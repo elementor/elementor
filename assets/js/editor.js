@@ -688,6 +688,7 @@ TemplateLibraryManager = function() {
 		deleteDialog,
 		errorDialog,
 		layout,
+		config = {},
 		startIntent = {},
 		templateTypes = {},
 		templatesCollection;
@@ -716,7 +717,7 @@ TemplateLibraryManager = function() {
 		};
 
 		_.each( [ 'page', 'section' ], function( type ) {
-			var safeData = Backbone.$.extend( true, {}, data, {
+			var safeData = jQuery.extend( true, {}, data, {
 				saveDialog: {
 					title: elementor.translate( 'save_your_template', [ elementor.translate( type ) ] )
 				}
@@ -728,6 +729,10 @@ TemplateLibraryManager = function() {
 
 	this.init = function() {
 		registerDefaultTemplateTypes();
+
+		elementor.addBackgroundClickListener( 'libraryToggleMore', {
+			element: '.elementor-template-library-template-more'
+		} );
 	};
 
 	this.getTemplateTypes = function( type ) {
@@ -824,10 +829,22 @@ TemplateLibraryManager = function() {
 		};
 
 		if ( ajaxOptions ) {
-			Backbone.$.extend( true, options, ajaxOptions );
+			jQuery.extend( true, options, ajaxOptions );
 		}
 
 		return elementor.ajax.send( 'get_template_data', options );
+	};
+
+	this.markAsFavorite = function( templateModel, favorite ) {
+		var options = {
+			data: {
+				source: templateModel.get( 'source' ),
+				template_id: templateModel.get( 'template_id' ),
+				favorite: favorite
+			}
+		};
+
+		return elementor.ajax.send( 'mark_template_as_favorite', options );
 	};
 
 	this.getDeleteDialog = function() {
@@ -875,7 +892,15 @@ TemplateLibraryManager = function() {
 		return templatesCollection;
 	};
 
-	this.requestRemoteTemplates = function( callback, forceUpdate ) {
+	this.getConfig = function( item ) {
+		if ( item ) {
+			return config[ item ];
+		}
+
+		return config;
+	};
+
+	this.requestLibraryData = function( callback, forceUpdate, forceSync ) {
 		if ( templatesCollection && ! forceUpdate ) {
 			if ( callback ) {
 				callback();
@@ -884,15 +909,24 @@ TemplateLibraryManager = function() {
 			return;
 		}
 
-		elementor.ajax.send( 'get_templates', {
+		var options = {
+			data: {},
 			success: function( data ) {
-				templatesCollection = new TemplateLibraryCollection( data );
+				templatesCollection = new TemplateLibraryCollection( data.templates );
+
+				config = data.config;
 
 				if ( callback ) {
 					callback();
 				}
 			}
-		} );
+		};
+
+		if ( forceSync ) {
+			options.data.sync = true;
+		}
+
+		elementor.ajax.send( 'get_library_data', options );
 	};
 
 	this.startModal = function( customStartIntent ) {
@@ -908,7 +942,7 @@ TemplateLibraryManager = function() {
 
 		layout.showLoadingView();
 
-		self.requestRemoteTemplates( function() {
+		self.requestLibraryData( function() {
 			if ( startIntent.onReady ) {
 				startIntent.onReady();
 			}
@@ -968,7 +1002,6 @@ var TemplateLibraryTemplateModel;
 TemplateLibraryTemplateModel = Backbone.Model.extend( {
 	defaults: {
 		template_id: 0,
-		name: '',
 		title: '',
 		source: '',
 		type: '',
@@ -976,8 +1009,7 @@ TemplateLibraryTemplateModel = Backbone.Model.extend( {
 		thumbnail: '',
 		url: '',
 		export_link: '',
-		categories: [],
-		keywords: []
+		tags: []
 	}
 } );
 
@@ -986,7 +1018,7 @@ module.exports = TemplateLibraryTemplateModel;
 },{}],11:[function(require,module,exports){
 var TemplateLibraryHeaderView = require( 'elementor-templates/views/parts/header' ),
 	TemplateLibraryHeaderLogoView = require( 'elementor-templates/views/parts/header-parts/logo' ),
-	TemplateLibraryHeaderSaveView = require( 'elementor-templates/views/parts/header-parts/save' ),
+	TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts/header-parts/actions' ),
 	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
 	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
 	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
@@ -1034,23 +1066,19 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 
 		var headerView = this.getHeaderView();
 
-		headerView.tools.show( new TemplateLibraryHeaderSaveView() );
+		headerView.tools.show( new TemplateLibraryHeaderActionsView() );
 		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
 		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
 	showImportView: function() {
+		this.getHeaderView().menuArea.reset();
+
 		this.modalContent.show( new TemplateLibraryImportView() );
 	},
 
 	showSaveTemplateView: function( elementModel ) {
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
-
-		var headerView = this.getHeaderView();
-
-		headerView.tools.reset();
-		headerView.menuArea.reset();
-		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
 	showPreviewView: function( templateModel ) {
@@ -1072,10 +1100,48 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 
 module.exports = TemplateLibraryLayoutView;
 
-},{"elementor-templates/views/parts/header":17,"elementor-templates/views/parts/header-parts/back":12,"elementor-templates/views/parts/header-parts/logo":13,"elementor-templates/views/parts/header-parts/menu":14,"elementor-templates/views/parts/header-parts/preview":15,"elementor-templates/views/parts/header-parts/save":16,"elementor-templates/views/parts/import":18,"elementor-templates/views/parts/loading":19,"elementor-templates/views/parts/preview":20,"elementor-templates/views/parts/save-template":21,"elementor-templates/views/parts/templates":23}],12:[function(require,module,exports){
-var TemplateLibraryHeaderBackView;
+},{"elementor-templates/views/parts/header":17,"elementor-templates/views/parts/header-parts/actions":12,"elementor-templates/views/parts/header-parts/back":13,"elementor-templates/views/parts/header-parts/logo":14,"elementor-templates/views/parts/header-parts/menu":15,"elementor-templates/views/parts/header-parts/preview":16,"elementor-templates/views/parts/import":18,"elementor-templates/views/parts/loading":19,"elementor-templates/views/parts/preview":20,"elementor-templates/views/parts/save-template":21,"elementor-templates/views/parts/templates":23}],12:[function(require,module,exports){
+module.exports = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-template-library-header-actions',
 
-TemplateLibraryHeaderBackView = Marionette.ItemView.extend( {
+	id: 'elementor-template-library-header-actions',
+
+	ui: {
+		'import': '#elementor-template-library-header-import',
+		sync: '#elementor-template-library-header-sync',
+		syncIcon: '#elementor-template-library-header-sync i',
+		save: '#elementor-template-library-header-save'
+	},
+
+	events: {
+		'click @ui.import': 'onImportClick',
+		'click @ui.sync': 'onSyncClick',
+		'click @ui.save': 'onSaveClick'
+	},
+
+	onImportClick: function() {
+		elementor.templates.getLayout().showImportView();
+	},
+
+	onSyncClick: function() {
+		var self = this;
+
+		self.ui.syncIcon.addClass( 'eicon-animation-spin' );
+
+		elementor.templates.requestLibraryData( function() {
+			self.ui.syncIcon.removeClass( 'eicon-animation-spin' );
+
+			elementor.templates.showTemplates();
+		}, true, true );
+	},
+
+	onSaveClick: function() {
+		elementor.templates.getLayout().showSaveTemplateView();
+	}
+} );
+
+},{}],13:[function(require,module,exports){
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-back',
 
 	id: 'elementor-template-library-header-preview-back',
@@ -1089,12 +1155,8 @@ TemplateLibraryHeaderBackView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplateLibraryHeaderBackView;
-
-},{}],13:[function(require,module,exports){
-var TemplateLibraryHeaderLogoView;
-
-TemplateLibraryHeaderLogoView = Marionette.ItemView.extend( {
+},{}],14:[function(require,module,exports){
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-logo',
 
 	id: 'elementor-template-library-header-logo',
@@ -1109,12 +1171,8 @@ TemplateLibraryHeaderLogoView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplateLibraryHeaderLogoView;
-
-},{}],14:[function(require,module,exports){
-var TemplateLibraryHeaderMenuView;
-
-TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
+},{}],15:[function(require,module,exports){
+module.exports = Marionette.ItemView.extend( {
 	options: {
 		activeClass: 'elementor-active'
 	},
@@ -1165,13 +1223,10 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplateLibraryHeaderMenuView;
+},{}],16:[function(require,module,exports){
+var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' );
 
-},{}],15:[function(require,module,exports){
-var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' ),
-	TemplateLibraryHeaderPreviewView;
-
-TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-preview',
 
 	id: 'elementor-template-library-header-preview',
@@ -1183,30 +1238,7 @@ TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplateLibraryHeaderPreviewView;
-
-},{"elementor-templates/behaviors/insert-template":7}],16:[function(require,module,exports){
-var TemplateLibraryHeaderSaveView;
-
-TemplateLibraryHeaderSaveView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-template-library-header-save',
-
-	id: 'elementor-template-library-header-save',
-
-	className: 'elementor-template-library-header-item',
-
-	events: {
-		'click': 'onClick'
-	},
-
-	onClick: function() {
-		elementor.templates.getLayout().showSaveTemplateView();
-	}
-} );
-
-module.exports = TemplateLibraryHeaderSaveView;
-
-},{}],17:[function(require,module,exports){
+},{"elementor-templates/behaviors/insert-template":7}],17:[function(require,module,exports){
 var TemplateLibraryHeaderView;
 
 TemplateLibraryHeaderView = Marionette.LayoutView.extend( {
@@ -1245,31 +1277,87 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-import',
 
 	ui: {
-		uploadForm: '#elementor-template-library-import-form'
+		uploadForm: '#elementor-template-library-import-form',
+		fileInput: '#elementor-template-library-import-form-input'
 	},
 
 	events: {
-		'submit @ui.uploadForm': 'onFormSubmit'
+		'change @ui.fileInput': 'onFileInputChange'
 	},
 
-	onFormSubmit: function( event ) {
-		event.preventDefault();
+	droppedFiles: null,
 
-		elementor.templates.getLayout().showLoadingView();
+	submitForm: function() {
+		var layout = elementor.templates.getLayout(),
+			data = new FormData();
 
-		elementor.ajax.send( 'import_template', {
-			data: new FormData( this.ui.uploadForm[ 0 ] ),
+		if ( this.droppedFiles ) {
+			data.append( 'file', this.droppedFiles[0] );
+
+			this.droppedFiles = null;
+		} else {
+			data.append( 'file', this.ui.fileInput[0].files[0] );
+
+			this.ui.uploadForm[0].reset();
+		}
+
+		var options = {
+			data: data,
 			processData: false,
 			contentType: false,
 			success: function( data ) {
-				elementor.templates.getTemplatesCollection().add( data.item );
+				elementor.templates.getTemplatesCollection().add( data );
+
+				elementor.templates.setTemplatesSource( 'local' );
 
 				elementor.templates.showTemplates();
 			},
 			error: function( data ) {
 				elementor.templates.showErrorDialog( data );
+
+				layout.showImportView();
 			}
+		};
+
+		elementor.ajax.send( 'import_template', options );
+
+		layout.showLoadingView();
+	},
+
+	onRender: function() {
+		this.ui.uploadForm.on( {
+			'drag dragstart dragend dragover dragenter dragleave drop': this.onFormActions.bind( this ),
+			dragenter: this.onFormDragEnter.bind( this ),
+			'dragleave drop': this.onFormDragLeave.bind( this ),
+			drop: this.onFormDrop.bind( this )
 		} );
+	},
+
+	onFormActions: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+	},
+
+	onFormDragEnter: function() {
+		this.ui.uploadForm.addClass( 'elementor-drag-over' );
+	},
+
+	onFormDragLeave: function( event ) {
+		if ( jQuery( event.relatedTarget ).closest( this.ui.uploadForm ).length ) {
+			return;
+		}
+
+		this.ui.uploadForm.removeClass( 'elementor-drag-over' );
+	},
+
+	onFormDrop: function( event ) {
+		this.droppedFiles = event.originalEvent.dataTransfer.files;
+
+		this.submitForm();
+	},
+
+	onFileInputChange: function() {
+		this.submitForm();
 	}
 } );
 
@@ -1374,7 +1462,28 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	childViewContainer: '#elementor-template-library-templates-container',
 
+	reorderOnSort: true,
+
 	emptyView: TemplateLibraryTemplatesEmptyView,
+
+	ui: {
+		filterText: '#elementor-template-library-filter-text',
+		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
+		orderInputs: '.elementor-template-library-order-input',
+		orderLabels: '.elementor-template-library-order-label'
+	},
+
+	events: {
+		'input @ui.filterText': 'onFilterTextInput',
+		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
+		'mousedown @ui.orderLabels': 'onOrderLabelsClick'
+	},
+
+	comparators: {
+		title: function( model ) {
+			return model.get( 'title' ).toLowerCase();
+		}
+	},
 
 	getChildView: function( childModel ) {
 		if ( 'remote' === childModel.get( 'source' ) ) {
@@ -1388,46 +1497,124 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 	},
 
-	filterByName: function( model ) {
-		var filterValue = elementor.channels.templates.request( 'filter:text' );
+	filterByText: function( model, text ) {
+		text = text.toLowerCase();
 
-		if ( ! filterValue ) {
+		if ( model.get( 'title' ).toLowerCase().indexOf( text ) >= 0 ) {
 			return true;
 		}
 
-		filterValue = filterValue.toLowerCase();
-
-		if ( model.get( 'title' ).toLowerCase().indexOf( filterValue ) >= 0 ) {
-			return true;
-		}
-
-		return _.any( model.get( 'keywords' ), function( keyword ) {
-			return keyword.toLowerCase().indexOf( filterValue ) >= 0;
+		return _.any( model.get( 'tags' ), function( tag ) {
+			return tag.toLowerCase().indexOf( text ) >= 0;
 		} );
 	},
 
-	filterBySource: function( model ) {
-		var filterValue = elementor.channels.templates.request( 'filter:source' );
-
-		if ( ! filterValue ) {
-			return true;
-		}
-
-		return filterValue === model.get( 'source' );
+	filterBySource: function( model, source ) {
+		return source === model.get( 'source' );
 	},
 
 	filterByType: function( model ) {
-		return false !== elementor.templates.getTemplateTypes( model.get( 'type' ) ).showInLibrary;
+		var typeInfo = elementor.templates.getTemplateTypes( model.get( 'type' ) );
+
+		return ! typeInfo || false !== typeInfo.showInLibrary;
+	},
+
+	filterByFavorite: function( model ) {
+		return model.get( 'favorite' );
 	},
 
 	filter: function( childModel ) {
-		return this.filterByName( childModel ) && this.filterBySource( childModel ) && this.filterByType( childModel );
+		var textFilter = elementor.channels.templates.request( 'filter:text' ),
+			sourceFilter = elementor.channels.templates.request( 'filter:source' ),
+			favoriteFilter = elementor.channels.templates.request( 'filter:favorite' );
+
+		return ( ! textFilter || this.filterByText( childModel, textFilter ) ) &&
+			   ( ! sourceFilter || this.filterBySource( childModel, sourceFilter ) ) &&
+			   ( ! favoriteFilter || 'remote' !== sourceFilter || this.filterByFavorite( childModel ) ) &&
+			   this.filterByType( childModel );
+	},
+
+	order: function( by, reverseOrder ) {
+		var comparator = this.comparators[ by ] || by;
+
+		if ( reverseOrder ) {
+			comparator = this.reverseOrder( comparator );
+		}
+
+		this.collection.comparator = comparator;
+
+		this.collection.sort();
+	},
+
+	activateOrdering: function( by, reverseOrder ) {
+		var $orderInput = this.ui.orderInputs.filter( '[value="' + by + '"]' );
+
+		reverseOrder = !! reverseOrder;
+
+		$orderInput
+			.attr( 'checked', true )
+			.toggleClass( 'elementor-template-library-order-reverse', reverseOrder );
+
+		this.order( by, reverseOrder );
+	},
+
+	reverseOrder: function( comparator ) {
+		if ( 'function' !== typeof comparator ) {
+			var comparatorValue = comparator;
+
+			comparator = function( model ) {
+				return model.get( comparatorValue );
+			};
+		}
+
+		return function( left, right ) {
+			var l = comparator( left ),
+				r = comparator( right );
+
+			if ( undefined === l ) {
+				return -1;
+			}
+
+			if ( undefined === r ) {
+				return 1;
+			}
+
+			return l < r ? 1 : l > r ? -1 : 0;
+		};
+	},
+
+	onRender: function() {
+		_.defer( this.activateOrdering.bind( this, 'date', true ) );
 	},
 
 	onRenderCollection: function() {
 		var isEmpty = this.children.isEmpty();
 
-		this.$childViewContainer.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
+		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
+	},
+
+	onFilterTextInput: function() {
+		elementor.channels.templates
+			.reply( 'filter:text', this.ui.filterText.val() )
+			.trigger( 'filter:change' );
+	},
+
+	onMyFavoritesFilterChange: function(  ) {
+		elementor.channels.templates
+			.reply( 'filter:favorite', this.ui.myFavoritesFilter[0].checked )
+			.trigger( 'filter:change' );
+	},
+
+	onOrderLabelsClick: function( event ) {
+		var $clickedInput = jQuery( event.currentTarget.control );
+
+		if ( ! $clickedInput[0].checked ) {
+			$clickedInput.removeClass( 'elementor-template-library-order-reverse' );
+		} else {
+			$clickedInput.toggleClass( 'elementor-template-library-order-reverse' );
+		}
+
+		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
 	}
 } );
 
@@ -1478,18 +1665,25 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	ui: function() {
 		return _.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
-			deleteButton: '.elementor-template-library-template-delete'
+			deleteButton: '.elementor-template-library-template-delete',
+			morePopup: '.elementor-template-library-template-more',
+			toggleMore: '.elementor-template-library-template-more-toggle'
 		} );
 	},
 
 	events: function() {
 		return _.extend( TemplateLibraryTemplateView.prototype.events.apply( this, arguments ), {
-			'click @ui.deleteButton': 'onDeleteButtonClick'
+			'click @ui.deleteButton': 'onDeleteButtonClick',
+			'click @ui.toggleMore': 'onToggleMoreClick'
 		} );
 	},
 
 	onDeleteButtonClick: function() {
 		elementor.templates.deleteTemplate( this.model );
+	},
+
+	onToggleMoreClick: function() {
+		this.ui.morePopup.show();
 	},
 
 	onPreviewButtonClick: function() {
@@ -1506,8 +1700,32 @@ var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/b
 TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-remote',
 
+	ui: function() {
+		return jQuery.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
+			favoriteCheckbox: '.elementor-template-library-template-favorite-input'
+		} );
+	},
+
+	events: function() {
+		return jQuery.extend( TemplateLibraryTemplateView.prototype.events.apply( this, arguments ), {
+			'change @ui.favoriteCheckbox': 'onFavoriteCheckboxChange'
+		} );
+	},
+
 	onPreviewButtonClick: function() {
 		elementor.templates.getLayout().showPreviewView( this.model );
+	},
+
+	onFavoriteCheckboxChange: function() {
+		var isFavorite = this.ui.favoriteCheckbox[0].checked;
+
+		this.model.set( 'favorite', isFavorite );
+
+		elementor.templates.markAsFavorite( this.model, isFavorite );
+
+		if ( ! isFavorite && elementor.channels.templates.request( 'filter:favorite' ) ) {
+			elementor.channels.templates.trigger( 'filter:change' );
+		}
 	}
 } );
 
@@ -1590,6 +1808,8 @@ App = Marionette.Application.extend( {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
 		}
 	},
+
+	backgroundClickListeners: {},
 
 	_defaultDeviceMode: 'desktop',
 
@@ -1895,6 +2115,14 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
+	addBackgroundClickArea: function( element ) {
+		element.addEventListener( 'click', this.onBackgroundClick.bind( this ), { capture: true } );
+	},
+
+	addBackgroundClickListener: function( key, listener ) {
+		this.backgroundClickListeners[ key ] = listener;
+	},
+
 	showFatalErrorDialog: function( options ) {
 		var defaultOptions = {
 			id: 'elementor-fatal-error-dialog',
@@ -1944,6 +2172,8 @@ App = Marionette.Application.extend( {
 
 		this.initClearPageDialog();
 
+		this.addBackgroundClickArea( document );
+
 		this.$window.trigger( 'elementor:init' );
 
 		this.initPreview();
@@ -1988,6 +2218,8 @@ App = Marionette.Application.extend( {
 		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
+
+		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
 
 		var Preview = require( 'elementor-views/preview' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
@@ -2053,6 +2285,16 @@ App = Marionette.Application.extend( {
 			onConfirm: function() {
 				open( elementor.config.help_the_content_url, '_blank' );
 			}
+		} );
+	},
+
+	onBackgroundClick: function( event ) {
+		jQuery.each( this.backgroundClickListeners, function() {
+			var elementToHide = this.element,
+				$clickedTarget = jQuery( event.target ),
+				$clickedTargetClosestElement = $clickedTarget.closest( elementToHide );
+
+			jQuery( elementToHide ).not( $clickedTargetClosestElement ).hide();
 		} );
 	},
 
@@ -8147,7 +8389,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 
 		self.editor.getSession().setUseWrapMode( true );
 
-		elementor.panel.$el.on( 'resize.aceEditor', _.bind( self.onResize, this ) );
+		elementor.panel.$el.on( 'resize.aceEditor', self.onResize.bind( this ) );
 
 		if ( 'css' === self.model.attributes.language ) {
 			var selectorCompleter = {
