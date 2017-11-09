@@ -196,9 +196,9 @@ abstract class Skin_Base {
 	 * @param string $id   Control ID.
 	 * @param array  $args Control arguments. Only the new fields you want to update.
 	 */
-	public function update_control( $id, $args, $recursive = false ) {
+	public function update_control( $id, $args, array $options = [] ) {
 		$args['condition']['_skin'] = $this->get_id();
-		$this->parent->update_control( $this->get_control_id( $id ), $args, $recursive );
+		$this->parent->update_control( $this->get_control_id( $id ), $args, $options );
 	}
 
 	/**
