@@ -186,6 +186,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.8.1 - 09.11.2017 ###
+* Fix! - Bug loading Editor templates in some server configurations ([#2712](https://github.com/pojome/elementor/issues/2712))
+* Fix! - Added parameter to overwrite control recursively ([#2702](https://github.com/pojome/elementor/issues/2702))
+* Fix! - Patched nonce validation for all library actions
+* Fix! - Glitch with Tabs widget on touch screen
+* Fix! - Glitch with Button wrap on small screens
+
 ### 1.8.0 - 07.11.2017 ###
 * New! - Inline Editing added to all text, textarea & TinyMCE controls ([#437](https://github.com/pojome/elementor/issues/437))
 * New! - Added auto complete for code editor (Custom CSS & HTML widget) ([#2416](https://github.com/pojome/elementor/issues/2416))
