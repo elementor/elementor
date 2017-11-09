@@ -386,11 +386,14 @@ abstract class Controls_Stack {
 	 * the arguments by passing new data.
 	 *
 	 * @since 1.4.0
+	 * @since 1.8.1 New `$options` parameter added.
+	 *
 	 * @access public
 	 *
 	 * @param string $control_id Control ID.
 	 * @param array  $args       Control arguments. Only the new fields you want
 	 *                           to update.
+	 * @param array  $options    Optional. Some additional options.
 	 *
 	 * @return bool
 	 */
