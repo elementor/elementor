@@ -8,6 +8,7 @@ TemplateLibraryManager = function() {
 		deleteDialog,
 		errorDialog,
 		layout,
+		config = {},
 		startIntent = {},
 		templateTypes = {},
 		templatesCollection;
@@ -36,7 +37,7 @@ TemplateLibraryManager = function() {
 		};
 
 		_.each( [ 'page', 'section' ], function( type ) {
-			var safeData = Backbone.$.extend( true, {}, data, {
+			var safeData = jQuery.extend( true, {}, data, {
 				saveDialog: {
 					title: elementor.translate( 'save_your_template', [ elementor.translate( type ) ] )
 				}
@@ -48,6 +49,10 @@ TemplateLibraryManager = function() {
 
 	this.init = function() {
 		registerDefaultTemplateTypes();
+
+		elementor.addBackgroundClickListener( 'libraryToggleMore', {
+			element: '.elementor-template-library-template-more'
+		} );
 	};
 
 	this.getTemplateTypes = function( type ) {
@@ -144,10 +149,22 @@ TemplateLibraryManager = function() {
 		};
 
 		if ( ajaxOptions ) {
-			Backbone.$.extend( true, options, ajaxOptions );
+			jQuery.extend( true, options, ajaxOptions );
 		}
 
 		return elementor.ajax.send( 'get_template_data', options );
+	};
+
+	this.markAsFavorite = function( templateModel, favorite ) {
+		var options = {
+			data: {
+				source: templateModel.get( 'source' ),
+				template_id: templateModel.get( 'template_id' ),
+				favorite: favorite
+			}
+		};
+
+		return elementor.ajax.send( 'mark_template_as_favorite', options );
 	};
 
 	this.getDeleteDialog = function() {
@@ -195,7 +212,15 @@ TemplateLibraryManager = function() {
 		return templatesCollection;
 	};
 
-	this.requestRemoteTemplates = function( callback, forceUpdate ) {
+	this.getConfig = function( item ) {
+		if ( item ) {
+			return config[ item ];
+		}
+
+		return config;
+	};
+
+	this.requestLibraryData = function( callback, forceUpdate, forceSync ) {
 		if ( templatesCollection && ! forceUpdate ) {
 			if ( callback ) {
 				callback();
@@ -204,15 +229,24 @@ TemplateLibraryManager = function() {
 			return;
 		}
 
-		elementor.ajax.send( 'get_templates', {
+		var options = {
+			data: {},
 			success: function( data ) {
-				templatesCollection = new TemplateLibraryCollection( data );
+				templatesCollection = new TemplateLibraryCollection( data.templates );
+
+				config = data.config;
 
 				if ( callback ) {
 					callback();
 				}
 			}
-		} );
+		};
+
+		if ( forceSync ) {
+			options.data.sync = true;
+		}
+
+		elementor.ajax.send( 'get_library_data', options );
 	};
 
 	this.startModal = function( customStartIntent ) {
@@ -228,7 +262,7 @@ TemplateLibraryManager = function() {
 
 		layout.showLoadingView();
 
-		self.requestRemoteTemplates( function() {
+		self.requestLibraryData( function() {
 			if ( startIntent.onReady ) {
 				startIntent.onReady();
 			}

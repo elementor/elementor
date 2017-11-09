@@ -1,8 +1,15 @@
 #elementor-template-library-modal {
 
 	.dialog-widget-content {
-		width: 990px;
 		background-color: $editor-background-light;
+
+		@media (max-width: $screen-xl-max) {
+			width: 990px;
+		}
+
+		@media (min-width: $screen-xxl-min) {
+			width: 1200px;
+		}
 	}
 
 	.dialog-widget-header {
@@ -21,7 +28,7 @@
 		height: 630px;
 		max-height: 85vh;
 		overflow: auto;
-		padding: 15px;
+		padding: 15px 30px;
 	}
 
 	a {
@@ -48,6 +55,7 @@
 #elementor-template-library-header {
 	display: flex;
 	align-items: center;
+	height: 50px;
 }
 
 #elementor-template-library-header-logo-area {
@@ -107,8 +115,9 @@
 
 .elementor-template-library-header-item {
 	position: relative;
-	@include border-start(1px solid $editor-background);
-	height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	box-sizing: content-box;
 	cursor: pointer;
 	transition: color .5s;
@@ -122,21 +131,20 @@
 	}
 }
 
-#elementor-template-library-header-close-modal, #elementor-template-library-header-save {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 56px;
+#elementor-template-library-header-close-modal {
+	width: 50px;
+	@include border-start(1px solid $editor-background);
 }
 
-#elementor-template-library-header-preview {
+#elementor-template-library-header-actions {
+	display: flex;
 
+	> div {
+		padding: 0 10px;
+	}
 }
 
 #elementor-template-library-header-preview-insert-wrapper {
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	cursor: default;
 	padding: 0 10px;
 
@@ -176,27 +184,164 @@
 	}
 }
 
-#elementor-template-library-templates-container {
-	overflow: hidden;
+#elementor-template-library-templates {
+	padding: 0 15px;
 
 	&[data-template-source="local"] {
-		box-shadow: 1px 1px 5px rgba(0,0,0,.1);
-		margin: 15px;
+
+		#elementor-template-library-templates-container {
+			box-shadow: 1px 1px 5px rgba(0,0,0,.1);
+			margin-top: 10px;
+		}
+
+		#elementor-template-library-filter-toolbar-remote {
+			display: none;
+		}
+	}
+
+	&[data-template-source="remote"] {
+
+		#elementor-template-library-templates-container {
+			margin: 0 -15px;
+		}
+	}
+
+	&:not([data-template-source="local"]) {
+
+		#elementor-template-library-filter-toolbar-local, #elementor-template-library-order-toolbar-local {
+			display: none;
+		}
 	}
 
 	&:not([data-template-source="remote"]) {
 
-		+ #elementor-template-library-footer-banner {
+		#elementor-template-library-footer-banner {
 			display: none;
+		}
+	}
+
+	.elementor-template-library-order-input {
+		display: none;
+	}
+}
+
+#elementor-template-library-templates-container {
+	display: flex;
+	flex-wrap: wrap;
+
+	// These rules are here because of selectors priority
+	.elementor-template-library-template-insert {
+		text-transform: none;
+		font-size: 12px;
+	}
+}
+
+#elementor-template-library-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.elementor-template-library-filter-toolbar {
+	display: flex;
+}
+
+#elementor-template-library-order {
+	display: flex;
+	@include border-end(1px solid $editor-lightest);
+}
+
+.elementor-template-library-order-input {
+
+	&:checked {
+
+		+ .elementor-template-library-order-label {
+			font-weight: 600;
 		}
 	}
 }
 
+.elementor-template-library-order-label {
+	font-size: 13px;
+	text-transform: uppercase;
+	cursor: pointer;
+	@include padding-end(20px);
+	user-select: none;
+}
+
+#elementor-template-library-my-favorites {
+	flex-grow: 1;
+	text-align: $start;
+	@include padding-start(20px);
+}
+
+#elementor-template-library-filter-my-favorites {
+	display: none;
+
+	&:checked {
+
+		+ #elementor-template-library-filter-my-favorites-label {
+
+			i {
+
+				&:after {
+					color: $editor-accent;
+					content: '\f004';
+				}
+			}
+		}
+	}
+}
+
+#elementor-template-library-filter-my-favorites-label {
+	cursor: pointer;
+
+	i {
+		@include padding-end(5px);
+
+		&:after {
+			color: $editor-light;
+			content: '\f08a';
+		}
+	}
+}
+
+#elementor-template-library-filter-text-wrapper {
+	width: 200px;
+	position: relative;
+
+	&:after {
+		content: '\e863';
+		position: absolute;
+		top: 50%;
+		@include end(0);
+		transform: translateY(-50%);
+		font-family: eicons;
+	}
+}
+
+#elementor-template-library-filter-text {
+	border: none;
+	border-bottom: 1px solid $editor-lighter;
+	border-radius: 0;
+	font-size: 15px;
+	padding: 8px;
+}
+
 .elementor-template-library-template-remote {
-	float: $start;
-	width: 25%;
-	padding: 0 15px;
-	margin-top: 15px;
+	$items-space: 30px;
+
+	margin: $items-space / 2;
+	padding: 10px;
+	background-color: #fff;
+
+	@media (max-width: $screen-xl-max) {
+		width: calc(25% - #{$items-space});
+	}
+
+	@media (min-width: $screen-xxl-min) {
+		width: calc(20% - #{$items-space});
+	}
 
 	&.elementor-template-library-pro-template {
 
@@ -219,10 +364,8 @@
 	}
 
 	.elementor-template-library-template-body {
-		height: 250px;
-		border: 3px solid #fff;
+		height: 200px;
 		position: relative;
-		box-shadow: 0 1px 6px rgba(0,0,0,0.2);
 
 		&:not(:hover) {
 
@@ -256,7 +399,7 @@
 
 	.elementor-template-library-template-preview {
 		position: relative;
-		height: 180px;
+		height: 150px;
 		cursor: pointer;
 
 		i {
@@ -269,20 +412,109 @@
 		}
 	}
 
+	.elementor-template-library-template-footer {
+		margin-top: 10px;
+		display: flex;
+	}
+
 	.elementor-template-library-template-name {
-		margin: 13px 0 10px;
 		font-size: 12px;
-		text-align: center;
+		text-align: $start;
 		color: $editor-dark;
+		flex-grow: 1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		@include padding-end(5px);
+	}
+
+	.elementor-template-library-template-favorite-input {
+		display: none;
+
+		&:checked {
+
+			+ .elementor-template-library-template-favorite-label {
+
+				i {
+					color: $editor-accent;
+				}
+			}
+		}
+	}
+
+	.elementor-template-library-template-favorite-label {
+		cursor: pointer;
+	}
+}
+
+.elementor-template-library-local-column-1 {
+	width: 35%;
+}
+
+.elementor-template-library-local-column-2 {
+	width: 10%;
+}
+
+.elementor-template-library-local-column-3 {
+	width: 15%;
+}
+
+.elementor-template-library-local-column-4 {
+	width: 15%;
+}
+
+.elementor-template-library-local-column-5 {
+	width: 25%;
+}
+
+#elementor-template-library-order-toolbar-local,
+.elementor-template-library-template-local {
+	display: flex;
+	align-items: center;
+	padding: 0 25px;
+	text-align: $start;
+}
+
+#elementor-template-library-order-toolbar-local {
+	margin-top: 30px;
+
+	.elementor-template-library-order-input {
+
+		&:checked {
+
+			+ .elementor-template-library-order-label {
+
+				&:after {
+					font-family: eicons;
+					content: '\e956';
+					@include margin-start(5px);
+				}
+			}
+
+			&.elementor-template-library-order-reverse {
+
+				+ .elementor-template-library-order-label {
+
+					&:after {
+						content: '\e955';
+					}
+				}
+			}
+		}
+	}
+
+	.elementor-template-library-order-label {
+		color: $editor-light;
+		line-height: 1;
+		font-size: 11px;
 	}
 }
 
 .elementor-template-library-template-local {
-	background-color: #fff;
-	display: flex;
-	align-items: center;
-	border-bottom: 1px solid $editor-lightest;
 	height: 50px;
+	width: 100%;
+	border-bottom: 1px solid $editor-lightest;
+	background-color: #fff;
 	transition: background-color .3s linear;
 
 	&:hover {
@@ -291,48 +523,35 @@
 
 	&:not(:hover) {
 
-		.elementor-template-library-template-controls {
-			visibility: hidden;
+		.elementor-template-library-template-insert {
+			background: none;
+			color: $editor-light;
 		}
 	}
 
-	> * {
-		text-align: start;
-	}
-
-	.elementor-template-library-template-icon {
-		text-align: center;
-		width: 6%;
-	}
-
-	.elementor-template-library-template-name {
-		font-size: 13px;
-		font-weight: 500;
-		width: 35%;
-	}
-
-	.elementor-template-library-template-type {
+	.elementor-template-library-template-meta {
 		color: $editor-light;
 	}
 
 	.elementor-template-library-template-controls {
-		direction: getInverseDirection();
-		flex-grow: 1;
-
-		> * {
-			direction: $direction;
-		}
+		position: relative;
+		display: flex;
+		align-items: center;
 
 		> div {
-			display: inline-block;
-			@include margin-start(15px);
 			cursor: pointer;
-			font-weight: 500;
 			transition: color .5s;
 
 			&:not(:hover) {
 				color: $editor-light;
 			}
+		}
+	}
+
+	.elementor-template-library-template-insert {
+
+		i {
+			@include margin-end(3px);
 		}
 	}
 
@@ -351,6 +570,37 @@
 		padding: 8px 18px;
 		margin: 0 20px;
 	}
+
+	.elementor-template-library-template-more {
+		display: none;
+		position: absolute;
+		background-color: #fff;
+		padding: 0 20px;
+		box-shadow: 1px 3px 11px rgba(0,0,0,0.3);
+		top: 100%;
+		@include end(0);
+		transform: translateX(65%);
+		z-index: 1;
+
+		&:before {
+			content: '';
+			position: absolute;
+			border: solid transparent;
+			border-width: 8px 4px;
+			border-bottom-color: #fff;
+			transform: translateY(-100%);
+		}
+
+		> div {
+			margin: 10px 0;
+			font-size: 11px;
+		}
+	}
+
+	.elementor-template-library-template-more-toggle {
+		flex-grow: 1;
+		text-align: $end;
+	}
 }
 
 #elementor-template-library-preview {
@@ -364,9 +614,13 @@
 	}
 }
 
+.elementor-template-library-blank-icon {
+	font-size: 50px;
+	margin: 30px;
+}
+
 .elementor-template-library-blank-title {
 	font-size: 30px;
-	margin-top: 55px;
 }
 
 .elementor-template-library-blank-excerpt {
@@ -412,6 +666,40 @@
 	}
 }
 
+#elementor-template-library-import {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&-form {
+		height: 500px;
+		width: 700px;
+		background-color: #fff;
+		padding: 40px;
+		border: 2px dashed $editor-lightest;
+
+		&-or {
+			margin-top: 15px;
+		}
+
+		&-label {
+			margin-top: 20px;
+			padding: 11px 25px;
+			font-size: 18px;
+			display: inline-block;
+		}
+
+		&-input {
+			display: none;
+		}
+
+		&.elementor-drag-over {
+			border: 3px dashed $editor-info;
+		}
+	}
+}
+
 .elementor-template-library-blank-footer {
 	position: absolute;
 	bottom: 90px;
@@ -438,9 +726,13 @@
 	}
 }
 
+#elementor-template-library-templates-empty {
+	width: 100%;
+}
+
 #elementor-template-library-templates-empty-icon {
 	font-size: 96px;
-	margin-top: 40px;
+	margin: 40px;
 	color: $editor-lightest;
 }
 
