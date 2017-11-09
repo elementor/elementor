@@ -609,9 +609,8 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Used to generate the edit tools HTML.
 	 *
-	 * @deprecated: 1.8.0 use render_edit_tools() instead.
-	 *
 	 * @since 1.0.0
+	 * @deprecated 1.8.0 use render_edit_tools() instead.
 	 * @access protected
 	 */
 	protected function _render_settings() {
@@ -620,6 +619,14 @@ abstract class Element_Base extends Controls_Stack {
 		$this->render_edit_tools();
 	}
 
+	/**
+	 * Render element edit tools.
+	 *
+	 * Used to generate the edit tools HTML.
+	 *
+	 * @since 1.8.0
+	 * @access protected
+	 */
 	protected function render_edit_tools() {}
 
 	/**
