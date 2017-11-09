@@ -36,7 +36,7 @@ ControlCodeEditorItemView = ControlBaseItemView.extend( {
 
 		self.editor.getSession().setUseWrapMode( true );
 
-		elementor.panel.$el.on( 'resize.aceEditor', _.bind( self.onResize, this ) );
+		elementor.panel.$el.on( 'resize.aceEditor', self.onResize.bind( this ) );
 
 		if ( 'css' === self.model.attributes.language ) {
 			var selectorCompleter = {
