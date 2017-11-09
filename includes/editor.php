@@ -369,10 +369,6 @@ class Editor {
 
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
-		// Remove all TinyMCE plugins.
-		remove_all_filters( 'mce_buttons', 10 );
-		remove_all_filters( 'mce_external_plugins', 10 );
-
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
@@ -579,7 +575,22 @@ class Editor {
 	 * @access private
 	*/
 	private function get_wp_editor_config() {
+		// Remove all TinyMCE plugins.
+		remove_all_filters( 'mce_buttons', 10 );
+		remove_all_filters( 'mce_external_plugins', 10 );
+
+		if ( ! class_exists( '\_WP_Editors', false ) ) {
+			require( ABSPATH . WPINC . '/class-wp-editor.php' );
+		}
+
+		// WordPress 4.8 and higher
+		if ( method_exists( '\_WP_Editors', 'print_tinymce_scripts' ) ) {
+			\_WP_Editors::print_default_editor_scripts();
+			\_WP_Editors::print_tinymce_scripts();
+		}
+
 		ob_start();
+
 		wp_editor(
 			'%%EDITORCONTENT%%',
 			'elementorwpeditor',
@@ -589,7 +600,16 @@ class Editor {
 				'drag_drop_upload' => true,
 			]
 		);
-		return ob_get_clean();
+
+		$config = ob_get_clean();
+
+		// Don't call \_WP_Editors methods again
+		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'editor_js' ], 50 );
+		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'print_default_editor_scripts' ], 45 );
+
+		\_WP_Editors::editor_js();
+
+		return $config;
 	}
 
 	/**
