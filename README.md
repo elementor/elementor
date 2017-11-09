@@ -6,8 +6,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
-**Stable tag:** 1.7.12  
-**Beta tag:** 1.8.0-RC3  
+**Stable tag:** 1.8.1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -25,7 +24,7 @@ It's time for **[Elementor Page Builder](https://elementor.com/?utm_source=wp-re
 Instant reaction was a key feature we wanted to achieve. And we did. Instant drag & drop page builder, instant live edit, instant page load. The speed of Elementor is not matched by any other page builder, free or paid. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
 
 ### Live design. Truly live. ###
-Never again work on the backend and guess what the frontend will look like. With Elementor page builder, you edit the page and simultaneously see exactly how it looks like. Elementor features live editing that is truly live, with no need to press update or go to preview mode.
+Never again work on the backend and guess what the frontend will look like. With Elementor page builder, you edit the page and simultaneously see exactly how it looks like. Elementor features live design & inline editing, so the whole process of writing and designing is done directly on the page, with no need to press update or go to preview mode.
 
 ### Surprises you won’t see anywhere else. ###
 With Elementor's unique features, you can create websites that have that certain 'designer touch'. Among our page builder features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
@@ -186,6 +185,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 1.8.1 - 09.11.2017 ###
+* Fix! - Bug loading Editor templates in some server configurations ([#2712](https://github.com/pojome/elementor/issues/2712))
+* Fix! - Added parameter to overwrite control recursively ([#2702](https://github.com/pojome/elementor/issues/2702))
+* Fix! - Patched nonce validation for all library actions
+* Fix! - Glitch with Tabs widget on touch screen
+* Fix! - Glitch with Button wrap on small screens
 
 ### 1.8.0 - 07.11.2017 ###
 * New! - Inline Editing added to all text, textarea & TinyMCE controls ([#437](https://github.com/pojome/elementor/issues/437))
