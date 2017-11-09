@@ -394,8 +394,8 @@ abstract class Controls_Stack {
 	 *
 	 * @return bool
 	 */
-	public function update_control( $control_id, array $args, $recursive = false ) {
-		$is_updated = Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args, $recursive );
+	public function update_control( $control_id, array $args, array $options = [] ) {
+		$is_updated = Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args, $options );
 
 		if ( ! $is_updated ) {
 			return false;
@@ -759,7 +759,7 @@ abstract class Controls_Stack {
 			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
 
 			if ( ! empty( $options['overwrite'] ) ) {
-				$this->update_control( $id . $id_suffix, $control_args, ! empty( $options['overwrite_recursive'] ) );
+				$this->update_control( $id . $id_suffix, $control_args, [ 'recursive' => ! empty( $options['overwrite_recursive'] ) ] );
 			} else {
 				$this->add_control( $id . $id_suffix, $control_args, $options );
 			}
