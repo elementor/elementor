@@ -363,6 +363,7 @@ class DB {
 	 * @access public
 	*/
 	public function switch_to_post( $post_id ) {
+		$post_id = absint( $post_id );
 		// If is already switched, or is the same post, return.
 		if ( get_the_ID() === $post_id ) {
 			$this->switched_post_data[] = false;
