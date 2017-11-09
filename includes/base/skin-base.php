@@ -191,10 +191,13 @@ abstract class Skin_Base {
 	 * Change the value of an existing skin control.
 	 *
 	 * @since 1.3.0
+	 * @since 1.8.1 New `$options` parameter added.
+	 *
 	 * @access public
 	 *
-	 * @param string $id   Control ID.
-	 * @param array  $args Control arguments. Only the new fields you want to update.
+	 * @param string $id      Control ID.
+	 * @param array  $args    Control arguments. Only the new fields you want to update.
+	 * @param array  $options Optional. Some additional options.
 	 */
 	public function update_control( $id, $args, array $options = [] ) {
 		$args['condition']['_skin'] = $this->get_id();
