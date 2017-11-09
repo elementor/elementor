@@ -1,6 +1,4 @@
-var TemplateLibraryHeaderMenuView;
-
-TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	options: {
 		activeClass: 'elementor-active'
 	},
@@ -50,5 +48,3 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 		elementor.templates.setTemplatesSource( item.dataset.templateSource, true );
 	}
 } );
-
-module.exports = TemplateLibraryHeaderMenuView;
