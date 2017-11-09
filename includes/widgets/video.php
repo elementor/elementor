@@ -537,7 +537,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
-	 * @since 1.4.5
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function render() {
