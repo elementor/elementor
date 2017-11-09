@@ -132,6 +132,10 @@ App = Marionette.Application.extend( {
 		return this.getRegion( 'panel' ).currentView;
 	},
 
+	initEnvData: function() {
+		this.envData = _.pick( tinymce.EditorManager.Env, [ 'desktop', 'webkit', 'gecko', 'ie', 'opera' ] );
+	},
+
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
 			Settings = require( 'elementor-editor/settings/settings' );
@@ -417,6 +421,8 @@ App = Marionette.Application.extend( {
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
+
+		this.initEnvData();
 
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
@@ -738,7 +744,7 @@ App = Marionette.Application.extend( {
 		var text = '',
 			style = '';
 
-		if ( -1 !== navigator.userAgent.search( 'Firefox' ) ) {
+		if ( this.envData.gecko ) {
 			var asciiText = [
 				' ;;;;;;;;;;;;;;; ',
 				';;;  ;;       ;;;',
