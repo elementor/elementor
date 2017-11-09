@@ -5,6 +5,7 @@ use Elementor\DB;
 use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
+use Elementor\Editor;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -155,14 +156,14 @@ class Source_Local extends Source_Base {
 				Settings::PAGE_ID,
 				__( 'My Library', 'elementor' ),
 				__( 'My Library', 'elementor' ),
-				'edit_pages',
+				Editor::EDITING_CAPABILITY,
 				'edit.php?post_type=' . self::CPT
 			);
 		} else {
 			add_menu_page(
 				__( 'Elementor', 'elementor' ),
 				__( 'Elementor', 'elementor' ),
-				'edit_pages',
+				Editor::EDITING_CAPABILITY,
 				'edit.php?post_type=' . self::CPT,
 				'',
 				'',

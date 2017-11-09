@@ -103,7 +103,7 @@ abstract class Manager {
 	}
 
 	public function on_elementor_init() {
-		Plugin::$instance->editor->add_editor_template( $this->get_editor_template() );
+		Plugin::$instance->editor->add_editor_template( $this->get_editor_template(), 'text' );
 	}
 
 	/**
