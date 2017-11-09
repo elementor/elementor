@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor {
 
+	const EDITING_NONCE_KEY = 'elementor_editing';
+
 	private $_post_id;
 
 	private $_is_edit_mode;
@@ -390,7 +392,7 @@ class Editor {
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
-			'nonce' => wp_create_nonce( 'elementor-editing' ),
+			'nonce' => Plugin::$instance->editor->create_nonce(),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
@@ -650,6 +652,42 @@ class Editor {
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
+	}
+
+	/**
+	 * @since 1.8.1
+	 * @access public
+	 *
+	 * @return null|string
+	 */
+	public function create_nonce() {
+		if ( ! current_user_can( self::EDITING_CAPABILITY ) ) {
+			return null;
+		}
+
+		return wp_create_nonce( self::EDITING_NONCE_KEY );
+	}
+
+	/**
+	 * @since 1.8.1
+	 * @access public
+	 *
+	 * @param string $nonce
+	 *
+	 * @return false|int
+	 */
+	public function verify_nonce( $nonce ) {
+		return wp_verify_nonce( $nonce, self::EDITING_NONCE_KEY );
+	}
+
+	/**
+	 * @since 1.8.1
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function verify_request_nonce() {
+		return ! empty( $_REQUEST['_nonce'] ) && $this->verify_nonce( $_REQUEST['_nonce'] );
 	}
 
 	/**
