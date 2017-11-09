@@ -261,7 +261,6 @@ class Manager {
 	 * @access public
 	*/
 	public function export_template( array $args ) {
-		// TODO: Add nonce for security.
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -348,6 +347,10 @@ class Manager {
 	 * @access private
 	*/
 	private function handle_ajax_request( $ajax_request ) {
+		if ( ! Plugin::$instance->editor->verify_request_nonce() ) {
+			wp_send_json_error( new \WP_Error( 'token_expired' ) );
+		}
+
 		$result = call_user_func( [ $this, $ajax_request ], $_REQUEST );
 
 		$request_type = ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ? 'ajax' : 'direct';
