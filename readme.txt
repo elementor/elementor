@@ -184,6 +184,10 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.8.2 - 09.11.2017 =
+* Fix! - Added nonce to export template action ([#2722](https://github.com/pojome/elementor/issues/2722))
+* Fix! - Changes nonce key for third party plugins
+
 = 1.8.1 - 09.11.2017 =
 * Fix! - Bug loading Editor templates in some server configurations ([#2712](https://github.com/pojome/elementor/issues/2712))
 * Fix! - Added parameter to overwrite control recursively ([#2702](https://github.com/pojome/elementor/issues/2702))
