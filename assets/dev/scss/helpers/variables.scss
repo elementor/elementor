@@ -172,7 +172,8 @@ $breakpoints: (
 	sm: 480px, // Mobile landscape
 	md: 768px, // Tablet
 	lg: 1025px, // Desktop
-	xl: 1440px // Largest devices
+	xl: 1440px, // Larger devices
+	xxl: 1600px // Largest devices
 );
 
 // Media Queries
@@ -184,3 +185,5 @@ $screen-md-max: map_get($breakpoints, lg) - 1;
 $screen-lg-min: map_get($breakpoints, lg);
 $screen-lg-max: map_get($breakpoints, xl) - 1;
 $screen-xl-min: map_get($breakpoints, xl);
+$screen-xl-max: map_get($breakpoints, xxl) - 1;
+$screen-xxl-min: map_get($breakpoints, xxl);
