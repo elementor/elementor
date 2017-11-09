@@ -994,7 +994,7 @@
     margin-right: 5px; }
   .elementor-button .elementor-button-text {
     display: inline-block;
-    white-space: nowrap; }
+    white-space: pre-wrap; }
 
 .elementor-element.elementor-button-info .elementor-button {
   background-color: #5bc0de; }
