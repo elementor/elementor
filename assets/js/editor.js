@@ -7157,6 +7157,10 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
+	onBeforeRender: function() {
+		this.renderAttributes = {};
+	},
+
 	onRender: function() {
 		var self = this;
 
