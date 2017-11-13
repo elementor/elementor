@@ -12,9 +12,7 @@ ControlColorItemView = ControlBaseItemView.extend( {
 			clear: function() {
 				self.setValue( '' );
 			}
-		} ).wpColorPicker( 'instance' )
-			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
-			.removeAttr( 'maxlength' );
+		} );
 	},
 
 	onBeforeDestroy: function() {
