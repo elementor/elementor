@@ -5,28 +5,100 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Image Size control.
+ *
+ * A base control for creating image size control. Displays input fields to define
+ * one of the default image sizes (thumbnail, medium, medium_large, large) or set
+ * a custom dimension.
+ *
+ * Creating new control in the editor (inside `Widget_Base::_register_controls()`
+ * method):
+ *
+ *    $this->add_control(
+ *    	Group_Control_Image_Size::get_type(),
+ *    	[
+ *          'name' => 'thumbnail',
+ *    		'label' => __( 'Image Size', 'plugin-domain' ),
+ *          'default' => 'large',
+ *    	]
+ *    );
+ *
+ * @since 1.0.0
+ *
+ * @param string $name        Optional. The field name. Default is empty.
+ * @param string $label       Optional. The label that appears above of the
+ *                            field. Default is empty.
+ * @param string $description Optional. The description that appears below the
+ *                            field. Default is empty.
+ * @param string $default     Optional. The default image size. Default is empty.
+ * @param string $separator   Optional. Set the position of the control separator.
+ *                            Available values are 'default', 'before', 'after'
+ *                            and 'none'. 'default' will position the separator
+ *                            depending on the control type. 'before' / 'after'
+ *                            will position the separator before/after the
+ *                            control. 'none' will hide the separator. Default
+ *                            is 'default'.
+ * @param bool   $show_label  Optional. Whether to display the label. Default is
+ *                            true.
+ * @param bool   $label_block Optional. Whether to display the label in a
+ *                            separate line. Default is false.
+ */
 class Group_Control_Image_Size extends Group_Control_Base {
 
+	/**
+	 * Fields.
+	 *
+	 * Holds all the image size control fields.
+	 *
+	 * @since 1.2.2
+	 * @access protected
+	 * @static
+	 *
+	 * @var array Image size control fields.
+	 */
 	protected static $fields;
 
 	/**
-	 * @static
-	 * @since 1.0.0
+	 * Retrieve type.
+	 *
+	 * Get image size control type.
+	 *
+	 * @since 1.2.2
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return string Control type.
+	 */
 	public static function get_type() {
 		return 'image-size';
 	}
 
 	/**
-	 * @static
+	 * Retrieve attachment image HTML.
+	 *
+	 * Get the attachment image HTML code.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param array  $settings [ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ].
+	 * @static
 	 *
-	 * @param string $setting_key
+	 * @param array  $settings    {
+	 *     Control settings.
+	 *     `[ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ]`
+	 * 
+	 *     @type array  $image           {
+	 *         Optional. Image data.
 	 *
-	 * @return string
+	 *         @type string $id  Optional. Image ID.
+	 *         @type string $url Optional. Image URL.
+	 *     }
+	 *     @type string $image_size      Optional. Image size.
+	 *     @type string $hover_animation Optional. Hover animation.
+	 * }
+	 * @param string $setting_key Optional. Settings key. Default is `image`.
+	 *
+	 * @return string Image HTML.
 	 */
 	public static function get_attachment_image_html( $settings, $setting_key = 'image' ) {
 		$id  = $settings[ $setting_key ]['id'];
@@ -72,10 +144,16 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * @static
+	 * Retrieve all image sizes.
+	 *
+	 * Get available image sizes with data like `width`, `height` and `crop`.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return array An array of available image sizes.
+	 */
 	public static function get_all_image_sizes() {
 		global $_wp_additional_image_sizes;
 
@@ -100,10 +178,20 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * @static
+	 * Get attachment image src.
+	 *
+	 * Retrieve the attachment image source URL.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $attachment_id The attachment ID.
+	 * @param string $group_name    Group name
+	 * @param array  $settings      Control settings.
+	 *
+	 * @return string Attachment image source URL.
+	 */
 	public static function get_attachment_image_src( $attachment_id, $group_name, array $settings ) {
 		if ( empty( $attachment_id ) ) {
 			return false;
@@ -151,9 +239,16 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
+	 * Retrieve child default arguments.
+	 *
+	 * Get the default arguments for all the child controls for a specific group
+	 * control.
+	 *
 	 * @since 1.2.2
 	 * @access protected
-	*/
+	 *
+	 * @return array Default arguments for all the child controls.
+	 */
 	protected function get_child_default_args() {
 		return [
 			'include' => [],
@@ -162,9 +257,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
+	 * Init fields.
+	 *
+	 * Initialize image size control fields.
+	 *
 	 * @since 1.2.2
 	 * @access protected
-	*/
+	 *
+	 * @return array Control fields.
+	 */
 	protected function init_fields() {
 		$fields = [];
 
@@ -188,9 +289,17 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
+	 * Prepare fields.
+	 *
+	 * Process image size control fields before adding them to `add_control()`.
+	 *
 	 * @since 1.2.2
 	 * @access protected
-	*/
+	 *
+	 * @param array $fields Image size control fields.
+	 *
+	 * @return array Processed fields.
+	 */
 	protected function prepare_fields( $fields ) {
 		$image_sizes = $this->_get_image_sizes();
 
@@ -216,9 +325,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
+	 * Retrieve image sizes.
+	 *
+	 * Get available image sizes after filtering `include` and `exclude` arguments.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 *
+	 * @return array Filtered image sizes.
+	 */
 	private function _get_image_sizes() {
 		$wp_image_sizes = self::get_all_image_sizes();
 
