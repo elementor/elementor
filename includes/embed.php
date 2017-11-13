@@ -13,7 +13,7 @@ class Embed {
 	];
 
 	private static $embed_patterns = [
-		'youtube' => 'https://www.youtube.com/embed/{VIDEO_ID}?feature=oembed',
+		'youtube' => 'https://www.youtube{NO_COOKIE}.com/embed/{VIDEO_ID}?feature=oembed',
 		'vimeo' => 'https://player.vimeo.com/video/{VIDEO_ID}',
 	];
 
@@ -42,7 +42,7 @@ class Embed {
 	 * @since 1.5.0
 	 * @access public
 	*/
-	public static function get_embed_url( $video_url, array $embed_url_params = [] ) {
+	public static function get_embed_url( $video_url, array $embed_url_params = [], array $options = [] ) {
 		$video_properties = self::get_video_properties( $video_url );
 
 		if ( ! $video_properties ) {
@@ -51,7 +51,13 @@ class Embed {
 
 		$embed_pattern = self::$embed_patterns[ $video_properties['provider'] ];
 
-		$embed_pattern = str_replace( '{VIDEO_ID}', $video_properties['video_id'], $embed_pattern );
+		$replacements = [ '{VIDEO_ID}' => $video_properties['video_id'] ];
+
+		if ( 'youtube' === $video_properties['provider'] ) {
+			$replacements['{NO_COOKIE}'] = ! empty( $options['privacy'] ) ? '-nocookie' : '';
+		}
+
+		$embed_pattern = str_replace( array_keys( $replacements ), $replacements, $embed_pattern );
 
 		return add_query_arg( $embed_url_params, $embed_pattern );
 	}
@@ -61,8 +67,8 @@ class Embed {
 	 * @since 1.5.0
 	 * @access public
 	*/
-	public static function get_embed_html( $video_url, array $embed_url_params = [], array $frame_attributes = [] ) {
-		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params );
+	public static function get_embed_html( $video_url, array $embed_url_params = [], array $options = [],  array $frame_attributes = [] ) {
+		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
 
 		if ( ! $video_embed_url ) {
 			return null;
