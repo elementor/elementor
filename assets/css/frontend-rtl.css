@@ -993,8 +993,7 @@
     float: left;
     margin-right: 5px; }
   .elementor-button .elementor-button-text {
-    display: inline-block;
-    white-space: pre-wrap; }
+    display: inline-block; }
 
 .elementor-element.elementor-button-info .elementor-button {
   background-color: #5bc0de; }
