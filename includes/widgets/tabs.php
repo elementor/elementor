@@ -372,27 +372,32 @@ class Widget_Tabs extends Widget_Base {
 		<div class="elementor-tabs" role="tablist">
 			<#
 			if ( settings.tabs ) {
-				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
-					counter = 1;
+				var tabindex = view.getIDInt().toString().substr( 0, 3 );
 				#>
 				<div class="elementor-tabs-wrapper" role="tab">
 					<#
-					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-title elementor-tab-desktop-title" tabindex="{{ tabindex + counter }}" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>
-					<#
-						counter++;
-					} ); #>
+					_.each( settings.tabs, function( item, index ) {
+						var tabCount = index + 1;
+						#>
+						<div class="elementor-tab-title elementor-tab-desktop-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}">{{{ item.tab_title }}}</div>
+					<# } ); #>
 				</div>
-
-				<# counter = 1; #>
 				<div class="elementor-tabs-content-wrapper" role="tabpanel">
 					<#
-					_.each( settings.tabs, function( item ) { #>
-						<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ counter }}">{{{ item.tab_title }}}</div>
-						<div class="elementor-tab-content elementor-clearfix elementor-repeater-item-{{ item._id }} elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content" data-elementor-inline-editing-toolbar="advanced">{{{ item.tab_content }}}</div>
-					<#
-					counter++;
-					} ); #>
+					_.each( settings.tabs, function( item, index ) {
+						var tabCount = index + 1,
+							tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs',index );
+
+						view.addRenderAttribute( tabContentKey, {
+							'class': [ 'elementor-tab-content', 'elementor-clearfix', 'elementor-repeater-item-' + item._id ],
+							'data-tab': tabCount
+						} );
+
+						view.addInlineEditingAttributes( tabContentKey, 'advanced' );
+						#>
+						<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ tabCount }}">{{{ item.tab_title }}}</div>
+						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
+					<# } ); #>
 				</div>
 			<# } #>
 		</div>
