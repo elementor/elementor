@@ -296,7 +296,7 @@ abstract class Controls_Stack {
 	/**
 	 * Add new control to stack.
 	 *
-	 * Register a single control to the allow the user to set/update data.
+	 * Register a single control to allow the user to set/update data.
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
