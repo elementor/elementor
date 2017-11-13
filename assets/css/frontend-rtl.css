@@ -1423,7 +1423,8 @@
   -webkit-align-self: center;
       -ms-flex-item-align: center;
           align-self: center;
-  padding-right: 5px; }
+  padding-right: 5px;
+  white-space: pre-wrap; }
 
 .elementor-widget-icon-list .elementor-icon-list-icon {
   text-align: center; }
