@@ -993,8 +993,7 @@
     float: left;
     margin-right: 5px; }
   .elementor-button .elementor-button-text {
-    display: inline-block;
-    white-space: pre-wrap; }
+    display: inline-block; }
 
 .elementor-element.elementor-button-info .elementor-button {
   background-color: #5bc0de; }
@@ -1423,8 +1422,7 @@
   -webkit-align-self: center;
       -ms-flex-item-align: center;
           align-self: center;
-  padding-left: 5px;
-  white-space: pre-wrap; }
+  padding-left: 5px; }
 
 .elementor-widget-icon-list .elementor-icon-list-icon {
   text-align: center; }
