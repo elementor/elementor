@@ -7,18 +7,59 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Editor
+ *
+ * @since 1.0.0
+ */
 class Editor {
 
+	/**
+	 * Post ID.
+	 *
+	 * Holds the ID of the current post being edited.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var int Post ID.
+	 */
 	private $_post_id;
 
+	/**
+	 * Whether edit mode is active.
+	 *
+	 * Used to determine whether we are in edit mode.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var bool Whether edit mode is active.
+	 */
 	private $_is_edit_mode;
 
+	/**
+	 * Editor templates.
+	 *
+	 * Holds the ID of the current post being edited.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var array Whether edit mode is active.
+	 */
 	private $_editor_templates = [];
 
 	/**
+	 * Init.
+	 *
+	 * Initialize Elementor editor. Fired by `init` action.
+	 *
 	 * @since 1.7.0
 	 * @access public
-	*/
+	 *
+	 * @param bool $die Optional. Whether to die at the end. Default is `true`.
+	 */
 	public function init( $die = true ) {
 		if ( empty( $_REQUEST['post'] ) ) { // WPCS: CSRF ok.
 			return;
@@ -29,8 +70,6 @@ class Editor {
 		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
 		}
-
-		$this->init_editor_templates();
 
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
@@ -92,14 +131,25 @@ class Editor {
 	}
 
 	/**
+	 * Retrieve post ID.
+	 *
+	 * Get the ID of the current post.
+	 *
 	 * @since 1.8.0
 	 * @access public
+	 * 
+	 * @return int Post ID.
 	 */
 	public function get_post_id() {
 		return $this->_post_id;
 	}
 
 	/**
+	 * Redirect to new URL.
+	 *
+	 * Used as a fallback function for the old URL structure of Elementor
+	 * page edit URL.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 */
@@ -119,9 +169,17 @@ class Editor {
 	}
 
 	/**
+	 * Whether edit mode is active.
+	 *
+	 * Used to determine whether we are in the edit mode.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $post_id Optional. Post ID. Default is `null`, the current post ID.
+	 *
+	 * @return bool Whether edit mode is active.
+	 */
 	public function is_edit_mode( $post_id = null ) {
 		if ( null !== $this->_is_edit_mode ) {
 			return $this->_is_edit_mode;
@@ -153,9 +211,14 @@ class Editor {
 	}
 
 	/**
+	 * Lock post.
+	 *
+	 * Mark the post as currently being edited by the current user.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param $post_id
+	 *
+	 * @param int $post_id The ID of the post being edited.
 	 */
 	public function lock_post( $post_id ) {
 		if ( ! function_exists( 'wp_set_post_lock' ) ) {
@@ -166,11 +229,16 @@ class Editor {
 	}
 
 	/**
+	 * Get locked user.
+	 *
+	 * Check what user is currently editing the post.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param $post_id
 	 *
-	 * @return bool|\WP_User
+	 * @param int $post_id The ID of the post being edited.
+	 *
+	 * @return false|\WP_User User information or false if the post is not locked.
 	 */
 	public function get_locked_user( $post_id ) {
 		if ( ! function_exists( 'wp_check_post_lock' ) ) {
@@ -186,9 +254,11 @@ class Editor {
 	}
 
 	/**
+	 * Print panel HTML.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function print_panel_html() {
 		include( 'editor-templates/editor-wrapper.php' );
 	}
@@ -196,7 +266,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function enqueue_scripts() {
 		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
 
@@ -392,7 +462,7 @@ class Editor {
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
-			'nonce' => wp_create_nonce( 'elementor-editing' ),
+			'nonce' => $this->create_nonce(),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
@@ -491,7 +561,7 @@ class Editor {
 		unset( $config );
 
 		if ( get_option( 'elementor_editor_break_lines' ) ) {
-			// Add new lines to avoid memory limits in some hosting servers that handles th buffer output according to new line characters
+			// Add new lines to avoid memory limits in some hosting servers that handles the buffer output according to new line characters
 			$config_json = str_replace( '}},"', '}},' . PHP_EOL . '"', $config_json );
 		}
 
@@ -507,7 +577,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function enqueue_styles() {
 		do_action( 'elementor/editor/before_enqueue_styles' );
 
@@ -572,7 +642,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 */
 	protected function _get_wp_editor_config() {
 		ob_start();
 		wp_editor(
@@ -590,7 +660,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function editor_head_trigger() {
 		do_action( 'elementor/editor/wp_head' );
 	}
@@ -598,16 +668,26 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	 * @param string $template_path - Can be either a link to template file or template HTML content
+	 *
+	 * @param string $template Can be either a link to template file or template HTML content.
+	 * @param string $type     Optional. Whether to handle the template as path or text. Default is `path`.
 	 */
-	public function add_editor_template( $template_path ) {
-		$this->_editor_templates[] = $template_path;
+	public function add_editor_template( $template, $type = 'path' ) {
+		if ( 'path' === $type ) {
+			ob_start();
+
+			include $template;
+
+			$template = ob_get_clean();
+		}
+
+		$this->_editor_templates[] = $template;
 	}
 
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function wp_footer() {
 		$plugin = Plugin::$instance;
 
@@ -617,16 +697,10 @@ class Editor {
 
 		$plugin->schemes_manager->print_schemes_templates();
 
-		$abs_path = str_replace( '\\', '/', ABSPATH );
+		$this->init_editor_templates();
 
 		foreach ( $this->_editor_templates as $editor_template ) {
-			$template_abs_path = str_replace( '\\', '/', substr( $editor_template, 0, strlen( ABSPATH ) ) );
-
-			if ( $template_abs_path === $abs_path ) {
-				include $editor_template;
-			} else {
-				echo $editor_template;
-			}
+			echo $editor_template;
 		}
 
 		do_action( 'elementor/editor/footer' );
@@ -635,6 +709,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
+	 *
 	 * @param bool $edit_mode
 	 */
 	public function set_edit_mode( $edit_mode ) {
@@ -644,24 +719,63 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 	}
 
 	/**
+	 * @since 1.8.1
+	 * @access public
+	 *
+	 * @return null|string
+	 */
+	public function create_nonce() {
+		if ( ! current_user_can( self::EDITING_CAPABILITY ) ) {
+			return null;
+		}
+
+		return wp_create_nonce( self::EDITING_NONCE_KEY );
+	}
+
+	/**
+	 * @since 1.8.1
+	 * @access public
+	 *
+	 * @param string $nonce
+	 *
+	 * @return false|int
+	 */
+	public function verify_nonce( $nonce ) {
+		return wp_verify_nonce( $nonce, self::EDITING_NONCE_KEY );
+	}
+
+	/**
+	 * @since 1.8.1
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function verify_request_nonce() {
+		return ! empty( $_REQUEST['_nonce'] ) && $this->verify_nonce( $_REQUEST['_nonce'] );
+	}
+
+	/**
 	 * @since 1.7.0
 	 * @access private
-	*/
+	 */
 	private function init_editor_templates() {
-		// It can be filled from plugins
-		$this->_editor_templates = array_merge( $this->_editor_templates, [
-		 	__DIR__ . '/editor-templates/global.php',
-			__DIR__ . '/editor-templates/panel.php',
-			__DIR__ . '/editor-templates/panel-elements.php',
-			__DIR__ . '/editor-templates/repeater.php',
-			__DIR__ . '/editor-templates/templates.php',
-		] );
+		$template_names = [
+			'global',
+			'panel',
+			'panel-elements',
+			'repeater',
+			'templates',
+		];
+
+		foreach ( $template_names as $template_name ) {
+			$this->add_editor_template( __DIR__ . "/editor-templates/$template_name.php" );
+		}
 	}
 }

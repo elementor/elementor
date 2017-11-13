@@ -333,14 +333,22 @@ class Widget_Tabs extends Widget_Base {
 				<?php foreach ( $tabs as $item ) :
 					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $counter - 1 );
 
+					$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $counter - 1 );
+
 					$this->add_render_attribute( $tab_content_setting_key, [
 						'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 						'data-tab' => $counter,
 					] );
 
+					$this->add_render_attribute( $tab_title_mobile_setting_key, [
+						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
+						'tabindex' => $id_int . $counter,
+						'data-tab' => $counter,
+					] );
+
 					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 					?>
-					<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="<?php echo $counter; ?>"><?php echo $item['tab_title']; ?></div>
+					<div <?php echo $this->get_render_attribute_string( $tab_title_mobile_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				<?php
 					$counter++;
