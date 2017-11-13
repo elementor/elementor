@@ -1,6 +1,7 @@
 .pen {
   position: relative;
-  outline: none; }
+  outline: none;
+  white-space: pre-wrap; }
   .pen-menu {
     -webkit-box-shadow: 1px 2px 3px -2px #222;
             box-shadow: 1px 2px 3px -2px #222;
@@ -114,14 +115,14 @@
     .pen-external-url-checkbox:checked + i {
       color: #fff; }
 
-.elementor-inline-editing {
-  white-space: pre-wrap; }
-  .elementor-inline-editing i {
-    font-style: italic; }
-  .elementor-inline-editing b {
-    font-weight: bold; }
-  .elementor-inline-editing u {
-    text-decoration: underline; }
+.elementor-inline-editing i {
+  font-style: italic; }
+
+.elementor-inline-editing b {
+  font-weight: bold; }
+
+.elementor-inline-editing u {
+  text-decoration: underline; }
 
 @-webkit-keyframes placeholder-section {
   0% {
