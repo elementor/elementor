@@ -310,50 +310,45 @@ class Widget_Tabs extends Widget_Base {
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-tabs" role="tablist">
-			<?php $counter = 1; ?>
 			<div class="elementor-tabs-wrapper" role="tab">
-				<?php foreach ( $tabs as $item ) :
-					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $counter - 1 );
+				<?php foreach ( $tabs as $index => $item ) :
+					$tab_count = $index + 1;
+
+					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
 
 					$this->add_render_attribute( $tab_title_setting_key, [
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
-						'data-tab' => $counter,
-						'tabindex' => $id_int . $counter,
+						'data-tab' => $tab_count,
+						'tabindex' => $id_int . $tab_count,
 					] );
 					?>
 					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
-				<?php
-					$counter++;
-				endforeach;
-				?>
+				<?php endforeach; ?>
 			</div>
-
-			<?php $counter = 1; ?>
 			<div class="elementor-tabs-content-wrapper" role="tabpanel">
-				<?php foreach ( $tabs as $item ) :
-					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $counter - 1 );
+				<?php foreach ( $tabs as $index => $item ) :
+					$tab_count = $index + 1;
 
-					$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $counter - 1 );
+					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
+
+					$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
 
 					$this->add_render_attribute( $tab_content_setting_key, [
 						'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
-						'data-tab' => $counter,
+						'data-tab' => $tab_count,
 					] );
 
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [
 						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
-						'tabindex' => $id_int . $counter,
-						'data-tab' => $counter,
+						'tabindex' => $id_int . $tab_count,
+						'data-tab' => $tab_count,
 					] );
 
 					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 					?>
 					<div <?php echo $this->get_render_attribute_string( $tab_title_mobile_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
-				<?php
-					$counter++;
-				endforeach;
-				?>
+				<?php endforeach; ?>
 			</div>
 		</div>
 		<?php
