@@ -15,23 +15,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
+ *    $this->add_group_control(
  *    	Group_Control_Image_Size::get_type(),
  *    	[
- *          'name' => 'thumbnail',
- *    		'label' => __( 'Image Size', 'plugin-domain' ),
- *          'default' => 'large',
+ *    		'name' => 'thumbnail',
+ *    		'default' => 'large',
+ *    		'exclude' => [],
+ *    		'include' => [],
+ *    		'separator' => 'before',
  *    	]
  *    );
  *
  * @since 1.0.0
  *
- * @param string $name        Optional. The field name. Default is empty.
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
+ * @param string $name        The field name.
  * @param string $default     Optional. The default image size. Default is empty.
+ * @param array  $exclude     Optional. Image size to exclude. Default is empty.
+ * @param array  $include     Optional. Image size to include. Default is empty.
  * @param string $separator   Optional. Set the position of the control separator.
  *                            Available values are 'default', 'before', 'after'
  *                            and 'none'. 'default' will position the separator
@@ -39,10 +39,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *                            will position the separator before/after the
  *                            control. 'none' will hide the separator. Default
  *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is false.
  */
 class Group_Control_Image_Size extends Group_Control_Base {
 
@@ -85,7 +81,6 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 *
 	 * @param array  $settings    {
 	 *     Control settings.
-	 *     `[ image => [ id => '', url => '' ], image_size => '', hover_animation => '' ]`
 	 * 
 	 *     @type array  $image           {
 	 *         Optional. Image data.
