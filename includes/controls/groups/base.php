@@ -31,8 +31,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * Register multiple controls to allow the user to set/update data.
 	 *
-	 * This method should be used inside `_register_controls()` method.
-	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
