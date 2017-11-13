@@ -298,20 +298,21 @@ class Widget_Accordion extends Widget_Base {
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-accordion" role="tablist">
-			<?php $counter = 1; ?>
-			<?php foreach ( $settings['tabs'] as $item ) :
-				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $counter - 1 );
+			<?php foreach ( $settings['tabs'] as $index => $item ) :
+				$tab_count = $index + 1;
+
+				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
 
 				$this->add_render_attribute( $tab_content_setting_key, [
 					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
-					'data-tab' => $counter,
+					'data-tab' => $tab_count,
 					'role' => 'tabpanel',
 				] );
 
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
 				<div class="elementor-accordion-item">
-					<div class="elementor-tab-title" tabindex="<?php echo $id_int . $counter; ?>" data-tab="<?php echo $counter; ?>" role="tab">
+					<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>" role="tab">
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>">
 							<i class="fa"></i>
 						</span>
@@ -319,10 +320,7 @@ class Widget_Accordion extends Widget_Base {
 					</div>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
-			<?php
-				$counter++;
-			endforeach;
-			?>
+			<?php endforeach; ?>
 		</div>
 		<?php
 	}
