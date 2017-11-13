@@ -18,7 +18,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		// Filter witch controls to display
 		$filtered_fields = $this->filter_fields();
-
 		$filtered_fields = $this->prepare_fields( $filtered_fields );
 
 		// For php < 7
