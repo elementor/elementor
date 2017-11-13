@@ -379,7 +379,7 @@ class Widget_Button extends Widget_Base {
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
-	 * @since 1.5.0
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function render() {

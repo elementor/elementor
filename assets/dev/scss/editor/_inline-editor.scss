@@ -1,6 +1,7 @@
 .pen {
     position: relative;
     outline: none;
+	white-space: pre-wrap;
 
 	&-menu {
 		box-shadow: 1px 2px 3px -2px #222;
@@ -94,10 +95,11 @@
 			align-items: center;
 
 			.pen-url-input {
-				line-height: 1;
-				padding: 3px;
-				width: 250px;
 				font-size: 12px;
+				line-height: 1.5;
+				padding: 0;
+				@include padding-start(10px);
+				width: 250px;
 
 				&, &:focus {
 					background-color: transparent;
@@ -135,5 +137,20 @@
 		&:checked + i {
 			color: #fff;
 		}
+	}
+}
+
+.elementor-inline-editing {
+
+	i {
+		font-style: italic;
+	}
+
+	b {
+		font-weight: bold;
+	}
+
+	u {
+		text-decoration: underline;
 	}
 }
