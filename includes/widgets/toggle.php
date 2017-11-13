@@ -322,19 +322,27 @@ class Widget_Toggle extends Widget_Base {
 		<div class="elementor-toggle">
 			<#
 			if ( settings.tabs ) {
-				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
-					counter = 1;
-				_.each(settings.tabs, function( item ) { #>
-					<div class="elementor-tab-title" tabindex="{{ tabindex + counter }}" data-tab="{{ counter }}">
+				var tabindex = view.getIDInt().toString().substr( 0, 3 );
+
+				_.each(settings.tabs, function( item, index ) {
+					var tabCount = index + 1,
+						tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs', index );
+
+					view.addRenderAttribute( tabContentKey, {
+						'class': [ 'elementor-tab-content', 'elementor-clearfix' ],
+						'data-tab': tabCount,
+					} );
+
+					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
+					#>
+					<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}">
 						<span class="elementor-toggle-icon">
 							<i class="fa"></i>
 						</span>
 						{{{ item.tab_title }}}
 					</div>
-					<div class="elementor-tab-content elementor-clearfix elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content" data-elementor-inline-editing-toolbar="advanced">{{{ item.tab_content }}}</div>
-				<#
-					counter++;
-				} );
+					<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
+				<# } );
 			} #>
 		</div>
 		<?php
