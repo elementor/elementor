@@ -46,7 +46,7 @@ class Frontend {
 		add_action( 'wp_head', [ $this, 'print_google_fonts' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
-		// Add Edit with the Elementor in Admin Bar
+		// Add Edit with the Elementor in Admin Bar.
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
 	}
 
