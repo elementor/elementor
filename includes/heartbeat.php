@@ -29,15 +29,18 @@ class Heartbeat {
 				$response['locked_user'] = $locked_user->display_name;
 			}
 
-			$response['elementorNonce'] = wp_create_nonce( 'elementor-editing' );
+			$response['elementorNonce'] = Plugin::$instance->editor->create_nonce();
 		}
 		return $response;
 	}
 
+	/**
+	 * @access public
+	 */
 	public function refresh_nonces( $response, $data ) {
 		if ( isset( $data['elementor_post_lock']['post_ID'] ) ) {
 			$response['elementor-refresh-nonces'] = [
-				'elementorNonce' => wp_create_nonce( 'elementor-editing' ),
+				'elementorNonce' => Plugin::$instance->editor->create_nonce(),
 				'heartbeatNonce' => wp_create_nonce( 'heartbeat-nonce' ),
 			];
 		}

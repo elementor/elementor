@@ -9,6 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor {
 
+	const EDITING_NONCE_KEY = 'elementor-editing';
+
+	const EDITING_CAPABILITY = 'edit_pages';
+
 	private $_post_id;
 
 	private $_is_edit_mode;
@@ -29,8 +33,6 @@ class Editor {
 		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
 		}
-
-		$this->init_editor_templates();
 
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
@@ -392,7 +394,7 @@ class Editor {
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
-			'nonce' => wp_create_nonce( 'elementor-editing' ),
+			'nonce' => $this->create_nonce(),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
@@ -491,7 +493,7 @@ class Editor {
 		unset( $config );
 
 		if ( get_option( 'elementor_editor_break_lines' ) ) {
-			// Add new lines to avoid memory limits in some hosting servers that handles th buffer output according to new line characters
+			// Add new lines to avoid memory limits in some hosting servers that handles the buffer output according to new line characters
 			$config_json = str_replace( '}},"', '}},' . PHP_EOL . '"', $config_json );
 		}
 
@@ -598,10 +600,20 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	 * @param string $template_path - Can be either a link to template file or template HTML content
+	 *
+	 * @param string $template - Can be either a link to template file or template HTML content
+	 * @param string $type Optional. Whether to handle the template as path or text
 	 */
-	public function add_editor_template( $template_path ) {
-		$this->_editor_templates[] = $template_path;
+	public function add_editor_template( $template, $type = 'path' ) {
+		if ( 'path' === $type ) {
+			ob_start();
+
+			include $template;
+
+			$template = ob_get_clean();
+		}
+
+		$this->_editor_templates[] = $template;
 	}
 
 	/**
@@ -617,16 +629,10 @@ class Editor {
 
 		$plugin->schemes_manager->print_schemes_templates();
 
-		$abs_path = str_replace( '\\', '/', ABSPATH );
+		$this->init_editor_templates();
 
 		foreach ( $this->_editor_templates as $editor_template ) {
-			$template_abs_path = str_replace( '\\', '/', substr( $editor_template, 0, strlen( ABSPATH ) ) );
-
-			if ( $template_abs_path === $abs_path ) {
-				include $editor_template;
-			} else {
-				echo $editor_template;
-			}
+			echo $editor_template;
 		}
 
 		do_action( 'elementor/editor/footer' );
@@ -651,17 +657,56 @@ class Editor {
 	}
 
 	/**
+	 * @since 1.8.1
+	 * @access public
+	 *
+	 * @return null|string
+	 */
+	public function create_nonce() {
+		if ( ! current_user_can( self::EDITING_CAPABILITY ) ) {
+			return null;
+		}
+
+		return wp_create_nonce( self::EDITING_NONCE_KEY );
+	}
+
+	/**
+	 * @since 1.8.1
+	 * @access public
+	 *
+	 * @param string $nonce
+	 *
+	 * @return false|int
+	 */
+	public function verify_nonce( $nonce ) {
+		return wp_verify_nonce( $nonce, self::EDITING_NONCE_KEY );
+	}
+
+	/**
+	 * @since 1.8.1
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function verify_request_nonce() {
+		return ! empty( $_REQUEST['_nonce'] ) && $this->verify_nonce( $_REQUEST['_nonce'] );
+	}
+
+	/**
 	 * @since 1.7.0
 	 * @access private
 	*/
 	private function init_editor_templates() {
-		// It can be filled from plugins
-		$this->_editor_templates = array_merge( $this->_editor_templates, [
-		 	__DIR__ . '/editor-templates/global.php',
-			__DIR__ . '/editor-templates/panel.php',
-			__DIR__ . '/editor-templates/panel-elements.php',
-			__DIR__ . '/editor-templates/repeater.php',
-			__DIR__ . '/editor-templates/templates.php',
-		] );
+		$template_names = [
+			'global',
+			'panel',
+			'panel-elements',
+			'repeater',
+			'templates',
+		];
+
+		foreach ( $template_names as $template_name ) {
+			$this->add_editor_template( __DIR__ . "/editor-templates/$template_name.php" );
+		}
 	}
 }

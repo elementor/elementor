@@ -8,7 +8,7 @@
 		background-color: #fff;
 		border: solid #fff;
 		border-width: 0 10px 0 5px;
-		padding-top: 9px;
+		padding-top: 10px;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
 
 		.wp-color-result {
@@ -23,6 +23,19 @@
 
 	* {
 		box-sizing: content-box;
+	}
+
+	.color-alpha {
+		$margin: 2px;
+
+		width: calc( 100% - #{$margin} * 2 );
+		height: calc( 100% - #{$margin} * 2 );
+		margin: $margin;
+		position: absolute;
+		top: 0;
+		left: 0;
+		border-radius: 2px;
+		box-sizing: border-box;
 	}
 
 	.iris-picker {
@@ -111,6 +124,10 @@
 
 		&.wp-picker-active {
 			transform: translateY(6px);
+
+			[class*="wp-version-4-9"] &, [class*="wp-version-5"] & {
+				padding-top: 9px;
+			}
 
 			.wp-color-result {
 				margin-right: 3px;

@@ -5,6 +5,7 @@ use Elementor\DB;
 use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
+use Elementor\Editor;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -155,14 +156,14 @@ class Source_Local extends Source_Base {
 				Settings::PAGE_ID,
 				__( 'My Library', 'elementor' ),
 				__( 'My Library', 'elementor' ),
-				'edit_pages',
+				Editor::EDITING_CAPABILITY,
 				'edit.php?post_type=' . self::CPT
 			);
 		} else {
 			add_menu_page(
 				__( 'Elementor', 'elementor' ),
 				__( 'Elementor', 'elementor' ),
-				'edit_pages',
+				Editor::EDITING_CAPABILITY,
 				'edit.php?post_type=' . self::CPT,
 				'',
 				'',
@@ -499,6 +500,7 @@ class Source_Local extends Source_Base {
 				<div id="elementor-import-template-title"><?php _e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
+					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce(); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
 						<input type="submit" class="button" value="<?php _e( 'Import Now', 'elementor' ); ?>">
@@ -528,6 +530,9 @@ class Source_Local extends Source_Base {
 		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
 	}
 
+	/**
+	 * @access public
+	 */
 	public function remove_elementor_post_state_from_library( $post_states, $post ) {
 		if ( self::CPT === $post->post_type && isset( $post_states['elementor'] ) ) {
 			unset( $post_states['elementor'] );
@@ -544,6 +549,7 @@ class Source_Local extends Source_Base {
 			[
 				'action' => 'elementor_export_template',
 				'source' => $this->get_id(),
+				'_nonce' => Plugin::$instance->editor->create_nonce(),
 				'template_id' => $template_id,
 			],
 			admin_url( 'admin-ajax.php' )
