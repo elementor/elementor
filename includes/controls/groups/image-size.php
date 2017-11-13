@@ -182,7 +182,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 * @static
 	 *
 	 * @param string $attachment_id The attachment ID.
-	 * @param string $group_name    Group name
+	 * @param string $group_name    Group name.
 	 * @param array  $settings      Control settings.
 	 *
 	 * @return string Attachment image source URL.
