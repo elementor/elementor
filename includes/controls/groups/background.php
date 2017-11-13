@@ -5,26 +5,97 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Background control.
+ *
+ * A base control for creating background control. Displays input fields to define
+ * the background color, background image, background gradiant or background video.
+ *
+ * Creating new control in the editor (inside `Widget_Base::_register_controls()`
+ * method):
+ *
+ *    $this->add_control(
+ *    	Group_Control_Background::get_type(),
+ *    	[
+ *          'name' => 'background',
+ *    		'selector' => '{{WRAPPER}} .wrapper',
+ *    	]
+ *    );
+ *
+ * @since 1.2.2
+ *
+ * @param string $name        Optional. The field name. Default is empty.
+ * @param string $label       Optional. The label that appears above of the
+ *                            field. Default is empty.
+ * @param string $description Optional. The description that appears below the
+ *                            field. Default is empty.
+ * @param string $default     Optional. The default background. Default is empty.
+ * @param string $separator   Optional. Set the position of the control separator.
+ *                            Available values are 'default', 'before', 'after'
+ *                            and 'none'. 'default' will position the separator
+ *                            depending on the control type. 'before' / 'after'
+ *                            will position the separator before/after the
+ *                            control. 'none' will hide the separator. Default
+ *                            is 'default'.
+ * @param bool   $show_label  Optional. Whether to display the label. Default is
+ *                            true.
+ * @param bool   $label_block Optional. Whether to display the label in a
+ *                            separate line. Default is false.
+ */
 class Group_Control_Background extends Group_Control_Base {
 
+	/**
+	 * Fields.
+	 *
+	 * Holds all the background control fields.
+	 *
+	 * @since 1.2.2
+	 * @access protected
+	 * @static
+	 *
+	 * @var array Background control fields.
+	 */
 	protected static $fields;
 
+	/**
+	 * Background Types.
+	 *
+	 * Holds all the available background types.
+	 *
+	 * @since 1.2.2
+	 * @access private
+	 * @static
+	 *
+	 * @var array
+	 */
 	private static $background_types;
 
 	/**
-	 * @static
-	 * @since 1.0.0
+	 * Retrieve type.
+	 *
+	 * Get background control type.
+	 *
+	 * @since 1.2.2
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return string Control type.
+	 */
 	public static function get_type() {
 		return 'background';
 	}
 
 	/**
-	 * @static
+	 * Retrieve background types.
+	 * 
+	 * Gat available background types.
+	 * 
 	 * @since 1.2.2
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return array Available background types.
+	 */
 	public static function get_background_types() {
 		if ( null === self::$background_types ) {
 			self::$background_types = self::init_background_types();
@@ -33,11 +104,18 @@ class Group_Control_Background extends Group_Control_Base {
 		return self::$background_types;
 	}
 
+	/* TODO: rename to `default_background_types()` */
 	/**
-	 * @static
+	 * Default background types.
+	 *
+	 * Retrieve background control initial types.
+	 *
 	 * @since 1.2.2
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @return array Default background types.
+	 */
 	private static function init_background_types() {
 		return [
 			'classic' => [
@@ -56,9 +134,15 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
+	 * Init fields.
+	 *
+	 * Initialize background control fields.
+	 *
 	 * @since 1.2.2
 	 * @access public
-	*/
+	 *
+	 * @return array Control fields.
+	 */
 	public function init_fields() {
 		$fields = [];
 
@@ -311,9 +395,16 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
+	 * Retrieve child default args.
+	 * 
+	 * Get the default arguments for all the child controls for a specific group
+	 * control.
+	 *
 	 * @since 1.2.2
 	 * @access protected
-	*/
+	 *
+	 * @return array Default arguments for all the child controls.
+	 */
 	protected function get_child_default_args() {
 		return [
 			'types' => [ 'classic', 'gradient' ],
@@ -321,9 +412,16 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
+	 * Filter fields.
+	 *
+	 * Filter which controls to display, using `include`, `exclude`, `condition`
+	 * and `of_type` arguments.
+	 *
 	 * @since 1.2.2
 	 * @access protected
-	*/
+	 *
+	 * @return array Control fields.
+	 */
 	protected function filter_fields() {
 		$fields = parent::filter_fields();
 
@@ -339,9 +437,17 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
+	 * Prepare fields.
+	 *
+	 * Process background control fields before adding them to add_control().
+	 *
 	 * @since 1.2.2
 	 * @access protected
-	*/
+	 *
+	 * @param array $fields Background control fields.
+	 *
+	 * @return array Processed fields.
+	 */
 	protected function prepare_fields( $fields ) {
 		$args = $this->get_args();
 
