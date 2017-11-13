@@ -190,6 +190,18 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'yt_privacy',
+			[
+				'label' => __( 'Privacy Mode', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'description' => __( 'When you turn on privacy mode, YouTube won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+			]
+		);
+
 		// Vimeo.
 		$this->add_control(
 			'vimeo_autoplay',
@@ -551,7 +563,11 @@ class Widget_Video extends Widget_Base {
 
 		$embed_params = $this->get_embed_params();
 
-		$video_html = Embed::get_embed_html( $video_link, $embed_params );
+		$embed_options = [
+			'privacy' => $settings['yt_privacy'],
+		];
+
+		$video_html = Embed::get_embed_html( $video_link, $embed_params, $embed_options );
 
 		if ( empty( $video_html ) ) {
 			echo esc_url( $video_link );
@@ -579,7 +595,7 @@ class Widget_Video extends Widget_Base {
 				if ( $settings['lightbox'] ) {
 					$lightbox_options = [
 						'type' => 'video',
-						'url' => Embed::get_embed_url( $video_link, $embed_params ),
+						'url' => Embed::get_embed_url( $video_link, $embed_params, $embed_options ),
 						'modalOptions' => [
 							'id' => 'elementor-lightbox-' . $this->get_id(),
 							'entranceAnimation' => $settings['lightbox_content_animation'],
