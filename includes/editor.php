@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Editor {
 
+	const EDITING_NONCE_KEY = 'elementor-editing';
+
+	const EDITING_CAPABILITY = 'edit_pages';
+
 	/**
 	 * Post ID.
 	 *
