@@ -25,7 +25,9 @@ class Preview {
 	private $post_id;
 
 	/**
-	 * Initialize the preview mode. Fired by `init` action.
+	 * Init.
+	 *
+	 * Initialize Elementor preview mode. Fired by `init` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -76,7 +78,7 @@ class Preview {
 	/**
 	 * Whether preview mode is active.
 	 *
-	 * Used to determine whether we are in the preview mode (iFrame).
+	 * Used to determine whether we are in the preview mode (iframe).
 	 *
 	 * @since 1.0.0
 	 * @access public
