@@ -238,8 +238,6 @@ class Frontend {
 	 * @access public
 	*/
 	public function enqueue_scripts() {
-		Utils::do_action_deprecated( 'elementor/frontend/enqueue_scripts/before', [], '1.0.10', 'elementor/frontend/before_enqueue_scripts' );
-
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
