@@ -7,22 +7,63 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Editor
+ *
+ * @since 1.0.0
+ */
 class Editor {
 
-	const EDITING_NONCE_KEY = 'elementor_editing';
+	const EDITING_NONCE_KEY = 'elementor-editing';
 
 	const EDITING_CAPABILITY = 'edit_pages';
 
+	/**
+	 * Post ID.
+	 *
+	 * Holds the ID of the current post being edited.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var int Post ID.
+	 */
 	private $_post_id;
 
+	/**
+	 * Whether edit mode is active.
+	 *
+	 * Used to determine whether we are in edit mode.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var bool Whether edit mode is active.
+	 */
 	private $_is_edit_mode;
 
+	/**
+	 * Editor templates.
+	 *
+	 * Holds the ID of the current post being edited.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var array Whether edit mode is active.
+	 */
 	private $_editor_templates = [];
 
 	/**
+	 * Init.
+	 *
+	 * Initialize Elementor editor. Fired by `init` action.
+	 *
 	 * @since 1.7.0
 	 * @access public
-	*/
+	 *
+	 * @param bool $die Optional. Whether to die at the end. Default is `true`.
+	 */
 	public function init( $die = true ) {
 		if ( empty( $_REQUEST['post'] ) ) { // WPCS: CSRF ok.
 			return;
@@ -94,14 +135,25 @@ class Editor {
 	}
 
 	/**
+	 * Retrieve post ID.
+	 *
+	 * Get the ID of the current post.
+	 *
 	 * @since 1.8.0
 	 * @access public
+	 *
+	 * @return int Post ID.
 	 */
 	public function get_post_id() {
 		return $this->_post_id;
 	}
 
 	/**
+	 * Redirect to new URL.
+	 *
+	 * Used as a fallback function for the old URL structure of Elementor
+	 * page edit URL.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 */
@@ -121,9 +173,17 @@ class Editor {
 	}
 
 	/**
+	 * Whether edit mode is active.
+	 *
+	 * Used to determine whether we are in the edit mode.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $post_id Optional. Post ID. Default is `null`, the current post ID.
+	 *
+	 * @return bool Whether edit mode is active.
+	 */
 	public function is_edit_mode( $post_id = null ) {
 		if ( null !== $this->_is_edit_mode ) {
 			return $this->_is_edit_mode;
@@ -155,9 +215,14 @@ class Editor {
 	}
 
 	/**
+	 * Lock post.
+	 *
+	 * Mark the post as currently being edited by the current user.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param $post_id
+	 *
+	 * @param int $post_id The ID of the post being edited.
 	 */
 	public function lock_post( $post_id ) {
 		if ( ! function_exists( 'wp_set_post_lock' ) ) {
@@ -168,11 +233,16 @@ class Editor {
 	}
 
 	/**
+	 * Get locked user.
+	 *
+	 * Check what user is currently editing the post.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param $post_id
 	 *
-	 * @return bool|\WP_User
+	 * @param int $post_id The ID of the post being edited.
+	 *
+	 * @return false|\WP_User User information or false if the post is not locked.
 	 */
 	public function get_locked_user( $post_id ) {
 		if ( ! function_exists( 'wp_check_post_lock' ) ) {
@@ -188,9 +258,11 @@ class Editor {
 	}
 
 	/**
+	 * Print panel HTML.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function print_panel_html() {
 		include( 'editor-templates/editor-wrapper.php' );
 	}
@@ -198,7 +270,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function enqueue_scripts() {
 		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
 
@@ -369,10 +441,6 @@ class Editor {
 
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
-		// Remove all TinyMCE plugins.
-		remove_all_filters( 'mce_buttons', 10 );
-		remove_all_filters( 'mce_external_plugins', 10 );
-
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
@@ -407,7 +475,7 @@ class Editor {
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
-			'wp_editor' => $this->_get_wp_editor_config(),
+			'wp_editor' => $this->get_wp_editor_config(),
 			'post_id' => $this->_post_id,
 			'settings_page_link' => Settings::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
@@ -451,6 +519,8 @@ class Editor {
 				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
 				'preview_not_loading_header' => __( 'The preview could not be loaded', 'elementor' ),
 				'preview_not_loading_message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
+				'device_incompatible_header' => __( 'Your browser isn\'t compatible', 'elementor' ),
+				'device_incompatible_message' => __( 'Your browser isn\'t compatible with all of Elementor\'s editing features. We recommend you switch to another browser like Chrome or Firefox.', 'elementor' ),
 				'session_expired_header' => __( 'Timeout', 'elementor' ),
 				'session_expired_message' => __( 'Your session has expired. Please reload the page to continue editing.', 'elementor' ),
 				'learn_more' => __( 'Learn More', 'elementor' ),
@@ -478,6 +548,7 @@ class Editor {
 				'yes' => __( 'Yes', 'elementor' ),
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 				'type_here' => __( 'Type Here', 'elementor' ),
+				'proceed_anyway' => __( 'Proceed Anyway', 'elementor' ),
 			],
 		];
 
@@ -509,7 +580,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function enqueue_styles() {
 		do_action( 'elementor/editor/before_enqueue_styles' );
 
@@ -573,10 +644,24 @@ class Editor {
 
 	/**
 	 * @since 1.0.0
-	 * @access protected
-	*/
-	protected function _get_wp_editor_config() {
+	 * @access private
+	 */
+	private function get_wp_editor_config() {
+		// Remove all TinyMCE plugins.
+		remove_all_filters( 'mce_buttons', 10 );
+		remove_all_filters( 'mce_external_plugins', 10 );
+
+		if ( ! class_exists( '\_WP_Editors', false ) ) {
+			require( ABSPATH . WPINC . '/class-wp-editor.php' );
+		}
+
+		// WordPress 4.8 and higher
+		if ( method_exists( '\_WP_Editors', 'print_tinymce_scripts' ) ) {
+			\_WP_Editors::print_default_editor_scripts();
+			\_WP_Editors::print_tinymce_scripts();
+		}
 		ob_start();
+
 		wp_editor(
 			'%%EDITORCONTENT%%',
 			'elementorwpeditor',
@@ -586,13 +671,22 @@ class Editor {
 				'drag_drop_upload' => true,
 			]
 		);
-		return ob_get_clean();
+
+		$config = ob_get_clean();
+
+		// Don't call \_WP_Editors methods again
+		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'editor_js' ], 50 );
+		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'print_default_editor_scripts' ], 45 );
+
+		\_WP_Editors::editor_js();
+
+		return $config;
 	}
 
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function editor_head_trigger() {
 		do_action( 'elementor/editor/wp_head' );
 	}
@@ -601,8 +695,8 @@ class Editor {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string $template - Can be either a link to template file or template HTML content
-	 * @param string $type Optional. Whether to handle the template as path or text
+	 * @param string $template Can be either a link to template file or template HTML content.
+	 * @param string $type     Optional. Whether to handle the template as path or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
 		if ( 'path' === $type ) {
@@ -619,7 +713,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function wp_footer() {
 		$plugin = Plugin::$instance;
 
@@ -641,6 +735,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
+	 *
 	 * @param bool $edit_mode
 	 */
 	public function set_edit_mode( $edit_mode ) {
@@ -650,7 +745,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
@@ -695,7 +790,7 @@ class Editor {
 	/**
 	 * @since 1.7.0
 	 * @access private
-	*/
+	 */
 	private function init_editor_templates() {
 		$template_names = [
 			'global',

@@ -236,7 +236,7 @@ class Widgets_Manager {
 	 * @access public
 	*/
 	public function ajax_get_wp_widget_form() {
-		if ( Plugin::$instance->editor->verify_request_nonce() ) {
+		if ( ! Plugin::$instance->editor->verify_request_nonce() ) {
 			die;
 		}
 

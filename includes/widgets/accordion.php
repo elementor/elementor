@@ -298,20 +298,21 @@ class Widget_Accordion extends Widget_Base {
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-accordion" role="tablist">
-			<?php $counter = 1; ?>
-			<?php foreach ( $settings['tabs'] as $item ) :
-				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $counter - 1 );
+			<?php foreach ( $settings['tabs'] as $index => $item ) :
+				$tab_count = $index + 1;
+
+				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
 
 				$this->add_render_attribute( $tab_content_setting_key, [
 					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
-					'data-tab' => $counter,
+					'data-tab' => $tab_count,
 					'role' => 'tabpanel',
 				] );
 
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
 				<div class="elementor-accordion-item">
-					<div class="elementor-tab-title" tabindex="<?php echo $id_int . $counter; ?>" data-tab="<?php echo $counter; ?>" role="tab">
+					<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>" role="tab">
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>">
 							<i class="fa"></i>
 						</span>
@@ -319,10 +320,7 @@ class Widget_Accordion extends Widget_Base {
 					</div>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
-			<?php
-				$counter++;
-			endforeach;
-			?>
+			<?php endforeach; ?>
 		</div>
 		<?php
 	}
@@ -340,21 +338,30 @@ class Widget_Accordion extends Widget_Base {
 		<div class="elementor-accordion" role="tablist">
 			<#
 			if ( settings.tabs ) {
-				var counter = 1,
-					tabindex = view.getIDInt().toString().substr( 0, 3 );
+				var tabindex = view.getIDInt().toString().substr( 0, 3 );
 
-				_.each( settings.tabs, function( item ) { #>
+				_.each( settings.tabs, function( item, index ) {
+					var tabCount = index + 1,
+						tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs', index );
+
+					view.addRenderAttribute( tabContentKey, {
+						'class': [ 'elementor-tab-content', 'elementor-clearfix' ],
+						'data-tab': tabCount,
+						'role': 'tabpanel'
+					} );
+
+					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
+					#>
 					<div class="elementor-accordion-item">
-						<div class="elementor-tab-title" tabindex="{{ tabindex + counter }}" data-tab="{{ counter }}" role="tab">
+						<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}">
 								<i class="fa"></i>
 							</span>
 							{{{ item.tab_title }}}
 						</div>
-						<div class="elementor-tab-content elementor-clearfix elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content" data-elementor-inline-editing-toolbar="advanced" role="tabpanel">{{{ item.tab_content }}}</div>
+						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>
 				<#
-					counter++;
 				} );
 			} #>
 		</div>
