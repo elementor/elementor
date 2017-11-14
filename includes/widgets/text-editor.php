@@ -346,7 +346,12 @@ class Widget_Text_Editor extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-text-editor elementor-clearfix elementor-inline-editing" data-elementor-setting-key="editor" data-elementor-inline-editing-toolbar="advanced">{{{ settings.editor }}}</div>
+		<#
+		view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+
+		view.addInlineEditingAttributes( 'editor', 'advanced' );
+		#>
+		<div {{{ view.getRenderAttributeString( 'editor' ) }}}>{{{ settings.editor }}}</div>
 		<?php
 	}
 }
