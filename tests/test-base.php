@@ -2,7 +2,7 @@
 
 class Elementor_Test_Base extends WP_UnitTestCase {
 
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 
 		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
