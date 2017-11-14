@@ -283,28 +283,26 @@ class Widget_Toggle extends Widget_Base {
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-toggle">
-			<?php $counter = 1; ?>
-			<?php foreach ( $tabs as $item ) :
-				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $counter - 1 );
+			<?php foreach ( $tabs as $index => $item ) :
+				$tab_count = $index + 1;
+
+				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
 
 				$this->add_render_attribute( $tab_content_setting_key, [
 					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
-					'data-tab' => $counter,
+					'data-tab' => $tab_count,
 				] );
 
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
-				<div class="elementor-tab-title" tabindex="<?php echo $id_int . $counter; ?>" data-tab="<?php echo $counter; ?>">
+				<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>">
 					<span class="elementor-toggle-icon">
 						<i class="fa"></i>
 					</span>
 					<?php echo $item['tab_title']; ?>
 				</div>
 				<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
-			<?php
-				$counter++;
-			endforeach;
-			?>
+			<?php endforeach; ?>
 		</div>
 		<?php
 	}
@@ -322,19 +320,27 @@ class Widget_Toggle extends Widget_Base {
 		<div class="elementor-toggle">
 			<#
 			if ( settings.tabs ) {
-				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
-					counter = 1;
-				_.each(settings.tabs, function( item ) { #>
-					<div class="elementor-tab-title" tabindex="{{ tabindex + counter }}" data-tab="{{ counter }}">
+				var tabindex = view.getIDInt().toString().substr( 0, 3 );
+
+				_.each(settings.tabs, function( item, index ) {
+					var tabCount = index + 1,
+						tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs', index );
+
+					view.addRenderAttribute( tabContentKey, {
+						'class': [ 'elementor-tab-content', 'elementor-clearfix' ],
+						'data-tab': tabCount,
+					} );
+
+					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
+					#>
+					<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}">
 						<span class="elementor-toggle-icon">
 							<i class="fa"></i>
 						</span>
 						{{{ item.tab_title }}}
 					</div>
-					<div class="elementor-tab-content elementor-clearfix elementor-inline-editing" data-tab="{{ counter }}" data-elementor-setting-key="tabs.{{ counter - 1 }}.tab_content" data-elementor-inline-editing-toolbar="advanced">{{{ item.tab_content }}}</div>
-				<#
-					counter++;
-				} );
+					<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
+				<# } );
 			} #>
 		</div>
 		<?php
