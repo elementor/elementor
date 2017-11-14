@@ -7,22 +7,63 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Editor
+ *
+ * @since 1.0.0
+ */
 class Editor {
 
 	const EDITING_NONCE_KEY = 'elementor-editing';
 
 	const EDITING_CAPABILITY = 'edit_pages';
 
+	/**
+	 * Post ID.
+	 *
+	 * Holds the ID of the current post being edited.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var int Post ID.
+	 */
 	private $_post_id;
 
+	/**
+	 * Whether edit mode is active.
+	 *
+	 * Used to determine whether we are in edit mode.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var bool Whether edit mode is active.
+	 */
 	private $_is_edit_mode;
 
+	/**
+	 * Editor templates.
+	 *
+	 * Holds the ID of the current post being edited.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var array Whether edit mode is active.
+	 */
 	private $_editor_templates = [];
 
 	/**
+	 * Init.
+	 *
+	 * Initialize Elementor editor. Fired by `init` action.
+	 *
 	 * @since 1.7.0
 	 * @access public
-	*/
+	 *
+	 * @param bool $die Optional. Whether to die at the end. Default is `true`.
+	 */
 	public function init( $die = true ) {
 		if ( empty( $_REQUEST['post'] ) ) { // WPCS: CSRF ok.
 			return;
@@ -94,14 +135,25 @@ class Editor {
 	}
 
 	/**
+	 * Retrieve post ID.
+	 *
+	 * Get the ID of the current post.
+	 *
 	 * @since 1.8.0
 	 * @access public
+	 * 
+	 * @return int Post ID.
 	 */
 	public function get_post_id() {
 		return $this->_post_id;
 	}
 
 	/**
+	 * Redirect to new URL.
+	 *
+	 * Used as a fallback function for the old URL structure of Elementor
+	 * page edit URL.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 */
@@ -121,9 +173,17 @@ class Editor {
 	}
 
 	/**
+	 * Whether edit mode is active.
+	 *
+	 * Used to determine whether we are in the edit mode.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $post_id Optional. Post ID. Default is `null`, the current post ID.
+	 *
+	 * @return bool Whether edit mode is active.
+	 */
 	public function is_edit_mode( $post_id = null ) {
 		if ( null !== $this->_is_edit_mode ) {
 			return $this->_is_edit_mode;
@@ -155,9 +215,14 @@ class Editor {
 	}
 
 	/**
+	 * Lock post.
+	 *
+	 * Mark the post as currently being edited by the current user.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param $post_id
+	 *
+	 * @param int $post_id The ID of the post being edited.
 	 */
 	public function lock_post( $post_id ) {
 		if ( ! function_exists( 'wp_set_post_lock' ) ) {
@@ -168,11 +233,16 @@ class Editor {
 	}
 
 	/**
+	 * Get locked user.
+	 *
+	 * Check what user is currently editing the post.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param $post_id
 	 *
-	 * @return bool|\WP_User
+	 * @param int $post_id The ID of the post being edited.
+	 *
+	 * @return false|\WP_User User information or false if the post is not locked.
 	 */
 	public function get_locked_user( $post_id ) {
 		if ( ! function_exists( 'wp_check_post_lock' ) ) {
@@ -188,9 +258,11 @@ class Editor {
 	}
 
 	/**
+	 * Print panel HTML.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function print_panel_html() {
 		include( 'editor-templates/editor-wrapper.php' );
 	}
@@ -198,7 +270,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function enqueue_scripts() {
 		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
 
@@ -509,7 +581,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function enqueue_styles() {
 		do_action( 'elementor/editor/before_enqueue_styles' );
 
@@ -574,7 +646,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 */
 	protected function _get_wp_editor_config() {
 		ob_start();
 		wp_editor(
@@ -592,7 +664,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function editor_head_trigger() {
 		do_action( 'elementor/editor/wp_head' );
 	}
@@ -601,8 +673,8 @@ class Editor {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string $template - Can be either a link to template file or template HTML content
-	 * @param string $type Optional. Whether to handle the template as path or text
+	 * @param string $template Can be either a link to template file or template HTML content.
+	 * @param string $type     Optional. Whether to handle the template as path or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
 		if ( 'path' === $type ) {
@@ -619,7 +691,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function wp_footer() {
 		$plugin = Plugin::$instance;
 
@@ -641,6 +713,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
+	 *
 	 * @param bool $edit_mode
 	 */
 	public function set_edit_mode( $edit_mode ) {
@@ -650,7 +723,7 @@ class Editor {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
@@ -695,7 +768,7 @@ class Editor {
 	/**
 	 * @since 1.7.0
 	 * @access private
-	*/
+	 */
 	private function init_editor_templates() {
 		$template_names = [
 			'global',
