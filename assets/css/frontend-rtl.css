@@ -1296,7 +1296,7 @@
         text-align: left; }
       .elementor-accordion .elementor-tab-title .elementor-accordion-icon .fa:before {
         content: '\f067'; }
-    .elementor-accordion .elementor-tab-title.active .elementor-accordion-icon .fa:before {
+    .elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon .fa:before {
       content: '\f068'; }
   .elementor-accordion .elementor-tab-content {
     display: none;
