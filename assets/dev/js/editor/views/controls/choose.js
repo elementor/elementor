@@ -1,19 +1,21 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlChooseItemView;
 
-ControlChooseItemView = ControlBaseItemView.extend( {
+ControlChooseItemView = ControlBaseDataView.extend( {
 	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		ui.inputs = '[type="radio"]';
 
 		return ui;
 	},
 
-	childEvents: {
-		'mousedown label': 'onMouseDownLabel',
-		'click @ui.inputs': 'onClickInput',
-		'change @ui.inputs': 'onBaseInputChange'
+	events: function() {
+		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
+			'mousedown label': 'onMouseDownLabel',
+			'click @ui.inputs': 'onClickInput',
+			'change @ui.inputs': 'onBaseInputChange'
+		} );
 	},
 
 	onMouseDownLabel: function( event ) {
@@ -36,7 +38,7 @@ ControlChooseItemView = ControlBaseItemView.extend( {
 	},
 
 	onRender: function() {
-		ControlBaseItemView.prototype.onRender.apply( this, arguments );
+		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
 		var currentValue = this.getControlValue();
 

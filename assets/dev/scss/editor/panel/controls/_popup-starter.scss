@@ -1,0 +1,23 @@
+.elementor-control-type-popup_starter {
+
+	.elementor-control-input-wrapper {
+		text-align: right;
+	}
+
+	.elementor-control-popup-starter-simple-toggle {
+		display: inline-block;
+		width: 50px;
+		text-align: center;
+		padding: 6px 0;
+		color: $editor-light;
+		text-transform: uppercase;
+		border-radius: 3px;
+		border: 1px solid;
+		cursor: pointer;
+	}
+	
+	.elementor-choices-label {
+		font-size: 10px;
+		text-transform: uppercase;
+	}
+}

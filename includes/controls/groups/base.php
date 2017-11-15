@@ -26,6 +26,24 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 */
 	private $args = [];
 
+	private $options;
+
+	final public function get_options( $option ) {
+		if ( null === $this->options ) {
+			$this->init_options();
+		}
+
+		if ( $option ) {
+			if ( isset( $this->options[ $option ] ) ) {
+				return $this->options[ $option ];
+			}
+
+			return null;
+		}
+
+		return $this->options;
+	}
+
 	/**
 	 * Add new controls to stack.
 	 *
@@ -48,6 +66,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		// For php < 7
 		reset( $filtered_fields );
+
+		if ( $this->get_options( 'popup' ) ) {
+			$filtered_fields = $this->set_popup( $filtered_fields );
+		}
 
 		if ( isset( $this->args['separator'] ) ) {
 			$filtered_fields[ key( $filtered_fields ) ]['separator'] = $this->args['separator'];
@@ -149,7 +171,8 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return 'elementor-group-control-' . static::get_type() . ' elementor-group-control';
 	}
 
-	// TODO: Temp - Make it abstract
+	abstract protected function init_fields();
+
 	/**
 	 * Init fields.
 	 *
@@ -158,7 +181,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @since 1.2.2
 	 * @access protected
 	 */
-	protected function init_fields() {}
+	protected function get_default_options() {
+		return [];
+	}
 
 	/**
 	 * Retrieve child default arguments.
@@ -197,22 +222,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		if ( ! empty( $args['exclude'] ) ) {
 			$fields = array_diff_key( $fields, array_flip( $args['exclude'] ) );
-		}
-
-		foreach ( $fields as $field_key => $field ) {
-			if ( empty( $field['condition'] ) ) {
-				continue;
-			}
-
-			foreach ( $field['condition'] as $condition_key => $condition_value ) {
-				preg_match( '/^\w+/', $condition_key, $matches );
-
-				if ( empty( $fields[ $matches[0] ] ) ) {
-					unset( $fields[ $field_key ] );
-
-					continue 2;
-				}
-			}
 		}
 
 		return $fields;
@@ -287,6 +296,20 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		}
 
 		return $fields;
+	}
+
+	private function init_options() {
+		$default_options = [
+			'popup' => [
+				'starter_name' => 'popup_starter',
+				'starter_value' => 'custom',
+				'starter_title' => '',
+				'toggle_type' => 'switcher',
+				'toggle_title' => __( 'Set', 'elementor' ),
+			],
+		];
+
+		$this->options = array_replace_recursive( $default_options, $this->get_default_options() );
 	}
 
 	/**
@@ -400,5 +423,31 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		}
 
 		return $selectors;
+	}
+
+	private function set_popup( array $fields ) {
+		$popup_options = $this->get_options( 'popup' );
+
+		$fields[ key( $fields ) ]['popup']['start'] = true;
+
+		$popup_starter_field = [
+			$popup_options['starter_name'] => [
+				'type' => Controls_Manager::POPUP_STARTER,
+				'label' => $popup_options['starter_title'],
+				'toggle_type' => $popup_options['toggle_type'],
+				'toggle_title' => $popup_options['toggle_title'],
+				'return_value' => $popup_options['starter_value'],
+			]
+		];
+
+		$fields = $popup_starter_field + $fields;
+
+		end( $fields );
+
+		$fields[ key( $fields ) ]['popup']['end'] = true;
+
+		reset( $fields );
+
+		return $fields;
 	}
 }

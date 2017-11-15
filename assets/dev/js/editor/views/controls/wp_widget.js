@@ -1,9 +1,9 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlWPWidgetItemView;
 
-ControlWPWidgetItemView = ControlBaseItemView.extend( {
+ControlWPWidgetItemView = ControlBaseDataView.extend( {
 	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		ui.form = 'form';
 		ui.loading = '.wp-widget-form-loading';
@@ -11,9 +11,11 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 		return ui;
 	},
 
-	events: {
-		'keyup @ui.form :input': 'onFormChanged',
-		'change @ui.form :input': 'onFormChanged'
+	events: function() {
+		return {
+			'keyup @ui.form :input': 'onFormChanged',
+			'change @ui.form :input': 'onFormChanged'
+		};
 	},
 
 	onFormChanged: function() {
