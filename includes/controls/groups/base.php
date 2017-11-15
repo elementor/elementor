@@ -171,7 +171,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return 'elementor-group-control-' . static::get_type() . ' elementor-group-control';
 	}
 
-	protected abstract function init_fields();
+	abstract protected function init_fields();
 
 	/**
 	 * Init fields.
