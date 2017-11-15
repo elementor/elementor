@@ -178,7 +178,7 @@ class Widget_Icon_List extends Widget_Base {
 						'icon' => 'eicon-h-align-right',
 					],
 				],
-				'prefix_class' => 'elementor-align-',
+				'prefix_class' => 'elementor%s-align-',
 				'classes' => 'elementor-control-start-end',
 			]
 		);
