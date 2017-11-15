@@ -110,20 +110,22 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 			var popup = child.model.get( 'popup' );
 
-			if ( popup ) {
-				if ( popup.start ) {
-					popupStarted = true;
+			if ( ! popup ) {
+				return;
+			}
 
-					$popup = jQuery( '<div>', { 'class': self.classes.popup } );
+			if ( popup.start ) {
+				popupStarted = true;
 
-					child.$el.before( $popup );
+				$popup = jQuery( '<div>', { 'class': self.classes.popup } );
 
-					$popup.append( child.$el );
-				}
+				child.$el.before( $popup );
 
-				if ( popup.end ) {
-					popupStarted = false;
-				}
+				$popup.append( child.$el );
+			}
+
+			if ( popup.end ) {
+				popupStarted = false;
 			}
 		} );
 	},
