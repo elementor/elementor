@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.5
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 1.8.3
+Stable tag: 1.8.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -183,6 +183,12 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 1.8.4 - 14.11.2017 =
+* Fix! - Accordion open/close icon ([#2740](https://github.com/pojome/elementor/issues/2740))
+* Fix! - Color control does not allow more than 7 characters ([#2737](https://github.com/pojome/elementor/issues/2737))
+* Fix! - Button wrap on Safari browser
+* Fix! - Print duplicate styles when Print Method set to Internal Embedding
 
 = 1.8.3 - 11.11.2017 =
 * Fix! – Added nonce to export template action ([Topic](https://wordpress.org/support/topic/importation-error-in-library-elementor-8-2/))
