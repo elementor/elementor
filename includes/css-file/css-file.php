@@ -337,7 +337,7 @@ abstract class CSS_File {
 	 * @abstract
 	 * @since 1.2.0
 	 * @access protected
-	 * @param string $meta
+	 * @param array $meta
 	 */
 	abstract protected function update_meta( $meta );
 
