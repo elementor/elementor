@@ -7,34 +7,106 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Typography control.
+ *
+ * A base control for creating typography control. Displays input fields to define
+ * the content typography including font size, font family, font weight, text
+ * transform, font style, line height and letter spacing.
+ *
+ * Creating new control in the editor (inside `Widget_Base::_register_controls()`
+ * method):
+ *
+ *    $this->add_group_control(
+ *    	Group_Control_Typography::get_type(),
+ *    	[
+ *    		'name' => 'content_typography',
+ *    		'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+ *    		'selector' => '{{WRAPPER}} .text',
+ *    		'separator' => 'before',
+ *    	]
+ *    );
+ *
+ * @since 1.0.0
+ *
+ * @param string $name        The field name.
+ * @param string $separator   Optional. Set the position of the control separator.
+ *                            Available values are 'default', 'before', 'after'
+ *                            and 'none'. 'default' will position the separator
+ *                            depending on the control type. 'before' / 'after'
+ *                            will position the separator before/after the
+ *                            control. 'none' will hide the separator. Default
+ *                            is 'default'.
+ */
 class Group_Control_Typography extends Group_Control_Base {
 
+	/**
+	 * Fields.
+	 *
+	 * Holds all the typography control fields.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 * @static
+	 *
+	 * @var array Typography control fields.
+	 */
 	protected static $fields;
 
+	/**
+	 * Scheme fields keys.
+	 *
+	 * Holds all the typography control scheme fields keys.
+	 * Default is an array containing `font_family` and `font_weight`.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @static
+	 *
+	 * @var array Typography control scheme fields keys.
+	 */
 	private static $_scheme_fields_keys = [ 'font_family', 'font_weight' ];
 
 	/**
-	 * @static
+	 * Retrieve scheme fields keys.
+	 *
+	 * Get all the available typography control scheme fields keys.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return string Scheme fields keys.
+	 */
 	public static function get_scheme_fields_keys() {
 		return self::$_scheme_fields_keys;
 	}
 
 	/**
-	 * @static
+	 * Retrieve type.
+	 *
+	 * Get typography control type.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return string Control type.
+	 */
 	public static function get_type() {
 		return 'typography';
 	}
 
 	/**
+	 * Init fields.
+	 *
+	 * Initialize typography control fields.
+	 *
 	 * @since 1.2.2
 	 * @access protected
-	*/
+	 *
+	 * @return array Control fields.
+	 */
 	protected function init_fields() {
 		$fields = [];
 
@@ -149,9 +221,17 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	/**
+	 * Prepare fields.
+	 *
+	 * Process typography control fields before adding them to `add_control()`.
+	 *
 	 * @since 1.2.3
 	 * @access protected
-	*/
+	 *
+	 * @param array $fields Typography control fields.
+	 *
+	 * @return array Processed fields.
+	 */
 	protected function prepare_fields( $fields ) {
 		array_walk(
 			$fields, function( &$field, $field_name ) {
@@ -175,9 +255,18 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	/**
+	 * Add group arguments to field.
+	 *
+	 * Register field arguments to typography control.
+	 *
 	 * @since 1.2.2
 	 * @access protected
-	*/
+	 *
+	 * @param string $control_id Typography control id.
+	 * @param array  $field_args Typography control field arguments.
+	 *
+	 * @return array Field arguments.
+	 */
 	protected function add_group_args_to_field( $control_id, $field_args ) {
 		$field_args = parent::add_group_args_to_field( $control_id, $field_args );
 
