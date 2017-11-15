@@ -35,11 +35,18 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 			},
 			success: _.bind( function( data ) {
 				this.ui.form.html( data );
+
 				// WP >= 4.8
 				if ( wp.textWidgets ) {
+					this.ui.form.addClass( 'open' );
 					var event = new jQuery.Event( 'widget-added' );
 					wp.textWidgets.handleWidgetAdded( event, this.ui.form );
 					wp.mediaWidgets.handleWidgetAdded( event, this.ui.form );
+
+					// WP >= 4.9
+					if ( wp.customHtmlWidgets ) {
+						wp.customHtmlWidgets.handleWidgetAdded( event, this.ui.form );
+					}
 				}
 
 				elementor.hooks.doAction( 'panel/widgets/' + this.model.get( 'widget' ) + '/controls/wp_widget/loaded', this );
