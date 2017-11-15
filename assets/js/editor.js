@@ -9530,6 +9530,7 @@ ControlWPWidgetItemView = ControlBaseItemView.extend( {
 					wp.textWidgets.handleWidgetAdded( event, this.ui.form );
 					wp.mediaWidgets.handleWidgetAdded( event, this.ui.form );
 
+					// WP >= 4.8
 					if ( wp.customHtmlWidgets ) {
 						wp.customHtmlWidgets.handleWidgetAdded( event, this.ui.form );
 					}
