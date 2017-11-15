@@ -436,8 +436,12 @@ class Widget_Testimonial extends Widget_Base {
 		var testimonial_image_position = settings.testimonial_image_position ? ' elementor-testimonial-image-position-' + settings.testimonial_image_position : '';
 		#>
 		<div class="elementor-testimonial-wrapper{{ testimonial_alignment }}">
-			<# if ( '' !== settings.testimonial_content ) { #>
-				<div class="elementor-testimonial-content elementor-inline-editing" data-elementor-setting-key="testimonial_content">{{{ settings.testimonial_content }}}</div>
+			<# if ( '' !== settings.testimonial_content ) {
+				view.addRenderAttribute( 'testimonial_content', 'class', 'elementor-testimonial-content' );
+
+				view.addInlineEditingAttributes( 'testimonial_content' );
+				#>
+				<div {{{ view.getRenderAttributeString( 'testimonial_content' ) }}}>{{{ settings.testimonial_content }}}</div>
 			<# } #>
 			<div class="elementor-testimonial-meta{{ hasImage }}{{ testimonial_image_position }}">
 				<div class="elementor-testimonial-meta-inner">
@@ -448,12 +452,20 @@ class Widget_Testimonial extends Widget_Base {
 					<# } #>
 
 					<div class="elementor-testimonial-details">
-						<# if ( '' !== settings.testimonial_name ) { #>
-							<div class="elementor-testimonial-name elementor-inline-editing" data-elementor-setting-key="testimonial_name" data-elementor-inline-editing-toolbar="none">{{{ settings.testimonial_name }}}</div>
+						<# if ( '' !== settings.testimonial_name ) {
+							view.addRenderAttribute( 'testimonial_name', 'class', 'elementor-testimonial-name' );
+
+							view.addInlineEditingAttributes( 'testimonial_name', 'none' );
+							#>
+							<div {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{{ settings.testimonial_name }}}</div>
 						<# } #>
 
-						<# if ( '' !== settings.testimonial_job ) { #>
-							<div class="elementor-testimonial-job elementor-inline-editing" data-elementor-setting-key="testimonial_job" data-elementor-inline-editing-toolbar="none">{{{ settings.testimonial_job }}}</div>
+						<# if ( '' !== settings.testimonial_job ) {
+							view.addRenderAttribute( 'testimonial_job', 'class', 'elementor-testimonial-job' );
+
+							view.addInlineEditingAttributes( 'testimonial_job', 'none' );
+							#>
+							<div {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{{ settings.testimonial_job }}}</div>
 						<# } #>
 					</div>
 				</div>

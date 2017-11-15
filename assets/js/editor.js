@@ -1825,6 +1825,10 @@ App = Marionette.Application.extend( {
 		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
 	},
 
+	checkEnvCompatibility: function() {
+		return this.envData.gecko || this.envData.webkit;
+	},
+
 	getElementData: function( modelElement ) {
 		var elType = modelElement.get( 'elType' );
 
@@ -1874,6 +1878,10 @@ App = Marionette.Application.extend( {
 
 	getPanelView: function() {
 		return this.getRegion( 'panel' ).currentView;
+	},
+
+	initEnvData: function() {
+		this.envData = _.pick( tinymce.EditorManager.Env, [ 'desktop', 'webkit', 'gecko', 'ie', 'opera' ] );
 	},
 
 	initComponents: function() {
@@ -2165,6 +2173,12 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
+		this.initEnvData();
+
+		if ( ! this.checkEnvCompatibility() ) {
+			this.onEnvNotCompatible();
+		}
+
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
@@ -2261,6 +2275,22 @@ App = Marionette.Application.extend( {
 		} else {
 			this.enterPreviewMode( 'preview' === activeMode );
 		}
+	},
+
+	onEnvNotCompatible: function() {
+		this.showFatalErrorDialog( {
+			headerMessage: this.translate( 'device_incompatible_header' ),
+			message: this.translate( 'device_incompatible_message' ),
+			strings: {
+				confirm: elementor.translate( 'proceed_anyway' )
+			},
+			hide: {
+				onButtonClick: true
+			},
+			onConfirm: function() {
+				this.hide();
+			}
+		} );
 	},
 
 	onPreviewLoadingError: function() {
@@ -2436,7 +2466,7 @@ App = Marionette.Application.extend( {
 		var text = '',
 			style = '';
 
-		if ( -1 !== navigator.userAgent.search( 'Firefox' ) ) {
+		if ( this.envData.gecko ) {
 			var asciiText = [
 				' ;;;;;;;;;;;;;;; ',
 				';;;  ;;       ;;;',
@@ -6835,6 +6865,8 @@ BaseElementView = BaseContainer.extend( {
 
 	allowRender: true,
 
+	renderAttributes: {},
+
 	className: function() {
 		return 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 	},
@@ -6994,6 +7026,59 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		validators[ controlName ].push( validator );
+	},
+
+	addRenderAttribute: function( element, key, value, overwrite ) {
+		var self = this;
+
+		if ( 'object' === typeof element ) {
+			jQuery.each( element, function( elementKey ) {
+				self.addRenderAttribute( elementKey, this, null, overwrite );
+			} );
+
+			return self;
+		}
+
+		if ( 'object' === typeof key ) {
+			jQuery.each( key, function( attributeKey ) {
+				self.addRenderAttribute( element, attributeKey, this, overwrite );
+			} );
+
+			return self;
+		}
+
+		if ( ! self.renderAttributes[ element ] ) {
+			self.renderAttributes[ element ] = {};
+		}
+
+		if ( ! self.renderAttributes[ element ][ key ] ) {
+			self.renderAttributes[ element ][ key ] = [];
+		}
+
+		if ( ! Array.isArray( value ) ) {
+			value = [ value ];
+		}
+
+		if ( overwrite ) {
+			self.renderAttributes[ element ][ key ] = value;
+		} else {
+			self.renderAttributes[ element ][ key ] = self.renderAttributes[ element ][ key ].concat( value );
+		}
+	},
+
+	getRenderAttributeString: function( element ) {
+		if ( ! this.renderAttributes[ element ] ) {
+			return '';
+		}
+
+		var renderAttributes = this.renderAttributes[ element ],
+			attributes = [];
+
+		jQuery.each( renderAttributes, function( attributeKey ) {
+			attributes.push( attributeKey + '="' + _.escape( this.join( ' ' ) ) + '"' );
+		} );
+
+		return attributes.join( ' ' );
 	},
 
 	isCollectionFilled: function() {
@@ -7184,6 +7269,10 @@ BaseElementView = BaseContainer.extend( {
 		} else {
 			editModel.renderRemoteServer();
 		}
+	},
+
+	onBeforeRender: function() {
+		this.renderAttributes = {};
 	},
 
 	onRender: function() {
@@ -8332,9 +8421,7 @@ ControlColorItemView = ControlBaseItemView.extend( {
 			clear: function() {
 				self.setValue( '' );
 			}
-		} ).wpColorPicker( 'instance' )
-			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
-			.removeAttr( 'maxlength' );
+		} );
 	},
 
 	onBeforeDestroy: function() {
@@ -10285,24 +10372,6 @@ WidgetView = BaseElementView.extend( {
 		return this._templateType;
 	},
 
-	onModelBeforeRemoteRender: function() {
-		this.$el.addClass( 'elementor-loading' );
-	},
-
-	onBeforeDestroy: function() {
-		// Remove old style from the DOM.
-		elementor.$previewContents.find( '#elementor-style-' + this.model.cid ).remove();
-	},
-
-	onModelRemoteRender: function() {
-		if ( this.isDestroyed ) {
-			return;
-		}
-
-		this.$el.removeClass( 'elementor-loading' );
-		this.render();
-	},
-
 	getHTMLContent: function( html ) {
 		var htmlCache = this.getEditModel().getHtmlCache();
 
@@ -10320,6 +10389,41 @@ WidgetView = BaseElementView.extend( {
 		} );
 
 		return this;
+	},
+
+	addInlineEditingAttributes: function( key, toolbar ) {
+		this.addRenderAttribute( key, {
+			'class': 'elementor-inline-editing',
+			'data-elementor-setting-key': key
+		} );
+
+		if ( toolbar ) {
+			this.addRenderAttribute( key, {
+				'data-elementor-inline-editing-toolbar': toolbar
+			} );
+		}
+	},
+
+	getRepeaterSettingKey: function( settingKey, repeaterKey, repeaterItemIndex ) {
+		return [ repeaterKey, repeaterItemIndex, settingKey ].join( '.' );
+	},
+
+	onModelBeforeRemoteRender: function() {
+		this.$el.addClass( 'elementor-loading' );
+	},
+
+	onBeforeDestroy: function() {
+		// Remove old style from the DOM.
+		elementor.$previewContents.find( '#elementor-style-' + this.model.cid ).remove();
+	},
+
+	onModelRemoteRender: function() {
+		if ( this.isDestroyed ) {
+			return;
+		}
+
+		this.$el.removeClass( 'elementor-loading' );
+		this.render();
 	},
 
 	onRender: function() {

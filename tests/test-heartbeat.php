@@ -5,7 +5,7 @@ class Elementor_Test_Heartbeat extends WP_UnitTestCase {
 	protected $user_own_post;
 	protected $user_editor;
 
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 
 		// Create new instance again
