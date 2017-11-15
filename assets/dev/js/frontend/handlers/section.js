@@ -80,7 +80,8 @@ var BackgroundVideo = HandlerModule.extend( {
 			},
 			playerVars: {
 				controls: 0,
-				showinfo: 0
+				showinfo: 0,
+				rel: 0
 			}
 		} );
 
