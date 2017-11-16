@@ -24,8 +24,8 @@ module.exports = HandlerModule.extend( {
 		var selectors = this.getSettings( 'selectors' );
 
 		return {
-			$tabTitles: this.$element.find( selectors.tabTitle ),
-			$tabContents: this.$element.find( selectors.tabContent )
+			$tabTitles: this.findElement( selectors.tabTitle ),
+			$tabContents: this.findElement( selectors.tabContent )
 		};
 	},
 
