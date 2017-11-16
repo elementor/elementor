@@ -93,24 +93,6 @@ WidgetView = BaseElementView.extend( {
 		return this._templateType;
 	},
 
-	onModelBeforeRemoteRender: function() {
-		this.$el.addClass( 'elementor-loading' );
-	},
-
-	onBeforeDestroy: function() {
-		// Remove old style from the DOM.
-		elementor.$previewContents.find( '#elementor-style-' + this.model.cid ).remove();
-	},
-
-	onModelRemoteRender: function() {
-		if ( this.isDestroyed ) {
-			return;
-		}
-
-		this.$el.removeClass( 'elementor-loading' );
-		this.render();
-	},
-
 	getHTMLContent: function( html ) {
 		var htmlCache = this.getEditModel().getHtmlCache();
 
@@ -128,6 +110,41 @@ WidgetView = BaseElementView.extend( {
 		} );
 
 		return this;
+	},
+
+	addInlineEditingAttributes: function( key, toolbar ) {
+		this.addRenderAttribute( key, {
+			'class': 'elementor-inline-editing',
+			'data-elementor-setting-key': key
+		} );
+
+		if ( toolbar ) {
+			this.addRenderAttribute( key, {
+				'data-elementor-inline-editing-toolbar': toolbar
+			} );
+		}
+	},
+
+	getRepeaterSettingKey: function( settingKey, repeaterKey, repeaterItemIndex ) {
+		return [ repeaterKey, repeaterItemIndex, settingKey ].join( '.' );
+	},
+
+	onModelBeforeRemoteRender: function() {
+		this.$el.addClass( 'elementor-loading' );
+	},
+
+	onBeforeDestroy: function() {
+		// Remove old style from the DOM.
+		elementor.$previewContents.find( '#elementor-style-' + this.model.cid ).remove();
+	},
+
+	onModelRemoteRender: function() {
+		if ( this.isDestroyed ) {
+			return;
+		}
+
+		this.$el.removeClass( 'elementor-loading' );
+		this.render();
 	},
 
 	onRender: function() {

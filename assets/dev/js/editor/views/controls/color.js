@@ -1,7 +1,7 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlColorItemView;
 
-ControlColorItemView = ControlBaseItemView.extend( {
+ControlColorItemView = ControlBaseDataView.extend( {
 	onReady: function() {
 		var self = this;
 
@@ -12,9 +12,7 @@ ControlColorItemView = ControlBaseItemView.extend( {
 			clear: function() {
 				self.setValue( '' );
 			}
-		} ).wpColorPicker( 'instance' )
-			.wrap.find( '> .wp-picker-input-wrap > .wp-color-picker' )
-			.removeAttr( 'maxlength' );
+		} );
 	},
 
 	onBeforeDestroy: function() {

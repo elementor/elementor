@@ -1,21 +1,23 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlStructureItemView;
 
-ControlStructureItemView = ControlBaseItemView.extend( {
+ControlStructureItemView = ControlBaseDataView.extend( {
 	ui: function() {
-		var ui = ControlBaseItemView.prototype.ui.apply( this, arguments );
+		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		ui.resetStructure = '.elementor-control-structure-reset';
 
 		return ui;
 	},
 
-	childEvents: {
-		'click @ui.resetStructure': 'onResetStructureClick'
+	events: function() {
+		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
+			'click @ui.resetStructure': 'onResetStructureClick'
+		} );
 	},
 
 	templateHelpers: function() {
-		var helpers = ControlBaseItemView.prototype.templateHelpers.apply( this, arguments );
+		var helpers = ControlBaseDataView.prototype.templateHelpers.apply( this, arguments );
 
 		helpers.getMorePresets = this.getMorePresets.bind( this );
 
