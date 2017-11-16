@@ -1,19 +1,21 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	RepeaterRowView = require( 'elementor-views/controls/repeater-row' ),
 	BaseSettingsModel = require( 'elementor-models/base-settings' ),
 	ControlRepeaterItemView;
 
-ControlRepeaterItemView = ControlBaseItemView.extend( {
+ControlRepeaterItemView = ControlBaseDataView.extend( {
 	ui: {
 		btnAddRow: '.elementor-repeater-add',
 		fieldContainer: '.elementor-repeater-fields'
 	},
 
-	events: {
-		'click @ui.btnAddRow': 'onButtonAddRowClick',
-		'sortstart @ui.fieldContainer': 'onSortStart',
-		'sortupdate @ui.fieldContainer': 'onSortUpdate',
-		'sortstop @ui.fieldContainer': 'onSortStop'
+	events: function() {
+		return {
+			'click @ui.btnAddRow': 'onButtonAddRowClick',
+			'sortstart @ui.fieldContainer': 'onSortStart',
+			'sortupdate @ui.fieldContainer': 'onSortUpdate',
+			'sortstop @ui.fieldContainer': 'onSortStop'
+		};
 	},
 
 	childView: RepeaterRowView,
@@ -65,7 +67,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	initialize: function( options ) {
-		ControlBaseItemView.prototype.initialize.apply( this, arguments );
+		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
 		this.fillCollection();
 
@@ -133,7 +135,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 	},
 
 	onRender: function() {
-		ControlBaseItemView.prototype.onRender.apply( this, arguments );
+		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
 		this.ui.fieldContainer.sortable( { axis: 'y', handle: '.elementor-repeater-row-tools' } );
 
@@ -267,7 +269,7 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 		// Update the collection with current value
 		this.fillCollection();
 
-		ControlBaseItemView.prototype.onAfterExternalChange.apply( this, arguments );
+		ControlBaseDataView.prototype.onAfterExternalChange.apply( this, arguments );
 	}
 } );
 

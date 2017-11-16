@@ -1,7 +1,7 @@
-var ControlBaseItemView = require( 'elementor-views/controls/base' ),
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
 	ControlColorItemView;
 
-ControlColorItemView = ControlBaseItemView.extend( {
+ControlColorItemView = ControlBaseDataView.extend( {
 	onReady: function() {
 		var self = this;
 
