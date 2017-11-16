@@ -11,8 +11,10 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'slide @ui.sliders': 'onSlideChange'
+	events: function() {
+		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
+			'slide @ui.sliders': 'onSlideChange'
+		} );
 	},
 
 	initSliders: function() {

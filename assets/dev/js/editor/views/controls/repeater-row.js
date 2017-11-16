@@ -1,4 +1,5 @@
-var RepeaterRowView;
+var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),
+	RepeaterRowView;
 
 RepeaterRowView = Marionette.CompositeView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-repeater-row' ),
@@ -80,6 +81,10 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 			var values = {};
 
 			self.children.each( function( child ) {
+				if ( ! ( child instanceof ControlBaseDataView ) ) {
+					return;
+				}
+
 				values[ child.model.get( 'name' ) ] = child.getControlValue();
 			} );
 

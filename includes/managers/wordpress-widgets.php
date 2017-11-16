@@ -29,6 +29,7 @@ class WordPress_Widgets_Manager {
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
+		// TODO: after WP >= 4.9 - it's no needed, Keep for Backward compatibility.
 		$wp_scripts->add( 'media-widgets', "/wp-admin/js/widgets/media-widgets$suffix.js", array( 'jquery', 'media-models', 'media-views' ) );
 		$wp_scripts->add_inline_script( 'media-widgets', 'wp.mediaWidgets.init();', 'after' );
 
@@ -40,6 +41,7 @@ class WordPress_Widgets_Manager {
 
 		wp_enqueue_style( 'widgets' );
 		wp_enqueue_style( 'media-views' );
+		// End TODO.
 
 		do_action( 'admin_print_scripts-widgets.php' );
 	}
