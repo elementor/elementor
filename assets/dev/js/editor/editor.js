@@ -35,42 +35,44 @@ App = Marionette.Application.extend( {
 
 	// Exporting modules that can be used externally
 	modules: {
-		element: require( 'elementor-models/element' ),
-		WidgetView: require( 'elementor-views/widget' ),
+		element: {
+			Model: require( 'elementor-elements/model' )
+		},
+		WidgetView: require( 'elementor-elements/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
 		},
 		controls: {
-			Base: require( 'elementor-views/controls/base' ),
-			BaseData: require( 'elementor-views/controls/base-data' ),
-			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
-			Color: require( 'elementor-views/controls/color' ),
-			Dimensions: require( 'elementor-views/controls/dimensions' ),
-			Image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
-			Media: require( 'elementor-views/controls/media' ),
-			Slider: require( 'elementor-views/controls/slider' ),
-			Wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
-			Choose: require( 'elementor-views/controls/choose' ),
-			Url: require( 'elementor-views/controls/base-multiple' ),
-			Font: require( 'elementor-views/controls/font' ),
-			Section: require( 'elementor-views/controls/section' ),
-			Tab: require( 'elementor-views/controls/tab' ),
-			Repeater: require( 'elementor-views/controls/repeater' ),
-			Wp_widget: require( 'elementor-views/controls/wp_widget' ),
-			Icon: require( 'elementor-views/controls/icon' ),
-			Gallery: require( 'elementor-views/controls/gallery' ),
-			Select2: require( 'elementor-views/controls/select2' ),
-			Date_time: require( 'elementor-views/controls/date-time' ),
-			Code: require( 'elementor-views/controls/code' ),
-			Box_shadow: require( 'elementor-views/controls/box-shadow' ),
-			Text_shadow: require( 'elementor-views/controls/box-shadow' ),
-			Structure: require( 'elementor-views/controls/structure' ),
-			Animation: require( 'elementor-views/controls/select2' ),
-			Hover_animation: require( 'elementor-views/controls/select2' ),
-			Order: require( 'elementor-views/controls/order' ),
-			Switcher: require( 'elementor-views/controls/switcher' ),
-			Number: require( 'elementor-views/controls/number' ),
-			Popup_starter: require( 'elementor-views/controls/popup-starter' )
+			Base: require( 'elementor-controls/base' ),
+			BaseData: require( 'elementor-controls/base-data' ),
+			BaseMultiple: require( 'elementor-controls/base-multiple' ),
+			Color: require( 'elementor-controls/color' ),
+			Dimensions: require( 'elementor-controls/dimensions' ),
+			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
+			Media: require( 'elementor-controls/media' ),
+			Slider: require( 'elementor-controls/slider' ),
+			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
+			Choose: require( 'elementor-controls/choose' ),
+			Url: require( 'elementor-controls/base-multiple' ),
+			Font: require( 'elementor-controls/font' ),
+			Section: require( 'elementor-controls/section' ),
+			Tab: require( 'elementor-controls/tab' ),
+			Repeater: require( 'elementor-controls/repeater' ),
+			Wp_widget: require( 'elementor-controls/wp_widget' ),
+			Icon: require( 'elementor-controls/icon' ),
+			Gallery: require( 'elementor-controls/gallery' ),
+			Select2: require( 'elementor-controls/select2' ),
+			Date_time: require( 'elementor-controls/date-time' ),
+			Code: require( 'elementor-controls/code' ),
+			Box_shadow: require( 'elementor-controls/box-shadow' ),
+			Text_shadow: require( 'elementor-controls/box-shadow' ),
+			Structure: require( 'elementor-controls/structure' ),
+			Animation: require( 'elementor-controls/select2' ),
+			Hover_animation: require( 'elementor-controls/select2' ),
+			Order: require( 'elementor-controls/order' ),
+			Switcher: require( 'elementor-controls/switcher' ),
+			Number: require( 'elementor-controls/number' ),
+			Popup_starter: require( 'elementor-controls/popup-starter' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
@@ -178,7 +180,7 @@ App = Marionette.Application.extend( {
 	},
 
 	initElements: function() {
-		var ElementModel = elementor.modules.element,
+		var ElementCollection = require( 'elementor-elements/collection' ),
 			config = this.config.data;
 
 		// If it's an reload, use the not-saved data
@@ -186,7 +188,7 @@ App = Marionette.Application.extend( {
 			config = this.elements.toJSON();
 		}
 
-		this.elements = new ElementModel.Collection( config );
+		this.elements = new ElementCollection( config );
 	},
 
 	initPreview: function() {
