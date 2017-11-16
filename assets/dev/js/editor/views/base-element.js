@@ -13,6 +13,8 @@ BaseElementView = BaseContainer.extend( {
 
 	allowRender: true,
 
+	renderAttributes: {},
+
 	className: function() {
 		return 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 	},
@@ -172,6 +174,59 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		validators[ controlName ].push( validator );
+	},
+
+	addRenderAttribute: function( element, key, value, overwrite ) {
+		var self = this;
+
+		if ( 'object' === typeof element ) {
+			jQuery.each( element, function( elementKey ) {
+				self.addRenderAttribute( elementKey, this, null, overwrite );
+			} );
+
+			return self;
+		}
+
+		if ( 'object' === typeof key ) {
+			jQuery.each( key, function( attributeKey ) {
+				self.addRenderAttribute( element, attributeKey, this, overwrite );
+			} );
+
+			return self;
+		}
+
+		if ( ! self.renderAttributes[ element ] ) {
+			self.renderAttributes[ element ] = {};
+		}
+
+		if ( ! self.renderAttributes[ element ][ key ] ) {
+			self.renderAttributes[ element ][ key ] = [];
+		}
+
+		if ( ! Array.isArray( value ) ) {
+			value = [ value ];
+		}
+
+		if ( overwrite ) {
+			self.renderAttributes[ element ][ key ] = value;
+		} else {
+			self.renderAttributes[ element ][ key ] = self.renderAttributes[ element ][ key ].concat( value );
+		}
+	},
+
+	getRenderAttributeString: function( element ) {
+		if ( ! this.renderAttributes[ element ] ) {
+			return '';
+		}
+
+		var renderAttributes = this.renderAttributes[ element ],
+			attributes = [];
+
+		jQuery.each( renderAttributes, function( attributeKey ) {
+			attributes.push( attributeKey + '="' + _.escape( this.join( ' ' ) ) + '"' );
+		} );
+
+		return attributes.join( ' ' );
 	},
 
 	isCollectionFilled: function() {
@@ -364,6 +419,10 @@ BaseElementView = BaseContainer.extend( {
 		} else {
 			editModel.renderRemoteServer();
 		}
+	},
+
+	onBeforeRender: function() {
+		this.renderAttributes = {};
 	},
 
 	onRender: function() {

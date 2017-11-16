@@ -96,6 +96,8 @@ abstract class Controls_Stack {
 	 */
 	private $_current_tab;
 
+	private $current_popup;
+
 	/**
 	 * Injection point.
 	 *
@@ -296,7 +298,7 @@ abstract class Controls_Stack {
 	/**
 	 * Add new control to stack.
 	 *
-	 * Register a single control to the allow the user to set/update data.
+	 * Register a single control to allow the user to set/update data.
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
@@ -358,6 +360,14 @@ abstract class Controls_Stack {
 		}
 
 		unset( $options['position'] );
+
+		if ( $this->current_popup && ! $this->current_popup['initialized'] ) {
+			$args['popup'] = [
+				'start' => true,
+			];
+
+			$this->current_popup['initialized'] = true;
+		}
 
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
 	}
@@ -762,7 +772,7 @@ abstract class Controls_Stack {
 			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
 
 			if ( ! empty( $options['overwrite'] ) ) {
-				$this->update_control( $id . $id_suffix, $control_args, [ 'recursive' => ! empty( $options['overwrite_recursive'] ) ] );
+				$this->update_control( $id . $id_suffix, $control_args, [ 'recursive' => ! empty( $options['recursive'] ) ] );
 			} else {
 				$this->add_control( $id . $id_suffix, $control_args, $options );
 			}
@@ -779,11 +789,12 @@ abstract class Controls_Stack {
 	 * @since 1.4.0
 	 * @access public
 	 *
-	 * @param string $id   Responsive control ID.
-	 * @param array  $args Responsive control arguments.
+	 * @param string $id      Responsive control ID.
+	 * @param array  $args    Responsive control arguments.
+	 * @param array  $options Optional. Additional options.
 	 */
-	final public function update_responsive_control( $id, array $args, $recursive = false ) {
-		$this->add_responsive_control( $id, $args, [ 'overwrite' => true, 'overwrite_recursive' => $recursive ] );
+	final public function update_responsive_control( $id, array $args, array $options = [] ) {
+		$this->add_responsive_control( $id, $args, [ 'overwrite' => true, 'recursive' => ! empty( $options['recursive'] ) ] );
 	}
 
 	/**
@@ -1208,6 +1219,28 @@ abstract class Controls_Stack {
 	 */
 	public function end_controls_tab() {
 		unset( $this->_current_tab['inner_tab'] );
+	}
+
+	final public function start_popup() {
+		$this->current_popup = [
+			'initialized' => false,
+		];
+	}
+
+	final public function end_popup() {
+		$this->current_popup = null;
+
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this, false )['controls'];
+
+		end( $registered_controls );
+
+		$last_control_key = key( $registered_controls );
+
+		$this->update_control( $last_control_key, [
+			'popup' => [
+				'end' => true,
+			],
+		] );
 	}
 
 	/**
