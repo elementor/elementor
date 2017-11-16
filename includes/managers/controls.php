@@ -21,6 +21,7 @@ class Controls_Manager {
 	const HIDDEN = 'hidden';
 	const HEADING = 'heading';
 	const RAW_HTML = 'raw_html';
+	const POPUP_STARTER = 'popup_starter';
 	const SECTION = 'section';
 	const TAB = 'tab';
 	const TABS = 'tabs';
@@ -134,6 +135,7 @@ class Controls_Manager {
 			self::HIDDEN,
 			self::HEADING,
 			self::RAW_HTML,
+			self::POPUP_STARTER,
 			self::SECTION,
 			self::TAB,
 			self::TABS,
@@ -482,7 +484,7 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @access public
 	*/
-	public function get_element_stack( Controls_Stack $controls_stack ) {
+	public function get_element_stack( Controls_Stack $controls_stack, $common_controls = true ) {
 		$stack_id = $controls_stack->get_unique_name();
 
 		if ( ! isset( $this->stacks[ $stack_id ] ) ) {
@@ -491,7 +493,7 @@ class Controls_Manager {
 
 		$stack = $this->stacks[ $stack_id ];
 
-		if ( 'widget' === $controls_stack->get_type() && 'common' !== $stack_id ) {
+		if ( $common_controls && 'common' !== $stack_id && 'widget' === $controls_stack->get_type() ) {
 			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
 
 			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );

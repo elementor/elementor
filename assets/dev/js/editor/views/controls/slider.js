@@ -10,8 +10,10 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'slide @ui.slider': 'onSlideChange'
+	events: function() {
+		return _.extend( ControlBaseUnitsItemView.prototype.events.apply( this, arguments ), {
+			'slide @ui.slider': 'onSlideChange'
+		} );
 	},
 
 	initSlider: function() {

@@ -1397,6 +1397,56 @@
 .elementor-widget-icon-list:not(.elementor-align-left) .elementor-icon-list-item:after {
   right: 0; }
 
+@media (max-width: 1024px) {
+  .elementor-widget-icon-list.elementor-tablet-align-center .elementor-icon-list-item, .elementor-widget-icon-list.elementor-tablet-align-center .elementor-icon-list-item a {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
+  .elementor-widget-icon-list.elementor-tablet-align-center .elementor-icon-list-item:after {
+    margin: auto; }
+  .elementor-widget-icon-list.elementor-tablet-align-left .elementor-icon-list-item, .elementor-widget-icon-list.elementor-tablet-align-left .elementor-icon-list-item a {
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    text-align: left; }
+  .elementor-widget-icon-list.elementor-tablet-align-right .elementor-icon-list-item, .elementor-widget-icon-list.elementor-tablet-align-right .elementor-icon-list-item a {
+    -webkit-box-pack: end;
+    -webkit-justify-content: flex-end;
+        -ms-flex-pack: end;
+            justify-content: flex-end;
+    text-align: right; }
+  .elementor-widget-icon-list:not(.elementor-tablet-align-right) .elementor-icon-list-item:after {
+    left: 0; }
+  .elementor-widget-icon-list:not(.elementor-tablet-align-left) .elementor-icon-list-item:after {
+    right: 0; } }
+
+@media (max-width: 767px) {
+  .elementor-widget-icon-list.elementor-mobile-align-center .elementor-icon-list-item, .elementor-widget-icon-list.elementor-mobile-align-center .elementor-icon-list-item a {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
+  .elementor-widget-icon-list.elementor-mobile-align-center .elementor-icon-list-item:after {
+    margin: auto; }
+  .elementor-widget-icon-list.elementor-mobile-align-left .elementor-icon-list-item, .elementor-widget-icon-list.elementor-mobile-align-left .elementor-icon-list-item a {
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    text-align: left; }
+  .elementor-widget-icon-list.elementor-mobile-align-right .elementor-icon-list-item, .elementor-widget-icon-list.elementor-mobile-align-right .elementor-icon-list-item a {
+    -webkit-box-pack: end;
+    -webkit-justify-content: flex-end;
+        -ms-flex-pack: end;
+            justify-content: flex-end;
+    text-align: right; }
+  .elementor-widget-icon-list:not(.elementor-mobile-align-right) .elementor-icon-list-item:after {
+    left: 0; }
+  .elementor-widget-icon-list:not(.elementor-mobile-align-left) .elementor-icon-list-item:after {
+    right: 0; } }
+
 .elementor-widget-icon-list .elementor-icon-list-items {
   list-style-type: none;
   margin: 0;

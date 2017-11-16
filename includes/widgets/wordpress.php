@@ -34,7 +34,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @since 1.0.0
 	 * @access private
 	 *
-	 * @return \Pojo_Widget_Base
+	 * @return bool
 	 */
 	private function _is_pojo_widget() {
 		return $this->get_widget_instance() instanceof \Pojo_Widget_Base;
