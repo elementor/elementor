@@ -96,7 +96,7 @@ abstract class Controls_Stack {
 	 */
 	private $_current_tab;
 
-	private $current_popup;
+	private $current_popover;
 
 	/**
 	 * Injection point.
@@ -361,12 +361,12 @@ abstract class Controls_Stack {
 
 		unset( $options['position'] );
 
-		if ( $this->current_popup && ! $this->current_popup['initialized'] ) {
-			$args['popup'] = [
+		if ( $this->current_popover && ! $this->current_popover['initialized'] ) {
+			$args['popover'] = [
 				'start' => true,
 			];
 
-			$this->current_popup['initialized'] = true;
+			$this->current_popover['initialized'] = true;
 		}
 
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
@@ -1221,14 +1221,14 @@ abstract class Controls_Stack {
 		unset( $this->_current_tab['inner_tab'] );
 	}
 
-	final public function start_popup() {
-		$this->current_popup = [
+	final public function start_popover() {
+		$this->current_popover = [
 			'initialized' => false,
 		];
 	}
 
-	final public function end_popup() {
-		$this->current_popup = null;
+	final public function end_popover() {
+		$this->current_popover = null;
 
 		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this, false )['controls'];
 
@@ -1237,7 +1237,7 @@ abstract class Controls_Stack {
 		$last_control_key = key( $registered_controls );
 
 		$this->update_control( $last_control_key, [
-			'popup' => [
+			'popover' => [
 				'end' => true,
 			],
 		] );
