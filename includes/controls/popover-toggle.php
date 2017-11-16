@@ -6,16 +6,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Switch a controls popup.
+ * Switch a controls popover.
  *
  * @param string $label   The label to show
  *
  * @since 1.8.0
  */
-class Control_Popup_Starter extends Base_Data_Control {
+class Control_Popover_Toggle extends Base_Data_Control {
 
 	public function get_type() {
-		return 'popup_starter';
+		return 'popover_toggle';
 	}
 
 	protected function get_default_settings() {
@@ -35,11 +35,11 @@ class Control_Popup_Starter extends Base_Data_Control {
 					<div class="elementor-choices">
 						<input id="<?php echo $control_uid; ?>-default" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="">
 						<label class="elementor-choices-label" for="<?php echo $control_uid; ?>-default"><?php echo __( 'Default', 'elementor' ); ?></label>
-						<input id="<?php echo $control_uid; ?>-custom" class="elementor-control-popup-starter-toggle" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ data.return_value }}">
-						<label class="elementor-choices-label elementor-control-popup-starter-toggle" for="<?php echo $control_uid; ?>-custom"><?php echo __( 'Custom', 'elementor' ); ?></label>
+						<input id="<?php echo $control_uid; ?>-custom" class="elementor-control-popover-toggle-toggle" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ data.return_value }}">
+						<label class="elementor-choices-label elementor-control-popover-toggle-toggle" for="<?php echo $control_uid; ?>-custom"><?php echo __( 'Custom', 'elementor' ); ?></label>
 					</div>
 				<# } else { #>
-					<label class="elementor-control-popup-starter-toggle elementor-control-popup-starter-simple-toggle">{{{ data.toggle_title }}}</label>
+					<label class="elementor-control-popover-toggle-toggle elementor-control-popover-toggle-simple-toggle">{{{ data.toggle_title }}}</label>
 				<# } #>
 			</div>
 		</div>
