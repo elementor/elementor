@@ -184,6 +184,12 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.8.5 - 19.11.2017 =
+* Fix! – Compatibility with the WordPress 4.9 native widgets ([#2763](https://github.com/pojome/elementor/issues/2763))
+* Fix! - Removed related videos from background video in some cases ([#2372](https://github.com/pojome/elementor/issues/2372))
+* Fix! - Element inside similar element conflict ([#2760](https://github.com/pojome/elementor/issues/2760))
+* Fix! - Responsive alignment in Icon List widget
+
 = 1.8.4 - 14.11.2017 =
 * Fix! - Accordion open/close icon ([#2740](https://github.com/pojome/elementor/issues/2740))
 * Fix! - Color control does not allow more than 7 characters ([#2737](https://github.com/pojome/elementor/issues/2737))
