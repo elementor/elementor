@@ -28,7 +28,7 @@ class Fonts {
 			'Trebuchet MS' => self::SYSTEM,
 			'Georgia' => self::SYSTEM,
 
-			// Google Fonts (last update: 19/11/2017).
+			// Google Fonts (last update: 29/10/2017).
 			'ABeeZee' => self::GOOGLE,
 			'Abel' => self::GOOGLE,
 			'Abhaya Libre' => self::GOOGLE,
@@ -126,9 +126,6 @@ class Fonts {
 			'Baloo Thambi' => self::GOOGLE,
 			'Balthazar' => self::GOOGLE,
 			'Bangers' => self::GOOGLE,
-			'Barlow' => self::GOOGLE,
-			'Barlow Condensed' => self::GOOGLE,
-			'Barlow Semi Condensed' => self::GOOGLE,
 			'Barrio' => self::GOOGLE,
 			'Basic' => self::GOOGLE,
 			'Battambang' => self::GOOGLE,
@@ -269,6 +266,9 @@ class Fonts {
 			'Dr Sugiyama' => self::GOOGLE,
 			'Droid Arabic Kufi' => self::EARLYACCESS, // Hack for Google Early Access.
 			'Droid Arabic Naskh' => self::EARLYACCESS, // Hack for Google Early Access.
+			'Droid Sans' => self::GOOGLE,
+			'Droid Sans Mono' => self::GOOGLE,
+			'Droid Serif' => self::GOOGLE,
 			'Duru Sans' => self::GOOGLE,
 			'Dynalight' => self::GOOGLE,
 			'EB Garamond' => self::GOOGLE,
@@ -794,7 +794,6 @@ class Fonts {
 			'Space Mono' => self::GOOGLE,
 			'Special Elite' => self::GOOGLE,
 			'Spectral' => self::GOOGLE,
-			'Spectral SC' => self::GOOGLE,
 			'Spicy Rice' => self::GOOGLE,
 			'Spinnaker' => self::GOOGLE,
 			'Spirax' => self::GOOGLE,
@@ -865,7 +864,6 @@ class Fonts {
 			'Voces' => self::GOOGLE,
 			'Volkhov' => self::GOOGLE,
 			'Vollkorn' => self::GOOGLE,
-			'Vollkorn SC' => self::GOOGLE,
 			'Voltaire' => self::GOOGLE,
 			'Waiting for the Sunrise' => self::GOOGLE,
 			'Wallpoet' => self::GOOGLE,
