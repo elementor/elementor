@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		the_content();
 	endwhile;
 
+	do_action( 'elementor/page_templates/canvas/after_content' );
 	wp_footer();
 	?>
 	</body>
