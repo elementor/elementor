@@ -201,6 +201,11 @@ class Elements_Manager {
 			$this->register_element_type( new $class_name() );
 		}
 
+		/**
+		 * Fires after Elementor elements are registered.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/elements/elements_registered' );
 	}
 

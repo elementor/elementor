@@ -112,6 +112,11 @@ class Frontend {
 	 * @access public
 	*/
 	public function register_scripts() {
+		/**
+		 * Fires before Elementor frontend scripts are registered.
+		 *
+		 * @since 1.2.1
+		 */
 		do_action( 'elementor/frontend/before_register_scripts' );
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
@@ -188,6 +193,11 @@ class Frontend {
 			true
 		);
 
+		/**
+		 * Fires after Elementor frontend scripts are registered.
+		 *
+		 * @since 1.2.1
+		 */
 		do_action( 'elementor/frontend/after_register_scripts' );
 	}
 
@@ -196,6 +206,11 @@ class Frontend {
 	 * @access public
 	*/
 	public function register_styles() {
+		/**
+		 * Fires before Elementor frontend styles are registered.
+		 *
+		 * @since 1.2.0
+		 */
 		do_action( 'elementor/frontend/before_register_styles' );
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
@@ -230,6 +245,11 @@ class Frontend {
 			ELEMENTOR_VERSION
 		);
 
+		/**
+		 * Fires after Elementor frontend styles are registered.
+		 *
+		 * @since 1.2.0
+		 */
 		do_action( 'elementor/frontend/after_register_styles' );
 	}
 
@@ -240,6 +260,11 @@ class Frontend {
 	public function enqueue_scripts() {
 		Utils::do_action_deprecated( 'elementor/frontend/enqueue_scripts/before', [], '1.0.10', 'elementor/frontend/before_enqueue_scripts' );
 
+		/**
+		 * Fires before Elementor frontend scripts are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
@@ -279,6 +304,11 @@ class Frontend {
 
 		wp_localize_script( 'elementor-frontend', 'elementorFrontendConfig', $elementor_frontend_config );
 
+		/**
+		 * Fires after Elementor frontend scripts are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/frontend/after_enqueue_scripts' );
 	}
 
@@ -287,6 +317,11 @@ class Frontend {
 	 * @access public
 	*/
 	public function enqueue_styles() {
+		/**
+		 * Fires before Elementor frontend styles are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/frontend/before_enqueue_styles' );
 
 		wp_enqueue_style( 'elementor-icons' );
@@ -301,6 +336,11 @@ class Frontend {
 			$css_file->enqueue();
 		}
 
+		/**
+		 * Fires after Elementor frontend styles are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/frontend/after_enqueue_styles' );
 	}
 
