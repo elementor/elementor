@@ -82,6 +82,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				type: 'link',
 				link: elementor.config.elementor_site,
 				newTab: true
+			},
+			{
+				name: 'exit-to-dashboard',
+				icon: 'fa fa-times',
+				title: elementor.translate( 'exit_to_dashboard' ),
+				type: 'link',
+				link: _.unescape( elementor.config.exit_to_dashboard_url )
 			}
 		] );
 	},
