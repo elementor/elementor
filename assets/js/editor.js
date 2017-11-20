@@ -611,25 +611,27 @@ module.exports = SortableBehavior;
 module.exports = Marionette.Behavior.extend( {
 	ui: function() {
 		return {
-			buttonSave: '#elementor-panel-saver-save',
+			buttonSave: '#elementor-panel-saver-button-save',
+			buttonSaveText: '#elementor-panel-saver-save-text',
 			buttonSaveIcon: '#elementor-panel-saver-save-icon',
-			buttonSaveDraft: '#elementor-panel-saver-save-draft',
-			buttonUpdate: '#elementor-panel-saver-update',
+			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonPreview: '#elementor-panel-saver-preview span',
-			buttonPublish: '#elementor-panel-saver-publish',
-			buttonPublishChanges: '#elementor-panel-saver-publish-changes',
-			formPreview: '#elementor-panel-saver-preview form'
+			formPreview: '#elementor-panel-saver-preview form',
+			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
+			menuUpdate: '#elementor-panel-saver-menu-update',
+			menuPublish: '#elementor-panel-saver-menu-publish',
+			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes'
 		};
 	},
 
 	events: function() {
 		return {
 			'click @ui.buttonSave': 'onClickButtonSave',
-			'click @ui.buttonSaveDraft': 'onClickButtonSaveDraft',
-			'click @ui.buttonUpdate': 'onClickButtonUpdate',
-			'click @ui.buttonPublish': 'onClickButtonPublish',
-			'click @ui.buttonPublishChanges': 'onClickButtonPublish',
-			'click @ui.buttonPreview': 'onClickButtonPreview'
+			'click @ui.buttonPreview': 'onClickButtonPreview',
+			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
+			'click @ui.menuUpdate': 'onClickMenuUpdate',
+			'click @ui.menuPublish': 'onClickMenuPublish',
+			'click @ui.menuPublishChanges': 'onClickMenuPublish'
 		};
 	},
 
@@ -643,14 +645,14 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onRender: function() {
-		this.showButtons( elementor.settings.page.model.get( 'post_status' ) );
+		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
 	},
 
 	onPostStatusChange: function( settings ) {
 		var changed = settings.changed;
 
 		if ( ! ( _.isUndefined( changed.post_status ) ) ) {
-			this.showButtons( changed.post_status );
+			this.setMenuItems( changed.post_status );
 		}
 	},
 
@@ -658,11 +660,13 @@ module.exports = Marionette.Behavior.extend( {
 		NProgress.start();
 		this.ui.buttonSave.addClass( 'elementor-button-state' );
 		this.ui.buttonSaveIcon.hide();
+		this.ui.buttonSaveText.hide();
 	},
 
 	onAfterSave: function() {
 		NProgress.done();
 		this.ui.buttonSave.removeClass( 'elementor-button-state' );
+		this.ui.buttonSaveText.hide();
 		this.ui.buttonSaveIcon.show();
 	},
 
@@ -687,33 +691,34 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onClickButtonSaveDraft: function() {
+	onClickMenuSaveDraft: function() {
 		elementor.saver.update();
 	},
 
-	onClickButtonUpdate: function() {
+	onClickMenuUpdate: function() {
 		elementor.saver.update();
 	},
 
-	onClickButtonPublish: function() {
+	onClickMenuPublish: function() {
 		elementor.saver.publish();
 	},
 
 	 removeSavedIcon: function() {
 		this.ui.buttonSaveIcon.hide();
+		this.ui.buttonSaveText.show();
 	},
 
-	showButtons: function( postStatus ) {
+	setMenuItems: function( postStatus ) {
 		if ( 'publish' === postStatus || 'private' === postStatus ) {
-			this.ui.buttonSaveDraft.hide();
-			this.ui.buttonPublish.hide();
-			this.ui.buttonUpdate.toggle( 'private' === postStatus );
-			this.ui.buttonPublishChanges.toggle( 'publish' === postStatus );
+			this.ui.menuSaveDraft.hide();
+			this.ui.menuPublish.hide();
+			this.ui.menuUpdate.toggle( 'private' === postStatus );
+			this.ui.menuPublishChanges.toggle( 'publish' === postStatus );
 		} else {
-			this.ui.buttonSaveDraft.show();
-			this.ui.buttonPublish.show();
-			this.ui.buttonUpdate.hide();
-			this.ui.buttonPublishChanges.hide();
+			this.ui.menuSaveDraft.show();
+			this.ui.menuPublish.show();
+			this.ui.menuUpdate.hide();
+			this.ui.menuPublishChanges.hide();
 		}
 	}
 } );
@@ -2575,12 +2580,12 @@ module.exports = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
-		buttonSave: '#elementor-panel-saver-publish, #elementor-panel-saver-save-draft, #elementor-panel-saver-publish-changes', // Compatibility for Pro <= 1.9.5
+		buttonSave: '#elementor-panel-saver-menu-publish, #elementor-panel-saver-menu-save-draft, #elementor-panel-saver-menu-publish-changes', // Compatibility for Pro <= 1.9.5
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
-		saveTemplate: '#elementor-panel-footer-save-template',
+		saveTemplate: '#elementor-panel-saver-menu-save-template',
 		history: '#elementor-panel-footer-history'
 	},
 

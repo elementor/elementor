@@ -364,17 +364,17 @@ body {
     cursor: pointer; }
   .elementor-button:not(.elementor-button-state) .elementor-state-icon {
     display: none; }
-  .elementor-button.elementor-button-success, .elementor-panel #elementor-panel-footer-save .elementor-button.elementor-save-active {
+  .elementor-button.elementor-button-success {
     color: #fff; }
-    .elementor-button.elementor-button-success[disabled], .elementor-panel #elementor-panel-footer-save .elementor-button[disabled].elementor-save-active {
+    .elementor-button.elementor-button-success[disabled] {
       background-color: #c2cbd2; }
-    .elementor-button.elementor-button-success:not([disabled]), .elementor-panel #elementor-panel-footer-save .elementor-button.elementor-save-active:not([disabled]) {
+    .elementor-button.elementor-button-success:not([disabled]) {
       background-color: #39b54a; }
-      .elementor-button.elementor-button-success:not([disabled]):hover, .elementor-panel #elementor-panel-footer-save .elementor-button.elementor-save-active:not([disabled]):hover {
+      .elementor-button.elementor-button-success:not([disabled]):hover {
         opacity: 0.85;
         -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
                 box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2); }
-      .elementor-button.elementor-button-success:not([disabled]):active, .elementor-panel #elementor-panel-footer-save .elementor-button.elementor-save-active:not([disabled]):active {
+      .elementor-button.elementor-button-success:not([disabled]):active {
         -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
                 box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1); }
   .elementor-button.elementor-button-go-pro {
@@ -2108,19 +2108,20 @@ select {
     text-align: left;
     padding: 10px 0;
     color: #d5dadf; }
-  .elementor-panel #elementor-panel-footer-save {
-    width: 90px;
+  .elementor-panel #elementor-panel-saver-save {
+    width: 45px;
     padding: 0 10px; }
-    .elementor-panel #elementor-panel-footer-save .elementor-button {
-      font-size: 11px;
-      text-transform: uppercase;
-      width: 100%;
-      height: 26px;
-      background-color: #556068;
-      color: #a4afb7; }
-  .elementor-panel #elementor-panel-saver-preview a {
+  .elementor-panel #elementor-panel-saver-button-preview a {
     color: #a4afb7; }
-  .elementor-panel #elementor-panel-saver-publish .elementor-icon, .elementor-panel #elementor-panel-saver-publish .elementor-title, .elementor-panel #elementor-panel-saver-publish-changes .elementor-icon, .elementor-panel #elementor-panel-saver-publish-changes .elementor-title {
+  .elementor-panel #elementor-panel-saver-button-save, .elementor-panel #elementor-panel-saver-button-publish {
+    font-size: 11px;
+    text-transform: uppercase;
+    height: 26px; }
+  .elementor-panel #elementor-panel-saver-button-save {
+    width: 45px; }
+  .elementor-panel #elementor-panel-saver-button-, .elementor-panel #elementor-panel-saver-button-publish {
+    width: 25px; }
+  .elementor-panel #elementor-panel-saver-menu-publish .elementor-icon, .elementor-panel #elementor-panel-saver-menu-publish .elementor-title, .elementor-panel #elementor-panel-saver-menu-publish-changes .elementor-icon, .elementor-panel #elementor-panel-saver-menu-publish-changes .elementor-title {
     color: #39b54a; }
   .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {
     color: #b01b1b; }
