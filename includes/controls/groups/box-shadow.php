@@ -77,14 +77,6 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 	protected function init_fields() {
 		$controls = [];
 
-		$controls['box_shadow_type'] = [
-			'label' => _x( 'Box Shadow', 'Box Shadow Control', 'elementor' ),
-			'type' => Controls_Manager::SWITCHER,
-			'return_value' => 'yes',
-			'separator' => 'before',
-			'render_type' => 'ui',
-		];
-
 		$controls['box_shadow'] = [
 			'label' => _x( 'Box Shadow', 'Box Shadow Control', 'elementor' ),
 			'type' => Controls_Manager::BOX_SHADOW,
@@ -111,5 +103,15 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 		];
 
 		return $controls;
+	}
+
+	protected function get_default_options() {
+		return [
+			'popover' => [
+				'starter_title' => _x( 'Box Shadow', 'Box Shadow Control', 'elementor' ),
+				'starter_name' => 'box_shadow_type',
+				'starter_value' => 'yes',
+			],
+		];
 	}
 }

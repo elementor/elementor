@@ -77,13 +77,6 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 	protected function init_fields() {
 		$controls = [];
 
-		$controls['text_shadow_type'] = [
-			'label' => _x( 'Text Shadow', 'Text Shadow Control', 'elementor' ),
-			'type' => Controls_Manager::SWITCHER,
-			'return_value' => 'yes',
-			'render_type' => 'ui',
-		];
-
 		$controls['text_shadow'] = [
 			'label' => _x( 'Text Shadow', 'Text Shadow Control', 'elementor' ),
 			'type' => Controls_Manager::TEXT_SHADOW,
@@ -96,5 +89,15 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 		];
 
 		return $controls;
+	}
+
+	protected function get_default_options() {
+		return [
+			'popover' => [
+				'starter_title' => _x( 'Text Shadow', 'Text Shadow Control', 'elementor' ),
+				'starter_name' => 'text_shadow_type',
+				'starter_value' => 'yes',
+			],
+		];
 	}
 }

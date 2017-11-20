@@ -12,8 +12,10 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	// Override the base events
-	baseEvents: {
-		'click @ui.btnApply': 'onApplyClicked'
+	events: function() {
+		return {
+			'click @ui.btnApply': 'onApplyClicked'
+		};
 	},
 
 	onApplyClicked: function( event ) {

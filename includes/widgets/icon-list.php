@@ -178,7 +178,7 @@ class Widget_Icon_List extends Widget_Base {
 						'icon' => 'eicon-h-align-right',
 					],
 				],
-				'prefix_class' => 'elementor-align-',
+				'prefix_class' => 'elementor%s-align-',
 				'classes' => 'elementor-control-start-end',
 			]
 		);
@@ -449,7 +449,13 @@ class Widget_Icon_List extends Widget_Base {
 		<ul class="elementor-icon-list-items">
 			<#
 			if ( settings.icon_list ) {
-				_.each( settings.icon_list, function( item, index ) { #>
+				_.each( settings.icon_list, function( item, index ) {
+					var iconTextKey = view.getRepeaterSettingKey( 'text', 'icon_list', index );
+
+					view.addRenderAttribute( iconTextKey, 'class', 'elementor-icon-list-text' );
+
+					view.addInlineEditingAttributes( iconTextKey );
+					#>
 					<li class="elementor-icon-list-item">
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
@@ -457,7 +463,7 @@ class Widget_Icon_List extends Widget_Base {
 						<span class="elementor-icon-list-icon">
 							<i class="{{ item.icon }}"></i>
 						</span>
-						<span class="elementor-icon-list-text elementor-inline-editing" data-elementor-setting-key="icon_list.{{{ index }}}.text">{{{ item.text }}}</span>
+						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
 						<# if ( item.link && item.link.url ) { #>
 							</a>
 						<# } #>
