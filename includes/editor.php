@@ -14,8 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Editor {
 
+	/**
+	 * The nonce key for Elementor editor.
+	 */
 	const EDITING_NONCE_KEY = 'elementor-editing';
 
+	/**
+	 * User capability required to access Elementor editor.
+	 */
 	const EDITING_CAPABILITY = 'edit_pages';
 
 	/**
@@ -31,26 +37,26 @@ class Editor {
 	private $_post_id;
 
 	/**
-	 * Whether edit mode is active.
+	 * Whether the edit mode is active.
 	 *
 	 * Used to determine whether we are in edit mode.
 	 *
 	 * @since 1.0.0
 	 * @access private
 	 *
-	 * @var bool Whether edit mode is active.
+	 * @var bool Whether the edit mode is active.
 	 */
 	private $_is_edit_mode;
 
 	/**
 	 * Editor templates.
 	 *
-	 * Holds the ID of the current post being edited.
+	 * Holds the editor templates used by Marionette.js.
 	 *
 	 * @since 1.0.0
 	 * @access private
 	 *
-	 * @var array Whether edit mode is active.
+	 * @var array Editor templates.
 	 */
 	private $_editor_templates = [];
 
@@ -173,7 +179,7 @@ class Editor {
 	}
 
 	/**
-	 * Whether edit mode is active.
+	 * Whether the edit mode is active.
 	 *
 	 * Used to determine whether we are in the edit mode.
 	 *
@@ -182,7 +188,7 @@ class Editor {
 	 *
 	 * @param int $post_id Optional. Post ID. Default is `null`, the current post ID.
 	 *
-	 * @return bool Whether edit mode is active.
+	 * @return bool Whether the edit mode is active.
 	 */
 	public function is_edit_mode( $post_id = null ) {
 		if ( null !== $this->_is_edit_mode ) {
@@ -268,6 +274,10 @@ class Editor {
 	}
 
 	/**
+	 * Enqueue scripts.
+	 *
+	 * Registers all the editor scripts and enqueues them.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
@@ -579,6 +589,10 @@ class Editor {
 	}
 
 	/**
+	 * Enqueue styles.
+	 *
+	 * Registers all the editor styles and enqueues them.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
@@ -644,6 +658,10 @@ class Editor {
 	}
 
 	/**
+	 * Get WordPress editor config.
+	 *
+	 * Config the default WordPress editor with custom settings for Elementor use.
+	 * 
 	 * @since 1.0.0
 	 * @access protected
 	 */
@@ -662,19 +680,34 @@ class Editor {
 	}
 
 	/**
+	 * Editor head trigger.
+	 *
+	 * Fires the 'elementor/editor/wp_head' action in the head tag in Elementor editor.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
 	public function editor_head_trigger() {
+		/**
+		 * Prints scripts or data in the head tag in Elementor editor.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/editor/wp_head' );
 	}
 
 	/**
+	 * Add editor template.
+	 *
+	 * Registers new editor templates.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string $template Can be either a link to template file or template HTML content.
-	 * @param string $type     Optional. Whether to handle the template as path or text. Default is `path`.
+	 * @param string $template Can be either a link to template file or template HTML
+	 *                         content.
+	 * @param string $type     Optional. Whether to handle the template as path or text.
+	 *                         Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
 		if ( 'path' === $type ) {
@@ -689,6 +722,11 @@ class Editor {
 	}
 
 	/**
+	 * WP footer.
+	 *
+	 * Prints Elementor editor with all the editor templates, and render controls,
+	 * widgets and content elements. Fired by `wp_footer` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
@@ -707,20 +745,33 @@ class Editor {
 			echo $editor_template;
 		}
 
+		/**
+		 * Prints scripts or data before the closing body tag in Elementor editor.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/editor/footer' );
 	}
 
 	/**
+	 * Set edit mode.
+	 *
+	 * Used to update the edit mode.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param bool $edit_mode
+	 * @param bool $edit_mode Whether the edit mode is active.
 	 */
 	public function set_edit_mode( $edit_mode ) {
 		$this->_is_edit_mode = $edit_mode;
 	}
 
 	/**
+	 * Editor constructor.
+	 *
+	 * Initializing Elementor editor and redirect from old URL structure of Elementor editor.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
@@ -730,10 +781,15 @@ class Editor {
 	}
 
 	/**
+	 * Create nonce.
+	 *
+	 * If the user has edit capabilities, it creates a cryptographic token to give him
+	 * access to Elementor editor.
+	 *
 	 * @since 1.8.1
 	 * @access public
 	 *
-	 * @return null|string
+	 * @return null|string The nonce token, or `null` if the user has no edit capabilities.
 	 */
 	public function create_nonce() {
 		if ( ! current_user_can( self::EDITING_CAPABILITY ) ) {
@@ -744,28 +800,43 @@ class Editor {
 	}
 
 	/**
+	 * Verify nonce.
+	 *
+	 * The user is given an amount of time to use the token, so therefore, since the user ID
+	 * and `$action` remain the same, the independent variable is the time.
+	 *
 	 * @since 1.8.1
 	 * @access public
 	 *
-	 * @param string $nonce
+	 * @param string $nonce Nonce that was used in the form to verify.
 	 *
-	 * @return false|int
+	 * @return false|int If the nonce is invalid it returns `false`. If the nonce is valid
+	 *                   and generated between 0-12 hours ago it returns `1`. If the nonce is
+	 *                   valid and generated between 12-24 hours ago it returns `2`.
 	 */
 	public function verify_nonce( $nonce ) {
 		return wp_verify_nonce( $nonce, self::EDITING_NONCE_KEY );
 	}
 
 	/**
+	 * Verify request nonce.
+	 *
+	 * Whether the request nonce verified or not.
+	 * 
 	 * @since 1.8.1
 	 * @access public
 	 *
-	 * @return bool
+	 * @return bool True if request nonce verified, False otherwise. 
 	 */
 	public function verify_request_nonce() {
 		return ! empty( $_REQUEST['_nonce'] ) && $this->verify_nonce( $_REQUEST['_nonce'] );
 	}
 
 	/**
+	 * Init editor templates.
+	 *
+	 * Initialize default elementor templates used in the editor pannel.
+	 *
 	 * @since 1.7.0
 	 * @access private
 	 */
