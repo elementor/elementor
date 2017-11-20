@@ -466,7 +466,18 @@ abstract class CSS_File {
 	private function parse_css() {
 		$this->render_css();
 
-		do_action( 'elementor/' . $this->get_name() . '-css-file/parse', $this );
+		$name = $this->get_name();
+
+		/**
+		 * Fires when CSS file is parsed on Elementor.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name from `$this->get_name()`.
+		 *
+		 * @since 1.2.0
+		 *
+		 * @param Elementor\CSS_File $this The current CSS file.
+		 */
+		do_action( "elementor/{$name}-css-file/parse", $this );
 
 		$this->css = $this->stylesheet_obj->__toString();
 	}

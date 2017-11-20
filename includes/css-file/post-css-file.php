@@ -159,6 +159,14 @@ class Post_CSS_File extends CSS_File {
 	 * @param Element_Base $element
 	 */
 	private function render_styles( Element_Base $element ) {
+		/**
+		 * Fires before the CSS of the element is parsed.
+		 *
+		 * @since 1.2.0
+		 *
+		 * @param Elementor\Post_CSS_File $this    The post CSS file.
+		 * @param Elementor\Element_Base  $element The element.
+		 */
 		do_action( 'elementor/element/before_parse_css', $this, $element );
 
 		$element_settings = $element->get_settings();
@@ -170,6 +178,14 @@ class Post_CSS_File extends CSS_File {
 		 */
 		Utils::do_action_deprecated( 'elementor/element_css/parse_css',[ $this, $element ], '1.0.10', 'elementor/element/parse_css' );
 
+		/**
+		 * Fires after the CSS of the element is parsed.
+		 *
+		 * @since 1.2.0
+		 *
+		 * @param Elementor\Post_CSS_File $this    The post CSS file.
+		 * @param Elementor\Element_Base  $element The element.
+		 */
 		do_action( 'elementor/element/parse_css', $this, $element );
 	}
 }

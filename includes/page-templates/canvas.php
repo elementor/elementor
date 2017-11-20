@@ -16,6 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</head>
 	<body <?php body_class(); ?>>
 	<?php
+	/**
+	 * Fires before the content of Elementor canvas page template.
+	 *
+	 * @since 1.0.0
+	 */
 	do_action( 'elementor/page_templates/canvas/before_content' );
 
 	while ( have_posts() ) :

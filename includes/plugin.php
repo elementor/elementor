@@ -182,6 +182,19 @@ class Plugin {
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
+
+			/**
+			 * Fires when Elementor was fully loaded and instantiated.
+			 *
+			 * For example, can be used to check if Elementor installed and activated:
+			 *
+			 *     if ( ! did_action( 'elementor/loaded' ) ) {
+			 *         add_action( 'admin_notices', [ $this, 'admin_notice_missing_main_plugin' ] );
+			 *         return;
+			 *     }
+			 *
+			 * @since 1.0.0
+			 */
 			do_action( 'elementor/loaded' );
 		}
 
@@ -198,6 +211,11 @@ class Plugin {
 
 		$this->init_components();
 
+		/**
+		 * Fires on Elementor init, after Elementor has finished loading but before any headers are sent.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/init' );
 	}
 

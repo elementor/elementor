@@ -449,6 +449,11 @@ class Editor {
 			true
 		);
 
+		/**
+		 * Fires before Elementor editor scripts are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
 		// Remove all TinyMCE plugins.
@@ -585,6 +590,11 @@ class Editor {
 
 		$plugin->controls_manager->enqueue_control_scripts();
 
+		/**
+		 * Fires after Elementor editor scripts are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/editor/after_enqueue_scripts' );
 	}
 
@@ -597,6 +607,11 @@ class Editor {
 	 * @access public
 	 */
 	public function enqueue_styles() {
+		/**
+		 * Fires before Elementor editor styles are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/editor/before_enqueue_styles' );
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
@@ -654,6 +669,11 @@ class Editor {
 
 		wp_enqueue_style( 'elementor-editor' );
 
+		/**
+		 * Fires after Elementor editor styles are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/editor/after_enqueue_styles' );
 	}
 
@@ -689,7 +709,9 @@ class Editor {
 	 */
 	public function editor_head_trigger() {
 		/**
-		 * Prints scripts or data in the head tag in Elementor editor.
+		 * Fires on Elementor editor head tag.
+		 *
+		 * Used to prints scripts or any other data in the head tag.
 		 *
 		 * @since 1.0.0
 		 */
@@ -746,7 +768,9 @@ class Editor {
 		}
 
 		/**
-		 * Prints scripts or data before the closing body tag in Elementor editor.
+		 * Fires on Elementor editor before closing the body tag.
+		 *
+		 * Used to prints scripts or any other HTML before closing the body tag.
 		 *
 		 * @since 1.0.0
 		 */

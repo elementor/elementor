@@ -262,7 +262,18 @@ abstract class Settings_Page {
 		if ( null === $this->tabs ) {
 			$this->tabs = $this->create_tabs();
 
-			do_action( 'elementor/admin/after_create_settings/' . static::PAGE_ID, $this );
+			$page_id = static::PAGE_ID;
+
+			/**
+			 * Fires after the settings are created in Elementor admin page.
+			 *
+			 * The dynamic portion of the hook name, `$page_id`, refers to the ID of the settings page from `static::PAGE_ID`.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param Elementor\Settings_Page $this The settings page.
+			 */
+			do_action( "elementor/admin/after_create_settings/{$page_id}", $this );
 		}
 	}
 }
