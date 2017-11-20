@@ -612,8 +612,7 @@ module.exports = Marionette.Behavior.extend( {
 	ui: function() {
 		return {
 			buttonSave: '#elementor-panel-saver-button-save',
-			buttonSaveText: '#elementor-panel-saver-save-text',
-			buttonSaveIcon: '#elementor-panel-saver-save-icon',
+			buttonSaveLabel: '#elementor-panel-saver-save-label',
 			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonPreview: '#elementor-panel-saver-preview span',
 			formPreview: '#elementor-panel-saver-preview form',
@@ -639,9 +638,9 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver.on( 'before:save', _.bind( this.onBeforeSave, this ) );
 		elementor.saver.on( 'after:save', _.bind( this.onAfterSave, this ) );
 
-		elementor.channels.editor.on( 'status:change', _.bind( this. removeSavedIcon, this ) );
+		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
 
-		elementor.settings.page.model.on( 'change', _.bind( this.onPostStatusChange, this ) );
+		elementor.settings.page.model.on( 'change', this.onPostStatusChange.bind( this ) );
 	},
 
 	onRender: function() {
@@ -659,15 +658,11 @@ module.exports = Marionette.Behavior.extend( {
 	onBeforeSave: function() {
 		NProgress.start();
 		this.ui.buttonSave.addClass( 'elementor-button-state' );
-		this.ui.buttonSaveIcon.hide();
-		this.ui.buttonSaveText.hide();
 	},
 
 	onAfterSave: function() {
 		NProgress.done();
 		this.ui.buttonSave.removeClass( 'elementor-button-state' );
-		this.ui.buttonSaveText.hide();
-		this.ui.buttonSaveIcon.show();
 	},
 
 	onClickButtonSave: function() {
@@ -703,9 +698,14 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver.publish();
 	},
 
-	 removeSavedIcon: function() {
-		this.ui.buttonSaveIcon.hide();
-		this.ui.buttonSaveText.show();
+	activateSaveButton: function( hasChanges ) {
+		if ( hasChanges ) {
+			this.ui.buttonSave.addClass( 'elementor-save-active' );
+			this.ui.buttonSaveLabel.html( elementor.translate( 'save' ) );
+		} else {
+			this.ui.buttonSave.removeClass( 'elementor-save-active' );
+			this.ui.buttonSaveLabel.html( elementor.translate( 'saved' ) );
+		}
 	},
 
 	setMenuItems: function( postStatus ) {

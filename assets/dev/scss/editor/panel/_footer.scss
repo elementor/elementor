@@ -117,8 +117,11 @@
 }
 
 #elementor-panel-saver-save {
-	width: 45px;
-	padding: 0 10px;
+	width: 60px;
+
+	.elementor-save-active {
+		@extend .elementor-button-success;
+	}
 }
 
 #elementor-panel-saver-button- {
@@ -135,7 +138,9 @@
 	}
 
 	&save {
-		width: 45px;
+		width: 60px;
+		background-color: $editor-darker;
+		color: $editor-light;
 	},
 
 	&publish {
