@@ -71,17 +71,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</span>
 	</div>
 	<div id="elementor-panel-saver-save" class="elementor-panel-footer-tool">
-		<button id="elementor-panel-saver-button-save" class="elementor-button elementor-button-success">
-				<span class="elementor-state-icon">
-					<i class="fa fa-spin fa-circle-o-notch"></i>
-				</span>
-			<span id="elementor-panel-saver-save-icon" style="display: none">
-					<i class="fa fa-check"></i>
-				</span>
+		<button id="elementor-panel-saver-button-save" class="elementor-button">
+			<span class="elementor-state-icon">
+				<i class="fa fa-spin fa-circle-o-notch"></i>
+			</span>
 
-			<span id="elementor-panel-saver-save-text">
-					<?php esc_html_e( 'Save', 'elementor' ); ?>
-				</span>
+			<span id="elementor-panel-saver-save-label">
+				<?php esc_html_e( 'Save', 'elementor' ); ?>
+			</span>
 		</button>
 	</div>
 	<div id="elementor-panel-saver-publish" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>">

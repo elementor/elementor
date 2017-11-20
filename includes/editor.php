@@ -501,6 +501,7 @@ class Editor {
 				'delete_element' => __( 'Delete {0}', 'elementor' ),
 				'take_over' => __( 'Take Over', 'elementor' ),
 				'go_back' => __( 'Go Back', 'elementor' ),
+				'save' => __( 'Save', 'elementor' ),
 				'saved' => __( 'Saved', 'elementor' ),
 				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
 				'edit_element' => __( 'Edit {0}', 'elementor' ),
