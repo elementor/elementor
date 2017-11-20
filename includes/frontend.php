@@ -258,8 +258,6 @@ class Frontend {
 	 * @access public
 	*/
 	public function enqueue_scripts() {
-		Utils::do_action_deprecated( 'elementor/frontend/enqueue_scripts/before', [], '1.0.10', 'elementor/frontend/before_enqueue_scripts' );
-
 		/**
 		 * Fires before Elementor frontend scripts are enqueued.
 		 *
