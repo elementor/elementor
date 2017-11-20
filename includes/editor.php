@@ -492,6 +492,7 @@ class Editor {
 			'page_title_selector' => $page_title_selector,
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
+			'exit_to_dashboard_url' => get_edit_post_link(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),
@@ -552,6 +553,7 @@ class Editor {
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 				'type_here' => __( 'Type Here', 'elementor' ),
 				'proceed_anyway' => __( 'Proceed Anyway', 'elementor' ),
+				'exit_to_dashboard' => __( 'Exit to Dashboard', '' ),
 			],
 		];
 
