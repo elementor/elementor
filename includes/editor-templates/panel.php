@@ -108,7 +108,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span class="elementor-title"><?php esc_html_e( 'Save to Library', 'elementor' ); ?></span>
 				</div>
 				<a id="elementor-panel-footer-saver-exit" class="elementor-panel-footer-sub-menu-item" href="<?php echo esc_attr( get_edit_post_link() ); ?>">
-					<i class="elementor-icon fa fa-wordpress"></i>
+					<i class="elementor-icon fa fa-times"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Exit to Dashboard', 'elementor' ); ?></span>
 				</a>
 			</div>
