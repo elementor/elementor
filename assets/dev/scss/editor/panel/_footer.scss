@@ -26,6 +26,25 @@
 	color: $editor-light;
 	transition: $transition-hover;
 
+	#elementor-panel-saver-button-save {
+		@include border-end(1px solid #2d8739);
+		border-radius: 3px 0 0 3px;
+
+		i {
+			@include margin-end(5px);
+		}
+	}
+
+	#elementor-panel-saver-button-publish {
+		float: $start;
+
+		border-radius: 0 3px 3px 0;
+
+		i {
+			margin: auto;
+		}
+	}
+
 	&.elementor-open {
 		color: #fff;
 	}
@@ -117,7 +136,7 @@
 }
 
 #elementor-panel-saver-save {
-	width: 60px;
+	width: 65px;
 
 	.elementor-save-active {
 		@extend .elementor-button-success;
@@ -138,13 +157,13 @@
 	}
 
 	&save {
-		width: 60px;
+		width: 100%;
 		background-color: $editor-darker;
 		color: $editor-light;
 	},
 
 	&publish {
-		width: 25px;
+		width: 30px;
 	}
 }
 

@@ -2056,6 +2056,16 @@ select {
     -webkit-transition: all 0.5s;
     -o-transition: all 0.5s;
     transition: all 0.5s; }
+    .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-save {
+      border-left: 1px solid #2d8739;
+      border-radius: 3px 0 0 3px; }
+      .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-save i {
+        margin-left: 5px; }
+    .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-publish {
+      float: right;
+      border-radius: 0 3px 3px 0; }
+      .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-publish i {
+        margin: auto; }
     .elementor-panel .elementor-panel-footer-tool.elementor-open {
       color: #fff; }
     .elementor-panel .elementor-panel-footer-tool:not(.elementor-open):hover {
@@ -2113,7 +2123,7 @@ select {
     padding: 10px 0;
     color: #d5dadf; }
   .elementor-panel #elementor-panel-saver-save {
-    width: 60px; }
+    width: 65px; }
   .elementor-panel #elementor-panel-saver-button-preview a {
     color: #a4afb7; }
   .elementor-panel #elementor-panel-saver-button-save, .elementor-panel #elementor-panel-saver-button-publish {
@@ -2121,11 +2131,11 @@ select {
     text-transform: uppercase;
     height: 26px; }
   .elementor-panel #elementor-panel-saver-button-save {
-    width: 60px;
+    width: 100%;
     background-color: #556068;
     color: #a4afb7; }
   .elementor-panel #elementor-panel-saver-button-, .elementor-panel #elementor-panel-saver-button-publish {
-    width: 25px; }
+    width: 30px; }
   .elementor-panel #elementor-panel-saver-menu-publish .elementor-icon, .elementor-panel #elementor-panel-saver-menu-publish .elementor-title, .elementor-panel #elementor-panel-saver-menu-publish-changes .elementor-icon, .elementor-panel #elementor-panel-saver-menu-publish-changes .elementor-title {
     color: #39b54a; }
   .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {
