@@ -94,7 +94,7 @@ module.exports = Module.extend( {
 		self.isSaving = true;
 		self.isChangedDuringSave = false;
 
-		return elementor.ajax.send( 'save_builder', {
+		self.xhr = elementor.ajax.send( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
@@ -103,6 +103,7 @@ module.exports = Module.extend( {
 
 			success: function( data ) {
 				self.isSaving = false;
+				self.xhr = null;
 
 				if ( ! self.isChangedDuringSave ) {
 					self.setFlagEditorChange( false );
@@ -124,5 +125,7 @@ module.exports = Module.extend( {
 				}
 			}
 		} );
+
+		return self.xhr;
 	}
 } );
