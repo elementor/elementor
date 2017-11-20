@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?2.5.0");
-  src: url("../fonts/eicons.eot?2.5.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.5.0") format("woff2"), url("../fonts/eicons.woff?2.5.0") format("woff"), url("../fonts/eicons.ttf?2.5.0") format("truetype"), url("../fonts/eicons.svg?2.5.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?2.6.0");
+  src: url("../fonts/eicons.eot?2.6.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.6.0") format("woff2"), url("../fonts/eicons.woff?2.6.0") format("woff"), url("../fonts/eicons.ttf?2.6.0") format("truetype"), url("../fonts/eicons.svg?2.6.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -17,6 +17,15 @@
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
+
+@keyframes eicon-spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(359deg); } }
+
+.eicon-animation-spin {
+  animation: eicon-spin 2s infinite linear; }
 
 .eicon-elementor:before {
   content: '\e800'; }
@@ -461,6 +470,33 @@
 
 .eicon-twitter-feed:before {
   content: '\e947'; }
+
+.eicon-sync:before {
+  content: '\e948'; }
+
+.eicon-import-export:before {
+  content: '\e949'; }
+
+.eicon-check-circle:before {
+  content: '\e950'; }
+
+.eicon-library-save:before {
+  content: '\e951'; }
+
+.eicon-library-import:before {
+  content: '\e952'; }
+
+.eicon-insert:before {
+  content: '\e953'; }
+
+.eicon-preview:before {
+  content: '\e954'; }
+
+.eicon-sort-down:before {
+  content: '\e955'; }
+
+.eicon-sort-up:before {
+  content: '\e956'; }
 
 .eicon-editor-link:before {
   content: '\e500'; }

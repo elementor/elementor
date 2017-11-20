@@ -24,6 +24,14 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
+	findElement: function( selector ) {
+		var $mainElement = this.$element;
+
+		return $mainElement.find( selector ).filter( function() {
+			return jQuery( this ).closest( '.elementor-element' ).is( $mainElement );
+		} );
+	},
+
 	getUniqueHandlerID: function( cid, $element ) {
 		if ( ! cid ) {
 			cid = this.getModelCID();

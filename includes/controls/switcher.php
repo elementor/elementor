@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *    		'type' => Controls_Manager::SWITCHER,
  *    		'default' => 'yes',
  *    		'return_value' => 'yes',
- *    		'label_on' => __( 'Show', 'plugin-domain' ),
  *    		'label_off' => __( 'Hide', 'plugin-domain' ),
+ *    		'label_on' => __( 'Show', 'plugin-domain' ),
  *    	]
  *    );
  *
