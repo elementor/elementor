@@ -42,6 +42,7 @@ App = Marionette.Application.extend( {
 		},
 		controls: {
 			Base: require( 'elementor-views/controls/base' ),
+			BaseData: require( 'elementor-views/controls/base-data' ),
 			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
 			Color: require( 'elementor-views/controls/color' ),
 			Dimensions: require( 'elementor-views/controls/dimensions' ),
@@ -68,7 +69,8 @@ App = Marionette.Application.extend( {
 			Hover_animation: require( 'elementor-views/controls/select2' ),
 			Order: require( 'elementor-views/controls/order' ),
 			Switcher: require( 'elementor-views/controls/switcher' ),
-			Number: require( 'elementor-views/controls/number' )
+			Number: require( 'elementor-views/controls/number' ),
+			Popover_toggle: require( 'elementor-views/controls/popover-toggle' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
@@ -79,6 +81,10 @@ App = Marionette.Application.extend( {
 
 	addControlView: function( controlID, ControlView ) {
 		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
+	},
+
+	checkEnvCompatibility: function() {
+		return this.envData.gecko || this.envData.webkit;
 	},
 
 	getElementData: function( modelElement ) {
@@ -109,8 +115,7 @@ App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elType = modelElement.get( 'elType' ),
-			isInner = modelElement.get( 'isInner' ),
+		var isInner = modelElement.get( 'isInner' ),
 			controls = {};
 
 		_.each( elementData.controls, function( controlData, controlKey ) {
@@ -125,11 +130,25 @@ App = Marionette.Application.extend( {
 	},
 
 	getControlView: function( controlID ) {
-		return this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] || this.modules.controls.Base;
+		var capitalizedControlName = controlID[0].toUpperCase() + controlID.slice( 1 ),
+			View = this.modules.controls[ capitalizedControlName ];
+
+		if ( ! View ) {
+			var controlData = this.config.controls[ controlID ],
+				isUIControl = -1 !== controlData.features.indexOf( 'ui' );
+
+			View = this.modules.controls[ isUIControl ? 'Base' : 'BaseData' ];
+		}
+
+		return View;
 	},
 
 	getPanelView: function() {
 		return this.getRegion( 'panel' ).currentView;
+	},
+
+	initEnvData: function() {
+		this.envData = _.pick( tinymce.EditorManager.Env, [ 'desktop', 'webkit', 'gecko', 'ie', 'opera' ] );
 	},
 
 	initComponents: function() {
@@ -418,6 +437,12 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
+		this.initEnvData();
+
+		if ( ! this.checkEnvCompatibility() ) {
+			this.onEnvNotCompatible();
+		}
+
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
@@ -516,6 +541,22 @@ App = Marionette.Application.extend( {
 		} else {
 			this.enterPreviewMode( 'preview' === activeMode );
 		}
+	},
+
+	onEnvNotCompatible: function() {
+		this.showFatalErrorDialog( {
+			headerMessage: this.translate( 'device_incompatible_header' ),
+			message: this.translate( 'device_incompatible_message' ),
+			strings: {
+				confirm: elementor.translate( 'proceed_anyway' )
+			},
+			hide: {
+				onButtonClick: true
+			},
+			onConfirm: function() {
+				this.hide();
+			}
+		} );
 	},
 
 	onPreviewLoadingError: function() {
@@ -738,7 +779,7 @@ App = Marionette.Application.extend( {
 		var text = '',
 			style = '';
 
-		if ( -1 !== navigator.userAgent.search( 'Firefox' ) ) {
+		if ( this.envData.gecko ) {
 			var asciiText = [
 				' ;;;;;;;;;;;;;;; ',
 				';;;  ;;       ;;;',

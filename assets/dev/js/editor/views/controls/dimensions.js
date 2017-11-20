@@ -11,8 +11,10 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		return ui;
 	},
 
-	childEvents: {
-		'click @ui.link': 'onLinkDimensionsClicked'
+	events: function() {
+		return _.extend( ControlBaseUnitsItemView.prototype.events.apply( this, arguments ), {
+			'click @ui.link': 'onLinkDimensionsClicked'
+		} );
 	},
 
 	defaultDimensionValue: 0,

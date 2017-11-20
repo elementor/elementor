@@ -429,6 +429,11 @@ class Widget_Button extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
+		<#
+		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
+
+		view.addInlineEditingAttributes( 'text', 'none' );
+		#>
 		<div class="elementor-button-wrapper">
 			<a class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">
 				<span class="elementor-button-content-wrapper">
@@ -437,7 +442,7 @@ class Widget_Button extends Widget_Base {
 						<i class="{{ settings.icon }}"></i>
 					</span>
 					<# } #>
-					<span class="elementor-button-text elementor-inline-editing" data-elementor-setting-key="text" data-elementor-inline-editing-toolbar="none">{{{ settings.text }}}</span>
+					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
 				</span>
 			</a>
 		</div>

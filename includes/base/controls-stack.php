@@ -96,6 +96,8 @@ abstract class Controls_Stack {
 	 */
 	private $_current_tab;
 
+	private $current_popover;
+
 	/**
 	 * Injection point.
 	 *
@@ -358,6 +360,14 @@ abstract class Controls_Stack {
 		}
 
 		unset( $options['position'] );
+
+		if ( $this->current_popover && ! $this->current_popover['initialized'] ) {
+			$args['popover'] = [
+				'start' => true,
+			];
+
+			$this->current_popover['initialized'] = true;
+		}
 
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
 	}
@@ -675,7 +685,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve tabs controls.
 	 *
-	 * Get all the tabs assigened to the control.
+	 * Get all the tabs assigned to the control.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1051,7 +1061,7 @@ abstract class Controls_Stack {
 	 * Start controls section.
 	 *
 	 * Used to add a new section of controls. When you use this method, all the
-	 * registered controls from this point will be assigened to this section,
+	 * registered controls from this point will be assigned to this section,
 	 * until you close the section using `end_controls_section()` method.
 	 *
 	 * This method should be used inside `_register_controls()`.
@@ -1117,7 +1127,7 @@ abstract class Controls_Stack {
 	 *
 	 * Used to add a new set of tabs inside a section. You should use this
 	 * method before adding new indevidual tabs using `start_controls_tab()`.
-	 * Each tab added after this point will be assigened to this group of tabs,
+	 * Each tab added after this point will be assigned to this group of tabs,
 	 * until you close it using `end_controls_tabs()` method.
 	 *
 	 * This method should be used inside `_register_controls()`.
@@ -1168,7 +1178,7 @@ abstract class Controls_Stack {
 	 *
 	 * Used to add a new tab inside a group of tabs. Use this method before
 	 * adding new indevidual tabs using `start_controls_tab()`.
-	 * Each tab added after this point will be assigened to this group of tabs,
+	 * Each tab added after this point will be assigned to this group of tabs,
 	 * until you close it using `end_controls_tab()` method.
 	 *
 	 * This method should be used inside `_register_controls()`.
@@ -1209,6 +1219,51 @@ abstract class Controls_Stack {
 	 */
 	public function end_controls_tab() {
 		unset( $this->_current_tab['inner_tab'] );
+	}
+
+	/**
+	 * Start popover.
+	 *
+	 * Used to add a new set of controls in a popover. When you use this method,
+	 * all the registered controls from this point will be assigned to this
+	 * popover, until you close the popover using `end_popover()` method.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 */
+	final public function start_popover() {
+		$this->current_popover = [
+			'initialized' => false,
+		];
+	}
+
+	/**
+	 * End popover.
+	 *
+	 * Used to close an existing open popover. When you use this method it stops
+	 * adding new controls to this popover.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 */
+	final public function end_popover() {
+		$this->current_popover = null;
+
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this, false )['controls'];
+
+		end( $registered_controls );
+
+		$last_control_key = key( $registered_controls );
+
+		$this->update_control( $last_control_key, [
+			'popover' => [
+				'end' => true,
+			],
+		] );
 	}
 
 	/**
