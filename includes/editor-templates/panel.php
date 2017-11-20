@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool" title="<?php esc_html_e( 'Settings', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open" title="<?php esc_html_e( 'Settings', 'elementor' ); ?>">
 		<i class="fa fa-cog"></i>
 	</div>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>">
@@ -65,7 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-saver-button-preview" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
 		<form style="display: none" method="post" action="<?php echo esc_attr( get_preview_post_link() ); ?>" target="wp-preview-<?php echo get_the_ID() ?>">
 		</form>
-		<span>
+		<span id="elementor-panel-saver-button-preview-label">
 			<span class="elementor-screen-only"><?php esc_html_e( 'Preview', 'elementor' ); ?></span>
 			<i class="fa fa-eye"></i>
 		</span>

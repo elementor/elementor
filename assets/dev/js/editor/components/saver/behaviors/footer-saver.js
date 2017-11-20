@@ -4,8 +4,8 @@ module.exports = Marionette.Behavior.extend( {
 			buttonSave: '#elementor-panel-saver-button-save',
 			buttonSaveLabel: '#elementor-panel-saver-save-label',
 			buttonPublish: '#elementor-panel-saver-button-publish',
-			buttonPreview: '#elementor-panel-saver-preview span',
-			formPreview: '#elementor-panel-saver-preview form',
+			buttonPreview: '#elementor-panel-saver-button-preview-label',
+			formPreview: '#elementor-panel-saver-button-preview form',
 			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
 			menuUpdate: '#elementor-panel-saver-menu-update',
 			menuPublish: '#elementor-panel-saver-menu-publish',
@@ -68,6 +68,11 @@ module.exports = Marionette.Behavior.extend( {
 			};
 
 		if ( elementor.saver.isEditorChanged() ) {
+			if ( elementor.saver.xhr ) {
+				elementor.saver.xhr.abort();
+				elementor.saver.isSaving = false;
+			}
+
 			elementor.saver.saveAutoSave( {
 				onSuccess: submit
 			} );

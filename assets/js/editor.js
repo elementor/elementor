@@ -614,8 +614,8 @@ module.exports = Marionette.Behavior.extend( {
 			buttonSave: '#elementor-panel-saver-button-save',
 			buttonSaveLabel: '#elementor-panel-saver-save-label',
 			buttonPublish: '#elementor-panel-saver-button-publish',
-			buttonPreview: '#elementor-panel-saver-preview span',
-			formPreview: '#elementor-panel-saver-preview form',
+			buttonPreview: '#elementor-panel-saver-button-preview-label',
+			formPreview: '#elementor-panel-saver-button-preview form',
 			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
 			menuUpdate: '#elementor-panel-saver-menu-update',
 			menuPublish: '#elementor-panel-saver-menu-publish',
@@ -678,6 +678,12 @@ module.exports = Marionette.Behavior.extend( {
 			};
 
 		if ( elementor.saver.isEditorChanged() ) {
+			if ( elementor.saver.xhr ) {
+				elementor.saver.xhr.abort();
+				elementor.saver.isSaving = false;
+			}
+			
+
 			elementor.saver.saveAutoSave( {
 				onSuccess: submit
 			} );
@@ -820,7 +826,7 @@ module.exports = Module.extend( {
 		self.isSaving = true;
 		self.isChangedDuringSave = false;
 
-		return elementor.ajax.send( 'save_builder', {
+		self.xhr = elementor.ajax.send( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
@@ -829,6 +835,7 @@ module.exports = Module.extend( {
 
 			success: function( data ) {
 				self.isSaving = false;
+				self.xhr = null;
 
 				if ( ! self.isChangedDuringSave ) {
 					self.setFlagEditorChange( false );
@@ -850,6 +857,8 @@ module.exports = Module.extend( {
 				}
 			}
 		} );
+
+		return self.xhr;
 	}
 } );
 
