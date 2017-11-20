@@ -5,6 +5,8 @@ module.exports = Module.extend( {
 
 	isSaving: false,
 
+	isChangedDuringSave: false,
+
 	__construct: function() {
 		this.setWorkSaver();
 
@@ -52,6 +54,9 @@ module.exports = Module.extend( {
 	},
 
 	setFlagEditorChange: function( status ) {
+		if ( status && this.isSaving ) {
+			this.isChangedDuringSave = true;
+		}
 		elementor.channels.editor
 			.reply( 'status', status )
 			.trigger( 'status:change', status );
@@ -71,6 +76,10 @@ module.exports = Module.extend( {
 	},
 
 	saveEditor: function( options ) {
+		if ( this.isSaving ) {
+			return;
+		}
+
 		options = _.extend( {
 			status: 'draft',
 			onSuccess: null
@@ -83,6 +92,7 @@ module.exports = Module.extend( {
 			.trigger( 'before:save:' + options.status );
 
 		self.isSaving = true;
+		self.isChangedDuringSave = false;
 
 		return elementor.ajax.send( 'save_builder', {
 			data: {
@@ -93,7 +103,10 @@ module.exports = Module.extend( {
 
 			success: function( data ) {
 				self.isSaving = false;
-				self.setFlagEditorChange( false );
+
+				if ( ! self.isChangedDuringSave ) {
+					self.setFlagEditorChange( false );
+				}
 
 				if ( 'autosave' !== options.status ) {
 					elementor.settings.page.model.set( 'post_status', options.status );
