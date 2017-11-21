@@ -60,6 +60,8 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showSaveTemplateView: function( elementModel ) {
+		this.getHeaderView().menuArea.reset();
+
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
 	},
 
