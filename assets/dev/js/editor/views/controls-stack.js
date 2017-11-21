@@ -4,8 +4,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-controls-stack',
 
 	classes: {
-		popup: 'elementor-controls-popup',
-		popupToggle: 'elementor-control-popup-starter-toggle'
+		popover: 'elementor-controls-popover',
+		popoverToggle: 'elementor-control-popover-toggle-toggle'
 	},
 
 	activeTab: null,
@@ -32,7 +32,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			'click @ui.reloadButton': 'onReloadButtonClick'
 		};
 
-		events[ 'click .' + this.classes.popup ] = 'onPopupClick';
+		events[ 'click .' + this.classes.popover ] = 'onPopoverClick';
 
 		return events;
 	},
@@ -96,46 +96,46 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return elementor.getControlView( controlType );
 	},
 
-	handlePopups: function() {
+	handlePopovers: function() {
 		var self = this,
-			popupStarted = false,
-			$popup;
+			popoverStarted = false,
+			$popover;
 
-		self.removePopups();
+		self.removePopovers();
 
 		self.children.each( function( child ) {
-			if ( popupStarted ) {
-				$popup.append( child.$el );
+			if ( popoverStarted ) {
+				$popover.append( child.$el );
 			}
 
-			var popup = child.model.get( 'popup' );
+			var popover = child.model.get( 'popover' );
 
-			if ( ! popup ) {
+			if ( ! popover ) {
 				return;
 			}
 
-			if ( popup.start ) {
-				popupStarted = true;
+			if ( popover.start ) {
+				popoverStarted = true;
 
-				$popup = jQuery( '<div>', { 'class': self.classes.popup } );
+				$popover = jQuery( '<div>', { 'class': self.classes.popover } );
 
-				child.$el.before( $popup );
+				child.$el.before( $popover );
 
-				$popup.append( child.$el );
+				$popover.append( child.$el );
 			}
 
-			if ( popup.end ) {
-				popupStarted = false;
+			if ( popover.end ) {
+				popoverStarted = false;
 			}
 		} );
 	},
 
-	hidePopups: function() {
-		this.$el.find( '.' + this.classes.popup ).hide();
+	hidePopovers: function() {
+		this.$el.find( '.' + this.classes.popover ).hide();
 	},
 
-	removePopups: function() {
-		this.$el.find( '.' + this.classes.popup ).remove();
+	removePopovers: function() {
+		this.$el.find( '.' + this.classes.popover ).remove();
 	},
 
 	openActiveSection: function() {
@@ -152,7 +152,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	onRenderCollection: function() {
 		this.openActiveSection();
 
-		this.handlePopups();
+		this.handlePopovers();
 	},
 
 	onRenderTemplate: function() {
@@ -164,17 +164,17 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onClick: function( event ) {
-		if ( jQuery( event.target ).closest( '.' + this.classes.popup + ',.' + this.classes.popupToggle ).length ) {
+		if ( jQuery( event.target ).closest( '.' + this.classes.popover + ',.' + this.classes.popoverToggle ).length ) {
 			return;
 		}
 
-		this.hidePopups();
+		this.hidePopovers();
 	},
 
-	onPopupClick: function( event ) {
-		var $currentPopup = jQuery( event.target ).closest( '.' + this.classes.popup );
+	onPopoverClick: function( event ) {
+		var $currentPopover = jQuery( event.target ).closest( '.' + this.classes.popover );
 
-		this.$el.find( '.' + this.classes.popup ).not( $currentPopup ).hide();
+		this.$el.find( '.' + this.classes.popover ).not( $currentPopover ).hide();
 	},
 
 	onClickTabControl: function( event ) {

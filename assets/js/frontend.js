@@ -324,6 +324,14 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 
+	findElement: function( selector ) {
+		var $mainElement = this.$element;
+
+		return $mainElement.find( selector ).filter( function() {
+			return jQuery( this ).closest( '.elementor-element' ).is( $mainElement );
+		} );
+	},
+
 	getUniqueHandlerID: function( cid, $element ) {
 		if ( ! cid ) {
 			cid = this.getModelCID();
@@ -470,8 +478,8 @@ module.exports = HandlerModule.extend( {
 		var selectors = this.getSettings( 'selectors' );
 
 		return {
-			$tabTitles: this.$element.find( selectors.tabTitle ),
-			$tabContents: this.$element.find( selectors.tabContent )
+			$tabTitles: this.findElement( selectors.tabTitle ),
+			$tabContents: this.findElement( selectors.tabContent )
 		};
 	},
 
