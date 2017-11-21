@@ -131,6 +131,27 @@
 	}
 }
 
+#elementor-template-library-header-save {
+
+	i {
+		font-size: 15px;
+	}
+}
+
+#elementor-template-library-header-sync {
+
+	i {
+		font-size: 20px;
+	}
+}
+
+#elementor-template-library-header-import {
+
+	i {
+		font-size: 19px;
+	}
+}
+
 #elementor-template-library-header-close-modal {
 	width: 50px;
 	@include border-start(1px solid $editor-background);
