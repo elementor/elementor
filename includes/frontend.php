@@ -11,6 +11,7 @@ class Frontend {
 
 	const THE_CONTENT_FILTER_PRIORITY = 9;
 
+	private $post_id;
 	private $google_fonts = [];
 	private $registered_fonts = [];
 	private $google_early_access_fonts = [];
@@ -35,9 +36,9 @@ class Frontend {
 			return;
 		}
 
+		$this->post_id = get_the_ID();
 		$this->_is_frontend_mode = true;
-
-		$this->_has_elementor_in_page = is_singular() && Plugin::$instance->db->is_built_with_elementor( get_the_ID() );
+		$this->_has_elementor_in_page = is_singular() && Plugin::$instance->db->is_built_with_elementor( $this->post_id );
 
 		if ( $this->_has_elementor_in_page ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
@@ -446,7 +447,16 @@ class Frontend {
 			return '';
 		}
 
-		$data = Plugin::$instance->db->get_plain_editor( $post_id, DB::STATUS_PUBLISH, true );
+		$is_main_content_preview = $this->post_id === $post_id && is_preview();
+		if ( $is_main_content_preview ) {
+			$preview_post = wp_get_post_autosave( $post_id, get_current_user_id() );
+			$status = DB::STATUS_DRAFT;
+		} else {
+			$preview_post = false;
+			$status = DB::STATUS_PUBLISH;
+		}
+
+		$data = Plugin::$instance->db->get_plain_editor( $post_id, $status );
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
 
 		if ( empty( $data ) ) {
@@ -454,20 +464,16 @@ class Frontend {
 		}
 
 		if ( ! $this->_is_excerpt ) {
-			$css_file = new Post_CSS_File( $post_id );
+			if ( $is_main_content_preview && $preview_post ) {
+				$css_file = new Post_Preview_CSS( $preview_post->ID );
+			} else {
+				$css_file = new Post_CSS_File( $post_id );
+			}
+
 			$css_file->enqueue();
 		}
 
 		ob_start();
-
-		if ( is_preview() ) {
-			$autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
-
-			if ( $autosave ) {
-				$preview_css = new Post_Preview_CSS( $autosave->ID );
-				$preview_css->enqueue();
-			}
-		}
 
 		// Handle JS and Customizer requests, with css inline.
 		if ( is_customize_preview() || Utils::is_ajax() ) {
