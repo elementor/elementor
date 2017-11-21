@@ -1840,7 +1840,7 @@ App = Marionette.Application.extend( {
 			Order: require( 'elementor-views/controls/order' ),
 			Switcher: require( 'elementor-views/controls/switcher' ),
 			Number: require( 'elementor-views/controls/number' ),
-			Popup_starter: require( 'elementor-views/controls/popup-starter' )
+			Popover_toggle: require( 'elementor-views/controls/popover-toggle' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
@@ -2533,7 +2533,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"elementor-editor-utils/ajax":65,"elementor-editor-utils/conditions":66,"elementor-editor-utils/debug":68,"elementor-editor-utils/heartbeat":69,"elementor-editor-utils/helpers":70,"elementor-editor-utils/images-manager":71,"elementor-editor-utils/presets-factory":74,"elementor-editor-utils/schemes":75,"elementor-editor/components/saver/manager":8,"elementor-editor/settings/settings":64,"elementor-layouts/panel/panel":54,"elementor-models/element":57,"elementor-panel/pages/elements/views/elements":41,"elementor-panel/pages/menu/menu":44,"elementor-templates/manager":11,"elementor-utils/hooks":118,"elementor-utils/hot-keys":119,"elementor-views/controls/base":89,"elementor-views/controls/base-data":86,"elementor-views/controls/base-multiple":87,"elementor-views/controls/box-shadow":90,"elementor-views/controls/choose":91,"elementor-views/controls/code":92,"elementor-views/controls/color":93,"elementor-views/controls/date-time":94,"elementor-views/controls/dimensions":95,"elementor-views/controls/font":96,"elementor-views/controls/gallery":97,"elementor-views/controls/icon":98,"elementor-views/controls/image-dimensions":99,"elementor-views/controls/media":100,"elementor-views/controls/number":101,"elementor-views/controls/order":102,"elementor-views/controls/popup-starter":103,"elementor-views/controls/repeater":105,"elementor-views/controls/section":106,"elementor-views/controls/select2":107,"elementor-views/controls/slider":108,"elementor-views/controls/structure":109,"elementor-views/controls/switcher":110,"elementor-views/controls/tab":111,"elementor-views/controls/wp_widget":112,"elementor-views/controls/wysiwyg":113,"elementor-views/preview":115,"elementor-views/widget":117,"modules/history/assets/js/module":129}],30:[function(require,module,exports){
+},{"elementor-editor-utils/ajax":65,"elementor-editor-utils/conditions":66,"elementor-editor-utils/debug":68,"elementor-editor-utils/heartbeat":69,"elementor-editor-utils/helpers":70,"elementor-editor-utils/images-manager":71,"elementor-editor-utils/presets-factory":74,"elementor-editor-utils/schemes":75,"elementor-editor/components/saver/manager":8,"elementor-editor/settings/settings":64,"elementor-layouts/panel/panel":54,"elementor-models/element":57,"elementor-panel/pages/elements/views/elements":41,"elementor-panel/pages/menu/menu":44,"elementor-templates/manager":11,"elementor-utils/hooks":118,"elementor-utils/hot-keys":119,"elementor-views/controls/base":89,"elementor-views/controls/base-data":86,"elementor-views/controls/base-multiple":87,"elementor-views/controls/box-shadow":90,"elementor-views/controls/choose":91,"elementor-views/controls/code":92,"elementor-views/controls/color":93,"elementor-views/controls/date-time":94,"elementor-views/controls/dimensions":95,"elementor-views/controls/font":96,"elementor-views/controls/gallery":97,"elementor-views/controls/icon":98,"elementor-views/controls/image-dimensions":99,"elementor-views/controls/media":100,"elementor-views/controls/number":101,"elementor-views/controls/order":102,"elementor-views/controls/popover-toggle":103,"elementor-views/controls/repeater":105,"elementor-views/controls/section":106,"elementor-views/controls/select2":107,"elementor-views/controls/slider":108,"elementor-views/controls/structure":109,"elementor-views/controls/switcher":110,"elementor-views/controls/tab":111,"elementor-views/controls/wp_widget":112,"elementor-views/controls/wysiwyg":113,"elementor-views/preview":115,"elementor-views/widget":117,"modules/history/assets/js/module":129}],30:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -7696,8 +7696,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-controls-stack',
 
 	classes: {
-		popup: 'elementor-controls-popup',
-		popupToggle: 'elementor-control-popup-starter-toggle'
+		popover: 'elementor-controls-popover',
+		popoverToggle: 'elementor-control-popover-toggle-toggle'
 	},
 
 	activeTab: null,
@@ -7724,7 +7724,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			'click @ui.reloadButton': 'onReloadButtonClick'
 		};
 
-		events[ 'click .' + this.classes.popup ] = 'onPopupClick';
+		events[ 'click .' + this.classes.popover ] = 'onPopoverClick';
 
 		return events;
 	},
@@ -7788,46 +7788,46 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return elementor.getControlView( controlType );
 	},
 
-	handlePopups: function() {
+	handlePopovers: function() {
 		var self = this,
-			popupStarted = false,
-			$popup;
+			popoverStarted = false,
+			$popover;
 
-		self.removePopups();
+		self.removePopovers();
 
 		self.children.each( function( child ) {
-			if ( popupStarted ) {
-				$popup.append( child.$el );
+			if ( popoverStarted ) {
+				$popover.append( child.$el );
 			}
 
-			var popup = child.model.get( 'popup' );
+			var popover = child.model.get( 'popover' );
 
-			if ( ! popup ) {
+			if ( ! popover ) {
 				return;
 			}
 
-			if ( popup.start ) {
-				popupStarted = true;
+			if ( popover.start ) {
+				popoverStarted = true;
 
-				$popup = jQuery( '<div>', { 'class': self.classes.popup } );
+				$popover = jQuery( '<div>', { 'class': self.classes.popover } );
 
-				child.$el.before( $popup );
+				child.$el.before( $popover );
 
-				$popup.append( child.$el );
+				$popover.append( child.$el );
 			}
 
-			if ( popup.end ) {
-				popupStarted = false;
+			if ( popover.end ) {
+				popoverStarted = false;
 			}
 		} );
 	},
 
-	hidePopups: function() {
-		this.$el.find( '.' + this.classes.popup ).hide();
+	hidePopovers: function() {
+		this.$el.find( '.' + this.classes.popover ).hide();
 	},
 
-	removePopups: function() {
-		this.$el.find( '.' + this.classes.popup ).remove();
+	removePopovers: function() {
+		this.$el.find( '.' + this.classes.popover ).remove();
 	},
 
 	openActiveSection: function() {
@@ -7844,7 +7844,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	onRenderCollection: function() {
 		this.openActiveSection();
 
-		this.handlePopups();
+		this.handlePopovers();
 	},
 
 	onRenderTemplate: function() {
@@ -7856,17 +7856,17 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onClick: function( event ) {
-		if ( jQuery( event.target ).closest( '.' + this.classes.popup + ',.' + this.classes.popupToggle ).length ) {
+		if ( jQuery( event.target ).closest( '.' + this.classes.popover + ',.' + this.classes.popoverToggle ).length ) {
 			return;
 		}
 
-		this.hidePopups();
+		this.hidePopovers();
 	},
 
-	onPopupClick: function( event ) {
-		var $currentPopup = jQuery( event.target ).closest( '.' + this.classes.popup );
+	onPopoverClick: function( event ) {
+		var $currentPopover = jQuery( event.target ).closest( '.' + this.classes.popover );
 
-		this.$el.find( '.' + this.classes.popup ).not( $currentPopup ).hide();
+		this.$el.find( '.' + this.classes.popover ).not( $currentPopover ).hide();
 	},
 
 	onClickTabControl: function( event ) {
@@ -9252,29 +9252,29 @@ module.exports = ControlOrderItemView;
 
 },{"elementor-views/controls/base-multiple":87}],103:[function(require,module,exports){
 var ControlChooseView = require( 'elementor-views/controls/choose' ),
-	ControlPopupStarterView;
+	ControlPopoverStarterView;
 
-ControlPopupStarterView = ControlChooseView.extend( {
+ControlPopoverStarterView = ControlChooseView.extend( {
 	ui: function() {
 		var ui = ControlChooseView.prototype.ui.apply( this, arguments );
 
-		ui.popupToggle = 'label.elementor-control-popup-starter-toggle';
+		ui.popoverToggle = 'label.elementor-control-popover-toggle-toggle';
 
 		return ui;
 	},
 
 	events: function() {
 		return _.extend( ControlChooseView.prototype.events.apply( this, arguments ), {
-			'click @ui.popupToggle': 'onPopupToggleClick'
+			'click @ui.popoverToggle': 'onPopoverToggleClick'
 		} );
 	},
 
-	onPopupToggleClick: function() {
-		this.$el.next( '.elementor-controls-popup' ).toggle();
+	onPopoverToggleClick: function() {
+		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 } );
 
-module.exports = ControlPopupStarterView;
+module.exports = ControlPopoverStarterView;
 
 },{"elementor-views/controls/choose":91}],104:[function(require,module,exports){
 var ControlBaseDataView = require( 'elementor-views/controls/base-data' ),

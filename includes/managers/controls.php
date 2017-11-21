@@ -21,7 +21,7 @@ class Controls_Manager {
 	const HIDDEN = 'hidden';
 	const HEADING = 'heading';
 	const RAW_HTML = 'raw_html';
-	const POPUP_STARTER = 'popup_starter';
+	const POPOVER_TOGGLE = 'popover_toggle';
 	const SECTION = 'section';
 	const TAB = 'tab';
 	const TABS = 'tabs';
@@ -135,7 +135,7 @@ class Controls_Manager {
 			self::HIDDEN,
 			self::HEADING,
 			self::RAW_HTML,
-			self::POPUP_STARTER,
+			self::POPOVER_TOGGLE,
 			self::SECTION,
 			self::TAB,
 			self::TABS,

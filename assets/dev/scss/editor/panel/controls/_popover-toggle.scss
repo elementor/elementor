@@ -1,10 +1,10 @@
-.elementor-control-type-popup_starter {
+.elementor-control-type-popover_toggle {
 
 	.elementor-control-input-wrapper {
 		text-align: right;
 	}
 
-	.elementor-control-popup-starter-simple-toggle {
+	.elementor-control-popover-toggle-simple-toggle {
 		display: inline-block;
 		width: 50px;
 		text-align: center;
@@ -19,5 +19,9 @@
 	.elementor-choices-label {
 		font-size: 10px;
 		text-transform: uppercase;
+
+		i {
+			@include padding-start(2px);
+		}
 	}
 }
