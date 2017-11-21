@@ -362,7 +362,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 	protected function get_default_options() {
 		return [
-			'popup' => [
+			'popover' => [
 				'starter_title' => _x( 'Image Size', 'Image Size Control', 'elementor' ),
 				'toggle_type' => 'simple',
 			],
