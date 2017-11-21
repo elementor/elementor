@@ -616,7 +616,6 @@ module.exports = Marionette.Behavior.extend( {
 			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonPreview: '#elementor-panel-saver-button-preview-label',
 			formPreview: '#elementor-panel-saver-button-preview form',
-			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
 			menuUpdate: '#elementor-panel-saver-menu-update',
 			menuPublish: '#elementor-panel-saver-menu-publish',
 			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes'
@@ -627,7 +626,6 @@ module.exports = Marionette.Behavior.extend( {
 		return {
 			'click @ui.buttonSave': 'onClickButtonSave',
 			'click @ui.buttonPreview': 'onClickButtonPreview',
-			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
 			'click @ui.menuUpdate': 'onClickMenuUpdate',
 			'click @ui.menuPublish': 'onClickMenuPublish',
 			'click @ui.menuPublishChanges': 'onClickMenuPublish'
@@ -635,8 +633,8 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	initialize: function() {
-		elementor.saver.on( 'before:save', _.bind( this.onBeforeSave, this ) );
-		elementor.saver.on( 'after:save', _.bind( this.onAfterSave, this ) );
+		elementor.saver.on( 'before:save', this.onBeforeSave.bind( this ) );
+		elementor.saver.on( 'after:save', this.onAfterSave.bind( this ) );
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
 
@@ -650,7 +648,7 @@ module.exports = Marionette.Behavior.extend( {
 	onPostStatusChange: function( settings ) {
 		var changed = settings.changed;
 
-		if ( ! ( _.isUndefined( changed.post_status ) ) ) {
+		if ( ! _.isUndefined( changed.post_status ) ) {
 			this.setMenuItems( changed.post_status );
 		}
 	},
@@ -669,13 +667,12 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver.doAutoSave();
 	},
 
-	onClickButtonPreview: function( event ) {
-		event.preventDefault();
-
+	onClickButtonPreview: function() {
 		var self = this,
-			submit = function() {
-				self.ui.formPreview.submit();
-			};
+			previewWindow;
+
+		// Open immediately in order to avoid popup blockers.
+		previewWindow = window.open( self.ui.formPreview.attr( 'action' ), self.ui.formPreview.attr( 'target' ) );
 
 		if ( elementor.saver.isEditorChanged() ) {
 			if ( elementor.saver.xhr ) {
@@ -684,15 +681,11 @@ module.exports = Marionette.Behavior.extend( {
 			}
 
 			elementor.saver.saveAutoSave( {
-				onSuccess: submit
+				onSuccess: function() {
+					previewWindow.reload();
+				}
 			} );
-		} else {
-			submit();
 		}
-	},
-
-	onClickMenuSaveDraft: function() {
-		elementor.saver.update();
 	},
 
 	onClickMenuUpdate: function() {
@@ -715,12 +708,10 @@ module.exports = Marionette.Behavior.extend( {
 
 	setMenuItems: function( postStatus ) {
 		if ( 'publish' === postStatus || 'private' === postStatus ) {
-			this.ui.menuSaveDraft.hide();
 			this.ui.menuPublish.hide();
 			this.ui.menuUpdate.toggle( 'private' === postStatus );
 			this.ui.menuPublishChanges.toggle( 'publish' === postStatus );
 		} else {
-			this.ui.menuSaveDraft.show();
 			this.ui.menuPublish.show();
 			this.ui.menuUpdate.hide();
 			this.ui.menuPublishChanges.hide();
@@ -2601,7 +2592,7 @@ module.exports = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
-		buttonSave: '#elementor-panel-saver-menu-publish, #elementor-panel-saver-menu-save-draft, #elementor-panel-saver-menu-publish-changes', // Compatibility for Pro <= 1.9.5
+		buttonSave: '#elementor-panel-saver-menu-publish, #elementor-panel-saver-menu-publish-changes', // Compatibility for Pro <= 1.9.5
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
