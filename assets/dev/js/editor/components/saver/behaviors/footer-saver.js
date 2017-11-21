@@ -6,7 +6,6 @@ module.exports = Marionette.Behavior.extend( {
 			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonPreview: '#elementor-panel-saver-button-preview-label',
 			formPreview: '#elementor-panel-saver-button-preview form',
-			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
 			menuUpdate: '#elementor-panel-saver-menu-update',
 			menuPublish: '#elementor-panel-saver-menu-publish',
 			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes'
@@ -17,7 +16,6 @@ module.exports = Marionette.Behavior.extend( {
 		return {
 			'click @ui.buttonSave': 'onClickButtonSave',
 			'click @ui.buttonPreview': 'onClickButtonPreview',
-			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
 			'click @ui.menuUpdate': 'onClickMenuUpdate',
 			'click @ui.menuPublish': 'onClickMenuPublish',
 			'click @ui.menuPublishChanges': 'onClickMenuPublish'
@@ -81,10 +79,6 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onClickMenuSaveDraft: function() {
-		elementor.saver.update();
-	},
-
 	onClickMenuUpdate: function() {
 		elementor.saver.update();
 	},
@@ -105,12 +99,10 @@ module.exports = Marionette.Behavior.extend( {
 
 	setMenuItems: function( postStatus ) {
 		if ( 'publish' === postStatus || 'private' === postStatus ) {
-			this.ui.menuSaveDraft.hide();
 			this.ui.menuPublish.hide();
 			this.ui.menuUpdate.toggle( 'private' === postStatus );
 			this.ui.menuPublishChanges.toggle( 'publish' === postStatus );
 		} else {
-			this.ui.menuSaveDraft.show();
 			this.ui.menuPublish.show();
 			this.ui.menuUpdate.hide();
 			this.ui.menuPublishChanges.hide();
