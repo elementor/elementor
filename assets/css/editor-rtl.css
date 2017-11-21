@@ -2501,6 +2501,15 @@ body.elementor-editor-preview #elementor-mode-switcher {
   .elementor-template-library-header-item > i {
     font-size: 18px; }
 
+#elementor-template-library-header-save i {
+  font-size: 15px; }
+
+#elementor-template-library-header-sync i {
+  font-size: 20px; }
+
+#elementor-template-library-header-import i {
+  font-size: 19px; }
+
 #elementor-template-library-header-close-modal {
   width: 50px;
   border-right: 1px solid #e6e9ec; }
@@ -2511,7 +2520,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   display: -ms-flexbox;
   display: flex; }
   #elementor-template-library-header-actions > div {
-    padding: 0 10px; }
+    padding-left: 20px; }
 
 #elementor-template-library-header-preview-insert-wrapper {
   cursor: default;
@@ -2738,7 +2747,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     cursor: pointer; }
 
 .elementor-template-library-local-column-1 {
-  width: 35%; }
+  width: 33%; }
 
 .elementor-template-library-local-column-2 {
   width: 10%; }
@@ -2750,7 +2759,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   width: 15%; }
 
 .elementor-template-library-local-column-5 {
-  width: 25%; }
+  width: 27%; }
 
 #elementor-template-library-order-toolbar-local,
 .elementor-template-library-template-local {
@@ -2828,9 +2837,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
             box-shadow: 1px 3px 11px rgba(0, 0, 0, 0.3);
     top: 100%;
     left: 0;
-    -webkit-transform: translateX(65%);
-        -ms-transform: translateX(65%);
-            transform: translateX(65%);
+    -webkit-transform: translateX(-65%);
+        -ms-transform: translateX(-65%);
+            transform: translateX(-65%);
     z-index: 1; }
     .elementor-template-library-template-local .elementor-template-library-template-more:before {
       content: '';

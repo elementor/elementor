@@ -747,19 +747,25 @@ TemplateLibraryManager = function() {
 		templateTypes[ type ] = data;
 	};
 
-	this.deleteTemplate = function( templateModel ) {
+	this.deleteTemplate = function( templateModel, options ) {
 		var dialog = self.getDeleteDialog();
 
 		dialog.onConfirm = function() {
+			if ( options.onConfirm ) {
+				options.onConfirm();
+			}
+
 			elementor.ajax.send( 'delete_template', {
 				data: {
 					source: templateModel.get( 'source' ),
 					template_id: templateModel.get( 'template_id' )
 				},
-				success: function() {
+				success: function( response ) {
 					templatesCollection.remove( templateModel, { silent: true } );
 
-					self.showTemplates();
+					if ( options.onSuccess ) {
+						options.onSuccess( response );
+					}
 				}
 			} );
 		};
@@ -1078,6 +1084,8 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showSaveTemplateView: function( elementModel ) {
+		this.getHeaderView().menuArea.reset();
+
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
 	},
 
@@ -1166,7 +1174,10 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClick: function() {
+		elementor.channels.templates.stopReplying();
+
 		elementor.templates.setTemplatesSource( 'remote' );
+
 		elementor.templates.showTemplates();
 	}
 } );
@@ -1583,10 +1594,6 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	onRender: function() {
-		_.defer( this.activateOrdering.bind( this, 'date', true ) );
-	},
-
 	onRenderCollection: function() {
 		var isEmpty = this.children.isEmpty();
 
@@ -1667,7 +1674,8 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		return _.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
 			deleteButton: '.elementor-template-library-template-delete',
 			morePopup: '.elementor-template-library-template-more',
-			toggleMore: '.elementor-template-library-template-more-toggle'
+			toggleMore: '.elementor-template-library-template-more-toggle',
+			toggleMoreIcon: '.elementor-template-library-template-more-toggle i'
 		} );
 	},
 
@@ -1679,7 +1687,16 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onDeleteButtonClick: function() {
-		elementor.templates.deleteTemplate( this.model );
+		var toggleMoreIcon = this.ui.toggleMoreIcon;
+
+		elementor.templates.deleteTemplate( this.model, {
+			onConfirm: function() {
+				toggleMoreIcon.removeClass( 'fa-ellipsis-h' ).addClass( 'fa-circle-o-notch fa-spin' );
+			},
+			onSuccess: function() {
+				elementor.templates.showTemplates();
+			}
+		} );
 	},
 
 	onToggleMoreClick: function() {
