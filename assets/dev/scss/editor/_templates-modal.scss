@@ -161,7 +161,7 @@
 	display: flex;
 
 	> div {
-		padding: 0 10px;
+		@include padding_end(20px);
 	}
 }
 
@@ -469,7 +469,7 @@
 }
 
 .elementor-template-library-local-column-1 {
-	width: 35%;
+	width: 33%;
 }
 
 .elementor-template-library-local-column-2 {
@@ -485,7 +485,7 @@
 }
 
 .elementor-template-library-local-column-5 {
-	width: 25%;
+	width: 27%;
 }
 
 #elementor-template-library-order-toolbar-local,
@@ -600,7 +600,7 @@
 		box-shadow: 1px 3px 11px rgba(0,0,0,0.3);
 		top: 100%;
 		@include end(0);
-		transform: translateX(65%);
+		transform: translateX(getValueByDirection(65%, -65%));
 		z-index: 1;
 
 		&:before {
