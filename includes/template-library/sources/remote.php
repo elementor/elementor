@@ -74,6 +74,7 @@ class Source_Remote extends Source_Base {
 			'tags' => json_decode( $template_data['tags'] ),
 			'isPro' => ( '1' === $template_data['is_pro'] ),
 			'popularityIndex' => (int) $template_data['popularity_index'],
+			'trendIndex' => (int) $template_data['trend_index'],
 			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),
 			'url' => $template_data['url'],
 			'favorite' => ! empty( $favorite_templates[ $template_data['id'] ] )
