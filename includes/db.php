@@ -27,8 +27,8 @@ class DB {
 	 * @access public
 	 * @since 1.0.0
 	 *
-	 * @param int    $post_id
-	 * @param array  $posted
+	 * @param int $post_id
+	 * @param array $posted
 	 * @param string $status
 	 *
 	 * @return void
@@ -73,7 +73,7 @@ class DB {
 			] );
 
 			if ( $autosave_id ) {
-				update_metadata( 'post',  $autosave_id, '_elementor_data', $json_value );
+				update_metadata( 'post', $autosave_id, '_elementor_data', $json_value );
 			}
 		}
 
@@ -94,7 +94,7 @@ class DB {
 	 * @access public
 	 * @since 1.0.0
 	 *
-	 * @param int    $post_id
+	 * @param int $post_id
 	 * @param string $status
 	 * @param bool $allow_preview
 	 *
@@ -195,7 +195,7 @@ class DB {
 	 * @access public
 	 * @since 1.5.0
 	 *
-	 * @param int  $post_id
+	 * @param int $post_id
 	 * @param bool $is_elementor
 	 */
 	public function set_is_elementor_page( $post_id, $is_elementor = true ) {
@@ -271,7 +271,7 @@ class DB {
 	 *
 	 * @param array $data
 	 *
-	 * @param bool  $with_html_content
+	 * @param bool $with_html_content
 	 *
 	 * @return array
 	 */
