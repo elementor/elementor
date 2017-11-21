@@ -3316,7 +3316,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				icon: 'fa fa-times',
 				title: elementor.translate( 'exit_to_dashboard' ),
 				type: 'link',
-				link: _.unescape( elementor.config.exit_to_dashboard_url ),
+				link: _.unescape( elementor.config.exit_to_dashboard_url )
 			}
 		] );
 	},
