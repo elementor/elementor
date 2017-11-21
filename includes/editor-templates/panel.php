@@ -99,10 +99,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<i class="elementor-icon fa fa-save"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Update', 'elementor' ); ?></span>
 				</div>
-				<div id="elementor-panel-saver-menu-save-draft" class="elementor-panel-footer-sub-menu-item" title="<?php esc_html_e( 'Save Draft', 'elementor' ); ?>">
-					<i class="elementor-icon fa fa-save"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Save Draft', 'elementor' ); ?></span>
-				</div>
 				<div id="elementor-panel-saver-menu-save-template" class="elementor-panel-footer-sub-menu-item" title="<?php esc_html_e( 'Save to Library', 'elementor' ); ?>">
 					<i class="elementor-icon fa fa-save"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Save to Library', 'elementor' ); ?></span>
