@@ -8,7 +8,8 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		return _.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
 			deleteButton: '.elementor-template-library-template-delete',
 			morePopup: '.elementor-template-library-template-more',
-			toggleMore: '.elementor-template-library-template-more-toggle'
+			toggleMore: '.elementor-template-library-template-more-toggle',
+			toggleMoreIcon: '.elementor-template-library-template-more-toggle i'
 		} );
 	},
 
@@ -20,7 +21,16 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onDeleteButtonClick: function() {
-		elementor.templates.deleteTemplate( this.model );
+		var toggleMoreIcon = this.ui.toggleMoreIcon;
+
+		elementor.templates.deleteTemplate( this.model, {
+			onConfirm: function() {
+				toggleMoreIcon.removeClass( 'fa-ellipsis-h' ).addClass( 'fa-circle-o-notch fa-spin' );
+			},
+			onSuccess: function() {
+				elementor.templates.showTemplates();
+			}
+		} );
 	},
 
 	onToggleMoreClick: function() {
