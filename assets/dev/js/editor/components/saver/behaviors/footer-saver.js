@@ -1,11 +1,12 @@
 module.exports = Marionette.Behavior.extend( {
+	previewWindow: null,
+
 	ui: function() {
 		return {
 			buttonSave: '#elementor-panel-saver-button-save',
 			buttonSaveLabel: '#elementor-panel-saver-save-label',
 			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonPreview: '#elementor-panel-saver-button-preview-label',
-			formPreview: '#elementor-panel-saver-button-preview form',
 			menuUpdate: '#elementor-panel-saver-menu-update',
 			menuPublish: '#elementor-panel-saver-menu-publish',
 			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes'
@@ -51,6 +52,10 @@ module.exports = Marionette.Behavior.extend( {
 	onAfterSave: function() {
 		NProgress.done();
 		this.ui.buttonSave.removeClass( 'elementor-button-state' );
+		// If the this.previewWindow is not null and not closed.
+		if ( this.previewWindow && this.previewWindow.location.reload ) {
+			this.previewWindow.location.reload();
+		}
 	},
 
 	onClickButtonSave: function() {
@@ -58,11 +63,8 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickButtonPreview: function() {
-		var self = this,
-			previewWindow;
-
 		// Open immediately in order to avoid popup blockers.
-		previewWindow = window.open( self.ui.formPreview.attr( 'action' ), self.ui.formPreview.attr( 'target' ) );
+		this.previewWindow = window.open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
 
 		if ( elementor.saver.isEditorChanged() ) {
 			if ( elementor.saver.xhr ) {
@@ -70,11 +72,7 @@ module.exports = Marionette.Behavior.extend( {
 				elementor.saver.isSaving = false;
 			}
 
-			elementor.saver.saveAutoSave( {
-				onSuccess: function() {
-					previewWindow.reload();
-				}
-			} );
+			elementor.saver.doAutoSave();
 		}
 	},
 
