@@ -73,7 +73,7 @@ class Source_Remote extends Source_Base {
 			'author' => $template_data['author'],
 			'tags' => json_decode( $template_data['tags'] ),
 			'isPro' => ( '1' === $template_data['is_pro'] ),
-			'popularityIndex' => (int) $template_data['popular_index'],
+			'popularityIndex' => (int) $template_data['popularity_index'],
 			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),
 			'url' => $template_data['url'],
 			'favorite' => ! empty( $favorite_templates[ $template_data['id'] ] )
