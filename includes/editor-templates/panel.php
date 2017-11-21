@@ -63,8 +63,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<i class="fa fa-history"></i>
 	</div>
 	<div id="elementor-panel-saver-button-preview" class="elementor-panel-footer-tool" title="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
-		<form style="display: none" method="post" action="<?php echo esc_attr( get_preview_post_link() ); ?>" target="wp-preview-<?php echo get_the_ID() ?>">
-		</form>
 		<span id="elementor-panel-saver-button-preview-label">
 			<span class="elementor-screen-only"><?php esc_html_e( 'Preview', 'elementor' ); ?></span>
 			<i class="fa fa-eye"></i>
