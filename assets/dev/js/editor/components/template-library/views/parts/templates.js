@@ -131,10 +131,6 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	onRender: function() {
-		_.defer( this.activateOrdering.bind( this, 'date', true ) );
-	},
-
 	onRenderCollection: function() {
 		var isEmpty = this.children.isEmpty();
 
