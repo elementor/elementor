@@ -67,19 +67,25 @@ TemplateLibraryManager = function() {
 		templateTypes[ type ] = data;
 	};
 
-	this.deleteTemplate = function( templateModel ) {
+	this.deleteTemplate = function( templateModel, options ) {
 		var dialog = self.getDeleteDialog();
 
 		dialog.onConfirm = function() {
+			if ( options.onConfirm ) {
+				options.onConfirm();
+			}
+
 			elementor.ajax.send( 'delete_template', {
 				data: {
 					source: templateModel.get( 'source' ),
 					template_id: templateModel.get( 'template_id' )
 				},
-				success: function() {
+				success: function( response ) {
 					templatesCollection.remove( templateModel, { silent: true } );
 
-					self.showTemplates();
+					if ( options.onSuccess ) {
+						options.onSuccess( response );
+					}
 				}
 			} );
 		};
