@@ -96,12 +96,11 @@ class DB {
 	 *
 	 * @param int $post_id
 	 * @param string $status
-	 * @param bool $allow_preview
 	 *
 	 * @return array
 	 */
-	public function get_builder( $post_id, $status = self::STATUS_PUBLISH, $allow_preview = false ) {
-		$data = $this->get_plain_editor( $post_id, $status, $allow_preview );
+	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
+		$data = $this->get_plain_editor( $post_id, $status );
 
 		$this->switch_to_post( $post_id );
 		$editor_data = $this->_get_editor_data( $data, true );
@@ -127,11 +126,16 @@ class DB {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
-	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH, $allow_preview = false ) {
+	 *
+	 * @param int $post_id
+	 * @param string $status
+	 *
+	 * @return array
+	 */
+	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
 		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
 
-		if ( $allow_preview && ( self::STATUS_DRAFT === $status || is_preview() ) ) {
+		if ( self::STATUS_DRAFT === $status ) {
 			$autosave = wp_get_post_autosave( $post_id );
 
 			if ( is_object( $autosave ) ) {
@@ -139,13 +143,12 @@ class DB {
 
 				if ( ! empty( $autosave_data ) ) {
 					$data = $autosave_data;
-
 				}
 			}
-		}
 
-		if ( self::STATUS_DRAFT === $status && empty( $data ) ) {
-			$data = $this->_get_new_editor_from_wp_editor( $post_id );
+			if ( empty( $data ) ) {
+				$data = $this->_get_new_editor_from_wp_editor( $post_id );
+			}
 		}
 
 		return $data;

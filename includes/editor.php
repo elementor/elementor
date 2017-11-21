@@ -291,7 +291,7 @@ class Editor {
 
 		$plugin = Plugin::$instance;
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT, true );
+		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
 
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
