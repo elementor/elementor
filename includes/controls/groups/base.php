@@ -18,7 +18,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	/**
 	 * Arguments.
 	 *
-	 * Holds all the base group control arguments.
+	 * Holds all the group control arguments.
 	 *
 	 * @access private
 	 *
@@ -26,9 +26,34 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 */
 	private $args = [];
 
+	/**
+	 * Options.
+	 *
+	 * Holds all the group control options.
+	 *
+	 * Currently supports only the popover options.
+	 *
+	 * @access private
+	 *
+	 * @var array Group control options.
+	 */
 	private $options;
 
-	final public function get_options( $option ) {
+	/**
+	 * Retrieve options.
+	 *
+	 * Get group control options. If options are not set, it will initialize default options.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @param array $option Optional. Single option.
+	 *
+	 * @return mixed Group control options. If option parameter was not specified, it will
+	 *               return an array of all the options. If single option specified, it will
+	 *               return the option value or `null` if option does not exists.
+	 */
+	final public function get_options( $option = null ) {
 		if ( null === $this->options ) {
 			$this->init_options();
 		}
@@ -67,8 +92,8 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		// For php < 7
 		reset( $filtered_fields );
 
-		if ( $this->get_options( 'popup' ) ) {
-			$filtered_fields = $this->set_popup( $filtered_fields );
+		if ( $this->get_options( 'popover' ) ) {
+			$filtered_fields = $this->set_popover( $filtered_fields );
 		}
 
 		if ( isset( $this->args['separator'] ) ) {
@@ -114,7 +139,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return array Control arguments.
+	 * @return array Group control arguments.
 	 */
 	final public function get_args() {
 		return $this->args;
@@ -171,8 +196,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return 'elementor-group-control-' . static::get_type() . ' elementor-group-control';
 	}
 
-	abstract protected function init_fields();
-
 	/**
 	 * Init fields.
 	 *
@@ -180,6 +203,19 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * @since 1.2.2
 	 * @access protected
+	 */
+	abstract protected function init_fields();
+
+	/**
+	 * Retrieve default options.
+	 *
+	 * Get the default options of the group control. Used to return the
+	 * default options while initializing the group control.
+	 *
+	 * @since 1.9.0
+	 * @access protected
+	 *
+	 * @return array Default group control options.
 	 */
 	protected function get_default_options() {
 		return [];
@@ -298,10 +334,18 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return $fields;
 	}
 
+	/**
+	 * Init options.
+	 *
+	 * Initializing group control options.
+	 *
+	 * @since 1.9.0
+	 * @access private
+	 */
 	private function init_options() {
 		$default_options = [
-			'popup' => [
-				'starter_name' => 'popup_starter',
+			'popover' => [
+				'starter_name' => 'popover_toggle',
 				'starter_value' => 'custom',
 				'starter_title' => '',
 				'toggle_type' => 'switcher',
@@ -321,8 +365,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @access private
 	 *
 	 * @param array $args Group control settings value.
-	 *
-	 * @return array Control default settings.
 	 */
 	private function init_args( $args ) {
 		$this->args = array_merge( $this->get_default_args(), $this->get_child_default_args(), $args );
@@ -425,26 +467,35 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		return $selectors;
 	}
 
-	private function set_popup( array $fields ) {
-		$popup_options = $this->get_options( 'popup' );
+	/**
+	 * Set popover.
+	 *
+	 * Wraps the group controls with a popover.
+	 *
+	 * @param array $fields Group control fields.
+	 *
+	 * @return array Fields wrapped with popover data to be rendered in frontend.
+	 */
+	private function set_popover( array $fields ) {
+		$popover_options = $this->get_options( 'popover' );
 
-		$fields[ key( $fields ) ]['popup']['start'] = true;
+		$fields[ key( $fields ) ]['popover']['start'] = true;
 
-		$popup_starter_field = [
-			$popup_options['starter_name'] => [
-				'type' => Controls_Manager::POPUP_STARTER,
-				'label' => $popup_options['starter_title'],
-				'toggle_type' => $popup_options['toggle_type'],
-				'toggle_title' => $popup_options['toggle_title'],
-				'return_value' => $popup_options['starter_value'],
+		$popover_toggle_field = [
+			$popover_options['starter_name'] => [
+				'type' => Controls_Manager::POPOVER_TOGGLE,
+				'label' => $popover_options['starter_title'],
+				'toggle_type' => $popover_options['toggle_type'],
+				'toggle_title' => $popover_options['toggle_title'],
+				'return_value' => $popover_options['starter_value'],
 			]
 		];
 
-		$fields = $popup_starter_field + $fields;
+		$fields = $popover_toggle_field + $fields;
 
 		end( $fields );
 
-		$fields[ key( $fields ) ]['popup']['end'] = true;
+		$fields[ key( $fields ) ]['popover']['end'] = true;
 
 		reset( $fields );
 

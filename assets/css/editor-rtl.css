@@ -849,7 +849,7 @@ select {
       transition: .5s; }
       .elementor-panel .elementor-panel-nerd-box .elementor-button.elementor-panel-nerd-box-link:hover {
         background-color: #fdca5e; }
-  .elementor-panel .elementor-controls-popup {
+  .elementor-panel .elementor-controls-popover {
     display: none;
     position: absolute;
     -webkit-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
@@ -861,14 +861,14 @@ select {
     width: 90%;
     z-index: 1;
     background-color: #fff; }
-    .elementor-panel .elementor-controls-popup:before {
+    .elementor-panel .elementor-controls-popover:before {
       content: '';
       position: absolute;
       top: -20px;
       right: 20px;
       border: 10px solid transparent;
       border-bottom-color: #fff; }
-    .elementor-panel .elementor-controls-popup div.elementor-control:before {
+    .elementor-panel .elementor-controls-popover div.elementor-control:before {
       content: none; }
   .elementor-panel #elementor-panel-get-pro-elements .elementor-panel-nerd-box-message {
     text-transform: uppercase; }
@@ -1937,9 +1937,9 @@ select {
               transform: translateX(-50%) translateY(-50%); }
   .elementor-panel .elementor-control-type-hidden {
     display: none !important; }
-  .elementor-panel .elementor-control-type-popup_starter .elementor-control-input-wrapper {
+  .elementor-panel .elementor-control-type-popover_toggle .elementor-control-input-wrapper {
     text-align: right; }
-  .elementor-panel .elementor-control-type-popup_starter .elementor-control-popup-starter-simple-toggle {
+  .elementor-panel .elementor-control-type-popover_toggle .elementor-control-popover-toggle-simple-toggle {
     display: inline-block;
     width: 50px;
     text-align: center;
@@ -1949,9 +1949,11 @@ select {
     border-radius: 3px;
     border: 1px solid;
     cursor: pointer; }
-  .elementor-panel .elementor-control-type-popup_starter .elementor-choices-label {
+  .elementor-panel .elementor-control-type-popover_toggle .elementor-choices-label {
     font-size: 10px;
     text-transform: uppercase; }
+    .elementor-panel .elementor-control-type-popover_toggle .elementor-choices-label i {
+      padding-right: 2px; }
   .elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;

@@ -70,7 +70,7 @@ App = Marionette.Application.extend( {
 			Order: require( 'elementor-views/controls/order' ),
 			Switcher: require( 'elementor-views/controls/switcher' ),
 			Number: require( 'elementor-views/controls/number' ),
-			Popup_starter: require( 'elementor-views/controls/popup-starter' )
+			Popover_toggle: require( 'elementor-views/controls/popover-toggle' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
