@@ -23,8 +23,8 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	initialize: function() {
-		elementor.saver.on( 'before:save', _.bind( this.onBeforeSave, this ) );
-		elementor.saver.on( 'after:save', _.bind( this.onAfterSave, this ) );
+		elementor.saver.on( 'before:save', this.onBeforeSave.bind( this ) );
+		elementor.saver.on( 'after:save', this.onAfterSave.bind( this ) );
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
 
@@ -38,7 +38,7 @@ module.exports = Marionette.Behavior.extend( {
 	onPostStatusChange: function( settings ) {
 		var changed = settings.changed;
 
-		if ( ! ( _.isUndefined( changed.post_status ) ) ) {
+		if ( ! _.isUndefined( changed.post_status ) ) {
 			this.setMenuItems( changed.post_status );
 		}
 	},
@@ -57,13 +57,12 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver.doAutoSave();
 	},
 
-	onClickButtonPreview: function( event ) {
-		event.preventDefault();
-
+	onClickButtonPreview: function() {
 		var self = this,
-			submit = function() {
-				self.ui.formPreview.submit();
-			};
+			previewWindow;
+
+		// Open immediately in order to avoid popup blockers.
+		previewWindow = window.open( self.ui.formPreview.attr( 'action' ), self.ui.formPreview.attr( 'target' ) );
 
 		if ( elementor.saver.isEditorChanged() ) {
 			if ( elementor.saver.xhr ) {
@@ -72,10 +71,10 @@ module.exports = Marionette.Behavior.extend( {
 			}
 
 			elementor.saver.saveAutoSave( {
-				onSuccess: submit
+				onSuccess: function() {
+					previewWindow.reload();
+				}
 			} );
-		} else {
-			submit();
 		}
 	},
 
