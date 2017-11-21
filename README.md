@@ -6,7 +6,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
-**Stable tag:** 1.8.4  
+**Stable tag:** 1.8.5  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -185,6 +185,12 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 1.8.5 - 19.11.2017 ###
+* Fix! – Compatibility with the WordPress 4.9 native widgets ([#2763](https://github.com/pojome/elementor/issues/2763))
+* Fix! - Removed related videos from background video in some cases ([#2372](https://github.com/pojome/elementor/issues/2372))
+* Fix! - Element inside similar element conflict ([#2760](https://github.com/pojome/elementor/issues/2760))
+* Fix! - Responsive alignment in Icon List widget
 
 ### 1.8.4 - 14.11.2017 ###
 * Fix! - Accordion open/close icon ([#2740](https://github.com/pojome/elementor/issues/2740))

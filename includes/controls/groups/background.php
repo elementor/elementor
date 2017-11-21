@@ -466,7 +466,7 @@ class Group_Control_Background extends Group_Control_Base {
 
 	protected function get_default_options() {
 		return [
-			'popup' => false,
+			'popover' => false,
 		];
 	}
 }

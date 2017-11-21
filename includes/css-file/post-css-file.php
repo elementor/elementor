@@ -165,11 +165,6 @@ class Post_CSS_File extends CSS_File {
 
 		$this->add_controls_stack_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
 
-		/**
-		 * @deprecated, use `elementor/element/parse_css`
-		 */
-		Utils::do_action_deprecated( 'elementor/element_css/parse_css',[ $this, $element ], '1.0.10', 'elementor/element/parse_css' );
-
 		do_action( 'elementor/element/parse_css', $this, $element );
 	}
 }
