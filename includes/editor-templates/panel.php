@@ -79,8 +79,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 		</button>
 	</div>
-	<div id="elementor-panel-saver-publish" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Publish & Exit', 'elementor' ); ?>">
-		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success">
+	<div id="elementor-panel-saver-publish" class="elementor-panel-footer-tool" >
+		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success tooltip-target" data-tooltip="<?php esc_attr_e( 'Publish & Exit', 'elementor' ); ?>">
 			<i class="fa fa-paper-plane"></i>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
