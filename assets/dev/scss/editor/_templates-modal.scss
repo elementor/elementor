@@ -149,7 +149,7 @@
 }
 
 #elementor-template-library-header-close-modal {
-	width: 50px;
+	width: 45px;
 	@include border-start(1px solid $editor-background);
 }
 
@@ -157,7 +157,7 @@
 	display: flex;
 
 	> div {
-		@include padding_end(20px);
+		@include padding_end(16px);
 	}
 }
 
