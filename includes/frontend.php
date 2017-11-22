@@ -259,6 +259,12 @@ class Frontend {
 				'title' => $post->post_title,
 				'excerpt' => $post->post_excerpt,
 			];
+		} else {
+			$elementor_frontend_config['post'] = [
+				'id' => 0,
+				'title' => wp_get_document_title(),
+				'excerpt' => '',
+			];
 		}
 
 		if ( Plugin::$instance->preview->is_preview_mode() ) {

@@ -9,7 +9,8 @@ module.exports = Marionette.Behavior.extend( {
 			buttonPreview: '#elementor-panel-saver-button-preview-label',
 			menuUpdate: '#elementor-panel-saver-menu-update',
 			menuPublish: '#elementor-panel-saver-menu-publish',
-			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes'
+			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes',
+			menuSubmitForReview: '#elementor-panel-saver-menu-submit-for-review'
 		};
 	},
 
@@ -19,13 +20,15 @@ module.exports = Marionette.Behavior.extend( {
 			'click @ui.buttonPreview': 'onClickButtonPreview',
 			'click @ui.menuUpdate': 'onClickMenuUpdate',
 			'click @ui.menuPublish': 'onClickMenuPublish',
-			'click @ui.menuPublishChanges': 'onClickMenuPublish'
+			'click @ui.menuPublishChanges': 'onClickMenuPublish',
+			'click @ui.menuSubmitForReview': 'onClickMenuSubmitForReview'
 		};
 	},
 
 	initialize: function() {
 		elementor.saver.on( 'before:save', this.onBeforeSave.bind( this ) );
 		elementor.saver.on( 'after:save', this.onAfterSave.bind( this ) );
+		elementor.saver.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
 
@@ -34,6 +37,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	onRender: function() {
 		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
+		this.addTooltip();
 	},
 
 	onPostStatusChange: function( settings ) {
@@ -63,6 +67,11 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
+	onAfterSaveError: function() {
+		NProgress.done();
+		this.ui.buttonSave.removeClass( 'elementor-button-state' );
+	},
+
 	onClickButtonSave: function() {
 		elementor.saver.doAutoSave();
 	},
@@ -89,6 +98,10 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver.publish();
 	},
 
+	onClickMenuSubmitForReview: function() {
+		elementor.saver.savePending();
+	},
+
 	activateSaveButton: function( hasChanges ) {
 		if ( hasChanges ) {
 			this.ui.buttonSave.addClass( 'elementor-save-active' );
@@ -104,14 +117,37 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	setMenuItems: function( postStatus ) {
-		if ( 'publish' === postStatus || 'private' === postStatus ) {
-			this.ui.menuPublish.hide();
-			this.ui.menuUpdate.toggle( 'private' === postStatus );
-			this.ui.menuPublishChanges.toggle( 'publish' === postStatus );
-		} else {
-			this.ui.menuPublish.show();
-			this.ui.menuUpdate.hide();
-			this.ui.menuPublishChanges.hide();
+		this.ui.menuPublish.hide();
+		this.ui.menuPublishChanges.hide();
+		this.ui.menuUpdate.hide();
+		this.ui.menuSubmitForReview.hide();
+
+		switch ( postStatus ) {
+			case 'publish':
+				this.ui.menuPublish.show();
+				break;
+			case 'private':
+				this.ui.menuUpdate.show();
+				break;
+			case 'draft':
+				// TODO: if currentUserCan( 'publish_posts' )
+				this.ui.menuPublish.show();
+				break;
+			// TODO: should be 'pending' and not undefined.
+			case undefined: // User cannot change post status
+				this.ui.menuSubmitForReview.show();
+				break;
 		}
+	},
+
+	addTooltip: function() {
+		// Create tooltip on controls
+		this.$el.find( '.tooltip-target' ).tipsy( {
+			// `n` for down, `s` for up
+			gravity: 's',
+			title: function() {
+				return this.getAttribute( 'data-tooltip' );
+			}
+		} );
 	}
 } );

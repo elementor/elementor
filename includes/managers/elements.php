@@ -185,28 +185,7 @@ class Elements_Manager {
 
 		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
 
-		$post = get_post( $post_id );
-
-		if ( 'autosave' === $status ) {
-			$modified_post = wp_get_post_autosave( $post_id, get_current_user_id() );
-		} else {
-			$modified_post = $post;
-		}
-
-		$last_date = mysql2date( __( 'F j, Y', 'elementor' ), $modified_post->post_modified );
-		$last_time = mysql2date( __( 'g:i a', 'elementor' ), $modified_post->post_modified );
-
-		if ( DB::STATUS_AUTOSAVE === $status ) {
-			/* translators: 1: Name of most recent post author, 2: Post edited date, 3: Post edited time */
-			$last_edited = sprintf( __( 'Draft saved on %1$s at %2$s', 'elementor' ), $last_date, $last_time );
-		} else {
-			/* translators: 1: Name of most recent post author, 2: Post edited date, 3: Post edited time */
-			$last_edited = sprintf( __( 'Last edited on %1$s at %2$s', 'elementor' ), $last_date, $last_time );
-		}
-
-		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', [
-			'last_edited' => $last_edited,
-		] );
+		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', $post_id );
 
 		wp_send_json_success( $return_data );
 	}
