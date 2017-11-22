@@ -27,8 +27,6 @@ TemplateLibraryManager = function() {
 					self.getTemplatesCollection().add( data );
 
 					self.setTemplatesSource( 'local' );
-
-					self.showTemplates();
 				},
 				error: function( data ) {
 					self.showErrorDialog( data );
@@ -260,7 +258,7 @@ TemplateLibraryManager = function() {
 
 		self.getModal().show();
 
-		self.setTemplatesSource( 'remote' );
+		self.setTemplatesSource( 'remote', true );
 
 		if ( ! layout ) {
 			initLayout();
@@ -279,13 +277,13 @@ TemplateLibraryManager = function() {
 		self.getModal().hide();
 	};
 
-	this.setTemplatesSource = function( source, trigger ) {
-		var channel = elementor.channels.templates;
+	this.setTemplatesSource = function( source, silent ) {
+		elementor.channels.templates
+			.stopReplying()
+			.reply( 'filter:source', source );
 
-		channel.reply( 'filter:source', source );
-
-		if ( trigger ) {
-			channel.trigger( 'filter:change' );
+		if ( ! silent ) {
+			this.showTemplates();
 		}
 	};
 

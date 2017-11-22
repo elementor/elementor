@@ -38,8 +38,6 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				elementor.templates.getTemplatesCollection().add( data );
 
 				elementor.templates.setTemplatesSource( 'local' );
-
-				elementor.templates.showTemplates();
 			},
 			error: function( data ) {
 				elementor.templates.showErrorDialog( data );
