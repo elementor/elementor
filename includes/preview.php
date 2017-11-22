@@ -66,7 +66,7 @@ class Preview {
 	 *
 	 * Get the ID of the current post.
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 * @access public
 	 * 
 	 * @return int Post ID.
