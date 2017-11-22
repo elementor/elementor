@@ -37,6 +37,14 @@ module.exports = Module.extend( {
 		this.saveEditor( options );
 	},
 
+	savePending: function( options ) {
+		options = _.extend( {
+			status: 'pending'
+		}, options );
+
+		this.saveEditor( options );
+	},
+
 	update: function( options ) {
 		options = _.extend( {
 			status: elementor.settings.page.model.get( 'post_status' )
@@ -102,8 +110,7 @@ module.exports = Module.extend( {
 			},
 
 			success: function( data ) {
-				self.isSaving = false;
-				self.xhr = null;
+				self.afterAjax();
 
 				if ( ! self.isChangedDuringSave ) {
 					self.setFlagEditorChange( false );
@@ -123,9 +130,20 @@ module.exports = Module.extend( {
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
 				}
+			},
+			error: function( data ) {
+				self.afterAjax();
+
+				self.trigger( 'after:saveError', data )
+					.trigger( 'after:saveError:' + options.status, data );
 			}
 		} );
 
 		return self.xhr;
+	},
+
+	afterAjax: function() {
+		this.isSaving = false;
+		this.xhr = null;
 	}
 } );

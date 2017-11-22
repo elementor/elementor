@@ -476,7 +476,7 @@ class Editor {
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
 			'wp_preview' => [
 				'url' => get_preview_post_link(),
-				'target' => 'wp-preview-' . get_the_ID(),
+				'target' => 'wp-preview-' . $this->_post_id,
 			],
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),

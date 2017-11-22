@@ -139,7 +139,7 @@ abstract class CSS_File {
 			$dep = $this->get_inline_dependency();
 			// If the dependency has already been printed ( like a template in footer )
 			if ( wp_styles()->query( $dep, 'done' ) ) {
-				echo '<style>' . $this->get_css() . '</style>'; // XSS ok.
+				echo '<style>' . $meta['css'] . '</style>'; // XSS ok.
 			} else {
 				wp_add_inline_style( $dep , $meta['css'] );
 			}

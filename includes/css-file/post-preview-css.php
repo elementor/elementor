@@ -23,14 +23,18 @@ class Post_Preview_CSS extends Post_CSS_File {
 		return Plugin::$instance->db->get_plain_editor( $this->preview_id );
 	}
 
-	public function enqueue() {
-		$this->parse_css();
-		echo '<style>' . $this->get_css() . '</style>'; // XSS ok.
-		// Handle fonts
-		if ( ! empty( $this->get_fonts() ) ) {
-			foreach ( $this->get_fonts() as $font ) {
-				Plugin::$instance->frontend->enqueue_font( $font );
-			}
-		}
+	protected function get_file_handle_id() {
+		return 'elementor-preview-' . $this->preview_id;
+	}
+
+	public function get_meta( $property = null ) {
+		// Parse CSS first, to get the fonts list.
+		$css = $this->get_css();
+
+		return [
+			'status' => self::CSS_STATUS_INLINE,
+			'fonts' => $this->get_fonts(),
+			'css' => $css,
+		];
 	}
 }
