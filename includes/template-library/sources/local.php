@@ -533,6 +533,7 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * @since 1.8.0
 	 * @access public
 	 */
 	public function remove_elementor_post_state_from_library( $post_states, $post ) {
