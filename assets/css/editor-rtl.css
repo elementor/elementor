@@ -2138,7 +2138,9 @@ select {
     color: #a4afb7; }
   .elementor-panel #elementor-panel-saver-button-, .elementor-panel #elementor-panel-saver-button-publish {
     width: 30px; }
-  .elementor-panel #elementor-panel-saver-menu-publish .elementor-icon, .elementor-panel #elementor-panel-saver-menu-publish .elementor-title, .elementor-panel #elementor-panel-saver-menu-publish-changes .elementor-icon, .elementor-panel #elementor-panel-saver-menu-publish-changes .elementor-title {
+  .elementor-panel #elementor-panel-saver-menu-publish .elementor-icon, .elementor-panel #elementor-panel-saver-menu-publish .elementor-title {
+    color: #39b54a; }
+  .elementor-panel #elementor-panel-saver-menu-publish-changes.elementor-save-active .elementor-icon, .elementor-panel #elementor-panel-saver-menu-publish-changes.elementor-save-active .elementor-title {
     color: #39b54a; }
   .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {
     color: #b01b1b; }

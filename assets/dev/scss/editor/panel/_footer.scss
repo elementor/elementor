@@ -167,9 +167,16 @@
 	}
 }
 
-#elementor-panel-saver-menu-publish, #elementor-panel-saver-menu-publish-changes {
+#elementor-panel-saver-menu-publish {
 	.elementor-icon, .elementor-title {
 		color: $editor-success;
+	}
+}
+#elementor-panel-saver-menu-publish-changes {
+	&.elementor-save-active {
+		.elementor-icon, .elementor-title {
+			color: $editor-success;
+		}
 	}
 }
 

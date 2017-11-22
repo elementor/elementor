@@ -518,6 +518,8 @@ class Editor {
 				'go_back' => __( 'Go Back', 'elementor' ),
 				'save' => __( 'Save', 'elementor' ),
 				'saved' => __( 'Saved', 'elementor' ),
+				'publish_changes' => __( 'Publish Changes', 'elementor' ),
+				'published' => __( 'Published', 'elementor' ),
 				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
 				'edit_element' => __( 'Edit {0}', 'elementor' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
