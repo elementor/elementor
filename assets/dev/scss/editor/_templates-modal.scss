@@ -122,12 +122,12 @@
 	cursor: pointer;
 	transition: color .5s;
 
-	&:not(:hover) {
-		color: $editor-light;
-	}
-
 	> i {
 		font-size: 18px;
+
+		&:not(:hover) {
+			color: $editor-light;
+		}
 	}
 }
 
