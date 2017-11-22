@@ -707,8 +707,6 @@ TemplateLibraryManager = function() {
 					self.getTemplatesCollection().add( data );
 
 					self.setTemplatesSource( 'local' );
-
-					self.showTemplates();
 				},
 				error: function( data ) {
 					self.showErrorDialog( data );
@@ -940,7 +938,7 @@ TemplateLibraryManager = function() {
 
 		self.getModal().show();
 
-		self.setTemplatesSource( 'remote' );
+		self.setTemplatesSource( 'remote', true );
 
 		if ( ! layout ) {
 			initLayout();
@@ -959,18 +957,30 @@ TemplateLibraryManager = function() {
 		self.getModal().hide();
 	};
 
-	this.setTemplatesSource = function( source, trigger ) {
-		var channel = elementor.channels.templates;
+	this.setTemplatesSource = function( source, silent ) {
+		elementor.channels.templates
+			.stopReplying()
+			.reply( 'filter:source', source );
 
-		channel.reply( 'filter:source', source );
-
-		if ( trigger ) {
-			channel.trigger( 'filter:change' );
+		if ( ! silent ) {
+			this.showTemplates();
 		}
 	};
 
 	this.showTemplates = function() {
-		layout.showTemplatesView( templatesCollection );
+		var activeSource = elementor.channels.templates.request( 'filter:source' );
+
+		var templatesToShow = templatesCollection.filter( function( model ) {
+			if ( activeSource !== model.get( 'source' ) ) {
+				return false;
+			}
+
+			var typeInfo = templateTypes[ model.get( 'type' ) ];
+
+			return ! typeInfo || false !== typeInfo.showInLibrary;
+		} );
+
+		layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
 	};
 
 	this.showTemplatesModal = function() {
@@ -1115,10 +1125,9 @@ module.exports = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-header-actions',
 
 	ui: {
-		'import': '#elementor-template-library-header-import',
-		sync: '#elementor-template-library-header-sync',
-		syncIcon: '#elementor-template-library-header-sync i',
-		save: '#elementor-template-library-header-save'
+		'import': '#elementor-template-library-header-import i',
+		sync: '#elementor-template-library-header-sync i',
+		save: '#elementor-template-library-header-save i'
 	},
 
 	events: {
@@ -1134,10 +1143,10 @@ module.exports = Marionette.ItemView.extend( {
 	onSyncClick: function() {
 		var self = this;
 
-		self.ui.syncIcon.addClass( 'eicon-animation-spin' );
+		self.ui.sync.addClass( 'eicon-animation-spin' );
 
 		elementor.templates.requestLibraryData( function() {
-			self.ui.syncIcon.removeClass( 'eicon-animation-spin' );
+			self.ui.sync.removeClass( 'eicon-animation-spin' );
 
 			elementor.templates.showTemplates();
 		}, true, true );
@@ -1174,11 +1183,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClick: function() {
-		elementor.channels.templates.stopReplying();
-
 		elementor.templates.setTemplatesSource( 'remote' );
-
-		elementor.templates.showTemplates();
 	}
 } );
 
@@ -1230,7 +1235,7 @@ module.exports = Marionette.ItemView.extend( {
 
 		this.activateMenuItem( jQuery( item ) );
 
-		elementor.templates.setTemplatesSource( item.dataset.templateSource, true );
+		elementor.templates.setTemplatesSource( item.dataset.templateSource );
 	}
 } );
 
@@ -1320,8 +1325,6 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				elementor.templates.getTemplatesCollection().add( data );
 
 				elementor.templates.setTemplatesSource( 'local' );
-
-				elementor.templates.showTemplates();
 			},
 			error: function( data ) {
 				elementor.templates.showErrorDialog( data );
@@ -1493,6 +1496,12 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	comparators: {
 		title: function( model ) {
 			return model.get( 'title' ).toLowerCase();
+		},
+		popularityIndex: function( model ) {
+			return -model.get( 'popularityIndex' );
+		},
+		trendIndex: function( model ) {
+			return -model.get( 'trendIndex' );
 		}
 	},
 
@@ -1520,16 +1529,6 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		} );
 	},
 
-	filterBySource: function( model, source ) {
-		return source === model.get( 'source' );
-	},
-
-	filterByType: function( model ) {
-		var typeInfo = elementor.templates.getTemplateTypes( model.get( 'type' ) );
-
-		return ! typeInfo || false !== typeInfo.showInLibrary;
-	},
-
 	filterByFavorite: function( model ) {
 		return model.get( 'favorite' );
 	},
@@ -1540,9 +1539,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			favoriteFilter = elementor.channels.templates.request( 'filter:favorite' );
 
 		return ( ! textFilter || this.filterByText( childModel, textFilter ) ) &&
-			   ( ! sourceFilter || this.filterBySource( childModel, sourceFilter ) ) &&
-			   ( ! favoriteFilter || 'remote' !== sourceFilter || this.filterByFavorite( childModel ) ) &&
-			   this.filterByType( childModel );
+			   ( ! favoriteFilter || 'remote' !== sourceFilter || this.filterByFavorite( childModel ) );
 	},
 
 	order: function( by, reverseOrder ) {
@@ -1594,10 +1591,18 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	onRenderCollection: function() {
+	addSourceData: function() {
 		var isEmpty = this.children.isEmpty();
 
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
+	},
+
+	onRenderCollection: function() {
+		this.addSourceData();
+	},
+
+	onBeforeRenderEmpty: function() {
+		this.addSourceData();
 	},
 
 	onFilterTextInput: function() {
@@ -1613,13 +1618,14 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onOrderLabelsClick: function( event ) {
-		var $clickedInput = jQuery( event.currentTarget.control );
+		var $clickedInput = jQuery( event.currentTarget.control ),
+			toggle;
 
 		if ( ! $clickedInput[0].checked ) {
-			$clickedInput.removeClass( 'elementor-template-library-order-reverse' );
-		} else {
-			$clickedInput.toggleClass( 'elementor-template-library-order-reverse' );
+			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
 		}
+		
+		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
 
 		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
 	}
