@@ -288,7 +288,19 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showTemplates = function() {
-		layout.showTemplatesView( templatesCollection );
+		var activeSource = elementor.channels.templates.request( 'filter:source' );
+
+		var templatesToShow = templatesCollection.filter( function( model ) {
+			if ( activeSource !== model.get( 'source' ) ) {
+				return false;
+			}
+
+			var typeInfo = templateTypes[ model.get( 'type' ) ];
+
+			return ! typeInfo || false !== typeInfo.showInLibrary;
+		} );
+
+		layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
 	};
 
 	this.showTemplatesModal = function() {

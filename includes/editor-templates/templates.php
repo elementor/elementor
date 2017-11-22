@@ -60,55 +60,65 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-templates">
+	<#
+		var activeSource = elementor.channels.templates.request('filter:source');
+	#>
 	<div id="elementor-template-library-toolbar">
-		<div id="elementor-template-library-filter-toolbar-remote" class="elementor-template-library-filter-toolbar">
-			<div id="elementor-template-library-order">
-				<input type="radio" id="elementor-template-library-order-new" class="elementor-template-library-order-input" name="elementor-template-library-order" value="date">
-				<label for="elementor-template-library-order-new" class="elementor-template-library-order-label"><?php echo __( 'New', 'elementor' ); ?></label>
-				<input type="radio" id="elementor-template-library-order-trend" class="elementor-template-library-order-input" name="elementor-template-library-order" value="trendIndex">
-				<label for="elementor-template-library-order-trend" class="elementor-template-library-order-label"><?php echo __( 'Trend', 'elementor' ); ?></label>
-				<input type="radio" id="elementor-template-library-order-popular" class="elementor-template-library-order-input" name="elementor-template-library-order" value="popularityIndex">
-				<label for="elementor-template-library-order-popular" class="elementor-template-library-order-label"><?php echo __( 'Popular', 'elementor' ); ?></label>
+		<# if ( 'remote' === activeSource ) { #>
+			<div id="elementor-template-library-filter-toolbar-remote" class="elementor-template-library-filter-toolbar">
+				<div id="elementor-template-library-order">
+					<input type="radio" id="elementor-template-library-order-new" class="elementor-template-library-order-input" name="elementor-template-library-order" value="date">
+					<label for="elementor-template-library-order-new" class="elementor-template-library-order-label"><?php echo __( 'New', 'elementor' ); ?></label>
+					<input type="radio" id="elementor-template-library-order-trend" class="elementor-template-library-order-input" name="elementor-template-library-order" value="trendIndex">
+					<label for="elementor-template-library-order-trend" class="elementor-template-library-order-label"><?php echo __( 'Trend', 'elementor' ); ?></label>
+					<input type="radio" id="elementor-template-library-order-popular" class="elementor-template-library-order-input" name="elementor-template-library-order" value="popularityIndex">
+					<label for="elementor-template-library-order-popular" class="elementor-template-library-order-label"><?php echo __( 'Popular', 'elementor' ); ?></label>
+				</div>
+				<div id="elementor-template-library-my-favorites">
+					<input id="elementor-template-library-filter-my-favorites" type="checkbox">
+					<label id="elementor-template-library-filter-my-favorites-label" for="elementor-template-library-filter-my-favorites">
+						<i class="fa"></i>
+						<?php echo __( 'My Favorites', 'elementor' ); ?>
+					</label>
+				</div>
 			</div>
-			<div id="elementor-template-library-my-favorites">
-				<input id="elementor-template-library-filter-my-favorites" type="checkbox">
-				<label id="elementor-template-library-filter-my-favorites-label" for="elementor-template-library-filter-my-favorites">
-					<i class="fa"></i>
-					<?php echo __( 'My Favorites', 'elementor' ); ?>
-				</label>
-			</div>
-		</div>
-		<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar"></div>
+		<# } else { #>
+			<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar"></div>
+		<# } #>
 		<div id="elementor-template-library-filter-text-wrapper">
 			<input id="elementor-template-library-filter-text" placeholder="<?php echo __( 'Search', 'elementor' ); ?>">
 		</div>
 	</div>
-	<div id="elementor-template-library-order-toolbar-local">
-		<div class="elementor-template-library-local-column-1">
-			<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title">
-			<label for="elementor-template-library-order-local-title" class="elementor-template-library-order-label"><?php echo __( 'Name', 'elementor' ); ?></label>
+	<# if ( 'local' === activeSource ) { #>
+		<div id="elementor-template-library-order-toolbar-local">
+			<div class="elementor-template-library-local-column-1">
+				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title">
+				<label for="elementor-template-library-order-local-title" class="elementor-template-library-order-label"><?php echo __( 'Name', 'elementor' ); ?></label>
+			</div>
+			<div class="elementor-template-library-local-column-2">
+				<input type="radio" id="elementor-template-library-order-local-type" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="type">
+				<label for="elementor-template-library-order-local-type" class="elementor-template-library-order-label"><?php echo __( 'Type', 'elementor' ); ?></label>
+			</div>
+			<div class="elementor-template-library-local-column-3">
+				<input type="radio" id="elementor-template-library-order-local-author" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="author">
+				<label for="elementor-template-library-order-local-author" class="elementor-template-library-order-label"><?php echo __( 'Created By', 'elementor' ); ?></label>
+			</div>
+			<div class="elementor-template-library-local-column-4">
+				<input type="radio" id="elementor-template-library-order-local-date" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="date">
+				<label for="elementor-template-library-order-local-date" class="elementor-template-library-order-label"><?php echo __( 'Creation Date', 'elementor' ); ?></label>
+			</div>
+			<div class="elementor-template-library-local-column-5">
+				<div class="elementor-template-library-order-label"><?php echo __( 'Actions', 'elementor' ); ?></div>
+			</div>
 		</div>
-		<div class="elementor-template-library-local-column-2">
-			<input type="radio" id="elementor-template-library-order-local-type" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="type">
-			<label for="elementor-template-library-order-local-type" class="elementor-template-library-order-label"><?php echo __( 'Type', 'elementor' ); ?></label>
-		</div>
-		<div class="elementor-template-library-local-column-3">
-			<input type="radio" id="elementor-template-library-order-local-author" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="author">
-			<label for="elementor-template-library-order-local-author" class="elementor-template-library-order-label"><?php echo __( 'Created By', 'elementor' ); ?></label>
-		</div>
-		<div class="elementor-template-library-local-column-4">
-			<input type="radio" id="elementor-template-library-order-local-date" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="date">
-			<label for="elementor-template-library-order-local-date" class="elementor-template-library-order-label"><?php echo __( 'Creation Date', 'elementor' ); ?></label>
-		</div>
-		<div class="elementor-template-library-local-column-5">
-			<div class="elementor-template-library-order-label"><?php echo __( 'Actions', 'elementor' ); ?></div>
-		</div>
-	</div>
+	<# } #>
 	<div id="elementor-template-library-templates-container"></div>
-	<div id="elementor-template-library-footer-banner">
-		<i class="eicon-nerd"></i>
-		<div class="elementor-excerpt"><?php echo __( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
-	</div>
+	<# if ( 'remote' === activeSource ) { #>
+		<div id="elementor-template-library-footer-banner">
+			<i class="eicon-nerd"></i>
+			<div class="elementor-excerpt"><?php echo __( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
+		</div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">

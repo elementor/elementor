@@ -214,10 +214,6 @@
 			box-shadow: 1px 1px 5px rgba(0,0,0,.1);
 			margin-top: 10px;
 		}
-
-		#elementor-template-library-filter-toolbar-remote {
-			display: none;
-		}
 	}
 
 	&[data-template-source="remote"] {
@@ -227,16 +223,9 @@
 		}
 	}
 
-	&:not([data-template-source="local"]) {
+	&[data-template-source="empty"] {
 
-		#elementor-template-library-filter-toolbar-local, #elementor-template-library-order-toolbar-local {
-			display: none;
-		}
-	}
-
-	&:not([data-template-source="remote"]) {
-
-		#elementor-template-library-footer-banner {
+		#elementor-template-library-order-toolbar-local, #elementor-template-library-footer-banner {
 			display: none;
 		}
 	}
