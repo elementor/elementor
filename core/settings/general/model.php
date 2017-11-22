@@ -23,7 +23,7 @@ class Model extends BaseModel {
 			'title' => __( 'Global Settings', 'elementor' ),
 			'menu' => [
 				'icon' => 'fa fa-cogs',
-				'beforeItem' => 'clear-page',
+				'beforeItem' => 'elementor-settings',
 			],
 		];
 	}

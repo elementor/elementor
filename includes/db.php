@@ -27,8 +27,8 @@ class DB {
 	 * @access public
 	 * @since 1.0.0
 	 *
-	 * @param int    $post_id
-	 * @param array  $posted
+	 * @param int $post_id
+	 * @param array $posted
 	 * @param string $status
 	 *
 	 * @return void
@@ -42,23 +42,29 @@ class DB {
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
-		if ( self::STATUS_PUBLISH === $status ) {
-			$this->remove_draft( $post_id );
+		$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
 
+		if ( $old_autosave ) {
+			wp_delete_post_revision( $old_autosave->ID );
+		}
+
+		$save_original = true;
+
+		// If the post is a draft - save the `autosave` to the original draft.
+		// Allow a revision only if the original post is already published.
+		if ( self::STATUS_AUTOSAVE === $status && self::STATUS_PUBLISH === get_post_status( $post_id ) ) {
+			$save_original = false;
+		}
+
+		if ( $save_original ) {
 			// Don't use `update_post_meta` that can't handle `revision` post type
 			$is_meta_updated = update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 
 			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
 
 			$this->_save_plain_text( $post_id );
-		} elseif ( self::STATUS_AUTOSAVE === $status ) {
+		} else {
 			do_action( 'elementor/db/before_save', $status, true );
-
-			$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
-
-			if ( $old_autosave ) {
-				wp_delete_post_revision( $old_autosave->ID );
-			}
 
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $post_id,
@@ -67,7 +73,7 @@ class DB {
 			] );
 
 			if ( $autosave_id ) {
-				update_metadata( 'post',  $autosave_id, '_elementor_data', $json_value );
+				update_metadata( 'post', $autosave_id, '_elementor_data', $json_value );
 			}
 		}
 
@@ -88,7 +94,7 @@ class DB {
 	 * @access public
 	 * @since 1.0.0
 	 *
-	 * @param int    $post_id
+	 * @param int $post_id
 	 * @param string $status
 	 *
 	 * @return array
@@ -129,15 +135,24 @@ class DB {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $post_id
+	 * @param string $status
+	 *
+	 * @return array
+	 */
 	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
 		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
 
 		if ( self::STATUS_DRAFT === $status ) {
-			$draft_data = $this->_get_json_meta( $post_id, '_elementor_draft_data' );
+			$autosave = wp_get_post_autosave( $post_id );
 
-			if ( ! empty( $draft_data ) ) {
-				$data = $draft_data;
+			if ( is_object( $autosave ) ) {
+				$autosave_data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
+
+				if ( ! empty( $autosave_data ) ) {
+					$data = $autosave_data;
+				}
 			}
 
 			if ( empty( $data ) ) {
@@ -187,26 +202,12 @@ class DB {
 	}
 
 	/**
-	 * Remove draft data from DB.
-	 *
-	 * @access public
-	 * @since 1.0.0
-	 *
-	 * @param $post_id
-	 *
-	 * @return void
-	 */
-	public function remove_draft( $post_id ) {
-		delete_post_meta( $post_id, '_elementor_draft_data' );
-	}
-
-	/**
 	 * Set whether the page is elementor page or not
 	 *
 	 * @access public
 	 * @since 1.5.0
 	 *
-	 * @param int  $post_id
+	 * @param int $post_id
 	 * @param bool $is_elementor
 	 */
 	public function set_is_elementor_page( $post_id, $is_elementor = true ) {
@@ -282,7 +283,7 @@ class DB {
 	 *
 	 * @param array $data
 	 *
-	 * @param bool  $with_html_content
+	 * @param bool $with_html_content
 	 *
 	 * @return array
 	 */
@@ -297,7 +298,7 @@ class DB {
 			}
 
 			$editor_data[] = $element->get_raw_data( $with_html_content );
-		} // End Section
+		} // End foreach().
 
 		return $editor_data;
 	}
@@ -374,6 +375,7 @@ class DB {
 	 * @access public
 	*/
 	public function switch_to_post( $post_id ) {
+		$post_id = absint( $post_id );
 		// If is already switched, or is the same post, return.
 		if ( get_the_ID() === $post_id ) {
 			$this->switched_post_data[] = false;

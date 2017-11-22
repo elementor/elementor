@@ -125,7 +125,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onApplyClick: function() {
-		elementor.getPanelView().getChildView( 'footer' )._publishBuilder();
+		elementor.saver.saveAutoSave();
 
 		this.isRevisionApplied = true;
 
@@ -135,7 +135,7 @@ module.exports = Marionette.CompositeView.extend( {
 	onDiscardClick: function() {
 		this.setEditorData( elementor.config.data );
 
-		elementor.setFlagEditorChange( this.isRevisionApplied );
+		elementor.saver.setFlagEditorChange( this.isRevisionApplied );
 
 		this.isRevisionApplied = false;
 
@@ -163,9 +163,11 @@ module.exports = Marionette.CompositeView.extend( {
 
 		var currentPreviewModel = this.collection.findWhere({ id: this.currentPreviewId });
 
-		this.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
-
-		this.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
+		// Ensure the model is exist and not deleted during a save.
+		if ( currentPreviewModel ) {
+			this.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
+			this.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
+		}
 	},
 
 	onChildviewDetailsAreaClick: function( childView ) {
@@ -186,8 +188,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 		childView.$el.addClass( 'elementor-revision-current-preview elementor-revision-item-loading' );
 
-		if ( elementor.isEditorChanged() && null === self.currentPreviewId ) {
-			elementor.saveEditor( {
+		if ( elementor.saver.isEditorChanged() && null === self.currentPreviewId ) {
+			elementor.saver.saveEditor( {
 				status: 'autosave',
 				onSuccess: function() {
 					self.getRevisionViewData( childView );

@@ -291,7 +291,7 @@ class Editor {
 
 		$plugin = Plugin::$instance;
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
+		$editor_data = $plugin->db->get_builder( $this->_post_id );
 
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
@@ -474,6 +474,10 @@ class Editor {
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce(),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
+			'wp_preview' => [
+				'url' => get_preview_post_link(),
+				'target' => 'wp-preview-' . $this->_post_id,
+			],
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
@@ -502,6 +506,7 @@ class Editor {
 			'page_title_selector' => $page_title_selector,
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
+			'exit_to_dashboard_url' => get_edit_post_link(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),
@@ -511,7 +516,10 @@ class Editor {
 				'delete_element' => __( 'Delete {0}', 'elementor' ),
 				'take_over' => __( 'Take Over', 'elementor' ),
 				'go_back' => __( 'Go Back', 'elementor' ),
+				'save' => __( 'Save', 'elementor' ),
 				'saved' => __( 'Saved', 'elementor' ),
+				'publish_changes' => __( 'Publish Changes', 'elementor' ),
+				'published' => __( 'Published', 'elementor' ),
 				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
 				'edit_element' => __( 'Edit {0}', 'elementor' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
@@ -556,9 +564,12 @@ class Editor {
 				'import_template_dialog_message_attention' => __( 'Attention! Importing may override previous settings.', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
+				'update' => __( 'Update', 'elementor' ),
+				'publish_changes' => __( 'Publish Changes', 'elementor' ),
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 				'type_here' => __( 'Type Here', 'elementor' ),
 				'proceed_anyway' => __( 'Proceed Anyway', 'elementor' ),
+				'exit_to_dashboard' => __( 'Exit to Dashboard', '' ),
 			],
 		];
 
