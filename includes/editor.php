@@ -22,7 +22,7 @@ class Editor {
 	/**
 	 * User capability required to access Elementor editor.
 	 */
-	const EDITING_CAPABILITY = 'edit_pages';
+	const EDITING_CAPABILITY = 'edit_posts';
 
 	/**
 	 * Post ID.
@@ -671,7 +671,7 @@ class Editor {
 	 * Get WordPress editor config.
 	 *
 	 * Config the default WordPress editor with custom settings for Elementor use.
-	 * 
+	 *
 	 * @since 1.0.0
 	 * @access private
 	 */
@@ -855,14 +855,25 @@ class Editor {
 	 * Verify request nonce.
 	 *
 	 * Whether the request nonce verified or not.
-	 * 
+	 *
 	 * @since 1.8.1
 	 * @access public
 	 *
-	 * @return bool True if request nonce verified, False otherwise. 
+	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
 		return ! empty( $_REQUEST['_nonce'] ) && $this->verify_nonce( $_REQUEST['_nonce'] );
+	}
+
+	/**
+	 * Verify request nonce and send a JSON error if not.
+	 *
+	 * @access public
+	 */
+	public function verify_ajax_nonce() {
+		if ( ! $this->verify_request_nonce() ) {
+			wp_send_json_error( new \WP_Error( 'token_expired' ) );
+		}
 	}
 
 	/**

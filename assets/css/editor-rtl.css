@@ -865,7 +865,7 @@ select {
       content: '';
       position: absolute;
       top: -20px;
-      right: 20px;
+      left: 20px;
       border: 10px solid transparent;
       border-bottom-color: #fff; }
     .elementor-panel .elementor-controls-popover div.elementor-control:before {
@@ -1938,7 +1938,7 @@ select {
   .elementor-panel .elementor-control-type-hidden {
     display: none !important; }
   .elementor-panel .elementor-control-type-popover_toggle .elementor-control-input-wrapper {
-    text-align: right; }
+    text-align: left; }
   .elementor-panel .elementor-control-type-popover_toggle .elementor-control-popover-toggle-simple-toggle {
     display: inline-block;
     width: 50px;
