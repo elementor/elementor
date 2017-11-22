@@ -1,6 +1,5 @@
 var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
-	TemplateLibraryTemplatesEmptyView = require( 'elementor-templates/views/parts/templates-empty' ),
 	TemplateLibraryCollectionView;
 
 TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
@@ -12,7 +11,11 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	reorderOnSort: true,
 
-	emptyView: TemplateLibraryTemplatesEmptyView,
+	emptyView: function() {
+		var EmptyView = require( 'elementor-templates/views/parts/templates-empty' );
+
+		return new EmptyView();
+	},
 
 	ui: {
 		filterText: '#elementor-template-library-filter-text',
