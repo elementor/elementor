@@ -652,6 +652,11 @@ module.exports = Marionette.Behavior.extend( {
 		if ( ! _.isUndefined( changed.post_status ) ) {
 			this.setMenuItems( changed.post_status );
 		}
+
+		// Refresh page-settings post-status value.
+		if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
+			elementor.getPanelView().getCurrentPageView().render();
+		}
 	},
 
 	onBeforeSave: function() {
@@ -698,9 +703,13 @@ module.exports = Marionette.Behavior.extend( {
 		if ( hasChanges ) {
 			this.ui.buttonSave.addClass( 'elementor-save-active' );
 			this.ui.buttonSaveLabel.html( elementor.translate( 'save' ) );
+			this.ui.menuPublishChanges.find( '.elementor-title' ).html( elementor.translate( 'publish_changes' ) )
+				.end().addClass( 'elementor-save-active' );
 		} else {
 			this.ui.buttonSave.removeClass( 'elementor-save-active' );
 			this.ui.buttonSaveLabel.html( elementor.translate( 'saved' ) );
+			this.ui.menuPublishChanges.find( '.elementor-title' ).html( elementor.translate( 'published' ) )
+				.end().removeClass( 'elementor-save-active' );
 		}
 	},
 
