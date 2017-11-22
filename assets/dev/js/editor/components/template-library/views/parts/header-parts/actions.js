@@ -4,10 +4,9 @@ module.exports = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-header-actions',
 
 	ui: {
-		'import': '#elementor-template-library-header-import',
-		sync: '#elementor-template-library-header-sync',
-		syncIcon: '#elementor-template-library-header-sync i',
-		save: '#elementor-template-library-header-save'
+		'import': '#elementor-template-library-header-import i',
+		sync: '#elementor-template-library-header-sync i',
+		save: '#elementor-template-library-header-save i'
 	},
 
 	events: {
@@ -23,10 +22,10 @@ module.exports = Marionette.ItemView.extend( {
 	onSyncClick: function() {
 		var self = this;
 
-		self.ui.syncIcon.addClass( 'eicon-animation-spin' );
+		self.ui.sync.addClass( 'eicon-animation-spin' );
 
 		elementor.templates.requestLibraryData( function() {
-			self.ui.syncIcon.removeClass( 'eicon-animation-spin' );
+			self.ui.sync.removeClass( 'eicon-animation-spin' );
 
 			elementor.templates.showTemplates();
 		}, true, true );
