@@ -152,13 +152,14 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onOrderLabelsClick: function( event ) {
-		var $clickedInput = jQuery( event.currentTarget.control );
+		var $clickedInput = jQuery( event.currentTarget.control ),
+			toggle;
 
 		if ( ! $clickedInput[0].checked ) {
-			$clickedInput.removeClass( 'elementor-template-library-order-reverse' );
-		} else {
-			$clickedInput.toggleClass( 'elementor-template-library-order-reverse' );
+			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
 		}
+
+		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
 
 		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
 	}
