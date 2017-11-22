@@ -2492,10 +2492,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
   -webkit-transition: color .5s;
   -o-transition: color .5s;
   transition: color .5s; }
-  .elementor-template-library-header-item:not(:hover) {
-    color: #a4afb7; }
   .elementor-template-library-header-item > i {
     font-size: 18px; }
+    .elementor-template-library-header-item > i:not(:hover) {
+      color: #a4afb7; }
 
 #elementor-template-library-header-save i {
   font-size: 15px; }
@@ -2551,13 +2551,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
     -webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
             box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
     margin-top: 10px; }
-  #elementor-template-library-templates[data-template-source="local"] #elementor-template-library-filter-toolbar-remote {
-    display: none; }
   #elementor-template-library-templates[data-template-source="remote"] #elementor-template-library-templates-container {
     margin: 0 -15px; }
-  #elementor-template-library-templates:not([data-template-source="local"]) #elementor-template-library-filter-toolbar-local, #elementor-template-library-templates:not([data-template-source="local"]) #elementor-template-library-order-toolbar-local {
-    display: none; }
-  #elementor-template-library-templates:not([data-template-source="remote"]) #elementor-template-library-footer-banner {
+  #elementor-template-library-templates[data-template-source="empty"] #elementor-template-library-order-toolbar-local, #elementor-template-library-templates[data-template-source="empty"] #elementor-template-library-footer-banner {
     display: none; }
   #elementor-template-library-templates .elementor-template-library-order-input {
     display: none; }
@@ -2603,6 +2599,13 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .elementor-template-library-order-input:checked + .elementor-template-library-order-label {
   font-weight: 600; }
+  .elementor-template-library-order-input:checked + .elementor-template-library-order-label:after {
+    font-family: eicons;
+    content: '\e956';
+    margin-left: 5px; }
+
+.elementor-template-library-order-input:checked.elementor-template-library-order-reverse + .elementor-template-library-order-label:after {
+  content: '\e955'; }
 
 .elementor-template-library-order-label {
   font-size: 13px;
@@ -2772,12 +2775,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-template-library-order-toolbar-local {
   margin-top: 30px; }
-  #elementor-template-library-order-toolbar-local .elementor-template-library-order-input:checked + .elementor-template-library-order-label:after {
-    font-family: eicons;
-    content: '\e956';
-    margin-left: 5px; }
-  #elementor-template-library-order-toolbar-local .elementor-template-library-order-input:checked.elementor-template-library-order-reverse + .elementor-template-library-order-label:after {
-    content: '\e955'; }
   #elementor-template-library-order-toolbar-local .elementor-template-library-order-label {
     color: #a4afb7;
     line-height: 1;
