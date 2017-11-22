@@ -167,21 +167,23 @@ class Elements_Manager {
 			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
 		}
 
-		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+		$post_id = $_POST['post_id'];
+
+		if ( ! User::is_current_user_can_edit( $post_id ) ) {
 			wp_send_json_error( new \WP_Error( 'no_access' ) );
 		}
 
-		if ( isset( $_POST['status'] ) || in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_DRAFT, DB::STATUS_AUTOSAVE ] ) ) {
+		$status = DB::STATUS_DRAFT;
+
+		if ( isset( $_POST['status'] ) && in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_AUTOSAVE ] ) ) {
 			$status = $_POST['status'];
-		} else {
-			$status = DB::STATUS_DRAFT;
 		}
 
 		$posted = json_decode( stripslashes( $_POST['data'] ), true );
 
-		Plugin::$instance->db->save_editor( $_POST['post_id'], $posted, $status );
+		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
 
-		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', [] );
+		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', [], $post_id );
 
 		wp_send_json_success( $return_data );
 	}

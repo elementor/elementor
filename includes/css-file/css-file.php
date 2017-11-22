@@ -139,7 +139,7 @@ abstract class CSS_File {
 			$dep = $this->get_inline_dependency();
 			// If the dependency has already been printed ( like a template in footer )
 			if ( wp_styles()->query( $dep, 'done' ) ) {
-				echo '<style>' . $this->get_css() . '</style>'; // XSS ok.
+				echo '<style>' . $meta['css'] . '</style>'; // XSS ok.
 			} else {
 				wp_add_inline_style( $dep , $meta['css'] );
 			}
@@ -251,6 +251,10 @@ abstract class CSS_File {
 
 			$this->stylesheet_obj->add_rules( $parsed_selector, $output_css_property, $query );
 		}
+	}
+
+	public function get_fonts() {
+		return $this->fonts;
 	}
 
 	/**
@@ -391,6 +395,14 @@ abstract class CSS_File {
 		return false;
 	}
 
+	protected function parse_css() {
+		$this->render_css();
+
+		do_action( 'elementor/' . $this->get_name() . '-css-file/parse', $this );
+
+		$this->css = $this->stylesheet_obj->__toString();
+	}
+
 	/**
 	 * @since 1.6.0
 	 * @access private
@@ -457,17 +469,5 @@ abstract class CSS_File {
 		$this->path = $wp_upload_dir['basedir'] . $relative_path;
 
 		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
-	}
-
-	/**
-	 * @since 1.2.0
-	 * @access private
-	*/
-	private function parse_css() {
-		$this->render_css();
-
-		do_action( 'elementor/' . $this->get_name() . '-css-file/parse', $this );
-
-		$this->css = $this->stylesheet_obj->__toString();
 	}
 }
