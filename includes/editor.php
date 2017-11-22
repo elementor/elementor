@@ -16,7 +16,7 @@ class Editor {
 
 	const EDITING_NONCE_KEY = 'elementor-editing';
 
-	const EDITING_CAPABILITY = 'edit_pages';
+	const EDITING_CAPABILITY = 'edit_posts';
 
 	/**
 	 * Post ID.
