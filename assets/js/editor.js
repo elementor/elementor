@@ -636,9 +636,10 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	initialize: function() {
-		elementor.saver.on( 'before:save', this.onBeforeSave.bind( this ) );
-		elementor.saver.on( 'after:save', this.onAfterSave.bind( this ) );
-		elementor.saver.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
+		elementor.saver
+			.on( 'before:save', this.onBeforeSave.bind( this ) )
+			.on( 'after:save', this.onAfterSave.bind( this ) )
+			.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
 
@@ -716,13 +717,15 @@ module.exports = Marionette.Behavior.extend( {
 		if ( hasChanges ) {
 			this.ui.buttonSave.addClass( 'elementor-save-active' );
 			this.ui.buttonSaveLabel.html( elementor.translate( 'save' ) );
-			this.ui.menuPublishChanges.find( '.elementor-title' ).html( elementor.translate( 'publish_changes' ) )
-				.end().addClass( 'elementor-save-active' );
+			this.ui.menuPublishChanges.find( '.elementor-title' )
+				.addClass( 'elementor-save-active' )
+				.html( elementor.translate( 'publish_changes' ) );
 		} else {
 			this.ui.buttonSave.removeClass( 'elementor-save-active' );
 			this.ui.buttonSaveLabel.html( elementor.translate( 'saved' ) );
-			this.ui.menuPublishChanges.find( '.elementor-title' ).html( elementor.translate( 'published' ) )
-				.end().removeClass( 'elementor-save-active' );
+			this.ui.menuPublishChanges.find( '.elementor-title' )
+				.removeClass( 'elementor-save-active' )
+				.html( elementor.translate( 'published' ) );
 		}
 	},
 
@@ -740,12 +743,17 @@ module.exports = Marionette.Behavior.extend( {
 				this.ui.menuUpdate.show();
 				break;
 			case 'draft':
-				// TODO: if currentUserCan( 'publish_posts' )
-				this.ui.menuPublish.show();
+				if ( elementor.config.current_user_can_publish ) {
+					this.ui.menuPublish.show();
+				}
 				break;
-			// TODO: should be 'pending' and not undefined.
-			case undefined: // User cannot change post status
-				this.ui.menuSubmitForReview.show();
+			case 'pending': // User cannot change post status
+			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
+				if ( elementor.config.current_user_can_publish ) {
+					this.ui.menuPublish.show();
+				} else {
+					this.ui.menuSubmitForReview.show();
+				}
 				break;
 		}
 	},
@@ -12198,10 +12206,6 @@ RevisionsManager = function() {
 				elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
 			}
 		} ).show();
-
-		jQuery( '.dialog-widget' ).css( {
-			backgroundColor: 'rgba(0, 0, 0, 0.3)'
-		} );
 	};
 
 	var attachEvents = function() {
