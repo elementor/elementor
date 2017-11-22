@@ -57,16 +57,6 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		} );
 	},
 
-	filterBySource: function( model, source ) {
-		return source === model.get( 'source' );
-	},
-
-	filterByType: function( model ) {
-		var typeInfo = elementor.templates.getTemplateTypes( model.get( 'type' ) );
-
-		return ! typeInfo || false !== typeInfo.showInLibrary;
-	},
-
 	filterByFavorite: function( model ) {
 		return model.get( 'favorite' );
 	},
@@ -77,9 +67,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			favoriteFilter = elementor.channels.templates.request( 'filter:favorite' );
 
 		return ( ! textFilter || this.filterByText( childModel, textFilter ) ) &&
-			   ( ! sourceFilter || this.filterBySource( childModel, sourceFilter ) ) &&
-			   ( ! favoriteFilter || 'remote' !== sourceFilter || this.filterByFavorite( childModel ) ) &&
-			   this.filterByType( childModel );
+			   ( ! favoriteFilter || 'remote' !== sourceFilter || this.filterByFavorite( childModel ) );
 	},
 
 	order: function( by, reverseOrder ) {
@@ -131,10 +119,18 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	onRenderCollection: function() {
+	addSourceData: function() {
 		var isEmpty = this.children.isEmpty();
 
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
+	},
+
+	onRenderCollection: function() {
+		this.addSourceData();
+	},
+
+	onBeforeRenderEmpty: function() {
+		this.addSourceData();
 	},
 
 	onFilterTextInput: function() {
