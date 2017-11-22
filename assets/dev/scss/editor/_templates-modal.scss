@@ -263,6 +263,22 @@
 
 		+ .elementor-template-library-order-label {
 			font-weight: 600;
+
+			&:after {
+				font-family: eicons;
+				content: '\e956';
+				@include margin-start(5px);
+			}
+		}
+
+		&.elementor-template-library-order-reverse {
+
+			+ .elementor-template-library-order-label {
+
+				&:after {
+					content: '\e955';
+				}
+			}
 		}
 	}
 }
@@ -483,31 +499,6 @@
 
 #elementor-template-library-order-toolbar-local {
 	margin-top: 30px;
-
-	.elementor-template-library-order-input {
-
-		&:checked {
-
-			+ .elementor-template-library-order-label {
-
-				&:after {
-					font-family: eicons;
-					content: '\e956';
-					@include margin-start(5px);
-				}
-			}
-
-			&.elementor-template-library-order-reverse {
-
-				+ .elementor-template-library-order-label {
-
-					&:after {
-						content: '\e955';
-					}
-				}
-			}
-		}
-	}
 
 	.elementor-template-library-order-label {
 		color: $editor-light;
