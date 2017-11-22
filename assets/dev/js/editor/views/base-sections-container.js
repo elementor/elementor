@@ -62,7 +62,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	onCollectionChanged: function() {
-		elementor.setFlagEditorChange( true );
+		elementor.saver.setFlagEditorChange( true );
 	},
 
 	onPanelElementDragStart: function() {

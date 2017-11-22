@@ -92,8 +92,13 @@ module.exports = ViewModule.extend( {
 	},
 
 	addPanelMenuItem: function() {
-		var menuSettings = this.getSettings( 'panelPage.menu' ),
-			menuItemOptions = {
+		var menuSettings = this.getSettings( 'panelPage.menu' );
+
+		if ( ! menuSettings ) {
+			return;
+		}
+
+		var menuItemOptions = {
 				icon: menuSettings.icon,
 				title: this.getSettings( 'panelPage.title' ),
 				type: 'page',
