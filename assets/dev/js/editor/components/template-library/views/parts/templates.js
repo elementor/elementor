@@ -30,6 +30,12 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	comparators: {
 		title: function( model ) {
 			return model.get( 'title' ).toLowerCase();
+		},
+		popularityIndex: function( model ) {
+			return -model.get( 'popularityIndex' );
+		},
+		trendIndex: function( model ) {
+			return -model.get( 'trendIndex' );
 		}
 	},
 
