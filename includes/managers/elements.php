@@ -183,7 +183,7 @@ class Elements_Manager {
 
 		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
 
-		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', $post_id );
+		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', [], $post_id );
 
 		wp_send_json_success( $return_data );
 	}
