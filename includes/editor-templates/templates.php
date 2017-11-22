@@ -189,7 +189,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<i class="eicon-library-save"></i>
 	</div>
 	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
-	<div class="elementor-template-library-blank-excerpt">{{{ description }}}</div>
+	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
 	<form id="elementor-template-library-save-template-form">
 		<input type="hidden" name="post_id" value="<?php echo get_the_ID(); ?>">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo __( 'Enter Template Name', 'elementor' ); ?>" required>
@@ -212,7 +212,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon-library-import"></i>
 		</div>
 		<div class="elementor-template-library-blank-title"><?php echo __( 'Import Template to Your Library', 'elementor' ); ?></div>
-		<div class="elementor-template-library-blank-excerpt"><?php echo __( 'Drag & drop your .JSON or .zip template file', 'elementor' ); ?></div>
+		<div class="elementor-template-library-blank-message"><?php echo __( 'Drag & drop your .JSON or .zip template file', 'elementor' ); ?></div>
 		<div id="elementor-template-library-import-form-or"><?php echo __( 'or', 'elementor' ); ?></div>
 		<label for="elementor-template-library-import-form-input" id="elementor-template-library-import-form-label" class="elementor-button elementor-button-success"><?php echo __( 'Select File', 'elementor' ); ?></label>
 		<input id="elementor-template-library-import-form-input" type="file" name="file" accept=".json,.zip" required/>
@@ -227,8 +227,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-template-library-templates-empty-icon">
 		<i class="eicon-nerd"></i>
 	</div>
-	<div class="elementor-template-library-blank-title"><?php echo __( 'Haven’t Saved Templates Yet?', 'elementor' ); ?></div>
-	<div class="elementor-template-library-blank-excerpt"><?php echo __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ); ?></div>
+	<div class="elementor-template-library-blank-title"></div>
+	<div class="elementor-template-library-blank-message"></div>
 	<div class="elementor-template-library-blank-footer">
 		<?php echo __( 'What is Library?', 'elementor' ); ?>
 		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo __( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
