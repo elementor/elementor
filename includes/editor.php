@@ -559,6 +559,13 @@ class Editor {
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 				'type_here' => __( 'Type Here', 'elementor' ),
 				'proceed_anyway' => __( 'Proceed Anyway', 'elementor' ),
+				'templates_empty_title' => __( 'Haven’t Saved Templates Yet?', 'elementor' ),
+				'templates_empty_message' => __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
+				'templates_no_results_title' => __( 'No Results Found', 'elementor' ),
+				'templates_no_results_message' => __( 'Please make sure your search is spelled correctly or try a different words.', 'elementor' ),
+				'templates_no_favorites_title' => __( 'No Favorites Templates', 'elementor' ),
+				'templates_no_favorites_message' => __( 'You can mark every predesigned template as favorite.', 'elementor' ),
+
 			],
 		];
 
