@@ -468,6 +468,10 @@ class Editor {
 			$page_title_selector = 'h1.entry-title';
 		}
 
+		$post_type_object = get_post_type_object( get_post_type() );
+
+		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
+
 		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
@@ -506,6 +510,7 @@ class Editor {
 			'page_title_selector' => $page_title_selector,
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
+			'current_user_can_publish' => $current_user_can_publish,
 			'exit_to_dashboard_url' => get_edit_post_link(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
