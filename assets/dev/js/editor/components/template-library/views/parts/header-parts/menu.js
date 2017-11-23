@@ -34,7 +34,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var currentSource = elementor.channels.templates.request( 'filter:source' ),
+		var currentSource = elementor.templates.getFilter( 'source' ),
 			$sourceItem = this.ui.menuItems.filter( '[data-template-source="' + currentSource + '"]' );
 
 		this.activateMenuItem( $sourceItem );

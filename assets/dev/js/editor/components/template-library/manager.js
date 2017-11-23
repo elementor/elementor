@@ -277,6 +277,10 @@ TemplateLibraryManager = function() {
 		self.getModal().hide();
 	};
 
+	this.getFilter = function( name ) {
+		return elementor.channels.templates.request( 'filter:' + name );
+	};
+
 	this.setTemplatesSource = function( source, silent ) {
 		elementor.channels.templates
 			.stopReplying()
@@ -288,7 +292,7 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showTemplates = function() {
-		var activeSource = elementor.channels.templates.request( 'filter:source' );
+		var activeSource = this.getFilter( 'source' );
 
 		var templatesToShow = templatesCollection.filter( function( model ) {
 			if ( activeSource !== model.get( 'source' ) ) {

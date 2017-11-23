@@ -26,11 +26,11 @@ TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 	},
 
 	getCurrentMode: function() {
-		if ( elementor.channels.templates.request( 'filter:text' ) ) {
+		if ( elementor.templates.getFilter( 'text' ) ) {
 			return 'noResults';
 		}
 
-		if ( elementor.channels.templates.request( 'filter:favorite' ) ) {
+		if ( elementor.templates.getFilter( 'favorite' ) ) {
 			return 'noFavorites';
 		}
 

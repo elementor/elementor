@@ -71,9 +71,9 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	filter: function( childModel ) {
-		var textFilter = elementor.channels.templates.request( 'filter:text' ),
-			sourceFilter = elementor.channels.templates.request( 'filter:source' ),
-			favoriteFilter = elementor.channels.templates.request( 'filter:favorite' );
+		var textFilter = elementor.templates.getFilter( 'text' ),
+			sourceFilter = elementor.templates.getFilter( 'source' ),
+			favoriteFilter = elementor.templates.getFilter( 'favorite' );
 
 		return ( ! textFilter || this.filterByText( childModel, textFilter ) ) &&
 			   ( ! favoriteFilter || 'remote' !== sourceFilter || this.filterByFavorite( childModel ) );
@@ -139,7 +139,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	addSourceData: function() {
 		var isEmpty = this.children.isEmpty();
 
-		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
+		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
 	onRenderCollection: function() {

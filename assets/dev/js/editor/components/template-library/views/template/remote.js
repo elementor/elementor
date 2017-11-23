@@ -27,7 +27,7 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 
 		elementor.templates.markAsFavorite( this.model, isFavorite );
 
-		if ( ! isFavorite && elementor.channels.templates.request( 'filter:favorite' ) ) {
+		if ( ! isFavorite && elementor.templates.getFilter( 'favorite' ) ) {
 			elementor.channels.templates.trigger( 'filter:change' );
 		}
 	}
