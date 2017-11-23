@@ -61,7 +61,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-templates">
 	<#
-		var activeSource = elementor.channels.templates.request('filter:source');
+		var activeSource = elementor.templates.getFilter('source');
 	#>
 	<div id="elementor-template-library-toolbar">
 		<# if ( 'remote' === activeSource ) { #>
@@ -113,12 +113,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	<# } #>
 	<div id="elementor-template-library-templates-container"></div>
-	<# if ( 'remote' === activeSource ) { #>
-		<div id="elementor-template-library-footer-banner">
-			<i class="eicon-nerd"></i>
-			<div class="elementor-excerpt"><?php echo __( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
-		</div>
-	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">
@@ -201,8 +195,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</button>
 	</form>
 	<div class="elementor-template-library-blank-footer">
-		<?php echo __( 'What is Library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo __( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
+		<?php echo __( 'Want to learn more about Elementor library?', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo __( 'Click here', 'elementor' ); ?></a>
 	</div>
 </script>
 
@@ -217,21 +211,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<label for="elementor-template-library-import-form-input" id="elementor-template-library-import-form-label" class="elementor-button elementor-button-success"><?php echo __( 'Select File', 'elementor' ); ?></label>
 		<input id="elementor-template-library-import-form-input" type="file" name="file" accept=".json,.zip" required/>
 		<div class="elementor-template-library-blank-footer">
-			<?php echo __( 'What is Library?', 'elementor' ); ?>
-			<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo __( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
+			<?php echo __( 'Want to learn more about Elementor library?', 'elementor' ); ?>
+			<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo __( 'Click here', 'elementor' ); ?></a>
 		</div>
 	</form>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-templates-empty">
-	<div id="elementor-template-library-templates-empty-icon">
+	<div class="elementor-template-library-blank-icon">
 		<i class="eicon-nerd"></i>
 	</div>
 	<div class="elementor-template-library-blank-title"></div>
 	<div class="elementor-template-library-blank-message"></div>
 	<div class="elementor-template-library-blank-footer">
-		<?php echo __( 'What is Library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo __( 'Read our tutorial on using Library templates.', 'elementor' ); ?></a>
+		<?php echo __( 'Want to learn more about Elementor library?', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo __( 'Click here', 'elementor' ); ?></a>
 	</div>
 </script>
 
