@@ -911,7 +911,7 @@ class Editor {
 	/**
 	 * Init editor templates.
 	 *
-	 * Initialize default elementor templates used in the editor pannel.
+	 * Initialize default elementor templates used in the editor panel.
 	 *
 	 * @since 1.7.0
 	 * @access private
