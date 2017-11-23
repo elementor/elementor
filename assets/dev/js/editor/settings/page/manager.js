@@ -20,7 +20,7 @@ module.exports = BaseSettings.extend( {
 	},
 
 	bindEvents: function() {
-		this.model.on( 'clearPage', function() {
+		elementor.channels.editor.on( 'elementor:clearPage', function() {
 			elementor.clearPage();
 		} );
 
