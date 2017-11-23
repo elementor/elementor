@@ -2507,7 +2507,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   font-size: 19px; }
 
 #elementor-template-library-header-close-modal {
-  width: 50px;
+  width: 45px;
   border-left: 1px solid #e6e9ec; }
 
 #elementor-template-library-header-actions {
@@ -2516,7 +2516,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   display: -ms-flexbox;
   display: flex; }
   #elementor-template-library-header-actions > div {
-    padding-right: 20px; }
+    padding-right: 16px; }
 
 #elementor-template-library-header-preview-insert-wrapper {
   cursor: default;
@@ -2870,7 +2870,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .elementor-template-library-blank-title {
   font-size: 30px; }
 
-.elementor-template-library-blank-excerpt {
+.elementor-template-library-blank-message {
   font-size: 18px;
   color: #a4afb7;
   margin-top: 20px;
