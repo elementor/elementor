@@ -1005,6 +1005,7 @@ TemplateLibraryManager = function() {
 		config = {},
 		startIntent = {},
 		templateTypes = {},
+		filterTerms = {},
 		templatesCollection;
 
 	var initLayout = function() {
@@ -1036,6 +1037,33 @@ TemplateLibraryManager = function() {
 			} );
 
 			self.registerTemplateType( type, safeData );
+		} );
+	};
+
+	var registerDefaultFilterTerms = function() {
+		filterTerms = {
+			text: {
+				callback: function( value ) {
+					value = value.toLowerCase();
+
+					if ( this.get( 'title' ).toLowerCase().indexOf( value ) >= 0 ) {
+						return true;
+					}
+
+					return _.any( this.get( 'tags' ), function( tag ) {
+						return tag.toLowerCase().indexOf( value ) >= 0;
+					} );
+				}
+			},
+			favorite: {}
+		};
+
+		jQuery.each( startIntent.filters, function( filterName ) {
+			if ( filterTerms[ filterName ] ) {
+				jQuery.extend( filterTerms[ filterName ], this );
+			} else {
+				filterTerms[ filterName ] = this;
+			}
 		} );
 	};
 
@@ -1250,6 +1278,8 @@ TemplateLibraryManager = function() {
 	this.startModal = function( customStartIntent ) {
 		startIntent = customStartIntent || {};
 
+		registerDefaultFilterTerms();
+
 		self.getModal().show();
 
 		self.setTemplatesSource( 'remote', true );
@@ -1271,18 +1301,38 @@ TemplateLibraryManager = function() {
 		self.getModal().hide();
 	};
 
-	this.setTemplatesSource = function( source, silent ) {
-		elementor.channels.templates
-			.stopReplying()
-			.reply( 'filter:source', source );
+	this.getFilter = function( name ) {
+		return elementor.channels.templates.request( 'filter:' + name );
+	};
+
+	this.setFilter = function( name, value, silent ) {
+		elementor.channels.templates.reply( 'filter:' + name, value );
 
 		if ( ! silent ) {
-			this.showTemplates();
+			elementor.channels.templates.trigger( 'filter:change' );
+		}
+	};
+
+	this.getFilterTerms = function( termName ) {
+		if ( termName ) {
+			return filterTerms[ termName ];
+		}
+
+		return filterTerms;
+	};
+
+	this.setTemplatesSource = function( source, silent ) {
+		elementor.channels.templates.stopReplying();
+
+		self.setFilter( 'source', source );
+
+		if ( ! silent ) {
+			self.showTemplates();
 		}
 	};
 
 	this.showTemplates = function() {
-		var activeSource = elementor.channels.templates.request( 'filter:source' );
+		var activeSource = self.getFilter( 'source' );
 
 		var templatesToShow = templatesCollection.filter( function( model ) {
 			if ( activeSource !== model.get( 'source' ) ) {
@@ -1538,7 +1588,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var currentSource = elementor.channels.templates.request( 'filter:source' ),
+		var currentSource = elementor.templates.getFilter( 'source' ),
 			$sourceItem = this.ui.menuItems.filter( '[data-template-source="' + currentSource + '"]' );
 
 		this.activateMenuItem( $sourceItem );
@@ -1795,11 +1845,11 @@ TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 	},
 
 	getCurrentMode: function() {
-		if ( elementor.channels.templates.request( 'filter:text' ) ) {
+		if ( elementor.templates.getFilter( 'text' ) ) {
 			return 'noResults';
 		}
 
-		if ( elementor.channels.templates.request( 'filter:favorite' ) ) {
+		if ( elementor.templates.getFilter( 'favorite' ) ) {
 			return 'noFavorites';
 		}
 
@@ -1874,29 +1924,37 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 	},
 
-	filterByText: function( model, text ) {
-		text = text.toLowerCase();
-
-		if ( model.get( 'title' ).toLowerCase().indexOf( text ) >= 0 ) {
-			return true;
-		}
-
-		return _.any( model.get( 'tags' ), function( tag ) {
-			return tag.toLowerCase().indexOf( text ) >= 0;
-		} );
-	},
-
-	filterByFavorite: function( model ) {
-		return model.get( 'favorite' );
-	},
-
 	filter: function( childModel ) {
-		var textFilter = elementor.channels.templates.request( 'filter:text' ),
-			sourceFilter = elementor.channels.templates.request( 'filter:source' ),
-			favoriteFilter = elementor.channels.templates.request( 'filter:favorite' );
+		var filterTerms = elementor.templates.getFilterTerms(),
+			passingFilter = true;
 
-		return ( ! textFilter || this.filterByText( childModel, textFilter ) ) &&
-			   ( ! favoriteFilter || 'remote' !== sourceFilter || this.filterByFavorite( childModel ) );
+		jQuery.each( filterTerms, function( filterTermName ) {
+			var filterValue = this.value || elementor.templates.getFilter( filterTermName );
+
+			if ( ! filterValue ) {
+				return;
+			}
+
+			if ( this.callback ) {
+				var callbackResult = this.callback.call( childModel, filterValue );
+
+				if ( ! callbackResult ) {
+					passingFilter = false;
+				}
+
+				return callbackResult;
+			}
+
+			var filterResult = filterValue === childModel.get( filterTermName );
+
+			if ( ! filterResult ) {
+				passingFilter = false;
+			}
+
+			return filterResult;
+		} );
+
+		return passingFilter;
 	},
 
 	order: function( by, reverseOrder ) {
@@ -1948,18 +2006,10 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	setFilter: function( name, value, silent ) {
-		elementor.channels.templates.reply( 'filter:' + name, value );
-
-		if ( ! silent ) {
-			elementor.channels.templates.trigger( 'filter:change' );
-		}
-	},
-
 	addSourceData: function() {
 		var isEmpty = this.children.isEmpty();
 
-		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
+		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
 	onRenderCollection: function() {
@@ -1971,11 +2021,11 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onFilterTextInput: function() {
-		this.setFilter( 'text', this.ui.filterText.val() );
+		elementor.templates.setFilter( 'text', this.ui.filterText.val() );
 	},
 
 	onMyFavoritesFilterChange: function(  ) {
-		this.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
+		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
 	},
 
 	onOrderLabelsClick: function( event ) {
@@ -2107,7 +2157,7 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 
 		elementor.templates.markAsFavorite( this.model, isFavorite );
 
-		if ( ! isFavorite && elementor.channels.templates.request( 'filter:favorite' ) ) {
+		if ( ! isFavorite && elementor.templates.getFilter( 'favorite' ) ) {
 			elementor.channels.templates.trigger( 'filter:change' );
 		}
 	}
