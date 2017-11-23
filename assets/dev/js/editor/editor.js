@@ -73,6 +73,9 @@ App = Marionette.Application.extend( {
 			Number: require( 'elementor-views/controls/number' ),
 			Popover_toggle: require( 'elementor-views/controls/popover-toggle' )
 		},
+		saver: {
+			footerBehavior: require( './components/saver/behaviors/footer-saver' )
+		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
 		}
