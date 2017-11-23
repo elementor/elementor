@@ -18,6 +18,7 @@ class Controls_Manager {
 	const SELECT = 'select';
 	const SWITCHER = 'switcher';
 
+	const BUTTON = 'button';
 	const HIDDEN = 'hidden';
 	const HEADING = 'heading';
 	const RAW_HTML = 'raw_html';
@@ -132,6 +133,7 @@ class Controls_Manager {
 			self::SELECT,
 			self::SWITCHER,
 
+			self::BUTTON,
 			self::HIDDEN,
 			self::HEADING,
 			self::RAW_HTML,

@@ -176,7 +176,7 @@ body {
   body a {
     color: #71d7f7; }
     body a:hover {
-      color: #9b0a46; }
+      color: #B7084E; }
   body.elementor-editor-active #elementor-preview {
     right: 0; }
     @media (max-width: 1439px) {
@@ -652,7 +652,7 @@ select {
     background: #5bc0de;
     color: #ffffff; }
   .elementor-panel a {
-    color: #9b0a46;
+    color: #B7084E;
     -webkit-transition: none;
     -o-transition: none;
     transition: none; }
@@ -876,7 +876,7 @@ select {
     display: table;
     height: 40px;
     width: 100%;
-    background-color: #9b0a46;
+    background-color: #B7084E;
     color: #fff; }
     .elementor-panel #elementor-panel-header > * {
       display: table-cell;
@@ -925,7 +925,7 @@ select {
       -webkit-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
               box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); }
       .elementor-panel .elementor-element:hover .icon, .elementor-panel .elementor-element:hover .title {
-        color: #9b0a46; }
+        color: #B7084E; }
     .elementor-panel .elementor-element .icon {
       font-size: 28px;
       padding-top: 15px;
@@ -1138,7 +1138,7 @@ select {
         background-image: -webkit-linear-gradient(top, #f3f3f3, #fff);
         background-image: -o-linear-gradient(top, #f3f3f3, #fff);
         background-image: linear-gradient(to bottom, #f3f3f3, #fff);
-        border-bottom: 3px solid #9b0a46; }
+        border-bottom: 3px solid #B7084E; }
       .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab a {
         display: block;
         text-align: center;
@@ -1950,6 +1950,8 @@ select {
     text-transform: uppercase; }
     .elementor-panel .elementor-control-type-popover_toggle .elementor-choices-label i {
       padding-left: 2px; }
+  .elementor-panel .elementor-control-type-button .elementor-control-input-wrapper {
+    text-align: right; }
   .elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;
@@ -2156,11 +2158,11 @@ select {
           box-shadow: 3px 1px 5px rgba(0, 0, 0, 0.1);
   cursor: pointer; }
   #elementor-mode-switcher:hover {
-    background-color: #9b0a46;
+    background-color: #B7084E;
     color: #FFFFFF; }
 
 body.elementor-editor-preview #elementor-mode-switcher {
-  background-color: #9b0a46;
+  background-color: #B7084E;
   color: #FFFFFF; }
 
 #elementor-mode-switcher-inner, #elementor-mode-switcher-preview {
@@ -2476,7 +2478,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   cursor: pointer; }
   #elementor-template-library-header-logo i {
     padding-right: 10px;
-    color: #9b0a46;
+    color: #B7084E;
     font-size: 20px; }
 
 #elementor-template-library-header-menu-area {
@@ -2668,7 +2670,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   #elementor-template-library-filter-my-favorites:checked + #elementor-template-library-filter-my-favorites-label {
     color: #495157; }
     #elementor-template-library-filter-my-favorites:checked + #elementor-template-library-filter-my-favorites-label i:after {
-      color: #9b0a46;
+      color: #B7084E;
       content: '\f004'; }
 
 #elementor-template-library-filter-my-favorites-label {
@@ -2677,7 +2679,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   #elementor-template-library-filter-my-favorites-label:hover {
     color: #556068; }
     #elementor-template-library-filter-my-favorites-label:hover i:after {
-      color: #9b0a46; }
+      color: #B7084E; }
   #elementor-template-library-filter-my-favorites-label i {
     padding-right: 5px; }
     #elementor-template-library-filter-my-favorites-label i:after {
@@ -2740,7 +2742,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
       text-transform: uppercase;
       top: 5px;
       right: 5px;
-      background-color: #9b0a46;
+      background-color: #B7084E;
       color: #d5dadf;
       padding: 1px 4px;
       font-size: 9px;
@@ -2805,11 +2807,11 @@ body.elementor-editor-preview #elementor-mode-switcher {
     display: none; }
     .elementor-template-library-template-remote .elementor-template-library-template-favorite-input:checked + .elementor-template-library-template-favorite-label i:before {
       content: '\f004';
-      color: #9b0a46; }
+      color: #B7084E; }
   .elementor-template-library-template-remote .elementor-template-library-template-favorite-label {
     cursor: pointer; }
     .elementor-template-library-template-remote .elementor-template-library-template-favorite-label:hover i {
-      color: #9b0a46; }
+      color: #B7084E; }
 
 #elementor-template-library-order-toolbar-local,
 .elementor-template-library-template-local {
