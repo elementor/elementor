@@ -43,10 +43,6 @@ class Model extends BaseModel {
 	public function get_panel_page_settings() {
 		return [
 			'title' => __( 'Page Settings', 'elementor' ),
-			'menu' => [
-				'icon' => 'fa fa-cog',
-				'beforeItem' => 'clear-page',
-			],
 		];
 	}
 
@@ -138,6 +134,15 @@ class Model extends BaseModel {
 				]
 			);
 		}
+
+		$this->add_control(
+			'clear_page',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'separator' => 'before',
+				'raw' => sprintf( '<label>%s</label> <button class="elementor-button elementor-button-default" onclick="elementor.settings.page.model.trigger( \'clearPage\')">%s</button>', __( 'Delete All Content', 'elementor' ), __( 'Delete', 'elementor' ) ),
+			]
+		);
 
 		$this->end_controls_section();
 

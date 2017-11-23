@@ -21,8 +21,10 @@ heartbeat = {
 			},
 			'heartbeat-tick': function( event, response ) {
 				if ( response.locked_user ) {
-					if ( elementor.isEditorChanged() ) {
-						elementor.saveEditor( { status: 'autosave' } );
+					if ( elementor.saver.isEditorChanged() ) {
+						elementor.saver.saveEditor( {
+							status: 'autosave'
+						} );
 					}
 
 					heartbeat.showLockMessage( response.locked_user );
