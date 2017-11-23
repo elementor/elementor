@@ -1,7 +1,10 @@
 .pen {
     position: relative;
     outline: none;
-	white-space: pre-wrap;
+
+	&:not([data-elementor-inline-editing-toolbar="advanced"]) {
+		white-space: pre-wrap;
+	}
 
 	&-menu {
 		box-shadow: 1px 2px 3px -2px #222;
