@@ -281,10 +281,18 @@ TemplateLibraryManager = function() {
 		return elementor.channels.templates.request( 'filter:' + name );
 	};
 
+	this.setFilter = function( name, value, silent ) {
+		elementor.channels.templates.reply( 'filter:' + name, value );
+
+		if ( ! silent ) {
+			elementor.channels.templates.trigger( 'filter:change' );
+		}
+	};
+
 	this.setTemplatesSource = function( source, silent ) {
-		elementor.channels.templates
-			.stopReplying()
-			.reply( 'filter:source', source );
+		elementor.channels.templates.stopReplying();
+
+		this.setFilter( 'source', source );
 
 		if ( ! silent ) {
 			this.showTemplates();

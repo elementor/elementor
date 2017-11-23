@@ -128,14 +128,6 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	setFilter: function( name, value, silent ) {
-		elementor.channels.templates.reply( 'filter:' + name, value );
-
-		if ( ! silent ) {
-			elementor.channels.templates.trigger( 'filter:change' );
-		}
-	},
-
 	addSourceData: function() {
 		var isEmpty = this.children.isEmpty();
 
@@ -151,11 +143,11 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onFilterTextInput: function() {
-		this.setFilter( 'text', this.ui.filterText.val() );
+		elementor.templates.setFilter( 'text', this.ui.filterText.val() );
 	},
 
 	onMyFavoritesFilterChange: function(  ) {
-		this.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
+		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
 	},
 
 	onOrderLabelsClick: function( event ) {
