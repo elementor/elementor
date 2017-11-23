@@ -44,6 +44,7 @@ App = Marionette.Application.extend( {
 			Base: require( 'elementor-views/controls/base' ),
 			BaseData: require( 'elementor-views/controls/base-data' ),
 			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
+			Button: require( 'elementor-views/controls/button' ),
 			Color: require( 'elementor-views/controls/color' ),
 			Dimensions: require( 'elementor-views/controls/dimensions' ),
 			Image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
