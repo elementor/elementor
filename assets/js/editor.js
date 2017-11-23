@@ -1458,7 +1458,47 @@ var TemplateLibraryTemplatesEmptyView;
 TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-templates-empty',
 
-	template: '#tmpl-elementor-template-library-templates-empty'
+	template: '#tmpl-elementor-template-library-templates-empty',
+
+	ui: {
+		title: '.elementor-template-library-blank-title',
+		message: '.elementor-template-library-blank-message'
+	},
+
+	modesStrings: {
+		empty: {
+			title: elementor.translate( 'templates_empty_title' ),
+			message: elementor.translate( 'templates_empty_message' )
+		},
+		noResults: {
+			title: elementor.translate( 'templates_no_results_title' ),
+			message: elementor.translate( 'templates_no_results_message' )
+		},
+		noFavorites: {
+			title: elementor.translate( 'templates_no_favorites_title' ),
+			message: elementor.translate( 'templates_no_favorites_message' )
+		}
+	},
+
+	getCurrentMode: function() {
+		if ( elementor.channels.templates.request( 'filter:text' ) ) {
+			return 'noResults';
+		}
+
+		if ( elementor.channels.templates.request( 'filter:favorite' ) ) {
+			return 'noFavorites';
+		}
+
+		return 'empty';
+	},
+
+	onRender: function() {
+		var modeStrings = this.modesStrings[ this.getCurrentMode() ];
+
+		this.ui.title.html( modeStrings.title );
+
+		this.ui.message.html( modeStrings.message );
+	}
 } );
 
 module.exports = TemplateLibraryTemplatesEmptyView;
@@ -1466,7 +1506,6 @@ module.exports = TemplateLibraryTemplatesEmptyView;
 },{}],23:[function(require,module,exports){
 var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
-	TemplateLibraryTemplatesEmptyView = require( 'elementor-templates/views/parts/templates-empty' ),
 	TemplateLibraryCollectionView;
 
 TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
@@ -1478,7 +1517,11 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	reorderOnSort: true,
 
-	emptyView: TemplateLibraryTemplatesEmptyView,
+	emptyView: function() {
+		var EmptyView = require( 'elementor-templates/views/parts/templates-empty' );
+
+		return new EmptyView();
+	},
 
 	ui: {
 		filterText: '#elementor-template-library-filter-text',
@@ -1591,6 +1634,14 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		};
 	},
 
+	setFilter: function( name, value, silent ) {
+		elementor.channels.templates.reply( 'filter:' + name, value );
+
+		if ( ! silent ) {
+			elementor.channels.templates.trigger( 'filter:change' );
+		}
+	},
+
 	addSourceData: function() {
 		var isEmpty = this.children.isEmpty();
 
@@ -1606,15 +1657,11 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onFilterTextInput: function() {
-		elementor.channels.templates
-			.reply( 'filter:text', this.ui.filterText.val() )
-			.trigger( 'filter:change' );
+		this.setFilter( 'text', this.ui.filterText.val() );
 	},
 
 	onMyFavoritesFilterChange: function(  ) {
-		elementor.channels.templates
-			.reply( 'filter:favorite', this.ui.myFavoritesFilter[0].checked )
-			.trigger( 'filter:change' );
+		this.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
 	},
 
 	onOrderLabelsClick: function( event ) {
@@ -1624,7 +1671,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		if ( ! $clickedInput[0].checked ) {
 			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
 		}
-		
+
 		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
 
 		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
