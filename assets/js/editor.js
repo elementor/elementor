@@ -656,11 +656,11 @@ module.exports = Marionette.Behavior.extend( {
 
 		if ( ! _.isUndefined( changed.post_status ) ) {
 			this.setMenuItems( changed.post_status );
-		}
 
-		// Refresh page-settings post-status value.
-		if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
-			elementor.getPanelView().getCurrentPageView().render();
+			// Refresh page-settings post-status value.
+			if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
+				elementor.getPanelView().getCurrentPageView().render();
+			}
 		}
 	},
 
