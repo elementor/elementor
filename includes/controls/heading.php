@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Heading control.
  *
  * A base control for creating heading control. Displays a text heading between
- * controls in the pannel.
+ * controls in the panel.
  *
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
