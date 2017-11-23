@@ -121,12 +121,12 @@ class DB {
 	protected function _get_json_meta( $post_id, $key ) {
 		$meta = get_post_meta( $post_id, $key, true );
 
-		if ( is_string( $meta ) ) {
-			if ( empty( $meta ) ) {
-				$meta = [];
-			} else {
-				$meta = json_decode( $meta, true );
-			}
+		if ( is_string( $meta ) && ! empty( $meta ) ) {
+			$meta = json_decode( $meta, true );
+		}
+
+		if ( empty( $meta ) ) {
+			$meta = [];
 		}
 
 		return $meta;
