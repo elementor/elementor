@@ -533,6 +533,9 @@ class Editor {
 				'asc' => __( 'Ascending order', 'elementor' ),
 				'desc' => __( 'Descending order', 'elementor' ),
 
+				// Control Select2.
+				'unknown_value' => __( 'Unknown Value', 'elementor' ),
+
 				// Clear Page.
 				'clear_page' => __( 'Delete All Content', 'elementor' ),
 				'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
@@ -601,7 +604,6 @@ class Editor {
 				'session_expired_header' => __( 'Timeout', 'elementor' ),
 				'session_expired_message' => __( 'Your session has expired. Please reload the page to continue editing.', 'elementor' ),
 				'soon' => __( 'Soon', 'elementor' ),
-				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
 		];
 
