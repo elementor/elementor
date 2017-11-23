@@ -737,7 +737,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		switch ( postStatus ) {
 			case 'publish':
-				this.ui.menuPublish.show();
+				this.ui.menuPublishChanges.hide();
 				break;
 			case 'private':
 				this.ui.menuUpdate.show();
