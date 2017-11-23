@@ -54,29 +54,37 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 	},
 
-	filterByText: function( model, text ) {
-		text = text.toLowerCase();
-
-		if ( model.get( 'title' ).toLowerCase().indexOf( text ) >= 0 ) {
-			return true;
-		}
-
-		return _.any( model.get( 'tags' ), function( tag ) {
-			return tag.toLowerCase().indexOf( text ) >= 0;
-		} );
-	},
-
-	filterByFavorite: function( model ) {
-		return model.get( 'favorite' );
-	},
-
 	filter: function( childModel ) {
-		var textFilter = elementor.templates.getFilter( 'text' ),
-			sourceFilter = elementor.templates.getFilter( 'source' ),
-			favoriteFilter = elementor.templates.getFilter( 'favorite' );
+		var filterTerms = elementor.templates.getFilterTerms(),
+			passingFilter = true;
 
-		return ( ! textFilter || this.filterByText( childModel, textFilter ) ) &&
-			   ( ! favoriteFilter || 'remote' !== sourceFilter || this.filterByFavorite( childModel ) );
+		jQuery.each( filterTerms, function( filterTermName ) {
+			var filterValue = this.value || elementor.templates.getFilter( filterTermName );
+
+			if ( ! filterValue ) {
+				return;
+			}
+
+			if ( this.callback ) {
+				var callbackResult = this.callback.call( childModel, filterValue );
+
+				if ( ! callbackResult ) {
+					passingFilter = false;
+				}
+
+				return callbackResult;
+			}
+
+			var filterResult = filterValue === childModel.get( filterTermName );
+
+			if ( ! filterResult ) {
+				passingFilter = false;
+			}
+
+			return filterResult;
+		} );
+
+		return passingFilter;
 	},
 
 	order: function( by, reverseOrder ) {
