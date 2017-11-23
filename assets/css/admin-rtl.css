@@ -356,6 +356,8 @@ body.elementor-editor-inactive #elementor-editor {
       .notice.elementor-message .elementor-message-inner .elementor-message-content,
       .notice.elementor-message .elementor-message-inner .elementor-message-action {
         display: block; }
+      .notice.elementor-message .elementor-message-inner .elementor-message-action {
+        text-align: center; }
       .notice.elementor-message .elementor-message-inner .elementor-message-icon {
         width: auto; }
       .notice.elementor-message .elementor-message-inner .elementor-message-content {
