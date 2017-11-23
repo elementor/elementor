@@ -28,7 +28,7 @@
 		height: 630px;
 		max-height: 85vh;
 		overflow: auto;
-		padding: 15px 30px;
+		padding: 25px 30px 30px;
 	}
 
 	a {
@@ -41,9 +41,12 @@
 
 	a.elementor-template-library-blank-footer-link {
 		transition: color .5s;
+		font-style: normal;
+		text-decoration: underline;
+		color: $editor-success;
 
 		&:hover {
-			color: $editor-accent;
+			font-weight: 500;
 		}
 	}
 
@@ -130,7 +133,7 @@
 #elementor-template-library-header-save {
 
 	i {
-		font-size: 15px;
+		font-size: 14px;
 	}
 }
 
@@ -207,7 +210,7 @@
 	&[data-template-source="local"] {
 
 		#elementor-template-library-templates-container {
-			box-shadow: 1px 1px 5px rgba(0,0,0,.1);
+			box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, .03);
 			margin-top: 10px;
 		}
 	}
@@ -215,7 +218,7 @@
 	&[data-template-source="remote"] {
 
 		#elementor-template-library-templates-container {
-			margin: 0 -15px;
+			margin: 10px -15px 0;
 		}
 	}
 
@@ -228,6 +231,29 @@
 
 	.elementor-template-library-order-input {
 		display: none;
+
+		&:checked {
+
+			+ .elementor-template-library-order-label {
+				color: $editor-dark;
+
+				&:after {
+					font-family: eicons;
+					content: '\e956';
+					@include margin-start(5px);
+				}
+			}
+
+			&.elementor-template-library-order-reverse {
+
+				+ .elementor-template-library-order-label {
+
+					&:after {
+						content: '\e955';
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -257,38 +283,16 @@
 	@include border-end(1px solid $editor-lightest);
 }
 
-.elementor-template-library-order-input {
-
-	&:checked {
-
-		+ .elementor-template-library-order-label {
-			font-weight: 600;
-
-			&:after {
-				font-family: eicons;
-				content: '\e956';
-				@include margin-start(5px);
-			}
-		}
-
-		&.elementor-template-library-order-reverse {
-
-			+ .elementor-template-library-order-label {
-
-				&:after {
-					content: '\e955';
-				}
-			}
-		}
-	}
-}
-
 .elementor-template-library-order-label {
 	font-size: 13px;
 	text-transform: uppercase;
 	cursor: pointer;
 	@include padding-end(20px);
 	user-select: none;
+
+	&:hover {
+		color: $editor-darker;
+	}
 }
 
 #elementor-template-library-my-favorites {
@@ -303,6 +307,7 @@
 	&:checked {
 
 		+ #elementor-template-library-filter-my-favorites-label {
+			color: $editor-darkest;
 
 			i {
 
@@ -317,6 +322,18 @@
 
 #elementor-template-library-filter-my-favorites-label {
 	cursor: pointer;
+	text-transform: uppercase;
+
+	&:hover {
+		color: $editor-darker;
+
+		i {
+
+			&:after {
+				color: $editor-accent;
+			}
+		}
+	}
 
 	i {
 		@include padding-end(5px);
@@ -346,8 +363,13 @@
 	border: none;
 	border-bottom: 1px solid $editor-lighter;
 	border-radius: 0;
-	font-size: 15px;
-	padding: 8px;
+	font-size: 13px;
+	padding: 8px 8px 8px 0;
+
+	&::placeholder {
+		font-weight: 300;
+		color: $editor-light;
+	}
 }
 
 .elementor-template-library-template-remote {
@@ -356,6 +378,8 @@
 	margin: $items-space / 2;
 	padding: 10px;
 	background-color: #fff;
+	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, .07);
+	border-radius: 3px;
 
 	@media (max-width: $screen-xl-max) {
 		width: calc(25% - #{$items-space});
@@ -458,7 +482,11 @@
 			+ .elementor-template-library-template-favorite-label {
 
 				i {
-					color: $editor-accent;
+
+					&:before {
+						content: '\f004';
+						color: $editor-accent;
+					}
 				}
 			}
 		}
@@ -466,27 +494,14 @@
 
 	.elementor-template-library-template-favorite-label {
 		cursor: pointer;
+
+		&:hover {
+
+			i {
+				color: $editor-accent;
+			}
+		}
 	}
-}
-
-.elementor-template-library-local-column-1 {
-	width: 33%;
-}
-
-.elementor-template-library-local-column-2 {
-	width: 10%;
-}
-
-.elementor-template-library-local-column-3 {
-	width: 15%;
-}
-
-.elementor-template-library-local-column-4 {
-	width: 15%;
-}
-
-.elementor-template-library-local-column-5 {
-	width: 27%;
 }
 
 #elementor-template-library-order-toolbar-local,
@@ -501,16 +516,20 @@
 	margin-top: 30px;
 
 	.elementor-template-library-order-label {
-		color: $editor-light;
 		line-height: 1;
 		font-size: 11px;
+		font-weight: 500;
+
+		&:not(:hover) {
+			color: $editor-light;
+		}
 	}
 }
 
 .elementor-template-library-template-local {
 	height: 50px;
 	width: 100%;
-	border-bottom: 1px solid $editor-lightest;
+	margin-top: 1px;
 	background-color: #fff;
 	transition: background-color .3s linear;
 
@@ -524,6 +543,21 @@
 			background: none;
 			color: $editor-light;
 		}
+	}
+
+	&:first-child {
+		border-radius: 3px 3px 0 0;
+	}
+
+	&:last-child {
+		border-radius: 0 0 3px 3px;
+	}
+
+	.elementor-template-library-template-name, .elementor-template-library-template-meta {
+		@include padding-end(45px);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.elementor-template-library-template-meta {
@@ -559,7 +593,20 @@
 	.elementor-template-library-template-delete {
 
 		&:hover {
-			color: $editor-warning;
+
+			i {
+				color: $editor-danger;
+			}
+		}
+	}
+
+	.elementor-template-library-template-export {
+
+		&:hover {
+
+			i {
+				color: $editor-darker;
+			}
 		}
 	}
 
@@ -572,11 +619,12 @@
 		display: none;
 		position: absolute;
 		background-color: #fff;
-		padding: 0 20px;
+		padding: 3px 20px;
+		border-radius: 3px;
 		box-shadow: 1px 3px 11px rgba(0,0,0,0.3);
 		top: 100%;
 		@include end(0);
-		transform: translateX(getValueByDirection(65%, -65%));
+		transform: translateX(getValueByDirection(65%, -65%)) translateY(-7px);
 		z-index: 1;
 
 		&:before {
@@ -597,6 +645,10 @@
 	.elementor-template-library-template-more-toggle {
 		flex-grow: 1;
 		text-align: $end;
+
+		i {
+			font-size: 16px;
+		}
 	}
 }
 
@@ -612,35 +664,38 @@
 }
 
 .elementor-template-library-blank-icon {
-	font-size: 50px;
-	margin: 30px;
+	font-size: 65px;
+	margin-top: 45px;
+	color: $editor-lighter;
+	line-height: 1;
 }
 
 .elementor-template-library-blank-title {
 	font-size: 30px;
+	margin-top: 40px;
 }
 
 .elementor-template-library-blank-message {
 	font-size: 18px;
 	color: $editor-light;
-	margin-top: 20px;
+	margin-top: 25px;
 	font-weight: 300;
 }
 
 #elementor-template-library-save-template-form {
-	margin-top: 55px;
+	margin-top: 40px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
 	> * {
-		height: 60px;
-		font-size: 18px;
+		height: 55px;
+		font-size: 16px;
 	}
 }
 
 #elementor-template-library-save-template-name {
-	width: 460px;
+	width: 500px;
 	background-color: #fff;
 	font-weight: 300;
 	color: $editor-light;
@@ -648,8 +703,8 @@
 	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 	border: none;
 
-	&:focus {
-		border: 1px solid $editor-background;
+	&::placeholder {
+		color: $editor-light;
 	}
 }
 
@@ -664,26 +719,23 @@
 }
 
 #elementor-template-library-import {
-	height: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 
 	&-form {
-		height: 500px;
-		width: 700px;
-		background-color: #fff;
-		padding: 40px;
+		width: 95%;
+		background-color: rgba(255, 255, 255, 0.5);
+		padding: 60px;
 		border: 2px dashed $editor-lightest;
+		margin: 35px auto;
 
 		&-or {
 			margin-top: 15px;
+			font-size: 18px;
 		}
 
 		&-label {
 			margin-top: 20px;
-			padding: 11px 25px;
-			font-size: 18px;
+			padding: 15px 35px;
+			font-size: 16px;
 			display: inline-block;
 		}
 
@@ -695,15 +747,26 @@
 			border: 3px dashed $editor-info;
 		}
 	}
+
+	.elementor-template-library-blank {
+
+		&-icon {
+			margin-top: 0;
+		}
+
+		&-message {
+			margin-top: 20px;
+		}
+	}
 }
 
 .elementor-template-library-blank-footer {
 	position: absolute;
-	bottom: 90px;
+	bottom: 70px;
 	left: 50%;
 	transform: translateX(-50%);
 	color: $editor-light;
-	font-size: 13px;
+	font-size: 16px;
 	font-style: italic;
 }
 
@@ -725,12 +788,7 @@
 
 #elementor-template-library-templates-empty {
 	width: 100%;
-}
-
-#elementor-template-library-templates-empty-icon {
-	font-size: 96px;
-	margin: 40px;
-	color: $editor-lightest;
+	margin-top: 40px;
 }
 
 #elementor-template-library-error-dialog {
@@ -742,4 +800,50 @@
 
 #elementor-template-library-error-info {
 	margin-top: 10px;
+}
+
+@media (max-width: $screen-xl-max) {
+
+	.elementor-template-library-local-column-1 {
+		width: 33%;
+	}
+
+	.elementor-template-library-local-column-2 {
+		width: 10%;
+	}
+
+	.elementor-template-library-local-column-3 {
+		width: 15%;
+	}
+
+	.elementor-template-library-local-column-4 {
+		width: 15%;
+	}
+
+	.elementor-template-library-local-column-5 {
+		width: 27%;
+	}
+}
+
+@media (min-width: $screen-xxl-min) {
+
+	.elementor-template-library-local-column-1 {
+		width: 25%;
+	}
+
+	.elementor-template-library-local-column-2 {
+		width: 17%;
+	}
+
+	.elementor-template-library-local-column-3 {
+		width: 17%;
+	}
+
+	.elementor-template-library-local-column-4 {
+		width: 17%;
+	}
+
+	.elementor-template-library-local-column-5 {
+		width: 24%;
+	}
 }
