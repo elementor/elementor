@@ -43,10 +43,6 @@ RevisionsManager = function() {
 				elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
 			}
 		} ).show();
-
-		jQuery( '.dialog-widget' ).css( {
-			backgroundColor: 'rgba(0, 0, 0, 0.3)'
-		} );
 	};
 
 	var attachEvents = function() {
