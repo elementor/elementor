@@ -11,6 +11,7 @@ TemplateLibraryManager = function() {
 		config = {},
 		startIntent = {},
 		templateTypes = {},
+		filterTerms = {},
 		templatesCollection;
 
 	var initLayout = function() {
@@ -42,6 +43,33 @@ TemplateLibraryManager = function() {
 			} );
 
 			self.registerTemplateType( type, safeData );
+		} );
+	};
+
+	var registerDefaultFilterTerms = function() {
+		filterTerms = {
+			text: {
+				callback: function( value ) {
+					value = value.toLowerCase();
+
+					if ( this.get( 'title' ).toLowerCase().indexOf( value ) >= 0 ) {
+						return true;
+					}
+
+					return _.any( this.get( 'tags' ), function( tag ) {
+						return tag.toLowerCase().indexOf( value ) >= 0;
+					} );
+				}
+			},
+			favorite: {}
+		};
+
+		jQuery.each( startIntent.filters, function( filterName ) {
+			if ( filterTerms[ filterName ] ) {
+				jQuery.extend( filterTerms[ filterName ], this );
+			} else {
+				filterTerms[ filterName ] = this;
+			}
 		} );
 	};
 
@@ -256,6 +284,8 @@ TemplateLibraryManager = function() {
 	this.startModal = function( customStartIntent ) {
 		startIntent = customStartIntent || {};
 
+		registerDefaultFilterTerms();
+
 		self.getModal().show();
 
 		self.setTemplatesSource( 'remote', true );
@@ -289,18 +319,26 @@ TemplateLibraryManager = function() {
 		}
 	};
 
+	this.getFilterTerms = function( termName ) {
+		if ( termName ) {
+			return filterTerms[ termName ];
+		}
+
+		return filterTerms;
+	};
+
 	this.setTemplatesSource = function( source, silent ) {
 		elementor.channels.templates.stopReplying();
 
-		this.setFilter( 'source', source );
+		self.setFilter( 'source', source );
 
 		if ( ! silent ) {
-			this.showTemplates();
+			self.showTemplates();
 		}
 	};
 
 	this.showTemplates = function() {
-		var activeSource = this.getFilter( 'source' );
+		var activeSource = self.getFilter( 'source' );
 
 		var templatesToShow = templatesCollection.filter( function( model ) {
 			if ( activeSource !== model.get( 'source' ) ) {
