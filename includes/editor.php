@@ -514,67 +514,94 @@ class Editor {
 			'exit_to_dashboard_url' => get_edit_post_link(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
-				'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),
-				'dialog_user_taken_over' => __( '{0} has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
-				'delete_element' => __( 'Delete {0}', 'elementor' ),
-				'take_over' => __( 'Take Over', 'elementor' ),
-				'go_back' => __( 'Go Back', 'elementor' ),
-				'save' => __( 'Save', 'elementor' ),
-				'saved' => __( 'Saved', 'elementor' ),
-				'publish_changes' => __( 'Publish Changes', 'elementor' ),
-				'published' => __( 'Published', 'elementor' ),
-				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
 				'edit_element' => __( 'Edit {0}', 'elementor' ),
+
+				// Menu.
+				'about_elementor' => __( 'About Elementor', 'elementor' ),
+				'color_picker' => __( 'Color Picker', 'elementor' ),
+				'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
+				'exit_to_dashboard' => __( 'Exit to Dashboard', '' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
-				'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
-				'soon' => __( 'Soon', 'elementor' ),
-				'elementor_docs' => __( 'Documentation', 'elementor' ),
-				'about_elementor' => __( 'About Elementor', 'elementor' ),
+
+				// Elements.
 				'inner_section' => __( 'Columns', 'elementor' ),
-				'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
-				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
-				'gallery_images_selected' => __( '{0} Images Selected', 'elementor' ),
-				'insert_media' => __( 'Insert Media', 'elementor' ),
-				'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
-				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
-				'preview_not_loading_header' => __( 'The preview could not be loaded', 'elementor' ),
-				'preview_not_loading_message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
-				'device_incompatible_header' => __( 'Your browser isn\'t compatible', 'elementor' ),
-				'device_incompatible_message' => __( 'Your browser isn\'t compatible with all of Elementor\'s editing features. We recommend you switch to another browser like Chrome or Firefox.', 'elementor' ),
-				'session_expired_header' => __( 'Timeout', 'elementor' ),
-				'session_expired_message' => __( 'Your session has expired. Please reload the page to continue editing.', 'elementor' ),
-				'learn_more' => __( 'Learn More', 'elementor' ),
-				'reload_page' => __( 'Reload Page', 'elementor' ),
-				'an_error_occurred' => __( 'An error occurred', 'elementor' ),
-				'templates_request_error' => __( 'The following error(s) occurred while processing the request:', 'elementor' ),
-				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
-				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
-				'page' => __( 'Page', 'elementor' ),
-				'section' => __( 'Section', 'elementor' ),
-				'delete_template' => __( 'Delete Template', 'elementor' ),
-				'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
-				'color_picker' => __( 'Color Picker', 'elementor' ),
-				'clear_page' => __( 'Delete All Content', 'elementor' ),
-				'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
+
+				// Control Order.
 				'asc' => __( 'Ascending order', 'elementor' ),
 				'desc' => __( 'Descending order', 'elementor' ),
-				'autosave' => __( 'Autosave', 'elementor' ),
-				'preview' => __( 'Preview', 'elementor' ),
+
+				// Clear Page.
+				'clear_page' => __( 'Delete All Content', 'elementor' ),
+				'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
+
+				// Panel Preview Mode.
 				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
+				'preview' => __( 'Preview', 'elementor' ),
+
+				// Inline Editing.
+				'type_here' => __( 'Type Here', 'elementor' ),
+
+				// Library.
+				'an_error_occurred' => __( 'An error occurred', 'elementor' ),
+				'delete_template' => __( 'Delete Template', 'elementor' ),
+				'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
 				'import_template_dialog_header' => __( 'Import Page Settings', 'elementor' ),
 				'import_template_dialog_message' => __( 'Do you want to also import the page settings of the template?', 'elementor' ),
 				'import_template_dialog_message_attention' => __( 'Attention! Importing may override previous settings.', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
+				'page' => __( 'Page', 'elementor' ),
+				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
+				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
+				'section' => __( 'Section', 'elementor' ),
+				'templates_request_error' => __( 'The following error(s) occurred while processing the request:', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
-				'update' => __( 'Update', 'elementor' ),
-				'publish_changes' => __( 'Publish Changes', 'elementor' ),
-				'unknown_value' => __( 'Unknown Value', 'elementor' ),
-				'type_here' => __( 'Type Here', 'elementor' ),
+
+				// Incompatible Device.
+				'device_incompatible_header' => __( 'Your browser isn\'t compatible', 'elementor' ),
+				'device_incompatible_message' => __( 'Your browser isn\'t compatible with all of Elementor\'s editing features. We recommend you switch to another browser like Chrome or Firefox.', 'elementor' ),
 				'proceed_anyway' => __( 'Proceed Anyway', 'elementor' ),
-				'exit_to_dashboard' => __( 'Exit to Dashboard', '' ),
+
+				// Preview not loaded.
+				'learn_more' => __( 'Learn More', 'elementor' ),
+				'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
+				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
+				'preview_not_loading_header' => __( 'The preview could not be loaded', 'elementor' ),
+				'preview_not_loading_message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
+
+				// Gallery.
+				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
+				'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
+				'gallery_images_selected' => __( '{0} Images Selected', 'elementor' ),
+				'insert_media' => __( 'Insert Media', 'elementor' ),
+
+				// Take Over.
+				'dialog_user_taken_over' => __( '{0} has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ),
+				'go_back' => __( 'Go Back', 'elementor' ),
+				'take_over' => __( 'Take Over', 'elementor' ),
+
+				// Revisions.
+				'delete_element' => __( 'Delete {0}', 'elementor' ),
+				'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),
+
+				// Saver.
+				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
+				'publish_changes' => __( 'Publish Changes', 'elementor' ),
+				'published' => __( 'Published', 'elementor' ),
+				'save' => __( 'Save', 'elementor' ),
+				'saved' => __( 'Saved', 'elementor' ),
+				'update' => __( 'Update', 'elementor' ),
+
+				// TODO: Remove.
+				'autosave' => __( 'Autosave', 'elementor' ),
+				'elementor_docs' => __( 'Documentation', 'elementor' ),
+				'reload_page' => __( 'Reload Page', 'elementor' ),
+				'session_expired_header' => __( 'Timeout', 'elementor' ),
+				'session_expired_message' => __( 'Your session has expired. Please reload the page to continue editing.', 'elementor' ),
+				'soon' => __( 'Soon', 'elementor' ),
+				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
 		];
 
