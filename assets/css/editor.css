@@ -1950,6 +1950,8 @@ select {
     text-transform: uppercase; }
     .elementor-panel .elementor-control-type-popover_toggle .elementor-choices-label i {
       padding-left: 2px; }
+  .elementor-panel .elementor-control-type-button .elementor-control-input-wrapper {
+    text-align: right; }
   .elementor-panel .wp-picker-container.wp-picker-active {
     position: absolute;
     z-index: 1;
