@@ -52,7 +52,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Button extends Base_UI_Control {
 
 	/**
-	 * Retrieve heading control type.
+	 * Retrieve button control type.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -82,7 +82,7 @@ class Control_Button extends Base_UI_Control {
 	}
 
 	/**
-	 * Render heading control output in the editor.
+	 * Render button control output in the editor.
 	 *
 	 * Used to generate the control HTML in the editor using Underscore JS
 	 * template. The variables for the class are available using `data` JS
