@@ -472,6 +472,12 @@ class Editor {
 
 		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
 
+
+		$nonce = wp_create_nonce( 'post_preview_' . $this->_post_id );
+		$query_args['preview_id'] = $this->_post_id;
+		$query_args['preview_nonce'] = $nonce;
+		$preview_post_link = get_preview_post_link( $query_args );
+
 		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
@@ -479,7 +485,7 @@ class Editor {
 			'nonce' => $this->create_nonce(),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
 			'wp_preview' => [
-				'url' => get_preview_post_link(),
+				'url' => $preview_post_link,
 				'target' => 'wp-preview-' . $this->_post_id,
 			],
 			'elements_categories' => $plugin->elements_manager->get_categories(),
