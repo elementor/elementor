@@ -531,19 +531,20 @@
 			editor.classList.remove(ctx.config.placeholderClass);
 
 			if (e.which !== 13 || e.shiftKey) return;
+
 			var node = getNode(ctx, true);
 
-			if (!node) {
-				return;
-			}
-
-			if(!lineBreakReg.test(node.nodeName)) {
+			if(!node || !lineBreakReg.test(node.nodeName)) {
 				if (ctx.config.mode === 'basic') {
 					e.preventDefault();
 
 					commandOverall('insertHTML', '<br>');
 				}
 
+				return;
+			}
+
+			if (!node) {
 				return;
 			}
 
