@@ -46,6 +46,7 @@ App = Marionette.Application.extend( {
 			Base: require( 'elementor-controls/base' ),
 			BaseData: require( 'elementor-controls/base-data' ),
 			BaseMultiple: require( 'elementor-controls/base-multiple' ),
+			Button: require( 'elementor-controls/button' ),
 			Color: require( 'elementor-controls/color' ),
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
@@ -73,6 +74,9 @@ App = Marionette.Application.extend( {
 			Switcher: require( 'elementor-controls/switcher' ),
 			Number: require( 'elementor-controls/number' ),
 			Popover_toggle: require( 'elementor-controls/popover-toggle' )
+		},
+		saver: {
+			footerBehavior: require( './components/saver/behaviors/footer-saver' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
