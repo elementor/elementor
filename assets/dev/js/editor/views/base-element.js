@@ -440,7 +440,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onCollectionChanged: function() {
-		elementor.setFlagEditorChange( true );
+		elementor.saver.setFlagEditorChange( true );
 	},
 
 	onEditSettingsChanged: function( changedModel ) {
@@ -449,7 +449,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onSettingsChanged: function( changedModel ) {
-		elementor.setFlagEditorChange( true );
+		elementor.saver.setFlagEditorChange( true );
 
 		this.renderOnChange( changedModel );
 	},

@@ -68,14 +68,6 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				pageName: 'colorPickerScheme'
 			},
 			{
-				name: 'clear-page',
-				icon: 'fa fa-eraser',
-				title: elementor.translate( 'clear_page' ),
-				callback: function() {
-					elementor.clearPage();
-				}
-			},
-			{
 				name: 'elementor-settings',
 				icon: 'eicon-elementor',
 				title: elementor.translate( 'elementor_settings' ),
@@ -90,6 +82,13 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 				type: 'link',
 				link: elementor.config.elementor_site,
 				newTab: true
+			},
+			{
+				name: 'exit-to-dashboard',
+				icon: 'fa fa-times',
+				title: elementor.translate( 'exit_to_dashboard' ),
+				type: 'link',
+				link: _.unescape( elementor.config.exit_to_dashboard_url )
 			}
 		] );
 	},
@@ -115,7 +114,7 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 		}
 
 		items.add( itemData, options );
-				}
+	}
 } );
 
 module.exports = PanelMenuPageView;

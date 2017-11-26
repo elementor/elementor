@@ -21,8 +21,33 @@ RevisionsManager = function() {
 		revisions.reset( revisionsToKeep );
 	};
 
+	var checkNewAutoSave = function() {
+		if ( ! elementor.config.newer_autosave ) {
+			return;
+		}
+
+		elementor.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-restore-autosave-dialog',
+			headerMessage: elementor.translate( 'restore_auto_saved_data' ),
+			message: elementor.translate( 'restore_auto_saved_data_message' ),
+			position: {
+				my: 'center center',
+				at: 'center center'
+			},
+			strings: {
+				confirm: elementor.translate( 'restore' ),
+				cancel: elementor.translate( 'cancel' )
+			},
+			onConfirm: function() {
+				elementor.getPanelView().setPage( 'historyPage' );
+				elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
+			}
+		} ).show();
+	};
+
 	var attachEvents = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
+		elementor.on( 'preview:loaded', checkNewAutoSave );
 	};
 
 	var addHotKeys = function() {

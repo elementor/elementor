@@ -6,28 +6,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Heading control.
+ * Button control.
  *
- * A base control for creating heading control. Displays a text heading between
- * controls in the panel.
+ * A base control for creating a button control. Displays a button that can trigger an event.
  *
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
  *    $this->add_control(
- *    	'title',
+ *    	'delete_content',
  *    	[
- *    		'label' => __( 'Title', 'plugin-domain' ),
- *    		'type' => Controls_Manager::HEADING,
- *    		'description' => __( 'My Header', 'plugin-domain' ),
+ *    		'label' => __( 'Delete Content', 'plugin-domain' ),
+ *    		'type' => Controls_Manager::BUTTON,
+ *    		'button_type' => 'success',
+ *    		'text' => __( 'Delete', 'plugin-domain' ),
+ *    		'event' => 'namespace:editor:delete',
  *    		'separator' => 'before',
  *    	]
  *    );
  *
- * @since 1.0.0
+ * @since 1.9.0
  *
  * @param string $label       Optional. The label that appears above of the
  *                            field. Default is empty.
+ * @param string $button_type Optional. Set button type. Available values are
+ *                            'default', 'success'. Default is 'default'.
+ * @param string $text        Set button text. Default is empty.
+ * @param string $event       Set the event the button will trigger. The event will
+ *                            be triggered via `elementor.channels.editor.on( event )`
+ *                            Default is empty.
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param string $separator   Optional. Set the position of the control separator.
@@ -42,52 +49,59 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param bool   $label_block Optional. Whether to display the label in a
  *                            separate line. Default is true.
  */
-class Control_Heading extends Base_UI_Control {
+class Control_Button extends Base_UI_Control {
 
 	/**
-	 * Retrieve heading control type.
+	 * Retrieve button control type.
 	 *
-	 * @since 1.0.0
+	 * @since 1.9.0
 	 * @access public
 	 *
 	 * @return string Control type.
 	 */
 	public function get_type() {
-		return 'heading';
+		return 'button';
 	}
 
 	/**
-	 * Retrieve heading control default settings.
+	 * Retrieve button control default settings.
 	 *
-	 * Get the default settings of the heading control. Used to return the
-	 * default settings while initializing the heading control.
+	 * Get the default settings of the button control. Used to
+	 * return the default settings while initializing the button
+	 * control.
 	 *
-	 * @since 1.0.0
+	 * @since 1.9.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
 		return [
-			'label_block' => true,
+			'button_type' => 'default',
 		];
 	}
 
 	/**
-	 * Render heading control output in the editor.
+	 * Render button control output in the editor.
 	 *
 	 * Used to generate the control HTML in the editor using Underscore JS
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * @since 1.0.0
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
-			<h3 class="elementor-control-title">{{ data.label }}</h3>
+			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<div class="elementor-control-input-wrapper">
+				<button type="button" class="elementor-button elementor-button-{{{ data.button_type }}}" data-event="{{{ data.event }}}">{{{ data.text }}}</button>
+			</div>
 		</div>
+		<# if ( data.description ) { #>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
+		<# } #>
 		<?php
 	}
 }
