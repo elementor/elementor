@@ -1,5 +1,3 @@
-var SaverBehavior = require( './../../components/saver/behaviors/footer-saver' );
-
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-footer-content',
 
@@ -29,7 +27,7 @@ module.exports = Marionette.ItemView.extend( {
 	behaviors: function() {
 		var behaviors = {
 			saver: {
-				behaviorClass: SaverBehavior
+				behaviorClass: elementor.modules.saver.footerBehavior
 			}
 		};
 

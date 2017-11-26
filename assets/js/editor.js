@@ -737,7 +737,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		switch ( postStatus ) {
 			case 'publish':
-				this.ui.menuPublishChanges.hide();
+				this.ui.menuPublishChanges.show();
 				break;
 			case 'private':
 				this.ui.menuUpdate.show();
@@ -2241,6 +2241,9 @@ App = Marionette.Application.extend( {
 			Number: require( 'elementor-views/controls/number' ),
 			Popover_toggle: require( 'elementor-views/controls/popover-toggle' )
 		},
+		saver: {
+			footerBehavior: require( './components/saver/behaviors/footer-saver' )
+		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
 		}
@@ -2958,7 +2961,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"elementor-editor-utils/ajax":65,"elementor-editor-utils/conditions":66,"elementor-editor-utils/debug":68,"elementor-editor-utils/heartbeat":69,"elementor-editor-utils/helpers":70,"elementor-editor-utils/images-manager":71,"elementor-editor-utils/presets-factory":74,"elementor-editor-utils/schemes":75,"elementor-editor/components/saver/manager":8,"elementor-editor/settings/settings":64,"elementor-layouts/panel/panel":54,"elementor-models/element":57,"elementor-panel/pages/elements/views/elements":41,"elementor-panel/pages/menu/menu":44,"elementor-templates/manager":11,"elementor-utils/hooks":119,"elementor-utils/hot-keys":120,"elementor-views/controls/base":89,"elementor-views/controls/base-data":86,"elementor-views/controls/base-multiple":87,"elementor-views/controls/box-shadow":90,"elementor-views/controls/button":91,"elementor-views/controls/choose":92,"elementor-views/controls/code":93,"elementor-views/controls/color":94,"elementor-views/controls/date-time":95,"elementor-views/controls/dimensions":96,"elementor-views/controls/font":97,"elementor-views/controls/gallery":98,"elementor-views/controls/icon":99,"elementor-views/controls/image-dimensions":100,"elementor-views/controls/media":101,"elementor-views/controls/number":102,"elementor-views/controls/order":103,"elementor-views/controls/popover-toggle":104,"elementor-views/controls/repeater":106,"elementor-views/controls/section":107,"elementor-views/controls/select2":108,"elementor-views/controls/slider":109,"elementor-views/controls/structure":110,"elementor-views/controls/switcher":111,"elementor-views/controls/tab":112,"elementor-views/controls/wp_widget":113,"elementor-views/controls/wysiwyg":114,"elementor-views/preview":116,"elementor-views/widget":118,"modules/history/assets/js/module":130}],30:[function(require,module,exports){
+},{"./components/saver/behaviors/footer-saver":7,"elementor-editor-utils/ajax":65,"elementor-editor-utils/conditions":66,"elementor-editor-utils/debug":68,"elementor-editor-utils/heartbeat":69,"elementor-editor-utils/helpers":70,"elementor-editor-utils/images-manager":71,"elementor-editor-utils/presets-factory":74,"elementor-editor-utils/schemes":75,"elementor-editor/components/saver/manager":8,"elementor-editor/settings/settings":64,"elementor-layouts/panel/panel":54,"elementor-models/element":57,"elementor-panel/pages/elements/views/elements":41,"elementor-panel/pages/menu/menu":44,"elementor-templates/manager":11,"elementor-utils/hooks":119,"elementor-utils/hot-keys":120,"elementor-views/controls/base":89,"elementor-views/controls/base-data":86,"elementor-views/controls/base-multiple":87,"elementor-views/controls/box-shadow":90,"elementor-views/controls/button":91,"elementor-views/controls/choose":92,"elementor-views/controls/code":93,"elementor-views/controls/color":94,"elementor-views/controls/date-time":95,"elementor-views/controls/dimensions":96,"elementor-views/controls/font":97,"elementor-views/controls/gallery":98,"elementor-views/controls/icon":99,"elementor-views/controls/image-dimensions":100,"elementor-views/controls/media":101,"elementor-views/controls/number":102,"elementor-views/controls/order":103,"elementor-views/controls/popover-toggle":104,"elementor-views/controls/repeater":106,"elementor-views/controls/section":107,"elementor-views/controls/select2":108,"elementor-views/controls/slider":109,"elementor-views/controls/structure":110,"elementor-views/controls/switcher":111,"elementor-views/controls/tab":112,"elementor-views/controls/wp_widget":113,"elementor-views/controls/wysiwyg":114,"elementor-views/preview":116,"elementor-views/widget":118,"modules/history/assets/js/module":130}],30:[function(require,module,exports){
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -3014,8 +3017,6 @@ EditModeItemView = Marionette.ItemView.extend( {
 module.exports = EditModeItemView;
 
 },{}],31:[function(require,module,exports){
-var SaverBehavior = require( './../../components/saver/behaviors/footer-saver' );
-
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-footer-content',
 
@@ -3045,7 +3046,7 @@ module.exports = Marionette.ItemView.extend( {
 	behaviors: function() {
 		var behaviors = {
 			saver: {
-				behaviorClass: SaverBehavior
+				behaviorClass: elementor.modules.saver.footerBehavior
 			}
 		};
 
@@ -3126,7 +3127,7 @@ module.exports = Marionette.ItemView.extend( {
 	}
 } );
 
-},{"./../../components/saver/behaviors/footer-saver":7}],32:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var PanelHeaderItemView;
 
 PanelHeaderItemView = Marionette.ItemView.extend( {
