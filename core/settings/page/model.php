@@ -138,9 +138,11 @@ class Model extends BaseModel {
 		$this->add_control(
 			'clear_page',
 			[
-				'type' => Controls_Manager::RAW_HTML,
+				'type' => Controls_Manager::BUTTON,
+				'label' => __( 'Delete All Content', 'elementor' ),
+				'text' => __( 'Delete', 'elementor' ),
 				'separator' => 'before',
-				'raw' => sprintf( '<label>%s</label> <button class="elementor-button elementor-button-default" onclick="elementor.settings.page.model.trigger( \'clearPage\')">%s</button>', __( 'Delete All Content', 'elementor' ), __( 'Delete', 'elementor' ) ),
+				'event' => 'elementor:clearPage',
 			]
 		);
 

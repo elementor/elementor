@@ -46,11 +46,11 @@ module.exports = Marionette.Behavior.extend( {
 
 		if ( ! _.isUndefined( changed.post_status ) ) {
 			this.setMenuItems( changed.post_status );
-		}
 
-		// Refresh page-settings post-status value.
-		if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
-			elementor.getPanelView().getCurrentPageView().render();
+			// Refresh page-settings post-status value.
+			if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
+				elementor.getPanelView().getCurrentPageView().render();
+			}
 		}
 	},
 
@@ -127,7 +127,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		switch ( postStatus ) {
 			case 'publish':
-				this.ui.menuPublish.show();
+				this.ui.menuPublishChanges.show();
 				break;
 			case 'private':
 				this.ui.menuUpdate.show();
