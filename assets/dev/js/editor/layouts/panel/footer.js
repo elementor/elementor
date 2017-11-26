@@ -1,6 +1,4 @@
-var PanelFooterItemView;
-
-PanelFooterItemView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-footer-content',
 
 	tagName: 'nav',
@@ -10,93 +8,34 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
+		buttonSave: '#elementor-panel-saver-menu-publish, #elementor-panel-saver-menu-publish-changes', // Compatibility for Pro <= 1.9.5
 		menuButtons: '.elementor-panel-footer-tool',
+		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
-		buttonSave: '#elementor-panel-footer-save',
-		buttonSaveButton: '#elementor-panel-footer-save .elementor-button',
-		buttonPublish: '#elementor-panel-footer-publish',
-		showTemplates: '#elementor-panel-footer-templates-modal',
-		saveTemplate: '#elementor-panel-footer-save-template',
+		saveTemplate: '#elementor-panel-saver-menu-save-template',
 		history: '#elementor-panel-footer-history'
 	},
 
 	events: {
+		'click @ui.settings': 'onClickSettings',
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
-		'click @ui.buttonSave': 'onClickButtonSave',
-		'click @ui.buttonPublish': 'onClickButtonPublish',
-		'click @ui.showTemplates': 'onClickShowTemplates',
 		'click @ui.saveTemplate': 'onClickSaveTemplate',
 		'click @ui.history': 'onClickHistory'
 	},
 
+	behaviors: function() {
+		var behaviors = {
+			saver: {
+				behaviorClass: elementor.modules.saver.footerBehavior
+			}
+		};
+
+		return elementor.hooks.applyFilters( 'panel/footer/behaviors', behaviors, this );
+	},
+
 	initialize: function() {
-		this._initDialog();
-
-		this.listenTo( elementor.channels.editor, 'status:change', this.onEditorChanged )
-			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
-	},
-
-	_initDialog: function() {
-		var dialog;
-
-		this.getDialog = function() {
-			if ( ! dialog ) {
-				var $ = Backbone.$,
-					$dialogMessage = $( '<div>', {
-						'class': 'elementor-dialog-message'
-					} ),
-					$messageIcon = $( '<i>', {
-						'class': 'fa fa-check-circle'
-					} ),
-					$messageText = $( '<div>', {
-						'class': 'elementor-dialog-message-text'
-					} ).text( elementor.translate( 'saved' ) );
-
-				$dialogMessage.append( $messageIcon, $messageText );
-
-				dialog = elementor.dialogsManager.createWidget( 'simple', {
-					id: 'elementor-saved-popup',
-					position: {
-						element: 'message',
-						of: 'widget'
-					},
-					hide: {
-						auto: true,
-						autoDelay: 1500
-					}
-				} );
-
-				dialog.setMessage( $dialogMessage );
-			}
-
-			return dialog;
-		};
-	},
-
-	_publishBuilder: function() {
-		var self = this;
-
-		var options = {
-			status: 'publish',
-			onSuccess: function() {
-				self.getDialog().show();
-
-				self.ui.buttonSaveButton.removeClass( 'elementor-button-state' );
-
-				NProgress.done();
-			}
-		};
-
-		self.ui.buttonSaveButton.addClass( 'elementor-button-state' );
-
-		NProgress.start();
-
-		elementor.saveEditor( options );
-	},
-
-	_saveBuilderDraft: function() {
-		elementor.saveEditor();
+		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	getDeviceModeButton: function( deviceMode ) {
@@ -121,8 +60,10 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		}
 	},
 
-	onEditorChanged: function() {
-		this.ui.buttonSave.toggleClass( 'elementor-save-active', elementor.isEditorChanged() );
+	onClickSettings: function() {
+		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
+			elementor.getPanelView().setPage( 'page_settings' );
+		}
 	},
 
 	onDeviceModeChange: function() {
@@ -137,27 +78,11 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		this.ui.deviceModeIcon.removeClass( 'eicon-device-' + previousDeviceMode ).addClass( 'eicon-device-' + currentDeviceMode );
 	},
 
-	onClickButtonSave: function() {
-		//this._saveBuilderDraft();
-		this._publishBuilder();
-	},
-
-	onClickButtonPublish: function( event ) {
-		// Prevent click on save button
-		event.stopPropagation();
-
-		this._publishBuilder();
-	},
-
 	onClickResponsiveButtons: function( event ) {
 		var $clickedButton = this.$( event.currentTarget ),
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
 		elementor.changeDeviceMode( newDeviceMode );
-	},
-
-	onClickShowTemplates: function() {
-		elementor.templates.showTemplatesModal();
 	},
 
 	onClickSaveTemplate: function() {
@@ -182,5 +107,3 @@ PanelFooterItemView = Marionette.ItemView.extend( {
 		} );
 	}
 } );
-
-module.exports = PanelFooterItemView;

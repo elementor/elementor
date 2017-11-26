@@ -261,7 +261,7 @@
 		content: '';
 		position: absolute;
 		top: -$triangle-size * 2;
-		right: 20px;
+		@include end(20px);
 		border: $triangle-size solid transparent;
 		border-bottom-color: #fff;
 	}

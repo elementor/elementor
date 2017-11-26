@@ -57,22 +57,10 @@ class Import_Images {
 			return $saved_image;
 		}
 
-		// Extract the file name and extension from the url
+		// Extract the file name and extension from the url.
 		$filename = basename( $attachment['url'] );
 
-		if ( function_exists( 'file_get_contents' ) ) {
-			$options = [
-				'http' => [
-					'user_agent' => 'Mozilla/5.0 (X11; Ubuntu; Linux i686 on x86_64; rv:49.0) Gecko/20100101 Firefox/49.0',
-				],
-			];
-
-			$context = stream_context_create( $options );
-
-			$file_content = file_get_contents( $attachment['url'], false, $context );
-		} else {
-			$file_content = wp_remote_retrieve_body( wp_safe_remote_get( $attachment['url'] ) );
-		}
+		$file_content = wp_remote_retrieve_body( wp_safe_remote_get( $attachment['url'] ) );
 
 		if ( empty( $file_content ) ) {
 			return false;
