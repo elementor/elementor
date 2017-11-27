@@ -9,22 +9,115 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Frontend {
 
+	/**
+	 * The priority of the content filter.
+	 */
 	const THE_CONTENT_FILTER_PRIORITY = 9;
 
+	/**
+	 * Post ID.
+	 *
+	 * Holds the ID of the current post.
+	 *
+	 * @access private
+	 *
+	 * @var int Post ID.
+	 */
 	private $post_id;
+
+	/**
+	 * Google fonts.
+	 *
+	 * Holds the list of google fonts that are being used in the current page.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var array Google fonts. Default is an empty array.
+	 */
 	private $google_fonts = [];
+
+	/**
+	 * Registered fonts.
+	 *
+	 * Holds the list of enqueued fonts in the current page.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var array Registered fonts. Default is an empty array.
+	 */
 	private $registered_fonts = [];
+
+	/**
+	 * Google early access fonts.
+	 *
+	 * Holds the list of google early access fonts that are being used in the current page.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var array Registered fonts. Default is an empty array.
+	 */
 	private $google_early_access_fonts = [];
 
+	/**
+	 * Whether the front end mode is active.
+	 *
+	 * Used to determine whether we are in front end mode.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var bool Whether the front end mode is active. Default is false.
+	 */
 	private $_is_frontend_mode = false;
+
+	/**
+	 * Whether the page is using Elementor.
+	 *
+	 * Used to determine whether the current page is using Elementor.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var bool Whether Elementor is being used. Default is false.
+	 */
 	private $_has_elementor_in_page = false;
+
+	/**
+	 * Whether the excerpt is being used.
+	 *
+	 * Used to determine whether the call to `the_content()` came from `get_the_excerpt()`.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var bool Whether the excerpt is being used. Default is false.
+	 */
 	private $_is_excerpt = false;
+
+	/**
+	 * Filters removed from the content.
+	 *
+	 * Hold the list of filters removed from `the_content()`. Used to hold the filters that
+	 * conflicted with Elementor.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var array Filters removed from the content. Default is an empty array.
+	 */
 	private $content_removed_filters = [];
 
 	/**
+	 * Init.
+	 *
+	 * Initialize Elementor front end. Fired by `template_redirect` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function init() {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			return;
@@ -52,9 +145,15 @@ class Frontend {
 	}
 
 	/**
+	 * Print elements.
+	 *
+	 * Used to generate the element final HTML on the frontend and the editor.
+ 	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 *
+	 * @param array $elements_data Element data.
+	 */
 	protected function _print_elements( $elements_data ) {
 		foreach ( $elements_data as $element_data ) {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
@@ -68,9 +167,18 @@ class Frontend {
 	}
 
 	/**
+	 * Body tag classes.
+	 *
+	 * Add new elementor classes to the body tag.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $classes Optional. One or more classes to add to the body tag class list.
+	 *                       Default is an empty array.
+	 *
+	 * @return array Body tag classes.
+	 */
 	public function body_class( $classes = [] ) {
 		$classes[] = 'elementor-default';
 
@@ -98,8 +206,8 @@ class Frontend {
 	/**
 	 * Remove content filter.
 	 *
-	 * When the Elementor generated content rendered, we remove the filter to prevent multiple accuracies. This way we
-	 * make sure Elementor renders the content only once.
+	 * When the Elementor generated content rendered, we remove the filter to prevent multiple
+	 * accuracies. This way we make sure Elementor renders the content only once.
 	 *
 	 * @since 1.8.0
 	 * @access public
@@ -109,9 +217,13 @@ class Frontend {
 	}
 
 	/**
+	 * Registers scripts.
+	 *
+	 * Registers all the frontend scripts.
+	 *
 	 * @since 1.2.1
 	 * @access public
-	*/
+	 */
 	public function register_scripts() {
 		/**
 		 * Fires before Elementor frontend scripts are registered.
@@ -203,9 +315,13 @@ class Frontend {
 	}
 
 	/**
+	 * Registers styles.
+	 *
+	 * Registers all the frontend styles.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	*/
+	 */
 	public function register_styles() {
 		/**
 		 * Fires before Elementor frontend styles are registered.
@@ -255,9 +371,13 @@ class Frontend {
 	}
 
 	/**
+	 * Enqueue scripts.
+	 *
+	 * Enqueue all the frontend scripts.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function enqueue_scripts() {
 		/**
 		 * Fires before Elementor frontend scripts are enqueued.
@@ -320,9 +440,13 @@ class Frontend {
 	}
 
 	/**
+	 * Enqueue styles.
+	 *
+	 * Enqueue all the frontend styles.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function enqueue_styles() {
 		/**
 		 * Fires before Elementor frontend styles are enqueued.
@@ -352,7 +476,8 @@ class Frontend {
 	}
 
 	/**
-	 * Handle style that do not printed in header
+	 * Handle style that do not printed in header.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
@@ -368,9 +493,13 @@ class Frontend {
 	}
 
 	/**
+	 * Print Google fonts.
+	 *
+	 * Enqueue all the frontend Google fonts.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function print_google_fonts() {
 		if ( ! apply_filters( 'elementor/frontend/print_google_fonts', true ) ) {
 			return;
@@ -414,9 +543,13 @@ class Frontend {
 	}
 
 	/**
+	 * Enqueue fonts.
+	 *
+	 * Enqueue all the frontend fonts.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	*/
+	 */
 	public function enqueue_font( $font ) {
 		$font_type = Fonts::get_font_type( $font );
 		$cache_id = $font_type . $font;
@@ -443,9 +576,13 @@ class Frontend {
 	}
 
 	/**
+	 * Parse global CSS.
+	 *
+	 * Enqueue the global CSS file.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	*/
+	 */
 	protected function parse_global_css_code() {
 		$scheme_css_file = new Global_CSS_File();
 
@@ -453,9 +590,17 @@ class Frontend {
 	}
 
 	/**
+	 * Apply builder in content.
+	 *
+	 * Used to apply the Elementor page editor on the post content.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param string $content The post content.
+	 *
+	 * @return string The post content.
+	 */
 	public function apply_builder_in_content( $content ) {
 		$this->restore_content_filters();
 
@@ -481,9 +626,21 @@ class Frontend {
 	}
 
 	/**
+	 * Retrieve builder content.
+	 *
+	 * Used to render and return the post content with all the Elementor elements.
+	 *
+	 * Note that this method is an internal method, please use `get_builder_content_for_display()`.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int  $post_id  The post ID.
+	 * @param bool $with_css Optional. Whether to retrieve the content with CSS
+	 *                       or not. Default is false.
+	 *
+	 * @return string The post content.
+	 */
 	public function get_builder_content( $post_id, $with_css = false ) {
 		if ( post_password_required( $post_id ) ) {
 			return '';
@@ -549,9 +706,16 @@ class Frontend {
 	}
 
 	/**
+	 * Add Elementor menu to admin bar.
+	 *
+	 * Add new admin bar item only on singular pages, to display a link that
+	 * allows the user to edit with Elementor.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param \WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance, passed by reference.
+	 */
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$post_id = get_the_ID();
 
@@ -569,9 +733,17 @@ class Frontend {
 	}
 
 	/**
+	 * Retrieve builder content for display.
+	 *
+	 * Used to render and return the post content with all the Elementor elements.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $post_id The post ID.
+	 *
+	 * @return string The post content.
+	 */
 	public function get_builder_content_for_display( $post_id ) {
 		if ( ! get_post( $post_id ) ) {
 			return '';
@@ -607,25 +779,44 @@ class Frontend {
 	}
 
 	/**
+	 * Start excerpt flag.
+	 *
+	 * Flags when `the_excerpt` is called. Used to avoid enqueueing css in the excerpt.
+	 *
 	 * @since 1.4.3
 	 * @access public
-	*/
+	 *
+	 * @param string $post_excerpt The post excerpt.
+	 *
+	 * @return string The post excerpt.
+	 */
 	public function start_excerpt_flag( $excerpt ) {
 		$this->_is_excerpt = true;
 		return $excerpt;
 	}
 
 	/**
+	 * End excerpt flag.
+	 *
+	 * Flags when `the_excerpt` call ended.
+	 *
 	 * @since 1.4.3
 	 * @access public
-	*/
+	 *
+	 * @param string $post_excerpt The post excerpt.
+	 *
+	 * @return string The post excerpt.
+	 */
 	public function end_excerpt_flag( $excerpt ) {
 		$this->_is_excerpt = false;
 		return $excerpt;
 	}
 
 	/**
-	 * Remove WordPress default filters that conflicted with Elementor
+	 * Remove content filters.
+	 *
+	 * Remove WordPress default filters that conflicted with Elementor.
+	 *
 	 * @since 1.5.0
 	 * @access public
 	 */
@@ -646,9 +837,13 @@ class Frontend {
 	}
 
 	/**
+	 * Restore content filters.
+	 *
+	 * Restore removed WordPress filters that conflicted with Elementor.
+	 *
 	 * @since 1.5.0
 	 * @access private
-	*/
+	 */
 	private function restore_content_filters() {
 		foreach ( $this->content_removed_filters as $filter ) {
 			add_filter( 'the_content', $filter );
@@ -657,9 +852,14 @@ class Frontend {
 	}
 
 	/**
+	 * Front End constructor.
+	 *
+	 * Initializing Elementor front end. Make sure we are not in admin, not and
+	 * redirect from old URL structure of Elementor editor.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests.
 		if ( is_admin() && ! Utils::is_ajax() ) {
