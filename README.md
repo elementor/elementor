@@ -186,8 +186,15 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.8.6 - 26.11.2017 ###
+* Fix! - Changed minimum editing capability to `edit_posts` ([#2791](https://github.com/pojome/elementor/issues/2791))
+* Fix! - Disable `white-space: pre-wrap` in advanced editing mode ([#2776](https://github.com/pojome/elementor/issues/2776))
+* Fix! - Check publish capabilities in the page settings
+* Fix! - Fixed line break in webkit in cases when there are no active nodes.
+* Fix! - Import/export template in some server configurations.
+
 ### 1.8.5 - 19.11.2017 ###
-* Fix! – Compatibility with the WordPress 4.9 native widgets ([#2763](https://github.com/pojome/elementor/issues/2763))
+* Fix! - Compatibility with the WordPress 4.9 native widgets ([#2763](https://github.com/pojome/elementor/issues/2763))
 * Fix! - Removed related videos from background video in some cases ([#2372](https://github.com/pojome/elementor/issues/2372))
 * Fix! - Element inside similar element conflict ([#2760](https://github.com/pojome/elementor/issues/2760))
 * Fix! - Responsive alignment in Icon List widget
@@ -199,7 +206,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix! - Print duplicate styles when Print Method set to Internal Embedding
 
 ### 1.8.3 - 11.11.2017 ###
-* Fix! – Added nonce to export template action ([Topic](https://wordpress.org/support/topic/importation-error-in-library-elementor-8-2/))
+* Fix! - Added nonce to export template action ([Topic](https://wordpress.org/support/topic/importation-error-in-library-elementor-8-2/))
 * Fix! - Native WordPress widgets stopped working ([#2732](https://github.com/pojome/elementor/issues/2732))
 
 ### 1.8.2 - 09.11.2017 ###
@@ -216,7 +223,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 ### 1.8.0 - 07.11.2017 ###
 * New! - Inline Editing added to all text, textarea & TinyMCE controls ([#437](https://github.com/pojome/elementor/issues/437))
 * New! - Added auto complete for code editor (Custom CSS & HTML widget) ([#2416](https://github.com/pojome/elementor/issues/2416))
-* New! – Added more icons to Social Icons widget: Telegram & OK ([#2670](https://github.com/pojome/elementor/issues/2670))
+* New! - Added more icons to Social Icons widget: Telegram & OK ([#2670](https://github.com/pojome/elementor/issues/2670))
 * New! - Set focus to search bar when you click on widget button in the panel ([#2333](https://github.com/pojome/elementor/issues/2333))
 * Tweak! - Added `soft wrap` for code editor
 * Tweak! - Better accessibility for Tabs, Toggle & Accordion widgets
@@ -229,7 +236,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak! - Added responsive control for Icon Box (Space & Size)
 * Tweak! - Added compatibility and support for WP Color in WordPress 4.9 ([#2550](https://github.com/pojome/elementor/issues/2550))
 * Tweak! - Better nonce handling/renewing to avoid timeouts
-* Tweak! – Added compatibility for the future release of Elementor
+* Tweak! - Added compatibility for the future release of Elementor
 * Fix! - Icon List widget alignment with RTL
 * Fix! - Render element on unknown control changed
 * Fix! - Conflict `elementor-clickable` element with editor lightbox

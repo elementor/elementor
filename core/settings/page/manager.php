@@ -91,7 +91,10 @@ class Manager extends BaseManager {
 		$post->post_title = $data['post_title'];
 
 		if ( isset( $data['post_status'] ) ) {
-			$post->post_status = $data['post_status'];
+			$post_type_object = get_post_type_object( $post->post_type );
+			if ( 'publish' !== $data['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
+				$post->post_status = $data['post_status'];
+			}
 		}
 
 		wp_update_post( $post );

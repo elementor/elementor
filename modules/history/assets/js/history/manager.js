@@ -253,7 +253,7 @@ var	Manager = function() {
 
 		if ( item.get( 'editing_started' ) ) {
 			if ( ! editorSaved ) {
-				elementor.setFlagEditorChange( false );
+				elementor.saver.setFlagEditorChange( false );
 			}
 		}
 	};

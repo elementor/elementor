@@ -73,7 +73,7 @@ class Preview {
 	 *
 	 * Get the ID of the current post.
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 * @access public
 	 *
 	 * @return int Post ID.
@@ -157,7 +157,7 @@ class Preview {
 	 *
 	 * @since 1.5.4
 	 * @access private
-	 */
+	*/
 	private function enqueue_scripts() {
 		Plugin::$instance->frontend->register_scripts();
 		Plugin::$instance->frontend->enqueue_scripts();
