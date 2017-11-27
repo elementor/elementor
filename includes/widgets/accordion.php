@@ -131,19 +131,6 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
-			'icon_align',
-			[
-				'label' => __( 'Icon Alignment', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => is_rtl() ? 'right' : 'left',
-				'options' => [
-					'left' => __( 'Left', 'elementor' ),
-					'right' => __( 'Right', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
 			'border_width',
 			[
 				'label' => __( 'Border Width', 'elementor' ),
@@ -174,6 +161,39 @@ class Widget_Accordion extends Widget_Base {
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item' => 'border-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-accordion .elementor-tab-content' => 'border-top-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-wrapper .elementor-tab-title.elementor-active > span' => 'border-bottom-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'heading_icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'icon_align',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => is_rtl() ? 'right' : 'left',
+				'options' => [
+					'left' => __( 'Left', 'elementor' ),
+					'right' => __( 'Right', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-accordion .elementor-tab-title .elementor-accordion-icon .fa:before' => 'color: {{VALUE}};',
 				],
 			]
 		);
