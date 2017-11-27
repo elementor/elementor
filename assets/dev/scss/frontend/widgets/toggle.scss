@@ -16,6 +16,19 @@
 			display: inline-block;
 			width: 1em;
 
+			&.elementor-toggle-icon- {
+
+				&right {
+					float: right;
+					text-align: right;
+				}
+
+				&left {
+					float: left;
+					text-align: left;
+				}
+			}
+
 			.fa {
 
 				&:before {
