@@ -63,7 +63,7 @@ class Preview {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param Elementor\Preview $this The current preview.
+		 * @param Preview $this The current preview.
 		 */
 		do_action( 'elementor/preview/init', $this );
 	}
@@ -75,7 +75,7 @@ class Preview {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * 
+	 *
 	 * @return int Post ID.
 	 */
 	public function get_post_id() {

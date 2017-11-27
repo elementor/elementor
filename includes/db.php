@@ -53,7 +53,7 @@ class DB {
 			 *
 			 * @since 1.0.0
 			 *
-			 * @param string   $status
+			 * @param string   $status          Post status.
 			 * @param int|bool $is_meta_updated Meta ID if the key didn't exist, true on successful update, false on failure.
 			 */
 			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
@@ -65,7 +65,7 @@ class DB {
 			 *
 			 * @since 1.0.0
 			 *
-			 * @param string   $status
+			 * @param string   $status          Post status.
 			 * @param int|bool $is_meta_updated Meta ID if the key didn't exist, true on successful update, false on failure.
 			 */
 			do_action( 'elementor/db/before_save', $status, true );

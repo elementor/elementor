@@ -535,7 +535,7 @@ abstract class Element_Base extends Controls_Stack {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param Elementor\Element_Base $this The element.
+		 * @param Element_Base $this The element.
 		 */
 		do_action( "elementor/frontend/{$element_type}/before_render", $this );
 
@@ -554,7 +554,7 @@ abstract class Element_Base extends Controls_Stack {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param Elementor\Element_Base $this The element.
+		 * @param Element_Base $this The element.
 		 */
 		do_action( "elementor/frontend/{$element_type}/after_render", $this );
 	}

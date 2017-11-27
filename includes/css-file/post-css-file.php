@@ -164,8 +164,8 @@ class Post_CSS_File extends CSS_File {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Elementor\Post_CSS_File $this    The post CSS file.
-		 * @param Elementor\Element_Base  $element The element.
+		 * @param Post_CSS_File $this    The post CSS file.
+		 * @param Element_Base  $element The element.
 		 */
 		do_action( 'elementor/element/before_parse_css', $this, $element );
 
@@ -178,8 +178,8 @@ class Post_CSS_File extends CSS_File {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Elementor\Post_CSS_File $this    The post CSS file.
-		 * @param Elementor\Element_Base  $element The element.
+		 * @param Post_CSS_File $this    The post CSS file.
+		 * @param Element_Base  $element The element.
 		 */
 		do_action( 'elementor/element/parse_css', $this, $element );
 	}

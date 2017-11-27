@@ -193,7 +193,7 @@ class Controls_Manager {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param Elementor\Controls_Manager $this The controls manager.
+		 * @param Controls_Manager $this The controls manager.
 		 */
 		do_action( 'elementor/controls/controls_registered', $this );
 	}

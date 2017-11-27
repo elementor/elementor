@@ -66,7 +66,7 @@ class Widgets_Manager {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param Elementor\Widgets_Manager $this The widgets manager.
+		 * @param Widgets_Manager $this The widgets manager.
 		 */
 		do_action( 'elementor/widgets/widgets_registered', $this );
 	}
