@@ -38,18 +38,6 @@ class Frontend {
 	private $google_fonts = [];
 
 	/**
-	 * Registered fonts.
-	 *
-	 * Holds the list of enqueued fonts in the current page.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 *
-	 * @var array Registered fonts. Default is an empty array.
-	 */
-	private $registered_fonts = [];
-
-	/**
 	 * Google early access fonts.
 	 *
 	 * Holds the list of google early access fonts that are being used in the current page.
@@ -60,6 +48,18 @@ class Frontend {
 	 * @var array Registered fonts. Default is an empty array.
 	 */
 	private $google_early_access_fonts = [];
+
+	/**
+	 * Registered fonts.
+	 *
+	 * Holds the list of enqueued fonts in the current page.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var array Registered fonts. Default is an empty array.
+	 */
+	private $registered_fonts = [];
 
 	/**
 	 * Whether the front end mode is active.
@@ -86,7 +86,7 @@ class Frontend {
 	private $_has_elementor_in_page = false;
 
 	/**
-	 * Whether the excerpt is being used.
+	 * Whether the excerpt is being called.
 	 *
 	 * Used to determine whether the call to `the_content()` came from `get_the_excerpt()`.
 	 *
@@ -101,7 +101,7 @@ class Frontend {
 	 * Filters removed from the content.
 	 *
 	 * Hold the list of filters removed from `the_content()`. Used to hold the filters that
-	 * conflicted with Elementor.
+	 * conflicted with Elementor while Elementor process the content.
 	 *
 	 * @since 1.0.0
 	 * @access private
@@ -147,7 +147,7 @@ class Frontend {
 	/**
 	 * Print elements.
 	 *
-	 * Used to generate the element final HTML on the frontend and the editor.
+	 * Used to generate the element final HTML on the frontend.
  	 *
 	 * @since 1.0.0
 	 * @access protected
@@ -169,7 +169,7 @@ class Frontend {
 	/**
 	 * Body tag classes.
 	 *
-	 * Add new elementor classes to the body tag.
+	 * Add new elementor classes to the body tag. Fired by `body_class` filter.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -219,7 +219,7 @@ class Frontend {
 	/**
 	 * Registers scripts.
 	 *
-	 * Registers all the frontend scripts.
+	 * Registers all the frontend scripts. Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.2.1
 	 * @access public
@@ -317,7 +317,7 @@ class Frontend {
 	/**
 	 * Registers styles.
 	 *
-	 * Registers all the frontend styles.
+	 * Registers all the frontend styles. Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.2.0
 	 * @access public
@@ -442,7 +442,7 @@ class Frontend {
 	/**
 	 * Enqueue styles.
 	 *
-	 * Enqueue all the frontend styles.
+	 * Enqueue all the frontend styles. Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -476,7 +476,9 @@ class Frontend {
 	}
 
 	/**
-	 * Handle style that do not printed in header.
+	 * Elementor footer scripts and styles.
+	 *
+	 * Handle styles and scripts that are not printed in the header. Fired by `wp_footer` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -495,7 +497,7 @@ class Frontend {
 	/**
 	 * Print Google fonts.
 	 *
-	 * Enqueue all the frontend Google fonts.
+	 * Enqueue all the frontend Google fonts. Fired by `wp_head` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -709,7 +711,7 @@ class Frontend {
 	 * Add Elementor menu to admin bar.
 	 *
 	 * Add new admin bar item only on singular pages, to display a link that
-	 * allows the user to edit with Elementor.
+	 * allows the user to edit with Elementor. Fired by `admin_bar_menu` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
