@@ -90,7 +90,9 @@ class Manager extends BaseManager {
 
 		$post->post_title = $data['post_title'];
 
-		$post->post_excerpt = $data['post_excerpt'];
+		if ( post_type_supports( $data['post_type'], 'excerpt' ) ) {
+			$post->post_excerpt = $data['post_excerpt'];
+		}
 
 		if ( isset( $data['post_status'] ) ) {
 			$post_type_object = get_post_type_object( $post->post_type );
