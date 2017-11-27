@@ -35,6 +35,7 @@ class Heartbeat {
 	}
 
 	/**
+	 * @since 1.8.0
 	 * @access public
 	 */
 	public function refresh_nonces( $response, $data ) {

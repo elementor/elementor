@@ -44,6 +44,7 @@ App = Marionette.Application.extend( {
 			Base: require( 'elementor-views/controls/base' ),
 			BaseData: require( 'elementor-views/controls/base-data' ),
 			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
+			Button: require( 'elementor-views/controls/button' ),
 			Color: require( 'elementor-views/controls/color' ),
 			Dimensions: require( 'elementor-views/controls/dimensions' ),
 			Image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
@@ -71,6 +72,9 @@ App = Marionette.Application.extend( {
 			Switcher: require( 'elementor-views/controls/switcher' ),
 			Number: require( 'elementor-views/controls/number' ),
 			Popover_toggle: require( 'elementor-views/controls/popover-toggle' )
+		},
+		saver: {
+			footerBehavior: require( './components/saver/behaviors/footer-saver' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
@@ -153,9 +157,12 @@ App = Marionette.Application.extend( {
 
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
-			Settings = require( 'elementor-editor/settings/settings' );
+			Settings = require( 'elementor-editor/settings/settings' ),
+			Saver = require( 'elementor-editor/components/saver/manager' );
 
 		this.hooks = new EventManager();
+
+		this.saver = new Saver();
 
 		this.settings = new Settings();
 
@@ -357,7 +364,7 @@ App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.getPanelView().getFooterView()._publishBuilder();
+					elementor.saver.saveAutoSave();
 				}
 			}
 		};
@@ -446,8 +453,6 @@ App = Marionette.Application.extend( {
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
-
-		this.setWorkSaver();
 
 		this.initClearPageDialog();
 
@@ -579,24 +584,6 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	setFlagEditorChange: function( status ) {
-		elementor.channels.editor
-			.reply( 'status', status )
-			.trigger( 'status:change', status );
-	},
-
-	isEditorChanged: function() {
-		return ( true === elementor.channels.editor.request( 'status' ) );
-	},
-
-	setWorkSaver: function() {
-		this.$window.on( 'beforeunload', function() {
-			if ( elementor.isEditorChanged() ) {
-				return elementor.translate( 'before_unload_alert' );
-			}
-		} );
-	},
-
 	setResizablePanel: function() {
 		var self = this,
 			side = elementor.config.is_rtl ? 'right' : 'left';
@@ -660,35 +647,6 @@ App = Marionette.Application.extend( {
 		if ( newMode !== oldEditMode ) {
 			dataEditMode.trigger( 'switch', newMode );
 		}
-	},
-
-	saveEditor: function( options ) {
-		options = _.extend( {
-			status: 'draft',
-			onSuccess: null
-		}, options );
-
-		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } );
-
-		return this.ajax.send( 'save_builder', {
-	        data: {
-		        post_id: this.config.post_id,
-				status: options.status,
-		        data: JSON.stringify( newData )
-	        },
-			success: function( data ) {
-				self.setFlagEditorChange( false );
-
-				self.config.data = newData;
-
-				self.channels.editor.trigger( 'saved', data );
-
-				if ( _.isFunction( options.onSuccess ) ) {
-					options.onSuccess.call( this, data );
-				}
-			}
-		} );
 	},
 
 	reloadPreview: function() {
