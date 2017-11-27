@@ -4,8 +4,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-controls-stack',
 
 	classes: {
-		popover: 'elementor-controls-popover',
-		popoverToggle: 'elementor-control-popover-toggle-toggle'
+		popover: 'elementor-controls-popover'
 	},
 
 	activeTab: null,
@@ -26,15 +25,10 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	events: function() {
-		var events = {
-			'click': 'onClick',
+		return {
 			'click @ui.tabs': 'onClickTabControl',
 			'click @ui.reloadButton': 'onReloadButtonClick'
 		};
-
-		events[ 'click .' + this.classes.popover ] = 'onPopoverClick';
-
-		return events;
 	},
 
 	modelEvents: {
@@ -130,10 +124,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 		} );
 	},
 
-	hidePopovers: function() {
-		this.$el.find( '.' + this.classes.popover ).hide();
-	},
-
 	removePopovers: function() {
 		this.$el.find( '.' + this.classes.popover ).remove();
 	},
@@ -161,20 +151,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	onModelDestroy: function() {
 		this.destroy();
-	},
-
-	onClick: function( event ) {
-		if ( jQuery( event.target ).closest( '.' + this.classes.popover + ',.' + this.classes.popoverToggle ).length ) {
-			return;
-		}
-
-		this.hidePopovers();
-	},
-
-	onPopoverClick: function( event ) {
-		var $currentPopover = jQuery( event.target ).closest( '.' + this.classes.popover );
-
-		this.$el.find( '.' + this.classes.popover ).not( $currentPopover ).hide();
 	},
 
 	onClickTabControl: function( event ) {
