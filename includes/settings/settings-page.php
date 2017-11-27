@@ -271,7 +271,7 @@ abstract class Settings_Page {
 			 *
 			 * @since 1.0.0
 			 *
-			 * @param Elementor\Settings_Page $this The settings page.
+			 * @param Settings_Page $this The settings page.
 			 */
 			do_action( "elementor/admin/after_create_settings/{$page_id}", $this );
 		}

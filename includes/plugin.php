@@ -186,13 +186,6 @@ class Plugin {
 			/**
 			 * Fires when Elementor was fully loaded and instantiated.
 			 *
-			 * For example, can be used to check if Elementor installed and activated:
-			 *
-			 *     if ( ! did_action( 'elementor/loaded' ) ) {
-			 *         add_action( 'admin_notices', [ $this, 'admin_notice_missing_main_plugin' ] );
-			 *         return;
-			 *     }
-			 *
 			 * @since 1.0.0
 			 */
 			do_action( 'elementor/loaded' );

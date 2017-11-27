@@ -141,7 +141,7 @@ abstract class Widget_Base extends Element_Base {
 			 *
 			 * @since 1.0.0
 			 *
-			 * @param Elementor\Widget_Base $this The current widget.
+			 * @param Widget_Base $this The current widget.
 			 */
 			do_action( "elementor/widget/{$widget_name}/skins_init", $this );
 		}
@@ -375,7 +375,7 @@ abstract class Widget_Base extends Element_Base {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param Elementor\Widget_Base $this The current widget.
+		 * @param Widget_Base $this The current widget.
 		 */
 		do_action( 'elementor/widget/before_render_content', $this );
 

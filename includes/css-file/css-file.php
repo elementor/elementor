@@ -475,7 +475,7 @@ abstract class CSS_File {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Elementor\CSS_File $this The current CSS file.
+		 * @param CSS_File $this The current CSS file.
 		 */
 		do_action( "elementor/{$name}-css-file/parse", $this );
 
