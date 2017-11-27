@@ -526,7 +526,18 @@ abstract class Element_Base extends Controls_Stack {
 	public function print_element() {
 		$this->enqueue_scripts();
 
-		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
+		$element_type = static::get_type();
+
+		/**
+		 * Fires before Elementor element is rendered in the frontend.
+		 *
+		 * The dynamic portion of the hook name, `$element_type`, refers to the element type from `static::get_type()`.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( "elementor/frontend/{$element_type}/before_render", $this );
 
 		$this->_add_render_attributes();
 
@@ -536,7 +547,16 @@ abstract class Element_Base extends Controls_Stack {
 
 		$this->after_render();
 
-		do_action( 'elementor/frontend/' . static::get_type() . '/after_render', $this );
+		/**
+		 * Fires after Elementor element was rendered in the frontend.
+		 *
+		 * The dynamic portion of the hook name, `$element_type`, refers to the element type from `static::get_type()`.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( "elementor/frontend/{$element_type}/after_render", $this );
 	}
 
 	/**
@@ -813,6 +833,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
 	 * @param array      $data Element data. Default is an empty array.
 	 * @param array|null $args Optional. Element default arguments. Default is null.
 	 **/

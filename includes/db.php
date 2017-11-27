@@ -60,10 +60,26 @@ class DB {
 			// Don't use `update_post_meta` that can't handle `revision` post type
 			$is_meta_updated = update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 
+			/**
+			 * Fires before Elementor saves data to the database.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param string   $status          Post status.
+			 * @param int|bool $is_meta_updated Meta ID if the key didn't exist, true on successful update, false on failure.
+			 */
 			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
 
 			$this->_save_plain_text( $post_id );
 		} else {
+			/**
+			 * Fires before Elementor saves data to the database.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param string   $status          Post status.
+			 * @param int|bool $is_meta_updated Meta ID if the key didn't exist, true on successful update, false on failure.
+			 */
 			do_action( 'elementor/db/before_save', $status, true );
 
 			$autosave_id = wp_create_post_autosave( [
@@ -85,6 +101,14 @@ class DB {
 		// Remove Post CSS
 		delete_post_meta( $post_id, Post_CSS_File::META_KEY );
 
+		/**
+		 * Fires after Elementor saves data to the database.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param int   $post_id     The ID of the post.
+		 * @param array $editor_data Sanitize posted data.
+		 */
 		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
 	}
 
