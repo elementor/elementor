@@ -63,7 +63,7 @@ class Editor {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor editor. Fired by `init` action.
+	 * Initialize Elementor editor. Fired by `admin_action_elementor` action.
 	 *
 	 * @since 1.7.0
 	 * @access public
@@ -158,7 +158,7 @@ class Editor {
 	 * Redirect to new URL.
 	 *
 	 * Used as a fallback function for the old URL structure of Elementor
-	 * page edit URL.
+	 * page edit URL. Fired by `template_redirect` action.
 	 *
 	 * @since 1.6.0
 	 * @access public
