@@ -680,7 +680,7 @@ class Frontend {
 
 		ob_start();
 
-		// Handle JS and Customizer requests, with css inline.
+		// Handle JS and Customizer requests, with CSS inline.
 		if ( is_customize_preview() || Utils::is_ajax() ) {
 			$with_css = true;
 		}
@@ -763,7 +763,7 @@ class Frontend {
 			return $content;
 		}
 
-		// Set edit mode as false, so don't render settings and etc. use the $is_edit_mode to indicate if we need the css inline
+		// Set edit mode as false, so don't render settings and etc. use the $is_edit_mode to indicate if we need the CSS inline
 		$is_edit_mode = $editor->is_edit_mode();
 		$editor->set_edit_mode( false );
 
@@ -783,7 +783,7 @@ class Frontend {
 	/**
 	 * Start excerpt flag.
 	 *
-	 * Flags when `the_excerpt` is called. Used to avoid enqueueing css in the excerpt.
+	 * Flags when `the_excerpt` is called. Used to avoid enqueueing CSS in the excerpt.
 	 *
 	 * @since 1.4.3
 	 * @access public
@@ -874,7 +874,7 @@ class Frontend {
 
 		$this->add_content_filter();
 
-		// Hack to avoid enqueue post css while it's a `the_excerpt` call.
+		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
 		add_filter( 'get_the_excerpt', [ $this, 'end_excerpt_flag' ], 20 );
 	}
