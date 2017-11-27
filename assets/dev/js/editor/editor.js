@@ -81,7 +81,11 @@ App = Marionette.Application.extend( {
 		}
 	},
 
-	backgroundClickListeners: {},
+	backgroundClickListeners: {
+		popover: {
+			element: '.elementor-controls-popover'
+		}
+	},
 
 	_defaultDeviceMode: 'desktop',
 
@@ -408,7 +412,7 @@ App = Marionette.Application.extend( {
 	},
 
 	addBackgroundClickArea: function( element ) {
-		element.addEventListener( 'click', this.onBackgroundClick.bind( this ), { capture: true } );
+		element.addEventListener( 'click', this.onBackgroundClick.bind( this ), true );
 	},
 
 	addBackgroundClickListener: function( key, listener ) {
