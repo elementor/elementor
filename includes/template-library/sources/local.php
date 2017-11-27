@@ -237,7 +237,24 @@ class Source_Local extends Source_Base {
 			SettingsManager::get_settings_managers( 'page' )->save_settings( $template_data['page_settings'], $template_id );
 		}
 
+		/**
+		 * Fires after Elementor template library was saved.
+		 *
+		 * @since 1.0.1
+		 *
+		 * @param int   $template_id   The ID of the template.
+		 * @param array $template_data The template data.
+		 */
 		do_action( 'elementor/template-library/after_save_template', $template_id, $template_data );
+
+		/**
+		 * Fires after Elementor template library was updated.
+		 *
+		 * @since 1.0.1
+		 *
+		 * @param int   $template_id   The ID of the template.
+		 * @param array $template_data The template data.
+		 */
 		do_action( 'elementor/template-library/after_update_template', $template_id, $template_data );
 
 		return $template_id;
@@ -250,6 +267,14 @@ class Source_Local extends Source_Base {
 	public function update_item( $new_data ) {
 		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
 
+		/**
+		 * Fires after Elementor template library was updated.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param int   $new_data_id The ID of the new template.
+		 * @param array $new_data    The new template data.
+		 */
 		do_action( 'elementor/template-library/after_update_template', $new_data['id'], $new_data );
 
 		return true;
