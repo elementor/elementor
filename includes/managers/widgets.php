@@ -61,6 +61,13 @@ class Widgets_Manager {
 
 		$this->_register_wp_widgets();
 
+		/**
+		 * Fires after Elementor widgets are registered.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Widgets_Manager $this The widgets manager.
+		 */
 		do_action( 'elementor/widgets/widgets_registered', $this );
 	}
 
