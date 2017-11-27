@@ -190,6 +190,13 @@ class Controls_Manager {
 		$this->control_groups['box-shadow'] = new Group_Control_Box_Shadow();
 		$this->control_groups['text-shadow'] = new Group_Control_Text_Shadow();
 
+		/**
+		 * Fires after Elementor controls are registered.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Controls_Manager $this The controls manager.
+		 */
 		do_action( 'elementor/controls/controls_registered', $this );
 	}
 
