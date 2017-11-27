@@ -493,8 +493,7 @@ class Frontend {
 			return '';
 		}
 
-		$is_main_content_preview = $this->post_id === $post_id && is_preview();
-		if ( $is_main_content_preview ) {
+		if (  is_preview() ) {
 			$preview_post = wp_get_post_autosave( $post_id, get_current_user_id() );
 			$status = DB::STATUS_DRAFT;
 		} else {
@@ -510,7 +509,7 @@ class Frontend {
 		}
 
 		if ( ! $this->_is_excerpt ) {
-			if ( $is_main_content_preview && $preview_post ) {
+			if ( $preview_post ) {
 				$css_file = new Post_Preview_CSS( $preview_post->ID );
 			} else {
 				$css_file = new Post_CSS_File( $post_id );

@@ -639,6 +639,7 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver
 			.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )
+			.on( 'after:save:publish', this.onAfterPublished.bind( this ) )
 			.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
@@ -713,6 +714,10 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver.savePending();
 	},
 
+	onAfterPublished: function() {
+		this.ui.menuPublishChanges.find( '.elementor-title' ).html( elementor.translate( 'published' ) );
+	},
+
 	activateSaveButton: function( hasChanges ) {
 		if ( hasChanges ) {
 			this.ui.buttonSave.addClass( 'elementor-save-active' );
@@ -724,8 +729,7 @@ module.exports = Marionette.Behavior.extend( {
 			this.ui.buttonSave.removeClass( 'elementor-save-active' );
 			this.ui.buttonSaveLabel.html( elementor.translate( 'saved' ) );
 			this.ui.menuPublishChanges.find( '.elementor-title' )
-				.removeClass( 'elementor-save-active' )
-				.html( elementor.translate( 'published' ) );
+				.removeClass( 'elementor-save-active' );
 		}
 	},
 
