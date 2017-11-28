@@ -63,7 +63,7 @@ class Editor {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor editor. Fired by `init` action.
+	 * Initialize Elementor editor. Fired by `admin_action_elementor` action.
 	 *
 	 * @since 1.7.0
 	 * @access public
@@ -158,7 +158,7 @@ class Editor {
 	 * Redirect to new URL.
 	 *
 	 * Used as a fallback function for the old URL structure of Elementor
-	 * page edit URL.
+	 * page edit URL. Fired by `template_redirect` action.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -449,6 +449,11 @@ class Editor {
 			true
 		);
 
+		/**
+		 * Fires before Elementor editor scripts are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-editor' );
@@ -633,6 +638,11 @@ class Editor {
 
 		$plugin->controls_manager->enqueue_control_scripts();
 
+		/**
+		 * Fires after Elementor editor scripts are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/editor/after_enqueue_scripts' );
 	}
 
@@ -645,6 +655,11 @@ class Editor {
 	 * @access public
 	 */
 	public function enqueue_styles() {
+		/**
+		 * Fires before Elementor editor styles are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/editor/before_enqueue_styles' );
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
@@ -702,6 +717,11 @@ class Editor {
 
 		wp_enqueue_style( 'elementor-editor' );
 
+		/**
+		 * Fires after Elementor editor styles are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/editor/after_enqueue_styles' );
 	}
 
@@ -760,7 +780,9 @@ class Editor {
 	 */
 	public function editor_head_trigger() {
 		/**
-		 * Prints scripts or data in the head tag in Elementor editor.
+		 * Fires on Elementor editor head tag.
+		 *
+		 * Used to prints scripts or any other data in the head tag.
 		 *
 		 * @since 1.0.0
 		 */
@@ -817,7 +839,9 @@ class Editor {
 		}
 
 		/**
-		 * Prints scripts or data before the closing body tag in Elementor editor.
+		 * Fires on Elementor editor before closing the body tag.
+		 *
+		 * Used to prints scripts or any other HTML before closing the body tag.
 		 *
 		 * @since 1.0.0
 		 */

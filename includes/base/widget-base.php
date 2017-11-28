@@ -132,7 +132,18 @@ abstract class Widget_Base extends Element_Base {
 		if ( $is_type_instance ) {
 			$this->_register_skins();
 
-			do_action( 'elementor/widget/' . $this->get_name() . '/skins_init', $this );
+			$widget_name = $this->get_name();
+
+			/**
+			 * Fires when Elementor widget is being initialized.
+			 *
+			 * The dynamic portion of the hook name, `$widget_name`, refers to the widget name from `$this->get_name()`.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param Widget_Base $this The current widget.
+			 */
+			do_action( "elementor/widget/{$widget_name}/skins_init", $this );
 		}
 	}
 
@@ -359,6 +370,13 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 */
 	public function render_content() {
+		/**
+		 * Fires before Elementor widget is being rendered.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Widget_Base $this The current widget.
+		 */
 		do_action( 'elementor/widget/before_render_content', $this );
 
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
