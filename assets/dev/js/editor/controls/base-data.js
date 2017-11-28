@@ -155,7 +155,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	onSwitcherClick: function( event ) {
-		var device = Backbone.$( event.currentTarget ).data( 'device' );
+		var device = jQuery( event.currentTarget ).data( 'device' );
 
 		elementor.changeDeviceMode( device );
 
@@ -187,7 +187,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.$( '.tooltip-target' ).tipsy( {
 			gravity: function() {
 				// `n` for down, `s` for up
-				var gravity = Backbone.$( this ).data( 'tooltip-pos' );
+				var gravity = jQuery( this ).data( 'tooltip-pos' );
 
 				if ( undefined !== gravity ) {
 					return gravity;

@@ -129,9 +129,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	updateChildIndexes: function() {
-		this.children.each( _.bind( function( view ) {
-			view.updateIndex( this.collection.indexOf( view.model ) + 1 );
-		}, this ) );
+		var collection = this.collection;
+
+		this.children.each( function( view ) {
+			view.updateIndex( collection.indexOf( view.model ) + 1 );
+		} );
 	},
 
 	onRender: function() {
@@ -152,7 +154,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			var editor = tinymce.get( this.id ),
 				settings = editor.settings;
 
-			settings.height = Backbone.$( editor.getContainer() ).height();
+			settings.height = jQuery( editor.getContainer() ).height();
 			tinymce.execCommand( 'mceRemoveEditor', true, this.id );
 			tinymce.init( settings );
 		} );

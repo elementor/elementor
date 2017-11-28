@@ -55,7 +55,7 @@ ElementModel = Backbone.Model.extend( {
 			},
 			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
 
-		if ( Backbone.$.isEmptyObject( settings ) ) {
+		if ( jQuery.isEmptyObject( settings ) ) {
 			settings = elementor.helpers.cloneObject( settings );
 		}
 
@@ -170,7 +170,7 @@ ElementModel = Backbone.Model.extend( {
 				data: JSON.stringify( data ),
 				_nonce: elementor.config.nonce
 			},
-			success: _.bind( this.onRemoteGetHtml, this )
+			success: this.onRemoteGetHtml.bind( this )
 		} );
 	},
 
