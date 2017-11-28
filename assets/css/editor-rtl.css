@@ -348,6 +348,12 @@ body {
 #elementor-saved-popup .elementor-dialog-message-text {
   text-transform: uppercase; }
 
+.eicon-nerd:hover:before {
+  content: '\e965'; }
+
+.eicon-nerd:active:before {
+  content: '\e964'; }
+
 .elementor-button {
   outline: none;
   border: none;
