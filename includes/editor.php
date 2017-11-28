@@ -567,6 +567,12 @@ class Editor {
 				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
 				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				'section' => __( 'Section', 'elementor' ),
+				'templates_empty_message' => __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
+				'templates_empty_title' => __( 'Haven’t Saved Templates Yet?', 'elementor' ),
+				'templates_no_favorites_message' => __( 'You can mark every predesigned template as favorite.', 'elementor' ),
+				'templates_no_favorites_title' => __( 'No Favorite Templates', 'elementor' ),
+				'templates_no_results_message' => __( 'Please make sure your search is spelled correctly or try a different words.', 'elementor' ),
+				'templates_no_results_title' => __( 'No Results Found', 'elementor' ),
 				'templates_request_error' => __( 'The following error(s) occurred while processing the request:', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
 

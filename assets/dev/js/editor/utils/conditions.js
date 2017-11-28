@@ -34,7 +34,7 @@ Conditions = function() {
 		var isOrCondition = 'or' === conditions.relation,
 			conditionSucceed = ! isOrCondition;
 
-		Backbone.$.each( conditions.terms, function() {
+		jQuery.each( conditions.terms, function() {
 			var term = this,
 				comparisonResult;
 

@@ -62,18 +62,22 @@ class Source_Remote extends Source_Base {
 	 * @return array
 	 */
 	public function get_item( $template_data ) {
+		$favorite_templates = $this->get_user_meta( 'favorites' );
+
 		return [
 			'template_id' => $template_data['id'],
 			'source' => $this->get_id(),
 			'title' => $template_data['title'],
 			'thumbnail' => $template_data['thumbnail'],
-			'date' => date( get_option( 'date_format' ), $template_data['tmpl_created'] ),
+			'date' => $template_data['tmpl_created'],
 			'author' => $template_data['author'],
-			'categories' => [],
-			'keywords' => [],
+			'tags' => json_decode( $template_data['tags'] ),
 			'isPro' => ( '1' === $template_data['is_pro'] ),
+			'popularityIndex' => (int) $template_data['popularity_index'],
+			'trendIndex' => (int) $template_data['trend_index'],
 			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),
 			'url' => $template_data['url'],
+			'favorite' => ! empty( $favorite_templates[ $template_data['id'] ] ),
 		];
 	}
 

@@ -1,7 +1,6 @@
-var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' ),
-	TemplateLibraryHeaderPreviewView;
+var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' );
 
-TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-preview',
 
 	id: 'elementor-template-library-header-preview',
@@ -12,5 +11,3 @@ TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
 		}
 	}
 } );
-
-module.exports = TemplateLibraryHeaderPreviewView;
