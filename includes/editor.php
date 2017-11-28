@@ -481,7 +481,7 @@ class Editor {
 		$nonce = wp_create_nonce( 'post_preview_' . $this->_post_id );
 		$query_args['preview_id'] = $this->_post_id;
 		$query_args['preview_nonce'] = $nonce;
-		$preview_post_link = get_preview_post_link( $query_args );
+		$preview_post_link = get_preview_post_link( $this->_post_id, $query_args );
 
 		$config = [
 			'version' => ELEMENTOR_VERSION,
