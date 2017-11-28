@@ -516,6 +516,12 @@
 .eicon-post-navigation:before {
   content: '\e962'; }
 
+.eicon-nerd-chuckle:before {
+  content: '\e964'; }
+
+.eicon-nerd-wink:before {
+  content: '\e965'; }
+
 .eicon-editor-link:before {
   content: '\e500'; }
 
