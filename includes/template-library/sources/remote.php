@@ -77,7 +77,7 @@ class Source_Remote extends Source_Base {
 			'trendIndex' => (int) $template_data['trend_index'],
 			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),
 			'url' => $template_data['url'],
-			'favorite' => ! empty( $favorite_templates[ $template_data['id'] ] )
+			'favorite' => ! empty( $favorite_templates[ $template_data['id'] ] ),
 		];
 	}
 
