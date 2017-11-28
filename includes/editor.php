@@ -887,7 +887,17 @@ class Editor {
 	 * @return null|string The nonce token, or `null` if the user has no edit capabilities.
 	 */
 	public function create_nonce() {
-		if ( ! current_user_can( self::EDITING_CAPABILITY ) ) {
+		$post_id = $this->get_post_id();
+
+		if ( $post_id ) {
+			$post_type = get_post_type( $post_id );
+			$post_type_object = get_post_type_object( $post_type );
+			$capability = $post_type_object->cap->{self::EDITING_CAPABILITY};
+		} else {
+			$capability = self::EDITING_CAPABILITY;
+		}
+
+		if ( ! current_user_can( $capability ) ) {
 			return null;
 		}
 
