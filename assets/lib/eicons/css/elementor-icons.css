@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?2.6.0");
-  src: url("../fonts/eicons.eot?2.6.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.6.0") format("woff2"), url("../fonts/eicons.woff?2.6.0") format("woff"), url("../fonts/eicons.ttf?2.6.0") format("truetype"), url("../fonts/eicons.svg?2.6.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?2.7.0");
+  src: url("../fonts/eicons.eot?2.7.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.7.0") format("woff2"), url("../fonts/eicons.woff?2.7.0") format("woff"), url("../fonts/eicons.ttf?2.7.0") format("truetype"), url("../fonts/eicons.svg?2.7.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -497,6 +497,30 @@
 
 .eicon-sort-up:before {
   content: '\e956'; }
+
+.eicon-heading:before {
+  content: '\e957'; }
+
+.eicon-logo:before {
+  content: '\e958'; }
+
+.eicon-meta-data:before {
+  content: '\e959'; }
+
+.eicon-post-content:before {
+  content: '\e960'; }
+
+.eicon-post-excerpt:before {
+  content: '\e961'; }
+
+.eicon-post-navigation:before {
+  content: '\e962'; }
+
+.eicon-nerd-chuckle:before {
+  content: '\e964'; }
+
+.eicon-nerd-wink:before {
+  content: '\e965'; }
 
 .eicon-editor-link:before {
   content: '\e500'; }
