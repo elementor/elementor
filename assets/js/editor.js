@@ -12584,12 +12584,15 @@ RevisionsManager = function() {
 				at: 'center center'
 			},
 			strings: {
-				confirm: elementor.translate( 'restore' ),
-				cancel: elementor.translate( 'cancel' )
+				confirm: elementor.translate( 'edit_draft' ),
+				cancel: elementor.translate( 'edit_published' )
 			},
 			onConfirm: function() {
-				elementor.getPanelView().setPage( 'historyPage' );
-				elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
+				self.getRevisionDataAsync( elementor.config.newer_autosave, {
+					success: function( data ) {
+						self.setEditorData( data );
+					}
+				} );
 			}
 		} ).show();
 	};
@@ -12623,6 +12626,22 @@ RevisionsManager = function() {
 		elementor.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
 
 		elementor.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
+	};
+
+	this.setEditorData = function( data ) {
+		var collection = elementor.getRegion( 'sections' ).currentView.collection;
+
+		collection.reset( data );
+	};
+
+	this.getRevisionDataAsync = function( id, options ) {
+		_.extend( options, {
+			data: {
+				id: id
+			}
+		} );
+
+		return elementor.ajax.send( 'get_revision_data', options );
 	};
 
 	this.addRevision = function( revisionData ) {
@@ -12712,15 +12731,11 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getRevisionViewData: function( revisionView ) {
-		var self = this,
-			revisionID = revisionView.model.get( 'id' );
+		var self = this;
 
-		self.jqueryXhr = elementor.ajax.send( 'get_revision_data', {
-			data: {
-				id: revisionID
-			},
+		this.jqueryXhr = elementor.history.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: function( data ) {
-				self.setEditorData( data );
+				elementor.history.revisions.setEditorData( data );
 
 				self.setRevisionsButtonsActive( true );
 
@@ -12730,7 +12745,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 				self.enterReviewMode();
 			},
-			error: function( data ) {
+			error: function() {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				if ( 'abort' === self.jqueryXhr.statusText ) {
@@ -12748,12 +12763,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 	setRevisionsButtonsActive: function( active ) {
 		this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
-	},
-
-	setEditorData: function( data ) {
-		var collection = elementor.getRegion( 'sections' ).currentView.collection;
-
-		collection.reset( data );
 	},
 
 	deleteRevision: function( revisionView ) {
