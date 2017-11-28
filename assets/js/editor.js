@@ -173,7 +173,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			event.preventDefault();
 		} );
 
-		this.$currentEditingArea.on( 'blur', _.bind( this.onInlineEditingBlur, this ) );
+		this.$currentEditingArea.on( 'blur', this.onInlineEditingBlur.bind( this ) );
 	},
 
 	stopEditing: function() {
@@ -457,7 +457,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					top: 20,
 					left: 25
 				},
-				helper: _.bind( this._getSortableHelper, this ),
+				helper: this._getSortableHelper.bind( this ),
 				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title'
 
 			},
@@ -518,7 +518,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		var model = elementor.channels.data.request( 'dragging:model' );
 
-		Backbone.$( event.target )
+		jQuery( event.target )
 			.addClass( 'elementor-draggable-over' )
 			.attr( {
 				'data-dragged-element': model.get( 'elType' ),
@@ -531,7 +531,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onSortOut: function( event ) {
 		event.stopPropagation();
 
-		Backbone.$( event.target )
+		jQuery( event.target )
 			.removeClass( 'elementor-draggable-over' )
 			.removeAttr( 'data-dragged-element data-dragged-is-inner' );
 
@@ -542,7 +542,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		event.stopPropagation();
 
 		if ( this.view.isCollectionFilled() ) {
-			Backbone.$( ui.sender ).sortable( 'cancel' );
+			jQuery( ui.sender ).sortable( 'cancel' );
 			return;
 		}
 
@@ -552,7 +552,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			targetIsInnerColumn = 'column' === this.view.getElementType() && this.view.isInner();
 
 		if ( draggedIsInnerSection && targetIsInnerColumn ) {
-			Backbone.$( ui.sender ).sortable( 'cancel' );
+			jQuery( ui.sender ).sortable( 'cancel' );
 
 			return;
 		}
@@ -1006,8 +1006,10 @@ TemplateLibraryManager = function() {
 		deleteDialog,
 		errorDialog,
 		layout,
+		config = {},
 		startIntent = {},
 		templateTypes = {},
+		filterTerms = {},
 		templatesCollection;
 
 	var initLayout = function() {
@@ -1024,8 +1026,6 @@ TemplateLibraryManager = function() {
 					self.getTemplatesCollection().add( data );
 
 					self.setTemplatesSource( 'local' );
-
-					self.showTemplates();
 				},
 				error: function( data ) {
 					self.showErrorDialog( data );
@@ -1034,7 +1034,7 @@ TemplateLibraryManager = function() {
 		};
 
 		_.each( [ 'page', 'section' ], function( type ) {
-			var safeData = Backbone.$.extend( true, {}, data, {
+			var safeData = jQuery.extend( true, {}, data, {
 				saveDialog: {
 					title: elementor.translate( 'save_your_template', [ elementor.translate( type ) ] )
 				}
@@ -1044,8 +1044,39 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
+	var registerDefaultFilterTerms = function() {
+		filterTerms = {
+			text: {
+				callback: function( value ) {
+					value = value.toLowerCase();
+
+					if ( this.get( 'title' ).toLowerCase().indexOf( value ) >= 0 ) {
+						return true;
+					}
+
+					return _.any( this.get( 'tags' ), function( tag ) {
+						return tag.toLowerCase().indexOf( value ) >= 0;
+					} );
+				}
+			},
+			favorite: {}
+		};
+
+		jQuery.each( startIntent.filters, function( filterName ) {
+			if ( filterTerms[ filterName ] ) {
+				jQuery.extend( filterTerms[ filterName ], this );
+			} else {
+				filterTerms[ filterName ] = this;
+			}
+		} );
+	};
+
 	this.init = function() {
 		registerDefaultTemplateTypes();
+
+		elementor.addBackgroundClickListener( 'libraryToggleMore', {
+			element: '.elementor-template-library-template-more'
+		} );
 	};
 
 	this.getTemplateTypes = function( type ) {
@@ -1060,19 +1091,25 @@ TemplateLibraryManager = function() {
 		templateTypes[ type ] = data;
 	};
 
-	this.deleteTemplate = function( templateModel ) {
+	this.deleteTemplate = function( templateModel, options ) {
 		var dialog = self.getDeleteDialog();
 
 		dialog.onConfirm = function() {
+			if ( options.onConfirm ) {
+				options.onConfirm();
+			}
+
 			elementor.ajax.send( 'delete_template', {
 				data: {
 					source: templateModel.get( 'source' ),
 					template_id: templateModel.get( 'template_id' )
 				},
-				success: function() {
+				success: function( response ) {
 					templatesCollection.remove( templateModel, { silent: true } );
 
-					self.showTemplates();
+					if ( options.onSuccess ) {
+						options.onSuccess( response );
+					}
 				}
 			} );
 		};
@@ -1142,10 +1179,22 @@ TemplateLibraryManager = function() {
 		};
 
 		if ( ajaxOptions ) {
-			Backbone.$.extend( true, options, ajaxOptions );
+			jQuery.extend( true, options, ajaxOptions );
 		}
 
 		return elementor.ajax.send( 'get_template_data', options );
+	};
+
+	this.markAsFavorite = function( templateModel, favorite ) {
+		var options = {
+			data: {
+				source: templateModel.get( 'source' ),
+				template_id: templateModel.get( 'template_id' ),
+				favorite: favorite
+			}
+		};
+
+		return elementor.ajax.send( 'mark_template_as_favorite', options );
 	};
 
 	this.getDeleteDialog = function() {
@@ -1193,7 +1242,15 @@ TemplateLibraryManager = function() {
 		return templatesCollection;
 	};
 
-	this.requestRemoteTemplates = function( callback, forceUpdate ) {
+	this.getConfig = function( item ) {
+		if ( item ) {
+			return config[ item ];
+		}
+
+		return config;
+	};
+
+	this.requestLibraryData = function( callback, forceUpdate, forceSync ) {
 		if ( templatesCollection && ! forceUpdate ) {
 			if ( callback ) {
 				callback();
@@ -1202,23 +1259,34 @@ TemplateLibraryManager = function() {
 			return;
 		}
 
-		elementor.ajax.send( 'get_templates', {
+		var options = {
+			data: {},
 			success: function( data ) {
-				templatesCollection = new TemplateLibraryCollection( data );
+				templatesCollection = new TemplateLibraryCollection( data.templates );
+
+				config = data.config;
 
 				if ( callback ) {
 					callback();
 				}
 			}
-		} );
+		};
+
+		if ( forceSync ) {
+			options.data.sync = true;
+		}
+
+		elementor.ajax.send( 'get_library_data', options );
 	};
 
 	this.startModal = function( customStartIntent ) {
 		startIntent = customStartIntent || {};
 
+		registerDefaultFilterTerms();
+
 		self.getModal().show();
 
-		self.setTemplatesSource( 'remote' );
+		self.setTemplatesSource( 'remote', true );
 
 		if ( ! layout ) {
 			initLayout();
@@ -1226,7 +1294,7 @@ TemplateLibraryManager = function() {
 
 		layout.showLoadingView();
 
-		self.requestRemoteTemplates( function() {
+		self.requestLibraryData( function() {
 			if ( startIntent.onReady ) {
 				startIntent.onReady();
 			}
@@ -1237,18 +1305,50 @@ TemplateLibraryManager = function() {
 		self.getModal().hide();
 	};
 
-	this.setTemplatesSource = function( source, trigger ) {
-		var channel = elementor.channels.templates;
+	this.getFilter = function( name ) {
+		return elementor.channels.templates.request( 'filter:' + name );
+	};
 
-		channel.reply( 'filter:source', source );
+	this.setFilter = function( name, value, silent ) {
+		elementor.channels.templates.reply( 'filter:' + name, value );
 
-		if ( trigger ) {
-			channel.trigger( 'filter:change' );
+		if ( ! silent ) {
+			elementor.channels.templates.trigger( 'filter:change' );
+		}
+	};
+
+	this.getFilterTerms = function( termName ) {
+		if ( termName ) {
+			return filterTerms[ termName ];
+		}
+
+		return filterTerms;
+	};
+
+	this.setTemplatesSource = function( source, silent ) {
+		elementor.channels.templates.stopReplying();
+
+		self.setFilter( 'source', source );
+
+		if ( ! silent ) {
+			self.showTemplates();
 		}
 	};
 
 	this.showTemplates = function() {
-		layout.showTemplatesView( templatesCollection );
+		var activeSource = self.getFilter( 'source' );
+
+		var templatesToShow = templatesCollection.filter( function( model ) {
+			if ( activeSource !== model.get( 'source' ) ) {
+				return false;
+			}
+
+			var typeInfo = templateTypes[ model.get( 'type' ) ];
+
+			return ! typeInfo || false !== typeInfo.showInLibrary;
+		} );
+
+		layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
 	};
 
 	this.showTemplatesModal = function() {
@@ -1286,7 +1386,6 @@ var TemplateLibraryTemplateModel;
 TemplateLibraryTemplateModel = Backbone.Model.extend( {
 	defaults: {
 		template_id: 0,
-		name: '',
 		title: '',
 		source: '',
 		type: '',
@@ -1294,8 +1393,7 @@ TemplateLibraryTemplateModel = Backbone.Model.extend( {
 		thumbnail: '',
 		url: '',
 		export_link: '',
-		categories: [],
-		keywords: []
+		tags: []
 	}
 } );
 
@@ -1304,7 +1402,7 @@ module.exports = TemplateLibraryTemplateModel;
 },{}],13:[function(require,module,exports){
 var TemplateLibraryHeaderView = require( 'elementor-templates/views/parts/header' ),
 	TemplateLibraryHeaderLogoView = require( 'elementor-templates/views/parts/header-parts/logo' ),
-	TemplateLibraryHeaderSaveView = require( 'elementor-templates/views/parts/header-parts/save' ),
+	TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts/header-parts/actions' ),
 	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
 	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
 	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
@@ -1352,23 +1450,21 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 
 		var headerView = this.getHeaderView();
 
-		headerView.tools.show( new TemplateLibraryHeaderSaveView() );
+		headerView.tools.show( new TemplateLibraryHeaderActionsView() );
 		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
 		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
 	showImportView: function() {
+		this.getHeaderView().menuArea.reset();
+
 		this.modalContent.show( new TemplateLibraryImportView() );
 	},
 
 	showSaveTemplateView: function( elementModel ) {
+		this.getHeaderView().menuArea.reset();
+
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
-
-		var headerView = this.getHeaderView();
-
-		headerView.tools.reset();
-		headerView.menuArea.reset();
-		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
 	showPreviewView: function( templateModel ) {
@@ -1390,10 +1486,47 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 
 module.exports = TemplateLibraryLayoutView;
 
-},{"elementor-templates/views/parts/header":19,"elementor-templates/views/parts/header-parts/back":14,"elementor-templates/views/parts/header-parts/logo":15,"elementor-templates/views/parts/header-parts/menu":16,"elementor-templates/views/parts/header-parts/preview":17,"elementor-templates/views/parts/header-parts/save":18,"elementor-templates/views/parts/import":20,"elementor-templates/views/parts/loading":21,"elementor-templates/views/parts/preview":22,"elementor-templates/views/parts/save-template":23,"elementor-templates/views/parts/templates":25}],14:[function(require,module,exports){
-var TemplateLibraryHeaderBackView;
+},{"elementor-templates/views/parts/header":19,"elementor-templates/views/parts/header-parts/actions":14,"elementor-templates/views/parts/header-parts/back":15,"elementor-templates/views/parts/header-parts/logo":16,"elementor-templates/views/parts/header-parts/menu":17,"elementor-templates/views/parts/header-parts/preview":18,"elementor-templates/views/parts/import":20,"elementor-templates/views/parts/loading":21,"elementor-templates/views/parts/preview":22,"elementor-templates/views/parts/save-template":23,"elementor-templates/views/parts/templates":25}],14:[function(require,module,exports){
+module.exports = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-template-library-header-actions',
 
-TemplateLibraryHeaderBackView = Marionette.ItemView.extend( {
+	id: 'elementor-template-library-header-actions',
+
+	ui: {
+		'import': '#elementor-template-library-header-import i',
+		sync: '#elementor-template-library-header-sync i',
+		save: '#elementor-template-library-header-save i'
+	},
+
+	events: {
+		'click @ui.import': 'onImportClick',
+		'click @ui.sync': 'onSyncClick',
+		'click @ui.save': 'onSaveClick'
+	},
+
+	onImportClick: function() {
+		elementor.templates.getLayout().showImportView();
+	},
+
+	onSyncClick: function() {
+		var self = this;
+
+		self.ui.sync.addClass( 'eicon-animation-spin' );
+
+		elementor.templates.requestLibraryData( function() {
+			self.ui.sync.removeClass( 'eicon-animation-spin' );
+
+			elementor.templates.showTemplates();
+		}, true, true );
+	},
+
+	onSaveClick: function() {
+		elementor.templates.getLayout().showSaveTemplateView();
+	}
+} );
+
+},{}],15:[function(require,module,exports){
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-back',
 
 	id: 'elementor-template-library-header-preview-back',
@@ -1407,12 +1540,8 @@ TemplateLibraryHeaderBackView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplateLibraryHeaderBackView;
-
-},{}],15:[function(require,module,exports){
-var TemplateLibraryHeaderLogoView;
-
-TemplateLibraryHeaderLogoView = Marionette.ItemView.extend( {
+},{}],16:[function(require,module,exports){
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-logo',
 
 	id: 'elementor-template-library-header-logo',
@@ -1423,16 +1552,11 @@ TemplateLibraryHeaderLogoView = Marionette.ItemView.extend( {
 
 	onClick: function() {
 		elementor.templates.setTemplatesSource( 'remote' );
-		elementor.templates.showTemplates();
 	}
 } );
 
-module.exports = TemplateLibraryHeaderLogoView;
-
-},{}],16:[function(require,module,exports){
-var TemplateLibraryHeaderMenuView;
-
-TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
+},{}],17:[function(require,module,exports){
+module.exports = Marionette.ItemView.extend( {
 	options: {
 		activeClass: 'elementor-active'
 	},
@@ -1468,7 +1592,7 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var currentSource = elementor.channels.templates.request( 'filter:source' ),
+		var currentSource = elementor.templates.getFilter( 'source' ),
 			$sourceItem = this.ui.menuItems.filter( '[data-template-source="' + currentSource + '"]' );
 
 		this.activateMenuItem( $sourceItem );
@@ -1477,19 +1601,16 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	onMenuItemClick: function( event ) {
 		var item = event.currentTarget;
 
-		this.activateMenuItem( Backbone.$( item ) );
+		this.activateMenuItem( jQuery( item ) );
 
-		elementor.templates.setTemplatesSource( item.dataset.templateSource, true );
+		elementor.templates.setTemplatesSource( item.dataset.templateSource );
 	}
 } );
 
-module.exports = TemplateLibraryHeaderMenuView;
+},{}],18:[function(require,module,exports){
+var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' );
 
-},{}],17:[function(require,module,exports){
-var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' ),
-	TemplateLibraryHeaderPreviewView;
-
-TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-preview',
 
 	id: 'elementor-template-library-header-preview',
@@ -1501,30 +1622,7 @@ TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
 	}
 } );
 
-module.exports = TemplateLibraryHeaderPreviewView;
-
-},{"elementor-templates/behaviors/insert-template":9}],18:[function(require,module,exports){
-var TemplateLibraryHeaderSaveView;
-
-TemplateLibraryHeaderSaveView = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-template-library-header-save',
-
-	id: 'elementor-template-library-header-save',
-
-	className: 'elementor-template-library-header-item',
-
-	events: {
-		'click': 'onClick'
-	},
-
-	onClick: function() {
-		elementor.templates.getLayout().showSaveTemplateView();
-	}
-} );
-
-module.exports = TemplateLibraryHeaderSaveView;
-
-},{}],19:[function(require,module,exports){
+},{"elementor-templates/behaviors/insert-template":9}],19:[function(require,module,exports){
 var TemplateLibraryHeaderView;
 
 TemplateLibraryHeaderView = Marionette.LayoutView.extend( {
@@ -1563,31 +1661,85 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-import',
 
 	ui: {
-		uploadForm: '#elementor-template-library-import-form'
+		uploadForm: '#elementor-template-library-import-form',
+		fileInput: '#elementor-template-library-import-form-input'
 	},
 
 	events: {
-		'submit @ui.uploadForm': 'onFormSubmit'
+		'change @ui.fileInput': 'onFileInputChange'
 	},
 
-	onFormSubmit: function( event ) {
-		event.preventDefault();
+	droppedFiles: null,
 
-		elementor.templates.getLayout().showLoadingView();
+	submitForm: function() {
+		var layout = elementor.templates.getLayout(),
+			data = new FormData();
 
-		elementor.ajax.send( 'import_template', {
-			data: new FormData( this.ui.uploadForm[ 0 ] ),
+		if ( this.droppedFiles ) {
+			data.append( 'file', this.droppedFiles[0] );
+
+			this.droppedFiles = null;
+		} else {
+			data.append( 'file', this.ui.fileInput[0].files[0] );
+
+			this.ui.uploadForm[0].reset();
+		}
+
+		var options = {
+			data: data,
 			processData: false,
 			contentType: false,
 			success: function( data ) {
-				elementor.templates.getTemplatesCollection().add( data.item );
+				elementor.templates.getTemplatesCollection().add( data );
 
-				elementor.templates.showTemplates();
+				elementor.templates.setTemplatesSource( 'local' );
 			},
 			error: function( data ) {
 				elementor.templates.showErrorDialog( data );
+
+				layout.showImportView();
 			}
+		};
+
+		elementor.ajax.send( 'import_template', options );
+
+		layout.showLoadingView();
+	},
+
+	onRender: function() {
+		this.ui.uploadForm.on( {
+			'drag dragstart dragend dragover dragenter dragleave drop': this.onFormActions.bind( this ),
+			dragenter: this.onFormDragEnter.bind( this ),
+			'dragleave drop': this.onFormDragLeave.bind( this ),
+			drop: this.onFormDrop.bind( this )
 		} );
+	},
+
+	onFormActions: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+	},
+
+	onFormDragEnter: function() {
+		this.ui.uploadForm.addClass( 'elementor-drag-over' );
+	},
+
+	onFormDragLeave: function( event ) {
+		if ( jQuery( event.relatedTarget ).closest( this.ui.uploadForm ).length ) {
+			return;
+		}
+
+		this.ui.uploadForm.removeClass( 'elementor-drag-over' );
+	},
+
+	onFormDrop: function( event ) {
+		this.droppedFiles = event.originalEvent.dataTransfer.files;
+
+		this.submitForm();
+	},
+
+	onFileInputChange: function() {
+		this.submitForm();
 	}
 } );
 
@@ -1674,7 +1826,47 @@ var TemplateLibraryTemplatesEmptyView;
 TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-templates-empty',
 
-	template: '#tmpl-elementor-template-library-templates-empty'
+	template: '#tmpl-elementor-template-library-templates-empty',
+
+	ui: {
+		title: '.elementor-template-library-blank-title',
+		message: '.elementor-template-library-blank-message'
+	},
+
+	modesStrings: {
+		empty: {
+			title: elementor.translate( 'templates_empty_title' ),
+			message: elementor.translate( 'templates_empty_message' )
+		},
+		noResults: {
+			title: elementor.translate( 'templates_no_results_title' ),
+			message: elementor.translate( 'templates_no_results_message' )
+		},
+		noFavorites: {
+			title: elementor.translate( 'templates_no_favorites_title' ),
+			message: elementor.translate( 'templates_no_favorites_message' )
+		}
+	},
+
+	getCurrentMode: function() {
+		if ( elementor.templates.getFilter( 'text' ) ) {
+			return 'noResults';
+		}
+
+		if ( elementor.templates.getFilter( 'favorite' ) ) {
+			return 'noFavorites';
+		}
+
+		return 'empty';
+	},
+
+	onRender: function() {
+		var modeStrings = this.modesStrings[ this.getCurrentMode() ];
+
+		this.ui.title.html( modeStrings.title );
+
+		this.ui.message.html( modeStrings.message );
+	}
 } );
 
 module.exports = TemplateLibraryTemplatesEmptyView;
@@ -1682,7 +1874,6 @@ module.exports = TemplateLibraryTemplatesEmptyView;
 },{}],25:[function(require,module,exports){
 var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
-	TemplateLibraryTemplatesEmptyView = require( 'elementor-templates/views/parts/templates-empty' ),
 	TemplateLibraryCollectionView;
 
 TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
@@ -1692,7 +1883,38 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	childViewContainer: '#elementor-template-library-templates-container',
 
-	emptyView: TemplateLibraryTemplatesEmptyView,
+	reorderOnSort: true,
+
+	emptyView: function() {
+		var EmptyView = require( 'elementor-templates/views/parts/templates-empty' );
+
+		return new EmptyView();
+	},
+
+	ui: {
+		filterText: '#elementor-template-library-filter-text',
+		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
+		orderInputs: '.elementor-template-library-order-input',
+		orderLabels: '.elementor-template-library-order-label'
+	},
+
+	events: {
+		'input @ui.filterText': 'onFilterTextInput',
+		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
+		'mousedown @ui.orderLabels': 'onOrderLabelsClick'
+	},
+
+	comparators: {
+		title: function( model ) {
+			return model.get( 'title' ).toLowerCase();
+		},
+		popularityIndex: function( model ) {
+			return -model.get( 'popularityIndex' );
+		},
+		trendIndex: function( model ) {
+			return -model.get( 'trendIndex' );
+		}
+	},
 
 	getChildView: function( childModel ) {
 		if ( 'remote' === childModel.get( 'source' ) ) {
@@ -1706,46 +1928,121 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 	},
 
-	filterByName: function( model ) {
-		var filterValue = elementor.channels.templates.request( 'filter:text' );
-
-		if ( ! filterValue ) {
-			return true;
-		}
-
-		filterValue = filterValue.toLowerCase();
-
-		if ( model.get( 'title' ).toLowerCase().indexOf( filterValue ) >= 0 ) {
-			return true;
-		}
-
-		return _.any( model.get( 'keywords' ), function( keyword ) {
-			return keyword.toLowerCase().indexOf( filterValue ) >= 0;
-		} );
-	},
-
-	filterBySource: function( model ) {
-		var filterValue = elementor.channels.templates.request( 'filter:source' );
-
-		if ( ! filterValue ) {
-			return true;
-		}
-
-		return filterValue === model.get( 'source' );
-	},
-
-	filterByType: function( model ) {
-		return false !== elementor.templates.getTemplateTypes( model.get( 'type' ) ).showInLibrary;
-	},
-
 	filter: function( childModel ) {
-		return this.filterByName( childModel ) && this.filterBySource( childModel ) && this.filterByType( childModel );
+		var filterTerms = elementor.templates.getFilterTerms(),
+			passingFilter = true;
+
+		jQuery.each( filterTerms, function( filterTermName ) {
+			var filterValue = this.value || elementor.templates.getFilter( filterTermName );
+
+			if ( ! filterValue ) {
+				return;
+			}
+
+			if ( this.callback ) {
+				var callbackResult = this.callback.call( childModel, filterValue );
+
+				if ( ! callbackResult ) {
+					passingFilter = false;
+				}
+
+				return callbackResult;
+			}
+
+			var filterResult = filterValue === childModel.get( filterTermName );
+
+			if ( ! filterResult ) {
+				passingFilter = false;
+			}
+
+			return filterResult;
+		} );
+
+		return passingFilter;
+	},
+
+	order: function( by, reverseOrder ) {
+		var comparator = this.comparators[ by ] || by;
+
+		if ( reverseOrder ) {
+			comparator = this.reverseOrder( comparator );
+		}
+
+		this.collection.comparator = comparator;
+
+		this.collection.sort();
+	},
+
+	activateOrdering: function( by, reverseOrder ) {
+		var $orderInput = this.ui.orderInputs.filter( '[value="' + by + '"]' );
+
+		reverseOrder = !! reverseOrder;
+
+		$orderInput
+			.attr( 'checked', true )
+			.toggleClass( 'elementor-template-library-order-reverse', reverseOrder );
+
+		this.order( by, reverseOrder );
+	},
+
+	reverseOrder: function( comparator ) {
+		if ( 'function' !== typeof comparator ) {
+			var comparatorValue = comparator;
+
+			comparator = function( model ) {
+				return model.get( comparatorValue );
+			};
+		}
+
+		return function( left, right ) {
+			var l = comparator( left ),
+				r = comparator( right );
+
+			if ( undefined === l ) {
+				return -1;
+			}
+
+			if ( undefined === r ) {
+				return 1;
+			}
+
+			return l < r ? 1 : l > r ? -1 : 0;
+		};
+	},
+
+	addSourceData: function() {
+		var isEmpty = this.children.isEmpty();
+
+		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
 	onRenderCollection: function() {
-		var isEmpty = this.children.isEmpty();
+		this.addSourceData();
+	},
 
-		this.$childViewContainer.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
+	onBeforeRenderEmpty: function() {
+		this.addSourceData();
+	},
+
+	onFilterTextInput: function() {
+		elementor.templates.setFilter( 'text', this.ui.filterText.val() );
+	},
+
+	onMyFavoritesFilterChange: function(  ) {
+		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
+	},
+
+	onOrderLabelsClick: function( event ) {
+		var $clickedInput = jQuery( event.currentTarget.control ),
+			toggle;
+
+		if ( ! $clickedInput[0].checked ) {
+			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
+		}
+
+		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
+
+		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
 	}
 } );
 
@@ -1796,18 +2093,35 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	ui: function() {
 		return _.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
-			deleteButton: '.elementor-template-library-template-delete'
+			deleteButton: '.elementor-template-library-template-delete',
+			morePopup: '.elementor-template-library-template-more',
+			toggleMore: '.elementor-template-library-template-more-toggle',
+			toggleMoreIcon: '.elementor-template-library-template-more-toggle i'
 		} );
 	},
 
 	events: function() {
 		return _.extend( TemplateLibraryTemplateView.prototype.events.apply( this, arguments ), {
-			'click @ui.deleteButton': 'onDeleteButtonClick'
+			'click @ui.deleteButton': 'onDeleteButtonClick',
+			'click @ui.toggleMore': 'onToggleMoreClick'
 		} );
 	},
 
 	onDeleteButtonClick: function() {
-		elementor.templates.deleteTemplate( this.model );
+		var toggleMoreIcon = this.ui.toggleMoreIcon;
+
+		elementor.templates.deleteTemplate( this.model, {
+			onConfirm: function() {
+				toggleMoreIcon.removeClass( 'fa-ellipsis-h' ).addClass( 'fa-circle-o-notch fa-spin' );
+			},
+			onSuccess: function() {
+				elementor.templates.showTemplates();
+			}
+		} );
+	},
+
+	onToggleMoreClick: function() {
+		this.ui.morePopup.show();
 	},
 
 	onPreviewButtonClick: function() {
@@ -1824,8 +2138,32 @@ var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/b
 TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-remote',
 
+	ui: function() {
+		return jQuery.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
+			favoriteCheckbox: '.elementor-template-library-template-favorite-input'
+		} );
+	},
+
+	events: function() {
+		return jQuery.extend( TemplateLibraryTemplateView.prototype.events.apply( this, arguments ), {
+			'change @ui.favoriteCheckbox': 'onFavoriteCheckboxChange'
+		} );
+	},
+
 	onPreviewButtonClick: function() {
 		elementor.templates.getLayout().showPreviewView( this.model );
+	},
+
+	onFavoriteCheckboxChange: function() {
+		var isFavorite = this.ui.favoriteCheckbox[0].checked;
+
+		this.model.set( 'favorite', isFavorite );
+
+		elementor.templates.markAsFavorite( this.model, isFavorite );
+
+		if ( ! isFavorite && elementor.templates.getFilter( 'favorite' ) ) {
+			elementor.channels.templates.trigger( 'filter:change' );
+		}
 	}
 } );
 
@@ -1912,6 +2250,12 @@ App = Marionette.Application.extend( {
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
+		}
+	},
+
+	backgroundClickListeners: {
+		popover: {
+			element: '.elementor-controls-popover'
 		}
 	},
 
@@ -2031,15 +2375,17 @@ App = Marionette.Application.extend( {
 	},
 
 	initPreview: function() {
-		this.$previewWrapper = Backbone.$( '#elementor-preview' );
+		var $ = jQuery;
 
-		this.$previewResponsiveWrapper = Backbone.$( '#elementor-preview-responsive-wrapper' );
+		this.$previewWrapper = $( '#elementor-preview' );
+
+		this.$previewResponsiveWrapper = $( '#elementor-preview-responsive-wrapper' );
 
 		var previewIframeId = 'elementor-preview-iframe';
 
 		// Make sure the iFrame does not exist.
 		if ( ! this.$preview ) {
-			this.$preview = Backbone.$( '<iframe>', {
+			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
 				src: this.config.preview_link + '&' + ( new Date().getTime() ),
 				allowfullscreen: 1
@@ -2048,7 +2394,7 @@ App = Marionette.Application.extend( {
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
+		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	},
 
 	initFrontend: function() {
@@ -2214,7 +2560,7 @@ App = Marionette.Application.extend( {
 
 	preventClicksInsideEditor: function() {
 		this.$previewContents.on( 'click', function( event ) {
-			var $target = Backbone.$( event.target ),
+			var $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
@@ -2235,6 +2581,14 @@ App = Marionette.Application.extend( {
 				}
 			}
 		} );
+	},
+
+	addBackgroundClickArea: function( element ) {
+		element.addEventListener( 'click', this.onBackgroundClick.bind( this ), true );
+	},
+
+	addBackgroundClickListener: function( key, listener ) {
+		this.backgroundClickListeners[ key ] = listener;
 	},
 
 	showFatalErrorDialog: function( options ) {
@@ -2266,7 +2620,7 @@ App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
-		this.$window = Backbone.$( window );
+		this.$window = jQuery( window );
 
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -2289,6 +2643,8 @@ App = Marionette.Application.extend( {
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.initClearPageDialog();
+
+		this.addBackgroundClickArea( document );
 
 		this.$window.trigger( 'elementor:init' );
 
@@ -2335,6 +2691,8 @@ App = Marionette.Application.extend( {
 
 		this.preventClicksInsideEditor();
 
+		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
+
 		var Preview = require( 'elementor-views/preview' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
@@ -2359,7 +2717,7 @@ App = Marionette.Application.extend( {
 
 		this.changeDeviceMode( this._defaultDeviceMode );
 
-		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
+		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
 			elementorFrontend.getElements( 'window' ).jQuery.holdReady( false );
@@ -2415,6 +2773,16 @@ App = Marionette.Application.extend( {
 			onConfirm: function() {
 				open( elementor.config.help_the_content_url, '_blank' );
 			}
+		} );
+	},
+
+	onBackgroundClick: function( event ) {
+		jQuery.each( this.backgroundClickListeners, function() {
+			var elementToHide = this.element,
+				$clickedTarget = jQuery( event.target ),
+				$clickedTargetClosestElement = $clickedTarget.closest( elementToHide );
+
+			jQuery( elementToHide ).not( $clickedTargetClosestElement ).hide();
 		} );
 	},
 
@@ -2484,7 +2852,7 @@ App = Marionette.Application.extend( {
 	},
 
 	reloadPreview: function() {
-		Backbone.$( '#elementor-preview-loading' ).show();
+		jQuery( '#elementor-preview-loading' ).show();
 
 		this.$preview[0].contentWindow.location.reload( true );
 	},
@@ -2500,7 +2868,7 @@ App = Marionette.Application.extend( {
 			return;
 		}
 
-		Backbone.$( 'body' )
+		jQuery( 'body' )
 			.removeClass( 'elementor-device-' + oldDeviceMode )
 			.addClass( 'elementor-device-' + newDeviceMode );
 
@@ -2702,7 +3070,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onPanelClick: function( event ) {
-		var $target = Backbone.$( event.target ),
+		var $target = jQuery( event.target ),
 			isClickInsideOfTool = $target.closest( '.elementor-panel-footer-sub-menu-wrapper' ).length;
 
 		if ( isClickInsideOfTool ) {
@@ -2762,7 +3130,7 @@ module.exports = Marionette.ItemView.extend( {
 		var self = this;
 
 		_.defer( function() {
-			elementor.getPanelView().$el.on( 'click', _.bind( self.onPanelClick, self ) );
+			elementor.getPanelView().$el.on( 'click', self.onPanelClick.bind( self ) );
 		} );
 	}
 } );
@@ -3534,16 +3902,17 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 	},
 
 	resetCollection: function() {
-		var items = this.model.get( 'items' );
+		var self = this,
+			items = self.model.get( 'items' );
 
-		this.collection = new Backbone.Collection();
+		self.collection = new Backbone.Collection();
 
-		_.each( items, _.bind( function( item, key ) {
-			item.type = this.getType();
+		_.each( items, function( item, key ) {
+			item.type = self.getType();
 			item.key = key;
 
-			this.collection.add( item );
-		}, this ) );
+			self.collection.add( item );
+		} );
 	},
 
 	resetScheme: function() {
@@ -3616,7 +3985,7 @@ PanelSchemeColorsView = PanelSchemeBaseView.extend( {
 	},
 
 	onSystemSchemeClick: function( event ) {
-		var $schemeClicked = Backbone.$( event.currentTarget ),
+		var $schemeClicked = jQuery( event.currentTarget ),
 			schemeName = $schemeClicked.data( 'schemeName' ),
 			scheme = elementor.config.system_schemes[ this.getType() ][ schemeName ].items;
 
@@ -3686,10 +4055,12 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 	},
 
 	onRender: function() {
-		elementor.helpers.wpColorPicker( this.ui.input, {
-			change: _.bind( function( event, ui ) {
-				this.triggerMethod( 'value:change', ui.color.toString() );
-			}, this )
+		var self = this;
+
+		elementor.helpers.wpColorPicker( self.ui.input, {
+			change: function( event, ui ) {
+				self.triggerMethod( 'value:change', ui.color.toString() );
+			}
 		} );
 	}
 } );
@@ -3729,7 +4100,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 		var self = this;
 
 		this.ui.inputFields.add( this.ui.selectFields ).each( function() {
-			var $this = Backbone.$( this ),
+			var $this = jQuery( this ),
 				name = $this.attr( 'name' ),
 				value = self.model.get( 'value' )[ name ];
 
@@ -3747,7 +4118,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 
 	changeUIValue: function( newValue ) {
 		this.ui.allFields.each( function() {
-			var $this = Backbone.$( this ),
+			var $this = jQuery( this ),
 				thisName = $this.attr( 'name' ),
 				newFieldValue = newValue[ thisName ];
 
@@ -3970,9 +4341,9 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.updateScrollbar = _.throttle( this.updateScrollbar, 100 );
 
 		this.getRegion( 'content' )
-			.on( 'before:show', _.bind( this.onEditorBeforeShow, this ) )
-			.on( 'empty', _.bind( this.onEditorEmpty, this ) )
-			.on( 'show', _.bind( this.updateScrollbar, this ) );
+			.on( 'before:show', this.onEditorBeforeShow.bind( this ) )
+			.on( 'empty', this.onEditorEmpty.bind( this ) )
+			.on( 'show', this.updateScrollbar.bind( this ) );
 
 		// Set default page to elements
 		this.setPage( 'elements' );
@@ -3981,7 +4352,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onEditorBeforeShow: function() {
-		_.defer( _.bind( this.updateScrollbar, this ) );
+		_.defer( this.updateScrollbar.bind( this ) );
 	},
 
 	onEditorEmpty: function() {
@@ -4304,7 +4675,7 @@ ElementModel = Backbone.Model.extend( {
 			},
 			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
 
-		if ( Backbone.$.isEmptyObject( settings ) ) {
+		if ( jQuery.isEmptyObject( settings ) ) {
 			settings = elementor.helpers.cloneObject( settings );
 		}
 
@@ -4419,7 +4790,7 @@ ElementModel = Backbone.Model.extend( {
 				data: JSON.stringify( data ),
 				_nonce: elementor.config.nonce
 			},
-			success: _.bind( this.onRemoteGetHtml, this )
+			success: this.onRemoteGetHtml.bind( this )
 		} );
 	},
 
@@ -4850,7 +5221,7 @@ Ajax = {
 
 		action = this.config.actionPrefix + action;
 
-		Backbone.$.extend( ajaxParams, options );
+		jQuery.extend( ajaxParams, options );
 
 		if ( ajaxParams.data instanceof FormData ) {
 			ajaxParams.data.append( 'action', action );
@@ -4881,7 +5252,7 @@ Ajax = {
 			}
 		}
 
-		return Backbone.$.ajax( ajaxParams );
+		return jQuery.ajax( ajaxParams );
 	}
 };
 
@@ -4924,7 +5295,7 @@ Conditions = function() {
 		var isOrCondition = 'or' === conditions.relation,
 			conditionSucceed = ! isOrCondition;
 
-		Backbone.$.each( conditions.terms, function() {
+		jQuery.each( conditions.terms, function() {
 			var term = this,
 				comparisonResult;
 
@@ -4976,7 +5347,7 @@ ControlsCSSParser = ViewModule.extend( {
 
 	getDefaultElements: function() {
 		return {
-			$stylesheetElement: Backbone.$( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } )
+			$stylesheetElement: jQuery( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } )
 		};
 	},
 
@@ -5295,7 +5666,7 @@ heartbeat = {
 			return modal;
 		};
 
-		Backbone.$( document ).on( {
+		jQuery( document ).on( {
 			'heartbeat-send': function( event, data ) {
 				data.elementor_post_lock = {
 					post_ID: elementor.config.post_id
@@ -5433,7 +5804,7 @@ helpers = {
 
 		if ( undefined !== container[ elementType ] ) {
 
-			if ( Backbone.$.isPlainObject( container[ elementType ] ) ) {
+			if ( jQuery.isPlainObject( container[ elementType ] ) ) {
 				return Object.keys( container[ elementType ] );
 			}
 
@@ -5446,7 +5817,7 @@ helpers = {
 				continue;
 			}
 
-			if ( ! Backbone.$.isPlainObject( container[ type ] ) ) {
+			if ( ! jQuery.isPlainObject( container[ type ] ) ) {
 				continue;
 			}
 
@@ -5536,7 +5907,7 @@ helpers = {
 				return;
 			}
 
-			Backbone.$( this )
+			jQuery( this )
 				.data( 'backup-pointer-events', currentPointerEvents )
 				.css( 'pointer-events', 'none' );
 		} );
@@ -5544,7 +5915,7 @@ helpers = {
 
 	enableElementEvents: function( $element ) {
 		$element.each( function() {
-			var $this = Backbone.$( this ),
+			var $this = jQuery( this ),
 				backupPointerEvents = $this.data( 'backup-pointer-events' );
 
 			if ( undefined === backupPointerEvents ) {
@@ -6358,7 +6729,7 @@ Schemes = function() {
 	};
 
 	var initElements = function() {
-		elements.$style = Backbone.$( '<style>', {
+		elements.$style = jQuery( '<style>', {
 			id: 'elementor-style-scheme'
 		});
 
@@ -6810,7 +7181,7 @@ AddSectionView = Marionette.ItemView.extend( {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: _.bind( this.onDropping, this )
+			onDropping: this.onDropping.bind( this )
 		} );
 	},
 
@@ -7126,7 +7497,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	addControlValidator: function( controlName, validationCallback ) {
-		validationCallback = _.bind( validationCallback, this );
+		validationCallback = validationCallback.bind( this );
 
 		var validator = new Validator( { customValidationMethod: validationCallback } ),
 			validators = this.getEditModel().get( 'settings' ).validators;
@@ -7207,7 +7578,7 @@ BaseElementView = BaseContainer.extend( {
 		var editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
 
-		_.each( settings.getFontControls(), _.bind( function( control ) {
+		_.each( settings.getFontControls(), function( control ) {
 			var fontFamilyName = editModel.getSetting( control.name );
 
 			if ( _.isEmpty( fontFamilyName ) ) {
@@ -7215,7 +7586,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			elementor.helpers.enqueueFont( fontFamilyName );
-		}, this ) );
+		} );
 	},
 
 	renderStyles: function( settings ) {
@@ -7303,9 +7674,11 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	runReadyTrigger: function() {
-		_.defer( _.bind( function() {
-			elementorFrontend.elementsHandler.runReadyTrigger( this.$el );
-		}, this ) );
+		var self = this;
+
+		_.defer( function() {
+			elementorFrontend.elementsHandler.runReadyTrigger( self.$el );
+		} );
 	},
 
 	getID: function() {
@@ -7417,7 +7790,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onClickEdit: function( event ) {
-		if ( ! Backbone.$( event.target ).closest( '.elementor-clickable' ).length ) {
+		if ( ! jQuery( event.target ).closest( '.elementor-clickable' ).length ) {
 			event.preventDefault();
 
 			event.stopPropagation();
@@ -7698,14 +8071,14 @@ ColumnView = BaseElementView.extend( {
 			items: ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
-			isDroppingAllowed: _.bind( self.isDroppingAllowed, self ),
+			isDroppingAllowed: self.isDroppingAllowed.bind( self ),
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
-				var newIndex = Backbone.$( this ).index();
+				var newIndex = jQuery( this ).index();
 
 				if ( 'bottom' === side ) {
 					newIndex++;
@@ -7762,8 +8135,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-controls-stack',
 
 	classes: {
-		popover: 'elementor-controls-popover',
-		popoverToggle: 'elementor-control-popover-toggle-toggle'
+		popover: 'elementor-controls-popover'
 	},
 
 	activeTab: null,
@@ -7784,15 +8156,10 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	events: function() {
-		var events = {
-			'click': 'onClick',
+		return {
 			'click @ui.tabs': 'onClickTabControl',
 			'click @ui.reloadButton': 'onReloadButtonClick'
 		};
-
-		events[ 'click .' + this.classes.popover ] = 'onPopoverClick';
-
-		return events;
 	},
 
 	modelEvents: {
@@ -7888,10 +8255,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 		} );
 	},
 
-	hidePopovers: function() {
-		this.$el.find( '.' + this.classes.popover ).hide();
-	},
-
 	removePopovers: function() {
 		this.$el.find( '.' + this.classes.popover ).remove();
 	},
@@ -7919,20 +8282,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	onModelDestroy: function() {
 		this.destroy();
-	},
-
-	onClick: function( event ) {
-		if ( jQuery( event.target ).closest( '.' + this.classes.popover + ',.' + this.classes.popoverToggle ).length ) {
-			return;
-		}
-
-		this.hidePopovers();
-	},
-
-	onPopoverClick: function( event ) {
-		var $currentPopover = jQuery( event.target ).closest( '.' + this.classes.popover );
-
-		this.$el.find( '.' + this.classes.popover ).not( $currentPopover ).hide();
 	},
 
 	onClickTabControl: function( event ) {
@@ -8132,7 +8481,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	onSwitcherClick: function( event ) {
-		var device = Backbone.$( event.currentTarget ).data( 'device' );
+		var device = jQuery( event.currentTarget ).data( 'device' );
 
 		elementor.changeDeviceMode( device );
 
@@ -8164,7 +8513,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.$( '.tooltip-target' ).tipsy( {
 			gravity: function() {
 				// `n` for down, `s` for up
-				var gravity = Backbone.$( this ).data( 'tooltip-pos' );
+				var gravity = jQuery( this ).data( 'tooltip-pos' );
 
 				if ( undefined !== gravity ) {
 					return gravity;
@@ -8217,7 +8566,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 	getControlValue: function( key ) {
 		var values = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
-		if ( ! Backbone.$.isPlainObject( values ) ) {
+		if ( ! jQuery.isPlainObject( values ) ) {
 			return {};
 		}
 
@@ -8338,7 +8687,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		this.elementSettingsModel = options.elementSettingsModel;
 
 		var controlType = this.model.get( 'type' ),
-			controlSettings = Backbone.$.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
+			controlSettings = jQuery.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
 
 		this.model.set( controlSettings );
 
@@ -8396,7 +8745,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var value = this.getControlValue();
 
 		this.ui.sliders.each( function() {
-			var $slider = Backbone.$( this ),
+			var $slider = jQuery( this ),
 				$input = $slider.next( '.elementor-slider-input' ).find( 'input' );
 
 			$slider.slider( {
@@ -8412,7 +8761,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 		elementor.helpers.wpColorPicker( this.ui.colors, {
 			change: function() {
-				var $this = Backbone.$( this ),
+				var $this = jQuery( this ),
 					type = $this.data( 'setting' );
 
 				self.setValue( type, $this.wpColorPicker( 'color' ) );
@@ -8446,7 +8795,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 	onBeforeDestroy: function() {
 		this.ui.colors.each( function() {
-			var $color = Backbone.$( this );
+			var $color = jQuery( this );
 
 			if ( $color.wpColorPicker( 'instance' ) ) {
 				$color.wpColorPicker( 'close' );
@@ -8563,7 +8912,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 
 		self.editor = ace.edit( this.ui.editor[0] );
 
-		Backbone.$( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
+		jQuery( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
 
 		self.editor.setOptions( {
 			mode: 'ace/mode/' + self.model.attributes.language,
@@ -8577,7 +8926,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 
 		self.editor.getSession().setUseWrapMode( true );
 
-		elementor.panel.$el.on( 'resize.aceEditor', _.bind( self.onResize, this ) );
+		elementor.panel.$el.on( 'resize.aceEditor', self.onResize.bind( this ) );
 
 		if ( 'css' === self.model.attributes.language ) {
 			var selectorCompleter = {
@@ -8765,35 +9114,37 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	onReady: function() {
-		var currentValue = this.getControlValue();
+		var self = this,
+			currentValue = self.getControlValue();
 
-		if ( ! this.isLinkedDimensions() ) {
-			this.ui.link.addClass( 'unlinked' );
+		if ( ! self.isLinkedDimensions() ) {
+			self.ui.link.addClass( 'unlinked' );
 
-			this.ui.controls.each( _.bind( function( index, element ) {
+			self.ui.controls.each( function( index, element ) {
 				var value = currentValue[ element.dataset.setting ];
 
 				if ( _.isEmpty( value ) ) {
-					value = this.defaultDimensionValue;
+					value = self.defaultDimensionValue;
 				}
 
-				this.$( element ).val( value );
-			}, this ) );
+				self.$( element ).val( value );
+			} );
 		}
 
-		this.fillEmptyDimensions();
+		self.fillEmptyDimensions();
 	},
 
 	updateDimensionsValue: function() {
 		var currentValue = {},
 			dimensions = this.getPossibleDimensions(),
-			$controls = this.ui.controls;
+			$controls = this.ui.controls,
+			defaultDimensionValue = this.defaultDimensionValue;
 
-		dimensions.forEach( _.bind( function( dimension ) {
+		dimensions.forEach( function( dimension ) {
 			var $element = $controls.filter( '[data-setting="' + dimension + '"]' );
 
-			currentValue[ dimension ] = $element.length ? $element.val() : this.defaultDimensionValue;
-		}, this ) );
+			currentValue[ dimension ] = $element.length ? $element.val() : defaultDimensionValue;
+		} );
 
 		this.setValue( currentValue );
 	},
@@ -8801,21 +9152,22 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 	fillEmptyDimensions: function() {
 		var dimensions = this.getPossibleDimensions(),
 			allowedDimensions = this.model.get( 'allowed_dimensions' ),
-			$controls = this.ui.controls;
+			$controls = this.ui.controls,
+			defaultDimensionValue = this.defaultDimensionValue;
 
 		if ( this.isLinkedDimensions() ) {
 			return;
 		}
 
-		dimensions.forEach( _.bind( function( dimension ) {
+		dimensions.forEach( function( dimension ) {
 			var $element = $controls.filter( '[data-setting="' + dimension + '"]' ),
 				isAllowedDimension = -1 !== _.indexOf( allowedDimensions, dimension );
 
 			if ( isAllowedDimension && $element.length && _.isEmpty( $element.val() ) ) {
-				$element.val( this.defaultDimensionValue );
+				$element.val( defaultDimensionValue );
 			}
 
-		}, this ) );
+		} );
 	},
 
 	updateDimensions: function() {
@@ -8883,11 +9235,11 @@ module.exports = ControlSelect2View.extend( {
 	},
 
 	templateHelpers: function() {
-		var helpers = ControlSelect2View.prototype.templateHelpers.apply( this, arguments );
+		var helpers = ControlSelect2View.prototype.templateHelpers.apply( this, arguments ),
+			fonts = this.model.get( 'options' );
 
-		helpers.getFontsByGroups = _.bind( function( groups ) {
-			var fonts = this.model.get( 'options' ),
-				filteredFonts = {};
+		helpers.getFontsByGroups = function( groups ) {
+			var filteredFonts = {};
 
 			_.each( fonts, function( fontType, fontName ) {
 				if ( _.isArray( groups ) && _.contains( groups, fontType ) || fontType === groups ) {
@@ -8896,7 +9248,7 @@ module.exports = ControlSelect2View.extend( {
 			} );
 
 			return filteredFonts;
-		}, this );
+		};
 
 		return helpers;
 	}
@@ -9047,7 +9399,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 						cancel: elementor.translate( 'cancel' )
 					},
 					defaultOption: 'confirm',
-					onConfirm: _.bind( this.resetGallery, this )
+					onConfirm: this.resetGallery.bind( this )
 				} );
 			}
 
@@ -9110,7 +9462,7 @@ ControlIconView = ControlSelect2View.extend( {
 			return icon.text;
 		}
 
-		return Backbone.$(
+		return jQuery(
 			'<span><i class="' + icon.id + '"></i> ' + icon.text + '</span>'
 		);
 	},
@@ -9118,8 +9470,8 @@ ControlIconView = ControlSelect2View.extend( {
 	getSelect2Options: function() {
 		return {
 			allowClear: true,
-			templateResult: _.bind( this.iconsList, this ),
-			templateSelection: _.bind( this.iconsList, this )
+			templateResult: this.iconsList.bind( this ),
+			templateSelection: this.iconsList.bind( this )
 		};
 	}
 } );
@@ -9223,7 +9575,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		// When a file is selected, run a callback.
-		this.frame.on( 'insert select', _.bind( this.select, this ) );
+		this.frame.on( 'insert select', this.select.bind( this ) );
 	},
 
 	/**
@@ -9348,7 +9700,7 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 	ui: function() {
 		var ui = ControlChooseView.prototype.ui.apply( this, arguments );
 
-		ui.popoverToggle = 'label.elementor-control-popover-toggle-toggle';
+		ui.popoverToggle = 'input.elementor-control-popover-toggle-toggle';
 
 		return ui;
 	},
@@ -9360,7 +9712,7 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 	},
 
 	onPopoverToggleClick: function() {
-		this.$el.next( '.elementor-controls-popover' ).toggle();
+		this.$el.next( '.elementor-controls-popover' ).show();
 	}
 } );
 
@@ -9631,9 +9983,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	updateChildIndexes: function() {
-		this.children.each( _.bind( function( view ) {
-			view.updateIndex( this.collection.indexOf( view.model ) + 1 );
-		}, this ) );
+		var collection = this.collection;
+
+		this.children.each( function( view ) {
+			view.updateIndex( collection.indexOf( view.model ) + 1 );
+		} );
 	},
 
 	onRender: function() {
@@ -9654,7 +10008,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			var editor = tinymce.get( this.id ),
 				settings = editor.settings;
 
-			settings.height = Backbone.$( editor.getContainer() ).height();
+			settings.height = jQuery( editor.getContainer() ).height();
 			tinymce.execCommand( 'mceRemoveEditor', true, this.id );
 			tinymce.init( settings );
 		} );
@@ -9913,7 +10267,7 @@ ControlStructureItemView = ControlBaseDataView.extend( {
 	templateHelpers: function() {
 		var helpers = ControlBaseDataView.prototype.templateHelpers.apply( this, arguments );
 
-		helpers.getMorePresets = _.bind( this.getMorePresets, this );
+		helpers.getMorePresets = this.getMorePresets.bind( this );
 
 		return helpers;
 	},
@@ -10000,22 +10354,23 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 	},
 
 	onReady: function() {
+		var self = this;
+
 		elementor.ajax.send( 'editor_get_wp_widget_form', {
 			data: {
 				// Fake Widget ID
-				id: this.model.cid,
-				widget_type: this.model.get( 'widget' ),
-				data: JSON.stringify( this.elementSettingsModel.toJSON() )
+				id: self.model.cid,
+				widget_type: self.model.get( 'widget' ),
+				data: JSON.stringify( self.elementSettingsModel.toJSON() )
 			},
-			success: _.bind( function( data ) {
-				this.ui.form.html( data );
-
+			success: function( data ) {
+				self.ui.form.html( data );
 				// WP >= 4.8
 				if ( wp.textWidgets ) {
 					this.ui.form.addClass( 'open' );
 					var event = new jQuery.Event( 'widget-added' );
-					wp.textWidgets.handleWidgetAdded( event, this.ui.form );
-					wp.mediaWidgets.handleWidgetAdded( event, this.ui.form );
+					wp.textWidgets.handleWidgetAdded( event, self.ui.form );
+					wp.mediaWidgets.handleWidgetAdded( event, self.ui.form );
 
 					// WP >= 4.9
 					if ( wp.customHtmlWidgets ) {
@@ -10023,8 +10378,8 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 					}
 				}
 
-				elementor.hooks.doAction( 'panel/widgets/' + this.model.get( 'widget' ) + '/controls/wp_widget/loaded', this );
-			}, this )
+				elementor.hooks.doAction( 'panel/widgets/' + self.model.get( 'widget' ) + '/controls/wp_widget/loaded', self );
+			}
 		} );
 	}
 } );
@@ -10093,7 +10448,8 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
 				// Save the bind callback to allow overwrite it externally
-				self.saveEditor = _.bind( self.saveEditor, self, editor );
+				self.saveEditor = self.saveEditor.bind( self, editor );
+
 				editor.on( 'keyup change undo redo SetContent', self.saveEditor );
 			}
 		};
@@ -10618,8 +10974,8 @@ WidgetView = BaseElementView.extend( {
 		var editModel = this.getEditModel();
 
 		editModel.on( {
-			'before:remote:render': _.bind( this.onModelBeforeRemoteRender, this ),
-			'remote:render': _.bind( this.onModelRemoteRender, this )
+			'before:remote:render': this.onModelBeforeRemoteRender.bind( this ),
+			'remote:render': this.onModelRemoteRender.bind( this )
 		} );
 
 		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
@@ -10631,7 +10987,7 @@ WidgetView = BaseElementView.extend( {
 		this.render = _.throttle( this.render, 300 );
 
 		this.onRender = function() {
-			_.defer( _.bind( onRenderMethod, this ) );
+			_.defer( onRenderMethod.bind( this ) );
 		};
 	},
 
@@ -10658,7 +11014,7 @@ WidgetView = BaseElementView.extend( {
 	getTemplateType: function() {
 		if ( null === this._templateType ) {
 			var editModel = this.getEditModel(),
-				$template = Backbone.$( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
+				$template = jQuery( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
 
 			this._templateType = $template.length ? 'js' : 'remote';
 		}
@@ -11421,7 +11777,7 @@ module.exports = Marionette.Behavior.extend( {
 	listenerAttached: false,
 
 	initialize: function() {
-		this.lazySaveTextHistory = _.debounce( _.bind( this.saveTextHistory, this ), 800 );
+		this.lazySaveTextHistory = _.debounce( this.saveTextHistory.bind( this ), 800 );
 	},
 
 	// use beforeRender that runs after the settingsModel is exist

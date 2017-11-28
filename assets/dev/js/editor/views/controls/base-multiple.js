@@ -20,7 +20,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 	getControlValue: function( key ) {
 		var values = this.elementSettingsModel.get( this.model.get( 'name' ) );
 
-		if ( ! Backbone.$.isPlainObject( values ) ) {
+		if ( ! jQuery.isPlainObject( values ) ) {
 			return {};
 		}
 

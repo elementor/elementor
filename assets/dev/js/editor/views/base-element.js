@@ -164,7 +164,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	addControlValidator: function( controlName, validationCallback ) {
-		validationCallback = _.bind( validationCallback, this );
+		validationCallback = validationCallback.bind( this );
 
 		var validator = new Validator( { customValidationMethod: validationCallback } ),
 			validators = this.getEditModel().get( 'settings' ).validators;
@@ -245,7 +245,7 @@ BaseElementView = BaseContainer.extend( {
 		var editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
 
-		_.each( settings.getFontControls(), _.bind( function( control ) {
+		_.each( settings.getFontControls(), function( control ) {
 			var fontFamilyName = editModel.getSetting( control.name );
 
 			if ( _.isEmpty( fontFamilyName ) ) {
@@ -253,7 +253,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			elementor.helpers.enqueueFont( fontFamilyName );
-		}, this ) );
+		} );
 	},
 
 	renderStyles: function( settings ) {
@@ -341,9 +341,11 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	runReadyTrigger: function() {
-		_.defer( _.bind( function() {
-			elementorFrontend.elementsHandler.runReadyTrigger( this.$el );
-		}, this ) );
+		var self = this;
+
+		_.defer( function() {
+			elementorFrontend.elementsHandler.runReadyTrigger( self.$el );
+		} );
 	},
 
 	getID: function() {
@@ -455,7 +457,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onClickEdit: function( event ) {
-		if ( ! Backbone.$( event.target ).closest( '.elementor-clickable' ).length ) {
+		if ( ! jQuery( event.target ).closest( '.elementor-clickable' ).length ) {
 			event.preventDefault();
 
 			event.stopPropagation();

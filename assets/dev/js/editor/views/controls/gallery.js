@@ -142,7 +142,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 						cancel: elementor.translate( 'cancel' )
 					},
 					defaultOption: 'confirm',
-					onConfirm: _.bind( this.resetGallery, this )
+					onConfirm: this.resetGallery.bind( this )
 				} );
 			}
 

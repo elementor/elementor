@@ -43,7 +43,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onPanelClick: function( event ) {
-		var $target = Backbone.$( event.target ),
+		var $target = jQuery( event.target ),
 			isClickInsideOfTool = $target.closest( '.elementor-panel-footer-sub-menu-wrapper' ).length;
 
 		if ( isClickInsideOfTool ) {
@@ -103,7 +103,7 @@ module.exports = Marionette.ItemView.extend( {
 		var self = this;
 
 		_.defer( function() {
-			elementor.getPanelView().$el.on( 'click', _.bind( self.onPanelClick, self ) );
+			elementor.getPanelView().$el.on( 'click', self.onPanelClick.bind( self ) );
 		} );
 	}
 } );

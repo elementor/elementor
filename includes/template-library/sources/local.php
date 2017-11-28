@@ -294,17 +294,19 @@ class Source_Local extends Source_Base {
 
 		$page_settings = get_post_meta( $post->ID, PageSettingsManager::META_KEY, true );
 
+		$date = strtotime( $post->post_date );
+
 		$data = [
 			'template_id' => $post->ID,
 			'source' => $this->get_id(),
 			'type' => self::get_template_type( $post->ID ),
 			'title' => $post->post_title,
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
-			'date' => mysql2date( get_option( 'date_format' ), $post->post_date ),
+			'date' => $date,
+			'human_date' => date_i18n( get_option( 'date_format' ), $date ),
 			'author' => $user->display_name,
 			'hasPageSettings' => ! empty( $page_settings ),
-			'categories' => [],
-			'keywords' => [],
+			'tags' => [],
 			'export_link' => $this->_get_export_link( $template_id ),
 			'url' => get_permalink( $post->ID ),
 		];
