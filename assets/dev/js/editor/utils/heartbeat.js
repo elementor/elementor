@@ -13,7 +13,7 @@ heartbeat = {
 			return modal;
 		};
 
-		Backbone.$( document ).on( {
+		jQuery( document ).on( {
 			'heartbeat-send': function( event, data ) {
 				data.elementor_post_lock = {
 					post_ID: elementor.config.post_id

@@ -21,7 +21,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var value = this.getControlValue();
 
 		this.ui.sliders.each( function() {
-			var $slider = Backbone.$( this ),
+			var $slider = jQuery( this ),
 				$input = $slider.next( '.elementor-slider-input' ).find( 'input' );
 
 			$slider.slider( {
@@ -37,7 +37,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 		elementor.helpers.wpColorPicker( this.ui.colors, {
 			change: function() {
-				var $this = Backbone.$( this ),
+				var $this = jQuery( this ),
 					type = $this.data( 'setting' );
 
 				self.setValue( type, $this.wpColorPicker( 'color' ) );
@@ -71,7 +71,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 	onBeforeDestroy: function() {
 		this.ui.colors.each( function() {
-			var $color = Backbone.$( this );
+			var $color = jQuery( this );
 
 			if ( $color.wpColorPicker( 'instance' ) ) {
 				$color.wpColorPicker( 'close' );

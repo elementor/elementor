@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Api;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
@@ -108,6 +109,17 @@ class Manager {
 		}
 
 		return $templates;
+	}
+
+	public function get_library_data( array $args ) {
+		if ( ! empty( $args['sync'] ) ) {
+			Api::get_templates_data( true );
+		}
+
+		return [
+			'templates' => $this->get_templates(),
+			'config' => [],
+		];
 	}
 
 	/**
@@ -276,6 +288,18 @@ class Manager {
 		return $source->import_template();
 	}
 
+	public function mark_template_as_favorite( $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'template_id', 'favorite' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		return $source->mark_as_favorite( $args['template_id'], filter_var( $args['favorite'], FILTER_VALIDATE_BOOLEAN ) );
+	}
+
 	/**
 	 * @since 1.0.0
 	 * @access public
@@ -370,13 +394,14 @@ class Manager {
 	*/
 	private function init_ajax_calls() {
 		$allowed_ajax_requests = [
-			'get_templates',
+			'get_library_data',
 			'get_template_data',
 			'save_template',
 			'update_templates',
 			'delete_template',
 			'export_template',
 			'import_template',
+			'mark_template_as_favorite',
 		];
 
 		foreach ( $allowed_ajax_requests as $ajax_request ) {

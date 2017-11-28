@@ -56,35 +56,37 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	onReady: function() {
-		var currentValue = this.getControlValue();
+		var self = this,
+			currentValue = self.getControlValue();
 
-		if ( ! this.isLinkedDimensions() ) {
-			this.ui.link.addClass( 'unlinked' );
+		if ( ! self.isLinkedDimensions() ) {
+			self.ui.link.addClass( 'unlinked' );
 
-			this.ui.controls.each( _.bind( function( index, element ) {
+			self.ui.controls.each( function( index, element ) {
 				var value = currentValue[ element.dataset.setting ];
 
 				if ( _.isEmpty( value ) ) {
-					value = this.defaultDimensionValue;
+					value = self.defaultDimensionValue;
 				}
 
-				this.$( element ).val( value );
-			}, this ) );
+				self.$( element ).val( value );
+			} );
 		}
 
-		this.fillEmptyDimensions();
+		self.fillEmptyDimensions();
 	},
 
 	updateDimensionsValue: function() {
 		var currentValue = {},
 			dimensions = this.getPossibleDimensions(),
-			$controls = this.ui.controls;
+			$controls = this.ui.controls,
+			defaultDimensionValue = this.defaultDimensionValue;
 
-		dimensions.forEach( _.bind( function( dimension ) {
+		dimensions.forEach( function( dimension ) {
 			var $element = $controls.filter( '[data-setting="' + dimension + '"]' );
 
-			currentValue[ dimension ] = $element.length ? $element.val() : this.defaultDimensionValue;
-		}, this ) );
+			currentValue[ dimension ] = $element.length ? $element.val() : defaultDimensionValue;
+		} );
 
 		this.setValue( currentValue );
 	},
@@ -92,21 +94,22 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 	fillEmptyDimensions: function() {
 		var dimensions = this.getPossibleDimensions(),
 			allowedDimensions = this.model.get( 'allowed_dimensions' ),
-			$controls = this.ui.controls;
+			$controls = this.ui.controls,
+			defaultDimensionValue = this.defaultDimensionValue;
 
 		if ( this.isLinkedDimensions() ) {
 			return;
 		}
 
-		dimensions.forEach( _.bind( function( dimension ) {
+		dimensions.forEach( function( dimension ) {
 			var $element = $controls.filter( '[data-setting="' + dimension + '"]' ),
 				isAllowedDimension = -1 !== _.indexOf( allowedDimensions, dimension );
 
 			if ( isAllowedDimension && $element.length && _.isEmpty( $element.val() ) ) {
-				$element.val( this.defaultDimensionValue );
+				$element.val( defaultDimensionValue );
 			}
 
-		}, this ) );
+		} );
 	},
 
 	updateDimensions: function() {

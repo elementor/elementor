@@ -83,6 +83,12 @@ App = Marionette.Application.extend( {
 		}
 	},
 
+	backgroundClickListeners: {
+		popover: {
+			element: '.elementor-controls-popover'
+		}
+	},
+
 	_defaultDeviceMode: 'desktop',
 
 	addControlView: function( controlID, ControlView ) {
@@ -199,15 +205,17 @@ App = Marionette.Application.extend( {
 	},
 
 	initPreview: function() {
-		this.$previewWrapper = Backbone.$( '#elementor-preview' );
+		var $ = jQuery;
 
-		this.$previewResponsiveWrapper = Backbone.$( '#elementor-preview-responsive-wrapper' );
+		this.$previewWrapper = $( '#elementor-preview' );
+
+		this.$previewResponsiveWrapper = $( '#elementor-preview-responsive-wrapper' );
 
 		var previewIframeId = 'elementor-preview-iframe';
 
 		// Make sure the iFrame does not exist.
 		if ( ! this.$preview ) {
-			this.$preview = Backbone.$( '<iframe>', {
+			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
 				src: this.config.preview_link + '&' + ( new Date().getTime() ),
 				allowfullscreen: 1
@@ -216,7 +224,7 @@ App = Marionette.Application.extend( {
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
+		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	},
 
 	initFrontend: function() {
@@ -382,7 +390,7 @@ App = Marionette.Application.extend( {
 
 	preventClicksInsideEditor: function() {
 		this.$previewContents.on( 'click', function( event ) {
-			var $target = Backbone.$( event.target ),
+			var $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
@@ -403,6 +411,14 @@ App = Marionette.Application.extend( {
 				}
 			}
 		} );
+	},
+
+	addBackgroundClickArea: function( element ) {
+		element.addEventListener( 'click', this.onBackgroundClick.bind( this ), true );
+	},
+
+	addBackgroundClickListener: function( key, listener ) {
+		this.backgroundClickListeners[ key ] = listener;
 	},
 
 	showFatalErrorDialog: function( options ) {
@@ -434,7 +450,7 @@ App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
-		this.$window = Backbone.$( window );
+		this.$window = jQuery( window );
 
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -457,6 +473,8 @@ App = Marionette.Application.extend( {
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.initClearPageDialog();
+
+		this.addBackgroundClickArea( document );
 
 		this.$window.trigger( 'elementor:init' );
 
@@ -503,6 +521,8 @@ App = Marionette.Application.extend( {
 
 		this.preventClicksInsideEditor();
 
+		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
+
 		var Preview = require( 'elementor-views/preview' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
@@ -527,7 +547,7 @@ App = Marionette.Application.extend( {
 
 		this.changeDeviceMode( this._defaultDeviceMode );
 
-		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
+		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
 			elementorFrontend.getElements( 'window' ).jQuery.holdReady( false );
@@ -583,6 +603,16 @@ App = Marionette.Application.extend( {
 			onConfirm: function() {
 				open( elementor.config.help_the_content_url, '_blank' );
 			}
+		} );
+	},
+
+	onBackgroundClick: function( event ) {
+		jQuery.each( this.backgroundClickListeners, function() {
+			var elementToHide = this.element,
+				$clickedTarget = jQuery( event.target ),
+				$clickedTargetClosestElement = $clickedTarget.closest( elementToHide );
+
+			jQuery( elementToHide ).not( $clickedTargetClosestElement ).hide();
 		} );
 	},
 
@@ -652,7 +682,7 @@ App = Marionette.Application.extend( {
 	},
 
 	reloadPreview: function() {
-		Backbone.$( '#elementor-preview-loading' ).show();
+		jQuery( '#elementor-preview-loading' ).show();
 
 		this.$preview[0].contentWindow.location.reload( true );
 	},
@@ -668,7 +698,7 @@ App = Marionette.Application.extend( {
 			return;
 		}
 
-		Backbone.$( 'body' )
+		jQuery( 'body' )
 			.removeClass( 'elementor-device-' + oldDeviceMode )
 			.addClass( 'elementor-device-' + newDeviceMode );
 

@@ -51,7 +51,7 @@
 							this.addButton( {
 								name: 'submit',
 								text: ElementorAdminFeedbackArgs.i18n.submit_n_deactivate,
-								callback: _.bind( self.sendFeedback, self )
+								callback: self.sendFeedback.bind( self )
 							} );
 
 							if ( ! ElementorAdminFeedbackArgs.is_tracker_opted_in ) {
@@ -77,7 +77,7 @@
 
 			self.getModal().getElements( 'submit' ).text( '' ).addClass( 'elementor-loading' );
 
-			$.post( ajaxurl, formData, _.bind( this.deactivate, this ) );
+			$.post( ajaxurl, formData, this.deactivate.bind( this ) );
 		},
 
 		init: function() {

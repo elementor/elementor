@@ -6,31 +6,85 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-import',
 
 	ui: {
-		uploadForm: '#elementor-template-library-import-form'
+		uploadForm: '#elementor-template-library-import-form',
+		fileInput: '#elementor-template-library-import-form-input'
 	},
 
 	events: {
-		'submit @ui.uploadForm': 'onFormSubmit'
+		'change @ui.fileInput': 'onFileInputChange'
 	},
 
-	onFormSubmit: function( event ) {
-		event.preventDefault();
+	droppedFiles: null,
 
-		elementor.templates.getLayout().showLoadingView();
+	submitForm: function() {
+		var layout = elementor.templates.getLayout(),
+			data = new FormData();
 
-		elementor.ajax.send( 'import_template', {
-			data: new FormData( this.ui.uploadForm[ 0 ] ),
+		if ( this.droppedFiles ) {
+			data.append( 'file', this.droppedFiles[0] );
+
+			this.droppedFiles = null;
+		} else {
+			data.append( 'file', this.ui.fileInput[0].files[0] );
+
+			this.ui.uploadForm[0].reset();
+		}
+
+		var options = {
+			data: data,
 			processData: false,
 			contentType: false,
 			success: function( data ) {
-				elementor.templates.getTemplatesCollection().add( data.item );
+				elementor.templates.getTemplatesCollection().add( data );
 
-				elementor.templates.showTemplates();
+				elementor.templates.setTemplatesSource( 'local' );
 			},
 			error: function( data ) {
 				elementor.templates.showErrorDialog( data );
+
+				layout.showImportView();
 			}
+		};
+
+		elementor.ajax.send( 'import_template', options );
+
+		layout.showLoadingView();
+	},
+
+	onRender: function() {
+		this.ui.uploadForm.on( {
+			'drag dragstart dragend dragover dragenter dragleave drop': this.onFormActions.bind( this ),
+			dragenter: this.onFormDragEnter.bind( this ),
+			'dragleave drop': this.onFormDragLeave.bind( this ),
+			drop: this.onFormDrop.bind( this )
 		} );
+	},
+
+	onFormActions: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+	},
+
+	onFormDragEnter: function() {
+		this.ui.uploadForm.addClass( 'elementor-drag-over' );
+	},
+
+	onFormDragLeave: function( event ) {
+		if ( jQuery( event.relatedTarget ).closest( this.ui.uploadForm ).length ) {
+			return;
+		}
+
+		this.ui.uploadForm.removeClass( 'elementor-drag-over' );
+	},
+
+	onFormDrop: function( event ) {
+		this.droppedFiles = event.originalEvent.dataTransfer.files;
+
+		this.submitForm();
+	},
+
+	onFileInputChange: function() {
+		this.submitForm();
 	}
 } );
 

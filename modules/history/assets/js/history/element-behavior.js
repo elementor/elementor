@@ -4,7 +4,7 @@ module.exports = Marionette.Behavior.extend( {
 	listenerAttached: false,
 
 	initialize: function() {
-		this.lazySaveTextHistory = _.debounce( _.bind( this.saveTextHistory, this ), 800 );
+		this.lazySaveTextHistory = _.debounce( this.saveTextHistory.bind( this ), 800 );
 	},
 
 	// use beforeRender that runs after the settingsModel is exist
