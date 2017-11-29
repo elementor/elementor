@@ -63,8 +63,13 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	isDroppingAllowed: function() {
-		var elementView = elementor.channels.panelElements.request( 'element:selected' ),
-			elType = elementView.model.get( 'elType' );
+		var elementView = elementor.channels.panelElements.request( 'element:selected' );
+
+		if ( ! elementView ) {
+			return false;
+		}
+
+		var elType = elementView.model.get( 'elType' );
 
 		if ( 'section' === elType ) {
 			return ! this.isInner();
