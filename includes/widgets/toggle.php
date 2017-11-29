@@ -334,6 +334,17 @@ class Widget_Toggle extends Widget_Base {
 		$tabs = $this->get_settings( 'tabs' );
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
+
+		// Backwards Compitability
+		if ( ! isset( $settings['icon_align'] ) ) {
+			$settings['icon_align'] = ( is_rtl() ? 'right' : 'left' );
+		}
+		if ( ! isset( $settings['icon'] ) ) {
+			$settings['icon'] = ( is_rtl() ? 'fa fa-caret-left' : 'fa fa-caret-right' );
+		}
+		if ( ! isset( $settings['icon_active'] ) ) {
+			$settings['icon_active'] = 'fa fa-caret-up';
+		}
 		?>
 		<div class="elementor-toggle">
 			<?php foreach ( $tabs as $index => $item ) :
@@ -372,6 +383,17 @@ class Widget_Toggle extends Widget_Base {
 		?>
 		<div class="elementor-toggle">
 			<#
+			// Backwards Compitability
+			if ( '' === settings.icon_align ) {
+				settings.icon_align = '<?php echo ( is_rtl() ? 'right' : 'left' ); ?>';
+			}
+			if ( '' === settings.icon ) {
+				settings.icon = '<?php echo ( is_rtl() ? 'fa fa-caret-left' : 'fa fa-caret-right' ); ?>';
+			}
+			if ( '' === settings.icon_active ) {
+				settings.icon_active = 'fa fa-caret-up';
+			}
+
 			if ( settings.tabs ) {
 				var tabindex = view.getIDInt().toString().substr( 0, 3 );
 
