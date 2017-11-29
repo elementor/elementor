@@ -199,6 +199,16 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'label_block' => true,
+				'default' => 'fa fa-plus',
+			]
+		);
+
+		$this->add_control(
 			'heading_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -334,7 +344,7 @@ class Widget_Accordion extends Widget_Base {
 				<div class="elementor-accordion-item">
 					<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>" role="tab">
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>">
-							<i class="fa"></i>
+							<i class="<?php echo $settings['icon']; ?>"></i>
 						</span>
 						<?php echo $item['tab_title']; ?>
 					</div>
@@ -375,7 +385,7 @@ class Widget_Accordion extends Widget_Base {
 					<div class="elementor-accordion-item">
 						<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}">
-								<i class="fa"></i>
+								<i class="{{ settings.icon }}"></i>
 							</span>
 							{{{ item.tab_title }}}
 						</div>
