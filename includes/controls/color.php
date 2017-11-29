@@ -95,7 +95,7 @@ class Control_Color extends Base_Data_Control {
 			[
 				'wp-color-picker',
 			],
-			'1.1',
+			'2.0',
 			true
 		);
 
