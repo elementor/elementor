@@ -197,6 +197,16 @@ class Widget_Toggle extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'label_block' => true,
+				'default' => is_rtl() ? 'fa fa-caret-left' : 'fa fa-caret-right',
+			]
+		);
+
+		$this->add_control(
 			'heading_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -330,7 +340,7 @@ class Widget_Toggle extends Widget_Base {
 				?>
 				<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>">
 					<span class="elementor-toggle-icon elementor-toggle-icon-<?php echo $settings['icon_align']; ?>">
-						<i class="fa"></i>
+						<i class="<?php echo $settings['icon']; ?>"></i>
 					</span>
 					<?php echo $item['tab_title']; ?>
 				</div>
@@ -368,7 +378,7 @@ class Widget_Toggle extends Widget_Base {
 					#>
 					<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}">
 						<span class="elementor-toggle-icon elementor-toggle-icon-{{ settings.icon_align }}">
-							<i class="fa"></i>
+							<i class="{{ settings.icon }}"></i>
 						</span>
 						{{{ item.tab_title }}}
 					</div>

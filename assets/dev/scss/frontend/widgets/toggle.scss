@@ -28,13 +28,6 @@
 					text-align: left;
 				}
 			}
-
-			.fa {
-
-				&:before {
-					content: getValueByDirection('\f0da', '\f0d9');
-				}
-			}
 		}
 
 		&.elementor-active {
