@@ -184,6 +184,11 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.8.7 - 29.11.2017 =
+* Tweak! - Eicons v2.7.0 updated
+* Fix! - Added per post type "edit_post" capability mapping in the editor ([#2846](https://github.com/pojome/elementor/issues/2846))
+* Fix! - Bump color picker script version to v2.0 to force a browser cached version refresh ([#2550](https://github.com/pojome/elementor/issues/2550))
+
 = 1.8.6 - 26.11.2017 =
 * Fix! - Changed minimum editing capability to `edit_posts` ([#2791](https://github.com/pojome/elementor/issues/2791))
 * Fix! - Disable `white-space: pre-wrap` in advanced editing mode ([#2776](https://github.com/pojome/elementor/issues/2776))
