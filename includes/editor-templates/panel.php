@@ -64,7 +64,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div id="elementor-panel-saver-button-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
 		<span id="elementor-panel-saver-button-preview-label">
-			<span class="elementor-screen-only"><?php esc_html_e( 'Preview', 'elementor' ); ?></span>
+			<span class="elementor-screen-only"><?php esc_html_e( 'Preview Changes', 'elementor' ); ?></span>
 			<i class="fa fa-eye"></i>
 		</span>
 	</div>
@@ -81,7 +81,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div id="elementor-panel-saver-publish" class="elementor-panel-footer-tool" >
 		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success tooltip-target" data-tooltip="<?php esc_attr_e( 'Publish & Exit', 'elementor' ); ?>">
-			<i class="fa fa-paper-plane"></i>
+            <span class="elementor-screen-only"><?php esc_html_e( 'Publish & Exit', 'elementor' ); ?></span>
+            <i class="fa fa-paper-plane"></i>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
@@ -117,7 +118,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-mode-switcher-content">
 	<input id="elementor-mode-switcher-preview-input" type="checkbox">
 	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview" title="<?php esc_attr_e( 'Preview', 'elementor' ); ?>">
-		<span class="elementor-screen-only"><?php esc_html_e( 'Preview', 'elementor' ); ?></span>
+		<span class="elementor-screen-only"><?php esc_html_e( 'Hide Panel', 'elementor' ); ?></span>
 		<i class="fa"></i>
 	</label>
 </script>
