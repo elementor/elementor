@@ -209,6 +209,16 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon_active',
+			[
+				'label' => __( 'Active Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'label_block' => true,
+				'default' => 'fa fa-minus',
+			]
+		);
+
+		$this->add_control(
 			'heading_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
