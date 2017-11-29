@@ -106,7 +106,9 @@ class Revisions_Manager {
 	}
 
 	public static function on_revision_data_request() {
-		if ( empty( $_POST['id'] ) ) {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
+		if ( ! isset( $_POST['id'] ) ) {
 			wp_send_json_error( 'You must set the revision ID' );
 		}
 
@@ -120,6 +122,8 @@ class Revisions_Manager {
 	}
 
 	public static function on_delete_revision_request() {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
 		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( 'You must set the id' );
 		}
