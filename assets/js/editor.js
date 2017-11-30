@@ -5635,10 +5635,12 @@ BaseElementView = BaseContainer.extend( {
 		self.runReadyTrigger();
 
 		if ( self.toggleEditTools ) {
+			var triggerButton = self.ui.triggerButton;
+
 			self.ui.settingsList.hoverIntent( function() {
-				self.ui.triggerButton.addClass( 'elementor-active' );
+				triggerButton.addClass( 'elementor-active' );
 			}, function() {
-				self.ui.triggerButton.removeClass( 'elementor-active' );
+				triggerButton.removeClass( 'elementor-active' );
 			}, { timeout: 500 } );
 		}
 	},
@@ -5824,8 +5826,13 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	isDroppingAllowed: function() {
-		var elementView = elementor.channels.panelElements.request( 'element:selected' ),
-			elType = elementView.model.get( 'elType' );
+		var elementView = elementor.channels.panelElements.request( 'element:selected' );
+
+		if ( ! elementView ) {
+			return false;
+		}
+
+		var elType = elementView.model.get( 'elType' );
 
 		if ( 'section' === elType ) {
 			return ! this.isInner();
