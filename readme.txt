@@ -184,6 +184,10 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.8.8 - 30.11.2017 =
+* Tweak! - Eicons v2.8.0 Updated
+* Security Fix! - Prevent potential privilege escalation in template library
+
 = 1.8.7 - 29.11.2017 =
 * Tweak! - Eicons v2.7.0 updated
 * Fix! - Added per post type "edit_post" capability mapping in the editor ([#2846](https://github.com/pojome/elementor/issues/2846))
