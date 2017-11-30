@@ -433,10 +433,12 @@ BaseElementView = BaseContainer.extend( {
 		self.runReadyTrigger();
 
 		if ( self.toggleEditTools ) {
+			var triggerButton = self.ui.triggerButton;
+
 			self.ui.settingsList.hoverIntent( function() {
-				self.ui.triggerButton.addClass( 'elementor-active' );
+				triggerButton.addClass( 'elementor-active' );
 			}, function() {
-				self.ui.triggerButton.removeClass( 'elementor-active' );
+				triggerButton.removeClass( 'elementor-active' );
 			}, { timeout: 500 } );
 		}
 	},
