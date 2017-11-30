@@ -366,7 +366,7 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'template_error', __( 'Sorry, you are not allowed to delete templates.', 'elementor' ) );
 		}
 
-		wp_delete_post( $template_id, true );
+		return wp_delete_post( $template_id, true );
 	}
 
 	/**
