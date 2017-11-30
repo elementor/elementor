@@ -120,3 +120,20 @@
 		text-transform: uppercase;
 	}
 }
+
+.eicon-nerd {
+
+	&:hover {
+
+		&:before {
+			content: '\e965';
+		}
+	}
+
+	&:active {
+
+		&:before {
+			content: '\e964';
+		}
+	}
+}
