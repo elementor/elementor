@@ -113,6 +113,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	<# } #>
 	<div id="elementor-template-library-templates-container"></div>
+	<# if ( 'remote' === activeSource ) { #>
+		<div id="elementor-template-library-footer-banner">
+			<i class="eicon-nerd"></i>
+			<div class="elementor-excerpt"><?php echo __( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
+		</div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">
