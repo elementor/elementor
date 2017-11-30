@@ -184,9 +184,7 @@ class Widgets_Manager {
 	 * @access public
 	*/
 	public function ajax_render_widget() {
-		if ( ! Plugin::$instance->editor->verify_request_nonce() ) {
-			wp_send_json_error( new \WP_Error( 'token_expired' ) );
-		}
+		Plugin::$instance->editor->verify_ajax_nonce();
 
 		if ( empty( $_POST['post_id'] ) ) {
 			wp_send_json_error( new \WP_Error( 'no_post_id', 'No post_id' ) );
