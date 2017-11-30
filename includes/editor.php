@@ -950,6 +950,17 @@ class Editor {
 	}
 
 	/**
+	 * Verify request nonce and send a JSON error if not.
+	 *
+	 * @access public
+	 */
+	public function verify_ajax_nonce() {
+		if ( ! $this->verify_request_nonce() ) {
+			wp_send_json_error( new \WP_Error( 'token_expired' ) );
+		}
+	}
+
+	/**
 	 * Init editor templates.
 	 *
 	 * Initialize default elementor templates used in the editor panel.
