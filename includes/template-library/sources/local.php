@@ -28,6 +28,8 @@ class Source_Local extends Source_Base {
 
 	private static $_template_types = [ 'page', 'section' ];
 
+	private $post_type_object;
+
 	/**
 	 * @static
 	 * @since 1.0.0
@@ -123,7 +125,7 @@ class Source_Local extends Source_Base {
 			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
 		];
 
-		register_post_type(
+		$this->post_type_object = register_post_type(
 			self::CPT,
 			apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args )
 		);
@@ -217,9 +219,13 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', 'Invalid template type `' . $template_data['type'] . '`' );
 		}
 
+		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
+			return new \WP_Error( 'save_error', __( 'Sorry, you are not allowed to save templates.', 'elementor' ) );
+		}
+
 		$template_id = wp_insert_post( [
 			'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
-			'post_status' => 'publish',
+			'post_status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
 			'post_type' => self::CPT,
 		] );
 
@@ -248,6 +254,10 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function update_item( $new_data ) {
+		if ( ! current_user_can( $this->post_type_object->cap->edit_post, $new_data['id'] ) ) {
+			return new \WP_Error( 'save_error', __( 'Sorry, you are not allowed to save templates.', 'elementor' ) );
+		}
+
 		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
 
 		do_action( 'elementor/template-library/after_update_template', $new_data['id'], $new_data );
@@ -325,6 +335,10 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function delete_template( $template_id ) {
+		if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
+			return new \WP_Error( 'template_error', __( 'Sorry, you are not allowed to delete templates.', 'elementor' ) );
+		}
+
 		wp_delete_post( $template_id, true );
 	}
 
