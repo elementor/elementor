@@ -530,7 +530,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function block_template_frontend() {
-		if ( is_singular( self::CPT ) && ! User::is_current_user_can_edit() ) {
+		if ( is_singular( self::CPT ) && ! current_user_can( 'edit_posts' ) ) {
 			wp_redirect( site_url(), 301 );
 			die;
 		}
