@@ -487,7 +487,7 @@ class Editor {
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
-			'nonce' => $this->create_nonce(),
+			'nonce' => $this->create_nonce( get_post_type() ),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
 			'wp_preview' => [
 				'url' => $preview_post_link,
@@ -890,10 +890,15 @@ class Editor {
 	 * @since 1.8.1
 	 * @access public
 	 *
+	 * @param string $post_type The post type to check capabilities. @since  1.8.7
+	 *
 	 * @return null|string The nonce token, or `null` if the user has no edit capabilities.
 	 */
-	public function create_nonce() {
-		if ( ! current_user_can( self::EDITING_CAPABILITY ) ) {
+	public function create_nonce( $post_type ) {
+		$post_type_object = get_post_type_object( $post_type );
+		$capability = $post_type_object->cap->{self::EDITING_CAPABILITY};
+
+		if ( ! current_user_can( $capability ) ) {
 			return null;
 		}
 
