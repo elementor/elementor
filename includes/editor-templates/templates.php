@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-back">
-	<i class="eicon-"></i><span><?php echo __( 'Back To library', 'elementor' ); ?></span>
+	<i class="eicon-"></i><span><?php echo __( 'Back to Library', 'elementor' ); ?></span>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-loading">
