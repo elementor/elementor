@@ -549,8 +549,8 @@ class Editor {
 				'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 
 				// Panel Preview Mode.
-				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
-				'preview' => __( 'Preview', 'elementor' ),
+				'back_to_editor' => __( 'Show Panel', 'elementor' ),
+				'preview' => __( 'Hide Panel', 'elementor' ),
 
 				// Inline Editing.
 				'type_here' => __( 'Type Here', 'elementor' ),
