@@ -3546,7 +3546,7 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 	ui: function() {
 		var ui = ControlChooseView.prototype.ui.apply( this, arguments );
 
-		ui.popoverToggle = 'input.elementor-control-popover-toggle-toggle';
+		ui.popoverToggle = '.elementor-control-popover-toggle-toggle';
 
 		return ui;
 	},
