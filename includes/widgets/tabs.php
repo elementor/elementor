@@ -320,7 +320,7 @@ class Widget_Tabs extends Widget_Base {
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
 						'data-tab' => $tab_count,
 						'tabindex' => $id_int . $tab_count,
-						'role' => 'tab'
+						'role' => 'tab',
 					] );
 					?>
 					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
@@ -337,14 +337,14 @@ class Widget_Tabs extends Widget_Base {
 					$this->add_render_attribute( $tab_content_setting_key, [
 						'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 						'data-tab' => $tab_count,
-						'role' => 'tabpanel'
+						'role' => 'tabpanel',
 					] );
 
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [
 						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
 						'tabindex' => $id_int . $tab_count,
 						'data-tab' => $tab_count,
-						'role' => 'tab'
+						'role' => 'tab',
 					] );
 
 					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
