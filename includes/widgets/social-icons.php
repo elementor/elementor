@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Social Icons Widget
+ * Social Icons Widget.
+ *
+ * Elementor widget that displays icons to social pages like Facebook and Twitter.
+ *
+ * @since 1.0.0
  */
 class Widget_Social_Icons extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve social icons widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Social_Icons extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve social icons widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Social_Icons extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve social icons widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Social_Icons extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the social icons widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
