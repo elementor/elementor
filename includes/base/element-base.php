@@ -8,10 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Element Base.
  *
- * Base class extended to register elements.
+ * An abstract class to register new Elementor elements. It extended the
+ * `Controls_Stack` class to inherit its properties.
  *
- * This class must be extended for each element.
+ * This abstract class must be extended in order to register new elements.
  *
+ * @since 1.0.0
  * @abstract
  */
 abstract class Element_Base extends Controls_Stack {
