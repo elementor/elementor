@@ -6,7 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Controls Stack
+ * Controls Stack.
+ *
+ * Abstract class that holds all the basic properties and methods each control
+ * can inherit.
  *
  * @abstract
  */
@@ -96,6 +99,15 @@ abstract class Controls_Stack {
 	 */
 	private $_current_tab;
 
+	/**
+	 * Current popover.
+	 *
+	 * Holds the current popover while inserting a set of controls.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
 	private $current_popover;
 
 	/**
@@ -110,7 +122,9 @@ abstract class Controls_Stack {
 	private $injection_point;
 
 	/**
-	 * Retrieve the name.
+	 * Get element type.
+	 *
+	 * Retrieve the element name.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -136,7 +150,9 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Retrieve the generic ID.
+	 * Get element ID.
+	 *
+	 * Retrieve the element generic ID.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -148,7 +164,9 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Retrieve the generic ID as integer.
+	 * Get element ID.
+	 *
+	 * Retrieve the element generic ID as integer.
 	 *
 	 * @since 1.8.0
 	 * @access public
