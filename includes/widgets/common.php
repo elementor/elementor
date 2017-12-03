@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Common Widget
+ * Common Widget.
+ *
+ * Elementor base widget that givs you all the advanced options of the basic
+ * widget.
+ *
+ * @since 1.0.0
  */
 class Widget_Common extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve common widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
+	 * Show in panel.
+	 *
 	 * Whether to show the common widget in the panel or not.
 	 *
 	 * @since 1.0.0

@@ -6,7 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * WordPress Widget
+ * WordPress Widget.
+ *
+ * Elementor widget that displays the default WordPress/Pojo widgets.
+ *
+ * @since 1.0.0
  */
 class Widget_WordPress extends Widget_Base {
 
@@ -41,6 +45,8 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve WordPress/Pojo widget name.
 	 *
 	 * @since 1.0.0
@@ -53,6 +59,8 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve WordPress/Pojo widget title.
 	 *
 	 * @since 1.0.0
@@ -65,6 +73,8 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the WordPress/Pojo widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
@@ -84,6 +94,8 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve WordPress/Pojo widget icon.
 	 *
 	 * @since 1.0.0

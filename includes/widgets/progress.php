@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Progress Widget
+ * Progress Widget.
+ *
+ * Elementor widget that displays an escalating progress bar.
+ *
+ * @since 1.0.0
  */
 class Widget_Progress extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve progress widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Progress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve progress widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Progress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve progress widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Progress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the progress widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Shortcode Widget
+ * Shortcode Widget.
+ *
+ * Elementor widget that insert any shortcodes into the page.
+ *
+ * @since 1.0.0
  */
 class Widget_Shortcode extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve shortcode widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Shortcode extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve shortcode widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Shortcode extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve shortcode widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Shortcode extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the shortcode widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

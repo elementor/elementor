@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Image Carousel Widget
+ * Image Carousel Widget.
+ *
+ * Elementor widget that displays a set of images in a rotating carousel or
+ * slider.
+ *
+ * @since 1.0.0
  */
 class Widget_Image_Carousel extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve image carousel widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve image carousel widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +44,8 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve image carousel widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +58,8 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the image carousel widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
