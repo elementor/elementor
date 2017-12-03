@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Icon Box Widget
+ * Icon Box Widget.
+ *
+ * Elementor widget that displays an icon, a headline and a text.
+ *
+ * @since 1.0.0
  */
 class Widget_Icon_Box extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve icon box widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve icon box widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve icon box widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the icon box widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

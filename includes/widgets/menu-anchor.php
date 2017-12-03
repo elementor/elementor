@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Menu Anchor Widget
+ * Menu Anchor Widget.
+ *
+ * Elementor widget that allows to link and menu to a specific position on the
+ * page.
+ *
+ * @since 1.0.0
  */
 class Widget_Menu_Anchor extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve menu anchor widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve menu anchor widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +44,8 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve menu anchor widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +58,8 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the menu anchor widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

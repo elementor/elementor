@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Accordion Widget
+ * Accordion Widget.
+ *
+ * Elementor widget that displays a collapsible display of content in an
+ * accordion style, showing only one item at a time.
+ *
+ * @since 1.0.0
  */
 class Widget_Accordion extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve accordion widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve accordion widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +44,8 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve accordion widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +58,8 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the accordion widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

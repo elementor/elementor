@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Tabs Widget
+ * Tabs Widget.
+ *
+ * Elementor widget that displays vertical or horizontal tabs with different
+ * pieces of content.
+ *
+ * @since 1.0.0
  */
 class Widget_Tabs extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve tabs widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Tabs extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve tabs widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +44,8 @@ class Widget_Tabs extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve tabs widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +58,8 @@ class Widget_Tabs extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the tabs widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
