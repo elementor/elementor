@@ -8,8 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Controls Stack.
  *
- * Abstract class that holds all the basic properties and methods each control
- * can inherit.
+ * Abstract class that holds all the basic properties, methods and other
+ * actions that communicate with the Elementor editor panel.
  *
  * @abstract
  */
