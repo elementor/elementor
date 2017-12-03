@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * WordPress Widget.
  *
- * Elementor widget that displays the default WordPress/Pojo widgets.
+ * Elementor widget that displays all the WordPress widgets.
  *
  * @since 1.0.0
  */
