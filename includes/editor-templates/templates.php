@@ -17,18 +17,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-logo">
-	<i class="eicon-elementor-square"></i><span><?php echo __( 'Library', 'elementor' ); ?></span>
+	<span id="elementor-template-library-header-logo-icon-wrapper">
+		<i class="eicon-elementor"></i>
+	</span>
+	<span><?php echo __( 'Library', 'elementor' ); ?></span>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-actions">
 	<div id="elementor-template-library-header-import" class="elementor-template-library-header-item">
-		<i class="eicon-import-export" title="<?php echo __( 'Import Template', 'elementor' ); ?>"></i>
+		<i class="eicon-upload-circle-o" title="<?php echo __( 'Import Template', 'elementor' ); ?>"></i>
 	</div>
 	<div id="elementor-template-library-header-sync" class="elementor-template-library-header-item">
 		<i class="eicon-sync" title="<?php echo __( 'Sync Library', 'elementor' ); ?>"></i>
 	</div>
 	<div id="elementor-template-library-header-save" class="elementor-template-library-header-item">
-		<i class="eicon-save" title="<?php echo __( 'Save ', 'elementor' ); ?>"></i>
+		<i class="eicon-save-o" title="<?php echo __( 'Save ', 'elementor' ); ?>"></i>
 	</div>
 </script>
 
@@ -44,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-back">
-	<i class="eicon-"></i><span><?php echo __( 'Back To library', 'elementor' ); ?></span>
+	<i class="eicon-"></i><span><?php echo __( 'Back to Library', 'elementor' ); ?></span>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-loading">
@@ -113,6 +116,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	<# } #>
 	<div id="elementor-template-library-templates-container"></div>
+	<# if ( 'remote' === activeSource ) { #>
+		<div id="elementor-template-library-footer-banner">
+			<i class="eicon-nerd"></i>
+			<div class="elementor-excerpt"><?php echo __( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
+		</div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">
@@ -203,7 +212,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-import">
 	<form id="elementor-template-library-import-form">
 		<div class="elementor-template-library-blank-icon">
-			<i class="eicon-library-import"></i>
+			<i class="eicon-library-upload"></i>
 		</div>
 		<div class="elementor-template-library-blank-title"><?php echo __( 'Import Template to Your Library', 'elementor' ); ?></div>
 		<div class="elementor-template-library-blank-message"><?php echo __( 'Drag & drop your .JSON or .zip template file', 'elementor' ); ?></div>

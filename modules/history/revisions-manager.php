@@ -129,6 +129,10 @@ class Revisions_Manager {
 			wp_send_json_error( 'You must set the id' );
 		}
 
+		if ( ! current_user_can( 'delete_post', $_POST['id'] ) ) {
+			wp_send_json_error( __( 'Cannot delete this Revision', 'elementor' ) );
+		}
+
 		$deleted = wp_delete_post_revision( $_POST['id'] );
 
 		if ( $deleted && ! is_wp_error( $deleted ) ) {
