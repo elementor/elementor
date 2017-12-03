@@ -145,7 +145,7 @@
 
 .elementor-inline-editing {
 
-	i {
+	i:not( [class] ) {
 		font-style: italic;
 	}
 

@@ -205,7 +205,7 @@ abstract class Settings_Page {
 						$active_class = ' nav-tab-active';
 					}
 
-					echo "<a id='elementor-settings-tab-$tab_id' class='nav-tab$active_class' href='#tab-$tab_id'>$tab[label]</a>";
+					echo "<a id='elementor-settings-tab-{$tab_id}' class='nav-tab{$active_class}' href='#tab-{$tab_id}'>{$tab['label']}</a>";
 				}
 				?>
 			</div>
@@ -224,13 +224,13 @@ abstract class Settings_Page {
 						$active_class = ' elementor-active';
 					}
 
-					echo "<div id='tab-$tab_id' class='elementor-settings-form-page$active_class'>";
+					echo "<div id='tab-{$tab_id}' class='elementor-settings-form-page{$active_class}'>";
 
 					foreach ( $tab['sections'] as $section_id => $section ) {
 						$full_section_id = 'elementor_' . $section_id . '_section';
 
 						if ( ! empty( $section['label'] ) ) {
-							echo "<h2>$section[label]</h2>";
+							echo "<h2>{$section['label']}</h2>";
 						}
 
 						if ( ! empty( $section['callback'] ) ) {
