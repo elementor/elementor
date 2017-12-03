@@ -310,7 +310,7 @@ class Widget_Tabs extends Widget_Base {
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-tabs" role="tablist">
-			<div class="elementor-tabs-wrapper" role="tab">
+			<div class="elementor-tabs-wrapper">
 				<?php foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
 
@@ -320,12 +320,13 @@ class Widget_Tabs extends Widget_Base {
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
 						'data-tab' => $tab_count,
 						'tabindex' => $id_int . $tab_count,
+						'role' => 'tab',
 					] );
 					?>
 					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
 				<?php endforeach; ?>
 			</div>
-			<div class="elementor-tabs-content-wrapper" role="tabpanel">
+			<div class="elementor-tabs-content-wrapper">
 				<?php foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
 
@@ -336,12 +337,14 @@ class Widget_Tabs extends Widget_Base {
 					$this->add_render_attribute( $tab_content_setting_key, [
 						'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 						'data-tab' => $tab_count,
+						'role' => 'tabpanel',
 					] );
 
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [
 						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
 						'tabindex' => $id_int . $tab_count,
 						'data-tab' => $tab_count,
+						'role' => 'tab',
 					] );
 
 					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
@@ -369,15 +372,15 @@ class Widget_Tabs extends Widget_Base {
 			if ( settings.tabs ) {
 				var tabindex = view.getIDInt().toString().substr( 0, 3 );
 				#>
-				<div class="elementor-tabs-wrapper" role="tab">
+				<div class="elementor-tabs-wrapper">
 					<#
 					_.each( settings.tabs, function( item, index ) {
 						var tabCount = index + 1;
 						#>
-						<div class="elementor-tab-title elementor-tab-desktop-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}">{{{ item.tab_title }}}</div>
+						<div class="elementor-tab-title elementor-tab-desktop-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">{{{ item.tab_title }}}</div>
 					<# } ); #>
 				</div>
-				<div class="elementor-tabs-content-wrapper" role="tabpanel">
+				<div class="elementor-tabs-content-wrapper">
 					<#
 					_.each( settings.tabs, function( item, index ) {
 						var tabCount = index + 1,
@@ -385,12 +388,13 @@ class Widget_Tabs extends Widget_Base {
 
 						view.addRenderAttribute( tabContentKey, {
 							'class': [ 'elementor-tab-content', 'elementor-clearfix', 'elementor-repeater-item-' + item._id ],
-							'data-tab': tabCount
+							'data-tab': tabCount,
+							'role' : 'tabpanel'
 						} );
 
 						view.addInlineEditingAttributes( tabContentKey, 'advanced' );
 						#>
-						<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ tabCount }}">{{{ item.tab_title }}}</div>
+						<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ tabCount }}" role="tab">{{{ item.tab_title }}}</div>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					<# } ); #>
 				</div>
