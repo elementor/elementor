@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Spacer Widget
+ * Spacer Widget.
+ *
+ * Elementor widget that inserts a space that divides various elements.
+ *
+ * @since 1.0.0
  */
 class Widget_Spacer extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve spacer widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Spacer extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve spacer widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Spacer extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve spacer widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Spacer extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the spacer widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

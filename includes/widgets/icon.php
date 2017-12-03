@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Icon Widget
+ * Icon Widget.
+ *
+ * Elementor widget that displays an icon from over 600+ icons.
+ *
+ * @since 1.0.0
  */
 class Widget_Icon extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve icon widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Icon extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve icon widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Icon extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve icon widget icon.
 	 *
 	 * @since 1.0.0
