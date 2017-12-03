@@ -116,7 +116,7 @@
     .pen-external-url-checkbox:checked + i {
       color: #fff; }
 
-.elementor-inline-editing i {
+.elementor-inline-editing i:not([class]) {
   font-style: italic; }
 
 .elementor-inline-editing b {
