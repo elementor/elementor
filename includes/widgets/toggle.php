@@ -291,11 +291,12 @@ class Widget_Toggle extends Widget_Base {
 				$this->add_render_attribute( $tab_content_setting_key, [
 					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 					'data-tab' => $tab_count,
+					'role' => 'tabpanel',
 				] );
 
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
-				<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>">
+				<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>" role="tab">
 					<span class="elementor-toggle-icon">
 						<i class="fa"></i>
 					</span>
@@ -329,11 +330,12 @@ class Widget_Toggle extends Widget_Base {
 					view.addRenderAttribute( tabContentKey, {
 						'class': [ 'elementor-tab-content', 'elementor-clearfix' ],
 						'data-tab': tabCount,
+						'role': 'tabpanel'
 					} );
 
 					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
 					#>
-					<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}">
+					<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">
 						<span class="elementor-toggle-icon">
 							<i class="fa"></i>
 						</span>
