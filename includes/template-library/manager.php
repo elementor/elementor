@@ -239,9 +239,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$source->delete_template( $args['template_id'] );
-
-		return true;
+		return $source->delete_template( $args['template_id'] );
 	}
 
 	/**

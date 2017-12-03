@@ -884,7 +884,7 @@ class Editor {
 	 * @since 1.8.1
 	 * @access public
 	 *
-	 * @param string $post_type The post type to check capabilities. @since  1.9.0
+	 * @param string $post_type The post type to check capabilities. @since  1.8.7
 	 *
 	 * @return null|string The nonce token, or `null` if the user has no edit capabilities.
 	 */
