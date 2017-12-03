@@ -8,9 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Controls Stack.
  *
- * Abstract class that holds all the basic properties, methods and other
+ * An abstract class that holds all the basic properties, methods and other
  * actions that communicate with the Elementor editor panel.
  *
+ * @since 1.4.0
  * @abstract
  */
 abstract class Controls_Stack {
