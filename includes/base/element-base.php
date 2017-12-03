@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Element Base
+ * Element Base.
  *
  * Base class extended to register elements.
  *

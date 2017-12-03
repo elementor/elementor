@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Widget Base
+ * Widget Base.
  *
- * Base class extended to create Elementor widgets.
+ * Abstract class to register new Elementor widgets. It extended the Element_Base
+ * class to inherit its properties.
  *
  * This class must be extended for each widget.
  *
