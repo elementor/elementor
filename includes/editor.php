@@ -549,8 +549,8 @@ class Editor {
 				'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 
 				// Panel Preview Mode.
-				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
-				'preview' => __( 'Preview', 'elementor' ),
+				'back_to_editor' => __( 'Show Panel', 'elementor' ),
+				'preview' => __( 'Hide Panel', 'elementor' ),
 
 				// Inline Editing.
 				'type_here' => __( 'Type Here', 'elementor' ),
@@ -567,6 +567,12 @@ class Editor {
 				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
 				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				'section' => __( 'Section', 'elementor' ),
+				'templates_empty_message' => __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
+				'templates_empty_title' => __( 'Haven’t Saved Templates Yet?', 'elementor' ),
+				'templates_no_favorites_message' => __( 'You can mark every predesigned template as favorite.', 'elementor' ),
+				'templates_no_favorites_title' => __( 'No Favorite Templates', 'elementor' ),
+				'templates_no_results_message' => __( 'Please make sure your search is spelled correctly or try a different words.', 'elementor' ),
+				'templates_no_results_title' => __( 'No Results Found', 'elementor' ),
 				'templates_request_error' => __( 'The following error(s) occurred while processing the request:', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
 

@@ -1,6 +1,4 @@
-var TemplateLibraryHeaderMenuView;
-
-TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	options: {
 		activeClass: 'elementor-active'
 	},
@@ -36,7 +34,7 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var currentSource = elementor.channels.templates.request( 'filter:source' ),
+		var currentSource = elementor.templates.getFilter( 'source' ),
 			$sourceItem = this.ui.menuItems.filter( '[data-template-source="' + currentSource + '"]' );
 
 		this.activateMenuItem( $sourceItem );
@@ -45,10 +43,8 @@ TemplateLibraryHeaderMenuView = Marionette.ItemView.extend( {
 	onMenuItemClick: function( event ) {
 		var item = event.currentTarget;
 
-		this.activateMenuItem( Backbone.$( item ) );
+		this.activateMenuItem( jQuery( item ) );
 
-		elementor.templates.setTemplatesSource( item.dataset.templateSource, true );
+		elementor.templates.setTemplatesSource( item.dataset.templateSource );
 	}
 } );
-
-module.exports = TemplateLibraryHeaderMenuView;

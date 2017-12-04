@@ -8,11 +8,11 @@ module.exports = ControlSelect2View.extend( {
 	},
 
 	templateHelpers: function() {
-		var helpers = ControlSelect2View.prototype.templateHelpers.apply( this, arguments );
+		var helpers = ControlSelect2View.prototype.templateHelpers.apply( this, arguments ),
+			fonts = this.model.get( 'options' );
 
-		helpers.getFontsByGroups = _.bind( function( groups ) {
-			var fonts = this.model.get( 'options' ),
-				filteredFonts = {};
+		helpers.getFontsByGroups = function( groups ) {
+			var filteredFonts = {};
 
 			_.each( fonts, function( fontType, fontName ) {
 				if ( _.isArray( groups ) && _.contains( groups, fontType ) || fontType === groups ) {
@@ -21,7 +21,7 @@ module.exports = ControlSelect2View.extend( {
 			} );
 
 			return filteredFonts;
-		}, this );
+		};
 
 		return helpers;
 	}

@@ -1,6 +1,6 @@
 var TemplateLibraryHeaderView = require( 'elementor-templates/views/parts/header' ),
 	TemplateLibraryHeaderLogoView = require( 'elementor-templates/views/parts/header-parts/logo' ),
-	TemplateLibraryHeaderSaveView = require( 'elementor-templates/views/parts/header-parts/save' ),
+	TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts/header-parts/actions' ),
 	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
 	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
 	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
@@ -48,23 +48,21 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 
 		var headerView = this.getHeaderView();
 
-		headerView.tools.show( new TemplateLibraryHeaderSaveView() );
+		headerView.tools.show( new TemplateLibraryHeaderActionsView() );
 		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
 		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
 	showImportView: function() {
+		this.getHeaderView().menuArea.reset();
+
 		this.modalContent.show( new TemplateLibraryImportView() );
 	},
 
 	showSaveTemplateView: function( elementModel ) {
+		this.getHeaderView().menuArea.reset();
+
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
-
-		var headerView = this.getHeaderView();
-
-		headerView.tools.reset();
-		headerView.menuArea.reset();
-		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
 	},
 
 	showPreviewView: function( templateModel ) {

@@ -1,6 +1,4 @@
-var TemplateLibraryHeaderBackView;
-
-TemplateLibraryHeaderBackView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-back',
 
 	id: 'elementor-template-library-header-preview-back',
@@ -13,5 +11,3 @@ TemplateLibraryHeaderBackView = Marionette.ItemView.extend( {
 		elementor.templates.showTemplates();
 	}
 } );
-
-module.exports = TemplateLibraryHeaderBackView;

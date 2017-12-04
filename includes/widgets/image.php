@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Image Widget
+ * Image Widget.
+ *
+ * Elementor widget that displays an image into the page.
+ *
+ * @since 1.0.0
  */
 class Widget_Image extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve image widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Image extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve image widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Image extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve image widget icon.
 	 *
 	 * @since 1.0.0

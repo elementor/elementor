@@ -5,7 +5,7 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 	ui: function() {
 		var ui = ControlChooseView.prototype.ui.apply( this, arguments );
 
-		ui.popoverToggle = 'label.elementor-control-popover-toggle-toggle';
+		ui.popoverToggle = '.elementor-control-popover-toggle-toggle';
 
 		return ui;
 	},
@@ -17,7 +17,7 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 	},
 
 	onPopoverToggleClick: function() {
-		this.$el.next( '.elementor-controls-popover' ).toggle();
+		this.$el.next( '.elementor-controls-popover' ).show();
 	}
 } );
 

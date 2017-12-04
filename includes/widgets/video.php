@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Video Widget
+ * Video Widget.
+ *
+ * Elementor widget that displays a video player.
+ *
+ * @since 1.0.0
  */
 class Widget_Video extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve video widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve video widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve video widget icon.
 	 *
 	 * @since 1.0.0

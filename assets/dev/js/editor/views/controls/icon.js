@@ -37,7 +37,7 @@ ControlIconView = ControlSelect2View.extend( {
 			return icon.text;
 		}
 
-		return Backbone.$(
+		return jQuery(
 			'<span><i class="' + icon.id + '"></i> ' + icon.text + '</span>'
 		);
 	},
@@ -45,8 +45,8 @@ ControlIconView = ControlSelect2View.extend( {
 	getSelect2Options: function() {
 		return {
 			allowClear: true,
-			templateResult: _.bind( this.iconsList, this ),
-			templateSelection: _.bind( this.iconsList, this )
+			templateResult: this.iconsList.bind( this ),
+			templateSelection: this.iconsList.bind( this )
 		};
 	}
 } );

@@ -94,12 +94,18 @@ class Manager extends BaseManager {
 
 		$post->post_title = $data['post_title'];
 
-		$allowed_post_statuses = get_post_statuses();
+		if ( isset( $data['post_excerpt'] ) && post_type_supports( $data['post_type'], 'excerpt' ) ) {
+			$post->post_excerpt = $data['post_excerpt'];
+		}
 
-		if ( isset( $data['post_status'] ) && in_array( $data['post_status'], $allowed_post_statuses, true ) ) {
-			$post_type_object = get_post_type_object( $post->post_type );
-			if ( 'publish' !== $data['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
-				$post->post_status = $data['post_status'];
+		if ( isset( $data['post_status'] ) ) {
+			$allowed_post_statuses = get_post_statuses();
+
+			if ( in_array( $data['post_status'], $allowed_post_statuses, true ) ) {
+				$post_type_object = get_post_type_object( $post->post_type );
+				if ( 'publish' !== $data['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
+					$post->post_status = $data['post_status'];
+				}
 			}
 		}
 

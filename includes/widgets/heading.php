@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Heading Widget
+ * Heading Widget.
+ *
+ * Elementor widget that displays an eye-catching headlines.
+ *
+ * @since 1.0.0
  */
 class Widget_Heading extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve heading widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve heading widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve heading widget icon.
 	 *
 	 * @since 1.0.0

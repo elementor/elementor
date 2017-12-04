@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Text Editor Widget
+ * Text Editor Widget.
+ *
+ * Elementor widget that displays a WYSIWYG text editor, just like the WordPress
+ * editor.
+ *
+ * @since 1.0.0
  */
 class Widget_Text_Editor extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve text editor widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve text editor widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +44,8 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve text editor widget icon.
 	 *
 	 * @since 1.0.0
