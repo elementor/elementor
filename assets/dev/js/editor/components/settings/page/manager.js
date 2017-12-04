@@ -1,4 +1,4 @@
-var BaseSettings = require( 'elementor-editor/settings/base/manager' );
+var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
 module.exports = BaseSettings.extend( {
 	changeCallbacks: {
