@@ -13,6 +13,7 @@ class DB {
 	const DB_VERSION = '0.4';
 
 	const STATUS_PUBLISH = 'publish';
+	const STATUS_PRIVATE = 'private';
 	const STATUS_DRAFT = 'draft';
 	const STATUS_AUTOSAVE = 'autosave';
 
@@ -52,7 +53,7 @@ class DB {
 
 		// If the post is a draft - save the `autosave` to the original draft.
 		// Allow a revision only if the original post is already published.
-		if ( self::STATUS_AUTOSAVE === $status && self::STATUS_PUBLISH === get_post_status( $post_id ) ) {
+		if ( self::STATUS_AUTOSAVE === $status && in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
 			$save_original = false;
 		}
 
