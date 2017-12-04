@@ -7,6 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Frontend.
+ *
+ * Elementor frontend handler class.
+ *
+ * @since 1.0.0
+ */
 class Frontend {
 
 	/**

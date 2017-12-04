@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Heartbeat.
+ *
+ * Elementor heartbeat handler class.
+ *
+ * @since 1.0.0
+ */
 class Heartbeat {
 
 	/**

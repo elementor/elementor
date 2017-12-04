@@ -5,7 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Responsive.
+ *
+ * Elementor responsive handler class.
+ *
+ * @since 1.0.0
+ */
 class Responsive {
+
 	const BREAKPOINT_OPTION_PREFIX = 'elementor_viewport_';
 
 	private static $_default_breakpoints = [
