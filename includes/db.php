@@ -70,7 +70,7 @@ class DB {
 			 */
 			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
 
-			$this->_save_plain_text( $post_id );
+			$this->save_plain_text( $post_id );
 		} else {
 			/**
 			 * Fires before Elementor saves data to the database.
@@ -266,9 +266,9 @@ class DB {
 
 	/**
 	 * @since 1.0.0
-	 * @access private
+	 * @access public
 	*/
-	private function _save_plain_text( $post_id ) {
+	public function save_plain_text( $post_id ) {
 		ob_start();
 
 		$data = $this->get_plain_editor( $post_id );
