@@ -175,7 +175,7 @@ class Elements_Manager {
 
 		$status = DB::STATUS_DRAFT;
 
-		if ( isset( $_POST['status'] ) && in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_AUTOSAVE ] ) ) {
+		if ( isset( $_POST['status'] ) && in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_AUTOSAVE ] , true ) ) {
 			$status = $_POST['status'];
 		}
 
