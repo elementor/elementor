@@ -36,6 +36,7 @@ App = Marionette.Application.extend( {
 	// Exporting modules that can be used externally
 	modules: {
 		element: require( 'elementor-models/element' ),
+		Module: require( 'elementor-utils/module' ),
 		WidgetView: require( 'elementor-views/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
