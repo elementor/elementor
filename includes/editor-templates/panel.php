@@ -117,9 +117,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-mode-switcher-content">
 	<input id="elementor-mode-switcher-preview-input" type="checkbox">
-	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview" title="<?php esc_attr_e( 'Preview', 'elementor' ); ?>">
+	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview">
+		<i class="fa" aria-hidden="true" title="<?php esc_attr_e( 'Hide Panel', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php esc_html_e( 'Hide Panel', 'elementor' ); ?></span>
-		<i class="fa"></i>
 	</label>
 </script>
 

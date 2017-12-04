@@ -6,7 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Audio Widget
+ * Audio Widget.
+ *
+ * Elementor widget that displays an audio player.
+ *
+ * @since 1.0.0
  */
 class Widget_Audio extends Widget_Base {
 
@@ -20,6 +24,8 @@ class Widget_Audio extends Widget_Base {
 	protected $_current_instance = [];
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve audio widget name.
 	 *
 	 * @since 1.0.0
@@ -32,6 +38,8 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve audio widget title.
 	 *
 	 * @since 1.0.0
@@ -44,6 +52,8 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve audio widget icon.
 	 *
 	 * @since 1.0.0
@@ -56,6 +66,8 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the audio widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Toggle Widget
+ * Toggle Widget.
+ *
+ * Elementor widget that displays a collapsible display of content in an toggle
+ * style, allowing the user to open multiple items.
+ *
+ * @since 1.0.0
  */
 class Widget_Toggle extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve toggle widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve toggle widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +44,8 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve toggle widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +58,8 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the toggle widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
@@ -291,11 +304,12 @@ class Widget_Toggle extends Widget_Base {
 				$this->add_render_attribute( $tab_content_setting_key, [
 					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 					'data-tab' => $tab_count,
+					'role' => 'tabpanel',
 				] );
 
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
-				<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>">
+				<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>" role="tab">
 					<span class="elementor-toggle-icon">
 						<i class="fa"></i>
 					</span>
@@ -329,11 +343,12 @@ class Widget_Toggle extends Widget_Base {
 					view.addRenderAttribute( tabContentKey, {
 						'class': [ 'elementor-tab-content', 'elementor-clearfix' ],
 						'data-tab': tabCount,
+						'role': 'tabpanel'
 					} );
 
 					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
 					#>
-					<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}">
+					<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">
 						<span class="elementor-toggle-icon">
 							<i class="fa"></i>
 						</span>

@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Testimonial Widget
+ * Testimonial Widget.
+ *
+ * Elementor widget that displays customer testimonials that show social proof.
+ *
+ * @since 1.0.0
  */
 class Widget_Testimonial extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve testimonial widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Testimonial extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve testimonial widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Testimonial extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve testimonial widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Testimonial extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the testimonial widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

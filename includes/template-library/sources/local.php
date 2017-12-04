@@ -220,7 +220,7 @@ class Source_Local extends Source_Base {
 		}
 
 		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
-			return new \WP_Error( 'save_error', __( 'Sorry, you are not allowed to save templates.', 'elementor' ) );
+			return new \WP_Error( 'save_error', __( 'Access Denied.', 'elementor' ) );
 		}
 
 		$template_id = wp_insert_post( [
@@ -272,7 +272,7 @@ class Source_Local extends Source_Base {
 	*/
 	public function update_item( $new_data ) {
 		if ( ! current_user_can( $this->post_type_object->cap->edit_post, $new_data['id'] ) ) {
-			return new \WP_Error( 'save_error', __( 'Sorry, you are not allowed to save templates.', 'elementor' ) );
+			return new \WP_Error( 'save_error', __( 'Access Denied.', 'elementor' ) );
 		}
 
 		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
@@ -363,7 +363,7 @@ class Source_Local extends Source_Base {
 	*/
 	public function delete_template( $template_id ) {
 		if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
-			return new \WP_Error( 'template_error', __( 'Sorry, you are not allowed to delete templates.', 'elementor' ) );
+			return new \WP_Error( 'template_error', __( 'Access Denied.', 'elementor' ) );
 		}
 
 		return wp_delete_post( $template_id, true );
@@ -557,7 +557,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function block_template_frontend() {
-		if ( is_singular( self::CPT ) && ! User::is_current_user_can_edit() ) {
+		if ( is_singular( self::CPT ) && ! current_user_can( 'edit_posts' ) ) {
 			wp_redirect( site_url(), 301 );
 			die;
 		}
