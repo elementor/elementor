@@ -36,9 +36,9 @@ App = Marionette.Application.extend( {
 	// Exporting modules that can be used externally
 	modules: {
 		element: {
-			Model: require( 'elementor-elements/model' )
+			Model: require( 'elementor-elements/models/element' )
 		},
-		WidgetView: require( 'elementor-elements/widget' ),
+		WidgetView: require( 'elementor-elements/views/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
 		},
@@ -165,7 +165,7 @@ App = Marionette.Application.extend( {
 
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
-			Settings = require( 'elementor-editor/settings/settings' ),
+			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Saver = require( 'elementor-editor/components/saver/manager' );
 
 		this.hooks = new EventManager();
@@ -193,7 +193,7 @@ App = Marionette.Application.extend( {
 	},
 
 	initElements: function() {
-		var ElementCollection = require( 'elementor-elements/collection' ),
+		var ElementCollection = require( 'elementor-elements/collections/elements-collection' ),
 			config = this.config.data;
 
 		// If it's an reload, use the not-saved data

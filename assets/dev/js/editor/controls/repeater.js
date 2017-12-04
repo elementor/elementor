@@ -1,6 +1,6 @@
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	RepeaterRowView = require( 'elementor-controls/repeater-row' ),
-	BaseSettingsModel = require( 'elementor-elements/settings/base' ),
+	BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlRepeaterItemView;
 
 ControlRepeaterItemView = ControlBaseDataView.extend( {
