@@ -88,9 +88,15 @@ class Manager extends BaseManager {
 			wp_send_json_error( 'Invalid Post' );
 		}
 
+		if ( ! current_user_can( 'edit_post', $id ) ) {
+			wp_send_json_error( __( 'Access Denied.', '' ) );
+		}
+
 		$post->post_title = $data['post_title'];
 
-		if ( isset( $data['post_status'] ) ) {
+		$allowed_post_statuses = get_post_statuses();
+
+		if ( isset( $data['post_status'] ) && in_array( $data['post_status'], $allowed_post_statuses, true ) ) {
 			$post_type_object = get_post_type_object( $post->post_type );
 			if ( 'publish' !== $data['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
 				$post->post_status = $data['post_status'];

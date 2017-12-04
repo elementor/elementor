@@ -131,9 +131,7 @@ class Schemes_Manager {
 	 * @access public
 	*/
 	public function ajax_apply_scheme() {
-		if ( ! Plugin::$instance->editor->verify_request_nonce() ) {
-			wp_send_json_error( new \WP_Error( 'token_expired' ) );
-		}
+		Plugin::$instance->editor->verify_ajax_nonce();
 
 		if ( ! isset( $_POST['scheme_name'] ) ) {
 			wp_send_json_error();
