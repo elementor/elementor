@@ -9,8 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-template-library-header-logo-area"></div>
 	<div id="elementor-template-library-header-menu-area"></div>
 	<div id="elementor-template-library-header-items-area">
-		<div id="elementor-template-library-header-close-modal" class="elementor-template-library-header-item" title="<?php echo __( 'Close', 'elementor' ); ?>">
-			<i class="eicon-close" title="<?php echo __( 'Close', 'elementor' ); ?>"></i>
+		<div id="elementor-template-library-header-close-modal" class="elementor-template-library-header-item">
+			<i class="eicon-close" aria-hidden="true" title="<?php esc_attr_e( 'Close', 'elementor' ); ?>"></i>
+			<span class="elementor-screen-only"><?php esc_html_e( 'Close', 'elementor' ); ?></span>
 		</div>
 		<div id="elementor-template-library-header-tools"></div>
 	</div>
@@ -25,13 +26,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-header-actions">
 	<div id="elementor-template-library-header-import" class="elementor-template-library-header-item">
-		<i class="eicon-upload-circle-o" title="<?php echo __( 'Import Template', 'elementor' ); ?>"></i>
+		<i class="eicon-import-export" aria-hidden="true" title="<?php esc_attr_e( 'Import Template', 'elementor' ); ?>"></i>
+		<span class="elementor-screen-only"><?php esc_html_e( 'Import Template', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-template-library-header-sync" class="elementor-template-library-header-item">
-		<i class="eicon-sync" title="<?php echo __( 'Sync Library', 'elementor' ); ?>"></i>
+		<i class="eicon-sync" aria-hidden="true" title="<?php esc_attr_e( 'Sync Library', 'elementor' ); ?>"></i>
+		<span class="elementor-screen-only"><?php esc_html_e( 'Sync Library', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-template-library-header-save" class="elementor-template-library-header-item">
-		<i class="eicon-save-o" title="<?php echo __( 'Save ', 'elementor' ); ?>"></i>
+		<i class="eicon-save" aria-hidden="true" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>"></i>
+		<span class="elementor-screen-only"><?php esc_html_e( 'Save', 'elementor' ); ?></span>
 	</div>
 </script>
 

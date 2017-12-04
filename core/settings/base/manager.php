@@ -50,6 +50,8 @@ abstract class Manager {
 	}
 
 	final public function ajax_save_settings() {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
 		$data = json_decode( stripslashes( $_POST['data'] ), true );
 
 		$id = 0;

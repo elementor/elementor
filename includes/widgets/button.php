@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Button Widget
+ * Button Widget.
+ *
+ * Elementor widget that displays a button with the ability to controll every
+ * aspect of the button design.
+ *
+ * @since 1.0.0
  */
 class Widget_Button extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve button widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve button widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +44,8 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve button widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,7 +58,9 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
-	 * Retrieve button sizes.
+	 * Get button sizes.
+	 *
+	 * Retrieve an array of button sizes for the button widget.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -450,6 +463,8 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
+	 * Render button text.
+	 *
 	 * Render button widget text.
 	 *
 	 * @since 1.5.0
