@@ -193,7 +193,7 @@ App = Marionette.Application.extend( {
 	},
 
 	initElements: function() {
-		var ElementCollection = require( 'elementor-elements/collections/elements-collection' ),
+		var ElementCollection = require( 'elementor-elements/collections/elements' ),
 			config = this.config.data;
 
 		// If it's an reload, use the not-saved data
