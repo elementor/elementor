@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Tracker.
+ *
+ * Elementor tracker handler class.
+ *
+ * @since 1.0.0
+ */
 class Tracker {
 
 	private static $_api_url = 'http://my.elementor.com/api/v1/tracker/';
@@ -231,7 +238,7 @@ class Tracker {
 		$usage = [];
 
 		$results = $wpdb->get_results(
-			"SELECT `post_type`, `post_status`, COUNT(`ID`) `hits` 
+			"SELECT `post_type`, `post_status`, COUNT(`ID`) `hits`
 				FROM {$wpdb->posts} `p`
 				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id`)
 				WHERE `post_type` != 'elementor_library'
@@ -260,7 +267,7 @@ class Tracker {
 		$usage = [];
 
 		$results = $wpdb->get_results(
-			"SELECT `meta_value`, COUNT(`ID`) `hits` 
+			"SELECT `meta_value`, COUNT(`ID`) `hits`
 				FROM {$wpdb->posts} `p`
 				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id`)
 				WHERE `post_type` = 'elementor_library'

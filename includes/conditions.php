@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Conditions.
+ *
+ * Elementor conditions handler class.
+ *
+ * @since 1.0.0
+ */
 class Conditions {
 
 	/**

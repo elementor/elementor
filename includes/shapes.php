@@ -5,7 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Shapes.
+ *
+ * Elementor shapes handler class.
+ *
+ * @since 1.3.0
+ */
 class Shapes {
+
 	const FILTER_EXCLUDE = 'exclude';
 
 	const FILTER_INCLUDE = 'include';

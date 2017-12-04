@@ -8,7 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Editor
+ * Editor.
+ *
+ * Elementor editor handler class.
  *
  * @since 1.0.0
  */
