@@ -113,11 +113,15 @@ class Revisions_Manager {
 			wp_send_json_error( 'You must set the revision ID' );
 		}
 
-		if ( ! get_post( $_POST['id'] ) ) {
-			wp_send_json_error( 'Invalid Revision' );
+		if ( ! current_user_can( 'edit_post', $_POST['id'] ) ) {
+			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
 		}
 
 		$revision = Plugin::$instance->db->get_plain_editor( $_POST['id'] );
+
+		if ( empty( $revision ) ) {
+			wp_send_json_error( 'Invalid Revision' );
+		}
 
 		wp_send_json_success( $revision );
 	}
@@ -130,7 +134,7 @@ class Revisions_Manager {
 		}
 
 		if ( ! current_user_can( 'delete_post', $_POST['id'] ) ) {
-			wp_send_json_error( __( 'Cannot delete this Revision', 'elementor' ) );
+			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
 		}
 
 		$deleted = wp_delete_post_revision( $_POST['id'] );
