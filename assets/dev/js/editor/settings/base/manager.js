@@ -1,5 +1,5 @@
 var ViewModule = require( 'elementor-utils/view-module' ),
-	SettingsModel = require( 'elementor-models/base-settings' ),
+	SettingsModel = require( 'elementor-elements/settings/base' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
 module.exports = ViewModule.extend( {
