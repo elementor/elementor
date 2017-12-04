@@ -89,7 +89,7 @@ class Manager extends BaseManager {
 		}
 
 		if ( ! current_user_can( 'edit_post', $id ) ) {
-			wp_send_json_error( __( 'Access Denied.', '' ) );
+			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
 		}
 
 		$post->post_title = $data['post_title'];
