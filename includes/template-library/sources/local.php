@@ -509,15 +509,15 @@ class Source_Local extends Source_Base {
 		}
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-template-trigger" class="page-title-action"><?php _e( 'Import Templates', 'elementor' ); ?></a>
+			<a id="elementor-import-template-trigger" class="page-title-action"><?php esc_attr_e( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
-				<div id="elementor-import-template-title"><?php _e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
+				<div id="elementor-import-template-title"><?php esc_attr_e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
 					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
-						<input type="file" name="file" accept=".json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php _e( 'Import Now', 'elementor' ); ?>">
+						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
+						<input type="submit" class="button" value="<?php esc_attr_e( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
