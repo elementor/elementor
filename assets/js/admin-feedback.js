@@ -35,7 +35,7 @@
 
 			self.getModal = function() {
 				if ( ! modal ) {
-					modal = self.dialogsManager.createWidget( 'options', {
+					modal = self.dialogsManager.createWidget( 'lightbox', {
 						id: 'elementor-deactivate-feedback-modal',
 						headerMessage: self.cache.$dialogHeader,
 						message: self.cache.$dialogForm,
@@ -47,7 +47,7 @@
 							at: 'center'
 						},
 						onReady: function() {
-							DialogsManager.getWidgetType( 'options' ).prototype.onReady.apply( this, arguments );
+							DialogsManager.getWidgetType( 'lightbox' ).prototype.onReady.apply( this, arguments );
 
 							this.addButton( {
 								name: 'submit',
