@@ -38,6 +38,7 @@ App = Marionette.Application.extend( {
 		element: {
 			Model: require( 'elementor-elements/model' )
 		},
+		Module: require( 'elementor-utils/module' ),
 		WidgetView: require( 'elementor-elements/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
