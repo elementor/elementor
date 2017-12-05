@@ -11,7 +11,8 @@ final class Modules_Manager {
 
 	public function __construct() {
 		$modules = [
-			'history'
+			'history',
+			'tags'
 		];
 
 		foreach ( $modules as $module_id ) {
