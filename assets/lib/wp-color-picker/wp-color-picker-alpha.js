@@ -193,6 +193,17 @@
 				self.toggler.click();
 			}
 		},
+
+		open: function() {
+			this.element.iris( 'toggle' );
+			this.inputWrapper.removeClass( 'hidden' );
+			this.wrap.addClass( 'wp-picker-active' );
+			this.toggler
+				.addClass( 'wp-picker-open' )
+				.attr( 'aria-expanded', 'true' );
+			$( 'body' ).on( 'click.wpcolorpicker', this.close );
+		},
+
 		/**
 		 * @summary Binds event listeners to the color picker.
 		 *
