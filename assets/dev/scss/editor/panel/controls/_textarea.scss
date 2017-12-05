@@ -3,4 +3,8 @@
 	textarea {
 		display: block;
 	}
+
+	[contenteditable="true"] {
+		height: 100px;
+	}
 }
