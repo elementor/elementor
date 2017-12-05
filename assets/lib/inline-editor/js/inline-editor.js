@@ -103,6 +103,7 @@
 			debug: false,
 			toolbar: null, // custom toolbar
 			mode: 'basic',
+			ignoreLineBreak: false,
 			toolbarIconsPrefix: 'fa fa-',
 			toolbarIconsDictionary: {externalLink: 'fa fa-external-link'},
 			stay: config.stay || !config.debug,
@@ -531,6 +532,12 @@
 			editor.classList.remove(ctx.config.placeholderClass);
 
 			if (e.which !== 13 || e.shiftKey) return;
+
+			if ( ctx.config.ignoreLineBreak ) {
+				e.preventDefault();
+
+				return;
+			}
 
 			var node = getNode(ctx, true);
 
