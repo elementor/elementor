@@ -17,7 +17,7 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 	},
 
 	onPopoverToggleClick: function() {
-		this.$el.next( '.elementor-controls-popover' ).show();
+		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 } );
 
