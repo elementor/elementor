@@ -244,21 +244,29 @@ class Frontend {
 
 		wp_enqueue_script( 'elementor-frontend' );
 
-		$post = get_post();
-
 		$elementor_frontend_config = [
 			'isEditMode' => Plugin::$instance->preview->is_preview_mode(),
 			'settings' => SettingsManager::get_settings_frontend_config(),
 			'is_rtl' => is_rtl(),
-			'post' => [
-				'id' => $post->ID,
-				'title' => $post->post_title,
-				'excerpt' => $post->post_excerpt,
-			],
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
 		];
+
+		if ( is_singular() ) {
+			$post = get_post();
+			$elementor_frontend_config['post'] = [
+				'id' => $post->ID,
+				'title' => $post->post_title,
+				'excerpt' => $post->post_excerpt,
+			];
+		} else {
+			$elementor_frontend_config['post'] = [
+				'id' => 0,
+				'title' => wp_get_document_title(),
+				'excerpt' => '',
+			];
+		}
 
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			$elements_manager = Plugin::$instance->elements_manager;
