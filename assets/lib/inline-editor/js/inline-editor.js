@@ -804,7 +804,7 @@
 		if (!editor || editor.nodeType !== 1) throw new Error('Can\'t find editor');
 
 		// set default class
-		editor.classList.add(defaults.class);
+		editor.classList.add.apply(editor.classList, defaults.class.split(' '));
 
 		// set contenteditable
 		editor.setAttribute('contenteditable', 'true');
@@ -1162,7 +1162,7 @@
 
 		removeAllListeners(this);
 
-		config.editor.classList.remove(config.class, config.placeholderClass);
+		config.editor.classList.remove.apply(config.editor.classList, config.class.split(' ').concat(config.placeholderClass));
 
 		config.editor.removeAttribute('contenteditable');
 
