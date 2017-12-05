@@ -1,4 +1,5 @@
 var ControlBaseView = require( 'elementor-controls/base' ),
+	MentionsBehavior = require( 'elementor-micro-elements/control-mentions-behavior' ),
 	ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend( {
@@ -11,7 +12,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 			radio: 'input[data-setting][type="radio"]',
 			select: 'select[data-setting]',
 			textarea: 'textarea[data-setting]',
-			responsiveSwitchers: '.elementor-responsive-switcher'
+			responsiveSwitchers: '.elementor-responsive-switcher',
+			contentEditable: '[contenteditable="true"]'
 		} );
 
 		return ui;
@@ -32,8 +34,19 @@ ControlBaseDataView = ControlBaseView.extend( {
 			'change @ui.radio': 'onBaseInputChange',
 			'input @ui.textarea': 'onBaseInputChange',
 			'change @ui.select': 'onBaseInputChange',
-			'click @ui.responsiveSwitchers': 'onSwitcherClick'
+			'click @ui.responsiveSwitchers': 'onSwitcherClick',
+			'input @ui.contentEditable': 'onBaseInputChange'
 		};
+	},
+
+	behaviors: function() {
+		var behaviors = {};
+
+		if ( this.options.model.get( 'micro_elements' ) ) {
+			behaviors.mentions = { behaviorClass: MentionsBehavior };
+		}
+
+		return behaviors;
 	},
 
 	initialize: function( options ) {
@@ -105,6 +118,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
+		} else if ( $input.attr( 'contenteditable' ) ) {
+			$input.html( value );
 		} else {
 			$input.val( value );
 		}

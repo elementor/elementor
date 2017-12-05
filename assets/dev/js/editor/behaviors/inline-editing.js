@@ -1,7 +1,14 @@
-var InlineEditingBehavior;
+var Mentions = require( 'elementor-micro-elements/mentions' ),
+	InlineEditingBehavior;
 
 InlineEditingBehavior = Marionette.Behavior.extend( {
+	editor: null,
+
 	editing: false,
+
+	stayInEditing: false,
+
+	mentionsListShown: false,
 
 	$currentEditingArea: null,
 
@@ -20,6 +27,25 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 	getEditingSettingKey: function() {
 		return this.$currentEditingArea.data().elementorSettingKey;
+	},
+
+	initMentions: function( content ) {
+		this.mentions = new Mentions( {
+			element: this.$currentEditingArea,
+			value: content,
+			isInsidePreview: true
+		} );
+
+		this.mentions.on( {
+			'mention:popup:hide': this.onMentionSettingsHide.bind( this ),
+			'mention:popup:show': this.onMentionSettingsShow.bind( this ),
+			'mention:create mention:change mention:remove': this.onMentionChange.bind( this )
+		} );
+
+		this.mentions.$element.on( {
+			'shown.atwho': this.onMentionsListShow.bind( this ),
+			'hidden.atwho': this.onMentionsListHide.bind( this )
+		} );
 	},
 
 	startEditing: function( $element ) {
@@ -99,6 +125,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			}
 		} );
 
+		this.initMentions( contentHTML );
+
 		var $menuItems = jQuery( this.editor._menu ).children();
 
 		/**
@@ -125,8 +153,12 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		 * we need to rerender the area. To prevent multiple renderings, we will render only areas that
 		 * use advanced toolbars.
 		 */
-		if ( 'advanced' === this.$currentEditingArea.data().elementorInlineEditingToolbar ) {
+		var toolbar = this.$currentEditingArea.data().elementorInlineEditingToolbar;
+
+		if ( 'advanced' === toolbar ) {
 			this.view.getEditModel().renderRemoteServer();
+		} else if ( ! toolbar ) {
+			this.view.render();
 		}
 	},
 
@@ -154,7 +186,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			var selection = elementorFrontend.getElements( 'window' ).getSelection(),
 				$focusNode = jQuery( selection.focusNode );
 
-			if ( $focusNode.closest( '.pen-input-wrapper' ).length ) {
+			if ( self.stayInEditing || $focusNode.closest( '.pen-input-wrapper, .elementor-mentions-popup' ).length ) {
 				return;
 			}
 
@@ -163,7 +195,47 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.editor.getContent() );
+		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.mentions.getValue().trim().replace( /\u200b/g, '' ) );
+	},
+
+	onMentionChange: function() {
+		this.$currentEditingArea.trigger( 'input' );
+	},
+
+	onMentionSettingsShow: function( mentionView ) {
+		this.stayInEditing = true;
+
+		var $frontendWindow = elementorFrontend.getElements( '$window' ),
+			$editingArea = this.$currentEditingArea;
+
+		var hidePopup = function() {
+			mentionView.mentionPopup.hide();
+
+			$frontendWindow[0].removeEventListener( 'click', hidePopup, true );
+
+			$editingArea[0].removeEventListener( 'click', hidePopup, true );
+		};
+
+		$frontendWindow[0].addEventListener( 'click', hidePopup, true );
+
+		$editingArea[0].addEventListener( 'click', hidePopup, true );
+	},
+
+	onMentionSettingsHide: function() {
+		this.stayInEditing = false;
+
+		if ( ! this.$currentEditingArea.is( ':focus' ) ) {
+			this.stopEditing();
+		}
+
+	},
+
+	onMentionsListShow: function() {
+		this.editor.config.ignoreLineBreak = true;
+	},
+
+	onMentionsListHide: function() {
+		this.editor.config.ignoreLineBreak = false;
 	}
 } );
 

@@ -90,11 +90,6 @@ module.exports = function( grunt ) {
 							expose: 'elementor-views'
 						},
 						{
-							cwd: 'assets/dev/js/editor/components',
-							src: '**/*.js',
-							expose: 'elementor-components'
-						},
-						{
 							cwd: 'assets/dev/js/editor/utils',
 							src: '**/*.js',
 							expose: 'elementor-editor-utils'
@@ -108,6 +103,11 @@ module.exports = function( grunt ) {
 							cwd: 'assets/dev/js/editor/components/template-library',
 							src: '**/*.js',
 							expose: 'elementor-templates'
+						},
+						{
+							cwd: 'assets/dev/js/editor/components/micro-elements',
+							src: '**/*.js',
+							expose: 'elementor-micro-elements'
 						},
 						{
 							cwd: 'assets/dev/js/frontend',

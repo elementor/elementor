@@ -421,6 +421,21 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
+	serializeData: function() {
+		var data = BaseContainer.prototype.serializeData.apply( this, arguments ),
+			controls = this.getEditModel().get( 'settings' ).controls;
+
+		jQuery.each( controls, function() {
+			if ( this.micro_elements ) {
+				var value = data.settings[ this.name ];
+
+				data.settings[ this.name ] = elementor.microElements.parseTagsText( value, elementor.microElements.renderTagData );
+			}
+		} );
+
+		return data;
+	},
+
 	onBeforeRender: function() {
 		this.renderAttributes = {};
 	},

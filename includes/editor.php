@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\MicroElements\Manager as MicroElementsManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -542,6 +543,7 @@ class Editor {
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'current_user_can_publish' => $current_user_can_publish,
 			'exit_to_dashboard_url' => get_edit_post_link(),
+			'microElements' => MicroElementsManager::get_config(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),

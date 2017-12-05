@@ -165,6 +165,7 @@ App = Marionette.Application.extend( {
 
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
+			MicroElements = require( 'elementor-micro-elements/manager' ),
 			Settings = require( 'elementor-editor/settings/settings' ),
 			Saver = require( 'elementor-editor/components/saver/manager' );
 
@@ -173,6 +174,8 @@ App = Marionette.Application.extend( {
 		this.saver = new Saver();
 
 		this.settings = new Settings();
+
+		this.microElements = new MicroElements();
 
 		/**
 		 * @deprecated - use `this.settings.page` instead
@@ -300,7 +303,7 @@ App = Marionette.Application.extend( {
 						return false;
 					}
 
-					return ! $target.closest( '.elementor-inline-editing' ).length;
+					return ! $target.closest( '[contenteditable="true"]' ).length;
 				},
 				handle: function() {
 					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
