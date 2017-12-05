@@ -125,10 +125,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-editor-content">
 	<div class="elementor-panel-navigation">
-		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
-		<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-			<a href="#">{{{ tabTitle }}}</a>
-		</div>
+		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) {
+			#>
+			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<a href="#">{{{ tabTitle }}}</a>
+			</div>
 		<# } ); #>
 	</div>
 	<# if ( elementData.reload_preview ) { #>
