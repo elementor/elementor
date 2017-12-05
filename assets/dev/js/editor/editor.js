@@ -85,7 +85,8 @@ App = Marionette.Application.extend( {
 
 	backgroundClickListeners: {
 		popover: {
-			element: '.elementor-controls-popover'
+			element: '.elementor-controls-popover',
+			ignore: '.elementor-control-popover-toggle-toggle'
 		}
 	},
 
