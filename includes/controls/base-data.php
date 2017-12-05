@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\MicroElements\Manager as MicroElementsManager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -31,28 +33,58 @@ abstract class Base_Data_Control extends Base_Control {
 	}
 
 	/**
+	 * Retrieve default control settings.
+	 *
+	 * Get the default settings of the control. Used to return the default
+	 * settings while initializing the control.
+	 *
+	 * @access protected
+	 *
+	 * @return array Control default settings.
+	 */
+	protected function get_default_settings() {
+		$default_settings = parent::get_default_settings();
+
+		$default_settings['micro_elements'] = false;
+
+		return $default_settings;
+	}
+
+	/**
 	 * Retrieve data control value.
-	 *
 	 * Get the value of the data control from a specific widget settings.
-	 *
 	 * @since 1.5.0
 	 * @access public
 	 *
 	 * @param array $control Control
-	 * @param array $widget  Widget
+	 * @param array $element Element
 	 *
 	 * @return mixed Control values.
 	 */
-	public function get_value( $control, $widget ) {
+	public function get_value( $control, $element ) {
 		if ( ! isset( $control['default'] ) ) {
 			$control['default'] = $this->get_default_value();
 		}
 
-		if ( ! isset( $widget[ $control['name'] ] ) ) {
-			return $control['default'];
+		if ( isset( $element[ $control['name'] ] ) ) {
+			$value = $element[ $control['name'] ];
+		} else {
+			$value = $control['default'];
 		}
 
-		return $widget[ $control['name'] ];
+		if ( $this->get_settings( 'micro_elements' ) ) {
+			$value = $this->parse_tags( $value );
+		}
+
+		return $value;
+	}
+
+	public function parse_tags( $value ) {
+		if ( $value ) {
+			$value = MicroElementsManager::parse_tags_text( $value );
+		}
+
+		return $value;
 	}
 
 	/**

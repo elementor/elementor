@@ -274,35 +274,12 @@ abstract class Widget_Base extends Element_Base {
 		return array_merge( parent::_get_initial_config(), $config );
 	}
 
-	/**
-	 * Print widget template.
-	 *
-	 * Used to generate the widget template on the editor, using a Backbone
-	 * JavaScript template.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	final public function print_template() {
-		ob_start();
-
-		$this->_content_template();
-
-		$content_template = ob_get_clean();
-
-		$content_template = apply_filters( 'elementor/widget/print_template', $content_template,  $this );
-
-		// Bail if the widget renderd on the server not using javascript
-		if ( empty( $content_template ) ) {
-			return;
-		}
+	protected function print_template_content( $template_content ) {
+		$this->render_edit_tools();
 		?>
-		<script type="text/html" id="tmpl-elementor-<?php echo static::get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
-			<?php $this->render_edit_tools(); ?>
-			<div class="elementor-widget-container">
-				<?php echo $content_template; ?>
-			</div>
-		</script>
+		<div class="elementor-widget-container">
+			<?php echo $template_content; ?>
+		</div>
 		<?php
 	}
 

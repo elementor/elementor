@@ -1,0 +1,34 @@
+.atwho-inserted {
+	padding: 2px 5px;
+	background-color: $editor-background;
+	cursor: pointer;
+	white-space: nowrap;
+	user-select: none;
+}
+
+@at-root .elementor-mentions-popup {
+	position: absolute;
+	width: 230px;
+	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
+
+	&:before {
+		$triangle-size: 10px;
+		content: '';
+		position: absolute;
+		top: 10px;
+		transform: translateX(getValueByDirection(-$triangle-size * 2, $triangle-size * 2));
+		border: $triangle-size solid transparent;
+		@include border-end-property(color, #fff);
+	}
+
+	.elementor-control {
+
+		&-type-section {
+			margin: 0;
+		}
+	}
+
+	.elementor-section-toggle {
+		display: none;
+	}
+}

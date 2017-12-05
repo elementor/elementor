@@ -244,7 +244,7 @@ abstract class Controls_Stack {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		if ( null === $stack ) {
-			$this->_init_controls();
+			$this->init_controls();
 
 			return $this->get_controls();
 		}
@@ -1268,6 +1268,33 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Print element template.
+	 *
+	 * Used to generate the element template on the editor.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
+	public function print_template() {
+		ob_start();
+
+		$this->_content_template();
+
+		$template_content = ob_get_clean();
+
+		$template_content = apply_filters( 'elementor/' . $this->get_type() . '/print_template', $template_content, $this );
+
+		if ( empty( $template_content ) ) {
+			return;
+		}
+		?>
+		<script type="text/html" id="tmpl-elementor-<?php echo $this->get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
+			<?php $this->print_template_content( $template_content ); ?>
+		</script>
+		<?php
+	}
+
+	/**
 	 * Start injection.
 	 *
 	 * Used to inject controls and sections to a specific position in the stack.
@@ -1441,14 +1468,38 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Render element.
+	 *
+	 * Generates the final HTML on the frontend.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
+	protected function render() {}
+
+	protected function print_template_content( $template_content ) {
+		echo $template_content;
+	}
+
+	/**
+	 * Render element output in the editor.
+	 *
+	 * Used to generate the live preview, using a Backbone JavaScript template.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
+	protected function _content_template() {}
+
+	/**
 	 * Initialize controls.
 	 *
 	 * Register the all controls added by `_register_controls()`.
 	 *
 	 * @since 1.4.0
-	 * @access private
+	 * @access protected
 	 */
-	private function _init_controls() {
+	protected function init_controls() {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
 		$this->_register_controls();
