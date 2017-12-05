@@ -3,6 +3,9 @@
 //
 @import "../helpers/variables";
 @import "../helpers/mixins";
+@import "panel/global";
+@import "panel/control";
+@import "panel/color-picker";
 @import "inline-editor";
 @import "animations";
 @import "compatibility";
