@@ -612,6 +612,11 @@ App = Marionette.Application.extend( {
 				$clickedTarget = jQuery( event.target ),
 				$clickedTargetClosestElement = $clickedTarget.closest( elementToHide );
 
+			// If it's a label that associated with an input
+			if ( $clickedTarget[0].control ) {
+				$clickedTarget = $clickedTarget.add( $clickedTarget[0].control );
+			}
+
 			jQuery( elementToHide ).not( $clickedTargetClosestElement ).hide();
 		} );
 	},
