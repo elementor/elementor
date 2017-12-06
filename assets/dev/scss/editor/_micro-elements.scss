@@ -32,3 +32,37 @@
 		display: none;
 	}
 }
+
+.elementor-control-mentions {
+
+	&-wrapper {
+		position: relative;
+	}
+
+	&-add {
+		position: absolute;
+		@include end(0);
+		top: 0;
+		height: 100%;
+		@include border-start(1px solid $editor-lighter);
+		padding: 5px 10px;
+
+		i {
+			cursor: pointer;
+			color: $editor-info;
+			font-size: 10px;
+		}
+	}
+
+	&-area {
+		line-height: 2;
+		@include padding-end(30px);
+
+		&:focus {
+
+			+ .elementor-control-mentions-add {
+				@include border-start-property(color, $editor-light);
+			}
+		}
+	}
+}
