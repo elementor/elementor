@@ -56,18 +56,18 @@ abstract class Base_Data_Control extends Base_Control {
 	 * @since 1.5.0
 	 * @access public
 	 *
-	 * @param array $control Control
-	 * @param array $element Element
+	 * @param array $control  Control
+	 * @param array $settings Element settings
 	 *
 	 * @return mixed Control values.
 	 */
-	public function get_value( $control, $element ) {
+	public function get_value( $control, $settings ) {
 		if ( ! isset( $control['default'] ) ) {
 			$control['default'] = $this->get_default_value();
 		}
 
-		if ( isset( $element[ $control['name'] ] ) ) {
-			$value = $element[ $control['name'] ];
+		if ( isset( $settings[ $control['name'] ] ) ) {
+			$value = $settings[ $control['name'] ];
 		} else {
 			$value = $control['default'];
 		}
