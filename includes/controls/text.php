@@ -86,11 +86,20 @@ class Control_Text extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<div id="<?php echo $control_uid; ?>" class="elementor-input-style tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" contenteditable="true"></div>
+				<# if ( data.micro_elements ) { #>
+					<div class="elementor-control-mentions-wrapper">
+						<div id="<?php echo $control_uid; ?>" class="elementor-input-style tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" contenteditable="true"></div>
+						<div class="elementor-control-mentions-add">
+							<i class="fa fa-database"></i>
+						</div>
+					</div>
+				<# } else { #>
+					<input id="<?php echo $control_uid; ?>" type="{{ data.input_type }}" class="tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}" />
+				<# } #>
 			</div>
 		</div>
 		<# if ( data.description ) { #>
-		<div class="elementor-control-field-description">{{{ data.description }}}</div>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
 	}

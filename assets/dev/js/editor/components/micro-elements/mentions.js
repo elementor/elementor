@@ -1,8 +1,28 @@
-var Module = require( 'elementor-utils/module' ),
+var ViewModule = require( 'elementor-utils/view-module' ),
 	MentionView = require( 'elementor-micro-elements/mention-view' );
 
-module.exports = Module.extend( {
+module.exports = ViewModule.extend( {
 	$element: null,
+
+	lastCaretPosition: null,
+
+	mentionsInstance: null,
+
+	__construct: function( settings ) {
+		this.$element = settings.element;
+	},
+
+	getDefaultElements: function() {
+		return {
+			$addMention: this.$element.next()
+		};
+	},
+
+	bindEvents: function() {
+		this.$element.on( 'blur', this.onElementBlur.bind( this ) );
+
+		this.elements.$addMention.on( 'click', this.onAddMentionClick.bind( this ) );
+	},
 
 	initValue: function() {
 		var self = this;
@@ -37,6 +57,10 @@ module.exports = Module.extend( {
 			},
 			lookUpOnClick: false
 		} );
+
+		this.mentionsInstance = this.$element.data( 'atwho' );
+
+		this.mentionsController = this.mentionsInstance.controllers['@'];
 
 		this.handleMentionInsert();
 	},
@@ -78,10 +102,9 @@ module.exports = Module.extend( {
 
 	handleMentionInsert: function() {
 		var self = this,
-			mentionInstance = self.$element.data( 'atwho' ),
-			insert = mentionInstance.controllers['@'].insert;
+			insert = this.mentionsController.insert;
 
-		mentionInstance.controllers['@'].insert = function( content, $li ) {
+		this.mentionsController.insert = function( content, $li ) {
 			insert.apply( this, arguments );
 
 			self.createMentionView( {
@@ -106,10 +129,49 @@ module.exports = Module.extend( {
 	},
 
 	onInit: function() {
-		this.$element = this.getSettings( 'element' );
+		ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.initValue();
 
 		this.initMentions();
+	},
+
+	onElementBlur: function() {
+		this.lastCaretPosition = this.$element.caret( 'pos' );
+	},
+
+	onAddMentionClick: function() {
+		var lastCaretPosition = this.lastCaretPosition;
+
+		if ( ! lastCaretPosition ) {
+			lastCaretPosition = this.$element.text().length;
+		}
+
+		this.$element
+			.focus()
+			.caret( 'pos', lastCaretPosition );
+
+		var selection = getSelection(),
+			range = selection.getRangeAt( 0 ),
+			endContainerData = range.endContainer.data,
+			addAt = '@';
+
+		if ( endContainerData ) {
+			if ( endContainerData.match( '@$' ) ) { // Content ends with a @.
+				addAt = '';
+			} else if ( ! endContainerData.match( ' $' ) ) { // Content ends with a text.
+				addAt = ' @';
+			}
+		}
+
+		range.deleteContents();
+
+		range.insertNode( document.createTextNode( addAt ) );
+
+		if ( addAt ) {
+			this.$element.caret( 'pos', lastCaretPosition + addAt.length );
+		}
+
+		this.mentionsController.lookUp( { which: '' } );
 	}
 } );
