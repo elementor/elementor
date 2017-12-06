@@ -193,7 +193,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix! - CSS autoprefixer for minified files (now supports last 10 versions of browsers)
 * Fix! - Import template in Safari browser
 * Fix! - Post config for none singular pages
-* Fix! - Re-Render Wysiwyg control inside repeater on sort changed ([#2897](https://github.com/pojome/elementor/issues/2897), [#2450](https://github.com/pojome/elementor/issues/2450), [#2324](https://github.com/pojome/elementor/issues/2324))
+* Fix! - Re-Render WYSIWYG control inside repeater on sort changed ([#2897](https://github.com/pojome/elementor/issues/2897), [#2450](https://github.com/pojome/elementor/issues/2450), [#2324](https://github.com/pojome/elementor/issues/2324))
 * Fix! - Eicons CSS re-compiled ([#2878](https://github.com/pojome/elementor/issues/2878))
 
 ### 1.8.8 - 30.11.2017 ###
