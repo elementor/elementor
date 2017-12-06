@@ -146,13 +146,13 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 	onSortStop: function( event, ui ) {
 		// Reload TinyMCE editors (if exist), it's a bug that TinyMCE content is missing after stop dragging
-		ui.item.find( '.elementor-wp-editor' ).each( function() {
-			var editor = tinymce.get( this.id ),
-				settings = editor.settings;
+		var sortedRowView = this.children.findByIndex( ui.item.index() ),
+			rowControls = sortedRowView.children;
 
-			settings.height = Backbone.$( editor.getContainer() ).height();
-			tinymce.execCommand( 'mceRemoveEditor', true, this.id );
-			tinymce.init( settings );
+		rowControls.each( function( control ) {
+			if ( 'wysiwyg' === control.model.get( 'type' ) ) {
+				control.render();
+			}
 		} );
 	},
 
