@@ -1,5 +1,5 @@
 var TagControlsStack = require( 'elementor-micro-elements/tag-controls-stack' ),
-	SettingsModel = require( 'elementor-elements/settings/base' );
+	SettingsModel = require( 'elementor-elements/models/base-settings' );
 
 module.exports = Marionette.ItemView.extend( {
 	mentionPopup: null,
