@@ -1,11 +1,11 @@
-var BaseElementView = require( 'elementor-elements/base-element' ),
-	ElementEmptyView = require( 'elementor-elements/empty' ),
+var BaseElementView = require( 'elementor-elements/views/base' ),
+	ColumnEmptyView = require( 'elementor-elements/views/column-empty' ),
 	ColumnView;
 
 ColumnView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-column-content' ),
 
-	emptyView: ElementEmptyView,
+	emptyView: ColumnEmptyView,
 
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 

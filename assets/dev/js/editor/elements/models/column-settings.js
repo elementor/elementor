@@ -1,4 +1,4 @@
-var BaseSettingsModel = require( 'elementor-elements/settings/base' ),
+var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ColumnSettingsModel;
 
 ColumnSettingsModel = BaseSettingsModel.extend( {

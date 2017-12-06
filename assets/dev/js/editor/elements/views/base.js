@@ -1,4 +1,4 @@
-var BaseSettingsModel = require( 'elementor-elements/settings/base' ),
+var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-editor-utils/validator' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
@@ -79,9 +79,9 @@ BaseElementView = BaseContainer.extend( {
 			elType = model.get( 'elType' );
 
 		if ( 'section' === elType ) {
-			ChildView = require( 'elementor-elements/section' );
+			ChildView = require( 'elementor-elements/views/section' );
 		} else if ( 'column' === elType ) {
-			ChildView = require( 'elementor-elements/column' );
+			ChildView = require( 'elementor-elements/views/column' );
 		} else {
 			ChildView = elementor.modules.WidgetView;
 		}
