@@ -36,10 +36,10 @@ App = Marionette.Application.extend( {
 	// Exporting modules that can be used externally
 	modules: {
 		element: {
-			Model: require( 'elementor-elements/model' )
+			Model: require( 'elementor-elements/models/element' )
 		},
 		Module: require( 'elementor-utils/module' ),
-		WidgetView: require( 'elementor-elements/widget' ),
+		WidgetView: require( 'elementor-elements/views/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
 		},
@@ -86,7 +86,8 @@ App = Marionette.Application.extend( {
 
 	backgroundClickListeners: {
 		popover: {
-			element: '.elementor-controls-popover'
+			element: '.elementor-controls-popover',
+			ignore: '.elementor-control-popover-toggle-toggle'
 		}
 	},
 
@@ -167,7 +168,7 @@ App = Marionette.Application.extend( {
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
 			MicroElements = require( 'elementor-micro-elements/manager' ),
-			Settings = require( 'elementor-editor/settings/settings' ),
+			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Saver = require( 'elementor-editor/components/saver/manager' );
 
 		this.hooks = new EventManager();
@@ -197,7 +198,7 @@ App = Marionette.Application.extend( {
 	},
 
 	initElements: function() {
-		var ElementCollection = require( 'elementor-elements/collection' ),
+		var ElementCollection = require( 'elementor-elements/collections/elements' ),
 			config = this.config.data;
 
 		// If it's an reload, use the not-saved data
@@ -613,8 +614,18 @@ App = Marionette.Application.extend( {
 	onBackgroundClick: function( event ) {
 		jQuery.each( this.backgroundClickListeners, function() {
 			var elementToHide = this.element,
-				$clickedTarget = jQuery( event.target ),
-				$clickedTargetClosestElement = $clickedTarget.closest( elementToHide );
+				$clickedTarget = jQuery( event.target );
+
+			// If it's a label that associated with an input
+			if ( $clickedTarget[0].control ) {
+				$clickedTarget = $clickedTarget.add( $clickedTarget[0].control );
+			}
+
+			if ( this.ignore && $clickedTarget.closest( this.ignore ).length ) {
+				return;
+			}
+
+			var $clickedTargetClosestElement = $clickedTarget.closest( elementToHide );
 
 			jQuery( elementToHide ).not( $clickedTargetClosestElement ).hide();
 		} );

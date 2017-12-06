@@ -203,6 +203,7 @@
 				.attr( 'aria-expanded', 'true' );
 			$( 'body' ).on( 'click.wpcolorpicker', this.close );
 		},
+
 		/**
 		 * @summary Binds event listeners to the color picker.
 		 *

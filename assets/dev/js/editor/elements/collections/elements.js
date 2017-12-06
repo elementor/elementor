@@ -1,4 +1,4 @@
-var ElementModel = require( 'elementor-elements/model' );
+var ElementModel = require( 'elementor-elements/models/element' );
 
 var ElementsCollection = Backbone.Collection.extend( {
 	add: function( models, options, isCorrectSet ) {

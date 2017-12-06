@@ -65,7 +65,7 @@ module.exports = function( grunt ) {
 							expose: 'elementor-editor'
 						},
 						{
-							cwd: 'assets/dev/js/editor/behaviors',
+							cwd: 'assets/dev/js/editor/elements/views/behaviors',
 							src: '**/*.js',
 							expose: 'elementor-behaviors'
 						},

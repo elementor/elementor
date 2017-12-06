@@ -1,5 +1,5 @@
-var BaseSettingsModel = require( 'elementor-elements/settings/base' ),
-	ColumnSettingsModel = require( 'elementor-elements/settings/column' ),
+var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
+	ColumnSettingsModel = require( 'elementor-elements/models/column-settings' ),
 	ElementModel;
 
 ElementModel = Backbone.Model.extend( {
@@ -21,7 +21,7 @@ ElementModel = Backbone.Model.extend( {
 			elements = this.get( 'elements' );
 
 		if ( undefined !== elements ) {
-			var ElementsCollection = require( 'elementor-elements/collection' );
+			var ElementsCollection = require( 'elementor-elements/collections/elements' );
 
 			this.set( 'elements', new ElementsCollection( elements ) );
 		}

@@ -1,4 +1,4 @@
-var BaseElementView = require( 'elementor-elements/base-element' ),
+var BaseElementView = require( 'elementor-elements/views/base' ),
 	AddSectionView = require( 'elementor-views/add-section/inline' ),
 	SectionView;
 
