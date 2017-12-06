@@ -1,5 +1,4 @@
-var ControlsStack = require( 'elementor-views/controls-stack' ),
-	SettingsModel = require( 'elementor-elements/settings/base' );
+var ControlsStack = require( 'elementor-views/controls-stack' );
 
 module.exports = ControlsStack.extend( {
 	activeTab: 'content',
