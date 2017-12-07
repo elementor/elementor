@@ -261,7 +261,6 @@ class Widget_Accordion extends Widget_Base {
 			'icon_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
@@ -430,14 +429,6 @@ class Widget_Accordion extends Widget_Base {
 		$settings = $this->get_settings();
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
-
-		// Backwards Compitability
-		if ( ! isset( $settings['icon'] ) ) {
-			$settings['icon'] = 'fa fa-plus';
-		}
-		if ( ! isset( $settings['icon_active'] ) ) {
-			$settings['icon_active'] = 'fa fa-minus';
-		}
 		?>
 		<div class="elementor-accordion" role="tablist">
 			<?php foreach ( $settings['tabs'] as $index => $item ) :
@@ -480,14 +471,6 @@ class Widget_Accordion extends Widget_Base {
 		?>
 		<div class="elementor-accordion" role="tablist">
 			<#
-			// Backwards Compitability
-			if ( '' === settings.icon ) {
-				settings.icon = 'fa fa-plus';
-			}
-			if ( '' === settings.icon_active ) {
-				settings.icon_active = 'fa fa-minus';
-			}
-
 			if ( settings.tabs ) {
 				var tabindex = view.getIDInt().toString().substr( 0, 3 );
 
