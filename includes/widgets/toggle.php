@@ -374,8 +374,9 @@ class Widget_Toggle extends Widget_Base {
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
 				<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>" role="tab">
-					<span class="elementor-toggle-icon elementor-toggle-icon-<?php echo $settings['icon_align']; ?>">
-						<i class="<?php echo $settings['icon']; ?>"></i>
+					<span class="elementor-toggle-icon elementor-toggle-icon-<?php echo $settings['icon_align']; ?>" aria-hidden="true">
+						<i class="elementor-toggle-icon-closed <?php echo $settings['icon']; ?>"></i>
+						<i class="elementor-toggle-icon-opened <?php echo $settings['icon_active']; ?>"></i>
 					</span>
 					<?php echo $item['tab_title']; ?>
 				</div>
@@ -424,8 +425,9 @@ class Widget_Toggle extends Widget_Base {
 					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
 					#>
 					<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">
-						<span class="elementor-toggle-icon elementor-toggle-icon-{{ settings.icon_align }}">
-							<i class="{{ settings.icon }}"></i>
+						<span class="elementor-toggle-icon elementor-toggle-icon-{{ settings.icon_align }}" aria-hidden="true">
+							<i class="elementor-toggle-icon-closed {{ settings.icon }}"></i>
+							<i class="elementor-toggle-icon-opened {{ settings.icon_active }}"></i>
 						</span>
 						{{{ item.tab_title }}}
 					</div>
