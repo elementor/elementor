@@ -103,7 +103,7 @@ class Manager extends BaseManager {
 
 		$allowed_post_statuses = get_post_statuses();
 
-		if ( isset( $data['post_status'] ) && in_array( $data['post_status'], $allowed_post_statuses, true ) ) {
+		if ( isset( $data['post_status'] ) && isset( $allowed_post_statuses[ $data['post_status'] ] ) ) {
 			$post_type_object = get_post_type_object( $post->post_type );
 			if ( 'publish' !== $data['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
 				$post->post_status = $data['post_status'];
