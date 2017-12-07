@@ -121,6 +121,13 @@ class Api {
 			'site_lang' => get_bloginfo( 'language' ),
 		];
 
+		/**
+		 * Filters the body arguments send with the GET request when fetching the content.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $body_args Body arguments.
+		 */
 		$body_args = apply_filters( 'elementor/api/get_templates/body_args', $body_args );
 
 		$response = wp_remote_get( $url, [
