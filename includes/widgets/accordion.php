@@ -416,6 +416,20 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon_active_color',
+			[
+				'label' => __( 'Active Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon .fa:before' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'icon!' => '',
+				]
+			]
+		);
+
+		$this->add_control(
 			'heading_content',
 			[
 				'label' => __( 'Content', 'elementor' ),
