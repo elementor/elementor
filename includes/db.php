@@ -180,16 +180,10 @@ class DB {
 			$autosave = wp_get_post_autosave( $post_id );
 
 			if ( is_object( $autosave ) ) {
-				$autosave_data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
-
-				if ( ! empty( $autosave_data ) ) {
-					$data = $autosave_data;
-				}
+				$data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
 			}
-
-			if ( empty( $data ) ) {
-				$data = $this->_get_new_editor_from_wp_editor( $post_id );
-			}
+		} elseif ( empty( $data ) ) {
+			$data = $this->_get_new_editor_from_wp_editor( $post_id );
 		}
 
 		return $data;
