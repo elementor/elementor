@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Google Maps Widget
+ * Google Maps Widget.
+ *
+ * Elementor widget that displays an embeded google map.
+ *
+ * @since 1.0.0
  */
 class Widget_Google_Maps extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve google maps widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Google_Maps extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve google maps widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Google_Maps extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve google maps widget icon.
 	 *
 	 * @since 1.0.0

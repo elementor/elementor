@@ -6,7 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * WordPress Widget
+ * WordPress Widget.
+ *
+ * Elementor widget that displays all the WordPress widgets.
+ *
+ * @since 1.0.0
  */
 class Widget_WordPress extends Widget_Base {
 
@@ -41,6 +45,8 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve WordPress/Pojo widget name.
 	 *
 	 * @since 1.0.0
@@ -53,6 +59,8 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve WordPress/Pojo widget title.
 	 *
 	 * @since 1.0.0
@@ -65,6 +73,8 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the WordPress/Pojo widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
@@ -84,6 +94,8 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve WordPress/Pojo widget icon.
 	 *
 	 * @since 1.0.0
@@ -209,7 +221,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$empty_widget_args = [
+		$default_widget_args = [
 			'widget_id' => $this->get_name(),
 			'before_widget' => '',
 			'after_widget' => '',
@@ -217,9 +229,17 @@ class Widget_WordPress extends Widget_Base {
 			'after_title' => '</h5>',
 		];
 
-		$empty_widget_args = apply_filters( 'elementor/widgets/wordpress/widget_args', $empty_widget_args, $this ); // WPCS: spelling ok.
+		/**
+		 * Filters the WordPress widget arguments when they are rendered in Elementor panel.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array            $default_widget_args Default widget arguments.
+		 * @param Widget_WordPress $this                The WordPress widget.
+		 */
+		$default_widget_args = apply_filters( 'elementor/widgets/wordpress/widget_args', $default_widget_args, $this ); // WPCS: spelling ok.
 
-		$this->get_widget_instance()->widget( $empty_widget_args, $this->get_settings( 'wp' ) );
+		$this->get_widget_instance()->widget( $default_widget_args, $this->get_settings( 'wp' ) );
 	}
 
 	/**

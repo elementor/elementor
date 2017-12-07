@@ -28,6 +28,8 @@ class Source_Local extends Source_Base {
 
 	private static $_template_types = [ 'page', 'section' ];
 
+	private $post_type_object;
+
 	/**
 	 * @static
 	 * @since 1.0.0
@@ -123,10 +125,16 @@ class Source_Local extends Source_Base {
 			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
 		];
 
-		register_post_type(
-			self::CPT,
-			apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args )
-		);
+		/**
+		 * Filters the post type arguments when registering elementor template library post type.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $args Arguments for registering a post type.
+		 */
+		$args = apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args );
+
+		$this->post_type_object = register_post_type( self::CPT, $args );
 
 		$args = [
 			'hierarchical' => false,
@@ -139,11 +147,16 @@ class Source_Local extends Source_Base {
 			'label' => _x( 'Type', 'Template Library', 'elementor' ),
 		];
 
-		register_taxonomy(
-			self::TAXONOMY_TYPE_SLUG,
-			self::CPT,
-			apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args )
-		);
+		/**
+		 * Filters the taxonomy arguments when registering elementor template library taxonomy.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $args Arguments for registering a taxonomy.
+		 */
+		$args = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args );
+
+		register_taxonomy( self::TAXONOMY_TYPE_SLUG, self::CPT, $args );
 	}
 
 	/**
@@ -217,9 +230,13 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', 'Invalid template type `' . $template_data['type'] . '`' );
 		}
 
+		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
+			return new \WP_Error( 'save_error', __( 'Access Denied.', 'elementor' ) );
+		}
+
 		$template_id = wp_insert_post( [
 			'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
-			'post_status' => 'publish',
+			'post_status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
 			'post_type' => self::CPT,
 		] );
 
@@ -265,6 +282,10 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function update_item( $new_data ) {
+		if ( ! current_user_can( $this->post_type_object->cap->edit_post, $new_data['id'] ) ) {
+			return new \WP_Error( 'save_error', __( 'Access Denied.', 'elementor' ) );
+		}
+
 		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
 
 		/**
@@ -294,22 +315,33 @@ class Source_Local extends Source_Base {
 
 		$page_settings = get_post_meta( $post->ID, PageSettingsManager::META_KEY, true );
 
+		$date = strtotime( $post->post_date );
+
 		$data = [
 			'template_id' => $post->ID,
 			'source' => $this->get_id(),
 			'type' => self::get_template_type( $post->ID ),
 			'title' => $post->post_title,
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
-			'date' => mysql2date( get_option( 'date_format' ), $post->post_date ),
+			'date' => $date,
+			'human_date' => date_i18n( get_option( 'date_format' ), $date ),
 			'author' => $user->display_name,
 			'hasPageSettings' => ! empty( $page_settings ),
-			'categories' => [],
-			'keywords' => [],
+			'tags' => [],
 			'export_link' => $this->_get_export_link( $template_id ),
 			'url' => get_permalink( $post->ID ),
 		];
 
-		return apply_filters( 'elementor/template-library/get_template', $data );
+		/**
+		 * Filters the elementor template data when loading template library item.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $data Arguments for registering a taxonomy.
+		 */
+		$data = apply_filters( 'elementor/template-library/get_template', $data );
+
+		return $data;
 	}
 
 	/**
@@ -350,7 +382,11 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function delete_template( $template_id ) {
-		wp_delete_post( $template_id, true );
+		if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
+			return new \WP_Error( 'template_error', __( 'Access Denied.', 'elementor' ) );
+		}
+
+		return wp_delete_post( $template_id, true );
 	}
 
 	/**
@@ -520,15 +556,15 @@ class Source_Local extends Source_Base {
 		}
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-template-trigger" class="page-title-action"><?php _e( 'Import Templates', 'elementor' ); ?></a>
+			<a id="elementor-import-template-trigger" class="page-title-action"><?php esc_attr_e( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
-				<div id="elementor-import-template-title"><?php _e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
+				<div id="elementor-import-template-title"><?php esc_attr_e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
-					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce(); ?>">
+					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
-						<input type="file" name="file" accept=".json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php _e( 'Import Now', 'elementor' ); ?>">
+						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
+						<input type="submit" class="button" value="<?php esc_attr_e( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
@@ -541,7 +577,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function block_template_frontend() {
-		if ( is_singular( self::CPT ) && ! User::is_current_user_can_edit() ) {
+		if ( is_singular( self::CPT ) && ! current_user_can( 'edit_posts' ) ) {
 			wp_redirect( site_url(), 301 );
 			die;
 		}
@@ -552,7 +588,20 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function is_template_supports_export( $template_id ) {
-		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
+		$export_support = true;
+
+		/**
+		 * Filters whether the template library supports export.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool $export_support Whether the template library supports export.
+		 *                             Default is true.
+		 * @param int  $template_id    Post ID.
+		 */
+		$export_support = apply_filters( 'elementor/template_library/is_template_supports_export', $export_support, $template_id );
+
+		return $export_support;
 	}
 
 	/**
@@ -575,7 +624,7 @@ class Source_Local extends Source_Base {
 			[
 				'action' => 'elementor_export_template',
 				'source' => $this->get_id(),
-				'_nonce' => Plugin::$instance->editor->create_nonce(),
+				'_nonce' => Plugin::$instance->editor->create_nonce( self::CPT ),
 				'template_id' => $template_id,
 			],
 			admin_url( 'admin-ajax.php' )

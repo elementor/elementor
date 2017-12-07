@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Beta testers.
+ *
+ * Elementor beta testers handler class.
+ *
+ * @since 1.5.0
+ */
 class Beta_Testers {
 
 	private $transient_key;

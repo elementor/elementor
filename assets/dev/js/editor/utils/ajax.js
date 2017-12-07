@@ -25,7 +25,7 @@ Ajax = {
 
 		action = this.config.actionPrefix + action;
 
-		Backbone.$.extend( ajaxParams, options );
+		jQuery.extend( ajaxParams, options );
 
 		if ( ajaxParams.data instanceof FormData ) {
 			ajaxParams.data.append( 'action', action );
@@ -56,7 +56,7 @@ Ajax = {
 			}
 		}
 
-		return Backbone.$.ajax( ajaxParams );
+		return jQuery.ajax( ajaxParams );
 	}
 };
 

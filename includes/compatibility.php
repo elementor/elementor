@@ -7,6 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Compatibility.
+ *
+ * Elementor compatibility handler class.
+ *
+ * @since 1.0.0
+ */
 class Compatibility {
 
 	/**

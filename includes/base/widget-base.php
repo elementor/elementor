@@ -6,12 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Widget Base
+ * Widget Base.
  *
- * Base class extended to create Elementor widgets.
+ * An abstract class to register new Elementor widgets. It extended the
+ * `Element_Base` class to inherit its properties.
  *
- * This class must be extended for each widget.
+ * This abstract class must be extended in order to register new widgets.
  *
+ * @since 1.0.0
  * @abstract
  */
 abstract class Widget_Base extends Element_Base {
@@ -290,6 +292,14 @@ abstract class Widget_Base extends Element_Base {
 
 		$content_template = ob_get_clean();
 
+		/**
+		 * Filters the widget template before it's printed in the editor.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string      $content_template The widget template in the editor.
+		 * @param Widget_Base $this             The widget.
+		 */
 		$content_template = apply_filters( 'elementor/widget/print_template', $content_template,  $this );
 
 		// Bail if the widget renderd on the server not using javascript
@@ -319,12 +329,13 @@ abstract class Widget_Base extends Element_Base {
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-widget-settings">
 				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?>">
-					<i class="eicon-edit"></i>
+					<i class="eicon-edit" aria-hidden="true"></i>
+					<span class="elementor-screen-only"><?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?></span>
 				</li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
+						<i class="eicon-<?php echo $edit_tool['icon']; ?>" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
-						<i class="eicon-<?php echo $edit_tool['icon']; ?>"></i>
 					</li>
 				<?php endforeach; ?>
 			</ul>
@@ -346,6 +357,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return string Parsed content.
 	 */
 	protected function parse_text_editor( $content ) {
+		/** This filter is documented in wp-includes/widgets/class-wp-widget-text.php */
 		$content = apply_filters( 'widget_text', $content, $this->get_settings() );
 
 		$content = shortcode_unautop( $content );
@@ -396,7 +408,19 @@ abstract class Widget_Base extends Element_Base {
 				$this->render();
 			}
 
-			echo apply_filters( 'elementor/widget/render_content', ob_get_clean(), $this );
+			$widget_content = ob_get_clean();
+
+			/**
+			 * Filters the widget content before it's rendered.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param string      $widget_content The content of the widget.
+			 * @param Widget_Base $this           The widget.
+			 */
+			$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
+
+			echo $widget_content;
 			?>
 		</div>
 		<?php

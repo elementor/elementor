@@ -66,7 +66,7 @@ AddSectionView = Marionette.ItemView.extend( {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: _.bind( this.onDropping, this )
+			onDropping: this.onDropping.bind( this )
 		} );
 	},
 

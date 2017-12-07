@@ -30,15 +30,11 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getRevisionViewData: function( revisionView ) {
-		var self = this,
-			revisionID = revisionView.model.get( 'id' );
+		var self = this;
 
-		self.jqueryXhr = elementor.ajax.send( 'get_revision_data', {
-			data: {
-				id: revisionID
-			},
+		this.jqueryXhr = elementor.history.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: function( data ) {
-				self.setEditorData( data );
+				elementor.history.revisions.setEditorData( data );
 
 				self.setRevisionsButtonsActive( true );
 
@@ -48,7 +44,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 				self.enterReviewMode();
 			},
-			error: function( data ) {
+			error: function() {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				if ( 'abort' === self.jqueryXhr.statusText ) {
@@ -66,12 +62,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 	setRevisionsButtonsActive: function( active ) {
 		this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
-	},
-
-	setEditorData: function( data ) {
-		var collection = elementor.getRegion( 'sections' ).currentView.collection;
-
-		collection.reset( data );
 	},
 
 	deleteRevision: function( revisionView ) {
@@ -133,7 +123,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onDiscardClick: function() {
-		this.setEditorData( elementor.config.data );
+		elementor.history.revisions.setEditorData( elementor.config.data );
 
 		elementor.saver.setFlagEditorChange( this.isRevisionApplied );
 

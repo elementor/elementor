@@ -8,7 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Editor
+ * Editor.
+ *
+ * Elementor editor handler class.
  *
  * @since 1.0.0
  */
@@ -63,7 +65,7 @@ class Editor {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor editor. Fired by `init` action.
+	 * Initialize Elementor editor. Fired by `admin_action_elementor` action.
 	 *
 	 * @since 1.7.0
 	 * @access public
@@ -158,7 +160,7 @@ class Editor {
 	 * Redirect to new URL.
 	 *
 	 * Used as a fallback function for the old URL structure of Elementor
-	 * page edit URL.
+	 * page edit URL. Fired by `template_redirect` action.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -481,13 +483,13 @@ class Editor {
 		$nonce = wp_create_nonce( 'post_preview_' . $this->_post_id );
 		$query_args['preview_id'] = $this->_post_id;
 		$query_args['preview_nonce'] = $nonce;
-		$preview_post_link = get_preview_post_link( $query_args );
+		$preview_post_link = get_preview_post_link( $this->_post_id, $query_args );
 
 		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
-			'nonce' => $this->create_nonce(),
+			'nonce' => $this->create_nonce( get_post_type() ),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
 			'wp_preview' => [
 				'url' => $preview_post_link,
@@ -549,8 +551,8 @@ class Editor {
 				'dialog_confirm_clear_page' => __( 'Attention! We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 
 				// Panel Preview Mode.
-				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
-				'preview' => __( 'Preview', 'elementor' ),
+				'back_to_editor' => __( 'Show Panel', 'elementor' ),
+				'preview' => __( 'Hide Panel', 'elementor' ),
 
 				// Inline Editing.
 				'type_here' => __( 'Type Here', 'elementor' ),
@@ -567,6 +569,12 @@ class Editor {
 				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
 				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				'section' => __( 'Section', 'elementor' ),
+				'templates_empty_message' => __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
+				'templates_empty_title' => __( 'Haven’t Saved Templates Yet?', 'elementor' ),
+				'templates_no_favorites_message' => __( 'You can mark every predesigned template as favorite.', 'elementor' ),
+				'templates_no_favorites_title' => __( 'No Favorite Templates', 'elementor' ),
+				'templates_no_results_message' => __( 'Please make sure your search is spelled correctly or try a different words.', 'elementor' ),
+				'templates_no_results_title' => __( 'No Results Found', 'elementor' ),
 				'templates_request_error' => __( 'The following error(s) occurred while processing the request:', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
 
@@ -616,7 +624,17 @@ class Editor {
 			],
 		];
 
-		$localized_settings = apply_filters( 'elementor/editor/localize_settings', [], $this->_post_id );
+		$localized_settings = [];
+
+		/**
+		 * Filters the editor localized settings.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $localized_settings Localized settings.
+		 * @param int    $post_id            The ID of the current post being edited.
+		 */
+		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings, $this->_post_id );
 
 		if ( ! empty( $localized_settings ) ) {
 			$config = array_replace_recursive( $config, $localized_settings );
@@ -884,10 +902,15 @@ class Editor {
 	 * @since 1.8.1
 	 * @access public
 	 *
+	 * @param string $post_type The post type to check capabilities. @since  1.8.7
+	 *
 	 * @return null|string The nonce token, or `null` if the user has no edit capabilities.
 	 */
-	public function create_nonce() {
-		if ( ! current_user_can( self::EDITING_CAPABILITY ) ) {
+	public function create_nonce( $post_type ) {
+		$post_type_object = get_post_type_object( $post_type );
+		$capability = $post_type_object->cap->{self::EDITING_CAPABILITY};
+
+		if ( ! current_user_can( $capability ) ) {
 			return null;
 		}
 

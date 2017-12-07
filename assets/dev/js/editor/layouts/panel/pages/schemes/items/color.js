@@ -21,10 +21,12 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 	},
 
 	onRender: function() {
-		elementor.helpers.wpColorPicker( this.ui.input, {
-			change: _.bind( function( event, ui ) {
-				this.triggerMethod( 'value:change', ui.color.toString() );
-			}, this )
+		var self = this;
+
+		elementor.helpers.wpColorPicker( self.ui.input, {
+			change: function( event, ui ) {
+				self.triggerMethod( 'value:change', ui.color.toString() );
+			}
 		} );
 	}
 } );

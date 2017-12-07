@@ -103,16 +103,17 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 	},
 
 	resetCollection: function() {
-		var items = this.model.get( 'items' );
+		var self = this,
+			items = self.model.get( 'items' );
 
-		this.collection = new Backbone.Collection();
+		self.collection = new Backbone.Collection();
 
-		_.each( items, _.bind( function( item, key ) {
-			item.type = this.getType();
+		_.each( items, function( item, key ) {
+			item.type = self.getType();
 			item.key = key;
 
-			this.collection.add( item );
-		}, this ) );
+			self.collection.add( item );
+		} );
 	},
 
 	resetScheme: function() {

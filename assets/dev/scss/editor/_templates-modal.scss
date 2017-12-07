@@ -1,8 +1,15 @@
 #elementor-template-library-modal {
 
 	.dialog-widget-content {
-		width: 990px;
 		background-color: $editor-background-light;
+
+		@media (max-width: $screen-xl-max) {
+			width: 990px;
+		}
+
+		@media (min-width: $screen-xxl-min) {
+			width: 1200px;
+		}
 	}
 
 	.dialog-widget-header {
@@ -18,10 +25,10 @@
 	}
 
 	.dialog-message {
-		height: 630px;
+		height: 750px;
 		max-height: 85vh;
 		overflow: auto;
-		padding: 15px;
+		padding: 25px 30px 30px;
 	}
 
 	a {
@@ -33,10 +40,12 @@
 	}
 
 	a.elementor-template-library-blank-footer-link {
-		transition: color .5s;
+		font-style: normal;
+		text-decoration: underline;
+		color: $editor-success;
 
 		&:hover {
-			color: $editor-accent;
+			font-weight: 500;
 		}
 	}
 
@@ -48,6 +57,7 @@
 #elementor-template-library-header {
 	display: flex;
 	align-items: center;
+	height: 50px;
 }
 
 #elementor-template-library-header-logo-area {
@@ -55,11 +65,8 @@
 	@include padding-start(15px);
 
 	> * {
-		float: $start;
-
-		> * {
-			vertical-align: middle;
-		}
+		display: flex;
+		align-items: center;
 	}
 }
 
@@ -70,12 +77,20 @@
 	font-weight: bold;
 	cursor: pointer;
 
+	&-icon-wrapper {
+		padding: 4px 7px 6px;
+		background-image: linear-gradient(-135deg, #EF295A, #434363);
+		border-radius: 2px;
+		@include margin-end(10px);
+	}
+
 	i {
-		@include padding-end(10px);
-		color: $editor-accent;
-		font-size: 20px;
+		color: #fff;
+		font-size: 10px;
 	}
 }
+
+
 
 #elementor-template-library-header-menu-area {
 	flex-grow: 1;
@@ -101,42 +116,42 @@
 	flex-direction: row-reverse;
 }
 
-#elementor-template-library-header-tools {
-
-}
-
 .elementor-template-library-header-item {
 	position: relative;
-	@include border-start(1px solid $editor-background);
-	height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	box-sizing: content-box;
-	cursor: pointer;
-	transition: color .5s;
-
-	&:not(:hover) {
-		color: $editor-light;
-	}
 
 	> i {
+		font-size: 20px;
+		transition: color .5s;
+		cursor: pointer;
+
+		&:not(:hover) {
+			color: $editor-light;
+		}
+	}
+}
+
+#elementor-template-library-header-close-modal {
+	width: 45px;
+	@include border-start(1px solid $editor-background);
+
+	i {
 		font-size: 18px;
 	}
 }
 
-#elementor-template-library-header-close-modal, #elementor-template-library-header-save {
+#elementor-template-library-header-actions {
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 56px;
-}
 
-#elementor-template-library-header-preview {
-
+	> div {
+		@include padding_end(16px);
+	}
 }
 
 #elementor-template-library-header-preview-insert-wrapper {
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	cursor: default;
 	padding: 0 10px;
 
@@ -176,27 +191,222 @@
 	}
 }
 
-#elementor-template-library-templates-container {
-	overflow: hidden;
+#elementor-template-library-templates {
+	padding: 0 15px;
 
 	&[data-template-source="local"] {
-		box-shadow: 1px 1px 5px rgba(0,0,0,.1);
-		margin: 15px;
+
+		#elementor-template-library-templates-container {
+			box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, .03);
+			margin-top: 10px;
+		}
+
+		.elementor-template-library-order-input {
+
+			&:checked {
+
+				+ .elementor-template-library-order-label {
+					color: $editor-dark;
+				}
+			}
+		}
 	}
 
-	&:not([data-template-source="remote"]) {
+	&[data-template-source="remote"] {
 
-		+ #elementor-template-library-footer-banner {
+		#elementor-template-library-templates-container {
+			margin: 10px -15px 0;
+		}
+
+		.elementor-template-library-order-input {
+
+			&:checked {
+
+				+ .elementor-template-library-order-label {
+					color: $editor-darkest;
+				}
+			}
+		}
+	}
+
+	&[data-template-source="empty"] {
+
+		#elementor-template-library-order-toolbar-local, #elementor-template-library-footer-banner {
 			display: none;
+		}
+	}
+
+	.elementor-template-library-order-input {
+		display: none;
+
+		&:checked {
+
+			+ .elementor-template-library-order-label {
+
+				&:after {
+					font-family: eicons;
+					content: '\e956';
+					@include margin-start(5px);
+				}
+			}
+
+			&.elementor-template-library-order-reverse {
+
+				+ .elementor-template-library-order-label {
+
+					&:after {
+						content: '\e955';
+					}
+				}
+			}
 		}
 	}
 }
 
+#elementor-template-library-templates-container {
+	display: flex;
+	flex-wrap: wrap;
+
+	// These rules are here because of selectors priority
+	.elementor-template-library-template-insert {
+		text-transform: none;
+		font-size: 12px;
+	}
+}
+
+#elementor-template-library-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.elementor-template-library-filter-toolbar {
+	display: flex;
+}
+
+#elementor-template-library-order {
+	display: flex;
+	@include border-end(1px solid $editor-lightest);
+}
+
+.elementor-template-library-order-label {
+	font-size: 13px;
+	text-transform: uppercase;
+	cursor: pointer;
+	@include padding-end(20px);
+	user-select: none;
+
+	&:hover {
+		color: $editor-darker;
+	}
+}
+
+#elementor-template-library-my-favorites {
+	flex-grow: 1;
+	text-align: $start;
+	@include padding-start(20px);
+}
+
+#elementor-template-library-filter-my-favorites {
+	display: none;
+
+	&:checked {
+
+		+ #elementor-template-library-filter-my-favorites-label {
+			color: $editor-darkest;
+
+			i {
+
+				&:after {
+					color: $editor-accent;
+					content: '\f004';
+				}
+			}
+		}
+	}
+}
+
+#elementor-template-library-filter-my-favorites-label {
+	cursor: pointer;
+	text-transform: uppercase;
+
+	&:hover {
+		color: $editor-darker;
+
+		i {
+
+			&:after {
+				color: $editor-accent;
+			}
+		}
+	}
+
+	i {
+		@include padding-end(5px);
+
+		&:after {
+			color: $editor-light;
+			content: '\f08a';
+		}
+	}
+}
+
+#elementor-template-library-filter-text-wrapper {
+	width: 200px;
+	position: relative;
+
+	&:after {
+		content: '\e863';
+		position: absolute;
+		top: 50%;
+		@include end(0);
+		transform: translateY(-50%);
+		font-family: eicons;
+	}
+}
+
+#elementor-template-library-filter-text {
+	border: none;
+	border-bottom: 1px solid $editor-lighter;
+	border-radius: 0;
+	font-size: 13px;
+	padding: 8px 8px 8px 0;
+	transition: border 0.5s;
+
+	&:focus {
+		border-color: $editor-light;
+	}
+
+	&::placeholder {
+		font-weight: 300;
+		color: $editor-light;
+	}
+}
+
 .elementor-template-library-template-remote {
-	float: $start;
-	width: 25%;
-	padding: 0 15px;
-	margin-top: 15px;
+	$items-space: 30px;
+
+	margin: $items-space / 2;
+	padding: 10px;
+	background-color: #fff;
+	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, .07);
+
+	&:not(:hover) {
+
+		.elementor-template-library-template-controls {
+			opacity: 0;
+		}
+	}
+
+	border-radius: 3px;
+
+	@media (max-width: $screen-xl-max) {
+		width: calc(25% - #{$items-space});
+	}
+
+	@media (min-width: $screen-xxl-min) {
+		width: calc(20% - #{$items-space});
+	}
 
 	&.elementor-template-library-pro-template {
 
@@ -219,17 +429,8 @@
 	}
 
 	.elementor-template-library-template-body {
-		height: 250px;
-		border: 3px solid #fff;
+		height: 200px;
 		position: relative;
-		box-shadow: 0 1px 6px rgba(0,0,0,0.2);
-
-		&:not(:hover) {
-
-			.elementor-template-library-template-controls {
-				opacity: 0;
-			}
-		}
 	}
 
 	.elementor-template-library-template-screenshot {
@@ -256,7 +457,7 @@
 
 	.elementor-template-library-template-preview {
 		position: relative;
-		height: 180px;
+		height: 150px;
 		cursor: pointer;
 
 		i {
@@ -269,20 +470,79 @@
 		}
 	}
 
+	.elementor-template-library-template-footer {
+		margin-top: 10px;
+		display: flex;
+	}
+
 	.elementor-template-library-template-name {
-		margin: 13px 0 10px;
 		font-size: 12px;
-		text-align: center;
+		text-align: $start;
 		color: $editor-dark;
+		flex-grow: 1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		@include padding-end(5px);
+	}
+
+	.elementor-template-library-template-favorite-input {
+		display: none;
+
+		&:checked {
+
+			+ .elementor-template-library-template-favorite-label {
+
+				i {
+
+					&:before {
+						content: '\f004';
+						color: $editor-accent;
+					}
+				}
+			}
+		}
+	}
+
+	.elementor-template-library-template-favorite-label {
+		cursor: pointer;
+
+		&:hover {
+
+			i {
+				color: $editor-accent;
+			}
+		}
+	}
+}
+
+#elementor-template-library-order-toolbar-local,
+.elementor-template-library-template-local {
+	display: flex;
+	align-items: center;
+	padding: 0 25px;
+	text-align: $start;
+}
+
+#elementor-template-library-order-toolbar-local {
+	margin-top: 30px;
+
+	.elementor-template-library-order-label {
+		line-height: 1;
+		font-size: 11px;
+		font-weight: 500;
+
+		&:not(:hover) {
+			color: $editor-light;
+		}
 	}
 }
 
 .elementor-template-library-template-local {
-	background-color: #fff;
-	display: flex;
-	align-items: center;
-	border-bottom: 1px solid $editor-lightest;
 	height: 50px;
+	width: 100%;
+	margin-top: 1px;
+	background-color: #fff;
 	transition: background-color .3s linear;
 
 	&:hover {
@@ -291,48 +551,50 @@
 
 	&:not(:hover) {
 
-		.elementor-template-library-template-controls {
-			visibility: hidden;
+		.elementor-template-library-template-insert {
+			background: none;
+			color: $editor-light;
 		}
 	}
 
-	> * {
-		text-align: start;
+	&:first-child {
+		border-radius: 3px 3px 0 0;
 	}
 
-	.elementor-template-library-template-icon {
-		text-align: center;
-		width: 6%;
+	&:last-child {
+		border-radius: 0 0 3px 3px;
 	}
 
-	.elementor-template-library-template-name {
-		font-size: 13px;
-		font-weight: 500;
-		width: 35%;
+	.elementor-template-library-template-name, .elementor-template-library-template-meta {
+		@include padding-end(45px);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
-	.elementor-template-library-template-type {
+	.elementor-template-library-template-meta {
 		color: $editor-light;
 	}
 
 	.elementor-template-library-template-controls {
-		direction: getInverseDirection();
-		flex-grow: 1;
-
-		> * {
-			direction: $direction;
-		}
+		position: relative;
+		display: flex;
+		align-items: center;
 
 		> div {
-			display: inline-block;
-			@include margin-start(15px);
 			cursor: pointer;
-			font-weight: 500;
 			transition: color .5s;
 
 			&:not(:hover) {
 				color: $editor-light;
 			}
+		}
+	}
+
+	.elementor-template-library-template-insert {
+
+		i {
+			@include margin-end(3px);
 		}
 	}
 
@@ -343,13 +605,62 @@
 	.elementor-template-library-template-delete {
 
 		&:hover {
-			color: $editor-warning;
+
+			i {
+				color: $editor-danger;
+			}
+		}
+	}
+
+	.elementor-template-library-template-export {
+
+		&:hover {
+
+			i {
+				color: $editor-darker;
+			}
 		}
 	}
 
 	.elementor-template-library-template-action {
 		padding: 8px 18px;
 		margin: 0 20px;
+	}
+
+	.elementor-template-library-template-more {
+		display: none;
+		position: absolute;
+		background-color: #fff;
+		padding: 3px 20px;
+		border-radius: 3px;
+		box-shadow: 1px 3px 11px rgba(0,0,0,0.3);
+		top: 100%;
+		@include end(0);
+		transform: translateX(getValueByDirection(65%, -65%)) translateY(-7px);
+		z-index: 1;
+
+		&:before {
+			content: '';
+			position: absolute;
+			border: solid transparent;
+			border-width: 8px 4px;
+			border-bottom-color: #fff;
+			transform: translateY(-100%);
+		}
+
+		> div {
+			margin: 10px 0;
+			font-size: 11px;
+		}
+	}
+
+	.elementor-template-library-template-more-toggle {
+		flex-grow: 1;
+		text-align: $end;
+
+		i {
+			font-size: 16px;
+		}
 	}
 }
 
@@ -364,32 +675,39 @@
 	}
 }
 
-.elementor-template-library-blank-title {
-	font-size: 30px;
-	margin-top: 55px;
+.elementor-template-library-blank-icon {
+	font-size: 65px;
+	margin-top: 45px;
+	color: $editor-lighter;
+	line-height: 1;
 }
 
-.elementor-template-library-blank-excerpt {
+.elementor-template-library-blank-title {
+	font-size: 30px;
+	margin-top: 40px;
+}
+
+.elementor-template-library-blank-message {
 	font-size: 18px;
 	color: $editor-light;
-	margin-top: 20px;
+	margin-top: 25px;
 	font-weight: 300;
 }
 
 #elementor-template-library-save-template-form {
-	margin-top: 55px;
+	margin-top: 40px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
 	> * {
-		height: 60px;
-		font-size: 18px;
+		height: 55px;
+		font-size: 16px;
 	}
 }
 
 #elementor-template-library-save-template-name {
-	width: 460px;
+	width: 500px;
 	background-color: #fff;
 	font-weight: 300;
 	color: $editor-light;
@@ -397,8 +715,8 @@
 	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 	border: none;
 
-	&:focus {
-		border: 1px solid $editor-background;
+	&::placeholder {
+		color: $editor-light;
 	}
 }
 
@@ -412,13 +730,60 @@
 	}
 }
 
+#elementor-template-library-import {
+
+	&-form {
+		width: 95%;
+		background-color: rgba(255, 255, 255, 0.5);
+		padding: 60px;
+		border: 2px dashed $editor-lightest;
+		margin: 35px auto;
+		transition: background-color 0.5s;
+
+		&:hover {
+			background-color: rgba(255, 255, 255, 0.9);
+		}
+
+		&-or {
+			margin-top: 15px;
+			font-size: 18px;
+		}
+
+		&-label {
+			margin-top: 20px;
+			padding: 15px 35px;
+			font-size: 16px;
+			display: inline-block;
+		}
+
+		&-input {
+			display: none;
+		}
+
+		&.elementor-drag-over {
+			border: 3px dashed $editor-info;
+		}
+	}
+
+	.elementor-template-library-blank {
+
+		&-icon {
+			margin-top: 0;
+		}
+
+		&-message {
+			margin-top: 20px;
+		}
+	}
+}
+
 .elementor-template-library-blank-footer {
 	position: absolute;
-	bottom: 90px;
+	bottom: 70px;
 	left: 50%;
 	transform: translateX(-50%);
 	color: $editor-light;
-	font-size: 13px;
+	font-size: 16px;
 	font-style: italic;
 }
 
@@ -438,10 +803,9 @@
 	}
 }
 
-#elementor-template-library-templates-empty-icon {
-	font-size: 96px;
+#elementor-template-library-templates-empty {
+	width: 100%;
 	margin-top: 40px;
-	color: $editor-lightest;
 }
 
 #elementor-template-library-error-dialog {
@@ -453,4 +817,50 @@
 
 #elementor-template-library-error-info {
 	margin-top: 10px;
+}
+
+@media (max-width: $screen-xl-max) {
+
+	.elementor-template-library-local-column-1 {
+		width: 33%;
+	}
+
+	.elementor-template-library-local-column-2 {
+		width: 10%;
+	}
+
+	.elementor-template-library-local-column-3 {
+		width: 15%;
+	}
+
+	.elementor-template-library-local-column-4 {
+		width: 15%;
+	}
+
+	.elementor-template-library-local-column-5 {
+		width: 27%;
+	}
+}
+
+@media (min-width: $screen-xxl-min) {
+
+	.elementor-template-library-local-column-1 {
+		width: 25%;
+	}
+
+	.elementor-template-library-local-column-2 {
+		width: 17%;
+	}
+
+	.elementor-template-library-local-column-3 {
+		width: 17%;
+	}
+
+	.elementor-template-library-local-column-4 {
+		width: 17%;
+	}
+
+	.elementor-template-library-local-column-5 {
+		width: 24%;
+	}
 }

@@ -107,25 +107,45 @@ class Revisions_Manager {
 	}
 
 	public static function on_revision_data_request() {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
 		if ( ! isset( $_POST['id'] ) ) {
 			wp_send_json_error( 'You must set the revision ID' );
 		}
 
-		if ( ! get_post( $_POST['id'] ) ) {
+		$revision = get_post( $_POST['id'] );
+
+		if ( empty( $revision ) ) {
 			wp_send_json_error( 'Invalid Revision' );
 		}
 
-		$revision = Plugin::$instance->db->get_plain_editor( $_POST['id'] );
+		if ( ! current_user_can( 'edit_post', $revision->ID ) ) {
+			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
+		}
 
-		wp_send_json_success( $revision );
+		$revision_data = Plugin::$instance->db->get_plain_editor( $revision->ID );
+
+		wp_send_json_success( $revision_data );
 	}
 
 	public static function on_delete_revision_request() {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
 		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( 'You must set the id' );
 		}
 
-		$deleted = wp_delete_post_revision( $_POST['id'] );
+		$revision = get_post( $_POST['id'] );
+
+		if ( empty( $revision ) ) {
+			wp_send_json_error( 'Invalid Revision' );
+		}
+
+		if ( ! current_user_can( 'delete_post', $revision->ID ) ) {
+			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
+		}
+
+		$deleted = wp_delete_post_revision( $revision->ID );
 
 		if ( $deleted && ! is_wp_error( $deleted ) ) {
 			wp_send_json_success();
@@ -174,16 +194,18 @@ class Revisions_Manager {
 			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
 			'newer_autosave' => self::get_newer_autosave( $post_id ),
 			'i18n' => [
-				'revision_history' => __( 'Revision History', 'elementor' ),
+				'edit_draft' => __( 'Edit Draft', 'elementor' ),
+				'edit_published' => __( 'Edit Published', 'elementor' ),
 				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
 				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
-				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
-				// translators: %s: WordPress Revision docs.
-				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
-				'revision' => __( 'Revision', 'elementor' ),
 				'restore' => __( 'Restore', 'elementor' ),
 				'restore_auto_saved_data' => __( 'Restore Auto Saved Data', 'elementor' ),
 				'restore_auto_saved_data_message' => __( 'There is an autosave of this post that is more recent than the version below. You can restore the saved data fron the Revisions panel', 'elementor' ),
+				'revision' => __( 'Revision', 'elementor' ),
+				'revision_history' => __( 'Revision History', 'elementor' ),
+				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
+				// translators: %s: WordPress Revision docs.,
+				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
 			],
 		] );
 
@@ -207,9 +229,9 @@ class Revisions_Manager {
 		$post = get_post( $post_id );
 		$autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
 
-		// Detect if there exists an autosave newer than the post and if that autosave is different than the post
+		// Detect if there exists an autosave newer than the post.
 		if ( $autosave && mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false ) ) {
-			return $autosave;
+			return $autosave->ID;
 		}
 
 		return false;
