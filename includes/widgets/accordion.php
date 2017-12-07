@@ -370,6 +370,26 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'title_html_tag',
+			[
+				'label' => __( 'HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => __( 'H1', 'elementor' ),
+					'h2' => __( 'H2', 'elementor' ),
+					'h3' => __( 'H3', 'elementor' ),
+					'h4' => __( 'H4', 'elementor' ),
+					'h5' => __( 'H5', 'elementor' ),
+					'h6' => __( 'H6', 'elementor' ),
+					'div' => __( 'div', 'elementor' ),
+					'span' => __( 'span', 'elementor' ),
+					'p' => __( 'p', 'elementor' ),
+				],
+				'default' => 'div',
+			]
+		);
+
 		$this->add_responsive_control(
 			'title_padding',
 			[
@@ -469,13 +489,13 @@ class Widget_Accordion extends Widget_Base {
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
 				<div class="elementor-accordion-item">
-					<div class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>" role="tab">
+					<<?php echo $settings['title_html_tag']; ?> class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>" role="tab">
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>" aria-hidden="true">
 							<i class="elementor-accordion-icon-closed <?php echo $settings['icon']; ?>"></i>
 							<i class="elementor-accordion-icon-opened <?php echo $settings['icon_active']; ?>"></i>
 						</span>
 						<?php echo $item['tab_title']; ?>
-					</div>
+					</<?php echo $settings['title_html_tag']; ?>>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
 			<?php endforeach; ?>
@@ -511,13 +531,13 @@ class Widget_Accordion extends Widget_Base {
 					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
 					#>
 					<div class="elementor-accordion-item">
-						<div class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">
+						<{{{ settings.title_html_tag }}} class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}" aria-hidden="true">
 								<i class="elementor-accordion-icon-closed {{ settings.icon }}"></i>
 								<i class="elementor-accordion-icon-opened {{ settings.icon_active }}"></i>
 							</span>
 							{{{ item.tab_title }}}
-						</div>
+						</{{{ settings.title_html_tag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>
 					<#
