@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * API.
+ *
+ * Elementor API handler class.
+ *
+ * @since 1.0.0
+ */
 class Api {
 
 	public static $api_info_url = 'http://my.elementor.com/api/v1/info/';

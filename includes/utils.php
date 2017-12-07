@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Utils.
+ *
+ * Elementor utils handler class.
+ *
+ * @since 1.0.0
+ */
 class Utils {
 
 	/**

@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Rollback.
+ *
+ * Elementor rollback handler class.
+ *
+ * @since 1.5.0
+ */
 class Rollback {
 
 	protected $package_url;
