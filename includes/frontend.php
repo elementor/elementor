@@ -510,7 +510,18 @@ class Frontend {
 	 * @access public
 	 */
 	public function print_google_fonts() {
-		if ( ! apply_filters( 'elementor/frontend/print_google_fonts', true ) ) {
+		$print_google_fonts = true;
+
+		/**
+		 * Filters whether to enqueue Google fonts in the frontend.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool $print_google_fonts Whether to enqueue Google fonts. Default is true.
+		 */
+		$print_google_fonts = apply_filters( 'elementor/frontend/print_google_fonts', $print_google_fonts );
+
+		if ( ! $print_google_fonts ) {
 			return;
 		}
 
@@ -668,6 +679,15 @@ class Frontend {
 		}
 
 		$data = Plugin::$instance->db->get_plain_editor( $post_id, $status );
+
+		/**
+		 * Filters the builder content in the frontend.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $data    The builder content.
+		 * @param int   $post_id The post ID.
+		 */
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
 
 		if ( empty( $data ) ) {
@@ -704,7 +724,16 @@ class Frontend {
 			</div>
 		</div>
 		<?php
-		$content = apply_filters( 'elementor/frontend/the_content', ob_get_clean() );
+		$content = ob_get_clean();
+
+		/**
+		 * Filters the content in the frontend.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $content The content.
+		 */
+		$content = apply_filters( 'elementor/frontend/the_content', $content );
 
 		if ( ! empty( $content ) ) {
 			$this->_has_elementor_in_page = true;

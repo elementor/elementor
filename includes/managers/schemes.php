@@ -172,6 +172,14 @@ class Schemes_Manager {
 				}
 				$enabled_schemes[] = $schemes_type;
 			}
+
+			/**
+			 * Filters the enabled schemes.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param array $enabled_schemes The enabled schemes.
+			 */
 			self::$_enabled_schemes = apply_filters( 'elementor/schemes/enabled_schemes', $enabled_schemes );
 		}
 		return self::$_enabled_schemes;
