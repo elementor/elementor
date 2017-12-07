@@ -26,6 +26,7 @@ class Elementor_Test_Heartbeat extends WP_UnitTestCase {
 			],
 		];
 
+		/** This filter is documented in wp-admin/includes/ajax-actions.php */
 		$response = apply_filters( 'heartbeat_received', [], $data, '' );
 
 		// Switch to other user
@@ -33,6 +34,7 @@ class Elementor_Test_Heartbeat extends WP_UnitTestCase {
 
 		$this->assertEquals( $this->user_own_post, wp_check_post_lock( $post->ID ) );
 
+		/** This filter is documented in wp-admin/includes/ajax-actions.php */
 		$response = apply_filters( 'heartbeat_received', [], $data, '' );
 
 		$this->assertArrayHasKey( 'locked_user', $response );
