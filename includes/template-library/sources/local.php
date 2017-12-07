@@ -134,10 +134,7 @@ class Source_Local extends Source_Base {
 		 */
 		$args = apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args );
 
-		$this->post_type_object = register_post_type(
-			self::CPT,
-			$args
-		);
+		$this->post_type_object = register_post_type( self::CPT, $args );
 
 		$args = [
 			'hierarchical' => false,
@@ -159,11 +156,7 @@ class Source_Local extends Source_Base {
 		 */
 		$args = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args );
 
-		register_taxonomy(
-			self::TAXONOMY_TYPE_SLUG,
-			self::CPT,
-			$args
-		);
+		register_taxonomy( self::TAXONOMY_TYPE_SLUG, self::CPT, $args );
 	}
 
 	/**
@@ -192,7 +185,7 @@ class Source_Local extends Source_Base {
 		}
 	}
 
- 	/**
+	/**
 	 * @since 1.0.0
 	 * @access public
 	*/
