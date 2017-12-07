@@ -28,10 +28,24 @@
 					text-align: left;
 				}
 			}
+
+			.elementor-toggle-icon-closed {
+				display: block;
+			}
+			.elementor-toggle-icon-opened {
+				display: none;
+			}
 		}
 
 		&.elementor-active {
 			border-bottom: none;
+
+			.elementor-toggle-icon-closed {
+				display: none;
+			}
+			.elementor-toggle-icon-opened {
+				display: block;
+			}
 		}
 	}
 

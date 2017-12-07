@@ -35,6 +35,23 @@
 					text-align: left;
 				}
 			}
+
+			.elementor-accordion-icon-closed {
+				display: block;
+			}
+			.elementor-accordion-icon-opened {
+				display: none;
+			}
+		}
+
+		&.elementor-active {
+
+			.elementor-accordion-icon-closed {
+				display: none;
+			}
+			.elementor-accordion-icon-opened {
+				display: block;
+			}
 		}
 	}
 
