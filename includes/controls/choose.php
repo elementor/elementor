@@ -116,7 +116,7 @@ class Control_Choose extends Base_Data_Control {
 					<input id="<?php echo $control_uid; ?>" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ value }}">
 					<label class="elementor-choices-label tooltip-target" for="<?php echo $control_uid; ?>" data-tooltip="{{ options.title }}" title="{{ options.title }}">
 						<i class="{{ options.icon }}" aria-hidden="true"></i>
-						<span class="elementor-screen-only">{{ options.title }}</span>
+						<span class="elementor-screen-only">{{{ options.title }}}</span>
 					</label>
 					<# } ); #>
 				</div>
