@@ -2169,7 +2169,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   font-size: 11px; }
   .elementor-revision-item:hover:not(.elementor-revision-current-preview) {
     background-color: rgba(230, 233, 236, 0.3); }
-  .elementor-revision-item:not(:hover) .elementor-revision-item__tools-delete {
+  .elementor-revision-item:not(:hover) .elementor-revision-item__tools-delete, .elementor-revision-item.elementor-revision-current-preview .elementor-revision-item__tools-delete {
     display: none; }
   .elementor-revision-item-loading .elementor-revision-item__tools-delete {
     display: none; }
