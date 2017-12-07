@@ -183,7 +183,7 @@ class Control_Media extends Control_Base_Multiple {
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-control-media">
 					<div class="elementor-control-media-upload-button">
-						<i class="fa fa-plus-circle"></i>
+						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 					</div>
 					<div class="elementor-control-media-image-area">
 						<div class="elementor-control-media-image" style="background-image: url({{ data.controlValue.url }});"></div>
