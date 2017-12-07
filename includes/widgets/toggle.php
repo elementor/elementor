@@ -74,6 +74,76 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	/**
+	 * Get arrow icons.
+	 *
+	 * Retrieve all the arrow icons used by the toggle widget.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @return array Arrow icons.
+	 */
+	public function get_arrow_icons() {
+		return [
+			'fa fa-plus',
+			'fa fa-minus',
+			'fa fa-angle-double-down',
+			'fa fa-angle-double-left',
+			'fa fa-angle-double-right',
+			'fa fa-angle-double-up',
+			'fa fa-angle-down',
+			'fa fa-angle-left',
+			'fa fa-angle-right',
+			'fa fa-angle-up',
+			'fa fa-arrow-circle-down',
+			'fa fa-arrow-circle-left',
+			'fa fa-arrow-circle-o-down',
+			'fa fa-arrow-circle-o-left',
+			'fa fa-arrow-circle-o-right',
+			'fa fa-arrow-circle-o-up',
+			'fa fa-arrow-circle-right',
+			'fa fa-arrow-circle-up',
+			'fa fa-arrow-down',
+			'fa fa-arrow-left',
+			'fa fa-arrow-right',
+			'fa fa-arrow-up',
+			'fa fa-arrows',
+			'fa fa-arrows-alt',
+			'fa fa-arrows-h',
+			'fa fa-arrows-v',
+			'fa fa-exchange',
+			'fa fa-caret-down',
+			'fa fa-caret-left',
+			'fa fa-caret-right',
+			'fa fa-caret-square-o-down',
+			'fa fa-caret-square-o-left',
+			'fa fa-caret-square-o-right',
+			'fa fa-caret-square-o-up',
+			'fa fa-caret-up',
+			'fa fa-chevron-circle-down',
+			'fa fa-chevron-circle-left',
+			'fa fa-chevron-circle-right',
+			'fa fa-chevron-circle-up',
+			'fa fa-chevron-down',
+			'fa fa-chevron-left',
+			'fa fa-chevron-right',
+			'fa fa-chevron-up',
+			'fa fa-hand-o-down',
+			'fa fa-hand-o-left',
+			'fa fa-hand-o-right',
+			'fa fa-hand-o-up',
+			'fa fa-long-arrow-down',
+			'fa fa-long-arrow-left',
+			'fa fa-long-arrow-right',
+			'fa fa-long-arrow-up',
+			'fa fa-caret-square-o-down',
+			'fa fa-caret-square-o-left',
+			'fa fa-caret-square-o-right',
+			'fa fa-caret-square-o-up',
+		];
+	}
+
+	/**
 	 * Register toggle widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -222,8 +292,9 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
-				'label_block' => true,
+				'include' => self::get_arrow_icons(),
 				'default' => is_rtl() ? 'fa fa-caret-left' : 'fa fa-caret-right',
+				'label_block' => true,
 			]
 		);
 
@@ -232,8 +303,9 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Active Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
-				'label_block' => true,
+				'include' => self::get_arrow_icons(),
 				'default' => 'fa fa-caret-up',
+				'label_block' => true,
 			]
 		);
 
