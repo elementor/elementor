@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Divider Widget
+ * Divider Widget.
+ *
+ * Elementor widget that displays a line that divides different elements in the
+ * page.
+ *
+ * @since 1.0.0
  */
 class Widget_Divider extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve divider widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve divider widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +44,8 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve divider widget icon.
 	 *
 	 * @since 1.0.0

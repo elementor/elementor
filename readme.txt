@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.5
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 1.8.5
+Stable tag: 1.8.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -183,6 +183,25 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 1.8.9 - 06.12.2017 =
+* Security Fix! - Prevent potential privilege escalation in page settings & history
+* Fix! - Allow Contributors to preview library templates
+* Fix! - Font Awesome icons are italicized ([#2873](https://github.com/pojome/elementor/issues/2873))
+* Fix! - CSS autoprefixer for minified files (now supports last 10 versions of browsers)
+* Fix! - Import template in Safari browser
+* Fix! - Post config for none singular pages
+* Fix! - Re-Render WYSIWYG control inside repeater on sort changed ([#2897](https://github.com/pojome/elementor/issues/2897), [#2450](https://github.com/pojome/elementor/issues/2450), [#2324](https://github.com/pojome/elementor/issues/2324))
+* Fix! - Eicons CSS re-compiled ([#2878](https://github.com/pojome/elementor/issues/2878))
+
+= 1.8.8 - 30.11.2017 =
+* Tweak! - Eicons v2.8.0 Updated
+* Security Fix! - Prevent potential privilege escalation in template library
+
+= 1.8.7 - 29.11.2017 =
+* Tweak! - Eicons v2.7.0 updated
+* Fix! - Added per post type "edit_post" capability mapping in the editor ([#2846](https://github.com/pojome/elementor/issues/2846))
+* Fix! - Bump color picker script version to v2.0 to force a browser cached version refresh ([#2550](https://github.com/pojome/elementor/issues/2550))
 
 = 1.8.6 - 26.11.2017 =
 * Fix! - Changed minimum editing capability to `edit_posts` ([#2791](https://github.com/pojome/elementor/issues/2791))

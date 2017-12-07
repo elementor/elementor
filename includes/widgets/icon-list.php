@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Icon List Widget
+ * Icon List Widget.
+ *
+ * Elementor widget that displays a bullet list with any chosen icons and texts.
+ *
+ * @since 1.0.0
  */
 class Widget_Icon_List extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve icon list widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Icon_List extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve icon list widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Icon_List extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve icon list widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Icon_List extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the icon list widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

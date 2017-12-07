@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Utils.
+ *
+ * Elementor utils handler class.
+ *
+ * @since 1.0.0
+ */
 class Utils {
 
 	/**
@@ -33,7 +40,17 @@ class Utils {
 	public static function get_edit_link( $post_id = 0 ) {
 		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
 
-		return apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
+		/**
+		 * Filters the Elementor edit link.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $edit_link New URL query string (unescaped).
+		 * @param int    $post_id   Post ID.
+		 */
+		$edit_link = apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
+
+		return $edit_link;
 	}
 
 	/**
@@ -72,7 +89,17 @@ class Utils {
 	public static function get_preview_url( $post_id ) {
 		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
 
-		return apply_filters( 'elementor/utils/preview_url', $preview_url, $post_id );
+		/**
+		 * Filters the Elementor preview URL.
+		 *
+		 * @since 1.6.4
+		 *
+		 * @param string $preview_url URL with chosen scheme.
+		 * @param int    $post_id     Post ID.
+		 */
+		$preview_url = apply_filters( 'elementor/utils/preview_url', $preview_url, $post_id );
+
+		return $preview_url;
 	}
 
 	/**
@@ -84,7 +111,18 @@ class Utils {
 		$post_type = get_post_type( $post_id );
 		$is_supported = post_type_supports( $post_type, 'elementor' );
 
-		return apply_filters( 'elementor/utils/is_post_type_support', $is_supported, $post_id, $post_type );
+		/**
+		 * Filters whether the post type supports editing with Elementor.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool   $is_supported Whether the post type supports editing with Elementor.
+		 * @param int    $post_id      Post ID.
+		 * @param string $post_type    Post type.
+		 */
+		$is_supported = apply_filters( 'elementor/utils/is_post_type_support', $is_supported, $post_id, $post_type );
+
+		return $is_supported;
 	}
 
 	/**
@@ -93,7 +131,18 @@ class Utils {
 	 * @access public
 	*/
 	public static function get_placeholder_image_src() {
-		return apply_filters( 'elementor/utils/get_placeholder_image_src', ELEMENTOR_ASSETS_URL . 'images/placeholder.png' );
+		$placeholder_image = ELEMENTOR_ASSETS_URL . 'images/placeholder.png';
+
+		/**
+		 * Filters the source of the default placeholder image used by Elementor.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $placeholder_image The source of the default placeholder image.
+		 */
+		$placeholder_image = apply_filters( 'elementor/utils/get_placeholder_image_src', $placeholder_image );
+
+		return $placeholder_image;
 	}
 
 	/**

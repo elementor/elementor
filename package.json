@@ -1,7 +1,7 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "1.8.5",
+	"version": "1.8.8",
 	"prev_stable_version": "1.7.12",
 	"author": "Pojo Team",
 	"homepage": "http://pojo.me/",
@@ -13,7 +13,7 @@
 		"grunt-exorcise": "~2.1.1",
 		"grunt-contrib-jshint": "^1.1.0",
 		"grunt-contrib-watch": "^1.0.0",
-		"grunt-contrib-uglify": "~3.1.0",
+		"grunt-contrib-uglify": "~3.2.1",
 		"grunt-contrib-sass": "~1.0.0",
 		"grunt-postcss": "~0.9.0",
 		"autoprefixer": "~7.1.6",

@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Image Gallery Widget
+ * Image Gallery Widget.
+ *
+ * Elementor widget that displays a set of images in an aligned grid.
+ *
+ * @since 1.0.0
  */
 class Widget_Image_Gallery extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve image gallery widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve image gallery widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve image gallery widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the image gallery widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

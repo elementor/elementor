@@ -1,6 +1,5 @@
 var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
-	TemplateLibraryTemplatesEmptyView = require( 'elementor-templates/views/parts/templates-empty' ),
 	TemplateLibraryCollectionView;
 
 TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
@@ -10,7 +9,38 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	childViewContainer: '#elementor-template-library-templates-container',
 
-	emptyView: TemplateLibraryTemplatesEmptyView,
+	reorderOnSort: true,
+
+	emptyView: function() {
+		var EmptyView = require( 'elementor-templates/views/parts/templates-empty' );
+
+		return new EmptyView();
+	},
+
+	ui: {
+		filterText: '#elementor-template-library-filter-text',
+		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
+		orderInputs: '.elementor-template-library-order-input',
+		orderLabels: '.elementor-template-library-order-label'
+	},
+
+	events: {
+		'input @ui.filterText': 'onFilterTextInput',
+		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
+		'mousedown @ui.orderLabels': 'onOrderLabelsClick'
+	},
+
+	comparators: {
+		title: function( model ) {
+			return model.get( 'title' ).toLowerCase();
+		},
+		popularityIndex: function( model ) {
+			return -model.get( 'popularityIndex' );
+		},
+		trendIndex: function( model ) {
+			return -model.get( 'trendIndex' );
+		}
+	},
 
 	getChildView: function( childModel ) {
 		if ( 'remote' === childModel.get( 'source' ) ) {
@@ -24,46 +54,121 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 	},
 
-	filterByName: function( model ) {
-		var filterValue = elementor.channels.templates.request( 'filter:text' );
-
-		if ( ! filterValue ) {
-			return true;
-		}
-
-		filterValue = filterValue.toLowerCase();
-
-		if ( model.get( 'title' ).toLowerCase().indexOf( filterValue ) >= 0 ) {
-			return true;
-		}
-
-		return _.any( model.get( 'keywords' ), function( keyword ) {
-			return keyword.toLowerCase().indexOf( filterValue ) >= 0;
-		} );
-	},
-
-	filterBySource: function( model ) {
-		var filterValue = elementor.channels.templates.request( 'filter:source' );
-
-		if ( ! filterValue ) {
-			return true;
-		}
-
-		return filterValue === model.get( 'source' );
-	},
-
-	filterByType: function( model ) {
-		return false !== elementor.templates.getTemplateTypes( model.get( 'type' ) ).showInLibrary;
-	},
-
 	filter: function( childModel ) {
-		return this.filterByName( childModel ) && this.filterBySource( childModel ) && this.filterByType( childModel );
+		var filterTerms = elementor.templates.getFilterTerms(),
+			passingFilter = true;
+
+		jQuery.each( filterTerms, function( filterTermName ) {
+			var filterValue = this.value || elementor.templates.getFilter( filterTermName );
+
+			if ( ! filterValue ) {
+				return;
+			}
+
+			if ( this.callback ) {
+				var callbackResult = this.callback.call( childModel, filterValue );
+
+				if ( ! callbackResult ) {
+					passingFilter = false;
+				}
+
+				return callbackResult;
+			}
+
+			var filterResult = filterValue === childModel.get( filterTermName );
+
+			if ( ! filterResult ) {
+				passingFilter = false;
+			}
+
+			return filterResult;
+		} );
+
+		return passingFilter;
+	},
+
+	order: function( by, reverseOrder ) {
+		var comparator = this.comparators[ by ] || by;
+
+		if ( reverseOrder ) {
+			comparator = this.reverseOrder( comparator );
+		}
+
+		this.collection.comparator = comparator;
+
+		this.collection.sort();
+	},
+
+	activateOrdering: function( by, reverseOrder ) {
+		var $orderInput = this.ui.orderInputs.filter( '[value="' + by + '"]' );
+
+		reverseOrder = !! reverseOrder;
+
+		$orderInput
+			.attr( 'checked', true )
+			.toggleClass( 'elementor-template-library-order-reverse', reverseOrder );
+
+		this.order( by, reverseOrder );
+	},
+
+	reverseOrder: function( comparator ) {
+		if ( 'function' !== typeof comparator ) {
+			var comparatorValue = comparator;
+
+			comparator = function( model ) {
+				return model.get( comparatorValue );
+			};
+		}
+
+		return function( left, right ) {
+			var l = comparator( left ),
+				r = comparator( right );
+
+			if ( undefined === l ) {
+				return -1;
+			}
+
+			if ( undefined === r ) {
+				return 1;
+			}
+
+			return l < r ? 1 : l > r ? -1 : 0;
+		};
+	},
+
+	addSourceData: function() {
+		var isEmpty = this.children.isEmpty();
+
+		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
 	onRenderCollection: function() {
-		var isEmpty = this.children.isEmpty();
+		this.addSourceData();
+	},
 
-		this.$childViewContainer.attr( 'data-template-source', isEmpty ? 'empty' : elementor.channels.templates.request( 'filter:source' ) );
+	onBeforeRenderEmpty: function() {
+		this.addSourceData();
+	},
+
+	onFilterTextInput: function() {
+		elementor.templates.setFilter( 'text', this.ui.filterText.val() );
+	},
+
+	onMyFavoritesFilterChange: function(  ) {
+		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
+	},
+
+	onOrderLabelsClick: function( event ) {
+		var $clickedInput = jQuery( event.currentTarget.control ),
+			toggle;
+
+		if ( ! $clickedInput[0].checked ) {
+			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
+		}
+
+		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
+
+		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
 	}
 } );
 

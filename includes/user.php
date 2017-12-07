@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * User.
+ *
+ * Elementor user handler class.
+ *
+ * @since 1.0.0
+ */
 class User {
 
 	const ADMIN_NOTICES_KEY = 'elementor_admin_notices';
