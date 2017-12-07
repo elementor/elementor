@@ -104,6 +104,7 @@ class Embed {
 
 		$iframe_html = "<iframe $attributes_for_print></iframe>";
 
+		/** This filter is documented in wp-includes/class-oembed.php */
 		return apply_filters( 'oembed_result', $iframe_html, $video_url, $frame_attributes );
 	}
 }

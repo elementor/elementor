@@ -319,6 +319,14 @@ abstract class Element_Base extends Controls_Stack {
 
 		$content_template = ob_get_clean();
 
+		/**
+		 * Filters the element template before it's printed in the editor.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string       $content_template The element template in the editor.
+		 * @param Element_Base $this             The element.
+		 */
 		$content_template = apply_filters( 'elementor/element/print_template', $content_template, $this );
 
 		if ( empty( $content_template ) ) {
@@ -798,7 +806,18 @@ abstract class Element_Base extends Controls_Stack {
 			return false;
 		}
 
-		return apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
+		/**
+		 * Filters the child type of the element.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Element_Base $child_type   The child element.
+		 * @param array        $element_data The original element ID.
+		 * @param Element_Base $this         The original element.
+		 */
+		$child_type = apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
+
+		return $child_type;
 	}
 
 	/**

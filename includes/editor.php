@@ -624,7 +624,17 @@ class Editor {
 			],
 		];
 
-		$localized_settings = apply_filters( 'elementor/editor/localize_settings', [], $this->_post_id );
+		$localized_settings = [];
+
+		/**
+		 * Filters the editor localized settings.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $localized_settings Localized settings.
+		 * @param int    $post_id            The ID of the current post being edited.
+		 */
+		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings, $this->_post_id );
 
 		if ( ! empty( $localized_settings ) ) {
 			$config = array_replace_recursive( $config, $localized_settings );
