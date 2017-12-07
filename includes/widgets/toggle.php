@@ -424,6 +424,8 @@ class Widget_Toggle extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
+		$settings = $this->get_settings();
+
 		$tabs = $this->get_settings( 'tabs' );
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
