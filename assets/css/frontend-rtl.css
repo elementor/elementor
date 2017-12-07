@@ -1,4 +1,3 @@
-@charset "UTF-8";
 .dialog-widget {
   position: fixed;
   height: 100%;
@@ -1309,10 +1308,14 @@
       .elementor-accordion .elementor-tab-title .elementor-accordion-icon.elementor-accordion-icon-left {
         float: left;
         text-align: left; }
-      .elementor-accordion .elementor-tab-title .elementor-accordion-icon .fa:before {
-        content: '\f067'; }
-    .elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon .fa:before {
-      content: '\f068'; }
+      .elementor-accordion .elementor-tab-title .elementor-accordion-icon .elementor-accordion-icon-closed {
+        display: block; }
+      .elementor-accordion .elementor-tab-title .elementor-accordion-icon .elementor-accordion-icon-opened {
+        display: none; }
+    .elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon-closed {
+      display: none; }
+    .elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon-opened {
+      display: block; }
   .elementor-accordion .elementor-tab-content {
     display: none;
     padding: 15px 20px;
@@ -1337,14 +1340,24 @@
     .elementor-toggle .elementor-tab-title .elementor-toggle-icon {
       display: inline-block;
       width: 1em; }
-      .elementor-toggle .elementor-tab-title .elementor-toggle-icon .fa:before {
-        content: ""; }
+      .elementor-toggle .elementor-tab-title .elementor-toggle-icon.elementor-toggle-icon-right {
+        float: right;
+        text-align: right; }
+      .elementor-toggle .elementor-tab-title .elementor-toggle-icon.elementor-toggle-icon-left {
+        float: left;
+        text-align: left; }
+      .elementor-toggle .elementor-tab-title .elementor-toggle-icon .elementor-toggle-icon-closed {
+        display: block; }
+      .elementor-toggle .elementor-tab-title .elementor-toggle-icon .elementor-toggle-icon-opened {
+        display: none; }
     .elementor-toggle .elementor-tab-title.elementor-active {
       border-bottom: none; }
-      .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon .fa:before {
-        content: '\f0d7'; }
+      .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon-closed {
+        display: none; }
+      .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon-opened {
+        display: block; }
   .elementor-toggle .elementor-tab-content {
-    padding: 0 15px 15px;
+    padding: 15px 15px;
     border-bottom: 1px solid #D4D4D4;
     display: none; }
 
@@ -1352,7 +1365,7 @@
   .elementor-toggle .elementor-tab-title {
     padding: 12px; }
   .elementor-toggle .elementor-tab-content {
-    padding: 0 12px 10px; } }
+    padding: 12px 10px; } }
 
 .elementor-icon {
   display: inline-block;
