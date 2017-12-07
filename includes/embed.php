@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Embed.
+ *
+ * Elementor embed handler class.
+ *
+ * @since 1.5.0
+ */
 class Embed {
 
 	private static $provider_match_masks = [
