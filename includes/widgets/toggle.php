@@ -189,12 +189,20 @@ class Widget_Toggle extends Widget_Base {
 			'icon_align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => is_rtl() ? 'right' : 'left',
+				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => __( 'Left', 'elementor' ),
-					'right' => __( 'Right', 'elementor' ),
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'fa fa-align-left',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'fa fa-align-right',
+					],
 				],
+				'default' => is_rtl() ? 'right' : 'left',
+				'toggle' => false,
+				'label_block' => false,
 			]
 		);
 
