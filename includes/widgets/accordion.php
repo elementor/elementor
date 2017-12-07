@@ -203,6 +203,27 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'title_html_tag',
+			[
+				'label' => __( 'Title HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => __( 'H1', 'elementor' ),
+					'h2' => __( 'H2', 'elementor' ),
+					'h3' => __( 'H3', 'elementor' ),
+					'h4' => __( 'H4', 'elementor' ),
+					'h5' => __( 'H5', 'elementor' ),
+					'h6' => __( 'H6', 'elementor' ),
+					'div' => __( 'div', 'elementor' ),
+					'span' => __( 'span', 'elementor' ),
+					'p' => __( 'p', 'elementor' ),
+				],
+				'default' => 'div',
+				'separator' => 'before',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -367,26 +388,6 @@ class Widget_Accordion extends Widget_Base {
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-tab-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
-			]
-		);
-
-		$this->add_control(
-			'title_html_tag',
-			[
-				'label' => __( 'HTML Tag', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'h1' => __( 'H1', 'elementor' ),
-					'h2' => __( 'H2', 'elementor' ),
-					'h3' => __( 'H3', 'elementor' ),
-					'h4' => __( 'H4', 'elementor' ),
-					'h5' => __( 'H5', 'elementor' ),
-					'h6' => __( 'H6', 'elementor' ),
-					'div' => __( 'div', 'elementor' ),
-					'span' => __( 'span', 'elementor' ),
-					'p' => __( 'p', 'elementor' ),
-				],
-				'default' => 'div',
 			]
 		);
 
