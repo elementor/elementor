@@ -253,10 +253,12 @@ class Tracker {
 	/**
 	 * Get the last time tracking data was sent.
 	 *
-	 * @static
 	 * @since 1.0.0
 	 * @access private
-	 * @return int|bool
+	 * @static
+	 *
+	 * @return int|false The last time tracking data was sent, or false if
+	 *                   tracking data never sent.
 	 */
 	private static function _get_last_send_time() {
 		$last_send_time = get_option( 'elementor_tracker_last_send', false );
@@ -266,7 +268,8 @@ class Tracker {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param int|bool $last_send_time The last time tracking data was sent.
+		 * @param int|false $last_send_time The last time tracking data was sent,
+		 *                                  or false if tracking data never sent.
 		 */
 		$last_send_time = apply_filters( 'elementor/tracker/last_send_time', $last_send_time );
 
