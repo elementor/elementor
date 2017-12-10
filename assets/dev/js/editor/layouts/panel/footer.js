@@ -61,8 +61,14 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClickSettings: function() {
+		var self = this;
+
 		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
 			elementor.getPanelView().setPage( 'page_settings' );
+
+			elementor.getPanelView().getCurrentPageView().once( 'destroy', function() {
+				self.ui.settings.removeClass( 'elementor-open' );
+			} );
 		}
 	},
 
