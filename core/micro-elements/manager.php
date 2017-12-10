@@ -47,7 +47,7 @@ class Manager {
 	 * @param string $tag_name
 	 * @param array  $settings
 	 *
-	 * @return Base_Tag
+	 * @return Tag
 	 */
 	public static function create_tag( $tag_id, $tag_name, array $settings = [] ) {
 		$tag_class = self::get_tag_info( $tag_name )['class'];
@@ -67,7 +67,7 @@ class Manager {
 	}
 
 	public static function register_tag( $class ) {
-		/** @var Base_Tag $tag */
+		/** @var Tag $tag */
 		$tag = new $class();
 
 		self::$tags_info[ $tag->get_name() ] = [
@@ -88,7 +88,7 @@ class Manager {
 		self::$tags_groups[ $group_name ] = $group_settings;
 	}
 
-	public static function add_editor_template( Base_Tag $tag ) {
+	public static function add_editor_template( Tag $tag ) {
 		ob_start();
 
 		$tag->print_template();
@@ -100,7 +100,7 @@ class Manager {
 		$config = [];
 
 		foreach ( self::$tags_info as $tag_name => $tag_info ) {
-			/** @var Base_Tag $tag */
+			/** @var Tag $tag */
 			$tag = $tag_info['instance'];
 
 			$config[ $tag_name ] = [

@@ -2,12 +2,12 @@
 namespace Elementor\Modules\Tags\Tags;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\MicroElements\Base_Tag;
+use Elementor\Core\MicroElements\Tag;
 use Elementor\Modules\Tags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Icon extends Base_Tag {
+class Icon extends Tag {
 
 	public function get_name() {
 		return 'icon';
