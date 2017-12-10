@@ -94,7 +94,16 @@ class Widgets_Manager {
 		];
 
 		// Allow themes/plugins to filter out their widgets.
-		$black_list = apply_filters( 'elementor/widgets/black_list', [] );
+		$black_list = [];
+
+		/**
+		 * Filters the widgets black list.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $black_list A black list of widgets. Default is an empty array.
+		 */
+		$black_list = apply_filters( 'elementor/widgets/black_list', $black_list );
 
 		foreach ( $wp_widget_factory->widgets as $widget_class => $widget_obj ) {
 

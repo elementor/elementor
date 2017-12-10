@@ -6,7 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Preview
+ * Preview.
+ *
+ * Elementor preview handler class.
  *
  * @since 1.0.0
  */

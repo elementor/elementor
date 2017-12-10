@@ -1,4 +1,4 @@
-var SectionView = require( 'elementor-views/section' ),
+var SectionView = require( 'elementor-elements/views/section' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseSectionsContainerView;
 

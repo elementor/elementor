@@ -3,6 +3,13 @@ namespace Elementor;
 
 use Elementor\TemplateLibrary\Source_Local;
 
+/**
+ * Maintenance mode.
+ *
+ * Elementor maintenance mode handler class.
+ *
+ * @since 1.4.0
+ */
 class Maintenance_Mode {
 
 	const OPTION_PREFIX = 'elementor_maintenance_mode_';

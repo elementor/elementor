@@ -175,7 +175,7 @@ class Elements_Manager {
 
 		$status = DB::STATUS_DRAFT;
 
-		if ( isset( $_POST['status'] ) && in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_AUTOSAVE ] ) ) {
+		if ( isset( $_POST['status'] ) && in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_AUTOSAVE ] , true ) ) {
 			$status = $_POST['status'];
 		}
 
@@ -183,7 +183,16 @@ class Elements_Manager {
 
 		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
 
-		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', [], $post_id );
+		$return_data = [];
+
+		/**
+		 * Filters the ajax data returned when saving the post on the builder.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $return_data The returned data. Default is an empty array.
+		 */
+		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', $return_data, $post_id );
 
 		wp_send_json_success( $return_data );
 	}

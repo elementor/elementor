@@ -21,6 +21,8 @@ class Elementor_Test_Qunit_Preview extends WP_UnitTestCase {
 
 		// Load the theme template.
 		$template = get_index_template();
+
+		/** This filter is documented in wp-includes/template-loader.php */
 		$template = apply_filters( 'template_include', $template );
 
 		// Recreate the frontend instance because it's scripts hooks are removed in previous test
