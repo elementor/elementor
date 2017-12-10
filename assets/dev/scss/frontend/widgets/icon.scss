@@ -19,6 +19,14 @@
 	i {
 		width: 1em;
 		height: 1em;
+		position: relative;
+		display: block;
+
+		&:before {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+		}
 	}
 }
 
@@ -38,12 +46,13 @@
 		color: $gray;
 		border: 3px solid $gray;
 		background-color: transparent;
+
 	}
 }
 
-.elementor-shape- {
+.elementor-shape {
 
-	&circle {
+	&-circle {
 
 		.elementor-icon {
 			border-radius: 50%;
