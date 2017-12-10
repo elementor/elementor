@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Upgrades.
+ *
+ * Elementor upgrades handler class.
+ *
+ * @since 1.0.0
+ */
 class Upgrades {
 
 	/**

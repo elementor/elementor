@@ -38,11 +38,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<i class="' . esc_attr( $this->get_settings( 'icon' ) ) . '"></i>';
+ *    echo '<i class="' . esc_attr( $this->get_settings( 'icon' ) ) . '" aria-hidden="true"></i>';
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <i class="{{ settings.icon }}"></i>
+ *    <i class="{{ settings.icon }}" aria-hidden="true"></i>
  *
  * @since 1.0.0
  *

@@ -12,7 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Main plugin class.
+ * Plugin.
+ *
+ * The main plugin class.
+ *
+ * @since 1.0.0
  */
 class Plugin {
 

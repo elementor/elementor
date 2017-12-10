@@ -125,10 +125,16 @@ class Source_Local extends Source_Base {
 			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
 		];
 
-		$this->post_type_object = register_post_type(
-			self::CPT,
-			apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args )
-		);
+		/**
+		 * Filters the post type arguments when registering elementor template library post type.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $args Arguments for registering a post type.
+		 */
+		$args = apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args );
+
+		$this->post_type_object = register_post_type( self::CPT, $args );
 
 		$args = [
 			'hierarchical' => false,
@@ -141,11 +147,16 @@ class Source_Local extends Source_Base {
 			'label' => _x( 'Type', 'Template Library', 'elementor' ),
 		];
 
-		register_taxonomy(
-			self::TAXONOMY_TYPE_SLUG,
-			self::CPT,
-			apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args )
-		);
+		/**
+		 * Filters the taxonomy arguments when registering elementor template library taxonomy.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $args Arguments for registering a taxonomy.
+		 */
+		$args = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args );
+
+		register_taxonomy( self::TAXONOMY_TYPE_SLUG, self::CPT, $args );
 	}
 
 	/**
@@ -321,7 +332,16 @@ class Source_Local extends Source_Base {
 			'url' => get_permalink( $post->ID ),
 		];
 
-		return apply_filters( 'elementor/template-library/get_template', $data );
+		/**
+		 * Filters the elementor template data when loading template library item.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $data Arguments for registering a taxonomy.
+		 */
+		$data = apply_filters( 'elementor/template-library/get_template', $data );
+
+		return $data;
 	}
 
 	/**
@@ -536,15 +556,15 @@ class Source_Local extends Source_Base {
 		}
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-template-trigger" class="page-title-action"><?php _e( 'Import Templates', 'elementor' ); ?></a>
+			<a id="elementor-import-template-trigger" class="page-title-action"><?php esc_attr_e( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
-				<div id="elementor-import-template-title"><?php _e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
+				<div id="elementor-import-template-title"><?php esc_attr_e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
 					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
-						<input type="file" name="file" accept=".json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php _e( 'Import Now', 'elementor' ); ?>">
+						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
+						<input type="submit" class="button" value="<?php esc_attr_e( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
@@ -568,7 +588,20 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function is_template_supports_export( $template_id ) {
-		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
+		$export_support = true;
+
+		/**
+		 * Filters whether the template library supports export.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool $export_support Whether the template library supports export.
+		 *                             Default is true.
+		 * @param int  $template_id    Post ID.
+		 */
+		$export_support = apply_filters( 'elementor/template_library/is_template_supports_export', $export_support, $template_id );
+
+		return $export_support;
 	}
 
 	/**

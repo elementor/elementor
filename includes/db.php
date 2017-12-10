@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Database.
+ *
+ * Elementor database handler class.
+ *
+ * @since 1.0.0
+ */
 class DB {
 
 	/**
@@ -13,6 +20,7 @@ class DB {
 	const DB_VERSION = '0.4';
 
 	const STATUS_PUBLISH = 'publish';
+	const STATUS_PRIVATE = 'private';
 	const STATUS_DRAFT = 'draft';
 	const STATUS_AUTOSAVE = 'autosave';
 
@@ -52,7 +60,7 @@ class DB {
 
 		// If the post is a draft - save the `autosave` to the original draft.
 		// Allow a revision only if the original post is already published.
-		if ( self::STATUS_AUTOSAVE === $status && self::STATUS_PUBLISH === get_post_status( $post_id ) ) {
+		if ( self::STATUS_AUTOSAVE === $status && in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
 			$save_original = false;
 		}
 
@@ -70,7 +78,7 @@ class DB {
 			 */
 			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
 
-			$this->_save_plain_text( $post_id );
+			$this->save_plain_text( $post_id );
 		} else {
 			/**
 			 * Fires before Elementor saves data to the database.
@@ -172,16 +180,10 @@ class DB {
 			$autosave = wp_get_post_autosave( $post_id );
 
 			if ( is_object( $autosave ) ) {
-				$autosave_data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
-
-				if ( ! empty( $autosave_data ) ) {
-					$data = $autosave_data;
-				}
+				$data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
 			}
-
-			if ( empty( $data ) ) {
-				$data = $this->_get_new_editor_from_wp_editor( $post_id );
-			}
+		} elseif ( empty( $data ) ) {
+			$data = $this->_get_new_editor_from_wp_editor( $post_id );
 		}
 
 		return $data;
@@ -266,9 +268,9 @@ class DB {
 
 	/**
 	 * @since 1.0.0
-	 * @access private
+	 * @access public
 	*/
-	private function _save_plain_text( $post_id ) {
+	public function save_plain_text( $post_id ) {
 		ob_start();
 
 		$data = $this->get_plain_editor( $post_id );
