@@ -7,7 +7,7 @@ module.exports = Marionette.Behavior.extend( {
 			buttonSave: '#elementor-panel-saver-button-save',
 			buttonSaveLabel: '#elementor-panel-saver-save-label',
 			buttonPublish: '#elementor-panel-saver-button-publish',
-			buttonPreview: '#elementor-panel-saver-button-preview-label',
+			buttonPreview: '#elementor-panel-saver-button-preview',
 			menuUpdate: '#elementor-panel-saver-menu-update',
 			menuPublish: '#elementor-panel-saver-menu-publish',
 			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes',
