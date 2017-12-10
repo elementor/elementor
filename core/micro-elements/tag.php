@@ -6,7 +6,7 @@ use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-abstract class Base_Tag extends Controls_Stack {
+abstract class Tag extends Controls_Stack {
 
 	public static function get_type() {
 		return 'tag';
