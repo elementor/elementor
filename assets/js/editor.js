@@ -49,6 +49,8 @@ module.exports = Marionette.Behavior.extend( {
 		if ( ! _.isUndefined( changed.post_status ) ) {
 			this.setMenuItems( changed.post_status );
 
+			this.refreshWpPreview();
+
 			// Refresh page-settings post-status value.
 			if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
 				elementor.getPanelView().getCurrentPageView().render();
@@ -64,10 +66,7 @@ module.exports = Marionette.Behavior.extend( {
 	onAfterSave: function() {
 		NProgress.done();
 		this.ui.buttonSave.removeClass( 'elementor-button-state' );
-		// If the this.previewWindow is not null and not closed.
-		if ( this.previewWindow && this.previewWindow.location.reload ) {
-			this.previewWindow.location.reload();
-		}
+		this.refreshWpPreview();
 	},
 
 	onAfterSaveError: function() {
@@ -162,6 +161,14 @@ module.exports = Marionette.Behavior.extend( {
 				return this.getAttribute( 'data-tooltip' );
 			}
 		} );
+	},
+
+	refreshWpPreview: function() {
+		// If the this.previewWindow is not null and not closed.
+		if ( this.previewWindow && this.previewWindow.location.reload ) {
+			// Refresh URL form updated config.
+			this.previewWindow.location = elementor.config.wp_preview.url;
+		}
 	}
 } );
 
@@ -286,6 +293,10 @@ module.exports = Module.extend( {
 
 				if ( 'autosave' !== options.status ) {
 					elementor.settings.page.model.set( 'post_status', options.status );
+				}
+
+				if ( data.config ) {
+					jQuery.extend( true, elementor.config, data.config );
 				}
 
 				elementor.config.data = newData;
