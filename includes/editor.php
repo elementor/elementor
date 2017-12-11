@@ -479,7 +479,6 @@ class Editor {
 
 		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
 
-
 		$nonce = wp_create_nonce( 'post_preview_' . $this->_post_id );
 		$query_args['preview_id'] = $this->_post_id;
 		$query_args['preview_nonce'] = $nonce;
