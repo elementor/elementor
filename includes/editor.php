@@ -9,7 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Editor
+ * Editor.
+ *
+ * Elementor editor handler class.
  *
  * @since 1.0.0
  */
@@ -497,7 +499,6 @@ class Editor {
 
 		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
 
-
 		$nonce = wp_create_nonce( 'post_preview_' . $this->_post_id );
 		$query_args['preview_id'] = $this->_post_id;
 		$query_args['preview_nonce'] = $nonce;
@@ -643,7 +644,17 @@ class Editor {
 			],
 		];
 
-		$localized_settings = apply_filters( 'elementor/editor/localize_settings', [], $this->_post_id );
+		$localized_settings = [];
+
+		/**
+		 * Filters the editor localized settings.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $localized_settings Localized settings.
+		 * @param int    $post_id            The ID of the current post being edited.
+		 */
+		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings, $this->_post_id );
 
 		if ( ! empty( $localized_settings ) ) {
 			$config = array_replace_recursive( $config, $localized_settings );

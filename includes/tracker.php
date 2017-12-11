@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Tracker.
+ *
+ * Elementor tracker handler class.
+ *
+ * @since 1.0.0
+ */
 class Tracker {
 
 	private static $_api_url = 'http://my.elementor.com/api/v1/tracker/';
@@ -58,9 +65,29 @@ class Tracker {
 
 		$last_send = self::_get_last_send_time();
 
-		if ( ! apply_filters( 'elementor/tracker/send_override', $override ) ) {
+		/**
+		 * Filters whether to override sending tracking data or not.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool $override Whether to override default setting or not.
+		 */
+		$override = apply_filters( 'elementor/tracker/send_override', $override );
+
+		if ( ! $override ) {
+			$last_send_interval = strtotime( '-1 week' );
+
+			/**
+			 * Filters the interval of beetwin two tracking requests.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param int $last_send_interval A date/time string. Default is `strtotime( '-1 week' )`.
+			 */
+			$last_send_interval = apply_filters( 'elementor/tracker/last_send_interval', $last_send_interval );
+
 			// Send a maximum of once per week by default.
-			if ( $last_send && $last_send > apply_filters( 'elementor/tracker/last_send_interval', strtotime( '-1 week' ) ) ) {
+			if ( $last_send && $last_send > $last_send_interval ) {
 				return;
 			}
 		} else {
@@ -85,6 +112,13 @@ class Tracker {
 			'is_first_time' => empty( $last_send ),
 		];
 
+		/**
+		 * Filters the data parameters when sending tracking request.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $params Variable to encode as JSON.
+		 */
 		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
 
 		add_filter( 'https_ssl_verify', '__return_false' );
@@ -167,6 +201,14 @@ class Tracker {
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 
 		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our anonymous plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
+
+		/**
+		 * Filters the admin notice text for anonymous data collection.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $tracker_description_text Description text displayed in admin notice.
+		 */
 		$tracker_description_text = apply_filters( 'elementor/tracker/admin_description_text', $tracker_description_text );
 		?>
 		<div class="updated">
@@ -211,13 +253,27 @@ class Tracker {
 	/**
 	 * Get the last time tracking data was sent.
 	 *
-	 * @static
 	 * @since 1.0.0
 	 * @access private
-	 * @return int|bool
+	 * @static
+	 *
+	 * @return int|false The last time tracking data was sent, or false if
+	 *                   tracking data never sent.
 	 */
 	private static function _get_last_send_time() {
-		return apply_filters( 'elementor/tracker/last_send_time', get_option( 'elementor_tracker_last_send', false ) );
+		$last_send_time = get_option( 'elementor_tracker_last_send', false );
+
+		/**
+		 * Filters the last time tracking data was sent.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param int|false $last_send_time The last time tracking data was sent,
+		 *                                  or false if tracking data never sent.
+		 */
+		$last_send_time = apply_filters( 'elementor/tracker/last_send_time', $last_send_time );
+
+		return $last_send_time;
 	}
 
 	/**
@@ -231,7 +287,7 @@ class Tracker {
 		$usage = [];
 
 		$results = $wpdb->get_results(
-			"SELECT `post_type`, `post_status`, COUNT(`ID`) `hits` 
+			"SELECT `post_type`, `post_status`, COUNT(`ID`) `hits`
 				FROM {$wpdb->posts} `p`
 				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id`)
 				WHERE `post_type` != 'elementor_library'
@@ -260,7 +316,7 @@ class Tracker {
 		$usage = [];
 
 		$results = $wpdb->get_results(
-			"SELECT `meta_value`, COUNT(`ID`) `hits` 
+			"SELECT `meta_value`, COUNT(`ID`) `hits`
 				FROM {$wpdb->posts} `p`
 				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id`)
 				WHERE `post_type` = 'elementor_library'

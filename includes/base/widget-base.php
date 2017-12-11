@@ -6,12 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Widget Base
+ * Widget Base.
  *
- * Base class extended to create Elementor widgets.
+ * An abstract class to register new Elementor widgets. It extended the
+ * `Element_Base` class to inherit its properties.
  *
- * This class must be extended for each widget.
+ * This abstract class must be extended in order to register new widgets.
  *
+ * @since 1.0.0
  * @abstract
  */
 abstract class Widget_Base extends Element_Base {
@@ -63,10 +65,12 @@ abstract class Widget_Base extends Element_Base {
 
 		return [
 			'duplicate' => [
+				/* translators: %s: Widget Label */
 				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
 				'icon' => 'clone',
 			],
 			'remove' => [
+				/* translators: %s: Widget Label */
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
 				'icon' => 'close',
 			],
@@ -274,6 +278,17 @@ abstract class Widget_Base extends Element_Base {
 		return array_merge( parent::_get_initial_config(), $config );
 	}
 
+	/**
+	 * Print widget template.
+	 *
+	 * Used to generate the widget template on the editor, using a Backbone
+	 * JavaScript template.
+	 *
+	 * @param string $template_content Template content.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	protected function print_template_content( $template_content ) {
 		$this->render_edit_tools();
 		?>
@@ -324,6 +339,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return string Parsed content.
 	 */
 	protected function parse_text_editor( $content ) {
+		/** This filter is documented in wp-includes/widgets/class-wp-widget-text.php */
 		$content = apply_filters( 'widget_text', $content, $this->get_settings() );
 
 		$content = shortcode_unautop( $content );
@@ -374,7 +390,19 @@ abstract class Widget_Base extends Element_Base {
 				$this->render();
 			}
 
-			echo apply_filters( 'elementor/widget/render_content', ob_get_clean(), $this );
+			$widget_content = ob_get_clean();
+
+			/**
+			 * Filters the widget content before it's rendered.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param string      $widget_content The content of the widget.
+			 * @param Widget_Base $this           The widget.
+			 */
+			$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
+
+			echo $widget_content;
 			?>
 		</div>
 		<?php
@@ -565,7 +593,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return string The repeater setting key (e.g. `tabs.3.tab_title`).
 	 */
 	protected function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {
-		return implode( '.', [ $repeater_key , $repeater_item_index, $setting_key ] );
+		return implode( '.', [ $repeater_key, $repeater_item_index, $setting_key ] );
 	}
 
 	/**
