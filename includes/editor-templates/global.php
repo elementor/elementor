@@ -18,7 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-add-section">
 	<div class="elementor-add-section-inner">
 		<div class="elementor-add-section-close">
-			<i class="eicon-close"></i>
+			<i class="eicon-close" aria-hidden="true"></i>
+			<span class="elementor-screen-only"><?php esc_html_e( 'Close', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-add-new-section">
 			<button class="elementor-add-section-button elementor-button"><?php _e( 'Add New Section', 'elementor' ); ?></button>

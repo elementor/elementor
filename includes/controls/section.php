@@ -74,7 +74,7 @@ class Control_Section extends Base_UI_Control {
 		?>
 		<div class="elementor-panel-heading">
 			<div class="elementor-panel-heading-toggle elementor-section-toggle" data-collapse_id="{{ data.name }}">
-				<i class="fa"></i>
+				<i class="fa" aria-hidden="true"></i>
 			</div>
 			<div class="elementor-panel-heading-title elementor-section-title">{{{ data.label }}}</div>
 		</div>
