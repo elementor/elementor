@@ -216,8 +216,6 @@ class Widget_Toggle extends Widget_Base {
 					'h5' => __( 'H5', 'elementor' ),
 					'h6' => __( 'H6', 'elementor' ),
 					'div' => __( 'div', 'elementor' ),
-					'span' => __( 'span', 'elementor' ),
-					'p' => __( 'p', 'elementor' ),
 				],
 				'default' => 'div',
 				'separator' => 'before',
