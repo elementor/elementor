@@ -10,5 +10,5 @@ module.exports = function( $scope, $ ) {
 		}
 
 		$number.numerator( data );
-	}, { offset: '90%' } );
+	} );
 };
