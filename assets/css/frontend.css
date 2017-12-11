@@ -1295,6 +1295,7 @@
     .elementor-accordion .elementor-accordion-item + .elementor-accordion-item {
       border-top: none; }
   .elementor-accordion .elementor-tab-title {
+    margin: 0;
     padding: 15px 20px;
     font-weight: bold;
     line-height: 1;
@@ -1334,6 +1335,7 @@
   .elementor-toggle .elementor-tab-title {
     font-weight: bold;
     line-height: 1;
+    margin: 0;
     padding: 15px;
     border-bottom: 1px solid #D4D4D4;
     cursor: pointer; }
