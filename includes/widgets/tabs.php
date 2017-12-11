@@ -330,10 +330,12 @@ class Widget_Tabs extends Widget_Base {
 					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
 
 					$this->add_render_attribute( $tab_title_setting_key, [
+						'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
 						'data-tab' => $tab_count,
 						'tabindex' => $id_int . $tab_count,
 						'role' => 'tab',
+						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					] );
 					?>
 					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
@@ -348,9 +350,11 @@ class Widget_Tabs extends Widget_Base {
 					$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
 
 					$this->add_render_attribute( $tab_content_setting_key, [
+						'id' => 'elementor-tab-content-' . $id_int . $tab_count,
 						'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 						'data-tab' => $tab_count,
 						'role' => 'tabpanel',
+						'aria-labelledby' => 'elementor-tab-title-' . $id_int . $tab_count,
 					] );
 
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [
@@ -390,7 +394,7 @@ class Widget_Tabs extends Widget_Base {
 					_.each( settings.tabs, function( item, index ) {
 						var tabCount = index + 1;
 						#>
-						<div class="elementor-tab-title elementor-tab-desktop-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">{{{ item.tab_title }}}</div>
+						<div id="elementor-tab-title-{{ tabindex + tabCount }}" class="elementor-tab-title elementor-tab-desktop-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab" aria-controls="elementor-tab-content-{{ tabindex + tabCount }}">{{{ item.tab_title }}}</div>
 					<# } ); #>
 				</div>
 				<div class="elementor-tabs-content-wrapper">
@@ -400,9 +404,11 @@ class Widget_Tabs extends Widget_Base {
 							tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs',index );
 
 						view.addRenderAttribute( tabContentKey, {
+							'id': 'elementor-tab-content-' + tabindex + tabCount,
 							'class': [ 'elementor-tab-content', 'elementor-clearfix', 'elementor-repeater-item-' + item._id ],
 							'data-tab': tabCount,
-							'role' : 'tabpanel'
+							'role' : 'tabpanel',
+							'aria-labelledby' : 'elementor-tab-title-' + tabindex + tabCount
 						} );
 
 						view.addInlineEditingAttributes( tabContentKey, 'advanced' );
