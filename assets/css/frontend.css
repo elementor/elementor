@@ -1367,7 +1367,15 @@
     color: #818a91; }
   .elementor-icon i {
     width: 1em;
-    height: 1em; }
+    height: 1em;
+    position: relative;
+    display: block; }
+    .elementor-icon i:before {
+      position: absolute;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+          -ms-transform: translateX(-50%);
+              transform: translateX(-50%); }
 
 .elementor-view-stacked .elementor-icon {
   padding: .5em;
