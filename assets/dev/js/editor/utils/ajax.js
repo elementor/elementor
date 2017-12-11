@@ -2,6 +2,8 @@ var Ajax;
 
 Ajax = {
 	config: {},
+	requests: [],
+	requestsMap: {},
 
 	initConfig: function() {
 		this.config = {
@@ -16,6 +18,74 @@ Ajax = {
 
 	init: function() {
 		this.initConfig();
+
+		this.debounceSendBatch = _.debounce( _.bind( this.sendBatch, this ), 200 );
+	},
+
+	addUnique: function( action, options ) {
+		if ( this.requestsMap[ action ] ) {
+			this.requests[ this.requestsMap[ action ] ] = {
+				action: action,
+				options: options
+			};
+		} else {
+			this.requests.push( {
+				action: action,
+				options: options
+			} );
+
+			this.requestsMap[ action ] = this.requests.length - 1;
+		}
+
+		this.debounceSendBatch();
+	},
+
+	add: function( action, options ) {
+		this.requests.push( {
+			action: action,
+			options: options
+		} );
+
+		this.debounceSendBatch();
+	},
+
+	sendBatch: function() {
+		var requests = this.requests,
+			actions = [];
+
+		// Empty for next batch.
+		this.requests = [];
+
+		_( requests ).each( function( request ) {
+			actions.push( {
+				action: request.action,
+				data: request.options.data
+			} );
+		} );
+
+		this.send( 'ajax', {
+			data: {
+				actions: actions
+			},
+			success: function( data ) {
+				_.each( data.responses, function( response, id ) {
+					var options = requests[ id ].options;
+					if ( options ) {
+						if ( response.success && options.success ) {
+							try {
+								options.success( response.data );
+							} catch ( error ) {}
+						} else if ( ! response.success && options.error ) {
+							try {
+								options.error( response.data );
+							} catch ( error ) {}
+						}
+					}
+				} );
+				},
+			error: function( data ) {
+			}
+		} );
 	},
 
 	send: function( action, options ) {

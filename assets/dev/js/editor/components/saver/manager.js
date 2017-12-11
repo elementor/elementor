@@ -102,7 +102,12 @@ module.exports = Module.extend( {
 		self.isSaving = true;
 		self.isChangedDuringSave = false;
 
-		self.xhr = elementor.ajax.send( 'save_builder', {
+		if ( 'autosave' !== options.status ) {
+			elementor.settings.page.model.set( 'post_status', options.status );
+			elementor.settings.page.save();
+		}
+
+		elementor.ajax.add( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
@@ -114,10 +119,6 @@ module.exports = Module.extend( {
 
 				if ( ! self.isChangedDuringSave ) {
 					self.setFlagEditorChange( false );
-				}
-
-				if ( 'autosave' !== options.status ) {
-					elementor.settings.page.model.set( 'post_status', options.status );
 				}
 
 				if ( data.config ) {
@@ -142,12 +143,9 @@ module.exports = Module.extend( {
 					.trigger( 'after:saveError:' + options.status, data );
 			}
 		} );
-
-		return self.xhr;
 	},
 
 	afterAjax: function() {
 		this.isSaving = false;
-		this.xhr = null;
 	}
 } );
