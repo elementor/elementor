@@ -82,7 +82,7 @@ class DB {
 
 		// If the post is a draft - save the `autosave` to the original draft.
 		// Allow a revision only if the original post is already published.
-		if ( self::STATUS_AUTOSAVE === $status && self::STATUS_PUBLISH === get_post_status( $post_id ) ) {
+		if ( self::STATUS_AUTOSAVE === $status && in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
 			$save_original = false;
 		}
 
@@ -213,16 +213,10 @@ class DB {
 			$autosave = wp_get_post_autosave( $post_id );
 
 			if ( is_object( $autosave ) ) {
-				$autosave_data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
-
-				if ( ! empty( $autosave_data ) ) {
-					$data = $autosave_data;
-				}
+				$data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
 			}
-
-			if ( empty( $data ) ) {
-				$data = $this->_get_new_editor_from_wp_editor( $post_id );
-			}
+		} elseif ( empty( $data ) ) {
+			$data = $this->_get_new_editor_from_wp_editor( $post_id );
 		}
 
 		return $data;

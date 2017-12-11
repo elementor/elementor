@@ -231,7 +231,7 @@ class Source_Local extends Source_Base {
 		}
 
 		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
-			return new \WP_Error( 'save_error', __( 'Sorry, you are not allowed to save templates.', 'elementor' ) );
+			return new \WP_Error( 'save_error', __( 'Access Denied.', 'elementor' ) );
 		}
 
 		$template_id = wp_insert_post( [
@@ -283,7 +283,7 @@ class Source_Local extends Source_Base {
 	*/
 	public function update_item( $new_data ) {
 		if ( ! current_user_can( $this->post_type_object->cap->edit_post, $new_data['id'] ) ) {
-			return new \WP_Error( 'save_error', __( 'Sorry, you are not allowed to save templates.', 'elementor' ) );
+			return new \WP_Error( 'save_error', __( 'Access Denied.', 'elementor' ) );
 		}
 
 		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
@@ -383,7 +383,7 @@ class Source_Local extends Source_Base {
 	*/
 	public function delete_template( $template_id ) {
 		if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
-			return new \WP_Error( 'template_error', __( 'Sorry, you are not allowed to delete templates.', 'elementor' ) );
+			return new \WP_Error( 'template_error', __( 'Access Denied.', 'elementor' ) );
 		}
 
 		return wp_delete_post( $template_id, true );
@@ -556,15 +556,15 @@ class Source_Local extends Source_Base {
 		}
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-template-trigger" class="page-title-action"><?php _e( 'Import Templates', 'elementor' ); ?></a>
+			<a id="elementor-import-template-trigger" class="page-title-action"><?php esc_attr_e( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
-				<div id="elementor-import-template-title"><?php _e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
+				<div id="elementor-import-template-title"><?php esc_attr_e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
 					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
-						<input type="file" name="file" accept=".json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php _e( 'Import Now', 'elementor' ); ?>">
+						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
+						<input type="submit" class="button" value="<?php esc_attr_e( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
@@ -577,7 +577,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function block_template_frontend() {
-		if ( is_singular( self::CPT ) && ! User::is_current_user_can_edit() ) {
+		if ( is_singular( self::CPT ) && ! current_user_can( 'edit_posts' ) ) {
 			wp_redirect( site_url(), 301 );
 			die;
 		}

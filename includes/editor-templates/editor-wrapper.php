@@ -34,7 +34,7 @@ global $wp_version;
 		</div>
 		<div id="elementor-preview-responsive-wrapper" class="elementor-device-desktop elementor-device-rotate-portrait">
 			<div id="elementor-preview-loading">
-				<i class="fa fa-spin fa-circle-o-notch"></i>
+				<i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>
 			</div>
 			<?php
 			// IFrame will be create here by the Javascript later.

@@ -130,7 +130,7 @@ class Admin {
 			<button id="elementor-switch-mode-button" class="elementor-button button button-primary button-hero">
 				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 				<span class="elementor-switch-mode-off">
-					<i class="eicon-elementor"></i>
+					<i class="eicon-elementor" aria-hidden="true"></i>
 					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
 				</span>
 			</button>
@@ -138,7 +138,7 @@ class Admin {
 		<div id="elementor-editor">
 			<a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
 				<div id="elementor-editor-button" class="elementor-button button button-primary button-hero">
-					<i class="eicon-elementor"></i>
+					<i class="eicon-elementor" aria-hidden="true"></i>
 					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
 				</div>
 				<div class="elementor-loader-wrapper">
@@ -294,8 +294,8 @@ class Admin {
 	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
 		if ( ELEMENTOR_PLUGIN_BASE === $plugin_file ) {
 			$row_meta = [
-				'docs' => '<a href="https://go.elementor.com/docs-admin-plugins/" title="' . esc_attr( __( 'View Elementor Documentation', 'elementor' ) ) . '" target="_blank">' . __( 'Docs & FAQs', 'elementor' ) . '</a>',
-				'ideo' => '<a href="https://go.elementor.com/yt-admin-plugins/" title="' . esc_attr( __( 'View Elementor Video Tutorials', 'elementor' ) ) . '" target="_blank">' . __( 'Video Tutorials', 'elementor' ) . '</a>',
+				'docs' => '<a href="https://go.elementor.com/docs-admin-plugins/" aria-label="' . esc_attr( __( 'View Elementor Documentation', 'elementor' ) ) . '" target="_blank">' . __( 'Docs & FAQs', 'elementor' ) . '</a>',
+				'ideo' => '<a href="https://go.elementor.com/yt-admin-plugins/" aria-label="' . esc_attr( __( 'View Elementor Video Tutorials', 'elementor' ) ) . '" target="_blank">' . __( 'Video Tutorials', 'elementor' ) . '</a>',
 			];
 
 			$plugin_meta = array_merge( $plugin_meta, $row_meta );
@@ -350,7 +350,7 @@ class Admin {
 		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
 			<div class="elementor-message-inner">
 				<div class="elementor-message-icon">
-					<i class="eicon-elementor-square"></i>
+					<i class="eicon-elementor-square" aria-hidden="true"></i>
 				</div>
 				<div class="elementor-message-content">
 					<strong><?php _e( 'Update Notification', 'elementor' ); ?></strong>
@@ -375,7 +375,10 @@ class Admin {
 					</p>
 				</div>
 				<div class="elementor-message-action">
-					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>"><i class="dashicons dashicons-update"></i><?php _e( 'Update Now', 'elementor' ); ?></a>
+					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>">
+						<i class="dashicons dashicons-update" aria-hidden="true"></i>
+						<?php _e( 'Update Now', 'elementor' ); ?>
+					</a>
 				</div>
 			</div>
 		</div>
@@ -484,7 +487,7 @@ class Admin {
 		?>
 		<div id="elementor-deactivate-feedback-dialog-wrapper">
 			<div id="elementor-deactivate-feedback-dialog-header">
-				<i class="eicon-elementor-square"></i>
+				<i class="eicon-elementor-square" aria-hidden="true"></i>
 				<span id="elementor-deactivate-feedback-dialog-header-title"><?php _e( 'Quick Feedback', 'elementor' ); ?></span>
 			</div>
 			<form id="elementor-deactivate-feedback-dialog-form" method="post">
