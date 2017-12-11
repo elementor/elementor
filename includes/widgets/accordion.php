@@ -515,10 +515,12 @@ class Widget_Accordion extends Widget_Base {
 				?>
 				<div class="elementor-accordion-item">
 					<<?php echo $settings['title_html_tag']; ?> class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>" role="tab">
+						<?php if ( $settings['icon'] ) : ?>
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>" aria-hidden="true">
 							<i class="elementor-accordion-icon-closed <?php echo $settings['icon']; ?>"></i>
 							<i class="elementor-accordion-icon-opened <?php echo $settings['icon_active']; ?>"></i>
 						</span>
+						<?php endif; ?>
 						<?php echo $item['tab_title']; ?>
 					</<?php echo $settings['title_html_tag']; ?>>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
@@ -557,10 +559,12 @@ class Widget_Accordion extends Widget_Base {
 					#>
 					<div class="elementor-accordion-item">
 						<{{{ settings.title_html_tag }}} class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">
+							<# if ( settings.icon ) { #>
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}" aria-hidden="true">
 								<i class="elementor-accordion-icon-closed {{ settings.icon }}"></i>
 								<i class="elementor-accordion-icon-opened {{ settings.icon_active }}"></i>
 							</span>
+							<# } #>
 							{{{ item.tab_title }}}
 						</{{{ settings.title_html_tag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
