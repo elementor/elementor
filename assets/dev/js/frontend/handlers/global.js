@@ -31,13 +31,9 @@ GlobalHandler = HandlerModule.extend( {
 			return;
 		}
 
-		var waypoint = elementorFrontend.waypoint( self.$element, function() {
+		elementorFrontend.waypoint( self.$element, function() {
 			self.animate();
-
-			if ( waypoint && waypoint[0] && waypoint[0].destroy ) { // If it's Waypoint new API and is frontend
-				waypoint[0].destroy();
-			}
-		}, { offset: '90%' } );
+		} );
 	},
 	onElementChange: function( propertyName ) {
 		if ( /^_?animation/.test( propertyName ) ) {

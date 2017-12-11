@@ -280,10 +280,22 @@ module.exports = ElementsHandler;
 		};
 
 		this.waypoint = function( $element, callback, options ) {
-			var correctCallback = function() {
-				var element = this.element || this;
+			var defaultOptions = {
+				offset: '90%',
+				triggerOnce: true
+			};
 
-				return callback.apply( element, arguments );
+			options = $.extend( defaultOptions, options );
+
+			var correctCallback = function() {
+				var element = this.element || this,
+					result = callback.apply( element, arguments );
+
+				if ( options.triggerOnce && this.destroy ) { // If is Waypoint new API and is frontend
+					this.destroy();
+				}
+
+				return result;
 			};
 
 			return $element.elementorWaypoint( correctCallback, options );
@@ -594,7 +606,7 @@ module.exports = function( $scope, $ ) {
 		}
 
 		$number.numerator( data );
-	}, { offset: '90%' } );
+	} );
 };
 
 },{}],8:[function(require,module,exports){
@@ -631,13 +643,9 @@ GlobalHandler = HandlerModule.extend( {
 			return;
 		}
 
-		var waypoint = elementorFrontend.waypoint( self.$element, function() {
+		elementorFrontend.waypoint( self.$element, function() {
 			self.animate();
-
-			if ( waypoint && waypoint[0] && waypoint[0].destroy ) { // If it's Waypoint new API and is frontend
-				waypoint[0].destroy();
-			}
-		}, { offset: '90%' } );
+		} );
 	},
 	onElementChange: function( propertyName ) {
 		if ( /^_?animation/.test( propertyName ) ) {
@@ -726,7 +734,7 @@ module.exports = function( $scope, $ ) {
 		var $progressbar = $( this );
 
 		$progressbar.css( 'width', $progressbar.data( 'max' ) + '%' );
-	}, { offset: '90%' } );
+	} );
 };
 
 },{}],11:[function(require,module,exports){
