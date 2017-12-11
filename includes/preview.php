@@ -29,7 +29,9 @@ class Preview {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor preview mode. Fired by `init` action.
+	 * Initialize Elementor preview mode.
+	 *
+	 * Fired by `init` action.
 	 *
 	 * @since 1.0.0
 	 * @access public

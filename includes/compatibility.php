@@ -38,8 +38,9 @@ class Compatibility {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor compatibility with external plugins. Fired by `init`
-	 * action.
+	 * Initialize Elementor compatibility with external plugins.
+	 *
+	 * Fired by `init` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -180,6 +181,7 @@ class Compatibility {
 	 *
 	 * Normalize Elementor post meta on import, We need the `wp_slash` in order
 	 * to avoid the unslashing during the `add_post_meta`.
+	 *
 	 * Fired by `wp_import_post_meta` filter.
 	 *
 	 * @since 1.0.0
@@ -206,6 +208,7 @@ class Compatibility {
 	 *
 	 * Normalize Elementor post meta on import with the new WP_importer, We need
 	 * the `wp_slash` in order to avoid the unslashing during the `add_post_meta`.
+	 *
 	 * Fired by `wxr_importer.pre_process.post_meta` filter.
 	 *
 	 * @since 1.0.0

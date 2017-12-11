@@ -18,6 +18,7 @@ class Heartbeat {
 	 * Heartbeat received.
 	 *
 	 * Locks the Heartbeat response received when editing with Elementor.
+	 *
 	 * Fired by `heartbeat_received` filter.
 	 *
 	 * @since 1.0.0
@@ -48,6 +49,7 @@ class Heartbeat {
 	 * Refresh nonces.
 	 *
 	 * Filter the nonces to send to the editor when editing with Elementor.
+	 *
 	 * Fired by `wp_refresh_nonces` filter.
 	 *
 	 * @since 1.8.0

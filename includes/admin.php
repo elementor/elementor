@@ -18,6 +18,7 @@ class Admin {
 	 * Enqueue admin scripts.
 	 *
 	 * Registers all the admin scripts and enqueues them.
+	 *
 	 * Fired by `admin_enqueue_scripts` action.
 	 *
 	 * @since 1.0.0
@@ -73,6 +74,7 @@ class Admin {
 	 * Enqueue admin styles.
 	 *
 	 * Registers all the admin styles and enqueues them.
+	 *
 	 * Fired by `admin_enqueue_scripts` action.
 	 *
 	 * @since 1.0.0
@@ -111,6 +113,7 @@ class Admin {
 	 *
 	 * Adds a switch button in post edit page (which has cpt support). To allow
 	 * the user to switch from regular WordPress editor to Elementor builder.
+	 *
 	 * Fired by `edit_form_after_title` action.
 	 *
 	 * @since 1.0.0
@@ -159,6 +162,7 @@ class Admin {
 	 * Save post.
 	 *
 	 * Fired when the save the post, and flag the post mode.
+	 *
 	 * Fired by `save_post` action.
 	 *
 	 * @since 1.0.0
@@ -182,6 +186,7 @@ class Admin {
 	 * Add edit link in dashboard.
 	 *
 	 * Add an edit link to the post/page action links on the post/pages list table.
+	 *
 	 * Fired by `post_row_actions` and `page_row_actions` filters.
 	 *
 	 * @since 1.0.0
@@ -208,6 +213,7 @@ class Admin {
 	 * Add Elementor post state.
 	 *
 	 * Adds a new "Elementor" post state to the post table.
+	 *
 	 * Fired by `display_post_states` filter.
 	 *
 	 * @since 1.8.0
@@ -229,6 +235,7 @@ class Admin {
 	 * Body status classes.
 	 *
 	 * Adds CSS classes to the admin body tag.
+	 *
 	 * Fired by `admin_body_class` filter.
 	 *
 	 * @since 1.0.0
@@ -256,6 +263,7 @@ class Admin {
 	 * Plugin action links.
 	 *
 	 * Adds action links to the plugin list table
+	 *
 	 * Fired by `plugin_action_links` filter.
 	 *
 	 * @since 1.0.0
@@ -279,6 +287,7 @@ class Admin {
 	 * Plugin row meta.
 	 *
 	 * Adds row meta links to the plugin list table
+	 *
 	 * Fired by `plugin_row_meta` filter.
 	 *
 	 * @since 1.1.4
@@ -308,6 +317,7 @@ class Admin {
 	 * Admin notices.
 	 *
 	 * Add Elementor notices to WordPress admin screen.
+	 *
 	 * Fired by `admin_notices` action.
 	 *
 	 * @since 1.0.0
@@ -389,6 +399,7 @@ class Admin {
 	 * Admin footer text.
 	 *
 	 * Filters the "Thank you" text displayed in the admin footer.
+	 *
 	 * Fired by `admin_footer_text` filter.
 	 *
 	 * @since 1.0.0
@@ -455,6 +466,7 @@ class Admin {
 	 * Print deactivate feedback dialog.
 	 *
 	 * Display a dialog box to ask the user why he deactivated Elementor.
+	 *
 	 * Fired by `admin_footer` filter.
 	 *
 	 * @since 1.0.0
@@ -517,6 +529,7 @@ class Admin {
 	 * Ajax elementor deactivate feedback.
 	 *
 	 * Display a dialog box to ask the user why he deactivated Elementor.
+	 *
 	 * Fired by `wp_ajax_elementor_deactivate_feedback` action.
 	 *
 	 * @since 1.0.0
