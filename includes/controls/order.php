@@ -110,7 +110,7 @@ class Control_Order extends Control_Base_Multiple {
 					</select>
 					<input id="<?php echo $reverse_order_control_uid; ?>" type="checkbox" data-setting="reverse_order">
 					<label for="<?php echo $reverse_order_control_uid; ?>" class="elementor-control-order-label">
-						<i class="fa fa-sort-amount-desc"></i>
+						<i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
 					</label>
 				</div>
 			</div>

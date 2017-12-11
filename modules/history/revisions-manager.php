@@ -113,13 +113,19 @@ class Revisions_Manager {
 			wp_send_json_error( 'You must set the revision ID' );
 		}
 
-		if ( ! get_post( $_POST['id'] ) ) {
+		$revision = get_post( $_POST['id'] );
+
+		if ( empty( $revision ) ) {
 			wp_send_json_error( 'Invalid Revision' );
 		}
 
-		$revision = Plugin::$instance->db->get_plain_editor( $_POST['id'] );
+		if ( ! current_user_can( 'edit_post', $revision->ID ) ) {
+			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
+		}
 
-		wp_send_json_success( $revision );
+		$revision_data = Plugin::$instance->db->get_plain_editor( $revision->ID );
+
+		wp_send_json_success( $revision_data );
 	}
 
 	public static function on_delete_revision_request() {
@@ -129,11 +135,17 @@ class Revisions_Manager {
 			wp_send_json_error( 'You must set the id' );
 		}
 
-		if ( ! current_user_can( 'delete_post', $_POST['id'] ) ) {
-			wp_send_json_error( __( 'Cannot delete this Revision', 'elementor' ) );
+		$revision = get_post( $_POST['id'] );
+
+		if ( empty( $revision ) ) {
+			wp_send_json_error( 'Invalid Revision' );
 		}
 
-		$deleted = wp_delete_post_revision( $_POST['id'] );
+		if ( ! current_user_can( 'delete_post', $revision->ID ) ) {
+			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
+		}
+
+		$deleted = wp_delete_post_revision( $revision->ID );
 
 		if ( $deleted && ! is_wp_error( $deleted ) ) {
 			wp_send_json_success();

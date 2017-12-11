@@ -131,7 +131,7 @@ class Widget_Icon_List extends Widget_Base {
 						'placeholder' => __( 'http://your-link.com', 'elementor' ),
 					],
 				],
-				'title_field' => '<i class="{{ icon }}"></i> {{{ text }}}',
+				'title_field' => '<i class="{{ icon }}" aria-hidden="true"></i> {{{ text }}}',
 			]
 		);
 
@@ -431,7 +431,7 @@ class Widget_Icon_List extends Widget_Base {
 					if ( $item['icon'] ) :
 					?>
 						<span class="elementor-icon-list-icon">
-							<i class="<?php echo esc_attr( $item['icon'] ); ?>"></i>
+							<i class="<?php echo esc_attr( $item['icon'] ); ?>" aria-hidden="true"></i>
 						</span>
 					<?php endif; ?>
 					<span <?php echo $this->get_render_attribute_string( $repeater_setting_key ); ?>><?php echo $item['text']; ?></span>
@@ -473,7 +473,7 @@ class Widget_Icon_List extends Widget_Base {
 							<a href="{{ item.link.url }}">
 						<# } #>
 						<span class="elementor-icon-list-icon">
-							<i class="{{ item.icon }}"></i>
+							<i class="{{ item.icon }}" aria-hidden="true"></i>
 						</span>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
 						<# if ( item.link && item.link.url ) { #>

@@ -452,7 +452,7 @@ class Widget_Button extends Widget_Base {
 				<span class="elementor-button-content-wrapper">
 					<# if ( settings.icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
-						<i class="{{ settings.icon }}"></i>
+						<i class="{{ settings.icon }}" aria-hidden="true"></i>
 					</span>
 					<# } #>
 					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
@@ -483,7 +483,7 @@ class Widget_Button extends Widget_Base {
 		<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) ) : ?>
 			<span <?php echo $this->get_render_attribute_string( 'icon-align' ); ?>>
-				<i class="<?php echo esc_attr( $settings['icon'] ); ?>"></i>
+				<i class="<?php echo esc_attr( $settings['icon'] ); ?>" aria-hidden="true"></i>
 			</span>
 			<?php endif; ?>
 			<span <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>

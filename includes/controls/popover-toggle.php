@@ -105,7 +105,7 @@ class Control_Popover_Toggle extends Base_Data_Control {
 						<input id="<?php echo $control_uid; ?>-default" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="">
 						<label class="elementor-choices-label" for="<?php echo $control_uid; ?>-default">{{{ data.label_off }}}</label>
 						<input id="<?php echo $control_uid; ?>-custom" class="elementor-control-popover-toggle-toggle" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ data.return_value }}">
-						<label class="elementor-choices-label" for="<?php echo $control_uid; ?>-custom">{{{ data.label_on }}}<i class="eicon-sort-down"></i></label>
+						<label class="elementor-choices-label" for="<?php echo $control_uid; ?>-custom">{{{ data.label_on }}}<i class="eicon-sort-down" aria-hidden="true"></i></label>
 					</div>
 				<# } else { #>
 					<label class="elementor-control-popover-toggle-toggle elementor-control-popover-toggle-simple-toggle">{{{ data.toggle_title }}}</label>

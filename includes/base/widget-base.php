@@ -65,10 +65,12 @@ abstract class Widget_Base extends Element_Base {
 
 		return [
 			'duplicate' => [
+				/* translators: %s: Widget Label */
 				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
 				'icon' => 'clone',
 			],
 			'remove' => [
+				/* translators: %s: Widget Label */
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
 				'icon' => 'close',
 			],
@@ -329,12 +331,13 @@ abstract class Widget_Base extends Element_Base {
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-widget-settings">
 				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?>">
-					<i class="eicon-edit"></i>
+					<i class="eicon-edit" aria-hidden="true"></i>
+					<span class="elementor-screen-only"><?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?></span>
 				</li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
+						<i class="eicon-<?php echo $edit_tool['icon']; ?>" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
-						<i class="eicon-<?php echo $edit_tool['icon']; ?>"></i>
 					</li>
 				<?php endforeach; ?>
 			</ul>
@@ -610,7 +613,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return string The repeater setting key (e.g. `tabs.3.tab_title`).
 	 */
 	protected function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {
-		return implode( '.', [ $repeater_key , $repeater_item_index, $setting_key ] );
+		return implode( '.', [ $repeater_key, $repeater_item_index, $setting_key ] );
 	}
 
 	/**
