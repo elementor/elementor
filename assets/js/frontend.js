@@ -281,7 +281,7 @@ module.exports = ElementsHandler;
 
 		this.waypoint = function( $element, callback, options ) {
 			var defaultOptions = {
-				offset: '90%',
+				offset: '100%',
 				triggerOnce: true
 			};
 
@@ -635,17 +635,17 @@ GlobalHandler = HandlerModule.extend( {
 		return elementSettings.animation || elementSettings._animation;
 	},
 	onInit: function() {
-		var self = this;
+		HandlerModule.prototype.onInit.apply( this, arguments );
 
-		HandlerModule.prototype.onInit.apply( self, arguments );
+		var animation = this.getAnimation();
 
-		if ( ! self.getAnimation() ) {
+		if ( ! animation ) {
 			return;
 		}
 
-		elementorFrontend.waypoint( self.$element, function() {
-			self.animate();
-		} );
+		this.$element.removeClass( animation );
+
+		elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
 	},
 	onElementChange: function( propertyName ) {
 		if ( /^_?animation/.test( propertyName ) ) {

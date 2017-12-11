@@ -183,7 +183,7 @@
 
 		this.waypoint = function( $element, callback, options ) {
 			var defaultOptions = {
-				offset: '90%',
+				offset: '100%',
 				triggerOnce: true
 			};
 
