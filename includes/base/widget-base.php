@@ -65,10 +65,12 @@ abstract class Widget_Base extends Element_Base {
 
 		return [
 			'duplicate' => [
+				/* translators: %s: Widget Label */
 				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
 				'icon' => 'clone',
 			],
 			'remove' => [
+				/* translators: %s: Widget Label */
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
 				'icon' => 'close',
 			],
