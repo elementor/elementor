@@ -62,6 +62,7 @@ class Beta_Testers {
 	 * Check version.
 	 *
 	 * Checks whether a beta version exist, and retrieves the version data.
+	 *
 	 * Fired by `pre_set_site_transient_update_plugins` filter, before WordPress
 	 * runs the plugin update checker.
 	 *

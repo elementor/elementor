@@ -120,7 +120,9 @@ class Frontend {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor front end. Fired by `template_redirect` action.
+	 * Initialize Elementor front end.
+	 *
+	 * Fired by `template_redirect` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -176,7 +178,9 @@ class Frontend {
 	/**
 	 * Body tag classes.
 	 *
-	 * Add new elementor classes to the body tag. Fired by `body_class` filter.
+	 * Add new elementor classes to the body tag.
+	 *
+	 * Fired by `body_class` filter.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -226,7 +230,9 @@ class Frontend {
 	/**
 	 * Registers scripts.
 	 *
-	 * Registers all the frontend scripts. Fired by `wp_enqueue_scripts` action.
+	 * Registers all the frontend scripts.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.2.1
 	 * @access public
@@ -324,7 +330,9 @@ class Frontend {
 	/**
 	 * Registers styles.
 	 *
-	 * Registers all the frontend styles. Fired by `wp_enqueue_scripts` action.
+	 * Registers all the frontend styles.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.2.0
 	 * @access public
@@ -449,7 +457,9 @@ class Frontend {
 	/**
 	 * Enqueue styles.
 	 *
-	 * Enqueue all the frontend styles. Fired by `wp_enqueue_scripts` action.
+	 * Enqueue all the frontend styles.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -485,7 +495,9 @@ class Frontend {
 	/**
 	 * Elementor footer scripts and styles.
 	 *
-	 * Handle styles and scripts that are not printed in the header. Fired by `wp_footer` action.
+	 * Handle styles and scripts that are not printed in the header.
+	 *
+	 * Fired by `wp_footer` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -504,7 +516,9 @@ class Frontend {
 	/**
 	 * Print Google fonts.
 	 *
-	 * Enqueue all the frontend Google fonts. Fired by `wp_head` action.
+	 * Enqueue all the frontend Google fonts.
+	 *
+	 * Fired by `wp_head` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -746,7 +760,9 @@ class Frontend {
 	 * Add Elementor menu to admin bar.
 	 *
 	 * Add new admin bar item only on singular pages, to display a link that
-	 * allows the user to edit with Elementor. Fired by `admin_bar_menu` action.
+	 * allows the user to edit with Elementor.
+	 *
+	 * Fired by `admin_bar_menu` action.
 	 *
 	 * @since 1.0.0
 	 * @access public

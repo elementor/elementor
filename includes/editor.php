@@ -65,7 +65,9 @@ class Editor {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor editor. Fired by `admin_action_elementor` action.
+	 * Initialize Elementor editor.
+	 *
+	 * Fired by `admin_action_elementor` action.
 	 *
 	 * @since 1.7.0
 	 * @access public
@@ -160,7 +162,9 @@ class Editor {
 	 * Redirect to new URL.
 	 *
 	 * Used as a fallback function for the old URL structure of Elementor
-	 * page edit URL. Fired by `template_redirect` action.
+	 * page edit URL.
+	 *
+	 * Fired by `template_redirect` action.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -835,7 +839,9 @@ class Editor {
 	 * WP footer.
 	 *
 	 * Prints Elementor editor with all the editor templates, and render controls,
-	 * widgets and content elements. Fired by `wp_footer` action.
+	 * widgets and content elements.
+	 *
+	 * Fired by `wp_footer` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
