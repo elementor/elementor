@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Autoloader.
+ *
+ * Elementor Autoloader handler class.
+ *
+ * @since 1.0.0
+ */
 class Autoloader {
 
 	private static $classes_map = [

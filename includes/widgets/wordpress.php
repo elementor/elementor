@@ -221,7 +221,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$empty_widget_args = [
+		$default_widget_args = [
 			'widget_id' => $this->get_name(),
 			'before_widget' => '',
 			'after_widget' => '',
@@ -229,9 +229,17 @@ class Widget_WordPress extends Widget_Base {
 			'after_title' => '</h5>',
 		];
 
-		$empty_widget_args = apply_filters( 'elementor/widgets/wordpress/widget_args', $empty_widget_args, $this ); // WPCS: spelling ok.
+		/**
+		 * Filters the WordPress widget arguments when they are rendered in Elementor panel.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array            $default_widget_args Default widget arguments.
+		 * @param Widget_WordPress $this                The WordPress widget.
+		 */
+		$default_widget_args = apply_filters( 'elementor/widgets/wordpress/widget_args', $default_widget_args, $this ); // WPCS: spelling ok.
 
-		$this->get_widget_instance()->widget( $empty_widget_args, $this->get_settings( 'wp' ) );
+		$this->get_widget_instance()->widget( $default_widget_args, $this->get_settings( 'wp' ) );
 	}
 
 	/**

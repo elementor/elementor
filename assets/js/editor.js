@@ -13346,7 +13346,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onDiscardClick: function() {
-		this.setEditorData( elementor.config.data );
+		elementor.history.revisions.setEditorData( elementor.config.data );
 
 		elementor.saver.setFlagEditorChange( this.isRevisionApplied );
 
