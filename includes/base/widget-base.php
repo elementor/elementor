@@ -65,10 +65,12 @@ abstract class Widget_Base extends Element_Base {
 
 		return [
 			'duplicate' => [
+				/* translators: %s: Widget Label */
 				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
 				'icon' => 'clone',
 			],
 			'remove' => [
+				/* translators: %s: Widget Label */
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
 				'icon' => 'close',
 			],
@@ -611,7 +613,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return string The repeater setting key (e.g. `tabs.3.tab_title`).
 	 */
 	protected function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {
-		return implode( '.', [ $repeater_key , $repeater_item_index, $setting_key ] );
+		return implode( '.', [ $repeater_key, $repeater_item_index, $setting_key ] );
 	}
 
 	/**
