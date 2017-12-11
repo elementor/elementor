@@ -291,7 +291,8 @@ module.exports = ElementsHandler;
 				var element = this.element || this,
 					result = callback.apply( element, arguments );
 
-				if ( options.triggerOnce && this.destroy ) { // If is Waypoint new API and is frontend
+				// If is Waypoint new API and is frontend
+				if ( options.triggerOnce && this.destroy ) {
 					this.destroy();
 				}
 
