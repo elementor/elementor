@@ -153,6 +153,10 @@ abstract class CSS_File {
 				Plugin::$instance->frontend->enqueue_font( $font );
 			}
 		}
+
+		$name = $this->get_name();
+
+		do_action( "elementor/{$name}-css-file/enqueue", $this );
 	}
 
 	/**
@@ -449,7 +453,7 @@ abstract class CSS_File {
 	 * @since 1.2.0
 	 * @access private
 	*/
-	private function set_path_and_url() {
+	protected function set_path_and_url() {
 		$wp_upload_dir = wp_upload_dir( null, false );
 
 		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, $this->get_file_name() );
