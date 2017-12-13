@@ -63,6 +63,10 @@ abstract class CSS_File {
 		$this->init_stylesheet();
 	}
 
+	protected function use_external_file() {
+		return 'internal' !== get_option( 'elementor_css_print_method' );
+	}
+
 	/**
 	 * @since 1.2.0
 	 * @access public
@@ -82,9 +86,9 @@ abstract class CSS_File {
 			$meta['css'] = '';
 		} else {
 			$file_created = false;
-			$is_external_file = ( 'internal' !== get_option( 'elementor_css_print_method' ) );
+			$use_external_file = $this->use_external_file();
 
-			if ( $is_external_file && wp_is_writable( dirname( $this->path ) ) ) {
+			if ( $use_external_file && wp_is_writable( dirname( $this->path ) ) ) {
 				$file_created = file_put_contents( $this->path, $this->css );
 			}
 
