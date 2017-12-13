@@ -105,15 +105,11 @@ class Utils {
 	public static function get_wp_preview_url( $post_id ) {
 		$query_args = [];
 
-		if ( wp_get_post_autosave( $post_id, get_current_user_id() ) ) {
-			$nonce = wp_create_nonce( 'post_preview_' . $post_id );
-			$query_args['preview_id'] = $post_id;
-			$query_args['preview_nonce'] = $nonce;
+		$nonce = wp_create_nonce( 'post_preview_' . $post_id );
+		$query_args['preview_id'] = $post_id;
+		$query_args['preview_nonce'] = $nonce;
 
-			$wp_preview_url = get_preview_post_link( $post_id, $query_args );
-		} else {
-			$wp_preview_url = get_permalink( $post_id );
-		}
+		$wp_preview_url = get_preview_post_link( $post_id, $query_args );
 
 		/**
 		 * Filters the Wordpress preview URL.
