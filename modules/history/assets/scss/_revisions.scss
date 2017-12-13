@@ -12,7 +12,7 @@
 			background-color: fade_out($editor-background, 0.7) ;
 		}
 
-		&:not(:hover) {
+		&:not(:hover), &.elementor-revision-current-preview {
 
 			.elementor-revision-item__tools-delete {
 				display: none;

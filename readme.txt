@@ -184,6 +184,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.8.10 - 13.12.2017 =
+* Tweak! - Allow support for multiple conditions with relations
+* Fix! - Waypoint in order to support default options and trigger once
+* Fix! - Entrance animation near the bottom of the page ([#2114](https://github.com/pojome/elementor/issues/2114), [#2060](https://github.com/pojome/elementor/issues/2060))
+* Fix! - Avoid delete current revision preview, check it's a valid revision
+* Fix! - Change post-status in page settings
+
 = 1.8.9 - 06.12.2017 =
 * Security Fix! - Prevent potential privilege escalation in page settings & history
 * Fix! - Allow Contributors to preview library templates
