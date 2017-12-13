@@ -177,6 +177,19 @@ class Group_Control_Typography extends Group_Control_Base {
 			],
 		];
 
+		$fields['text_decoration'] = [
+			'label' => _x( 'Decoration', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => '',
+			'options' => [
+				'' => __( 'Default', 'elementor' ),
+				'underline' => _x( 'Underline', 'Typography Control', 'elementor' ),
+				'overline' => _x( 'Overline', 'Typography Control', 'elementor' ),
+				'line-through' => _x( 'Line Through', 'Typography Control', 'elementor' ),
+				'none' => _x( 'None', 'Typography Control', 'elementor' ),
+			],
+		];
+
 		$fields['line_height'] = [
 			'label' => _x( 'Line-Height', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
