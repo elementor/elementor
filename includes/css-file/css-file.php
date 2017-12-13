@@ -58,7 +58,9 @@ abstract class CSS_File {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->set_path_and_url();
+		if ( $this->use_external_file() ) {
+			$this->set_path_and_url();
+		}
 
 		$this->init_stylesheet();
 	}
