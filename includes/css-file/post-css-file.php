@@ -69,7 +69,7 @@ class Post_CSS_File extends CSS_File {
 	/**
 	 * @since 1.2.0
 	 * @access protected
-	 * @param string $meta
+	 * @param array $meta
 	 */
 	protected function update_meta( $meta ) {
 		update_post_meta( $this->post_id, static::META_KEY, $meta );
