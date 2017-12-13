@@ -5232,7 +5232,7 @@ helpers = {
 			conditions = controlModel.conditions;
 		}
 
-		// multiple conditions with relations
+		// Multiple conditions with relations.
 		if ( conditions ) {
 			return elementor.conditions.check( conditions, values );
 		}
