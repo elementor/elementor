@@ -20,7 +20,7 @@ class Utils {
 	 * @access public
 	*/
 	public static function is_ajax() {
-		return defined( 'DOING_AJAX' ) && DOING_AJAX;
+		return wp_doing_ajax();
 	}
 
 	/**
