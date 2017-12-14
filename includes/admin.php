@@ -466,10 +466,10 @@ class Admin {
                         <span>Dec 4th, 4:52 pm</span> <a href="#" class="e-overview__post-link"> <span class="dashicons dashicons-edit"></span> Introducing Single Post Widget</a>
                     </li>
                     <li class="e-overview__post">
-                        <span>Dec 4th, 4:52 pm</span> <a href="#" class="e-overview__post-link"> <span class="dashicons dashicons-edit"></span> 7 Marketing Ideas To Boost Your Sales On Black Friday <span class="dashicons dashicons-edit"></span></a>
+                        <span>Dec 4th, 4:52 pm</span> <a href="#" class="e-overview__post-link"> <span class="dashicons dashicons-edit"></span> 7 Marketing Ideas To Boost Your Sales On Black Friday</a>
                     </li>
                     <li class="e-overview__post">
-                        <span>Dec 4th, 4:52 pm</span> <a href="#" class="e-overview__post-link"> <span class="dashicons dashicons-edit"></span> 7 Marketing Ideas To Boost Your Sales On Black Friday <span class="dashicons dashicons-edit"></span></a>
+                        <span>Dec 4th, 4:52 pm</span> <a href="#" class="e-overview__post-link"> <span class="dashicons dashicons-edit"></span> 7 Marketing Ideas To Boost Your Sales On Black Friday</a>
                     </li>
                 </ul>
             </div>
