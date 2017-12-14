@@ -2,7 +2,7 @@
 //Dashboard Widget
 
 //Overview
-.elementor-dashboard-widget {
+#elementor-dashboard-overview {
 
 	.dashicons {
 		vertical-align: middle;
@@ -45,13 +45,33 @@
 			text-align: $end;
 		}
 
+		&__recently-edited {
+
+			li > span {
+				display: inline-block;
+				margin-right: 5px;
+				min-width: 150px;
+				color: #72777c;
+			}
+		}
+
 		&__heading {
-			font-weight: 700 !important;
+			font-weight: 700;
 		}
 
 		&__post {
 			margin-top: 10px;
 			font-size: 14px;
+		}
+
+		&__feed {
+
+			.elementor-overview__heading {
+				border-top: 1px solid #eee;
+				border-bottom: 1px solid #eee;
+				margin: 0 -12px;
+				padding: 6px 12px;
+			}
 		}
 
 		&__post-link {
