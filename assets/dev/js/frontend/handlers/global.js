@@ -23,21 +23,17 @@ GlobalHandler = HandlerModule.extend( {
 		return elementSettings.animation || elementSettings._animation;
 	},
 	onInit: function() {
-		var self = this;
+		HandlerModule.prototype.onInit.apply( this, arguments );
 
-		HandlerModule.prototype.onInit.apply( self, arguments );
+		var animation = this.getAnimation();
 
-		if ( ! self.getAnimation() ) {
+		if ( ! animation ) {
 			return;
 		}
 
-		var waypoint = elementorFrontend.waypoint( self.$element, function() {
-			self.animate();
+		this.$element.removeClass( animation );
 
-			if ( waypoint && waypoint[0] && waypoint[0].destroy ) { // If it's Waypoint new API and is frontend
-				waypoint[0].destroy();
-			}
-		}, { offset: '90%' } );
+		elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
 	},
 	onElementChange: function( propertyName ) {
 		if ( /^_?animation/.test( propertyName ) ) {
