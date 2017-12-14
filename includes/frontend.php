@@ -120,7 +120,8 @@ class Frontend {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor front end.
+	 * Initialize Elementor front end. Hooks the needed actions to run Elementor
+	 * in the front end, including script and style regestration.
 	 *
 	 * Fired by `template_redirect` action.
 	 *
