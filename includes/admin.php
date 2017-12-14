@@ -111,8 +111,8 @@ class Admin {
 	/**
 	 * Print switch mode button.
 	 *
-	 * Adds a switch button in post edit page (which has cpt support). To allow
-	 * the user to switch from regular WordPress editor to Elementor builder.
+	 * Adds a switch button in post edit screen (which has cpt support). To allow
+	 * the user to switch from the native WordPress editor to Elementor builder.
 	 *
 	 * Fired by `edit_form_after_title` action.
 	 *
@@ -161,7 +161,7 @@ class Admin {
 	/**
 	 * Save post.
 	 *
-	 * Fired when the save the post, and flag the post mode.
+	 * Flag the post mode when the post is saved.
 	 *
 	 * Fired by `save_post` action.
 	 *
@@ -398,7 +398,7 @@ class Admin {
 	/**
 	 * Admin footer text.
 	 *
-	 * Filters the "Thank you" text displayed in the admin footer.
+	 * Modifies the "Thank you" text displayed in the admin footer.
 	 *
 	 * Fired by `admin_footer_text` filter.
 	 *
@@ -525,10 +525,30 @@ class Admin {
 		<?php
 	}
 
+	/**
+	 * Register dashboard widgets.
+	 *
+	 * Adds a new Elementor widgets to WordPress dashboard.
+	 *
+	 * Fired by `wp_dashboard_setup` action.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 */
 	public function register_dashboard_widgets() {
 		wp_add_dashboard_widget( 'elementor_summery', __( 'Elementor', 'elementor-api' ), [ $this, 'elementor_summery_dashboard_widget' ] );
 	}
 
+	/**
+	 * Elementor dashboard widget.
+	 *
+	 * Displays the Elementor dashboard widget.
+	 *
+	 * Fired by `wp_add_dashboard_widget` function.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 */
 	public function elementor_summery_dashboard_widget() {
 		// Content here..
 	}
@@ -536,7 +556,7 @@ class Admin {
 	/**
 	 * Ajax elementor deactivate feedback.
 	 *
-	 * Display a dialog box to ask the user why he deactivated Elementor.
+	 * Send the user feedback when Elementor is deactivated.
 	 *
 	 * Fired by `wp_ajax_elementor_deactivate_feedback` action.
 	 *
