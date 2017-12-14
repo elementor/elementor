@@ -47,7 +47,7 @@ class DB {
 	 * @since 1.5.0
 	 * @access protected
 	 *
-	 * @var array Post data.
+	 * @var array Post data. Default is an empty array.
 	 */
 	protected $switched_post_data = [];
 
@@ -145,7 +145,7 @@ class DB {
 	/**
 	 * Get builder.
 	 *
-	 * Retrieve data from the database and parse it to the editor.
+	 * Retrieve editor data from the database.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -168,7 +168,7 @@ class DB {
 	/**
 	 * Get JSON meta.
 	 *
-	 * Retrieve post meta data, and return the decodes JSON data.
+	 * Retrieve post meta data, and return the JSON decoded data.
 	 *
 	 * @since 1.0.0
 	 * @access protected
@@ -195,7 +195,7 @@ class DB {
 	/**
 	 * Get plain editor.
 	 *
-	 * Retrieve post data that was saved in the the database. Raw data befor is
+	 * Retrieve post data that was saved in the database. Raw data before it
 	 * was parsed by elementor.
 	 *
 	 * @since 1.0.0
@@ -270,9 +270,9 @@ class DB {
 	}
 
 	/**
-	 * Set is elementor page.
+	 * Is using Elementor.
 	 *
-	 * Set whether the page is elementor page or not.
+	 * Set whether the page is using Elementor or not.
 	 *
 	 * @since 1.5.0
 	 * @access public
@@ -322,7 +322,7 @@ class DB {
 	 * Save plain text.
 	 *
 	 * Retrives the raw content, removes all kind of unwanted HTML tags and saves
-	 * the content to post_content.
+	 * the content as the `post_content` field in the database.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -363,12 +363,12 @@ class DB {
 	/**
 	 * Get editor data.
 	 *
-	 * Accept plain data and return parsed data.
+	 * Accepts raw Elementor data and return parsed data.
 	 *
-	 * @access private
 	 * @since 1.0.0
+	 * @access private
 	 *
-	 * @param array $data              Raw post data from the database.
+	 * @param array $data              Raw Elementor post data from the database.
 	 * @param bool  $with_html_content Optional. Whether to return content with
 	 *                                 HTML or not. Default is false.
 	 *
@@ -394,8 +394,7 @@ class DB {
 	 * Iterate data.
 	 *
 	 * Accept any type of Elementor data and a callback function. The callback
-	 * function runs recursively for each element in the data in all the child
-	 * elements.
+	 * function runs recursively for each element and his child elements.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -460,32 +459,32 @@ class DB {
 	}
 
 	/**
-	 * Is built with elementor.
+	 * Is built with Elementor.
 	 *
-	 * Check whether the post was built with elementor.
+	 * Check whether the post was built with Elementor.
 	 *
 	 * @since 1.0.10
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
 	 *
-	 * @return bool Whether the post was built with elementor.
+	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function is_built_with_elementor( $post_id ) {
 		return ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
 	}
 
 	/**
-	 * Has elementor in post.
+	 * Has Elementor in post.
 	 *
-	 * Check whether the post has elementor data in the post.
+	 * Check whether the post has Elementor data in the post.
 	 *
 	 * @access public
 	 * @deprecated 1.4.0
 	 *
 	 * @param int $post_id Post ID.
 	 *
-	 * @return bool Whether the post was built with elementor.
+	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function has_elementor_in_post( $post_id ) {
 		return $this->is_built_with_elementor( $post_id );
@@ -521,7 +520,7 @@ class DB {
 	/**
 	 * Restore current post.
 	 *
-	 * Rollback to the previous global post, rolling back from `switch_to_post()`.
+	 * Rollback to the previous global post, rolling back from `DB::switch_to_post()`.
 	 *
 	 * @since 1.5.0
 	 * @access public
