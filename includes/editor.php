@@ -254,7 +254,7 @@ class Editor {
 	 *
 	 * @param int $post_id The ID of the post being edited.
 	 *
-	 * @return false|\WP_User User information or false if the post is not locked.
+	 * @return \WP_User|false User information or false if the post is not locked.
 	 */
 	public function get_locked_user( $post_id ) {
 		if ( ! function_exists( 'wp_check_post_lock' ) ) {
@@ -271,6 +271,8 @@ class Editor {
 
 	/**
 	 * Print panel HTML.
+	 *
+	 * Include the wrapper template of the editor.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -956,7 +958,10 @@ class Editor {
 	}
 
 	/**
-	 * Verify request nonce and send a JSON error if not.
+	 * Verify ajax nonce.
+	 *
+	 * Verify request nonce and send a JSON request, if not verified returns an
+	 * error.
 	 *
 	 * @access public
 	 */
