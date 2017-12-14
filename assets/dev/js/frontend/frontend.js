@@ -182,10 +182,23 @@
 		};
 
 		this.waypoint = function( $element, callback, options ) {
-			var correctCallback = function() {
-				var element = this.element || this;
+			var defaultOptions = {
+				offset: '100%',
+				triggerOnce: true
+			};
 
-				return callback.apply( element, arguments );
+			options = $.extend( defaultOptions, options );
+
+			var correctCallback = function() {
+				var element = this.element || this,
+					result = callback.apply( element, arguments );
+
+				// If is Waypoint new API and is frontend
+				if ( options.triggerOnce && this.destroy ) {
+					this.destroy();
+				}
+
+				return result;
 			};
 
 			return $element.elementorWaypoint( correctCallback, options );
