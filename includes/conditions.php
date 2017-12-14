@@ -17,7 +17,7 @@ class Conditions {
 	/**
 	 * Compare conditions.
 	 *
-	 * Whether the two values complies the compare operator.
+	 * Whether the two values comply the comparison operator.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -25,9 +25,9 @@ class Conditions {
 	 *
 	 * @param mixed  $left_value  First value to compare.
 	 * @param mixed  $right_value Second value to compare.
-	 * @param string $operator    Compare operator.
+	 * @param string $operator    Comparison operator.
 	 *
-	 * @return bool Whether the two values complies the compare operator.
+	 * @return bool Whether the two values complies the comparison operator.
 	 */
 	public static function compare( $left_value, $right_value, $operator ) {
 		switch ( $operator ) {
@@ -57,7 +57,7 @@ class Conditions {
 	/**
 	 * Check conditions.
 	 *
-	 * Whether the comparison condition comply.
+	 * Whether the comparison conditions comply.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -66,7 +66,7 @@ class Conditions {
 	 * @param array $conditions The conditions to check.
 	 * @param array $comparison The comparison parameter.
 	 *
-	 * @return bool Whether the comparison condition comply.
+	 * @return bool Whether the comparison conditions comply.
 	 */
 	public static function check( array $conditions, array $comparison ) {
 		$is_or_condition = isset( $conditions['relation'] ) && 'or' === $conditions['relation'];
