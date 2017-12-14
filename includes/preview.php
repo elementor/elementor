@@ -31,7 +31,7 @@ class Preview {
 	 *
 	 * Initialize Elementor preview mode.
 	 *
-	 * Fired by `init` action.
+	 * Fired by `template_redirect` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -126,6 +126,10 @@ class Preview {
 	/**
 	 * Enqueue preview styles.
 	 *
+	 * Registers all the preview styles and enqueues them.
+ 	 *
+	 * Fired by `wp_enqueue_scripts` action.
+	 *
 	 * @since 1.0.0
 	 * @access private
 	 */
@@ -159,9 +163,13 @@ class Preview {
 	/**
 	 * Enqueue preview scripts.
 	 *
+	 * Registers all the preview scripts and enqueues them.
+ 	 *
+	 * Fired by `wp_enqueue_scripts` action.
+	 *
 	 * @since 1.5.4
 	 * @access private
-	*/
+	 */
 	private function enqueue_scripts() {
 		Plugin::$instance->frontend->register_scripts();
 		Plugin::$instance->frontend->enqueue_scripts();
@@ -188,6 +196,8 @@ class Preview {
 
 	/**
 	 * Preview constructor.
+	 *
+	 * Initializing Elementor preview.
 	 *
 	 * @since 1.0.0
 	 * @access public
