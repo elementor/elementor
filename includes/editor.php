@@ -65,7 +65,8 @@ class Editor {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor editor.
+	 * Initialize Elementor editor. Registers all needed actions to run Elementor,
+	 * removes conflicting actions etc.
 	 *
 	 * Fired by `admin_action_elementor` action.
 	 *
