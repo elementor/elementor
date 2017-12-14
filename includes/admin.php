@@ -445,11 +445,46 @@ class Admin {
 	}
 
 	public function register_dashboard_widgets() {
-		wp_add_dashboard_widget( 'elementor_summery', __( 'Elementor', 'elementor-api' ), [ $this, 'elementor_summery_dashboard_widget' ] );
+		wp_add_dashboard_widget( 'elementor-dashboard-overview', __( 'Elementor Overview', 'elementor-api' ), [ $this, 'elementor_dashboard_overview_widget' ] );
 	}
 
-	public function elementor_summery_dashboard_widget() {
-		// Content here..
+	public function elementor_dashboard_overview_widget() {
+		?>
+        <div class="elementor-dashboard-widget">
+            <div class="elementor-overview__header">
+                <div class="elementor-overview__logo"><i class="eicon-elementor-square"></i></div>
+                <div class="elementor-overview__version">Elementor v1.8.11</div>
+                <div class="elementor-overview__create"><a href="#" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> Create New Page</a></div>
+            </div>
+            <div class="elementor-overview__feed">
+                <h3 class="elementor-overview__heading">News & Updates</h3>
+                <ul class="elementor-overview__posts">
+                    <li class="elementor-overview__post">
+                        <a href="#" class="elementor-overview__post-link">Introducing Single Post Widgets: The Easy Way to Design Your Blog Posts</a>
+                        <p class="elementor-overview__post-description">Create stylish blog posts with our new Single Post Widgets: Author Box, WordPress Comments, Yoast Breadcrumbs & Post Navigation.</p>
+                    </li>
+                    <li class="elementor-overview__post">
+                        <a href="#" class="elementor-overview__post-link"><span class="elementor-overview__badge"><?php _e( 'Sale', 'elementor' ); ?></span> 7 Marketing Ideas To Boost Your Sales On Black Friday</a>
+                        <p class="elementor-overview__post-description">Take advantage of our Mega Black Friday Creative Kit and get more sales and conversions this Black Friday and Cyber Monday!​ Get ready for the Ultimate Black Friday Web Design Pack that will skyrocket your sales on Black Friday.</p>
+                    </li>
+                    <li class="elementor-overview__post">
+                        <a href="#" class="elementor-overview__post-link">7 Marketing Ideas To Boost Your Sales On Black Friday</a>
+                        <p class="elementor-overview__post-description">Create stylish blog posts with our new Single Post Widgets: Author Box, WordPress Comments, Yoast Breadcrumbs & Post Navigation.</p>
+                    </li>
+                </ul>
+                <div class="elementor-overview__footer">
+                    <a href="#" target="_blank"><?php _e( 'Blog', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                    |
+                    <a href="#" target="_blank"><?php _e( 'Help', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                    |
+                    <a href="#" target="_blank"><?php _e( 'My Account', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                    |
+                    <a href="#" target="_blank" class="elementor-overview__go-pro"><?php _e( 'Go Pro', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                </div>
+
+            </div>
+        </div>
+        <?php
 	}
 
 	/**

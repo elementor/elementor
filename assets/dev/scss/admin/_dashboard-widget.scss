@@ -1,0 +1,82 @@
+
+//Dashboard Widget
+
+//Overview
+.elementor-dashboard-widget {
+
+	.dashicons {
+		vertical-align: middle;
+	}
+
+	.elementor-overview {
+
+		&__header {
+			display: table;
+			width: 100%;
+			box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+			margin: 0 -12px 18px;
+			padding: 0 12px 12px;
+		}
+
+		&__logo,
+		&__version,
+		&__create {
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+		&__logo {
+			color: $editor-accent;
+			font-size: 40px;
+			width: 40px;
+		}
+
+		&__version {
+			padding: 0 10px;
+		}
+
+		&__create {
+			text-align: $end;
+		}
+
+		&__heading {
+			font-weight: 700 !important;
+		}
+
+		&__post {
+			margin-top: 10px;
+			font-size: 14px;
+		}
+
+		&__post-link {
+			display: inline-block;
+			padding-bottom: 5px;
+			font-weight: 500;
+		}
+
+		&__badge {
+			background: $editor-success;
+			color: white;
+			font-size: 0.8em;
+			padding: 3px 6px;
+			border-radius: 3px;
+			text-transform: uppercase;
+		}
+
+		&__post-description {
+			margin: 0 0 1.5em;
+		}
+
+		&__footer{
+			margin: 0 -12px -12px;
+			padding: 12px;
+			border-top: 1px solid #eee;
+			color: #ddd;
+		}
+
+		&__go-pro {
+			color: $editor-orange;
+			font-weight: 500;
+		}
+	}
+}
