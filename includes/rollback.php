@@ -116,7 +116,7 @@ class Rollback {
 	 *
 	 * Change the plugin data when WordPress checks for updates. This method
 	 * modifies package data to update the plugin from a specific URL containing
-	 * the version data.
+	 * the version package.
 	 *
 	 * @since 1.5.0
 	 * @access protected
