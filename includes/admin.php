@@ -445,7 +445,7 @@ class Admin {
 	}
 
 	public function register_dashboard_widgets() {
-		wp_add_dashboard_widget( 'elementor_summery', __( 'Elementor', 'elementor-api' ), [ $this, 'elementor_summery_dashboard_widget' ] );
+		wp_add_dashboard_widget( 'elementor_summary', __( 'Elementor', 'elementor-api' ), [ $this, 'elementor_summary_dashboard_widget' ] );
 	}
 
 	public function elementor_summery_dashboard_widget() {
