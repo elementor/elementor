@@ -20,6 +20,7 @@ class Utils {
 	 * @access public
 	*/
 	public static function is_ajax() {
+		// TODO: When minimum required version will be 4.7, use `wp_doing_ajax()`.
 		return defined( 'DOING_AJAX' ) && DOING_AJAX;
 	}
 
