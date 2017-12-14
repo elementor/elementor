@@ -50,8 +50,8 @@ class Heartbeat {
 	 *
 	 * Filter the nonces to send to the editor when editing with Elementor. Used
 	 * to refresh the nonce when the nonce expires while editing. This way the
-	 * user don't need to login again, Elementor fetched the new nonce from the
-	 * server using ajax.
+	 * user doesn't need to log-in again as Elementor fetches the new nonce from
+	 * the server using ajax.
 	 *
 	 * Fired by `wp_refresh_nonces` filter.
 	 *
@@ -78,7 +78,7 @@ class Heartbeat {
 	/**
 	 * Heartbeat constructor.
 	 *
-	 * Initializing Elementor heartbeat changes.
+	 * Initializing Elementor heartbeat.
 	 *
 	 * @since 1.0.0
 	 * @access public
