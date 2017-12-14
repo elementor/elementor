@@ -9303,18 +9303,21 @@ helpers = {
 	},
 
 	isActiveControl: function( controlModel, values ) {
-		var condition;
+		var condition,
+			conditions;
 
 		// TODO: Better way to get this?
 		if ( _.isFunction( controlModel.get ) ) {
 			condition = controlModel.get( 'condition' );
+			conditions = controlModel.get( 'conditions' );
 		} else {
 			condition = controlModel.condition;
+			conditions = controlModel.conditions;
 		}
 
-		// Repeater items conditions
-		if ( controlModel.conditions ) {
-			return elementor.conditions.check( controlModel.conditions, values );
+		// Multiple conditions with relations.
+		if ( conditions ) {
+			return elementor.conditions.check( conditions, values );
 		}
 
 		if ( _.isEmpty( condition ) ) {
