@@ -453,11 +453,14 @@ class Admin {
         <div class="elementor-dashboard-widget">
             <div class="elementor-overview__header">
                 <div class="elementor-overview__logo"><i class="eicon-elementor-square"></i></div>
-                <div class="elementor-overview__version">Elementor v1.8.11</div>
+                <div class="elementor-overview__versions">
+                    <span class="elementor-overview__version">v1.8.11</span>
+                    <span class="elementor-overview__version">Pro v1.10.0</span>
+                </div>
                 <div class="elementor-overview__create"><a href="#" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> Create New Page</a></div>
             </div>
             <div class="elementor-overview__feed">
-                <h3 class="elementor-overview__heading">News & Updates</h3>
+                <h3 class="elementor-overview__heading"><?php _e( 'News & Updates', 'elementor' ); ?></h3>
                 <ul class="elementor-overview__posts">
                     <li class="elementor-overview__post">
                         <a href="#" class="elementor-overview__post-link">Introducing Single Post Widgets: The Easy Way to Design Your Blog Posts</a>

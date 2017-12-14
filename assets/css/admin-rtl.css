@@ -551,17 +551,22 @@ body.elementor-editor-inactive #elementor-editor {
   margin: 0 -12px 18px;
   padding: 0 12px 12px; }
 
-.elementor-dashboard-widget .elementor-overview__logo, .elementor-dashboard-widget .elementor-overview__version, .elementor-dashboard-widget .elementor-overview__create {
+.elementor-dashboard-widget .elementor-overview__logo, .elementor-dashboard-widget .elementor-overview__versions, .elementor-dashboard-widget .elementor-overview__create {
   display: table-cell;
   vertical-align: middle; }
 
 .elementor-dashboard-widget .elementor-overview__logo {
   color: #B7084E;
-  font-size: 40px;
-  width: 40px; }
+  font-size: 45px;
+  width: 45px; }
+
+.elementor-dashboard-widget .elementor-overview__versions {
+  padding: 0 10px;
+  font-size: 0.9em;
+  line-height: 1.5; }
 
 .elementor-dashboard-widget .elementor-overview__version {
-  padding: 0 10px; }
+  display: block; }
 
 .elementor-dashboard-widget .elementor-overview__create {
   text-align: left; }

@@ -19,7 +19,7 @@
 		}
 
 		&__logo,
-		&__version,
+		&__versions,
 		&__create {
 			display: table-cell;
 			vertical-align: middle;
@@ -27,12 +27,18 @@
 
 		&__logo {
 			color: $editor-accent;
-			font-size: 40px;
-			width: 40px;
+			font-size: 45px;
+			width: 45px;
+		}
+
+		&__versions {
+			padding: 0 10px;
+			font-size: 0.9em;
+			line-height: 1.5;
 		}
 
 		&__version {
-			padding: 0 10px;
+			display: block;
 		}
 
 		&__create {
