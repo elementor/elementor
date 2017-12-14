@@ -2,13 +2,13 @@
 //Dashboard Widget
 
 //Overview
-#elementor-dashboard-overview {
+#e-dashboard-overview {
 
 	.dashicons {
 		vertical-align: middle;
 	}
 
-	.elementor-overview {
+	.e-overview {
 
 		&__header {
 			display: table;
@@ -66,7 +66,7 @@
 
 		&__feed {
 
-			.elementor-overview__heading {
+			.e-overview__heading {
 				border-top: 1px solid #eee;
 				border-bottom: 1px solid #eee;
 				margin: 0 -12px;
