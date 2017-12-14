@@ -177,7 +177,7 @@ class Compatibility {
 	}
 
 	/**
-	 * Process post meta before WX importer.
+	 * Process post meta before WP importer.
 	 *
 	 * Normalize Elementor post meta on import, We need the `wp_slash` in order
 	 * to avoid the unslashing during the `add_post_meta`.
