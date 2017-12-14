@@ -17,7 +17,7 @@ class Autoloader {
 	/**
 	 * Classes map.
 	 *
-	 * Holds the classes used by elementor.
+	 * Maps Elementor classes to file names.
 	 *
 	 * @since 1.6.0
 	 * @access private
@@ -97,13 +97,13 @@ class Autoloader {
 	/**
 	 * Classes aliases.
 	 *
-	 * Holds the classes alternative names.
+	 * Maps Elementor classes to aliases.
 	 *
 	 * @since 1.6.0
 	 * @access private
 	 * @static
 	 *
-	 * @var array Classes alternative names.
+	 * @var array Classes aliases.
 	 */
 	private static $classes_aliases = [
 		'Control_Base' => 'Base_Data_Control',
@@ -114,7 +114,7 @@ class Autoloader {
 	/**
 	 * Run autoloader.
 	 *
-	 * Register a function as __autoload() implementation.
+	 * Register a function as `__autoload()` implementation.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -126,9 +126,9 @@ class Autoloader {
 
 	/**
 	 * Get classes aliases.
-	 * 
-	 * Retrieve the classes alternative names.
-	 * 
+	 *
+	 * Retrieve the classes aliases names.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
@@ -142,7 +142,7 @@ class Autoloader {
 	/**
 	 * Load class.
 	 *
-	 * Require a given class.
+	 * For a given class name, require the class file.
 	 *
 	 * @since 1.6.0
 	 * @access private
