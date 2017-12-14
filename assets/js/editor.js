@@ -7874,6 +7874,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.triggerMethod( 'ready' );
 
 		this.toggleControlVisibility();
+
 		this.addTooltip();
 	},
 
@@ -9183,12 +9184,23 @@ ControlRepeaterItemView = ControlBaseItemView.extend( {
 
 	onSortStop: function( event, ui ) {
 		// Reload TinyMCE editors (if exist), it's a bug that TinyMCE content is missing after stop dragging
-		var sortedRowView = this.children.findByIndex( ui.item.index() ),
-			rowControls = sortedRowView.children;
+		var self = this,
+			sortedIndex = ui.item.index();
 
-		rowControls.each( function( control ) {
-			if ( 'wysiwyg' === control.model.get( 'type' ) ) {
-				control.render();
+		if ( -1 === sortedIndex ) {
+			return;
+		}
+
+		var sortedRowView = self.children.findByIndex( ui.item.index() ),
+			rowControls = sortedRowView.children._views;
+
+		jQuery.each( rowControls, function() {
+			if ( 'wysiwyg' === this.model.get( 'type' ) ) {
+				sortedRowView.render();
+
+				delete self.currentEditableChild;
+
+				return false;
 			}
 		} );
 	},
