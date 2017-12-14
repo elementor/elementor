@@ -32,7 +32,7 @@ class Utils {
 	/**
 	 * Is script debug.
 	 *
-	 * Whether WordPress loads non-minified versions of all CSS and JS files.
+	 * Whether script debug is ebanled or not.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -139,7 +139,7 @@ class Utils {
 	}
 
 	/**
-	 * Is post type support Elementor.
+	 * Is post type supports Elementor.
 	 *
 	 * Whether the post type supports editing with Elementor.
 	 *
