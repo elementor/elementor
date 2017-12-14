@@ -27,7 +27,76 @@ class Compatibility {
 		if ( is_admin() ) {
 			add_filter( 'wp_import_post_meta', [ __CLASS__, 'on_wp_import_post_meta' ] );
 			add_filter( 'wxr_importer.pre_process.post_meta', [ __CLASS__, 'on_wxr_importer_pre_process_post_meta' ] );
+
+			if ( function_exists( 'gutenberg_init' ) ) {
+				add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
+				add_action( 'admin_action_elementor_new_post', [ __CLASS__, 'admin_new_post' ] );
+				add_filter( 'elementor/utils/exit_to_dashboard_url', [ __CLASS__, 'exit_to_classic_editor' ] );
+			}
 		}
+	}
+
+	/**
+	 * @static
+	 * @since 1.9.0
+	 * @access public
+	 */
+
+	public static function exit_to_classic_editor( $exit_url ) {
+		$exit_url = add_query_arg( 'classic-editor', '', $exit_url );
+
+		return $exit_url;
+	}
+
+	/**
+	 * @static
+	 * @since 1.9.0
+	 * @access public
+	 */
+
+	public static function add_new_button_to_gutenberg() {
+		global $typenow;
+		if ( ! gutenberg_can_edit_post_type( $typenow ) || ! User::is_current_user_can_create_new_post( $typenow ) ) {
+			return;
+		}
+
+		?>
+
+		<script type="text/javascript">
+			document.addEventListener( 'DOMContentLoaded', function() {
+				var dropdown = document.querySelector( '#split-page-title-action .dropdown' );
+
+				if ( ! dropdown ) {
+					return;
+				}
+
+				var url = './edit.php?post_type=<?php echo $typenow; // XSS ok. ?>&action=elementor_new_post';
+
+				dropdown.insertAdjacentHTML( 'afterbegin', '<a href="' + url + '">Elementor</a>' );
+			} );
+		</script>
+		<?php
+	}
+
+	public static function admin_new_post() {
+		if ( empty( $_GET['post_type'] ) ) {
+			$post_type = 'post';
+		} else {
+			$post_type = $_GET['post_type'];
+		}
+
+		if ( ! User::is_current_user_can_create_new_post( $post_type ) ) {
+			return;
+		}
+
+		$post_id = wp_insert_post( [
+			'post_type' => $post_type,
+		] );
+
+		add_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+
+		wp_redirect( Utils::get_edit_link( $post_id ) );
+		die;
 	}
 
 	/**
