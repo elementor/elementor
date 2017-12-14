@@ -49,7 +49,7 @@ class Shapes {
 	 *
 	 * @param array $shape Optional. Specific shape. Default is `null`.
 	 *
-	 * @return array A list of shapes.
+	 * @return array The specified shape or a list of all the supported shapes.
 	 */
 	public static function get_shapes( $shape = null ) {
 		if ( null === self::$shapes ) {
