@@ -948,7 +948,7 @@ class Fonts {
 	 * @access public
 	 * @static
 	 *
-	 * @param array $groups Optionl. Font group. Default is an empty array.
+	 * @param array $groups Optional. Font group. Default is an empty array.
 	 *
 	 * @return array Font type, or false if font doesn't exist.
 	 */
