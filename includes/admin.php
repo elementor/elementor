@@ -459,6 +459,20 @@ class Admin {
                 </div>
                 <div class="elementor-overview__create"><a href="#" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> Create New Page</a></div>
             </div>
+            <div class="elementor-overview__recently-edited">
+                <h3 class="elementor-overview__heading"><?php _e( 'Recently Edited', 'elementor' ); ?></h3>
+                <ul class="elementor-overview__posts">
+                    <li class="elementor-overview__post">
+                        <span>Dec 4th, 4:52 pm</span> <a href="#" class="elementor-overview__post-link"> <span class="dashicons dashicons-edit"></span> Introducing Single Post Widget</a>
+                    </li>
+                    <li class="elementor-overview__post">
+                        <span>Dec 4th, 4:52 pm</span> <a href="#" class="elementor-overview__post-link"> <span class="dashicons dashicons-edit"></span> 7 Marketing Ideas To Boost Your Sales On Black Friday</span></a>
+                    </li>
+                    <li class="elementor-overview__post">
+                        <span>Dec 4th, 4:52 pm</span> <a href="#" class="elementor-overview__post-link"> <span class="dashicons dashicons-edit"></span> 7 Marketing Ideas To Boost Your Sales On Black Friday</span></a>
+                    </li>
+                </ul>
+            </div>
             <div class="elementor-overview__feed">
                 <h3 class="elementor-overview__heading"><?php _e( 'News & Updates', 'elementor' ); ?></h3>
                 <ul class="elementor-overview__posts">
@@ -475,16 +489,15 @@ class Admin {
                         <p class="elementor-overview__post-description">Create stylish blog posts with our new Single Post Widgets: Author Box, WordPress Comments, Yoast Breadcrumbs & Post Navigation.</p>
                     </li>
                 </ul>
-                <div class="elementor-overview__footer">
-                    <a href="#" target="_blank"><?php _e( 'Blog', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
-                    |
-                    <a href="#" target="_blank"><?php _e( 'Help', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
-                    |
-                    <a href="#" target="_blank"><?php _e( 'My Account', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
-                    |
-                    <a href="#" target="_blank" class="elementor-overview__go-pro"><?php _e( 'Go Pro', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
-                </div>
-
+            </div>
+            <div class="elementor-overview__footer">
+                <a href="#" target="_blank"><?php _e( 'Blog', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                |
+                <a href="#" target="_blank"><?php _e( 'Help', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                |
+                <a href="#" target="_blank"><?php _e( 'My Account', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                |
+                <a href="#" target="_blank" class="elementor-overview__go-pro"><?php _e( 'Go Pro', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
             </div>
         </div>
         <?php
