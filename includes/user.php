@@ -125,9 +125,9 @@ class User {
 	}
 
 	/**
-	 * Set admin notice viewed.
+	 * Set admin notice as viewed.
 	 *
-	 * Fire authenticated ajax actions for logged-in users to set admin notices.
+	 * Flag the user admin notice as viewed using an authenticated ajax request.
 	 *
 	 * Fired by `wp_ajax_elementor_set_admin_notice_viewed` action.
 	 *
