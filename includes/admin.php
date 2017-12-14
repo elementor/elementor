@@ -444,6 +444,14 @@ class Admin {
 		<?php
 	}
 
+	public function register_dashboard_widgets() {
+		wp_add_dashboard_widget( 'elementor_summery', __( 'Elementor', 'elementor-api' ), [ $this, 'elementor_summery_dashboard_widget' ] );
+	}
+
+	public function elementor_summery_dashboard_widget() {
+		// Content here..
+	}
+
 	/**
 	 * @since 1.0.0
 	 * @access public
@@ -493,6 +501,9 @@ class Admin {
 		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
+
+		// Register Dashboard Widgets.
+		add_action( 'wp_dashboard_setup', [ $this, 'register_dashboard_widgets' ] );
 
 		// Ajax.
 		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
