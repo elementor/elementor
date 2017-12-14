@@ -124,6 +124,23 @@ class Utils {
 		return $wp_preview_url;
 	}
 
+
+	public static function get_exit_to_dashboard_url( $post_id ) {
+		$exit_url = get_edit_post_link( $post_id );
+
+		/**
+		 * Filters the Exit To Dashboard URL.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param string $$exit_url   Default exit URL.
+		 * @param int    $post_id     Post ID.
+		 */
+		$exit_url = apply_filters( 'elementor/utils/exit_to_dashboard_url', $exit_url, $post_id );
+
+		return $exit_url;
+	}
+
 	/**
 	 * @static
 	 * @since 1.0.0

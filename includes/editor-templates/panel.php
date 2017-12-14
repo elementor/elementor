@@ -109,7 +109,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Save to Library', 'elementor' ); ?></span>
 				</div>
-				<a id="elementor-panel-footer-saver-exit" class="elementor-panel-footer-sub-menu-item" href="<?php echo esc_attr( get_edit_post_link() ); ?>">
+				<a id="elementor-panel-footer-saver-exit" class="elementor-panel-footer-sub-menu-item" href="<?php echo esc_attr( Utils::get_exit_to_dashboard_url( get_the_ID() ) ); ?>">
 					<i class="elementor-icon fa fa-times" aria-hidden="true"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Exit to Dashboard', 'elementor' ); ?></span>
 				</a>
