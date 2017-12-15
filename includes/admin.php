@@ -444,6 +444,13 @@ class Admin {
 		<?php
 	}
 
+	/**
+	 * Add overview widget to WordPress dashboard.
+     *
+     * @since 1.9.0
+	 * @access public
+	 */
+
 	public function register_dashboard_widgets() {
 		wp_add_dashboard_widget( 'e-dashboard-overview', __( 'Elementor Overview', 'elementor-api' ), [ $this, 'elementor_dashboard_overview_widget' ] );
 	}
