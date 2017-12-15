@@ -491,13 +491,13 @@ class Admin {
                 </ul>
             </div>
             <div class="e-overview__footer">
-                <a href="#" target="_blank"><?php _e( 'Blog', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                <a href="https://go.elementor.com/overview-widget-blog/" target="_blank"><?php _e( 'Blog', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
                 |
-                <a href="#" target="_blank"><?php _e( 'Help', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                <a href="https://go.elementor.com/overview-widget-docs/" target="_blank"><?php _e( 'Help', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
                 |
-                <a href="#" target="_blank"><?php _e( 'My Account', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                <a href="https://go.elementor.com/overview-widget-account/" target="_blank"><?php _e( 'My Account', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
                 |
-                <a href="#" target="_blank" class="e-overview__go-pro"><?php _e( 'Go Pro', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+                <a href="https://go.elementor.com/overview-widget-pro/" target="_blank" class="e-overview__go-pro"><?php _e( 'Go Pro', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
             </div>
         </div>
         <?php
