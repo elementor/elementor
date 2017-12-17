@@ -14,21 +14,51 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Embed {
 
+	/**
+	 * Provider match masks.
+	 *
+	 * Holds a list of supported providers with their URL structure in a regex format.
+	 *
+	 * @since 1.5.0
+	 * @access private
+	 * @static
+	 *
+	 * @var array Provider URL structure regex.
+	 */
 	private static $provider_match_masks = [
 		'youtube' => '/^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^\?&\"\'>]+)/',
 		'vimeo' => '/(?:https?:\/\/)?(?:www\.)?(?:player\.)?vimeo\.com\/(?:[a-z]*\/)*([‌​0-9]{6,11})[?]?.*/',
 	];
 
+	/**
+	 * Embed patterns.
+	 *
+	 * Holds a list of supported providers with their embed patters.
+	 *
+	 * @since 1.5.0
+	 * @access private
+	 * @static
+	 *
+	 * @var array Embed patters.
+	 */
 	private static $embed_patterns = [
 		'youtube' => 'https://www.youtube{NO_COOKIE}.com/embed/{VIDEO_ID}?feature=oembed',
 		'vimeo' => 'https://player.vimeo.com/video/{VIDEO_ID}',
 	];
 
 	/**
-	 * @static
+	 * Get video properties.
+	 *
+	 * Retrieve the video properties for a given video URL.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $video_url Video URL.
+	 *
+	 * @return null|array The video properties, or null.
+	 */
 	public static function get_video_properties( $video_url ) {
 		foreach ( self::$provider_match_masks as $provider => $match_mask ) {
 			preg_match( $match_mask, $video_url, $matches );
@@ -45,10 +75,22 @@ class Embed {
 	}
 
 	/**
-	 * @static
+	 * Get embed URL.
+	 *
+	 * Retrieve the embed URL for a given video.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $video_url        Video URL.
+	 * @param array  $embed_url_params Optional. Embed parameters. Default is an
+	 *                                 empty array.
+	 * @param array  $options          Optional. Embed options. Default is an
+	 *                                 empty array.
+	 *
+	 * @return null|array The video properties, or null.
+	 */
 	public static function get_embed_url( $video_url, array $embed_url_params = [], array $options = [] ) {
 		$video_properties = self::get_video_properties( $video_url );
 
@@ -70,10 +112,24 @@ class Embed {
 	}
 
 	/**
-	 * @static
+	 * Get embed HTML.
+	 *
+	 * Retrieve the final HTML of the embeded URL.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $video_url        Video URL.
+	 * @param array  $embed_url_params Optional. Embed parameters. Default is an
+	 *                                 empty array.
+	 * @param array  $options          Optional. Embed options. Default is an
+	 *                                 empty array.
+	 * @param array  $frame_attributes Optional. IFrame attributes. Default is an
+	 *                                 empty array.
+	 *
+	 * @return string The embed HTML.
+	 */
 	public static function get_embed_html( $video_url, array $embed_url_params = [], array $options = [],  array $frame_attributes = [] ) {
 		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
 
