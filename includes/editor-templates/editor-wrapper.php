@@ -9,7 +9,7 @@ global $wp_version;
 
 $body_classes = [
 	'elementor-editor-active',
-	'wp-version' . str_replace( '.', '-', $wp_version ),
+	'wp-version-' . str_replace( '.', '-', $wp_version ),
 ];
 
 if ( is_rtl() ) {
