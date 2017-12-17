@@ -536,7 +536,7 @@ class Admin {
 	 * @access public
 	 */
 	public function register_dashboard_widgets() {
-		wp_add_dashboard_widget( 'elementor_summary', __( 'Elementor', 'elementor-api' ), [ $this, 'elementor_summary_dashboard_widget' ] );
+		wp_add_dashboard_widget( 'elementor_summary', __( 'Elementor', 'elementor' ), [ $this, 'elementor_summary_dashboard_widget' ] );
 	}
 
 	/**
