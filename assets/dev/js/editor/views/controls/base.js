@@ -178,6 +178,7 @@ ControlBaseItemView = Marionette.CompositeView.extend( {
 		this.triggerMethod( 'ready' );
 
 		this.toggleControlVisibility();
+
 		this.addTooltip();
 	},
 
