@@ -66,7 +66,10 @@ class Editor {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor editor. Fired by `admin_action_elementor` action.
+	 * Initialize Elementor editor. Registers all needed actions to run Elementor,
+	 * removes conflicting actions etc.
+	 *
+	 * Fired by `admin_action_elementor` action.
 	 *
 	 * @since 1.7.0
 	 * @access public
@@ -161,7 +164,9 @@ class Editor {
 	 * Redirect to new URL.
 	 *
 	 * Used as a fallback function for the old URL structure of Elementor
-	 * page edit URL. Fired by `template_redirect` action.
+	 * page edit URL.
+	 *
+	 * Fired by `template_redirect` action.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -251,7 +256,7 @@ class Editor {
 	 *
 	 * @param int $post_id The ID of the post being edited.
 	 *
-	 * @return false|\WP_User User information or false if the post is not locked.
+	 * @return \WP_User|false User information or false if the post is not locked.
 	 */
 	public function get_locked_user( $post_id ) {
 		if ( ! function_exists( 'wp_check_post_lock' ) ) {
@@ -268,6 +273,8 @@ class Editor {
 
 	/**
 	 * Print panel HTML.
+	 *
+	 * Include the wrapper template of the editor.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -864,7 +871,9 @@ class Editor {
 	 * WP footer.
 	 *
 	 * Prints Elementor editor with all the editor templates, and render controls,
-	 * widgets and content elements. Fired by `wp_footer` action.
+	 * widgets and content elements.
+	 *
+	 * Fired by `wp_footer` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -979,7 +988,10 @@ class Editor {
 	}
 
 	/**
-	 * Verify request nonce and send a JSON error if not.
+	 * Verify ajax nonce.
+	 *
+	 * Verify request nonce and send a JSON request, if not verified returns an
+	 * error.
 	 *
 	 * @access public
 	 */
