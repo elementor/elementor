@@ -425,6 +425,27 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'icon_space',
+			[
+				'label' => __( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-toggle .elementor-toggle-icon.elementor-toggle-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-toggle .elementor-toggle-icon.elementor-toggle-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'icon!' => '',
+				]
+			]
+		);
+
 		$this->add_control(
 			'heading_content',
 			[
