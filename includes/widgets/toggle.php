@@ -339,12 +339,13 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'heading_title',
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_toggle_style_title',
 			[
 				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -410,12 +411,13 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'heading_icon',
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_toggle_style_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
+				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'icon!' => '',
 				]
@@ -495,12 +497,16 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'heading_content',
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_toggle_style_content',
 			[
 				'label' => __( 'Content', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'icon!' => '',
+				]
 			]
 		);
 
