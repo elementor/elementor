@@ -14,19 +14,55 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Api {
 
+	/**
+	 * API info URL.
+	 *
+	 * Holds the URL of the info API.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @var string API info URL.
+	 */
 	public static $api_info_url = 'http://my.elementor.com/api/v1/info/';
+
+	/**
+	 * API feedback URL.
+	 *
+	 * Holds the URL of the feedback API.
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @var string API feedback URL.
+	 */
 	private static $api_feedback_url = 'http://my.elementor.com/api/v1/feedback/';
+
+	/**
+	 * API get template content URL.
+	 *
+	 * Holds the URL of the template content API.
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @var string API get template content URL.
+	 */
 	private static $api_get_template_content_url = 'http://my.elementor.com/api/v1/templates/%d';
 
 	/**
-	 * This function notifies the user of upgrade notices, new templates and contributors
+	 * Get info data.
 	 *
-	 * @static
+	 * This function notifies the user of upgrade notices, new templates and contributors.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	 * @param bool $force
+	 * @static
 	 *
-	 * @return array|bool
+	 * @param bool $force_update Optional. Whether to force the data retrieval or
+	 *                                     not. Default is false.
+	 *
+	 * @return array|false Info data, or false.
 	 */
 	private static function _get_info_data( $force = false ) {
 		$cache_key = 'elementor_remote_info_api_data_' . ELEMENTOR_VERSION;
@@ -71,10 +107,16 @@ class Api {
 	}
 
 	/**
-	 * @static
+	 * Get upgrade notice.
+	 *
+	 * Retrieve the upgrade notice if one exists, or false otherwise.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return array|false Upgrade notice, or false none exist.
+	 */
 	public static function get_upgrade_notice() {
 		$data = self::_get_info_data();
 
@@ -86,14 +128,19 @@ class Api {
 	}
 
 	/**
-	 * @static
+	 * Get templates data.
+	 *
+	 * Retrieve the templates data from a remote server.
+	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @static
 	 *
-	 * @param bool $force_update
+	 * @param bool $force_update Optional. Whether to force the data update or
+	 *                                     not. Default is false.
 	 *
-	 * @return array
-	*/
+	 * @return array The templates data.
+	 */
 	public static function get_templates_data( $force_update = false ) {
 		self::_get_info_data( $force_update );
 
@@ -107,10 +154,18 @@ class Api {
 	}
 
 	/**
-	 * @static
+	 * Get template content.
+	 *
+	 * Retrieve the templates content recieved from a remote server.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param int $template_id The template ID.
+	 *
+	 * @return array The template content.
+	 */
 	public static function get_template_content( $template_id ) {
 		$url = sprintf( self::$api_get_template_content_url, $template_id );
 
@@ -159,10 +214,19 @@ class Api {
 	}
 
 	/**
-	 * @static
+	 * Send Feedback.
+	 *
+	 * Fires a request to Elementor server with the feedback data.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $feedback_key  Feedback key.
+	 * @param string $feedback_text Feedback text.
+	 *
+	 * @return array The response of the request.
+	 */
 	public static function send_feedback( $feedback_key, $feedback_text ) {
 		return wp_remote_post( self::$api_feedback_url, [
 			'timeout' => 30,
@@ -176,10 +240,14 @@ class Api {
 	}
 
 	/**
-	 * @static
+	 * Ajax reset API data.
+	 *
+	 * Reset Elementor library API data using an ajax call.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 */
 	public static function ajax_reset_api_data() {
 		check_ajax_referer( 'elementor_reset_library', '_nonce' );
 
@@ -189,10 +257,14 @@ class Api {
 	}
 
 	/**
-	 * @static
+	 * Init.
+	 *
+	 * Initialize Elementor API.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 */
 	public static function init() {
 		add_action( 'wp_ajax_elementor_reset_library', [ __CLASS__, 'ajax_reset_api_data' ] );
 	}

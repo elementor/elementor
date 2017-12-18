@@ -14,17 +14,43 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Shapes {
 
+	/**
+	 * The exclude filter.
+	 */
 	const FILTER_EXCLUDE = 'exclude';
 
+	/**
+	 * The include filter.
+	 */
 	const FILTER_INCLUDE = 'include';
 
+	/**
+	 * Shapes.
+	 *
+	 * Holds the list of supported shapes.
+	 *
+	 * @since 1.3.0
+	 * @access private
+	 * @static
+	 *
+	 * @var array A list of supported shapes.
+	 */
 	private static $shapes;
 
 	/**
-	 * @static
+	 * Get shapes.
+	 *
+	 * Retrieve a shape from the lists of supported shapes. If no shape specified
+	 * it will return all the supported shapes.
+	 *
 	 * @since 1.3.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param array $shape Optional. Specific shape. Default is `null`.
+	 *
+	 * @return array The specified shape or a list of all the supported shapes.
+	 */
 	public static function get_shapes( $shape = null ) {
 		if ( null === self::$shapes ) {
 			self::init_shapes();
@@ -38,10 +64,21 @@ class Shapes {
 	}
 
 	/**
-	 * @static
+	 * Filter shapes.
+	 *
+	 * Retrieve shapes filtered by a specific condition, from the list of
+	 * supported shapes.
+	 *
 	 * @since 1.3.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $by     Specific condition to filter by.
+	 * @param string $filter Optional. Comparison condition to filter by.
+	 *                       Default is `include`.
+	 *
+	 * @return array A list of filtered shapes.
+	 */
 	public static function filter_shapes( $by, $filter = self::FILTER_INCLUDE ) {
 		return array_filter(
 			self::get_shapes(), function( $shape ) use ( $by, $filter ) {
@@ -51,10 +88,20 @@ class Shapes {
 	}
 
 	/**
-	 * @static
+	 * Get shape path.
+	 *
+	 * For a given shape, retrieve the file path.
+	 *
 	 * @since 1.3.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $shape       The shape.
+	 * @param bool   $is_negative Optional. Whether the file name is negative or
+	 *                            not. Default is `false`.
+	 *
+	 * @return string Shape file path.
+	 */
 	public static function get_shape_path( $shape, $is_negative = false ) {
 		$file_name = $shape;
 
@@ -66,10 +113,14 @@ class Shapes {
 	}
 
 	/**
-	 * @static
+	 * Init shapes.
+	 *
+	 * Set the supported shapes.
+	 *
 	 * @since 1.3.0
 	 * @access private
-	*/
+	 * @static
+	 */
 	private static function init_shapes() {
 		self::$shapes = [
 			'mountains' => [
