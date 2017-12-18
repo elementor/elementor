@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Preview.
+ * Elementor preview class.
  *
- * Elementor preview handler class.
+ * Elementor preview handler class is responsible for initializing Elementor in
+ * preview mode.
  *
  * @since 1.0.0
  */
@@ -17,7 +18,7 @@ class Preview {
 	/**
 	 * Post ID.
 	 *
-	 * Holds the ID of the current post being previewed
+	 * Holds the ID of the current post being previewed.
 	 *
 	 * @since 1.0.0
 	 * @access private

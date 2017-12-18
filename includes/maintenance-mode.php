@@ -4,9 +4,10 @@ namespace Elementor;
 use Elementor\TemplateLibrary\Source_Local;
 
 /**
- * Maintenance mode.
+ * Elementor maintenance mode class.
  *
- * Elementor maintenance mode handler class.
+ * Elementor maintenance mode handler class is responsible for the Elementor
+ * "Maintenance Mode" and the "Coming Soon" features.
  *
  * @since 1.4.0
  */

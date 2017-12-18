@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Upgrades.
+ * Elementor upgrades class.
  *
- * Elementor upgrades handler class.
+ * Elementor upgrades handler class is responsible for ????????
  *
  * @since 1.0.0
  */

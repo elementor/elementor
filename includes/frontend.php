@@ -8,9 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Frontend.
+ * Elementor frontend class.
  *
- * Elementor frontend handler class.
+ * Elementor frontend handler class is responsible for initializing Elementor in
+ * the frontend.
  *
  * @since 1.0.0
  */

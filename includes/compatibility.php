@@ -8,9 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Compatibility.
+ * Elementor compatibility class.
  *
- * Elementor compatibility handler class.
+ * Elementor compatibility handler class is responsible for compatibility with
+ * external plugins. The class resolves different issues with non-compatibile
+ * plugins.
  *
  * @since 1.0.0
  */

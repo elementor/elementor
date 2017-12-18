@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Database.
+ * Elementor database class.
  *
- * Elementor database handler class.
+ * Elementor database handler class is responsible for comunicating with the
+ * DB, save and retrieve Elementor data and meta data.
  *
  * @since 1.0.0
  */
