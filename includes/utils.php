@@ -27,13 +27,19 @@ class Utils {
 
 	/**
 	 * @static
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $post_id
+	 *
+	 * @return mixed
+	 */
 	public static function get_edit_link( $post_id = 0 ) {
-		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
+		_deprecated_function( __METHOD__, '1.9.0', '$document->get_edit_link()' );
 
-		return apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
+		$url = Plugin::$instance->documents_manager->get( $post_id )->get_edit_url();
+
+		return self::apply_filters_deprecated( 'elementor/utils/get_edit_link', [ $url, $post_id ], '1.9.0', 'elementor/document/get_edit_link' );
 	}
 
 	/**
@@ -68,11 +74,13 @@ class Utils {
 	 * @static
 	 * @since 1.6.4
 	 * @access public
-	*/
+	 */
 	public static function get_preview_url( $post_id ) {
-		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
+		_deprecated_function( __METHOD__, '1.9.0', '$document->get_preview_url()' );
 
-		return apply_filters( 'elementor/utils/preview_url', $preview_url, $post_id );
+		$url = Plugin::$instance->documents_manager->get( $post_id )->get_preview_url();
+
+		return self::apply_filters_deprecated( 'elementor/utils/preview_url', [ $url, $post_id ], '1.9.0', 'elementor/document/preview_url' );
 	}
 
 	/**

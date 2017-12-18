@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Documents_Manager;
 use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -35,6 +36,11 @@ class Plugin {
 	 * @var Debug
 	 */
 	public $debug;
+
+	/**
+	 * @var Documents_Manager
+	 */
+	public $documents_manager;
 
 	/**
 	 * @var Schemes_Manager
@@ -211,6 +217,7 @@ class Plugin {
 
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
+		$this->documents_manager = new Documents_Manager();
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();

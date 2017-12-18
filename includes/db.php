@@ -113,46 +113,27 @@ class DB {
 	 * @return array
 	 */
 	protected function _get_json_meta( $post_id, $key ) {
-		$meta = get_post_meta( $post_id, $key, true );
+		return Plugin::$instance->documents_manager->get( $post_id )->get_json_meta( $key );
+	}
 
-		if ( is_string( $meta ) ) {
-			if ( empty( $meta ) ) {
-				$meta = [];
-			} else {
-				$meta = json_decode( $meta, true );
-			}
-		}
-
-		return $meta;
+	/**
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @param int $post_id
+	 * @param string $status
+	 *
+	 * @return array
+	 */
+	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
+		return Plugin::$instance->documents_manager->get( $post_id )->get_elements( $status );
 	}
 
 	/**
 	 * @since 1.0.0
 	 * @access public
 	*/
-	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
-		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
-
-		if ( self::STATUS_DRAFT === $status ) {
-			$draft_data = $this->_get_json_meta( $post_id, '_elementor_draft_data' );
-
-			if ( ! empty( $draft_data ) ) {
-				$data = $draft_data;
-			}
-
-			if ( empty( $data ) ) {
-				$data = $this->_get_new_editor_from_wp_editor( $post_id );
-			}
-		}
-
-		return $data;
-	}
-
-	/**
-	 * @since 1.0.0
-	 * @access protected
-	*/
-	protected function _get_new_editor_from_wp_editor( $post_id ) {
+	public function _get_new_editor_from_wp_editor( $post_id ) {
 		$post = get_post( $post_id );
 
 		if ( empty( $post ) || empty( $post->post_content ) ) {

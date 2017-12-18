@@ -195,30 +195,6 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve items.
-	 *
-	 * Utility method that recieves an array with a needle and returns all the
-	 * items that match the needle. If needle is not defined the entire haystack
-	 * will be returened.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @static
-	 *
-	 * @param array  $haystack An array of items.
-	 * @param string $needle   Optional. Default is null.
-	 *
-	 * @return mixed The whole haystack or the needle from the haystack when requested.
-	 */
-	private static function _get_items( array $haystack, $needle = null ) {
-		if ( $needle ) {
-			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
-		}
-
-		return $haystack;
-	}
-
-	/**
 	 * Initialize edit tools.
 	 *
 	 * Register default edit tools.

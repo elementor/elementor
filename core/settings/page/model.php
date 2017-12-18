@@ -67,17 +67,6 @@ class Model extends BaseModel {
 			]
 		);
 
-		$this->add_control(
-			'post_title',
-			[
-				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => $this->post->post_title,
-				'label_block' => true,
-				'separator' => 'none',
-			]
-		);
-
 		$page_title_selector = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_page_title_selector' );
 
 		if ( ! $page_title_selector ) {
@@ -119,22 +108,6 @@ class Model extends BaseModel {
 					'export' => function( $value ) {
 						return Manager::TEMPLATE_CANVAS === $value;
 					},
-				]
-			);
-		}
-
-		$post_type_object = get_post_type_object( $this->post->post_type );
-
-		$can_publish = current_user_can( $post_type_object->cap->publish_posts );
-
-		if ( 'publish' === $this->post->post_status || 'private' === $this->post->post_status || $can_publish ) {
-			$this->add_control(
-				'post_status',
-				[
-					'label' => __( 'Status', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => $this->post->post_status,
-					'options' => get_post_statuses(),
 				]
 			);
 		}
