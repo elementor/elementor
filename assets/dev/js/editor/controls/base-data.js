@@ -125,9 +125,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.renderResponsiveSwitchers();
 
-		this.addTooltip();
-
 		this.triggerMethod( 'ready' );
+
+		this.toggleControlVisibility();
+
+		this.addTooltip();
 	},
 
 	onBaseInputChange: function( event ) {
