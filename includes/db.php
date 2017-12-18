@@ -204,7 +204,7 @@ class DB {
 
 			if ( is_object( $autosave ) ) {
 				$data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
-	}
+			}
 		} elseif ( empty( $data ) ) {
 			$data = $this->_get_new_editor_from_wp_editor( $post_id );
 		}

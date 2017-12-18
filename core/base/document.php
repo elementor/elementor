@@ -120,12 +120,12 @@ abstract class Document extends Controls_Stack {
 	public function get_json_meta( $key ) {
 		$meta = get_post_meta( $this->post->ID, $key, true );
 
-		if ( is_string( $meta ) ) {
-			if ( empty( $meta ) ) {
-				$meta = [];
-			} else {
-				$meta = json_decode( $meta, true );
-			}
+		if ( is_string( $meta ) && ! empty( $meta ) ) {
+			$meta = json_decode( $meta, true );
+		}
+
+		if ( empty( $meta ) ) {
+			$meta = [];
 		}
 
 		return $meta;
@@ -143,15 +143,15 @@ abstract class Document extends Controls_Stack {
 		$elements = $this->get_json_meta( '_elementor_data' );
 
 		if ( DB::STATUS_DRAFT === $status ) {
-			$draft_data = $this->get_json_meta( '_elementor_draft_data' );
+			$autosave = wp_get_post_autosave( $this->post->ID );
 
-			if ( ! empty( $draft_data ) ) {
-				$elements = $draft_data;
+			if ( is_object( $autosave ) ) {
+				$elements = Plugin::$instance->documents_manager
+					->get( $autosave->ID )
+					->get_json_meta( '_elementor_data' );
 			}
-
-			if ( empty( $this->elements ) ) {
-				$elements = Plugin::$instance->db->_get_new_editor_from_wp_editor( $this->post->ID );
-			}
+		} elseif ( empty( $data ) ) {
+			$elements = Plugin::$instance->db->_get_new_editor_from_wp_editor( $this->post->ID );
 		}
 
 		return $elements;
