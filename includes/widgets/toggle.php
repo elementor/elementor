@@ -74,16 +74,16 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	/**
-	 * Get arrow icons.
+	 * Get icons.
 	 *
-	 * Retrieve all the arrow icons used by the toggle widget.
+	 * Retrieve all the icons used by the toggle widget.
 	 *
 	 * @since 1.9.0
 	 * @access public
 	 *
-	 * @return array Arrow icons.
+	 * @return array Widget icons.
 	 */
-	public function get_arrow_icons() {
+	public function get_icons() {
 		return [
 			'fa fa-plus',
 			'fa fa-minus',
@@ -227,7 +227,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
-				'include' => self::get_arrow_icons(),
+				'include' => self::get_icons(),
 				'default' => is_rtl() ? 'fa fa-caret-left' : 'fa fa-caret-right',
 				'label_block' => true,
 			]
@@ -238,7 +238,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Active Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
-				'include' => self::get_arrow_icons(),
+				'include' => self::get_icons(),
 				'default' => 'fa fa-caret-up',
 				'label_block' => true,
 				'condition' => [
