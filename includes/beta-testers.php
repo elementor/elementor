@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Beta testers.
+ * Elementor beta testers class.
  *
- * Elementor beta testers handler class.
+ * Elementor beta testers handler class is responsible for the Beta Testers
+ * feature that allows developers to test Elementor beta versions.
  *
  * @since 1.5.0
  */

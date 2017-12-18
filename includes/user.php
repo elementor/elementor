@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * User.
+ * Elementor user class.
  *
- * Elementor user handler class.
+ * Elementor user handler class is responsible for initializing Elementor user.
  *
  * @since 1.0.0
  */

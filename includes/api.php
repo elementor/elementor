@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * API.
+ * Elementor API class.
  *
- * Elementor API handler class.
+ * Elementor API handler class is responsible for communicating with Elementor
+ * remote servers to send feedback and retrieve templates data.
  *
  * @since 1.0.0
  */

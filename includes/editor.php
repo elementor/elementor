@@ -8,9 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Editor.
+ * Elementor editor class.
  *
- * Elementor editor handler class.
+ * Elementor editor handler class is responsible for initializing Elementor
+ * editor and register all the actions needed to display the editor.
  *
  * @since 1.0.0
  */

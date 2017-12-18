@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Rollback.
+ * Elementor rollback class.
  *
- * Elementor rollback handler class.
+ * Elementor rollback handler class is responsible for rolling back Elementor to
+ * previous version.
  *
  * @since 1.5.0
  */
