@@ -307,6 +307,22 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
+			'space_between',
+			[
+				'label' => __( 'Space Between', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 50,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
 			'border_width',
 			[
 				'label' => __( 'Border Width', 'elementor' ),
