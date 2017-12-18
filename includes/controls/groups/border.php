@@ -117,4 +117,13 @@ class Group_Control_Border extends Group_Control_Base {
 
 		return $fields;
 	}
+
+	protected function get_default_options() {
+		return [
+			'popover' => [
+				'starter_title' => _x( 'Border', 'Border Control', 'elementor' ),
+				'toggle_type' => 'simple',
+			],
+		];
+	}
 }

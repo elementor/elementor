@@ -5,13 +5,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Conditions.
+ *
+ * Elementor conditions handler class.
+ *
+ * @since 1.0.0
+ */
 class Conditions {
 
 	/**
-	 * @static
+	 * Compare conditions.
+	 *
+	 * Whether the two values comply the comparison operator.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param mixed  $left_value  First value to compare.
+	 * @param mixed  $right_value Second value to compare.
+	 * @param string $operator    Comparison operator.
+	 *
+	 * @return bool Whether the two values complies the comparison operator.
+	 */
 	public static function compare( $left_value, $right_value, $operator ) {
 		switch ( $operator ) {
 			case '==':
@@ -38,10 +55,19 @@ class Conditions {
 	}
 
 	/**
-	 * @static
+	 * Check conditions.
+	 *
+	 * Whether the comparison conditions comply.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param array $conditions The conditions to check.
+	 * @param array $comparison The comparison parameter.
+	 *
+	 * @return bool Whether the comparison conditions comply.
+	 */
 	public static function check( array $conditions, array $comparison ) {
 		$is_or_condition = isset( $conditions['relation'] ) && 'or' === $conditions['relation'];
 

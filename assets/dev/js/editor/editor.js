@@ -35,44 +35,59 @@ App = Marionette.Application.extend( {
 
 	// Exporting modules that can be used externally
 	modules: {
-		element: require( 'elementor-models/element' ),
+		element: {
+			Model: require( 'elementor-elements/models/element' )
+		},
 		Module: require( 'elementor-utils/module' ),
-		WidgetView: require( 'elementor-views/widget' ),
+		WidgetView: require( 'elementor-elements/views/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
 		},
 		controls: {
-			Base: require( 'elementor-views/controls/base' ),
-			BaseMultiple: require( 'elementor-views/controls/base-multiple' ),
-			Color: require( 'elementor-views/controls/color' ),
-			Dimensions: require( 'elementor-views/controls/dimensions' ),
-			Image_dimensions: require( 'elementor-views/controls/image-dimensions' ),
-			Media: require( 'elementor-views/controls/media' ),
-			Slider: require( 'elementor-views/controls/slider' ),
-			Wysiwyg: require( 'elementor-views/controls/wysiwyg' ),
-			Choose: require( 'elementor-views/controls/choose' ),
-			Url: require( 'elementor-views/controls/base-multiple' ),
-			Font: require( 'elementor-views/controls/font' ),
-			Section: require( 'elementor-views/controls/section' ),
-			Tab: require( 'elementor-views/controls/tab' ),
-			Repeater: require( 'elementor-views/controls/repeater' ),
-			Wp_widget: require( 'elementor-views/controls/wp_widget' ),
-			Icon: require( 'elementor-views/controls/icon' ),
-			Gallery: require( 'elementor-views/controls/gallery' ),
-			Select2: require( 'elementor-views/controls/select2' ),
-			Date_time: require( 'elementor-views/controls/date-time' ),
-			Code: require( 'elementor-views/controls/code' ),
-			Box_shadow: require( 'elementor-views/controls/box-shadow' ),
-			Text_shadow: require( 'elementor-views/controls/box-shadow' ),
-			Structure: require( 'elementor-views/controls/structure' ),
-			Animation: require( 'elementor-views/controls/select2' ),
-			Hover_animation: require( 'elementor-views/controls/select2' ),
-			Order: require( 'elementor-views/controls/order' ),
-			Switcher: require( 'elementor-views/controls/switcher' ),
-			Number: require( 'elementor-views/controls/number' )
+			Base: require( 'elementor-controls/base' ),
+			BaseData: require( 'elementor-controls/base-data' ),
+			BaseMultiple: require( 'elementor-controls/base-multiple' ),
+			Button: require( 'elementor-controls/button' ),
+			Color: require( 'elementor-controls/color' ),
+			Dimensions: require( 'elementor-controls/dimensions' ),
+			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
+			Media: require( 'elementor-controls/media' ),
+			Slider: require( 'elementor-controls/slider' ),
+			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
+			Choose: require( 'elementor-controls/choose' ),
+			Url: require( 'elementor-controls/base-multiple' ),
+			Font: require( 'elementor-controls/font' ),
+			Section: require( 'elementor-controls/section' ),
+			Tab: require( 'elementor-controls/tab' ),
+			Repeater: require( 'elementor-controls/repeater' ),
+			Wp_widget: require( 'elementor-controls/wp_widget' ),
+			Icon: require( 'elementor-controls/icon' ),
+			Gallery: require( 'elementor-controls/gallery' ),
+			Select2: require( 'elementor-controls/select2' ),
+			Date_time: require( 'elementor-controls/date-time' ),
+			Code: require( 'elementor-controls/code' ),
+			Box_shadow: require( 'elementor-controls/box-shadow' ),
+			Text_shadow: require( 'elementor-controls/box-shadow' ),
+			Structure: require( 'elementor-controls/structure' ),
+			Animation: require( 'elementor-controls/select2' ),
+			Hover_animation: require( 'elementor-controls/select2' ),
+			Order: require( 'elementor-controls/order' ),
+			Switcher: require( 'elementor-controls/switcher' ),
+			Number: require( 'elementor-controls/number' ),
+			Popover_toggle: require( 'elementor-controls/popover-toggle' )
+		},
+		saver: {
+			footerBehavior: require( './components/saver/behaviors/footer-saver' )
 		},
 		templateLibrary: {
 			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
+		}
+	},
+
+	backgroundClickListeners: {
+		popover: {
+			element: '.elementor-controls-popover',
+			ignore: '.elementor-control-popover-toggle-toggle'
 		}
 	},
 
@@ -80,6 +95,10 @@ App = Marionette.Application.extend( {
 
 	addControlView: function( controlID, ControlView ) {
 		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
+	},
+
+	checkEnvCompatibility: function() {
+		return this.envData.gecko || this.envData.webkit;
 	},
 
 	getElementData: function( modelElement ) {
@@ -110,8 +129,7 @@ App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elType = modelElement.get( 'elType' ),
-			isInner = modelElement.get( 'isInner' ),
+		var isInner = modelElement.get( 'isInner' ),
 			controls = {};
 
 		_.each( elementData.controls, function( controlData, controlKey ) {
@@ -126,18 +144,35 @@ App = Marionette.Application.extend( {
 	},
 
 	getControlView: function( controlID ) {
-		return this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] || this.modules.controls.Base;
+		var capitalizedControlName = controlID[0].toUpperCase() + controlID.slice( 1 ),
+			View = this.modules.controls[ capitalizedControlName ];
+
+		if ( ! View ) {
+			var controlData = this.config.controls[ controlID ],
+				isUIControl = -1 !== controlData.features.indexOf( 'ui' );
+
+			View = this.modules.controls[ isUIControl ? 'Base' : 'BaseData' ];
+		}
+
+		return View;
 	},
 
 	getPanelView: function() {
 		return this.getRegion( 'panel' ).currentView;
 	},
 
+	initEnvData: function() {
+		this.envData = _.pick( tinymce.EditorManager.Env, [ 'desktop', 'webkit', 'gecko', 'ie', 'opera' ] );
+	},
+
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
-			Settings = require( 'elementor-editor/settings/settings' );
+			Settings = require( 'elementor-editor/components/settings/settings' ),
+			Saver = require( 'elementor-editor/components/saver/manager' );
 
 		this.hooks = new EventManager();
+
+		this.saver = new Saver();
 
 		this.settings = new Settings();
 
@@ -160,7 +195,7 @@ App = Marionette.Application.extend( {
 	},
 
 	initElements: function() {
-		var ElementModel = elementor.modules.element,
+		var ElementCollection = require( 'elementor-elements/collections/elements' ),
 			config = this.config.data;
 
 		// If it's an reload, use the not-saved data
@@ -168,19 +203,21 @@ App = Marionette.Application.extend( {
 			config = this.elements.toJSON();
 		}
 
-		this.elements = new ElementModel.Collection( config );
+		this.elements = new ElementCollection( config );
 	},
 
 	initPreview: function() {
-		this.$previewWrapper = Backbone.$( '#elementor-preview' );
+		var $ = jQuery;
 
-		this.$previewResponsiveWrapper = Backbone.$( '#elementor-preview-responsive-wrapper' );
+		this.$previewWrapper = $( '#elementor-preview' );
+
+		this.$previewResponsiveWrapper = $( '#elementor-preview-responsive-wrapper' );
 
 		var previewIframeId = 'elementor-preview-iframe';
 
 		// Make sure the iFrame does not exist.
 		if ( ! this.$preview ) {
-			this.$preview = Backbone.$( '<iframe>', {
+			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
 				src: this.config.preview_link + '&' + ( new Date().getTime() ),
 				allowfullscreen: 1
@@ -189,7 +226,7 @@ App = Marionette.Application.extend( {
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		this.$preview.on( 'load', _.bind( this.onPreviewLoaded, this ) );
+		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	},
 
 	initFrontend: function() {
@@ -339,7 +376,7 @@ App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.getPanelView().getFooterView()._publishBuilder();
+					elementor.saver.saveAutoSave();
 				}
 			}
 		};
@@ -355,7 +392,7 @@ App = Marionette.Application.extend( {
 
 	preventClicksInsideEditor: function() {
 		this.$previewContents.on( 'click', function( event ) {
-			var $target = Backbone.$( event.target ),
+			var $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
@@ -376,6 +413,14 @@ App = Marionette.Application.extend( {
 				}
 			}
 		} );
+	},
+
+	addBackgroundClickArea: function( element ) {
+		element.addEventListener( 'click', this.onBackgroundClick.bind( this ), true );
+	},
+
+	addBackgroundClickListener: function( key, listener ) {
+		this.backgroundClickListeners[ key ] = listener;
 	},
 
 	showFatalErrorDialog: function( options ) {
@@ -407,7 +452,7 @@ App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
-		this.$window = Backbone.$( window );
+		this.$window = jQuery( window );
 
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -419,13 +464,19 @@ App = Marionette.Application.extend( {
 
 		this.initComponents();
 
+		this.initEnvData();
+
+		if ( ! this.checkEnvCompatibility() ) {
+			this.onEnvNotCompatible();
+		}
+
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
-		this.setWorkSaver();
-
 		this.initClearPageDialog();
+
+		this.addBackgroundClickArea( document );
 
 		this.$window.trigger( 'elementor:init' );
 
@@ -472,6 +523,8 @@ App = Marionette.Application.extend( {
 
 		this.preventClicksInsideEditor();
 
+		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
+
 		var Preview = require( 'elementor-views/preview' ),
 			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
 
@@ -496,7 +549,7 @@ App = Marionette.Application.extend( {
 
 		this.changeDeviceMode( this._defaultDeviceMode );
 
-		Backbone.$( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
+		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
 			elementorFrontend.getElements( 'window' ).jQuery.holdReady( false );
@@ -519,6 +572,22 @@ App = Marionette.Application.extend( {
 		}
 	},
 
+	onEnvNotCompatible: function() {
+		this.showFatalErrorDialog( {
+			headerMessage: this.translate( 'device_incompatible_header' ),
+			message: this.translate( 'device_incompatible_message' ),
+			strings: {
+				confirm: elementor.translate( 'proceed_anyway' )
+			},
+			hide: {
+				onButtonClick: true
+			},
+			onConfirm: function() {
+				this.hide();
+			}
+		} );
+	},
+
 	onPreviewLoadingError: function() {
 		this.showFatalErrorDialog( {
 			headerMessage: this.translate( 'preview_not_loading_header' ),
@@ -539,21 +608,23 @@ App = Marionette.Application.extend( {
 		} );
 	},
 
-	setFlagEditorChange: function( status ) {
-		elementor.channels.editor
-			.reply( 'status', status )
-			.trigger( 'status:change', status );
-	},
+	onBackgroundClick: function( event ) {
+		jQuery.each( this.backgroundClickListeners, function() {
+			var elementToHide = this.element,
+				$clickedTarget = jQuery( event.target );
 
-	isEditorChanged: function() {
-		return ( true === elementor.channels.editor.request( 'status' ) );
-	},
-
-	setWorkSaver: function() {
-		this.$window.on( 'beforeunload', function() {
-			if ( elementor.isEditorChanged() ) {
-				return elementor.translate( 'before_unload_alert' );
+			// If it's a label that associated with an input
+			if ( $clickedTarget[0].control ) {
+				$clickedTarget = $clickedTarget.add( $clickedTarget[0].control );
 			}
+
+			if ( this.ignore && $clickedTarget.closest( this.ignore ).length ) {
+				return;
+			}
+
+			var $clickedTargetClosestElement = $clickedTarget.closest( elementToHide );
+
+			jQuery( elementToHide ).not( $clickedTargetClosestElement ).hide();
 		} );
 	},
 
@@ -622,37 +693,8 @@ App = Marionette.Application.extend( {
 		}
 	},
 
-	saveEditor: function( options ) {
-		options = _.extend( {
-			status: 'draft',
-			onSuccess: null
-		}, options );
-
-		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } );
-
-		return this.ajax.send( 'save_builder', {
-	        data: {
-		        post_id: this.config.post_id,
-				status: options.status,
-		        data: JSON.stringify( newData )
-	        },
-			success: function( data ) {
-				self.setFlagEditorChange( false );
-
-				self.config.data = newData;
-
-				self.channels.editor.trigger( 'saved', data );
-
-				if ( _.isFunction( options.onSuccess ) ) {
-					options.onSuccess.call( this, data );
-				}
-			}
-		} );
-	},
-
 	reloadPreview: function() {
-		Backbone.$( '#elementor-preview-loading' ).show();
+		jQuery( '#elementor-preview-loading' ).show();
 
 		this.$preview[0].contentWindow.location.reload( true );
 	},
@@ -668,7 +710,7 @@ App = Marionette.Application.extend( {
 			return;
 		}
 
-		Backbone.$( 'body' )
+		jQuery( 'body' )
 			.removeClass( 'elementor-device-' + oldDeviceMode )
 			.addClass( 'elementor-device-' + newDeviceMode );
 
@@ -739,7 +781,7 @@ App = Marionette.Application.extend( {
 		var text = '',
 			style = '';
 
-		if ( -1 !== navigator.userAgent.search( 'Firefox' ) ) {
+		if ( this.envData.gecko ) {
 			var asciiText = [
 				' ;;;;;;;;;;;;;;; ',
 				';;;  ;;       ;;;',

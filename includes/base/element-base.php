@@ -6,12 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Element Base
+ * Element Base.
  *
- * Base class extended to register elements.
+ * An abstract class to register new Elementor elements. It extended the
+ * `Controls_Stack` class to inherit its properties.
  *
- * This class must be extended for each element.
+ * This abstract class must be extended in order to register new elements.
  *
+ * @since 1.0.0
  * @abstract
  */
 abstract class Element_Base extends Controls_Stack {
@@ -293,8 +295,14 @@ abstract class Element_Base extends Controls_Stack {
 
 		$content_template = ob_get_clean();
 
-		$content_template = Utils::apply_filters_deprecated( 'elementor/elements/print_template', [ $content_template, $this ], '1.0.10', 'elementor/element/print_template' );
-
+		/**
+		 * Filters the element template before it's printed in the editor.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string       $content_template The element template in the editor.
+		 * @param Element_Base $this             The element.
+		 */
 		$content_template = apply_filters( 'elementor/element/print_template', $content_template, $this );
 
 		if ( empty( $content_template ) ) {
@@ -504,7 +512,18 @@ abstract class Element_Base extends Controls_Stack {
 	public function print_element() {
 		$this->enqueue_scripts();
 
-		do_action( 'elementor/frontend/' . static::get_type() . '/before_render', $this );
+		$element_type = static::get_type();
+
+		/**
+		 * Fires before Elementor element is rendered in the frontend.
+		 *
+		 * The dynamic portion of the hook name, `$element_type`, refers to the element type from `static::get_type()`.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( "elementor/frontend/{$element_type}/before_render", $this );
 
 		$this->_add_render_attributes();
 
@@ -514,7 +533,16 @@ abstract class Element_Base extends Controls_Stack {
 
 		$this->after_render();
 
-		do_action( 'elementor/frontend/' . static::get_type() . '/after_render', $this );
+		/**
+		 * Fires after Elementor element was rendered in the frontend.
+		 *
+		 * The dynamic portion of the hook name, `$element_type`, refers to the element type from `static::get_type()`.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( "elementor/frontend/{$element_type}/after_render", $this );
 	}
 
 	/**
@@ -754,7 +782,18 @@ abstract class Element_Base extends Controls_Stack {
 			return false;
 		}
 
-		return apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
+		/**
+		 * Filters the child type of the element.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Element_Base $child_type   The child element.
+		 * @param array        $element_data The original element ID.
+		 * @param Element_Base $this         The original element.
+		 */
+		$child_type = apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
+
+		return $child_type;
 	}
 
 	/**
@@ -791,6 +830,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
 	 * @param array      $data Element data. Default is an empty array.
 	 * @param array|null $args Optional. Element default arguments. Default is null.
 	 **/

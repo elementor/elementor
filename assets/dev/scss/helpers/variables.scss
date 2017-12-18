@@ -71,6 +71,7 @@ $instagram:		#262626;
 $jsfiddle:		#487AA2;
 $linkedin:		#0077b5;
 $medium:		#00ab6b;
+$meetup:		#ec1c40;
 $odnoklassniki:	#F4731C;
 $pinterest:		#bd081c;
 $pocket:		#EF3F56;
@@ -110,7 +111,7 @@ $editor-light: #a4afb7;
 $editor-lighter: #c2cbd2;
 $editor-lightest: #d5dadf;
 
-$editor-accent: #9b0a46;
+$editor-accent: #B7084E;
 $editor-background: #e6e9ec;
 $editor-background-light: #f1f3f5;
 
@@ -172,7 +173,8 @@ $breakpoints: (
 	sm: 480px, // Mobile landscape
 	md: 768px, // Tablet
 	lg: 1025px, // Desktop
-	xl: 1440px // Largest devices
+	xl: 1440px, // Larger devices
+	xxl: 1600px // Largest devices
 );
 
 // Media Queries
@@ -184,3 +186,5 @@ $screen-md-max: map_get($breakpoints, lg) - 1;
 $screen-lg-min: map_get($breakpoints, lg);
 $screen-lg-max: map_get($breakpoints, xl) - 1;
 $screen-xl-min: map_get($breakpoints, xl);
+$screen-xl-max: map_get($breakpoints, xxl) - 1;
+$screen-xxl-min: map_get($breakpoints, xxl);

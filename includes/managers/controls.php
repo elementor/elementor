@@ -18,9 +18,11 @@ class Controls_Manager {
 	const SELECT = 'select';
 	const SWITCHER = 'switcher';
 
+	const BUTTON = 'button';
 	const HIDDEN = 'hidden';
 	const HEADING = 'heading';
 	const RAW_HTML = 'raw_html';
+	const POPOVER_TOGGLE = 'popover_toggle';
 	const SECTION = 'section';
 	const TAB = 'tab';
 	const TABS = 'tabs';
@@ -131,9 +133,11 @@ class Controls_Manager {
 			self::SELECT,
 			self::SWITCHER,
 
+			self::BUTTON,
 			self::HIDDEN,
 			self::HEADING,
 			self::RAW_HTML,
+			self::POPOVER_TOGGLE,
 			self::SECTION,
 			self::TAB,
 			self::TABS,
@@ -186,6 +190,13 @@ class Controls_Manager {
 		$this->control_groups['box-shadow'] = new Group_Control_Box_Shadow();
 		$this->control_groups['text-shadow'] = new Group_Control_Text_Shadow();
 
+		/**
+		 * Fires after Elementor controls are registered.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Controls_Manager $this The controls manager.
+		 */
 		do_action( 'elementor/controls/controls_registered', $this );
 	}
 
@@ -482,7 +493,7 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @access public
 	*/
-	public function get_element_stack( Controls_Stack $controls_stack ) {
+	public function get_element_stack( Controls_Stack $controls_stack, $common_controls = true ) {
 		$stack_id = $controls_stack->get_unique_name();
 
 		if ( ! isset( $this->stacks[ $stack_id ] ) ) {
@@ -491,7 +502,7 @@ class Controls_Manager {
 
 		$stack = $this->stacks[ $stack_id ];
 
-		if ( 'widget' === $controls_stack->get_type() && 'common' !== $stack_id ) {
+		if ( $common_controls && 'common' !== $stack_id && 'widget' === $controls_stack->get_type() ) {
 			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
 
 			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
@@ -521,7 +532,7 @@ class Controls_Manager {
 			[
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => '<div class="elementor-panel-nerd-box">
-						<i class="elementor-panel-nerd-box-icon eicon-hypster"></i>
+						<i class="elementor-panel-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
 						<div class="elementor-panel-nerd-box-title">' .
 							__( 'Meet Our Custom CSS', 'elementor' ) .
 						'</div>

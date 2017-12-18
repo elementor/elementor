@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * HTML Widget
+ * HTML Widget.
+ *
+ * Elementor widget that insert a custom HTML code into the page.
+ *
+ * @since 1.0.0
  */
 class Widget_Html extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve HTML widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Html extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve HTML widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Html extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve HTML widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Html extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the HTML widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

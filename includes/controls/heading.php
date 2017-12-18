@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Heading control.
  *
  * A base control for creating heading control. Displays a text heading between
- * controls in the pannel.
+ * controls in the panel.
  *
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
@@ -85,7 +85,9 @@ class Control_Heading extends Base_UI_Control {
 	 */
 	public function content_template() {
 		?>
-		<h3 class="elementor-control-title">{{ data.label }}</h3>
+		<div class="elementor-control-field">
+			<h3 class="elementor-control-title">{{ data.label }}</h3>
+		</div>
 		<?php
 	}
 }

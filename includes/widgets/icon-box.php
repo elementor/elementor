@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Icon Box Widget
+ * Icon Box Widget.
+ *
+ * Elementor widget that displays an icon, a headline and a text.
+ *
+ * @since 1.0.0
  */
 class Widget_Icon_Box extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve icon box widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve icon box widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve icon box widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the icon box widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
@@ -598,8 +610,15 @@ class Widget_Icon_Box extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-        <# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-			iconTag = link ? 'a' : 'span'; #>
+        <#
+        var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+			iconTag = link ? 'a' : 'span';
+
+        view.addRenderAttribute( 'description_text', 'class', 'elementor-icon-box-description' );
+
+        view.addInlineEditingAttributes( 'title_text', 'none' );
+        view.addInlineEditingAttributes( 'description_text' );
+        #>
         <div class="elementor-icon-box-wrapper">
             <div class="elementor-icon-box-icon">
                 <{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
@@ -608,9 +627,9 @@ class Widget_Icon_Box extends Widget_Base {
             </div>
             <div class="elementor-icon-box-content">
                 <{{{ settings.title_size }}} class="elementor-icon-box-title">
-                    <{{{ iconTag + ' ' + link }}} class="elementor-inline-editing" data-elementor-setting-key="title_text" data-elementor-inline-editing-toolbar="none">{{{ settings.title_text }}}</{{{ iconTag }}}>
+                    <{{{ iconTag + ' ' + link }}} {{{ view.getRenderAttributeString( 'title_text' ) }}}>{{{ settings.title_text }}}</{{{ iconTag }}}>
                 </{{{ settings.title_size }}}>
-                <p class="elementor-icon-box-description elementor-inline-editing" data-elementor-setting-key="description_text">{{{ settings.description_text }}}</p>
+                <p {{{ view.getRenderAttributeString( 'description_text' ) }}}>{{{ settings.description_text }}}</p>
             </div>
         </div>
 		<?php

@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Heading Widget
+ * Heading Widget.
+ *
+ * Elementor widget that displays an eye-catching headlines.
+ *
+ * @since 1.0.0
  */
 class Widget_Heading extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve heading widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve heading widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve heading widget icon.
 	 *
 	 * @since 1.0.0
@@ -261,15 +271,19 @@ class Widget_Heading extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<#
-			var title = settings.title;
+		var title = settings.title;
 
-			if ( '' !== settings.link.url ) {
-				title = '<a href="' + settings.link.url + '">' + title + '</a>';
-			}
+		if ( '' !== settings.link.url ) {
+			title = '<a href="' + settings.link.url + '">' + title + '</a>';
+		}
 
-			var title_html = '<' + settings.header_size  + ' class="elementor-heading-title elementor-inline-editing elementor-size-' + settings.size + '" data-elementor-setting-key="title">' + title + '</' + settings.header_size + '>';
+		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title', 'elementor-size-' + settings.size ] );
 
-			print( title_html );
+		view.addInlineEditingAttributes( 'title' );
+
+		var title_html = '<' + settings.header_size  + ' ' + view.getRenderAttributeString( 'title' ) + '>' + title + '</' + settings.header_size + '>';
+
+		print( title_html );
 		#>
 		<?php
 	}

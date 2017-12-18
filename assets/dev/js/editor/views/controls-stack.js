@@ -3,6 +3,10 @@ var ControlsStack;
 ControlsStack = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-controls-stack',
 
+	classes: {
+		popover: 'elementor-controls-popover'
+	},
+
 	activeTab: null,
 
 	activeSection: null,
@@ -86,6 +90,44 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return elementor.getControlView( controlType );
 	},
 
+	handlePopovers: function() {
+		var self = this,
+			popoverStarted = false,
+			$popover;
+
+		self.removePopovers();
+
+		self.children.each( function( child ) {
+			if ( popoverStarted ) {
+				$popover.append( child.$el );
+			}
+
+			var popover = child.model.get( 'popover' );
+
+			if ( ! popover ) {
+				return;
+			}
+
+			if ( popover.start ) {
+				popoverStarted = true;
+
+				$popover = jQuery( '<div>', { 'class': self.classes.popover } );
+
+				child.$el.before( $popover );
+
+				$popover.append( child.$el );
+			}
+
+			if ( popover.end ) {
+				popoverStarted = false;
+			}
+		} );
+	},
+
+	removePopovers: function() {
+		this.$el.find( '.' + this.classes.popover ).remove();
+	},
+
 	openActiveSection: function() {
 		var activeSection = this.activeSection,
 			activeSectionView = this.children.filter( function( view ) {
@@ -99,6 +141,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	onRenderCollection: function() {
 		this.openActiveSection();
+
+		this.handlePopovers();
 	},
 
 	onRenderTemplate: function() {

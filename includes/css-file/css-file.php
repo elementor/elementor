@@ -139,7 +139,7 @@ abstract class CSS_File {
 			$dep = $this->get_inline_dependency();
 			// If the dependency has already been printed ( like a template in footer )
 			if ( wp_styles()->query( $dep, 'done' ) ) {
-				echo '<style>' . $this->get_css() . '</style>'; // XSS ok.
+				echo '<style>' . $meta['css'] . '</style>'; // XSS ok.
 			} else {
 				wp_add_inline_style( $dep , $meta['css'] );
 			}
@@ -253,6 +253,10 @@ abstract class CSS_File {
 		}
 	}
 
+	public function get_fonts() {
+		return $this->fonts;
+	}
+
 	/**
 	 * @since 1.2.0
 	 * @access public
@@ -337,7 +341,7 @@ abstract class CSS_File {
 	 * @abstract
 	 * @since 1.2.0
 	 * @access protected
-	 * @param string $meta
+	 * @param array $meta
 	 */
 	abstract protected function update_meta( $meta );
 
@@ -389,6 +393,29 @@ abstract class CSS_File {
 	 */
 	protected function is_update_required() {
 		return false;
+	}
+
+	/**
+	 * @since 1.2.0
+	 * @access protected
+	*/
+	protected function parse_css() {
+		$this->render_css();
+
+		$name = $this->get_name();
+
+		/**
+		 * Fires when CSS file is parsed on Elementor.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name from `$this->get_name()`.
+		 *
+		 * @since 1.2.0
+		 *
+		 * @param CSS_File $this The current CSS file.
+		 */
+		do_action( "elementor/{$name}-css-file/parse", $this );
+
+		$this->css = $this->stylesheet_obj->__toString();
 	}
 
 	/**
@@ -457,17 +484,5 @@ abstract class CSS_File {
 		$this->path = $wp_upload_dir['basedir'] . $relative_path;
 
 		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
-	}
-
-	/**
-	 * @since 1.2.0
-	 * @access private
-	*/
-	private function parse_css() {
-		$this->render_css();
-
-		do_action( 'elementor/' . $this->get_name() . '-css-file/parse', $this );
-
-		$this->css = $this->stylesheet_obj->__toString();
 	}
 }

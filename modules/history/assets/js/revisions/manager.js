@@ -21,8 +21,36 @@ RevisionsManager = function() {
 		revisions.reset( revisionsToKeep );
 	};
 
+	var checkNewAutoSave = function() {
+		if ( ! elementor.config.newer_autosave ) {
+			return;
+		}
+
+		elementor.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-restore-autosave-dialog',
+			headerMessage: elementor.translate( 'restore_auto_saved_data' ),
+			message: elementor.translate( 'restore_auto_saved_data_message' ),
+			position: {
+				my: 'center center',
+				at: 'center center'
+			},
+			strings: {
+				confirm: elementor.translate( 'edit_draft' ),
+				cancel: elementor.translate( 'edit_published' )
+			},
+			onConfirm: function() {
+				self.getRevisionDataAsync( elementor.config.newer_autosave, {
+					success: function( data ) {
+						self.setEditorData( data );
+					}
+				} );
+			}
+		} ).show();
+	};
+
 	var attachEvents = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
+		elementor.on( 'preview:loaded', checkNewAutoSave );
 	};
 
 	var addHotKeys = function() {
@@ -49,6 +77,22 @@ RevisionsManager = function() {
 		elementor.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
 
 		elementor.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
+	};
+
+	this.setEditorData = function( data ) {
+		var collection = elementor.getRegion( 'sections' ).currentView.collection;
+
+		collection.reset( data );
+	};
+
+	this.getRevisionDataAsync = function( id, options ) {
+		_.extend( options, {
+			data: {
+				id: id
+			}
+		} );
+
+		return elementor.ajax.send( 'get_revision_data', options );
 	};
 
 	this.addRevision = function( revisionData ) {

@@ -1,4 +1,4 @@
-var SectionView = require( 'elementor-views/section' ),
+var SectionView = require( 'elementor-elements/views/section' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseSectionsContainerView;
 
@@ -62,7 +62,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	onCollectionChanged: function() {
-		elementor.setFlagEditorChange( true );
+		elementor.saver.setFlagEditorChange( true );
 	},
 
 	onPanelElementDragStart: function() {

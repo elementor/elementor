@@ -243,6 +243,37 @@
 	}
 }
 
+.elementor-controls-popover {
+	display: none;
+	position: absolute;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+	left: 0;
+	right: 0;
+	margin: -10px auto 5px;
+	padding-top: 15px;
+	width: 90%;
+	z-index: 1;
+	background-color: #fff;
+
+	$triangle-size: 10px;
+
+	&:before {
+		content: '';
+		position: absolute;
+		top: -$triangle-size * 2;
+		@include end(20px);
+		border: $triangle-size solid transparent;
+		border-bottom-color: #fff;
+	}
+
+	div.elementor-control { // Harder selector to override default settings
+
+		&:before {
+			content: none;
+		}
+	}
+}
+
 #elementor-panel-get-pro-elements {
 
 	.elementor-panel-nerd-box-message {

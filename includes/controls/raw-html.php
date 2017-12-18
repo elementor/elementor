@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Raw HTML control.
  *
  * A base control for creating raw HTML control. Displays HTML markup between
- * controls in the pannel.
+ * controls in the panel.
  *
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):

@@ -65,7 +65,7 @@ module.exports = function( grunt ) {
 							expose: 'elementor-editor'
 						},
 						{
-							cwd: 'assets/dev/js/editor/behaviors',
+							cwd: 'assets/dev/js/editor/elements/views/behaviors',
 							src: '**/*.js',
 							expose: 'elementor-behaviors'
 						},
@@ -75,14 +75,14 @@ module.exports = function( grunt ) {
 							expose: 'elementor-layouts'
 						},
 						{
-							cwd: 'assets/dev/js/editor/models',
+							cwd: 'assets/dev/js/editor/controls',
 							src: '**/*.js',
-							expose: 'elementor-models'
+							expose: 'elementor-controls'
 						},
 						{
-							cwd: 'assets/dev/js/editor/collections',
+							cwd: 'assets/dev/js/editor/elements',
 							src: '**/*.js',
-							expose: 'elementor-collections'
+							expose: 'elementor-elements'
 						},
 						{
 							cwd: 'assets/dev/js/editor/views',

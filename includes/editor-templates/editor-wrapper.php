@@ -6,6 +6,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 global $wp_version;
+
+$body_classes = [
+	'elementor-editor-active',
+	'wp-version-' . str_replace( '.', '-', $wp_version ),
+];
+
+if ( is_rtl() ) {
+	$body_classes[] = 'rtl';
+}
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -18,7 +27,7 @@ global $wp_version;
 		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php', 'relative' ); ?>';
 	</script>
 </head>
-<body class="elementor-editor-active wp-version-<?php echo str_replace( '.', '-', $wp_version ); ?>">
+<body class="<?php echo implode( ' ', $body_classes ); ?>">
 <div id="elementor-editor-wrapper">
 	<div id="elementor-preview">
 		<div id="elementor-loading">
@@ -34,7 +43,7 @@ global $wp_version;
 		</div>
 		<div id="elementor-preview-responsive-wrapper" class="elementor-device-desktop elementor-device-rotate-portrait">
 			<div id="elementor-preview-loading">
-				<i class="fa fa-spin fa-circle-o-notch"></i>
+				<i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>
 			</div>
 			<?php
 			// IFrame will be create here by the Javascript later.

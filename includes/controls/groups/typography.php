@@ -110,14 +110,17 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function init_fields() {
 		$fields = [];
 
-		$fields['typography'] = [
-			'label' => _x( 'Typography', 'Typography Control', 'elementor' ),
-			'type' => Controls_Manager::SWITCHER,
+		$default_fonts = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' );
+
+		if ( $default_fonts ) {
+			$default_fonts = ', ' . $default_fonts;
+		}
+
+		$fields['font_family'] = [
+			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::FONT,
 			'default' => '',
-			'label_on' => __( 'On', 'elementor' ),
-			'label_off' => __( 'Off', 'elementor' ),
-			'return_value' => 'custom',
-			'render_type' => 'ui',
+			'selector_value' => 'font-family: "{{VALUE}}"' . $default_fonts . ';',
 		];
 
 		$fields['font_size'] = [
@@ -132,19 +135,6 @@ class Group_Control_Typography extends Group_Control_Base {
 			],
 			'responsive' => true,
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
-		];
-
-		$default_fonts = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' );
-
-		if ( $default_fonts ) {
-			$default_fonts = ', ' . $default_fonts;
-		}
-
-		$fields['font_family'] = [
-			'label' => _x( 'Family', 'Typography Control', 'elementor' ),
-			'type' => Controls_Manager::FONT,
-			'default' => '',
-			'selector_value' => 'font-family: "{{VALUE}}"' . $default_fonts . ';',
 		];
 
 		$typo_weight_options = [
@@ -184,6 +174,19 @@ class Group_Control_Typography extends Group_Control_Base {
 				'normal' => _x( 'Normal', 'Typography Control', 'elementor' ),
 				'italic' => _x( 'Italic', 'Typography Control', 'elementor' ),
 				'oblique' => _x( 'Oblique', 'Typography Control', 'elementor' ),
+			],
+		];
+
+		$fields['text_decoration'] = [
+			'label' => _x( 'Decoration', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => '',
+			'options' => [
+				'' => __( 'Default', 'elementor' ),
+				'underline' => _x( 'Underline', 'Typography Control', 'elementor' ),
+				'overline' => _x( 'Overline', 'Typography Control', 'elementor' ),
+				'line-through' => _x( 'Line Through', 'Typography Control', 'elementor' ),
+				'none' => _x( 'None', 'Typography Control', 'elementor' ),
 			],
 		];
 
@@ -235,7 +238,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	protected function prepare_fields( $fields ) {
 		array_walk(
 			$fields, function( &$field, $field_name ) {
-				if ( 'typography' === $field_name ) {
+				if ( in_array( $field_name, [ 'typography', 'popover_toggle' ] ) ) {
 					return;
 				}
 
@@ -246,7 +249,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				];
 
 				$field['condition'] = [
-					'typography' => [ 'custom' ],
+					'typography' => 'custom',
 				];
 			}
 		);
@@ -281,5 +284,14 @@ class Group_Control_Typography extends Group_Control_Base {
 		}
 
 		return $field_args;
+	}
+
+	protected function get_default_options() {
+		return [
+			'popover' => [
+				'starter_name' => 'typography',
+				'starter_title' => _x( 'Typography', 'Typography Control', 'elementor' ),
+			],
+		];
 	}
 }

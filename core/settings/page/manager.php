@@ -92,7 +92,14 @@ class Manager extends BaseManager {
 			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
 		}
 
-		$post->post_title = $data['post_title'];
+		// Avoid save empty post title.
+		if ( ! empty( $data['post_title'] ) ) {
+			$post->post_title = $data['post_title'];
+		}
+
+		if ( isset( $data['post_excerpt'] ) && post_type_supports( $post->post_type, 'excerpt' ) ) {
+			$post->post_excerpt = $data['post_excerpt'];
+		}
 
 		$allowed_post_statuses = get_post_statuses();
 

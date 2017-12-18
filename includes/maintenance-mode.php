@@ -3,45 +3,98 @@ namespace Elementor;
 
 use Elementor\TemplateLibrary\Source_Local;
 
+/**
+ * Maintenance mode.
+ *
+ * Elementor maintenance mode handler class.
+ *
+ * @since 1.4.0
+ */
 class Maintenance_Mode {
 
+	/**
+	 * The options prefix.
+	 */
 	const OPTION_PREFIX = 'elementor_maintenance_mode_';
 
+	/**
+	 * The maintenance mode.
+	 */
 	const MODE_MAINTENANCE = 'maintenance';
 
+	/**
+	 * The coming soon mode.
+	 */
 	const MODE_COMING_SOON = 'coming_soon';
 
 	/**
-	 * @static
+	 * Get elementor option.
+	 *
+	 * Retrieve elementor option from the database.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $option  Option name. Expected to not be SQL-escaped.
+	 * @param mixed  $default Optional. Default value to return if the option
+	 *                        does not exist. Default is false.
+	 *
+	 * @return bool False if value was not updated and true if value was updated.
+	 */
 	public static function get( $option, $default = false ) {
 		return get_option( self::OPTION_PREFIX . $option, $default );
 	}
 
 	/**
-	 * @static
+	 * Set elementor option.
+	 *
+	 * Update elementor option in the database.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $option Option name. Expected to not be SQL-escaped.
+	 * @param mixed  $value  Option value. Must be serializable if non-scalar.
+	 *                       Expected to not be SQL-escaped.
+	 *
+	 * @return bool False if value was not updated and true if value was updated.
+	 */
 	public static function set( $option, $value ) {
 		return update_option( self::OPTION_PREFIX . $option, $value );
 	}
 
 	/**
+	 * Body class.
+	 *
+	 * Add "Maintenance Mode" CSS classes to the body tag.
+	 *
+	 * Fired by `body_class` filter.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 *
+	 * @param array $classes An array of body classes.
+	 *
+	 * @return array An array of body classes.
+	 */
 	public function body_class( $classes ) {
 		$classes[] = 'elementor-maintenance-mode';
 
 		return $classes;
 	}
+
 	/**
+	 * Template redirect.
+	 *
+	 * Redirect to the "Maintenance Mode" template.
+	 *
+	 * Fired by `template_redirect` action.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 */
 	public function template_redirect() {
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			return;
@@ -54,9 +107,20 @@ class Maintenance_Mode {
 	}
 
 	/**
+	 * Template include.
+	 *
+	 * Update the path of the current template before including it. Used to
+	 * change the "Maintenance Mode" path and the HTTP header data.
+	 *
+	 * Fired by `template_include` filter.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 *
+	 * @param string $template The path of the template to include.
+	 *
+	 * @return string Updated path of the template to include.
+	 */
 	public function template_include( $template ) {
 		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
 		query_posts( [
@@ -75,9 +139,15 @@ class Maintenance_Mode {
 	}
 
 	/**
+	 * Register settings fields.
+	 *
+	 * Adds new "Maintenance Mode" settings fields to Elementor admin page.
+	 *
+	 * Fired by `elementor/admin/after_create_settings/{$page_id}` action.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 */
 	public function register_settings_fields( Tools $tools ) {
 		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( [ 'type' => 'page' ] );
 
@@ -162,9 +232,17 @@ class Maintenance_Mode {
 	}
 
 	/**
+	 * Add menu in admin bar.
+	 *
+	 * Adds "Maintenance Mode" items to the WordPress admin bar.
+	 *
+	 * Fired by `admin_bar_menu` filter.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 *
+	 * @param \WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance, passed by reference.
+	 */
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-on',
@@ -181,9 +259,16 @@ class Maintenance_Mode {
 	}
 
 	/**
+	 * Print style.
+	 *
+	 * Adds custom CSS to the HEAD html tag. The CSS that emphasise the maintenance
+	 * mode with red colors.
+	 *
+	 * Fired by `admin_head` and `wp_head` filters.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 */
 	public function print_style() {
 		?>
 		<style>#wp-admin-bar-elementor-maintenance-on > a { background-color: #dc3232; }
@@ -192,9 +277,13 @@ class Maintenance_Mode {
 	}
 
 	/**
+	 * Maintenance mode constructor.
+	 *
+	 * Initializing Elementor maintenance mode.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
 

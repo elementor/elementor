@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\History;
 
+use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Post_CSS_File;
 use Elementor\Utils;
@@ -191,14 +192,20 @@ class Revisions_Manager {
 		$settings = array_replace_recursive( $settings, [
 			'revisions' => self::get_revisions(),
 			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
+			'newer_autosave' => self::get_newer_autosave( $post_id ),
 			'i18n' => [
-				'revision_history' => __( 'Revision History', 'elementor' ),
+				'edit_draft' => __( 'Edit Draft', 'elementor' ),
+				'edit_published' => __( 'Edit Published', 'elementor' ),
 				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
 				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
-				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
-				// translators: %s: WordPress Revision docs.
-				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
+				'restore' => __( 'Restore', 'elementor' ),
+				'restore_auto_saved_data' => __( 'Restore Auto Saved Data', 'elementor' ),
+				'restore_auto_saved_data_message' => __( 'There is an autosave of this post that is more recent than the version below. You can restore the saved data fron the Revisions panel', 'elementor' ),
 				'revision' => __( 'Revision', 'elementor' ),
+				'revision_history' => __( 'Revision History', 'elementor' ),
+				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
+				// translators: %s: WordPress Revision docs.,
+				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
 			],
 		] );
 
@@ -216,5 +223,17 @@ class Revisions_Manager {
 			add_action( 'wp_ajax_elementor_get_revision_data', [ __CLASS__, 'on_revision_data_request' ] );
 			add_action( 'wp_ajax_elementor_delete_revision', [ __CLASS__, 'on_delete_revision_request' ] );
 		}
+	}
+
+	private static function get_newer_autosave( $post_id ) {
+		$post = get_post( $post_id );
+		$autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
+
+		// Detect if there exists an autosave newer than the post.
+		if ( $autosave && mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false ) ) {
+			return $autosave->ID;
+		}
+
+		return false;
 	}
 }

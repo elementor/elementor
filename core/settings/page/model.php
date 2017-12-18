@@ -43,10 +43,6 @@ class Model extends BaseModel {
 	public function get_panel_page_settings() {
 		return [
 			'title' => __( 'Page Settings', 'elementor' ),
-			'menu' => [
-				'icon' => 'fa fa-cog',
-				'beforeItem' => 'clear-page',
-			],
 		];
 	}
 
@@ -89,6 +85,18 @@ class Model extends BaseModel {
 			]
 		);
 
+		if ( post_type_supports( $this->post->post_type, 'excerpt' ) ) {
+			$this->add_control(
+				'post_excerpt',
+				[
+					'label' => __( 'Excerpt', 'elementor' ),
+					'type' => Controls_Manager::TEXTAREA,
+					'default' => $this->post->post_excerpt,
+					'label_block' => true,
+				]
+			);
+		}
+
 		if ( Manager::is_cpt_custom_templates_supported() ) {
 			require_once ABSPATH . '/wp-admin/includes/template.php';
 
@@ -111,6 +119,17 @@ class Model extends BaseModel {
 				]
 			);
 		}
+
+		$this->add_control(
+			'clear_page',
+			[
+				'type' => Controls_Manager::BUTTON,
+				'label' => __( 'Delete All Content', 'elementor' ),
+				'text' => __( 'Delete', 'elementor' ),
+				'separator' => 'before',
+				'event' => 'elementor:clearPage',
+			]
+		);
 
 		$this->end_controls_section();
 

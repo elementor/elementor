@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Counter Widget
+ * Counter Widget.
+ *
+ * Elementor widget that displays stats and numbers in an escalating manner.
+ *
+ * @since 1.0.0
  */
 class Widget_Counter extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve counter widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve counter widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve counter widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the counter widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.

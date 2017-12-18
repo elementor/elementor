@@ -61,6 +61,13 @@ class Widgets_Manager {
 
 		$this->_register_wp_widgets();
 
+		/**
+		 * Fires after Elementor widgets are registered.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Widgets_Manager $this The widgets manager.
+		 */
 		do_action( 'elementor/widgets/widgets_registered', $this );
 	}
 
@@ -87,7 +94,16 @@ class Widgets_Manager {
 		];
 
 		// Allow themes/plugins to filter out their widgets.
-		$black_list = apply_filters( 'elementor/widgets/black_list', [] );
+		$black_list = [];
+
+		/**
+		 * Filters the widgets black list.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $black_list A black list of widgets. Default is an empty array.
+		 */
+		$black_list = apply_filters( 'elementor/widgets/black_list', $black_list );
 
 		foreach ( $wp_widget_factory->widgets as $widget_class => $widget_obj ) {
 
@@ -234,9 +250,7 @@ class Widgets_Manager {
 	 * @access public
 	*/
 	public function ajax_get_wp_widget_form() {
-		if ( ! Plugin::$instance->editor->verify_request_nonce() ) {
-			die;
-		}
+		Plugin::$instance->editor->verify_ajax_nonce();
 
 		if ( empty( $_POST['widget_type'] ) ) {
 			wp_send_json_error();

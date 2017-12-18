@@ -96,12 +96,14 @@ abstract class Scheme_Base implements Scheme_Interface {
 			<div class="elementor-panel-scheme-buttons">
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-reset">
 					<button class="elementor-button">
-						<i class="fa fa-undo"></i><?php _e( 'Reset', 'elementor' ); ?>
+						<i class="fa fa-undo" aria-hidden="true"></i>
+						<?php _e( 'Reset', 'elementor' ); ?>
 					</button>
 				</div>
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
 					<button class="elementor-button">
-						<i class="fa fa-times"></i><?php _e( 'Discard', 'elementor' ); ?>
+						<i class="fa fa-times" aria-hidden="true"></i>
+						<?php _e( 'Discard', 'elementor' ); ?>
 					</button>
 				</div>
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">

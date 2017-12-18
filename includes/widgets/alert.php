@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Alert Widget
+ * Alert Widget.
+ *
+ * Elementor widget that displays a collapsible display of content in an toggle
+ * style, allowing the user to open multiple items.
+ *
+ * @since 1.0.0
  */
 class Widget_Alert extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve alert widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Alert extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve alert widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +44,8 @@ class Widget_Alert extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve alert widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +58,8 @@ class Widget_Alert extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the alert widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
@@ -300,12 +313,18 @@ class Widget_Alert extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<# if ( settings.alert_title ) { #>
+		<# if ( settings.alert_title ) {
+			view.addRenderAttribute( {
+				alert_title: { class: 'elementor-alert-title' },
+				alert_description: { class: 'elementor-alert-description' }
+			} );
+
+			view.addInlineEditingAttributes( 'alert_title', 'none' );
+			view.addInlineEditingAttributes( 'alert_description' );
+			#>
 			<div class="elementor-alert elementor-alert-{{ settings.alert_type }}" role="alert">
-				<span class="elementor-alert-title elementor-inline-editing" data-elementor-setting-key="alert_title" data-elementor-inline-editing-toolbar="none">{{{ settings.alert_title }}}</span>
-				<# if ( settings.alert_title ) { #>
-					<span class="elementor-alert-description elementor-inline-editing" data-elementor-setting-key="alert_description">{{{ settings.alert_description }}}</span>
-				<# } #>
+				<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{{ settings.alert_title }}}</span>
+				<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{{ settings.alert_description }}}</span>
 				<# if ( 'show' === settings.show_dismiss ) { #>
 					<button type="button" class="elementor-alert-dismiss">X</button>
 				<# } #>

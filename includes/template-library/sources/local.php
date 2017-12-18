@@ -125,10 +125,16 @@ class Source_Local extends Source_Base {
 			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
 		];
 
-		$this->post_type_object = register_post_type(
-			self::CPT,
-			apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args )
-		);
+		/**
+		 * Filters the post type arguments when registering elementor template library post type.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $args Arguments for registering a post type.
+		 */
+		$args = apply_filters( 'elementor/template_library/sources/local/register_post_type_args', $args );
+
+		$this->post_type_object = register_post_type( self::CPT, $args );
 
 		$args = [
 			'hierarchical' => false,
@@ -141,11 +147,16 @@ class Source_Local extends Source_Base {
 			'label' => _x( 'Type', 'Template Library', 'elementor' ),
 		];
 
-		register_taxonomy(
-			self::TAXONOMY_TYPE_SLUG,
-			self::CPT,
-			apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args )
-		);
+		/**
+		 * Filters the taxonomy arguments when registering elementor template library taxonomy.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $args Arguments for registering a taxonomy.
+		 */
+		$args = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args );
+
+		register_taxonomy( self::TAXONOMY_TYPE_SLUG, self::CPT, $args );
 	}
 
 	/**
@@ -243,7 +254,24 @@ class Source_Local extends Source_Base {
 			SettingsManager::get_settings_managers( 'page' )->save_settings( $template_data['page_settings'], $template_id );
 		}
 
+		/**
+		 * Fires after Elementor template library was saved.
+		 *
+		 * @since 1.0.1
+		 *
+		 * @param int   $template_id   The ID of the template.
+		 * @param array $template_data The template data.
+		 */
 		do_action( 'elementor/template-library/after_save_template', $template_id, $template_data );
+
+		/**
+		 * Fires after Elementor template library was updated.
+		 *
+		 * @since 1.0.1
+		 *
+		 * @param int   $template_id   The ID of the template.
+		 * @param array $template_data The template data.
+		 */
 		do_action( 'elementor/template-library/after_update_template', $template_id, $template_data );
 
 		return $template_id;
@@ -260,6 +288,14 @@ class Source_Local extends Source_Base {
 
 		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
 
+		/**
+		 * Fires after Elementor template library was updated.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param int   $new_data_id The ID of the new template.
+		 * @param array $new_data    The new template data.
+		 */
 		do_action( 'elementor/template-library/after_update_template', $new_data['id'], $new_data );
 
 		return true;
@@ -279,22 +315,33 @@ class Source_Local extends Source_Base {
 
 		$page_settings = get_post_meta( $post->ID, PageSettingsManager::META_KEY, true );
 
+		$date = strtotime( $post->post_date );
+
 		$data = [
 			'template_id' => $post->ID,
 			'source' => $this->get_id(),
 			'type' => self::get_template_type( $post->ID ),
 			'title' => $post->post_title,
 			'thumbnail' => get_the_post_thumbnail_url( $post ),
-			'date' => mysql2date( get_option( 'date_format' ), $post->post_date ),
+			'date' => $date,
+			'human_date' => date_i18n( get_option( 'date_format' ), $date ),
 			'author' => $user->display_name,
 			'hasPageSettings' => ! empty( $page_settings ),
-			'categories' => [],
-			'keywords' => [],
+			'tags' => [],
 			'export_link' => $this->_get_export_link( $template_id ),
 			'url' => get_permalink( $post->ID ),
 		];
 
-		return apply_filters( 'elementor/template-library/get_template', $data );
+		/**
+		 * Filters the elementor template data when loading template library item.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $data Arguments for registering a taxonomy.
+		 */
+		$data = apply_filters( 'elementor/template-library/get_template', $data );
+
+		return $data;
 	}
 
 	/**
@@ -541,7 +588,20 @@ class Source_Local extends Source_Base {
 	 * @access public
 	*/
 	public function is_template_supports_export( $template_id ) {
-		return apply_filters( 'elementor/template_library/is_template_supports_export', true, $template_id );
+		$export_support = true;
+
+		/**
+		 * Filters whether the template library supports export.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool $export_support Whether the template library supports export.
+		 *                             Default is true.
+		 * @param int  $template_id    Post ID.
+		 */
+		$export_support = apply_filters( 'elementor/template_library/is_template_supports_export', $export_support, $template_id );
+
+		return $export_support;
 	}
 
 	/**

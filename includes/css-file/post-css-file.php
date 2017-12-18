@@ -75,12 +75,16 @@ class Post_CSS_File extends CSS_File {
 		update_post_meta( $this->post_id, '_elementor_css', $meta );
 	}
 
+	protected function get_data() {
+		return Plugin::$instance->db->get_plain_editor( $this->post_id );
+	}
+
 	/**
 	 * @since 1.2.0
 	 * @access protected
 	*/
 	protected function render_css() {
-		$data = Plugin::$instance->db->get_plain_editor( $this->post_id );
+		$data = $this->get_data();
 
 		if ( ! empty( $data ) ) {
 			foreach ( $data as $element_data ) {
@@ -159,6 +163,14 @@ class Post_CSS_File extends CSS_File {
 	 * @param Element_Base $element
 	 */
 	private function render_styles( Element_Base $element ) {
+		/**
+		 * Fires before the CSS of the element is parsed.
+		 *
+		 * @since 1.2.0
+		 *
+		 * @param Post_CSS_File $this    The post CSS file.
+		 * @param Element_Base  $element The element.
+		 */
 		do_action( 'elementor/element/before_parse_css', $this, $element );
 
 		$element_settings = $element->get_settings();
@@ -166,10 +178,13 @@ class Post_CSS_File extends CSS_File {
 		$this->add_controls_stack_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
 
 		/**
-		 * @deprecated, use `elementor/element/parse_css`
+		 * Fires after the CSS of the element is parsed.
+		 *
+		 * @since 1.2.0
+		 *
+		 * @param Post_CSS_File $this    The post CSS file.
+		 * @param Element_Base  $element The element.
 		 */
-		Utils::do_action_deprecated( 'elementor/element_css/parse_css',[ $this, $element ], '1.0.10', 'elementor/element/parse_css' );
-
 		do_action( 'elementor/element/parse_css', $this, $element );
 	}
 }

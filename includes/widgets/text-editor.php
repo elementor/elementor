@@ -6,11 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Text Editor Widget
+ * Text Editor Widget.
+ *
+ * Elementor widget that displays a WYSIWYG text editor, just like the WordPress
+ * editor.
+ *
+ * @since 1.0.0
  */
 class Widget_Text_Editor extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve text editor widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +30,8 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve text editor widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +44,8 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve text editor widget icon.
 	 *
 	 * @since 1.0.0
@@ -346,7 +357,12 @@ class Widget_Text_Editor extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-text-editor elementor-clearfix elementor-inline-editing" data-elementor-setting-key="editor" data-elementor-inline-editing-toolbar="advanced">{{{ settings.editor }}}</div>
+		<#
+		view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+
+		view.addInlineEditingAttributes( 'editor', 'advanced' );
+		#>
+		<div {{{ view.getRenderAttributeString( 'editor' ) }}}>{{{ settings.editor }}}</div>
 		<?php
 	}
 }

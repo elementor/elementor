@@ -6,7 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Preview
+ * Preview.
+ *
+ * Elementor preview handler class.
  *
  * @since 1.0.0
  */
@@ -27,7 +29,9 @@ class Preview {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor preview mode. Fired by `init` action.
+	 * Initialize Elementor preview mode.
+	 *
+	 * Fired by `template_redirect` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -58,6 +62,13 @@ class Preview {
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
 
+		/**
+		 * Fires on Elementor preview init, after Elementor preview has finished loading but before any headers are sent.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param Preview $this The current preview.
+		 */
 		do_action( 'elementor/preview/init', $this );
 	}
 
@@ -68,7 +79,7 @@ class Preview {
 	 *
 	 * @since 1.8.0
 	 * @access public
-	 * 
+	 *
 	 * @return int Post ID.
 	 */
 	public function get_post_id() {
@@ -115,6 +126,10 @@ class Preview {
 	/**
 	 * Enqueue preview styles.
 	 *
+	 * Registers all the preview styles and enqueues them.
+ 	 *
+	 * Fired by `wp_enqueue_scripts` action.
+	 *
 	 * @since 1.0.0
 	 * @access private
 	 */
@@ -137,11 +152,20 @@ class Preview {
 
 		wp_enqueue_style( 'editor-preview' );
 
+		/**
+		 * Fires after Elementor preview styles are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'elementor/preview/enqueue_styles' );
 	}
 
 	/**
 	 * Enqueue preview scripts.
+	 *
+	 * Registers all the preview scripts and enqueues them.
+ 	 *
+	 * Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.5.4
 	 * @access private
@@ -162,11 +186,18 @@ class Preview {
 			true
 		);
 
+		/**
+		 * Fires after Elementor preview scripts are enqueued.
+		 *
+		 * @since 1.5.4
+		 */
 		do_action( 'elementor/preview/enqueue_scripts' );
 	}
 
 	/**
 	 * Preview constructor.
+	 *
+	 * Initializing Elementor preview.
 	 *
 	 * @since 1.0.0
 	 * @access public

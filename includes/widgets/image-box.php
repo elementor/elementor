@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Image Box Widget
+ * Image Box Widget.
+ *
+ * Elementor widget that displays an image, a headline and a text.
+ *
+ * @since 1.0.0
  */
 class Widget_Image_Box extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve image box widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Image_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve image box widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Image_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve image box widget icon.
 	 *
 	 * @since 1.0.0
@@ -47,6 +57,8 @@ class Widget_Image_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
 	 * Retrieve the list of categories the image box widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
@@ -519,11 +531,19 @@ class Widget_Image_Box extends Widget_Base {
 					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
 				}
 
-				html += '<' + settings.title_size  + ' class="elementor-image-box-title elementor-inline-editing" data-elementor-setting-key="title_text" data-elementor-inline-editing-toolbar="none">' + title_html + '</' + settings.title_size  + '>';
+				view.addRenderAttribute( 'title_text', 'class', 'elementor-image-box-title' );
+
+				view.addInlineEditingAttributes( 'title_text', 'none' );
+
+				html += '<' + settings.title_size  + ' ' + view.getRenderAttributeString( 'title_text' ) + '>' + title_html + '</' + settings.title_size  + '>';
 			}
 
 			if ( settings.description_text ) {
-				html += '<p class="elementor-image-box-description elementor-inline-editing" data-elementor-setting-key="description_text">' + settings.description_text + '</p>';
+				view.addRenderAttribute( 'description_text', 'class', 'elementor-image-box-description' );
+
+				view.addInlineEditingAttributes( 'description_text' );
+
+				html += '<p ' + view.getRenderAttributeString( 'description_text' ) + '>' + settings.description_text + '</p>';
 			}
 
 			html += '</div>';

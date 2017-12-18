@@ -6,8 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Controls Stack
+ * Controls Stack.
  *
+ * A base abstract class that provides the needed properties and methods to
+ * manage and handle controls  in the editor panel to inheriting classes.
+ *
+ * @since 1.4.0
  * @abstract
  */
 abstract class Controls_Stack {
@@ -97,6 +101,17 @@ abstract class Controls_Stack {
 	private $_current_tab;
 
 	/**
+	 * Current popover.
+	 *
+	 * Holds the current popover while inserting a set of controls.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
+	private $current_popover;
+
+	/**
 	 * Injection point.
 	 *
 	 * Holds the injection point in the stack where the control will be inserted.
@@ -108,7 +123,9 @@ abstract class Controls_Stack {
 	private $injection_point;
 
 	/**
-	 * Retrieve the name.
+	 * Get element type.
+	 *
+	 * Retrieve the element name.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -134,7 +151,9 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Retrieve the generic ID.
+	 * Get element ID.
+	 *
+	 * Retrieve the element generic ID.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -146,7 +165,9 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Retrieve the generic ID as integer.
+	 * Get element ID.
+	 *
+	 * Retrieve the element generic ID as integer.
 	 *
 	 * @since 1.8.0
 	 * @access public
@@ -359,6 +380,14 @@ abstract class Controls_Stack {
 		}
 
 		unset( $options['position'] );
+
+		if ( $this->current_popover && ! $this->current_popover['initialized'] ) {
+			$args['popover'] = [
+				'start' => true,
+			];
+
+			$this->current_popover['initialized'] = true;
+		}
 
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
 	}
@@ -676,7 +705,7 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve tabs controls.
 	 *
-	 * Get all the tabs assigened to the control.
+	 * Get all the tabs assigned to the control.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1052,7 +1081,7 @@ abstract class Controls_Stack {
 	 * Start controls section.
 	 *
 	 * Used to add a new section of controls. When you use this method, all the
-	 * registered controls from this point will be assigened to this section,
+	 * registered controls from this point will be assigned to this section,
 	 * until you close the section using `end_controls_section()` method.
 	 *
 	 * This method should be used inside `_register_controls()`.
@@ -1064,8 +1093,30 @@ abstract class Controls_Stack {
 	 * @param array  $args       Section arguments.
 	 */
 	public function start_controls_section( $section_id, array $args ) {
+		$section_name = $this->get_name();
+
+		/**
+		 * Fires before Elementor section starts in the editor panel.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param Controls_Stack $this       The control.
+		 * @param string         $section_id Section ID.
+		 * @param array          $args       Section arguments.
+		 */
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
-		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_start', $this, $args );
+
+		/**
+		 * Fires before Elementor section starts in the editor panel.
+		 *
+		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param Controls_Stack $this The control.
+		 * @param array          $args Section arguments.
+		 */
+		do_action( "elementor/element/{$section_name}/{$section_id}/before_section_start", $this, $args );
 
 		$args['type'] = Controls_Manager::SECTION;
 
@@ -1081,8 +1132,28 @@ abstract class Controls_Stack {
 			$this->injection_point['section'] = $this->_current_section;
 		}
 
+		/**
+		 * Fires after Elementor section starts in the editor panel.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param Controls_Stack $this       The control.
+		 * @param string         $section_id Section ID.
+		 * @param array          $args       Section arguments.
+		 */
 		do_action( 'elementor/element/after_section_start', $this, $section_id, $args );
-		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_start', $this, $args );
+
+		/**
+		 * Fires after Elementor section starts in the editor panel.
+		 *
+		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param Controls_Stack $this The control.
+		 * @param array          $args Section arguments.
+		 */
+		do_action( "elementor/element/{$section_name}/{$section_id}/after_section_start", $this, $args );
 	}
 
 	/**
@@ -1097,6 +1168,8 @@ abstract class Controls_Stack {
 	 * @access public
 	 */
 	public function end_controls_section() {
+		$section_name = $this->get_name();
+
 		// Save the current section for the action.
 		$current_section = $this->_current_section;
 		$section_id = $current_section['section'];
@@ -1104,13 +1177,53 @@ abstract class Controls_Stack {
 			'tab' => $current_section['tab'],
 		];
 
+		/**
+		 * Fires before Elementor section ends in the editor panel.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param Controls_Stack $this       The control.
+		 * @param string         $section_id Section ID.
+		 * @param array          $args       Section arguments.
+		 */
 		do_action( 'elementor/element/before_section_end', $this, $section_id, $args );
-		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/before_section_end', $this, $args );
+
+		/**
+		 * Fires before Elementor section ends in the editor panel.
+		 *
+		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param Controls_Stack $this The control.
+		 * @param array          $args Section arguments.
+		 */
+		do_action( "elementor/element/{$section_name}/{$section_id}/before_section_end", $this, $args );
 
 		$this->_current_section = null;
 
+		/**
+		 * Fires after Elementor section ends in the editor panel.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param Controls_Stack $this       The control.
+		 * @param string         $section_id Section ID.
+		 * @param array          $args       Section arguments.
+		 */
 		do_action( 'elementor/element/after_section_end', $this, $section_id, $args );
-		do_action( 'elementor/element/' . $this->get_name() . '/' . $section_id . '/after_section_end', $this, $args );
+
+		/**
+		 * Fires after Elementor section ends in the editor panel.
+		 *
+		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param Controls_Stack $this The control.
+		 * @param array          $args Section arguments.
+		 */
+		do_action( "elementor/element/{$section_name}/{$section_id}/after_section_end", $this, $args );
 	}
 
 	/**
@@ -1118,7 +1231,7 @@ abstract class Controls_Stack {
 	 *
 	 * Used to add a new set of tabs inside a section. You should use this
 	 * method before adding new indevidual tabs using `start_controls_tab()`.
-	 * Each tab added after this point will be assigened to this group of tabs,
+	 * Each tab added after this point will be assigned to this group of tabs,
 	 * until you close it using `end_controls_tabs()` method.
 	 *
 	 * This method should be used inside `_register_controls()`.
@@ -1169,7 +1282,7 @@ abstract class Controls_Stack {
 	 *
 	 * Used to add a new tab inside a group of tabs. Use this method before
 	 * adding new indevidual tabs using `start_controls_tab()`.
-	 * Each tab added after this point will be assigened to this group of tabs,
+	 * Each tab added after this point will be assigned to this group of tabs,
 	 * until you close it using `end_controls_tab()` method.
 	 *
 	 * This method should be used inside `_register_controls()`.
@@ -1210,6 +1323,51 @@ abstract class Controls_Stack {
 	 */
 	public function end_controls_tab() {
 		unset( $this->_current_tab['inner_tab'] );
+	}
+
+	/**
+	 * Start popover.
+	 *
+	 * Used to add a new set of controls in a popover. When you use this method,
+	 * all the registered controls from this point will be assigned to this
+	 * popover, until you close the popover using `end_popover()` method.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 */
+	final public function start_popover() {
+		$this->current_popover = [
+			'initialized' => false,
+		];
+	}
+
+	/**
+	 * End popover.
+	 *
+	 * Used to close an existing open popover. When you use this method it stops
+	 * adding new controls to this popover.
+	 *
+	 * This method should be used inside `_register_controls()`.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 */
+	final public function end_popover() {
+		$this->current_popover = null;
+
+		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this, false )['controls'];
+
+		end( $registered_controls );
+
+		$last_control_key = key( $registered_controls );
+
+		$this->update_control( $last_control_key, [
+			'popover' => [
+				'end' => true,
+			],
+		] );
 	}
 
 	/**

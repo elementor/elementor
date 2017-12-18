@@ -6,11 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Video Widget
+ * Video Widget.
+ *
+ * Elementor widget that displays a video player.
+ *
+ * @since 1.0.0
  */
 class Widget_Video extends Widget_Base {
 
 	/**
+	 * Get widget name.
+	 *
 	 * Retrieve video widget name.
 	 *
 	 * @since 1.0.0
@@ -23,6 +29,8 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
+	 * Get widget title.
+	 *
 	 * Retrieve video widget title.
 	 *
 	 * @since 1.0.0
@@ -35,6 +43,8 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
+	 * Get widget icon.
+	 *
 	 * Retrieve video widget icon.
 	 *
 	 * @since 1.0.0
@@ -184,6 +194,18 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Mute', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+			]
+		);
+
+		$this->add_control(
+			'yt_privacy',
+			[
+				'label' => __( 'Privacy Mode', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'description' => __( 'When you turn on privacy mode, YouTube won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
 				'condition' => [
 					'video_type' => 'youtube',
 				],
@@ -551,7 +573,11 @@ class Widget_Video extends Widget_Base {
 
 		$embed_params = $this->get_embed_params();
 
-		$video_html = Embed::get_embed_html( $video_link, $embed_params );
+		$embed_options = [
+			'privacy' => $settings['yt_privacy'],
+		];
+
+		$video_html = Embed::get_embed_html( $video_link, $embed_params, $embed_options );
 
 		if ( empty( $video_html ) ) {
 			echo esc_url( $video_link );
@@ -579,7 +605,7 @@ class Widget_Video extends Widget_Base {
 				if ( $settings['lightbox'] ) {
 					$lightbox_options = [
 						'type' => 'video',
-						'url' => Embed::get_embed_url( $video_link, $embed_params ),
+						'url' => Embed::get_embed_url( $video_link, $embed_params, $embed_options ),
 						'modalOptions' => [
 							'id' => 'elementor-lightbox-' . $this->get_id(),
 							'entranceAnimation' => $settings['lightbox_content_animation'],
@@ -603,7 +629,7 @@ class Widget_Video extends Widget_Base {
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play">
-							<i class="eicon-play"></i>
+							<i class="eicon-play" aria-hidden="true"></i>
 						</div>
 					<?php endif; ?>
 				</div>

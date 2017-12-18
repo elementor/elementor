@@ -300,7 +300,7 @@ body.elementor-editor-inactive #elementor-editor {
 /*= Elementor Message
 ---------------------------------------*/
 .notice.elementor-message {
-  border-left-color: #9b0a46 !important;
+  border-left-color: #B7084E !important;
   padding: 20px; }
   .notice.elementor-message .elementor-message-inner {
     display: table;
@@ -311,7 +311,7 @@ body.elementor-editor-inactive #elementor-editor {
       display: table-cell;
       vertical-align: middle; }
   .notice.elementor-message .elementor-message-icon {
-    color: #9b0a46;
+    color: #B7084E;
     font-size: 40px;
     width: 40px; }
   .notice.elementor-message .elementor-message-content {
@@ -324,7 +324,7 @@ body.elementor-editor-inactive #elementor-editor {
   .notice.elementor-message .elementor-message-action {
     text-align: right; }
     .notice.elementor-message .elementor-message-action .elementor-button {
-      background-color: #9b0a46;
+      background-color: #B7084E;
       color: #fff;
       border-color: #7c1337;
       -webkit-box-shadow: 0 1px 0 #7c1337;
@@ -358,6 +358,8 @@ body.elementor-editor-inactive #elementor-editor {
       .notice.elementor-message .elementor-message-inner .elementor-message-content,
       .notice.elementor-message .elementor-message-inner .elementor-message-action {
         display: block; }
+      .notice.elementor-message .elementor-message-inner .elementor-message-action {
+        text-align: center; }
       .notice.elementor-message .elementor-message-inner .elementor-message-icon {
         width: auto; }
       .notice.elementor-message .elementor-message-inner .elementor-message-content {
@@ -464,7 +466,7 @@ body.elementor-editor-inactive #elementor-editor {
   padding: 20px 30px 30px; }
 
 #elementor-deactivate-feedback-modal .dialog-submit {
-  background-color: #9b0a46;
+  background-color: #B7084E;
   -webkit-border-radius: 3px;
           border-radius: 3px;
   color: #fff;
@@ -488,7 +490,7 @@ body.elementor-editor-inactive #elementor-editor {
   width: auto; }
 
 #elementor-deactivate-feedback-dialog-header i {
-  color: #9b0a46;
+  color: #B7084E;
   font-size: 19px; }
 
 #elementor-deactivate-feedback-dialog-header-title {

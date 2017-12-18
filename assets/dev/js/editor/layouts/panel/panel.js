@@ -183,9 +183,9 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.updateScrollbar = _.throttle( this.updateScrollbar, 100 );
 
 		this.getRegion( 'content' )
-			.on( 'before:show', _.bind( this.onEditorBeforeShow, this ) )
-			.on( 'empty', _.bind( this.onEditorEmpty, this ) )
-			.on( 'show', _.bind( this.updateScrollbar, this ) );
+			.on( 'before:show', this.onEditorBeforeShow.bind( this ) )
+			.on( 'empty', this.onEditorEmpty.bind( this ) )
+			.on( 'show', this.updateScrollbar.bind( this ) );
 
 		// Set default page to elements
 		this.setPage( 'elements' );
@@ -194,7 +194,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onEditorBeforeShow: function() {
-		_.defer( _.bind( this.updateScrollbar, this ) );
+		_.defer( this.updateScrollbar.bind( this ) );
 	},
 
 	onEditorEmpty: function() {

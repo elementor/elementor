@@ -1,0 +1,27 @@
+.elementor-control-type-popover_toggle {
+
+	.elementor-control-input-wrapper {
+		text-align: $end;
+	}
+
+	.elementor-control-popover-toggle-simple-toggle {
+		display: inline-block;
+		width: 50px;
+		text-align: center;
+		padding: 6px 0;
+		color: $editor-light;
+		text-transform: uppercase;
+		border-radius: 3px;
+		border: 1px solid;
+		cursor: pointer;
+	}
+	
+	.elementor-choices-label {
+		font-size: 10px;
+		text-transform: uppercase;
+
+		i {
+			@include padding-start(2px);
+		}
+	}
+}
