@@ -20,8 +20,6 @@ abstract class Document extends Controls_Stack {
 
 	private static $properties = [
 		'is_editable' => true,
-		'show_in_library' => false,
-		'library_view' => 'grid',
 		'edit_area' => 'content',
 	];
 
