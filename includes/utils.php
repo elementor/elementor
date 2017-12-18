@@ -61,7 +61,7 @@ class Utils {
 	public static function get_edit_link( $post_id = 0 ) {
 		_deprecated_function( __METHOD__, '1.9.0', '$document->get_edit_link()' );
 
-		$url = Plugin::$instance->documents_manager->get( $post_id )->get_edit_url();
+		$url = Plugin::$instance->documents->get( $post_id )->get_edit_url();
 
 		/**
 		 * Filters the Elementor edit link.
@@ -126,7 +126,7 @@ class Utils {
 	public static function get_preview_url( $post_id ) {
 		_deprecated_function( __METHOD__, '1.9.0', '$document->get_preview_url()' );
 
-		$url = Plugin::$instance->documents_manager->get( $post_id )->get_preview_url();
+		$url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 
 		/**
 		 * Filters the Elementor preview URL.

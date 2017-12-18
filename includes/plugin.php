@@ -73,7 +73,7 @@ class Plugin {
 	/**
 	 * @var Documents_Manager
 	 */
-	public $documents_manager;
+	public $documents;
 
 	/**
 	 * Schemes manager.
@@ -423,7 +423,7 @@ class Plugin {
 
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
-		$this->documents_manager = new Documents_Manager();
+		$this->documents = new Documents_Manager();
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();

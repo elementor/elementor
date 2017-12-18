@@ -6,6 +6,7 @@ use Elementor\DB;
 use Elementor\Element_Base;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -23,11 +24,6 @@ abstract class Document extends Controls_Stack {
 		'edit_area' => 'content',
 	];
 
-	/**
-	 * @var Element_Base[]
-	 */
-	private $elements;
-
 	public static function get_properties( $key = null ) {
 		return self::_get_items( self::$properties, $key );
 	}
@@ -38,6 +34,10 @@ abstract class Document extends Controls_Stack {
 
 	public function get_unique_name() {
 		return $this->get_name() . '-' . $this->post->ID;
+	}
+
+	public function is_editable_by_current_user() {
+		return User::is_current_user_can_edit( $this->post->ID );
 	}
 
 	protected function _register_controls() {
@@ -77,6 +77,20 @@ abstract class Document extends Controls_Stack {
 		}
 
 		$this->end_controls_section();
+	}
+
+	/**
+	 * Is built with Elementor.
+	 *
+	 * Check whether the post was built with Elementor.
+	 *
+	 * @since 1.0.10
+	 * @access public
+	 *
+	 * @return bool Whether the post was built with Elementor.
+	 */
+	public function is_built_with_elementor() {
+		return ! ! get_post_meta( $this->post->ID, '_elementor_edit_mode', true );
 	}
 
 	/**
@@ -146,7 +160,7 @@ abstract class Document extends Controls_Stack {
 			$autosave = wp_get_post_autosave( $this->post->ID );
 
 			if ( is_object( $autosave ) ) {
-				$elements = Plugin::$instance->documents_manager
+				$elements = Plugin::$instance->documents
 					->get( $autosave->ID )
 					->get_json_meta( '_elementor_data' );
 			}
@@ -163,8 +177,6 @@ abstract class Document extends Controls_Stack {
 		if ( ! $this->post ) {
 			$this->post = new \WP_Post( (object) [] );
 		}
-
-		$this->elements = $this->get_elements();
 
 		// Each Control_Stack is based on a unique ID.
 		$data['id'] = $data['post_id'];

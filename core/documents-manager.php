@@ -40,6 +40,11 @@ class Documents_Manager {
 		}
 	}
 
+	/**
+	 * @param int $post_id
+	 *
+	 * @return Document
+	 */
 	public function get( $post_id ) {
 		if ( ! isset( $this->documents[ $post_id ] ) ) {
 			$doc_type = get_post_meta( $post_id, '_elementor_type', true );

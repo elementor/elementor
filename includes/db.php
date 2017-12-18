@@ -179,7 +179,7 @@ class DB {
 	 * @return array Decoded JSON data from post meta.
 	 */
 	protected function _get_json_meta( $post_id, $key ) {
-		return Plugin::$instance->documents_manager->get( $post_id )->get_json_meta( $key );
+		return Plugin::$instance->documents->get( $post_id )->get_json_meta( $key );
 	}
 
 	/**

@@ -198,10 +198,12 @@ class Admin {
 	 * @return array An updated array of row action links.
 	 */
 	public function add_edit_in_dashboard( $actions, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		if ( $document->is_built_with_elementor() && $document->is_editable_by_current_user() ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%s">%s</a>',
-				Utils::get_edit_link( $post->ID ),
+				$document->get_edit_url(),
 				__( 'Edit with Elementor', 'elementor' )
 			);
 		}
@@ -225,7 +227,9 @@ class Admin {
 	 * @return array A filtered array of post display states.
 	 */
 	public function add_elementor_post_state( $post_states, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		if ( $document->is_built_with_elementor() && $document->is_editable_by_current_user() ) {
 			$post_states['elementor'] = __( 'Elementor', 'elementor' );
 		}
 		return $post_states;
