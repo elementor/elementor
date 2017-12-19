@@ -187,7 +187,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 ## Changelog ##
 
 ### 1.8.11 - 2017-12-19 ###
-* Tweak! - Support W3C validation when using multiple google fonts ([Topic](https://wordpress.org/support/topic/bad-character-while-embedding-google-fonts/))
+* Tweak! - Support W3C validation when using multiple Google Fonts ([Topic](https://wordpress.org/support/topic/bad-character-while-embedding-google-fonts/))
 * Tweak! - Eicons v2.9.0 Updated
 * Fix! - TinyMCE inside repeater missing content after sort canceled ([#2952](https://github.com/pojome/elementor/issues/2952))
 * Fix! - Alpha color picker added `#` to default value ([#2978](https://github.com/pojome/elementor/issues/2978))
