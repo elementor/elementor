@@ -40,6 +40,14 @@ abstract class Document extends Controls_Stack {
 		return User::is_current_user_can_edit( $this->post->ID );
 	}
 
+	public function get_wp_preview_url() {
+		$nonce = wp_create_nonce( 'post_preview_' . $this->post->ID );
+		$query_args['preview_id'] = $this->post->ID;
+		$query_args['preview_nonce'] = $nonce;
+
+		return get_preview_post_link( $this->post->ID, $query_args );
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'document_settings',

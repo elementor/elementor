@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,6 +38,18 @@ class Editor {
 	 * @var int Post ID.
 	 */
 	private $_post_id;
+
+	/**
+	 * Document.
+	 *
+	 * Holds the current Document being edited.
+	 *
+	 * @since 1.9.0
+	 * @access private
+	 *
+	 * @var Document
+	 */
+	private $document;
 
 	/**
 	 * Whether the edit mode is active.
@@ -81,6 +94,8 @@ class Editor {
 		}
 
 		$this->_post_id = absint( $_REQUEST['post'] );
+
+		$this->document = Plugin::$instance->documents->get( $this->_post_id );
 
 		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
@@ -486,19 +501,14 @@ class Editor {
 
 		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
 
-		$nonce = wp_create_nonce( 'post_preview_' . $this->_post_id );
-		$query_args['preview_id'] = $this->_post_id;
-		$query_args['preview_nonce'] = $nonce;
-		$preview_post_link = get_preview_post_link( $this->_post_id, $query_args );
-
 		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
-			'preview_link' => Utils::get_preview_url( $this->_post_id ),
+			'preview_link' => $this->document->get_preview_url(),
 			'wp_preview' => [
-				'url' => $preview_post_link,
+				'url' => $this->document->get_wp_preview_url(),
 				'target' => 'wp-preview-' . $this->_post_id,
 			],
 			'elements_categories' => $plugin->elements_manager->get_categories(),
