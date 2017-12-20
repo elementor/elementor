@@ -117,13 +117,9 @@ class Control_Color extends Base_Data_Control {
 		?>
 		<# var defaultValue = '', dataAlpha = '';
 			if ( data.default ) {
-				if ( '#' !== data.default.substring( 0, 1 ) ) {
-					defaultValue = '#' + data.default;
-				} else {
-					defaultValue = data.default;
-				}
-				defaultValue = ' data-default-color=' + defaultValue; // Quotes added automatically.
+				defaultValue = ' data-default-color=' + data.default; // Quotes added automatically.
 			}
+
 			if ( data.alpha ) {
 				dataAlpha = ' data-alpha=true';
 			} #>

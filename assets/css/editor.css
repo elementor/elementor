@@ -666,9 +666,14 @@ select {
     color: #ffffff; }
   .elementor-panel a {
     color: #B7084E;
-    -webkit-transition: none;
-    -o-transition: none;
-    transition: none; }
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px dotted transparent;
+    -webkit-transition: all ease-in-out .3s;
+    -o-transition: all ease-in-out .3s;
+    transition: all ease-in-out .3s; }
+    .elementor-panel a:hover {
+      border-bottom-color: inherit; }
   .elementor-panel h1,
   .elementor-panel h2,
   .elementor-panel h3,
@@ -749,6 +754,8 @@ select {
     font-size: 12px;
     line-height: 1.5;
     text-align: left; }
+    .elementor-panel .elementor-panel-alert a {
+      color: inherit; }
     .elementor-panel .elementor-panel-alert.elementor-panel-alert-info {
       color: #31708f;
       background-color: #d9edf7;

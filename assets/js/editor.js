@@ -4688,8 +4688,6 @@ App = Marionette.Application.extend( {
 
 		this.initDialogsManager();
 
-		this.heartbeat.init();
-
 		this.ajax.init();
 	},
 
@@ -5014,6 +5012,8 @@ App = Marionette.Application.extend( {
 		this.initElements();
 
 		this.initHotKeys();
+
+		this.heartbeat.init();
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
