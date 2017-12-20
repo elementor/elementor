@@ -60,4 +60,11 @@
 		padding: 5px;
 		display: block;
 	}
+
+	.elementor-warning {
+
+		td:first-child {
+			@include border-start(3px solid $editor-orange);
+		}
+	}
 }
