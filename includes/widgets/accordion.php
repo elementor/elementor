@@ -600,16 +600,20 @@ class Widget_Accordion extends Widget_Base {
 				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
 
 				$this->add_render_attribute( $tab_title_setting_key, [
+					'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 					'class' => [ 'elementor-tab-title' ],
 					'tabindex' => $id_int . $tab_count,
 					'data-tab' => $tab_count,
 					'role' => 'tab',
+					'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 				] );
 
 				$this->add_render_attribute( $tab_content_setting_key, [
+					'id' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 					'data-tab' => $tab_count,
 					'role' => 'tabpanel',
+					'aria-labelledby' => 'elementor-tab-title-' . $id_int . $tab_count,
 				] );
 
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
@@ -652,16 +656,20 @@ class Widget_Accordion extends Widget_Base {
 						tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs', index );
 
 					view.addRenderAttribute( tabTitleKey, {
+						'id': 'elementor-tab-title-' + tabindex + tabCount,
 						'class': [ 'elementor-tab-title' ],
 						'tabindex': tabindex + tabCount,
 						'data-tab': tabCount,
-						'role': 'tab'
+						'role': 'tab',
+						'aria-controls': 'elementor-tab-content-' + tabindex + tabCount
 					} );
 
 					view.addRenderAttribute( tabContentKey, {
+						'id': 'elementor-tab-content-' + tabindex + tabCount,
 						'class': [ 'elementor-tab-content', 'elementor-clearfix' ],
 						'data-tab': tabCount,
-						'role': 'tabpanel'
+						'role': 'tabpanel',
+						'aria-labelledby': 'elementor-tab-title-' + tabindex + tabCount
 					} );
 
 					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
