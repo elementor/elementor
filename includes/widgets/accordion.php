@@ -595,7 +595,16 @@ class Widget_Accordion extends Widget_Base {
 			<?php foreach ( $settings['tabs'] as $index => $item ) :
 				$tab_count = $index + 1;
 
+				$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
+
 				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
+
+				$this->add_render_attribute( $tab_title_setting_key, [
+					'class' => [ 'elementor-tab-title' ],
+					'tabindex' => $id_int . $tab_count,
+					'data-tab' => $tab_count,
+					'role' => 'tab',
+				] );
 
 				$this->add_render_attribute( $tab_content_setting_key, [
 					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
@@ -606,7 +615,7 @@ class Widget_Accordion extends Widget_Base {
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
 				<div class="elementor-accordion-item">
-					<<?php echo $settings['title_html_tag']; ?> class="elementor-tab-title" tabindex="<?php echo $id_int . $tab_count; ?>" data-tab="<?php echo $tab_count; ?>" role="tab">
+					<<?php echo $settings['title_html_tag']; ?> <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>>
 						<?php if ( $settings['icon'] ) : ?>
 						<span class="elementor-accordion-icon elementor-accordion-icon-<?php echo $settings['icon_align']; ?>" aria-hidden="true">
 							<i class="elementor-accordion-icon-closed <?php echo $settings['icon']; ?>"></i>
@@ -639,7 +648,15 @@ class Widget_Accordion extends Widget_Base {
 
 				_.each( settings.tabs, function( item, index ) {
 					var tabCount = index + 1,
+						tabTitleKey = view.getRepeaterSettingKey( 'tab_title', 'tabs', index ),
 						tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs', index );
+
+					view.addRenderAttribute( tabTitleKey, {
+						'class': [ 'elementor-tab-title' ],
+						'tabindex': tabindex + tabCount,
+						'data-tab': tabCount,
+						'role': 'tab'
+					} );
 
 					view.addRenderAttribute( tabContentKey, {
 						'class': [ 'elementor-tab-content', 'elementor-clearfix' ],
@@ -650,7 +667,7 @@ class Widget_Accordion extends Widget_Base {
 					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
 					#>
 					<div class="elementor-accordion-item">
-						<{{{ settings.title_html_tag }}} class="elementor-tab-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab">
+						<{{{ settings.title_html_tag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 							<# if ( settings.icon ) { #>
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}" aria-hidden="true">
 								<i class="elementor-accordion-icon-closed {{ settings.icon }}"></i>
