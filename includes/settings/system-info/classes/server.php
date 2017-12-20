@@ -47,6 +47,8 @@ class Server_Reporter extends Base_Reporter {
 
 		if ( version_compare( $result['value'], '5.4', '<' ) ) {
 			$result['recommendation'] = _x( 'We recommend to use php 5.4 or higher', 'System Info', 'elementor' );
+
+			$result['warning'] = true;
 		}
 
 		return $result;
@@ -65,8 +67,11 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	public function get_gd_installed() {
+		$gd_installed = extension_loaded( 'gd' );
+
 		return [
-			'value' => extension_loaded( 'gd' ) ? 'Yes' : 'No',
+			'value' => $gd_installed ? 'Yes' : 'No',
+			'warning' => ! $gd_installed,
 		];
 	}
 
@@ -139,6 +144,7 @@ class Server_Reporter extends Base_Reporter {
 		if ( is_wp_error( $response ) ) {
 			return [
 				'value' => 'Not connected (' . $response->get_error_message() . ')',
+				'warning' => true,
 			];
 		}
 
@@ -149,6 +155,7 @@ class Server_Reporter extends Base_Reporter {
 
 			return [
 				'value' => 'Not connected (' . $error_msg . ')',
+				'warning' => true,
 			];
 		}
 
@@ -157,6 +164,7 @@ class Server_Reporter extends Base_Reporter {
 		if ( empty( $info_data ) ) {
 			return [
 				'value' => 'Not connected (Returns invalid JSON)',
+				'warning' => true,
 			];
 		}
 

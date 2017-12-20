@@ -46,6 +46,8 @@ class WordPress_Reporter extends Base_Reporter {
 				$min_recommended_memory,
 				'https://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP'
 			);
+
+			$result['warning'] = true;
 		}
 
 		return $result;
