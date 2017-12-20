@@ -228,8 +228,8 @@ class Widget_Toggle extends Widget_Base {
 						'name' => 'tab_title',
 						'label' => __( 'Title & Content', 'elementor' ),
 						'type' => Controls_Manager::TEXT,
-						'label_block' => true,
 						'default' => __( 'Toggle Title' , 'elementor' ),
+						'label_block' => true,
 					],
 					[
 						'name' => 'tab_content',
@@ -587,12 +587,10 @@ class Widget_Toggle extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings();
 
-		$tabs = $this->get_settings( 'tabs' );
-
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-toggle" role="tablist">
-			<?php foreach ( $tabs as $index => $item ) :
+			<?php foreach ( $settings['tabs'] as $index => $item ) :
 				$tab_count = $index + 1;
 
 				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
