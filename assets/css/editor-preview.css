@@ -22,6 +22,8 @@
   font-size: 12px;
   line-height: 1.5;
   text-align: left; }
+  .elementor-panel-alert a {
+    color: inherit; }
   .elementor-panel-alert.elementor-panel-alert-info {
     color: #31708f;
     background-color: #d9edf7;
