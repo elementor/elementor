@@ -7,6 +7,7 @@ use Elementor\Element_Base;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

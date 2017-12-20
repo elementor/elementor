@@ -6,6 +6,7 @@ use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Group_Control_Background;
 use Elementor\Settings;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -44,14 +45,6 @@ class Model extends BaseModel {
 		return [
 			'title' => __( 'Page Settings', 'elementor' ),
 		];
-	}
-
-	public function on_export( $element_data ) {
-		if ( ! empty( $element_data['settings']['template'] ) && Manager::TEMPLATE_CANVAS !== $element_data['settings']['template'] ) {
-			unset( $element_data['settings']['template'] );
-		}
-
-		return $element_data;
 	}
 
 	protected function _register_controls() {
@@ -97,7 +90,7 @@ class Model extends BaseModel {
 			);
 		}
 
-		if ( Manager::is_cpt_custom_templates_supported() ) {
+		if ( Utils::is_cpt_custom_templates_supported() ) {
 			require_once ABSPATH . '/wp-admin/includes/template.php';
 
 			$options = [
@@ -113,9 +106,6 @@ class Model extends BaseModel {
 					'type' => Controls_Manager::SELECT,
 					'default' => 'default',
 					'options' => $options,
-					'export' => function( $value ) {
-						return Manager::TEMPLATE_CANVAS === $value;
-					},
 				]
 			);
 		}

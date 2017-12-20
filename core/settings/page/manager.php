@@ -6,6 +6,7 @@ use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Post_CSS_File;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,17 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends BaseManager {
 
-	const TEMPLATE_CANVAS = 'elementor_canvas';
-
 	const META_KEY = '_elementor_page_settings';
-
-	public function __construct() {
-		parent::__construct();
-
-		add_action( 'init', [ $this, 'init' ] );
-
-		add_filter( 'template_include', [ $this, 'template_include' ] );
-	}
 
 	/**
 	 * @deprecated since 1.6.0
@@ -34,40 +25,6 @@ class Manager extends BaseManager {
 	 */
 	public static function get_page( $id ) {
 		return SettingsManager::get_settings_managers( 'page' )->get_model( $id );
-	}
-
-	public static function add_page_templates( $post_templates ) {
-		$post_templates = [
-			self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
-		] + $post_templates;
-
-		return $post_templates;
-	}
-
-	public static function is_cpt_custom_templates_supported() {
-		require_once ABSPATH . '/wp-admin/includes/theme.php';
-
-		return method_exists( wp_get_theme(), 'get_post_templates' );
-	}
-
-	public function template_include( $template ) {
-		if ( is_singular() ) {
-			$page_template = get_post_meta( get_the_ID(), '_wp_page_template', true );
-
-			if ( self::TEMPLATE_CANVAS === $page_template ) {
-				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
-			}
-		}
-
-		return $template;
-	}
-
-	public function init() {
-		$post_types = get_post_types_by_support( 'elementor' );
-
-		foreach ( $post_types as $post_type ) {
-			add_filter( "theme_{$post_type}_templates", [ __CLASS__, 'add_page_templates' ], 10, 4 );
-		}
 	}
 
 	public function get_name() {
@@ -112,7 +69,7 @@ class Manager extends BaseManager {
 
 		wp_update_post( $post );
 
-		if ( self::is_cpt_custom_templates_supported() ) {
+		if ( Utils::is_cpt_custom_templates_supported() ) {
 			$template = 'default';
 
 			if ( isset( $data['template'] ) ) {
@@ -142,7 +99,7 @@ class Manager extends BaseManager {
 			$settings = [];
 		}
 
-		if ( self::is_cpt_custom_templates_supported() ) {
+		if ( Utils::is_cpt_custom_templates_supported() ) {
 			$saved_template = get_post_meta( $id, '_wp_page_template', true );
 
 			if ( $saved_template ) {

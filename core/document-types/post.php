@@ -6,6 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Settings\Page\Manager;
 use Elementor\Settings;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -62,7 +63,7 @@ class Post extends Document {
 			);
 		}
 
-		if ( Manager::is_cpt_custom_templates_supported() ) {
+		if ( Utils::is_cpt_custom_templates_supported() ) {
 			require_once ABSPATH . '/wp-admin/includes/template.php';
 
 			$options = [
@@ -78,9 +79,6 @@ class Post extends Document {
 					'type' => Controls_Manager::SELECT,
 					'default' => 'default',
 					'options' => $options,
-					'export' => function( $value ) {
-						return Manager::TEMPLATE_CANVAS === $value;
-					},
 				]
 			);
 		}

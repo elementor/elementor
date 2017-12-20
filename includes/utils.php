@@ -319,4 +319,10 @@ class Utils {
 			return apply_filters_ref_array( $tag, $args );
 		}
 	}
+
+	public static function is_cpt_custom_templates_supported() {
+		require_once ABSPATH . '/wp-admin/includes/theme.php';
+
+		return method_exists( wp_get_theme(), 'get_post_templates' );
+	}
 }
