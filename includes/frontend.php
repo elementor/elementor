@@ -771,9 +771,9 @@ class Frontend {
 	 * @param \WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance, passed by reference.
 	 */
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
-		$post_id = get_the_ID();
+		$document = Plugin::$instance->documents->get( get_the_ID() );
 
-		$is_builder_mode = is_singular() && User::is_current_user_can_edit( $post_id ) && Plugin::$instance->db->is_built_with_elementor( $post_id );
+		$is_builder_mode = is_singular() && $document->is_editable_by_current_user() && $document->is_built_with_elementor();
 
 		if ( ! $is_builder_mode ) {
 			return;
@@ -782,7 +782,7 @@ class Frontend {
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor_edit_page',
 			'title' => __( 'Edit with Elementor', 'elementor' ),
-			'href' => Utils::get_edit_link( $post_id ),
+			'href' => $document->get_edit_url(),
 		] );
 	}
 

@@ -175,6 +175,20 @@ class Editor {
 	}
 
 	/**
+	 * Retrieve Document.
+	 *
+	 * Get the current Document.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @return Document.
+	 */
+	public function get_document() {
+		return $this->document;
+	}
+
+	/**
 	 * Redirect to new URL.
 	 *
 	 * Used as a fallback function for the old URL structure of Elementor
@@ -540,7 +554,7 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'current_user_can_publish' => $current_user_can_publish,
-			'exit_to_dashboard_url' => get_edit_post_link(),
+			'exit_to_dashboard_url' => $this->document->get_exit_to_dashboard_url(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),

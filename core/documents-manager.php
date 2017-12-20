@@ -10,12 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Documents_Manager {
 
-	private $types = [];
+	protected $types = [];
 
 	/**
 	 * @var Document[]
 	 */
-	private $documents = [];
+	protected $documents = [];
 
 	public function __construct() {
 		$this->register_default_types();
@@ -38,6 +38,8 @@ class Documents_Manager {
 		foreach ( $default_types as $type => $class ) {
 			$this->register_document_type( $type, $class );
 		}
+
+		do_action( 'elementor/documents/register', $this );
 	}
 
 	/**
@@ -47,7 +49,7 @@ class Documents_Manager {
 	 */
 	public function get( $post_id ) {
 		if ( ! isset( $this->documents[ $post_id ] ) ) {
-			$doc_type = get_post_meta( $post_id, '_elementor_type', true );
+			$doc_type = get_post_meta( $post_id, '_elementor_template_type', true );
 			$doc_type_class = $this->get_document_type( $doc_type );
 			$this->documents[ $post_id ] = new $doc_type_class( [
 				'post_id' => $post_id,
@@ -55,5 +57,28 @@ class Documents_Manager {
 		}
 
 		return $this->documents[ $post_id ];
+	}
+
+	/**
+	 * @param string $class_name
+	 * @param array $post_data
+	 * @param array $meta_data
+	 *
+	 * @return Document
+	 */
+	public function create( $class_name, $post_data = [], $meta_data = [] ) {
+		$post_id = wp_insert_post( $post_data );
+
+		add_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+
+		foreach ( $meta_data as $key => $value ) {
+			add_post_meta( $post_id, $key, $value );
+		}
+
+		$document = new $class_name( [
+			'post_id' => $post_id,
+		] );
+
+		return $document;
 	}
 }

@@ -120,6 +120,10 @@ module.exports = Module.extend( {
 					elementor.settings.page.model.set( 'post_status', options.status );
 				}
 
+				if ( data.config ) {
+					jQuery.extend( true, elementor.config, data.config );
+				}
+
 				elementor.config.data = newData;
 
 				elementor.channels.editor.trigger( 'saved', data );

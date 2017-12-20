@@ -7,7 +7,7 @@ module.exports = Marionette.Behavior.extend( {
 			buttonSave: '#elementor-panel-saver-button-save',
 			buttonSaveLabel: '#elementor-panel-saver-save-label',
 			buttonPublish: '#elementor-panel-saver-button-publish',
-			buttonPreview: '#elementor-panel-saver-button-preview-label',
+			buttonPreview: '#elementor-panel-saver-button-preview',
 			menuUpdate: '#elementor-panel-saver-menu-update',
 			menuPublish: '#elementor-panel-saver-menu-publish',
 			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes',
@@ -49,6 +49,8 @@ module.exports = Marionette.Behavior.extend( {
 		if ( ! _.isUndefined( changed.post_status ) ) {
 			this.setMenuItems( changed.post_status );
 
+			this.refreshWpPreview();
+
 			// Refresh page-settings post-status value.
 			if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
 				elementor.getPanelView().getCurrentPageView().render();
@@ -64,10 +66,7 @@ module.exports = Marionette.Behavior.extend( {
 	onAfterSave: function() {
 		NProgress.done();
 		this.ui.buttonSave.removeClass( 'elementor-button-state' );
-		// If the this.previewWindow is not null and not closed.
-		if ( this.previewWindow && this.previewWindow.location.reload ) {
-			this.previewWindow.location.reload();
-		}
+		this.refreshWpPreview();
 	},
 
 	onAfterSaveError: function() {
@@ -162,6 +161,14 @@ module.exports = Marionette.Behavior.extend( {
 				return this.getAttribute( 'data-tooltip' );
 			}
 		} );
+	},
+
+	refreshWpPreview: function() {
+		// If the this.previewWindow is not null and not closed.
+		if ( this.previewWindow && this.previewWindow.location.reload ) {
+			// Refresh URL form updated config.
+			this.previewWindow.location = elementor.config.wp_preview.url;
+		}
 	}
 } );
 
@@ -286,6 +293,10 @@ module.exports = Module.extend( {
 
 				if ( 'autosave' !== options.status ) {
 					elementor.settings.page.model.set( 'post_status', options.status );
+				}
+
+				if ( data.config ) {
+					jQuery.extend( true, elementor.config, data.config );
 				}
 
 				elementor.config.data = newData;
@@ -4099,7 +4110,10 @@ App = Marionette.Application.extend( {
 		element: {
 			Model: require( 'elementor-elements/models/element' )
 		},
+		ControlsStack: require( 'elementor-views/controls-stack' ),
 		Module: require( 'elementor-utils/module' ),
+		RepeaterRowView: require( 'elementor-controls/repeater-row' ),
+		SettingsModel: require( 'elementor-elements/models/base-settings' ),
 		WidgetView: require( 'elementor-elements/views/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
@@ -4872,7 +4886,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"./components/saver/behaviors/footer-saver":1,"elementor-controls/base":31,"elementor-controls/base-data":28,"elementor-controls/base-multiple":29,"elementor-controls/box-shadow":32,"elementor-controls/button":33,"elementor-controls/choose":34,"elementor-controls/code":35,"elementor-controls/color":36,"elementor-controls/date-time":37,"elementor-controls/dimensions":38,"elementor-controls/font":39,"elementor-controls/gallery":40,"elementor-controls/icon":41,"elementor-controls/image-dimensions":42,"elementor-controls/media":43,"elementor-controls/number":44,"elementor-controls/order":45,"elementor-controls/popover-toggle":46,"elementor-controls/repeater":48,"elementor-controls/section":49,"elementor-controls/select2":50,"elementor-controls/slider":51,"elementor-controls/structure":52,"elementor-controls/switcher":53,"elementor-controls/tab":54,"elementor-controls/wp_widget":55,"elementor-controls/wysiwyg":56,"elementor-editor-utils/ajax":98,"elementor-editor-utils/conditions":99,"elementor-editor-utils/debug":101,"elementor-editor-utils/heartbeat":102,"elementor-editor-utils/helpers":103,"elementor-editor-utils/images-manager":104,"elementor-editor-utils/presets-factory":107,"elementor-editor-utils/schemes":108,"elementor-editor/components/saver/manager":2,"elementor-editor/components/settings/settings":7,"elementor-elements/collections/elements":58,"elementor-elements/models/element":61,"elementor-elements/views/widget":72,"elementor-layouts/panel/panel":97,"elementor-panel/pages/elements/views/elements":84,"elementor-panel/pages/menu/menu":87,"elementor-templates/manager":10,"elementor-utils/hooks":118,"elementor-utils/hot-keys":119,"elementor-utils/module":120,"elementor-views/preview":117,"modules/history/assets/js/module":129}],58:[function(require,module,exports){
+},{"./components/saver/behaviors/footer-saver":1,"elementor-controls/base":31,"elementor-controls/base-data":28,"elementor-controls/base-multiple":29,"elementor-controls/box-shadow":32,"elementor-controls/button":33,"elementor-controls/choose":34,"elementor-controls/code":35,"elementor-controls/color":36,"elementor-controls/date-time":37,"elementor-controls/dimensions":38,"elementor-controls/font":39,"elementor-controls/gallery":40,"elementor-controls/icon":41,"elementor-controls/image-dimensions":42,"elementor-controls/media":43,"elementor-controls/number":44,"elementor-controls/order":45,"elementor-controls/popover-toggle":46,"elementor-controls/repeater":48,"elementor-controls/repeater-row":47,"elementor-controls/section":49,"elementor-controls/select2":50,"elementor-controls/slider":51,"elementor-controls/structure":52,"elementor-controls/switcher":53,"elementor-controls/tab":54,"elementor-controls/wp_widget":55,"elementor-controls/wysiwyg":56,"elementor-editor-utils/ajax":98,"elementor-editor-utils/conditions":99,"elementor-editor-utils/debug":101,"elementor-editor-utils/heartbeat":102,"elementor-editor-utils/helpers":103,"elementor-editor-utils/images-manager":104,"elementor-editor-utils/presets-factory":107,"elementor-editor-utils/schemes":108,"elementor-editor/components/saver/manager":2,"elementor-editor/components/settings/settings":7,"elementor-elements/collections/elements":58,"elementor-elements/models/base-settings":59,"elementor-elements/models/element":61,"elementor-elements/views/widget":72,"elementor-layouts/panel/panel":97,"elementor-panel/pages/elements/views/elements":84,"elementor-panel/pages/menu/menu":87,"elementor-templates/manager":10,"elementor-utils/hooks":118,"elementor-utils/hot-keys":119,"elementor-utils/module":120,"elementor-views/controls-stack":116,"elementor-views/preview":117,"modules/history/assets/js/module":129}],58:[function(require,module,exports){
 var ElementModel = require( 'elementor-elements/models/element' );
 
 var ElementsCollection = Backbone.Collection.extend( {
@@ -7378,8 +7392,14 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClickSettings: function() {
+		var self = this;
+
 		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
 			elementor.getPanelView().setPage( 'page_settings' );
+
+			elementor.getPanelView().getCurrentPageView().once( 'destroy', function() {
+				self.ui.settings.removeClass( 'elementor-open' );
+			} );
 		}
 	},
 

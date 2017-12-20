@@ -1,9 +1,14 @@
 <?php
 namespace Elementor;
 
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+/**
+ * @var Editor $this
+ */
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
 	<div id="elementor-mode-switcher"></div>
@@ -85,7 +90,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-saver-publish" class="elementor-panel-footer-tool" >
 		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success tooltip-target" data-tooltip="<?php esc_attr_e( 'Publish & Exit', 'elementor' ); ?>">
 			<i class="fa fa-paper-plane" aria-hidden="true"></i>
-            <span class="elementor-screen-only"><?php esc_html_e( 'Publish & Exit', 'elementor' ); ?></span>
+			<span class="elementor-screen-only"><?php esc_html_e( 'Publish & Exit', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
@@ -109,7 +114,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Save to Library', 'elementor' ); ?></span>
 				</div>
-				<a id="elementor-panel-footer-saver-exit" class="elementor-panel-footer-sub-menu-item" href="<?php echo esc_attr( get_edit_post_link() ); ?>">
+				<a id="elementor-panel-footer-saver-exit" class="elementor-panel-footer-sub-menu-item" href="<?php echo esc_attr( $this->get_document()->get_exit_to_dashboard_url() ); ?>">
 					<i class="elementor-icon fa fa-times" aria-hidden="true"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Exit to Dashboard', 'elementor' ); ?></span>
 				</a>

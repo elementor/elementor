@@ -17,15 +17,21 @@ abstract class Document extends Controls_Stack {
 	/**
 	 * @var \WP_Post
 	 */
-	private $post;
+	protected $post;
 
-	private static $properties = [
-		'is_editable' => true,
-		'edit_area' => 'content',
-	];
+	public static function get_properties() {
+		return [
+			'is_editable' => true,
+			'edit_area' => 'content',
+		];
+	}
 
-	public static function get_properties( $key = null ) {
-		return self::_get_items( self::$properties, $key );
+	public static function get_title() {
+		return __( 'Document', '' );
+	}
+
+	public static function get_property( $key ) {
+		return self::_get_items( self::get_properties(), $key );
 	}
 
 	public static function get_class_full_name() {
@@ -41,11 +47,39 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function get_wp_preview_url() {
-		$nonce = wp_create_nonce( 'post_preview_' . $this->post->ID );
-		$query_args['preview_id'] = $this->post->ID;
-		$query_args['preview_nonce'] = $nonce;
+		$wp_preview_url = get_preview_post_link(
+			$this->post->ID,
+			[
+				'preview_id' => $this->post->ID,
+				'preview_nonce' => wp_create_nonce( 'post_preview_' . $this->post->ID ),
+			]
+		);
 
-		return get_preview_post_link( $this->post->ID, $query_args );
+		/**
+		 * Filters the Wordpress preview URL.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param string $wp_preview_url URL with chosen scheme.
+		 * @param Document $this Document.
+		 */
+		return apply_filters( 'elementor/document/wp_preview_url', $wp_preview_url, $this );
+	}
+
+	public function get_exit_to_dashboard_url() {
+		$exit_url = get_edit_post_link( $this->post->ID );
+
+		/**
+		 * Filters the Exit To Dashboard URL.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param string $$exit_url Default exit URL.
+		 * @param Document $this Document.
+		 */
+		$exit_url = apply_filters( 'elementor/document/exit_to_dashboard_url', $exit_url, $this );
+
+		return $exit_url;
 	}
 
 	protected function _register_controls() {
@@ -70,7 +104,7 @@ abstract class Document extends Controls_Stack {
 
 		$post_type_object = get_post_type_object( $this->post->post_type );
 
-		$can_publish = current_user_can( $post_type_object->cap->publish_posts );
+		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
 
 		if ( 'publish' === $this->post->post_status || 'private' === $this->post->post_status || $can_publish ) {
 			$this->add_control(
@@ -177,6 +211,10 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $elements;
+	}
+
+	public function get_post() {
+		return $this->post;
 	}
 
 	public function __construct( array $data = [] ) {
