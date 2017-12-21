@@ -8,7 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor user class.
  *
- * Elementor user handler class is responsible for initializing Elementor user.
+ * Elementor user handler class is responsible for checking if the user can edit
+ * with Elementor and displaying different admin notices.
  *
  * @since 1.0.0
  */
