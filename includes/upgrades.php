@@ -15,19 +15,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Upgrades {
 
 	/**
+	 * Add actions.
+	 *
+	 * Hook into WordPress actions and launce Elementor upgrades.
+	 *
 	 * @static
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public static function add_actions() {
 		add_action( 'init', [ __CLASS__, 'init' ], 20 );
 	}
 
 	/**
+	 * Init.
+	 *
+	 * Initialize Elementor upgrades.
+	 *
+	 * Fired by `init` action.
+	 *
 	 * @static
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public static function init() {
 		$elementor_version = get_option( 'elementor_version' );
 
@@ -44,10 +54,17 @@ class Upgrades {
 	}
 
 	/**
+	 * Check upgrades.
+	 *
+	 * Checks whether the Elementor version need the be upgraded.
+	 *
+	 * If an upgrade required for a specific Elementor version, it will update
+	 * the `elementor_upgrades` option in the database.
+	 *
 	 * @static
 	 * @since 1.0.10
 	 * @access private
-	*/
+	 */
 	private static function check_upgrades( $elementor_version ) {
 		// It's a new install.
 		if ( ! $elementor_version ) {
@@ -72,10 +89,14 @@ class Upgrades {
 	}
 
 	/**
+	 * Upgrade Elementor 0.3.2
+	 *
+	 * Change the image widget link URL, setting is to `custom` link.
+	 *
 	 * @static
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private static function _upgrade_v032() {
 		global $wpdb;
 
@@ -112,10 +133,17 @@ class Upgrades {
 	}
 
 	/**
+	 * Upgrade Elementor 0.9.2
+	 *
+	 * Change the icon widget, icon-box widget and the social-icons widget,
+	 * setting their icon padding size to an empty string.
+	 *
+	 * Change the image widget, setting the image size to full image size.
+	 *
 	 * @static
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private static function _upgrade_v092() {
 		global $wpdb;
 
@@ -161,10 +189,14 @@ class Upgrades {
 	}
 
 	/**
+	 * Upgrade Elementor 0.11.0
+	 *
+	 * Change the button widget sizes, setting up new button sizes.
+	 *
 	 * @static
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private static function _upgrade_v0110() {
 		global $wpdb;
 
