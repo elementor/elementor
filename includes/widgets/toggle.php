@@ -330,39 +330,6 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'border_width',
-			[
-				'label' => __( 'Border Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 1,
-				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 10,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'border_color',
-			[
-				'label' => __( 'Border Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-content' => 'border-bottom-color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title' => 'border-color: {{VALUE}};',
-				],
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -420,6 +387,31 @@ class Widget_Toggle extends Widget_Base {
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-title',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'title_border',
+				'label' => __( 'Border', 'elementor' ),
+				'fields_options' => [
+					'border' => [
+						'default' => 'solid',
+					],
+					'width' => [
+						'default' => [
+							'top' => '0',
+							'right' => '0',
+							'bottom' => '1',
+							'left' => '0',
+						],
+					],
+					'color' => [
+						'default' => '#D4D4D4',
+					],
+				],
+				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-title',
 			]
 		);
 
@@ -566,6 +558,15 @@ class Widget_Toggle extends Widget_Base {
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'content_border',
+				'label' => __( 'Border', 'elementor' ),
+				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-content',
 			]
 		);
 
