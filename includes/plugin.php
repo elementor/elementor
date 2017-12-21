@@ -370,6 +370,8 @@ class Plugin {
 			self::$instance = new self();
 
 			/**
+			 * Elementor loaded.
+			 *
 			 * Fires when Elementor was fully loaded and instantiated.
 			 *
 			 * @since 1.0.0
@@ -395,7 +397,10 @@ class Plugin {
 		$this->init_components();
 
 		/**
-		 * Fires on Elementor init, after Elementor has finished loading but before any headers are sent.
+		 * Elementor init.
+		 *
+		 * Fires on Elementor init, after Elementor has finished loading but
+		 * before any headers are sent.
 		 *
 		 * @since 1.0.0
 		 */

@@ -230,6 +230,8 @@ class Widget_WordPress extends Widget_Base {
 		];
 
 		/**
+		 * WordPress widget args.
+		 *
 		 * Filters the WordPress widget arguments when they are rendered in Elementor panel.
 		 *
 		 * @since 1.0.0

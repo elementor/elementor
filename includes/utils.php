@@ -63,6 +63,8 @@ class Utils {
 		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
 
 		/**
+		 * Get edit link.
+		 *
 		 * Filters the Elementor edit link.
 		 *
 		 * @since 1.0.0
@@ -128,6 +130,8 @@ class Utils {
 		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
 
 		/**
+		 * Preview URL.
+		 *
 		 * Filters the Elementor preview URL.
 		 *
 		 * @since 1.6.4
@@ -158,6 +162,8 @@ class Utils {
 		$is_supported = post_type_supports( $post_type, 'elementor' );
 
 		/**
+		 * Is post type support.
+		 *
 		 * Filters whether the post type supports editing with Elementor.
 		 *
 		 * @since 1.0.0
@@ -186,6 +192,8 @@ class Utils {
 		$placeholder_image = ELEMENTOR_ASSETS_URL . 'images/placeholder.png';
 
 		/**
+		 * Get placeholder image source.
+		 *
 		 * Filters the source of the default placeholder image used by Elementor.
 		 *
 		 * @since 1.0.0

@@ -1096,6 +1096,8 @@ abstract class Controls_Stack {
 		$section_name = $this->get_name();
 
 		/**
+		 * Before section start.
+		 *
 		 * Fires before Elementor section starts in the editor panel.
 		 *
 		 * @since 1.4.0
@@ -1107,6 +1109,8 @@ abstract class Controls_Stack {
 		do_action( 'elementor/element/before_section_start', $this, $section_id, $args );
 
 		/**
+		 * Before section start.
+		 *
 		 * Fires before Elementor section starts in the editor panel.
 		 *
 		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
@@ -1133,6 +1137,8 @@ abstract class Controls_Stack {
 		}
 
 		/**
+		 * After section start.
+		 *
 		 * Fires after Elementor section starts in the editor panel.
 		 *
 		 * @since 1.4.0
@@ -1144,6 +1150,8 @@ abstract class Controls_Stack {
 		do_action( 'elementor/element/after_section_start', $this, $section_id, $args );
 
 		/**
+		 * After section start.
+		 *
 		 * Fires after Elementor section starts in the editor panel.
 		 *
 		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
@@ -1178,6 +1186,8 @@ abstract class Controls_Stack {
 		];
 
 		/**
+		 * Before section end.
+		 *
 		 * Fires before Elementor section ends in the editor panel.
 		 *
 		 * @since 1.4.0
@@ -1189,6 +1199,8 @@ abstract class Controls_Stack {
 		do_action( 'elementor/element/before_section_end', $this, $section_id, $args );
 
 		/**
+		 * Before section end.
+		 *
 		 * Fires before Elementor section ends in the editor panel.
 		 *
 		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
@@ -1203,6 +1215,8 @@ abstract class Controls_Stack {
 		$this->_current_section = null;
 
 		/**
+		 * After section end.
+		 *
 		 * Fires after Elementor section ends in the editor panel.
 		 *
 		 * @since 1.4.0
@@ -1214,6 +1228,8 @@ abstract class Controls_Stack {
 		do_action( 'elementor/element/after_section_end', $this, $section_id, $args );
 
 		/**
+		 * After section end.
+		 *
 		 * Fires after Elementor section ends in the editor panel.
 		 *
 		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.

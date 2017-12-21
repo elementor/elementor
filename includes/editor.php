@@ -460,6 +460,8 @@ class Editor {
 		);
 
 		/**
+		 * Before editor enqueue scripts.
+		 *
 		 * Fires before Elementor editor scripts are enqueued.
 		 *
 		 * @since 1.0.0
@@ -634,6 +636,8 @@ class Editor {
 		$localized_settings = [];
 
 		/**
+		 * Localize editor settings.
+		 *
 		 * Filters the editor localized settings.
 		 *
 		 * @since 1.0.0
@@ -664,6 +668,8 @@ class Editor {
 		$plugin->controls_manager->enqueue_control_scripts();
 
 		/**
+		 * After editor enqueue scripts.
+		 *
 		 * Fires after Elementor editor scripts are enqueued.
 		 *
 		 * @since 1.0.0
@@ -681,6 +687,8 @@ class Editor {
 	 */
 	public function enqueue_styles() {
 		/**
+		 * Before editor enqueue styles.
+		 *
 		 * Fires before Elementor editor styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -743,6 +751,8 @@ class Editor {
 		wp_enqueue_style( 'elementor-editor' );
 
 		/**
+		 * After editor enqueue styles.
+		 *
 		 * Fires after Elementor editor styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -805,6 +815,8 @@ class Editor {
 	 */
 	public function editor_head_trigger() {
 		/**
+		 * Elementor editor head.
+		 *
 		 * Fires on Elementor editor head tag.
 		 *
 		 * Used to prints scripts or any other data in the head tag.
@@ -866,6 +878,8 @@ class Editor {
 		}
 
 		/**
+		 * Elementor editor footer.
+		 *
 		 * Fires on Elementor editor before closing the body tag.
 		 *
 		 * Used to prints scripts or any other HTML before closing the body tag.
