@@ -27,6 +27,7 @@ class Utils {
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
 	 */
 	public static function is_ajax() {
+		// TODO: When minimum required version will be 4.7, use `wp_doing_ajax()`.
 		return defined( 'DOING_AJAX' ) && DOING_AJAX;
 	}
 

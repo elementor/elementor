@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-header-actions">
 	<div id="elementor-template-library-header-import" class="elementor-template-library-header-item">
-		<i class="eicon-import-export" aria-hidden="true" title="<?php esc_attr_e( 'Import Template', 'elementor' ); ?>"></i>
+		<i class="eicon-upload-circle-o" aria-hidden="true" title="<?php esc_attr_e( 'Import Template', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php esc_html_e( 'Import Template', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-template-library-header-sync" class="elementor-template-library-header-item">
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<span class="elementor-screen-only"><?php esc_html_e( 'Sync Library', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-template-library-header-save" class="elementor-template-library-header-item">
-		<i class="eicon-save" aria-hidden="true" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>"></i>
+		<i class="eicon-save-o" aria-hidden="true" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php esc_html_e( 'Save', 'elementor' ); ?></span>
 	</div>
 </script>
