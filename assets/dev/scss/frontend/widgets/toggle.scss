@@ -10,7 +10,6 @@
 		line-height: 1;
 		margin: 0;
 		padding: 15px;
-		border-bottom: 1px solid $gray-light;
 		cursor: pointer;
 
 		.elementor-toggle-icon {
@@ -39,7 +38,6 @@
 		}
 
 		&.elementor-active {
-			border-bottom: none;
 
 			.elementor-toggle-icon-closed {
 				display: none;
@@ -52,7 +50,6 @@
 
 	.elementor-tab-content {
 	    padding: 15px 15px;
-		border-bottom: 1px solid $gray-light;
 	    display: none;
 	}
 }
