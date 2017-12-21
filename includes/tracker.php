@@ -15,13 +15,26 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Tracker {
 
+	/**
+	 * API URL.
+	 *
+	 * Holds the URL of the Tracker API.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var string API URL.
+	 */
 	private static $_api_url = 'http://my.elementor.com/api/v1/tracker/';
 
 	/**
-	 * Hook into cron event.
-	 * @static
+	 * Init.
+	 *
+	 * Initialize Elementor tracker.
+	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @static
 	 */
 	public static function init() {
 		add_action( 'elementor/tracker/send_event', [ __CLASS__, 'send_tracking_data' ] );
@@ -30,10 +43,18 @@ class Tracker {
 	}
 
 	/**
-	 * @static
+	 * Check for settings optin.
+	 *
+	 * Checks whether the site admin has opted-in for data tracking, or not.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $new_value Allowed tracking value.
+	 *
+	 * @return string Return `yes` if tracking allowed, `no` otherwise.
+	 */
 	public static function check_for_settings_optin( $new_value ) {
 		$old_value = get_option( 'elementor_allow_tracking', 'no' );
 		if ( $old_value !== $new_value && 'yes' === $new_value ) {
@@ -47,11 +68,14 @@ class Tracker {
 	}
 
 	/**
-	 * Decide whether to send tracking data or not.
+	 * Send tracking data.
 	 *
-	 * @static
+	 * Decide whether to send tracking data, or not.
+	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @static
+	 *
 	 * @param bool $override
 	 */
 	public static function send_tracking_data( $override = false ) {
@@ -138,19 +162,29 @@ class Tracker {
 	}
 
 	/**
-	 * @static
+	 * Is allow track.
+	 *
+	 * Checks whether the site admin has opted-in for data tracking, or not.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 */
 	public static function is_allow_track() {
 		return 'yes' === get_option( 'elementor_allow_tracking', 'no' );
 	}
 
 	/**
-	 * @static
+	 * Handle tracker actions.
+	 *
+	 * Check if the user opted-in or opted-out and update the database.
+	 *
+	 * Fired by `admin_init` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 */
 	public static function handle_tracker_actions() {
 		if ( ! isset( $_GET['elementor_tracker'] ) ) {
 			return;
@@ -175,10 +209,16 @@ class Tracker {
 	}
 
 	/**
-	 * @static
+	 * Admin notices.
+	 *
+	 * Add Elementor notices to WordPress admin screen to show tracker notice.
+	 *
+	 * Fired by `admin_notices` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 */
 	public static function admin_notices() {
 		// Show tracker notice after 24 hours from installed time.
 		if ( self::_get_installed_time() > strtotime( '-24 hours' ) ) {
@@ -220,10 +260,16 @@ class Tracker {
 	}
 
 	/**
-	 * @static
+	 * Get installed time.
+	 *
+	 * Retrieve the time when Elementor was installed.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @return int Unix timestamp when Elementor was installed.
+	 */
 	private static function _get_installed_time() {
 		$installed_time = get_option( '_elementor_installed_time' );
 		if ( ! $installed_time ) {
@@ -234,10 +280,16 @@ class Tracker {
 	}
 
 	/**
-	 * @static
+	 * Get system reports data.
+	 *
+	 * Retrieve the data from system reports.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @return array The data from system reports.
+	 */
 	private static function _get_system_reports_data() {
 		$reports = Plugin::$instance->system_info->load_reports( System_Info\Main::get_allowed_reports() );
 
@@ -252,7 +304,9 @@ class Tracker {
 	}
 
 	/**
-	 * Get the last time tracking data was sent.
+	 * Get last send time.
+	 *
+	 * Retrieve the last time tracking data was sent.
 	 *
 	 * @since 1.0.0
 	 * @access private
@@ -278,10 +332,17 @@ class Tracker {
 	}
 
 	/**
-	 * @static
+	 * Get posts usage.
+	 *
+	 * Retrieve the number of posts using Elementor.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @return array The number of posts using Elementor grouped by post types
+	 *               and post status.
+	 */
 	private static function _get_posts_usage() {
 		global $wpdb;
 
@@ -307,10 +368,17 @@ class Tracker {
 	}
 
 	/**
-	 * @static
+	 * Get library usage.
+	 *
+	 * Retrieve the number of Elementor library items saved.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @return array The number of Elementor library items grouped by post types
+	 *               and meta value.
+	 */
 	private static function _get_library_usage() {
 		global $wpdb;
 
