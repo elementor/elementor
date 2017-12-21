@@ -2084,6 +2084,10 @@ select {
   .elementor-panel .wp-picker-open ~ .wp-picker-holder {
     clear: both;
     margin-bottom: 15px; }
+  .elementor-panel .iris-square-value {
+    -webkit-transition: none;
+    -o-transition: none;
+    transition: none; }
   .elementor-panel .elementor-control .wp-picker-container:not(.wp-picker-active) {
     float: left; }
     .elementor-panel .elementor-control .wp-picker-container:not(.wp-picker-active) .wp-color-result {
@@ -2092,8 +2096,6 @@ select {
     -webkit-transform: translateY(6px);
         -ms-transform: translateY(6px);
             transform: translateY(6px); }
-    [class*="wp-version-4-9"] .elementor-panel .elementor-control .wp-picker-container.wp-picker-active, [class*="wp-version-5"] .elementor-panel .elementor-control .wp-picker-container.wp-picker-active {
-      padding-top: 9px; }
     .elementor-panel .elementor-control .wp-picker-container.wp-picker-active .wp-color-result {
       margin-right: 3px; }
   .elementor-panel #elementor-panel-footer {
