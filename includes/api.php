@@ -178,6 +178,8 @@ class Api {
 		];
 
 		/**
+		 * API: Template body args.
+		 *
 		 * Filters the body arguments send with the GET request when fetching the content.
 		 *
 		 * @since 1.0.0

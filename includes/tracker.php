@@ -91,6 +91,8 @@ class Tracker {
 		$last_send = self::_get_last_send_time();
 
 		/**
+		 * Tracker override send.
+		 *
 		 * Filters whether to override sending tracking data or not.
 		 *
 		 * @since 1.0.0
@@ -103,6 +105,8 @@ class Tracker {
 			$last_send_interval = strtotime( '-1 week' );
 
 			/**
+			 * Tracker last send interval.
+			 *
 			 * Filters the interval of beetwin two tracking requests.
 			 *
 			 * @since 1.0.0
@@ -138,6 +142,8 @@ class Tracker {
 		];
 
 		/**
+		 * Tracker send tracking data params.
+		 *
 		 * Filters the data parameters when sending tracking request.
 		 *
 		 * @since 1.0.0
@@ -244,6 +250,8 @@ class Tracker {
 		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to our anonymous plugin data collection and to our updates. We guarantee no sensitive data is collected.', 'elementor' );
 
 		/**
+		 * Tracker admin description text.
+		 *
 		 * Filters the admin notice text for anonymous data collection.
 		 *
 		 * @since 1.0.0
@@ -319,6 +327,8 @@ class Tracker {
 		$last_send_time = get_option( 'elementor_tracker_last_send', false );
 
 		/**
+		 * Tracker last send time.
+		 *
 		 * Filters the last time tracking data was sent.
 		 *
 		 * @since 1.0.0

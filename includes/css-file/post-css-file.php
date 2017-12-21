@@ -164,6 +164,8 @@ class Post_CSS_File extends CSS_File {
 	 */
 	private function render_styles( Element_Base $element ) {
 		/**
+		 * Before element parse CSS.
+		 *
 		 * Fires before the CSS of the element is parsed.
 		 *
 		 * @since 1.2.0
@@ -178,6 +180,8 @@ class Post_CSS_File extends CSS_File {
 		$this->add_controls_stack_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
 
 		/**
+		 * After element parse CSS.
+		 *
 		 * Fires after the CSS of the element is parsed.
 		 *
 		 * @since 1.2.0

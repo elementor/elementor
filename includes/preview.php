@@ -64,6 +64,8 @@ class Preview {
 		Utils::do_not_cache();
 
 		/**
+		 * Preview init.
+		 *
 		 * Fires on Elementor preview init, after Elementor preview has finished loading but before any headers are sent.
 		 *
 		 * @since 1.0.0
@@ -154,6 +156,8 @@ class Preview {
 		wp_enqueue_style( 'editor-preview' );
 
 		/**
+		 * Preview enqueue styles.
+		 *
 		 * Fires after Elementor preview styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -188,6 +192,8 @@ class Preview {
 		);
 
 		/**
+		 * Preview enqueue scripts.
+		 *
 		 * Fires after Elementor preview scripts are enqueued.
 		 *
 		 * @since 1.5.4

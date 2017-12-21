@@ -320,6 +320,8 @@ abstract class Element_Base extends Controls_Stack {
 		$content_template = ob_get_clean();
 
 		/**
+		 * Print element template.
+		 *
 		 * Filters the element template before it's printed in the editor.
 		 *
 		 * @since 1.0.0
@@ -539,9 +541,11 @@ abstract class Element_Base extends Controls_Stack {
 		$element_type = static::get_type();
 
 		/**
+		 * Before frontend element render.
+		 *
 		 * Fires before Elementor element is rendered in the frontend.
 		 *
-		 * The dynamic portion of the hook name, `$element_type`, refers to the element type from `static::get_type()`.
+		 * The dynamic portion of the hook name, `$element_type`, refers to the element type.
 		 *
 		 * @since 1.0.0
 		 *
@@ -558,9 +562,11 @@ abstract class Element_Base extends Controls_Stack {
 		$this->after_render();
 
 		/**
+		 * After frontend element render.
+		 *
 		 * Fires after Elementor element was rendered in the frontend.
 		 *
-		 * The dynamic portion of the hook name, `$element_type`, refers to the element type from `static::get_type()`.
+		 * The dynamic portion of the hook name, `$element_type`, refers to the element type.
 		 *
 		 * @since 1.0.0
 		 *
@@ -807,6 +813,8 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		/**
+		 * Element child type.
+		 *
 		 * Filters the child type of the element.
 		 *
 		 * @since 1.0.0
