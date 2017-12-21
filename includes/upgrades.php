@@ -8,7 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor upgrades class.
  *
- * Elementor upgrades handler class is responsible for ????????
+ * Elementor upgrades handler class is responsible for updating different
+ * Elementor versions.
  *
  * @since 1.0.0
  */
