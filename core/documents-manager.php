@@ -3,6 +3,8 @@ namespace Elementor\Core;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\Post;
+use Elementor\DB;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -16,10 +18,7 @@ class Documents_Manager {
 	 * @var Document[]
 	 */
 	protected $documents = [];
-
-	public function __construct() {
-		$this->register_default_types();
-	}
+	private $current_doc_id;
 
 	public function register_document_type( $type, $class ) {
 		$this->types[ $type ] = $class;
@@ -49,7 +48,13 @@ class Documents_Manager {
 	 */
 	public function get( $post_id ) {
 		if ( ! isset( $this->documents[ $post_id ] ) ) {
-			$doc_type = get_post_meta( $post_id, '_elementor_template_type', true );
+			$post_id_for_get_meta = $post_id;
+			$parent_post_id = wp_is_post_revision( $post_id );
+			if ( $parent_post_id ) {
+				$post_id_for_get_meta = $parent_post_id;
+			}
+			$doc_type = get_post_meta( $post_id_for_get_meta, '_elementor_template_type', true );
+
 			$doc_type_class = $this->get_document_type( $doc_type );
 			$this->documents[ $post_id ] = new $doc_type_class( [
 				'post_id' => $post_id,
@@ -80,5 +85,73 @@ class Documents_Manager {
 		] );
 
 		return $document;
+	}
+
+	/**
+	 * @since 1.0.0
+	 * @access public
+	 */
+	public function ajax_save() {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
+		$request = $_POST;
+
+		if ( empty( $request['post_id'] ) ) {
+			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
+		}
+
+		$document = $this->get( $request['post_id'] );
+
+		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
+			wp_send_json_error( new \WP_Error( 'no_access' ) );
+		}
+
+		$status = DB::STATUS_DRAFT;
+
+		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_AUTOSAVE ] , true ) ) {
+			$status = $request['status'];
+		}
+
+		// If the post is a draft - save the `autosave` to the original draft.
+		// Allow a revision only if the original post is already published.
+		if ( DB::STATUS_AUTOSAVE === $status && in_array( $document->get_post()->post_status, [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE ], true ) ) {
+			$document = $document->get_autosave();
+		}
+
+		$data = [
+			'elements' => json_decode( stripslashes( $request['elements'] ), true ),
+			'settings' => json_decode( stripslashes( $request['settings'] ), true ),
+		];
+
+		$data['settings']['post_status'] = $status;
+
+		$document->save( $data );
+
+		$return_data = [];
+
+		/**
+		 * Filters the ajax data returned when saving the post on the builder.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $return_data The returned data. Default is an empty array.
+		 */
+		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', $return_data, $document->get_post()->ID );
+
+		wp_send_json_success( $return_data );
+	}
+
+	public function __construct() {
+		$this->register_default_types();
+
+		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save' ] );
+	}
+
+	public function set_current( $post_id ) {
+		$this->current_doc_id = $post_id;
+	}
+
+	public function get_current() {
+		return $this->get( $this->current_doc_id );
 	}
 }

@@ -234,13 +234,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </script>
 
-<script type="text/template" id="tmpl-elementor-panel-page-settings">
+<script type="text/template" id="tmpl-elementor-panel-document-settings">
 	<div class="elementor-panel-navigation">
-		<# _.each( elementor.config.page_settings.tabs, function( tabTitle, tabSlug ) { #>
-			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-				<a href="#">{{{ tabTitle }}}</a>
-			</div>
-			<# } ); #>
+		<# _.each( elementor.config.document_settings.tabs, function( tabTitle, tabSlug ) { #>
+		<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+			<a href="#">{{{ tabTitle }}}</a>
+		</div>
+		<# } ); #>
 	</div>
-	<div id="elementor-panel-page-settings-controls"></div>
+	<div id="elementor-panel-document-settings-controls"></div>
 </script>

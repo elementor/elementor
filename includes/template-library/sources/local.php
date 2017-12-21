@@ -313,7 +313,7 @@ class Source_Local extends Source_Base {
 
 		$user = get_user_by( 'id', $post->post_author );
 
-		$page_settings = get_post_meta( $post->ID, PageSettingsManager::META_KEY, true );
+		$page_settings = Plugin::$instance->documents->get( $post->ID )->get_settings();
 
 		$date = strtotime( $post->post_date );
 

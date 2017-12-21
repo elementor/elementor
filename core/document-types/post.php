@@ -3,7 +3,7 @@ namespace Elementor\Core\DocumentTypes;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
-use Elementor\Core\Settings\Page\Manager;
+use Elementor\Group_Control_Background;
 use Elementor\Settings;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
@@ -16,6 +16,28 @@ class Post extends Document {
 
 	public function get_name() {
 		return 'post';
+	}
+
+	public function get_css_wrapper_selector() {
+		return 'body.elementor-page-' . $this->get_id();
+	}
+
+	public function save( $data ) {
+		if ( ! parent::save( $data ) ) {
+			return false;
+		}
+
+		if ( Utils::is_cpt_custom_templates_supported() ) {
+			$template = 'default';
+
+			if ( isset( $data['settings']['template'] ) ) {
+				$template = $data['settings']['template'];
+			}
+
+			update_post_meta( $this->post->ID, '_wp_page_template', $template );
+		}
+
+		return true;
 	}
 
 	protected function _register_controls() {
@@ -84,9 +106,41 @@ class Post extends Document {
 		}
 
 		$this->end_controls_section();
-	}
 
-	public function get_css_wrapper_selector() {
-		return 'body.elementor-page-' . $this->get_id();
+		$this->start_controls_section(
+			'section_page_style',
+			[
+				'label' => __( 'Page Style', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background',
+				'label' => __( 'Background', 'elementor' ),
+				'fields_options' => [
+					'__all' => [
+						'export' => '__return_true',
+					],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'padding',
+			[
+				'label' => __( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', 'em', '%' ],
+				'selectors' => [
+					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
+				],
+				'export' => '__return_true',
+			]
+		);
+
+		$this->end_controls_section();
 	}
 }

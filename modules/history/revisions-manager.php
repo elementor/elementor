@@ -113,17 +113,20 @@ class Revisions_Manager {
 			wp_send_json_error( 'You must set the revision ID' );
 		}
 
-		$revision = get_post( $_POST['id'] );
+		$document = Plugin::$instance->documents->get( $_POST['id'] );
 
-		if ( empty( $revision ) ) {
+		if ( empty( $document ) ) {
 			wp_send_json_error( 'Invalid Revision' );
 		}
 
-		if ( ! current_user_can( 'edit_post', $revision->ID ) ) {
+		if ( ! $document->is_editable_by_current_user() ) {
 			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
 		}
 
-		$revision_data = Plugin::$instance->db->get_plain_editor( $revision->ID );
+		$revision_data = [
+			'settings' => $document->get_settings(),
+			'elements' => $document->get_elements(),
+		];
 
 		wp_send_json_success( $revision_data );
 	}

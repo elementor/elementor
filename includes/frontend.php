@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,18 @@ class Frontend {
 	 * @var int Post ID.
 	 */
 	private $post_id;
+
+	/**
+	 * Document.
+	 *
+	 * Holds the current Document being edited.
+	 *
+	 * @since 1.9.0
+	 * @access private
+	 *
+	 * @var Document
+	 */
+	private $document;
 
 	/**
 	 * Google fonts.
@@ -140,6 +153,8 @@ class Frontend {
 		}
 
 		$this->post_id = get_the_ID();
+		$this->document = Plugin::$instance->documents->get( $this->post_id );
+
 		$this->_is_frontend_mode = true;
 		$this->_has_elementor_in_page = is_singular() && Plugin::$instance->db->is_built_with_elementor( $this->post_id );
 
@@ -152,6 +167,20 @@ class Frontend {
 
 		// Add Edit with the Elementor in Admin Bar.
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
+	}
+
+	/**
+	 * Retrieve Document.
+	 *
+	 * Get the current Document.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @return Document.
+	 */
+	public function get_document() {
+		return $this->document;
 	}
 
 	/**

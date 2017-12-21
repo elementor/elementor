@@ -34,11 +34,11 @@ module.exports = Marionette.Behavior.extend( {
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
 
-		elementor.settings.page.model.on( 'change', this.onPostStatusChange.bind( this ) );
+		elementor.settings.document.model.on( 'change', this.onPostStatusChange.bind( this ) );
 	},
 
 	onRender: function() {
-		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
+		this.setMenuItems( elementor.settings.document.model.get( 'post_status' ) );
 		this.addTooltip();
 	},
 

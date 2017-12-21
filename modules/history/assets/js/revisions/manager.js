@@ -41,7 +41,8 @@ RevisionsManager = function() {
 			onConfirm: function() {
 				self.getRevisionDataAsync( elementor.config.newer_autosave, {
 					success: function( data ) {
-						self.setEditorData( data );
+						self.setEditorData( data.elements );
+						elementor.settings.document.model.set( data.settings );
 					}
 				} );
 			}

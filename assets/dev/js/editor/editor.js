@@ -180,9 +180,14 @@ App = Marionette.Application.extend( {
 		this.settings = new Settings();
 
 		/**
-		 * @deprecated - use `this.settings.page` instead
+		 * @deprecated - use `this.settings.document` instead
 		 */
-		this.pageSettings = this.settings.page;
+		this.pageSettings = this.settings.document;
+
+		/**
+		 * @deprecated - use `this.settings.document` instead
+		 */
+		this.settings.page = this.settings.document;
 
 		this.templates.init();
 

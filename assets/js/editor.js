@@ -35,11 +35,11 @@ module.exports = Marionette.Behavior.extend( {
 
 		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
 
-		elementor.settings.page.model.on( 'change', this.onPostStatusChange.bind( this ) );
+		elementor.settings.document.model.on( 'change', this.onPostStatusChange.bind( this ) );
 	},
 
 	onRender: function() {
-		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
+		this.setMenuItems( elementor.settings.document.model.get( 'post_status' ) );
 		this.addTooltip();
 	},
 
@@ -222,7 +222,7 @@ module.exports = Module.extend( {
 
 	update: function( options ) {
 		options = _.extend( {
-			status: elementor.settings.page.model.get( 'post_status' )
+			status: elementor.settings.document.model.get( 'post_status' )
 		}, options );
 
 		this.saveEditor( options );
@@ -269,7 +269,8 @@ module.exports = Module.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } );
+			elements = elementor.elements.toJSON( { removeDefault: true } ),
+			settings = elementor.settings.document.model.toJSON( { removeDefault: true } );
 
 		self.trigger( 'before:save' )
 			.trigger( 'before:save:' + options.status );
@@ -281,7 +282,8 @@ module.exports = Module.extend( {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
-				data: JSON.stringify( newData )
+				elements: JSON.stringify( elements ),
+				settings: JSON.stringify( settings )
 			},
 
 			success: function( data ) {
@@ -292,14 +294,14 @@ module.exports = Module.extend( {
 				}
 
 				if ( 'autosave' !== options.status ) {
-					elementor.settings.page.model.set( 'post_status', options.status );
+					elementor.settings.document.model.set( 'post_status', options.status );
 				}
 
 				if ( data.config ) {
 					jQuery.extend( true, elementor.config, data.config );
 				}
 
-				elementor.config.data = newData;
+				elementor.config.data = elements;
 
 				elementor.channels.editor.trigger( 'saved', data );
 
@@ -506,22 +508,12 @@ module.exports = ControlsStack.extend( {
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
 module.exports = BaseSettings.extend( {
-	changeCallbacks: {
-		elementor_page_title_selector: function( newValue ) {
-			var newSelector = newValue || 'h1.entry-title',
-				titleSelectors = elementor.settings.page.model.controls.hide_title.selectors = {};
 
-			titleSelectors[ newSelector ] = 'display: none';
+	onInit: function() {
 
-			elementor.settings.page.updateStylesheet();
-		}
-	}
-} );
+		BaseSettings.prototype.onInit.apply( this, arguments );
+	},
 
-},{"elementor-editor/components/settings/base/manager":3}],6:[function(require,module,exports){
-var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
-
-module.exports = BaseSettings.extend( {
 	changeCallbacks: {
 		post_title: function( newValue ) {
 			var $title = elementorFrontend.getElements( '$document' ).find( elementor.config.page_title_selector );
@@ -530,14 +522,24 @@ module.exports = BaseSettings.extend( {
 		},
 
 		template: function() {
-			this.save( function() {
-				elementor.reloadPreview();
+			elementor.saver.saveAutoSave( {
+				onSuccess: function() {
+					elementor.reloadPreview();
 
-				elementor.once( 'preview:loaded', function() {
-					elementor.getPanelView().setPage( 'page_settings' );
-				} );
+					elementor.once( 'preview:loaded', function() {
+						elementor.getPanelView().setPage( 'document_settings' );
+					} );
+				}
 			} );
 		}
+	},
+
+	save: function() {},
+
+	onModelChange: function() {
+		elementor.saver.setFlagEditorChange( true );
+
+		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},
 
 	bindEvents: function() {
@@ -555,6 +557,22 @@ module.exports = BaseSettings.extend( {
 	}
 } );
 
+},{"elementor-editor/components/settings/base/manager":3}],6:[function(require,module,exports){
+var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
+
+module.exports = BaseSettings.extend( {
+	changeCallbacks: {
+		elementor_page_title_selector: function( newValue ) {
+			var newSelector = newValue || 'h1.entry-title',
+				titleSelectors = elementor.settings.document.model.controls.hide_title.selectors = {};
+
+			titleSelectors[ newSelector ] = 'display: none';
+
+			elementor.settings.document.updateStylesheet();
+		}
+	}
+} );
+
 },{"elementor-editor/components/settings/base/manager":3}],7:[function(require,module,exports){
 var Module = require( 'elementor-utils/module' );
 
@@ -562,7 +580,7 @@ module.exports = Module.extend( {
 	modules: {
 		base: require( 'elementor-editor/components/settings/base/manager' ),
 		general: require( 'elementor-editor/components/settings/general/manager' ),
-		page: require( 'elementor-editor/components/settings/page/manager' )
+		document: require( 'elementor-editor/components/settings/document/manager' )
 	},
 
 	panelPages: {
@@ -584,7 +602,7 @@ module.exports = Module.extend( {
 	}
 } );
 
-},{"elementor-editor/components/settings/base/manager":3,"elementor-editor/components/settings/base/panel":4,"elementor-editor/components/settings/general/manager":5,"elementor-editor/components/settings/page/manager":6,"elementor-utils/module":120}],8:[function(require,module,exports){
+},{"elementor-editor/components/settings/base/manager":3,"elementor-editor/components/settings/base/panel":4,"elementor-editor/components/settings/document/manager":5,"elementor-editor/components/settings/general/manager":6,"elementor-utils/module":120}],8:[function(require,module,exports){
 var InsertTemplateHandler;
 
 InsertTemplateHandler = Marionette.Behavior.extend( {
@@ -795,7 +813,7 @@ TemplateLibraryManager = function() {
 				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 
 				if ( options.withPageSettings ) {
-					elementor.settings.page.model.set( data.page_settings );
+					elementor.settings.document.model.set( data.page_settings );
 				}
 			},
 			error: function( data ) {
@@ -4252,9 +4270,14 @@ App = Marionette.Application.extend( {
 		this.settings = new Settings();
 
 		/**
-		 * @deprecated - use `this.settings.page` instead
+		 * @deprecated - use `this.settings.document` instead
 		 */
-		this.pageSettings = this.settings.page;
+		this.pageSettings = this.settings.document;
+
+		/**
+		 * @deprecated - use `this.settings.document` instead
+		 */
+		this.settings.page = this.settings.document;
 
 		this.templates.init();
 
@@ -7394,8 +7417,8 @@ module.exports = Marionette.ItemView.extend( {
 	onClickSettings: function() {
 		var self = this;
 
-		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
-			elementor.getPanelView().setPage( 'page_settings' );
+		if ( 'document_settings' !== elementor.getPanelView().getCurrentPageName() ) {
+			elementor.getPanelView().setPage( 'document_settings' );
 
 			elementor.getPanelView().getCurrentPageView().once( 'destroy', function() {
 				self.ui.settings.removeClass( 'elementor-open' );
@@ -12607,7 +12630,8 @@ RevisionsManager = function() {
 			onConfirm: function() {
 				self.getRevisionDataAsync( elementor.config.newer_autosave, {
 					success: function( data ) {
-						self.setEditorData( data );
+						self.setEditorData( data.elements );
+						elementor.settings.document.model.set( data.settings );
 					}
 				} );
 			}
@@ -12752,7 +12776,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.jqueryXhr = elementor.history.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: function( data ) {
-				elementor.history.revisions.setEditorData( data );
+				elementor.history.revisions.setEditorData( data.elements );
+				elementor.settings.document.model.set( data.settings );
 
 				self.setRevisionsButtonsActive( true );
 

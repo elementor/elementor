@@ -34,7 +34,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.jqueryXhr = elementor.history.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: function( data ) {
-				elementor.history.revisions.setEditorData( data );
+				elementor.history.revisions.setEditorData( data.elements );
+				elementor.settings.document.model.set( data.settings );
 
 				self.setRevisionsButtonsActive( true );
 
