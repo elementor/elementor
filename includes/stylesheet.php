@@ -114,7 +114,7 @@ class Stylesheet {
 	 * @param string $device_name      Device name.
 	 * @param string $device_max_point Device maximum point.
 	 *
-	 * @return Stylesheet The Stylesheet class instance.
+	 * @return Stylesheet The current stylesheet class instance.
 	 */
 	public function add_device( $device_name, $device_max_point ) {
 		$this->devices[ $device_name ] = $device_max_point;
@@ -136,7 +136,7 @@ class Stylesheet {
 	 * @param array|string $style_rules Optional. Style rules. Default is `null`.
 	 * @param array        $query       Optional. Media query. Default is `null`.
 	 *
-	 * @return Stylesheet The Stylesheet class instance.
+	 * @return Stylesheet The current stylesheet class instance.
 	 */
 	public function add_rules( $selector, $style_rules = null, array $query = null ) {
 		$query_hash = 'all';
@@ -197,7 +197,7 @@ class Stylesheet {
 	 * @param string $css    The raw CSS.
 	 * @param string $device Optional. The device. Default is empty.
 	 *
-	 * @return Stylesheet The Stylesheet class instance.
+	 * @return Stylesheet The current stylesheet class instance.
 	 */
 	public function add_raw_css( $css , $device = '' ) {
 		if ( ! isset( $this->raw[ $device ] ) ) {
@@ -403,7 +403,7 @@ class Stylesheet {
 	 * Retrieve formated media query rule with the endpoint width settings.
 	 *
 	 * The method returns the CSS `@media` rule and supported viewport width in
-	 * pixels. It can also handel multiple endpoints.
+	 * pixels. It can also handel multiple width endpoints.
 	 *
 	 * @since 1.2.0
 	 * @access private
