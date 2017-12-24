@@ -34,7 +34,7 @@ class Post extends Document {
 				$template = $data['settings']['template'];
 			}
 
-			update_post_meta( $this->post->ID, '_wp_page_template', $template );
+			update_metadata( 'post', $this->post->ID, '_wp_page_template', $template );
 		}
 
 		return true;
@@ -92,7 +92,7 @@ class Post extends Document {
 				'default' => __( 'Default', 'elementor' ),
 			];
 
-			$options += array_flip( get_page_templates( null, $this->post->post_type ) );
+			$options += array_flip( get_page_templates( null, $this->get_post_type_for_settings() ) );
 
 			$this->add_control(
 				'template',
@@ -142,5 +142,15 @@ class Post extends Document {
 		);
 
 		$this->end_controls_section();
+	}
+
+	public function __construct( array $data = [] ) {
+		$template = get_post_meta( $data['post_id'], '_wp_page_template', true );
+		if ( empty( $template ) ) {
+			$template = 'default';
+		}
+		$data['settings']['template'] = $template;
+
+		parent::__construct( $data );
 	}
 }

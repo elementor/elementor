@@ -330,7 +330,9 @@ class Editor {
 
 		$plugin = Plugin::$instance;
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id );
+		$document_for_settings = $this->get_document_for_settings();
+
+		$editor_data = $plugin->db->get_builder( $document_for_settings->get_post()->ID );
 
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
@@ -1017,5 +1019,9 @@ class Editor {
 		foreach ( $template_names as $template_name ) {
 			$this->add_editor_template( __DIR__ . "/editor-templates/$template_name.php" );
 		}
+	}
+
+	public function get_document_for_settings() {
+		return Plugin::$instance->documents->get_doc_or_auto_save( $this->_post_id );
 	}
 }

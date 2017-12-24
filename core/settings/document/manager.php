@@ -30,7 +30,12 @@ class Manager extends BaseManager {
 	}
 
 	public function get_model_for_config() {
-		return $this->get_model();
+		$model = $this->get_model();
+
+		if ( $model->get_autosave_id() ) {
+			$model = $model->get_autosave();
+		}
+		return $model;
 	}
 
 	protected function ajax_before_save_settings( array $data, $id ) {}

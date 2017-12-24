@@ -90,12 +90,12 @@ abstract class Document extends Controls_Stack {
 		return $exit_url;
 	}
 
-	public function get_autosave( $user_id = 0, $create = true ) {
+	public function get_autosave( $user_id = 0, $create = false ) {
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
 		}
 
-		$autosave_id = wp_get_post_autosave( $this->post->ID, $user_id )->ID;
+		$autosave_id = $this->get_autosave_id( $user_id );
 
 		if ( $autosave_id ) {
 			wp_update_post( [
@@ -370,8 +370,21 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/editor/after_save', $this->post->ID, $editor_data );
 	}
 
-	private function get_post_status_for_settings() {
+	public function get_post_status_for_settings() {
 		return wp_is_post_revision( $this->post->ID ) ? get_post_status( $this->post->post_parent ) : $this->post->post_status;
+	}
+
+	public function get_post_type_for_settings() {
+		return wp_is_post_revision( $this->post->ID ) ? get_post_type( $this->post->post_parent ) : $this->post->post_type;
+	}
+
+	public function get_autosave_id( $user_id  = 0 ) {
+		$autosave = wp_get_post_autosave( $this->post->ID, $user_id );
+		if ( $autosave ) {
+			return $autosave->ID;
+		}
+
+		return false;
 	}
 
 	public function __construct( array $data = [] ) {
@@ -388,7 +401,10 @@ abstract class Document extends Controls_Stack {
 			$data['settings'] = [];
 		}
 
-		$data['settings'] += (array) get_post_meta( $this->post->ID, '_elementor_page_settings', true );
+		$saved_settings = get_post_meta( $this->post->ID, '_elementor_page_settings', true );
+		if ( ! empty( $saved_settings ) ) {
+			$data['settings'] += $saved_settings;
+		}
 
 		$data['settings'] += [
 			'post_title' => $this->post->post_title,

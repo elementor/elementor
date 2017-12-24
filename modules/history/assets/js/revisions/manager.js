@@ -51,7 +51,7 @@ RevisionsManager = function() {
 
 	var attachEvents = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
-		elementor.on( 'preview:loaded', checkNewAutoSave );
+		// elementor.on( 'preview:loaded', checkNewAutoSave );
 	};
 
 	var addHotKeys = function() {

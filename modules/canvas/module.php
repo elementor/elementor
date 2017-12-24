@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Canvas;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Plugin;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +19,8 @@ class Module extends BaseModule {
 
 	public function template_include( $template ) {
 		if ( is_singular() ) {
-			$page_template = get_post_meta( get_the_ID(), '_wp_page_template', true );
+			$document = Plugin::$instance->documents->get_doc_or_auto_save( get_the_ID() );
+			$page_template = get_post_meta( $document->get_post()->ID, '_wp_page_template', true );
 
 			if ( self::TEMPLATE_CANVAS === $page_template ) {
 				$template = __DIR__ . '/page-templates/canvas.php';
@@ -48,5 +50,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->add_wp_templates_support();
+
+		add_filter( 'template_include', [ $this, 'template_include' ] );
 	}
 }

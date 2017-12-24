@@ -64,6 +64,15 @@ class Documents_Manager {
 		return $this->documents[ $post_id ];
 	}
 
+	public function get_doc_or_auto_save( $id, $user_id = 0  ) {
+		$document = $this->get( $id );
+		if ( $document->get_autosave_id( $user_id ) ) {
+			$document = $document->get_autosave( $user_id );
+		}
+
+		return $document;
+	}
+
 	/**
 	 * @param string $class_name
 	 * @param array $post_data
@@ -126,7 +135,7 @@ class Documents_Manager {
 		// If the post is a draft - save the `autosave` to the original draft.
 		// Allow a revision only if the original post is already published.
 		if ( DB::STATUS_AUTOSAVE === $status && in_array( $document->get_post()->post_status, [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE ], true ) ) {
-			$document = $document->get_autosave();
+			$document = $document->get_autosave( 0, true );
 		}
 
 		$data = [
@@ -169,7 +178,7 @@ class Documents_Manager {
 
 		$document = $this->get( $request['post_id'] );
 
-		$autosave = $document->get_autosave( 0, false );
+		$autosave = $document->get_autosave();
 
 		if ( $autosave ) {
 			$success = $autosave->delete();
