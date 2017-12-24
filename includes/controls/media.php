@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Media control.
+ * Elementor media control.
  *
  * A base control for creating a media chooser control. Based on the WordPress
  * media library. Used to select an image from the WordPress media library.

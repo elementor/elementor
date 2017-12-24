@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Text control.
+ * Elementor text control.
  *
  * A base control for creating text control. Displays a simple text input.
  *

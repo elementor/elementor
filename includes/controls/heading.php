@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Heading control.
+ * Elementor heading control.
  *
  * A base control for creating heading control. Displays a text heading between
  * controls in the panel.

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Background control.
+ * Elementor background control.
  *
  * A base control for creating background control. Displays input fields to define
  * the background color, background image, background gradiant or background video.
@@ -85,9 +85,9 @@ class Group_Control_Background extends Group_Control_Base {
 
 	/**
 	 * Retrieve background types.
-	 * 
+	 *
 	 * Gat available background types.
-	 * 
+	 *
 	 * @since 1.2.2
 	 * @access public
 	 * @static
@@ -394,7 +394,7 @@ class Group_Control_Background extends Group_Control_Base {
 
 	/**
 	 * Retrieve child default args.
-	 * 
+	 *
 	 * Get the default arguments for all the child controls for a specific group
 	 * control.
 	 *

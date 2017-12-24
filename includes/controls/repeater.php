@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Repeater control.
+ * Elementor repeater control.
  *
  * A base control for creating repeater control. Repeater control allows you to
  * build repeatable blocks of fields. You can create, for example, a set of

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Order control.
+ * Elementor order control.
  *
  * A base control for creating an order control. Displays an 'Order By' select
  * box.

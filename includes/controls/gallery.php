@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Gallery control.
+ * Elementor gallery control.
  *
  * A base control for creating gallery chooser control. Based on the WordPress
  * media library galleries. Used to select images from the WordPress media library.

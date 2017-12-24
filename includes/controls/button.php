@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Button control.
+ * Elementor button control.
  *
  * A base control for creating a button control. Displays a button that can trigger an event.
  *
