@@ -314,6 +314,10 @@ abstract class Document extends Controls_Stack {
 		return $this->post;
 	}
 
+	public function get_permalink() {
+		return get_permalink( $this->post->ID );
+	}
+
 	public function delete(){
 		if ( 'revision' === $this->post->post_type ) {
 			return wp_delete_post_revision( $this->post );

@@ -46,12 +46,14 @@ module.exports = Module.extend( {
 	},
 
 	discard: function() {
+		var self = this;
 		elementor.ajax.send( 'discard_changes', {
 			data: {
 				post_id: elementor.config.post_id
 			},
 
-			success: function( data ) {
+			success: function() {
+				self.setFlagEditorChange( false );
 				location.href = elementor.config.exit_to_dashboard_url;
 			}
 		} );

@@ -138,7 +138,13 @@ class Documents_Manager {
 
 		$document->save( $data );
 
-		$return_data = [];
+		$return_data = [
+			'config' => [
+				'wp_preview' => [
+					'url' => $document->get_permalink(),
+				],
+			],
+		];
 
 		/**
 		 * Filters the ajax data returned when saving the post on the builder.

@@ -77,47 +77,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="elementor-screen-only"><?php esc_html_e( 'Preview Changes', 'elementor' ); ?></span>
 		</span>
 	</div>
-	<div id="elementor-panel-saver-save" class="elementor-panel-footer-tool">
-		<button id="elementor-panel-saver-button-save" class="elementor-button">
+	<div id="elementor-panel-saver-save" class="elementor-panel-footer-tool" >
+		<button id="elementor-panel-saver-button-update" class="elementor-button button-save-active elementor-button-success tooltip-target" data-tooltip="<?php esc_attr_e( 'Publish & Exit', 'elementor' ); ?>">
 			<span class="elementor-state-icon">
 				<i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>
 			</span>
-			<span id="elementor-panel-saver-save-label">
-				<?php esc_html_e( 'Save', 'elementor' ); ?>
+			<span id="elementor-panel-saver-update-label">
+				<?php esc_html_e( 'Update', 'elementor' ); ?>
 			</span>
-		</button>
-	</div>
-	<div id="elementor-panel-saver-publish" class="elementor-panel-footer-tool" >
-		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success tooltip-target" data-tooltip="<?php esc_attr_e( 'Publish & Exit', 'elementor' ); ?>">
-			<i class="fa fa-paper-plane" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php esc_html_e( 'Publish & Exit', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
 				<div id="elementor-panel-saver-menu-publish" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-paper-plane" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Publish', 'elementor' ); ?></span>
-				</div>
-				<div id="elementor-panel-saver-menu-publish-changes" class="elementor-panel-footer-sub-menu-item">
-					<i class="elementor-icon fa fa-paper-plane" aria-hidden="true"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Publish Changes', 'elementor' ); ?></span>
+				</div>
+				<div id="elementor-panel-saver-menu-update" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-paper-plane" aria-hidden="true"></i>
+					<span class="elementor-title"><?php esc_html_e( 'Update', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-saver-menu-submit-for-review" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-paper-plane" aria-hidden="true"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Submit for Review', 'elementor' ); ?></span>
 				</div>
-				<div id="elementor-panel-saver-menu-update" class="elementor-panel-footer-sub-menu-item">
+				<div id="elementor-panel-saver-menu-save-draft" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Update', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php esc_html_e( 'Save Draft & Exit', 'elementor' ); ?></span>
+				</div>
+				<div id="elementor-panel-saver-menu-discard" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon fa fa-times" aria-hidden="true"></i>
+					<span class="elementor-title"><?php esc_html_e( 'Discard & Exit', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-saver-menu-save-template" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Save to Library', 'elementor' ); ?></span>
 				</div>
-				<a id="elementor-panel-footer-saver-exit" class="elementor-panel-footer-sub-menu-item" href="<?php echo esc_attr( $this->get_document()->get_exit_to_dashboard_url() ); ?>">
-					<i class="elementor-icon fa fa-times" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Exit to Dashboard', 'elementor' ); ?></span>
-				</a>
 			</div>
 		</div>
 	</div>

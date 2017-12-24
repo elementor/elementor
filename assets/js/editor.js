@@ -4,24 +4,23 @@ module.exports = Marionette.Behavior.extend( {
 
 	ui: function() {
 		return {
-			buttonSave: '#elementor-panel-saver-button-save',
-			buttonSaveLabel: '#elementor-panel-saver-save-label',
-			buttonPublish: '#elementor-panel-saver-button-publish',
+			buttonUpdate: '#elementor-panel-saver-button-update',
 			buttonPreview: '#elementor-panel-saver-button-preview',
-			menuUpdate: '#elementor-panel-saver-menu-update',
 			menuPublish: '#elementor-panel-saver-menu-publish',
-			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes',
+			menuUpdate: '#elementor-panel-saver-menu-update',
+			menuDiscard: '#elementor-panel-saver-menu-discard',
+			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
 			menuSubmitForReview: '#elementor-panel-saver-menu-submit-for-review'
 		};
 	},
 
 	events: function() {
 		return {
-			'click @ui.buttonSave': 'onClickButtonSave',
 			'click @ui.buttonPreview': 'onClickButtonPreview',
-			'click @ui.menuUpdate': 'onClickMenuUpdate',
 			'click @ui.menuPublish': 'onClickMenuPublish',
-			'click @ui.menuPublishChanges': 'onClickMenuPublish',
+			'click @ui.menuUpdate': 'onClickMenuUpdate',
+			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
+			'click @ui.menuDiscard': 'onClickMenuDiscard',
 			'click @ui.menuSubmitForReview': 'onClickMenuSubmitForReview'
 		};
 	},
@@ -30,10 +29,9 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver
 			.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )
-			.on( 'after:save:publish', this.onAfterPublished.bind( this ) )
+			.on( 'after:save:publish', this.onAfterPublish.bind( this ) )
+			.on( 'after:save:private', this.onAfterPublish.bind( this ) )
 			.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
-
-		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
 
 		elementor.settings.document.model.on( 'change', this.onPostStatusChange.bind( this ) );
 	},
@@ -52,7 +50,7 @@ module.exports = Marionette.Behavior.extend( {
 			this.refreshWpPreview();
 
 			// Refresh page-settings post-status value.
-			if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
+			if ( 'document_settings' === elementor.getPanelView().getCurrentPageName() ) {
 				elementor.getPanelView().getCurrentPageView().render();
 			}
 		}
@@ -60,22 +58,23 @@ module.exports = Marionette.Behavior.extend( {
 
 	onBeforeSave: function() {
 		NProgress.start();
-		this.ui.buttonSave.addClass( 'elementor-button-state' );
+		this.ui.buttonUpdate.addClass( 'elementor-button-state' );
 	},
 
 	onAfterSave: function() {
 		NProgress.done();
-		this.ui.buttonSave.removeClass( 'elementor-button-state' );
+		this.ui.buttonUpdate.removeClass( 'elementor-button-state' );
 		this.refreshWpPreview();
+	},
+
+	onAfterPublish: function() {
+		self.setFlagEditorChange( false );
+		location.href = elementor.config.wp_preview.url;
 	},
 
 	onAfterSaveError: function() {
 		NProgress.done();
 		this.ui.buttonSave.removeClass( 'elementor-button-state' );
-	},
-
-	onClickButtonSave: function() {
-		elementor.saver.doAutoSave();
 	},
 
 	onClickButtonPreview: function() {
@@ -92,49 +91,43 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
+	onClickMenuPublish: function() {
+		elementor.saver.publish();
+	},
+
 	onClickMenuUpdate: function() {
 		elementor.saver.update();
 	},
 
-	onClickMenuPublish: function() {
-		elementor.saver.publish();
+	onClickMenuSaveDraft: function() {
+		elementor.saver.saveAutoSave( {
+			onSuccess: function() {
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
+	},
+
+	onClickMenuDiscard: function() {
+		elementor.saver.discard();
 	},
 
 	onClickMenuSubmitForReview: function() {
 		elementor.saver.savePending();
 	},
 
-	onAfterPublished: function() {
-		this.ui.menuPublishChanges.find( '.elementor-title' ).html( elementor.translate( 'published' ) );
-	},
-
-	activateSaveButton: function( hasChanges ) {
-		if ( hasChanges ) {
-			this.ui.buttonSave.addClass( 'elementor-save-active' );
-			this.ui.buttonSaveLabel.html( elementor.translate( 'save' ) );
-			this.ui.menuPublishChanges.find( '.elementor-title' )
-				.addClass( 'elementor-save-active' )
-				.html( elementor.translate( 'publish_changes' ) );
-		} else {
-			this.ui.buttonSave.removeClass( 'elementor-save-active' );
-			this.ui.buttonSaveLabel.html( elementor.translate( 'saved' ) );
-			this.ui.menuPublishChanges.find( '.elementor-title' )
-				.removeClass( 'elementor-save-active' );
-		}
-	},
-
 	setMenuItems: function( postStatus ) {
 		this.ui.menuPublish.hide();
-		this.ui.menuPublishChanges.hide();
 		this.ui.menuUpdate.hide();
 		this.ui.menuSubmitForReview.hide();
 
 		switch ( postStatus ) {
 			case 'publish':
-				this.ui.menuPublishChanges.show();
+				this.ui.menuPublish.show();
+				this.ui.menuDiscard.show();
 				break;
 			case 'private':
 				this.ui.menuUpdate.show();
+				this.ui.menuDiscard.show();
 				break;
 			case 'draft':
 				if ( elementor.config.current_user_can_publish ) {
@@ -218,6 +211,20 @@ module.exports = Module.extend( {
 		}, options );
 
 		this.saveEditor( options );
+	},
+
+	discard: function() {
+		var self = this;
+		elementor.ajax.send( 'discard_changes', {
+			data: {
+				post_id: elementor.config.post_id
+			},
+
+			success: function() {
+				self.setFlagEditorChange( false );
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
 	},
 
 	update: function( options ) {
@@ -7362,7 +7369,7 @@ module.exports = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
-		buttonSave: '#elementor-panel-saver-menu-publish, #elementor-panel-saver-menu-publish-changes', // Compatibility for Pro <= 1.9.5
+		buttonSave: '#elementor-panel-saver-menu-publish', // Compatibility for Pro <= 1.9.5
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
