@@ -318,7 +318,7 @@ abstract class Document extends Controls_Stack {
 		return get_permalink( $this->post->ID );
 	}
 
-	public function delete(){
+	public function delete() {
 		if ( 'revision' === $this->post->post_type ) {
 			return wp_delete_post_revision( $this->post );
 		} else {
