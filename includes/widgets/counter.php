@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Counter Widget.
+ * Elementor counter widget.
  *
  * Elementor widget that displays stats and numbers in an escalating manner.
  *

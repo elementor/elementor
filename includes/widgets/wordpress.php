@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * WordPress Widget.
+ * Elementor WordPress widget.
  *
  * Elementor widget that displays all the WordPress widgets.
  *
