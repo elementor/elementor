@@ -45,6 +45,18 @@ module.exports = Module.extend( {
 		this.saveEditor( options );
 	},
 
+	discard: function() {
+		elementor.ajax.send( 'discard_changes', {
+			data: {
+				post_id: elementor.config.post_id
+			},
+
+			success: function( data ) {
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
+	},
+
 	update: function( options ) {
 		options = _.extend( {
 			status: elementor.settings.document.model.get( 'post_status' )

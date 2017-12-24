@@ -152,10 +152,37 @@ class Documents_Manager {
 		wp_send_json_success( $return_data );
 	}
 
+	public function ajax_discard_changes() {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
+		$request = $_POST;
+
+		if ( empty( $request['post_id'] ) ) {
+			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
+		}
+
+		$document = $this->get( $request['post_id'] );
+
+		$autosave = $document->get_autosave( 0, false );
+
+		if ( $autosave ) {
+			$success = $autosave->delete();
+		} else {
+			$success = true;
+		}
+
+		if ( $success ) {
+			wp_send_json_success();
+		} else {
+			wp_send_json_error();
+		}
+	}
+
 	public function __construct() {
 		$this->register_default_types();
 
 		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save' ] );
+		add_action( 'wp_ajax_elementor_discard_changes', [ $this, 'ajax_discard_changes' ] );
 	}
 
 	public function set_current( $post_id ) {

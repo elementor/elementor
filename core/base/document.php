@@ -90,7 +90,7 @@ abstract class Document extends Controls_Stack {
 		return $exit_url;
 	}
 
-	public function get_autosave( $user_id = 0 ) {
+	public function get_autosave( $user_id = 0, $create = true ) {
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
 		}
@@ -102,10 +102,12 @@ abstract class Document extends Controls_Stack {
 				'ID' => $autosave_id,
 				'post_modified' => current_time( 'mysql' ),
 			] );
-		} else {
+		} elseif ( $create ) {
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $this->post->ID,
 			] );
+		} else {
+			return false;
 		}
 
 		return Plugin::$instance->documents->get( $autosave_id );
@@ -310,6 +312,14 @@ abstract class Document extends Controls_Stack {
 
 	public function get_post() {
 		return $this->post;
+	}
+
+	public function delete(){
+		if ( 'revision' === $this->post->post_type ) {
+			return wp_delete_post_revision( $this->post );
+		} else {
+			return wp_delete_post( $this->post->ID );
+		}
 	}
 
 	public function save_elements( $elements ) {
