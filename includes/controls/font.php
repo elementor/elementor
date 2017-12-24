@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Font control.
+ * Elementor font control.
  *
  * A base control for creating font control. Displays font select box. The
  * control allows you to set a list of fonts, if non is set it will use Google

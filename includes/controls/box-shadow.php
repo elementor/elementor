@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Box shadow control.
+ * Elementor box shadow control.
  *
  * A base control for creating box shadows control. Displays input fields for
  * horizontal shadow, vertical shadow, shadow blur, shadow spread, shadow color.

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Number control.
+ * Elementor number control.
  *
  * A base control for creating a number control. Displays a simple number input.
  *

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Select control.
+ * Elementor select control.
  *
  * A base control for creating select control. Displays a simple select box.
  * Accepts an array in which the `key` is the value and the `value` is the option name.

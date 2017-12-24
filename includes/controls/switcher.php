@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Switcher control.
+ * Elementor switcher control.
  *
  * A base control for creating switcher control. Displays an on/off switcher,
  * basically a fancy UI representation of a checkbox.

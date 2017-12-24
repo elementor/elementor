@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Date time control.
+ * Elementor date/time control.
  *
  * A base control for creating date time control. Displays a date/time picker
  * based on the jquery-simple-datetimepicker jQuery plugin

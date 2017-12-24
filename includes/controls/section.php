@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Section control.
+ * Elementor section control.
  *
  * A base control for creating section control. Displays a header that
  * functions as a toggle to show or hide a set of controls.
