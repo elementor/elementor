@@ -158,7 +158,7 @@ class Widget_Fake extends Widget_Base {
 #### Design attributes for a control
 Each control has several design attributes that determine its style and its integration in the editor panel:
 
-<sub>*Please Note*: The default value for every attribute may change according to the type of control. See [Controls Introduction > Settings hierarchy](README.MD#settings-hierarchy) to learn more.</sub>
+<sub>*Please Note*: The default value for every attribute may change according to the type of control. See [Controls Introduction > Settings hierarchy](README.md#settings-hierarchy) to learn more.</sub>
 
 ##### `label_block`
 *Sets whether to display the title in a separate line.*
