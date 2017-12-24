@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Icon List Widget.
+ * Elementor icon list widget.
  *
  * Elementor widget that displays a bullet list with any chosen icons and texts.
  *

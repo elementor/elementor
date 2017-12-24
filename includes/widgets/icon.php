@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Icon Widget.
+ * Elementor icon widget.
  *
  * Elementor widget that displays an icon from over 600+ icons.
  *
