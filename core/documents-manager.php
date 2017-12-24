@@ -72,7 +72,18 @@ class Documents_Manager {
 	 * @return Document
 	 */
 	public function create( $class_name, $post_data = [], $meta_data = [] ) {
+		if ( empty( $post_data['post_title'] ) ) {
+			$post_data['post_title'] = __( 'Elementor', '' );
+			$update_title = true;
+		}
+
 		$post_id = wp_insert_post( $post_data );
+
+		if ( ! empty( $update_title ) ) {
+			$post_data['ID'] = $post_id;
+			$post_data['post_title'] .= ' #' . $post_id;
+			wp_update_post( $post_data );
+		}
 
 		add_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 
