@@ -95,8 +95,6 @@ class Editor {
 
 		$this->_post_id = absint( $_REQUEST['post'] );
 
-		$this->document = Plugin::$instance->documents->get( $this->_post_id );
-
 		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
 		}
@@ -185,6 +183,9 @@ class Editor {
 	 * @return Document.
 	 */
 	public function get_document() {
+		if ( empty( $this->document ) ) {
+			$this->document = Plugin::$instance->documents->get( $this->_post_id );
+		}
 		return $this->document;
 	}
 
@@ -520,9 +521,9 @@ class Editor {
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
-			'preview_link' => $this->document->get_preview_url(),
+			'preview_link' => $this->get_document()->get_preview_url(),
 			'wp_preview' => [
-				'url' => $this->document->get_wp_preview_url(),
+				'url' => $this->get_document()->get_wp_preview_url(),
 				'target' => 'wp-preview-' . $this->_post_id,
 			],
 			'elements_categories' => $plugin->elements_manager->get_categories(),
@@ -554,7 +555,7 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'current_user_can_publish' => $current_user_can_publish,
-			'exit_to_dashboard_url' => $this->document->get_exit_to_dashboard_url(),
+			'exit_to_dashboard_url' => $this->get_document()->get_exit_to_dashboard_url(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
