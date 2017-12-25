@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor repeater element class.
+ *
+ * Elementor repeater handler class is responsible for initializing the repeater.
+ *
+ * @since 1.0.0
+ */
 class Repeater extends Element_Base {
 
 	private static $counter = 0;
