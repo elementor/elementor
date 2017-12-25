@@ -199,7 +199,7 @@ class Stylesheet {
 	 *
 	 * @return Stylesheet The current stylesheet class instance.
 	 */
-	public function add_raw_css( $css , $device = '' ) {
+	public function add_raw_css( $css, $device = '' ) {
 		if ( ! isset( $this->raw[ $device ] ) ) {
 			$this->raw[ $device ] = [];
 		}
