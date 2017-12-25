@@ -9,8 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor date/time control.
  *
  * A base control for creating date time control. Displays a date/time picker
- * based on the jquery-simple-datetimepicker jQuery plugin
- * @see https://github.com/mugifly/jquery-simple-datetimepicker
+ * based on the Flatpickr library
+ * @see https://chmln.github.io/flatpickr/
  *
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $default        Optional. Default date in mysql format
  *                               `(YYYY-mm-dd HH:ii)`. Default is empty.
  * @param array  $picker_options Optional. The picker configurations.
- *                               @see http://mugifly.github.io/jquery-simple-datetimepicker/jquery.simple-dtpicker.html
+ *                               @see https://chmln.github.io/flatpickr/options/
  *                               But you cannot use `onHide` callback that is
  *                               already in use (`onHide: saveValue()`).
  *                               Default is an empty array.
@@ -115,7 +115,7 @@ class Control_Date_Time extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input id="<?php echo $control_uid; ?>" class="elementor-date-time-picker" type="text" data-setting="{{ data.name }}">
+				<input id="<?php echo $control_uid; ?>" class="elementor-date-time-picker flatpickr" type="text" data-setting="{{ data.name }}">
 			</div>
 		</div>
 		<# if ( data.description ) { #>
