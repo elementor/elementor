@@ -857,13 +857,15 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Element base constructor.
 	 *
-	 * Initializing the element base class using `$data` and `$args`. The
-	 * `$data` is required for a normal instance.
+	 * Initializing the element base class using `$data` and `$args`.
+	 *
+	 * The `$data` parameter is required for a normal instance because of the
+	 * way Elementor renders data when initializing elements.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array      $data Element data. Default is an empty array.
+	 * @param array      $data Optional. Element data. Default is an empty array.
 	 * @param array|null $args Optional. Element default arguments. Default is null.
 	 **/
 	public function __construct( array $data = [], array $args = null ) {
