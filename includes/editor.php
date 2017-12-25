@@ -205,13 +205,13 @@ class Editor {
 			return;
 		}
 
-		$post_id = get_the_ID();
+		$document = Plugin::$instance->documents->get( get_the_ID() );
 
-		if ( ! User::is_current_user_can_edit( $post_id ) || ! Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+		if ( ! $document->is_editable_by_current_user() || ! $document->is_built_with_elementor() ) {
 			return;
 		}
 
-		wp_redirect( Utils::get_edit_link( $post_id ) );
+		wp_redirect( $document->get_edit_url() );
 		die;
 	}
 

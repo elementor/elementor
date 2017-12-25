@@ -139,7 +139,7 @@ class Admin {
 			</button>
 		</div>
 		<div id="elementor-editor">
-			<a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
+			<a id="elementor-go-to-edit-page-link" href="<?php echo Plugin::$instance->documents->get( $post->ID )->get_edit_url(); ?>">
 				<div id="elementor-editor-button" class="elementor-button button button-primary button-hero">
 					<i class="eicon-elementor" aria-hidden="true"></i>
 					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
