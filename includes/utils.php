@@ -27,7 +27,7 @@ class Utils {
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
 	 */
 	public static function is_ajax() {
-		// TODO: When minimum required version will be 4.7, use `wp_doing_ajax()`.
+		// TODO: When minimum required version of Elementor will be 4.7, use `wp_doing_ajax()` instead.
 		return defined( 'DOING_AJAX' ) && DOING_AJAX;
 	}
 
@@ -299,6 +299,7 @@ class Utils {
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `do_action_deprecated()` function.
 		if ( function_exists( 'do_action_deprecated' ) ) { /* WP >= 4.6 */
 			do_action_deprecated( $tag, $args, $version, $replacement, $message );
 		} else {
@@ -322,6 +323,7 @@ class Utils {
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `apply_filters_deprecated()` function.
 		if ( function_exists( 'apply_filters_deprecated' ) ) { /* WP >= 4.6 */
 			return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
 		} else {
