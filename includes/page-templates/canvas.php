@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<body <?php body_class(); ?>>
 	<?php
 	/**
+	 * Before canvas page template content.
+	 *
 	 * Fires before the content of Elementor canvas page template.
 	 *
 	 * @since 1.0.0
@@ -28,6 +30,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		the_content();
 	endwhile;
 
+	/**
+	 * After canvas page template content.
+	 *
+	 * Fires after the content of Elementor canvas page template.
+	 *
+	 * @since 1.0.0
+	 */
 	do_action( 'elementor/page_templates/canvas/after_content' );
 	wp_footer();
 	?>

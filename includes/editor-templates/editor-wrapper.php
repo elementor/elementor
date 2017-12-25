@@ -54,6 +54,7 @@ if ( is_rtl() ) {
 </div>
 <?php
 	wp_footer();
+	/** This action is documented in wp-admin/admin-footer.php */
 	do_action( 'admin_print_footer_scripts' );
 ?>
 </body>

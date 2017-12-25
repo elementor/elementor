@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Social Icons Widget.
+ * Elementor social icons widget.
  *
  * Elementor widget that displays icons to social pages like Facebook and Twitter.
  *

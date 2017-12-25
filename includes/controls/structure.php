@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Structure control.
+ * Elementor structure control.
  *
  * A base control for creating structure control. A private control for section
  * columns structure.

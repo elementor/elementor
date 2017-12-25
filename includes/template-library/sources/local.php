@@ -126,6 +126,8 @@ class Source_Local extends Source_Base {
 		];
 
 		/**
+		 * Register template library post type args.
+		 *
 		 * Filters the post type arguments when registering elementor template library post type.
 		 *
 		 * @since 1.0.0
@@ -148,6 +150,8 @@ class Source_Local extends Source_Base {
 		];
 
 		/**
+		 * Register template library taxonomy args.
+		 *
 		 * Filters the taxonomy arguments when registering elementor template library taxonomy.
 		 *
 		 * @since 1.0.0
@@ -255,6 +259,8 @@ class Source_Local extends Source_Base {
 		}
 
 		/**
+		 * After template library save.
+		 *
 		 * Fires after Elementor template library was saved.
 		 *
 		 * @since 1.0.1
@@ -265,6 +271,8 @@ class Source_Local extends Source_Base {
 		do_action( 'elementor/template-library/after_save_template', $template_id, $template_data );
 
 		/**
+		 * After template library update.
+		 *
 		 * Fires after Elementor template library was updated.
 		 *
 		 * @since 1.0.1
@@ -289,6 +297,8 @@ class Source_Local extends Source_Base {
 		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
 
 		/**
+		 * After template library update.
+		 *
 		 * Fires after Elementor template library was updated.
 		 *
 		 * @since 1.0.0
@@ -333,6 +343,8 @@ class Source_Local extends Source_Base {
 		];
 
 		/**
+		 * Get template library template.
+		 *
 		 * Filters the elementor template data when loading template library item.
 		 *
 		 * @since 1.0.0
@@ -591,6 +603,8 @@ class Source_Local extends Source_Base {
 		$export_support = true;
 
 		/**
+		 * Is template library supports export.
+		 *
 		 * Filters whether the template library supports export.
 		 *
 		 * @since 1.0.0

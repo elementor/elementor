@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Fonts.
+ * Elementor fonts class.
  *
- * Elementor fonts handler class.
+ * Elementor fonts handler class is responsible for registering the supported
+ * fonts used by Elementor.
  *
  * @since 1.0.0
  */

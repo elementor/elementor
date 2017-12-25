@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Animation control.
+ * Elementor animation control.
  *
  * A base control for creating entrance animation control. Displays a select box
  * with the available entrance animation effects @see Control_Animation::get_animations()

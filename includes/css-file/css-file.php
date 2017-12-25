@@ -405,9 +405,11 @@ abstract class CSS_File {
 		$name = $this->get_name();
 
 		/**
+		 * CSS file parse.
+		 *
 		 * Fires when CSS file is parsed on Elementor.
 		 *
-		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name from `$this->get_name()`.
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
 		 * @since 1.2.0
 		 *

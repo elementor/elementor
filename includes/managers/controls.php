@@ -191,6 +191,8 @@ class Controls_Manager {
 		$this->control_groups['text-shadow'] = new Group_Control_Text_Shadow();
 
 		/**
+		 * After controls registered.
+		 *
 		 * Fires after Elementor controls are registered.
 		 *
 		 * @since 1.0.0

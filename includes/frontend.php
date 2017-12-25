@@ -8,9 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Frontend.
+ * Elementor frontend class.
  *
- * Elementor frontend handler class.
+ * Elementor frontend handler class is responsible for initializing Elementor in
+ * the frontend.
  *
  * @since 1.0.0
  */
@@ -240,6 +241,8 @@ class Frontend {
 	 */
 	public function register_scripts() {
 		/**
+		 * Before frontend register scripts.
+		 *
 		 * Fires before Elementor frontend scripts are registered.
 		 *
 		 * @since 1.2.1
@@ -321,6 +324,8 @@ class Frontend {
 		);
 
 		/**
+		 * After frontend register scripts.
+		 *
 		 * Fires after Elementor frontend scripts are registered.
 		 *
 		 * @since 1.2.1
@@ -340,6 +345,8 @@ class Frontend {
 	 */
 	public function register_styles() {
 		/**
+		 * Before frontend register styles.
+		 *
 		 * Fires before Elementor frontend styles are registered.
 		 *
 		 * @since 1.2.0
@@ -379,6 +386,8 @@ class Frontend {
 		);
 
 		/**
+		 * After frontend register styles.
+		 *
 		 * Fires after Elementor frontend styles are registered.
 		 *
 		 * @since 1.2.0
@@ -396,6 +405,8 @@ class Frontend {
 	 */
 	public function enqueue_scripts() {
 		/**
+		 * Before frontend enqueue scripts.
+		 *
 		 * Fires before Elementor frontend scripts are enqueued.
 		 *
 		 * @since 1.0.0
@@ -448,6 +459,8 @@ class Frontend {
 		wp_localize_script( 'elementor-frontend', 'elementorFrontendConfig', $elementor_frontend_config );
 
 		/**
+		 * After frontend enqueue scripts.
+		 *
 		 * Fires after Elementor frontend scripts are enqueued.
 		 *
 		 * @since 1.0.0
@@ -467,6 +480,8 @@ class Frontend {
 	 */
 	public function enqueue_styles() {
 		/**
+		 * Before frontend enqueue styles.
+		 *
 		 * Fires before Elementor frontend styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -486,6 +501,8 @@ class Frontend {
 		}
 
 		/**
+		 * After frontend enqueue styles.
+		 *
 		 * Fires after Elementor frontend styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -528,6 +545,8 @@ class Frontend {
 		$print_google_fonts = true;
 
 		/**
+		 * Print frontend google fonts.
+		 *
 		 * Filters whether to enqueue Google fonts in the frontend.
 		 *
 		 * @since 1.0.0
@@ -696,6 +715,8 @@ class Frontend {
 		$data = Plugin::$instance->db->get_plain_editor( $post_id, $status );
 
 		/**
+		 * Frontend builder content data.
+		 *
 		 * Filters the builder content in the frontend.
 		 *
 		 * @since 1.0.0
@@ -742,6 +763,8 @@ class Frontend {
 		$content = ob_get_clean();
 
 		/**
+		 * Frontend content.
+		 *
 		 * Filters the content in the frontend.
 		 *
 		 * @since 1.0.0

@@ -62,6 +62,8 @@ class Widgets_Manager {
 		$this->_register_wp_widgets();
 
 		/**
+		 * After widgets registered.
+		 *
 		 * Fires after Elementor widgets are registered.
 		 *
 		 * @since 1.0.0
@@ -97,6 +99,8 @@ class Widgets_Manager {
 		$black_list = [];
 
 		/**
+		 * Widgets black list.
+		 *
 		 * Filters the widgets black list.
 		 *
 		 * @since 1.0.0

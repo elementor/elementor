@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Spacer Widget.
+ * Elementor spacer widget.
  *
  * Elementor widget that inserts a space that divides various elements.
  *
