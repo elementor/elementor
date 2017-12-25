@@ -2519,24 +2519,19 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlDateTimePickerItemView;
 
 ControlDateTimePickerItemView = ControlBaseDataView.extend( {
-	ui: function() {
-		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
-
-		ui.picker = '.elementor-date-time-picker';
-
-		return ui;
-	},
 
 	onReady: function() {
 		var self = this;
 
-		var options = _.extend( this.model.get( 'picker_options' ), {
-			onHide: function() {
+		var options = _.extend( {
+			onClose: function() {
 				self.saveValue();
-			}
-		} );
+			},
+			enableTime: true,
+			minuteIncrement: 1
+		}, this.model.get( 'picker_options' ) );
 
-		this.ui.picker.appendDtpicker( options ).handleDtpicker( 'setDate', new Date( this.getControlValue() ) );
+		this.ui.input.flatpickr( options );
 	},
 
 	saveValue: function() {
@@ -2545,7 +2540,7 @@ ControlDateTimePickerItemView = ControlBaseDataView.extend( {
 
 	onBeforeDestroy: function() {
 		this.saveValue();
-		this.ui.picker.dtpicker( 'destroy' );
+		this.ui.input.flatpickr().destroy();
 	}
 } );
 

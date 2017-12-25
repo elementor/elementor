@@ -388,8 +388,8 @@ class Editor {
 		);
 
 		wp_register_script(
-			'jquery-simple-dtpicker',
-			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-dtpicker/jquery.simple-dtpicker' . $suffix . '.js',
+			'flatpickr',
+			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.js',
 			[
 				'jquery',
 			],
@@ -448,7 +448,7 @@ class Editor {
 				'imagesloaded',
 				'heartbeat',
 				'jquery-select2',
-				'jquery-simple-dtpicker',
+				'flatpickr',
 				'elementor-dialog',
 				'ace',
 				'ace-language-tools',
@@ -719,8 +719,8 @@ class Editor {
 		);
 
 		wp_register_style(
-			'jquery-simple-dtpicker',
-			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-dtpicker/jquery.simple-dtpicker' . $suffix . '.css',
+			'flatpickr',
+			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.css',
 			[],
 			'1.12.0'
 		);
@@ -734,7 +734,7 @@ class Editor {
 				'elementor-icons',
 				'wp-auth-check',
 				'google-font-roboto',
-				'jquery-simple-dtpicker',
+				'flatpickr',
 			],
 			ELEMENTOR_VERSION
 		);
