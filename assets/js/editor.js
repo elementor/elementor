@@ -68,7 +68,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onAfterPublish: function() {
-		self.setFlagEditorChange( false );
+		elementor.saver.setFlagEditorChange( false );
 		location.href = elementor.config.wp_preview.url;
 	},
 
