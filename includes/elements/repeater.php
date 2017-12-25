@@ -1,6 +1,10 @@
 <?php
 namespace Elementor;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 class Repeater extends Element_Base {
 
 	private static $counter = 0;
