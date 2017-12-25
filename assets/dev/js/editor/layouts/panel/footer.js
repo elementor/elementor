@@ -8,7 +8,7 @@ module.exports = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
-		buttonSave: '#elementor-panel-saver-menu-publish, #elementor-panel-saver-menu-publish-changes', // Compatibility for Pro <= 1.9.5
+		buttonSave: '#elementor-panel-saver-menu-publish', // Compatibility for Pro <= 1.9.5
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
@@ -61,8 +61,14 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClickSettings: function() {
-		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
-			elementor.getPanelView().setPage( 'page_settings' );
+		var self = this;
+
+		if ( 'document_settings' !== elementor.getPanelView().getCurrentPageName() ) {
+			elementor.getPanelView().setPage( 'document_settings' );
+
+			elementor.getPanelView().getCurrentPageView().once( 'destroy', function() {
+				self.ui.settings.removeClass( 'elementor-open' );
+			} );
 		}
 	},
 

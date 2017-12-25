@@ -138,7 +138,7 @@ TemplateLibraryManager = function() {
 				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 
 				if ( options.withPageSettings ) {
-					elementor.settings.page.model.set( data.page_settings );
+					elementor.settings.document.model.set( data.page_settings );
 				}
 			},
 			error: function( data ) {

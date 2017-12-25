@@ -41,7 +41,8 @@ RevisionsManager = function() {
 			onConfirm: function() {
 				self.getRevisionDataAsync( elementor.config.newer_autosave, {
 					success: function( data ) {
-						self.setEditorData( data );
+						self.setEditorData( data.elements );
+						elementor.settings.document.model.set( data.settings );
 					}
 				} );
 			}
@@ -50,7 +51,7 @@ RevisionsManager = function() {
 
 	var attachEvents = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
-		elementor.on( 'preview:loaded', checkNewAutoSave );
+		// elementor.on( 'preview:loaded', checkNewAutoSave );
 	};
 
 	var addHotKeys = function() {

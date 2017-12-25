@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Documents_Manager;
 use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -68,6 +69,11 @@ class Plugin {
 	 * @var Debug
 	 */
 	public $debug;
+
+	/**
+	 * @var Documents_Manager
+	 */
+	public $documents;
 
 	/**
 	 * Schemes manager.
@@ -410,13 +416,14 @@ class Plugin {
 	 *
 	 * @since 1.0.0
 	 * @access private
-	 */
+	*/
 	private function init_components() {
 		Compatibility::register_actions();
 		SettingsManager::run();
 
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
+		$this->documents = new Documents_Manager();
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
@@ -461,7 +468,7 @@ class Plugin {
 	 *
 	 * @since 1.0.0
 	 * @access private
-	 */
+	*/
 	private function add_cpt_support() {
 		$cpt_support = get_option( 'elementor_cpt_support', [ 'page', 'post' ] );
 
@@ -477,7 +484,7 @@ class Plugin {
 	 *
 	 * @since 1.6.0
 	 * @access private
-	 */
+	*/
 	private function register_autoloader() {
 		require ELEMENTOR_PATH . '/includes/autoloader.php';
 

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,6 +38,18 @@ class Editor {
 	 * @var int Post ID.
 	 */
 	private $_post_id;
+
+	/**
+	 * Document.
+	 *
+	 * Holds the current Document being edited.
+	 *
+	 * @since 1.9.0
+	 * @access private
+	 *
+	 * @var Document
+	 */
+	private $document;
 
 	/**
 	 * Whether the edit mode is active.
@@ -160,6 +173,23 @@ class Editor {
 	}
 
 	/**
+	 * Retrieve Document.
+	 *
+	 * Get the current Document.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @return Document.
+	 */
+	public function get_document() {
+		if ( empty( $this->document ) ) {
+			$this->document = Plugin::$instance->documents->get( $this->_post_id );
+		}
+		return $this->document;
+	}
+
+	/**
 	 * Redirect to new URL.
 	 *
 	 * Used as a fallback function for the old URL structure of Elementor
@@ -175,13 +205,13 @@ class Editor {
 			return;
 		}
 
-		$post_id = get_the_ID();
+		$document = Plugin::$instance->documents->get( get_the_ID() );
 
-		if ( ! User::is_current_user_can_edit( $post_id ) || ! Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+		if ( ! $document->is_editable_by_current_user() || ! $document->is_built_with_elementor() ) {
 			return;
 		}
 
-		wp_redirect( Utils::get_edit_link( $post_id ) );
+		wp_redirect( $document->get_edit_url() );
 		die;
 	}
 
@@ -300,7 +330,9 @@ class Editor {
 
 		$plugin = Plugin::$instance;
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id );
+		$document_for_settings = $this->get_document_for_settings();
+
+		$editor_data = $plugin->db->get_builder( $document_for_settings->get_post()->ID );
 
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
@@ -486,19 +518,14 @@ class Editor {
 
 		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
 
-		$nonce = wp_create_nonce( 'post_preview_' . $this->_post_id );
-		$query_args['preview_id'] = $this->_post_id;
-		$query_args['preview_nonce'] = $nonce;
-		$preview_post_link = get_preview_post_link( $this->_post_id, $query_args );
-
 		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
-			'preview_link' => Utils::get_preview_url( $this->_post_id ),
+			'preview_link' => $this->get_document()->get_preview_url(),
 			'wp_preview' => [
-				'url' => $preview_post_link,
+				'url' => $this->get_document()->get_wp_preview_url(),
 				'target' => 'wp-preview-' . $this->_post_id,
 			],
 			'elements_categories' => $plugin->elements_manager->get_categories(),
@@ -530,7 +557,7 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'current_user_can_publish' => $current_user_can_publish,
-			'exit_to_dashboard_url' => get_edit_post_link(),
+			'exit_to_dashboard_url' => $this->get_document()->get_exit_to_dashboard_url(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
@@ -992,5 +1019,9 @@ class Editor {
 		foreach ( $template_names as $template_name ) {
 			$this->add_editor_template( __DIR__ . "/editor-templates/$template_name.php" );
 		}
+	}
+
+	public function get_document_for_settings() {
+		return Plugin::$instance->documents->get_doc_or_auto_save( $this->_post_id );
 	}
 }

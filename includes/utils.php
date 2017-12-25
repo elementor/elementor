@@ -24,7 +24,7 @@ class Utils {
 	 * @static
 	 *
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
-	 */
+	*/
 	public static function is_ajax() {
 		// TODO: When minimum required version will be 4.7, use `wp_doing_ajax()`.
 		return defined( 'DOING_AJAX' ) && DOING_AJAX;
@@ -40,7 +40,7 @@ class Utils {
 	 * @static
 	 *
 	 * @return bool True if it's a script debug is active, false otherwise.
-	 */
+	*/
 	public static function is_script_debug() {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 	}
@@ -50,7 +50,7 @@ class Utils {
 	 *
 	 * Retrieve Elementor edit link.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @access public
 	 * @static
 	 *
@@ -59,7 +59,9 @@ class Utils {
 	 * @return string Post edit link.
 	 */
 	public static function get_edit_link( $post_id = 0 ) {
-		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
+		_deprecated_function( __METHOD__, '1.9.0', '$document->get_edit_link()' );
+
+		$url = Plugin::$instance->documents->get( $post_id )->get_edit_url();
 
 		/**
 		 * Filters the Elementor edit link.
@@ -69,9 +71,7 @@ class Utils {
 		 * @param string $edit_link New URL query string (unescaped).
 		 * @param int    $post_id   Post ID.
 		 */
-		$edit_link = apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
-
-		return $edit_link;
+		return self::apply_filters_deprecated( 'elementor/utils/get_edit_link', [ $url, $post_id ], '1.9.0', 'elementor/document/get_edit_link' );
 	}
 
 	/**
@@ -86,7 +86,7 @@ class Utils {
 	 * @param string $link URL to Elementor pro.
 	 *
 	 * @return string Elementor pro link.
-	 */
+	*/
 	public static function get_pro_link( $link ) {
 		static $theme_name = false;
 
@@ -124,7 +124,9 @@ class Utils {
 	 * @return string Post preview URL.
 	 */
 	public static function get_preview_url( $post_id ) {
-		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
+		_deprecated_function( __METHOD__, '1.9.0', '$document->get_preview_url()' );
+
+		$url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 
 		/**
 		 * Filters the Elementor preview URL.
@@ -134,9 +136,7 @@ class Utils {
 		 * @param string $preview_url URL with chosen scheme.
 		 * @param int    $post_id     Post ID.
 		 */
-		$preview_url = apply_filters( 'elementor/utils/preview_url', $preview_url, $post_id );
-
-		return $preview_url;
+		return self::apply_filters_deprecated( 'elementor/utils/preview_url', [ $url, $post_id ], '1.9.0', 'elementor/document/preview_url' );
 	}
 
 	/**
@@ -151,7 +151,7 @@ class Utils {
 	 * @param int $post_id Optional. Post ID. Default is `0`.
 	 *
 	 * @return string True if post type supports editing with Elementor, false otherwise.
-	 */
+	*/
 	public static function is_post_type_support( $post_id = 0 ) {
 		$post_type = get_post_type( $post_id );
 		$is_supported = post_type_supports( $post_type, 'elementor' );
@@ -180,7 +180,7 @@ class Utils {
 	 * @static
 	 *
 	 * @return string The source of the default placeholder image used by Elementor.
-	 */
+	*/
 	public static function get_placeholder_image_src() {
 		$placeholder_image = ELEMENTOR_ASSETS_URL . 'images/placeholder.png';
 
@@ -206,7 +206,7 @@ class Utils {
 	 * @static
 	 *
 	 * @return string Random string.
-	 */
+	*/
 	public static function generate_random_string() {
 		return dechex( rand() );
 	}
@@ -255,7 +255,7 @@ class Utils {
 	 * @static
 	 *
 	 * @return string Timezone string.
-	 */
+	*/
 	public static function get_timezone_string() {
 		$current_offset = (float) get_option( 'gmt_offset' );
 		$timezone_string = get_option( 'timezone_string' );
@@ -288,7 +288,7 @@ class Utils {
 	 * @param string $version     The version of WordPress that deprecated the hook.
 	 * @param string $replacement Optional. The hook that should have been used.
 	 * @param string $message     Optional. A message regarding the change.
-	 */
+	*/
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
 		if ( function_exists( 'do_action_deprecated' ) ) { /* WP >= 4.6 */
 			do_action_deprecated( $tag, $args, $version, $replacement, $message );
@@ -311,12 +311,18 @@ class Utils {
 	 * @param string $version     The version of WordPress that deprecated the hook.
 	 * @param string $replacement Optional. The hook that should have been used.
 	 * @param string $message     Optional. A message regarding the change.
-	 */
+	*/
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
 		if ( function_exists( 'apply_filters_deprecated' ) ) { /* WP >= 4.6 */
 			return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
 		} else {
 			return apply_filters_ref_array( $tag, $args );
 		}
+	}
+
+	public static function is_cpt_custom_templates_supported() {
+		require_once ABSPATH . '/wp-admin/includes/theme.php';
+
+		return method_exists( wp_get_theme(), 'get_post_templates' );
 	}
 }

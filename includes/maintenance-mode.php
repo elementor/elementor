@@ -157,7 +157,14 @@ class Maintenance_Mode {
 			$templates_options[ $template['template_id'] ] = $template['title'];
 		}
 
-		$template_description = sprintf( ' <a target="_blank" class="elementor-edit-template" style="display: none" href="%s">%s</a>', Utils::get_edit_link( self::get( 'template_id' ) ), __( 'Edit Template', 'elementor' ) );
+		$current_template_id = self::get( 'template_id' );
+		$current_edit_url = '';
+
+		if ( $current_template_id ) {
+			$current_edit_url = Plugin::$instance->documents->get( $current_template_id )->get_edit_url();
+		}
+
+		$template_description = sprintf( ' <a target="_blank" class="elementor-edit-template" style="display: none" href="%s">%s</a>', $current_edit_url, __( 'Edit Template', 'elementor' ) );
 
 		$template_description .= '<span class="elementor-maintenance-mode-error" style="display: none">' .
 								 __( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ) .
@@ -250,11 +257,14 @@ class Maintenance_Mode {
 			'href' => Tools::get_url() . '#tab-maintenance_mode',
 		] );
 
+		$current_template_id = self::get( 'template_id' );
+		$current_edit_url = Plugin::$instance->documents->get( $current_template_id )->get_edit_url();
+
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-edit',
 			'parent' => 'elementor-maintenance-on',
 			'title' => __( 'Edit Template', 'elementor' ),
-			'href' => Utils::get_edit_link( self::get( 'template_id' ) ),
+			'href' => $current_edit_url,
 		] );
 	}
 

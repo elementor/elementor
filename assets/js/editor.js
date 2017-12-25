@@ -4,24 +4,23 @@ module.exports = Marionette.Behavior.extend( {
 
 	ui: function() {
 		return {
-			buttonSave: '#elementor-panel-saver-button-save',
-			buttonSaveLabel: '#elementor-panel-saver-save-label',
-			buttonPublish: '#elementor-panel-saver-button-publish',
-			buttonPreview: '#elementor-panel-saver-button-preview-label',
-			menuUpdate: '#elementor-panel-saver-menu-update',
+			buttonUpdate: '#elementor-panel-saver-button-update',
+			buttonPreview: '#elementor-panel-saver-button-preview',
 			menuPublish: '#elementor-panel-saver-menu-publish',
-			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes',
+			menuUpdate: '#elementor-panel-saver-menu-update',
+			menuDiscard: '#elementor-panel-saver-menu-discard',
+			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
 			menuSubmitForReview: '#elementor-panel-saver-menu-submit-for-review'
 		};
 	},
 
 	events: function() {
 		return {
-			'click @ui.buttonSave': 'onClickButtonSave',
 			'click @ui.buttonPreview': 'onClickButtonPreview',
-			'click @ui.menuUpdate': 'onClickMenuUpdate',
 			'click @ui.menuPublish': 'onClickMenuPublish',
-			'click @ui.menuPublishChanges': 'onClickMenuPublish',
+			'click @ui.menuUpdate': 'onClickMenuUpdate',
+			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
+			'click @ui.menuDiscard': 'onClickMenuDiscard',
 			'click @ui.menuSubmitForReview': 'onClickMenuSubmitForReview'
 		};
 	},
@@ -30,16 +29,15 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver
 			.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )
-			.on( 'after:save:publish', this.onAfterPublished.bind( this ) )
+			.on( 'after:save:publish', this.onAfterPublish.bind( this ) )
+			.on( 'after:save:private', this.onAfterPublish.bind( this ) )
 			.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
 
-		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
-
-		elementor.settings.page.model.on( 'change', this.onPostStatusChange.bind( this ) );
+		elementor.settings.document.model.on( 'change', this.onPostStatusChange.bind( this ) );
 	},
 
 	onRender: function() {
-		this.setMenuItems( elementor.settings.page.model.get( 'post_status' ) );
+		this.setMenuItems( elementor.settings.document.model.get( 'post_status' ) );
 		this.addTooltip();
 	},
 
@@ -49,8 +47,10 @@ module.exports = Marionette.Behavior.extend( {
 		if ( ! _.isUndefined( changed.post_status ) ) {
 			this.setMenuItems( changed.post_status );
 
+			this.refreshWpPreview();
+
 			// Refresh page-settings post-status value.
-			if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
+			if ( 'document_settings' === elementor.getPanelView().getCurrentPageName() ) {
 				elementor.getPanelView().getCurrentPageView().render();
 			}
 		}
@@ -58,25 +58,23 @@ module.exports = Marionette.Behavior.extend( {
 
 	onBeforeSave: function() {
 		NProgress.start();
-		this.ui.buttonSave.addClass( 'elementor-button-state' );
+		this.ui.buttonUpdate.addClass( 'elementor-button-state' );
 	},
 
 	onAfterSave: function() {
 		NProgress.done();
-		this.ui.buttonSave.removeClass( 'elementor-button-state' );
-		// If the this.previewWindow is not null and not closed.
-		if ( this.previewWindow && this.previewWindow.location.reload ) {
-			this.previewWindow.location.reload();
-		}
+		this.ui.buttonUpdate.removeClass( 'elementor-button-state' );
+		this.refreshWpPreview();
+	},
+
+	onAfterPublish: function() {
+		elementor.saver.setFlagEditorChange( false );
+		location.href = elementor.config.wp_preview.url;
 	},
 
 	onAfterSaveError: function() {
 		NProgress.done();
 		this.ui.buttonSave.removeClass( 'elementor-button-state' );
-	},
-
-	onClickButtonSave: function() {
-		elementor.saver.doAutoSave();
 	},
 
 	onClickButtonPreview: function() {
@@ -93,49 +91,43 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
+	onClickMenuPublish: function() {
+		elementor.saver.publish();
+	},
+
 	onClickMenuUpdate: function() {
 		elementor.saver.update();
 	},
 
-	onClickMenuPublish: function() {
-		elementor.saver.publish();
+	onClickMenuSaveDraft: function() {
+		elementor.saver.saveAutoSave( {
+			onSuccess: function() {
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
+	},
+
+	onClickMenuDiscard: function() {
+		elementor.saver.discard();
 	},
 
 	onClickMenuSubmitForReview: function() {
 		elementor.saver.savePending();
 	},
 
-	onAfterPublished: function() {
-		this.ui.menuPublishChanges.find( '.elementor-title' ).html( elementor.translate( 'published' ) );
-	},
-
-	activateSaveButton: function( hasChanges ) {
-		if ( hasChanges ) {
-			this.ui.buttonSave.addClass( 'elementor-save-active' );
-			this.ui.buttonSaveLabel.html( elementor.translate( 'save' ) );
-			this.ui.menuPublishChanges.find( '.elementor-title' )
-				.addClass( 'elementor-save-active' )
-				.html( elementor.translate( 'publish_changes' ) );
-		} else {
-			this.ui.buttonSave.removeClass( 'elementor-save-active' );
-			this.ui.buttonSaveLabel.html( elementor.translate( 'saved' ) );
-			this.ui.menuPublishChanges.find( '.elementor-title' )
-				.removeClass( 'elementor-save-active' );
-		}
-	},
-
 	setMenuItems: function( postStatus ) {
 		this.ui.menuPublish.hide();
-		this.ui.menuPublishChanges.hide();
 		this.ui.menuUpdate.hide();
 		this.ui.menuSubmitForReview.hide();
 
 		switch ( postStatus ) {
 			case 'publish':
-				this.ui.menuPublishChanges.show();
+				this.ui.menuPublish.show();
+				this.ui.menuDiscard.show();
 				break;
 			case 'private':
 				this.ui.menuUpdate.show();
+				this.ui.menuDiscard.show();
 				break;
 			case 'draft':
 				if ( elementor.config.current_user_can_publish ) {
@@ -162,6 +154,14 @@ module.exports = Marionette.Behavior.extend( {
 				return this.getAttribute( 'data-tooltip' );
 			}
 		} );
+	},
+
+	refreshWpPreview: function() {
+		// If the this.previewWindow is not null and not closed.
+		if ( this.previewWindow && this.previewWindow.location.reload ) {
+			// Refresh URL form updated config.
+			this.previewWindow.location = elementor.config.wp_preview.url;
+		}
 	}
 } );
 
@@ -213,9 +213,23 @@ module.exports = Module.extend( {
 		this.saveEditor( options );
 	},
 
+	discard: function() {
+		var self = this;
+		elementor.ajax.send( 'discard_changes', {
+			data: {
+				post_id: elementor.config.post_id
+			},
+
+			success: function() {
+				self.setFlagEditorChange( false );
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
+	},
+
 	update: function( options ) {
 		options = _.extend( {
-			status: elementor.settings.page.model.get( 'post_status' )
+			status: elementor.settings.document.model.get( 'post_status' )
 		}, options );
 
 		this.saveEditor( options );
@@ -262,7 +276,8 @@ module.exports = Module.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } );
+			elements = elementor.elements.toJSON( { removeDefault: true } ),
+			settings = elementor.settings.document.model.toJSON( { removeDefault: true } );
 
 		self.trigger( 'before:save' )
 			.trigger( 'before:save:' + options.status );
@@ -274,7 +289,8 @@ module.exports = Module.extend( {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
-				data: JSON.stringify( newData )
+				elements: JSON.stringify( elements ),
+				settings: JSON.stringify( settings )
 			},
 
 			success: function( data ) {
@@ -285,10 +301,14 @@ module.exports = Module.extend( {
 				}
 
 				if ( 'autosave' !== options.status ) {
-					elementor.settings.page.model.set( 'post_status', options.status );
+					elementor.settings.document.model.set( 'post_status', options.status );
 				}
 
-				elementor.config.data = newData;
+				if ( data.config ) {
+					jQuery.extend( true, elementor.config, data.config );
+				}
+
+				elementor.config.data = elements;
 
 				elementor.channels.editor.trigger( 'saved', data );
 
@@ -495,22 +515,12 @@ module.exports = ControlsStack.extend( {
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
 module.exports = BaseSettings.extend( {
-	changeCallbacks: {
-		elementor_page_title_selector: function( newValue ) {
-			var newSelector = newValue || 'h1.entry-title',
-				titleSelectors = elementor.settings.page.model.controls.hide_title.selectors = {};
 
-			titleSelectors[ newSelector ] = 'display: none';
+	onInit: function() {
 
-			elementor.settings.page.updateStylesheet();
-		}
-	}
-} );
+		BaseSettings.prototype.onInit.apply( this, arguments );
+	},
 
-},{"elementor-editor/components/settings/base/manager":3}],6:[function(require,module,exports){
-var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
-
-module.exports = BaseSettings.extend( {
 	changeCallbacks: {
 		post_title: function( newValue ) {
 			var $title = elementorFrontend.getElements( '$document' ).find( elementor.config.page_title_selector );
@@ -519,14 +529,24 @@ module.exports = BaseSettings.extend( {
 		},
 
 		template: function() {
-			this.save( function() {
-				elementor.reloadPreview();
+			elementor.saver.saveAutoSave( {
+				onSuccess: function() {
+					elementor.reloadPreview();
 
-				elementor.once( 'preview:loaded', function() {
-					elementor.getPanelView().setPage( 'page_settings' );
-				} );
+					elementor.once( 'preview:loaded', function() {
+						elementor.getPanelView().setPage( 'document_settings' );
+					} );
+				}
 			} );
 		}
+	},
+
+	save: function() {},
+
+	onModelChange: function() {
+		elementor.saver.setFlagEditorChange( true );
+
+		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},
 
 	bindEvents: function() {
@@ -544,6 +564,22 @@ module.exports = BaseSettings.extend( {
 	}
 } );
 
+},{"elementor-editor/components/settings/base/manager":3}],6:[function(require,module,exports){
+var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
+
+module.exports = BaseSettings.extend( {
+	changeCallbacks: {
+		elementor_page_title_selector: function( newValue ) {
+			var newSelector = newValue || 'h1.entry-title',
+				titleSelectors = elementor.settings.document.model.controls.hide_title.selectors = {};
+
+			titleSelectors[ newSelector ] = 'display: none';
+
+			elementor.settings.document.updateStylesheet();
+		}
+	}
+} );
+
 },{"elementor-editor/components/settings/base/manager":3}],7:[function(require,module,exports){
 var Module = require( 'elementor-utils/module' );
 
@@ -551,7 +587,7 @@ module.exports = Module.extend( {
 	modules: {
 		base: require( 'elementor-editor/components/settings/base/manager' ),
 		general: require( 'elementor-editor/components/settings/general/manager' ),
-		page: require( 'elementor-editor/components/settings/page/manager' )
+		document: require( 'elementor-editor/components/settings/document/manager' )
 	},
 
 	panelPages: {
@@ -573,7 +609,7 @@ module.exports = Module.extend( {
 	}
 } );
 
-},{"elementor-editor/components/settings/base/manager":3,"elementor-editor/components/settings/base/panel":4,"elementor-editor/components/settings/general/manager":5,"elementor-editor/components/settings/page/manager":6,"elementor-utils/module":120}],8:[function(require,module,exports){
+},{"elementor-editor/components/settings/base/manager":3,"elementor-editor/components/settings/base/panel":4,"elementor-editor/components/settings/document/manager":5,"elementor-editor/components/settings/general/manager":6,"elementor-utils/module":120}],8:[function(require,module,exports){
 var InsertTemplateHandler;
 
 InsertTemplateHandler = Marionette.Behavior.extend( {
@@ -784,7 +820,7 @@ TemplateLibraryManager = function() {
 				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 
 				if ( options.withPageSettings ) {
-					elementor.settings.page.model.set( data.page_settings );
+					elementor.settings.document.model.set( data.page_settings );
 				}
 			},
 			error: function( data ) {
@@ -4099,7 +4135,10 @@ App = Marionette.Application.extend( {
 		element: {
 			Model: require( 'elementor-elements/models/element' )
 		},
+		ControlsStack: require( 'elementor-views/controls-stack' ),
 		Module: require( 'elementor-utils/module' ),
+		RepeaterRowView: require( 'elementor-controls/repeater-row' ),
+		SettingsModel: require( 'elementor-elements/models/base-settings' ),
 		WidgetView: require( 'elementor-elements/views/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
@@ -4238,9 +4277,14 @@ App = Marionette.Application.extend( {
 		this.settings = new Settings();
 
 		/**
-		 * @deprecated - use `this.settings.page` instead
+		 * @deprecated - use `this.settings.document` instead
 		 */
-		this.pageSettings = this.settings.page;
+		this.pageSettings = this.settings.document;
+
+		/**
+		 * @deprecated - use `this.settings.document` instead
+		 */
+		this.settings.page = this.settings.document;
 
 		this.templates.init();
 
@@ -4872,7 +4916,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"./components/saver/behaviors/footer-saver":1,"elementor-controls/base":31,"elementor-controls/base-data":28,"elementor-controls/base-multiple":29,"elementor-controls/box-shadow":32,"elementor-controls/button":33,"elementor-controls/choose":34,"elementor-controls/code":35,"elementor-controls/color":36,"elementor-controls/date-time":37,"elementor-controls/dimensions":38,"elementor-controls/font":39,"elementor-controls/gallery":40,"elementor-controls/icon":41,"elementor-controls/image-dimensions":42,"elementor-controls/media":43,"elementor-controls/number":44,"elementor-controls/order":45,"elementor-controls/popover-toggle":46,"elementor-controls/repeater":48,"elementor-controls/section":49,"elementor-controls/select2":50,"elementor-controls/slider":51,"elementor-controls/structure":52,"elementor-controls/switcher":53,"elementor-controls/tab":54,"elementor-controls/wp_widget":55,"elementor-controls/wysiwyg":56,"elementor-editor-utils/ajax":98,"elementor-editor-utils/conditions":99,"elementor-editor-utils/debug":101,"elementor-editor-utils/heartbeat":102,"elementor-editor-utils/helpers":103,"elementor-editor-utils/images-manager":104,"elementor-editor-utils/presets-factory":107,"elementor-editor-utils/schemes":108,"elementor-editor/components/saver/manager":2,"elementor-editor/components/settings/settings":7,"elementor-elements/collections/elements":58,"elementor-elements/models/element":61,"elementor-elements/views/widget":72,"elementor-layouts/panel/panel":97,"elementor-panel/pages/elements/views/elements":84,"elementor-panel/pages/menu/menu":87,"elementor-templates/manager":10,"elementor-utils/hooks":118,"elementor-utils/hot-keys":119,"elementor-utils/module":120,"elementor-views/preview":117,"modules/history/assets/js/module":129}],58:[function(require,module,exports){
+},{"./components/saver/behaviors/footer-saver":1,"elementor-controls/base":31,"elementor-controls/base-data":28,"elementor-controls/base-multiple":29,"elementor-controls/box-shadow":32,"elementor-controls/button":33,"elementor-controls/choose":34,"elementor-controls/code":35,"elementor-controls/color":36,"elementor-controls/date-time":37,"elementor-controls/dimensions":38,"elementor-controls/font":39,"elementor-controls/gallery":40,"elementor-controls/icon":41,"elementor-controls/image-dimensions":42,"elementor-controls/media":43,"elementor-controls/number":44,"elementor-controls/order":45,"elementor-controls/popover-toggle":46,"elementor-controls/repeater":48,"elementor-controls/repeater-row":47,"elementor-controls/section":49,"elementor-controls/select2":50,"elementor-controls/slider":51,"elementor-controls/structure":52,"elementor-controls/switcher":53,"elementor-controls/tab":54,"elementor-controls/wp_widget":55,"elementor-controls/wysiwyg":56,"elementor-editor-utils/ajax":98,"elementor-editor-utils/conditions":99,"elementor-editor-utils/debug":101,"elementor-editor-utils/heartbeat":102,"elementor-editor-utils/helpers":103,"elementor-editor-utils/images-manager":104,"elementor-editor-utils/presets-factory":107,"elementor-editor-utils/schemes":108,"elementor-editor/components/saver/manager":2,"elementor-editor/components/settings/settings":7,"elementor-elements/collections/elements":58,"elementor-elements/models/base-settings":59,"elementor-elements/models/element":61,"elementor-elements/views/widget":72,"elementor-layouts/panel/panel":97,"elementor-panel/pages/elements/views/elements":84,"elementor-panel/pages/menu/menu":87,"elementor-templates/manager":10,"elementor-utils/hooks":118,"elementor-utils/hot-keys":119,"elementor-utils/module":120,"elementor-views/controls-stack":116,"elementor-views/preview":117,"modules/history/assets/js/module":129}],58:[function(require,module,exports){
 var ElementModel = require( 'elementor-elements/models/element' );
 
 var ElementsCollection = Backbone.Collection.extend( {
@@ -7325,7 +7369,7 @@ module.exports = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
-		buttonSave: '#elementor-panel-saver-menu-publish, #elementor-panel-saver-menu-publish-changes', // Compatibility for Pro <= 1.9.5
+		buttonSave: '#elementor-panel-saver-menu-publish', // Compatibility for Pro <= 1.9.5
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
@@ -7378,8 +7422,14 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClickSettings: function() {
-		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
-			elementor.getPanelView().setPage( 'page_settings' );
+		var self = this;
+
+		if ( 'document_settings' !== elementor.getPanelView().getCurrentPageName() ) {
+			elementor.getPanelView().setPage( 'document_settings' );
+
+			elementor.getPanelView().getCurrentPageView().once( 'destroy', function() {
+				self.ui.settings.removeClass( 'elementor-open' );
+			} );
 		}
 	},
 
@@ -12587,7 +12637,8 @@ RevisionsManager = function() {
 			onConfirm: function() {
 				self.getRevisionDataAsync( elementor.config.newer_autosave, {
 					success: function( data ) {
-						self.setEditorData( data );
+						self.setEditorData( data.elements );
+						elementor.settings.document.model.set( data.settings );
 					}
 				} );
 			}
@@ -12596,7 +12647,7 @@ RevisionsManager = function() {
 
 	var attachEvents = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
-		elementor.on( 'preview:loaded', checkNewAutoSave );
+		// elementor.on( 'preview:loaded', checkNewAutoSave );
 	};
 
 	var addHotKeys = function() {
@@ -12732,7 +12783,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.jqueryXhr = elementor.history.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: function( data ) {
-				elementor.history.revisions.setEditorData( data );
+				elementor.history.revisions.setEditorData( data.elements );
+				elementor.settings.document.model.set( data.settings );
 
 				self.setRevisionsButtonsActive( true );
 

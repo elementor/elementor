@@ -11,7 +11,7 @@ class Manager {
 	 */
 	private static $settings_managers = [];
 
-	private static $builtin_settings_managers_names = [ 'page', 'general' ];
+	private static $builtin_settings_managers_names = [ 'document', 'general' ];
 
 	public static function add_settings_manager( Base\Manager $manager ) {
 		self::$settings_managers[ $manager->get_name() ] = $manager;

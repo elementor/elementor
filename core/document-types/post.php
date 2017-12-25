@@ -1,76 +1,53 @@
 <?php
-namespace Elementor\Core\Settings\Page;
+namespace Elementor\Core\DocumentTypes;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Settings\Base\Model as BaseModel;
+use Elementor\Core\Base\Document;
 use Elementor\Group_Control_Background;
 use Elementor\Settings;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit; // Exit if accessed directly
 }
 
-class Model extends BaseModel {
-
-	/**
-	 * @var \WP_Post
-	 */
-	private $post;
-
-	public function __construct( array $data = [] ) {
-		$this->post = get_post( $data['id'] );
-
-		if ( ! $this->post ) {
-			$this->post = new \WP_Post( (object) [] );
-		}
-
-		parent::__construct( $data );
-	}
+class Post extends Document {
 
 	public function get_name() {
-		return 'page-settings';
-	}
-
-	public function get_unique_name() {
-		return $this->get_name() . '-' . $this->post->ID;
+		return 'post';
 	}
 
 	public function get_css_wrapper_selector() {
 		return 'body.elementor-page-' . $this->get_id();
 	}
 
-	public function get_panel_page_settings() {
-		return [
-			'title' => __( 'Page Settings', 'elementor' ),
-		];
-	}
-
-	public function on_export( $element_data ) {
-		if ( ! empty( $element_data['settings']['template'] ) && Manager::TEMPLATE_CANVAS !== $element_data['settings']['template'] ) {
-			unset( $element_data['settings']['template'] );
+	public function save( $data ) {
+		if ( ! parent::save( $data ) ) {
+			return false;
 		}
 
-		return $element_data;
+		if ( Utils::is_cpt_custom_templates_supported() ) {
+			$template = 'default';
+
+			if ( isset( $data['settings']['template'] ) ) {
+				$template = $data['settings']['template'];
+			}
+
+			update_metadata( 'post', $this->post->ID, '_wp_page_template', $template );
+		}
+
+		return true;
 	}
 
 	protected function _register_controls() {
+		parent::_register_controls();
+
 		$this->start_controls_section(
 			'section_page_settings',
 			[
 				'label' => __( 'Page Settings', 'elementor' ),
 				'tab' => Controls_Manager::TAB_SETTINGS,
-			]
-		);
-
-		$this->add_control(
-			'post_title',
-			[
-				'label' => __( 'Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => $this->post->post_title,
-				'label_block' => true,
-				'separator' => 'none',
 			]
 		);
 
@@ -108,14 +85,14 @@ class Model extends BaseModel {
 			);
 		}
 
-		if ( Manager::is_cpt_custom_templates_supported() ) {
+		if ( Utils::is_cpt_custom_templates_supported() ) {
 			require_once ABSPATH . '/wp-admin/includes/template.php';
 
 			$options = [
 				'default' => __( 'Default', 'elementor' ),
 			];
 
-			$options += array_flip( get_page_templates( null, $this->post->post_type ) );
+			$options += array_flip( get_page_templates( null, $this->get_post_type_for_settings() ) );
 
 			$this->add_control(
 				'template',
@@ -124,39 +101,9 @@ class Model extends BaseModel {
 					'type' => Controls_Manager::SELECT,
 					'default' => 'default',
 					'options' => $options,
-					'export' => function( $value ) {
-						return Manager::TEMPLATE_CANVAS === $value;
-					},
 				]
 			);
 		}
-
-		$post_type_object = get_post_type_object( $this->post->post_type );
-
-		$can_publish = current_user_can( $post_type_object->cap->publish_posts );
-
-		if ( 'publish' === $this->post->post_status || 'private' === $this->post->post_status || $can_publish ) {
-			$this->add_control(
-				'post_status',
-				[
-					'label' => __( 'Status', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => $this->post->post_status,
-					'options' => get_post_statuses(),
-				]
-			);
-		}
-
-		$this->add_control(
-			'clear_page',
-			[
-				'type' => Controls_Manager::BUTTON,
-				'label' => __( 'Delete All Content', 'elementor' ),
-				'text' => __( 'Delete', 'elementor' ),
-				'separator' => 'before',
-				'event' => 'elementor:clearPage',
-			]
-		);
 
 		$this->end_controls_section();
 
@@ -195,5 +142,15 @@ class Model extends BaseModel {
 		);
 
 		$this->end_controls_section();
+	}
+
+	public function __construct( array $data = [] ) {
+		$template = get_post_meta( $data['post_id'], '_wp_page_template', true );
+		if ( empty( $template ) ) {
+			$template = 'default';
+		}
+		$data['settings']['template'] = $template;
+
+		parent::__construct( $data );
 	}
 }

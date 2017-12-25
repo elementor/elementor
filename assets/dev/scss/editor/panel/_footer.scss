@@ -26,7 +26,7 @@
 	color: $editor-light;
 	transition: $transition-hover;
 
-	#elementor-panel-saver-button-save {
+	#elementor-panel-saver-button-update {
 		@include border-end(1px solid #2d8739);
 		border-radius: 3px 0 0 3px;
 
@@ -136,10 +136,11 @@
 }
 
 #elementor-panel-saver-save {
-	width: 65px;
+	width: 85px;
+	@include padding-end( 10px );
 
 	.elementor-save-active {
-		@extend .elementor-button-success;
+
 	}
 }
 
@@ -150,33 +151,18 @@
 		}
 	}
 
-	&save, &publish {
+	&update {
+		@extend .elementor-button-success;
 		font-size: 11px;
 		text-transform: uppercase;
 		height: 26px;
-	}
-
-	&save {
 		width: 100%;
-		background-color: $editor-darker;
-		color: $editor-light;
-	},
-
-	&publish {
-		width: 30px;
 	}
 }
 
 #elementor-panel-saver-menu-publish {
 	.elementor-icon, .elementor-title {
 		color: $editor-success;
-	}
-}
-#elementor-panel-saver-menu-publish-changes {
-	&.elementor-save-active {
-		.elementor-icon, .elementor-title {
-			color: $editor-success;
-		}
 	}
 }
 

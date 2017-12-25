@@ -201,7 +201,7 @@ abstract class Controls_Stack {
 	 * will be returened.
 	 *
 	 * @since 1.4.0
-	 * @access private
+	 * @access protected
 	 * @static
 	 *
 	 * @param array  $haystack An array of items.
@@ -209,7 +209,7 @@ abstract class Controls_Stack {
 	 *
 	 * @return mixed The whole haystack or the needle from the haystack when requested.
 	 */
-	private static function _get_items( array $haystack, $needle = null ) {
+	protected static function _get_items( array $haystack, $needle = null ) {
 		if ( $needle ) {
 			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
 		}

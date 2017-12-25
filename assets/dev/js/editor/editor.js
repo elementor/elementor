@@ -38,7 +38,10 @@ App = Marionette.Application.extend( {
 		element: {
 			Model: require( 'elementor-elements/models/element' )
 		},
+		ControlsStack: require( 'elementor-views/controls-stack' ),
 		Module: require( 'elementor-utils/module' ),
+		RepeaterRowView: require( 'elementor-controls/repeater-row' ),
+		SettingsModel: require( 'elementor-elements/models/base-settings' ),
 		WidgetView: require( 'elementor-elements/views/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
@@ -177,9 +180,14 @@ App = Marionette.Application.extend( {
 		this.settings = new Settings();
 
 		/**
-		 * @deprecated - use `this.settings.page` instead
+		 * @deprecated - use `this.settings.document` instead
 		 */
-		this.pageSettings = this.settings.page;
+		this.pageSettings = this.settings.document;
+
+		/**
+		 * @deprecated - use `this.settings.document` instead
+		 */
+		this.settings.page = this.settings.document;
 
 		this.templates.init();
 

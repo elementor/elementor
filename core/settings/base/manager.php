@@ -41,7 +41,7 @@ abstract class Manager {
 	 *
 	 * @return Model
 	 */
-	final public function get_model( $id = 0 ) {
+	public function get_model( $id = 0 ) {
 		if ( ! isset( $this->models_cache[ $id ] ) ) {
 			$this->create_model( $id );
 		}

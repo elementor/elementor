@@ -64,83 +64,14 @@ class DB {
 	 * @param string $status  Optional. Post status. Default is `publish`.
 	 */
 	public function save_editor( $post_id, $data, $status = self::STATUS_PUBLISH ) {
-		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		$this->switch_to_post( $post_id );
+		_deprecated_function( __METHOD__, '1.9.0', '$document->save()' );
 
-		$editor_data = $this->_get_editor_data( $data );
-
-		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
-		$json_value = wp_slash( wp_json_encode( $editor_data ) );
-
-		$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
-
-		if ( $old_autosave ) {
-			wp_delete_post_revision( $old_autosave->ID );
-		}
-
-		$save_original = true;
-
-		// If the post is a draft - save the `autosave` to the original draft.
-		// Allow a revision only if the original post is already published.
-		if ( self::STATUS_AUTOSAVE === $status && in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
-			$save_original = false;
-		}
-
-		if ( $save_original ) {
-			// Don't use `update_post_meta` that can't handle `revision` post type
-			$is_meta_updated = update_metadata( 'post', $post_id, '_elementor_data', $json_value );
-
-			/**
-			 * Fires before Elementor saves data to the database.
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param string   $status          Post status.
-			 * @param int|bool $is_meta_updated Meta ID if the key didn't exist, true on successful update, false on failure.
-			 */
-			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
-
-			$this->save_plain_text( $post_id );
-		} else {
-			/**
-			 * Fires before Elementor saves data to the database.
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param string   $status          Post status.
-			 * @param int|bool $is_meta_updated Meta ID if the key didn't exist, true on successful update, false on failure.
-			 */
-			do_action( 'elementor/db/before_save', $status, true );
-
-			$autosave_id = wp_create_post_autosave( [
-				'post_ID' => $post_id,
-				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
-				'post_modified' => current_time( 'mysql' ),
-			] );
-
-			if ( $autosave_id ) {
-				update_metadata( 'post', $autosave_id, '_elementor_data', $json_value );
-			}
-		}
-
-		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
-
-		// Restore global post
-		$this->restore_current_post();
-
-		// Remove Post CSS
-		delete_post_meta( $post_id, Post_CSS_File::META_KEY );
-
-		/**
-		 * Fires after Elementor saves data to the database.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param int   $post_id     The ID of the post.
-		 * @param array $editor_data Sanitize posted data.
-		 */
-		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
+		$document = Plugin::$instance->documents->get( $post_id );
+		$document->save( [
+			'elements' => $data,
+		] );
 	}
+
 
 	/**
 	 * Get builder.
@@ -179,17 +110,7 @@ class DB {
 	 * @return array Decoded JSON data from post meta.
 	 */
 	protected function _get_json_meta( $post_id, $key ) {
-		$meta = get_post_meta( $post_id, $key, true );
-
-		if ( is_string( $meta ) && ! empty( $meta ) ) {
-			$meta = json_decode( $meta, true );
-		}
-
-		if ( empty( $meta ) ) {
-			$meta = [];
-		}
-
-		return $meta;
+		return Plugin::$instance->documents->get( $post_id )->get_json_meta( $key );
 	}
 
 	/**
@@ -198,7 +119,7 @@ class DB {
 	 * Retrieve post data that was saved in the database. Raw data before it
 	 * was parsed by elementor.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @access public
 	 *
 	 * @param int    $post_id Post ID.
@@ -229,13 +150,13 @@ class DB {
 	 * is parsed into Text Editor Widget that contains the original data.
 	 *
 	 * @since 1.0.0
-	 * @access protected
+	 * @access public
 	 *
 	 * @param int $post_id Post ID.
 	 *
 	 * @return array Content in Elementor format.
-	 */
-	protected function _get_new_editor_from_wp_editor( $post_id ) {
+	*/
+	public function _get_new_editor_from_wp_editor( $post_id ) {
 		$post = get_post( $post_id );
 
 		if ( empty( $post ) || empty( $post->post_content ) ) {
@@ -300,7 +221,7 @@ class DB {
 	 * @access private
 	 *
 	 * @param array $element_data Element data.
-	 */
+	*/
 	private function _render_element_plain_content( $element_data ) {
 		if ( 'widget' === $element_data['elType'] ) {
 			/** @var Widget_Base $widget */
@@ -328,7 +249,7 @@ class DB {
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
-	 */
+	*/
 	public function save_plain_text( $post_id ) {
 		ob_start();
 
@@ -366,7 +287,7 @@ class DB {
 	 * Accepts raw Elementor data and return parsed data.
 	 *
 	 * @since 1.0.0
-	 * @access private
+	 * @access public
 	 *
 	 * @param array $data              Raw Elementor post data from the database.
 	 * @param bool  $with_html_content Optional. Whether to return content with
@@ -374,7 +295,7 @@ class DB {
 	 *
 	 * @return array Parsed data.
 	 */
-	private function _get_editor_data( $data, $with_html_content = false ) {
+	public function _get_editor_data( $data, $with_html_content = false ) {
 		$editor_data = [];
 
 		foreach ( $data as $element_data ) {
@@ -403,7 +324,7 @@ class DB {
 	 * @param callable $callback       A function to iterate data by.
 	 *
 	 * @return mixed Iterated data.
-	 */
+	*/
 	public function iterate_data( $data_container, $callback ) {
 		if ( isset( $data_container['elType'] ) ) {
 			if ( ! empty( $data_container['elements'] ) ) {
@@ -436,7 +357,7 @@ class DB {
 	 *
 	 * @param int $from_post_id Original post ID.
 	 * @param int $to_post_id   Target post ID.
-	 */
+	*/
 	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
 		$from_post_meta = get_post_meta( $from_post_id );
 
@@ -469,7 +390,7 @@ class DB {
 	 * @param int $post_id Post ID.
 	 *
 	 * @return bool Whether the post was built with Elementor.
-	 */
+	*/
 	public function is_built_with_elementor( $post_id ) {
 		return ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
 	}
@@ -499,7 +420,7 @@ class DB {
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
-	 */
+	*/
 	public function switch_to_post( $post_id ) {
 		$post_id = absint( $post_id );
 		// If is already switched, or is the same post, return.
@@ -515,6 +436,8 @@ class DB {
 
 		$GLOBALS['post'] = get_post( $post_id );
 		setup_postdata( $GLOBALS['post'] );
+
+		Plugin::$instance->documents->set_current( $post_id );
 	}
 
 	/**
@@ -524,7 +447,7 @@ class DB {
 	 *
 	 * @since 1.5.0
 	 * @access public
-	 */
+	*/
 	public function restore_current_post() {
 		$data = array_pop( $this->switched_post_data );
 
@@ -541,5 +464,6 @@ class DB {
 
 		$GLOBALS['post'] = get_post( $data['original_id'] );
 		setup_postdata( $GLOBALS['post'] );
+		Plugin::$instance->documents->set_current( $data['original_id'] );
 	}
 }

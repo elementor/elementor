@@ -45,9 +45,23 @@ module.exports = Module.extend( {
 		this.saveEditor( options );
 	},
 
+	discard: function() {
+		var self = this;
+		elementor.ajax.send( 'discard_changes', {
+			data: {
+				post_id: elementor.config.post_id
+			},
+
+			success: function() {
+				self.setFlagEditorChange( false );
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
+	},
+
 	update: function( options ) {
 		options = _.extend( {
-			status: elementor.settings.page.model.get( 'post_status' )
+			status: elementor.settings.document.model.get( 'post_status' )
 		}, options );
 
 		this.saveEditor( options );
@@ -94,7 +108,8 @@ module.exports = Module.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } );
+			elements = elementor.elements.toJSON( { removeDefault: true } ),
+			settings = elementor.settings.document.model.toJSON( { removeDefault: true } );
 
 		self.trigger( 'before:save' )
 			.trigger( 'before:save:' + options.status );
@@ -106,7 +121,8 @@ module.exports = Module.extend( {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
-				data: JSON.stringify( newData )
+				elements: JSON.stringify( elements ),
+				settings: JSON.stringify( settings )
 			},
 
 			success: function( data ) {
@@ -117,10 +133,14 @@ module.exports = Module.extend( {
 				}
 
 				if ( 'autosave' !== options.status ) {
-					elementor.settings.page.model.set( 'post_status', options.status );
+					elementor.settings.document.model.set( 'post_status', options.status );
 				}
 
-				elementor.config.data = newData;
+				if ( data.config ) {
+					jQuery.extend( true, elementor.config, data.config );
+				}
+
+				elementor.config.data = elements;
 
 				elementor.channels.editor.trigger( 'saved', data );
 

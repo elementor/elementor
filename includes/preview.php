@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -27,6 +29,18 @@ class Preview {
 	private $post_id;
 
 	/**
+	 * Document.
+	 *
+	 * Holds the current Document being edited.
+	 *
+	 * @since 1.9.0
+	 * @access private
+	 *
+	 * @var Document
+	 */
+	private $document;
+
+	/**
 	 * Init.
 	 *
 	 * Initialize Elementor preview mode.
@@ -42,6 +56,7 @@ class Preview {
 		}
 
 		$this->post_id = get_the_ID();
+		$this->document = Plugin::$instance->documents->get( $this->post_id );
 
 		// Compatibility with Yoast SEO plugin when 'Removes unneeded query variables from the URL' enabled.
 		// TODO: Move this code to `includes/compatibility.php`.
@@ -84,6 +99,20 @@ class Preview {
 	 */
 	public function get_post_id() {
 		return $this->post_id;
+	}
+
+	/**
+	 * Retrieve Document.
+	 *
+	 * Get the current Document.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @return Document.
+	 */
+	public function get_document() {
+		return $this->document;
 	}
 
 	/**
