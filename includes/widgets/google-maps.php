@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Google Maps Widget.
+ * Elementor google maps widget.
  *
  * Elementor widget that displays an embeded google map.
  *

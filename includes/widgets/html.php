@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * HTML Widget.
+ * Elementor HTML widget.
  *
  * Elementor widget that insert a custom HTML code into the page.
  *

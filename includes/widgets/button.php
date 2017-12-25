@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Button Widget.
+ * Elementor button widget.
  *
  * Elementor widget that displays a button with the ability to controll every
  * aspect of the button design.

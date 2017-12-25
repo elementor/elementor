@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Tabs Widget.
+ * Elementor tabs widget.
  *
  * Elementor widget that displays vertical or horizontal tabs with different
  * pieces of content.

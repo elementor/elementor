@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Video Widget.
+ * Elementor video widget.
  *
  * Elementor widget that displays a video player.
  *

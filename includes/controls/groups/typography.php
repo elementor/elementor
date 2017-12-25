@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Typography control.
+ * Elementor typography control.
  *
  * A base control for creating typography control. Displays input fields to define
  * the content typography including font size, font family, font weight, text

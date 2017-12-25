@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Audio Widget.
+ * Elementor audio widget.
  *
  * Elementor widget that displays an audio player.
  *

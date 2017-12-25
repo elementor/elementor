@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Dimension control.
+ * Elementor dimension control.
  *
  * A base control for creating dimension control. Displays input fields for top,
  * right, bottom, left and the option to link them together.

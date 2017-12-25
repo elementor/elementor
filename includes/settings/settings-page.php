@@ -265,9 +265,11 @@ abstract class Settings_Page {
 			$page_id = static::PAGE_ID;
 
 			/**
+			 * After create settings.
+			 *
 			 * Fires after the settings are created in Elementor admin page.
 			 *
-			 * The dynamic portion of the hook name, `$page_id`, refers to the ID of the settings page from `static::PAGE_ID`.
+			 * The dynamic portion of the hook name, `$page_id`, refers to the current page ID.
 			 *
 			 * @since 1.0.0
 			 *

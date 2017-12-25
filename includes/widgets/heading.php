@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Heading Widget.
+ * Elementor heading widget.
  *
  * Elementor widget that displays an eye-catching headlines.
  *

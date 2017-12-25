@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Color control.
+ * Elementor color control.
  *
  * A base control for creating color control. Displays a color picker with an
  * alpha slider. Includes a customizable color palette that can be preset by the

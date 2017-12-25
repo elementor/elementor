@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Choose control.
+ * Elementor choose control.
  *
  * A base control for creating choose control. Displays radio button represented
  * as a stylized component with an icon for each option.
