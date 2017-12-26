@@ -45,6 +45,20 @@ module.exports = Module.extend( {
 		this.saveEditor( options );
 	},
 
+	discard: function() {
+		var self = this;
+		elementor.ajax.send( 'discard_changes', {
+			data: {
+				post_id: elementor.config.post_id
+			},
+
+			success: function() {
+				self.setFlagEditorChange( false );
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
+	},
+
 	update: function( options ) {
 		options = _.extend( {
 			status: elementor.settings.page.model.get( 'post_status' )
@@ -96,8 +110,8 @@ module.exports = Module.extend( {
 		var self = this,
 			newData = elementor.elements.toJSON( { removeDefault: true } );
 
-		self.trigger( 'before:save' )
-			.trigger( 'before:save:' + options.status );
+		self.trigger( 'before:save', options )
+			.trigger( 'before:save:' + options.status, options );
 
 		self.isSaving = true;
 		self.isChangedDuringSave = false;

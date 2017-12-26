@@ -4,25 +4,21 @@ module.exports = Marionette.Behavior.extend( {
 
 	ui: function() {
 		return {
-			buttonSave: '#elementor-panel-saver-button-save',
-			buttonSaveLabel: '#elementor-panel-saver-save-label',
-			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonPreview: '#elementor-panel-saver-button-preview',
-			menuUpdate: '#elementor-panel-saver-menu-update',
-			menuPublish: '#elementor-panel-saver-menu-publish',
-			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes',
-			menuSubmitForReview: '#elementor-panel-saver-menu-submit-for-review'
+			buttonPublish: '#elementor-panel-saver-button-publish',
+			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
+			menuDiscard: '#elementor-panel-saver-menu-discard',
+			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
+			lastEdited: '.elementor-last-edited'
 		};
 	},
 
 	events: function() {
 		return {
-			'click @ui.buttonSave': 'onClickButtonSave',
 			'click @ui.buttonPreview': 'onClickButtonPreview',
-			'click @ui.menuUpdate': 'onClickMenuUpdate',
-			'click @ui.menuPublish': 'onClickMenuPublish',
-			'click @ui.menuPublishChanges': 'onClickMenuPublish',
-			'click @ui.menuSubmitForReview': 'onClickMenuSubmitForReview'
+			'click @ui.buttonPublish': 'onClickButtonPublish',
+			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
+			'click @ui.menuDiscard': 'onClickMenuDiscard'
 		};
 	},
 
@@ -30,10 +26,7 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver
 			.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )
-			.on( 'after:save:publish', this.onAfterPublished.bind( this ) )
 			.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
-
-		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
 
 		elementor.settings.page.model.on( 'change', this.onPostStatusChange.bind( this ) );
 	},
@@ -58,24 +51,31 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onBeforeSave: function() {
+	onBeforeSave: function( options ) {
 		NProgress.start();
-		this.ui.buttonSave.addClass( 'elementor-button-state' );
+		if ( 'autosave' === options.status ) {
+			this.ui.lastEdited.addClass( 'elementor-button-state' );
+		} else {
+			this.ui.buttonPublish.addClass( 'elementor-button-state' );
+		}
 	},
 
-	onAfterSave: function() {
+	onAfterSave: function( data ) {
 		NProgress.done();
-		this.ui.buttonSave.removeClass( 'elementor-button-state' );
+		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
 		this.refreshWpPreview();
+		this.setLastEdited( data );
+	},
+
+	setLastEdited: function() {
+		this.ui.lastEdited
+			.removeClass( 'elementor-button-state' )
+			.html( elementor.config.last_edited );
 	},
 
 	onAfterSaveError: function() {
 		NProgress.done();
 		this.ui.buttonSave.removeClass( 'elementor-button-state' );
-	},
-
-	onClickButtonSave: function() {
-		elementor.saver.doAutoSave();
 	},
 
 	onClickButtonPreview: function() {
@@ -92,64 +92,67 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onClickMenuUpdate: function() {
-		elementor.saver.update();
-	},
-
-	onClickMenuPublish: function() {
-		elementor.saver.publish();
-	},
-
-	onClickMenuSubmitForReview: function() {
-		elementor.saver.savePending();
-	},
-
-	onAfterPublished: function() {
-		this.ui.menuPublishChanges.find( '.elementor-title' ).html( elementor.translate( 'published' ) );
-	},
-
-	activateSaveButton: function( hasChanges ) {
-		if ( hasChanges ) {
-			this.ui.buttonSave.addClass( 'elementor-save-active' );
-			this.ui.buttonSaveLabel.html( elementor.translate( 'save' ) );
-			this.ui.menuPublishChanges.find( '.elementor-title' )
-				.addClass( 'elementor-save-active' )
-				.html( elementor.translate( 'publish_changes' ) );
-		} else {
-			this.ui.buttonSave.removeClass( 'elementor-save-active' );
-			this.ui.buttonSaveLabel.html( elementor.translate( 'saved' ) );
-			this.ui.menuPublishChanges.find( '.elementor-title' )
-				.removeClass( 'elementor-save-active' );
-		}
-	},
-
-	setMenuItems: function( postStatus ) {
-		this.ui.menuPublish.hide();
-		this.ui.menuPublishChanges.hide();
-		this.ui.menuUpdate.hide();
-		this.ui.menuSubmitForReview.hide();
-
+	onClickButtonPublish: function() {
+		var postStatus = elementor.settings.page.model.get( 'post_status' );
 		switch ( postStatus ) {
 			case 'publish':
-				this.ui.menuPublishChanges.show();
-				break;
 			case 'private':
-				this.ui.menuUpdate.show();
+				elementor.saver.update();
 				break;
 			case 'draft':
 				if ( elementor.config.current_user_can_publish ) {
-					this.ui.menuPublish.show();
+					elementor.saver.publish();
+				} else {
+					elementor.saver.savePending();
 				}
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
 				if ( elementor.config.current_user_can_publish ) {
-					this.ui.menuPublish.show();
+					elementor.saver.publish();
 				} else {
-					this.ui.menuSubmitForReview.show();
+					elementor.saver.update();
 				}
 				break;
 		}
+	},
+
+	onClickMenuSaveDraft: function() {
+		elementor.saver.saveAutoSave( {
+			onSuccess: function() {
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
+	},
+
+	onClickMenuDiscard: function() {
+		elementor.saver.discard();
+	},
+
+	setMenuItems: function( postStatus ) {
+		var publishLabel = 'publish';
+		this.ui.menuDiscard.hide();
+
+		switch ( postStatus ) {
+			case 'publish':
+			case 'private':
+				this.ui.menuDiscard.show();
+				publishLabel = 'update';
+				break;
+			case 'draft':
+				if ( ! elementor.config.current_user_can_publish ) {
+					publishLabel = 'submit';
+				}
+				break;
+			case 'pending': // User cannot change post status
+			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
+				if ( ! elementor.config.current_user_can_publish ) {
+					publishLabel = 'update';
+				}
+				break;
+		}
+
+		this.ui.buttonPublishLabel.html( elementor.translate( publishLabel ) );
 	},
 
 	addTooltip: function() {
@@ -220,6 +223,20 @@ module.exports = Module.extend( {
 		this.saveEditor( options );
 	},
 
+	discard: function() {
+		var self = this;
+		elementor.ajax.send( 'discard_changes', {
+			data: {
+				post_id: elementor.config.post_id
+			},
+
+			success: function() {
+				self.setFlagEditorChange( false );
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
+	},
+
 	update: function( options ) {
 		options = _.extend( {
 			status: elementor.settings.page.model.get( 'post_status' )
@@ -271,7 +288,7 @@ module.exports = Module.extend( {
 		var self = this,
 			newData = elementor.elements.toJSON( { removeDefault: true } );
 
-		self.trigger( 'before:save' )
+		self.trigger( 'before:save', options )
 			.trigger( 'before:save:' + options.status );
 
 		self.isSaving = true;
