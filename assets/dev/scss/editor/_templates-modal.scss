@@ -562,7 +562,7 @@ $library_screen_breakpoint: $screen-lg-max;
 
 	.elementor-template-library-order-label {
 		line-height: 1;
-		font-size: 11px;
+		font-size: 10px;
 		font-weight: 500;
 
 		&:not(:hover) {
@@ -603,7 +603,7 @@ $library_screen_breakpoint: $screen-lg-max;
 	}
 
 	.elementor-template-library-template-name, .elementor-template-library-template-meta {
-		@include padding-end(45px);
+		@include padding-end(20px);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
