@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Common Widget.
+ * Elementor common widget.
  *
  * Elementor base widget that givs you all the advanced options of the basic
  * widget.

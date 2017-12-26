@@ -8,9 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Editor.
+ * Elementor editor class.
  *
- * Elementor editor handler class.
+ * Elementor editor handler class is responsible for initializing Elementor
+ * editor and register all the actions needed to display the editor.
  *
  * @since 1.0.0
  */
@@ -65,7 +66,10 @@ class Editor {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor editor. Fired by `admin_action_elementor` action.
+	 * Initialize Elementor editor. Registers all needed actions to run Elementor,
+	 * removes conflicting actions etc.
+	 *
+	 * Fired by `admin_action_elementor` action.
 	 *
 	 * @since 1.7.0
 	 * @access public
@@ -160,7 +164,9 @@ class Editor {
 	 * Redirect to new URL.
 	 *
 	 * Used as a fallback function for the old URL structure of Elementor
-	 * page edit URL. Fired by `template_redirect` action.
+	 * page edit URL.
+	 *
+	 * Fired by `template_redirect` action.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -250,7 +256,7 @@ class Editor {
 	 *
 	 * @param int $post_id The ID of the post being edited.
 	 *
-	 * @return false|\WP_User User information or false if the post is not locked.
+	 * @return \WP_User|false User information or false if the post is not locked.
 	 */
 	public function get_locked_user( $post_id ) {
 		if ( ! function_exists( 'wp_check_post_lock' ) ) {
@@ -267,6 +273,8 @@ class Editor {
 
 	/**
 	 * Print panel HTML.
+	 *
+	 * Include the wrapper template of the editor.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -381,8 +389,8 @@ class Editor {
 		);
 
 		wp_register_script(
-			'jquery-simple-dtpicker',
-			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-dtpicker/jquery.simple-dtpicker' . $suffix . '.js',
+			'flatpickr',
+			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.js',
 			[
 				'jquery',
 			],
@@ -441,7 +449,7 @@ class Editor {
 				'imagesloaded',
 				'heartbeat',
 				'jquery-select2',
-				'jquery-simple-dtpicker',
+				'flatpickr',
 				'elementor-dialog',
 				'ace',
 				'ace-language-tools',
@@ -452,6 +460,8 @@ class Editor {
 		);
 
 		/**
+		 * Before editor enqueue scripts.
+		 *
 		 * Fires before Elementor editor scripts are enqueued.
 		 *
 		 * @since 1.0.0
@@ -621,6 +631,8 @@ class Editor {
 		$localized_settings = [];
 
 		/**
+		 * Localize editor settings.
+		 *
 		 * Filters the editor localized settings.
 		 *
 		 * @since 1.0.0
@@ -651,6 +663,8 @@ class Editor {
 		$plugin->controls_manager->enqueue_control_scripts();
 
 		/**
+		 * After editor enqueue scripts.
+		 *
 		 * Fires after Elementor editor scripts are enqueued.
 		 *
 		 * @since 1.0.0
@@ -668,6 +682,8 @@ class Editor {
 	 */
 	public function enqueue_styles() {
 		/**
+		 * Before editor enqueue styles.
+		 *
 		 * Fires before Elementor editor styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -707,8 +723,8 @@ class Editor {
 		);
 
 		wp_register_style(
-			'jquery-simple-dtpicker',
-			ELEMENTOR_ASSETS_URL . 'lib/jquery-simple-dtpicker/jquery.simple-dtpicker' . $suffix . '.css',
+			'flatpickr',
+			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.css',
 			[],
 			'1.12.0'
 		);
@@ -722,7 +738,7 @@ class Editor {
 				'elementor-icons',
 				'wp-auth-check',
 				'google-font-roboto',
-				'jquery-simple-dtpicker',
+				'flatpickr',
 			],
 			ELEMENTOR_VERSION
 		);
@@ -730,6 +746,8 @@ class Editor {
 		wp_enqueue_style( 'elementor-editor' );
 
 		/**
+		 * After editor enqueue styles.
+		 *
 		 * Fires after Elementor editor styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -792,6 +810,8 @@ class Editor {
 	 */
 	public function editor_head_trigger() {
 		/**
+		 * Elementor editor head.
+		 *
 		 * Fires on Elementor editor head tag.
 		 *
 		 * Used to prints scripts or any other data in the head tag.
@@ -830,7 +850,9 @@ class Editor {
 	 * WP footer.
 	 *
 	 * Prints Elementor editor with all the editor templates, and render controls,
-	 * widgets and content elements. Fired by `wp_footer` action.
+	 * widgets and content elements.
+	 *
+	 * Fired by `wp_footer` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -851,6 +873,8 @@ class Editor {
 		}
 
 		/**
+		 * Elementor editor footer.
+		 *
 		 * Fires on Elementor editor before closing the body tag.
 		 *
 		 * Used to prints scripts or any other HTML before closing the body tag.
@@ -945,7 +969,10 @@ class Editor {
 	}
 
 	/**
-	 * Verify request nonce and send a JSON error if not.
+	 * Verify ajax nonce.
+	 *
+	 * Verify request nonce and send a JSON request, if not verified returns an
+	 * error.
 	 *
 	 * @access public
 	 */

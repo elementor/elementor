@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Raw HTML control.
+ * Elementor raw HTML control.
  *
  * A base control for creating raw HTML control. Displays HTML markup between
  * controls in the panel.

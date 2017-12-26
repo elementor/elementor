@@ -8,9 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Frontend.
+ * Elementor frontend class.
  *
- * Elementor frontend handler class.
+ * Elementor frontend handler class is responsible for initializing Elementor in
+ * the frontend.
  *
  * @since 1.0.0
  */
@@ -120,7 +121,10 @@ class Frontend {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor front end. Fired by `template_redirect` action.
+	 * Initialize Elementor front end. Hooks the needed actions to run Elementor
+	 * in the front end, including script and style regestration.
+	 *
+	 * Fired by `template_redirect` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -176,7 +180,9 @@ class Frontend {
 	/**
 	 * Body tag classes.
 	 *
-	 * Add new elementor classes to the body tag. Fired by `body_class` filter.
+	 * Add new elementor classes to the body tag.
+	 *
+	 * Fired by `body_class` filter.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -226,13 +232,17 @@ class Frontend {
 	/**
 	 * Registers scripts.
 	 *
-	 * Registers all the frontend scripts. Fired by `wp_enqueue_scripts` action.
+	 * Registers all the frontend scripts.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.2.1
 	 * @access public
 	 */
 	public function register_scripts() {
 		/**
+		 * Before frontend register scripts.
+		 *
 		 * Fires before Elementor frontend scripts are registered.
 		 *
 		 * @since 1.2.1
@@ -314,6 +324,8 @@ class Frontend {
 		);
 
 		/**
+		 * After frontend register scripts.
+		 *
 		 * Fires after Elementor frontend scripts are registered.
 		 *
 		 * @since 1.2.1
@@ -324,13 +336,17 @@ class Frontend {
 	/**
 	 * Registers styles.
 	 *
-	 * Registers all the frontend styles. Fired by `wp_enqueue_scripts` action.
+	 * Registers all the frontend styles.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.2.0
 	 * @access public
 	 */
 	public function register_styles() {
 		/**
+		 * Before frontend register styles.
+		 *
 		 * Fires before Elementor frontend styles are registered.
 		 *
 		 * @since 1.2.0
@@ -370,6 +386,8 @@ class Frontend {
 		);
 
 		/**
+		 * After frontend register styles.
+		 *
 		 * Fires after Elementor frontend styles are registered.
 		 *
 		 * @since 1.2.0
@@ -387,6 +405,8 @@ class Frontend {
 	 */
 	public function enqueue_scripts() {
 		/**
+		 * Before frontend enqueue scripts.
+		 *
 		 * Fires before Elementor frontend scripts are enqueued.
 		 *
 		 * @since 1.0.0
@@ -439,6 +459,8 @@ class Frontend {
 		wp_localize_script( 'elementor-frontend', 'elementorFrontendConfig', $elementor_frontend_config );
 
 		/**
+		 * After frontend enqueue scripts.
+		 *
 		 * Fires after Elementor frontend scripts are enqueued.
 		 *
 		 * @since 1.0.0
@@ -449,13 +471,17 @@ class Frontend {
 	/**
 	 * Enqueue styles.
 	 *
-	 * Enqueue all the frontend styles. Fired by `wp_enqueue_scripts` action.
+	 * Enqueue all the frontend styles.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
 	public function enqueue_styles() {
 		/**
+		 * Before frontend enqueue styles.
+		 *
 		 * Fires before Elementor frontend styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -475,6 +501,8 @@ class Frontend {
 		}
 
 		/**
+		 * After frontend enqueue styles.
+		 *
 		 * Fires after Elementor frontend styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -485,7 +513,9 @@ class Frontend {
 	/**
 	 * Elementor footer scripts and styles.
 	 *
-	 * Handle styles and scripts that are not printed in the header. Fired by `wp_footer` action.
+	 * Handle styles and scripts that are not printed in the header.
+	 *
+	 * Fired by `wp_footer` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -504,7 +534,9 @@ class Frontend {
 	/**
 	 * Print Google fonts.
 	 *
-	 * Enqueue all the frontend Google fonts. Fired by `wp_head` action.
+	 * Enqueue all the frontend Google fonts.
+	 *
+	 * Fired by `wp_head` action.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -513,6 +545,8 @@ class Frontend {
 		$print_google_fonts = true;
 
 		/**
+		 * Print frontend google fonts.
+		 *
 		 * Filters whether to enqueue Google fonts in the frontend.
 		 *
 		 * @since 1.0.0
@@ -531,7 +565,7 @@ class Frontend {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
 
-			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( '|', $this->google_fonts ) );
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( rawurlencode( '|' ), $this->google_fonts ) );
 
 			$subsets = [
 				'ru_RU' => 'cyrillic',
@@ -681,6 +715,8 @@ class Frontend {
 		$data = Plugin::$instance->db->get_plain_editor( $post_id, $status );
 
 		/**
+		 * Frontend builder content data.
+		 *
 		 * Filters the builder content in the frontend.
 		 *
 		 * @since 1.0.0
@@ -727,6 +763,8 @@ class Frontend {
 		$content = ob_get_clean();
 
 		/**
+		 * Frontend content.
+		 *
 		 * Filters the content in the frontend.
 		 *
 		 * @since 1.0.0
@@ -746,7 +784,9 @@ class Frontend {
 	 * Add Elementor menu to admin bar.
 	 *
 	 * Add new admin bar item only on singular pages, to display a link that
-	 * allows the user to edit with Elementor. Fired by `admin_bar_menu` action.
+	 * allows the user to edit with Elementor.
+	 *
+	 * Fired by `admin_bar_menu` action.
 	 *
 	 * @since 1.0.0
 	 * @access public

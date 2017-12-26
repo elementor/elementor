@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Image Gallery Widget.
+ * Elementor image gallery widget.
  *
  * Elementor widget that displays a set of images in an aligned grid.
  *

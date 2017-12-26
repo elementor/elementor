@@ -668,9 +668,14 @@ select {
     color: #ffffff; }
   .elementor-panel a {
     color: #B7084E;
-    -webkit-transition: none;
-    -o-transition: none;
-    transition: none; }
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px dotted transparent;
+    -webkit-transition: all ease-in-out .3s;
+    -o-transition: all ease-in-out .3s;
+    transition: all ease-in-out .3s; }
+    .elementor-panel a:hover {
+      border-bottom-color: inherit; }
   .elementor-panel h1,
   .elementor-panel h2,
   .elementor-panel h3,
@@ -796,6 +801,8 @@ select {
     font-size: 12px;
     line-height: 1.5;
     text-align: left; }
+    .elementor-panel .elementor-panel-alert a {
+      color: inherit; }
     .elementor-panel .elementor-panel-alert.elementor-panel-alert-info {
       color: #31708f;
       background-color: #d9edf7;
@@ -2073,6 +2080,10 @@ select {
   .elementor-panel .wp-picker-open ~ .wp-picker-holder {
     clear: both;
     margin-bottom: 15px; }
+  .elementor-panel .iris-square-value {
+    -webkit-transition: none;
+    -o-transition: none;
+    transition: none; }
   .elementor-panel .elementor-control .wp-picker-container:not(.wp-picker-active) {
     float: right; }
     .elementor-panel .elementor-control .wp-picker-container:not(.wp-picker-active) .wp-color-result {
@@ -2081,8 +2092,6 @@ select {
     -webkit-transform: translateY(6px);
         -ms-transform: translateY(6px);
             transform: translateY(6px); }
-    [class*="wp-version-4-9"] .elementor-panel .elementor-control .wp-picker-container.wp-picker-active, [class*="wp-version-5"] .elementor-panel .elementor-control .wp-picker-container.wp-picker-active {
-      padding-top: 9px; }
     .elementor-panel .elementor-control .wp-picker-container.wp-picker-active .wp-color-result {
       margin-right: 3px; }
   .elementor-panel #elementor-panel-footer {

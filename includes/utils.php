@@ -6,41 +6,65 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Utils.
+ * Elementor utils class.
  *
- * Elementor utils handler class.
+ * Elementor utils handler class is responsible for different utility methods
+ * used by Elementor.
  *
  * @since 1.0.0
  */
 class Utils {
 
 	/**
-	 * @static
+	 * Is ajax.
+	 *
+	 * Whether the current request is a WordPress ajax request.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return bool True if it's a WordPress ajax request, false otherwise.
+	 */
 	public static function is_ajax() {
+		// TODO: When minimum required version of Elementor will be 4.7, use `wp_doing_ajax()` instead.
 		return defined( 'DOING_AJAX' ) && DOING_AJAX;
 	}
 
 	/**
-	 * @static
+	 * Is script debug.
+	 *
+	 * Whether script debug is ebanled or not.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return bool True if it's a script debug is active, false otherwise.
+	 */
 	public static function is_script_debug() {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 	}
 
 	/**
-	 * @static
+	 * Get edit link.
+	 *
+	 * Retrieve Elementor edit link.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param int $post_id Optional. Post ID. Default is `0`.
+	 *
+	 * @return string Post edit link.
+	 */
 	public static function get_edit_link( $post_id = 0 ) {
 		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
 
 		/**
+		 * Get edit link.
+		 *
 		 * Filters the Elementor edit link.
 		 *
 		 * @since 1.0.0
@@ -54,10 +78,18 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Get pro link.
+	 *
+	 * Retrieve the link to Elementor Pro.
+	 *
 	 * @since 1.7.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $link URL to Elementor pro.
+	 *
+	 * @return string Elementor pro link.
+	 */
 	public static function get_pro_link( $link ) {
 		static $theme_name = false;
 
@@ -82,14 +114,24 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Get preview URL.
+	 *
+	 * Retrieve the post preview URL.
+	 *
 	 * @since 1.6.4
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param int $post_id Optional. Post ID. Default is `0`.
+	 *
+	 * @return string Post preview URL.
+	 */
 	public static function get_preview_url( $post_id ) {
 		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
 
 		/**
+		 * Preview URL.
+		 *
 		 * Filters the Elementor preview URL.
 		 *
 		 * @since 1.6.4
@@ -142,15 +184,25 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Is post type supports Elementor.
+	 *
+	 * Whether the post type supports editing with Elementor.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param int $post_id Optional. Post ID. Default is `0`.
+	 *
+	 * @return string True if post type supports editing with Elementor, false otherwise.
+	 */
 	public static function is_post_type_support( $post_id = 0 ) {
 		$post_type = get_post_type( $post_id );
 		$is_supported = post_type_supports( $post_type, 'elementor' );
 
 		/**
+		 * Is post type support.
+		 *
 		 * Filters whether the post type supports editing with Elementor.
 		 *
 		 * @since 1.0.0
@@ -165,14 +217,22 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Get placeholder image source.
+	 *
+	 * Retrieve the source of the placeholder image.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return string The source of the default placeholder image used by Elementor.
+	 */
 	public static function get_placeholder_image_src() {
 		$placeholder_image = ELEMENTOR_ASSETS_URL . 'images/placeholder.png';
 
 		/**
+		 * Get placeholder image source.
+		 *
 		 * Filters the source of the default placeholder image used by Elementor.
 		 *
 		 * @since 1.0.0
@@ -185,21 +245,28 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Generate random string.
+	 *
+	 * Returns a string containing a hexadecimal representation of randon number.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return string Random string.
+	 */
 	public static function generate_random_string() {
 		return dechex( rand() );
 	}
 
 	/**
-	 * Tell to WP Cache plugins do not cache this request.
+	 * Do not cache.
 	 *
-	 * @static
+	 * Tell WordPress cache plugins not to cache this request.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @return void
+	 * @static
 	 */
 	public static function do_not_cache() {
 		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
@@ -227,10 +294,16 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Get timezone string.
+	 *
+	 * Retrieve timezone string from the WordPress database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return string Timezone string.
+	 */
 	public static function get_timezone_string() {
 		$current_offset = (float) get_option( 'gmt_offset' );
 		$timezone_string = get_option( 'timezone_string' );
@@ -250,11 +323,22 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Do action deprecated.
+	 *
+	 * Fires functions attached to a deprecated action hook.
+	 *
 	 * @since 1.0.10
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $tag         The name of the action hook.
+	 * @param array  $args        Array of additional function arguments to be passed to `do_action()`.
+	 * @param string $version     The version of WordPress that deprecated the hook.
+	 * @param string $replacement Optional. The hook that should have been used.
+	 * @param string $message     Optional. A message regarding the change.
+	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `do_action_deprecated()` function.
 		if ( function_exists( 'do_action_deprecated' ) ) { /* WP >= 4.6 */
 			do_action_deprecated( $tag, $args, $version, $replacement, $message );
 		} else {
@@ -263,11 +347,22 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Do filter deprecated.
+	 *
+	 * Fires functions attached to a deprecated filter hook.
+	 *
 	 * @since 1.0.10
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $tag         The name of the filter hook.
+	 * @param array  $args        Array of additional function arguments to be passed to `apply_filters()`.
+	 * @param string $version     The version of WordPress that deprecated the hook.
+	 * @param string $replacement Optional. The hook that should have been used.
+	 * @param string $message     Optional. A message regarding the change.
+	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `apply_filters_deprecated()` function.
 		if ( function_exists( 'apply_filters_deprecated' ) ) { /* WP >= 4.6 */
 			return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
 		} else {

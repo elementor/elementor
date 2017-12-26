@@ -8,18 +8,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Compatibility.
+ * Elementor compatibility class.
  *
- * Elementor compatibility handler class.
+ * Elementor compatibility handler class is responsible for compatibility with
+ * external plugins. The class resolves different issues with non-compatibile
+ * plugins.
  *
  * @since 1.0.0
  */
 class Compatibility {
 
 	/**
-	 * @static
+	 * Register actions.
+	 *
+	 * Run Elementor compatibility with external plugins using custom filters and
+	 * actions.
+	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @static
 	*/
 	public static function register_actions() {
 		add_action( 'init', [ __CLASS__, 'init' ] );
@@ -37,7 +44,12 @@ class Compatibility {
 	}
 
 	/**
-	 * @static
+	 * Init.
+	 *
+	 * Initialize Elementor compatibility with external plugins.
+	 *
+	 * Fired by `init` action.
+	 *
 	 * @since 1.9.0
 	 * @access public
 	 */
@@ -103,6 +115,7 @@ class Compatibility {
 	 * @static
 	 * @since 1.0.0
 	 * @access public
+	 * @static
 	*/
 	public static function init() {
 		// Hotfix for NextGEN Gallery plugin.
@@ -209,9 +222,21 @@ class Compatibility {
 	}
 
 	/**
-	 * @static
+	 * Save polylang meta.
+	 *
+	 * Copy elementor data while polylang creates a translation copy. Fired by
+	 * `pll_copy_post_metas` filter.
+	 *
 	 * @since 1.6.0
 	 * @access public
+	 * @static
+	 *
+	 * @param array $keys List of custom fields names.
+	 * @param bool  $sync True if it is synchronization, false if it is a copy.
+	 * @param int   $from ID of the post from which we copy informations.
+	 * @param int   $to   ID of the post to which we paste informations.
+	 *
+	 * @return array List of custom fields names.
 	*/
 	public static function save_polylang_meta( $keys, $sync, $from, $to ) {
 		// Copy only for a new post.
@@ -223,15 +248,20 @@ class Compatibility {
 	}
 
 	/**
-	 * Normalize Elementor post meta on import,
-	 * We need the `wp_slash` in order to avoid the unslashing during the `add_post_meta`
+	 * Process post meta before WP importer.
 	 *
-	 * @static
+	 * Normalize Elementor post meta on import, We need the `wp_slash` in order
+	 * to avoid the unslashing during the `add_post_meta`.
+	 *
+	 * Fired by `wp_import_post_meta` filter.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param array $post_meta
+	 * @static
 	 *
-	 * @return array
+	 * @param array $post_meta Post meta.
+	 *
+	 * @return array Updated post meta.
 	 */
 	public static function on_wp_import_post_meta( $post_meta ) {
 		foreach ( $post_meta as &$meta ) {
@@ -245,15 +275,20 @@ class Compatibility {
 	}
 
 	/**
-	 * Normalize Elementor post meta on import with the new WP_importer,
-	 * We need the `wp_slash` in order to avoid the unslashing during the `add_post_meta`
+	 * Process post meta before WXR importer.
 	 *
-	 * @static
+	 * Normalize Elementor post meta on import with the new WP_importer, We need
+	 * the `wp_slash` in order to avoid the unslashing during the `add_post_meta`.
+	 *
+	 * Fired by `wxr_importer.pre_process.post_meta` filter.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param array $post_meta
+	 * @static
 	 *
-	 * @return array
+	 * @param array $post_meta Post meta.
+	 *
+	 * @return array Updated post meta.
 	 */
 	public static function on_wxr_importer_pre_process_post_meta( $post_meta ) {
 		if ( '_elementor_data' === $post_meta['key'] ) {

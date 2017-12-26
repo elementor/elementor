@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Divider Widget.
+ * Elementor divider widget.
  *
  * Elementor widget that displays a line that divides different elements in the
  * page.

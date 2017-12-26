@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Base data control.
+ * Elementor base data control.
  *
  * A base control for creating data controls.
  *

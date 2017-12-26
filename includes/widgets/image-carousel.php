@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Image Carousel Widget.
+ * Elementor image carousel widget.
  *
  * Elementor widget that displays a set of images in a rotating carousel or
  * slider.

@@ -1956,9 +1956,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.renderResponsiveSwitchers();
 
-		this.addTooltip();
-
 		this.triggerMethod( 'ready' );
+
+		this.toggleControlVisibility();
+
+		this.addTooltip();
 	},
 
 	onBaseInputChange: function( event ) {
@@ -2528,24 +2530,19 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlDateTimePickerItemView;
 
 ControlDateTimePickerItemView = ControlBaseDataView.extend( {
-	ui: function() {
-		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
-
-		ui.picker = '.elementor-date-time-picker';
-
-		return ui;
-	},
 
 	onReady: function() {
 		var self = this;
 
-		var options = _.extend( this.model.get( 'picker_options' ), {
-			onHide: function() {
+		var options = _.extend( {
+			onClose: function() {
 				self.saveValue();
-			}
-		} );
+			},
+			enableTime: true,
+			minuteIncrement: 1
+		}, this.model.get( 'picker_options' ) );
 
-		this.ui.picker.appendDtpicker( options ).handleDtpicker( 'setDate', new Date( this.getControlValue() ) );
+		this.ui.input.flatpickr( options );
 	},
 
 	saveValue: function() {
@@ -2554,7 +2551,7 @@ ControlDateTimePickerItemView = ControlBaseDataView.extend( {
 
 	onBeforeDestroy: function() {
 		this.saveValue();
-		this.ui.picker.dtpicker( 'destroy' );
+		this.ui.input.flatpickr().destroy();
 	}
 } );
 
@@ -3509,12 +3506,23 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	onSortStop: function( event, ui ) {
 		// Reload TinyMCE editors (if exist), it's a bug that TinyMCE content is missing after stop dragging
-		var sortedRowView = this.children.findByIndex( ui.item.index() ),
-			rowControls = sortedRowView.children;
+		var self = this,
+			sortedIndex = ui.item.index();
 
-		rowControls.each( function( control ) {
-			if ( 'wysiwyg' === control.model.get( 'type' ) ) {
-				control.render();
+		if ( -1 === sortedIndex ) {
+			return;
+		}
+
+		var sortedRowView = self.children.findByIndex( ui.item.index() ),
+			rowControls = sortedRowView.children._views;
+
+		jQuery.each( rowControls, function() {
+			if ( 'wysiwyg' === this.model.get( 'type' ) ) {
+				sortedRowView.render();
+
+				delete self.currentEditableChild;
+
+				return false;
 			}
 		} );
 	},
@@ -4247,8 +4255,6 @@ App = Marionette.Application.extend( {
 
 		this.initDialogsManager();
 
-		this.heartbeat.init();
-
 		this.ajax.init();
 	},
 
@@ -4573,6 +4579,8 @@ App = Marionette.Application.extend( {
 		this.initElements();
 
 		this.initHotKeys();
+
+		this.heartbeat.init();
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
@@ -9323,18 +9331,21 @@ helpers = {
 	},
 
 	isActiveControl: function( controlModel, values ) {
-		var condition;
+		var condition,
+			conditions;
 
 		// TODO: Better way to get this?
 		if ( _.isFunction( controlModel.get ) ) {
 			condition = controlModel.get( 'condition' );
+			conditions = controlModel.get( 'conditions' );
 		} else {
 			condition = controlModel.condition;
+			conditions = controlModel.conditions;
 		}
 
-		// Repeater items conditions
-		if ( controlModel.conditions ) {
-			return elementor.conditions.check( controlModel.conditions, values );
+		// Multiple conditions with relations.
+		if ( conditions ) {
+			return elementor.conditions.check( conditions, values );
 		}
 
 		if ( _.isEmpty( condition ) ) {

@@ -186,6 +186,8 @@ class Elements_Manager {
 		$return_data = [];
 
 		/**
+		 * Saved ajax data returned by the builder.
+		 *
 		 * Filters the ajax data returned when saving the post on the builder.
 		 *
 		 * @since 1.0.0
@@ -211,6 +213,8 @@ class Elements_Manager {
 		}
 
 		/**
+		 * After elements registered.
+		 *
 		 * Fires after Elementor elements are registered.
 		 *
 		 * @since 1.0.0

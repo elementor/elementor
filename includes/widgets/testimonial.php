@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Testimonial Widget.
+ * Elementor testimonial widget.
  *
  * Elementor widget that displays customer testimonials that show social proof.
  *

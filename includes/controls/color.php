@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Color control.
+ * Elementor color control.
  *
  * A base control for creating color control. Displays a color picker with an
  * alpha slider. Includes a customizable color palette that can be preset by the
@@ -95,7 +95,7 @@ class Control_Color extends Base_Data_Control {
 			[
 				'wp-color-picker',
 			],
-			'2.0',
+			'2.0.1',
 			true
 		);
 
@@ -117,13 +117,9 @@ class Control_Color extends Base_Data_Control {
 		?>
 		<# var defaultValue = '', dataAlpha = '';
 			if ( data.default ) {
-				if ( '#' !== data.default.substring( 0, 1 ) ) {
-					defaultValue = '#' + data.default;
-				} else {
-					defaultValue = data.default;
-				}
-				defaultValue = ' data-default-color=' + defaultValue; // Quotes added automatically.
+				defaultValue = ' data-default-color=' + data.default; // Quotes added automatically.
 			}
+
 			if ( data.alpha ) {
 				dataAlpha = ' data-alpha=true';
 			} #>

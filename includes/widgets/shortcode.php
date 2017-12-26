@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Shortcode Widget.
+ * Elementor shortcode widget.
  *
  * Elementor widget that insert any shortcodes into the page.
  *

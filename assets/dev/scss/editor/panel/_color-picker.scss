@@ -110,6 +110,10 @@
 	}
 }
 
+.iris-square-value {
+	transition: none;
+}
+
 .elementor-control {
 
 	.wp-picker-container {
@@ -124,10 +128,6 @@
 
 		&.wp-picker-active {
 			transform: translateY(6px);
-
-			[class*="wp-version-4-9"] &, [class*="wp-version-5"] & {
-				padding-top: 9px;
-			}
 
 			.wp-color-result {
 				margin-right: 3px;
