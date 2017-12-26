@@ -154,8 +154,14 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
+	toggleFilterClass: function() {
+		this.$el.toggleClass( 'elementor-templates-filter-active', !! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
+	},
+
 	onRenderCollection: function() {
 		this.addSourceData();
+
+		this.toggleFilterClass();
 	},
 
 	onBeforeRenderEmpty: function() {
