@@ -38,7 +38,7 @@ abstract class Settings_Page {
 	 * @access public
 	*/
 	public function __construct() {
-		add_action( 'admin_init', [ $this, 'register_settings_fields' ] );
+		add_action( 'elementor/admin/after_create_settings/' . static::PAGE_ID, [ $this, 'register_settings_fields' ] );
 	}
 
 	/**
