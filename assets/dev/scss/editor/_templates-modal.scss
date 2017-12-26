@@ -1,14 +1,17 @@
+$library_screen_breakpoint: $screen-lg-max;
+
 #elementor-template-library-modal {
 
 	.dialog-widget-content {
 		background-color: $editor-background-light;
+		width: 100%;
 
-		@media (max-width: $screen-xl-max) {
-			width: 990px;
+		@media (max-width: $library_screen_breakpoint) {
+			max-width: 990px;
 		}
 
-		@media (min-width: $screen-xxl-min) {
-			width: 1200px;
+		@media (min-width: $library_screen_breakpoint + 1) {
+			max-width: 1200px;
 		}
 	}
 
@@ -236,6 +239,13 @@
 		}
 	}
 
+	&.elementor-templates-filter-active {
+
+		#elementor-template-library-footer-banner {
+			display: none;
+		}
+	}
+
 	.elementor-template-library-order-input {
 		display: none;
 
@@ -269,8 +279,14 @@
 
 	// These rules are here because of selectors priority
 	.elementor-template-library-template-insert {
-		text-transform: none;
 		font-size: 12px;
+	}
+
+	.elementor-template-library-template-local {
+
+		.elementor-template-library-template-insert {
+			text-transform: none;
+		}
 	}
 }
 
@@ -284,13 +300,16 @@
 	display: flex;
 }
 
+#elementor-template-library-filter-toolbar-remote {
+	font-size: 11px;
+}
+
 #elementor-template-library-order {
 	display: flex;
 	@include border-end(1px solid $editor-lightest);
 }
 
 .elementor-template-library-order-label {
-	font-size: 13px;
 	text-transform: uppercase;
 	cursor: pointer;
 	@include padding-end(20px);
@@ -367,19 +386,27 @@
 
 #elementor-template-library-filter-text {
 	border: none;
-	border-bottom: 1px solid $editor-lighter;
+	border-bottom: 1px solid $editor-lightest;
 	border-radius: 0;
 	font-size: 13px;
 	padding: 8px 8px 8px 0;
 	transition: border 0.5s;
 
 	&:focus {
-		border-color: $editor-light;
+		border-color: $editor-lighter;
 	}
 
 	&::placeholder {
 		font-weight: 300;
-		color: $editor-light;
+		color: $editor-lighter;
+	}
+
+	&:focus {
+		border-color: $editor-lighter;
+
+		&::placeholder {
+			color: $editor-light;
+		}
 	}
 }
 
@@ -387,7 +414,7 @@
 	$items-space: 30px;
 
 	margin: $items-space / 2;
-	padding: 10px;
+	padding: 8px;
 	background-color: #fff;
 	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, .07);
 
@@ -404,11 +431,11 @@
 
 	border-radius: 3px;
 
-	@media (max-width: $screen-xl-max) {
+	@media (max-width: $library_screen_breakpoint) {
 		width: calc(25% - #{$items-space});
 	}
 
-	@media (min-width: $screen-xxl-min) {
+	@media (min-width: $library_screen_breakpoint + 1) {
 		width: calc(20% - #{$items-space});
 	}
 
@@ -425,7 +452,7 @@
 				@include end(5px);
 				background-color: $editor-accent;
 				color: $editor-lightest;
-				padding: 1px 4px;
+				padding: 2px 4px 0;
 				font-size: 9px;
 				border-radius: 2px;
 			}
@@ -441,6 +468,7 @@
 		height: 100%;
 		background-size: cover;
 		background-position-x: 50%;
+		box-shadow: inset 0px -2px 15px -6px rgba(0, 0, 0, 0.07);
 	}
 
 	.elementor-template-library-template-controls {
@@ -475,12 +503,13 @@
 	}
 
 	.elementor-template-library-template-footer {
-		margin-top: 10px;
+		margin: 10px 0 2px;
 		display: flex;
+		font-size: 11px;
+		line-height: 1;
 	}
 
 	.elementor-template-library-template-name {
-		font-size: 12px;
 		text-align: $start;
 		color: $editor-dark;
 		flex-grow: 1;
@@ -569,6 +598,10 @@
 		border-radius: 0 0 3px 3px;
 	}
 
+	.elementor-template-library-template-name {
+		font-weight: 500;
+	}
+
 	.elementor-template-library-template-name, .elementor-template-library-template-meta {
 		@include padding-end(45px);
 		white-space: nowrap;
@@ -609,10 +642,7 @@
 	.elementor-template-library-template-delete {
 
 		&:hover {
-
-			i {
-				color: $editor-danger;
-			}
+			color: $editor-danger;
 		}
 	}
 
@@ -676,11 +706,11 @@
 		height: 150%;
 		transform: scale(0.666) translateX(getValueByDirection(-25%, 25%)) translateY(-25%);
 
-		@media (max-width: $screen-xl-max) {
+		@media (max-width: $library_screen_breakpoint) {
 			width: 1440px;
 		}
 
-		@media (min-width: $screen-xxl-min) {
+		@media (min-width: $library_screen_breakpoint + 1) {
 			width: 1710px;
 		}
 	}
@@ -796,6 +826,10 @@
 	color: $editor-light;
 	font-size: 16px;
 	font-style: italic;
+
+	@media (max-height: 700px) {
+		display: none;
+	}
 }
 
 #elementor-template-library-footer-banner {
@@ -830,7 +864,7 @@
 	margin-top: 10px;
 }
 
-@media (max-width: $screen-xl-max) {
+@media (max-width: $library_screen_breakpoint) {
 
 	.elementor-template-library-local-column-1 {
 		width: 33%;
@@ -853,7 +887,7 @@
 	}
 }
 
-@media (min-width: $screen-xxl-min) {
+@media (min-width: $library_screen_breakpoint + 1) {
 
 	.elementor-template-library-local-column-1 {
 		width: 25%;
@@ -873,5 +907,16 @@
 
 	.elementor-template-library-local-column-5 {
 		width: 24%;
+	}
+}
+
+@media (max-width: $screen-md-max) {
+
+	.elementor-template-library-local-column-3 {
+		display: none;
+	}
+
+	.elementor-template-library-local-column-5 {
+		width: 41%;
 	}
 }
