@@ -669,9 +669,16 @@
 	overflow: hidden;
 
 	iframe {
-		width: 1440px;
 		height: 150%;
 		transform: scale(0.666) translateX(getValueByDirection(-25%, 25%)) translateY(-25%);
+
+		@media (max-width: $screen-xl-max) {
+			width: 1440px;
+		}
+
+		@media (min-width: $screen-xxl-min) {
+			width: 1710px;
+		}
 	}
 }
 
