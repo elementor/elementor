@@ -373,17 +373,17 @@ body {
     cursor: pointer; }
   .elementor-button:not(.elementor-button-state) .elementor-state-icon {
     display: none; }
-  .elementor-button.elementor-button-success, .elementor-panel #elementor-panel-saver-save .elementor-button.elementor-save-active {
+  .elementor-button.elementor-button-success, .elementor-panel .elementor-button#elementor-panel-saver-publish {
     color: #fff; }
-    .elementor-button.elementor-button-success[disabled], .elementor-panel #elementor-panel-saver-save .elementor-button[disabled].elementor-save-active {
+    .elementor-button.elementor-button-success[disabled], .elementor-panel .elementor-button[disabled]#elementor-panel-saver-publish {
       background-color: #c2cbd2; }
-    .elementor-button.elementor-button-success:not([disabled]), .elementor-panel #elementor-panel-saver-save .elementor-button.elementor-save-active:not([disabled]) {
+    .elementor-button.elementor-button-success:not([disabled]), .elementor-panel .elementor-button#elementor-panel-saver-publish:not([disabled]) {
       background-color: #39b54a; }
-      .elementor-button.elementor-button-success:not([disabled]):hover, .elementor-panel #elementor-panel-saver-save .elementor-button.elementor-save-active:not([disabled]):hover {
+      .elementor-button.elementor-button-success:not([disabled]):hover, .elementor-panel .elementor-button#elementor-panel-saver-publish:not([disabled]):hover {
         opacity: 0.85;
         -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
                 box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2); }
-      .elementor-button.elementor-button-success:not([disabled]):active, .elementor-panel #elementor-panel-saver-save .elementor-button.elementor-save-active:not([disabled]):active {
+      .elementor-button.elementor-button-success:not([disabled]):active, .elementor-panel .elementor-button#elementor-panel-saver-publish:not([disabled]):active {
         -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
                 box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1); }
   .elementor-button.elementor-button-go-pro {
@@ -2119,17 +2119,17 @@ select {
     -webkit-transition: all 0.5s;
     -o-transition: all 0.5s;
     transition: all 0.5s; }
-    .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-save {
+    .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-update {
       border-left: 1px solid #2d8739;
-      -webkit-border-radius: 3px 0 0 3px;
-              border-radius: 3px 0 0 3px; }
-      .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-save i {
-        margin-left: 5px; }
-    .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-publish {
-      float: right;
       -webkit-border-radius: 0 3px 3px 0;
               border-radius: 0 3px 3px 0; }
-      .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-publish i {
+      .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-update i {
+        margin-left: 5px; }
+    .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-save-options {
+      float: right;
+      -webkit-border-radius: 3px 0 0 3px;
+              border-radius: 3px 0 0 3px; }
+      .elementor-panel .elementor-panel-footer-tool #elementor-panel-saver-button-save-options i {
         margin: auto; }
     .elementor-panel .elementor-panel-footer-tool.elementor-open {
       color: #fff; }
@@ -2188,26 +2188,30 @@ select {
     text-align: right;
     padding: 10px 0;
     color: #d5dadf; }
-  .elementor-panel #elementor-panel-saver-save {
-    width: 65px; }
+  .elementor-panel #elementor-panel-saver-publish {
+    width: 80px; }
+    .elementor-panel #elementor-panel-saver-publish .elementor-button.elementor-button-state #elementor-panel-saver-button-publish-label {
+      display: none; }
+  .elementor-panel #elementor-panel-saver-save-options {
+    width: 35px;
+    border-right: 1px solid #495157; }
+    .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited {
+      font-size: 11px;
+      font-style: italic;
+      color: #a4afb7;
+      padding: 5px 0 15px; }
   .elementor-panel #elementor-panel-saver-button-preview a {
     color: #a4afb7; }
-  .elementor-panel #elementor-panel-saver-button-save, .elementor-panel #elementor-panel-saver-button-publish {
+  .elementor-panel #elementor-panel-saver-button-publish, .elementor-panel #elementor-panel-saver-button-save-options {
     font-size: 11px;
     text-transform: uppercase;
     height: 26px; }
-  .elementor-panel #elementor-panel-saver-button-save {
+  .elementor-panel #elementor-panel-saver-button-publish {
     width: 100%;
-    background-color: #556068;
-    color: #a4afb7; }
-  .elementor-panel #elementor-panel-saver-button-, .elementor-panel #elementor-panel-saver-button-publish {
-    width: 30px; }
-  .elementor-panel #elementor-panel-saver-menu-publish .elementor-icon, .elementor-panel #elementor-panel-saver-menu-publish .elementor-title {
-    color: #39b54a; }
-  .elementor-panel #elementor-panel-saver-menu-publish-changes.elementor-save-active .elementor-icon, .elementor-panel #elementor-panel-saver-menu-publish-changes.elementor-save-active .elementor-title {
-    color: #39b54a; }
-  .elementor-panel #elementor-panel-footer-discard .elementor-icon, .elementor-panel #elementor-panel-footer-discard .elementor-title {
-    color: #b01b1b; }
+    -webkit-border-radius: 0 3px 3px 0;
+            border-radius: 0 3px 3px 0; }
+  .elementor-panel #elementor-panel-saver-button-, .elementor-panel #elementor-panel-saver-button-save-options {
+    width: 25px; }
 
 #elementor-mode-switcher {
   position: absolute;

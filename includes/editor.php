@@ -495,6 +495,7 @@ class Editor {
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
+			'last_edited' => Utils::get_last_edited( $this->_post_id ),
 			'wp_preview' => [
 				'url' => Utils::get_wp_preview_url( $this->_post_id ),
 				'target' => 'wp-preview-' . $this->_post_id,
@@ -616,6 +617,7 @@ class Editor {
 				'save' => __( 'Save', 'elementor' ),
 				'saved' => __( 'Saved', 'elementor' ),
 				'update' => __( 'Update', 'elementor' ),
+				'submit' => __( 'Submit', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),

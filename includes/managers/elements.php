@@ -21,6 +21,7 @@ class Elements_Manager {
 		$this->require_files();
 
 		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
+		add_action( 'wp_ajax_elementor_discard_changes', [ $this, 'ajax_discard_changes' ] );
 	}
 
 	/**
@@ -156,6 +157,31 @@ class Elements_Manager {
 		}
 	}
 
+	public function ajax_discard_changes() {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
+		$request = $_POST;
+
+		if ( empty( $request['post_id'] ) ) {
+			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
+		}
+
+		$autosave = wp_get_post_autosave( $request['post_id'] );
+
+		if ( $autosave ) {
+			$deleted = wp_delete_post_revision( $autosave->ID );
+			$success = $deleted && ! is_wp_error( $deleted );
+		} else {
+			$success = true;
+		}
+
+		if ( $success ) {
+			wp_send_json_success();
+		} else {
+			wp_send_json_error();
+		}
+	}
+
 	/**
 	 * @since 1.0.0
 	 * @access public
@@ -175,7 +201,7 @@ class Elements_Manager {
 
 		$status = DB::STATUS_DRAFT;
 
-		if ( isset( $_POST['status'] ) && in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_AUTOSAVE ] , true ) ) {
+		if ( isset( $_POST['status'] ) && in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ] , true ) ) {
 			$status = $_POST['status'];
 		}
 
@@ -183,7 +209,11 @@ class Elements_Manager {
 
 		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
 
-		$return_data = [];
+		$return_data = [
+			'config' => [
+				'last_edited' => Utils::get_last_edited( $post_id ),
+			],
+		];
 
 		/**
 		 * Saved ajax data returned by the builder.
