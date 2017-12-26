@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Alert Widget.
+ * Elementor alert widget.
  *
  * Elementor widget that displays a collapsible display of content in an toggle
  * style, allowing the user to open multiple items.

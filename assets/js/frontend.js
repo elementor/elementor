@@ -280,10 +280,23 @@ module.exports = ElementsHandler;
 		};
 
 		this.waypoint = function( $element, callback, options ) {
-			var correctCallback = function() {
-				var element = this.element || this;
+			var defaultOptions = {
+				offset: '100%',
+				triggerOnce: true
+			};
 
-				return callback.apply( element, arguments );
+			options = $.extend( defaultOptions, options );
+
+			var correctCallback = function() {
+				var element = this.element || this,
+					result = callback.apply( element, arguments );
+
+				// If is Waypoint new API and is frontend
+				if ( options.triggerOnce && this.destroy ) {
+					this.destroy();
+				}
+
+				return result;
 			};
 
 			return $element.elementorWaypoint( correctCallback, options );
@@ -594,7 +607,7 @@ module.exports = function( $scope, $ ) {
 		}
 
 		$number.numerator( data );
-	}, { offset: '90%' } );
+	} );
 };
 
 },{}],8:[function(require,module,exports){
@@ -623,21 +636,17 @@ GlobalHandler = HandlerModule.extend( {
 		return elementSettings.animation || elementSettings._animation;
 	},
 	onInit: function() {
-		var self = this;
+		HandlerModule.prototype.onInit.apply( this, arguments );
 
-		HandlerModule.prototype.onInit.apply( self, arguments );
+		var animation = this.getAnimation();
 
-		if ( ! self.getAnimation() ) {
+		if ( ! animation ) {
 			return;
 		}
 
-		var waypoint = elementorFrontend.waypoint( self.$element, function() {
-			self.animate();
+		this.$element.removeClass( animation );
 
-			if ( waypoint && waypoint[0] && waypoint[0].destroy ) { // If it's Waypoint new API and is frontend
-				waypoint[0].destroy();
-			}
-		}, { offset: '90%' } );
+		elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
 	},
 	onElementChange: function( propertyName ) {
 		if ( /^_?animation/.test( propertyName ) ) {
@@ -726,7 +735,7 @@ module.exports = function( $scope, $ ) {
 		var $progressbar = $( this );
 
 		$progressbar.css( 'width', $progressbar.data( 'max' ) + '%' );
-	}, { offset: '90%' } );
+	} );
 };
 
 },{}],11:[function(require,module,exports){

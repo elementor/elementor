@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Base group control.
+ * Elementor base group control.
  *
  * A base control for creating group control.
  *

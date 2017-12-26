@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Image dimensions control.
+ * Elementor image dimensions control.
  *
  * A base control for creating image dimension control. Displays image width
  * input, image height input and an apply button.

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Image Size control.
+ * Elementor image size control.
  *
  * A base control for creating image size control. Displays input fields to define
  * one of the default image sizes (thumbnail, medium, medium_large, large) or set
@@ -81,7 +81,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 *
 	 * @param array  $settings    {
 	 *     Control settings.
-	 * 
+	 *
 	 *     @type array  $image           {
 	 *         Optional. Image data.
 	 *

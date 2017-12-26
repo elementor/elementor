@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Tab control.
+ * Elementor tab control.
  *
  * A base control for creating tab control. Displays a tab header for a set of
  * controls.

@@ -65,10 +65,12 @@ abstract class Widget_Base extends Element_Base {
 
 		return [
 			'duplicate' => [
+				/* translators: %s: Widget Label */
 				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
 				'icon' => 'clone',
 			],
 			'remove' => [
+				/* translators: %s: Widget Label */
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
 				'icon' => 'close',
 			],
@@ -137,9 +139,11 @@ abstract class Widget_Base extends Element_Base {
 			$widget_name = $this->get_name();
 
 			/**
+			 * Widget skin init.
+			 *
 			 * Fires when Elementor widget is being initialized.
 			 *
-			 * The dynamic portion of the hook name, `$widget_name`, refers to the widget name from `$this->get_name()`.
+			 * The dynamic portion of the hook name, `$widget_name`, refers to the widget name.
 			 *
 			 * @since 1.0.0
 			 *
@@ -293,6 +297,8 @@ abstract class Widget_Base extends Element_Base {
 		$content_template = ob_get_clean();
 
 		/**
+		 * Print widget template.
+		 *
 		 * Filters the widget template before it's printed in the editor.
 		 *
 		 * @since 1.0.0
@@ -383,6 +389,8 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function render_content() {
 		/**
+		 * Before widget render content.
+		 *
 		 * Fires before Elementor widget is being rendered.
 		 *
 		 * @since 1.0.0
@@ -411,6 +419,8 @@ abstract class Widget_Base extends Element_Base {
 			$widget_content = ob_get_clean();
 
 			/**
+			 * Render widget content.
+			 *
 			 * Filters the widget content before it's rendered.
 			 *
 			 * @since 1.0.0
@@ -611,7 +621,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return string The repeater setting key (e.g. `tabs.3.tab_title`).
 	 */
 	protected function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {
-		return implode( '.', [ $repeater_key , $repeater_item_index, $setting_key ] );
+		return implode( '.', [ $repeater_key, $repeater_item_index, $setting_key ] );
 	}
 
 	/**

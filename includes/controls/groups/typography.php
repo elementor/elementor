@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Typography control.
+ * Elementor typography control.
  *
  * A base control for creating typography control. Displays input fields to define
  * the content typography including font size, font family, font weight, text
@@ -174,6 +174,19 @@ class Group_Control_Typography extends Group_Control_Base {
 				'normal' => _x( 'Normal', 'Typography Control', 'elementor' ),
 				'italic' => _x( 'Italic', 'Typography Control', 'elementor' ),
 				'oblique' => _x( 'Oblique', 'Typography Control', 'elementor' ),
+			],
+		];
+
+		$fields['text_decoration'] = [
+			'label' => _x( 'Decoration', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => '',
+			'options' => [
+				'' => __( 'Default', 'elementor' ),
+				'underline' => _x( 'Underline', 'Typography Control', 'elementor' ),
+				'overline' => _x( 'Overline', 'Typography Control', 'elementor' ),
+				'line-through' => _x( 'Line Through', 'Typography Control', 'elementor' ),
+				'none' => _x( 'None', 'Typography Control', 'elementor' ),
 			],
 		];
 

@@ -6,14 +6,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Autoloader.
+ * Elementor autoloader class.
  *
- * Elementor Autoloader handler class.
+ * Elementor autoloader handler class is responsible for loading the different
+ * classes needed to run the plugin.
  *
- * @since 1.0.0
+ * @since 1.6.0
  */
 class Autoloader {
 
+	/**
+	 * Classes map.
+	 *
+	 * Maps Elementor classes to file names.
+	 *
+	 * @since 1.6.0
+	 * @access private
+	 * @static
+	 *
+	 * @var array Classes used by elementor.
+	 */
 	private static $classes_map = [
 		'Admin' => 'includes/admin.php',
 		'Api' => 'includes/api.php',
@@ -83,6 +95,17 @@ class Autoloader {
 		'WordPress_Widgets_Manager' => 'includes/managers/wordpress-widgets.php',
 	];
 
+	/**
+	 * Classes aliases.
+	 *
+	 * Maps Elementor classes to aliases.
+	 *
+	 * @since 1.6.0
+	 * @access private
+	 * @static
+	 *
+	 * @var array Classes aliases.
+	 */
 	private static $classes_aliases = [
 		'Control_Base' => 'Base_Data_Control',
 		'PageSettings\Manager' => 'Core\Settings\Page\Manager',
@@ -90,29 +113,44 @@ class Autoloader {
 	];
 
 	/**
-	 * @static
+	 * Run autoloader.
+	 *
+	 * Register a function as `__autoload()` implementation.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	*/
+	 * @static
+	 */
 	public static function run() {
 		spl_autoload_register( [ __CLASS__, 'autoload' ] );
 	}
 
 	/**
-	 * @static
+	 * Get classes aliases.
+	 *
+	 * Retrieve the classes aliases names.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	 * @return array
+	 * @static
+	 *
+	 * @return array Classes aliases.
 	 */
 	public static function get_classes_aliases() {
 		return self::$classes_aliases;
 	}
 
 	/**
-	 * @static
+	 * Load class.
+	 *
+	 * For a given class name, require the class file.
+	 *
 	 * @since 1.6.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @param string $relative_class_name Class name.
+	 */
 	private static function load_class( $relative_class_name ) {
 		if ( isset( self::$classes_map[ $relative_class_name ] ) ) {
 			$filename = ELEMENTOR_PATH . '/' . self::$classes_map[ $relative_class_name ];
@@ -134,10 +172,16 @@ class Autoloader {
 	}
 
 	/**
-	 * @static
+	 * Autoload.
+	 *
+	 * For a given class, check if it exist and load it.
+	 *
 	 * @since 1.6.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @param string $class Class name.
+	 */
 	private static function autoload( $class ) {
 		if ( 0 !== strpos( $class, __NAMESPACE__ . '\\' ) ) {
 			return;

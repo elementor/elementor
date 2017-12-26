@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Slider control.
+ * Elementor slider control.
  *
  * A base control for creating slider control. Displays a draggable range slider.
  * The slider control can optionally have a number of unit types (`size_units`)
