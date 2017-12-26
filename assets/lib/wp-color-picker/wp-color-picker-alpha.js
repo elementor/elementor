@@ -1,10 +1,10 @@
-/**!
+/*!
  * wp-color-picker-alpha
  *
  * Overwrite Automattic Iris for enabled Alpha Channel in wpColorPicker
  * Only run in input and is defined data alpha in true
  *
- * Version: 2.0
+ * Version: 2.0.1
  * https://github.com/kallookoo/wp-color-picker-alpha
  * Licensed under the GPLv2 license.
  *
