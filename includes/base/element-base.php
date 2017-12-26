@@ -77,6 +77,40 @@ abstract class Element_Base extends Controls_Stack {
 	private $_is_type_instance = true;
 
 	/**
+	 * Depended scripts
+	 *
+	 * Holds depended scripts to enqueue
+	 *
+	 * @var array
+	 */
+	private $depended_scripts = [];
+
+	/**
+	 * Depended styles
+	 *
+	 * Holds depended styles to enqueue
+	 *
+	 * @var array
+	 */
+	private $depended_styles = [];
+
+	/**
+	 * adds scripts to enqueue by handle
+	 * @param $handler
+	 */
+	public function add_script_depends( $handler ) {
+		$this->depended_scripts[] = $handler;
+	}
+
+	/**
+	 * adds styles to enqueue by handle
+	 * @param $handler
+	 */
+	public function add_style_depends( $handler ) {
+		$this->depended_styles[] = $handler;
+	}
+
+	/**
 	 * Retrieve script dependencies.
 	 *
 	 * Get the list of script dependencies the element requires.
@@ -87,7 +121,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return array Widget scripts dependencies.
 	 */
 	public function get_script_depends() {
-		return [];
+		return $this->depended_scripts;
 	}
 
 	/**
@@ -102,6 +136,35 @@ abstract class Element_Base extends Controls_Stack {
 	final public function enqueue_scripts() {
 		foreach ( $this->get_script_depends() as $script ) {
 			wp_enqueue_script( $script );
+		}
+	}
+
+	/**
+	 * Retrieve style dependencies.
+	 *
+	 * Get the list of style dependencies the element requires.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @return array Widget styles dependencies.
+	 */
+	final public function get_style_depends() {
+		return $this->depended_styles;
+	}
+
+	/**
+	 * Enqueue styles.
+	 *
+	 * Registers all the styles defined as element dependencies and enqueues
+	 * them. Use `get_style_depends()` method to add custom style dependencies.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 */
+	final public function enqueue_styles() {
+		foreach ( $this->get_style_depends() as $style ) {
+			wp_enqueue_style( $style );
 		}
 	}
 
@@ -534,8 +597,6 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 */
 	public function print_element() {
-		$this->enqueue_scripts();
-
 		$element_type = static::get_type();
 
 		/**
@@ -557,6 +618,9 @@ abstract class Element_Base extends Controls_Stack {
 
 		$this->after_render();
 
+		$this->enqueue_scripts();
+
+		$this->enqueue_styles();
 		/**
 		 * Fires after Elementor element was rendered in the frontend.
 		 *
