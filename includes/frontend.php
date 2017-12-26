@@ -259,6 +259,15 @@ class Frontend {
 		);
 
 		wp_register_script(
+			'flatpickr',
+			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.js',
+			[
+				'jquery',
+			],
+			'4.1.4'
+		);
+
+		wp_register_script(
 			'imagesloaded',
 			ELEMENTOR_ASSETS_URL . 'lib/imagesloaded/imagesloaded' . $suffix . '.js',
 			[
@@ -369,6 +378,13 @@ class Frontend {
 			ELEMENTOR_ASSETS_URL . 'css/animations.min.css',
 			[],
 			ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
+			'flatpickr',
+			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.css',
+			[],
+			'4.1.4'
 		);
 
 		wp_register_style(
