@@ -183,7 +183,7 @@ class Revisions_Manager {
 			$return_data['config'] = [
 				'current_revision_id' => self::current_revision_id( $_POST['post_id'] )
 			];
-			$return_data['last_revision'] = $latest_revision[0];
+			$return_data['last_revision'] = $latest_revision[1];
 			$return_data['revisions_ids'] = $all_revision_ids;
 		}
 
