@@ -2251,7 +2251,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
 #elementor-mode-switcher-preview-input {
   display: none; }
 
-.elementor-revision-item {
+.elementor-revision-item__wrapper {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -2264,29 +2264,41 @@ body.elementor-editor-preview #elementor-mode-switcher {
   padding: 10px 15px;
   margin-bottom: 10px;
   font-size: 11px; }
-  .elementor-revision-item:hover:not(.elementor-revision-current-preview) {
-    background-color: rgba(230, 233, 236, 0.3); }
-  .elementor-revision-item:not(:hover) .elementor-revision-item__tools-delete, .elementor-revision-item.elementor-revision-current-preview .elementor-revision-item__tools-delete {
-    display: none; }
-  .elementor-revision-item-loading .elementor-revision-item__tools-delete {
-    display: none; }
-  .elementor-revision-item:not(.elementor-revision-item-loading) .elementor-revision-item__tools-spinner {
-    display: none; }
-  .elementor-revision-item__gravatar {
-    -webkit-border-radius: 50%;
-            border-radius: 50%;
-    overflow: hidden; }
-    .elementor-revision-item__gravatar img {
-      display: block; }
-  .elementor-revision-item__details {
-    padding-left: 15px;
-    -webkit-box-flex: 1;
-    -webkit-flex-grow: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
-    cursor: pointer; }
-  .elementor-revision-item__tools-delete {
-    cursor: pointer; }
+  .elementor-revision-item__wrapper.current {
+    font-weight: bold; }
+
+.elementor-revision-item:hover:not(.elementor-revision-current-preview) {
+  background-color: rgba(230, 233, 236, 0.3); }
+
+.elementor-revision-item:not(:hover) .elementor-revision-item__tools-delete, .elementor-revision-item.elementor-revision-current-preview .elementor-revision-item__tools-delete {
+  display: none; }
+
+.elementor-revision-item-loading .elementor-revision-item__tools-current {
+  display: none; }
+
+.elementor-revision-item-loading .elementor-revision-item__tools-delete {
+  display: none; }
+
+.elementor-revision-item:not(.elementor-revision-item-loading) .elementor-revision-item__tools-spinner {
+  display: none; }
+
+.elementor-revision-item__gravatar {
+  -webkit-border-radius: 50%;
+          border-radius: 50%;
+  overflow: hidden; }
+  .elementor-revision-item__gravatar img {
+    display: block; }
+
+.elementor-revision-item__details {
+  padding-left: 15px;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  cursor: pointer; }
+
+.elementor-revision-item__tools-delete {
+  cursor: pointer; }
 
 .elementor-revision-meta {
   padding-top: 5px;
