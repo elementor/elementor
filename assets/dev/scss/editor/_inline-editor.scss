@@ -8,7 +8,7 @@
 
 	&-menu {
 		box-shadow: 1px 2px 3px -2px #222;
-		background-color: #6D7882;
+		background-color: $editor-dark;
 		position: fixed;
 		border-radius: 3px;
 		z-index: 9998;
@@ -18,7 +18,7 @@
 			content: '';
 			position: absolute;
 			border: 6px solid transparent;
-			border-top-color: #6D7882;
+			border-top-color: $editor-dark;
 			left: 50%;
 			transform: translateX(-50%);
 		}
@@ -40,12 +40,12 @@
 		height: 35px;
 		padding: 0 10px;
 		font-size: 21px;
-		color: #D5DADF;
+		color: $editor-lightest;
 		cursor: pointer;
 		user-select: none;
 
 		&:hover {
-			background: #556068;
+			background: $editor-darker;
 		}
 
 		&:first-of-type {
@@ -71,13 +71,13 @@
 				left: 0;
 				height: 60%;
 				width: 1px;
-				background-color: #556068;
+				background-color: $editor-darker;
 			}
 		}
 
 		&.active {
-			background-color: #556068;
-			box-shadow: inset 2px 2px 4px #556068;
+			background-color: $editor-darker;
+			box-shadow: inset 2px 2px 4px $editor-darker;
 		}
 	}
 
@@ -88,7 +88,7 @@
 			font-size: 12px;
 			content: '\f0d7';
 			padding-left: 4px;
-			color: #71d7f7;
+			color: $editor-info;
 		}
 	}
 

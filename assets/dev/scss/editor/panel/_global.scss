@@ -218,7 +218,7 @@
 
 	.elementor-panel-nerd-box-icon {
 		font-size: 52px;
-		color: #a4afb7;
+		color: $editor-light;
 	}
 
 	.elementor-panel-nerd-box-title {
@@ -253,19 +253,19 @@
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 	left: 0;
 	right: 0;
-	margin: -10px auto 5px;
+	margin: -4px auto 5px;
 	padding-top: 15px;
 	width: 90%;
 	z-index: 1;
 	background-color: #fff;
 
-	$triangle-size: 10px;
+	$triangle-size: 8px;
 
 	&:before {
 		content: '';
 		position: absolute;
 		top: -$triangle-size * 2;
-		@include end(20px);
+		@include end(11px);
 		border: $triangle-size solid transparent;
 		border-bottom-color: #fff;
 	}

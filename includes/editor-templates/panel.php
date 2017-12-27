@@ -15,6 +15,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</footer>
 </script>
 
+<script type="text/template" id="tmpl-elementor-panel-menu">
+	<div id="elementor-panel-page-menu-content"></div>
+	<div id="elementor-panel-page-menu-footer">
+		<a href="<?php echo get_edit_post_link(); ?>" id="elementor-panel-exit-to-dashboard" class="elementor-button">
+			<i class="fa fa-wordpress"></i>
+			<?php echo __( 'Exit To Dashboard', 'elementor' ); ?>
+		</a>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-panel-menu-group">
+	<div class="elementor-panel-menu-group-title">{{{ title }}}</div>
+	<div class="elementor-panel-menu-items"></div>
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-menu-item">
 	<div class="elementor-panel-menu-item-icon">
 		<i class="{{ icon }}"></i>

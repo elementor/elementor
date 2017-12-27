@@ -35,10 +35,22 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			return model.get( 'title' ).toLowerCase();
 		},
 		popularityIndex: function( model ) {
-			return -model.get( 'popularityIndex' );
+			var popularityIndex = model.get( 'popularityIndex' );
+
+			if ( ! popularityIndex ) {
+				popularityIndex = model.get( 'date' );
+			}
+
+			return -popularityIndex;
 		},
 		trendIndex: function( model ) {
-			return -model.get( 'trendIndex' );
+			var trendIndex = model.get( 'trendIndex' );
+
+			if ( ! trendIndex ) {
+				trendIndex = model.get( 'date' );
+			}
+
+			return -trendIndex;
 		}
 	},
 
@@ -142,8 +154,14 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
+	toggleFilterClass: function() {
+		this.$el.toggleClass( 'elementor-templates-filter-active', !! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
+	},
+
 	onRenderCollection: function() {
 		this.addSourceData();
+
+		this.toggleFilterClass();
 	},
 
 	onBeforeRenderEmpty: function() {
