@@ -159,7 +159,7 @@ class Frontend {
 	 * Print elements.
 	 *
 	 * Used to generate the element final HTML on the frontend.
- 	 *
+	 *
 	 * @since 1.0.0
 	 * @access protected
 	 *
