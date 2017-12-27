@@ -1,123 +1,107 @@
-var PanelMenuItemView = require( 'elementor-panel/pages/menu/views/item' ),
+var PanelMenuGroupView = require( 'elementor-panel/pages/menu/views/group' ),
 	PanelMenuPageView;
 
-PanelMenuPageView = Marionette.CollectionView.extend( {
+PanelMenuPageView = Marionette.CompositeView.extend( {
 	id: 'elementor-panel-page-menu',
 
-	childView: PanelMenuItemView,
+	template: '#tmpl-elementor-panel-menu',
+
+	childView: PanelMenuGroupView,
+
+	childViewContainer: '#elementor-panel-page-menu-content',
 
 	initialize: function() {
-		this.collection = PanelMenuPageView.getItems();
+		this.collection = PanelMenuPageView.getGroups();
 	},
 
 	onDestroy: function() {
 		elementor.panel.currentView.getHeaderView().ui.menuIcon.removeClass( 'eicon-close' ).addClass( 'eicon-menu-bar' );
-	},
-
-	onChildviewClick: function( childView ) {
-		var menuItemType = childView.model.get( 'type' );
-
-		switch ( menuItemType ) {
-			case 'page':
-				var pageName = childView.model.get( 'pageName' ),
-					pageTitle = childView.model.get( 'title' );
-
-				elementor.getPanelView().setPage( pageName, pageTitle );
-				break;
-
-			case 'link':
-				var link = childView.model.get( 'link' ),
-					isNewTab = childView.model.get( 'newTab' );
-
-				if ( isNewTab ) {
-					open( link, '_blank' );
-				} else {
-					location.href = childView.model.get( 'link' );
-				}
-
-				break;
-
-			default:
-				var callback = childView.model.get( 'callback' );
-
-				if ( _.isFunction( callback ) ) {
-					callback.call( childView );
-				}
-		}
 	}
 }, {
-	items: null,
+	groups: null,
 
-	initItems: function() {
-		this.items = new Backbone.Collection( [
+	initGroups: function() {
+		this.groups = new Backbone.Collection( [
 			{
-				name: 'global-colors',
-				icon: 'fa fa-paint-brush',
-				title: elementor.translate( 'global_colors' ),
-				type: 'page',
-				pageName: 'colorScheme'
+				name: 'style',
+				title: elementor.translate( 'global_style' ),
+				items: [
+					{
+						name: 'global-colors',
+						icon: 'fa fa-paint-brush',
+						title: elementor.translate( 'global_colors' ),
+						type: 'page',
+						pageName: 'colorScheme'
+					},
+					{
+						name: 'global-fonts',
+						icon: 'fa fa-font',
+						title: elementor.translate( 'global_fonts' ),
+						type: 'page',
+						pageName: 'typographyScheme'
+					},
+					{
+						name: 'color-picker',
+						icon: 'fa fa-eyedropper',
+						title: elementor.translate( 'color_picker' ),
+						type: 'page',
+						pageName: 'colorPickerScheme'
+					}
+				]
 			},
 			{
-				name: 'global-fonts',
-				icon: 'fa fa-font',
-				title: elementor.translate( 'global_fonts' ),
-				type: 'page',
-				pageName: 'typographyScheme'
-			},
-			{
-				name: 'color-picker',
-				icon: 'fa fa-eyedropper',
-				title: elementor.translate( 'color_picker' ),
-				type: 'page',
-				pageName: 'colorPickerScheme'
-			},
-			{
-				name: 'elementor-settings',
-				icon: 'eicon-elementor',
-				title: elementor.translate( 'elementor_settings' ),
-				type: 'link',
-				link: elementor.config.settings_page_link,
-				newTab: true
-			},
-			{
-				name: 'about-elementor',
-				icon: 'fa fa-info-circle',
-				title: elementor.translate( 'about_elementor' ),
-				type: 'link',
-				link: elementor.config.elementor_site,
-				newTab: true
-			},
-			{
-				name: 'exit-to-dashboard',
-				icon: 'fa fa-times',
-				title: elementor.translate( 'exit_to_dashboard' ),
-				type: 'link',
-				link: _.unescape( elementor.config.exit_to_dashboard_url )
+				name: 'settings',
+				title: elementor.translate( 'settings' ),
+				items: [
+					{
+						name: 'elementor-settings',
+						icon: 'eicon-elementor',
+						title: elementor.translate( 'elementor_settings' ),
+						type: 'link',
+						link: elementor.config.settings_page_link,
+						newTab: true
+					},
+					{
+						name: 'about-elementor',
+						icon: 'fa fa-info-circle',
+						title: elementor.translate( 'about_elementor' ),
+						type: 'link',
+						link: elementor.config.elementor_site,
+						newTab: true
+					}
+				]
 			}
 		] );
 	},
 
-	getItems: function() {
-		if ( ! this.items ) {
-			this.initItems();
+	getGroups: function() {
+		if ( ! this.groups ) {
+			this.initGroups();
 		}
 
-		return this.items;
+		return this.groups;
 	},
 
-	addItem: function( itemData, before ) {
-		var items = this.getItems(),
-			options = {};
+	addItem: function( itemData, groupName, before ) {
+		var group = this.getGroups().findWhere( { name: groupName } );
 
-		if ( before ) {
-			var beforeItem = items.findWhere( { name: before } );
-
-			if ( beforeItem ) {
-				options.at = items.indexOf( beforeItem );
-			}
+		if ( ! group ) {
+			return;
 		}
 
-		items.add( itemData, options );
+		var items = group.get( 'items' ),
+			beforeItem;
+
+		if ( before ) {
+			beforeItem = _.findWhere( items, { name: before } );
+		}
+
+		if ( beforeItem ) {
+			items.splice( items.indexOf( beforeItem ), 0, itemData );
+		} else {
+			items.push( itemData );
+		}
+
 	}
 } );
 
