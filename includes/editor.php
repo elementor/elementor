@@ -539,10 +539,10 @@ class Editor {
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'color_picker' => __( 'Color Picker', 'elementor' ),
-				'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
+				'elementor_settings' => __( 'Dashboard Settings', 'elementor' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
-				'global_style' => __( 'Global Style', 'elementor' ),
+				'global_style' => __( 'Style', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 
 				// Elements.
