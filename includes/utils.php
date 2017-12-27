@@ -405,7 +405,7 @@ class Utils {
 
 		$post_data = [
 			'post_type' => $post_type,
-			'post_title' => __( 'Elementor', '' ),
+			'post_title' => __( 'Elementor', 'elementor' ),
 		];
 
 		$post_id = wp_insert_post( $post_data );
@@ -415,7 +415,7 @@ class Utils {
 
 		wp_update_post( $post_data );
 
-		wp_redirect( Utils::get_edit_link( $post_id ) );
+		wp_redirect( self::get_edit_link( $post_id ) );
 		die;
 	}
 }
