@@ -5,7 +5,6 @@
 	}
 
 	label {
-		padding: 5px 7px;
 		cursor: pointer;
 	}
 
@@ -32,9 +31,15 @@
 
 	.elementor-control-popover-toggle-reset-label {
 		color: $editor-lighter;
+		@include padding-end(5px);
 	}
 
 	.elementor-control-popover-toggle-toggle-label {
+		width: 50px;
+		height: 27px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		border-radius: 3px;
 		border: 1px solid $editor-lightest;
 	}
