@@ -545,7 +545,8 @@ body.elementor-editor-inactive #elementor-editor {
   color: red; }
 
 #e-dashboard-overview .dashicons {
-  vertical-align: middle; }
+  vertical-align: middle;
+  font-size: 17px; }
 
 #e-dashboard-overview .e-overview__header {
   display: table;
@@ -575,29 +576,27 @@ body.elementor-editor-inactive #elementor-editor {
 #e-dashboard-overview .e-overview__create {
   text-align: right; }
 
-#e-dashboard-overview .e-overview__recently-edited li > span {
-  display: inline-block;
-  margin-right: 5px;
-  min-width: 150px;
+#e-dashboard-overview .e-overview__recently-edited li {
   color: #72777c; }
 
 #e-dashboard-overview .e-overview__heading {
   font-weight: 700; }
 
 #e-dashboard-overview .e-overview__post {
-  margin-top: 10px;
-  font-size: 14px; }
+  margin-top: 10px; }
 
-#e-dashboard-overview .e-overview__feed .e-overview__heading {
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
-  margin: 0 -12px;
-  padding: 6px 12px; }
+#e-dashboard-overview .e-overview__feed {
+  font-size: 14px;
+  font-weight: 500; }
+  #e-dashboard-overview .e-overview__feed .e-overview__heading {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    margin: 0 -12px;
+    padding: 6px 12px; }
 
 #e-dashboard-overview .e-overview__post-link {
   display: inline-block;
-  padding-bottom: 5px;
-  font-weight: 500; }
+  padding-bottom: 5px; }
 
 #e-dashboard-overview .e-overview__badge {
   background: #39b54a;
@@ -614,8 +613,22 @@ body.elementor-editor-inactive #elementor-editor {
 #e-dashboard-overview .e-overview__footer {
   margin: 0 -12px -12px;
   padding: 12px;
-  border-top: 1px solid #eee;
-  color: #ddd; }
+  border-top: 1px solid #eee; }
+  #e-dashboard-overview .e-overview__footer ul {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+    #e-dashboard-overview .e-overview__footer ul li {
+      padding: 0 10px;
+      margin: 0;
+      border-left: 1px solid #ddd; }
+      #e-dashboard-overview .e-overview__footer ul li:first-child {
+        padding-left: 0;
+        border: none; }
 
 #e-dashboard-overview .e-overview__go-pro {
   color: #fcb92c;
