@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Base UI control.
+ * Elementor base UI control.
  *
  * A base control for creating UI controls.
  *

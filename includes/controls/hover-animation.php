@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Hover animation control.
+ * Elementor hover animation control.
  *
  * A base control for creating hover animation control. Displays a select box
  * with the available hover animation effects @see Control_Hover_Animation::get_animations()

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Border control.
+ * Elementor border control.
  *
  * A base control for creating border control. Displays input fields to define
  * border type, border width and border color.

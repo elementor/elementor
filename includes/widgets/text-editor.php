@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Text Editor Widget.
+ * Elementor text editor widget.
  *
  * Elementor widget that displays a WYSIWYG text editor, just like the WordPress
  * editor.

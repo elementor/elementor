@@ -174,6 +174,8 @@ class Schemes_Manager {
 			}
 
 			/**
+			 * Enabled schemes.
+			 *
 			 * Filters the enabled schemes.
 			 *
 			 * @since 1.0.0

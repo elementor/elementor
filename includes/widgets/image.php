@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Image Widget.
+ * Elementor image widget.
  *
  * Elementor widget that displays an image into the page.
  *

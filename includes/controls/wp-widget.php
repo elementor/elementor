@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * WordPress widget control.
+ * Elementor WordPress widget control.
  *
  * A base control for creating WordPress widget control. Displays native
  * WordPress widgets. This a private control for internal use.

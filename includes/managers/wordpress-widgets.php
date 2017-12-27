@@ -43,6 +43,7 @@ class WordPress_Widgets_Manager {
 		wp_enqueue_style( 'media-views' );
 		// End TODO.
 
+		/** This action is documented in wp-admin/admin-header.php */
 		do_action( 'admin_print_scripts-widgets.php' );
 	}
 
@@ -51,6 +52,7 @@ class WordPress_Widgets_Manager {
 	 * @access public
 	*/
 	public function footer() {
+		/** This action is documented in wp-admin/admin-footer.php */
 		do_action( 'admin_footer-widgets.php' );
 	}
 }

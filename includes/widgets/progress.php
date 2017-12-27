@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Progress Widget.
+ * Elementor progress widget.
  *
  * Elementor widget that displays an escalating progress bar.
  *

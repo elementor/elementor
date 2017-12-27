@@ -2345,6 +2345,11 @@ select {
   clear: both;
   margin-bottom: 15px; }
 
+.iris-square-value {
+  -webkit-transition: none;
+  -o-transition: none;
+  transition: none; }
+
 #elementor-mode-switcher {
   position: absolute;
   right: 100%;
@@ -2617,13 +2622,14 @@ body.elementor-editor-preview #elementor-mode-switcher {
   border-left: none; }
 
 #elementor-template-library-modal .dialog-widget-content {
-  background-color: #f1f3f5; }
-  @media (max-width: 1599px) {
+  background-color: #f1f3f5;
+  width: 100%; }
+  @media (max-width: 1439px) {
     #elementor-template-library-modal .dialog-widget-content {
-      width: 990px; } }
-  @media (min-width: 1600px) {
+      max-width: 990px; } }
+  @media (min-width: 1440px) {
     #elementor-template-library-modal .dialog-widget-content {
-      width: 1200px; } }
+      max-width: 1200px; } }
 
 #elementor-template-library-modal .dialog-widget-header {
   padding: 0;
@@ -2808,6 +2814,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
     color: #495157; }
   #elementor-template-library-templates[data-template-source="empty"] #elementor-template-library-order-toolbar-local, #elementor-template-library-templates[data-template-source="empty"] #elementor-template-library-footer-banner {
     display: none; }
+  #elementor-template-library-templates.elementor-templates-filter-active #elementor-template-library-footer-banner {
+    display: none; }
   #elementor-template-library-templates .elementor-template-library-order-input {
     display: none; }
     #elementor-template-library-templates .elementor-template-library-order-input:checked + .elementor-template-library-order-label:after {
@@ -2826,8 +2834,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
       -ms-flex-wrap: wrap;
           flex-wrap: wrap; }
   #elementor-template-library-templates-container .elementor-template-library-template-insert {
-    text-transform: none;
     font-size: 12px; }
+  #elementor-template-library-templates-container .elementor-template-library-template-local .elementor-template-library-template-insert {
+    text-transform: none; }
 
 #elementor-template-library-toolbar {
   display: -webkit-box;
@@ -2849,6 +2858,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
   display: -ms-flexbox;
   display: flex; }
 
+#elementor-template-library-filter-toolbar-remote {
+  font-size: 11px; }
+
 #elementor-template-library-order {
   display: -webkit-box;
   display: -webkit-flex;
@@ -2857,7 +2869,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   border-left: 1px solid #d5dadf; }
 
 .elementor-template-library-order-label {
-  font-size: 13px;
   text-transform: uppercase;
   cursor: pointer;
   padding-left: 20px;
@@ -2912,7 +2923,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 #elementor-template-library-filter-text {
   border: none;
-  border-bottom: 1px solid #c2cbd2;
+  border-bottom: 1px solid #d5dadf;
   -webkit-border-radius: 0;
           border-radius: 0;
   font-size: 13px;
@@ -2921,26 +2932,38 @@ body.elementor-editor-preview #elementor-mode-switcher {
   -o-transition: border 0.5s;
   transition: border 0.5s; }
   #elementor-template-library-filter-text:focus {
-    border-color: #a4afb7; }
+    border-color: #c2cbd2; }
   #elementor-template-library-filter-text::-webkit-input-placeholder {
     font-weight: 300;
-    color: #a4afb7; }
+    color: #c2cbd2; }
   #elementor-template-library-filter-text::-moz-placeholder {
     font-weight: 300;
-    color: #a4afb7; }
+    color: #c2cbd2; }
   #elementor-template-library-filter-text:-ms-input-placeholder {
     font-weight: 300;
-    color: #a4afb7; }
+    color: #c2cbd2; }
   #elementor-template-library-filter-text::-ms-input-placeholder {
     font-weight: 300;
-    color: #a4afb7; }
+    color: #c2cbd2; }
   #elementor-template-library-filter-text::placeholder {
     font-weight: 300;
-    color: #a4afb7; }
+    color: #c2cbd2; }
+  #elementor-template-library-filter-text:focus {
+    border-color: #c2cbd2; }
+    #elementor-template-library-filter-text:focus::-webkit-input-placeholder {
+      color: #a4afb7; }
+    #elementor-template-library-filter-text:focus::-moz-placeholder {
+      color: #a4afb7; }
+    #elementor-template-library-filter-text:focus:-ms-input-placeholder {
+      color: #a4afb7; }
+    #elementor-template-library-filter-text:focus::-ms-input-placeholder {
+      color: #a4afb7; }
+    #elementor-template-library-filter-text:focus::placeholder {
+      color: #a4afb7; }
 
 .elementor-template-library-template-remote {
   margin: 15px;
-  padding: 10px;
+  padding: 8px;
   background-color: #fff;
   -webkit-box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.07);
           box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.07);
@@ -2948,11 +2971,13 @@ body.elementor-editor-preview #elementor-mode-switcher {
           border-radius: 3px; }
   .elementor-template-library-template-remote:not(:hover) .elementor-template-library-template-controls {
     opacity: 0; }
-  @media (max-width: 1599px) {
+  .elementor-template-library-template-remote:not(:hover) .elementor-template-library-template-favorite-label {
+    display: none; }
+  @media (max-width: 1439px) {
     .elementor-template-library-template-remote {
       width: -webkit-calc(25% - 30px);
       width: calc(25% - 30px); } }
-  @media (min-width: 1600px) {
+  @media (min-width: 1440px) {
     .elementor-template-library-template-remote {
       width: -webkit-calc(20% - 30px);
       width: calc(20% - 30px); } }
@@ -2966,7 +2991,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
       left: 5px;
       background-color: #B7084E;
       color: #d5dadf;
-      padding: 1px 4px;
+      padding: 2px 4px 0;
       font-size: 9px;
       -webkit-border-radius: 2px;
               border-radius: 2px; }
@@ -2977,7 +3002,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
     height: 100%;
     -webkit-background-size: cover;
             background-size: cover;
-    background-position-x: 50%; }
+    background-position-x: 50%;
+    -webkit-box-shadow: inset 0px -2px 15px -6px rgba(0, 0, 0, 0.07);
+            box-shadow: inset 0px -2px 15px -6px rgba(0, 0, 0, 0.07); }
   .elementor-template-library-template-remote .elementor-template-library-template-controls {
     position: absolute;
     top: 0;
@@ -3006,13 +3033,14 @@ body.elementor-editor-preview #elementor-mode-switcher {
           -ms-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
   .elementor-template-library-template-remote .elementor-template-library-template-footer {
-    margin-top: 10px;
+    margin: 10px 0 2px;
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: flex; }
+    display: flex;
+    font-size: 11px;
+    line-height: 1; }
   .elementor-template-library-template-remote .elementor-template-library-template-name {
-    font-size: 12px;
     text-align: right;
     color: #6d7882;
     -webkit-box-flex: 1;
@@ -3051,7 +3079,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   margin-top: 30px; }
   #elementor-template-library-order-toolbar-local .elementor-template-library-order-label {
     line-height: 1;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500; }
     #elementor-template-library-order-toolbar-local .elementor-template-library-order-label:not(:hover) {
       color: #a4afb7; }
@@ -3075,8 +3103,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
   .elementor-template-library-template-local:last-child {
     -webkit-border-radius: 0 0 3px 3px;
             border-radius: 0 0 3px 3px; }
+  .elementor-template-library-template-local .elementor-template-library-template-name {
+    font-weight: 500; }
   .elementor-template-library-template-local .elementor-template-library-template-name, .elementor-template-library-template-local .elementor-template-library-template-meta {
-    padding-left: 45px;
+    padding-left: 20px;
     white-space: nowrap;
     overflow: hidden;
     -o-text-overflow: ellipsis;
@@ -3104,7 +3134,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
     margin-left: 3px; }
   .elementor-template-library-template-local .elementor-template-library-template-control-title {
     margin-right: 6px; }
-  .elementor-template-library-template-local .elementor-template-library-template-delete:hover i {
+  .elementor-template-library-template-local .elementor-template-library-template-delete:hover {
     color: #f00; }
   .elementor-template-library-template-local .elementor-template-library-template-export:hover i {
     color: #556068; }
@@ -3151,11 +3181,16 @@ body.elementor-editor-preview #elementor-mode-switcher {
   height: 100%;
   overflow: hidden; }
   #elementor-template-library-preview iframe {
-    width: 1440px;
     height: 150%;
     -webkit-transform: scale(0.666) translateX(25%) translateY(-25%);
         -ms-transform: scale(0.666) translateX(25%) translateY(-25%);
             transform: scale(0.666) translateX(25%) translateY(-25%); }
+    @media (max-width: 1439px) {
+      #elementor-template-library-preview iframe {
+        width: 1440px; } }
+    @media (min-width: 1440px) {
+      #elementor-template-library-preview iframe {
+        width: 1710px; } }
 
 .elementor-template-library-blank-icon {
   font-size: 65px;
@@ -3260,6 +3295,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
   color: #a4afb7;
   font-size: 16px;
   font-style: italic; }
+  @media (max-height: 700px) {
+    .elementor-template-library-blank-footer {
+      display: none; } }
 
 #elementor-template-library-footer-banner i {
   color: #c2cbd2;
@@ -3282,7 +3320,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
 #elementor-template-library-error-info {
   margin-top: 10px; }
 
-@media (max-width: 1599px) {
+@media (max-width: 1439px) {
   .elementor-template-library-local-column-1 {
     width: 33%; }
   .elementor-template-library-local-column-2 {
@@ -3294,7 +3332,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   .elementor-template-library-local-column-5 {
     width: 27%; } }
 
-@media (min-width: 1600px) {
+@media (min-width: 1440px) {
   .elementor-template-library-local-column-1 {
     width: 25%; }
   .elementor-template-library-local-column-2 {
@@ -3305,6 +3343,12 @@ body.elementor-editor-preview #elementor-mode-switcher {
     width: 17%; }
   .elementor-template-library-local-column-5 {
     width: 24%; } }
+
+@media (max-width: 1024px) {
+  .elementor-template-library-local-column-3 {
+    display: none; }
+  .elementor-template-library-local-column-5 {
+    width: 41%; } }
 
 .atwho-inserted {
   padding: 2px 5px;
