@@ -567,11 +567,11 @@ class Admin {
 			<div class="e-overview__header">
 				<div class="e-overview__logo"><i class="eicon-elementor-square"></i></div>
 				<div class="e-overview__versions">
-					<span class="e-overview__version"><?php esc_html_e( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?></span>
+					<span class="e-overview__version"><?php esc_html_e( 'Elementor', 'elementor' ); ?> v<?php echo esc_html( ELEMENTOR_VERSION ); ?></span>
 					<?php do_action( 'elementor/admin/dashboard_overview_widget/after_version' ); ?>
 				</div>
 				<div class="e-overview__create">
-					<a href="#" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php esc_html_e( 'Create New Page', 'elementor' ); ?></a>
+					<a href="<?php echo esc_attr( Utils::get_create_new_post_url() ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php esc_html_e( 'Create New Page', 'elementor' ); ?></a>
 				</div>
 			</div>
 			<?php if ( $recently_edited_query->have_posts() ) : ?>
@@ -677,6 +677,35 @@ class Admin {
 		return $actions;
 	}
 
+	public function admin_action_new_post() {
+		check_admin_referer( 'elementor_action_new_post' );
+
+		if ( empty( $_GET['post_type'] ) ) {
+			$post_type = 'post';
+		} else {
+			$post_type = $_GET['post_type'];
+		}
+
+		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
+			return;
+		}
+
+		$post_data = [
+			'post_type' => $post_type,
+			'post_title' => __( 'Elementor', 'elementor' ),
+		];
+
+		$post_id = wp_insert_post( $post_data );
+
+		$post_data['ID'] = $post_id;
+		$post_data['post_title'] .= ' #' . $post_id;
+
+		wp_update_post( $post_data );
+
+		wp_redirect( Utils::get_edit_link( $post_id ) );
+		die;
+	}
+
 	/**
 	 * Admin constructor.
 	 *
@@ -709,5 +738,8 @@ class Admin {
 
 		// Ajax.
 		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
+
+		// Admin Actions
+		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 	}
 }
