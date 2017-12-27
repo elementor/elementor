@@ -551,7 +551,9 @@ body.elementor-editor-inactive #elementor-editor {
 #e-dashboard-overview .e-overview__header {
   display: table;
   width: 100%;
-  margin: 0 -12px;
+  -webkit-box-shadow: 0 5px 8px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 5px 8px rgba(0, 0, 0, 0.05);
+  margin: 0 -12px 18px;
   padding: 0 12px 12px; }
 
 #e-dashboard-overview .e-overview__logo, #e-dashboard-overview .e-overview__versions, #e-dashboard-overview .e-overview__create {
@@ -583,7 +585,7 @@ body.elementor-editor-inactive #elementor-editor {
 #e-dashboard-overview .e-overview__badge {
   background: #39b54a;
   color: white;
-  font-size: 0.8em;
+  font-size: 0.75em;
   padding: 3px 6px;
   -webkit-border-radius: 3px;
           border-radius: 3px;
@@ -603,7 +605,6 @@ body.elementor-editor-inactive #elementor-editor {
 
 #e-dashboard-overview .e-overview__recently-edited .e-overview__heading, #e-dashboard-overview .e-overview__feed .e-overview__heading {
   font-weight: 700;
-  border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
   margin: 0 -12px;
   padding: 6px 12px; }

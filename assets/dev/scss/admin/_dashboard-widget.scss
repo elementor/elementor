@@ -14,7 +14,8 @@
 		&__header {
 			display: table;
 			width: 100%;
-			margin: 0 -12px;
+			box-shadow: 0 5px 8px rgba(0, 0, 0, 0.05);
+			margin: 0 -12px 8px;
 			padding: 0 12px 12px;
 		}
 
@@ -56,7 +57,7 @@
 		&__badge {
 			background: $editor-success;
 			color: white;
-			font-size: 0.8em;
+			font-size: 0.75em;
 			padding: 3px 6px;
 			border-radius: 3px;
 			text-transform: uppercase;
@@ -87,7 +88,6 @@
 
 			.e-overview__heading {
 				font-weight: 700;
-				border-top: 1px solid #eee;
 				border-bottom: 1px solid #eee;
 				margin: 0 -12px;
 				padding: 6px 12px;
