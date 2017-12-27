@@ -349,7 +349,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 				'starter_value' => 'custom',
 				'starter_title' => '',
 				'toggle_type' => 'switcher',
-				'toggle_title' => __( 'Set', 'elementor' ),
 			],
 		];
 
@@ -486,7 +485,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 				'type' => Controls_Manager::POPOVER_TOGGLE,
 				'label' => $popover_options['starter_title'],
 				'toggle_type' => $popover_options['toggle_type'],
-				'toggle_title' => $popover_options['toggle_title'],
 				'return_value' => $popover_options['starter_value'],
 			]
 		];

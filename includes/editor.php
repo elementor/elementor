@@ -533,7 +533,6 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'current_user_can_publish' => $current_user_can_publish,
-			'exit_to_dashboard_url' => get_edit_post_link(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
@@ -544,9 +543,10 @@ class Editor {
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'color_picker' => __( 'Color Picker', 'elementor' ),
 				'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
-				'exit_to_dashboard' => __( 'Exit to Dashboard', 'elementor' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
+				'global_style' => __( 'Global Style', 'elementor' ),
+				'settings' => __( 'Settings', 'elementor' ),
 
 				// Elements.
 				'inner_section' => __( 'Columns', 'elementor' ),
@@ -621,15 +621,6 @@ class Editor {
 				'save' => __( 'Save', 'elementor' ),
 				'saved' => __( 'Saved', 'elementor' ),
 				'update' => __( 'Update', 'elementor' ),
-
-				// TODO: Remove.
-				'autosave' => __( 'Autosave', 'elementor' ),
-				'elementor_docs' => __( 'Documentation', 'elementor' ),
-				'reload_page' => __( 'Reload Page', 'elementor' ),
-				'session_expired_header' => __( 'Timeout', 'elementor' ),
-				'session_expired_message' => __( 'Your session has expired. Please reload the page to continue editing.', 'elementor' ),
-				'soon' => __( 'Soon', 'elementor' ),
-				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
 		];
 
