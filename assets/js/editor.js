@@ -4,25 +4,21 @@ module.exports = Marionette.Behavior.extend( {
 
 	ui: function() {
 		return {
-			buttonSave: '#elementor-panel-saver-button-save',
-			buttonSaveLabel: '#elementor-panel-saver-save-label',
+			buttonPreview: '#elementor-panel-saver-button-preview',
 			buttonPublish: '#elementor-panel-saver-button-publish',
-			buttonPreview: '#elementor-panel-saver-button-preview-label',
-			menuUpdate: '#elementor-panel-saver-menu-update',
-			menuPublish: '#elementor-panel-saver-menu-publish',
-			menuPublishChanges: '#elementor-panel-saver-menu-publish-changes',
-			menuSubmitForReview: '#elementor-panel-saver-menu-submit-for-review'
+			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
+			menuDiscard: '#elementor-panel-saver-menu-discard',
+			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
+			lastEdited: '.elementor-last-edited'
 		};
 	},
 
 	events: function() {
 		return {
-			'click @ui.buttonSave': 'onClickButtonSave',
 			'click @ui.buttonPreview': 'onClickButtonPreview',
-			'click @ui.menuUpdate': 'onClickMenuUpdate',
-			'click @ui.menuPublish': 'onClickMenuPublish',
-			'click @ui.menuPublishChanges': 'onClickMenuPublish',
-			'click @ui.menuSubmitForReview': 'onClickMenuSubmitForReview'
+			'click @ui.buttonPublish': 'onClickButtonPublish',
+			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
+			'click @ui.menuDiscard': 'onClickMenuDiscard'
 		};
 	},
 
@@ -30,10 +26,7 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver
 			.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )
-			.on( 'after:save:publish', this.onAfterPublished.bind( this ) )
 			.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
-
-		elementor.channels.editor.on( 'status:change', this.activateSaveButton.bind( this ) );
 
 		elementor.settings.page.model.on( 'change', this.onPostStatusChange.bind( this ) );
 	},
@@ -49,6 +42,8 @@ module.exports = Marionette.Behavior.extend( {
 		if ( ! _.isUndefined( changed.post_status ) ) {
 			this.setMenuItems( changed.post_status );
 
+			this.refreshWpPreview();
+
 			// Refresh page-settings post-status value.
 			if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
 				elementor.getPanelView().getCurrentPageView().render();
@@ -56,27 +51,31 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onBeforeSave: function() {
+	onBeforeSave: function( options ) {
 		NProgress.start();
-		this.ui.buttonSave.addClass( 'elementor-button-state' );
+		if ( 'autosave' === options.status ) {
+			this.ui.lastEdited.addClass( 'elementor-button-state' );
+		} else {
+			this.ui.buttonPublish.addClass( 'elementor-button-state' );
+		}
 	},
 
-	onAfterSave: function() {
+	onAfterSave: function( data ) {
 		NProgress.done();
-		this.ui.buttonSave.removeClass( 'elementor-button-state' );
-		// If the this.previewWindow is not null and not closed.
-		if ( this.previewWindow && this.previewWindow.location.reload ) {
-			this.previewWindow.location.reload();
-		}
+		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
+		this.refreshWpPreview();
+		this.setLastEdited( data );
+	},
+
+	setLastEdited: function() {
+		this.ui.lastEdited
+			.removeClass( 'elementor-button-state' )
+			.html( elementor.config.last_edited );
 	},
 
 	onAfterSaveError: function() {
 		NProgress.done();
 		this.ui.buttonSave.removeClass( 'elementor-button-state' );
-	},
-
-	onClickButtonSave: function() {
-		elementor.saver.doAutoSave();
 	},
 
 	onClickButtonPreview: function() {
@@ -93,64 +92,67 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
-	onClickMenuUpdate: function() {
-		elementor.saver.update();
-	},
-
-	onClickMenuPublish: function() {
-		elementor.saver.publish();
-	},
-
-	onClickMenuSubmitForReview: function() {
-		elementor.saver.savePending();
-	},
-
-	onAfterPublished: function() {
-		this.ui.menuPublishChanges.find( '.elementor-title' ).html( elementor.translate( 'published' ) );
-	},
-
-	activateSaveButton: function( hasChanges ) {
-		if ( hasChanges ) {
-			this.ui.buttonSave.addClass( 'elementor-save-active' );
-			this.ui.buttonSaveLabel.html( elementor.translate( 'save' ) );
-			this.ui.menuPublishChanges.find( '.elementor-title' )
-				.addClass( 'elementor-save-active' )
-				.html( elementor.translate( 'publish_changes' ) );
-		} else {
-			this.ui.buttonSave.removeClass( 'elementor-save-active' );
-			this.ui.buttonSaveLabel.html( elementor.translate( 'saved' ) );
-			this.ui.menuPublishChanges.find( '.elementor-title' )
-				.removeClass( 'elementor-save-active' );
-		}
-	},
-
-	setMenuItems: function( postStatus ) {
-		this.ui.menuPublish.hide();
-		this.ui.menuPublishChanges.hide();
-		this.ui.menuUpdate.hide();
-		this.ui.menuSubmitForReview.hide();
-
+	onClickButtonPublish: function() {
+		var postStatus = elementor.settings.page.model.get( 'post_status' );
 		switch ( postStatus ) {
 			case 'publish':
-				this.ui.menuPublishChanges.show();
-				break;
 			case 'private':
-				this.ui.menuUpdate.show();
+				elementor.saver.update();
 				break;
 			case 'draft':
 				if ( elementor.config.current_user_can_publish ) {
-					this.ui.menuPublish.show();
+					elementor.saver.publish();
+				} else {
+					elementor.saver.savePending();
 				}
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
 				if ( elementor.config.current_user_can_publish ) {
-					this.ui.menuPublish.show();
+					elementor.saver.publish();
 				} else {
-					this.ui.menuSubmitForReview.show();
+					elementor.saver.update();
 				}
 				break;
 		}
+	},
+
+	onClickMenuSaveDraft: function() {
+		elementor.saver.saveAutoSave( {
+			onSuccess: function() {
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
+	},
+
+	onClickMenuDiscard: function() {
+		elementor.saver.discard();
+	},
+
+	setMenuItems: function( postStatus ) {
+		var publishLabel = 'publish';
+		this.ui.menuDiscard.hide();
+
+		switch ( postStatus ) {
+			case 'publish':
+			case 'private':
+				this.ui.menuDiscard.show();
+				publishLabel = 'update';
+				break;
+			case 'draft':
+				if ( ! elementor.config.current_user_can_publish ) {
+					publishLabel = 'submit';
+				}
+				break;
+			case 'pending': // User cannot change post status
+			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
+				if ( ! elementor.config.current_user_can_publish ) {
+					publishLabel = 'update';
+				}
+				break;
+		}
+
+		this.ui.buttonPublishLabel.html( elementor.translate( publishLabel ) );
 	},
 
 	addTooltip: function() {
@@ -162,6 +164,14 @@ module.exports = Marionette.Behavior.extend( {
 				return this.getAttribute( 'data-tooltip' );
 			}
 		} );
+	},
+
+	refreshWpPreview: function() {
+		// If the this.previewWindow is not null and not closed.
+		if ( this.previewWindow && this.previewWindow.location.reload ) {
+			// Refresh URL form updated config.
+			this.previewWindow.location = elementor.config.wp_preview.url;
+		}
 	}
 } );
 
@@ -211,6 +221,20 @@ module.exports = Module.extend( {
 		}, options );
 
 		this.saveEditor( options );
+	},
+
+	discard: function() {
+		var self = this;
+		elementor.ajax.send( 'discard_changes', {
+			data: {
+				post_id: elementor.config.post_id
+			},
+
+			success: function() {
+				self.setFlagEditorChange( false );
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
 	},
 
 	update: function( options ) {
@@ -264,8 +288,8 @@ module.exports = Module.extend( {
 		var self = this,
 			newData = elementor.elements.toJSON( { removeDefault: true } );
 
-		self.trigger( 'before:save' )
-			.trigger( 'before:save:' + options.status );
+		self.trigger( 'before:save', options )
+			.trigger( 'before:save:' + options.status, options );
 
 		self.isSaving = true;
 		self.isChangedDuringSave = false;
@@ -286,6 +310,10 @@ module.exports = Module.extend( {
 
 				if ( 'autosave' !== options.status ) {
 					elementor.settings.page.model.set( 'post_status', options.status );
+				}
+
+				if ( data.config ) {
+					jQuery.extend( true, elementor.config, data.config );
 				}
 
 				elementor.config.data = newData;
@@ -4112,7 +4140,10 @@ App = Marionette.Application.extend( {
 		element: {
 			Model: require( 'elementor-elements/models/element' )
 		},
+		ControlsStack: require( 'elementor-views/controls-stack' ),
 		Module: require( 'elementor-utils/module' ),
+		RepeaterRowView: require( 'elementor-controls/repeater-row' ),
+		SettingsModel: require( 'elementor-elements/models/base-settings' ),
 		WidgetView: require( 'elementor-elements/views/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
@@ -4885,7 +4916,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"./components/saver/behaviors/footer-saver":1,"elementor-controls/base":31,"elementor-controls/base-data":28,"elementor-controls/base-multiple":29,"elementor-controls/box-shadow":32,"elementor-controls/button":33,"elementor-controls/choose":34,"elementor-controls/code":35,"elementor-controls/color":36,"elementor-controls/date-time":37,"elementor-controls/dimensions":38,"elementor-controls/font":39,"elementor-controls/gallery":40,"elementor-controls/icon":41,"elementor-controls/image-dimensions":42,"elementor-controls/media":43,"elementor-controls/number":44,"elementor-controls/order":45,"elementor-controls/popover-toggle":46,"elementor-controls/repeater":48,"elementor-controls/section":49,"elementor-controls/select2":50,"elementor-controls/slider":51,"elementor-controls/structure":52,"elementor-controls/switcher":53,"elementor-controls/tab":54,"elementor-controls/wp_widget":55,"elementor-controls/wysiwyg":56,"elementor-editor-utils/ajax":99,"elementor-editor-utils/conditions":100,"elementor-editor-utils/debug":102,"elementor-editor-utils/heartbeat":103,"elementor-editor-utils/helpers":104,"elementor-editor-utils/images-manager":105,"elementor-editor-utils/presets-factory":108,"elementor-editor-utils/schemes":109,"elementor-editor/components/saver/manager":2,"elementor-editor/components/settings/settings":7,"elementor-elements/collections/elements":58,"elementor-elements/models/element":61,"elementor-elements/views/widget":72,"elementor-layouts/panel/panel":98,"elementor-panel/pages/elements/views/elements":84,"elementor-panel/pages/menu/menu":87,"elementor-templates/manager":10,"elementor-utils/hooks":119,"elementor-utils/hot-keys":120,"elementor-utils/module":121,"elementor-views/preview":118,"modules/history/assets/js/module":130}],58:[function(require,module,exports){
+},{"./components/saver/behaviors/footer-saver":1,"elementor-controls/base":31,"elementor-controls/base-data":28,"elementor-controls/base-multiple":29,"elementor-controls/box-shadow":32,"elementor-controls/button":33,"elementor-controls/choose":34,"elementor-controls/code":35,"elementor-controls/color":36,"elementor-controls/date-time":37,"elementor-controls/dimensions":38,"elementor-controls/font":39,"elementor-controls/gallery":40,"elementor-controls/icon":41,"elementor-controls/image-dimensions":42,"elementor-controls/media":43,"elementor-controls/number":44,"elementor-controls/order":45,"elementor-controls/popover-toggle":46,"elementor-controls/repeater":48,"elementor-controls/repeater-row":47,"elementor-controls/section":49,"elementor-controls/select2":50,"elementor-controls/slider":51,"elementor-controls/structure":52,"elementor-controls/switcher":53,"elementor-controls/tab":54,"elementor-controls/wp_widget":55,"elementor-controls/wysiwyg":56,"elementor-editor-utils/ajax":99,"elementor-editor-utils/conditions":100,"elementor-editor-utils/debug":102,"elementor-editor-utils/heartbeat":103,"elementor-editor-utils/helpers":104,"elementor-editor-utils/images-manager":105,"elementor-editor-utils/presets-factory":108,"elementor-editor-utils/schemes":109,"elementor-editor/components/saver/manager":2,"elementor-editor/components/settings/settings":7,"elementor-elements/collections/elements":58,"elementor-elements/models/base-settings":59,"elementor-elements/models/element":61,"elementor-elements/views/widget":72,"elementor-layouts/panel/panel":98,"elementor-panel/pages/elements/views/elements":84,"elementor-panel/pages/menu/menu":87,"elementor-templates/manager":10,"elementor-utils/hooks":119,"elementor-utils/hot-keys":120,"elementor-utils/module":121,"elementor-views/controls-stack":117,"elementor-views/preview":118,"modules/history/assets/js/module":130}],58:[function(require,module,exports){
 var ElementModel = require( 'elementor-elements/models/element' );
 
 var ElementsCollection = Backbone.Collection.extend( {
@@ -7391,8 +7422,14 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClickSettings: function() {
+		var self = this;
+
 		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
 			elementor.getPanelView().setPage( 'page_settings' );
+
+			elementor.getPanelView().getCurrentPageView().once( 'destroy', function() {
+				self.ui.settings.removeClass( 'elementor-open' );
+			} );
 		}
 	},
 
@@ -12619,36 +12656,8 @@ RevisionsManager = function() {
 		revisions.reset( revisionsToKeep );
 	};
 
-	var checkNewAutoSave = function() {
-		if ( ! elementor.config.newer_autosave ) {
-			return;
-		}
-
-		elementor.dialogsManager.createWidget( 'confirm', {
-			id: 'elementor-restore-autosave-dialog',
-			headerMessage: elementor.translate( 'restore_auto_saved_data' ),
-			message: elementor.translate( 'restore_auto_saved_data_message' ),
-			position: {
-				my: 'center center',
-				at: 'center center'
-			},
-			strings: {
-				confirm: elementor.translate( 'edit_draft' ),
-				cancel: elementor.translate( 'edit_published' )
-			},
-			onConfirm: function() {
-				self.getRevisionDataAsync( elementor.config.newer_autosave, {
-					success: function( data ) {
-						self.setEditorData( data );
-					}
-				} );
-			}
-		} ).show();
-	};
-
 	var attachEvents = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
-		elementor.on( 'preview:loaded', checkNewAutoSave );
 	};
 
 	var addHotKeys = function() {
@@ -12694,6 +12703,14 @@ RevisionsManager = function() {
 	};
 
 	this.addRevision = function( revisionData ) {
+		var existedModel = revisions.findWhere( {
+			id: revisionData.id
+		} );
+
+		if ( existedModel ) {
+			revisions.remove( existedModel );
+		}
+
 		revisions.add( revisionData, { at: 0 } );
 	};
 
@@ -12777,6 +12794,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
+		this.currentPreviewId = elementor.config.current_revision_id;
 	},
 
 	getRevisionViewData: function( revisionView ) {
@@ -12862,9 +12880,13 @@ module.exports = Marionette.CompositeView.extend( {
 		this.exitReviewMode();
 
 		this.setRevisionsButtonsActive( false );
+
+		this.currentPreviewId = elementor.config.current_revision_id;
 	},
 
 	onApplyClick: function() {
+		elementor.saver.setFlagEditorChange( true );
+
 		elementor.saver.saveAutoSave();
 
 		this.isRevisionApplied = true;

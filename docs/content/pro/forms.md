@@ -66,7 +66,7 @@ add_action( 'elementor_pro/forms/validation', function ( $record, $ajax_handler 
 ## After Validation - Action
 
 ### `elementor_pro/forms/valid_record_submitted`
-Same as the [`elementor_pro/forms/validation`](#elementor_proformsvalidation`), but it's runs after the form actions like Email, Webhooks and etc.
+Same as the [`elementor_pro/forms/validation`](#elementor_proformsvalidation), but it's runs after the form actions like Email, Webhooks and etc.
 
 ## Webhooks Request - Filter 
 

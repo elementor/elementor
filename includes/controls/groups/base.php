@@ -477,13 +477,21 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 */
 	private function set_popover( array $fields ) {
 		$popover_options = $this->get_options( 'popover' );
+		$settings = $this->get_args();
+
+		if ( ! empty( $settings['label'] ) ) {
+			$label = $settings['label'];
+		} else {
+			$label = $popover_options['starter_title'];
+		}
+
 
 		$fields[ key( $fields ) ]['popover']['start'] = true;
 
 		$popover_toggle_field = [
 			$popover_options['starter_name'] => [
 				'type' => Controls_Manager::POPOVER_TOGGLE,
-				'label' => $popover_options['starter_title'],
+				'label' => $label,
 				'toggle_type' => $popover_options['toggle_type'],
 				'return_value' => $popover_options['starter_value'],
 			]

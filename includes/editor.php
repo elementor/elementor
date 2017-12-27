@@ -301,7 +301,7 @@ class Editor {
 
 		$plugin = Plugin::$instance;
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id );
+		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
 
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
@@ -489,19 +489,15 @@ class Editor {
 
 		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
 
-		$nonce = wp_create_nonce( 'post_preview_' . $this->_post_id );
-		$query_args['preview_id'] = $this->_post_id;
-		$query_args['preview_nonce'] = $nonce;
-		$preview_post_link = get_preview_post_link( $this->_post_id, $query_args );
-
 		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
+			'last_edited' => Utils::get_last_edited( $this->_post_id ),
 			'wp_preview' => [
-				'url' => $preview_post_link,
+				'url' => Utils::get_wp_preview_url( $this->_post_id ),
 				'target' => 'wp-preview-' . $this->_post_id,
 			],
 			'elements_categories' => $plugin->elements_manager->get_categories(),
@@ -533,6 +529,7 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'current_user_can_publish' => $current_user_can_publish,
+			'exit_to_dashboard_url' => Utils::get_exit_to_dashboard_url( $this->_post_id ),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
@@ -621,6 +618,16 @@ class Editor {
 				'save' => __( 'Save', 'elementor' ),
 				'saved' => __( 'Saved', 'elementor' ),
 				'update' => __( 'Update', 'elementor' ),
+				'submit' => __( 'Submit', 'elementor' ),
+
+				// TODO: Remove.
+				'autosave' => __( 'Autosave', 'elementor' ),
+				'elementor_docs' => __( 'Documentation', 'elementor' ),
+				'reload_page' => __( 'Reload Page', 'elementor' ),
+				'session_expired_header' => __( 'Timeout', 'elementor' ),
+				'session_expired_message' => __( 'Your session has expired. Please reload the page to continue editing.', 'elementor' ),
+				'soon' => __( 'Soon', 'elementor' ),
+				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
 		];
 

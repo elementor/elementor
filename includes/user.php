@@ -88,6 +88,26 @@ class User {
 		return true;
 	}
 
+	public static function is_current_user_can_edit_post_type( $post_type ) {
+		if ( ! post_type_exists( $post_type ) ) {
+			return false;
+		}
+
+		if ( ! post_type_supports( $post_type, 'elementor' ) ) {
+			return false;
+		}
+
+		$user = wp_get_current_user();
+		$exclude_roles = get_option( 'elementor_exclude_user_roles', [] );
+
+		$compare_roles = array_intersect( $user->roles, $exclude_roles );
+		if ( ! empty( $compare_roles ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	/**
 	 * Get user notices.
 	 *
