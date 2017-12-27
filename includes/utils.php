@@ -148,7 +148,6 @@ class Utils {
 		$query_args = [];
 
 		$nonce = wp_create_nonce( 'post_preview_' . $post_id );
-		$query_args['preview_id'] = $post_id;
 		$query_args['preview_nonce'] = $nonce;
 
 		$wp_preview_url = get_preview_post_link( $post_id, $query_args );
@@ -168,7 +167,7 @@ class Utils {
 
 
 	public static function get_exit_to_dashboard_url( $post_id ) {
-		$exit_url = get_edit_post_link( $post_id, '' );
+		$exit_url = get_edit_post_link( $post_id, 'raw' );
 
 		/**
 		 * Filters the Exit To Dashboard URL.
@@ -391,5 +390,32 @@ class Utils {
 		}
 
 		return $last_edited;
+	}
+
+	public static function admin_new_post() {
+		if ( empty( $_GET['post_type'] ) ) {
+			$post_type = 'post';
+		} else {
+			$post_type = $_GET['post_type'];
+		}
+
+		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
+			return;
+		}
+
+		$post_data = [
+			'post_type' => $post_type,
+			'post_title' => __( 'Elementor', '' ),
+		];
+
+		$post_id = wp_insert_post( $post_data );
+
+		$post_data['ID'] = $post_id;
+		$post_data['post_title'] .= ' #' . $post_id;
+
+		wp_update_post( $post_data );
+
+		wp_redirect( Utils::get_edit_link( $post_id ) );
+		die;
 	}
 }

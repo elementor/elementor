@@ -88,7 +88,7 @@ class User {
 		return true;
 	}
 
-	public static function is_current_user_can_create_new_post( $post_type ) {
+	public static function is_current_user_can_edit_post_type( $post_type ) {
 		if ( ! post_type_exists( $post_type ) ) {
 			return false;
 		}
