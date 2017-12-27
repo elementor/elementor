@@ -880,7 +880,7 @@ select {
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
     left: 0;
     right: 0;
-    margin: -10px auto 5px;
+    margin: -4px auto 5px;
     padding-top: 15px;
     width: 90%;
     z-index: 1;
@@ -888,9 +888,9 @@ select {
     .elementor-panel .elementor-controls-popover:before {
       content: '';
       position: absolute;
-      top: -20px;
-      left: 20px;
-      border: 10px solid transparent;
+      top: -16px;
+      left: 11px;
+      border: 8px solid transparent;
       border-bottom-color: #fff; }
     .elementor-panel .elementor-controls-popover div.elementor-control:before {
       content: none; }
@@ -1984,24 +1984,23 @@ select {
               transform: translateX(-50%) translateY(-50%); }
   .elementor-panel .elementor-control-type-hidden {
     display: none !important; }
+  .elementor-panel .elementor-control-type-popover_toggle input {
+    display: none; }
+  .elementor-panel .elementor-control-type-popover_toggle label {
+    padding: 5px 7px;
+    cursor: pointer; }
   .elementor-panel .elementor-control-type-popover_toggle .elementor-control-input-wrapper {
-    text-align: left; }
-  .elementor-panel .elementor-control-type-popover_toggle .elementor-control-popover-toggle-simple-toggle {
-    display: inline-block;
-    width: 50px;
-    text-align: center;
-    padding: 6px 0;
-    color: #a4afb7;
-    text-transform: uppercase;
+    direction: rtl; }
+  .elementor-panel .elementor-control-type-popover_toggle .elementor-control-popover-toggle-toggle:checked + .elementor-control-popover-toggle-toggle-label {
+    color: #71d7f7; }
+  .elementor-panel .elementor-control-type-popover_toggle .elementor-control-popover-toggle-toggle:not(:checked) ~ .elementor-control-popover-toggle-reset-label {
+    display: none; }
+  .elementor-panel .elementor-control-type-popover_toggle .elementor-control-popover-toggle-reset-label {
+    color: #c2cbd2; }
+  .elementor-panel .elementor-control-type-popover_toggle .elementor-control-popover-toggle-toggle-label {
     -webkit-border-radius: 3px;
             border-radius: 3px;
-    border: 1px solid;
-    cursor: pointer; }
-  .elementor-panel .elementor-control-type-popover_toggle .elementor-choices-label {
-    font-size: 10px;
-    text-transform: uppercase; }
-    .elementor-panel .elementor-control-type-popover_toggle .elementor-choices-label i {
-      padding-right: 2px; }
+    border: 1px solid #d5dadf; }
   .elementor-panel .elementor-control-type-button .elementor-control-input-wrapper {
     text-align: left; }
   .elementor-panel .elementor-control-type-button .elementor-button {
