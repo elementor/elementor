@@ -14,6 +14,7 @@ $gray-light:    #D4D4D4;
 $gray-lighter:  #eceeef;
 $gray-lightest: #f7f7f7;
 $gray-mouse:    #CCD6DF;
+$gray-bg:       #e6e9ec;
 
 $blue:          #0275d8;
 $blue-flat:     #1b607f;
@@ -111,7 +112,7 @@ $editor-lighter: #c2cbd2;
 $editor-lightest: #d5dadf;
 
 $editor-accent: #9b0a46;
-$editor-background: #e6e9ec;
+$editor-background: $gray-bg;
 $editor-background-light: #f1f3f5;
 
 $editor-orange: #fcb92c;
