@@ -5,6 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor column element class.
+ *
+ * Elementor repeater handler class is responsible for initializing the column
+ * element.
+ *
+ * @since 1.0.0
+ */
 class Element_Column extends Element_Base {
 
 	protected static $_edit_tools;
