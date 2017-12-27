@@ -289,7 +289,7 @@ module.exports = Module.extend( {
 			newData = elementor.elements.toJSON( { removeDefault: true } );
 
 		self.trigger( 'before:save', options )
-			.trigger( 'before:save:' + options.status );
+			.trigger( 'before:save:' + options.status, options );
 
 		self.isSaving = true;
 		self.isChangedDuringSave = false;
@@ -12599,36 +12599,8 @@ RevisionsManager = function() {
 		revisions.reset( revisionsToKeep );
 	};
 
-	var checkNewAutoSave = function() {
-		if ( ! elementor.config.newer_autosave ) {
-			return;
-		}
-
-		elementor.dialogsManager.createWidget( 'confirm', {
-			id: 'elementor-restore-autosave-dialog',
-			headerMessage: elementor.translate( 'restore_auto_saved_data' ),
-			message: elementor.translate( 'restore_auto_saved_data_message' ),
-			position: {
-				my: 'center center',
-				at: 'center center'
-			},
-			strings: {
-				confirm: elementor.translate( 'edit_draft' ),
-				cancel: elementor.translate( 'edit_published' )
-			},
-			onConfirm: function() {
-				self.getRevisionDataAsync( elementor.config.newer_autosave, {
-					success: function( data ) {
-						self.setEditorData( data );
-					}
-				} );
-			}
-		} ).show();
-	};
-
 	var attachEvents = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
-		elementor.on( 'preview:loaded', checkNewAutoSave );
 	};
 
 	var addHotKeys = function() {
@@ -12674,6 +12646,14 @@ RevisionsManager = function() {
 	};
 
 	this.addRevision = function( revisionData ) {
+		var existedModel = revisions.findWhere( {
+			id: revisionData.id
+		} );
+
+		if ( existedModel ) {
+			revisions.remove( existedModel );
+		}
+
 		revisions.add( revisionData, { at: 0 } );
 	};
 
@@ -12757,6 +12737,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
+		this.currentPreviewId = elementor.config.current_revision_id;
 	},
 
 	getRevisionViewData: function( revisionView ) {
@@ -12845,6 +12826,8 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onApplyClick: function() {
+		elementor.saver.setFlagEditorChange( true );
+
 		elementor.saver.saveAutoSave();
 
 		this.isRevisionApplied = true;
