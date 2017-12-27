@@ -334,22 +334,6 @@ body {
   font-size: 13px;
   color: #6d7882; }
 
-#elementor-saved-popup .dialog-message {
-  height: 155px;
-  width: 155px;
-  background-color: #fff;
-  -webkit-border-radius: 10px;
-          border-radius: 10px; }
-
-#elementor-saved-popup .elementor-dialog-message {
-  padding: 15px; }
-  #elementor-saved-popup .elementor-dialog-message .fa {
-    font-size: 85px;
-    padding: 10px; }
-
-#elementor-saved-popup .elementor-dialog-message-text {
-  text-transform: uppercase; }
-
 .eicon-nerd:hover:before {
   content: '\e965'; }
 
