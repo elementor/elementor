@@ -8062,7 +8062,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 				items: [
 					{
 						name: 'elementor-settings',
-						icon: 'eicon-elementor',
+						icon: 'fa fa-external-link',
 						title: elementor.translate( 'elementor_settings' ),
 						type: 'link',
 						link: elementor.config.settings_page_link,
