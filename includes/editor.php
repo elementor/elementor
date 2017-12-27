@@ -621,15 +621,6 @@ class Editor {
 				'save' => __( 'Save', 'elementor' ),
 				'saved' => __( 'Saved', 'elementor' ),
 				'update' => __( 'Update', 'elementor' ),
-
-				// TODO: Remove.
-				'autosave' => __( 'Autosave', 'elementor' ),
-				'elementor_docs' => __( 'Documentation', 'elementor' ),
-				'reload_page' => __( 'Reload Page', 'elementor' ),
-				'session_expired_header' => __( 'Timeout', 'elementor' ),
-				'session_expired_message' => __( 'Your session has expired. Please reload the page to continue editing.', 'elementor' ),
-				'soon' => __( 'Soon', 'elementor' ),
-				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
 		];
 
