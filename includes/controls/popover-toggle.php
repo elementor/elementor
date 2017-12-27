@@ -79,8 +79,6 @@ class Control_Popover_Toggle extends Base_Data_Control {
 		return [
 			'toggle_type' => 'switcher',
 			'return_value' => 'yes',
-			'label_off' => __( 'Default', 'elementor' ),
-			'label_on' => __( 'Custom', 'elementor' ),
 		];
 	}
 
@@ -100,15 +98,11 @@ class Control_Popover_Toggle extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
+				<input id="<?php echo $control_uid; ?>-custom" class="elementor-control-popover-toggle-toggle" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ data.return_value }}">
+				<label class="elementor-control-popover-toggle-toggle-label" for="<?php echo $control_uid; ?>-custom"><i class="eicon-edit" aria-hidden="true"></i></label>
 				<# if ( 'switcher' === data.toggle_type ) { #>
-					<div class="elementor-choices">
-						<input id="<?php echo $control_uid; ?>-default" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="">
-						<label class="elementor-choices-label" for="<?php echo $control_uid; ?>-default">{{{ data.label_off }}}</label>
-						<input id="<?php echo $control_uid; ?>-custom" class="elementor-control-popover-toggle-toggle" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ data.return_value }}">
-						<label class="elementor-choices-label" for="<?php echo $control_uid; ?>-custom">{{{ data.label_on }}}<i class="eicon-sort-down" aria-hidden="true"></i></label>
-					</div>
-				<# } else { #>
-					<label class="elementor-control-popover-toggle-toggle elementor-control-popover-toggle-simple-toggle">{{{ data.toggle_title }}}</label>
+					<input id="<?php echo $control_uid; ?>-default" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="">
+					<label class="elementor-control-popover-toggle-reset-label" for="<?php echo $control_uid; ?>-default"><i class="fa fa-repeat" aria-hidden="true"></i></label>
 				<# } #>
 			</div>
 		</div>
