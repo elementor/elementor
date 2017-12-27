@@ -392,30 +392,14 @@ class Utils {
 		return $last_edited;
 	}
 
-	public static function admin_new_post() {
-		if ( empty( $_GET['post_type'] ) ) {
-			$post_type = 'post';
-		} else {
-			$post_type = $_GET['post_type'];
-		}
-
-		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
-			return;
-		}
-
-		$post_data = [
+	public static function get_create_new_post_url( $post_type = 'post' ) {
+		$new_post_url = add_query_arg( [
+			'action' => 'elementor_new_post',
 			'post_type' => $post_type,
-			'post_title' => __( 'Elementor', 'elementor' ),
-		];
+		], admin_url( 'edit.php' ) );
 
-		$post_id = wp_insert_post( $post_data );
+		$new_post_url = wp_nonce_url( $new_post_url, 'elementor_action_new_post' );
 
-		$post_data['ID'] = $post_id;
-		$post_data['post_title'] .= ' #' . $post_id;
-
-		wp_update_post( $post_data );
-
-		wp_redirect( self::get_edit_link( $post_id ) );
-		die;
+		return $new_post_url;
 	}
 }
