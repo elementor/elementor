@@ -5,6 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor section element class.
+ *
+ * Elementor repeater handler class is responsible for initializing the section
+ * element.
+ *
+ * @since 1.0.0
+ */
 class Element_Section extends Element_Base {
 
 	protected static $_edit_tools;

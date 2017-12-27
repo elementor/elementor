@@ -710,6 +710,8 @@
               transform: translateY(-50%);
       right: 10px;
       pointer-events: none; }
+  .elementor-field-group.elementor-field-type-select-multiple .elementor-select-wrapper:before {
+    content: ''; }
 
 .elementor-field-subgroup {
   display: -webkit-box;

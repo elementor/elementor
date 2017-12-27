@@ -540,9 +540,10 @@ class Editor {
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
 				'color_picker' => __( 'Color Picker', 'elementor' ),
 				'elementor_settings' => __( 'Elementor Settings', 'elementor' ),
-				'exit_to_dashboard' => __( 'Exit to Dashboard', 'elementor' ),
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
+				'global_style' => __( 'Global Style', 'elementor' ),
+				'settings' => __( 'Settings', 'elementor' ),
 
 				// Elements.
 				'inner_section' => __( 'Columns', 'elementor' ),
