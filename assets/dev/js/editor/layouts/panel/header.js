@@ -7,6 +7,7 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 
 	ui: {
 		menuButton: '#elementor-panel-header-menu-button',
+		menuIcon: '#elementor-panel-header-menu-button i',
 		title: '#elementor-panel-header-title',
 		addButton: '#elementor-panel-header-add-button'
 	},
@@ -28,6 +29,10 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 		var panel = elementor.getPanelView(),
 			currentPanelPageName = panel.getCurrentPageName(),
 			nextPage = 'menu' === currentPanelPageName ? 'elements' : 'menu';
+
+		if ( 'menu' === nextPage ) {
+			this.ui.menuIcon.removeClass( 'eicon-menu-bar' ).addClass( 'eicon-close' );
+		}
 
 		panel.setPage( nextPage );
 	}

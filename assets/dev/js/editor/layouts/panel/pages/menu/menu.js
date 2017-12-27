@@ -10,6 +10,10 @@ PanelMenuPageView = Marionette.CollectionView.extend( {
 		this.collection = PanelMenuPageView.getItems();
 	},
 
+	onDestroy: function() {
+		elementor.panel.currentView.getHeaderView().ui.menuIcon.removeClass( 'eicon-close' ).addClass( 'eicon-menu-bar' );
+	},
+
 	onChildviewClick: function( childView ) {
 		var menuItemType = childView.model.get( 'type' );
 
