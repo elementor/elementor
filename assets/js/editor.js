@@ -12823,6 +12823,8 @@ module.exports = Marionette.CompositeView.extend( {
 		this.exitReviewMode();
 
 		this.setRevisionsButtonsActive( false );
+
+		this.currentPreviewId = elementor.config.current_revision_id;
 	},
 
 	onApplyClick: function() {
