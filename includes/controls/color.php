@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Color control.
+ * Elementor color control.
  *
  * A base control for creating color control. Displays a color picker with an
  * alpha slider. Includes a customizable color palette that can be preset by the
@@ -95,7 +95,7 @@ class Control_Color extends Base_Data_Control {
 			[
 				'wp-color-picker',
 			],
-			'2.0',
+			'2.0.1',
 			true
 		);
 

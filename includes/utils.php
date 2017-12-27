@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Utils.
+ * Elementor utils class.
  *
- * Elementor utils handler class.
+ * Elementor utils handler class is responsible for different utility methods
+ * used by Elementor.
  *
  * @since 1.0.0
  */
@@ -26,7 +27,7 @@ class Utils {
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
 	 */
 	public static function is_ajax() {
-		// TODO: When minimum required version will be 4.7, use `wp_doing_ajax()`.
+		// TODO: When minimum required version of Elementor will be 4.7, use `wp_doing_ajax()` instead.
 		return defined( 'DOING_AJAX' ) && DOING_AJAX;
 	}
 
@@ -62,6 +63,8 @@ class Utils {
 		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
 
 		/**
+		 * Get edit link.
+		 *
 		 * Filters the Elementor edit link.
 		 *
 		 * @since 1.0.0
@@ -127,6 +130,8 @@ class Utils {
 		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
 
 		/**
+		 * Preview URL.
+		 *
 		 * Filters the Elementor preview URL.
 		 *
 		 * @since 1.6.4
@@ -157,6 +162,8 @@ class Utils {
 		$is_supported = post_type_supports( $post_type, 'elementor' );
 
 		/**
+		 * Is post type support.
+		 *
 		 * Filters whether the post type supports editing with Elementor.
 		 *
 		 * @since 1.0.0
@@ -185,6 +192,8 @@ class Utils {
 		$placeholder_image = ELEMENTOR_ASSETS_URL . 'images/placeholder.png';
 
 		/**
+		 * Get placeholder image source.
+		 *
 		 * Filters the source of the default placeholder image used by Elementor.
 		 *
 		 * @since 1.0.0
@@ -290,6 +299,7 @@ class Utils {
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `do_action_deprecated()` function.
 		if ( function_exists( 'do_action_deprecated' ) ) { /* WP >= 4.6 */
 			do_action_deprecated( $tag, $args, $version, $replacement, $message );
 		} else {
@@ -313,6 +323,7 @@ class Utils {
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `apply_filters_deprecated()` function.
 		if ( function_exists( 'apply_filters_deprecated' ) ) { /* WP >= 4.6 */
 			return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
 		} else {

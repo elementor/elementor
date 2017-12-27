@@ -165,7 +165,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="elementor-button-title"><?php echo __( 'Insert', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-template-library-template-more-toggle">
-			<i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+			<i class="eicon-ellipsis-h" aria-hidden="true"></i>
 		</div>
 		<div class="elementor-template-library-template-more">
 			<div class="elementor-template-library-template-delete">

@@ -69,6 +69,8 @@ abstract class Manager {
 		$success_response_data = [];
 
 		/**
+		 * Settings success response data.
+		 *
 		 * Filters the success response data when saving settings using ajax.
 		 *
 		 * The dynamic portion of the hook name, `$settings_name`, refers to the settings name.

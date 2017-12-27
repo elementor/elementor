@@ -1215,6 +1215,11 @@
   clear: both;
   margin-bottom: 15px; }
 
+.iris-square-value {
+  -webkit-transition: none;
+  -o-transition: none;
+  transition: none; }
+
 .pen {
   position: relative;
   outline: none; }

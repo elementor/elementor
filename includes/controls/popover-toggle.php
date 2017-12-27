@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Popover Toggle control.
+ * Elementor popover toggle control.
  *
  * A base control for creating a popover toggle control. By default displays a button
  * to open and close the popover.

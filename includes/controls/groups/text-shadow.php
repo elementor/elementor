@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Text shadow control.
+ * Elementor text shadow control.
  *
  * A base control for creating text shadow control. Displays input fields to define
  * the text shadow.

@@ -139,9 +139,11 @@ abstract class Widget_Base extends Element_Base {
 			$widget_name = $this->get_name();
 
 			/**
+			 * Widget skin init.
+			 *
 			 * Fires when Elementor widget is being initialized.
 			 *
-			 * The dynamic portion of the hook name, `$widget_name`, refers to the widget name from `$this->get_name()`.
+			 * The dynamic portion of the hook name, `$widget_name`, refers to the widget name.
 			 *
 			 * @since 1.0.0
 			 *
@@ -365,6 +367,8 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function render_content() {
 		/**
+		 * Before widget render content.
+		 *
 		 * Fires before Elementor widget is being rendered.
 		 *
 		 * @since 1.0.0
@@ -393,6 +397,8 @@ abstract class Widget_Base extends Element_Base {
 			$widget_content = ob_get_clean();
 
 			/**
+			 * Render widget content.
+			 *
 			 * Filters the widget content before it's rendered.
 			 *
 			 * @since 1.0.0

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Base units control.
+ * Elementor base units control.
  *
  * A base control for creating unit control.
  *

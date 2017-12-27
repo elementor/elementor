@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sidebar Widget.
+ * Elementor sidebar widget.
  *
  * Elementor widget that insert any sidebar into the page.
  *

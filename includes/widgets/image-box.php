@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Image Box Widget.
+ * Elementor image box widget.
  *
  * Elementor widget that displays an image, a headline and a text.
  *

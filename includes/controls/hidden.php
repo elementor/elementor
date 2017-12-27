@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Hidden control.
+ * Elementor hidden control.
  *
  * A base control for creating hidden control. Used to save additional data in
  * the database without a visual presentation in the panel.

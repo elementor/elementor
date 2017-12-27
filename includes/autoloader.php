@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Autoloader.
+ * Elementor autoloader class.
  *
- * Elementor Autoloader handler class.
+ * Elementor autoloader handler class is responsible for loading the different
+ * classes needed to run the plugin.
  *
  * @since 1.6.0
  */
