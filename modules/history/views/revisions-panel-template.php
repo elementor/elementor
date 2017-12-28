@@ -34,7 +34,7 @@
 		<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>
 		<div class="elementor-revision-item__details">
 			<div class="elementor-revision-date">{{{ date }}}</div>
-			<div class="elementor-revision-meta">{{{ elementor.translate( type ) }}} <?php esc_html_e( 'By', 'elementor' ); ?> {{{ author }}}</div>
+			<div class="elementor-revision-meta"><span>{{{ elementor.translate( type ) }}}</span> <?php esc_html_e( 'By', 'elementor' ); ?> {{{ author }}}</div>
 		</div>
 		<div class="elementor-revision-item__tools">
 			<# if ( 'current' === type ) { #>

@@ -119,8 +119,11 @@
 		}
 
 		&__go-pro {
-			color: $editor-orange;
-			font-weight: 500;
+
+			a {
+				color: $editor-orange;
+				font-weight: 500;
+			}
 		}
 	}
 }
