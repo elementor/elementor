@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Settings\Base;
 
+use Elementor\Core\Ajax_Manager;
 use Elementor\CSS_File;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -18,7 +19,8 @@ abstract class Manager {
 
 	public function __construct() {
 		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_save_' . $this->get_name() . '_settings', [ $this, 'ajax_save_settings' ] );
+			$name = $this->get_name();
+			Plugin::$instance->ajax->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
 		}
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
@@ -49,15 +51,17 @@ abstract class Manager {
 		return $this->models_cache[ $id ];
 	}
 
-	final public function ajax_save_settings() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+	/**
+	 * @param Ajax_Manager $ajax_handler
+	 * @param array $request
+	 */
+	final public function ajax_save_settings( $ajax_handler, $request ) {
+		$data = json_decode( stripslashes( $request['data'] ), true );
 
 		$id = 0;
 
-		if ( ! empty( $_POST['id'] ) ) {
-			$id = $_POST['id'];
+		if ( ! empty( $request['id'] ) ) {
+			$id = $request['id'];
 		}
 
 		$this->ajax_before_save_settings( $data, $id );
@@ -81,7 +85,7 @@ abstract class Manager {
 		 */
 		$success_response_data = apply_filters( "elementor/{$settings_name}/settings/success_response_data", $success_response_data, $id, $data );
 
-		wp_send_json_success( $success_response_data );
+		$ajax_handler->add_response_data( true, $success_response_data );
 	}
 
 	final public function save_settings( array $settings, $id = 0 ) {
