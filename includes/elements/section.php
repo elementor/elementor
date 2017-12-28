@@ -15,15 +15,50 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Element_Section extends Element_Base {
 
+	/**
+	 * Section edit tools.
+	 *
+	 * Holds the section edit tools.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 * @static
+	 *
+	 * @var array Section edit tools.
+	 */
 	protected static $_edit_tools;
 
+	/**
+	 * Section predefined columns presets.
+	 *
+	 * Holds the predefined columns width for each columns count available by
+	 * default by Elementor. Default is an empty array.
+	 *
+	 * Note that when the user creates a section he can define custom sizes for
+	 * the columns. But Elementor sets default values for predefined columns.
+	 *
+	 * For example two columns 50% width each one, or three columns 33.33% each
+	 * one. This property hold the data for those preset values.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @static
+	 *
+	 * @var array Section presets.
+	 */
 	private static $presets = [];
 
 	/**
-	 * @static
+	 * Get default edit tools.
+	 *
+	 * Retrieve the section default edit tools. Used to set initial tools.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 * @static
+	 *
+	 * @return array Default section edit tools.
+	 */
 	protected static function get_default_edit_tools() {
 		$section_label = __( 'Section', 'elementor' );
 
@@ -48,34 +83,62 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Get section name.
+	 *
+	 * Retrieve the section name.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string Section name.
+	 */
 	public function get_name() {
 		return 'section';
 	}
 
 	/**
+	 * Get section title.
+	 *
+	 * Retrieve the section title.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string Section title.
+	 */
 	public function get_title() {
 		return __( 'Section', 'elementor' );
 	}
 
 	/**
+	 * Get section icon.
+	 *
+	 * Retrieve the section icon.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string Section icon.
+	 */
 	public function get_icon() {
 		return 'eicon-columns';
 	}
 
 	/**
-	 * @static
+	 * Get presets.
+	 *
+	 * Retrieve a specific preset columns for a given columns count, or a list
+	 * of all the preset if no parameters passed.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param int $columns_count Optional. Columns count. Default is null.
+	 * @param int $preset_index  Optional. Preset index. Default is null.
+	 *
+	 * @return array Section presets.
+	 */
 	public static function get_presets( $columns_count = null, $preset_index = null ) {
 		if ( ! self::$presets ) {
 			self::init_presets();
@@ -95,10 +158,19 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
-	 * @static
+	 * Initialize presets.
+	 *
+	 * Initializing the section peresets and set the number of columents the
+	 * section can have by default. For example a columnt can have two columns
+	 * 50% width each one, or three columns 33.33% each one.
+	 *
+	 * Note that Elementor sections have default section presets but the user
+	 * can set custom number of columens and define custom sizes for each column.
+
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 */
 	public static function init_presets() {
 		$additional_presets = [
 			2 => [
@@ -149,9 +221,19 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Get initial config.
+	 *
+	 * Retrieve the current section initial configuration.
+	 *
+	 * Adds more configuration on top of the controls list, the tabs assignet to
+	 * the control, element name, type, icon and more. This method also adds
+	 * section presets.
+	 *
 	 * @since 1.0.10
 	 * @access protected
-	*/
+	 *
+	 * @return array The initial config.
+	 */
 	protected function _get_initial_config() {
 		$config = parent::_get_initial_config();
 
@@ -161,9 +243,13 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Register section controls.
+	 *
+	 * Used to add new controls to the section element.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 */
 	protected function _register_controls() {
 
 		$this->start_controls_section(
@@ -1152,9 +1238,13 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Render section edit tools.
+	 *
+	 * Used to generate the edit tools HTML.
+	 *
 	 * @since 1.8.0
 	 * @access protected
-	*/
+	 */
 	protected function render_edit_tools() {
 		?>
 		<div class="elementor-element-overlay">
@@ -1181,9 +1271,13 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Render section output in the editor.
+	 *
+	 * Used to generate the live preview, using a Backbone JavaScript template.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 */
 	protected function _content_template() {
 		?>
 		<div class="elementor-background-video-container elementor-hidden-phone">
@@ -1201,9 +1295,13 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Before section rendering.
+	 *
+	 * Used to add stuff before the section element.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function before_render() {
 		$settings = $this->get_settings();
 		?>
@@ -1247,9 +1345,13 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * After section rendering.
+	 *
+	 * Used to add stuff after the section element.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function after_render() {
 		?>
 				</div>
@@ -1259,9 +1361,13 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Add section render attributes.
+	 *
+	 * Used to add render attributes to the section element.
+	 *
 	 * @since 1.3.0
 	 * @access protected
-	*/
+	 */
 	protected function _add_render_attributes() {
 		parent::_add_render_attributes();
 
@@ -1278,17 +1384,31 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Get default child type.
+	 *
+	 * Retrieve the section child type based on element data.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 *
+	 * @param array $element_data Element ID.
+	 *
+	 * @return Element_Base Section default child type.
+	 */
 	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::$instance->elements_manager->get_element_types( 'column' );
 	}
 
 	/**
+	 * Get HTML tag.
+	 *
+	 * Retrieve the section element HTML tag.
+	 *
 	 * @since 1.5.3
 	 * @access private
-	*/
+	 *
+	 * @return string Section HTML tag.
+	 */
 	private function get_html_tag() {
 		$html_tag = $this->get_settings( 'html_tag' );
 
@@ -1300,9 +1420,15 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Print section shape divider.
+	 *
+	 * Used to generate the shape dividers HTML.
+	 *
 	 * @since 1.3.0
 	 * @access private
-	*/
+	 *
+	 * @param string $side Shape divider side, used to set the shape key.
+	 */
 	private function print_shape_divider( $side ) {
 		$settings = $this->get_active_settings();
 		$base_setting_key = "shape_divider_$side";
