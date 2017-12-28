@@ -663,7 +663,7 @@ class Admin {
 		];
 
 		$additions_actions = [
-			'go_pro' => [
+			'go-pro' => [
 				'title' => __( 'Go Pro', 'elementor' ),
 				'link' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-overview-widget&utm_campaign=gopro&utm_medium=wp-dash' ),
 			],
