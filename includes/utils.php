@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Utils.
+ * Elementor utils class.
  *
- * Elementor utils handler class.
+ * Elementor utils handler class is responsible for different utility methods
+ * used by Elementor.
  *
  * @since 1.0.0
  */
@@ -26,7 +27,7 @@ class Utils {
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
 	 */
 	public static function is_ajax() {
-		// TODO: When minimum required version will be 4.7, use `wp_doing_ajax()`.
+		// TODO: When minimum required version of Elementor will be 4.7, use `wp_doing_ajax()` instead.
 		return defined( 'DOING_AJAX' ) && DOING_AJAX;
 	}
 
@@ -62,6 +63,8 @@ class Utils {
 		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
 
 		/**
+		 * Get edit link.
+		 *
 		 * Filters the Elementor edit link.
 		 *
 		 * @since 1.0.0
@@ -127,6 +130,8 @@ class Utils {
 		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
 
 		/**
+		 * Preview URL.
+		 *
 		 * Filters the Elementor preview URL.
 		 *
 		 * @since 1.6.4
@@ -137,6 +142,48 @@ class Utils {
 		$preview_url = apply_filters( 'elementor/utils/preview_url', $preview_url, $post_id );
 
 		return $preview_url;
+	}
+
+	public static function get_wp_preview_url( $post_id ) {
+		$query_args = [];
+
+		$nonce = wp_create_nonce( 'post_preview_' . $post_id );
+		$query_args['preview_nonce'] = $nonce;
+
+		$wp_preview_url = get_preview_post_link( $post_id, $query_args );
+
+		/**
+		 * WordPress preview URL.
+		 *
+		 * Filters the WordPress preview URL.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param string $wp_preview_url WordPress preview URL with chosen scheme.
+		 * @param int    $post_id        Post ID.
+		 */
+		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
+
+		return $wp_preview_url;
+	}
+
+
+	public static function get_exit_to_dashboard_url( $post_id ) {
+		$exit_url = get_edit_post_link( $post_id, 'raw' );
+
+		/**
+		 * Exit To Dashboard URL.
+		 *
+		 * Filters the Exit To Dashboard URL.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param string $exit_url Default exit URL.
+		 * @param int    $post_id  Post ID.
+		 */
+		$exit_url = apply_filters( 'elementor/utils/exit_to_dashboard_url', $exit_url, $post_id );
+
+		return $exit_url;
 	}
 
 	/**
@@ -157,6 +204,8 @@ class Utils {
 		$is_supported = post_type_supports( $post_type, 'elementor' );
 
 		/**
+		 * Is post type support.
+		 *
 		 * Filters whether the post type supports editing with Elementor.
 		 *
 		 * @since 1.0.0
@@ -185,6 +234,8 @@ class Utils {
 		$placeholder_image = ELEMENTOR_ASSETS_URL . 'images/placeholder.png';
 
 		/**
+		 * Get placeholder image source.
+		 *
 		 * Filters the source of the default placeholder image used by Elementor.
 		 *
 		 * @since 1.0.0
@@ -290,6 +341,7 @@ class Utils {
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `do_action_deprecated()` function.
 		if ( function_exists( 'do_action_deprecated' ) ) { /* WP >= 4.6 */
 			do_action_deprecated( $tag, $args, $version, $replacement, $message );
 		} else {
@@ -313,10 +365,45 @@ class Utils {
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `apply_filters_deprecated()` function.
 		if ( function_exists( 'apply_filters_deprecated' ) ) { /* WP >= 4.6 */
 			return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
 		} else {
 			return apply_filters_ref_array( $tag, $args );
 		}
+	}
+
+	public static function get_last_edited( $post_id ) {
+		$post = get_post( $post_id );
+		$autosave_post = wp_get_post_autosave( $post_id );
+
+		if ( $autosave_post ) {
+			$post = $autosave_post;
+		}
+		$current_time = current_time( 'timestamp' );
+		$date = date_i18n( _x( 'M j @ H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
+		$human_time = human_time_diff( strtotime( $post->post_modified ), $current_time );
+		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
+
+		if ( $autosave_post ) {
+			/* translators: 1: Post edited human date, 2:  Post edited data, 3: Post author name */
+			$last_edited = sprintf( __( 'Draft saved <time title="%2$s">%1$s</time> ago by %3$s', 'elementor' ), $human_time, $date, $display_name );
+		} else {
+			/* translators: 1: Post edited human date, 2:  Post edited data, 3: Post author name */
+			$last_edited = sprintf( __( 'Last edited <time title="%2$s">%1$s</time> ago by %3$s', 'elementor' ), $human_time, $date, $display_name );
+		}
+
+		return $last_edited;
+	}
+
+	public static function get_create_new_post_url( $post_type = 'post' ) {
+		$new_post_url = add_query_arg( [
+			'action' => 'elementor_new_post',
+			'post_type' => $post_type,
+		], admin_url( 'edit.php' ) );
+
+		$new_post_url = wp_nonce_url( $new_post_url, 'elementor_action_new_post' );
+
+		return $new_post_url;
 	}
 }

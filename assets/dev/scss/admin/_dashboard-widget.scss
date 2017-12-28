@@ -1,0 +1,129 @@
+
+//Dashboard Widget
+
+//Overview
+#e-dashboard-overview {
+
+	.dashicons {
+		vertical-align: middle;
+		font-size: 17px;
+	}
+
+	.e-overview {
+
+		&__header {
+			display: table;
+			width: 100%;
+			box-shadow: 0 5px 8px rgba(0, 0, 0, 0.05);
+			margin: 0 -12px 8px;
+			padding: 0 12px 12px;
+		}
+
+		&__logo,
+		&__versions,
+		&__create {
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+		&__logo {
+			color: $editor-accent;
+			font-size: 40px;
+			width: 40px;
+		}
+
+		&__versions {
+			padding: 0 10px;
+			font-size: 0.9em;
+			line-height: 1.5;
+		}
+
+		&__version {
+			display: block;
+		}
+
+		&__create {
+			text-align: $end;
+		}
+
+		&__post {
+			margin-top: 10px;
+		}
+
+		&__post-link {
+			display: inline-block;
+		}
+
+		&__badge {
+			background: $editor-success;
+			color: white;
+			font-size: 0.75em;
+			padding: 3px 6px;
+			border-radius: 3px;
+			text-transform: uppercase;
+		}
+
+		&__post-description {
+			margin: 0 0 1.5em;
+		}
+
+		&__recently-edited {
+
+			li {
+				color: #72777c;
+			}
+		}
+
+		&__feed {
+			font-size: 14px;
+			font-weight: 500;
+
+			.e-overview__post-link {
+				padding-bottom: 5px;
+			}
+		}
+
+		&__recently-edited,
+		&__feed {
+
+			.e-overview__heading {
+				font-weight: 700;
+				border-bottom: 1px solid #eee;
+				margin: 0 -12px;
+				padding: 6px 12px;
+			}
+		}
+
+		&__footer{
+			margin: 0 -12px -12px;
+			padding: 12px;
+			border-top: 1px solid #eee;
+
+			ul {
+				display: flex;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+
+				li {
+					padding: 0 10px;
+					margin: 0;
+					@include border-start(1px solid #ddd);
+
+					&:first-child {
+						@include padding-start(0);
+						border: none;
+					}
+				}
+			}
+		}
+
+		&__go-pro {
+
+			a {
+				color: $editor-orange;
+				font-weight: 500;
+			}
+		}
+	}
+}

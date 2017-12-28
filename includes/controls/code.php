@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Code control.
+ * Elementor code control.
  *
  * A base control for creating code control. Displays a code editor textarea.
  * Based on Ace editor (@see https://ace.c9.io/).

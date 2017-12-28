@@ -58,9 +58,15 @@ abstract class CSS_File {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->set_path_and_url();
+		if ( $this->use_external_file() ) {
+			$this->set_path_and_url();
+		}
 
 		$this->init_stylesheet();
+	}
+
+	protected function use_external_file() {
+		return 'internal' !== get_option( 'elementor_css_print_method' );
 	}
 
 	/**
@@ -82,9 +88,9 @@ abstract class CSS_File {
 			$meta['css'] = '';
 		} else {
 			$file_created = false;
-			$is_external_file = ( 'internal' !== get_option( 'elementor_css_print_method' ) );
+			$use_external_file = $this->use_external_file();
 
-			if ( $is_external_file && wp_is_writable( dirname( $this->path ) ) ) {
+			if ( $use_external_file && wp_is_writable( dirname( $this->path ) ) ) {
 				$file_created = file_put_contents( $this->path, $this->css );
 			}
 
@@ -139,7 +145,7 @@ abstract class CSS_File {
 			$dep = $this->get_inline_dependency();
 			// If the dependency has already been printed ( like a template in footer )
 			if ( wp_styles()->query( $dep, 'done' ) ) {
-				echo '<style>' . $meta['css'] . '</style>'; // XSS ok.
+				printf( '<style id="%s">%s</style>', $this->get_file_handle_id(), $meta['css'] ); // XSS ok.
 			} else {
 				wp_add_inline_style( $dep , $meta['css'] );
 			}
@@ -153,6 +159,21 @@ abstract class CSS_File {
 				Plugin::$instance->frontend->enqueue_font( $font );
 			}
 		}
+
+		$name = $this->get_name();
+
+		/**
+		 * CSS file enqueue.
+		 *
+		 * Fires when CSS file is enqueued on Elementor.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param CSS_File $this The current CSS file.
+		 */
+		do_action( "elementor/{$name}-css-file/enqueue", $this );
 	}
 
 	/**
@@ -405,9 +426,11 @@ abstract class CSS_File {
 		$name = $this->get_name();
 
 		/**
+		 * CSS file parse.
+		 *
 		 * Fires when CSS file is parsed on Elementor.
 		 *
-		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name from `$this->get_name()`.
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
 		 * @since 1.2.0
 		 *
@@ -476,7 +499,7 @@ abstract class CSS_File {
 	 * @since 1.2.0
 	 * @access private
 	*/
-	private function set_path_and_url() {
+	protected function set_path_and_url() {
 		$wp_upload_dir = wp_upload_dir( null, false );
 
 		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, $this->get_file_name() );

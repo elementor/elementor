@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Base control.
+ * Elementor base control.
  *
  * A base control for creating controls in the panel. Each control accepts all
  * the params listed below.

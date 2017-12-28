@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Shapes.
+ * Elementor shapes class.
  *
- * Elementor shapes handler class.
+ * Elementor shapes handler class is responsible for setting up the supported
+ * shape dividers.
  *
  * @since 1.3.0
  */

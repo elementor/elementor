@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Conditions.
+ * Elementor conditions class.
  *
- * Elementor conditions handler class.
+ * Elementor conditions handler class introduce the compare conditions and the
+ * check conditions methods.
  *
  * @since 1.0.0
  */
@@ -75,7 +76,7 @@ class Conditions {
 
 		foreach ( $conditions['terms'] as $term ) {
 			if ( ! empty( $term['terms'] ) ) {
-				$comparison_result = self::check( $term, $conditions );
+				$comparison_result = self::check( $term, $comparison );
 			} else {
 				preg_match( '/(\w+)(?:\[(\w+)])?/', $term['name'], $parsed_name );
 

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Accordion Widget.
+ * Elementor accordion widget.
  *
  * Elementor widget that displays a collapsible display of content in an
  * accordion style, showing only one item at a time.

@@ -9,13 +9,13 @@ module.exports = Module.extend( {
 
 	__construct: function() {
 		this.setWorkSaver();
-
-		elementor.channels.editor.on( 'status:change', _.bind( this.startTime, this ) );
 	},
 
-	startTime: function() {
-		if ( ! this.autoSaveTimer ) {
-			this.autoSaveTimer = window.setInterval( _.bind( this.doAutoSave, this ), 15000 );
+	startTimer: function( hasChanges ) {
+		if ( hasChanges ) {
+			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), 5000 );
+		} else if ( ! this.isChangedDuringSave ) {
+			clearTimeout( this.autoSaveTimer );
 		}
 	},
 
@@ -27,6 +27,8 @@ module.exports = Module.extend( {
 		}
 
 		this.saveAutoSave();
+
+		this.autoSaveTimer = null;
 	},
 
 	saveAutoSave: function( options ) {
@@ -43,6 +45,20 @@ module.exports = Module.extend( {
 		}, options );
 
 		this.saveEditor( options );
+	},
+
+	discard: function() {
+		var self = this;
+		elementor.ajax.send( 'discard_changes', {
+			data: {
+				post_id: elementor.config.post_id
+			},
+
+			success: function() {
+				self.setFlagEditorChange( false );
+				location.href = elementor.config.exit_to_dashboard_url;
+			}
+		} );
 	},
 
 	update: function( options ) {
@@ -65,6 +81,9 @@ module.exports = Module.extend( {
 		if ( status && this.isSaving ) {
 			this.isChangedDuringSave = true;
 		}
+
+		this.startTimer( status );
+
 		elementor.channels.editor
 			.reply( 'status', status )
 			.trigger( 'status:change', status );
@@ -96,8 +115,8 @@ module.exports = Module.extend( {
 		var self = this,
 			newData = elementor.elements.toJSON( { removeDefault: true } );
 
-		self.trigger( 'before:save' )
-			.trigger( 'before:save:' + options.status );
+		self.trigger( 'before:save', options )
+			.trigger( 'before:save:' + options.status, options );
 
 		self.isSaving = true;
 		self.isChangedDuringSave = false;
@@ -118,6 +137,10 @@ module.exports = Module.extend( {
 
 				if ( 'autosave' !== options.status ) {
 					elementor.settings.page.model.set( 'post_status', options.status );
+				}
+
+				if ( data.config ) {
+					jQuery.extend( true, elementor.config, data.config );
 				}
 
 				elementor.config.data = newData;

@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Rollback.
+ * Elementor rollback class.
  *
- * Elementor rollback handler class.
+ * Elementor rollback handler class is responsible for rolling back Elementor to
+ * previous version.
  *
  * @since 1.5.0
  */
@@ -155,7 +156,7 @@ class Rollback {
 		$logo_url = ELEMENTOR_ASSETS_URL . 'images/logo-panel.svg';
 
 		$upgrader_args = [
-			'url' => 'update.php?action=upgrade-plugin&plugin=' . urlencode( $this->plugin_name ),
+			'url' => 'update.php?action=upgrade-plugin&plugin=' . rawurlencode( $this->plugin_name ),
 			'plugin' => $this->plugin_name,
 			'nonce' => 'upgrade-plugin_' . $this->plugin_name,
 			'title' => '<img src="' . $logo_url . '" alt="Elementor">' . __( 'Rollback to Previous Version', 'elementor' ),

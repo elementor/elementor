@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Textarea control.
+ * Elementor textarea control.
  *
  * A base control for creating textarea control. Displays a classic textarea.
  *

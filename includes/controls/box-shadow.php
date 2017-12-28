@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Box shadow control.
+ * Elementor box shadow control.
  *
  * A base control for creating box shadows control. Displays input fields for
  * horizontal shadow, vertical shadow, shadow blur, shadow spread, shadow color.
@@ -164,13 +164,7 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 		var defaultColorValue = '';
 
 		if ( data.default.color ) {
-			if ( '#' !== data.default.color.substring( 0, 1 ) ) {
-				defaultColorValue = '#' + data.default.color;
-			} else {
-				defaultColorValue = data.default.color;
-			}
-
-			defaultColorValue = ' data-default-color=' + defaultColorValue; // Quotes added automatically.
+			defaultColorValue = ' data-default-color=' + data.default.color; // Quotes added automatically.
 		}
 		#>
 		<div class="elementor-control-field">

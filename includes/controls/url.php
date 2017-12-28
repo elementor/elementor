@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * URL control.
+ * Elementor URL control.
  *
  * A base control for creating url control. Displays a URL input with the
  * ability to set the target of the link to `_blank` to open in a new tab.

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Icon control.
+ * Elementor icon control.
  *
  * A base control for creating an icon control. Displays font icon select box.
  * Available icons are listed in @see Control_Icon::get_icons(). The control

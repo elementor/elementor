@@ -8,9 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Frontend.
+ * Elementor frontend class.
  *
- * Elementor frontend handler class.
+ * Elementor frontend handler class is responsible for initializing Elementor in
+ * the frontend.
  *
  * @since 1.0.0
  */
@@ -158,7 +159,7 @@ class Frontend {
 	 * Print elements.
 	 *
 	 * Used to generate the element final HTML on the frontend.
- 	 *
+	 *
 	 * @since 1.0.0
 	 * @access protected
 	 *
@@ -240,6 +241,8 @@ class Frontend {
 	 */
 	public function register_scripts() {
 		/**
+		 * Before frontend register scripts.
+		 *
 		 * Fires before Elementor frontend scripts are registered.
 		 *
 		 * @since 1.2.1
@@ -256,6 +259,15 @@ class Frontend {
 			],
 			'4.0.2',
 			true
+		);
+
+		wp_register_script(
+			'flatpickr',
+			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.js',
+			[
+				'jquery',
+			],
+			'4.1.4'
 		);
 
 		wp_register_script(
@@ -321,6 +333,8 @@ class Frontend {
 		);
 
 		/**
+		 * After frontend register scripts.
+		 *
 		 * Fires after Elementor frontend scripts are registered.
 		 *
 		 * @since 1.2.1
@@ -340,6 +354,8 @@ class Frontend {
 	 */
 	public function register_styles() {
 		/**
+		 * Before frontend register styles.
+		 *
 		 * Fires before Elementor frontend styles are registered.
 		 *
 		 * @since 1.2.0
@@ -372,6 +388,13 @@ class Frontend {
 		);
 
 		wp_register_style(
+			'flatpickr',
+			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.css',
+			[],
+			'4.1.4'
+		);
+
+		wp_register_style(
 			'elementor-frontend',
 			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
 			[],
@@ -379,6 +402,8 @@ class Frontend {
 		);
 
 		/**
+		 * After frontend register styles.
+		 *
 		 * Fires after Elementor frontend styles are registered.
 		 *
 		 * @since 1.2.0
@@ -396,6 +421,8 @@ class Frontend {
 	 */
 	public function enqueue_scripts() {
 		/**
+		 * Before frontend enqueue scripts.
+		 *
 		 * Fires before Elementor frontend scripts are enqueued.
 		 *
 		 * @since 1.0.0
@@ -448,6 +475,8 @@ class Frontend {
 		wp_localize_script( 'elementor-frontend', 'elementorFrontendConfig', $elementor_frontend_config );
 
 		/**
+		 * After frontend enqueue scripts.
+		 *
 		 * Fires after Elementor frontend scripts are enqueued.
 		 *
 		 * @since 1.0.0
@@ -467,6 +496,8 @@ class Frontend {
 	 */
 	public function enqueue_styles() {
 		/**
+		 * Before frontend enqueue styles.
+		 *
 		 * Fires before Elementor frontend styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -486,6 +517,8 @@ class Frontend {
 		}
 
 		/**
+		 * After frontend enqueue styles.
+		 *
 		 * Fires after Elementor frontend styles are enqueued.
 		 *
 		 * @since 1.0.0
@@ -528,6 +561,8 @@ class Frontend {
 		$print_google_fonts = true;
 
 		/**
+		 * Print frontend google fonts.
+		 *
 		 * Filters whether to enqueue Google fonts in the frontend.
 		 *
 		 * @since 1.0.0
@@ -546,7 +581,7 @@ class Frontend {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
 
-			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( '|', $this->google_fonts ) );
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( rawurlencode( '|' ), $this->google_fonts ) );
 
 			$subsets = [
 				'ru_RU' => 'cyrillic',
@@ -685,7 +720,7 @@ class Frontend {
 			return '';
 		}
 
-		if (  is_preview() ) {
+		if ( is_preview() ) {
 			$preview_post = wp_get_post_autosave( $post_id, get_current_user_id() );
 			$status = DB::STATUS_DRAFT;
 		} else {
@@ -696,6 +731,8 @@ class Frontend {
 		$data = Plugin::$instance->db->get_plain_editor( $post_id, $status );
 
 		/**
+		 * Frontend builder content data.
+		 *
 		 * Filters the builder content in the frontend.
 		 *
 		 * @since 1.0.0
@@ -742,6 +779,8 @@ class Frontend {
 		$content = ob_get_clean();
 
 		/**
+		 * Frontend content.
+		 *
 		 * Filters the content in the frontend.
 		 *
 		 * @since 1.0.0

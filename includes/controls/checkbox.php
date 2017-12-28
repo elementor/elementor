@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Checkbox control.
+ * Elementor checkbox control.
  *
  * A base control for creating checkbox control. Displays a single checkbox.
  *

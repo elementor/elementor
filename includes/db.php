@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Database.
+ * Elementor database class.
  *
- * Elementor database handler class.
+ * Elementor database handler class is responsible for comunicating with the
+ * DB, save and retrieve Elementor data and meta data.
  *
  * @since 1.0.0
  */
@@ -38,6 +39,11 @@ class DB {
 	 * Post autosave status.
 	 */
 	const STATUS_AUTOSAVE = 'autosave';
+
+	/**
+	 * Post pending status.
+	 */
+	const STATUS_PENDING = 'pending';
 
 	/**
 	 * Switched post data.
@@ -91,7 +97,9 @@ class DB {
 			$is_meta_updated = update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 
 			/**
-			 * Fires before Elementor saves data to the database.
+			 * Before DB save.
+			 *
+			 * Fires before Elementor editor saves data to the database.
 			 *
 			 * @since 1.0.0
 			 *
@@ -103,7 +111,9 @@ class DB {
 			$this->save_plain_text( $post_id );
 		} else {
 			/**
-			 * Fires before Elementor saves data to the database.
+			 * Before DB save.
+			 *
+			 * Fires before Elementor editor saves data to the database.
 			 *
 			 * @since 1.0.0
 			 *
@@ -132,7 +142,9 @@ class DB {
 		delete_post_meta( $post_id, Post_CSS_File::META_KEY );
 
 		/**
-		 * Fires after Elementor saves data to the database.
+		 * After DB save.
+		 *
+		 * Fires after Elementor editor saves data to the database.
 		 *
 		 * @since 1.0.0
 		 *
