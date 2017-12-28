@@ -843,17 +843,15 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return array The initial config.
 	 */
 	protected function _get_initial_config() {
-		$config = parent::_get_initial_config();
+		$config = [
+			'name' => $this->get_name(),
+			'elType' => $this->get_type(),
+			'title' => $this->get_title(),
+			'icon' => $this->get_icon(),
+			'reload_preview' => $this->is_reload_preview_required(),
+		];
 
-		return array_merge(
-			$config, [
-				'name' => $this->get_name(),
-				'elType' => $this->get_type(),
-				'title' => $this->get_title(),
-				'icon' => $this->get_icon(),
-				'reload_preview' => $this->is_reload_preview_required(),
-			]
-		);
+		return array_merge( parent::_get_initial_config(), $config );
 	}
 
 	/**
