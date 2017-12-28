@@ -154,6 +154,7 @@ class Model extends BaseModel {
 				'label' => __( 'Delete All Content', 'elementor' ),
 				'text' => __( 'Delete', 'elementor' ),
 				'separator' => 'before',
+				'button_type' => 'warning',
 				'event' => 'elementor:clearPage',
 			]
 		);

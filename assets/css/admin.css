@@ -629,7 +629,7 @@ body.elementor-editor-inactive #elementor-editor {
         padding-left: 0;
         border: none; }
 
-#e-dashboard-overview .e-overview__go-pro {
+#e-dashboard-overview .e-overview__go-pro a {
   color: #fcb92c;
   font-weight: 500; }
 /*# sourceMappingURL=admin.css.map */
