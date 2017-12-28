@@ -227,7 +227,7 @@ module.exports = Module.extend( {
 
 	discard: function() {
 		var self = this;
-		elementor.ajax.send( 'discard_changes', {
+		elementor.ajax.add( 'discard_changes', {
 			data: {
 				post_id: elementor.config.post_id
 			},
