@@ -77,9 +77,9 @@ abstract class Element_Base extends Controls_Stack {
 	private $_is_type_instance = true;
 
 	/**
-	 * Retrieve script dependencies.
+	 * Get script dependencies.
 	 *
-	 * Get the list of script dependencies the element requires.
+	 * Retrieve the list of script dependencies the element requires.
 	 *
 	 * @since 1.3.0
 	 * @access public
@@ -106,9 +106,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve element edit tools.
+	 * Get element edit tools.
 	 *
-	 * Used to get the element edit tools.
+	 * Used to retrieve the element edit tools.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -166,9 +166,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve element type.
+	 * Get element type.
 	 *
-	 * Get the element type, in this case `element`.
+	 * Retrieve the element type, in this case `element`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -181,9 +181,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve default edit tools.
+	 * Get default edit tools.
 	 *
-	 * Get the element default edit tools. Used to set initial tools.
+	 * Retrieve the element default edit tools. Used to set initial tools.
 	 * By default the element has no edit tools.
 	 *
 	 * @since 1.0.0
@@ -197,7 +197,7 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve items.
+	 * Get items.
 	 *
 	 * Utility method that recieves an array with a needle and returns all the
 	 * items that match the needle. If needle is not defined the entire haystack
@@ -234,7 +234,11 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve the default child element type.
+	 * Get default child type.
+	 *
+	 * Retrieve the default child type based on element data.
+	 *
+	 * Note that not all elements support childen.
 	 *
 	 * @since 1.0.0
 	 * @access protected
@@ -267,7 +271,9 @@ abstract class Element_Base extends Controls_Stack {
 	public function after_render() {}
 
 	/**
-	 * Retrieve element title.
+	 * Get element title.
+	 *
+	 * Retrieve the element title.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -279,7 +285,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve element icon.
+	 * Get element icon.
+	 *
+	 * Retrieve the element icon.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -343,9 +351,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve children elements.
+	 * Get child elements.
 	 *
-	 * Get all the child elements of this this element.
+	 * Retrieve all the child elements of this element.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -361,9 +369,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve default arguments.
+	 * Get default arguments.
 	 *
-	 * Get the element default arguments. Used to return all the default
+	 * Retrieve the element default arguments. Used to return all the default
 	 * arguments or a specific default argument, if one is set.
 	 *
 	 * @since 1.0.0
@@ -378,9 +386,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve parent element.
+	 * Get parent element.
 	 *
-	 * Get the element parent. Used to check which element it belongs to.
+	 * Retrieve the element parent. Used to check which element it belongs to.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -499,9 +507,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve render attribute string.
+	 * Get render attribute string.
 	 *
-	 * Used to get the value of the render attribute.
+	 * Used to retrieve the value of the render attribute.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -576,9 +584,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve the element raw data.
+	 * Get the element raw data.
 	 *
-	 * Get the raw element data, including the id, type, settings, child
+	 * Retrieve the raw element data, including the id, type, settings, child
 	 * elements and whether it is an inner element.
 	 *
 	 * The data with the HTML used always to display the data, but the Elementor
@@ -613,11 +621,11 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve unique selector.
+	 * Get unique selector.
 	 *
-	 * Get the unique selector of the element. Used to set a unique HTML class
-	 * for each HTML element. This way Elementor can set custom styles for each
-	 * element.
+	 * Retrieve the unique selector of the element. Used to set a unique HTML
+	 * class for each HTML element. This way Elementor can set custom styles for
+	 * each element.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -734,9 +742,9 @@ abstract class Element_Base extends Controls_Stack {
 	protected function render() {}
 
 	/**
-	 * Retrieve default data.
+	 * Get default data.
 	 *
-	 * Get the default element data. Used to reset the data on initialization.
+	 * Retrieve the default element data. Used to reset the data on initialization.
 	 *
 	 * @since 1.0.0
 	 * @access protected
@@ -769,9 +777,12 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve initial config.
+	 * Get initial config.
 	 *
-	 * Get the element initial configuration.
+	 * Retrieve the current element initial configuration.
+	 *
+	 * Adds more configuration on top of the controls list and the tabs assignet
+	 * to the control. This method also adds element name, type, icon and more.
 	 *
 	 * @since 1.0.10
 	 * @access protected
@@ -793,9 +804,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve child type.
+	 * Get child type.
 	 *
-	 * Get the element child type based on element data.
+	 * Retrieve the element child type based on element data.
 	 *
 	 * @since 1.0.0
 	 * @access private
