@@ -133,7 +133,7 @@ class Model extends BaseModel {
 
 		$post_type_object = get_post_type_object( $this->post->post_type );
 
-		$can_publish = current_user_can( $post_type_object->cap->publish_posts );
+		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
 
 		if ( 'publish' === $this->post->post_status || 'private' === $this->post->post_status || $can_publish ) {
 			$this->add_control(
@@ -154,6 +154,7 @@ class Model extends BaseModel {
 				'label' => __( 'Delete All Content', 'elementor' ),
 				'text' => __( 'Delete', 'elementor' ),
 				'separator' => 'before',
+				'button_type' => 'warning',
 				'event' => 'elementor:clearPage',
 			]
 		);

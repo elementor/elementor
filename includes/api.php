@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * API.
+ * Elementor API class.
  *
- * Elementor API handler class.
+ * Elementor API handler class is responsible for communicating with Elementor
+ * remote servers retrieve templates data and to send uninstall feedback.
  *
  * @since 1.0.0
  */
@@ -100,6 +101,12 @@ class Api {
 				unset( $info_data['templates'] );
 			}
 
+			if ( isset( $info_data['feed'] ) ) {
+				update_option( 'elementor_remote_info_feed_data', $info_data['feed'], 'no' );
+
+				unset( $info_data['feed'] );
+			}
+
 			set_transient( $cache_key, $info_data, 12 * HOUR_IN_SECONDS );
 		}
 
@@ -153,6 +160,18 @@ class Api {
 		return $templates;
 	}
 
+	public static function get_feed_data( $force_update = false ) {
+		self::_get_info_data( $force_update );
+
+		$feed = get_option( 'elementor_remote_info_feed_data' );
+
+		if ( empty( $feed ) ) {
+			return [];
+		}
+
+		return $feed;
+	}
+
 	/**
 	 * Get template content.
 	 *
@@ -177,6 +196,8 @@ class Api {
 		];
 
 		/**
+		 * API: Template body args.
+		 *
 		 * Filters the body arguments send with the GET request when fetching the content.
 		 *
 		 * @since 1.0.0

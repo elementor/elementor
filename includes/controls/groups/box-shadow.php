@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Box shadow control.
+ * Elementor box shadow control.
  *
  * A base control for creating box shadow control. Displays input fields to define
  * the box shadow.

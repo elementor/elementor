@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Border control.
+ * Elementor border control.
  *
  * A base control for creating border control. Displays input fields to define
  * border type, border width and border color.
@@ -120,10 +120,7 @@ class Group_Control_Border extends Group_Control_Base {
 
 	protected function get_default_options() {
 		return [
-			'popover' => [
-				'starter_title' => _x( 'Border', 'Border Control', 'elementor' ),
-				'toggle_type' => 'simple',
-			],
+			'popover' => false,
 		];
 	}
 }

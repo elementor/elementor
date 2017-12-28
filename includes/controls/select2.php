@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Select2 control.
+ * Elementor select2 control.
  *
  * A base control for creating select2 control. Displays a select box control
  * based on select2 jQuery plugin @see https://select2.github.io/ .

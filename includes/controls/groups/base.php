@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Base group control.
+ * Elementor base group control.
  *
  * A base control for creating group control.
  *
@@ -349,7 +349,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 				'starter_value' => 'custom',
 				'starter_title' => '',
 				'toggle_type' => 'switcher',
-				'toggle_title' => __( 'Set', 'elementor' ),
 			],
 		];
 
@@ -478,15 +477,22 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 */
 	private function set_popover( array $fields ) {
 		$popover_options = $this->get_options( 'popover' );
+		$settings = $this->get_args();
+
+		if ( ! empty( $settings['label'] ) ) {
+			$label = $settings['label'];
+		} else {
+			$label = $popover_options['starter_title'];
+		}
+
 
 		$fields[ key( $fields ) ]['popover']['start'] = true;
 
 		$popover_toggle_field = [
 			$popover_options['starter_name'] => [
 				'type' => Controls_Manager::POPOVER_TOGGLE,
-				'label' => $popover_options['starter_title'],
+				'label' => $label,
 				'toggle_type' => $popover_options['toggle_type'],
-				'toggle_title' => $popover_options['toggle_title'],
 				'return_value' => $popover_options['starter_value'],
 			]
 		];
