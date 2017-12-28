@@ -82,6 +82,11 @@
 			pointer-events: none;
 		}
 	}
+	&.elementor-field-type-select-multiple{
+		.elementor-select-wrapper:before {
+			content: '';
+		}
+	}
 }
 
 .elementor-field-subgroup {

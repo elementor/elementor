@@ -159,7 +159,7 @@ class Frontend {
 	 * Print elements.
 	 *
 	 * Used to generate the element final HTML on the frontend.
- 	 *
+	 *
 	 * @since 1.0.0
 	 * @access protected
 	 *
@@ -259,6 +259,15 @@ class Frontend {
 			],
 			'4.0.2',
 			true
+		);
+
+		wp_register_script(
+			'flatpickr',
+			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.js',
+			[
+				'jquery',
+			],
+			'4.1.4'
 		);
 
 		wp_register_script(
@@ -376,6 +385,13 @@ class Frontend {
 			ELEMENTOR_ASSETS_URL . 'css/animations.min.css',
 			[],
 			ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
+			'flatpickr',
+			ELEMENTOR_ASSETS_URL . 'lib/flatpickr/flatpickr' . $suffix . '.css',
+			[],
+			'4.1.4'
 		);
 
 		wp_register_style(
@@ -704,7 +720,7 @@ class Frontend {
 			return '';
 		}
 
-		if (  is_preview() ) {
+		if ( is_preview() ) {
 			$preview_post = wp_get_post_autosave( $post_id, get_current_user_id() );
 			$status = DB::STATUS_DRAFT;
 		} else {
