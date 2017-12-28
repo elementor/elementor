@@ -7,7 +7,11 @@
 	border: none;
 	border-radius: 3px;
 	transition-property: background, color, box-shadow, opacity;
-	transition-duration: .5s;
+	transition-duration: .3s;
+
+	&:hover {
+		border: none;
+	}
 
 	&:not([disabled]) {
 		cursor: pointer;

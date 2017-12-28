@@ -567,11 +567,11 @@ class Admin {
 			<div class="e-overview__header">
 				<div class="e-overview__logo"><i class="eicon-elementor-square"></i></div>
 				<div class="e-overview__versions">
-					<span class="e-overview__version"><?php esc_html_e( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?></span>
+					<span class="e-overview__version"><?php esc_html_e( 'Elementor', 'elementor' ); ?> v<?php echo esc_html( ELEMENTOR_VERSION ); ?></span>
 					<?php do_action( 'elementor/admin/dashboard_overview_widget/after_version' ); ?>
 				</div>
 				<div class="e-overview__create">
-					<a href="#" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php esc_html_e( 'Create New Page', 'elementor' ); ?></a>
+					<a href="<?php echo esc_attr( Utils::get_create_new_post_url() ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php esc_html_e( 'Create New Page', 'elementor' ); ?></a>
 				</div>
 			</div>
 			<?php if ( $recently_edited_query->have_posts() ) : ?>
@@ -581,10 +581,11 @@ class Admin {
 					<?php
 					while ( $recently_edited_query->have_posts() ) :
 						$recently_edited_query->the_post();
+
+						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_time( 'U' ) );
 					?>
 					<li class="e-overview__post">
-						<span><?php echo date_i18n( 'M jS', get_the_time( 'U' ) ); ?>, <?php the_time(); ?></span> <a href="<?php echo esc_attr( Utils::get_edit_link( get_the_ID() ) ); ?>" class="e-overview__post-link">
-							<span class="dashicons dashicons-edit"></span> <?php the_title(); ?></a>
+						 <a href="<?php echo esc_attr( Utils::get_edit_link( get_the_ID() ) ); ?>" class="e-overview__post-link"><?php the_title(); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; ?>, <?php the_time(); ?></span>
 					</li>
 					<?php endwhile; ?>
 				</ul>
@@ -610,8 +611,8 @@ class Admin {
 			<?php endif; ?>
 			<div class="e-overview__footer">
 				<ul>
-				<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action ) : ?>
-					<li><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+				<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action_id => $action ) : ?>
+					<li class="e-overview__<?php echo esc_attr( $action_id ); ?>"><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
 				<?php endforeach; ?>
 				</ul>
 			</div>
@@ -664,7 +665,7 @@ class Admin {
 		];
 
 		$additions_actions = [
-			'go_pro' => [
+			'go-pro' => [
 				'title' => __( 'Go Pro', 'elementor' ),
 				'link' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-overview-widget&utm_campaign=gopro&utm_medium=wp-dash' ),
 			],
@@ -675,6 +676,35 @@ class Admin {
 		$actions = $base_actions + $additions_actions;
 
 		return $actions;
+	}
+
+	public function admin_action_new_post() {
+		check_admin_referer( 'elementor_action_new_post' );
+
+		if ( empty( $_GET['post_type'] ) ) {
+			$post_type = 'post';
+		} else {
+			$post_type = $_GET['post_type'];
+		}
+
+		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
+			return;
+		}
+
+		$post_data = [
+			'post_type' => $post_type,
+			'post_title' => __( 'Elementor', 'elementor' ),
+		];
+
+		$post_id = wp_insert_post( $post_data );
+
+		$post_data['ID'] = $post_id;
+		$post_data['post_title'] .= ' #' . $post_id;
+
+		wp_update_post( $post_data );
+
+		wp_redirect( Utils::get_edit_link( $post_id ) );
+		die;
 	}
 
 	/**
@@ -709,5 +739,8 @@ class Admin {
 
 		// Ajax.
 		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
+
+		// Admin Actions
+		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 	}
 }

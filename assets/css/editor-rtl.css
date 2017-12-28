@@ -350,9 +350,11 @@ body {
   -o-transition-property: background, color, box-shadow, opacity;
   transition-property: background, color, box-shadow, opacity;
   transition-property: background, color, box-shadow, opacity, -webkit-box-shadow;
-  -webkit-transition-duration: .5s;
-       -o-transition-duration: .5s;
-          transition-duration: .5s; }
+  -webkit-transition-duration: .3s;
+       -o-transition-duration: .3s;
+          transition-duration: .3s; }
+  .elementor-button:hover {
+    border: none; }
   .elementor-button:not([disabled]) {
     cursor: pointer; }
   .elementor-button:not(.elementor-button-state) .elementor-state-icon {
@@ -1104,18 +1106,30 @@ select {
     padding: 25px 15px; }
   .elementor-panel #elementor-panel-exit-to-dashboard {
     width: 100%;
-    padding: 16px 20px;
-    font-size: 14px;
+    padding: 15px 20px;
+    font-size: 12px;
     background-color: #0085ba;
     color: #fff;
     text-transform: uppercase;
     text-align: right;
-    font-weight: normal; }
+    font-weight: normal;
+    border: none; }
+    .elementor-panel #elementor-panel-exit-to-dashboard:hover {
+      background-color: #0073a1;
+      -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+              box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2); }
+    .elementor-panel #elementor-panel-exit-to-dashboard:active {
+      -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
+              box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1); }
+    .elementor-panel #elementor-panel-exit-to-dashboard:visited {
+      color: #fff; }
+    .elementor-panel #elementor-panel-exit-to-dashboard i {
+      margin-left: 15px; }
   .elementor-panel .elementor-panel-menu-group-title {
     text-transform: uppercase;
-    font-weight: 500; }
+    font-size: 11px; }
   .elementor-panel .elementor-panel-menu-items {
-    margin: 10px 0 25px;
+    margin: 15px 0 25px;
     -webkit-border-radius: 5px;
             border-radius: 5px;
     overflow: hidden; }
@@ -1133,7 +1147,7 @@ select {
       vertical-align: middle; }
     .elementor-panel .elementor-panel-menu-item-icon {
       text-align: center;
-      width: 55px;
+      width: 50px;
       color: #a4afb7; }
     .elementor-panel .elementor-panel-menu-item-title {
       font-weight: 500; }
