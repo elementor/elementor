@@ -162,6 +162,17 @@ abstract class CSS_File {
 
 		$name = $this->get_name();
 
+		/**
+		 * CSS file enqueue.
+		 *
+		 * Fires when CSS file is enqueued on Elementor.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param CSS_File $this The current CSS file.
+		 */
 		do_action( "elementor/{$name}-css-file/enqueue", $this );
 	}
 
