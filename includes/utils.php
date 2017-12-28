@@ -178,8 +178,8 @@ class Utils {
 		 *
 		 * @since 1.9.0
 		 *
-		 * @param string $$exit_url Default exit URL.
-		 * @param int    $post_id   Post ID.
+		 * @param string $exit_url Default exit URL.
+		 * @param int    $post_id  Post ID.
 		 */
 		$exit_url = apply_filters( 'elementor/utils/exit_to_dashboard_url', $exit_url, $post_id );
 
