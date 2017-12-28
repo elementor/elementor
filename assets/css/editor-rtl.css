@@ -2275,6 +2275,14 @@ select {
       font-style: italic;
       color: #a4afb7;
       padding: 5px 0 15px; }
+      .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited time {
+        border-bottom: 1px dotted transparent;
+        -webkit-transition: all ease-in-out .3s;
+        -o-transition: all ease-in-out .3s;
+        transition: all ease-in-out .3s;
+        cursor: pointer; }
+        .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited time:hover {
+          border-bottom-color: inherit; }
   .elementor-panel #elementor-panel-saver-button-preview a {
     color: #a4afb7; }
   .elementor-panel #elementor-panel-saver-button-publish, .elementor-panel #elementor-panel-saver-button-save-options {
@@ -2345,6 +2353,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   font-size: 11px; }
   .elementor-revision-item__wrapper.current {
     font-weight: bold; }
+  .elementor-revision-item__wrapper .elementor-revision-item__tools-current {
+    color: #B7084E; }
 
 .elementor-revision-item:hover:not(.elementor-revision-current-preview) {
   background-color: rgba(230, 233, 236, 0.3); }

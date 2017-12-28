@@ -155,6 +155,16 @@
 		font-style: italic;
 		color: $editor-light;
 		padding: 5px 0 15px;
+
+		time {
+			border-bottom: 1px dotted transparent;
+			transition: all ease-in-out .3s;
+			cursor:pointer;
+
+			&:hover {
+				border-bottom-color: inherit;
+			}
+		}
 	}
 }
 
