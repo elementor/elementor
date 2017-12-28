@@ -33,8 +33,6 @@ class Ajax_Manager {
 
 	public function __construct() {
 		add_action( 'wp_ajax_elementor_ajax', [ $this, 'handle_ajax_request' ] );
-
-		$this->register_ajax_action( 'save_builder', [ $this, 'ajax_save_builder' ] );
 	}
 
 	public function register_ajax_action( $tag, $callback, $priority = 10 ) {
@@ -47,6 +45,8 @@ class Ajax_Manager {
 
 	public function handle_ajax_request() {
 		Plugin::$instance->editor->verify_ajax_nonce();
+
+		do_action( 'elementor/ajax/register_actions', $this );
 
 		if ( empty( $_REQUEST['actions'] ) ) {
 			wp_send_json_error( new \WP_Error( 'Action Required' ) );
@@ -77,55 +77,5 @@ class Ajax_Manager {
 		$this->current_action_id = null;
 
 		$this->send();
-	}
-
-	/**
-	 * @since  1.0.0
-	 * @access public
-	 *
-	 * @param Ajax_Manager $ajax_handler
-	 * @param array $request
-	 */
-	public function ajax_save_builder( $ajax_handler, $request ) {
-		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception('no_post_id' );
-		}
-
-		$post_id = $request['post_id'];
-
-		if ( ! User::is_current_user_can_edit( $post_id ) ) {
-			throw new \Exception('no_access' );
-		}
-
-		$status = DB::STATUS_DRAFT;
-
-		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_AUTOSAVE ] , true ) ) {
-			$status = $request['status'];
-		}
-
-		$posted = json_decode( stripslashes( $request['data'] ), true );
-
-		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
-
-		/**
-		 * Filters the ajax data returned when saving the post on the builder.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array $return_data The returned data. Default is an empty array.
-		 */
-		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', [], $post_id );
-
-		$ajax_handler->add_response_data(
-			true,
-			array_merge( $return_data, [
-					'config' => [
-						'wp_preview' => [
-							'url' => Utils::get_wp_preview_url( $post_id ),
-						],
-					],
-				]
-			)
-		);
 	}
 }
