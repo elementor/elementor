@@ -21,11 +21,11 @@ class Posts_CSS_Manager {
 	 * @access public
 	*/
 	public function init() {
-		// Create the css directory if it's not exist.
 		$wp_upload_dir = wp_upload_dir( null, false );
 
 		$css_path = $wp_upload_dir['basedir'] . CSS_File::FILE_BASE_DIR;
 
+		// Create the css directory if it's not exist.
 		if ( ! is_dir( $css_path ) ) {
 			wp_mkdir_p( $css_path );
 		}

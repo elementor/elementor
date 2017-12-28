@@ -43,7 +43,10 @@ class Revisions_Manager {
 
 		$posts = wp_get_post_revisions( $post->ID, $query_args );
 
-		if ( ! $parse_result ) {
+		if ( $parse_result ) {
+			array_unshift( $posts, $post );
+		} else {
+			array_unshift( $posts, $post->ID );
 			return $posts;
 		}
 
@@ -55,7 +58,9 @@ class Revisions_Manager {
 
 			$human_time = human_time_diff( strtotime( $revision->post_modified ), $current_time );
 
-			if ( false !== strpos( $revision->post_name, 'autosave' ) ) {
+			if ( $revision->ID === $post->ID ) {
+				$type = 'current';
+			} elseif ( false !== strpos( $revision->post_name, 'autosave' ) ) {
 				$type = 'autosave';
 			} else {
 				$type = 'revision';
@@ -175,7 +180,13 @@ class Revisions_Manager {
 		);
 
 		if ( ! empty( $latest_revision ) ) {
-			$return_data['last_revision'] = $latest_revision[0];
+			$current_revision_id = self::current_revision_id( $_POST['post_id'] );
+
+			$return_data['config'] = [
+				'current_revision_id' => $current_revision_id,
+			];
+			// $latest_revision[0] = current post, $latest_revision[1] = last revision.
+			$return_data['last_revision'] = $current_revision_id === $_POST['post_id'] ? $latest_revision[0] : $latest_revision[1];
 			$return_data['revisions_ids'] = $all_revision_ids;
 		}
 
@@ -192,12 +203,13 @@ class Revisions_Manager {
 		$settings = array_replace_recursive( $settings, [
 			'revisions' => self::get_revisions(),
 			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
-			'newer_autosave' => self::get_newer_autosave( $post_id ),
+			'current_revision_id' => self::current_revision_id( $post_id ),
 			'i18n' => [
 				'edit_draft' => __( 'Edit Draft', 'elementor' ),
 				'edit_published' => __( 'Edit Published', 'elementor' ),
 				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
 				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
+				'current' => __( 'Current', 'elementor' ),
 				'restore' => __( 'Restore', 'elementor' ),
 				'restore_auto_saved_data' => __( 'Restore Auto Saved Data', 'elementor' ),
 				'restore_auto_saved_data_message' => __( 'There is an autosave of this post that is more recent than the version below. You can restore the saved data fron the Revisions panel', 'elementor' ),
@@ -225,15 +237,13 @@ class Revisions_Manager {
 		}
 	}
 
-	private static function get_newer_autosave( $post_id ) {
-		$post = get_post( $post_id );
-		$autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
-
-		// Detect if there exists an autosave newer than the post.
-		if ( $autosave && mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false ) ) {
-			return $autosave->ID;
+	private static function current_revision_id( $post_id ) {
+		$current_revision_id = $post_id;
+		$autosave = wp_get_post_autosave( $post_id );
+		if ( is_object( $autosave ) ) {
+			$current_revision_id = $autosave->ID;
 		}
 
-		return false;
+		return $current_revision_id;
 	}
 }

@@ -1,12 +1,14 @@
-/**!
+/*!
  * wp-color-picker-alpha
  *
  * Overwrite Automattic Iris for enabled Alpha Channel in wpColorPicker
  * Only run in input and is defined data alpha in true
  *
- * Version: 2.0
+ * Version: 2.0.1
  * https://github.com/kallookoo/wp-color-picker-alpha
  * Licensed under the GPLv2 license.
+ *
+ * Customized and fixed by Elementor team
  */
 ( function( $ ) {
 	// Variable for some backgrounds ( grid )
@@ -103,8 +105,7 @@
 			self.wrap = self.wrappingLabel.parent();
 			// Set up the toggle button and insert it before the wrapping label.
 			self.toggler = $( _before )
-				.insertBefore( self.wrappingLabel )
-				.css( { backgroundColor: self.initialValue } );
+				.insertBefore( self.wrappingLabel );
 			// Set the toggle button span element text.
 			self.toggler.find( '.wp-color-result-text' ).text( wpColorPickerL10n.pick );
 			// Set up the Iris container and insert it after the wrapping label.
@@ -146,6 +147,23 @@
 
 			self.toggler.find( '.wp-color-result-text' ).hide();
 
+			var setTogglerColor = function( color ) {
+				if ( self.options.alpha ) {
+					self.toggler.css( {
+						'background-image' : 'url(' + image + ')',
+						'position' : 'relative'
+					} );
+
+					if ( ! self.toggler.find('span.color-alpha').length ) {
+						self.toggler.append('<span class="color-alpha" />');
+					}
+
+					self.toggler.find( 'span.color-alpha' ).css( { backgroundColor : color } );
+				} else {
+					self.toggler.css( { backgroundColor : color } );
+				}
+			};
+
 			el.iris( {
 				target: self.pickerContainer,
 				hide: self.options.hide,
@@ -166,18 +184,7 @@
 				 * @returns {void}
 				 */
 				change: function( event, ui ) {
-					if ( self.options.alpha ) {
-						self.toggler.css( {
-							'background-image' : 'url(' + image + ')',
-							'position' : 'relative'
-						} );
-						if ( self.toggler.find('span.color-alpha').length == 0 ) {
-							self.toggler.append('<span class="color-alpha" />');
-						}
-						self.toggler.find( 'span.color-alpha' ).css( { backgroundColor : ui.color.toString() } );
-					} else {
-						self.toggler.css( { backgroundColor : ui.color.toString() } );
-					}
+					setTogglerColor( ui.color );
 
 					if ( $.isFunction( self.options.change ) ) {
 						self.options.change.call( this, event, ui );
@@ -186,6 +193,9 @@
 			} );
 
 			el.val( self.initialValue );
+
+			setTogglerColor( self.initialValue );
+
 			self._addListeners();
 
 			// Force the color picker to always be closed on initial load.
@@ -296,7 +306,7 @@
 					self.element.val( self.options.defaultColor ).change();
 				}
 			});
-		},
+		}
 	});
 
 	/**
@@ -354,11 +364,10 @@
 					self.controls[v].width( stripsWidth ).css( { 'margin-left' : stripsMargin + 'px' } );
 				} );
 
+				self.setAlphaSliderBackground();
+
 				// Add new slider
 				self._initControls();
-
-				// For updated widget
-				//self._change();
 			}
 		},
 		_initControls: function() {
@@ -388,20 +397,12 @@
 			var self = this,
 				el   = self.element;
 
-			if ( this.options.alpha ) {
+			if ( self.options.alpha ) {
 				var	controls     = self.controls,
 					alpha        = parseInt( self._color._alpha * 100 ),
-					color        = self._color.toRgb(),
-					gradient     = [
-						'rgb(' + color.r + ',' + color.g + ',' + color.b + ') 0%',
-						'rgba(' + color.r + ',' + color.g + ',' + color.b + ', 0) 100%'
-					],
-					//defaultWidth = self.options.defaultWidth,
-					customWidth  = self.options.customWidth,
 					target       = self.picker.closest( '.wp-picker-container' ).find( '.wp-color-result' );
 
-				// Generate background slider alpha, only for CSS3 old browser fuck!! :)
-				controls.aContainer.css( { 'background' : 'linear-gradient(to bottom, ' + gradient.join( ', ' ) + '), url(' + image + ')' } );
+				self.setAlphaSliderBackground();
 
 				if ( target.hasClass( 'wp-picker-open' ) ) {
 					// Update alpha value
@@ -460,6 +461,15 @@
 					self.show();
 				} );
 			}
+		},
+		setAlphaSliderBackground: function() {
+			var color = this._color.toRgb(),
+				gradient = [
+					'rgb(' + color.r + ',' + color.g + ',' + color.b + ') 0%',
+					'rgba(' + color.r + ',' + color.g + ',' + color.b + ', 0) 100%'
+				];
+
+			this.controls.aContainer.css( { 'background' : 'linear-gradient(to bottom, ' + gradient.join( ', ' ) + '), url(' + image + ')' } );
 		}
 	} );
 }( jQuery ) );

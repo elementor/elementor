@@ -3,35 +3,83 @@
 //
 
 #elementor-panel-page-menu {
-	box-shadow: $panel-bottom-shadow;
+	padding: 25px 15px;
 }
 
-.elementor-panel-menu-item {
-	display: table;
+#elementor-panel-exit-to-dashboard {
 	width: 100%;
-	height: 50px;
-	cursor: pointer;
-	margin-bottom: 1px;
+	padding: 15px 20px;
+	font-size: 12px;
+	background-color: $wp-primary;
+	color: #fff;
+	text-transform: uppercase;
+	text-align: $start;
+	font-weight: normal;
+	border: none;
 
-	&:not(:hover) {
+	&:hover {
+		background-color: darken($wp-primary, 5%);
+		box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+	}
+
+	&:active {
+		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
+	}
+
+	&:visited {
+		color: #fff;
+	}
+
+	i {
+		@include margin-end(15px);
+	}
+}
+
+.elementor-panel-menu {
+
+	&-group {
+
+		&-title {
+			text-transform: uppercase;
+			font-size: 11px;
+		}
+	}
+
+	&-items {
+		margin: 15px 0 25px;
+		border-radius: 5px;
+		overflow: hidden;
+	}
+
+	&-item {
+		display: table;
+		width: 100%;
+		height: 40px;
+		cursor: pointer;
+		margin-bottom: 1px;
 		background-color: #fff;
-	}
 
-	> * {
-		display: table-cell;
-		vertical-align: middle;
-	}
-}
+		&:hover {
+			background-color: rgba( 255, 255, 255, .8 );
+		}
 
-.elementor-panel-menu-item-icon {
-	text-align: center;
-	width: 55px;
-}
+		> * {
+			display: table-cell;
+			vertical-align: middle;
+		}
 
-.elementor-panel-menu-item-title {
-	font-weight: 500;
+		&-icon {
+			text-align: center;
+			width: 50px;
+			color: $editor-light;
+		}
 
-	> span {
-		color: $editor-success;
+		&-title {
+			font-weight: 500;
+
+			> span {
+				color: $editor-success;
+			}
+		}
 	}
 }

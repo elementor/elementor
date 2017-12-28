@@ -63,16 +63,16 @@ class Post_CSS_File extends CSS_File {
 	 * @return array
 	 */
 	protected function load_meta() {
-		return get_post_meta( $this->post_id, self::META_KEY, true );
+		return get_post_meta( $this->post_id, static::META_KEY, true );
 	}
 
 	/**
 	 * @since 1.2.0
 	 * @access protected
-	 * @param string $meta
+	 * @param array $meta
 	 */
 	protected function update_meta( $meta ) {
-		update_post_meta( $this->post_id, '_elementor_css', $meta );
+		update_post_meta( $this->post_id, static::META_KEY, $meta );
 	}
 
 	protected function get_data() {
@@ -162,7 +162,7 @@ class Post_CSS_File extends CSS_File {
 	 * @access private
 	 * @param Element_Base $element
 	 */
-	private function render_styles( Element_Base $element ) {
+	protected function render_styles( Element_Base $element ) {
 		/**
 		 * Before element parse CSS.
 		 *

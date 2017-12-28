@@ -378,6 +378,7 @@ abstract class Widget_Base extends Element_Base {
 
 		$content = shortcode_unautop( $content );
 		$content = do_shortcode( $content );
+		$content = wptexturize( $content );
 
 		if ( $GLOBALS['wp_embed'] instanceof \WP_Embed ) {
 			$content = $GLOBALS['wp_embed']->autoembed( $content );

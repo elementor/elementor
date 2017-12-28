@@ -710,6 +710,8 @@
               transform: translateY(-50%);
       right: 10px;
       pointer-events: none; }
+  .elementor-field-group.elementor-field-type-select-multiple .elementor-select-wrapper:before {
+    content: ''; }
 
 .elementor-field-subgroup {
   display: -webkit-box;
@@ -1747,6 +1749,8 @@
     background-color: #da552f; }
   .elementor-social-icon-reddit {
     background-color: #ff4500; }
+  .elementor-social-icon-rss {
+    background-color: #f26522; }
   .elementor-social-icon-shopping-cart {
     background-color: #4CAF50; }
   .elementor-social-icon-slideshare {

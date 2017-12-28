@@ -41,6 +41,11 @@ class DB {
 	const STATUS_AUTOSAVE = 'autosave';
 
 	/**
+	 * Post pending status.
+	 */
+	const STATUS_PENDING = 'pending';
+
+	/**
 	 * Switched post data.
 	 *
 	 * Holds the post data.
