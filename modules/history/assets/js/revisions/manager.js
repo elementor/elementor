@@ -19,6 +19,19 @@ RevisionsManager = function() {
 		} );
 
 		revisions.reset( revisionsToKeep );
+
+		if ( 'current' === data.last_revision.type ) {
+			// Move current to top
+			var current = revisions.findWhere( {
+				id: elementor.config.post_id
+			} );
+
+			if ( current ) {
+				revisions.remove( current );
+			}
+
+			revisions.add( current, { at: 0 } );
+		}
 	};
 
 	var attachEvents = function() {
