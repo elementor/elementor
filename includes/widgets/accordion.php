@@ -405,6 +405,7 @@ class Widget_Accordion extends Widget_Base {
 							'right' => '1',
 							'bottom' => '1',
 							'left' => '1',
+							'isLinked' => false,
 						],
 					],
 					'color' => [
@@ -576,6 +577,7 @@ class Widget_Accordion extends Widget_Base {
 							'right' => '1',
 							'bottom' => '0',
 							'left' => '1',
+							'isLinked' => false,
 						],
 					],
 					'color' => [
