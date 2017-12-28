@@ -680,6 +680,18 @@ class Admin {
 			],
 		];
 
+		/**
+		 * Dashboard widget footer actions.
+		 *
+		 * Filters the additions actions displayed in Elementor dashboard widget.
+		 *
+		 * Developers can add new action links to Elementor dashboard widget
+		 * footer using this filter.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param array $additions_actions Elementor dashboard widget footer actions.
+		 */
 		$additions_actions = apply_filters( 'elementor/admin/dashboard_overview_widget/footer_actions', $additions_actions );
 
 		$actions = $base_actions + $additions_actions;

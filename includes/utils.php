@@ -153,12 +153,14 @@ class Utils {
 		$wp_preview_url = get_preview_post_link( $post_id, $query_args );
 
 		/**
-		 * Filters the Wordpress preview URL.
+		 * WordPress preview URL.
+		 *
+		 * Filters the WordPress preview URL.
 		 *
 		 * @since 1.9.0
 		 *
-		 * @param string $wp_preview_url URL with chosen scheme.
-		 * @param int    $post_id     Post ID.
+		 * @param string $wp_preview_url WordPress preview URL with chosen scheme.
+		 * @param int    $post_id        Post ID.
 		 */
 		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
 
@@ -170,12 +172,14 @@ class Utils {
 		$exit_url = get_edit_post_link( $post_id, 'raw' );
 
 		/**
+		 * Exit To Dashboard URL.
+		 *
 		 * Filters the Exit To Dashboard URL.
 		 *
 		 * @since 1.9.0
 		 *
-		 * @param string $$exit_url   Default exit URL.
-		 * @param int    $post_id     Post ID.
+		 * @param string $$exit_url Default exit URL.
+		 * @param int    $post_id   Post ID.
 		 */
 		$exit_url = apply_filters( 'elementor/utils/exit_to_dashboard_url', $exit_url, $post_id );
 
