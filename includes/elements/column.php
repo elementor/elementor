@@ -15,13 +15,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Element_Column extends Element_Base {
 
+	/**
+	 * Column edit tools.
+	 *
+	 * Holds the column edit tools.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 * @static
+	 *
+	 * @var array Column edit tools.
+	 */
 	protected static $_edit_tools;
 
 	/**
-	 * @static
+	 * Get default edit tools.
+	 *
+	 * Retrieve the column default edit tools. Used to set initial tools.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 * @static
+	 *
+	 * @return array Default column edit tools.
+	 */
 	protected static function get_default_edit_tools() {
 		$column_label = __( 'Column', 'elementor' );
 
@@ -42,33 +59,55 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * Get column name.
+	 *
+	 * Retrieve the column name.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string Column name.
+	 */
 	public function get_name() {
 		return 'column';
 	}
 
 	/**
+	 * Get column title.
+	 *
+	 * Retrieve the column title.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string Column title.
+	 */
 	public function get_title() {
 		return __( 'Column', 'elementor' );
 	}
 
 	/**
+	 * Get column icon.
+	 *
+	 * Retrieve the column icon.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string Column icon.
+	 */
 	public function get_icon() {
 		return 'eicon-column';
 	}
 
 	/**
+	 * Register column controls.
+	 *
+	 * Used to add new controls to the column element.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 */
 	protected function _register_controls() {
 		// Section Layout.
 		$this->start_controls_section(
@@ -731,9 +770,13 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * Render column edit tools.
+	 *
+	 * Used to generate the edit tools HTML.
+	 *
 	 * @since 1.8.0
 	 * @access protected
-	*/
+	 */
 	protected function render_edit_tools() {
 		?>
 		<div class="elementor-element-overlay">
@@ -755,9 +798,13 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * Render column output in the editor.
+	 *
+	 * Used to generate the live preview, using a Backbone JavaScript template.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 */
 	protected function _content_template() {
 		?>
 		<div class="elementor-column-wrap">
@@ -768,9 +815,13 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * Before column rendering.
+	 *
+	 * Used to add stuff before the column element.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function before_render() {
 		$settings = $this->get_settings();
 
@@ -792,9 +843,13 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * After column rendering.
+	 *
+	 * Used to add stuff after the column element.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function after_render() {
 		?>
 				</div>
@@ -804,9 +859,13 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * Add column render attributes.
+	 *
+	 * Used to add render attributes to the column element.
+	 *
 	 * @since 1.3.0
 	 * @access protected
-	*/
+	 */
 	protected function _add_render_attributes() {
 		parent::_add_render_attributes();
 
@@ -828,9 +887,17 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * Get default child type.
+	 *
+	 * Retrieve the column child type based on element data.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 *
+	 * @param array $element_data Element ID.
+	 *
+	 * @return Element_Base Column default child type.
+	 */
 	protected function _get_default_child_type( array $element_data ) {
 		if ( 'section' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( 'section' );
@@ -840,9 +907,15 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * Get HTML tag.
+	 *
+	 * Retrieve the column element HTML tag.
+	 *
 	 * @since 1.5.3
 	 * @access private
-	*/
+	 *
+	 * @return string Column HTML tag.
+	 */
 	private function get_html_tag() {
 		$html_tag = $this->get_settings( 'html_tag' );
 

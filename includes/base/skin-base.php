@@ -47,7 +47,9 @@ abstract class Skin_Base {
 	}
 
 	/**
-	 * Retrieve skin ID.
+	 * Get skin ID.
+	 *
+	 * Retrieve the skin ID.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -56,7 +58,9 @@ abstract class Skin_Base {
 	abstract public function get_id();
 
 	/**
-	 * Retrieve skin title.
+	 * Get skin title.
+	 *
+	 * Retrieve the skin title.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -103,11 +107,11 @@ abstract class Skin_Base {
 	protected function _register_controls_actions() {}
 
 	/**
-	 * Retrieve skin control ID.
+	 * Get skin control ID.
 	 *
-	 * Used to get the skin control ID. Note that skin controls have special
-	 * prefix to destiguish them from regular controls, and from controls in
-	 * other skins.
+	 * Retrieve the skin control ID. Note that skin controls have special prefix
+	 * to destiguish them from regular controls, and from controls in other
+	 * skins.
 	 *
 	 * @since 1.0.0
 	 * @access protected
@@ -122,9 +126,9 @@ abstract class Skin_Base {
 	}
 
 	/**
-	 * Retrieve skin settings.
+	 * Get skin settings.
 	 *
-	 * Get all the skin settings or, when requested, a specific setting.
+	 * Retrieve all the skin settings or, when requested, a specific setting.
 	 *
 	 * @since 1.0.0
 	 * @TODO: rename to get_setting() and create backward compitability.

@@ -33,9 +33,9 @@ abstract class Widget_Base extends Element_Base {
 	protected $_has_template_content = true;
 
 	/**
-	 * Retrieve element type.
+	 * Get element type.
 	 *
-	 * Get the element type, in this case `widget`.
+	 * Retrieve the element type, in this case `widget`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -48,9 +48,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve default edit tools.
+	 * Get default edit tools.
 	 *
-	 * Get the default edit tools of the widget. This method is used to set
+	 * Retrieve the default edit tools of the widget. This method is used to set
 	 * initial tools - it adds Duplicate and Remove on top of of Edit and Save
 	 * tools.
 	 *
@@ -78,7 +78,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve widget icon.
+	 * Get widget icon.
+	 *
+	 * Retrieve the widget icon.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -90,7 +92,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve widget keywords.
+	 * Get widget keywords.
+	 *
+	 * Retrieve the widget keywords.
 	 *
 	 * @since 1.0.10
 	 * @access public
@@ -102,7 +106,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve widget categories.
+	 * Get widget categories.
+	 *
+	 * Retrieve the widget categories.
 	 *
 	 * @since 1.0.10
 	 * @access public
@@ -261,9 +267,13 @@ abstract class Widget_Base extends Element_Base {
 	protected function _register_skins() {}
 
 	/**
-	 * Retrieve initial config.
+	 * Get initial config.
 	 *
-	 * Get the initial widget configuration.
+	 * Retrieve the current widget initial configuration.
+	 *
+	 * Adds more configuration on top of the controls list, the tabs assignet to
+	 * the control, element name, type, icon and more. This method also adds
+	 * widget type, keywords and categories.
 	 *
 	 * @since 1.0.10
 	 * @access protected
@@ -515,9 +525,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve the element raw data.
+	 * Get the element raw data.
 	 *
-	 * Get the raw element data, including the id, type, settings, child
+	 * Retrieve the raw element data, including the id, type, settings, child
 	 * elements and whether it is an inner element.
 	 *
 	 * The data with the HTML used always to display the data, but the Elementor
@@ -564,9 +574,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve default data.
+	 * Get default data.
 	 *
-	 * Get the default widget data. Used to reset the data on initialization.
+	 * Retrieve the default widget data. Used to reset the data on initialization.
 	 *
 	 * @since 1.0.0
 	 * @access protected
@@ -582,9 +592,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve child type.
+	 * Get default child type.
 	 *
-	 * Get the widget child type based on element data.
+	 * Retrieve the widget child type based on element data.
 	 *
 	 * @since 1.0.0
 	 * @access protected
@@ -680,11 +690,11 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve single skin.
+	 * Get single skin.
 	 *
-	 * Get a single skin based on skin ID, from all the skin assigned to the
-	 * widget. If the skin does not exist or not assigned to the widget, return
-	 * false.
+	 * Retrieve a single skin based on skin ID, from all the skin assigned to
+	 * the widget. If the skin does not exist or not assigned to the widget,
+	 * return false.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -703,9 +713,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve current skin ID.
+	 * Get current skin ID.
 	 *
-	 * Get the ID of the current skin.
+	 * Retrieve the ID of the current skin.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -717,9 +727,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve current skin.
+	 * Get current skin.
 	 *
-	 * Get the current skin, or if non exist return false.
+	 * Retrieve the current skin, or if non exist return false.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -747,9 +757,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Retrieve widget skins.
+	 * Get widget skins.
 	 *
-	 * Get all the skin assigned to the widget.
+	 * Retrieve all the skin assigned to the widget.
 	 *
 	 * @since 1.0.0
 	 * @access public
