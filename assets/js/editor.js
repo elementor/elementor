@@ -191,9 +191,9 @@ module.exports = Module.extend( {
 		elementor.channels.editor.on( 'status:change', _.bind( this.startTime, this ) );
 	},
 
-	startTime: function() {
-		if ( ! this.autoSaveTimer ) {
-			this.autoSaveTimer = window.setInterval( _.bind( this.doAutoSave, this ), 15000 );
+	startTime: function( hasChanges ) {
+		if ( hasChanges && ! this.autoSaveTimer ) {
+			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), 5000 );
 		}
 	},
 
@@ -205,6 +205,8 @@ module.exports = Module.extend( {
 		}
 
 		this.saveAutoSave();
+
+		this.autoSaveTimer = null;
 	},
 
 	saveAutoSave: function( options ) {
@@ -4479,7 +4481,7 @@ App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.saver.saveAutoSave();
+					elementor.saver.doAutoSave();
 				}
 			}
 		};
