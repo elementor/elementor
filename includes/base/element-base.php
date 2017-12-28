@@ -77,34 +77,52 @@ abstract class Element_Base extends Controls_Stack {
 	private $_is_type_instance = true;
 
 	/**
-	 * Depended scripts
+	 * Depended scripts.
 	 *
-	 * Holds depended scripts to enqueue
+	 * Holds all the element depended scripts to enqueue.
+	 *
+	 * @since 1.9.0
+	 * @access private
 	 *
 	 * @var array
 	 */
 	private $depended_scripts = [];
 
 	/**
-	 * Depended styles
+	 * Depended styles.
 	 *
-	 * Holds depended styles to enqueue
+	 * Holds all the element depended styles to enqueue.
+	 *
+	 * @since 1.9.0
+	 * @access private
 	 *
 	 * @var array
 	 */
 	private $depended_styles = [];
 
 	/**
-	 * adds scripts to enqueue by handle
-	 * @param $handler
+	 * Add script depends.
+	 *
+	 * Register new script to enqueue by the handler.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @param string $handler Depend script handler.
 	 */
 	public function add_script_depends( $handler ) {
 		$this->depended_scripts[] = $handler;
 	}
 
 	/**
-	 * adds styles to enqueue by handle
-	 * @param $handler
+	 * Add style depends.
+	 *
+	 * Register new style to enqueue by the handler.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @param string $handler Depend style handler.
 	 */
 	public function add_style_depends( $handler ) {
 		$this->depended_styles[] = $handler;
