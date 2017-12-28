@@ -209,7 +209,7 @@ class Revisions_Manager {
 				'edit_published' => __( 'Edit Published', 'elementor' ),
 				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
 				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
-				'current' => __( 'Current', 'elementor' ),
+				'current' => __( 'Current Version', 'elementor' ),
 				'restore' => __( 'Restore', 'elementor' ),
 				'restore_auto_saved_data' => __( 'Restore Auto Saved Data', 'elementor' ),
 				'restore_auto_saved_data_message' => __( 'There is an autosave of this post that is more recent than the version below. You can restore the saved data fron the Revisions panel', 'elementor' ),
