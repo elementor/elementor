@@ -23,7 +23,6 @@ class Elements_Manager {
 		$this->require_files();
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-		add_action( 'wp_ajax_elementor_discard_changes', [ $this, 'ajax_discard_changes' ] );
 	}
 
 	/**
@@ -34,6 +33,7 @@ class Elements_Manager {
 	 */
 	public function register_ajax_actions( $ajax_handler ) {
 		$ajax_handler->register_ajax_action( 'save_builder', [ $this, 'ajax_save_builder' ] );
+		$ajax_handler->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
 	}
 
 	/**
@@ -169,10 +169,8 @@ class Elements_Manager {
 		}
 	}
 
-	public function ajax_discard_changes() {
+	public function ajax_discard_changes( $ajax_handler, $request ) {
 		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$request = $_POST;
 
 		if ( empty( $request['post_id'] ) ) {
 			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
