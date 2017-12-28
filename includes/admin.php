@@ -609,8 +609,8 @@ class Admin {
 			<?php endif; ?>
 			<div class="e-overview__footer">
 				<ul>
-				<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action ) : ?>
-					<li><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+				<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action_id => $action ) : ?>
+					<li class="e-overview__<?php echo esc_attr( $action_id ); ?>"><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
 				<?php endforeach; ?>
 				</ul>
 			</div>

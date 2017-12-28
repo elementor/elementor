@@ -553,7 +553,7 @@ body.elementor-editor-inactive #elementor-editor {
   width: 100%;
   -webkit-box-shadow: 0 5px 8px rgba(0, 0, 0, 0.05);
           box-shadow: 0 5px 8px rgba(0, 0, 0, 0.05);
-  margin: 0 -12px 18px;
+  margin: 0 -12px 8px;
   padding: 0 12px 12px; }
 
 #e-dashboard-overview .e-overview__logo, #e-dashboard-overview .e-overview__versions, #e-dashboard-overview .e-overview__create {
