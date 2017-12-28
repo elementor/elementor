@@ -289,7 +289,8 @@ class Maintenance_Mode {
 		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
 
 		if ( is_admin() ) {
-			add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_settings_fields' ] );
+			$page_id = Tools::PAGE_ID;
+			add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_fields' ] );
 		}
 
 		if ( ! $is_enabled ) {
