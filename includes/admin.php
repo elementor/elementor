@@ -583,8 +583,7 @@ class Admin {
 						$recently_edited_query->the_post();
 					?>
 					<li class="e-overview__post">
-						<span><?php echo date_i18n( 'M jS', get_the_time( 'U' ) ); ?>, <?php the_time(); ?></span> <a href="<?php echo esc_attr( Utils::get_edit_link( get_the_ID() ) ); ?>" class="e-overview__post-link">
-							<span class="dashicons dashicons-edit"></span> <?php the_title(); ?></a>
+						 <a href="<?php echo esc_attr( Utils::get_edit_link( get_the_ID() ) ); ?>" class="e-overview__post-link"><?php the_title(); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo date_i18n( 'M jS', get_the_time( 'U' ) ); ?>, <?php the_time(); ?></span>
 					</li>
 					<?php endwhile; ?>
 				</ul>
