@@ -12,6 +12,10 @@
 			&.current {
 				font-weight: bold;
 			}
+
+			.elementor-revision-item__tools-current {
+				color: $editor-accent;
+			}
 		}
 
 		&:hover:not(.elementor-revision-current-preview) {
