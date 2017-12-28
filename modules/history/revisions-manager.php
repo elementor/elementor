@@ -180,10 +180,13 @@ class Revisions_Manager {
 		);
 
 		if ( ! empty( $latest_revision ) ) {
+			$current_revision_id = self::current_revision_id( $_POST['post_id'] );
+
 			$return_data['config'] = [
-				'current_revision_id' => self::current_revision_id( $_POST['post_id'] )
+				'current_revision_id' => $current_revision_id,
 			];
-			$return_data['last_revision'] = $latest_revision[1];
+			// $latest_revision[0] = current post, $latest_revision[1] = last revision.
+			$return_data['last_revision'] = $current_revision_id === $_POST['post_id'] ? $latest_revision[0] : $latest_revision[1];
 			$return_data['revisions_ids'] = $all_revision_ids;
 		}
 
