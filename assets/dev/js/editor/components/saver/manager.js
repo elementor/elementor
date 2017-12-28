@@ -9,13 +9,13 @@ module.exports = Module.extend( {
 
 	__construct: function() {
 		this.setWorkSaver();
-
-		elementor.channels.editor.on( 'status:change', _.bind( this.startTime, this ) );
 	},
 
-	startTime: function( hasChanges ) {
-		if ( hasChanges && ! this.autoSaveTimer ) {
+	startTimer: function( hasChanges ) {
+		if ( hasChanges ) {
 			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), 5000 );
+		} else {
+			clearTimeout( this.autoSaveTimer );
 		}
 	},
 
@@ -81,6 +81,9 @@ module.exports = Module.extend( {
 		if ( status && this.isSaving ) {
 			this.isChangedDuringSave = true;
 		}
+
+		this.startTimer( status );
+
 		elementor.channels.editor
 			.reply( 'status', status )
 			.trigger( 'status:change', status );
