@@ -69,6 +69,10 @@ class Settings extends Settings_Page {
 
 		if ( isset( $submenu['elementor'] ) ) {
 			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
+			$tmp = $submenu['elementor'][0];
+			$submenu['elementor'][0] = $submenu['elementor'][1];
+			$submenu['elementor'][1] = $tmp;
+			unset( $tmp );
 		}
 	}
 
