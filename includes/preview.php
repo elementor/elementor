@@ -66,7 +66,8 @@ class Preview {
 		/**
 		 * Preview init.
 		 *
-		 * Fires on Elementor preview init, after Elementor preview has finished loading but before any headers are sent.
+		 * Fires on Elementor preview init, after Elementor preview has finished
+		 * loading but before any headers are sent.
 		 *
 		 * @since 1.0.0
 		 *

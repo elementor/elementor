@@ -568,7 +568,16 @@ class Admin {
 				<div class="e-overview__logo"><i class="eicon-elementor-square"></i></div>
 				<div class="e-overview__versions">
 					<span class="e-overview__version"><?php esc_html_e( 'Elementor', 'elementor' ); ?> v<?php echo esc_html( ELEMENTOR_VERSION ); ?></span>
-					<?php do_action( 'elementor/admin/dashboard_overview_widget/after_version' ); ?>
+					<?php
+					/**
+					 * Elementor dashboard widget after the version.
+					 *
+					 * Fires after Elementor version display in the dashboard widget.
+					 *
+					 * @since 1.9.0
+					 */
+					do_action( 'elementor/admin/dashboard_overview_widget/after_version' );
+					?>
 				</div>
 				<div class="e-overview__create">
 					<a href="<?php echo esc_attr( Utils::get_create_new_post_url() ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php esc_html_e( 'Create New Page', 'elementor' ); ?></a>
