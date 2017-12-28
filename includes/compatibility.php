@@ -37,7 +37,7 @@ class Compatibility {
 
 			if ( function_exists( 'gutenberg_init' ) ) {
 				add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
-				add_action( 'admin_action_elementor_new_post', '\Elementor\Utils::admin_new_post' );
+
 				add_filter( 'elementor/utils/exit_to_dashboard_url', [ __CLASS__, 'exit_to_classic_editor' ] );
 			}
 		}
@@ -80,7 +80,7 @@ class Compatibility {
 					return;
 				}
 
-				var url = './edit.php?post_type=<?php echo $typenow; // XSS ok. ?>&action=elementor_new_post';
+				var url = '<?php echo esc_attr( Utils::get_create_new_post_url( $typenow ) ); ?>';
 
 				dropdown.insertAdjacentHTML( 'afterbegin', '<a href="' + url + '">Elementor</a>' );
 			} );
