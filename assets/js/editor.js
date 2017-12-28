@@ -187,13 +187,13 @@ module.exports = Module.extend( {
 
 	__construct: function() {
 		this.setWorkSaver();
-
-		elementor.channels.editor.on( 'status:change', _.bind( this.startTime, this ) );
 	},
 
-	startTime: function( hasChanges ) {
-		if ( hasChanges && ! this.autoSaveTimer ) {
+	startTimer: function( hasChanges ) {
+		if ( hasChanges ) {
 			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), 5000 );
+		} else {
+			clearTimeout( this.autoSaveTimer );
 		}
 	},
 
@@ -259,6 +259,9 @@ module.exports = Module.extend( {
 		if ( status && this.isSaving ) {
 			this.isChangedDuringSave = true;
 		}
+
+		this.startTimer( status );
+
 		elementor.channels.editor
 			.reply( 'status', status )
 			.trigger( 'status:change', status );
@@ -12656,6 +12659,19 @@ RevisionsManager = function() {
 		} );
 
 		revisions.reset( revisionsToKeep );
+
+		if ( 'current' === data.last_revision.type ) {
+			// Move current to top
+			var current = revisions.findWhere( {
+				id: elementor.config.post_id
+			} );
+
+			if ( current ) {
+				revisions.remove( current );
+			}
+
+			revisions.add( current, { at: 0 } );
+		}
 	};
 
 	var attachEvents = function() {
