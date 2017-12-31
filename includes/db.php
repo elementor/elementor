@@ -387,6 +387,8 @@ class DB {
 		// Remove empty lines.
 		$plain_text = preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n", $plain_text );
 
+		$plain_text = trim( $plain_text );
+
 		wp_update_post(
 			[
 				'ID' => $post_id,

@@ -301,8 +301,6 @@ class Editor {
 
 		$plugin = Plugin::$instance;
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
-
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
 		$wp_scripts = new \WP_Scripts();
@@ -467,6 +465,8 @@ class Editor {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/editor/before_enqueue_scripts' );
+
+		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
 
 		wp_enqueue_script( 'elementor-editor' );
 
