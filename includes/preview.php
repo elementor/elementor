@@ -66,7 +66,8 @@ class Preview {
 		/**
 		 * Preview init.
 		 *
-		 * Fires on Elementor preview init, after Elementor preview has finished loading but before any headers are sent.
+		 * Fires on Elementor preview init, after Elementor preview has finished
+		 * loading but before any headers are sent.
 		 *
 		 * @since 1.0.0
 		 *
@@ -130,7 +131,7 @@ class Preview {
 	 * Enqueue preview styles.
 	 *
 	 * Registers all the preview styles and enqueues them.
- 	 *
+	 *
 	 * Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.0.0
@@ -178,7 +179,7 @@ class Preview {
 	 * Enqueue preview scripts.
 	 *
 	 * Registers all the preview scripts and enqueues them.
- 	 *
+	 *
 	 * Fired by `wp_enqueue_scripts` action.
 	 *
 	 * @since 1.5.4

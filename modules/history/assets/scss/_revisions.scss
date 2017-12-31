@@ -1,12 +1,22 @@
 .elementor-revision- {
 
 	&item {
-		display: flex;
-		align-items: center;
-		border: 1px solid $editor-lightest;
-		padding: 10px 15px;
-		margin-bottom: 10px;
-		font-size: 11px;
+		&__wrapper {
+			display: flex;
+			align-items: center;
+			border: 1px solid $editor-lightest;
+			padding: 10px 15px;
+			margin-bottom: 10px;
+			font-size: 11px;
+
+			&.current {
+				font-weight: bold;
+			}
+
+			.elementor-revision-item__tools-current {
+				color: $editor-accent;
+			}
+		}
 
 		&:hover:not(.elementor-revision-current-preview) {
 			background-color: fade_out($editor-background, 0.7) ;
@@ -20,6 +30,10 @@
 		}
 
 		&-loading {
+
+			.elementor-revision-item__tools-current {
+				display: none;
+			}
 
 			.elementor-revision-item__tools-delete {
 				display: none;

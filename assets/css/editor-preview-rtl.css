@@ -105,7 +105,7 @@
           box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
   left: 0;
   right: 0;
-  margin: -10px auto 5px;
+  margin: -4px auto 5px;
   padding-top: 15px;
   width: 90%;
   z-index: 1;
@@ -113,9 +113,9 @@
   .elementor-controls-popover:before {
     content: '';
     position: absolute;
-    top: -20px;
-    left: 20px;
-    border: 10px solid transparent;
+    top: -16px;
+    left: 11px;
+    border: 8px solid transparent;
     border-bottom-color: #fff; }
   .elementor-controls-popover div.elementor-control:before {
     content: none; }
@@ -1101,26 +1101,43 @@
 .elementor-control-type-hidden {
   display: none !important; }
 
-.elementor-control-type-popover_toggle .elementor-control-input-wrapper {
-  text-align: left; }
+.elementor-control-type-popover_toggle input {
+  display: none; }
 
-.elementor-control-type-popover_toggle .elementor-control-popover-toggle-simple-toggle {
-  display: inline-block;
-  width: 50px;
-  text-align: center;
-  padding: 6px 0;
-  color: #a4afb7;
-  text-transform: uppercase;
-  -webkit-border-radius: 3px;
-          border-radius: 3px;
-  border: 1px solid;
+.elementor-control-type-popover_toggle label {
   cursor: pointer; }
 
-.elementor-control-type-popover_toggle .elementor-choices-label {
-  font-size: 10px;
-  text-transform: uppercase; }
-  .elementor-control-type-popover_toggle .elementor-choices-label i {
-    padding-right: 2px; }
+.elementor-control-type-popover_toggle .elementor-control-input-wrapper {
+  direction: rtl; }
+
+.elementor-control-type-popover_toggle .elementor-control-popover-toggle-toggle:checked + .elementor-control-popover-toggle-toggle-label {
+  color: #71d7f7; }
+
+.elementor-control-type-popover_toggle .elementor-control-popover-toggle-toggle:not(:checked) ~ .elementor-control-popover-toggle-reset-label {
+  display: none; }
+
+.elementor-control-type-popover_toggle .elementor-control-popover-toggle-reset-label {
+  color: #c2cbd2;
+  padding-left: 5px; }
+
+.elementor-control-type-popover_toggle .elementor-control-popover-toggle-toggle-label {
+  width: 50px;
+  height: 27px;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-border-radius: 3px;
+          border-radius: 3px;
+  border: 1px solid #d5dadf; }
 
 .elementor-control-type-button .elementor-control-input-wrapper {
   text-align: left; }
@@ -1228,7 +1245,7 @@
   .pen-menu {
     -webkit-box-shadow: 1px 2px 3px -2px #222;
             box-shadow: 1px 2px 3px -2px #222;
-    background-color: #6D7882;
+    background-color: #6d7882;
     position: fixed;
     -webkit-border-radius: 3px;
             border-radius: 3px;
@@ -1238,7 +1255,7 @@
       content: '';
       position: absolute;
       border: 6px solid transparent;
-      border-top-color: #6D7882;
+      border-top-color: #6d7882;
       left: 50%;
       -webkit-transform: translateX(-50%);
           -ms-transform: translateX(-50%);

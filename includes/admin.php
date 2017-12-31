@@ -501,7 +501,7 @@ class Admin {
 		<div id="elementor-deactivate-feedback-dialog-wrapper">
 			<div id="elementor-deactivate-feedback-dialog-header">
 				<i class="eicon-elementor-square" aria-hidden="true"></i>
-				<span id="elementor-deactivate-feedback-dialog-header-title"><?php _e( 'Quick Feedback', 'elementor' ); ?></span>
+				<span id="elementor-deactivate-feedback-dialog-header-title"><?php esc_html_e( 'Quick Feedback', 'elementor' ); ?></span>
 			</div>
 			<form id="elementor-deactivate-feedback-dialog-form" method="post">
 				<?php
@@ -509,12 +509,12 @@ class Admin {
 				?>
 				<input type="hidden" name="action" value="elementor_deactivate_feedback" />
 
-				<div id="elementor-deactivate-feedback-dialog-form-caption"><?php _e( 'If you have a moment, please share why you are deactivating Elementor:', 'elementor' ); ?></div>
+				<div id="elementor-deactivate-feedback-dialog-form-caption"><?php esc_html_e( 'If you have a moment, please share why you are deactivating Elementor:', 'elementor' ); ?></div>
 				<div id="elementor-deactivate-feedback-dialog-form-body">
 					<?php foreach ( $deactivate_reasons as $reason_key => $reason ) : ?>
 						<div class="elementor-deactivate-feedback-dialog-input-wrapper">
 							<input id="elementor-deactivate-feedback-<?php echo esc_attr( $reason_key ); ?>" class="elementor-deactivate-feedback-dialog-input" type="radio" name="reason_key" value="<?php echo esc_attr( $reason_key ); ?>" />
-							<label for="elementor-deactivate-feedback-<?php echo esc_attr( $reason_key ); ?>" class="elementor-deactivate-feedback-dialog-label"><?php echo $reason['title']; ?></label>
+							<label for="elementor-deactivate-feedback-<?php echo esc_attr( $reason_key ); ?>" class="elementor-deactivate-feedback-dialog-label"><?php echo esc_html( $reason['title'] ); ?></label>
 							<?php if ( ! empty( $reason['input_placeholder'] ) ) : ?>
 								<input class="elementor-feedback-text" type="text" name="reason_<?php echo esc_attr( $reason_key ); ?>" placeholder="<?php echo esc_attr( $reason['input_placeholder'] ); ?>" />
 							<?php endif; ?>
@@ -551,58 +551,82 @@ class Admin {
 	 * @access public
 	 */
 	public function elementor_dashboard_overview_widget() {
+		$elementor_feed = Api::get_feed_data();
+
+		$recently_edited_query_args = [
+			'post_type' => 'any',
+			'posts_per_page' => '3',
+			'meta_key' => '_elementor_edit_mode',
+			'meta_value' => 'builder',
+			'orderby' => 'modified',
+		];
+
+		$recently_edited_query = new \WP_Query( $recently_edited_query_args );
 		?>
-        <div class="e-dashboard-widget">
-            <div class="e-overview__header">
-                <div class="e-overview__logo"><i class="eicon-elementor-square"></i></div>
-                <div class="e-overview__versions">
-                    <span class="e-overview__version">v1.8.11</span>
-                    <span class="e-overview__version">Pro v1.10.0</span>
-                </div>
-                <div class="e-overview__create"><a href="#" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> Create New Page</a></div>
-            </div>
-            <div class="e-overview__recently-edited">
-                <h3 class="e-overview__heading"><?php _e( 'Recently Edited', 'elementor' ); ?></h3>
-                <ul class="e-overview__posts">
-                    <li class="e-overview__post">
-                        <span>Dec 4th, 4:52 pm</span> <a href="#" class="e-overview__post-link"> <span class="dashicons dashicons-edit"></span> Introducing Single Post Widget</a>
-                    </li>
-                    <li class="e-overview__post">
-                        <span>Dec 4th, 4:52 pm</span> <a href="#" class="e-overview__post-link"> <span class="dashicons dashicons-edit"></span> 7 Marketing Ideas To Boost Your Sales On Black Friday</a>
-                    </li>
-                    <li class="e-overview__post">
-                        <span>Dec 4th, 4:52 pm</span> <a href="#" class="e-overview__post-link"> <span class="dashicons dashicons-edit"></span> 7 Marketing Ideas To Boost Your Sales On Black Friday</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="e-overview__feed">
-                <h3 class="e-overview__heading"><?php _e( 'News & Updates', 'elementor' ); ?></h3>
-                <ul class="e-overview__posts">
-                    <li class="e-overview__post">
-                        <a href="#" class="e-overview__post-link">Introducing Single Post Widgets: The Easy Way to Design Your Blog Posts</a>
-                        <p class="e-overview__post-description">Create stylish blog posts with our new Single Post Widgets: Author Box, WordPress Comments, Yoast Breadcrumbs & Post Navigation.</p>
-                    </li>
-                    <li class="e-overview__post">
-                        <a href="#" class="e-overview__post-link"><span class="e-overview__badge"><?php _e( 'Sale', 'elementor' ); ?></span> 7 Marketing Ideas To Boost Your Sales On Black Friday</a>
-                        <p class="e-overview__post-description">Take advantage of our Mega Black Friday Creative Kit and get more sales and conversions this Black Friday and Cyber Monday!​ Get ready for the Ultimate Black Friday Web Design Pack that will skyrocket your sales on Black Friday.</p>
-                    </li>
-                    <li class="e-overview__post">
-                        <a href="#" class="e-overview__post-link">7 Marketing Ideas To Boost Your Sales On Black Friday</a>
-                        <p class="e-overview__post-description">Create stylish blog posts with our new Single Post Widgets: Author Box, WordPress Comments, Yoast Breadcrumbs & Post Navigation.</p>
-                    </li>
-                </ul>
-            </div>
-            <div class="e-overview__footer">
-                <a href="https://go.elementor.com/overview-widget-blog/" target="_blank"><?php _e( 'Blog', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
-                |
-                <a href="https://go.elementor.com/overview-widget-docs/" target="_blank"><?php _e( 'Help', 'elementor' ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
-                |
-                <a href="https://go.elementor.com/overview-widget-account/" target="_blank"><?php _e( 'My Account', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
-                |
-                <a href="https://go.elementor.com/overview-widget-pro/" target="_blank" class="e-overview__go-pro"><?php _e( 'Go Pro', 'elementor' ); ?>  <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
-            </div>
-        </div>
-        <?php
+		<div class="e-dashboard-widget">
+			<div class="e-overview__header">
+				<div class="e-overview__logo"><i class="eicon-elementor-square"></i></div>
+				<div class="e-overview__versions">
+					<span class="e-overview__version"><?php esc_html_e( 'Elementor', 'elementor' ); ?> v<?php echo esc_html( ELEMENTOR_VERSION ); ?></span>
+					<?php
+					/**
+					 * Elementor dashboard widget after the version.
+					 *
+					 * Fires after Elementor version display in the dashboard widget.
+					 *
+					 * @since 1.9.0
+					 */
+					do_action( 'elementor/admin/dashboard_overview_widget/after_version' );
+					?>
+				</div>
+				<div class="e-overview__create">
+					<a href="<?php echo esc_attr( Utils::get_create_new_post_url() ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php esc_html_e( 'Create New Page', 'elementor' ); ?></a>
+				</div>
+			</div>
+			<?php if ( $recently_edited_query->have_posts() ) : ?>
+			<div class="e-overview__recently-edited">
+				<h3 class="e-overview__heading"><?php esc_html_e( 'Recently Edited', 'elementor' ); ?></h3>
+				<ul class="e-overview__posts">
+					<?php
+					while ( $recently_edited_query->have_posts() ) :
+						$recently_edited_query->the_post();
+
+						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_time( 'U' ) );
+					?>
+					<li class="e-overview__post">
+						 <a href="<?php echo esc_attr( Utils::get_edit_link( get_the_ID() ) ); ?>" class="e-overview__post-link"><?php the_title(); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; ?>, <?php the_time(); ?></span>
+					</li>
+					<?php endwhile; ?>
+				</ul>
+			</div>
+			<?php endif; ?>
+			<?php if ( ! empty( $elementor_feed ) ) : ?>
+			<div class="e-overview__feed">
+				<h3 class="e-overview__heading"><?php esc_html_e( 'News & Updates', 'elementor' ); ?></h3>
+				<ul class="e-overview__posts">
+					<?php foreach ( $elementor_feed as $feed_item ) : ?>
+					<li class="e-overview__post">
+						<a href="<?php echo esc_url( $feed_item['url'] ); ?>" class="e-overview__post-link" target="_blank">
+							<?php if ( ! empty( $feed_item['badge'] ) ) : ?>
+								<span class="e-overview__badge"><?php echo esc_html( $feed_item['badge'] ); ?></span>
+							<?php endif; ?>
+							<?php echo esc_html( $feed_item['title'] ); ?>
+						</a>
+						<p class="e-overview__post-description"><?php echo esc_html( $feed_item['excerpt'] ); ?></p>
+					</li>
+					<?php endforeach; ?>
+				</ul>
+			</div>
+			<?php endif; ?>
+			<div class="e-overview__footer">
+				<ul>
+				<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action_id => $action ) : ?>
+					<li class="e-overview__<?php echo esc_attr( $action_id ); ?>"><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+				<?php endforeach; ?>
+				</ul>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -637,6 +661,73 @@ class Admin {
 		wp_send_json_success();
 	}
 
+	private function get_dashboard_overview_widget_footer_actions() {
+		$base_actions = [
+			'blog' => [
+				'title' => __( 'Blog', 'elementor' ),
+				'link' => 'https://go.elementor.com/overview-widget-blog/',
+			],
+			'help' => [
+				'title' => __( 'Help', 'elementor' ),
+				'link' => 'https://go.elementor.com/overview-widget-docs/',
+			],
+		];
+
+		$additions_actions = [
+			'go-pro' => [
+				'title' => __( 'Go Pro', 'elementor' ),
+				'link' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-overview-widget&utm_campaign=gopro&utm_medium=wp-dash' ),
+			],
+		];
+
+		/**
+		 * Dashboard widget footer actions.
+		 *
+		 * Filters the additions actions displayed in Elementor dashboard widget.
+		 *
+		 * Developers can add new action links to Elementor dashboard widget
+		 * footer using this filter.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param array $additions_actions Elementor dashboard widget footer actions.
+		 */
+		$additions_actions = apply_filters( 'elementor/admin/dashboard_overview_widget/footer_actions', $additions_actions );
+
+		$actions = $base_actions + $additions_actions;
+
+		return $actions;
+	}
+
+	public function admin_action_new_post() {
+		check_admin_referer( 'elementor_action_new_post' );
+
+		if ( empty( $_GET['post_type'] ) ) {
+			$post_type = 'post';
+		} else {
+			$post_type = $_GET['post_type'];
+		}
+
+		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
+			return;
+		}
+
+		$post_data = [
+			'post_type' => $post_type,
+			'post_title' => __( 'Elementor', 'elementor' ),
+		];
+
+		$post_id = wp_insert_post( $post_data );
+
+		$post_data['ID'] = $post_id;
+		$post_data['post_title'] .= ' #' . $post_id;
+
+		wp_update_post( $post_data );
+
+		wp_redirect( Utils::get_edit_link( $post_id ) );
+		die;
+	}
+
 	/**
 	 * Admin constructor.
 	 *
@@ -669,5 +760,8 @@ class Admin {
 
 		// Ajax.
 		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
+
+		// Admin Actions
+		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 	}
 }

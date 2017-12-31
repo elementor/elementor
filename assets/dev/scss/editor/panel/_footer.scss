@@ -26,19 +26,18 @@
 	color: $editor-light;
 	transition: $transition-hover;
 
-	#elementor-panel-saver-button-save {
+	#elementor-panel-saver-button-update {
 		@include border-end(1px solid #2d8739);
-		border-radius: 3px 0 0 3px;
+		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 
 		i {
 			@include margin-end(5px);
 		}
 	}
 
-	#elementor-panel-saver-button-publish {
+	#elementor-panel-saver-button-save-options {
 		float: $start;
-
-		border-radius: 0 3px 3px 0;
+		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 
 		i {
 			margin: auto;
@@ -135,11 +134,37 @@
 	color: $editor-lightest;
 }
 
-#elementor-panel-saver-save {
-	width: 65px;
+#elementor-panel-saver-publish {
+	width: 80px;
+	@extend .elementor-button-success;
 
-	.elementor-save-active {
-		@extend .elementor-button-success;
+	.elementor-button.elementor-button-state {
+
+		#elementor-panel-saver-button-publish-label {
+			display: none;
+		}
+	}
+}
+
+#elementor-panel-saver-save-options {
+	width: 35px;
+	@include border-start(1px solid $editor-darkest);
+
+	.elementor-last-edited {
+		font-size: 11px;
+		font-style: italic;
+		color: $editor-light;
+		padding: 5px 0 15px;
+
+		time {
+			border-bottom: 1px dotted transparent;
+			transition: all ease-in-out .3s;
+			cursor:pointer;
+
+			&:hover {
+				border-bottom-color: inherit;
+			}
+		}
 	}
 }
 
@@ -150,39 +175,19 @@
 		}
 	}
 
-	&save, &publish {
+	&publish,
+	&save-options {
 		font-size: 11px;
 		text-transform: uppercase;
 		height: 26px;
 	}
 
-	&save {
+	&publish {
 		width: 100%;
-		background-color: $editor-darker;
-		color: $editor-light;
+		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 	},
 
-	&publish {
-		width: 30px;
-	}
-}
-
-#elementor-panel-saver-menu-publish {
-	.elementor-icon, .elementor-title {
-		color: $editor-success;
-	}
-}
-#elementor-panel-saver-menu-publish-changes {
-	&.elementor-save-active {
-		.elementor-icon, .elementor-title {
-			color: $editor-success;
-		}
-	}
-}
-
-#elementor-panel-footer-discard {
-
-	.elementor-icon, .elementor-title {
-		color: $editor-warning;
+	&save-options {
+		width: 25px;
 	}
 }

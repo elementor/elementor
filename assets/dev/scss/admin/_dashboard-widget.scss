@@ -6,6 +6,7 @@
 
 	.dashicons {
 		vertical-align: middle;
+		font-size: 17px;
 	}
 
 	.e-overview {
@@ -13,8 +14,8 @@
 		&__header {
 			display: table;
 			width: 100%;
-			box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
-			margin: 0 -12px 18px;
+			box-shadow: 0 5px 8px rgba(0, 0, 0, 0.05);
+			margin: 0 -12px 8px;
 			padding: 0 12px 12px;
 		}
 
@@ -45,45 +46,18 @@
 			text-align: $end;
 		}
 
-		&__recently-edited {
-
-			li > span {
-				display: inline-block;
-				margin-right: 5px;
-				min-width: 150px;
-				color: #72777c;
-			}
-		}
-
-		&__heading {
-			font-weight: 700;
-		}
-
 		&__post {
 			margin-top: 10px;
-			font-size: 14px;
-		}
-
-		&__feed {
-
-			.e-overview__heading {
-				border-top: 1px solid #eee;
-				border-bottom: 1px solid #eee;
-				margin: 0 -12px;
-				padding: 6px 12px;
-			}
 		}
 
 		&__post-link {
 			display: inline-block;
-			padding-bottom: 5px;
-			font-weight: 500;
 		}
 
 		&__badge {
 			background: $editor-success;
 			color: white;
-			font-size: 0.8em;
+			font-size: 0.75em;
 			padding: 3px 6px;
 			border-radius: 3px;
 			text-transform: uppercase;
@@ -93,16 +67,63 @@
 			margin: 0 0 1.5em;
 		}
 
+		&__recently-edited {
+
+			li {
+				color: #72777c;
+			}
+		}
+
+		&__feed {
+			font-size: 14px;
+			font-weight: 500;
+
+			.e-overview__post-link {
+				padding-bottom: 5px;
+			}
+		}
+
+		&__recently-edited,
+		&__feed {
+
+			.e-overview__heading {
+				font-weight: 700;
+				border-bottom: 1px solid #eee;
+				margin: 0 -12px;
+				padding: 6px 12px;
+			}
+		}
+
 		&__footer{
 			margin: 0 -12px -12px;
 			padding: 12px;
 			border-top: 1px solid #eee;
-			color: #ddd;
+
+			ul {
+				display: flex;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+
+				li {
+					padding: 0 10px;
+					margin: 0;
+					@include border-start(1px solid #ddd);
+
+					&:first-child {
+						@include padding-start(0);
+						border: none;
+					}
+				}
+			}
 		}
 
 		&__go-pro {
-			color: $editor-orange;
-			font-weight: 500;
+
+			a {
+				color: $editor-orange;
+				font-weight: 500;
+			}
 		}
 	}
 }
