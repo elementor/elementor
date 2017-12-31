@@ -38,11 +38,15 @@ class Debug {
 			$all_fields_identical = false;
 
 			if ( $last_error ) {
-				$identical_fields = array_intersect( $last_error, $error );
+				$compare_fields_as_keys = array_flip( $compare_fields );
 
-				$required_identical_fields = array_intersect_key( array_flip( $compare_fields ), $identical_fields );
+				$error_requires_equality_fields = array_intersect_key( $error, $compare_fields_as_keys );
 
-				$all_fields_identical = count( $compare_fields ) === count( $required_identical_fields );
+				$last_error_requires_equality_fields = array_intersect_key( $last_error, $compare_fields_as_keys );
+
+				$identical_fields = array_intersect( $error_requires_equality_fields, $last_error_requires_equality_fields );
+
+				$all_fields_identical = count( $compare_fields ) === count( $identical_fields );
 
 				if ( $all_fields_identical ) {
 					$error_custom_fields_count = count( $error['customFields'] );
