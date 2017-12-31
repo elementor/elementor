@@ -2259,6 +2259,8 @@ select {
       font-style: italic;
       color: #a4afb7;
       padding: 5px 0 15px; }
+      .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited:not(.elementor-state-active) .elementor-state-icon {
+        display: none; }
       .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited time {
         border-bottom: 1px dotted transparent;
         -webkit-transition: all ease-in-out .3s;
