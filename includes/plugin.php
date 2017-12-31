@@ -131,9 +131,9 @@ class Plugin {
 	public $maintenance_mode;
 
 	/**
-	 * Page settings manager.
+	 * Document settings manager.
 	 *
-	 * Holds the page settings manager.
+	 * Holds the document settings manager.
 	 *
 	 * @since 1.0.0
 	 * @access public
