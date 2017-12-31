@@ -154,6 +154,15 @@ class Compatibility {
 			return $tabs;
 		} );
 
+		// Fix WC session not defined in editor.
+		if ( function_exists( 'WC' ) ) {
+			add_action( 'elementor/editor/before_enqueue_scripts', function() {
+				remove_action( 'woocommerce_shortcode_before_product_cat_loop', 'wc_print_notices' );
+				remove_action( 'woocommerce_before_shop_loop', 'wc_print_notices' );
+				remove_action( 'woocommerce_before_single_product', 'wc_print_notices' );
+			} );
+		}
+
 		// Fix Jetpack Contact Form in Editor Mode.
 		if ( class_exists( 'Grunion_Editor_View' ) ) {
 			add_action( 'elementor/editor/before_enqueue_scripts', function() {
