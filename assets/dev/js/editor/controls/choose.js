@@ -44,8 +44,6 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 
 		if ( currentValue ) {
 			this.ui.inputs.filter( '[value="' + currentValue + '"]' ).prop( 'checked', true );
-		} else if ( ! this.model.get( 'toggle' ) ) {
-			this.ui.inputs.first().prop( 'checked', true ).trigger( 'change' );
 		}
 	}
 } );
