@@ -120,6 +120,21 @@
 .elementor-hidden {
   display: none; }
 
+.flatpickr-calendar {
+  width: 280px; }
+  .flatpickr-calendar .flatpickr-current-month span.cur-month {
+    font-weight: 300; }
+  .flatpickr-calendar .dayContainer {
+    width: 280px;
+    min-width: 280px;
+    max-width: 280px; }
+  .flatpickr-calendar .flatpickr-days {
+    width: 280px; }
+  .flatpickr-calendar .flatpickr-day {
+    max-width: 37px;
+    height: 37px;
+    line-height: 37px; }
+
 .elementor {
   -webkit-hyphens: manual;
       -ms-hyphens: manual;
@@ -714,6 +729,8 @@
               transform: translateY(-50%);
       left: 10px;
       pointer-events: none; }
+  .elementor-field-group.elementor-field-type-select-multiple .elementor-select-wrapper:before {
+    content: ''; }
 
 .elementor-field-subgroup {
   display: -webkit-box;

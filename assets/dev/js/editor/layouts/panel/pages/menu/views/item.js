@@ -1,6 +1,4 @@
-var PanelMenuItemView;
-
-PanelMenuItemView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-menu-item',
 
 	className: 'elementor-panel-menu-item',
@@ -9,5 +7,3 @@ PanelMenuItemView = Marionette.ItemView.extend( {
 		click: 'click'
 	}
 } );
-
-module.exports = PanelMenuItemView;

@@ -27,6 +27,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
+		this.currentPreviewId = elementor.config.current_revision_id;
 	},
 
 	getRevisionViewData: function( revisionView ) {
@@ -112,9 +113,13 @@ module.exports = Marionette.CompositeView.extend( {
 		this.exitReviewMode();
 
 		this.setRevisionsButtonsActive( false );
+
+		this.currentPreviewId = elementor.config.current_revision_id;
 	},
 
 	onApplyClick: function() {
+		elementor.saver.setFlagEditorChange( true );
+
 		elementor.saver.saveAutoSave();
 
 		this.isRevisionApplied = true;

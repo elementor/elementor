@@ -38,7 +38,10 @@ App = Marionette.Application.extend( {
 		element: {
 			Model: require( 'elementor-elements/models/element' )
 		},
+		ControlsStack: require( 'elementor-views/controls-stack' ),
 		Module: require( 'elementor-utils/module' ),
+		RepeaterRowView: require( 'elementor-controls/repeater-row' ),
+		SettingsModel: require( 'elementor-elements/models/base-settings' ),
 		WidgetView: require( 'elementor-elements/views/widget' ),
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
@@ -377,7 +380,7 @@ App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.saver.saveAutoSave();
+					elementor.saver.doAutoSave();
 				}
 			}
 		};

@@ -30,13 +30,20 @@
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
-	<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>
-	<div class="elementor-revision-item__details">
-		<div class="elementor-revision-date">{{{ date }}}</div>
-		<div class="elementor-revision-meta">{{{ elementor.translate( type ) }}} <?php esc_html_e( 'By', 'elementor' ); ?> {{{ author }}}</div>
-	</div>
-	<div class="elementor-revision-item__tools">
-		<i class="elementor-revision-item__tools-delete fa fa-times"></i>
-		<i class="elementor-revision-item__tools-spinner fa fa-spin fa-circle-o-notch"></i>
+	<div class="elementor-revision-item__wrapper {{ type }}">
+		<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>
+		<div class="elementor-revision-item__details">
+			<div class="elementor-revision-date">{{{ date }}}</div>
+			<div class="elementor-revision-meta"><span>{{{ elementor.translate( type ) }}}</span> <?php esc_html_e( 'By', 'elementor' ); ?> {{{ author }}}</div>
+		</div>
+		<div class="elementor-revision-item__tools">
+			<# if ( 'current' === type ) { #>
+				<i class="elementor-revision-item__tools-current fa fa-star"></i>
+			<# } else { #>
+				<i class="elementor-revision-item__tools-delete fa fa-times"></i>
+			<# } #>
+
+			<i class="elementor-revision-item__tools-spinner fa fa-spin fa-circle-o-notch"></i>
+		</div>
 	</div>
 </script>
