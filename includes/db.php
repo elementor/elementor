@@ -222,7 +222,7 @@ class DB {
 		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
 
 		if ( self::STATUS_DRAFT === $status ) {
-			$autosave = wp_get_post_autosave( $post_id );
+			$autosave = $this->get_newer_autosave( $post_id );
 
 			if ( is_object( $autosave ) ) {
 				$data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
@@ -232,6 +232,29 @@ class DB {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Get the post auto-saved revision if it's exist and it's newer than current post.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return \WP_Post|false the auto-saved post of false.
+	 */
+
+	public function get_newer_autosave( $post_id ) {
+		$post = get_post( $post_id );
+		$autosave = wp_get_post_autosave( $post_id );
+
+		// Detect if there exists an autosave newer than the post.
+		if ( $autosave && mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false ) ) {
+			return $autosave;
+		}
+
+		return false;
 	}
 
 	/**
