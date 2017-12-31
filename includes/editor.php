@@ -281,8 +281,6 @@ class Editor {
 
 		$plugin = Plugin::$instance;
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
-
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
 		$wp_scripts = new \WP_Scripts();
@@ -444,6 +442,8 @@ class Editor {
 		// Remove all TinyMCE plugins.
 		remove_all_filters( 'mce_buttons', 10 );
 		remove_all_filters( 'mce_external_plugins', 10 );
+
+		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
 
 		wp_enqueue_script( 'elementor-editor' );
 
