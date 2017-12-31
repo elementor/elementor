@@ -356,6 +356,7 @@ body {
   content: '\e964'; }
 
 .elementor-button {
+  text-transform: uppercase;
   outline: none;
   border: none;
   -webkit-border-radius: 3px;
@@ -411,7 +412,6 @@ body {
     background-color: #a4afb7;
     color: #fff;
     font-size: 11px;
-    text-transform: uppercase;
     padding: 6.5px 15px; }
     .elementor-button.elementor-button-default:hover {
       background-color: #6d7882;
@@ -1044,8 +1044,7 @@ select {
     .elementor-panel .elementor-panel-scheme-button-wrapper:last-child {
       text-align: left; }
   .elementor-panel .elementor-panel-scheme-save .elementor-button {
-    padding: 6px 18px;
-    text-transform: uppercase; }
+    padding: 6px 18px; }
   .elementor-panel .elementor-panel-scheme-reset .elementor-button, .elementor-panel .elementor-panel-scheme-discard .elementor-button {
     color: #a4afb7;
     background: none; }
@@ -2603,9 +2602,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   color: #39b54a; }
   #elementor-template-library-modal a.elementor-template-library-blank-footer-link:hover {
     font-weight: 500; }
-
-#elementor-template-library-modal .elementor-button {
-  text-transform: uppercase; }
 
 #elementor-template-library-header {
   display: -webkit-box;

@@ -3,6 +3,7 @@
 //
 
 .elementor-button {
+	text-transform: uppercase;
 	outline: none;
 	border: none;
 	border-radius: 3px;
@@ -83,7 +84,6 @@
 		background-color: $editor-light;
 		color: #fff;
 		font-size: 11px;
-		text-transform: uppercase;
 		padding: 6.5px 15px;
 
 		&:hover {
