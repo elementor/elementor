@@ -166,27 +166,27 @@ class Revisions_Manager {
 		}
 	}
 
-	public static function ajax_save_builder_data( $return_data ) {
+	public static function ajax_save_builder_data( $return_data, $post_id ) {
 		$latest_revision = self::get_revisions(
-			$_POST['post_id'], [
+			$post_id, [
 				'posts_per_page' => 1,
 			]
 		);
 
 		$all_revision_ids = self::get_revisions(
-			$_POST['post_id'], [
+			$post_id, [
 				'fields' => 'ids',
 			], false
 		);
 
 		if ( ! empty( $latest_revision ) ) {
-			$current_revision_id = self::current_revision_id( $_POST['post_id'] );
+			$current_revision_id = self::current_revision_id( $post_id );
 
 			$return_data['config'] = [
 				'current_revision_id' => $current_revision_id,
 			];
 			// $latest_revision[0] = current post, $latest_revision[1] = last revision.
-			$return_data['last_revision'] = $current_revision_id === $_POST['post_id'] ? $latest_revision[0] : $latest_revision[1];
+			$return_data['last_revision'] = $current_revision_id === $post_id ? $latest_revision[0] : $latest_revision[1];
 			$return_data['revisions_ids'] = $all_revision_ids;
 		}
 
@@ -228,7 +228,7 @@ class Revisions_Manager {
 		add_action( 'wp_restore_post_revision', [ __CLASS__, 'restore_revision' ], 10, 2 );
 		add_action( 'init', [ __CLASS__, 'add_revision_support_for_all_post_types' ], 9999 );
 		add_filter( 'elementor/editor/localize_settings', [ __CLASS__, 'editor_settings' ], 10, 2 );
-		add_filter( 'elementor/ajax_save_builder/return_data', [ __CLASS__, 'ajax_save_builder_data' ] );
+		add_filter( 'elementor/ajax_save_builder/return_data', [ __CLASS__, 'ajax_save_builder_data' ], 10, 2 );
 		add_action( 'elementor/db/before_save', [ __CLASS__, 'db_before_save' ], 10, 2 );
 
 		if ( Utils::is_ajax() ) {
