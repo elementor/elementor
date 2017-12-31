@@ -1180,22 +1180,24 @@ select {
       font-weight: 500; }
       .elementor-panel .elementor-panel-menu-item-title > span {
         color: #39b54a; }
-  .elementor-panel .elementor-control-clear_page .elementor-control-raw-html {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-        -ms-flex-align: center;
-            align-items: center;
-    -webkit-box-pack: justify;
-    -webkit-justify-content: space-between;
-        -ms-flex-pack: justify;
-            justify-content: space-between; }
-  .elementor-panel .elementor-control-clear_page button {
-    width: 80px;
-    height: 26px; }
+  .elementor-panel .elementor-control.elementor-control-clear_page {
+    background-color: transparent; }
+    .elementor-panel .elementor-control.elementor-control-clear_page .elementor-control-raw-html {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+          -ms-flex-pack: justify;
+              justify-content: space-between; }
+    .elementor-panel .elementor-control.elementor-control-clear_page button {
+      width: 80px;
+      height: 26px; }
   .elementor-panel .elementor-panel-navigation {
     background-color: #ffffff;
     -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
