@@ -192,7 +192,7 @@ module.exports = Module.extend( {
 	startTimer: function( hasChanges ) {
 		if ( hasChanges ) {
 			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), 5000 );
-		} else {
+		} else if ( ! this.isChangedDuringSave ) {
 			clearTimeout( this.autoSaveTimer );
 		}
 	},
