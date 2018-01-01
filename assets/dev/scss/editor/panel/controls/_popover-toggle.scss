@@ -9,7 +9,7 @@
 	}
 
 	.elementor-control-input-wrapper {
-		direction: rtl;
+		direction: getInverseDirection();
 	}
 
 	.elementor-control-popover-toggle-toggle {
@@ -42,6 +42,5 @@
 		justify-content: center;
 		border-radius: 3px;
 		border: 1px solid $editor-lightest;
-		float: $end;
 	}
 }
