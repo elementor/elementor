@@ -18,14 +18,19 @@ abstract class Manager {
 	private $models_cache = [];
 
 	public function __construct() {
-		if ( Utils::is_ajax() ) {
-			$name = $this->get_name();
-			Plugin::$instance->ajax->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
-		}
-
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
 
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+
 		add_action( 'elementor/' . $this->get_css_file_name() . '-css-file/parse', [ $this, 'add_settings_css_rules' ] );
+	}
+
+	/**
+	 * @param Ajax_Manager $ajax_handler
+	 */
+	protected function register_ajax_actions( $ajax_handler ) {
+		$name = $this->get_name();
+		$ajax_handler->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
 	}
 
 	/**

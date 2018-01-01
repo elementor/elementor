@@ -3,7 +3,6 @@ var Ajax;
 Ajax = {
 	config: {},
 	requests: {},
-	requestsMap: {},
 
 	initConfig: function() {
 		this.config = {
@@ -19,7 +18,7 @@ Ajax = {
 	init: function() {
 		this.initConfig();
 
-		this.debounceSendBatch = _.debounce( _.bind( this.sendBatch, this ), 500 );
+		this.debounceSendBatch = _.debounce( this.sendBatch.bind( this ), 500 );
 	},
 
 	add: function( action, options ) {
@@ -27,7 +26,7 @@ Ajax = {
 			options.unique_id = '';
 		}
 
-		this.requests[ action +  options.unique_id ] = {
+		this.requests[ action + options.unique_id ] = {
 			action: action,
 			options: options
 		};

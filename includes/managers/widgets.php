@@ -389,7 +389,17 @@ class Widgets_Manager {
 	public function __construct() {
 		$this->_require_files();
 
-		Plugin::$instance->ajax->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
-		Plugin::$instance->ajax->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+	}
+
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param Ajax_Manager $ajax_handler
+	 */
+	public function register_ajax_actions( $ajax_handler ) {
+		$ajax_handler->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
+		$ajax_handler->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 	}
 }

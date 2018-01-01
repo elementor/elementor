@@ -26,7 +26,7 @@ class Elements_Manager {
 	}
 
 	/**
-	 * @since 1.9.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @param Ajax_Manager $ajax_handler
@@ -239,7 +239,9 @@ class Elements_Manager {
 		 *
 		 * @param array $return_data The returned data. Default is an empty array.
 		 */
-		return apply_filters( 'elementor/ajax_save_builder/return_data', $return_data, $post_id );
+		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', $return_data, $post_id );
+
+		return $return_data;
 	}
 
 	/**
