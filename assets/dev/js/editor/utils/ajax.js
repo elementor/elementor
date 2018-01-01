@@ -37,17 +37,16 @@ Ajax = {
 
 	sendBatch: function() {
 		var requests = this.requests,
-			actions = [];
+			actions = {};
 
 		// Empty for next batch.
 		this.requests = {};
 
 		_( requests ).each( function( request, id ) {
-			actions.push( {
-				id: id,
+			actions[ id ] = {
 				action: request.action,
 				data: request.options.data
-			} );
+			};
 		} );
 
 		this.send( 'ajax', {

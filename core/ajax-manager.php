@@ -51,11 +51,11 @@ class Ajax_Manager {
 
 		$responses = [];
 
-		foreach ( $_REQUEST['actions'] as $action_data ) {
+		foreach ( $_REQUEST['actions'] as $id => $action_data ) {
 
-			$this->current_action_id = $action_data['id'];
+			$this->current_action_id = $id;
 			if ( ! isset( $this->ajax_actions[ $action_data['action'] ] ) ) {
-				$responses[ $action_data['id'] ] = [
+				$responses[ $id ] = [
 					'error' => 'Action Not Found',
 				];
 
