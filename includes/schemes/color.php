@@ -40,9 +40,9 @@ class Scheme_Color extends Scheme_Base {
 	 *
 	 * Retrieve the color scheme type.
 	 *
-	 * @static
 	 * @since 1.0.0
 	 * @access public
+	 * @static
 	 *
 	 * @return string Color scheme type.
 	 */
