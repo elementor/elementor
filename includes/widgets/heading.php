@@ -78,7 +78,7 @@ class Widget_Heading extends Widget_Base {
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => __( 'Enter your title', 'elementor' ),
-				'default' => __( 'This is heading element', 'elementor' ),
+				'default' => __( 'Add Your Heading Text Here', 'elementor' ),
 			]
 		);
 
