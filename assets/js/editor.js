@@ -28,7 +28,7 @@ module.exports = Marionette.Behavior.extend( {
 			.on( 'after:save', this.onAfterSave.bind( this ) )
 			.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
 
-		elementor.settings.page.model.on( 'change', this.onPostStatusChange.bind( this ) );
+		elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
 	},
 
 	onRender: function() {
@@ -36,7 +36,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.addTooltip();
 	},
 
-	onPostStatusChange: function( settings ) {
+	onPageSettingsChange: function( settings ) {
 		var changed = settings.changed;
 
 		if ( ! _.isUndefined( changed.post_status ) ) {
@@ -81,7 +81,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	onClickButtonPreview: function() {
 		// Open immediately in order to avoid popup blockers.
-		this.previewWindow = window.open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
+		this.previewWindow = open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
 
 		if ( elementor.saver.isEditorChanged() ) {
 			// Force save even if it's saving now.
@@ -292,17 +292,19 @@ module.exports = Module.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } );
+			newData = elementor.elements.toJSON( { removeDefault: true } ),
+			oldStatus = elementor.settings.page.model.get( 'post_status' ),
+			statusChanged = oldStatus !== options.status;
 
 		self.trigger( 'before:save', options )
 			.trigger( 'before:save:' + options.status, options );
 
 		self.isSaving = true;
+
 		self.isChangedDuringSave = false;
 
-		if ( 'autosave' !== options.status ) {
-			elementor.settings.page.model.set( 'post_status', options.status );
-			elementor.settings.page.save();
+		if ( 'autosave' !== options.status && statusChanged ) {
+					elementor.settings.page.model.set( 'post_status', options.status );
 		}
 
 		elementor.ajax.add( 'save_builder', {
@@ -329,6 +331,10 @@ module.exports = Module.extend( {
 
 				self.trigger( 'after:save', data )
 					.trigger( 'after:save:' + options.status, data );
+
+				if ( statusChanged ) {
+					self.trigger( 'page:status:change', options.status, oldStatus );
+				}
 
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
@@ -9327,7 +9333,7 @@ heartbeat = {
 	},
 
 	initModal: function() {
-		var modal = elementor.dialogsManager.createWidget( 'options', {
+		var modal = elementor.dialogsManager.createWidget( 'lightbox', {
 			headerMessage: elementor.translate( 'take_over' )
 		} );
 
