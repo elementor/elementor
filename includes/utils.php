@@ -386,10 +386,10 @@ class Utils {
 
 		if ( $autosave_post ) {
 			/* translators: 1: Post edited human date, 2:  Post edited data, 3: Post author name */
-			$last_edited = sprintf( __( 'Draft saved <time>%1$s</time> by %2$s', 'elementor' ), $date, $display_name );
+			$last_edited = sprintf( __( 'Draft saved %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		} else {
 			/* translators: 1: Post edited human date, 2:  Post edited data, 3: Post author name */
-			$last_edited = sprintf( __( 'Last edited <time>%1$s</time> by %2$s', 'elementor' ), $date, $display_name );
+			$last_edited = sprintf( __( 'Last edited %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		}
 
 		return $last_edited;
