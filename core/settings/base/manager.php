@@ -52,10 +52,11 @@ abstract class Manager {
 	}
 
 	/**
-	 * @param Ajax_Manager $ajax_handler
 	 * @param array $request
+	 *
+	 * @return mixed
 	 */
-	final public function ajax_save_settings( $ajax_handler, $request ) {
+	final public function ajax_save_settings( $request ) {
 		$data = json_decode( stripslashes( $request['data'] ), true );
 
 		$id = 0;
@@ -85,7 +86,7 @@ abstract class Manager {
 		 */
 		$success_response_data = apply_filters( "elementor/{$settings_name}/settings/success_response_data", $success_response_data, $id, $data );
 
-		$ajax_handler->add_response_data( true, $success_response_data );
+		return $success_response_data;
 	}
 
 	final public function save_settings( array $settings, $id = 0 ) {

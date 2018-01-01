@@ -1,10 +1,7 @@
 <?php
 namespace Elementor\Core;
 
-use Elementor\DB;
 use Elementor\Plugin;
-use Elementor\User;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,7 +13,7 @@ class Ajax_Manager {
 	private $response_data = [];
 	private $current_action_id = null;
 
-	public function add_response_data( $success, $data ) {
+	public function add_response_data( $success, $data = null ) {
 		$this->response_data[ $this->current_action_id ] = [
 			'success' => $success,
 			'data' => $data,
@@ -54,10 +51,11 @@ class Ajax_Manager {
 
 		$responses = [];
 
-		foreach ( $_REQUEST['actions'] as $id => $action_data ) {
-			$this->current_action_id = $id;
+		foreach ( $_REQUEST['actions'] as $action_data ) {
+
+			$this->current_action_id = $action_data['id'];
 			if ( ! isset( $this->ajax_actions[ $action_data['action'] ] ) ) {
-				$responses[ $id ] = [
+				$responses[ $action_data['id'] ] = [
 					'error' => 'Action Not Found',
 				];
 
@@ -65,9 +63,11 @@ class Ajax_Manager {
 			}
 
 			try {
-				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ][0]['callback'], $this, $action_data['data'] );
+				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ][0]['callback'], $action_data['data'], $this );
 				if ( $results ) {
 					$this->add_response_data( true, $results );
+				} elseif ( false === $results ) {
+					$this->add_response_data( false );
 				}
 			} catch ( \Exception $e ) {
 				$this->add_response_data( false, $e->getMessage() );

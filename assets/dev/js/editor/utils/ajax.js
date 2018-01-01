@@ -2,7 +2,7 @@ var Ajax;
 
 Ajax = {
 	config: {},
-	requests: [],
+	requests: {},
 	requestsMap: {},
 
 	initConfig: function() {
@@ -19,32 +19,18 @@ Ajax = {
 	init: function() {
 		this.initConfig();
 
-		this.debounceSendBatch = _.debounce( _.bind( this.sendBatch, this ), 200 );
-	},
-
-	addUnique: function( action, options ) {
-		if ( this.requestsMap[ action ] ) {
-			this.requests[ this.requestsMap[ action ] ] = {
-				action: action,
-				options: options
-			};
-		} else {
-			this.requests.push( {
-				action: action,
-				options: options
-			} );
-
-			this.requestsMap[ action ] = this.requests.length - 1;
-		}
-
-		this.debounceSendBatch();
+		this.debounceSendBatch = _.debounce( _.bind( this.sendBatch, this ), 500 );
 	},
 
 	add: function( action, options ) {
-		this.requests.push( {
+		if ( ! options.unique_id ) {
+			options.unique_id = '';
+		}
+
+		this.requests[ action +  options.unique_id ] = {
 			action: action,
 			options: options
-		} );
+		};
 
 		this.debounceSendBatch();
 	},
@@ -54,10 +40,11 @@ Ajax = {
 			actions = [];
 
 		// Empty for next batch.
-		this.requests = [];
+		this.requests = {};
 
-		_( requests ).each( function( request ) {
+		_( requests ).each( function( request, id ) {
 			actions.push( {
+				id: id,
 				action: request.action,
 				data: request.options.data
 			} );

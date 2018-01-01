@@ -165,6 +165,7 @@ ElementModel = Backbone.Model.extend( {
 		var data = this.toJSON();
 
 		return elementor.ajax.add( 'render_widget', {
+			unique_id: this.cid,
 			data: {
 				post_id: elementor.config.post_id,
 				data: JSON.stringify( data )
