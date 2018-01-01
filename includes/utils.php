@@ -380,17 +380,16 @@ class Utils {
 		if ( $autosave_post ) {
 			$post = $autosave_post;
 		}
-		$current_time = current_time( 'timestamp' );
+
 		$date = date_i18n( _x( 'M j @ H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
-		$human_time = human_time_diff( strtotime( $post->post_modified ), $current_time );
 		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
 
 		if ( $autosave_post ) {
 			/* translators: 1: Post edited human date, 2:  Post edited data, 3: Post author name */
-			$last_edited = sprintf( __( 'Draft saved <time title="%2$s">%1$s</time> ago by %3$s', 'elementor' ), $human_time, $date, $display_name );
+			$last_edited = sprintf( __( 'Draft saved <time>%1$s</time> by %2$s', 'elementor' ), $date, $display_name );
 		} else {
 			/* translators: 1: Post edited human date, 2:  Post edited data, 3: Post author name */
-			$last_edited = sprintf( __( 'Last edited <time title="%2$s">%1$s</time> ago by %3$s', 'elementor' ), $human_time, $date, $display_name );
+			$last_edited = sprintf( __( 'Last edited <time>%1$s</time> by %2$s', 'elementor' ), $date, $display_name );
 		}
 
 		return $last_edited;
