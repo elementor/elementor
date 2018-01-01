@@ -236,14 +236,16 @@ class DB {
 	}
 
 	/**
-	 * Get the post auto-saved revision if it's exist and it's newer than current post.
+	 * Get auto-saved post revision.
+	 *
+	 * Retrieve the auto-saved post revision that is newer than current post.
 	 *
 	 * @since 1.9.0
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
 	 *
-	 * @return \WP_Post|false the auto-saved post of false.
+	 * @return \WP_Post|false The auto-saved post, or false.
 	 */
 
 	public function get_newer_autosave( $post_id ) {
