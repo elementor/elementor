@@ -32,22 +32,22 @@ class Ajax_Manager {
 		add_action( 'wp_ajax_elementor_ajax', [ $this, 'handle_ajax_request' ] );
 	}
 
-	public function register_ajax_action( $tag, $callback, $priority = 10 ) {
-		if ( ! isset( $this->ajax_actions[ $tag ] ) ) {
-			$this->ajax_actions[ $tag ] = [];
+	public function register_ajax_action( $tag, $callback ) {
+		if ( ! did_action( 'elementor/ajax/register_actions' ) ) {
+			doing_it_wrong( __METHOD__, __( 'Use `elementor/ajax/register_actions` hook to register ajax action.', 'elementor' ), '2.0.0' );
 		}
 
-		$this->ajax_actions[ $tag ][] = compact( 'tag', 'callback', 'priority' );
+		$this->ajax_actions[ $tag ] = compact( 'tag', 'callback' );
 	}
 
 	public function handle_ajax_request() {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
-		do_action( 'elementor/ajax/register_actions', $this );
-
 		if ( empty( $_REQUEST['actions'] ) ) {
 			wp_send_json_error( new \WP_Error( 'Action Required' ) );
 		}
+
+		do_action( 'elementor/ajax/register_actions', $this );
 
 		$responses = [];
 
@@ -63,7 +63,7 @@ class Ajax_Manager {
 			}
 
 			try {
-				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ][0]['callback'], $action_data['data'], $this );
+				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ]['callback'], $action_data['data'], $this );
 				if ( $results ) {
 					$this->add_response_data( true, $results );
 				} elseif ( false === $results ) {
