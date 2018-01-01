@@ -22,9 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-panel-menu">
 	<div id="elementor-panel-page-menu-content"></div>
 	<div id="elementor-panel-page-menu-footer">
-		<a href="<?php echo get_edit_post_link(); ?>" id="elementor-panel-exit-to-dashboard" class="elementor-button elementor-button-default">
+		<a href="<?php echo esc_url( Utils::get_exit_to_dashboard_url( get_the_ID() ) ); ?>" id="elementor-panel-exit-to-dashboard" class="elementor-button elementor-button-default">
 			<i class="fa fa-wordpress"></i>
-			<?php echo __( 'Exit To Dashboard', 'elementor' ); ?>
+			<?php echo esc_html__( 'Exit To Dashboard', 'elementor' ); ?>
 		</a>
 	</div>
 </script>
