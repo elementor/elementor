@@ -1,8 +1,8 @@
-# Page Settings
+# Document Settings
 
-Elementor's Page Settings feature allows the user to control various page definitions straight from Elementor's editing panel.
+Elementor's Document Settings feature allows the user to control various page definitions straight from Elementor's editing panel.
 
-The Page Settings controls are similar to element controls. In a similar way, you can extend the Page Settings capabilities, and add new controls and settings that will be managed through the Page Settings panel.
+The Document Settings controls are similar to element controls. In a similar way, you can extend the Document Settings capabilities, and add new controls and settings that will be managed through the Document Settings panel.
 
 ### Table Of Contents
 
@@ -14,7 +14,7 @@ The Page Settings controls are similar to element controls. In a similar way, yo
 
 #### Controls Structure
 
-In the Page Settings panel, controls that define the settings of the page appear under two [tabs](controls-and-the-editor.md#tabs):
+In the Document Settings panel, controls that define the settings of the page appear under two [tabs](controls-and-the-editor.md#tabs):
 
 **Settings**  - For controlling certain page definitions like: page title, page template, post status etc.
 
@@ -22,7 +22,7 @@ In the Page Settings panel, controls that define the settings of the page appear
 
 #### Adding a new settings
 
-Similarly to widgets, you can add more controls to Page Settings for controlling and saving any type of setting. The new controls can be added to the existing tabs, or to any new tab from the available tabs in Elementor.
+Similarly to widgets, you can add more controls to Document Settings for controlling and saving any type of setting. The new controls can be added to the existing tabs, or to any new tab from the available tabs in Elementor.
 
 Let's see an example for adding a control that sets the items color in the page menu:
 
@@ -43,11 +43,11 @@ function add_elementor_page_settings_controls( \Elementor\PageSettings\Page $pag
 add_action( 'elementor/element/page-settings/section_page_style/before_section_end', 'add_elementor_page_settings_controls' );
 ```
 
-With this example, we have created a function that adds a control for the instance of the class `Elementor\PageSettings\Page` that represents all the settings that can be controlled with the Page Settings panel.
+With this example, we have created a function that adds a control for the instance of the class `Elementor\PageSettings\Page` that represents all the settings that can be controlled with the Document Settings panel.
 
-The returned value from the control affects the page by defining `selectors`. In Page Settings, the `{{WRAPPER}}` placeholder represents a unique class for the `body` element. You can read more about behaviors and functionality of `selectors` [here](controls-and-the-editor.md#adding-the-value-to-the-style-definitions-of-the-element).
+The returned value from the control affects the page by defining `selectors`. In Document Settings, the `{{WRAPPER}}` placeholder represents a unique class for the `body` element. You can read more about behaviors and functionality of `selectors` [here](controls-and-the-editor.md#adding-the-value-to-the-style-definitions-of-the-element).
 
-After creating the function, we added an action that is called before closing the whole controls section. In the example above we have added the action before closing the section called `section_page_style` that contains all the Page Settings controls that have to do with styling.
+After creating the function, we added an action that is called before closing the whole controls section. In the example above we have added the action before closing the section called `section_page_style` that contains all the Document Settings controls that have to do with styling.
 
 **Some notes:**
 
@@ -57,18 +57,18 @@ After creating the function, we added an action that is called before closing th
 
 #### Saving the value of a control
 
-The returned item from each control, including custom made controls, is saved automatically in the `post meta` of the page. This `post meta` contains all the settings that are related to Page Settings (Not including some settings that require different treatment). In most cases, you will not need to do any special modifications while saving the control you've created.
+The returned item from each control, including custom made controls, is saved automatically in the `post meta` of the page. This `post meta` contains all the settings that are related to Document Settings (Not including some settings that require different treatment). In most cases, you will not need to do any special modifications while saving the control you've created.
 
 #### Getting a saved value of a control
 
-Much like any Elementor element, you can get the saved value of each Page Settings control by accessing the instance of the class `Elementor\PageSettings\Page`. 
+Much like any Elementor element, you can get the saved value of each Document Settings control by accessing the instance of the class `Elementor\PageSettings\Page`. 
 
 The right way to access is shown in the example below:
 
 ```php
 $post_id = get_the_ID();
 
-// Creating an instance of page settings for specific post
+// Creating an instance of Document settings for specific post
 $page = \Elementor\PageSettings\Manager::get_page( $post_id ); 
 
 $menu_item_color = $page->get_settings( 'menu_item_color' ); // The color we added before

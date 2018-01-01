@@ -17,7 +17,7 @@ Elementor is an [Open Source](https://opensource.org/) free frontend page builde
 * [Hooks](#hooks)
 * [Additional components](#additional-components)
   - [Template Library](#template-library)
-  - [Page Settings](#page-settings)
+  - [Document Settings](#document-settings)
   - [Icons](#icons)
   - [Menus](#menus)
 * [Elementor Pro](#additional-components)
@@ -98,11 +98,11 @@ Elementor has many hooks that allow to change the default behavior and even exte
 
 The Template Library lets you save pages, sections and widgets for reuse, as well as use pre-designed Elementor templates.
 
-### Page Settings
+### Document Settings
 
-Page Settings lets the user control some basic and useful settings in the page from within Elementor.
+Document Settings lets the user control some basic and useful settings in the page from within Elementor.
 
-For more information about extending the Page Settings features, please follow [this article](content/controls/page-settings.md).
+For more information about extending the Document Settings features, please follow [this article](content/controls/page-settings.md).
 
 
 ### Icons
