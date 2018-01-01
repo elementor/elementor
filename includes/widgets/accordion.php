@@ -306,14 +306,6 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'box_shadow',
-				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-accordion-item',
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
