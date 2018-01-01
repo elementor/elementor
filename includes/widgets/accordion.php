@@ -403,7 +403,7 @@ class Widget_Accordion extends Widget_Base {
 						'default' => [
 							'top' => '1',
 							'right' => '1',
-							'bottom' => '1',
+							'bottom' => '0',
 							'left' => '1',
 							'isLinked' => false,
 						],
