@@ -468,8 +468,6 @@ class Editor {
 
 		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
-
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
