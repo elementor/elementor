@@ -366,32 +366,6 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			[
-				'name' => 'title_border',
-				'label' => __( 'Border', 'elementor' ),
-				'fields_options' => [
-					'border' => [
-						'default' => 'solid',
-					],
-					'width' => [
-						'default' => [
-							'top' => '1',
-							'right' => '1',
-							'bottom' => '1',
-							'left' => '1',
-							'isLinked' => false,
-						],
-					],
-					'color' => [
-						'default' => '#D4D4D4',
-					],
-				],
-				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-tab-title',
-			]
-		);
-
 		$this->add_responsive_control(
 			'title_padding',
 			[
@@ -535,32 +509,6 @@ class Widget_Accordion extends Widget_Base {
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-tab-content',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			[
-				'name' => 'content_border',
-				'label' => __( 'Border', 'elementor' ),
-				'fields_options' => [
-					'border' => [
-						'default' => 'solid',
-					],
-					'width' => [
-						'default' => [
-							'top' => '0',
-							'right' => '1',
-							'bottom' => '1',
-							'left' => '1',
-							'isLinked' => false,
-						],
-					],
-					'color' => [
-						'default' => '#D4D4D4',
-					],
-				],
-				'selector' => '{{WRAPPER}} .elementor-accordion .elementor-tab-content',
 			]
 		);
 
