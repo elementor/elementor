@@ -27,7 +27,7 @@ module.exports = Marionette.Behavior.extend( {
 			.on( 'after:save', this.onAfterSave.bind( this ) )
 			.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
 
-		elementor.settings.page.model.on( 'change', this.onPostStatusChange.bind( this ) );
+		elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
 	},
 
 	onRender: function() {
@@ -35,7 +35,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.addTooltip();
 	},
 
-	onPostStatusChange: function( settings ) {
+	onPageSettingsChange: function( settings ) {
 		var changed = settings.changed;
 
 		if ( ! _.isUndefined( changed.post_status ) ) {
@@ -80,7 +80,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	onClickButtonPreview: function() {
 		// Open immediately in order to avoid popup blockers.
-		this.previewWindow = window.open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
+		this.previewWindow = open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
 
 		if ( elementor.saver.isEditorChanged() ) {
 			if ( elementor.saver.xhr ) {
