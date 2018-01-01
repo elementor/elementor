@@ -205,16 +205,18 @@ class Widgets_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_handler
 	 * @param array $request
+	 *
+	 * @return array
+	 * @throws \Exception
 	 */
-	public function ajax_render_widget( $ajax_handler, $request ) {
+	public function ajax_render_widget( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id', 'No post_id' ) );
+			throw new \Exception( 'no_post_id' );
 		}
 
 		if ( ! User::is_current_user_can_edit( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_access' ) );
+			throw new \Exception( 'no_access' );
 		}
 
 		// Override the global $post for the render.
@@ -243,35 +245,34 @@ class Widgets_Manager {
 
 		$render_html = ob_get_clean();
 
-		$ajax_handler->add_response_data(
-			true,
-			[
-				'render' => $render_html,
-			]
-		);
+		return [
+			'render' => $render_html,
+		];
 	}
 
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
-	public function ajax_get_wp_widget_form() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( empty( $_POST['widget_type'] ) ) {
-			wp_send_json_error();
+	 *
+	 * @param array $request
+	 *
+	 * @return bool|string
+	 */
+	public function ajax_get_wp_widget_form( $request ) {
+		if ( empty( $request['widget_type'] ) ) {
+			return false;
 		}
 
-		if ( empty( $_POST['data'] ) ) {
-			$_POST['data'] = [];
+		if ( empty( $request['data'] ) ) {
+			$request['data'] = [];
 		}
 
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		$data = json_decode( stripslashes( $request['data'] ), true );
 
 		$element_data = [
-			'id' => $_POST['id'],
+			'id' => $request['id'],
 			'elType' => 'widget',
-			'widgetType' => $_POST['widget_type'],
+			'widgetType' => $request['widget_type'],
 			'settings' => $data,
 		];
 
@@ -281,10 +282,10 @@ class Widgets_Manager {
 		$widget_obj = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 		if ( ! $widget_obj ) {
-			wp_send_json_error();
+			return false;
 		}
 
-		wp_send_json_success( $widget_obj->get_form() );
+		return $widget_obj->get_form();
 	}
 
 	/**
@@ -389,7 +390,6 @@ class Widgets_Manager {
 		$this->_require_files();
 
 		Plugin::$instance->ajax->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
-
-		add_action( 'wp_ajax_elementor_editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
+		Plugin::$instance->ajax->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 	}
 }

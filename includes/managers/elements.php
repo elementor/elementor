@@ -169,11 +169,15 @@ class Elements_Manager {
 		}
 	}
 
-	public function ajax_discard_changes( $ajax_handler, $request ) {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
+	/**
+	 * @param array $request
+	 *
+	 * @return bool
+	 * @throws \Exception
+	 */
+	public function ajax_discard_changes( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
+			throw new \Exception( 'no_post_id' );
 		}
 
 		$autosave = wp_get_post_autosave( $request['post_id'] );
@@ -185,24 +189,19 @@ class Elements_Manager {
 			$success = true;
 		}
 
-		if ( $success ) {
-			wp_send_json_success();
-		}
-
-		wp_send_json_error();
+		return $success;
 	}
 
 	/**
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_handler
 	 * @param array $request
 	 *
 	 * @return mixed
 	 * @throws \Exception
 	*/
-	public function ajax_save_builder( $ajax_handler, $request ) {
+	public function ajax_save_builder( $request ) {
 		if ( empty( $request['post_id'] ) ) {
 			throw new \Exception( 'no_post_id' );
 		}
