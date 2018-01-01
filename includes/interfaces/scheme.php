@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Scheme interface.
  *
+ * An interface for Elementor Scheme.
+ *
  * @since 1.0.0
  */
 interface Scheme_Interface {
