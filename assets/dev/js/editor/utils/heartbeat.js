@@ -55,7 +55,7 @@ heartbeat = {
 	},
 
 	initModal: function() {
-		var modal = elementor.dialogsManager.createWidget( 'options', {
+		var modal = elementor.dialogsManager.createWidget( 'lightbox', {
 			headerMessage: elementor.translate( 'take_over' )
 		} );
 
