@@ -316,6 +316,9 @@ class Widget_Accordion extends Widget_Base {
 						'max' => 50,
 					],
 				],
+				'default' => [
+					'size' => -1,
+				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 				],
@@ -403,7 +406,7 @@ class Widget_Accordion extends Widget_Base {
 						'default' => [
 							'top' => '1',
 							'right' => '1',
-							'bottom' => '0',
+							'bottom' => '1',
 							'left' => '1',
 							'isLinked' => false,
 						],
@@ -573,9 +576,9 @@ class Widget_Accordion extends Widget_Base {
 					],
 					'width' => [
 						'default' => [
-							'top' => '1',
+							'top' => '0',
 							'right' => '1',
-							'bottom' => '0',
+							'bottom' => '1',
 							'left' => '1',
 							'isLinked' => false,
 						],
