@@ -189,11 +189,13 @@ class Elements_Manager {
 	public function ajax_save_builder() {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
-		if ( empty( $_POST['post_id'] ) ) {
+		$request = $_POST;
+
+		if ( empty( $request['post_id'] ) ) {
 			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
 		}
 
-		$post_id = $_POST['post_id'];
+		$post_id = $request['post_id'];
 
 		if ( ! User::is_current_user_can_edit( $post_id ) ) {
 			wp_send_json_error( new \WP_Error( 'no_access' ) );
@@ -201,17 +203,20 @@ class Elements_Manager {
 
 		$status = DB::STATUS_DRAFT;
 
-		if ( isset( $_POST['status'] ) && in_array( $_POST['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ] , true ) ) {
-			$status = $_POST['status'];
+		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ] , true ) ) {
+			$status = $request['status'];
 		}
 
-		$posted = json_decode( stripslashes( $_POST['data'] ), true );
+		$posted = json_decode( stripslashes( $request['data'] ), true );
 
 		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
 
 		$return_data = [
 			'config' => [
 				'last_edited' => Utils::get_last_edited( $post_id ),
+				'wp_preview' => [
+					'url' => Utils::get_wp_preview_url( $post_id ),
+				],
 			],
 		];
 
