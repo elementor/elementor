@@ -1333,8 +1333,6 @@
   .elementor-accordion .elementor-tab-content {
     display: none;
     padding: 15px 20px; }
-  .elementor-accordion .elementor-accordion-item:last-of-type {
-    border-bottom: 1px solid #D4D4D4 !important; }
 
 @media (max-width: 767px) {
   .elementor-accordion .elementor-tab-title {

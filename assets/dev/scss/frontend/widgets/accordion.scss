@@ -53,10 +53,6 @@
 		padding: 15px 20px;
 	}
 
-	// Backwards compatibility for pre 1.9 versions
-	.elementor-accordion-item:last-of-type {
-		border-bottom: 1px solid $gray-light !important;
-	}
 }
 
 // Responsive mode
