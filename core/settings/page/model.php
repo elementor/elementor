@@ -42,7 +42,7 @@ class Model extends BaseModel {
 
 	public function get_panel_page_settings() {
 		return [
-			'title' => __( 'Page Settings', 'elementor' ),
+			'title' => __( 'Document Settings', 'elementor' ),
 		];
 	}
 
@@ -58,7 +58,7 @@ class Model extends BaseModel {
 		$this->start_controls_section(
 			'section_page_settings',
 			[
-				'label' => __( 'Page Settings', 'elementor' ),
+				'label' => __( 'Document Settings', 'elementor' ),
 				'tab' => Controls_Manager::TAB_SETTINGS,
 			]
 		);
@@ -153,7 +153,6 @@ class Model extends BaseModel {
 				'type' => Controls_Manager::BUTTON,
 				'label' => __( 'Delete All Content', 'elementor' ),
 				'text' => __( 'Delete', 'elementor' ),
-				'separator' => 'before',
 				'button_type' => 'warning',
 				'event' => 'elementor:clearPage',
 			]
