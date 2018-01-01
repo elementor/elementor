@@ -1307,6 +1307,10 @@
 
 .elementor-accordion {
   text-align: left; }
+  .elementor-accordion .elementor-accordion-item {
+    border: 1px solid #D4D4D4; }
+    .elementor-accordion .elementor-accordion-item + .elementor-accordion-item {
+      border-top: none; }
   .elementor-accordion .elementor-tab-title {
     margin: 0;
     padding: 15px 20px;
@@ -1332,7 +1336,8 @@
       display: block; }
   .elementor-accordion .elementor-tab-content {
     display: none;
-    padding: 15px 20px; }
+    padding: 15px 20px;
+    border-top: 1px solid #D4D4D4; }
 
 @media (max-width: 767px) {
   .elementor-accordion .elementor-tab-title {
