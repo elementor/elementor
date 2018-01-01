@@ -306,25 +306,6 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'space_between',
-			[
-				'label' => __( 'Space Between', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 50,
-					],
-				],
-				'default' => [
-					'size' => -1,
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-accordion .elementor-accordion-item:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
-				],
-			]
-		);
-
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
