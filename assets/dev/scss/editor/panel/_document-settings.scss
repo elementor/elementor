@@ -2,16 +2,20 @@
 // Document Settings Panel (Former Page Settings)
 //
 
-.elementor-control-clear_page {
+.elementor-control {
 
-	.elementor-control-raw-html{
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
+	&.elementor-control-clear_page {
+		background-color: transparent;
 
-	button {
-		width: 80px;
-		height: 26px;
+		.elementor-control-raw-html{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		button {
+			width: 80px;
+			height: 26px;
+		}
 	}
 }

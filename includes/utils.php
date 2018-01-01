@@ -396,7 +396,7 @@ class Utils {
 		return $last_edited;
 	}
 
-	public static function get_create_new_post_url( $post_type = 'post' ) {
+	public static function get_create_new_post_url( $post_type = 'page' ) {
 		$new_post_url = add_query_arg( [
 			'action' => 'elementor_new_post',
 			'post_type' => $post_type,
