@@ -124,6 +124,7 @@ class DB {
 
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $post_id,
+				'post_type' => get_post_type( $post_id ),
 				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
 				'post_modified' => current_time( 'mysql' ),
 			] );
