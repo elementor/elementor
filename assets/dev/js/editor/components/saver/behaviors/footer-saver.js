@@ -80,7 +80,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	onClickButtonPreview: function() {
 		// Open immediately in order to avoid popup blockers.
-		this.previewWindow = window.open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
+		this.previewWindow = open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
 
 		if ( elementor.saver.isEditorChanged() ) {
 			if ( elementor.saver.xhr ) {
