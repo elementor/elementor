@@ -83,8 +83,8 @@ module.exports = Marionette.Behavior.extend( {
 		this.previewWindow = window.open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
 
 		if ( elementor.saver.isEditorChanged() ) {
-			if ( elementor.saver.xhr ) {
-				elementor.saver.xhr.abort();
+			// Force save even if it's saving now.
+			if ( elementor.saver.isSaving ) {
 				elementor.saver.isSaving = false;
 			}
 

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Ajax_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -202,29 +204,30 @@ class Widgets_Manager {
 	/**
 	 * @since 1.0.0
 	 * @access public
-	*/
-	public function ajax_render_widget() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( empty( $_POST['post_id'] ) ) {
+	 *
+	 * @param Ajax_Manager $ajax_handler
+	 * @param array $request
+	 */
+	public function ajax_render_widget( $ajax_handler, $request ) {
+		if ( empty( $request['post_id'] ) ) {
 			wp_send_json_error( new \WP_Error( 'no_post_id', 'No post_id' ) );
 		}
 
-		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+		if ( ! User::is_current_user_can_edit( $request['post_id'] ) ) {
 			wp_send_json_error( new \WP_Error( 'no_access' ) );
 		}
 
 		// Override the global $post for the render.
 		query_posts(
 			[
-				'p' => $_POST['post_id'],
+				'p' => $request['post_id'],
 				'post_type' => 'any',
 			]
 		);
 
-		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
+		Plugin::$instance->db->switch_to_post( $request['post_id'] );
 
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		$data = json_decode( stripslashes( $request['data'] ), true );
 
 		// Start buffering
 		ob_start();
@@ -233,16 +236,15 @@ class Widgets_Manager {
 		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
 
 		if ( ! $widget ) {
-			wp_send_json_error();
-
-			return;
+			throw new \Exception( 'Widget Not Found' );
 		}
 
 		$widget->render_content();
 
 		$render_html = ob_get_clean();
 
-		wp_send_json_success(
+		$ajax_handler->add_response_data(
+			true,
 			[
 				'render' => $render_html,
 			]
@@ -386,7 +388,8 @@ class Widgets_Manager {
 	public function __construct() {
 		$this->_require_files();
 
-		add_action( 'wp_ajax_elementor_render_widget', [ $this, 'ajax_render_widget' ] );
+		Plugin::$instance->ajax->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
+
 		add_action( 'wp_ajax_elementor_editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 	}
 }
