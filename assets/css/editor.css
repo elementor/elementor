@@ -2055,8 +2055,7 @@ select {
             justify-content: center;
     -webkit-border-radius: 3px;
             border-radius: 3px;
-    border: 1px solid #d5dadf;
-    float: right; }
+    border: 1px solid #d5dadf; }
   .elementor-panel .elementor-control-type-button .elementor-control-input-wrapper {
     text-align: right; }
   .elementor-panel .elementor-control-type-button .elementor-button {
