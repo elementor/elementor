@@ -5,6 +5,14 @@
 .elementor-accordion {
 	text-align: $start;
 
+	.elementor-accordion-item {
+		border: 1px solid $gray-light;
+
+		+ .elementor-accordion-item {
+			border-top: none;
+		}
+	}
+
 	.elementor-tab-title {
 		margin: 0;
 		padding: 15px 20px;
@@ -49,8 +57,9 @@
 	}
 
 	.elementor-tab-content {
-	    display: none;
+		display: none;
 		padding: 15px 20px;
+		border-top: 1px solid $gray-light;
 	}
 
 }
