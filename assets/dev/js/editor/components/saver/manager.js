@@ -113,17 +113,19 @@ module.exports = Module.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } );
+			newData = elementor.elements.toJSON( { removeDefault: true } ),
+			oldStatus = elementor.settings.page.model.get( 'post_status' ),
+			statusChanged = oldStatus !== options.status;
 
 		self.trigger( 'before:save', options )
 			.trigger( 'before:save:' + options.status, options );
 
 		self.isSaving = true;
+
 		self.isChangedDuringSave = false;
 
-		if ( 'autosave' !== options.status ) {
-			elementor.settings.page.model.set( 'post_status', options.status );
-			elementor.settings.page.save();
+		if ( 'autosave' !== options.status && statusChanged ) {
+					elementor.settings.page.model.set( 'post_status', options.status );
 		}
 
 		elementor.ajax.add( 'save_builder', {
@@ -150,6 +152,10 @@ module.exports = Module.extend( {
 
 				self.trigger( 'after:save', data )
 					.trigger( 'after:save:' + options.status, data );
+
+				if ( statusChanged ) {
+					self.trigger( 'page:status:change', options.status, oldStatus );
+				}
 
 				if ( _.isFunction( options.onSuccess ) ) {
 					options.onSuccess.call( this, data );
