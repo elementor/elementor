@@ -5,6 +5,7 @@ use Elementor\CSS_File;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
+use Elementor\Plugin;
 use Elementor\Post_CSS_File;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -84,12 +85,14 @@ class Manager extends BaseManager {
 	protected function ajax_before_save_settings( array $data, $id ) {
 		$post = get_post( $id );
 
+		$ajax_handler = Plugin::$instance->ajax;
+
 		if ( empty( $post ) ) {
-			wp_send_json_error( 'Invalid Post' );
+			$ajax_handler->add_response_data( false, 'Invalid Post' );
 		}
 
 		if ( ! current_user_can( 'edit_post', $id ) ) {
-			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
+			$ajax_handler->add_response_data( false, __( 'Access Denied.', 'elementor' ) );
 		}
 
 		// Avoid save empty post title.

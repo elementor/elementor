@@ -84,8 +84,8 @@ module.exports = Marionette.Behavior.extend( {
 		this.previewWindow = window.open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
 
 		if ( elementor.saver.isEditorChanged() ) {
-			if ( elementor.saver.xhr ) {
-				elementor.saver.xhr.abort();
+			// Force save even if it's saving now.
+			if ( elementor.saver.isSaving ) {
 				elementor.saver.isSaving = false;
 			}
 
@@ -228,7 +228,7 @@ module.exports = Module.extend( {
 
 	discard: function() {
 		var self = this;
-		elementor.ajax.send( 'discard_changes', {
+		elementor.ajax.add( 'discard_changes', {
 			data: {
 				post_id: elementor.config.post_id
 			},
@@ -300,7 +300,12 @@ module.exports = Module.extend( {
 		self.isSaving = true;
 		self.isChangedDuringSave = false;
 
-		self.xhr = elementor.ajax.send( 'save_builder', {
+		if ( 'autosave' !== options.status ) {
+			elementor.settings.page.model.set( 'post_status', options.status );
+			elementor.settings.page.save();
+		}
+
+		elementor.ajax.add( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
@@ -312,10 +317,6 @@ module.exports = Module.extend( {
 
 				if ( ! self.isChangedDuringSave ) {
 					self.setFlagEditorChange( false );
-				}
-
-				if ( 'autosave' !== options.status ) {
-					elementor.settings.page.model.set( 'post_status', options.status );
 				}
 
 				if ( data.config ) {
@@ -340,13 +341,10 @@ module.exports = Module.extend( {
 					.trigger( 'after:saveError:' + options.status, data );
 			}
 		} );
-
-		return self.xhr;
 	},
 
 	afterAjax: function() {
 		this.isSaving = false;
-		this.xhr = null;
 	}
 } );
 
@@ -425,7 +423,7 @@ module.exports = ViewModule.extend( {
 
 		NProgress.start();
 
-		elementor.ajax.send( 'save_' + this.getSettings( 'name' ) + '_settings', {
+		elementor.ajax.add( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data: data,
 			success: function() {
 				NProgress.done();
@@ -5363,11 +5361,10 @@ ElementModel = Backbone.Model.extend( {
 	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
-		return elementor.ajax.send( 'render_widget', {
+		return elementor.ajax.add( 'render_widget', {
 			data: {
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data ),
-				_nonce: elementor.config.nonce
+				data: JSON.stringify( data )
 			},
 			success: this.onRemoteGetHtml.bind( this )
 		} );
@@ -8763,6 +8760,8 @@ var Ajax;
 
 Ajax = {
 	config: {},
+	requests: [],
+	requestsMap: {},
 
 	initConfig: function() {
 		this.config = {
@@ -8777,6 +8776,74 @@ Ajax = {
 
 	init: function() {
 		this.initConfig();
+
+		this.debounceSendBatch = _.debounce( _.bind( this.sendBatch, this ), 200 );
+	},
+
+	addUnique: function( action, options ) {
+		if ( this.requestsMap[ action ] ) {
+			this.requests[ this.requestsMap[ action ] ] = {
+				action: action,
+				options: options
+			};
+		} else {
+			this.requests.push( {
+				action: action,
+				options: options
+			} );
+
+			this.requestsMap[ action ] = this.requests.length - 1;
+		}
+
+		this.debounceSendBatch();
+	},
+
+	add: function( action, options ) {
+		this.requests.push( {
+			action: action,
+			options: options
+		} );
+
+		this.debounceSendBatch();
+	},
+
+	sendBatch: function() {
+		var requests = this.requests,
+			actions = [];
+
+		// Empty for next batch.
+		this.requests = [];
+
+		_( requests ).each( function( request ) {
+			actions.push( {
+				action: request.action,
+				data: request.options.data
+			} );
+		} );
+
+		this.send( 'ajax', {
+			data: {
+				actions: actions
+			},
+			success: function( data ) {
+				_.each( data.responses, function( response, id ) {
+					var options = requests[ id ].options;
+					if ( options ) {
+						if ( response.success && options.success ) {
+							try {
+								options.success( response.data );
+							} catch ( error ) {}
+						} else if ( ! response.success && options.error ) {
+							try {
+								options.error( response.data );
+							} catch ( error ) {}
+						}
+					}
+				} );
+				},
+			error: function( data ) {
+			}
+		} );
 	},
 
 	send: function( action, options ) {
