@@ -21,7 +21,7 @@ Ajax = {
 		this.debounceSendBatch = _.debounce( this.sendBatch.bind( this ), 500 );
 	},
 
-	addRequset: function( action, options ) {
+	addRequest: function( action, options ) {
 		if ( ! options.unique_id ) {
 			options.unique_id = '';
 		}
