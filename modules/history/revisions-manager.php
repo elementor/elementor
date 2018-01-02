@@ -167,6 +167,8 @@ class Revisions_Manager {
 	}
 
 	public static function on_ajax_save_builder_data( $return_data, $post_id ) {
+		$post_id = $_POST['post_id'];
+
 		$latest_revision = self::get_revisions(
 			$post_id, [
 				'posts_per_page' => 1,
@@ -242,6 +244,7 @@ class Revisions_Manager {
 	private static function current_revision_id( $post_id ) {
 		$current_revision_id = $post_id;
 		$autosave = wp_get_post_autosave( $post_id );
+
 		if ( is_object( $autosave ) ) {
 			$current_revision_id = $autosave->ID;
 		}

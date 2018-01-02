@@ -9,7 +9,7 @@
 	}
 
 	.elementor-control-input-wrapper {
-		direction: rtl;
+		direction: getInverseDirection();
 	}
 
 	.elementor-control-popover-toggle-toggle {
