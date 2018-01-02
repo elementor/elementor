@@ -495,6 +495,7 @@ class Editor {
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
+			'post_link' => get_permalink( $this->_post_id ),
 			'last_edited' => Utils::get_last_edited( $this->_post_id ),
 			'wp_preview' => [
 				'url' => Utils::get_wp_preview_url( $this->_post_id ),
