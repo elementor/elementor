@@ -171,7 +171,8 @@ App = Marionette.Application.extend( {
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
 			Settings = require( 'elementor-editor/components/settings/settings' ),
-			Saver = require( 'elementor-editor/components/saver/manager' );
+			Saver = require( 'elementor-editor/components/saver/manager' ),
+			Notifications = require( 'elementor-editor-utils/notifications' );
 
 		this.hooks = new EventManager();
 
@@ -187,6 +188,8 @@ App = Marionette.Application.extend( {
 		this.templates.init();
 
 		this.initDialogsManager();
+
+		this.notifications = new Notifications();
 
 		this.ajax.init();
 	},
