@@ -9,27 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Ajax_Manager {
 
-	private $ajax_actions = [];
-	private $response_data = [];
-	private $current_action_id = null;
-
-	public function add_response_data( $success, $data = null ) {
-		$this->response_data[ $this->current_action_id ] = [
-			'success' => $success,
-			'data' => $data,
-		];
-
-		return $this;
-	}
+	protected $ajax_actions = [];
+	protected $response_data = [];
+	protected $current_action_id = null;
 
 	public function send() {
 		wp_send_json_success( [
 			'responses' => $this->response_data,
 		] );
-	}
-
-	public function __construct() {
-		add_action( 'wp_ajax_elementor_ajax', [ $this, 'handle_ajax_request' ] );
 	}
 
 	public function register_ajax_action( $tag, $callback ) {
@@ -77,5 +64,18 @@ class Ajax_Manager {
 		$this->current_action_id = null;
 
 		$this->send();
+	}
+
+	protected function add_response_data( $success, $data = null ) {
+		$this->response_data[ $this->current_action_id ] = [
+			'success' => $success,
+			'data' => $data,
+		];
+
+		return $this;
+	}
+
+	public function __construct() {
+		add_action( 'wp_ajax_elementor_ajax', [ $this, 'handle_ajax_request' ] );
 	}
 }

@@ -49,7 +49,7 @@ module.exports = Module.extend( {
 
 	discard: function() {
 		var self = this;
-		elementor.ajax.add( 'discard_changes', {
+		elementor.ajax.addRequest( 'discard_changes', {
 			data: {
 				post_id: elementor.config.post_id
 			},
@@ -128,7 +128,7 @@ module.exports = Module.extend( {
 					elementor.settings.page.model.set( 'post_status', options.status );
 		}
 
-		elementor.ajax.add( 'save_builder', {
+		elementor.ajax.addRequest( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
