@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?2.9.0");
-  src: url("../fonts/eicons.eot?2.9.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?2.9.0") format("woff2"), url("../fonts/eicons.woff?2.9.0") format("woff"), url("../fonts/eicons.ttf?2.9.0") format("truetype"), url("../fonts/eicons.svg?2.9.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?3.0.0");
+  src: url("../fonts/eicons.eot?3.0.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?3.0.0") format("woff2"), url("../fonts/eicons.woff?3.0.0") format("woff"), url("../fonts/eicons.ttf?3.0.0") format("truetype"), url("../fonts/eicons.svg?3.0.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -545,6 +545,18 @@
 
 .eicon-ellipsis-v:before {
   content: '\e972'; }
+
+.eicon-arrow-left:before {
+  content: '\e973'; }
+
+.eicon-arrow-right:before {
+  content: '\e974'; }
+
+.eicon-arrow-up:before {
+  content: '\e975'; }
+
+.eicon-arrow-down:before {
+  content: '\e976'; }
 
 .eicon-editor-link:before {
   content: '\e500'; }
