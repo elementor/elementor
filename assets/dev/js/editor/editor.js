@@ -171,7 +171,8 @@ App = Marionette.Application.extend( {
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
 			Settings = require( 'elementor-editor/components/settings/settings' ),
-			Saver = require( 'elementor-editor/components/saver/manager' );
+			Saver = require( 'elementor-editor/components/saver/manager' ),
+			Notifications = require( 'elementor-editor-utils/notifications' );
 
 		this.hooks = new EventManager();
 
@@ -187,6 +188,8 @@ App = Marionette.Application.extend( {
 		this.templates.init();
 
 		this.initDialogsManager();
+
+		this.notifications = new Notifications();
 
 		this.ajax.init();
 	},
@@ -227,7 +230,9 @@ App = Marionette.Application.extend( {
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
+		this.$preview
+			.on( 'load', this.onPreviewLoaded.bind( this ) )
+			.one( 'load', this.checkPageStatus.bind( this ) );
 	},
 
 	initFrontend: function() {
@@ -450,6 +455,27 @@ App = Marionette.Application.extend( {
 		options = jQuery.extend( true, defaultOptions, options );
 
 		this.dialogsManager.createWidget( 'confirm', options ).show();
+	},
+
+	checkPageStatus: function() {
+		if ( elementor.config.current_revision_id !== elementor.config.post_id ) {
+			this.notifications.showToast( {
+				message: this.translate( 'working_on_draft_notification' ),
+				buttons: [
+					{
+						name: 'view_revisions',
+						text: elementor.translate( 'view_all_revisions' ),
+						callback: function() {
+							var panel = elementor.getPanelView();
+
+							panel.setPage( 'historyPage' );
+
+							panel.getCurrentPageView().activateTab( 'revisions' );
+						}
+					}
+				]
+			} );
+		}
 	},
 
 	onStart: function() {
