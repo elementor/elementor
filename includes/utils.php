@@ -381,14 +381,14 @@ class Utils {
 			$post = $autosave_post;
 		}
 
-		$date = date_i18n( _x( 'M j @ H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
+		$date = date_i18n( _x( 'M j, H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
 		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
 
 		if ( $autosave_post ) {
-			/* translators: 1: Post edited human date, 2:  Post edited data, 3: Post author name */
+			/* translators: 1: Post saving date, 2: Post author display name */
 			$last_edited = sprintf( __( 'Draft saved %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		} else {
-			/* translators: 1: Post edited human date, 2:  Post edited data, 3: Post author name */
+			/* translators: 1: Post editing date, 2: Post author display name */
 			$last_edited = sprintf( __( 'Last edited %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		}
 
