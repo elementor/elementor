@@ -230,7 +230,9 @@ App = Marionette.Application.extend( {
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
+		this.$preview
+			.on( 'load', this.onPreviewLoaded.bind( this ) )
+			.one( 'load', this.checkPageStatus.bind( this ) );
 	},
 
 	initFrontend: function() {
@@ -453,6 +455,27 @@ App = Marionette.Application.extend( {
 		options = jQuery.extend( true, defaultOptions, options );
 
 		this.dialogsManager.createWidget( 'confirm', options ).show();
+	},
+
+	checkPageStatus: function() {
+		if ( elementor.config.current_revision_id !== elementor.config.post_id ) {
+			this.notifications.showToast( {
+				message: this.translate( 'working_on_draft_notification' ),
+				buttons: [
+					{
+						name: 'view_revisions',
+						text: elementor.translate( 'view_all_revisions' ),
+						callback: function() {
+							var panel = elementor.getPanelView();
+
+							panel.setPage( 'historyPage' );
+
+							panel.getCurrentPageView().activateTab( 'revisions' );
+						}
+					}
+				]
+			} );
+		}
 	},
 
 	onStart: function() {
