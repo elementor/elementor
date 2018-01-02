@@ -228,7 +228,7 @@ module.exports = Module.extend( {
 
 	discard: function() {
 		var self = this;
-		elementor.ajax.add( 'discard_changes', {
+		elementor.ajax.addRequest( 'discard_changes', {
 			data: {
 				post_id: elementor.config.post_id
 			},
@@ -307,7 +307,7 @@ module.exports = Module.extend( {
 					elementor.settings.page.model.set( 'post_status', options.status );
 		}
 
-		elementor.ajax.add( 'save_builder', {
+		elementor.ajax.addRequest( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
@@ -429,7 +429,7 @@ module.exports = ViewModule.extend( {
 
 		NProgress.start();
 
-		elementor.ajax.add( 'save_' + this.getSettings( 'name' ) + '_settings', {
+		elementor.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data: data,
 			success: function() {
 				NProgress.done();
@@ -5367,7 +5367,7 @@ ElementModel = Backbone.Model.extend( {
 	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
-		return elementor.ajax.add( 'render_widget', {
+		return elementor.ajax.addRequest( 'render_widget', {
 			unique_id: this.cid,
 			data: {
 				post_id: elementor.config.post_id,
@@ -8786,7 +8786,7 @@ Ajax = {
 		this.debounceSendBatch = _.debounce( this.sendBatch.bind( this ), 500 );
 	},
 
-	add: function( action, options ) {
+	addRequset: function( action, options ) {
 		if ( ! options.unique_id ) {
 			options.unique_id = '';
 		}

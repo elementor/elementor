@@ -85,14 +85,12 @@ class Manager extends BaseManager {
 	protected function ajax_before_save_settings( array $data, $id ) {
 		$post = get_post( $id );
 
-		$ajax_handler = Plugin::$instance->ajax;
-
 		if ( empty( $post ) ) {
-			$ajax_handler->add_response_data( false, 'Invalid Post' );
+			throw new \Exception( 'Invalid Post' );
 		}
 
 		if ( ! current_user_can( 'edit_post', $id ) ) {
-			$ajax_handler->add_response_data( false, __( 'Access Denied.', 'elementor' ) );
+			throw new \Exception( __( 'Access Denied.', 'elementor' ) );
 		}
 
 		// Avoid save empty post title.
