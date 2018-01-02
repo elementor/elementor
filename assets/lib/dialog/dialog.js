@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.0.0
+ * Dialogs Manager v4.1.0
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -28,7 +28,7 @@
 
 			var prototype = WidgetType.prototype = new Parent(typeName);
 
-			prototype.types = prototype.types.concat( [typeName] );
+			prototype.types = prototype.types.concat([typeName]);
 
 			$.extend(prototype, properties);
 
@@ -126,6 +126,7 @@
 			settings = {},
 			events = {},
 			elements = {},
+			hideTimeOut = 0,
 			baseClosureMethods = ['refreshPosition'];
 
 		var bindEvents = function () {
@@ -199,17 +200,17 @@
 			var classes = [];
 
 			$.each(self.types, function() {
-				classes.push( settings.classes.globalPrefix + '-type-' + this );
+				classes.push(settings.classes.globalPrefix + '-type-' + this);
 			});
 
-			classes.push( self.getSettings('className') );
+			classes.push(self.getSettings('className'));
 
 			self.getElements('widget').addClass(classes.join(' '));
 		};
 
 		var initSettings = function (parent, userSettings) {
 
-			var parentSettings = parent.getSettings();
+			var parentSettings = $.extend(true, {}, parent.getSettings());
 
 			settings = {
 				effects: parentSettings.effects,
@@ -319,21 +320,17 @@
 
 			var $newElement = elements[name] = $(element || '<div>'),
 				normalizedName = normalizeClassName(name),
-				className;
+				className = [];
 
-			if (settings.classes[name]) {
-				className = settings.classes[name];
-			} else {
-				className = settings.classes.prefix + '-' + normalizedName;
+			if (type) {
+				className.push(settings.classes.globalPrefix + '-' + type);
 			}
 
-			if (!type) {
-				type = normalizedName;
-			}
+			className.push(settings.classes.globalPrefix + '-' + normalizedName);
 
-			className += ' ' + settings.classes.globalPrefix + '-' + type;
+			className.push(settings.classes.prefix + '-' + normalizedName);
 
-			$newElement.addClass(className);
+			$newElement.addClass(className.join(' '));
 
 			return $newElement;
 		};
@@ -381,6 +378,8 @@
 
 		this.hide = function () {
 
+			clearTimeout(hideTimeOut);
+
 			callEffect('hide', arguments);
 
 			unbindEvents();
@@ -395,7 +394,7 @@
 			if ('object' === typeof eventName) {
 				$.each(eventName, function(singleEventName) {
 					self.on(singleEventName, this);
-				} );
+				});
 
 				return self;
 			}
@@ -408,7 +407,7 @@
 				}
 
 				events[singleEventName].push(callback);
-			} );
+			});
 
 			return self;
 		};
@@ -440,14 +439,14 @@
 
 		this.show = function () {
 
-			elements.widget.appendTo(elements.container);
+			elements.widget.appendTo(elements.container).hide();
 
 			callEffect('show', arguments);
 
 			self.refreshPosition();
 
 			if (settings.hide.auto) {
-				setTimeout(self.hide, settings.hide.autoDelay);
+				hideTimeOut = setTimeout(self.hide, settings.hide.autoDelay);
 			}
 
 			bindEvents();
@@ -585,7 +584,7 @@
 		addButton: function (options) {
 
 			var self = this,
-				$button = self.addElement(options.name, $('<button>').text(options.text));
+				$button = self.addElement(options.name, $('<' + this.getSettings('buttonTag') + '>').text(options.text), 'button');
 
 			self.buttons.push($button);
 
@@ -641,7 +640,8 @@
 			return {
 				hide: {
 					onButtonClick: true
-				}
+				},
+				buttonTag: 'button'
 			};
 		},
 		onHide: function () {
@@ -682,7 +682,7 @@
 
 			var settings = DialogsManager.getWidgetType('buttons').prototype.getDefaultSettings.apply(this, arguments);
 
-			return $.extend( true, settings, {
+			return $.extend(true, settings, {
 				headerMessage: '',
 				contentWidth: 'auto',
 				contentHeight: 'auto',
@@ -693,7 +693,7 @@
 					of: 'widget',
 					autoRefresh: true
 				}
-			} );
+			});
 		},
 		buildWidget: function () {
 

@@ -202,6 +202,7 @@ class Revisions_Manager {
 	}
 
 	public static function editor_settings( $settings, $post_id ) {
+
 		$settings = array_replace_recursive( $settings, [
 			'revisions' => self::get_revisions(),
 			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
@@ -222,6 +223,8 @@ class Revisions_Manager {
 				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
 			],
 		] );
+
+
 
 		return $settings;
 	}
