@@ -124,6 +124,7 @@ class DB {
 
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $post_id,
+				'post_type' => get_post_type( $post_id ),
 				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
 				'post_modified' => current_time( 'mysql' ),
 			] );
@@ -222,16 +223,41 @@ class DB {
 		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
 
 		if ( self::STATUS_DRAFT === $status ) {
-			$autosave = wp_get_post_autosave( $post_id );
+			$autosave = $this->get_newer_autosave( $post_id );
 
 			if ( is_object( $autosave ) ) {
 				$data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
 			}
-		} elseif ( empty( $data ) ) {
+		} elseif ( empty( $data ) && Plugin::$instance->editor->is_edit_mode() ) {
 			$data = $this->_get_new_editor_from_wp_editor( $post_id );
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Get auto-saved post revision.
+	 *
+	 * Retrieve the auto-saved post revision that is newer than current post.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return \WP_Post|false The auto-saved post, or false.
+	 */
+
+	public function get_newer_autosave( $post_id ) {
+		$post = get_post( $post_id );
+		$autosave = wp_get_post_autosave( $post_id );
+
+		// Detect if there exists an autosave newer than the post.
+		if ( $autosave && mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false ) ) {
+			return $autosave;
+		}
+
+		return false;
 	}
 
 	/**
@@ -363,6 +389,8 @@ class DB {
 
 		// Remove empty lines.
 		$plain_text = preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n", $plain_text );
+
+		$plain_text = trim( $plain_text );
 
 		wp_update_post(
 			[

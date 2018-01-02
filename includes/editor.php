@@ -302,8 +302,6 @@ class Editor {
 
 		$plugin = Plugin::$instance;
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
-
 		// Reset global variable
 		$wp_styles = new \WP_Styles();
 		$wp_scripts = new \WP_Scripts();
@@ -488,6 +486,8 @@ class Editor {
 		 */
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
+		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
+
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
@@ -588,8 +588,8 @@ class Editor {
 				'an_error_occurred' => __( 'An error occurred', 'elementor' ),
 				'delete_template' => __( 'Delete Template', 'elementor' ),
 				'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
-				'import_template_dialog_header' => __( 'Import Page Settings', 'elementor' ),
-				'import_template_dialog_message' => __( 'Do you want to also import the page settings of the template?', 'elementor' ),
+				'import_template_dialog_header' => __( 'Import Document Settings', 'elementor' ),
+				'import_template_dialog_message' => __( 'Do you want to also import the document settings of the template?', 'elementor' ),
 				'import_template_dialog_message_attention' => __( 'Attention! Importing may override previous settings.', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'page' => __( 'Page', 'elementor' ),
