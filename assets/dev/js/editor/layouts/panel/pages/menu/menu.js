@@ -15,7 +15,9 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		elementor.panel.currentView.getHeaderView().ui.menuIcon.removeClass( 'eicon-close' ).addClass( 'eicon-menu-bar' );
+		var arrowClass = 'eicon-arrow-' + ( elementor.config.is_rtl ? 'right' : 'left' );
+
+		elementor.panel.currentView.getHeaderView().ui.menuIcon.removeClass( arrowClass ).addClass( 'eicon-menu-bar' );
 	}
 }, {
 	groups: null,
