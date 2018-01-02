@@ -167,27 +167,29 @@ class Revisions_Manager {
 	}
 
 	public static function ajax_save_builder_data( $return_data ) {
+		$post_id = $_POST['post_id'];
+
 		$latest_revision = self::get_revisions(
-			$_POST['post_id'], [
+			$post_id, [
 				'posts_per_page' => 1,
 			]
 		);
 
 		$all_revision_ids = self::get_revisions(
-			$_POST['post_id'], [
+			$post_id, [
 				'fields' => 'ids',
 			], false
 		);
 
 		if ( ! empty( $latest_revision ) ) {
-			$current_revision_id = self::current_revision_id( $_POST['post_id'] );
+			$current_revision_id = self::current_revision_id( $post_id );
 
 			$return_data = array_replace_recursive( $return_data, [
 				'config' => [
 					'current_revision_id' => $current_revision_id,
 				],
 				// $latest_revision[0] = current post, $latest_revision[1] = last revision.
-				'last_revision' => $current_revision_id === $_POST['post_id'] ? $latest_revision[0] : $latest_revision[1],
+				'last_revision' => $current_revision_id === $post_id ? $latest_revision[0] : $latest_revision[1],
 				'revisions_ids' => $all_revision_ids,
 			] );
 		}
@@ -202,7 +204,6 @@ class Revisions_Manager {
 	}
 
 	public static function editor_settings( $settings, $post_id ) {
-
 		$settings = array_replace_recursive( $settings, [
 			'revisions' => self::get_revisions(),
 			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
@@ -224,8 +225,6 @@ class Revisions_Manager {
 			],
 		] );
 
-
-
 		return $settings;
 	}
 
@@ -245,6 +244,7 @@ class Revisions_Manager {
 	private static function current_revision_id( $post_id ) {
 		$current_revision_id = $post_id;
 		$autosave = wp_get_post_autosave( $post_id );
+
 		if ( is_object( $autosave ) ) {
 			$current_revision_id = $autosave->ID;
 		}
