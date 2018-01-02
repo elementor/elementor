@@ -2034,7 +2034,7 @@ select {
   .elementor-panel .elementor-control-type-popover_toggle label {
     cursor: pointer; }
   .elementor-panel .elementor-control-type-popover_toggle .elementor-control-input-wrapper {
-    direction: rtl; }
+    direction: ltr; }
   .elementor-panel .elementor-control-type-popover_toggle .elementor-control-popover-toggle-toggle:checked + .elementor-control-popover-toggle-toggle-label {
     color: #71d7f7; }
   .elementor-panel .elementor-control-type-popover_toggle .elementor-control-popover-toggle-toggle:not(:checked) ~ .elementor-control-popover-toggle-reset-label {

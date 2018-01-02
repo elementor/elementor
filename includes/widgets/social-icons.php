@@ -459,7 +459,7 @@ class Widget_Social_Icons extends Widget_Base {
 				}
 				?>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo $social . $class_animation; ?>" <?php echo $this->get_render_attribute_string( $link_key ); ?>>
-					<span class="sr-only"><?php echo ucwords( $social ); ?></span>
+					<span class="elementor-screen-only"><?php echo ucwords( $social ); ?></span>
 					<i class="<?php echo $item['social']; ?>"></i>
 				</a>
 			<?php } ?>
@@ -482,7 +482,7 @@ class Widget_Social_Icons extends Widget_Base {
 				var link = item.link ? item.link.url : '',
 					social = item.social.replace( 'fa fa-', '' ); #>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }}" href="{{ link }}">
-					<span class="sr-only">{{{ social }}}</span>
+					<span class="elementor-screen-only">{{{ social }}}</span>
 					<i class="{{ item.social }}"></i>
 				</a>
 			<# } ); #>
