@@ -3,6 +3,8 @@ var Module = require( 'elementor-utils/module' );
 module.exports = Module.extend( {
 	autoSaveTimer: null,
 
+	autosaveInterval: elementor.config.autosave_interval * 1000,
+
 	isSaving: false,
 
 	isChangedDuringSave: false,
@@ -12,10 +14,9 @@ module.exports = Module.extend( {
 	},
 
 	startTimer: function( hasChanges ) {
+		clearTimeout( this.autoSaveTimer );
 		if ( hasChanges ) {
-			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), 5000 );
-		} else if ( ! this.isChangedDuringSave ) {
-			clearTimeout( this.autoSaveTimer );
+			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), this.autosaveInterval );
 		}
 	},
 
@@ -27,8 +28,6 @@ module.exports = Module.extend( {
 		}
 
 		this.saveAutoSave();
-
-		this.autoSaveTimer = null;
 	},
 
 	saveAutoSave: function( options ) {
