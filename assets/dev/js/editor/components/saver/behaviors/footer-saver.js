@@ -136,7 +136,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickMenuSaveDraft: function() {
-		elementor.saver.saveDraft()
+		elementor.saver.saveDraft();
 	},
 
 	onClickMenuDiscard: function() {
