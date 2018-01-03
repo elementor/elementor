@@ -385,11 +385,11 @@ class Utils {
 		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
 
 		if ( $autosave_post ) {
-			/* translators: 1: Post saving date, 2: Post author display name */
-			$last_edited = sprintf( __( 'Draft saved %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
+			/* translators: 1: Saving date, 2: Author display name */
+			$last_edited = sprintf( __( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		} else {
-			/* translators: 1: Post editing date, 2: Post author display name */
-			$last_edited = sprintf( __( 'Last edited %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
+			/* translators: 1: Editing date, 2: Author display name */
+			$last_edited = sprintf( __( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		}
 
 		return $last_edited;
