@@ -373,29 +373,7 @@ class DB {
 	 * @param int $post_id Post ID.
 	 */
 	public function save_plain_text( $post_id ) {
-		ob_start();
-
-		$data = $this->get_plain_editor( $post_id );
-
-		if ( $data ) {
-			foreach ( $data as $element_data ) {
-				$this->_render_element_plain_content( $element_data );
-			}
-		}
-
-		$plain_text = ob_get_clean();
-
-		// Remove unnecessary tags.
-		$plain_text = preg_replace( '/<\/?div[^>]*\>/i', '', $plain_text );
-		$plain_text = preg_replace( '/<\/?span[^>]*\>/i', '', $plain_text );
-		$plain_text = preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $plain_text );
-		$plain_text = preg_replace( '/<i [^>]*><\\/i[^>]*>/', '', $plain_text );
-		$plain_text = preg_replace( '/ class=".*?"/', '', $plain_text );
-
-		// Remove empty lines.
-		$plain_text = preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n", $plain_text );
-
-		$plain_text = trim( $plain_text );
+		$plain_text = $this->get_plain_text( $post_id );
 
 		wp_update_post(
 			[
@@ -586,5 +564,33 @@ class DB {
 
 		$GLOBALS['post'] = get_post( $data['original_id'] );
 		setup_postdata( $GLOBALS['post'] );
+	}
+
+	public function get_plain_text( $post_id ) {
+		ob_start();
+
+		$data = $this->get_plain_editor( $post_id );
+
+		if ( $data ) {
+			foreach ( $data as $element_data ) {
+				$this->_render_element_plain_content( $element_data );
+			}
+		}
+
+		$plain_text = ob_get_clean();
+
+		// Remove unnecessary tags.
+		$plain_text = preg_replace( '/<\/?div[^>]*\>/i', '', $plain_text );
+		$plain_text = preg_replace( '/<\/?span[^>]*\>/i', '', $plain_text );
+		$plain_text = preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $plain_text );
+		$plain_text = preg_replace( '/<i [^>]*><\\/i[^>]*>/', '', $plain_text );
+		$plain_text = preg_replace( '/ class=".*?"/', '', $plain_text );
+
+		// Remove empty lines.
+		$plain_text = preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n", $plain_text );
+
+		$plain_text = trim( $plain_text );
+
+		return $plain_text;
 	}
 }
