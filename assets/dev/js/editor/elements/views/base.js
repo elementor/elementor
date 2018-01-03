@@ -1,6 +1,6 @@
 var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
-	Validator = require( 'elementor-editor-utils/validator' ),
+	Validator = require( 'elementor-validator/base' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 

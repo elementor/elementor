@@ -1,8 +1,10 @@
 var ControlBaseView = require( 'elementor-controls/base' ),
 	MentionsBehavior = require( 'elementor-micro-elements/control-mentions-behavior' ),
+	Validator = require( 'elementor-validator/base' ),
 	ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend( {
+
 	ui: function() {
 		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
@@ -51,6 +53,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	initialize: function( options ) {
 		ControlBaseView.prototype.initialize.apply( this, arguments );
+
+		this.registerValidators();
 
 		this.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onSettingsExternalChange );
 	},
@@ -125,6 +129,26 @@ ControlBaseDataView = ControlBaseView.extend( {
 		}
 	},
 
+	addValidator: function( validator ) {
+		this.validators.push( validator );
+	},
+
+	registerValidators: function() {
+		this.validators = [];
+
+		var validationTerms = {};
+
+		if ( this.model.get( 'required' ) ) {
+			validationTerms.required = true;
+		}
+
+		if ( ! jQuery.isEmptyObject( validationTerms ) ) {
+			this.addValidator( new Validator( {
+				validationTerms: validationTerms
+			} ) );
+		}
+	},
+
 	onSettingsError: function() {
 		this.$el.addClass( 'elementor-error' );
 	},
@@ -148,19 +172,26 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	onBaseInputChange: function( event ) {
+		clearTimeout( this.correctionTimeout );
+
 		var input = event.currentTarget,
 			value = this.getInputValue( input ),
-			validators = this.elementSettingsModel.validators[ this.model.get( 'name' ) ];
+			validators = this.validators.slice( 0 ),
+			settingsValidators = this.elementSettingsModel.validators[ this.model.get( 'name' ) ];
+
+		if ( settingsValidators ) {
+			validators = validators.concat( settingsValidators );
+		}
 
 		if ( validators ) {
-			var oldValue = this.getControlValue();
+			var oldValue = this.getControlValue( input.dataset.setting );
 
 			var isValidValue = validators.every( function( validator ) {
 				return validator.isValid( value, oldValue );
 			} );
 
 			if ( ! isValidValue ) {
-				this.setInputValue( input, oldValue );
+				this.correctionTimeout = setTimeout( this.setInputValue.bind( this, input, oldValue ), 1200 );
 
 				return;
 			}
