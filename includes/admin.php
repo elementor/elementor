@@ -373,7 +373,7 @@ class Admin {
 							esc_url( $details_url ),
 							esc_attr(
 								sprintf(
-									/* translators: %s: version number */
+									/* translators: %s: Elementor version */
 									__( 'View Elementor version %s details', 'elementor' ),
 									$product->new_version
 								)
@@ -416,7 +416,7 @@ class Admin {
 
 		if ( $is_elementor_screen ) {
 			$footer_text = sprintf(
-				/* translators: %s: link to plugin review */
+				/* translators: %s: Link to plugin review */
 				__( 'Enjoyed <strong>Elementor</strong>? Please leave us a %s rating. We really appreciate your support!', 'elementor' ),
 				'<a href="https://wordpress.org/support/plugin/elementor/reviews/?filter=5#new-post" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 			);
