@@ -136,11 +136,21 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickMenuSaveDraft: function() {
-		elementor.saver.saveAutoSave( {
-			onSuccess: function() {
-				location.href = elementor.config.exit_to_dashboard_url;
-			}
-		} );
+		var postStatus = elementor.settings.page.model.get( 'post_status' ),
+			options = {
+				onSuccess: function() {
+					location.href = elementor.config.exit_to_dashboard_url;
+				}
+			};
+
+		switch ( postStatus ) {
+			case 'publish':
+			case 'private':
+				elementor.saver.saveAutoSave( options );
+				break;
+			default:
+				elementor.saver.update( options );
+		}
 	},
 
 	onClickMenuDiscard: function() {
