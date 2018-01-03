@@ -78,16 +78,25 @@ class DB {
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
-		$save_original = true;
-
-		if ( self::STATUS_AUTOSAVE === $status && ! defined( 'DOING_AUTOSAVE' ) ) {
-			define( 'DOING_AUTOSAVE', true );
+		$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
+		if ( $old_autosave ) {
+			// Force WP to save a new version if the JSON meta was changed.
+			// P.S CSS Changes doesn't change the `plain_text.
+			wp_delete_post_revision( $old_autosave->ID );
 		}
 
-		// If the post is a draft - save the `autosave` to the original draft.
-		// Allow a revision only if the original post is already published.
-		if ( DOING_AUTOSAVE && in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
-			$save_original = false;
+		$save_original = true;
+
+		if ( $status === self::STATUS_AUTOSAVE ) {
+			if ( ! defined( 'DOING_AUTOSAVE' ) ) {
+				define( 'DOING_AUTOSAVE', true );
+			}
+
+			// If the post is a draft - save the `autosave` to the original draft.
+			// Allow a revision only if the original post is already published.
+			if ( in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
+				$save_original = false;
+			}
 		}
 
 		if ( $save_original ) {
@@ -107,11 +116,6 @@ class DB {
 			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
 
 			$this->save_plain_text( $post_id );
-
-			$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
-			if ( $old_autosave ) {
-				wp_delete_post_revision( $old_autosave->ID );
-			}
 		} else {
 			/**
 			 * Before DB save.
@@ -131,6 +135,7 @@ class DB {
 				'post_ID' => $post_id,
 				'post_type' => $post->post_type,
 				'post_title' => $post->post_title,
+				'post_content' => $this->get_plain_text( $post_id ),
 				'post_modified' => current_time( 'mysql' ),
 			] );
 
