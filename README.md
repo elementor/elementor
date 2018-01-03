@@ -186,6 +186,11 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.8.12 - 2018-01-03 ###
+* Tweak! - Added style compatibility for multiple select field
+* Tweak! - Added trim extra spaces in WP editor
+* Fix! - WC session not defined in editor
+
 ### 1.8.11 - 2017-12-19 ###
 * Tweak! - Support W3C validation when using multiple Google Fonts ([Topic](https://wordpress.org/support/topic/bad-character-while-embedding-google-fonts/))
 * Tweak! - Eicons v2.9.0 Updated
