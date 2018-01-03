@@ -2132,7 +2132,13 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		}
 
 		if ( key ) {
-			return values[ key ] || '';
+			var value = values[ key ];
+
+			if ( undefined === value ) {
+				value = '';
+			}
+
+			return value;
 		}
 
 		return elementor.helpers.cloneObject( values );
