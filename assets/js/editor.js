@@ -1692,18 +1692,6 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.collection.sort();
 	},
 
-	activateOrdering: function( by, reverseOrder ) {
-		var $orderInput = this.ui.orderInputs.filter( '[value="' + by + '"]' );
-
-		reverseOrder = !! reverseOrder;
-
-		$orderInput
-			.attr( 'checked', true )
-			.toggleClass( 'elementor-template-library-order-reverse', reverseOrder );
-
-		this.order( by, reverseOrder );
-	},
-
 	reverseOrder: function( comparator ) {
 		if ( 'function' !== typeof comparator ) {
 			var comparatorValue = comparator;
@@ -2144,7 +2132,13 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		}
 
 		if ( key ) {
-			return values[ key ] || '';
+			var value = values[ key ];
+
+			if ( undefined === value ) {
+				value = '';
+			}
+
+			return value;
 		}
 
 		return elementor.helpers.cloneObject( values );
