@@ -678,16 +678,6 @@ select {
   .elementor-panel ::selection {
     background: #5bc0de;
     color: #ffffff; }
-  .elementor-panel a {
-    color: #B7084E;
-    font-weight: 500;
-    text-decoration: none;
-    border-bottom: 1px dotted transparent;
-    -webkit-transition: all ease-in-out .3s;
-    -o-transition: all ease-in-out .3s;
-    transition: all ease-in-out .3s; }
-    .elementor-panel a:hover {
-      border-bottom-color: inherit; }
   .elementor-panel h1,
   .elementor-panel h2,
   .elementor-panel h3,
@@ -1238,6 +1228,16 @@ select {
     background-color: #fff;
     position: relative;
     padding: 0 20px 15px; }
+    .elementor-panel .elementor-control a {
+      color: #B7084E;
+      font-weight: 500;
+      text-decoration: none;
+      border-bottom: 1px dotted transparent;
+      -webkit-transition: all ease-in-out .3s;
+      -o-transition: all ease-in-out .3s;
+      transition: all ease-in-out .3s; }
+      .elementor-panel .elementor-control a:hover {
+        border-bottom-color: inherit; }
     .elementor-panel .elementor-control.elementor-control-separator-default:before {
       content: '';
       height: 1px;
@@ -2652,7 +2652,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
           flex-grow: 1; }
 
 #elementor-template-library-header-menu {
-  text-align: center; }
+  text-align: center;
+  color: #6d7882;
+  font-size: 13px; }
 
 .elementor-template-library-menu-item {
   display: inline-block;
@@ -2760,10 +2762,12 @@ body.elementor-editor-preview #elementor-mode-switcher {
     display: none; }
   #elementor-template-library-templates .elementor-template-library-order-input {
     display: none; }
-    #elementor-template-library-templates .elementor-template-library-order-input:checked + .elementor-template-library-order-label:after {
-      font-family: eicons;
-      content: '\e956';
-      margin-right: 5px; }
+    #elementor-template-library-templates .elementor-template-library-order-input:checked + .elementor-template-library-order-label {
+      padding-left: 8px; }
+      #elementor-template-library-templates .elementor-template-library-order-input:checked + .elementor-template-library-order-label:after {
+        font-family: eicons;
+        content: '\e956';
+        margin-right: 3px; }
     #elementor-template-library-templates .elementor-template-library-order-input:checked.elementor-template-library-order-reverse + .elementor-template-library-order-label:after {
       content: '\e955'; }
 
@@ -2813,7 +2817,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
 .elementor-template-library-order-label {
   text-transform: uppercase;
   cursor: pointer;
-  padding-left: 20px;
+  padding-left: 22px;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
@@ -2868,7 +2872,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   border-bottom: 1px solid #d5dadf;
   -webkit-border-radius: 0;
           border-radius: 0;
-  font-size: 13px;
+  font-size: 11px;
+  text-transform: uppercase;
   padding: 8px 8px 8px 0;
   -webkit-transition: border 0.5s;
   -o-transition: border 0.5s;
@@ -2923,6 +2928,10 @@ body.elementor-editor-preview #elementor-mode-switcher {
     .elementor-template-library-template-remote {
       width: -webkit-calc(20% - 30px);
       width: calc(20% - 30px); } }
+  @media (max-width: 1025px) {
+    .elementor-template-library-template-remote {
+      width: -webkit-calc(33.333% - 30px);
+      width: calc(33.333% - 30px); } }
   .elementor-template-library-template-remote.elementor-template-library-pro-template .elementor-template-library-template-body {
     position: relative; }
     .elementor-template-library-template-remote.elementor-template-library-pro-template .elementor-template-library-template-body:before {
@@ -2940,6 +2949,9 @@ body.elementor-editor-preview #elementor-mode-switcher {
   .elementor-template-library-template-remote .elementor-template-library-template-body {
     height: 200px;
     position: relative; }
+  @media (max-width: 1025px) {
+    .elementor-template-library-template-remote .elementor-template-library-template-body {
+      height: 300px; } }
   .elementor-template-library-template-remote .elementor-template-library-template-screenshot {
     height: 100%;
     -webkit-background-size: cover;
