@@ -125,14 +125,15 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::NUMBER,
 				'min' => 10,
 				'max' => 90,
+				'required' => true,
 				'device_args' => [
 					Controls_Stack::RESPONSIVE_TABLET => [
-						'nullable' => true,
 						'max' => 100,
+						'required' => false,
 					],
 					Controls_Stack::RESPONSIVE_MOBILE => [
-						'nullable' => true,
 						'max' => 100,
+						'required' => false,
 					],
 				],
 				'min_affected_device' => [
