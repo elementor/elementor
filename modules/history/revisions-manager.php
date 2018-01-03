@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\History;
 
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Post_CSS_File;
 use Elementor\Utils;
