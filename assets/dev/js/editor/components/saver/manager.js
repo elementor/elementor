@@ -21,12 +21,16 @@ module.exports = Module.extend( {
 	},
 
 	saveDraft: function() {
+		if ( ! this.isEditorChanged() ) {
+			return;
+		}
+
 		var postStatus = elementor.settings.page.model.get( 'post_status' );
 
 		switch ( postStatus ) {
 			case 'publish':
 			case 'private':
-				this.saveAutoSave();
+				this.doAutoSave();
 				break;
 			default:
 				// Update and create a revision
@@ -37,7 +41,8 @@ module.exports = Module.extend( {
 	doAutoSave: function() {
 		var editorMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
-		if ( ! this.isEditorChanged() || this.isSaving || 'edit' !== editorMode ) {
+		// Avoid auto save for Revisions Preview changes.
+		if ( 'edit' !== editorMode ) {
 			return;
 		}
 
@@ -45,6 +50,10 @@ module.exports = Module.extend( {
 	},
 
 	saveAutoSave: function( options ) {
+		if ( ! this.isEditorChanged() ) {
+			return;
+		}
+
 		options = _.extend( {
 			status: 'autosave'
 		}, options );
