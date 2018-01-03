@@ -120,6 +120,11 @@ module.exports = function( grunt ) {
 							expose: 'elementor-revisions'
 						},
 						{
+							cwd: 'assets/dev/js/editor/components/validator',
+							src: '**/*.js',
+							expose: 'elementor-validator'
+						},
+						{
 							cwd: 'assets/dev/js/utils',
 							src: '**/*.js',
 							expose: 'elementor-utils'
