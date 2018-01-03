@@ -78,17 +78,15 @@ class DB {
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
-		$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
-
-		if ( $old_autosave ) {
-			wp_delete_post_revision( $old_autosave->ID );
-		}
-
 		$save_original = true;
+
+		if ( self::STATUS_AUTOSAVE === $status && ! defined( 'DOING_AUTOSAVE' ) ) {
+			define( 'DOING_AUTOSAVE', true );
+		}
 
 		// If the post is a draft - save the `autosave` to the original draft.
 		// Allow a revision only if the original post is already published.
-		if ( self::STATUS_AUTOSAVE === $status && in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
+		if ( DOING_AUTOSAVE && in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
 			$save_original = false;
 		}
 
@@ -109,6 +107,11 @@ class DB {
 			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
 
 			$this->save_plain_text( $post_id );
+
+			$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
+			if ( $old_autosave ) {
+				wp_delete_post_revision( $old_autosave->ID );
+			}
 		} else {
 			/**
 			 * Before DB save.
@@ -122,17 +125,19 @@ class DB {
 			 */
 			do_action( 'elementor/db/before_save', $status, true );
 
+			$post = get_post( $post_id );
+
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $post_id,
-				'post_type' => get_post_type( $post_id ),
-				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
+				'post_type' => $post->post_type,
+				'post_title' => $post->post_title,
 				'post_modified' => current_time( 'mysql' ),
 			] );
 
 			if ( $autosave_id ) {
 				update_metadata( 'post', $autosave_id, '_elementor_data', $json_value );
 			}
-		}
+		} // End if().
 
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
 

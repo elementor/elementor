@@ -20,6 +20,20 @@ module.exports = Module.extend( {
 		}
 	},
 
+	saveDraft: function() {
+		var postStatus = elementor.settings.page.model.get( 'post_status' );
+
+		switch ( postStatus ) {
+			case 'publish':
+			case 'private':
+				this.saveAutoSave();
+				break;
+			default:
+				// Update and create a revision
+				this.update();
+		}
+	},
+
 	doAutoSave: function() {
 		var editorMode = elementor.channels.dataEditMode.request( 'activeMode' );
 

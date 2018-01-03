@@ -115,7 +115,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-panel-footer-sub-menu">
 				<div id="elementor-panel-saver-menu-save-draft" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Save Draft & Exit', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php esc_html_e( 'Save Draft', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-saver-menu-discard" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-eraser" aria-hidden="true"></i>
