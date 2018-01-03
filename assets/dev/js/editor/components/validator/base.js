@@ -12,6 +12,12 @@ Validator = Module.extend( {
 		}
 	},
 
+	getDefaultSettings: function() {
+		return {
+			validationTerms: {}
+		};
+	},
+
 	isValid: function() {
 		var validationErrors = this.validationMethod.apply( this, arguments );
 
@@ -24,8 +30,17 @@ Validator = Module.extend( {
 		return true;
 	},
 
-	validationMethod: function() {
-		return [];
+	validationMethod: function( newValue ) {
+		var validationTerms = this.getSettings( 'validationTerms' ),
+			errors = [];
+
+		if ( validationTerms.required ) {
+			if ( ! ( '' + newValue ).length ) {
+				errors.push( 'Required value is empty' );
+			}
+		}
+
+		return errors;
 	}
 } );
 
