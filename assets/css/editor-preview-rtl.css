@@ -1108,7 +1108,7 @@
   cursor: pointer; }
 
 .elementor-control-type-popover_toggle .elementor-control-input-wrapper {
-  direction: rtl; }
+  direction: ltr; }
 
 .elementor-control-type-popover_toggle .elementor-control-popover-toggle-toggle:checked + .elementor-control-popover-toggle-toggle-label {
   color: #71d7f7; }
