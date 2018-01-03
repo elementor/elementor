@@ -7,48 +7,71 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Scheme interface.
+ *
+ * An interface for Elementor Scheme.
+ *
+ * @since 1.0.0
  */
 interface Scheme_Interface {
 
 	/**
-	 * Retrieve Scheme type.
+	 * Get scheme type.
 	 *
+	 * Retrieve the scheme type.
+	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 */
 	public static function get_type();
 
 	/**
-	 * Retrieve scheme title.
+	 * Get scheme title.
 	 *
+	 * Retrieve the scheme title.
+	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function get_title();
 
 	/**
-	 * Retrieve scheme disabled title.
+	 * Get scheme disabled title.
 	 *
+	 * Retrieve the scheme disabled title.
+	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function get_disabled_title();
 
 	/**
-	 * Retrieve scheme titles.
+	 * Get scheme titles.
 	 *
+	 * Retrieve the scheme titles.
+	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function get_scheme_titles();
 
 	/**
-	 * Retrieve default scheme.
+	 * Get default scheme.
 	 *
+	 * Retrieve the default scheme.
+	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function get_default_scheme();
 
 	/**
-	 * Print template content.
+	 * Print scheme content template.
 	 *
+	 * Used to generate the HTML in the editor using Underscore JS template. The
+	 * variables for the class are available using `data` JS object.
+	 *
+	 * @since 1.0.0
 	 * @access public
 	 */
 	public function print_template_content();
