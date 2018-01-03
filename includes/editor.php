@@ -429,7 +429,7 @@ class Editor {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.5',
+			'4.1.0',
 			true
 		);
 
@@ -515,6 +515,7 @@ class Editor {
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
+			'post_link' => get_permalink( $this->_post_id ),
 			'last_edited' => Utils::get_last_edited( $this->_post_id ),
 			'wp_preview' => [
 				'url' => Utils::get_wp_preview_url( $this->_post_id ),
@@ -640,6 +641,12 @@ class Editor {
 				'saved' => __( 'Saved', 'elementor' ),
 				'update' => __( 'Update', 'elementor' ),
 				'submit' => __( 'Submit', 'elementor' ),
+				'publish_notification' => __( 'Hurray! Your page is live.', 'elementor' ),
+				'working_on_draft_notification' => __( 'This is just a draft. Play around and when you\'re done - click update.', 'elementor' ),
+				'keep_editing' => __( 'Keep Editing', 'elementor' ),
+				'have_a_look' => __( 'Have a look', 'elementor' ),
+				'view_all_revisions' => __( 'View All Revisions', 'elementor' ),
+				'dismiss' => __( 'Dismiss', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
