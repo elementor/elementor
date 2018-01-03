@@ -90,11 +90,6 @@ module.exports = function( grunt ) {
 							expose: 'elementor-views'
 						},
 						{
-							cwd: 'assets/dev/js/editor/components',
-							src: '**/*.js',
-							expose: 'elementor-components'
-						},
-						{
 							cwd: 'assets/dev/js/editor/utils',
 							src: '**/*.js',
 							expose: 'elementor-editor-utils'
