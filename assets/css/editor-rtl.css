@@ -678,6 +678,8 @@ select {
   .elementor-panel ::selection {
     background: #5bc0de;
     color: #ffffff; }
+  .elementor-panel a {
+    color: #B7084E; }
   .elementor-panel h1,
   .elementor-panel h2,
   .elementor-panel h3,
@@ -1229,7 +1231,6 @@ select {
     position: relative;
     padding: 0 20px 15px; }
     .elementor-panel .elementor-control a {
-      color: #B7084E;
       font-weight: 500;
       text-decoration: none;
       border-bottom: 1px dotted transparent;
@@ -1420,7 +1421,17 @@ select {
     .elementor-panel .elementor-responsive-switcher:hover {
       background-color: #c2cbd2; }
     .elementor-panel .elementor-responsive-switcher i {
+      position: relative;
+      display: block;
       line-height: 18px; }
+      .elementor-panel .elementor-responsive-switcher i:before {
+        height: 18px;
+        width: 18px;
+        position: absolute;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+            -ms-transform: translateX(-50%);
+                transform: translateX(-50%); }
   .elementor-device-desktop #elementor-panel .elementor-panel-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
     background: #c2cbd2; }
     .elementor-device-desktop #elementor-panel .elementor-panel-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
