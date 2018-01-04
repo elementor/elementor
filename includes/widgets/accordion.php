@@ -311,9 +311,6 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 1,
-				],
 				'range' => [
 					'px' => [
 						'min' => 0,
