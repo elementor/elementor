@@ -6,8 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 /**
  * Elementor controls manager class.
  *
- * A base abstract class that provides the needed properties and methods to
- * manage Elementor controls.
+ * Elementor controls manager handler class is responsible for registering and
+ * initializing all the supported controls, both regular controls and the group
+ * controls.
  *
  * @since 1.0.0
  */
@@ -214,7 +215,7 @@ class Controls_Manager {
 	}
 
 	/**
-	 * Register element controls.
+	 * Register controls.
 	 *
 	 * This method creates a list of all the supported controls by requiring the
 	 * control files and initializing each one of them.
