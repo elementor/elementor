@@ -87,7 +87,7 @@ class Skins_Manager {
 	 *
 	 * @param Widget_Base $widget Elementor widget.
 	 *
-	 * @return false|array Skins, False otherwise.
+	 * @return false|array Skins if the widget has skins, False otherwise.
 	 */
 	public function get_skins( Widget_Base $widget ) {
 		$widget_name = $widget->get_name();

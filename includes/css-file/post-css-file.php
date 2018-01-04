@@ -75,6 +75,9 @@ class Post_CSS_File extends CSS_File {
 		update_post_meta( $this->post_id, static::META_KEY, $meta );
 	}
 
+	/**
+	 * @access protected
+	 */
 	protected function get_data() {
 		return Plugin::$instance->db->get_plain_editor( $this->post_id );
 	}
@@ -158,8 +161,8 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	/**
+	 * @access protected
 	 * @since 1.2.0
-	 * @access private
 	 * @param Element_Base $element
 	 */
 	protected function render_styles( Element_Base $element ) {

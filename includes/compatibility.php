@@ -50,10 +50,10 @@ class Compatibility {
 	 *
 	 * Fired by `init` action.
 	 *
+	 * @static
 	 * @since 1.9.0
 	 * @access public
 	 */
-
 	public static function exit_to_classic_editor( $exit_url ) {
 		$exit_url = add_query_arg( 'classic-editor', '', $exit_url );
 

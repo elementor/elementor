@@ -9,10 +9,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class User_Reporter extends Base_Reporter {
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_title() {
 		return 'User';
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_fields() {
 		return [
 			'role' => 'Role',
@@ -21,6 +29,10 @@ class User_Reporter extends Base_Reporter {
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_role() {
 		$role = null;
 
@@ -34,12 +46,20 @@ class User_Reporter extends Base_Reporter {
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_locale() {
 		return [
 			'value' => get_locale(),
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_agent() {
 		return [
 			'value' => $_SERVER['HTTP_USER_AGENT'],
