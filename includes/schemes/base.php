@@ -5,32 +5,70 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Scheme base class.
+ *
+ * Elementor base class for schemes is an abstract class implementing the scheme
+ * interface. The class is responsible for creating base schemes.
+ *
+ * @since 1.0.0
+ * @abstract
+ */
 abstract class Scheme_Base implements Scheme_Interface {
 
+	/**
+	 * DB option name for the time when the scheme was last updated.
+	 */
 	const LAST_UPDATED_META = '_elementor_scheme_last_updated';
 
+	/**
+	 * System schemes.
+	 *
+	 * Holds the list of all the system schemes.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var array System schemes.
+	 */
 	private $_system_schemes;
 
 	/**
-	 * @abstract
+	 * Init system schemes.
+	 *
+	 * Initialize the system schemes.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 * @abstract
+	 */
 	abstract protected function _init_system_schemes();
 
 	/**
-	 * @static
+	 * Get description.
+	 *
+	 * Retrieve the scheme description.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return string Scheme description.
+	 */
 	public static function get_description() {
 		return '';
 	}
 
 	/**
+	 * Get system schemes.
+	 *
+	 * Retrieve the system schemes.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string System schemes.
+	 */
 	final public function get_system_schemes() {
 		if ( null === $this->_system_schemes ) {
 			$this->_system_schemes = $this->_init_system_schemes();
@@ -40,9 +78,15 @@ abstract class Scheme_Base implements Scheme_Interface {
 	}
 
 	/**
+	 * Get scheme value.
+	 *
+	 * Retrieve the scheme value.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string Scheme value.
+	 */
 	public function get_scheme_value() {
 		$scheme_value = get_option( 'elementor_scheme_' . static::get_type() );
 
@@ -56,9 +100,16 @@ abstract class Scheme_Base implements Scheme_Interface {
 	}
 
 	/**
+	 * Save scheme.
+	 *
+	 * Update Elementor scheme in the database, and update the last updated
+	 * scheme time.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $posted
+	 */
 	public function save_scheme( array $posted ) {
 		$scheme_value = $this->get_scheme_value();
 
@@ -68,9 +119,15 @@ abstract class Scheme_Base implements Scheme_Interface {
 	}
 
 	/**
+	 * Get scheme.
+	 *
+	 * Retrieve the scheme.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string The scheme.
+	 */
 	public function get_scheme() {
 		$scheme = [];
 
@@ -87,9 +144,14 @@ abstract class Scheme_Base implements Scheme_Interface {
 	}
 
 	/**
+	 * Print scheme template.
+	 *
+	 * Used to generate the scheme template on the editor using Underscore JS
+	 * template.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	final public function print_template() {
 		?>
 		<script type="text/template" id="tmpl-elementor-panel-schemes-<?php echo static::get_type(); ?>">

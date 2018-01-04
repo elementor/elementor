@@ -25,9 +25,10 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.saver
 			.on( 'before:save', this.onBeforeSave.bind( this ) )
 			.on( 'after:save', this.onAfterSave.bind( this ) )
-			.on( 'after:saveError', this.onAfterSaveError.bind( this ) );
+			.on( 'after:saveError', this.onAfterSaveError.bind( this ) )
+			.on( 'page:status:change', this.onPageStatusChange );
 
-		elementor.settings.page.model.on( 'change', this.onPostStatusChange.bind( this ) );
+		elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
 	},
 
 	onRender: function() {
@@ -35,7 +36,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.addTooltip();
 	},
 
-	onPostStatusChange: function( settings ) {
+	onPageSettingsChange: function( settings ) {
 		var changed = settings.changed;
 
 		if ( ! _.isUndefined( changed.post_status ) ) {
@@ -47,6 +48,23 @@ module.exports = Marionette.Behavior.extend( {
 			if ( 'page_settings' === elementor.getPanelView().getCurrentPageName() ) {
 				elementor.getPanelView().getCurrentPageView().render();
 			}
+		}
+	},
+
+	onPageStatusChange: function( newStatus ) {
+		if ( 'publish' === newStatus ) {
+			elementor.notifications.showToast( {
+				message: elementor.translate( 'publish_notification' ),
+				buttons: [
+					{
+						name: 'view_page',
+						text: elementor.translate( 'have_a_look' ),
+						callback: function() {
+							open( elementor.config.post_link );
+						}
+					}
+				]
+			} );
 		}
 	},
 
@@ -80,7 +98,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	onClickButtonPreview: function() {
 		// Open immediately in order to avoid popup blockers.
-		this.previewWindow = window.open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
+		this.previewWindow = open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
 
 		if ( elementor.saver.isEditorChanged() ) {
 			if ( elementor.saver.xhr ) {
