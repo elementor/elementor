@@ -65,7 +65,7 @@ class Control_Checkbox extends Base_Data_Control {
 	/**
 	 * Retrieve checkbox control type.
 	 *
-	 * @since 1.0.0
+	 * @since 1.5.4
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -79,7 +79,7 @@ class Control_Checkbox extends Base_Data_Control {
 	 *
 	 * Get the value of the checkbox control from a specific widget.
 	 *
-	 * @since 1.0.0
+	 * @since 1.5.4
 	 * @access public
 	 *
 	 * @param array $control Control
@@ -100,7 +100,7 @@ class Control_Checkbox extends Base_Data_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * @since 1.0.0
+	 * @since 1.5.4
 	 * @access public
 	 */
 	public function content_template() {

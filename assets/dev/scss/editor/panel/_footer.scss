@@ -150,7 +150,7 @@
 	width: 35px;
 	@include border-start(1px solid $editor-darkest);
 
-	.elementor-last-edited {
+	.elementor-last-edited-wrapper {
 		font-size: 11px;
 		font-style: italic;
 		color: $editor-light;

@@ -3,16 +3,41 @@ namespace Elementor\Debug;
 
 use Elementor\System_Info\Main;
 
+/**
+ * Elementor debug class.
+ *
+ * Elementor debug handler class is responsible for logging errors and
+ * generating debug reports.
+ *
+ * @since 1.4.0
+ */
 class Debug {
 
+	/**
+	 * Debug option name in the database.
+	 */
 	const OPTION_NAME = 'elementor_debug_log';
+
+	/**
+	 * Maximum debug logs to save in the database.
+	 */
 	const MAX_LOGS_TO_SAVE = 10;
+
+	/**
+	 * Debug report name.
+	 */
 	const REPORT_NAME = 'debug';
 
 	/**
+	 * Debug log.
+	 *
+	 * Log Elementor errors and save them in the database.
+	 *
+	 * Fired by `wp_ajax_elementor_debug_log` action.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 */
 	public function debug_log() {
 		if ( empty( $_POST['data'] ) ) {
 			return;
@@ -84,9 +109,13 @@ class Debug {
 	}
 
 	/**
+	 * Add system info debug report.
+	 *
+	 * Create new system info debug report.
+	 *
 	 * @since 1.4.0
 	 * @access private
-	*/
+	 */
 	private function add_system_info_report() {
 		Main::add_report(
 			self::REPORT_NAME, [
@@ -97,9 +126,13 @@ class Debug {
 	}
 
 	/**
+	 * Debug constructor.
+	 *
+	 * Initializing Elementor debug and logging errors.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		add_action( 'wp_ajax_elementor_debug_log', [ $this, 'debug_log' ] );
 

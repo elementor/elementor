@@ -50,7 +50,7 @@ class Repeater extends Element_Base {
 	 *
 	 * Retrieve the repeater name.
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.7
 	 * @access public
 	 *
 	 * @return string Repeater name.
