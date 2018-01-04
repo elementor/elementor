@@ -72,7 +72,7 @@ if ( ! version_compare( PHP_VERSION, '5.4', '>=' ) ) {
 /**
  * Load Elementor textdomain.
  *
- * Load gettext translate for our text domain.
+ * Load gettext translate for Elementor text domain.
  *
  * @since 1.0.0
  *
@@ -83,9 +83,9 @@ function elementor_load_plugin_textdomain() {
 }
 
 /**
- * Admin notice - minimum PHP version.
+ * Elementor admin notice for minimum PHP version.
  *
- * Warning when the site doesn't have a minimum required PHP version.
+ * Warning when the site doesn't have the minimum required PHP version.
  *
  * @since 1.0.0
  *
@@ -99,9 +99,9 @@ function elementor_fail_php_version() {
 }
 
 /**
- * Admin notice - minimum Elementor version.
+ * Elementor admin notice for minimum WordPress version.
  *
- * Warning when the site doesn't have a minimum required Elementor version.
+ * Warning when the site doesn't have the minimum required WordPress version.
  *
  * @since 1.5.0
  *
