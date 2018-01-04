@@ -87,7 +87,7 @@ class DB {
 
 		$save_original = true;
 
-		if ( $status === self::STATUS_AUTOSAVE ) {
+		if ( self::STATUS_AUTOSAVE === $status ) {
 			if ( ! defined( 'DOING_AUTOSAVE' ) ) {
 				define( 'DOING_AUTOSAVE', true );
 			}
