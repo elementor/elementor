@@ -117,10 +117,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Save Draft', 'elementor' ); ?></span>
 				</div>
-				<div id="elementor-panel-saver-menu-discard" class="elementor-panel-footer-sub-menu-item">
-					<i class="elementor-icon fa fa-eraser" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Discard & Exit', 'elementor' ); ?></span>
-				</div>
 				<div id="elementor-panel-saver-menu-save-template" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-folder" aria-hidden="true"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Save as Template', 'elementor' ); ?></span>
