@@ -10,27 +10,16 @@ RevisionsManager = function() {
 	};
 
 	var onEditorSaved = function( data ) {
-		if ( data.last_revision ) {
-			self.addRevision( data.last_revision );
+		if ( data.latest_revisions ) {
+			self.addRevisions( data.latest_revisions );
 		}
 
-		var revisionsToKeep = revisions.filter( function( revision ) {
-			return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
-		} );
-
-		revisions.reset( revisionsToKeep );
-
-		if ( 'current' === data.last_revision.type ) {
-			// Move current to top
-			var current = revisions.findWhere( {
-				id: elementor.config.post_id
+		if ( data.revisions_ids ) {
+			var revisionsToKeep = revisions.filter( function( revision ) {
+				return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
 			} );
 
-			if ( current ) {
-				revisions.remove( current );
-			}
-
-			revisions.add( current, { at: 0 } );
+			revisions.reset( revisionsToKeep );
 		}
 	};
 
@@ -80,16 +69,18 @@ RevisionsManager = function() {
 		return elementor.ajax.send( 'get_revision_data', options );
 	};
 
-	this.addRevision = function( revisionData ) {
-		var existedModel = revisions.findWhere( {
-			id: revisionData.id
+	this.addRevisions = function( items ) {
+		items.forEach( function( item ) {
+			var existedModel = revisions.findWhere( {
+				id: item.id
+			} );
+
+			if ( existedModel ) {
+				revisions.remove( existedModel );
+			}
+
+			revisions.add( item );
 		} );
-
-		if ( existedModel ) {
-			revisions.remove( existedModel );
-		}
-
-		revisions.add( revisionData, { at: 0 } );
 	};
 
 	this.deleteRevision = function( revisionModel, options ) {

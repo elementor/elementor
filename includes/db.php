@@ -79,17 +79,24 @@ class DB {
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
 		$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
-
 		if ( $old_autosave ) {
+			// Force WP to save a new version if the JSON meta was changed.
+			// P.S CSS Changes doesn't change the `plain_text.
 			wp_delete_post_revision( $old_autosave->ID );
 		}
 
 		$save_original = true;
 
-		// If the post is a draft - save the `autosave` to the original draft.
-		// Allow a revision only if the original post is already published.
-		if ( self::STATUS_AUTOSAVE === $status && in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
-			$save_original = false;
+		if ( self::STATUS_AUTOSAVE === $status ) {
+			if ( ! defined( 'DOING_AUTOSAVE' ) ) {
+				define( 'DOING_AUTOSAVE', true );
+			}
+
+			// If the post is a draft - save the `autosave` to the original draft.
+			// Allow a revision only if the original post is already published.
+			if ( in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
+				$save_original = false;
+			}
 		}
 
 		if ( $save_original ) {
@@ -122,17 +129,20 @@ class DB {
 			 */
 			do_action( 'elementor/db/before_save', $status, true );
 
+			$post = get_post( $post_id );
+
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $post_id,
-				'post_type' => get_post_type( $post_id ),
-				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
+				'post_type' => $post->post_type,
+				'post_title' => $post->post_title,
+				'post_content' => $this->get_plain_text( $post_id ),
 				'post_modified' => current_time( 'mysql' ),
 			] );
 
 			if ( $autosave_id ) {
 				update_metadata( 'post', $autosave_id, '_elementor_data', $json_value );
 			}
-		}
+		} // End if().
 
 		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
 
@@ -368,29 +378,7 @@ class DB {
 	 * @param int $post_id Post ID.
 	 */
 	public function save_plain_text( $post_id ) {
-		ob_start();
-
-		$data = $this->get_plain_editor( $post_id );
-
-		if ( $data ) {
-			foreach ( $data as $element_data ) {
-				$this->_render_element_plain_content( $element_data );
-			}
-		}
-
-		$plain_text = ob_get_clean();
-
-		// Remove unnecessary tags.
-		$plain_text = preg_replace( '/<\/?div[^>]*\>/i', '', $plain_text );
-		$plain_text = preg_replace( '/<\/?span[^>]*\>/i', '', $plain_text );
-		$plain_text = preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $plain_text );
-		$plain_text = preg_replace( '/<i [^>]*><\\/i[^>]*>/', '', $plain_text );
-		$plain_text = preg_replace( '/ class=".*?"/', '', $plain_text );
-
-		// Remove empty lines.
-		$plain_text = preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n", $plain_text );
-
-		$plain_text = trim( $plain_text );
+		$plain_text = $this->get_plain_text( $post_id );
 
 		wp_update_post(
 			[
@@ -519,6 +507,7 @@ class DB {
 	 *
 	 * Check whether the post has Elementor data in the post.
 	 *
+	 * @since 1.0.10
 	 * @access public
 	 * @deprecated 1.4.0
 	 *
@@ -581,5 +570,36 @@ class DB {
 
 		$GLOBALS['post'] = get_post( $data['original_id'] );
 		setup_postdata( $GLOBALS['post'] );
+	}
+
+	/**
+	 * @access public
+	 */
+	public function get_plain_text( $post_id ) {
+		ob_start();
+
+		$data = $this->get_plain_editor( $post_id );
+
+		if ( $data ) {
+			foreach ( $data as $element_data ) {
+				$this->_render_element_plain_content( $element_data );
+			}
+		}
+
+		$plain_text = ob_get_clean();
+
+		// Remove unnecessary tags.
+		$plain_text = preg_replace( '/<\/?div[^>]*\>/i', '', $plain_text );
+		$plain_text = preg_replace( '/<\/?span[^>]*\>/i', '', $plain_text );
+		$plain_text = preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $plain_text );
+		$plain_text = preg_replace( '/<i [^>]*><\\/i[^>]*>/', '', $plain_text );
+		$plain_text = preg_replace( '/ class=".*?"/', '', $plain_text );
+
+		// Remove empty lines.
+		$plain_text = preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n", $plain_text );
+
+		$plain_text = trim( $plain_text );
+
+		return $plain_text;
 	}
 }
