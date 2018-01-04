@@ -226,7 +226,7 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 * @access public
 	*/
 	public function save_item( $template_data ) {

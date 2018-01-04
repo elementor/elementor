@@ -144,6 +144,10 @@ class Utils {
 		return $preview_url;
 	}
 
+	/**
+	 * @access public
+	 * @static
+	 */
 	public static function get_wp_preview_url( $post_id ) {
 		$query_args = [];
 
@@ -168,6 +172,10 @@ class Utils {
 	}
 
 
+	/**
+	 * @access public
+	 * @static
+	 */
 	public static function get_exit_to_dashboard_url( $post_id ) {
 		$exit_url = get_edit_post_link( $post_id, 'raw' );
 
@@ -373,6 +381,10 @@ class Utils {
 		}
 	}
 
+	/**
+	 * @access public
+	 * @static
+	 */
 	public static function get_last_edited( $post_id ) {
 		$post = get_post( $post_id );
 		$autosave_post = wp_get_post_autosave( $post_id );
@@ -395,6 +407,10 @@ class Utils {
 		return $last_edited;
 	}
 
+	/**
+	 * @access public
+	 * @static
+	 */
 	public static function get_create_new_post_url( $post_type = 'page' ) {
 		$new_post_url = add_query_arg( [
 			'action' => 'elementor_new_post',

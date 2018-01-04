@@ -671,6 +671,9 @@ class Admin {
 		wp_send_json_success();
 	}
 
+	/**
+	 * @access private
+	 */
 	private function get_dashboard_overview_widget_footer_actions() {
 		$base_actions = [
 			'blog' => [
@@ -709,6 +712,9 @@ class Admin {
 		return $actions;
 	}
 
+	/**
+	 * @access public
+	 */
 	public function admin_action_new_post() {
 		check_admin_referer( 'elementor_action_new_post' );
 

@@ -507,6 +507,7 @@ class DB {
 	 *
 	 * Check whether the post has Elementor data in the post.
 	 *
+	 * @since 1.0.10
 	 * @access public
 	 * @deprecated 1.4.0
 	 *
@@ -571,6 +572,9 @@ class DB {
 		setup_postdata( $GLOBALS['post'] );
 	}
 
+	/**
+	 * @access public
+	 */
 	public function get_plain_text( $post_id ) {
 		ob_start();
 
