@@ -136,11 +136,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickMenuSaveDraft: function() {
-		elementor.saver.saveAutoSave( {
-			onSuccess: function() {
-				location.href = elementor.config.exit_to_dashboard_url;
-			}
-		} );
+		elementor.saver.saveDraft();
 	},
 
 	onClickMenuDiscard: function() {
