@@ -368,19 +368,17 @@ class Admin {
 					<p>
 					<?php
 						printf(
-							/* translators: 1: details URL, 2: accessibility text, 3: version number, 4: update URL, 5: accessibility text */
+							/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text */
 							__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 							esc_url( $details_url ),
-							esc_attr(
-								sprintf(
-									/* translators: %s: Elementor version */
-									__( 'View Elementor version %s details', 'elementor' ),
-									$product->new_version
-								)
-							),
+							esc_attr( sprintf(
+								/* translators: %s: Elementor version */
+								__( 'View Elementor version %s details', 'elementor' ),
+								$product->new_version
+							) ),
 							$product->new_version,
 							esc_url( $upgrade_url ),
-							esc_attr( __( 'Update Now', 'elementor' ) )
+							esc_attr( __( 'Update Elementor Now', 'elementor' ) )
 						);
 						?>
 					</p>
