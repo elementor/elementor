@@ -11,10 +11,18 @@ class Network_Plugins_Reporter extends Base_Reporter {
 
 	private $plugins;
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_title() {
 		return 'Network Plugins';
 	}
 
+	/**
+	 * @access private
+	 * @since 1.0.0
+	 */
 	private function _get_network_plugins() {
 		if ( ! $this->plugins ) {
 			$active_plugins = get_site_option( 'active_sitewide_plugins' );
@@ -24,6 +32,10 @@ class Network_Plugins_Reporter extends Base_Reporter {
 		return $this->plugins;
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function is_enabled() {
 		if ( ! is_multisite() ) {
 			return false;
@@ -32,12 +44,20 @@ class Network_Plugins_Reporter extends Base_Reporter {
 		return ! ! $this->_get_network_plugins();
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_fields() {
 		return [
 			'network_active_plugins' => 'Network Plugins',
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_network_active_plugins() {
 		return [
 			'value' => $this->_get_network_plugins(),

@@ -111,6 +111,9 @@ class Manager {
 		return $templates;
 	}
 
+	/**
+	 * @access public
+	 */
 	public function get_library_data( array $args ) {
 		if ( ! empty( $args['sync'] ) ) {
 			Api::get_templates_data( true );
@@ -286,6 +289,9 @@ class Manager {
 		return $source->import_template();
 	}
 
+	/**
+	 * @access public
+	 */
 	public function mark_template_as_favorite( $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id', 'favorite' ], $args );
 

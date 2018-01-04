@@ -11,6 +11,9 @@ class Post_Preview_CSS extends Post_CSS_File {
 	*/
 	private $preview_id;
 
+	/**
+	 * @access public
+	 */
 	public function __construct( $post_id ) {
 		$this->preview_id = $post_id;
 
@@ -19,14 +22,23 @@ class Post_Preview_CSS extends Post_CSS_File {
 		parent::__construct( $parent_id );
 	}
 
+	/**
+	 * @access protected
+	 */
 	protected function get_data() {
 		return Plugin::$instance->db->get_plain_editor( $this->preview_id );
 	}
 
+	/**
+	 * @access protected
+	 */
 	protected function get_file_handle_id() {
 		return 'elementor-preview-' . $this->preview_id;
 	}
 
+	/**
+	 * @access public
+	 */
 	public function get_meta( $property = null ) {
 		// Parse CSS first, to get the fonts list.
 		$css = $this->get_css();

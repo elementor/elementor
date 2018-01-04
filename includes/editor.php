@@ -71,7 +71,7 @@ class Editor {
 	 *
 	 * Fired by `admin_action_elementor` action.
 	 *
-	 * @since 1.7.0
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param bool $die Optional. Whether to die at the end. Default is `true`.
