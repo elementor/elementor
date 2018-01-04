@@ -7,18 +7,56 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor debug reporter class.
+ *
+ * Elementor debug reporter handler class is responsible for generating the
+ * debug reports.
+ *
+ * @since 1.0.0
+ */
 class Debug_Reporter extends Base_Reporter {
 
+	/**
+	 * Get debug reporter title.
+	 *
+	 * Retrieve the debug reporter title.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Debug reporter title.
+	 */
 	public function get_title() {
 		return 'Debug';
 	}
 
+	/**
+	 * Get debug reporter fields.
+	 *
+	 * Retrieve the debug reporter fields.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Debug reporter fields.
+	 */
 	public function get_fields() {
 		return [
 			'errors' => 'Errors',
 		];
 	}
 
+	/**
+	 * Get debug reporter errors.
+	 *
+	 * Retrieve the debug reporter errors from the database.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Debug reporter errors.
+	 */
 	public function get_errors() {
 		$log = get_option( Debug::OPTION_NAME, [] );
 
