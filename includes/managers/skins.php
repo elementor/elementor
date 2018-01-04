@@ -18,7 +18,7 @@ class Skins_Manager {
 	/**
 	 * Skins.
 	 *
-	 * Holds the registered skins for all the widgets.
+	 * Holds the list of all the registered skins for all the widgets.
 	 *
 	 * @since 1.0.0
 	 * @access private
