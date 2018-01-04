@@ -34,7 +34,7 @@ class Admin {
 			[
 				'jquery-ui-position',
 			],
-			'3.2.5',
+			'4.1.0',
 			true
 		);
 
@@ -538,6 +538,16 @@ class Admin {
 	 */
 	public function register_dashboard_widgets() {
 		wp_add_dashboard_widget( 'e-dashboard-overview', __( 'Elementor Overview', 'elementor' ), [ $this, 'elementor_dashboard_overview_widget' ] );
+
+		// Move our widget to top.
+		global $wp_meta_boxes;
+
+		$dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+		$ours = [
+			'e-dashboard-overview' => $dashboard['e-dashboard-overview'],
+		];
+
+		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $ours, $dashboard );
 	}
 
 	/**
