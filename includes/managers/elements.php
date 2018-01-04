@@ -157,6 +157,9 @@ class Elements_Manager {
 		}
 	}
 
+	/**
+	 * @access public
+	 */
 	public function ajax_discard_changes() {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
