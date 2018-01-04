@@ -7,7 +7,7 @@ module.exports = Marionette.Behavior.extend( {
 			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
 			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
-			lastEdited: '.elementor-last-edited'
+			lastEditedWrapper: '.elementor-last-edited-wrapper'
 		};
 	},
 
@@ -69,7 +69,7 @@ module.exports = Marionette.Behavior.extend( {
 	onBeforeSave: function( options ) {
 		NProgress.start();
 		if ( 'autosave' === options.status ) {
-			this.ui.lastEdited.addClass( 'elementor-state-active' );
+			this.ui.lastEditedWrapper.addClass( 'elementor-state-active' );
 		} else {
 			this.ui.buttonPublish.addClass( 'elementor-button-state' );
 		}
@@ -78,14 +78,15 @@ module.exports = Marionette.Behavior.extend( {
 	onAfterSave: function( data ) {
 		NProgress.done();
 		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
-		this.ui.lastEdited.removeClass( 'elementor-state-active' );
+		this.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
 		this.refreshWpPreview();
 		this.setLastEdited( data );
 	},
 
 	setLastEdited: function( data ) {
-		this.ui.lastEdited
+		this.ui.lastEditedWrapper
 			.removeClass( 'elementor-button-state' )
+			.find( '.elementor-last-edited' )
 			.html( data.config.last_edited );
 	},
 
