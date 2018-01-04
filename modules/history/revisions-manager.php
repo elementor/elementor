@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\History;
 
+use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Post_CSS_File;
 use Elementor\Utils;
@@ -42,17 +43,6 @@ class Revisions_Manager {
 
 		$posts = wp_get_post_revisions( $post->ID, $query_args );
 
-		if ( ! wp_revisions_enabled( $post ) ) {
-			$autosave = wp_get_post_autosave( $post->ID );
-			if ( $autosave ) {
-				if ( $parse_result ) {
-					array_unshift( $posts, $autosave );
-				} else {
-					array_unshift( $posts, $autosave->ID );
-				}
-			}
-		}
-
 		if ( $parse_result ) {
 			array_unshift( $posts, $post );
 		} else {
@@ -86,8 +76,12 @@ class Revisions_Manager {
 			$revisions[] = [
 				'id' => $revision->ID,
 				'author' => self::$authors[ $revision->post_author ]['display_name'],
-				'timestamp' => strtotime( $revision->post_modified ),
-				'date' => sprintf( __( '%1$s ago (%2$s)', 'elementor' ), $human_time, $date ),
+				'date' => sprintf(
+					/* translators: 1: Human readable time difference, 2: Date */
+					__( '%1$s ago (%2$s)', 'elementor' ),
+					$human_time,
+					$date
+				),
 				'type' => $type,
 				'gravatar' => self::$authors[ $revision->post_author ]['avatar'],
 			];
@@ -180,7 +174,7 @@ class Revisions_Manager {
 	public static function ajax_save_builder_data( $return_data ) {
 		$post_id = $_POST['post_id'];
 
-		$latest_revisions = self::get_revisions(
+		$latest_revision = self::get_revisions(
 			$post_id, [
 				'posts_per_page' => 1,
 			]
@@ -192,15 +186,15 @@ class Revisions_Manager {
 			], false
 		);
 
-		// Send revisions data only if has revisions.
-		if ( ! empty( $latest_revisions ) ) {
+		if ( ! empty( $latest_revision ) ) {
 			$current_revision_id = self::current_revision_id( $post_id );
 
 			$return_data = array_replace_recursive( $return_data, [
 				'config' => [
 					'current_revision_id' => $current_revision_id,
 				],
-				'latest_revisions' => $latest_revisions,
+				// $latest_revision[0] = current post, $latest_revision[1] = last revision.
+				'last_revision' => $current_revision_id === $post_id ? $latest_revision[0] : $latest_revision[1],
 				'revisions_ids' => $all_revision_ids,
 			] );
 		}
@@ -231,8 +225,11 @@ class Revisions_Manager {
 				'revision' => __( 'Revision', 'elementor' ),
 				'revision_history' => __( 'Revision History', 'elementor' ),
 				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
-				// translators: %s: WordPress Revision docs.,
-				'revisions_disabled_2' => sprintf( __( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://codex.wordpress.org/Revisions#Revision_Options)' ),
+				'revisions_disabled_2' => sprintf(
+					/* translators: %s: Codex URL */
+					__( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ),
+					'https://codex.wordpress.org/Revisions#Revision_Options'
+				),
 			],
 		] );
 

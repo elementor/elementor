@@ -76,9 +76,9 @@ class Theme_Reporter extends Base_Reporter {
 
 		if ( ! $is_child_theme ) {
 			$result['recommendation'] = sprintf(
-				/* translators: %s: codex child theme URL */
+				/* translators: %s: Codex URL */
 				_x( 'If you want to modify the source code of your theme, we recommend using a <a href="%s">child theme</a>.', 'System Info', 'elementor' ),
-				esc_html( 'https://codex.wordpress.org/Child_Themes' )
+				esc_url( 'https://codex.wordpress.org/Child_Themes' )
 			);
 		}
 
