@@ -89,14 +89,14 @@ $library_screen_breakpoint: $screen-lg-max;
 	}
 }
 
-
-
 #elementor-template-library-header-menu-area {
 	flex-grow: 1;
 }
 
 #elementor-template-library-header-menu {
 	text-align: center;
+	color: $editor-dark;
+	font-size: 13px;
 }
 
 .elementor-template-library-menu-item {
@@ -248,11 +248,12 @@ $library_screen_breakpoint: $screen-lg-max;
 		&:checked {
 
 			+ .elementor-template-library-order-label {
+				@include padding-end(8px);
 
 				&:after {
 					font-family: eicons;
 					content: '\e956';
-					@include margin-start(5px);
+					@include margin-start(3px);
 				}
 			}
 
@@ -308,7 +309,7 @@ $library_screen_breakpoint: $screen-lg-max;
 .elementor-template-library-order-label {
 	text-transform: uppercase;
 	cursor: pointer;
-	@include padding-end(20px);
+	@include padding-end(22px);
 	user-select: none;
 
 	&:hover {
@@ -384,7 +385,8 @@ $library_screen_breakpoint: $screen-lg-max;
 	border: none;
 	border-bottom: 1px solid $editor-lightest;
 	border-radius: 0;
-	font-size: 13px;
+	font-size: 11px;
+	text-transform: uppercase;
 	padding: 8px 8px 8px 0;
 	transition: border 0.5s;
 
@@ -435,6 +437,10 @@ $library_screen_breakpoint: $screen-lg-max;
 		width: calc(20% - #{$items-space});
 	}
 
+	@media (max-width: $screen-lg-min) {
+		width: calc(33.333% - #{$items-space});
+	}
+
 	&.elementor-template-library-pro-template {
 
 		.elementor-template-library-template-body {
@@ -458,6 +464,13 @@ $library_screen_breakpoint: $screen-lg-max;
 	.elementor-template-library-template-body {
 		height: 200px;
 		position: relative;
+	}
+
+	@media (max-width: $screen-lg-min) {
+
+		.elementor-template-library-template-body {
+			height: 300px;
+		}
 	}
 
 	.elementor-template-library-template-screenshot {
