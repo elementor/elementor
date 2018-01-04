@@ -74,125 +74,6 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	/**
-	 * Get icons.
-	 *
-	 * Retrieve all the icons used by the toggle widget.
-	 *
-	 * @since 1.9.0
-	 * @access public
-	 *
-	 * @return array Widget icons.
-	 */
-	public function get_icons() {
-		return [
-			'fa fa-angle-double-down',
-			'fa fa-angle-double-left',
-			'fa fa-angle-double-right',
-			'fa fa-angle-double-up',
-			'fa fa-angle-down',
-			'fa fa-angle-left',
-			'fa fa-angle-right',
-			'fa fa-angle-up',
-			'fa fa-arrow-circle-down',
-			'fa fa-arrow-circle-left',
-			'fa fa-arrow-circle-o-down',
-			'fa fa-arrow-circle-o-left',
-			'fa fa-arrow-circle-o-right',
-			'fa fa-arrow-circle-o-up',
-			'fa fa-arrow-circle-right',
-			'fa fa-arrow-circle-up',
-			'fa fa-arrow-down',
-			'fa fa-arrow-left',
-			'fa fa-arrow-right',
-			'fa fa-arrow-up',
-			'fa fa-arrows',
-			'fa fa-arrows-alt',
-			'fa fa-arrows-h',
-			'fa fa-arrows-v',
-			'fa fa-exchange',
-			'fa fa-caret-down',
-			'fa fa-caret-left',
-			'fa fa-caret-right',
-			'fa fa-caret-square-o-down',
-			'fa fa-caret-square-o-left',
-			'fa fa-caret-square-o-right',
-			'fa fa-caret-square-o-up',
-			'fa fa-caret-up',
-			'fa fa-chevron-circle-down',
-			'fa fa-chevron-circle-left',
-			'fa fa-chevron-circle-right',
-			'fa fa-chevron-circle-up',
-			'fa fa-chevron-down',
-			'fa fa-chevron-left',
-			'fa fa-chevron-right',
-			'fa fa-chevron-up',
-			'fa fa-hand-o-down',
-			'fa fa-hand-o-left',
-			'fa fa-hand-o-right',
-			'fa fa-hand-o-up',
-			'fa fa-long-arrow-down',
-			'fa fa-long-arrow-left',
-			'fa fa-long-arrow-right',
-			'fa fa-long-arrow-up',
-			'fa fa-caret-square-o-down',
-			'fa fa-caret-square-o-left',
-			'fa fa-caret-square-o-right',
-			'fa fa-caret-square-o-up',
-			'fa fa-plus',
-			'fa fa-minus',
-			'fa fa-plus-circle',
-			'fa fa-minus-circle',
-			'fa fa-plus-square',
-			'fa fa-minus-square',
-			'fa fa-plus-square-o',
-			'fa fa-minus-square-o',
-			'fa fa-check',
-			'fa fa-times',
-			'fa fa-check-circle',
-			'fa fa-times-circle',
-			'fa fa-quora',
-			'fa fa-font',
-			'fa fa-question',
-			'fa fa-info',
-			'fa fa-question-circle',
-			'fa fa-info-circle',
-			'fa fa-exclamation',
-			'fa fa-exclamation-circle',
-			'fa fa-exclamation-triangle',
-			'fa fa-ellipsis-v',
-			'fa fa-ellipsis-h',
-			'fa fa-folder',
-			'fa fa-folder-open',
-			'fa fa-folder-o',
-			'fa fa-folder-open-o',
-			'fa fa-flag',
-			'fa fa-flag-checkered',
-			'fa fa-flag-o',
-			'fa fa-bookmark',
-			'fa fa-bookmark-o',
-			'fa fa-envelope',
-			'fa fa-envelope-open',
-			'fa fa-envelope-o',
-			'fa fa-envelope-open-o',
-			'fa fa-bell',
-			'fa fa-bell-o',
-			'fa fa-heart',
-			'fa fa-heart-o',
-			'fa fa-life-ring',
-			'fa fa-lightbulb-o',
-			'fa fa-diamond',
-			'fa fa-cog',
-			'fa fa-bug',
-			'fa fa-music',
-			'fa fa-graduation-cap',
-			'fa fa-cutlery',
-			'fa fa-coffee',
-			'fa fa-car',
-			'fa fa-camera',
-		];
-	}
-
-	/**
 	 * Register toggle widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -276,7 +157,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
-				'include' => self::get_icons(),
 				'default' => is_rtl() ? 'fa fa-caret-left' : 'fa fa-caret-right',
 				'label_block' => true,
 			]
@@ -287,12 +167,11 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Active Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
-				'include' => self::get_icons(),
 				'default' => 'fa fa-caret-up',
 				'label_block' => true,
 				'condition' => [
 					'icon!' => '',
-				]
+				],
 			]
 		);
 
@@ -441,7 +320,7 @@ class Widget_Toggle extends Widget_Base {
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'icon!' => '',
-				]
+				],
 			]
 		);
 
@@ -465,7 +344,7 @@ class Widget_Toggle extends Widget_Base {
 				'label_block' => false,
 				'condition' => [
 					'icon!' => '',
-				]
+				],
 			]
 		);
 
@@ -479,7 +358,7 @@ class Widget_Toggle extends Widget_Base {
 				],
 				'condition' => [
 					'icon!' => '',
-				]
+				],
 			]
 		);
 
@@ -493,7 +372,7 @@ class Widget_Toggle extends Widget_Base {
 				],
 				'condition' => [
 					'icon!' => '',
-				]
+				],
 			]
 		);
 
@@ -514,7 +393,7 @@ class Widget_Toggle extends Widget_Base {
 				],
 				'condition' => [
 					'icon!' => '',
-				]
+				],
 			]
 		);
 
@@ -527,7 +406,7 @@ class Widget_Toggle extends Widget_Base {
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'icon!' => '',
-				]
+				],
 			]
 		);
 
@@ -624,9 +503,9 @@ class Widget_Toggle extends Widget_Base {
 				<div class="elementor-toggle-item">
 					<<?php echo $settings['title_html_tag']; ?> <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>>
 						<?php if ( $settings['icon'] ) : ?>
-						<span class="elementor-toggle-icon elementor-toggle-icon-<?php echo $settings['icon_align']; ?>" aria-hidden="true">
-							<i class="elementor-toggle-icon-closed <?php echo $settings['icon']; ?>"></i>
-							<i class="elementor-toggle-icon-opened <?php echo $settings['icon_active']; ?>"></i>
+						<span class="elementor-toggle-icon elementor-toggle-icon-<?php echo esc_attr( $settings['icon_align'] ); ?>" aria-hidden="true">
+							<i class="elementor-toggle-icon-closed <?php echo esc_attr( $settings['icon'] ); ?>"></i>
+							<i class="elementor-toggle-icon-opened <?php echo esc_attr( $settings['icon_active'] ); ?>"></i>
 						</span>
 						<?php endif; ?>
 						<?php echo $item['tab_title']; ?>
