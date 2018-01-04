@@ -1352,6 +1352,7 @@
     line-height: 1;
     margin: 0;
     padding: 15px;
+    border-bottom: 1px solid #D4D4D4;
     cursor: pointer; }
     .elementor-toggle .elementor-tab-title .elementor-toggle-icon {
       display: inline-block;
@@ -1366,12 +1367,15 @@
         display: block; }
       .elementor-toggle .elementor-tab-title .elementor-toggle-icon .elementor-toggle-icon-opened {
         display: none; }
-    .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon-closed {
-      display: none; }
-    .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon-opened {
-      display: block; }
+    .elementor-toggle .elementor-tab-title.elementor-active {
+      border-bottom: none; }
+      .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon-closed {
+        display: none; }
+      .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon-opened {
+        display: block; }
   .elementor-toggle .elementor-tab-content {
-    padding: 15px 15px;
+    padding: 15px;
+    border-bottom: 1px solid #D4D4D4;
     display: none; }
 
 @media (max-width: 767px) {
