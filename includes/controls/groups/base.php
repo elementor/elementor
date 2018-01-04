@@ -201,6 +201,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * Initialize group control fields.
 	 *
+	 * @abstract
 	 * @since 1.2.2
 	 * @access protected
 	 */
@@ -471,6 +472,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * Wraps the group controls with a popover.
 	 *
+	 * @access private
 	 * @param array $fields Group control fields.
 	 *
 	 * @return array Fields wrapped with popover data to be rendered in frontend.

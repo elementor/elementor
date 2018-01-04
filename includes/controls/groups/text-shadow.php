@@ -91,6 +91,9 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 		return $controls;
 	}
 
+	/**
+	 * @access protected
+	 */
 	protected function get_default_options() {
 		return [
 			'popover' => [

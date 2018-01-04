@@ -11,6 +11,10 @@ class Plugins_Reporter extends Base_Reporter {
 
 	private $plugins;
 
+	/**
+	 * @access private
+	 * @since 1.0.0
+	 */
 	private function _get_plugins() {
 		if ( ! $this->plugins ) {
 			// Ensure get_plugins function is loaded
@@ -25,20 +29,36 @@ class Plugins_Reporter extends Base_Reporter {
 		return $this->plugins;
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_title() {
 		return 'Active Plugins';
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function is_enabled() {
 		return ! ! $this->_get_plugins();
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_fields() {
 		return [
 			'active_plugins' => 'Active Plugins',
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_active_plugins() {
 		return [
 			'value' => $this->_get_plugins(),

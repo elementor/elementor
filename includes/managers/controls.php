@@ -435,7 +435,7 @@ class Controls_Manager {
 	 * it will return the group control instance. When no ID was given, it will
 	 * return all the control groups.
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.10
 	 * @access public
 	 *
 	 * @param string $id Optional. Group ID. Default is null.

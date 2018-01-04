@@ -65,6 +65,9 @@ abstract class CSS_File {
 		$this->init_stylesheet();
 	}
 
+	/**
+	 * @access protected
+	 */
 	protected function use_external_file() {
 		return 'internal' !== get_option( 'elementor_css_print_method' );
 	}
@@ -274,6 +277,9 @@ abstract class CSS_File {
 		}
 	}
 
+	/**
+	 * @access public
+	 */
 	public function get_fonts() {
 		return $this->fonts;
 	}
@@ -496,8 +502,8 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @access protected
 	 * @since 1.2.0
-	 * @access private
 	*/
 	protected function set_path_and_url() {
 		$wp_upload_dir = wp_upload_dir( null, false );
