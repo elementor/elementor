@@ -9,10 +9,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WordPress_Reporter extends Base_Reporter {
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_title() {
 		return 'WordPress Environment';
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_fields() {
 		return [
 			'version' => 'Version',
@@ -29,6 +37,10 @@ class WordPress_Reporter extends Base_Reporter {
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_memory_limit() {
 		$result = [
 			'value' => WP_MEMORY_LIMIT,
@@ -53,30 +65,50 @@ class WordPress_Reporter extends Base_Reporter {
 		return $result;
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_version() {
 		return [
 			'value' => get_bloginfo( 'version' ),
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_is_multisite() {
 		return [
 			'value' => is_multisite() ? 'Yes' : 'No',
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_site_url() {
 		return [
 			'value' => get_site_url(),
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_home_url() {
 		return [
 			'value' => get_home_url(),
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_permalink_structure() {
 		global $wp_rewrite;
 
@@ -91,18 +123,30 @@ class WordPress_Reporter extends Base_Reporter {
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_language() {
 		return [
 			'value' => get_bloginfo( 'language' ),
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_max_upload_size() {
 		return [
 			'value' => size_format( wp_max_upload_size() ),
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_timezone() {
 		$timezone = get_option( 'timezone_string' );
 		if ( ! $timezone ) {
@@ -114,12 +158,20 @@ class WordPress_Reporter extends Base_Reporter {
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_admin_email() {
 		return [
 			'value' => get_option( 'admin_email' ),
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_debug_mode() {
 		return [
 			'value' => WP_DEBUG ? 'Active' : 'Inactive',
