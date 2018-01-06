@@ -90,20 +90,6 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
-			'type',
-			[
-				'label' => __( 'Type', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'horizontal',
-				'options' => [
-					'horizontal' => __( 'Horizontal', 'elementor' ),
-					'vertical' => __( 'Vertical', 'elementor' ),
-				],
-				'prefix_class' => 'elementor-tabs-view-',
-			]
-		);
-
-		$this->add_control(
 			'tabs',
 			[
 				'label' => __( 'Tabs Items', 'elementor' ),
@@ -146,6 +132,21 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
+			]
+		);
+
+		$this->add_control(
+			'type',
+			[
+				'label' => __( 'Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'horizontal',
+				'options' => [
+					'horizontal' => __( 'Horizontal', 'elementor' ),
+					'vertical' => __( 'Vertical', 'elementor' ),
+				],
+				'prefix_class' => 'elementor-tabs-view-',
+				'separator' => 'before',
 			]
 		);
 
