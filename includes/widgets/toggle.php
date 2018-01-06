@@ -215,7 +215,7 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'space_between',
 			[
 				'label' => __( 'Space Between', 'elementor' ),
