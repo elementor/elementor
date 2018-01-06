@@ -222,7 +222,8 @@ class Widget_Toggle extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
-						'max' => 50,
+						'min' => 0,
+						'max' => 100,
 					],
 				],
 				'selectors' => [
