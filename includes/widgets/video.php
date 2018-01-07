@@ -91,7 +91,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Enter your YouTube link', 'elementor' ),
-				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
+				'default' => Utils::get_placeholder_video_url( 'youtube' ),
 				'label_block' => true,
 				'condition' => [
 					'video_type' => 'youtube',
@@ -105,7 +105,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Vimeo Link', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Enter your Vimeo link', 'elementor' ),
-				'default' => 'https://vimeo.com/235215203',
+				'default' => Utils::get_placeholder_video_url( 'vimeo' ),
 				'label_block' => true,
 				'condition' => [
 					'video_type' => 'vimeo',

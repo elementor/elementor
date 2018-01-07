@@ -365,8 +365,8 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['video_link'] = [
 			'label' => _x( 'Video Link', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
-			'placeholder' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
 			'description' => __( 'Insert YouTube link or video file (mp4 is recommended)', 'elementor' ),
+			'placeholder' => Utils::get_placeholder_video_url( 'youtube' ),
 			'label_block' => true,
 			'default' => '',
 			'condition' => [
