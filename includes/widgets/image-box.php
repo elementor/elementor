@@ -117,7 +117,6 @@ class Widget_Image_Box extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 				'placeholder' => __( 'Your Description', 'elementor' ),
-				'title' => __( 'Input image text here', 'elementor' ),
 				'separator' => 'none',
 				'rows' => 10,
 				'show_label' => false,

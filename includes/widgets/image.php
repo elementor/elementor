@@ -125,7 +125,6 @@ class Widget_Image extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'placeholder' => __( 'Enter your caption about the image', 'elementor' ),
-				'title' => __( 'Input image caption here', 'elementor' ),
 			]
 		);
 
