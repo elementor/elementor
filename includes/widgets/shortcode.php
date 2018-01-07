@@ -105,7 +105,7 @@ class Widget_Shortcode extends Widget_Base {
 		$this->add_control(
 			'shortcode',
 			[
-				'label' => __( 'Insert your shortcode here', 'elementor' ),
+				'label' => __( 'Enter your shortcode here', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => '[gallery id="123" size="medium"]',
 				'default' => '',
