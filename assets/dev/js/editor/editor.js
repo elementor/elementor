@@ -385,7 +385,7 @@ App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.saver.doAutoSave();
+					elementor.saver.saveDraft();
 				}
 			}
 		};

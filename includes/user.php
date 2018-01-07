@@ -88,6 +88,10 @@ class User {
 		return true;
 	}
 
+	/**
+	 * @static
+	 * @access public
+	 */
 	public static function is_current_user_can_edit_post_type( $post_type ) {
 		if ( ! post_type_exists( $post_type ) ) {
 			return false;

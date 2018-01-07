@@ -431,9 +431,8 @@ module.exports = Marionette.Behavior.extend( {
 			buttonPreview: '#elementor-panel-saver-button-preview',
 			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
-			menuDiscard: '#elementor-panel-saver-menu-discard',
 			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
-			lastEdited: '.elementor-last-edited'
+			lastEditedWrapper: '.elementor-last-edited-wrapper'
 		};
 	},
 
@@ -441,8 +440,7 @@ module.exports = Marionette.Behavior.extend( {
 		return {
 			'click @ui.buttonPreview': 'onClickButtonPreview',
 			'click @ui.buttonPublish': 'onClickButtonPublish',
-			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
-			'click @ui.menuDiscard': 'onClickMenuDiscard'
+			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft'
 		};
 	},
 
@@ -496,7 +494,7 @@ module.exports = Marionette.Behavior.extend( {
 	onBeforeSave: function( options ) {
 		NProgress.start();
 		if ( 'autosave' === options.status ) {
-			this.ui.lastEdited.addClass( 'elementor-state-active' );
+			this.ui.lastEditedWrapper.addClass( 'elementor-state-active' );
 		} else {
 			this.ui.buttonPublish.addClass( 'elementor-button-state' );
 		}
@@ -505,14 +503,15 @@ module.exports = Marionette.Behavior.extend( {
 	onAfterSave: function( data ) {
 		NProgress.done();
 		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
-		this.ui.lastEdited.removeClass( 'elementor-state-active' );
+		this.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
 		this.refreshWpPreview();
 		this.setLastEdited( data );
 	},
 
 	setLastEdited: function( data ) {
-		this.ui.lastEdited
+		this.ui.lastEditedWrapper
 			.removeClass( 'elementor-button-state' )
+			.find( '.elementor-last-edited' )
 			.html( data.config.last_edited );
 	},
 
@@ -561,25 +560,15 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickMenuSaveDraft: function() {
-		elementor.saver.saveAutoSave( {
-			onSuccess: function() {
-				location.href = elementor.config.exit_to_dashboard_url;
-			}
-		} );
-	},
-
-	onClickMenuDiscard: function() {
-		elementor.saver.discard();
+		elementor.saver.saveDraft();
 	},
 
 	setMenuItems: function( postStatus ) {
 		var publishLabel = 'publish';
-		this.ui.menuDiscard.hide();
 
 		switch ( postStatus ) {
 			case 'publish':
 			case 'private':
-				this.ui.menuDiscard.show();
 				publishLabel = 'update';
 				break;
 			case 'draft':
@@ -624,6 +613,8 @@ var Module = require( 'elementor-utils/module' );
 module.exports = Module.extend( {
 	autoSaveTimer: null,
 
+	autosaveInterval: elementor.config.autosave_interval * 1000,
+
 	isSaving: false,
 
 	isChangedDuringSave: false,
@@ -633,26 +624,46 @@ module.exports = Module.extend( {
 	},
 
 	startTimer: function( hasChanges ) {
+		clearTimeout( this.autoSaveTimer );
 		if ( hasChanges ) {
-			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), 5000 );
-		} else if ( ! this.isChangedDuringSave ) {
-			clearTimeout( this.autoSaveTimer );
+			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), this.autosaveInterval );
+		}
+	},
+
+	saveDraft: function() {
+		if ( ! this.isEditorChanged() ) {
+			return;
+		}
+
+		var postStatus = elementor.settings.page.model.get( 'post_status' );
+
+		switch ( postStatus ) {
+			case 'publish':
+			case 'private':
+				this.doAutoSave();
+				break;
+			default:
+				// Update and create a revision
+				this.update();
 		}
 	},
 
 	doAutoSave: function() {
 		var editorMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
-		if ( ! this.isEditorChanged() || this.isSaving || 'edit' !== editorMode ) {
+		// Avoid auto save for Revisions Preview changes.
+		if ( 'edit' !== editorMode ) {
 			return;
 		}
 
 		this.saveAutoSave();
-
-		this.autoSaveTimer = null;
 	},
 
 	saveAutoSave: function( options ) {
+		if ( ! this.isEditorChanged() ) {
+			return;
+		}
+
 		options = _.extend( {
 			status: 'autosave'
 		}, options );
@@ -5029,7 +5040,7 @@ App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.saver.doAutoSave();
+					elementor.saver.saveDraft();
 				}
 			}
 		};
@@ -13350,7 +13361,10 @@ module.exports = Marionette.LayoutView.extend( {
 var RevisionModel = require( './model' );
 
 module.exports = Backbone.Collection.extend( {
-	model: RevisionModel
+	model: RevisionModel,
+	comparator: function( model ) {
+		return -model.get( 'timestamp' );
+	}
 } );
 
 },{"./model":143}],141:[function(require,module,exports){
@@ -13373,27 +13387,16 @@ RevisionsManager = function() {
 	};
 
 	var onEditorSaved = function( data ) {
-		if ( data.last_revision ) {
-			self.addRevision( data.last_revision );
+		if ( data.latest_revisions ) {
+			self.addRevisions( data.latest_revisions );
 		}
 
-		var revisionsToKeep = revisions.filter( function( revision ) {
-			return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
-		} );
-
-		revisions.reset( revisionsToKeep );
-
-		if ( 'current' === data.last_revision.type ) {
-			// Move current to top
-			var current = revisions.findWhere( {
-				id: elementor.config.post_id
+		if ( data.revisions_ids ) {
+			var revisionsToKeep = revisions.filter( function( revision ) {
+				return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
 			} );
 
-			if ( current ) {
-				revisions.remove( current );
-			}
-
-			revisions.add( current, { at: 0 } );
+			revisions.reset( revisionsToKeep );
 		}
 	};
 
@@ -13443,16 +13446,18 @@ RevisionsManager = function() {
 		return elementor.ajax.send( 'get_revision_data', options );
 	};
 
-	this.addRevision = function( revisionData ) {
-		var existedModel = revisions.findWhere( {
-			id: revisionData.id
+	this.addRevisions = function( items ) {
+		items.forEach( function( item ) {
+			var existedModel = revisions.findWhere( {
+				id: item.id
+			} );
+
+			if ( existedModel ) {
+				revisions.remove( existedModel );
+			}
+
+			revisions.add( item );
 		} );
-
-		if ( existedModel ) {
-			revisions.remove( existedModel );
-		}
-
-		revisions.add( revisionData, { at: 0 } );
 	};
 
 	this.deleteRevision = function( revisionModel, options ) {

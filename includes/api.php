@@ -160,6 +160,10 @@ class Api {
 		return $templates;
 	}
 
+	/**
+	 * @static
+	 * @access public
+	 */
 	public static function get_feed_data( $force_update = false ) {
 		self::_get_info_data( $force_update );
 
