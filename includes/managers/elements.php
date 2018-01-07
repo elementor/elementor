@@ -171,6 +171,7 @@ class Elements_Manager {
 
 	/**
 	 * @param array $request
+	 * @access public
 	 *
 	 * @return bool
 	 * @throws \Exception

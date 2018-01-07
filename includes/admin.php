@@ -368,19 +368,17 @@ class Admin {
 					<p>
 					<?php
 						printf(
-							/* translators: 1: details URL, 2: accessibility text, 3: version number, 4: update URL, 5: accessibility text */
+							/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text */
 							__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 							esc_url( $details_url ),
-							esc_attr(
-								sprintf(
-									/* translators: %s: version number */
-									__( 'View Elementor version %s details', 'elementor' ),
-									$product->new_version
-								)
-							),
+							esc_attr( sprintf(
+								/* translators: %s: Elementor version */
+								__( 'View Elementor version %s details', 'elementor' ),
+								$product->new_version
+							) ),
 							$product->new_version,
 							esc_url( $upgrade_url ),
-							esc_attr( __( 'Update Now', 'elementor' ) )
+							esc_attr( __( 'Update Elementor Now', 'elementor' ) )
 						);
 						?>
 					</p>
@@ -416,7 +414,7 @@ class Admin {
 
 		if ( $is_elementor_screen ) {
 			$footer_text = sprintf(
-				/* translators: %s: link to plugin review */
+				/* translators: %s: Link to plugin review */
 				__( 'Enjoyed <strong>Elementor</strong>? Please leave us a %s rating. We really appreciate your support!', 'elementor' ),
 				'<a href="https://wordpress.org/support/plugin/elementor/reviews/?filter=5#new-post" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 			);
@@ -671,6 +669,9 @@ class Admin {
 		wp_send_json_success();
 	}
 
+	/**
+	 * @access private
+	 */
 	private function get_dashboard_overview_widget_footer_actions() {
 		$base_actions = [
 			'blog' => [
@@ -709,6 +710,9 @@ class Admin {
 		return $actions;
 	}
 
+	/**
+	 * @access public
+	 */
 	public function admin_action_new_post() {
 		check_admin_referer( 'elementor_action_new_post' );
 

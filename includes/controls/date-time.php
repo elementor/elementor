@@ -87,7 +87,7 @@ class Control_Date_Time extends Base_Data_Control {
 	 * Get the default settings of the date time control. Used to return the
 	 * default settings while initializing the date time control.
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.

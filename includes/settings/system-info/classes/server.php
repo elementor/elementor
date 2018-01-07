@@ -10,10 +10,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Server_Reporter extends Base_Reporter {
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_title() {
 		return 'Server Environment';
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_fields() {
 		return [
 			'os' => 'Operating System',
@@ -28,18 +36,30 @@ class Server_Reporter extends Base_Reporter {
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_os() {
 		return [
 			'value' => PHP_OS,
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_software() {
 		return [
 			'value' => $_SERVER['SERVER_SOFTWARE'],
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_php_version() {
 		$result = [
 			'value' => PHP_VERSION,
@@ -54,18 +74,30 @@ class Server_Reporter extends Base_Reporter {
 		return $result;
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_php_max_input_vars() {
 		return [
 			'value' => ini_get( 'max_input_vars' ),
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_php_max_post_size() {
 		return [
 			'value' => ini_get( 'post_max_size' ),
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_gd_installed() {
 		$gd_installed = extension_loaded( 'gd' );
 
@@ -75,6 +107,10 @@ class Server_Reporter extends Base_Reporter {
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_mysql_version() {
 		global $wpdb;
 
@@ -83,6 +119,9 @@ class Server_Reporter extends Base_Reporter {
 		];
 	}
 
+	/**
+	 * @access public
+	 */
 	public function get_write_permissions() {
 		$paths_to_check = [
 			ABSPATH => 'WordPress root directory',
@@ -128,6 +167,10 @@ class Server_Reporter extends Base_Reporter {
 		];
 	}
 
+	/**
+	 * @access public
+	 * @since 1.0.0
+	 */
 	public function get_elementor_library() {
 		$response = wp_remote_post(
 			Api::$api_info_url, [
