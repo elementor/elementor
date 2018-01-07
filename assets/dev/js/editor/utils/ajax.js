@@ -3,6 +3,7 @@ var Ajax;
 Ajax = {
 	config: {},
 	requests: {},
+	cache: {},
 
 	initConfig: function() {
 		this.config = {
@@ -21,17 +22,86 @@ Ajax = {
 		this.debounceSendBatch = _.debounce( this.sendBatch.bind( this ), 500 );
 	},
 
-	addRequest: function( action, options ) {
-		if ( ! options.unique_id ) {
-			options.unique_id = '';
+	getCacheKey: function( request ) {
+		return JSON.stringify( {
+			unique_id: request.unique_id,
+			data: request.data
+		} );
+	},
+
+	loadObjects: function( options ) {
+		var self = this,
+			dataCollection = {},
+			deferredArray = [];
+
+		if ( options.before ) {
+			options.before();
 		}
 
-		this.requests[ action + options.unique_id ] = {
+		options.ids.forEach( function( objectId ) {
+			deferredArray.push( self.load( {
+				action: options.action,
+				unique_id: options.data.object_type + objectId,
+				data: jQuery.extend( { id: objectId }, options.data )
+			} ).done( function( response ) {
+				dataCollection = jQuery.extend( dataCollection, response.data );
+			}) );
+		} );
+
+		jQuery.when.apply( jQuery, deferredArray ).done( function() {
+			options.success( {
+				data: dataCollection
+			} );
+		} );
+	},
+
+	load: function( request ) {
+		var self = this;
+		if ( ! request.unique_id ) {
+			request.unique_id = request.action;
+		}
+
+		if ( request.before ) {
+			request.before();
+		}
+
+		var	deferred,
+			cacheKey = self.getCacheKey( request );
+
+		if ( _.has( self.cache, cacheKey ) ) {
+			deferred = jQuery.Deferred()
+				.done( request.success )
+				.resolve( {
+					data: self.cache[ cacheKey ]
+				} );
+		} else {
+			deferred = self.addRequest( request.action, {
+				data: request.data,
+				unique_id: request.unique_id,
+				success: function( response ) {
+					self.cache[ cacheKey ] = response.data;
+				}
+			} ).done( request.success );
+		}
+
+		return deferred;
+	},
+
+	addRequest: function( action, options ) {
+		options.deferred = jQuery.Deferred().done( options.success ).fail( options.error );
+
+		if ( ! options.unique_id ) {
+			options.unique_id = action;
+		}
+
+		this.requests[ options.unique_id ] = {
 			action: action,
 			options: options
 		};
 
 		this.debounceSendBatch();
+
+		return options.deferred;
 	},
 
 	sendBatch: function() {
@@ -50,20 +120,16 @@ Ajax = {
 
 		this.send( 'ajax', {
 			data: {
-				actions: actions
+				actions: JSON.stringify( actions )
 			},
 			success: function( data ) {
 				_.each( data.responses, function( response, id ) {
 					var options = requests[ id ].options;
 					if ( options ) {
-						if ( response.success && options.success ) {
-							try {
-								options.success( response.data );
-							} catch ( error ) {}
-						} else if ( ! response.success && options.error ) {
-							try {
-								options.error( response.data );
-							} catch ( error ) {}
+						if ( response.success ) {
+							options.deferred.resolve( response );
+						} else if ( ! response.success ) {
+							options.deferred.reject( response );
 						}
 					}
 				} );
