@@ -159,7 +159,7 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'separator' => 'before',
 			]
 		);
