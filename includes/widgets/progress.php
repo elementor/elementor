@@ -93,7 +93,6 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'My Skill', 'elementor' ),
 				'label_block' => true,
 			]
