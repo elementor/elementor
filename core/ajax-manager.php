@@ -37,11 +37,11 @@ class Ajax_Manager {
 		do_action( 'elementor/ajax/register_actions', $this );
 
 		$responses = [];
+		$requests = json_decode( stripslashes( $_REQUEST['actions'] ) );
 
-		foreach ( $_REQUEST['actions'] as $id => $action_data ) {
-
+		foreach ( $requests as $id => $action_data ) {
 			$this->current_action_id = $id;
-			if ( ! isset( $this->ajax_actions[ $action_data['action'] ] ) ) {
+			if ( ! isset( $this->ajax_actions[ $action_data->action ] ) ) {
 				$responses[ $id ] = [
 					'error' => 'Action Not Found',
 				];
@@ -50,7 +50,7 @@ class Ajax_Manager {
 			}
 
 			try {
-				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ]['callback'], $action_data['data'], $this );
+				$results = call_user_func( $this->ajax_actions[ $action_data->action ]['callback'], (array) $action_data->data, $this );
 				if ( $results ) {
 					$this->add_response_data( true, $results );
 				} elseif ( false === $results ) {
