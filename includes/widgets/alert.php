@@ -154,7 +154,7 @@ class Widget_Alert extends Widget_Base {
 		$this->start_controls_section(
 			'section_type',
 			[
-				'label' => __( 'Alert Type', 'elementor' ),
+				'label' => __( 'Alert', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
