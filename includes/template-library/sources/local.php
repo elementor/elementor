@@ -171,8 +171,8 @@ class Source_Local extends Source_Base {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_submenu_page(
 				Settings::PAGE_ID,
-				__( 'My Library', 'elementor' ),
-				__( 'My Library', 'elementor' ),
+				_x( 'My Library', 'Template Library', 'elementor' ),
+				_x( 'My Library', 'Template Library', 'elementor' ),
 				Editor::EDITING_CAPABILITY,
 				'edit.php?post_type=' . self::CPT
 			);
