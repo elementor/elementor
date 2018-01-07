@@ -256,6 +256,47 @@ class Utils {
 	}
 
 	/**
+	 * Get placeholder video URL.
+	 *
+	 * Retrieve the URL of the placeholder video.
+	 *
+	 * This method will
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 * @static
+	 *
+	 * @param string $provider Optional. The video service provider. Default is
+	 *                         'youtube'.
+	 *
+	 * @return string The URL of the default placeholder video used by Elementor.
+	 */
+	public static function get_placeholder_video_url( $provider = 'youtube' ) {
+		$placeholder_video = [
+			'youtube' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
+			'vimeo' => 'https://vimeo.com/235215203',
+		];
+
+		/**
+		 * Get placeholder video URL.
+		 *
+		 * Filters the URL of the default placeholder video used by Elementor.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param array $placeholder_video An array of placeholder URLs for all
+		 *                                 the supported services used by Elementor.
+		 */
+		$placeholder_video = apply_filters( 'elementor/utils/get_placeholder_video_url', $placeholder_video );
+
+		if ( $provider ) {
+			return $placeholder_video[ $provider ];
+		}
+
+		return $placeholder_video;
+	}
+
+	/**
 	 * Generate random string.
 	 *
 	 * Returns a string containing a hexadecimal representation of randon number.
