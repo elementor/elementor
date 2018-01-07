@@ -166,7 +166,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'default' => [
 							'is_external' => 'true',
 						],
-						'placeholder' => __( 'http://your-link.com', 'elementor' ),
+						'placeholder' => __( 'https://your-link.com', 'elementor' ),
 					],
 				],
 				'title_field' => '<i class="{{ social }}"></i> {{{ social.replace( \'fa fa-\', \'\' ).replace( \'-\', \' \' ).replace( /\b\w/g, function( letter ){ return letter.toUpperCase() } ) }}}',
