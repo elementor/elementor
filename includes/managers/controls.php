@@ -6,8 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 /**
  * Elementor controls manager class.
  *
- * A base abstract class that provides the needed properties and methods to
- * manage Elementor controls.
+ * Elementor controls manager handler class is responsible for registering and
+ * initializing all the supported controls, both regular controls and the group
+ * controls.
  *
  * @since 1.0.0
  */
@@ -214,7 +215,7 @@ class Controls_Manager {
 	}
 
 	/**
-	 * Register element controls.
+	 * Register controls.
 	 *
 	 * This method creates a list of all the supported controls by requiring the
 	 * control files and initializing each one of them.
@@ -435,7 +436,7 @@ class Controls_Manager {
 	 * it will return the group control instance. When no ID was given, it will
 	 * return all the control groups.
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.10
 	 * @access public
 	 *
 	 * @param string $id Optional. Group ID. Default is null.

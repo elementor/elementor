@@ -68,7 +68,11 @@ class Tools extends Settings_Page {
 			wp_send_json_error( __( 'An error occurred', 'elementor' ) );
 		} else {
 			Plugin::$instance->posts_css_manager->clear_cache();
-			wp_send_json_success( sprintf( __( '%d Rows Affected', 'elementor' ), $rows_affected ) );
+			wp_send_json_success( sprintf(
+				/* translators: %s: Number of rows */
+				__( '%d Rows Affected', 'elementor' ),
+				$rows_affected
+			) );
 		}
 	}
 
@@ -152,7 +156,11 @@ class Tools extends Settings_Page {
 				'sections' => [
 					'replace_url' => [
 						'callback' => function() {
-							$intro_text = sprintf( __( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" href="%s">backup your database</a> before using Replace URL.', 'elementor' ), 'https://codex.wordpress.org/WordPress_Backups' );
+							$intro_text = sprintf(
+								/* translators: %s: Codex URL */
+								__( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" href="%s">backup your database</a> before using Replace URL.', 'elementor' ),
+								'https://codex.wordpress.org/WordPress_Backups'
+							);
 							$intro_text = '<div>' . $intro_text . '</div>';
 
 							echo $intro_text;
@@ -176,7 +184,11 @@ class Tools extends Settings_Page {
 					'rollback' => [
 						'label' => __( 'Rollback to Previous Version', 'elementor' ),
 						'callback' => function() {
-							$intro_text = sprintf( __( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ), ELEMENTOR_VERSION );
+							$intro_text = sprintf(
+								/* translators: %s: Elementor version */
+								__( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ),
+								ELEMENTOR_VERSION
+							);
 							$intro_text = '<p>' . $intro_text . '</p>';
 
 							echo $intro_text;
@@ -186,7 +198,15 @@ class Tools extends Settings_Page {
 								'label' => __( 'Rollback Version', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<a href="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>', wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback' ), 'elementor_rollback' ), sprintf( __( 'Reinstall v%s', 'elementor' ), ELEMENTOR_PREVIOUS_STABLE_VERSION ) ),
+									'html' => sprintf(
+										'<a href="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
+										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback' ), 'elementor_rollback' ),
+										sprintf(
+											/* translators: %s: Elementor previous stable version */
+											__( 'Reinstall v%s', 'elementor' ),
+											ELEMENTOR_PREVIOUS_STABLE_VERSION
+										)
+									),
 									'desc' => '<span style="color: red;">' . __( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
 								],
 							],
@@ -195,7 +215,11 @@ class Tools extends Settings_Page {
 					'beta' => [
 						'label' => __( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							$intro_text = sprintf( __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ), ELEMENTOR_VERSION );
+							$intro_text = sprintf(
+								/* translators: %s: Elementor version */
+								__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ),
+								ELEMENTOR_VERSION
+							);
 							$intro_text = '<p>' . $intro_text . '</p>';
 
 							echo $intro_text;

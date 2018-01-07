@@ -286,6 +286,9 @@ class Group_Control_Typography extends Group_Control_Base {
 		return $field_args;
 	}
 
+	/**
+	 * @access protected
+	 */
 	protected function get_default_options() {
 		return [
 			'popover' => [

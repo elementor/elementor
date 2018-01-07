@@ -60,7 +60,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 *
 	 * Get image size control type.
 	 *
-	 * @since 1.2.2
+	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
@@ -360,6 +360,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		return $image_sizes;
 	}
 
+	/**
+	 * @access protected
+	 */
 	protected function get_default_options() {
 		return [
 			'popover' => false,
