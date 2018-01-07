@@ -71,7 +71,7 @@ module.exports = Module.extend( {
 
 	discard: function() {
 		var self = this;
-		elementor.ajax.send( 'discard_changes', {
+		elementor.ajax.addRequest( 'discard_changes', {
 			data: {
 				post_id: elementor.config.post_id
 			},
@@ -146,7 +146,11 @@ module.exports = Module.extend( {
 
 		self.isChangedDuringSave = false;
 
-		self.xhr = elementor.ajax.send( 'save_builder', {
+		if ( 'autosave' !== options.status && statusChanged ) {
+					elementor.settings.page.model.set( 'post_status', options.status );
+		}
+
+		elementor.ajax.addRequest( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
@@ -158,10 +162,6 @@ module.exports = Module.extend( {
 
 				if ( ! self.isChangedDuringSave ) {
 					self.setFlagEditorChange( false );
-				}
-
-				if ( 'autosave' !== options.status && statusChanged ) {
-					elementor.settings.page.model.set( 'post_status', options.status );
 				}
 
 				if ( data.config ) {
@@ -190,12 +190,9 @@ module.exports = Module.extend( {
 					.trigger( 'after:saveError:' + options.status, data );
 			}
 		} );
-
-		return self.xhr;
 	},
 
 	afterAjax: function() {
 		this.isSaving = false;
-		this.xhr = null;
 	}
 } );

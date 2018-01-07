@@ -164,11 +164,11 @@ ElementModel = Backbone.Model.extend( {
 	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
-		return elementor.ajax.send( 'render_widget', {
+		return elementor.ajax.addRequest( 'render_widget', {
+			unique_id: this.cid,
 			data: {
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data ),
-				_nonce: elementor.config.nonce
+				data: JSON.stringify( data )
 			},
 			success: this.onRemoteGetHtml.bind( this )
 		} );
