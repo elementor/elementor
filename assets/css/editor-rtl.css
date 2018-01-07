@@ -678,6 +678,8 @@ select {
   .elementor-panel ::selection {
     background: #5bc0de;
     color: #ffffff; }
+  .elementor-panel a {
+    color: #B7084E; }
   .elementor-panel h1,
   .elementor-panel h2,
   .elementor-panel h3,
@@ -1229,7 +1231,6 @@ select {
     position: relative;
     padding: 0 20px 15px; }
     .elementor-panel .elementor-control a {
-      color: #B7084E;
       font-weight: 500;
       text-decoration: none;
       border-bottom: 1px dotted transparent;
@@ -1420,7 +1421,17 @@ select {
     .elementor-panel .elementor-responsive-switcher:hover {
       background-color: #c2cbd2; }
     .elementor-panel .elementor-responsive-switcher i {
+      position: relative;
+      display: block;
       line-height: 18px; }
+      .elementor-panel .elementor-responsive-switcher i:before {
+        height: 18px;
+        width: 18px;
+        position: absolute;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+            -ms-transform: translateX(-50%);
+                transform: translateX(-50%); }
   .elementor-device-desktop #elementor-panel .elementor-panel-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
     background: #c2cbd2; }
     .elementor-device-desktop #elementor-panel .elementor-panel-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher:not(.elementor-responsive-switcher-desktop) {
@@ -2253,20 +2264,20 @@ select {
   .elementor-panel #elementor-panel-saver-save-options {
     width: 35px;
     border-right: 1px solid #495157; }
-    .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited {
+    .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited-wrapper {
       font-size: 11px;
       font-style: italic;
       color: #a4afb7;
       padding: 5px 0 15px; }
-      .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited:not(.elementor-state-active) .elementor-state-icon {
+      .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited-wrapper:not(.elementor-state-active) .elementor-state-icon {
         display: none; }
-      .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited time {
+      .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited-wrapper time {
         border-bottom: 1px dotted transparent;
         -webkit-transition: all ease-in-out .3s;
         -o-transition: all ease-in-out .3s;
         transition: all ease-in-out .3s;
         cursor: pointer; }
-        .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited time:hover {
+        .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited-wrapper time:hover {
           border-bottom-color: inherit; }
   .elementor-panel #elementor-panel-saver-button-preview a {
     color: #a4afb7; }

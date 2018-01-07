@@ -73,7 +73,7 @@ class Group_Control_Background extends Group_Control_Base {
 	 *
 	 * Get background control type.
 	 *
-	 * @since 1.2.2
+	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
@@ -464,6 +464,9 @@ class Group_Control_Background extends Group_Control_Base {
 		return parent::prepare_fields( $fields );
 	}
 
+	/**
+	 * @access protected
+	 */
 	protected function get_default_options() {
 		return [
 			'popover' => false,

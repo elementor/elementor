@@ -144,6 +144,10 @@ class Utils {
 		return $preview_url;
 	}
 
+	/**
+	 * @static
+	 * @access public
+	 */
 	public static function get_wp_preview_url( $post_id ) {
 		$query_args = [];
 
@@ -168,6 +172,10 @@ class Utils {
 	}
 
 
+	/**
+	 * @static
+	 * @access public
+	 */
 	public static function get_exit_to_dashboard_url( $post_id ) {
 		$exit_url = get_edit_post_link( $post_id, 'raw' );
 
@@ -373,6 +381,10 @@ class Utils {
 		}
 	}
 
+	/**
+	 * @static
+	 * @access public
+	 */
 	public static function get_last_edited( $post_id ) {
 		$post = get_post( $post_id );
 		$autosave_post = wp_get_post_autosave( $post_id );
@@ -385,16 +397,20 @@ class Utils {
 		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
 
 		if ( $autosave_post ) {
-			/* translators: 1: Post edited human date, 2:  Post edited data, 3: Post author name */
-			$last_edited = sprintf( __( 'Draft saved on <time>%1$s</time> by %2$s', 'elementor' ), $date, $display_name );
+			/* translators: 1: Saving date, 2: Author display name */
+			$last_edited = sprintf( __( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		} else {
-			/* translators: 1: Post edited human date, 2:  Post edited data, 3: Post author name */
-			$last_edited = sprintf( __( 'Last edited on <time>%1$s</time> by %2$s', 'elementor' ), $date, $display_name );
+			/* translators: 1: Editing date, 2: Author display name */
+			$last_edited = sprintf( __( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		}
 
 		return $last_edited;
 	}
 
+	/**
+	 * @static
+	 * @access public
+	 */
 	public static function get_create_new_post_url( $post_type = 'page' ) {
 		$new_post_url = add_query_arg( [
 			'action' => 'elementor_new_post',
