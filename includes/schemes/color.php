@@ -5,42 +5,89 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor color scheme.
+ *
+ * Elementor color scheme class is responsible for initializing a scheme for
+ * colors.
+ *
+ * @since 1.0.0
+ */
 class Scheme_Color extends Scheme_Base {
 
+	/**
+	 * 1st color scheme.
+	 */
 	const COLOR_1 = '1';
+
+	/**
+	 * 2nd color scheme.
+	 */
 	const COLOR_2 = '2';
+
+	/**
+	 * 3rd color scheme.
+	 */
 	const COLOR_3 = '3';
+
+	/**
+	 * 4th color scheme.
+	 */
 	const COLOR_4 = '4';
 
 	/**
-	 * @static
+	 * Get color scheme type.
+	 *
+	 * Retrieve the color scheme type.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return string Color scheme type.
+	 */
 	public static function get_type() {
 		return 'color';
 	}
 
 	/**
+	 * Get color scheme title.
+	 *
+	 * Retrieve the color scheme title.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string Color scheme title.
+	 */
 	public function get_title() {
 		return __( 'Colors', 'elementor' );
 	}
 
 	/**
+	 * Get color scheme disabled title.
+	 *
+	 * Retrieve the color scheme disabled title.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string Color scheme disabled title.
+	 */
 	public function get_disabled_title() {
 		return __( 'Color Palettes', 'elementor' );
 	}
 
 	/**
+	 * Get color scheme titles.
+	 *
+	 * Retrieve the color scheme titles.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return array Color scheme titles.
+	 */
 	public function get_scheme_titles() {
 		return [
 			self::COLOR_1 => __( 'Primary', 'elementor' ),
@@ -51,9 +98,15 @@ class Scheme_Color extends Scheme_Base {
 	}
 
 	/**
+	 * Get default color scheme.
+	 *
+	 * Retrieve the default color scheme.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return array Default color scheme.
+	 */
 	public function get_default_scheme() {
 		return [
 			self::COLOR_1 => '#6ec1e4',
@@ -64,9 +117,14 @@ class Scheme_Color extends Scheme_Base {
 	}
 
 	/**
+	 * Print color scheme content template.
+	 *
+	 * Used to generate the HTML in the editor using Underscore JS template. The
+	 * variables for the class are available using `data` JS object.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function print_template_content() {
 		?>
 		<div class="elementor-panel-scheme-content elementor-panel-box">
@@ -103,9 +161,15 @@ class Scheme_Color extends Scheme_Base {
 	}
 
 	/**
+	 * Init system color schemes.
+	 *
+	 * Initialize the system color schemes.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 *
+	 * @return array System color schemes.
+	 */
 	protected function _init_system_schemes() {
 		return [
 			'joker' => [
@@ -193,17 +257,29 @@ class Scheme_Color extends Scheme_Base {
 	}
 
 	/**
+	 * Get system color schemes to print.
+	 *
+	 * Retrieve the system color schemes
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 *
+	 * @return array The system color schemes.
+	 */
 	protected function _get_system_schemes_to_print() {
 		return $this->get_system_schemes();
 	}
 
 	/**
+	 * Get current color scheme title.
+	 *
+	 * Retrieve the current color scheme title.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 *
+	 * @return string The current color scheme title.
+	 */
 	protected function _get_current_scheme_title() {
 		return __( 'Color Palette', 'elementor' );
 	}

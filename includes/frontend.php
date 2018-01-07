@@ -533,7 +533,7 @@ class Frontend {
 	 *
 	 * Fired by `wp_footer` action.
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.11
 	 * @access public
 	 */
 	public function wp_footer() {
@@ -804,7 +804,7 @@ class Frontend {
 	 *
 	 * Fired by `admin_bar_menu` action.
 	 *
-	 * @since 1.0.0
+	 * @since 1.3.4
 	 * @access public
 	 *
 	 * @param \WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance, passed by reference.

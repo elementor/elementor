@@ -3,6 +3,8 @@ var Module = require( 'elementor-utils/module' );
 module.exports = Module.extend( {
 	autoSaveTimer: null,
 
+	autosaveInterval: elementor.config.autosave_interval * 1000,
+
 	isSaving: false,
 
 	isChangedDuringSave: false,
@@ -12,26 +14,46 @@ module.exports = Module.extend( {
 	},
 
 	startTimer: function( hasChanges ) {
+		clearTimeout( this.autoSaveTimer );
 		if ( hasChanges ) {
-			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), 5000 );
-		} else if ( ! this.isChangedDuringSave ) {
-			clearTimeout( this.autoSaveTimer );
+			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), this.autosaveInterval );
+		}
+	},
+
+	saveDraft: function() {
+		if ( ! this.isEditorChanged() ) {
+			return;
+		}
+
+		var postStatus = elementor.settings.page.model.get( 'post_status' );
+
+		switch ( postStatus ) {
+			case 'publish':
+			case 'private':
+				this.doAutoSave();
+				break;
+			default:
+				// Update and create a revision
+				this.update();
 		}
 	},
 
 	doAutoSave: function() {
 		var editorMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
-		if ( ! this.isEditorChanged() || this.isSaving || 'edit' !== editorMode ) {
+		// Avoid auto save for Revisions Preview changes.
+		if ( 'edit' !== editorMode ) {
 			return;
 		}
 
 		this.saveAutoSave();
-
-		this.autoSaveTimer = null;
 	},
 
 	saveAutoSave: function( options ) {
+		if ( ! this.isEditorChanged() ) {
+			return;
+		}
+
 		options = _.extend( {
 			status: 'autosave'
 		}, options );

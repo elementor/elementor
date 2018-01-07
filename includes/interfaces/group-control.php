@@ -7,12 +7,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Group control interface.
+ *
+ * An interface for Elementor group control.
+ *
+ * @since 1.0.0
  */
 interface Group_Control_Interface {
 
 	/**
-	 * Retrieve group control type.
+	 * Get group control type.
 	 *
+	 * Retrieve the group control type.
+	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 */

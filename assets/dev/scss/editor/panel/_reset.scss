@@ -9,14 +9,6 @@
 
 a {
 	color: $editor-accent;
-	font-weight: 500;
-	text-decoration: none;
-	border-bottom: 1px dotted transparent;
-	transition: all ease-in-out .3s;
-
-	&:hover {
-		border-bottom-color: inherit;
-	}
 }
 
 h1,
