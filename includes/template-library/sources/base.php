@@ -81,6 +81,9 @@ abstract class Source_Base {
 		$this->register_data();
 	}
 
+	/**
+	 * @access public
+	 */
 	public function mark_as_favorite( $template_id, $favorite = true ) {
 		$favorites_templates = $this->get_user_meta( 'favorites' );
 
@@ -97,6 +100,9 @@ abstract class Source_Base {
 		return $this->update_user_meta( 'favorites', $favorites_templates );
 	}
 
+	/**
+	 * @access public
+	 */
 	public function get_user_meta( $item = null ) {
 		if ( null === $this->user_meta ) {
 			$this->user_meta = get_user_meta( get_current_user_id(), $this->get_user_meta_prefix(), true );
@@ -117,6 +123,9 @@ abstract class Source_Base {
 		return $this->user_meta;
 	}
 
+	/**
+	 * @access public
+	 */
 	public function update_user_meta( $key, $value ) {
 		$meta = $this->get_user_meta();
 
@@ -139,6 +148,9 @@ abstract class Source_Base {
 		} );
 	}
 
+	/**
+	 * @access protected
+	 */
 	protected function get_user_meta_prefix() {
 		return 'elementor_library_' . $this->get_id();
 	}

@@ -8,7 +8,6 @@
 	padding: 0 20px 15px;
 
 	a {
-		color: $editor-accent;
 		font-weight: 500;
 		text-decoration: none;
 		border-bottom: 1px dotted transparent;
@@ -426,7 +425,17 @@
 		}
 
 		i {
+			position: relative;
+			display: block;
 			line-height: $icon-size;
+
+			&:before {
+				height: $icon-size;
+				width: $icon-size;
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
+			}
 		}
 	}
 }

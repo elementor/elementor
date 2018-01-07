@@ -118,6 +118,9 @@ class Group_Control_Border extends Group_Control_Base {
 		return $fields;
 	}
 
+	/**
+	 * @access protected
+	 */
 	protected function get_default_options() {
 		return [
 			'popover' => false,

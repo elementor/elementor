@@ -107,19 +107,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="elementor-screen-only"><?php esc_html_e( 'Save Options', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
-            <p class="elementor-last-edited">
+			<p class="elementor-last-edited-wrapper">
 				<span class="elementor-state-icon">
 					<i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>
 				</span>
-				{{{ elementor.config.last_edited }}}</p>
+				<span class="elementor-last-edited">
+					{{{ elementor.config.last_edited }}}
+				</span>
+			</p>
 			<div class="elementor-panel-footer-sub-menu">
 				<div id="elementor-panel-saver-menu-save-draft" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Save Draft & Exit', 'elementor' ); ?></span>
-				</div>
-				<div id="elementor-panel-saver-menu-discard" class="elementor-panel-footer-sub-menu-item">
-					<i class="elementor-icon fa fa-eraser" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Discard & Exit', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php esc_html_e( 'Save Draft', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-saver-menu-save-template" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-folder" aria-hidden="true"></i>

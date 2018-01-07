@@ -92,7 +92,7 @@ class Control_Select2 extends Base_Data_Control {
 	 * Get the default settings of the select2 control. Used to return the
 	 * default settings while initializing the select2 control.
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.

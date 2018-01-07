@@ -72,7 +72,7 @@ class Editor {
 	 *
 	 * Fired by `admin_action_elementor` action.
 	 *
-	 * @since 1.7.0
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param bool $die Optional. Whether to die at the end. Default is `true`.
@@ -517,6 +517,7 @@ class Editor {
 			'preview_link' => Utils::get_preview_url( $this->_post_id ),
 			'post_link' => get_permalink( $this->_post_id ),
 			'last_edited' => Utils::get_last_edited( $this->_post_id ),
+			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'wp_preview' => [
 				'url' => Utils::get_wp_preview_url( $this->_post_id ),
 				'target' => 'wp-preview-' . $this->_post_id,

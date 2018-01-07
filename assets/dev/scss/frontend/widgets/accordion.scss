@@ -14,6 +14,7 @@
 	}
 
 	.elementor-tab-title {
+		margin: 0;
 		padding: 15px 20px;
 		font-weight: bold;
 		line-height: 1;
@@ -36,33 +37,31 @@
 				}
 			}
 
-			.fa {
-
-				&:before {
-					content: '\f067';
-				}
+			.elementor-accordion-icon-closed {
+				display: block;
+			}
+			.elementor-accordion-icon-opened {
+				display: none;
 			}
 		}
 
 		&.elementor-active {
 
-			.elementor-accordion-icon {
-
-				.fa {
-
-					&:before {
-						content: '\f068';
-					}
-				}
+			.elementor-accordion-icon-closed {
+				display: none;
+			}
+			.elementor-accordion-icon-opened {
+				display: block;
 			}
 		}
 	}
 
 	.elementor-tab-content {
-	    display: none;
+		display: none;
 		padding: 15px 20px;
 		border-top: 1px solid $gray-light;
 	}
+
 }
 
 // Responsive mode
