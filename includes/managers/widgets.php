@@ -129,7 +129,7 @@ class Widgets_Manager {
 		/**
 		 * Elementor widgets black list.
 		 *
-		 * Filters the widgets black list that won't be displayed in the .
+		 * Filters the widgets black list that won't be displayed in the panel.
 		 *
 		 * @since 1.0.0
 		 *
