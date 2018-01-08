@@ -133,7 +133,7 @@ class Control_Color extends Base_Data_Control {
 				<# } #>
 			</label>
 			<div class="elementor-control-input-wrapper">
-				<input data-setting="{{ name }}" type="text" placeholder="<?php echo esc_attr( 'Hex/rgba', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
+				<input data-setting="{{ name }}" type="text" placeholder="<?php esc_html_e( 'Hex/rgba', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
 			</div>
 		</div>
 		<?php

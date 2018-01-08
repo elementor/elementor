@@ -137,17 +137,17 @@ class Control_Gallery extends Base_Data_Control {
 							<# if ( data.controlValue.length ) {
 								print( elementor.translate( 'gallery_images_selected', [ data.controlValue.length ] ) );
 							} else { #>
-								<?php _e( 'No Images Selected', 'elementor' ); ?>
+								<?php esc_html_e( 'No Images Selected', 'elementor' ); ?>
 							<# } #>
 						</span>
-						<span class="elementor-control-gallery-clear">(<?php _e( 'Clear', 'elementor' ); ?>)</span>
+						<span class="elementor-control-gallery-clear">(<?php esc_html_e( 'Clear', 'elementor' ); ?>)</span>
 					</div>
 					<div class="elementor-control-gallery-thumbnails">
 						<# _.each( data.controlValue, function( image ) { #>
 							<div class="elementor-control-gallery-thumbnail" style="background-image: url({{ image.url }})"></div>
 						<# } ); #>
 					</div>
-					<button class="elementor-button elementor-control-gallery-add"><?php _e( '+ Add Images', 'elementor' ); ?></button>
+					<button class="elementor-button elementor-control-gallery-add"><?php esc_html_e( '+ Add Images', 'elementor' ); ?></button>
 				</div>
 			</div>
 		</div>

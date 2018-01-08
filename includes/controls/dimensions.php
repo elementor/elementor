@@ -187,7 +187,7 @@ class Control_Dimensions extends Control_Base_Units {
 						</li>
 					<?php endforeach; ?>
 					<li>
-						<button class="elementor-link-dimensions tooltip-target" data-tooltip="<?php _e( 'Link values together', 'elementor' ); ?>">
+						<button class="elementor-link-dimensions tooltip-target" data-tooltip="<?php esc_attr_e( 'Link values together', 'elementor' ); ?>">
 							<span class="elementor-linked">
 								<i class="fa fa-link" aria-hidden="true"></i>
 								<span class="elementor-screen-only"><?php esc_html_e( 'Link values together', 'elementor' ); ?></span>
