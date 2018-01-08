@@ -9000,7 +9000,7 @@ Ajax = {
 		if ( immediately ) {
 			var requests = {};
 			requests[ options.unique_id ] = request;
-			options.deferred.jqXhr = this.sendBatch( requests ).done( options.success ).fail( options.error );
+			options.deferred.jqXhr = this.sendBatch( requests );
 		} else {
 			this.requests[ options.unique_id ] = request;
 			this.debounceSendBatch();
@@ -9035,9 +9035,9 @@ Ajax = {
 					var options = requests[ id ].options;
 					if ( options ) {
 						if ( response.success ) {
-							options.deferred.resolve( response );
+							options.deferred.resolve( response.data );
 						} else if ( ! response.success ) {
-							options.deferred.reject( response );
+							options.deferred.reject( response.data );
 						}
 					}
 				} );
