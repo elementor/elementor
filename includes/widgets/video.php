@@ -88,7 +88,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => __( 'YouTube Link', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Enter your YouTube link', 'elementor' ),
 				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
@@ -102,7 +102,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'vimeo_link',
 			[
-				'label' => __( 'Vimeo Link', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Enter your Vimeo link', 'elementor' ),
 				'default' => 'https://vimeo.com/235215203',
