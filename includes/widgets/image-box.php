@@ -105,7 +105,7 @@ class Widget_Image_Box extends Widget_Base {
 				'label' => __( 'Title & Description', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'This is the heading', 'elementor' ),
-				'placeholder' => __( 'Your Title', 'elementor' ),
+				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'label_block' => true,
 			]
 		);
@@ -116,7 +116,7 @@ class Widget_Image_Box extends Widget_Base {
 				'label' => __( 'Content', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-				'placeholder' => __( 'Your Description', 'elementor' ),
+				'placeholder' => __( 'Enter your description', 'elementor' ),
 				'separator' => 'none',
 				'rows' => 10,
 				'show_label' => false,
