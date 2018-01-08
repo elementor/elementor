@@ -106,7 +106,7 @@ class Control_Font extends Base_Data_Control {
 			<div class="elementor-control-input-wrapper">
 				<select id="<?php echo $control_uid; ?>" class="elementor-control-font-family" data-setting="{{ data.name }}">
 					<option value=""><?php esc_html_e( 'Default', 'elementor' ); ?></option>
-					<optgroup label="<?php esc_html_e( 'System', 'elementor' ); ?>">
+					<optgroup label="<?php esc_attr_e( 'System', 'elementor' ); ?>">
 						<# _.each( getFontsByGroups( 'system' ), function( fontType, fontName ) { #>
 						<option value="{{ fontName }}">{{{ fontName }}}</option>
 						<# } ); #>
