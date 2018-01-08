@@ -27,7 +27,7 @@ if ( is_rtl() ) {
 		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php', 'relative' ); ?>';
 	</script>
 </head>
-<body class="<?php echo implode( ' ', $body_classes ); ?>">
+<body class="<?php echo esc_attr( implode( ' ', $body_classes ) ); ?>">
 <div id="elementor-editor-wrapper">
 	<div id="elementor-preview">
 		<div id="elementor-loading">

@@ -196,29 +196,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="elementor-panel-scheme-item-title elementor-control-title"><?php echo $option['label']; ?></div>
 				<div class="elementor-panel-scheme-typography-item-value">
 					<?php if ( 'select' === $option['type'] ) : ?>
-						<select name="<?php echo $option_name; ?>" class="elementor-panel-scheme-typography-item-field">
+						<select name="<?php echo esc_attr( $option_name ); ?>" class="elementor-panel-scheme-typography-item-field">
 							<?php foreach ( $option['options'] as $field_key => $field_value ) : ?>
-								<option value="<?php echo $field_key; ?>"><?php echo $field_value; ?></option>
+								<option value="<?php echo esc_attr( $field_key ); ?>"><?php echo $field_value; ?></option>
 							<?php endforeach; ?>
 						</select>
 					<?php elseif ( 'font' === $option['type'] ) : ?>
-						<select name="<?php echo $option_name; ?>" class="elementor-panel-scheme-typography-item-field">
+						<select name="<?php echo esc_attr( $option_name ); ?>" class="elementor-panel-scheme-typography-item-field">
 							<option value=""><?php esc_html_e( 'Default', 'elementor' ); ?></option>
 
-							<optgroup label="<?php esc_html_e( 'System', 'elementor' ); ?>">
+							<optgroup label="<?php esc_attr_e( 'System', 'elementor' ); ?>">
 								<?php foreach ( $system_fonts as $font_title => $font_type ) : ?>
 									<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo $font_title; ?></option>
 								<?php endforeach; ?>
 							</optgroup>
 
-							<optgroup label="<?php esc_html_e( 'Google', 'elementor' ); ?>">
+							<optgroup label="<?php esc_attr_e( 'Google', 'elementor' ); ?>">
 								<?php foreach ( $google_fonts as $font_title => $font_type ) : ?>
 									<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo $font_title; ?></option>
 								<?php endforeach; ?>
 							</optgroup>
 						</select>
 					<?php elseif ( 'text' === $option['type'] ) : ?>
-						<input name="<?php echo $option_name; ?>" class="elementor-panel-scheme-typography-item-field" />
+						<input name="<?php echo esc_attr($option_name ); ?>" class="elementor-panel-scheme-typography-item-field" />
 					<?php endif; ?>
 				</div>
 			</div>

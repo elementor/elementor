@@ -190,7 +190,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-get-pro-button">
-	<a href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-library&utm_campaign=gopro&utm_medium=wp-dash' ); ?>" target="_blank">
+	<a href="<?php echo esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-library&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>" target="_blank">
 		<button class="elementor-template-library-template-action elementor-button elementor-button-go-pro">
 			<i class="fa fa-external-link-square" aria-hidden="true"></i>
 			<span class="elementor-button-title"><?php esc_html_e( 'Go Pro', 'elementor' ); ?></span>
@@ -205,7 +205,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
 	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
 	<form id="elementor-template-library-save-template-form">
-		<input type="hidden" name="post_id" value="<?php echo get_the_ID(); ?>">
+		<input type="hidden" name="post_id" value="<?php echo esc_attr( get_the_ID() ); ?>">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php esc_attr_e( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success">
 			<span class="elementor-state-icon">
