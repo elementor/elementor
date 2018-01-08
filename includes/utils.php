@@ -262,7 +262,7 @@ class Utils {
 	 *
 	 * This method will
 	 *
-	 * @since 1.9.0
+	 * @since 2.0.0
 	 * @access public
 	 * @static
 	 *
@@ -282,7 +282,7 @@ class Utils {
 		 *
 		 * Filters the URL of the default placeholder video used by Elementor.
 		 *
-		 * @since 1.9.0
+		 * @since 2.0.0
 		 *
 		 * @param array $placeholder_video An array of placeholder URLs for all
 		 *                                 the supported services used by Elementor.
