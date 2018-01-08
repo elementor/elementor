@@ -5,7 +5,6 @@ Requires at least: 4.5
 Tested up to: 4.9
 Requires PHP: 5.4
 Stable tag: 1.8.12
-Beta tag: 1.9.0-RC2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -185,9 +184,44 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 1.9.0 RC2 - Available For Beta Testing =
-* [Read more about v1.9](https://github.com/pojome/elementor/issues/3067/)
-* [Sign Up Now For Our Elite Group Of Early Access Testers](https://my.elementor.com/beta/)
+= 1.9.0 - 2018-01-09 =
+* New! - Added Autosave capability for editor
+* New! - Added save as draft option
+* New! - Brand new Template Library
+* New! - Added filter & sorting (new, trend & popular) to Template Library ([#1711](https://github.com/pojome/elementor/issues/1711))
+* New! - Added import & sync tools to Template Library ([#2402](https://github.com/pojome/elementor/issues/2402))
+* New! - Added search form to Template Library ([#2499](https://github.com/pojome/elementor/issues/2499))
+* New! - Added my favorites option to the Template Library
+* New! - Added sorting (name, type, author & date) to My Templates Library
+* New! - Added new social icons for Meetup, RSS & Skype ([#2703](https://github.com/pojome/elementor/issues/2703), [#2701](https://github.com/pojome/elementor/issues/2701), [#3090](https://github.com/pojome/elementor/issues/3090))
+* New! - Added Overview dashboard widget
+* Tweak! - Added privacy control to video widget ([#2741](https://github.com/pojome/elementor/issues/2741))
+* Tweak! - Added new controls for Icons, Spacing & Padding to Toggle widget ([#2836](https://github.com/pojome/elementor/issues/2836))
+* Tweak! - Added new controls for Icons & Padding to Accordion widget ([#2836](https://github.com/pojome/elementor/issues/2836))
+* Tweak! - Added responsive space between control to Icon List widget
+* Tweak! - Rename "Page Settings" panel to "Document Settings"
+* Tweak! - Moved My Library to top of admin menu ([#2843](https://github.com/pojome/elementor/issues/2843))
+* Tweak! - Re-design menu of editor panel
+* Tweak! - Replaced `jquery-simple-dtpicker` with `flatpickr` JS library ([#2095](https://github.com/pojome/elementor/issues/2095))
+* Tweak! - Reduced panel clutter by allowing group control to be displayed as a popup
+* Tweak! - Added Gutenberg compatibility - "Add New Elementor" and "Back to Classic" edit screen
+* Tweak! - Added excerpt control to the Document Settings if the post type supports excerpts ([#2837](https://github.com/pojome/elementor/issues/2837))
+* Tweak! - Added `text-decoration` to Typography control
+* Tweak! - All functions, action hooks and filter hooks have been documented
+* Tweak! - Implementing inline editing functionality in various Elementor widgets
+* Tweak! - Accessible widget search - add label for screen readers in the search box ([#2835](https://github.com/pojome/elementor/issues/2835))
+* Tweak! - Improved Editor accessibility - replace `title` attributes with `aria-label` ([#2861](https://github.com/pojome/elementor/issues/2861))
+* Tweak! - Progress Bar widget accessibility - set correct `role` and added new `aria` attributes ([#2861](https://github.com/pojome/elementor/issues/2861))
+* Tweak! - Alert widget accessibility - make the "Dismiss" button accessible ([#3108](https://github.com/pojome/elementor/issues/3108))
+* Tweak! - Tabs widget accessibility - added `id`, `role` and `aria` attributes ([#2913](https://github.com/pojome/elementor/issues/2913))
+* Tweak! - Toggle widget accessibility - added `id`, `role` and `aria` attributes ([#2836](https://github.com/pojome/elementor/issues/2836))
+* Tweak! - Accordion widget accessibility - added `id`, `role` and `aria` attributes ([#2836](https://github.com/pojome/elementor/issues/2836))
+* Tweak! - Social Icons widget accessibility - added labels for screen readers
+* Tweak! - Added Browser support notification for unsupported browsers
+* Tweak! - Depended styles, various elements can set stylesheet dependencies
+* Tweak! - Added option to set control as required by `required => true`
+* Fix! - Added `wptexturize` filter to match WordPress native text formatting
+* Fix! - Alignment issue with Icon widget
 
 = 1.8.12 - 2018-01-03 =
 * Tweak! - Added style compatibility for multiple select field
