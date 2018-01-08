@@ -109,8 +109,8 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => __( 'This is Alert', 'elementor' ),
 				'placeholder' => __( 'Enter your title', 'elementor' ),
+				'default' => __( 'This is an Alert', 'elementor' ),
 				'label_block' => true,
 			]
 		);
@@ -120,8 +120,8 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => __( 'Content', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
-				'default' => __( 'I am description. Click edit button to change this text.', 'elementor' ),
 				'placeholder' => __( 'Enter your description', 'elementor' ),
+				'default' => __( 'I am a description. Click the edit button to change this text.', 'elementor' ),
 				'separator' => 'none',
 				'show_label' => false,
 			]
