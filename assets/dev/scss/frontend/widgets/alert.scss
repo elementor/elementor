@@ -20,12 +20,13 @@
 		position: absolute;
 		@include end(10px);
 		top: 10px;
-		padding: 0px;
+		padding: 3px;
 		font-size: 20px;
 		line-height: 1;
 		background: transparent;
 		color: inherit;
 		border: none;
+		cursor: pointer;
 	}
 
 	&.elementor-alert-info {

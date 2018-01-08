@@ -1107,12 +1107,13 @@
     position: absolute;
     left: 10px;
     top: 10px;
-    padding: 0px;
+    padding: 3px;
     font-size: 20px;
     line-height: 1;
     background: transparent;
     color: inherit;
-    border: none; }
+    border: none;
+    cursor: pointer; }
   .elementor-alert.elementor-alert-info {
     color: #31708f;
     background-color: #d9edf7;
