@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Ajax_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -20,8 +22,18 @@ class Elements_Manager {
 	public function __construct() {
 		$this->require_files();
 
-		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
-		add_action( 'wp_ajax_elementor_discard_changes', [ $this, 'ajax_discard_changes' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+	}
+
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param Ajax_Manager $ajax_handler
+	 */
+	public function register_ajax_actions( $ajax_handler ) {
+		$ajax_handler->register_ajax_action( 'save_builder', [ $this, 'ajax_save_builder' ] );
+		$ajax_handler->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
 	}
 
 	/**
@@ -158,15 +170,15 @@ class Elements_Manager {
 	}
 
 	/**
+	 * @param array $request
 	 * @access public
+	 *
+	 * @return bool
+	 * @throws \Exception
 	 */
-	public function ajax_discard_changes() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$request = $_POST;
-
+	public function ajax_discard_changes( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
+			throw new \Exception( 'no_post_id' );
 		}
 
 		$autosave = wp_get_post_autosave( $request['post_id'] );
@@ -178,30 +190,27 @@ class Elements_Manager {
 			$success = true;
 		}
 
-		if ( $success ) {
-			wp_send_json_success();
-		}
-
-		wp_send_json_error();
+		return $success;
 	}
 
 	/**
 	 * @since 1.0.0
 	 * @access public
+	 *
+	 * @param array $request
+	 *
+	 * @return mixed
+	 * @throws \Exception
 	*/
-	public function ajax_save_builder() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$request = $_POST;
-
+	public function ajax_save_builder( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
+			throw new \Exception( 'no_post_id' );
 		}
 
 		$post_id = $request['post_id'];
 
 		if ( ! User::is_current_user_can_edit( $post_id ) ) {
-			wp_send_json_error( new \WP_Error( 'no_access' ) );
+			throw new \Exception( 'no_access' );
 		}
 
 		$status = DB::STATUS_DRAFT;
@@ -224,7 +233,6 @@ class Elements_Manager {
 		];
 
 		/**
-		 * Saved ajax data returned by the builder.
 		 *
 		 * Filters the ajax data returned when saving the post on the builder.
 		 *
@@ -234,7 +242,7 @@ class Elements_Manager {
 		 */
 		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', $return_data, $post_id );
 
-		wp_send_json_success( $return_data );
+		return $return_data;
 	}
 
 	/**
