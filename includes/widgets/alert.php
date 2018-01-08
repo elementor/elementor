@@ -297,7 +297,10 @@ class Widget_Alert extends Widget_Base {
 				<span <?php echo $this->get_render_attribute_string( 'alert_description' ); ?>><?php echo $settings['alert_description']; ?></span>
 			<?php }
 			if ( 'show' === $settings['show_dismiss'] ) { ?>
-				<button type="button" class="elementor-alert-dismiss">X</button>
+				<button type="button" class="elementor-alert-dismiss">
+					<span aria-hidden="true">&times;</span>
+					<span class="elementor-screen-only"><?php esc_html_e( 'Dismiss alert', 'elementor' ); ?></span>
+				</button>
 			<?php } ?>
 		</div>
 		<?php
@@ -326,7 +329,10 @@ class Widget_Alert extends Widget_Base {
 				<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{{ settings.alert_title }}}</span>
 				<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{{ settings.alert_description }}}</span>
 				<# if ( 'show' === settings.show_dismiss ) { #>
-					<button type="button" class="elementor-alert-dismiss">X</button>
+					<button type="button" class="elementor-alert-dismiss">
+						<span aria-hidden="true">&times;</span>
+						<span class="elementor-screen-only"><?php esc_html_e( 'Dismiss alert', 'elementor' ); ?></span>
+					</button>
 				<# } #>
 			</div>
 		<# } #>
