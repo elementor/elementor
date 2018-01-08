@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-page-menu-footer">
 		<a href="<?php echo esc_url( Utils::get_exit_to_dashboard_url( get_the_ID() ) ); ?>" id="elementor-panel-exit-to-dashboard" class="elementor-button elementor-button-default">
 			<i class="fa fa-wordpress"></i>
-			<?php echo esc_html__( 'Exit To Dashboard', 'elementor' ); ?>
+			<?php esc_html_e( 'Exit To Dashboard', 'elementor' ); ?>
 		</a>
 	</div>
 </script>
@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_html_e( 'Settings', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
 		<i class="fa fa-cog" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php esc_html_e( 'Document Settings', 'elementor' ); ?></span>
 	</div>
@@ -147,9 +147,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<# if ( elementData.reload_preview ) { #>
 		<div class="elementor-update-preview">
-			<div class="elementor-update-preview-title"><?php echo __( 'Update changes to page', 'elementor' ); ?></div>
+			<div class="elementor-update-preview-title"><?php esc_html_e( 'Update changes to page', 'elementor' ); ?></div>
 			<div class="elementor-update-preview-button-wrapper">
-				<button class="elementor-update-preview-button elementor-button elementor-button-success"><?php echo __( 'Apply', 'elementor' ); ?></button>
+				<button class="elementor-update-preview-button elementor-button elementor-button-success"><?php esc_html_e( 'Apply', 'elementor' ); ?></button>
 			</div>
 		</div>
 	<# } #>
