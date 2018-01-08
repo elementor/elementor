@@ -161,7 +161,7 @@
 		content: '';
 		position: absolute;
 		top: -$triangle-size * 2;
-		@include end(11px);
+		@include end(22px);
 		border: $triangle-size solid transparent;
 		border-bottom-color: #fff;
 	}

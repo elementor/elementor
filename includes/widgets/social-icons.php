@@ -137,6 +137,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-reddit',
 							'fa fa-rss',
 							'fa fa-shopping-cart',
+							'fa fa-skype',
 							'fa fa-slideshare',
 							'fa fa-snapchat',
 							'fa fa-soundcloud',
@@ -166,7 +167,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'default' => [
 							'is_external' => 'true',
 						],
-						'placeholder' => __( 'http://your-link.com', 'elementor' ),
+						'placeholder' => __( 'https://your-link.com', 'elementor' ),
 					],
 				],
 				'title_field' => '<i class="{{ social }}"></i> {{{ social.replace( \'fa fa-\', \'\' ).replace( \'-\', \' \' ).replace( /\b\w/g, function( letter ){ return letter.toUpperCase() } ) }}}',
@@ -415,7 +416,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$this->add_control(
 			'hover_animation',
 			[
-				'label' => __( 'Animation', 'elementor' ),
+				'label' => __( 'Hover Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
 			]
 		);
