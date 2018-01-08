@@ -1107,8 +1107,8 @@
     position: absolute;
     right: 10px;
     top: 10px;
-    padding: 3px;
-    font-size: 13px;
+    padding: 0px;
+    font-size: 20px;
     line-height: 1;
     background: transparent;
     color: inherit;
