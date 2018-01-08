@@ -197,7 +197,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => 'Link to',
 				'type' => Controls_Manager::URL,
-				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'condition' => [
 					'link_to' => 'custom',
 				],
