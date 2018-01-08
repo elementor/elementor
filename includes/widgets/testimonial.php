@@ -190,7 +190,7 @@ class Widget_Testimonial extends Widget_Base {
 		$this->add_control(
 			'content_content_color',
 			[
-				'label' => __( 'Content Color', 'elementor' ),
+				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),

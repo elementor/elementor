@@ -109,8 +109,8 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Your Title', 'elementor' ),
-				'default' => __( 'This is Alert', 'elementor' ),
+				'placeholder' => __( 'Enter your title', 'elementor' ),
+				'default' => __( 'This is an Alert', 'elementor' ),
 				'label_block' => true,
 			]
 		);
@@ -120,8 +120,8 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => __( 'Content', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
-				'placeholder' => __( 'Your Description', 'elementor' ),
-				'default' => __( 'I am description. Click edit button to change this text.', 'elementor' ),
+				'placeholder' => __( 'Enter your description', 'elementor' ),
+				'default' => __( 'I am a description. Click the edit button to change this text.', 'elementor' ),
 				'separator' => 'none',
 				'show_label' => false,
 			]
@@ -154,7 +154,7 @@ class Widget_Alert extends Widget_Base {
 		$this->start_controls_section(
 			'section_type',
 			[
-				'label' => __( 'Alert Type', 'elementor' ),
+				'label' => __( 'Alert', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
