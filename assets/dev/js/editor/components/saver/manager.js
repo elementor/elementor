@@ -147,7 +147,7 @@ module.exports = Module.extend( {
 		self.isChangedDuringSave = false;
 
 		if ( 'autosave' !== options.status && statusChanged ) {
-					elementor.settings.page.model.set( 'post_status', options.status );
+			elementor.settings.page.model.set( 'post_status', options.status );
 		}
 
 		elementor.ajax.addRequest( 'save_builder', {
