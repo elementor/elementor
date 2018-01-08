@@ -171,7 +171,7 @@ ElementModel = Backbone.Model.extend( {
 				data: JSON.stringify( data )
 			},
 			success: this.onRemoteGetHtml.bind( this )
-		} );
+		}, true ).jqXhr;
 	},
 
 	renderRemoteServer: function() {

@@ -333,7 +333,7 @@ module.exports = Module.extend( {
 		self.isChangedDuringSave = false;
 
 		if ( 'autosave' !== options.status && statusChanged ) {
-					elementor.settings.page.model.set( 'post_status', options.status );
+			elementor.settings.page.model.set( 'post_status', options.status );
 		}
 
 		elementor.ajax.addRequest( 'save_builder', {
@@ -5503,7 +5503,7 @@ ElementModel = Backbone.Model.extend( {
 				data: JSON.stringify( data )
 			},
 			success: this.onRemoteGetHtml.bind( this )
-		} );
+		}, true ).jqXhr;
 	},
 
 	renderRemoteServer: function() {
@@ -8963,7 +8963,7 @@ Ajax = {
 			request.before();
 		}
 
-		var	deferred,
+		var deferred,
 			cacheKey = self.getCacheKey( request );
 
 		if ( _.has( self.cache, cacheKey ) ) {
@@ -8985,29 +8985,39 @@ Ajax = {
 		return deferred;
 	},
 
-	addRequest: function( action, options ) {
-		options.deferred = jQuery.Deferred().done( options.success ).fail( options.error );
-
+	addRequest: function( action, options, immediately ) {
 		if ( ! options.unique_id ) {
 			options.unique_id = action;
 		}
 
-		this.requests[ options.unique_id ] = {
+		options.deferred = jQuery.Deferred().done( options.success ).fail( options.error );
+
+		var request = {
 			action: action,
 			options: options
 		};
 
-		this.debounceSendBatch();
+		if ( immediately ) {
+			var requests = {};
+			requests[ options.unique_id ] = request;
+			options.deferred.jqXhr = this.sendBatch( requests ).done( options.success ).fail( options.error );
+		} else {
+			this.requests[ options.unique_id ] = request;
+			this.debounceSendBatch();
+		}
 
 		return options.deferred;
 	},
 
-	sendBatch: function() {
-		var requests = this.requests,
-			actions = {};
+	sendBatch: function( requests ) {
+		var actions = {};
 
-		// Empty for next batch.
-		this.requests = {};
+		if ( ! requests ) {
+			requests = this.requests;
+
+			// Empty for next batch.
+			this.requests = {};
+		}
 
 		_( requests ).each( function( request, id ) {
 			actions[ id ] = {
@@ -9016,7 +9026,7 @@ Ajax = {
 			};
 		} );
 
-		this.send( 'ajax', {
+		return this.send( 'ajax', {
 			data: {
 				actions: JSON.stringify( actions )
 			},
@@ -9031,7 +9041,7 @@ Ajax = {
 						}
 					}
 				} );
-				},
+			},
 			error: function( data ) {
 			}
 		} );
