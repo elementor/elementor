@@ -455,7 +455,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix: Show edit with elementor button on admin bar in regular posts
 * Fix: Inherit style for select field from field
 * Fix: Conflict with ManageWP on Multisite ([#1600](https://github.com/pojome/elementor/issues/1600), [#1456](https://github.com/pojome/elementor/issues/1456))
-* Deprecated! - `elementor/controls/get_available_tabs_controls` filter, please use `\Elementor\Controls_Manager::add_tab( $tab_name, $tab_title )` instead of
+* Deprecated: `elementor/controls/get_available_tabs_controls` filter, please use `\Elementor\Controls_Manager::add_tab( $tab_name, $tab_title )` instead of
 
 ### 1.5.5 - 2017-07-18 ###
 * Fix: Page Settings data gets corrupted on revision save ([#2031](https://github.com/pojome/elementor/issues/2031))
@@ -704,7 +704,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix: Default WordPress widget checkboxes not holding values ([#1210](https://github.com/pojome/elementor/issues/1210))
 * Fix: Heading with link custom color gone
 * Fix: Jumping of panel when the `wp-color-picker` is active
-* Deprecated! - `Plugin::get_version()` method removed
+* Deprecated: `Plugin::get_version()` method removed
 
 ### 1.1.6 - 2017-01-18 ###
 * Fix: Improving enqueue assets if elementor exists on the page
@@ -760,9 +760,9 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix: Library modal 'Go Pro' button in FireFox
 * Fix: Bug load elementor in front page in some server configuration
 * Fix: Ninja Forms widget conflict
-* Deprecated! - `elementor/frontend/enqueue_scripts/after` is no longer available
-* Deprecated! - `elementor/elements/print_template` is replaced by `elementor/element/print_template`
-* Deprecated! - `elementor/element_css/parse_css` is replaced by `elementor/element/parse_css`
+* Deprecated: `elementor/frontend/enqueue_scripts/after` is no longer available
+* Deprecated: `elementor/elements/print_template` is replaced by `elementor/element/print_template`
+* Deprecated: `elementor/element_css/parse_css` is replaced by `elementor/element/parse_css`
 
 ### 1.0.9 - 2016-12-27 ###
 * Fix: Elementor library import remote template
@@ -785,15 +785,15 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak: Updated jQuery Numerator Plugin v0.2.1
 * Fix: Added support for floating numbers in counter widget
 * Fix: Removed limit from counter widget
-* Deprecated! - Removed `#elementor-section-wrap` ID from frontend output
-* Deprecated! - Removed `#elementor-inner` ID from frontend output
+* Deprecated: Removed `#elementor-section-wrap` ID from frontend output
+* Deprecated: Removed `#elementor-inner` ID from frontend output
 
 ### 1.0.5 - 2016-12-18 ###
 * Tweak: Added VH unit in min-height control for section ([#764](https://github.com/pojome/elementor/issues/764))
 * Fix: Bug with section-content-position in Columns widget
 * Fix: Bug with stretched section
 * Fix: Avoid fatal error for invalid widgets
-* Deprecated! - Removed `#elementor` ID from frontend output
+* Deprecated: Removed `#elementor` ID from frontend output
 
 ### 1.0.4 - 2016-12-12 ###
 * Tweak: Added mobile editing options for social icons widget
@@ -983,7 +983,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix: Preview mode with real sizes for mobile and tablet
 * Fix: Sortable inner section not showing placeholder
 * Fix: Network plugins included in System Info
-* Deprecated! - Column width option for mobile portrait is deprecated. Use Mobile Width option instead
+* Deprecated: Column width option for mobile portrait is deprecated. Use Mobile Width option instead
 
 ### 0.7.4 - 2016-08-24 ###
 * New: Added Shortcode widget
