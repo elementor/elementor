@@ -2885,7 +2885,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
           border-radius: 0;
   font-size: 11px;
   text-transform: uppercase;
-  padding: 8px 8px 8px 0;
+  padding: 8px 15px 8px 0;
   -webkit-transition: border 0.5s;
   -o-transition: border 0.5s;
   transition: border 0.5s; }
