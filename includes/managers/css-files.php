@@ -31,9 +31,8 @@ class Posts_CSS_Manager {
 	/**
 	 * Init.
 	 *
-	 * Initialize Elementor posts CSS manager.
-	 *
-	 * Create the css directory, if it doesn't exist.
+	 * Initialize Elementor posts CSS manager and create the css directory, if
+	 * it doesn't exist.
 	 *
 	 * @since 1.2.0
 	 * @access public
@@ -82,8 +81,7 @@ class Posts_CSS_Manager {
 	 * @since 1.2.0
 	 * @access public
 	 *
-	 * @param bool   $skip     Whether to skip the current post meta. Default is
-	 *                         false.
+	 * @param bool   $skip     Whether to skip the current post meta.
 	 * @param string $meta_key Current meta key.
 	 *
 	 * @return bool Whether to skip the post CSS meta.
