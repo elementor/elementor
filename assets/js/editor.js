@@ -93,7 +93,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	onAfterSaveError: function() {
 		NProgress.done();
-		this.ui.buttonSave.removeClass( 'elementor-button-state' );
+		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
 	},
 
 	onClickButtonPreview: function() {
@@ -7509,7 +7509,7 @@ module.exports = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
-		buttonSave: '#elementor-panel-saver-menu-publish, #elementor-panel-saver-menu-publish-changes', // Compatibility for Pro <= 1.9.5
+		buttonSave: '#elementor-panel-saver-button-publish, #elementor-panel-saver-menu-save-draft', // Compatibility for Pro <= 1.9.5
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
