@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Skins_Manager {
 
 	/**
-	 * Skins.
+	 * Registered Skins.
 	 *
 	 * Holds the list of all the registered skins for all the widgets.
 	 *
