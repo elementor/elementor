@@ -6,7 +6,7 @@
 	user-select: none;
 }
 
-@at-root .elementor-mentions-popup {
+.elementor-mentions-popup {
 	position: absolute;
 	width: 230px;
 	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
@@ -33,36 +33,139 @@
 	}
 }
 
+.elementor-tag-controls-stack-empty {
+	background-color: #fff;
+	padding: 10px;
+	font-size: 13px;
+	text-align: center;
+}
+
 .elementor-control-mentions {
 
-	&-wrapper {
-		position: relative;
-	}
+	 &-wrapper {
+		 position: relative;
+	 }
 
-	&-add {
-		position: absolute;
-		@include end(0);
-		top: 0;
-		height: 100%;
-		@include border-start(1px solid $editor-lighter);
-		padding: 5px 10px;
+	 &-add {
+		 position: absolute;
+		 @include end(0);
+		 top: 0;
+		 height: 100%;
+		 @include border-start(1px solid $editor-lighter);
+		 padding: 5px 10px;
 
-		i {
+		 i {
+			 cursor: pointer;
+			 font-size: 10px;
+		 }
+	 }
+
+	 &-area {
+		 @include padding-end(30px);
+
+		 .elementor-control-type-textarea & {
+			 height: 100px;
+		 }
+
+		 .elementor-control-type-textarea & {
+			 line-height: 2;
+		 }
+
+		 &:focus {
+
+			 + .elementor-control-mentions-add {
+				 @include border-start-property(color, $editor-light);
+			 }
+		 }
+	 }
+ }
+
+.elementor-control-dynamic {
+
+	&-switcher {
+		display: flex;
+		justify-content: flex-end;
+
+		&-wrapper {
+			flex-grow: 1;
+		}
+
+		input {
+			display: none;
+		}
+
+		&-label {
+			display: inline-flex;
+			height: 25px;
+			width: 25px;
+			align-items: center;
+			justify-content: center;
 			cursor: pointer;
-			color: $editor-info;
-			font-size: 10px;
+			border: 1px solid $editor-lightest;
+
+			&:first-of-type {
+				border-top-left-radius: 3px;
+				border-bottom-left-radius: 3px;
+			}
+
+			&:last-of-type {
+				border-top-right-radius: 3px;
+				border-bottom-right-radius: 3px;
+			}
+
+			&:not(:last-of-type) {
+				@include border-end(0);
+			}
+
+			i {
+				font-size: 10px;
+			}
 		}
 	}
 
-	&-area {
-		line-height: 2;
-		@include padding-end(30px);
+	.elementor-control-preview-area {
+		pointer-events: none;
+	}
 
-		&:focus {
+	.elementor-control-dynamic-switcher-dynamic-label, .elementor-control-mentions-add {
 
-			+ .elementor-control-mentions-add {
-				@include border-start-property(color, $editor-light);
+		i {
+			color: $editor-info;
+		}
+	}
+
+	.elementor-control-media {
+		display: none;
+	}
+}
+
+.elementor-control:not(.elementor-control-dynamic) {
+
+	&.elementor-control-type-media {
+
+		.elementor-control-mentions-area {
+			display: none;
+		}
+	}
+}
+
+.elementor-control-type-url {
+
+	.elementor-control-mentions-wrapper {
+
+		.elementor-control-mentions-add {
+			@include end(30px);
+		}
+
+		.elementor-control-url-external-show {
+
+			.elementor-input-style {
+				@include padding-end(60px);
 			}
+		}
+
+		+ .elementor-control-url-more {
+			width: 30px;
 		}
 	}
 }

@@ -8,26 +8,52 @@ module.exports = ViewModule.extend( {
 
 	mentionsInstance: null,
 
+	mentions: [],
+
 	__construct: function( settings ) {
-		this.$element = settings.element;
+		this.$element = settings.$element;
 	},
 
 	getDefaultElements: function() {
+		var elements = {},
+			$addButton = this.getSettings( '$addButton' );
+
+		if ( $addButton ) {
+			elements.$addButton = $addButton;
+		}
+
+		return elements;
+	},
+
+	getDefaultSettings: function() {
 		return {
-			$addMention: this.$element.next()
+			$element: null,
+			$addButton: null,
+			$iframe: null,
+			value: null,
+			groups: [],
+			freeText: true,
+			mixedContent: true,
+			multiple: true
 		};
 	},
 
 	bindEvents: function() {
-		this.$element.on( 'blur', this.onElementBlur.bind( this ) );
+		this.$element
+			.on( 'blur', this.onElementBlur.bind( this ) )
+			.on( 'keydown', this.onElementKeyDown.bind( this ) );
 
-		this.elements.$addMention.on( 'click', this.onAddMentionClick.bind( this ) );
+		if ( this.elements.$addButton ) {
+			this.elements.$addButton.on( 'click', this.onAddMentionClick.bind( this ) );
+		}
 	},
 
-	initValue: function() {
+	setValue: function( value ) {
 		var self = this;
 
-		var parsedValue = elementor.microElements.parseTagsText( self.getSettings( 'value' ), function( tagID, tagName, tagSettings ) {
+		self.destroyMentions();
+
+		var parsedValue = elementor.microElements.parseTagsText( value, this.getSettings(), function( tagID, tagName, tagSettings ) {
 			tagSettings = tagSettings ? _.escape( JSON.stringify( tagSettings ) ) : '';
 
 			return '<span class="atwho-inserted" contenteditable="false" data-tag-id="' + tagID + '" data-tag-name="' + tagName + '" data-elementor-settings="' + tagSettings + '"></span>';
@@ -49,9 +75,16 @@ module.exports = ViewModule.extend( {
 	},
 
 	initMentions: function() {
+		var tags = elementor.microElements.getConfig( 'tags' ),
+			groups = this.getSettings( 'groups' );
+
+		tags = _.filter( tags, function( tag ) {
+			return _.intersection( tag.groups, groups ).length;
+		} );
+
 		this.$element.atwho( {
 			at: '@',
-			data: Object.values( elementor.microElements.getConfig( 'tags' ) ),
+			data: tags,
 			displayTpl: function( item ) {
 				return '<li>' + item.title + '</li>';
 			},
@@ -73,7 +106,7 @@ module.exports = ViewModule.extend( {
 			name: options.name,
 			id: options.id || elementor.helpers.getUniqueID(),
 			settings: options.settings || {},
-			isInsidePreview: this.getSettings( 'isInsidePreview' )
+			$iframe: this.getSettings( '$iframe' )
 		} );
 
 		mentionView.render();
@@ -90,7 +123,7 @@ module.exports = ViewModule.extend( {
 			self.trigger( 'mention:change', mentionView );
 		} );
 
-		mentionView.mentionPopup.on( {
+		mentionView.getMentionsPopup().on( {
 			show: function() {
 				self.trigger( 'mention:popup:show', mentionView );
 			},
@@ -98,6 +131,8 @@ module.exports = ViewModule.extend( {
 				self.trigger( 'mention:popup:hide', mentionView );
 			}
 		} );
+
+		this.mentions.push( mentionView );
 	},
 
 	handleMentionInsert: function() {
@@ -125,13 +160,64 @@ module.exports = ViewModule.extend( {
 			$tag.replaceWith( elementor.microElements.tagDataToTagText( tagData.tagId, tagData.tagName, tagData.elementorSettings ) );
 		} );
 
-		return $clonedElement.html();
+		return $clonedElement.html().replace( '&nbsp;', ' ' ).trim();
+	},
+
+	getMentionsCount: function() {
+		return this.$element.find( '.atwho-inserted' ).length;
+	},
+
+	isAtKey: function( event ) {
+		return 50 === event.which && event.shiftKey;
+	},
+
+	isFreeTextKey: function( event ) {
+		if ( this.isAtKey( event ) ) {
+			return false;
+		}
+
+		var allowedKeys = [
+			8, // Backspace
+			46 // Delete
+		];
+
+		return -1 === allowedKeys.indexOf( event.which );
+	},
+
+	freeTextAllowed: function() {
+		if ( ! this.getSettings( 'freeText' ) ) {
+			return false;
+		}
+
+		return ! ( ! this.getSettings( 'mixedContent' ) && this.getMentionsCount() );
+	},
+
+	mentionAllowed: function() {
+		if ( ! this.getSettings( 'multiple' ) && this.getMentionsCount() ) {
+			return false;
+		}
+
+		return ! ( ! this.getSettings( 'mixedContent' ) && this.getValue() );
+	},
+
+	destroyMentions: function() {
+		this.mentions.forEach( function( mention ) {
+			mention.destroy();
+		} );
+
+		this.mentions = [];
+	},
+
+	destroy: function() {
+		this.destroyMentions();
+
+		this.$element.atwho( 'destroy' );
 	},
 
 	onInit: function() {
 		ViewModule.prototype.onInit.apply( this, arguments );
 
-		this.initValue();
+		this.setValue( this.getSettings( 'value' ) );
 
 		this.initMentions();
 	},
@@ -140,11 +226,29 @@ module.exports = ViewModule.extend( {
 		this.lastCaretPosition = this.$element.caret( 'pos' );
 	},
 
-	onAddMentionClick: function() {
-		var lastCaretPosition = this.lastCaretPosition;
+	onElementKeyDown: function( event ) {
+		if (
+			this.isAtKey( event ) && ! this.mentionAllowed() ||
+			this.isFreeTextKey( event ) && ! this.freeTextAllowed()
+		) {
+			event.preventDefault();
+		}
+	},
 
-		if ( ! lastCaretPosition ) {
-			lastCaretPosition = this.$element.text().length;
+	onAddMentionClick: function() {
+		if ( ! this.mentionAllowed() ) {
+			if ( ! this.getSettings( 'mixedContent' ) && this.getValue() && ! this.getMentionsCount() ) {
+				this.$element.empty();
+			} else {
+				return;
+			}
+		}
+
+		var lastCaretPosition = this.lastCaretPosition,
+			textLength = this.$element.text().length;
+
+		if ( ! lastCaretPosition || ! textLength ) {
+			lastCaretPosition = textLength;
 		}
 
 		this.$element

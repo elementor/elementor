@@ -241,6 +241,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </script>
 
+<script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
+	<div class="elementor-control-dynamic-switcher-wrapper">
+		<div class="elementor-control-dynamic-switcher">
+			<# if ( 'switcher' === addButton ) { #>
+				<input id="elementor-dynamic-switcher-simple-{{ cid }}" class="elementor-control-dynamic-switcher-static" type="radio" name="elementor-dynamic-switcher-{{ cid }}" value="simple">
+				<label for="elementor-dynamic-switcher-simple-{{ cid }}" class="elementor-control-dynamic-switcher-label">
+					<i class="fa fa-picture-o"></i>
+				</label>
+			<# } #>
+			<input id="elementor-dynamic-switcher-dynamic-{{ cid }}" class="elementor-control-mentions-add elementor-control-dynamic-switcher-dynamic" type="radio" name="elementor-dynamic-switcher-{{ cid }}" value="dynamic">
+			<label for="elementor-dynamic-switcher-dynamic-{{ cid }}" class="elementor-control-dynamic-switcher-label elementor-control-dynamic-switcher-dynamic-label">
+				<i class="fa fa-database"></i>
+			</label>
+		</div>
+	</div>
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-page-settings">
 	<div class="elementor-panel-navigation">
 		<# _.each( elementor.config.page_settings.tabs, function( tabTitle, tabSlug ) { #>

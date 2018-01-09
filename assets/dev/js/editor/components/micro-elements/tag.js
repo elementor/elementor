@@ -1,13 +1,11 @@
 module.exports = Marionette.ItemView.extend( {
-	tagName: 'span',
+	getContent: function() {
+		var data = elementor.microElements.loadTagDataFromCache( this );
 
-	className: 'elementor-tag',
+		if ( undefined === data ) {
+			throw new Error();
+		}
 
-	id: function() {
-		return 'elementor-tag-' + this.model.get( 'id' );
-	},
-
-	getTemplate: function() {
-		return '#tmpl-elementor-tag-' + this.getOption( 'name' ) + '-content';
+		return data;
 	}
 } );

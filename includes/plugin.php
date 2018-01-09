@@ -6,6 +6,7 @@ use Elementor\Debug\Debug;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
 use Elementor\Modules\History\Revisions_Manager;
+use Elementor\Core\MicroElements\Manager as MicroElementsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -141,6 +142,11 @@ class Plugin {
 	 * @var PageSettingsManager
 	 */
 	public $page_settings_manager;
+
+	/**
+	 * @var MicroElementsManager
+	 */
+	public $micro_elements_manager;
 
 	/**
 	 * Settings.
@@ -435,6 +441,7 @@ class Plugin {
 		$this->debug = new Debug();
 		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->maintenance_mode = new Maintenance_Mode();
+		$this->micro_elements_manager = new MicroElementsManager();
 		$this->modules_manager = new Modules_Manager();
 
 		Api::init();
