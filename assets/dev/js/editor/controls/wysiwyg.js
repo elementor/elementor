@@ -58,8 +58,6 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 			id: self.editorID,
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
-
-				editor.on( 'keyup change undo redo SetContent', self.saveEditor );
 			}
 		};
 
@@ -131,6 +129,14 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 
 		editorProps.toolbar1 = editorBasicToolbarButtons.join( ',' );
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
+	},
+
+	onReady: function() {
+		var self = this;
+
+		setTimeout( function() {
+			self.editor.on( 'keyup change undo redo SetContent', self.saveEditor.bind( self ) );
+		}, 100 );
 	},
 
 	onAfterExternalChange: function() {
