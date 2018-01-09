@@ -36,16 +36,21 @@ ControlBaseDataView = ControlBaseView.extend( {
 			'change @ui.radio': 'onBaseInputChange',
 			'input @ui.textarea': 'onBaseInputChange',
 			'change @ui.select': 'onBaseInputChange',
-			'click @ui.responsiveSwitchers': 'onSwitcherClick',
-			'input @ui.contentEditable': 'onBaseInputChange'
+			'input @ui.contentEditable': 'onBaseInputChange',
+			'click @ui.responsiveSwitchers': 'onResponsiveSwitcherClick'
 		};
 	},
 
 	behaviors: function() {
-		var behaviors = {};
+		var behaviors = {},
+			microElements = this.options.model.get( 'dynamic' );
 
-		if ( this.options.model.get( 'micro_elements' ) ) {
+		if ( microElements ) {
 			behaviors.mentions = { behaviorClass: MentionsBehavior };
+
+			if ( 'object' === typeof microElements ) {
+				jQuery.extend( behaviors.mentions, microElements );
+			}
 		}
 
 		return behaviors;
@@ -94,8 +99,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	getInputValue: function( input ) {
-		var $input = this.$( input ),
-			inputValue = $input.val(),
+		var $input = this.$( input );
+
+		if ( $input.is( '[contenteditable="true"]' ) ) {
+			return $input.html();
+		}
+
+		var inputValue = $input.val(),
 			inputType = $input.attr( 'type' );
 
 		if ( -1 !== [ 'radio', 'checkbox' ].indexOf( inputType ) ) {
@@ -122,8 +132,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
-		} else if ( $input.attr( 'contenteditable' ) ) {
-			$input.html( value );
 		} else {
 			$input.val( value );
 		}
@@ -149,20 +157,16 @@ ControlBaseDataView = ControlBaseView.extend( {
 		}
 	},
 
-	onSettingsError: function() {
-		this.$el.addClass( 'elementor-error' );
-	},
-
-	onSettingsChange: function() {
-		this.$el.removeClass( 'elementor-error' );
-	},
-
 	onRender: function() {
 		ControlBaseView.prototype.onRender.apply( this, arguments );
 
 		this.applySavedValue();
 
-		this.renderResponsiveSwitchers();
+		// this.$el.toggleClass( 'elementor-control-dynamic', this.isDynamic() );
+
+		if ( this.model.get( 'responsive' ) ) {
+			this.renderResponsiveSwitchers();
+		}
 
 		this.triggerMethod( 'ready' );
 
@@ -202,7 +206,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.triggerMethod( 'input:change', event );
 	},
 
-	onSwitcherClick: function( event ) {
+	onResponsiveSwitcherClick: function( event ) {
 		var device = jQuery( event.currentTarget ).data( 'device' );
 
 		elementor.changeDeviceMode( device );
@@ -212,6 +216,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	onSettingsExternalChange: function() {
 		this.applySavedValue();
+
 		this.triggerMethod( 'after:external:change' );
 	},
 

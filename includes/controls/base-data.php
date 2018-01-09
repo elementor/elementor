@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\MicroElements\Manager as MicroElementsManager;
+use Elementor\Core\DynamicContent\Manager as DynamicContentManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -45,7 +46,7 @@ abstract class Base_Data_Control extends Base_Control {
 	protected function get_default_settings() {
 		$default_settings = parent::get_default_settings();
 
-		$default_settings['micro_elements'] = false;
+		$default_settings['dynamic'] = false;
 
 		return $default_settings;
 	}
@@ -72,16 +73,12 @@ abstract class Base_Data_Control extends Base_Control {
 			$value = $control['default'];
 		}
 
-		if ( $this->get_settings( 'micro_elements' ) ) {
-			$value = $this->parse_tags( $value );
-		}
-
 		return $value;
 	}
 
 	public function parse_tags( $value ) {
 		if ( $value ) {
-			$value = MicroElementsManager::parse_tags_text( $value );
+			$value = Plugin::$instance->micro_elements_manager->parse_tags_text( $value, $this->get_settings( 'dynamic' ), [ Plugin::$instance->micro_elements_manager, 'render_tag_data' ] );
 		}
 
 		return $value;
