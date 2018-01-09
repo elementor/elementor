@@ -3,6 +3,8 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 
 ControlWysiwygItemView = ControlBaseDataView.extend( {
 
+	editor: null,
+
 	events: function() {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
 			'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
@@ -58,6 +60,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 			id: self.editorID,
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
+				self.editor = editor;
 			}
 		};
 
@@ -68,10 +71,10 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	saveEditor: function( editor ) {
-		editor.save();
+	saveEditor: function() {
+		this.editor.save();
 
-		this.setValue( editor.getContent() );
+		this.setValue( this.editor.getContent() );
 	},
 
 	attachElContent: function() {
@@ -142,7 +145,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 	onAfterExternalChange: function() {
 		var controlValue = this.getControlValue();
 
-		tinymce.get( this.editorID ).setContent( controlValue );
+		this.editor.setContent( controlValue );
 
 		// Update also the plain textarea
 		jQuery( '#' + this.editorID ).val( controlValue );
