@@ -145,7 +145,7 @@ class Control_URL extends Control_Base_Multiple {
 		<div class="elementor-control-field elementor-control-url-external-{{{ data.show_external ? 'show' : 'hide' }}}">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input id="<?php echo $control_uid; ?>" type="url" class="elementor-input" data-setting="url" placeholder="{{ data.placeholder }}" />
+				<div id="<?php echo $control_uid; ?>" class="elementor-control-mentions-area elementor-input-style" title="{{ data.title }}" data-setting="url" contenteditable="true"></div>
 				<label for="<?php echo $more_input_control_uid; ?>" class="elementor-control-url-more tooltip-target" data-tooltip="<?php _e( 'Link Options', 'elementor' ); ?>">
 					<i class="fa fa-cog" aria-hidden="true"></i>
 				</label>
