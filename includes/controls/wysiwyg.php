@@ -78,10 +78,6 @@ class Control_Wysiwyg extends Base_Data_Control {
 	 */
 	public function content_template() {
 		?>
-		<label>
-			<span class="elementor-control-title">{{{ data.label }}}</span>
-			<textarea data-setting="{{ data.name }}"></textarea>
-		</label>
 		<?php
 	}
 }
