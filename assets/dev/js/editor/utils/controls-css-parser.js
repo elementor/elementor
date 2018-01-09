@@ -7,7 +7,9 @@ ControlsCSSParser = ViewModule.extend( {
 
 	getDefaultSettings: function() {
 		return {
-			id: 0
+			id: 0,
+			settingsModel: null,
+			dynamicParsing: {}
 		};
 	},
 
@@ -28,30 +30,59 @@ ControlsCSSParser = ViewModule.extend( {
 			.addDevice( 'desktop', viewportBreakpoints.lg );
 	},
 
-	addStyleRules: function( controls, values, controlsStack, placeholders, replacements ) {
-		var self = this;
+	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
+		var self = this,
+			dynamicParsedValues = self.getSettings( 'settingsModel' ).parseDynamicSettings( values, self.getSettings( 'dynamicParsing' ) );
 
-		_.each( controls, function( control ) {
+		_.each( styleControls, function( control ) {
 			if ( control.styleFields && control.styleFields.length ) {
 				values[ control.name ].each( function( itemModel ) {
 					self.addStyleRules(
 						control.styleFields,
 						itemModel.attributes,
-						controlsStack,
+						controls,
 						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
 						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
 					);
 				} );
 			}
 
-			self.addControlStyleRules( control, values, controlsStack, placeholders, replacements );
+			if ( control.dynamic && values[ 'dynamic_' + control.name ] ) {
+				var value = values[ control.name ];
+
+				if ( control.dynamic.property ) {
+					value = value[ control.dynamic.property ];
+				}
+
+				elementor.microElements.parseTagsText( value, control.dynamic, function( id, name, settings ) {
+					var tag = elementor.microElements.createTag( id, name, settings ),
+						tagSettingsModel = tag.model,
+						styleControls = tagSettingsModel.getStyleControls();
+
+					if ( ! styleControls.length ) {
+						return;
+					}
+
+					var tagReplacements = replacements.slice( 0 );
+
+					tagReplacements.splice( placeholders.indexOf( '{{WRAPPER}}' ), 1, '#elementor-tag-' + id );
+
+					self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, placeholders, tagReplacements );
+				} );
+			}
+
+			if ( ! control.selectors ) {
+				return;
+			}
+
+			self.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements );
 		} );
 	},
 
-	addControlStyleRules: function( control, values, controlsStack, placeholders, replacements ) {
+	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
 		var self = this;
 
-		ControlsCSSParser.addControlStyleRules( self.stylesheet, control, controlsStack, function( control ) {
+		ControlsCSSParser.addControlStyleRules( self.stylesheet, control, controls, function( control ) {
 			return self.getStyleControlValue( control, values );
 		}, placeholders, replacements );
 	},
@@ -87,7 +118,7 @@ ControlsCSSParser = ViewModule.extend( {
 	}
 } );
 
-ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controlsStack, valueCallback, placeholders, replacements ) {
+ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls, valueCallback, placeholders, replacements ) {
 	var value = valueCallback( control );
 
 	if ( undefined === value ) {
@@ -103,7 +134,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 					valueToInsert = value;
 
 				if ( controlName ) {
-					parserControl = _.findWhere( controlsStack, { name: controlName } );
+					parserControl = _.findWhere( controls, { name: controlName } );
 
 					if ( ! parserControl ) {
 						return '';
