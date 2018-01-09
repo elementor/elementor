@@ -145,6 +145,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<input id="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-input" type="checkbox"{{ favorite ? " checked" : "" }}>
 			<label for="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-label">
 				<i class="fa fa-heart-o" aria-hidden="true"></i>
+				<span class="elementor-screen-only"><?php esc_html_e( 'Favorite', 'elementor' ); ?></span>
 			</label>
 		</div>
 	</div>

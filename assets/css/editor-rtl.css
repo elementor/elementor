@@ -878,8 +878,6 @@ select {
       transition: all 0.5s; }
       .elementor-panel .elementor-header-button .elementor-icon.eicon-menu-bar {
         font-size: 18px; }
-        .elementor-panel .elementor-header-button .elementor-icon.eicon-menu-bar:hover:before {
-          content: '\e909'; }
       .elementor-panel .elementor-header-button .elementor-icon:hover {
         color: #d5dadf; }
   .elementor-panel #elementor-panel-header-title {
@@ -949,7 +947,10 @@ select {
     border: none;
     -webkit-transition: all 1s;
     -o-transition: all 1s;
-    transition: all 1s; }
+    transition: all 1s;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none; }
     .elementor-panel #elementor-panel-elements-search-input:focus {
       background-color: rgba(255, 255, 255, 0.7);
       padding-right: 15px; }
@@ -3032,7 +3033,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
           border-radius: 0;
   font-size: 11px;
   text-transform: uppercase;
-  padding: 8px 8px 8px 0;
+  padding: 8px 15px 8px 0;
   -webkit-transition: border 0.5s;
   -o-transition: border 0.5s;
   transition: border 0.5s; }
