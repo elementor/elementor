@@ -42,8 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param mixed  $default     Optional. The field default value.
- * @param string $input_type  Optional. Any valid HTML5 input type: text, email,
- *                            url, tel, etc. Default is 'text'.
+ *
  * @param string $separator   Optional. Set the position of the control separator.
  *                            Available values are 'default', 'before', 'after'
  *                            and 'none'. 'default' will position the separator
@@ -86,16 +85,7 @@ class Control_Text extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<# if ( data.micro_elements ) { #>
-					<div class="elementor-control-mentions-wrapper">
-						<div id="<?php echo $control_uid; ?>" class="elementor-input-style tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" contenteditable="true"></div>
-						<div class="elementor-control-mentions-add">
-							<i class="fa fa-database"></i>
-						</div>
-					</div>
-				<# } else { #>
-					<input id="<?php echo $control_uid; ?>" type="{{ data.input_type }}" class="tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}" />
-				<# } #>
+				<div id="<?php echo $control_uid; ?>" class="elementor-control-mentions-area elementor-input-style tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" contenteditable="true"></div>
 			</div>
 		</div>
 		<# if ( data.description ) { #>
