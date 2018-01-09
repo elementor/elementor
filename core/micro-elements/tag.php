@@ -12,16 +12,18 @@ abstract class Tag extends Controls_Stack {
 		return 'tag';
 	}
 
-	abstract public function get_group();
+	abstract public function get_groups();
 
 	abstract public function get_title();
 
-	final public function get_content() {
-		ob_start();
-		?>
-		<span id="elementor-tag-<?php echo $this->get_id(); ?>" class="elementor-tag"><?php $this->render(); ?></span>
-		<?php
-		return ob_get_clean();
+	abstract public function get_content();
+
+	protected function _get_initial_config() {
+		$config = parent::_get_initial_config();
+
+		$config['render_type'] = 'plain';
+
+		return $config;
 	}
 
 	public function get_unique_name() {

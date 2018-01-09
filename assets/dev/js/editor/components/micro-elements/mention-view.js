@@ -2,8 +2,6 @@ var TagControlsStack = require( 'elementor-micro-elements/tag-controls-stack' ),
 	SettingsModel = require( 'elementor-elements/models/base-settings' );
 
 module.exports = Marionette.ItemView.extend( {
-	mentionPopup: null,
-
 	tagControlsStack: null,
 
 	events: {
@@ -21,31 +19,58 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	initMentionsPopup: function() {
-		var positionFromLeft = 7,
-			positionFromTop = -10;
-
-		if ( this.getOption( 'isInsidePreview' ) ) {
-			positionFromLeft += elementor.panel.$el.width();
-
-			positionFromTop -= elementorFrontend.getElements( 'window' ).pageYOffset;
-		}
-
-		this.mentionPopup = elementor.dialogsManager.createWidget( 'buttons', {
+		var mentionsPopupOptions = {
 			className: 'elementor-mentions-popup',
 			position: {
-				my: 'left+' + positionFromLeft + ' top+' + positionFromTop,
 				at: 'right top',
-				of: this.el
+				of: this.el,
+				autoRefresh: true
 			}
-		} );
-	},
+		};
 
-	getMentionsPopup: function() {
-		if ( ! this.mentionPopup ) {
-			this.initMentionsPopup();
+		var $iframe = this.getOption( '$iframe' );
+
+		if ( $iframe ) {
+			var iframeWindow = $iframe[0].contentWindow,
+				mentionsPopupHideMethod;
+
+			mentionsPopupOptions.onShow = function() {
+				mentionsPopupHideMethod = this.hide.bind( this );
+
+				iframeWindow.addEventListener( 'click', mentionsPopupHideMethod, true );
+			};
+
+			mentionsPopupOptions.onHide = function() {
+				iframeWindow.removeEventListener( 'click', mentionsPopupHideMethod, true );
+			};
 		}
 
-		return this.mentionPopup;
+		var mentionPopup = elementor.dialogsManager.createWidget( 'buttons', mentionsPopupOptions );
+
+		this.getMentionsPopup = function() {
+			return mentionPopup;
+		};
+	},
+
+	showMentionsPopup: function() {
+		var positionFromLeft = 7,
+			positionFromTop = -10,
+			$iframe = this.getOption( '$iframe' ),
+			mentionsPopup = this.getMentionsPopup();
+
+		if ( $iframe ) {
+			var offset = $iframe.offset();
+
+			positionFromLeft += offset.left;
+
+			positionFromTop -=  $iframe[0].contentWindow.pageYOffset - offset.top;
+		}
+
+		mentionsPopup.setSettings( 'position', {
+			my: 'left+' + positionFromLeft + ' top+' + positionFromTop
+		} );
+
+		mentionsPopup.show();
 	},
 
 	initTagControlsStack: function() {
@@ -70,11 +95,15 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	initialize: function() {
+		if ( ! this.getTagConfig().controls ) {
+			return;
+		}
+
 		this.initModel();
 
 		this.initMentionsPopup();
 
-		this.model.on( 'change', this.render );
+		this.listenTo( this.model, 'change', this.render );
 	},
 
 	onRender: function() {
@@ -88,6 +117,6 @@ module.exports = Marionette.ItemView.extend( {
 	onClick: function() {
 		this.getTagControlsStack().render();
 
-		this.getMentionsPopup().show();
+		this.showMentionsPopup();
 	}
 } );
