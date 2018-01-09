@@ -31,9 +31,10 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 	initMentions: function( content ) {
 		this.mentions = new Mentions( {
-			element: this.$currentEditingArea,
-			value: content,
-			isInsidePreview: true
+			$element: this.$currentEditingArea,
+			$iframe: elementor.$preview,
+			groups: [ 'base' ],
+			value: content
 		} );
 
 		this.mentions.on( {
@@ -195,7 +196,20 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.mentions.getValue().trim().replace( /\u200b/g, '' ) );
+		var settingName = this.getEditingSettingKey(),
+			dynamicSettingName = 'dynamic_' + settingName,
+			editModel = this.view.getEditModel(),
+			settingsModel = editModel.get( 'settings' );
+
+		if ( this.mentions.getMentionsCount() ) {
+			settingsModel.set( dynamicSettingName, true, { silent: true } );
+
+			editModel.setSetting( settingName, this.mentions.getValue().trim().replace( /\u200b/g, '' ) );
+		} else {
+			settingsModel.unset( dynamicSettingName, { silent: true } );
+
+			editModel.setSetting( settingName, this.editor.getContent() );
+		}
 	},
 
 	onMentionChange: function() {
@@ -209,7 +223,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			$editingArea = this.$currentEditingArea;
 
 		var hidePopup = function() {
-			mentionView.mentionPopup.hide();
+			mentionView.getMentionsPopup().hide();
 
 			$frontendWindow[0].removeEventListener( 'click', hidePopup, true );
 
