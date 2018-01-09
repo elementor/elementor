@@ -39,16 +39,19 @@ BaseSettingsModel = Backbone.Model.extend( {
 				defaults[ field.name ] = field['default'] || control.default_value;
 			}
 
-			if ( undefined !== attrs[ field.name ] ) {
-				if ( isMultipleControl && ! _.isObject( attrs[ field.name ] ) ) {
-					elementor.debug.addCustomError(
-						new TypeError( 'An invalid argument supplied as multiple control value' ),
-						'InvalidElementData',
-						'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ field.name ] + '> as `' + field.name + '` value. Expected array or object.'
-					);
+			if (
+				undefined !== attrs[ field.name ] &&
+				isMultipleControl &&
+				! _.isObject( attrs[ field.name ] ) &&
+				( ! control.dynamic || ! attrs[ 'dynamic_' + field.name ] || 'mentions' !== control.dynamic.valueController )
+			) {
+				elementor.debug.addCustomError(
+					new TypeError( 'An invalid argument supplied as multiple control value' ),
+					'InvalidElementData',
+					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ field.name ] + '> as `' + field.name + '` value. Expected array or object.'
+				);
 
-					delete attrs[ field.name ];
-				}
+				delete attrs[ field.name ];
 			}
 
 			if ( undefined === attrs[ field.name ] ) {
@@ -95,16 +98,20 @@ BaseSettingsModel = Backbone.Model.extend( {
 	getStyleControls: function( controls ) {
 		var self = this;
 
-		controls = controls || self.getActiveControls();
+		controls = elementor.helpers.cloneObject( controls || self.getActiveControls() );
 
-		return _.filter( controls, function( control ) {
+		return _.filter( controls, function( control, index ) {
+			var controlDefaultSettings = elementor.config.controls[ control.type ];
+
+			control = controls[ index ] = jQuery.extend( {}, controlDefaultSettings, control );
+
 			if ( control.fields ) {
 				control.styleFields = self.getStyleControls( control.fields );
 
 				return true;
 			}
 
-			return self.isStyleControl( control.name, controls );
+			return self.isStyleControl( control.name, controls ) || control.dynamic;
 		} );
 	},
 
@@ -164,6 +171,55 @@ BaseSettingsModel = Backbone.Model.extend( {
 			.trigger( 'change:external:' + key, value );
 	},
 
+	parseDynamicSettings: function( settings, options ) {
+		settings = elementor.helpers.cloneObject( settings );
+
+		jQuery.each( this.controls, function() {
+			if ( settings[ 'dynamic_' + this.name ] ) {
+				var valueToParse = settings[ this.name ],
+					dynamicSettings = this.dynamic;
+
+				if ( undefined === dynamicSettings ) {
+					dynamicSettings = elementor.config.controls[ this.type ].dynamic;
+				}
+
+				if ( ! dynamicSettings ) {
+					return;
+				}
+
+				if ( dynamicSettings.property ) {
+					valueToParse = valueToParse[ dynamicSettings.property ];
+				}
+
+				var dynamicValue;
+
+				try {
+					dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.renderTagData );
+				} catch ( e ) {
+					dynamicValue = '';
+
+					if ( options.onServerRequestStart ) {
+						options.onServerRequestStart();
+					}
+
+					elementor.microElements.refreshCacheFromServer( function() {
+						if ( options.onServerRequestEnd ) {
+							options.onServerRequestEnd();
+						}
+					} );
+				}
+
+				if ( dynamicSettings.property ) {
+					settings[ this.name ][ dynamicSettings.property ] = dynamicValue;
+				} else {
+					settings[ this.name ] = dynamicValue;
+				}
+			}
+		} );
+
+		return settings;
+	},
+
 	toJSON: function( options ) {
 		var data = Backbone.Model.prototype.toJSON.call( this );
 
@@ -217,7 +273,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			} );
 		}
 
-		return data;
+		return elementor.helpers.cloneObject( data );
 	}
 } );
 

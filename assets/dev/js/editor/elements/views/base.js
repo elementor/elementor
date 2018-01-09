@@ -425,17 +425,25 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	serializeData: function() {
-		var data = BaseContainer.prototype.serializeData.apply( this, arguments ),
-			controls = this.getEditModel().get( 'settings' ).controls;
+	getDynamicParsingSettings: function() {
+		var self = this;
 
-		jQuery.each( controls, function() {
-			if ( this.micro_elements ) {
-				var value = data.settings[ this.name ];
+		return {
+			onServerRequestStart: function() {
+				self.$el.addClass( 'elementor-loading' );
+			},
+			onServerRequestEnd: function() {
+				self.render();
 
-				data.settings[ this.name ] = elementor.microElements.parseTagsText( value, elementor.microElements.renderTagData );
+				self.$el.removeClass( 'elementor-loading' );
 			}
-		} );
+		};
+	},
+
+	serializeData: function() {
+		var data = BaseContainer.prototype.serializeData.apply( this, arguments );
+
+		data.settings = this.getEditModel().get( 'settings' ).parseDynamicSettings( data.settings, this.getDynamicParsingSettings() );
 
 		return data;
 	},
