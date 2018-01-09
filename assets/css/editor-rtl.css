@@ -992,7 +992,10 @@ select {
     border: none;
     -webkit-transition: all 1s;
     -o-transition: all 1s;
-    transition: all 1s; }
+    transition: all 1s;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none; }
     .elementor-panel #elementor-panel-elements-search-input:focus {
       background-color: rgba(255, 255, 255, 0.7);
       padding-right: 15px; }
