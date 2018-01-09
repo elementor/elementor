@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\MicroElements\Manager as MicroElementsManager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -335,6 +337,10 @@ abstract class CSS_File {
 	 * @param array          $replacements
 	 */
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
+		$all_controls = $controls_stack->get_controls();
+
+		$parsed_dynamic_settings = $controls_stack->parse_dynamic_settings( $values );
+
 		foreach ( $controls as $control ) {
 			if ( ! empty( $control['style_fields'] ) ) {
 				foreach ( $values[ $control['name'] ] as $field_value ) {
@@ -348,11 +354,23 @@ abstract class CSS_File {
 				}
 			}
 
+			if ( ! empty( $control['dynamic'] ) ) {
+				Plugin::$instance->micro_elements_manager->parse_tags_text( $values[ $control['name'] ], $control, function( $id, $name, $settings ) use ( $placeholders, $replacements ) {
+					$tag = Plugin::$instance->micro_elements_manager->create_tag( $id, $name, $settings );
+
+					$tag_replacements = $replacements;
+
+					$tag_replacements[ array_search( '{{WRAPPER}}', $placeholders ) ] = '#elementor-tag-' . $id;
+
+					$this->add_controls_stack_style_rules( $tag, $tag->get_style_controls(), $tag->get_active_settings(), $placeholders, $tag_replacements );
+				} );
+			}
+
 			if ( empty( $control['selectors'] ) ) {
 				continue;
 			}
 
-			$this->add_control_style_rules( $control, $values, $controls_stack->get_controls(), $placeholders, $replacements );
+			$this->add_control_style_rules( $control, $parsed_dynamic_settings, $all_controls, $placeholders, $replacements );
 		}
 	}
 
@@ -450,15 +468,16 @@ abstract class CSS_File {
 	/**
 	 * @since 1.6.0
 	 * @access private
+	 *
 	 * @param array $control
 	 * @param array $values
-	 * @param array $controls_stack
+	 * @param array $controls
 	 * @param array $placeholders
 	 * @param array $replacements
 	 */
-	private function add_control_style_rules( array $control, array $values, array $controls_stack, array $placeholders, array $replacements ) {
+	private function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
 		$this->add_control_rules(
-			$control, $controls_stack, function( $control ) use ( $values ) {
+			$control, $controls, function( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements
 		);
