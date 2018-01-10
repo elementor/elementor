@@ -4914,14 +4914,14 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 				self.ui.form.html( data );
 				// WP >= 4.8
 				if ( wp.textWidgets ) {
-					this.ui.form.addClass( 'open' );
+					self.ui.form.addClass( 'open' );
 					var event = new jQuery.Event( 'widget-added' );
 					wp.textWidgets.handleWidgetAdded( event, self.ui.form );
 					wp.mediaWidgets.handleWidgetAdded( event, self.ui.form );
 
 					// WP >= 4.9
 					if ( wp.customHtmlWidgets ) {
-						wp.customHtmlWidgets.handleWidgetAdded( event, this.ui.form );
+						wp.customHtmlWidgets.handleWidgetAdded( event, self.ui.form );
 					}
 				}
 
