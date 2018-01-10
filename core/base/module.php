@@ -19,6 +19,27 @@ abstract class Module {
 	 */
 	protected static $_instances = [];
 
+	abstract public function get_name();
+
+	/**
+	 * @return static
+	 */
+	public static function instance() {
+		if ( empty( static::$_instances[ static::class_name() ] ) ) {
+			static::$_instances[ static::class_name() ] = new static();
+		}
+
+		return static::$_instances[ static::class_name() ];
+	}
+
+	public static function is_active() {
+		return true;
+	}
+
+	public static function class_name() {
+		return get_called_class();
+	}
+
 	/**
 	 * Throw error on object clone
 	 *
@@ -44,25 +65,12 @@ abstract class Module {
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
 	}
 
-	public static function class_name() {
-		return get_called_class();
-	}
-
-	/**
-	 * @return static
-	 */
-	public static function instance() {
-		if ( empty( static::$_instances[ static::class_name() ] ) ) {
-			static::$_instances[ static::class_name() ] = new static();
+	public function get_reflection() {
+		if ( null === $this->reflection ) {
+			$this->reflection = new \ReflectionClass( $this );
 		}
 
-		return static::$_instances[ static::class_name() ];
-	}
-
-	abstract public function get_name();
-
-	public function __construct() {
-		$this->reflection = new \ReflectionClass( $this );
+		return $this->reflection;
 	}
 
 	public function add_component( $id, $instance ) {
