@@ -94,7 +94,7 @@ class Widget_Html extends Widget_Base {
 				'label' => '',
 				'type' => Controls_Manager::CODE,
 				'default' => '',
-				'placeholder' => __( 'Enter your embed code here', 'elementor' ),
+				'placeholder' => __( 'Enter your code', 'elementor' ),
 				'show_label' => false,
 			]
 		);

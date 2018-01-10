@@ -128,7 +128,7 @@ class Widget_Icon_List extends Widget_Base {
 						'label' => __( 'Link', 'elementor' ),
 						'type' => Controls_Manager::URL,
 						'label_block' => true,
-						'placeholder' => __( 'http://your-link.com', 'elementor' ),
+						'placeholder' => __( 'https://your-link.com', 'elementor' ),
 					],
 				],
 				'title_field' => '<i class="{{ icon }}" aria-hidden="true"></i> {{{ text }}}',

@@ -145,6 +145,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<input id="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-input" type="checkbox"{{ favorite ? " checked" : "" }}>
 			<label for="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-label">
 				<i class="fa fa-heart-o" aria-hidden="true"></i>
+				<span class="elementor-screen-only"><?php esc_html_e( 'Favorite', 'elementor' ); ?></span>
 			</label>
 		</div>
 	</div>
@@ -215,7 +216,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</button>
 	</form>
 	<div class="elementor-template-library-blank-footer">
-		<?php esc_html_e( 'Want to learn more about Elementor library?', 'elementor' ); ?>
+		<?php esc_html_e( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
 		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php esc_html_e( 'Click here', 'elementor' ); ?></a>
 	</div>
 </script>
@@ -231,7 +232,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<label for="elementor-template-library-import-form-input" id="elementor-template-library-import-form-label" class="elementor-button elementor-button-success"><?php esc_html_e( 'Select File', 'elementor' ); ?></label>
 		<input id="elementor-template-library-import-form-input" type="file" name="file" accept=".json,.zip" required/>
 		<div class="elementor-template-library-blank-footer">
-			<?php esc_html_e( 'Want to learn more about Elementor library?', 'elementor' ); ?>
+			<?php esc_html_e( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
 			<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php esc_html_e( 'Click here', 'elementor' ); ?></a>
 		</div>
 	</form>
@@ -244,7 +245,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-title"></div>
 	<div class="elementor-template-library-blank-message"></div>
 	<div class="elementor-template-library-blank-footer">
-		<?php esc_html_e( 'Want to learn more about Elementor library?', 'elementor' ); ?>
+		<?php esc_html_e( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
 		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php esc_html_e( 'Click here', 'elementor' ); ?></a>
 	</div>
 </script>

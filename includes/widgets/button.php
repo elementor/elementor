@@ -126,7 +126,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'placeholder' => 'http://your-link.com',
+				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'default' => [
 					'url' => '#',
 				],
@@ -330,7 +330,7 @@ class Widget_Button extends Widget_Base {
 		$this->add_control(
 			'hover_animation',
 			[
-				'label' => __( 'Animation', 'elementor' ),
+				'label' => __( 'Hover Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
 			]
 		);
@@ -374,7 +374,7 @@ class Widget_Button extends Widget_Base {
 		$this->add_control(
 			'text_padding',
 			[
-				'label' => __( 'Text Padding', 'elementor' ),
+				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
