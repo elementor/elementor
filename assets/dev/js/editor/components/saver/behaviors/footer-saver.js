@@ -92,7 +92,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	onAfterSaveError: function() {
 		NProgress.done();
-		this.ui.buttonSave.removeClass( 'elementor-button-state' );
+		this.ui.buttonPublish.removeClass( 'elementor-button-state' );
 	},
 
 	onClickButtonPreview: function() {

@@ -102,7 +102,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'vimeo_link',
 			[
-				'label' => __( 'Vimeo Link', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'Enter your Vimeo link', 'elementor' ),
 				'default' => Utils::get_placeholder_video_url( 'vimeo' ),

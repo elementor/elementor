@@ -5,18 +5,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor elements manager class.
+ *
+ * Elementor elements manager handler class is responsible for registering and
+ * initializing all the supported elements.
+ *
+ * @since 1.0.0
+ */
 class Elements_Manager {
+
 	/**
+	 * Element types.
+	 *
+	 * Holds the list of all the element types.
+	 *
+	 * @access private
+	 *
 	 * @var Element_Base[]
 	 */
 	private $_element_types;
 
+	/**
+	 * Element categories.
+	 *
+	 * Holds the list of all the element categories.
+	 *
+	 * @access private
+	 *
+	 * @var
+	 */
 	private $_categories;
 
 	/**
+	 * Elements constructor.
+	 *
+	 * Initializing Elementor elements manager.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		$this->require_files();
 
@@ -25,15 +53,20 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Create element instance.
+	 *
+	 * This method creates a new element instance for any given element.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param array        $element_data
 	 *
-	 * @param array        $element_args
+	 * @param array        $element_data Element data.
+	 * @param array        $element_args Optional. Element arguments. Default is
+	 *                                   an empty array.
+	 * @param Element_Base $element_type Optional. Element type. Default is null.
 	 *
-	 * @param Element_Base $element_type
-	 *
-	 * @return Element_Base
+	 * @return Element_Base|null Element instance if element created, or null
+	 *                           otherwise.
 	 */
 	public function create_element_instance( array $element_data, array $element_args = [], Element_Base $element_type = null ) {
 		if ( null === $element_type ) {
@@ -62,9 +95,15 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Get element categories.
+	 *
+	 * Retrieve the list of categories the element belongs to.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return array Element categories.
+	 */
 	public function get_categories() {
 		if ( null === $this->_categories ) {
 			$this->init_categories();
@@ -74,9 +113,18 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Add element category.
+	 *
+	 * Register new category for the element.
+	 *
 	 * @since 1.7.12
 	 * @access public
-	*/
+	 *
+	 * @param string $category_name       Category name.
+	 * @param array  $category_properties Category properties.
+	 * @param int    $offset              Optional. Where to add the category in
+	 *                                    the categories array. Default is null.
+	 */
 	public function add_category( $category_name, $category_properties, $offset = null ) {
 		if ( null === $this->_categories ) {
 			$this->init_categories();
@@ -94,9 +142,17 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Register element type.
+	 *
+	 * Add new type to the list of registered types.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param Element_Base $element Element instance.
+	 *
+	 * @return bool Whether the element type was registered.
+	 */
 	public function register_element_type( Element_Base $element ) {
 		$this->_element_types[ $element->get_name() ] = $element;
 
@@ -104,9 +160,17 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Unregister element type.
+	 *
+	 * Remove element type from the list of registered types.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param string $name Element name.
+	 *
+	 * @return bool Whether the element type was unregister, or not.
+	 */
 	public function unregister_element_type( $name ) {
 		if ( ! isset( $this->_element_types[ $name ] ) ) {
 			return false;
@@ -118,9 +182,19 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Get element types.
+	 *
+	 * Retrieve the list of all the element types, or if a spesific element name
+	 * was provided retrieve his element types.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param string $element_name Optional. Element name. Default is null.
+	 *
+	 * @return null|Element_Base[] Element types, or a list of all the element
+	 *                             types, or null if element does not exist.
+	 */
 	public function get_element_types( $element_name = null ) {
 		if ( is_null( $this->_element_types ) ) {
 			$this->_init_elements();
@@ -134,9 +208,15 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Get element types config.
+	 *
+	 * Retrieve the config of all the element types.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return array Element types config.
+	 */
 	public function get_element_types_config() {
 		$config = [];
 
@@ -148,9 +228,13 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Render elements content.
+	 *
+	 * Used to generate the elements templates on the editor.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function render_elements_content() {
 		foreach ( $this->get_element_types() as $element_type ) {
 			$element_type->print_template();
@@ -158,6 +242,14 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Ajax discard changes.
+	 *
+	 * Ajax handler for Elementor discard_changes. Handles the discarded changes
+	 * in the builder by deleting autosaved revisions.
+	 *
+	 * Fired by `wp_ajax_elementor_discard_changes` action.
+	 *
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function ajax_discard_changes() {
@@ -186,9 +278,16 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Ajax save builder.
+	 *
+	 * Ajax handler for Elementor save_builder. Handles the saved data returned
+	 * by the builder.
+	 *
+	 * Fired by `wp_ajax_elementor_save_builder` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function ajax_save_builder() {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
@@ -238,9 +337,14 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Init elements.
+	 *
+	 * Initialize Elementor elements by registering the supported elements.
+	 * Elementor supports by default `section` element and `column` element.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private function _init_elements() {
 		$this->_element_types = [];
 
@@ -261,9 +365,13 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Init categories.
+	 *
+	 * Initialize the element categories.
+	 *
 	 * @since 1.7.12
 	 * @access private
-	*/
+	 */
 	private function init_categories() {
 		$this->_categories = [
 			'basic' => [
@@ -286,9 +394,14 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Require files.
+	 *
+	 * Require Elementor element base class and column, section and repeater
+	 * elements.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private function require_files() {
 		require_once ELEMENTOR_PATH . 'includes/base/element-base.php';
 
