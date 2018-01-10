@@ -2,19 +2,19 @@
 namespace Elementor\Modules\Tags\Tags;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\MicroElements\Tag;
+use Elementor\Core\MicroElements\UI_Tag;
 use Elementor\Modules\Tags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Icon extends Tag {
+class Icon extends UI_Tag {
 
 	public function get_name() {
 		return 'icon';
 	}
 
-	public function get_group() {
-		return Module::DEFAULT_GROUP;
+	public function get_groups() {
+		return [ Module::DEFAULT_GROUP ];
 	}
 
 	public function get_title() {
@@ -45,7 +45,7 @@ class Icon extends Tag {
 	}
 
 	public function get_mention_template() {
-		return '<i class="{{ icon }}"></i>';
+		return '<i class="{{ icon }}" style="color: {{{ icon_color }}}"></i>';
 	}
 
 	protected function _content_template() {
