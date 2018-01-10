@@ -1391,7 +1391,7 @@ abstract class Controls_Stack {
 			'popover' => [
 				'end' => true,
 			],
-		] );
+		], [ 'recursive' => true ] );
 	}
 
 	/**
