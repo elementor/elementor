@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\Tags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -83,7 +85,9 @@ class Control_Textarea extends Base_Data_Control {
 		return [
 			'label_block' => true,
 			'rows' => 5,
-			'micro_elements' => true,
+			'dynamic' => [
+				'groups' => [ TagsModule::DEFAULT_GROUP ],
+			],
 		];
 	}
 
