@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\Tags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -107,8 +109,9 @@ class Control_Text extends Base_Data_Control {
 	 */
 	protected function get_default_settings() {
 		return [
-			'input_type' => 'text',
-			'micro_elements' => true,
+			'dynamic' => [
+				'groups' => [ TagsModule::DEFAULT_GROUP ],
+			],
 		];
 	}
 }
