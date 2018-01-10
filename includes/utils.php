@@ -408,8 +408,17 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Get create new post URL.
+	 *
+	 * Retrieve a custom URL for creating a new post/page using Elementor.
+	 *
+	 * @since 1.9.0
 	 * @access public
+	 * @static
+	 *
+	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 *
+	 * @return string A URL for creating new post using Elementor.
 	 */
 	public static function get_create_new_post_url( $post_type = 'page' ) {
 		$new_post_url = add_query_arg( [
