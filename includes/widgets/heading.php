@@ -225,7 +225,7 @@ class Widget_Heading extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['title'] ) ) {
 			return;
