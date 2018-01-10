@@ -199,8 +199,6 @@ class Controls_Manager {
 	 * @since 1.6.0
 	 * @access public
 	 * @static
-	 *
-	 * @return array Control tabs.
 	 */
 	public static function add_tab( $tab_name, $tab_title ) {
 		if ( ! self::$tabs ) {
