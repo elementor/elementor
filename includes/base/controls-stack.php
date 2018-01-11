@@ -1436,13 +1436,9 @@ abstract class Controls_Stack {
 	final public function end_popover() {
 		$this->current_popover = null;
 
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this, false )['controls'];
+		$last_control_key = $this->get_control_key( $this->get_pointer_index() - 1 );
 
-		end( $registered_controls );
-
-		$last_control_key = key( $registered_controls );
-
-		$this->update_control( $last_control_key, [
+ 		$this->update_control( $last_control_key, [
 			'popover' => [
 				'end' => true,
 			],
