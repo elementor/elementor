@@ -342,7 +342,6 @@ class Widget_Button extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
-				'label' => __( 'Border', 'elementor' ),
 				'placeholder' => '1px',
 				'default' => '1px',
 				'selector' => '{{WRAPPER}} .elementor-button',
