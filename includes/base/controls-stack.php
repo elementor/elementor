@@ -581,19 +581,21 @@ abstract class Controls_Stack {
 	/**
 	 * Get control index.
 	 *
+	 * Retrieve the index of the control based on a given key of the control.
+	 *
 	 * @since 1.7.6
 	 * @access public
 	 *
-	 * @param string $control_id Control ID.
+	 * @param string $control_key Control key.
 	 *
 	 * @return false|int Control index.
 	 */
-	final public function get_control_index( $control_id ) {
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+	final public function get_control_index( $control_key ) {
+		$controls = $this->get_controls();
 
-		$controls_keys = array_keys( $registered_controls );
+		$controls_keys = array_keys( $controls );
 
-		return array_search( $control_id, $controls_keys );
+		return array_search( $control_key, $controls_keys );
 	}
 
 	/**
