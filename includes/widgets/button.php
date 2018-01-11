@@ -240,7 +240,6 @@ class Widget_Button extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button',
 			]
