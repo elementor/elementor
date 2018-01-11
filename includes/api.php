@@ -222,7 +222,7 @@ class Api {
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
 		if ( 200 !== $response_code ) {
-			return new \WP_Error( 'response_code_error', 'The request returned with a status code of ' . $response_code );
+			return new \WP_Error( 'response_code_error', sprintf( 'The request returned with a status code of %s.', $response_code ) );
 		}
 
 		$template_content = json_decode( wp_remote_retrieve_body( $response ), true );
@@ -232,7 +232,7 @@ class Api {
 		}
 
 		if ( empty( $template_content['data'] ) && empty( $template_content['content'] ) ) {
-			return new \WP_Error( 'template_data_error', 'An invalid data was returned' );
+			return new \WP_Error( 'template_data_error', 'An invalid data was returned.' );
 		}
 
 		return $template_content;
