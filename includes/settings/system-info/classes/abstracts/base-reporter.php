@@ -88,7 +88,7 @@ abstract class Base_Reporter {
 			$method = 'get_' . $field_name;
 
 			if ( ! method_exists( $this, $method ) ) {
-				return new \WP_error( sprintf( 'Getter method for the field \'%1$s\' wasn\'t found in %2$s.', $field_name, get_called_class() ) );
+				return new \WP_error( sprintf( "Getter method for the field '%s' wasn't found in %s.", $field_name, get_called_class() ) );
 			}
 
 			$reporter_field = [
