@@ -914,6 +914,27 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Get controls pointer index.
+	 *
+	 * Retrieve pointer index where the next control should be added.
+	 *
+	 * While using injection point, it will return the injection point index. Otherwise index of the last control plus
+	 * one.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @return int Controls pointer index.
+	 */
+	public function get_pointer_index() {
+		if ( null !== $this->injection_point ) {
+			return $this->injection_point['index'];
+		}
+
+		return count( $this->get_controls() );
+	}
+
+	/**
 	 * Get the raw data.
 	 *
 	 * Retrieve all the items or, when requested, a specific item.
