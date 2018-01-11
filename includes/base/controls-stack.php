@@ -559,6 +559,26 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Get control key.
+	 *
+	 * Retrieve the key of the control based on a given index of the control.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @param string $control_index Control index.
+	 *
+	 * @return int Control key.
+	 */
+	final public function get_control_key( $control_index ) {
+		$registered_controls = $this->get_controls();
+
+		$controls_keys = array_keys( $registered_controls );
+
+		return $controls_keys[ $control_index ];
+	}
+
+	/**
 	 * Get control index.
 	 *
 	 * @since 1.7.6
