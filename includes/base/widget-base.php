@@ -127,6 +127,9 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @throw \Exception If arguments are missing when initializing a full widget
+	 *                   instance.
+	 *
 	 * @param array      $data Widget data. Default is an empty array.
 	 * @param array|null $args Optional. Widget default arguments. Default is null.
 	 */
@@ -136,7 +139,7 @@ abstract class Widget_Base extends Element_Base {
 		$is_type_instance = $this->is_type_instance();
 
 		if ( ! $is_type_instance && null === $args ) {
-			throw new \Exception( '`$args` argument is required when initializing a full widget instance' );
+			throw new \Exception( '`$args` argument is required when initializing a full widget instance.' );
 		}
 
 		if ( $is_type_instance ) {
