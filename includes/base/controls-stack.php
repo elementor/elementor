@@ -260,15 +260,7 @@ abstract class Controls_Stack {
 	 * @return mixed Controls list.
 	 */
 	public function get_controls( $control_id = null ) {
-		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
-
-		if ( null === $stack ) {
-			$this->_init_controls();
-
-			return $this->get_controls();
-		}
-
-		return self::_get_items( $stack['controls'], $control_id );
+		return self::_get_items( $this->get_stack()['controls'], $control_id );
 	}
 
 	/**
@@ -451,6 +443,28 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Get stack.
+	 *
+	 * Retrieve the stack of controls.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @return array Stack of controls.
+	 */
+	public function get_stack() {
+		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
+
+		if ( null === $stack ) {
+			$this->_init_controls();
+
+			return $this->get_stack();
+		}
+
+		return $stack;
+	}
+
+	/**
 	 * Get position information.
 	 *
 	 * Retrieve the position while injecting data, based on the element type.
@@ -501,7 +515,7 @@ abstract class Controls_Stack {
 
 		$target_section_index = $target_control_index;
 
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+		$registered_controls = $this->get_controls();
 
 		$controls_keys = array_keys( $registered_controls );
 
@@ -579,7 +593,7 @@ abstract class Controls_Stack {
 
 		$section_controls = [];
 
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+		$registered_controls = $this->get_controls();
 
 		$controls_keys = array_keys( $registered_controls );
 
@@ -718,9 +732,7 @@ abstract class Controls_Stack {
 	 * @return array Tabs controls.
 	 */
 	final public function get_tabs_controls() {
-		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
-
-		return $stack['tabs'];
+		return $this->get_stack()['tabs'];
 	}
 
 	/**
