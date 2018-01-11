@@ -87,7 +87,6 @@ class Widget_Image extends Widget_Base {
 			Group_Control_Image_Size::get_type(),
 			[
 				'name' => 'image', // Actually its `image_size`.
-				'label' => __( 'Image Size', 'elementor' ),
 				'default' => 'large',
 			]
 		);
@@ -252,7 +251,6 @@ class Widget_Image extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'label' => __( 'Image Border', 'elementor' ),
 				'selector' => '{{WRAPPER}} .elementor-image img',
 				'separator' => 'before',
 			]
