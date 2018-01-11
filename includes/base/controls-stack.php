@@ -1496,6 +1496,13 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * @return array|null
+	 */
+	final public function get_injection_point() {
+		return $this->injection_point;
+	}
+
+	/**
 	 * Set settings.
 	 *
 	 * Change or add new settings to an existing control in the stack.
