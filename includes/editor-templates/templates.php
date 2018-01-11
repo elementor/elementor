@@ -94,6 +94,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar"></div>
 		<# } #>
 		<div id="elementor-template-library-filter-text-wrapper">
+			<label for="elementor-template-library-filter-text" class="elementor-screen-only"><?php esc_html_e( 'Search Templates:', 'elementor' ); ?></label>
 			<input id="elementor-template-library-filter-text" placeholder="<?php echo __( 'Search', 'elementor' ); ?>">
 		</div>
 	</div>
