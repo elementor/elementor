@@ -123,7 +123,7 @@ class Source_Remote extends Source_Base {
 	/**
 	 * Save remote template.
 	 *
-	 * Remote template from Elementor.com servers can not be saved on the
+	 * Remote template from Elementor.com servers cannot be saved on the
 	 * database as they are retrieved from remote servers.
 	 *
 	 * @since 1.0.0
@@ -140,7 +140,7 @@ class Source_Remote extends Source_Base {
 	/**
 	 * Update remote template.
 	 *
-	 * Remote template from Elementor.com servers can not be updated on the
+	 * Remote template from Elementor.com servers cannot be updated on the
 	 * database as they are retrieved from remote servers.
 	 *
 	 * @since 1.0.0
@@ -157,7 +157,7 @@ class Source_Remote extends Source_Base {
 	/**
 	 * Delete remote template.
 	 *
-	 * Remote template from Elementor.com servers can not be deleted from the
+	 * Remote template from Elementor.com servers cannot be deleted from the
 	 * database as they are retrieved from remote servers.
 	 *
 	 * @since 1.0.0
@@ -174,7 +174,7 @@ class Source_Remote extends Source_Base {
 	/**
 	 * Export remote template.
 	 *
-	 * Remote template from Elementor.com servers can not be exported from the
+	 * Remote template from Elementor.com servers cannot be exported from the
 	 * database as they are retrieved from remote servers.
 	 *
 	 * @since 1.0.0
