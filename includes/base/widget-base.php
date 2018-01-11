@@ -187,6 +187,29 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get widget controls pointer index.
+	 *
+	 * Retrieve widget pointer index where the next control should be added.
+	 *
+	 * While using injection point, it will return the injection point index. Otherwise index of the last control of the
+	 * current widget itself without the common controls, plus one.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @return int Widget controls pointer index.
+	 */
+	public function get_pointer_index() {
+		$injection_point = $this->get_injection_point();
+
+		if ( null !== $injection_point ) {
+			return $injection_point['index'];
+		}
+
+		return count( $this->get_stack( false )['controls'] );
+	}
+
+	/**
 	 * Show in panel.
 	 *
 	 * Whether to show the widget in the panel or not. By default returns true.
