@@ -727,7 +727,7 @@ class Source_Local extends Source_Base {
 		$data = json_decode( file_get_contents( $file_name ), true );
 
 		if ( empty( $data ) ) {
-			return new \WP_Error( 'file_error', 'Invalid File' );
+			return new \WP_Error( 'file_error', 'Invalid File.' );
 		}
 
 		// TODO: since 1.5.0 to content container named `content` instead of `data`.
@@ -738,7 +738,7 @@ class Source_Local extends Source_Base {
 		}
 
 		if ( ! is_array( $content ) ) {
-			return new \WP_Error( 'file_error', 'Invalid File' );
+			return new \WP_Error( 'file_error', 'Invalid File.' );
 		}
 
 		$content = $this->process_export_import_content( $content, 'on_import' );
@@ -782,7 +782,7 @@ class Source_Local extends Source_Base {
 		] );
 
 		if ( empty( $template_data['content'] ) ) {
-			return new \WP_Error( '404', 'The template does not exist' );
+			return new \WP_Error( '404', 'The template does not exist.' );
 		}
 
 		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
