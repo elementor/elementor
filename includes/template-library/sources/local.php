@@ -231,7 +231,7 @@ class Source_Local extends Source_Base {
 	*/
 	public function save_item( $template_data ) {
 		if ( ! in_array( $template_data['type'], self::$_template_types ) ) {
-			return new \WP_Error( 'save_error', 'Invalid template type `' . $template_data['type'] . '`' );
+			return new \WP_Error( 'save_error', sprintf( 'Invalid template type `%s`.', $template_data['type'] ) );
 		}
 
 		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
@@ -456,7 +456,7 @@ class Source_Local extends Source_Base {
 			$put_contents = file_put_contents( $complete_path, $file_data['content'] );
 
 			if ( ! $put_contents ) {
-				return new \WP_Error( '404', 'Cannot create file ' . $file_data['name'] );
+				return new \WP_Error( '404', sprintf( 'Cannot create file %s.', $file_data['name'] ) );
 			}
 
 			$files[] = [
@@ -505,7 +505,7 @@ class Source_Local extends Source_Base {
 		$import_file = $_FILES['file']['tmp_name'];
 
 		if ( empty( $import_file ) ) {
-			return new \WP_Error( 'file_error', 'Please upload a file to import' );
+			return new \WP_Error( 'file_error', 'Please upload a file to import.' );
 		}
 
 		$items = [];

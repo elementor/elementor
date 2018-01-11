@@ -83,7 +83,7 @@ class Import_Images {
 		} else {
 			// For now just return the origin attachment
 			return $attachment;
-			// return new \WP_Error( 'attachment_processing_error', __( 'Invalid file type', 'elementor' ) );
+			// return new \WP_Error( 'attachment_processing_error', __( 'Invalid file type.', 'elementor' ) );
 		}
 
 		$post_id = wp_insert_attachment( $post, $upload['file'] );
