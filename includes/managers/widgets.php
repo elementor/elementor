@@ -275,7 +275,7 @@ class Widgets_Manager {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
 		if ( empty( $_POST['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id', 'No post_id' ) );
+			wp_send_json_error( new \WP_Error( 'no_post_id', 'No `post_id`.' ) );
 		}
 
 		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
