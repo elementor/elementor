@@ -198,7 +198,7 @@ class Admin {
 	 *
 	 * @return array An updated array of row action links.
 	 */
-	public function add_edit_in_dashboard( $actions, $post ) {
+	public function add_edit_in_dashboard( $actions, \WP_Post $post ) {
 		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%s">%s</a>',
