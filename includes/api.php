@@ -71,12 +71,14 @@ class Api {
 		$info_data = get_transient( $cache_key );
 
 		if ( $force_update || false === $info_data ) {
+			$timeout = ( $force_update ) ? 25 : 8;
+
 			$response = wp_remote_post( self::$api_info_url, [
-				'timeout' => 25,
+				'timeout' => $timeout,
 				'body' => [
-					// Which API version is used
+					// Which API version is used.
 					'api_version' => ELEMENTOR_VERSION,
-					// Which language to return
+					// Which language to return.
 					'site_lang' => get_bloginfo( 'language' ),
 				],
 			] );
