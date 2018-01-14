@@ -42,7 +42,7 @@ class Revisions_Manager {
 		$posts = wp_get_post_revisions( $post->ID, $query_args );
 
 		if ( ! wp_revisions_enabled( $post ) ) {
-			$autosave = self::get_post_autosave( $post->ID );
+			$autosave = Utils::get_post_autosave( $post->ID );
 			if ( $autosave ) {
 				if ( $parse_result ) {
 					array_unshift( $posts, $autosave );
@@ -222,20 +222,6 @@ class Revisions_Manager {
 		}
 	}
 
-	public static function get_post_autosave( $post_id, $user_id = 0 ) {
-		global $wpdb;
-
-		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s', [ $post_id, "{$post_id}-autosave%" ] );
-
-		if ( $user_id ) {
-			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
-		}
-
-		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'");
-
-		return $revision;
-	}
-
 	public static function editor_settings( $settings, $post_id ) {
 		$settings = array_replace_recursive( $settings, [
 			'revisions' => self::get_revisions(),
@@ -281,7 +267,7 @@ class Revisions_Manager {
 
 	private static function current_revision_id( $post_id ) {
 		$current_revision_id = $post_id;
-		$autosave = self::get_post_autosave( $post_id );
+		$autosave = Utils::get_post_autosave( $post_id );
 
 		if ( is_object( $autosave ) ) {
 			$current_revision_id = $autosave->ID;

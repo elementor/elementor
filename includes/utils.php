@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Modules\History\Revisions_Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -390,7 +388,7 @@ class Utils {
 	public static function get_last_edited( $post_id ) {
 		$post = get_post( $post_id );
 
-		$autosave_post = Revisions_Manager::get_post_autosave( $post_id );
+		$autosave_post = Utils::get_post_autosave( $post_id );
 
 		if ( $autosave_post ) {
 			$post = $autosave_post;
@@ -423,5 +421,19 @@ class Utils {
 		$new_post_url = wp_nonce_url( $new_post_url, 'elementor_action_new_post' );
 
 		return $new_post_url;
+	}
+
+	public static function get_post_autosave( $post_id, $user_id = 0 ) {
+		global $wpdb;
+
+		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s', [ $post_id, "{$post_id}-autosave%" ] );
+
+		if ( $user_id ) {
+			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
+		}
+
+		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'" );
+
+		return $revision;
 	}
 }
