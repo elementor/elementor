@@ -435,6 +435,12 @@ class Utils {
 
 		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'" );
 
+		if ( $revision ) {
+			$revision = new \WP_Post( $revision );
+		} else {
+			$revision = false;
+		}
+
 		return $revision;
 	}
 }
