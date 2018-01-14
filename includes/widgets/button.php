@@ -240,7 +240,6 @@ class Widget_Button extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button',
 			]
@@ -343,7 +342,6 @@ class Widget_Button extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
-				'label' => __( 'Border', 'elementor' ),
 				'placeholder' => '1px',
 				'default' => '1px',
 				'selector' => '{{WRAPPER}} .elementor-button',
