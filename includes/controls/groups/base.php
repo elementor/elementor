@@ -92,10 +92,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		// For php < 7
 		reset( $filtered_fields );
 
-		if ( $this->get_options( 'popover' ) ) {
-			$filtered_fields = $this->set_popover( $filtered_fields );
-		}
-
 		if ( isset( $this->args['separator'] ) ) {
 			$filtered_fields[ key( $filtered_fields ) ]['separator'] = $this->args['separator'];
 		}
@@ -108,6 +104,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$element->start_injection( $options['position'] );
 
 			unset( $options['position'] );
+		}
+
+		if ( $this->get_options( 'popover' ) ) {
+			$this->start_popover( $element );
 		}
 
 		foreach ( $filtered_fields as $field_id => $field_args ) {
@@ -124,6 +124,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			} else {
 				$element->add_control( $id , $field_args, $options );
 			}
+		}
+
+		if ( $this->get_options( 'popover' ) ) {
+			$element->end_popover();
 		}
 
 		if ( $has_injection ) {
@@ -468,17 +472,16 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Set popover.
+	 * Start popover.
 	 *
-	 * Wraps the group controls with a popover.
+	 * Starts a group controls popover.
 	 *
 	 * @access private
-	 * @param array $fields Group control fields.
-	 *
-	 * @return array Fields wrapped with popover data to be rendered in frontend.
+	 * @param Controls_Stack $element Element.
 	 */
-	private function set_popover( array $fields ) {
+	private function start_popover( Controls_Stack $element ) {
 		$popover_options = $this->get_options( 'popover' );
+
 		$settings = $this->get_args();
 
 		if ( ! empty( $settings['label'] ) ) {
@@ -487,26 +490,13 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$label = $popover_options['starter_title'];
 		}
 
+		$element->add_control( $this->get_controls_prefix() . $popover_options['starter_name'], [
+			'type' => Controls_Manager::POPOVER_TOGGLE,
+			'label' => $label,
+			'toggle_type' => $popover_options['toggle_type'],
+			'return_value' => $popover_options['starter_value'],
+		] );
 
-		$fields[ key( $fields ) ]['popover']['start'] = true;
-
-		$popover_toggle_field = [
-			$popover_options['starter_name'] => [
-				'type' => Controls_Manager::POPOVER_TOGGLE,
-				'label' => $label,
-				'toggle_type' => $popover_options['toggle_type'],
-				'return_value' => $popover_options['starter_value'],
-			]
-		];
-
-		$fields = $popover_toggle_field + $fields;
-
-		end( $fields );
-
-		$fields[ key( $fields ) ]['popover']['end'] = true;
-
-		reset( $fields );
-
-		return $fields;
+		$element->start_popover();
 	}
 }
