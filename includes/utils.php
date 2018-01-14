@@ -153,6 +153,7 @@ class Utils {
 
 		$nonce = wp_create_nonce( 'post_preview_' . $post_id );
 		$query_args['preview_nonce'] = $nonce;
+		$query_args['preview'] = 'true';
 
 		$wp_preview_url = get_preview_post_link( $post_id, $query_args );
 
