@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor API class.
  *
  * Elementor API handler class is responsible for communicating with Elementor
- * remote servers retrieve templates data and to send uninstall feedback.
+ * remote servers retrieving templates data and to send uninstall feedback.
  *
  * @since 1.0.0
  */
@@ -71,12 +71,14 @@ class Api {
 		$info_data = get_transient( $cache_key );
 
 		if ( $force_update || false === $info_data ) {
+			$timeout = ( $force_update ) ? 25 : 8;
+
 			$response = wp_remote_post( self::$api_info_url, [
-				'timeout' => 25,
+				'timeout' => $timeout,
 				'body' => [
-					// Which API version is used
+					// Which API version is used.
 					'api_version' => ELEMENTOR_VERSION,
-					// Which language to return
+					// Which language to return.
 					'site_lang' => get_bloginfo( 'language' ),
 				],
 			] );
@@ -222,7 +224,7 @@ class Api {
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
 		if ( 200 !== $response_code ) {
-			return new \WP_Error( 'response_code_error', 'The request returned with a status code of ' . $response_code );
+			return new \WP_Error( 'response_code_error', sprintf( 'The request returned with a status code of %s.', $response_code ) );
 		}
 
 		$template_content = json_decode( wp_remote_retrieve_body( $response ), true );
@@ -232,7 +234,7 @@ class Api {
 		}
 
 		if ( empty( $template_content['data'] ) && empty( $template_content['content'] ) ) {
-			return new \WP_Error( 'template_data_error', 'An invalid data was returned' );
+			return new \WP_Error( 'template_data_error', 'An invalid data was returned.' );
 		}
 
 		return $template_content;
