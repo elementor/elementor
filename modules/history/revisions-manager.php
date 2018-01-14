@@ -225,13 +225,13 @@ class Revisions_Manager {
 	public static function get_post_autosave( $post_id, $user_id = 0 ) {
 		global $wpdb;
 
-		$where = $wpdb->prepare("post_parent = %d AND post_name LIKE %s", [ $post_id, "{$post_id}-autosave%" ] );
+		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s', [ $post_id, "{$post_id}-autosave%" ] );
 
 		if ( $user_id ) {
-			$where .= $wpdb->prepare(" AND post_author = %d", $user_id );
+			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
 		}
 
-		$revision = $wpdb->get_row("SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'");
+		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'");
 
 		return $revision;
 	}

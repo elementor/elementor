@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\History\Revisions_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -387,8 +389,8 @@ class Utils {
 	 */
 	public static function get_last_edited( $post_id ) {
 		$post = get_post( $post_id );
-		$revisions_manager = Plugin::$instance->revisions_manager;
-		$autosave_post = $revisions_manager::get_post_autosave( $post_id );
+
+		$autosave_post = Revisions_Manager::get_post_autosave( $post_id );
 
 		if ( $autosave_post ) {
 			$post = $autosave_post;

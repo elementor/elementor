@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Modules\History\Revisions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -721,8 +722,7 @@ class Frontend {
 		}
 
 		if ( is_preview() ) {
-			$revisions_manager = Plugin::$instance->revisions_manager;
-			$preview_post = $revisions_manager::get_post_autosave( $post_id, get_current_user_id() );
+			$preview_post = Revisions_Manager::get_post_autosave( $post_id, get_current_user_id() );
 			$status = DB::STATUS_DRAFT;
 		} else {
 			$preview_post = false;
