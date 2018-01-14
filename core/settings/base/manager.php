@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Settings\Base;
 
+use Elementor\Core\Ajax_Manager;
 use Elementor\CSS_File;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -17,13 +18,19 @@ abstract class Manager {
 	private $models_cache = [];
 
 	public function __construct() {
-		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_save_' . $this->get_name() . '_settings', [ $this, 'ajax_save_settings' ] );
-		}
-
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
 
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+
 		add_action( 'elementor/' . $this->get_css_file_name() . '-css-file/parse', [ $this, 'add_settings_css_rules' ] );
+	}
+
+	/**
+	 * @param Ajax_Manager $ajax_handler
+	 */
+	protected function register_ajax_actions( $ajax_handler ) {
+		$name = $this->get_name();
+		$ajax_handler->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
 	}
 
 	/**
@@ -49,15 +56,18 @@ abstract class Manager {
 		return $this->models_cache[ $id ];
 	}
 
-	final public function ajax_save_settings() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+	/**
+	 * @param array $request
+	 *
+	 * @return mixed
+	 */
+	final public function ajax_save_settings( $request ) {
+		$data = json_decode( stripslashes( $request['data'] ), true );
 
 		$id = 0;
 
-		if ( ! empty( $_POST['id'] ) ) {
-			$id = $_POST['id'];
+		if ( ! empty( $request['id'] ) ) {
+			$id = $request['id'];
 		}
 
 		$this->ajax_before_save_settings( $data, $id );
@@ -81,7 +91,7 @@ abstract class Manager {
 		 */
 		$success_response_data = apply_filters( "elementor/{$settings_name}/settings/success_response_data", $success_response_data, $id, $data );
 
-		wp_send_json_success( $success_response_data );
+		return $success_response_data;
 	}
 
 	final public function save_settings( array $settings, $id = 0 ) {
