@@ -65,18 +65,20 @@ class Api {
 	 *
 	 * @return array|false Info data, or false.
 	 */
-	private static function _get_info_data( $force = false ) {
+	private static function _get_info_data( $force_update = false ) {
 		$cache_key = 'elementor_remote_info_api_data_' . ELEMENTOR_VERSION;
 
 		$info_data = get_transient( $cache_key );
 
-		if ( $force || false === $info_data ) {
+		if ( $force_update || false === $info_data ) {
+			$timeout = ( $force_update ) ? 25 : 8;
+
 			$response = wp_remote_post( self::$api_info_url, [
-				'timeout' => 25,
+				'timeout' => $timeout,
 				'body' => [
-					// Which API version is used
+					// Which API version is used.
 					'api_version' => ELEMENTOR_VERSION,
-					// Which language to return
+					// Which language to return.
 					'site_lang' => get_bloginfo( 'language' ),
 				],
 			] );
