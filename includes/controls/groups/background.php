@@ -366,7 +366,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Video Link', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
 			'placeholder' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
-			'description' => __( 'Insert YouTube link or video file (mp4 is recommended)', 'elementor' ),
+			'description' => __( 'YouTube link or video file (mp4 is recommended).', 'elementor' ),
 			'label_block' => true,
 			'default' => '',
 			'condition' => [
@@ -377,7 +377,7 @@ class Group_Control_Background extends Group_Control_Base {
 
 		$fields['video_fallback'] = [
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
-			'description' => __( 'This cover image will replace the background video on mobile or tablet.', 'elementor' ),
+			'description' => __( 'This cover image will replace the background video on mobile and tablet devices.', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
 			'label_block' => true,
 			'condition' => [

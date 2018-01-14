@@ -1108,11 +1108,12 @@
     left: 10px;
     top: 10px;
     padding: 3px;
-    font-size: 13px;
+    font-size: 20px;
     line-height: 1;
     background: transparent;
     color: inherit;
-    border: none; }
+    border: none;
+    cursor: pointer; }
   .elementor-alert.elementor-alert-info {
     color: #31708f;
     background-color: #d9edf7;
@@ -1781,6 +1782,8 @@
     background-color: #f26522; }
   .elementor-social-icon-shopping-cart {
     background-color: #4CAF50; }
+  .elementor-social-icon-skype {
+    background-color: #00AFF0; }
   .elementor-social-icon-slideshare {
     background-color: #0077b5; }
   .elementor-social-icon-snapchat {
