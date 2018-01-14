@@ -454,6 +454,24 @@ class DB {
 		return $data_container;
 	}
 
+	public function safe_copy_elementor_meta( $from_post_id, $to_post_id ) {
+		if ( ! Plugin::$instance->db->is_built_with_elementor( $from_post_id ) ) {
+			return;
+		}
+
+		// It's from Elementor, and not from WP-Admin
+		if ( did_action( 'elementor/db/before_save' ) ) {
+			return;
+		}
+
+		// It's an exited Elementor auto-save
+		if ( get_post_meta( $to_post_id, '_elementor_data', true ) ) {
+			return;
+		}
+
+		$this->copy_elementor_meta( $from_post_id, $to_post_id );
+	}
+
 	/**
 	 * Copy elementor meta.
 	 *
