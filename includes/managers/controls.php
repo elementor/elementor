@@ -720,29 +720,17 @@ class Controls_Manager {
 	 * @access public
 	 *
 	 * @param Controls_Stack $controls_stack  Controls stack.
-	 * @param bool           $common_controls Optional. Whether to use the
-	 *                                        common controls. Default is true.
 	 *
 	 * @return null|array Stack data if it exist, `null` otherwise.
 	 */
-	public function get_element_stack( Controls_Stack $controls_stack, $common_controls = true ) {
+	public function get_element_stack( Controls_Stack $controls_stack ) {
 		$stack_id = $controls_stack->get_unique_name();
 
 		if ( ! isset( $this->stacks[ $stack_id ] ) ) {
 			return null;
 		}
 
-		$stack = $this->stacks[ $stack_id ];
-
-		if ( $common_controls && 'common' !== $stack_id && 'widget' === $controls_stack->get_type() ) {
-			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
-
-			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
-
-			$stack['tabs'] = array_merge( $stack['tabs'], $common_widget->get_tabs_controls() );
-		}
-
-		return $stack;
+		return $this->stacks[ $stack_id ];
 	}
 
 	/**
