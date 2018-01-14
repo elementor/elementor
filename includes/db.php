@@ -78,7 +78,8 @@ class DB {
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
-		$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
+		$revisions_manager = Plugin::$instance->revisions_manager;
+		$old_autosave = $revisions_manager::get_post_autosave( $post_id, get_current_user_id() );
 		if ( $old_autosave ) {
 			// Force WP to save a new version if the JSON meta was changed.
 			// P.S CSS Changes doesn't change the `plain_text.
@@ -260,7 +261,8 @@ class DB {
 
 	public function get_newer_autosave( $post_id ) {
 		$post = get_post( $post_id );
-		$autosave = wp_get_post_autosave( $post_id );
+		$revisions_manager = Plugin::$instance->revisions_manager;
+		$autosave = $revisions_manager::get_post_autosave( $post_id );
 
 		// Detect if there exists an autosave newer than the post.
 		if ( $autosave && mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false ) ) {

@@ -261,7 +261,8 @@ class Elements_Manager {
 			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
 		}
 
-		$autosave = wp_get_post_autosave( $request['post_id'] );
+		$revisions_manager = Plugin::$instance->revisions_manager;
+		$autosave = $revisions_manager::get_post_autosave( $request['post_id'] );
 
 		if ( $autosave ) {
 			$deleted = wp_delete_post_revision( $autosave->ID );
