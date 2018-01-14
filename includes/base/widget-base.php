@@ -160,6 +160,56 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get stack.
+	 *
+	 * Retrieve the widget stack of controls.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @param bool $with_common_controls Optional. Whether to include the common controls. Default is true.
+	 *
+	 * @return array Widget stack of controls.
+	 */
+	public function get_stack( $with_common_controls = true ) {
+		$stack = parent::get_stack();
+
+		if ( $with_common_controls && 'common' !== $this->get_unique_name() ) {
+			/** @var Widget_Common $common_widget */
+			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
+
+			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
+
+			$stack['tabs'] = array_merge( $stack['tabs'], $common_widget->get_tabs_controls() );
+		}
+
+		return $stack;
+	}
+
+	/**
+	 * Get widget controls pointer index.
+	 *
+	 * Retrieve widget pointer index where the next control should be added.
+	 *
+	 * While using injection point, it will return the injection point index. Otherwise index of the last control of the
+	 * current widget itself without the common controls, plus one.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @return int Widget controls pointer index.
+	 */
+	public function get_pointer_index() {
+		$injection_point = $this->get_injection_point();
+
+		if ( null !== $injection_point ) {
+			return $injection_point['index'];
+		}
+
+		return count( $this->get_stack( false )['controls'] );
+	}
+
+	/**
 	 * Show in panel.
 	 *
 	 * Whether to show the widget in the panel or not. By default returns true.
