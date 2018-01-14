@@ -548,7 +548,7 @@ class Controls_Manager {
 		$control_type_instance = $this->get_control( $control_data['type'] );
 
 		if ( ! $control_type_instance ) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Control type `' . $control_data['type'] . '` not found`', '1.0.0' );
+			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, sprintf( 'Control type `%s` not found.', $control_data['type'] ), '1.0.0' );
 			return false;
 		}
 

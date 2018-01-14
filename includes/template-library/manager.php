@@ -423,7 +423,7 @@ class Manager {
 		$not_specified_args = array_diff( $required_args, array_keys( array_filter( $specified_args ) ) );
 
 		if ( $not_specified_args ) {
-			return new \WP_Error( 'arguments_not_specified', 'The required argument(s) `' . implode( ', ', $not_specified_args ) . '` not specified' );
+			return new \WP_Error( 'arguments_not_specified', sprintf( 'The required argument(s) `%s` not specified.', implode( ', ', $not_specified_args ) ) );
 		}
 
 		return true;
