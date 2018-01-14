@@ -2994,8 +2994,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.applySavedValue();
 
-		// this.$el.toggleClass( 'elementor-control-dynamic', this.isDynamic() );
-
 		if ( this.model.get( 'responsive' ) ) {
 			this.renderResponsiveSwitchers();
 		}
