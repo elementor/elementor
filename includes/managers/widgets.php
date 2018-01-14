@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Ajax_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -35,7 +37,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access private
-	 */
+	*/
 	private function _init_widgets() {
 		$build_widgets_filename = [
 			'common',
@@ -104,7 +106,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access private
-	 */
+	*/
 	private function _register_wp_widgets() {
 		global $wp_widget_factory;
 
@@ -164,7 +166,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access private
-	 */
+	*/
 	private function _require_files() {
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
 	}
@@ -180,7 +182,7 @@ class Widgets_Manager {
 	 * @param Widget_Base $widget Elementor widget.
 	 *
 	 * @return true True if the widget was registered.
-	 */
+	*/
 	public function register_widget_type( Widget_Base $widget ) {
 		if ( is_null( $this->_widget_types ) ) {
 			$this->_init_widgets();
@@ -202,7 +204,7 @@ class Widgets_Manager {
 	 * @param string $name Widget name.
 	 *
 	 * @return true True if the widget was unregistered, False otherwise.
-	 */
+	*/
 	public function unregister_widget_type( $name ) {
 		if ( ! isset( $this->_widget_types[ $name ] ) ) {
 			return false;
@@ -224,7 +226,7 @@ class Widgets_Manager {
 	 * @param string $widget_name Optional. Widget name. Default is null.
 	 *
 	 * @return null|Widget_Base[] Registered widget types.
-	 */
+	*/
 	public function get_widget_types( $widget_name = null ) {
 		if ( is_null( $this->_widget_types ) ) {
 			$this->_init_widgets();
@@ -246,7 +248,7 @@ class Widgets_Manager {
 	 * @access public
 	 *
 	 * @return array Registered widget types with each widget config.
-	 */
+	*/
 	public function get_widget_types_config() {
 		$config = [];
 
@@ -270,29 +272,32 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
+	 * @param array $request
+	 *
+	 * @return array
+	 * @throws \Exception
 	 */
-	public function ajax_render_widget() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( empty( $_POST['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id', 'No `post_id`.' ) );
+	public function ajax_render_widget( $request ) {
+		if ( empty( $request['post_id'] ) ) {
+			throw new \Exception( 'no_post_id' );
 		}
 
-		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_access' ) );
+		if ( ! User::is_current_user_can_edit( $request['post_id'] ) ) {
+			throw new \Exception( 'no_access' );
 		}
 
 		// Override the global $post for the render.
 		query_posts(
 			[
-				'p' => $_POST['post_id'],
+				'p' => $request['post_id'],
 				'post_type' => 'any',
 			]
 		);
 
-		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
+		Plugin::$instance->db->switch_to_post( $request['post_id'] );
 
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		$data = json_decode( stripslashes( $request['data'] ), true );
 
 		// Start buffering
 		ob_start();
@@ -301,20 +306,16 @@ class Widgets_Manager {
 		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
 
 		if ( ! $widget ) {
-			wp_send_json_error();
-
-			return;
+			throw new \Exception( 'Widget Not Found' );
 		}
 
 		$widget->render_content();
 
 		$render_html = ob_get_clean();
 
-		wp_send_json_success(
-			[
-				'render' => $render_html,
-			]
-		);
+		return [
+			'render' => $render_html,
+		];
 	}
 
 	/**
@@ -326,24 +327,26 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
+	 * @param array $request
+	 *
+	 * @return bool|string
 	 */
-	public function ajax_get_wp_widget_form() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( empty( $_POST['widget_type'] ) ) {
-			wp_send_json_error();
+	public function ajax_get_wp_widget_form( $request ) {
+		if ( empty( $request['widget_type'] ) ) {
+			return false;
 		}
 
-		if ( empty( $_POST['data'] ) ) {
-			$_POST['data'] = [];
+		if ( empty( $request['data'] ) ) {
+			$request['data'] = [];
 		}
 
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		$data = json_decode( stripslashes( $request['data'] ), true );
 
 		$element_data = [
-			'id' => $_POST['id'],
+			'id' => $request['id'],
 			'elType' => 'widget',
-			'widgetType' => $_POST['widget_type'],
+			'widgetType' => $request['widget_type'],
 			'settings' => $data,
 		];
 
@@ -353,10 +356,10 @@ class Widgets_Manager {
 		$widget_obj = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 		if ( ! $widget_obj ) {
-			wp_send_json_error();
+			return false;
 		}
 
-		wp_send_json_success( $widget_obj->get_form() );
+		return $widget_obj->get_form();
 	}
 
 	/**
@@ -367,7 +370,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function render_widgets_content() {
 		foreach ( $this->get_widget_types() as $widget ) {
 			$widget->print_template();
@@ -384,7 +387,7 @@ class Widgets_Manager {
 	 * @access public
 	 *
 	 * @return array Registered widget types with settings keys for each widget.
-	 */
+	*/
 	public function get_widgets_frontend_settings_keys() {
 		$keys = [];
 
@@ -406,7 +409,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.3.0
 	 * @access public
-	 */
+	*/
 	public function enqueue_widgets_scripts() {
 		foreach ( $this->get_widget_types() as $widget ) {
 			$widget->enqueue_scripts();
@@ -476,11 +479,21 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function __construct() {
 		$this->_require_files();
 
-		add_action( 'wp_ajax_elementor_render_widget', [ $this, 'ajax_render_widget' ] );
-		add_action( 'wp_ajax_elementor_editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+	}
+
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param Ajax_Manager $ajax_handler
+	 */
+	public function register_ajax_actions( $ajax_handler ) {
+		$ajax_handler->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
+		$ajax_handler->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 	}
 }

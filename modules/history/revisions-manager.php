@@ -182,7 +182,7 @@ class Revisions_Manager {
 		}
 	}
 
-	public static function ajax_save_builder_data( $return_data ) {
+	public static function on_ajax_save_builder_data( $return_data, $post_id ) {
 		$post_id = $_POST['post_id'];
 
 		$latest_revisions = self::get_revisions(
@@ -251,10 +251,10 @@ class Revisions_Manager {
 		add_action( 'wp_restore_post_revision', [ __CLASS__, 'restore_revision' ], 10, 2 );
 		add_action( 'init', [ __CLASS__, 'add_revision_support_for_all_post_types' ], 9999 );
 		add_filter( 'elementor/editor/localize_settings', [ __CLASS__, 'editor_settings' ], 10, 2 );
-		add_filter( 'elementor/ajax_save_builder/return_data', [ __CLASS__, 'ajax_save_builder_data' ] );
 		add_action( 'elementor/db/before_save', [ __CLASS__, 'db_before_save' ], 10, 2 );
 
 		if ( Utils::is_ajax() ) {
+			add_filter( 'elementor/ajax_save_builder/return_data', [ __CLASS__, 'on_ajax_save_builder_data' ], 10, 2 );
 			add_action( 'wp_ajax_elementor_get_revision_data', [ __CLASS__, 'on_revision_data_request' ] );
 			add_action( 'wp_ajax_elementor_delete_revision', [ __CLASS__, 'on_delete_revision_request' ] );
 		}
