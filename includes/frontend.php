@@ -721,7 +721,8 @@ class Frontend {
 		}
 
 		if ( is_preview() ) {
-			$preview_post = wp_get_post_autosave( $post_id, get_current_user_id() );
+			$revisions_manager = Plugin::$instance->revisions_manager;
+			$preview_post = $revisions_manager::get_post_autosave( $post_id, get_current_user_id() );
 			$status = DB::STATUS_DRAFT;
 		} else {
 			$preview_post = false;
