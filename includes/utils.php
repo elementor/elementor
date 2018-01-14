@@ -153,6 +153,7 @@ class Utils {
 
 		$nonce = wp_create_nonce( 'post_preview_' . $post_id );
 		$query_args['preview_nonce'] = $nonce;
+		$query_args['preview'] = 'true';
 
 		$wp_preview_url = get_preview_post_link( $post_id, $query_args );
 
@@ -387,7 +388,8 @@ class Utils {
 	 */
 	public static function get_last_edited( $post_id ) {
 		$post = get_post( $post_id );
-		$autosave_post = wp_get_post_autosave( $post_id );
+
+		$autosave_post = Utils::get_post_autosave( $post_id );
 
 		if ( $autosave_post ) {
 			$post = $autosave_post;
@@ -429,5 +431,25 @@ class Utils {
 		$new_post_url = wp_nonce_url( $new_post_url, 'elementor_action_new_post' );
 
 		return $new_post_url;
+	}
+
+	public static function get_post_autosave( $post_id, $user_id = 0 ) {
+		global $wpdb;
+
+		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s', [ $post_id, "{$post_id}-autosave%" ] );
+
+		if ( $user_id ) {
+			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
+		}
+
+		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'" );
+
+		if ( $revision ) {
+			$revision = new \WP_Post( $revision );
+		} else {
+			$revision = false;
+		}
+
+		return $revision;
 	}
 }
