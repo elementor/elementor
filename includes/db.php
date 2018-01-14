@@ -137,7 +137,7 @@ class DB {
 				'post_ID' => $post_id,
 				'post_type' => $post->post_type,
 				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
-				'post_content' => $this->get_plain_text( $post_id ),
+				'post_content' => $this->get_plain_text_from_data( $json_value ),
 				'post_modified' => current_time( 'mysql' ),
 			] );
 
@@ -597,10 +597,13 @@ class DB {
 	 * @access public
 	 */
 	public function get_plain_text( $post_id ) {
-		ob_start();
-
 		$data = $this->get_plain_editor( $post_id );
 
+		return $this->get_plain_text_from_data( $data );
+	}
+
+	public function get_plain_text_from_data( $data ) {
+		ob_start();
 		if ( $data ) {
 			foreach ( $data as $element_data ) {
 				$this->_render_element_plain_content( $element_data );
