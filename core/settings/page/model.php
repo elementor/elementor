@@ -90,7 +90,7 @@ class Model extends BaseModel {
 				'description' => sprintf(
 					/* translators: %s: Setting Page URL */
 					__( 'Not working? You can set a different selector for the title in the <a href="%s" target="_blank">Settings page</a>.', 'elementor' ),
-					Settings::get_url()
+					Settings::get_url() . '#tab-style'
 				),
 				'selectors' => [
 					'{{WRAPPER}} ' . $page_title_selector => 'display: none',
@@ -175,7 +175,6 @@ class Model extends BaseModel {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'label' => __( 'Background', 'elementor' ),
 				'fields_options' => [
 					'__all' => [
 						'export' => '__return_true',

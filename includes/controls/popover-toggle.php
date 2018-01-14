@@ -99,10 +99,16 @@ class Control_Popover_Toggle extends Base_Data_Control {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<input id="<?php echo $control_uid; ?>-custom" class="elementor-control-popover-toggle-toggle" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ data.return_value }}">
-				<label class="elementor-control-popover-toggle-toggle-label" for="<?php echo $control_uid; ?>-custom"><i class="eicon-edit" aria-hidden="true"></i></label>
+				<label class="elementor-control-popover-toggle-toggle-label" for="<?php echo $control_uid; ?>-custom">
+					<i class="eicon-edit" aria-hidden="true"></i>
+					<span class="elementor-screen-only"><?php esc_html_e( 'Edit', 'elementor' ); ?></span>
+				</label>
 				<# if ( 'switcher' === data.toggle_type ) { #>
 					<input id="<?php echo $control_uid; ?>-default" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="">
-					<label class="elementor-control-popover-toggle-reset-label" for="<?php echo $control_uid; ?>-default"><i class="fa fa-repeat" aria-hidden="true"></i></label>
+					<label class="elementor-control-popover-toggle-reset-label tooltip-target" for="<?php echo $control_uid; ?>-default" data-tooltip="<?php echo __( 'Back to default', 'elementor' ); ?>" data-tooltip-pos="s">
+						<i class="fa fa-repeat" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php esc_html_e( 'Back to default', 'elementor' ); ?></span>
+					</label>
 				<# } #>
 			</div>
 		</div>

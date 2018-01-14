@@ -260,15 +260,7 @@ abstract class Controls_Stack {
 	 * @return mixed Controls list.
 	 */
 	public function get_controls( $control_id = null ) {
-		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
-
-		if ( null === $stack ) {
-			$this->_init_controls();
-
-			return $this->get_controls();
-		}
-
-		return self::_get_items( $stack['controls'], $control_id );
+		return self::_get_items( $this->get_stack()['controls'], $control_id );
 	}
 
 	/**
@@ -451,6 +443,28 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Get stack.
+	 *
+	 * Retrieve the stack of controls.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @return array Stack of controls.
+	 */
+	public function get_stack() {
+		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
+
+		if ( null === $stack ) {
+			$this->_init_controls();
+
+			return $this->get_stack();
+		}
+
+		return $stack;
+	}
+
+	/**
 	 * Get position information.
 	 *
 	 * Retrieve the position while injecting data, based on the element type.
@@ -501,7 +515,7 @@ abstract class Controls_Stack {
 
 		$target_section_index = $target_control_index;
 
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+		$registered_controls = $this->get_controls();
 
 		$controls_keys = array_keys( $registered_controls );
 
@@ -545,21 +559,43 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Get control key.
+	 *
+	 * Retrieve the key of the control based on a given index of the control.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @param string $control_index Control index.
+	 *
+	 * @return int Control key.
+	 */
+	final public function get_control_key( $control_index ) {
+		$registered_controls = $this->get_controls();
+
+		$controls_keys = array_keys( $registered_controls );
+
+		return $controls_keys[ $control_index ];
+	}
+
+	/**
 	 * Get control index.
+	 *
+	 * Retrieve the index of the control based on a given key of the control.
 	 *
 	 * @since 1.7.6
 	 * @access public
 	 *
-	 * @param string $control_id Control ID.
+	 * @param string $control_key Control key.
 	 *
 	 * @return false|int Control index.
 	 */
-	final public function get_control_index( $control_id ) {
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+	final public function get_control_index( $control_key ) {
+		$controls = $this->get_controls();
 
-		$controls_keys = array_keys( $registered_controls );
+		$controls_keys = array_keys( $controls );
 
-		return array_search( $control_id, $controls_keys );
+		return array_search( $control_key, $controls_keys );
 	}
 
 	/**
@@ -579,7 +615,7 @@ abstract class Controls_Stack {
 
 		$section_controls = [];
 
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this )['controls'];
+		$registered_controls = $this->get_controls();
 
 		$controls_keys = array_keys( $registered_controls );
 
@@ -718,9 +754,7 @@ abstract class Controls_Stack {
 	 * @return array Tabs controls.
 	 */
 	final public function get_tabs_controls() {
-		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
-
-		return $stack['tabs'];
+		return $this->get_stack()['tabs'];
 	}
 
 	/**
@@ -899,6 +933,27 @@ abstract class Controls_Stack {
 		}
 
 		return $controls;
+	}
+
+	/**
+	 * Get controls pointer index.
+	 *
+	 * Retrieve pointer index where the next control should be added.
+	 *
+	 * While using injection point, it will return the injection point index. Otherwise index of the last control plus
+	 * one.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @return int Controls pointer index.
+	 */
+	public function get_pointer_index() {
+		if ( null !== $this->injection_point ) {
+			return $this->injection_point['index'];
+		}
+
+		return count( $this->get_controls() );
 	}
 
 	/**
@@ -1381,17 +1436,13 @@ abstract class Controls_Stack {
 	final public function end_popover() {
 		$this->current_popover = null;
 
-		$registered_controls = Plugin::$instance->controls_manager->get_element_stack( $this, false )['controls'];
+		$last_control_key = $this->get_control_key( $this->get_pointer_index() - 1 );
 
-		end( $registered_controls );
-
-		$last_control_key = key( $registered_controls );
-
-		$this->update_control( $last_control_key, [
+ 		$this->update_control( $last_control_key, [
 			'popover' => [
 				'end' => true,
 			],
-		] );
+		], [ 'recursive' => true ] );
 	}
 
 	/**
@@ -1438,6 +1489,13 @@ abstract class Controls_Stack {
 	 */
 	final public function end_injection() {
 		$this->injection_point = null;
+	}
+
+	/**
+	 * @return array|null
+	 */
+	final public function get_injection_point() {
+		return $this->injection_point;
 	}
 
 	/**
