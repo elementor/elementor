@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Ajax_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -44,20 +46,29 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function __construct() {
 		$this->require_files();
 
-		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
-		add_action( 'wp_ajax_elementor_discard_changes', [ $this, 'ajax_discard_changes' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+	}
+
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param Ajax_Manager $ajax_handler
+	 */
+	public function register_ajax_actions( $ajax_handler ) {
+		$ajax_handler->register_ajax_action( 'save_builder', [ $this, 'ajax_save_builder' ] );
+		$ajax_handler->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
 	}
 
 	/**
 	 * Create element instance.
 	 *
 	 * This method creates a new element instance for any given element.
-	 *
-	 * @since 1.0.0
+	 *	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param array        $element_data Element data.
@@ -103,7 +114,7 @@ class Elements_Manager {
 	 * @access public
 	 *
 	 * @return array Element categories.
-	 */
+	*/
 	public function get_categories() {
 		if ( null === $this->_categories ) {
 			$this->init_categories();
@@ -124,7 +135,7 @@ class Elements_Manager {
 	 * @param array  $category_properties Category properties.
 	 * @param int    $offset              Optional. Where to add the category in
 	 *                                    the categories array. Default is null.
-	 */
+	*/
 	public function add_category( $category_name, $category_properties, $offset = null ) {
 		if ( null === $this->_categories ) {
 			$this->init_categories();
@@ -152,7 +163,7 @@ class Elements_Manager {
 	 * @param Element_Base $element Element instance.
 	 *
 	 * @return bool Whether the element type was registered.
-	 */
+	*/
 	public function register_element_type( Element_Base $element ) {
 		$this->_element_types[ $element->get_name() ] = $element;
 
@@ -170,7 +181,7 @@ class Elements_Manager {
 	 * @param string $name Element name.
 	 *
 	 * @return bool Whether the element type was unregister, or not.
-	 */
+	*/
 	public function unregister_element_type( $name ) {
 		if ( ! isset( $this->_element_types[ $name ] ) ) {
 			return false;
@@ -194,7 +205,7 @@ class Elements_Manager {
 	 *
 	 * @return null|Element_Base[] Element types, or a list of all the element
 	 *                             types, or null if element does not exist.
-	 */
+	*/
 	public function get_element_types( $element_name = null ) {
 		if ( is_null( $this->_element_types ) ) {
 			$this->_init_elements();
@@ -216,7 +227,7 @@ class Elements_Manager {
 	 * @access public
 	 *
 	 * @return array Element types config.
-	 */
+	*/
 	public function get_element_types_config() {
 		$config = [];
 
@@ -234,7 +245,7 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
+	*/
 	public function render_elements_content() {
 		foreach ( $this->get_element_types() as $element_type ) {
 			$element_type->print_template();
@@ -249,19 +260,20 @@ class Elements_Manager {
 	 *
 	 * Fired by `wp_ajax_elementor_discard_changes` action.
 	 *
-	 * @since 1.9.0
+	 * @since  1.9.0
 	 * @access public
+	 *
+	 * @param $request
+	 *
+	 * @return bool
+	 * @throws \Exception
 	 */
-	public function ajax_discard_changes() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$request = $_POST;
-
+	public function ajax_discard_changes( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
+			throw new \Exception( 'no_post_id' );
 		}
 
-		$autosave = wp_get_post_autosave( $request['post_id'] );
+		$autosave = Utils::get_post_autosave( $request['post_id'] );
 
 		if ( $autosave ) {
 			$deleted = wp_delete_post_revision( $autosave->ID );
@@ -270,11 +282,7 @@ class Elements_Manager {
 			$success = true;
 		}
 
-		if ( $success ) {
-			wp_send_json_success();
-		}
-
-		wp_send_json_error();
+		return $success;
 	}
 
 	/**
@@ -287,20 +295,21 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 */
-	public function ajax_save_builder() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$request = $_POST;
-
+	 *
+	 * @param array $request
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	*/
+	public function ajax_save_builder( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
+			throw new \Exception( 'no_post_id' );
 		}
 
 		$post_id = $request['post_id'];
 
 		if ( ! User::is_current_user_can_edit( $post_id ) ) {
-			wp_send_json_error( new \WP_Error( 'no_access' ) );
+			throw new \Exception( 'no_access' );
 		}
 
 		$status = DB::STATUS_DRAFT;
@@ -323,7 +332,6 @@ class Elements_Manager {
 		];
 
 		/**
-		 * Saved ajax data returned by the builder.
 		 *
 		 * Filters the ajax data returned when saving the post on the builder.
 		 *
@@ -333,7 +341,7 @@ class Elements_Manager {
 		 */
 		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', $return_data, $post_id );
 
-		wp_send_json_success( $return_data );
+		return $return_data;
 	}
 
 	/**
@@ -344,7 +352,7 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access private
-	 */
+	*/
 	private function _init_elements() {
 		$this->_element_types = [];
 
@@ -371,7 +379,7 @@ class Elements_Manager {
 	 *
 	 * @since 1.7.12
 	 * @access private
-	 */
+	*/
 	private function init_categories() {
 		$this->_categories = [
 			'basic' => [
@@ -401,7 +409,7 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access private
-	 */
+	*/
 	private function require_files() {
 		require_once ELEMENTOR_PATH . 'includes/base/element-base.php';
 

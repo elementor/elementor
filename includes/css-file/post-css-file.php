@@ -76,6 +76,7 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access protected
 	 */
 	protected function get_data() {

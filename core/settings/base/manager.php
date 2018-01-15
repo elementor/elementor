@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Settings\Base;
 
+use Elementor\Core\Ajax_Manager;
 use Elementor\CSS_File;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -16,27 +17,45 @@ abstract class Manager {
 	 */
 	private $models_cache = [];
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function __construct() {
-		if ( Utils::is_ajax() ) {
-			add_action( 'wp_ajax_elementor_save_' . $this->get_name() . '_settings', [ $this, 'ajax_save_settings' ] );
-		}
-
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
+
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		add_action( 'elementor/' . $this->get_css_file_name() . '-css-file/parse', [ $this, 'add_settings_css_rules' ] );
 	}
 
 	/**
+	 * @param Ajax_Manager $ajax_handler
+	 */
+	protected function register_ajax_actions( $ajax_handler ) {
+		$name = $this->get_name();
+		$ajax_handler->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
+	}
+
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 * @abstract
 	 * @return Model
 	 */
 	abstract public function get_model_for_config();
 
 	/**
+	 * @since 1.6.0
+	 * @access public
+	 * @abstract
 	 * @return string
 	 */
 	abstract public function get_name();
 
 	/**
+	 * @since 1.6.0
+	 * @access public
 	 * @param int $id
 	 *
 	 * @return Model
@@ -49,15 +68,17 @@ abstract class Manager {
 		return $this->models_cache[ $id ];
 	}
 
-	final public function ajax_save_settings() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
+	final public function ajax_save_settings( $request ) {
+		$data = json_decode( stripslashes( $request['data'] ), true );
 
 		$id = 0;
 
-		if ( ! empty( $_POST['id'] ) ) {
-			$id = $_POST['id'];
+		if ( ! empty( $request['id'] ) ) {
+			$id = $request['id'];
 		}
 
 		$this->ajax_before_save_settings( $data, $id );
@@ -81,9 +102,13 @@ abstract class Manager {
 		 */
 		$success_response_data = apply_filters( "elementor/{$settings_name}/settings/success_response_data", $success_response_data, $id, $data );
 
-		wp_send_json_success( $success_response_data );
+		return $success_response_data;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	final public function save_settings( array $settings, $id = 0 ) {
 		$special_settings = $this->get_special_settings_names();
 
@@ -107,6 +132,10 @@ abstract class Manager {
 		$css_file->update();
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function add_settings_css_rules( CSS_File $css_file ) {
 		$model = $this->get_model_for_css_file( $css_file );
 
@@ -119,11 +148,18 @@ abstract class Manager {
 		);
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function on_elementor_init() {
 		Plugin::$instance->editor->add_editor_template( $this->get_editor_template(), 'text' );
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access protected
+	 * @abstract
 	 * @param int $id
 	 *
 	 * @return array
@@ -131,11 +167,17 @@ abstract class Manager {
 	abstract protected function get_saved_settings( $id );
 
 	/**
+	 * @since 1.6.0
+	 * @access protected
+	 * @abstract
 	 * @return string
 	 */
 	abstract protected function get_css_file_name();
 
 	/**
+	 * @since 1.6.0
+	 * @access protected
+	 * @abstract
 	 * @param array $settings
 	 * @param int   $id
 	 *
@@ -144,6 +186,9 @@ abstract class Manager {
 	abstract protected function save_settings_to_db( array $settings, $id );
 
 	/**
+	 * @since 1.6.0
+	 * @access protected
+	 * @abstract
 	 * @param CSS_File $css_file
 	 *
 	 * @return Model
@@ -151,18 +196,33 @@ abstract class Manager {
 	abstract protected function get_model_for_css_file( CSS_File $css_file );
 
 	/**
+	 * @since 1.6.0
+	 * @access protected
+	 * @abstract
 	 * @param int $id
 	 *
 	 * @return CSS_File
 	 */
 	abstract protected function get_css_file_for_update( $id );
 
+	/**
+	 * @since 1.6.0
+	 * @access protected
+	 */
 	protected function get_special_settings_names() {
 		return [];
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access protected
+	 */
 	protected function ajax_before_save_settings( array $data, $id ) {}
 
+	/**
+	 * @since 1.6.0
+	 * @access protected
+	 */
 	protected function print_editor_template_content( $name ) {
 		?>
 		<div class="elementor-panel-navigation">
@@ -177,6 +237,8 @@ abstract class Manager {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access private
 	 * @param int $id
 	 */
 	private function create_model( $id ) {
@@ -192,6 +254,10 @@ abstract class Manager {
 		] );
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access private
+	 */
 	private function get_editor_template() {
 		$name = $this->get_name();
 

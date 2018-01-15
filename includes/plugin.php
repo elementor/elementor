@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Ajax_Manager;
 use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -46,6 +47,19 @@ class Plugin {
 	 * @var DB
 	 */
 	public $db;
+
+	/**
+	 * Ajax Manager.
+	 *
+	 * Holds the plugin ajax manager.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 *
+	 * @var Ajax_Manager
+	 */
+	public $ajax;
 
 	/**
 	 * Controls manager.
@@ -424,6 +438,9 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
+		// Allow all components to use AJAX.
+		$this->ajax = new Ajax_Manager();
+
 		Compatibility::register_actions();
 		SettingsManager::run();
 

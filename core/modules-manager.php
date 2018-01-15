@@ -11,6 +11,10 @@ class Modules_Manager {
 
 	private $modules = [];
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function __construct() {
 		foreach ( $this->get_modules_names() as $module_name ) {
 			$class_name = str_replace( '-', ' ', $module_name );

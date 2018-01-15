@@ -799,7 +799,7 @@ class Editor {
 	 *
 	 * Config the default WordPress editor with custom settings for Elementor use.
 	 *
-	 * @since 1.0.0
+	 * @since 1.9.0
 	 * @access private
 	 */
 	private function get_wp_editor_config() {
@@ -1013,6 +1013,7 @@ class Editor {
 	 * Verify request nonce and send a JSON request, if not verified returns an
 	 * error.
 	 *
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function verify_ajax_nonce() {

@@ -112,6 +112,7 @@ class Manager {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function get_library_data( array $args ) {
@@ -290,6 +291,7 @@ class Manager {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function mark_template_as_favorite( $args ) {
