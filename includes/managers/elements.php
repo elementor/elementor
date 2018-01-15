@@ -49,19 +49,6 @@ class Elements_Manager {
 	*/
 	public function __construct() {
 		$this->require_files();
-
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-	}
-
-	/**
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @param Ajax_Manager $ajax_handler
-	 */
-	public function register_ajax_actions( $ajax_handler ) {
-		$ajax_handler->register_ajax_action( 'save_builder', [ $this, 'ajax_save_builder' ] );
-		$ajax_handler->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
 	}
 
 	/**
@@ -269,21 +256,10 @@ class Elements_Manager {
 	 * @throws \Exception
 	 */
 	public function ajax_discard_changes( $request ) {
-		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'no_post_id' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->ajax_discard_changes()' );
+
+		return Plugin::$instance->documents->ajax_discard_changes( $request );
 		}
-
-		$autosave = Utils::get_post_autosave( $request['post_id'] );
-
-		if ( $autosave ) {
-			$deleted = wp_delete_post_revision( $autosave->ID );
-			$success = $deleted && ! is_wp_error( $deleted );
-		} else {
-			$success = true;
-		}
-
-		return $success;
-	}
 
 	/**
 	 * Ajax save builder.
@@ -302,34 +278,9 @@ class Elements_Manager {
 	 * @throws \Exception
 	*/
 	public function ajax_save_builder( $request ) {
-		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'no_post_id' );
-		}
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->ajax_save()' );
 
-		$post_id = $request['post_id'];
-
-		if ( ! User::is_current_user_can_edit( $post_id ) ) {
-			throw new \Exception( 'no_access' );
-		}
-
-		$status = DB::STATUS_DRAFT;
-
-		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ] , true ) ) {
-			$status = $request['status'];
-		}
-
-		$posted = json_decode( stripslashes( $request['data'] ), true );
-
-		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
-
-		$return_data = [
-			'config' => [
-				'last_edited' => Utils::get_last_edited( $post_id ),
-				'wp_preview' => [
-					'url' => Utils::get_wp_preview_url( $post_id ),
-				],
-			],
-		];
+		$return_data = Plugin::$instance->documents->ajax_save( $request );
 
 		/**
 		 *
@@ -339,7 +290,7 @@ class Elements_Manager {
 		 *
 		 * @param array $return_data The returned data. Default is an empty array.
 		 */
-		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', $return_data, $post_id );
+		$return_data = Utils::apply_filters_deprecated( 'elementor/ajax_save_builder/return_data', [ $return_data, $request['post_id'] ], '2.0.0', 'elementor/documents/ajax_save/return_data' );
 
 		return $return_data;
 	}
