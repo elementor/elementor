@@ -4,7 +4,6 @@ namespace Elementor\Core\Settings\Base;
 use Elementor\Core\Ajax_Manager;
 use Elementor\CSS_File;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -30,6 +29,10 @@ abstract class Manager {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access public
+	 * @abstract
+	 *
 	 * @param Ajax_Manager $ajax_handler
 	 */
 	protected function register_ajax_actions( $ajax_handler ) {
@@ -71,6 +74,10 @@ abstract class Manager {
 	/**
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @param array $request
+	 *
+	 * @return mixed
 	 */
 	final public function ajax_save_settings( $request ) {
 		$data = json_decode( stripslashes( $request['data'] ), true );

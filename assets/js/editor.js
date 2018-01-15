@@ -374,6 +374,22 @@ module.exports = Module.extend( {
 
 				self.trigger( 'after:saveError', data )
 					.trigger( 'after:saveError:' + options.status, data );
+
+				var message;
+
+				if ( data.statusText ) {
+					message = elementor.ajax.createErrorMessage( data );
+
+					if ( 0 === data.readyState ) {
+						message += '. ' + elementor.translate( 'saving_disabled' );
+					}
+				} else if ( data[0] && data[0].code ) {
+					message = elementor.translate( 'server_error' ) + ' ' + data[0].code;
+				}
+
+				elementor.notifications.showToast( {
+					message: message
+				} );
 			}
 		} );
 	},
@@ -9052,7 +9068,8 @@ Ajax = {
 	},
 
 	send: function( action, options ) {
-		var ajaxParams = elementor.helpers.cloneObject( this.config.ajaxParams );
+		var self = this,
+			ajaxParams = elementor.helpers.cloneObject( this.config.ajaxParams );
 
 		options = options || {};
 
@@ -9086,10 +9103,31 @@ Ajax = {
 				ajaxParams.error = function( data ) {
 					errorCallback( data );
 				};
+			} else {
+				ajaxParams.error = function( XMLHttpRequest ) {
+					var message = self.createErrorMessage( XMLHttpRequest );
+
+					elementor.notifications.showToast( {
+						message: message
+					} );
+				};
 			}
 		}
 
 		return jQuery.ajax( ajaxParams );
+	},
+
+	createErrorMessage: function( XMLHttpRequest ) {
+		var message;
+		if ( 4 === XMLHttpRequest.readyState ) {
+			message = elementor.translate( 'server_error' ) + ' (' + XMLHttpRequest.status + ' ' + XMLHttpRequest.statusText + ')';
+		} else if ( 0 === XMLHttpRequest.readyState ) {
+			message = elementor.translate( 'server_connection_lost' );
+		} else {
+			message = elementor.translate( 'unknown_error' );
+		}
+
+		return message;
 	}
 };
 
