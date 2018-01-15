@@ -92,8 +92,15 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 	}
 
 	/**
+	 * Retrieve default options.
+	 *
+	 * Get the default options of the text shadow control. Used to return the
+	 * default options while initializing the text shadow control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default text shadow control options.
 	 */
 	protected function get_default_options() {
 		return [

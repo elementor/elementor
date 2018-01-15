@@ -55,7 +55,6 @@ class Plugin {
 	 * @since 1.9.0
 	 * @access public
 	 *
-	 *
 	 * @var Ajax_Manager
 	 */
 	public $ajax;

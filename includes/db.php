@@ -595,8 +595,16 @@ class DB {
 	}
 
 	/**
+	 * Get plain text.
+	 *
+	 * Retrieve the post plain text.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string Post plain text.
 	 */
 	public function get_plain_text( $post_id ) {
 		$data = $this->get_plain_editor( $post_id );
@@ -605,7 +613,15 @@ class DB {
 	}
 
 	/**
+	 * Get plain text from data.
+	 *
+	 * Retrieve the post plain text from any given Elementor data.
+	 *
 	 * @access public
+	 *
+	 * @param array $data Post ID.
+	 *
+	 * @return string Post plain text.
 	 */
 	public function get_plain_text_from_data( $data ) {
 		ob_start();
