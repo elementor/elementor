@@ -287,6 +287,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access protected
 	 */
 	protected function get_default_options() {
