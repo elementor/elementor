@@ -85,11 +85,11 @@ class Manager extends BaseManager {
 		$post = get_post( $id );
 
 		if ( empty( $post ) ) {
-			wp_send_json_error( 'Invalid Post' );
+			throw new \Exception( 'Invalid Post' );
 		}
 
 		if ( ! current_user_can( 'edit_post', $id ) ) {
-			wp_send_json_error( __( 'Access Denied.', 'elementor' ) );
+			throw new \Exception( __( 'Access Denied.', 'elementor' ) );
 		}
 
 		// Avoid save empty post title.

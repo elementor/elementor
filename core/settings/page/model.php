@@ -175,7 +175,6 @@ class Model extends BaseModel {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'label' => __( 'Background', 'elementor' ),
 				'fields_options' => [
 					'__all' => [
 						'export' => '__return_true',
