@@ -68,6 +68,7 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access protected
 	 */
 	protected function use_external_file() {
@@ -280,6 +281,7 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function get_fonts() {

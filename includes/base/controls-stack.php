@@ -1573,6 +1573,7 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * @access public
 	 * @return array|null
 	 */
 	final public function get_injection_point() {
