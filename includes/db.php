@@ -78,7 +78,7 @@ class DB {
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
-		$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
+		$old_autosave = Utils::get_post_autosave( $post_id, get_current_user_id() );
 		if ( $old_autosave ) {
 			// Force WP to save a new version if the JSON meta was changed.
 			// P.S CSS Changes doesn't change the `plain_text.
@@ -135,7 +135,7 @@ class DB {
 				'post_ID' => $post_id,
 				'post_type' => $post->post_type,
 				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
-				'post_content' => $this->get_plain_text( $post_id ),
+				'post_content' => $this->get_plain_text_from_data( $json_value ),
 				'post_modified' => current_time( 'mysql' ),
 			] );
 
@@ -260,7 +260,8 @@ class DB {
 
 	public function get_newer_autosave( $post_id ) {
 		$post = get_post( $post_id );
-		$autosave = wp_get_post_autosave( $post_id );
+
+		$autosave = Utils::get_post_autosave( $post_id );
 
 		// Detect if there exists an autosave newer than the post.
 		if ( $autosave && mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false ) ) {
@@ -372,7 +373,7 @@ class DB {
 	 * Retrives the raw content, removes all kind of unwanted HTML tags and saves
 	 * the content as the `post_content` field in the database.
 	 *
-	 * @since 1.0.0
+	 * @since 1.9.0
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
@@ -452,6 +453,27 @@ class DB {
 		}
 
 		return $data_container;
+	}
+
+	/**
+	 * @access public
+	 */
+	public function safe_copy_elementor_meta( $from_post_id, $to_post_id ) {
+		if ( ! Plugin::$instance->db->is_built_with_elementor( $from_post_id ) ) {
+			return;
+		}
+
+		// It's from Elementor, and not from WP-Admin
+		if ( did_action( 'elementor/db/before_save' ) ) {
+			return;
+		}
+
+		// It's an exited Elementor auto-save
+		if ( get_post_meta( $to_post_id, '_elementor_data', true ) ) {
+			return;
+		}
+
+		$this->copy_elementor_meta( $from_post_id, $to_post_id );
 	}
 
 	/**
@@ -573,13 +595,20 @@ class DB {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function get_plain_text( $post_id ) {
-		ob_start();
-
 		$data = $this->get_plain_editor( $post_id );
 
+		return $this->get_plain_text_from_data( $data );
+	}
+
+	/**
+	 * @access public
+	 */
+	public function get_plain_text_from_data( $data ) {
+		ob_start();
 		if ( $data ) {
 			foreach ( $data as $element_data ) {
 				$this->_render_element_plain_content( $element_data );

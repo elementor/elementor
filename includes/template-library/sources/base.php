@@ -284,6 +284,7 @@ abstract class Source_Base {
 	 *
 	 * Retrieve user meta prefix used to save Elementor data.
 	 *
+	 * @since 1.9.0
 	 * @access protected
 	 *
 	 * @return string User meta prefix.

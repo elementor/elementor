@@ -94,6 +94,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar"></div>
 		<# } #>
 		<div id="elementor-template-library-filter-text-wrapper">
+			<label for="elementor-template-library-filter-text" class="elementor-screen-only"><?php esc_html_e( 'Search Templates:', 'elementor' ); ?></label>
 			<input id="elementor-template-library-filter-text" placeholder="<?php echo __( 'Search', 'elementor' ); ?>">
 		</div>
 	</div>
@@ -167,6 +168,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</button>
 		<div class="elementor-template-library-template-more-toggle">
 			<i class="eicon-ellipsis-h" aria-hidden="true"></i>
+			<span class="elementor-screen-only"><?php esc_html_e( 'More actions', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-template-library-template-more">
 			<div class="elementor-template-library-template-delete">
@@ -202,6 +204,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
 	<div class="elementor-template-library-blank-icon">
 		<i class="eicon-library-save" aria-hidden="true"></i>
+		<span class="elementor-screen-only"><?php esc_html_e( 'Save', 'elementor' ); ?></span>
 	</div>
 	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
 	<div class="elementor-template-library-blank-message">{{{ description }}}</div>

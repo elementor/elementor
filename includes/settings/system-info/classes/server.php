@@ -120,6 +120,7 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function get_write_permissions() {
@@ -174,7 +175,7 @@ class Server_Reporter extends Base_Reporter {
 	public function get_elementor_library() {
 		$response = wp_remote_post(
 			Api::$api_info_url, [
-				'timeout' => 25,
+				'timeout' => 5,
 				'body' => [
 					// Which API version is used
 					'api_version' => ELEMENTOR_VERSION,

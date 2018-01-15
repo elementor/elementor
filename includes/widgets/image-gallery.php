@@ -241,7 +241,6 @@ class Widget_Image_Gallery extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'label' => __( 'Image Border', 'elementor' ),
 				'selector' => '{{WRAPPER}} .gallery-item img',
 				'separator' => 'before',
 			]
@@ -337,7 +336,6 @@ class Widget_Image_Gallery extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
-				'label' => __( 'Typography', 'elementor' ),
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} .gallery-item .gallery-caption',
 				'condition' => [
