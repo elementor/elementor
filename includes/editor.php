@@ -627,6 +627,12 @@ class Editor {
 				'have_a_look' => __( 'Have a look', 'elementor' ),
 				'view_all_revisions' => __( 'View All Revisions', 'elementor' ),
 				'dismiss' => __( 'Dismiss', 'elementor' ),
+				'saving_disabled' => __( 'Saving has been disabled until you’re reconnected.', 'elementor' ),
+
+				// Ajax
+				'server_error' => __( 'Server Error', 'elementor' ),
+				'server_connection_lost' => __( 'Connection Lost', 'elementor' ),
+				'unknown_error' => __( 'Unknown Error', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),

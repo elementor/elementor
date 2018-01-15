@@ -188,6 +188,22 @@ module.exports = Module.extend( {
 
 				self.trigger( 'after:saveError', data )
 					.trigger( 'after:saveError:' + options.status, data );
+
+				var message;
+
+				if ( data.statusText ) {
+					message = elementor.ajax.createErrorMessage( data );
+
+					if ( 0 === data.readyState ) {
+						message += '. ' + elementor.translate( 'saving_disabled' );
+					}
+				} else if ( data[0] && data[0].code ) {
+					message = elementor.translate( 'server_error' ) + ' ' + data[0].code;
+				}
+
+				elementor.notifications.showToast( {
+					message: message
+				} );
 			}
 		} );
 
