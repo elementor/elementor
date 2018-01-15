@@ -18,6 +18,10 @@ class Model extends BaseModel {
 	 */
 	private $post;
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function __construct( array $data = [] ) {
 		$this->post = get_post( $data['id'] );
 
@@ -28,24 +32,44 @@ class Model extends BaseModel {
 		parent::__construct( $data );
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function get_name() {
 		return 'page-settings';
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function get_unique_name() {
 		return $this->get_name() . '-' . $this->post->ID;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function get_css_wrapper_selector() {
 		return 'body.elementor-page-' . $this->get_id();
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function get_panel_page_settings() {
 		return [
 			'title' => __( 'Document Settings', 'elementor' ),
 		];
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function on_export( $element_data ) {
 		if ( ! empty( $element_data['settings']['template'] ) && Manager::TEMPLATE_CANVAS !== $element_data['settings']['template'] ) {
 			unset( $element_data['settings']['template'] );
@@ -54,6 +78,10 @@ class Model extends BaseModel {
 		return $element_data;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_page_settings',
@@ -175,7 +203,6 @@ class Model extends BaseModel {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'label' => __( 'Background', 'elementor' ),
 				'fields_options' => [
 					'__all' => [
 						'export' => '__return_true',

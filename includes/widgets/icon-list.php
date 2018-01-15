@@ -382,7 +382,6 @@ class Widget_Icon_List extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'icon_typography',
-				'label' => __( 'Typography', 'elementor' ),
 				'selector' => '{{WRAPPER}} .elementor-icon-list-item',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
