@@ -476,6 +476,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * Starts a group controls popover.
 	 *
+	 * @since 1.9.1
 	 * @access private
 	 * @param Controls_Stack $element Element.
 	 */
@@ -490,12 +491,18 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$label = $popover_options['starter_title'];
 		}
 
-		$element->add_control( $this->get_controls_prefix() . $popover_options['starter_name'], [
+		$control_params = [
 			'type' => Controls_Manager::POPOVER_TOGGLE,
 			'label' => $label,
 			'toggle_type' => $popover_options['toggle_type'],
 			'return_value' => $popover_options['starter_value'],
-		] );
+		];
+
+		if ( ! empty( $settings['condition'] ) ) {
+			$control_params['condition'] = $settings['condition'];
+		}
+
+		$element->add_control( $this->get_controls_prefix() . $popover_options['starter_name'], $control_params );
 
 		$element->start_popover();
 	}

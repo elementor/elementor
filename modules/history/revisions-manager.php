@@ -21,7 +21,6 @@ class Revisions_Manager {
 
 	public static function handle_revision() {
 		add_filter( 'wp_save_post_revision_post_has_changed', '__return_true' );
-		add_action( '_wp_put_post_revision', [ __CLASS__, 'save_revision' ] );
 	}
 
 	public static function get_revisions( $post_id = 0, $query_args = [], $parse_result = true ) {
@@ -43,7 +42,7 @@ class Revisions_Manager {
 		$posts = wp_get_post_revisions( $post->ID, $query_args );
 
 		if ( ! wp_revisions_enabled( $post ) ) {
-			$autosave = wp_get_post_autosave( $post->ID );
+			$autosave = Utils::get_post_autosave( $post->ID );
 			if ( $autosave ) {
 				if ( $parse_result ) {
 					array_unshift( $posts, $autosave );
@@ -101,14 +100,18 @@ class Revisions_Manager {
 		return $revisions;
 	}
 
+	public static function update_autosave( $autosave_data ) {
+		$revision_id = $autosave_data['ID'];
+
+		Plugin::$instance->db->safe_copy_elementor_meta( $autosave_data['post_parent'], $revision_id );
+	}
+
 	public static function save_revision( $revision_id ) {
 		$parent_id = wp_is_post_revision( $revision_id );
 
-		if ( ! $parent_id || ! Plugin::$instance->db->is_built_with_elementor( $parent_id ) ) {
-			return;
+		if ( $parent_id ) {
+			Plugin::$instance->db->safe_copy_elementor_meta( $parent_id, $revision_id );
 		}
-
-		Plugin::$instance->db->copy_elementor_meta( $parent_id, $revision_id );
 	}
 
 	public static function restore_revision( $parent_id, $revision_id ) {
@@ -252,6 +255,8 @@ class Revisions_Manager {
 		add_action( 'init', [ __CLASS__, 'add_revision_support_for_all_post_types' ], 9999 );
 		add_filter( 'elementor/editor/localize_settings', [ __CLASS__, 'editor_settings' ], 10, 2 );
 		add_action( 'elementor/db/before_save', [ __CLASS__, 'db_before_save' ], 10, 2 );
+		add_action( '_wp_put_post_revision', [ __CLASS__, 'save_revision' ] );
+		add_action( 'wp_creating_autosave', [ __CLASS__, 'update_autosave' ] );
 
 		if ( Utils::is_ajax() ) {
 			add_filter( 'elementor/ajax_save_builder/return_data', [ __CLASS__, 'on_ajax_save_builder_data' ], 10, 2 );
@@ -262,7 +267,7 @@ class Revisions_Manager {
 
 	private static function current_revision_id( $post_id ) {
 		$current_revision_id = $post_id;
-		$autosave = wp_get_post_autosave( $post_id );
+		$autosave = Utils::get_post_autosave( $post_id );
 
 		if ( is_object( $autosave ) ) {
 			$current_revision_id = $autosave->ID;
