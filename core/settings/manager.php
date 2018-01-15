@@ -13,11 +13,19 @@ class Manager {
 
 	private static $builtin_settings_managers_names = [ 'page', 'general' ];
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 * @static
+	 */
 	public static function add_settings_manager( Base\Manager $manager ) {
 		self::$settings_managers[ $manager->get_name() ] = $manager;
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access public
+	 * @static
 	 * @return Base\Manager|Base\Manager[]
 	 */
 	public static function get_settings_managers( $manager_name = null ) {
@@ -32,6 +40,11 @@ class Manager {
 		return self::$settings_managers;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access private
+	 * @static
+	 */
 	private static function register_default_settings_managers() {
 		foreach ( self::$builtin_settings_managers_names as $manager_name ) {
 			$manager_class = __NAMESPACE__ . '\\' . ucfirst( $manager_name ) . '\Manager';
@@ -40,6 +53,11 @@ class Manager {
 		}
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_settings_managers_config() {
 		$config = [];
 
@@ -59,6 +77,11 @@ class Manager {
 		return $config;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_settings_frontend_config() {
 		$config = [];
 
@@ -71,6 +94,11 @@ class Manager {
 		return $config;
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 * @static
+	 */
 	public static function run() {
 		self::register_default_settings_managers();
 	}

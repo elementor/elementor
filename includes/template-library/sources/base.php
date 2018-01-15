@@ -82,6 +82,7 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function mark_as_favorite( $template_id, $favorite = true ) {
@@ -101,6 +102,7 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function get_user_meta( $item = null ) {
@@ -124,6 +126,7 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function update_user_meta( $key, $value ) {
@@ -149,6 +152,7 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access protected
 	 */
 	protected function get_user_meta_prefix() {
