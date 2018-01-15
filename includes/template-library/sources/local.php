@@ -510,15 +510,20 @@ class Source_Local extends Source_Base {
 
 		$items = [];
 
-		$zip = new \ZipArchive();
+		$file_extension = pathinfo( $_FILES['file']['name'], PATHINFO_EXTENSION );
 
-		/*
-		 * Check if file is a json or a .zip archive
-		 */
-		if ( true === $zip->open( $import_file ) ) {
+		if ( 'zip' === $file_extension ) {
+			if ( ! class_exists( '\ZipArchive' ) ) {
+				return new \WP_Error( 'zip_error', 'PHP Zip extension not loaded.' );
+			}
+
+			$zip = new \ZipArchive();
+
 			$wp_upload_dir = wp_upload_dir();
 
 			$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR . '/' . uniqid();
+
+			$zip->open( $import_file );
 
 			$zip->extractTo( $temp_path );
 

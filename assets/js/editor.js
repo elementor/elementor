@@ -8018,10 +8018,6 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	className: 'elementor-panel-category',
 
-	id: function() {
-		return 'elementor-panel-category-' + this.model.get( 'name' );
-	},
-
 	childView: require( 'elementor-panel/pages/elements/views/element' ),
 
 	childViewContainer: '.panel-elements-category-items',
