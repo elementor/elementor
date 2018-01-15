@@ -120,6 +120,7 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function get_write_permissions() {

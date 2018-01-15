@@ -10,14 +10,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Model extends BaseModel {
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function get_name() {
 		return 'global-settings';
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function get_css_wrapper_selector() {
 		return '';
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function get_panel_page_settings() {
 		return [
 			'title' => __( 'Global Settings', 'elementor' ),
@@ -28,6 +40,11 @@ class Model extends BaseModel {
 		];
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_controls_list() {
 
 		return [
@@ -124,6 +141,10 @@ class Model extends BaseModel {
 		];
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		$controls_list = self::get_controls_list();
 

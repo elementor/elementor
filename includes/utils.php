@@ -145,6 +145,7 @@ class Utils {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @static
 	 * @access public
 	 */
@@ -174,6 +175,7 @@ class Utils {
 
 
 	/**
+	 * @since 1.9.0
 	 * @static
 	 * @access public
 	 */
@@ -383,6 +385,7 @@ class Utils {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @static
 	 * @access public
 	 */
@@ -433,6 +436,10 @@ class Utils {
 		return $new_post_url;
 	}
 
+	/**
+	 * @static
+	 * @access public
+	 */
 	public static function get_post_autosave( $post_id, $user_id = 0 ) {
 		global $wpdb;
 
