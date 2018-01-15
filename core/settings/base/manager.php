@@ -4,7 +4,6 @@ namespace Elementor\Core\Settings\Base;
 use Elementor\Core\Ajax_Manager;
 use Elementor\CSS_File;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -75,7 +74,7 @@ abstract class Manager {
 	/**
 	 * @since 1.6.0
 	 * @access public
-	 * 
+	 *
 	 * @param array $request
 	 *
 	 * @return mixed
