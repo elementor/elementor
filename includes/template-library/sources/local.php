@@ -660,6 +660,8 @@ class Source_Local extends Source_Base {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
+	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
 	public function import_template() {
 		$import_file = $_FILES['file']['tmp_name'];
