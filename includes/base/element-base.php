@@ -136,7 +136,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.3.0
 	 * @access public
 	 *
-	 * @return array Widget scripts dependencies.
+	 * @return array Element scripts dependencies.
 	 */
 	public function get_script_depends() {
 		return $this->depended_scripts;
@@ -165,7 +165,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.9.0
 	 * @access public
 	 *
-	 * @return array Widget styles dependencies.
+	 * @return array Element styles dependencies.
 	 */
 	final public function get_style_depends() {
 		return $this->depended_styles;

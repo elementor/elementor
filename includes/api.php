@@ -163,9 +163,18 @@ class Api {
 	}
 
 	/**
+	 * Get feed data.
+	 *
+	 * Retrieve the feed info data from remote elementor server.
+	 *
 	 * @since 1.9.0
-	 * @static
 	 * @access public
+	 * @static
+	 *
+	 * @param bool $force_update Optional. Whether to force the data update or
+	 *                                     not. Default is false.
+	 *
+	 * @return array Feed data.
 	 */
 	public static function get_feed_data( $force_update = false ) {
 		self::_get_info_data( $force_update );

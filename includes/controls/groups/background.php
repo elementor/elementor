@@ -465,8 +465,15 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
+	 * Retrieve default options.
+	 *
+	 * Get the default options of the background control. Used to return the
+	 * default options while initializing the background control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default background control options.
 	 */
 	protected function get_default_options() {
 		return [

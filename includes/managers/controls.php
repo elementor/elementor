@@ -192,9 +192,9 @@ class Controls_Manager {
 	}
 
 	/**
-	 * Get tab.
+	 * Add tab.
 	 *
-	 * Retrieve the tab of the current control.
+	 * This method adds a new tab to the current control.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -368,7 +368,7 @@ class Controls_Manager {
 	/**
 	 * Get control.
 	 *
-	 * Retrieve the specific control from the current controls instance.
+	 * Retrieve a specific control from the current controls instance.
 	 *
 	 * @since 1.0.0
 	 * @access public
