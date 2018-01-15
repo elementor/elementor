@@ -373,7 +373,7 @@ class DB {
 	 * Retrives the raw content, removes all kind of unwanted HTML tags and saves
 	 * the content as the `post_content` field in the database.
 	 *
-	 * @since 1.0.0
+	 * @since 1.9.0
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
@@ -455,6 +455,9 @@ class DB {
 		return $data_container;
 	}
 
+	/**
+	 * @access public
+	 */
 	public function safe_copy_elementor_meta( $from_post_id, $to_post_id ) {
 		if ( ! Plugin::$instance->db->is_built_with_elementor( $from_post_id ) ) {
 			return;
@@ -592,6 +595,7 @@ class DB {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function get_plain_text( $post_id ) {
@@ -600,6 +604,9 @@ class DB {
 		return $this->get_plain_text_from_data( $data );
 	}
 
+	/**
+	 * @access public
+	 */
 	public function get_plain_text_from_data( $data ) {
 		ob_start();
 		if ( $data ) {
