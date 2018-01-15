@@ -273,7 +273,7 @@ class Elements_Manager {
 			throw new \Exception( 'no_post_id' );
 		}
 
-		$autosave = wp_get_post_autosave( $request['post_id'] );
+		$autosave = Utils::get_post_autosave( $request['post_id'] );
 
 		if ( $autosave ) {
 			$deleted = wp_delete_post_revision( $autosave->ID );

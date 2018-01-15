@@ -627,6 +627,12 @@ class Editor {
 				'have_a_look' => __( 'Have a look', 'elementor' ),
 				'view_all_revisions' => __( 'View All Revisions', 'elementor' ),
 				'dismiss' => __( 'Dismiss', 'elementor' ),
+				'saving_disabled' => __( 'Saving has been disabled until you’re reconnected.', 'elementor' ),
+
+				// Ajax
+				'server_error' => __( 'Server Error', 'elementor' ),
+				'server_connection_lost' => __( 'Connection Lost', 'elementor' ),
+				'unknown_error' => __( 'Unknown Error', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
@@ -771,7 +777,7 @@ class Editor {
 	 *
 	 * Config the default WordPress editor with custom settings for Elementor use.
 	 *
-	 * @since 1.0.0
+	 * @since 1.9.0
 	 * @access private
 	 */
 	private function get_wp_editor_config() {
@@ -985,6 +991,7 @@ class Editor {
 	 * Verify request nonce and send a JSON request, if not verified returns an
 	 * error.
 	 *
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function verify_ajax_nonce() {

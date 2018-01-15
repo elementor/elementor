@@ -12,6 +12,7 @@ class Post_Preview_CSS extends Post_CSS_File {
 	private $preview_id;
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function __construct( $post_id ) {
@@ -23,6 +24,7 @@ class Post_Preview_CSS extends Post_CSS_File {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access protected
 	 */
 	protected function get_data() {
@@ -30,6 +32,7 @@ class Post_Preview_CSS extends Post_CSS_File {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access protected
 	 */
 	protected function get_file_handle_id() {
@@ -37,6 +40,7 @@ class Post_Preview_CSS extends Post_CSS_File {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function get_meta( $property = null ) {
