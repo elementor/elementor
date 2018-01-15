@@ -34,7 +34,7 @@ class Manager {
 	/**
 	 * Imported template images.
 	 *
-	 * Holds a list of all the imported images.
+	 * Holds an instance of `Import_Images` class.
 	 *
 	 * @access private
 	 *
@@ -58,9 +58,9 @@ class Manager {
 	}
 
 	/**
-	 * Get imported images instance.
+	 * Get `Import_Images` instance.
 	 *
-	 * Retrieve the instance of the imported images.
+	 * Retrieve the instance of the `Import_Images` class.
 	 *
 	 * @since 1.0.0
 	 * @access public
