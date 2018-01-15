@@ -670,6 +670,7 @@ class Admin {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access private
 	 */
 	private function get_dashboard_overview_widget_footer_actions() {
@@ -711,6 +712,7 @@ class Admin {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function admin_action_new_post() {

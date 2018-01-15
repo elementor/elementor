@@ -161,6 +161,7 @@ class Api {
 	}
 
 	/**
+	 * @since 1.9.0
 	 * @static
 	 * @access public
 	 */
