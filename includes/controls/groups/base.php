@@ -476,6 +476,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * Starts a group controls popover.
 	 *
+	 * @since 1.9.1
 	 * @access private
 	 * @param Controls_Stack $element Element.
 	 */

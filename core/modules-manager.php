@@ -9,6 +9,10 @@ final class Modules_Manager {
 
 	private $modules = null;
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function __construct() {
 		$modules = [
 			'history'

@@ -17,6 +17,10 @@ class Manager extends BaseManager {
 
 	const META_KEY = '_elementor_general_settings';
 
+	/**
+	 * @since 1.6.0
+	 * @access public
+	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -24,6 +28,8 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access public
 	 * @return string
 	 */
 	public function get_name() {
@@ -31,6 +37,8 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access public
 	 * @return BaseModel
 	 */
 	public function get_model_for_config() {
@@ -38,6 +46,8 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access protected
 	 * @param int $id
 	 *
 	 * @return array
@@ -65,6 +75,8 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access protected
 	 * @return string
 	 */
 	protected function get_css_file_name() {
@@ -72,6 +84,8 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access protected
 	 * @param array $settings
 	 * @param int   $id
 	 *
@@ -109,6 +123,8 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access protected
 	 * @param CSS_File $css_file
 	 *
 	 * @return BaseModel
@@ -118,6 +134,8 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * @since 1.6.0
+	 * @access protected
 	 * @param int $id
 	 *
 	 * @return CSS_File
@@ -126,6 +144,10 @@ class Manager extends BaseManager {
 		return new Global_CSS_File();
 	}
 
+	/**
+	 * @since 1.6.0
+	 * @access private
+	 */
 	private function add_panel_tabs() {
 		Controls_Manager::add_tab( self::PANEL_TAB_LIGHTBOX, __( 'Lightbox', 'elementor' ) );
 	}
