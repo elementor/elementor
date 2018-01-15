@@ -285,6 +285,8 @@ abstract class Source_Base {
 	 * Retrieve user meta prefix used to save Elementor data.
 	 *
 	 * @access protected
+	 *
+	 * @return string User meta prefix.
 	 */
 	protected function get_user_meta_prefix() {
 		return 'elementor_library_' . $this->get_id();
