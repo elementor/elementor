@@ -175,6 +175,8 @@ class Documents_Manager {
 		];
 
 		/**
+		 * Returned documents ajax saved data.
+		 *
 		 * Filters the ajax data returned when saving the post on the builder.
 		 *
 		 * @since 2.0.0
