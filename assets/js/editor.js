@@ -344,7 +344,7 @@ module.exports = Module.extend( {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
-				data: JSON.stringify( newData )
+				data: newData
 			},
 
 			success: function( data ) {
@@ -473,7 +473,7 @@ module.exports = ViewModule.extend( {
 
 		var settings = this.model.toJSON( { removeDefault: true } ),
 			data = this.getDataToSave( {
-				data: JSON.stringify( settings )
+				data: settings
 			} );
 
 		NProgress.start();
@@ -5520,7 +5520,7 @@ ElementModel = Backbone.Model.extend( {
 			unique_id: this.cid,
 			data: {
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data )
+				data: data
 			},
 			success: this.onRemoteGetHtml.bind( this )
 		}, true ).jqXhr;
