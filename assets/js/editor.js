@@ -1037,10 +1037,14 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	refreshWpPreview: function() {
-		// If the this.previewWindow is not null and not closed.
-		if ( this.previewWindow && this.previewWindow.location.reload ) {
+		if ( this.previewWindow ) {
 			// Refresh URL form updated config.
-			this.previewWindow.location = elementor.config.wp_preview.url;
+			try {
+				this.previewWindow.location = elementor.config.wp_preview.url;
+			} catch ( e ) {
+				// If the this.previewWindow is closed or it's domain was changed.
+				// Do nothing.
+			}
 		}
 	}
 } );
@@ -1202,7 +1206,7 @@ module.exports = Module.extend( {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
-				data: JSON.stringify( newData )
+				data: newData
 			},
 
 			success: function( data ) {
@@ -1334,7 +1338,7 @@ module.exports = ViewModule.extend( {
 
 		var settings = this.model.toJSON( { removeDefault: true } ),
 			data = this.getDataToSave( {
-				data: JSON.stringify( settings )
+				data: settings
 			} );
 
 		NProgress.start();
@@ -6465,7 +6469,7 @@ ElementModel = Backbone.Model.extend( {
 			unique_id: this.cid,
 			data: {
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data )
+				data: data
 			},
 			success: this.onRemoteGetHtml.bind( this )
 		}, true ).jqXhr;

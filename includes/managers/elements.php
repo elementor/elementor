@@ -318,7 +318,7 @@ class Elements_Manager {
 			$status = $request['status'];
 		}
 
-		$posted = json_decode( stripslashes( $request['data'] ), true );
+		$posted = $request['data'];
 
 		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
 
