@@ -2254,6 +2254,10 @@ select {
     text-align: left;
     padding: 10px 0;
     color: #d5dadf; }
+  .elementor-panel #elementor-panel-footer-responsive > i {
+    display: block;
+    height: 100%;
+    line-height: 40px; }
   .elementor-panel #elementor-panel-saver-publish {
     width: 80px; }
     .elementor-panel #elementor-panel-saver-publish .elementor-button.elementor-button-state #elementor-panel-saver-button-publish-label {
