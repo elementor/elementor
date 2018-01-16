@@ -70,7 +70,7 @@ module.exports = ViewModule.extend( {
 
 		var settings = this.model.toJSON( { removeDefault: true } ),
 			data = this.getDataToSave( {
-				data: JSON.stringify( settings )
+				data: settings
 			} );
 
 		NProgress.start();

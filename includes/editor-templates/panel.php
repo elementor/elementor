@@ -58,9 +58,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<i class="fa fa-cog" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php esc_html_e( 'Document Settings', 'elementor' ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>">
-		<i class="eicon-device-desktop" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'Responsive Mode', 'elementor' ); ?></span>
+	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool">
+		<i class="eicon-device-desktop tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
+		<span class="elementor-screen-only">
+			<?php esc_html_e( 'Responsive Mode', 'elementor' ); ?>
+		</span>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="desktop">
