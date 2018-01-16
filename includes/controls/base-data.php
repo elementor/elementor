@@ -1,9 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\MicroElements\Manager as MicroElementsManager;
-use Elementor\Core\DynamicContent\Manager as DynamicContentManager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
