@@ -175,10 +175,14 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	refreshWpPreview: function() {
-		// If the this.previewWindow is not null and not closed.
-		if ( this.previewWindow && this.previewWindow.location.reload ) {
+		if ( this.previewWindow ) {
 			// Refresh URL form updated config.
-			this.previewWindow.location = elementor.config.wp_preview.url;
+			try {
+				this.previewWindow.location = elementor.config.wp_preview.url;
+			} catch ( e ) {
+				// If the this.previewWindow is closed or it's domain was changed.
+				// Do nothing.
+			}
 		}
 	}
 } );
