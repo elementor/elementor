@@ -35,7 +35,7 @@ abstract class Manager {
 	 *
 	 * @param Ajax_Manager $ajax_handler
 	 */
-	protected function register_ajax_actions( $ajax_handler ) {
+	public function register_ajax_actions( $ajax_handler ) {
 		$name = $this->get_name();
 		$ajax_handler->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
 	}
