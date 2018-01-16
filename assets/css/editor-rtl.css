@@ -3595,7 +3595,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   -webkit-border-radius: 5px;
           border-radius: 5px;
   color: #d5dadf;
-  background-color: rgba(0, 0, 0, 0.8); }
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 10000; }
   #elementor-toast .dialog-message {
     font-size: 13px; }
   #elementor-toast .dialog-buttons-wrapper {

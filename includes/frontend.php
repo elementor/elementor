@@ -267,7 +267,8 @@ class Frontend {
 			[
 				'jquery',
 			],
-			'4.1.4'
+			'4.1.4',
+			true
 		);
 
 		wp_register_script(
