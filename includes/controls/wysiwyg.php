@@ -78,10 +78,7 @@ class Control_Wysiwyg extends Base_Data_Control {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function content_template() {
-		?>
-		<?php
-	}
+	public function content_template() {}
 
 	/**
 	 * Retrieve textarea control default settings.
