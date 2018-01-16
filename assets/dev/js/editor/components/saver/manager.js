@@ -154,7 +154,7 @@ module.exports = Module.extend( {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
-				data: JSON.stringify( newData )
+				data: newData
 			},
 
 			success: function( data ) {
