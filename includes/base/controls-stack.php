@@ -1030,7 +1030,7 @@ abstract class Controls_Stack {
 				continue;
 			}
 
-			$control = array_merge( $control, $control_obj->get_settings() );
+			$control = array_merge( $control_obj->get_settings(), $control );
 
 			if ( ! empty( $control['dynamic'] ) && ! empty( $all_settings[ 'dynamic_' . $control['name'] ] ) ) {
 				$valueToParse = $settings[ $control['name'] ];
@@ -1658,7 +1658,7 @@ abstract class Controls_Stack {
 				continue;
 			}
 
-			$control = array_merge( $control, $control_obj->get_settings() );
+			$control = array_merge( $control_obj->get_settings(), $control );
 
 			if (
 				isset( $settings[ $control['name'] ] ) &&
