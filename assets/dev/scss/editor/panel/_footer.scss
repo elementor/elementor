@@ -134,6 +134,14 @@
 	color: $editor-lightest;
 }
 
+#elementor-panel-footer-responsive {
+	& > i {
+		display: block;
+		height: 100%;
+		line-height: 40px;
+	}
+}
+
 #elementor-panel-saver-publish {
 	width: 80px;
 	@extend .elementor-button-success;
