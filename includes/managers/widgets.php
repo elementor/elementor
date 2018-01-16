@@ -297,7 +297,7 @@ class Widgets_Manager {
 
 		Plugin::$instance->db->switch_to_post( $request['post_id'] );
 
-		$data = json_decode( stripslashes( $request['data'] ), true );
+		$data = $request['data'];
 
 		// Start buffering
 		ob_start();
