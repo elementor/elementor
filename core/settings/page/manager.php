@@ -6,6 +6,7 @@ use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Post_CSS_File;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -62,9 +63,9 @@ class Manager extends BaseManager {
 	 * @static
 	 */
 	public static function is_cpt_custom_templates_supported() {
-		require_once ABSPATH . '/wp-admin/includes/theme.php';
+		_deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported' );
 
-		return method_exists( wp_get_theme(), 'get_post_templates' );
+		return Utils::is_cpt_custom_templates_supported();
 	}
 
 	/**

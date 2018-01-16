@@ -124,8 +124,13 @@ class Documents_Manager {
 	}
 
 	/**
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param $request
+	 *
+	 * @return array|mixed|void
+	 * @throws \Exception
 	 */
 	public function	ajax_save( $request ) {
 		if ( empty( $request['post_id'] ) ) {
@@ -135,7 +140,7 @@ class Documents_Manager {
 		$document = $this->get( $request['post_id'] );
 
 		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
-			wp_send_json_error( new \WP_Error( 'no_access' ) );
+			throw new \Exception( 'no_access' );
 		}
 
 		$status = DB::STATUS_DRAFT;

@@ -62,6 +62,10 @@ class Utils {
 	public static function get_edit_link( $post_id = 0 ) {
 		_deprecated_function( __METHOD__, '2.0.0', '$document->get_edit_link()' );
 
+		if ( ! $post_id ) {
+			$post_id = get_the_ID();
+		}
+
 		$edit_link = Plugin::$instance->documents->get( $post_id )->get_edit_url();
 
 		/**
@@ -451,5 +455,16 @@ class Utils {
 		}
 
 		return $revision;
+	}
+
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
+	public static function is_cpt_custom_templates_supported() {
+		require_once ABSPATH . '/wp-admin/includes/theme.php';
+
+		return method_exists( wp_get_theme(), 'get_post_templates' );
 	}
 }
