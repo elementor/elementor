@@ -293,7 +293,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return mixed The whole haystack or the needle from the haystack when requested.
 	 */
-	private static function _get_items( array $haystack, $needle = null ) {
+	protected static function _get_items( array $haystack, $needle = null ) {
 		if ( $needle ) {
 			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
 		}
