@@ -157,7 +157,7 @@ class Documents_Manager {
 		}
 
 		$data = [
-			'elements' => json_decode( stripslashes( $request['data'] ), true ),
+			'elements' => $request['data'],
 		];
 
 		$data['settings']['post_status'] = $status;

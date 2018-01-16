@@ -168,7 +168,7 @@ ElementModel = Backbone.Model.extend( {
 			unique_id: this.cid,
 			data: {
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data )
+				data: data
 			},
 			success: this.onRemoteGetHtml.bind( this )
 		}, true ).jqXhr;

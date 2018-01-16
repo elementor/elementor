@@ -80,7 +80,7 @@ abstract class Manager {
 	 * @return mixed
 	 */
 	final public function ajax_save_settings( $request ) {
-		$data = json_decode( stripslashes( $request['data'] ), true );
+		$data = $request['data'];
 
 		$id = 0;
 
