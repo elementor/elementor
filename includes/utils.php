@@ -73,6 +73,8 @@ class Utils {
 		 *
 		 * @param string $edit_link New URL query string (unescaped).
 		 * @param int    $post_id   Post ID.
+		 *
+		 * @deprecated 2.0.0
 		 */
 		$edit_link = self::apply_filters_deprecated( 'elementor/utils/get_edit_link', [ $edit_link, $post_id ], '2.0.0', 'elementor/document/get_edit_link' );
 
@@ -142,6 +144,8 @@ class Utils {
 		 *
 		 * @param string $preview_url URL with chosen scheme.
 		 * @param int    $post_id     Post ID.
+		 *
+		 * @deprecated 2.0.0
 		 */
 		$url = self::apply_filters_deprecated( 'elementor/utils/preview_url', [ $url, $post_id ], '2.0.0', 'elementor/document/preview_url' );
 
