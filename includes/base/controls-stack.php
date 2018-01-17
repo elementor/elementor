@@ -1020,34 +1020,34 @@ abstract class Controls_Stack {
 		return $this->parse_dynamic_settings( $this->get_active_settings() );
 	}
 
-	public function parse_dynamic_settings( $settings ) {
-		$all_settings = $this->get_settings();
+	public function parse_dynamic_settings( $settings, $controls = null, $all_settings = null ) {
+		if ( null === $all_settings ) {
+			$all_settings = $this->get_settings();
+		}
 
-		foreach ( $this->get_controls() as $control ) {
+		if ( null === $controls ) {
+			$controls = $this->get_controls();
+		}
+
+		foreach ( $controls as $control ) {
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
 				continue;
 			}
 
+			if ( 'repeater' === $control_obj->get_type() ) {
+				foreach ( $settings[ $control['name'] ] as & $field ) {
+					$field = $this->parse_dynamic_settings( $field, $control['fields'], $field );
+				}
+
+				continue;
+			}
+
 			$control = array_merge( $control_obj->get_settings(), $control );
 
 			if ( ! empty( $control['dynamic'] ) && ! empty( $all_settings[ 'dynamic_' . $control['name'] ] ) ) {
-				$valueToParse = $settings[ $control['name'] ];
-
-				$dynamicProperty = ! empty( $control['dynamic']['property'] ) ? $control['dynamic']['property'] : null;
-
-				if ( $dynamicProperty ) {
-					$valueToParse = $valueToParse[ $dynamicProperty ];
-				}
-
-				$parsedValue = $control_obj->parse_tags( $valueToParse );
-
-				if ( $dynamicProperty ) {
-					$settings[ $control['name'] ][ $dynamicProperty ] = $parsedValue;
-				} else {
-					$settings[ $control['name'] ] = $parsedValue;
-				}
+				$settings[ $control['name'] ] = $control_obj->parse_tags( $settings[ $control['name'] ], $control['dynamic'] );
 			}
 		}
 
