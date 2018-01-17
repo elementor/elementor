@@ -1016,8 +1016,14 @@ abstract class Controls_Stack {
 		return array_merge( $settings_mask, $active_settings );
 	}
 
-	public function get_settings_for_display() {
-		return $this->parse_dynamic_settings( $this->get_active_settings() );
+	public function get_settings_for_display( $setting_key = null ) {
+		if ( $setting_key ) {
+			$settings = [ $setting_key => $this->get_settings( $setting_key ) ];
+		} else {
+			$settings = $this->get_active_settings();
+		}
+
+		return $this->parse_dynamic_settings( $settings );
 	}
 
 	public function parse_dynamic_settings( $settings, $controls = null, $all_settings = null ) {
@@ -1030,6 +1036,10 @@ abstract class Controls_Stack {
 		}
 
 		foreach ( $controls as $control ) {
+			if ( ! isset( $settings[ $control['name'] ] ) || null === $settings[ $control['name'] ] ) {
+				continue;
+			}
+
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
