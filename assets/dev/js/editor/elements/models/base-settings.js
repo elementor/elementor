@@ -100,19 +100,24 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		controls = elementor.helpers.cloneObject( controls || self.getActiveControls() );
 
-		return _.filter( controls, function( control, index ) {
-			var controlDefaultSettings = elementor.config.controls[ control.type ];
+		var styleControls = [];
 
-			control = controls[ index ] = jQuery.extend( {}, controlDefaultSettings, control );
+		jQuery.each( controls, function() {
+			var control = this,
+				controlDefaultSettings = elementor.config.controls[ control.type ];
+
+			control = jQuery.extend( {}, controlDefaultSettings, control );
 
 			if ( control.fields ) {
 				control.styleFields = self.getStyleControls( control.fields );
-
-				return true;
 			}
 
-			return self.isStyleControl( control.name, controls ) || control.dynamic;
+			if ( control.fields || control.dynamic || self.isStyleControl( control.name, controls ) ) {
+				styleControls.push( control );
+			}
 		} );
+
+		return styleControls;
 	},
 
 	isStyleControl: function( attribute, controls ) {
