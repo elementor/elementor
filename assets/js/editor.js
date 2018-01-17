@@ -453,6 +453,7 @@ module.exports = Marionette.ItemView.extend( {
 	initTagControlsStack: function() {
 		this.tagControlsStack = new TagControlsStack( {
 			model: this.model,
+			controls: this.model.controls,
 			el: this.getMentionsPopup().getElements( 'message' )[0]
 		} );
 	},
@@ -495,6 +496,10 @@ module.exports = Marionette.ItemView.extend( {
 		this.getTagControlsStack().render();
 
 		this.showMentionsPopup();
+	},
+
+	onDestroy: function() {
+		this.getMentionsPopup().destroy();
 	}
 } );
 
@@ -809,14 +814,6 @@ module.exports = ControlsStack.extend( {
 		return {
 			elementSettingsModel: this.model
 		};
-	},
-
-	initModel: function() {
-		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
-	},
-
-	initialize: function() {
-		this.initModel();
 	},
 
 	onRenderTemplate: _.noop
@@ -1297,6 +1294,7 @@ module.exports = ViewModule.extend( {
 			title: this.getSettings( 'panelPage.title' ),
 			options: {
 				model: this.model,
+				controls: this.model.controls,
 				name: name
 			}
 		} );
@@ -1436,10 +1434,6 @@ module.exports = ControlsStack.extend( {
 		return {
 			elementSettingsModel: this.model
 		};
-	},
-
-	initialize: function() {
-		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
 	}
 } );
 
@@ -5263,6 +5257,16 @@ App = Marionette.Application.extend( {
 				return;
 			}
 
+			controls[ controlKey ] = controlData;
+		} );
+
+		return controls;
+	},
+
+	mergeControlsSettings: function( controls ) {
+		var  self = this;
+
+		_.each( controls, function( controlData, controlKey ) {
 			controls[ controlKey ] = _.extend( {}, self.config.controls[ controlData.type ], controlData  );
 		} );
 
@@ -6013,12 +6017,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 	initialize: function( data, options ) {
 		var self = this;
 
-		if ( options ) {
-			// Keep the options for cloning
-			self.options = options;
-		}
+		// Keep the options for cloning
+		self.options = options;
 
-		self.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( self );
+		self.controls = elementor.mergeControlsSettings( options.controls );
 
 		self.validators = {};
 
@@ -6183,49 +6185,71 @@ BaseSettingsModel = Backbone.Model.extend( {
 			.trigger( 'change:external:' + key, value );
 	},
 
-	parseDynamicSettings: function( settings, options ) {
+	parseDynamicSettings: function( settings, options, controls ) {
+		var self = this;
+
 		settings = elementor.helpers.cloneObject( settings );
 
-		jQuery.each( this.controls, function() {
-			if ( settings[ 'dynamic_' + this.name ] ) {
-				var valueToParse = settings[ this.name ],
-					dynamicSettings = this.dynamic;
+		if ( ! controls ) {
+			controls = this.controls;
+		}
 
-				if ( undefined === dynamicSettings ) {
-					dynamicSettings = elementor.config.controls[ this.type ].dynamic;
+		jQuery.each( controls, function() {
+			var control = this,
+				valueToParse = settings[ control.name ];
+
+			if ( ! valueToParse ) {
+				return;
+			}
+
+			if ( 'repeater' === control.type ) {
+				valueToParse.forEach( function( value, key ) {
+					valueToParse[ key ] = self.parseDynamicSettings( value, options, control.fields );
+				} );
+
+				return;
+			}
+
+			if ( ! settings[ 'dynamic_' + control.name ] ) {
+				return;
+			}
+
+			var dynamicSettings = control.dynamic;
+
+			if ( undefined === dynamicSettings ) {
+				dynamicSettings = elementor.config.controls[ control.type ].dynamic;
+			}
+
+			if ( ! dynamicSettings ) {
+				return;
+			}
+
+			if ( dynamicSettings.property ) {
+				valueToParse = valueToParse[ dynamicSettings.property ];
+			}
+
+			var dynamicValue;
+
+			try {
+				dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.renderTagData );
+			} catch ( e ) {
+				dynamicValue = '';
+
+				if ( options.onServerRequestStart ) {
+					options.onServerRequestStart();
 				}
 
-				if ( ! dynamicSettings ) {
-					return;
-				}
-
-				if ( dynamicSettings.property ) {
-					valueToParse = valueToParse[ dynamicSettings.property ];
-				}
-
-				var dynamicValue;
-
-				try {
-					dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.renderTagData );
-				} catch ( e ) {
-					dynamicValue = '';
-
-					if ( options.onServerRequestStart ) {
-						options.onServerRequestStart();
+				elementor.microElements.refreshCacheFromServer( function() {
+					if ( options.onServerRequestEnd ) {
+						options.onServerRequestEnd();
 					}
+				} );
+			}
 
-					elementor.microElements.refreshCacheFromServer( function() {
-						if ( options.onServerRequestEnd ) {
-							options.onServerRequestEnd();
-						}
-					} );
-				}
-
-				if ( dynamicSettings.property ) {
-					settings[ this.name ][ dynamicSettings.property ] = dynamicValue;
-				} else {
-					settings[ this.name ] = dynamicValue;
-				}
+			if ( dynamicSettings.property ) {
+				settings[ control.name ][ dynamicSettings.property ] = dynamicValue;
+			} else {
+				settings[ control.name ] = dynamicValue;
 			}
 		} );
 
@@ -6359,7 +6383,8 @@ ElementModel = Backbone.Model.extend( {
 			settingModels = {
 				column: ColumnSettingsModel
 			},
-			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
+			SettingsModel = settingModels[ elType ] || BaseSettingsModel,
+			elementData;
 
 		if ( jQuery.isEmptyObject( settings ) ) {
 			settings = elementor.helpers.cloneObject( settings );
@@ -6367,12 +6392,18 @@ ElementModel = Backbone.Model.extend( {
 
 		if ( 'widget' === elType ) {
 			settings.widgetType = this.get( 'widgetType' );
+
+			elementData = elementor.config.widgets[ settings.widgetType ];
+		} else {
+			elementData = elementor.config.elements[ elType ];
 		}
 
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
-		settings = new SettingsModel( settings );
+		settings = new SettingsModel( settings, {
+			controls: elementor.getElementControls( this )
+		} );
 
 		this.set( 'settings', settings );
 
@@ -8776,17 +8807,6 @@ EditorView = ControlsStack.extend( {
 		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ) );
 	},
 
-	onBeforeRender: function() {
-		var controls = elementor.getElementControls( this.model );
-
-		if ( ! controls ) {
-			throw new Error( 'Editor controls not found' );
-		}
-
-		// Create new instance of that collection
-		this.collection = new Backbone.Collection( _.values( controls ) );
-	},
-
 	onDestroy: function() {
 		var editedElementView = this.getOption( 'editedElementView' );
 
@@ -9923,6 +9943,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementData.title ] ), {
 			model: model,
+			controls: elementor.getElementControls( model ),
 			editedElementView: view
 		} );
 
@@ -10312,7 +10333,7 @@ ControlsCSSParser = ViewModule.extend( {
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
 		var self = this,
-			dynamicParsedValues = self.getSettings( 'settingsModel' ).parseDynamicSettings( values, self.getSettings( 'dynamicParsing' ) );
+			dynamicParsedValues = self.getSettings( 'settingsModel' ).parseDynamicSettings( values, self.getSettings( 'dynamicParsing' ), styleControls );
 
 		_.each( styleControls, function( control ) {
 			if ( control.styleFields && control.styleFields.length ) {
@@ -10343,11 +10364,7 @@ ControlsCSSParser = ViewModule.extend( {
 						return;
 					}
 
-					var tagReplacements = replacements.slice( 0 );
-
-					tagReplacements.splice( placeholders.indexOf( '{{WRAPPER}}' ), 1, '#elementor-tag-' + id );
-
-					self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, placeholders, tagReplacements );
+					self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, [ '{{WRAPPER}}' ], [ '#elementor-tag-' + id ] );
 				} );
 			}
 
@@ -12488,7 +12505,13 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	initialize: function() {
+		this.initCollection();
+
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
+	initCollection: function() {
+		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( this.getOption( 'controls' ) ) ) );
 	},
 
 	filter: function( controlModel ) {
