@@ -63,11 +63,7 @@ ControlsCSSParser = ViewModule.extend( {
 						return;
 					}
 
-					var tagReplacements = replacements.slice( 0 );
-
-					tagReplacements.splice( placeholders.indexOf( '{{WRAPPER}}' ), 1, '#elementor-tag-' + id );
-
-					self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, placeholders, tagReplacements );
+					self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, [ '{{WRAPPER}}' ], [ '#elementor-tag-' + id ] );
 				} );
 			}
 
