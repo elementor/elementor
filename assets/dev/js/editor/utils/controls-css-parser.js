@@ -32,7 +32,7 @@ ControlsCSSParser = ViewModule.extend( {
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
 		var self = this,
-			dynamicParsedValues = self.getSettings( 'settingsModel' ).parseDynamicSettings( values, self.getSettings( 'dynamicParsing' ) );
+			dynamicParsedValues = self.getSettings( 'settingsModel' ).parseDynamicSettings( values, self.getSettings( 'dynamicParsing' ), styleControls );
 
 		_.each( styleControls, function( control ) {
 			if ( control.styleFields && control.styleFields.length ) {
