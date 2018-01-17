@@ -119,5 +119,9 @@ module.exports = Marionette.ItemView.extend( {
 		this.getTagControlsStack().render();
 
 		this.showMentionsPopup();
+	},
+
+	onDestroy: function() {
+		this.getMentionsPopup().destroy();
 	}
 } );
