@@ -399,7 +399,7 @@ class Widget_Icon_List extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 		?>
 		<ul class="elementor-icon-list-items">
 			<?php foreach ( $settings['icon_list'] as $index => $item ) :
