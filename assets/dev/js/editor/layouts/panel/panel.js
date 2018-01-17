@@ -154,6 +154,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementData.title ] ), {
 			model: model,
+			controls: elementor.getElementControls( model ),
 			editedElementView: view
 		} );
 

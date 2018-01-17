@@ -20,13 +20,5 @@ module.exports = ControlsStack.extend( {
 		};
 	},
 
-	initModel: function() {
-		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
-	},
-
-	initialize: function() {
-		this.initModel();
-	},
-
 	onRenderTemplate: _.noop
 } );

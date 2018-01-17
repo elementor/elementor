@@ -76,6 +76,7 @@ module.exports = Marionette.ItemView.extend( {
 	initTagControlsStack: function() {
 		this.tagControlsStack = new TagControlsStack( {
 			model: this.model,
+			controls: this.model.controls,
 			el: this.getMentionsPopup().getElements( 'message' )[0]
 		} );
 	},
