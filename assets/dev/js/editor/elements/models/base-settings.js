@@ -6,12 +6,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 	initialize: function( data, options ) {
 		var self = this;
 
-		if ( options ) {
-			// Keep the options for cloning
-			self.options = options;
-		}
+		// Keep the options for cloning
+		self.options = options;
 
-		self.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( self );
+		self.controls = elementor.mergeControlsSettings( options.controls );
 
 		self.validators = {};
 
