@@ -78,7 +78,7 @@ class Manager {
 	/**
 	 * Register template source.
 	 *
-	 * Used to register new template sources displayed in the templated library.
+	 * Used to register new template sources displayed in the template library.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -210,7 +210,7 @@ class Manager {
 	 /**
  	 * Save template.
  	 *
- 	 * Save new or update exising template on the database.
+ 	 * Save new or update existing template on the database.
 	 *
 	 * @since 1.0.0
 	 * @access public
