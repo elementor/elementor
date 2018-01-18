@@ -135,7 +135,7 @@ class DB {
 				'post_ID' => $post_id,
 				'post_type' => $post->post_type,
 				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
-				'post_content' => $this->get_plain_text_from_data( $json_value ),
+				'post_content' => $this->get_plain_text_from_data( $editor_data ),
 				'post_modified' => current_time( 'mysql' ),
 			] );
 

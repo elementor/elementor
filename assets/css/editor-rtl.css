@@ -2258,6 +2258,10 @@ select {
     text-align: right;
     padding: 10px 0;
     color: #d5dadf; }
+  .elementor-panel #elementor-panel-footer-responsive > i {
+    display: block;
+    height: 100%;
+    line-height: 40px; }
   .elementor-panel #elementor-panel-saver-publish {
     width: 80px; }
     .elementor-panel #elementor-panel-saver-publish .elementor-button.elementor-button-state #elementor-panel-saver-button-publish-label {
@@ -3323,7 +3327,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
   -webkit-border-radius: 5px;
           border-radius: 5px;
   color: #d5dadf;
-  background-color: rgba(0, 0, 0, 0.8); }
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 10000; }
   #elementor-toast .dialog-message {
     font-size: 13px; }
   #elementor-toast .dialog-buttons-wrapper {

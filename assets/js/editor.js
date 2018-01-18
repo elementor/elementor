@@ -175,10 +175,14 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	refreshWpPreview: function() {
-		// If the this.previewWindow is not null and not closed.
-		if ( this.previewWindow && this.previewWindow.location.reload ) {
+		if ( this.previewWindow ) {
 			// Refresh URL form updated config.
-			this.previewWindow.location = elementor.config.wp_preview.url;
+			try {
+				this.previewWindow.location = elementor.config.wp_preview.url;
+			} catch ( e ) {
+				// If the this.previewWindow is closed or it's domain was changed.
+				// Do nothing.
+			}
 		}
 	}
 } );
@@ -340,7 +344,7 @@ module.exports = Module.extend( {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
-				data: JSON.stringify( newData )
+				data: newData
 			},
 
 			success: function( data ) {
@@ -374,6 +378,22 @@ module.exports = Module.extend( {
 
 				self.trigger( 'after:saveError', data )
 					.trigger( 'after:saveError:' + options.status, data );
+
+				var message;
+
+				if ( data.statusText ) {
+					message = elementor.ajax.createErrorMessage( data );
+
+					if ( 0 === data.readyState ) {
+						message += '. ' + elementor.translate( 'saving_disabled' );
+					}
+				} else if ( data[0] && data[0].code ) {
+					message = elementor.translate( 'server_error' ) + ' ' + data[0].code;
+				}
+
+				elementor.notifications.showToast( {
+					message: message
+				} );
 			}
 		} );
 	},
@@ -453,7 +473,7 @@ module.exports = ViewModule.extend( {
 
 		var settings = this.model.toJSON( { removeDefault: true } ),
 			data = this.getDataToSave( {
-				data: JSON.stringify( settings )
+				data: settings
 			} );
 
 		NProgress.start();
@@ -5500,7 +5520,7 @@ ElementModel = Backbone.Model.extend( {
 			unique_id: this.cid,
 			data: {
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data )
+				data: data
 			},
 			success: this.onRemoteGetHtml.bind( this )
 		}, true ).jqXhr;
@@ -9052,7 +9072,8 @@ Ajax = {
 	},
 
 	send: function( action, options ) {
-		var ajaxParams = elementor.helpers.cloneObject( this.config.ajaxParams );
+		var self = this,
+			ajaxParams = elementor.helpers.cloneObject( this.config.ajaxParams );
 
 		options = options || {};
 
@@ -9086,10 +9107,31 @@ Ajax = {
 				ajaxParams.error = function( data ) {
 					errorCallback( data );
 				};
+			} else {
+				ajaxParams.error = function( XMLHttpRequest ) {
+					var message = self.createErrorMessage( XMLHttpRequest );
+
+					elementor.notifications.showToast( {
+						message: message
+					} );
+				};
 			}
 		}
 
 		return jQuery.ajax( ajaxParams );
+	},
+
+	createErrorMessage: function( XMLHttpRequest ) {
+		var message;
+		if ( 4 === XMLHttpRequest.readyState ) {
+			message = elementor.translate( 'server_error' ) + ' (' + XMLHttpRequest.status + ' ' + XMLHttpRequest.statusText + ')';
+		} else if ( 0 === XMLHttpRequest.readyState ) {
+			message = elementor.translate( 'server_connection_lost' );
+		} else {
+			message = elementor.translate( 'unknown_error' );
+		}
+
+		return message;
 	}
 };
 

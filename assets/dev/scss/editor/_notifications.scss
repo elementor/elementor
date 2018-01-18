@@ -5,6 +5,7 @@
 	border-radius: 5px;
 	color: $editor-lightest;
 	background-color: rgba(0, 0, 0, .8);
+	z-index: $toast-layer;
 
 	.dialog-message {
 		font-size: 13px;
