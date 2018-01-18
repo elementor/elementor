@@ -34,7 +34,7 @@ abstract class Controls_Stack {
 	/**
 	 * Generic ID.
 	 *
-	 * Holds the uniqe ID.
+	 * Holds the unique ID.
 	 *
 	 * @access private
 	 *
@@ -196,9 +196,9 @@ abstract class Controls_Stack {
 	/**
 	 * Retrieve items.
 	 *
-	 * Utility method that recieves an array with a needle and returns all the
+	 * Utility method that receives an array with a needle and returns all the
 	 * items that match the needle. If needle is not defined the entire haystack
-	 * will be returened.
+	 * will be returned.
 	 *
 	 * @since 1.4.0
 	 * @access private
@@ -479,7 +479,7 @@ abstract class Controls_Stack {
 	 *                        Default is `control`.
 	 *     @type string $at   Where to inject. If `$type` is `control` accepts
 	 *                        `before` and `after`. If `$type` is `section`
-	 *                        accepts `start` and `end`. Dafault values based on
+	 *                        accepts `start` and `end`. Default values based on
 	 *                        the `type`.
 	 *     @type string $of   Control/Section ID.
 	 * }
@@ -761,7 +761,7 @@ abstract class Controls_Stack {
 	 * Add new responsive control to stack.
 	 *
 	 * Register a set of controls to allow editing based on user screen size.
-	 * This method registeres three screen sizes: Desktop, Tablet and Mobile.
+	 * This method registers three screen sizes: Desktop, Tablet and Mobile.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -940,8 +940,8 @@ abstract class Controls_Stack {
 	 *
 	 * Retrieve pointer index where the next control should be added.
 	 *
-	 * While using injection point, it will return the injection point index. Otherwise index of the last control plus
-	 * one.
+	 * While using injection point, it will return the injection point index.
+	 * Otherwise index of the last control plus one.
 	 *
 	 * @since 1.9.2
 	 * @access public
@@ -1033,7 +1033,7 @@ abstract class Controls_Stack {
 	/**
 	 * Filter controls settings.
 	 *
-	 * Recieves controls, settings and a callback function to filter the settings by
+	 * Receives controls, settings and a callback function to filter the settings by
 	 * and returns filtered settings.
 	 *
 	 * @since 1.5.0
@@ -1231,7 +1231,7 @@ abstract class Controls_Stack {
 	 * End controls section.
 	 *
 	 * Used to close an existing open controls section. When you use this method
-	 * it stopps adding new controls to this section.
+	 * it stops adding new controls to this section.
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
@@ -1309,7 +1309,7 @@ abstract class Controls_Stack {
 	 * Start controls tabs.
 	 *
 	 * Used to add a new set of tabs inside a section. You should use this
-	 * method before adding new indevidual tabs using `start_controls_tab()`.
+	 * method before adding new individual tabs using `start_controls_tab()`.
 	 * Each tab added after this point will be assigned to this group of tabs,
 	 * until you close it using `end_controls_tabs()` method.
 	 *
@@ -1345,7 +1345,7 @@ abstract class Controls_Stack {
 	 * End controls tabs.
 	 *
 	 * Used to close an existing open controls tabs. When you use this method it
-	 * stopps adding new controls to this tabs.
+	 * stops adding new controls to this tabs.
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
@@ -1360,7 +1360,7 @@ abstract class Controls_Stack {
 	 * Start controls tab.
 	 *
 	 * Used to add a new tab inside a group of tabs. Use this method before
-	 * adding new indevidual tabs using `start_controls_tab()`.
+	 * adding new individual tabs using `start_controls_tab()`.
 	 * Each tab added after this point will be assigned to this group of tabs,
 	 * until you close it using `end_controls_tab()` method.
 	 *
@@ -1393,7 +1393,7 @@ abstract class Controls_Stack {
 	 * End controls tab.
 	 *
 	 * Used to close an existing open controls tab. When you use this method it
-	 * stopps adding new controls to this tab.
+	 * stops adding new controls to this tab.
 	 *
 	 * This method should be used inside `_register_controls()`.
 	 *
@@ -1458,13 +1458,13 @@ abstract class Controls_Stack {
 	 * @access public
 	 *
 	 * @param array $position {
-	 *     The position where to srart the injection.
+	 *     The position where to start the injection.
 	 *
 	 *     @type string $type Injection type, either `control` or `section`.
 	 *                        Default is `control`.
 	 *     @type string $at   Where to inject. If `$type` is `control` accepts
 	 *                        `before` and `after`. If `$type` is `section`
-	 *                        accepts `start` and `end`. Dafault values based on
+	 *                        accepts `start` and `end`. Default values based on
 	 *                        the `type`.
 	 *     @type string $of   Control/Section ID.
 	 * }
@@ -1481,7 +1481,7 @@ abstract class Controls_Stack {
 	 * End injection.
 	 *
 	 * Used to close an existing open injection point. When you use this method
-	 * it stopps adding new controls to this point and continue to add controls
+	 * it stops adding new controls to this point and continue to add controls
 	 * to the regular position in the stack.
 	 *
 	 * @since 1.7.1
@@ -1589,7 +1589,7 @@ abstract class Controls_Stack {
 	 * Get initial config.
 	 *
 	 * Retrieve the current element initial configuration - controls list and
-	 * the tabs assignet to the control.
+	 * the tabs assigned to the control.
 	 *
 	 * @since 1.4.0
 	 * @access protected

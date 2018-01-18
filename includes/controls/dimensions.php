@@ -43,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $placeholder Optional. The field placeholder that appears when
  *                            the field has no values. Default is empty.
  * @param array  $default     {
- *     Optional. Defautl dimension values.
+ *     Optional. Default dimension values.
  *
  *     @type int    $top      Optional. Top dimension. Default is empty.
  *     @type int    $right    Optional. Right dimension. Default is empty.

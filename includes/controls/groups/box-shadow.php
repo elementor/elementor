@@ -106,8 +106,15 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 	}
 
 	/**
+	 * Retrieve default options.
+	 *
+	 * Get the default options of the box shadow control. Used to return the
+	 * default options while initializing the box shadow control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default box shadow control options.
 	 */
 	protected function get_default_options() {
 		return [

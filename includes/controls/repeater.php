@@ -89,10 +89,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  *                            values for each key as values:
  *                            `[ [ 'title' => '', 'content' => '' ], [ 'title' => '', 'content' => '' ], ... ]`
  *                            Default is an empty array.
- * @param array  $fields      Optional. An array of arrays contaning the repeter
+ * @param array  $fields      Optional. An array of arrays containing the repeater
  *                            fields. Default is an empty array.
  * @param string $title_field Optional. Field that will be used as the repeater
- *                            title in the fields list when the item is mnimized.
+ *                            title in the fields list when the item is minimized.
  *                            Default is empty.
  * @param string $separator   Optional. Set the position of the control separator.
  *                            Available values are 'default', 'before', 'after'
