@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor google maps widget.
  *
- * Elementor widget that displays an embeded google map.
+ * Elementor widget that displays an embedded google map.
  *
  * @since 1.0.0
  */

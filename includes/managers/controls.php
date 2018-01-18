@@ -517,7 +517,7 @@ class Controls_Manager {
 	 * @param Controls_Stack $element      Element stack.
 	 * @param string         $control_id   Control ID.
 	 * @param array          $control_data Control data.
-	 * @param array          $options      Optional. Control aditional options.
+	 * @param array          $options      Optional. Control additional options.
 	 *                                     Default is an empty array.
 	 *
 	 * @return bool True if control added, False otherwise.
@@ -662,7 +662,7 @@ class Controls_Manager {
 	 * @param Controls_Stack $element      Element stack.
 	 * @param string         $control_id   Control ID.
 	 * @param array          $control_data Control data.
-	 * @param array          $options      Optional. Control aditional options.
+	 * @param array          $options      Optional. Control additional options.
 	 *                                     Default is an empty array.
 	 *
 	 * @return bool True if control updated, False otherwise.

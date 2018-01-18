@@ -191,7 +191,7 @@ class Api {
 	/**
 	 * Get template content.
 	 *
-	 * Retrieve the templates content recieved from a remote server.
+	 * Retrieve the templates content received from a remote server.
 	 *
 	 * @since 1.0.0
 	 * @access public

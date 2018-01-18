@@ -476,7 +476,7 @@ class Plugin {
 	 *
 	 * Register Elementor support for all the supported post types defined by
 	 * the user in the admin screen and saved as `elementor_cpt_support` option
-	 * in WordPress ``$wpdb->options` table.
+	 * in WordPress `$wpdb->options` table.
 	 *
 	 * If no custom post type selected, usually in new installs, this method
 	 * will return the two default post types: `page` and `post`.
