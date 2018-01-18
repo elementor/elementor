@@ -23,6 +23,7 @@ App = Marionette.Application.extend( {
 	conditions: require( 'elementor-editor-utils/conditions' ),
 	hotKeys: require( 'elementor-utils/hot-keys' ),
 	history:  require( 'modules/history/assets/js/module' ),
+	screenshots:  require( 'modules/screenshots/assets/js/editor/module' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),

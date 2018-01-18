@@ -4256,6 +4256,7 @@ App = Marionette.Application.extend( {
 	conditions: require( 'elementor-editor-utils/conditions' ),
 	hotKeys: require( 'elementor-utils/hot-keys' ),
 	history:  require( 'modules/history/assets/js/module' ),
+	screenshots:  require( 'modules/screenshots/assets/js/editor/module' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -5073,7 +5074,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"./components/saver/behaviors/footer-saver":1,"elementor-controls/base":33,"elementor-controls/base-data":30,"elementor-controls/base-multiple":31,"elementor-controls/box-shadow":34,"elementor-controls/button":35,"elementor-controls/choose":36,"elementor-controls/code":37,"elementor-controls/color":38,"elementor-controls/date-time":39,"elementor-controls/dimensions":40,"elementor-controls/font":41,"elementor-controls/gallery":42,"elementor-controls/icon":43,"elementor-controls/image-dimensions":44,"elementor-controls/media":45,"elementor-controls/number":46,"elementor-controls/order":47,"elementor-controls/popover-toggle":48,"elementor-controls/repeater":50,"elementor-controls/repeater-row":49,"elementor-controls/section":51,"elementor-controls/select2":52,"elementor-controls/slider":53,"elementor-controls/structure":54,"elementor-controls/switcher":55,"elementor-controls/tab":56,"elementor-controls/wp_widget":57,"elementor-controls/wysiwyg":58,"elementor-editor-utils/ajax":101,"elementor-editor-utils/conditions":102,"elementor-editor-utils/debug":104,"elementor-editor-utils/heartbeat":105,"elementor-editor-utils/helpers":106,"elementor-editor-utils/images-manager":107,"elementor-editor-utils/notifications":110,"elementor-editor-utils/presets-factory":111,"elementor-editor-utils/schemes":112,"elementor-editor/components/saver/manager":2,"elementor-editor/components/settings/settings":7,"elementor-elements/collections/elements":60,"elementor-elements/models/base-settings":61,"elementor-elements/models/element":63,"elementor-elements/views/widget":74,"elementor-layouts/panel/panel":100,"elementor-panel/pages/elements/views/elements":86,"elementor-panel/pages/menu/menu":89,"elementor-templates/manager":10,"elementor-utils/hooks":121,"elementor-utils/hot-keys":122,"elementor-utils/module":123,"elementor-views/controls-stack":119,"elementor-views/preview":120,"modules/history/assets/js/module":132}],60:[function(require,module,exports){
+},{"./components/saver/behaviors/footer-saver":1,"elementor-controls/base":33,"elementor-controls/base-data":30,"elementor-controls/base-multiple":31,"elementor-controls/box-shadow":34,"elementor-controls/button":35,"elementor-controls/choose":36,"elementor-controls/code":37,"elementor-controls/color":38,"elementor-controls/date-time":39,"elementor-controls/dimensions":40,"elementor-controls/font":41,"elementor-controls/gallery":42,"elementor-controls/icon":43,"elementor-controls/image-dimensions":44,"elementor-controls/media":45,"elementor-controls/number":46,"elementor-controls/order":47,"elementor-controls/popover-toggle":48,"elementor-controls/repeater":50,"elementor-controls/repeater-row":49,"elementor-controls/section":51,"elementor-controls/select2":52,"elementor-controls/slider":53,"elementor-controls/structure":54,"elementor-controls/switcher":55,"elementor-controls/tab":56,"elementor-controls/wp_widget":57,"elementor-controls/wysiwyg":58,"elementor-editor-utils/ajax":101,"elementor-editor-utils/conditions":102,"elementor-editor-utils/debug":104,"elementor-editor-utils/heartbeat":105,"elementor-editor-utils/helpers":106,"elementor-editor-utils/images-manager":107,"elementor-editor-utils/notifications":110,"elementor-editor-utils/presets-factory":111,"elementor-editor-utils/schemes":112,"elementor-editor/components/saver/manager":2,"elementor-editor/components/settings/settings":7,"elementor-elements/collections/elements":60,"elementor-elements/models/base-settings":61,"elementor-elements/models/element":63,"elementor-elements/views/widget":74,"elementor-layouts/panel/panel":100,"elementor-panel/pages/elements/views/elements":86,"elementor-panel/pages/menu/menu":89,"elementor-templates/manager":10,"elementor-utils/hooks":121,"elementor-utils/hot-keys":122,"elementor-utils/module":123,"elementor-views/controls-stack":119,"elementor-views/preview":120,"modules/history/assets/js/module":132,"modules/screenshots/assets/js/editor/module":140}],60:[function(require,module,exports){
 var ElementModel = require( 'elementor-elements/models/element' );
 
 var ElementsCollection = Backbone.Collection.extend( {
@@ -13384,5 +13385,50 @@ module.exports =  Marionette.ItemView.extend( {
 	}
 } );
 
+},{}],140:[function(require,module,exports){
+var Module = function() {
+	var self = this;
+
+	var init = function() {
+		elementor.saver.on( 'before:save', onBeforeSave.bind( this ) );
+	};
+
+	var onBeforeSave = function( options ) {
+		if ( 'autosave' === options.status ) {
+			return;
+		}
+
+		var $elementor = elementorFrontend.getElements( '$elementor' );
+
+		$elementor
+			.find( '.elementor-element-overlay, .elementor-background-video-container, .elementor-widget-empty, #elementor-add-new-section' )
+			.attr( 'data-html2canvas-ignore', 'true' );
+
+		html2canvas( $elementor[0], {
+			dpi:144,
+			logging: false
+		} ).then( function( canvas ) {
+			var cropCanvas = document.createElement( 'canvas' ),
+				cropContext = cropCanvas.getContext( '2d' ),
+				ratio = 250 / canvas.width;
+
+			cropCanvas.width = 250;
+			cropCanvas.height = 350;
+
+			cropContext.drawImage( canvas, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width * ratio, canvas.height * ratio );
+
+			elementor.ajax.addRequest( 'save_screenshot', {
+				data: {
+					post_id: elementor.config.post_id,
+					screenshot: cropCanvas.toDataURL( 'image/png' )
+				}
+			} );
+		} );
+	};
+
+	jQuery( window ).on( 'elementor:init', init );
+};
+
+module.exports = new Module();
 },{}]},{},[108,109,59])
 //# sourceMappingURL=editor.js.map

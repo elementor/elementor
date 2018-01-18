@@ -15,7 +15,8 @@ final class Modules_Manager {
 	 */
 	public function __construct() {
 		$modules = [
-			'history'
+			'history',
+			'screenshots',
 		];
 
 		foreach ( $modules as $module_id ) {
