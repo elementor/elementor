@@ -92,13 +92,13 @@ class Source_Local extends Source_Base {
 	/**
 	 * Is base templates screen.
 	 *
-	 * Whether the current screen is a base template.
+	 * Whether the current screen base is edit and the post type is template.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
-	 * @return bool True on templates screen, False otherwise.
+	 * @return bool True on base templates screen, False otherwise.
 	 */
 	public static function is_base_templates_screen() {
 		global $current_screen;
@@ -121,7 +121,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @param \WP_Post_Type $type Post type object.
 	 */
-	public static function add_template_type( \WP_Post_Type $type ) {
+	public static function add_template_type( $type ) {
 		self::$_template_types[] = $type;
 	}
 
@@ -137,7 +137,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @param \WP_Post_Type $type Post type object.
 	 */
-	public static function remove_template_type( \WP_Post_Type $type ) {
+	public static function remove_template_type( $type ) {
 		$key = array_search( $type, self::$_template_types, true );
 		if ( false !== $key ) {
 			unset( self::$_template_types[ $key ] );
@@ -833,7 +833,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @return array Updated array of post display states.
 	 */
-	public function remove_elementor_post_state_from_library( array $post_states, \WP_Post $post ) {
+	public function remove_elementor_post_state_from_library( $post_states, $post ) {
 		if ( self::CPT === $post->post_type && isset( $post_states['elementor'] ) ) {
 			unset( $post_states['elementor'] );
 		}
