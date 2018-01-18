@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor background control.
  *
  * A base control for creating background control. Displays input fields to define
- * the background color, background image, background gradiant or background video.
+ * the background color, background image, background gradient or background video.
  *
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
@@ -27,10 +27,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.2.2
  *
  * @param string $name           The field name.
- * @param array  $types          Optional. Define spesific types to use. Available
+ * @param array  $types          Optional. Define specific types to use. Available
  *                               types are `classic`, `gradient` and `video`. Default
  *                               is an empty array, including all the types.
- * @param array  $fields_options Optional. An array of arays contaning data that
+ * @param array  $fields_options Optional. An array of arrays containing data that
  *                               overrides control settings. Default is an empty array.
  * @param string $separator      Optional. Set the position of the control separator.
  *                               Available values are 'default', 'before', 'after'
@@ -465,8 +465,15 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
+	 * Retrieve default options.
+	 *
+	 * Get the default options of the background control. Used to return the
+	 * default options while initializing the background control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default background control options.
 	 */
 	protected function get_default_options() {
 		return [

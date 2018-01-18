@@ -119,8 +119,15 @@ class Group_Control_Border extends Group_Control_Base {
 	}
 
 	/**
+	 * Retrieve default options.
+	 *
+	 * Get the default options of the border control. Used to return the
+	 * default options while initializing the border control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default border control options.
 	 */
 	protected function get_default_options() {
 		return [

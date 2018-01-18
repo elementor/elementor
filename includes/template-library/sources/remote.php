@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor template library remote source class.
  *
  * Elementor template library remote source handler class is responsible for
- * hendaling remote templates from Elementor.com servers.
+ * handling remote templates from Elementor.com servers.
  *
  * @since 1.0.0
  */

@@ -14,36 +14,92 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor template library local source class.
+ *
+ * Elementor template library local source handler class is responsible for
+ * handling local Elementor templates saved by the user locally on his site.
+ *
+ * @since 1.0.0
+ */
 class Source_Local extends Source_Base {
 
+	/**
+	 * Elementor template-library post-type slug.
+	 */
 	const CPT = 'elementor_library';
 
+	/**
+	 * Elementor template-library taxonomy slug.
+	 */
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
+	/**
+	 * Elementor template-library meta key.
+	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 
+	/**
+	 * Elementor template-library temporary files folder.
+	 */
 	const TEMP_FILES_DIR = 'elementor/tmp';
 
+	/**
+	 * Elementor template-library bulk export action name.
+	 */
 	const BULK_EXPORT_ACTION = 'elementor_export_multiple_templates';
 
+	/**
+	 * Template types.
+	 *
+	 * Holds the list of supported template types that can be displayed.
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @var array
+	 */
 	private static $_template_types = [ 'page', 'section' ];
 
+	/**
+	 * Post type object.
+	 *
+	 * Holds the post type object of the current post.
+	 *
+	 * @access private
+	 *
+	 * @var \WP_Post_Type
+	 */
 	private $post_type_object;
 
 	/**
-	 * @static
+	 * Get local template type.
+	 *
+	 * Retrieve the template type from the post meta.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param int $template_id The template ID.
+	 *
+	 * @return mixed The value of meta data field.
+	 */
 	public static function get_template_type( $template_id ) {
 		return get_post_meta( $template_id, self::TYPE_META_KEY, true );
 	}
 
 	/**
-	 * @static
+	 * Is base templates screen.
+	 *
+	 * Whether the current screen base is edit and the post type is template.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return bool True on base templates screen, False otherwise.
+	 */
 	public static function is_base_templates_screen() {
 		global $current_screen;
 
@@ -55,18 +111,31 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
-	 * @static
+	 * Add template type.
+	 *
+	 * Register new template type to the list of supported local template types.
+	 *
 	 * @since 1.0.3
 	 * @access public
+	 * @static
+	 *
+	 * @param \WP_Post_Type $type Post type object.
 	 */
 	public static function add_template_type( $type ) {
 		self::$_template_types[] = $type;
 	}
 
 	/**
-	 * @static
+	 * Remove template type.
+	 *
+	 * Remove existing template type from the list of supported local template
+	 * types.
+	 *
 	 * @since 1.8.0
 	 * @access public
+	 * @static
+	 *
+	 * @param \WP_Post_Type $type Post type object.
 	 */
 	public static function remove_template_type( $type ) {
 		$key = array_search( $type, self::$_template_types, true );
@@ -76,25 +145,46 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Get local template ID.
+	 *
+	 * Retrieve the local template ID.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string The local template ID.
+	 */
 	public function get_id() {
 		return 'local';
 	}
 
 	/**
+	 * Get local template title.
+	 *
+	 * Retrieve the local template title.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string The local template title.
+	 */
 	public function get_title() {
 		return __( 'Local', 'elementor' );
 	}
 
 	/**
+	 * Register local template data.
+	 *
+	 * Used to register custom template data like a post type, a taxonomy or any
+	 * other data.
+	 *
+	 * The local template class registers a new `elementor_library` post type
+	 * and an `elementor_library_type` taxonomy. They are used to store data for
+	 * local templates saved by the user on his site.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function register_data() {
 		$labels = [
 			'name' => _x( 'My Library', 'Template Library', 'elementor' ),
@@ -164,9 +254,15 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Register admin menu.
+	 *
+	 * Add a top-level menu page for Elementor Template Library.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function register_admin_menu() {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_submenu_page(
@@ -190,9 +286,18 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Get local templates.
+	 *
+	 * Retrieve local templates saved by the user on his site.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $args Optional. Filter templates list based on a set of
+	 *                    arguments. Default is an empty array.
+	 *
+	 * @return array Local templates.
+	 */
 	public function get_items( $args = [] ) {
 		$templates_query = new \WP_Query(
 			[
@@ -226,9 +331,17 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Save local template.
+	 *
+	 * Save new or update existing template on the database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $template_data Local template data.
+	 *
+	 * @return \WP_Error|int The ID of the saved/updated template, `WP_Error` otherwise.
+	 */
 	public function save_item( $template_data ) {
 		if ( ! in_array( $template_data['type'], self::$_template_types ) ) {
 			return new \WP_Error( 'save_error', sprintf( 'Invalid template type `%s`.', $template_data['type'] ) );
@@ -286,9 +399,17 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Update local template.
+	 *
+	 * Update template on the database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $new_data New template data.
+	 *
+	 * @return \WP_Error|true True if template updated, `WP_Error` otherwise.
+	 */
 	public function update_item( $new_data ) {
 		if ( ! current_user_can( $this->post_type_object->cap->edit_post, $new_data['id'] ) ) {
 			return new \WP_Error( 'save_error', __( 'Access Denied.', 'elementor' ) );
@@ -312,11 +433,16 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Get local template.
+	 *
+	 * Retrieve a single local template saved by the user on his site.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param int $template_id
 	 *
-	 * @return array
+	 * @param int $template_id The template ID.
+	 *
+	 * @return array Local template.
 	 */
 	public function get_item( $template_id ) {
 		$post = get_post( $template_id );
@@ -345,11 +471,12 @@ class Source_Local extends Source_Base {
 		/**
 		 * Get template library template.
 		 *
-		 * Filters the elementor template data when loading template library item.
+		 * Filters the template data when retrieving a single template from the
+		 * template library.
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array $data Arguments for registering a taxonomy.
+		 * @param array $data Template data.
 		 */
 		$data = apply_filters( 'elementor/template-library/get_template', $data );
 
@@ -357,9 +484,17 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Get template data.
+	 *
+	 * Retrieve the data of a single local template saved by the user on his site.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 *
+	 * @param array $args Custom template arguments.
+	 *
+	 * @return array Local template data.
+	 */
 	public function get_data( array $args ) {
 		$db = Plugin::$instance->db;
 
@@ -390,9 +525,18 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Delete local template.
+	 *
+	 * Delete template from the database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $template_id The template ID.
+	 *
+	 * @return \WP_Post|\WP_Error|false|null Post data on success, false or null
+	 *                                       or 'WP_Error' on failure.
+	 */
 	public function delete_template( $template_id ) {
 		if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
 			return new \WP_Error( 'template_error', __( 'Access Denied.', 'elementor' ) );
@@ -402,9 +546,15 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Export local template.
+	 *
+	 * Export template to a file.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $template_id The template ID.
+	 */
 	public function export_template( $template_id ) {
 		$file_data = $this->prepare_template_export( $template_id );
 
@@ -426,9 +576,15 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Export multiple local templates.
+	 *
+	 * Export multiple template to a ZIP file.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	*/
+	 *
+	 * @param array $template_ids An array of template IDs.
+	 */
 	public function export_multiple_templates( array $template_ids ) {
 		$files = [];
 
@@ -436,14 +592,10 @@ class Source_Local extends Source_Base {
 
 		$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR;
 
-		/*
-		 * Create temp path if it doesn't exist
-		 */
+		// Create temp path if it doesn't exist
 		wp_mkdir_p( $temp_path );
 
-		/*
-		 * Create all json files
-		 */
+		// Create all json files
 		foreach ( $template_ids as $template_id ) {
 			$file_data = $this->prepare_template_export( $template_id );
 
@@ -465,9 +617,7 @@ class Source_Local extends Source_Base {
 			];
 		}
 
-		/*
-		 * Create temporary .zip file
-		 */
+		// Create temporary .zip file
 		$zip_archive_filename = 'elementor-templates-' . date( 'Y-m-d' ) . '.zip';
 
 		$zip_archive = new \ZipArchive();
@@ -498,9 +648,15 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Import local template.
+	 *
+	 * Import template from a file.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
+	 */
 	public function import_template() {
 		$import_file = $_FILES['file']['tmp_name'];
 
@@ -548,9 +704,20 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Post row actions.
+	 *
+	 * Add an export link to the template library action links table list.
+	 *
+	 * Fired by `post_row_actions` filter.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array    $actions An array of row action links.
+	 * @param \WP_Post $post    The post object.
+	 *
+	 * @return array An updated array of row action links.
+	 */
 	public function post_row_actions( $actions, \WP_Post $post ) {
 		if ( self::is_base_templates_screen() ) {
 			if ( $this->is_template_supports_export( $post->ID ) ) {
@@ -564,9 +731,17 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Admin import template form.
+	 *
+	 * The import form displayed in "My Library" screen in WordPress dashboard.
+	 *
+	 * The form allows the user to import template in json/zip format to the site.
+	 *
+	 * Fired by `admin_footer` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function admin_import_template_form() {
 		if ( ! self::is_base_templates_screen() ) {
 			return;
@@ -575,7 +750,7 @@ class Source_Local extends Source_Base {
 		<div id="elementor-hidden-area">
 			<a id="elementor-import-template-trigger" class="page-title-action"><?php esc_attr_e( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
-				<div id="elementor-import-template-title"><?php esc_attr_e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
+				<div id="elementor-import-template-title"><?php esc_html_e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
 					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
@@ -590,9 +765,16 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Block template frontend
+	 *
+	 * Don't display the single view of the template library post type in the
+	 * frontend, for users that don't have the proper permissions.
+	 *
+	 * Fired by `template_redirect` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function block_template_frontend() {
 		if ( is_singular( self::CPT ) && ! current_user_can( 'edit_posts' ) ) {
 			wp_redirect( site_url(), 301 );
@@ -601,9 +783,20 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Is template library supports export.
+	 *
+	 * whether the template library supports export.
+	 *
+	 * Template saved by the user locally on his site, support export by default
+	 * but this can be changed using a filter.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $template_id The template ID.
+	 *
+	 * @return bool Whether the template library supports export.
+	 */
 	public function is_template_supports_export( $template_id ) {
 		$export_support = true;
 
@@ -624,8 +817,21 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Remove Elementor post state.
+	 *
+	 * Remove the 'elementor' post state from the display states of the post.
+	 *
+	 * Used to remove the 'elementor' post state from the template library items.
+	 *
+	 * Fired by `display_post_states` filter.
+	 *
 	 * @since 1.8.0
 	 * @access public
+	 *
+	 * @param array    $post_states An array of post display states.
+	 * @param \WP_Post $post        The current post object.
+	 *
+	 * @return array Updated array of post display states.
 	 */
 	public function remove_elementor_post_state_from_library( $post_states, $post ) {
 		if ( self::CPT === $post->post_type && isset( $post_states['elementor'] ) ) {
@@ -635,9 +841,18 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Get template export link.
+	 *
+	 * Retrieve the link used to export a single template based on the template
+	 * ID.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 *
+	 * @param int $template_id The template ID.
+	 *
+	 * @return string Template export URL.
+	 */
 	private function _get_export_link( $template_id ) {
 		return add_query_arg(
 			[
@@ -651,10 +866,19 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * On template save.
+	 *
+	 * Run this method when template is being saved.
+	 *
+	 * Fired by `save_post` action.
+	 *
 	 * @since 1.0.1
 	 * @access public
-	*/
-	public function on_save_post( $post_id, $post ) {
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    The current post object.
+	 */
+	public function on_save_post( $post_id, \WP_Post $post ) {
 		if ( self::CPT !== $post->post_type ) {
 			return;
 		}
@@ -672,9 +896,17 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Save item type.
+	 *
+	 * When saving/updating templates, this method is used to update the post
+	 * meta data and the taxonomy.
+	 *
 	 * @since 1.0.1
 	 * @access private
-	*/
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $type    Item type.
+	 */
 	private function save_item_type( $post_id, $type ) {
 		update_post_meta( $post_id, self::TYPE_META_KEY, $type );
 
@@ -682,11 +914,18 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Filter template types in admin query.
+	 *
+	 * Update the template types in the main admin query.
+	 *
+	 * Fired by `parse_query` action.
+	 *
 	 * @since 1.0.6
 	 * @access public
-	 * @param $query \WP_Query
+	 *
+	 * @param \WP_Query $query The `WP_Query` instance.
 	 */
-	public function admin_query_filter_types( $query ) {
+	public function admin_query_filter_types( \WP_Query $query ) {
 		if ( ! function_exists( 'get_current_screen' ) ) {
 			return;
 		}
@@ -703,9 +942,20 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Bulk export action.
+	 *
+	 * Adds an 'Export' action to the Bulk Actions drop-down in the template
+	 * library.
+	 *
+	 * Fired by `bulk_actions-edit-elementor_library` filter.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	*/
+	 *
+	 * @param array $actions An array of the available bulk actions.
+	 *
+	 * @return array An array of the available bulk actions.
+	 */
 	public function admin_add_bulk_export_action( $actions ) {
 		$actions[ self::BULK_EXPORT_ACTION ] = __( 'Export', 'elementor' );
 
@@ -713,9 +963,21 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Add bulk export action.
+	 *
+	 * Handles the template library bulk export action.
+	 *
+	 * Fired by `handle_bulk_actions-edit-elementor_library` filter.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	*/
+	 *
+	 * @param string $redirect_url The redirect URL.
+	 * @param string $action       The action being taken.
+	 * @param array  $items        The items to take the action on.
+	 *
+	 * @return string The redirect URL.
+	 */
 	public function admin_export_multiple_templates( $redirect_to, $action, $post_ids ) {
 		if ( self::BULK_EXPORT_ACTION === $action ) {
 			$this->export_multiple_templates( $post_ids );
@@ -725,9 +987,18 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Import single template.
+	 *
+	 * Import template from a file to the database.
+	 *
 	 * @since 1.6.0
 	 * @access private
-	*/
+	 *
+	 * @param string $file_name File name.
+	 *
+	 * @return \WP_Error|int|array Local template array, or template ID, or
+	 *                             `WP_Error`.
+	 */
 	private function import_single_template( $file_name ) {
 		$data = json_decode( file_get_contents( $file_name ), true );
 
@@ -778,9 +1049,17 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Prepare template to export.
+	 *
+	 * Retrieve the relevant template data and return them as an array.
+	 *
 	 * @since 1.6.0
 	 * @access private
-	*/
+	 *
+	 * @param int $template_id The template ID.
+	 *
+	 * @return \WP_Error|array Exported template data.
+	 */
 	private function prepare_template_export( $template_id ) {
 		$template_data = $this->get_data( [
 			'template_id' => $template_id,
@@ -819,9 +1098,16 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Send file headers.
+	 *
+	 * Set the file header when export template data to a file.
+	 *
 	 * @since 1.6.0
 	 * @access private
-	*/
+	 *
+	 * @param string $file_name File name.
+	 * @param int    $file_size File size.
+	 */
 	private function send_file_headers( $file_name, $file_size ) {
 		header( 'Content-Type: application/octet-stream' );
 		header( 'Content-Disposition: attachment; filename=' . $file_name );
@@ -832,9 +1118,13 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Add template library actions.
+	 *
+	 * Register filters and actions for the template library.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private function _add_actions() {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
@@ -854,9 +1144,14 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
+	 * Template library local source constructor.
+	 *
+	 * Initializing the template library local source base by registering custom
+	 * template data and running custom actions.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		parent::__construct();
 

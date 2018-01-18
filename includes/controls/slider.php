@@ -60,7 +60,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param array $default      {
- *     Optional. Defautl slider value.
+ *     Optional. Default slider value.
  *
  *     @type int $size Optional. The initial size of slider. Default is empty.
  * }

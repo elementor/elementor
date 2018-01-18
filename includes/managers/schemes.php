@@ -304,7 +304,7 @@ class Schemes_Manager {
 	 *
 	 * Add a default schemes to the register schemes list.
 	 *
-	 * This methode is used to set initial schemes when initializing the class.
+	 * This method is used to set initial schemes when initializing the class.
 	 *
 	 * @since 1.7.12
 	 * @access private

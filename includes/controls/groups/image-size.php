@@ -361,8 +361,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
+	 * Retrieve default options.
+	 *
+	 * Get the default options of the image size control. Used to return the
+	 * default options while initializing the image size control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default image size control options.
 	 */
 	protected function get_default_options() {
 		return [
