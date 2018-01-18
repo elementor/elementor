@@ -43,7 +43,7 @@ class Tracker {
 	}
 
 	/**
-	 * Check for settings optin.
+	 * Check for settings opt-in.
 	 *
 	 * Checks whether the site admin has opted-in for data tracking, or not.
 	 *
@@ -107,7 +107,7 @@ class Tracker {
 			/**
 			 * Tracker last send interval.
 			 *
-			 * Filters the interval of beetwin two tracking requests.
+			 * Filters the interval of between two tracking requests.
 			 *
 			 * @since 1.0.0
 			 *

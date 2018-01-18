@@ -55,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *     @type string $url         Optional. Default is empty.
  *     @type bool   $is_external Optional. Determine whether to open the url in
  *                               the same tab or in a new one. Default is empty.
- *     @type bool   $nofollow    Optional. Determine whether to add nofolloe
+ *     @type bool   $nofollow    Optional. Determine whether to add nofollow
  *                               attribute. Default is empty.
  * }
  * @param bool   $show_external Optional. Whether to show 'Is External' button.

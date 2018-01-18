@@ -34,7 +34,7 @@ class Utils {
 	/**
 	 * Is script debug.
 	 *
-	 * Whether script debug is ebanled or not.
+	 * Whether script debug is enabled or not.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -277,7 +277,7 @@ class Utils {
 	/**
 	 * Generate random string.
 	 *
-	 * Returns a string containing a hexadecimal representation of randon number.
+	 * Returns a string containing a hexadecimal representation of random number.
 	 *
 	 * @since 1.0.0
 	 * @access public

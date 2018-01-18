@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor database class.
  *
- * Elementor database handler class is responsible for comunicating with the
+ * Elementor database handler class is responsible for communicating with the
  * DB, save and retrieve Elementor data and meta data.
  *
  * @since 1.0.0
@@ -370,7 +370,7 @@ class DB {
 	/**
 	 * Save plain text.
 	 *
-	 * Retrives the raw content, removes all kind of unwanted HTML tags and saves
+	 * Retrieves the raw content, removes all kind of unwanted HTML tags and saves
 	 * the content as the `post_content` field in the database.
 	 *
 	 * @since 1.9.0

@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @abstract
  *
  * @param array $default {
- *     Optional. Defautl unit values.
+ *     Optional. Default unit values.
  *
  *     @type int    $top      Optional. Top unit. Default is empty.
  *     @type int    $right    Optional. Right unit. Default is empty.
