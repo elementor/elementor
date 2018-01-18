@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor template library source base class.
  *
  * Elementor template library source base handler class is responsible for
- * initializing all the methods controling the source of Elementor templates.
+ * initializing all the methods controlling the source of Elementor templates.
  *
  * @since 1.0.0
  * @abstract
@@ -120,7 +120,7 @@ abstract class Source_Base {
 	/**
 	 * Save template.
 	 *
-	 * Save new or update exising template on the database.
+	 * Save new or update existing template on the database.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -261,7 +261,7 @@ abstract class Source_Base {
 	/**
 	 * Replace elements IDs.
 	 *
-	 * For any given Elelemtor content/data, replace the IDs with new randomly
+	 * For any given Elementor content/data, replace the IDs with new randomly
 	 * generated IDs.
 	 *
 	 * @since 1.0.0
@@ -303,7 +303,7 @@ abstract class Source_Base {
 	 * @access protected
 	 *
 	 * @param array  $content A set of elements.
-	 * @param string $method  Acceprs either `on_export` to export data or
+	 * @param string $method  Accepts either `on_export` to export data or
 	 *                        `on_import` to import data.
 	 *
 	 * @return mixed Processed content data.

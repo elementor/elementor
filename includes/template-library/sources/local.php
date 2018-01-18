@@ -333,7 +333,7 @@ class Source_Local extends Source_Base {
 	/**
 	 * Save local template.
 	 *
-	 * Save new or update exising template on the database.
+	 * Save new or update existing template on the database.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -592,14 +592,10 @@ class Source_Local extends Source_Base {
 
 		$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR;
 
-		/*
-		 * Create temp path if it doesn't exist
-		 */
+		// Create temp path if it doesn't exist
 		wp_mkdir_p( $temp_path );
 
-		/*
-		 * Create all json files
-		 */
+		// Create all json files
 		foreach ( $template_ids as $template_id ) {
 			$file_data = $this->prepare_template_export( $template_id );
 
@@ -621,9 +617,7 @@ class Source_Local extends Source_Base {
 			];
 		}
 
-		/*
-		 * Create temporary .zip file
-		 */
+		// Create temporary .zip file
 		$zip_archive_filename = 'elementor-templates-' . date( 'Y-m-d' ) . '.zip';
 
 		$zip_archive = new \ZipArchive();
@@ -743,7 +737,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * The import form displayed in "My Library" screen in WordPress dashboard.
 	 *
-	 * The form allows the user to import templated in json/zip format to the site.
+	 * The form allows the user to import template in json/zip format to the site.
 	 *
 	 * Fired by `admin_footer` action.
 	 *
@@ -829,7 +823,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * Remove the 'elementor' post state from the display states of the post.
 	 *
-	 * Uused to remove the 'elementor' post state from the template library items.
+	 * Used to remove the 'elementor' post state from the template library items.
 	 *
 	 * Fired by `display_post_states` filter.
 	 *
@@ -906,7 +900,7 @@ class Source_Local extends Source_Base {
 	/**
 	 * Save item type.
 	 *
-	 * When saving/updateing templates, this method is used to update the post
+	 * When saving/updating templates, this method is used to update the post
 	 * meta data and the taxonomy.
 	 *
 	 * @since 1.0.1
@@ -973,7 +967,7 @@ class Source_Local extends Source_Base {
 	/**
 	 * Add bulk export action.
 	 *
-	 * Habdles the template library bulk export action.
+	 * Handles the template library bulk export action.
 	 *
 	 * Fired by `handle_bulk_actions-edit-elementor_library` filter.
 	 *
@@ -981,7 +975,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param string $redirect_url The redirect URL.
-	 * @param string $doaction     The action being taken.
+	 * @param string $action       The action being taken.
 	 * @param array  $items        The items to take the action on.
 	 *
 	 * @return string The redirect URL.
@@ -1059,7 +1053,7 @@ class Source_Local extends Source_Base {
 	/**
 	 * Prepare template to export.
 	 *
-	 * Retrieve the relevand template data and return them as an array.
+	 * Retrieve the relevant template data and return them as an array.
 	 *
 	 * @since 1.6.0
 	 * @access private
