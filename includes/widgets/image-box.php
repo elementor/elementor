@@ -99,6 +99,14 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Image_Size::get_type(),
+			[
+				'name' => 'image', // Actually its `image_size`.
+				'default' => 'large',
+			]
+		);
+
 		$this->add_control(
 			'title_text',
 			[
@@ -443,7 +451,7 @@ class Widget_Image_Box extends Widget_Base {
 				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 			}
 
-			$image_html = '<img ' . $this->get_render_attribute_string( 'image' ) . '>';
+			$image_html = Group_Control_Image_Size::get_attachment_image_html( $settings );
 
 			if ( ! empty( $settings['link']['url'] ) ) {
 				$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
@@ -509,7 +517,17 @@ class Widget_Image_Box extends Widget_Base {
 		var html = '<div class="elementor-image-box-wrapper">';
 
 		if ( settings.image.url ) {
-			var imageHtml = '<img src="' + settings.image.url + '" class="elementor-animation-' + settings.hover_animation + '" />';
+			var image = {
+				id: settings.image.id,
+				url: settings.image.url,
+				size: settings.image_size,
+				dimension: settings.image_custom_dimension,
+				model: view.getEditModel()
+			};
+
+			var image_url = elementor.imagesManager.getImageUrl( image );
+
+			var imageHtml = '<img src="' + image_url + '" class="elementor-animation-' + settings.hover_animation + '" />';
 
 			if ( settings.link.url ) {
 				imageHtml = '<a href="' + settings.link.url + '">' + imageHtml + '</a>';
