@@ -18,7 +18,7 @@ $this->add_control(
      'label' => __( 'Choose Image', 'your-plugin' ),
      'type' => Controls_Manager::MEDIA,
      'default' => [
-        'url' => Utils::get_placeholder_image_src(),
+        'url' => Utils::get_placeholder_image_src(),  // Rember to add 'use Elementor\Utils' at the top of the document;
      ],
   ]
 );
