@@ -31,7 +31,7 @@ class Ajax_Manager {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
 		if ( empty( $_REQUEST['actions'] ) ) {
-			wp_send_json_error( new \WP_Error( 'Action Required' ) );
+			wp_send_json_error( new \WP_Error( 'missing_action', 'Action required.' ) );
 		}
 
 		do_action( 'elementor/ajax/register_actions', $this );
@@ -43,7 +43,7 @@ class Ajax_Manager {
 			$this->current_action_id = $id;
 			if ( ! isset( $this->ajax_actions[ $action_data['action'] ] ) ) {
 				$responses[ $id ] = [
-					'error' => 'Action Not Found',
+					'error' => 'Action not found.',
 				];
 
 				continue;
