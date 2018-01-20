@@ -396,7 +396,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Play Icon', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'condition' => [
-					'show_image_overlay' => 'yes',
+					'show_play_icon' => 'yes',
 				],
 			]
 		);
@@ -411,7 +411,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'separator' => 'before',
 				'condition' => [
-					'show_image_overlay' => 'yes',
+					'show_play_icon' => 'yes',
 				],
 			]
 		);
@@ -431,7 +431,7 @@ class Widget_Video extends Widget_Base {
 					'{{WRAPPER}} .elementor-custom-embed-play i' => 'font-size: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
-					'show_image_overlay' => 'yes',
+					'show_play_icon' => 'yes',
 				],
 			]
 		);
@@ -447,7 +447,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'condition' => [
-					'show_image_overlay' => 'yes',
+					'show_play_icon' => 'yes',
 				],
 			]
 		);
