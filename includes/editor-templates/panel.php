@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-page-menu-footer">
 		<a href="<?php echo esc_url( Utils::get_exit_to_dashboard_url( get_the_ID() ) ); ?>" id="elementor-panel-exit-to-dashboard" class="elementor-button elementor-button-default">
 			<i class="fa fa-wordpress"></i>
-			<?php echo esc_html__( 'Exit To Dashboard', 'elementor' ); ?>
+			<?php echo __( 'Exit To Dashboard', 'elementor' ); ?>
 		</a>
 	</div>
 </script>
@@ -43,54 +43,54 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-panel-header">
 	<div id="elementor-panel-header-menu-button" class="elementor-header-button">
-		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'Menu', 'elementor' ); ?></span>
+		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php _e( 'Menu', 'elementor' ); ?>"></i>
+		<span class="elementor-screen-only"><?php _e( 'Menu', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-panel-header-title"></div>
 	<div id="elementor-panel-header-add-button" class="elementor-header-button">
-		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Widgets Panel', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'Widgets Panel', 'elementor' ); ?></span>
+		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php _e( 'Widgets Panel', 'elementor' ); ?>"></i>
+		<span class="elementor-screen-only"><?php _e( 'Widgets Panel', 'elementor' ); ?></span>
 	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_html_e( 'Settings', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php _e( 'Settings', 'elementor' ); ?>">
 		<i class="fa fa-cog" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'Document Settings', 'elementor' ); ?></span>
+		<span class="elementor-screen-only"><?php _e( 'Document Settings', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool">
-		<i class="eicon-device-desktop tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
+		<i class="eicon-device-desktop tooltip-target" aria-hidden="true" data-tooltip="<?php _e( 'Responsive Mode', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only">
-			<?php esc_html_e( 'Responsive Mode', 'elementor' ); ?>
+			<?php _e( 'Responsive Mode', 'elementor' ); ?>
 		</span>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="desktop">
 					<i class="elementor-icon eicon-device-desktop" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Desktop', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php esc_html_e( 'Default Preview', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php _e( 'Desktop', 'elementor' ); ?></span>
+					<span class="elementor-description"><?php _e( 'Default Preview', 'elementor' ); ?></span>
 				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="tablet">
 					<i class="elementor-icon eicon-device-tablet" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Tablet', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php esc_html_e( 'Preview for 768px', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php _e( 'Tablet', 'elementor' ); ?></span>
+					<span class="elementor-description"><?php _e( 'Preview for 768px', 'elementor' ); ?></span>
 				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile">
 					<i class="elementor-icon eicon-device-mobile" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Mobile', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php esc_html_e( 'Preview for 360px', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php _e( 'Mobile', 'elementor' ); ?></span>
+					<span class="elementor-description"><?php _e( 'Preview for 360px', 'elementor' ); ?></span>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php _e( 'History', 'elementor' ); ?>">
 		<i class="fa fa-history" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'History', 'elementor' ); ?></span>
+		<span class="elementor-screen-only"><?php _e( 'History', 'elementor' ); ?></span>
 	</div>
-	<div id="elementor-panel-saver-button-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
+	<div id="elementor-panel-saver-button-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php _e( 'Preview Changes', 'elementor' ); ?>">
 		<span id="elementor-panel-saver-button-preview-label">
 			<i class="fa fa-eye" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php esc_html_e( 'Preview Changes', 'elementor' ); ?></span>
+			<span class="elementor-screen-only"><?php _e( 'Preview Changes', 'elementor' ); ?></span>
 		</span>
 	</div>
 	<div id="elementor-panel-saver-publish" class="elementor-panel-footer-tool">
@@ -99,14 +99,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>
 			</span>
 			<span id="elementor-panel-saver-button-publish-label">
-				<?php esc_html_e( 'Publish', 'elementor' ); ?>
+				<?php _e( 'Publish', 'elementor' ); ?>
 			</span>
 		</button>
 	</div>
 	<div id="elementor-panel-saver-save-options" class="elementor-panel-footer-tool" >
-		<button id="elementor-panel-saver-button-save-options" class="elementor-button elementor-button-success tooltip-target" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>">
+		<button id="elementor-panel-saver-button-save-options" class="elementor-button elementor-button-success tooltip-target" data-tooltip="<?php _e( 'Save Options', 'elementor' ); ?>">
 			<i class="fa fa-caret-up" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php esc_html_e( 'Save Options', 'elementor' ); ?></span>
+			<span class="elementor-screen-only"><?php _e( 'Save Options', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<p class="elementor-last-edited-wrapper">
@@ -120,11 +120,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-panel-footer-sub-menu">
 				<div id="elementor-panel-saver-menu-save-draft" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Save Draft', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php _e( 'Save Draft', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-saver-menu-save-template" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-folder" aria-hidden="true"></i>
-					<span class="elementor-title"><?php esc_html_e( 'Save as Template', 'elementor' ); ?></span>
+					<span class="elementor-title"><?php _e( 'Save as Template', 'elementor' ); ?></span>
 				</div>
 			</div>
 		</div>
@@ -134,8 +134,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-mode-switcher-content">
 	<input id="elementor-mode-switcher-preview-input" type="checkbox">
 	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview">
-		<i class="fa" aria-hidden="true" title="<?php esc_attr_e( 'Hide Panel', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'Hide Panel', 'elementor' ); ?></span>
+		<i class="fa" aria-hidden="true" title="<?php _e( 'Hide Panel', 'elementor' ); ?>"></i>
+		<span class="elementor-screen-only"><?php _e( 'Hide Panel', 'elementor' ); ?></span>
 	</label>
 </script>
 
@@ -205,15 +205,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</select>
 					<?php elseif ( 'font' === $option['type'] ) : ?>
 						<select name="<?php echo $option_name; ?>" class="elementor-panel-scheme-typography-item-field">
-							<option value=""><?php esc_html_e( 'Default', 'elementor' ); ?></option>
+							<option value=""><?php _e( 'Default', 'elementor' ); ?></option>
 
-							<optgroup label="<?php esc_html_e( 'System', 'elementor' ); ?>">
+							<optgroup label="<?php _e( 'System', 'elementor' ); ?>">
 								<?php foreach ( $system_fonts as $font_title => $font_type ) : ?>
 									<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo $font_title; ?></option>
 								<?php endforeach; ?>
 							</optgroup>
 
-							<optgroup label="<?php esc_html_e( 'Google', 'elementor' ); ?>">
+							<optgroup label="<?php _e( 'Google', 'elementor' ); ?>">
 								<?php foreach ( $google_fonts as $font_title => $font_type ) : ?>
 									<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo $font_title; ?></option>
 								<?php endforeach; ?>

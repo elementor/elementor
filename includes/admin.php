@@ -499,7 +499,7 @@ class Admin {
 		<div id="elementor-deactivate-feedback-dialog-wrapper">
 			<div id="elementor-deactivate-feedback-dialog-header">
 				<i class="eicon-elementor-square" aria-hidden="true"></i>
-				<span id="elementor-deactivate-feedback-dialog-header-title"><?php esc_html_e( 'Quick Feedback', 'elementor' ); ?></span>
+				<span id="elementor-deactivate-feedback-dialog-header-title"><?php _e( 'Quick Feedback', 'elementor' ); ?></span>
 			</div>
 			<form id="elementor-deactivate-feedback-dialog-form" method="post">
 				<?php
@@ -507,7 +507,7 @@ class Admin {
 				?>
 				<input type="hidden" name="action" value="elementor_deactivate_feedback" />
 
-				<div id="elementor-deactivate-feedback-dialog-form-caption"><?php esc_html_e( 'If you have a moment, please share why you are deactivating Elementor:', 'elementor' ); ?></div>
+				<div id="elementor-deactivate-feedback-dialog-form-caption"><?php _e( 'If you have a moment, please share why you are deactivating Elementor:', 'elementor' ); ?></div>
 				<div id="elementor-deactivate-feedback-dialog-form-body">
 					<?php foreach ( $deactivate_reasons as $reason_key => $reason ) : ?>
 						<div class="elementor-deactivate-feedback-dialog-input-wrapper">
@@ -575,7 +575,7 @@ class Admin {
 			<div class="e-overview__header">
 				<div class="e-overview__logo"><i class="eicon-elementor-square"></i></div>
 				<div class="e-overview__versions">
-					<span class="e-overview__version"><?php esc_html_e( 'Elementor', 'elementor' ); ?> v<?php echo esc_html( ELEMENTOR_VERSION ); ?></span>
+					<span class="e-overview__version"><?php _e( 'Elementor', 'elementor' ); ?> v<?php echo esc_html( ELEMENTOR_VERSION ); ?></span>
 					<?php
 					/**
 					 * Elementor dashboard widget after the version.
@@ -588,12 +588,12 @@ class Admin {
 					?>
 				</div>
 				<div class="e-overview__create">
-					<a href="<?php echo esc_attr( Utils::get_create_new_post_url() ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php esc_html_e( 'Create New Page', 'elementor' ); ?></a>
+					<a href="<?php echo esc_attr( Utils::get_create_new_post_url() ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php _e( 'Create New Page', 'elementor' ); ?></a>
 				</div>
 			</div>
 			<?php if ( $recently_edited_query->have_posts() ) : ?>
 			<div class="e-overview__recently-edited">
-				<h3 class="e-overview__heading"><?php esc_html_e( 'Recently Edited', 'elementor' ); ?></h3>
+				<h3 class="e-overview__heading"><?php _e( 'Recently Edited', 'elementor' ); ?></h3>
 				<ul class="e-overview__posts">
 					<?php
 					while ( $recently_edited_query->have_posts() ) :
@@ -610,7 +610,7 @@ class Admin {
 			<?php endif; ?>
 			<?php if ( ! empty( $elementor_feed ) ) : ?>
 			<div class="e-overview__feed">
-				<h3 class="e-overview__heading"><?php esc_html_e( 'News & Updates', 'elementor' ); ?></h3>
+				<h3 class="e-overview__heading"><?php _e( 'News & Updates', 'elementor' ); ?></h3>
 				<ul class="e-overview__posts">
 					<?php foreach ( $elementor_feed as $feed_item ) : ?>
 					<li class="e-overview__post">
@@ -629,7 +629,7 @@ class Admin {
 			<div class="e-overview__footer">
 				<ul>
 				<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action_id => $action ) : ?>
-					<li class="e-overview__<?php echo esc_attr( $action_id ); ?>"><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+					<li class="e-overview__<?php echo esc_attr( $action_id ); ?>"><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php _e( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
 				<?php endforeach; ?>
 				</ul>
 			</div>
