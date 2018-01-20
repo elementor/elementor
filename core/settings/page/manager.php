@@ -115,16 +115,19 @@ class Manager extends BaseManager {
 	/**
 	 * @since 1.6.0
 	 * @access protected
+	 *
+	 * @throw \Exception If invalid post returned using the `$id`.
+	 * @throw \Exception If current user don't have permissions to edit the post.
 	 */
 	protected function ajax_before_save_settings( array $data, $id ) {
 		$post = get_post( $id );
 
 		if ( empty( $post ) ) {
-			throw new \Exception( 'Invalid Post' );
+			throw new \Exception( 'Invalid post.' );
 		}
 
 		if ( ! current_user_can( 'edit_post', $id ) ) {
-			throw new \Exception( __( 'Access Denied.', 'elementor' ) );
+			throw new \Exception( 'Access denied.' );
 		}
 
 		// Avoid save empty post title.
