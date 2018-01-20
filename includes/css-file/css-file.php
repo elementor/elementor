@@ -5,55 +5,126 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor CSS file class.
+ *
+ * Elementor CSS file handler class is responsible for generating CSS files.
+ *
+ * @since 1.2.0
+ * @abstract
+ */
 abstract class CSS_File {
 
+	/**
+	 * Elementor CSS file base folder.
+	 */
 	const FILE_BASE_DIR = '/elementor/css';
-	// %s: Base folder; %s: file name
+
+	/**
+	 * Elementor CSS file name pattern.
+	 *
+	 * %s: Base folder; %s: file name
+	 */
 	const FILE_NAME_PATTERN = '%s/%s.css';
 
+	/**
+	 * Elementor CSS status for file output.
+	 */
 	const CSS_STATUS_FILE = 'file';
+
+	/**
+	 * Elementor CSS status for inline output.
+	 */
 	const CSS_STATUS_INLINE = 'inline';
+
+	/**
+	 * Elementor CSS status for empty output.
+	 */
 	const CSS_STATUS_EMPTY = 'empty';
 
 	/**
+	 * CSS file path.
+	 *
+	 * Holds the CSS file path.
+	 *
+	 * @access private
+	 *
 	 * @var string
 	 */
 	private $path;
 
 	/**
+	 * CSS file URL.
+	 *
+	 * Holds the CSS file URL.
+	 *
+	 * @access private
+	 *
 	 * @var string
 	 */
 	private $url;
 
 	/**
+	 * CSS.
+	 *
+	 * Holds the CSS.
+	 *
+	 * @access private
+	 *
 	 * @var string
 	 */
 	private $css;
 
 	/**
+	 * Fonts.
+	 *
+	 * Holds the list of fonts.
+	 *
+	 * @access private
+	 *
 	 * @var array
 	 */
 	private $fonts = [];
 
 	/**
+	 * Stylesheet object.
+	 *
+	 * Holds the CSS file stylesheet instance.
+	 *
+	 * @access protected
+	 *
 	 * @var Stylesheet
 	 */
 	protected $stylesheet_obj;
 
 	/**
+	 * Printed.
+	 *
+	 * Holds the list of printed files.
+	 *
+	 * @access protected
+	 *
 	 * @var array
 	 */
 	private static $printed = [];
 
 	/**
-	 * @abstract
+	 * Get CSS file name.
+	 *
+	 * Retrieve the CSS file name.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	*/
+	 * @abstract
+	 */
 	abstract public function get_name();
 
 	/**
-	 * CSS_File constructor.
+	 * CSS file constructor.
+	 *
+	 * Initializing Elementor CSS file. If using external files, set path and
+	 * URL, otherwise initiate stylesheet.
+	 *
 	 * @since 1.2.0
 	 * @access public
 	 */
@@ -66,17 +137,28 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Use external file.
+	 *
+	 * Whether to use external CSS file of not. When there are new schemes or settings
+	 * updates.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return bool True if the CSS requires an update, False otherwise.
 	 */
 	protected function use_external_file() {
 		return 'internal' !== get_option( 'elementor_css_print_method' );
 	}
 
 	/**
+	 * ??
+	 *
+	 * ??
+	 *
 	 * @since 1.2.0
 	 * @access public
-	*/
+	 */
 	public function update() {
 		$this->parse_css();
 
@@ -110,9 +192,13 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * ??
+	 *
+	 * ??
+	 *
 	 * @since 1.2.0
 	 * @access public
-	*/
+	 */
 	public function delete() {
 		if ( file_exists( $this->path ) ) {
 			unlink( $this->path );
@@ -120,9 +206,13 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Enqueue CSS.
+	 *
+	 * Enqueue the CSS file in Elementor.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	*/
+	 */
 	public function enqueue() {
 		$handle_id = $this->get_file_handle_id();
 
@@ -181,8 +271,13 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * ??
+	 *
+	 * ??
+	 *
 	 * @since 1.2.0
 	 * @access public
+	 *
 	 * @param array    $control
 	 * @param array    $controls_stack
 	 * @param callable $value_callback
@@ -279,16 +374,27 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Get the fonts.
+	 *
+	 * Retrieve the list of fonts.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 *
+	 * @return array Fonts.
 	 */
 	public function get_fonts() {
 		return $this->fonts;
 	}
 
 	/**
+	 * ??
+	 *
+	 * ??
+	 *
 	 * @since 1.2.0
 	 * @access public
+	 *
 	 * @return string
 	 */
 	public function get_css() {
@@ -300,8 +406,13 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * ??
+	 *
+	 * ??
+	 *
 	 * @since 1.2.0
 	 * @access public
+	 *
 	 * @return Stylesheet
 	 */
 	public function get_stylesheet() {
@@ -309,9 +420,22 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Get meta data.
+	 *
+	 * Retrieve the CSS file meta data. Returns an array of all the data, or if
+	 * custom property is given it will return the property value, or `null` if
+	 * the property does not exist.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	*/
+	 *
+	 * @param string $property Optional. Custom meta data property. Default is
+	 *                         null.
+	 *
+	 * @return array|null An array of all the data, or if custom property is
+	 *                    given it will return the property value, or `null` if
+	 *                    the property does not exist.
+	 */
 	public function get_meta( $property = null ) {
 		$defaults = [
 			'status' => '',
@@ -328,10 +452,17 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Add controls stack style rules.
+	 *
+	 * Parse the CSS for all the elements inside any given controls stack.
+	 *
+	 * This method recursively renders the CSS for all the child elements in the stack.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	 * @param Controls_Stack $controls_stack
-	 * @param array          $controls
+	 *
+	 * @param Controls_Stack $controls_stack The controls stack.
+	 * @param array          $controls       
 	 * @param array          $values
 	 * @param array          $placeholders
 	 * @param array          $replacements
@@ -359,75 +490,117 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * @abstract
+	 * Load meta data.
+	 *
+	 * Retrieve the CSS file meta data.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return array
+	 * @abstract
 	 */
 	abstract protected function load_meta();
 
 	/**
-	 * @abstract
+	 * Update meta data.
+	 *
+	 * Update the global CSS file meta data.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @param array $meta
+	 * @abstract
+	 *
+	 * @param array $meta New meta data.
 	 */
 	abstract protected function update_meta( $meta );
 
 	/**
-	 * @abstract
+	 * Get file handle ID.
+	 *
+	 * Retrieve the file handle ID.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return string
+	 * @abstract
+	 *
+	 * @return string CSS file handle ID.
 	 */
 	abstract protected function get_file_handle_id();
 
 	/**
-	 * @abstract
+	 * Render CSS.
+	 *
+	 * Parse the CSS.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	*/
+	 * @abstract
+	 */
 	abstract protected function render_css();
 
 	/**
-	 * @abstract
+	 * Get file name.
+	 *
+	 * Retrieve the name of the CSS file.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return string
+	 * @abstract
+	 *
+	 * @return string File name.
 	 */
 	abstract protected function get_file_name();
 
 	/**
+	 * Get enqueue dependencies.
+	 *
+	 * Retrieve the name of the stylesheet used by `wp_enqueue_style()`.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return array
+	 *
+	 * @return array Name of the stylesheet.
 	 */
 	protected function get_enqueue_dependencies() {
 		return [];
 	}
 
 	/**
+	 * Get inline dependency.
+	 *
+	 * Retrieve the name of the stylesheet used by `wp_add_inline_style()`.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return string
+	 *
+	 * @return string Name of the stylesheet.
 	 */
 	protected function get_inline_dependency() {
 		return '';
 	}
 
 	/**
+	 * Is update required.
+	 *
+	 * Whether the CSS requires an update. When there are new schemes or settings
+	 * updates.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return bool
+	 *
+	 * @return bool True if the CSS requires an update, False otherwise.
 	 */
 	protected function is_update_required() {
 		return false;
 	}
 
 	/**
+	 * ??
+	 *
+	 * ??
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	*/
+	 */
 	protected function parse_css() {
 		$this->render_css();
 
@@ -450,8 +623,13 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * ??
+	 *
+	 * ??
+	 *
 	 * @since 1.6.0
 	 * @access private
+	 *
 	 * @param array $control
 	 * @param array $values
 	 * @param array $controls_stack
@@ -467,8 +645,13 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * ??
+	 *
+	 * ??
+	 *
 	 * @since 1.6.0
 	 * @access private
+	 *
 	 * @param array $control
 	 * @param array $values
 	 *
@@ -489,9 +672,13 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * ??
+	 *
+	 * ??
+	 *
 	 * @since 1.2.0
 	 * @access private
-	*/
+	 */
 	private function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
@@ -504,9 +691,13 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * @access protected
+	 * ??
+	 *
+	 * ??
+	 *
 	 * @since 1.2.0
-	*/
+	 * @access protected
+	 */
 	protected function set_path_and_url() {
 		$wp_upload_dir = wp_upload_dir( null, false );
 
