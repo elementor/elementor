@@ -1,9 +1,22 @@
-.atwho-inserted {
-	padding: 2px 5px;
-	background-color: $editor-background;
-	cursor: pointer;
-	white-space: nowrap;
-	user-select: none;
+.atwho {
+
+	&-inserted {
+		display: inline-block;
+		line-height: 1.5;
+		background-color: $editor-background;
+		cursor: pointer;
+		white-space: nowrap;
+		user-select: none;
+
+		&-inner {
+			padding: 0 5px;
+		}
+	}
+
+	&-remove {
+		font-size: 10px;
+		@include margin-start(3px);
+	}
 }
 
 .elementor-mentions-popup {
