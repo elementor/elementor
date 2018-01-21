@@ -236,10 +236,18 @@ class DB {
 			$autosave = $this->get_newer_autosave( $post_id );
 
 			if ( is_object( $autosave ) ) {
-				$data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
+				$autosave_data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
 			}
-		} elseif ( empty( $data ) && Plugin::$instance->editor->is_edit_mode() ) {
-			$data = $this->_get_new_editor_from_wp_editor( $post_id );
+		}
+
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			if ( empty( $data ) && empty( $autosave_data ) ) {
+				$data = $this->_get_new_editor_from_wp_editor( $post_id );
+			}
+		}
+
+		if ( ! empty( $autosave_data ) ) {
+			$data = $autosave_data;
 		}
 
 		return $data;
