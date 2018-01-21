@@ -186,6 +186,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.9.3 - 2018-01-21 ###
+* Fix: Enqueue style/script if when not needed ([#3094](https://github.com/pojome/elementor/issues/3094))
+* Fix: Added compatibility for Safari browser accessibility
+* Fix: Error message in saver
+* Fix: Elementor missing WP editor content ([#3139](https://github.com/pojome/elementor/issues/3139))
+* Fix: Changes lost on revisions panel tab destroy ([#3242](https://github.com/pojome/elementor/issues/3242))
+
 ### 1.9.2 - 2018-01-16 ###
 * Tweak: Improved querying for revisions to reduce load time on posts with lots of revisions
 * Tweak: Added new notifications when connection with the server is lost and on server errors
