@@ -140,6 +140,7 @@
 .screen-reader-text span,
 .ui-helper-hidden-accessible {
   position: absolute;
+  top: -10000em;
   width: 1px;
   height: 1px;
   margin: -1px;
