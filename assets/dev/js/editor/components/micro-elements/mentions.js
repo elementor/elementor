@@ -10,6 +10,8 @@ module.exports = ViewModule.extend( {
 
 	mentions: [],
 
+	emptyChar: '\u200b',
+
 	__construct: function( settings ) {
 		this.$element = settings.$element;
 	},
@@ -41,7 +43,8 @@ module.exports = ViewModule.extend( {
 	bindEvents: function() {
 		this.$element
 			.on( 'blur', this.onElementBlur.bind( this ) )
-			.on( 'keydown', this.onElementKeyDown.bind( this ) );
+			.on( 'keydown', this.onElementKeyDown.bind( this ) )
+			.on( 'keyup', this.onElementKeyUp.bind( this ) );
 
 		if ( this.elements.$addButton ) {
 			this.elements.$addButton.on( 'click', this.onAddMentionClick.bind( this ) );
@@ -59,7 +62,7 @@ module.exports = ViewModule.extend( {
 			return '<span class="atwho-inserted" contenteditable="false" data-tag-id="' + tagID + '" data-tag-name="' + tagName + '" data-elementor-settings="' + tagSettings + '"></span>';
 		} );
 
-		self.$element.html( parsedValue );
+		self.$element.html( parsedValue + this.emptyChar );
 
 		self.$element.find( '.atwho-inserted' ).each( function() {
 			var mentionData = jQuery( this ).data();
@@ -160,7 +163,7 @@ module.exports = ViewModule.extend( {
 			$tag.replaceWith( elementor.microElements.tagDataToTagText( tagData.tagId, tagData.tagName, tagData.elementorSettings ) );
 		} );
 
-		return $clonedElement.html().replace( '&nbsp;', ' ' ).trim();
+		return $clonedElement.html().replace( /&nbsp;/g, ' ' ).replace( new RegExp( this.emptyChar, 'g' ), '' ).trim();
 	},
 
 	getMentionsCount: function() {
@@ -232,6 +235,15 @@ module.exports = ViewModule.extend( {
 			this.isFreeTextKey( event ) && ! this.freeTextAllowed()
 		) {
 			event.preventDefault();
+		}
+	},
+
+	onElementKeyUp: function() {
+		var elementContent = this.$element.html(),
+			lastCharCode = elementContent.charCodeAt( elementContent.length - 1 );
+
+		if ( this.emptyChar.charCodeAt( 0 ) !== lastCharCode ) {
+			this.$element.append( this.emptyChar );
 		}
 	},
 
