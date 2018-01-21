@@ -1023,7 +1023,13 @@ abstract class Controls_Stack {
 			$settings = $this->get_active_settings();
 		}
 
-		return $this->parse_dynamic_settings( $settings );
+		$parsed_settings = $this->parse_dynamic_settings( $settings );
+
+		if ( $setting_key ) {
+			return $parsed_settings[ $setting_key ];
+		}
+
+		return $parsed_settings;
 	}
 
 	public function parse_dynamic_settings( $settings, $controls = null, $all_settings = null ) {
