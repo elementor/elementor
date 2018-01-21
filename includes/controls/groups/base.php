@@ -432,9 +432,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * Used to process the CSS selector of group control fields. When using
 	 * group control, Elementor needs to apply the selector to different fields.
-	 * This method handels the process.
+	 * This method handles the process.
 	 *
-	 * In addition, it handels selector values from other fields and process the
+	 * In addition, it handles selector values from other fields and process the
 	 * css.
 	 *
 	 * @since 1.2.2

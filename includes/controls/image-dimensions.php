@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $placeholder Optional. The field placeholder that appears when
  *                            the field has no values. Default is empty.
  * @param array  $default     {
- *     Optional. Defautl image dimension values.
+ *     Optional. Default image dimension values.
  *
  *     @type int $width  Optional. Image width. Default is empty.
  *     @type int $height Optional. Image height. Default is empty.

@@ -127,7 +127,7 @@ abstract class Base_Control {
 	 * @param string $setting_key Optional. Specific key to return from the
 	 *                            settings. If key set it will return the
 	 *                            specific value of the key, otherwise the
-	 *                            entire key array will be returned. Dafault is
+	 *                            entire key array will be returned. Default is
 	 *                            null.
 	 *
 	 * @return mixed The control settings, or specific setting value.

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor database class.
  *
- * Elementor database handler class is responsible for comunicating with the
+ * Elementor database handler class is responsible for communicating with the
  * DB, save and retrieve Elementor data and meta data.
  *
  * @since 1.0.0
@@ -155,7 +155,7 @@ class DB {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( self::STATUS_DRAFT === $status ) {
-			$autosave = $document->get_autosave( 0, true );
+			$document = $document->get_autosave( 0, true );
 		}
 
 		return $document->get_elements_data();
@@ -281,7 +281,7 @@ class DB {
 	/**
 	 * Save plain text.
 	 *
-	 * Retrives the raw content, removes all kind of unwanted HTML tags and saves
+	 * Retrieves the raw content, removes all kind of unwanted HTML tags and saves
 	 * the content as the `post_content` field in the database.
 	 *
 	 * @since 1.9.0
@@ -506,8 +506,16 @@ class DB {
 	}
 
 	/**
+	 * Get plain text.
+	 *
+	 * Retrieve the post plain text.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string Post plain text.
 	 */
 	public function get_plain_text( $post_id ) {
 		$data = $this->get_plain_editor( $post_id );
@@ -516,7 +524,15 @@ class DB {
 	}
 
 	/**
+	 * Get plain text from data.
+	 *
+	 * Retrieve the post plain text from any given Elementor data.
+	 *
 	 * @access public
+	 *
+	 * @param array $data Post ID.
+	 *
+	 * @return string Post plain text.
 	 */
 	public function get_plain_text_from_data( $data ) {
 		ob_start();

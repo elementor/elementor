@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor common widget.
  *
- * Elementor base widget that givs you all the advanced options of the basic
+ * Elementor base widget that gives you all the advanced options of the basic
  * widget.
  *
  * @since 1.0.0

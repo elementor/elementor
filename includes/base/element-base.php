@@ -136,7 +136,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.3.0
 	 * @access public
 	 *
-	 * @return array Widget scripts dependencies.
+	 * @return array Element scripts dependencies.
 	 */
 	public function get_script_depends() {
 		return $this->depended_scripts;
@@ -165,7 +165,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.9.0
 	 * @access public
 	 *
-	 * @return array Widget styles dependencies.
+	 * @return array Element styles dependencies.
 	 */
 	final public function get_style_depends() {
 		return $this->depended_styles;
@@ -280,9 +280,9 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Get items.
 	 *
-	 * Utility method that recieves an array with a needle and returns all the
+	 * Utility method that receives an array with a needle and returns all the
 	 * items that match the needle. If needle is not defined the entire haystack
-	 * will be returened.
+	 * will be returned.
 	 *
 	 * @since 1.0.0
 	 * @access private
@@ -319,7 +319,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Retrieve the default child type based on element data.
 	 *
-	 * Note that not all elements support childen.
+	 * Note that not all elements support children.
 	 *
 	 * @since 1.0.0
 	 * @access protected
@@ -529,8 +529,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param array|string $element   The HTML element.
-	 * @param array|string $key       Optional. Attribute key. Dafault is null.
-	 * @param array|string $value     Optional. Attribute value. Dafault is null.
+	 * @param array|string $key       Optional. Attribute key. Default is null.
+	 * @param array|string $value     Optional. Attribute value. Default is null.
 	 * @param bool         $overwrite Optional. Whether to overwrite existing
 	 *                                attribute. Default is false, not to overwrite.
 	 *
@@ -578,8 +578,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param array|string $element The HTML element.
-	 * @param array|string $key     Optional. Attribute key. Dafault is null.
-	 * @param array|string $value   Optional. Attribute value. Dafault is null.
+	 * @param array|string $key     Optional. Attribute key. Default is null.
+	 * @param array|string $value   Optional. Attribute value. Default is null.
 	 *
 	 * @return Element_Base Current instance of the element.
 	 */
@@ -863,7 +863,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Retrieve the current element initial configuration.
 	 *
-	 * Adds more configuration on top of the controls list and the tabs assignet
+	 * Adds more configuration on top of the controls list and the tabs assigned
 	 * to the control. This method also adds element name, type, icon and more.
 	 *
 	 * @since 1.0.10
