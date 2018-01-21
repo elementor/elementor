@@ -63,10 +63,15 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showMentionsPopup: function() {
+		var mentionsPopup = this.getMentionsPopup();
+
+		if ( mentionsPopup.isVisible() ) {
+			return;
+		}
+
 		var positionFromLeft = 7,
 			positionFromTop = -10,
-			$iframe = this.getOption( '$iframe' ),
-			mentionsPopup = this.getMentionsPopup();
+			$iframe = this.getOption( '$iframe' );
 
 		if ( $iframe ) {
 			var offset = $iframe.offset();
