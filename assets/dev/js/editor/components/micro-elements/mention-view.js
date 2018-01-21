@@ -14,9 +14,14 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	getTemplate: function() {
-		var config = this.getTagConfig();
+		var config = this.getTagConfig(),
+			templateFunction = Marionette.TemplateCache.get( '#tmpl-elementor-tag-mention' ),
+			renderedTemplate = Marionette.Renderer.render( templateFunction, {
+				title: config.title,
+				content: config.mention_template
+			} );
 
-		return Marionette.TemplateCache.prototype.compileTemplate( config.title + ' ' + config.mention_template );
+		return Marionette.TemplateCache.prototype.compileTemplate( renderedTemplate.trim() );
 	},
 
 	getTagConfig: function() {
