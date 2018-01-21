@@ -8,6 +8,7 @@
 .ui-helper-hidden-accessible // wp - common.css
 {
 	position: absolute;
+	top: -10000em; //for safari browser compatibility
 	width: 1px;
 	height: 1px;
 	margin: -1px;
