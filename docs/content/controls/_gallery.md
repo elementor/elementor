@@ -29,7 +29,7 @@ $this->add_control(
 $images = $this->get_settings( 'gallery' );
 
 foreach ( $images as $image ) {
-    echo '<img src="' . $image[url] . '">';
+    echo '<img src="' . $image['url'] . '">';
 }
 ```
 
