@@ -46,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param array $default      {
- *     Optional. Defautl media values.
+ *     Optional. Default media values.
  *
  *     @type int    $id  Optional. Media id. Default is empty.
  *     @type string $url Optional. Media url. Use `Utils::get_placeholder_image_src()`

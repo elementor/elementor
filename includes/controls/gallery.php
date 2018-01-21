@@ -45,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param array $default      {
- *     Optional. Defautl gallery images. An array of images containing the image
+ *     Optional. Default gallery images. An array of images containing the image
  *     ID and URL: `[ [ 'id' => '', 'url' => '' ], [ 'id' => '', 'url' => '' ], ... ]`
  *     Default is an empty array.
  *

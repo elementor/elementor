@@ -51,10 +51,10 @@ class Ajax_Manager {
 
 			try {
 				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ]['callback'], $action_data['data'], $this );
-				if ( $results ) {
-					$this->add_response_data( true, $results );
-				} elseif ( false === $results ) {
+				if ( false === $results ) {
 					$this->add_response_data( false );
+				} else {
+					$this->add_response_data( true, $results );
 				}
 			} catch ( \Exception $e ) {
 				$this->add_response_data( false, $e->getMessage() );

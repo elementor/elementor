@@ -122,7 +122,7 @@ class Frontend {
 	 * Init.
 	 *
 	 * Initialize Elementor front end. Hooks the needed actions to run Elementor
-	 * in the front end, including script and style regestration.
+	 * in the front end, including script and style registration.
 	 *
 	 * Fired by `template_redirect` action.
 	 *
@@ -142,9 +142,8 @@ class Frontend {
 
 		$this->post_id = get_the_ID();
 		$this->_is_frontend_mode = true;
-		$this->_has_elementor_in_page = is_singular() && Plugin::$instance->db->is_built_with_elementor( $this->post_id );
 
-		if ( $this->_has_elementor_in_page ) {
+		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $this->post_id ) ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		}
 
