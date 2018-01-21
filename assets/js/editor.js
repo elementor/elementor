@@ -13163,7 +13163,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		if ( this.currentPreviewId ) {
+		if ( this.currentPreviewId && this.currentPreviewId !== elementor.config.current_revision_id ) {
 			this.onDiscardClick();
 		}
 	},
