@@ -4,8 +4,13 @@ var TagControlsStack = require( 'elementor-micro-elements/tag-controls-stack' ),
 module.exports = Marionette.ItemView.extend( {
 	tagControlsStack: null,
 
+	ui: {
+		remove: '.atwho-remove'
+	},
+
 	events: {
-		click: 'onClick'
+		click: 'onClick',
+		'click @ui.remove': 'onRemoveClick'
 	},
 
 	getTemplate: function() {
@@ -119,6 +124,14 @@ module.exports = Marionette.ItemView.extend( {
 		this.getTagControlsStack().render();
 
 		this.showMentionsPopup();
+	},
+
+	onRemoveClick: function( event ) {
+		event.stopPropagation();
+
+		this.destroy();
+
+		this.trigger( 'remove' );
 	},
 
 	onDestroy: function() {
