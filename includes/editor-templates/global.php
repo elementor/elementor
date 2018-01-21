@@ -44,6 +44,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </script>
 
+<script type="text/template" id="tmpl-elementor-tag-mention">
+	&#8203;<i class="atwho-remove eicon-close"></i><span class="atwho-inserted-inner">{{{ title + ' ' + content }}}</span>&#8203;
+</script>
+
 <script type="text/template" id="tmpl-elementor-tag-controls-stack-empty">
 	<?php echo __( 'This tag has no settings.', 'elementor' ); ?>
 </script>
