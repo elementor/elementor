@@ -385,7 +385,7 @@ module.exports = Module.extend( {
 					message = elementor.ajax.createErrorMessage( data );
 
 					if ( 0 === data.readyState ) {
-						message += '. ' + elementor.translate( 'saving_disabled' );
+						message += ' ' + elementor.translate( 'saving_disabled' );
 					}
 				} else if ( data[0] && data[0].code ) {
 					message = elementor.translate( 'server_error' ) + ' ' + data[0].code;
@@ -8992,14 +8992,17 @@ Ajax = {
 	createErrorMessage: function( XMLHttpRequest ) {
 		var message;
 		if ( 4 === XMLHttpRequest.readyState ) {
-			message = elementor.translate( 'server_error' ) + ' (' + XMLHttpRequest.status + ' ' + XMLHttpRequest.statusText + ')';
+			message = elementor.translate( 'server_error' );
+			if ( 200 !== XMLHttpRequest.status ) {
+				message += ' (' + XMLHttpRequest.status + ' ' + XMLHttpRequest.statusText + ')';
+			}
 		} else if ( 0 === XMLHttpRequest.readyState ) {
 			message = elementor.translate( 'server_connection_lost' );
 		} else {
 			message = elementor.translate( 'unknown_error' );
 		}
 
-		return message;
+		return message + '.';
 	}
 };
 
