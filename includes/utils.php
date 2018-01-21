@@ -34,7 +34,7 @@ class Utils {
 	/**
 	 * Is script debug.
 	 *
-	 * Whether script debug is ebanled or not.
+	 * Whether script debug is enabled or not.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -157,9 +157,17 @@ class Utils {
 	}
 
 	/**
+	 * Get WordPress preview url.
+	 *
+	 * Retrieve WordPress preview URL for any given post ID.
+	 *
 	 * @since 1.9.0
-	 * @static
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string WordPress preview URL.
 	 */
 	public static function get_wp_preview_url( $post_id ) {
 		$query_args = [];
@@ -177,7 +185,7 @@ class Utils {
 		 *
 		 * @since 1.9.0
 		 *
-		 * @param string $wp_preview_url WordPress preview URL with chosen scheme.
+		 * @param string $wp_preview_url WordPress preview URL.
 		 * @param int    $post_id        Post ID.
 		 */
 		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
@@ -187,17 +195,25 @@ class Utils {
 
 
 	/**
+	 * Get exit to dashboard URL.
+	 *
+	 * Retrieve WordPress preview URL for any given post ID.
+	 *
 	 * @since 1.9.0
-	 * @static
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string Exit to dashboard URL.
 	 */
 	public static function get_exit_to_dashboard_url( $post_id ) {
 		$exit_url = get_edit_post_link( $post_id, 'raw' );
 
 		/**
-		 * Exit To Dashboard URL.
+		 * Exit to dashboard URL.
 		 *
-		 * Filters the Exit To Dashboard URL.
+		 * Filters the exit to dashboard URL.
 		 *
 		 * @since 1.9.0
 		 *
@@ -273,7 +289,7 @@ class Utils {
 	/**
 	 * Generate random string.
 	 *
-	 * Returns a string containing a hexadecimal representation of randon number.
+	 * Returns a string containing a hexadecimal representation of random number.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -397,9 +413,17 @@ class Utils {
 	}
 
 	/**
+	 * Get last edited string.
+	 *
+	 * Retrieve a string saying when the post was saved or the last time it was edited.
+	 *
 	 * @since 1.9.0
-	 * @static
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string Last edited string.
 	 */
 	public static function get_last_edited( $post_id ) {
 		_deprecated_function( __METHOD__, '2.0.0', '$document->get_last_edited()' );
@@ -434,8 +458,17 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Get post autosave.
+	 *
+	 * Retrieve an autosave for any given post.
+	 *
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 * @param int $user_id Optional. User ID. Default is `0`.
+	 *
+	 * @return \WP_Post|false Post autosave or false.
 	 */
 	public static function get_post_autosave( $post_id, $user_id = 0 ) {
 		global $wpdb;

@@ -670,6 +670,10 @@ class Admin {
 	}
 
 	/**
+	 * Get elementor dashboard overview widget footer actions.
+	 *
+	 * Retrieves the footer action links displayed in elementor dashboard widget.
+	 *
 	 * @since 1.9.0
 	 * @access private
 	 */
@@ -712,6 +716,12 @@ class Admin {
 	}
 
 	/**
+	 * Admin action new post.
+	 *
+	 * When a new post action is fired the title is set to 'Elementor' and the post ID.
+	 *
+	 * Fired by `admin_action_elementor_new_post` action.
+	 *
 	 * @since 1.9.0
 	 * @access public
 	 */

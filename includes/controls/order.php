@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param array  $default     {
- *     Optional. Defautl order value.
+ *     Optional. Default order value.
  *
  *     @type string $order_by      Optional. The selected order. Default is
  *                                 empty.

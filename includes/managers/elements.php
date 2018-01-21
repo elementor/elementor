@@ -182,7 +182,7 @@ class Elements_Manager {
 	/**
 	 * Get element types.
 	 *
-	 * Retrieve the list of all the element types, or if a spesific element name
+	 * Retrieve the list of all the element types, or if a specific element name
 	 * was provided retrieve his element types.
 	 *
 	 * @since 1.0.0
@@ -243,7 +243,7 @@ class Elements_Manager {
 	 * Ajax discard changes.
 	 *
 	 * Ajax handler for Elementor discard_changes. Handles the discarded changes
-	 * in the builder by deleting autosaved revisions.
+	 * in the builder by deleting auto-saved revisions.
 	 *
 	 * Fired by `wp_ajax_elementor_discard_changes` action.
 	 *

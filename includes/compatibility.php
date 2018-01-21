@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor compatibility class.
  *
  * Elementor compatibility handler class is responsible for compatibility with
- * external plugins. The class resolves different issues with non-compatibile
+ * external plugins. The class resolves different issues with non-compatible
  * plugins.
  *
  * @since 1.0.0
@@ -46,7 +46,7 @@ class Compatibility {
 	/**
 	 * Exit to classic editor.
 	 *
-	 * Filters the "Exit To Dashboard URL" and replace it with the clasic editor
+	 * Filters the "Exit To Dashboard URL" and replace it with the classic editor
 	 * URL.
 	 *
 	 * Fired by `elementor/utils/exit_to_dashboard_url` filter.
