@@ -30,7 +30,7 @@ $this->add_control(
 ```php
 $image = $this->get_settings( 'image' );
 
-echo '<img src="' . $image[url] . '">';
+echo '<img src="' . $image['url'] . '">';
 
 // Get image by id
 echo wp_get_attachment_image( $image['id'], 'thumbnail' );
