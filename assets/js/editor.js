@@ -381,14 +381,24 @@ var TagControlsStack = require( 'elementor-micro-elements/tag-controls-stack' ),
 module.exports = Marionette.ItemView.extend( {
 	tagControlsStack: null,
 
+	ui: {
+		remove: '.atwho-remove'
+	},
+
 	events: {
-		click: 'onClick'
+		click: 'onClick',
+		'click @ui.remove': 'onRemoveClick'
 	},
 
 	getTemplate: function() {
-		var config = this.getTagConfig();
+		var config = this.getTagConfig(),
+			templateFunction = Marionette.TemplateCache.get( '#tmpl-elementor-tag-mention' ),
+			renderedTemplate = Marionette.Renderer.render( templateFunction, {
+				title: config.title,
+				content: config.mention_template
+			} );
 
-		return Marionette.TemplateCache.prototype.compileTemplate( config.title + ' ' + config.mention_template );
+		return Marionette.TemplateCache.prototype.compileTemplate( renderedTemplate.trim() );
 	},
 
 	getTagConfig: function() {
@@ -430,10 +440,15 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showMentionsPopup: function() {
+		var mentionsPopup = this.getMentionsPopup();
+
+		if ( mentionsPopup.isVisible() ) {
+			return;
+		}
+
 		var positionFromLeft = 7,
 			positionFromTop = -10,
-			$iframe = this.getOption( '$iframe' ),
-			mentionsPopup = this.getMentionsPopup();
+			$iframe = this.getOption( '$iframe' );
 
 		if ( $iframe ) {
 			var offset = $iframe.offset();
@@ -498,6 +513,14 @@ module.exports = Marionette.ItemView.extend( {
 		this.showMentionsPopup();
 	},
 
+	onRemoveClick: function( event ) {
+		event.stopPropagation();
+
+		this.destroy();
+
+		this.trigger( 'remove' );
+	},
+
 	onDestroy: function() {
 		this.getMentionsPopup().destroy();
 	}
@@ -515,6 +538,8 @@ module.exports = ViewModule.extend( {
 	mentionsInstance: null,
 
 	mentions: [],
+
+	emptyChar: '\u200b',
 
 	__construct: function( settings ) {
 		this.$element = settings.$element;
@@ -547,7 +572,8 @@ module.exports = ViewModule.extend( {
 	bindEvents: function() {
 		this.$element
 			.on( 'blur', this.onElementBlur.bind( this ) )
-			.on( 'keydown', this.onElementKeyDown.bind( this ) );
+			.on( 'keydown', this.onElementKeyDown.bind( this ) )
+			.on( 'keyup', this.onElementKeyUp.bind( this ) );
 
 		if ( this.elements.$addButton ) {
 			this.elements.$addButton.on( 'click', this.onAddMentionClick.bind( this ) );
@@ -565,7 +591,7 @@ module.exports = ViewModule.extend( {
 			return '<span class="atwho-inserted" contenteditable="false" data-tag-id="' + tagID + '" data-tag-name="' + tagName + '" data-elementor-settings="' + tagSettings + '"></span>';
 		} );
 
-		self.$element.html( parsedValue );
+		self.$element.html( parsedValue + this.emptyChar );
 
 		self.$element.find( '.atwho-inserted' ).each( function() {
 			var mentionData = jQuery( this ).data();
@@ -666,7 +692,7 @@ module.exports = ViewModule.extend( {
 			$tag.replaceWith( elementor.microElements.tagDataToTagText( tagData.tagId, tagData.tagName, tagData.elementorSettings ) );
 		} );
 
-		return $clonedElement.html().replace( '&nbsp;', ' ' ).trim();
+		return $clonedElement.html().replace( /&nbsp;/g, ' ' ).replace( new RegExp( this.emptyChar, 'g' ), '' ).trim();
 	},
 
 	getMentionsCount: function() {
@@ -738,6 +764,15 @@ module.exports = ViewModule.extend( {
 			this.isFreeTextKey( event ) && ! this.freeTextAllowed()
 		) {
 			event.preventDefault();
+		}
+	},
+
+	onElementKeyUp: function() {
+		var elementContent = this.$element.html(),
+			lastCharCode = elementContent.charCodeAt( elementContent.length - 1 );
+
+		if ( this.emptyChar.charCodeAt( 0 ) !== lastCharCode ) {
+			this.$element.append( this.emptyChar );
 		}
 	},
 
