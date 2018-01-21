@@ -654,6 +654,8 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
+	 * Get embed params.
+	 *
 	 * Retrieve video widget embed parameters.
 	 *
 	 * @since 1.5.0
@@ -700,6 +702,8 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
+	 * Get hosted params.
+	 *
 	 * Retrieve video widget hosted parameters.
 	 *
 	 * @since 1.0.0
