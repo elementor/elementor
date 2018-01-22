@@ -11,6 +11,7 @@ module.exports = ControlsStack.extend( {
 	emptyView: EmptyView,
 
 	isEmpty: function() {
+		// Ignore the section control
 		return this.collection.length < 2;
 	},
 
