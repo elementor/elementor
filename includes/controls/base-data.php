@@ -78,20 +78,20 @@ abstract class Base_Data_Control extends Base_Control {
 			return $value;
 		}
 
-		$valueToParse = $value;
+		$value_to_parse = $value;
 
-		$dynamicProperty = ! empty( $dynamic_settings['property'] ) ? $dynamic_settings['property'] : null;
+		$dynamic_property = ! empty( $dynamic_settings['property'] ) ? $dynamic_settings['property'] : null;
 
-		if ( $dynamicProperty ) {
-			$valueToParse = $valueToParse[ $dynamicProperty ];
+		if ( $dynamic_property ) {
+			$value_to_parse = $value_to_parse[ $dynamic_property ];
 		}
 
-		$parsedValue = Plugin::$instance->micro_elements_manager->parse_tags_text( $valueToParse, $this->get_settings( 'dynamic' ), [ Plugin::$instance->micro_elements_manager, 'get_tag_data_content' ] );
+		$parsed_value = Plugin::$instance->micro_elements_manager->parse_tags_text( $value_to_parse, $this->get_settings( 'dynamic' ), [ Plugin::$instance->micro_elements_manager, 'get_tag_data_content' ] );
 
-		if ( $dynamicProperty ) {
-			$value[ $dynamicProperty ] = $parsedValue;
+		if ( $dynamic_property ) {
+			$value[ $dynamic_property ] = $parsed_value;
 		} else {
-			$value = $parsedValue;
+			$value = $parsed_value;
 		}
 
 		return $value;
