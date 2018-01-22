@@ -1676,13 +1676,13 @@ abstract class Controls_Stack {
 
 			$control = array_merge( $control_obj->get_settings(), $control );
 
-			if (
-				isset( $settings[ $control['name'] ] ) &&
-			    ! empty( $control['dynamic']['valueController'] ) &&
-			    'mentions' === $control['dynamic']['valueController'] &&
-				! empty( $settings[ 'dynamic_' . $control['name'] ] )
-			)
-			{
+			if ( ! isset( $settings[ $control['name'] ] ) || empty( $settings[ 'dynamic_' . $control['name'] ] ) ) {
+				continue;
+			}
+
+			$is_value_controlled = empty( $control['dynamic']['valueController'] ) || 'mentions' !== $control['dynamic']['valueController'];
+
+			if ( ! $is_value_controlled ) {
 				continue;
 			}
 
