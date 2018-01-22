@@ -62,10 +62,6 @@ ElementModel = Backbone.Model.extend( {
 
 		if ( 'widget' === elType ) {
 			settings.widgetType = this.get( 'widgetType' );
-
-			elementData = elementor.config.widgets[ settings.widgetType ];
-		} else {
-			elementData = elementor.config.elements[ elType ];
 		}
 
 		settings.elType = elType;
