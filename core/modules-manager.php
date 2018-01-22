@@ -16,12 +16,14 @@ class Modules_Manager {
 	 * @access public
 	 */
 	public function __construct() {
+		$modules_namespace_prefix = $this->get_modules_namespace_prefix();
+
 		foreach ( $this->get_modules_names() as $module_name ) {
 			$class_name = str_replace( '-', ' ', $module_name );
 
 			$class_name = str_replace( ' ', '', ucwords( $class_name ) );
 	
-			$class_name = $this->get_modules_namespace_prefix() . '\\Modules\\' . $class_name . '\Module';
+			$class_name = $modules_namespace_prefix . '\\Modules\\' . $class_name . '\Module';
 
 			/** @var Module $class_name */
 			if ( $class_name::is_active() ) {
