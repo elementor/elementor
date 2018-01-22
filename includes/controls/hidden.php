@@ -42,7 +42,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Hidden extends Base_Data_Control {
 
 	/**
-	 * Retrieve hidden control type.
+	 * Get hidden control type.
+	 *
+	 * Retrieve the control type, in this case `hidden`.
 	 *
 	 * @since 1.0.0
 	 * @access public

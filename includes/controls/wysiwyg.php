@@ -55,7 +55,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Wysiwyg extends Base_Data_Control {
 
 	/**
-	 * Retrieve wysiwyg control type.
+	 * Get wysiwyg control type.
+	 *
+	 * Retrieve the control type, in this case `wysiwyg`.
 	 *
 	 * @since 1.0.0
 	 * @access public

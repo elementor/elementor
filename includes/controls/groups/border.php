@@ -50,9 +50,9 @@ class Group_Control_Border extends Group_Control_Base {
 	protected static $fields;
 
 	/**
-	 * Retrieve type.
-	 *
 	 * Get border control type.
+	 *
+	 * Retrieve the control type, in this case `border`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -119,9 +119,9 @@ class Group_Control_Border extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve default options.
+	 * Get default options.
 	 *
-	 * Get the default options of the border control. Used to return the
+	 * Retrieve the default options of the border control. Used to return the
 	 * default options while initializing the border control.
 	 *
 	 * @since 1.9.0
