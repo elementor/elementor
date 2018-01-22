@@ -45,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-tag-mention">
-	<?php // `&#8203;` is represents an empty char. Used to keep the cursor out of the tag label area  ?>
+	<?php // `&#8203;` is represents an empty char. Used to keep the cursor out of the tag label area. ?>
 	&#8203;<i class="atwho-remove eicon-close"></i><span class="atwho-inserted-inner">{{{ title + ' ' + content }}}</span>&#8203;
 </script>
 
