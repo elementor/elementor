@@ -219,10 +219,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	renderResponsiveSwitchers: function() {
-		if ( _.isEmpty( this.model.get( 'responsive' ) ) ) {
-			return;
-		}
-
 		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
