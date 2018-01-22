@@ -50,9 +50,9 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 	protected static $fields;
 
 	/**
-	 * Retrieve type.
-	 *
 	 * Get box shadow control type.
+	 *
+	 * Retrieve the control type, in this case `box-shadow`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -106,9 +106,9 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve default options.
+	 * Get default options.
 	 *
-	 * Get the default options of the box shadow control. Used to return the
+	 * Retrieve the default options of the box shadow control. Used to return the
 	 * default options while initializing the box shadow control.
 	 *
 	 * @since 1.9.0
