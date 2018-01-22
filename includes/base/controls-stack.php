@@ -194,7 +194,7 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Retrieve items.
+	 * Get items.
 	 *
 	 * Utility method that receives an array with a needle and returns all the
 	 * items that match the needle. If needle is not defined the entire haystack
