@@ -86,7 +86,7 @@ abstract class Base_Data_Control extends Base_Control {
 			$valueToParse = $valueToParse[ $dynamicProperty ];
 		}
 
-		$parsedValue = Plugin::$instance->micro_elements_manager->parse_tags_text( $valueToParse, $this->get_settings( 'dynamic' ), [ Plugin::$instance->micro_elements_manager, 'render_tag_data' ] );
+		$parsedValue = Plugin::$instance->micro_elements_manager->parse_tags_text( $valueToParse, $this->get_settings( 'dynamic' ), [ Plugin::$instance->micro_elements_manager, 'get_tag_data_content' ] );
 
 		if ( $dynamicProperty ) {
 			$value[ $dynamicProperty ] = $parsedValue;
