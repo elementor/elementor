@@ -6884,6 +6884,8 @@ ColumnView = BaseElementView.extend( {
 	onRender: function() {
 		var self = this;
 
+		var itemSelector = elementor.hooks.applyFilters( 'elements/column/render/droppable-item-selector', ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add', this );
+
 		BaseElementView.prototype.onRender.apply( self, arguments );
 
 		self.changeChildContainerClasses();
@@ -6891,7 +6893,7 @@ ColumnView = BaseElementView.extend( {
 		self.changeSizeUI();
 
 		self.$el.html5Droppable( {
-			items: ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
+			items: itemSelector,
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: self.isDroppingAllowed.bind( self ),
