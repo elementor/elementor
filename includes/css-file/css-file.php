@@ -16,7 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class CSS_File {
 
 	/**
-	 * Elementor CSS file base folder.
+	 * Elementor CSS files base folder.
+	 *
+	 * Relative folder in the WordPress uploads folder.
 	 */
 	const FILE_BASE_DIR = '/elementor/css';
 
@@ -28,17 +30,23 @@ abstract class CSS_File {
 	const FILE_NAME_PATTERN = '%s/%s.css';
 
 	/**
-	 * Elementor CSS status for file output.
+	 * Elementor CSS file generated status.
+	 *
+	 * The parsing result after generating CSS file.
 	 */
 	const CSS_STATUS_FILE = 'file';
 
 	/**
-	 * Elementor CSS status for inline output.
+	 * Elementor inline CSS status.
+	 *
+	 * The parsing result after generating inline CSS.
 	 */
 	const CSS_STATUS_INLINE = 'inline';
 
 	/**
-	 * Elementor CSS status for empty output.
+	 * Elementor CSS empty status.
+	 *
+	 * The parsing result when an empty CSS returned.
 	 */
 	const CSS_STATUS_EMPTY = 'empty';
 
@@ -156,6 +164,8 @@ abstract class CSS_File {
 	 *
 	 * Delete old CSS, parse the CSS, save the new file and update the database.
 	 *
+	 * This method also sets the CSS status to be used later on in the render posses.
+	 *
 	 * @since 1.2.0
 	 * @access public
 	 */
@@ -208,7 +218,9 @@ abstract class CSS_File {
 	/**
 	 * Enqueue CSS.
 	 *
-	 * Enqueue the CSS file in Elementor.
+	 * Either enqueue the CSS file in Elementor or add inline style.
+	 *
+	 * This method is also responsible for loading the fonts.
 	 *
 	 * @since 1.2.0
 	 * @access public
