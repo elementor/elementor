@@ -30,8 +30,6 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		parent::__construct();
-
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 
 		Plugin::$instance->editor->add_editor_template( __DIR__ . '/views/history-panel-template.php' );

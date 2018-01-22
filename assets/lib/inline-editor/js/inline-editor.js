@@ -103,6 +103,7 @@
 			debug: false,
 			toolbar: null, // custom toolbar
 			mode: 'basic',
+			ignoreLineBreak: false,
 			toolbarIconsPrefix: 'fa fa-',
 			toolbarIconsDictionary: {externalLink: 'fa fa-external-link'},
 			stay: config.stay || !config.debug,
@@ -532,6 +533,12 @@
 
 			if (e.which !== 13 || e.shiftKey) return;
 
+			if ( ctx.config.ignoreLineBreak ) {
+				e.preventDefault();
+
+				return;
+			}
+
 			var node = getNode(ctx, true);
 
 			if(!node || !lineBreakReg.test(node.nodeName)) {
@@ -804,7 +811,7 @@
 		if (!editor || editor.nodeType !== 1) throw new Error('Can\'t find editor');
 
 		// set default class
-		editor.classList.add(defaults.class);
+		editor.classList.add.apply(editor.classList, defaults.class.split(' '));
 
 		// set contenteditable
 		editor.setAttribute('contenteditable', 'true');
@@ -1162,7 +1169,7 @@
 
 		removeAllListeners(this);
 
-		config.editor.classList.remove(config.class, config.placeholderClass);
+		config.editor.classList.remove.apply(config.editor.classList, config.class.split(' ').concat(config.placeholderClass));
 
 		config.editor.removeAttribute('contenteditable');
 

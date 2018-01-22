@@ -456,7 +456,7 @@ abstract class Controls_Stack {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		if ( null === $stack ) {
-			$this->_init_controls();
+			$this->init_controls();
 
 			return $this->get_stack();
 		}
@@ -712,11 +712,19 @@ abstract class Controls_Stack {
 		$style_controls = [];
 
 		foreach ( $controls as $control_name => $control ) {
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
+
+			$control = array_merge( $control_obj->get_settings(), $control );
+
 			if ( Controls_Manager::REPEATER === $control['type'] ) {
 				$control['style_fields'] = $this->get_style_controls( $control['fields'] );
 			}
 
-			if ( ! empty( $control['style_fields'] ) || ! empty( $control['selectors'] ) ) {
+			if ( ! empty( $control['style_fields'] ) || ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) ) {
 				$style_controls[ $control_name ] = $control;
 			}
 		}
@@ -1006,6 +1014,44 @@ abstract class Controls_Stack {
 		$settings_mask = array_fill_keys( array_keys( $settings ), null );
 
 		return array_merge( $settings_mask, $active_settings );
+	}
+
+	public function get_settings_for_display() {
+		return $this->parse_dynamic_settings( $this->get_active_settings() );
+	}
+
+	public function parse_dynamic_settings( $settings ) {
+		$all_settings = $this->get_settings();
+
+		foreach ( $this->get_controls() as $control ) {
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( ! $control_obj instanceof Base_Data_Control ) {
+				continue;
+			}
+
+			$control = array_merge( $control_obj->get_settings(), $control );
+
+			if ( ! empty( $control['dynamic'] ) && ! empty( $all_settings[ 'dynamic_' . $control['name'] ] ) ) {
+				$valueToParse = $settings[ $control['name'] ];
+
+				$dynamicProperty = ! empty( $control['dynamic']['property'] ) ? $control['dynamic']['property'] : null;
+
+				if ( $dynamicProperty ) {
+					$valueToParse = $valueToParse[ $dynamicProperty ];
+				}
+
+				$parsedValue = $control_obj->parse_tags( $valueToParse );
+
+				if ( $dynamicProperty ) {
+					$settings[ $control['name'] ][ $dynamicProperty ] = $parsedValue;
+				} else {
+					$settings[ $control['name'] ] = $parsedValue;
+				}
+			}
+		}
+
+		return $settings;
 	}
 
 	/**
@@ -1446,6 +1492,41 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Print element template.
+	 *
+	 * Used to generate the element template on the editor.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
+	public function print_template() {
+		ob_start();
+
+		$this->_content_template();
+
+		$template_content = ob_get_clean();
+
+		/**
+		 * Filters the controls stack template before it's printed in the editor.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string         $content_template The controls stack template in the editor.
+		 * @param Controls_Stack $this             The controls stack.
+		 */
+		$template_content = apply_filters( 'elementor/' . $this->get_type() . '/print_template', $template_content, $this );
+
+		if ( empty( $template_content ) ) {
+			return;
+		}
+		?>
+		<script type="text/html" id="tmpl-elementor-<?php echo $this->get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
+			<?php $this->print_template_content( $template_content ); ?>
+		</script>
+		<?php
+	}
+
+	/**
 	 * Start injection.
 	 *
 	 * Used to inject controls and sections to a specific position in the stack.
@@ -1577,7 +1658,17 @@ abstract class Controls_Stack {
 				continue;
 			}
 
-			$control = array_merge( $control, $control_obj->get_settings() );
+			$control = array_merge( $control_obj->get_settings(), $control );
+
+			if (
+				isset( $settings[ $control['name'] ] ) &&
+			    ! empty( $control['dynamic']['valueController'] ) &&
+			    'mentions' === $control['dynamic']['valueController'] &&
+				! empty( $settings[ 'dynamic_' . $control['name'] ] )
+			)
+			{
+				continue;
+			}
 
 			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}
@@ -1628,14 +1719,38 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Render element.
+	 *
+	 * Generates the final HTML on the frontend.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
+	protected function render() {}
+
+	protected function print_template_content( $template_content ) {
+		echo $template_content;
+	}
+
+	/**
+	 * Render element output in the editor.
+	 *
+	 * Used to generate the live preview, using a Backbone JavaScript template.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
+	protected function _content_template() {}
+
+	/**
 	 * Initialize controls.
 	 *
 	 * Register the all controls added by `_register_controls()`.
 	 *
 	 * @since 1.4.0
-	 * @access private
+	 * @access protected
 	 */
-	private function _init_controls() {
+	protected function init_controls() {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
 		$this->_register_controls();
