@@ -16,9 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Document extends Controls_Stack {
 
-	const TYPE_META_KEY = '_elementor_template_type';
-	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
-
 	/**
 	 * @var \WP_Post
 	 */
@@ -82,7 +79,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function get_exit_to_dashboard_url() {
-		$exit_url = get_edit_post_link( $this->post->ID, '' );
+		$exit_url = get_edit_post_link( $this->get_main_id(), 'raw' );
 
 		/**
 		 * Filters the Exit To Dashboard URL.
@@ -141,7 +138,6 @@ abstract class Document extends Controls_Stack {
 			Plugin::$instance->db->copy_elementor_meta( $this->post->ID, $autosave_id );
 
 			$document = Plugin::$instance->documents->get( $autosave_id );
-			$document->save_type();
 		} else {
 			$document = false;
 		}
@@ -215,39 +211,10 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
-		$settings = $data['settings'];
+		SettingsManager::get_settings_managers( 'page' )->save_settings( $data['settings'], $this->post->ID );
 
-		// Avoid save empty post title.
-		if ( ! empty( $settings['post_title'] ) ) {
-			$this->post->post_title = $settings['post_title'];
-		}
-		unset( $settings['post_title'] );
-
-		if ( isset( $settings['post_excerpt'] ) && post_type_supports( $this->post->post_type, 'excerpt' ) ) {
-			$this->post->post_excerpt = $settings['post_excerpt'];
-		}
-		unset( $settings['post_excerpt'] );
-
-		$allowed_post_statuses = get_post_statuses();
-
-		if ( isset( $settings['post_status'] ) && isset( $allowed_post_statuses[ $settings['post_status'] ] ) ) {
-			$post_type_object = get_post_type_object( $this->post->post_type );
-			if ( 'publish' !== $settings['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
-				$this->post->post_status = $settings['post_status'];
-			}
-		}
-		unset( $settings['post_status'] );
-
-		wp_update_post( $this->post );
-
-		if ( 'publish' === $this->post->post_status ) {
-			$autosave = Utils::get_post_autosave( $this->post->ID );
-			if ( $autosave ) {
-				wp_delete_post_revision( $autosave->ID );
-			}
-		}
-
-		SettingsManager::get_settings_managers( 'page' )->save_settings( $settings, $this->post->ID );
+		// Refresh post after save settings.
+		$this->post = $this->get_post( $this->post->ID );
 
 		$this->save_elements( $data['elements'] );
 
@@ -278,7 +245,7 @@ abstract class Document extends Controls_Stack {
 	public function get_edit_url() {
 		$edit_link = add_query_arg(
 			[
-				'post' => $this->post->ID,
+				'post' => $this->get_main_id(),
 				'action' => 'elementor',
 			],
 			admin_url( 'post.php' )
@@ -293,7 +260,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function get_preview_url() {
-		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $this->post->ID ) ) );
+		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', $this->get_permalink() ) );
 
 		return apply_filters( 'elementor/document/preview_url', $preview_url, $this );
 	}
@@ -331,17 +298,28 @@ abstract class Document extends Controls_Stack {
 	public function get_elements_data( $status = DB::STATUS_PUBLISH ) {
 		$elements = $this->get_json_meta( '_elementor_data' );
 
-		// TODO: remove.
 		if ( DB::STATUS_DRAFT === $status ) {
 			$autosave = Plugin::$instance->db->get_newer_autosave( $this->post->ID );
 
 			if ( is_object( $autosave ) ) {
-				$elements = Plugin::$instance->documents
+				$autosave_elements = Plugin::$instance->documents
 					->get( $autosave->ID )
 					->get_json_meta( '_elementor_data' );
 			}
-		} elseif ( empty( $elements ) && Plugin::$instance->editor->is_edit_mode() ) {
+		}
+
+		if ( empty( $elements ) && Plugin::$instance->editor->is_edit_mode() ) {
 			$elements = Plugin::$instance->db->_get_new_editor_from_wp_editor( $this->post->ID );
+		}
+
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			if ( empty( $elements ) && empty( $autosave_elements ) ) {
+				$elements = Plugin::$instance->db->_get_new_editor_from_wp_editor( $this->post->ID );
+			}
+		}
+
+		if ( ! empty( $autosave_elements ) ) {
+			$elements = $autosave_elements;
 		}
 
 		return $elements;
@@ -353,7 +331,7 @@ abstract class Document extends Controls_Stack {
 
 	public function get_panel_page_settings() {
 		return [
-			'title' => __( 'Document Settings', 'elementor' ),
+			'title' => self::get_title() . ' ' . __( 'Settings', 'elementor' ),
 		];
 	}
 
@@ -362,7 +340,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function get_permalink() {
-		return get_permalink( $this->post->ID );
+		return get_permalink( $this->get_main_id() );
 	}
 
 	public function delete() {
@@ -385,7 +363,6 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @param array $elements
 	 */
-
 	protected function save_elements( $elements ) {
 		$db = Plugin::$instance->db;
 		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
@@ -439,12 +416,6 @@ abstract class Document extends Controls_Stack {
 		return false;
 	}
 
-	public function save_type() {
-		update_post_meta( $this->post->ID, self::TYPE_META_KEY, $this->get_name() );
-
-		wp_set_object_terms( $this->post->ID, $this->get_name(), self::TAXONOMY_TYPE_SLUG );
-	}
-
 	public function get_last_edited() {
 		$post = $this->post;
 		$autosave_post = $this->get_autosave();
@@ -469,10 +440,14 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function __construct( array $data = [] ) {
-		$this->post = get_post( $data['post_id'] );
-
-		if ( ! $this->post ) {
+		if ( empty( $data['post_id'] ) ) {
 			$this->post = new \WP_Post( (object) [] );
+		} else {
+			$this->post = get_post( $data['post_id'] );
+
+			if ( ! $this->post ) {
+				throw new \Exception( 'Post ID #' . $data['post_id'] . ' is not exist.' );
+			}
 		}
 
 		// Each Control_Stack is based on a unique ID.
