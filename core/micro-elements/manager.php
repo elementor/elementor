@@ -103,8 +103,6 @@ class Manager {
 			'class' => $class,
 			'instance' => $tag,
 		];
-
-		$this->add_editor_template( $tag );
 	}
 
 	public function register_group( $group_name, array $group_settings ) {
@@ -117,12 +115,16 @@ class Manager {
 		$this->tags_groups[ $group_name ] = $group_settings;
 	}
 
-	public function add_editor_template( Tag $tag ) {
-		ob_start();
+	public function print_templates() {
+		foreach ( $this->tags_info as $tag_name => $tag_info ) {
+			$tag = $tag_info['instance'];
 
-		$tag->print_template();
+			if ( ! $tag instanceof UI_Tag ) {
+				continue;
+			}
 
-		Plugin::$instance->editor->add_editor_template( ob_get_clean(), 'text' );
+			$tag->print_template();
+		}
 	}
 
 	public function get_tags_config() {
