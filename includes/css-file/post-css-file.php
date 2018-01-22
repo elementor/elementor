@@ -190,10 +190,10 @@ class Post_CSS_File extends CSS_File {
 	 * @access public
 	 *
 	 * @param Controls_Stack $controls_stack The controls stack.
-	 * @param array          $controls       
-	 * @param array          $values         
-	 * @param array          $placeholders   
-	 * @param array          $replacements   
+	 * @param array          $controls       Controls array.
+	 * @param array          $values         Values array.
+	 * @param array          $placeholders   Placeholders.
+	 * @param array          $replacements   Replacements.
 	 */
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
 		parent::add_controls_stack_style_rules( $controls_stack, $controls, $values, $placeholders, $replacements );
