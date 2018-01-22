@@ -30,7 +30,7 @@
 			<span class="elementor-history-item__action">{{{ action }}}</span>
 		</div>
 		<div class="elementor-history-item__icon">
-			<span class="fa"></span>
+			<span class="fa" aria-hidden="true"></span>
 		</div>
 	</div>
 </script>
