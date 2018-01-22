@@ -350,7 +350,7 @@ module.exports = Module.extend( {
 
 	createTag: function( tagID, tagName, tagSettings ) {
 		var tagConfig = this.getConfig( 'tags.' + tagName ),
-			DefaultTagClass = this.tags[ 'plain' === tagConfig.render_type ? 'Base' : 'UI' ],
+			DefaultTagClass = this.tags[ 'plain' === tagConfig.content_type ? 'Base' : 'UI' ],
 			TagClass = this.tags[ tagName ] || DefaultTagClass,
 			model = new SettingsModel( tagSettings, {
 				controls: tagConfig.controls
@@ -359,7 +359,7 @@ module.exports = Module.extend( {
 		return new TagClass( { id: tagID, name: tagName, model: model } );
 	},
 
-	renderTagData: function( tagID, tagName, tagSettings ) {
+	getTagDataContent: function( tagID, tagName, tagSettings ) {
 		return this.createTag( tagID, tagName, tagSettings ).getContent();
 	},
 
@@ -842,6 +842,7 @@ module.exports = ControlsStack.extend( {
 	emptyView: EmptyView,
 
 	isEmpty: function() {
+		// Ignore the section control
 		return this.collection.length < 2;
 	},
 
@@ -3097,10 +3098,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	renderResponsiveSwitchers: function() {
-		if ( _.isEmpty( this.model.get( 'responsive' ) ) ) {
-			return;
-		}
-
 		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
@@ -6083,12 +6080,9 @@ BaseSettingsModel = Backbone.Model.extend( {
 				defaults[ field.name ] = field['default'] || control.default_value;
 			}
 
-			if (
-				undefined !== attrs[ field.name ] &&
-				isMultipleControl &&
-				! _.isObject( attrs[ field.name ] ) &&
-				( ! control.dynamic || ! attrs[ 'dynamic_' + field.name ] || 'mentions' !== control.dynamic.valueController )
-			) {
+			var isDynamicControl = control.dynamic && attrs[ 'dynamic_' + field.name ] && 'mentions' === control.dynamic.valueController;
+
+			if ( undefined !== attrs[ field.name ] && isMultipleControl && ! _.isObject( attrs[ field.name ] ) && ! isDynamicControl ) {
 				elementor.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
@@ -6266,7 +6260,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			var dynamicValue;
 
 			try {
-				dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.renderTagData );
+				dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.getTagDataContent );
 			} catch ( e ) {
 				dynamicValue = '';
 
@@ -10375,35 +10369,11 @@ ControlsCSSParser = ViewModule.extend( {
 
 		_.each( styleControls, function( control ) {
 			if ( control.styleFields && control.styleFields.length ) {
-				values[ control.name ].each( function( itemModel ) {
-					self.addStyleRules(
-						control.styleFields,
-						itemModel.attributes,
-						controls,
-						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
-						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
-					);
-				} );
+				self.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, controls, placeholders, replacements );
 			}
 
 			if ( control.dynamic && values[ 'dynamic_' + control.name ] ) {
-				var value = values[ control.name ];
-
-				if ( control.dynamic.property ) {
-					value = value[ control.dynamic.property ];
-				}
-
-				elementor.microElements.parseTagsText( value, control.dynamic, function( id, name, settings ) {
-					var tag = elementor.microElements.createTag( id, name, settings ),
-						tagSettingsModel = tag.model,
-						styleControls = tagSettingsModel.getStyleControls();
-
-					if ( ! styleControls.length ) {
-						return;
-					}
-
-					self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, [ '{{WRAPPER}}' ], [ '#elementor-tag-' + id ] );
-				} );
+				self.addDynamicControlStyleRules( values[ control.name ], control );
 			}
 
 			if ( ! control.selectors ) {
@@ -10434,6 +10404,41 @@ ControlsCSSParser = ViewModule.extend( {
 		}
 
 		return value;
+	},
+
+	addRepeaterControlsStyleRules: function( repeaterValues, repeaterControls, controls, placeholders, replacements ) {
+		var self = this;
+
+		repeaterValues.each( function( itemModel ) {
+			self.addStyleRules(
+				repeaterControls,
+				itemModel.attributes,
+				controls,
+				placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
+				replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
+			);
+		} );
+	},
+
+	addDynamicControlStyleRules: function( value, control ) {
+		var self = this,
+			valueToParse = value;
+
+		if ( control.dynamic.property ) {
+			valueToParse = valueToParse[ control.dynamic.property ];
+		}
+
+		elementor.microElements.parseTagsText( valueToParse, control.dynamic, function( id, name, settings ) {
+			var tag = elementor.microElements.createTag( id, name, settings ),
+				tagSettingsModel = tag.model,
+				styleControls = tagSettingsModel.getStyleControls();
+
+			if ( ! styleControls.length ) {
+				return;
+			}
+
+			self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, [ '{{WRAPPER}}' ], [ '#elementor-tag-' + id ] );
+		} );
 	},
 
 	addStyleToDocument: function() {
