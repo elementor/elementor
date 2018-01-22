@@ -220,7 +220,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			var dynamicValue;
 
 			try {
-				dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.renderTagData );
+				dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.getTagDataContent );
 			} catch ( e ) {
 				dynamicValue = '';
 

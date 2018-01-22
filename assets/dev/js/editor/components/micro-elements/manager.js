@@ -120,7 +120,7 @@ module.exports = Module.extend( {
 		return new TagClass( { id: tagID, name: tagName, model: model } );
 	},
 
-	renderTagData: function( tagID, tagName, tagSettings ) {
+	getTagDataContent: function( tagID, tagName, tagSettings ) {
 		return this.createTag( tagID, tagName, tagSettings ).getContent();
 	},
 
