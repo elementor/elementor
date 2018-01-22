@@ -724,7 +724,7 @@ abstract class Controls_Stack {
 				$control['style_fields'] = $this->get_style_controls( $control['fields'] );
 			}
 
-			if ( ! empty( $control['style_fields'] ) || ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) ) {
+			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || ! empty( $control['style_fields'] ) ) {
 				$style_controls[ $control_name ] = $control;
 			}
 		}
