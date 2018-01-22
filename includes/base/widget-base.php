@@ -23,7 +23,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Used in cases where the widget has no content. When widgets uses only
 	 * skins to display dynamic content generated on the server. For example the
-	 * posts widget in Elemenrot Pro. Default is true, the widget has content
+	 * posts widget in Elementor Pro. Default is true, the widget has content
 	 * template.
 	 *
 	 * @access protected
@@ -324,7 +324,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Retrieve the current widget initial configuration.
 	 *
-	 * Adds more configuration on top of the controls list, the tabs assignet to
+	 * Adds more configuration on top of the controls list, the tabs assigned to
 	 * the control, element name, type, icon and more. This method also adds
 	 * widget type, keywords and categories.
 	 *
