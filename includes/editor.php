@@ -911,6 +911,8 @@ class Editor {
 
 		$plugin->schemes_manager->print_schemes_templates();
 
+		$plugin->micro_elements_manager->print_templates();
+
 		$this->init_editor_templates();
 
 		foreach ( $this->_editor_templates as $editor_template ) {
