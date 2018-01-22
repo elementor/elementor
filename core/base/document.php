@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Document extends Controls_Stack {
 
+	const TYPE_META_KEY = '_elementor_template_type';
 	/**
 	 * @var \WP_Post
 	 */
@@ -138,6 +139,7 @@ abstract class Document extends Controls_Stack {
 			Plugin::$instance->db->copy_elementor_meta( $this->post->ID, $autosave_id );
 
 			$document = Plugin::$instance->documents->get( $autosave_id );
+			$document->save_type();
 		} else {
 			$document = false;
 		}
@@ -414,6 +416,10 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return false;
+	}
+
+	public function save_type() {
+		update_post_meta( $this->post->ID, self::TYPE_META_KEY, $this->get_name() );
 	}
 
 	public function get_last_edited() {
