@@ -350,7 +350,7 @@ module.exports = Module.extend( {
 
 	createTag: function( tagID, tagName, tagSettings ) {
 		var tagConfig = this.getConfig( 'tags.' + tagName ),
-			DefaultTagClass = this.tags[ 'plain' === tagConfig.render_type ? 'Base' : 'UI' ],
+			DefaultTagClass = this.tags[ 'plain' === tagConfig.content_type ? 'Base' : 'UI' ],
 			TagClass = this.tags[ tagName ] || DefaultTagClass,
 			model = new SettingsModel( tagSettings, {
 				controls: tagConfig.controls
@@ -359,7 +359,7 @@ module.exports = Module.extend( {
 		return new TagClass( { id: tagID, name: tagName, model: model } );
 	},
 
-	renderTagData: function( tagID, tagName, tagSettings ) {
+	getTagDataContent: function( tagID, tagName, tagSettings ) {
 		return this.createTag( tagID, tagName, tagSettings ).getContent();
 	},
 
@@ -381,14 +381,24 @@ var TagControlsStack = require( 'elementor-micro-elements/tag-controls-stack' ),
 module.exports = Marionette.ItemView.extend( {
 	tagControlsStack: null,
 
+	ui: {
+		remove: '.atwho-remove'
+	},
+
 	events: {
-		click: 'onClick'
+		click: 'onClick',
+		'click @ui.remove': 'onRemoveClick'
 	},
 
 	getTemplate: function() {
-		var config = this.getTagConfig();
+		var config = this.getTagConfig(),
+			templateFunction = Marionette.TemplateCache.get( '#tmpl-elementor-tag-mention' ),
+			renderedTemplate = Marionette.Renderer.render( templateFunction, {
+				title: config.title,
+				content: config.mention_template
+			} );
 
-		return Marionette.TemplateCache.prototype.compileTemplate( config.title + ' ' + config.mention_template );
+		return Marionette.TemplateCache.prototype.compileTemplate( renderedTemplate.trim() );
 	},
 
 	getTagConfig: function() {
@@ -430,10 +440,15 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showMentionsPopup: function() {
+		var mentionsPopup = this.getMentionsPopup();
+
+		if ( mentionsPopup.isVisible() ) {
+			return;
+		}
+
 		var positionFromLeft = 7,
 			positionFromTop = -10,
-			$iframe = this.getOption( '$iframe' ),
-			mentionsPopup = this.getMentionsPopup();
+			$iframe = this.getOption( '$iframe' );
 
 		if ( $iframe ) {
 			var offset = $iframe.offset();
@@ -453,6 +468,7 @@ module.exports = Marionette.ItemView.extend( {
 	initTagControlsStack: function() {
 		this.tagControlsStack = new TagControlsStack( {
 			model: this.model,
+			controls: this.model.controls,
 			el: this.getMentionsPopup().getElements( 'message' )[0]
 		} );
 	},
@@ -495,6 +511,18 @@ module.exports = Marionette.ItemView.extend( {
 		this.getTagControlsStack().render();
 
 		this.showMentionsPopup();
+	},
+
+	onRemoveClick: function( event ) {
+		event.stopPropagation();
+
+		this.destroy();
+
+		this.trigger( 'remove' );
+	},
+
+	onDestroy: function() {
+		this.getMentionsPopup().destroy();
 	}
 } );
 
@@ -510,6 +538,8 @@ module.exports = ViewModule.extend( {
 	mentionsInstance: null,
 
 	mentions: [],
+
+	emptyChar: '\u200b',
 
 	__construct: function( settings ) {
 		this.$element = settings.$element;
@@ -542,7 +572,8 @@ module.exports = ViewModule.extend( {
 	bindEvents: function() {
 		this.$element
 			.on( 'blur', this.onElementBlur.bind( this ) )
-			.on( 'keydown', this.onElementKeyDown.bind( this ) );
+			.on( 'keydown', this.onElementKeyDown.bind( this ) )
+			.on( 'keyup', this.onElementKeyUp.bind( this ) );
 
 		if ( this.elements.$addButton ) {
 			this.elements.$addButton.on( 'click', this.onAddMentionClick.bind( this ) );
@@ -560,7 +591,7 @@ module.exports = ViewModule.extend( {
 			return '<span class="atwho-inserted" contenteditable="false" data-tag-id="' + tagID + '" data-tag-name="' + tagName + '" data-elementor-settings="' + tagSettings + '"></span>';
 		} );
 
-		self.$element.html( parsedValue );
+		self.$element.html( parsedValue + this.emptyChar );
 
 		self.$element.find( '.atwho-inserted' ).each( function() {
 			var mentionData = jQuery( this ).data();
@@ -661,7 +692,7 @@ module.exports = ViewModule.extend( {
 			$tag.replaceWith( elementor.microElements.tagDataToTagText( tagData.tagId, tagData.tagName, tagData.elementorSettings ) );
 		} );
 
-		return $clonedElement.html().replace( '&nbsp;', ' ' ).trim();
+		return $clonedElement.html().replace( /&nbsp;/g, ' ' ).replace( new RegExp( this.emptyChar, 'g' ), '' ).trim();
 	},
 
 	getMentionsCount: function() {
@@ -736,6 +767,15 @@ module.exports = ViewModule.extend( {
 		}
 	},
 
+	onElementKeyUp: function() {
+		var elementContent = this.$element.html(),
+			lastCharCode = elementContent.charCodeAt( elementContent.length - 1 );
+
+		if ( this.emptyChar.charCodeAt( 0 ) !== lastCharCode ) {
+			this.$element.append( this.emptyChar );
+		}
+	},
+
 	onAddMentionClick: function() {
 		if ( ! this.mentionAllowed() ) {
 			if ( ! this.getSettings( 'mixedContent' ) && this.getValue() && ! this.getMentionsCount() ) {
@@ -802,6 +842,7 @@ module.exports = ControlsStack.extend( {
 	emptyView: EmptyView,
 
 	isEmpty: function() {
+		// Ignore the section control
 		return this.collection.length < 2;
 	},
 
@@ -809,14 +850,6 @@ module.exports = ControlsStack.extend( {
 		return {
 			elementSettingsModel: this.model
 		};
-	},
-
-	initModel: function() {
-		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
-	},
-
-	initialize: function() {
-		this.initModel();
 	},
 
 	onRenderTemplate: _.noop
@@ -1297,6 +1330,7 @@ module.exports = ViewModule.extend( {
 			title: this.getSettings( 'panelPage.title' ),
 			options: {
 				model: this.model,
+				controls: this.model.controls,
 				name: name
 			}
 		} );
@@ -1436,10 +1470,6 @@ module.exports = ControlsStack.extend( {
 		return {
 			elementSettingsModel: this.model
 		};
-	},
-
-	initialize: function() {
-		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
 	}
 } );
 
@@ -3068,10 +3098,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	renderResponsiveSwitchers: function() {
-		if ( _.isEmpty( this.model.get( 'responsive' ) ) ) {
-			return;
-		}
-
 		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
@@ -5263,6 +5289,16 @@ App = Marionette.Application.extend( {
 				return;
 			}
 
+			controls[ controlKey ] = controlData;
+		} );
+
+		return controls;
+	},
+
+	mergeControlsSettings: function( controls ) {
+		var  self = this;
+
+		_.each( controls, function( controlData, controlKey ) {
 			controls[ controlKey ] = _.extend( {}, self.config.controls[ controlData.type ], controlData  );
 		} );
 
@@ -6013,12 +6049,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 	initialize: function( data, options ) {
 		var self = this;
 
-		if ( options ) {
-			// Keep the options for cloning
-			self.options = options;
-		}
+		// Keep the options for cloning
+		self.options = options;
 
-		self.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( self );
+		self.controls = elementor.mergeControlsSettings( options.controls );
 
 		self.validators = {};
 
@@ -6046,12 +6080,9 @@ BaseSettingsModel = Backbone.Model.extend( {
 				defaults[ field.name ] = field['default'] || control.default_value;
 			}
 
-			if (
-				undefined !== attrs[ field.name ] &&
-				isMultipleControl &&
-				! _.isObject( attrs[ field.name ] ) &&
-				( ! control.dynamic || ! attrs[ 'dynamic_' + field.name ] || 'mentions' !== control.dynamic.valueController )
-			) {
+			var isDynamicControl = control.dynamic && attrs[ 'dynamic_' + field.name ] && 'mentions' === control.dynamic.valueController;
+
+			if ( undefined !== attrs[ field.name ] && isMultipleControl && ! _.isObject( attrs[ field.name ] ) && ! isDynamicControl ) {
 				elementor.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
@@ -6183,49 +6214,71 @@ BaseSettingsModel = Backbone.Model.extend( {
 			.trigger( 'change:external:' + key, value );
 	},
 
-	parseDynamicSettings: function( settings, options ) {
+	parseDynamicSettings: function( settings, options, controls ) {
+		var self = this;
+
 		settings = elementor.helpers.cloneObject( settings );
 
-		jQuery.each( this.controls, function() {
-			if ( settings[ 'dynamic_' + this.name ] ) {
-				var valueToParse = settings[ this.name ],
-					dynamicSettings = this.dynamic;
+		if ( ! controls ) {
+			controls = this.controls;
+		}
 
-				if ( undefined === dynamicSettings ) {
-					dynamicSettings = elementor.config.controls[ this.type ].dynamic;
+		jQuery.each( controls, function() {
+			var control = this,
+				valueToParse = settings[ control.name ];
+
+			if ( ! valueToParse ) {
+				return;
+			}
+
+			if ( 'repeater' === control.type ) {
+				valueToParse.forEach( function( value, key ) {
+					valueToParse[ key ] = self.parseDynamicSettings( value, options, control.fields );
+				} );
+
+				return;
+			}
+
+			if ( ! settings[ 'dynamic_' + control.name ] ) {
+				return;
+			}
+
+			var dynamicSettings = control.dynamic;
+
+			if ( undefined === dynamicSettings ) {
+				dynamicSettings = elementor.config.controls[ control.type ].dynamic;
+			}
+
+			if ( ! dynamicSettings ) {
+				return;
+			}
+
+			if ( dynamicSettings.property ) {
+				valueToParse = valueToParse[ dynamicSettings.property ];
+			}
+
+			var dynamicValue;
+
+			try {
+				dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.getTagDataContent );
+			} catch ( e ) {
+				dynamicValue = '';
+
+				if ( options.onServerRequestStart ) {
+					options.onServerRequestStart();
 				}
 
-				if ( ! dynamicSettings ) {
-					return;
-				}
-
-				if ( dynamicSettings.property ) {
-					valueToParse = valueToParse[ dynamicSettings.property ];
-				}
-
-				var dynamicValue;
-
-				try {
-					dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.renderTagData );
-				} catch ( e ) {
-					dynamicValue = '';
-
-					if ( options.onServerRequestStart ) {
-						options.onServerRequestStart();
+				elementor.microElements.refreshCacheFromServer( function() {
+					if ( options.onServerRequestEnd ) {
+						options.onServerRequestEnd();
 					}
+				} );
+			}
 
-					elementor.microElements.refreshCacheFromServer( function() {
-						if ( options.onServerRequestEnd ) {
-							options.onServerRequestEnd();
-						}
-					} );
-				}
-
-				if ( dynamicSettings.property ) {
-					settings[ this.name ][ dynamicSettings.property ] = dynamicValue;
-				} else {
-					settings[ this.name ] = dynamicValue;
-				}
+			if ( dynamicSettings.property ) {
+				settings[ control.name ][ dynamicSettings.property ] = dynamicValue;
+			} else {
+				settings[ control.name ] = dynamicValue;
 			}
 		} );
 
@@ -6359,7 +6412,8 @@ ElementModel = Backbone.Model.extend( {
 			settingModels = {
 				column: ColumnSettingsModel
 			},
-			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
+			SettingsModel = settingModels[ elType ] || BaseSettingsModel,
+			elementData;
 
 		if ( jQuery.isEmptyObject( settings ) ) {
 			settings = elementor.helpers.cloneObject( settings );
@@ -6372,7 +6426,9 @@ ElementModel = Backbone.Model.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
-		settings = new SettingsModel( settings );
+		settings = new SettingsModel( settings, {
+			controls: elementor.getElementControls( this )
+		} );
 
 		this.set( 'settings', settings );
 
@@ -8776,17 +8832,6 @@ EditorView = ControlsStack.extend( {
 		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ) );
 	},
 
-	onBeforeRender: function() {
-		var controls = elementor.getElementControls( this.model );
-
-		if ( ! controls ) {
-			throw new Error( 'Editor controls not found' );
-		}
-
-		// Create new instance of that collection
-		this.collection = new Backbone.Collection( _.values( controls ) );
-	},
-
 	onDestroy: function() {
 		var editedElementView = this.getOption( 'editedElementView' );
 
@@ -9923,6 +9968,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementData.title ] ), {
 			model: model,
+			controls: elementor.getElementControls( model ),
 			editedElementView: view
 		} );
 
@@ -10315,43 +10361,15 @@ ControlsCSSParser = ViewModule.extend( {
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
 		var self = this,
-			dynamicParsedValues = self.getSettings( 'settingsModel' ).parseDynamicSettings( values, self.getSettings( 'dynamicParsing' ) );
+			dynamicParsedValues = self.getSettings( 'settingsModel' ).parseDynamicSettings( values, self.getSettings( 'dynamicParsing' ), styleControls );
 
 		_.each( styleControls, function( control ) {
 			if ( control.styleFields && control.styleFields.length ) {
-				values[ control.name ].each( function( itemModel ) {
-					self.addStyleRules(
-						control.styleFields,
-						itemModel.attributes,
-						controls,
-						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
-						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
-					);
-				} );
+				self.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, controls, placeholders, replacements );
 			}
 
 			if ( control.dynamic && values[ 'dynamic_' + control.name ] ) {
-				var value = values[ control.name ];
-
-				if ( control.dynamic.property ) {
-					value = value[ control.dynamic.property ];
-				}
-
-				elementor.microElements.parseTagsText( value, control.dynamic, function( id, name, settings ) {
-					var tag = elementor.microElements.createTag( id, name, settings ),
-						tagSettingsModel = tag.model,
-						styleControls = tagSettingsModel.getStyleControls();
-
-					if ( ! styleControls.length ) {
-						return;
-					}
-
-					var tagReplacements = replacements.slice( 0 );
-
-					tagReplacements.splice( placeholders.indexOf( '{{WRAPPER}}' ), 1, '#elementor-tag-' + id );
-
-					self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, placeholders, tagReplacements );
-				} );
+				self.addDynamicControlStyleRules( values[ control.name ], control );
 			}
 
 			if ( ! control.selectors ) {
@@ -10382,6 +10400,41 @@ ControlsCSSParser = ViewModule.extend( {
 		}
 
 		return value;
+	},
+
+	addRepeaterControlsStyleRules: function( repeaterValues, repeaterControls, controls, placeholders, replacements ) {
+		var self = this;
+
+		repeaterValues.each( function( itemModel ) {
+			self.addStyleRules(
+				repeaterControls,
+				itemModel.attributes,
+				controls,
+				placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
+				replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
+			);
+		} );
+	},
+
+	addDynamicControlStyleRules: function( value, control ) {
+		var self = this,
+			valueToParse = value;
+
+		if ( control.dynamic.property ) {
+			valueToParse = valueToParse[ control.dynamic.property ];
+		}
+
+		elementor.microElements.parseTagsText( valueToParse, control.dynamic, function( id, name, settings ) {
+			var tag = elementor.microElements.createTag( id, name, settings ),
+				tagSettingsModel = tag.model,
+				styleControls = tagSettingsModel.getStyleControls();
+
+			if ( ! styleControls.length ) {
+				return;
+			}
+
+			self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, [ '{{WRAPPER}}' ], [ '#elementor-tag-' + id ] );
+		} );
 	},
 
 	addStyleToDocument: function() {
@@ -12491,7 +12544,13 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	initialize: function() {
+		this.initCollection();
+
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
+	initCollection: function() {
+		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( this.getOption( 'controls' ) ) ) );
 	},
 
 	filter: function( controlModel ) {

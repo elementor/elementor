@@ -428,7 +428,7 @@ class Widget_Image_Box extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$has_content = ! empty( $settings['title_text'] ) || ! empty( $settings['description_text'] );
 

@@ -11,7 +11,7 @@ abstract class UI_Tag extends Tag {
 	protected function _get_initial_config() {
 		$config = parent::_get_initial_config();
 
-		$config['render_type'] = 'ui';
+		$config['content_type'] = 'ui';
 
 		return $config;
 	}

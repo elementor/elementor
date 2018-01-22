@@ -634,7 +634,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['carousel'] ) ) {
 			return;
@@ -754,7 +754,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	 * @return string The caption of the image.
 	 */
 	private function get_image_caption( $attachment ) {
-		$caption_type = $this->get_settings( 'caption_type' );
+		$caption_type = $this->get_settings_for_display( 'caption_type' );
 
 		if ( empty( $caption_type ) ) {
 			return '';

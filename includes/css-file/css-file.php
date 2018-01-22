@@ -342,7 +342,7 @@ abstract class CSS_File {
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
 		$all_controls = $controls_stack->get_controls();
 
-		$parsed_dynamic_settings = $controls_stack->parse_dynamic_settings( $values );
+		$parsed_dynamic_settings = $controls_stack->parse_dynamic_settings( $values, $controls );
 
 		foreach ( $controls as $control ) {
 			if ( ! empty( $control['style_fields'] ) ) {
@@ -350,7 +350,7 @@ abstract class CSS_File {
 			}
 
 			if ( ! empty( $control['dynamic'] ) ) {
-				$this->add_dynamic_control_style_rules( $control, $values[ $control['name'] ], $placeholders, $replacements );
+				$this->add_dynamic_control_style_rules( $control, $values[ $control['name'] ] );
 			}
 
 			if ( empty( $control['selectors'] ) ) {
@@ -535,19 +535,15 @@ abstract class CSS_File {
 		}
 	}
 
-	private function add_dynamic_control_style_rules( array $control, $value, array $placeholders, array $replacements ) {
-		Plugin::$instance->micro_elements_manager->parse_tags_text( $value, $control, function( $id, $name, $settings ) use ( $placeholders, $replacements ) {
+	private function add_dynamic_control_style_rules( array $control, $value ) {
+		Plugin::$instance->micro_elements_manager->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
 			$tag = Plugin::$instance->micro_elements_manager->create_tag( $id, $name, $settings );
 
 			if ( ! $tag instanceof UI_Tag ) {
 				return;
 			}
 
-			$tag_replacements = $replacements;
-
-			$tag_replacements[ array_search( '{{WRAPPER}}', $placeholders, true ) ] = '#elementor-tag-' . $id;
-
-			$this->add_controls_stack_style_rules( $tag, $tag->get_style_controls(), $tag->get_active_settings(), $placeholders, $tag_replacements );
+			$this->add_controls_stack_style_rules( $tag, $tag->get_style_controls(), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
 		} );
 	}
 }

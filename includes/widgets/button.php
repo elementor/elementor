@@ -394,7 +394,7 @@ class Widget_Button extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
@@ -469,12 +469,18 @@ class Widget_Button extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render_text() {
-		$settings = $this->get_settings();
-		$this->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
-		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $settings['icon_align'] );
-		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
+		$settings = $this->get_settings_for_display();
 
-		$this->add_render_attribute( 'text', 'class', 'elementor-button-text' );
+		$this->add_render_attribute( [
+			'content-wrapper' => [ 'class' => 'elementor-button-content-wrapper' ],
+			'icon-align' => [
+				'class' => [
+					'elementor-button-icon',
+					'elementor-align-icon-' . $settings['icon_align'],
+				],
+			],
+			'text' => [ 'class' => 'elementor-button-text' ],
+		] );
 
 		$this->add_inline_editing_attributes( 'text', 'none' );
 		?>

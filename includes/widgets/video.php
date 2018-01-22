@@ -664,7 +664,7 @@ class Widget_Video extends Widget_Base {
 	 * @return array Video embed parameters.
 	 */
 	public function get_embed_params() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$params = [];
 
@@ -712,7 +712,7 @@ class Widget_Video extends Widget_Base {
 	 * @return array Video hosted parameters.
 	 */
 	protected function get_hosted_params() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$params = [];
 
@@ -746,7 +746,7 @@ class Widget_Video extends Widget_Base {
 	 * @return bool Whether an image overlay was set for the video.
 	 */
 	protected function has_image_overlay() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		return ! empty( $settings['image_overlay']['url'] ) && 'yes' === $settings['show_image_overlay'];
 	}

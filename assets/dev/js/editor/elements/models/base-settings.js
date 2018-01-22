@@ -6,12 +6,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 	initialize: function( data, options ) {
 		var self = this;
 
-		if ( options ) {
-			// Keep the options for cloning
-			self.options = options;
-		}
+		// Keep the options for cloning
+		self.options = options;
 
-		self.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( self );
+		self.controls = elementor.mergeControlsSettings( options.controls );
 
 		self.validators = {};
 
@@ -39,12 +37,9 @@ BaseSettingsModel = Backbone.Model.extend( {
 				defaults[ field.name ] = field['default'] || control.default_value;
 			}
 
-			if (
-				undefined !== attrs[ field.name ] &&
-				isMultipleControl &&
-				! _.isObject( attrs[ field.name ] ) &&
-				( ! control.dynamic || ! attrs[ 'dynamic_' + field.name ] || 'mentions' !== control.dynamic.valueController )
-			) {
+			var isDynamicControl = control.dynamic && attrs[ 'dynamic_' + field.name ] && 'mentions' === control.dynamic.valueController;
+
+			if ( undefined !== attrs[ field.name ] && isMultipleControl && ! _.isObject( attrs[ field.name ] ) && ! isDynamicControl ) {
 				elementor.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
@@ -176,49 +171,71 @@ BaseSettingsModel = Backbone.Model.extend( {
 			.trigger( 'change:external:' + key, value );
 	},
 
-	parseDynamicSettings: function( settings, options ) {
+	parseDynamicSettings: function( settings, options, controls ) {
+		var self = this;
+
 		settings = elementor.helpers.cloneObject( settings );
 
-		jQuery.each( this.controls, function() {
-			if ( settings[ 'dynamic_' + this.name ] ) {
-				var valueToParse = settings[ this.name ],
-					dynamicSettings = this.dynamic;
+		if ( ! controls ) {
+			controls = this.controls;
+		}
 
-				if ( undefined === dynamicSettings ) {
-					dynamicSettings = elementor.config.controls[ this.type ].dynamic;
+		jQuery.each( controls, function() {
+			var control = this,
+				valueToParse = settings[ control.name ];
+
+			if ( ! valueToParse ) {
+				return;
+			}
+
+			if ( 'repeater' === control.type ) {
+				valueToParse.forEach( function( value, key ) {
+					valueToParse[ key ] = self.parseDynamicSettings( value, options, control.fields );
+				} );
+
+				return;
+			}
+
+			if ( ! settings[ 'dynamic_' + control.name ] ) {
+				return;
+			}
+
+			var dynamicSettings = control.dynamic;
+
+			if ( undefined === dynamicSettings ) {
+				dynamicSettings = elementor.config.controls[ control.type ].dynamic;
+			}
+
+			if ( ! dynamicSettings ) {
+				return;
+			}
+
+			if ( dynamicSettings.property ) {
+				valueToParse = valueToParse[ dynamicSettings.property ];
+			}
+
+			var dynamicValue;
+
+			try {
+				dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.getTagDataContent );
+			} catch ( e ) {
+				dynamicValue = '';
+
+				if ( options.onServerRequestStart ) {
+					options.onServerRequestStart();
 				}
 
-				if ( ! dynamicSettings ) {
-					return;
-				}
-
-				if ( dynamicSettings.property ) {
-					valueToParse = valueToParse[ dynamicSettings.property ];
-				}
-
-				var dynamicValue;
-
-				try {
-					dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.renderTagData );
-				} catch ( e ) {
-					dynamicValue = '';
-
-					if ( options.onServerRequestStart ) {
-						options.onServerRequestStart();
+				elementor.microElements.refreshCacheFromServer( function() {
+					if ( options.onServerRequestEnd ) {
+						options.onServerRequestEnd();
 					}
+				} );
+			}
 
-					elementor.microElements.refreshCacheFromServer( function() {
-						if ( options.onServerRequestEnd ) {
-							options.onServerRequestEnd();
-						}
-					} );
-				}
-
-				if ( dynamicSettings.property ) {
-					settings[ this.name ][ dynamicSettings.property ] = dynamicValue;
-				} else {
-					settings[ this.name ] = dynamicValue;
-				}
+			if ( dynamicSettings.property ) {
+				settings[ control.name ][ dynamicSettings.property ] = dynamicValue;
+			} else {
+				settings[ control.name ] = dynamicValue;
 			}
 		} );
 

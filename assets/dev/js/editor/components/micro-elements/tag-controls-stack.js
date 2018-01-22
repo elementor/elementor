@@ -11,6 +11,7 @@ module.exports = ControlsStack.extend( {
 	emptyView: EmptyView,
 
 	isEmpty: function() {
+		// Ignore the section control
 		return this.collection.length < 2;
 	},
 
@@ -18,14 +19,6 @@ module.exports = ControlsStack.extend( {
 		return {
 			elementSettingsModel: this.model
 		};
-	},
-
-	initModel: function() {
-		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
-	},
-
-	initialize: function() {
-		this.initModel();
 	},
 
 	onRenderTemplate: _.noop

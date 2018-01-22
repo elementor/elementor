@@ -81,7 +81,7 @@ class Manager {
 		] );
 	}
 
-	public function render_tag_data( $tag_id, $tag_name, array $settings = [] ) {
+	public function get_tag_data_content( $tag_id, $tag_name, array $settings = [] ) {
 		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
 
 		return $tag->get_content();
@@ -103,8 +103,6 @@ class Manager {
 			'class' => $class,
 			'instance' => $tag,
 		];
-
-		$this->add_editor_template( $tag );
 	}
 
 	public function register_group( $group_name, array $group_settings ) {
@@ -117,12 +115,16 @@ class Manager {
 		$this->tags_groups[ $group_name ] = $group_settings;
 	}
 
-	public function add_editor_template( Tag $tag ) {
-		ob_start();
+	public function print_templates() {
+		foreach ( $this->tags_info as $tag_name => $tag_info ) {
+			$tag = $tag_info['instance'];
 
-		$tag->print_template();
+			if ( ! $tag instanceof UI_Tag ) {
+				continue;
+			}
 
-		Plugin::$instance->editor->add_editor_template( ob_get_clean(), 'text' );
+			$tag->print_template();
+		}
 	}
 
 	public function get_tags_config() {
@@ -138,7 +140,7 @@ class Manager {
 				'mention_template' => $tag->get_mention_template(),
 				'groups' => $tag->get_groups(),
 				'controls' => $tag->get_controls(),
-				'render_type' => $tag->get_config()['render_type'],
+				'content_type' => $tag->get_config()['content_type'],
 			];
 		}
 

@@ -111,7 +111,7 @@ module.exports = Module.extend( {
 
 	createTag: function( tagID, tagName, tagSettings ) {
 		var tagConfig = this.getConfig( 'tags.' + tagName ),
-			DefaultTagClass = this.tags[ 'plain' === tagConfig.render_type ? 'Base' : 'UI' ],
+			DefaultTagClass = this.tags[ 'plain' === tagConfig.content_type ? 'Base' : 'UI' ],
 			TagClass = this.tags[ tagName ] || DefaultTagClass,
 			model = new SettingsModel( tagSettings, {
 				controls: tagConfig.controls
@@ -120,7 +120,7 @@ module.exports = Module.extend( {
 		return new TagClass( { id: tagID, name: tagName, model: model } );
 	},
 
-	renderTagData: function( tagID, tagName, tagSettings ) {
+	getTagDataContent: function( tagID, tagName, tagSettings ) {
 		return this.createTag( tagID, tagName, tagSettings ).getContent();
 	},
 

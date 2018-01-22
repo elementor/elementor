@@ -4,14 +4,24 @@ var TagControlsStack = require( 'elementor-micro-elements/tag-controls-stack' ),
 module.exports = Marionette.ItemView.extend( {
 	tagControlsStack: null,
 
+	ui: {
+		remove: '.atwho-remove'
+	},
+
 	events: {
-		click: 'onClick'
+		click: 'onClick',
+		'click @ui.remove': 'onRemoveClick'
 	},
 
 	getTemplate: function() {
-		var config = this.getTagConfig();
+		var config = this.getTagConfig(),
+			templateFunction = Marionette.TemplateCache.get( '#tmpl-elementor-tag-mention' ),
+			renderedTemplate = Marionette.Renderer.render( templateFunction, {
+				title: config.title,
+				content: config.mention_template
+			} );
 
-		return Marionette.TemplateCache.prototype.compileTemplate( config.title + ' ' + config.mention_template );
+		return Marionette.TemplateCache.prototype.compileTemplate( renderedTemplate.trim() );
 	},
 
 	getTagConfig: function() {
@@ -53,10 +63,15 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showMentionsPopup: function() {
+		var mentionsPopup = this.getMentionsPopup();
+
+		if ( mentionsPopup.isVisible() ) {
+			return;
+		}
+
 		var positionFromLeft = 7,
 			positionFromTop = -10,
-			$iframe = this.getOption( '$iframe' ),
-			mentionsPopup = this.getMentionsPopup();
+			$iframe = this.getOption( '$iframe' );
 
 		if ( $iframe ) {
 			var offset = $iframe.offset();
@@ -76,6 +91,7 @@ module.exports = Marionette.ItemView.extend( {
 	initTagControlsStack: function() {
 		this.tagControlsStack = new TagControlsStack( {
 			model: this.model,
+			controls: this.model.controls,
 			el: this.getMentionsPopup().getElements( 'message' )[0]
 		} );
 	},
@@ -118,5 +134,17 @@ module.exports = Marionette.ItemView.extend( {
 		this.getTagControlsStack().render();
 
 		this.showMentionsPopup();
+	},
+
+	onRemoveClick: function( event ) {
+		event.stopPropagation();
+
+		this.destroy();
+
+		this.trigger( 'remove' );
+	},
+
+	onDestroy: function() {
+		this.getMentionsPopup().destroy();
 	}
 } );
