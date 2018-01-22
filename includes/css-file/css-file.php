@@ -415,7 +415,7 @@ abstract class CSS_File {
 	 * @since 1.2.0
 	 * @access public
 	 *
-	 * @return Stylesheet
+	 * @return Stylesheet The stylesheet object.
 	 */
 	public function get_stylesheet() {
 		return $this->stylesheet_obj;
