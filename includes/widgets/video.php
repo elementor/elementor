@@ -628,8 +628,9 @@ class Widget_Video extends Widget_Base {
 						<img src="<?php echo $settings['image_overlay']['url']; ?>">
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
-						<div class="elementor-custom-embed-play">
+						<div class="elementor-custom-embed-play" role="button">
 							<i class="eicon-play" aria-hidden="true"></i>
+							<span class="elementor-screen-only"><?php esc_html_e( 'Play Video', 'elementor' ); ?></span>
 						</div>
 					<?php endif; ?>
 				</div>
