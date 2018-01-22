@@ -141,10 +141,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-editor-content">
 	<div class="elementor-panel-navigation">
-		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
-		<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-			<a href="#">{{{ tabTitle }}}</a>
-		</div>
+		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) {
+			#>
+			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<a href="#">{{{ tabTitle }}}</a>
+			</div>
 		<# } ); #>
 	</div>
 	<# if ( elementData.reload_preview ) { #>
@@ -239,6 +240,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</a>
 			<# } );
 		#>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
+	<div class="elementor-control-dynamic-switcher-wrapper">
+		<div class="elementor-control-dynamic-switcher">
+			<# if ( 'switcher' === addButton ) { #>
+				<input id="elementor-dynamic-switcher-simple-{{ cid }}" class="elementor-control-dynamic-switcher-static" type="radio" name="elementor-dynamic-switcher-{{ cid }}" value="simple">
+				<label for="elementor-dynamic-switcher-simple-{{ cid }}" class="elementor-control-dynamic-switcher-label">
+					<i class="fa fa-picture-o"></i>
+				</label>
+			<# } #>
+			<input id="elementor-dynamic-switcher-dynamic-{{ cid }}" class="elementor-control-mentions-add elementor-control-dynamic-switcher-dynamic" type="radio" name="elementor-dynamic-switcher-{{ cid }}" value="dynamic">
+			<label for="elementor-dynamic-switcher-dynamic-{{ cid }}" class="elementor-control-dynamic-switcher-label elementor-control-dynamic-switcher-dynamic-label">
+				<i class="fa fa-database"></i>
+			</label>
+		</div>
 	</div>
 </script>
 

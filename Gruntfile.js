@@ -105,6 +105,11 @@ module.exports = function( grunt ) {
 							expose: 'elementor-templates'
 						},
 						{
+							cwd: 'assets/dev/js/editor/components/micro-elements',
+							src: '**/*.js',
+							expose: 'elementor-micro-elements'
+						},
+						{
 							cwd: 'assets/dev/js/frontend',
 							src: '**/*.js',
 							expose: 'elementor-frontend'

@@ -433,6 +433,24 @@ class Editor {
 		);
 
 		wp_register_script(
+			'jquery-caret',
+			ELEMENTOR_ASSETS_URL . 'lib/caret/jquery.caret' . $suffix . '.js',
+			[],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
+			'jquery-at',
+			ELEMENTOR_ASSETS_URL . 'lib/at/js/jquery.atwho' . $suffix . '.js',
+			[
+				'jquery-caret',
+			],
+			'1.5.4',
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
@@ -452,6 +470,7 @@ class Editor {
 				'ace',
 				'ace-language-tools',
 				'jquery-hover-intent',
+				'jquery-at',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -532,6 +551,7 @@ class Editor {
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'current_user_can_publish' => $current_user_can_publish,
 			'exit_to_dashboard_url' => Utils::get_exit_to_dashboard_url( $this->_post_id ),
+			'microElements' => Plugin::$instance->micro_elements_manager->get_config(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
@@ -747,6 +767,13 @@ class Editor {
 		);
 
 		wp_register_style(
+			'jquery-atwho',
+			ELEMENTOR_ASSETS_URL . 'lib/at/css/jquery.atwho' . $suffix . '.css',
+			[],
+			'1.5.4'
+		);
+
+		wp_register_style(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
@@ -756,6 +783,7 @@ class Editor {
 				'wp-auth-check',
 				'google-font-roboto',
 				'flatpickr',
+				'jquery-atwho',
 			],
 			ELEMENTOR_VERSION
 		);
