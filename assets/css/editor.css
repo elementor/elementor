@@ -3462,7 +3462,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
     width: 41%; } }
 
 .atwho-inserted {
-  padding: 2px 5px;
+  display: inline-block;
+  line-height: 1.5;
   background-color: #e6e9ec;
   cursor: pointer;
   white-space: nowrap;
@@ -3470,6 +3471,12 @@ body.elementor-editor-preview #elementor-mode-switcher {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none; }
+  .atwho-inserted-inner {
+    padding: 0 5px; }
+
+.atwho-remove {
+  font-size: 10px;
+  margin-left: 3px; }
 
 .elementor-mentions-popup {
   position: absolute;

@@ -32,43 +32,15 @@ ControlsCSSParser = ViewModule.extend( {
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
 		var self = this,
-			dynamicParsedValues = self.getSettings( 'settingsModel' ).parseDynamicSettings( values, self.getSettings( 'dynamicParsing' ) );
+			dynamicParsedValues = self.getSettings( 'settingsModel' ).parseDynamicSettings( values, self.getSettings( 'dynamicParsing' ), styleControls );
 
 		_.each( styleControls, function( control ) {
 			if ( control.styleFields && control.styleFields.length ) {
-				values[ control.name ].each( function( itemModel ) {
-					self.addStyleRules(
-						control.styleFields,
-						itemModel.attributes,
-						controls,
-						placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
-						replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
-					);
-				} );
+				self.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, controls, placeholders, replacements );
 			}
 
 			if ( control.dynamic && values[ 'dynamic_' + control.name ] ) {
-				var value = values[ control.name ];
-
-				if ( control.dynamic.property ) {
-					value = value[ control.dynamic.property ];
-				}
-
-				elementor.microElements.parseTagsText( value, control.dynamic, function( id, name, settings ) {
-					var tag = elementor.microElements.createTag( id, name, settings ),
-						tagSettingsModel = tag.model,
-						styleControls = tagSettingsModel.getStyleControls();
-
-					if ( ! styleControls.length ) {
-						return;
-					}
-
-					var tagReplacements = replacements.slice( 0 );
-
-					tagReplacements.splice( placeholders.indexOf( '{{WRAPPER}}' ), 1, '#elementor-tag-' + id );
-
-					self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, placeholders, tagReplacements );
-				} );
+				self.addDynamicControlStyleRules( values[ control.name ], control );
 			}
 
 			if ( ! control.selectors ) {
@@ -99,6 +71,41 @@ ControlsCSSParser = ViewModule.extend( {
 		}
 
 		return value;
+	},
+
+	addRepeaterControlsStyleRules: function( repeaterValues, repeaterControls, controls, placeholders, replacements ) {
+		var self = this;
+
+		repeaterValues.each( function( itemModel ) {
+			self.addStyleRules(
+				repeaterControls,
+				itemModel.attributes,
+				controls,
+				placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),
+				replacements.concat( [ '.elementor-repeater-item-' + itemModel.get( '_id' ) ] )
+			);
+		} );
+	},
+
+	addDynamicControlStyleRules: function( value, control ) {
+		var self = this,
+			valueToParse = value;
+
+		if ( control.dynamic.property ) {
+			valueToParse = valueToParse[ control.dynamic.property ];
+		}
+
+		elementor.microElements.parseTagsText( valueToParse, control.dynamic, function( id, name, settings ) {
+			var tag = elementor.microElements.createTag( id, name, settings ),
+				tagSettingsModel = tag.model,
+				styleControls = tagSettingsModel.getStyleControls();
+
+			if ( ! styleControls.length ) {
+				return;
+			}
+
+			self.addStyleRules( tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, [ '{{WRAPPER}}' ], [ '#elementor-tag-' + id ] );
+		} );
 	},
 
 	addStyleToDocument: function() {

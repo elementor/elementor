@@ -124,7 +124,7 @@ class Widget_Sidebar extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$sidebar = $this->get_settings( 'sidebar' );
+		$sidebar = $this->get_settings_for_display( 'sidebar' );
 
 		if ( empty( $sidebar ) ) {
 			return;

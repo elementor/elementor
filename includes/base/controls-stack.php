@@ -724,7 +724,7 @@ abstract class Controls_Stack {
 				$control['style_fields'] = $this->get_style_controls( $control['fields'] );
 			}
 
-			if ( ! empty( $control['style_fields'] ) || ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) ) {
+			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || ! empty( $control['style_fields'] ) ) {
 				$style_controls[ $control_name ] = $control;
 			}
 		}
@@ -1016,38 +1016,54 @@ abstract class Controls_Stack {
 		return array_merge( $settings_mask, $active_settings );
 	}
 
-	public function get_settings_for_display() {
-		return $this->parse_dynamic_settings( $this->get_active_settings() );
+	public function get_settings_for_display( $setting_key = null ) {
+		if ( $setting_key ) {
+			$settings = [ $setting_key => $this->get_settings( $setting_key ) ];
+		} else {
+			$settings = $this->get_active_settings();
+		}
+
+		$parsed_settings = $this->parse_dynamic_settings( $settings );
+
+		if ( $setting_key ) {
+			return $parsed_settings[ $setting_key ];
+		}
+
+		return $parsed_settings;
 	}
 
-	public function parse_dynamic_settings( $settings ) {
-		$all_settings = $this->get_settings();
+	public function parse_dynamic_settings( $settings, $controls = null, $all_settings = null ) {
+		if ( null === $all_settings ) {
+			$all_settings = $this->get_settings();
+		}
 
-		foreach ( $this->get_controls() as $control ) {
+		if ( null === $controls ) {
+			$controls = $this->get_controls();
+		}
+
+		foreach ( $controls as $control ) {
+			if ( ! isset( $settings[ $control['name'] ] ) || null === $settings[ $control['name'] ] ) {
+				continue;
+			}
+
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
 				continue;
 			}
 
+			if ( 'repeater' === $control_obj->get_type() ) {
+				foreach ( $settings[ $control['name'] ] as & $field ) {
+					$field = $this->parse_dynamic_settings( $field, $control['fields'], $field );
+				}
+
+				continue;
+			}
+
 			$control = array_merge( $control_obj->get_settings(), $control );
 
 			if ( ! empty( $control['dynamic'] ) && ! empty( $all_settings[ 'dynamic_' . $control['name'] ] ) ) {
-				$valueToParse = $settings[ $control['name'] ];
-
-				$dynamicProperty = ! empty( $control['dynamic']['property'] ) ? $control['dynamic']['property'] : null;
-
-				if ( $dynamicProperty ) {
-					$valueToParse = $valueToParse[ $dynamicProperty ];
-				}
-
-				$parsedValue = $control_obj->parse_tags( $valueToParse );
-
-				if ( $dynamicProperty ) {
-					$settings[ $control['name'] ][ $dynamicProperty ] = $parsedValue;
-				} else {
-					$settings[ $control['name'] ] = $parsedValue;
-				}
+				$settings[ $control['name'] ] = $control_obj->parse_tags( $settings[ $control['name'] ], $control['dynamic'] );
 			}
 		}
 
@@ -1660,13 +1676,11 @@ abstract class Controls_Stack {
 
 			$control = array_merge( $control_obj->get_settings(), $control );
 
-			if (
-				isset( $settings[ $control['name'] ] ) &&
-			    ! empty( $control['dynamic']['valueController'] ) &&
-			    'mentions' === $control['dynamic']['valueController'] &&
-				! empty( $settings[ 'dynamic_' . $control['name'] ] )
-			)
-			{
+			$is_dynamic_value = isset( $settings[ $control['name'] ] ) && ! empty( $settings[ 'dynamic_' . $control['name'] ] );
+
+			$is_value_not_controlled =  $is_dynamic_value && ! empty( $control['dynamic']['valueController'] ) && 'mentions' === $control['dynamic']['valueController'];
+
+			if ( $is_value_not_controlled ) {
 				continue;
 			}
 
