@@ -66,7 +66,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Color extends Base_Data_Control {
 
 	/**
-	 * Retrieve color control type.
+	 * Get color control type.
+	 *
+	 * Retrieve the control type, in this case `color`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -140,9 +142,9 @@ class Control_Color extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve color control default settings.
+	 * Get color control default settings.
 	 *
-	 * Get the default settings of the color control. Used to return the default
+	 * Retrieve the default settings of the color control. Used to return the default
 	 * settings while initializing the color control.
 	 *
 	 * @since 1.0.0

@@ -101,7 +101,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Slider extends Control_Base_Units {
 
 	/**
-	 * Retrieve slider control type.
+	 * Get slider control type.
+	 *
+	 * Retrieve the control type, in this case `slider`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -113,9 +115,9 @@ class Control_Slider extends Control_Base_Units {
 	}
 
 	/**
-	 * Retrieve slider control default values.
+	 * Get slider control default values.
 	 *
-	 * Get the default value of the slider control. Used to return the default
+	 * Retrieve the default value of the slider control. Used to return the default
 	 * values while initializing the slider control.
 	 *
 	 * @since 1.0.0
@@ -132,9 +134,9 @@ class Control_Slider extends Control_Base_Units {
 	}
 
 	/**
-	 * Retrieve slider control default settings.
+	 * Get slider control default settings.
 	 *
-	 * Get the default settings of the slider control. Used to return the
+	 * Retrieve the default settings of the slider control. Used to return the
 	 * default settings while initializing the slider control.
 	 *
 	 * @since 1.0.0
