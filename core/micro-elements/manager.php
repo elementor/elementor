@@ -140,7 +140,7 @@ class Manager {
 				'mention_template' => $tag->get_mention_template(),
 				'groups' => $tag->get_groups(),
 				'controls' => $tag->get_controls(),
-				'render_type' => $tag->get_config()['render_type'],
+				'content_type' => $tag->get_config()['content_type'],
 			];
 		}
 

@@ -111,7 +111,7 @@ module.exports = Module.extend( {
 
 	createTag: function( tagID, tagName, tagSettings ) {
 		var tagConfig = this.getConfig( 'tags.' + tagName ),
-			DefaultTagClass = this.tags[ 'plain' === tagConfig.render_type ? 'Base' : 'UI' ],
+			DefaultTagClass = this.tags[ 'plain' === tagConfig.content_type ? 'Base' : 'UI' ],
 			TagClass = this.tags[ tagName ] || DefaultTagClass,
 			model = new SettingsModel( tagSettings, {
 				controls: tagConfig.controls
