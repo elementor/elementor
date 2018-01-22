@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.5
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 1.9.2
+Stable tag: 1.9.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -183,6 +183,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 1.9.3 - 2018-01-21 =
+* Fix: Enqueue style/script if when not needed ([#3094](https://github.com/pojome/elementor/issues/3094))
+* Fix: Added compatibility for Safari browser accessibility
+* Fix: Error message in saver
+* Fix: Elementor missing WP editor content ([#3139](https://github.com/pojome/elementor/issues/3139))
+* Fix: Changes lost on revisions panel tab destroy ([#3242](https://github.com/pojome/elementor/issues/3242))
 
 = 1.9.2 - 2018-01-16 =
 * Tweak: Improved querying for revisions to reduce load time on posts with lots of revisions
