@@ -81,7 +81,7 @@ class Manager {
 		] );
 	}
 
-	public function render_tag_data( $tag_id, $tag_name, array $settings = [] ) {
+	public function get_tag_data_content( $tag_id, $tag_name, array $settings = [] ) {
 		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
 
 		return $tag->get_content();
