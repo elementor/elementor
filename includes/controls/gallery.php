@@ -75,7 +75,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Gallery extends Base_Data_Control {
 
 	/**
-	 * Retrieve gallery control type.
+	 * Get gallery control type.
+	 *
+	 * Retrieve the control type, in this case `gallery`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -155,9 +157,9 @@ class Control_Gallery extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve gallery control default settings.
+	 * Get gallery control default settings.
 	 *
-	 * Get the default settings of the gallery control. Used to return the
+	 * Retrieve the default settings of the gallery control. Used to return the
 	 * default settings while initializing the gallery control.
 	 *
 	 * @since 1.0.0
@@ -173,9 +175,9 @@ class Control_Gallery extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve gallery control default values.
+	 * Get gallery control default values.
 	 *
-	 * Get the default value of the gallery control. Used to return the default
+	 * Retrieve the default value of the gallery control. Used to return the default
 	 * values while initializing the gallery control.
 	 *
 	 * @since 1.0.0

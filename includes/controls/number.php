@@ -69,7 +69,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Number extends Base_Data_Control {
 
 	/**
-	 * Retrieve number control type.
+	 * Get number control type.
+	 *
+	 * Retrieve the control type, in this case `number`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -81,9 +83,9 @@ class Control_Number extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve number control default settings.
+	 * Get number control default settings.
 	 *
-	 * Get the default settings of the number control. Used to return the
+	 * Retrieve the default settings of the number control. Used to return the
 	 * default settings while initializing the number control.
 	 *
 	 * @since 1.5.0

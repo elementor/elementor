@@ -80,7 +80,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Box_Shadow extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve box shadow control type.
+	 * Get box shadow control type.
+	 *
+	 * Retrieve the control type, in this case `box_shadow`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -92,9 +94,9 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve box shadow control default value.
+	 * Get box shadow control default value.
 	 *
-	 * Get the default value of the box shadow control. Used to return the
+	 * Retrieve the default value of the box shadow control. Used to return the
 	 * default values while initializing the box shadow control.
 	 *
 	 * @since 1.0.0
@@ -113,9 +115,9 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve box shadow control sliders.
+	 * Get box shadow control sliders.
 	 *
-	 * Get the sliders of the box shadow control. Sliders are used while
+	 * Retrieve the sliders of the box shadow control. Sliders are used while
 	 * rendering the control output in the editor.
 	 *
 	 * @since 1.0.0
