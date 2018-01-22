@@ -152,9 +152,9 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * ??
+	 * Update the CSS file.
 	 *
-	 * ??
+	 * Delete old CSS, parse the CSS, save the new file and update the database.
 	 *
 	 * @since 1.2.0
 	 * @access public
@@ -192,9 +192,9 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * ??
+	 * Delete the CSS file.
 	 *
-	 * ??
+	 * If the CSS file exist, delete it.
 	 *
 	 * @since 1.2.0
 	 * @access public
@@ -271,18 +271,20 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * ??
+	 * Add control rules.
 	 *
-	 * ??
+	 * Parse the CSS for all the elements inside any given control.
+	 *
+	 * This method recursively renders the CSS for all the selectors in the control.
 	 *
 	 * @since 1.2.0
 	 * @access public
 	 *
-	 * @param array    $control
-	 * @param array    $controls_stack
-	 * @param callable $value_callback
-	 * @param array    $placeholders
-	 * @param array    $replacements
+	 * @param array    $control        The controls.
+	 * @param array    $controls_stack The controls stack.
+	 * @param callable $value_callback Callback function for the value.
+	 * @param array    $placeholders   Placeholders.
+	 * @param array    $replacements   Replacements.
 	 */
 	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
 		$value = call_user_func( $value_callback, $control );
@@ -388,14 +390,14 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * ??
+	 * Get CSS.
 	 *
-	 * ??
+	 * Retrieve the CSS. If the CSS is empty, parse it again.
 	 *
 	 * @since 1.2.0
 	 * @access public
 	 *
-	 * @return string
+	 * @return string The CSS.
 	 */
 	public function get_css() {
 		if ( empty( $this->css ) ) {
@@ -406,9 +408,9 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * ??
+	 * Get stylesheet.
 	 *
-	 * ??
+	 * Retrieve the CSS file stylesheet instance.
 	 *
 	 * @since 1.2.0
 	 * @access public
@@ -462,10 +464,10 @@ abstract class CSS_File {
 	 * @access public
 	 *
 	 * @param Controls_Stack $controls_stack The controls stack.
-	 * @param array          $controls       
-	 * @param array          $values
-	 * @param array          $placeholders
-	 * @param array          $replacements
+	 * @param array          $controls       Controls array.
+	 * @param array          $values         Values array.
+	 * @param array          $placeholders   Placeholders.
+	 * @param array          $replacements   Replacements.
 	 */
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
 		foreach ( $controls as $control ) {
@@ -594,9 +596,9 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * ??
+	 * Parse CSS.
 	 *
-	 * ??
+	 * Parsing the CSS file.
 	 *
 	 * @since 1.2.0
 	 * @access protected
@@ -623,18 +625,18 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * ??
+	 * Add control style rules.
 	 *
-	 * ??
+	 * Register new style rules for the control.
 	 *
 	 * @since 1.6.0
 	 * @access private
 	 *
-	 * @param array $control
-	 * @param array $values
-	 * @param array $controls_stack
-	 * @param array $placeholders
-	 * @param array $replacements
+	 * @param array $control        The control.
+	 * @param array $values         Values array.
+	 * @param array $controls_stack The controls stack.
+	 * @param array $placeholders   Placeholders.
+	 * @param array $replacements   Replacements.
 	 */
 	private function add_control_style_rules( array $control, array $values, array $controls_stack, array $placeholders, array $replacements ) {
 		$this->add_control_rules(
@@ -645,17 +647,19 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * ??
+	 * Get style control value.
 	 *
-	 * ??
+	 * Retrieve the value of the style control for any give control and values.
+	 *
+	 * It will retrieve the control name and return the style value.
 	 *
 	 * @since 1.6.0
 	 * @access private
 	 *
-	 * @param array $control
-	 * @param array $values
+	 * @param array $control The control.
+	 * @param array $values  Values array.
 	 *
-	 * @return mixed
+	 * @return mixed Style control value.
 	 */
 	private function get_style_control_value( array $control, array $values ) {
 		$value = $values[ $control['name'] ];
@@ -672,9 +676,10 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * ??
+	 * Init stylesheet.
 	 *
-	 * ??
+	 * Initialize CSS file stylesheet by creating a new `Stylesheet` object and register new
+	 * breakpoints for the stylesheet.
 	 *
 	 * @since 1.2.0
 	 * @access private
@@ -691,9 +696,9 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * ??
+	 * Set path and URL.
 	 *
-	 * ??
+	 * Define the CSS file path and file URL.
 	 *
 	 * @since 1.2.0
 	 * @access protected
