@@ -21,7 +21,7 @@ abstract class Tag extends Controls_Stack {
 	protected function _get_initial_config() {
 		$config = parent::_get_initial_config();
 
-		$config['render_type'] = 'plain';
+		$config['content_type'] = 'plain';
 
 		return $config;
 	}
