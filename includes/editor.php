@@ -551,7 +551,7 @@ class Editor {
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'current_user_can_publish' => $current_user_can_publish,
 			'exit_to_dashboard_url' => Utils::get_exit_to_dashboard_url( $this->_post_id ),
-			'microElements' => Plugin::$instance->micro_elements_manager->get_config(),
+			'dynamicTags' => Plugin::$instance->dynamic_tags_manager->get_config(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
@@ -911,7 +911,7 @@ class Editor {
 
 		$plugin->schemes_manager->print_schemes_templates();
 
-		$plugin->micro_elements_manager->print_templates();
+		$plugin->dynamic_tags_manager->print_templates();
 
 		$this->init_editor_templates();
 

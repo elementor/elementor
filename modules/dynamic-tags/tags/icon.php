@@ -1,13 +1,13 @@
 <?php
-namespace Elementor\Modules\Tags\Tags;
+namespace Elementor\Modules\DynamicTags\Tags;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\MicroElements\UI_Tag;
-use Elementor\Modules\Tags\Module;
+use Elementor\Core\DynamicTags\Markup_Dynamic_Tag;
+use Elementor\Modules\DynamicTags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Icon extends UI_Tag {
+class Icon extends Markup_Dynamic_Tag {
 
 	public function get_name() {
 		return 'icon';

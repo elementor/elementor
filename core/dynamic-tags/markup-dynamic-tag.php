@@ -1,12 +1,12 @@
 <?php
-namespace Elementor\Core\MicroElements;
+namespace Elementor\Core\DynamicTags;
 
 use Elementor\Controls_Stack;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-abstract class UI_Tag extends Tag {
+abstract class Markup_Dynamic_Tag extends Dynamic_Tag {
 
 	protected function _get_initial_config() {
 		$config = parent::_get_initial_config();

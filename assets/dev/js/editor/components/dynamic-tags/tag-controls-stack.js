@@ -1,5 +1,5 @@
 var ControlsStack = require( 'elementor-views/controls-stack' ),
-	EmptyView = require( 'elementor-micro-elements/tag-controls-stack-empty' );
+	EmptyView = require( 'elementor-dynamic-tags/tag-controls-stack-empty' );
 
 module.exports = ControlsStack.extend( {
 	activeTab: 'content',
