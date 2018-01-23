@@ -68,101 +68,21 @@ class DB {
 	 * @param int    $post_id Post ID.
 	 * @param array  $data    Post data.
 	 * @param string $status  Optional. Post status. Default is `publish`.
+	 *
+	 * @return bool
 	 */
 	public function save_editor( $post_id, $data, $status = self::STATUS_PUBLISH ) {
-		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		$this->switch_to_post( $post_id );
+		_deprecated_function( __METHOD__, '2.0.0', '$document->save()' );
 
-		$editor_data = $this->_get_editor_data( $data );
-
-		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
-		$json_value = wp_slash( wp_json_encode( $editor_data ) );
-
-		$old_autosave = Utils::get_post_autosave( $post_id, get_current_user_id() );
-		if ( $old_autosave ) {
-			// Force WP to save a new version if the JSON meta was changed.
-			// P.S CSS Changes doesn't change the `plain_text.
-			wp_delete_post_revision( $old_autosave->ID );
-		}
-
-		$save_original = true;
+		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( self::STATUS_AUTOSAVE === $status ) {
-			if ( ! defined( 'DOING_AUTOSAVE' ) ) {
-				define( 'DOING_AUTOSAVE', true );
-			}
-
-			// If the post is a draft - save the `autosave` to the original draft.
-			// Allow a revision only if the original post is already published.
-			if ( in_array( get_post_status( $post_id ), [ self::STATUS_PUBLISH, self::STATUS_PRIVATE ], true ) ) {
-				$save_original = false;
-			}
+			$document = $document->get_autosave( 0, true );
 		}
 
-		if ( $save_original ) {
-			// Don't use `update_post_meta` that can't handle `revision` post type
-			$is_meta_updated = update_metadata( 'post', $post_id, '_elementor_data', $json_value );
-
-			/**
-			 * Before DB save.
-			 *
-			 * Fires before Elementor editor saves data to the database.
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param string   $status          Post status.
-			 * @param int|bool $is_meta_updated Meta ID if the key didn't exist, true on successful update, false on failure.
-			 */
-			do_action( 'elementor/db/before_save', $status, $is_meta_updated );
-
-			$this->save_plain_text( $post_id );
-		} else {
-			/**
-			 * Before DB save.
-			 *
-			 * Fires before Elementor editor saves data to the database.
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param string   $status          Post status.
-			 * @param int|bool $is_meta_updated Meta ID if the key didn't exist, true on successful update, false on failure.
-			 */
-			do_action( 'elementor/db/before_save', $status, true );
-
-			$post = get_post( $post_id );
-
-			$autosave_id = wp_create_post_autosave( [
-				'post_ID' => $post_id,
-				'post_type' => $post->post_type,
-				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
-				'post_content' => $this->get_plain_text_from_data( $editor_data ),
-				'post_modified' => current_time( 'mysql' ),
-			] );
-
-			if ( $autosave_id ) {
-				update_metadata( 'post', $autosave_id, '_elementor_data', $json_value );
-			}
-		} // End if().
-
-		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
-
-		// Restore global post
-		$this->restore_current_post();
-
-		// Remove Post CSS
-		delete_post_meta( $post_id, Post_CSS_File::META_KEY );
-
-		/**
-		 * After DB save.
-		 *
-		 * Fires after Elementor editor saves data to the database.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param int   $post_id     The ID of the post.
-		 * @param array $editor_data Sanitize posted data.
-		 */
-		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
+		return $document->save( [
+			'elements' => $data,
+		] );
 	}
 
 	/**
@@ -230,27 +150,15 @@ class DB {
 	 * @return array Post data.
 	 */
 	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
-		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
+		_deprecated_function( __METHOD__, '2.0.0', '$document->get_elements_data()' );
+
+		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( self::STATUS_DRAFT === $status ) {
-			$autosave = $this->get_newer_autosave( $post_id );
-
-			if ( is_object( $autosave ) ) {
-				$autosave_data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
-			}
+			$document = $document->get_autosave( 0, true );
 		}
 
-		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			if ( empty( $data ) && empty( $autosave_data ) ) {
-				$data = $this->_get_new_editor_from_wp_editor( $post_id );
-			}
-		}
-
-		if ( ! empty( $autosave_data ) ) {
-			$data = $autosave_data;
-		}
-
-		return $data;
+		return $document->get_elements_data();
 	}
 
 	/**
@@ -267,16 +175,11 @@ class DB {
 	 */
 
 	public function get_newer_autosave( $post_id ) {
-		$post = get_post( $post_id );
+		_deprecated_function( __METHOD__, '2.0.0', '$document->get_newer_autosave()' );
 
-		$autosave = Utils::get_post_autosave( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id );
 
-		// Detect if there exists an autosave newer than the post.
-		if ( $autosave && mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false ) ) {
-			return $autosave;
-		}
-
-		return false;
+		return $document->get_newer_autosave();
 	}
 
 	/**
@@ -286,13 +189,13 @@ class DB {
 	 * is parsed into Text Editor Widget that contains the original data.
 	 *
 	 * @since 1.0.0
-	 * @access protected
+	 * @access public
 	 *
 	 * @param int $post_id Post ID.
 	 *
 	 * @return array Content in Elementor format.
 	 */
-	protected function _get_new_editor_from_wp_editor( $post_id ) {
+	public function _get_new_editor_from_wp_editor( $post_id ) {
 		$post = get_post( $post_id );
 
 		if ( empty( $post ) || empty( $post->post_content ) ) {
@@ -403,7 +306,7 @@ class DB {
 	 * Accepts raw Elementor data and return parsed data.
 	 *
 	 * @since 1.0.0
-	 * @access private
+	 * @access public
 	 *
 	 * @param array $data              Raw Elementor post data from the database.
 	 * @param bool  $with_html_content Optional. Whether to return content with
@@ -411,7 +314,7 @@ class DB {
 	 *
 	 * @return array Parsed data.
 	 */
-	private function _get_editor_data( $data, $with_html_content = false ) {
+	public function _get_editor_data( $data, $with_html_content = false ) {
 		$editor_data = [];
 
 		foreach ( $data as $element_data ) {
