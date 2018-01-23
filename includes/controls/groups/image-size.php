@@ -56,9 +56,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	protected static $fields;
 
 	/**
-	 * Retrieve type.
-	 *
 	 * Get image size control type.
+	 *
+	 * Retrieve the control type, in this case `image-size`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -71,9 +71,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve attachment image HTML.
+	 * Get attachment image HTML.
 	 *
-	 * Get the attachment image HTML code.
+	 * Retrieve the attachment image HTML code.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -139,9 +139,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve all image sizes.
+	 * Get all image sizes.
 	 *
-	 * Get available image sizes with data like `width`, `height` and `crop`.
+	 * Retrieve available image sizes with data like `width`, `height` and `crop`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -234,9 +234,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve child default arguments.
+	 * Get child default arguments.
 	 *
-	 * Get the default arguments for all the child controls for a specific group
+	 * Retrieve the default arguments for all the child controls for a specific group
 	 * control.
 	 *
 	 * @since 1.2.2
@@ -320,9 +320,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve image sizes.
+	 * Get image sizes.
 	 *
-	 * Get available image sizes after filtering `include` and `exclude` arguments.
+	 * Retrieve available image sizes after filtering `include` and `exclude` arguments.
 	 *
 	 * @since 1.0.0
 	 * @access private
@@ -361,9 +361,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve default options.
+	 * Get default options.
 	 *
-	 * Get the default options of the image size control. Used to return the
+	 * Retrieve the default options of the image size control. Used to return the
 	 * default options while initializing the image size control.
 	 *
 	 * @since 1.9.0

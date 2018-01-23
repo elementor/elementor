@@ -84,7 +84,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Choose extends Base_Data_Control {
 
 	/**
-	 * Retrieve choose control type.
+	 * Get choose control type.
+	 *
+	 * Retrieve the control type, in this case `choose`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -130,9 +132,9 @@ class Control_Choose extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve choose control default settings.
+	 * Get choose control default settings.
 	 *
-	 * Get the default settings of the choose control. Used to return the
+	 * Retrieve the default settings of the choose control. Used to return the
 	 * default settings while initializing the choose control.
 	 *
 	 * @since 1.0.0

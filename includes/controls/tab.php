@@ -28,7 +28,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Tab extends Base_UI_Control {
 
 	/**
-	 * Retrieve tab control type.
+	 * Get tab control type.
+	 *
+	 * Retrieve the control type, in this case `tab`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -58,9 +60,9 @@ class Control_Tab extends Base_UI_Control {
 	}
 
 	/**
-	 * Retrieve tab control default settings.
+	 * Get tab control default settings.
 	 *
-	 * Get the default settings of the tab control. Used to return the
+	 * Retrieve the default settings of the tab control. Used to return the
 	 * default settings while initializing the tab control.
 	 *
 	 * @since 1.0.0

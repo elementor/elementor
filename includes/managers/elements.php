@@ -250,6 +250,8 @@ class Elements_Manager {
 	 * @since  1.9.0
 	 * @access public
 	 *
+	 * @throw \Exception If the request has no post id.
+	 *
 	 * @param $request
 	 *
 	 * @return bool
@@ -271,6 +273,9 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
+	 * @throw \Exception If the request has no post id.
+	 * @throw \Exception If current user don't have permissions to edit the post.
 	 *
 	 * @param array $request
 	 *
