@@ -33,11 +33,11 @@ abstract class Manager {
 	 * @access public
 	 * @abstract
 	 *
-	 * @param Ajax_Manager $ajax_handler
+	 * @param Ajax_Manager $ajax_manager
 	 */
-	public function register_ajax_actions( $ajax_handler ) {
+	public function register_ajax_actions( $ajax_manager ) {
 		$name = $this->get_name();
-		$ajax_handler->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
+		$ajax_manager->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
 	}
 
 	/**

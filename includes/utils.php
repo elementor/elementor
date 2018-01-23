@@ -60,7 +60,13 @@ class Utils {
 	 * @return string Post edit link.
 	 */
 	public static function get_edit_link( $post_id = 0 ) {
-		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
+		_deprecated_function( __METHOD__, '2.0.0', '$document->get_edit_link()' );
+
+		if ( ! $post_id ) {
+			$post_id = get_the_ID();
+		}
+
+		$edit_link = Plugin::$instance->documents->get( $post_id )->get_edit_url();
 
 		/**
 		 * Get edit link.
@@ -71,8 +77,10 @@ class Utils {
 		 *
 		 * @param string $edit_link New URL query string (unescaped).
 		 * @param int    $post_id   Post ID.
+		 *
+		 * @deprecated 2.0.0
 		 */
-		$edit_link = apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
+		$edit_link = self::apply_filters_deprecated( 'elementor/utils/get_edit_link', [ $edit_link, $post_id ], '2.0.0', 'elementor/document/get_edit_link' );
 
 		return $edit_link;
 	}
@@ -127,7 +135,9 @@ class Utils {
 	 * @return string Post preview URL.
 	 */
 	public static function get_preview_url( $post_id ) {
-		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
+		_deprecated_function( __METHOD__, '2.0.0', '$document->get_preview_url()' );
+
+		$url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 
 		/**
 		 * Preview URL.
@@ -138,10 +148,12 @@ class Utils {
 		 *
 		 * @param string $preview_url URL with chosen scheme.
 		 * @param int    $post_id     Post ID.
+		 *
+		 * @deprecated 2.0.0
 		 */
-		$preview_url = apply_filters( 'elementor/utils/preview_url', $preview_url, $post_id );
+		$url = self::apply_filters_deprecated( 'elementor/utils/preview_url', [ $url, $post_id ], '2.0.0', 'elementor/document/preview_url' );
 
-		return $preview_url;
+		return $url;
 	}
 
 	/**
@@ -414,26 +426,11 @@ class Utils {
 	 * @return string Last edited string.
 	 */
 	public static function get_last_edited( $post_id ) {
-		$post = get_post( $post_id );
+		_deprecated_function( __METHOD__, '2.0.0', '$document->get_last_edited()' );
 
-		$autosave_post = Utils::get_post_autosave( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id );
 
-		if ( $autosave_post ) {
-			$post = $autosave_post;
-		}
-
-		$date = date_i18n( _x( 'M j, H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
-		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
-
-		if ( $autosave_post ) {
-			/* translators: 1: Saving date, 2: Author display name */
-			$last_edited = sprintf( __( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
-		} else {
-			/* translators: 1: Editing date, 2: Author display name */
-			$last_edited = sprintf( __( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
-		}
-
-		return $last_edited;
+		return $document->get_last_edited();
 	}
 
 	/**
@@ -491,5 +488,16 @@ class Utils {
 		}
 
 		return $revision;
+	}
+
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
+	public static function is_cpt_custom_templates_supported() {
+		require_once ABSPATH . '/wp-admin/includes/theme.php';
+
+		return method_exists( wp_get_theme(), 'get_post_templates' );
 	}
 }

@@ -5,7 +5,9 @@ use Elementor\CSS_File;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
+use Elementor\DB;
 use Elementor\Post_CSS_File;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -62,9 +64,9 @@ class Manager extends BaseManager {
 	 * @static
 	 */
 	public static function is_cpt_custom_templates_supported() {
-		require_once ABSPATH . '/wp-admin/includes/theme.php';
+		_deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported' );
 
-		return method_exists( wp_get_theme(), 'get_post_templates' );
+		return Utils::is_cpt_custom_templates_supported();
 	}
 
 	/**
@@ -143,12 +145,19 @@ class Manager extends BaseManager {
 
 		if ( isset( $data['post_status'] ) && isset( $allowed_post_statuses[ $data['post_status'] ] ) ) {
 			$post_type_object = get_post_type_object( $post->post_type );
-			if ( 'publish' !== $data['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
+			if ( DB::STATUS_PUBLISH !== $data['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
 				$post->post_status = $data['post_status'];
 			}
 		}
 
 		wp_update_post( $post );
+
+		if ( DB::STATUS_PUBLISH === $post->post_status ) {
+			$autosave = Utils::get_post_autosave( $post->ID );
+			if ( $autosave ) {
+				wp_delete_post_revision( $autosave->ID );
+			}
+		}
 
 		if ( self::is_cpt_custom_templates_supported() ) {
 			$template = 'default';
