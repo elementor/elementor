@@ -1,5 +1,5 @@
 var ViewModule = require( 'elementor-utils/view-module' ),
-	MentionView = require( 'elementor-micro-elements/mention-view' );
+	MentionView = require( 'elementor-dynamic-tags/mention-view' );
 
 module.exports = ViewModule.extend( {
 	$element: null,
@@ -56,7 +56,7 @@ module.exports = ViewModule.extend( {
 
 		self.destroyMentions();
 
-		var parsedValue = elementor.microElements.parseTagsText( value, this.getSettings(), function( tagID, tagName, tagSettings ) {
+		var parsedValue = elementor.dynamicTags.parseTagsText( value, this.getSettings(), function( tagID, tagName, tagSettings ) {
 			tagSettings = tagSettings ? _.escape( JSON.stringify( tagSettings ) ) : '';
 
 			return '<span class="atwho-inserted" contenteditable="false" data-tag-id="' + tagID + '" data-tag-name="' + tagName + '" data-elementor-settings="' + tagSettings + '"></span>';
@@ -78,7 +78,7 @@ module.exports = ViewModule.extend( {
 	},
 
 	initMentions: function() {
-		var tags = elementor.microElements.getConfig( 'tags' ),
+		var tags = elementor.dynamicTags.getConfig( 'tags' ),
 			groups = this.getSettings( 'groups' );
 
 		tags = _.filter( tags, function( tag ) {
@@ -160,7 +160,7 @@ module.exports = ViewModule.extend( {
 			var $tag = jQuery( this ),
 				tagData = $tag.data();
 
-			$tag.replaceWith( elementor.microElements.tagDataToTagText( tagData.tagId, tagData.tagName, tagData.elementorSettings ) );
+			$tag.replaceWith( elementor.dynamicTags.tagDataToTagText( tagData.tagId, tagData.tagName, tagData.elementorSettings ) );
 		} );
 
 		return $clonedElement.html().replace( /&nbsp;/g, ' ' ).replace( new RegExp( this.emptyChar, 'g' ), '' ).trim();

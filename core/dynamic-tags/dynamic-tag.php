@@ -1,12 +1,12 @@
 <?php
-namespace Elementor\Core\MicroElements;
+namespace Elementor\Core\DynamicTags;
 
 use Elementor\Controls_Stack;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-abstract class Tag extends Controls_Stack {
+abstract class Dynamic_Tag extends Controls_Stack {
 
 	public static function get_type() {
 		return 'tag';

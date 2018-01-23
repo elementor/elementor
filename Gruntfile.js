@@ -105,9 +105,9 @@ module.exports = function( grunt ) {
 							expose: 'elementor-templates'
 						},
 						{
-							cwd: 'assets/dev/js/editor/components/micro-elements',
+							cwd: 'assets/dev/js/editor/components/dynamic-tags',
 							src: '**/*.js',
-							expose: 'elementor-micro-elements'
+							expose: 'elementor-dynamic-tags'
 						},
 						{
 							cwd: 'assets/dev/js/frontend',

@@ -1,4 +1,4 @@
-var Mentions = require( 'elementor-micro-elements/mentions' ),
+var Mentions = require( 'elementor-dynamic-tags/mentions' ),
 	InlineEditingBehavior;
 
 InlineEditingBehavior = Marionette.Behavior.extend( {

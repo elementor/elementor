@@ -1,8 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\MicroElements\Manager as MicroElementsManager;
-use Elementor\Core\MicroElements\UI_Tag;
+use Elementor\Core\DynamicTags\Markup_Dynamic_Tag;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -536,10 +535,10 @@ abstract class CSS_File {
 	}
 
 	private function add_dynamic_control_style_rules( array $control, $value ) {
-		Plugin::$instance->micro_elements_manager->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
-			$tag = Plugin::$instance->micro_elements_manager->create_tag( $id, $name, $settings );
+		Plugin::$instance->dynamic_tags_manager->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
+			$tag = Plugin::$instance->dynamic_tags_manager->create_tag( $id, $name, $settings );
 
-			if ( ! $tag instanceof UI_Tag ) {
+			if ( ! $tag instanceof Markup_Dynamic_Tag ) {
 				return;
 			}
 
