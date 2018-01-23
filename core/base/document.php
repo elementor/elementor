@@ -175,7 +175,7 @@ abstract class Document extends Controls_Stack {
 
 		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
 
-		if ( 'publish' === $this->post->post_status || 'private' === $this->post->post_status || $can_publish ) {
+		if ( DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status || $can_publish ) {
 
 			$this->add_control(
 				'post_status',
@@ -213,10 +213,12 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
-		SettingsManager::get_settings_managers( 'page' )->save_settings( $data['settings'], $this->post->ID );
+		if ( ! empty( $data['settings'] ) ) {
+			SettingsManager::get_settings_managers( 'page' )->save_settings( $data['settings'], $this->post->ID );
+		}
 
 		// Refresh post after save settings.
-		$this->post = $this->get_post( $this->post->ID );
+		$this->post = get_post( $this->post->ID );
 
 		$this->save_elements( $data['elements'] );
 
@@ -308,10 +310,6 @@ abstract class Document extends Controls_Stack {
 					->get( $autosave->ID )
 					->get_json_meta( '_elementor_data' );
 			}
-		}
-
-		if ( empty( $elements ) && Plugin::$instance->editor->is_edit_mode() ) {
-			$elements = Plugin::$instance->db->_get_new_editor_from_wp_editor( $this->post->ID );
 		}
 
 		if ( Plugin::$instance->editor->is_edit_mode() ) {

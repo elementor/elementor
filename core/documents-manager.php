@@ -31,11 +31,11 @@ class Documents_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_handler
+	 * @param Ajax_Manager $ajax_manager
 	 */
-	public function register_ajax_actions( $ajax_handler ) {
-		$ajax_handler->register_ajax_action( 'save_builder', [ $this, 'ajax_save' ] );
-		$ajax_handler->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
+	public function register_ajax_actions( $ajax_manager ) {
+		$ajax_manager->register_ajax_action( 'save_builder', [ $this, 'ajax_save' ] );
+		$ajax_manager->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
 	}
 
 	public function register_default_types() {
