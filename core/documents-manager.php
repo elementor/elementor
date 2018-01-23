@@ -150,10 +150,6 @@ class Documents_Manager {
 		}
 
 		if ( DB::STATUS_AUTOSAVE === $status ) {
-			if ( ! defined( 'DOING_AUTOSAVE' ) ) {
-				define( 'DOING_AUTOSAVE', true );
-			}
-
 			// If the post is a draft - save the `autosave` to the original draft.
 			// Allow a revision only if the original post is already published.
 			if ( in_array( $document->get_post()->post_status, [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE ], true ) ) {
@@ -164,8 +160,6 @@ class Documents_Manager {
 		$data = [
 			'elements' => $request['data'],
 		];
-
-		$data['settings']['post_status'] = $status;
 
 		$document->save( $data );
 

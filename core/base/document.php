@@ -466,11 +466,6 @@ abstract class Document extends Controls_Stack {
 			$data['settings'] += $saved_settings;
 		}
 
-		$data['settings'] += [
-			'post_title' => $this->post->post_title,
-			'post_status' => $this->get_main_post()->post_status,
-		];
-
 		parent::__construct( $data );
 	}
 }
