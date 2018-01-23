@@ -217,7 +217,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			var dynamicValue;
 
 			try {
-				dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.getTagDataContent );
+				dynamicValue = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 			} catch ( e ) {
 				dynamicValue = '';
 
@@ -225,7 +225,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 					options.onServerRequestStart();
 				}
 
-				elementor.microElements.refreshCacheFromServer( function() {
+				elementor.dynamicTags.refreshCacheFromServer( function() {
 					if ( options.onServerRequestEnd ) {
 						options.onServerRequestEnd();
 					}

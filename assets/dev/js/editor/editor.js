@@ -180,7 +180,7 @@ App = Marionette.Application.extend( {
 
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
-			MicroElements = require( 'elementor-micro-elements/manager' ),
+			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
 			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
@@ -191,7 +191,7 @@ App = Marionette.Application.extend( {
 
 		this.settings = new Settings();
 
-		this.microElements = new MicroElements();
+		this.dynamicTags = new DynamicTags();
 
 		/**
 		 * @deprecated - use `this.settings.page` instead

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\MicroElements;
+namespace Elementor\Core\DynamicTags;
 
 use Elementor\Controls_Stack;
 use Elementor\Plugin;

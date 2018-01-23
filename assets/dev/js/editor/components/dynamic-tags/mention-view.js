@@ -1,4 +1,4 @@
-var TagControlsStack = require( 'elementor-micro-elements/tag-controls-stack' ),
+var TagControlsStack = require( 'elementor-dynamic-tags/tag-controls-stack' ),
 	SettingsModel = require( 'elementor-elements/models/base-settings' );
 
 module.exports = Marionette.ItemView.extend( {
@@ -25,7 +25,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	getTagConfig: function() {
-		return elementor.microElements.getConfig( 'tags.' + this.getOption( 'name' ) );
+		return elementor.dynamicTags.getConfig( 'tags.' + this.getOption( 'name' ) );
 	},
 
 	initMentionsPopup: function() {

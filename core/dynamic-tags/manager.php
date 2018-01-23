@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\MicroElements;
+namespace Elementor\Core\DynamicTags;
 
 use Elementor\Plugin;
 
@@ -119,7 +119,7 @@ class Manager {
 		foreach ( $this->tags_info as $tag_name => $tag_info ) {
 			$tag = $tag_info['instance'];
 
-			if ( ! $tag instanceof UI_Tag ) {
+			if ( ! $tag instanceof Markup_Tag ) {
 				continue;
 			}
 
