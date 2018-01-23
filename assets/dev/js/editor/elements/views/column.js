@@ -152,6 +152,8 @@ ColumnView = BaseElementView.extend( {
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
+				elementor.channels.data.trigger( 'column:before:drop', event, this );
+
 				var newIndex = jQuery( this ).index();
 
 				if ( 'bottom' === side ) {
@@ -159,6 +161,8 @@ ColumnView = BaseElementView.extend( {
 				}
 
 				self.addElementFromPanel( { at: newIndex } );
+
+				elementor.channels.data.trigger( 'column:after:drop', event, this );
 			}
 		} );
 	},
