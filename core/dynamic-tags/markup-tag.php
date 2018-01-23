@@ -1,12 +1,9 @@
 <?php
 namespace Elementor\Core\DynamicTags;
 
-use Elementor\Controls_Stack;
-use Elementor\Plugin;
-
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-abstract class Markup_Dynamic_Tag extends Dynamic_Tag {
+abstract class Markup_Tag extends Tag {
 
 	protected function _get_initial_config() {
 		$config = parent::_get_initial_config();

@@ -64,7 +64,7 @@ class Manager {
 	 * @param string $tag_name
 	 * @param array  $settings
 	 *
-	 * @return Dynamic_Tag
+	 * @return Tag
 	 */
 	public function create_tag( $tag_id, $tag_name, array $settings = [] ) {
 		$tag_info = $this->get_tag_info( $tag_name );
@@ -96,7 +96,7 @@ class Manager {
 	}
 
 	public function register_tag( $class ) {
-		/** @var Dynamic_Tag $tag */
+		/** @var Tag $tag */
 		$tag = new $class();
 
 		$this->tags_info[ $tag->get_name() ] = [
@@ -119,7 +119,7 @@ class Manager {
 		foreach ( $this->tags_info as $tag_name => $tag_info ) {
 			$tag = $tag_info['instance'];
 
-			if ( ! $tag instanceof Markup_Dynamic_Tag ) {
+			if ( ! $tag instanceof Markup_Tag ) {
 				continue;
 			}
 
@@ -131,7 +131,7 @@ class Manager {
 		$config = [];
 
 		foreach ( $this->tags_info as $tag_name => $tag_info ) {
-			/** @var Dynamic_Tag $tag */
+			/** @var Tag $tag */
 			$tag = $tag_info['instance'];
 
 			$config[ $tag_name ] = [

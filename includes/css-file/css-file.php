@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\DynamicTags\Markup_Dynamic_Tag;
+use Elementor\Core\DynamicTags\Markup_Tag;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -538,7 +538,7 @@ abstract class CSS_File {
 		Plugin::$instance->dynamic_tags_manager->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
 			$tag = Plugin::$instance->dynamic_tags_manager->create_tag( $id, $name, $settings );
 
-			if ( ! $tag instanceof Markup_Dynamic_Tag ) {
+			if ( ! $tag instanceof Markup_Tag ) {
 				return;
 			}
 
