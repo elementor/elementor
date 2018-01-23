@@ -348,7 +348,7 @@ class Source_Local extends Source_Base {
 		}
 
 		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
-			return new \WP_Error( 'save_error', __( 'Access Denied.', 'elementor' ) );
+			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
 		}
 
 		$template_id = wp_insert_post( [
@@ -412,7 +412,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function update_item( $new_data ) {
 		if ( ! current_user_can( $this->post_type_object->cap->edit_post, $new_data['id'] ) ) {
-			return new \WP_Error( 'save_error', __( 'Access Denied.', 'elementor' ) );
+			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
 		}
 
 		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
@@ -539,7 +539,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function delete_template( $template_id ) {
 		if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
-			return new \WP_Error( 'template_error', __( 'Access Denied.', 'elementor' ) );
+			return new \WP_Error( 'template_error', __( 'Access denied.', 'elementor' ) );
 		}
 
 		return wp_delete_post( $template_id, true );

@@ -134,7 +134,7 @@ class Documents_Manager {
 	 */
 	public function	ajax_save( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'no_post_id' );
+			throw new \Exception( 'Missing post id.' );
 		}
 
 		$document = $this->get( $request['post_id'] );
@@ -195,7 +195,7 @@ class Documents_Manager {
 
 	public function ajax_discard_changes( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'no_post_id' );
+			throw new \Exception( 'Missing post id.' );
 		}
 
 		$document = $this->get( $request['post_id'] );

@@ -60,7 +60,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Font extends Base_Data_Control {
 
 	/**
-	 * Retrieve font control type.
+	 * Get font control type.
+	 *
+	 * Retrieve the control type, in this case `font`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -72,9 +74,9 @@ class Control_Font extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve font control default settings.
+	 * Get font control default settings.
 	 *
-	 * Get the default settings of the font control. Used to return the default
+	 * Retrieve the default settings of the font control. Used to return the default
 	 * settings while initializing the font control.
 	 *
 	 * @since 1.0.0

@@ -996,7 +996,7 @@ class Editor {
 	 */
 	public function verify_ajax_nonce() {
 		if ( ! $this->verify_request_nonce() ) {
-			wp_send_json_error( new \WP_Error( 'token_expired' ) );
+			wp_send_json_error( new \WP_Error( 'token_expired', 'Nonce token expired.' ) );
 		}
 	}
 

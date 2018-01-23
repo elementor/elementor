@@ -49,7 +49,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Section extends Base_UI_Control {
 
 	/**
-	 * Retrieve section control type.
+	 * Get section control type.
+	 *
+	 * Retrieve the control type, in this case `section`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -82,9 +84,9 @@ class Control_Section extends Base_UI_Control {
 	}
 
 	/**
-	 * Retrieve repeater control default settings.
+	 * Get repeater control default settings.
 	 *
-	 * Get the default settings of the repeater control. Used to return the
+	 * Retrieve the default settings of the repeater control. Used to return the
 	 * default settings while initializing the repeater control.
 	 *
 	 * @since 1.0.0

@@ -52,7 +52,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Button extends Base_UI_Control {
 
 	/**
-	 * Retrieve button control type.
+	 * Get button control type.
+	 *
+	 * Retrieve the control type, in this case `button`.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -64,9 +66,9 @@ class Control_Button extends Base_UI_Control {
 	}
 
 	/**
-	 * Retrieve button control default settings.
+	 * Get button control default settings.
 	 *
-	 * Get the default settings of the button control. Used to
+	 * Retrieve the default settings of the button control. Used to
 	 * return the default settings while initializing the button
 	 * control.
 	 *
