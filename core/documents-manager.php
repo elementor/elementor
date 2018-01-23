@@ -73,6 +73,10 @@ class Documents_Manager {
 		if ( ! isset( $this->documents[ $post_id ] ) ) {
 			$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 
+			if ( ! $doc_type ) {
+				$doc_type = get_post_type( $post_id );
+			}
+
 			$doc_type_class = $this->get_document_type( $doc_type );
 			$this->documents[ $post_id ] = new $doc_type_class( [
 				'post_id' => $post_id,
