@@ -3,6 +3,7 @@ namespace Elementor\Core\DocumentTypes;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
+use Elementor\Core\Settings\Page\Manager;
 use Elementor\Group_Control_Background;
 use Elementor\Settings;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -20,24 +21,6 @@ class Post extends Document {
 
 	public function get_css_wrapper_selector() {
 		return 'body.elementor-page-' . $this->get_main_id();
-	}
-
-	public function save( $data ) {
-		if ( ! parent::save( $data ) ) {
-			return false;
-		}
-
-		if ( Utils::is_cpt_custom_templates_supported() ) {
-			$template = 'default';
-
-			if ( isset( $data['settings']['template'] ) ) {
-				$template = $data['settings']['template'];
-			}
-
-			update_metadata( 'post', $this->post->ID, '_wp_page_template', $template );
-		}
-
-		return true;
 	}
 
 	protected function _register_controls() {
@@ -65,7 +48,7 @@ class Post extends Document {
 				'label_off' => __( 'No', 'elementor' ),
 				'label_on' => __( 'Yes', 'elementor' ),
 				// translators: %s: Setting Page link
-				'description' => sprintf( __( 'Not working? You can set a different selector for the title in the <a href="%s" target="_blank">Settings page</a>.', 'elementor' ), Settings::get_url() ),
+				'description' => sprintf( __( 'Not working? You can set a different selector for the title in the <a href="%s" target="_blank">Settings page</a>.', 'elementor' ), Settings::get_url() . '#tab-style' ),
 				'selectors' => [
 					'{{WRAPPER}} ' . $page_title_selector => 'display: none',
 				],
@@ -101,6 +84,9 @@ class Post extends Document {
 					'type' => Controls_Manager::SELECT,
 					'default' => 'default',
 					'options' => $options,
+					'export' => function( $value ) {
+						return Manager::TEMPLATE_CANVAS === $value;
+					},
 				]
 			);
 		}
@@ -119,7 +105,6 @@ class Post extends Document {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'label' => __( 'Background', 'elementor' ),
 				'fields_options' => [
 					'__all' => [
 						'export' => '__return_true',
