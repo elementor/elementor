@@ -210,7 +210,6 @@ class Editor {
 		// Ajax request as Editor mode
 		$actions = [
 			'elementor',
-			'elementor_ajax',
 
 			// Templates
 			'elementor_get_templates',
