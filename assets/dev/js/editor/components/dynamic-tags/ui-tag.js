@@ -1,4 +1,4 @@
-var Tag = require( 'elementor-micro-elements/tag' );
+var Tag = require( 'elementor-dynamic-tags/tag' );
 
 module.exports = Tag.extend( {
 	tagName: 'span',

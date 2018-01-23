@@ -1,5 +1,5 @@
 var ControlBaseView = require( 'elementor-controls/base' ),
-	MentionsBehavior = require( 'elementor-micro-elements/control-mentions-behavior' ),
+	MentionsBehavior = require( 'elementor-dynamic-tags/control-mentions-behavior' ),
 	Validator = require( 'elementor-validator/base' ),
 	ControlBaseDataView;
 
@@ -43,13 +43,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	behaviors: function() {
 		var behaviors = {},
-			microElements = this.options.model.get( 'dynamic' );
+			dynamicTags = this.options.model.get( 'dynamic' );
 
-		if ( microElements ) {
+		if ( dynamicTags ) {
 			behaviors.mentions = { behaviorClass: MentionsBehavior };
 
-			if ( 'object' === typeof microElements ) {
-				jQuery.extend( behaviors.mentions, microElements );
+			if ( 'object' === typeof dynamicTags ) {
+				jQuery.extend( behaviors.mentions, dynamicTags );
 			}
 		}
 

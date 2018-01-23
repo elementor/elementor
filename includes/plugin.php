@@ -4,10 +4,10 @@ namespace Elementor;
 use Elementor\Core\Ajax_Manager;
 use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
-use Elementor\Core\Settings\Manager as SettingsManager;
-use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
+use Elementor\Core\Settings\Manager as Settings_Manager;
+use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Modules\History\Revisions_Manager;
-use Elementor\Core\MicroElements\Manager as MicroElementsManager;
+use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -146,20 +146,17 @@ class Plugin {
 
 	/**
 	 * Document settings manager.
-	 *
 	 * Holds the document settings manager.
-	 *
 	 * @since 1.0.0
 	 * @access public
-	 *
-	 * @var PageSettingsManager
+	 * @var Page_Settings_Manager
 	 */
 	public $page_settings_manager;
 
 	/**
-	 * @var MicroElementsManager
+	 * @var Dynamic_Tags_Manager
 	 */
-	public $micro_elements_manager;
+	public $dynamic_tags_manager;
 
 	/**
 	 * Settings.
@@ -441,7 +438,7 @@ class Plugin {
 		$this->ajax = new Ajax_Manager();
 
 		Compatibility::register_actions();
-		SettingsManager::run();
+		Settings_Manager::run();
 
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
@@ -457,7 +454,7 @@ class Plugin {
 		$this->debug = new Debug();
 		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->maintenance_mode = new Maintenance_Mode();
-		$this->micro_elements_manager = new MicroElementsManager();
+		$this->dynamic_tags_manager = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
 
 		Api::init();

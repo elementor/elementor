@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Mentions = require( 'elementor-micro-elements/mentions' );
+var Mentions = require( 'elementor-dynamic-tags/mentions' );
 
 module.exports = Marionette.Behavior.extend( {
 
@@ -236,14 +236,14 @@ module.exports = Marionette.Behavior.extend( {
 	}
 } );
 
-},{"elementor-micro-elements/mentions":4}],2:[function(require,module,exports){
+},{"elementor-dynamic-tags/mentions":4}],2:[function(require,module,exports){
 var Module = require( 'elementor-utils/module' ),
 	SettingsModel = require( 'elementor-elements/models/base-settings' );
 
 module.exports = Module.extend( {
 	tags: {
-		Base: require( 'elementor-micro-elements/tag' ),
-		UI: require( 'elementor-micro-elements/ui-tag' )
+		Base: require( 'elementor-dynamic-tags/tag' ),
+		UI: require( 'elementor-dynamic-tags/ui-tag' )
 	},
 
 	cache: {},
@@ -303,7 +303,7 @@ module.exports = Module.extend( {
 	},
 
 	getConfig: function( key ) {
-		return this.getItems( elementor.config.microElements, key );
+		return this.getItems( elementor.config.dynamicTags, key );
 	},
 
 	parseTagsText: function( text, settings, parseCallback ) {
@@ -374,8 +374,8 @@ module.exports = Module.extend( {
 	}
 } );
 
-},{"elementor-elements/models/base-settings":69,"elementor-micro-elements/tag":7,"elementor-micro-elements/ui-tag":8,"elementor-utils/module":131}],3:[function(require,module,exports){
-var TagControlsStack = require( 'elementor-micro-elements/tag-controls-stack' ),
+},{"elementor-dynamic-tags/tag":7,"elementor-dynamic-tags/ui-tag":8,"elementor-elements/models/base-settings":69,"elementor-utils/module":131}],3:[function(require,module,exports){
+var TagControlsStack = require( 'elementor-dynamic-tags/tag-controls-stack' ),
 	SettingsModel = require( 'elementor-elements/models/base-settings' );
 
 module.exports = Marionette.ItemView.extend( {
@@ -402,7 +402,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	getTagConfig: function() {
-		return elementor.microElements.getConfig( 'tags.' + this.getOption( 'name' ) );
+		return elementor.dynamicTags.getConfig( 'tags.' + this.getOption( 'name' ) );
 	},
 
 	initMentionsPopup: function() {
@@ -526,9 +526,9 @@ module.exports = Marionette.ItemView.extend( {
 	}
 } );
 
-},{"elementor-elements/models/base-settings":69,"elementor-micro-elements/tag-controls-stack":6}],4:[function(require,module,exports){
+},{"elementor-dynamic-tags/tag-controls-stack":6,"elementor-elements/models/base-settings":69}],4:[function(require,module,exports){
 var ViewModule = require( 'elementor-utils/view-module' ),
-	MentionView = require( 'elementor-micro-elements/mention-view' );
+	MentionView = require( 'elementor-dynamic-tags/mention-view' );
 
 module.exports = ViewModule.extend( {
 	$element: null,
@@ -585,7 +585,7 @@ module.exports = ViewModule.extend( {
 
 		self.destroyMentions();
 
-		var parsedValue = elementor.microElements.parseTagsText( value, this.getSettings(), function( tagID, tagName, tagSettings ) {
+		var parsedValue = elementor.dynamicTags.parseTagsText( value, this.getSettings(), function( tagID, tagName, tagSettings ) {
 			tagSettings = tagSettings ? _.escape( JSON.stringify( tagSettings ) ) : '';
 
 			return '<span class="atwho-inserted" contenteditable="false" data-tag-id="' + tagID + '" data-tag-name="' + tagName + '" data-elementor-settings="' + tagSettings + '"></span>';
@@ -607,7 +607,7 @@ module.exports = ViewModule.extend( {
 	},
 
 	initMentions: function() {
-		var tags = elementor.microElements.getConfig( 'tags' ),
+		var tags = elementor.dynamicTags.getConfig( 'tags' ),
 			groups = this.getSettings( 'groups' );
 
 		tags = _.filter( tags, function( tag ) {
@@ -689,7 +689,7 @@ module.exports = ViewModule.extend( {
 			var $tag = jQuery( this ),
 				tagData = $tag.data();
 
-			$tag.replaceWith( elementor.microElements.tagDataToTagText( tagData.tagId, tagData.tagName, tagData.elementorSettings ) );
+			$tag.replaceWith( elementor.dynamicTags.tagDataToTagText( tagData.tagId, tagData.tagName, tagData.elementorSettings ) );
 		} );
 
 		return $clonedElement.html().replace( /&nbsp;/g, ' ' ).replace( new RegExp( this.emptyChar, 'g' ), '' ).trim();
@@ -821,7 +821,7 @@ module.exports = ViewModule.extend( {
 	}
 } );
 
-},{"elementor-micro-elements/mention-view":3,"elementor-utils/view-module":132}],5:[function(require,module,exports){
+},{"elementor-dynamic-tags/mention-view":3,"elementor-utils/view-module":132}],5:[function(require,module,exports){
 module.exports = Marionette.ItemView.extend( {
 	className: 'elementor-tag-controls-stack-empty',
 
@@ -830,7 +830,7 @@ module.exports = Marionette.ItemView.extend( {
 
 },{}],6:[function(require,module,exports){
 var ControlsStack = require( 'elementor-views/controls-stack' ),
-	EmptyView = require( 'elementor-micro-elements/tag-controls-stack-empty' );
+	EmptyView = require( 'elementor-dynamic-tags/tag-controls-stack-empty' );
 
 module.exports = ControlsStack.extend( {
 	activeTab: 'content',
@@ -855,10 +855,10 @@ module.exports = ControlsStack.extend( {
 	onRenderTemplate: _.noop
 } );
 
-},{"elementor-micro-elements/tag-controls-stack-empty":5,"elementor-views/controls-stack":127}],7:[function(require,module,exports){
+},{"elementor-dynamic-tags/tag-controls-stack-empty":5,"elementor-views/controls-stack":127}],7:[function(require,module,exports){
 module.exports = Marionette.ItemView.extend( {
 	getContent: function() {
-		var data = elementor.microElements.loadTagDataFromCache( this );
+		var data = elementor.dynamicTags.loadTagDataFromCache( this );
 
 		if ( undefined === data ) {
 			throw new Error();
@@ -869,7 +869,7 @@ module.exports = Marionette.ItemView.extend( {
 } );
 
 },{}],8:[function(require,module,exports){
-var Tag = require( 'elementor-micro-elements/tag' );
+var Tag = require( 'elementor-dynamic-tags/tag' );
 
 module.exports = Tag.extend( {
 	tagName: 'span',
@@ -893,7 +893,7 @@ module.exports = Tag.extend( {
 	}
 } );
 
-},{"elementor-micro-elements/tag":7}],9:[function(require,module,exports){
+},{"elementor-dynamic-tags/tag":7}],9:[function(require,module,exports){
 module.exports = Marionette.Behavior.extend( {
 	previewWindow: null,
 
@@ -2878,7 +2878,7 @@ module.exports = Validator.extend( {
 
 },{"elementor-validator/base":36}],38:[function(require,module,exports){
 var ControlBaseView = require( 'elementor-controls/base' ),
-	MentionsBehavior = require( 'elementor-micro-elements/control-mentions-behavior' ),
+	MentionsBehavior = require( 'elementor-dynamic-tags/control-mentions-behavior' ),
 	Validator = require( 'elementor-validator/base' ),
 	ControlBaseDataView;
 
@@ -2922,13 +2922,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	behaviors: function() {
 		var behaviors = {},
-			microElements = this.options.model.get( 'dynamic' );
+			dynamicTags = this.options.model.get( 'dynamic' );
 
-		if ( microElements ) {
+		if ( dynamicTags ) {
 			behaviors.mentions = { behaviorClass: MentionsBehavior };
 
-			if ( 'object' === typeof microElements ) {
-				jQuery.extend( behaviors.mentions, microElements );
+			if ( 'object' === typeof dynamicTags ) {
+				jQuery.extend( behaviors.mentions, dynamicTags );
 			}
 		}
 
@@ -3143,7 +3143,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 module.exports = ControlBaseDataView;
 
-},{"elementor-controls/base":41,"elementor-micro-elements/control-mentions-behavior":1,"elementor-validator/base":36}],39:[function(require,module,exports){
+},{"elementor-controls/base":41,"elementor-dynamic-tags/control-mentions-behavior":1,"elementor-validator/base":36}],39:[function(require,module,exports){
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlBaseMultipleItemView;
 
@@ -5329,7 +5329,7 @@ App = Marionette.Application.extend( {
 
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
-			MicroElements = require( 'elementor-micro-elements/manager' ),
+			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
 			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
@@ -5340,7 +5340,7 @@ App = Marionette.Application.extend( {
 
 		this.settings = new Settings();
 
-		this.microElements = new MicroElements();
+		this.dynamicTags = new DynamicTags();
 
 		/**
 		 * @deprecated - use `this.settings.page` instead
@@ -6002,7 +6002,7 @@ App = Marionette.Application.extend( {
 
 module.exports = ( window.elementor = new App() ).start();
 
-},{"./components/saver/behaviors/footer-saver":9,"elementor-controls/base":41,"elementor-controls/base-data":38,"elementor-controls/base-multiple":39,"elementor-controls/box-shadow":42,"elementor-controls/button":43,"elementor-controls/choose":44,"elementor-controls/code":45,"elementor-controls/color":46,"elementor-controls/date-time":47,"elementor-controls/dimensions":48,"elementor-controls/font":49,"elementor-controls/gallery":50,"elementor-controls/icon":51,"elementor-controls/image-dimensions":52,"elementor-controls/media":53,"elementor-controls/number":54,"elementor-controls/order":55,"elementor-controls/popover-toggle":56,"elementor-controls/repeater":58,"elementor-controls/repeater-row":57,"elementor-controls/section":59,"elementor-controls/select2":60,"elementor-controls/slider":61,"elementor-controls/structure":62,"elementor-controls/switcher":63,"elementor-controls/tab":64,"elementor-controls/wp_widget":65,"elementor-controls/wysiwyg":66,"elementor-editor-utils/ajax":109,"elementor-editor-utils/conditions":110,"elementor-editor-utils/debug":112,"elementor-editor-utils/heartbeat":113,"elementor-editor-utils/helpers":114,"elementor-editor-utils/images-manager":115,"elementor-editor-utils/notifications":118,"elementor-editor-utils/presets-factory":119,"elementor-editor-utils/schemes":120,"elementor-editor/components/saver/manager":10,"elementor-editor/components/settings/settings":15,"elementor-elements/collections/elements":68,"elementor-elements/models/base-settings":69,"elementor-elements/models/element":71,"elementor-elements/views/widget":82,"elementor-layouts/panel/panel":108,"elementor-micro-elements/manager":2,"elementor-panel/pages/elements/views/elements":94,"elementor-panel/pages/menu/menu":97,"elementor-templates/manager":18,"elementor-utils/hooks":129,"elementor-utils/hot-keys":130,"elementor-utils/module":131,"elementor-views/controls-stack":127,"elementor-views/preview":128,"modules/history/assets/js/module":140}],68:[function(require,module,exports){
+},{"./components/saver/behaviors/footer-saver":9,"elementor-controls/base":41,"elementor-controls/base-data":38,"elementor-controls/base-multiple":39,"elementor-controls/box-shadow":42,"elementor-controls/button":43,"elementor-controls/choose":44,"elementor-controls/code":45,"elementor-controls/color":46,"elementor-controls/date-time":47,"elementor-controls/dimensions":48,"elementor-controls/font":49,"elementor-controls/gallery":50,"elementor-controls/icon":51,"elementor-controls/image-dimensions":52,"elementor-controls/media":53,"elementor-controls/number":54,"elementor-controls/order":55,"elementor-controls/popover-toggle":56,"elementor-controls/repeater":58,"elementor-controls/repeater-row":57,"elementor-controls/section":59,"elementor-controls/select2":60,"elementor-controls/slider":61,"elementor-controls/structure":62,"elementor-controls/switcher":63,"elementor-controls/tab":64,"elementor-controls/wp_widget":65,"elementor-controls/wysiwyg":66,"elementor-dynamic-tags/manager":2,"elementor-editor-utils/ajax":109,"elementor-editor-utils/conditions":110,"elementor-editor-utils/debug":112,"elementor-editor-utils/heartbeat":113,"elementor-editor-utils/helpers":114,"elementor-editor-utils/images-manager":115,"elementor-editor-utils/notifications":118,"elementor-editor-utils/presets-factory":119,"elementor-editor-utils/schemes":120,"elementor-editor/components/saver/manager":10,"elementor-editor/components/settings/settings":15,"elementor-elements/collections/elements":68,"elementor-elements/models/base-settings":69,"elementor-elements/models/element":71,"elementor-elements/views/widget":82,"elementor-layouts/panel/panel":108,"elementor-panel/pages/elements/views/elements":94,"elementor-panel/pages/menu/menu":97,"elementor-templates/manager":18,"elementor-utils/hooks":129,"elementor-utils/hot-keys":130,"elementor-utils/module":131,"elementor-views/controls-stack":127,"elementor-views/preview":128,"modules/history/assets/js/module":140}],68:[function(require,module,exports){
 var ElementModel = require( 'elementor-elements/models/element' );
 
 var ElementsCollection = Backbone.Collection.extend( {
@@ -6260,7 +6260,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			var dynamicValue;
 
 			try {
-				dynamicValue = elementor.microElements.parseTagsText( valueToParse, dynamicSettings, elementor.microElements.getTagDataContent );
+				dynamicValue = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 			} catch ( e ) {
 				dynamicValue = '';
 
@@ -6268,7 +6268,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 					options.onServerRequestStart();
 				}
 
-				elementor.microElements.refreshCacheFromServer( function() {
+				elementor.dynamicTags.refreshCacheFromServer( function() {
 					if ( options.onServerRequestEnd ) {
 						options.onServerRequestEnd();
 					}
@@ -7217,7 +7217,7 @@ HandleDuplicateBehavior = Marionette.Behavior.extend( {
 module.exports = HandleDuplicateBehavior;
 
 },{}],75:[function(require,module,exports){
-var Mentions = require( 'elementor-micro-elements/mentions' ),
+var Mentions = require( 'elementor-dynamic-tags/mentions' ),
 	InlineEditingBehavior;
 
 InlineEditingBehavior = Marionette.Behavior.extend( {
@@ -7474,7 +7474,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 module.exports = InlineEditingBehavior;
 
-},{"elementor-micro-elements/mentions":4}],76:[function(require,module,exports){
+},{"elementor-dynamic-tags/mentions":4}],76:[function(require,module,exports){
 var InnerTabsBehavior;
 
 InnerTabsBehavior = Marionette.Behavior.extend( {
@@ -10424,8 +10424,8 @@ ControlsCSSParser = ViewModule.extend( {
 			valueToParse = valueToParse[ control.dynamic.property ];
 		}
 
-		elementor.microElements.parseTagsText( valueToParse, control.dynamic, function( id, name, settings ) {
-			var tag = elementor.microElements.createTag( id, name, settings ),
+		elementor.dynamicTags.parseTagsText( valueToParse, control.dynamic, function( id, name, settings ) {
+			var tag = elementor.dynamicTags.createTag( id, name, settings ),
 				tagSettingsModel = tag.model,
 				styleControls = tagSettingsModel.getStyleControls();
 

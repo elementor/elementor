@@ -1,6 +1,6 @@
 module.exports = Marionette.ItemView.extend( {
 	getContent: function() {
-		var data = elementor.microElements.loadTagDataFromCache( this );
+		var data = elementor.dynamicTags.loadTagDataFromCache( this );
 
 		if ( undefined === data ) {
 			throw new Error();

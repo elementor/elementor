@@ -3,8 +3,8 @@ var Module = require( 'elementor-utils/module' ),
 
 module.exports = Module.extend( {
 	tags: {
-		Base: require( 'elementor-micro-elements/tag' ),
-		UI: require( 'elementor-micro-elements/ui-tag' )
+		Base: require( 'elementor-dynamic-tags/tag' ),
+		UI: require( 'elementor-dynamic-tags/ui-tag' )
 	},
 
 	cache: {},
@@ -64,7 +64,7 @@ module.exports = Module.extend( {
 	},
 
 	getConfig: function( key ) {
-		return this.getItems( elementor.config.microElements, key );
+		return this.getItems( elementor.config.dynamicTags, key );
 	},
 
 	parseTagsText: function( text, settings, parseCallback ) {
