@@ -263,6 +263,8 @@ class Elements_Manager {
 	 * @since  1.9.0
 	 * @access public
 	 *
+	 * @throw \Exception If the request has no post id.
+	 *
 	 * @param $request
 	 *
 	 * @return bool
@@ -270,7 +272,7 @@ class Elements_Manager {
 	 */
 	public function ajax_discard_changes( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'no_post_id' );
+			throw new \Exception( 'Missing post id.' );
 		}
 
 		$autosave = Utils::get_post_autosave( $request['post_id'] );
@@ -296,6 +298,9 @@ class Elements_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @throw \Exception If the request has no post id.
+	 * @throw \Exception If current user don't have permissions to edit the post.
+	 *
 	 * @param array $request
 	 *
 	 * @return mixed
@@ -303,13 +308,13 @@ class Elements_Manager {
 	*/
 	public function ajax_save_builder( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'no_post_id' );
+			throw new \Exception( 'Missing post id.' );
 		}
 
 		$post_id = $request['post_id'];
 
 		if ( ! User::is_current_user_can_edit( $post_id ) ) {
-			throw new \Exception( 'no_access' );
+			throw new \Exception( 'Access denied.' );
 		}
 
 		$status = DB::STATUS_DRAFT;

@@ -66,9 +66,9 @@ class Control_Animation extends Base_Data_Control {
 	private static $_animations;
 
 	/**
-	 * Retrieve control type.
+	 * Get control type.
 	 *
-	 * Get the animation control type.
+	 * Retrieve the animation control type.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -80,9 +80,9 @@ class Control_Animation extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve animations list.
+	 * Get animations list.
 	 *
-	 * Get the list of all the available animations.
+	 * Retrieve the list of all the available animations.
 	 *
 	 * @static
 	 * @since 1.0.0

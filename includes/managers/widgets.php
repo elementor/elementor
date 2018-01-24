@@ -273,6 +273,10 @@ class Widgets_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @throw \Exception If the request has no post id.
+	 * @throw \Exception If current user don't have permissions to edit the post.
+	 * @throw \Exception If the widget was not found or does not exist.
+	 *
 	 * @param array $request
 	 *
 	 * @return array
@@ -280,11 +284,11 @@ class Widgets_Manager {
 	 */
 	public function ajax_render_widget( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'no_post_id' );
+			throw new \Exception( 'Missing post id.' );
 		}
 
 		if ( ! User::is_current_user_can_edit( $request['post_id'] ) ) {
-			throw new \Exception( 'no_access' );
+			throw new \Exception( 'Access denied.' );
 		}
 
 		// Override the global $post for the render.
@@ -295,7 +299,11 @@ class Widgets_Manager {
 			]
 		);
 
+		$editor = Plugin::$instance->editor;
+		$is_edit_mode = $editor->is_edit_mode();
+
 		Plugin::$instance->db->switch_to_post( $request['post_id'] );
+		$editor->set_edit_mode( true );
 
 		$data = $request['data'];
 
@@ -306,12 +314,14 @@ class Widgets_Manager {
 		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
 
 		if ( ! $widget ) {
-			throw new \Exception( 'Widget Not Found' );
+			throw new \Exception( 'Widget not found.' );
 		}
 
 		$widget->render_content();
 
 		$render_html = ob_get_clean();
+
+		$editor->set_edit_mode( $is_edit_mode );
 
 		return [
 			'render' => $render_html,

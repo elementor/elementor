@@ -63,7 +63,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Checkbox extends Base_Data_Control {
 
 	/**
-	 * Retrieve checkbox control type.
+	 * Get checkbox control type.
+	 *
+	 * Retrieve the control type, in this case `checkbox`.
 	 *
 	 * @since 1.5.4
 	 * @access public
@@ -75,9 +77,9 @@ class Control_Checkbox extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve checkbox control value.
+	 * Get checkbox control value.
 	 *
-	 * Get the value of the checkbox control from a specific widget.
+	 * Retrieve the value of the checkbox control from a specific widget.
 	 *
 	 * @since 1.5.4
 	 * @access public
