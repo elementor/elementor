@@ -60,7 +60,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Image_Dimensions extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve image dimensions control type.
+	 * Get image dimensions control type.
+	 *
+	 * Retrieve the control type, in this case `image_dimensions`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -72,9 +74,9 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve image dimensions control default values.
+	 * Get image dimensions control default values.
 	 *
-	 * Get the default value of the image dimensions control. Used to return the
+	 * Retrieve the default value of the image dimensions control. Used to return the
 	 * default values while initializing the image dimensions control.
 	 *
 	 * @since 1.0.0
@@ -90,9 +92,9 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve image dimensions control default settings.
+	 * Get image dimensions control default settings.
 	 *
-	 * Get the default settings of the image dimensions control. Used to return
+	 * Retrieve the default settings of the image dimensions control. Used to return
 	 * the default settings while initializing the image dimensions control.
 	 *
 	 * @since 1.0.0

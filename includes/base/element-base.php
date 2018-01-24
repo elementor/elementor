@@ -158,9 +158,9 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve style dependencies.
+	 * Get style dependencies.
 	 *
-	 * Get the list of style dependencies the element requires.
+	 * Retrieve the list of style dependencies the element requires.
 	 *
 	 * @since 1.9.0
 	 * @access public

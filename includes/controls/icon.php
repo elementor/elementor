@@ -73,7 +73,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Icon extends Base_Data_Control {
 
 	/**
-	 * Retrieve icon control type.
+	 * Get icon control type.
+	 *
+	 * Retrieve the control type, in this case `icon`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -85,9 +87,9 @@ class Control_Icon extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve icons.
+	 * Get icons.
 	 *
-	 * Get all the available icons.
+	 * Retrieve all the available icons.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -889,9 +891,9 @@ class Control_Icon extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve icons control default settings.
+	 * Get icons control default settings.
 	 *
-	 * Get the default settings of the icons control. Used to return the default
+	 * Retrieve the default settings of the icons control. Used to return the default
 	 * settings while initializing the icons control.
 	 *
 	 * @since 1.0.0

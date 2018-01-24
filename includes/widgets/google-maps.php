@@ -165,9 +165,10 @@ class Widget_Google_Maps extends Widget_Base {
 		}
 
 		printf(
-			'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%s&amp;t=m&amp;z=%d&amp;output=embed&amp;iwloc=near"></iframe></div>',
+			'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%s&amp;t=m&amp;z=%d&amp;output=embed&amp;iwloc=near" aria-label="%s"></iframe></div>',
 			rawurlencode( $settings['address'] ),
-			absint( $settings['zoom']['size'] )
+			absint( $settings['zoom']['size'] ),
+			esc_attr( $settings['address'] )
 		);
 	}
 

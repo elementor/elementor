@@ -66,7 +66,9 @@ class Control_Hover_Animation extends Base_Data_Control {
 	private static $_animations;
 
 	/**
-	 * Retrieve hover animation control type.
+	 * Get hover animation control type.
+	 *
+	 * Retrieve the control type, in this case `hover_animation`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -78,9 +80,9 @@ class Control_Hover_Animation extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve animations.
+	 * Get animations.
 	 *
-	 * Get the available hover animation effects.
+	 * Retrieve the available hover animation effects.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -155,9 +157,9 @@ class Control_Hover_Animation extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve hover animation control default settings.
+	 * Get hover animation control default settings.
 	 *
-	 * Get the default settings of the hover animation control. Used to return
+	 * Retrieve the default settings of the hover animation control. Used to return
 	 * the default settings while initializing the hover animation control.
 	 *
 	 * @since 1.0.0

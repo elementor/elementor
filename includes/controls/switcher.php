@@ -71,7 +71,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Switcher extends Base_Data_Control {
 
 	/**
-	 * Retrieve switcher control type.
+	 * Get switcher control type.
+	 *
+	 * Retrieve the control type, in this case `switcher`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -112,9 +114,9 @@ class Control_Switcher extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve switcher control default settings.
+	 * Get switcher control default settings.
 	 *
-	 * Get the default settings of the switcher control. Used to return the
+	 * Retrieve the default settings of the switcher control. Used to return the
 	 * default settings while initializing the switcher control.
 	 *
 	 * @since 1.0.0

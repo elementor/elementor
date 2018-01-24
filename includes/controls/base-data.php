@@ -16,9 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Base_Data_Control extends Base_Control {
 
 	/**
-	 * Retrieve data control default value.
+	 * Get data control default value.
 	 *
-	 * Get the default value of the data control. Used to return the default
+	 * Retrieve the default value of the data control. Used to return the default
 	 * values while initializing the data control.
 	 *
 	 * @since 1.5.0
@@ -49,8 +49,10 @@ abstract class Base_Data_Control extends Base_Control {
 	}
 
 	/**
-	 * Retrieve data control value.
-	 * Get the value of the data control from a specific widget settings.
+	 * Get data control value.
+	 *
+	 * Retrieve the value of the data control from a specific widget settings.
+	 *
 	 * @since 1.5.0
 	 * @access public
 	 *
@@ -98,9 +100,9 @@ abstract class Base_Data_Control extends Base_Control {
 	}
 
 	/**
-	 * Retrieve data control style value.
+	 * Get data control style value.
 	 *
-	 * Get the style of the control. Used when adding CSS rules to the control
+	 * Retrieve the style of the control. Used when adding CSS rules to the control
 	 * while extracting CSS from the `selectors` data argument.
 	 *
 	 * @since 1.5.0
@@ -116,9 +118,9 @@ abstract class Base_Data_Control extends Base_Control {
 	}
 
 	/**
-	 * Retrieve data control unique ID.
+	 * Get data control unique ID.
 	 *
-	 * Get the unique ID of the control. Used to set a uniq CSS ID for the
+	 * Retrieve the unique ID of the control. Used to set a uniq CSS ID for the
 	 * element.
 	 *
 	 * @since 1.5.0

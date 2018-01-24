@@ -60,7 +60,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Text extends Base_Data_Control {
 
 	/**
-	 * Retrieve text control type.
+	 * Get text control type.
+	 *
+	 * Retrieve the control type, in this case `text`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -97,9 +99,9 @@ class Control_Text extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve text control default settings.
+	 * Get text control default settings.
 	 *
-	 * Get the default settings of the text control. Used to return the
+	 * Retrieve the default settings of the text control. Used to return the
 	 * default settings while initializing the text control.
 	 *
 	 * @since 1.0.0
