@@ -174,11 +174,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 	parseDynamicSettings: function( settings, options, controls ) {
 		var self = this;
 
-		settings = elementor.helpers.cloneObject( settings );
+		settings = elementor.helpers.cloneObject( settings || self.attributes );
 
-		if ( ! controls ) {
-			controls = this.controls;
-		}
+		options = options || {};
+
+		controls = controls || this.controls;
 
 		jQuery.each( controls, function() {
 			var control = this,
