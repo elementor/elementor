@@ -44,7 +44,7 @@ abstract class Base_Reporter {
 	/**
 	 * Get report fields.
 	 *
-	 * Retrieve the fields of the report.
+	 * Retrieve the required fields for the report.
 	 *
 	 * @since 1.0.0
 	 * @access public
