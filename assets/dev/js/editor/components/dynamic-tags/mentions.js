@@ -236,6 +236,14 @@ module.exports = ViewModule.extend( {
 		) {
 			event.preventDefault();
 		}
+
+		if ( 13 !== event.which || event.shiftKey ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		document.execCommand( 'insertHTML', false, '<br>' );
 	},
 
 	onElementKeyUp: function() {

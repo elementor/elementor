@@ -71,6 +71,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		if ( ! this.isTinyMCE() ) {
 			value = _.escape( value )
+				.replace( /&lt;br[ /]*&gt;/g, '<br>' )
 				.replace( /&quot;/g, '"' )
 				.replace( /&amp;/g, '&' );
 		}
