@@ -70,7 +70,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Date_Time extends Base_Data_Control {
 
 	/**
-	 * Retrieve date time control type.
+	 * Get date time control type.
+	 *
+	 * Retrieve the control type, in this case `date_time`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -82,9 +84,9 @@ class Control_Date_Time extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve date time control default settings.
+	 * Get date time control default settings.
 	 *
-	 * Get the default settings of the date time control. Used to return the
+	 * Retrieve the default settings of the date time control. Used to return the
 	 * default settings while initializing the date time control.
 	 *
 	 * @since 1.8.0

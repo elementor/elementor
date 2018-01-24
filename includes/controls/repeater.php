@@ -109,7 +109,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Repeater extends Base_Data_Control {
 
 	/**
-	 * Retrieve repeater control type.
+	 * Get repeater control type.
+	 *
+	 * Retrieve the control type, in this case `repeater`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -121,9 +123,9 @@ class Control_Repeater extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve repeater control default settings.
+	 * Get repeater control default settings.
 	 *
-	 * Get the default settings of the repeater control. Used to return the
+	 * Retrieve the default settings of the repeater control. Used to return the
 	 * default settings while initializing the repeater control.
 	 *
 	 * @since 1.0.0
@@ -139,9 +141,9 @@ class Control_Repeater extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve repeater control value.
+	 * Get repeater control value.
 	 *
-	 * Get the value of the repeater control from a specific widget.
+	 * Retrieve the value of the repeater control from a specific widget.
 	 *
 	 * @since 1.0.0
 	 * @access public

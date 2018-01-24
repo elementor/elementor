@@ -65,7 +65,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Select extends Base_Data_Control {
 
 	/**
-	 * Retrieve select control type.
+	 * Get select control type.
+	 *
+	 * Retrieve the control type, in this case `select`.
 	 *
 	 * @since 1.0.0
 	 * @access public

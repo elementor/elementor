@@ -52,7 +52,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Popover_Toggle extends Base_Data_Control {
 
 	/**
-	 * Retrieve popover toggle control type.
+	 * Get popover toggle control type.
+	 *
+	 * Retrieve the control type, in this case `popover_toggle`.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -64,9 +66,9 @@ class Control_Popover_Toggle extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve popover toggle control default settings.
+	 * Get popover toggle control default settings.
 	 *
-	 * Get the default settings of the popover toggle control. Used to
+	 * Retrieve the default settings of the popover toggle control. Used to
 	 * return the default settings while initializing the popover toggle
 	 * control.
 	 *

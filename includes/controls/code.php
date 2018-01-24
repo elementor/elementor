@@ -62,7 +62,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Code extends Base_Data_Control {
 
 	/**
-	 * Retrieve code control type.
+	 * Get code control type.
+	 *
+	 * Retrieve the control type, in this case `code`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -74,9 +76,9 @@ class Control_Code extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve code control default settings.
+	 * Get code control default settings.
 	 *
-	 * Get the default settings of the code control. Used to return the default
+	 * Retrieve the default settings of the code control. Used to return the default
 	 * settings while initializing the code control.
 	 *
 	 * @since 1.0.0

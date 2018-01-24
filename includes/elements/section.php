@@ -160,7 +160,7 @@ class Element_Section extends Element_Base {
 	/**
 	 * Initialize presets.
 	 *
-	 * Initializing the section peresets and set the number of columns the
+	 * Initializing the section presets and set the number of columns the
 	 * section can have by default. For example a column can have two columns
 	 * 50% width each one, or three columns 33.33% each one.
 	 *
