@@ -42,14 +42,17 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	behaviors: function() {
-		var behaviors = {},
-			dynamicTags = this.options.model.get( 'dynamic' );
+		var behaviors = {};
 
-		if ( dynamicTags ) {
-			behaviors.mentions = { behaviorClass: MentionsBehavior };
+		if ( this.options.elementSettingsModel.options.supportsDynamic ) {
+			var dynamicTags = this.options.model.get( 'dynamic' );
 
-			if ( 'object' === typeof dynamicTags ) {
-				jQuery.extend( behaviors.mentions, dynamicTags );
+			if ( dynamicTags ) {
+				behaviors.mentions = { behaviorClass: MentionsBehavior };
+
+				if ( 'object' === typeof dynamicTags ) {
+					jQuery.extend( behaviors.mentions, dynamicTags );
+				}
 			}
 		}
 
@@ -132,6 +135,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
+		} else if ( $input.is( '[contenteditable]' ) ) {
+			$input.html( value );
 		} else {
 			$input.val( value );
 		}

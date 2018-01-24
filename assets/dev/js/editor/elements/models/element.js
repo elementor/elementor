@@ -53,8 +53,7 @@ ElementModel = Backbone.Model.extend( {
 			settingModels = {
 				column: ColumnSettingsModel
 			},
-			SettingsModel = settingModels[ elType ] || BaseSettingsModel,
-			elementData;
+			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
 
 		if ( jQuery.isEmptyObject( settings ) ) {
 			settings = elementor.helpers.cloneObject( settings );
@@ -68,7 +67,8 @@ ElementModel = Backbone.Model.extend( {
 		settings.isInner = this.get( 'isInner' );
 
 		settings = new SettingsModel( settings, {
-			controls: elementor.getElementControls( this )
+			controls: elementor.getElementControls( this ),
+			supportsDynamic: true
 		} );
 
 		this.set( 'settings', settings );
