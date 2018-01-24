@@ -299,7 +299,11 @@ class Widgets_Manager {
 			]
 		);
 
+		$editor = Plugin::$instance->editor;
+		$is_edit_mode = $editor->is_edit_mode();
+
 		Plugin::$instance->db->switch_to_post( $request['post_id'] );
+		$editor->set_edit_mode( true );
 
 		$data = $request['data'];
 
@@ -316,6 +320,8 @@ class Widgets_Manager {
 		$widget->render_content();
 
 		$render_html = ob_get_clean();
+
+		$editor->set_edit_mode( $is_edit_mode );
 
 		return [
 			'render' => $render_html,
