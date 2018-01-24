@@ -163,7 +163,9 @@ module.exports = ViewModule.extend( {
 			$tag.replaceWith( elementor.dynamicTags.tagDataToTagText( tagData.tagId, tagData.tagName, tagData.elementorSettings ) );
 		} );
 
-		return $clonedElement.html().replace( /&nbsp;/g, ' ' ).replace( new RegExp( this.emptyChar, 'g' ), '' ).trim();
+		return $clonedElement.html()
+			.replace( /&nbsp;/g, ' ' )
+			.replace( new RegExp( this.emptyChar, 'g' ), '' );
 	},
 
 	getMentionsCount: function() {
