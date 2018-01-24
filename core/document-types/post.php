@@ -26,19 +26,15 @@ class Post extends Document {
 	protected function _register_controls() {
 		parent::_register_controls();
 
-		$this->start_controls_section(
-			'section_page_settings',
-			[
-				'label' => __( 'Page Settings', 'elementor' ),
-				'tab' => Controls_Manager::TAB_SETTINGS,
-			]
-		);
-
 		$page_title_selector = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_page_title_selector' );
 
 		if ( ! $page_title_selector ) {
 			$page_title_selector = 'h1.entry-title';
 		}
+
+		$this->start_injection( [
+			'of' => 'post_status',
+		] );
 
 		$this->add_control(
 			'hide_title',
@@ -91,7 +87,7 @@ class Post extends Document {
 			);
 		}
 
-		$this->end_controls_section();
+		$this->end_injection();
 
 		$this->start_controls_section(
 			'section_page_style',

@@ -144,7 +144,7 @@ class Documents_Manager {
 		$document = $this->get( $request['post_id'] );
 
 		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'no_access' );
+			throw new \Exception( 'Access Denied' );
 		}
 
 		$status = DB::STATUS_DRAFT;
@@ -162,7 +162,8 @@ class Documents_Manager {
 		}
 
 		$data = [
-			'elements' => $request['data'],
+			'elements' => $request['elements'],
+			'settings' => $request['settings'],
 		];
 
 		$document->save( $data );

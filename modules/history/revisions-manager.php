@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\History;
 
+use Elementor\Core\Settings\Manager;
 use Elementor\Plugin;
 use Elementor\Post_CSS_File;
 use Elementor\Utils;
@@ -147,7 +148,10 @@ class Revisions_Manager {
 			wp_send_json_error( __( 'Access denied.', 'elementor' ) );
 		}
 
-		$revision_data = Plugin::$instance->db->get_plain_editor( $revision->ID );
+		$revision_data = [
+			'settings' => Manager::get_settings_managers( 'page' )->get_model( $revision->ID )->get_settings(),
+			'elements' => Plugin::$instance->db->get_plain_editor( $revision->ID ),
+		];
 
 		wp_send_json_success( $revision_data );
 	}
