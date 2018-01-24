@@ -2285,6 +2285,8 @@ select {
         cursor: pointer; }
         .elementor-panel #elementor-panel-saver-save-options .elementor-last-edited-wrapper time:hover {
           border-bottom-color: inherit; }
+  .elementor-panel .elementor-saver-disabled {
+    cursor: default; }
   .elementor-panel #elementor-panel-saver-button-preview a {
     color: #a4afb7; }
   .elementor-panel #elementor-panel-saver-button-publish, .elementor-panel #elementor-panel-saver-button-save-options {
@@ -2295,8 +2297,12 @@ select {
     width: 100%;
     -webkit-border-radius: 0 3px 3px 0;
             border-radius: 0 3px 3px 0; }
+    .elementor-panel #elementor-panel-saver-button-publish.elementor-saver-disabled {
+      background-color: #2f903c; }
   .elementor-panel #elementor-panel-saver-button-, .elementor-panel #elementor-panel-saver-button-save-options {
     width: 25px; }
+  .elementor-panel #elementor-panel-saver-menu-save-draft.elementor-saver-disabled .elementor-title {
+    color: #556068; }
 
 #elementor-mode-switcher {
   position: absolute;

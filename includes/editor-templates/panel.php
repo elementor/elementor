@@ -94,7 +94,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</span>
 	</div>
 	<div id="elementor-panel-saver-publish" class="elementor-panel-footer-tool">
-		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success">
+		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success elementor-saver-disabled">
 			<span class="elementor-state-icon">
 				<i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>
 			</span>
@@ -118,7 +118,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</span>
 			</p>
 			<div class="elementor-panel-footer-sub-menu">
-				<div id="elementor-panel-saver-menu-save-draft" class="elementor-panel-footer-sub-menu-item">
+				<div id="elementor-panel-saver-menu-save-draft" class="elementor-panel-footer-sub-menu-item elementor-saver-disabled">
 					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
 					<span class="elementor-title"><?php esc_html_e( 'Save Draft', 'elementor' ); ?></span>
 				</div>

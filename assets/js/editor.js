@@ -28,6 +28,12 @@ module.exports = Marionette.Behavior.extend( {
 			.on( 'page:status:change', this.onPageStatusChange );
 
 		elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
+
+		elementor.channels.editor.on( 'status:change', _.bind( this.activateSaveButtons, this ) );
+	},
+
+	activateSaveButtons: function( hasChanges ) {
+		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-saver-disabled', ! hasChanges );
 	},
 
 	onRender: function() {
@@ -111,6 +117,10 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickButtonPublish: function() {
+		if ( ! elementor.saver.isEditorChanged() ) {
+			return;
+		}
+
 		var postStatus = elementor.settings.page.model.get( 'post_status' );
 		switch ( postStatus ) {
 			case 'publish':
