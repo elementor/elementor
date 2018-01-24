@@ -28,7 +28,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
 
-		elementor.channels.editor.on( 'status:change', _.bind( this.activateSaveButtons, this ) );
+		elementor.channels.editor.on( 'status:change', this.activateSaveButtons.bind( this ) );
 	},
 
 	activateSaveButtons: function( hasChanges ) {
