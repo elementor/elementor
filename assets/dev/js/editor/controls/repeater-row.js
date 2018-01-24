@@ -100,8 +100,6 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	initialize: function( options ) {
 		var self = this;
 
-		self.elementSettingsModel = options.elementSettingsModel;
-
 		self.itemIndex = 0;
 
 		// Collection for Controls list
@@ -117,6 +115,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	onRender: function() {
 		this.setTitle();
+
 		this.checkConditions();
 	},
 
