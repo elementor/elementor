@@ -8,6 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor server environment report.
+ *
+ * Elementor system report handler class responsible for generating a report for
+ * the server environment.
+ *
+ * @since 1.0.0
+ */
 class Server_Reporter extends Base_Reporter {
 
 	/**
