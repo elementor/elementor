@@ -45,7 +45,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Heading extends Base_UI_Control {
 
 	/**
-	 * Retrieve heading control type.
+	 * Get heading control type.
+	 *
+	 * Retrieve the control type, in this case `heading`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -57,9 +59,9 @@ class Control_Heading extends Base_UI_Control {
 	}
 
 	/**
-	 * Retrieve heading control default settings.
+	 * Get heading control default settings.
 	 *
-	 * Get the default settings of the heading control. Used to return the
+	 * Retrieve the default settings of the heading control. Used to return the
 	 * default settings while initializing the heading control.
 	 *
 	 * @since 1.0.0

@@ -47,7 +47,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Structure extends Base_Data_Control {
 
 	/**
-	 * Retrieve structure control type.
+	 * Get structure control type.
+	 *
+	 * Retrieve the control type, in this case `structure`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -109,9 +111,9 @@ class Control_Structure extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve structure control default settings.
+	 * Get structure control default settings.
 	 *
-	 * Get the default settings of the structure control. Used to return the
+	 * Retrieve the default settings of the structure control. Used to return the
 	 * default settings while initializing the structure control.
 	 *
 	 * @since 1.0.0

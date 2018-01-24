@@ -75,7 +75,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Select2 extends Base_Data_Control {
 
 	/**
-	 * Retrieve select2 control type.
+	 * Get select2 control type.
+	 *
+	 * Retrieve the control type, in this case `select2`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -87,9 +89,9 @@ class Control_Select2 extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve select2 control default settings.
+	 * Get select2 control default settings.
 	 *
-	 * Get the default settings of the select2 control. Used to return the
+	 * Retrieve the default settings of the select2 control. Used to return the
 	 * default settings while initializing the select2 control.
 	 *
 	 * @since 1.8.0

@@ -18,9 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Control_Base_Multiple extends Base_Data_Control {
 
 	/**
-	 * Retrieve multiple control default value.
+	 * Get multiple control default value.
 	 *
-	 * Get the default value of the multiple control. Used to return the default
+	 * Retrieve the default value of the multiple control. Used to return the default
 	 * values while initializing the multiple control.
 	 *
 	 * @since 1.0.0
@@ -33,8 +33,10 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve multiple control value.
-	 * Get the value of the multiple control from a specific widget settings.
+	 * Get multiple control value.
+	 *
+	 * Retrieve the value of the multiple control from a specific widget settings.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
@@ -66,9 +68,9 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve multiple control style value.
+	 * Get multiple control style value.
 	 *
-	 * Get the style of the control. Used when adding CSS rules to the control
+	 * Retrieve the style of the control. Used when adding CSS rules to the control
 	 * while extracting CSS from the `selectors` data argument.
 	 *
 	 * @since 1.0.5
