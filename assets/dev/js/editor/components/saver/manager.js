@@ -135,7 +135,9 @@ module.exports = Module.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } ),
+			elements = elementor.elements.toJSON( { removeDefault: true } ),
+			settings = elementor.settings.page.model.toJSON( { removeDefault: true } );
+
 			oldStatus = elementor.settings.page.model.get( 'post_status' ),
 			statusChanged = oldStatus !== options.status;
 
@@ -154,7 +156,8 @@ module.exports = Module.extend( {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
-				data: newData
+				elements: elements,
+				settings: settings
 			},
 
 			success: function( data ) {
@@ -168,7 +171,7 @@ module.exports = Module.extend( {
 					jQuery.extend( true, elementor.config, data.config );
 				}
 
-				elementor.config.data = newData;
+				elementor.config.data = elements;
 
 				elementor.channels.editor.trigger( 'saved', data );
 

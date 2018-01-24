@@ -6,6 +6,7 @@ use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\DB;
+use Elementor\Plugin;
 use Elementor\Post_CSS_File;
 use Elementor\Utils;
 
@@ -76,7 +77,16 @@ class Manager extends BaseManager {
 	 */
 	public function template_include( $template ) {
 		if ( is_singular() ) {
-			$page_template = get_post_meta( get_the_ID(), '_wp_page_template', true );
+			$post_id = get_the_ID();
+
+			if ( is_preview() || Plugin::$instance->preview->is_preview_mode() ) {
+				$preview_post = Utils::get_post_autosave( $post_id, get_current_user_id() );
+				if ( $preview_post ) {
+					$post_id = $preview_post->ID;
+				}
+			}
+
+			$page_template = get_post_meta( $post_id, '_wp_page_template', true );
 
 			if ( self::TEMPLATE_CANVAS === $page_template ) {
 				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
@@ -112,7 +122,21 @@ class Manager extends BaseManager {
 	 * @return BaseModel
 	 */
 	public function get_model_for_config() {
-		return $this->get_model( get_the_ID() );
+		$post_id = get_the_ID();
+
+		$autosave = Plugin::$instance->db->get_newer_autosave( $post_id );
+
+		if ( $autosave ) {
+			$post_id = $autosave->ID;
+	}
+
+		$model = $this->get_model( $post_id );
+
+		if ( $autosave ) {
+			$model->set_settings( 'post_status', get_post_status( get_the_ID() ) );
+		}
+
+		return $model;
 	}
 
 	/**
@@ -122,7 +146,7 @@ class Manager extends BaseManager {
 	 * @throw \Exception If invalid post returned using the `$id`.
 	 * @throw \Exception If current user don't have permissions to edit the post.
 	 */
-	protected function ajax_before_save_settings( array $data, $id ) {
+	public function ajax_before_save_settings( array $data, $id ) {
 		$post = get_post( $id );
 
 		if ( empty( $post ) ) {
@@ -142,13 +166,9 @@ class Manager extends BaseManager {
 			$post->post_excerpt = $data['post_excerpt'];
 		}
 
-		$allowed_post_statuses = get_post_statuses();
-
-		if ( isset( $data['post_status'] ) && isset( $allowed_post_statuses[ $data['post_status'] ] ) ) {
-			$post_type_object = get_post_type_object( $post->post_type );
-			if ( DB::STATUS_PUBLISH !== $data['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
-				$post->post_status = $data['post_status'];
-			}
+		if ( isset( $data['post_status'] ) ) {
+			$this->save_post_status( $id, $data['post_status'] );
+			unset( $post->post_status );
 		}
 
 		wp_update_post( $post );
@@ -160,14 +180,15 @@ class Manager extends BaseManager {
 			}
 		}
 
-		if ( self::is_cpt_custom_templates_supported() ) {
+		if ( Utils::is_cpt_custom_templates_supported() ) {
 			$template = 'default';
 
 			if ( isset( $data['template'] ) ) {
 				$template = $data['template'];
 			}
 
-			update_post_meta( $post->ID, '_wp_page_template', $template );
+			// Use `update_metadata` in order to save also for revisions.
+			update_metadata( 'post', $post->ID, '_wp_page_template', $template );
 		}
 	}
 
@@ -247,5 +268,26 @@ class Manager extends BaseManager {
 			'post_status',
 			'template',
 		];
+	}
+
+	public function save_post_status( $post_id, $status ) {
+		$parent_id = wp_is_post_revision( $post_id );
+
+		if ( ! $parent_id ) {
+			$parent_id = $post_id;
+		}
+
+		$post = get_post( $parent_id );
+
+		$allowed_post_statuses = get_post_statuses();
+
+		if ( isset( $allowed_post_statuses[ $status ] ) ) {
+			$post_type_object = get_post_type_object( $post->post_type );
+			if ( 'publish' !== $status || current_user_can( $post_type_object->cap->publish_posts ) ) {
+				$post->post_status = $status;
+			}
+		}
+
+		wp_update_post( $post );
 	}
 }

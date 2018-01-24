@@ -214,7 +214,9 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
-			SettingsManager::get_settings_managers( 'page' )->save_settings( $data['settings'], $this->post->ID );
+			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+			$page_settings_manager->ajax_before_save_settings( $data['settings'], $this->post->ID );
+			$page_settings_manager->save_settings( $data['settings'], $this->post->ID );
 		}
 
 		// Refresh post after save settings.
@@ -431,7 +433,7 @@ abstract class Document extends Controls_Stack {
 		$date = date_i18n( _x( 'M j, H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
 		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
 
-		if ( $autosave_post ) {
+		if ( $autosave_post || 'revision' === $post->post_type ) {
 			/* translators: 1: Saving date, 2: Author display name */
 			$last_edited = sprintf( __( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		} else {

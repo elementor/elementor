@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Ajax_Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -261,7 +259,7 @@ class Elements_Manager {
 		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->ajax_discard_changes()' );
 
 		return Plugin::$instance->documents->ajax_discard_changes( $request );
-		}
+	}
 
 	/**
 	 * Ajax save builder.

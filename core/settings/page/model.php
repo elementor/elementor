@@ -20,6 +20,11 @@ class Model extends BaseModel {
 	private $post;
 
 	/**
+	 * @var \WP_Post
+	 */
+	private $post_parent;
+
+	/**
 	 * @since 1.6.0
 	 * @access public
 	 */
@@ -28,6 +33,12 @@ class Model extends BaseModel {
 
 		if ( ! $this->post ) {
 			$this->post = new \WP_Post( (object) [] );
+		}
+
+		if ( wp_is_post_revision( $this->post->ID ) ) {
+			$this->post_parent = get_post( $this->post->post_parent );
+		} else {
+			$this->post_parent = $this->post;
 		}
 
 		parent::__construct( $data );
@@ -84,7 +95,7 @@ class Model extends BaseModel {
 	 * @access protected
 	 */
 	protected function _register_controls() {
-		$controls = Plugin::$instance->documents->get( $this->post->ID )->get_controls();
+		$controls = Plugin::$instance->documents->get_doc_or_auto_save( $this->post->ID, get_current_user_id() )->get_controls();
 
 		foreach ( $controls as $control_id => $args ) {
 			$this->add_control( $control_id, $args );
