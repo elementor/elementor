@@ -1405,7 +1405,7 @@
 
 .elementor-mentions-popup {
   position: absolute;
-  width: 230px;
+  width: 300px;
   -webkit-box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
           box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3); }
   .elementor-mentions-popup:before {

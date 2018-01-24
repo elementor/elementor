@@ -72,6 +72,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		if ( ! this.isTinyMCE() ) {
 			value = _.escape( value )
+				.replace( /&lt;br[ /]*&gt;/g, '<br>' )
 				.replace( /&quot;/g, '"' )
 				.replace( /&amp;/g, '&' );
 		}
@@ -149,11 +150,11 @@ module.exports = Marionette.Behavior.extend( {
 
 	setSettingsModel: function( value ) {
 		var settingName = this.view.model.get( 'name' ),
+			parsedValue = _.unescape( this.mentions.getValue() ),
 			isDynamic = false;
 
 		if ( this.mentions.getMentionsCount() ) {
-			var parsedValue = _.unescape( this.mentions.getValue() ),
-				dynamicProperty = this.getOption( 'property' );
+			var dynamicProperty = this.getOption( 'property' );
 
 			if ( dynamicProperty ) {
 				value[ dynamicProperty ] = parsedValue;
@@ -162,6 +163,8 @@ module.exports = Marionette.Behavior.extend( {
 			}
 
 			isDynamic = true;
+		} else {
+			value = parsedValue;
 		}
 
 		if ( ! this.isValueUnderControl() ) {
@@ -692,7 +695,9 @@ module.exports = ViewModule.extend( {
 			$tag.replaceWith( elementor.dynamicTags.tagDataToTagText( tagData.tagId, tagData.tagName, tagData.elementorSettings ) );
 		} );
 
-		return $clonedElement.html().replace( /&nbsp;/g, ' ' ).replace( new RegExp( this.emptyChar, 'g' ), '' ).trim();
+		return $clonedElement.html()
+			.replace( /&nbsp;/g, ' ' )
+			.replace( new RegExp( this.emptyChar, 'g' ), '' );
 	},
 
 	getMentionsCount: function() {
@@ -765,6 +770,14 @@ module.exports = ViewModule.extend( {
 		) {
 			event.preventDefault();
 		}
+
+		if ( 13 !== event.which || event.shiftKey ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		document.execCommand( 'insertHTML', false, '<br>' );
 	},
 
 	onElementKeyUp: function() {
@@ -2921,14 +2934,17 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	behaviors: function() {
-		var behaviors = {},
-			dynamicTags = this.options.model.get( 'dynamic' );
+		var behaviors = {};
 
-		if ( dynamicTags ) {
-			behaviors.mentions = { behaviorClass: MentionsBehavior };
+		if ( this.options.elementSettingsModel.options.supportsDynamic ) {
+			var dynamicTags = this.options.model.get( 'dynamic' );
 
-			if ( 'object' === typeof dynamicTags ) {
-				jQuery.extend( behaviors.mentions, dynamicTags );
+			if ( dynamicTags ) {
+				behaviors.mentions = { behaviorClass: MentionsBehavior };
+
+				if ( 'object' === typeof dynamicTags ) {
+					jQuery.extend( behaviors.mentions, dynamicTags );
+				}
 			}
 		}
 
@@ -3011,6 +3027,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
+		} else if ( $input.is( '[contenteditable]' ) ) {
+			$input.html( value );
 		} else {
 			$input.val( value );
 		}
@@ -4367,7 +4385,6 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	updateIndex: function( newIndex ) {
 		this.itemIndex = newIndex;
-		this.setTitle();
 	},
 
 	setTitle: function() {
@@ -4386,7 +4403,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 				values[ child.model.get( 'name' ) ] = child.getControlValue();
 			} );
 
-			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( values );
+			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( self.model.parseDynamicSettings() );
 		}
 
 		if ( ! title ) {
@@ -4398,8 +4415,6 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	initialize: function( options ) {
 		var self = this;
-
-		self.elementSettingsModel = options.elementSettingsModel;
 
 		self.itemIndex = 0;
 
@@ -4416,6 +4431,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	onRender: function() {
 		this.setTitle();
+
 		this.checkConditions();
 	},
 
@@ -4564,6 +4580,8 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 		this.children.each( function( view ) {
 			view.updateIndex( collection.indexOf( view.model ) + 1 );
+
+			view.setTitle();
 		} );
 	},
 
@@ -6217,11 +6235,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 	parseDynamicSettings: function( settings, options, controls ) {
 		var self = this;
 
-		settings = elementor.helpers.cloneObject( settings );
+		settings = elementor.helpers.cloneObject( settings || self.attributes );
 
-		if ( ! controls ) {
-			controls = this.controls;
-		}
+		options = options || {};
+
+		controls = controls || this.controls;
 
 		jQuery.each( controls, function() {
 			var control = this,
@@ -6412,8 +6430,7 @@ ElementModel = Backbone.Model.extend( {
 			settingModels = {
 				column: ColumnSettingsModel
 			},
-			SettingsModel = settingModels[ elType ] || BaseSettingsModel,
-			elementData;
+			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
 
 		if ( jQuery.isEmptyObject( settings ) ) {
 			settings = elementor.helpers.cloneObject( settings );
@@ -6427,7 +6444,8 @@ ElementModel = Backbone.Model.extend( {
 		settings.isInner = this.get( 'isInner' );
 
 		settings = new SettingsModel( settings, {
-			controls: elementor.getElementControls( this )
+			controls: elementor.getElementControls( this ),
+			supportsDynamic: true
 		} );
 
 		this.set( 'settings', settings );
