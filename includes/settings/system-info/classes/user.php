@@ -7,6 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor user report.
+ *
+ * Elementor system report handler class responsible for generating a report for
+ * the user.
+ *
+ * @since 1.0.0
+ */
 class User_Reporter extends Base_Reporter {
 
 	/**

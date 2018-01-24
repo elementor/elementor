@@ -7,6 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor network plugins report.
+ *
+ * Elementor system report handler class responsible for generating a report for
+ * network plugins.
+ *
+ * @since 1.0.0
+ */
 class Network_Plugins_Reporter extends Base_Reporter {
 
 	/**

@@ -7,6 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor theme report.
+ *
+ * Elementor system report handler class responsible for generating a report for
+ * the theme.
+ *
+ * @since 1.0.0
+ */
 class Theme_Reporter extends Base_Reporter {
 
 	/**

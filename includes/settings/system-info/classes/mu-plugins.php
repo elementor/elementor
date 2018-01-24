@@ -7,6 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor must-use plugins report.
+ *
+ * Elementor system report handler class responsible for generating a report for
+ * must-use plugins.
+ *
+ * @since 1.0.0
+ */
 class MU_Plugins_Reporter extends Base_Reporter {
 
 	/**
