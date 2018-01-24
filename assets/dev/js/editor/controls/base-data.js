@@ -135,6 +135,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
+		} else if ( $input.is( '[contenteditable]' ) ) {
+			$input.html( value );
 		} else {
 			$input.val( value );
 		}
