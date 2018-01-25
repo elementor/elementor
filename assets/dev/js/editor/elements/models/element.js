@@ -67,8 +67,7 @@ ElementModel = Backbone.Model.extend( {
 		settings.isInner = this.get( 'isInner' );
 
 		settings = new SettingsModel( settings, {
-			controls: elementor.getElementControls( this ),
-			supportsDynamic: true
+			controls: elementor.getElementControls( this )
 		} );
 
 		this.set( 'settings', settings );
