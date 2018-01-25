@@ -97,15 +97,20 @@ class Documents_Manager {
 	}
 
 	/**
-	 * @param string $class_name
+	 * @param string $type
 	 * @param array $post_data
 	 * @param array $meta_data
 	 *
 	 * @return Document
 	 */
-	public function create( $class_name, $post_data = [], $meta_data = [] ) {
+	public function create( $type, $post_data = [], $meta_data = [] ) {
+		if ( ! isset( $this->types[ $type ] ) ) {
+			// Translators: %s = document type name.
+			wp_die( sprintf( __( 'Type %s isn\'t exist', '' ), $type ) );
+		}
+
 		if ( empty( $post_data['post_title'] ) ) {
-			$post_data['post_title'] = __( 'Elementor', '' );
+			$post_data['post_title'] = __( 'Elementor', '' ) . ' ' . ucfirst( $type );
 			$update_title = true;
 		}
 
@@ -124,6 +129,9 @@ class Documents_Manager {
 		}
 
 		/** @var Document $document */
+
+		$class_name = $this->types[ $type ];
+
 		$document = new $class_name( [
 			'post_id' => $post_id,
 		] );
