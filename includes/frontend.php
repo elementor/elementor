@@ -720,15 +720,8 @@ class Frontend {
 			return '';
 		}
 
-		if ( is_preview() ) {
-			$preview_post = Utils::get_post_autosave( $post_id, get_current_user_id() );
-			$status = DB::STATUS_DRAFT;
-		} else {
-			$preview_post = false;
-			$status = DB::STATUS_PUBLISH;
-		}
-
-		$data = Plugin::$instance->db->get_plain_editor( $post_id, $status );
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+		$data = $document->get_elements_data();
 
 		/**
 		 * Frontend builder content data.
@@ -747,8 +740,8 @@ class Frontend {
 		}
 
 		if ( ! $this->_is_excerpt ) {
-			if ( $preview_post ) {
-				$css_file = new Post_Preview_CSS( $preview_post->ID );
+			if ( $document->is_autosave() ) {
+				$css_file = new Post_Preview_CSS( $document->get_post()->ID );
 			} else {
 				$css_file = new Post_CSS_File( $post_id );
 			}
