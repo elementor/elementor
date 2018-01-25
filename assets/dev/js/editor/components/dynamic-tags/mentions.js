@@ -154,7 +154,12 @@ module.exports = ViewModule.extend( {
 
 	getValue: function() {
 		var $clonedElement = this.$element.clone(),
-			$tags = $clonedElement.find( '.atwho-inserted' );
+			$tags = $clonedElement.find( '.atwho-inserted' ),
+			$ghostSpans = $clonedElement.find( 'span:not([class!=""])' );
+
+		$ghostSpans.replaceWith( function() {
+			return jQuery( this ).text();
+		} );
 
 		$tags.each( function() {
 			var $tag = jQuery( this ),
