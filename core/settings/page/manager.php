@@ -117,18 +117,12 @@ class Manager extends BaseManager {
 	 * @return BaseModel
 	 */
 	public function get_model_for_config() {
-		$post_id = get_the_ID();
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( get_the_ID() );
 
-		$autosave = Plugin::$instance->db->get_newer_autosave( $post_id );
+		$model = $this->get_model( $document->get_post()->ID );
 
-		if ( $autosave ) {
-			$post_id = $autosave->ID;
-		}
-
-		$model = $this->get_model( $post_id );
-
-		if ( $autosave ) {
-			$model->set_settings( 'post_status', get_post_status( get_the_ID() ) );
+		if ( $document->is_autosave() ) {
+			$model->set_settings( 'post_status', $document->get_main_post()->post_status );
 		}
 
 		return $model;

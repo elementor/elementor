@@ -118,6 +118,10 @@ abstract class Document extends Controls_Stack {
 		return false;
 	}
 
+	public function is_autosave() {
+		return wp_is_post_autosave( $this->post->ID );
+	}
+
 	public function get_autosave( $user_id = 0, $create = false ) {
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
