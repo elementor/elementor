@@ -186,10 +186,11 @@ class Manager extends BaseManager {
 	 * @access protected
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
+		// Use update/delete_metadata in order to handle also revisions.
 		if ( ! empty( $settings ) ) {
-			update_post_meta( $id, self::META_KEY, $settings );
+			update_metadata( 'post', $id, self::META_KEY, $settings );
 		} else {
-			delete_post_meta( $id, self::META_KEY );
+			delete_metadata( 'post', $id, self::META_KEY );
 		}
 	}
 
