@@ -55,15 +55,6 @@ class Documents_Manager {
 		return $this;
 	}
 
-	public function get_doc_or_auto_save( $id, $user_id = 0 ) {
-		$document = $this->get( $id );
-		if ( $document->get_autosave_id( $user_id ) ) {
-			$document = $document->get_autosave( $user_id );
-		}
-
-		return $document;
-	}
-
 	/**
 	 * @param int $post_id
 	 *
@@ -73,10 +64,6 @@ class Documents_Manager {
 		if ( ! isset( $this->documents[ $post_id ] ) ) {
 			$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 
-			if ( ! $doc_type ) {
-				$doc_type = get_post_type( $post_id );
-			}
-
 			$doc_type_class = $this->get_document_type( $doc_type );
 			$this->documents[ $post_id ] = new $doc_type_class( [
 				'post_id' => $post_id,
@@ -84,6 +71,25 @@ class Documents_Manager {
 		}
 
 		return $this->documents[ $post_id ];
+	}
+
+	public function get_doc_or_auto_save( $id, $user_id = 0 ) {
+		$document = $this->get( $id );
+		if ( $document->get_autosave_id( $user_id ) ) {
+			$document = $document->get_autosave( $user_id );
+		}
+
+		return $document;
+	}
+
+	public function get_doc_for_frontend( $post_id ) {
+		if ( is_preview() || Plugin::$instance->preview->is_preview_mode() ) {
+			$document = $this->get_doc_or_auto_save( $post_id, get_current_user_id() );
+		} else {
+			$document = $this->get( $post_id );
+		}
+
+		return $document;
 	}
 
 	public function get_document_type( $type ) {
@@ -134,7 +140,7 @@ class Documents_Manager {
 	 * @param $request
 	 *
 	 * @return array|mixed|void
-	 * @throws \Exception
+	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
 	 */
 	public function	ajax_save( $request ) {
 		if ( empty( $request['post_id'] ) ) {

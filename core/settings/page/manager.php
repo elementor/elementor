@@ -74,21 +74,16 @@ class Manager extends BaseManager {
 	/**
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @param string $template
+	 *
+	 * @return string
 	 */
 	public function template_include( $template ) {
 		if ( is_singular() ) {
-			$post_id = get_the_ID();
+			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
 
-			if ( is_preview() || Plugin::$instance->preview->is_preview_mode() ) {
-				$preview_post = Utils::get_post_autosave( $post_id, get_current_user_id() );
-				if ( $preview_post ) {
-					$post_id = $preview_post->ID;
-				}
-			}
-
-			$page_template = get_post_meta( $post_id, '_wp_page_template', true );
-
-			if ( self::TEMPLATE_CANVAS === $page_template ) {
+			if ( self::TEMPLATE_CANVAS === $document->get_settings( 'template' ) ) {
 				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
 			}
 		}
@@ -128,7 +123,7 @@ class Manager extends BaseManager {
 
 		if ( $autosave ) {
 			$post_id = $autosave->ID;
-	}
+		}
 
 		$model = $this->get_model( $post_id );
 

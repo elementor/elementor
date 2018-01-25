@@ -473,6 +473,7 @@ class Utils {
 	public static function get_post_autosave( $post_id, $user_id = 0 ) {
 		global $wpdb;
 
+		// TODO: compare dates in order to get newer auto-save
 		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s', [ $post_id, "{$post_id}-autosave%" ] );
 
 		if ( $user_id ) {
