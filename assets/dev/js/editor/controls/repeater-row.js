@@ -103,7 +103,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		self.itemIndex = 0;
 
 		// Collection for Controls list
-		self.collection = new Backbone.Collection( options.controlFields );
+		self.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( options.controlFields )  ) );
 
 		self.listenTo( self.model, 'change', self.checkConditions );
 		self.listenTo( self.getOption( 'parentModel' ), 'change', self.checkConditions );
