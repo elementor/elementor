@@ -2,6 +2,7 @@
 namespace Elementor\Modules\DynamicTags;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\DynamicTags\Tag;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -40,7 +41,14 @@ class Module extends BaseModule {
 
 	private function register_tags() {
 		foreach ( $this->get_tag_classes_names() as $tag_class ) {
-			Plugin::$instance->dynamic_tags_manager->register_tag( $this->get_reflection()->getNamespaceName() . '\Tags\\' . $tag_class );
+			/** @var Tag $class_name */
+			$class_name = $this->get_reflection()->getNamespaceName() . '\Tags\\' . $tag_class;
+
+			if ( ! $class_name::is_active() ) {
+				continue;
+			}
+
+			Plugin::$instance->dynamic_tags_manager->register_tag( $class_name );
 		}
 	}
 }
