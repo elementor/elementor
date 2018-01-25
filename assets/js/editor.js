@@ -686,7 +686,12 @@ module.exports = ViewModule.extend( {
 
 	getValue: function() {
 		var $clonedElement = this.$element.clone(),
-			$tags = $clonedElement.find( '.atwho-inserted' );
+			$tags = $clonedElement.find( '.atwho-inserted' ),
+			$ghostSpans = $clonedElement.find( 'span:not([class!=""])' );
+
+		$ghostSpans.replaceWith( function() {
+			return jQuery( this ).text();
+		} );
 
 		$tags.each( function() {
 			var $tag = jQuery( this ),
@@ -2934,17 +2939,14 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	behaviors: function() {
-		var behaviors = {};
+		var behaviors = {},
+			dynamicTags = this.options.model.get( 'dynamic' );
 
-		if ( this.options.elementSettingsModel.options.supportsDynamic ) {
-			var dynamicTags = this.options.model.get( 'dynamic' );
+		if ( dynamicTags &&  dynamicTags.active ) {
+			behaviors.mentions = { behaviorClass: MentionsBehavior };
 
-			if ( dynamicTags ) {
-				behaviors.mentions = { behaviorClass: MentionsBehavior };
-
-				if ( 'object' === typeof dynamicTags ) {
-					jQuery.extend( behaviors.mentions, dynamicTags );
-				}
+			if ( 'object' === typeof dynamicTags ) {
+				jQuery.extend( behaviors.mentions, dynamicTags );
 			}
 		}
 
@@ -3027,8 +3029,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 			$input.prop( 'checked', !! value );
 		} else if ( 'radio' === inputType ) {
 			$input.filter( '[value="' + value + '"]' ).prop( 'checked', true );
-		} else if ( $input.is( '[contenteditable]' ) ) {
-			$input.html( value );
 		} else {
 			$input.val( value );
 		}
@@ -4419,7 +4419,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		self.itemIndex = 0;
 
 		// Collection for Controls list
-		self.collection = new Backbone.Collection( options.controlFields );
+		self.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( options.controlFields )  ) );
 
 		self.listenTo( self.model, 'change', self.checkConditions );
 		self.listenTo( self.getOption( 'parentModel' ), 'change', self.checkConditions );
@@ -5317,7 +5317,7 @@ App = Marionette.Application.extend( {
 		var  self = this;
 
 		_.each( controls, function( controlData, controlKey ) {
-			controls[ controlKey ] = _.extend( {}, self.config.controls[ controlData.type ], controlData  );
+			controls[ controlKey ] = jQuery.extend( true, {}, self.config.controls[ controlData.type ], controlData  );
 		} );
 
 		return controls;
@@ -6098,7 +6098,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 				defaults[ field.name ] = field['default'] || control.default_value;
 			}
 
-			var isDynamicControl = control.dynamic && attrs[ 'dynamic_' + field.name ] && 'mentions' === control.dynamic.valueController;
+			var isDynamicControl = control.dynamic && control.dynamic.active && attrs[ 'dynamic_' + field.name ] && 'mentions' === control.dynamic.valueController;
 
 			if ( undefined !== attrs[ field.name ] && isMultipleControl && ! _.isObject( attrs[ field.name ] ) && ! isDynamicControl ) {
 				elementor.debug.addCustomError(
@@ -6168,7 +6168,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 				control.styleFields = self.getStyleControls( control.fields );
 			}
 
-			if ( control.fields || control.dynamic || self.isStyleControl( control.name, controls ) ) {
+			if ( control.fields || ( control.dynamic && control.dynamic.active ) || self.isStyleControl( control.name, controls ) ) {
 				styleControls.push( control );
 			}
 		} );
@@ -6267,7 +6267,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 				dynamicSettings = elementor.config.controls[ control.type ].dynamic;
 			}
 
-			if ( ! dynamicSettings ) {
+			if ( ! dynamicSettings || ! dynamicSettings.active ) {
 				return;
 			}
 
@@ -6444,8 +6444,7 @@ ElementModel = Backbone.Model.extend( {
 		settings.isInner = this.get( 'isInner' );
 
 		settings = new SettingsModel( settings, {
-			controls: elementor.getElementControls( this ),
-			supportsDynamic: true
+			controls: elementor.getElementControls( this )
 		} );
 
 		this.set( 'settings', settings );
@@ -10386,7 +10385,7 @@ ControlsCSSParser = ViewModule.extend( {
 				self.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, controls, placeholders, replacements );
 			}
 
-			if ( control.dynamic && values[ 'dynamic_' + control.name ] ) {
+			if ( control.dynamic && control.dynamic.active && values[ 'dynamic_' + control.name ] ) {
 				self.addDynamicControlStyleRules( values[ control.name ], control );
 			}
 
@@ -10845,6 +10844,7 @@ helpers = {
 		if ( ! _.isEmpty( fontUrl ) ) {
 			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + fontUrl + '" rel="stylesheet" type="text/css">' );
 		}
+
 		this._enqueuedFonts.push( font );
 	},
 

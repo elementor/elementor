@@ -583,11 +583,11 @@
   padding: 5px;
   font-size: 12px; }
 
-.elementor-control-type-url .elementor-input-style {
+.elementor-control-type-url input[type=url], .elementor-control-type-url .elementor-input-style {
   direction: ltr; }
-  .elementor-control-type-url .elementor-input-style:not(:focus) + .elementor-control-url-more {
+  .elementor-control-type-url input[type=url]:not(:focus) + .elementor-control-url-more, .elementor-control-type-url .elementor-input-style:not(:focus) + .elementor-control-url-more {
     border-color: #d5dadf; }
-  .elementor-control-type-url .elementor-input-style:focus + .elementor-control-url-more {
+  .elementor-control-type-url input[type=url]:focus + .elementor-control-url-more, .elementor-control-type-url .elementor-input-style:focus + .elementor-control-url-more {
     border-color: #a4afb7; }
 
 .elementor-control-type-section {
