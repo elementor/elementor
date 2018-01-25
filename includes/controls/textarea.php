@@ -109,11 +109,15 @@ class Control_Textarea extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<div id="<?php echo $control_uid; ?>" class="elementor-control-mentions-area elementor-input-style" data-setting="{{ data.name }}" contenteditable="true"></div>
+				<# if ( data.dynamic && data.dynamic.active ) { #>
+					<div id="<?php echo $control_uid; ?>" class="elementor-control-mentions-area elementor-input-style" data-setting="{{ data.name }}" contenteditable="true"></div>
+				<# } else { #>
+					<textarea id="<?php echo $control_uid; ?>" rows="{{ data.rows }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}"></textarea>
+				<# } #>
 			</div>
 		</div>
 		<# if ( data.description ) { #>
-		<div class="elementor-control-field-description">{{{ data.description }}}</div>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
 	}
