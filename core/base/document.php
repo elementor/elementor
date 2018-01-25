@@ -136,7 +136,9 @@ abstract class Document extends Controls_Stack {
 				'post_ID' => $this->post->ID,
 				'post_type' => $this->post->post_type,
 				'post_title' => $this->post->post_title,
-				'post_content' => Plugin::$instance->db->get_plain_text( $this->post->ID ),
+				'post_excerpt' => $this->post->post_excerpt,
+				// Hack to cause $autosave_is_different=true in `wp_create_post_autosave`.
+				'post_content' => '<!-- Created With Elementor -->',
 				'post_modified' => current_time( 'mysql' ),
 			] );
 
