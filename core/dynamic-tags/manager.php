@@ -64,7 +64,7 @@ class Manager {
 	 * @param string $tag_name
 	 * @param array  $settings
 	 *
-	 * @return Tag
+	 * @return Tag|null
 	 */
 	public function create_tag( $tag_id, $tag_name, array $settings = [] ) {
 		$tag_info = $this->get_tag_info( $tag_name );
