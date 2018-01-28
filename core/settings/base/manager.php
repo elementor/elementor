@@ -25,7 +25,8 @@ abstract class Manager {
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
-		add_action( 'elementor/' . $this->get_css_file_name() . '-css-file/parse', [ $this, 'add_settings_css_rules' ] );
+		$name = $this->get_css_file_name();
+		add_action( "elementor/css-file/{$name}/parse", [ $this, 'add_settings_css_rules' ] );
 	}
 
 	/**

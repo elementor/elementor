@@ -269,7 +269,7 @@ abstract class CSS_File {
 		$name = $this->get_name();
 
 		/**
-		 * CSS file enqueue.
+		 * Enqueue CSS file.
 		 *
 		 * Fires when CSS file is enqueued on Elementor.
 		 *
@@ -279,7 +279,20 @@ abstract class CSS_File {
 		 *
 		 * @param CSS_File $this The current CSS file.
 		 */
-		do_action( "elementor/{$name}-css-file/enqueue", $this );
+		Utils::do_action_deprecated( "elementor/{$name}-css-file/enqueue", array( $this ), '2.0.0', "elementor/css-file/{$name}/enqueue" );
+
+		/**
+		 * Enqueue CSS file.
+		 *
+		 * Fires when CSS file is enqueued on Elementor.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param CSS_File $this The current CSS file.
+		 */
+		do_action( "elementor/css-file/{$name}/enqueue", $this );
 	}
 
 	/**
@@ -621,7 +634,7 @@ abstract class CSS_File {
 		$name = $this->get_name();
 
 		/**
-		 * CSS file parse.
+		 * Parse CSS file.
 		 *
 		 * Fires when CSS file is parsed on Elementor.
 		 *
@@ -631,7 +644,20 @@ abstract class CSS_File {
 		 *
 		 * @param CSS_File $this The current CSS file.
 		 */
-		do_action( "elementor/{$name}-css-file/parse", $this );
+		Utils::do_action_deprecated( "elementor/{$name}-css-file/parse", array( $this ), '2.0.0', "elementor/css-file/{$name}/parse" );
+
+		/**
+		 * Parse CSS file.
+		 *
+		 * Fires when CSS file is parsed on Elementor.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param CSS_File $this The current CSS file.
+		 */
+		do_action( "elementor/css-file/{$name}/parse", $this );
 
 		$this->css = $this->stylesheet_obj->__toString();
 	}
