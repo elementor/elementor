@@ -6,6 +6,7 @@ use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\DB;
+use Elementor\Plugin;
 use Elementor\Post_CSS_File;
 use Elementor\Utils;
 
@@ -60,11 +61,12 @@ class Manager extends BaseManager {
 
 	/**
 	 * @since 1.6.0
+	 * @deprecated 2.0.0
 	 * @access public
 	 * @static
 	 */
 	public static function is_cpt_custom_templates_supported() {
-		_deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported' );
+		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported' );
 
 		return Utils::is_cpt_custom_templates_supported();
 	}
@@ -72,12 +74,16 @@ class Manager extends BaseManager {
 	/**
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @param string $template
+	 *
+	 * @return string
 	 */
 	public function template_include( $template ) {
 		if ( is_singular() ) {
-			$page_template = get_post_meta( get_the_ID(), '_wp_page_template', true );
+			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
 
-			if ( self::TEMPLATE_CANVAS === $page_template ) {
+			if ( self::TEMPLATE_CANVAS === $document->get_settings( 'template' ) ) {
 				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
 			}
 		}
@@ -111,17 +117,25 @@ class Manager extends BaseManager {
 	 * @return BaseModel
 	 */
 	public function get_model_for_config() {
-		return $this->get_model( get_the_ID() );
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( get_the_ID() );
+
+		$model = $this->get_model( $document->get_post()->ID );
+
+		if ( $document->is_autosave() ) {
+			$model->set_settings( 'post_status', $document->get_main_post()->post_status );
+		}
+
+		return $model;
 	}
 
 	/**
 	 * @since 1.6.0
-	 * @access protected
+	 * @access public
 	 *
 	 * @throw \Exception If invalid post returned using the `$id`.
 	 * @throw \Exception If current user don't have permissions to edit the post.
 	 */
-	protected function ajax_before_save_settings( array $data, $id ) {
+	public function ajax_before_save_settings( array $data, $id ) {
 		$post = get_post( $id );
 
 		if ( empty( $post ) ) {
@@ -141,13 +155,9 @@ class Manager extends BaseManager {
 			$post->post_excerpt = $data['post_excerpt'];
 		}
 
-		$allowed_post_statuses = get_post_statuses();
-
-		if ( isset( $data['post_status'] ) && isset( $allowed_post_statuses[ $data['post_status'] ] ) ) {
-			$post_type_object = get_post_type_object( $post->post_type );
-			if ( DB::STATUS_PUBLISH !== $data['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
-				$post->post_status = $data['post_status'];
-			}
+		if ( isset( $data['post_status'] ) ) {
+			$this->save_post_status( $id, $data['post_status'] );
+			unset( $post->post_status );
 		}
 
 		wp_update_post( $post );
@@ -159,14 +169,15 @@ class Manager extends BaseManager {
 			}
 		}
 
-		if ( self::is_cpt_custom_templates_supported() ) {
+		if ( Utils::is_cpt_custom_templates_supported() ) {
 			$template = 'default';
 
 			if ( isset( $data['template'] ) ) {
 				$template = $data['template'];
 			}
 
-			update_post_meta( $post->ID, '_wp_page_template', $template );
+			// Use `update_metadata` in order to save also for revisions.
+			update_metadata( 'post', $post->ID, '_wp_page_template', $template );
 		}
 	}
 
@@ -175,10 +186,11 @@ class Manager extends BaseManager {
 	 * @access protected
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
+		// Use update/delete_metadata in order to handle also revisions.
 		if ( ! empty( $settings ) ) {
-			update_post_meta( $id, self::META_KEY, $settings );
+			update_metadata( 'post', $id, self::META_KEY, $settings );
 		} else {
-			delete_post_meta( $id, self::META_KEY );
+			delete_metadata( 'post', $id, self::META_KEY );
 		}
 	}
 
@@ -246,5 +258,26 @@ class Manager extends BaseManager {
 			'post_status',
 			'template',
 		];
+	}
+
+	public function save_post_status( $post_id, $status ) {
+		$parent_id = wp_is_post_revision( $post_id );
+
+		if ( ! $parent_id ) {
+			$parent_id = $post_id;
+		}
+
+		$post = get_post( $parent_id );
+
+		$allowed_post_statuses = get_post_statuses();
+
+		if ( isset( $allowed_post_statuses[ $status ] ) ) {
+			$post_type_object = get_post_type_object( $post->post_type );
+			if ( 'publish' !== $status || current_user_can( $post_type_object->cap->publish_posts ) ) {
+				$post->post_status = $status;
+			}
+		}
+
+		wp_update_post( $post );
 	}
 }

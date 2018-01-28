@@ -118,6 +118,10 @@ abstract class Document extends Controls_Stack {
 		return false;
 	}
 
+	public function is_autosave() {
+		return wp_is_post_autosave( $this->post->ID );
+	}
+
 	public function get_autosave( $user_id = 0, $create = false ) {
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
@@ -132,7 +136,9 @@ abstract class Document extends Controls_Stack {
 				'post_ID' => $this->post->ID,
 				'post_type' => $this->post->post_type,
 				'post_title' => $this->post->post_title,
-				'post_content' => Plugin::$instance->db->get_plain_text( $this->post->ID ),
+				'post_excerpt' => $this->post->post_excerpt,
+				// Hack to cause $autosave_is_different=true in `wp_create_post_autosave`.
+				'post_content' => '<!-- Created With Elementor -->',
 				'post_modified' => current_time( 'mysql' ),
 			] );
 
@@ -214,7 +220,9 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
-			SettingsManager::get_settings_managers( 'page' )->save_settings( $data['settings'], $this->post->ID );
+			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+			$page_settings_manager->ajax_before_save_settings( $data['settings'], $this->post->ID );
+			$page_settings_manager->save_settings( $data['settings'], $this->post->ID );
 		}
 
 		// Refresh post after save settings.
@@ -431,7 +439,7 @@ abstract class Document extends Controls_Stack {
 		$date = date_i18n( _x( 'M j, H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
 		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
 
-		if ( $autosave_post ) {
+		if ( $autosave_post || 'revision' === $post->post_type ) {
 			/* translators: 1: Saving date, 2: Author display name */
 			$last_edited = sprintf( __( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		} else {
