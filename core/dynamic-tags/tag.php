@@ -12,10 +12,6 @@ abstract class Tag extends Controls_Stack {
 		return 'tag';
 	}
 
-	public static function is_active() {
-		return true;
-	}
-
 	abstract public function get_groups();
 
 	abstract public function get_title();

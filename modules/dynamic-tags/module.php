@@ -44,10 +44,6 @@ class Module extends BaseModule {
 			/** @var Tag $class_name */
 			$class_name = $this->get_reflection()->getNamespaceName() . '\Tags\\' . $tag_class;
 
-			if ( ! $class_name::is_active() ) {
-				continue;
-			}
-
 			Plugin::$instance->dynamic_tags_manager->register_tag( $class_name );
 		}
 	}
