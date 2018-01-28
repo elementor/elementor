@@ -55,15 +55,6 @@ class Documents_Manager {
 		return $this;
 	}
 
-	public function get_doc_or_auto_save( $id, $user_id = 0 ) {
-		$document = $this->get( $id );
-		if ( $document->get_autosave_id( $user_id ) ) {
-			$document = $document->get_autosave( $user_id );
-		}
-
-		return $document;
-	}
-
 	/**
 	 * @param int $post_id
 	 *
@@ -82,18 +73,42 @@ class Documents_Manager {
 		return $this->documents[ $post_id ];
 	}
 
+	public function get_doc_or_auto_save( $id, $user_id = 0 ) {
+		$document = $this->get( $id );
+		if ( $document->get_autosave_id( $user_id ) ) {
+			$document = $document->get_autosave( $user_id );
+		}
+
+		return $document;
+	}
+
+	public function get_doc_for_frontend( $post_id ) {
+		if ( is_preview() || Plugin::$instance->preview->is_preview_mode() ) {
+			$document = $this->get_doc_or_auto_save( $post_id, get_current_user_id() );
+		} else {
+			$document = $this->get( $post_id );
+		}
+
+		return $document;
+	}
+
 	public function get_document_type( $type ) {
 		return isset( $this->types[ $type ] ) ? $this->types[ $type ] : $this->types['post'];
 	}
 
 	/**
-	 * @param string $class_name
+	 * @param string $type
 	 * @param array $post_data
 	 * @param array $meta_data
 	 *
 	 * @return Document
 	 */
-	public function create( $class_name, $post_data = [], $meta_data = [] ) {
+	public function create( $type, $post_data = [], $meta_data = [] ) {
+		if ( ! isset( $this->types[ $type ] ) ) {
+			/* translators: %s: document type name */
+			wp_die( sprintf( __( 'Type %s does not exist.', 'elementor' ), $type ) );
+		}
+
 		if ( empty( $post_data['post_title'] ) ) {
 			$post_data['post_title'] = __( 'Elementor', '' );
 			$update_title = true;
@@ -114,6 +129,9 @@ class Documents_Manager {
 		}
 
 		/** @var Document $document */
+
+		$class_name = $this->types[ $type ];
+
 		$document = new $class_name( [
 			'post_id' => $post_id,
 		] );
@@ -130,7 +148,7 @@ class Documents_Manager {
 	 * @param $request
 	 *
 	 * @return array|mixed|void
-	 * @throws \Exception
+	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
 	 */
 	public function	ajax_save( $request ) {
 		if ( empty( $request['post_id'] ) ) {
@@ -140,7 +158,7 @@ class Documents_Manager {
 		$document = $this->get( $request['post_id'] );
 
 		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'no_access' );
+			throw new \Exception( 'Access denied.' );
 		}
 
 		$status = DB::STATUS_DRAFT;
@@ -158,7 +176,8 @@ class Documents_Manager {
 		}
 
 		$data = [
-			'elements' => $request['data'],
+			'elements' => $request['elements'],
+			'settings' => $request['settings'],
 		];
 
 		$document->save( $data );

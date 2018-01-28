@@ -325,7 +325,8 @@ module.exports = Module.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } ),
+			elements = elementor.elements.toJSON( { removeDefault: true } ),
+			settings = elementor.settings.page.model.toJSON( { removeDefault: true } ),
 			oldStatus = elementor.settings.page.model.get( 'post_status' ),
 			statusChanged = oldStatus !== options.status;
 
@@ -344,7 +345,8 @@ module.exports = Module.extend( {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
-				data: newData
+				elements: elements,
+				settings: settings
 			},
 
 			success: function( data ) {
@@ -358,7 +360,7 @@ module.exports = Module.extend( {
 					jQuery.extend( true, elementor.config, data.config );
 				}
 
-				elementor.config.data = newData;
+				elementor.config.data = elements;
 
 				elementor.channels.editor.trigger( 'saved', data );
 
@@ -598,6 +600,9 @@ module.exports = BaseSettings.extend( {
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
 module.exports = BaseSettings.extend( {
+
+	save: function() {},
+
 	changeCallbacks: {
 		post_title: function( newValue ) {
 			var $title = elementorFrontend.getElements( '$document' ).find( elementor.config.page_title_selector );
@@ -606,14 +611,22 @@ module.exports = BaseSettings.extend( {
 		},
 
 		template: function() {
-			this.save( function() {
-				elementor.reloadPreview();
+			elementor.saver.saveAutoSave( {
+				onSuccess: function() {
+					elementor.reloadPreview();
 
-				elementor.once( 'preview:loaded', function() {
-					elementor.getPanelView().setPage( 'page_settings' );
-				} );
+					elementor.once( 'preview:loaded', function() {
+						elementor.getPanelView().setPage( 'page_settings' );
+					} );
+				}
 			} );
 		}
+	},
+
+	onModelChange: function() {
+		elementor.saver.setFlagEditorChange( true );
+
+		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},
 
 	bindEvents: function() {
@@ -13184,7 +13197,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.jqueryXhr = elementor.history.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: function( data ) {
-				elementor.history.revisions.setEditorData( data );
+				elementor.history.revisions.setEditorData( data.elements );
+				elementor.settings.page.model.set( data.settings );
 
 				self.setRevisionsButtonsActive( true );
 
