@@ -2947,7 +2947,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		var behaviors = {},
 			dynamicTags = this.options.model.get( 'dynamic' );
 
-		if ( dynamicTags &&  dynamicTags.active ) {
+		if ( dynamicTags && dynamicTags.active ) {
 			behaviors.mentions = { behaviorClass: MentionsBehavior };
 
 			if ( 'object' === typeof dynamicTags ) {
@@ -4424,7 +4424,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		self.itemIndex = 0;
 
 		// Collection for Controls list
-		self.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( options.controlFields )  ) );
+		self.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( options.controlFields ) ) );
 
 		self.listenTo( self.model, 'change', self.checkConditions );
 		self.listenTo( self.getOption( 'parentModel' ), 'change', self.checkConditions );
