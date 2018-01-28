@@ -45,7 +45,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		var behaviors = {},
 			dynamicTags = this.options.model.get( 'dynamic' );
 
-		if ( dynamicTags &&  dynamicTags.active ) {
+		if ( dynamicTags && dynamicTags.active ) {
 			behaviors.mentions = { behaviorClass: MentionsBehavior };
 
 			if ( 'object' === typeof dynamicTags ) {
