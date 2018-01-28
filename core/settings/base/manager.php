@@ -29,11 +29,14 @@ abstract class Manager {
 	}
 
 	/**
-	 * @since 1.6.0
-	 * @access public
-	 * @abstract
+	 * Register ajax actions.
 	 *
-	 * @param Ajax_Manager $ajax_handler
+	 * Add new actions to handle data after an ajax requests returned.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param Ajax_Manager $ajax_handler The ajax handler.
 	 */
 	public function register_ajax_actions( $ajax_handler ) {
 		$name = $this->get_name();
