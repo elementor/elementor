@@ -116,8 +116,8 @@ class Manager extends BaseManager {
 	 * @since 1.6.0
 	 * @access protected
 	 *
-	 * @throw \Exception If invalid post returned using the `$id`.
-	 * @throw \Exception If current user don't have permissions to edit the post.
+	 * @throws \Exception If invalid post returned using the `$id`.
+	 * @throws \Exception If current user don't have permissions to edit the post.
 	 */
 	protected function ajax_before_save_settings( array $data, $id ) {
 		$post = get_post( $id );
