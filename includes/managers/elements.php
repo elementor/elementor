@@ -54,10 +54,14 @@ class Elements_Manager {
 	}
 
 	/**
+	 * Register ajax actions.
+	 *
+	 * Add new actions to handle data after an ajax requests returned.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_handler
+	 * @param Ajax_Manager $ajax_handler The ajax handler.
 	 */
 	public function register_ajax_actions( $ajax_handler ) {
 		$ajax_handler->register_ajax_action( 'save_builder', [ $this, 'ajax_save_builder' ] );
