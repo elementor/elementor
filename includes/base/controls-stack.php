@@ -1674,7 +1674,7 @@ abstract class Controls_Stack {
 				continue;
 			}
 
-			$control = array_merge( $control_obj->get_settings(), $control );
+			$control = array_merge_recursive( $control_obj->get_settings(), $control );
 
 			$is_dynamic_value = isset( $settings[ $control['name'] ] ) && ! empty( $settings[ 'dynamic_' . $control['name'] ] );
 
