@@ -53,7 +53,8 @@ class Elements_Manager {
 	 * Create element instance.
 	 *
 	 * This method creates a new element instance for any given element.
-	 *	 * @since 1.0.0
+	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param array        $element_data Element data.
