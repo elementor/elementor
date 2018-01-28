@@ -84,11 +84,15 @@ class Manager {
 	public function get_tag_data_content( $tag_id, $tag_name, array $settings = [] ) {
 		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
 
+		if ( ! $tag ) {
+			return null;
+		}
+
 		return $tag->get_content();
 	}
 
 	public function get_tag_info( $tag_name ) {
-		if ( ! $this->tags_info[ $tag_name ] ) {
+		if ( empty( $this->tags_info[ $tag_name ] ) ) {
 			return null;
 		}
 
