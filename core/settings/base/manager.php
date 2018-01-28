@@ -222,7 +222,7 @@ abstract class Manager {
 
 	/**
 	 * @since 1.6.0
-	 * @access protected
+	 * @access public
 	 */
 	public function ajax_before_save_settings( array $data, $id ) {}
 

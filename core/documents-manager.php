@@ -105,12 +105,12 @@ class Documents_Manager {
 	 */
 	public function create( $type, $post_data = [], $meta_data = [] ) {
 		if ( ! isset( $this->types[ $type ] ) ) {
-			// Translators: %s = document type name.
-			wp_die( sprintf( __( 'Type %s isn\'t exist', '' ), $type ) );
+			/* translators: %s: document type name */
+			wp_die( sprintf( __( 'Type %s does not exist', 'elementor' ), $type ) );
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {
-			$post_data['post_title'] = __( 'Elementor', '' ) . ' ' . ucfirst( $type );
+			$post_data['post_title'] = __( 'Elementor', '' );
 			$update_title = true;
 		}
 
@@ -158,7 +158,7 @@ class Documents_Manager {
 		$document = $this->get( $request['post_id'] );
 
 		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'Access Denied' );
+			throw new \Exception( 'Access denied.' );
 		}
 
 		$status = DB::STATUS_DRAFT;
