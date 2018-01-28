@@ -68,7 +68,8 @@ class Elements_Manager {
 	 * Create element instance.
 	 *
 	 * This method creates a new element instance for any given element.
-	 *	 * @since 1.0.0
+	 *
+	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @param array        $element_data Element data.
@@ -260,7 +261,7 @@ class Elements_Manager {
 	 *
 	 * Fired by `wp_ajax_elementor_discard_changes` action.
 	 *
-	 * @since  1.9.0
+	 * @since 1.9.0
 	 * @access public
 	 *
 	 * @throw \Exception If the request has no post id.
