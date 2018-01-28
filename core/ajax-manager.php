@@ -37,9 +37,9 @@ class Ajax_Manager {
 		/**
 		 * Register ajax actions.
 		 *
-		 * Fires after an ajax request is handled.
+		 * Fires when an ajax request is received and verified.
 		 *
-		 * Used to add new actions to handle data after an ajax requests returned.
+		 * Used to register new ajax action handles.
 		 *
 		 * @since 2.0.0
 		 *
