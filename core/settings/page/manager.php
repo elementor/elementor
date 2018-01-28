@@ -61,9 +61,9 @@ class Manager extends BaseManager {
 
 	/**
 	 * @since 1.6.0
+	 * @deprecated 2.0.0
 	 * @access public
 	 * @static
-	 * @deprecated
 	 */
 	public static function is_cpt_custom_templates_supported() {
 		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported' );
@@ -130,7 +130,7 @@ class Manager extends BaseManager {
 
 	/**
 	 * @since 1.6.0
-	 * @access protected
+	 * @access public
 	 *
 	 * @throw \Exception If invalid post returned using the `$id`.
 	 * @throw \Exception If current user don't have permissions to edit the post.
