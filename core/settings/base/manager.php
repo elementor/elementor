@@ -25,7 +25,8 @@ abstract class Manager {
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
-		add_action( 'elementor/' . $this->get_css_file_name() . '-css-file/parse', [ $this, 'add_settings_css_rules' ] );
+		$name = $this->get_css_file_name();
+		add_action( "elementor/css-file/{$name}/parse", [ $this, 'add_settings_css_rules' ] );
 	}
 
 	/**
@@ -106,11 +107,31 @@ abstract class Manager {
 		 *
 		 * The dynamic portion of the hook name, `$settings_name`, refers to the settings name.
 		 *
+		 * @todo Need to be hard deprecated using `apply_filters_deprecated()`.
+		 *
+		 * @since 1.6.0
+		 * @deprecated 2.0.0 Use `elementor/settings/{$settings_name}/success_response_data` filter.
+		 *
 		 * @param array $success_response_data Success response data.
 		 * @param int   $id                    Settings ID.
 		 * @param array $data                  Settings data.
 		 */
 		$success_response_data = apply_filters( "elementor/{$settings_name}/settings/success_response_data", $success_response_data, $id, $data );
+
+		/**
+		 * Settings success response data.
+		 *
+		 * Filters the success response data when saving settings using ajax.
+		 *
+		 * The dynamic portion of the hook name, `$settings_name`, refers to the settings name.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $success_response_data Success response data.
+		 * @param int   $id                    Settings ID.
+		 * @param array $data                  Settings data.
+		 */
+		$success_response_data = apply_filters( "elementor/settings/{$settings_name}/success_response_data", $success_response_data, $id, $data );
 
 		return $success_response_data;
 	}
