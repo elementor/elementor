@@ -498,7 +498,7 @@ class DB {
 	 *
 	 * Duplicate the data from one post to another.
 	 *
-	 * Considering using `safe_copy_elementor_meta()` method instead.
+	 * Consider using `safe_copy_elementor_meta()` method instead.
 	 *
 	 * @since 1.1.0
 	 * @access public

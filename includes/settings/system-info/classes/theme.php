@@ -115,7 +115,7 @@ class Theme_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value The theme name.
+	 *    @type string $value The theme name.
 	 * }
 	 */
 	public function get_name() {
@@ -135,7 +135,7 @@ class Theme_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value The theme author.
+	 *    @type string $value The theme author.
 	 * }
 	 */
 	public function get_author() {
@@ -155,7 +155,7 @@ class Theme_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value The theme version.
+	 *    @type string $value The theme version.
 	 * }
 	 */
 	public function get_version() {
@@ -175,8 +175,8 @@ class Theme_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value          Yes if the theme is a child theme, No otherwise.
-	 *    $type string $recommendation Theme source code modification recommendation.
+	 *    @type string $value          Yes if the theme is a child theme, No otherwise.
+	 *    @type string $recommendation Theme source code modification recommendation.
 	 * }
 	 */
 	public function get_is_child_theme() {
@@ -208,7 +208,7 @@ class Theme_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value The parent theme version.
+	 *    @type string $value The parent theme version.
 	 * }
 	 */
 	public function get_parent_version() {
@@ -228,7 +228,7 @@ class Theme_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value The parent theme author.
+	 *    @type string $value The parent theme author.
 	 * }
 	 */
 	public function get_parent_author() {
@@ -248,7 +248,7 @@ class Theme_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value The parent theme name.
+	 *    @type string $value The parent theme name.
 	 * }
 	 */
 	public function get_parent_name() {

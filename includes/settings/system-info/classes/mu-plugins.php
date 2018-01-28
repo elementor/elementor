@@ -102,7 +102,7 @@ class MU_Plugins_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value The must-use plugins list.
+	 *    @type string $value The must-use plugins list.
 	 * }
 	 */
 	public function get_must_use_plugins() {

@@ -107,7 +107,7 @@ class Network_Plugins_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value The active network plugins list.
+	 *    @type string $value The active network plugins list.
 	 * }
 	 */
 	public function get_network_active_plugins() {
