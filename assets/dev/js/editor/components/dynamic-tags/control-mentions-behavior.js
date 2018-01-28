@@ -93,6 +93,8 @@ module.exports = Marionette.Behavior.extend( {
 		this.mentions = new Mentions( mentionsSettings );
 
 		this.mentions.on( 'mention:create mention:change mention:remove', this.onMentionChange.bind( this ) );
+
+		this.mentions.$element.on( 'keydown', this.onMentionsElementKeyDown.bind( this ) );
 	},
 
 	toggleDynamicClass: function() {
@@ -201,6 +203,16 @@ module.exports = Marionette.Behavior.extend( {
 		} else {
 			this.ui.mentionsArea.trigger( 'input' );
 		}
+	},
+
+	onMentionsElementKeyDown: function( event ) {
+		if ( 13 !== event.which || event.shiftKey ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		document.execCommand( 'insertHTML', false, '<br>' );
 	},
 
 	onSwitcherDynamicClick: function() {

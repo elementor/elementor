@@ -37,7 +37,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 				defaults[ field.name ] = field['default'] || control.default_value;
 			}
 
-			var isDynamicControl = control.dynamic && attrs[ 'dynamic_' + field.name ] && 'mentions' === control.dynamic.valueController;
+			var isDynamicControl = control.dynamic && control.dynamic.active && attrs[ 'dynamic_' + field.name ] && 'mentions' === control.dynamic.valueController;
 
 			if ( undefined !== attrs[ field.name ] && isMultipleControl && ! _.isObject( attrs[ field.name ] ) && ! isDynamicControl ) {
 				elementor.debug.addCustomError(
@@ -107,7 +107,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 				control.styleFields = self.getStyleControls( control.fields );
 			}
 
-			if ( control.fields || control.dynamic || self.isStyleControl( control.name, controls ) ) {
+			if ( control.fields || ( control.dynamic && control.dynamic.active ) || self.isStyleControl( control.name, controls ) ) {
 				styleControls.push( control );
 			}
 		} );
@@ -206,7 +206,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 				dynamicSettings = elementor.config.controls[ control.type ].dynamic;
 			}
 
-			if ( ! dynamicSettings ) {
+			if ( ! dynamicSettings || ! dynamicSettings.active ) {
 				return;
 			}
 

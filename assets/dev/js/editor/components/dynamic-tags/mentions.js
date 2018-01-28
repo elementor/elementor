@@ -154,7 +154,13 @@ module.exports = ViewModule.extend( {
 
 	getValue: function() {
 		var $clonedElement = this.$element.clone(),
-			$tags = $clonedElement.find( '.atwho-inserted' );
+			$spans = $clonedElement.find( 'span' ),
+			$tags = $spans.filter( '.atwho-inserted' ),
+			$ghostSpans = $spans.not( $tags );
+
+		$ghostSpans.replaceWith( function() {
+			return jQuery( this ).text();
+		} );
 
 		$tags.each( function() {
 			var $tag = jQuery( this ),
@@ -238,14 +244,6 @@ module.exports = ViewModule.extend( {
 		) {
 			event.preventDefault();
 		}
-
-		if ( 13 !== event.which || event.shiftKey ) {
-			return;
-		}
-
-		event.preventDefault();
-
-		document.execCommand( 'insertHTML', false, '<br>' );
 	},
 
 	onElementKeyUp: function() {
