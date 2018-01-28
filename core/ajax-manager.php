@@ -34,6 +34,17 @@ class Ajax_Manager {
 			wp_send_json_error( new \WP_Error( 'missing_action', 'Action required.' ) );
 		}
 
+		/**
+		 * Register ajax actions.
+		 *
+		 * Fires after an ajax request is handled.
+		 *
+		 * Used to add new actions to handle data after an ajax requests returned.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param Ajax_Manager $this The ajax manager.
+		 */
 		do_action( 'elementor/ajax/register_actions', $this );
 
 		$responses = [];
