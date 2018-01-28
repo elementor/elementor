@@ -5,6 +5,7 @@ use Elementor\Core\Ajax_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,13 +26,23 @@ class Module extends BaseModule {
 
 	}
 
-	public function save_screenshot( $request ) {
-		if ( empty( $request['screenshot'] ) ) {
+	public function screenshot_proxy() {
+		if ( ! empty( $_REQUEST['href'] ) ) {
+			$response = wp_remote_get( utf8_decode( $_REQUEST['href'] ) );
+			$body =  wp_remote_retrieve_body( $response );
+			if ( $body ) {
+				echo $body;
+			}
+		}
+	}
+
+	public function save_screenshot() {
+		if ( empty( $_REQUEST['screenshot'] ) ) {
 			return;
 		}
 
-		$post_id = $request['post_id'];
-		$file_content = substr( $request['screenshot'], strlen( 'data:image/png;base64,' ) );
+		$post_id = $_REQUEST['post_id'];
+		$file_content = substr( $_REQUEST['screenshot'], strlen( 'data:image/png;base64,' ) );
 		$file_name = 'Elementor Post Screenshot ' . $post_id . '.png';
 		$attachment_data = get_post_meta( $post_id, '_elementor_screenshot', true );
 		$over_write_file_name_callback = function () use ( $file_name ) {
@@ -79,12 +90,22 @@ class Module extends BaseModule {
 
 	public function enqueue_scripts() {
 		wp_enqueue_script(
-			'html2canvas',
-			'https://html2canvas.hertzen.com/dist/html2canvas.js',
+			'rasterizeHTML',
+			ELEMENTOR_URL . '/modules/screenshots/assets/js/rasterizeHTML.js-master/dist/rasterizeHTML.allinone.js',
 			[],
-			'1.0.0-alpha.9',
+			'10-06-2017',
 			true
 		);
+	}
+
+	public function template_include( $template ) {
+		if ( User::is_current_user_can_edit() && isset( $_REQUEST['elementor-screenshot'] ) ) { // WPCS: CSRF ok.
+
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+			$template = __DIR__ . '/templates/screenshot.php';
+		}
+
+		return $template;
 	}
 
 	public function __construct() {
@@ -94,8 +115,8 @@ class Module extends BaseModule {
 	}
 
 	private function register_actions() {
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-
+		add_filter( 'template_include', [ $this, 'template_include' ] );
+		add_action( 'wp_ajax_elementor_save_screenshot', [ $this, 'save_screenshot' ] );
+		add_action( 'wp_ajax_elementor_screenshot_proxy', [ $this, 'screenshot_proxy' ] );
 	}
 }
