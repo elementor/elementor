@@ -150,7 +150,7 @@ App = Marionette.Application.extend( {
 		var  self = this;
 
 		_.each( controls, function( controlData, controlKey ) {
-			controls[ controlKey ] = _.extend( {}, self.config.controls[ controlData.type ], controlData  );
+			controls[ controlKey ] = jQuery.extend( true, {}, self.config.controls[ controlData.type ], controlData  );
 		} );
 
 		return controls;
