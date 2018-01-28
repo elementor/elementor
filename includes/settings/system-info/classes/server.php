@@ -67,7 +67,7 @@ class Server_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value Server operating system.
+	 *    @type string $value Server operating system.
 	 * }
 	 */
 	public function get_os() {
@@ -87,7 +87,7 @@ class Server_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value Server software.
+	 *    @type string $value Server software.
 	 * }
 	 */
 	public function get_software() {
@@ -107,9 +107,9 @@ class Server_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value          PHP version.
-	 *    $type string $recommendation Minimum PHP version recommendation.
-	 *    $type bool   $warning        Whether to display a warning.
+	 *    @type string $value          PHP version.
+	 *    @type string $recommendation Minimum PHP version recommendation.
+	 *    @type bool   $warning        Whether to display a warning.
 	 * }
 	 */
 	public function get_php_version() {
@@ -137,7 +137,7 @@ class Server_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value PHP `max_input_vars`.
+	 *    @type string $value PHP `max_input_vars`.
 	 * }
 	 */
 	public function get_php_max_input_vars() {
@@ -157,7 +157,7 @@ class Server_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value PHP `post_max_size`.
+	 *    @type string $value PHP `post_max_size`.
 	 * }
 	 */
 	public function get_php_max_post_size() {
@@ -177,8 +177,8 @@ class Server_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value   Yes if the GD extension is installed, No otherwise.
-	 *    $type bool   $warning Whether to display a warning. True if the GD extension is installed, False otherwise.
+	 *    @type string $value   Yes if the GD extension is installed, No otherwise.
+	 *    @type bool   $warning Whether to display a warning. True if the GD extension is installed, False otherwise.
 	 * }
 	 */
 	public function get_gd_installed() {
@@ -201,7 +201,7 @@ class Server_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value MySQL version.
+	 *    @type string $value MySQL version.
 	 * }
 	 */
 	public function get_mysql_version() {
@@ -223,8 +223,8 @@ class Server_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value   Writing permissions status.
-	 *    $type bool   $warning Whether to display a warning. True if some required
+	 *    @type string $value   Writing permissions status.
+	 *    @type bool   $warning Whether to display a warning. True if some required
 	 *                          folders don't have writing permissions, False otherwise.
 	 * }
 	 */
@@ -284,8 +284,8 @@ class Server_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value   The status of elementor library connectivity.
-	 *    $type bool   $warning Whether to display a warning. True if elementor
+	 *    @type string $value   The status of elementor library connectivity.
+	 *    @type bool   $warning Whether to display a warning. True if elementor
 	 * *                        library is not reachable, False otherwise.
 	 * }
 	 */

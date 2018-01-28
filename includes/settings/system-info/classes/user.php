@@ -60,7 +60,7 @@ class User_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value The user role.
+	 *    @type string $value The user role.
 	 * }
 	 */
 	public function get_role() {
@@ -87,7 +87,7 @@ class User_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value User profile language.
+	 *    @type string $value User profile language.
 	 * }
 	 */
 	public function get_locale() {
@@ -107,7 +107,7 @@ class User_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value HTTP user agent.
+	 *    @type string $value HTTP user agent.
 	 * }
 	 */
 	public function get_agent() {

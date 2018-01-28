@@ -68,9 +68,9 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value          WordPress memory limit.
-	 *    $type string $recommendation Recommendation memory limit.
-	 *    $type bool   $warning        Whether to display a warning. True if the limit
+	 *    @type string $value          WordPress memory limit.
+	 *    @type string $recommendation Recommendation memory limit.
+	 *    @type bool   $warning        Whether to display a warning. True if the limit
 	 *                                 is below the recommended 64M, False otherwise.
 	 * }
 	 */
@@ -109,7 +109,7 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value WordPress version.
+	 *    @type string $value WordPress version.
 	 * }
 	 */
 	public function get_version() {
@@ -129,7 +129,7 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value Yes if multisite is enabled, No otherwise.
+	 *    @type string $value Yes if multisite is enabled, No otherwise.
 	 * }
 	 */
 	public function get_is_multisite() {
@@ -149,7 +149,7 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value WordPress site URL.
+	 *    @type string $value WordPress site URL.
 	 * }
 	 */
 	public function get_site_url() {
@@ -169,7 +169,7 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value WordPress home URL.
+	 *    @type string $value WordPress home URL.
 	 * }
 	 */
 	public function get_home_url() {
@@ -189,7 +189,7 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value WordPress permalink structure.
+	 *    @type string $value WordPress permalink structure.
 	 * }
 	 */
 	public function get_permalink_structure() {
@@ -217,7 +217,7 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value WordPress site language.
+	 *    @type string $value WordPress site language.
 	 * }
 	 */
 	public function get_language() {
@@ -237,7 +237,7 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value Maximum upload file size allowed.
+	 *    @type string $value Maximum upload file size allowed.
 	 * }
 	 */
 	public function get_max_upload_size() {
@@ -257,7 +257,7 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value WordPress timezone.
+	 *    @type string $value WordPress timezone.
 	 * }
 	 */
 	public function get_timezone() {
@@ -282,7 +282,7 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value WordPress administrator email.
+	 *    @type string $value WordPress administrator email.
 	 * }
 	 */
 	public function get_admin_email() {
@@ -302,7 +302,7 @@ class WordPress_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value Active if debug mode is enabled, Inactive otherwise.
+	 *    @type string $value Active if debug mode is enabled, Inactive otherwise.
 	 * }
 	 */
 	public function get_debug_mode() {

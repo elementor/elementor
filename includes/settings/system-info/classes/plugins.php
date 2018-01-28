@@ -108,7 +108,7 @@ class Plugins_Reporter extends Base_Reporter {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    $type string $value The active plugins list.
+	 *    @type string $value The active plugins list.
 	 * }
 	 */
 	public function get_active_plugins() {
