@@ -1690,6 +1690,24 @@ abstract class Controls_Stack {
 		return $settings;
 	}
 
+	protected function sanitize_initial_data( $data ) {
+		$settings = $data['settings'];
+
+		foreach ( $this->get_controls() as $control ) {
+			$has_dynamic_property = ! empty( $settings[ 'dynamic_' . $control['name'] ] );
+
+			$is_correct_dynamic_value = isset( $settings[ $control['name'] ] ) && is_string( $settings[ $control['name'] ] );
+
+			if ( $has_dynamic_property && ! $is_correct_dynamic_value ) {
+				unset( $settings[ 'dynamic_' . $control['name'] ] );
+			}
+		}
+
+		$data['settings'] = $settings;
+
+		return $data;
+	}
+
 	/**
 	 * Get initial config.
 	 *
@@ -1779,7 +1797,7 @@ abstract class Controls_Stack {
 	 * @access protected
 	 */
 	protected function _init( $data ) {
-		$this->_data = array_merge( $this->get_default_data(), $data );
+		$this->_data = array_merge( $this->get_default_data(), $this->sanitize_initial_data( $data ) );
 
 		$this->_id = $data['id'];
 
