@@ -1,0 +1,184 @@
+.atwho {
+
+	&-inserted {
+		display: inline-block;
+		line-height: 1.5;
+		background-color: $editor-background;
+		cursor: pointer;
+		white-space: nowrap;
+		user-select: none;
+
+		&-inner {
+			padding: 0 5px;
+		}
+	}
+
+	&-remove {
+		font-size: 10px;
+		@include margin-start(3px);
+	}
+}
+
+.elementor-mentions-popup {
+	position: absolute;
+	width: 300px;
+	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
+
+	&:before {
+		$triangle-size: 10px;
+		content: '';
+		position: absolute;
+		top: 10px;
+		transform: translateX(getValueByDirection(-$triangle-size * 2, $triangle-size * 2));
+		border: $triangle-size solid transparent;
+		@include border-end-property(color, #fff);
+	}
+
+	.elementor-control {
+
+		&-type-section {
+			margin: 0;
+		}
+	}
+
+	.elementor-section-toggle {
+		display: none;
+	}
+}
+
+.elementor-tag-controls-stack-empty {
+	background-color: #fff;
+	padding: 10px;
+	font-size: 13px;
+	text-align: center;
+}
+
+.elementor-control-mentions {
+
+	 &-wrapper {
+		 position: relative;
+	 }
+
+	 &-add {
+		 position: absolute;
+		 @include end(0);
+		 top: 0;
+		 height: 100%;
+		 @include border-start(1px solid $editor-lighter);
+		 padding: 5px 10px;
+
+		 i {
+			 cursor: pointer;
+			 font-size: 10px;
+		 }
+	 }
+
+	 &-area {
+		 @include padding-end(30px);
+
+		 .elementor-control-type-textarea & {
+			 height: 100px;
+		 }
+
+		 .elementor-control-type-textarea & {
+			 line-height: 2;
+		 }
+
+		 &:focus {
+
+			 + .elementor-control-mentions-add {
+				 @include border-start-property(color, $editor-light);
+			 }
+		 }
+	 }
+ }
+
+.elementor-control-dynamic {
+
+	&-switcher {
+		display: flex;
+		justify-content: flex-end;
+
+		&-wrapper {
+			flex-grow: 1;
+		}
+
+		input {
+			display: none;
+		}
+
+		&-label {
+			display: inline-flex;
+			height: 25px;
+			width: 25px;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			border: 1px solid $editor-lightest;
+
+			&:first-of-type {
+				border-top-left-radius: 3px;
+				border-bottom-left-radius: 3px;
+			}
+
+			&:last-of-type {
+				border-top-right-radius: 3px;
+				border-bottom-right-radius: 3px;
+			}
+
+			&:not(:last-of-type) {
+				@include border-end(0);
+			}
+
+			i {
+				font-size: 10px;
+			}
+		}
+	}
+
+	.elementor-control-preview-area {
+		pointer-events: none;
+	}
+
+	.elementor-control-dynamic-switcher-dynamic-label, .elementor-control-mentions-add {
+
+		i {
+			color: $editor-info;
+		}
+	}
+
+	.elementor-control-media {
+		display: none;
+	}
+}
+
+.elementor-control:not(.elementor-control-dynamic) {
+
+	&.elementor-control-type-media {
+
+		.elementor-control-mentions-area {
+			display: none;
+		}
+	}
+}
+
+.elementor-control-type-url {
+
+	.elementor-control-mentions-wrapper {
+
+		.elementor-control-mentions-add {
+			@include end(30px);
+		}
+
+		.elementor-control-url-external-show {
+
+			.elementor-input-style {
+				@include padding-end(60px);
+			}
+		}
+
+		+ .elementor-control-url-more {
+			width: 30px;
+		}
+	}
+}

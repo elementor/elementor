@@ -267,6 +267,12 @@
   .elementor-swiper-button.swiper-button-disabled {
     opacity: 0.3; }
 
+.elementor-tag {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex; }
+
 @media (max-width: 1024px) {
   .elementor-tablet-align-center {
     text-align: center; }

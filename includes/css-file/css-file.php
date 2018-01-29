@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\DynamicTags\Markup_Tag;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -498,24 +500,24 @@ abstract class CSS_File {
 	 * @param array          $replacements   Replacements.
 	 */
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
+		$all_controls = $controls_stack->get_controls();
+
+		$parsed_dynamic_settings = $controls_stack->parse_dynamic_settings( $values, $controls );
+
 		foreach ( $controls as $control ) {
 			if ( ! empty( $control['style_fields'] ) ) {
-				foreach ( $values[ $control['name'] ] as $field_value ) {
-					$this->add_controls_stack_style_rules(
-						$controls_stack,
-						$control['style_fields'],
-						$field_value,
-						array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] ),
-						array_merge( $replacements, [ '.elementor-repeater-item-' . $field_value['_id'] ] )
-					);
-				}
+				$this->add_repeater_control_style_rules( $controls_stack, $control['style_fields'], $values[ $control['name'] ], $placeholders, $replacements );
+			}
+
+			if ( ! empty( $control['dynamic'] ) ) {
+				$this->add_dynamic_control_style_rules( $control, $values[ $control['name'] ] );
 			}
 
 			if ( empty( $control['selectors'] ) ) {
 				continue;
 			}
 
-			$this->add_control_style_rules( $control, $values, $controls_stack->get_controls(), $placeholders, $replacements );
+			$this->add_control_style_rules( $control, $parsed_dynamic_settings, $all_controls, $placeholders, $replacements );
 		}
 	}
 
@@ -669,6 +671,24 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Set path and URL.
+	 *
+	 * Define the CSS file path and file URL.
+	 *
+	 * @since 1.2.0
+	 * @access protected
+	 */
+	protected function set_path_and_url() {
+		$wp_upload_dir = wp_upload_dir( null, false );
+
+		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, $this->get_file_name() );
+
+		$this->path = $wp_upload_dir['basedir'] . $relative_path;
+
+		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
+	}
+
+	/**
 	 * Add control style rules.
 	 *
 	 * Register new style rules for the control.
@@ -682,9 +702,9 @@ abstract class CSS_File {
 	 * @param array $placeholders   Placeholders.
 	 * @param array $replacements   Replacements.
 	 */
-	private function add_control_style_rules( array $control, array $values, array $controls_stack, array $placeholders, array $replacements ) {
+	private function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
 		$this->add_control_rules(
-			$control, $controls_stack, function( $control ) use ( $values ) {
+			$control, $controls, function( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements
 		);
@@ -739,21 +759,29 @@ abstract class CSS_File {
 			->add_device( 'desktop', $breakpoints['lg'] );
 	}
 
-	/**
-	 * Set path and URL.
-	 *
-	 * Define the CSS file path and file URL.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 */
-	protected function set_path_and_url() {
-		$wp_upload_dir = wp_upload_dir( null, false );
+	private function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_controls, array $repeater_values, array $placeholders, array $replacements ) {
+		$placeholders = array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] );
 
-		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, $this->get_file_name() );
+		foreach ( $repeater_values as $field_value ) {
+			$this->add_controls_stack_style_rules(
+				$controls_stack,
+				$repeater_controls,
+				$field_value,
+				$placeholders,
+				array_merge( $replacements, [ '.elementor-repeater-item-' . $field_value['_id'] ] )
+			);
+		}
+	}
 
-		$this->path = $wp_upload_dir['basedir'] . $relative_path;
+	private function add_dynamic_control_style_rules( array $control, $value ) {
+		Plugin::$instance->dynamic_tags_manager->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
+			$tag = Plugin::$instance->dynamic_tags_manager->create_tag( $id, $name, $settings );
 
-		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
+			if ( ! $tag instanceof Markup_Tag ) {
+				return;
+			}
+
+			$this->add_controls_stack_style_rules( $tag, $tag->get_style_controls(), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
+		} );
 	}
 }
