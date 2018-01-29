@@ -64,6 +64,7 @@ class DB {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 2.0.0
 	 *
 	 * @param int    $post_id Post ID.
 	 * @param array  $data    Post data.
@@ -143,6 +144,7 @@ class DB {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 2.0.0
 	 *
 	 * @param int    $post_id Post ID.
 	 * @param string $status  Optional. Post status. Default is `publish`.
@@ -168,6 +170,7 @@ class DB {
 	 *
 	 * @since 1.9.0
 	 * @access public
+	 * @deprecated 2.0.0
 	 *
 	 * @param int $post_id Post ID.
 	 *
