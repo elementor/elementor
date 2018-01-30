@@ -2,12 +2,12 @@
 namespace Elementor\Modules\DynamicTags\Tags;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\DynamicTags\Markup_Tag;
+use Elementor\Core\DynamicTags\Tag;
 use Elementor\Modules\DynamicTags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Icon extends Markup_Tag {
+class Icon extends Tag {
 
 	public function get_name() {
 		return 'icon';

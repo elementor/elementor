@@ -123,7 +123,7 @@ class Manager {
 		foreach ( $this->tags_info as $tag_name => $tag_info ) {
 			$tag = $tag_info['instance'];
 
-			if ( ! $tag instanceof Markup_Tag ) {
+			if ( ! $tag instanceof Tag ) {
 				continue;
 			}
 
