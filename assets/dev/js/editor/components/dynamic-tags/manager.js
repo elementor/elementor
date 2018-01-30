@@ -3,8 +3,7 @@ var Module = require( 'elementor-utils/module' ),
 
 module.exports = Module.extend( {
 	tags: {
-		Base: require( 'elementor-dynamic-tags/tag' ),
-		UI: require( 'elementor-dynamic-tags/ui-tag' )
+		Base: require( 'elementor-dynamic-tags/tag' )
 	},
 
 	cache: {},
@@ -111,8 +110,7 @@ module.exports = Module.extend( {
 
 	createTag: function( tagID, tagName, tagSettings ) {
 		var tagConfig = this.getConfig( 'tags.' + tagName ),
-			DefaultTagClass = this.tags[ 'plain' === tagConfig.content_type ? 'Base' : 'UI' ],
-			TagClass = this.tags[ tagName ] || DefaultTagClass,
+			TagClass = this.tags[ tagName ] || this.tags.Base,
 			model = new SettingsModel( tagSettings, {
 				controls: tagConfig.controls
 			} );
