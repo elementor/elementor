@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-template-library-header-menu-area"></div>
 	<div id="elementor-template-library-header-items-area">
 		<div id="elementor-template-library-header-close-modal" class="elementor-template-library-header-item">
-			<i class="eicon-close" aria-hidden="true" title="<?php esc_attr_e( 'Close', 'elementor' ); ?>"></i>
-			<span class="elementor-screen-only"><?php esc_html_e( 'Close', 'elementor' ); ?></span>
+			<i class="eicon-close" aria-hidden="true" title="<?php _e( 'Close', 'elementor' ); ?>"></i>
+			<span class="elementor-screen-only"><?php _e( 'Close', 'elementor' ); ?></span>
 		</div>
 		<div id="elementor-template-library-header-tools"></div>
 	</div>
@@ -26,16 +26,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-header-actions">
 	<div id="elementor-template-library-header-import" class="elementor-template-library-header-item">
-		<i class="eicon-upload-circle-o" aria-hidden="true" title="<?php esc_attr_e( 'Import Template', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'Import Template', 'elementor' ); ?></span>
+		<i class="eicon-upload-circle-o" aria-hidden="true" title="<?php _e( 'Import Template', 'elementor' ); ?>"></i>
+		<span class="elementor-screen-only"><?php _e( 'Import Template', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-template-library-header-sync" class="elementor-template-library-header-item">
-		<i class="eicon-sync" aria-hidden="true" title="<?php esc_attr_e( 'Sync Library', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'Sync Library', 'elementor' ); ?></span>
+		<i class="eicon-sync" aria-hidden="true" title="<?php _e( 'Sync Library', 'elementor' ); ?>"></i>
+		<span class="elementor-screen-only"><?php _e( 'Sync Library', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-template-library-header-save" class="elementor-template-library-header-item">
-		<i class="eicon-save-o" aria-hidden="true" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'Save', 'elementor' ); ?></span>
+		<i class="eicon-save-o" aria-hidden="true" title="<?php _e( 'Save', 'elementor' ); ?>"></i>
+		<span class="elementor-screen-only"><?php _e( 'Save', 'elementor' ); ?></span>
 	</div>
 </script>
 
@@ -94,7 +94,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar"></div>
 		<# } #>
 		<div id="elementor-template-library-filter-text-wrapper">
-			<label for="elementor-template-library-filter-text" class="elementor-screen-only"><?php esc_html_e( 'Search Templates:', 'elementor' ); ?></label>
+			<label for="elementor-template-library-filter-text" class="elementor-screen-only"><?php _e( 'Search Templates:', 'elementor' ); ?></label>
 			<input id="elementor-template-library-filter-text" placeholder="<?php echo __( 'Search', 'elementor' ); ?>">
 		</div>
 	</div>
@@ -146,7 +146,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<input id="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-input" type="checkbox"{{ favorite ? " checked" : "" }}>
 			<label for="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-label">
 				<i class="fa fa-heart-o" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><?php esc_html_e( 'Favorite', 'elementor' ); ?></span>
+				<span class="elementor-screen-only"><?php _e( 'Favorite', 'elementor' ); ?></span>
 			</label>
 		</div>
 	</div>
@@ -168,7 +168,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</button>
 		<div class="elementor-template-library-template-more-toggle">
 			<i class="eicon-ellipsis-h" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php esc_html_e( 'More actions', 'elementor' ); ?></span>
+			<span class="elementor-screen-only"><?php _e( 'More actions', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-template-library-template-more">
 			<div class="elementor-template-library-template-delete">
@@ -204,7 +204,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
 	<div class="elementor-template-library-blank-icon">
 		<i class="eicon-library-save" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'Save', 'elementor' ); ?></span>
+		<span class="elementor-screen-only"><?php _e( 'Save', 'elementor' ); ?></span>
 	</div>
 	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
 	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
