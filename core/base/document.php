@@ -311,7 +311,7 @@ abstract class Document extends Controls_Stack {
 		$elements = $this->get_json_meta( '_elementor_data' );
 
 		if ( DB::STATUS_DRAFT === $status ) {
-			$autosave = Plugin::$instance->db->get_newer_autosave( $this->post->ID );
+			$autosave = $this->get_newer_autosave();
 
 			if ( is_object( $autosave ) ) {
 				$autosave_elements = Plugin::$instance->documents

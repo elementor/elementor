@@ -156,11 +156,7 @@ class DB {
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
-		if ( self::STATUS_DRAFT === $status ) {
-			$document = $document->get_autosave( 0, true );
-		}
-
-		return $document->get_elements_data();
+		return $document->get_elements_data( $status );
 	}
 
 	/**
