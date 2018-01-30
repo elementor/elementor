@@ -1806,7 +1806,7 @@ abstract class Controls_Stack {
 	 * @access protected
 	 */
 	protected function _init( $data ) {
-		$this->_data = array_merge( $this->get_default_data(), $this->sanitize_initial_data( $data ) );
+		$this->_data = $this->sanitize_initial_data( array_merge( $this->get_default_data(), $data ) );
 
 		$this->_id = $data['id'];
 
