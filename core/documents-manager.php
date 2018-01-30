@@ -3,6 +3,7 @@ namespace Elementor\Core;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\Post;
+use Elementor\Core\Utils\Exceptions;
 use Elementor\DB;
 use Elementor\Plugin;
 
@@ -208,7 +209,7 @@ class Documents_Manager {
 
 	public function ajax_discard_changes( $request ) {
 		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'Missing post id.' );
+			throw new \Exception( 'Missing post id.', Exceptions::BAD_REQUEST );
 		}
 
 		$document = $this->get( $request['post_id'] );

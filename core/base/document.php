@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Base;
 
+use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\DB;
 use Elementor\Controls_Manager;
@@ -458,7 +459,7 @@ abstract class Document extends Controls_Stack {
 			$this->post = get_post( $data['post_id'] );
 
 			if ( ! $this->post ) {
-				throw new \Exception( 'Post ID #' . $data['post_id'] . ' is not exist.' );
+				throw new \Exception( 'Post ID #' . $data['post_id'] . ' is not exist.', Exceptions::NOT_FOUND );
 			}
 		}
 
