@@ -148,18 +148,18 @@ class Control_URL extends Control_Base_Multiple {
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<input id="<?php echo $control_uid; ?>" type="url" class="elementor-input" data-setting="url" placeholder="{{ data.placeholder }}" />
-				<label for="<?php echo $more_input_control_uid; ?>" class="elementor-control-url-more tooltip-target" data-tooltip="<?php _e( 'Link Options', 'elementor' ); ?>">
+				<label for="<?php echo $more_input_control_uid; ?>" class="elementor-control-url-more tooltip-target" data-tooltip="<?php esc_attr_e( 'Link Options', 'elementor' ); ?>">
 					<i class="fa fa-cog" aria-hidden="true"></i>
 				</label>
 				<input id="<?php echo $more_input_control_uid; ?>" type="checkbox" class="elementor-control-url-more-input">
 				<div class="elementor-control-url-more-options">
 					<div class="elementor-control-url-option">
 						<input id="<?php echo $is_external_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="is_external">
-						<label for="<?php echo $is_external_control_uid; ?>"><?php echo __( 'Open in new window', 'elementor' ); ?></label>
+						<label for="<?php echo $is_external_control_uid; ?>"><?php esc_html_e( 'Open in new window', 'elementor' ); ?></label>
 					</div>
 					<div class="elementor-control-url-option">
 						<input id="<?php echo $nofollow_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="nofollow">
-						<label for="<?php echo $nofollow_control_uid; ?>"><?php echo __( 'Add nofollow', 'elementor' ); ?></label>
+						<label for="<?php echo $nofollow_control_uid; ?>"><?php esc_html_e( 'Add nofollow', 'elementor' ); ?></label>
 					</div>
 				</div>
 			</div>

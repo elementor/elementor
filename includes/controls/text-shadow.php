@@ -137,9 +137,9 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 		}
 		#>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title"><?php _e( 'Color', 'elementor' ); ?></label>
+			<label class="elementor-control-title"><?php esc_html_e( 'Color', 'elementor' ); ?></label>
 			<div class="elementor-control-input-wrapper">
-				<input data-setting="color" class="elementor-shadow-color-picker" type="text" placeholder="<?php echo esc_attr( 'Hex/rgba', 'elementor' ); ?>" data-alpha="true"{{{ defaultColorValue }}} />
+				<input data-setting="color" class="elementor-shadow-color-picker" type="text" placeholder="<?php esc_attr_e( 'Hex/rgba', 'elementor' ); ?>" data-alpha="true"{{{ defaultColorValue }}} />
 			</div>
 		</div>
 		<?php

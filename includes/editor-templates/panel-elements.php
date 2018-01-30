@@ -7,8 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <script type="text/template" id="tmpl-elementor-panel-elements">
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
-		<div id="elementor-panel-elements-navigation-all" class="elementor-panel-navigation-tab active" data-view="categories"><?php echo __( 'Elements', 'elementor' ); ?></div>
-		<div id="elementor-panel-elements-navigation-global" class="elementor-panel-navigation-tab" data-view="global"><?php echo __( 'Global', 'elementor' ); ?></div>
+		<div id="elementor-panel-elements-navigation-all" class="elementor-panel-navigation-tab active" data-view="categories"><?php esc_html_e( 'Elements', 'elementor' ); ?></div>
+		<div id="elementor-panel-elements-navigation-global" class="elementor-panel-navigation-tab" data-view="global"><?php esc_html_e( 'Global', 'elementor' ); ?></div>
 	</div>
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>
@@ -19,8 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div id="elementor-panel-get-pro-elements" class="elementor-panel-nerd-box">
 		<i class="elementor-panel-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
-		<div class="elementor-panel-nerd-box-message"><?php _e( 'Get more with Elementor Pro', 'elementor' ); ?></div>
-		<a class="elementor-button elementor-button-default elementor-panel-nerd-box-link" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-widgets&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php _e( 'Go Pro', 'elementor' ); ?></a>
+		<div class="elementor-panel-nerd-box-message"><?php esc_html_e( 'Get more with Elementor Pro', 'elementor' ); ?></div>
+		<a class="elementor-button elementor-button-default elementor-panel-nerd-box-link" target="_blank" href="<?php echo esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-widgets&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php esc_html_e( 'Go Pro', 'elementor' ); ?></a>
 	</div>
 </script>
 
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-element-search">
-	<label for="elementor-panel-elements-search-input" class="screen-reader-text"><?php echo __( 'Search Widget:', 'elementor' ); ?></label>
+	<label for="elementor-panel-elements-search-input" class="screen-reader-text"><?php esc_html_e( 'Search Widget:', 'elementor' ); ?></label>
 	<input type="search" id="elementor-panel-elements-search-input" placeholder="<?php esc_attr_e( 'Search Widget...', 'elementor' ); ?>" />
 	<i class="fa fa-search" aria-hidden="true"></i>
 </script>
@@ -49,9 +49,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-panel-global">
 	<div class="elementor-panel-nerd-box">
 		<i class="elementor-panel-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
-		<div class="elementor-panel-nerd-box-title"><?php echo __( 'Meet Our Global Widget', 'elementor' ); ?></div>
-		<div class="elementor-panel-nerd-box-message"><?php echo __( 'With this feature, you can save a widget as global, then add it to multiple areas. All areas will be editable from one single place.', 'elementor' ); ?></div>
-		<div class="elementor-panel-nerd-box-message"><?php echo __( 'This feature is only available on Elementor Pro.', 'elementor' ); ?></div>
-        <a class="elementor-button elementor-button-default elementor-panel-nerd-box-link" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-global&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php _e( 'Go Pro', 'elementor' ); ?></a>
+		<div class="elementor-panel-nerd-box-title"><?php esc_html_e( 'Meet Our Global Widget', 'elementor' ); ?></div>
+		<div class="elementor-panel-nerd-box-message"><?php esc_html_e( 'With this feature, you can save a widget as global, then add it to multiple areas. All areas will be editable from one single place.', 'elementor' ); ?></div>
+		<div class="elementor-panel-nerd-box-message"><?php esc_html_e( 'This feature is only available on Elementor Pro.', 'elementor' ); ?></div>
+        <a class="elementor-button elementor-button-default elementor-panel-nerd-box-link" target="_blank" href="<?php echo esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-global&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php esc_html_e( 'Go Pro', 'elementor' ); ?></a>
     </div>
 </script>
