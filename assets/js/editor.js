@@ -256,6 +256,9 @@ var Module = require( 'elementor-utils/module' ),
 	SettingsModel = require( 'elementor-elements/models/base-settings' );
 
 module.exports = Module.extend( {
+
+	CACHE_KEY_NOT_FOUND_ERROR: 'Cache key not found',
+
 	tags: {
 		Base: require( 'elementor-dynamic-tags/tag' )
 	},
@@ -888,6 +891,10 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	getTemplate: function() {
+		if ( ! this.hasTemplate ) {
+			return false;
+		}
+
 		return Marionette.TemplateCache.get( '#tmpl-elementor-tag-' + this.getOption( 'name' ) + '-content' );
 	},
 
@@ -899,17 +906,36 @@ module.exports = Marionette.ItemView.extend( {
 		}
 	},
 
-	getContent: function() {
-		if ( this.hasTemplate ) {
-			this.render();
+	getConfig: function( key ) {
+		var config = elementor.dynamicTags.getConfig( 'tags.' + this.getOption( 'name' ) );
 
-			return this.el.outerHTML;
+		if ( key ) {
+			return config[ key ];
 		}
 
-		var data = elementor.dynamicTags.loadTagDataFromCache( this );
+		return config;
+	},
 
-		if ( undefined === data ) {
-			throw new Error();
+	getContent: function() {
+		var contentType = this.getConfig( 'content_type' ),
+			data;
+
+		if ( ! this.hasTemplate ) {
+			data = elementor.dynamicTags.loadTagDataFromCache( this );
+
+			if ( undefined === data ) {
+				throw new Error( elementor.dynamicTags.CACHE_KEY_NOT_FOUND_ERROR );
+			}
+		}
+
+		if ( 'ui' === contentType ) {
+			this.render();
+
+			if ( data ) {
+				this.$el.html( data );
+			}
+
+			return this.el.outerHTML;
 		}
 
 		return data;
@@ -6288,7 +6314,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 			try {
 				dynamicValue = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-			} catch ( e ) {
+			} catch ( error ) {
+				if ( elementor.dynamicTags.CACHE_KEY_NOT_FOUND_ERROR !== error.message ) {
+					throw error;
+				}
+
 				dynamicValue = '';
 
 				if ( options.onServerRequestStart ) {
