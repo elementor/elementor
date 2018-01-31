@@ -20,37 +20,37 @@ BaseSettingsModel = Backbone.Model.extend( {
 		var attrs = data || {},
 			defaults = {};
 
-		_.each( self.controls, function( field ) {
-			var control = elementor.config.controls[ field.type ],
-				isUIControl = -1 !== control.features.indexOf( 'ui' );
+		_.each( self.controls, function( control ) {
+			var isUIControl = -1 !== control.features.indexOf( 'ui' );
 
 			if ( isUIControl ) {
 				return;
 			}
 
 			// Check if the value is a plain object ( and not an array )
-			var isMultipleControl = jQuery.isPlainObject( control.default_value );
+			var controlName = control.name,
+				isMultipleControl = jQuery.isPlainObject( control.default_value );
 
 			if ( isMultipleControl  ) {
-				defaults[ field.name ] = _.extend( {}, control.default_value, field['default'] || {} );
+				defaults[ controlName ] = _.extend( {}, control.default_value, control['default'] || {} );
 			} else {
-				defaults[ field.name ] = field['default'] || control.default_value;
+				defaults[ controlName ] = control['default'] || control.default_value;
 			}
 
-			var isDynamicControl = control.dynamic && control.dynamic.active && attrs[ 'dynamic_' + field.name ] && 'mentions' === control.dynamic.valueController;
+			var isDynamicControl = control.dynamic && control.dynamic.active && attrs[ 'dynamic_' + controlName ] && 'mentions' === control.dynamic.valueController;
 
-			if ( undefined !== attrs[ field.name ] && isMultipleControl && ! _.isObject( attrs[ field.name ] ) && ! isDynamicControl ) {
+			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! isDynamicControl ) {
 				elementor.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
-					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ field.name ] + '> as `' + field.name + '` value. Expected array or object.'
+					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ controlName ] + '> as `' + controlName + '` value. Expected array or object.'
 				);
 
-				delete attrs[ field.name ];
+				delete attrs[ controlName ];
 			}
 
-			if ( undefined === attrs[ field.name ] ) {
-				attrs[ field.name ] = defaults[ field.name ];
+			if ( undefined === attrs[ controlName ] ) {
+				attrs[ controlName ] = defaults[ controlName ];
 			}
 		} );
 
