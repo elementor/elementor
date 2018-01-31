@@ -218,7 +218,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 			try {
 				dynamicValue = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-			} catch ( e ) {
+			} catch ( error ) {
+				if ( elementor.dynamicTags.CACHE_KEY_NOT_FOUND_ERROR !== error.message ) {
+					throw error;
+				}
+
 				dynamicValue = '';
 
 				if ( options.onServerRequestStart ) {
