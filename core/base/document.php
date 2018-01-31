@@ -82,7 +82,6 @@ abstract class Document extends Controls_Stack {
 
 	public function get_exit_to_dashboard_url() {
 		$exit_url = get_edit_post_link( $this->get_main_id(), 'raw' );
-
 		/**
 		 * Filters the Exit To Dashboard URL.
 		 *
@@ -228,6 +227,8 @@ abstract class Document extends Controls_Stack {
 
 		// Refresh post after save settings.
 		$this->post = get_post( $this->post->ID );
+
+		// TODO: refresh settings.
 
 		$this->save_elements( $data['elements'] );
 

@@ -57,12 +57,13 @@ class Documents_Manager {
 	}
 
 	/**
-	 * @param int $post_id
+	 * @param int  $post_id
+	 * @param bool $from_cache
 	 *
 	 * @return Document
 	 */
-	public function get( $post_id ) {
-		if ( ! isset( $this->documents[ $post_id ] ) ) {
+	public function get( $post_id, $from_cache = true ) {
+		if ( $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
 			$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 
 			$doc_type_class = $this->get_document_type( $doc_type );
@@ -183,13 +184,15 @@ class Documents_Manager {
 
 		$document->save( $data );
 
+		// Refresh after save.
+		$document = $this->get( $document->get_post()->ID, false );
+
 		$return_data = [
 			'config' => [
 				'last_edited' => $document->get_last_edited(),
 				'wp_preview' => [
 					'url' => $document->get_wp_preview_url(),
 				],
-
 			],
 		];
 
