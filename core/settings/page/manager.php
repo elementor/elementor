@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Settings\Page;
 
+use Elementor\Core\Utils\Exceptions;
 use Elementor\CSS_File;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -139,11 +140,11 @@ class Manager extends BaseManager {
 		$post = get_post( $id );
 
 		if ( empty( $post ) ) {
-			throw new \Exception( 'Invalid post.' );
+			throw new \Exception( 'Invalid post.', Exceptions::NOT_FOUND );
 		}
 
 		if ( ! current_user_can( 'edit_post', $id ) ) {
-			throw new \Exception( 'Access denied.' );
+			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
 		}
 
 		// Avoid save empty post title.

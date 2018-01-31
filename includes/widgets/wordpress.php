@@ -180,7 +180,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @access protected
 	 * @since 1.0.0
 	 *
-	 * @return \WP_Widget
+	 * @return array Parsed settings.
 	 */
 	protected function _get_parsed_settings() {
 		$settings = parent::_get_parsed_settings();

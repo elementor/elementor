@@ -170,6 +170,7 @@ class Control_Repeater extends Base_Data_Control {
 				}
 			}
 		}
+
 		return $value;
 	}
 

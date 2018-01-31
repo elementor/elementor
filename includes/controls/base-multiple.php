@@ -40,13 +40,13 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $control Control
-	 * @param array $widget  Widget
+	 * @param array $control  Control
+	 * @param array $settings Settings
 	 *
 	 * @return mixed Control values.
 	 */
-	public function get_value( $control, $widget ) {
-		$value = parent::get_value( $control, $widget );
+	public function get_value( $control, $settings ) {
+		$value = parent::get_value( $control, $settings );
 
 		if ( empty( $control['default'] ) ) {
 			$control['default'] = [];

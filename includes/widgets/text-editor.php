@@ -322,7 +322,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$editor_content = $this->get_settings( 'editor' );
+		$editor_content = $this->get_settings_for_display( 'editor' );
 
 		$editor_content = $this->parse_text_editor( $editor_content );
 

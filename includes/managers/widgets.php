@@ -225,7 +225,7 @@ class Widgets_Manager {
 	 *
 	 * @param string $widget_name Optional. Widget name. Default is null.
 	 *
-	 * @return null|Widget_Base[] Registered widget types.
+	 * @return null|Widget_Base|Widget_Base[] Registered widget types.
 	*/
 	public function get_widget_types( $widget_name = null ) {
 		if ( is_null( $this->_widget_types ) ) {

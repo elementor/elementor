@@ -64,6 +64,7 @@ class DB {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 2.0.0
 	 *
 	 * @param int    $post_id Post ID.
 	 * @param array  $data    Post data.
@@ -143,6 +144,7 @@ class DB {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 2.0.0
 	 *
 	 * @param int    $post_id Post ID.
 	 * @param string $status  Optional. Post status. Default is `publish`.
@@ -154,11 +156,7 @@ class DB {
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
-		if ( self::STATUS_DRAFT === $status ) {
-			$document = $document->get_autosave( 0, true );
-		}
-
-		return $document->get_elements_data();
+		return $document->get_elements_data( $status );
 	}
 
 	/**
@@ -168,6 +166,7 @@ class DB {
 	 *
 	 * @since 1.9.0
 	 * @access public
+	 * @deprecated 2.0.0
 	 *
 	 * @param int $post_id Post ID.
 	 *

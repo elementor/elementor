@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Base;
 
+use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\DB;
 use Elementor\Controls_Manager;
@@ -81,7 +82,6 @@ abstract class Document extends Controls_Stack {
 
 	public function get_exit_to_dashboard_url() {
 		$exit_url = get_edit_post_link( $this->get_main_id(), 'raw' );
-
 		/**
 		 * Filters the Exit To Dashboard URL.
 		 *
@@ -228,6 +228,8 @@ abstract class Document extends Controls_Stack {
 		// Refresh post after save settings.
 		$this->post = get_post( $this->post->ID );
 
+		// TODO: refresh settings.
+
 		$this->save_elements( $data['elements'] );
 
 		return true;
@@ -311,7 +313,7 @@ abstract class Document extends Controls_Stack {
 		$elements = $this->get_json_meta( '_elementor_data' );
 
 		if ( DB::STATUS_DRAFT === $status ) {
-			$autosave = Plugin::$instance->db->get_newer_autosave( $this->post->ID );
+			$autosave = $this->get_newer_autosave();
 
 			if ( is_object( $autosave ) ) {
 				$autosave_elements = Plugin::$instance->documents
@@ -458,7 +460,7 @@ abstract class Document extends Controls_Stack {
 			$this->post = get_post( $data['post_id'] );
 
 			if ( ! $this->post ) {
-				throw new \Exception( 'Post ID #' . $data['post_id'] . ' is not exist.' );
+				throw new \Exception( 'Post ID #' . $data['post_id'] . ' is not exist.', Exceptions::NOT_FOUND );
 			}
 		}
 
