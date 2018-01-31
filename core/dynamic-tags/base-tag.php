@@ -16,7 +16,7 @@ abstract class Base_Tag extends Controls_Stack {
 
 	abstract public function get_title();
 
-	abstract public function get_content();
+	abstract public function get_content( array $options = [] );
 
 	abstract public function get_content_type();
 
