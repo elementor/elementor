@@ -88,7 +88,7 @@ class Manager {
 			return null;
 		}
 
-		return $tag->get_content();
+		return $tag->get_content( [ 'wrap' => true ] );
 	}
 
 	public function get_tag_info( $tag_name ) {
