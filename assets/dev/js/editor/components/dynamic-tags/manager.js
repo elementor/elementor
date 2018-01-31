@@ -2,9 +2,11 @@ var Module = require( 'elementor-utils/module' ),
 	SettingsModel = require( 'elementor-elements/models/base-settings' );
 
 module.exports = Module.extend( {
+
+	CACHE_KEY_NOT_FOUND_ERROR: 'Cache key not found',
+
 	tags: {
-		Base: require( 'elementor-dynamic-tags/tag' ),
-		UI: require( 'elementor-dynamic-tags/ui-tag' )
+		Base: require( 'elementor-dynamic-tags/tag' )
 	},
 
 	cache: {},
@@ -111,8 +113,7 @@ module.exports = Module.extend( {
 
 	createTag: function( tagID, tagName, tagSettings ) {
 		var tagConfig = this.getConfig( 'tags.' + tagName ),
-			DefaultTagClass = this.tags[ 'plain' === tagConfig.content_type ? 'Base' : 'UI' ],
-			TagClass = this.tags[ tagName ] || DefaultTagClass,
+			TagClass = this.tags[ tagName ] || this.tags.Base,
 			model = new SettingsModel( tagSettings, {
 				controls: tagConfig.controls
 			} );

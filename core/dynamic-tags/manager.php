@@ -88,7 +88,7 @@ class Manager {
 			return null;
 		}
 
-		return $tag->get_content();
+		return $tag->get_content( [ 'wrap' => true ] );
 	}
 
 	public function get_tag_info( $tag_name ) {
@@ -123,7 +123,7 @@ class Manager {
 		foreach ( $this->tags_info as $tag_name => $tag_info ) {
 			$tag = $tag_info['instance'];
 
-			if ( ! $tag instanceof Markup_Tag ) {
+			if ( ! $tag instanceof Tag ) {
 				continue;
 			}
 
