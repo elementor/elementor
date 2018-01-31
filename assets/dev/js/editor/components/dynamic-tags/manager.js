@@ -2,6 +2,9 @@ var Module = require( 'elementor-utils/module' ),
 	SettingsModel = require( 'elementor-elements/models/base-settings' );
 
 module.exports = Module.extend( {
+
+	CACHE_KEY_NOT_FOUND_ERROR: 'Cache key not found',
+
 	tags: {
 		Base: require( 'elementor-dynamic-tags/tag' )
 	},
