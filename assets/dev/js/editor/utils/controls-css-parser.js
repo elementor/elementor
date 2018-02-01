@@ -96,8 +96,13 @@ ControlsCSSParser = ViewModule.extend( {
 		}
 
 		elementor.dynamicTags.parseTagsText( valueToParse, control.dynamic, function( id, name, settings ) {
-			var tag = elementor.dynamicTags.createTag( id, name, settings ),
-				tagSettingsModel = tag.model,
+			var tag = elementor.dynamicTags.createTag( id, name, settings );
+
+			if ( ! tag ) {
+				return;
+			}
+
+			var tagSettingsModel = tag.model,
 				styleControls = tagSettingsModel.getStyleControls();
 
 			if ( ! styleControls.length ) {
