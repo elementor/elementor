@@ -112,8 +112,13 @@ module.exports = Module.extend( {
 	},
 
 	createTag: function( tagID, tagName, tagSettings ) {
-		var tagConfig = this.getConfig( 'tags.' + tagName ),
-			TagClass = this.tags[ tagName ] || this.tags.Base,
+		var tagConfig = this.getConfig( 'tags.' + tagName );
+
+		if ( ! tagConfig ) {
+			return;
+		}
+
+		var TagClass = this.tags[ tagName ] || this.tags.Base,
 			model = new SettingsModel( tagSettings, {
 				controls: tagConfig.controls
 			} );
@@ -122,7 +127,13 @@ module.exports = Module.extend( {
 	},
 
 	getTagDataContent: function( tagID, tagName, tagSettings ) {
-		return this.createTag( tagID, tagName, tagSettings ).getContent();
+		var tag = this.createTag( tagID, tagName, tagSettings );
+
+		if ( ! tag ) {
+			return;
+		}
+
+		return tag.getContent();
 	},
 
 	tagDataToTagText: function( tagID, tagName, tagSettings ) {
