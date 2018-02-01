@@ -309,10 +309,12 @@ class Main {
 	 * @access public
 	 */
 	public function register_menu() {
+		$system_info_text = __( 'System Info', 'elementor' );
+
 		add_submenu_page(
 			'elementor',
-			__( 'System Info', 'elementor' ),
-			__( 'System Info', 'elementor' ),
+			$system_info_text,
+			$system_info_text,
 			$this->capability,
 			'elementor-system-info',
 			[ $this, 'display_page' ]
