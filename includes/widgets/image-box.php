@@ -103,7 +103,7 @@ class Widget_Image_Box extends Widget_Base {
 			Group_Control_Image_Size::get_type(),
 			[
 				'name' => 'image', // Actually its `image_size`.
-				'default' => 'large',
+				'default' => 'full',
 			]
 		);
 
