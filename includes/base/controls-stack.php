@@ -1696,9 +1696,31 @@ abstract class Controls_Stack {
 		foreach ( $this->get_controls() as $control ) {
 			$has_dynamic_property = ! empty( $settings[ 'dynamic_' . $control['name'] ] );
 
-			$is_correct_dynamic_value = isset( $settings[ $control['name'] ] ) && is_string( $settings[ $control['name'] ] );
+			if ( ! $has_dynamic_property ) {
+				continue;
+			}
 
-			if ( $has_dynamic_property && ! $is_correct_dynamic_value ) {
+			$is_correct_dynamic_value = true;
+
+			if ( isset( $settings[ $control['name'] ] ) ) {
+				$prototype_control = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+				$value_to_check =  $settings[ $control['name'] ];
+
+				$dynamic_settings = $prototype_control->get_settings( 'dynamic' );
+
+				if ( ! empty( $dynamic_settings['property'] ) ) {
+					$value_to_check = $value_to_check[ $dynamic_settings['property'] ];
+				}
+
+				if ( ! is_string( $value_to_check ) ) {
+					$is_correct_dynamic_value = false;
+				}
+			} else {
+				$is_correct_dynamic_value = false;
+			}
+
+			if ( ! $is_correct_dynamic_value ) {
 				unset( $settings[ 'dynamic_' . $control['name'] ] );
 			}
 		}
