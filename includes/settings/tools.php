@@ -5,14 +5,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor "Tools" page in WordPress Dashboard.
+ *
+ * Elementor settings page handler class responsible for creating and displaying
+ * Elementor "Tools" page in WordPress dashboard.
+ *
+ * @since 1.0.0
+ */
 class Tools extends Settings_Page {
 
+	/**
+	 * Settings page ID for Elementor tools.
+	 */
 	const PAGE_ID = 'elementor-tools';
 
 	/**
+	 * Register admin menu.
+	 *
+	 * Add new Elementor Tools admin menu.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function register_admin_menu() {
 		add_submenu_page(
 			Settings::PAGE_ID,
@@ -25,9 +42,16 @@ class Tools extends Settings_Page {
 	}
 
 	/**
+	 * Clear cache.
+	 *
+	 * Delete post meta containing the post CSS file data. And delete the actual
+	 * CSS files from the upload directory.
+	 *
+	 * Fired by `wp_ajax_elementor_clear_cache` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function ajax_elementor_clear_cache() {
 		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
@@ -37,9 +61,16 @@ class Tools extends Settings_Page {
 	}
 
 	/**
+	 * Replace URLs.
+	 *
+	 * Sends an ajax request to replace old URLs to new URLs. This method also
+	 * updates all the Elementor data.
+	 *
+	 * Fired by `wp_ajax_elementor_replace_url` action.
+	 *
 	 * @since 1.1.0
 	 * @access public
-	*/
+	 */
 	public function ajax_elementor_replace_url() {
 		check_ajax_referer( 'elementor_replace_url', '_nonce' );
 
@@ -77,9 +108,15 @@ class Tools extends Settings_Page {
 	}
 
 	/**
+	 * Elementor version rollback.
+	 *
+	 * Rollback to previous Elementor version.
+	 *
+	 * Fired by `admin_post_elementor_rollback` action.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 */
 	public function post_elementor_rollback() {
 		check_admin_referer( 'elementor_rollback' );
 
@@ -104,9 +141,13 @@ class Tools extends Settings_Page {
 	}
 
 	/**
+	 * Tools page constructor.
+	 *
+	 * Initializing Elementor "Tools" page.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -121,9 +162,15 @@ class Tools extends Settings_Page {
 	}
 
 	/**
+	 * Create tabs.
+	 *
+	 * Return the tools page tabs, sections and fields.
+	 *
 	 * @since 1.5.0
 	 * @access protected
-	*/
+	 *
+	 * @return array An array with the page tabs, sections and fields.
+	 */
 	protected function create_tabs() {
 		return [
 			'general' => [
@@ -245,9 +292,13 @@ class Tools extends Settings_Page {
 	}
 
 	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the settings page.
+	 *
 	 * @since 1.5.2
 	 * @access public
-	*/
+	 */
 	public function display_settings_page() {
 		wp_enqueue_script( 'elementor-dialog' );
 
@@ -255,9 +306,15 @@ class Tools extends Settings_Page {
 	}
 
 	/**
+	 * Get tools page title.
+	 *
+	 * Retrieve the title for the tools page.
+	 *
 	 * @since 1.5.0
 	 * @access protected
-	*/
+	 *
+	 * @return string Tools page title.
+	 */
 	protected function get_page_title() {
 		return __( 'Tools', 'elementor' );
 	}
