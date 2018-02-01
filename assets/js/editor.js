@@ -152,11 +152,11 @@ module.exports = Marionette.Behavior.extend( {
 
 	setSettingsModel: function( value ) {
 		var settingName = this.view.model.get( 'name' ),
-			parsedValue = _.unescape( this.mentions.getValue() ),
 			isDynamic = false;
 
 		if ( this.mentions.getMentionsCount() ) {
-			var dynamicProperty = this.getOption( 'property' );
+			var parsedValue = _.unescape( this.mentions.getValue() ),
+				dynamicProperty = this.getOption( 'property' );
 
 			if ( dynamicProperty ) {
 				value[ dynamicProperty ] = parsedValue;
@@ -165,8 +165,8 @@ module.exports = Marionette.Behavior.extend( {
 			}
 
 			isDynamic = true;
-		} else {
-			value = parsedValue;
+		} else if ( 'string' === typeof value ) {
+			value = _.unescape( value );
 		}
 
 		if ( ! this.isValueUnderControl() ) {
