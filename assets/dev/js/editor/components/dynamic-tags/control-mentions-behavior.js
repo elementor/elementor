@@ -206,7 +206,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onMentionsElementKeyDown: function( event ) {
-		if ( 13 !== event.which || event.shiftKey ) {
+		if ( 13 !== event.which || event.shiftKey || event.isDefaultPrevented() ) {
 			return;
 		}
 
