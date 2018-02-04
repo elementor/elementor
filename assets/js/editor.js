@@ -10982,7 +10982,8 @@ helpers = {
 				return true;
 			}
 
-			if ( conditionSubKey ) {
+			if ( conditionSubKey && Array.isArray( controlValue ) ) {
+				
 				controlValue = controlValue[ conditionSubKey ];
 			}
 

@@ -1171,7 +1171,7 @@ abstract class Controls_Stack {
 
 			$instance_value = $values[ $pure_condition_key ];
 
-			if ( $condition_sub_key ) {
+			if ( $condition_sub_key && is_array( $instance_value ) ) {
 				if ( ! isset( $instance_value[ $condition_sub_key ] ) ) {
 					return false;
 				}
