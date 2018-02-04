@@ -152,11 +152,11 @@ module.exports = Marionette.Behavior.extend( {
 
 	setSettingsModel: function( value ) {
 		var settingName = this.view.model.get( 'name' ),
-			parsedValue = _.unescape( this.mentions.getValue() ),
 			isDynamic = false;
 
 		if ( this.mentions.getMentionsCount() ) {
-			var dynamicProperty = this.getOption( 'property' );
+			var parsedValue = _.unescape( this.mentions.getValue() ),
+				dynamicProperty = this.getOption( 'property' );
 
 			if ( dynamicProperty ) {
 				value[ dynamicProperty ] = parsedValue;
@@ -165,8 +165,8 @@ module.exports = Marionette.Behavior.extend( {
 			}
 
 			isDynamic = true;
-		} else {
-			value = parsedValue;
+		} else if ( 'string' === typeof value ) {
+			value = _.unescape( value );
 		}
 
 		if ( ! this.isValueUnderControl() ) {
@@ -207,7 +207,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onMentionsElementKeyDown: function( event ) {
-		if ( 13 !== event.which || event.shiftKey ) {
+		if ( 13 !== event.which || event.shiftKey || event.isDefaultPrevented() ) {
 			return;
 		}
 
@@ -366,8 +366,13 @@ module.exports = Module.extend( {
 	},
 
 	createTag: function( tagID, tagName, tagSettings ) {
-		var tagConfig = this.getConfig( 'tags.' + tagName ),
-			TagClass = this.tags[ tagName ] || this.tags.Base,
+		var tagConfig = this.getConfig( 'tags.' + tagName );
+
+		if ( ! tagConfig ) {
+			return;
+		}
+
+		var TagClass = this.tags[ tagName ] || this.tags.Base,
 			model = new SettingsModel( tagSettings, {
 				controls: tagConfig.controls
 			} );
@@ -376,7 +381,13 @@ module.exports = Module.extend( {
 	},
 
 	getTagDataContent: function( tagID, tagName, tagSettings ) {
-		return this.createTag( tagID, tagName, tagSettings ).getContent();
+		var tag = this.createTag( tagID, tagName, tagSettings );
+
+		if ( ! tag ) {
+			return;
+		}
+
+		return tag.getContent();
 	},
 
 	tagDataToTagText: function( tagID, tagName, tagSettings ) {
@@ -6139,14 +6150,14 @@ BaseSettingsModel = Backbone.Model.extend( {
 				elementor.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
-					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ control.name ] + '> as `' + control.name + '` value. Expected array or object.'
+					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ controlName ] + '> as `' + controlName + '` value. Expected array or object.'
 				);
 
-				delete attrs[ control.name ];
+				delete attrs[ controlName ];
 			}
 
-			if ( undefined === attrs[ control.name ] ) {
-				attrs[ control.name ] = defaults[ control.name ];
+			if ( undefined === attrs[ controlName ] ) {
+				attrs[ controlName ] = defaults[ controlName ];
 			}
 		} );
 
@@ -10481,8 +10492,13 @@ ControlsCSSParser = ViewModule.extend( {
 		}
 
 		elementor.dynamicTags.parseTagsText( valueToParse, control.dynamic, function( id, name, settings ) {
-			var tag = elementor.dynamicTags.createTag( id, name, settings ),
-				tagSettingsModel = tag.model,
+			var tag = elementor.dynamicTags.createTag( id, name, settings );
+
+			if ( ! tag ) {
+				return;
+			}
+
+			var tagSettingsModel = tag.model,
 				styleControls = tagSettingsModel.getStyleControls();
 
 			if ( ! styleControls.length ) {
@@ -10966,7 +10982,7 @@ helpers = {
 				return true;
 			}
 
-			if ( conditionSubKey ) {
+			if ( conditionSubKey && Array.isArray( controlValue ) ) {
 				controlValue = controlValue[ conditionSubKey ];
 			}
 
