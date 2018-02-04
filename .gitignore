@@ -6,6 +6,7 @@ log/
 vendor/
 composer.lock
 .project
+.vscode
 Thumbs.db
 *.DS_Store
 

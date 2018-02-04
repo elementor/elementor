@@ -8,15 +8,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor main system info page class.
+ *
+ * Elementor main system info page handler class responsible for creating system info
+ * reports and displaying them on WordPress dashboard under Elementor setting.
+ *
+ * @since 1.0.0
+ */
 class Main {
 
+	/**
+	 * Required user capabilities.
+	 *
+	 * Holds the user capabilities required to manage Elementor menus.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var string
+	 */
 	private $capability = 'manage_options';
 
 	/**
+	 * System info settings.
+	 *
+	 * Holds the settings required for Elementor system info page.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
 	 * @var array
 	 */
 	private $settings = [];
 
+	/**
+	 * Elementor system info reports.
+	 *
+	 * Holds an array of available reports in Elementor system info page.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var array
+	 */
 	private static $reports = [
 		'server' => [],
 		'wordpress' => [],
@@ -28,9 +63,13 @@ class Main {
 	];
 
 	/**
+	 * Main system info page constructor.
+	 *
+	 * Initializing Elementor system info page.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		$this->require_files();
 		$this->init_settings();
@@ -38,20 +77,30 @@ class Main {
 	}
 
 	/**
+	 * Require files.
+	 *
+	 * Require the needed files for Elementor system info page.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private function require_files() {
 		require __DIR__ . '/classes/abstracts/base-reporter.php';
 		require __DIR__ . '/helpers/model-helper.php';
 	}
 
 	/**
+	 * Create a report.
+	 *
+	 * Register a new report that will be displayed in Elementor system info page.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param array $properties
 	 *
-	 * @return \WP_Error|false|Base_Reporter
+	 * @param array $properties Report properties.
+	 *
+	 * @return \WP_Error|false|Base_Reporter Base_Reporter instance if the report was created,
+	 *                                       False or WP_Error otherwise.
 	 */
 	public function create_reporter( array $properties ) {
 		$properties = Model_Helper::prepare_properties( $this->get_settings( 'reporter_properties' ), $properties );
@@ -61,7 +110,7 @@ class Main {
 		$reporter = new $reporter_class( $properties );
 
 		if ( ! ( $reporter instanceof Base_Reporter ) ) {
-			return new \WP_Error( 'Each reporter must to be an instance or sub-instance of Base_Reporter class' );
+			return new \WP_Error( 'Each reporter must to be an instance or sub-instance of `Base_Reporter` class.' );
 		}
 
 		if ( ! $reporter->is_enabled() ) {
@@ -72,19 +121,26 @@ class Main {
 	}
 
 	/**
+	 * Add actions.
+	 *
+	 * Register filters and actions for the main system info page.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private function add_actions() {
 		add_action( 'admin_menu', [ $this, 'register_menu' ], 501 );
-
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
 	}
 
 	/**
+	 * Display page.
+	 *
+	 * Output the content for the main system info page.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function display_page() {
 		$reports_info = self::get_allowed_reports();
 
@@ -123,9 +179,15 @@ class Main {
 	}
 
 	/**
+	 * Download file.
+	 *
+	 * Download the reports files.
+	 *
+	 * Fired by `wp_ajax_elementor_system_info_download_file` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function download_file() {
 		if ( ! current_user_can( $this->capability ) ) {
 			wp_die( __( 'You don\'t have a permission to download this file', 'elementor' ) );
@@ -143,17 +205,33 @@ class Main {
 	}
 
 	/**
+	 * Get report class.
+	 *
+	 * Retrieve the class of the report for any given report type.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param string $reporter_type The type of the report.
+	 *
+	 * @return string The class of the report.
+	 */
 	public function get_reporter_class( $reporter_type ) {
 		return $this->get_settings( 'namespaces.classes_namespace' ) . '\\' . ucfirst( $reporter_type ) . '_Reporter';
 	}
 
 	/**
+	 * Load reports.
+	 *
+	 * Retrieve the system info reports.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $reports An array of system info reports.
+	 *
+	 * @return array An array of system info reports.
+	 */
 	public function load_reports( $reports ) {
 		$result = [];
 
@@ -194,9 +272,17 @@ class Main {
 	}
 
 	/**
+	 * Print report.
+	 *
+	 * Output the system info page reports using an output template.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array  $reports  An array of system info reports.
+	 * @param string $template Output type from the templates folder. Available
+	 *                         templates are `raw` and `html`. Default is `raw`.
+	 */
 	public function print_report( $reports, $template = 'raw' ) {
 		static $tabs_count = 0;
 
@@ -213,9 +299,15 @@ class Main {
 	}
 
 	/**
+	 * Register admin menu.
+	 *
+	 * Add new Elementor system info admin menu.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function register_menu() {
 		$system_info_text = __( 'System Info', 'elementor' );
 
@@ -230,9 +322,16 @@ class Main {
 	}
 
 	/**
+	 * Get default settings.
+	 *
+	 * Retrieve the default settings. Used to reset the report settings on
+	 * initialization.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 *
+	 * @return array Default settings.
+	 */
 	protected function get_default_settings() {
 		$settings = [];
 
@@ -262,18 +361,28 @@ class Main {
 	}
 
 	/**
+	 * Init settings.
+	 *
+	 * Initialize Elementor system info page by setting default settings.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private function init_settings() {
 		$this->settings = $this->get_default_settings();
 	}
 
 	/**
+	 * Get settings.
+	 *
+	 * Retrieve the settings from any given container.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param string $setting
-	 * @param array  $container
+	 *
+	 * @param array $setting   Optional. Settings required for Elementor system
+	 *                         info page. Default is null.
+	 * @param array $container Optional. Container. Default is null.
 	 *
 	 * @return mixed
 	 */
@@ -296,19 +405,32 @@ class Main {
 	}
 
 	/**
-	 * @static
+	 * Get allowed reports.
+	 *
+	 * Retrieve the available reports in Elementor system info page.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return array Available reports in Elementor system info page.
+	 */
 	public static function get_allowed_reports() {
 		return self::$reports;
 	}
 
 	/**
-	 * @static
+	 * Add report.
+	 *
+	 * Register a new report to Elementor system info page.
+	 *
 	 * @since 1.4.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param string $report_name The name of the report.
+	 * @param array  $report_info Report info.
+	 */
 	public static function add_report( $report_name, $report_info ) {
 		self::$reports[ $report_name ] = $report_info;
 	}

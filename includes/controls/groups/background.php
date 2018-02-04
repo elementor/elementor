@@ -69,9 +69,9 @@ class Group_Control_Background extends Group_Control_Base {
 	private static $background_types;
 
 	/**
-	 * Retrieve type.
-	 *
 	 * Get background control type.
+	 *
+	 * Retrieve the control type, in this case `background`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -84,9 +84,9 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve background types.
+	 * Get background control types.
 	 *
-	 * Gat available background types.
+	 * Retrieve available background types.
 	 *
 	 * @since 1.2.2
 	 * @access public
@@ -393,9 +393,9 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve child default args.
+	 * Get child default args.
 	 *
-	 * Get the default arguments for all the child controls for a specific group
+	 * Retrieve the default arguments for all the child controls for a specific group
 	 * control.
 	 *
 	 * @since 1.2.2
@@ -465,9 +465,9 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve default options.
+	 * Get default options.
 	 *
-	 * Get the default options of the background control. Used to return the
+	 * Retrieve the default options of the background control. Used to return the
 	 * default options while initializing the background control.
 	 *
 	 * @since 1.9.0

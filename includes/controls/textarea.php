@@ -57,7 +57,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Textarea extends Base_Data_Control {
 
 	/**
-	 * Retrieve textarea control type.
+	 * Get textarea control type.
+	 *
+	 * Retrieve the control type, in this case `textarea`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -69,9 +71,9 @@ class Control_Textarea extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve textarea control default settings.
+	 * Get textarea control default settings.
 	 *
-	 * Get the default settings of the textarea control. Used to return the
+	 * Retrieve the default settings of the textarea control. Used to return the
 	 * default settings while initializing the textarea control.
 	 *
 	 * @since 1.0.0

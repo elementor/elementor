@@ -75,7 +75,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_URL extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve url control type.
+	 * Get url control type.
+	 *
+	 * Retrieve the control type, in this case `url`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -87,9 +89,9 @@ class Control_URL extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve url control default values.
+	 * Get url control default values.
 	 *
-	 * Get the default value of the url control. Used to return the default
+	 * Retrieve the default value of the url control. Used to return the default
 	 * values while initializing the url control.
 	 *
 	 * @since 1.0.0
@@ -106,9 +108,9 @@ class Control_URL extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve url control default settings.
+	 * Get url control default settings.
 	 *
-	 * Get the default settings of the url control. Used to return the default
+	 * Retrieve the default settings of the url control. Used to return the default
 	 * settings while initializing the url control.
 	 *
 	 * @since 1.0.0

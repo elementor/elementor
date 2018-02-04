@@ -87,7 +87,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Dimensions extends Control_Base_Units {
 
 	/**
-	 * Retrieve dimensions control type.
+	 * Get dimensions control type.
+	 *
+	 * Retrieve the control type, in this case `dimensions`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -99,9 +101,9 @@ class Control_Dimensions extends Control_Base_Units {
 	}
 
 	/**
-	 * Retrieve dimensions control default values.
+	 * Get dimensions control default values.
 	 *
-	 * Get the default value of the dimensions control. Used to return the
+	 * Retrieve the default value of the dimensions control. Used to return the
 	 * default values while initializing the dimensions control.
 	 *
 	 * @since 1.0.0
@@ -122,9 +124,9 @@ class Control_Dimensions extends Control_Base_Units {
 	}
 
 	/**
-	 * Retrieve dimensions control default settings.
+	 * Get dimensions control default settings.
 	 *
-	 * Get the default settings of the dimensions control. Used to return the
+	 * Retrieve the default settings of the dimensions control. Used to return the
 	 * default settings while initializing the dimensions control.
 	 *
 	 * @since 1.0.0

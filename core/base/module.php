@@ -5,29 +5,63 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor module class.
+ *
+ * A base abstract class that provides the needed properties and methods to
+ * manage and handle modules in inheriting classes.
+ *
+ * @since 1.7.0
+ * @abstract
+ */
 abstract class Module {
 
 	/**
+	 * Module class reflection.
+	 *
+	 * Holds the information about a class.
+	 *
+	 * @since 1.7.0
+	 * @access private
+	 *
 	 * @var \ReflectionClass
 	 */
 	private $reflection;
 
+	/**
+	 * Module components.
+	 *
+	 * Holds the module components.
+	 *
+	 * @since 1.7.0
+	 * @access private
+	 *
+	 * @var array
+	 */
 	private $components = [];
 
 	/**
+	 * Module instance.
+	 *
+	 * Holds the module instance.
+	 *
+	 * @since 1.7.0
+	 * @access protected
+	 *
 	 * @var Module
 	 */
 	protected static $_instances = [];
 
 	/**
-	 * Throw error on object clone
+	 * Clone.
+	 *
+	 * Disable class cloning and throw an error on object clone.
 	 *
 	 * The whole idea of the singleton design pattern is that there is a single
-	 * object therefore, we don't want the object to be cloned.
+	 * object. Therefore, we don't want the object to be cloned.
 	 *
 	 * @since 1.7.0
 	 * @access public
-	 * @return void
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden
@@ -35,11 +69,12 @@ abstract class Module {
 	}
 
 	/**
-	 * Disable unserializing of the class
+	 * Wakeup.
+	 *
+	 * Disable unserializing of the class.
 	 *
 	 * @since 1.7.0
 	 * @access public
-	 * @return void
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden
@@ -47,6 +82,10 @@ abstract class Module {
 	}
 
 	/**
+	 * Class name.
+	 *
+	 * Retrieve the name of the class.
+	 *
 	 * @since 1.7.0
 	 * @access public
 	 * @static
@@ -56,10 +95,15 @@ abstract class Module {
 	}
 
 	/**
+	 * Instance.
+	 *
+	 * Ensures only one instance of the module class is loaded or can be loaded.
+	 *
 	 * @since 1.7.0
 	 * @access public
 	 * @static
-	 * @return static
+	 *
+	 * @return Module An instance of the class.
 	 */
 	public static function instance() {
 		if ( empty( static::$_instances[ static::class_name() ] ) ) {
@@ -70,13 +114,23 @@ abstract class Module {
 	}
 
 	/**
+	 * Get module name.
+	 *
+	 * Retrieve the module name.
+	 *
 	 * @since 1.7.0
 	 * @access public
 	 * @abstract
+	 *
+	 * @return string Module name.
 	 */
 	abstract public function get_name();
 
 	/**
+	 * Module constructor.
+	 *
+	 * Initializing Elementor module.
+	 *
 	 * @since 1.7.0
 	 * @access public
 	 */
@@ -85,16 +139,32 @@ abstract class Module {
 	}
 
 	/**
+	 * Add module component.
+	 *
+	 * Add new component to the current module.
+	 *
 	 * @since 1.7.0
 	 * @access public
+	 *
+	 * @param string $id       Component ID.
+	 * @param mixed  $instance An instance of the component.
 	 */
 	public function add_component( $id, $instance ) {
 		$this->components[ $id ] = $instance;
 	}
 
 	/**
+	 * Get module component.
+	 *
+	 * Retrieve the module component.
+	 *
 	 * @since 1.7.0
 	 * @access public
+	 *
+	 * @param string $id Component ID.
+	 *
+	 * @return mixed An instance of the component, or `false` if the component
+	 *               doesn't exist.
 	 */
 	public function get_component( $id ) {
 		if ( isset( $this->components[ $id ] ) ) {

@@ -29,7 +29,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_WP_Widget extends Base_Data_Control {
 
 	/**
-	 * Retrieve WordPress widget control type.
+	 * Get WordPress widget control type.
+	 *
+	 * Retrieve the control type, in this case `wp_widget`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -41,9 +43,9 @@ class Control_WP_Widget extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve WordPress widget control default values.
+	 * Get WordPress widget control default values.
 	 *
-	 * Get the default value of the WordPress widget control. Used to return the
+	 * Retrieve the default value of the WordPress widget control. Used to return the
 	 * default values while initializing the WordPress widget control.
 	 *
 	 * @since 1.4.3

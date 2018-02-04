@@ -50,9 +50,9 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 	protected static $fields;
 
 	/**
-	 * Retrieve type.
-	 *
 	 * Get text shadow control type.
+	 *
+	 * Retrieve the control type, in this case `text-shadow`.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -92,9 +92,9 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve default options.
+	 * Get default options.
 	 *
-	 * Get the default options of the text shadow control. Used to return the
+	 * Retrieve the default options of the text shadow control. Used to return the
 	 * default options while initializing the text shadow control.
 	 *
 	 * @since 1.9.0
