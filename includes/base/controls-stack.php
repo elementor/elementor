@@ -1060,9 +1060,7 @@ abstract class Controls_Stack {
 				continue;
 			}
 
-			$control = array_merge( $control_obj->get_settings(), $control );
-
-			if ( ! empty( $control['dynamic'] ) && ! empty( $all_settings[ 'dynamic_' . $control['name'] ] ) ) {
+			if ( ! empty( $control['dynamic']['active'] ) && ! empty( $all_settings[ 'dynamic_' . $control['name'] ] ) ) {
 				$settings[ $control['name'] ] = $control_obj->parse_tags( $settings[ $control['name'] ], $control['dynamic'] );
 			}
 		}
@@ -1173,7 +1171,7 @@ abstract class Controls_Stack {
 
 			$instance_value = $values[ $pure_condition_key ];
 
-			if ( $condition_sub_key ) {
+			if ( $condition_sub_key && is_array( $instance_value ) ) {
 				if ( ! isset( $instance_value[ $condition_sub_key ] ) ) {
 					return false;
 				}
@@ -1696,9 +1694,31 @@ abstract class Controls_Stack {
 		foreach ( $this->get_controls() as $control ) {
 			$has_dynamic_property = ! empty( $settings[ 'dynamic_' . $control['name'] ] );
 
-			$is_correct_dynamic_value = isset( $settings[ $control['name'] ] ) && is_string( $settings[ $control['name'] ] );
+			if ( ! $has_dynamic_property ) {
+				continue;
+			}
 
-			if ( $has_dynamic_property && ! $is_correct_dynamic_value ) {
+			$is_correct_dynamic_value = true;
+
+			if ( isset( $settings[ $control['name'] ] ) ) {
+				$prototype_control = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+				$value_to_check =  $settings[ $control['name'] ];
+
+				$dynamic_settings = $prototype_control->get_settings( 'dynamic' );
+
+				if ( ! empty( $dynamic_settings['property'] ) ) {
+					$value_to_check = $value_to_check[ $dynamic_settings['property'] ];
+				}
+
+				if ( ! is_string( $value_to_check ) ) {
+					$is_correct_dynamic_value = false;
+				}
+			} else {
+				$is_correct_dynamic_value = false;
+			}
+
+			if ( ! $is_correct_dynamic_value ) {
 				unset( $settings[ 'dynamic_' . $control['name'] ] );
 			}
 		}
