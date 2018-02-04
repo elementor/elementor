@@ -49,7 +49,7 @@ class Manager {
 		preg_match( '/settings="(.+?(?="]))/', $tag_text, $tag_settings_match );
 
 		if ( ! $tag_id_match || ! $tag_name_match || ! $tag_settings_match ) {
-			return $tag_text;
+			return null;
 		}
 
 		return [
