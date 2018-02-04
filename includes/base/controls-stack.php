@@ -1060,9 +1060,7 @@ abstract class Controls_Stack {
 				continue;
 			}
 
-			$control = array_merge( $control_obj->get_settings(), $control );
-
-			if ( ! empty( $control['dynamic'] ) && ! empty( $all_settings[ 'dynamic_' . $control['name'] ] ) ) {
+			if ( ! empty( $control['dynamic']['active'] ) && ! empty( $all_settings[ 'dynamic_' . $control['name'] ] ) ) {
 				$settings[ $control['name'] ] = $control_obj->parse_tags( $settings[ $control['name'] ], $control['dynamic'] );
 			}
 		}
