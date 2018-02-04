@@ -70,7 +70,7 @@ abstract class Controls_Stack {
 	 * The configuration.
 	 *
 	 * Holds the configuration used to generate the Elementor editor. It includes
-	 * the element name, icon, categories ect...
+	 * the element name, icon, categories, etc.
 	 *
 	 * @access private
 	 *
@@ -194,7 +194,7 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Retrieve items.
+	 * Get items.
 	 *
 	 * Utility method that receives an array with a needle and returns all the
 	 * items that match the needle. If needle is not defined the entire haystack
@@ -1480,9 +1480,11 @@ abstract class Controls_Stack {
 	/**
 	 * End injection.
 	 *
-	 * Used to close an existing open injection point. When you use this method
-	 * it stops adding new controls to this point and continue to add controls
-	 * to the regular position in the stack.
+	 * Used to close an existing opened injection point.
+	 *
+	 * When you use this method it stops adding new controls and sections to
+	 * this point and continue to add controls to the regular position in the
+	 * stack.
 	 *
 	 * @since 1.7.1
 	 * @access public
@@ -1492,8 +1494,15 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Get injection point.
+	 *
+	 * Retrieve the injection point in the stack where new controls and sections
+	 * will be inserted.
+	 *
 	 * @access public
-	 * @return array|null
+	 *
+	 * @return array|null An array when an injection point is defined, null
+	 *                    otherwise.
 	 */
 	final public function get_injection_point() {
 		return $this->injection_point;

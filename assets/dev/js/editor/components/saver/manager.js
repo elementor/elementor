@@ -195,7 +195,7 @@ module.exports = Module.extend( {
 					message = elementor.ajax.createErrorMessage( data );
 
 					if ( 0 === data.readyState ) {
-						message += '. ' + elementor.translate( 'saving_disabled' );
+						message += ' ' + elementor.translate( 'saving_disabled' );
 					}
 				} else if ( data[0] && data[0].code ) {
 					message = elementor.translate( 'server_error' ) + ' ' + data[0].code;

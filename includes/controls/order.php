@@ -55,7 +55,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Order extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve order control type.
+	 * Get order control type.
+	 *
+	 * Retrieve the control type, in this case `order`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -67,9 +69,9 @@ class Control_Order extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve order control default values.
+	 * Get order control default values.
 	 *
-	 * Get the default value of the order control. Used to return the default
+	 * Retrieve the default value of the order control. Used to return the default
 	 * values while initializing the order control.
 	 *
 	 * @since 1.0.0

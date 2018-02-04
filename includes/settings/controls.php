@@ -5,13 +5,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor settings controls class.
+ *
+ * Elementor settings controls handler class responsible for creating the final
+ * HTML for various input field types used in Elementor settings pages.
+ *
+ * @since 1.0.0
+ */
 class Settings_Controls {
 
 	/**
-	 * @static
+	 * Render settings control.
+	 *
+	 * Generates the final HTML on the frontend for any given field based on
+	 * the field type (text, select, checkbox, raw HTML, etc.).
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param array $field Optional. Field data. Default is an empty array.
+	 */
 	public static function render( $field = [] ) {
 		if ( empty( $field ) || empty( $field['id'] ) ) {
 			return;
@@ -37,10 +52,16 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
+	 * Render text control.
+	 *
+	 * Generates the final HTML for text controls.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
 	private static function _text( array $field ) {
 		if ( empty( $field['classes'] ) ) {
 			$field['classes'] = [ 'regular-text' ];
@@ -59,10 +80,16 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
+	 * Render checkbox control.
+	 *
+	 * Generates the final HTML for checkbox controls.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
 	private static function _checkbox( array $field ) {
 		?>
 		<label>
@@ -80,10 +107,16 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
+	 * Render checkbox list control.
+	 *
+	 * Generates the final HTML for checkbox list controls.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
 	private static function _checkbox_list( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		if ( ! is_array( $old_value ) ) {
@@ -104,10 +137,16 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
+	 * Render select control.
+	 *
+	 * Generates the final HTML for select controls.
+	 *
 	 * @since 1.4.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
 	private static function _select( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		?>
@@ -128,10 +167,16 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
+	 * Render checkbox list control for CPT.
+	 *
+	 * Generates the final HTML for checkbox list controls populated with Custom Post Types.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
 	private static function _checkbox_list_cpt( array $field ) {
 		$defaults = [
 			'exclude' => [],
@@ -156,10 +201,16 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
+	 * Render checkbox list control for user roles.
+	 *
+	 * Generates the final HTML for checkbox list controls populated with user roles.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
 	private static function _checkbox_list_roles( array $field ) {
 		$defaults = [
 			'exclude' => [],
@@ -179,10 +230,16 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
+	 * Render raw HTML control.
+	 *
+	 * Generates the final HTML for raw HTML controls.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
 	private static function _raw_html( array $field ) {
 		if ( empty( $field['html'] ) ) {
 			return;

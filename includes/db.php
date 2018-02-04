@@ -236,10 +236,18 @@ class DB {
 			$autosave = $this->get_newer_autosave( $post_id );
 
 			if ( is_object( $autosave ) ) {
-				$data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
+				$autosave_data = $this->_get_json_meta( $autosave->ID, '_elementor_data' );
 			}
-		} elseif ( empty( $data ) && Plugin::$instance->editor->is_edit_mode() ) {
-			$data = $this->_get_new_editor_from_wp_editor( $post_id );
+		}
+
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			if ( empty( $data ) && empty( $autosave_data ) ) {
+				$data = $this->_get_new_editor_from_wp_editor( $post_id );
+			}
+		}
+
+		if ( ! empty( $autosave_data ) ) {
+			$data = $autosave_data;
 		}
 
 		return $data;
@@ -456,7 +464,16 @@ class DB {
 	}
 
 	/**
+	 * Safely copy Elementor meta.
+	 *
+	 * Make sure the original page was built with Elementor and the post is not
+	 * auto-save. Only then copy elementor meta from one post to another using
+	 * `copy_elementor_meta()`.
+	 *
 	 * @access public
+	 *
+	 * @param int $from_post_id Original post ID.
+	 * @param int $to_post_id   Target post ID.
 	 */
 	public function safe_copy_elementor_meta( $from_post_id, $to_post_id ) {
 		if ( ! Plugin::$instance->db->is_built_with_elementor( $from_post_id ) ) {
@@ -477,9 +494,11 @@ class DB {
 	}
 
 	/**
-	 * Copy elementor meta.
+	 * Copy Elementor meta.
 	 *
 	 * Duplicate the data from one post to another.
+	 *
+	 * Consider using `safe_copy_elementor_meta()` method instead.
 	 *
 	 * @since 1.1.0
 	 * @access public

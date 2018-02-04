@@ -74,7 +74,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Media extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve media control type.
+	 * Get media control type.
+	 *
+	 * Retrieve the control type, in this case `media`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -86,9 +88,9 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control default values.
+	 * Get media control default values.
 	 *
-	 * Get the default value of the media control. Used to return the default
+	 * Retrieve the default value of the media control. Used to return the default
 	 * values while initializing the media control.
 	 *
 	 * @since 1.0.0
@@ -200,9 +202,9 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control default settings.
+	 * Get media control default settings.
 	 *
-	 * Get the default settings of the media control. Used to return the default
+	 * Retrieve the default settings of the media control. Used to return the default
 	 * settings while initializing the media control.
 	 *
 	 * @since 1.0.0
@@ -217,9 +219,9 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control image title.
+	 * Get media control image title.
 	 *
-	 * Get the title of the image selected by the media control.
+	 * Retrieve the `title` of the image selected by the media control.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -238,9 +240,9 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control image alt.
+	 * Get media control image alt.
 	 *
-	 * Get the alt value of the image selected by the media control.
+	 * Retrieve the `alt` value of the image selected by the media control.
 	 *
 	 * @since 1.0.0
 	 * @access public
