@@ -8,27 +8,59 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor global settings model class.
+ *
+ * Elementor global settings model handler class is responsible for registering
+ * and managing Elementor global settings models.
+ *
+ * @since 1.6.0
+ */
 class Model extends BaseModel {
 
 	/**
+	 * Get model name.
+	 *
+	 * Retrieve global settings model name.
+	 *
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @return string Model name.
 	 */
 	public function get_name() {
 		return 'global-settings';
 	}
 
 	/**
+	 * Get CSS wrapper selector.
+	 *
+	 * Retrieve the wrapper selector for the global settings model.
+	 *
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @return string CSS wrapper selector.
 	 */
+
 	public function get_css_wrapper_selector() {
 		return '';
 	}
 
 	/**
+	 * Get panel page settings.
+	 *
+	 * Retrieve the panel setting for the global settings model.
+	 *
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @return array {
+	 *    Panel settings.
+	 *
+	 *    @type string $title The panel title.
+	 *    @type array  $menu  The panel menu.
+ 	 * }
 	 */
 	public function get_panel_page_settings() {
 		return [
@@ -41,9 +73,15 @@ class Model extends BaseModel {
 	}
 
 	/**
+	 * Get controls list.
+	 *
+	 * Retrieve the global settings model controls list.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
+	 *
+	 * @return array Controls list.
 	 */
 	public static function get_controls_list() {
 
@@ -142,6 +180,10 @@ class Model extends BaseModel {
 	}
 
 	/**
+	 * Register model controls.
+	 *
+	 * Used to add new controls to the global settings model.
+	 *
 	 * @since 1.6.0
 	 * @access protected
 	 */
