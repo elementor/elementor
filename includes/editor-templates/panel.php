@@ -188,10 +188,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		$scheme_fields = array_intersect_key( $typography_fields, array_flip( $scheme_fields_keys ) );
 
-		$system_fonts = Fonts::get_fonts_by_groups( [ Fonts::SYSTEM ] );
-
-		$google_fonts = Fonts::get_fonts_by_groups( [ Fonts::GOOGLE, Fonts::EARLYACCESS ] );
-
 		foreach ( $scheme_fields as $option_name => $option ) :
 		?>
 			<div class="elementor-panel-scheme-typography-item">
@@ -206,18 +202,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php elseif ( 'font' === $option['type'] ) : ?>
 						<select name="<?php echo $option_name; ?>" class="elementor-panel-scheme-typography-item-field">
 							<option value=""><?php esc_html_e( 'Default', 'elementor' ); ?></option>
-
-							<optgroup label="<?php esc_html_e( 'System', 'elementor' ); ?>">
-								<?php foreach ( $system_fonts as $font_title => $font_type ) : ?>
-									<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo $font_title; ?></option>
-								<?php endforeach; ?>
-							</optgroup>
-
-							<optgroup label="<?php esc_html_e( 'Google', 'elementor' ); ?>">
-								<?php foreach ( $google_fonts as $font_title => $font_type ) : ?>
-									<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo $font_title; ?></option>
-								<?php endforeach; ?>
-							</optgroup>
+							<?php foreach ( Fonts::get_font_groups() as $group_type => $group_label ) : ?>
+                                <optgroup label="<?php echo esc_attr( $group_label ); ?>">
+									<?php foreach ( Fonts::get_fonts_by_groups( [ $group_type ] ) as $font_title => $font_type ) : ?>
+                                        <option value="<?php echo esc_attr( $font_title ); ?>"><?php echo $font_title; ?></option>
+									<?php endforeach; ?>
+                                </optgroup>
+							<?php endforeach; ?>
 						</select>
 					<?php elseif ( 'text' === $option['type'] ) : ?>
 						<input name="<?php echo $option_name; ?>" class="elementor-panel-scheme-typography-item-field" />

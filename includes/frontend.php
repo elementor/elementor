@@ -58,6 +58,18 @@ class Frontend {
 	private $google_early_access_fonts = [];
 
 	/**
+	 * Fonts to enqueue
+	 *
+	 * Holds the list of fonts that are being used in the current page.
+	 *
+	 * @since 1.9.4
+	 * @access private
+	 *
+	 * @var array Used fonts. Default is an empty array.
+	 */
+	private $fonts_to_enqueue = [];
+
+	/**
 	 * Registered fonts.
 	 *
 	 * Holds the list of enqueued fonts in the current page.
@@ -147,7 +159,7 @@ class Frontend {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		}
 
-		add_action( 'wp_head', [ $this, 'print_google_fonts' ] );
+		add_action( 'wp_head', [ $this, 'print_fonts_links' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar.
@@ -543,7 +555,41 @@ class Frontend {
 		$this->enqueue_styles();
 		$this->enqueue_scripts();
 
-		$this->print_google_fonts();
+		$this->print_fonts_links();
+	}
+
+	/**
+	 * Print fonts links.
+	 *
+	 * Enqueue all the frontend fonts by url.
+	 *
+	 * Fired by `wp_head` action.
+	 *
+	 * @since 1.9.4
+	 * @access public
+	 */
+	public function print_fonts_links() {
+		$google_fonts = [
+			'google' => [],
+			'early' => [],
+		];
+		foreach ( $this->fonts_to_enqueue as $key => $font ) {
+			$font_type = Fonts::get_font_type( $font );
+			switch ( $font_type ) {
+				case Fonts::GOOGLE:
+					$google_fonts['google'][] = $font;
+					break;
+
+				case Fonts::EARLYACCESS:
+					$google_fonts['early'][] = $font;
+					break;
+
+				default:
+					do_action( 'elementor/fonts/print_font_links/' . $font_type, $font );
+			}
+			unset( $this->fonts_to_enqueue[ $key ] );
+		}
+		$this->print_google_fonts( $google_fonts );
 	}
 
 	/**
@@ -554,9 +600,9 @@ class Frontend {
 	 * Fired by `wp_head` action.
 	 *
 	 * @since 1.0.0
-	 * @access public
+	 * @access private
 	 */
-	public function print_google_fonts() {
+	private function print_google_fonts( $google_fonts = [] ) {
 		$print_google_fonts = true;
 
 		/**
@@ -575,12 +621,12 @@ class Frontend {
 		}
 
 		// Print used fonts
-		if ( ! empty( $this->google_fonts ) ) {
-			foreach ( $this->google_fonts as &$font ) {
+		if ( ! empty( $google_fonts['google'] ) ) {
+			foreach ( $google_fonts['google'] as &$font ) {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
 
-			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( rawurlencode( '|' ), $this->google_fonts ) );
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( rawurlencode( '|' ), $google_fonts['google'] ) );
 
 			$subsets = [
 				'ru_RU' => 'cyrillic',
@@ -600,15 +646,14 @@ class Frontend {
 			}
 
 			echo '<link rel="stylesheet" type="text/css" href="' . $fonts_url . '">';
-			$this->google_fonts = [];
 		}
 
-		if ( ! empty( $this->google_early_access_fonts ) ) {
-			foreach ( $this->google_early_access_fonts as $current_font ) {
+		if ( ! empty( $google_fonts['early'] ) ) {
+			foreach ( $google_fonts['early'] as $current_font ) {
 				printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
 			}
-			$this->google_early_access_fonts = [];
 		}
+
 	}
 
 	/**
@@ -620,28 +665,13 @@ class Frontend {
 	 * @access public
 	 */
 	public function enqueue_font( $font ) {
-		$font_type = Fonts::get_font_type( $font );
-		$cache_id = $font_type . $font;
 
-		if ( in_array( $cache_id, $this->registered_fonts ) ) {
+		if ( in_array( $font, $this->registered_fonts ) ) {
 			return;
 		}
 
-		switch ( $font_type ) {
-			case Fonts::GOOGLE:
-				if ( ! in_array( $font, $this->google_fonts ) ) {
-					$this->google_fonts[] = $font;
-				}
-				break;
-
-			case Fonts::EARLYACCESS:
-				if ( ! in_array( $font, $this->google_early_access_fonts ) ) {
-					$this->google_early_access_fonts[] = $font;
-				}
-				break;
-		}
-
-		$this->registered_fonts[] = $cache_id;
+		$this->fonts_to_enqueue[] = $font;
+		$this->registered_fonts[] = $font;
 	}
 
 	/**
