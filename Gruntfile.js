@@ -202,9 +202,7 @@ module.exports = function( grunt ) {
 				files: {
 					src: [
 						'assets/js/*.js',
-						'assets/css/*.css',
-
-						'!assets/css/animations.min.css'
+						'assets/css/*.css'
 					]
 				}
 			}
