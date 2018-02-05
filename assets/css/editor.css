@@ -2289,13 +2289,13 @@ select {
     font-size: 11px;
     text-transform: uppercase;
     height: 26px; }
+    .elementor-panel #elementor-panel-saver-button-publish.elementor-saver-disabled, .elementor-panel #elementor-panel-saver-button-save-options.elementor-saver-disabled {
+      background-color: #556068;
+      color: #a4afb7; }
   .elementor-panel #elementor-panel-saver-button-publish {
     width: 100%;
     -webkit-border-radius: 3px 0 0 3px;
             border-radius: 3px 0 0 3px; }
-    .elementor-panel #elementor-panel-saver-button-publish.elementor-saver-disabled {
-      background-color: #556068;
-      color: #a4afb7; }
   .elementor-panel #elementor-panel-saver-button-save-options {
     width: 25px; }
   .elementor-panel #elementor-panel-saver-menu-save-draft.elementor-saver-disabled .elementor-icon,
