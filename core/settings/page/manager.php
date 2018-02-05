@@ -11,13 +11,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor page settings manager class.
+ *
+ * Elementor page settings manager handler class is responsible for registering
+ * and managing Elementor page settings managers.
+ *
+ * @since 1.6.0
+ */
 class Manager extends BaseManager {
 
+	/**
+	 * Elementor Canvas template name.
+	 */
 	const TEMPLATE_CANVAS = 'elementor_canvas';
 
+	/**
+	 * Meta key for the page settings.
+	 */
 	const META_KEY = '_elementor_page_settings';
 
 	/**
+	 * Page settings manager constructor.
+	 *
+	 * Initializing Elementor page settings manager.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 */
@@ -30,12 +48,16 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Get page data.
+	 *
+	 * Retrieves page data for any given a page ID.
+	 *
 	 * @since 1.6.0
+	 * @deprecated 1.6.0
 	 * @access public
 	 * @static
-	 * @deprecated since 1.6.0
 	 *
-	 * @param int $id
+	 * @param int $id Page ID.
 	 *
 	 * @return BaseModel
 	 */
@@ -44,9 +66,20 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Add page templates.
+	 *
+	 * Add the Elementor Canvas page templates to the theme templates.
+	 *
+	 * Fired by `theme_{$post_type}_templates` filter.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
+	 *
+	 * @param array $post_templates Array of page templates. Keys are filenames,
+	 *                              values are translated names.
+	 *
+	 * @return array Page templates.
 	 */
 	public static function add_page_templates( $post_templates ) {
 		$post_templates = [
@@ -57,9 +90,15 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Is CPT supports custom templates.
+	 *
+	 * Whether the Custom Post Type supports templates.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
+	 *
+	 * @return bool True is templates are supported, False otherwise.
 	 */
 	public static function is_cpt_custom_templates_supported() {
 		require_once ABSPATH . '/wp-admin/includes/theme.php';
@@ -68,8 +107,18 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Template include.
+	 *
+	 * Update the path for the Elementor Canvas template.
+	 *
+	 * Fired by `template_include` filter.
+	 *
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @param string $template The path of the template to include.
+	 *
+	 * @return bool The path of the template to include.
 	 */
 	public function template_include( $template ) {
 		if ( is_singular() ) {
@@ -84,6 +133,10 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Init.
+	 *
+	 * Initialize Elementor page settings manager.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 */
@@ -96,25 +149,43 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Get manager name.
+	 *
+	 * Retrieve page settings manager name.
+	 *
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @return string Manager name.
 	 */
 	public function get_name() {
 		return 'page';
 	}
 
 	/**
+	 * Get model for config.
+	 *
+	 * Retrieve the model for settings configuration.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	 * @return BaseModel
+	 *
+	 * @return BaseModel The model object.
 	 */
 	public function get_model_for_config() {
 		return $this->get_model( get_the_ID() );
 	}
 
 	/**
+	 * Ajax before saving settings.
+	 *
+	 * Validate the data before saving it and updating the data in the database.
+	 *
 	 * @since 1.6.0
 	 * @access protected
+	 *
+	 * @param array $data Post data.
+	 * @param int   $id   Post ID.
 	 *
 	 * @throws \Exception If invalid post returned using the `$id`.
 	 * @throws \Exception If current user don't have permissions to edit the post.
@@ -162,8 +233,15 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Save settings to DB.
+	 *
+	 * Save page settings to the database, as post meta data.
+	 *
 	 * @since 1.6.0
 	 * @access protected
+	 *
+	 * @param array $settings Settings.
+	 * @param int   $id       Post ID.
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
 		if ( ! empty( $settings ) ) {
@@ -174,16 +252,32 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Get CSS file for update.
+	 *
+	 * Retrieve the CSS file before updating the it.
+	 *
 	 * @since 1.6.0
 	 * @access protected
+	 *
+	 * @param int $id Post ID.
+	 *
+	 * @return Post_CSS_File The post CSS file object.
 	 */
 	protected function get_css_file_for_update( $id ) {
 		return new Post_CSS_File( $id );
 	}
 
 	/**
+	 * Get saved settings.
+	 *
+	 * Retrieve the saved settings from the post meta.
+	 *
 	 * @since 1.6.0
 	 * @access protected
+	 *
+	 * @param int $id Post ID.
+	 *
+	 * @return array Saved settings.
 	 */
 	protected function get_saved_settings( $id ) {
 		$settings = get_post_meta( $id, self::META_KEY, true );
@@ -204,19 +298,30 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Get CSS file name.
+	 *
+	 * Retrieve CSS file name for the page settings manager.
+	 *
 	 * @since 1.6.0
 	 * @access protected
+	 *
+	 * @return string CSS file name.
 	 */
 	protected function get_css_file_name() {
 		return 'post';
 	}
 
 	/**
+	 * Get model for CSS file.
+	 *
+	 * Retrieve the model for the CSS file.
+	 *
 	 * @since 1.6.0
 	 * @access protected
-	 * @param CSS_File $css_file
 	 *
-	 * @return BaseModel
+	 * @param CSS_File $css_file The requested CSS file.
+	 *
+	 * @return BaseModel The model object.
 	 */
 	protected function get_model_for_css_file( CSS_File $css_file ) {
 		if ( ! $css_file instanceof Post_CSS_File ) {
@@ -227,8 +332,15 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Get special settings names.
+	 *
+	 * Retrieve the names of the special settings that are not saved as regular
+	 * settings. Those settings have a separate saving process.
+	 *
 	 * @since 1.6.0
 	 * @access protected
+	 *
+	 * @return array Special settings names.
 	 */
 	protected function get_special_settings_names() {
 		return [
