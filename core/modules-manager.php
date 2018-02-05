@@ -7,11 +7,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor modules manager class.
+ *
+ * Elementor modules manager handler class is responsible for registering and
+ * managing Elementor modules.
+ *
+ * @since 1.6.0
+ */
 class Modules_Manager {
 
+	/**
+	 * Registered modules.
+	 *
+	 * Holds the list of all the registered modules.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 *
+	 * @var array
+	 */
 	private $modules = [];
 
 	/**
+	 * Modules manager constructor.
+	 *
+	 * Initializing the Elementor modules manager.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 */
@@ -22,7 +44,7 @@ class Modules_Manager {
 			$class_name = str_replace( '-', ' ', $module_name );
 
 			$class_name = str_replace( ' ', '', ucwords( $class_name ) );
-	
+
 			$class_name = $modules_namespace_prefix . '\\Modules\\' . $class_name . '\Module';
 
 			/** @var Module $class_name */
