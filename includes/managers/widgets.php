@@ -277,10 +277,13 @@ class Widgets_Manager {
 	 * @throw \Exception If current user don't have permissions to edit the post.
 	 * @throw \Exception If the widget was not found or does not exist.
 	 *
-	 * @param array $request
+	 * @param array $request Ajax request.
 	 *
-	 * @return array
-	 * @throws \Exception
+	 * @return array {
+	 *     Rendered widget.
+	 *
+	 *     @type string $render The rendered HTML.
+ 	 * }
 	 */
 	public function ajax_render_widget( $request ) {
 		if ( empty( $request['post_id'] ) ) {
@@ -338,9 +341,9 @@ class Widgets_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $request
+	 * @param array $request Ajax request.
 	 *
-	 * @return bool|string
+	 * @return bool|string Rendered widget form.
 	 */
 	public function ajax_get_wp_widget_form( $request ) {
 		if ( empty( $request['widget_type'] ) ) {
@@ -497,10 +500,14 @@ class Widgets_Manager {
 	}
 
 	/**
+	 * Register ajax actions.
+	 *
+	 * Add new actions to handle data after an ajax requests returned.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_handler
+	 * @param Ajax_Manager $ajax_handler The ajax handler.
 	 */
 	public function register_ajax_actions( $ajax_handler ) {
 		$ajax_handler->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
