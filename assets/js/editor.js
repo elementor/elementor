@@ -6,6 +6,7 @@ module.exports = Marionette.Behavior.extend( {
 		return {
 			buttonPreview: '#elementor-panel-saver-button-preview',
 			buttonPublish: '#elementor-panel-saver-button-publish',
+			buttonSaveOptions: '#elementor-panel-saver-button-save-options',
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
 			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
 			lastEditedWrapper: '.elementor-last-edited-wrapper'
@@ -34,6 +35,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	activateSaveButtons: function( hasChanges ) {
 		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-saver-disabled', ! hasChanges );
+		this.ui.buttonSaveOptions.toggleClass( 'elementor-saver-disabled', ! hasChanges );
 	},
 
 	onRender: function() {
