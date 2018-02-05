@@ -75,35 +75,39 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 *
 	 * Retrieve the attachment image HTML code.
 	 *
+	 * Note that some widgets use the same key for the media control that allows
+	 * the image selection and for the image size control that allows the user
+	 * to select the image size, in this case the third parameter should be null
+	 * or the same as the second parameter. But when the widget uses different
+	 * keys for the media control and the image size control, when calling this
+	 * method you should pass the keys.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
-	 * @param array  $settings    {
-	 *     Control settings.
-	 *
-	 *     @type array  $image           {
-	 *         Optional. Image data.
-	 *
-	 *         @type string $id  Optional. Image ID.
-	 *         @type string $url Optional. Image URL.
-	 *     }
-	 *     @type string $image_size      Optional. Image size.
-	 *     @type string $hover_animation Optional. Hover animation.
-	 * }
-	 * @param string $setting_key Optional. Settings key. Default is `image`.
+	 * @param array  $settings       Control settings.
+	 * @param string $image_size_key Optional. Settings key for image size.
+	 *                               Default is `image`.
+	 * @param string $image_key      Optional. Settings key for image. Default
+	 *                               is null. If not defined uses image size key
+	 *                               as the image key.
 	 *
 	 * @return string Image HTML.
 	 */
-	public static function get_attachment_image_html( $settings, $setting_key = 'image' ) {
-		$id  = $settings[ $setting_key ]['id'];
-
-		// Old version of image settings.
-		if ( ! isset( $settings[ $setting_key . '_size' ] ) ) {
-			$settings[ $setting_key . '_size' ] = '';
+	public static function get_attachment_image_html( $settings, $image_size_key = 'image', $image_key = null ) {
+		if ( ! $image_key ) {
+			$image_key = $image_size_key;
 		}
 
-		$size = $settings[ $setting_key . '_size' ];
+		$image = $settings[ $image_key ];
+
+		// Old version of image settings.
+		if ( ! isset( $settings[ $image_size_key . '_size' ] ) ) {
+			$settings[ $image_size_key . '_size' ] = '';
+		}
+
+		$size = $settings[ $image_size_key . '_size' ];
 
 		$image_class = ! empty( $settings['hover_animation'] ) ? 'elementor-animation-' . $settings['hover_animation'] : '';
 
@@ -114,24 +118,24 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		$image_sizes[] = 'full';
 
-		if ( ! empty( $id ) && in_array( $size, $image_sizes ) ) {
+		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) ) {
 			$image_class .= " attachment-$size size-$size";
 			$image_attr = [
 				'class' => trim( $image_class ),
 			];
 
-			$html .= wp_get_attachment_image( $id, $size, false, $image_attr );
+			$html .= wp_get_attachment_image( $image['id'], $size, false, $image_attr );
 		} else {
-			$image_src = self::get_attachment_image_src( $id, $setting_key, $settings );
+			$image_src = self::get_attachment_image_src( $image['id'], $image_size_key, $settings );
 
-			if ( ! $image_src && isset( $settings[ $setting_key ]['url'] ) ) {
-				$image_src = $settings[ $setting_key ]['url'] ;
+			if ( ! $image_src && isset( $image['url'] ) ) {
+				$image_src = $image['url'] ;
 			}
 
 			if ( ! empty( $image_src ) ) {
 				$image_class_html = ! empty( $image_class ) ? ' class="' . $image_class . '"' : '';
 
-				$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings[ $setting_key ] ), Control_Media::get_image_alt( $settings[ $setting_key ] ), $image_class_html );
+				$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $image ), Control_Media::get_image_alt( $image ), $image_class_html );
 			}
 		}
 
@@ -181,18 +185,18 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 * @access public
 	 * @static
 	 *
-	 * @param string $attachment_id The attachment ID.
-	 * @param string $group_name    Group name.
-	 * @param array  $settings      Control settings.
+	 * @param string $attachment_id  The attachment ID.
+	 * @param string $image_size_key Settings key for image size.
+	 * @param array  $settings       Control settings.
 	 *
 	 * @return string Attachment image source URL.
 	 */
-	public static function get_attachment_image_src( $attachment_id, $group_name, array $settings ) {
+	public static function get_attachment_image_src( $attachment_id, $image_size_key, array $settings ) {
 		if ( empty( $attachment_id ) ) {
 			return false;
 		}
 
-		$size = $settings[ $group_name . '_size' ];
+		$size = $settings[ $image_size_key . '_size' ];
 
 		if ( 'custom' !== $size ) {
 			$attachment_size = $size;
@@ -201,7 +205,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			// TODO: Please rewrite this code.
 			require_once( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
 
-			$custom_dimension = $settings[ $group_name . '_custom_dimension' ];
+			$custom_dimension = $settings[ $image_size_key . '_custom_dimension' ];
 
 			$attachment_size = [
 				// Defaults sizes

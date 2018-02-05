@@ -102,7 +102,7 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
-				'name' => 'image', // Actually its `image_size`.
+				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
 				'default' => 'full',
 			]
 		);
@@ -451,7 +451,7 @@ class Widget_Image_Box extends Widget_Base {
 				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 			}
 
-			$image_html = Group_Control_Image_Size::get_attachment_image_html( $settings );
+			$image_html = Group_Control_Image_Size::get_attachment_image_html( $settings, 'thumbnail', 'image' );
 
 			if ( ! empty( $settings['link']['url'] ) ) {
 				$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
@@ -520,8 +520,8 @@ class Widget_Image_Box extends Widget_Base {
 			var image = {
 				id: settings.image.id,
 				url: settings.image.url,
-				size: settings.image_size,
-				dimension: settings.image_custom_dimension,
+				size: settings.thumbnail_size,
+				dimension: settings.thumbnail_custom_dimension,
 				model: view.getEditModel()
 			};
 
