@@ -30,7 +30,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		this.view.setSettingsModel = this.setSettingsModel.bind( this );
 
-		this.view.onAfterExternalChange = this.onAfterExternalChange.bind( this );
+		this.view.onAfterExternalChange = this.onViewAfterExternalChange.bind( this );
 
 		this.view.applySavedValue = _.noop;
 	},
@@ -88,6 +88,10 @@ module.exports = Marionette.Behavior.extend( {
 
 		if ( this.isTinyMCE() ) {
 			mentionsSettings.$iframe = jQuery( this.view.editor.iframeElement );
+		}
+
+		if ( this.mentions ) {
+			this.mentions.destroy();
 		}
 
 		this.mentions = new Mentions( mentionsSettings );
@@ -237,7 +241,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.view.render();
 	},
 
-	onAfterExternalChange: function() {
+	onViewAfterExternalChange: function() {
 		if ( this.isTinyMCE() ) {
 			this.mentions.setValue( this.getControlValue() );
 		} else {
