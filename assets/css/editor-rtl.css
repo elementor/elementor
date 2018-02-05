@@ -2298,11 +2298,13 @@ select {
     -webkit-border-radius: 0 3px 3px 0;
             border-radius: 0 3px 3px 0; }
     .elementor-panel #elementor-panel-saver-button-publish.elementor-saver-disabled {
-      background-color: #2f903c; }
-  .elementor-panel #elementor-panel-saver-button-, .elementor-panel #elementor-panel-saver-button-save-options {
+      background-color: #556068;
+      color: #a4afb7; }
+  .elementor-panel #elementor-panel-saver-button-save-options {
     width: 25px; }
+  .elementor-panel #elementor-panel-saver-menu-save-draft.elementor-saver-disabled .elementor-icon,
   .elementor-panel #elementor-panel-saver-menu-save-draft.elementor-saver-disabled .elementor-title {
-    color: #556068; }
+    color: #6d7882; }
 
 #elementor-mode-switcher {
   position: absolute;
