@@ -278,7 +278,7 @@ abstract class CSS_File {
 		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
 		 * @since 1.9.0
-		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action.
+		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action instead.
 		 *
 		 * @param CSS_File $this The current CSS file.
 		 */
@@ -646,7 +646,7 @@ abstract class CSS_File {
 		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
 		 * @since 1.2.0
-		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action.
+		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action instead.
 		 *
 		 * @param CSS_File $this The current CSS file.
 		 */
