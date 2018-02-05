@@ -382,7 +382,7 @@ class Frontend {
 
 		wp_register_style(
 			'elementor-animations',
-			ELEMENTOR_ASSETS_URL . 'css/animations.min.css',
+			ELEMENTOR_ASSETS_URL . 'lib/animations/animations.min.css',
 			[],
 			ELEMENTOR_VERSION
 		);
