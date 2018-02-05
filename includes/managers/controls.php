@@ -97,7 +97,7 @@ class Controls_Manager {
 	const ORDER = 'order';
 
 	/**
-	 * @deprecated 1.5.4 In favor of Control_Switcher.
+	 * @deprecated 1.5.4 Use `SWITCHER` const instead.
 	 */
 	const CHECKBOX = 'checkbox';
 

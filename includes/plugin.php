@@ -329,8 +329,8 @@ class Plugin {
 	 * Retrieve the current version of Elementor.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 1.2.0 Use `ELEMENTOR_VERSION` const instead.
 	 * @access public
-	 * @deprecated
 	 *
 	 * @return string Elementor version.
 	 */
