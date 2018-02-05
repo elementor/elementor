@@ -763,7 +763,7 @@ class Frontend {
 		}
 
 		if ( ! empty( $css_file ) && $with_css ) {
-			echo '<style>' . $css_file->get_css() . '</style>';
+			$css_file->print_css();
 		}
 
 		?>
