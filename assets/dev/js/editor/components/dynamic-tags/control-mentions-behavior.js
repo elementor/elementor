@@ -90,6 +90,10 @@ module.exports = Marionette.Behavior.extend( {
 			mentionsSettings.$iframe = jQuery( this.view.editor.iframeElement );
 		}
 
+		if ( this.mentions ) {
+			this.mentions.destroy();
+		}
+
 		this.mentions = new Mentions( mentionsSettings );
 
 		this.mentions.on( 'mention:create mention:change mention:remove', this.onMentionChange.bind( this ) );

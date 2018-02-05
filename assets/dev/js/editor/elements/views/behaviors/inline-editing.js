@@ -145,6 +145,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	stopEditing: function() {
 		this.editing = false;
 
+		this.mentions.destroy();
+
 		this.editor.destroy();
 
 		this.view.allowRender = true;
