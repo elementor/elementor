@@ -63,8 +63,10 @@ class Fonts {
 				self::GOOGLE => __( 'Google', 'elementor' ),
 				self::EARLYACCESS => __( 'Google Early Access', 'elementor' ),
 			];
+
 			self::$font_groups = apply_filters( 'elementor/fonts/groups', $font_groups );
 		}
+
 		return self::$font_groups;
 	}
 
@@ -90,6 +92,7 @@ class Fonts {
 			 */
 			self::$additional_fonts = apply_filters( 'elementor/fonts/additional_fonts', [] );
 		}
+
 		return array_merge( self::get_native_fonts(), self::$additional_fonts );
 	}
 
