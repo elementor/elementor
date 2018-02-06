@@ -30,7 +30,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public static function get_title() {
-		return __( 'Document', '' );
+		return __( 'Document', 'elementor' );
 	}
 
 	public static function get_property( $key ) {
@@ -161,7 +161,7 @@ abstract class Document extends Controls_Stack {
 		$this->start_controls_section(
 			'document_settings',
 			[
-				'label' => __( 'Document Settings', '' ),
+				'label' => __( 'Document Settings', 'elementor' ),
 				'tab' => Controls_Manager::TAB_SETTINGS,
 			]
 		);

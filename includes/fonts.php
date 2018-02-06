@@ -36,6 +36,41 @@ class Fonts {
 	const LOCAL = 'local';
 
 	/**
+	 * Used to hold additional fonts
+	 */
+	private static $additional_fonts =  null;
+
+	/**
+	 * Used to hold font types/groups
+	 */
+	private static $font_groups =  null;
+
+	/**
+	 * Get font Groups.
+	 *
+	 * Retrieve the list of font groups.
+	 *
+	 * @since 1.9.4
+	 * @access public
+	 * @static
+	 *
+	 * @return array Supported font groups/types.
+	 */
+	public static function get_font_groups() {
+		if ( null === self::$font_groups ) {
+			$font_groups = [
+				self::SYSTEM => __( 'System', 'elementor' ),
+				self::GOOGLE => __( 'Google', 'elementor' ),
+				self::EARLYACCESS => __( 'Google Early Access', 'elementor' ),
+			];
+
+			self::$font_groups = apply_filters( 'elementor/fonts/groups', $font_groups );
+		}
+
+		return self::$font_groups;
+	}
+
+	/**
 	 * Get fonts.
 	 *
 	 * Retrieve the list of supported fonts.
@@ -47,6 +82,32 @@ class Fonts {
 	 * @return array Supported fonts.
 	 */
 	public static function get_fonts() {
+		if ( null === self::$additional_fonts ) {
+			/**
+			 * Allows adding additional fonts to elementor
+			 *
+			 * @since 1.9.4
+			 *
+			 * @param array $additional_fonts
+			 */
+			self::$additional_fonts = apply_filters( 'elementor/fonts/additional_fonts', [] );
+		}
+
+		return array_merge( self::get_native_fonts(), self::$additional_fonts );
+	}
+
+	/**
+	 * Get Elementor native fonts.
+	 *
+	 * Retrieve the list of supported fonts.
+	 *
+	 * @since 1.9.4
+	 * @access private
+	 * @static
+	 *
+	 * @return array Supported fonts.
+	 */
+	private static function get_native_fonts() {
 		return [
 			// System fonts.
 			'Arial' => self::SYSTEM,
