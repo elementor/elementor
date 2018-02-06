@@ -34,30 +34,6 @@ class Frontend {
 	private $post_id;
 
 	/**
-	 * Google fonts.
-	 *
-	 * Holds the list of google fonts that are being used in the current page.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 *
-	 * @var array Google fonts. Default is an empty array.
-	 */
-	private $google_fonts = [];
-
-	/**
-	 * Google early access fonts.
-	 *
-	 * Holds the list of google early access fonts that are being used in the current page.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 *
-	 * @var array Registered fonts. Default is an empty array.
-	 */
-	private $google_early_access_fonts = [];
-
-	/**
 	 * Fonts to enqueue
 	 *
 	 * Holds the list of fonts that are being used in the current page.
@@ -573,8 +549,10 @@ class Frontend {
 			'google' => [],
 			'early' => [],
 		];
+
 		foreach ( $this->fonts_to_enqueue as $key => $font ) {
 			$font_type = Fonts::get_font_type( $font );
+
 			switch ( $font_type ) {
 				case Fonts::GOOGLE:
 					$google_fonts['google'][] = $font;
@@ -585,10 +563,11 @@ class Frontend {
 					break;
 
 				default:
-					do_action( 'elementor/fonts/print_font_links/' . $font_type, $font );
+					do_action( "elementor/fonts/print_font_links/{$font_type}", $font );
 			}
 		}
 		$this->fonts_to_enqueue = [];
+
 		$this->print_google_fonts( $google_fonts );
 	}
 
@@ -665,7 +644,6 @@ class Frontend {
 	 * @access public
 	 */
 	public function enqueue_font( $font ) {
-
 		if ( in_array( $font, $this->registered_fonts ) ) {
 			return;
 		}
@@ -797,7 +775,7 @@ class Frontend {
 		}
 
 		?>
-		<div class="elementor elementor-<?php echo $post_id; ?>">
+		<div class="elementor elementor-<?php echo esc_attr( $post_id ); ?>">
 			<div class="elementor-inner">
 				<div class="elementor-section-wrap">
 					<?php $this->_print_elements( $data ); ?>
