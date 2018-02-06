@@ -587,8 +587,8 @@ class Frontend {
 				default:
 					do_action( 'elementor/fonts/print_font_links/' . $font_type, $font );
 			}
-			unset( $this->fonts_to_enqueue[ $key ] );
 		}
+		$this->fonts_to_enqueue = [];
 		$this->print_google_fonts( $google_fonts );
 	}
 
