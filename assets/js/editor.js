@@ -2942,9 +2942,7 @@ module.exports = ControlSelect2View.extend( {
 
 	templateHelpers: function() {
 		var helpers = ControlSelect2View.prototype.templateHelpers.apply( this, arguments ),
-			fonts = this.model.get( 'options' ),
-			self = this,
-			fontGroups = this.model.get( 'groups' );
+			fonts = this.model.get( 'options' );
 
 		helpers.getFontsByGroups = function( groups ) {
 			var filteredFonts = {};
