@@ -2958,34 +2958,6 @@ module.exports = ControlSelect2View.extend( {
 			return filteredFonts;
 		};
 
-		helpers.getFontGroupsData = function () {
-			if ( fontGroups ) {
-				return fontGroups;
-			}
-
-			var getGroupFonts = function( group ) {
-				var groupFonts = {};
-				_.each( fonts, function( fontType, fontName ) {
-					if ( fontType === group ) {
-						groupFonts[ fontName ] = fontName;
-					}
-				} );
-				return groupFonts;
-			};
-
-			var groups = _.uniq( _.values( fonts) ),
-				fontGroups = [];
-			_.each( groups, function( group ) {
-				fontGroups[group] = {
-					options: getGroupFonts( group ),
-					label: group
-				};
-			});
-			self.model.set( 'groups', fontGroups );
-			return fontGroups;
-
-		};
-
 		return helpers;
 	}
 } );
