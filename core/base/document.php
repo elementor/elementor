@@ -229,6 +229,8 @@ abstract class Document extends Controls_Stack {
 		// Refresh post after save settings.
 		$this->post = get_post( $this->post->ID );
 
+		// TODO: refresh settings.
+
 		$this->save_elements( $data['elements'] );
 
 		return true;
