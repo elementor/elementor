@@ -110,7 +110,7 @@ class Documents_Manager {
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {
-			$post_data['post_title'] = __( 'Elementor', '' );
+			$post_data['post_title'] = __( 'Elementor', 'elementor' );
 			$update_title = true;
 		}
 

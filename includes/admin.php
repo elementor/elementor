@@ -563,6 +563,7 @@ class Admin {
 
 		$recently_edited_query_args = [
 			'post_type' => 'any',
+			'post_status' => [ 'publish', 'draft' ],
 			'posts_per_page' => '3',
 			'meta_key' => '_elementor_edit_mode',
 			'meta_value' => 'builder',

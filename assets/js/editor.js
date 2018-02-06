@@ -6,6 +6,7 @@ module.exports = Marionette.Behavior.extend( {
 		return {
 			buttonPreview: '#elementor-panel-saver-button-preview',
 			buttonPublish: '#elementor-panel-saver-button-publish',
+			buttonSaveOptions: '#elementor-panel-saver-button-save-options',
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
 			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
 			lastEditedWrapper: '.elementor-last-edited-wrapper'
@@ -28,6 +29,13 @@ module.exports = Marionette.Behavior.extend( {
 			.on( 'page:status:change', this.onPageStatusChange );
 
 		elementor.settings.page.model.on( 'change', this.onPageSettingsChange.bind( this ) );
+
+		elementor.channels.editor.on( 'status:change', this.activateSaveButtons.bind( this ) );
+	},
+
+	activateSaveButtons: function( hasChanges ) {
+		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-saver-disabled', ! hasChanges );
+		this.ui.buttonSaveOptions.toggleClass( 'elementor-saver-disabled', ! hasChanges );
 	},
 
 	onRender: function() {
@@ -111,6 +119,10 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickButtonPublish: function() {
+		if ( ! elementor.saver.isEditorChanged() ) {
+			return;
+		}
+
 		var postStatus = elementor.settings.page.model.get( 'post_status' );
 		switch ( postStatus ) {
 			case 'publish':
@@ -975,7 +987,10 @@ TemplateLibraryManager = function() {
 		if ( ! modal ) {
 			modal = elementor.dialogsManager.createWidget( 'lightbox', {
 				id: 'elementor-template-library-modal',
-				closeButton: false
+				closeButton: false,
+				hide: {
+					onOutsideClick: false
+				}
 			} );
 		}
 
@@ -2946,7 +2961,7 @@ module.exports = ControlSelect2View.extend( {
 
 			_.each( fonts, function( fontType, fontName ) {
 				if ( _.isArray( groups ) && _.contains( groups, fontType ) || fontType === groups ) {
-					filteredFonts[ fontName ] = fontType;
+					filteredFonts[ fontName ] = fontName;
 				}
 			} );
 
@@ -9690,6 +9705,8 @@ helpers = {
 			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + fontUrl + '" rel="stylesheet" type="text/css">' );
 		}
 		this._enqueuedFonts.push( font );
+
+		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
 	},
 
 	getElementChildType: function( elementType, container ) {
