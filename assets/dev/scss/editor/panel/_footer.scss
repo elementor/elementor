@@ -183,26 +183,44 @@
 	}
 }
 
-#elementor-panel-saver-button- {
-	&preview {
-		a {
-			color: $editor-light;
+.elementor-saver-disabled {
+	cursor: default;
+}
+
+#elementor-panel-saver- {
+	&button-{
+		&preview {
+			a {
+				color: $editor-light;
+			}
+		}
+
+		&publish,
+		&save-options {
+			font-size: 11px;
+			text-transform: uppercase;
+			height: 26px;
+		}
+
+		&publish {
+			width: 100%;
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+
+			&.elementor-saver-disabled {
+				background-color: #2f903c;
+			}
+		},
+
+		&save-options {
+			width: 25px;
 		}
 	}
 
-	&publish,
-	&save-options {
-		font-size: 11px;
-		text-transform: uppercase;
-		height: 26px;
-	}
-
-	&publish {
-		width: 100%;
-		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-	},
-
-	&save-options {
-		width: 25px;
+	&menu-save-draft {
+		&.elementor-saver-disabled {
+			.elementor-title {
+				color: $editor-darker;
+			}
+		}
 	}
 }

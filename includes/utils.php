@@ -52,6 +52,8 @@ class Utils {
 	 * Retrieve Elementor edit link.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.0.0
+	 *
 	 * @access public
 	 * @static
 	 *
@@ -60,7 +62,7 @@ class Utils {
 	 * @return string Post edit link.
 	 */
 	public static function get_edit_link( $post_id = 0 ) {
-		_deprecated_function( __METHOD__, '2.0.0', '$document->get_edit_link()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_edit_url()' );
 
 		if ( ! $post_id ) {
 			$post_id = get_the_ID();
@@ -127,6 +129,8 @@ class Utils {
 	 * Retrieve the post preview URL.
 	 *
 	 * @since 1.6.4
+	 * @deprecated 2.0.0
+	 *
 	 * @access public
 	 * @static
 	 *
@@ -135,7 +139,7 @@ class Utils {
 	 * @return string Post preview URL.
 	 */
 	public static function get_preview_url( $post_id ) {
-		_deprecated_function( __METHOD__, '2.0.0', '$document->get_preview_url()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_preview_url()' );
 
 		$url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 
@@ -145,6 +149,7 @@ class Utils {
 		 * Filters the Elementor preview URL.
 		 *
 		 * @since 1.6.4
+		 * @deprecated 2.0.0
 		 *
 		 * @param string $preview_url URL with chosen scheme.
 		 * @param int    $post_id     Post ID.
@@ -162,6 +167,8 @@ class Utils {
 	 * Retrieve WordPress preview URL for any given post ID.
 	 *
 	 * @since 1.9.0
+	 * @deprecated 2.0.0
+	 *
 	 * @access public
 	 * @static
 	 *
@@ -170,13 +177,9 @@ class Utils {
 	 * @return string WordPress preview URL.
 	 */
 	public static function get_wp_preview_url( $post_id ) {
-		$query_args = [];
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_wp_preview_url()' );
 
-		$nonce = wp_create_nonce( 'post_preview_' . $post_id );
-		$query_args['preview_nonce'] = $nonce;
-		$query_args['preview'] = 'true';
-
-		$wp_preview_url = get_preview_post_link( $post_id, $query_args );
+		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
 
 		/**
 		 * WordPress preview URL.
@@ -184,11 +187,12 @@ class Utils {
 		 * Filters the WordPress preview URL.
 		 *
 		 * @since 1.9.0
+		 * @deprecated 2.0.0
 		 *
 		 * @param string $wp_preview_url WordPress preview URL.
 		 * @param int    $post_id        Post ID.
 		 */
-		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
+		$wp_preview_url = self::apply_filters_deprecated( 'elementor/utils/wp_preview_url', [ $wp_preview_url, $post_id ], '2.0.0', 'elementor/document/wp_preview_url' );
 
 		return $wp_preview_url;
 	}
@@ -200,6 +204,8 @@ class Utils {
 	 * Retrieve WordPress preview URL for any given post ID.
 	 *
 	 * @since 1.9.0
+	 * @deprecated 2.0.0
+	 *
 	 * @access public
 	 * @static
 	 *
@@ -208,7 +214,9 @@ class Utils {
 	 * @return string Exit to dashboard URL.
 	 */
 	public static function get_exit_to_dashboard_url( $post_id ) {
-		$exit_url = get_edit_post_link( $post_id, 'raw' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_exit_to_dashboard_url()' );
+
+		$exit_url = Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url();
 
 		/**
 		 * Exit to dashboard URL.
@@ -216,11 +224,13 @@ class Utils {
 		 * Filters the exit to dashboard URL.
 		 *
 		 * @since 1.9.0
+		 * @deprecated 2.0.0
 		 *
 		 * @param string $exit_url Default exit URL.
 		 * @param int    $post_id  Post ID.
 		 */
-		$exit_url = apply_filters( 'elementor/utils/exit_to_dashboard_url', $exit_url, $post_id );
+
+		$exit_url = self::apply_filters_deprecated( 'elementor/utils/exit_to_dashboard_url', [ $exit_url, $post_id ], '2.0.0', 'elementor/document/exit_to_dashboard_url' );
 
 		return $exit_url;
 	}
@@ -418,6 +428,8 @@ class Utils {
 	 * Retrieve a string saying when the post was saved or the last time it was edited.
 	 *
 	 * @since 1.9.0
+	 * @deprecated 2.0.0
+	 *
 	 * @access public
 	 * @static
 	 *
@@ -426,7 +438,7 @@ class Utils {
 	 * @return string Last edited string.
 	 */
 	public static function get_last_edited( $post_id ) {
-		_deprecated_function( __METHOD__, '2.0.0', '$document->get_last_edited()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_last_edited()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
