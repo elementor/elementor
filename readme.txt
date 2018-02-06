@@ -241,7 +241,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak: Accordion widget accessibility - added `id`, `role` and `aria` attributes ([#2836](https://github.com/pojome/elementor/issues/2836))
 * Tweak: Social Icons widget accessibility - added labels for screen readers
 * Tweak: Added Browser support notification for unsupported browsers
-* Tweak: Depended styles, various elements can set stylesheet dependencies
+* Tweak: Depended styles, various elements can set stylesheet dependencies ([#1636](https://github.com/pojome/elementor/issues/1636))
 * Tweak: Added option to set control as required by `required => true`
 * Fix: Added `wptexturize` filter to match WordPress native text formatting
 * Fix: Alignment issue with Icon widget
