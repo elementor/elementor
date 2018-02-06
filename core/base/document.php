@@ -72,7 +72,7 @@ abstract class Document extends Controls_Stack {
 		/**
 		 * Filters the Wordpress preview URL.
 		 *
-		 * @since 1.9.0
+		 * @since 2.0.0
 		 *
 		 * @param string $wp_preview_url URL with chosen scheme.
 		 * @param Document $this Document.
@@ -86,7 +86,7 @@ abstract class Document extends Controls_Stack {
 		/**
 		 * Filters the Exit To Dashboard URL.
 		 *
-		 * @since 1.9.0
+		 * @since 2.0.0
 		 *
 		 * @param string $$exit_url Default exit URL.
 		 * @param Document $this Document.
@@ -101,11 +101,11 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * Retrieve the auto-saved post revision that is newer than current post.
 	 *
-	 * @since 1.9.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 *
-	 * @return \WP_Post|false The auto-saved post, or false.
+	 * @return bool|Document
 	 */
 
 	public function get_newer_autosave() {
@@ -123,6 +123,12 @@ abstract class Document extends Controls_Stack {
 		return wp_is_post_autosave( $this->post->ID );
 	}
 
+	/**
+	 * @param int  $user_id
+	 * @param bool $create
+	 *
+	 * @return bool|Document
+	 */
 	public function get_autosave( $user_id = 0, $create = false ) {
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
@@ -241,7 +247,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * Check whether the post was built with Elementor.
 	 *
-	 * @since 1.0.10
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @return bool Whether the post was built with Elementor.
@@ -252,7 +258,7 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @static
-	 * @since  1.0.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @return mixed
@@ -271,7 +277,7 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @static
-	 * @since 1.6.4
+	 * @since 2.0.0
 	 * @access public
 	 */
 	public function get_preview_url() {
@@ -281,7 +287,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @param string $key
@@ -303,7 +309,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @since  1.0.0
+	 * @since  2.0.0
 	 * @access public
 	 *
 	 * @param string $status
