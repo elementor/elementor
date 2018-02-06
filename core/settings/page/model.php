@@ -34,6 +34,9 @@ class Model extends BaseModel {
 	 */
 	private $post;
 
+	/**
+	 * @var \WP_Post
+	 */
 	private $post_parent;
 
 	/**
