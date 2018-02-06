@@ -2,6 +2,7 @@
 namespace Elementor\Core\DynamicTags;
 
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -57,6 +58,36 @@ class Manager {
 			'name' => $tag_name_match[1],
 			'settings' => json_decode( $tag_settings_match[1], true ),
 		];
+	}
+
+	/**
+	 * @param Tag $tag
+	 *
+	 * @return string
+	 */
+	public function tag_to_text( $tag ) {
+		return sprintf( '[%1$s id="%2$s" name="%3$s" settings="%4$s"]', self::TAG_LABEL, $tag->get_id(), $tag->get_name(), wp_json_encode( $tag->get_settings(), JSON_FORCE_OBJECT ) );
+	}
+
+	/**
+	 * @param string $tag_id
+	 * @param string $tag_name
+	 * @param array  $settings
+	 *
+	 * @return string|null
+	 */
+	public function create_tag_text( $tag_name, $tag_id = null, array $settings = [] ) {
+		if ( ! $tag_id ) {
+			$tag_id = Utils::generate_random_string();
+		}
+		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
+		if ( $tag ) {
+			$text = $this->tag_to_text( $tag );
+		} else {
+			$text = '';
+		}
+
+		return $text;
 	}
 
 	/**
