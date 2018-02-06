@@ -63,6 +63,9 @@ class WordPress_Widgets_Manager {
 		wp_enqueue_style( 'media-views' );
 		// End TODO.
 
+		// Don't enqueue `code-editor` for WP Custom HTML widget.
+		wp_get_current_user()->syntax_highlighting = 'false';
+
 		/** This action is documented in wp-admin/admin-header.php */
 		do_action( 'admin_print_scripts-widgets.php' );
 	}
