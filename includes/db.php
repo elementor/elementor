@@ -63,8 +63,9 @@ class DB {
 	 * Save data from the editor to the database.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 * @deprecated 2.0.0
+	 *
+	 * @access public
 	 *
 	 * @param int    $post_id Post ID.
 	 * @param array  $data    Post data.
@@ -73,7 +74,7 @@ class DB {
 	 * @return bool
 	 */
 	public function save_editor( $post_id, $data, $status = self::STATUS_PUBLISH ) {
-		_deprecated_function( __METHOD__, '2.0.0', '$document->save()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->save()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
@@ -143,8 +144,9 @@ class DB {
 	 * was parsed by elementor.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 * @deprecated 2.0.0
+	 *
+	 * @access public
 	 *
 	 * @param int    $post_id Post ID.
 	 * @param string $status  Optional. Post status. Default is `publish`.
@@ -152,15 +154,11 @@ class DB {
 	 * @return array Post data.
 	 */
 	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
-		_deprecated_function( __METHOD__, '2.0.0', '$document->get_elements_data()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_elements_data()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
-		if ( self::STATUS_DRAFT === $status ) {
-			$document = $document->get_autosave( 0, true );
-		}
-
-		return $document->get_elements_data();
+		return $document->get_elements_data( $status );
 	}
 
 	/**
@@ -169,8 +167,9 @@ class DB {
 	 * Retrieve the auto-saved post revision that is newer than current post.
 	 *
 	 * @since 1.9.0
-	 * @access public
 	 * @deprecated 2.0.0
+	 *
+	 * @access public
 	 *
 	 * @param int $post_id Post ID.
 	 *
@@ -178,7 +177,7 @@ class DB {
 	 */
 
 	public function get_newer_autosave( $post_id ) {
-		_deprecated_function( __METHOD__, '2.0.0', '$document->get_newer_autosave()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_newer_autosave()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
