@@ -38,6 +38,7 @@ final class Modules_Manager {
 	public function __construct() {
 		$modules = [
 			'history',
+			'debug-mode',
 		];
 
 		foreach ( $modules as $module_id ) {
