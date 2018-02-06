@@ -86,7 +86,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
-				'name' => 'image', // Actually its `image_size`.
+				'name' => 'image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_size` and `image_custom_dimension`.
 				'default' => 'large',
 			]
 		);

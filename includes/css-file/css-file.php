@@ -298,6 +298,11 @@ abstract class CSS_File {
 		do_action( "elementor/css-file/{$name}/enqueue", $this );
 	}
 
+	public function print_css() {
+		echo '<style>' . $this->get_css() . '</style>';
+		Plugin::$instance->frontend->print_google_fonts();
+	}
+
 	/**
 	 * Add control rules.
 	 *
