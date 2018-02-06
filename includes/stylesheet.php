@@ -283,7 +283,7 @@ class Stylesheet {
 	 * @since 1.2.0
 	 * @access private
 	 *
-	 * @throw \RangeException If max value for this device is out of range.
+	 * @throws \RangeException If max value for this device is out of range.
 	 *
 	 * @param string $device_name Device name.
 	 *

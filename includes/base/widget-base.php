@@ -127,7 +127,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @throw \Exception If arguments are missing when initializing a full widget
+	 * @throws \Exception If arguments are missing when initializing a full widget
 	 *                   instance.
 	 *
 	 * @param array      $data Widget data. Default is an empty array.

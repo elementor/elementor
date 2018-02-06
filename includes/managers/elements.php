@@ -44,7 +44,7 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		$this->require_files();
 	}
@@ -100,7 +100,7 @@ class Elements_Manager {
 	 * @access public
 	 *
 	 * @return array Element categories.
-	*/
+	 */
 	public function get_categories() {
 		if ( null === $this->_categories ) {
 			$this->init_categories();
@@ -121,7 +121,7 @@ class Elements_Manager {
 	 * @param array  $category_properties Category properties.
 	 * @param int    $offset              Optional. Where to add the category in
 	 *                                    the categories array. Default is null.
-	*/
+	 */
 	public function add_category( $category_name, $category_properties, $offset = null ) {
 		if ( null === $this->_categories ) {
 			$this->init_categories();
@@ -149,7 +149,7 @@ class Elements_Manager {
 	 * @param Element_Base $element Element instance.
 	 *
 	 * @return bool Whether the element type was registered.
-	*/
+	 */
 	public function register_element_type( Element_Base $element ) {
 		$this->_element_types[ $element->get_name() ] = $element;
 
@@ -167,7 +167,7 @@ class Elements_Manager {
 	 * @param string $name Element name.
 	 *
 	 * @return bool Whether the element type was unregister, or not.
-	*/
+	 */
 	public function unregister_element_type( $name ) {
 		if ( ! isset( $this->_element_types[ $name ] ) ) {
 			return false;
@@ -191,7 +191,7 @@ class Elements_Manager {
 	 *
 	 * @return null|Element_Base[] Element types, or a list of all the element
 	 *                             types, or null if element does not exist.
-	*/
+	 */
 	public function get_element_types( $element_name = null ) {
 		if ( is_null( $this->_element_types ) ) {
 			$this->_init_elements();
@@ -213,7 +213,7 @@ class Elements_Manager {
 	 * @access public
 	 *
 	 * @return array Element types config.
-	*/
+	 */
 	public function get_element_types_config() {
 		$config = [];
 
@@ -231,7 +231,7 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function render_elements_content() {
 		foreach ( $this->get_element_types() as $element_type ) {
 			$element_type->print_template();
@@ -249,12 +249,11 @@ class Elements_Manager {
 	 * @since  1.9.0
 	 * @access public
 	 *
-	 * @throw \Exception If the request has no post id.
+	 * @throws \Exception If the request has no post id.
 	 *
 	 * @param $request
 	 *
 	 * @return bool
-	 * @throws \Exception
 	 */
 	public function ajax_discard_changes( $request ) {
 		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->ajax_discard_changes()' );
@@ -273,14 +272,13 @@ class Elements_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @throw \Exception If the request has no post id.
-	 * @throw \Exception If current user don't have permissions to edit the post.
+	 * @throws \Exception If the request has no post id.
+	 * @throws \Exception If current user don't have permissions to edit the post.
 	 *
 	 * @param array $request
 	 *
 	 * @return mixed
-	 * @throws \Exception
-	*/
+	 */
 	public function ajax_save_builder( $request ) {
 		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->ajax_save()' );
 
@@ -307,7 +305,7 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private function _init_elements() {
 		$this->_element_types = [];
 
@@ -334,7 +332,7 @@ class Elements_Manager {
 	 *
 	 * @since 1.7.12
 	 * @access private
-	*/
+	 */
 	private function init_categories() {
 		$this->_categories = [
 			'basic' => [
@@ -364,7 +362,7 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private function require_files() {
 		require_once ELEMENTOR_PATH . 'includes/base/element-base.php';
 
