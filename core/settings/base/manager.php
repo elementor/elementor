@@ -59,11 +59,11 @@ abstract class Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_handler The ajax handler.
+	 * @param Ajax_Manager $ajax_manager
 	 */
-	public function register_ajax_actions( $ajax_handler ) {
+	public function register_ajax_actions( $ajax_manager ) {
 		$name = $this->get_name();
-		$ajax_handler->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
+		$ajax_manager->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
 	}
 
 	/**
@@ -330,12 +330,12 @@ abstract class Manager {
 	 * Validate the data before saving it and updating the data in the database.
 	 *
 	 * @since 1.6.0
-	 * @access protected
+	 * @access public
 	 *
 	 * @param array $data Post data.
 	 * @param int   $id   Post ID.
 	 */
-	protected function ajax_before_save_settings( array $data, $id ) {}
+	public function ajax_before_save_settings( array $data, $id ) {}
 
 	/**
 	 * Print the setting template content in the editor.
