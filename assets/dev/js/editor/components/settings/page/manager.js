@@ -1,6 +1,9 @@
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
 module.exports = BaseSettings.extend( {
+
+	save: function() {},
+
 	changeCallbacks: {
 		post_title: function( newValue ) {
 			var $title = elementorFrontend.getElements( '$document' ).find( elementor.config.page_title_selector );
@@ -9,14 +12,22 @@ module.exports = BaseSettings.extend( {
 		},
 
 		template: function() {
-			this.save( function() {
-				elementor.reloadPreview();
+			elementor.saver.saveAutoSave( {
+				onSuccess: function() {
+					elementor.reloadPreview();
 
-				elementor.once( 'preview:loaded', function() {
-					elementor.getPanelView().setPage( 'page_settings' );
-				} );
+					elementor.once( 'preview:loaded', function() {
+						elementor.getPanelView().setPage( 'page_settings' );
+					} );
+				}
 			} );
 		}
+	},
+
+	onModelChange: function() {
+		elementor.saver.setFlagEditorChange( true );
+
+		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},
 
 	bindEvents: function() {

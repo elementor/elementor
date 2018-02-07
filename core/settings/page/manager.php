@@ -1,11 +1,15 @@
 <?php
 namespace Elementor\Core\Settings\Page;
 
+use Elementor\Core\Utils\Exceptions;
 use Elementor\CSS_File;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
+use Elementor\DB;
+use Elementor\Plugin;
 use Elementor\Post_CSS_File;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -95,15 +99,16 @@ class Manager extends BaseManager {
 	 * Whether the Custom Post Type supports templates.
 	 *
 	 * @since 1.6.0
+	 * @deprecated 2.0.0
 	 * @access public
 	 * @static
 	 *
 	 * @return bool True is templates are supported, False otherwise.
 	 */
 	public static function is_cpt_custom_templates_supported() {
-		require_once ABSPATH . '/wp-admin/includes/theme.php';
+		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported' );
 
-		return method_exists( wp_get_theme(), 'get_post_templates' );
+		return Utils::is_cpt_custom_templates_supported();
 	}
 
 	/**
@@ -118,13 +123,13 @@ class Manager extends BaseManager {
 	 *
 	 * @param string $template The path of the template to include.
 	 *
-	 * @return bool The path of the template to include.
+	 * @return string The path of the template to include.
 	 */
 	public function template_include( $template ) {
 		if ( is_singular() ) {
-			$page_template = get_post_meta( get_the_ID(), '_wp_page_template', true );
+			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
 
-			if ( self::TEMPLATE_CANVAS === $page_template ) {
+			if ( self::TEMPLATE_CANVAS === $document->get_settings( 'template' ) ) {
 				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
 			}
 		}
@@ -173,7 +178,19 @@ class Manager extends BaseManager {
 	 * @return BaseModel The model object.
 	 */
 	public function get_model_for_config() {
-		return $this->get_model( get_the_ID() );
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			$document = Plugin::$instance->documents->get_doc_or_auto_save( get_the_ID() );
+		} else {
+			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
+		}
+
+		$model = $this->get_model( $document->get_post()->ID );
+
+		if ( $document->is_autosave() ) {
+			$model->set_settings( 'post_status', $document->get_main_post()->post_status );
+		}
+
+		return $model;
 	}
 
 	/**
@@ -182,7 +199,7 @@ class Manager extends BaseManager {
 	 * Validate the data before saving it and updating the data in the database.
 	 *
 	 * @since 1.6.0
-	 * @access protected
+	 * @access public
 	 *
 	 * @param array $data Post data.
 	 * @param int   $id   Post ID.
@@ -190,15 +207,15 @@ class Manager extends BaseManager {
 	 * @throws \Exception If invalid post returned using the `$id`.
 	 * @throws \Exception If current user don't have permissions to edit the post.
 	 */
-	protected function ajax_before_save_settings( array $data, $id ) {
+	public function ajax_before_save_settings( array $data, $id ) {
 		$post = get_post( $id );
 
 		if ( empty( $post ) ) {
-			throw new \Exception( 'Invalid post.' );
+			throw new \Exception( 'Invalid post.', Exceptions::NOT_FOUND );
 		}
 
 		if ( ! current_user_can( 'edit_post', $id ) ) {
-			throw new \Exception( 'Access denied.' );
+			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
 		}
 
 		// Avoid save empty post title.
@@ -210,25 +227,29 @@ class Manager extends BaseManager {
 			$post->post_excerpt = $data['post_excerpt'];
 		}
 
-		$allowed_post_statuses = get_post_statuses();
-
-		if ( isset( $data['post_status'] ) && isset( $allowed_post_statuses[ $data['post_status'] ] ) ) {
-			$post_type_object = get_post_type_object( $post->post_type );
-			if ( 'publish' !== $data['post_status'] || current_user_can( $post_type_object->cap->publish_posts ) ) {
-				$post->post_status = $data['post_status'];
-			}
+		if ( isset( $data['post_status'] ) ) {
+			$this->save_post_status( $id, $data['post_status'] );
+			unset( $post->post_status );
 		}
 
 		wp_update_post( $post );
 
-		if ( self::is_cpt_custom_templates_supported() ) {
+		if ( DB::STATUS_PUBLISH === $post->post_status ) {
+			$autosave = Utils::get_post_autosave( $post->ID );
+			if ( $autosave ) {
+				wp_delete_post_revision( $autosave->ID );
+			}
+		}
+
+		if ( Utils::is_cpt_custom_templates_supported() ) {
 			$template = 'default';
 
 			if ( isset( $data['template'] ) ) {
 				$template = $data['template'];
 			}
 
-			update_post_meta( $post->ID, '_wp_page_template', $template );
+			// Use `update_metadata` in order to save also for revisions.
+			update_metadata( 'post', $post->ID, '_wp_page_template', $template );
 		}
 	}
 
@@ -244,10 +265,11 @@ class Manager extends BaseManager {
 	 * @param int   $id       Post ID.
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
+		// Use update/delete_metadata in order to handle also revisions.
 		if ( ! empty( $settings ) ) {
-			update_post_meta( $id, self::META_KEY, $settings );
+			update_metadata( 'post', $id, self::META_KEY, $settings );
 		} else {
-			delete_post_meta( $id, self::META_KEY );
+			delete_metadata( 'post', $id, self::META_KEY );
 		}
 	}
 
@@ -349,5 +371,26 @@ class Manager extends BaseManager {
 			'post_status',
 			'template',
 		];
+	}
+
+	public function save_post_status( $post_id, $status ) {
+		$parent_id = wp_is_post_revision( $post_id );
+
+		if ( ! $parent_id ) {
+			$parent_id = $post_id;
+		}
+
+		$post = get_post( $parent_id );
+
+		$allowed_post_statuses = get_post_statuses();
+
+		if ( isset( $allowed_post_statuses[ $status ] ) ) {
+			$post_type_object = get_post_type_object( $post->post_type );
+			if ( 'publish' !== $status || current_user_can( $post_type_object->cap->publish_posts ) ) {
+				$post->post_status = $status;
+			}
+		}
+
+		wp_update_post( $post );
 	}
 }

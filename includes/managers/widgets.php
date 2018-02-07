@@ -507,10 +507,10 @@ class Widgets_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_handler The ajax handler.
+	 * @param Ajax_Manager $ajax_manager
 	 */
-	public function register_ajax_actions( $ajax_handler ) {
-		$ajax_handler->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
-		$ajax_handler->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
+	public function register_ajax_actions( $ajax_manager ) {
+		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
+		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 	}
 }

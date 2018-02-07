@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\History;
 
+use Elementor\Core\Settings\Manager;
 use Elementor\Plugin;
 use Elementor\Post_CSS_File;
 use Elementor\Utils;
@@ -20,7 +21,27 @@ class Revisions_Manager {
 	}
 
 	public static function handle_revision() {
-		add_filter( 'wp_save_post_revision_post_has_changed', '__return_true' );
+		add_filter( 'wp_save_post_revision_check_for_changes', '__return_false' );
+	}
+
+	public static function avoid_delete_auto_save( $post_content ) {
+		global $post;
+
+		// Add a temporary string in order the $post will not be equal to the $autosave
+		// in edit-form-advanced.php:210
+		if ( Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
+			$post_content .= '<!-- Created with Elementor -->';
+		}
+
+		return $post_content;
+	}
+
+	public static function remove_temp_post_content() {
+		global $post;
+
+		if ( Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
+			$post->post_content = str_replace( '<!-- Created with Elementor -->', '', $post->post_content );
+		}
 	}
 
 	public static function get_revisions( $post_id = 0, $query_args = [], $parse_result = true ) {
@@ -147,7 +168,10 @@ class Revisions_Manager {
 			wp_send_json_error( __( 'Access denied.', 'elementor' ) );
 		}
 
-		$revision_data = Plugin::$instance->db->get_plain_editor( $revision->ID );
+		$revision_data = [
+			'settings' => Manager::get_settings_managers( 'page' )->get_model( $revision->ID )->get_settings(),
+			'elements' => Plugin::$instance->db->get_plain_editor( $revision->ID ),
+		];
 
 		wp_send_json_success( $revision_data );
 	}
@@ -257,6 +281,10 @@ class Revisions_Manager {
 		add_action( 'elementor/db/before_save', [ __CLASS__, 'db_before_save' ], 10, 2 );
 		add_action( '_wp_put_post_revision', [ __CLASS__, 'save_revision' ] );
 		add_action( 'wp_creating_autosave', [ __CLASS__, 'update_autosave' ] );
+
+		// Hack to avoid delete the auto-save revision in WP editor.
+		add_filter( 'edit_post_content', [ __CLASS__, 'avoid_delete_auto_save' ] );
+		add_action( 'edit_form_after_title', [ __CLASS__, 'remove_temp_post_content' ] );
 
 		if ( Utils::is_ajax() ) {
 			add_filter( 'elementor/ajax_save_builder/return_data', [ __CLASS__, 'on_ajax_save_builder_data' ], 10, 2 );
