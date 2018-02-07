@@ -582,7 +582,7 @@ class Frontend {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private function print_google_fonts( $google_fonts = [] ) {
+	public function print_google_fonts( $google_fonts = [] ) {
 		$print_google_fonts = true;
 
 		/**
