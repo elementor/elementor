@@ -180,6 +180,11 @@ abstract class CSS_File {
 		do_action( "elementor/{$name}-css-file/enqueue", $this );
 	}
 
+	public function print_css() {
+		echo '<style>' . $this->get_css() . '</style>';
+		Plugin::$instance->frontend->print_fonts_links();
+	}
+
 	/**
 	 * @since 1.2.0
 	 * @access public

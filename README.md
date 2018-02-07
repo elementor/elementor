@@ -186,6 +186,16 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.9.4 - 2018-02-07 ###
+* Tweak: Added draft posts to Elementor dashboard widget ([#3379](https://github.com/pojome/elementor/issues/3379))
+* Tweak: Removed CodeMirror script for WP Custom HTML widget to improve performance
+* Fix: Fonts not loaded in edit mode for widget template ([#3352](https://github.com/pojome/elementor/issues/3352))
+* Fix: Prevent template library modal close on actions in edge cases
+* Fix: Set save button as disabled if there is nothing to save
+* Fix: Added publish to editor translations
+* Fix: Added a flex-basis patch for better support in Firefox browser
+* Fix: Image Box heading link now works without an image
+
 ### 1.9.3 - 2018-01-21 ###
 * Fix: Enqueue style/script if when not needed ([#3094](https://github.com/pojome/elementor/issues/3094))
 * Fix: Added compatibility for Safari browser accessibility
@@ -243,7 +253,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak: Accordion widget accessibility - added `id`, `role` and `aria` attributes ([#2836](https://github.com/pojome/elementor/issues/2836))
 * Tweak: Social Icons widget accessibility - added labels for screen readers
 * Tweak: Added Browser support notification for unsupported browsers
-* Tweak: Depended styles, various elements can set stylesheet dependencies
+* Tweak: Depended styles, various elements can set stylesheet dependencies ([#1636](https://github.com/pojome/elementor/issues/1636))
 * Tweak: Added option to set control as required by `required => true`
 * Fix: Added `wptexturize` filter to match WordPress native text formatting
 * Fix: Alignment issue with Icon widget
