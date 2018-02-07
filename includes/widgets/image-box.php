@@ -434,6 +434,18 @@ class Widget_Image_Box extends Widget_Base {
 
 		$html = '<div class="elementor-image-box-wrapper">';
 
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
+
+			if ( $settings['link']['is_external'] ) {
+				$this->add_render_attribute( 'link', 'target', '_blank' );
+			}
+
+			if ( ! empty( $settings['link']['nofollow'] ) ) {
+				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
+			}
+		}
+
 		if ( ! empty( $settings['image']['url'] ) ) {
 			$this->add_render_attribute( 'image', 'src', $settings['image']['url'] );
 			$this->add_render_attribute( 'image', 'alt', Control_Media::get_image_alt( $settings['image'] ) );
@@ -446,16 +458,6 @@ class Widget_Image_Box extends Widget_Base {
 			$image_html = '<img ' . $this->get_render_attribute_string( 'image' ) . '>';
 
 			if ( ! empty( $settings['link']['url'] ) ) {
-				$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
-
-				if ( $settings['link']['is_external'] ) {
-					$this->add_render_attribute( 'link', 'target', '_blank' );
-				}
-
-				if ( ! empty( $settings['link']['nofollow'] ) ) {
-					$this->add_render_attribute( 'link', 'rel', 'nofollow' );
-				}
-
 				$image_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $image_html . '</a>';
 			}
 
