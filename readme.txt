@@ -192,7 +192,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix: Set save button as disabled if there is nothing to save
 * Fix: Added publish to editor translations
 * Fix: Added a flex-basis patch for better support in Firefox browser
-* Fix: Image Box heading link now works without an image
+* Fix: Image Box heading link now works without an image ([#2854](https://github.com/pojome/elementor/issues/2854))
 
 = 1.9.3 - 2018-01-21 =
 * Fix: Enqueue style/script if when not needed ([#3094](https://github.com/pojome/elementor/issues/3094))
