@@ -49,6 +49,8 @@ helpers = {
 			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + fontUrl + '" rel="stylesheet" type="text/css">' );
 		}
 		this._enqueuedFonts.push( font );
+
+		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
 	},
 
 	getElementChildType: function( elementType, container ) {

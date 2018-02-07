@@ -84,6 +84,7 @@ class Control_Font extends Base_Data_Control {
 	 */
 	protected function get_default_settings() {
 		return [
+			'groups' => Fonts::get_font_groups(),
 			'options' => Fonts::get_fonts(),
 		];
 	}
@@ -105,23 +106,21 @@ class Control_Font extends Base_Data_Control {
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<select id="<?php echo $control_uid; ?>" class="elementor-control-font-family" data-setting="{{ data.name }}">
-					<option value=""><?php _e( 'Default', 'elementor' ); ?></option>
-					<optgroup label="<?php _e( 'System', 'elementor' ); ?>">
-						<# _.each( getFontsByGroups( 'system' ), function( fontType, fontName ) { #>
-						<option value="{{ fontName }}">{{{ fontName }}}</option>
-						<# } ); #>
-					</optgroup>
-
-					<optgroup label="<?php _e( 'Google', 'elementor' ); ?>">
-						<# _.each( getFontsByGroups( [ 'googlefonts', 'earlyaccess' ] ), function( fontType, fontName ) { #>
-						<option value="{{ fontName }}">{{{ fontName }}}</option>
-						<# } ); #>
-					</optgroup>
+					<option value=""><?php esc_html_e( 'Default', 'elementor' ); ?></option>
+					<#
+					_.each( data.groups, function( group_label, group_name ) { #>
+						<optgroup label="{{ group_label }}">
+							<# _.each( getFontsByGroups( group_name ), function( fontType, fontName ) { #>
+								<option value="{{ fontName }}">{{{ fontName }}}</option>
+							<# } ); #>
+						</optgroup>
+					<# } );
+				#>
 				</select>
 			</div>
 		</div>
 		<# if ( data.description ) { #>
-		<div class="elementor-control-field-description">{{{ data.description }}}</div>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
 	}
