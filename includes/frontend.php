@@ -496,13 +496,6 @@ class Frontend {
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
-		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
-			$this->parse_global_css_code();
-
-			$css_file = new Post_CSS_File( get_the_ID() );
-			$css_file->enqueue();
-		}
-
 		/**
 		 * After frontend enqueue styles.
 		 *
@@ -511,6 +504,13 @@ class Frontend {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/frontend/after_enqueue_styles' );
+
+		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
+			$this->parse_global_css_code();
+
+			$css_file = new Post_CSS_File( get_the_ID() );
+			$css_file->enqueue();
+		}
 	}
 
 	/**
