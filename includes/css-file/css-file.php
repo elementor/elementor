@@ -300,7 +300,7 @@ abstract class CSS_File {
 
 	public function print_css() {
 		echo '<style>' . $this->get_css() . '</style>';
-		Plugin::$instance->frontend->print_google_fonts();
+		Plugin::$instance->frontend->print_fonts_links();
 	}
 
 	/**
