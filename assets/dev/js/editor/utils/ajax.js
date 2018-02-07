@@ -43,15 +43,13 @@ Ajax = {
 				action: options.action,
 				unique_id: options.data.object_type + objectId,
 				data: jQuery.extend( { id: objectId }, options.data )
-			} ).done( function( response ) {
-				dataCollection = jQuery.extend( dataCollection, response.data );
+			} ).done( function( data ) {
+				dataCollection = jQuery.extend( dataCollection, data );
 			}) );
 		} );
 
 		jQuery.when.apply( jQuery, deferredArray ).done( function() {
-			options.success( {
-				data: dataCollection
-			} );
+			options.success( dataCollection );
 		} );
 	},
 
@@ -71,15 +69,13 @@ Ajax = {
 		if ( _.has( self.cache, cacheKey ) ) {
 			deferred = jQuery.Deferred()
 				.done( request.success )
-				.resolve( {
-					data: self.cache[ cacheKey ]
-				} );
+				.resolve( self.cache[ cacheKey ] );
 		} else {
 			deferred = self.addRequest( request.action, {
 				data: request.data,
 				unique_id: request.unique_id,
-				success: function( response ) {
-					self.cache[ cacheKey ] = response.data;
+				success: function( data ) {
+					self.cache[ cacheKey ] = data;
 				}
 			} ).done( request.success );
 		}
