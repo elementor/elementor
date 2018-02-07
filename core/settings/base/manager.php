@@ -330,7 +330,7 @@ abstract class Manager {
 	 * Validate the data before saving it and updating the data in the database.
 	 *
 	 * @since 1.6.0
-	 * @access protected
+	 * @access public
 	 *
 	 * @param array $data Post data.
 	 * @param int   $id   Post ID.
