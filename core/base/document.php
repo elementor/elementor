@@ -383,9 +383,9 @@ abstract class Document extends Controls_Stack {
 	 */
 	protected function save_elements( $elements ) {
 		$db = Plugin::$instance->db;
-		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		$db->switch_to_post( $this->post->ID );
 
+		// Change the current post, so widgets can use `documents->get_current` and other post data
+		Plugin::$instance->documents->set_current( $this->post->ID );
 		$editor_data = $db->_get_editor_data( $elements );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
@@ -407,9 +407,6 @@ abstract class Document extends Controls_Stack {
 		$db->save_plain_text( $this->post->ID );
 
 		update_metadata( 'post', $this->post->ID, '_elementor_version', $db::DB_VERSION );
-
-		// Restore global post
-		$db->restore_current_post();
 
 		// Remove Post CSS
 		delete_post_meta( $this->post->ID, Post_CSS_File::META_KEY );
