@@ -15,25 +15,32 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'font_family',
- *    	[
- *    		'label' => __( 'Font Family', 'plugin-domain' ),
- *    		'type' => Controls_Manager::FONT,
- *    		'default' => "'Open Sans', sans-serif",
- *    		'selectors' => [
- *    			'{{WRAPPER}} .title' => 'font-family: {{VALUE}}',
- *    		],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'font_family',
+ * 	[
+ * 		'label' => __( 'Font Family', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::FONT,
+ * 		'default' => "'Open Sans', sans-serif",
+ * 		'selectors' => [
+ * 			'{{WRAPPER}} .title' => 'font-family: {{VALUE}}',
+ * 		],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<h2 class="title" style="font-family:' . $this->get_settings( 'font_family' ) . '"> ... </h2>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<h2 class="title" style="font-family: ' . $settings['font_family'] . '"> ... </h2>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <h2 class="title" style="font-family: {{ settings.font_family }}"> ... </h2>
+ * ```js
+ * <h2 class="title" style="font-family: {{ settings.font_family }}"> ... </h2>
+ * ```
  *
  * @since 1.0.0
  *

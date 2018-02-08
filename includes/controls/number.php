@@ -13,25 +13,32 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'price',
- *    	[
- *    		'label' => __( 'Price', 'plugin-domain' ),
- *    		'type' => Controls_Manager::NUMBER,
- *    		'default' => 10,
- *    		'min' => 5,
- *    		'min' => 100,
- *    		'step' => 5,
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'price',
+ * 	[
+ * 		'label' => __( 'Price', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::NUMBER,
+ * 		'default' => 10,
+ * 		'min' => 5,
+ * 		'min' => 100,
+ * 		'step' => 5,
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<span class="price">' . $this->get_settings( 'price' ) . '</span>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<span class="price">' . $settings['price'] . '</span>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <span class="price">{{{ settings.price }}}</span>
+ * ```js
+ * <span class="price">{{{ settings.price }}}</span>
+ * ```
  *
  * @since 1.0.0
  *

@@ -14,28 +14,44 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'image',
- *    	[
- *    		'label' => __( 'Choose Image', 'plugin-domain' ),
- *    		'type' => Controls_Manager::MEDIA,
- *    		'default' => [
- *    			'url' => Utils::get_placeholder_image_src(),
- *    		]
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'image',
+ * 	[
+ * 		'label' => __( 'Choose Image', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::MEDIA,
+ * 		'default' => [
+ * 			'url' => Utils::get_placeholder_image_src(),
+ * 		]
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $image = $this->get_settings( 'image' );
- *    // Get image URL
- *    echo '<img src="' . $image['url'] . '">';
- *    // Get image thumbnail by ID
- *    echo wp_get_attachment_image( $image['id'], 'thumbnail' );
+ * ```php
+ * // Get image URL
+ * $settings = $this->get_settings();
+ * echo '<img src="' . $settings['image']['url'] . '">';
+ * ```
+ *
+ * ```php
+ * // Get image 'thumbnail' by ID
+ * $settings = $this->get_settings();
+ * echo wp_get_attachment_image( $settings['image']['id'], 'thumbnail' );
+ * ```
+ *
+ * ```php
+ * // Get image HTML
+ * $settings = $this->get_settings();
+ * echo Group_Control_Image_Size::get_attachment_image_html( $settings );
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <img src="{{ settings.image.url }}">
+ * ```js
+ * <img src="{{ settings.image.url }}">
+ * ```
  *
  * @since 1.0.0
  *
