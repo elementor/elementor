@@ -57,6 +57,8 @@ class DB {
 	 */
 	protected $switched_post_data = [];
 
+	protected $switched_data = [];
+
 	/**
 	 * Save editor.
 	 *
@@ -516,6 +518,61 @@ class DB {
 
 		$GLOBALS['post'] = get_post( $data['original_id'] );
 		setup_postdata( $GLOBALS['post'] );
+	}
+
+
+	/**
+	 * @access public
+	 *
+	 * @param $query_vars array
+	 */
+	public function switch_to_query( $query_vars ) {
+		global $wp_query;
+		$current_query_vars = $wp_query->query;
+
+		// If is already switched, or is the same query, return.
+		if ( $current_query_vars === $query_vars ) {
+			$this->switched_data[] = false;
+			return;
+		}
+
+		$new_query = new \WP_Query( $query_vars );
+
+		$this->switched_data[] = [
+			'switched' => $new_query,
+			'original' => $wp_query,
+		];
+
+		$wp_query = $new_query;
+
+		if ( $new_query->is_singular() && isset( $new_query->posts[0] ) ) {
+			$GLOBALS['post'] = $new_query->posts[0];
+			setup_postdata( $GLOBALS['post'] );
+		}
+	}
+
+	/**
+	 * @access public
+	 */
+	public function restore_current_query() {
+		$data = array_pop( $this->switched_data );
+
+		// If not switched, return.
+		if ( ! $data ) {
+			return;
+		}
+
+		global $wp_query;
+
+		$wp_query = $data['original'];
+
+		// Ensure the global post is set only if needed
+		unset( $GLOBALS['post'] );
+
+		if ( $wp_query->is_singular() ) {
+			$GLOBALS['post'] = $wp_query->posts[0];
+			setup_postdata( $GLOBALS['post'] );
+		}
 	}
 
 	/**
