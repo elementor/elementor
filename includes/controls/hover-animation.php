@@ -14,22 +14,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'hover_animation',
- *    	[
- *    		'label' => __( 'Hover Animation', 'plugin-domain' ),
- *    		'type' => Controls_Manager::HOVER_ANIMATION,
- *    		'prefix_class' => 'elementor-animation-',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'hover_animation',
+ * 	[
+ * 		'label' => __( 'Hover Animation', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::HOVER_ANIMATION,
+ * 		'prefix_class' => 'elementor-animation-',
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<div class="' . $this->get_settings( 'hover_animation' ) . '"> ... </div>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<div class="' . $settings['hover_animation'] . '"> ... </div>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div class="{{ settings.hover_animation }}"> ... </div>
+ * ```js
+ * <div class="{{ settings.hover_animation }}"> ... </div>
+ * ```
  *
  * @since 1.0.0
  *

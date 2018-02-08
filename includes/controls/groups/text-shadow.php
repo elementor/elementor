@@ -14,14 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_group_control(
- *    	Group_Control_Text_Shadow::get_type(),
- *    	[
- *    		'name' => 'text_shadow',
- *    		'selector' => '{{WRAPPER}} .wrapper',
- *    		'separator' => 'before',
- *    	]
- *    );
+ * ```php
+ * $this->add_group_control(
+ * 	Group_Control_Text_Shadow::get_type(),
+ * 	[
+ * 		'name' => 'text_shadow',
+ * 		'selector' => '{{WRAPPER}} .wrapper',
+ * 		'separator' => 'before',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.6.0
  *

@@ -14,14 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'custom_dimension',
- *    	[
- *    		'label' => __( 'Image Dimension', 'plugin-domain' ),
- *    		'type' => Controls_Manager::IMAGE_DIMENSIONS,
- *    		'description' => __( 'Crop the original image size to any custom size. Set custom width or height to keep the original size ratio.', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'custom_dimension',
+ * 	[
+ * 		'label' => __( 'Image Dimension', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::IMAGE_DIMENSIONS,
+ * 		'description' => __( 'Crop the original image size to any custom size. Set custom width or height to keep the original size ratio.', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *

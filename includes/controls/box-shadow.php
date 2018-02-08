@@ -14,27 +14,33 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'box_shadow',
- *    	[
- *    		'label' => __( 'Box Shadow', 'plugin-domain' ),
- *    		'type' => Controls_Manager::BOX_SHADOW,
- *    		'default' => [
- *    			'color' => 'rgba(0,0,0,.5)',
- *    		],
- *    		'selectors' => [
- *    			'{{WRAPPER}} .your-class' => 'box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}};',
- *    		],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'box_shadow',
+ * 	[
+ * 		'label' => __( 'Box Shadow', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::BOX_SHADOW,
+ * 		'default' => [
+ * 			'color' => 'rgba(0,0,0,.5)',
+ * 		],
+ * 		'selectors' => [
+ * 			'{{WRAPPER}} .your-class' => 'box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}};',
+ * 		],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<div class="your-class"> ... </div>';
+ * ```php
+ * echo '<div class="your-class"> ... </div>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div class="your-class"> ... </div>
+ * ```js
+ * <div class="your-class"> ... </div>
+ * ```
  *
  * @since 1.0.0
  *
