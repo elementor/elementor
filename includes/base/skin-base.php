@@ -85,9 +85,8 @@ abstract class Skin_Base {
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
 	 * @since 1.0.0
-	 * @access public
-	 *
 	 * @deprecated
+	 * @access public
 	 */
 	public function _content_template() {}
 

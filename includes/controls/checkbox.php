@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *    <# } #>
  *
  * @since 1.0.0
- * @deprecated 1.5.4 In favor of Control_Switcher.
+ * @deprecated 1.5.4 Use `Control_Switcher` class instead.
  *
  * @param string $label        Optional. The label that appears next of the
  *                             field. Default is empty.
