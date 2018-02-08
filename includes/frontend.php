@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -105,6 +106,12 @@ class Frontend {
 	 * @var array Filters removed from the content. Default is an empty array.
 	 */
 	private $content_removed_filters = [];
+
+
+	/**
+	 * @var Document[]
+	 */
+	private $admin_bar_edit_documents = [];
 
 	/**
 	 * Init.
@@ -729,6 +736,11 @@ class Frontend {
 		}
 
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+
+		if ( $document->is_editable_by_current_user() ) {
+			$this->admin_bar_edit_documents[  $document->get_main_id() ] = $document;
+		}
+
 		$data = $document->get_elements_data();
 
 		/**
@@ -811,19 +823,31 @@ class Frontend {
 	 * @param \WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance, passed by reference.
 	 */
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
-		$post_id = get_the_ID();
-
-		$is_builder_mode = is_singular() && User::is_current_user_can_edit( $post_id ) && Plugin::$instance->db->is_built_with_elementor( $post_id );
-
-		if ( ! $is_builder_mode ) {
+		if ( empty( $this->admin_bar_edit_documents ) ) {
 			return;
 		}
 
-		$wp_admin_bar->add_node( [
+		$queried_object_id = get_queried_object_id();
+
+		$menu_args = [
 			'id' => 'elementor_edit_page',
 			'title' => __( 'Edit with Elementor', 'elementor' ),
-			'href' => Utils::get_edit_link( $post_id ),
-		] );
+		];
+
+		if ( is_singular() && isset( $this->admin_bar_edit_documents[ $queried_object_id ] ) ) {
+			$menu_args['href'] = $this->admin_bar_edit_documents[ $queried_object_id ]->get_edit_url();
+			unset( $this->admin_bar_edit_documents[ $queried_object_id ] );
+		}
+
+		$wp_admin_bar->add_node( $menu_args );
+
+		foreach ( $this->admin_bar_edit_documents as $document ) {
+			$wp_admin_bar->add_menu( [
+				'parent' => 'elementor_edit_page',
+				'title' => sprintf( '<span class="elementor-edit-link-title">%s</span><span class="elementor-edit-link-type">%s</span>', $document->get_post()->post_title, $document::get_title() ),
+				'href' => $document->get_edit_url(),
+			] );
+		}
 	}
 
 	/**
