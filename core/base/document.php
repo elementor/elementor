@@ -187,8 +187,9 @@ abstract class Document extends Controls_Stack {
 		$post_type_object = get_post_type_object( $this->post->post_type );
 
 		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
+		$is_published = DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status;
 
-		if ( DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status || $can_publish ) {
+		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
 
 			$this->add_control(
 				'post_status',
