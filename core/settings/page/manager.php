@@ -234,6 +234,12 @@ class Manager extends BaseManager {
 
 		wp_update_post( $post );
 
+		if ( empty( $data['post_featured_image']['id'] ) ) {
+			delete_post_thumbnail( $post->ID );
+		} else {
+			set_post_thumbnail( $post->ID, $data['post_featured_image']['id'] );
+		}
+
 		if ( DB::STATUS_PUBLISH === $post->post_status ) {
 			$autosave = Utils::get_post_autosave( $post->ID );
 			if ( $autosave ) {
