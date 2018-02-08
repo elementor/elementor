@@ -557,7 +557,7 @@ class DB {
 	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function has_elementor_in_post( $post_id ) {
-		_deprecated_function( get_called_class() . '::' . __FUNCTION__, '1.4.0', 'is_built_with_elementor()' );
+		_deprecated_function( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), '1.4.0', 'is_built_with_elementor()' );
 
 		return $this->is_built_with_elementor( $post_id );
 	}
