@@ -156,12 +156,14 @@ module.exports = Module.extend( {
 			success: function( data ) {
 				self.afterAjax();
 
-				if ( ! self.isChangedDuringSave ) {
-					self.setFlagEditorChange( false );
-				}
+				if ( 'autosave' !== options.status ) {
+					if ( ! self.isChangedDuringSave ) {
+						self.setFlagEditorChange( false );
+					}
 
-				if ( 'autosave' !== options.status && statusChanged ) {
-					elementor.settings.page.model.set( 'post_status', options.status );
+					if ( statusChanged ) {
+						elementor.settings.page.model.set( 'post_status', options.status );
+					}
 				}
 
 				if ( data.config ) {
