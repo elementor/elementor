@@ -13,17 +13,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'delete_content',
- *    	[
- *    		'label' => __( 'Delete Content', 'plugin-domain' ),
- *    		'type' => Controls_Manager::BUTTON,
- *    		'button_type' => 'success',
- *    		'text' => __( 'Delete', 'plugin-domain' ),
- *    		'event' => 'namespace:editor:delete',
- *    		'separator' => 'before',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'delete_content',
+ * 	[
+ * 		'label' => __( 'Delete Content', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::BUTTON,
+ * 		'button_type' => 'success',
+ * 		'text' => __( 'Delete', 'plugin-domain' ),
+ * 		'event' => 'namespace:editor:delete',
+ * 		'separator' => 'before',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.9.0
  *

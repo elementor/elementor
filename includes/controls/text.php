@@ -13,23 +13,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'widget_title',
- *    	[
- *    		'label' => __( 'Text', 'plugin-domain' ),
- *    		'type' => Controls_Manager::TEXT,
- *    		'default' => __( 'Default text', 'plugin-domain' ),
- *    		'placeholder' => __( 'Type your text here', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'widget_title',
+ * 	[
+ * 		'label' => __( 'Text', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::TEXT,
+ * 		'default' => __( 'Default text', 'plugin-domain' ),
+ * 		'placeholder' => __( 'Type your text here', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<h2>' . $this->get_settings( 'widget_title' ) . '</h2>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<h2>' . $settings['widget_title'] . '</h2>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <h2>{{{ settings.widget_title }}}</h2>
+ * ```js
+ * <h2>{{{ settings.widget_title }}}</h2>
+ * ```
  *
  * @since 1.0.0
  *
