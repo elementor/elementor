@@ -105,8 +105,9 @@ class DB {
 	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
 		$data = $this->get_plain_editor( $post_id, $status );
 
-		Plugin::$instance->documents->set_current( $post_id );
+		Plugin::$instance->documents->switch_to_document( $post_id );
 		$editor_data = $this->_get_editor_data( $data, true );
+		Plugin::$instance->documents->restore_document();
 
 		return $editor_data;
 	}

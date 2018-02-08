@@ -22,6 +22,8 @@ class Documents_Manager {
 
 	protected $current_doc_id;
 
+	protected $switched_data = [];
+
 	public function __construct() {
 		$this->register_default_types();
 
@@ -228,8 +230,48 @@ class Documents_Manager {
 		return $success;
 	}
 
-	public function set_current( $post_id ) {
-		$this->current_doc_id = $post_id;
+	/**
+	 * Switch to document.
+	 *
+	 * Change the current document to the requested post.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 */
+
+	public function switch_to_document( $post_id ) {
+		$post_id = absint( $post_id );
+		// If is already switched, or is the same post, return.
+		if ( $this->current_doc_id === $post_id ) {
+			$this->switched_data[] = false;
+			return;
+		}
+
+		$this->switched_data[] = [
+			'switched_id' => $post_id,
+			'original_id' => $this->current_doc_id, // Note, it can be false if the global isn't set
+		];
+	}
+
+	/**
+	 * Restore current post.
+	 *
+	 * Rollback to the previous global post, rolling back from `DB::switch_to_post()`.
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 */
+	public function restore_document() {
+		$data = array_pop( $this->switched_data );
+
+		// If not switched, return.
+		if ( ! $data ) {
+			return;
+		}
+
+		$this->current_doc_id = $data['original_id'];
 	}
 
 	public function get_current() {
