@@ -735,7 +735,10 @@ class Frontend {
 			return '';
 		}
 
+		// Change the current post, so widgets can use `documents->get_current` and other post data
+		Plugin::$instance->documents->switch_to_document( $post_id );
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+		Plugin::$instance->documents->restore_document();
 
 		if ( $document->is_editable_by_current_user() ) {
 			$this->admin_bar_edit_documents[  $document->get_main_id() ] = $document;
@@ -883,12 +886,7 @@ class Frontend {
 		$is_edit_mode = $editor->is_edit_mode();
 		$editor->set_edit_mode( false );
 
-		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		Plugin::$instance->db->switch_to_post( $post_id );
-
 		$content = $this->get_builder_content( $post_id, $is_edit_mode );
-
-		Plugin::$instance->db->restore_current_post();
 
 		// Restore edit mode state
 		Plugin::$instance->editor->set_edit_mode( $is_edit_mode );

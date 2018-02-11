@@ -304,9 +304,9 @@ class Widgets_Manager {
 
 		$editor = Plugin::$instance->editor;
 		$is_edit_mode = $editor->is_edit_mode();
+		$editor->set_edit_mode( true );
 
 		Plugin::$instance->db->switch_to_post( $request['post_id'] );
-		$editor->set_edit_mode( true );
 
 		$data = $request['data'];
 
