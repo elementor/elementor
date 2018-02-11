@@ -335,12 +335,14 @@ class Plugin {
 	 * Retrieve the current version of Elementor.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 1.2.0 Use `ELEMENTOR_VERSION` const instead.
 	 * @access public
-	 * @deprecated
 	 *
 	 * @return string Elementor version.
 	 */
 	public function get_version() {
+		_deprecated_function( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), '1.2.0', 'ELEMENTOR_VERSION' );
+
 		return ELEMENTOR_VERSION;
 	}
 

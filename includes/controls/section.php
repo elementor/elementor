@@ -17,14 +17,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->start_controls_section(
- *    	'section_advanced',
- *    	[
- *    		'label' => __( 'Element Style', 'plugin-domain' ),
- *    		'type' => Controls_Manager::SECTION,
- *    		'tab' => Controls_Manager::TAB_ADVANCED,
- *    	]
- *    );
+ * ```php
+ * $this->start_controls_section(
+ * 	'section_advanced',
+ * 	[
+ * 		'label' => __( 'Element Style', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::SECTION,
+ * 		'tab' => Controls_Manager::TAB_ADVANCED,
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *

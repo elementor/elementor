@@ -14,14 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'html_message',
- *    	[
- *    		'type' => Controls_Manager::RAW_HTML,
- *    		'raw' => __( 'An important message to show in the panel.', 'your-plugin' ),
- *    		'content_classes' => 'your-class',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'html_message',
+ * 	[
+ * 		'type' => Controls_Manager::RAW_HTML,
+ * 		'raw' => __( 'An important message to show in the panel.', 'your-plugin' ),
+ * 		'content_classes' => 'your-class',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *

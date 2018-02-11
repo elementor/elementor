@@ -17,15 +17,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_group_control(
- *    	Group_Control_Typography::get_type(),
- *    	[
- *    		'name' => 'content_typography',
- *    		'scheme' => Scheme_Typography::TYPOGRAPHY_1,
- *    		'selector' => '{{WRAPPER}} .text',
- *    		'separator' => 'before',
- *    	]
- *    );
+ * ```php
+ * $this->add_group_control(
+ * 	Group_Control_Typography::get_type(),
+ * 	[
+ * 		'name' => 'content_typography',
+ * 		'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+ * 		'selector' => '{{WRAPPER}} .text',
+ * 		'separator' => 'before',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *

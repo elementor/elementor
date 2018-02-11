@@ -16,28 +16,35 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'title_color',
- *    	[
- *    		'label' => __( 'Title Color', 'plugin-domain' ),
- *    		'type' => Controls_Manager::COLOR,
- *    		'scheme' => [
- *    			'type' => Scheme_Color::get_type(),
- *    			'value' => Scheme_Color::COLOR_1,
- *    		],
- *    		'selectors' => [
- *    			'{{WRAPPER}} .title' => 'color: {{VALUE}}',
- *    		],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'title_color',
+ * 	[
+ * 		'label' => __( 'Title Color', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::COLOR,
+ * 		'scheme' => [
+ * 			'type' => Scheme_Color::get_type(),
+ * 			'value' => Scheme_Color::COLOR_1,
+ * 		],
+ * 		'selectors' => [
+ * 			'{{WRAPPER}} .title' => 'color: {{VALUE}}',
+ * 		],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<h2 class="title" style="color:' . $this->get_settings( 'title_color' ) . '"> ... </h2>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<h2 class="title" style="color: ' . $settings['title_color'] . '"> ... </h2>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <h2 class="title" style="color:{{ settings.title_color }}"> ... </h2>
+ * ```js
+ * <h2 class="title" style="color: {{ settings.title_color }}"> ... </h2>
+ * ```
  *
  * @since 1.0.0
  *
