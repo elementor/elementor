@@ -16,40 +16,46 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'width',
- *    	[
- *    		'label' => __( 'Width', 'plugin-domain' ),
- *    		'type' => Controls_Manager::SLIDER,
- *    		'default' => [
- *    			'size' => 1,
- *    		],
- *    		'size_units' => [ 'px', '%' ],
- *    		'range' => [
- *    			'px' => [
- *    				'min' => 0,
- *    				'max' => 1000,
- *    				'step' => 5,
- *    			],
- *    			'%' => [
- *    				'min' => 0,
- *    				'max' => 100,
- *    			],
- *    		],
- *    		'selectors' => [
- *    			'{{WRAPPER}} .box' => 'width: {{SIZE}}{{UNIT}};',
- *    		],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'width',
+ * 	[
+ * 		'label' => __( 'Width', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::SLIDER,
+ * 		'default' => [
+ * 			'size' => 1,
+ * 		],
+ * 		'size_units' => [ 'px', '%' ],
+ * 		'range' => [
+ * 			'px' => [
+ * 				'min' => 0,
+ * 				'max' => 1000,
+ * 				'step' => 5,
+ * 			],
+ * 			'%' => [
+ * 				'min' => 0,
+ * 				'max' => 100,
+ * 			],
+ * 		],
+ * 		'selectors' => [
+ * 			'{{WRAPPER}} .box' => 'width: {{SIZE}}{{UNIT}};',
+ * 		],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $width = $this->get_settings( 'width' );
- *    echo '<div style="width: ' . $width['size'] . $width['unit'] '"> ... </div>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<div style="width: ' . $settings['width']['size'] . $settings['width']['unit'] '"> ... </div>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div style="width: {{ settings.width.size }}{{ settings.width.unit }}"> ... </div>';
+ * ```js
+ * <div style="width: {{ settings.width.size }}{{ settings.width.unit }}"> ... </div>';
+ * ```
  *
  * @since 1.0.0
  *

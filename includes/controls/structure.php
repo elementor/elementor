@@ -14,15 +14,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'structure',
- *    	[
- *    		'label' => __( 'Structure', 'plugin-domain' ),
- *    		'type' => Controls_Manager::STRUCTURE,
- *    		'default' => '10',
- *    		'render_type' => 'none',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'structure',
+ * 	[
+ * 		'label' => __( 'Structure', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::STRUCTURE,
+ * 		'default' => '10',
+ * 		'render_type' => 'none',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *

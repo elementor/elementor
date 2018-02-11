@@ -15,16 +15,42 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_group_control(
- *    	Group_Control_Image_Size::get_type(),
- *    	[
- *    		'name' => 'thumbnail',
- *    		'default' => 'large',
- *    		'exclude' => [],
- *    		'include' => [],
- *    		'separator' => 'before',
- *    	]
- *    );
+ * ```php
+ * $this->add_group_control(
+ * 	Group_Control_Image_Size::get_type(),
+ * 	[
+ * 		'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
+ * 		'default' => 'large',
+ * 		'exclude' => [ 'custom' ],
+ * 		'include' => [],
+ * 		'separator' => 'before',
+ * 	]
+ * );
+ * ```
+ *
+ * PHP usage (inside `Widget_Base::render()` method):
+ *
+ * ```php
+ * // Get image HTML
+ * $settings = $this->get_settings();
+ * echo Group_Control_Image_Size::get_attachment_image_html( $settings, 'thumbnail' );
+ * ```
+ *
+ * JS usage (inside `Widget_Base::_content_template()` method):
+ *
+ * ```js
+ * <#
+ * var image = {
+ * 	id: settings.image.id,
+ * 	url: settings.image.url,
+ * 	size: settings.thumbnail_size,
+ * 	dimension: settings.thumbnail_custom_dimension,
+ * 	model: view.getEditModel()
+ * };
+ * var image_url = elementor.imagesManager.getImageUrl( image );
+ * #>
+ * <img src="{{{ image_url }}}" />';
+ * ```
  *
  * @since 1.0.0
  *

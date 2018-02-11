@@ -448,9 +448,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * Retrieve the element parent. Used to check which element it belongs to.
 	 *
 	 * @since 1.0.0
-	 * @access public
-	 *
 	 * @deprecated
+	 * @access public
 	 *
 	 * @return Element_Base Parent element.
 	 */
@@ -710,11 +709,11 @@ abstract class Element_Base extends Controls_Stack {
 	 * Used to generate the edit tools HTML.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 1.8.0 use render_edit_tools() instead.
+	 * @deprecated 1.8.0 Use `render_edit_tools()` instead.
 	 * @access protected
 	 */
 	protected function _render_settings() {
-		_deprecated_function( get_called_class() . '::' . __FUNCTION__, '1.8.0', 'render_edit_tools()' );
+		_deprecated_function( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), '1.8.0', 'render_edit_tools()' );
 
 		$this->render_edit_tools();
 	}

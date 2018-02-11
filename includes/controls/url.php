@@ -14,30 +14,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'link',
- *    	[
- *    		'label' => __( 'Link', 'plugin-domain' ),
- *    		'type' => Controls_Manager::URL,
- *    		'placeholder' => __( 'https://your-link.com', 'plugin-domain' ),
- *    		'default' => [
- *    			'url' => '',
- *    			'is_external' => true,
- *    		]
- *    		'show_external' => true
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'link',
+ * 	[
+ * 		'label' => __( 'Link', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::URL,
+ * 		'placeholder' => __( 'https://your-link.com', 'plugin-domain' ),
+ * 		'default' => [
+ * 			'url' => '',
+ * 			'is_external' => true,
+ * 		]
+ * 		'show_external' => true
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $website_link = $this->get_settings( 'website_link' );
- *    $target = $website_link['is_external'] ? 'target="_blank"' : '';
- *    echo '<a href="' . $website_link['url'] . '" ' . $target .'>Visit Website</a>';
+ * ```php
+ * $settings = $this->get_settings();
+ * $target = $settings['website_link']['is_external'] ? 'target="_blank"' : '';
+ * echo '<a href="' . $settings['website_link']['url'] . '" ' . $target . '> ... </a>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <# var target = settings.website_link.is_external ? 'target="_blank"' : ''; #>
- *    <a href="{{ settings.website_link.url }}" {{ target }}>Visit Website</a>
+ * ```js
+ * <# var target = settings.website_link.is_external ? 'target="_blank"' : ''; #>
+ * <a href="{{ settings.website_link.url }}" {{ target }}> ... </a>
+ * ```
  *
  * @since 1.0.0
  *

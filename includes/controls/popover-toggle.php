@@ -14,17 +14,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'border_popover_toggle',
- *    	[
- *    		'label' => __( 'Border', 'plugin-domain' ),
- *    		'type' => Controls_Manager::POPOVER_TOGGLE,
- *    		'default' => 'yes',
- *    		'return_value' => 'yes',
- *    		'label_off' => __( 'Default', 'plugin-domain' ),
- *    		'label_on' => __( 'Custom', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'border_popover_toggle',
+ * 	[
+ * 		'label' => __( 'Border', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::POPOVER_TOGGLE,
+ * 		'default' => 'yes',
+ * 		'return_value' => 'yes',
+ * 		'label_off' => __( 'Default', 'plugin-domain' ),
+ * 		'label_on' => __( 'Custom', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * @since 1.9.0
  *

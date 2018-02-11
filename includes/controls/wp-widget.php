@@ -14,15 +14,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'wp',
- *    	[
- *    		'label' => __( 'Form', 'plugin-domain' ),
- *    		'type' => Controls_Manager::WP_WIDGET,
- *    		'widget' => "wp-widget-{$widget_id_base}",
- *    		'id_base' => $widget_id_base,
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'wp',
+ * 	[
+ * 		'label' => __( 'Form', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::WP_WIDGET,
+ * 		'widget' => "wp-widget-{$widget_id_base}",
+ * 		'id_base' => $widget_id_base,
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  */
