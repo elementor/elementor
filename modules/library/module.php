@@ -29,7 +29,12 @@ class Module extends BaseModule {
 
 		Plugin::$instance->documents
 			->register_document_type( 'page', Documents\Page::get_class_full_name() )
-			->register_document_type( 'section', Documents\Section::get_class_full_name() );
+			->register_document_type( 'section', Documents\Section::get_class_full_name() )
+			->register_group( 'blocks', [
+				'label' => __( 'Blocks', 'elementor' ),
+			] )->register_group( 'pages', [
+				'label' => __( 'Pages', 'elementor' ),
+			] );
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 	}

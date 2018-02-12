@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Documents_Manager {
 
+	protected $groups = [];
+
 	protected $types = [];
 
 	/**
@@ -98,6 +100,13 @@ class Documents_Manager {
 
 	public function get_document_type( $type ) {
 		return isset( $this->types[ $type ] ) ? $this->types[ $type ] : $this->types['post'];
+	}
+
+	/**
+	 * @return Document[]
+	 */
+	public function get_document_types() {
+		return $this->types;
 	}
 
 	/**
@@ -276,5 +285,14 @@ class Documents_Manager {
 
 	public function get_current() {
 		return $this->get( $this->current_doc_id );
+	}
+
+	public function register_group( $id, $args ) {
+		$this->groups[ $id ] = $args;
+		return $this;
+	}
+
+	public function get_groups() {
+		return $this->groups;
 	}
 }
