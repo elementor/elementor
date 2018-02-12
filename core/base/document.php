@@ -436,6 +436,10 @@ abstract class Document extends Controls_Stack {
 		update_post_meta( $this->post->ID, self::TYPE_META_KEY, $this->get_name() );
 	}
 
+	public function get_meta( $key ) {
+		return get_post_meta( $this->post->ID, $key, true );
+	}
+
 	public function get_last_edited() {
 		$post = $this->post;
 		$autosave_post = $this->get_autosave();
