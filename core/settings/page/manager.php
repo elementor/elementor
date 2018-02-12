@@ -129,7 +129,7 @@ class Manager extends BaseManager {
 		if ( is_singular() ) {
 			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
 
-			if ( self::TEMPLATE_CANVAS === $document->get_settings( 'template' ) ) {
+			if ( self::TEMPLATE_CANVAS === $document->get_meta( '_wp_page_template' ) ) {
 				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
 			}
 		}
