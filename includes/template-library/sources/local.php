@@ -172,6 +172,105 @@ class Source_Local extends Source_Base {
 		return __( 'Local', 'elementor' );
 	}
 
+	public function admin_enqueue_scripts() {
+		if ( in_array( get_current_screen()->id, [ 'elementor_library', 'edit-elementor_library' ] ) ) {
+			wp_enqueue_script( 'elementor-dialog' );
+			add_action( 'admin_footer', [ $this, 'print_new_template_dialog' ] );
+		}
+	}
+
+	public function print_new_template_dialog() {
+		?>
+		<div id="elementor-new-template-dialog" style="display: none">
+
+			<div id="elementor-new-template-dialog-header">
+				<div id="elementor-new-template-dialog-header-logo">
+					<span id="elementor-new-template-dialog-header-logo-icon-wrapper">
+						<i class="eicon-elementor"></i>
+					</span>
+					<span>
+						<?php esc_html_e( 'New Template', '' ) ?>
+					</span>
+				</div>
+
+				<div id="elementor-new-template-dialog-close">
+					<i class="eicon-close" aria-hidden="true" title="Close"></i>
+					<span class="elementor-screen-only">
+						<?php esc_html_e( 'Close', '' ) ?>
+					</span>
+				</div>
+			</div>
+
+			<div id="elementor-new-template-dialog-wrapper" class="elementor-new-template-dialog">
+				<div class="elementor-new-template-dialog-description">
+					<h2><?php esc_html_e( 'Get Started With', 'elementor' ); ?></h2>
+					<h1><?php esc_html_e( 'Elementor Builder', 'elementor' ); ?></h1>
+					<p>
+						<?php esc_html_e( 'Build & Design all dynamic parts of tour site using pre designed blocks or from scratch.', 'elementor' ); ?>
+					</p>
+
+					<div id="elementor-control-learn-more-wrapper" class="elementor-control-field">
+						<i class="fa fa-play-circle"></i>
+						<a href="">
+							<?php esc_html_e( 'Take The Video Tour', 'elementor' ); ?>
+						</a>
+					</div>
+				</div>
+
+				<form action="<?php esc_url( admin_url( '/edit.php' ) ); ?>" class="elementor-new-template-dialog-form">
+					<div class="elementor-control-field">
+						<input type="hidden" name="post_type" value="elementor_library">
+						<input type="hidden" name="action" value="elementor_new_theme_template">
+						<label for="template-type" class="elementor-control-title">
+							<?php esc_html_e( 'Choose a Theme Template', 'elementor-pro' ); ?>
+						</label>
+						<div class="elementor-control-input-wrapper">
+							<select name="template_type" required>
+								<option value=""><?php esc_html_e( 'Select', 'elementor-pro' ); ?>...</option>
+								<?php
+
+								$document_types = Plugin::$instance->documents->get_document_types();
+								$groups = Plugin::$instance->documents->get_groups();
+								$types_by_groups = [];
+
+								foreach ( $document_types as $document_type ) {
+									if ( $document_type::get_property( 'show_in_library' ) ) {
+										$group = $document_type::get_property( 'group' );
+										if ( ! isset( $types_by_groups[ $group ] ) ) {
+											$types_by_groups[ $group ] = [];
+										}
+										$types_by_groups[ $group ][  $document_type::get_name() ] = $document_type::get_title();
+									}
+								}
+
+								foreach ( $groups as $group_id => $group_args ) {
+									echo sprintf( '<optgroup label="%s">', $group_args['label'] );
+
+									foreach ( $types_by_groups[ $group_id ] as $value => $title ) {
+										echo sprintf( '<option value="%s">%s</option>', $value, $title );
+									}
+									echo '</optgroup>';
+								}
+								?>
+							</select>
+						</div>
+					</div>
+
+					<div id="elementor-control-create-wrapper" class="elementor-control-field">
+						<button id="create" class="elementor-button elementor-button-success elementor-new-template-dialog-submit" >
+							<span class="elementor-state-icon">
+								<i class="fa fa-spin fa-circle-o-notch "></i>
+							</span>
+							<?php esc_html_e( 'Create', 'elementor-pro' ); ?>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<?php
+
+	}
+
 	/**
 	 * Register local template data.
 	 *
@@ -1128,6 +1227,7 @@ class Source_Local extends Source_Base {
 	private function _add_actions() {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
+			add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ], 11 );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
