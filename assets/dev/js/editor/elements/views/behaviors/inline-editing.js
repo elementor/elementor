@@ -1,14 +1,7 @@
-var Mentions = require( 'elementor-dynamic-tags/mentions' ),
-	InlineEditingBehavior;
+var InlineEditingBehavior;
 
 InlineEditingBehavior = Marionette.Behavior.extend( {
-	editor: null,
-
 	editing: false,
-
-	stayInEditing: false,
-
-	mentionsListShown: false,
 
 	$currentEditingArea: null,
 
@@ -27,26 +20,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 	getEditingSettingKey: function() {
 		return this.$currentEditingArea.data().elementorSettingKey;
-	},
-
-	initMentions: function( content ) {
-		this.mentions = new Mentions( {
-			$element: this.$currentEditingArea,
-			$iframe: elementor.$preview,
-			groups: [ 'base' ],
-			value: content
-		} );
-
-		this.mentions.on( {
-			'mention:popup:hide': this.onMentionSettingsHide.bind( this ),
-			'mention:popup:show': this.onMentionSettingsShow.bind( this ),
-			'mention:create mention:change mention:remove': this.onMentionChange.bind( this )
-		} );
-
-		this.mentions.$element.on( {
-			'shown.atwho': this.onMentionsListShow.bind( this ),
-			'hidden.atwho': this.onMentionsListHide.bind( this )
-		} );
 	},
 
 	startEditing: function( $element ) {
@@ -126,8 +99,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			}
 		} );
 
-		this.initMentions( contentHTML );
-
 		var $menuItems = jQuery( this.editor._menu ).children();
 
 		/**
@@ -145,8 +116,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	stopEditing: function() {
 		this.editing = false;
 
-		this.mentions.destroy();
-
 		this.editor.destroy();
 
 		this.view.allowRender = true;
@@ -156,12 +125,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		 * we need to rerender the area. To prevent multiple renderings, we will render only areas that
 		 * use advanced toolbars.
 		 */
-		var toolbar = this.$currentEditingArea.data().elementorInlineEditingToolbar;
-
-		if ( 'advanced' === toolbar ) {
+		if ( 'advanced' === this.$currentEditingArea.data().elementorInlineEditingToolbar ) {
 			this.view.getEditModel().renderRemoteServer();
-		} else if ( ! toolbar ) {
-			this.view.render();
 		}
 	},
 
@@ -189,7 +154,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			var selection = elementorFrontend.getElements( 'window' ).getSelection(),
 				$focusNode = jQuery( selection.focusNode );
 
-			if ( self.stayInEditing || $focusNode.closest( '.pen-input-wrapper, .elementor-mentions-popup' ).length ) {
+			if ( $focusNode.closest( '.pen-input-wrapper' ).length ) {
 				return;
 			}
 
@@ -198,60 +163,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	onInlineEditingUpdate: function() {
-		var settingName = this.getEditingSettingKey(),
-			dynamicSettingName = 'dynamic_' + settingName,
-			editModel = this.view.getEditModel(),
-			settingsModel = editModel.get( 'settings' );
-
-		if ( this.mentions.getMentionsCount() ) {
-			settingsModel.set( dynamicSettingName, true, { silent: true } );
-
-			editModel.setSetting( settingName, this.mentions.getValue().trim().replace( /\u200b/g, '' ) );
-		} else {
-			settingsModel.unset( dynamicSettingName, { silent: true } );
-
-			editModel.setSetting( settingName, this.editor.getContent() );
-		}
-	},
-
-	onMentionChange: function() {
-		this.$currentEditingArea.trigger( 'input' );
-	},
-
-	onMentionSettingsShow: function( mentionView ) {
-		this.stayInEditing = true;
-
-		var $frontendWindow = elementorFrontend.getElements( '$window' ),
-			$editingArea = this.$currentEditingArea;
-
-		var hidePopup = function() {
-			mentionView.getMentionsPopup().hide();
-
-			$frontendWindow[0].removeEventListener( 'click', hidePopup, true );
-
-			$editingArea[0].removeEventListener( 'click', hidePopup, true );
-		};
-
-		$frontendWindow[0].addEventListener( 'click', hidePopup, true );
-
-		$editingArea[0].addEventListener( 'click', hidePopup, true );
-	},
-
-	onMentionSettingsHide: function() {
-		this.stayInEditing = false;
-
-		if ( ! this.$currentEditingArea.is( ':focus' ) ) {
-			this.stopEditing();
-		}
-
-	},
-
-	onMentionsListShow: function() {
-		this.editor.config.ignoreLineBreak = true;
-	},
-
-	onMentionsListHide: function() {
-		this.editor.config.ignoreLineBreak = false;
+		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.editor.getContent() );
 	}
 } );
 

@@ -91,6 +91,10 @@ App = Marionette.Application.extend( {
 		popover: {
 			element: '.elementor-controls-popover',
 			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label'
+		},
+		tagsList: {
+			element: '.elementor-tags-list',
+			ignore: '.elementor-control-mentions-add'
 		}
 	},
 

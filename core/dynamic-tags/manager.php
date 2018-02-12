@@ -158,6 +158,10 @@ class Manager {
 		];
 	}
 
+	public function get_static_setting_key( $key ) {
+		return $key . '__static__';
+	}
+
 	public function ajax_render_tags() {
 		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
 

@@ -2,20 +2,24 @@ var TagControlsStack = require( 'elementor-dynamic-tags/tag-controls-stack' ),
 	SettingsModel = require( 'elementor-elements/models/base-settings' );
 
 module.exports = Marionette.ItemView.extend( {
+
+	className: 'elementor-dynamic-cover',
+
 	tagControlsStack: null,
 
 	ui: {
-		remove: '.atwho-remove'
+		settings: '.elementor-dynamic-cover__tool--settings',
+		remove: '.elementor-dynamic-cover__tool--remove'
 	},
 
 	events: {
-		click: 'onClick',
+		'click @ui.settings': 'onSettingsClick',
 		'click @ui.remove': 'onRemoveClick'
 	},
 
 	getTemplate: function() {
 		var config = this.getTagConfig(),
-			templateFunction = Marionette.TemplateCache.get( '#tmpl-elementor-tag-mention' ),
+			templateFunction = Marionette.TemplateCache.get( '#tmpl-elementor-control-dynamic-cover' ),
 			renderedTemplate = Marionette.Renderer.render( templateFunction, {
 				title: config.title,
 				content: config.mention_template
@@ -33,27 +37,10 @@ module.exports = Marionette.ItemView.extend( {
 			className: 'elementor-mentions-popup',
 			position: {
 				at: 'right top',
-				of: this.el,
+				of: this.ui.settings,
 				autoRefresh: true
 			}
 		};
-
-		var $iframe = this.getOption( '$iframe' );
-
-		if ( $iframe ) {
-			var iframeWindow = $iframe[0].contentWindow,
-				mentionsPopupHideMethod;
-
-			mentionsPopupOptions.onShow = function() {
-				mentionsPopupHideMethod = this.hide.bind( this );
-
-				iframeWindow.addEventListener( 'click', mentionsPopupHideMethod, true );
-			};
-
-			mentionsPopupOptions.onHide = function() {
-				iframeWindow.removeEventListener( 'click', mentionsPopupHideMethod, true );
-			};
-		}
 
 		var mentionPopup = elementor.dialogsManager.createWidget( 'buttons', mentionsPopupOptions );
 
@@ -69,17 +56,8 @@ module.exports = Marionette.ItemView.extend( {
 			return;
 		}
 
-		var positionFromLeft = 7,
-			positionFromTop = -10,
-			$iframe = this.getOption( '$iframe' );
-
-		if ( $iframe ) {
-			var offset = $iframe.offset();
-
-			positionFromLeft += offset.left;
-
-			positionFromTop -=  $iframe[0].contentWindow.pageYOffset - offset.top;
-		}
+		var positionFromLeft = 15,
+			positionFromTop = -15;
 
 		mentionsPopup.setSettings( 'position', {
 			my: 'left+' + positionFromLeft + ' top+' + positionFromTop
@@ -122,23 +100,13 @@ module.exports = Marionette.ItemView.extend( {
 		this.listenTo( this.model, 'change', this.render );
 	},
 
-	onRender: function() {
-		this.$el.attr( {
-			'data-tag-name': this.getOption( 'name' ),
-			'data-tag-id': this.getOption( 'id' ),
-			'data-elementor-settings': JSON.stringify( this.model )
-		} );
-	},
-
-	onClick: function() {
+	onSettingsClick: function() {
 		this.getTagControlsStack().render();
 
 		this.showMentionsPopup();
 	},
 
-	onRemoveClick: function( event ) {
-		event.stopPropagation();
-
+	onRemoveClick: function() {
 		this.destroy();
 
 		this.trigger( 'remove' );

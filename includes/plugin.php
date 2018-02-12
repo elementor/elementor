@@ -156,7 +156,7 @@ class Plugin {
 	/**
 	 * @var Dynamic_Tags_Manager
 	 */
-	public $dynamic_tags_manager;
+	public $dynamic_tags;
 
 	/**
 	 * Settings.
@@ -454,7 +454,7 @@ class Plugin {
 		$this->debug = new Debug();
 		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->maintenance_mode = new Maintenance_Mode();
-		$this->dynamic_tags_manager = new Dynamic_Tags_Manager();
+		$this->dynamic_tags = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
 
 		Api::init();
