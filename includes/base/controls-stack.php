@@ -1060,7 +1060,7 @@ abstract class Controls_Stack {
 				continue;
 			}
 
-			if ( ! empty( $control['dynamic']['active'] ) && ! empty( $all_settings[ 'dynamic_' . $control['name'] ] ) ) {
+			if ( ! empty( $control['dynamic']['active'] ) && isset( $all_settings[ Plugin::$instance->dynamic_tags->get_static_setting_key( $control['name'] ) ] ) ) {
 				$settings[ $control['name'] ] = $control_obj->parse_tags( $settings[ $control['name'] ], $control['dynamic'] );
 			}
 		}
@@ -1683,7 +1683,7 @@ abstract class Controls_Stack {
 
 			$control = array_merge_recursive( $control_obj->get_settings(), $control );
 
-			$is_dynamic_value = isset( $settings[ $control['name'] ] ) && ! empty( $settings[ 'dynamic_' . $control['name'] ] );
+			$is_dynamic_value = isset( $settings[ $control['name'] ] ) && isset( $settings[ Plugin::$instance->dynamic_tags->get_static_setting_key( $control['name'] ) ] );
 
 			$is_value_not_controlled =  $is_dynamic_value && ! empty( $control['dynamic']['valueController'] ) && 'mentions' === $control['dynamic']['valueController'];
 
@@ -1701,7 +1701,9 @@ abstract class Controls_Stack {
 		$settings = $data['settings'];
 
 		foreach ( $this->get_controls() as $control ) {
-			$has_dynamic_property = ! empty( $settings[ 'dynamic_' . $control['name'] ] );
+			$static_setting_key = Plugin::$instance->dynamic_tags->get_static_setting_key( $control['name'] );
+
+			$has_dynamic_property = isset( $settings[ $static_setting_key ] );
 
 			if ( ! $has_dynamic_property ) {
 				continue;
@@ -1728,7 +1730,7 @@ abstract class Controls_Stack {
 			}
 
 			if ( ! $is_correct_dynamic_value ) {
-				unset( $settings[ 'dynamic_' . $control['name'] ] );
+				unset( $settings[ $static_setting_key ] );
 			}
 		}
 

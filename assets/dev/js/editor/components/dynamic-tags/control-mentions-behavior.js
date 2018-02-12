@@ -1,6 +1,8 @@
-var Mentions = require( 'elementor-dynamic-tags/mentions' );
+var MentionView = require( 'elementor-dynamic-tags/mention-view' );
 
 module.exports = Marionette.Behavior.extend( {
+
+	mentionView: null,
 
 	defaults: {
 		addButton: 'inline',
@@ -9,30 +11,11 @@ module.exports = Marionette.Behavior.extend( {
 
 	ui: {
 		mentionsArea: '.elementor-control-mentions-area',
-		switcherDynamic: '.elementor-control-mentions-add',
-		switcherStatic: '.elementor-control-dynamic-switcher-static'
+		insertTag: '.elementor-control-mentions-add'
 	},
 
 	events: {
-		'click @ui.switcherStatic': 'onSwitcherStaticClick'
-	},
-
-	initialize: function() {
-		this.viewUpdateElementModel = this.view.updateElementModel;
-
-		this.viewGetControlValue = this.view.getControlValue;
-
-		this.viewOnAfterExternalChange = this.view.onAfterExternalChange;
-
-		this.view.updateElementModel = this.updateElementModel.bind( this );
-
-		this.view.getControlValue = this.getControlValue.bind( this );
-
-		this.view.setSettingsModel = this.setSettingsModel.bind( this );
-
-		this.view.onAfterExternalChange = this.onViewAfterExternalChange.bind( this );
-
-		this.view.applySavedValue = _.noop;
+		'click @ui.insertTag': 'onInsertTagClick'
 	},
 
 	renderTools: function() {
@@ -52,53 +35,7 @@ module.exports = Marionette.Behavior.extend( {
 			this.ui.controlTitle.after( $dynamicSwitcher );
 		}
 
-		this.ui.switcherDynamic = this.$el.find( this.ui.switcherDynamic.selector );
-
-		if ( this.ui.switcherDynamic.length ) {
-			this.ui.switcherDynamic[0].addEventListener( 'click', this.onSwitcherDynamicClick.bind( this ), true );
-		}
-
-		this.ui.switcherStatic = this.$el.find( this.ui.switcherStatic.selector );
-	},
-
-	initMentions: function() {
-		var value = this.view.getControlValue(),
-			dynamicProperty = this.getOption( 'property' );
-
-		if ( dynamicProperty ) {
-			value = value[ dynamicProperty ];
-		}
-
-		if ( ! this.isTinyMCE() ) {
-			value = _.escape( value )
-				.replace( /&lt;br[ /]*&gt;/g, '<br>' )
-				.replace( /&quot;/g, '"' )
-				.replace( /&amp;/g, '&' );
-		}
-
-		var mentionsSettings = {
-			$element: this.ui.mentionsArea,
-			$addButton: this.ui.switcherDynamic,
-			groups: this.getOption( 'groups' ),
-			freeText: this.getOption( 'freeText' ),
-			mixedContent: this.getOption( 'mixedContent' ),
-			multiple: this.getOption( 'multiple' ),
-			value: value
-		};
-
-		if ( this.isTinyMCE() ) {
-			mentionsSettings.$iframe = jQuery( this.view.editor.iframeElement );
-		}
-
-		if ( this.mentions ) {
-			this.mentions.destroy();
-		}
-
-		this.mentions = new Mentions( mentionsSettings );
-
-		this.mentions.on( 'mention:create mention:change mention:remove', this.onMentionChange.bind( this ) );
-
-		this.mentions.$element.on( 'keydown', this.onMentionsElementKeyDown.bind( this ) );
+		this.ui.insertTag = this.$el.find( this.ui.insertTag.selector );
 	},
 
 	toggleDynamicClass: function() {
@@ -108,79 +45,132 @@ module.exports = Marionette.Behavior.extend( {
 	buildMentions: function() {
 		this.renderTools();
 
-		this.initMentions();
-
 		this.toggleDynamicClass();
+
+		if ( this.isDynamicMode() ) {
+			var tagData = elementor.dynamicTags.getTagTextData( this.getDynamicValue() );
+
+			this.setMentionView( tagData.id, tagData.name, tagData.settings );
+		}
 	},
 
 	isDynamicMode: function() {
-		var dynamicSettingName = 'dynamic_' + this.view.model.get( 'name' );
+		var dynamicSettingName = elementor.dynamicTags.getStaticSettingKey( this.view.model.get( 'name' ) );
 
-		return !! this.view.elementSettingsModel.get( dynamicSettingName );
-	},
-
-	isValueUnderControl: function() {
-		return 'mentions' === this.getOption( 'valueController' );
+		return undefined !== this.view.elementSettingsModel.get( dynamicSettingName );
 	},
 
 	isTinyMCE: function() {
 		return 'wysiwyg' === this.view.model.get( 'type' );
 	},
 
-	setDynamicMode: function( dynamic ) {
-		var dynamicSettingName = 'dynamic_' + this.view.model.get( 'name' );
+	setDynamicMode: function( isDynamic, staticValue ) {
+		var staticSettingKey = elementor.dynamicTags.getStaticSettingKey( this.view.model.get( 'name' ) );
 
-		if ( dynamic ) {
-			this.view.elementSettingsModel.set( dynamicSettingName, true, { silent: true } );
+		if ( isDynamic ) {
+			this.view.elementSettingsModel.set( staticSettingKey, staticValue, { silent: true } );
 		} else {
-			this.view.elementSettingsModel.unset( dynamicSettingName, { silent: true } );
+			this.view.elementSettingsModel.unset( staticSettingKey, { silent: true } );
 		}
+
+		this.toggleDynamicClass();
 	},
 
-	getControlValue: function() {
-		if ( this.isValueUnderControl() && this.isDynamicMode() ) {
-			return this.view.elementSettingsModel.get( this.view.model.get( 'name' ) );
-		} else {
-			return this.viewGetControlValue.apply( this.view, arguments );
-		}
+	createTagsList: function() {
+		var tags = elementor.dynamicTags.getConfig( 'tags' ),
+			groups = this.getOption( 'groups' );
+
+		tags = _.filter( tags, function( tag ) {
+			return _.intersection( tag.groups, groups ).length;
+		} );
+
+		var $tagsList = this.ui.tagsList = jQuery( '<div>', { 'class': 'elementor-tags-list' } );
+
+		tags.forEach( function( tag ) {
+			var $tag = jQuery( '<div>', { 'class': 'elementor-tags-list__item' } );
+
+			$tag.text( tag.title ).attr( 'data-tag-name', tag.name );
+
+			$tagsList.append( $tag );
+		} );
+
+		$tagsList.on( 'click', '.elementor-tags-list__item', this.onTagsListItemClick.bind( this ) );
+
+		elementor.$body.append( $tagsList );
 	},
 
-	updateElementModel: function( value ) {
-		if ( this.isValueUnderControl() && this.isDynamicMode() ) {
-			this.setSettingsModel( value );
-		} else {
-			this.viewUpdateElementModel.apply( this.view, arguments );
+	getTagsList: function() {
+		if ( ! this.ui.tagsList ) {
+			this.createTagsList();
 		}
+
+		return this.ui.tagsList;
 	},
 
-	setSettingsModel: function( value ) {
-		var settingName = this.view.model.get( 'name' ),
-			isDynamic = false;
+	toggleTagsList: function() {
+		var $tagsList = this.getTagsList();
 
-		if ( this.mentions.getMentionsCount() ) {
-			var parsedValue = _.unescape( this.mentions.getValue() ),
-				dynamicProperty = this.getOption( 'property' );
+		if ( $tagsList.is( ':visible' ) ) {
+			$tagsList.hide();
 
-			if ( dynamicProperty ) {
-				value[ dynamicProperty ] = parsedValue;
-			} else {
-				value = parsedValue;
-			}
-
-			isDynamic = true;
-		} else if ( 'string' === typeof value ) {
-			value = _.unescape( value );
+			return;
 		}
 
-		if ( ! this.isValueUnderControl() ) {
-			this.setDynamicMode( isDynamic );
+		$tagsList.show().position( {
+			my: 'right top',
+			at: 'left-5 top+5',
+			of: this.ui.insertTag
+		} );
+	},
 
-			this.toggleDynamicClass();
+	setMentionView: function( id, name, settings ) {
+		if ( this.mentionView ) {
+			this.mentionView.destroy();
 		}
 
-		this.view.elementSettingsModel.set( settingName, value );
+		var mentionView = this.mentionView = new MentionView( {
+			id: id,
+			name: name,
+			settings: settings
+		} );
 
-		this.view.triggerMethod( 'settings:change' );
+		mentionView.render();
+
+		this.ui.mentionsArea.after( mentionView.el );
+
+		this.listenTo( mentionView.model, 'change', this.onMentionViewChange.bind( this ) )
+			.listenTo( mentionView, 'remove', this.onMentionViewRemove.bind( this ) );
+	},
+
+	mentionViewToTagText: function() {
+		var mentionView = this.mentionView;
+
+		return elementor.dynamicTags.tagDataToTagText( mentionView.getOption( 'id' ), mentionView.getOption( 'name' ), mentionView.model );
+	},
+
+	getDynamicValue: function() {
+		var value = this.view.elementSettingsModel.get( this.view.model.get( 'name' ) ),
+			dynamicProperty = this.getOption( 'property' );
+
+		if ( dynamicProperty ) {
+			value = value[ dynamicProperty ];
+		}
+
+		return value;
+	},
+
+	setDynamicValue: function( value ) {
+		var dynamicProperty = this.getOption( 'property' );
+
+		if ( dynamicProperty ) {
+			var values = this.view.getControlValue();
+
+			values[ dynamicProperty ] = value;
+
+			value = values;
+		}
+
+		this.view.setSettingsModel( value );
 	},
 
 	onRender: function() {
@@ -201,55 +191,35 @@ module.exports = Marionette.Behavior.extend( {
 		self.buildMentions();
 	},
 
-	onMentionChange: function() {
-		if ( this.isTinyMCE() ) {
-			this.view.editor.fire( 'change' );
-		} else {
-			this.ui.mentionsArea.trigger( 'input' );
-		}
+	onInsertTagClick: function() {
+		this.toggleTagsList();
 	},
 
-	onMentionsElementKeyDown: function( event ) {
-		if ( 13 !== event.which || event.shiftKey || event.isDefaultPrevented() ) {
-			return;
+	onTagsListItemClick: function( event ) {
+		var $tag = jQuery( event.currentTarget );
+
+		if ( ! this.isDynamicMode() ) {
+			this.setDynamicMode( true, this.view.getControlValue() );
 		}
 
-		event.preventDefault();
+		this.setMentionView( elementor.helpers.getUniqueID(), $tag.data( 'tagName' ), {} );
 
-		document.execCommand( 'insertHTML', false, '<br>' );
+		this.setDynamicValue( this.mentionViewToTagText() );
+
+		this.toggleTagsList();
 	},
 
-	onSwitcherDynamicClick: function() {
-		if ( this.isValueUnderControl() && ! this.isDynamicMode() ) {
-			this.setDynamicMode( true );
-
-			this.setSettingsModel( '' );
-
-			this.mentions.$element.empty();
-
-			this.toggleDynamicClass();
-		}
+	onMentionViewChange: function() {
+		this.setDynamicValue( this.mentionViewToTagText() );
 	},
 
-	onSwitcherStaticClick: function() {
-		this.mentions.$element.empty();
+	onMentionViewRemove: function() {
+		var staticValue = this.view.elementSettingsModel.get( elementor.dynamicTags.getStaticSettingKey( this.view.model.get( 'name' ) ) );
 
 		this.setDynamicMode( false );
 
-		this.setSettingsModel( this.view.model.get( 'default_value' ) );
+		this.view.setSettingsModel( staticValue );
 
 		this.view.render();
-	},
-
-	onViewAfterExternalChange: function() {
-		if ( this.isTinyMCE() ) {
-			this.mentions.setValue( this.getControlValue() );
-		} else {
-			this.viewOnAfterExternalChange.apply( this.view, arguments );
-		}
-	},
-
-	onDestroy: function() {
-		this.mentions.destroy();
 	}
 } );

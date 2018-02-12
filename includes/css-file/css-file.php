@@ -774,8 +774,8 @@ abstract class CSS_File {
 	}
 
 	private function add_dynamic_control_style_rules( array $control, $value ) {
-		Plugin::$instance->dynamic_tags_manager->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
-			$tag = Plugin::$instance->dynamic_tags_manager->create_tag( $id, $name, $settings );
+		Plugin::$instance->dynamic_tags->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
+			$tag = Plugin::$instance->dynamic_tags->create_tag( $id, $name, $settings );
 
 			if ( ! $tag instanceof Tag ) {
 				return;

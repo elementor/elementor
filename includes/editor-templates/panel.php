@@ -260,6 +260,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </script>
 
+<script type="text/template" id="tmpl-elementor-control-dynamic-cover">
+	<div class="elementor-dynamic-cover__title">{{{ title + ' ' + content }}}</div>
+	<div class="elementor-dynamic-cover__tools">
+		<div class="elementor-dynamic-cover__tool elementor-dynamic-cover__tool--settings">
+			<i class="eicon-settings"></i>
+		</div>
+		<div class="elementor-dynamic-cover__tool elementor-dynamic-cover__tool--remove">
+			<i class="eicon-close"></i>
+		</div>
+	</div>
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-page-settings">
 	<div class="elementor-panel-navigation">
 		<# _.each( elementor.config.page_settings.tabs, function( tabTitle, tabSlug ) { #>
