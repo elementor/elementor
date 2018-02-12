@@ -103,6 +103,13 @@ class Documents_Manager {
 	}
 
 	/**
+	 * @return Document[]
+	 */
+	public function get_document_types() {
+		return $this->types;
+	}
+
+	/**
 	 * @param string $type
 	 * @param array $post_data
 	 * @param array $meta_data
