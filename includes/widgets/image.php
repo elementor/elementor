@@ -319,23 +319,6 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
-			'caption_space',
-			[
-				'label' => __( 'Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 100,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .widget-image-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
-
 		$this->add_control(
 			'text_color',
 			[
@@ -358,6 +341,23 @@ class Widget_Image extends Widget_Base {
 				'name' => 'caption_typography',
 				'selector' => '{{WRAPPER}} .widget-image-caption',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+			]
+		);
+
+		$this->add_responsive_control(
+			'caption_space',
+			[
+				'label' => __( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .widget-image-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
