@@ -714,7 +714,7 @@ App = Marionette.Application.extend( {
 
 		if ( hidePanel ) {
 			// Handle panel resize
-			this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+			this.$previewWrapper.css( this.config.is_rtl ? 'right' : 'left', '' );
 
 			this.panel.$el.css( 'width', '' );
 		}
