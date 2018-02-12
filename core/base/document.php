@@ -35,7 +35,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public static function get_property( $key ) {
-		return self::_get_items( self::get_properties(), $key );
+		return self::_get_items( static::get_properties(), $key );
 	}
 
 	public static function get_class_full_name() {
