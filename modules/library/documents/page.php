@@ -7,6 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Page extends Library_Document {
 
+	public static function get_properties() {
+		$properties = parent::get_properties();
+
+		$properties['group'] = 'pages';
+		return $properties;
+	}
+
 	public function get_name() {
 		return 'page';
 	}
