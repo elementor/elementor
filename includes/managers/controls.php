@@ -97,7 +97,7 @@ class Controls_Manager {
 	const ORDER = 'order';
 
 	/**
-	 * @deprecated 1.5.4 In favor of Control_Switcher.
+	 * @deprecated 1.5.4 Use `SWITCHER` const instead.
 	 */
 	const CHECKBOX = 'checkbox';
 
@@ -522,7 +522,7 @@ class Controls_Manager {
 	 */
 	public function add_control_to_stack( Controls_Stack $element, $control_id, $control_data, $options = [] ) {
 		if ( ! is_array( $options ) ) {
-			_deprecated_argument( __FUNCTION__, '1.7.0', 'Use `[ \'overwrite\' => ' . var_export( $options, true ) . ' ]` instead.' );
+			_deprecated_argument( __FUNCTION__, '1.7.0', sprintf( 'Use `[ \'overwrite\' => %s ]` instead.', var_export( $options, true ) ) );
 
 			$options = [
 				'overwrite' => $options,
@@ -548,7 +548,7 @@ class Controls_Manager {
 		$control_type_instance = $this->get_control( $control_data['type'] );
 
 		if ( ! $control_type_instance ) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, sprintf( 'Control type `%s` not found.', $control_data['type'] ), '1.0.0' );
+			_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), sprintf( 'Control type "%s" not found.', $control_data['type'] ), '1.0.0' );
 			return false;
 		}
 
@@ -565,7 +565,7 @@ class Controls_Manager {
 		$stack_id = $element->get_unique_name();
 
 		if ( ! $options['overwrite'] && isset( $this->stacks[ $stack_id ]['controls'][ $control_id ] ) ) {
-			_doing_it_wrong( __CLASS__ . '::' . __FUNCTION__, 'Cannot redeclare control with same name. - ' . $control_id, '1.0.0' );
+			_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), sprintf( 'Cannot redeclare control with same name "%s".', $control_id ), '1.0.0' );
 
 			return false;
 		}

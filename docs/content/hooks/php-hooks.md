@@ -24,12 +24,12 @@
     + [`elementor/editor/before_enqueue_scripts`](#elementoreditorbefore_enqueue_scripts)
     + [`elementor/element/before_section_start`](#elementorelementbefore_section_start)
     + [`elementor/element/after_section_end`](#elementorelementafter_section_end)
-    + [`elementor/element/{$element_name}/{$section_id}/before_section_start`](#elementorelementelementnamesection_idbefore_section_start)
-    + [`elementor/element/{element_name}/{section_id}/after_section_end`](#elementorelementelementnamesection_idafter_section_end)
+    + [`elementor/element/{$element_name}/{$section_id}/before_section_start`](#elementorelementelement_namesection_idbefore_section_start)
+    + [`elementor/element/{element_name}/{section_id}/after_section_end`](#elementorelementelement_namesection_idafter_section_end)
     + [`elementor/element/after_section_start`](#elementorelementafter_section_start)
     + [`elementor/element/before_section_end`](#elementorelementbefore_section_end)
-    + [`elementor/element/{$element_name}/{$section_id}/after_section_start`](#elementorelementelementnamesection_idafter_section_start)
-    + [`elementor/element/{element_name}/{section_id}/before_section_end`](#elementorelementelementnamesection_idbefore_section_end)
+    + [`elementor/element/{$element_name}/{$section_id}/after_section_start`](#elementorelementelement_namesection_idafter_section_start)
+    + [`elementor/element/{element_name}/{section_id}/before_section_end`](#elementorelementelement_namesection_idbefore_section_end)
   * [Preview Actions](#preview-actions)
     + [`elementor/preview/enqueue_styles`](#elementorpreviewenqueue_styles)
 
@@ -244,8 +244,8 @@ add_action(	'elementor/element/parse_css', function( $post_css, $element ) {
 }, 10, 2 );
 ```
 
-### `elementor/frontend/{element|widget}/before_render`
-### `elementor/frontend/{element|widget}/after_render`
+### `elementor/frontend/{section|element|widget}/before_render`
+### `elementor/frontend/{section|element|widget}/after_render`
 Before/after the element is printed
 
 #### Arguments

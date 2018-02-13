@@ -14,27 +14,33 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'gallery',
- *    	[
- *    		'label' => __( 'Add Images', 'plugin-domain' ),
- *    		'type' => Controls_Manager::GALLERY,
- *    		'default' => [],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'gallery',
+ * 	[
+ * 		'label' => __( 'Add Images', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::GALLERY,
+ * 		'default' => [],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $images = $this->get_settings( 'gallery' );
- *    foreach ( $images as $image ) {
- *    	echo '<img src="' . $image['url'] . '">';
- *    }
+ * ```php
+ * $settings = $this->get_settings();
+ * foreach ( $settings['gallery'] as $image ) {
+ * 	echo '<img src="' . $image['url'] . '">';
+ * }
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <# _.each( settings.gallery, function( image ) { #>
- *    	<img src="{{ image.url }}">
- *    <# }); #>
+ * ```js
+ * <# _.each( settings.gallery, function( image ) { #>
+ * 	<img src="{{ image.url }}">
+ * <# }); #>
+ * ```
  *
  * @since 1.0.0
  *

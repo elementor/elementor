@@ -16,22 +16,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'item_description',
- *    	[
- *    		'label' => __( 'Description', 'plugin-domain' ),
- *    		'type' => Controls_Manager::WYSIWYG,
- *    		'default' => __( 'Default description', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'item_description',
+ * 	[
+ * 		'label' => __( 'Description', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::WYSIWYG,
+ * 		'default' => __( 'Default description', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<div class="description">' . $this->get_settings( 'item_description' ) . '</div>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<div class="description">' . $settings['item_description'] . '</div>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div class="description">{{{ settings.item_description }}}</div>
+ * ```js
+ * <div class="description">{{{ settings.item_description }}}</div>
+ * ```
  *
  * @since 1.0.0
  *

@@ -101,7 +101,7 @@ class Widget_Google_Maps extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'height',
 			[
 				'label' => __( 'Height', 'elementor' ),

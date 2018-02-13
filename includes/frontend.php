@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,28 +35,16 @@ class Frontend {
 	private $post_id;
 
 	/**
-	 * Google fonts.
+	 * Fonts to enqueue
 	 *
-	 * Holds the list of google fonts that are being used in the current page.
+	 * Holds the list of fonts that are being used in the current page.
 	 *
-	 * @since 1.0.0
+	 * @since 1.9.4
 	 * @access private
 	 *
-	 * @var array Google fonts. Default is an empty array.
+	 * @var array Used fonts. Default is an empty array.
 	 */
-	private $google_fonts = [];
-
-	/**
-	 * Google early access fonts.
-	 *
-	 * Holds the list of google early access fonts that are being used in the current page.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 *
-	 * @var array Registered fonts. Default is an empty array.
-	 */
-	private $google_early_access_fonts = [];
+	private $fonts_to_enqueue = [];
 
 	/**
 	 * Registered fonts.
@@ -118,6 +107,12 @@ class Frontend {
 	 */
 	private $content_removed_filters = [];
 
+
+	/**
+	 * @var Document[]
+	 */
+	private $admin_bar_edit_documents = [];
+
 	/**
 	 * Init.
 	 *
@@ -147,7 +142,7 @@ class Frontend {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		}
 
-		add_action( 'wp_head', [ $this, 'print_google_fonts' ] );
+		add_action( 'wp_head', [ $this, 'print_fonts_links' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar.
@@ -544,7 +539,44 @@ class Frontend {
 		$this->enqueue_styles();
 		$this->enqueue_scripts();
 
-		$this->print_google_fonts();
+		$this->print_fonts_links();
+	}
+
+	/**
+	 * Print fonts links.
+	 *
+	 * Enqueue all the frontend fonts by url.
+	 *
+	 * Fired by `wp_head` action.
+	 *
+	 * @since 1.9.4
+	 * @access public
+	 */
+	public function print_fonts_links() {
+		$google_fonts = [
+			'google' => [],
+			'early' => [],
+		];
+
+		foreach ( $this->fonts_to_enqueue as $key => $font ) {
+			$font_type = Fonts::get_font_type( $font );
+
+			switch ( $font_type ) {
+				case Fonts::GOOGLE:
+					$google_fonts['google'][] = $font;
+					break;
+
+				case Fonts::EARLYACCESS:
+					$google_fonts['early'][] = $font;
+					break;
+
+				default:
+					do_action( "elementor/fonts/print_font_links/{$font_type}", $font );
+			}
+		}
+		$this->fonts_to_enqueue = [];
+
+		$this->print_google_fonts( $google_fonts );
 	}
 
 	/**
@@ -555,9 +587,9 @@ class Frontend {
 	 * Fired by `wp_head` action.
 	 *
 	 * @since 1.0.0
-	 * @access public
+	 * @access private
 	 */
-	public function print_google_fonts() {
+	private function print_google_fonts( $google_fonts = [] ) {
 		$print_google_fonts = true;
 
 		/**
@@ -576,12 +608,12 @@ class Frontend {
 		}
 
 		// Print used fonts
-		if ( ! empty( $this->google_fonts ) ) {
-			foreach ( $this->google_fonts as &$font ) {
+		if ( ! empty( $google_fonts['google'] ) ) {
+			foreach ( $google_fonts['google'] as &$font ) {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
 
-			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( rawurlencode( '|' ), $this->google_fonts ) );
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( rawurlencode( '|' ), $google_fonts['google'] ) );
 
 			$subsets = [
 				'ru_RU' => 'cyrillic',
@@ -601,15 +633,14 @@ class Frontend {
 			}
 
 			echo '<link rel="stylesheet" type="text/css" href="' . $fonts_url . '">';
-			$this->google_fonts = [];
 		}
 
-		if ( ! empty( $this->google_early_access_fonts ) ) {
-			foreach ( $this->google_early_access_fonts as $current_font ) {
+		if ( ! empty( $google_fonts['early'] ) ) {
+			foreach ( $google_fonts['early'] as $current_font ) {
 				printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
 			}
-			$this->google_early_access_fonts = [];
 		}
+
 	}
 
 	/**
@@ -621,28 +652,12 @@ class Frontend {
 	 * @access public
 	 */
 	public function enqueue_font( $font ) {
-		$font_type = Fonts::get_font_type( $font );
-		$cache_id = $font_type . $font;
-
-		if ( in_array( $cache_id, $this->registered_fonts ) ) {
+		if ( in_array( $font, $this->registered_fonts ) ) {
 			return;
 		}
 
-		switch ( $font_type ) {
-			case Fonts::GOOGLE:
-				if ( ! in_array( $font, $this->google_fonts ) ) {
-					$this->google_fonts[] = $font;
-				}
-				break;
-
-			case Fonts::EARLYACCESS:
-				if ( ! in_array( $font, $this->google_early_access_fonts ) ) {
-					$this->google_early_access_fonts[] = $font;
-				}
-				break;
-		}
-
-		$this->registered_fonts[] = $cache_id;
+		$this->fonts_to_enqueue[] = $font;
+		$this->registered_fonts[] = $font;
 	}
 
 	/**
@@ -720,15 +735,16 @@ class Frontend {
 			return '';
 		}
 
-		if ( is_preview() ) {
-			$preview_post = Utils::get_post_autosave( $post_id, get_current_user_id() );
-			$status = DB::STATUS_DRAFT;
-		} else {
-			$preview_post = false;
-			$status = DB::STATUS_PUBLISH;
+		// Change the current post, so widgets can use `documents->get_current` and other post data
+		Plugin::$instance->documents->switch_to_document( $post_id );
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+		Plugin::$instance->documents->restore_document();
+
+		if ( $document->is_editable_by_current_user() ) {
+			$this->admin_bar_edit_documents[  $document->get_main_id() ] = $document;
 		}
 
-		$data = Plugin::$instance->db->get_plain_editor( $post_id, $status );
+		$data = $document->get_elements_data();
 
 		/**
 		 * Frontend builder content data.
@@ -747,8 +763,8 @@ class Frontend {
 		}
 
 		if ( ! $this->_is_excerpt ) {
-			if ( $preview_post ) {
-				$css_file = new Post_Preview_CSS( $preview_post->ID );
+			if ( $document->is_autosave() ) {
+				$css_file = new Post_Preview_CSS( $document->get_post()->ID );
 			} else {
 				$css_file = new Post_CSS_File( $post_id );
 			}
@@ -764,11 +780,11 @@ class Frontend {
 		}
 
 		if ( ! empty( $css_file ) && $with_css ) {
-			echo '<style>' . $css_file->get_css() . '</style>';
+			$css_file->print_css();
 		}
 
 		?>
-		<div class="elementor elementor-<?php echo $post_id; ?>">
+		<div class="elementor elementor-<?php echo esc_attr( $post_id ); ?>">
 			<div class="elementor-inner">
 				<div class="elementor-section-wrap">
 					<?php $this->_print_elements( $data ); ?>
@@ -810,19 +826,31 @@ class Frontend {
 	 * @param \WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance, passed by reference.
 	 */
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
-		$post_id = get_the_ID();
-
-		$is_builder_mode = is_singular() && User::is_current_user_can_edit( $post_id ) && Plugin::$instance->db->is_built_with_elementor( $post_id );
-
-		if ( ! $is_builder_mode ) {
+		if ( empty( $this->admin_bar_edit_documents ) ) {
 			return;
 		}
 
-		$wp_admin_bar->add_node( [
+		$queried_object_id = get_queried_object_id();
+
+		$menu_args = [
 			'id' => 'elementor_edit_page',
 			'title' => __( 'Edit with Elementor', 'elementor' ),
-			'href' => Utils::get_edit_link( $post_id ),
-		] );
+		];
+
+		if ( is_singular() && isset( $this->admin_bar_edit_documents[ $queried_object_id ] ) ) {
+			$menu_args['href'] = $this->admin_bar_edit_documents[ $queried_object_id ]->get_edit_url();
+			unset( $this->admin_bar_edit_documents[ $queried_object_id ] );
+		}
+
+		$wp_admin_bar->add_node( $menu_args );
+
+		foreach ( $this->admin_bar_edit_documents as $document ) {
+			$wp_admin_bar->add_menu( [
+				'parent' => 'elementor_edit_page',
+				'title' => sprintf( '<span class="elementor-edit-link-title">%s</span><span class="elementor-edit-link-type">%s</span>', $document->get_post()->post_title, $document::get_title() ),
+				'href' => $document->get_edit_url(),
+			] );
+		}
 	}
 
 	/**
@@ -858,12 +886,7 @@ class Frontend {
 		$is_edit_mode = $editor->is_edit_mode();
 		$editor->set_edit_mode( false );
 
-		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		Plugin::$instance->db->switch_to_post( $post_id );
-
 		$content = $this->get_builder_content( $post_id, $is_edit_mode );
-
-		Plugin::$instance->db->restore_current_post();
 
 		// Restore edit mode state
 		Plugin::$instance->editor->set_edit_mode( $is_edit_mode );

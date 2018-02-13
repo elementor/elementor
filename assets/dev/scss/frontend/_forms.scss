@@ -12,6 +12,7 @@
 
 			> input, > textarea, > .elementor-select-wrapper, .elementor-field-subgroup {
 				flex-basis: 100%;
+				max-width: 100%; // Fix for Firefox browser
 			}
 		}
 	}
