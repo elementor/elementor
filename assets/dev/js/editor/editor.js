@@ -94,7 +94,7 @@ App = Marionette.Application.extend( {
 		},
 		tagsList: {
 			element: '.elementor-tags-list',
-			ignore: '.elementor-control-mentions-add'
+			ignore: '.elementor-control-dynamic-switcher'
 		}
 	},
 
