@@ -26,17 +26,65 @@ class Post extends Document {
 	protected function _register_controls() {
 		parent::_register_controls();
 
+		self::register_hide_title_control( $this );
+
+		self::register_post_fields_control( $this );
+
+		self::register_canvas_control( $this );
+
+		self::register_style_controls( $this );
+	}
+
+	/**
+	 * @param Document $document
+	 */
+	public static function register_canvas_control( $document ) {
+
+		$document->start_injection( [
+			'of' => 'post_status',
+		] );
+
+		if ( Utils::is_cpt_custom_templates_supported() ) {
+			require_once ABSPATH . '/wp-admin/includes/template.php';
+
+			$options = [
+				'default' => __( 'Default', 'elementor' ),
+			];
+
+			$options += array_flip( get_page_templates( null, $document->get_main_post()->post_type ) );
+
+			$document->add_control(
+				'template',
+				[
+					'label' => __( 'Template', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'default',
+					'options' => $options,
+					'export' => function ( $value ) {
+						return Manager::TEMPLATE_CANVAS === $value;
+					},
+				]
+			);
+		}
+
+		$document->end_injection();
+	}
+
+	/**
+	 * @param Document $document
+	 */
+	public static function register_hide_title_control( $document ) {
 		$page_title_selector = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_page_title_selector' );
 
 		if ( ! $page_title_selector ) {
 			$page_title_selector = 'h1.entry-title';
 		}
 
-		$this->start_injection( [
+		$document->start_injection( [
 			'of' => 'post_status',
 		] );
 
-		$this->add_control(
+		$document->add_control(
 			'hide_title',
 			[
 				'label' => __( 'Hide Title', 'elementor' ),
@@ -52,44 +100,14 @@ class Post extends Document {
 			]
 		);
 
-		if ( post_type_supports( $this->post->post_type, 'excerpt' ) ) {
-			$this->add_control(
-				'post_excerpt',
-				[
-					'label' => __( 'Excerpt', 'elementor' ),
-					'type' => Controls_Manager::TEXTAREA,
-					'default' => $this->post->post_excerpt,
-					'label_block' => true,
-				]
-			);
-		}
+		$document->end_injection();
+	}
 
-		if ( Utils::is_cpt_custom_templates_supported() ) {
-			require_once ABSPATH . '/wp-admin/includes/template.php';
-
-			$options = [
-				'default' => __( 'Default', 'elementor' ),
-			];
-
-			$options += array_flip( get_page_templates( null, $this->get_main_post()->post_type ) );
-
-			$this->add_control(
-				'template',
-				[
-					'label' => __( 'Template', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => 'default',
-					'options' => $options,
-					'export' => function( $value ) {
-						return Manager::TEMPLATE_CANVAS === $value;
-					},
-				]
-			);
-		}
-
-		$this->end_injection();
-
-		$this->start_controls_section(
+	/**
+	 * @param Document $document
+	 */
+	public static function register_style_controls( $document ) {
+		$document->start_controls_section(
 			'section_page_style',
 			[
 				'label' => __( 'Page Style', 'elementor' ),
@@ -97,10 +115,10 @@ class Post extends Document {
 			]
 		);
 
-		$this->add_group_control(
+		$document->add_group_control(
 			Group_Control_Background::get_type(),
 			[
-				'name' => 'background',
+				'name'  => 'background',
 				'fields_options' => [
 					'__all' => [
 						'export' => '__return_true',
@@ -109,7 +127,7 @@ class Post extends Document {
 			]
 		);
 
-		$this->add_responsive_control(
+		$document->add_responsive_control(
 			'padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),
@@ -122,7 +140,43 @@ class Post extends Document {
 			]
 		);
 
-		$this->end_controls_section();
+		$document->end_controls_section();
+	}
+
+	/**
+	 * @param Document $document
+	 */
+	public static function register_post_fields_control( $document ) {
+		$document->start_injection( [
+			'of' => 'post_status',
+		] );
+
+		if ( post_type_supports( $document->post->post_type, 'excerpt' ) ) {
+			$document->add_control(
+				'post_excerpt',
+				[
+					'label' => __( 'Excerpt', 'elementor' ),
+					'type' => Controls_Manager::TEXTAREA,
+					'default' => $document->post->post_excerpt,
+					'label_block' => true,
+				]
+			);
+		}
+
+		if ( current_theme_supports( 'post-thumbnails' ) ) {
+			$document->add_control(
+				'post_featured_image',
+				[
+					'label' => __( 'Featured Image', 'elementor' ),
+					'type' => Controls_Manager::MEDIA,
+					'default' => [
+						'url' => get_the_post_thumbnail_url( $document->post->ID ),
+					],
+				]
+			);
+		}
+
+		$document->end_injection();
 	}
 
 	public function __construct( array $data = [] ) {

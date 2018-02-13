@@ -11,6 +11,7 @@ class Section extends Library_Document {
 		$properties = parent::get_properties();
 
 		$properties['library_view'] = 'list';
+		$properties['group'] = 'blocks';
 
 		return $properties;
 	}

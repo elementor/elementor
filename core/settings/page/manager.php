@@ -129,7 +129,7 @@ class Manager extends BaseManager {
 		if ( is_singular() ) {
 			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
 
-			if ( self::TEMPLATE_CANVAS === $document->get_settings( 'template' ) ) {
+			if ( self::TEMPLATE_CANVAS === $document->get_meta( '_wp_page_template' ) ) {
 				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
 			}
 		}
@@ -239,6 +239,12 @@ class Manager extends BaseManager {
 			if ( $autosave ) {
 				wp_delete_post_revision( $autosave->ID );
 			}
+		}
+
+		if ( empty( $data['post_featured_image']['id'] ) ) {
+			delete_post_thumbnail( $post->ID );
+		} else {
+			set_post_thumbnail( $post->ID, $data['post_featured_image']['id'] );
 		}
 
 		if ( Utils::is_cpt_custom_templates_supported() ) {
