@@ -262,6 +262,8 @@ class Documents_Manager {
 			'switched_id' => $post_id,
 			'original_id' => $this->current_doc_id, // Note, it can be false if the global isn't set
 		];
+
+		$this->current_doc_id = $post_id;
 	}
 
 	/**
