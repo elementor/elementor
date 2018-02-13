@@ -209,7 +209,7 @@ abstract class Controls_Stack {
 	 *
 	 * @return mixed The whole haystack or the needle from the haystack when requested.
 	 */
-	private static function _get_items( array $haystack, $needle = null ) {
+	protected static function _get_items( array $haystack, $needle = null ) {
 		if ( $needle ) {
 			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
 		}
@@ -354,7 +354,7 @@ abstract class Controls_Stack {
 
 			if ( null !== $target_section_args ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
-					_doing_it_wrong( get_called_class() . '::' . __FUNCTION__, 'Cannot redeclare control with `tab` or `section` args inside section. - ' . esc_html( $id ), '1.0.0' );
+					_doing_it_wrong( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', esc_html( $id ) ), '1.0.0' );
 				}
 
 				$args = array_replace_recursive( $target_section_args, $args );
@@ -502,7 +502,7 @@ abstract class Controls_Stack {
 			'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ] ) ||
 			'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ] )
 		) {
-			_doing_it_wrong( get_called_class() . '::' . __FUNCTION__, 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' );
+			_doing_it_wrong( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' );
 
 			return false;
 		}

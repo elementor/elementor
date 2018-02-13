@@ -15,22 +15,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'item_description',
- *    	[
- *    		'label' => __( 'Description', 'plugin-domain' ),
- *    		'type' => Controls_Manager::TEXTAREA,
- *    		'default' => __( 'Default description', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'item_description',
+ * 	[
+ * 		'label' => __( 'Description', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::TEXTAREA,
+ * 		'default' => __( 'Default description', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<p>' . $this->get_settings( 'item_description' ) . '</p>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<p>' .$settings['item_description'] . '</p>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <p>{{{ settings.item_description }}}</p>
+ * ```js
+ * <p>{{{ settings.item_description }}}</p>
+ * ```
  *
  * @since 1.0.0
  *

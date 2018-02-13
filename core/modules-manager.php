@@ -57,6 +57,7 @@ class Modules_Manager {
 	public function get_modules_names() {
 		return [
 			'history',
+			'library',
 			'dynamic-tags',
 		];
 	}

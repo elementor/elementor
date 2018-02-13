@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Documents_Manager;
 use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
 use Elementor\Core\Settings\Manager as Settings_Manager;
@@ -83,6 +84,11 @@ class Plugin {
 	 * @var Debug
 	 */
 	public $debug;
+
+	/**
+	 * @var Documents_Manager
+	 */
+	public $documents;
 
 	/**
 	 * Schemes manager.
@@ -332,12 +338,14 @@ class Plugin {
 	 * Retrieve the current version of Elementor.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 1.2.0 Use `ELEMENTOR_VERSION` const instead.
 	 * @access public
-	 * @deprecated
 	 *
 	 * @return string Elementor version.
 	 */
 	public function get_version() {
+		_deprecated_function( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), '1.2.0', 'ELEMENTOR_VERSION' );
+
 		return ELEMENTOR_VERSION;
 	}
 
@@ -442,6 +450,7 @@ class Plugin {
 
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
+		$this->documents = new Documents_Manager();
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();

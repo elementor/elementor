@@ -16,33 +16,39 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'show_elements',
- *    	[
- *    		'label' => __( 'Show Elements', 'plugin-domain' ),
- *    		'type' => Controls_Manager::SELECT2,
- *    		'default' => 'solid',
- *    		'options' => [
- *    			'title' => __( 'Title', 'plugin-domain' ),
- *    			'description' => __( 'Description', 'plugin-domain' ),
- *    			'button' => __( 'Button', 'plugin-domain' ),
- *    		],
- *    		'multiple' => true,
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'show_elements',
+ * 	[
+ * 		'label' => __( 'Show Elements', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::SELECT2,
+ * 		'default' => 'solid',
+ * 		'options' => [
+ * 			'title' => __( 'Title', 'plugin-domain' ),
+ * 			'description' => __( 'Description', 'plugin-domain' ),
+ * 			'button' => __( 'Button', 'plugin-domain' ),
+ * 		],
+ * 		'multiple' => true,
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $show_elements = $this->get_settings( 'show_elements' );
- *    foreach ( $show_elements as $element ) {
- *    	echo '<div>' . $element . '</div>';
- *    }
+ * ```php
+ * $settings = $this->get_settings();
+ * foreach ( $settings['show_elements'] as $element ) {
+ * 	echo '<div>' . $element . '</div>';
+ * }
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <# _.each( settings.show_elements, function( element ) { #>
- *    	<div>{{{ element }}}</div>
- *    <# } #>
+ * ```js
+ * <# _.each( settings.show_elements, function( element ) { #>
+ * 	<div>{{{ element }}}</div>
+ * <# } #>
+ * ```
  *
  * @since 1.0.0
  *

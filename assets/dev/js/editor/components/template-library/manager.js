@@ -229,7 +229,10 @@ TemplateLibraryManager = function() {
 		if ( ! modal ) {
 			modal = elementor.dialogsManager.createWidget( 'lightbox', {
 				id: 'elementor-template-library-modal',
-				closeButton: false
+				closeButton: false,
+				hide: {
+					onOutsideClick: false
+				}
 			} );
 		}
 

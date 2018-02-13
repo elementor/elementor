@@ -225,7 +225,7 @@ class Widgets_Manager {
 	 *
 	 * @param string $widget_name Optional. Widget name. Default is null.
 	 *
-	 * @return null|Widget_Base|Widget_Base[] Registered widget types.
+	 * @return Widget_Base|Widget_Base[]|null Registered widget types.
 	*/
 	public function get_widget_types( $widget_name = null ) {
 		if ( is_null( $this->_widget_types ) ) {
@@ -304,9 +304,9 @@ class Widgets_Manager {
 
 		$editor = Plugin::$instance->editor;
 		$is_edit_mode = $editor->is_edit_mode();
+		$editor->set_edit_mode( true );
 
 		Plugin::$instance->db->switch_to_post( $request['post_id'] );
-		$editor->set_edit_mode( true );
 
 		$data = $request['data'];
 
@@ -507,10 +507,10 @@ class Widgets_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_handler The ajax handler.
+	 * @param Ajax_Manager $ajax_manager
 	 */
-	public function register_ajax_actions( $ajax_handler ) {
-		$ajax_handler->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
-		$ajax_handler->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
+	public function register_ajax_actions( $ajax_manager ) {
+		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
+		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 	}
 }

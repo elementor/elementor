@@ -50,6 +50,8 @@ helpers = {
 		}
 
 		this._enqueuedFonts.push( font );
+
+		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
 	},
 
 	getElementChildType: function( elementType, container ) {

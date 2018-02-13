@@ -14,37 +14,44 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'align',
- *    	[
- *    		'label' => __( 'Alignment', 'plugin-domain' ),
- *    		'type' => Controls_Manager::CHOOSE,
- *    		'default' => 'center',
- *    		'options' => [
- *    			'left' => [
- *    				'title' => __( 'Left', 'plugin-domain' ),
- *    				'icon' => 'fa fa-align-left',
- *    			],
- *    			'center' => [
- *    				'title' => __( 'Center', 'plugin-domain' ),
- *    				'icon' => 'fa fa-align-center',
- *    			],
- *    			'right' => [
- *    				'title' => __( 'Right', 'plugin-domain' ),
- *    				'icon' => 'fa fa-align-right',
- *    			],
- *    		],
- *    		'toggle' => true,
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'text_align',
+ * 	[
+ * 		'label' => __( 'Alignment', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::CHOOSE,
+ * 		'default' => 'center',
+ * 		'options' => [
+ * 			'left' => [
+ * 				'title' => __( 'Left', 'plugin-domain' ),
+ * 				'icon' => 'fa fa-align-left',
+ * 			],
+ * 			'center' => [
+ * 				'title' => __( 'Center', 'plugin-domain' ),
+ * 				'icon' => 'fa fa-align-center',
+ * 			],
+ * 			'right' => [
+ * 				'title' => __( 'Right', 'plugin-domain' ),
+ * 				'icon' => 'fa fa-align-right',
+ * 			],
+ * 		],
+ * 		'toggle' => true,
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<div style="text-align:' . $this->get_settings( 'align' ) . '"> ... </div>'
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<div style="text-align: ' . $settings['text_align'] . '"> ... </div>'
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div style="text-align:{{ settings.align }}"> ... </div>
+ * ```js
+ * <div style="text-align: {{ settings.text_align }}"> ... </div>
+ * ```
  *
  * @since 1.0.0
  *

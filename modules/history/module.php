@@ -9,8 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Elementor history module class.
  *
- * Elementor history module handler class is responsible for initializing Elementor in
- * WordPress admin.
+ * Elementor history module handler class is responsible for registering and
+ * managing Elementor history modules.
  */
 class Module extends BaseModule {
 

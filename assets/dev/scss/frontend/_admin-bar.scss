@@ -1,0 +1,24 @@
+#wp-admin-bar-elementor_edit_page {
+
+	.ab-submenu {
+		.ab-item {
+			display: flex;
+			width: 200px;
+		}
+	}
+
+	.elementor-edit-link-title {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		width: 100%;
+	}
+
+	.elementor-edit-link-type {
+		background: $gray-dark;
+		font-size: 11px;
+		line-height: 9px;
+		margin-top: 6px;
+		padding: 4px 8px;
+		border-radius: 3px;
+	}
+}
