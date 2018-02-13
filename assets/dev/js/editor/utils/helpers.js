@@ -48,6 +48,7 @@ helpers = {
 		if ( ! _.isEmpty( fontUrl ) ) {
 			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + fontUrl + '" rel="stylesheet" type="text/css">' );
 		}
+
 		this._enqueuedFonts.push( font );
 
 		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
@@ -132,7 +133,7 @@ helpers = {
 				return true;
 			}
 
-			if ( conditionSubKey ) {
+			if ( conditionSubKey && Array.isArray( controlValue ) ) {
 				controlValue = controlValue[ conditionSubKey ];
 			}
 

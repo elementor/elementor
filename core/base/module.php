@@ -53,6 +53,55 @@ abstract class Module {
 	protected static $_instances = [];
 
 	/**
+	 * Get module name.
+	 *
+	 * Retrieve the module name.
+	 *
+	 * @since 1.7.0
+	 * @access public
+	 * @abstract
+	 *
+	 * @return string Module name.
+	 */
+	abstract public function get_name();
+
+	/**
+	 * Instance.
+	 *
+	 * Ensures only one instance of the module class is loaded or can be loaded.
+	 *
+	 * @since 1.7.0
+	 * @access public
+	 * @static
+	 *
+	 * @return Module An instance of the class.
+	 */
+	public static function instance() {
+		if ( empty( static::$_instances[ static::class_name() ] ) ) {
+			static::$_instances[ static::class_name() ] = new static();
+		}
+
+		return static::$_instances[ static::class_name() ];
+	}
+
+	public static function is_active() {
+		return true;
+	}
+
+	/**
+	 * Class name.
+	 *
+	 * Retrieve the name of the class.
+	 *
+	 * @since 1.7.0
+	 * @access public
+	 * @static
+	 */
+	public static function class_name() {
+		return get_called_class();
+	}
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -81,61 +130,12 @@ abstract class Module {
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
 	}
 
-	/**
-	 * Class name.
-	 *
-	 * Retrieve the name of the class.
-	 *
-	 * @since 1.7.0
-	 * @access public
-	 * @static
-	 */
-	public static function class_name() {
-		return get_called_class();
-	}
-
-	/**
-	 * Instance.
-	 *
-	 * Ensures only one instance of the module class is loaded or can be loaded.
-	 *
-	 * @since 1.7.0
-	 * @access public
-	 * @static
-	 *
-	 * @return Module An instance of the class.
-	 */
-	public static function instance() {
-		if ( empty( static::$_instances[ static::class_name() ] ) ) {
-			static::$_instances[ static::class_name() ] = new static();
+	public function get_reflection() {
+		if ( null === $this->reflection ) {
+			$this->reflection = new \ReflectionClass( $this );
 		}
 
-		return static::$_instances[ static::class_name() ];
-	}
-
-	/**
-	 * Get module name.
-	 *
-	 * Retrieve the module name.
-	 *
-	 * @since 1.7.0
-	 * @access public
-	 * @abstract
-	 *
-	 * @return string Module name.
-	 */
-	abstract public function get_name();
-
-	/**
-	 * Module constructor.
-	 *
-	 * Initializing Elementor module.
-	 *
-	 * @since 1.7.0
-	 * @access public
-	 */
-	public function __construct() {
-		$this->reflection = new \ReflectionClass( $this );
+		return $this->reflection;
 	}
 
 	/**

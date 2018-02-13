@@ -238,7 +238,11 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	initControlsCSSParser: function() {
-		this.controlsCSSParser = new ControlsCSSParser( { id: this.model.cid } );
+		this.controlsCSSParser = new ControlsCSSParser( {
+			id: this.model.cid,
+			settingsModel: this.getEditModel().get( 'settings' ),
+			dynamicParsing: this.getDynamicParsingSettings()
+		} );
 	},
 
 	enqueueFonts: function() {
@@ -419,6 +423,29 @@ BaseElementView = BaseContainer.extend( {
 		} else {
 			editModel.renderRemoteServer();
 		}
+	},
+
+	getDynamicParsingSettings: function() {
+		var self = this;
+
+		return {
+			onServerRequestStart: function() {
+				self.$el.addClass( 'elementor-loading' );
+			},
+			onServerRequestEnd: function() {
+				self.render();
+
+				self.$el.removeClass( 'elementor-loading' );
+			}
+		};
+	},
+
+	serializeData: function() {
+		var data = BaseContainer.prototype.serializeData.apply( this, arguments );
+
+		data.settings = this.getEditModel().get( 'settings' ).parseDynamicSettings( data.settings, this.getDynamicParsingSettings() );
+
+		return data;
 	},
 
 	onBeforeRender: function() {
