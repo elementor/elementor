@@ -2,6 +2,7 @@
 namespace Elementor\Core\DynamicTags;
 
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -57,6 +58,32 @@ class Manager {
 			'name' => $tag_name_match[1],
 			'settings' => json_decode( $tag_settings_match[1], true ),
 		];
+	}
+
+	/**
+	 * @param Tag $tag
+	 *
+	 * @return string
+	 */
+	public function tag_to_text( Tag $tag ) {
+		return sprintf( '[%1$s id="%2$s" name="%3$s" settings="%4$s"]', self::TAG_LABEL, $tag->get_id(), $tag->get_name(), wp_json_encode( $tag->get_settings(), JSON_FORCE_OBJECT ) );
+	}
+
+	/**
+	 * @param string $tag_id
+	 * @param string $tag_name
+	 * @param array  $settings
+	 *
+	 * @return string
+	 */
+	public function tag_data_to_tag_text( $tag_id, $tag_name, array $settings = [] ) {
+		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
+
+		if ( ! $tag ) {
+			return '';
+		}
+
+		return $this->tag_to_text( $tag );
 	}
 
 	/**
@@ -141,7 +168,7 @@ class Manager {
 			$config[ $tag_name ] = [
 				'name' => $tag_name,
 				'title' => $tag->get_title(),
-				'mention_template' => $tag->get_mention_template(),
+				'panel_template' => $tag->get_panel_template(),
 				'groups' => $tag->get_groups(),
 				'controls' => $tag->get_controls(),
 				'content_type' => $tag->get_config()['content_type'],
@@ -156,6 +183,10 @@ class Manager {
 			'tags' => $this->get_tags_config(),
 			'groups' => $this->tags_groups,
 		];
+	}
+
+	public function get_static_setting_key( $key ) {
+		return $key . '__static__';
 	}
 
 	public function ajax_render_tags() {

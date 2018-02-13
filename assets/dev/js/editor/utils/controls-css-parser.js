@@ -39,7 +39,7 @@ ControlsCSSParser = ViewModule.extend( {
 				self.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, controls, placeholders, replacements );
 			}
 
-			if ( control.dynamic && control.dynamic.active && values[ 'dynamic_' + control.name ] ) {
+			if ( control.dynamic && control.dynamic.active && undefined !== values[ elementor.dynamicTags.getStaticSettingKey( control.name ) ] ) {
 				self.addDynamicControlStyleRules( values[ control.name ], control );
 			}
 

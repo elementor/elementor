@@ -90,7 +90,7 @@ abstract class Base_Data_Control extends Base_Control {
 			$value_to_parse = $value_to_parse[ $dynamic_property ];
 		}
 
-		$parsed_value = Plugin::$instance->dynamic_tags_manager->parse_tags_text( $value_to_parse, $dynamic_settings, [ Plugin::$instance->dynamic_tags_manager, 'get_tag_data_content' ] );
+		$parsed_value = Plugin::$instance->dynamic_tags->parse_tags_text( $value_to_parse, $dynamic_settings, [ Plugin::$instance->dynamic_tags, 'get_tag_data_content' ] );
 
 		if ( $dynamic_property ) {
 			$value[ $dynamic_property ] = $parsed_value;
