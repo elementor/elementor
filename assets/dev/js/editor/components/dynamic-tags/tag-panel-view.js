@@ -8,12 +8,11 @@ module.exports = Marionette.ItemView.extend( {
 	tagControlsStack: null,
 
 	ui: {
-		settings: '.elementor-dynamic-cover__settings',
 		remove: '.elementor-dynamic-cover__remove'
 	},
 
 	events: {
-		'click @ui.settings': 'onSettingsClick',
+		'click': 'onClick',
 		'click @ui.remove': 'onRemoveClick'
 	},
 
@@ -94,13 +93,15 @@ module.exports = Marionette.ItemView.extend( {
 		this.listenTo( this.model, 'change', this.render );
 	},
 
-	onSettingsClick: function() {
+	onClick: function() {
 		this.getTagControlsStack().render();
 
 		this.showSettingsPopup();
 	},
 
-	onRemoveClick: function() {
+	onRemoveClick: function( event ) {
+		event.stopPropagation();
+
 		this.destroy();
 
 		this.trigger( 'remove' );
