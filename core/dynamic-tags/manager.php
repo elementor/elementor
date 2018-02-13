@@ -65,7 +65,7 @@ class Manager {
 	 *
 	 * @return string
 	 */
-	public function tag_to_text( $tag ) {
+	public function tag_to_text( Tag $tag ) {
 		return sprintf( '[%1$s id="%2$s" name="%3$s" settings="%4$s"]', self::TAG_LABEL, $tag->get_id(), $tag->get_name(), wp_json_encode( $tag->get_settings(), JSON_FORCE_OBJECT ) );
 	}
 
