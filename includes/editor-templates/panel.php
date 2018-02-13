@@ -246,29 +246,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
 	<div class="elementor-control-dynamic-switcher-wrapper">
 		<div class="elementor-control-dynamic-switcher">
-			<# if ( 'switcher' === addButton ) { #>
-				<input id="elementor-dynamic-switcher-simple-{{ cid }}" class="elementor-control-dynamic-switcher-static" type="radio" name="elementor-dynamic-switcher-{{ cid }}" value="simple">
-				<label for="elementor-dynamic-switcher-simple-{{ cid }}" class="elementor-control-dynamic-switcher-label">
-					<i class="fa fa-picture-o"></i>
-				</label>
-			<# } #>
-			<input id="elementor-dynamic-switcher-dynamic-{{ cid }}" class="elementor-control-mentions-add elementor-control-dynamic-switcher-dynamic" type="radio" name="elementor-dynamic-switcher-{{ cid }}" value="dynamic">
-			<label for="elementor-dynamic-switcher-dynamic-{{ cid }}" class="elementor-control-dynamic-switcher-label elementor-control-dynamic-switcher-dynamic-label">
-				<i class="fa fa-database"></i>
-			</label>
+			<?php echo __( 'Dynamic', 'elementor' ); ?>
+			<i class="fa fa-database"></i>
 		</div>
 	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-cover">
+	<div class="elementor-dynamic-cover__settings">
+		<i class="fa fa-wrench"></i>
+	</div>
 	<div class="elementor-dynamic-cover__title">{{{ title + ' ' + content }}}</div>
-	<div class="elementor-dynamic-cover__tools">
-		<div class="elementor-dynamic-cover__tool elementor-dynamic-cover__tool--settings">
-			<i class="eicon-settings"></i>
-		</div>
-		<div class="elementor-dynamic-cover__tool elementor-dynamic-cover__tool--remove">
-			<i class="eicon-close"></i>
-		</div>
+	<div class="elementor-dynamic-cover__remove">
+		<i class="fa fa-times-circle"></i>
 	</div>
 </script>
 

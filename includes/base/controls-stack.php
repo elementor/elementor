@@ -1685,7 +1685,7 @@ abstract class Controls_Stack {
 
 			$is_dynamic_value = isset( $settings[ $control['name'] ] ) && isset( $settings[ Plugin::$instance->dynamic_tags->get_static_setting_key( $control['name'] ) ] );
 
-			$is_value_not_controlled =  $is_dynamic_value && ! empty( $control['dynamic']['valueController'] ) && 'mentions' === $control['dynamic']['valueController'];
+			$is_value_not_controlled =  $is_dynamic_value && ! empty( $control['dynamic']['returnType'] ) && 'object' === $control['dynamic']['returnType'];
 
 			if ( $is_value_not_controlled ) {
 				continue;

@@ -1,7 +1,7 @@
 .elementor-tags-list {
 	display: none;
 	position: absolute;
-	width: 220px;
+	width: 260px;
 	background-color: #fff;
 	box-shadow: 1px 5px 7px rgba(0,0,0,.1);
 	border: 1px solid $editor-lighter;
@@ -17,24 +17,23 @@
 }
 
 .elementor-dynamic-cover {
-	position: absolute;
-	top: 0;
 	display: flex;
 	align-items: center;
 	width: 100%;
-	height: 100%;
-	background-color: $editor-background;
+	height: 27px;
+
+	&__settings {
+		color: $editor-lightest;
+		cursor: pointer;
+	}
 
 	&__title {
-		padding: 0 10px;
+		@include padding-start(8px);
+		flex-grow: 1;
 	}
 
-	&__tools {
-		display: flex;
-	}
-
-	&__tool {
-		margin: 0 5px;
+	&__remove {
+		color: $editor-lighter;
 		cursor: pointer;
 	}
 }
@@ -73,124 +72,28 @@
 	text-align: center;
 }
 
-.elementor-control-mentions {
-
-	 &-wrapper {
-		 position: relative;
-	 }
-
-	 &-add {
-		 position: absolute;
-		 @include end(0);
-		 top: 0;
-		 height: calc(100% - 2px);
-		 @include border-start(1px solid $editor-lighter);
-		 padding: 5px 10px;
-		 margin: 1px;
-		 background-color: #fff;
-
-		 i {
-			 cursor: pointer;
-			 font-size: 10px;
-		 }
-	 }
-
-	 &-area {
-		 @include padding-end(30px);
-
-		 .elementor-control-type-textarea & {
-			 min-height: 100px;
-		 }
-
-		 .elementor-control-type-textarea & {
-			 line-height: 2;
-		 }
-
-		 &:focus {
-
-			 + .elementor-control-mentions-add {
-				 @include border-start-property(color, $editor-light);
-			 }
-		 }
-	 }
- }
-
 .elementor-control-dynamic {
 
 	&-switcher {
-		display: flex;
-		justify-content: flex-end;
-
-		&-wrapper {
-			flex-grow: 1;
-		}
-
-		input {
-			display: none;
-		}
-
-		&-label {
-			display: inline-flex;
-			height: 25px;
-			width: 25px;
-			align-items: center;
-			justify-content: center;
-			cursor: pointer;
-			border: 1px solid $editor-lightest;
-
-			&:first-of-type {
-				border-top-left-radius: 3px;
-				border-bottom-left-radius: 3px;
-			}
-
-			&:last-of-type {
-				border-top-right-radius: 3px;
-				border-bottom-right-radius: 3px;
-			}
-
-			&:not(:last-of-type) {
-				@include border-end(0);
-			}
-
-			i {
-				font-size: 10px;
-			}
-		}
-	}
-
-	.elementor-control-input-wrapper {
-		position: relative;
-	}
-
-	.elementor-control-preview-area {
-		pointer-events: none;
-	}
-
-	.elementor-control-dynamic-switcher-dynamic-label, .elementor-control-mentions-add {
+		cursor: pointer;
+		font-size: 9px;
 
 		i {
-			color: $editor-info;
+			@include padding-start(5px);
+		}
+
+		&-wrapper {
+			display: flex;
+			justify-content: flex-end;
+			flex-grow: 1;
 		}
 	}
-}
 
-.elementor-control-type-url {
+	.elementor-control-mentions-area {
+		display: none;
+	}
 
-	.elementor-control-mentions-wrapper {
-
-		.elementor-control-mentions-add {
-			@include end(30px);
-		}
-
-		.elementor-control-url-external-show {
-
-			.elementor-input-style {
-				@include padding-end(60px);
-			}
-		}
-
-		+ .elementor-control-url-more {
-			width: 30px;
-		}
+	.elementor-control-dynamic-switcher {
+		color: $editor-info;
 	}
 }

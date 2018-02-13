@@ -3,13 +3,13 @@ var TagControlsStack = require( 'elementor-dynamic-tags/tag-controls-stack' ),
 
 module.exports = Marionette.ItemView.extend( {
 
-	className: 'elementor-dynamic-cover',
+	className: 'elementor-dynamic-cover elementor-input-style',
 
 	tagControlsStack: null,
 
 	ui: {
-		settings: '.elementor-dynamic-cover__tool--settings',
-		remove: '.elementor-dynamic-cover__tool--remove'
+		settings: '.elementor-dynamic-cover__settings',
+		remove: '.elementor-dynamic-cover__remove'
 	},
 
 	events: {

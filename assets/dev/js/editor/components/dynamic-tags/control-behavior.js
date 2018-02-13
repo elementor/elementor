@@ -4,64 +4,31 @@ module.exports = Marionette.Behavior.extend( {
 
 	mentionView: null,
 
-	defaults: {
-		addButton: 'inline',
-		valueController: 'self'
-	},
-
 	ui: {
 		mentionsArea: '.elementor-control-mentions-area',
-		insertTag: '.elementor-control-mentions-add'
+		dynamicSwitcher: '.elementor-control-dynamic-switcher'
 	},
 
 	events: {
-		'click @ui.insertTag': 'onInsertTagClick'
+		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick'
 	},
 
 	renderTools: function() {
-		var addButtonPlace = this.getOption( 'addButton' );
+		var $dynamicSwitcher = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-dynamic-switcher' ) );
 
-		if ( 'inline' === addButtonPlace ) {
-			var $mentionsWrapper = jQuery( '<div>', { 'class': 'elementor-control-mentions-wrapper' } ),
-				$mentionsAdd = jQuery( '<div>', { 'class': 'elementor-control-mentions-add' } ).html( jQuery( '<i>', { 'class': 'fa fa-database' } ) );
+		this.ui.controlTitle.after( $dynamicSwitcher );
 
-			this.ui.mentionsArea.wrap( $mentionsWrapper ).after( $mentionsAdd );
-		} else {
-			var $dynamicSwitcher = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-dynamic-switcher', {
-				cid: this.view.model.cid,
-				addButton: this.getOption( 'addButton' )
-			} ) );
-
-			this.ui.controlTitle.after( $dynamicSwitcher );
-		}
-
-		this.ui.insertTag = this.$el.find( this.ui.insertTag.selector );
+		this.ui.dynamicSwitcher = this.$el.find( this.ui.dynamicSwitcher.selector );
 	},
 
 	toggleDynamicClass: function() {
 		this.$el.toggleClass( 'elementor-control-dynamic', this.isDynamicMode() );
 	},
 
-	buildMentions: function() {
-		this.renderTools();
-
-		this.toggleDynamicClass();
-
-		if ( this.isDynamicMode() ) {
-			var tagData = elementor.dynamicTags.getTagTextData( this.getDynamicValue() );
-
-			this.setMentionView( tagData.id, tagData.name, tagData.settings );
-		}
-	},
-
 	isDynamicMode: function() {
 		var dynamicSettingName = elementor.dynamicTags.getStaticSettingKey( this.view.model.get( 'name' ) );
 
 		return undefined !== this.view.elementSettingsModel.get( dynamicSettingName );
-	},
-
-	isTinyMCE: function() {
-		return 'wysiwyg' === this.view.model.get( 'type' );
 	},
 
 	setDynamicMode: function( isDynamic, staticValue ) {
@@ -118,8 +85,8 @@ module.exports = Marionette.Behavior.extend( {
 
 		$tagsList.show().position( {
 			my: 'right top',
-			at: 'left-5 top+5',
-			of: this.ui.insertTag
+			at: 'right bottom+5',
+			of: this.ui.dynamicSwitcher
 		} );
 	},
 
@@ -174,24 +141,18 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onRender: function() {
-		var self = this;
+		this.renderTools();
 
-		if ( self.isTinyMCE() ) {
-			setTimeout( function() {
-				var editor = tinymce.get( self.view.editorID );
+		this.toggleDynamicClass();
 
-				self.ui.mentionsArea = jQuery( editor.getBody() );
+		if ( this.isDynamicMode() ) {
+			var tagData = elementor.dynamicTags.getTagTextData( this.getDynamicValue() );
 
-				self.buildMentions();
-			}, 100 );
-
-			return;
+			this.setMentionView( tagData.id, tagData.name, tagData.settings );
 		}
-
-		self.buildMentions();
 	},
 
-	onInsertTagClick: function() {
+	onDynamicSwitcherClick: function() {
 		this.toggleTagsList();
 	},
 
