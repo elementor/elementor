@@ -96,7 +96,7 @@ class Control_Wysiwyg extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'dynamic' => [
-				'groups' => [ TagsModule::DEFAULT_GROUP ],
+				'categories' => [ TagsModule::TEXT_CATEGORY ],
 			],
 		];
 	}
