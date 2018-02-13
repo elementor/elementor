@@ -174,6 +174,8 @@ class Documents_Manager {
 			throw new \Exception( 'Access denied.' );
 		}
 
+		$this->switch_to_document( $request['post_id'] );
+
 		$status = DB::STATUS_DRAFT;
 
 		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ] , true ) ) {
