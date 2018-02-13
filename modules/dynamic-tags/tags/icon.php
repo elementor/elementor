@@ -13,8 +13,12 @@ class Icon extends Tag {
 		return 'icon';
 	}
 
-	public function get_groups() {
-		return [ Module::DEFAULT_GROUP ];
+	public function get_group() {
+		return Module::BASE_GROUP;
+	}
+
+	public function get_categories() {
+		return [ Module::TEXT_CATEGORY ];
 	}
 
 	public function get_title() {

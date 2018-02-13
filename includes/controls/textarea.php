@@ -95,7 +95,7 @@ class Control_Textarea extends Base_Data_Control {
 			'label_block' => true,
 			'rows' => 5,
 			'dynamic' => [
-				'groups' => [ TagsModule::DEFAULT_GROUP ],
+				'categories' => [ TagsModule::TEXT_CATEGORY ],
 			],
 		];
 	}
