@@ -154,7 +154,7 @@ class Widget_Google_Maps extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['address'] ) ) {
 			return;

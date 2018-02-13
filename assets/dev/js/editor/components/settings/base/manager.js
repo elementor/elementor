@@ -29,6 +29,7 @@ module.exports = ViewModule.extend( {
 			title: this.getSettings( 'panelPage.title' ),
 			options: {
 				model: this.model,
+				controls: this.model.controls,
 				name: name
 			}
 		} );
@@ -51,7 +52,10 @@ module.exports = ViewModule.extend( {
 	},
 
 	initControlsCSSParser: function() {
-		this.controlsCSS = new ControlsCSSParser( { id: this.getSettings( 'name' ) } );
+		this.controlsCSS = new ControlsCSSParser( {
+			id: this.getSettings( 'name' ),
+			settingsModel: this.model
+		} );
 	},
 
 	getDataToSave: function( data ) {
