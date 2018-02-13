@@ -169,7 +169,8 @@ class Manager {
 				'name' => $tag_name,
 				'title' => $tag->get_title(),
 				'panel_template' => $tag->get_panel_template(),
-				'groups' => $tag->get_groups(),
+				'categories' => $tag->get_categories(),
+				'group' => $tag->get_group(),
 				'controls' => $tag->get_controls(),
 				'content_type' => $tag->get_config()['content_type'],
 			];

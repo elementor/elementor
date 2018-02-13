@@ -9,7 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Module extends BaseModule {
 
-	const DEFAULT_GROUP = 'base';
+	const BASE_GROUP = 'base';
+
+	const TEXT_CATEGORY = 'text';
 
 	public function __construct() {
 		$this->register_groups();
@@ -27,7 +29,7 @@ class Module extends BaseModule {
 
 	public function get_groups() {
 		return [
-			self::DEFAULT_GROUP => [
+			self::BASE_GROUP => [
 				'title' => __( 'Base Tags', 'elementor' ),
 			],
 		];
