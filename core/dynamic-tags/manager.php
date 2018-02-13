@@ -141,7 +141,7 @@ class Manager {
 			$config[ $tag_name ] = [
 				'name' => $tag_name,
 				'title' => $tag->get_title(),
-				'mention_template' => $tag->get_mention_template(),
+				'panel_template' => $tag->get_panel_template(),
 				'groups' => $tag->get_groups(),
 				'controls' => $tag->get_controls(),
 				'content_type' => $tag->get_config()['content_type'],

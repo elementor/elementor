@@ -44,7 +44,7 @@ class Icon extends Tag {
 		);
 	}
 
-	public function get_mention_template() {
+	public function get_panel_template() {
 		return '<i class="{{ icon }}" style="color: {{{ icon_color }}}"></i>';
 	}
 
