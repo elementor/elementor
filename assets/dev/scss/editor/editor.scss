@@ -18,6 +18,8 @@
 @import "perfect-scrollbar";
 @import "nprogress";
 @import "panel/panel";
+@import "panel/control";
+@import "panel/color-picker";
 @import "mode-switcher";
 @import "../../../../modules/history/assets/scss/revisions";
 @import "../../../../modules/history/assets/scss/history";
@@ -25,4 +27,5 @@
 @import "devices";
 @import "tipsy";
 @import "templates-modal";
+@import "dynamic-tags";
 @import "notifications";

@@ -69,7 +69,6 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	updateIndex: function( newIndex ) {
 		this.itemIndex = newIndex;
-		this.setTitle();
 	},
 
 	setTitle: function() {
@@ -88,7 +87,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 				values[ child.model.get( 'name' ) ] = child.getControlValue();
 			} );
 
-			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( values );
+			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( self.model.parseDynamicSettings() );
 		}
 
 		if ( ! title ) {
@@ -101,12 +100,10 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	initialize: function( options ) {
 		var self = this;
 
-		self.elementSettingsModel = options.elementSettingsModel;
-
 		self.itemIndex = 0;
 
 		// Collection for Controls list
-		self.collection = new Backbone.Collection( options.controlFields );
+		self.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( options.controlFields ) ) );
 
 		self.listenTo( self.model, 'change', self.checkConditions );
 		self.listenTo( self.getOption( 'parentModel' ), 'change', self.checkConditions );
@@ -118,6 +115,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	onRender: function() {
 		this.setTitle();
+
 		this.checkConditions();
 	},
 

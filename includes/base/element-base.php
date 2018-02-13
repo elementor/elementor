@@ -369,42 +369,10 @@ abstract class Element_Base extends Controls_Stack {
 		return false;
 	}
 
-	/**
-	 * Print element template.
-	 *
-	 * Used to generate the element template on the editor.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function print_template() {
-		ob_start();
+	protected function print_template_content( $template_content ) {
+		$this->render_edit_tools();
 
-		$this->_content_template();
-
-		$content_template = ob_get_clean();
-
-		/**
-		 * Print element template.
-		 *
-		 * Filters the element template before it's printed in the editor.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string       $content_template The element template in the editor.
-		 * @param Element_Base $this             The element.
-		 */
-		$content_template = apply_filters( 'elementor/element/print_template', $content_template, $this );
-
-		if ( empty( $content_template ) ) {
-			return;
-		}
-		?>
-		<script type="text/html" id="tmpl-elementor-<?php echo $this->get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
-			<?php $this->render_edit_tools(); ?>
-			<?php echo $content_template; ?>
-		</script>
-		<?php
+		echo $template_content;
 	}
 
 	/**
@@ -694,16 +662,6 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Render element output in the editor.
-	 *
-	 * Used to generate the live preview, using a Backbone JavaScript template.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
-	protected function _content_template() {}
-
-	/**
 	 * Render element edit tools.
 	 *
 	 * Used to generate the edit tools HTML.
@@ -787,16 +745,6 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
 		}
 	}
-
-	/**
-	 * Render element.
-	 *
-	 * Generates the final HTML on the frontend.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
-	protected function render() {}
 
 	/**
 	 * Get default data.
