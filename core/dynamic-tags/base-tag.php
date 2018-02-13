@@ -20,7 +20,7 @@ abstract class Base_Tag extends Controls_Stack {
 
 	abstract public function get_content_type();
 
-	public function get_mention_template() {
+	public function get_panel_template() {
 		return '';
 	}
 

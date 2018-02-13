@@ -22,7 +22,7 @@ module.exports = Marionette.ItemView.extend( {
 			templateFunction = Marionette.TemplateCache.get( '#tmpl-elementor-control-dynamic-cover' ),
 			renderedTemplate = Marionette.Renderer.render( templateFunction, {
 				title: config.title,
-				content: config.mention_template
+				content: config.panel_template
 			} );
 
 		return Marionette.TemplateCache.prototype.compileTemplate( renderedTemplate.trim() );
@@ -32,9 +32,9 @@ module.exports = Marionette.ItemView.extend( {
 		return elementor.dynamicTags.getConfig( 'tags.' + this.getOption( 'name' ) );
 	},
 
-	initMentionsPopup: function() {
-		var mentionsPopupOptions = {
-			className: 'elementor-mentions-popup',
+	initSettingsPopup: function() {
+		var settingsPopupOptions = {
+			className: 'elementor-tag-settings-popup',
 			position: {
 				at: 'right top',
 				of: this.ui.settings,
@@ -42,35 +42,35 @@ module.exports = Marionette.ItemView.extend( {
 			}
 		};
 
-		var mentionPopup = elementor.dialogsManager.createWidget( 'buttons', mentionsPopupOptions );
+		var settingsPopup = elementor.dialogsManager.createWidget( 'buttons', settingsPopupOptions );
 
-		this.getMentionsPopup = function() {
-			return mentionPopup;
+		this.getSettingsPopup = function() {
+			return settingsPopup;
 		};
 	},
 
-	showMentionsPopup: function() {
-		var mentionsPopup = this.getMentionsPopup();
+	showSettingsPopup: function() {
+		var settingsPopup = this.getSettingsPopup();
 
-		if ( mentionsPopup.isVisible() ) {
+		if ( settingsPopup.isVisible() ) {
 			return;
 		}
 
 		var positionFromLeft = 15,
 			positionFromTop = -15;
 
-		mentionsPopup.setSettings( 'position', {
+		settingsPopup.setSettings( 'position', {
 			my: 'left+' + positionFromLeft + ' top+' + positionFromTop
 		} );
 
-		mentionsPopup.show();
+		settingsPopup.show();
 	},
 
 	initTagControlsStack: function() {
 		this.tagControlsStack = new TagControlsStack( {
 			model: this.model,
 			controls: this.model.controls,
-			el: this.getMentionsPopup().getElements( 'message' )[0]
+			el: this.getSettingsPopup().getElements( 'message' )[0]
 		} );
 	},
 
@@ -95,7 +95,7 @@ module.exports = Marionette.ItemView.extend( {
 
 		this.initModel();
 
-		this.initMentionsPopup();
+		this.initSettingsPopup();
 
 		this.listenTo( this.model, 'change', this.render );
 	},
@@ -103,7 +103,7 @@ module.exports = Marionette.ItemView.extend( {
 	onSettingsClick: function() {
 		this.getTagControlsStack().render();
 
-		this.showMentionsPopup();
+		this.showSettingsPopup();
 	},
 
 	onRemoveClick: function() {
@@ -113,6 +113,6 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onDestroy: function() {
-		this.getMentionsPopup().destroy();
+		this.getSettingsPopup().destroy();
 	}
 } );

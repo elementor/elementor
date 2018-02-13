@@ -1,11 +1,11 @@
-var MentionView = require( 'elementor-dynamic-tags/mention-view' );
+var TagPanelView = require( 'elementor-dynamic-tags/tag-panel-view' );
 
 module.exports = Marionette.Behavior.extend( {
 
-	mentionView: null,
+	tagView: null,
 
 	ui: {
-		mentionsArea: '.elementor-control-mentions-area',
+		tagArea: '.elementor-control-tag-area',
 		dynamicSwitcher: '.elementor-control-dynamic-switcher'
 	},
 
@@ -90,29 +90,29 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 	},
 
-	setMentionView: function( id, name, settings ) {
-		if ( this.mentionView ) {
-			this.mentionView.destroy();
+	setTagView: function( id, name, settings ) {
+		if ( this.tagView ) {
+			this.tagView.destroy();
 		}
 
-		var mentionView = this.mentionView = new MentionView( {
+		var tagView = this.tagView = new TagPanelView( {
 			id: id,
 			name: name,
 			settings: settings
 		} );
 
-		mentionView.render();
+		tagView.render();
 
-		this.ui.mentionsArea.after( mentionView.el );
+		this.ui.tagArea.after( tagView.el );
 
-		this.listenTo( mentionView.model, 'change', this.onMentionViewChange.bind( this ) )
-			.listenTo( mentionView, 'remove', this.onMentionViewRemove.bind( this ) );
+		this.listenTo( tagView.model, 'change', this.onTagViewModelChange.bind( this ) )
+			.listenTo( tagView, 'remove', this.onTagViewRemove.bind( this ) );
 	},
 
-	mentionViewToTagText: function() {
-		var mentionView = this.mentionView;
+	tagViewToTagText: function() {
+		var tagView = this.tagView;
 
-		return elementor.dynamicTags.tagDataToTagText( mentionView.getOption( 'id' ), mentionView.getOption( 'name' ), mentionView.model );
+		return elementor.dynamicTags.tagDataToTagText( tagView.getOption( 'id' ), tagView.getOption( 'name' ), tagView.model );
 	},
 
 	getDynamicValue: function() {
@@ -148,7 +148,7 @@ module.exports = Marionette.Behavior.extend( {
 		if ( this.isDynamicMode() ) {
 			var tagData = elementor.dynamicTags.getTagTextData( this.getDynamicValue() );
 
-			this.setMentionView( tagData.id, tagData.name, tagData.settings );
+			this.setTagView( tagData.id, tagData.name, tagData.settings );
 		}
 	},
 
@@ -163,18 +163,18 @@ module.exports = Marionette.Behavior.extend( {
 			this.setDynamicMode( true, this.view.getControlValue() );
 		}
 
-		this.setMentionView( elementor.helpers.getUniqueID(), $tag.data( 'tagName' ), {} );
+		this.setTagView( elementor.helpers.getUniqueID(), $tag.data( 'tagName' ), {} );
 
-		this.setDynamicValue( this.mentionViewToTagText() );
+		this.setDynamicValue( this.tagViewToTagText() );
 
 		this.toggleTagsList();
 	},
 
-	onMentionViewChange: function() {
-		this.setDynamicValue( this.mentionViewToTagText() );
+	onTagViewModelChange: function() {
+		this.setDynamicValue( this.tagViewToTagText() );
 	},
 
-	onMentionViewRemove: function() {
+	onTagViewRemove: function() {
 		var staticValue = this.view.elementSettingsModel.get( elementor.dynamicTags.getStaticSettingKey( this.view.model.get( 'name' ) ) );
 
 		this.setDynamicMode( false );
