@@ -5,6 +5,7 @@
 // Core variables and mixins
 @import "../helpers/variables";
 @import "../helpers/mixins";
+@import "../helpers/utilities";
 
 // Common
 @import "../common/common";
@@ -214,3 +215,4 @@ body {
 @import "import-template";
 @import "maintenance-mode";
 @import "dashboard-widget";
+@import "new-template-dialog";
