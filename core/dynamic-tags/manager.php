@@ -74,20 +74,16 @@ class Manager {
 	 * @param string $tag_name
 	 * @param array  $settings
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	public function create_tag_text( $tag_name, $tag_id = null, array $settings = [] ) {
-		if ( ! $tag_id ) {
-			$tag_id = Utils::generate_random_string();
-		}
+	public function tag_data_to_tag_text( $tag_id, $tag_name, array $settings = [] ) {
 		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
-		if ( $tag ) {
-			$text = $this->tag_to_text( $tag );
-		} else {
-			$text = '';
+
+		if ( ! $tag ) {
+			return '';
 		}
 
-		return $text;
+		return $this->tag_to_text( $tag );
 	}
 
 	/**
