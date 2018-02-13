@@ -35,7 +35,7 @@ class Module extends BaseModule {
 
 	private function register_groups() {
 		foreach ( $this->get_groups() as $group_name => $group_settings ) {
-			Plugin::$instance->dynamic_tags_manager->register_group( $group_name, $group_settings );
+			Plugin::$instance->dynamic_tags->register_group( $group_name, $group_settings );
 		}
 	}
 
@@ -44,7 +44,7 @@ class Module extends BaseModule {
 			/** @var Tag $class_name */
 			$class_name = $this->get_reflection()->getNamespaceName() . '\Tags\\' . $tag_class;
 
-			Plugin::$instance->dynamic_tags_manager->register_tag( $class_name );
+			Plugin::$instance->dynamic_tags->register_tag( $class_name );
 		}
 	}
 }

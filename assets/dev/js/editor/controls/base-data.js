@@ -1,5 +1,5 @@
 var ControlBaseView = require( 'elementor-controls/base' ),
-	MentionsBehavior = require( 'elementor-dynamic-tags/control-mentions-behavior' ),
+	TagsBehavior = require( 'elementor-dynamic-tags/control-behavior' ),
 	Validator = require( 'elementor-validator/base' ),
 	ControlBaseDataView;
 
@@ -46,10 +46,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 			dynamicTags = this.options.model.get( 'dynamic' );
 
 		if ( dynamicTags && dynamicTags.active ) {
-			behaviors.mentions = { behaviorClass: MentionsBehavior };
+			behaviors.tags = { behaviorClass: TagsBehavior };
 
 			if ( 'object' === typeof dynamicTags ) {
-				jQuery.extend( behaviors.mentions, dynamicTags );
+				jQuery.extend( behaviors.tags, dynamicTags );
 			}
 		}
 
