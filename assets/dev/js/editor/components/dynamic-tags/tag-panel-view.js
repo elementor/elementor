@@ -36,8 +36,9 @@ module.exports = Marionette.ItemView.extend( {
 		var settingsPopupOptions = {
 			className: 'elementor-tag-settings-popup',
 			position: {
-				at: 'right top',
-				of: this.ui.settings,
+				my: 'left top+5',
+				at: 'left bottom',
+				of: this.$el,
 				autoRefresh: true
 			}
 		};
@@ -55,13 +56,6 @@ module.exports = Marionette.ItemView.extend( {
 		if ( settingsPopup.isVisible() ) {
 			return;
 		}
-
-		var positionFromLeft = 15,
-			positionFromTop = -15;
-
-		settingsPopup.setSettings( 'position', {
-			my: 'left+' + positionFromLeft + ' top+' + positionFromTop
-		} );
 
 		settingsPopup.show();
 	},

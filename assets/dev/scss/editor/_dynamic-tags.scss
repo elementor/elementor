@@ -40,17 +40,18 @@
 
 .elementor-tag-settings-popup {
 	position: absolute;
-	width: 300px;
+	width: 260px;
 	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
 
 	&:before {
 		$triangle-size: 10px;
+
 		content: '';
 		position: absolute;
-		top: 10px;
-		transform: translateX(getValueByDirection(-$triangle-size * 2, $triangle-size * 2));
+		top: -#{$triangle-size * 2};
+		@include start(5px);
 		border: $triangle-size solid transparent;
-		@include border-end-property(color, #fff);
+		border-bottom-color: #fff;
 	}
 
 	.elementor-control {
