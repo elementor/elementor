@@ -19,8 +19,17 @@ module.exports = ViewModule.extend( {
 
 	stretch: function() {
 		var containerSelector = this.getSettings( 'selectors.container' ),
-			$element = this.elements.$element,
-			$container = jQuery( containerSelector ),
+			$container;
+
+		try {
+			$container = jQuery( containerSelector );
+		} catch ( e ) {}
+
+		if ( ! $container || ! $container.length ) {
+			$container = jQuery( this.getDefaultSettings().selectors.container );
+		}
+
+		var $element = this.elements.$element,
 			isSpecialContainer = window !== $container[0];
 
 		this.reset();
