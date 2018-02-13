@@ -199,7 +199,7 @@ class Control_Media extends Control_Base_Multiple {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<div class="elementor-control-media">
+				<div class="elementor-control-media elementor-control-tag-area elementor-control-preview-area">
 					<div class="elementor-control-media-upload-button">
 						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 					</div>

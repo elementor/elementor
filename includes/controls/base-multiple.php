@@ -40,13 +40,13 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $control Control
-	 * @param array $widget  Widget
+	 * @param array $control  Control
+	 * @param array $settings Settings
 	 *
 	 * @return mixed Control values.
 	 */
-	public function get_value( $control, $widget ) {
-		$value = parent::get_value( $control, $widget );
+	public function get_value( $control, $settings ) {
+		$value = parent::get_value( $control, $settings );
 
 		if ( empty( $control['default'] ) ) {
 			$control['default'] = [];
@@ -65,6 +65,16 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 			$control['default'],
 			$value
 		);
+	}
+
+	public function parse_tags( $value, $dynamic_settings ) {
+		$parsed_value = parent::parse_tags( $value, $dynamic_settings );
+
+		if ( ! $parsed_value ) {
+			$parsed_value = $this->get_default_value();
+		}
+
+		return $parsed_value;
 	}
 
 	/**

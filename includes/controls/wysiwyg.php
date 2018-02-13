@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -85,12 +87,24 @@ class Control_Wysiwyg extends Base_Data_Control {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function content_template() {
-		?>
-		<label>
-			<span class="elementor-control-title">{{{ data.label }}}</span>
-			<textarea data-setting="{{ data.name }}"></textarea>
-		</label>
-		<?php
+	public function content_template() {}
+
+	/**
+	 * Retrieve textarea control default settings.
+	 *
+	 * Get the default settings of the textarea control. Used to return the
+	 * default settings while initializing the textarea control.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Control default settings.
+	 */
+	protected function get_default_settings() {
+		return [
+			'dynamic' => [
+				'groups' => [ TagsModule::DEFAULT_GROUP ],
+			],
+		];
 	}
 }

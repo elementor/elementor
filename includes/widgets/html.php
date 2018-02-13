@@ -111,7 +111,7 @@ class Widget_Html extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		 echo $this->get_settings( 'html' );
+		 echo $this->get_settings_for_display( 'html' );
 	}
 
 	/**
