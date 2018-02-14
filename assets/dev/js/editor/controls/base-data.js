@@ -222,7 +222,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	onAfterExternalChange: function() {
 		this.hideTooltip();
-		this.render();
+
+		this.applySavedValue();
 	},
 
 	addTooltip: function() {
