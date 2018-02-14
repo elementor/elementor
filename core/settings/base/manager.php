@@ -204,7 +204,9 @@ abstract class Manager {
 
 		$css_file = $this->get_css_file_for_update( $id );
 
-		$css_file->update();
+		if ( $css_file ) {
+			$css_file->update();
+		}
 	}
 
 	/**

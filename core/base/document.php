@@ -237,8 +237,10 @@ abstract class Document extends Controls_Stack {
 		$this->post = get_post( $this->post->ID );
 
 		// TODO: refresh settings.
-
 		$this->save_elements( $data['elements'] );
+
+		// Remove Post CSS
+		delete_post_meta( $this->post->ID, Post_CSS_File::META_KEY );
 
 		return true;
 	}
@@ -409,9 +411,6 @@ abstract class Document extends Controls_Stack {
 
 		update_metadata( 'post', $this->post->ID, '_elementor_version', $db::DB_VERSION );
 
-		// Remove Post CSS
-		delete_post_meta( $this->post->ID, Post_CSS_File::META_KEY );
-
 		/**
 		 * Fires after Elementor saves data to the database.
 		 *
@@ -458,7 +457,6 @@ abstract class Document extends Controls_Stack {
 			/* translators: 1: Editing date, 2: Author display name */
 			$last_edited = sprintf( __( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		}
-
 
 		return $last_edited;
 	}
