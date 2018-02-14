@@ -12,7 +12,9 @@ abstract class Base_Tag extends Controls_Stack {
 		return 'tag';
 	}
 
-	abstract public function get_groups();
+	abstract public function get_categories();
+
+	abstract public function get_group();
 
 	abstract public function get_title();
 

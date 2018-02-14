@@ -2,16 +2,31 @@
 	display: none;
 	position: absolute;
 	width: 260px;
+	padding-bottom: 5px;
 	background-color: #fff;
-	box-shadow: 1px 5px 7px rgba(0,0,0,.1);
-	border: 1px solid $editor-lighter;
+	border: 1px solid $editor-light;
+	border-radius: 3px;
+
+	&__group-title {
+		color: $editor-darkest;
+		font-weight: bold;
+		font-size: 12px;
+		padding: 10px 15px;
+	}
 
 	&__item {
-		padding: 5px;
+		font-size: 10px;
+		padding: 6px 15px;
 		cursor: pointer;
 
+		&:before {
+			content: '>';
+			font-size: 8px;
+			@include padding-end(5px);
+		}
+
 		&:hover {
-			background-color: $editor-background-light;
+			background-color: $editor-background;
 		}
 	}
 }
