@@ -34,6 +34,8 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	activateSaveButtons: function( hasChanges ) {
+		var hasChanges = hasChanges || 'draft' === elementor.settings.page.model.get( 'post_status' );
+
 		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-saver-disabled', ! hasChanges );
 		this.ui.buttonSaveOptions.toggleClass( 'elementor-saver-disabled', ! hasChanges );
 	},
@@ -362,7 +364,7 @@ module.exports = Module.extend( {
 					if ( ! self.isChangedDuringSave ) {
 						self.setFlagEditorChange( false );
 					}
-					
+
 					if ( statusChanged ) {
 						elementor.settings.page.model.set( 'post_status', options.status );
 					}
