@@ -1711,7 +1711,7 @@ abstract class Controls_Stack {
 
 			$is_correct_dynamic_value = true;
 
-			if ( isset( $settings[ $control['name'] ] ) ) {
+			if ( ! empty( $settings[ $control['name'] ] ) ) {
 				$prototype_control = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 				$value_to_check =  $settings[ $control['name'] ];
