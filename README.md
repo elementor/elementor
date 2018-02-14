@@ -90,6 +90,7 @@ Elementor page builder is free and open source. It's the perfect page builder pl
 We have created an extensive [API documentation](https://github.com/pojome/elementor/tree/master/docs), to help you get started and learn just how to integrate with Elementor.
 
 ### Translations ###
+- [English (Australia)](https://translate.wordpress.org/locale/en-au/default/wp-plugins/elementor) - (en_AU)
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR)
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
 - [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT)
@@ -99,13 +100,17 @@ We have created an extensive [API documentation](https://github.com/pojome/eleme
 - [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
 - [Swedish](https://translate.wordpress.org/locale/se/default/wp-plugins/elementor) - (sv_SE)
+- [Dutch](https://translate.wordpress.org/locale/nl/default/wp-plugins/elementor) - (nl_NL)
+- [Danish](https://translate.wordpress.org/locale/da/default/wp-plugins/elementor) - (da_DK)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
 - [Chinese (Taiwan)](https://translate.wordpress.org/locale/zh-tw/default/wp-plugins/elementor) - (zh_TW)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
+- [Russian](https://translate.wordpress.org/locale/ru/default/wp-plugins/elementor) - (ru_RU)
 - [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
-- [Arabic](https://translate.wordpress.org/locale/ar/default/wp-plugins/elementor) - (ar) - in progress
-- [Hungarian](https://translate.wordpress.org/locale/hu/default/wp-plugins/elementor) - (hu_HU) - in progress
+- [Bulgarian](https://translate.wordpress.org/locale/bg/default/wp-plugins/elementor) - (bg_BG)
+- [Greek](https://translate.wordpress.org/locale/el/default/wp-plugins/elementor) - (el)
+- [Czech](https://translate.wordpress.org/locale/cs/default/wp-plugins/elementor) - ( cs_CZ)
 
 ### Be a contributor ###
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
