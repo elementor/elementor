@@ -197,6 +197,6 @@ module.exports = Marionette.Behavior.extend( {
 
 		this.view.setSettingsModel( staticValue );
 
-		this.view.render();
+		this.view.applySavedValue();
 	}
 } );

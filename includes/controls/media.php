@@ -204,7 +204,7 @@ class Control_Media extends Control_Base_Multiple {
 						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 					</div>
 					<div class="elementor-control-media-image-area">
-						<div class="elementor-control-media-image" style="background-image: url({{ data.controlValue.url }});"></div>
+						<div class="elementor-control-media-image"></div>
 						<div class="elementor-control-media-delete"><?php _e( 'Delete', 'elementor' ); ?></div>
 					</div>
 				</div>
