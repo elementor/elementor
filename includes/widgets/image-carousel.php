@@ -116,6 +116,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			Group_Control_Image_Size::get_type(),
 			[
 				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
+				'separator' => 'none',
 			]
 		);
 
