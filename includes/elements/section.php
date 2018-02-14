@@ -447,13 +447,13 @@ class Element_Section extends Element_Base {
 		);
 
 		$possible_tags = [
-			'section',
+			'div',
 			'header',
 			'footer',
-			'aside',
 			'article',
+			'section',
+			'aside',
 			'nav',
-			'div',
 		];
 
 		$options = [
