@@ -376,6 +376,7 @@ class Manager extends BaseManager {
 			'post_title',
 			'post_status',
 			'template',
+			'post_featured_image',
 		];
 	}
 
