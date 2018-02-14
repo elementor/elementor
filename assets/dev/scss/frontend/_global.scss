@@ -71,6 +71,7 @@
 		max-width: none;
 		position: absolute;
 		top: 50%;
+		left: 0; //reset when the parent has set text-align: center;
 		transform: translateY(-50%);
 	}
 

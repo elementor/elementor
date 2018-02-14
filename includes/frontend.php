@@ -504,13 +504,6 @@ class Frontend {
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
-		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
-			$this->parse_global_css_code();
-
-			$css_file = new Post_CSS_File( get_the_ID() );
-			$css_file->enqueue();
-		}
-
 		/**
 		 * After frontend enqueue styles.
 		 *
@@ -519,6 +512,13 @@ class Frontend {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/frontend/after_enqueue_styles' );
+
+		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
+			$this->parse_global_css_code();
+
+			$css_file = new Post_CSS_File( get_the_ID() );
+			$css_file->enqueue();
+		}
 	}
 
 	/**
@@ -846,6 +846,7 @@ class Frontend {
 
 		foreach ( $this->admin_bar_edit_documents as $document ) {
 			$wp_admin_bar->add_menu( [
+				'id' => 'elementor_edit_doc_' . $document->get_main_id(),
 				'parent' => 'elementor_edit_page',
 				'title' => sprintf( '<span class="elementor-edit-link-title">%s</span><span class="elementor-edit-link-type">%s</span>', $document->get_post()->post_title, $document::get_title() ),
 				'href' => $document->get_edit_url(),

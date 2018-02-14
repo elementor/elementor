@@ -109,6 +109,15 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Image_Size::get_type(),
+			[
+				'name' => 'testimonial_image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `testimonial_image_size` and `testimonial_image_custom_dimension`.
+				'default' => 'full',
+				'separator' => 'none',
+			]
+		);
+
 		$this->add_control(
 			'testimonial_name',
 			[
@@ -394,7 +403,7 @@ class Widget_Testimonial extends Widget_Base {
 				<div class="elementor-testimonial-meta-inner">
 					<?php if ( $has_image ) : ?>
 						<div class="elementor-testimonial-image">
-							<img src="<?php echo esc_attr( $settings['testimonial_image']['url'] ); ?>" alt="<?php echo esc_attr( Control_Media::get_image_alt( $settings['testimonial_image'] ) ); ?>" />
+							<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings, 'testimonial_image' ); ?>
 						</div>
 					<?php endif; ?>
 
@@ -435,9 +444,17 @@ class Widget_Testimonial extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<#
+		var image = {
+				id: settings.testimonial_image.id,
+				url: settings.testimonial_image.url,
+				size: settings.testimonial_image_size,
+				dimension: settings.testimonial_image_custom_dimension,
+				model: view.getEditModel()
+			};
 		var imageUrl = false, hasImage = '';
+
 		if ( '' !== settings.testimonial_image.url ) {
-			imageUrl = settings.testimonial_image.url;
+			imageUrl = elementor.imagesManager.getImageUrl( image );
 			hasImage = ' elementor-has-image';
 		}
 
