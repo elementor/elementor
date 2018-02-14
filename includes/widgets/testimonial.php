@@ -101,7 +101,7 @@ class Widget_Testimonial extends Widget_Base {
 		$this->add_control(
 			'testimonial_image',
 			[
-				'label' => __( 'Add Image', 'elementor' ),
+				'label' => __( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
