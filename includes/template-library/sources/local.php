@@ -189,14 +189,14 @@ class Source_Local extends Source_Base {
 						<i class="eicon-elementor"></i>
 					</span>
 					<span>
-						<?php esc_html_e( 'New Template', '' ) ?>
+						<?php esc_html_e( 'New Template', 'elementor' ) ?>
 					</span>
 				</div>
 
 				<div id="elementor-new-template-dialog-close">
 					<i class="eicon-close" aria-hidden="true" title="Close"></i>
 					<span class="elementor-screen-only">
-						<?php esc_html_e( 'Close', '' ) ?>
+						<?php esc_html_e( 'Close', 'elementor' ) ?>
 					</span>
 				</div>
 			</div>
@@ -222,11 +222,11 @@ class Source_Local extends Source_Base {
 						<input type="hidden" name="post_type" value="elementor_library">
 						<input type="hidden" name="action" value="elementor_new_theme_template">
 						<label for="template-type" class="elementor-control-title">
-							<?php esc_html_e( 'Choose a Theme Template', 'elementor-pro' ); ?>
+							<?php esc_html_e( 'Choose a Theme Template', 'elementor' ); ?>
 						</label>
 						<div class="elementor-control-input-wrapper">
 							<select name="template_type" required>
-								<option value=""><?php esc_html_e( 'Select', 'elementor-pro' ); ?>...</option>
+								<option value=""><?php esc_html_e( 'Select', 'elementor' ); ?>...</option>
 								<?php
 
 								$document_types = Plugin::$instance->documents->get_document_types();
@@ -261,7 +261,7 @@ class Source_Local extends Source_Base {
 							<span class="elementor-state-icon">
 								<i class="fa fa-spin fa-circle-o-notch "></i>
 							</span>
-							<?php esc_html_e( 'Create', 'elementor-pro' ); ?>
+							<?php esc_html_e( 'Create', 'elementor' ); ?>
 						</button>
 					</div>
 				</form>
