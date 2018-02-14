@@ -120,11 +120,12 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickButtonPublish: function() {
-		if ( ! elementor.saver.isEditorChanged() ) {
+		var postStatus = elementor.settings.page.model.get( 'post_status' );
+
+		if ( ! elementor.saver.isEditorChanged() && 'draft' !== postStatus ) {
 			return;
 		}
 
-		var postStatus = elementor.settings.page.model.get( 'post_status' );
 		switch ( postStatus ) {
 			case 'publish':
 			case 'private':
@@ -164,6 +165,8 @@ module.exports = Marionette.Behavior.extend( {
 				if ( ! elementor.config.current_user_can_publish ) {
 					publishLabel = 'submit';
 				}
+
+				this.activateSaveButtons( true );
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
