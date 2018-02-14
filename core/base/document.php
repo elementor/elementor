@@ -239,6 +239,9 @@ abstract class Document extends Controls_Stack {
 		// TODO: refresh settings.
 		$this->save_elements( $data['elements'] );
 
+		// Remove Post CSS
+		delete_post_meta( $this->post->ID, Post_CSS_File::META_KEY );
+
 		return true;
 	}
 
@@ -407,9 +410,6 @@ abstract class Document extends Controls_Stack {
 		$db->save_plain_text( $this->post->ID );
 
 		update_metadata( 'post', $this->post->ID, '_elementor_version', $db::DB_VERSION );
-
-		// Remove Post CSS
-		delete_post_meta( $this->post->ID, Post_CSS_File::META_KEY );
 
 		/**
 		 * Fires after Elementor saves data to the database.
