@@ -163,12 +163,13 @@ module.exports = Module.extend( {
 				self.afterAjax();
 
 				if ( 'autosave' !== options.status ) {
-					if ( ! self.isChangedDuringSave ) {
-						self.setFlagEditorChange( false );
-					}
-
 					if ( statusChanged ) {
 						elementor.settings.page.model.set( 'post_status', options.status );
+					}
+
+					// Notice: Must be after update page.model.post_status to the new status.
+					if ( ! self.isChangedDuringSave ) {
+						self.setFlagEditorChange( false );
 					}
 				}
 
