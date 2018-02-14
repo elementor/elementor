@@ -362,7 +362,7 @@ module.exports = Module.extend( {
 					if ( ! self.isChangedDuringSave ) {
 						self.setFlagEditorChange( false );
 					}
-					
+
 					if ( statusChanged ) {
 						elementor.settings.page.model.set( 'post_status', options.status );
 					}
