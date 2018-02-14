@@ -48,8 +48,10 @@ class Icon extends Tag {
 		);
 	}
 
-	public function get_panel_template() {
-		return '<i class="{{ icon }}" style="color: {{{ icon_color }}}"></i>';
+	public function print_panel_template() {
+		?>
+		<i class="{{ icon }}" style="color: {{{ icon_color }}}"></i>
+		<?php
 	}
 
 	protected function _content_template() {
