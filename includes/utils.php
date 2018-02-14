@@ -82,7 +82,7 @@ class Utils {
 		 * @param int    $post_id   Post ID.
 		 *
 		 */
-		$edit_link = apply_filters( 'elementor/utils/get_edit_link', [ $edit_link, $post_id ], '2.0.0', 'elementor/document/get_edit_link' );
+		$edit_link = apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
 
 		return $edit_link;
 	}
@@ -154,7 +154,7 @@ class Utils {
 		 * @param string $preview_url URL with chosen scheme.
 		 * @param int    $post_id     Post ID.
 		 */
-		$url = apply_filters( 'elementor/utils/preview_url', [ $url, $post_id ], '2.0.0', 'elementor/document/preview_url' );
+		$url = apply_filters( 'elementor/utils/preview_url', $url, $post_id );
 
 		return $url;
 	}
@@ -190,7 +190,7 @@ class Utils {
 		 * @param string $wp_preview_url WordPress preview URL.
 		 * @param int    $post_id        Post ID.
 		 */
-		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', [ $wp_preview_url, $post_id ], '2.0.0', 'elementor/document/wp_preview_url' );
+		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
 
 		return $wp_preview_url;
 	}
@@ -228,7 +228,7 @@ class Utils {
 		 * @param int    $post_id  Post ID.
 		 */
 
-		$exit_url = apply_filters( 'elementor/utils/exit_to_dashboard_url', [ $exit_url, $post_id ], '2.0.0', 'elementor/document/exit_to_dashboard_url' );
+		$exit_url = apply_filters( 'elementor/utils/exit_to_dashboard_url', $exit_url, $post_id );
 
 		return $exit_url;
 	}
