@@ -237,7 +237,6 @@ abstract class Document extends Controls_Stack {
 		$this->post = get_post( $this->post->ID );
 
 		// TODO: refresh settings.
-
 		$this->save_elements( $data['elements'] );
 
 		return true;
@@ -458,7 +457,6 @@ abstract class Document extends Controls_Stack {
 			/* translators: 1: Editing date, 2: Author display name */
 			$last_edited = sprintf( __( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		}
-
 
 		return $last_edited;
 	}
