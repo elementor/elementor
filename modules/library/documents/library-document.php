@@ -16,6 +16,7 @@ abstract class Library_Document extends Document {
 
 		$properties['show_in_library'] = true;
 		$properties['library_view'] = 'grid';
+		$properties['group'] = 'blocks';
 
 		return $properties;
 	}

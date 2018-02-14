@@ -55,7 +55,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
 			this.collection = new Backbone.Collection( this.collection, {
 				// Use `partial` to supply the `this` as an argument, but not as context
-				// the `_` i sa place holder for original arguments: `attrs` & `options`
+				// the `_` is a place holder for original arguments: `attrs` & `options`
 				model: _.partial( this.createItemModel, _, _, this )
 			} );
 

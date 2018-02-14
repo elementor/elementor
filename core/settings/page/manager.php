@@ -292,7 +292,7 @@ class Manager extends BaseManager {
 	 * @return Post_CSS_File The post CSS file object.
 	 */
 	protected function get_css_file_for_update( $id ) {
-		return new Post_CSS_File( $id );
+		return false;
 	}
 
 	/**
@@ -376,6 +376,7 @@ class Manager extends BaseManager {
 			'post_title',
 			'post_status',
 			'template',
+			'post_featured_image',
 		];
 	}
 
