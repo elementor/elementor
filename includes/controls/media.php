@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * $this->add_control(
  * 	'image',
  * 	[
- * 		'label' => __( 'Choose an Image', 'plugin-domain' ),
+ * 		'label' => __( 'Choose Image', 'plugin-domain' ),
  * 		'type' => Controls_Manager::MEDIA,
  * 		'default' => [
  * 			'url' => Utils::get_placeholder_image_src(),

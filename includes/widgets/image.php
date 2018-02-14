@@ -75,7 +75,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'image',
 			[
-				'label' => __( 'Choose an Image', 'elementor' ),
+				'label' => __( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
