@@ -46,11 +46,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 			dynamicTags = this.options.model.get( 'dynamic' );
 
 		if ( dynamicTags && dynamicTags.active ) {
-			behaviors.tags = { behaviorClass: TagsBehavior };
-
-			if ( 'object' === typeof dynamicTags ) {
-				jQuery.extend( behaviors.tags, dynamicTags );
-			}
+			behaviors.tags = jQuery.extend( { behaviorClass: TagsBehavior }, dynamicTags );
 		}
 
 		return behaviors;
