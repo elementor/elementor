@@ -182,7 +182,10 @@ class Element_Column extends Element_Base {
 
 		$possible_tags = [
 			'div',
+			'header',
+			'footer',
 			'article',
+			'section',
 			'aside',
 			'nav',
 		];
