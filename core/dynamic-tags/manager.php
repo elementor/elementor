@@ -19,13 +19,20 @@ class Manager {
 	}
 
 	public function parse_tags_text( $text, array $settings, callable $parse_callback ) {
+		do_action( 'elementor/dynamic_tags/before_render' );
+
 		if ( ! empty( $settings['returnType'] ) && 'object' === $settings['returnType'] ) {
-			return $this->parse_tag_text( $text, $settings, $parse_callback );
+			$value = $this->parse_tag_text( $text, $settings, $parse_callback );
+		} else {
+
+			$value = preg_replace_callback( '/\[' . self::TAG_LABEL . '.+?(?=\])\]/', function( $tag_text_match ) use ( $settings, $parse_callback ) {
+				return $this->parse_tag_text( $tag_text_match[0], $settings, $parse_callback );
+			}, $text );
 		}
 
-		return preg_replace_callback( '/\[' . self::TAG_LABEL . '.+?(?=\])\]/', function( $tag_text_match ) use ( $settings, $parse_callback ) {
-			return $this->parse_tag_text( $tag_text_match[0], $settings, $parse_callback );
-		}, $text );
+		do_action( 'elementor/dynamic_tags/after_render' );
+
+		return $value;
 	}
 
 	public function parse_tag_text( $tag_text, array $settings, $parse_callback ) {
@@ -192,6 +199,7 @@ class Manager {
 
 	public function ajax_render_tags() {
 		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
+		do_action( 'elementor/dynamic_tags/before_render' );
 
 		$tags_data = [];
 
@@ -206,6 +214,8 @@ class Manager {
 
 			$tags_data[ $tag_key ] = $tag->get_content();
 		}
+
+		do_action( 'elementor/dynamic_tags/after_render' );
 
 		wp_send_json_success( $tags_data );
 	}
