@@ -87,7 +87,14 @@ class Control_Wysiwyg extends Base_Data_Control {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function content_template() {}
+	public function content_template() {
+		?>
+		<div class="elementor-control-field">
+			<div class="elementor-control-title">{{{ data.label }}}</div>
+			<div class="elementor-control-input-wrapper elementor-control-tag-area"></div>
+		</div>
+		<?php
+	}
 
 	/**
 	 * Retrieve textarea control default settings.
@@ -102,6 +109,7 @@ class Control_Wysiwyg extends Base_Data_Control {
 	 */
 	protected function get_default_settings() {
 		return [
+			'label_block' => true,
 			'dynamic' => [
 				'categories' => [ TagsModule::TEXT_CATEGORY ],
 			],

@@ -37,16 +37,26 @@ ControlBaseDataView = ControlBaseView.extend( {
 			'input @ui.textarea': 'onBaseInputChange',
 			'change @ui.select': 'onBaseInputChange',
 			'input @ui.contentEditable': 'onBaseInputChange',
-			'click @ui.responsiveSwitchers': 'onResponsiveSwitcherClick'
+			'click @ui.responsiveSwitchers': 'onResponsiveSwitchersClick'
 		};
 	},
 
 	behaviors: function() {
 		var behaviors = {},
-			dynamicTags = this.options.model.get( 'dynamic' );
+			dynamicData = this.options.model.get( 'dynamic' );
 
-		if ( dynamicTags && dynamicTags.active ) {
-			behaviors.tags = jQuery.extend( { behaviorClass: TagsBehavior }, dynamicTags );
+		if ( dynamicData && dynamicData.active ) {
+			var tags = _.filter( elementor.dynamicTags.getConfig( 'tags' ), function( tag ) {
+				return _.intersection( tag.categories, dynamicData.categories ).length;
+			} );
+
+			if ( tags.length ) {
+				behaviors.tags = {
+					behaviorClass: TagsBehavior,
+					tags: tags,
+					property: dynamicData.property
+				};
+			}
 		}
 
 		return behaviors;
@@ -200,7 +210,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.triggerMethod( 'input:change', event );
 	},
 
-	onResponsiveSwitcherClick: function( event ) {
+	onResponsiveSwitchersClick: function( event ) {
 		var device = jQuery( event.currentTarget ).data( 'device' );
 
 		elementor.changeDeviceMode( device );
@@ -222,7 +232,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	onAfterExternalChange: function() {
 		this.hideTooltip();
-		this.render();
+
+		this.applySavedValue();
 	},
 
 	addTooltip: function() {
