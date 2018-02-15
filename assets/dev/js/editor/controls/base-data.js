@@ -37,7 +37,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 			'input @ui.textarea': 'onBaseInputChange',
 			'change @ui.select': 'onBaseInputChange',
 			'input @ui.contentEditable': 'onBaseInputChange',
-			'click @ui.responsiveSwitchers': 'onResponsiveSwitcherClick'
+			'click @ui.responsiveSwitchers': 'onResponsiveSwitchersClick'
 		};
 	},
 
@@ -210,7 +210,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.triggerMethod( 'input:change', event );
 	},
 
-	onResponsiveSwitcherClick: function( event ) {
+	onResponsiveSwitchersClick: function( event ) {
 		var device = jQuery( event.currentTarget ).data( 'device' );
 
 		elementor.changeDeviceMode( device );
