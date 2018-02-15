@@ -810,6 +810,11 @@ abstract class Controls_Stack {
 
 				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
 			}
+			if ( ! empty( $args['suffix_class'] ) ) {
+				$device_to_replace = self::RESPONSIVE_DESKTOP === $device_name ? '' : '-' . $device_name;
+
+				$control_args['suffix_class'] = sprintf( $args['suffix_class'], $device_to_replace );
+			}
 
 			$control_args['responsive']['max'] = $device_name;
 
