@@ -1738,6 +1738,8 @@ abstract class Controls_Stack {
 			}
 
 			if ( ! $is_correct_dynamic_value ) {
+				$settings[ $control['name'] ] = $settings[ $static_setting_key ];
+
 				unset( $settings[ $static_setting_key ] );
 			}
 		}
