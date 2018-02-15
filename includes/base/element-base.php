@@ -794,7 +794,7 @@ abstract class Element_Base extends Controls_Stack {
 				continue;
 			}
 
-			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] . $control['suffix_class'] );
+			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] . isset($control['suffix_class']) ? $control['suffix_class'] : '' );
 		}
 
 		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
