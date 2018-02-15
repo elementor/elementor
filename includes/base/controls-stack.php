@@ -738,7 +738,7 @@ abstract class Controls_Stack {
 	final public function get_class_controls() {
 		return array_filter(
 			$this->get_active_controls(), function( $control ) {
-				return ( isset( $control['prefix_class'] ) );
+				return ( isset( $control['prefix_class'] || isset( $control['suffix_class'] ) );
 			}
 		);
 	}
