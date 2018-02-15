@@ -44,17 +44,9 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	createTagsList: function() {
-		var tags = elementor.dynamicTags.getConfig( 'tags' ),
+		var tags = _.groupBy( this.getOption( 'tags' ), 'group' ),
 			groups = elementor.dynamicTags.getConfig( 'groups' ),
-			categories = this.getOption( 'categories' );
-
-		tags = _.filter( tags, function( tag ) {
-			return _.intersection( tag.categories, categories ).length;
-		} );
-
-		tags = _.groupBy( tags, 'group' );
-
-		var $tagsList = this.ui.tagsList = jQuery( '<div>', { 'class': 'elementor-tags-list' } );
+			$tagsList = this.ui.tagsList = jQuery( '<div>', { 'class': 'elementor-tags-list' } );
 
 		jQuery.each( groups, function( groupName ) {
 			var groupTags = tags[ groupName ];
@@ -197,6 +189,6 @@ module.exports = Marionette.Behavior.extend( {
 
 		this.view.setSettingsModel( staticValue );
 
-		this.view.render();
+		this.view.applySavedValue();
 	}
 } );

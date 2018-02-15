@@ -22,8 +22,21 @@ abstract class Base_Tag extends Controls_Stack {
 
 	abstract public function get_content_type();
 
-	public function get_panel_template() {
+	public function get_panel_template_setting_key() {
 		return '';
+	}
+
+	public function print_panel_template() {
+		$panel_template_setting_key = $this->get_panel_template_setting_key();
+
+		if ( ! $panel_template_setting_key ) {
+			return;
+		}
+		?>
+		<# if ( <?php echo $panel_template_setting_key; ?> ) { #>
+			({{{<?php echo $panel_template_setting_key; ?>}}})
+		<# } #>
+		<?php
 	}
 
 	final public function get_unique_name() {

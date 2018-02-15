@@ -5,6 +5,16 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 
 	editor: null,
 
+	ui: function() {
+		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
+
+		jQuery.extend( ui, {
+			inputWrapper: '.elementor-control-input-wrapper'
+		} );
+
+		return ui;
+	},
+
 	events: function() {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
 			'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
@@ -71,18 +81,23 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		}
 	},
 
+	applySavedValue: function() {
+		if ( ! this.editor ) {
+			return;
+		}
+
+		var controlValue = this.getControlValue();
+
+		this.editor.setContent( controlValue );
+
+		// Update also the plain textarea
+		jQuery( '#' + this.editorID ).val( controlValue );
+	},
+
 	saveEditor: function() {
 		this.editor.save();
 
 		this.setValue( this.editor.getContent() );
-	},
-
-	attachElContent: function() {
-		var editorTemplate = elementor.config.wp_editor.replace( /elementorwpeditor/g, this.editorID ).replace( '%%EDITORCONTENT%%', this.getControlValue() );
-
-		this.$el.html( editorTemplate );
-
-		return this;
 	},
 
 	moveButtons: function( buttonsToMove, from, to ) {
@@ -137,18 +152,13 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 	onReady: function() {
 		var self = this;
 
+		var $editor = jQuery( elementor.config.wp_editor.replace( /elementorwpeditor/g, self.editorID ).replace( '%%EDITORCONTENT%%', self.getControlValue() ) );
+
+		self.ui.inputWrapper.html( $editor );
+
 		setTimeout( function() {
 			self.editor.on( 'keyup change undo redo SetContent', self.saveEditor.bind( self ) );
 		}, 100 );
-	},
-
-	onAfterExternalChange: function() {
-		var controlValue = this.getControlValue();
-
-		this.editor.setContent( controlValue );
-
-		// Update also the plain textarea
-		jQuery( '#' + this.editorID ).val( controlValue );
 	},
 
 	onBeforeDestroy: function() {
