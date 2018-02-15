@@ -142,7 +142,6 @@ class Widget_Testimonial extends Widget_Base {
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
-				'separator' => 'before',
 			]
 		);
 
@@ -159,6 +158,7 @@ class Widget_Testimonial extends Widget_Base {
 				'condition' => [
 					'testimonial_image[url]!' => '',
 				],
+				'separator' => 'before',
 			]
 		);
 
