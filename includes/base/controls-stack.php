@@ -1725,6 +1725,14 @@ abstract class Controls_Stack {
 				if ( ! is_string( $value_to_check ) ) {
 					$is_correct_dynamic_value = false;
 				}
+
+				if ( $is_correct_dynamic_value ) {
+					$tag_text_data = Plugin::$instance->dynamic_tags->get_tag_text_data( $value_to_check );
+
+					if ( ! $tag_text_data || ! Plugin::$instance->dynamic_tags->get_tag_info( $tag_text_data['name'] ) ) {
+						$is_correct_dynamic_value = false;
+					}
+				}
 			} else {
 				$is_correct_dynamic_value = false;
 			}
