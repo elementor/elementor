@@ -155,7 +155,7 @@ class Control_Gallery extends Base_Data_Control {
 							<div class="elementor-control-gallery-thumbnail" style="background-image: url({{ image.url }})"></div>
 						<# } ); #>
 					</div>
-					<button class="elementor-button elementor-control-gallery-add"><?php _e( '+ Add Images', 'elementor' ); ?></button>
+					<button class="elementor-button elementor-control-gallery-add"><?php _e( 'Add Images', 'elementor' ); ?></button>
 				</div>
 			</div>
 		</div>
