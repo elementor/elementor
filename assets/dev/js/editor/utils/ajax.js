@@ -139,8 +139,6 @@ Ajax = {
 						}
 					}
 				} );
-			},
-			error: function( data ) {
 			}
 		} );
 	},
