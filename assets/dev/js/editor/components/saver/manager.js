@@ -21,11 +21,11 @@ module.exports = Module.extend( {
 	},
 
 	saveDraft: function() {
-		if ( ! this.isEditorChanged() ) {
+		var postStatus = elementor.settings.page.model.get( 'post_status' );
+
+		if ( ! elementor.saver.isEditorChanged() && 'draft' !== postStatus ) {
 			return;
 		}
-
-		var postStatus = elementor.settings.page.model.get( 'post_status' );
 
 		switch ( postStatus ) {
 			case 'publish':
