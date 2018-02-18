@@ -191,7 +191,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 1.9.4 - 2018-02-14 ###
+### 1.9.5 - 2018-02-14 ###
 * Fix: Added reset for background video when the parent has set `text-align: center;`
 * Fix: Print global and post CSS files after all 3rd party plugins styles
 * Fix: Avoid setting editor changed-flag on auto-saving
