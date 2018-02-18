@@ -123,7 +123,7 @@ class Documents_Manager {
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {
-			$post_data['post_title'] = __( 'Elementor', 'elementor' );
+			$post_data['post_title'] = __( 'Elementor', 'elementor' ) . ' ' . $this->types[ $type ]::get_title();
 			$update_title = true;
 		}
 
