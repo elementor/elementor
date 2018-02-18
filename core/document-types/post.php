@@ -44,6 +44,19 @@ class Post extends Document {
 			'of' => 'post_status',
 		] );
 
+		if ( current_theme_supports( 'post-thumbnails' ) ) {
+			$this->add_control(
+				'post_featured_image',
+				[
+					'label' => __( 'Featured Image', 'elementor' ),
+					'type' => Controls_Manager::MEDIA,
+					'default' => [
+						'url' => get_the_post_thumbnail_url( $this->post->ID ),
+					]
+				]
+			);
+		}
+
 		if ( Utils::is_cpt_custom_templates_supported() ) {
 			require_once ABSPATH . '/wp-admin/includes/template.php';
 
