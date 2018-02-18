@@ -33,7 +33,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	activateSaveButtons: function( hasChanges ) {
-		var hasChanges = hasChanges || 'draft' === elementor.settings.page.model.get( 'post_status' );
+		hasChanges = hasChanges || 'draft' === elementor.settings.page.model.get( 'post_status' );
 
 		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-saver-disabled', ! hasChanges );
 		this.ui.buttonSaveOptions.toggleClass( 'elementor-saver-disabled', ! hasChanges );
