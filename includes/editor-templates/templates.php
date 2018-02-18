@@ -40,7 +40,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
-	<div id="elementor-template-library-menu-pre-made-templates" class="elementor-template-library-menu-item" data-template-source="remote"><?php echo __( 'Predesigned Templates', 'elementor' ); ?></div>
+	<div id="elementor-template-library-menu-pre-made-blocks" class="elementor-template-library-menu-item" data-template-source="remote" data-template-type="block"><?php echo __( 'Blocks', 'elementor' ); ?></div>
+	<div id="elementor-template-library-menu-pre-made-pages" class="elementor-template-library-menu-item" data-template-source="remote" data-template-type="page"><?php echo __( 'Pages', 'elementor' ); ?></div>
 	<div id="elementor-template-library-menu-my-templates" class="elementor-template-library-menu-item" data-template-source="local"><?php echo __( 'My Templates', 'elementor' ); ?></div>
 </script>
 
@@ -132,16 +133,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">
 	<div class="elementor-template-library-template-body">
-		<div class="elementor-template-library-template-screenshot" style="background-image: url({{ thumbnail }});"></div>
-		<div class="elementor-template-library-template-controls">
-			<div class="elementor-template-library-template-preview">
-				<i class="fa fa-search-plus" aria-hidden="true"></i>
-			</div>
-			{{{ elementor.templates.getLayout().getTemplateActionButton( obj ) }}}
+		<# if ( 'page' === type ) { #>
+			<div class="elementor-template-library-template-screenshot" style="background-image: url({{ thumbnail }});"></div>
+		<# } else { #>
+			<img src="{{ thumbnail }}">
+		<# } #>
+		<div class="elementor-template-library-template-preview">
+			<i class="fa fa-search-plus" aria-hidden="true"></i>
 		</div>
 	</div>
 	<div class="elementor-template-library-template-footer">
-		<div class="elementor-template-library-template-name">{{{ title }}}</div>
+		{{{ elementor.templates.getLayout().getTemplateActionButton( obj ) }}}
+		<div class="elementor-template-library-template-name">{{{ title }}} - {{{ type }}}</div>
 		<div class="elementor-template-library-favorite">
 			<input id="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-input" type="checkbox"{{ favorite ? " checked" : "" }}>
 			<label for="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-label">
@@ -186,18 +189,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-button">
-	<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button elementor-button-success">
+	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button">
 		<i class="eicon-file-download" aria-hidden="true"></i>
 		<span class="elementor-button-title"><?php echo __( 'Insert', 'elementor' ); ?></span>
-	</button>
+	</a>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-get-pro-button">
-	<a href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-library&utm_campaign=gopro&utm_medium=wp-dash' ); ?>" target="_blank">
-		<button class="elementor-template-library-template-action elementor-button elementor-button-go-pro">
-			<i class="fa fa-external-link-square" aria-hidden="true"></i>
-			<span class="elementor-button-title"><?php echo __( 'Go Pro', 'elementor' ); ?></span>
-		</button>
+	<a class="elementor-template-library-template-action elementor-button elementor-button-go-pro" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-library&utm_campaign=gopro&utm_medium=wp-dash' ); ?>" target="_blank">
+		<i class="fa fa-external-link-square" aria-hidden="true"></i>
+		<span class="elementor-button-title"><?php echo __( 'Go Pro', 'elementor' ); ?></span>
 	</a>
 </script>
 
