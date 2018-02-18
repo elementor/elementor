@@ -883,6 +883,8 @@ select {
     position: absolute;
     -webkit-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    -webkit-border-radius: 3px;
+            border-radius: 3px;
     left: 0;
     right: 0;
     margin: -4px auto 5px;
@@ -897,8 +899,10 @@ select {
       left: 22px;
       border: 8px solid transparent;
       border-bottom-color: #fff; }
-    .elementor-panel .elementor-controls-popover div.elementor-control:before {
-      content: none; }
+    .elementor-panel .elementor-controls-popover div.elementor-control {
+      background-color: transparent; }
+      .elementor-panel .elementor-controls-popover div.elementor-control:before {
+        content: none; }
   .elementor-panel #elementor-panel-get-pro-elements .elementor-panel-nerd-box-message {
     text-transform: uppercase; }
   .elementor-panel #elementor-panel-header {
