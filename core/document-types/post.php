@@ -170,6 +170,7 @@ class Post extends Document {
 					'label' => __( 'Featured Image', 'elementor' ),
 					'type' => Controls_Manager::MEDIA,
 					'default' => [
+						'id' => get_post_thumbnail_id(),
 						'url' => get_the_post_thumbnail_url( $document->post->ID ),
 					],
 				]
