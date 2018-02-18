@@ -147,6 +147,7 @@
 	display: none;
 	position: absolute;
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
 	left: 0;
 	right: 0;
 	margin: -4px auto 5px;
@@ -167,6 +168,7 @@
 	}
 
 	div.elementor-control { // Harder selector to override default settings
+		background-color: transparent; // Makes the popover's border-radius visible
 
 		&:before {
 			content: none;
