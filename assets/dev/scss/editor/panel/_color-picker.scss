@@ -87,12 +87,14 @@
 	}
 }
 
-.wp-color-picker {
+input[type="text"].wp-color-picker {
 	float: left;
 	width: 100px;
-	max-width: 100px;
+	max-width: 136px;
 	border-radius: 3px 0 0 3px;
-	line-height: 1;
+	font-size: 11px;
+	line-height: 12px;
+	padding: 7px 3px;
 }
 
 .wp-picker-holder {
