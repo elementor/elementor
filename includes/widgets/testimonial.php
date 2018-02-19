@@ -137,6 +137,15 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		$this->add_control(
+			'link',
+			[
+				'label' => __( 'Link to', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'placeholder' => __( 'https://your-link.com', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
 			'testimonial_image_position',
 			[
 				'label' => __( 'Image Position', 'elementor' ),
@@ -173,6 +182,7 @@ class Widget_Testimonial extends Widget_Base {
 						'icon' => 'fa fa-align-right',
 					],
 				],
+				'label_block' => false,
 			]
 		);
 
@@ -387,6 +397,18 @@ class Widget_Testimonial extends Widget_Base {
 		if ( ! $has_content && ! $has_image && ! $has_name && ! $has_job ) {
 			return;
 		}
+
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
+
+			if ( $settings['link']['is_external'] ) {
+				$this->add_render_attribute( 'link', 'target', '_blank' );
+			}
+
+			if ( ! empty( $settings['link']['nofollow'] ) ) {
+				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
+			}
+		}
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 
@@ -403,7 +425,13 @@ class Widget_Testimonial extends Widget_Base {
 				<div class="elementor-testimonial-meta-inner">
 					<?php if ( $has_image ) : ?>
 						<div class="elementor-testimonial-image">
-							<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings, 'testimonial_image' ); ?>
+							<?php
+							$image_html = Group_Control_Image_Size::get_attachment_image_html( $settings, 'testimonial_image' );
+							if ( ! empty( $settings['link']['url'] ) ) :
+								$image_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $image_html . '</a>';
+							endif;
+							echo $image_html;
+							?>
 						</div>
 					<?php endif; ?>
 
@@ -413,16 +441,26 @@ class Widget_Testimonial extends Widget_Base {
 							$this->add_render_attribute( 'testimonial_name', 'class', 'elementor-testimonial-name' );
 
 							$this->add_inline_editing_attributes( 'testimonial_name', 'none' );
+
+							$testimonial_name_html = $settings['testimonial_name'];
+							if ( ! empty( $settings['link']['url'] ) ) :
+								$testimonial_name_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $testimonial_name_html . '</a>';
+							endif;
 							?>
-							<div <?php echo $this->get_render_attribute_string( 'testimonial_name' );  ?>><?php echo $settings['testimonial_name']; ?></div>
+							<div <?php echo $this->get_render_attribute_string( 'testimonial_name' );  ?>><?php echo $testimonial_name_html; ?></div>
 						<?php endif; ?>
 
 						<?php if ( $has_job ) :
 							$this->add_render_attribute( 'testimonial_job', 'class', 'elementor-testimonial-job' );
 
 							$this->add_inline_editing_attributes( 'testimonial_job', 'none' );
+
+							$testimonial_job_html = $settings['testimonial_job'];
+							if ( ! empty( $settings['link']['url'] ) ) :
+								$testimonial_job_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $testimonial_job_html . '</a>';
+							endif;
 							?>
-							<div <?php echo $this->get_render_attribute_string( 'testimonial_job' );  ?>><?php echo $settings['testimonial_job']; ?></div>
+							<div <?php echo $this->get_render_attribute_string( 'testimonial_job' );  ?>><?php echo $testimonial_job_html; ?></div>
 						<?php endif; ?>
 					</div>
 					<?php endif; ?>
@@ -456,6 +494,11 @@ class Widget_Testimonial extends Widget_Base {
 		if ( '' !== settings.testimonial_image.url ) {
 			imageUrl = elementor.imagesManager.getImageUrl( image );
 			hasImage = ' elementor-has-image';
+
+			var imageHtml = '<img src="' + imageUrl + '" alt="testimonial" />';
+			if ( settings.link.url ) {
+				imageHtml = '<a href="' + settings.link.url + '">' + imageHtml + '</a>';
+			}
 		}
 
 		var testimonial_alignment = settings.testimonial_alignment ? ' elementor-testimonial-text-align-' + settings.testimonial_alignment : '';
@@ -472,9 +515,7 @@ class Widget_Testimonial extends Widget_Base {
 			<div class="elementor-testimonial-meta{{ hasImage }}{{ testimonial_image_position }}">
 				<div class="elementor-testimonial-meta-inner">
 					<# if ( imageUrl ) { #>
-					<div class="elementor-testimonial-image">
-						<img src="{{ imageUrl }}" alt="testimonial" />
-					</div>
+					<div class="elementor-testimonial-image">{{{ imageHtml }}}</div>
 					<# } #>
 
 					<div class="elementor-testimonial-details">
@@ -482,16 +523,26 @@ class Widget_Testimonial extends Widget_Base {
 							view.addRenderAttribute( 'testimonial_name', 'class', 'elementor-testimonial-name' );
 
 							view.addInlineEditingAttributes( 'testimonial_name', 'none' );
+
+							var testimonialNameHtml = settings.testimonial_name;
+							if ( settings.link.url ) {
+								testimonialNameHtml = '<a href="' + settings.link.url + '">' + testimonialNameHtml + '</a>';
+							}
 							#>
-							<div {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{{ settings.testimonial_name }}}</div>
+							<div {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{{ testimonialNameHtml }}}</div>
 						<# } #>
 
 						<# if ( '' !== settings.testimonial_job ) {
 							view.addRenderAttribute( 'testimonial_job', 'class', 'elementor-testimonial-job' );
 
 							view.addInlineEditingAttributes( 'testimonial_job', 'none' );
+
+							var testimonialJobHtml = settings.testimonial_job;
+							if ( settings.link.url ) {
+								testimonialJobHtml = '<a href="' + settings.link.url + '">' + testimonialJobHtml + '</a>';
+							}
 							#>
-							<div {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{{ settings.testimonial_job }}}</div>
+							<div {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{{ testimonialJobHtml }}}</div>
 						<# } #>
 					</div>
 				</div>
