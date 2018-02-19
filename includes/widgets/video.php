@@ -331,6 +331,18 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Image_Size::get_type(),
+			[
+				'name' => 'image_overlay', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_overlay_size` and `image_overlay_custom_dimension`.
+				'default' => 'full',
+				'separator' => 'none',
+				'condition' => [
+					'show_image_overlay' => 'yes',
+				],
+			]
+		);
+
 		$this->add_control(
 			'show_play_icon',
 			[
@@ -622,13 +634,13 @@ class Widget_Video extends Widget_Base {
 						'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
 					] );
 				} else {
-					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . $settings['image_overlay']['url'] . ');' );
+					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . Group_Control_Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings ) . ');' );
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
 					<?php
 					if ( $settings['lightbox'] ) : ?>
-						<img src="<?php echo $settings['image_overlay']['url']; ?>">
+						<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings, 'image_overlay' ); ?>
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play" role="button">
