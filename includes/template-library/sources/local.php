@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Core\Base\Document;
 use Elementor\DB;
 use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -239,7 +240,13 @@ class Source_Local extends Source_Base {
 										if ( ! isset( $types_by_groups[ $group ] ) ) {
 											$types_by_groups[ $group ] = [];
 										}
-										$types_by_groups[ $group ][  $document_type::get_name() ] = $document_type::get_title();
+
+										/**
+										 * @var Document $instance
+										 */
+										$instance = new $document_type();
+
+										$types_by_groups[ $group ][  $instance->get_name() ] = $document_type::get_title();
 									}
 								}
 
