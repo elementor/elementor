@@ -2146,13 +2146,15 @@ select {
     -webkit-border-radius: 0 3px 3px 0;
             border-radius: 0 3px 3px 0;
     margin: 0; }
-  .elementor-panel .wp-color-picker {
+  .elementor-panel input[type="text"].wp-color-picker {
     float: left;
     width: 100px;
-    max-width: 100px;
+    max-width: 136px;
     -webkit-border-radius: 3px 0 0 3px;
             border-radius: 3px 0 0 3px;
-    line-height: 1; }
+    font-size: 11px;
+    line-height: 12px;
+    padding: 7px 3px; }
   .elementor-panel .wp-picker-holder * {
     -webkit-box-sizing: content-box;
             box-sizing: content-box; }
