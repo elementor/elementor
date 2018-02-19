@@ -181,11 +181,13 @@ class Post extends Document {
 	}
 
 	public function __construct( array $data = [] ) {
-		$template = get_post_meta( $data['post_id'], '_wp_page_template', true );
-		if ( empty( $template ) ) {
-			$template = 'default';
+		if ( $data ) {
+			$template = get_post_meta( $data['post_id'], '_wp_page_template', true );
+			if ( empty( $template ) ) {
+				$template = 'default';
+			}
+			$data['settings']['template'] = $template;
 		}
-		$data['settings']['template'] = $template;
 
 		parent::__construct( $data );
 	}
