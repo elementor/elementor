@@ -250,3 +250,15 @@
 		flex-direction: column-reverse;
 	}
 }
+
+
+// Minimal simple Grid
+
+.elementor-grid {
+	display: flex;
+	flex-wrap: wrap;
+
+	.elementor-grid-item {
+		word-break: break-word;
+	}
+}
