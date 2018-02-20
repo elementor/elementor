@@ -297,9 +297,6 @@ class Editor {
 
 		global $wp_styles, $wp_scripts;
 
-		// Set the global data like $authordata and etc
-		setup_postdata( $this->_post_id );
-
 		$plugin = Plugin::$instance;
 
 		// Reset global variable
