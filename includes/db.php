@@ -105,9 +105,7 @@ class DB {
 	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
 		$data = $this->get_plain_editor( $post_id, $status );
 
-		Plugin::$instance->documents->switch_to_document( $post_id );
-		$editor_data = $this->_get_editor_data( $data, true );
-		Plugin::$instance->documents->restore_document();
+		$editor_data = $this->_get_editor_data( $post_id, $data, true );
 
 		return $editor_data;
 	}
@@ -312,13 +310,17 @@ class DB {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @param       $post_id
 	 * @param array $data              Raw Elementor post data from the database.
 	 * @param bool  $with_html_content Optional. Whether to return content with
 	 *                                 HTML or not. Default is false.
 	 *
 	 * @return array Parsed data.
 	 */
-	public function _get_editor_data( $data, $with_html_content = false ) {
+	public function _get_editor_data( $post_id, $data, $with_html_content = false ) {
+		// Change the current post, so widgets can use `documents->get_current` and other post data
+		Plugin::$instance->documents->switch_to_document( $post_id );
+
 		$editor_data = [];
 
 		foreach ( $data as $element_data ) {
@@ -330,6 +332,8 @@ class DB {
 
 			$editor_data[] = $element->get_raw_data( $with_html_content );
 		} // End foreach().
+
+		Plugin::$instance->documents->restore_document();
 
 		return $editor_data;
 	}
