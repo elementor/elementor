@@ -90,6 +90,7 @@ class Editor {
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
+		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
 		query_posts( [ 'p' => $this->_post_id, 'post_type' => get_post_type( $this->_post_id ) ] );
 
 		Plugin::$instance->db->switch_to_post( $this->_post_id );
