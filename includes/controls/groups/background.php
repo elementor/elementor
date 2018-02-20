@@ -323,6 +323,17 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 		];
 
+		$fields['attachment_alert'] = [
+			'type' => Controls_Manager::RAW_HTML,
+			'content_classes' => 'elementor-control-field-description',
+			'raw' => __( 'Note: the fixed feature works only in desktop mode.', 'elementor' ),
+			'separator' => 'none',
+			'condition' => [
+				'attachment' => 'fixed',
+				'image[url]!' => '',
+			],
+		];
+
 		$fields['repeat'] = [
 			'label' => _x( 'Repeat', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
