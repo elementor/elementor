@@ -604,6 +604,17 @@
         -ms-flex-direction: column-reverse;
             flex-direction: column-reverse; } }
 
+.elementor-grid {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap; }
+  .elementor-grid .elementor-grid-item {
+    word-break: break-word; }
+
 .elementor-screen-only,
 .screen-reader-text,
 .screen-reader-text span,
@@ -1435,12 +1446,24 @@
 .elementor-widget-icon-list.elementor-align-center .elementor-icon-list-item:after {
   margin: auto; }
 
+.elementor-widget-icon-list.elementor-align-center .elementor-grid {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center; }
+
 .elementor-widget-icon-list.elementor-align-left .elementor-icon-list-item, .elementor-widget-icon-list.elementor-align-left .elementor-icon-list-item a {
-  -webkit-box-pack: start;
-  -webkit-justify-content: flex-start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
   text-align: right; }
+
+.elementor-widget-icon-list.elementor-align-left .elementor-grid {
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+          justify-content: flex-end; }
 
 .elementor-widget-icon-list.elementor-align-right .elementor-icon-list-item, .elementor-widget-icon-list.elementor-align-right .elementor-icon-list-item a {
   -webkit-box-pack: end;
@@ -1448,6 +1471,12 @@
       -ms-flex-pack: end;
           justify-content: flex-end;
   text-align: left; }
+
+.elementor-widget-icon-list.elementor-align-right .elementor-grid {
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+      -ms-flex-pack: start;
+          justify-content: flex-start; }
 
 .elementor-widget-icon-list:not(.elementor-align-right) .elementor-icon-list-item:after {
   right: 0; }
