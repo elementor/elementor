@@ -386,10 +386,7 @@ abstract class Document extends Controls_Stack {
 	protected function save_elements( $elements ) {
 		$db = Plugin::$instance->db;
 
-		// Change the current post, so widgets can use `documents->get_current` and other post data
-		Plugin::$instance->documents->switch_to_document( $this->post->ID );
-		$editor_data = $db->_get_editor_data( $elements );
-		Plugin::$instance->documents->restore_document();
+		$editor_data = $db->_get_editor_data( $this->post->ID, $elements );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
