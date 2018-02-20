@@ -434,9 +434,10 @@ class Widget_Social_Icons extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$class_animation = '';
+
 		if ( ! empty( $settings['hover_animation'] ) ) {
 			$class_animation = ' elementor-animation-' . $settings['hover_animation'];
 		}

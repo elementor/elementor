@@ -14,14 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_group_control(
- *    	Group_Control_Border::get_type(),
- *    	[
- *    		'name' => 'border',
- *    		'selector' => '{{WRAPPER}} .wrapper',
- *    		'separator' => 'before',
- *    	]
- *    );
+ * ```php
+ * $this->add_group_control(
+ * 	Group_Control_Border::get_type(),
+ * 	[
+ * 		'name' => 'border',
+ * 		'selector' => '{{WRAPPER}} .wrapper',
+ * 		'separator' => 'before',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *
@@ -50,9 +52,9 @@ class Group_Control_Border extends Group_Control_Base {
 	protected static $fields;
 
 	/**
-	 * Retrieve type.
-	 *
 	 * Get border control type.
+	 *
+	 * Retrieve the control type, in this case `border`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -119,8 +121,15 @@ class Group_Control_Border extends Group_Control_Base {
 	}
 
 	/**
+	 * Get default options.
+	 *
+	 * Retrieve the default options of the border control. Used to return the
+	 * default options while initializing the border control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default border control options.
 	 */
 	protected function get_default_options() {
 		return [

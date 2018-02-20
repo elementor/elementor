@@ -331,16 +331,27 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Image_Size::get_type(),
+			[
+				'name' => 'image_overlay', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_overlay_size` and `image_overlay_custom_dimension`.
+				'default' => 'full',
+				'separator' => 'none',
+				'condition' => [
+					'show_image_overlay' => 'yes',
+				],
+			]
+		);
+
 		$this->add_control(
 			'show_play_icon',
 			[
 				'label' => __( 'Play Icon', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
-				'options' => [
-					'yes' => __( 'Yes', 'elementor' ),
-					'no' => __( 'No', 'elementor' ),
-				],
+				'label_off' => __( 'No', 'elementor' ),
+				'label_on' => __( 'Yes', 'elementor' ),
+				'return_value' => 'yes',
 				'condition' => [
 					'show_image_overlay' => 'yes',
 					'image_overlay[url]!' => '',
@@ -397,6 +408,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::HEADING,
 				'condition' => [
 					'show_image_overlay' => 'yes',
+					'show_play_icon' => 'yes',
 				],
 			]
 		);
@@ -412,6 +424,7 @@ class Widget_Video extends Widget_Base {
 				'separator' => 'before',
 				'condition' => [
 					'show_image_overlay' => 'yes',
+					'show_play_icon' => 'yes',
 				],
 			]
 		);
@@ -432,6 +445,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
+					'show_play_icon' => 'yes',
 				],
 			]
 		);
@@ -448,6 +462,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
+					'show_play_icon' => 'yes',
 				],
 			]
 		);
@@ -619,17 +634,18 @@ class Widget_Video extends Widget_Base {
 						'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
 					] );
 				} else {
-					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . $settings['image_overlay']['url'] . ');' );
+					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . Group_Control_Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings ) . ');' );
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
 					<?php
 					if ( $settings['lightbox'] ) : ?>
-						<img src="<?php echo $settings['image_overlay']['url']; ?>">
+						<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings, 'image_overlay' ); ?>
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
-						<div class="elementor-custom-embed-play">
+						<div class="elementor-custom-embed-play" role="button">
 							<i class="eicon-play" aria-hidden="true"></i>
+							<span class="elementor-screen-only"><?php esc_html_e( 'Play Video', 'elementor' ); ?></span>
 						</div>
 					<?php endif; ?>
 				</div>
@@ -654,6 +670,8 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
+	 * Get embed params.
+	 *
 	 * Retrieve video widget embed parameters.
 	 *
 	 * @since 1.5.0
@@ -662,7 +680,7 @@ class Widget_Video extends Widget_Base {
 	 * @return array Video embed parameters.
 	 */
 	public function get_embed_params() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$params = [];
 
@@ -700,6 +718,8 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
+	 * Get hosted params.
+	 *
 	 * Retrieve video widget hosted parameters.
 	 *
 	 * @since 1.0.0
@@ -708,7 +728,7 @@ class Widget_Video extends Widget_Base {
 	 * @return array Video hosted parameters.
 	 */
 	protected function get_hosted_params() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$params = [];
 
@@ -742,7 +762,7 @@ class Widget_Video extends Widget_Base {
 	 * @return bool Whether an image overlay was set for the video.
 	 */
 	protected function has_image_overlay() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		return ! empty( $settings['image_overlay']['url'] ) && 'yes' === $settings['show_image_overlay'];
 	}

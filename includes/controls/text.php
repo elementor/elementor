@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -13,23 +15,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'widget_title',
- *    	[
- *    		'label' => __( 'Text', 'plugin-domain' ),
- *    		'type' => Controls_Manager::TEXT,
- *    		'default' => __( 'Default text', 'plugin-domain' ),
- *    		'placeholder' => __( 'Type your text here', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'widget_title',
+ * 	[
+ * 		'label' => __( 'Text', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::TEXT,
+ * 		'default' => __( 'Default text', 'plugin-domain' ),
+ * 		'placeholder' => __( 'Type your text here', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<h2>' . $this->get_settings( 'widget_title' ) . '</h2>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<h2>' . $settings['widget_title'] . '</h2>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <h2>{{{ settings.widget_title }}}</h2>
+ * ```js
+ * <h2>{{{ settings.widget_title }}}</h2>
+ * ```
  *
  * @since 1.0.0
  *
@@ -42,8 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param mixed  $default     Optional. The field default value.
- * @param string $input_type  Optional. Any valid HTML5 input type: text, email,
- *                            url, tel, etc. Default is 'text'.
+ *
  * @param string $separator   Optional. Set the position of the control separator.
  *                            Available values are 'default', 'before', 'after'
  *                            and 'none'. 'default' will position the separator
@@ -59,7 +67,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Text extends Base_Data_Control {
 
 	/**
-	 * Retrieve text control type.
+	 * Get text control type.
+	 *
+	 * Retrieve the control type, in this case `text`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -86,19 +96,19 @@ class Control_Text extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input id="<?php echo $control_uid; ?>" type="{{ data.input_type }}" class="tooltip-target" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}" />
+				<input id="<?php echo $control_uid; ?>" type="{{ data.input_type }}" class="tooltip-target elementor-control-tag-area" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}" />
 			</div>
 		</div>
 		<# if ( data.description ) { #>
-		<div class="elementor-control-field-description">{{{ data.description }}}</div>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
 	}
 
 	/**
-	 * Retrieve text control default settings.
+	 * Get text control default settings.
 	 *
-	 * Get the default settings of the text control. Used to return the
+	 * Retrieve the default settings of the text control. Used to return the
 	 * default settings while initializing the text control.
 	 *
 	 * @since 1.0.0
@@ -108,7 +118,9 @@ class Control_Text extends Base_Data_Control {
 	 */
 	protected function get_default_settings() {
 		return [
-			'input_type' => 'text',
+			'dynamic' => [
+				'categories' => [ TagsModule::TEXT_CATEGORY ],
+			],
 		];
 	}
 }

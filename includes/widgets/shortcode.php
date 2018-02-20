@@ -135,7 +135,7 @@ class Widget_Shortcode extends Widget_Base {
 	/**
 	 * Render shortcode widget as plain content.
 	 *
-	 * Override the default behavior by printing the shortcode insted of rendering it.
+	 * Override the default behavior by printing the shortcode instead of rendering it.
 	 *
 	 * @since 1.0.0
 	 * @access public

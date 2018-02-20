@@ -14,27 +14,33 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'box_shadow',
- *    	[
- *    		'label' => __( 'Box Shadow', 'plugin-domain' ),
- *    		'type' => Controls_Manager::BOX_SHADOW,
- *    		'default' => [
- *    			'color' => 'rgba(0,0,0,.5)',
- *    		],
- *    		'selectors' => [
- *    			'{{WRAPPER}} .your-class' => 'box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}};',
- *    		],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'box_shadow',
+ * 	[
+ * 		'label' => __( 'Box Shadow', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::BOX_SHADOW,
+ * 		'default' => [
+ * 			'color' => 'rgba(0,0,0,.5)',
+ * 		],
+ * 		'selectors' => [
+ * 			'{{WRAPPER}} .your-class' => 'box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}};',
+ * 		],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<div class="your-class"> ... </div>';
+ * ```php
+ * echo '<div class="your-class"> ... </div>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div class="your-class"> ... </div>
+ * ```js
+ * <div class="your-class"> ... </div>
+ * ```
  *
  * @since 1.0.0
  *
@@ -45,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $placeholder Optional. The field placeholder that appears when
  *                            the field has no values. Default is empty.
  * @param array  $default     {
- *     Optional. Defautl box shadow values.
+ *     Optional. Default box shadow values.
  *
  *     @type int    $horizontal Optional. Horizontal shadow. Default is 0.
  *     @type int    $vertical   Optional. Vertical shadow. Default is 0.
@@ -80,7 +86,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Box_Shadow extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve box shadow control type.
+	 * Get box shadow control type.
+	 *
+	 * Retrieve the control type, in this case `box_shadow`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -92,9 +100,9 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve box shadow control default value.
+	 * Get box shadow control default value.
 	 *
-	 * Get the default value of the box shadow control. Used to return the
+	 * Retrieve the default value of the box shadow control. Used to return the
 	 * default values while initializing the box shadow control.
 	 *
 	 * @since 1.0.0
@@ -113,9 +121,9 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve box shadow control sliders.
+	 * Get box shadow control sliders.
 	 *
-	 * Get the sliders of the box shadow control. Sliders are used while
+	 * Retrieve the sliders of the box shadow control. Sliders are used while
 	 * rendering the control output in the editor.
 	 *
 	 * @since 1.0.0

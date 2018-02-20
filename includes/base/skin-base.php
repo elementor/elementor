@@ -85,9 +85,8 @@ abstract class Skin_Base {
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
 	 * @since 1.0.0
-	 * @access public
-	 *
 	 * @deprecated
+	 * @access public
 	 */
 	public function _content_template() {}
 
@@ -95,7 +94,7 @@ abstract class Skin_Base {
 	 * Register skin controls actions.
 	 *
 	 * Run on init and used to register new skins to be injected to the widget.
-	 * This method is used to register new actions that specify the locaion of
+	 * This method is used to register new actions that specify the location of
 	 * the skin in the widget.
 	 *
 	 * Example usage:
@@ -110,7 +109,7 @@ abstract class Skin_Base {
 	 * Get skin control ID.
 	 *
 	 * Retrieve the skin control ID. Note that skin controls have special prefix
-	 * to destiguish them from regular controls, and from controls in other
+	 * to distinguish them from regular controls, and from controls in other
 	 * skins.
 	 *
 	 * @since 1.0.0
@@ -131,7 +130,7 @@ abstract class Skin_Base {
 	 * Retrieve all the skin settings or, when requested, a specific setting.
 	 *
 	 * @since 1.0.0
-	 * @TODO: rename to get_setting() and create backward compitability.
+	 * @TODO: rename to get_setting() and create backward compatibility.
 	 *
 	 * @access public
 	 *

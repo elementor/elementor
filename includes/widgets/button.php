@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor button widget.
  *
- * Elementor widget that displays a button with the ability to controll every
+ * Elementor widget that displays a button with the ability to control every
  * aspect of the button design.
  *
  * @since 1.0.0
@@ -394,7 +394,7 @@ class Widget_Button extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
@@ -412,6 +412,7 @@ class Widget_Button extends Widget_Base {
 		}
 
 		$this->add_render_attribute( 'button', 'class', 'elementor-button' );
+		$this->add_render_attribute( 'button', 'role', 'button' );
 
 		if ( ! empty( $settings['size'] ) ) {
 			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
@@ -446,7 +447,7 @@ class Widget_Button extends Widget_Base {
 		view.addInlineEditingAttributes( 'text', 'none' );
 		#>
 		<div class="elementor-button-wrapper">
-			<a class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}">
+			<a class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
 				<span class="elementor-button-content-wrapper">
 					<# if ( settings.icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
@@ -469,12 +470,18 @@ class Widget_Button extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render_text() {
-		$settings = $this->get_settings();
-		$this->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
-		$this->add_render_attribute( 'icon-align', 'class', 'elementor-align-icon-' . $settings['icon_align'] );
-		$this->add_render_attribute( 'icon-align', 'class', 'elementor-button-icon' );
+		$settings = $this->get_settings_for_display();
 
-		$this->add_render_attribute( 'text', 'class', 'elementor-button-text' );
+		$this->add_render_attribute( [
+			'content-wrapper' => [ 'class' => 'elementor-button-content-wrapper' ],
+			'icon-align' => [
+				'class' => [
+					'elementor-button-icon',
+					'elementor-align-icon-' . $settings['icon_align'],
+				],
+			],
+			'text' => [ 'class' => 'elementor-button-text' ],
+		] );
 
 		$this->add_inline_editing_attributes( 'text', 'none' );
 		?>

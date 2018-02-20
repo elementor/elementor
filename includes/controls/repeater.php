@@ -20,63 +20,69 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'list',
- *    	[
- *    		'label' => __( 'Repeater List', 'plugin-domain' ),
- *    		'type' => Controls_Manager::REPEATER,
- *    		'default' => [
- *    			[
- *    				'list_title' => __( 'Title #1', 'plugin-domain' ),
- *    				'list_content' => __( 'Item content. Click the edit button to change this text.', 'plugin-domain' ),
- *    			],
- *    			[
- *    				'list_title' => __( 'Title #2', 'plugin-domain' ),
- *    				'list_content' => __( 'Item content. Click the edit button to change this text.', 'plugin-domain' ),
- *    			],
- *    		],
- *    		'fields' => [
- *    			[
- *    				'name' => 'list_title',
- *    				'label' => __( 'Title', 'plugin-domain' ),
- *    				'type' => Controls_Manager::TEXT,
- *    				'default' => __( 'List Title' , 'plugin-domain' ),
- *    				'label_block' => true,
- *    			],
- *    			[
- *    				'name' => 'list_content',
- *    				'label' => __( 'Content', 'plugin-domain' ),
- *    				'type' => Controls_Manager::WYSIWYG,
- *    				'default' => __( 'List Content' , 'plugin-domain' ),
- *    				'show_label' => false,
- *    			],
- *    		],
- *    		'title_field' => '{{{ list_title }}}',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'list',
+ * 	[
+ * 		'label' => __( 'Repeater List', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::REPEATER,
+ * 		'default' => [
+ * 			[
+ * 				'list_title' => __( 'Title #1', 'plugin-domain' ),
+ * 				'list_content' => __( 'Item content. Click the edit button to change this text.', 'plugin-domain' ),
+ * 			],
+ * 			[
+ * 				'list_title' => __( 'Title #2', 'plugin-domain' ),
+ * 				'list_content' => __( 'Item content. Click the edit button to change this text.', 'plugin-domain' ),
+ * 			],
+ * 		],
+ * 		'fields' => [
+ * 			[
+ * 				'name' => 'list_title',
+ * 				'label' => __( 'Title', 'plugin-domain' ),
+ * 				'type' => Controls_Manager::TEXT,
+ * 				'default' => __( 'List Title' , 'plugin-domain' ),
+ * 				'label_block' => true,
+ * 			],
+ * 			[
+ * 				'name' => 'list_content',
+ * 				'label' => __( 'Content', 'plugin-domain' ),
+ * 				'type' => Controls_Manager::WYSIWYG,
+ * 				'default' => __( 'List Content' , 'plugin-domain' ),
+ * 				'show_label' => false,
+ * 			],
+ * 		],
+ * 		'title_field' => '{{{ list_title }}}',
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $list = $this->get_settings( 'list' );
- *    if ( $list ) {
- *    	echo '<dl>';
- *    	foreach ( $list as $item ) {
- *    		echo '<dt>' . $item['list_title'] . '</dt>';
- *    		echo '<dd>' . $item['list_content'] . '</dd>';
- *    	}
- *    	echo '</dl>';
- *    }
+ * ```php
+ * $settings = $this->get_settings();
+ * if ( $list ) {
+ * 	echo '<dl>';
+ * 	foreach (  $settings['list'] as $item ) {
+ * 		echo '<dt>' . $item['list_title'] . '</dt>';
+ * 		echo '<dd>' . $item['list_content'] . '</dd>';
+ * 	}
+ * 	echo '</dl>';
+ * }
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <# if ( settings.list ) { #>
- *    	<dl>
- *    	<# _.each( settings.list, function( item ) { #>
- *    		<dt> {{ item.tab_title }} </dt>
- *    		<dd> {{ item.list_content }} </dd>
- *    	<# }); #>
- *    	</dl>
- *    <# } #>
+ * ```js
+ * <# if ( settings.list ) { #>
+ * 	<dl>
+ * 	<# _.each( settings.list, function( item ) { #>
+ * 		<dt> {{ item.tab_title }} </dt>
+ * 		<dd> {{ item.list_content }} </dd>
+ * 	<# }); #>
+ * 	</dl>
+ * <# } #>
+ * ```
  *
  * @since 1.0.0
  *
@@ -89,10 +95,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  *                            values for each key as values:
  *                            `[ [ 'title' => '', 'content' => '' ], [ 'title' => '', 'content' => '' ], ... ]`
  *                            Default is an empty array.
- * @param array  $fields      Optional. An array of arrays contaning the repeter
+ * @param array  $fields      Optional. An array of arrays containing the repeater
  *                            fields. Default is an empty array.
  * @param string $title_field Optional. Field that will be used as the repeater
- *                            title in the fields list when the item is mnimized.
+ *                            title in the fields list when the item is minimized.
  *                            Default is empty.
  * @param string $separator   Optional. Set the position of the control separator.
  *                            Available values are 'default', 'before', 'after'
@@ -109,7 +115,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Repeater extends Base_Data_Control {
 
 	/**
-	 * Retrieve repeater control type.
+	 * Get repeater control type.
+	 *
+	 * Retrieve the control type, in this case `repeater`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -121,9 +129,9 @@ class Control_Repeater extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve repeater control default settings.
+	 * Get repeater control default settings.
 	 *
-	 * Get the default settings of the repeater control. Used to return the
+	 * Retrieve the default settings of the repeater control. Used to return the
 	 * default settings while initializing the repeater control.
 	 *
 	 * @since 1.0.0
@@ -139,9 +147,9 @@ class Control_Repeater extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve repeater control value.
+	 * Get repeater control value.
 	 *
-	 * Get the value of the repeater control from a specific widget.
+	 * Retrieve the value of the repeater control from a specific widget.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -168,6 +176,7 @@ class Control_Repeater extends Base_Data_Control {
 				}
 			}
 		}
+
 		return $value;
 	}
 

@@ -29,6 +29,7 @@ module.exports = ViewModule.extend( {
 			title: this.getSettings( 'panelPage.title' ),
 			options: {
 				model: this.model,
+				controls: this.model.controls,
 				name: name
 			}
 		} );
@@ -51,7 +52,10 @@ module.exports = ViewModule.extend( {
 	},
 
 	initControlsCSSParser: function() {
-		this.controlsCSS = new ControlsCSSParser( { id: this.getSettings( 'name' ) } );
+		this.controlsCSS = new ControlsCSSParser( {
+			id: this.getSettings( 'name' ),
+			settingsModel: this.model
+		} );
 	},
 
 	getDataToSave: function( data ) {
@@ -67,12 +71,12 @@ module.exports = ViewModule.extend( {
 
 		var settings = this.model.toJSON( { removeDefault: true } ),
 			data = this.getDataToSave( {
-				data: JSON.stringify( settings )
+				data: settings
 			} );
 
 		NProgress.start();
 
-		elementor.ajax.send( 'save_' + this.getSettings( 'name' ) + '_settings', {
+		elementor.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data: data,
 			success: function() {
 				NProgress.done();

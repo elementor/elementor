@@ -110,6 +110,9 @@ class Widget_Accordion extends Widget_Base {
 						'label' => __( 'Title & Content', 'elementor' ),
 						'type' => Controls_Manager::TEXT,
 						'default' => __( 'Accordion Title' , 'elementor' ),
+						'dynamic' => [
+							'active' => true,
+						],
 						'label_block' => true,
 					],
 					[
@@ -447,7 +450,7 @@ class Widget_Accordion extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>

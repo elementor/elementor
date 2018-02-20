@@ -13,25 +13,32 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'price',
- *    	[
- *    		'label' => __( 'Price', 'plugin-domain' ),
- *    		'type' => Controls_Manager::NUMBER,
- *    		'default' => 10,
- *    		'min' => 5,
- *    		'min' => 100,
- *    		'step' => 5,
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'price',
+ * 	[
+ * 		'label' => __( 'Price', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::NUMBER,
+ * 		'default' => 10,
+ * 		'min' => 5,
+ * 		'min' => 100,
+ * 		'step' => 5,
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<span class="price">' . $this->get_settings( 'price' ) . '</span>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<span class="price">' . $settings['price'] . '</span>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <span class="price">{{{ settings.price }}}</span>
+ * ```js
+ * <span class="price">{{{ settings.price }}}</span>
+ * ```
  *
  * @since 1.0.0
  *
@@ -69,7 +76,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Number extends Base_Data_Control {
 
 	/**
-	 * Retrieve number control type.
+	 * Get number control type.
+	 *
+	 * Retrieve the control type, in this case `number`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -81,9 +90,9 @@ class Control_Number extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve number control default settings.
+	 * Get number control default settings.
 	 *
-	 * Get the default settings of the number control. Used to return the
+	 * Retrieve the default settings of the number control. Used to return the
 	 * default settings while initializing the number control.
 	 *
 	 * @since 1.5.0

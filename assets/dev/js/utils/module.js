@@ -96,11 +96,23 @@ var Module = function() {
 	};
 
 	this.on = function( eventName, callback ) {
-		if ( ! events[ eventName ] ) {
-			events[ eventName ] = [];
+		if ( 'object' === typeof eventName ) {
+			$.each( eventName, function( singleEventName ) {
+				self.on( singleEventName, this );
+			} );
+
+			return self;
 		}
 
-		events[ eventName ].push( callback );
+		var eventNames = eventName.split( ' ' );
+
+		eventNames.forEach( function( singleEventName ) {
+			if ( ! events[ singleEventName ] ) {
+				events[ singleEventName ] = [];
+			}
+
+			events[ singleEventName ].push( callback );
+		} );
 
 		return self;
 	};

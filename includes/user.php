@@ -89,9 +89,17 @@ class User {
 	}
 
 	/**
+	 * Is current user can edit post type.
+	 *
+	 * Whether the current user can edit any given post type.
+	 *
 	 * @since 1.9.0
-	 * @static
 	 * @access public
+	 * @static
+	 *
+	 * @param string The post type slug to check.
+	 *
+	 * @return bool True on success, False otherwise.
 	 */
 	public static function is_current_user_can_edit_post_type( $post_type ) {
 		if ( ! post_type_exists( $post_type ) ) {

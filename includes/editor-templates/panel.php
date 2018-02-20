@@ -141,10 +141,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-editor-content">
 	<div class="elementor-panel-navigation">
-		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
-		<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-			<a href="#">{{{ tabTitle }}}</a>
-		</div>
+		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) {
+			#>
+			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<a href="#">{{{ tabTitle }}}</a>
+			</div>
 		<# } ); #>
 	</div>
 	<# if ( elementData.reload_preview ) { #>
@@ -229,6 +230,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</a>
 			<# } );
 		#>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
+	<div class="elementor-control-dynamic-switcher-wrapper">
+		<div class="elementor-control-dynamic-switcher">
+			<?php echo __( 'Dynamic', 'elementor' ); ?>
+			<i class="fa fa-database"></i>
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-control-dynamic-cover">
+	<div class="elementor-dynamic-cover__settings">
+		<i class="fa fa-wrench"></i>
+	</div>
+	<div class="elementor-dynamic-cover__title">{{{ title + ' ' + content }}}</div>
+	<div class="elementor-dynamic-cover__remove">
+		<i class="fa fa-times-circle"></i>
 	</div>
 </script>
 

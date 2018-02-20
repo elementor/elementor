@@ -7,19 +7,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor WordPress environment report.
+ *
+ * Elementor system report handler class responsible for generating a report for
+ * the WordPress environment.
+ *
+ * @since 1.0.0
+ */
 class WordPress_Reporter extends Base_Reporter {
 
 	/**
-	 * @access public
+	 * Get WordPress environment reporter title.
+	 *
+	 * Retrieve WordPress environment reporter title.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Reporter title.
 	 */
 	public function get_title() {
 		return 'WordPress Environment';
 	}
 
 	/**
-	 * @access public
+	 * Get WordPress environment report fields.
+	 *
+	 * Retrieve the required fields for the WordPress environment report.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
 		return [
@@ -38,8 +58,21 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get WordPress memory limit.
+	 *
+	 * Retrieve the WordPress memory limit.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value          WordPress memory limit.
+	 *    @type string $recommendation Recommendation memory limit.
+	 *    @type bool   $warning        Whether to display a warning. True if the limit
+	 *                                 is below the recommended 64M, False otherwise.
+	 * }
 	 */
 	public function get_memory_limit() {
 		$result = [
@@ -66,8 +99,18 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get WordPress version.
+	 *
+	 * Retrieve the WordPress version.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value WordPress version.
+	 * }
 	 */
 	public function get_version() {
 		return [
@@ -76,8 +119,18 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Is multisite.
+	 *
+	 * Whether multisite is enabled or not.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value Yes if multisite is enabled, No otherwise.
+	 * }
 	 */
 	public function get_is_multisite() {
 		return [
@@ -86,8 +139,18 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get site URL.
+	 *
+	 * Retrieve WordPress site URL.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value WordPress site URL.
+	 * }
 	 */
 	public function get_site_url() {
 		return [
@@ -96,8 +159,18 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get home URL.
+	 *
+	 * Retrieve WordPress home URL.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value WordPress home URL.
+	 * }
 	 */
 	public function get_home_url() {
 		return [
@@ -106,8 +179,18 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get permalink structure.
+	 *
+	 * Retrieve the permalink structure
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value WordPress permalink structure.
+	 * }
 	 */
 	public function get_permalink_structure() {
 		global $wp_rewrite;
@@ -124,8 +207,18 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get site language.
+	 *
+	 * Retrieve the site language.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value WordPress site language.
+	 * }
 	 */
 	public function get_language() {
 		return [
@@ -134,8 +227,18 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get PHP `max_upload_size`.
+	 *
+	 * Retrieve the value of maximum upload file size defined in `php.ini` configuration file.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value Maximum upload file size allowed.
+	 * }
 	 */
 	public function get_max_upload_size() {
 		return [
@@ -144,8 +247,18 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get WordPress timezone.
+	 *
+	 * Retrieve WordPress timezone.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value WordPress timezone.
+	 * }
 	 */
 	public function get_timezone() {
 		$timezone = get_option( 'timezone_string' );
@@ -159,8 +272,18 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get WordPress administrator email.
+	 *
+	 * Retrieve WordPress administrator email.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value WordPress administrator email.
+	 * }
 	 */
 	public function get_admin_email() {
 		return [
@@ -169,8 +292,18 @@ class WordPress_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get debug mode.
+	 *
+	 * Whether WordPress debug mode is enabled or not.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value Active if debug mode is enabled, Inactive otherwise.
+	 * }
 	 */
 	public function get_debug_mode() {
 		return [

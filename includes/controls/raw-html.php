@@ -14,14 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'html_message',
- *    	[
- *    		'type' => Controls_Manager::RAW_HTML,
- *    		'raw' => __( 'An important message to show in the panel.', 'your-plugin' ),
- *    		'content_classes' => 'your-class',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'html_message',
+ * 	[
+ * 		'type' => Controls_Manager::RAW_HTML,
+ * 		'raw' => __( 'An important message to show in the panel.', 'your-plugin' ),
+ * 		'content_classes' => 'your-class',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *
@@ -47,7 +49,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Raw_Html extends Base_UI_Control {
 
 	/**
-	 * Retrieve raw html control type.
+	 * Get raw html control type.
+	 *
+	 * Retrieve the control type, in this case `raw_html`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -78,9 +82,9 @@ class Control_Raw_Html extends Base_UI_Control {
 	}
 
 	/**
-	 * Retrieve raw html control default settings.
+	 * Get raw html control default settings.
 	 *
-	 * Get the default settings of the raw html control. Used to return the
+	 * Retrieve the default settings of the raw html control. Used to return the
 	 * default settings while initializing the raw html control.
 	 *
 	 * @since 1.0.0

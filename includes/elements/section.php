@@ -160,12 +160,12 @@ class Element_Section extends Element_Base {
 	/**
 	 * Initialize presets.
 	 *
-	 * Initializing the section peresets and set the number of columents the
-	 * section can have by default. For example a columnt can have two columns
+	 * Initializing the section presets and set the number of columns the
+	 * section can have by default. For example a column can have two columns
 	 * 50% width each one, or three columns 33.33% each one.
 	 *
 	 * Note that Elementor sections have default section presets but the user
-	 * can set custom number of columens and define custom sizes for each column.
+	 * can set custom number of columns and define custom sizes for each column.
 
 	 * @since 1.0.0
 	 * @access public
@@ -225,7 +225,7 @@ class Element_Section extends Element_Base {
 	 *
 	 * Retrieve the current section initial configuration.
 	 *
-	 * Adds more configuration on top of the controls list, the tabs assignet to
+	 * Adds more configuration on top of the controls list, the tabs assigned to
 	 * the control, element name, type, icon and more. This method also adds
 	 * section presets.
 	 *
@@ -447,13 +447,13 @@ class Element_Section extends Element_Base {
 		);
 
 		$possible_tags = [
-			'section',
+			'div',
 			'header',
 			'footer',
-			'aside',
 			'article',
+			'section',
+			'aside',
 			'nav',
-			'div',
 		];
 
 		$options = [
@@ -1303,7 +1303,8 @@ class Element_Section extends Element_Base {
 	 * @access public
 	 */
 	public function before_render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
+
 		?>
 		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
 			<?php

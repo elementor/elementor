@@ -11,13 +11,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor general settings manager class.
+ *
+ * Elementor general settings manager handler class is responsible for registering
+ * and managing Elementor general settings managers.
+ *
+ * @since 1.6.0
+ */
 class Manager extends BaseManager {
 
+	/**
+	 * Lightbox panel tab.
+	 */
 	const PANEL_TAB_LIGHTBOX = 'lightbox';
 
+	/**
+	 * Meta key for the general settings.
+	 */
 	const META_KEY = '_elementor_general_settings';
 
 	/**
+	 * General settings manager constructor.
+	 *
+	 * Initializing Elementor general settings manager.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 */
@@ -28,29 +46,44 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Get manager name.
+	 *
+	 * Retrieve general settings manager name.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	 * @return string
+	 *
+	 * @return string Manager name.
 	 */
 	public function get_name() {
 		return 'general';
 	}
 
 	/**
+	 * Get model for config.
+	 *
+	 * Retrieve the model for settings configuration.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	 * @return BaseModel
+	 *
+	 * @return BaseModel The model object.
 	 */
 	public function get_model_for_config() {
 		return $this->get_model();
 	}
 
 	/**
+	 * Get saved settings.
+	 *
+	 * Retrieve the saved settings from the site options.
+	 *
 	 * @since 1.6.0
 	 * @access protected
-	 * @param int $id
 	 *
-	 * @return array
+	 * @param int $id Post ID.
+	 *
+	 * @return array Saved settings.
 	 */
 	protected function get_saved_settings( $id ) {
 		$model_controls = Model::get_controls_list();
@@ -75,21 +108,30 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Get CSS file name.
+	 *
+	 * Retrieve CSS file name for the general settings manager.
+	 *
 	 * @since 1.6.0
 	 * @access protected
 	 * @return string
+	 *
+	 * @return string CSS file name.
 	 */
 	protected function get_css_file_name() {
 		return 'global';
 	}
 
 	/**
+	 * Save settings to DB.
+	 *
+	 * Save general settings to the database, as site options.
+	 *
 	 * @since 1.6.0
 	 * @access protected
-	 * @param array $settings
-	 * @param int   $id
 	 *
-	 * @return void
+	 * @param array $settings Settings.
+	 * @param int   $id       Post ID.
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
 		$model_controls = Model::get_controls_list();
@@ -123,28 +165,42 @@ class Manager extends BaseManager {
 	}
 
 	/**
+	 * Get model for CSS file.
+	 *
+	 * Retrieve the model for the CSS file.
+	 *
 	 * @since 1.6.0
 	 * @access protected
-	 * @param CSS_File $css_file
 	 *
-	 * @return BaseModel
+	 * @param CSS_File $css_file The requested CSS file.
+	 *
+	 * @return BaseModel The model object.
 	 */
 	protected function get_model_for_css_file( CSS_File $css_file ) {
 		return $this->get_model();
 	}
 
 	/**
+	 * Get CSS file for update.
+	 *
+	 * Retrieve the CSS file before updating the it.
+	 *
 	 * @since 1.6.0
 	 * @access protected
-	 * @param int $id
 	 *
-	 * @return CSS_File
+	 * @param int $id Post ID.
+	 *
+	 * @return Global_CSS_File The global CSS file object.
 	 */
 	protected function get_css_file_for_update( $id ) {
 		return new Global_CSS_File();
 	}
 
 	/**
+	 * Add panel tabs.
+	 *
+	 * Register new panel tab for the lightbox settings.
+	 *
 	 * @since 1.6.0
 	 * @access private
 	 */

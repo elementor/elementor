@@ -14,28 +14,44 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'image',
- *    	[
- *    		'label' => __( 'Choose Image', 'plugin-domain' ),
- *    		'type' => Controls_Manager::MEDIA,
- *    		'default' => [
- *    			'url' => Utils::get_placeholder_image_src(),
- *    		]
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'image',
+ * 	[
+ * 		'label' => __( 'Choose Image', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::MEDIA,
+ * 		'default' => [
+ * 			'url' => Utils::get_placeholder_image_src(),
+ * 		]
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $image = $this->get_settings( 'image' );
- *    // Get image URL
- *    echo '<img src="' . $image['url'] . '">';
- *    // Get image thumbnail by ID
- *    echo wp_get_attachment_image( $image['id'], 'thumbnail' );
+ * ```php
+ * // Get image URL
+ * $settings = $this->get_settings();
+ * echo '<img src="' . $settings['image']['url'] . '">';
+ * ```
+ *
+ * ```php
+ * // Get image 'thumbnail' by ID
+ * $settings = $this->get_settings();
+ * echo wp_get_attachment_image( $settings['image']['id'], 'thumbnail' );
+ * ```
+ *
+ * ```php
+ * // Get image HTML
+ * $settings = $this->get_settings();
+ * echo Group_Control_Image_Size::get_attachment_image_html( $settings );
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <img src="{{ settings.image.url }}">
+ * ```js
+ * <img src="{{ settings.image.url }}">
+ * ```
  *
  * @since 1.0.0
  *
@@ -46,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param array $default      {
- *     Optional. Defautl media values.
+ *     Optional. Default media values.
  *
  *     @type int    $id  Optional. Media id. Default is empty.
  *     @type string $url Optional. Media url. Use `Utils::get_placeholder_image_src()`
@@ -74,7 +90,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Media extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve media control type.
+	 * Get media control type.
+	 *
+	 * Retrieve the control type, in this case `media`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -86,9 +104,9 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control default values.
+	 * Get media control default values.
 	 *
-	 * Get the default value of the media control. Used to return the default
+	 * Retrieve the default value of the media control. Used to return the default
 	 * values while initializing the media control.
 	 *
 	 * @since 1.0.0
@@ -181,12 +199,12 @@ class Control_Media extends Control_Base_Multiple {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<div class="elementor-control-media">
+				<div class="elementor-control-media elementor-control-tag-area elementor-control-preview-area">
 					<div class="elementor-control-media-upload-button">
 						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 					</div>
 					<div class="elementor-control-media-image-area">
-						<div class="elementor-control-media-image" style="background-image: url({{ data.controlValue.url }});"></div>
+						<div class="elementor-control-media-image"></div>
 						<div class="elementor-control-media-delete"><?php _e( 'Delete', 'elementor' ); ?></div>
 					</div>
 				</div>
@@ -200,9 +218,9 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control default settings.
+	 * Get media control default settings.
 	 *
-	 * Get the default settings of the media control. Used to return the default
+	 * Retrieve the default settings of the media control. Used to return the default
 	 * settings while initializing the media control.
 	 *
 	 * @since 1.0.0
@@ -217,9 +235,9 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control image title.
+	 * Get media control image title.
 	 *
-	 * Get the title of the image selected by the media control.
+	 * Retrieve the `title` of the image selected by the media control.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -238,9 +256,9 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control image alt.
+	 * Get media control image alt.
 	 *
-	 * Get the alt value of the image selected by the media control.
+	 * Retrieve the `alt` value of the image selected by the media control.
 	 *
 	 * @since 1.0.0
 	 * @access public

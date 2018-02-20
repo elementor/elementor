@@ -71,7 +71,7 @@ module.exports = Module.extend( {
 
 	discard: function() {
 		var self = this;
-		elementor.ajax.send( 'discard_changes', {
+		elementor.ajax.addRequest( 'discard_changes', {
 			data: {
 				post_id: elementor.config.post_id
 			},
@@ -135,7 +135,8 @@ module.exports = Module.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } ),
+			elements = elementor.elements.toJSON( { removeDefault: true } ),
+			settings = elementor.settings.page.model.toJSON( { removeDefault: true } ),
 			oldStatus = elementor.settings.page.model.get( 'post_status' ),
 			statusChanged = oldStatus !== options.status;
 
@@ -146,11 +147,16 @@ module.exports = Module.extend( {
 
 		self.isChangedDuringSave = false;
 
-		self.xhr = elementor.ajax.send( 'save_builder', {
+		if ( 'autosave' !== options.status && statusChanged ) {
+			elementor.settings.page.model.set( 'post_status', options.status );
+		}
+
+		elementor.ajax.addRequest( 'save_builder', {
 			data: {
 				post_id: elementor.config.post_id,
 				status: options.status,
-				data: JSON.stringify( newData )
+				elements: elements,
+				settings: settings
 			},
 
 			success: function( data ) {
@@ -171,7 +177,7 @@ module.exports = Module.extend( {
 					jQuery.extend( true, elementor.config, data.config );
 				}
 
-				elementor.config.data = newData;
+				elementor.config.data = elements;
 
 				elementor.channels.editor.trigger( 'saved', data );
 
@@ -209,12 +215,9 @@ module.exports = Module.extend( {
 				} );
 			}
 		} );
-
-		return self.xhr;
 	},
 
 	afterAjax: function() {
 		this.isSaving = false;
-		this.xhr = null;
 	}
 } );

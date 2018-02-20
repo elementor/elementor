@@ -13,17 +13,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'delete_content',
- *    	[
- *    		'label' => __( 'Delete Content', 'plugin-domain' ),
- *    		'type' => Controls_Manager::BUTTON,
- *    		'button_type' => 'success',
- *    		'text' => __( 'Delete', 'plugin-domain' ),
- *    		'event' => 'namespace:editor:delete',
- *    		'separator' => 'before',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'delete_content',
+ * 	[
+ * 		'label' => __( 'Delete Content', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::BUTTON,
+ * 		'button_type' => 'success',
+ * 		'text' => __( 'Delete', 'plugin-domain' ),
+ * 		'event' => 'namespace:editor:delete',
+ * 		'separator' => 'before',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.9.0
  *
@@ -52,7 +54,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Button extends Base_UI_Control {
 
 	/**
-	 * Retrieve button control type.
+	 * Get button control type.
+	 *
+	 * Retrieve the control type, in this case `button`.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -64,9 +68,9 @@ class Control_Button extends Base_UI_Control {
 	}
 
 	/**
-	 * Retrieve button control default settings.
+	 * Get button control default settings.
 	 *
-	 * Get the default settings of the button control. Used to
+	 * Retrieve the default settings of the button control. Used to
 	 * return the default settings while initializing the button
 	 * control.
 	 *

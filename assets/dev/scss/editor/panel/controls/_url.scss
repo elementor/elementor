@@ -9,8 +9,9 @@
 
 	.elementor-control-url-external-show {
 
-		input {
+		.elementor-input-style {
 			padding-right: 46px;
+			height: 26px;
 		}
 	}
 
@@ -60,7 +61,7 @@
 		}
 	}
 
-	input[type=url], .elementor-input[data-setting=url] {
+	input[type=url], .elementor-input-style {
 		direction: ltr; // Force ltr also in RTL languages
 
 		&:not(:focus) {

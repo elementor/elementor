@@ -182,7 +182,10 @@ class Element_Column extends Element_Base {
 
 		$possible_tags = [
 			'div',
+			'header',
+			'footer',
 			'article',
+			'section',
 			'aside',
 			'nav',
 		];
@@ -824,7 +827,7 @@ class Element_Column extends Element_Base {
 	 * @access public
 	 */
 	public function before_render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ||
 								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ] );

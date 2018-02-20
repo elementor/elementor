@@ -29,17 +29,6 @@ EditorView = ControlsStack.extend( {
 		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ) );
 	},
 
-	onBeforeRender: function() {
-		var controls = elementor.getElementControls( this.model );
-
-		if ( ! controls ) {
-			throw new Error( 'Editor controls not found' );
-		}
-
-		// Create new instance of that collection
-		this.collection = new Backbone.Collection( _.values( controls ) );
-	},
-
 	onDestroy: function() {
 		var editedElementView = this.getOption( 'editedElementView' );
 

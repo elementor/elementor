@@ -43,3 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 </script>
+
+<script type="text/template" id="tmpl-elementor-tag-controls-stack-empty">
+	<?php echo __( 'This tag has no settings.', 'elementor' ); ?>
+</script>

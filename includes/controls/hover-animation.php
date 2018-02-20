@@ -14,22 +14,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'hover_animation',
- *    	[
- *    		'label' => __( 'Hover Animation', 'plugin-domain' ),
- *    		'type' => Controls_Manager::HOVER_ANIMATION,
- *    		'prefix_class' => 'elementor-animation-',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'hover_animation',
+ * 	[
+ * 		'label' => __( 'Hover Animation', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::HOVER_ANIMATION,
+ * 		'prefix_class' => 'elementor-animation-',
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<div class="' . $this->get_settings( 'hover_animation' ) . '"> ... </div>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<div class="' . $settings['hover_animation'] . '"> ... </div>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div class="{{ settings.hover_animation }}"> ... </div>
+ * ```js
+ * <div class="{{ settings.hover_animation }}"> ... </div>
+ * ```
  *
  * @since 1.0.0
  *
@@ -66,7 +73,9 @@ class Control_Hover_Animation extends Base_Data_Control {
 	private static $_animations;
 
 	/**
-	 * Retrieve hover animation control type.
+	 * Get hover animation control type.
+	 *
+	 * Retrieve the control type, in this case `hover_animation`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -78,9 +87,9 @@ class Control_Hover_Animation extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve animations.
+	 * Get animations.
 	 *
-	 * Get the available hover animation effects.
+	 * Retrieve the available hover animation effects.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -155,9 +164,9 @@ class Control_Hover_Animation extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve hover animation control default settings.
+	 * Get hover animation control default settings.
 	 *
-	 * Get the default settings of the hover animation control. Used to return
+	 * Retrieve the default settings of the hover animation control. Used to return
 	 * the default settings while initializing the hover animation control.
 	 *
 	 * @since 1.0.0

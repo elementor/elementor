@@ -5,23 +5,61 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor "Settings" page in WordPress Dashboard.
+ *
+ * Elementor settings page handler class responsible for creating and displaying
+ * Elementor "Settings" page in WordPress dashboard.
+ *
+ * @since 1.0.0
+ */
 class Settings extends Settings_Page {
 
+	/**
+	 * Settings page ID for Elementor settings.
+	 */
 	const PAGE_ID = 'elementor';
 
+	/**
+	 * Go Pro menu priority.
+	 */
 	const MENU_PRIORITY_GO_PRO = 502;
 
+	/**
+	 * Settings page field for update time.
+	 */
 	const UPDATE_TIME_FIELD = '_elementor_settings_update_time';
 
+	/**
+	 * Settings page general tab slug.
+	 */
 	const TAB_GENERAL = 'general';
+
+	/**
+	 * Settings page style tab slug.
+	 */
 	const TAB_STYLE = 'style';
+
+	/**
+	 * Settings page integrations tab slug.
+	 */
 	const TAB_INTEGRATIONS = 'integrations';
+
+	/**
+	 * Settings page advanced tab slug.
+	 */
 	const TAB_ADVANCED = 'advanced';
 
 	/**
+	 * Register admin menu.
+	 *
+	 * Add new Elementor Settings admin menu.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function register_admin_menu() {
 		add_menu_page(
 			__( 'Elementor', 'elementor' ),
@@ -35,9 +73,15 @@ class Settings extends Settings_Page {
 	}
 
 	/**
+	 * Register Elementor Pro sub-menu.
+	 *
+	 * Add new Elementor Pro sub-menu under the main Elementor menu.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function register_pro_menu() {
 		add_submenu_page(
 			self::PAGE_ID,
@@ -50,9 +94,15 @@ class Settings extends Settings_Page {
 	}
 
 	/**
+	 * Go Elementor Pro.
+	 *
+	 * Redirect the Elementor Pro page the clicking the Elementor Pro menu link.
+	 *
+	 * Fired by `admin_init` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function go_elementor_pro() {
 		if ( isset( $_GET['page'] ) && 'go_elementor_pro' === $_GET['page'] ) {
 			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
@@ -61,9 +111,15 @@ class Settings extends Settings_Page {
 	}
 
 	/**
+	 * Change "Settings" menu name.
+	 *
+	 * Update the name of the Settings admin menu from "Elementor" to "Settings".
+	 *
+	 * Fired by `admin_menu` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function admin_menu_change_name() {
 		global $submenu;
 
@@ -77,9 +133,13 @@ class Settings extends Settings_Page {
 	}
 
 	/**
+	 * Settings page constructor.
+	 *
+	 * Initializing Elementor "Settings" page.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -94,17 +154,30 @@ class Settings extends Settings_Page {
 	}
 
 	/**
+	 * Update CSS print method.
+	 *
+	 * Clear post CSS cache.
+	 *
+	 * Fired by `add_option_elementor_css_print_method` and
+	 * `update_option_elementor_css_print_method` actions.
+	 *
 	 * @since 1.7.5
 	 * @access public
-	*/
+	 */
 	public function update_css_print_method() {
 		Plugin::$instance->posts_css_manager->clear_cache();
 	}
 
 	/**
+	 * Create tabs.
+	 *
+	 * Return the settings page tabs, sections and fields.
+	 *
 	 * @since 1.5.0
 	 * @access protected
-	*/
+	 *
+	 * @return array An array with the settings page tabs, sections and fields.
+	 */
 	protected function create_tabs() {
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
 
@@ -286,9 +359,15 @@ class Settings extends Settings_Page {
 	}
 
 	/**
+	 * Get settings page title.
+	 *
+	 * Retrieve the title for the settings page.
+	 *
 	 * @since 1.5.0
 	 * @access protected
-	*/
+	 *
+	 * @return string Settings page title.
+	 */
 	protected function get_page_title() {
 		return __( 'Elementor', 'elementor' );
 	}

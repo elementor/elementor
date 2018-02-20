@@ -14,25 +14,31 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'margin',
- *    	[
- *    		'label' => __( 'Margin', 'plugin-domain' ),
- *    		'type' => Controls_Manager::DIMENSIONS,
- *    		'size_units' => [ 'px', '%', 'em' ],
- *    		'selectors' => [
- *    			'{{WRAPPER}} .your-class' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
- *    		],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'margin',
+ * 	[
+ * 		'label' => __( 'Margin', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::DIMENSIONS,
+ * 		'size_units' => [ 'px', '%', 'em' ],
+ * 		'selectors' => [
+ * 			'{{WRAPPER}} .your-class' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+ * 		],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<div class="your-class"> ... </div>';
+ * ```php
+ * echo '<div class="your-class"> ... </div>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div class="your-class"> ... </div>
+ * ```js
+ * <div class="your-class"> ... </div>
+ * ```
  *
  * @since 1.0.0
  *
@@ -43,7 +49,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $placeholder Optional. The field placeholder that appears when
  *                            the field has no values. Default is empty.
  * @param array  $default     {
- *     Optional. Defautl dimension values.
+ *     Optional. Default dimension values.
  *
  *     @type int    $top      Optional. Top dimension. Default is empty.
  *     @type int    $right    Optional. Right dimension. Default is empty.
@@ -87,7 +93,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Dimensions extends Control_Base_Units {
 
 	/**
-	 * Retrieve dimensions control type.
+	 * Get dimensions control type.
+	 *
+	 * Retrieve the control type, in this case `dimensions`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -99,9 +107,9 @@ class Control_Dimensions extends Control_Base_Units {
 	}
 
 	/**
-	 * Retrieve dimensions control default values.
+	 * Get dimensions control default values.
 	 *
-	 * Get the default value of the dimensions control. Used to return the
+	 * Retrieve the default value of the dimensions control. Used to return the
 	 * default values while initializing the dimensions control.
 	 *
 	 * @since 1.0.0
@@ -122,9 +130,9 @@ class Control_Dimensions extends Control_Base_Units {
 	}
 
 	/**
-	 * Retrieve dimensions control default settings.
+	 * Get dimensions control default settings.
 	 *
-	 * Get the default settings of the dimensions control. Used to return the
+	 * Retrieve the default settings of the dimensions control. Used to return the
 	 * default settings while initializing the dimensions control.
 	 *
 	 * @since 1.0.0

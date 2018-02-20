@@ -34,7 +34,7 @@ class Utils {
 	/**
 	 * Is script debug.
 	 *
-	 * Whether script debug is ebanled or not.
+	 * Whether script debug is enabled or not.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -52,6 +52,8 @@ class Utils {
 	 * Retrieve Elementor edit link.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.0.0
+	 *
 	 * @access public
 	 * @static
 	 *
@@ -60,7 +62,13 @@ class Utils {
 	 * @return string Post edit link.
 	 */
 	public static function get_edit_link( $post_id = 0 ) {
-		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_edit_url()' );
+
+		if ( ! $post_id ) {
+			$post_id = get_the_ID();
+		}
+
+		$edit_link = Plugin::$instance->documents->get( $post_id )->get_edit_url();
 
 		/**
 		 * Get edit link.
@@ -68,9 +76,11 @@ class Utils {
 		 * Filters the Elementor edit link.
 		 *
 		 * @since 1.0.0
+		 * @deprecated 2.0.0
 		 *
 		 * @param string $edit_link New URL query string (unescaped).
 		 * @param int    $post_id   Post ID.
+		 *
 		 */
 		$edit_link = apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
 
@@ -119,6 +129,8 @@ class Utils {
 	 * Retrieve the post preview URL.
 	 *
 	 * @since 1.6.4
+	 * @deprecated 2.0.0
+	 *
 	 * @access public
 	 * @static
 	 *
@@ -127,7 +139,9 @@ class Utils {
 	 * @return string Post preview URL.
 	 */
 	public static function get_preview_url( $post_id ) {
-		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_preview_url()' );
+
+		$url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 
 		/**
 		 * Preview URL.
@@ -135,28 +149,35 @@ class Utils {
 		 * Filters the Elementor preview URL.
 		 *
 		 * @since 1.6.4
+		 * @deprecated 2.0.0
 		 *
 		 * @param string $preview_url URL with chosen scheme.
 		 * @param int    $post_id     Post ID.
 		 */
-		$preview_url = apply_filters( 'elementor/utils/preview_url', $preview_url, $post_id );
+		$url = apply_filters( 'elementor/utils/preview_url', $url, $post_id );
 
-		return $preview_url;
+		return $url;
 	}
 
 	/**
+	 * Get WordPress preview url.
+	 *
+	 * Retrieve WordPress preview URL for any given post ID.
+	 *
 	 * @since 1.9.0
-	 * @static
+	 * @deprecated 2.0.0
+	 *
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string WordPress preview URL.
 	 */
 	public static function get_wp_preview_url( $post_id ) {
-		$query_args = [];
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_wp_preview_url()' );
 
-		$nonce = wp_create_nonce( 'post_preview_' . $post_id );
-		$query_args['preview_nonce'] = $nonce;
-		$query_args['preview'] = 'true';
-
-		$wp_preview_url = get_preview_post_link( $post_id, $query_args );
+		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
 
 		/**
 		 * WordPress preview URL.
@@ -164,8 +185,9 @@ class Utils {
 		 * Filters the WordPress preview URL.
 		 *
 		 * @since 1.9.0
+		 * @deprecated 2.0.0
 		 *
-		 * @param string $wp_preview_url WordPress preview URL with chosen scheme.
+		 * @param string $wp_preview_url WordPress preview URL.
 		 * @param int    $post_id        Post ID.
 		 */
 		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
@@ -175,23 +197,37 @@ class Utils {
 
 
 	/**
+	 * Get exit to dashboard URL.
+	 *
+	 * Retrieve WordPress preview URL for any given post ID.
+	 *
 	 * @since 1.9.0
-	 * @static
+	 * @deprecated 2.0.0
+	 *
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string Exit to dashboard URL.
 	 */
 	public static function get_exit_to_dashboard_url( $post_id ) {
-		$exit_url = get_edit_post_link( $post_id, 'raw' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_exit_to_dashboard_url()' );
+
+		$exit_url = Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url();
 
 		/**
-		 * Exit To Dashboard URL.
+		 * Exit to dashboard URL.
 		 *
-		 * Filters the Exit To Dashboard URL.
+		 * Filters the exit to dashboard URL.
 		 *
 		 * @since 1.9.0
+		 * @deprecated 2.0.0
 		 *
 		 * @param string $exit_url Default exit URL.
 		 * @param int    $post_id  Post ID.
 		 */
+
 		$exit_url = apply_filters( 'elementor/utils/exit_to_dashboard_url', $exit_url, $post_id );
 
 		return $exit_url;
@@ -261,7 +297,7 @@ class Utils {
 	/**
 	 * Generate random string.
 	 *
-	 * Returns a string containing a hexadecimal representation of randon number.
+	 * Returns a string containing a hexadecimal representation of random number.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -385,37 +421,40 @@ class Utils {
 	}
 
 	/**
+	 * Get last edited string.
+	 *
+	 * Retrieve a string saying when the post was saved or the last time it was edited.
+	 *
 	 * @since 1.9.0
-	 * @static
+	 * @deprecated 2.0.0
+	 *
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string Last edited string.
 	 */
 	public static function get_last_edited( $post_id ) {
-		$post = get_post( $post_id );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_last_edited()' );
 
-		$autosave_post = Utils::get_post_autosave( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id );
 
-		if ( $autosave_post ) {
-			$post = $autosave_post;
-		}
-
-		$date = date_i18n( _x( 'M j, H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
-		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
-
-		if ( $autosave_post ) {
-			/* translators: 1: Saving date, 2: Author display name */
-			$last_edited = sprintf( __( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
-		} else {
-			/* translators: 1: Editing date, 2: Author display name */
-			$last_edited = sprintf( __( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
-		}
-
-		return $last_edited;
+		return $document->get_last_edited();
 	}
 
 	/**
+	 * Get create new post URL.
+	 *
+	 * Retrieve a custom URL for creating a new post/page using Elementor.
+	 *
 	 * @since 1.9.0
-	 * @static
 	 * @access public
+	 * @static
+	 *
+	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 *
+	 * @return string A URL for creating new post using Elementor.
 	 */
 	public static function get_create_new_post_url( $post_type = 'page' ) {
 		$new_post_url = add_query_arg( [
@@ -429,13 +468,24 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Get post autosave.
+	 *
+	 * Retrieve an autosave for any given post.
+	 *
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 * @param int $user_id Optional. User ID. Default is `0`.
+	 *
+	 * @return \WP_Post|false Post autosave or false.
 	 */
 	public static function get_post_autosave( $post_id, $user_id = 0 ) {
 		global $wpdb;
 
-		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s', [ $post_id, "{$post_id}-autosave%" ] );
+		$post = get_post( $post_id );
+
+		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s AND post_modified_gmt > %s', [ $post_id, "{$post_id}-autosave%", $post->post_modified_gmt ] );
 
 		if ( $user_id ) {
 			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
@@ -450,5 +500,16 @@ class Utils {
 		}
 
 		return $revision;
+	}
+
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
+	public static function is_cpt_custom_templates_supported() {
+		require_once ABSPATH . '/wp-admin/includes/theme.php';
+
+		return method_exists( wp_get_theme(), 'get_post_templates' );
 	}
 }

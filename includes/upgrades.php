@@ -18,7 +18,7 @@ class Upgrades {
 	/**
 	 * Add actions.
 	 *
-	 * Hook into WordPress actions and launce Elementor upgrades.
+	 * Hook into WordPress actions and launch Elementor upgrades.
 	 *
 	 * @static
 	 * @since 1.0.0

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor compatibility class.
  *
  * Elementor compatibility handler class is responsible for compatibility with
- * external plugins. The class resolves different issues with non-compatibile
+ * external plugins. The class resolves different issues with non-compatible
  * plugins.
  *
  * @since 1.0.0
@@ -27,7 +27,7 @@ class Compatibility {
 	 * @since 1.0.0
 	 * @access public
 	 * @static
-	*/
+	 */
 	public static function register_actions() {
 		add_action( 'init', [ __CLASS__, 'init' ] );
 
@@ -44,15 +44,20 @@ class Compatibility {
 	}
 
 	/**
-	 * Init.
+	 * Exit to classic editor.
 	 *
-	 * Initialize Elementor compatibility with external plugins.
+	 * Filters the "Exit To Dashboard URL" and replace it with the classic editor
+	 * URL.
 	 *
-	 * Fired by `init` action.
+	 * Fired by `elementor/utils/exit_to_dashboard_url` filter.
 	 *
-	 * @static
 	 * @since 1.9.0
 	 * @access public
+	 * @static
+	 *
+	 * @param string $exit_url Default exit URL.
+	 *
+	 * @return string Classic editor URL.
 	 */
 	public static function exit_to_classic_editor( $exit_url ) {
 		$exit_url = add_query_arg( 'classic-editor', '', $exit_url );
@@ -61,11 +66,15 @@ class Compatibility {
 	}
 
 	/**
-	 * @static
+	 * Add new button to gutenberg.
+	 *
+	 * Insert new "Elementor" button to the gutenberg editor to create new post
+	 * using Elementor page builder.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 * @static
 	 */
-
 	public static function add_new_button_to_gutenberg() {
 		global $typenow;
 		if ( ! gutenberg_can_edit_post_type( $typenow ) || ! User::is_current_user_can_edit_post_type( $typenow ) ) {
@@ -89,11 +98,16 @@ class Compatibility {
 	}
 
 	/**
-	 * @static
+	 * Init.
+	 *
+	 * Initialize Elementor compatibility with external plugins.
+	 *
+	 * Fired by `init` action.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
-	*/
+	 */
 	public static function init() {
 		// Hotfix for NextGEN Gallery plugin.
 		if ( defined( 'NGG_PLUGIN_VERSION' ) ) {
@@ -223,7 +237,7 @@ class Compatibility {
 	 * @param int   $to   ID of the post to which we paste informations.
 	 *
 	 * @return array List of custom fields names.
-	*/
+	 */
 	public static function save_polylang_meta( $keys, $sync, $from, $to ) {
 		// Copy only for a new post.
 		if ( ! $sync ) {
