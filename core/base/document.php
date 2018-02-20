@@ -462,26 +462,28 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function __construct( array $data = [] ) {
-		if ( empty( $data['post_id'] ) ) {
-			$this->post = new \WP_Post( (object) [] );
-		} else {
-			$this->post = get_post( $data['post_id'] );
+		if ( $data ) {
+			if ( empty( $data['post_id'] ) ) {
+				$this->post = new \WP_Post( (object) [] );
+			} else {
+				$this->post = get_post( $data['post_id'] );
 
-			if ( ! $this->post ) {
-				throw new \Exception( 'Post ID #' . $data['post_id'] . ' is not exist.', Exceptions::NOT_FOUND );
+				if ( ! $this->post ) {
+					throw new \Exception( 'Post ID #' . $data['post_id'] . ' is not exist.', Exceptions::NOT_FOUND );
+				}
 			}
-		}
 
-		// Each Control_Stack is based on a unique ID.
-		$data['id'] = $data['post_id'];
+			// Each Control_Stack is based on a unique ID.
+			$data['id'] = $data['post_id'];
 
-		if ( ! isset( $data['settings'] ) ) {
-			$data['settings'] = [];
-		}
+			if ( ! isset( $data['settings'] ) ) {
+				$data['settings'] = [];
+			}
 
-		$saved_settings = get_post_meta( $this->post->ID, '_elementor_page_settings', true );
-		if ( ! empty( $saved_settings ) ) {
-			$data['settings'] += $saved_settings;
+			$saved_settings = get_post_meta( $this->post->ID, '_elementor_page_settings', true );
+			if ( ! empty( $saved_settings ) ) {
+				$data['settings'] += $saved_settings;
+			}
 		}
 
 		parent::__construct( $data );

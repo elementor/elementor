@@ -170,6 +170,7 @@ class Post extends Document {
 					'label' => __( 'Featured Image', 'elementor' ),
 					'type' => Controls_Manager::MEDIA,
 					'default' => [
+						'id' => get_post_thumbnail_id(),
 						'url' => get_the_post_thumbnail_url( $document->post->ID ),
 					],
 				]
@@ -180,11 +181,13 @@ class Post extends Document {
 	}
 
 	public function __construct( array $data = [] ) {
-		$template = get_post_meta( $data['post_id'], '_wp_page_template', true );
-		if ( empty( $template ) ) {
-			$template = 'default';
+		if ( $data ) {
+			$template = get_post_meta( $data['post_id'], '_wp_page_template', true );
+			if ( empty( $template ) ) {
+				$template = 'default';
+			}
+			$data['settings']['template'] = $template;
 		}
-		$data['settings']['template'] = $template;
 
 		parent::__construct( $data );
 	}
