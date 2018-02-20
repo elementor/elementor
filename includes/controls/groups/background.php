@@ -315,7 +315,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'fixed' => _x( 'Fixed', 'Background Control', 'elementor' ),
 			],
 			'selectors' => [
-				'(tablet+){{SELECTOR}}' => 'background-attachment: {{VALUE}};',
+				'(desktop+){{SELECTOR}}' => 'background-attachment: {{VALUE}};',
 			],
 			'condition' => [
 				'background' => [ 'classic' ],
