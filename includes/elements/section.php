@@ -767,6 +767,20 @@ class Element_Section extends Element_Base {
 						'step' => 0.1,
 					],
 				],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'background_background',
+							'operator' => '!==',
+							'value' => ''
+						], [
+							'name' => 'border_border',
+							'operator' => '!==',
+							'value' => ''
+						]
+					],
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
 					'{{WRAPPER}} > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
