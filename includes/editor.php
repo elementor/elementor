@@ -464,12 +464,12 @@ class Editor {
 		 */
 		do_action( 'elementor/editor/before_enqueue_scripts' );
 
-		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
-
 		wp_enqueue_script( 'elementor-editor' );
 
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
+
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->_post_id );
 
 		$locked_user = $this->get_locked_user( $this->_post_id );
 
@@ -483,8 +483,7 @@ class Editor {
 			$page_title_selector = 'h1.entry-title';
 		}
 
-		$post_type_object = get_post_type_object( get_post_type() );
-
+		$post_type_object = get_post_type_object( $document->get_main_post()->post_type );
 		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
 
 		$config = [
@@ -492,14 +491,18 @@ class Editor {
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
-			'preview_link' => Utils::get_preview_url( $this->_post_id ),
-			'post_link' => get_permalink( $this->_post_id ),
-			'last_edited' => Utils::get_last_edited( $this->_post_id ),
+			'post_id' => $this->_post_id,
+			'data' => $document->get_elements_raw_data( true ),
+			'exit_to_dashboard_url' => $document->get_exit_to_dashboard_url(),
+			'preview_link' => $document->get_preview_url(),
+			'post_link' => $document->get_permalink(),
+			'last_edited' => $document->get_last_edited(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'wp_preview' => [
-				'url' => Utils::get_wp_preview_url( $this->_post_id ),
+				'url' => $document->get_wp_preview_url(),
 				'target' => 'wp-preview-' . $this->_post_id,
 			],
+			'current_user_can_publish' => $current_user_can_publish,
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
@@ -512,14 +515,12 @@ class Editor {
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->get_wp_editor_config(),
-			'post_id' => $this->_post_id,
 			'settings_page_link' => Settings::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
-			'data' => $editor_data,
 			'locked_user' => $locked_user,
 			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
@@ -528,8 +529,6 @@ class Editor {
 			'page_title_selector' => $page_title_selector,
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
-			'current_user_can_publish' => $current_user_can_publish,
-			'exit_to_dashboard_url' => Utils::get_exit_to_dashboard_url( $this->_post_id ),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
