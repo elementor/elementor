@@ -14,30 +14,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'link',
- *    	[
- *    		'label' => __( 'Link', 'plugin-domain' ),
- *    		'type' => Controls_Manager::URL,
- *    		'placeholder' => __( 'https://your-link.com', 'plugin-domain' ),
- *    		'default' => [
- *    			'url' => '',
- *    			'is_external' => true,
- *    		]
- *    		'show_external' => true
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'link',
+ * 	[
+ * 		'label' => __( 'Link', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::URL,
+ * 		'placeholder' => __( 'https://your-link.com', 'plugin-domain' ),
+ * 		'default' => [
+ * 			'url' => '',
+ * 			'is_external' => true,
+ * 		]
+ * 		'show_external' => true
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $website_link = $this->get_settings( 'website_link' );
- *    $target = $website_link['is_external'] ? 'target="_blank"' : '';
- *    echo '<a href="' . $website_link['url'] . '" ' . $target .'>Visit Website</a>';
+ * ```php
+ * $settings = $this->get_settings();
+ * $target = $settings['website_link']['is_external'] ? 'target="_blank"' : '';
+ * echo '<a href="' . $settings['website_link']['url'] . '" ' . $target . '> ... </a>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <# var target = settings.website_link.is_external ? 'target="_blank"' : ''; #>
- *    <a href="{{ settings.website_link.url }}" {{ target }}>Visit Website</a>
+ * ```js
+ * <# var target = settings.website_link.is_external ? 'target="_blank"' : ''; #>
+ * <a href="{{ settings.website_link.url }}" {{ target }}> ... </a>
+ * ```
  *
  * @since 1.0.0
  *
@@ -55,7 +61,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *     @type string $url         Optional. Default is empty.
  *     @type bool   $is_external Optional. Determine whether to open the url in
  *                               the same tab or in a new one. Default is empty.
- *     @type bool   $nofollow    Optional. Determine whether to add nofolloe
+ *     @type bool   $nofollow    Optional. Determine whether to add nofollow
  *                               attribute. Default is empty.
  * }
  * @param bool   $show_external Optional. Whether to show 'Is External' button.
@@ -75,7 +81,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_URL extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve url control type.
+	 * Get url control type.
+	 *
+	 * Retrieve the control type, in this case `url`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -87,9 +95,9 @@ class Control_URL extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve url control default values.
+	 * Get url control default values.
 	 *
-	 * Get the default value of the url control. Used to return the default
+	 * Retrieve the default value of the url control. Used to return the default
 	 * values while initializing the url control.
 	 *
 	 * @since 1.0.0
@@ -106,9 +114,9 @@ class Control_URL extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve url control default settings.
+	 * Get url control default settings.
 	 *
-	 * Get the default settings of the url control. Used to return the default
+	 * Retrieve the default settings of the url control. Used to return the default
 	 * settings while initializing the url control.
 	 *
 	 * @since 1.0.0
@@ -145,7 +153,7 @@ class Control_URL extends Control_Base_Multiple {
 		<div class="elementor-control-field elementor-control-url-external-{{{ data.show_external ? 'show' : 'hide' }}}">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input id="<?php echo $control_uid; ?>" type="url" class="elementor-input" data-setting="url" placeholder="{{ data.placeholder }}" />
+				<input id="<?php echo $control_uid; ?>" type="url" class="elementor-control-tag-area elementor-input" data-setting="url" placeholder="{{ data.placeholder }}" />
 				<label for="<?php echo $more_input_control_uid; ?>" class="elementor-control-url-more tooltip-target" data-tooltip="<?php _e( 'Link Options', 'elementor' ); ?>">
 					<i class="fa fa-cog" aria-hidden="true"></i>
 				</label>

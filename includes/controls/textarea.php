@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -13,22 +15,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'item_description',
- *    	[
- *    		'label' => __( 'Description', 'plugin-domain' ),
- *    		'type' => Controls_Manager::TEXTAREA,
- *    		'default' => __( 'Default description', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'item_description',
+ * 	[
+ * 		'label' => __( 'Description', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::TEXTAREA,
+ * 		'default' => __( 'Default description', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<p>' . $this->get_settings( 'item_description' ) . '</p>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<p>' .$settings['item_description'] . '</p>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <p>{{{ settings.item_description }}}</p>
+ * ```js
+ * <p>{{{ settings.item_description }}}</p>
+ * ```
  *
  * @since 1.0.0
  *
@@ -57,7 +66,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Textarea extends Base_Data_Control {
 
 	/**
-	 * Retrieve textarea control type.
+	 * Get textarea control type.
+	 *
+	 * Retrieve the control type, in this case `textarea`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -69,9 +80,9 @@ class Control_Textarea extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve textarea control default settings.
+	 * Get textarea control default settings.
 	 *
-	 * Get the default settings of the textarea control. Used to return the
+	 * Retrieve the default settings of the textarea control. Used to return the
 	 * default settings while initializing the textarea control.
 	 *
 	 * @since 1.0.0
@@ -83,6 +94,9 @@ class Control_Textarea extends Base_Data_Control {
 		return [
 			'label_block' => true,
 			'rows' => 5,
+			'dynamic' => [
+				'categories' => [ TagsModule::TEXT_CATEGORY ],
+			],
 		];
 	}
 
@@ -102,11 +116,11 @@ class Control_Textarea extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<textarea id="<?php echo $control_uid; ?>" rows="{{ data.rows }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}"></textarea>
+				<textarea id="<?php echo $control_uid; ?>" class="elementor-control-tag-area" rows="{{ data.rows }}" data-setting="{{ data.name }}" placeholder="{{ data.placeholder }}"></textarea>
 			</div>
 		</div>
 		<# if ( data.description ) { #>
-		<div class="elementor-control-field-description">{{{ data.description }}}</div>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
 	}

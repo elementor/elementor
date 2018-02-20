@@ -1,59 +1,140 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\DynamicTags\Tag;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor CSS file class.
+ *
+ * Elementor CSS file handler class is responsible for generating CSS files.
+ *
+ * @since 1.2.0
+ * @abstract
+ */
 abstract class CSS_File {
 
+	/**
+	 * Elementor CSS files base folder.
+	 *
+	 * Relative folder in the WordPress uploads folder.
+	 */
 	const FILE_BASE_DIR = '/elementor/css';
-	// %s: Base folder; %s: file name
+
+	/**
+	 * Elementor CSS file name pattern.
+	 *
+	 * %s: Base folder; %s: file name
+	 */
 	const FILE_NAME_PATTERN = '%s/%s.css';
 
+	/**
+	 * Elementor CSS file generated status.
+	 *
+	 * The parsing result after generating CSS file.
+	 */
 	const CSS_STATUS_FILE = 'file';
+
+	/**
+	 * Elementor inline CSS status.
+	 *
+	 * The parsing result after generating inline CSS.
+	 */
 	const CSS_STATUS_INLINE = 'inline';
+
+	/**
+	 * Elementor CSS empty status.
+	 *
+	 * The parsing result when an empty CSS returned.
+	 */
 	const CSS_STATUS_EMPTY = 'empty';
 
 	/**
+	 * CSS file path.
+	 *
+	 * Holds the CSS file path.
+	 *
+	 * @access private
+	 *
 	 * @var string
 	 */
 	private $path;
 
 	/**
+	 * CSS file URL.
+	 *
+	 * Holds the CSS file URL.
+	 *
+	 * @access private
+	 *
 	 * @var string
 	 */
 	private $url;
 
 	/**
+	 * CSS.
+	 *
+	 * Holds the CSS.
+	 *
+	 * @access private
+	 *
 	 * @var string
 	 */
 	private $css;
 
 	/**
+	 * Fonts.
+	 *
+	 * Holds the list of fonts.
+	 *
+	 * @access private
+	 *
 	 * @var array
 	 */
 	private $fonts = [];
 
 	/**
+	 * Stylesheet object.
+	 *
+	 * Holds the CSS file stylesheet instance.
+	 *
+	 * @access protected
+	 *
 	 * @var Stylesheet
 	 */
 	protected $stylesheet_obj;
 
 	/**
+	 * Printed.
+	 *
+	 * Holds the list of printed files.
+	 *
+	 * @access protected
+	 *
 	 * @var array
 	 */
 	private static $printed = [];
 
 	/**
-	 * @abstract
+	 * Get CSS file name.
+	 *
+	 * Retrieve the CSS file name.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	*/
+	 * @abstract
+	 */
 	abstract public function get_name();
 
 	/**
-	 * CSS_File constructor.
+	 * CSS file constructor.
+	 *
+	 * Initializing Elementor CSS file. If using external files, set path and
+	 * URL, otherwise initiate stylesheet.
+	 *
 	 * @since 1.2.0
 	 * @access public
 	 */
@@ -66,17 +147,30 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Use external file.
+	 *
+	 * Whether to use external CSS file of not. When there are new schemes or settings
+	 * updates.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return bool True if the CSS requires an update, False otherwise.
 	 */
 	protected function use_external_file() {
 		return 'internal' !== get_option( 'elementor_css_print_method' );
 	}
 
 	/**
+	 * Update the CSS file.
+	 *
+	 * Delete old CSS, parse the CSS, save the new file and update the database.
+	 *
+	 * This method also sets the CSS status to be used later on in the render posses.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	*/
+	 */
 	public function update() {
 		$this->parse_css();
 
@@ -110,9 +204,13 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Delete the CSS file.
+	 *
+	 * If the CSS file exist, delete it.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	*/
+	 */
 	public function delete() {
 		if ( file_exists( $this->path ) ) {
 			unlink( $this->path );
@@ -120,9 +218,15 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Enqueue CSS.
+	 *
+	 * Either enqueue the CSS file in Elementor or add inline style.
+	 *
+	 * This method is also responsible for loading the fonts.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	*/
+	 */
 	public function enqueue() {
 		$handle_id = $this->get_file_handle_id();
 
@@ -167,17 +271,33 @@ abstract class CSS_File {
 		$name = $this->get_name();
 
 		/**
-		 * CSS file enqueue.
+		 * Enqueue CSS file.
 		 *
 		 * Fires when CSS file is enqueued on Elementor.
 		 *
 		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
+		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
+		 *
 		 * @since 1.9.0
+		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action instead.
 		 *
 		 * @param CSS_File $this The current CSS file.
 		 */
 		do_action( "elementor/{$name}-css-file/enqueue", $this );
+
+		/**
+		 * Enqueue CSS file.
+		 *
+		 * Fires when CSS file is enqueued on Elementor.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param CSS_File $this The current CSS file.
+		 */
+		do_action( "elementor/css-file/{$name}/enqueue", $this );
 	}
 
 	public function print_css() {
@@ -186,13 +306,20 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Add control rules.
+	 *
+	 * Parse the CSS for all the elements inside any given control.
+	 *
+	 * This method recursively renders the CSS for all the selectors in the control.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	 * @param array    $control
-	 * @param array    $controls_stack
-	 * @param callable $value_callback
-	 * @param array    $placeholders
-	 * @param array    $replacements
+	 *
+	 * @param array    $control        The controls.
+	 * @param array    $controls_stack The controls stack.
+	 * @param callable $value_callback Callback function for the value.
+	 * @param array    $placeholders   Placeholders.
+	 * @param array    $replacements   Replacements.
 	 */
 	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
 		$value = call_user_func( $value_callback, $control );
@@ -284,17 +411,28 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Get the fonts.
+	 *
+	 * Retrieve the list of fonts.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 *
+	 * @return array Fonts.
 	 */
 	public function get_fonts() {
 		return $this->fonts;
 	}
 
 	/**
+	 * Get CSS.
+	 *
+	 * Retrieve the CSS. If the CSS is empty, parse it again.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	 * @return string
+	 *
+	 * @return string The CSS.
 	 */
 	public function get_css() {
 		if ( empty( $this->css ) ) {
@@ -305,18 +443,36 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Get stylesheet.
+	 *
+	 * Retrieve the CSS file stylesheet instance.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	 * @return Stylesheet
+	 *
+	 * @return Stylesheet The stylesheet object.
 	 */
 	public function get_stylesheet() {
 		return $this->stylesheet_obj;
 	}
 
 	/**
+	 * Get meta data.
+	 *
+	 * Retrieve the CSS file meta data. Returns an array of all the data, or if
+	 * custom property is given it will return the property value, or `null` if
+	 * the property does not exist.
+	 *
 	 * @since 1.2.0
 	 * @access public
-	*/
+	 *
+	 * @param string $property Optional. Custom meta data property. Default is
+	 *                         null.
+	 *
+	 * @return array|null An array of all the data, or if custom property is
+	 *                    given it will return the property value, or `null` if
+	 *                    the property does not exist.
+	 */
 	public function get_meta( $property = null ) {
 		$defaults = [
 			'status' => '',
@@ -333,151 +489,246 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Add controls stack style rules.
+	 *
+	 * Parse the CSS for all the elements inside any given controls stack.
+	 *
+	 * This method recursively renders the CSS for all the child elements in the stack.
+	 *
 	 * @since 1.6.0
 	 * @access public
-	 * @param Controls_Stack $controls_stack
-	 * @param array          $controls
-	 * @param array          $values
-	 * @param array          $placeholders
-	 * @param array          $replacements
+	 *
+	 * @param Controls_Stack $controls_stack The controls stack.
+	 * @param array          $controls       Controls array.
+	 * @param array          $values         Values array.
+	 * @param array          $placeholders   Placeholders.
+	 * @param array          $replacements   Replacements.
 	 */
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
+		$all_controls = $controls_stack->get_controls();
+
+		$parsed_dynamic_settings = $controls_stack->parse_dynamic_settings( $values, $controls );
+
 		foreach ( $controls as $control ) {
 			if ( ! empty( $control['style_fields'] ) ) {
-				foreach ( $values[ $control['name'] ] as $field_value ) {
-					$this->add_controls_stack_style_rules(
-						$controls_stack,
-						$control['style_fields'],
-						$field_value,
-						array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] ),
-						array_merge( $replacements, [ '.elementor-repeater-item-' . $field_value['_id'] ] )
-					);
-				}
+				$this->add_repeater_control_style_rules( $controls_stack, $control['style_fields'], $values[ $control['name'] ], $placeholders, $replacements );
+			}
+
+			if ( ! empty( $control['dynamic'] ) ) {
+				$this->add_dynamic_control_style_rules( $control, $values[ $control['name'] ] );
 			}
 
 			if ( empty( $control['selectors'] ) ) {
 				continue;
 			}
 
-			$this->add_control_style_rules( $control, $values, $controls_stack->get_controls(), $placeholders, $replacements );
+			$this->add_control_style_rules( $control, $parsed_dynamic_settings, $all_controls, $placeholders, $replacements );
 		}
 	}
 
 	/**
-	 * @abstract
+	 * Load meta data.
+	 *
+	 * Retrieve the CSS file meta data.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return array
+	 * @abstract
 	 */
 	abstract protected function load_meta();
 
 	/**
-	 * @abstract
+	 * Update meta data.
+	 *
+	 * Update the global CSS file meta data.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @param array $meta
+	 * @abstract
+	 *
+	 * @param array $meta New meta data.
 	 */
 	abstract protected function update_meta( $meta );
 
 	/**
-	 * @abstract
+	 * Get file handle ID.
+	 *
+	 * Retrieve the file handle ID.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return string
+	 * @abstract
+	 *
+	 * @return string CSS file handle ID.
 	 */
 	abstract protected function get_file_handle_id();
 
 	/**
-	 * @abstract
+	 * Render CSS.
+	 *
+	 * Parse the CSS.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	*/
+	 * @abstract
+	 */
 	abstract protected function render_css();
 
 	/**
-	 * @abstract
+	 * Get file name.
+	 *
+	 * Retrieve the name of the CSS file.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return string
+	 * @abstract
+	 *
+	 * @return string File name.
 	 */
 	abstract protected function get_file_name();
 
 	/**
+	 * Get enqueue dependencies.
+	 *
+	 * Retrieve the name of the stylesheet used by `wp_enqueue_style()`.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return array
+	 *
+	 * @return array Name of the stylesheet.
 	 */
 	protected function get_enqueue_dependencies() {
 		return [];
 	}
 
 	/**
+	 * Get inline dependency.
+	 *
+	 * Retrieve the name of the stylesheet used by `wp_add_inline_style()`.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return string
+	 *
+	 * @return string Name of the stylesheet.
 	 */
 	protected function get_inline_dependency() {
 		return '';
 	}
 
 	/**
+	 * Is update required.
+	 *
+	 * Whether the CSS requires an update. When there are new schemes or settings
+	 * updates.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	 * @return bool
+	 *
+	 * @return bool True if the CSS requires an update, False otherwise.
 	 */
 	protected function is_update_required() {
 		return false;
 	}
 
 	/**
+	 * Parse CSS.
+	 *
+	 * Parsing the CSS file.
+	 *
 	 * @since 1.2.0
 	 * @access protected
-	*/
+	 */
 	protected function parse_css() {
 		$this->render_css();
 
 		$name = $this->get_name();
 
 		/**
-		 * CSS file parse.
+		 * Parse CSS file.
 		 *
 		 * Fires when CSS file is parsed on Elementor.
 		 *
 		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
+		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
+		 *
 		 * @since 1.2.0
+		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action instead.
 		 *
 		 * @param CSS_File $this The current CSS file.
 		 */
 		do_action( "elementor/{$name}-css-file/parse", $this );
 
+		/**
+		 * Parse CSS file.
+		 *
+		 * Fires when CSS file is parsed on Elementor.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param CSS_File $this The current CSS file.
+		 */
+		do_action( "elementor/css-file/{$name}/parse", $this );
+
 		$this->css = $this->stylesheet_obj->__toString();
 	}
 
 	/**
+	 * Set path and URL.
+	 *
+	 * Define the CSS file path and file URL.
+	 *
+	 * @since 1.2.0
+	 * @access protected
+	 */
+	protected function set_path_and_url() {
+		$wp_upload_dir = wp_upload_dir( null, false );
+
+		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, $this->get_file_name() );
+
+		$this->path = $wp_upload_dir['basedir'] . $relative_path;
+
+		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
+	}
+
+	/**
+	 * Add control style rules.
+	 *
+	 * Register new style rules for the control.
+	 *
 	 * @since 1.6.0
 	 * @access private
-	 * @param array $control
-	 * @param array $values
-	 * @param array $controls_stack
-	 * @param array $placeholders
-	 * @param array $replacements
+	 *
+	 * @param array $control        The control.
+	 * @param array $values         Values array.
+	 * @param array $controls_stack The controls stack.
+	 * @param array $placeholders   Placeholders.
+	 * @param array $replacements   Replacements.
 	 */
-	private function add_control_style_rules( array $control, array $values, array $controls_stack, array $placeholders, array $replacements ) {
+	private function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
 		$this->add_control_rules(
-			$control, $controls_stack, function( $control ) use ( $values ) {
+			$control, $controls, function( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements
 		);
 	}
 
 	/**
+	 * Get style control value.
+	 *
+	 * Retrieve the value of the style control for any give control and values.
+	 *
+	 * It will retrieve the control name and return the style value.
+	 *
 	 * @since 1.6.0
 	 * @access private
-	 * @param array $control
-	 * @param array $values
 	 *
-	 * @return mixed
+	 * @param array $control The control.
+	 * @param array $values  Values array.
+	 *
+	 * @return mixed Style control value.
 	 */
 	private function get_style_control_value( array $control, array $values ) {
 		$value = $values[ $control['name'] ];
@@ -494,9 +745,14 @@ abstract class CSS_File {
 	}
 
 	/**
+	 * Init stylesheet.
+	 *
+	 * Initialize CSS file stylesheet by creating a new `Stylesheet` object and register new
+	 * breakpoints for the stylesheet.
+	 *
 	 * @since 1.2.0
 	 * @access private
-	*/
+	 */
 	private function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
@@ -508,17 +764,29 @@ abstract class CSS_File {
 			->add_device( 'desktop', $breakpoints['lg'] );
 	}
 
-	/**
-	 * @access protected
-	 * @since 1.2.0
-	*/
-	protected function set_path_and_url() {
-		$wp_upload_dir = wp_upload_dir( null, false );
+	private function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_controls, array $repeater_values, array $placeholders, array $replacements ) {
+		$placeholders = array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] );
 
-		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, $this->get_file_name() );
+		foreach ( $repeater_values as $field_value ) {
+			$this->add_controls_stack_style_rules(
+				$controls_stack,
+				$repeater_controls,
+				$field_value,
+				$placeholders,
+				array_merge( $replacements, [ '.elementor-repeater-item-' . $field_value['_id'] ] )
+			);
+		}
+	}
 
-		$this->path = $wp_upload_dir['basedir'] . $relative_path;
+	private function add_dynamic_control_style_rules( array $control, $value ) {
+		Plugin::$instance->dynamic_tags->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
+			$tag = Plugin::$instance->dynamic_tags->create_tag( $id, $name, $settings );
 
-		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
+			if ( ! $tag instanceof Tag ) {
+				return;
+			}
+
+			$this->add_controls_stack_style_rules( $tag, $tag->get_style_controls(), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
+		} );
 	}
 }

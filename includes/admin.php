@@ -198,7 +198,7 @@ class Admin {
 	 *
 	 * @return array An updated array of row action links.
 	 */
-	public function add_edit_in_dashboard( $actions, $post ) {
+	public function add_edit_in_dashboard( $actions, \WP_Post $post ) {
 		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%s">%s</a>',
@@ -681,6 +681,10 @@ class Admin {
 	}
 
 	/**
+	 * Get elementor dashboard overview widget footer actions.
+	 *
+	 * Retrieves the footer action links displayed in elementor dashboard widget.
+	 *
 	 * @since 1.9.0
 	 * @access private
 	 */
@@ -723,6 +727,12 @@ class Admin {
 	}
 
 	/**
+	 * Admin action new post.
+	 *
+	 * When a new post action is fired the title is set to 'Elementor' and the post ID.
+	 *
+	 * Fired by `admin_action_elementor_new_post` action.
+	 *
 	 * @since 1.9.0
 	 * @access public
 	 */

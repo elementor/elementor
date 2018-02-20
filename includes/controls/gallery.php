@@ -14,27 +14,33 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'gallery',
- *    	[
- *    		'label' => __( 'Add Images', 'plugin-domain' ),
- *    		'type' => Controls_Manager::GALLERY,
- *    		'default' => [],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'gallery',
+ * 	[
+ * 		'label' => __( 'Add Images', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::GALLERY,
+ * 		'default' => [],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $images = $this->get_settings( 'gallery' );
- *    foreach ( $images as $image ) {
- *    	echo '<img src="' . $image['url'] . '">';
- *    }
+ * ```php
+ * $settings = $this->get_settings();
+ * foreach ( $settings['gallery'] as $image ) {
+ * 	echo '<img src="' . $image['url'] . '">';
+ * }
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <# _.each( settings.gallery, function( image ) { #>
- *    	<img src="{{ image.url }}">
- *    <# }); #>
+ * ```js
+ * <# _.each( settings.gallery, function( image ) { #>
+ * 	<img src="{{ image.url }}">
+ * <# }); #>
+ * ```
  *
  * @since 1.0.0
  *
@@ -45,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param array $default      {
- *     Optional. Defautl gallery images. An array of images containing the image
+ *     Optional. Default gallery images. An array of images containing the image
  *     ID and URL: `[ [ 'id' => '', 'url' => '' ], [ 'id' => '', 'url' => '' ], ... ]`
  *     Default is an empty array.
  *
@@ -75,7 +81,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Gallery extends Base_Data_Control {
 
 	/**
-	 * Retrieve gallery control type.
+	 * Get gallery control type.
+	 *
+	 * Retrieve the control type, in this case `gallery`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -147,7 +155,7 @@ class Control_Gallery extends Base_Data_Control {
 							<div class="elementor-control-gallery-thumbnail" style="background-image: url({{ image.url }})"></div>
 						<# } ); #>
 					</div>
-					<button class="elementor-button elementor-control-gallery-add"><?php _e( '+ Add Images', 'elementor' ); ?></button>
+					<button class="elementor-button elementor-control-gallery-add"><?php _e( 'Add Images', 'elementor' ); ?></button>
 				</div>
 			</div>
 		</div>
@@ -155,9 +163,9 @@ class Control_Gallery extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve gallery control default settings.
+	 * Get gallery control default settings.
 	 *
-	 * Get the default settings of the gallery control. Used to return the
+	 * Retrieve the default settings of the gallery control. Used to return the
 	 * default settings while initializing the gallery control.
 	 *
 	 * @since 1.0.0
@@ -173,9 +181,9 @@ class Control_Gallery extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve gallery control default values.
+	 * Get gallery control default values.
 	 *
-	 * Get the default value of the gallery control. Used to return the default
+	 * Retrieve the default value of the gallery control. Used to return the default
 	 * values while initializing the gallery control.
 	 *
 	 * @since 1.0.0

@@ -14,14 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'custom_dimension',
- *    	[
- *    		'label' => __( 'Image Dimension', 'plugin-domain' ),
- *    		'type' => Controls_Manager::IMAGE_DIMENSIONS,
- *    		'description' => __( 'Crop the original image size to any custom size. Set custom width or height to keep the original size ratio.', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'custom_dimension',
+ * 	[
+ * 		'label' => __( 'Image Dimension', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::IMAGE_DIMENSIONS,
+ * 		'description' => __( 'Crop the original image size to any custom size. Set custom width or height to keep the original size ratio.', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *
@@ -32,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $placeholder Optional. The field placeholder that appears when
  *                            the field has no values. Default is empty.
  * @param array  $default     {
- *     Optional. Defautl image dimension values.
+ *     Optional. Default image dimension values.
  *
  *     @type int $width  Optional. Image width. Default is empty.
  *     @type int $height Optional. Image height. Default is empty.
@@ -60,7 +62,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Image_Dimensions extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve image dimensions control type.
+	 * Get image dimensions control type.
+	 *
+	 * Retrieve the control type, in this case `image_dimensions`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -72,9 +76,9 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve image dimensions control default values.
+	 * Get image dimensions control default values.
 	 *
-	 * Get the default value of the image dimensions control. Used to return the
+	 * Retrieve the default value of the image dimensions control. Used to return the
 	 * default values while initializing the image dimensions control.
 	 *
 	 * @since 1.0.0
@@ -90,9 +94,9 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve image dimensions control default settings.
+	 * Get image dimensions control default settings.
 	 *
-	 * Get the default settings of the image dimensions control. Used to return
+	 * Retrieve the default settings of the image dimensions control. Used to return
 	 * the default settings while initializing the image dimensions control.
 	 *
 	 * @since 1.0.0

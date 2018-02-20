@@ -78,6 +78,9 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => '',
 				'type' => Controls_Manager::WYSIWYG,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => __( 'I am text block. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 			]
 		);
@@ -322,7 +325,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$editor_content = $this->get_settings( 'editor' );
+		$editor_content = $this->get_settings_for_display( 'editor' );
 
 		$editor_content = $this->parse_text_editor( $editor_content );
 

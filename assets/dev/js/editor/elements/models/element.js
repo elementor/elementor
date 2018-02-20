@@ -66,7 +66,9 @@ ElementModel = Backbone.Model.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
-		settings = new SettingsModel( settings );
+		settings = new SettingsModel( settings, {
+			controls: elementor.getElementControls( this )
+		} );
 
 		this.set( 'settings', settings );
 
@@ -164,14 +166,14 @@ ElementModel = Backbone.Model.extend( {
 	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
-		return elementor.ajax.send( 'render_widget', {
+		return elementor.ajax.addRequest( 'render_widget', {
+			unique_id: this.cid,
 			data: {
 				post_id: elementor.config.post_id,
-				data: JSON.stringify( data ),
-				_nonce: elementor.config.nonce
+				data: data
 			},
 			success: this.onRemoteGetHtml.bind( this )
-		} );
+		}, true ).jqXhr;
 	},
 
 	renderRemoteServer: function() {

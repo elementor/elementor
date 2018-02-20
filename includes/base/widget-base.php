@@ -23,7 +23,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Used in cases where the widget has no content. When widgets uses only
 	 * skins to display dynamic content generated on the server. For example the
-	 * posts widget in Elemenrot Pro. Default is true, the widget has content
+	 * posts widget in Elementor Pro. Default is true, the widget has content
 	 * template.
 	 *
 	 * @access protected
@@ -127,6 +127,9 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @throws \Exception If arguments are missing when initializing a full widget
+	 *                   instance.
+	 *
 	 * @param array      $data Widget data. Default is an empty array.
 	 * @param array|null $args Optional. Widget default arguments. Default is null.
 	 */
@@ -136,7 +139,7 @@ abstract class Widget_Base extends Element_Base {
 		$is_type_instance = $this->is_type_instance();
 
 		if ( ! $is_type_instance && null === $args ) {
-			throw new \Exception( '`$args` argument is required when initializing a full widget instance' );
+			throw new \Exception( '`$args` argument is required when initializing a full widget instance.' );
 		}
 
 		if ( $is_type_instance ) {
@@ -321,7 +324,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Retrieve the current widget initial configuration.
 	 *
-	 * Adds more configuration on top of the controls list, the tabs assignet to
+	 * Adds more configuration on top of the controls list, the tabs assigned to
 	 * the control, element name, type, icon and more. This method also adds
 	 * widget type, keywords and categories.
 	 *
@@ -346,39 +349,17 @@ abstract class Widget_Base extends Element_Base {
 	 * Used to generate the widget template on the editor, using a Backbone
 	 * JavaScript template.
 	 *
+	 * @param string $template_content Template content.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
-	final public function print_template() {
-		ob_start();
-
-		$this->_content_template();
-
-		$content_template = ob_get_clean();
-
-		/**
-		 * Print widget template.
-		 *
-		 * Filters the widget template before it's printed in the editor.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string      $content_template The widget template in the editor.
-		 * @param Widget_Base $this             The widget.
-		 */
-		$content_template = apply_filters( 'elementor/widget/print_template', $content_template,  $this );
-
-		// Bail if the widget renderd on the server not using javascript
-		if ( empty( $content_template ) ) {
-			return;
-		}
+	protected function print_template_content( $template_content ) {
+		$this->render_edit_tools();
 		?>
-		<script type="text/html" id="tmpl-elementor-<?php echo static::get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
-			<?php $this->render_edit_tools(); ?>
-			<div class="elementor-widget-container">
-				<?php echo $content_template; ?>
-			</div>
-		</script>
+		<div class="elementor-widget-container">
+			<?php echo $template_content; ?>
+		</div>
 		<?php
 	}
 

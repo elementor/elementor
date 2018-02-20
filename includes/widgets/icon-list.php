@@ -425,7 +425,8 @@ class Widget_Icon_List extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+
+		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'icon_list', 'class', 'elementor-icon-list-items' );
 		$this->add_render_attribute( 'list_item', 'class', 'elementor-icon-list-item' );
@@ -434,7 +435,6 @@ class Widget_Icon_List extends Widget_Base {
 			$this->add_render_attribute( 'icon_list', 'class', 'elementor-grid' );
 			$this->add_render_attribute( 'list_item', 'class', 'elementor-grid-item' );
 		}
-
 		?>
 		<ul <?php echo $this->get_render_attribute_string( 'icon_list' ); ?>>
 			<?php foreach ( $settings['icon_list'] as $index => $item ) :

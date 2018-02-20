@@ -126,7 +126,7 @@ ImagesManager = function() {
 			} );
 		}
 
-		window.elementor.ajax.send(
+		elementor.ajax.send(
 			'get_images_details', {
 				data: {
 					items: requestedItems

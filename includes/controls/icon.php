@@ -15,34 +15,41 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'icon',
- *    	[
- *    		'label' => __( 'Social Icon', 'plugin-domain' ),
- *    		'type' => Controls_Manager::ICON,
- *    		'include' => [
- *    			'fa fa-facebook',
- *    			'fa fa-flickr',
- *    			'fa fa-google-plus',
- *    			'fa fa-instagram',
- *    			'fa fa-linkedin',
- *    			'fa fa-pinterest',
- *    			'fa fa-reddit',
- *    			'fa fa-twitch',
- *    			'fa fa-twitter',
- *    			'fa fa-vimeo',
- *    			'fa fa-youtube',
- *    		],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'icon',
+ * 	[
+ * 		'label' => __( 'Social Icon', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::ICON,
+ * 		'include' => [
+ * 			'fa fa-facebook',
+ * 			'fa fa-flickr',
+ * 			'fa fa-google-plus',
+ * 			'fa fa-instagram',
+ * 			'fa fa-linkedin',
+ * 			'fa fa-pinterest',
+ * 			'fa fa-reddit',
+ * 			'fa fa-twitch',
+ * 			'fa fa-twitter',
+ * 			'fa fa-vimeo',
+ * 			'fa fa-youtube',
+ * 		],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<i class="' . esc_attr( $this->get_settings( 'icon' ) ) . '" aria-hidden="true"></i>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<i class="' . $settings['icon'] . '" aria-hidden="true"></i>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <i class="{{ settings.icon }}" aria-hidden="true"></i>
+ * ```js
+ * <i class="{{ settings.icon }}" aria-hidden="true"></i>
+ * ```
  *
  * @since 1.0.0
  *
@@ -73,7 +80,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Icon extends Base_Data_Control {
 
 	/**
-	 * Retrieve icon control type.
+	 * Get icon control type.
+	 *
+	 * Retrieve the control type, in this case `icon`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -85,9 +94,9 @@ class Control_Icon extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve icons.
+	 * Get icons.
 	 *
-	 * Get all the available icons.
+	 * Retrieve all the available icons.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -889,9 +898,9 @@ class Control_Icon extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve icons control default settings.
+	 * Get icons control default settings.
 	 *
-	 * Get the default settings of the icons control. Used to return the default
+	 * Retrieve the default settings of the icons control. Used to return the default
 	 * settings while initializing the icons control.
 	 *
 	 * @since 1.0.0

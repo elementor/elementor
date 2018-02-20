@@ -16,40 +16,46 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'width',
- *    	[
- *    		'label' => __( 'Width', 'plugin-domain' ),
- *    		'type' => Controls_Manager::SLIDER,
- *    		'default' => [
- *    			'size' => 1,
- *    		],
- *    		'size_units' => [ 'px', '%' ],
- *    		'range' => [
- *    			'px' => [
- *    				'min' => 0,
- *    				'max' => 1000,
- *    				'step' => 5,
- *    			],
- *    			'%' => [
- *    				'min' => 0,
- *    				'max' => 100,
- *    			],
- *    		],
- *    		'selectors' => [
- *    			'{{WRAPPER}} .box' => 'width: {{SIZE}}{{UNIT}};',
- *    		],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'width',
+ * 	[
+ * 		'label' => __( 'Width', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::SLIDER,
+ * 		'default' => [
+ * 			'size' => 1,
+ * 		],
+ * 		'size_units' => [ 'px', '%' ],
+ * 		'range' => [
+ * 			'px' => [
+ * 				'min' => 0,
+ * 				'max' => 1000,
+ * 				'step' => 5,
+ * 			],
+ * 			'%' => [
+ * 				'min' => 0,
+ * 				'max' => 100,
+ * 			],
+ * 		],
+ * 		'selectors' => [
+ * 			'{{WRAPPER}} .box' => 'width: {{SIZE}}{{UNIT}};',
+ * 		],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $width = $this->get_settings( 'width' );
- *    echo '<div style="width: ' . $width['size'] . $width['unit'] '"> ... </div>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<div style="width: ' . $settings['width']['size'] . $settings['width']['unit'] '"> ... </div>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div style="width: {{ settings.width.size }}{{ settings.width.unit }}"> ... </div>';
+ * ```js
+ * <div style="width: {{ settings.width.size }}{{ settings.width.unit }}"> ... </div>';
+ * ```
  *
  * @since 1.0.0
  *
@@ -60,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $description Optional. The description that appears below the
  *                            field. Default is empty.
  * @param array $default      {
- *     Optional. Defautl slider value.
+ *     Optional. Default slider value.
  *
  *     @type int $size Optional. The initial size of slider. Default is empty.
  * }
@@ -101,7 +107,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Slider extends Control_Base_Units {
 
 	/**
-	 * Retrieve slider control type.
+	 * Get slider control type.
+	 *
+	 * Retrieve the control type, in this case `slider`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -113,9 +121,9 @@ class Control_Slider extends Control_Base_Units {
 	}
 
 	/**
-	 * Retrieve slider control default values.
+	 * Get slider control default values.
 	 *
-	 * Get the default value of the slider control. Used to return the default
+	 * Retrieve the default value of the slider control. Used to return the default
 	 * values while initializing the slider control.
 	 *
 	 * @since 1.0.0
@@ -132,9 +140,9 @@ class Control_Slider extends Control_Base_Units {
 	}
 
 	/**
-	 * Retrieve slider control default settings.
+	 * Get slider control default settings.
 	 *
-	 * Get the default settings of the slider control. Used to return the
+	 * Retrieve the default settings of the slider control. Used to return the
 	 * default settings while initializing the slider control.
 	 *
 	 * @since 1.0.0

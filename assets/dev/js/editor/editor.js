@@ -91,6 +91,10 @@ App = Marionette.Application.extend( {
 		popover: {
 			element: '.elementor-controls-popover',
 			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label'
+		},
+		tagsList: {
+			element: '.elementor-tags-list',
+			ignore: '.elementor-control-dynamic-switcher'
 		}
 	},
 
@@ -140,7 +144,17 @@ App = Marionette.Application.extend( {
 				return;
 			}
 
-			controls[ controlKey ] = _.extend( {}, self.config.controls[ controlData.type ], controlData  );
+			controls[ controlKey ] = controlData;
+		} );
+
+		return controls;
+	},
+
+	mergeControlsSettings: function( controls ) {
+		var  self = this;
+
+		_.each( controls, function( controlData, controlKey ) {
+			controls[ controlKey ] = jQuery.extend( true, {}, self.config.controls[ controlData.type ], controlData  );
 		} );
 
 		return controls;
@@ -170,6 +184,7 @@ App = Marionette.Application.extend( {
 
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
+			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
 			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
@@ -179,6 +194,8 @@ App = Marionette.Application.extend( {
 		this.saver = new Saver();
 
 		this.settings = new Settings();
+
+		this.dynamicTags = new DynamicTags();
 
 		/**
 		 * @deprecated - use `this.settings.page` instead
@@ -308,7 +325,7 @@ App = Marionette.Application.extend( {
 						return false;
 					}
 
-					return ! $target.closest( '.elementor-inline-editing' ).length;
+					return ! $target.closest( '[contenteditable="true"]' ).length;
 				},
 				handle: function() {
 					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
@@ -481,6 +498,8 @@ App = Marionette.Application.extend( {
 	onStart: function() {
 		this.$window = jQuery( window );
 
+		this.$body = jQuery( 'body' );
+
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
@@ -568,11 +587,9 @@ App = Marionette.Application.extend( {
 
 		this.getRegion( 'panel' ).show( new PanelLayoutView() );
 
-		this.$previewContents
-		    .children() // <html>
-		    .addClass( 'elementor-html' )
-		    .children( 'body' )
-		    .addClass( 'elementor-editor-active' );
+		this.$previewContents.children().addClass( 'elementor-html' );
+
+		elementorFrontend.getElements( '$body' ).addClass( 'elementor-editor-active' );
 
 		this.setResizablePanel();
 
@@ -685,10 +702,10 @@ App = Marionette.Application.extend( {
 	},
 
 	enterPreviewMode: function( hidePanel ) {
-		var $elements = this.$previewContents.find( 'body' );
+		var $elements = elementorFrontend.getElements( '$body' );
 
 		if ( hidePanel ) {
-			$elements = $elements.add( 'body' );
+			$elements = $elements.add( this.$body );
 		}
 
 		$elements
@@ -697,16 +714,14 @@ App = Marionette.Application.extend( {
 
 		if ( hidePanel ) {
 			// Handle panel resize
-			this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+			this.$previewWrapper.css( this.config.is_rtl ? 'right' : 'left', '' );
 
 			this.panel.$el.css( 'width', '' );
 		}
 	},
 
 	exitPreviewMode: function() {
-		this.$previewContents
-			.find( 'body' )
-			.add( 'body' )
+		elementorFrontend.getElements( '$body' ).add( this.$body )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
 	},
@@ -739,7 +754,7 @@ App = Marionette.Application.extend( {
 			return;
 		}
 
-		jQuery( 'body' )
+		this.$body
 			.removeClass( 'elementor-device-' + oldDeviceMode )
 			.addClass( 'elementor-device-' + newDeviceMode );
 

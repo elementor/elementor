@@ -136,7 +136,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.3.0
 	 * @access public
 	 *
-	 * @return array Widget scripts dependencies.
+	 * @return array Element scripts dependencies.
 	 */
 	public function get_script_depends() {
 		return $this->depended_scripts;
@@ -158,14 +158,14 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Retrieve style dependencies.
+	 * Get style dependencies.
 	 *
-	 * Get the list of style dependencies the element requires.
+	 * Retrieve the list of style dependencies the element requires.
 	 *
 	 * @since 1.9.0
 	 * @access public
 	 *
-	 * @return array Widget styles dependencies.
+	 * @return array Element styles dependencies.
 	 */
 	final public function get_style_depends() {
 		return $this->depended_styles;
@@ -278,30 +278,6 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Get items.
-	 *
-	 * Utility method that recieves an array with a needle and returns all the
-	 * items that match the needle. If needle is not defined the entire haystack
-	 * will be returened.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @static
-	 *
-	 * @param array  $haystack An array of items.
-	 * @param string $needle   Optional. Default is null.
-	 *
-	 * @return mixed The whole haystack or the needle from the haystack when requested.
-	 */
-	private static function _get_items( array $haystack, $needle = null ) {
-		if ( $needle ) {
-			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
-		}
-
-		return $haystack;
-	}
-
-	/**
 	 * Initialize edit tools.
 	 *
 	 * Register default edit tools.
@@ -319,7 +295,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Retrieve the default child type based on element data.
 	 *
-	 * Note that not all elements support childen.
+	 * Note that not all elements support children.
 	 *
 	 * @since 1.0.0
 	 * @access protected
@@ -393,42 +369,10 @@ abstract class Element_Base extends Controls_Stack {
 		return false;
 	}
 
-	/**
-	 * Print element template.
-	 *
-	 * Used to generate the element template on the editor.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function print_template() {
-		ob_start();
+	protected function print_template_content( $template_content ) {
+		$this->render_edit_tools();
 
-		$this->_content_template();
-
-		$content_template = ob_get_clean();
-
-		/**
-		 * Print element template.
-		 *
-		 * Filters the element template before it's printed in the editor.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string       $content_template The element template in the editor.
-		 * @param Element_Base $this             The element.
-		 */
-		$content_template = apply_filters( 'elementor/element/print_template', $content_template, $this );
-
-		if ( empty( $content_template ) ) {
-			return;
-		}
-		?>
-		<script type="text/html" id="tmpl-elementor-<?php echo $this->get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
-			<?php $this->render_edit_tools(); ?>
-			<?php echo $content_template; ?>
-		</script>
-		<?php
+		echo $template_content;
 	}
 
 	/**
@@ -472,9 +416,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * Retrieve the element parent. Used to check which element it belongs to.
 	 *
 	 * @since 1.0.0
-	 * @access public
-	 *
 	 * @deprecated
+	 * @access public
 	 *
 	 * @return Element_Base Parent element.
 	 */
@@ -529,8 +472,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param array|string $element   The HTML element.
-	 * @param array|string $key       Optional. Attribute key. Dafault is null.
-	 * @param array|string $value     Optional. Attribute value. Dafault is null.
+	 * @param array|string $key       Optional. Attribute key. Default is null.
+	 * @param array|string $value     Optional. Attribute value. Default is null.
 	 * @param bool         $overwrite Optional. Whether to overwrite existing
 	 *                                attribute. Default is false, not to overwrite.
 	 *
@@ -578,8 +521,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param array|string $element The HTML element.
-	 * @param array|string $key     Optional. Attribute key. Dafault is null.
-	 * @param array|string $value   Optional. Attribute value. Dafault is null.
+	 * @param array|string $key     Optional. Attribute key. Default is null.
+	 * @param array|string $value   Optional. Attribute value. Default is null.
 	 *
 	 * @return Element_Base Current instance of the element.
 	 */
@@ -719,26 +662,16 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Render element output in the editor.
-	 *
-	 * Used to generate the live preview, using a Backbone JavaScript template.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
-	protected function _content_template() {}
-
-	/**
 	 * Render element edit tools.
 	 *
 	 * Used to generate the edit tools HTML.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 1.8.0 use render_edit_tools() instead.
+	 * @deprecated 1.8.0 Use `render_edit_tools()` instead.
 	 * @access protected
 	 */
 	protected function _render_settings() {
-		_deprecated_function( get_called_class() . '::' . __FUNCTION__, '1.8.0', 'render_edit_tools()' );
+		_deprecated_function( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), '1.8.0', 'render_edit_tools()' );
 
 		$this->render_edit_tools();
 	}
@@ -814,16 +747,6 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Render element.
-	 *
-	 * Generates the final HTML on the frontend.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
-	protected function render() {}
-
-	/**
 	 * Get default data.
 	 *
 	 * Retrieve the default element data. Used to reset the data on initialization.
@@ -863,7 +786,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Retrieve the current element initial configuration.
 	 *
-	 * Adds more configuration on top of the controls list and the tabs assignet
+	 * Adds more configuration on top of the controls list and the tabs assigned
 	 * to the control. This method also adds element name, type, icon and more.
 	 *
 	 * @since 1.0.10

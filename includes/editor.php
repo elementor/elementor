@@ -163,8 +163,8 @@ class Editor {
 	/**
 	 * Redirect to new URL.
 	 *
-	 * Used as a fallback function for the old URL structure of Elementor
-	 * page edit URL.
+	 * Used as a fallback function for the old URL structure of Elementor page
+	 * edit URL.
 	 *
 	 * Fired by `template_redirect` action.
 	 *
@@ -194,7 +194,8 @@ class Editor {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param int $post_id Optional. Post ID. Default is `null`, the current post ID.
+	 * @param int $post_id Optional. Post ID. Default is `null`, the current
+	 *                     post ID.
 	 *
 	 * @return bool Whether the edit mode is active.
 	 */
@@ -210,7 +211,6 @@ class Editor {
 		// Ajax request as Editor mode
 		$actions = [
 			'elementor',
-			'elementor_render_widget',
 
 			// Templates
 			'elementor_get_templates',
@@ -532,6 +532,7 @@ class Editor {
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'current_user_can_publish' => $current_user_can_publish,
 			'exit_to_dashboard_url' => Utils::get_exit_to_dashboard_url( $this->_post_id ),
+			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
@@ -821,7 +822,8 @@ class Editor {
 	/**
 	 * Editor head trigger.
 	 *
-	 * Fires the 'elementor/editor/wp_head' action in the head tag in Elementor editor.
+	 * Fires the 'elementor/editor/wp_head' action in the head tag in Elementor
+	 * editor.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -847,10 +849,10 @@ class Editor {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string $template Can be either a link to template file or template HTML
-	 *                         content.
-	 * @param string $type     Optional. Whether to handle the template as path or text.
-	 *                         Default is `path`.
+	 * @param string $template Can be either a link to template file or template
+	 *                         HTML content.
+	 * @param string $type     Optional. Whether to handle the template as path
+	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
 		if ( 'path' === $type ) {
@@ -883,6 +885,8 @@ class Editor {
 		$plugin->elements_manager->render_elements_content();
 
 		$plugin->schemes_manager->print_schemes_templates();
+
+		$plugin->dynamic_tags->print_templates();
 
 		$this->init_editor_templates();
 
@@ -919,7 +923,8 @@ class Editor {
 	/**
 	 * Editor constructor.
 	 *
-	 * Initializing Elementor editor and redirect from old URL structure of Elementor editor.
+	 * Initializing Elementor editor and redirect from old URL structure of
+	 * Elementor editor.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -932,15 +937,17 @@ class Editor {
 	/**
 	 * Create nonce.
 	 *
-	 * If the user has edit capabilities, it creates a cryptographic token to give him
-	 * access to Elementor editor.
+	 * If the user has edit capabilities, it creates a cryptographic token to
+	 * give him access to Elementor editor.
 	 *
 	 * @since 1.8.1
+	 * @since 1.8.7 The `$post_type` parameter was introduces.
 	 * @access public
 	 *
-	 * @param string $post_type The post type to check capabilities. @since  1.8.7
+	 * @param string $post_type The post type to check capabilities.
 	 *
-	 * @return null|string The nonce token, or `null` if the user has no edit capabilities.
+	 * @return null|string The nonce token, or `null` if the user has no edit
+	 *                     capabilities.
 	 */
 	public function create_nonce( $post_type ) {
 		$post_type_object = get_post_type_object( $post_type );
@@ -956,17 +963,19 @@ class Editor {
 	/**
 	 * Verify nonce.
 	 *
-	 * The user is given an amount of time to use the token, so therefore, since the user ID
-	 * and `$action` remain the same, the independent variable is the time.
+	 * The user is given an amount of time to use the token, so therefore, since
+	 * the user ID and `$action` remain the same, the independent variable is
+	 * the time.
 	 *
 	 * @since 1.8.1
 	 * @access public
 	 *
 	 * @param string $nonce Nonce that was used in the form to verify.
 	 *
-	 * @return false|int If the nonce is invalid it returns `false`. If the nonce is valid
-	 *                   and generated between 0-12 hours ago it returns `1`. If the nonce is
-	 *                   valid and generated between 12-24 hours ago it returns `2`.
+	 * @return false|int If the nonce is invalid it returns `false`. If the
+	 *                   nonce is valid and generated between 0-12 hours ago it
+	 *                   returns `1`. If the nonce is valid and generated
+	 *                   between 12-24 hours ago it returns `2`.
 	 */
 	public function verify_nonce( $nonce ) {
 		return wp_verify_nonce( $nonce, self::EDITING_NONCE_KEY );
@@ -997,7 +1006,7 @@ class Editor {
 	 */
 	public function verify_ajax_nonce() {
 		if ( ! $this->verify_request_nonce() ) {
-			wp_send_json_error( new \WP_Error( 'token_expired' ) );
+			wp_send_json_error( new \WP_Error( 'token_expired', 'Nonce token expired.' ) );
 		}
 	}
 

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -14,22 +16,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'item_description',
- *    	[
- *    		'label' => __( 'Description', 'plugin-domain' ),
- *    		'type' => Controls_Manager::WYSIWYG,
- *    		'default' => __( 'Default description', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'item_description',
+ * 	[
+ * 		'label' => __( 'Description', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::WYSIWYG,
+ * 		'default' => __( 'Default description', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<div class="description">' . $this->get_settings( 'item_description' ) . '</div>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<div class="description">' . $settings['item_description'] . '</div>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div class="description">{{{ settings.item_description }}}</div>
+ * ```js
+ * <div class="description">{{{ settings.item_description }}}</div>
+ * ```
  *
  * @since 1.0.0
  *
@@ -55,7 +64,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Wysiwyg extends Base_Data_Control {
 
 	/**
-	 * Retrieve wysiwyg control type.
+	 * Get wysiwyg control type.
+	 *
+	 * Retrieve the control type, in this case `wysiwyg`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -78,10 +89,30 @@ class Control_Wysiwyg extends Base_Data_Control {
 	 */
 	public function content_template() {
 		?>
-		<label>
-			<span class="elementor-control-title">{{{ data.label }}}</span>
-			<textarea data-setting="{{ data.name }}"></textarea>
-		</label>
+		<div class="elementor-control-field">
+			<div class="elementor-control-title">{{{ data.label }}}</div>
+			<div class="elementor-control-input-wrapper elementor-control-tag-area"></div>
+		</div>
 		<?php
+	}
+
+	/**
+	 * Retrieve textarea control default settings.
+	 *
+	 * Get the default settings of the textarea control. Used to return the
+	 * default settings while initializing the textarea control.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Control default settings.
+	 */
+	protected function get_default_settings() {
+		return [
+			'label_block' => true,
+			'dynamic' => [
+				'categories' => [ TagsModule::TEXT_CATEGORY ],
+			],
+		];
 	}
 }

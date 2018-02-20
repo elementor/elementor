@@ -6,8 +6,12 @@ log/
 vendor/
 composer.lock
 .project
+.vscode
 Thumbs.db
 *.DS_Store
 
 *.log
 *.map
+
+assets/css/
+assets/js/

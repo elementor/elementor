@@ -9,28 +9,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor background control.
  *
  * A base control for creating background control. Displays input fields to define
- * the background color, background image, background gradiant or background video.
+ * the background color, background image, background gradient or background video.
  *
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_group_control(
- *    	Group_Control_Background::get_type(),
- *    	[
- *    		'name' => 'background',
- *    		'types' => [ 'classic', 'gradient', 'video' ],
- *    		'selector' => '{{WRAPPER}} .wrapper',
- *    		'separator' => 'before',
- *    	]
- *    );
+ * ```php
+ * $this->add_group_control(
+ * 	Group_Control_Background::get_type(),
+ * 	[
+ * 		'name' => 'background',
+ * 		'types' => [ 'classic', 'gradient', 'video' ],
+ * 		'selector' => '{{WRAPPER}} .wrapper',
+ * 		'separator' => 'before',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.2.2
  *
  * @param string $name           The field name.
- * @param array  $types          Optional. Define spesific types to use. Available
+ * @param array  $types          Optional. Define specific types to use. Available
  *                               types are `classic`, `gradient` and `video`. Default
  *                               is an empty array, including all the types.
- * @param array  $fields_options Optional. An array of arays contaning data that
+ * @param array  $fields_options Optional. An array of arrays containing data that
  *                               overrides control settings. Default is an empty array.
  * @param string $separator      Optional. Set the position of the control separator.
  *                               Available values are 'default', 'before', 'after'
@@ -69,9 +71,9 @@ class Group_Control_Background extends Group_Control_Base {
 	private static $background_types;
 
 	/**
-	 * Retrieve type.
-	 *
 	 * Get background control type.
+	 *
+	 * Retrieve the control type, in this case `background`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -84,9 +86,9 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve background types.
+	 * Get background control types.
 	 *
-	 * Gat available background types.
+	 * Retrieve available background types.
 	 *
 	 * @since 1.2.2
 	 * @access public
@@ -393,9 +395,9 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve child default args.
+	 * Get child default args.
 	 *
-	 * Get the default arguments for all the child controls for a specific group
+	 * Retrieve the default arguments for all the child controls for a specific group
 	 * control.
 	 *
 	 * @since 1.2.2
@@ -465,8 +467,15 @@ class Group_Control_Background extends Group_Control_Base {
 	}
 
 	/**
+	 * Get default options.
+	 *
+	 * Retrieve the default options of the background control. Used to return the
+	 * default options while initializing the background control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default background control options.
 	 */
 	protected function get_default_options() {
 		return [

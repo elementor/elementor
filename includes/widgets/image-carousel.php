@@ -115,7 +115,8 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
-				'name' => 'thumbnail',
+				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
+				'separator' => 'none',
 			]
 		);
 
@@ -634,7 +635,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['carousel'] ) ) {
 			return;
@@ -754,7 +755,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	 * @return string The caption of the image.
 	 */
 	private function get_image_caption( $attachment ) {
-		$caption_type = $this->get_settings( 'caption_type' );
+		$caption_type = $this->get_settings_for_display( 'caption_type' );
 
 		if ( empty( $caption_type ) ) {
 			return '';

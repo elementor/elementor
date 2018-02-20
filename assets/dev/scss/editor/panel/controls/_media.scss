@@ -21,14 +21,14 @@
 			}
 		}
 
-		&.media-empty {
+		&.elementor-media-empty {
 
 			.elementor-control-media-image-area {
 				display: none;
 			}
 		}
 
-		&:not(.media-empty) {
+		&:not(.elementor-media-empty) {
 
 			.elementor-control-media-upload-button {
 				display: none;

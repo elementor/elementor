@@ -15,30 +15,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'due_date',
- *    	[
- *    		'label' => __( 'Due Date', 'plugin-domain' ),
- *    		'type' => Controls_Manager::DATE_TIME,
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'due_date',
+ * 	[
+ * 		'label' => __( 'Due Date', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::DATE_TIME,
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $due_date = strtotime( $this->get_settings( 'due_date' ) );
- *    // GMT timezone
- *    // $due_date -= ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
- *    $due_date_in_days = $due_date / DAY_IN_SECONDS;
- *    echo '<p>' . sprintf( __( 'Something will happen in %s days.', 'plugin-domain' ), $due_date_in_days ) . '</p>';
+ * ```php
+ * $due_date = strtotime( $this->get_settings( 'due_date' ) );
+ * // GMT timezone
+ * // $due_date -= ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+ * $due_date_in_days = $due_date / DAY_IN_SECONDS;
+ * echo '<p>' . sprintf( __( 'Something will happen in %s days.', 'plugin-domain' ), $due_date_in_days ) . '</p>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <#
- *    var due_date = new Date( settings.due_date ),
- *        now_date = new Date(),
- *        due_date_in_days = Math.floor( ( due_date - now_date ) / 86400000 ); // 86400000 miliseconds in one Day.
- *    #>
- *    <p> Something will happen in {{{ due_date_in_days }}} days. </p>
+ * ```js
+ * <#
+ * var due_date = new Date( settings.due_date ),
+ * 	now_date = new Date(),
+ * 	due_date_in_days = Math.floor( ( due_date - now_date ) / 86400000 ); // 86400000 miliseconds in one Day.
+ * #>
+ * <p> Something will happen in {{{ due_date_in_days }}} days. </p>
+ * ```
  *
  * @since 1.0.0
  *
@@ -70,7 +76,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Date_Time extends Base_Data_Control {
 
 	/**
-	 * Retrieve date time control type.
+	 * Get date time control type.
+	 *
+	 * Retrieve the control type, in this case `date_time`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -82,9 +90,9 @@ class Control_Date_Time extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve date time control default settings.
+	 * Get date time control default settings.
 	 *
-	 * Get the default settings of the date time control. Used to return the
+	 * Retrieve the default settings of the date time control. Used to return the
 	 * default settings while initializing the date time control.
 	 *
 	 * @since 1.8.0
