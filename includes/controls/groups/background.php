@@ -315,10 +315,21 @@ class Group_Control_Background extends Group_Control_Base {
 				'fixed' => _x( 'Fixed', 'Background Control', 'elementor' ),
 			],
 			'selectors' => [
-				'(tablet+){{SELECTOR}}' => 'background-attachment: {{VALUE}};',
+				'(desktop+){{SELECTOR}}' => 'background-attachment: {{VALUE}};',
 			],
 			'condition' => [
 				'background' => [ 'classic' ],
+				'image[url]!' => '',
+			],
+		];
+
+		$fields['attachment_alert'] = [
+			'type' => Controls_Manager::RAW_HTML,
+			'content_classes' => 'elementor-control-field-description',
+			'raw' => __( 'Note: the fixed feature works only in desktop mode.', 'elementor' ),
+			'separator' => 'none',
+			'condition' => [
+				'attachment' => 'fixed',
 				'image[url]!' => '',
 			],
 		];

@@ -330,6 +330,20 @@ class Widget_Common extends Widget_Base {
 						'step' => 0.1,
 					],
 				],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => '_background_background',
+							'operator' => '!==',
+							'value' => ''
+						], [
+							'name' => '_border_border',
+							'operator' => '!==',
+							'value' => ''
+						]
+					],
+				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-widget-container' => 'transition: background {{_background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
 				],
