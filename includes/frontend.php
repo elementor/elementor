@@ -736,10 +736,10 @@ class Frontend {
 			return '';
 		}
 
-		// Change the current post, so widgets can use `documents->get_current` and other post data
+		// Change the current post, so widgets can use `documents->get_current`.
 		Plugin::$instance->documents->switch_to_document( $post_id );
+
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
-		Plugin::$instance->documents->restore_document();
 
 		if ( $document->is_editable_by_current_user() ) {
 			$this->admin_bar_edit_documents[  $document->get_main_id() ] = $document;
@@ -809,6 +809,8 @@ class Frontend {
 		if ( ! empty( $content ) ) {
 			$this->_has_elementor_in_page = true;
 		}
+
+		Plugin::$instance->documents->restore_document();
 
 		return $content;
 	}
