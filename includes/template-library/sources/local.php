@@ -221,7 +221,8 @@ class Source_Local extends Source_Base {
 				<form action="<?php esc_url( admin_url( '/edit.php' ) ); ?>" class="elementor-new-template-dialog-form">
 					<div class="elementor-control-field">
 						<input type="hidden" name="post_type" value="elementor_library">
-						<input type="hidden" name="action" value="elementor_new_theme_template">
+						<input type="hidden" name="action" value="elementor_new_post">
+						<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'elementor_action_new_post' ) ); ?>">
 						<label for="template-type" class="elementor-control-title">
 							<?php esc_html_e( 'Choose a Theme Template', 'elementor' ); ?>
 						</label>
