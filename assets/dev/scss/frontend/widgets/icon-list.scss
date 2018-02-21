@@ -1,7 +1,7 @@
 //
 // Icon List
 //
-.elementor-widget-icon-list {
+.elementor-icon-list-items {
 
 	&.elementor-align-center {
 
@@ -15,6 +15,10 @@
 				margin: auto;
 			}
 		}
+
+		.elementor-grid {
+			justify-content: center;
+		}
 	}
 
 	&.elementor-align-left {
@@ -22,9 +26,13 @@
 		.elementor-icon-list-item {
 
 			&, a {
-				justify-content: flex-start;
+				justify-content: getValueByDirection(flex-start, flex-end);
 				text-align: $start;
 			}
+		}
+
+		.elementor-grid {
+			justify-content: getValueByDirection(flex-start, flex-end);
 		}
 	}
 
@@ -36,6 +44,10 @@
 				justify-content: flex-end;
 				text-align: $end;
 			}
+		}
+
+		.elementor-grid {
+			justify-content: getValueByDirection(flex-end, flex-start);
 		}
 	}
 

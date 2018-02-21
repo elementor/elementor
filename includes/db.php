@@ -103,11 +103,17 @@ class DB {
 	 * @return array Editor data.
 	 */
 	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
-		$data = $this->get_plain_editor( $post_id, $status );
+		if ( self::STATUS_DRAFT === $status ) {
+			$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
+		} else {
+			$document = Plugin::$instance->documents->get( $post_id );
+		}
 
-		Plugin::$instance->documents->switch_to_document( $post_id );
-		$editor_data = $this->_get_editor_data( $data, true );
-		Plugin::$instance->documents->restore_document();
+		if ( $document ) {
+			$editor_data = $document->get_elements_raw_data( null, true );
+		} else {
+			$editor_data = [];
+		}
 
 		return $editor_data;
 	}
@@ -302,36 +308,6 @@ class DB {
 				'post_content' => $plain_text,
 			]
 		);
-	}
-
-	/**
-	 * Get editor data.
-	 *
-	 * Accepts raw Elementor data and return parsed data.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param array $data              Raw Elementor post data from the database.
-	 * @param bool  $with_html_content Optional. Whether to return content with
-	 *                                 HTML or not. Default is false.
-	 *
-	 * @return array Parsed data.
-	 */
-	public function _get_editor_data( $data, $with_html_content = false ) {
-		$editor_data = [];
-
-		foreach ( $data as $element_data ) {
-			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
-
-			if ( ! $element ) {
-				continue;
-			}
-
-			$editor_data[] = $element->get_raw_data( $with_html_content );
-		} // End foreach().
-
-		return $editor_data;
 	}
 
 	/**
