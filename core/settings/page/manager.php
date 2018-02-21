@@ -241,10 +241,12 @@ class Manager extends BaseManager {
 			}
 		}
 
-		if ( empty( $data['post_featured_image']['id'] ) ) {
-			delete_post_thumbnail( $post->ID );
-		} else {
-			set_post_thumbnail( $post->ID, $data['post_featured_image']['id'] );
+		if ( isset( $data['post_featured_image'] ) ) {
+			if ( empty( $data['post_featured_image']['id'] ) ) {
+				delete_post_thumbnail( $post->ID );
+			} else {
+				set_post_thumbnail( $post->ID, $data['post_featured_image']['id'] );
+			}
 		}
 
 		if ( Utils::is_cpt_custom_templates_supported() ) {

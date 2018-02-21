@@ -2,6 +2,7 @@
 namespace Elementor\Core\DynamicTags;
 
 use Elementor\Plugin;
+use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -19,8 +20,6 @@ class Manager {
 	}
 
 	public function parse_tags_text( $text, array $settings, callable $parse_callback ) {
-		do_action( 'elementor/dynamic_tags/before_render' );
-
 		if ( ! empty( $settings['returnType'] ) && 'object' === $settings['returnType'] ) {
 			$value = $this->parse_tag_text( $text, $settings, $parse_callback );
 		} else {
@@ -29,8 +28,6 @@ class Manager {
 				return $this->parse_tag_text( $tag_text_match[0], $settings, $parse_callback );
 			}, $text );
 		}
-
-		do_action( 'elementor/dynamic_tags/after_render' );
 
 		return $value;
 	}
@@ -204,6 +201,16 @@ class Manager {
 	}
 
 	public function ajax_render_tags() {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
+		if ( empty( $_POST['post_id'] ) ) {
+			throw new \Exception( 'Missing post id.' );
+		}
+
+		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
 		do_action( 'elementor/dynamic_tags/before_render' );
 
