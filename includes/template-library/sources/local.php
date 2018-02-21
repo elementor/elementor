@@ -233,7 +233,7 @@ class Source_Local extends Source_Base {
 					<input type="hidden" name="post_type" value="elementor_library">
 					<input type="hidden" name="action" value="elementor_new_theme_template">
 					<div id="elementor-new-template__form__title"><?php echo __( 'Create New Template', 'elementor' ); ?></div>
-					<div class="elementor-form-field">
+					<div id="elementor-new-template__form__template-type__wrapper" class="elementor-form-field">
 						<label for="elementor-new-template__form__template-type" class="elementor-form-field__label"><?php echo __( 'Select a Type to Start With', 'elementor' ); ?></label>
 						<div class="elementor-form-field__select__wrapper">
 							<select id="elementor-new-template__form__template-type" class="elementor-form-field__select" name="template_type" required>
