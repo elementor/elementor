@@ -316,7 +316,7 @@ abstract class Document extends Controls_Stack {
 			$data = $this->get_elements_data();
 		}
 
-		$editor_data = Plugin::$instance->db->_get_editor_data( $this->post->ID, $data, $with_html_content );
+		$editor_data = Plugin::$instance->db->get_editor_data( $this->post->ID, $data, $with_html_content );
 
 		return $editor_data;
 	}
