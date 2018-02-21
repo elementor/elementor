@@ -701,15 +701,16 @@ abstract class CSS_File {
 	 * @since 1.6.0
 	 * @access private
 	 *
-	 * @param array $control        The control.
-	 * @param array $values         Values array.
-	 * @param array $controls_stack The controls stack.
-	 * @param array $placeholders   Placeholders.
-	 * @param array $replacements   Replacements.
+	 * @param array $control      The control.
+	 * @param array $values       Values array.
+	 * @param array $controls     The controls stack.
+	 * @param array $placeholders Placeholders.
+	 * @param array $replacements Replacements.
 	 */
 	private function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
+
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements
 		);
