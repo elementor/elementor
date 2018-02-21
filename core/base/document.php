@@ -317,7 +317,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		// Change the current documents, so widgets can use `documents->get_current` and other post data
-		Plugin::$instance->documents->switch_to_document( $this->post->ID );
+		Plugin::$instance->documents->switch_to_document( $this );
 
 		$editor_data = [];
 
