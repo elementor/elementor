@@ -189,6 +189,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.9.6 - 2018-02-21 =
+* Fix: When selecting a color with alpha, the value is not fully visible (#3320)
+* Fix: "Create new Page" button in dashboard widget (#3491)
+* Fix: safe_copy_elementor_meta for editor revisions
+* Fix: Clear filters when syncing library
+* Fix: Background attachment fixed only on desktop
+
 = 1.9.5 - 2018-02-14 =
 * Fix: Added reset for background video when the parent has set `text-align: center;`
 * Fix: Print global and post CSS files after all 3rd party plugins styles
