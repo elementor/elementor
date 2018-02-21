@@ -10,6 +10,7 @@ use Elementor\Post_CSS_File;
 use Elementor\User;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
+use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -54,6 +55,24 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $post_id;
+	}
+
+	public function render_element( $data ) {
+		// Start buffering
+		ob_start();
+
+		/** @var Widget_Base $widget */
+		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
+
+		if ( ! $widget ) {
+			throw new \Exception( 'Widget not found.' );
+		}
+
+		$widget->render_content();
+
+		$render_html = ob_get_clean();
+
+		return $render_html;
 	}
 
 	public function get_main_post() {
