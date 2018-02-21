@@ -141,7 +141,7 @@ module.exports = Module.extend( {
 	},
 
 	tagDataToTagText: function( tagID, tagName, tagSettings ) {
-		tagSettings = tagSettings ? JSON.stringify( tagSettings ) : '';
+		tagSettings = JSON.stringify( tagSettings || {} );
 
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
 	},

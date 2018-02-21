@@ -571,6 +571,14 @@ class Admin {
 		];
 
 		$recently_edited_query = new \WP_Query( $recently_edited_query_args );
+
+		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
+			$create_new_label = __( 'Create New Page', 'elementor' );
+			$create_new_cpt = 'page';
+		} elseif ( User::is_current_user_can_edit_post_type( 'post' ) ) {
+			$create_new_label = __( 'Create New Post', 'elementor' );
+			$create_new_cpt = 'post';
+		}
 		?>
 		<div class="e-dashboard-widget">
 			<div class="e-overview__header">
@@ -588,9 +596,11 @@ class Admin {
 					do_action( 'elementor/admin/dashboard_overview_widget/after_version' );
 					?>
 				</div>
+				<?php if ( ! empty( $create_new_cpt ) ) : ?>
 				<div class="e-overview__create">
-					<a href="<?php echo esc_attr( Utils::get_create_new_post_url() ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php esc_html_e( 'Create New Page', 'elementor' ); ?></a>
+					<a href="<?php echo esc_attr( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
 				</div>
+				<?php endif; ?>
 			</div>
 			<?php if ( $recently_edited_query->have_posts() ) : ?>
 			<div class="e-overview__recently-edited">
