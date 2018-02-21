@@ -9000,7 +9000,11 @@ Ajax = {
 				};
 			} else {
 				ajaxParams.error = function( XMLHttpRequest ) {
-					var message = self.createErrorMessage( XMLHttpRequest );
+					if ( 0 === XMLHttpRequest.readyState && 'abort' === XMLHttpRequest.statusText ) {
+						
+					}
+
+						var message = self.createErrorMessage( XMLHttpRequest );
 
 					elementor.notifications.showToast( {
 						message: message
