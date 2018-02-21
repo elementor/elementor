@@ -311,42 +311,6 @@ class DB {
 	}
 
 	/**
-	 * Get editor data.
-	 *
-	 * Accepts raw Elementor data and return parsed data.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param       $post_id
-	 * @param array $data              Raw Elementor post data from the database.
-	 * @param bool  $with_html_content Optional. Whether to return content with
-	 *                                 HTML or not. Default is false.
-	 *
-	 * @return array Parsed data.
-	 */
-	public function get_editor_data( $post_id, $data, $with_html_content = false ) {
-		// Change the current post, so widgets can use `documents->get_current` and other post data
-		Plugin::$instance->documents->switch_to_document( $post_id );
-
-		$editor_data = [];
-
-		foreach ( $data as $element_data ) {
-			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
-
-			if ( ! $element ) {
-				continue;
-			}
-
-			$editor_data[] = $element->get_raw_data( $with_html_content );
-		} // End foreach().
-
-		Plugin::$instance->documents->restore_document();
-
-		return $editor_data;
-	}
-
-	/**
 	 * Iterate data.
 	 *
 	 * Accept any type of Elementor data and a callback function. The callback
