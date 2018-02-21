@@ -110,7 +110,7 @@ class DB {
 		}
 
 		if ( $document ) {
-			$editor_data = $document->get_elements_raw_data( true );
+			$editor_data = $document->get_elements_raw_data( null, true );
 		} else {
 			$editor_data = [];
 		}

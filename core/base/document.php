@@ -311,8 +311,11 @@ abstract class Document extends Controls_Stack {
 		return $meta;
 	}
 
-	public function get_elements_raw_data( $with_html_content = false ) {
-		$data = $this->get_elements_data();
+	public function get_elements_raw_data( $data = null, $with_html_content = false ) {
+		if ( is_null( $data ) ) {
+			$data = $this->get_elements_data();
+		}
+
 		$editor_data = Plugin::$instance->db->_get_editor_data( $this->post->ID, $data, $with_html_content );
 
 		return $editor_data;
@@ -391,9 +394,7 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
-		$db = Plugin::$instance->db;
-
-		$editor_data = $db->_get_editor_data( $this->post->ID, $elements );
+		$editor_data = $this->get_elements_raw_data( $elements );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
@@ -411,9 +412,9 @@ abstract class Document extends Controls_Stack {
 		 */
 		do_action( 'elementor/db/before_save', $this->post->post_status, $is_meta_updated );
 
-		$db->save_plain_text( $this->post->ID );
+		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
-		update_metadata( 'post', $this->post->ID, '_elementor_version', $db::DB_VERSION );
+		update_metadata( 'post', $this->post->ID, '_elementor_version', DB::DB_VERSION );
 
 		/**
 		 * Fires after Elementor saves data to the database.
