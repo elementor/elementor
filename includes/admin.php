@@ -739,19 +739,17 @@ class Admin {
 			return;
 		}
 
-		$post_data = [
+		if ( empty( $_GET['template_type'] ) ) {
+			$type = 'post';
+		} else {
+			$type = $_GET['template_type']; // XSS ok.
+		}
+
+		$document = Plugin::$instance->documents->create( $type, [
 			'post_type' => $post_type,
-			'post_title' => __( 'Elementor', 'elementor' ),
-		];
+		]  );
 
-		$post_id = wp_insert_post( $post_data );
-
-		$post_data['ID'] = $post_id;
-		$post_data['post_title'] .= ' #' . $post_id;
-
-		wp_update_post( $post_data );
-
-		wp_redirect( Utils::get_edit_link( $post_id ) );
+		wp_redirect( $document->get_edit_url() );
 		die;
 	}
 
