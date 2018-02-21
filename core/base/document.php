@@ -311,6 +311,31 @@ abstract class Document extends Controls_Stack {
 		return $meta;
 	}
 
+	public function get_elements_raw_data( $data = null, $with_html_content = false ) {
+		if ( is_null( $data ) ) {
+			$data = $this->get_elements_data();
+		}
+
+		// Change the current documents, so widgets can use `documents->get_current` and other post data
+		Plugin::$instance->documents->switch_to_document( $this );
+
+		$editor_data = [];
+
+		foreach ( $data as $element_data ) {
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			if ( ! $element ) {
+				continue;
+			}
+
+			$editor_data[] = $element->get_raw_data( $with_html_content );
+		} // End foreach().
+
+		Plugin::$instance->documents->restore_document();
+
+		return $editor_data;
+	}
+
 	/**
 	 * @since  2.0.0
 	 * @access public
@@ -384,12 +409,7 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
-		$db = Plugin::$instance->db;
-
-		// Change the current post, so widgets can use `documents->get_current` and other post data
-		Plugin::$instance->documents->switch_to_document( $this->post->ID );
-		$editor_data = $db->_get_editor_data( $elements );
-		Plugin::$instance->documents->restore_document();
+		$editor_data = $this->get_elements_raw_data( $elements );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
@@ -407,9 +427,9 @@ abstract class Document extends Controls_Stack {
 		 */
 		do_action( 'elementor/db/before_save', $this->post->post_status, $is_meta_updated );
 
-		$db->save_plain_text( $this->post->ID );
+		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
-		update_metadata( 'post', $this->post->ID, '_elementor_version', $db::DB_VERSION );
+		update_metadata( 'post', $this->post->ID, '_elementor_version', DB::DB_VERSION );
 
 		/**
 		 * Fires after Elementor saves data to the database.
