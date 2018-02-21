@@ -250,12 +250,6 @@ class Source_Local extends Source_Base {
 							</select>
 						</div>
 					</div>
-					<div class="elementor-form-field">
-						<label for="elementor-new-template__form__bla" class="elementor-form-field__label"><?php echo __( 'Choose a Content', 'elementor' ); ?></label>
-						<div class="elementor-form-field__select__wrapper">
-							<select id="elementor-new-template__form__bla" class="elementor-form-field__select" name="bla"></select>
-						</div>
-					</div>
 					<input type="submit" id="elementor-new-template__form__submit" value="<?php echo __( 'Create new template', 'elementor' ); ?>">
 				</form>
 			</div>
