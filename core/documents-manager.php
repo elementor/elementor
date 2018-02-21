@@ -22,7 +22,7 @@ class Documents_Manager {
 	 */
 	protected $documents = [];
 
-	protected $current_doc_id;
+	protected $current_doc;
 
 	protected $switched_data = [];
 
@@ -174,7 +174,7 @@ class Documents_Manager {
 			throw new \Exception( 'Access denied.' );
 		}
 
-		$this->switch_to_document( $request['post_id'] );
+		$this->switch_to_document( $document );
 
 		$status = DB::STATUS_DRAFT;
 
@@ -249,23 +249,23 @@ class Documents_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param int $post_id Post ID.
+	 * @param Document $document
 	 */
 
-	public function switch_to_document( $post_id ) {
-		$post_id = absint( $post_id );
+	public function switch_to_document( $document ) {
+
 		// If is already switched, or is the same post, return.
-		if ( $this->current_doc_id === $post_id ) {
+		if ( $this->current_doc === $document ) {
 			$this->switched_data[] = false;
 			return;
 		}
 
 		$this->switched_data[] = [
-			'switched_id' => $post_id,
-			'original_id' => $this->current_doc_id, // Note, it can be false if the global isn't set
+			'switched_doc' => $document,
+			'original_doc' => $this->current_doc, // Note, it can be null if the global isn't set
 		];
 
-		$this->current_doc_id = $post_id;
+		$this->current_doc = $document;
 	}
 
 	/**
@@ -284,11 +284,11 @@ class Documents_Manager {
 			return;
 		}
 
-		$this->current_doc_id = $data['original_id'];
+		$this->current_doc = $data['original_doc'];
 	}
 
 	public function get_current() {
-		return $this->get( $this->current_doc_id );
+		return $this->current_doc;
 	}
 
 	public function register_group( $id, $args ) {
