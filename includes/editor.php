@@ -455,6 +455,11 @@ class Editor {
 			true
 		);
 
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->_post_id );
+
+		// Get document data *before* enqueue scripts, so element can enqueue their own scripts.
+		$editor_data = $document->get_elements_raw_data( null, true );
+
 		/**
 		 * Before editor enqueue scripts.
 		 *
@@ -468,8 +473,6 @@ class Editor {
 
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
-
-		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->_post_id );
 
 		$locked_user = $this->get_locked_user( $this->_post_id );
 
@@ -492,7 +495,7 @@ class Editor {
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
 			'post_id' => $this->_post_id,
-			'data' => $document->get_elements_raw_data( null, true ),
+			'data' => $editor_data,
 			'exit_to_dashboard_url' => $document->get_exit_to_dashboard_url(),
 			'preview_link' => $document->get_preview_url(),
 			'post_link' => $document->get_permalink(),
