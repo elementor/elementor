@@ -73,9 +73,9 @@ ControlsStack = Marionette.CompositeView.extend( {
 		var self = this,
 			activeTab = this.activeTab = $tab.data( 'tab' );
 
-		this.ui.tabs.removeClass( 'active' );
+		self.ui.tabs.removeClass( 'elementor-active' );
 
-		$tab.addClass( 'active' );
+		$tab.addClass( 'elementor-active' );
 
 		var sectionControls = this.collection.filter( function( controlModel ) {
 			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
