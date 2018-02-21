@@ -12,7 +12,7 @@
 	.elementor-panel-navigation-tab {
 		display: table-cell;
 
-		&.active {
+		&.elementor-active {
 			background-image: linear-gradient(to bottom, #f3f3f3, #fff);
 			border-bottom: 3px solid $editor-accent;
 		}

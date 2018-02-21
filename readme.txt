@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.5
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 1.9.5
+Stable tag: 1.9.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -189,6 +189,13 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 1.9.6 - 2018-02-21 =
+* Fix: When selecting a color with alpha, the value is not fully visible ([#3320](https://github.com/pojome/elementor/issues/3320))
+* Fix: "Create new Page" button in dashboard widget ([#3491](https://github.com/pojome/elementor/issues/3491))
+* Fix: safe_copy_elementor_meta for editor revisions
+* Fix: Clear filters when syncing library
+* Fix: Background attachment fixed only on desktop
+
 = 1.9.5 - 2018-02-14 =
 * Fix: Added reset for background video when the parent has set `text-align: center;`
 * Fix: Print global and post CSS files after all 3rd party plugins styles
@@ -230,7 +237,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 = 1.9.0 - 2018-01-09 =
 * New: Added Autosave capability for editor
-* New: Added save as draft option
+* New: Added save as draft option ([#2824](https://github.com/pojome/elementor/issues/2824))
 * New: Brand new Template Library
 * New: Added filter & sorting (new, trend & popular) to Template Library ([#1711](https://github.com/pojome/elementor/issues/1711))
 * New: Added import & sync tools to Template Library ([#2402](https://github.com/pojome/elementor/issues/2402))

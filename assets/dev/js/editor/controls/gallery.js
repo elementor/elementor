@@ -8,6 +8,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		ui.addImages = '.elementor-control-gallery-add';
 		ui.clearGallery = '.elementor-control-gallery-clear';
 		ui.galleryThumbnails = '.elementor-control-gallery-thumbnails';
+		ui.status = '.elementor-control-gallery-status-title';
 
 		return ui;
 	},
@@ -21,13 +22,35 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 	},
 
 	onReady: function() {
-		var hasImages = this.hasImages();
+		this.initRemoveDialog();
+	},
+
+	applySavedValue: function() {
+		var images = this.getControlValue(),
+			imagesCount = images.length,
+			hasImages = !! imagesCount;
 
 		this.$el
-		    .toggleClass( 'elementor-gallery-has-images', hasImages )
-		    .toggleClass( 'elementor-gallery-empty', ! hasImages );
+			.toggleClass( 'elementor-gallery-has-images', hasImages )
+			.toggleClass( 'elementor-gallery-empty', ! hasImages );
 
-		this.initRemoveDialog();
+		var $galleryThumbnails = this.ui.galleryThumbnails;
+
+		$galleryThumbnails.empty();
+
+		this.ui.status.text( elementor.translate( hasImages ? 'gallery_images_selected' : 'gallery_no_images_selected', [ imagesCount ] ) );
+
+		if ( ! hasImages ) {
+			return;
+		}
+
+		this.getControlValue().forEach( function( image ) {
+			var $thumbnail = jQuery( '<div>', { 'class': 'elementor-control-gallery-thumbnail' } );
+
+			$thumbnail.css( 'background-image', 'url(' + image.url + ')' );
+
+			$galleryThumbnails.append( $thumbnail );
+		} );
 	},
 
 	hasImages: function() {
@@ -112,7 +135,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		this.setValue( images );
 
-		this.render();
+		this.applySavedValue();
 	},
 
 	onBeforeDestroy: function() {
@@ -126,7 +149,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 	resetGallery: function() {
 		this.setValue( '' );
 
-		this.render();
+		this.applySavedValue();
 	},
 
 	initRemoveDialog: function() {

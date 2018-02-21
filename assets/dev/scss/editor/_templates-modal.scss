@@ -1,46 +1,6 @@
-$library_screen_breakpoint: $screen-lg-max;
+$remote-templates-items-space: 30px;
 
 #elementor-template-library-modal {
-
-	.dialog-widget-content {
-		background-color: $editor-background-light;
-		width: 100%;
-
-		@media (max-width: $library_screen_breakpoint) {
-			max-width: 990px;
-		}
-
-		@media (min-width: $library_screen_breakpoint + 1) {
-			max-width: 1200px;
-		}
-	}
-
-	.dialog-widget-header {
-		padding: 0;
-		background-color: #fff;
-		box-shadow: $panel-bottom-shadow;
-		position: relative; // Show the shadow above the scrolled list
-		z-index: 1;
-	}
-
-	.dialog-buttons-wrapper {
-		display: none;
-	}
-
-	.dialog-message {
-		height: 750px;
-		max-height: 85vh;
-		overflow: auto;
-		padding: 25px 30px 30px;
-	}
-
-	a {
-
-		&,
-		&:hover {
-			color: inherit;
-		}
-	}
 
 	a.elementor-template-library-blank-footer-link {
 		font-style: normal;
@@ -53,46 +13,6 @@ $library_screen_breakpoint: $screen-lg-max;
 	}
 }
 
-#elementor-template-library-header {
-	display: flex;
-	align-items: center;
-	height: 50px;
-}
-
-#elementor-template-library-header-logo-area {
-	text-align: $start;
-	@include padding-start(15px);
-
-	> * {
-		display: flex;
-		align-items: center;
-	}
-}
-
-#elementor-template-library-header-logo {
-	font-size: 15px;
-	text-transform: uppercase;
-	color: $editor-darkest;
-	font-weight: bold;
-	cursor: pointer;
-
-	&-icon-wrapper {
-		padding: 4px 7px 6px;
-		background-image: linear-gradient(-135deg, #EF295A, #434363);
-		border-radius: 2px;
-		@include margin-end(10px);
-	}
-
-	i {
-		color: #fff;
-		font-size: 10px;
-	}
-}
-
-#elementor-template-library-header-menu-area {
-	flex-grow: 1;
-}
-
 #elementor-template-library-header-menu {
 	text-align: center;
 	color: $editor-dark;
@@ -101,44 +21,13 @@ $library_screen_breakpoint: $screen-lg-max;
 
 .elementor-template-library-menu-item {
 	display: inline-block;
-	padding: 17px;
+	padding: 17px 0;
+	width: 115px;
 	cursor: pointer;
 
 	&.elementor-active {
 		background-image: linear-gradient(to bottom, #f3f3f3, #fff);
 		border-bottom: 3px solid #9b0a46;
-	}
-}
-
-#elementor-template-library-header-items-area {
-	display: flex;
-	flex-direction: row-reverse;
-}
-
-.elementor-template-library-header-item {
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-sizing: content-box;
-
-	> i {
-		font-size: 20px;
-		transition: color .5s;
-		cursor: pointer;
-
-		&:not(:hover) {
-			color: $editor-light;
-		}
-	}
-}
-
-#elementor-template-library-header-close-modal {
-	width: 45px;
-	@include border-start(1px solid $editor-background);
-
-	i {
-		font-size: 18px;
 	}
 }
 
@@ -156,6 +45,12 @@ $library_screen_breakpoint: $screen-lg-max;
 
 	.elementor-button {
 		padding: 8px 14px;
+		font-size: 11px;
+	}
+
+	.elementor-template-library-template-insert {
+		color: #fff;
+		background-color: $editor-success;
 	}
 }
 
@@ -273,16 +168,14 @@ $library_screen_breakpoint: $screen-lg-max;
 #elementor-template-library-templates-container {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: flex-start; // For blocks layout
 
 	// These rules are here because of selectors priority
-	.elementor-template-library-template-insert {
-		font-size: 12px;
-	}
-
 	.elementor-template-library-template-local {
 
 		.elementor-template-library-template-insert {
 			text-transform: none;
+			font-size: 12px;
 		}
 	}
 }
@@ -409,42 +302,35 @@ $library_screen_breakpoint: $screen-lg-max;
 }
 
 .elementor-template-library-template-remote {
-	$items-space: 30px;
-
-	margin: $items-space / 2;
+	margin: $remote-templates-items-space / 2;
 	padding: 8px;
 	background-color: #fff;
 	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, .07);
 
-	&:not(:hover) {
+	border-radius: 3px;
 
-		.elementor-template-library-template-controls {
-			opacity: 0;
-		}
+	&:hover {
 
-		.elementor-template-library-template-favorite-label {
+		.elementor-template-library-template-name {
 			display: none;
 		}
 	}
 
-	border-radius: 3px;
+	&:not(:hover) {
 
-	@media (max-width: $library_screen_breakpoint) {
-		width: calc(25% - #{$items-space});
-	}
+		.elementor-template-library-template-preview {
+			opacity: 0;
+		}
 
-	@media (min-width: $library_screen_breakpoint + 1) {
-		width: calc(20% - #{$items-space});
-	}
-
-	@media (max-width: $screen-lg-min) {
-		width: calc(33.333% - #{$items-space});
+		.elementor-template-library-favorite,
+		.elementor-template-library-template-action {
+			display: none;
+		}
 	}
 
 	&.elementor-template-library-pro-template {
 
 		.elementor-template-library-template-body {
-			position: relative;
 
 			&:before {
 				position: absolute;
@@ -462,7 +348,6 @@ $library_screen_breakpoint: $screen-lg-max;
 	}
 
 	.elementor-template-library-template-body {
-		height: 200px;
 		position: relative;
 	}
 
@@ -480,7 +365,7 @@ $library_screen_breakpoint: $screen-lg-max;
 		box-shadow: inset 0px -2px 15px -6px rgba(0, 0, 0, 0.07);
 	}
 
-	.elementor-template-library-template-controls {
+	.elementor-template-library-template-preview {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -488,18 +373,6 @@ $library_screen_breakpoint: $screen-lg-max;
 		height: 100%;
 		background-color: rgba(0,0,0,.5);
 		transition: opacity .5s;
-	}
-
-	.elementor-template-library-template-action {
-		font-size: 11px;
-		width: 150px;
-		padding: 11px;
-	}
-
-	.elementor-template-library-template-preview {
-		position: relative;
-		height: 150px;
-		cursor: pointer;
 
 		i {
 			font-size: 20px;
@@ -511,9 +384,27 @@ $library_screen_breakpoint: $screen-lg-max;
 		}
 	}
 
+	.elementor-template-library-template-action {
+		background-color: transparent;
+		text-transform: none;
+
+		i {
+			@include margin-end(0);
+		}
+	}
+
+	.elementor-template-library-template-insert {
+		color: $editor-success;
+	}
+
+	.elementor-button-go-pro {
+		color: $editor-orange;
+	}
+
 	.elementor-template-library-template-footer {
-		margin: 10px 0 2px;
 		display: flex;
+		justify-content: space-between;
+		margin: 10px 0 2px;
 		font-size: 11px;
 		line-height: 1;
 	}
@@ -555,6 +446,33 @@ $library_screen_breakpoint: $screen-lg-max;
 				color: $editor-accent;
 			}
 		}
+	}
+}
+
+.elementor-template-library-template-page {
+	@media (max-width: $library_screen_breakpoint) {
+		width: calc(25% - #{$remote-templates-items-space});
+	}
+
+	@media (min-width: $library_screen_breakpoint + 1) {
+		width: calc(20% - #{$remote-templates-items-space});
+	}
+
+	@media (max-width: $screen-lg-min) {
+		width: calc(33.333% - #{$remote-templates-items-space});
+	}
+
+	.elementor-template-library-template-body {
+		height: 200px;
+	}
+}
+
+.elementor-template-library-template-block {
+	width: calc(33.333% - #{$remote-templates-items-space});
+
+	img {
+		display: block;
+		width: 100%;
 	}
 }
 
