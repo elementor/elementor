@@ -316,7 +316,22 @@ abstract class Document extends Controls_Stack {
 			$data = $this->get_elements_data();
 		}
 
-		$editor_data = Plugin::$instance->db->get_editor_data( $this->post->ID, $data, $with_html_content );
+		// Change the current documents, so widgets can use `documents->get_current` and other post data
+		Plugin::$instance->documents->switch_to_document( $this->post->ID );
+
+		$editor_data = [];
+
+		foreach ( $data as $element_data ) {
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			if ( ! $element ) {
+				continue;
+			}
+
+			$editor_data[] = $element->get_raw_data( $with_html_content );
+		} // End foreach().
+
+		Plugin::$instance->documents->restore_document();
 
 		return $editor_data;
 	}
