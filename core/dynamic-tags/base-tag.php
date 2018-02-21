@@ -60,6 +60,13 @@ abstract class Base_Tag extends Controls_Stack {
 
 		$this->_register_controls();
 
+		// If in fact no controls were registered, empty the stack
+		if ( 1 === count( Plugin::$instance->controls_manager->get_stacks( $this->get_unique_name() )['controls'] ) ) {
+			Plugin::$instance->controls_manager->open_stack( $this );
+
+			return;
+		}
+
 		$this->end_controls_section();
 	}
 }

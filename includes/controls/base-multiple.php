@@ -87,7 +87,7 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	 * @access public
 	 *
 	 * @param string $css_property  CSS property.
-	 * @param string $control_value Control value.
+	 * @param array $control_value Control value.
 	 *
 	 * @return array Control style value.
 	 */
