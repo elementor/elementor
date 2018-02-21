@@ -325,7 +325,7 @@ class DB {
 	 *
 	 * @return array Parsed data.
 	 */
-	public function _get_editor_data( $post_id, $data, $with_html_content = false ) {
+	public function get_editor_data( $post_id, $data, $with_html_content = false ) {
 		// Change the current post, so widgets can use `documents->get_current` and other post data
 		Plugin::$instance->documents->switch_to_document( $post_id );
 
