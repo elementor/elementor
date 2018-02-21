@@ -204,6 +204,16 @@ class Manager {
 	}
 
 	public function ajax_render_tags() {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
+		if ( empty( $_POST['post_id'] ) ) {
+			throw new \Exception( 'Missing post id.' );
+		}
+
+		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
 		do_action( 'elementor/dynamic_tags/before_render' );
 
