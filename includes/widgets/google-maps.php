@@ -106,9 +106,6 @@ class Widget_Google_Maps extends Widget_Base {
 			[
 				'label' => __( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 300,
-				],
 				'range' => [
 					'px' => [
 						'min' => 40,
