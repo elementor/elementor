@@ -20,8 +20,6 @@ class Manager {
 	}
 
 	public function parse_tags_text( $text, array $settings, callable $parse_callback ) {
-		do_action( 'elementor/dynamic_tags/before_render' );
-
 		if ( ! empty( $settings['returnType'] ) && 'object' === $settings['returnType'] ) {
 			$value = $this->parse_tag_text( $text, $settings, $parse_callback );
 		} else {
@@ -30,8 +28,6 @@ class Manager {
 				return $this->parse_tag_text( $tag_text_match[0], $settings, $parse_callback );
 			}, $text );
 		}
-
-		do_action( 'elementor/dynamic_tags/after_render' );
 
 		return $value;
 	}
