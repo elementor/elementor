@@ -160,7 +160,7 @@ class Documents_Manager {
 	 *
 	 * @param $request
 	 *
-	 * @return array|mixed|void
+	 * @return array
 	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
 	 */
 	public function	ajax_save( $request ) {
