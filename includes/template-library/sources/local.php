@@ -209,35 +209,36 @@ class Source_Local extends Source_Base {
 					<span id="elementor-template-library-header-logo-icon-wrapper">
 						<i class="eicon-elementor"></i>
 					</span>
-					<span><?php echo __( 'New Template', 'elementor' ) ?></span>
+					<span><?php esc_html_e( 'New Template', 'elementor' ) ?></span>
 					</div>
 				</div>
 				<div id="elementor-template-library-header-items-area">
 					<div id="elementor-template-library-header-close-modal" class="elementor-template-library-header-item">
 						<i class="eicon-close" aria-hidden="true" title="Close"></i>
-						<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ) ?></span>
+						<span class="elementor-screen-only"><?php esc_html_e( 'Close', 'elementor' ) ?></span>
 					</div>
 				</div>
 			</div>
 			<div id="elementor-new-template-dialog-content">
 				<div id="elementor-new-template__description">
-					<div id="elementor-new-template__description__get-started"><?php echo __( 'Get Started With', 'elementor' ); ?></div>
-					<div id="elementor-new-template__description__elementor-builder"><?php echo __( 'Elementor Builder', 'elementor' ); ?></div>
-					<div id="elementor-new-template__description__content"><?php echo __( 'Build & Design all dynamic parts of your site using pre designed blocks or by blank canvas and preview it in one of your pages.', 'elementor' ); ?></div>
+					<div id="elementor-new-template__description__get-started"><?php esc_html_e( 'Get Started With', 'elementor' ); ?></div>
+					<div id="elementor-new-template__description__elementor-builder"><?php esc_html_e( 'Elementor Builder', 'elementor' ); ?></div>
+					<div id="elementor-new-template__description__content"><?php esc_html_e( 'Build & Design all dynamic parts of your site using pre designed blocks or by blank canvas and preview it in one of your pages.', 'elementor' ); ?></div>
 					<div id="elementor-new-template__take_a_tour">
 						<i class="eicon-play"></i>
-						<a href=""><?php echo __( 'Take The Video Tour', 'elementor' ); ?></a>
+						<a href=""><?php esc_html_e( 'Take The Video Tour', 'elementor' ); ?></a>
 					</div>
 				</div>
 				<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
 					<input type="hidden" name="post_type" value="elementor_library">
-					<input type="hidden" name="action" value="elementor_new_theme_template">
-					<div id="elementor-new-template__form__title"><?php echo __( 'Create New Template', 'elementor' ); ?></div>
+					<input type="hidden" name="action" value="elementor_new_post">
+					<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'elementor_action_new_post' ) ); ?>">
+					<div id="elementor-new-template__form__title"><?php esc_html_e( 'Create New Template', 'elementor' ); ?></div>
 					<div id="elementor-new-template__form__template-type__wrapper" class="elementor-form-field">
-						<label for="elementor-new-template__form__template-type" class="elementor-form-field__label"><?php echo __( 'Select a Type to Start With', 'elementor' ); ?></label>
+						<label for="elementor-new-template__form__template-type" class="elementor-form-field__label"><?php esc_html_e( 'Select a Type to Start With', 'elementor' ); ?></label>
 						<div class="elementor-form-field__select__wrapper">
 							<select id="elementor-new-template__form__template-type" class="elementor-form-field__select" name="template_type" required>
-								<option value=""><?php echo __( 'Select', 'elementor' ); ?>...</option>
+								<option value=""><?php esc_html_e( 'Select', 'elementor' ); ?>...</option>
 								<?php foreach ( $groups as $group_id => $group_args ) {
 									echo sprintf( '<optgroup label="%s">', $group_args['label'] );
 
@@ -250,7 +251,7 @@ class Source_Local extends Source_Base {
 							</select>
 						</div>
 					</div>
-					<input type="submit" id="elementor-new-template__form__submit" value="<?php echo __( 'Create new template', 'elementor' ); ?>">
+					<input type="submit" id="elementor-new-template__form__submit" value="<?php esc_html_e( 'Create new template', 'elementor' ); ?>">
 				</form>
 			</div>
 		</div>
@@ -834,15 +835,15 @@ class Source_Local extends Source_Base {
 		}
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-template-trigger" class="page-title-action"><?php echo __( 'Import Templates', 'elementor' ); ?></a>
+			<a id="elementor-import-template-trigger" class="page-title-action"><?php esc_html_e( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
-				<div id="elementor-import-template-title"><?php echo __( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
+				<div id="elementor-import-template-title"><?php esc_html_e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
 					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php echo __( 'Import Now', 'elementor' ); ?>">
+						<input type="submit" class="button" value="<?php esc_attr_e( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
