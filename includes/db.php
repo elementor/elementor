@@ -103,9 +103,17 @@ class DB {
 	 * @return array Editor data.
 	 */
 	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
-		$data = $this->get_plain_editor( $post_id, $status );
+		if ( self::STATUS_DRAFT === $status ) {
+			$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
+		} else {
+			$document = Plugin::$instance->documents->get( $post_id );
+		}
 
-		$editor_data = $this->_get_editor_data( $post_id, $data, true );
+		if ( $document ) {
+			$editor_data = $document->get_elements_raw_data( true );
+		} else {
+			$editor_data = [];
+		}
 
 		return $editor_data;
 	}
