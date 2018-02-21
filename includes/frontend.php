@@ -742,7 +742,7 @@ class Frontend {
 		Plugin::$instance->documents->switch_to_document( $document );
 
 		if ( $document->is_editable_by_current_user() ) {
-			$this->admin_bar_edit_documents[  $document->get_main_id() ] = $document;
+			$this->admin_bar_edit_documents[ $document->get_main_id() ] = $document;
 		}
 
 		$data = $document->get_elements_data();

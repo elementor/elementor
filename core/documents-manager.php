@@ -253,7 +253,6 @@ class Documents_Manager {
 	 */
 
 	public function switch_to_document( $document ) {
-
 		// If is already switched, or is the same post, return.
 		if ( $this->current_doc === $document ) {
 			$this->switched_data[] = false;
