@@ -88,17 +88,6 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		/*
-		$this->add_control(
-			'view',
-			[
-				'label' => __( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-		*/
-
 		$this->add_control(
 			'view',
 			[
@@ -425,19 +414,19 @@ class Widget_Icon_List extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-
 		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'icon_list', 'class', 'elementor-icon-list-items' );
 		$this->add_render_attribute( 'list_item', 'class', 'elementor-icon-list-item' );
 
-		if ( 'inline' == $settings['view'] ) {
+		if ( 'inline' === $settings['view'] ) {
 			$this->add_render_attribute( 'icon_list', 'class', 'elementor-grid' );
 			$this->add_render_attribute( 'list_item', 'class', 'elementor-grid-item' );
 		}
 		?>
 		<ul <?php echo $this->get_render_attribute_string( 'icon_list' ); ?>>
-			<?php foreach ( $settings['icon_list'] as $index => $item ) :
+			<?php
+			foreach ( $settings['icon_list'] as $index => $item ) :
 				$repeater_setting_key = $this->get_repeater_setting_key( 'text', 'icon_list', $index );
 
 				$this->add_render_attribute( $repeater_setting_key, 'class', 'elementor-icon-list-text' );
@@ -492,7 +481,6 @@ class Widget_Icon_List extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-
 		<#
 			view.addRenderAttribute( 'icon_list', 'class', 'elementor-icon-list-items' );
 			view.addRenderAttribute( 'list_item', 'class', 'elementor-icon-list-item' );
@@ -502,8 +490,7 @@ class Widget_Icon_List extends Widget_Base {
 				view.addRenderAttribute( 'icon_list', 'class', 'elementor-grid' );
 				view.addRenderAttribute( 'list_item', 'class', 'elementor-grid-item' );
 			}
-
-				#>
+		#>
 		<ul {{{ view.getRenderAttributeString( 'icon_list' ) }}}>
 			<#
 			if ( settings.icon_list ) {
