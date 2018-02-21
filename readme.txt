@@ -190,8 +190,8 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 == Changelog ==
 
 = 1.9.6 - 2018-02-21 =
-* Fix: When selecting a color with alpha, the value is not fully visible (#3320)
-* Fix: "Create new Page" button in dashboard widget (#3491)
+* Fix: When selecting a color with alpha, the value is not fully visible ([#3320](https://github.com/pojome/elementor/issues/3320))
+* Fix: "Create new Page" button in dashboard widget ([#3491](https://github.com/pojome/elementor/issues/3491))
 * Fix: safe_copy_elementor_meta for editor revisions
 * Fix: Clear filters when syncing library
 * Fix: Background attachment fixed only on desktop
