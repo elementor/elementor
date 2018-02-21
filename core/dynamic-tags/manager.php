@@ -2,6 +2,7 @@
 namespace Elementor\Core\DynamicTags;
 
 use Elementor\Plugin;
+use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
