@@ -70,8 +70,9 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	activateTab: function( $tab ) {
-		var self = this,
-			activeTab = this.activeTab = $tab.data( 'tab' );
+		var self = this;
+
+		self.activeTab = $tab.data( 'tab' );
 
 		self.ui.tabs.removeClass( 'elementor-active' );
 
