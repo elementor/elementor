@@ -492,7 +492,7 @@ class Editor {
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
 			'post_id' => $this->_post_id,
-			'data' => $document->get_elements_raw_data( true ),
+			'data' => $document->get_elements_raw_data( null, true ),
 			'exit_to_dashboard_url' => $document->get_exit_to_dashboard_url(),
 			'preview_link' => $document->get_preview_url(),
 			'post_link' => $document->get_permalink(),
