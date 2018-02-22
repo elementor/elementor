@@ -4,6 +4,8 @@ module.exports = Marionette.Behavior.extend( {
 
 	tagView: null,
 
+	viewApplySavedValue: null,
+
 	ui: {
 		tagArea: '.elementor-control-tag-area',
 		dynamicSwitcher: '.elementor-control-dynamic-switcher'
@@ -11,6 +13,12 @@ module.exports = Marionette.Behavior.extend( {
 
 	events: {
 		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick'
+	},
+
+	initialize: function() {
+		this.viewApplySavedValue = this.view.applySavedValue.bind( this.view );
+
+		this.view.applySavedValue = this.applySavedValue.bind( this );
 	},
 
 	renderTools: function() {
@@ -146,6 +154,12 @@ module.exports = Marionette.Behavior.extend( {
 		}
 
 		this.view.setSettingsModel( value );
+	},
+
+	applySavedValue: function() {
+		if ( ! this.isDynamicMode() ) {
+			this.viewApplySavedValue();
+		}
 	},
 
 	onRender: function() {

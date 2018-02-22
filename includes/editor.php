@@ -90,6 +90,7 @@ class Editor {
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
+		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
 		query_posts( [ 'p' => $this->_post_id, 'post_type' => get_post_type( $this->_post_id ) ] );
 
 		Plugin::$instance->db->switch_to_post( $this->_post_id );
@@ -296,9 +297,6 @@ class Editor {
 
 		global $wp_styles, $wp_scripts;
 
-		// Set the global data like $authordata and etc
-		setup_postdata( $this->_post_id );
-
 		$plugin = Plugin::$instance;
 
 		// Reset global variable
@@ -457,6 +455,11 @@ class Editor {
 			true
 		);
 
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->_post_id );
+
+		// Get document data *before* enqueue scripts, so element can enqueue their own scripts.
+		$editor_data = $document->get_elements_raw_data( null, true );
+
 		/**
 		 * Before editor enqueue scripts.
 		 *
@@ -465,8 +468,6 @@ class Editor {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/editor/before_enqueue_scripts' );
-
-		$editor_data = $plugin->db->get_builder( $this->_post_id, DB::STATUS_DRAFT );
 
 		wp_enqueue_script( 'elementor-editor' );
 
@@ -485,8 +486,7 @@ class Editor {
 			$page_title_selector = 'h1.entry-title';
 		}
 
-		$post_type_object = get_post_type_object( get_post_type() );
-
+		$post_type_object = get_post_type_object( $document->get_main_post()->post_type );
 		$current_user_can_publish = current_user_can( $post_type_object->cap->publish_posts );
 
 		$config = [
@@ -494,14 +494,18 @@ class Editor {
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
-			'preview_link' => Utils::get_preview_url( $this->_post_id ),
-			'post_link' => get_permalink( $this->_post_id ),
-			'last_edited' => Utils::get_last_edited( $this->_post_id ),
+			'post_id' => $this->_post_id,
+			'data' => $editor_data,
+			'exit_to_dashboard_url' => $document->get_exit_to_dashboard_url(),
+			'preview_link' => $document->get_preview_url(),
+			'post_link' => $document->get_permalink(),
+			'last_edited' => $document->get_last_edited(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'wp_preview' => [
-				'url' => Utils::get_wp_preview_url( $this->_post_id ),
+				'url' => $document->get_wp_preview_url(),
 				'target' => 'wp-preview-' . $this->_post_id,
 			],
+			'current_user_can_publish' => $current_user_can_publish,
 			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
@@ -514,14 +518,12 @@ class Editor {
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->get_wp_editor_config(),
-			'post_id' => $this->_post_id,
 			'settings_page_link' => Settings::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
-			'data' => $editor_data,
 			'locked_user' => $locked_user,
 			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
@@ -530,8 +532,6 @@ class Editor {
 			'page_title_selector' => $page_title_selector,
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
-			'current_user_can_publish' => $current_user_can_publish,
-			'exit_to_dashboard_url' => Utils::get_exit_to_dashboard_url( $this->_post_id ),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
@@ -603,6 +603,7 @@ class Editor {
 				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
 				'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
 				'gallery_images_selected' => __( '{0} Images Selected', 'elementor' ),
+				'gallery_no_images_selected' => __( 'No Images Selected', 'elementor' ),
 				'insert_media' => __( 'Insert Media', 'elementor' ),
 
 				// Take Over.

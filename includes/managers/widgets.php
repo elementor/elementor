@@ -283,14 +283,17 @@ class Widgets_Manager {
 	 *     Rendered widget.
 	 *
 	 *     @type string $render The rendered HTML.
- 	 * }
+	 * }
+	 * @throws \Exception
 	 */
 	public function ajax_render_widget( $request ) {
 		if ( empty( $request['post_id'] ) ) {
 			throw new \Exception( 'Missing post id.' );
 		}
 
-		if ( ! User::is_current_user_can_edit( $request['post_id'] ) ) {
+		$document = Plugin::$instance->documents->get( $request['post_id'] );
+
+		if ( ! $document->is_editable_by_current_user() ) {
 			throw new \Exception( 'Access denied.' );
 		}
 
@@ -308,21 +311,7 @@ class Widgets_Manager {
 
 		Plugin::$instance->db->switch_to_post( $request['post_id'] );
 
-		$data = $request['data'];
-
-		// Start buffering
-		ob_start();
-
-		/** @var Widget_Base $widget */
-		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
-
-		if ( ! $widget ) {
-			throw new \Exception( 'Widget not found.' );
-		}
-
-		$widget->render_content();
-
-		$render_html = ob_get_clean();
+		$render_html = $document->render_element( $request['data'] );
 
 		$editor->set_edit_mode( $is_edit_mode );
 
