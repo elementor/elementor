@@ -493,10 +493,10 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param Controls_Stack $element Element stack.
+	 * @param Controls_Stack $controls_stack Controls stack.
 	 */
-	public function open_stack( Controls_Stack $element ) {
-		$stack_id = $element->get_unique_name();
+	public function open_stack( Controls_Stack $controls_stack ) {
+		$stack_id = $controls_stack->get_unique_name();
 
 		$this->stacks[ $stack_id ] = [
 			'tabs' => [],
