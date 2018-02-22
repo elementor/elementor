@@ -250,7 +250,7 @@ class Source_Local extends Source_Base {
 							</select>
 						</div>
 					</div>
-					<input type="submit" id="elementor-new-template__form__submit" value="<?php echo __( 'Create new template', 'elementor' ); ?>">
+					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create new template', 'elementor' ); ?></button>
 				</form>
 			</div>
 		</div>

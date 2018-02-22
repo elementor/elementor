@@ -92,13 +92,9 @@
 		}
 
 		&__submit {
-			appearance: none;
 			width: 100%;
 			height: 50px;
-			background-color: $editor-success;
-			color: #fff;
-			text-transform: uppercase;
-			cursor: pointer;
+			border-radius: 0;
 		}
 	}
 }
