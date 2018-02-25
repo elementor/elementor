@@ -33,8 +33,17 @@ abstract class Base_Tag extends Controls_Stack {
 			return;
 		}
 		?>
-		<# if ( <?php echo $panel_template_setting_key; ?> ) { #>
-			({{{<?php echo $panel_template_setting_key; ?>}}})
+		<#
+		if ( <?php echo $panel_template_setting_key; ?> ) {
+			var settings_key = "<?php echo $panel_template_setting_key; ?>";
+
+			// If the key is an existing control (and not an old one), and the control has options (select/select2)
+			// and the key is an existing option (and not in a group or an old one).
+			if ( controls[settings_key] && controls[settings_key].options && controls[settings_key].options[key] ) {
+				key = controls[settings_key].options[key];
+			}
+		#>
+			({{{key}}})
 		<# } #>
 		<?php
 	}
