@@ -8,9 +8,12 @@ module.exports = Marionette.ItemView.extend( {
 	tagControlsStack: null,
 
 	templateHelpers: function() {
-		return {
-			controls: this.model.options.controls
-		};
+		var helpers = {};
+		if ( this.model ) {
+			helpers.controls = this.model.options.controls;
+		}
+
+		return helpers;
 	},
 
 	ui: {
