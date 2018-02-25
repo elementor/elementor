@@ -167,7 +167,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return array Widget styles dependencies.
 	 */
-	final public function get_style_depends() {
+	public function get_style_depends() {
 		return $this->depended_styles;
 	}
 
