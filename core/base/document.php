@@ -183,6 +183,40 @@ abstract class Document extends Controls_Stack {
 		return User::is_current_user_can_edit( $this->get_main_id() );
 	}
 
+	/**
+	 * Initialize controls.
+	 *
+	 * Register the all controls added by `_register_controls()`.
+	 * and add the `clear_page_settings` at end of Settings Tab
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 */
+	protected function init_controls() {
+		parent::init_controls();
+
+		$this->start_controls_section(
+			'clear_page_settings',
+			[
+				'label' => __( 'Delete Content', 'elementor' ),
+				'tab' => Controls_Manager::TAB_SETTINGS,
+			]
+		);
+
+		$this->add_control(
+			'clear_page',
+			[
+				'type' => Controls_Manager::BUTTON,
+				'label' => __( 'Delete All Content', 'elementor' ),
+				'text' => __( 'Delete', 'elementor' ),
+				'separator' => 'before',
+				'event' => 'elementor:clearPage',
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'document_settings',
@@ -220,17 +254,6 @@ abstract class Document extends Controls_Stack {
 				]
 			);
 		}
-
-		$this->add_control(
-			'clear_page',
-			[
-				'type' => Controls_Manager::BUTTON,
-				'label' => __( 'Delete All Content', 'elementor' ),
-				'text' => __( 'Delete', 'elementor' ),
-				'separator' => 'before',
-				'event' => 'elementor:clearPage',
-			]
-		);
 
 		$this->end_controls_section();
 	}
