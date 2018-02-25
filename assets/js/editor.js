@@ -9001,10 +9001,10 @@ Ajax = {
 			} else {
 				ajaxParams.error = function( XMLHttpRequest ) {
 					if ( 0 === XMLHttpRequest.readyState && 'abort' === XMLHttpRequest.statusText ) {
-						
+						return;
 					}
 
-						var message = self.createErrorMessage( XMLHttpRequest );
+					var message = self.createErrorMessage( XMLHttpRequest );
 
 					elementor.notifications.showToast( {
 						message: message
