@@ -1,5 +1,6 @@
 var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
+	Masonry = require( 'elementor-utils/masonry' ),
 	TemplateLibraryCollectionView;
 
 TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
@@ -142,6 +143,15 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
+	setMasonrySkin: function() {
+		window.masonry = new Masonry( {
+			container: this.$childViewContainer,
+			items: this.$childViewContainer.children()
+		} );
+
+		this.$childViewContainer.imagesLoaded( masonry.run.bind( masonry ) );
+	},
+
 	toggleFilterClass: function() {
 		this.$el.toggleClass( 'elementor-templates-filter-active', !! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
 	},
@@ -150,6 +160,10 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.addSourceData();
 
 		this.toggleFilterClass();
+
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'block' === elementor.templates.getFilter( 'type' ) ) {
+			this.setMasonrySkin();
+		}
 	},
 
 	onBeforeRenderEmpty: function() {
