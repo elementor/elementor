@@ -144,7 +144,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	setMasonrySkin: function() {
-		window.masonry = new Masonry( {
+		var masonry = new Masonry( {
 			container: this.$childViewContainer,
 			items: this.$childViewContainer.children()
 		} );
