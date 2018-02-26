@@ -18,7 +18,12 @@
 				$importButton: $( '#elementor-import-template-trigger' ),
 				$importArea: $( '#elementor-import-template-area' ),
 				$settingsForm: $( '#elementor-settings-form' ),
-				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' )
+				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
+				$addNew: $( '.post-type-elementor_library #wpbody-content' ).find( '.page-title-action:first' ),
+				$addNewDialogHeader:  $( '#elementor-template-library-header' ),
+				$addNewDialogContent:  $( '#elementor-new-template-dialog-content' ),
+				$addNewDialogSubmit:  $( '#elementor-new-template-dialog-submit' ),
+				$addNewDialogClose:  $( '#elementor-template-library-header-close-modal' )
 			};
 
 			this.cache.$settingsFormPages = this.cache.$settingsForm.find( '.elementor-settings-form-page' );
@@ -69,6 +74,11 @@
 				}
 
 				self.toggleStatus();
+			} );
+
+			self.cache.$addNew.on( 'click', function( event ) {
+				event.preventDefault();
+				self.getNewTemplateModal().show();
 			} );
 
 			self.cache.$goToEditLink.on( 'click', function() {
@@ -194,9 +204,45 @@
 
 			this.initTemplatesImport();
 
+			this.initNewTemplateDialog();
+
 			this.initMaintenanceMode();
 
 			this.goToSettingsTabFromHash();
+		},
+
+		initNewTemplateDialog: function() {
+			var self = this,
+				modal;
+
+			self.getNewTemplateModal = function() {
+				if ( ! modal ) {
+					var dialogsManager = new DialogsManager.Instance();
+
+					modal = dialogsManager.createWidget( 'lightbox', {
+						id: 'elementor-template-library-modal',
+						headerMessage: self.cache.$addNewDialogHeader,
+						message: self.cache.$addNewDialogContent.html(),
+						hide: {
+							onButtonClick: false
+						},
+						position: {
+							my: 'center',
+							at: 'center'
+						},
+						onReady: function() {
+							DialogsManager.getWidgetType( 'lightbox' ).prototype.onReady.apply( this, arguments );
+
+							self.cache.$addNewDialogClose.on( 'click', function() {
+								modal.hide();
+							} );
+						}
+					} );
+				}
+
+				return modal;
+			};
+
 		},
 
 		initTemplatesImport: function() {

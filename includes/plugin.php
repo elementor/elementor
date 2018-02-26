@@ -1,11 +1,14 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Documents_Manager;
 use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
-use Elementor\Core\Settings\Manager as SettingsManager;
-use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
+use Elementor\Core\Settings\Manager as Settings_Manager;
+use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Modules\History\Revisions_Manager;
+use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -47,6 +50,18 @@ class Plugin {
 	public $db;
 
 	/**
+	 * Ajax Manager.
+	 *
+	 * Holds the plugin ajax manager.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @var Ajax_Manager
+	 */
+	public $ajax;
+
+	/**
 	 * Controls manager.
 	 *
 	 * Holds the plugin controls manager.
@@ -69,6 +84,11 @@ class Plugin {
 	 * @var Debug
 	 */
 	public $debug;
+
+	/**
+	 * @var Documents_Manager
+	 */
+	public $documents;
 
 	/**
 	 * Schemes manager.
@@ -132,15 +152,17 @@ class Plugin {
 
 	/**
 	 * Document settings manager.
-	 *
 	 * Holds the document settings manager.
-	 *
 	 * @since 1.0.0
 	 * @access public
-	 *
-	 * @var PageSettingsManager
+	 * @var Page_Settings_Manager
 	 */
 	public $page_settings_manager;
+
+	/**
+	 * @var Dynamic_Tags_Manager
+	 */
+	public $dynamic_tags;
 
 	/**
 	 * Settings.
@@ -316,12 +338,14 @@ class Plugin {
 	 * Retrieve the current version of Elementor.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 1.2.0 Use `ELEMENTOR_VERSION` const instead.
 	 * @access public
-	 * @deprecated
 	 *
 	 * @return string Elementor version.
 	 */
 	public function get_version() {
+		_deprecated_function( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), '1.2.0', 'ELEMENTOR_VERSION' );
+
 		return ELEMENTOR_VERSION;
 	}
 
@@ -418,11 +442,15 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
+		// Allow all components to use AJAX.
+		$this->ajax = new Ajax_Manager();
+
 		Compatibility::register_actions();
-		SettingsManager::run();
+		Settings_Manager::run();
 
 		$this->db = new DB();
 		$this->controls_manager = new Controls_Manager();
+		$this->documents = new Documents_Manager();
 		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
@@ -435,6 +463,7 @@ class Plugin {
 		$this->debug = new Debug();
 		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->maintenance_mode = new Maintenance_Mode();
+		$this->dynamic_tags = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
 
 		Api::init();
@@ -460,7 +489,7 @@ class Plugin {
 	 *
 	 * Register Elementor support for all the supported post types defined by
 	 * the user in the admin screen and saved as `elementor_cpt_support` option
-	 * in WordPress ``$wpdb->options` table.
+	 * in WordPress `$wpdb->options` table.
 	 *
 	 * If no custom post type selected, usually in new installs, this method
 	 * will return the two default post types: `page` and `post`.

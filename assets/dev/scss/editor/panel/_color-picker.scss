@@ -41,6 +41,26 @@
 	.iris-picker {
 		border: none;
 	}
+
+	&:not(.wp-picker-active) {
+		float: $end;
+
+		.wp-color-result {
+			margin: 0;
+		}
+	}
+
+	&.wp-picker-active {
+		transform: translateY(6px);
+
+		[class*="wp-version-4-9"] #elementor-controls &, [class*="wp-version-5"] #elementor-controls & {
+			padding-top: 9px;
+		}
+
+		.wp-color-result {
+			margin-right: 3px;
+		}
+	}
 }
 
 .wp-color-result {
@@ -102,6 +122,10 @@ input[type="text"].wp-color-picker {
 	* {
 		box-sizing: content-box;
 	}
+
+	.iris-square-value {
+		transition: none;
+	}
 }
 
 .wp-picker-open {
@@ -109,31 +133,5 @@ input[type="text"].wp-color-picker {
 	~ .wp-picker-holder {
 		clear: both;
 		margin-bottom: 15px;
-	}
-}
-
-.elementor-control {
-
-	.wp-picker-container {
-
-		.iris-square-value {
-			transition: none;
-		}
-
-		&:not(.wp-picker-active) {
-			float: $end;
-
-			.wp-color-result {
-				margin: 0;
-			}
-		}
-
-		&.wp-picker-active {
-			transform: translateY(6px);
-
-			.wp-color-result {
-				margin-right: 3px;
-			}
-		}
 	}
 }

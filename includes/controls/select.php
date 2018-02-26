@@ -14,29 +14,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'border_style',
- *    	[
- *    		'label' => __( 'Border Style', 'plugin-domain' ),
- *    		'type' => Controls_Manager::SELECT,
- *    		'default' => 'solid',
- *    		'options' => [
- *    			'solid'  => __( 'Solid', 'plugin-domain' ),
- *    			'dashed' => __( 'Dashed', 'plugin-domain' ),
- *    			'dotted' => __( 'Dotted', 'plugin-domain' ),
- *    			'double' => __( 'Double', 'plugin-domain' ),
- *    			'none'   => __( 'None', 'plugin-domain' ),
- *    		],
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'border_style',
+ * 	[
+ * 		'label' => __( 'Border Style', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::SELECT,
+ * 		'default' => 'solid',
+ * 		'options' => [
+ * 			'solid'  => __( 'Solid', 'plugin-domain' ),
+ * 			'dashed' => __( 'Dashed', 'plugin-domain' ),
+ * 			'dotted' => __( 'Dotted', 'plugin-domain' ),
+ * 			'double' => __( 'Double', 'plugin-domain' ),
+ * 			'none'   => __( 'None', 'plugin-domain' ),
+ * 		],
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo '<div style="border-style: ' . $this->get_settings( 'border_style' ) . '"> ... </div>';
+ * ```php
+ * $settings = $this->get_settings();
+ * echo '<div style="border-style: ' . $settings['border_style'] . '"> ... </div>';
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <div style="border-style: {{ settings.border_style }}"> ... </div>
+ * ```php
+ * <div style="border-style: {{ settings.border_style }}"> ... </div>
+ * ```
  *
  * @since 1.0.0
  *
@@ -65,7 +72,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Select extends Base_Data_Control {
 
 	/**
-	 * Retrieve select control type.
+	 * Get select control type.
+	 *
+	 * Retrieve the control type, in this case `select`.
 	 *
 	 * @since 1.0.0
 	 * @access public

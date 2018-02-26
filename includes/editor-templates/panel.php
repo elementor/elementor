@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+$document = Plugin::$instance->documents->get( $this->get_post_id() );
+
 /**
  * @var Editor $this
  */
@@ -22,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-panel-menu">
 	<div id="elementor-panel-page-menu-content"></div>
 	<div id="elementor-panel-page-menu-footer">
-		<a href="<?php echo esc_url( Utils::get_exit_to_dashboard_url( get_the_ID() ) ); ?>" id="elementor-panel-exit-to-dashboard" class="elementor-button elementor-button-default">
+		<a href="<?php echo esc_url( $document->get_exit_to_dashboard_url() ); ?>" id="elementor-panel-exit-to-dashboard" class="elementor-button elementor-button-default">
 			<i class="fa fa-wordpress"></i>
 			<?php echo esc_html__( 'Exit To Dashboard', 'elementor' ); ?>
 		</a>
@@ -56,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
 	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_html_e( 'Settings', 'elementor' ); ?>">
 		<i class="fa fa-cog" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php esc_html_e( 'Document Settings', 'elementor' ); ?></span>
+		<span class="elementor-screen-only"><?php esc_html( $document::get_title() . ' ' . __( 'Settings', 'elementor' ) ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool">
 		<i class="eicon-device-desktop tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
@@ -141,10 +143,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-editor-content">
 	<div class="elementor-panel-navigation">
-		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) { #>
-		<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-			<a href="#">{{{ tabTitle }}}</a>
-		</div>
+		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) {
+			#>
+			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<a href="#">{{{ tabTitle }}}</a>
+			</div>
 		<# } ); #>
 	</div>
 	<# if ( elementData.reload_preview ) { #>
@@ -229,6 +232,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</a>
 			<# } );
 		#>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
+	<div class="elementor-control-dynamic-switcher-wrapper">
+		<div class="elementor-control-dynamic-switcher">
+			<?php echo __( 'Dynamic', 'elementor' ); ?>
+			<i class="fa fa-database"></i>
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-control-dynamic-cover">
+	<# if ( hasSettings ) { #>
+		<div class="elementor-dynamic-cover__settings">
+			<i class="fa fa-wrench"></i>
+		</div>
+	<# } #>
+	<div class="elementor-dynamic-cover__title">{{{ title + ' ' + content }}}</div>
+	<div class="elementor-dynamic-cover__remove">
+		<i class="fa fa-times-circle"></i>
 	</div>
 </script>
 

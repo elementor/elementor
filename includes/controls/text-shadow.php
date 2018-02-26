@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $placeholder Optional. The field placeholder that appears when
  *                            the field has no values. Default is empty.
  * @param array $default      {
- *     Optional. Defautl text shadow values.
+ *     Optional. Default text shadow values.
  *
  *     @type int    $horizontal Optional. Horizontal shadow. Default is 0.
  *     @type int    $vertical   Optional. Vertical shadow. Default is 0.
@@ -53,7 +53,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Text_Shadow extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve text shadow control type.
+	 * Get text shadow control type.
+	 *
+	 * Retrieve the control type, in this case `text_shadow`.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -65,9 +67,9 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve text shadow control default values.
+	 * Get text shadow control default values.
 	 *
-	 * Get the default value of the text shadow control. Used to return the
+	 * Retrieve the default value of the text shadow control. Used to return the
 	 * default values while initializing the text shadow control.
 	 *
 	 * @since 1.6.0
@@ -85,9 +87,9 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve text shadow control sliders.
+	 * Get text shadow control sliders.
 	 *
-	 * Get the sliders of the text shadow control. Sliders are used while
+	 * Retrieve the sliders of the text shadow control. Sliders are used while
 	 * rendering the control output in the editor.
 	 *
 	 * @since 1.6.0

@@ -61,6 +61,7 @@ TemplateLibraryManager = function() {
 					} );
 				}
 			},
+			type: {},
 			favorite: {}
 		};
 
@@ -291,7 +292,7 @@ TemplateLibraryManager = function() {
 
 		self.getModal().show();
 
-		self.setTemplatesSource( 'remote', true );
+		self.setTemplatesSource( 'remote', 'page', true );
 
 		if ( ! layout ) {
 			initLayout();
@@ -330,10 +331,14 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setTemplatesSource = function( source, silent ) {
+	this.setTemplatesSource = function( source, type, silent ) {
 		elementor.channels.templates.stopReplying();
 
-		self.setFilter( 'source', source );
+		self.setFilter( 'source', source, true );
+
+		if ( type ) {
+			self.setFilter( 'type', type, true );
+		}
 
 		if ( ! silent ) {
 			self.showTemplates();

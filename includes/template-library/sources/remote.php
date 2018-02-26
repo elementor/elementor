@@ -8,34 +8,68 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor template library remote source class.
+ *
+ * Elementor template library remote source handler class is responsible for
+ * handling remote templates from Elementor.com servers.
+ *
+ * @since 1.0.0
+ */
 class Source_Remote extends Source_Base {
 
 	/**
+	 * Get remote template ID.
+	 *
+	 * Retrieve the remote template ID.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string The remote template ID.
+	 */
 	public function get_id() {
 		return 'remote';
 	}
 
 	/**
+	 * Get remote template title.
+	 *
+	 * Retrieve the remote template title.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return string The remote template title.
+	 */
 	public function get_title() {
 		return __( 'Remote', 'elementor' );
 	}
 
 	/**
+	 * Register remote template data.
+	 *
+	 * Used to register custom template data like a post type, a taxonomy or any
+	 * other data.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function register_data() {}
 
 	/**
+	 * Get remote templates.
+	 *
+	 * Retrieve remote templates from Elementor.com servers.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $args Optional. Filter templates list based on a set of
+	 *                    arguments. Default is an empty array.
+	 *
+	 * @return array Remote templates.
+	 */
 	public function get_items( $args = [] ) {
 		$templates_data = Api::get_templates_data();
 
@@ -55,11 +89,16 @@ class Source_Remote extends Source_Base {
 	}
 
 	/**
+	 * Get remote template.
+	 *
+	 * Retrieve a single remote template from Elementor.com servers.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param array $template_data
 	 *
-	 * @return array
+	 * @param array $template_data Remote template data.
+	 *
+	 * @return array Remote template.
 	 */
 	public function get_item( $template_data ) {
 		$favorite_templates = $this->get_user_meta( 'favorites' );
@@ -67,6 +106,7 @@ class Source_Remote extends Source_Base {
 		return [
 			'template_id' => $template_data['id'],
 			'source' => $this->get_id(),
+			'type' => $template_data['type'],
 			'title' => $template_data['title'],
 			'thumbnail' => $template_data['thumbnail'],
 			'date' => $template_data['tmpl_created'],
@@ -82,41 +122,86 @@ class Source_Remote extends Source_Base {
 	}
 
 	/**
+	 * Save remote template.
+	 *
+	 * Remote template from Elementor.com servers cannot be saved on the
+	 * database as they are retrieved from remote servers.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $template_data Remote template data.
+	 *
+	 * @return bool Return false.
+	 */
 	public function save_item( $template_data ) {
 		return false;
 	}
 
 	/**
+	 * Update remote template.
+	 *
+	 * Remote template from Elementor.com servers cannot be updated on the
+	 * database as they are retrieved from remote servers.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $new_data New template data.
+	 *
+	 * @return bool Return false.
+	 */
 	public function update_item( $new_data ) {
 		return false;
 	}
 
 	/**
+	 * Delete remote template.
+	 *
+	 * Remote template from Elementor.com servers cannot be deleted from the
+	 * database as they are retrieved from remote servers.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $template_id The template ID.
+	 *
+	 * @return bool Return false.
+	 */
 	public function delete_template( $template_id ) {
 		return false;
 	}
 
 	/**
+	 * Export remote template.
+	 *
+	 * Remote template from Elementor.com servers cannot be exported from the
+	 * database as they are retrieved from remote servers.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param int $template_id The template ID.
+	 *
+	 * @return bool Return false.
+	 */
 	public function export_template( $template_id ) {
 		return false;
 	}
 
 	/**
+	 * Get remote template data.
+	 *
+	 * Retrieve the data of a single remote template from Elementor.com servers.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 *
+	 * @param array  $args    Custom template arguments.
+	 * @param string $context Optional. The context. Default is `display`.
+	 *
+	 * @return array Remote Template data.
+	 */
 	public function get_data( array $args, $context = 'display' ) {
 		$data = Api::get_template_content( $args['template_id'] );
 

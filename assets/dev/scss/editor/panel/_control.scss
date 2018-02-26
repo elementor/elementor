@@ -122,6 +122,114 @@
 			}
 		}
 	}
+
+	// select2
+	.select2-container {
+		width: 100% !important;
+		outline: none;
+
+		&:not(.select2-container--open):not(.select2-container--focus) {
+
+			.select2-selection--single,
+			.select2-selection--multiple {
+				border-color: $editor-lightest;
+			}
+		}
+
+		&.select2-container--open,
+		&.select2-container--focus {
+
+			.select2-selection--single,
+			.select2-selection--multiple {
+				border-color: $editor-light;
+			}
+		}
+
+		&.select2-container--default {
+
+			.select2-selection--multiple {
+
+				.select2-selection__clear {
+					display: none;
+				}
+
+				.select2-selection__choice {
+					line-height: 1.5;
+					font-size: 0.9em;
+					border: none;
+					border-radius: 0;
+				}
+			}
+		}
+	}
+
+	.select2-selection {
+		outline: none;
+
+		&--single {
+			height: 27px;
+		}
+	}
+
+	.select2-selection__rendered {
+		line-height: 27px;
+	}
+
+	.select2-selection__arrow {
+		height: 27px;
+		top: 0;
+	}
+}
+
+.elementor-panel-heading {
+	display: table;
+	table-layout: fixed;
+	height: 40px;
+	padding: 0 20px;
+	width: 100%;
+	border-bottom: 1px solid $editor-background;
+	cursor: pointer;
+
+	&:not(.elementor-open) {
+
+		.elementor-panel-heading-toggle {
+
+			.fa {
+
+				&:before {
+					content: getValueByDirection('\f0da', '\f0d9');
+				}
+			}
+		}
+	}
+
+	&.elementor-open {
+
+		.elementor-panel-heading-toggle {
+
+			.fa {
+
+				&:before {
+					content: '\f0d7';
+				}
+			}
+		}
+	}
+
+	> * {
+		display: table-cell;
+		vertical-align: middle;
+	}
+
+	&-toggle {
+		width: 20px;
+		color: $editor-darkest;
+	}
+
+	&-title {
+		color: $editor-darkest;
+		font-weight: bold;
+	}
 }
 
 // WP Widgets
@@ -302,44 +410,44 @@
 .elementor-control-responsive-switchers {
 	display: flex;
 	margin: 0 5px;
-}
 
-.elementor-responsive-switcher {
-	$icon-size: 18px;
+	.elementor-responsive-switcher {
+		$icon-size: 18px;
 
-	display: inline-block;
-	border-radius: 50%;
-	height: $icon-size;
-	width: $icon-size;
-	background-color: $editor-light;
-	cursor: pointer;
-	position: relative;
-	@include margin-start(5px);
-	color: #fff;
-	font-size: 8px;
-	text-align: center;
-	transition: background-color .5s;
-
-	&:hover {
-		background-color: $editor-lighter;
-	}
-
-	i {
+		display: inline-block;
+		border-radius: 50%;
+		height: $icon-size;
+		width: $icon-size;
+		background-color: $editor-light;
+		cursor: pointer;
 		position: relative;
-		display: block;
-		line-height: $icon-size;
+		@include margin-start(5px);
+		color: #fff;
+		font-size: 8px;
+		text-align: center;
+		transition: background-color .5s;
 
-		&:before {
-			height: $icon-size;
-			width: $icon-size;
-			position: absolute;
-			left: 50%;
-			transform: translateX(-50%);
+		&:hover {
+			background-color: $editor-lighter;
+		}
+
+		i {
+			position: relative;
+			display: block;
+			line-height: $icon-size;
+
+			&:before {
+				height: $icon-size;
+				width: $icon-size;
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
+			}
 		}
 	}
 }
 
-@at-root .elementor-device-desktop #elementor-panel .elementor-panel-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
+.elementor-device-desktop #elementor-panel .elementor-panel-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
 	background: $editor-lighter;
 
 	&:not(.elementor-responsive-switcher-desktop) {

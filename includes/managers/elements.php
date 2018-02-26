@@ -47,9 +47,6 @@ class Elements_Manager {
 	 */
 	public function __construct() {
 		$this->require_files();
-
-		add_action( 'wp_ajax_elementor_save_builder', [ $this, 'ajax_save_builder' ] );
-		add_action( 'wp_ajax_elementor_discard_changes', [ $this, 'ajax_discard_changes' ] );
 	}
 
 	/**
@@ -184,7 +181,7 @@ class Elements_Manager {
 	/**
 	 * Get element types.
 	 *
-	 * Retrieve the list of all the element types, or if a spesific element name
+	 * Retrieve the list of all the element types, or if a specific element name
 	 * was provided retrieve his element types.
 	 *
 	 * @since 1.0.0
@@ -245,36 +242,23 @@ class Elements_Manager {
 	 * Ajax discard changes.
 	 *
 	 * Ajax handler for Elementor discard_changes. Handles the discarded changes
-	 * in the builder by deleting autosaved revisions.
+	 * in the builder by deleting auto-saved revisions.
 	 *
 	 * Fired by `wp_ajax_elementor_discard_changes` action.
 	 *
-	 * @since 1.9.0
+	 * @since  1.9.0
 	 * @access public
+	 *
+	 * @throws \Exception If the request has no post id.
+	 *
+	 * @param $request
+	 *
+	 * @return bool
 	 */
-	public function ajax_discard_changes() {
-		Plugin::$instance->editor->verify_ajax_nonce();
+	public function ajax_discard_changes( $request ) {
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->ajax_discard_changes()' );
 
-		$request = $_POST;
-
-		if ( empty( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
-		}
-
-		$autosave = Utils::get_post_autosave( $request['post_id'] );
-
-		if ( $autosave ) {
-			$deleted = wp_delete_post_revision( $autosave->ID );
-			$success = $deleted && ! is_wp_error( $deleted );
-		} else {
-			$success = true;
-		}
-
-		if ( $success ) {
-			wp_send_json_success();
-		}
-
-		wp_send_json_error();
+		return Plugin::$instance->documents->ajax_discard_changes( $request );
 	}
 
 	/**
@@ -287,43 +271,20 @@ class Elements_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
+	 * @throws \Exception If the request has no post id.
+	 * @throws \Exception If current user don't have permissions to edit the post.
+	 *
+	 * @param array $request
+	 *
+	 * @return mixed
 	 */
-	public function ajax_save_builder() {
-		Plugin::$instance->editor->verify_ajax_nonce();
+	public function ajax_save_builder( $request ) {
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->ajax_save()' );
 
-		$request = $_POST;
-
-		if ( empty( $request['post_id'] ) ) {
-			wp_send_json_error( new \WP_Error( 'no_post_id' ) );
-		}
-
-		$post_id = $request['post_id'];
-
-		if ( ! User::is_current_user_can_edit( $post_id ) ) {
-			wp_send_json_error( new \WP_Error( 'no_access' ) );
-		}
-
-		$status = DB::STATUS_DRAFT;
-
-		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ] , true ) ) {
-			$status = $request['status'];
-		}
-
-		$posted = json_decode( stripslashes( $request['data'] ), true );
-
-		Plugin::$instance->db->save_editor( $post_id, $posted, $status );
-
-		$return_data = [
-			'config' => [
-				'last_edited' => Utils::get_last_edited( $post_id ),
-				'wp_preview' => [
-					'url' => Utils::get_wp_preview_url( $post_id ),
-				],
-			],
-		];
+		$return_data = Plugin::$instance->documents->ajax_save( $request );
 
 		/**
-		 * Saved ajax data returned by the builder.
 		 *
 		 * Filters the ajax data returned when saving the post on the builder.
 		 *
@@ -331,9 +292,9 @@ class Elements_Manager {
 		 *
 		 * @param array $return_data The returned data. Default is an empty array.
 		 */
-		$return_data = apply_filters( 'elementor/ajax_save_builder/return_data', $return_data, $post_id );
+		$return_data = Utils::apply_filters_deprecated( 'elementor/ajax_save_builder/return_data', [ $return_data, $request['post_id'] ], '2.0.0', 'elementor/documents/ajax_save/return_data' );
 
-		wp_send_json_success( $return_data );
+		return $return_data;
 	}
 
 	/**

@@ -6,12 +6,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 	initialize: function( data, options ) {
 		var self = this;
 
-		if ( options ) {
-			// Keep the options for cloning
-			self.options = options;
-		}
+		// Keep the options for cloning
+		self.options = options;
 
-		self.controls = ( options && options.controls ) ? options.controls : elementor.getElementControls( self );
+		self.controls = elementor.mergeControlsSettings( options.controls );
 
 		self.validators = {};
 
@@ -22,37 +20,37 @@ BaseSettingsModel = Backbone.Model.extend( {
 		var attrs = data || {},
 			defaults = {};
 
-		_.each( self.controls, function( field ) {
-			var control = elementor.config.controls[ field.type ],
-				isUIControl = -1 !== control.features.indexOf( 'ui' );
+		_.each( self.controls, function( control ) {
+			var isUIControl = -1 !== control.features.indexOf( 'ui' );
 
 			if ( isUIControl ) {
 				return;
 			}
 
 			// Check if the value is a plain object ( and not an array )
-			var isMultipleControl = jQuery.isPlainObject( control.default_value );
+			var controlName = control.name,
+				isMultipleControl = jQuery.isPlainObject( control.default_value );
 
 			if ( isMultipleControl  ) {
-				defaults[ field.name ] = _.extend( {}, control.default_value, field['default'] || {} );
+				defaults[ controlName ] = _.extend( {}, control.default_value, control['default'] || {} );
 			} else {
-				defaults[ field.name ] = field['default'] || control.default_value;
+				defaults[ controlName ] = control['default'] || control.default_value;
 			}
 
-			if ( undefined !== attrs[ field.name ] ) {
-				if ( isMultipleControl && ! _.isObject( attrs[ field.name ] ) ) {
-					elementor.debug.addCustomError(
-						new TypeError( 'An invalid argument supplied as multiple control value' ),
-						'InvalidElementData',
-						'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ field.name ] + '> as `' + field.name + '` value. Expected array or object.'
-					);
+			var isDynamicControl = control.dynamic && control.dynamic.active && undefined !== attrs[ elementor.dynamicTags.getStaticSettingKey( controlName ) ];
 
-					delete attrs[ field.name ];
-				}
+			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! isDynamicControl ) {
+				elementor.debug.addCustomError(
+					new TypeError( 'An invalid argument supplied as multiple control value' ),
+					'InvalidElementData',
+					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ controlName ] + '> as `' + controlName + '` value. Expected array or object.'
+				);
+
+				delete attrs[ controlName ];
 			}
 
-			if ( undefined === attrs[ field.name ] ) {
-				attrs[ field.name ] = defaults[ field.name ];
+			if ( undefined === attrs[ controlName ] ) {
+				attrs[ controlName ] = defaults[ controlName ];
 			}
 		} );
 
@@ -95,17 +93,26 @@ BaseSettingsModel = Backbone.Model.extend( {
 	getStyleControls: function( controls ) {
 		var self = this;
 
-		controls = controls || self.getActiveControls();
+		controls = elementor.helpers.cloneObject( controls || self.getActiveControls() );
 
-		return _.filter( controls, function( control ) {
+		var styleControls = [];
+
+		jQuery.each( controls, function() {
+			var control = this,
+				controlDefaultSettings = elementor.config.controls[ control.type ];
+
+			control = jQuery.extend( {}, controlDefaultSettings, control );
+
 			if ( control.fields ) {
 				control.styleFields = self.getStyleControls( control.fields );
-
-				return true;
 			}
 
-			return self.isStyleControl( control.name, controls );
+			if ( control.fields || ( control.dynamic && control.dynamic.active ) || self.isStyleControl( control.name, controls ) ) {
+				styleControls.push( control );
+			}
 		} );
+
+		return styleControls;
 	},
 
 	isStyleControl: function( attribute, controls ) {
@@ -164,6 +171,81 @@ BaseSettingsModel = Backbone.Model.extend( {
 			.trigger( 'change:external:' + key, value );
 	},
 
+	parseDynamicSettings: function( settings, options, controls ) {
+		var self = this;
+
+		settings = elementor.helpers.cloneObject( settings || self.attributes );
+
+		options = options || {};
+
+		controls = controls || this.controls;
+
+		jQuery.each( controls, function() {
+			var control = this,
+				valueToParse = settings[ control.name ];
+
+			if ( ! valueToParse ) {
+				return;
+			}
+
+			if ( 'repeater' === control.type ) {
+				valueToParse.forEach( function( value, key ) {
+					valueToParse[ key ] = self.parseDynamicSettings( value, options, control.fields );
+				} );
+
+				return;
+			}
+
+			if ( undefined === settings[ elementor.dynamicTags.getStaticSettingKey( control.name ) ] ) {
+				return;
+			}
+
+			var dynamicSettings = control.dynamic;
+
+			if ( undefined === dynamicSettings ) {
+				dynamicSettings = elementor.config.controls[ control.type ].dynamic;
+			}
+
+			if ( ! dynamicSettings || ! dynamicSettings.active ) {
+				return;
+			}
+
+			if ( dynamicSettings.property ) {
+				valueToParse = valueToParse[ dynamicSettings.property ];
+			}
+
+			var dynamicValue;
+
+			try {
+				dynamicValue = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+			} catch ( error ) {
+				if ( elementor.dynamicTags.CACHE_KEY_NOT_FOUND_ERROR !== error.message ) {
+					throw error;
+				}
+
+				dynamicValue = '';
+
+				if ( options.onServerRequestStart ) {
+					options.onServerRequestStart();
+				}
+
+				elementor.dynamicTags.refreshCacheFromServer( function() {
+					if ( options.onServerRequestEnd ) {
+						options.onServerRequestEnd();
+					}
+				} );
+			}
+
+			if ( dynamicSettings.property ) {
+				settings[ control.name ][ dynamicSettings.property ] = dynamicValue;
+			} else {
+				settings[ control.name ] = dynamicValue;
+			}
+		} );
+
+		return settings;
+	},
+
 	toJSON: function( options ) {
 		var data = Backbone.Model.prototype.toJSON.call( this );
 
@@ -217,7 +299,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			} );
 		}
 
-		return data;
+		return elementor.helpers.cloneObject( data );
 	}
 } );
 

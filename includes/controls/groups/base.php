@@ -40,9 +40,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	private $options;
 
 	/**
-	 * Retrieve options.
+	 * Get options.
 	 *
-	 * Get group control options. If options are not set, it will initialize default options.
+	 * Retrieve group control options. If options are not set, it will initialize default options.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -136,9 +136,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve arguments.
+	 * Get arguments.
 	 *
-	 * Get group control arguments.
+	 * Retrieve group control arguments.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -150,9 +150,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve fields.
+	 * Get fields.
 	 *
-	 * Get group control fields.
+	 * Retrieve group control fields.
 	 *
 	 * @since 1.2.2
 	 * @access public
@@ -173,9 +173,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve controls prefix.
+	 * Get controls prefix.
 	 *
-	 * Get the prefix of the group control, which is `{{ControlName}}_`.
+	 * Retrieve the prefix of the group control, which is `{{ControlName}}_`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -187,9 +187,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve group control classes.
+	 * Get group control classes.
 	 *
-	 * Get the classes of the group control.
+	 * Retrieve the classes of the group control.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -212,9 +212,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	abstract protected function init_fields();
 
 	/**
-	 * Retrieve default options.
+	 * Get default options.
 	 *
-	 * Get the default options of the group control. Used to return the
+	 * Retrieve the default options of the group control. Used to return the
 	 * default options while initializing the group control.
 	 *
 	 * @since 1.9.0
@@ -227,9 +227,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve child default arguments.
+	 * Get child default arguments.
 	 *
-	 * Get the default arguments for all the child controls for a specific group
+	 * Retrieve the default arguments for all the child controls for a specific group
 	 * control.
 	 *
 	 * @since 1.2.2
@@ -375,9 +375,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve default arguments.
+	 * Get default arguments.
 	 *
-	 * Get the default arguments of the group control. Used to return the
+	 * Retrieve the default arguments of the group control. Used to return the
 	 * default arguments while initializing the group control.
 	 *
 	 * @since 1.2.2
@@ -432,9 +432,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * Used to process the CSS selector of group control fields. When using
 	 * group control, Elementor needs to apply the selector to different fields.
-	 * This method handels the process.
+	 * This method handles the process.
 	 *
-	 * In addition, it handels selector values from other fields and process the
+	 * In addition, it handles selector values from other fields and process the
 	 * css.
 	 *
 	 * @since 1.2.2

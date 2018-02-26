@@ -14,30 +14,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'show_title',
- *    	[
- *    		'label' => __( 'Show Title', 'plugin-domain' ),
- *    		'type' => Controls_Manager::SWITCHER,
- *    		'default' => 'yes',
- *    		'return_value' => 'yes',
- *    		'label_off' => __( 'Hide', 'plugin-domain' ),
- *    		'label_on' => __( 'Show', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'show_title',
+ * 	[
+ * 		'label' => __( 'Show Title', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::SWITCHER,
+ * 		'default' => 'yes',
+ * 		'return_value' => 'yes',
+ * 		'label_off' => __( 'Hide', 'plugin-domain' ),
+ * 		'label_on' => __( 'Show', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $settings = $this->get_settings();
- *    if ( 'yes' === $settings['show_title'] ) {
- *    	echo '<h2>' . $settings['title'] . '</h2>';
- *    }
+ * ```php
+ * $settings = $this->get_settings();
+ * if ( 'yes' === $settings['show_title'] ) {
+ * 	echo '<h2> ... </h2>';
+ * }
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <# if ( 'yes' === settings.show_title ) { #>
- *    	<h2>{{{ settings.title }}}</h2>
- *    <# } #>
+ * ```js
+ * <# if ( 'yes' === settings.show_title ) { #>
+ * 	<h2> ... </h2>
+ * <# } #>
+ * ```
  *
  * @since 1.0.0
  *
@@ -71,7 +77,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Switcher extends Base_Data_Control {
 
 	/**
-	 * Retrieve switcher control type.
+	 * Get switcher control type.
+	 *
+	 * Retrieve the control type, in this case `switcher`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -112,9 +120,9 @@ class Control_Switcher extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve switcher control default settings.
+	 * Get switcher control default settings.
 	 *
-	 * Get the default settings of the switcher control. Used to return the
+	 * Retrieve the default settings of the switcher control. Used to return the
 	 * default settings while initializing the switcher control.
 	 *
 	 * @since 1.0.0

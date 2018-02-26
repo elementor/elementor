@@ -17,14 +17,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->start_controls_section(
- *    	'section_advanced',
- *    	[
- *    		'label' => __( 'Element Style', 'plugin-domain' ),
- *    		'type' => Controls_Manager::SECTION,
- *    		'tab' => Controls_Manager::TAB_ADVANCED,
- *    	]
- *    );
+ * ```php
+ * $this->start_controls_section(
+ * 	'section_advanced',
+ * 	[
+ * 		'label' => __( 'Element Style', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::SECTION,
+ * 		'tab' => Controls_Manager::TAB_ADVANCED,
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *
@@ -49,7 +51,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Section extends Base_UI_Control {
 
 	/**
-	 * Retrieve section control type.
+	 * Get section control type.
+	 *
+	 * Retrieve the control type, in this case `section`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -82,9 +86,9 @@ class Control_Section extends Base_UI_Control {
 	}
 
 	/**
-	 * Retrieve repeater control default settings.
+	 * Get repeater control default settings.
 	 *
-	 * Get the default settings of the repeater control. Used to return the
+	 * Retrieve the default settings of the repeater control. Used to return the
 	 * default settings while initializing the repeater control.
 	 *
 	 * @since 1.0.0

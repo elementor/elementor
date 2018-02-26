@@ -89,6 +89,28 @@ class Widget_Icon_List extends Widget_Base {
 		);
 
 		$this->add_control(
+			'view',
+			[
+				'label' => __( 'Layout', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'default' => 'traditional',
+				'options' => [
+					'traditional' => [
+						'title' => __( 'Default', 'elementor' ),
+						'icon' => 'eicon-editor-list-ul',
+					],
+					'inline' => [
+						'title' => __( 'Inline', 'elementor' ),
+						'icon' => 'eicon-ellipsis-h',
+					],
+				],
+				'render_type' => 'template',
+				'classes' => 'elementor-control-start-end',
+				'label_block' => false,
+			]
+		);
+
+		$this->add_control(
 			'icon_list',
 			[
 				'label' => '',
@@ -135,15 +157,6 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'view',
-			[
-				'label' => __( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -165,8 +178,10 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child)' => 'padding-bottom: calc({{SIZE}}{{UNIT}}/2)',
-					'{{WRAPPER}} .elementor-icon-list-item:not(:first-child)' => 'margin-top: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-grid) .elementor-icon-list-item:not(:last-child)' => 'padding-bottom: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-grid) .elementor-icon-list-item:not(:first-child)' => 'margin-top: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-grid .elementor-icon-list-item' => 'margin-right: calc({{SIZE}}{{UNIT}}/2); margin-left: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-grid' => 'margin-right: calc(-{{SIZE}}{{UNIT}}/2); margin-left: calc(-{{SIZE}}{{UNIT}}/2)',
 				],
 			]
 		);
@@ -399,10 +414,19 @@ class Widget_Icon_List extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
+
+		$this->add_render_attribute( 'icon_list', 'class', 'elementor-icon-list-items' );
+		$this->add_render_attribute( 'list_item', 'class', 'elementor-icon-list-item' );
+
+		if ( 'inline' === $settings['view'] ) {
+			$this->add_render_attribute( 'icon_list', 'class', 'elementor-grid' );
+			$this->add_render_attribute( 'list_item', 'class', 'elementor-grid-item' );
+		}
 		?>
-		<ul class="elementor-icon-list-items">
-			<?php foreach ( $settings['icon_list'] as $index => $item ) :
+		<ul <?php echo $this->get_render_attribute_string( 'icon_list' ); ?>>
+			<?php
+			foreach ( $settings['icon_list'] as $index => $item ) :
 				$repeater_setting_key = $this->get_repeater_setting_key( 'text', 'icon_list', $index );
 
 				$this->add_render_attribute( $repeater_setting_key, 'class', 'elementor-icon-list-text' );
@@ -457,7 +481,17 @@ class Widget_Icon_List extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<ul class="elementor-icon-list-items">
+		<#
+			view.addRenderAttribute( 'icon_list', 'class', 'elementor-icon-list-items' );
+			view.addRenderAttribute( 'list_item', 'class', 'elementor-icon-list-item' );
+
+			if ( 'inline' == settings.view ) {
+
+				view.addRenderAttribute( 'icon_list', 'class', 'elementor-grid' );
+				view.addRenderAttribute( 'list_item', 'class', 'elementor-grid-item' );
+			}
+		#>
+		<ul {{{ view.getRenderAttributeString( 'icon_list' ) }}}>
 			<#
 			if ( settings.icon_list ) {
 				_.each( settings.icon_list, function( item, index ) {
@@ -467,7 +501,7 @@ class Widget_Icon_List extends Widget_Base {
 
 					view.addInlineEditingAttributes( iconTextKey );
 					#>
-					<li class="elementor-icon-list-item">
+					<li {{{ view.getRenderAttributeString( 'list_item' ) }}}>
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
 						<# } #>

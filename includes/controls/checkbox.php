@@ -13,30 +13,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'show_title',
- *    	[
- *    		'label' => __( 'Show Title', 'plugin-domain' ),
- *    		'type' => Controls_Manager::CHECKBOX,
- *    		'default' => 'on',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'show_title',
+ * 	[
+ * 		'label' => __( 'Show Title', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::CHECKBOX,
+ * 		'default' => 'on',
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    $settings = $this->get_settings();
- *    if ( 'on' === $settings['show_title'] ) {
- *    	echo '<h2>' . $settings['title'] . '</h2>';
- *    }
+ * ```php
+ * $settings = $this->get_settings();
+ * if ( 'on' === $settings['show_title'] ) {
+ * 	echo '<h2>' . $settings['title'] . '</h2>';
+ * }
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    <# if ( 'on' === settings.show_title ) { #>
- *    	<h2>{{{ settings.title }}}</h2>
- *    <# } #>
+ * ```js
+ * <# if ( 'on' === settings.show_title ) { #>
+ * 	<h2>{{{ settings.title }}}</h2>
+ * <# } #>
+ * ```
  *
  * @since 1.0.0
- * @deprecated 1.5.4 In favor of Control_Switcher.
+ * @deprecated 1.5.4 Use `Control_Switcher` class instead.
  *
  * @param string $label        Optional. The label that appears next of the
  *                             field. Default is empty.
@@ -63,7 +69,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Checkbox extends Base_Data_Control {
 
 	/**
-	 * Retrieve checkbox control type.
+	 * Get checkbox control type.
+	 *
+	 * Retrieve the control type, in this case `checkbox`.
 	 *
 	 * @since 1.5.4
 	 * @access public
@@ -75,9 +83,9 @@ class Control_Checkbox extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve checkbox control value.
+	 * Get checkbox control value.
 	 *
-	 * Get the value of the checkbox control from a specific widget.
+	 * Retrieve the value of the checkbox control from a specific widget.
 	 *
 	 * @since 1.5.4
 	 * @access public

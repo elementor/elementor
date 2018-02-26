@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor google maps widget.
  *
- * Elementor widget that displays an embeded google map.
+ * Elementor widget that displays an embedded google map.
  *
  * @since 1.0.0
  */
@@ -101,7 +101,7 @@ class Widget_Google_Maps extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'height',
 			[
 				'label' => __( 'Height', 'elementor' ),
@@ -151,7 +151,7 @@ class Widget_Google_Maps extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['address'] ) ) {
 			return;
@@ -162,9 +162,10 @@ class Widget_Google_Maps extends Widget_Base {
 		}
 
 		printf(
-			'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%s&amp;t=m&amp;z=%d&amp;output=embed&amp;iwloc=near"></iframe></div>',
+			'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%s&amp;t=m&amp;z=%d&amp;output=embed&amp;iwloc=near" aria-label="%s"></iframe></div>',
 			rawurlencode( $settings['address'] ),
-			absint( $settings['zoom']['size'] )
+			absint( $settings['zoom']['size'] ),
+			esc_attr( $settings['address'] )
 		);
 	}
 

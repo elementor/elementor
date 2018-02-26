@@ -14,17 +14,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'border_popover_toggle',
- *    	[
- *    		'label' => __( 'Border', 'plugin-domain' ),
- *    		'type' => Controls_Manager::POPOVER_TOGGLE,
- *    		'default' => 'yes',
- *    		'return_value' => 'yes',
- *    		'label_off' => __( 'Default', 'plugin-domain' ),
- *    		'label_on' => __( 'Custom', 'plugin-domain' ),
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'border_popover_toggle',
+ * 	[
+ * 		'label' => __( 'Border', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::POPOVER_TOGGLE,
+ * 		'default' => 'yes',
+ * 		'return_value' => 'yes',
+ * 		'label_off' => __( 'Default', 'plugin-domain' ),
+ * 		'label_on' => __( 'Custom', 'plugin-domain' ),
+ * 	]
+ * );
+ * ```
  *
  * @since 1.9.0
  *
@@ -52,7 +54,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Popover_Toggle extends Base_Data_Control {
 
 	/**
-	 * Retrieve popover toggle control type.
+	 * Get popover toggle control type.
+	 *
+	 * Retrieve the control type, in this case `popover_toggle`.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -64,9 +68,9 @@ class Control_Popover_Toggle extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve popover toggle control default settings.
+	 * Get popover toggle control default settings.
 	 *
-	 * Get the default settings of the popover toggle control. Used to
+	 * Retrieve the default settings of the popover toggle control. Used to
 	 * return the default settings while initializing the popover toggle
 	 * control.
 	 *

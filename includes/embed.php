@@ -116,7 +116,7 @@ class Embed {
 	/**
 	 * Get embed HTML.
 	 *
-	 * Retrieve the final HTML of the embeded URL.
+	 * Retrieve the final HTML of the embedded URL.
 	 *
 	 * @since 1.5.0
 	 * @access public

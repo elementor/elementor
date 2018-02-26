@@ -105,6 +105,11 @@ module.exports = function( grunt ) {
 							expose: 'elementor-templates'
 						},
 						{
+							cwd: 'assets/dev/js/editor/components/dynamic-tags',
+							src: '**/*.js',
+							expose: 'elementor-dynamic-tags'
+						},
+						{
 							cwd: 'assets/dev/js/frontend',
 							src: '**/*.js',
 							expose: 'elementor-frontend'
@@ -197,9 +202,7 @@ module.exports = function( grunt ) {
 				files: {
 					src: [
 						'assets/js/*.js',
-						'assets/css/*.css',
-
-						'!assets/css/animations.min.css'
+						'assets/css/*.css'
 					]
 				}
 			}

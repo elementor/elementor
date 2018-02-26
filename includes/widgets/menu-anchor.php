@@ -120,7 +120,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$anchor = $this->get_settings( 'anchor' );
+		$settings = $this->get_settings_for_display();
 
 		if ( ! empty( $anchor ) ) {
 			$this->add_render_attribute( 'inner', 'id', $anchor );

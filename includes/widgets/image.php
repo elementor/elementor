@@ -86,8 +86,9 @@ class Widget_Image extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
-				'name' => 'image', // Actually its `image_size`.
+				'name' => 'image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_size` and `image_custom_dimension`.
 				'default' => 'large',
+				'separator' => 'none',
 			]
 		);
 
@@ -339,6 +340,23 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'caption_space',
+			[
+				'label' => __( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .widget-image-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -351,7 +369,7 @@ class Widget_Image extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['image']['url'] ) ) {
 			return;
@@ -426,7 +444,7 @@ class Widget_Image extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<# if ( '' !== settings.image.url ) {
+		<# if ( settings.image.url ) {
 			var image = {
 				id: settings.image.id,
 				url: settings.image.url,

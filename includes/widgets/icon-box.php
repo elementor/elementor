@@ -553,7 +553,7 @@ class Widget_Icon_Box extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $settings['hover_animation'] ] );
 
@@ -573,6 +573,7 @@ class Widget_Icon_Box extends Widget_Base {
 		}
 
 		$this->add_render_attribute( 'i', 'class', $settings['icon'] );
+		$this->add_render_attribute( 'i', 'aria-hidden', 'true' );
 
 		$icon_attributes = $this->get_render_attribute_string( 'icon' );
 		$link_attributes = $this->get_render_attribute_string( 'link' );
@@ -621,7 +622,7 @@ class Widget_Icon_Box extends Widget_Base {
         <div class="elementor-icon-box-wrapper">
             <div class="elementor-icon-box-icon">
                 <{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
-                    <i class="{{ settings.icon }}"></i>
+                    <i class="{{ settings.icon }}" aria-hidden="true"></i>
                 </{{{ iconTag }}}>
             </div>
             <div class="elementor-icon-box-content">

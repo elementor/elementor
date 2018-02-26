@@ -14,15 +14,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'title',
- *    	[
- *    		'label' => __( 'Title', 'plugin-domain' ),
- *    		'type' => Controls_Manager::HEADING,
- *    		'description' => __( 'My Header', 'plugin-domain' ),
- *    		'separator' => 'before',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'title',
+ * 	[
+ * 		'label' => __( 'Title', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::HEADING,
+ * 		'description' => __( 'My Header', 'plugin-domain' ),
+ * 		'separator' => 'before',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *
@@ -45,7 +47,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Heading extends Base_UI_Control {
 
 	/**
-	 * Retrieve heading control type.
+	 * Get heading control type.
+	 *
+	 * Retrieve the control type, in this case `heading`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -57,9 +61,9 @@ class Control_Heading extends Base_UI_Control {
 	}
 
 	/**
-	 * Retrieve heading control default settings.
+	 * Get heading control default settings.
 	 *
-	 * Get the default settings of the heading control. Used to return the
+	 * Retrieve the default settings of the heading control. Used to return the
 	 * default settings while initializing the heading control.
 	 *
 	 * @since 1.0.0

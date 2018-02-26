@@ -17,15 +17,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_group_control(
- *    	Group_Control_Typography::get_type(),
- *    	[
- *    		'name' => 'content_typography',
- *    		'scheme' => Scheme_Typography::TYPOGRAPHY_1,
- *    		'selector' => '{{WRAPPER}} .text',
- *    		'separator' => 'before',
- *    	]
- *    );
+ * ```php
+ * $this->add_group_control(
+ * 	Group_Control_Typography::get_type(),
+ * 	[
+ * 		'name' => 'content_typography',
+ * 		'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+ * 		'selector' => '{{WRAPPER}} .text',
+ * 		'separator' => 'before',
+ * 	]
+ * );
+ * ```
  *
  * @since 1.0.0
  *
@@ -68,9 +70,9 @@ class Group_Control_Typography extends Group_Control_Base {
 	private static $_scheme_fields_keys = [ 'font_family', 'font_weight' ];
 
 	/**
-	 * Retrieve scheme fields keys.
+	 * Get scheme fields keys.
 	 *
-	 * Get all the available typography control scheme fields keys.
+	 * Retrieve all the available typography control scheme fields keys.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -83,9 +85,9 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve type.
-	 *
 	 * Get typography control type.
+	 *
+	 * Retrieve the control type, in this case `typography`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -287,8 +289,15 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	/**
+	 * Get default options.
+	 *
+	 * Retrieve the default options of the typography control. Used to return the
+	 * default options while initializing the typography control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default typography control options.
 	 */
 	protected function get_default_options() {
 		return [

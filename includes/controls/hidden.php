@@ -14,22 +14,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Creating new control in the editor (inside `Widget_Base::_register_controls()`
  * method):
  *
- *    $this->add_control(
- *    	'view',
- *    	[
- *    		'label' => __( 'View', 'plugin-domain' ),
- *    		'type' => Controls_Manager::HIDDEN,
- *    		'default' => 'traditional',
- *    	]
- *    );
+ * ```php
+ * $this->add_control(
+ * 	'view',
+ * 	[
+ * 		'label' => __( 'View', 'plugin-domain' ),
+ * 		'type' => Controls_Manager::HIDDEN,
+ * 		'default' => 'traditional',
+ * 	]
+ * );
+ * ```
  *
  * PHP usage (inside `Widget_Base::render()` method):
  *
- *    echo $this->get_settings( 'view' );
+ * ```php
+ * $settings = $this->get_settings();
+ * echo $settings['view'];
+ * ```
  *
  * JS usage (inside `Widget_Base::_content_template()` method):
  *
- *    {{{ settings.view }}}
+ * ```js
+ * {{{ settings.view }}}
+ * ```
  *
  * @since 1.0.0
  *
@@ -42,7 +49,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Hidden extends Base_Data_Control {
 
 	/**
-	 * Retrieve hidden control type.
+	 * Get hidden control type.
+	 *
+	 * Retrieve the control type, in this case `hidden`.
 	 *
 	 * @since 1.0.0
 	 * @access public

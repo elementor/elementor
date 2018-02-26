@@ -8,82 +8,183 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor template library source base class.
+ *
+ * Elementor template library source base handler class is responsible for
+ * initializing all the methods controlling the source of Elementor templates.
+ *
+ * @since 1.0.0
+ * @abstract
+ */
 abstract class Source_Base {
 
+	/**
+	 * User meta.
+	 *
+	 * Holds the current user meta data.
+	 *
+	 * @access private
+	 *
+	 * @var array
+	 */
 	private $user_meta;
 
 	/**
-	 * @abstract
+	 * Get template ID.
+	 *
+	 * Retrieve the template ID.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @abstract
+	 */
 	abstract public function get_id();
+
 	/**
-	 * @abstract
+	 * Get template title.
+	 *
+	 * Retrieve the template title.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @abstract
+	 */
 	abstract public function get_title();
+
 	/**
-	 * @abstract
+	 * Register template data.
+	 *
+	 * Used to register custom template data like a post type, a taxonomy or any
+	 * other data.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @abstract
+	 */
 	abstract public function register_data();
+
 	/**
-	 * @abstract
+	 * Get templates.
+	 *
+	 * Retrieve templates from the template library.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @abstract
+	 *
+	 * @param array $args Optional. Filter templates list based on a set of
+	 *                    arguments. Default is an empty array.
+	 */
 	abstract public function get_items( $args = [] );
+
 	/**
-	 * @abstract
+	 * Get template.
+	 *
+	 * Retrieve a single template from the template library.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
-	abstract public function get_item( $template_id );
-	/**
 	 * @abstract
+	 *
+	 * @param int $template_id The template ID.
+	 */
+	abstract public function get_item( $template_id );
+
+	/**
+	 * Get template data.
+	 *
+	 * Retrieve a single template data from the template library.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 * @abstract
+	 *
+	 * @param array $args Custom template arguments.
+	 */
 	abstract public function get_data( array $args );
+
 	/**
-	 * @abstract
+	 * Delete template.
+	 *
+	 * Delete template from the database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @abstract
+	 *
+	 * @param int $template_id The template ID.
+	 */
 	abstract public function delete_template( $template_id );
+
 	/**
-	 * @abstract
+	 * Save template.
+	 *
+	 * Save new or update existing template on the database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @abstract
+	 *
+	 * @param array $template_data The template data.
+	 */
 	abstract public function save_item( $template_data );
+
 	/**
-	 * @abstract
+	 * Update template.
+	 *
+	 * Update template on the database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @abstract
+	 *
+	 * @param array $new_data New template data.
+	 */
 	abstract public function update_item( $new_data );
+
 	/**
-	 * @abstract
+	 * Export template.
+	 *
+	 * Export template to a file.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @abstract
+	 *
+	 * @param int $template_id The template ID.
+	 */
 	abstract public function export_template( $template_id );
 
 	/**
+	 * Template library source base constructor.
+	 *
+	 * Initializing the template library source base by registering custom
+	 * template data.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		$this->register_data();
 	}
 
 	/**
+	 * Mark template as favorite.
+	 *
+	 * Update user meta containing his favorite templates. For a given template
+	 * ID, add the template to the favorite templates or remove it from the
+	 * favorites, based on the `favorite` parameter.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 *
+	 * @param int  $template_id The template ID.
+	 * @param bool $favorite    Optional. Whether the template is marked as
+	 *                          favorite, or not. Default is true.
+	 *
+	 * @return int|bool User meta ID if the key didn't exist, true on successful
+	 *                  update, false on failure.
 	 */
 	public function mark_as_favorite( $template_id, $favorite = true ) {
 		$favorites_templates = $this->get_user_meta( 'favorites' );
@@ -102,8 +203,16 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * Get current user meta.
+	 *
+	 * Retrieve Elementor meta data for the current user.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 *
+	 * @param string $item Optional. User meta key. Default is null.
+	 *
+	 * @return null|array An array of user meta data, or null otherwise.
 	 */
 	public function get_user_meta( $item = null ) {
 		if ( null === $this->user_meta ) {
@@ -126,8 +235,18 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * Update current user meta.
+	 *
+	 * Update user meta data based on meta key an value.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 *
+	 * @param string $key   Optional. User meta key.
+	 * @param mixed  $value Optional. User meta value.
+	 *
+	 * @return int|bool User meta ID if the key didn't exist, true on successful
+	 *                  update, false on failure.
 	 */
 	public function update_user_meta( $key, $value ) {
 		$meta = $this->get_user_meta();
@@ -140,9 +259,18 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * Replace elements IDs.
+	 *
+	 * For any given Elementor content/data, replace the IDs with new randomly
+	 * generated IDs.
+	 *
 	 * @since 1.0.0
 	 * @access protected
-	*/
+	 *
+	 * @param array $content Any type of Elementor data.
+	 *
+	 * @return mixed Iterated data.
+	 */
 	protected function replace_elements_ids( $content ) {
 		return Plugin::$instance->db->iterate_data( $content, function( $element ) {
 			$element['id'] = Utils::generate_random_string();
@@ -152,20 +280,33 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * Get Elementor library user meta prefix.
+	 *
+	 * Retrieve user meta prefix used to save Elementor data.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return string User meta prefix.
 	 */
 	protected function get_user_meta_prefix() {
 		return 'elementor_library_' . $this->get_id();
 	}
 
 	/**
+	 * Process content for export/import.
+	 *
+	 * Process the content and all the inner elements, and prepare all the
+	 * elements data for export/import.
+	 *
 	 * @since 1.5.0
 	 * @access protected
-	 * @param array  $content a set of elements.
-	 * @param string $method  (on_export|on_import).
 	 *
-	 * @return mixed
+	 * @param array  $content A set of elements.
+	 * @param string $method  Accepts either `on_export` to export data or
+	 *                        `on_import` to import data.
+	 *
+	 * @return mixed Processed content data.
 	 */
 	protected function process_export_import_content( $content, $method ) {
 		return Plugin::$instance->db->iterate_data(
@@ -183,12 +324,17 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * Process single element content for export/import.
+	 *
+	 * Process any given element and prepare the element data for export/import.
+	 *
 	 * @since 1.5.0
 	 * @access protected
-	 * @param \Elementor\Controls_Stack $element
-	 * @param string                    $method
 	 *
-	 * @return array
+	 * @param Controls_Stack $element
+	 * @param string         $method
+	 *
+	 * @return array Processed element data.
 	 */
 	protected function process_element_export_import_content( $element, $method ) {
 		$element_data = $element->get_data();

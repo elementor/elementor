@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @abstract
  *
  * @param array $default {
- *     Optional. Defautl unit values.
+ *     Optional. Default unit values.
  *
  *     @type int    $top      Optional. Top unit. Default is empty.
  *     @type int    $right    Optional. Right unit. Default is empty.
@@ -50,9 +50,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Control_Base_Units extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve units control default value.
+	 * Get units control default value.
 	 *
-	 * Get the default value of the units control. Used to return the default
+	 * Retrieve the default value of the units control. Used to return the default
 	 * values while initializing the units control.
 	 *
 	 * @since 1.0.0
@@ -67,9 +67,9 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve units control default settings.
+	 * Get units control default settings.
 	 *
-	 * Get the default settings of the units control. Used to return the default
+	 * Retrieve the default settings of the units control. Used to return the default
 	 * settings while initializing the units control.
 	 *
 	 * @since 1.0.0

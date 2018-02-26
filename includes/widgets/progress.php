@@ -251,7 +251,7 @@ class Widget_Progress extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'wrapper', [
 			'class' => 'elementor-progress-wrapper',

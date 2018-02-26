@@ -5,28 +5,75 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor settings manager class.
+ *
+ * Elementor settings manager handler class is responsible for registering and
+ * managing Elementor settings managers.
+ *
+ * @since 1.6.0
+ */
 class Manager {
+
 	/**
+	 * Settings managers.
+	 *
+	 * Holds all the registered settings managers.
+	 *
+	 * @since 1.6.0
+	 * @access private
+	 *
 	 * @var Base\Manager[]
 	 */
 	private static $settings_managers = [];
 
+	/**
+	 * Builtin settings managers names.
+	 *
+	 * Holds the names for builtin Elementor settings managers.
+	 *
+	 * @since 1.6.0
+	 * @access private
+	 *
+	 * @var array
+	 */
 	private static $builtin_settings_managers_names = [ 'page', 'general' ];
 
 	/**
+	 * Add settings manager.
+	 *
+	 * Register a single settings manager to the registered settings managers.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
+	 *
+	 * @param Base\Manager $manager Settings manager.
 	 */
 	public static function add_settings_manager( Base\Manager $manager ) {
 		self::$settings_managers[ $manager->get_name() ] = $manager;
 	}
 
 	/**
+	 * Get settings managers.
+	 *
+	 * Retrieve registered settings manager(s).
+	 *
+	 * If no parameter passed, it will retrieve all the settings managers. For
+	 * any given parameter it will retrieve a single settings manager if one
+	 * exist, or `null` otherwise.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
-	 * @return Base\Manager|Base\Manager[]
+	 *
+	 * @param string $manager_name Optional. Settings manager name. Default is
+	 *                             null.
+	 *
+	 * @return Base\Manager|Base\Manager[] Single settings manager, if it exists,
+	 *                                     null if it doesn't exists, or the all
+	 *                                     the settings managers if no parameter
+	 *                                     defined.
 	 */
 	public static function get_settings_managers( $manager_name = null ) {
 		if ( $manager_name ) {
@@ -41,6 +88,10 @@ class Manager {
 	}
 
 	/**
+	 * Register default settings managers.
+	 *
+	 * Register builtin Elementor settings managers.
+	 *
 	 * @since 1.6.0
 	 * @access private
 	 * @static
@@ -54,9 +105,15 @@ class Manager {
 	}
 
 	/**
+	 * Get settings managers config.
+	 *
+	 * Retrieve the settings managers configuration.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
+	 *
+	 * @return array The settings managers configuration.
 	 */
 	public static function get_settings_managers_config() {
 		$config = [];
@@ -78,9 +135,15 @@ class Manager {
 	}
 
 	/**
+	 * Get settings frontend config.
+	 *
+	 * Retrieve the settings managers frontend configuration.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
+	 *
+	 * @return array The settings managers frontend configuration.
 	 */
 	public static function get_settings_frontend_config() {
 		$config = [];
@@ -95,6 +158,10 @@ class Manager {
 	}
 
 	/**
+	 * Run settings managers.
+	 *
+	 * Register builtin Elementor settings managers.
+	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static

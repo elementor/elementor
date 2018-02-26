@@ -68,9 +68,9 @@ abstract class Base_Control {
 	private $_settings = [];
 
 	/**
-	 * Retrieve features.
+	 * Get features.
 	 *
-	 * Get the list of all the available features. Currently Elementor uses only
+	 * Retrieve the list of all the available features. Currently Elementor uses only
 	 * the `UI` feature.
 	 *
 	 * @since 1.5.0
@@ -84,7 +84,9 @@ abstract class Base_Control {
 	}
 
 	/**
-	 * Retrieve control type.
+	 * Get control type.
+	 *
+	 * Retrieve the control type.
 	 *
 	 * @since 1.5.0
 	 * @access public
@@ -117,9 +119,9 @@ abstract class Base_Control {
 	public function enqueue() {}
 
 	/**
-	 * Retrieve control settings.
+	 * Get control settings.
 	 *
-	 * Get the control settings or a specific setting value.
+	 * Retrieve the control settings or a specific setting value.
 	 *
 	 * @since 1.5.0
 	 * @access public
@@ -127,7 +129,7 @@ abstract class Base_Control {
 	 * @param string $setting_key Optional. Specific key to return from the
 	 *                            settings. If key set it will return the
 	 *                            specific value of the key, otherwise the
-	 *                            entire key array will be returned. Dafault is
+	 *                            entire key array will be returned. Default is
 	 *                            null.
 	 *
 	 * @return mixed The control settings, or specific setting value.
@@ -195,9 +197,9 @@ abstract class Base_Control {
 	}
 
 	/**
-	 * Retrieve default control settings.
+	 * Get default control settings.
 	 *
-	 * Get the default settings of the control. Used to return the default
+	 * Retrieve the default settings of the control. Used to return the default
 	 * settings while initializing the control.
 	 *
 	 * @since 1.5.0

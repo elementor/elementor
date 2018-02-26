@@ -131,7 +131,7 @@ class Admin {
 		?>
 		<div id="elementor-switch-mode">
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo Plugin::$instance->db->is_built_with_elementor( $post->ID ); ?>" />
-			<button id="elementor-switch-mode-button" class="elementor-button button button-primary button-hero">
+			<button id="elementor-switch-mode-button" type="button" class="elementor-button button button-primary button-hero">
 				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 				<span class="elementor-switch-mode-off">
 					<i class="eicon-elementor" aria-hidden="true"></i>
@@ -198,7 +198,7 @@ class Admin {
 	 *
 	 * @return array An updated array of row action links.
 	 */
-	public function add_edit_in_dashboard( $actions, $post ) {
+	public function add_edit_in_dashboard( $actions, \WP_Post $post ) {
 		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%s">%s</a>',
@@ -681,6 +681,10 @@ class Admin {
 	}
 
 	/**
+	 * Get elementor dashboard overview widget footer actions.
+	 *
+	 * Retrieves the footer action links displayed in elementor dashboard widget.
+	 *
 	 * @since 1.9.0
 	 * @access private
 	 */
@@ -723,6 +727,12 @@ class Admin {
 	}
 
 	/**
+	 * Admin action new post.
+	 *
+	 * When a new post action is fired the title is set to 'Elementor' and the post ID.
+	 *
+	 * Fired by `admin_action_elementor_new_post` action.
+	 *
 	 * @since 1.9.0
 	 * @access public
 	 */
@@ -739,19 +749,17 @@ class Admin {
 			return;
 		}
 
-		$post_data = [
+		if ( empty( $_GET['template_type'] ) ) {
+			$type = 'post';
+		} else {
+			$type = $_GET['template_type']; // XSS ok.
+		}
+
+		$document = Plugin::$instance->documents->create( $type, [
 			'post_type' => $post_type,
-			'post_title' => __( 'Elementor', 'elementor' ),
-		];
+		]  );
 
-		$post_id = wp_insert_post( $post_data );
-
-		$post_data['ID'] = $post_id;
-		$post_data['post_title'] .= ' #' . $post_id;
-
-		wp_update_post( $post_data );
-
-		wp_redirect( Utils::get_edit_link( $post_id ) );
+		wp_redirect( $document->get_edit_url() );
 		die;
 	}
 
