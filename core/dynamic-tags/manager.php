@@ -11,9 +11,15 @@ class Manager {
 
 	const TAG_LABEL = 'elementor-tag';
 
+	const MODE_RENDER = 'render';
+
+	const MODE_REMOVE = 'remove';
+
 	private $tags_groups = [];
 
 	private $tags_info = [];
+
+	private $parsing_mode = self::MODE_RENDER;
 
 	public function __construct() {
 		$this->add_actions();
@@ -113,6 +119,10 @@ class Manager {
 	}
 
 	public function get_tag_data_content( $tag_id, $tag_name, array $settings = [] ) {
+		if ( self::MODE_REMOVE === $this->parsing_mode ) {
+			return null;
+		}
+
 		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
 
 		if ( ! $tag ) {
@@ -231,6 +241,14 @@ class Manager {
 		do_action( 'elementor/dynamic_tags/after_render' );
 
 		wp_send_json_success( $tags_data );
+	}
+
+	public function set_parsing_mode( $mode ) {
+		$this->parsing_mode = $mode;
+	}
+
+	public function get_parsing_mode() {
+		return $this->parsing_mode;
 	}
 
 	private function add_actions() {
