@@ -50,6 +50,6 @@ module.exports = Marionette.ItemView.extend( {
 
 		this.activateMenuItem( jQuery( item ) );
 
-		elementor.templates.setTemplatesSource( item.dataset.templateSource, itemData.templateType );
+		elementor.templates.setTemplatesPage( item.dataset.templateSource, itemData.templateType );
 	}
 } );

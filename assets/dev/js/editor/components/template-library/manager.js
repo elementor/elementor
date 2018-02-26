@@ -27,7 +27,7 @@ TemplateLibraryManager = function() {
 				success: function( data ) {
 					self.getTemplatesCollection().add( data );
 
-					self.setTemplatesSource( 'local' );
+					self.setTemplatesPage( 'local' );
 				},
 				error: function( data ) {
 					self.showErrorDialog( data );
@@ -292,7 +292,7 @@ TemplateLibraryManager = function() {
 
 		self.getModal().show();
 
-		self.setTemplatesSource( 'remote', 'page', true );
+		self.setTemplatesPage( 'remote', 'page', true );
 
 		if ( ! layout ) {
 			initLayout();
@@ -331,7 +331,7 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setTemplatesSource = function( source, type, silent ) {
+	this.setTemplatesPage = function( source, type, silent ) {
 		elementor.channels.templates.stopReplying();
 
 		self.setFilter( 'source', source, true );
