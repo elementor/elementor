@@ -334,10 +334,10 @@ TemplateLibraryManager = function() {
 	this.setTemplatesSource = function( source, type, silent ) {
 		elementor.channels.templates.stopReplying();
 
-		self.setFilter( 'source', source );
+		self.setFilter( 'source', source, true );
 
 		if ( type ) {
-			self.setFilter( 'type', type );
+			self.setFilter( 'type', type, true );
 		}
 
 		if ( ! silent ) {

@@ -44,7 +44,8 @@
 			};
 
 			self.modules = {
-				StretchElement: require( 'elementor-frontend/modules/stretch-element' )
+				StretchElement: require( 'elementor-frontend/modules/stretch-element' ),
+				Masonry: require( 'elementor-utils/masonry' )
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
