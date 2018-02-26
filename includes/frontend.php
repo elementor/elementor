@@ -301,7 +301,7 @@ class Frontend {
 			[
 				'jquery',
 			],
-			'1.6.0',
+			'1.8.1',
 			true
 		);
 

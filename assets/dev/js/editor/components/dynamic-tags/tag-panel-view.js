@@ -7,6 +7,15 @@ module.exports = Marionette.ItemView.extend( {
 
 	tagControlsStack: null,
 
+	templateHelpers: function() {
+		var helpers = {};
+		if ( this.model ) {
+			helpers.controls = this.model.options.controls;
+		}
+
+		return helpers;
+	},
+
 	ui: {
 		remove: '.elementor-dynamic-cover__remove'
 	},
