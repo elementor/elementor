@@ -13,6 +13,8 @@ class Module extends BaseModule {
 
 	const TEXT_CATEGORY = 'text';
 
+	const POST_META_CATEGORY = 'post_meta';
+
 	public function __construct() {
 		$this->register_groups();
 
