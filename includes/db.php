@@ -554,7 +554,7 @@ class DB {
 		// Ensure the global post is set only if needed
 		unset( $GLOBALS['post'] );
 
-		if ( $wp_query->is_singular() ) {
+		if ( $wp_query->is_singular() && isset( $wp_query->posts[0] ) ) {
 			$GLOBALS['post'] = $wp_query->posts[0];
 			setup_postdata( $GLOBALS['post'] );
 		}
