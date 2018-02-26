@@ -1077,18 +1077,17 @@
   color: #222222;
   line-height: 1; }
 
-.elementor-counter .elementor-counter-number-prefix {
+.elementor-counter .elementor-counter-number-prefix, .elementor-counter .elementor-counter-number-suffix {
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
       -ms-flex-positive: 1;
           flex-grow: 1;
+  white-space: pre-wrap; }
+
+.elementor-counter .elementor-counter-number-prefix {
   text-align: right; }
 
 .elementor-counter .elementor-counter-number-suffix {
-  -webkit-box-flex: 1;
-  -webkit-flex-grow: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
   text-align: left; }
 
 .elementor-counter .elementor-counter-title {
