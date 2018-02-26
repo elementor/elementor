@@ -1,5 +1,5 @@
 var HotKeys = function() {
-	var hotKeysHandlers = this.hotKeysHandlers = {};
+	var hotKeysHandlers = {};
 
 	var isMac = function() {
 		return -1 !== navigator.userAgent.indexOf( 'Mac OS X' );
