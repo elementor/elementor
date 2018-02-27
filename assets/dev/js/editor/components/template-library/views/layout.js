@@ -15,8 +15,8 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 	el: '#elementor-template-library-modal',
 
 	regions: {
-		modalContent: '.dialog-message',
-		modalHeader: '.dialog-widget-header'
+		modalHeader: '.dialog-widget-header',
+		modalContent: '.dialog-message'
 	},
 
 	initialize: function() {
