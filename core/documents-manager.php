@@ -125,7 +125,7 @@ class Documents_Manager {
 		if ( empty( $post_data['post_title'] ) ) {
 			$post_data['post_title'] = __( 'Elementor', 'elementor' );
 			if ( 'post' !== $type ) {
-				$post_data['post_title'] .= ' ' . $this->types[ $type ]::get_title();
+				$post_data['post_title'] .= ' ' . call_user_func( $this->types[ $type ], 'get_title' );
 			}
 			$update_title = true;
 		}
