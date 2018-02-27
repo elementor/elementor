@@ -225,7 +225,7 @@ class Source_Local extends Source_Base {
 					<div id="elementor-new-template__description__elementor-builder"><?php echo __( 'Elementor Builder', 'elementor' ); ?></div>
 					<div id="elementor-new-template__description__content"><?php echo __( 'Build & Design all dynamic parts of your site using pre designed blocks or by blank canvas and preview it in one of your pages.', 'elementor' ); ?></div>
 					<div id="elementor-new-template__take_a_tour">
-						<i class="eicon-play"></i>
+						<i class="eicon-play-o"></i>
 						<a href=""><?php echo __( 'Take The Video Tour', 'elementor' ); ?></a>
 					</div>
 				</div>

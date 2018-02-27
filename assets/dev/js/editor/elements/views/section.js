@@ -199,7 +199,7 @@ SectionView = BaseElementView.extend( {
 			throw new ReferenceError( 'There is not any next column' );
 		}
 
-		var minColumnSize = 10,
+		var minColumnSize = 2,
 			$nextElement = nextChildView.$el,
 			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[0].getBoundingClientRect().width ),
 			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
