@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -77,6 +79,11 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [ Module::IMAGE_CATEGORY ],
+					'returnType' => 'object',
+				],
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
