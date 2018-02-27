@@ -150,6 +150,10 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [ Module::URL_CATEGORY ],
+				],
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'separator' => 'before',
 			]
