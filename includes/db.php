@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\DynamicTags\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -303,7 +305,7 @@ class DB {
 		// Switch $dynamic_tags to parsing mode = remove.
 		$dynamic_tags = Plugin::$instance->dynamic_tags;
 		$parsing_mode = $dynamic_tags->get_parsing_mode();
-		$dynamic_tags->set_parsing_mode( $dynamic_tags::MODE_REMOVE );
+		$dynamic_tags->set_parsing_mode( Manager::MODE_REMOVE );
 
 		$plain_text = $this->get_plain_text( $post_id );
 
