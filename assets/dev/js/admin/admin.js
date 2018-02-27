@@ -21,9 +21,8 @@
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$addNew: $( '.post-type-elementor_library #wpbody-content' ).find( '.page-title-action:first' ),
 				$addNewDialogHeader:  $( '#elementor-template-library-header' ),
-				$addNewDialogContent:  $( '#elementor-new-template-dialog-content' ),
-				$addNewDialogSubmit:  $( '#elementor-new-template-dialog-submit' ),
-				$addNewDialogClose:  $( '#elementor-template-library-header-close-modal' )
+				$addNewDialogClose:  $( '#elementor-template-library-header-close-modal' ),
+				$addNewDialogContent:  $( '#elementor-new-template-dialog-content' )
 			};
 
 			this.cache.$settingsFormPages = this.cache.$settingsForm.find( '.elementor-settings-form-page' );
