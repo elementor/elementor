@@ -448,6 +448,10 @@ html.elementor-html {
 		}
 	}
 
+	.elementor-column {
+		min-width: 25px;
+	}
+
 	.elementor-widget {
 
 		&.elementor-loading {
