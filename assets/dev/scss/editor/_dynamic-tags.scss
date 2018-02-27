@@ -44,8 +44,11 @@
 	}
 
 	&__title {
-		@include padding-start(8px);
+		padding: 0 8px;
 		flex-grow: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	&__remove {
