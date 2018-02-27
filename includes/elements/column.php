@@ -123,8 +123,8 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Column Width', 'elementor' ) . ' (%)',
 				'type' => Controls_Manager::NUMBER,
-				'min' => 10,
-				'max' => 90,
+				'min' => 2,
+				'max' => 98,
 				'required' => true,
 				'device_args' => [
 					Controls_Stack::RESPONSIVE_TABLET => [
