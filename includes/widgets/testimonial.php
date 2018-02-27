@@ -93,6 +93,9 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'label' => __( 'Content', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'rows' => '10',
 				'default' => 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.',
 			]
@@ -123,6 +126,9 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'label' => __( 'Name', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'John Doe',
 			]
 		);
@@ -132,6 +138,9 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'label' => __( 'Job', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Designer',
 			]
 		);
