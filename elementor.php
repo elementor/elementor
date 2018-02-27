@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'ELEMENTOR_VERSION', '2.0.0-alpha2' );
-define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '1.9.6' );
+define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '1.9.7' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
