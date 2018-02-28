@@ -24,13 +24,13 @@ module.exports = Marionette.Behavior.extend( {
 	renderTools: function() {
 		var $dynamicSwitcher = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-dynamic-switcher' ) );
 
-		this.ui.controlTitle.after( $dynamicSwitcher );
+		this.ui.controlTitle[ this.view.model.get( 'label_block' ) ? 'after' : 'before' ]( $dynamicSwitcher );
 
 		this.ui.dynamicSwitcher = this.$el.find( this.ui.dynamicSwitcher.selector );
 	},
 
 	toggleDynamicClass: function() {
-		this.$el.toggleClass( 'elementor-control-dynamic', this.isDynamicMode() );
+		this.$el.toggleClass( 'elementor-control-dynamic-value', this.isDynamicMode() );
 	},
 
 	isDynamicMode: function() {
@@ -163,6 +163,8 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onRender: function() {
+		this.$el.addClass( 'elementor-control-dynamic' );
+
 		this.renderTools();
 
 		this.toggleDynamicClass();
