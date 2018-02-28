@@ -44,11 +44,7 @@ AddSectionView = Marionette.ItemView.extend( {
 	},
 
 	getTemplatesModalOptions: function() {
-		return {
-			onReady: function() {
-				elementor.templates.showTemplates();
-			}
-		};
+		return {};
 	},
 
 	onAddSectionButtonClick: function() {

@@ -11,6 +11,11 @@ $remote-templates-items-space: 30px;
 			font-weight: 500;
 		}
 	}
+
+	.dialog-lightbox-preview {
+		height: 100%;
+		display: none;
+	}
 }
 
 #elementor-template-library-header-menu {
@@ -188,6 +193,7 @@ $remote-templates-items-space: 30px;
 
 .elementor-template-library-filter-toolbar {
 	display: flex;
+	align-items: center;
 }
 
 #elementor-template-library-filter-toolbar-remote {
@@ -207,6 +213,15 @@ $remote-templates-items-space: 30px;
 
 	&:hover {
 		color: $editor-darker;
+	}
+}
+
+#elementor-template-library-filter {
+	@include border-end(1px solid $editor-lightest);
+
+	.select2 {
+		text-align: $start;
+		@include margin-end(25px);
 	}
 }
 

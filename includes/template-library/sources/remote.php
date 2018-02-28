@@ -107,6 +107,7 @@ class Source_Remote extends Source_Base {
 			'template_id' => $template_data['id'],
 			'source' => $this->get_id(),
 			'type' => $template_data['type'],
+			'subtype' => $template_data['subtype'],
 			'title' => $template_data['title'],
 			'thumbnail' => $template_data['thumbnail'],
 			'date' => $template_data['tmpl_created'],
