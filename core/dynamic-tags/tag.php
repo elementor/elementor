@@ -1,30 +1,76 @@
 <?php
 namespace Elementor\Core\DynamicTags;
 
-use Elementor\Controls_Stack;
-use Elementor\Plugin;
-
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 abstract class Tag extends Base_Tag {
 
 	final public function get_content( array $options = [] ) {
+		$settings = $this->get_settings();
 		ob_start();
 
-		if ( ! empty( $options[ 'wrap' ] ) ) { ?>
+		if ( ! empty( $options['wrap'] ) ) { ?>
 			<span id="elementor-tag-<?php echo $this->get_id(); ?>" class="elementor-tag">
 		<?php }
 
+		if ( ! empty( $settings['before'] ) ) {
+			echo wp_kses_post( $settings['before'] );
+		}
+
 		$this->render();
 
-		if ( ! empty( $options[ 'wrap' ] ) ) { ?>
+		if ( ! empty( $settings['after'] ) ) {
+			echo wp_kses_post( $settings['after'] );
+		}
+
+		if ( ! empty( $options['wrap'] ) ) { ?>
 			</span>
 		<?php }
 
-		return ob_get_clean();
+		$value = ob_get_clean();
+
+		if ( ! $value && ! empty( $settings['fallback'] ) ) {
+			$value = $settings['fallback'];
+		}
+
+		return $value;
 	}
 
 	final public function get_content_type() {
 		return 'ui';
+	}
+
+	protected function register_advanced_section() {
+		$this->start_controls_section(
+			'advanced',
+			[
+				'label' => __( 'Advanced', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'before',
+			[
+				'label' => __( 'Before', 'elementor-pro' ),
+			]
+		);
+
+		$this->add_control(
+			'after',
+			[
+				'label' => __( 'After', 'elementor-pro' ),
+			]
+		);
+
+		$this->add_control(
+			'fallback',
+			[
+				'label' => __( 'Fallback', 'elementor-pro' ),
+			]
+		);
+
+		$this->end_controls_section();
 	}
 }
