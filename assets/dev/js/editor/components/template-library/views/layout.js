@@ -15,16 +15,17 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 	el: '#elementor-template-library-modal',
 
 	regions: {
-		modalContent: '.dialog-message',
-		modalHeader: '.dialog-widget-header'
+		modalHeader: '.dialog-widget-header',
+		modalContent: '.dialog-lightbox-content',
+		modalPreview: '.dialog-lightbox-preview'
 	},
 
 	initialize: function() {
-		this.getRegion( 'modalHeader' ).show( new TemplateLibraryHeaderView() );
+		this.modalHeader.show( new TemplateLibraryHeaderView() );
 	},
 
 	getHeaderView: function() {
-		return this.getRegion( 'modalHeader' ).currentView;
+		return this.modalHeader.currentView;
 	},
 
 	getTemplateActionButton: function( templateData ) {
@@ -37,6 +38,14 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		return Marionette.Renderer.render( template );
 	},
 
+	setHeaderDefaultParts: function() {
+		var headerView = this.getHeaderView();
+
+		headerView.tools.show( new TemplateLibraryHeaderActionsView() );
+		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
+		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
+	},
+
 	showLoadingView: function() {
 		this.modalContent.show( new TemplateLibraryLoadingView() );
 	},
@@ -46,11 +55,7 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 			collection: templatesCollection
 		} ) );
 
-		var headerView = this.getHeaderView();
-
-		headerView.tools.show( new TemplateLibraryHeaderActionsView() );
-		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
-		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
+		this.setHeaderDefaultParts();
 	},
 
 	showImportView: function() {
@@ -65,8 +70,8 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
 	},
 
-	showPreviewView: function( templateModel ) {
-		this.modalContent.show( new TemplateLibraryPreviewView( {
+	openPreview: function( templateModel ) {
+		this.modalPreview.show( new TemplateLibraryPreviewView( {
 			url: templateModel.get( 'url' )
 		} ) );
 
@@ -79,6 +84,18 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		} ) );
 
 		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
+
+		this.modalContent.$el.hide();
+
+		this.modalPreview.$el.show();
+	},
+
+	closePreview: function() {
+		this.setHeaderDefaultParts();
+
+		this.modalContent.$el.show();
+
+		this.modalPreview.$el.hide();
 	}
 } );
 
