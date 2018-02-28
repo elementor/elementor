@@ -30,7 +30,7 @@ class Module extends BaseModule {
 	}
 
 	public function get_tag_classes_names() {
-		return [ 'Icon' ];
+		return [];
 	}
 
 	public function get_groups() {
