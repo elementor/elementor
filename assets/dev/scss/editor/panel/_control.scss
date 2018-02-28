@@ -244,6 +244,7 @@
 .elementor-control-field {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 }
 
 .elementor-label-block {
@@ -251,7 +252,6 @@
 	> .elementor-control-content {
 
 		> .elementor-control-field {
-			flex-wrap: wrap;
 
 			> .elementor-control-input-wrapper {
 				width: 100%;
@@ -260,7 +260,7 @@
 		}
 	}
 
-	&.elementor-control-hidden-label {
+	&.elementor-control-hidden-label:not(.elementor-control-dynamic) {
 
 		> .elementor-control-content {
 
