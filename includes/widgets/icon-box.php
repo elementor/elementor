@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Modules\DynamicTags\Module;
+use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -168,7 +168,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
-					'categories' => [ Module::URL_CATEGORY ],
+					'categories' => [ TagsModule::URL_CATEGORY ],
 				],
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'separator' => 'before',
