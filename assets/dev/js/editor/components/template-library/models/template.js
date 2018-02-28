@@ -4,6 +4,7 @@ module.exports = Backbone.Model.extend( {
 		title: '',
 		source: '',
 		type: '',
+		subtype: '',
 		author: '',
 		thumbnail: '',
 		url: '',
