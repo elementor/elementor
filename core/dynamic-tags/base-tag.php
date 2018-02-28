@@ -34,7 +34,8 @@ abstract class Base_Tag extends Controls_Stack {
 		}
 		?>
 		<#
-		if ( <?php echo $panel_template_setting_key; ?> ) {
+		var key = <?php echo $panel_template_setting_key; ?>;
+		if ( key ) {
 			var settingsKey = "<?php echo $panel_template_setting_key; ?>";
 
 			/*
