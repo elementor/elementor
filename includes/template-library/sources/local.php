@@ -1084,7 +1084,7 @@ class Source_Local extends Source_Base {
 		$baseurl = admin_url( 'edit.php?post_type=' . self::CPT );
 		?>
 		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
-			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php esc_attr_e( 'All', '' ); ?></a>
+			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php esc_attr_e( 'All', 'elementor' ); ?></a>
 			<?php
 			foreach ( self::$_template_types as $template_type ) :
 				$active_class = '';
@@ -1122,7 +1122,12 @@ class Source_Local extends Source_Base {
 		?>
 		<style type="text/css">#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub  { display: none; } </style>
 		<div class="elementor-template_library-blank_state">
-
+            <div class="blank_state-inner">
+                <i class="eicon-folder"></i>
+                <h2>Creat your first Header</h2>
+                <p>Creat your first Header</p>
+                <a class="button button-primary button-hero elementor-button" href="#">Add New Header</a>
+            </div>
 		</div>
 		<?php
 	}
