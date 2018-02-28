@@ -11,6 +11,11 @@ $remote-templates-items-space: 30px;
 			font-weight: 500;
 		}
 	}
+
+	.dialog-lightbox-preview {
+		height: 100%;
+		display: none;
+	}
 }
 
 #elementor-template-library-header-menu {
