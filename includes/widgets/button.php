@@ -372,7 +372,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'text_padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),
