@@ -74,7 +74,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			passingFilter = true;
 
 		jQuery.each( filterTerms, function( filterTermName ) {
-			var filterValue = this.value || elementor.templates.getFilter( filterTermName );
+			var filterValue = elementor.templates.getFilter( filterTermName );
 
 			if ( ! filterValue ) {
 				return;
