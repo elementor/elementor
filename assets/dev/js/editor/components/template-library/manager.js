@@ -64,18 +64,18 @@ TemplateLibraryManager = function() {
 			type: {},
 			favorite: {}
 		};
+	};
 
-		jQuery.each( startIntent.filters, function( filterName ) {
-			if ( filterTerms[ filterName ] ) {
-				jQuery.extend( filterTerms[ filterName ], this );
-			} else {
-				filterTerms[ filterName ] = this;
-			}
+	var setIntentFilters = function() {
+		jQuery.each( startIntent.filters, function( filterKey, filterValue ) {
+			self.setFilter( filterKey, filterValue, true );
 		} );
 	};
 
 	this.init = function() {
 		registerDefaultTemplateTypes();
+
+		registerDefaultFilterTerms();
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more'
@@ -286,13 +286,17 @@ TemplateLibraryManager = function() {
 	};
 
 	this.startModal = function( customStartIntent ) {
-		startIntent = customStartIntent || {};
+		startIntent = jQuery.extend( {
+			filters: {
+				source: 'remote',
+				type: 'page'
+			},
+			onReady: self.showTemplates
+		}, customStartIntent );
 
-		registerDefaultFilterTerms();
+		setIntentFilters();
 
 		self.getModal().show();
-
-		self.setTemplatesPage( 'remote', 'page', true );
 
 		if ( ! layout ) {
 			initLayout();
@@ -300,11 +304,7 @@ TemplateLibraryManager = function() {
 
 		layout.showLoadingView();
 
-		self.requestLibraryData( function() {
-			if ( startIntent.onReady ) {
-				startIntent.onReady();
-			}
-		} );
+		self.requestLibraryData( startIntent.onReady );
 	};
 
 	this.closeModal = function() {
@@ -362,9 +362,7 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showTemplatesModal = function() {
-		self.startModal( {
-			onReady: self.showTemplates
-		} );
+		self.startModal();
 	};
 
 	this.showErrorDialog = function( errorMessage ) {
