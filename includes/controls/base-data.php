@@ -80,7 +80,11 @@ abstract class Base_Data_Control extends Base_Control {
 			return $value;
 		}
 
-		$dynamic_settings = array_merge( $this->get_settings( 'dynamic' ), $dynamic_settings );
+		$current_dynamic_settings = $this->get_settings( 'dynamic' );
+
+		if ( is_array( $current_dynamic_settings ) ) {
+			$dynamic_settings = array_merge( $current_dynamic_settings, $dynamic_settings );
+		}
 
 		$value_to_parse = $value;
 
