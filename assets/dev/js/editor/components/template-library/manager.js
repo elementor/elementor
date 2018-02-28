@@ -62,6 +62,7 @@ TemplateLibraryManager = function() {
 				}
 			},
 			type: {},
+			subtype: {},
 			favorite: {}
 		};
 	};

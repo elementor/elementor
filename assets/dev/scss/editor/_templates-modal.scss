@@ -188,6 +188,7 @@ $remote-templates-items-space: 30px;
 
 .elementor-template-library-filter-toolbar {
 	display: flex;
+	align-items: center;
 }
 
 #elementor-template-library-filter-toolbar-remote {
@@ -207,6 +208,13 @@ $remote-templates-items-space: 30px;
 
 	&:hover {
 		color: $editor-darker;
+	}
+}
+
+#elementor-template-library-filter {
+
+	.select2 {
+		text-align: $start;
 	}
 }
 
