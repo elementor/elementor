@@ -44,8 +44,11 @@
 	}
 
 	&__title {
-		@include padding-start(8px);
+		padding: 0 8px;
 		flex-grow: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	&__remove {
@@ -107,14 +110,21 @@
 			display: flex;
 			justify-content: flex-end;
 			flex-grow: 1;
+
+			.elementor-label-inline & {
+				width: 100%;
+				padding-bottom: 10px;
+			}
 		}
 	}
 
-	.elementor-control-tag-area {
-		display: none;
-	}
+	&-value {
+		.elementor-control-tag-area {
+			display: none;
+		}
 
-	.elementor-control-dynamic-switcher {
-		color: $editor-info;
+		.elementor-control-dynamic-switcher {
+			color: $editor-info;
+		}
 	}
 }

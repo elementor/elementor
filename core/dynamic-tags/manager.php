@@ -129,7 +129,9 @@ class Manager {
 			return null;
 		}
 
-		return $tag->get_content( [ 'wrap' => true ] );
+		return $tag->get_content( [
+			'wrap' => true,
+		] );
 	}
 
 	public function get_tag_info( $tag_name ) {
@@ -231,7 +233,7 @@ class Manager {
 
 			$tag_name = base64_decode( $tag_key_parts[0] );
 
-			$tag_settings = json_decode( base64_decode( $tag_key_parts[1] ), true );
+			$tag_settings = json_decode( urldecode( base64_decode( $tag_key_parts[1] ) ), true );
 
 			$tag = $this->create_tag( null, $tag_name, $tag_settings );
 
