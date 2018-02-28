@@ -187,7 +187,7 @@ abstract class Document extends Controls_Stack {
 	 * Initialize controls.
 	 *
 	 * Register the all controls added by `_register_controls()`.
-	 * and add the `clear_page_settings` at end of Settings Tab
+	 * and add the `advanced_settings` at end of Settings Tab
 	 *
 	 * @since 2.0.0
 	 * @access protected
@@ -196,9 +196,9 @@ abstract class Document extends Controls_Stack {
 		parent::init_controls();
 
 		$this->start_controls_section(
-			'clear_page_settings',
+			'advanced_settings',
 			[
-				'label' => __( 'Delete Content', 'elementor' ),
+				'label' => __( 'Advanced', 'elementor' ),
 				'tab' => Controls_Manager::TAB_SETTINGS,
 			]
 		);
