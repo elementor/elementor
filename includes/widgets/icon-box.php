@@ -134,6 +134,9 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => __( 'This is the heading', 'elementor' ),
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'label_block' => true,
@@ -145,6 +148,9 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => '',
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 				'placeholder' => __( 'Enter your description', 'elementor' ),
 				'rows' => 10,
