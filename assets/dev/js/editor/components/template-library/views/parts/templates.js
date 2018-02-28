@@ -19,14 +19,16 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	ui: {
-		filterText: '#elementor-template-library-filter-text',
+		textFilter: '#elementor-template-library-filter-text',
+		selectFilter: '.elementor-template-library-filter-select',
 		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
 		orderInputs: '.elementor-template-library-order-input',
 		orderLabels: '.elementor-template-library-order-label'
 	},
 
 	events: {
-		'input @ui.filterText': 'onFilterTextInput',
+		'input @ui.textFilter': 'onTextFilterInput',
+		'change @ui.selectFilter': 'onSelectFilterChange',
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick'
 	},
@@ -143,6 +145,16 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
+	setFiltersUI: function() {
+		var $filters = this.$( this.ui.selectFilter );
+
+		$filters.select2( {
+			placeholder: elementor.translate( 'type' ),
+			allowClear: true,
+			width: 150
+		} );
+	},
+
 	setMasonrySkin: function() {
 		var masonry = new Masonry( {
 			container: this.$childViewContainer,
@@ -162,6 +174,8 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.toggleFilterClass();
 
 		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'block' === elementor.templates.getFilter( 'type' ) ) {
+			this.setFiltersUI();
+
 			this.setMasonrySkin();
 		}
 	},
@@ -170,8 +184,15 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.addSourceData();
 	},
 
-	onFilterTextInput: function() {
-		elementor.templates.setFilter( 'text', this.ui.filterText.val() );
+	onTextFilterInput: function() {
+		elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
+	},
+
+	onSelectFilterChange: function( event ) {
+		var $select = jQuery( event.currentTarget ),
+			filterName = $select.data( 'elementor-filter' );
+
+		elementor.templates.setFilter( filterName, $select.val() );
 	},
 
 	onMyFavoritesFilterChange: function(  ) {
