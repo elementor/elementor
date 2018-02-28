@@ -236,6 +236,11 @@ TemplateLibraryManager = function() {
 					onOutsideClick: false
 				}
 			} );
+
+			var $content = modal.addElement( 'content' ),
+				$preview = modal.addElement( 'preview' );
+
+			modal.getElements( 'message' ).append( $content, $preview );
 		}
 
 		return modal;
