@@ -1124,8 +1124,8 @@ class Source_Local extends Source_Base {
 		<div class="elementor-template_library-blank_state">
             <div class="blank_state-inner">
                 <i class="eicon-folder"></i>
-                <h2>Creat your first Header</h2>
-                <p>Creat your first Header</p>
+                <h2>Create your first Header</h2>
+                <p>Add a new template here and take control of your site</p>
                 <a class="button button-primary button-hero elementor-button" href="#">Add New Header</a>
             </div>
 		</div>
