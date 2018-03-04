@@ -65,14 +65,6 @@ abstract class Base_Tag extends Controls_Stack {
 		return 'tag-' . $this->get_name();
 	}
 
-	protected function _get_initial_config() {
-		$config = parent::_get_initial_config();
-
-		$config['content_type'] = $this->get_content_type();
-
-		return $config;
-	}
-
 	protected function register_advanced_section() {}
 
 	final protected function init_controls() {
