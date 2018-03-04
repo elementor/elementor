@@ -184,6 +184,7 @@ class Source_Local extends Source_Base {
 		$document_types = Plugin::$instance->documents->get_document_types();
 		$groups = Plugin::$instance->documents->get_groups();
 		$types_by_groups = [];
+		$selected = isset( $_GET['elementor_library_type'] ) ? $_GET['elementor_library_type'] : '';
 
 		foreach ( $document_types as $document_type ) {
 			if ( $document_type::get_property( 'show_in_library' ) ) {
@@ -199,6 +200,8 @@ class Source_Local extends Source_Base {
 				$instance = new $document_type();
 
 				$types_by_groups[ $group ][  $instance->get_name() ] = $document_type::get_title();
+
+
 			}
 		}
 		?>
@@ -243,7 +246,7 @@ class Source_Local extends Source_Base {
 									echo sprintf( '<optgroup label="%s">', $group_args['label'] );
 
 									foreach ( $types_by_groups[ $group_id ] as $value => $title ) {
-										echo sprintf( '<option value="%s">%s</option>', $value, $title );
+										echo sprintf( '<option value="%1$s" %2$s>%3$s</option>', $value, selected( $selected, $value, false ), $title );
 									}
 
 									echo '</optgroup>';
