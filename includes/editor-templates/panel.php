@@ -250,7 +250,7 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 			<i class="fa fa-wrench"></i>
 		</div>
 	<# } #>
-	<div class="elementor-dynamic-cover__title">{{{ title + ' ' + content }}}</div>
+	<div class="elementor-dynamic-cover__title" title="{{{ title + ' ' + content }}}">{{{ title + ' ' + content }}}</div>
 	<div class="elementor-dynamic-cover__remove">
 		<i class="fa fa-times-circle"></i>
 	</div>
