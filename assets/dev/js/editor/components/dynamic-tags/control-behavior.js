@@ -206,5 +206,11 @@ module.exports = Marionette.Behavior.extend( {
 		this.view.setSettingsModel( staticValue );
 
 		this.view.applySavedValue();
+	},
+
+	onDestroy: function() {
+		if ( this.tagView ) {
+			this.tagView.destroy();
+		}
 	}
 } );
