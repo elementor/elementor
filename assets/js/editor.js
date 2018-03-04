@@ -406,7 +406,9 @@ module.exports = Module.extend( {
 
 				var message;
 
-				if ( data.statusText ) {
+				if ( _.isString( data ) ) {
+					message = data;
+				} else if ( data.statusText ) {
 					message = elementor.ajax.createErrorMessage( data );
 
 					if ( 0 === data.readyState ) {
