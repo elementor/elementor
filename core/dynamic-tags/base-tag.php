@@ -32,8 +32,7 @@ abstract class Base_Tag extends Controls_Stack {
 		if ( ! $panel_template_setting_key ) {
 			return;
 		}
-		?>
-		<#
+		?><#
 		if ( <?php echo $panel_template_setting_key; ?> ) {
 			var settingsKey = "<?php echo $panel_template_setting_key; ?>";
 
@@ -45,19 +44,21 @@ abstract class Base_Tag extends Controls_Stack {
 			 */
 			if ( controls && controls[settingsKey] ) {
 				var controlSettings = controls[settingsKey];
+
 				if ( controlSettings.options && controlSettings.options[ key ] ) {
 					key = controlSettings.options[ key ];
 				} else if ( controlSettings.groups ) {
 					var label = _.filter( _.pluck( _.pluck( controls.key.groups, 'options' ), key ) );
+
 					if ( label ) {
 						key = label;
 					}
 				}
 			}
-		#>
-			({{{key}}})
-		<# } #>
-		<?php
+
+			print( '(' + key + ')' );
+		}
+		#><?php
 	}
 
 	final public function get_unique_name() {
