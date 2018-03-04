@@ -69,21 +69,33 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return this.activeTab === sectionControlModel.get( 'tab' );
 	},
 
-	activateTab: function( $tab ) {
-		var self = this,
-			activeTab = this.activeTab = $tab.data( 'tab' );
+	activateTab: function( tabName ) {
+		var self = this;
 
-		this.ui.tabs.removeClass( 'active' );
+		self.activeTab = tabName;
 
-		$tab.addClass( 'active' );
+		self.ui.tabs
+			.removeClass( 'elementor-active' )
+			.filter( '[data-tab="' + tabName + '"]' )
+			.addClass( 'elementor-active' );
 
-		var sectionControls = this.collection.filter( function( controlModel ) {
+		var sectionControls = self.collection.filter( function( controlModel ) {
 			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
 		} );
 
-		if ( sectionControls[0] ) {
-			this.activateSection( sectionControls[0].get( 'name' ) );
+		if ( ! sectionControls[0] ) {
+			return;
 		}
+
+		var preActivatedSection = sectionControls.filter( function( controlModel ) {
+			return self.activeSection === controlModel.get( 'name' );
+		} );
+
+		if ( preActivatedSection[0] ) {
+			return;
+		}
+
+		self.activateSection( sectionControls[0].get( 'name' ) );
 	},
 
 	activateSection: function( sectionName ) {
@@ -152,7 +164,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onRenderTemplate: function() {
-		this.activateTab( this.ui.tabs.eq( 0 ) );
+		this.activateTab( this.activeTab || this.ui.tabs.eq( 0 ).data( 'tab' ) );
 	},
 
 	onModelDestroy: function() {
@@ -162,13 +174,14 @@ ControlsStack = Marionette.CompositeView.extend( {
 	onClickTabControl: function( event ) {
 		event.preventDefault();
 
-		var $tab = this.$( event.currentTarget );
+		var $tab = this.$( event.currentTarget ),
+			tabName = $tab.data( 'tab' );
 
-		if ( this.activeTab === $tab.data( 'tab' ) ) {
+		if ( this.activeTab === tabName ) {
 			return;
 		}
 
-		this.activateTab( $tab );
+		this.activateTab( tabName );
 
 		this._renderChildren();
 	},

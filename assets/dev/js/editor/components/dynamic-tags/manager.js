@@ -20,7 +20,7 @@ module.exports = Module.extend( {
 	},
 
 	createCacheKey: function( tag ) {
-		return btoa( tag.getOption( 'name' ) ) + '-' + btoa( JSON.stringify( tag.model ) );
+		return btoa( tag.getOption( 'name' ) ) + '-' + btoa( encodeURIComponent( JSON.stringify( tag.model ) ) );
 	},
 
 	loadTagDataFromCache: function( tag ) {
@@ -141,7 +141,7 @@ module.exports = Module.extend( {
 	},
 
 	tagDataToTagText: function( tagID, tagName, tagSettings ) {
-		tagSettings = tagSettings ? JSON.stringify( tagSettings ) : '';
+		tagSettings = JSON.stringify( tagSettings || {} );
 
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
 	},

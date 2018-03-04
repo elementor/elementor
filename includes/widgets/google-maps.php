@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -78,6 +80,12 @@ class Widget_Google_Maps extends Widget_Base {
 			[
 				'label' => __( 'Address', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [
+						TagsModule::POST_META_CATEGORY,
+					],
+				],
 				'placeholder' => $default_address,
 				'default' => $default_address,
 				'label_block' => true,

@@ -181,96 +181,77 @@ class Source_Local extends Source_Base {
 	}
 
 	public function print_new_template_dialog() {
+		$document_types = Plugin::$instance->documents->get_document_types();
+		$groups = Plugin::$instance->documents->get_groups();
+		$types_by_groups = [];
+
+		foreach ( $document_types as $document_type ) {
+			if ( $document_type::get_property( 'show_in_library' ) ) {
+				$group = $document_type::get_property( 'group' );
+
+				if ( ! isset( $types_by_groups[ $group ] ) ) {
+					$types_by_groups[ $group ] = [];
+				}
+
+				/**
+				 * @var Document $instance
+				 */
+				$instance = new $document_type();
+
+				$types_by_groups[ $group ][  $instance->get_name() ] = $document_type::get_title();
+			}
+		}
 		?>
 		<div id="elementor-new-template-dialog" style="display: none">
-
-			<div id="elementor-new-template-dialog-header">
-				<div id="elementor-new-template-dialog-header-logo">
-					<span id="elementor-new-template-dialog-header-logo-icon-wrapper">
+			<div id="elementor-template-library-header">
+				<div id="elementor-template-library-header-logo-area">
+					<div id="elementor-template-library-header-logo">
+					<span id="elementor-template-library-header-logo-icon-wrapper">
 						<i class="eicon-elementor"></i>
 					</span>
-					<span>
-						<?php esc_html_e( 'New Template', 'elementor' ) ?>
-					</span>
-				</div>
-
-				<div id="elementor-new-template-dialog-close">
-					<i class="eicon-close" aria-hidden="true" title="Close"></i>
-					<span class="elementor-screen-only">
-						<?php esc_html_e( 'Close', 'elementor' ) ?>
-					</span>
-				</div>
-			</div>
-
-			<div id="elementor-new-template-dialog-wrapper" class="elementor-new-template-dialog">
-				<div class="elementor-new-template-dialog-description">
-					<h2><?php esc_html_e( 'Get Started With', 'elementor' ); ?></h2>
-					<h1><?php esc_html_e( 'Elementor Builder', 'elementor' ); ?></h1>
-					<p>
-						<?php esc_html_e( 'Build & Design all dynamic parts of tour site using pre designed blocks or from scratch.', 'elementor' ); ?>
-					</p>
-
-					<div id="elementor-control-learn-more-wrapper" class="elementor-control-field">
-						<i class="fa fa-play-circle"></i>
-						<a href="">
-							<?php esc_html_e( 'Take The Video Tour', 'elementor' ); ?>
-						</a>
+					<span><?php echo __( 'New Template', 'elementor' ) ?></span>
 					</div>
 				</div>
-
-				<form action="<?php esc_url( admin_url( '/edit.php' ) ); ?>" class="elementor-new-template-dialog-form">
-					<div class="elementor-control-field">
-						<input type="hidden" name="post_type" value="elementor_library">
-						<input type="hidden" name="action" value="elementor_new_theme_template">
-						<label for="template-type" class="elementor-control-title">
-							<?php esc_html_e( 'Choose a Theme Template', 'elementor' ); ?>
-						</label>
-						<div class="elementor-control-input-wrapper">
-							<select name="template_type" required>
-								<option value=""><?php esc_html_e( 'Select', 'elementor' ); ?>...</option>
-								<?php
-
-								$document_types = Plugin::$instance->documents->get_document_types();
-								$groups = Plugin::$instance->documents->get_groups();
-								$types_by_groups = [];
-
-								foreach ( $document_types as $document_type ) {
-									if ( $document_type::get_property( 'show_in_library' ) ) {
-										$group = $document_type::get_property( 'group' );
-										if ( ! isset( $types_by_groups[ $group ] ) ) {
-											$types_by_groups[ $group ] = [];
-										}
-
-										/**
-										 * @var Document $instance
-										 */
-										$instance = new $document_type();
-
-										$types_by_groups[ $group ][  $instance->get_name() ] = $document_type::get_title();
-									}
-								}
-
-								foreach ( $groups as $group_id => $group_args ) {
+				<div id="elementor-template-library-header-items-area">
+					<div id="elementor-template-library-header-close-modal" class="elementor-template-library-header-item">
+						<i class="eicon-close" aria-hidden="true" title="Close"></i>
+						<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ) ?></span>
+					</div>
+				</div>
+			</div>
+			<div id="elementor-new-template-dialog-content">
+				<div id="elementor-new-template__description">
+					<div id="elementor-new-template__description__get-started"><?php echo __( 'Get Started With', 'elementor' ); ?></div>
+					<div id="elementor-new-template__description__elementor-builder"><?php echo __( 'Elementor Builder', 'elementor' ); ?></div>
+					<div id="elementor-new-template__description__content"><?php echo __( 'Build & Design all dynamic parts of your site using pre designed blocks or by blank canvas and preview it in one of your pages.', 'elementor' ); ?></div>
+					<div id="elementor-new-template__take_a_tour">
+						<i class="eicon-play-o"></i>
+						<a href=""><?php echo __( 'Take The Video Tour', 'elementor' ); ?></a>
+					</div>
+				</div>
+				<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
+					<input type="hidden" name="post_type" value="elementor_library">
+					<input type="hidden" name="action" value="elementor_new_post">
+					<input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'elementor_action_new_post' ); ?>">
+					<div id="elementor-new-template__form__title"><?php echo __( 'Create New Template', 'elementor' ); ?></div>
+					<div id="elementor-new-template__form__template-type__wrapper" class="elementor-form-field">
+						<label for="elementor-new-template__form__template-type" class="elementor-form-field__label"><?php echo __( 'Select a Type to Start With', 'elementor' ); ?></label>
+						<div class="elementor-form-field__select__wrapper">
+							<select id="elementor-new-template__form__template-type" class="elementor-form-field__select" name="template_type" required>
+								<option value=""><?php echo __( 'Select', 'elementor' ); ?>...</option>
+								<?php foreach ( $groups as $group_id => $group_args ) {
 									echo sprintf( '<optgroup label="%s">', $group_args['label'] );
 
 									foreach ( $types_by_groups[ $group_id ] as $value => $title ) {
 										echo sprintf( '<option value="%s">%s</option>', $value, $title );
 									}
+
 									echo '</optgroup>';
-								}
-								?>
+								} ?>
 							</select>
 						</div>
 					</div>
-
-					<div id="elementor-control-create-wrapper" class="elementor-control-field">
-						<button id="create" class="elementor-button elementor-button-success elementor-new-template-dialog-submit" >
-							<span class="elementor-state-icon">
-								<i class="fa fa-spin fa-circle-o-notch "></i>
-							</span>
-							<?php esc_html_e( 'Create', 'elementor' ); ?>
-						</button>
-					</div>
+					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create new template', 'elementor' ); ?></button>
 				</form>
 			</div>
 		</div>
@@ -854,15 +835,15 @@ class Source_Local extends Source_Base {
 		}
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-template-trigger" class="page-title-action"><?php esc_attr_e( 'Import Templates', 'elementor' ); ?></a>
+			<a id="elementor-import-template-trigger" class="page-title-action"><?php echo __( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
-				<div id="elementor-import-template-title"><?php esc_html_e( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
+				<div id="elementor-import-template-title"><?php echo __( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
 					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php esc_attr_e( 'Import Now', 'elementor' ); ?>">
+						<input type="submit" class="button" value="<?php echo __( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
@@ -1092,6 +1073,65 @@ class Source_Local extends Source_Base {
 		return $redirect_to;
 	}
 
+	public function admin_print_tabs( $views ) {
+		$current_type = '';
+		$active_class = ' nav-tab-active';
+		if ( ! empty( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ] ) ) {
+			$current_type = $_REQUEST[ self::TAXONOMY_TYPE_SLUG ];
+			$active_class = '';
+		}
+
+		$baseurl = admin_url( 'edit.php?post_type=' . self::CPT );
+		?>
+		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
+			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php esc_attr_e( 'All', 'elementor' ); ?></a>
+			<?php
+			foreach ( self::$_template_types as $template_type ) :
+				$active_class = '';
+
+				if ( $current_type === $template_type ) {
+					$active_class = ' nav-tab-active';
+				}
+
+				$type_url = add_query_arg( self::TAXONOMY_TYPE_SLUG, $template_type, $baseurl );
+
+				$type_lable = ucwords( $template_type );
+
+				echo "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_lable}</a>";
+			endforeach;
+			?>
+		</div>
+		<?php
+		return $views;
+	}
+
+	public function maybe_render_blank_state( $which ) {
+		global $post_type;
+
+		if ( self::CPT !== $post_type || 'bottom' !== $which ) {
+			return;
+		}
+
+		global $wp_list_table;
+
+		$total_items = $wp_list_table->get_pagination_arg( 'total_items' );
+
+		if ( ! empty( $total_items ) || ! empty( $_REQUEST['s'] ) ) {
+			return;
+		}
+		?>
+		<style type="text/css">#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub  { display: none; } </style>
+		<div class="elementor-template_library-blank_state">
+            <div class="blank_state-inner">
+                <i class="eicon-folder"></i>
+                <h2>Create your first Header</h2>
+                <p>Add a new template here and take control of your site</p>
+                <a class="button button-primary button-hero elementor-button" href="#">Add New Header</a>
+            </div>
+		</div>
+		<?php
+	}
+
 	/**
 	 * Import single template.
 	 *
@@ -1241,10 +1281,15 @@ class Source_Local extends Source_Base {
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
-			// template library bulk actions.
+			// Template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );
 			add_filter( 'handle_bulk_actions-edit-elementor_library', [ $this, 'admin_export_multiple_templates' ], 10, 3 );
 
+			// Print template library tabs.
+			add_filter( 'views_edit-elementor_library', [ $this, 'admin_print_tabs' ] );
+
+			// Show blank state.
+			add_action( 'manage_posts_extra_tablenav', [ $this, 'maybe_render_blank_state' ] );
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );

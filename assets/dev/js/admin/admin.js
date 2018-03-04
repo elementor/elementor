@@ -20,10 +20,9 @@
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$addNew: $( '.post-type-elementor_library #wpbody-content' ).find( '.page-title-action:first' ),
-				$addNewDialog:  $( '#elementor-new-template-dialog-wrapper' ),
-				$addNewDialogHeader:  $( '#elementor-new-template-dialog-header' ),
-				$addNewDialogSubmit:  $( '#elementor-new-template-dialog-submit' ),
-				$addNewDialogClose:  $( '#elementor-new-template-dialog-close' )
+				$addNewDialogHeader:  $( '#elementor-template-library-header' ),
+				$addNewDialogClose:  $( '#elementor-template-library-header-close-modal' ),
+				$addNewDialogContent:  $( '#elementor-new-template-dialog-content' )
 			};
 
 			this.cache.$settingsFormPages = this.cache.$settingsForm.find( '.elementor-settings-form-page' );
@@ -220,9 +219,9 @@
 					var dialogsManager = new DialogsManager.Instance();
 
 					modal = dialogsManager.createWidget( 'lightbox', {
-						id: 'elementor-new-template-modal',
+						id: 'elementor-template-library-modal',
 						headerMessage: self.cache.$addNewDialogHeader,
-						message: self.cache.$addNewDialog,
+						message: self.cache.$addNewDialogContent.html(),
 						hide: {
 							onButtonClick: false
 						},

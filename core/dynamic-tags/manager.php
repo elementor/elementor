@@ -2,6 +2,7 @@
 namespace Elementor\Core\DynamicTags;
 
 use Elementor\Plugin;
+use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -10,17 +11,21 @@ class Manager {
 
 	const TAG_LABEL = 'elementor-tag';
 
+	const MODE_RENDER = 'render';
+
+	const MODE_REMOVE = 'remove';
+
 	private $tags_groups = [];
 
 	private $tags_info = [];
+
+	private $parsing_mode = self::MODE_RENDER;
 
 	public function __construct() {
 		$this->add_actions();
 	}
 
 	public function parse_tags_text( $text, array $settings, callable $parse_callback ) {
-		do_action( 'elementor/dynamic_tags/before_render' );
-
 		if ( ! empty( $settings['returnType'] ) && 'object' === $settings['returnType'] ) {
 			$value = $this->parse_tag_text( $text, $settings, $parse_callback );
 		} else {
@@ -29,8 +34,6 @@ class Manager {
 				return $this->parse_tag_text( $tag_text_match[0], $settings, $parse_callback );
 			}, $text );
 		}
-
-		do_action( 'elementor/dynamic_tags/after_render' );
 
 		return $value;
 	}
@@ -116,13 +119,19 @@ class Manager {
 	}
 
 	public function get_tag_data_content( $tag_id, $tag_name, array $settings = [] ) {
+		if ( self::MODE_REMOVE === $this->parsing_mode ) {
+			return null;
+		}
+
 		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
 
 		if ( ! $tag ) {
 			return null;
 		}
 
-		return $tag->get_content( [ 'wrap' => true ] );
+		return $tag->get_content( [
+			'wrap' => true,
+		] );
 	}
 
 	public function get_tag_info( $tag_name ) {
@@ -204,6 +213,16 @@ class Manager {
 	}
 
 	public function ajax_render_tags() {
+		Plugin::$instance->editor->verify_ajax_nonce();
+
+		if ( empty( $_POST['post_id'] ) ) {
+			throw new \Exception( 'Missing post id.' );
+		}
+
+		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
 		do_action( 'elementor/dynamic_tags/before_render' );
 
@@ -214,7 +233,7 @@ class Manager {
 
 			$tag_name = base64_decode( $tag_key_parts[0] );
 
-			$tag_settings = json_decode( base64_decode( $tag_key_parts[1] ), true );
+			$tag_settings = json_decode( urldecode( base64_decode( $tag_key_parts[1] ) ), true );
 
 			$tag = $this->create_tag( null, $tag_name, $tag_settings );
 
@@ -224,6 +243,14 @@ class Manager {
 		do_action( 'elementor/dynamic_tags/after_render' );
 
 		wp_send_json_success( $tags_data );
+	}
+
+	public function set_parsing_mode( $mode ) {
+		$this->parsing_mode = $mode;
+	}
+
+	public function get_parsing_mode() {
+		return $this->parsing_mode;
 	}
 
 	private function add_actions() {

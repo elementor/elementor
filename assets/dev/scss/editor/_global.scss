@@ -75,6 +75,10 @@
 }
 
 // Select2
+.select2-container {
+	z-index: $editor-layer;
+}
+
 .select2-dropdown {
 	border-color: $editor-light;
 
