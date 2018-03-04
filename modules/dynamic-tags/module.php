@@ -13,6 +13,14 @@ class Module extends BaseModule {
 
 	const TEXT_CATEGORY = 'text';
 
+	const URL_CATEGORY = 'url';
+
+	const IMAGE_CATEGORY = 'image';
+
+	const POST_META_CATEGORY = 'post_meta';
+
+	const GALLERY_CATEGORY = 'gallery';
+
 	public function __construct() {
 		$this->register_groups();
 
@@ -24,7 +32,7 @@ class Module extends BaseModule {
 	}
 
 	public function get_tag_classes_names() {
-		return [ 'Icon' ];
+		return [];
 	}
 
 	public function get_groups() {

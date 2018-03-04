@@ -209,10 +209,14 @@ body {
 	display: none;
 }
 
+@import "../editor/buttons";
+@import "../editor/templates-modal-wrapper";
+
 @import "message";
 @import "system_info";
 @import "feedback";
 @import "import-template";
 @import "maintenance-mode";
 @import "dashboard-widget";
+@import "template-library";
 @import "new-template-dialog";

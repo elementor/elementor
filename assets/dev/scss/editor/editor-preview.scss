@@ -157,7 +157,7 @@ html.elementor-html {
 			> .elementor-container {
 
 				> .elementor-row {
-					min-height: 80px;
+					min-height: 40px;
 				}
 			}
 		}
@@ -439,13 +439,17 @@ html.elementor-html {
 		&.elementor-element-empty {
 
 			.elementor-widget-wrap {
-				min-height: 60px; // In case of section with not-default content position
+				min-height: 30px; // In case of section with non-default content position
 
 				@media (min-width: $screen-md-min) {
 					margin: 10px;
 				}
 			}
 		}
+	}
+
+	.elementor-column {
+		min-width: 25px;
 	}
 
 	.elementor-widget {

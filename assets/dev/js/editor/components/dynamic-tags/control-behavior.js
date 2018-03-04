@@ -4,6 +4,8 @@ module.exports = Marionette.Behavior.extend( {
 
 	tagView: null,
 
+	viewApplySavedValue: null,
+
 	ui: {
 		tagArea: '.elementor-control-tag-area',
 		dynamicSwitcher: '.elementor-control-dynamic-switcher'
@@ -13,16 +15,22 @@ module.exports = Marionette.Behavior.extend( {
 		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick'
 	},
 
+	initialize: function() {
+		this.viewApplySavedValue = this.view.applySavedValue.bind( this.view );
+
+		this.view.applySavedValue = this.applySavedValue.bind( this );
+	},
+
 	renderTools: function() {
 		var $dynamicSwitcher = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-dynamic-switcher' ) );
 
-		this.ui.controlTitle.after( $dynamicSwitcher );
+		this.ui.controlTitle[ this.view.model.get( 'label_block' ) ? 'after' : 'before' ]( $dynamicSwitcher );
 
 		this.ui.dynamicSwitcher = this.$el.find( this.ui.dynamicSwitcher.selector );
 	},
 
 	toggleDynamicClass: function() {
-		this.$el.toggleClass( 'elementor-control-dynamic', this.isDynamicMode() );
+		this.$el.toggleClass( 'elementor-control-dynamic-value', this.isDynamicMode() );
 	},
 
 	isDynamicMode: function() {
@@ -148,7 +156,15 @@ module.exports = Marionette.Behavior.extend( {
 		this.view.setSettingsModel( value );
 	},
 
+	applySavedValue: function() {
+		if ( ! this.isDynamicMode() ) {
+			this.viewApplySavedValue();
+		}
+	},
+
 	onRender: function() {
+		this.$el.addClass( 'elementor-control-dynamic' );
+
 		this.renderTools();
 
 		this.toggleDynamicClass();

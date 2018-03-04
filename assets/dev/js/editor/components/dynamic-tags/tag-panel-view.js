@@ -7,19 +7,36 @@ module.exports = Marionette.ItemView.extend( {
 
 	tagControlsStack: null,
 
+	templateHelpers: function() {
+		var helpers = {};
+		if ( this.model ) {
+			helpers.controls = this.model.options.controls;
+		}
+
+		return helpers;
+	},
+
 	ui: {
 		remove: '.elementor-dynamic-cover__remove'
 	},
 
-	events: {
-		'click': 'onClick',
-		'click @ui.remove': 'onRemoveClick'
+	events: function() {
+		var events = {
+			'click @ui.remove': 'onRemoveClick'
+		};
+
+		if ( this.hasSettings() ) {
+			events.click = 'onClick';
+		}
+
+		return events;
 	},
 
 	getTemplate: function() {
 		var config = this.getTagConfig(),
 			templateFunction = Marionette.TemplateCache.get( '#tmpl-elementor-control-dynamic-cover' ),
 			renderedTemplate = Marionette.Renderer.render( templateFunction, {
+				hasSettings: this.hasSettings(),
 				title: config.title,
 				content: config.panel_template
 			} );
@@ -47,6 +64,10 @@ module.exports = Marionette.ItemView.extend( {
 		this.getSettingsPopup = function() {
 			return settingsPopup;
 		};
+	},
+
+	hasSettings: function() {
+		return !! Object.values( this.getTagConfig().controls ).length;
 	},
 
 	showSettingsPopup: function() {
@@ -82,7 +103,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	initialize: function() {
-		if ( ! this.getTagConfig().controls ) {
+		if ( ! this.hasSettings() ) {
 			return;
 		}
 
@@ -108,6 +129,8 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onDestroy: function() {
-		this.getSettingsPopup().destroy();
+		if ( this.hasSettings() ) {
+			this.getSettingsPopup().destroy();
+		}
 	}
 } );

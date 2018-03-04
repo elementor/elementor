@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -116,6 +118,9 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => __( 'Click me', 'elementor' ),
 				'placeholder' => __( 'Click me', 'elementor' ),
 			]
@@ -126,6 +131,10 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [ TagsModule::URL_CATEGORY ],
+				],
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'default' => [
 					'url' => '#',
@@ -369,7 +378,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'text_padding',
 			[
 				'label' => __( 'Padding', 'elementor' ),

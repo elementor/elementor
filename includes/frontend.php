@@ -301,7 +301,7 @@ class Frontend {
 			[
 				'jquery',
 			],
-			'1.6.0',
+			'1.8.1',
 			true
 		);
 
@@ -365,7 +365,7 @@ class Frontend {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			ELEMENTOR_VERSION
+			'3.1.0'
 		);
 
 		wp_register_style(
@@ -736,13 +736,13 @@ class Frontend {
 			return '';
 		}
 
-		// Change the current post, so widgets can use `documents->get_current` and other post data
-		Plugin::$instance->documents->switch_to_document( $post_id );
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
-		Plugin::$instance->documents->restore_document();
+
+		// Change the current post, so widgets can use `documents->get_current`.
+		Plugin::$instance->documents->switch_to_document( $document );
 
 		if ( $document->is_editable_by_current_user() ) {
-			$this->admin_bar_edit_documents[  $document->get_main_id() ] = $document;
+			$this->admin_bar_edit_documents[ $document->get_main_id() ] = $document;
 		}
 
 		$data = $document->get_elements_data();
@@ -809,6 +809,8 @@ class Frontend {
 		if ( ! empty( $content ) ) {
 			$this->_has_elementor_in_page = true;
 		}
+
+		Plugin::$instance->documents->restore_document();
 
 		return $content;
 	}

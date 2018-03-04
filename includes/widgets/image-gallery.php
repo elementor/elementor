@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -109,6 +111,11 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Add Images', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [ TagsModule::GALLERY_CATEGORY ],
+					'returnType' => 'object',
+				],
 			]
 		);
 
