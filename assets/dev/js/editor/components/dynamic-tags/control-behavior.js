@@ -192,6 +192,10 @@ module.exports = Marionette.Behavior.extend( {
 		this.setDynamicValue( this.tagViewToTagText() );
 
 		this.toggleTagsList();
+
+		if ( this.tagView.getTagConfig().settings_required ) {
+			this.tagView.showSettingsPopup();
+		}
 	},
 
 	onTagViewModelChange: function() {

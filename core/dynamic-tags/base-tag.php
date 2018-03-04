@@ -26,6 +26,10 @@ abstract class Base_Tag extends Controls_Stack {
 		return '';
 	}
 
+	public function is_settings_required() {
+		return false;
+	}
+
 	public function print_panel_template() {
 		$panel_template_setting_key = $this->get_panel_template_setting_key();
 
