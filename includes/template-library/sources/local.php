@@ -200,8 +200,6 @@ class Source_Local extends Source_Base {
 				$instance = new $document_type();
 
 				$types_by_groups[ $group ][  $instance->get_name() ] = $document_type::get_title();
-
-
 			}
 		}
 		?>
@@ -1132,7 +1130,7 @@ class Source_Local extends Source_Base {
 				<i class="eicon-folder"></i>
 				<h2>Create your first <?php echo esc_html( $current_type_label ); ?></h2>
 				<p>Add a new template here and take control of your site</p>
-				<a class="button button-primary button-hero elementor-button" href="#">Add New <?php echo esc_html( $current_type_label ); ?></a>
+				<a id="elementor-template-library-add-new" class="button button-primary button-hero elementor-button" href="#">Add New <?php echo esc_html( $current_type_label ); ?></a>
 			</div>
 		</div>
 		<?php
