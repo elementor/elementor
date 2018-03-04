@@ -53,21 +53,21 @@ abstract class Tag extends Base_Tag {
 		$this->add_control(
 			'before',
 			[
-				'label' => __( 'Before', 'elementor-pro' ),
+				'label' => __( 'Before', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'after',
 			[
-				'label' => __( 'After', 'elementor-pro' ),
+				'label' => __( 'After', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'fallback',
 			[
-				'label' => __( 'Fallback', 'elementor-pro' ),
+				'label' => __( 'Fallback', 'elementor' ),
 			]
 		);
 
