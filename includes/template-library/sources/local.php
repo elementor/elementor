@@ -275,7 +275,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function register_data() {
 		$labels = [
-			'name' => _x( 'My Library', 'Template Library', 'elementor' ),
+			'name' => _x( 'My Templates', 'Template Library', 'elementor' ),
 			'singular_name' => _x( 'Template', 'Template Library', 'elementor' ),
 			'add_new' => _x( 'Add New', 'Template Library', 'elementor' ),
 			'add_new_item' => _x( 'Add New Template', 'Template Library', 'elementor' ),
@@ -287,7 +287,7 @@ class Source_Local extends Source_Base {
 			'not_found' => _x( 'No Templates found', 'Template Library', 'elementor' ),
 			'not_found_in_trash' => _x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => _x( 'My Library', 'Template Library', 'elementor' ),
+			'menu_name' => _x( 'My Templates', 'Template Library', 'elementor' ),
 		];
 
 		$args = [
@@ -355,8 +355,8 @@ class Source_Local extends Source_Base {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_submenu_page(
 				Settings::PAGE_ID,
-				_x( 'My Library', 'Template Library', 'elementor' ),
-				_x( 'My Library', 'Template Library', 'elementor' ),
+				_x( 'My Templates', 'Template Library', 'elementor' ),
+				_x( 'My Templates', 'Template Library', 'elementor' ),
 				Editor::EDITING_CAPABILITY,
 				'edit.php?post_type=' . self::CPT
 			);
