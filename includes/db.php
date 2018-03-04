@@ -532,6 +532,9 @@ class DB {
 
 		$wp_query = $new_query;
 
+		// Ensure the global post is set only if needed
+		unset( $GLOBALS['post'] );
+
 		if ( $new_query->is_singular() && isset( $new_query->posts[0] ) ) {
 			$GLOBALS['post'] = $new_query->posts[0];
 			setup_postdata( $GLOBALS['post'] );
