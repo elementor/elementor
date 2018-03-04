@@ -331,8 +331,9 @@ class Group_Control_Background extends Group_Control_Base {
 			'raw' => __( 'Note: Attachment Fixed works only on desktop.', 'elementor' ),
 			'separator' => 'none',
 			'condition' => [
-				'attachment' => 'fixed',
+				'background' => [ 'classic' ],
 				'image[url]!' => '',
+				'attachment' => 'fixed',
 			],
 		];
 
