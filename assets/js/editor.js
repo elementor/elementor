@@ -123,7 +123,7 @@ module.exports = Marionette.Behavior.extend( {
 	onClickButtonPublish: function() {
 		var postStatus = elementor.settings.page.model.get( 'post_status' );
 
-		if ( ! elementor.saver.isEditorChanged() && 'draft' !== postStatus ) {
+		if ( this.ui.buttonPublish.hasClass( 'elementor-saver-disabled' ) ) {
 			return;
 		}
 
@@ -161,6 +161,11 @@ module.exports = Marionette.Behavior.extend( {
 			case 'publish':
 			case 'private':
 				publishLabel = 'update';
+
+				if ( elementor.config.current_revision_id !== elementor.config.post_id ) {
+					this.activateSaveButtons( true );
+				}
+
 				break;
 			case 'draft':
 				if ( ! elementor.config.current_user_can_publish ) {
