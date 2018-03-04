@@ -610,7 +610,7 @@
         -ms-flex-direction: column-reverse;
             flex-direction: column-reverse; } }
 
-.elementor-grid {
+.elementor-grid, ul.elementor-icon-list-items.elementor-grid {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -618,7 +618,7 @@
   -webkit-flex-wrap: wrap;
       -ms-flex-wrap: wrap;
           flex-wrap: wrap; }
-  .elementor-grid .elementor-grid-item {
+  .elementor-grid .elementor-grid-item, ul.elementor-icon-list-items.elementor-grid .elementor-grid-item {
     word-break: break-word; }
 
 .elementor-screen-only,
@@ -1279,6 +1279,13 @@
 .elementor-widget-icon-box .elementor-icon-box-description {
   margin: 0; }
 
+.elementor-icon-list-items.elementor-grid {
+  margin-right: -8px;
+  margin-left: -8px; }
+  .elementor-icon-list-items.elementor-grid .elementor-icon-list-item {
+    margin-right: 8px;
+    margin-left: 8px; }
+
 .elementor-icon-list-items.elementor-align-center .elementor-icon-list-item, .elementor-icon-list-items.elementor-align-center .elementor-icon-list-item a {
   -webkit-box-pack: center;
   -webkit-justify-content: center;
@@ -1397,7 +1404,7 @@
   .elementor-icon-list-items .elementor-icon-list-item a {
     width: 100%; }
 
-.elementor-icon-list-items .elementor-icon-list-text {
+.elementor-icon-list-items .elementor-icon-list-icon + .elementor-icon-list-text {
   -webkit-align-self: center;
       -ms-flex-item-align: center;
           align-self: center;
@@ -2752,6 +2759,11 @@ button.swiper-pagination-bullet {
   -webkit-transition: none;
   -o-transition: none;
   transition: none; }
+
+#left-area ul.elementor-icon-list-items,
+.elementor .elementor-element ul.elementor-icon-list-items,
+#elementor .elementor-element ul.elementor-icon-list-items {
+  padding: 0; }
 
 @media (max-width: 767px) {
   body:not(.elementor-editor-active) .elementor-hidden-phone {
