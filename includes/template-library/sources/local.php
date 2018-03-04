@@ -1073,6 +1073,60 @@ class Source_Local extends Source_Base {
 		return $redirect_to;
 	}
 
+	public function admin_print_tabs( $views ) {
+		$current_type = '';
+		$active_class = ' nav-tab-active';
+		if ( ! empty( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ] ) ) {
+			$current_type = $_REQUEST[ self::TAXONOMY_TYPE_SLUG ];
+			$active_class = '';
+		}
+
+		$baseurl = admin_url( 'edit.php?post_type=' . self::CPT );
+		?>
+		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
+			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php esc_attr_e( 'All', '' ); ?></a>
+			<?php
+			foreach ( self::$_template_types as $template_type ) :
+				$active_class = '';
+
+				if ( $current_type === $template_type ) {
+					$active_class = ' nav-tab-active';
+				}
+
+				$type_url = add_query_arg( self::TAXONOMY_TYPE_SLUG, $template_type, $baseurl );
+
+				$type_lable = ucwords( $template_type );
+
+				echo "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_lable}</a>";
+			endforeach;
+			?>
+		</div>
+		<?php
+		return $views;
+	}
+
+	public function maybe_render_blank_state( $which ) {
+		global $post_type;
+
+		if ( self::CPT !== $post_type || 'bottom' !== $which ) {
+			return;
+		}
+
+		global $wp_list_table;
+
+		$total_items = $wp_list_table->get_pagination_arg( 'total_items' );
+
+		if ( ! empty( $total_items ) || ! empty( $_REQUEST['s'] ) ) {
+			return;
+		}
+		?>
+		<style type="text/css">#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub  { display: none; } </style>
+		<div class="elementor-template_library-blank_state">
+
+		</div>
+		<?php
+	}
+
 	/**
 	 * Import single template.
 	 *
@@ -1222,10 +1276,15 @@ class Source_Local extends Source_Base {
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
-			// template library bulk actions.
+			// Template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );
 			add_filter( 'handle_bulk_actions-edit-elementor_library', [ $this, 'admin_export_multiple_templates' ], 10, 3 );
 
+			// Print template library tabs.
+			add_filter( 'views_edit-elementor_library', [ $this, 'admin_print_tabs' ] );
+
+			// Show blank state.
+			add_action( 'manage_posts_extra_tablenav', [ $this, 'maybe_render_blank_state' ] );
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
