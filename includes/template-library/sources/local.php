@@ -184,7 +184,7 @@ class Source_Local extends Source_Base {
 		$document_types = Plugin::$instance->documents->get_document_types();
 		$groups = Plugin::$instance->documents->get_groups();
 		$types_by_groups = [];
-		$selected = isset( $_GET['elementor_library_type'] ) ? $_GET['elementor_library_type'] : '';
+		$selected = get_query_var( 'elementor_library_type' );
 
 		foreach ( $document_types as $document_type ) {
 			if ( $document_type::get_property( 'show_in_library' ) ) {
