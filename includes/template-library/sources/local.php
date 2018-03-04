@@ -1119,15 +1119,18 @@ class Source_Local extends Source_Base {
 		if ( ! empty( $total_items ) || ! empty( $_REQUEST['s'] ) ) {
 			return;
 		}
+
+		$current_type = get_query_var( 'elementor_library_type' );
+		$current_type_label = ucwords( $current_type );
 		?>
 		<style type="text/css">#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub  { display: none; } </style>
 		<div class="elementor-template_library-blank_state">
-            <div class="blank_state-inner">
-                <i class="eicon-folder"></i>
-                <h2>Create your first Header</h2>
-                <p>Add a new template here and take control of your site</p>
-                <a class="button button-primary button-hero elementor-button" href="#">Add New Header</a>
-            </div>
+			<div class="blank_state-inner">
+				<i class="eicon-folder"></i>
+				<h2>Create your first <?php echo esc_html( $current_type_label ); ?></h2>
+				<p>Add a new template here and take control of your site</p>
+				<a class="button button-primary button-hero elementor-button" href="#">Add New <?php echo esc_html( $current_type_label ); ?></a>
+			</div>
 		</div>
 		<?php
 	}
