@@ -184,6 +184,7 @@ class Source_Local extends Source_Base {
 		$document_types = Plugin::$instance->documents->get_document_types();
 		$groups = Plugin::$instance->documents->get_groups();
 		$types_by_groups = [];
+		$selected = get_query_var( 'elementor_library_type' );
 
 		foreach ( $document_types as $document_type ) {
 			if ( $document_type::get_property( 'show_in_library' ) ) {
@@ -243,7 +244,7 @@ class Source_Local extends Source_Base {
 									echo sprintf( '<optgroup label="%s">', $group_args['label'] );
 
 									foreach ( $types_by_groups[ $group_id ] as $value => $title ) {
-										echo sprintf( '<option value="%s">%s</option>', $value, $title );
+										echo sprintf( '<option value="%1$s" %2$s>%3$s</option>', $value, selected( $selected, $value, false ), $title );
 									}
 
 									echo '</optgroup>';
@@ -274,7 +275,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function register_data() {
 		$labels = [
-			'name' => _x( 'My Library', 'Template Library', 'elementor' ),
+			'name' => _x( 'My Templates', 'Template Library', 'elementor' ),
 			'singular_name' => _x( 'Template', 'Template Library', 'elementor' ),
 			'add_new' => _x( 'Add New', 'Template Library', 'elementor' ),
 			'add_new_item' => _x( 'Add New Template', 'Template Library', 'elementor' ),
@@ -286,7 +287,7 @@ class Source_Local extends Source_Base {
 			'not_found' => _x( 'No Templates found', 'Template Library', 'elementor' ),
 			'not_found_in_trash' => _x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => _x( 'My Library', 'Template Library', 'elementor' ),
+			'menu_name' => _x( 'My Templates', 'Template Library', 'elementor' ),
 		];
 
 		$args = [
@@ -354,8 +355,8 @@ class Source_Local extends Source_Base {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_submenu_page(
 				Settings::PAGE_ID,
-				_x( 'My Library', 'Template Library', 'elementor' ),
-				_x( 'My Library', 'Template Library', 'elementor' ),
+				_x( 'My Templates', 'Template Library', 'elementor' ),
+				_x( 'My Templates', 'Template Library', 'elementor' ),
 				Editor::EDITING_CAPABILITY,
 				'edit.php?post_type=' . self::CPT
 			);
@@ -1084,7 +1085,7 @@ class Source_Local extends Source_Base {
 		$baseurl = admin_url( 'edit.php?post_type=' . self::CPT );
 		?>
 		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
-			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php esc_attr_e( 'All', '' ); ?></a>
+			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php esc_attr_e( 'All', 'elementor' ); ?></a>
 			<?php
 			foreach ( self::$_template_types as $template_type ) :
 				$active_class = '';
@@ -1119,10 +1120,18 @@ class Source_Local extends Source_Base {
 		if ( ! empty( $total_items ) || ! empty( $_REQUEST['s'] ) ) {
 			return;
 		}
+
+		$current_type = get_query_var( 'elementor_library_type' );
+		$current_type_label = ucwords( $current_type );
 		?>
 		<style type="text/css">#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub  { display: none; } </style>
 		<div class="elementor-template_library-blank_state">
-
+			<div class="blank_state-inner">
+				<i class="eicon-folder"></i>
+				<h2>Create your first <?php echo esc_html( $current_type_label ); ?></h2>
+				<p>Add a new template here and take control of your site</p>
+				<a id="elementor-template-library-add-new" class="button button-primary button-hero elementor-button" href="#">Add New <?php echo esc_html( $current_type_label ); ?></a>
+			</div>
 		</div>
 		<?php
 	}

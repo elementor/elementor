@@ -19,6 +19,8 @@ class Module extends BaseModule {
 
 	const POST_META_CATEGORY = 'post_meta';
 
+	const GALLERY_CATEGORY = 'gallery';
+
 	public function __construct() {
 		$this->register_groups();
 

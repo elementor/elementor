@@ -1,7 +1,19 @@
 //
 // Icon List
 //
-.elementor-icon-list-items {
+
+.elementor-widget {
+
+	.elementor-icon-list-items.elementor-grid {
+
+		margin-right: -8px;
+		margin-left: -8px;
+
+		.elementor-icon-list-item {
+			margin-right: 8px;
+			margin-left: 8px;
+		}
+	}
 
 	&.elementor-align-center {
 
@@ -213,7 +225,7 @@
 		}
 	}
 
-	.elementor-icon-list-text {
+	.elementor-icon-list-icon + .elementor-icon-list-text {
 		align-self: center;
 		@include padding-start(5px);
 	}
