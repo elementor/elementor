@@ -98,6 +98,13 @@
 
 .elementor-control-dynamic {
 
+	&.elementor-label-inline {
+
+		.elementor-control-field {
+			flex-wrap: wrap;
+		}
+	}
+
 	&-switcher {
 		cursor: pointer;
 		font-size: 9px;
