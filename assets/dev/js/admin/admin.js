@@ -19,7 +19,7 @@
 				$importArea: $( '#elementor-import-template-area' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
-				$addNew: $( '.post-type-elementor_library #wpbody-content' ).find( '.page-title-action:first' ),
+				$addNew: $( '.post-type-elementor_library #wpbody-content .page-title-action:first, #elementor-template-library-add-new' ),
 				$addNewDialogHeader:  $( '#elementor-template-library-header' ),
 				$addNewDialogClose:  $( '#elementor-template-library-header-close-modal' ),
 				$addNewDialogContent:  $( '#elementor-new-template-dialog-content' )
