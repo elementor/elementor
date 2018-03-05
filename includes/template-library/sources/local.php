@@ -183,25 +183,17 @@ class Source_Local extends Source_Base {
 	public function print_new_template_dialog() {
 		$document_types = Plugin::$instance->documents->get_document_types();
 		$groups = Plugin::$instance->documents->get_groups();
-		$types_by_groups = [];
+		$types = [];
 		$selected = get_query_var( 'elementor_library_type' );
 
 		foreach ( $document_types as $document_type ) {
 			if ( $document_type::get_property( 'show_in_library' ) ) {
-				$group = $document_type::get_property( 'group' );
-
-				if ( ! isset( $types_by_groups[ $group ] ) ) {
-					$types_by_groups[ $group ] = [];
-				}
-
 				/**
 				 * @var Document $instance
 				 */
 				$instance = new $document_type();
 
-				$types_by_groups[ $group ][  $instance->get_name() ] = $document_type::get_title();
-
-
+				$types[ $instance->get_name() ] = $document_type::get_title();
 			}
 		}
 		?>
@@ -242,15 +234,11 @@ class Source_Local extends Source_Base {
 						<div class="elementor-form-field__select__wrapper">
 							<select id="elementor-new-template__form__template-type" class="elementor-form-field__select" name="template_type" required>
 								<option value=""><?php echo __( 'Select', 'elementor' ); ?>...</option>
-								<?php foreach ( $groups as $group_id => $group_args ) {
-									echo sprintf( '<optgroup label="%s">', $group_args['label'] );
-
-									foreach ( $types_by_groups[ $group_id ] as $value => $title ) {
+								<?php
+									foreach ( $types as $value => $title ) {
 										echo sprintf( '<option value="%1$s" %2$s>%3$s</option>', $value, selected( $selected, $value, false ), $title );
 									}
-
-									echo '</optgroup>';
-								} ?>
+								?>
 							</select>
 						</div>
 					</div>
