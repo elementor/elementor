@@ -295,6 +295,9 @@ class Editor {
 	public function enqueue_scripts() {
 		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
 
+		// Set the global data like $post, $authordata and etc
+		setup_postdata( $this->_post_id );
+
 		global $wp_styles, $wp_scripts;
 
 		$plugin = Plugin::$instance;
