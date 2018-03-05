@@ -100,8 +100,6 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	onCloseEditor: function() {
-		this.initEditSettings();
-
 		if ( this.renderOnLeave ) {
 			this.renderRemoteServer();
 		}
