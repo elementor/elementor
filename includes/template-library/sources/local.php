@@ -120,7 +120,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 * @static
 	 *
-	 * @param \WP_Post_Type $type Post type object.
+	 * @param string $type Template type.
 	 */
 	public static function add_template_type( $type ) {
 		self::$_template_types[] = $type;
@@ -136,10 +136,11 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 * @static
 	 *
-	 * @param \WP_Post_Type $type Post type object.
+	 * @param string $type Template type.
 	 */
 	public static function remove_template_type( $type ) {
 		$key = array_search( $type, self::$_template_types, true );
+
 		if ( false !== $key ) {
 			unset( self::$_template_types[ $key ] );
 		}
