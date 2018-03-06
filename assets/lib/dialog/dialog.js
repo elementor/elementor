@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.1.0
+ * Dialogs Manager v4.2.1
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -389,6 +389,11 @@
 			return self;
 		};
 
+		this.isVisible = function() {
+
+			return elements.widget.is(':visible');
+		};
+
 		this.on = function (eventName, callback) {
 
 			if ('object' === typeof eventName) {
@@ -438,6 +443,8 @@
 		};
 
 		this.show = function () {
+
+			clearTimeout(hideTimeOut);
 
 			elements.widget.appendTo(elements.container).hide();
 
@@ -817,4 +824,7 @@
 
 	// Exporting the DialogsManager variable to global
 	global.DialogsManager = DialogsManager;
-})(typeof require === 'function' ? require('jquery') : jQuery, typeof module !== 'undefined' ? module.exports : window);
+})(
+	typeof jQuery !== 'undefined' ? jQuery : typeof require === 'function' && require('jquery'),
+	typeof module !== 'undefined' ? module.exports : window
+);
