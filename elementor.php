@@ -62,7 +62,7 @@ if ( ! version_compare( PHP_VERSION, '5.4', '>=' ) ) {
 
 		add_action( 'pll_pre_init', function( $polylang ) {
 			if ( isset( $_REQUEST['post'] ) ) {
-				$post_language    = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
+				$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
 				$_REQUEST['lang'] = $post_language->locale;
 			}
 		} );
