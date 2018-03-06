@@ -143,6 +143,8 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-soundcloud',
 							'fa fa-spotify',
 							'fa fa-stack-overflow',
+							'fa fa-steam',
+							'fa fa-stumbleupon',
 							'fa fa-telegram',
 							'fa fa-tripadvisor',
 							'fa fa-tumblr',
@@ -157,6 +159,7 @@ class Widget_Social_Icons extends Widget_Base {
 							'fa fa-xing',
 							'fa fa-yelp',
 							'fa fa-youtube',
+							'fa fa-500px',
 						],
 					],
 					[
