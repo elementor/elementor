@@ -61,8 +61,10 @@ if ( ! version_compare( PHP_VERSION, '5.4', '>=' ) ) {
 		define( 'PLL_AJAX_ON_FRONT', true );
 
 		add_action( 'pll_pre_init', function( $polylang ) {
-			$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
-			$_REQUEST['lang'] = $post_language->locale;
+			if ( isset( $_REQUEST['post'] ) ) {
+				$post_language    = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
+				$_REQUEST['lang'] = $post_language->locale;
+			}
 		} );
 	}
 
