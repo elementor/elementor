@@ -356,7 +356,7 @@ App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
 				},
 				handle: function() {
-					elementor.templates.showTemplatesModal();
+					elementor.templates.startModal();
 				}
 			}
 		};
