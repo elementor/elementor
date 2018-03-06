@@ -445,7 +445,6 @@ class Plugin {
 		// Allow all components to use AJAX.
 		$this->ajax = new Ajax_Manager();
 
-		Compatibility::register_actions();
 		Settings_Manager::run();
 
 		$this->db = new DB();
@@ -529,6 +528,8 @@ class Plugin {
 	 */
 	private function __construct() {
 		$this->register_autoloader();
+
+		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
 	}
