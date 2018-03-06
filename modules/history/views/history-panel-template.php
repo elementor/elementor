@@ -1,6 +1,6 @@
 <script type="text/template" id="tmpl-elementor-panel-history-page">
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
-		<div id="elementor-panel-elements-navigation-history" class="elementor-panel-navigation-tab active" data-view="history"><?php esc_html_e( 'Actions', 'elementor' ); ?></div>
+		<div id="elementor-panel-elements-navigation-history" class="elementor-panel-navigation-tab elementor-active" data-view="history"><?php esc_html_e( 'Actions', 'elementor' ); ?></div>
 		<div id="elementor-panel-elements-navigation-revisions" class="elementor-panel-navigation-tab" data-view="revisions"><?php esc_html_e( 'Revisions', 'elementor' ); ?></div>
 	</div>
 	<div id="elementor-panel-history-content"></div>
