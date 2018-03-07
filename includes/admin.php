@@ -755,9 +755,11 @@ class Admin {
 			$type = $_GET['template_type']; // XSS ok.
 		}
 
+		$meta = isset( $_GET['meta'] ) ? $_GET['meta'] : [];
+
 		$document = Plugin::$instance->documents->create( $type, [
 			'post_type' => $post_type,
-		]  );
+		], $meta );
 
 		wp_redirect( $document->get_edit_url() );
 		die;
