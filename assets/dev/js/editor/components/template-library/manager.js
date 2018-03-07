@@ -367,10 +367,6 @@ TemplateLibraryManager = function() {
 		layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
 	};
 
-	this.showTemplatesModal = function() {
-		self.startModal();
-	};
-
 	this.showErrorDialog = function( errorMessage ) {
 		if ( 'object' === typeof errorMessage ) {
 			var message = '';
