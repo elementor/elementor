@@ -1142,7 +1142,7 @@ class Source_Local extends Source_Base {
 		<div class="elementor-template_library-blank_state">
 			<div class="blank_state-inner">
 				<i class="eicon-folder"></i>
-				<h2>Create Your First <?php echo esc_html( $current_type_label ); ?> Template</h2>
+				<h2>Create Your First <?php echo esc_html( $current_type_label ); ?></h2>
 				<p>Add templates and reuse them across your website. Easily export and import them to any other project, for an optimised workflow.</p>
 				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="#">Add New <?php echo esc_html( $current_type_label ); ?></a>
 			</div>
