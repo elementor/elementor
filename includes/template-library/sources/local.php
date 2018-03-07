@@ -1096,9 +1096,9 @@ class Source_Local extends Source_Base {
 
 				$type_url = add_query_arg( self::TAXONOMY_TYPE_SLUG, $template_type, $baseurl );
 
-				$type_lable = ucwords( $template_type );
+				$type_label = ucwords( str_replace( '_', ' ', $template_type ) );
 
-				echo "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_lable}</a>";
+				echo "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_label}</a>";
 			endforeach;
 			?>
 		</div>
@@ -1121,6 +1121,8 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
+		$inline_style = '#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub { display:none;}';
+
 		$current_type = get_query_var( 'elementor_library_type' );
 
 		if ( empty( $current_type ) ) {
@@ -1133,11 +1135,13 @@ class Source_Local extends Source_Base {
 			}
 
 			$current_type = 'template';
+
+			$inline_style .= '#elementor-template-library-tabs-wrapper {display: none;}';
 		}
 
 		$current_type_label = ucwords( $current_type );
 		?>
-		<style type="text/css">#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub  { display: none; } </style>
+		<style type="text/css"><?php echo $inline_style; ?></style>
 		<div class="elementor-template_library-blank_state">
 			<div class="blank_state-inner">
 				<i class="eicon-folder"></i>
