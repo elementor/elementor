@@ -236,14 +236,15 @@ class Source_Local extends Source_Base {
 							<select id="elementor-new-template__form__template-type" class="elementor-form-field__select" name="template_type" required>
 								<option value=""><?php echo __( 'Select', 'elementor' ); ?>...</option>
 								<?php
-									foreach ( $types as $value => $title ) {
-										echo sprintf( '<option value="%1$s" %2$s>%3$s</option>', $value, selected( $selected, $value, false ), $title );
-									}
+								foreach ( $types as $value => $title ) {
+									printf( '<option value="%1$s" %2$s>%3$s</option>', $value, selected( $selected, $value, false ), $title );
+								}
 								?>
 							</select>
 						</div>
 					</div>
-					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create Template', 'elementor' ); ?></button>
+					<?php do_action( 'elementor/template-library/create_new_dialog_fields' ); ?>
+					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create Template', 'elementor' ); ?></button>		
 				</form>
 			</div>
 		</div>
