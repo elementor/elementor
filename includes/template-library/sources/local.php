@@ -120,7 +120,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 * @static
 	 *
-	 * @param \WP_Post_Type $type Post type object.
+	 * @param string $type Template type.
 	 */
 	public static function add_template_type( $type ) {
 		self::$_template_types[] = $type;
@@ -136,10 +136,11 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 * @static
 	 *
-	 * @param \WP_Post_Type $type Post type object.
+	 * @param string $type Template type.
 	 */
 	public static function remove_template_type( $type ) {
 		$key = array_search( $type, self::$_template_types, true );
+
 		if ( false !== $key ) {
 			unset( self::$_template_types[ $key ] );
 		}
@@ -1075,6 +1076,14 @@ class Source_Local extends Source_Base {
 			$active_class = '';
 		}
 
+		$counts = (array) wp_count_posts( self::CPT );
+		unset( $counts['auto-draft'] );
+		$count  = array_sum( $counts );
+
+		if ( 0 >= $count ) {
+			return $views;
+		}
+
 		$baseurl = admin_url( 'edit.php?post_type=' . self::CPT );
 		?>
 		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
@@ -1115,6 +1124,11 @@ class Source_Local extends Source_Base {
 		}
 
 		$current_type = get_query_var( 'elementor_library_type' );
+
+		if ( empty( $current_type ) ) {
+			$current_type = 'template';
+		}
+
 		$current_type_label = ucwords( $current_type );
 		?>
 		<style type="text/css">#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub  { display: none; } </style>
@@ -1283,7 +1297,7 @@ class Source_Local extends Source_Base {
 			add_filter( 'handle_bulk_actions-edit-elementor_library', [ $this, 'admin_export_multiple_templates' ], 10, 3 );
 
 			// Print template library tabs.
-			add_filter( 'views_edit-elementor_library', [ $this, 'admin_print_tabs' ] );
+			add_filter( 'views_edit-' . self::CPT, [ $this, 'admin_print_tabs' ] );
 
 			// Show blank state.
 			add_action( 'manage_posts_extra_tablenav', [ $this, 'maybe_render_blank_state' ] );

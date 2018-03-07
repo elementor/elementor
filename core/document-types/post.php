@@ -110,7 +110,7 @@ class Post extends Document {
 		$document->start_controls_section(
 			'section_page_style',
 			[
-				'label' => __( 'Page Style', 'elementor' ),
+				'label' => __( 'Body Style', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);

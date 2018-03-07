@@ -26,15 +26,19 @@ abstract class Base_Tag extends Controls_Stack {
 		return '';
 	}
 
+	public function is_settings_required() {
+		return false;
+	}
+
 	public function print_panel_template() {
 		$panel_template_setting_key = $this->get_panel_template_setting_key();
 
 		if ( ! $panel_template_setting_key ) {
 			return;
 		}
-		?>
-		<#
+		?><#
 		var key = <?php echo $panel_template_setting_key; ?>;
+
 		if ( key ) {
 			var settingsKey = "<?php echo $panel_template_setting_key; ?>";
 
@@ -46,31 +50,25 @@ abstract class Base_Tag extends Controls_Stack {
 			 */
 			if ( controls && controls[settingsKey] ) {
 				var controlSettings = controls[settingsKey];
+
 				if ( controlSettings.options && controlSettings.options[ key ] ) {
 					key = controlSettings.options[ key ];
 				} else if ( controlSettings.groups ) {
 					var label = _.filter( _.pluck( _.pluck( controls.key.groups, 'options' ), key ) );
+
 					if ( label ) {
 						key = label;
 					}
 				}
 			}
-		#>
-			({{{key}}})
-		<# } #>
-		<?php
+
+			print( '(' + key + ')' );
+		}
+		#><?php
 	}
 
 	final public function get_unique_name() {
 		return 'tag-' . $this->get_name();
-	}
-
-	protected function _get_initial_config() {
-		$config = parent::_get_initial_config();
-
-		$config['content_type'] = $this->get_content_type();
-
-		return $config;
 	}
 
 	protected function register_advanced_section() {}

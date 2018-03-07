@@ -64,6 +64,7 @@
 .elementor-tag-settings-popup {
 	position: absolute;
 	width: 260px;
+	background-color: $editor-background;
 	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
 
 	&:before {
@@ -80,12 +81,11 @@
 	.elementor-control {
 
 		&-type-section {
-			margin: 0;
-		}
-	}
 
-	.elementor-section-toggle {
-		display: none;
+			&:first-child {
+				margin: 0;
+			}
+		}
 	}
 }
 
@@ -97,6 +97,13 @@
 }
 
 .elementor-control-dynamic {
+
+	&.elementor-label-inline {
+
+		.elementor-control-field {
+			flex-wrap: wrap;
+		}
+	}
 
 	&-switcher {
 		cursor: pointer;

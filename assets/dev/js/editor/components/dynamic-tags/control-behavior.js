@@ -39,18 +39,6 @@ module.exports = Marionette.Behavior.extend( {
 		return undefined !== this.view.elementSettingsModel.get( dynamicSettingName );
 	},
 
-	setDynamicMode: function( isDynamic, staticValue ) {
-		var staticSettingKey = elementor.dynamicTags.getStaticSettingKey( this.view.model.get( 'name' ) );
-
-		if ( isDynamic ) {
-			this.view.elementSettingsModel.set( staticSettingKey, staticValue, { silent: true } );
-		} else {
-			this.view.elementSettingsModel.unset( staticSettingKey, { silent: true } );
-		}
-
-		this.toggleDynamicClass();
-	},
-
 	createTagsList: function() {
 		var tags = _.groupBy( this.getOption( 'tags' ), 'group' ),
 			groups = elementor.dynamicTags.getConfig( 'groups' ),
@@ -125,6 +113,12 @@ module.exports = Marionette.Behavior.extend( {
 			.listenTo( tagView, 'remove', this.onTagViewRemove.bind( this ) );
 	},
 
+	setDefaultTagView: function() {
+		var tagData = elementor.dynamicTags.getTagTextData( this.getDynamicValue() );
+
+		this.setTagView( tagData.id, tagData.name, tagData.settings );
+	},
+
 	tagViewToTagText: function() {
 		var tagView = this.tagView;
 
@@ -153,12 +147,33 @@ module.exports = Marionette.Behavior.extend( {
 			value = values;
 		}
 
-		this.view.setSettingsModel( value );
+		var valuesToChange = {},
+			settingsKey = this.view.model.get( 'name' );
+
+		valuesToChange[ settingsKey ] = value;
+
+		if ( ! this.isDynamicMode() ) {
+			var staticSettingKey = elementor.dynamicTags.getStaticSettingKey( settingsKey );
+
+			valuesToChange[ staticSettingKey ] = this.view.getControlValue();
+		}
+
+		this.view.elementSettingsModel.set( valuesToChange );
+
+		this.toggleDynamicClass();
 	},
 
 	applySavedValue: function() {
 		if ( ! this.isDynamicMode() ) {
 			this.viewApplySavedValue();
+		}
+	},
+
+	destroyTagView: function() {
+		if ( this.tagView ) {
+			this.tagView.destroy();
+
+			this.tagView = null;
 		}
 	},
 
@@ -170,9 +185,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.toggleDynamicClass();
 
 		if ( this.isDynamicMode() ) {
-			var tagData = elementor.dynamicTags.getTagTextData( this.getDynamicValue() );
-
-			this.setTagView( tagData.id, tagData.name, tagData.settings );
+			this.setDefaultTagView();
 		}
 	},
 
@@ -183,15 +196,15 @@ module.exports = Marionette.Behavior.extend( {
 	onTagsListItemClick: function( event ) {
 		var $tag = jQuery( event.currentTarget );
 
-		if ( ! this.isDynamicMode() ) {
-			this.setDynamicMode( true, this.view.getControlValue() );
-		}
-
 		this.setTagView( elementor.helpers.getUniqueID(), $tag.data( 'tagName' ), {} );
 
 		this.setDynamicValue( this.tagViewToTagText() );
 
 		this.toggleTagsList();
+
+		if ( this.tagView.getTagConfig().settings_required ) {
+			this.tagView.showSettingsPopup();
+		}
 	},
 
 	onTagViewModelChange: function() {
@@ -199,12 +212,32 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onTagViewRemove: function() {
-		var staticValue = this.view.elementSettingsModel.get( elementor.dynamicTags.getStaticSettingKey( this.view.model.get( 'name' ) ) );
+		var settingKey = this.view.model.get( 'name' ),
+			staticKey = elementor.dynamicTags.getStaticSettingKey( settingKey ),
+			valuesToChange = {};
 
-		this.setDynamicMode( false );
+		valuesToChange[ settingKey ] = this.view.elementSettingsModel.get( staticKey );
 
-		this.view.setSettingsModel( staticValue );
+		valuesToChange[ staticKey ] = undefined;
+
+		this.view.elementSettingsModel.set( valuesToChange );
+
+		this.toggleDynamicClass();
 
 		this.view.applySavedValue();
+	},
+
+	onAfterExternalChange: function() {
+		this.destroyTagView();
+
+		if ( this.isDynamicMode() ) {
+			this.setDefaultTagView();
+		}
+
+		this.toggleDynamicClass();
+	},
+
+	onDestroy: function() {
+		this.destroyTagView();
 	}
 } );

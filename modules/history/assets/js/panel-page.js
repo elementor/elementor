@@ -63,9 +63,9 @@ module.exports = Marionette.LayoutView.extend( {
 
 	activateTab: function( tabName ) {
 		this.ui.tabs
-			.removeClass( 'active' )
+			.removeClass( 'elementor-active' )
 			.filter( '[data-view="' + tabName + '"]' )
-			.addClass( 'active' );
+			.addClass( 'elementor-active' );
 
 		this.showView( tabName );
 	},

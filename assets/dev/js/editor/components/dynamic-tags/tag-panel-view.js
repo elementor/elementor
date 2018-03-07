@@ -71,6 +71,10 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showSettingsPopup: function() {
+		if ( ! this.tagControlsStack ) {
+			this.initTagControlsStack();
+		}
+
 		var settingsPopup = this.getSettingsPopup();
 
 		if ( settingsPopup.isVisible() ) {
@@ -86,14 +90,8 @@ module.exports = Marionette.ItemView.extend( {
 			controls: this.model.controls,
 			el: this.getSettingsPopup().getElements( 'message' )[0]
 		} );
-	},
 
-	getTagControlsStack: function() {
-		if ( ! this.tagControlsStack ) {
-			this.initTagControlsStack();
-		}
-
-		return this.tagControlsStack;
+		this.tagControlsStack.render();
 	},
 
 	initModel: function() {
@@ -115,8 +113,6 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClick: function() {
-		this.getTagControlsStack().render();
-
 		this.showSettingsPopup();
 	},
 

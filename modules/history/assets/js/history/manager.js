@@ -208,7 +208,7 @@ var	Manager = function() {
 	};
 
 	this.doItem = function( index ) {
-		// Don't track while restore the item
+		// Don't track while restoring the item
 		this.setActive( false );
 
 		var item = items.at( index );
