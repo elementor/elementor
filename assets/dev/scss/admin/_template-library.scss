@@ -13,18 +13,25 @@
 			margin: auto;
 			max-width: 500px;
 			text-align: center;
-			color: #999999;
+			color: $editor-dark;
 
 			i {
-				font-size: 7em;
+				font-size: 50px;
 			}
 
 			h2 {
+				font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
 				font-size: 2em;
+				font-weight: normal;
+				color: inherit;
+				margin: 50px 0 35px;
 			}
 
 			p {
-				font-size: 1.2em;
+				font-size: 16px;
+				font-weight: normal;
+				color: $editor-light;
+				margin-bottom: 50px;
 			}
 
 			.elementor-button {
