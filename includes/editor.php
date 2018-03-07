@@ -458,8 +458,6 @@ class Editor {
 			true
 		);
 
-		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->_post_id );
-
 		/**
 		 * Before editor enqueue scripts.
 		 *
@@ -467,7 +465,9 @@ class Editor {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'elementor/editor/before_enqueue_scripts', $document );
+		do_action( 'elementor/editor/before_enqueue_scripts' );
+
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->_post_id );
 
 		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
 		$editor_data = $document->get_elements_raw_data( null, true );
