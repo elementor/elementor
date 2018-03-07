@@ -228,7 +228,7 @@ class Source_Local extends Source_Base {
 					<div id="elementor-new-template__description__content"><?php echo __( 'Use templates to create the different pieces of your site, and reuse them with one click whenever needed.', 'elementor' ); ?></div>
 					<div id="elementor-new-template__take_a_tour">
 						<i class="eicon-play-o"></i>
-						<a href=""><?php echo __( 'Take The Video Tour', 'elementor' ); ?></a>
+						<a href="#"><?php echo __( 'Take The Video Tour', 'elementor' ); ?></a>
 					</div>
 				</div>
 				<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
