@@ -223,6 +223,17 @@ $remote-templates-items-space: 30px;
 		text-align: $start;
 		@include margin-end(25px);
 	}
+
+	.select2-selection__rendered {
+		text-transform: capitalize;
+	}
+}
+
+#select2-elementor-template-library-filter-subtype-results {
+
+	.select2-results__option {
+		text-transform: capitalize;
+	}
 }
 
 #elementor-template-library-my-favorites {

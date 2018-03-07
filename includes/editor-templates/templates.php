@@ -90,9 +90,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div id="elementor-template-library-filter">
 						<select id="elementor-template-library-filter-subtype" class="elementor-template-library-filter-select" data-elementor-filter="subtype">
 							<option></option>
-							<option value="section"><?php echo __( 'Section', 'elementor' ); ?></option>
-							<option value="header"><?php echo __( 'Header', 'elementor' ); ?></option>
-							<option value="footer"><?php echo __( 'Footer', 'elementor' ); ?></option>
+							<# elementor.templates.getConfig( 'categories' ).forEach( function( category ) { #>
+								<option value="{{ category }}">{{{ category }}}</option>
+							<# } ); #>
 						</select>
 					</div>
 				<# } #>
