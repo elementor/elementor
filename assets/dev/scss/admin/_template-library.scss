@@ -11,20 +11,28 @@
 		.blank_state-inner {
 			padding: 5em 0;
 			margin: auto;
-			max-width: 500px;
+			max-width: 520px;
 			text-align: center;
-			color: #999999;
+			color: $editor-dark;
 
 			i {
-				font-size: 7em;
+				font-size: 50px;
+				color: $editor-light;
 			}
 
 			h2 {
-				font-size: 2em;
+				font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+				font-size: 32px;
+				font-weight: 300;
+				color: inherit;
+				margin: 50px 0 35px;
 			}
 
 			p {
-				font-size: 1.2em;
+				font-size: 16px;
+				font-weight: normal;
+				color: $editor-light;
+				margin-bottom: 50px;
 			}
 
 			.elementor-button {
