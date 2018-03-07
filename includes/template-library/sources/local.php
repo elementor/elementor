@@ -1083,14 +1083,6 @@ class Source_Local extends Source_Base {
 			$active_class = '';
 		}
 
-		$counts = (array) wp_count_posts( self::CPT );
-		unset( $counts['auto-draft'] );
-		$count  = array_sum( $counts );
-
-		if ( 0 >= $count ) {
-			return $views;
-		}
-
 		$baseurl = admin_url( 'edit.php?post_type=' . self::CPT );
 		?>
 		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
@@ -1133,6 +1125,14 @@ class Source_Local extends Source_Base {
 		$current_type = get_query_var( 'elementor_library_type' );
 
 		if ( empty( $current_type ) ) {
+			$counts = (array) wp_count_posts( self::CPT );
+			unset( $counts['auto-draft'] );
+			$count  = array_sum( $counts );
+
+			if ( 0 < $count ) {
+				return;
+			}
+
 			$current_type = 'template';
 		}
 
