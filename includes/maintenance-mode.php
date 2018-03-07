@@ -160,8 +160,8 @@ class Maintenance_Mode {
 
 		$template_id = self::get( 'template_id' );
 		$edit_url = '';
-		if ( $template_id ) {
-			$edit_url =  Utils::get_edit_link( $template_id );
+		if ( $template_id && get_post( $template_id ) ) {
+			$edit_url = Utils::get_edit_link( $template_id );
 		}
 
 		$template_description = sprintf( ' <a target="_blank" class="elementor-edit-template" style="display: none" href="%s">%s</a>', $edit_url, __( 'Edit Template', 'elementor' ) );

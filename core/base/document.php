@@ -27,7 +27,6 @@ abstract class Document extends Controls_Stack {
 	public static function get_properties() {
 		return [
 			'is_editable' => true,
-			'edit_area' => 'content',
 		];
 	}
 
