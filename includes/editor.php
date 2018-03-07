@@ -383,7 +383,7 @@ class Editor {
 			[
 				'jquery',
 			],
-			'4.0.2',
+			'4.0.5',
 			true
 		);
 
@@ -571,11 +571,13 @@ class Editor {
 
 				// Library.
 				'an_error_occurred' => __( 'An error occurred', 'elementor' ),
+				'category' => __( 'Category', 'elementor' ),
 				'delete_template' => __( 'Delete Template', 'elementor' ),
 				'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
 				'import_template_dialog_header' => __( 'Import Document Settings', 'elementor' ),
 				'import_template_dialog_message' => __( 'Do you want to also import the document settings of the template?', 'elementor' ),
 				'import_template_dialog_message_attention' => __( 'Attention: Importing may override previous settings.', 'elementor' ),
+				'library' => __( 'Library', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'page' => __( 'Page', 'elementor' ),
 				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
@@ -589,7 +591,6 @@ class Editor {
 				'templates_no_results_title' => __( 'No Results Found', 'elementor' ),
 				'templates_request_error' => __( 'The following error(s) occurred while processing the request:', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
-				'type' => __( 'Type', 'elementor' ),
 
 				// Incompatible Device.
 				'device_incompatible_header' => __( 'Your browser isn\'t compatible', 'elementor' ),
@@ -729,7 +730,7 @@ class Editor {
 			'select2',
 			ELEMENTOR_ASSETS_URL . 'lib/select2/css/select2' . $suffix . '.css',
 			[],
-			'4.0.2'
+			'4.0.5'
 		);
 
 		wp_register_style(

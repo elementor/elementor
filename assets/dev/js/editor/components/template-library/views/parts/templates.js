@@ -149,7 +149,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		var $filters = this.$( this.ui.selectFilter );
 
 		$filters.select2( {
-			placeholder: elementor.translate( 'type' ),
+			placeholder: elementor.translate( 'category' ),
 			allowClear: true,
 			width: 150
 		} );

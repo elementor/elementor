@@ -20,8 +20,8 @@
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$addNew: $( '.post-type-elementor_library #wpbody-content .page-title-action:first, #elementor-template-library-add-new' ),
-				$addNewDialogHeader:  $( '#elementor-template-library-header' ),
-				$addNewDialogClose:  $( '#elementor-template-library-header-close-modal' ),
+				$addNewDialogHeader:  $( '.elementor-templates-modal__header' ),
+				$addNewDialogClose:  $( '.elementor-templates-modal__header__close-modal' ),
 				$addNewDialogContent:  $( '#elementor-new-template-dialog-content' )
 			};
 
@@ -219,7 +219,8 @@
 					var dialogsManager = new DialogsManager.Instance();
 
 					modal = dialogsManager.createWidget( 'lightbox', {
-						id: 'elementor-template-library-modal',
+						id: 'elementor-new-template-modal',
+						className: 'elementor-templates-modal',
 						headerMessage: self.cache.$addNewDialogHeader,
 						message: self.cache.$addNewDialogContent.html(),
 						hide: {

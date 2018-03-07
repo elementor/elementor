@@ -1,15 +1,15 @@
-#elementor-template-library-modal {
-
-	.dialog-message {
-		display: flex;
-		align-items: center;
-		text-align: $start;
-		padding: 0 120px;
-		color: $editor-dark;
-	}
-}
-
 #elementor-new-template {
+
+	&-modal {
+
+		.dialog-message {
+			display: flex;
+			align-items: center;
+			text-align: $start;
+			padding: 0 120px;
+			color: $editor-dark;
+		}
+	}
 
 	&__description {
 		width: 35%;

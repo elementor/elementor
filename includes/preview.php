@@ -151,7 +151,7 @@ class Preview {
 			'select2',
 			ELEMENTOR_ASSETS_URL . 'lib/select2/css/select2' . $suffix . '.css',
 			[],
-			'4.0.2'
+			'4.0.5'
 		);
 
 		wp_register_style(
