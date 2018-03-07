@@ -17,6 +17,7 @@
 
 			i {
 				font-size: 50px;
+				color: $editor-light;
 			}
 
 			h2 {
@@ -36,6 +37,9 @@
 
 			.elementor-button {
 				display: inline-block;
+				font-weight: 700;
+				text-decoration: none;
+				padding: 14px 40px;
 			}
 		}
 	}
