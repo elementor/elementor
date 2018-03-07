@@ -232,6 +232,8 @@
 						onReady: function() {
 							DialogsManager.getWidgetType( 'lightbox' ).prototype.onReady.apply( this, arguments );
 
+							jQuery( document ).trigger( 'newTemplateDialogReady', [ this ] );
+
 							self.cache.$addNewDialogClose.on( 'click', function() {
 								modal.hide();
 							} );
