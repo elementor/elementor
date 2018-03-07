@@ -196,6 +196,8 @@ class Source_Local extends Source_Base {
 				$types[ $instance->get_name() ] = $document_type::get_title();
 			}
 		}
+
+		$types = apply_filters( 'elementor/template-library/create_new_dialog_types', $types, $document_types );
 		?>
 		<div id="elementor-new-template-dialog" style="display: none">
 			<div id="elementor-template-library-header">
