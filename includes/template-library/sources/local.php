@@ -183,7 +183,6 @@ class Source_Local extends Source_Base {
 
 	public function print_new_template_dialog() {
 		$document_types = Plugin::$instance->documents->get_document_types();
-		$groups = Plugin::$instance->documents->get_groups();
 		$types = [];
 		$selected = get_query_var( 'elementor_library_type' );
 
