@@ -223,9 +223,9 @@ class Source_Local extends Source_Base {
 			</div>
 			<div id="elementor-new-template-dialog-content">
 				<div id="elementor-new-template__description">
-					<div id="elementor-new-template__description__get-started"><?php echo __( 'Get Started With', 'elementor' ); ?></div>
-					<div id="elementor-new-template__description__elementor-builder"><?php echo __( 'Elementor Builder', 'elementor' ); ?></div>
-					<div id="elementor-new-template__description__content"><?php echo __( 'Build & Design all dynamic parts of your site using pre designed blocks or by blank canvas and preview it in one of your pages.', 'elementor' ); ?></div>
+					<div id="elementor-new-template__description__get-started"><?php echo __( 'Templates Help You', 'elementor' ); ?></div>
+					<div id="elementor-new-template__description__elementor-builder"><?php echo __( 'Work Efficiently', 'elementor' ); ?></div>
+					<div id="elementor-new-template__description__content"><?php echo __( 'Use templates to create the different pieces of your site, and reuse them with one click whenever needed.', 'elementor' ); ?></div>
 					<div id="elementor-new-template__take_a_tour">
 						<i class="eicon-play-o"></i>
 						<a href=""><?php echo __( 'Take The Video Tour', 'elementor' ); ?></a>
@@ -235,7 +235,7 @@ class Source_Local extends Source_Base {
 					<input type="hidden" name="post_type" value="elementor_library">
 					<input type="hidden" name="action" value="elementor_new_post">
 					<input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'elementor_action_new_post' ); ?>">
-					<div id="elementor-new-template__form__title"><?php echo __( 'Create New Template', 'elementor' ); ?></div>
+					<div id="elementor-new-template__form__title"><?php echo __( 'Choose Template Type', 'elementor' ); ?></div>
 					<div id="elementor-new-template__form__template-type__wrapper" class="elementor-form-field">
 						<label for="elementor-new-template__form__template-type" class="elementor-form-field__label"><?php echo __( 'Select the type of template you want to work on', 'elementor' ); ?></label>
 						<div class="elementor-form-field__select__wrapper">
