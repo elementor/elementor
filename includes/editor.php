@@ -571,6 +571,7 @@ class Editor {
 
 				// Library.
 				'an_error_occurred' => __( 'An error occurred', 'elementor' ),
+				'category' => __( 'Category', 'elementor' ),
 				'delete_template' => __( 'Delete Template', 'elementor' ),
 				'delete_template_confirm' => __( 'Are you sure you want to delete this template?', 'elementor' ),
 				'import_template_dialog_header' => __( 'Import Document Settings', 'elementor' ),
@@ -590,7 +591,6 @@ class Editor {
 				'templates_no_results_title' => __( 'No Results Found', 'elementor' ),
 				'templates_request_error' => __( 'The following error(s) occurred while processing the request:', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
-				'type' => __( 'Type', 'elementor' ),
 
 				// Incompatible Device.
 				'device_incompatible_header' => __( 'Your browser isn\'t compatible', 'elementor' ),

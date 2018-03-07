@@ -15,6 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Api {
 
+	const LIBRARY_OPTION_KEY = 'elementor_remote_info_library';
+
+	const FEED_OPTION_KEY = 'elementor_remote_info_feed_data';
+
 	/**
 	 * API info URL.
 	 *
@@ -97,14 +101,16 @@ class Api {
 				return false;
 			}
 
-			if ( isset( $info_data['templates'] ) ) {
-				update_option( 'elementor_remote_info_templates_data', $info_data['templates'], 'no' );
+			if ( isset( $info_data['library'] ) ) {
+				$info_data['library']['categories'] = json_decode( $info_data['library']['categories'] );
 
-				unset( $info_data['templates'] );
+				update_option( self::LIBRARY_OPTION_KEY, $info_data['library'], 'no' );
+
+				unset( $info_data['library'] );
 			}
 
 			if ( isset( $info_data['feed'] ) ) {
-				update_option( 'elementor_remote_info_feed_data', $info_data['feed'], 'no' );
+				update_option( self::FEED_OPTION_KEY, $info_data['feed'], 'no' );
 
 				unset( $info_data['feed'] );
 			}
@@ -150,16 +156,16 @@ class Api {
 	 *
 	 * @return array The templates data.
 	 */
-	public static function get_templates_data( $force_update = false ) {
+	public static function get_library_data( $force_update = false ) {
 		self::_get_info_data( $force_update );
 
-		$templates = get_option( 'elementor_remote_info_templates_data' );
+		$library_data = get_option( self::LIBRARY_OPTION_KEY );
 
-		if ( empty( $templates ) ) {
+		if ( empty( $library_data ) ) {
 			return [];
 		}
 
-		return $templates;
+		return $library_data;
 	}
 
 	/**
@@ -179,7 +185,7 @@ class Api {
 	public static function get_feed_data( $force_update = false ) {
 		self::_get_info_data( $force_update );
 
-		$feed = get_option( 'elementor_remote_info_feed_data' );
+		$feed = get_option( self::FEED_OPTION_KEY );
 
 		if ( empty( $feed ) ) {
 			return [];
