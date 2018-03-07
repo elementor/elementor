@@ -36,7 +36,6 @@
 	&__take_a_tour {
 		display: flex;
 		align-items: center;
-		color: inherit;
 
 		i {
 			color: #EF295A;
@@ -44,6 +43,7 @@
 		}
 
 		a {
+			color: $editor-dark;
 			@include padding-start(10px);
 			text-decoration: none;
 			font-weight: 500;
