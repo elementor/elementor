@@ -237,7 +237,7 @@ class Source_Local extends Source_Base {
 								<option value=""><?php echo __( 'Select', 'elementor' ); ?>...</option>
 								<?php
 								foreach ( $types as $value => $title ) {
-									echo sprintf( '<option value="%1$s" %2$s>%3$s</option>', $value, selected( $selected, $value, false ), $title );
+									printf( '<option value="%1$s" %2$s>%3$s</option>', $value, selected( $selected, $value, false ), $title );
 								}
 								?>
 							</select>
