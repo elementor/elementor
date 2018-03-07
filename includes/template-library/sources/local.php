@@ -183,7 +183,6 @@ class Source_Local extends Source_Base {
 
 	public function print_new_template_dialog() {
 		$document_types = Plugin::$instance->documents->get_document_types();
-		$groups = Plugin::$instance->documents->get_groups();
 		$types = [];
 		$selected = get_query_var( 'elementor_library_type' );
 
@@ -244,6 +243,15 @@ class Source_Local extends Source_Base {
 						</div>
 					</div>
 					<?php do_action( 'elementor/template-library/create_new_dialog_fields' ); ?>
+
+					<div id="elementor-new-template__form__post-title__wrapper" class="elementor-form-field">
+						<label for="elementor-new-template__form__post-title" class="elementor-form-field__label">
+							<?php echo __( 'Name Your Template', 'elementor' ); ?>
+						</label>
+						<div class="elementor-form-field__text__wrapper">
+							<input type="text" placeholder="<?php echo esc_attr( __( 'Enter template name (optional)', 'elementor' ) );?>" id="elementor-new-template__form__post-title" class="elementor-form-field__text" name="post_data[post_title]">
+						</div>
+					</div>
 					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create Template', 'elementor' ); ?></button>		
 				</form>
 			</div>
@@ -1074,14 +1082,6 @@ class Source_Local extends Source_Base {
 			$active_class = '';
 		}
 
-		$counts = (array) wp_count_posts( self::CPT );
-		unset( $counts['auto-draft'] );
-		$count  = array_sum( $counts );
-
-		if ( 0 >= $count ) {
-			return $views;
-		}
-
 		$baseurl = admin_url( 'edit.php?post_type=' . self::CPT );
 		?>
 		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
@@ -1124,6 +1124,14 @@ class Source_Local extends Source_Base {
 		$current_type = get_query_var( 'elementor_library_type' );
 
 		if ( empty( $current_type ) ) {
+			$counts = (array) wp_count_posts( self::CPT );
+			unset( $counts['auto-draft'] );
+			$count  = array_sum( $counts );
+
+			if ( 0 < $count ) {
+				return;
+			}
+
 			$current_type = 'template';
 		}
 
