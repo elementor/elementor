@@ -61,25 +61,36 @@
 		&__title {
 			font-size: 27px;
 			color: $editor-darker;
-			margin-bottom: 25px;
 		}
 
 		.elementor-form-field {
 
 			&__label {
 				display: block;
-				margin-bottom: 7px;
+				margin: 25px 0 7px;
 				line-height: 1;
 			}
 
 			input,
 			select {
-				border-radius: 3px;
 				width: 100%;
 				height: 50px;
 				padding: 10px;
-				margin-bottom: 25px;
+				font-size: 16px;
 				box-shadow: none;
+				border-radius: 3px;
+				background: none;
+				color: $editor-darkest;
+				border: 1px solid;
+				outline: none;
+
+				&:not(:focus) {
+					border-color: $editor-lightest;
+				}
+
+				&:focus {
+					border-color: $editor-light;
+				}
 			}
 
 			&__select {
@@ -96,7 +107,6 @@
 						top: 50%;
 						@include end(10px);
 						transform: translateY(-50%);
-						font-size: 16px;
 					}
 				}
 			}
@@ -105,6 +115,7 @@
 		&__submit {
 			width: 100%;
 			height: 50px;
+			margin-top: 25px;
 		}
 	}
 }
