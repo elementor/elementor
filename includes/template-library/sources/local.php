@@ -211,7 +211,7 @@ class Source_Local extends Source_Base {
 					<span id="elementor-template-library-header-logo-icon-wrapper">
 						<i class="eicon-elementor"></i>
 					</span>
-					<span><?php echo __( 'New Template', 'elementor' ) ?></span>
+					<span><?php echo __( 'Template Library', 'elementor' ) ?></span>
 					</div>
 				</div>
 				<div id="elementor-template-library-header-items-area">
@@ -237,7 +237,7 @@ class Source_Local extends Source_Base {
 					<input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'elementor_action_new_post' ); ?>">
 					<div id="elementor-new-template__form__title"><?php echo __( 'Create New Template', 'elementor' ); ?></div>
 					<div id="elementor-new-template__form__template-type__wrapper" class="elementor-form-field">
-						<label for="elementor-new-template__form__template-type" class="elementor-form-field__label"><?php echo __( 'Select a Type to Start With', 'elementor' ); ?></label>
+						<label for="elementor-new-template__form__template-type" class="elementor-form-field__label"><?php echo __( 'Select the type of template you want to work on', 'elementor' ); ?></label>
 						<div class="elementor-form-field__select__wrapper">
 							<select id="elementor-new-template__form__template-type" class="elementor-form-field__select" name="template_type" required>
 								<option value=""><?php echo __( 'Select', 'elementor' ); ?>...</option>
@@ -253,7 +253,7 @@ class Source_Local extends Source_Base {
 							</select>
 						</div>
 					</div>
-					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create new template', 'elementor' ); ?></button>
+					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create Template', 'elementor' ); ?></button>
 				</form>
 			</div>
 		</div>
@@ -1142,8 +1142,8 @@ class Source_Local extends Source_Base {
 		<div class="elementor-template_library-blank_state">
 			<div class="blank_state-inner">
 				<i class="eicon-folder"></i>
-				<h2>Create your first <?php echo esc_html( $current_type_label ); ?></h2>
-				<p>Add a new template here and take control of your site</p>
+				<h2>Create Your First <?php echo esc_html( $current_type_label ); ?> Template</h2>
+				<p>Add templates and reuse them across your website. Easily export and import them to any other project, for an optimised workflow.</p>
 				<a id="elementor-template-library-add-new" class="button button-primary button-hero elementor-button" href="#">Add New <?php echo esc_html( $current_type_label ); ?></a>
 			</div>
 		</div>
