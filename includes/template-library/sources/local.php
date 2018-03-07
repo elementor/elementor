@@ -243,7 +243,6 @@ class Source_Local extends Source_Base {
 							</select>
 						</div>
 					</div>
-					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create new template', 'elementor' ); ?></button>
 					<?php do_action( 'elementor/template-library/create_new_dialog_fields' ); ?>
 					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create Template', 'elementor' ); ?></button>		
 				</form>
