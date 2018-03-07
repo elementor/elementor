@@ -194,7 +194,8 @@ class Manager {
 				'categories' => $tag->get_categories(),
 				'group' => $tag->get_group(),
 				'controls' => $tag->get_controls(),
-				'content_type' => $tag->get_config()['content_type'],
+				'content_type' => $tag->get_content_type(),
+				'settings_required' => $tag->is_settings_required(),
 			];
 		}
 

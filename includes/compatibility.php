@@ -31,15 +31,11 @@ class Compatibility {
 	public static function register_actions() {
 		add_action( 'init', [ __CLASS__, 'init' ] );
 
+		self::polylang_compatibility();
+
 		if ( is_admin() ) {
 			add_filter( 'wp_import_post_meta', [ __CLASS__, 'on_wp_import_post_meta' ] );
 			add_filter( 'wxr_importer.pre_process.post_meta', [ __CLASS__, 'on_wxr_importer_pre_process_post_meta' ] );
-
-			if ( function_exists( 'gutenberg_init' ) ) {
-				add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
-
-				add_filter( 'elementor/utils/exit_to_dashboard_url', [ __CLASS__, 'exit_to_classic_editor' ] );
-			}
 		}
 	}
 
@@ -214,6 +210,32 @@ class Compatibility {
 				}
 
 				return $preview_url;
+			} );
+		}
+
+		// Gutenberg
+		if ( function_exists( 'gutenberg_init' ) ) {
+			add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
+			add_filter( 'elementor/utils/exit_to_dashboard_url', [ __CLASS__, 'exit_to_classic_editor' ] );
+		}
+	}
+
+	private static function polylang_compatibility() {
+		// Fix language if the `get_user_locale` is difference from the `get_locale
+		if ( isset( $_REQUEST['action'] ) && 0 === strpos( $_REQUEST['action'], 'elementor' ) ) {
+			add_action( 'set_current_user', function() {
+				global $current_user;
+				$current_user->locale = get_locale();
+			} );
+
+			// Fix for Polylang
+			define( 'PLL_AJAX_ON_FRONT', true );
+
+			add_action( 'pll_pre_init', function( $polylang ) {
+				if ( isset( $_REQUEST['post'] ) ) {
+					$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
+					$_REQUEST['lang'] = $post_language->locale;
+				}
 			} );
 		}
 
