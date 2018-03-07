@@ -574,6 +574,7 @@ class Editor {
 				'import_template_dialog_header' => __( 'Import Document Settings', 'elementor' ),
 				'import_template_dialog_message' => __( 'Do you want to also import the document settings of the template?', 'elementor' ),
 				'import_template_dialog_message_attention' => __( 'Attention: Importing may override previous settings.', 'elementor' ),
+				'library' => __( 'Library', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'page' => __( 'Page', 'elementor' ),
 				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),

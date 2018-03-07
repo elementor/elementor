@@ -1,4 +1,4 @@
-var TemplateLibraryLayoutView = require( 'elementor-templates/views/layout' ),
+var TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' ),
 	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
 	TemplateLibraryManager;
 
@@ -227,25 +227,6 @@ TemplateLibraryManager = function() {
 		return errorDialog;
 	};
 
-	this.getModal = function() {
-		if ( ! modal ) {
-			modal = elementor.dialogsManager.createWidget( 'lightbox', {
-				id: 'elementor-template-library-modal',
-				closeButton: false,
-				hide: {
-					onOutsideClick: false
-				}
-			} );
-
-			var $content = modal.addElement( 'content' ),
-				$preview = modal.addElement( 'preview' );
-
-			modal.getElements( 'message' ).append( $content, $preview );
-		}
-
-		return modal;
-	};
-
 	this.getLayout = function() {
 		return layout;
 	};
@@ -302,11 +283,11 @@ TemplateLibraryManager = function() {
 
 		setIntentFilters();
 
-		self.getModal().show();
-
 		if ( ! layout ) {
 			initLayout();
 		}
+
+		layout.modal.show();
 
 		layout.showLoadingView();
 
@@ -314,7 +295,7 @@ TemplateLibraryManager = function() {
 	};
 
 	this.closeModal = function() {
-		self.getModal().hide();
+		layout.modal.hide();
 	};
 
 	this.getFilter = function( name ) {

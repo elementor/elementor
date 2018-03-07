@@ -46,6 +46,18 @@ App = Marionette.Application.extend( {
 		panel: {
 			Menu: require( 'elementor-panel/pages/menu/menu' )
 		},
+		components: {
+			templateLibrary: {
+				views: {
+					parts: {
+						headerParts: {
+							logo: require( 'elementor-templates/views/parts/header-parts/logo' )
+						}
+					},
+					BaseModalLayout: require( 'elementor-templates/views/base-modal-layout' )
+				}
+			}
+		},
 		controls: {
 			Base: require( 'elementor-controls/base' ),
 			BaseData: require( 'elementor-controls/base-data' ),
