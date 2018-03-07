@@ -84,7 +84,7 @@ class Documents_Manager {
 
 	public function get_doc_or_auto_save( $id, $user_id = 0 ) {
 		$document = $this->get( $id );
-		if ( $document->get_autosave_id( $user_id ) ) {
+		if ( $document && $document->get_autosave_id( $user_id ) ) {
 			$document = $document->get_autosave( $user_id );
 		}
 
