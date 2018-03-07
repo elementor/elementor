@@ -1,31 +1,42 @@
-var TemplateLibraryHeaderView = require( 'elementor-templates/views/parts/header' ),
-	TemplateLibraryHeaderLogoView = require( 'elementor-templates/views/parts/header-parts/logo' ),
+var BaseModalLayout = require( 'elementor-templates/views/base-modal-layout' ),
 	TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts/header-parts/actions' ),
 	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
 	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
 	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
-	TemplateLibraryLoadingView = require( 'elementor-templates/views/parts/loading' ),
 	TemplateLibraryCollectionView = require( 'elementor-templates/views/parts/templates' ),
 	TemplateLibrarySaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
-	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' ),
-	TemplateLibraryLayoutView;
+	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
-TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
-	el: '#elementor-template-library-modal',
+module.exports = BaseModalLayout.extend( {
 
-	regions: {
-		modalHeader: '.dialog-widget-header',
-		modalContent: '.dialog-lightbox-content',
-		modalPreview: '.dialog-lightbox-preview'
+	regions: function() {
+		var regions = BaseModalLayout.prototype.regions.apply( this, arguments );
+
+		regions.modalPreview = '.dialog-lightbox-preview';
+
+		return regions;
 	},
 
-	initialize: function() {
-		this.modalHeader.show( new TemplateLibraryHeaderView() );
+	getModalOptions: function() {
+		return {
+			id: 'elementor-template-library-modal'
+		};
 	},
 
-	getHeaderView: function() {
-		return this.modalHeader.currentView;
+	getLogoOptions: function() {
+		return {
+			title: elementor.translate( 'library' ),
+			click: function() {
+				elementor.templates.setTemplatesPage( 'remote', 'page' );
+			}
+		};
+	},
+
+	initModal: function() {
+		BaseModalLayout.prototype.initModal.apply( this, arguments );
+
+		this.modal.getElements( 'message' ).append( this.modal.addElement( 'preview' ) );
 	},
 
 	getTemplateActionButton: function( templateData ) {
@@ -43,11 +54,8 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 
 		headerView.tools.show( new TemplateLibraryHeaderActionsView() );
 		headerView.menuArea.show( new TemplateLibraryHeaderMenuView() );
-		headerView.logoArea.show( new TemplateLibraryHeaderLogoView() );
-	},
 
-	showLoadingView: function() {
-		this.modalContent.show( new TemplateLibraryLoadingView() );
+		this.showLogo();
 	},
 
 	showTemplatesView: function( templatesCollection ) {
@@ -98,5 +106,3 @@ TemplateLibraryLayoutView = Marionette.LayoutView.extend( {
 		this.modalPreview.$el.hide();
 	}
 } );
-
-module.exports = TemplateLibraryLayoutView;

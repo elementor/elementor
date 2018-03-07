@@ -71,12 +71,12 @@ class Source_Remote extends Source_Base {
 	 * @return array Remote templates.
 	 */
 	public function get_items( $args = [] ) {
-		$templates_data = Api::get_templates_data();
+		$library_data = Api::get_library_data();
 
 		$templates = [];
 
-		if ( ! empty( $templates_data ) ) {
-			foreach ( $templates_data as $template_data ) {
+		if ( ! empty( $library_data['templates'] ) ) {
+			foreach ( $library_data['templates'] as $template_data ) {
 				$templates[] = $this->get_item( $template_data );
 			}
 		}

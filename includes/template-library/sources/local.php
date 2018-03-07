@@ -198,17 +198,17 @@ class Source_Local extends Source_Base {
 		}
 		?>
 		<div id="elementor-new-template-dialog" style="display: none">
-			<div id="elementor-template-library-header">
-				<div id="elementor-template-library-header-logo-area">
-					<div id="elementor-template-library-header-logo">
-					<span id="elementor-template-library-header-logo-icon-wrapper">
+			<div class="elementor-templates-modal__header">
+				<div class="elementor-templates-modal__header__logo-area">
+					<div class="elementor-templates-modal__header__logo">
+					<span class="elementor-templates-modal__header__logo__icon-wrapper">
 						<i class="eicon-elementor"></i>
 					</span>
 					<span><?php echo __( 'Template Library', 'elementor' ) ?></span>
 					</div>
 				</div>
-				<div id="elementor-template-library-header-items-area">
-					<div id="elementor-template-library-header-close-modal" class="elementor-template-library-header-item">
+				<div class="elementor-templates-modal__header__items-area">
+					<div class="elementor-templates-modal__header__close-modal elementor-templates-modal__header__item">
 						<i class="eicon-close" aria-hidden="true" title="Close"></i>
 						<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ) ?></span>
 					</div>
