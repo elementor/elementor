@@ -1096,9 +1096,9 @@ class Source_Local extends Source_Base {
 
 				$type_url = add_query_arg( self::TAXONOMY_TYPE_SLUG, $template_type, $baseurl );
 
-				$type_lable = ucwords( $template_type );
+				$type_label = ucwords( str_replace( '_', ' ', $template_type ) );
 
-				echo "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_lable}</a>";
+				echo "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_label}</a>";
 			endforeach;
 			?>
 		</div>
