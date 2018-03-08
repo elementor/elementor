@@ -39,7 +39,7 @@ module.exports = BaseSettings.extend( {
 	},
 
 	getDataToSave: function( data ) {
-		data.id = elementor.config.post_id;
+		data.id = elementor.config.document.id;
 
 		return data;
 	}

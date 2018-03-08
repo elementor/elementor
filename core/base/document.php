@@ -106,10 +106,10 @@ abstract class Document extends Controls_Stack {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param string $$exit_url Default exit URL.
+		 * @param string $exit_url Default exit URL.
 		 * @param Document $this Document.
 		 */
-		$exit_url = apply_filters( 'elementor/document/exit_to_dashboard_url', $exit_url, $this );
+		$exit_url = apply_filters( 'elementor/document/urls/exit_to_dashboard', $exit_url, $this );
 
 		return $exit_url;
 	}
@@ -180,6 +180,20 @@ abstract class Document extends Controls_Stack {
 
 	public function is_editable_by_current_user() {
 		return User::is_current_user_can_edit( $this->get_main_id() );
+	}
+
+	protected function _get_initial_config() {
+		return [
+			'id' => $this->get_main_id(),
+			'type' => $this->get_name(),
+			'last_edited' => $this->get_last_edited(),
+			'urls' => [
+				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
+				'preview' => $this->get_preview_url(),
+				'wp_preview' => $this->get_wp_preview_url(),
+				'permalink' => $this->get_permalink(),
+			],
+		];
 	}
 
 	/**

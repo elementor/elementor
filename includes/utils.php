@@ -213,24 +213,7 @@ class Utils {
 	 */
 	public static function get_exit_to_dashboard_url( $post_id ) {
 		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_exit_to_dashboard_url()' );
-
-		$exit_url = Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url();
-
-		/**
-		 * Exit to dashboard URL.
-		 *
-		 * Filters the exit to dashboard URL.
-		 *
-		 * @since 1.9.0
-		 * @deprecated 2.0.0
-		 *
-		 * @param string $exit_url Default exit URL.
-		 * @param int    $post_id  Post ID.
-		 */
-
-		$exit_url = apply_filters( 'elementor/utils/exit_to_dashboard_url', $exit_url, $post_id );
-
-		return $exit_url;
+		return Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url();
 	}
 
 	/**
