@@ -222,7 +222,7 @@
 						id: 'elementor-new-template-modal',
 						className: 'elementor-templates-modal',
 						headerMessage: self.cache.$addNewDialogHeader,
-						message: self.cache.$addNewDialogContent.html(),
+						message: self.cache.$addNewDialogContent.children(),
 						hide: {
 							onButtonClick: false
 						},
@@ -232,8 +232,6 @@
 						},
 						onReady: function() {
 							DialogsManager.getWidgetType( 'lightbox' ).prototype.onReady.apply( this, arguments );
-
-							jQuery( document ).trigger( 'newTemplateDialogReady', [ this ] );
 
 							self.cache.$addNewDialogClose.on( 'click', function() {
 								modal.hide();
