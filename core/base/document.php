@@ -182,6 +182,20 @@ abstract class Document extends Controls_Stack {
 		return User::is_current_user_can_edit( $this->get_main_id() );
 	}
 
+	protected function _get_initial_config() {
+		return [
+			'id' => $this->get_main_id(),
+			'type' => $this->get_name(),
+			'last_edited' => $this->get_last_edited(),
+			'urls' => [
+				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
+				'preview' => $this->get_preview_url(),
+				'wp_preview' => $this->get_wp_preview_url(),
+				'permalink' => $this->get_permalink(),
+			],
+		];
+	}
+
 	/**
 	 * Initialize controls.
 	 *
