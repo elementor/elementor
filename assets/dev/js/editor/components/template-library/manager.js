@@ -273,16 +273,6 @@ TemplateLibraryManager = function() {
 	};
 
 	this.startModal = function( customStartIntent ) {
-		startIntent = jQuery.extend( {
-			filters: {
-				source: 'remote',
-				type: 'page'
-			},
-			onReady: self.showTemplates
-		}, customStartIntent );
-
-		setIntentFilters();
-
 		if ( ! layout ) {
 			initLayout();
 		}
@@ -291,7 +281,23 @@ TemplateLibraryManager = function() {
 
 		layout.showLoadingView();
 
-		self.requestLibraryData( startIntent.onReady );
+		self.requestLibraryData( function() {
+			var documentType = elementor.config.document.type,
+				isBlockType = -1 !== config.categories.indexOf( documentType );
+
+			startIntent = jQuery.extend( {
+				filters: {
+					source: 'remote',
+					type: isBlockType ? 'block' : 'page',
+					subtype: isBlockType ? documentType : null
+				},
+				onReady: self.showTemplates
+			}, customStartIntent );
+
+			setIntentFilters();
+
+			startIntent.onReady();
+		} );
 	};
 
 	this.closeModal = function() {
