@@ -63,7 +63,7 @@ module.exports = BaseModalLayout.extend( {
 			collection: templatesCollection
 		} ) );
 
-		this.setHeaderDefaultParts();
+		this.closePreview();
 	},
 
 	showImportView: function() {
