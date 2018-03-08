@@ -5,11 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-$document = Plugin::$instance->documents->get( $this->get_post_id() );
-
 /**
  * @var Editor $this
  */
+$document = Plugin::$instance->documents->get( $this->get_post_id() );
+
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
 	<div id="elementor-mode-switcher"></div>
