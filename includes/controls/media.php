@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -231,6 +233,10 @@ class Control_Media extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
+			'dynamic' => [
+				'categories' => [ TagsModule::IMAGE_CATEGORY ],
+				'returnType' => 'object',
+			],
 		];
 	}
 

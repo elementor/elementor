@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Modules\DynamicTags\Module as TagsModule;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -97,8 +95,6 @@ class Widget_Image_Box extends Widget_Base {
 				'type' => Controls_Manager::MEDIA,
 				'dynamic' => [
 					'active' => true,
-					'categories' => [ TagsModule::IMAGE_CATEGORY ],
-					'returnType' => 'object',
 				],
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
@@ -152,7 +148,6 @@ class Widget_Image_Box extends Widget_Base {
 				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
-					'categories' => [ TagsModule::URL_CATEGORY ],
 				],
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'separator' => 'before',

@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Modules\DynamicTags\Module as TagsModule;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -94,7 +92,6 @@ class Widget_Heading extends Widget_Base {
 				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
-					'categories' => [ TagsModule::URL_CATEGORY ],
 				],
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'default' => [
