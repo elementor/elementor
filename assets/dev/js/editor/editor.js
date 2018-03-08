@@ -507,6 +507,14 @@ App = Marionette.Application.extend( {
 		}
 	},
 
+	openLibraryOnStart: function() {
+		if ( '#library' === location.hash ) {
+			elementor.templates.startModal();
+
+			location.hash = '';
+		}
+	},
+
 	onStart: function() {
 		this.$window = jQuery( window );
 
@@ -616,6 +624,8 @@ App = Marionette.Application.extend( {
 		this.enqueueTypographyFonts();
 
 		this.onEditModeSwitched();
+
+		this.openLibraryOnStart();
 
 		this.trigger( 'preview:loaded' );
 	},
