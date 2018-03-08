@@ -46,7 +46,7 @@ module.exports = Module.extend( {
 
 		elementor.ajax.send( 'render_tags', {
 			data: {
-				post_id: elementor.config.post_id,
+				post_id: elementor.config.document.id,
 				tags: Object.keys( cacheRequests )
 			},
 			success: function( data ) {
