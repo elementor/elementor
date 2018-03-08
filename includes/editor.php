@@ -498,6 +498,8 @@ class Editor {
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
 			'data' => $editor_data,
+			// @TODO: `post_id` is bc since 2.0.0
+			'post_id' => $this->_post_id,
 			'document' => $document->get_config(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'current_user_can_publish' => $current_user_can_publish,
