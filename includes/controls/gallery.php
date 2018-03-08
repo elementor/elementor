@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -168,6 +170,10 @@ class Control_Gallery extends Base_Data_Control {
 		return [
 			'label_block' => true,
 			'separator' => 'none',
+			'dynamic' => [
+				'categories' => [ TagsModule::GALLERY_CATEGORY ],
+				'returnType' => 'object',
+			],
 		];
 	}
 

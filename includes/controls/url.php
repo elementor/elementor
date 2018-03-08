@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -128,6 +130,10 @@ class Control_URL extends Control_Base_Multiple {
 		return [
 			'label_block' => true,
 			'show_external' => true,
+			'dynamic' => [
+				'categories' => [ TagsModule::URL_CATEGORY ],
+				'property' => 'url',
+			],
 		];
 	}
 
