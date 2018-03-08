@@ -167,7 +167,7 @@ ElementModel = Backbone.Model.extend( {
 		return elementor.ajax.addRequest( 'render_widget', {
 			unique_id: this.cid,
 			data: {
-				post_id: elementor.config.post_id,
+				post_id: elementor.config.document.id,
 				data: data
 			},
 			success: this.onRemoteGetHtml.bind( this )

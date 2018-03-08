@@ -73,12 +73,12 @@ module.exports = Module.extend( {
 		var self = this;
 		elementor.ajax.addRequest( 'discard_changes', {
 			data: {
-				post_id: elementor.config.post_id
+				post_id: elementor.config.document.id
 			},
 
 			success: function() {
 				self.setFlagEditorChange( false );
-				location.href = elementor.config.exit_to_dashboard_url;
+				location.href = elementor.config.document.urls.exit_to_dashboard;
 			}
 		} );
 	},
@@ -153,7 +153,7 @@ module.exports = Module.extend( {
 
 		elementor.ajax.addRequest( 'save_builder', {
 			data: {
-				post_id: elementor.config.post_id,
+				post_id: elementor.config.document.id,
 				status: options.status,
 				elements: elements,
 				settings: settings
