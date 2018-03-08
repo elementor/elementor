@@ -106,7 +106,7 @@ abstract class Document extends Controls_Stack {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param string $$exit_url Default exit URL.
+		 * @param string $exit_url Default exit URL.
 		 * @param Document $this Document.
 		 */
 		$exit_url = apply_filters( 'elementor/document/exit_to_dashboard_url', $exit_url, $this );
