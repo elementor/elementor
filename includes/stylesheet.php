@@ -384,12 +384,12 @@ class Stylesheet {
 
 				$b_query = $this->hash_to_query( $b );
 
-				if ( isset( $a_query['max'] ) && !isset($b_query['max']) ) {
+				if ( isset( $a_query['max'] ) xor isset( $b_query['max'] ) ) {
 					return -1;
 				}
 
 				if ( isset( $a_query['min'] ) xor isset( $b_query['min'] ) ) {
-					return 1;
+					return -1;
 				}
 
 				if ( isset( $a_query['min'] ) ) {
