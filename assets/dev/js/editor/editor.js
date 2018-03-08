@@ -252,7 +252,7 @@ App = Marionette.Application.extend( {
 		if ( ! this.$preview ) {
 			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
-				src: this.config.preview_link + '&' + ( new Date().getTime() ),
+				src: this.config.document.urls.preview + '&' + ( new Date().getTime() ),
 				allowfullscreen: 1
 			} );
 
@@ -487,7 +487,7 @@ App = Marionette.Application.extend( {
 	},
 
 	checkPageStatus: function() {
-		if ( elementor.config.current_revision_id !== elementor.config.post_id ) {
+		if ( elementor.config.current_revision_id !== elementor.config.document.id ) {
 			this.notifications.showToast( {
 				message: this.translate( 'working_on_draft_notification' ),
 				buttons: [

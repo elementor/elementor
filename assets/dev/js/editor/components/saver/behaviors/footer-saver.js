@@ -68,7 +68,7 @@ module.exports = Marionette.Behavior.extend( {
 						name: 'view_page',
 						text: elementor.translate( 'have_a_look' ),
 						callback: function() {
-							open( elementor.config.post_link );
+							open( elementor.config.document.urls.permalink );
 						}
 					}
 				]
@@ -107,7 +107,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	onClickButtonPreview: function() {
 		// Open immediately in order to avoid popup blockers.
-		this.previewWindow = open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
+		this.previewWindow = open( elementor.config.document.urls.wp_preview, 'wp-preview-' + elementor.config.document.id );
 
 		if ( elementor.saver.isEditorChanged() ) {
 			// Force save even if it's saving now.
@@ -161,7 +161,7 @@ module.exports = Marionette.Behavior.extend( {
 			case 'private':
 				publishLabel = 'update';
 
-				if ( elementor.config.current_revision_id !== elementor.config.post_id ) {
+				if ( elementor.config.current_revision_id !== elementor.config.document.id ) {
 					this.activateSaveButtons( true );
 				}
 
@@ -199,7 +199,7 @@ module.exports = Marionette.Behavior.extend( {
 		if ( this.previewWindow ) {
 			// Refresh URL form updated config.
 			try {
-				this.previewWindow.location = elementor.config.wp_preview.url;
+				this.previewWindow.location = elementor.config.document.urls.wp_preview;
 			} catch ( e ) {
 				// If the this.previewWindow is closed or it's domain was changed.
 				// Do nothing.
