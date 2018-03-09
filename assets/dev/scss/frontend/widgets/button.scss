@@ -66,6 +66,10 @@
 	.elementor-button-text {
 		display: inline-block;
 	}
+
+	span {
+		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
+	}
 }
 
 .elementor-element.elementor-button- {
