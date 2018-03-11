@@ -347,6 +347,19 @@ class Elements_Manager {
 			],
 		];
 
+		/**
+		 * When categories are registered.
+		 *
+		 * Fires after basic categories are registered, before Pojo and
+		 * WordPress have been registered.
+		 *
+		 * This is where categories registered by external developers are
+		 * added.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param Elements_Manager $this Elements manager instance.
+		 */
 		do_action( 'elementor/elements/categories_registered', $this );
 
 		$this->categories['pojo'] = [
