@@ -1042,6 +1042,8 @@
     margin-right: 5px; }
   .elementor-button .elementor-button-text {
     display: inline-block; }
+  .elementor-button span {
+    text-decoration: inherit; }
 
 .elementor-element.elementor-button-info .elementor-button {
   background-color: #5bc0de; }
