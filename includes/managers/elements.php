@@ -341,7 +341,7 @@ class Elements_Manager {
 				'title' => __( 'Theme Elements', 'elementor-pro' ),
 				'icon' => 'font',
 			],
-			'general-elements' => [
+			'general' => [
 				'title' => __( 'General Elements', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
