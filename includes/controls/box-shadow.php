@@ -9,79 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor box shadow control.
  *
  * A base control for creating box shadows control. Displays input fields for
- * horizontal shadow, vertical shadow, shadow blur, shadow spread, shadow color.
- *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- * ```php
- * $this->add_control(
- * 	'box_shadow',
- * 	[
- * 		'label' => __( 'Box Shadow', 'plugin-domain' ),
- * 		'type' => Controls_Manager::BOX_SHADOW,
- * 		'default' => [
- * 			'color' => 'rgba(0,0,0,.5)',
- * 		],
- * 		'selectors' => [
- * 			'{{WRAPPER}} .your-class' => 'box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}};',
- * 		],
- * 	]
- * );
- * ```
- *
- * PHP usage (inside `Widget_Base::render()` method):
- *
- * ```php
- * echo '<div class="your-class"> ... </div>';
- * ```
- *
- * JS usage (inside `Widget_Base::_content_template()` method):
- *
- * ```js
- * <div class="your-class"> ... </div>
- * ```
+ * horizontal shadow, vertical shadow, shadow blur, shadow spread and shadow
+ * color.
  *
  * @since 1.0.0
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param string $placeholder Optional. The field placeholder that appears when
- *                            the field has no values. Default is empty.
- * @param array  $default     {
- *     Optional. Default box shadow values.
- *
- *     @type int    $horizontal Optional. Horizontal shadow. Default is 0.
- *     @type int    $vertical   Optional. Vertical shadow. Default is 0.
- *     @type int    $blur       Optional. Shadow blur. Default is 10.
- *     @type int    $spread     Optional. Shadow spread. Default is 0.
- *     @type string $color      Optional. Shadow color. Available values are
- *                              `rgb`, `rgba`, `hex` or `format`. Default is
- *                              `rgba(0,0,0,0.5)`.
- * }
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is false.
- *
- * @return array {
- *     Box shadow values.
- *
- *     @type int    $horizontal Horizontal shadow.
- *     @type int    $vertical   Vertical shadow.
- *     @type int    $blur       Shadow blur.
- *     @type int    $spread     Shadow spread.
- *     @type string $color      Shadow color.
- * }
  */
 class Control_Box_Shadow extends Control_Base_Multiple {
 
