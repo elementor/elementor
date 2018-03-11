@@ -10,73 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * A base control for creating select2 control. Displays a select box control
  * based on select2 jQuery plugin @see https://select2.github.io/ .
- * Accepts an array in which the `key` is the value and the `value` is the option
- * name. Set `multiple` to `true` to allow multiple value selection.
- *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- * ```php
- * $this->add_control(
- * 	'show_elements',
- * 	[
- * 		'label' => __( 'Show Elements', 'plugin-domain' ),
- * 		'type' => Controls_Manager::SELECT2,
- * 		'default' => 'solid',
- * 		'options' => [
- * 			'title' => __( 'Title', 'plugin-domain' ),
- * 			'description' => __( 'Description', 'plugin-domain' ),
- * 			'button' => __( 'Button', 'plugin-domain' ),
- * 		],
- * 		'multiple' => true,
- * 	]
- * );
- * ```
- *
- * PHP usage (inside `Widget_Base::render()` method):
- *
- * ```php
- * $settings = $this->get_settings();
- * foreach ( $settings['show_elements'] as $element ) {
- * 	echo '<div>' . $element . '</div>';
- * }
- * ```
- *
- * JS usage (inside `Widget_Base::_content_template()` method):
- *
- * ```js
- * <# _.each( settings.show_elements, function( element ) { #>
- * 	<div>{{{ element }}}</div>
- * <# } #>
- * ```
+ * It accepts an array in which the `key` is the value and the `value` is the
+ * option name. Set `multiple` to `true` to allow multiple value selection.
  *
  * @since 1.0.0
- *
- * @param string $label         Optional. The label that appears next of the
- *                              field. Default is empty.
- * @param string $title         Optional. The field title that appears on mouse
- *                              hover. Default is empty.
- * @param string $description   Optional. The description that appears below the
- *                              field. Default is empty.
- * @param string|array $default Optional. The selected option key, or an array
- *                              of selected values if `multiple == true`.
- *                              Default is empty.
- * @param array  $options       Optional. An array of `key => value` pairs:
- *                              `[ 'key' => 'value', ... ]`
- *                              Default is empty.
- * @param bool   $multiple      Optional. Whether to allow multiple value
- *                              selection. Default is false.
- * @param string $separator     Optional. Set the position of the control separator.
- *                              Available values are 'default', 'before', 'after'
- *                              and 'none'. 'default' will position the separator
- *                              depending on the control type. 'before' / 'after'
- *                              will position the separator before/after the
- *                              control. 'none' will hide the separator. Default
- *                              is 'default'.
- * @param bool   $show_label    Optional. Whether to display the label. Default
- *                              is true.
- * @param bool   $label_block   Optional. Whether to display the label in a
- *                              separate line. Default is false.
  */
 class Control_Select2 extends Base_Data_Control {
 

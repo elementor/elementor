@@ -9,65 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor select control.
  *
  * A base control for creating select control. Displays a simple select box.
- * Accepts an array in which the `key` is the value and the `value` is the option name.
- *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- * ```php
- * $this->add_control(
- * 	'border_style',
- * 	[
- * 		'label' => __( 'Border Style', 'plugin-domain' ),
- * 		'type' => Controls_Manager::SELECT,
- * 		'default' => 'solid',
- * 		'options' => [
- * 			'solid'  => __( 'Solid', 'plugin-domain' ),
- * 			'dashed' => __( 'Dashed', 'plugin-domain' ),
- * 			'dotted' => __( 'Dotted', 'plugin-domain' ),
- * 			'double' => __( 'Double', 'plugin-domain' ),
- * 			'none'   => __( 'None', 'plugin-domain' ),
- * 		],
- * 	]
- * );
- * ```
- *
- * PHP usage (inside `Widget_Base::render()` method):
- *
- * ```php
- * $settings = $this->get_settings();
- * echo '<div style="border-style: ' . $settings['border_style'] . '"> ... </div>';
- * ```
- *
- * JS usage (inside `Widget_Base::_content_template()` method):
- *
- * ```php
- * <div style="border-style: {{ settings.border_style }}"> ... </div>
- * ```
+ * It accepts an array in which the `key` is the option value and the `value` is
+ * the option name.
  *
  * @since 1.0.0
- *
- * @param string $label        Optional. The label that appears next of the
- *                             field. Default is empty.
- * @param string $title        Optional. The field title that appears on mouse
- *                             hover. Default is empty.
- * @param string $description  Optional. The description that appears below the
- *                             field. Default is empty.
- * @param string $default      Optional. The field default value.
- * @param array  $options      Optional. An array of `key => value` pairs:
- *                             `[ 'key' => 'value', ... ]`
- *                             Default is empty.
- * @param string $separator    Optional. Set the position of the control separator.
- *                             Available values are 'default', 'before', 'after'
- *                             and 'none'. 'default' will position the separator
- *                             depending on the control type. 'before' / 'after'
- *                             will position the separator before/after the
- *                             control. 'none' will hide the separator. Default
- *                             is 'default'.
- * @param bool   $show_label   Optional. Whether to display the label. Default
- *                             is true.
- * @param bool   $label_block  Optional. Whether to display the label in a
- *                             separate line. Default is false.
  */
 class Control_Select extends Base_Data_Control {
 
