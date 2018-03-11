@@ -121,10 +121,15 @@ class Preview {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @param string $content
+	 *
 	 * @return string HTML wrapper for the builder.
 	 */
-	public function builder_wrapper() {
-		return '<div id="elementor" class="elementor elementor-edit-mode"></div>';
+	public function builder_wrapper( $content ) {
+		if ( get_the_ID() === $this->post_id ) {
+			$content = '<div id="elementor" class="elementor elementor-edit-mode"></div>';
+		}
+		return $content;
 	}
 
 	/**
