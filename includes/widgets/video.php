@@ -694,6 +694,8 @@ class Widget_Video extends Widget_Base {
 			}
 
 			$params['color'] = str_replace( '#', '', $settings['vimeo_color'] );
+
+			$params['autopause'] = '0';
 		}
 
 		return $params;
