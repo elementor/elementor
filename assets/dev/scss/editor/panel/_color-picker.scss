@@ -53,13 +53,24 @@
 	&.wp-picker-active {
 		transform: translateY(6px);
 
-		[class*="wp-version-4-9"] #elementor-controls &, [class*="wp-version-5"] #elementor-controls & {
+		[class*="wp-version-4-9"] #elementor-controls &,
+		[class*="wp-version-5"] #elementor-controls & {
 			padding-top: 9px;
 		}
 
 		.wp-color-result {
 			margin-right: 3px;
 		}
+	}
+
+	input[type="text"].wp-color-picker {
+		float: left;
+		width: 100px;
+		max-width: 136px;
+		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		font-size: 11px;
+		line-height: 12px;
+		padding: 7px 3px;
 	}
 }
 
@@ -102,19 +113,9 @@
 		width: 48px;
 		padding: 0;
 		background-color: $editor-lightest;
-		border-radius: 0 3px 3px 0;
+		border-radius: getValueByDirection(0 3px 3px 0 , 3px 0 0 3px);
 		margin: 0;
 	}
-}
-
-input[type="text"].wp-color-picker {
-	float: left;
-	width: 100px;
-	max-width: 136px;
-	border-radius: 3px 0 0 3px;
-	font-size: 11px;
-	line-height: 12px;
-	padding: 7px 3px;
 }
 
 .wp-picker-holder {
