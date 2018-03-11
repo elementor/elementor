@@ -13,72 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base control for creating url control. Displays a URL input with the
  * ability to set the target of the link to `_blank` to open in a new tab.
  *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- * ```php
- * $this->add_control(
- * 	'link',
- * 	[
- * 		'label' => __( 'Link', 'plugin-domain' ),
- * 		'type' => Controls_Manager::URL,
- * 		'placeholder' => __( 'https://your-link.com', 'plugin-domain' ),
- * 		'default' => [
- * 			'url' => '',
- * 			'is_external' => true,
- * 		]
- * 		'show_external' => true
- * 	]
- * );
- * ```
- *
- * PHP usage (inside `Widget_Base::render()` method):
- *
- * ```php
- * $settings = $this->get_settings();
- * $target = $settings['website_link']['is_external'] ? 'target="_blank"' : '';
- * echo '<a href="' . $settings['website_link']['url'] . '" ' . $target . '> ... </a>';
- * ```
- *
- * JS usage (inside `Widget_Base::_content_template()` method):
- *
- * ```js
- * <# var target = settings.website_link.is_external ? 'target="_blank"' : ''; #>
- * <a href="{{ settings.website_link.url }}" {{ target }}> ... </a>
- * ```
- *
  * @since 1.0.0
- *
- * @param string $label         Optional. The label that appears above of the
- *                              field. Default is empty.
- * @param string $title         Optional. The field title that appears on mouse
- *                              hover. Default is empty.
- * @param string $placeholder   Optional. The field placeholder that appears
- *                              when the field has no values. Default is empty.
- * @param string $description   Optional. The description that appears below the
- *                              field. Default is empty.
- * @param array  $default       {
- *     Optional. The field default values.
- *
- *     @type string $url         Optional. Default is empty.
- *     @type bool   $is_external Optional. Determine whether to open the url in
- *                               the same tab or in a new one. Default is empty.
- *     @type bool   $nofollow    Optional. Determine whether to add nofollow
- *                               attribute. Default is empty.
- * }
- * @param bool   $show_external Optional. Whether to show 'Is External' button.
- *                              Default is true.
- * @param string $separator     Optional. Set the position of the control separator.
- *                              Available values are 'default', 'before', 'after'
- *                              and 'none'. 'default' will position the separator
- *                              depending on the control type. 'before' / 'after'
- *                              will position the separator before/after the
- *                              control. 'none' will hide the separator. Default
- *                              is 'default'.
- * @param bool   $show_label    Optional. Whether to display the label. Default
- *                              is true.
- * @param bool   $label_block   Optional. Whether to display the label in a
- *                              separate line. Default is false.
  */
 class Control_URL extends Control_Base_Multiple {
 
