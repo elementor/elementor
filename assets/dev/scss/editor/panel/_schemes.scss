@@ -82,6 +82,10 @@
 
 	.wp-picker-container {
 
+		&:not(.wp-picker-active) {
+			float: none;
+		}
+
 		&.wp-picker-active {
 			transform: translateY(10px);
 

@@ -81,6 +81,8 @@ class Control_Button extends Base_UI_Control {
 	 */
 	protected function get_default_settings() {
 		return [
+			'text' => '',
+			'event' => '',
 			'button_type' => 'default',
 		];
 	}
