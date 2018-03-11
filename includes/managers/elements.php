@@ -350,8 +350,8 @@ class Elements_Manager {
 		/**
 		 * When categories are registered.
 		 *
-		 * Fires after basic categories are registered, before Pojo and
-		 * WordPress have been registered.
+		 * Fires after basic categories are registered, before WordPress
+		 * category have been registered.
 		 *
 		 * This is where categories registered by external developers are
 		 * added.
