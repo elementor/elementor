@@ -362,6 +362,7 @@ class Elements_Manager {
 		 */
 		do_action( 'elementor/elements/categories_registered', $this );
 
+		// TODO: Remove the category from Elementor, add registration hook to Pojo core.
 		$this->categories['pojo'] = [
 			'title' => __( 'Pojo Themes', 'elementor' ),
 			'icon' => 'eicon-pojome',
