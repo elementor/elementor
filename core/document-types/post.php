@@ -19,6 +19,10 @@ class Post extends Document {
 		return 'post';
 	}
 
+	public static function get_title() {
+		return __( 'Page', 'elementor' );
+	}
+
 	public function get_css_wrapper_selector() {
 		return 'body.elementor-page-' . $this->get_main_id();
 	}
