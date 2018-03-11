@@ -116,7 +116,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return array Widget categories.
 	 */
 	public function get_categories() {
-		return [ 'basic' ];
+		return [ 'general' ];
 	}
 
 	/**
