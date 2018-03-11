@@ -19,13 +19,6 @@
 	display: inline-block;
 }
 
-// Pojo Theme Support
-#elementor-controls {
-	.pojo-widget-button-collapse {
-		display: none;
-	}
-}
-
 // Alert
 .elementor-panel-alert {
 	padding: 15px;
@@ -180,5 +173,17 @@
 
 	.elementor-panel-nerd-box-message {
 		text-transform: uppercase;
+	}
+}
+
+// Select2 support
+.select2-container {
+	width: 100% !important;
+}
+
+// Pojo Theme Support
+#elementor-controls {
+	.pojo-widget-button-collapse {
+		display: none;
 	}
 }
