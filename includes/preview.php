@@ -98,14 +98,20 @@ class Preview {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @param int $post_id
+	 *
 	 * @return bool Whether preview mode is active.
 	 */
-	public function is_preview_mode() {
-		if ( ! User::is_current_user_can_edit() ) {
+	public function is_preview_mode( $post_id = 0 ) {
+		if ( empty( $post_id ) ) {
+			$post_id = get_the_ID();
+		}
+
+		if ( ! User::is_current_user_can_edit( $post_id ) ) {
 			return false;
 		}
 
-		if ( ! isset( $_GET['elementor-preview'] ) ) {
+		if ( ! isset( $_GET['elementor-preview'] ) || $post_id !== (int) $_GET['elementor-preview'] ) {
 			return false;
 		}
 
