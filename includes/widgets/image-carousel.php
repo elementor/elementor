@@ -58,22 +58,6 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
-	 *
-	 * Retrieve the list of categories the image carousel widget belongs to.
-	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return array Widget categories.
-	 */
-	public function get_categories() {
-		return [ 'general' ];
-	}
-
-	/**
 	 * Retrieve the list of scripts the image carousel widget depended on.
 	 *
 	 * Used to set scripts dependencies required to run the widget.
