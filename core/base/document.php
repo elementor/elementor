@@ -344,7 +344,16 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function get_preview_url() {
-		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', $this->get_main_id(), $this->get_permalink() ) );
+		static $time;
+
+		if ( empty( $time ) ) {
+			$time = time();
+		}
+
+		$preview_url = set_url_scheme( add_query_arg( [
+			'elementor-preview' => $this->get_main_id(),
+			$time => '',
+		] , $this->get_permalink() ) );
 
 		return apply_filters( 'elementor/document/preview_url', $preview_url, $this );
 	}
