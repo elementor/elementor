@@ -515,8 +515,17 @@ abstract class Document extends Controls_Stack {
 		update_post_meta( $this->post->ID, self::TYPE_META_KEY, $this->get_name() );
 	}
 
+	public function get_main_meta( $key ) {
+		return get_post_meta( $this->get_main_id(), $key, true );
+	}
+
 	public function get_meta( $key ) {
 		return get_post_meta( $this->post->ID, $key, true );
+	}
+
+	public function update_meta( $key, $value ) {
+		// Use `update_metadata` in order to save also for revisions.
+		return update_metadata( 'post', $this->post->ID, $key, $value );
 	}
 
 	public function get_last_edited() {
