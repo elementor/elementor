@@ -58,6 +58,22 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
+	 * Retrieve the list of categories the button widget belongs to.
+	 *
+	 * Used to determine where to display the widget in the editor.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return array Widget categories.
+	 */
+	public function get_categories() {
+		return [ 'basic' ];
+	}
+
+	/**
 	 * Get button sizes.
 	 *
 	 * Retrieve an array of button sizes for the button widget.
