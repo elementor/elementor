@@ -345,18 +345,21 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function get_preview_url() {
-		static $time;
+		/**
+		 * Use a static var - to avoid change the `ver` parameter on every call.
+		 */
+		static $url;
 
-		if ( empty( $time ) ) {
-			$time = time();
+		if ( empty( $url ) ) {
+			$url = set_url_scheme( add_query_arg( [
+				'elementor-preview' => $this->get_main_id(),
+				'ver' => time(),
+			] , $this->get_permalink() ) );
+
+			$url = apply_filters( 'elementor/document/preview_url', $url, $this );
 		}
 
-		$preview_url = set_url_scheme( add_query_arg( [
-			'elementor-preview' => $this->get_main_id(),
-			$time => '',
-		] , $this->get_permalink() ) );
-
-		return apply_filters( 'elementor/document/preview_url', $preview_url, $this );
+		return $url;
 	}
 
 	/**
