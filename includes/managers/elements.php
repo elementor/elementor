@@ -35,7 +35,7 @@ class Elements_Manager {
 	 *
 	 * @var
 	 */
-	private $_categories;
+	private $categories;
 
 	/**
 	 * Elements constructor.
@@ -102,11 +102,11 @@ class Elements_Manager {
 	 * @return array Element categories.
 	 */
 	public function get_categories() {
-		if ( null === $this->_categories ) {
+		if ( null === $this->categories ) {
 			$this->init_categories();
 		}
 
-		return $this->_categories;
+		return $this->categories;
 	}
 
 	/**
@@ -115,27 +115,21 @@ class Elements_Manager {
 	 * Register new category for the element.
 	 *
 	 * @since 1.7.12
+	 * @since 2.0.0 The third parameter was deprecated.
 	 * @access public
 	 *
 	 * @param string $category_name       Category name.
 	 * @param array  $category_properties Category properties.
-	 * @param int    $offset              Optional. Where to add the category in
-	 *                                    the categories array. Default is null.
+	 * @param int    $deprecated          Deprecated parameter.
 	 */
-	public function add_category( $category_name, $category_properties, $offset = null ) {
-		if ( null === $this->_categories ) {
-			$this->init_categories();
+	public function add_category( $category_name, $category_properties, $deprecated = null ) {
+		if ( null === $this->categories ) {
+			$this->get_categories();
 		}
 
-		if ( null === $offset ) {
-			$this->_categories[ $category_name ] = $category_properties;
+		if ( ! isset( $this->categories[ $category_name ] ) ) {
+			$this->categories[ $category_name ] = $category_properties;
 		}
-
-		$this->_categories = array_slice( $this->_categories, 0, $offset, true )
-			+ [
-				$category_name => $category_properties,
-			]
-			+ array_slice( $this->_categories, $offset, null, true );
 	}
 
 	/**
@@ -334,23 +328,35 @@ class Elements_Manager {
 	 * @access private
 	 */
 	private function init_categories() {
-		$this->_categories = [
+		$this->categories = [
 			'basic' => [
 				'title' => __( 'Basic', 'elementor' ),
 				'icon' => 'eicon-font',
+			],
+			'pro-elements' => [
+				'title' => __( 'Pro Elements', 'elementor-pro' ),
+				'icon' => 'font',
+			],
+			'theme-elements' => [
+				'title' => __( 'Theme Elements', 'elementor-pro' ),
+				'icon' => 'font',
 			],
 			'general-elements' => [
 				'title' => __( 'General Elements', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
-			'pojo' => [
-				'title' => __( 'Pojo Themes', 'elementor' ),
-				'icon' => 'eicon-pojome',
-			],
-			'wordpress' => [
-				'title' => __( 'WordPress', 'elementor' ),
-				'icon' => 'eicon-wordpress',
-			],
+		];
+
+		do_action( 'elementor/elements/categories_registered', $this );
+
+		$this->categories['pojo'] = [
+			'title' => __( 'Pojo Themes', 'elementor' ),
+			'icon' => 'eicon-pojome',
+		];
+
+		$this->categories['wordpress'] = [
+			'title' => __( 'WordPress', 'elementor' ),
+			'icon' => 'eicon-wordpress',
 		];
 	}
 
