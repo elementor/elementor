@@ -83,7 +83,7 @@ class Ajax_Manager {
 	 */
 	public function register_ajax_action( $tag, $callback ) {
 		if ( ! did_action( 'elementor/ajax/register_actions' ) ) {
-			doing_it_wrong( __METHOD__, __( 'Use `elementor/ajax/register_actions` hook to register ajax action.', 'elementor' ), '2.0.0' );
+			_doing_it_wrong( __METHOD__, __( 'Use `elementor/ajax/register_actions` hook to register ajax action.', 'elementor' ), '2.0.0' );
 		}
 
 		$this->ajax_actions[ $tag ] = compact( 'tag', 'callback' );

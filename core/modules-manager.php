@@ -59,6 +59,7 @@ class Modules_Manager {
 			'history',
 			'library',
 			'dynamic-tags',
+			'page-templates',
 		];
 	}
 

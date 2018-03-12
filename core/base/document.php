@@ -187,6 +187,9 @@ abstract class Document extends Controls_Stack {
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
 			'last_edited' => $this->get_last_edited(),
+			'messages' => [
+				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), $this::get_title() ),
+			],
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
 				'preview' => $this->get_preview_url(),
@@ -269,6 +272,8 @@ abstract class Document extends Controls_Stack {
 		}
 
 		$this->end_controls_section();
+
+		do_action( 'elementor/documents/register_controls', $this );
 	}
 
 	public function save( $data ) {
