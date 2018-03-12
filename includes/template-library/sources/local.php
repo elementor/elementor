@@ -60,7 +60,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @var array
 	 */
-	private static $_template_types = [ 'page', 'section' ];
+	private static $_template_types = [];
 
 	/**
 	 * Post type object.
@@ -123,7 +123,7 @@ class Source_Local extends Source_Base {
 	 * @param string $type Template type.
 	 */
 	public static function add_template_type( $type ) {
-		self::$_template_types[] = $type;
+		self::$_template_types[ $type ] = $type;
 	}
 
 	/**
@@ -139,10 +139,8 @@ class Source_Local extends Source_Base {
 	 * @param string $type Template type.
 	 */
 	public static function remove_template_type( $type ) {
-		$key = array_search( $type, self::$_template_types, true );
-
-		if ( false !== $key ) {
-			unset( self::$_template_types[ $key ] );
+		if ( isset( self::$_template_types[ $type ] ) ) {
+			unset( self::$_template_types[ $type ] );
 		}
 	}
 
@@ -399,7 +397,7 @@ class Source_Local extends Source_Base {
 				'meta_query' => [
 					[
 						'key' => self::TYPE_META_KEY,
-						'value' => self::$_template_types,
+						'value' => array_values( self::$_template_types ),
 					],
 				],
 			]
@@ -433,7 +431,7 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|int The ID of the saved/updated template, `WP_Error` otherwise.
 	 */
 	public function save_item( $template_data ) {
-		if ( ! in_array( $template_data['type'], self::$_template_types ) ) {
+		if ( ! isset( self::$_template_types[ $template_data['type'] ] ) ) {
 			return new \WP_Error( 'save_error', sprintf( 'Invalid template type `%s`.', $template_data['type'] ) );
 		}
 
@@ -1028,7 +1026,7 @@ class Source_Local extends Source_Base {
 		}
 
 		$query->query_vars['meta_key'] = self::TYPE_META_KEY;
-		$query->query_vars['meta_value'] = self::$_template_types;
+		$query->query_vars['meta_value'] = array_values( self::$_template_types );
 	}
 
 	/**
@@ -1299,7 +1297,10 @@ class Source_Local extends Source_Base {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private function _add_actions() {
+	private function add_actions() {
+		self::add_template_type( 'page' );
+		self::add_template_type( 'section' );
+
 		if ( is_admin() ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
 			add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ], 11 );
@@ -1335,6 +1336,6 @@ class Source_Local extends Source_Base {
 	public function __construct() {
 		parent::__construct();
 
-		$this->_add_actions();
+		$this->add_actions();
 	}
 }

@@ -64,7 +64,7 @@ class Documents_Manager {
 	 * @param int  $post_id
 	 * @param bool $from_cache
 	 *
-	 * @return Document
+	 * @return Document|false
 	 */
 	public function get( $post_id, $from_cache = true ) {
 		if ( ! $post_id ) {

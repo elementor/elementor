@@ -6,7 +6,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 ControlRepeaterItemView = ControlBaseDataView.extend( {
 	ui: {
 		btnAddRow: '.elementor-repeater-add',
-		fieldContainer: '.elementor-repeater-fields'
+		fieldContainer: '.elementor-repeater-fields-wrapper'
 	},
 
 	events: function() {
@@ -20,7 +20,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	childView: RepeaterRowView,
 
-	childViewContainer: '.elementor-repeater-fields',
+	childViewContainer: '.elementor-repeater-fields-wrapper',
 
 	templateHelpers: function() {
 		return {
