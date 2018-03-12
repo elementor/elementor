@@ -57,6 +57,22 @@ class Widget_Image extends Widget_Base {
 	}
 
 	/**
+	 * Get widget categories.
+	 *
+	 * Retrieve the list of categories the image widget belongs to.
+	 *
+	 * Used to determine where to display the widget in the editor.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return array Widget categories.
+	 */
+	public function get_categories() {
+		return [ 'basic' ];
+	}
+
+	/**
 	 * Register image widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
