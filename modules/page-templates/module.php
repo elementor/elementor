@@ -24,6 +24,9 @@ class Module extends BaseModule {
 	 */
 	const TEMPLATE_HEADER_FOOTER = 'elementor_header_footer';
 
+	/**
+	 * @var callable
+	 */
 	protected $print_callback;
 
 	public function get_name() {
@@ -46,7 +49,7 @@ class Module extends BaseModule {
 	 */
 	public function template_include( $template ) {
 		if ( is_singular() ) {
-			$document = Plugin::$instance->documents->get_doc_or_auto_save( get_the_ID() );
+			$document = Plugin::$instance->documents->get_doc_or_auto_save();
 
 			$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
 			if ( $template_path ) {
@@ -57,7 +60,7 @@ class Module extends BaseModule {
 		return $template;
 	}
 
-	private function add_wp_templates_support() {
+	public function add_wp_templates_support() {
 		$post_types = get_post_types_by_support( 'elementor' );
 
 		foreach ( $post_types as $post_type ) {
@@ -76,18 +79,18 @@ class Module extends BaseModule {
 	 * @access public
 	 * @static
 	 *
-	 * @param array $post_templates Array of page templates. Keys are filenames,
+	 * @param array $page_templates Array of page templates. Keys are filenames,
 	 *                              values are translated names.
 	 *
 	 * @return array Page templates.
 	 */
-	public function add_page_templates( $post_templates ) {
-		$post_templates = [
+	public function add_page_templates( $page_templates ) {
+		$page_templates = [
 			self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
 			self::TEMPLATE_HEADER_FOOTER => __( 'Elementor', 'elementor' ) . ' ' . __( 'Header & Footer', 'elementor' ),
-		] + $post_templates;
+		] + $page_templates;
 
-		return $post_templates;
+		return $page_templates;
 	}
 
 	public function set_print_callback( $callback ) {
@@ -126,16 +129,17 @@ class Module extends BaseModule {
 	/**
 	 * @param Document $document
 	 */
-	public function action_register_canvas_control( $document ) {
+	public function action_register_template_control( $document ) {
 		if ( $document instanceof \Elementor\Core\DocumentTypes\Post || $document instanceof \Elementor\Modules\Library\Documents\Page ) {
-			$this->register_canvas_control( $document );
+			$this->register_template_control( $document );
 		}
 	}
 
 	/**
 	 * @param Document $document
+	 * @param string $control_id
 	 */
-	public function register_canvas_control( $document, $control_id = 'template' ) {
+	public function register_template_control( $document, $control_id = 'template' ) {
 		$document->start_injection( [
 			'of' => 'post_status',
 		] );
@@ -156,9 +160,6 @@ class Module extends BaseModule {
 					'type' => Controls_Manager::SELECT,
 					'default' => 'default',
 					'options' => $options,
-					'export' => function ( $value ) {
-						return (bool) self::instance()->get_template_path( $value );
-					},
 				]
 			);
 		}
@@ -167,10 +168,10 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		$this->add_wp_templates_support();
+		add_action( 'init', [ $this, 'add_wp_templates_support' ] );
 
 		add_filter( 'template_include', [ $this, 'template_include' ] );
 
-		add_action( 'elementor/documents/register_controls', [ $this, 'action_register_canvas_control' ] );
+		add_action( 'elementor/documents/register_controls', [ $this, 'action_register_template_control' ] );
 	}
 }

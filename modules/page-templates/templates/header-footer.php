@@ -14,7 +14,7 @@ get_header();
  */
 do_action( 'elementor/page_templates/header-footer/before_content' );
 
-\Elementor\Modules\PageTemplates\Module::instance()->print_content();
+\Elementor\Plugin::$instance->modules_manager->get_modules( 'page-templates' )->print_content();
 
 /**
  * After Header-Footer page template content.
