@@ -62,7 +62,7 @@ module.exports = Marionette.Behavior.extend( {
 	onPageStatusChange: function( newStatus ) {
 		if ( 'publish' === newStatus ) {
 			elementor.notifications.showToast( {
-				message: elementor.translate( 'publish_notification' ),
+				message: elementor.config.document.messages.publish_notification,
 				buttons: [
 					{
 						name: 'view_page',

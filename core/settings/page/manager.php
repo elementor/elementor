@@ -26,30 +26,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Manager extends BaseManager {
 
 	/**
-	 * Elementor Canvas template name.
-	 */
-	const TEMPLATE_CANVAS = 'elementor_canvas';
-
-	/**
 	 * Meta key for the page settings.
 	 */
 	const META_KEY = '_elementor_page_settings';
-
-	/**
-	 * Page settings manager constructor.
-	 *
-	 * Initializing Elementor page settings manager.
-	 *
-	 * @since 1.6.0
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct();
-
-		add_action( 'init', [ $this, 'init' ] );
-
-		add_filter( 'template_include', [ $this, 'template_include' ] );
-	}
 
 	/**
 	 * Get page data.
@@ -70,30 +49,6 @@ class Manager extends BaseManager {
 	}
 
 	/**
-	 * Add page templates.
-	 *
-	 * Add the Elementor Canvas page templates to the theme templates.
-	 *
-	 * Fired by `theme_{$post_type}_templates` filter.
-	 *
-	 * @since 1.6.0
-	 * @access public
-	 * @static
-	 *
-	 * @param array $post_templates Array of page templates. Keys are filenames,
-	 *                              values are translated names.
-	 *
-	 * @return array Page templates.
-	 */
-	public static function add_page_templates( $post_templates ) {
-		$post_templates = [
-			self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
-		] + $post_templates;
-
-		return $post_templates;
-	}
-
-	/**
 	 * Is CPT supports custom templates.
 	 *
 	 * Whether the Custom Post Type supports templates.
@@ -109,48 +64,6 @@ class Manager extends BaseManager {
 		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported' );
 
 		return Utils::is_cpt_custom_templates_supported();
-	}
-
-	/**
-	 * Template include.
-	 *
-	 * Update the path for the Elementor Canvas template.
-	 *
-	 * Fired by `template_include` filter.
-	 *
-	 * @since 1.6.0
-	 * @access public
-	 *
-	 * @param string $template The path of the template to include.
-	 *
-	 * @return string The path of the template to include.
-	 */
-	public function template_include( $template ) {
-		if ( is_singular() ) {
-			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
-
-			if ( self::TEMPLATE_CANVAS === $document->get_meta( '_wp_page_template' ) ) {
-				$template = ELEMENTOR_PATH . '/includes/page-templates/canvas.php';
-			}
-		}
-
-		return $template;
-	}
-
-	/**
-	 * Init.
-	 *
-	 * Initialize Elementor page settings manager.
-	 *
-	 * @since 1.6.0
-	 * @access public
-	 */
-	public function init() {
-		$post_types = get_post_types_by_support( 'elementor' );
-
-		foreach ( $post_types as $post_type ) {
-			add_filter( "theme_{$post_type}_templates", [ __CLASS__, 'add_page_templates' ], 10, 4 );
-		}
 	}
 
 	/**
@@ -179,9 +92,9 @@ class Manager extends BaseManager {
 	 */
 	public function get_model_for_config() {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			$document = Plugin::$instance->documents->get_doc_or_auto_save( get_the_ID() );
+			$document = Plugin::$instance->documents->get_doc_or_auto_save();
 		} else {
-			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
+			$document = Plugin::$instance->documents->get_doc_for_frontend();
 		}
 
 		$model = $this->get_model( $document->get_post()->ID );
@@ -316,7 +229,7 @@ class Manager extends BaseManager {
 			$settings = [];
 		}
 
-		if ( self::is_cpt_custom_templates_supported() ) {
+		if ( Utils::is_cpt_custom_templates_supported() ) {
 			$saved_template = get_post_meta( $id, '_wp_page_template', true );
 
 			if ( $saved_template ) {
