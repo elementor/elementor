@@ -283,24 +283,30 @@ TemplateLibraryManager = function() {
 
 		layout.modal.show();
 
-		layout.showLoadingView();
+		self.requestLibraryData( {
+			onBeforeUpdate: layout.showLoadingView.bind( layout ),
+			onUpdate: function() {
+				var documentType = elementor.config.document.type,
+					isBlockType = -1 !== config.categories.indexOf( documentType ),
+					oldStartIntent = Object.create( startIntent );
 
-		self.requestLibraryData( function() {
-			var documentType = elementor.config.document.type,
-				isBlockType = -1 !== config.categories.indexOf( documentType );
+				startIntent = jQuery.extend( {
+					filters: {
+						source: 'remote',
+						type: isBlockType ? 'block' : 'page',
+						subtype: isBlockType ? documentType : null
+					},
+					onReady: self.showTemplates
+				}, customStartIntent );
 
-			startIntent = jQuery.extend( {
-				filters: {
-					source: 'remote',
-					type: isBlockType ? 'block' : 'page',
-					subtype: isBlockType ? documentType : null
-				},
-				onReady: self.showTemplates
-			}, customStartIntent );
+				if ( _.isEqual( oldStartIntent.__proto__, startIntent ) ) {
+					return;
+				}
 
-			setIntentFilters();
+				setIntentFilters();
 
-			startIntent.onReady();
+				startIntent.onReady();
+			}
 		} );
 	};
 
