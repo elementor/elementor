@@ -237,7 +237,7 @@ class Control_Repeater extends Base_Data_Control {
 		<label>
 			<span class="elementor-control-title">{{{ data.label }}}</span>
 		</label>
-		<div class="elementor-repeater-fields"></div>
+		<div class="elementor-repeater-fields-wrapper"></div>
 		<div class="elementor-button-wrapper">
 			<button class="elementor-button elementor-button-default elementor-repeater-add" type="button">
 				<i class="eicon-plus" aria-hidden="true"></i><?php _e( 'Add Item', 'elementor' ); ?>
