@@ -120,7 +120,6 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$slides_to_show = range( 1, 10 );
-
 		$slides_to_show = array_combine( $slides_to_show, $slides_to_show );
 
 		$this->add_responsive_control(
@@ -195,7 +194,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => 'Link to',
+				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'condition' => [
