@@ -1,12 +1,9 @@
 <?php
 namespace Elementor\Core\Settings\Page;
 
-use Elementor\Controls_Manager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
-use Elementor\Group_Control_Background;
+use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 use Elementor\Plugin;
-use Elementor\Settings;
-use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -139,7 +136,7 @@ class Model extends BaseModel {
 	 * @return array Element data to be exported.
 	 */
 	public function on_export( $element_data ) {
-		if ( ! empty( $element_data['settings']['template'] ) && Manager::TEMPLATE_CANVAS !== $element_data['settings']['template'] ) {
+		if ( ! empty( $element_data['settings']['template'] ) && ! PageTemplatesModule::instance()->get_template_path( $element_data['settings']['template'] ) ) {
 			unset( $element_data['settings']['template'] );
 		}
 

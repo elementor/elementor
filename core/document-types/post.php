@@ -3,7 +3,7 @@ namespace Elementor\Core\DocumentTypes;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
-use Elementor\Core\Settings\Page\Manager;
+use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 use Elementor\Group_Control_Background;
 use Elementor\Settings;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -34,44 +34,7 @@ class Post extends Document {
 
 		self::register_post_fields_control( $this );
 
-		self::register_canvas_control( $this );
-
 		self::register_style_controls( $this );
-	}
-
-	/**
-	 * @param Document $document
-	 */
-	public static function register_canvas_control( $document ) {
-
-		$document->start_injection( [
-			'of' => 'post_status',
-		] );
-
-		if ( Utils::is_cpt_custom_templates_supported() ) {
-			require_once ABSPATH . '/wp-admin/includes/template.php';
-
-			$options = [
-				'default' => __( 'Default', 'elementor' ),
-			];
-
-			$options += array_flip( get_page_templates( null, $document->get_main_post()->post_type ) );
-
-			$document->add_control(
-				'template',
-				[
-					'label' => __( 'Template', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => 'default',
-					'options' => $options,
-					'export' => function ( $value ) {
-						return Manager::TEMPLATE_CANVAS === $value;
-					},
-				]
-			);
-		}
-
-		$document->end_injection();
 	}
 
 	/**
