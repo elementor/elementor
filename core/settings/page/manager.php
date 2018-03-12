@@ -91,13 +91,15 @@ class Manager extends BaseManager {
 	 * @return BaseModel The model object.
 	 */
 	public function get_model_for_config() {
+		$post_id = get_the_ID();
+
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			$document = Plugin::$instance->documents->get_doc_or_auto_save();
+			$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
 		} else {
-			$document = Plugin::$instance->documents->get_doc_for_frontend();
+			$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 		}
 
-		$model = $this->get_model( $document->get_post()->ID );
+		$model = $this->get_model( $post_id );
 
 		if ( $document->is_autosave() ) {
 			$model->set_settings( 'post_status', $document->get_main_post()->post_status );
