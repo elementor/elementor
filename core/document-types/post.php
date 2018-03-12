@@ -63,7 +63,6 @@ class Post extends Document {
 				'selectors' => [
 					'{{WRAPPER}} ' . $page_title_selector => 'display: none',
 				],
-				'export' => '__return_true',
 			]
 		);
 
@@ -86,11 +85,6 @@ class Post extends Document {
 			Group_Control_Background::get_type(),
 			[
 				'name'  => 'background',
-				'fields_options' => [
-					'__all' => [
-						'export' => '__return_true',
-					],
-				],
 			]
 		);
 
@@ -103,7 +97,6 @@ class Post extends Document {
 				'selectors' => [
 					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
-				'export' => '__return_true',
 			]
 		);
 
