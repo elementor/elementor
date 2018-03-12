@@ -1127,7 +1127,7 @@ class Source_Local extends Source_Base {
 
 		$current_type = get_query_var( 'elementor_library_type' );
 
-		// TODO: Better war to exclude widget type.
+		// TODO: Better way to exclude widget type.
 		if ( 'widget' === $current_type ) {
 			return;
 		}
