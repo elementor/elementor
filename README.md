@@ -6,7 +6,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
-**Stable tag:** 1.9.7  
+**Stable tag:** 1.9.8  
 **Beta tag:** 2.0.0-beta1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
@@ -195,6 +195,14 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 ### 2.0.0 Beta 1 - Available For Beta Testing ###
 * [Read more about v2.0](https://github.com/pojome/elementor/issues/3706/)
 * [Sign Up Now For Our Elite Group Of Early Access Testers](https://my.elementor.com/beta/)
+
+### 1.9.8 - 2018-03-12 ###
+* Fix: Activate publish button if there is an auto-save version
+* Fix: Server error message missing in edge cases
+* Fix: Updated dialog library ([#3668](https://github.com/pojome/elementor/issues/3668))
+* Fix: Text Decoration option in Button Widget ([#3701](https://github.com/pojome/elementor/issues/3701))
+* Fix: Added `autopause=0` in order to allow multiple autoplay in Vimeo video
+* Fix: Added missing translation string to control in the Image Carousel widget
 
 ### 1.9.7 - 2018-02-27 ###
 * Tweak: `Element_Base::get_style_depends()` method is now overwritable ([#3494](https://github.com/pojome/elementor/issues/3494))

@@ -124,6 +124,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Slides to Scroll', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'description' => __( 'Set how many slides are scrolled per swipe.', 'elementor' ),
 				'default' => '2',
 				'options' => $slides_to_show,
 				'condition' => [
