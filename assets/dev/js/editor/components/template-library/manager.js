@@ -243,33 +243,37 @@ TemplateLibraryManager = function() {
 		return config;
 	};
 
-	this.requestLibraryData = function( callback, forceUpdate, forceSync ) {
-		if ( templatesCollection && ! forceUpdate ) {
-			if ( callback ) {
-				callback();
+	this.requestLibraryData = function( options ) {
+		if ( templatesCollection && ! options.forceUpdate ) {
+			if ( options.onUpdate ) {
+				options.onUpdate();
 			}
 
 			return;
 		}
 
-		var options = {
+		if ( options.onBeforeUpdate ) {
+			options.onBeforeUpdate();
+		}
+
+		var ajaxOptions = {
 			data: {},
 			success: function( data ) {
 				templatesCollection = new TemplateLibraryCollection( data.templates );
 
 				config = data.config;
 
-				if ( callback ) {
-					callback();
+				if ( options.onUpdate ) {
+					options.onUpdate();
 				}
 			}
 		};
 
-		if ( forceSync ) {
-			options.data.sync = true;
+		if ( options.forceSync ) {
+			ajaxOptions.data.sync = true;
 		}
 
-		elementor.ajax.send( 'get_library_data', options );
+		elementor.ajax.send( 'get_library_data', ajaxOptions );
 	};
 
 	this.startModal = function( customStartIntent ) {
