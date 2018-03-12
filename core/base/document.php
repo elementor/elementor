@@ -272,6 +272,8 @@ abstract class Document extends Controls_Stack {
 		}
 
 		$this->end_controls_section();
+
+		do_action( 'elementor/documents/register_controls', $this );
 	}
 
 	public function save( $data ) {
