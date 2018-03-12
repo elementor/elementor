@@ -191,6 +191,14 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 1.9.8 - 2018-03-12 ###
+* Fix: Activate publish button if there is an auto-save version
+* Fix: Server error message missing in edge cases
+* Fix: Updated dialog library ([#3668](https://github.com/pojome/elementor/issues/3668))
+* Fix: Text Decoration option in Button Widget ([#3701](https://github.com/pojome/elementor/issues/3701))
+* Fix: Added `autopause=0` in order to allow multiple autoplay in Vimeo video
+* Fix: Added missing translation string to control in the Image Carousel widget
+
 ### 1.9.7 - 2018-02-27 ###
 * Tweak: `Element_Base::get_style_depends()` method is now overwritable ([#3494](https://github.com/pojome/elementor/issues/3494))
 * Fix: "Enter" key triggers Elementor mode instead of default submit action ([#3556](https://github.com/pojome/elementor/issues/3556))
