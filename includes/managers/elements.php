@@ -341,14 +341,28 @@ class Elements_Manager {
 				'title' => __( 'Theme Elements', 'elementor' ),
 				'icon' => 'font',
 			],
-			'general-elements' => [
+			'general' => [
 				'title' => __( 'General Elements', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
 		];
 
+		/**
+		 * When categories are registered.
+		 *
+		 * Fires after basic categories are registered, before WordPress
+		 * category have been registered.
+		 *
+		 * This is where categories registered by external developers are
+		 * added.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param Elements_Manager $this Elements manager instance.
+		 */
 		do_action( 'elementor/elements/categories_registered', $this );
 
+		// TODO: Remove the category from Elementor, add registration hook to Pojo core.
 		$this->categories['pojo'] = [
 			'title' => __( 'Pojo Themes', 'elementor' ),
 			'icon' => 'eicon-pojome',
