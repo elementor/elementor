@@ -188,6 +188,7 @@ abstract class Document extends Controls_Stack {
 			'type' => $this->get_name(),
 			'last_edited' => $this->get_last_edited(),
 			'messages' => [
+				/* translators: %s = the document title. */
 				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), $this::get_title() ),
 			],
 			'urls' => [
@@ -344,9 +345,21 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function get_preview_url() {
-		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', $this->get_main_id(), $this->get_permalink() ) );
+		/**
+		 * Use a static var - to avoid change the `ver` parameter on every call.
+		 */
+		static $url;
 
-		return apply_filters( 'elementor/document/preview_url', $preview_url, $this );
+		if ( empty( $url ) ) {
+			$url = set_url_scheme( add_query_arg( [
+				'elementor-preview' => $this->get_main_id(),
+				'ver' => time(),
+			] , $this->get_permalink() ) );
+
+			$url = apply_filters( 'elementor/document/preview_url', $url, $this );
+		}
+
+		return $url;
 	}
 
 	/**
@@ -515,8 +528,17 @@ abstract class Document extends Controls_Stack {
 		update_post_meta( $this->post->ID, self::TYPE_META_KEY, $this->get_name() );
 	}
 
+	public function get_main_meta( $key ) {
+		return get_post_meta( $this->get_main_id(), $key, true );
+	}
+
 	public function get_meta( $key ) {
 		return get_post_meta( $this->post->ID, $key, true );
+	}
+
+	public function update_meta( $key, $value ) {
+		// Use `update_metadata` in order to save also for revisions.
+		return update_metadata( 'post', $this->post->ID, $key, $value );
 	}
 
 	public function get_last_edited() {
