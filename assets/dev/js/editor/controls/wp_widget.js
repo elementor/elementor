@@ -28,12 +28,12 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 	onReady: function() {
 		var self = this;
 
-		elementor.ajax.send( 'editor_get_wp_widget_form', {
+		elementor.ajax.addRequest( 'editor_get_wp_widget_form', {
 			data: {
 				// Fake Widget ID
 				id: self.model.cid,
 				widget_type: self.model.get( 'widget' ),
-				data: JSON.stringify( self.elementSettingsModel.toJSON() )
+				data: self.elementSettingsModel.toJSON()
 			},
 			success: function( data ) {
 				self.ui.form.html( data );

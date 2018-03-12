@@ -318,7 +318,7 @@ class Plugin {
 	 *
 	 * @var Modules_Manager
 	 */
-	private $modules_manager;
+	public $modules_manager;
 
 	/**
 	 * Beta testers.
