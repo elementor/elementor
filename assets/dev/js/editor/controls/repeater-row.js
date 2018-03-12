@@ -4,7 +4,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 RepeaterRowView = Marionette.CompositeView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-repeater-row' ),
 
-	className: 'repeater-fields',
+	className: 'elementor-repeater-fields',
 
 	ui: {
 		duplicateButton: '.elementor-repeater-tool-duplicate',
