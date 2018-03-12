@@ -66,15 +66,6 @@ class Manager extends BaseManager {
 		return Utils::is_cpt_custom_templates_supported();
 	}
 
-
-	public function init() {
-		$post_types = get_post_types_by_support( 'elementor' );
-
-		foreach ( $post_types as $post_type ) {
-			add_filter( "theme_{$post_type}_templates", [ __CLASS__, 'add_page_templates' ], 10, 4 );
-		}
-	}
-
 	/**
 	 * Get manager name.
 	 *
