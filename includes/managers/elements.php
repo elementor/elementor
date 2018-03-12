@@ -334,19 +334,32 @@ class Elements_Manager {
 				'icon' => 'eicon-font',
 			],
 			'pro-elements' => [
-				'title' => __( 'Pro Elements', 'elementor-pro' ),
+				'title' => __( 'Pro Elements', 'elementor' ),
 				'icon' => 'font',
 			],
 			'theme-elements' => [
-				'title' => __( 'Theme Elements', 'elementor-pro' ),
+				'title' => __( 'Theme Elements', 'elementor' ),
 				'icon' => 'font',
 			],
-			'general-elements' => [
+			'general' => [
 				'title' => __( 'General Elements', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
 		];
 
+		/**
+		 * When categories are registered.
+		 *
+		 * Fires after basic categories are registered, before WordPress
+		 * category have been registered.
+		 *
+		 * This is where categories registered by external developers are
+		 * added.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param Elements_Manager $this Elements manager instance.
+		 */
 		do_action( 'elementor/elements/categories_registered', $this );
 
 		$this->categories['pojo'] = [
