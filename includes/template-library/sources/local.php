@@ -206,13 +206,13 @@ class Source_Local extends Source_Base {
 					<span class="elementor-templates-modal__header__logo__icon-wrapper">
 						<i class="eicon-elementor"></i>
 					</span>
-					<span><?php echo __( 'Template Library', 'elementor' ) ?></span>
+					<span><?php echo __( 'Template Library', 'elementor' ); ?></span>
 					</div>
 				</div>
 				<div class="elementor-templates-modal__header__items-area">
 					<div class="elementor-templates-modal__header__close-modal elementor-templates-modal__header__item">
 						<i class="eicon-close" aria-hidden="true" title="Close"></i>
-						<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ) ?></span>
+						<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 					</div>
 				</div>
 			</div>
@@ -1126,6 +1126,11 @@ class Source_Local extends Source_Base {
 		$inline_style = '#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub { display:none;}';
 
 		$current_type = get_query_var( 'elementor_library_type' );
+
+		// TODO: Better war to exclude widget type.
+		if ( 'widget' === $current_type ) {
+			return;
+		}
 
 		if ( empty( $current_type ) ) {
 			$counts = (array) wp_count_posts( self::CPT );
