@@ -299,7 +299,7 @@ TemplateLibraryManager = function() {
 					onReady: self.showTemplates
 				}, customStartIntent );
 
-				if ( _.isEqual( oldStartIntent.__proto__, startIntent ) ) {
+				if ( _.isEqual( Object.getPrototypeOf( oldStartIntent ), startIntent ) ) {
 					return;
 				}
 
