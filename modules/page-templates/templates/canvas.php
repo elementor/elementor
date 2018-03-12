@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 */
 	do_action( 'elementor/page_templates/canvas/before_content' );
 
-	\Elementor\Modules\PageTemplates\Module::instance()->print_content();
+	\Elementor\Plugin::$instance->modules_manager->get_modules( 'page-templates' )->print_content();
 
 	do_action( 'elementor/page_templates/canvas/after_content' );
 

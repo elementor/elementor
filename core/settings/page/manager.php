@@ -101,9 +101,9 @@ class Manager extends BaseManager {
 	 */
 	public function get_model_for_config() {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			$document = Plugin::$instance->documents->get_doc_or_auto_save( get_the_ID() );
+			$document = Plugin::$instance->documents->get_doc_or_auto_save();
 		} else {
-			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
+			$document = Plugin::$instance->documents->get_doc_for_frontend();
 		}
 
 		$model = $this->get_model( $document->get_post()->ID );

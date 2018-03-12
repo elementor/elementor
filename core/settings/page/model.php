@@ -136,8 +136,16 @@ class Model extends BaseModel {
 	 * @return array Element data to be exported.
 	 */
 	public function on_export( $element_data ) {
-		if ( ! empty( $element_data['settings']['template'] ) && ! PageTemplatesModule::instance()->get_template_path( $element_data['settings']['template'] ) ) {
-			unset( $element_data['settings']['template'] );
+		if ( ! empty( $element_data['settings']['template'] ) ) {
+			/**
+			 * @var \Elementor\Modules\PageTemplates\Module $page_templates_module
+			 */
+			$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
+			$is_elementor_template = ! ! $page_templates_module->get_template_path( $element_data['settings']['template'] );
+
+			if ( ! $is_elementor_template ) {
+				unset( $element_data['settings']['template'] );
+			}
 		}
 
 		return $element_data;
