@@ -11,21 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base control for creating WordPress widget control. Displays native
  * WordPress widgets. This a private control for internal use.
  *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- * ```php
- * $this->add_control(
- * 	'wp',
- * 	[
- * 		'label' => __( 'Form', 'plugin-domain' ),
- * 		'type' => Controls_Manager::WP_WIDGET,
- * 		'widget' => "wp-widget-{$widget_id_base}",
- * 		'id_base' => $widget_id_base,
- * 	]
- * );
- * ```
- *
  * @since 1.0.0
  */
 class Control_WP_Widget extends Base_Data_Control {

@@ -9,60 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor font control.
  *
  * A base control for creating font control. Displays font select box. The
- * control allows you to set a list of fonts, if non is set it will use Google
- * Fonts (@see https://fonts.google.com/).
- *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- * ```php
- * $this->add_control(
- * 	'font_family',
- * 	[
- * 		'label' => __( 'Font Family', 'plugin-domain' ),
- * 		'type' => Controls_Manager::FONT,
- * 		'default' => "'Open Sans', sans-serif",
- * 		'selectors' => [
- * 			'{{WRAPPER}} .title' => 'font-family: {{VALUE}}',
- * 		],
- * 	]
- * );
- * ```
- *
- * PHP usage (inside `Widget_Base::render()` method):
- *
- * ```php
- * $settings = $this->get_settings();
- * echo '<h2 class="title" style="font-family: ' . $settings['font_family'] . '"> ... </h2>';
- * ```
- *
- * JS usage (inside `Widget_Base::_content_template()` method):
- *
- * ```js
- * <h2 class="title" style="font-family: {{ settings.font_family }}"> ... </h2>
- * ```
+ * control allows you to set a list of fonts.
  *
  * @since 1.0.0
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param string $default     Optional. Default font name. Default is empty.
- * @param array  $options     Optional. An associative array of available fonts.
- *                            `[ 'Font Name' => 'family-name', ... ]`
- *                            Default is a list of Google Fonts @see Fonts::get_fonts()
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is false.
  */
 class Control_Font extends Base_Data_Control {
 
