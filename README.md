@@ -7,6 +7,7 @@
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
 **Stable tag:** 1.9.7  
+**Beta tag:** 2.0.0-beta1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -190,6 +191,10 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.0.0 Beta 1 - Available For Beta Testing ###
+* [Read more about v2.0](https://github.com/pojome/elementor/issues/3706/)
+* [Sign Up Now For Our Elite Group Of Early Access Testers](https://my.elementor.com/beta/)
 
 ### 1.9.7 - 2018-02-27 ###
 * Tweak: `Element_Base::get_style_depends()` method is now overwritable ([#3494](https://github.com/pojome/elementor/issues/3494))
