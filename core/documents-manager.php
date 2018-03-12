@@ -82,7 +82,10 @@ class Documents_Manager {
 		return $this->documents[ $post_id ];
 	}
 
-	public function get_doc_or_auto_save( $id, $user_id = 0 ) {
+	public function get_doc_or_auto_save( $id = 0, $user_id = 0 ) {
+		if ( ! $id ) {
+			$id = get_the_ID();
+		}
 		$document = $this->get( $id );
 		if ( $document && $document->get_autosave_id( $user_id ) ) {
 			$document = $document->get_autosave( $user_id );
@@ -91,7 +94,7 @@ class Documents_Manager {
 		return $document;
 	}
 
-	public function get_doc_for_frontend( $post_id ) {
+	public function get_doc_for_frontend( $post_id = 0 ) {
 		if ( is_preview() || Plugin::$instance->preview->is_preview_mode() ) {
 			$document = $this->get_doc_or_auto_save( $post_id, get_current_user_id() );
 		} else {

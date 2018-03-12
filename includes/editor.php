@@ -623,7 +623,6 @@ class Editor {
 				'saved' => __( 'Saved', 'elementor' ),
 				'update' => __( 'Update', 'elementor' ),
 				'submit' => __( 'Submit', 'elementor' ),
-				'publish_notification' => __( 'Hurray! Your page is live.', 'elementor' ),
 				'working_on_draft_notification' => __( 'This is just a draft. Play around and when you\'re done - click update.', 'elementor' ),
 				'keep_editing' => __( 'Keep Editing', 'elementor' ),
 				'have_a_look' => __( 'Have a look', 'elementor' ),
