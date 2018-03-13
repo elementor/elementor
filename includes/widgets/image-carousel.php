@@ -639,11 +639,16 @@ class Widget_Image_Carousel extends Widget_Base {
 
 				$this->add_render_attribute( $link_key, [
 					'href' => $link['url'],
-					'class' => 'elementor-clickable',
 					'data-elementor-open-lightbox' => $settings['open_lightbox'],
 					'data-elementor-lightbox-slideshow' => $this->get_id(),
 					'data-elementor-lightbox-index' => $index,
 				] );
+
+				if ( Plugin::$instance->editor->is_edit_mode() ) {
+					$this->add_render_attribute( $link_key, [
+						'class' => 'elementor-clickable',
+					] );
+				}
 
 				if ( ! empty( $link['is_external'] ) ) {
 					$this->add_render_attribute( $link_key, 'target', '_blank' );
