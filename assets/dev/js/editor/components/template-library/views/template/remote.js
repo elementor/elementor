@@ -17,7 +17,7 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onPreviewButtonClick: function() {
-		elementor.templates.getLayout().openPreview( this.model );
+		elementor.templates.getLayout().showPreviewView( this.model );
 	},
 
 	onFavoriteCheckboxChange: function() {
