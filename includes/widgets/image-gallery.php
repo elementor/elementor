@@ -92,7 +92,8 @@ class Widget_Image_Gallery extends Widget_Base {
 			'wp_gallery',
 			[
 				'label' => __( 'Add Images', 'elementor' ),
-				'type' => Controls_Manager::GALLERY,
+                'type' => Controls_Manager::GALLERY,
+                'show_label' => false,
 				'dynamic' => [
 					'active' => true,
 				],
