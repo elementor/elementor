@@ -281,7 +281,7 @@ TemplateLibraryManager = function() {
 			initLayout();
 		}
 
-		layout.modal.show();
+		layout.showModal();
 
 		self.requestLibraryData( {
 			onBeforeUpdate: layout.showLoadingView.bind( layout ),
@@ -311,7 +311,7 @@ TemplateLibraryManager = function() {
 	};
 
 	this.closeModal = function() {
-		layout.modal.hide();
+		layout.hideModal();
 	};
 
 	this.getFilter = function( name ) {

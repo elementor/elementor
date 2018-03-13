@@ -42,6 +42,14 @@ module.exports = Marionette.LayoutView.extend( {
 		this.modal.getElements( 'message' ).append( this.modal.addElement( 'content' ) );
 	},
 
+	showModal: function() {
+		this.modal.show();
+	},
+
+	hideModal: function() {
+		this.modal.hide();
+	},
+
 	getModalOptions: function() {
 		return {};
 	},
