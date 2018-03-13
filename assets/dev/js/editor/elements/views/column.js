@@ -133,6 +133,8 @@ ColumnView = BaseElementView.extend( {
 	onRender: function() {
 		var self = this;
 
+		var itemSelector = elementor.hooks.applyFilters( 'elements/column/render/droppable-item-selector', ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add', this );
+
 		BaseElementView.prototype.onRender.apply( self, arguments );
 
 		self.changeChildContainerClasses();
@@ -140,7 +142,7 @@ ColumnView = BaseElementView.extend( {
 		self.changeSizeUI();
 
 		self.$el.html5Droppable( {
-			items: ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
+			items: itemSelector,
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: self.isDroppingAllowed.bind( self ),
@@ -150,6 +152,8 @@ ColumnView = BaseElementView.extend( {
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
+				elementor.channels.data.trigger( 'column:before:drop', event, this );
+
 				var newIndex = jQuery( this ).index();
 
 				if ( 'bottom' === side ) {
@@ -157,6 +161,8 @@ ColumnView = BaseElementView.extend( {
 				}
 
 				self.addElementFromPanel( { at: newIndex } );
+
+				elementor.channels.data.trigger( 'column:after:drop', event, this );
 			}
 		} );
 	},
