@@ -410,9 +410,14 @@ class Widget_Image extends Widget_Base {
 		if ( $link ) {
 			$this->add_render_attribute( 'link', [
 				'href' => $link['url'],
-				'class' => 'elementor-clickable',
 				'data-elementor-open-lightbox' => $settings['open_lightbox'],
 			] );
+
+			if ( Plugin::$instance->editor->is_edit_mode() ) {
+				$this->add_render_attribute( 'link', [
+					'class' => 'elementor-clickable',
+				] );
+			}
 
 			if ( ! empty( $link['is_external'] ) ) {
 				$this->add_render_attribute( 'link', 'target', '_blank' );
