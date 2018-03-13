@@ -145,6 +145,9 @@ TemplateLibraryManager = function() {
 			},
 			error: function( data ) {
 				self.showErrorDialog( data );
+			},
+			complete: function() {
+				layout.hideLoadingView();
 			}
 		} );
 	};
@@ -281,7 +284,7 @@ TemplateLibraryManager = function() {
 			initLayout();
 		}
 
-		layout.modal.show();
+		layout.showModal();
 
 		self.requestLibraryData( {
 			onBeforeUpdate: layout.showLoadingView.bind( layout ),
@@ -299,9 +302,13 @@ TemplateLibraryManager = function() {
 					onReady: self.showTemplates
 				}, customStartIntent );
 
-				if ( _.isEqual( Object.getPrototypeOf( oldStartIntent ), startIntent ) ) {
+				var isSameIntent = _.isEqual( Object.getPrototypeOf( oldStartIntent ), startIntent );
+
+				if ( isSameIntent && 'elementor-template-library-templates' === layout.modalContent.currentView.id ) {
 					return;
 				}
+
+				layout.hideLoadingView();
 
 				setIntentFilters();
 
@@ -311,7 +318,7 @@ TemplateLibraryManager = function() {
 	};
 
 	this.closeModal = function() {
-		layout.modal.hide();
+		layout.hideModal();
 	};
 
 	this.getFilter = function( name ) {

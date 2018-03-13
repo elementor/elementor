@@ -10,14 +10,6 @@ var BaseModalLayout = require( 'elementor-templates/views/base-modal-layout' ),
 
 module.exports = BaseModalLayout.extend( {
 
-	regions: function() {
-		var regions = BaseModalLayout.prototype.regions.apply( this, arguments );
-
-		regions.modalPreview = '.dialog-lightbox-preview';
-
-		return regions;
-	},
-
 	getModalOptions: function() {
 		return {
 			id: 'elementor-template-library-modal'
@@ -31,12 +23,6 @@ module.exports = BaseModalLayout.extend( {
 				elementor.templates.setTemplatesPage( 'remote', 'page' );
 			}
 		};
-	},
-
-	initModal: function() {
-		BaseModalLayout.prototype.initModal.apply( this, arguments );
-
-		this.modal.getElements( 'message' ).append( this.modal.addElement( 'preview' ) );
 	},
 
 	getTemplateActionButton: function( templateData ) {
@@ -63,7 +49,7 @@ module.exports = BaseModalLayout.extend( {
 			collection: templatesCollection
 		} ) );
 
-		this.closePreview();
+		this.setHeaderDefaultParts();
 	},
 
 	showImportView: function() {
@@ -78,8 +64,8 @@ module.exports = BaseModalLayout.extend( {
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
 	},
 
-	openPreview: function( templateModel ) {
-		this.modalPreview.show( new TemplateLibraryPreviewView( {
+	showPreviewView: function( templateModel ) {
+		this.modalContent.show( new TemplateLibraryPreviewView( {
 			url: templateModel.get( 'url' )
 		} ) );
 
@@ -92,17 +78,5 @@ module.exports = BaseModalLayout.extend( {
 		} ) );
 
 		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
-
-		this.modalContent.$el.hide();
-
-		this.modalPreview.$el.show();
-	},
-
-	closePreview: function() {
-		this.setHeaderDefaultParts();
-
-		this.modalContent.$el.show();
-
-		this.modalPreview.$el.hide();
 	}
 } );

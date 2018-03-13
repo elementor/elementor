@@ -43,6 +43,9 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				elementor.templates.showErrorDialog( data );
 
 				layout.showImportView();
+			},
+			complete: function() {
+				layout.hideLoadingView();
 			}
 		};
 

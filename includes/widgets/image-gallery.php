@@ -93,6 +93,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Add Images', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
+				'show_label' => false,
 				'dynamic' => [
 					'active' => true,
 				],

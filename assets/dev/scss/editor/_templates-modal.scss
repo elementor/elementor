@@ -12,8 +12,11 @@ $remote-templates-items-space: 30px;
 		}
 	}
 
-	.dialog-lightbox-preview {
+	.dialog-lightbox-content {
 		height: 100%;
+	}
+
+	.dialog-lightbox-loading {
 		display: none;
 	}
 }
