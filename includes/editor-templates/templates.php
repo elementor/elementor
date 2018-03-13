@@ -99,7 +99,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 				<# } #>
 				<div id="elementor-template-library-my-favorites">
-					<input id="elementor-template-library-filter-my-favorites" type="checkbox">
+					<# var checked = elementor.templates.getFilter( 'favorite' ) ? ' checked' : ''; #>
+					<input id="elementor-template-library-filter-my-favorites" type="checkbox"{{{ checked }}}>
 					<label id="elementor-template-library-filter-my-favorites-label" for="elementor-template-library-filter-my-favorites">
 						<i class="fa" aria-hidden="true"></i>
 						<?php echo __( 'My Favorites', 'elementor' ); ?>
