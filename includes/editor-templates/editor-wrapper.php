@@ -15,6 +15,9 @@ $body_classes = [
 if ( is_rtl() ) {
 	$body_classes[] = 'rtl';
 }
+if ( ! Plugin::$instance->role_manager->user_can( 'design' ) ) {
+	$body_classes[] = 'elementor-editor-content-only';
+}
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
