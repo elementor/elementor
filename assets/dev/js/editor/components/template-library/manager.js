@@ -302,10 +302,9 @@ TemplateLibraryManager = function() {
 					onReady: self.showTemplates
 				}, customStartIntent );
 
-				if (
-					_.isEqual( Object.getPrototypeOf( oldStartIntent ), startIntent ) &&
-					'elementor-template-library-templates' === layout.modalContent.currentView.id
-				) {
+				var isSameIntent = _.isEqual( Object.getPrototypeOf( oldStartIntent ), startIntent );
+
+				if ( isSameIntent && 'elementor-template-library-templates' === layout.modalContent.currentView.id ) {
 					return;
 				}
 
