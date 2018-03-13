@@ -8,6 +8,6 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClick: function() {
-		elementor.templates.getLayout().closePreview();
+		elementor.templates.showTemplates();
 	}
 } );

@@ -12,7 +12,8 @@ module.exports = Marionette.LayoutView.extend( {
 	regions: function() {
 		return {
 			modalHeader: '.dialog-widget-header',
-			modalContent: '.dialog-lightbox-content'
+			modalContent: '.dialog-lightbox-content',
+			modalLoading: '.dialog-lightbox-loading'
 		};
 	},
 
@@ -39,7 +40,15 @@ module.exports = Marionette.LayoutView.extend( {
 
 		this.modal = elementor.dialogsManager.createWidget( 'lightbox', modalOptions );
 
-		this.modal.getElements( 'message' ).append( this.modal.addElement( 'content' ) );
+		this.modal.getElements( 'message' ).append( this.modal.addElement( 'content' ), this.modal.addElement( 'loading' ) );
+	},
+
+	showModal: function() {
+		this.modal.show();
+	},
+
+	hideModal: function() {
+		this.modal.hide();
 	},
 
 	getModalOptions: function() {
@@ -55,7 +64,17 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	showLoadingView: function() {
-		this.modalContent.show( new TemplateLibraryLoadingView() );
+		this.modalLoading.show( new TemplateLibraryLoadingView() );
+
+		this.modalLoading.$el.show();
+
+		this.modalContent.$el.hide();
+	},
+
+	hideLoadingView: function() {
+		this.modalContent.$el.show();
+
+		this.modalLoading.$el.hide();
 	},
 
 	showLogo: function() {
