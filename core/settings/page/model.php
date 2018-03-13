@@ -117,8 +117,11 @@ class Model extends BaseModel {
  	 * }
 	 */
 	public function get_panel_page_settings() {
+		$document = Plugin::$instance->documents->get( $this->post->ID );
+
 		return [
-			'title' => __( 'Document Settings', 'elementor' ),
+			/* translators: %s = document title */
+			'title' => sprintf( __( '%s Settings', 'elementor' ), $document::get_title() ),
 		];
 	}
 
