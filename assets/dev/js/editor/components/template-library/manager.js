@@ -145,6 +145,9 @@ TemplateLibraryManager = function() {
 			},
 			error: function( data ) {
 				self.showErrorDialog( data );
+			},
+			complete: function() {
+				layout.hideLoadingView();
 			}
 		} );
 	};
@@ -302,6 +305,8 @@ TemplateLibraryManager = function() {
 				if ( _.isEqual( Object.getPrototypeOf( oldStartIntent ), startIntent ) ) {
 					return;
 				}
+
+				layout.hideLoadingView();
 
 				setIntentFilters();
 
