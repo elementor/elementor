@@ -495,14 +495,18 @@ class Widget_Button extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( [
-			'content-wrapper' => [ 'class' => 'elementor-button-content-wrapper' ],
+			'content-wrapper' => [
+				'class' => 'elementor-button-content-wrapper',
+			],
 			'icon-align' => [
 				'class' => [
 					'elementor-button-icon',
 					'elementor-align-icon-' . $settings['icon_align'],
 				],
 			],
-			'text' => [ 'class' => 'elementor-button-text' ],
+			'text' => [
+				'class' => 'elementor-button-text',
+			],
 		] );
 
 		$this->add_inline_editing_attributes( 'text', 'none' );
