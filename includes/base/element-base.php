@@ -234,7 +234,7 @@ abstract class Element_Base extends Controls_Stack {
 		// Adding the tool at specific position
 		// in the tools array if requested
 		if ( $after ) {
-			$after_index = array_search( $after, array_keys( static::$_edit_tools ) ) + 1;
+			$after_index = array_search( $after, array_keys( static::$_edit_tools ), true ) + 1;
 
 			static::$_edit_tools = array_slice( static::$_edit_tools, 0, $after_index, true ) +
 								   [
@@ -376,7 +376,7 @@ abstract class Element_Base extends Controls_Stack {
 	protected function print_template_content( $template_content ) {
 		$this->render_edit_tools();
 
-		echo $template_content;
+		echo $template_content; // XSS ok.
 	}
 
 	/**
@@ -594,13 +594,10 @@ abstract class Element_Base extends Controls_Stack {
 		$this->_add_render_attributes();
 
 		$this->before_render();
-
 		$this->_print_content();
-
 		$this->after_render();
 
 		$this->enqueue_scripts();
-
 		$this->enqueue_styles();
 		/**
 		 * After frontend element render.
@@ -625,7 +622,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * The data with the HTML used always to display the data, but the Elementor
 	 * editor uses the raw data without the HTML in order not to render the data
 	 * again.
- 	 *
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
@@ -679,7 +676,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _render_settings() {
-		_deprecated_function( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), '1.8.0', 'render_edit_tools()' );
+		_deprecated_function( esc_html( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ) ), '1.8.0', 'render_edit_tools()' );
 
 		$this->render_edit_tools();
 	}

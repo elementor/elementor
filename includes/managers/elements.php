@@ -183,7 +183,7 @@ class Elements_Manager {
 	 *
 	 * @param string $element_name Optional. Element name. Default is null.
 	 *
-	 * @return null|Element_Base[] Element types, or a list of all the element
+	 * @return null|Element_Base|Element_Base[] Element types, or a list of all the element
 	 *                             types, or null if element does not exist.
 	 */
 	public function get_element_types( $element_name = null ) {

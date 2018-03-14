@@ -374,7 +374,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @access protected
 	 */
 	protected function render_edit_tools() {
-		// translators: %s: Elementor type (Section/Column/Widget).
+		// translators: %s: Widget Label.
 		$edit_title = sprintf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) );
 		?>
 		<div class="elementor-element-overlay">
