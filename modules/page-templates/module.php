@@ -156,7 +156,7 @@ class Module extends BaseModule {
 			$document->add_control(
 				$control_id,
 				[
-					'label' => __( 'Template', 'elementor' ),
+					'label' => __( 'Page Layout', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
 					'default' => 'default',
 					'options' => $options,
