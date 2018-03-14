@@ -208,6 +208,8 @@
 			this.initMaintenanceMode();
 
 			this.goToSettingsTabFromHash();
+
+			this.roleManager.init();
 		},
 
 		initNewTemplateDialog: function() {
@@ -309,6 +311,74 @@
 			this.cache.$activeSettingsPage = $activePage;
 
 			this.cache.$activeSettingsTab = $activeTab;
+		},
+
+		roleManager: {
+			selectors: {
+				body: 'elementor_page_elementor-role-manager',
+				row: '.elementor-role-row',
+				label: '.elementor-role-label',
+				excludedIndicator: '.elementor-role-excluded-indicator',
+				excludedField: 'input[name="elementor_exclude_user_roles[]"]',
+				controlsContainer: '.elementor-role-controls',
+				toggleHandle: '.elementor-role-toggle',
+				arrowUp: 'dashicons-arrow-up',
+				arrowDown: 'dashicons-arrow-down'
+			},
+			toggle: function( $trigger ) {
+				var self = this,
+					$row = $trigger.closest( self.selectors.row ),
+					$toggleHandleIcon = $row.find( self.selectors.toggleHandle ).find( '.dashicons' ),
+					$controls = $row.find( self.selectors.controlsContainer );
+
+				$controls.toggleClass( 'hidden' );
+				if ( $controls.hasClass( 'hidden') ) {
+					$toggleHandleIcon.removeClass( self.selectors.arrowUp ).addClass( self.selectors.arrowDown );
+				} else {
+					$toggleHandleIcon.removeClass( self.selectors.arrowDown ).addClass( self.selectors.arrowUp);
+				}
+				self.updateLabel( $row );
+			},
+			updateLabel: function( $row ) {
+				var self = this,
+					$indicator = $row.find( self.selectors.excludedIndicator ),
+					excluded = $row.find( self.selectors.excludedField ).is( ':checked' );
+				if ( excluded ) {
+					$indicator.html( $indicator.data( 'excluded-label' ) );
+				} else {
+					$indicator.html( '' );
+				}
+				self.setAdvancedState( $row, excluded );
+			},
+			setAdvancedState: function( $row, state ) {
+				var self = this,
+					$controls = $row.find( 'input[type="checkbox"]' ).not( self.selectors.excludedField );
+
+				$controls.each( function( index, input ) {
+					$(input).prop( 'disabled', state );
+				});
+			},
+			bind: function() {
+				var self = this;
+				$( document ).on( 'click', self.selectors.label + ',' + self.selectors.toggleHandle, function( event ) {
+					event.stopPropagation();
+					event.preventDefault();
+					self.toggle( $( this ) );
+				} ).on( 'change', self.selectors.excludedField, function() {
+					self.updateLabel( $( this ).closest( self.selectors.row ) );
+				});
+
+			},
+			init: function() {
+				var self = this;
+				if ( ! $( 'body' ).hasClass( self.selectors.body ) ){
+					return;
+				}
+				self.bind();
+				$( self.selectors.row ).each( function( index, row ) {
+					self.updateLabel( $( row ) );
+				});
+			}
 		}
 	};
 
