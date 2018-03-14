@@ -15,6 +15,8 @@ class Manager {
 
 	const MODE_REMOVE = 'remove';
 
+	const DYNAMIC_SETTING_KEY = '__dynamic__';
+
 	private $tags_groups = [];
 
 	private $tags_info = [];
@@ -207,10 +209,6 @@ class Manager {
 			'tags' => $this->get_tags_config(),
 			'groups' => $this->tags_groups,
 		];
-	}
-
-	public function get_static_setting_key( $key ) {
-		return $key . '__static__';
 	}
 
 	public function ajax_render_tags() {

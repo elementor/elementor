@@ -4,8 +4,6 @@ module.exports = Marionette.Behavior.extend( {
 
 	tagView: null,
 
-	viewApplySavedValue: null,
-
 	ui: {
 		tagArea: '.elementor-control-tag-area',
 		dynamicSwitcher: '.elementor-control-dynamic-switcher'
@@ -13,12 +11,6 @@ module.exports = Marionette.Behavior.extend( {
 
 	events: {
 		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick'
-	},
-
-	initialize: function() {
-		this.viewApplySavedValue = this.view.applySavedValue.bind( this.view );
-
-		this.view.applySavedValue = this.applySavedValue.bind( this );
 	},
 
 	renderTools: function() {
@@ -34,9 +26,8 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	isDynamicMode: function() {
-		var dynamicSettingName = elementor.dynamicTags.getStaticSettingKey( this.view.model.get( 'name' ) );
-
-		return undefined !== this.view.elementSettingsModel.get( dynamicSettingName );
+		var dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' );
+		return ! ! ( dynamicSettings && dynamicSettings[ this.view.model.get( 'name' ) ] );
 	},
 
 	createTagsList: function() {
@@ -126,47 +117,20 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	getDynamicValue: function() {
-		var value = this.view.elementSettingsModel.get( this.view.model.get( 'name' ) ),
-			dynamicProperty = this.getOption( 'property' );
-
-		if ( dynamicProperty ) {
-			value = value[ dynamicProperty ];
-		}
-
-		return value;
+		return this.view.elementSettingsModel.get( '__dynamic__' )[ this.view.model.get( 'name' ) ];
 	},
 
 	setDynamicValue: function( value ) {
-		var dynamicProperty = this.getOption( 'property' );
+		var settingsKey = this.view.model.get( 'name' ),
+			dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' ) || {};
 
-		if ( dynamicProperty ) {
-			var values = this.view.getControlValue();
+		dynamicSettings = elementor.helpers.cloneObject( dynamicSettings );
 
-			values[ dynamicProperty ] = value;
+		dynamicSettings[ settingsKey ] = value;
 
-			value = values;
-		}
-
-		var valuesToChange = {},
-			settingsKey = this.view.model.get( 'name' );
-
-		valuesToChange[ settingsKey ] = value;
-
-		if ( ! this.isDynamicMode() ) {
-			var staticSettingKey = elementor.dynamicTags.getStaticSettingKey( settingsKey );
-
-			valuesToChange[ staticSettingKey ] = this.view.getControlValue();
-		}
-
-		this.view.elementSettingsModel.set( valuesToChange );
+		this.view.elementSettingsModel.set( '__dynamic__', dynamicSettings );
 
 		this.toggleDynamicClass();
-	},
-
-	applySavedValue: function() {
-		if ( ! this.isDynamicMode() ) {
-			this.viewApplySavedValue();
-		}
 	},
 
 	destroyTagView: function() {
@@ -213,18 +177,19 @@ module.exports = Marionette.Behavior.extend( {
 
 	onTagViewRemove: function() {
 		var settingKey = this.view.model.get( 'name' ),
-			staticKey = elementor.dynamicTags.getStaticSettingKey( settingKey ),
-			valuesToChange = {};
+			dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' );
 
-		valuesToChange[ settingKey ] = this.view.elementSettingsModel.get( staticKey );
+		dynamicSettings = elementor.helpers.cloneObject( dynamicSettings );
 
-		valuesToChange[ staticKey ] = undefined;
+		delete dynamicSettings[settingKey ];
 
-		this.view.elementSettingsModel.set( valuesToChange );
+		if ( Object.keys( dynamicSettings ).length ) {
+			this.view.elementSettingsModel.set( '__dynamic__', dynamicSettings );
+		} else {
+			this.view.elementSettingsModel.unset( '__dynamic__' );
+		}
 
 		this.toggleDynamicClass();
-
-		this.view.applySavedValue();
 	},
 
 	onAfterExternalChange: function() {

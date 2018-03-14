@@ -75,34 +75,14 @@ abstract class Base_Data_Control extends Base_Control {
 		return $value;
 	}
 
-	public function parse_tags( $value, $dynamic_settings ) {
-		if ( ! $value ) {
-			return $value;
-		}
-
+	public function parse_tags( $dynamic_value, $dynamic_settings ) {
 		$current_dynamic_settings = $this->get_settings( 'dynamic' );
 
 		if ( is_array( $current_dynamic_settings ) ) {
 			$dynamic_settings = array_merge( $current_dynamic_settings, $dynamic_settings );
 		}
 
-		$value_to_parse = $value;
-
-		$dynamic_property = ! empty( $dynamic_settings['property'] ) ? $dynamic_settings['property'] : null;
-
-		if ( $dynamic_property ) {
-			$value_to_parse = $value_to_parse[ $dynamic_property ];
-		}
-
-		$parsed_value = Plugin::$instance->dynamic_tags->parse_tags_text( $value_to_parse, $dynamic_settings, [ Plugin::$instance->dynamic_tags, 'get_tag_data_content' ] );
-
-		if ( $dynamic_property ) {
-			$value[ $dynamic_property ] = $parsed_value;
-		} else {
-			$value = $parsed_value;
-		}
-
-		return $value;
+		return Plugin::$instance->dynamic_tags->parse_tags_text( $dynamic_value, $dynamic_settings, [ Plugin::$instance->dynamic_tags, 'get_tag_data_content' ] );
 	}
 
 	/**
