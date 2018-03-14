@@ -563,11 +563,15 @@ abstract class Element_Base extends Controls_Stack {
 		return implode( ' ', $attributes );
 	}
 
+	public function print_render_attribute_string( $element ) {
+		echo $this->get_render_attribute_string( $element ); // XSS ok.
+	}
+
 	/**
 	 * Print element.
 	 *
 	 * Used to generate the element final HTML on the frontend and the editor.
- 	 *
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 */

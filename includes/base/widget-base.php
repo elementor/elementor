@@ -358,7 +358,9 @@ abstract class Widget_Base extends Element_Base {
 		$this->render_edit_tools();
 		?>
 		<div class="elementor-widget-container">
-			<?php echo $template_content; ?>
+			<?php
+			echo $template_content; // XSS ok.
+			?>
 		</div>
 		<?php
 	}
@@ -372,17 +374,19 @@ abstract class Widget_Base extends Element_Base {
 	 * @access protected
 	 */
 	protected function render_edit_tools() {
+		// translators: %s: Elementor type (Section/Column/Widget).
+		$edit_title = sprintf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) );
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-widget-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?>">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php echo esc_attr( $edit_title ); ?>">
 					<i class="eicon-edit" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php printf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) ); ?></span>
+					<span class="elementor-screen-only"><?php echo esc_html( $edit_title ); ?></span>
 				</li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
-						<i class="eicon-<?php echo $edit_tool['icon']; ?>" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
+						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
 					</li>
 				<?php endforeach; ?>
 			</ul>
@@ -472,7 +476,7 @@ abstract class Widget_Base extends Element_Base {
 			 */
 			$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
 
-			echo $widget_content;
+			echo $widget_content; // XSS ok.
 			?>
 		</div>
 		<?php
@@ -537,7 +541,7 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function before_render() {
 		?>
-		<div <?php echo $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<div <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
 	}
 
