@@ -4,6 +4,8 @@ module.exports = Marionette.Behavior.extend( {
 
 	tagView: null,
 
+	listenerAttached: false,
+
 	ui: {
 		tagArea: '.elementor-control-tag-area',
 		dynamicSwitcher: '.elementor-control-dynamic-switcher'
@@ -11,6 +13,13 @@ module.exports = Marionette.Behavior.extend( {
 
 	events: {
 		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick'
+	},
+
+	initialize: function() {
+		if ( ! this.listenerAttached ) {
+			this.listenTo( this.view.options.elementSettingsModel, 'change:external:__dynamic__', this.onAfterExternalChange );
+			this.listenerAttached = true;
+		}
 	},
 
 	renderTools: function() {
@@ -120,15 +129,24 @@ module.exports = Marionette.Behavior.extend( {
 		return this.view.elementSettingsModel.get( '__dynamic__' )[ this.view.model.get( 'name' ) ];
 	},
 
+	getDynamicControlSettings: function( settingKey ) {
+		return {
+			control: {
+				name: '__dynamic__',
+				label: this.view.elementSettingsModel.controls[ settingKey ].label
+			}
+		};
+	},
+
 	setDynamicValue: function( value ) {
-		var settingsKey = this.view.model.get( 'name' ),
+		var settingKey = this.view.model.get( 'name' ),
 			dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' ) || {};
 
 		dynamicSettings = elementor.helpers.cloneObject( dynamicSettings );
 
-		dynamicSettings[ settingsKey ] = value;
+		dynamicSettings[ settingKey ] = value;
 
-		this.view.elementSettingsModel.set( '__dynamic__', dynamicSettings );
+		this.view.elementSettingsModel.set( '__dynamic__', dynamicSettings, this.getDynamicControlSettings( settingKey ) );
 
 		this.toggleDynamicClass();
 	},
@@ -184,9 +202,9 @@ module.exports = Marionette.Behavior.extend( {
 		delete dynamicSettings[settingKey ];
 
 		if ( Object.keys( dynamicSettings ).length ) {
-			this.view.elementSettingsModel.set( '__dynamic__', dynamicSettings );
+			this.view.elementSettingsModel.set( '__dynamic__', dynamicSettings, this.getDynamicControlSettings( settingKey ) );
 		} else {
-			this.view.elementSettingsModel.unset( '__dynamic__' );
+			this.view.elementSettingsModel.unset( '__dynamic__', this.getDynamicControlSettings( settingKey ) );
 		}
 
 		this.toggleDynamicClass();
