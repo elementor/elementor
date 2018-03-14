@@ -23,8 +23,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	startEditing: function( $element ) {
-		var staticSettingKey = elementor.dynamicTags.getStaticSettingKey( $element.data().elementorSettingKey ),
-			isDynamic = undefined !== this.view.getEditModel().get( 'settings' ).get( staticSettingKey );
+		var dynamicSettings = this.view.getEditModel().get( 'settings' ).get( '__dynamic__' ),
+			isDynamic = dynamicSettings && dynamicSettings[ $element.data().elementorSettingKey ];
 
 		if (
 			this.editing ||
