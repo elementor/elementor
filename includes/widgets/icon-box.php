@@ -73,6 +73,15 @@ class Widget_Icon_Box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon',
+			[
+				'label' => __( 'Choose Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-star',
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -84,15 +93,9 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'default' => 'default',
 				'prefix_class' => 'elementor-view-',
-			]
-		);
-
-		$this->add_control(
-			'icon',
-			[
-				'label' => __( 'Choose Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-star',
+				'condition' => [
+					'icon!' => '',
+				],
 			]
 		);
 
@@ -108,6 +111,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'default' => 'circle',
 				'condition' => [
 					'view!' => 'default',
+					'icon!' => '',
 				],
 				'prefix_class' => 'elementor-shape-',
 			]
@@ -178,6 +182,9 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-position-',
 				'toggle' => false,
+				'condition' => [
+					'icon!' => '',
+				],
 			]
 		);
 
@@ -208,6 +215,9 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'icon!' => '',
+				],
 			]
 		);
 
@@ -355,6 +365,9 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => __( 'Icon Hover', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'icon!' => '',
+				],
 			]
 		);
 
@@ -552,6 +565,8 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$icon_tag = 'span';
 
+		$has_icon = ! empty( $settings['icon'] );
+
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
 			$icon_tag = 'a';
@@ -565,8 +580,10 @@ class Widget_Icon_Box extends Widget_Base {
 			}
 		}
 
-		$this->add_render_attribute( 'i', 'class', $settings['icon'] );
-		$this->add_render_attribute( 'i', 'aria-hidden', 'true' );
+		if ( $has_icon ) {
+			$this->add_render_attribute( 'i', 'class', $settings['icon'] );
+			$this->add_render_attribute( 'i', 'aria-hidden', 'true' );
+		}
 
 		$icon_attributes = $this->get_render_attribute_string( 'icon' );
 		$link_attributes = $this->get_render_attribute_string( 'link' );
@@ -577,12 +594,15 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$this->add_inline_editing_attributes( 'description_text' );
 		?>
+
         <div class="elementor-icon-box-wrapper">
+	        <?php if ( $has_icon ) : ?>
             <div class="elementor-icon-box-icon">
                 <<?php echo implode( ' ', [ $icon_tag, $icon_attributes, $link_attributes ] ); ?>>
                     <i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i>
                 </<?php echo $icon_tag; ?>>
             </div>
+			<?php endif; ?>
             <div class="elementor-icon-box-content">
                 <<?php echo $settings['title_size']; ?> class="elementor-icon-box-title">
                     <<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?> <?php echo $this->get_render_attribute_string( 'title_text' ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
@@ -613,11 +633,13 @@ class Widget_Icon_Box extends Widget_Base {
         view.addInlineEditingAttributes( 'description_text' );
         #>
         <div class="elementor-icon-box-wrapper">
+	        <# if ( settings.icon ) { #>
             <div class="elementor-icon-box-icon">
                 <{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
                     <i class="{{ settings.icon }}" aria-hidden="true"></i>
                 </{{{ iconTag }}}>
             </div>
+			<# } #>
             <div class="elementor-icon-box-content">
                 <{{{ settings.title_size }}} class="elementor-icon-box-title">
                     <{{{ iconTag + ' ' + link }}} {{{ view.getRenderAttributeString( 'title_text' ) }}}>{{{ settings.title_text }}}</{{{ iconTag }}}>
