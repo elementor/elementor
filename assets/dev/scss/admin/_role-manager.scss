@@ -1,0 +1,24 @@
+.elementor-role-row {
+	width: 500px;
+	background: #fff;
+	padding: 20px 0 0;
+	margin-bottom: 2px;
+
+	.elementor-role-label {
+		padding: 0px 10px 10px;
+
+		span.elementor-role-toggle {
+			float: right;
+			color: #c2cbd2;
+			cursor: pointer;
+		}
+		span.elementor-role-excluded-indicator {
+			color: #d5dadf;
+			padding: 15px;
+		}
+	}
+	.elementor-role-controls {
+		background: #fcfcfc;
+		padding: 10px;
+	}
+}

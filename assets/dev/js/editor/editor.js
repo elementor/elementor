@@ -110,6 +110,10 @@ App = Marionette.Application.extend( {
 		}
 	},
 
+	userCan: function ( capability ) {
+		return ! ( this.config.user.restrictions.indexOf( capability ) > -1 );
+	},
+
 	_defaultDeviceMode: 'desktop',
 
 	addControlView: function( controlID, ControlView ) {
@@ -149,10 +153,16 @@ App = Marionette.Application.extend( {
 		}
 
 		var isInner = modelElement.get( 'isInner' ),
-			controls = {};
+			controls = {},
+			userCanEditStyle = elementor.userCan( 'style' );
+
 
 		_.each( elementData.controls, function( controlData, controlKey ) {
 			if ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top ) {
+				return;
+			}
+
+			if ( ! userCanEditStyle && 'content' !== controlData.tab ) {
 				return;
 			}
 
@@ -610,6 +620,10 @@ App = Marionette.Application.extend( {
 		this.$previewContents.children().addClass( 'elementor-html' );
 
 		elementorFrontend.getElements( '$body' ).addClass( 'elementor-editor-active' );
+
+		if ( ! elementor.userCan( 'design' ) ) {
+			elementorFrontend.getElements( '$body' ).addClass( 'elementor-editor-content-only' );
+		}
 
 		this.setResizablePanel();
 
