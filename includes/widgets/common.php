@@ -336,12 +336,12 @@ class Widget_Common extends Widget_Base {
 						[
 							'name' => '_background_background',
 							'operator' => '!==',
-							'value' => ''
+							'value' => '',
 						], [
 							'name' => '_border_border',
 							'operator' => '!==',
-							'value' => ''
-						]
+							'value' => '',
+						],
 					],
 				],
 				'selectors' => [

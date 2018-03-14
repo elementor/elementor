@@ -5,7 +5,9 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Plugin;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Module extends BaseModule {
 
