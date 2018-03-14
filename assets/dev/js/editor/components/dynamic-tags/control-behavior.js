@@ -133,7 +133,7 @@ module.exports = Marionette.Behavior.extend( {
 		return {
 			control: {
 				name: '__dynamic__',
-				label: this.view.elementSettingsModel.controls[ settingKey ].label
+				label: this.view.model.get( 'label' )
 			}
 		};
 	},
