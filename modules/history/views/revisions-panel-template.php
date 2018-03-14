@@ -1,3 +1,9 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+?>
 <script type="text/template" id="tmpl-elementor-panel-revisions">
 	<div class="elementor-panel-box">
 	<div class="elementor-panel-scheme-buttons">

@@ -1,3 +1,9 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+?>
 <script type="text/template" id="tmpl-elementor-panel-history-page">
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
 		<div id="elementor-panel-elements-navigation-history" class="elementor-panel-navigation-tab elementor-active" data-view="history"><?php esc_html_e( 'Actions', 'elementor' ); ?></div>
