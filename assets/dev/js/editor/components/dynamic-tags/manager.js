@@ -65,10 +65,6 @@ module.exports = Module.extend( {
 		this.loadCacheRequests();
 	},
 
-	getStaticSettingKey: function( key ) {
-		return key + '__static__';
-	},
-
 	getConfig: function( key ) {
 		return this.getItems( elementor.config.dynamicTags, key );
 	},

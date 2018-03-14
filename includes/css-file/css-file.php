@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -514,8 +515,8 @@ abstract class CSS_File {
 				$this->add_repeater_control_style_rules( $controls_stack, $control['style_fields'], $values[ $control['name'] ], $placeholders, $replacements );
 			}
 
-			if ( ! empty( $control['dynamic'] ) ) {
-				$this->add_dynamic_control_style_rules( $control, $values[ $control['name'] ] );
+			if ( ! empty( $control[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] ) ) {
+				$this->add_dynamic_control_style_rules( $control, $control[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] );
 			}
 
 			if ( empty( $control['selectors'] ) ) {
