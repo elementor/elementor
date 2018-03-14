@@ -93,6 +93,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Add Images', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
 				'default' => [],
+				'show_label' => false,
 			]
 		);
 

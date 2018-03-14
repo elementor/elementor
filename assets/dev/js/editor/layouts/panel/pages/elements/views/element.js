@@ -7,6 +7,9 @@ PanelElementsElementView = Marionette.ItemView.extend( {
 
 	onRender: function() {
 		var self = this;
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
 
 		this.$el.html5Draggable( {
 
