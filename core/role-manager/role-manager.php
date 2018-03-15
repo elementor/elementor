@@ -75,20 +75,23 @@ class Role_Manager extends Settings_Page {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( $this->get_page_title() ); ?></h1>
-			<h3><?php esc_html_e( 'Manage Editing Permissions For Your Site', 'elementor' ); ?></h3>
-			<form id="elementor-settings-form" method="post" action="options.php">
-				<?php
-				settings_fields( static::PAGE_ID );
-				echo '<div id="elementor-role-manager" class="elementor-settings-form-page elementor-active">';
-				foreach ( get_editable_roles() as $role_slug => $role_data ) {
-					if ( 'administrator' === $role_slug ) {
-						continue;
-					}
-					$this->display_role_controls( $role_slug, $role_data );
-				}
-				submit_button();
-				?>
-			</form>
+
+            <div id="elementor-role-manager">
+                <h3><?php esc_html_e( 'Manage Editing Permissions For Your Site', 'elementor' ); ?></h3>
+                <form id="elementor-settings-form" method="post" action="options.php">
+		            <?php
+		            settings_fields( static::PAGE_ID );
+		            echo '<div class="elementor-settings-form-page elementor-active">';
+		            foreach ( get_editable_roles() as $role_slug => $role_data ) {
+			            if ( 'administrator' === $role_slug ) {
+				            continue;
+			            }
+			            $this->display_role_controls( $role_slug, $role_data );
+		            }
+		            submit_button();
+		            ?>
+                </form>
+            </div>
 		</div><!-- /.wrap -->
 		<?php
 	}
@@ -102,19 +105,25 @@ class Role_Manager extends Settings_Page {
 		?>
 		<div class="elementor-role-row <?php esc_attr( $role_slug ); ?>">
 			<div class="elementor-role-label">
-				<span><?php echo esc_html( $role_data['name'] ); ?></span>
+				<span class="elementor-role-name"><?php echo esc_html( $role_data['name'] ); ?></span>
 				<span data-excluded-label="<?php esc_attr_e( 'Role Excluded', 'elementor' ); ?>" class="elementor-role-excluded-indicator"></span>
 				<span class="elementor-role-toggle"><span class="dashicons dashicons-arrow-down"></span></span>
 			</div>
 			<div class="elementor-role-controls hidden">
-				<div class="">
-				<label>
-					<?php
-					printf( '<input type="checkbox" name="elementor_exclude_user_roles[]" value="%s"%s>', esc_attr( $role_slug ), $excluded );
-					esc_html_e( 'Exclude Role', 'elementor' );
-					?>
-				</label>
+				<div class="elementor-role-control">
+                    <label>
+                        <?php
+                        printf( '<input type="checkbox" name="elementor_exclude_user_roles[]" value="%s"%s>', esc_attr( $role_slug ), $excluded );
+                        esc_html_e( 'Exclude Role', 'elementor' );
+                        ?>
+                    </label>
 				</div>
+
+                <div class="elementor-role-go-pro">
+                    <div class="elementor-role-go-pro__desc">Want to set Advanced Role Manager Permissions?</div>
+                    <div class="elementor-role-go-pro__link"><a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://elementor.com/pro/">Go Pro</a></div>
+                </div>
+
 				<div>
 					<?php
 					/**

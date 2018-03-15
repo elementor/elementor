@@ -1,24 +1,64 @@
-.elementor-role-row {
-	width: 500px;
-	background: #fff;
-	padding: 20px 0 0;
-	margin-bottom: 2px;
 
-	.elementor-role-label {
-		padding: 0px 10px 10px;
-
-		span.elementor-role-toggle {
-			float: right;
-			color: #c2cbd2;
-			cursor: pointer;
-		}
-		span.elementor-role-excluded-indicator {
-			color: #d5dadf;
-			padding: 15px;
-		}
+#elementor-role-manager {
+	max-width: 500px;
+	margin-top: 50px;
+	
+	h3 {
+		font-weight: normal;
+		font-size: 22px;
 	}
-	.elementor-role-controls {
-		background: #fcfcfc;
-		padding: 10px;
+
+	.elementor-settings-form-page {
+		padding: 0;
+	}
+	
+	.elementor-role-row {
+		background: #ffffff;
+		color: $editor-dark;
+		margin-bottom: 2px;
+
+		.elementor-role-label {
+			display: flex;
+			padding: 15px 20px;
+			font-weight: 500;
+			cursor: pointer;
+
+			span.elementor-role-name {
+				@include padding-end(20px);
+			}
+
+			span.elementor-role-toggle {
+				text-align: $end;
+				flex-grow: 1;
+			}
+
+			span.elementor-role-excluded-indicator {
+				color: $editor-light;
+			}
+		}
+
+		.elementor-role-controls {
+			background-color: $gray-lightest;
+			padding: 20px 20px 5px;
+
+			> div {
+				margin-bottom: 15px;
+			}
+
+			.elementor-role-go-pro {
+				display: flex;
+
+				.elementor-role-go-pro__desc {
+					font-weight: 500;
+					font-style: italic;
+				}
+
+				.elementor-role-go-pro__link {
+					text-align: $end;
+					flex-grow: 1;
+				}
+			}
+		}
 	}
 }
+
