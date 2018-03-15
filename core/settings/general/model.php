@@ -90,14 +90,14 @@ class Model extends BaseModel {
 				'style' => [
 					'label' => __( 'Style', 'elementor' ),
 					'controls' => [
-						'elementor_default_generic_fonts' => [
+						'default_generic_fonts' => [
 							'label' => __( 'Default Generic Fonts', 'elementor' ),
 							'type' => Controls_Manager::TEXT,
 							'default' => 'Sans-serif',
 							'description' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
 							'label_block' => true,
 						],
-						'elementor_container_width' => [
+						'container_width' => [
 							'label' => __( 'Content Width', 'elementor' ) . ' (px)',
 							'type' => Controls_Manager::NUMBER,
 							'min' => 0,
@@ -106,7 +106,7 @@ class Model extends BaseModel {
 								'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{VALUE}}px',
 							],
 						],
-						'elementor_space_between_widgets' => [
+						'space_between_widgets' => [
 							'label' => __( 'Widgets Space', 'elementor' ) . ' (px)',
 							'type' => Controls_Manager::NUMBER,
 							'min' => 0,
@@ -116,7 +116,7 @@ class Model extends BaseModel {
 								'.elementor-widget:not(:last-child)' => 'margin-bottom: {{VALUE}}px',
 							],
 						],
-						'elementor_stretched_section_container' => [
+						'stretched_section_container' => [
 							'label' => __( 'Stretched Section Fit To', 'elementor' ),
 							'type' => Controls_Manager::TEXT,
 							'placeholder' => 'body',
@@ -124,7 +124,7 @@ class Model extends BaseModel {
 							'label_block' => true,
 							'frontend_available' => true,
 						],
-						'elementor_page_title_selector' => [
+						'page_title_selector' => [
 							'label' => __( 'Page Title Selector', 'elementor' ),
 							'type' => Controls_Manager::TEXT,
 							'placeholder' => 'h1.entry-title',
@@ -138,35 +138,35 @@ class Model extends BaseModel {
 				'lightbox' => [
 					'label' => __( 'Lightbox', 'elementor' ),
 					'controls' => [
-						'elementor_global_image_lightbox' => [
+						'global_image_lightbox' => [
 							'label' => __( 'Image Lightbox', 'elementor' ),
 							'type' => Controls_Manager::SWITCHER,
 							'default' => 'yes',
 							'description' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
 							'frontend_available' => true,
 						],
-						'elementor_enable_lightbox_in_editor' => [
+						'enable_lightbox_in_editor' => [
 							'label' => __( 'Enable In Editor', 'elementor' ),
 							'type' => Controls_Manager::SWITCHER,
 							'default' => 'yes',
 							'description' => __( '', 'elementor' ),
 							'frontend_available' => true,
 						],
-						'elementor_lightbox_color' => [
+						'lightbox_color' => [
 							'label' => __( 'Background Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [
 								'.elementor-lightbox' => 'background-color: {{VALUE}}',
 							],
 						],
-						'elementor_lightbox_ui_color' => [
+						'lightbox_ui_color' => [
 							'label' => __( 'UI Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [
 								'.elementor-lightbox .dialog-lightbox-close-button, .elementor-lightbox .elementor-swiper-button' => 'color: {{VALUE}}',
 							],
 						],
-						'elementor_lightbox_ui_color_hover' => [
+						'lightbox_ui_color_hover' => [
 							'label' => __( 'UI Hover Color', 'elementor' ),
 							'type' => Controls_Manager::COLOR,
 							'selectors' => [

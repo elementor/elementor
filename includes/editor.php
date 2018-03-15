@@ -483,7 +483,7 @@ class Editor {
 			$locked_user = $locked_user->display_name;
 		}
 
-		$page_title_selector = get_option( 'elementor_page_title_selector' );
+		$page_title_selector = SettingsManager::get_settings_managers( 'general' )->get_model()->get_settings( 'page_title_selector' );
 
 		if ( empty( $page_title_selector ) ) {
 			$page_title_selector = 'h1.entry-title';
