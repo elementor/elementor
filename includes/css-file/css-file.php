@@ -302,7 +302,7 @@ abstract class CSS_File {
 	}
 
 	public function print_css() {
-		echo '<style>' . $this->get_css() . '</style>';
+		echo '<style>' . $this->get_css() . '</style>'; // XSS ok.
 		Plugin::$instance->frontend->print_fonts_links();
 	}
 
