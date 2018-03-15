@@ -1737,8 +1737,6 @@ abstract class Controls_Stack {
 			}
 		}
 
-
-
 		$data['settings'] = $settings;
 
 		return $data;
