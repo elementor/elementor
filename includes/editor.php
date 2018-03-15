@@ -522,6 +522,10 @@ class Editor {
 			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'locked_user' => $locked_user,
+			'user' => [
+				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
+				'is_administrator' => current_user_can( 'manage_options' ),
+			],
 			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
 			'viewportBreakpoints' => Responsive::get_breakpoints(),

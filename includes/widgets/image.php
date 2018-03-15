@@ -428,35 +428,22 @@ class Widget_Image extends Widget_Base {
 			}
 		} ?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-		<?php if ( $has_caption ) : ?>
-			<figure class="wp-caption">
-		<?php
-		endif;
-
-		if ( $link ) :
-		?>
-				<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
-		<?php
-		endif;
-
-		echo Group_Control_Image_Size::get_attachment_image_html( $settings );
-
-		if ( $link ) :
-		?>
-				</a>
-		<?php
-		endif;
-
-		if ( $has_caption ) :
-		?>
-				<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
-		<?php
-		endif;
-
-		if ( $has_caption ) :
-		?>
-			</figure>
-		<?php endif; ?>
+			<?php if ( $has_caption ) : ?>
+				<figure class="wp-caption">
+			<?php endif; ?>
+			<?php if ( $link ) : ?>
+					<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
+			<?php endif; ?>
+				<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings ); ?>
+			<?php if ( $link ) : ?>
+					</a>
+			<?php endif; ?>
+			<?php if ( $has_caption ) : ?>
+					<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
+			<?php endif; ?>
+			<?php if ( $has_caption ) : ?>
+				</figure>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

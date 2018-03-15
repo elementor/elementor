@@ -4,7 +4,9 @@ namespace Elementor\Core\DynamicTags;
 use Elementor\Controls_Stack;
 use Elementor\Plugin;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Base_Tag extends Controls_Stack {
 
@@ -37,10 +39,10 @@ abstract class Base_Tag extends Controls_Stack {
 			return;
 		}
 		?><#
-		var key = <?php echo $panel_template_setting_key; ?>;
+		var key = <?php echo esc_html( $panel_template_setting_key ); ?>;
 
 		if ( key ) {
-			var settingsKey = "<?php echo $panel_template_setting_key; ?>";
+			var settingsKey = "<?php echo esc_html( $panel_template_setting_key ); ?>";
 
 			/*
 			 * If the tag has controls,
@@ -64,7 +66,8 @@ abstract class Base_Tag extends Controls_Stack {
 
 			print( '(' + key + ')' );
 		}
-		#><?php
+		#>
+		<?php
 	}
 
 	final public function get_unique_name() {

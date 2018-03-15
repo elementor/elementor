@@ -125,7 +125,7 @@ class Documents_Manager {
 	public function create( $type, $post_data = [], $meta_data = [] ) {
 		if ( ! isset( $this->types[ $type ] ) ) {
 			/* translators: %s: document type name */
-			wp_die( sprintf( __( 'Type %s does not exist.', 'elementor' ), $type ) );
+			wp_die( esc_html( sprintf( __( 'Type %s does not exist.', 'elementor' ), $type ) ) );
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {
@@ -172,7 +172,7 @@ class Documents_Manager {
 	 * @return array
 	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
 	 */
-	public function	ajax_save( $request ) {
+	public function ajax_save( $request ) {
 		if ( empty( $request['post_id'] ) ) {
 			throw new \Exception( 'Missing post id.' );
 		}

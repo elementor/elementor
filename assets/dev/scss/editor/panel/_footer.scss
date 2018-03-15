@@ -69,7 +69,7 @@
 	padding: 10px;
 	box-shadow: $panel-top-shadow;
 	cursor: default;
-	z-index: 4;
+	z-index: $super-layer;
 }
 
 .elementor-panel-footer-sub-menu {
