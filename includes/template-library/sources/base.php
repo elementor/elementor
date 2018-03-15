@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Controls_Stack;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -336,7 +337,7 @@ abstract class Source_Base {
 	 *
 	 * @return array Processed element data.
 	 */
-	protected function process_element_export_import_content( $element, $method ) {
+	protected function process_element_export_import_content( Controls_Stack $element, $method ) {
 		$element_data = $element->get_data();
 
 		if ( method_exists( $element, $method ) ) {
