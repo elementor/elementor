@@ -130,7 +130,6 @@ abstract class Manager {
 		}
 
 		$this->ajax_before_save_settings( $data, $id );
-
 		$this->save_settings( $data, $id );
 
 		$settings_name = $this->get_name();
@@ -354,13 +353,13 @@ abstract class Manager {
 	protected function print_editor_template_content( $name ) {
 		?>
 		<div class="elementor-panel-navigation">
-			<# _.each( elementor.config.settings.<?php echo $name; ?>.tabs, function( tabTitle, tabSlug ) { #>
+			<# _.each( elementor.config.settings.<?php echo esc_html( $name ); ?>.tabs, function( tabTitle, tabSlug ) { #>
 				<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 					<a href="#">{{{ tabTitle }}}</a>
 				</div>
 				<# } ); #>
 		</div>
-		<div id="elementor-panel-<?php echo $name; ?>-settings-controls"></div>
+		<div id="elementor-panel-<?php echo esc_attr( $name ); ?>-settings-controls"></div>
 		<?php
 	}
 
@@ -403,7 +402,7 @@ abstract class Manager {
 
 		ob_start();
 		?>
-		<script type="text/template" id="tmpl-elementor-panel-<?php echo $name; ?>-settings">
+		<script type="text/template" id="tmpl-elementor-panel-<?php echo esc_attr( $name ); ?>-settings">
 			<?php $this->print_editor_template_content( $name ); ?>
 		</script>
 		<?php
