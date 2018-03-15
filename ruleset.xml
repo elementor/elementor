@@ -22,13 +22,13 @@
 
 	<rule ref="WordPress.WP.DeprecatedFunctions">
 		<properties>
-			<property name="minimum_supported_version" value="4.5" />
+			<property name="minimum_supported_version" value="4.6" />
 		</properties>
 	</rule>
 
 	<rule ref="WordPress.NamingConventions.ValidHookName">
 		<properties>
-			<property name="additionalWordDelimiters" value="/" />
+			<property name="additionalWordDelimiters" value="/-" />
 		</properties>
 	</rule>
 </ruleset>
