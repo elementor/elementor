@@ -76,22 +76,22 @@ class Role_Manager extends Settings_Page {
 		<div class="wrap">
 			<h1><?php echo esc_html( $this->get_page_title() ); ?></h1>
 
-            <div id="elementor-role-manager">
-                <h3><?php esc_html_e( 'Manage Editing Permissions For Your Site', 'elementor' ); ?></h3>
-                <form id="elementor-settings-form" method="post" action="options.php">
-		            <?php
-		            settings_fields( static::PAGE_ID );
-		            echo '<div class="elementor-settings-form-page elementor-active">';
-		            foreach ( get_editable_roles() as $role_slug => $role_data ) {
-			            if ( 'administrator' === $role_slug ) {
-				            continue;
-			            }
-			            $this->display_role_controls( $role_slug, $role_data );
-		            }
-		            submit_button();
-		            ?>
-                </form>
-            </div>
+			<div id="elementor-role-manager">
+				<h3><?php esc_html_e( 'Manage Editing Permissions For Your Site', 'elementor' ); ?></h3>
+				<form id="elementor-settings-form" method="post" action="options.php">
+					<?php
+					settings_fields( static::PAGE_ID );
+					echo '<div class="elementor-settings-form-page elementor-active">';
+					foreach ( get_editable_roles() as $role_slug => $role_data ) {
+						if ( 'administrator' === $role_slug ) {
+							continue;
+						}
+						$this->display_role_controls( $role_slug, $role_data );
+					}
+					submit_button();
+					?>
+				</form>
+			</div>
 		</div><!-- /.wrap -->
 		<?php
 	}
