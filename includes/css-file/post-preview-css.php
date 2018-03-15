@@ -20,7 +20,7 @@ class Post_Preview_CSS extends Post_CSS_File {
 	 *
 	 * Holds the ID of the current post being previewed.
 	 *
-     * @var int
+	 * @var int
 	 */
 	private $preview_id;
 

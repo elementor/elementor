@@ -591,6 +591,8 @@ class Frontend {
 	 * @access private
 	 */
 	private function print_google_fonts( $google_fonts = [] ) {
+		static $google_fonts_index = 0;
+
 		$print_google_fonts = true;
 
 		/**
@@ -610,6 +612,8 @@ class Frontend {
 
 		// Print used fonts
 		if ( ! empty( $google_fonts['google'] ) ) {
+			$google_fonts_index++;
+
 			foreach ( $google_fonts['google'] as &$font ) {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
@@ -633,12 +637,18 @@ class Frontend {
 				$fonts_url .= '&subset=' . $subsets[ $locale ];
 			}
 
-			echo '<link rel="stylesheet" type="text/css" href="' . $fonts_url . '">';
+			wp_enqueue_style( 'google-fonts-' . $google_fonts_index, $fonts_url );
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
 			foreach ( $google_fonts['early'] as $current_font ) {
-				printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
+				$google_fonts_index++;
+
+				//printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
+
+				$font_url = sprintf( 'https://fonts.googleapis.com/earlyaccess/%s.css', strtolower( str_replace( ' ', '', $current_font ) ) );
+
+				wp_enqueue_style( 'google-earlyaccess-' . $google_fonts_index, $font_url );
 			}
 		}
 

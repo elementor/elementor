@@ -39,8 +39,8 @@ ControlsCSSParser = ViewModule.extend( {
 				self.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, controls, placeholders, replacements );
 			}
 
-			if ( control.dynamic && control.dynamic.active && undefined !== values[ elementor.dynamicTags.getStaticSettingKey( control.name ) ] ) {
-				self.addDynamicControlStyleRules( values[ control.name ], control );
+			if ( control.dynamic && control.dynamic.active && values.__dynamic__ && values.__dynamic__[ control.name ] ) {
+				self.addDynamicControlStyleRules( values.__dynamic__[ control.name ], control );
 			}
 
 			if ( ! control.selectors ) {
@@ -76,6 +76,10 @@ ControlsCSSParser = ViewModule.extend( {
 	addRepeaterControlsStyleRules: function( repeaterValues, repeaterControls, controls, placeholders, replacements ) {
 		var self = this;
 
+		if ( ! repeaterValues instanceof Backbone.Collection ) {
+			repeaterValues = new Backbone.Collection( repeaterValues );
+		}
+
 		repeaterValues.each( function( itemModel ) {
 			self.addStyleRules(
 				repeaterControls,
@@ -88,14 +92,9 @@ ControlsCSSParser = ViewModule.extend( {
 	},
 
 	addDynamicControlStyleRules: function( value, control ) {
-		var self = this,
-			valueToParse = value;
+		var self = this;
 
-		if ( control.dynamic.property ) {
-			valueToParse = valueToParse[ control.dynamic.property ];
-		}
-
-		elementor.dynamicTags.parseTagsText( valueToParse, control.dynamic, function( id, name, settings ) {
+		elementor.dynamicTags.parseTagsText( value, control.dynamic, function( id, name, settings ) {
 			var tag = elementor.dynamicTags.createTag( id, name, settings );
 
 			if ( ! tag ) {

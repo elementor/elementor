@@ -36,7 +36,7 @@ module.exports = Marionette.Behavior.extend( {
 			type: 'change',
 			elementType: 'control',
 			title: elementor.history.history.getModelLabel( model ),
-			subTitle: model.controls[ changed[0] ].label,
+			subTitle: control.label,
 			history: {
 				behavior: this,
 				changed: changedAttributes,
@@ -49,21 +49,24 @@ module.exports = Marionette.Behavior.extend( {
 		delete this.oldValues[ control.name ];
 	},
 
-	saveHistory: function( model ) {
+	saveHistory: function( model, options ) {
 		if ( ! elementor.history.history.getActive() ) {
 			return;
 		}
 
 		var self = this,
-			changed = Object.keys( model.changed );
+			changed = Object.keys( model.changed ),
+			control = model.controls[ changed[0] ];
 
-		if ( ! changed.length || ! model.controls[ changed[0] ] ) {
+		if ( ! control && options && options.control ) {
+			control = options.control;
+		}
+
+		if ( ! changed.length || ! control ) {
 			return;
 		}
 
 		if ( 1 === changed.length ) {
-			var control = model.controls[ changed[0] ];
-
 			if ( _.isUndefined( self.oldValues[ control.name ] ) ) {
 				self.oldValues[ control.name ] = model.previous( control.name );
 			}
@@ -99,7 +102,7 @@ module.exports = Marionette.Behavior.extend( {
 		};
 
 		if ( 1 === changed.length ) {
-			historyItem.subTitle = model.controls[ changed[0] ].label;
+			historyItem.subTitle = control.label;
 		}
 
 		elementor.history.history.addItem( historyItem );
