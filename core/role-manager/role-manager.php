@@ -4,6 +4,7 @@ namespace Elementor\Core\RoleManager;
 use Elementor\Plugin;
 use Elementor\Settings_Page;
 use Elementor\Settings;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -71,13 +72,13 @@ class Role_Manager extends Settings_Page {
 	 * @access public
 	 */
 	public function display_settings_page() {
-		$tabs = $this->get_tabs();
+		$this->get_tabs();
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( $this->get_page_title() ); ?></h1>
 
 			<div id="elementor-role-manager">
-				<h3><?php esc_html_e( 'Manage Editing Permissions For Your Site', 'elementor' ); ?></h3>
+				<h3><?php esc_html_e( 'Manage What Your Users Can Edit In Elementor', 'elementor' ); ?></h3>
 				<form id="elementor-settings-form" method="post" action="options.php">
 					<?php
 					settings_fields( static::PAGE_ID );
@@ -103,7 +104,7 @@ class Role_Manager extends Settings_Page {
 		}
 		$excluded = in_array( $role_slug, $excluded_options ) ? ' checked="checked"' : '';
 		?>
-		<div class="elementor-role-row <?php esc_attr( $role_slug ); ?>">
+		<div class="elementor-role-row <?php echo esc_attr( $role_slug ); ?>">
 			<div class="elementor-role-label">
 				<span class="elementor-role-name"><?php echo esc_html( $role_data['name'] ); ?></span>
 				<span data-excluded-label="<?php esc_attr_e( 'Role Excluded', 'elementor' ); ?>" class="elementor-role-excluded-indicator"></span>
@@ -111,19 +112,13 @@ class Role_Manager extends Settings_Page {
 			</div>
 			<div class="elementor-role-controls hidden">
 				<div class="elementor-role-control">
-                    <label>
-                        <?php
+					<label>
+						<?php
                         printf( '<input type="checkbox" name="elementor_exclude_user_roles[]" value="%s"%s>', esc_attr( $role_slug ), $excluded );
-                        esc_html_e( 'Exclude Role', 'elementor' );
-                        ?>
-                    </label>
+						esc_html_e( 'No access to editor', 'elementor' );
+						?>
+					</label>
 				</div>
-
-                <div class="elementor-role-go-pro">
-                    <div class="elementor-role-go-pro__desc">Want to set Advanced Role Manager Permissions?</div>
-                    <div class="elementor-role-go-pro__link"><a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://elementor.com/pro/">Go Pro</a></div>
-                </div>
-
 				<div>
 					<?php
 					/**
@@ -139,7 +134,16 @@ class Role_Manager extends Settings_Page {
 	}
 
 	public function get_go_pro_link_html() {
-		esc_html_e( 'Want to set Advanced Role Manager Permissions?', 'elementor' );
+		static $link = false;
+		if ( ! $link ) {
+			$link = Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' );
+		}
+		?>
+		<div class="elementor-role-go-pro">
+			<div class="elementor-role-go-pro__desc"><?php esc_html_e( 'Want to give access only to content?', 'elementor' ); ?></div>
+			<div class="elementor-role-go-pro__link"><a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( $link ); ?>"><?php esc_html_e( 'Go Pro', 'elementor' ); ?></a></div>
+		</div>
+		<?php
 	}
 
 	public function get_user_restrictions_array() {
