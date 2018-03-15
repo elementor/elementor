@@ -619,7 +619,6 @@ class Editor {
 
 				// Saver.
 				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
-				'publish_changes' => __( 'Publish Changes', 'elementor' ), // Todo: check if we need this
 				'published' => __( 'Published', 'elementor' ),
 				'publish' => __( 'Publish', 'elementor' ),
 				'save' => __( 'Save', 'elementor' ),
