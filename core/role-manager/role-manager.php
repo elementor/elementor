@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\RoleManager;
 
-use Elementor\Plugin;
 use Elementor\Settings_Page;
 use Elementor\Settings;
 use Elementor\Utils;
@@ -9,7 +8,9 @@ use Elementor\Utils;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
 class Role_Manager extends Settings_Page {
+
 	const PAGE_ID = 'elementor-role-manager';
 	const ROLE_MANAGER_OPTION_NAME = 'exclude_user_roles';
 
@@ -113,10 +114,8 @@ class Role_Manager extends Settings_Page {
 			<div class="elementor-role-controls hidden">
 				<div class="elementor-role-control">
 					<label>
-						<?php
-                        printf( '<input type="checkbox" name="elementor_exclude_user_roles[]" value="%s"%s>', esc_attr( $role_slug ), $excluded );
-						esc_html_e( 'No access to editor', 'elementor' );
-						?>
+						<input type="checkbox" name="elementor_exclude_user_roles[]" value="<?php echo esc_attr( $role_slug ); ?>"<?php checked( in_array( $role_slug, $excluded_options, true ), true ); ?>>
+						<?php _e( 'Exclude Role', 'elementor' ); ?>
 					</label>
 				</div>
 				<div>
@@ -175,7 +174,7 @@ class Role_Manager extends Settings_Page {
 	public function user_can( $capability ) {
 		$options = $this->get_user_restrictions_array();
 
-		if ( in_array( $capability, $options ) ) {
+		if ( in_array( $capability, $options, true ) ) {
 			return false;
 		}
 
@@ -188,6 +187,7 @@ class Role_Manager extends Settings_Page {
 	 */
 	public function __construct() {
 		parent::__construct();
+
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 100 );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
 	}
