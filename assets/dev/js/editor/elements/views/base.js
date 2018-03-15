@@ -89,15 +89,6 @@ BaseElementView = BaseContainer.extend( {
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
 	},
 
-	// TODO: backward compatibility method since 1.8.0
-	templateHelpers: function() {
-		var templateHelpers = BaseContainer.prototype.templateHelpers.apply( this, arguments );
-
-		return jQuery.extend( templateHelpers, {
-			editModel: this.getEditModel() // @deprecated. Use view.getEditModel() instead.
-		} );
-	},
-
 	getTemplateType: function() {
 		return 'js';
 	},
