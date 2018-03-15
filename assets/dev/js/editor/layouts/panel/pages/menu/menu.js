@@ -23,57 +23,63 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	groups: null,
 
 	initGroups: function() {
-		this.groups = new Backbone.Collection( [
-			{
-				name: 'style',
-				title: elementor.translate( 'global_style' ),
-				items: [
-					{
-						name: 'global-colors',
-						icon: 'fa fa-paint-brush',
-						title: elementor.translate( 'global_colors' ),
-						type: 'page',
-						pageName: 'colorScheme'
-					},
-					{
-						name: 'global-fonts',
-						icon: 'fa fa-font',
-						title: elementor.translate( 'global_fonts' ),
-						type: 'page',
-						pageName: 'typographyScheme'
-					},
-					{
-						name: 'color-picker',
-						icon: 'fa fa-eyedropper',
-						title: elementor.translate( 'color_picker' ),
-						type: 'page',
-						pageName: 'colorPickerScheme'
-					}
-				]
-			},
-			{
-				name: 'settings',
-				title: elementor.translate( 'settings' ),
-				items: [
-					{
-						name: 'elementor-settings',
-						icon: 'fa fa-external-link',
-						title: elementor.translate( 'elementor_settings' ),
-						type: 'link',
-						link: elementor.config.settings_page_link,
-						newTab: true
-					},
-					{
-						name: 'about-elementor',
-						icon: 'fa fa-info-circle',
-						title: elementor.translate( 'about_elementor' ),
-						type: 'link',
-						link: elementor.config.elementor_site,
-						newTab: true
-					}
-				]
-			}
-		] );
+		var menus = [];
+
+		if ( elementor.config.user.is_administrator ) {
+			menus = [
+				{
+					name: 'style',
+					title: elementor.translate( 'global_style' ),
+					items: [
+						{
+							name: 'global-colors',
+							icon: 'fa fa-paint-brush',
+							title: elementor.translate( 'global_colors' ),
+							type: 'page',
+							pageName: 'colorScheme'
+						},
+						{
+							name: 'global-fonts',
+							icon: 'fa fa-font',
+							title: elementor.translate( 'global_fonts' ),
+							type: 'page',
+							pageName: 'typographyScheme'
+						},
+						{
+							name: 'color-picker',
+							icon: 'fa fa-eyedropper',
+							title: elementor.translate( 'color_picker' ),
+							type: 'page',
+							pageName: 'colorPickerScheme'
+						}
+					]
+				},
+				{
+					name: 'settings',
+					title: elementor.translate( 'settings' ),
+					items: [
+						{
+							name: 'elementor-settings',
+							icon: 'fa fa-external-link',
+							title: elementor.translate( 'elementor_settings' ),
+							type: 'link',
+							link: elementor.config.settings_page_link,
+							newTab: true
+						},
+						{
+							name: 'about-elementor',
+							icon: 'fa fa-info-circle',
+							title: elementor.translate( 'about_elementor' ),
+							type: 'link',
+							link: elementor.config.elementor_site,
+							newTab: true
+						}
+					]
+				}
+			];
+		}
+
+		this.groups = new Backbone.Collection( menus );
 	},
 
 	getGroups: function() {
