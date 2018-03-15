@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Core\DynamicTags;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 abstract class Data_Tag extends Base_Tag {
 

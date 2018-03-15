@@ -1,14 +1,15 @@
 <?php
 namespace Elementor\Core\RoleManager;
 
-use Elementor\Plugin;
 use Elementor\Settings_Page;
 use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
 class Role_Manager extends Settings_Page {
+
 	const PAGE_ID = 'elementor-role-manager';
 	const ROLE_MANAGER_OPTION_NAME = 'exclude_user_roles';
 
@@ -111,18 +112,18 @@ class Role_Manager extends Settings_Page {
 			</div>
 			<div class="elementor-role-controls hidden">
 				<div class="elementor-role-control">
-                    <label>
-                        <?php
-                        printf( '<input type="checkbox" name="elementor_exclude_user_roles[]" value="%s"%s>', esc_attr( $role_slug ), $excluded );
-                        esc_html_e( 'Exclude Role', 'elementor' );
-                        ?>
-                    </label>
+					<label>
+						<input type="checkbox" name="elementor_exclude_user_roles[]" value="<?php echo esc_attr( $role_slug ); ?>"<?php checked( in_array( $role_slug, $excluded_options, true ), true ); ?>>
+						<?php _e( 'Exclude Role', 'elementor' ); ?>
+					</label>
 				</div>
 
-                <div class="elementor-role-go-pro">
-                    <div class="elementor-role-go-pro__desc">Want to set Advanced Role Manager Permissions?</div>
-                    <div class="elementor-role-go-pro__link"><a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://elementor.com/pro/">Go Pro</a></div>
-                </div>
+				<div class="elementor-role-go-pro">
+					<div class="elementor-role-go-pro__desc">Want to set Advanced Role Manager Permissions?</div>
+					<div class="elementor-role-go-pro__link">
+						<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="https://elementor.com/pro/"><?php _e( 'Go Pro', 'elementor' ); ?>></a>
+					</div>
+				</div>
 
 				<div>
 					<?php
@@ -171,7 +172,7 @@ class Role_Manager extends Settings_Page {
 	public function user_can( $capability ) {
 		$options = $this->get_user_restrictions_array();
 
-		if ( in_array( $capability, $options ) ) {
+		if ( in_array( $capability, $options, true ) ) {
 			return false;
 		}
 
@@ -184,6 +185,7 @@ class Role_Manager extends Settings_Page {
 	 */
 	public function __construct() {
 		parent::__construct();
+
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 100 );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
 	}
