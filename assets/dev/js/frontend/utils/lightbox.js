@@ -310,7 +310,7 @@ LightboxModule = ViewModule.extend( {
 			return false;
 		}
 
-		var generalOpenInLightbox = elementorFrontend.getGeneralSettings( 'elementor_global_image_lightbox' ),
+		var generalOpenInLightbox = elementorFrontend.getGeneralSettings( 'global_image_lightbox' ),
 			currentLinkOpenInLightbox = element.dataset.elementorOpenLightbox;
 
 		return 'yes' === currentLinkOpenInLightbox || generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox;
@@ -333,7 +333,7 @@ LightboxModule = ViewModule.extend( {
 
 		event.preventDefault();
 
-		if ( elementorFrontend.isEditMode() && ! elementorFrontend.getGeneralSettings( 'elementor_enable_lightbox_in_editor' ) ) {
+		if ( elementorFrontend.isEditMode() && ! elementorFrontend.getGeneralSettings( 'enable_lightbox_in_editor' ) ) {
 			return;
 		}
 

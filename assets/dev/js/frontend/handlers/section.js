@@ -157,7 +157,7 @@ var StretchedSection = HandlerModule.extend( {
 		}
 
 		if ( isStretched ) {
-			this.stretchElement.setSettings( 'selectors.container', elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window );
+			this.stretchElement.setSettings( 'selectors.container', elementorFrontend.getGeneralSettings( 'stretched_section_container' ) || window );
 
 			this.stretchElement.stretch();
 		}
@@ -172,7 +172,7 @@ var StretchedSection = HandlerModule.extend( {
 	},
 
 	onGeneralSettingsChange: function( changed ) {
-		if ( 'elementor_stretched_section_container' in changed ) {
+		if ( 'stretched_section_container' in changed ) {
 			this.stretchSection();
 		}
 	}

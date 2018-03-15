@@ -86,25 +86,9 @@ class Manager extends BaseManager {
 	 * @return array Saved settings.
 	 */
 	protected function get_saved_settings( $id ) {
-		$model_controls = Model::get_controls_list();
+		$settings = get_option( self::META_KEY );
 
-		$settings = [];
-
-		foreach ( $model_controls as $tab_name => $sections ) {
-
-			foreach ( $sections as $section_name => $section_data ) {
-
-				foreach ( $section_data['controls'] as $control_name => $control_data ) {
-					$saved_setting = get_option( $control_name, null );
-
-					if ( null !== $saved_setting ) {
-						$settings[ $control_name ] = get_option( $control_name );
-					}
-				}
-			}
-		}
-
-		return $settings;
+		return $settings ? $settings : [];
 	}
 
 	/**
@@ -134,31 +118,8 @@ class Manager extends BaseManager {
 	 * @param int   $id       Post ID.
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
-		$model_controls = Model::get_controls_list();
-
-		$one_list_settings = [];
-
-		foreach ( $model_controls as $tab_name => $sections ) {
-
-			foreach ( $sections as $section_name => $section_data ) {
-
-				foreach ( $section_data['controls'] as $control_name => $control_data ) {
-					if ( isset( $settings[ $control_name ] ) ) {
-						$one_list_control_name = str_replace( 'elementor_', '', $control_name );
-
-						$one_list_settings[ $one_list_control_name ] = $settings[ $control_name ];
-
-						update_option( $control_name, $settings[ $control_name ] );
-					} else {
-						delete_option( $control_name );
-					}
-				}
-			}
-		}
-
-		// Save all settings in one list for future usage
-		if ( ! empty( $one_list_settings ) ) {
-			update_option( self::META_KEY, $one_list_settings );
+		if ( ! empty( $settings ) ) {
+			update_option( self::META_KEY, $settings );
 		} else {
 			delete_option( self::META_KEY );
 		}
