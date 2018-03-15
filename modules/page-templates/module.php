@@ -87,7 +87,7 @@ class Module extends BaseModule {
 	public function add_page_templates( $page_templates ) {
 		$page_templates = [
 			self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
-			self::TEMPLATE_HEADER_FOOTER => __( 'Elementor', 'elementor' ) . ' ' . __( 'Header & Footer', 'elementor' ),
+			self::TEMPLATE_HEADER_FOOTER => __( 'Elementor', 'elementor' ) . ' ' . __( 'Full Width', 'elementor' ),
 		] + $page_templates;
 
 		return $page_templates;
@@ -170,7 +170,7 @@ class Module extends BaseModule {
 			$control_id . '_default_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Default Page Template from your theme', '' ),
+				'raw' => __( 'Default Page Template from your theme', 'elementor' ),
 				'separator' => 'none',
 				'condition' => [
 					$control_id => 'default',
@@ -182,7 +182,7 @@ class Module extends BaseModule {
 			$control_id . '_canvas_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'No header, no footer, just Elementor', '' ),
+				'raw' => __( 'No header, no footer, just Elementor', 'elementor' ),
 				'separator' => 'none',
 				'condition' => [
 					$control_id => self::TEMPLATE_CANVAS,
@@ -194,7 +194,7 @@ class Module extends BaseModule {
 			$control_id . '_header_footer_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Only header & footer, without sidebars and etc.', '' ),
+				'raw' => __( 'This template includes the header, full-width content and footer', 'elementor' ),
 				'separator' => 'none',
 				'condition' => [
 					$control_id => self::TEMPLATE_HEADER_FOOTER,
