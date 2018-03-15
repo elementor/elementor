@@ -103,7 +103,7 @@ class Role_Manager extends Settings_Page {
 		if ( false === $excluded_options ) {
 			$excluded_options = $this->get_role_manager_options();
 		}
-		$excluded = in_array( $role_slug, $excluded_options ) ? ' checked="checked"' : '';
+
 		?>
 		<div class="elementor-role-row <?php echo esc_attr( $role_slug ); ?>">
 			<div class="elementor-role-label">
@@ -115,7 +115,7 @@ class Role_Manager extends Settings_Page {
 				<div class="elementor-role-control">
 					<label>
 						<input type="checkbox" name="elementor_exclude_user_roles[]" value="<?php echo esc_attr( $role_slug ); ?>"<?php checked( in_array( $role_slug, $excluded_options, true ), true ); ?>>
-						<?php _e( 'Exclude Role', 'elementor' ); ?>
+						<?php esc_html_e( 'No access to editor', 'elementor' ); ?>
 					</label>
 				</div>
 				<div>
