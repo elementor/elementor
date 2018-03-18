@@ -52,6 +52,15 @@ class Documents_Manager {
 			$this->register_document_type( $type, $class );
 		}
 
+		/**
+		 * Register default documents.
+		 *
+		 * Fires after Elementor registers the default document types.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param Documents_Manager $this The document manager instance.
+		 */
 		do_action( 'elementor/documents/register', $this );
 	}
 

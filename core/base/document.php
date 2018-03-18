@@ -274,6 +274,15 @@ abstract class Document extends Controls_Stack {
 
 		$this->end_controls_section();
 
+		/**
+		 * Register document controls.
+		 *
+		 * Fires after Elementor registers the document controls.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param Document $this The document instance.
+		 */
 		do_action( 'elementor/documents/register_controls', $this );
 	}
 
@@ -491,6 +500,8 @@ abstract class Document extends Controls_Stack {
 		$is_meta_updated = update_metadata( 'post', $this->post->ID, '_elementor_data', $json_value );
 
 		/**
+		 * Before saving data.
+		 *
 		 * Fires before Elementor saves data to the database.
 		 *
 		 * @since 1.0.0
@@ -505,6 +516,8 @@ abstract class Document extends Controls_Stack {
 		update_metadata( 'post', $this->post->ID, '_elementor_version', DB::DB_VERSION );
 
 		/**
+		 * After saving data.
+		 *
 		 * Fires after Elementor saves data to the database.
 		 *
 		 * @since 1.0.0
