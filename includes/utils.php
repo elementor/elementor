@@ -27,7 +27,7 @@ class Utils {
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
 	 */
 	public static function is_ajax() {
-		// TODO: When minimum required version of Elementor will be 4.7, use `wp_doing_ajax()` instead.
+		// TODO: When minimum required version of WordPress will be 4.7, use `wp_doing_ajax()` instead.
 		return defined( 'DOING_AJAX' ) && DOING_AJAX;
 	}
 
