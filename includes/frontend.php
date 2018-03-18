@@ -572,6 +572,13 @@ class Frontend {
 					break;
 
 				default:
+					/**
+					 * Print font links.
+					 *
+					 * Fires when Elementor frontend fonts are printed on the HEAD tag.
+					 *
+					 * @since 2.0.0
+					 */
 					do_action( "elementor/fonts/print_font_links/{$font_type}", $font );
 			}
 		}
