@@ -242,7 +242,16 @@ class Source_Local extends Source_Base {
 							</select>
 						</div>
 					</div>
-					<?php do_action( 'elementor/template-library/create_new_dialog_fields' ); ?>
+					<?php
+					/**
+					 * Template library dialog fields.
+					 *
+					 * Fires after Elementor template library dialog fields are displayed.
+					 *
+					 * @since 2.0.0
+					 */
+					do_action( 'elementor/template-library/create_new_dialog_fields' );
+					?>
 
 					<div id="elementor-new-template__form__post-title__wrapper" class="elementor-form-field">
 						<label for="elementor-new-template__form__post-title" class="elementor-form-field__label">
