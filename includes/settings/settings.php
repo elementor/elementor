@@ -394,6 +394,8 @@ class Settings extends Settings_Page {
 
 	private function handle_general_settings_update() {
 		if ( ! empty( $_POST['option_page'] ) && self::PAGE_ID === $_POST['option_page'] && ! empty( $_POST['action'] ) && 'update' === $_POST['action']  ) {
+			check_admin_referer( 'elementor-options' );
+
 			$saved_general_settings = get_option( General_Settings_Manager::META_KEY );
 
 			if ( ! $saved_general_settings ) {
