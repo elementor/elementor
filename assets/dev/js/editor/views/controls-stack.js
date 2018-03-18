@@ -70,14 +70,22 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	activateTab: function( tabName ) {
-		var self = this;
+		this.activeTab = tabName;
 
-		self.activeTab = tabName;
-
-		self.ui.tabs
+		this.ui.tabs
 			.removeClass( 'elementor-active' )
 			.filter( '[data-tab="' + tabName + '"]' )
 			.addClass( 'elementor-active' );
+
+		this.activateFirstSection();
+	},
+
+	activateSection: function( sectionName ) {
+		this.activeSection = sectionName;
+	},
+
+	activateFirstSection: function() {
+		var self = this;
 
 		var sectionControls = self.collection.filter( function( controlModel ) {
 			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
@@ -96,10 +104,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 		}
 
 		self.activateSection( sectionControls[0].get( 'name' ) );
-	},
-
-	activateSection: function( sectionName ) {
-		this.activeSection = sectionName;
 	},
 
 	getChildView: function( item ) {
