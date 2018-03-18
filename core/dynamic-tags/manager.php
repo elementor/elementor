@@ -224,6 +224,14 @@ class Manager {
 		}
 
 		Plugin::$instance->db->switch_to_post( $posted['post_id'] );
+
+		/**
+		 * Before dynamic tags rendered.
+		 *
+		 * Fires before Elementor renders the dynamic tags.
+		 *
+		 * @since 2.0.0
+		 */
 		do_action( 'elementor/dynamic_tags/before_render' );
 
 		$tags_data = [];
@@ -240,6 +248,13 @@ class Manager {
 			$tags_data[ $tag_key ] = $tag->get_content();
 		}
 
+		/**
+		 * After dynamic tags rendered.
+		 *
+		 * Fires after Elementor renders the dynamic tags.
+		 *
+		 * @since 2.0.0
+		 */
 		do_action( 'elementor/dynamic_tags/after_render' );
 
 		wp_send_json_success( $tags_data );
