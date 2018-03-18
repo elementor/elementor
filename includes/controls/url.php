@@ -65,6 +65,7 @@ class Control_URL extends Control_Base_Multiple {
 		return [
 			'label_block' => true,
 			'show_external' => true,
+			'placeholder' => '',
 			'dynamic' => [
 				'categories' => [ TagsModule::URL_CATEGORY ],
 				'property' => 'url',
