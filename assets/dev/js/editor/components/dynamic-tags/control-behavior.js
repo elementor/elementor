@@ -36,6 +36,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	isDynamicMode: function() {
 		var dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' );
+
 		return ! ! ( dynamicSettings && dynamicSettings[ this.view.model.get( 'name' ) ] );
 	},
 
@@ -102,7 +103,8 @@ module.exports = Marionette.Behavior.extend( {
 		var tagView = this.tagView = new TagPanelView( {
 			id: id,
 			name: name,
-			settings: settings
+			settings: settings,
+			dynamicSettings: this.getOption( 'dynamicSettings' )
 		} );
 
 		tagView.render();
@@ -129,7 +131,8 @@ module.exports = Marionette.Behavior.extend( {
 		return this.view.elementSettingsModel.get( '__dynamic__' )[ this.view.model.get( 'name' ) ];
 	},
 
-	getDynamicControlSettings: function( settingKey ) {
+	getDynamicControlSettings: function() {
+
 		return {
 			control: {
 				name: '__dynamic__',
