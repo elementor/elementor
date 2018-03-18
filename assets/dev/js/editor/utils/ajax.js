@@ -41,7 +41,7 @@ Ajax = {
 		options.ids.forEach( function( objectId ) {
 			deferredArray.push( self.load( {
 				action: options.action,
-				unique_id: options.data.object_type + objectId,
+				unique_id: options.data.unique_id + objectId,
 				data: jQuery.extend( { id: objectId }, options.data )
 			} ).done( function( data ) {
 				dataCollection = jQuery.extend( dataCollection, data );

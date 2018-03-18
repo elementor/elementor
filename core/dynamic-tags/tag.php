@@ -11,9 +11,10 @@ abstract class Tag extends Base_Tag {
 		$settings = $this->get_settings();
 		ob_start();
 
-		if ( ! empty( $options['wrap'] ) ) { ?>
-			<span id="elementor-tag-<?php echo $this->get_id(); ?>" class="elementor-tag">
-		<?php }
+		if ( ! empty( $options['wrap'] ) ) : ?>
+			<span id="elementor-tag-<?php echo esc_attr( $this->get_id() ); ?>" class="elementor-tag">
+		<?php
+		endif;
 
 		if ( ! empty( $settings['before'] ) ) {
 			echo wp_kses_post( $settings['before'] );
@@ -25,9 +26,11 @@ abstract class Tag extends Base_Tag {
 			echo wp_kses_post( $settings['after'] );
 		}
 
-		if ( ! empty( $options['wrap'] ) ) { ?>
+		if ( ! empty( $options['wrap'] ) ) :
+		?>
 			</span>
-		<?php }
+		<?php
+		endif;
 
 		$value = ob_get_clean();
 

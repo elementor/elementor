@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\DynamicTags\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -1042,10 +1044,7 @@ abstract class Controls_Stack {
 		}
 
 		foreach ( $controls as $control ) {
-			if ( ! isset( $settings[ $control['name'] ] ) || null === $settings[ $control['name'] ] ) {
-				continue;
-			}
-
+			$control_name = $control['name'];
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
@@ -1053,15 +1052,29 @@ abstract class Controls_Stack {
 			}
 
 			if ( 'repeater' === $control_obj->get_type() ) {
-				foreach ( $settings[ $control['name'] ] as & $field ) {
+				foreach ( $settings[ $control_name ] as & $field ) {
 					$field = $this->parse_dynamic_settings( $field, $control['fields'], $field );
 				}
 
 				continue;
 			}
 
-			if ( ! empty( $control['dynamic']['active'] ) && isset( $all_settings[ Plugin::$instance->dynamic_tags->get_static_setting_key( $control['name'] ) ] ) ) {
-				$settings[ $control['name'] ] = $control_obj->parse_tags( $settings[ $control['name'] ], $control['dynamic'] );
+			if ( empty( $control['dynamic'] ) || ! isset( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ] ) ) {
+				continue;
+			}
+
+			$dynamic_settings = $control['dynamic'];
+
+			if ( ! empty( $dynamic_settings['active'] ) && ! empty( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ] ) ) {
+				$parsed_value = $control_obj->parse_tags( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ], $dynamic_settings );
+
+				$dynamic_property = ! empty( $dynamic_settings['property'] ) ? $dynamic_settings['property'] : null;
+
+				if ( $dynamic_property ) {
+					$settings[ $control_name ][ $dynamic_property ] = $parsed_value;
+				} else {
+					$settings[ $control_name ] = $parsed_value;
+				}
 			}
 		}
 
@@ -1683,64 +1696,44 @@ abstract class Controls_Stack {
 
 			$control = array_merge_recursive( $control_obj->get_settings(), $control );
 
-			$is_dynamic_value = isset( $settings[ $control['name'] ] ) && isset( $settings[ Plugin::$instance->dynamic_tags->get_static_setting_key( $control['name'] ) ] );
-
-			$is_value_not_controlled =  $is_dynamic_value && ! empty( $control['dynamic']['returnType'] ) && 'object' === $control['dynamic']['returnType'];
-
-			if ( $is_value_not_controlled ) {
-				continue;
-			}
-
 			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}
 
 		return $settings;
 	}
 
-	protected function sanitize_initial_data( $data ) {
+	protected function sanitize_initial_data( $data, array $controls = [] ) {
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
+
 		$settings = $data['settings'];
 
-		foreach ( $this->get_controls() as $control ) {
-			$static_setting_key = Plugin::$instance->dynamic_tags->get_static_setting_key( $control['name'] );
+		foreach ( $controls as $control ) {
+			if ( 'repeater' === $control['type'] ) {
+				foreach ( $settings[ $control['name'] ] as $index => $repeater_row_data ) {
+					$sanitized_row_data = $this->sanitize_initial_data( [
+						'settings' => $repeater_row_data,
+					], $control['fields'] );
 
-			$has_dynamic_property = isset( $settings[ $static_setting_key ] );
+					$settings[ $control['name'] ][ $index ] = $sanitized_row_data['settings'];
+				}
 
-			if ( ! $has_dynamic_property ) {
 				continue;
 			}
 
-			$is_correct_dynamic_value = true;
+			$is_dynamic = isset( $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] );
 
-			if ( ! empty( $settings[ $control['name'] ] ) ) {
-				$prototype_control = Plugin::$instance->controls_manager->get_control( $control['type'] );
-
-				$value_to_check =  $settings[ $control['name'] ];
-
-				$dynamic_settings = $prototype_control->get_settings( 'dynamic' );
-
-				if ( ! empty( $dynamic_settings['property'] ) ) {
-					$value_to_check = $value_to_check[ $dynamic_settings['property'] ];
-				}
-
-				if ( ! is_string( $value_to_check ) ) {
-					$is_correct_dynamic_value = false;
-				}
-
-				if ( $is_correct_dynamic_value ) {
-					$tag_text_data = Plugin::$instance->dynamic_tags->get_tag_text_data( $value_to_check );
-
-					if ( ! $tag_text_data || ! Plugin::$instance->dynamic_tags->get_tag_info( $tag_text_data['name'] ) ) {
-						$is_correct_dynamic_value = false;
-					}
-				}
-			} else {
-				$is_correct_dynamic_value = false;
+			if ( ! $is_dynamic ) {
+				continue;
 			}
 
-			if ( ! $is_correct_dynamic_value ) {
-				$settings[ $control['name'] ] = $settings[ $static_setting_key ];
+			$value_to_check =  $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ];
 
-				unset( $settings[ $static_setting_key ] );
+			$tag_text_data = Plugin::$instance->dynamic_tags->get_tag_text_data( $value_to_check );
+
+			if ( ! Plugin::$instance->dynamic_tags->get_tag_info( $tag_text_data['name'] ) ) {
+				unset( $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] );
 			}
 		}
 

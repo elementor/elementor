@@ -87,7 +87,7 @@ class Module extends BaseModule {
 	public function add_page_templates( $page_templates ) {
 		$page_templates = [
 			self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
-			self::TEMPLATE_HEADER_FOOTER => __( 'Elementor', 'elementor' ) . ' ' . __( 'Header & Footer', 'elementor' ),
+			self::TEMPLATE_HEADER_FOOTER => __( 'Elementor', 'elementor' ) . ' ' . __( 'Full Width', 'elementor' ),
 		] + $page_templates;
 
 		return $page_templates;
@@ -140,29 +140,67 @@ class Module extends BaseModule {
 	 * @param string $control_id
 	 */
 	public function register_template_control( $document, $control_id = 'template' ) {
+		if ( ! Utils::is_cpt_custom_templates_supported() ) {
+			return;
+		}
+
+		require_once ABSPATH . '/wp-admin/includes/template.php';
+
+		$options = [
+			'default' => __( 'Default', 'elementor' ),
+		];
+
+		$options += array_flip( get_page_templates( null, $document->get_main_post()->post_type ) );
+
 		$document->start_injection( [
 			'of' => 'post_status',
 		] );
 
-		if ( Utils::is_cpt_custom_templates_supported() ) {
-			require_once ABSPATH . '/wp-admin/includes/template.php';
+		$document->add_control(
+			$control_id,
+			[
+				'label' => __( 'Page Layout', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => $options,
+			]
+		);
 
-			$options = [
-				'default' => __( 'Default', 'elementor' ),
-			];
+		$document->add_control(
+			$control_id . '_default_description',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'Default Page Template from your theme', 'elementor' ),
+				'separator' => 'none',
+				'condition' => [
+					$control_id => 'default',
+				],
+			]
+		);
 
-			$options += array_flip( get_page_templates( null, $document->get_main_post()->post_type ) );
+		$document->add_control(
+			$control_id . '_canvas_description',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'No header, no footer, just Elementor', 'elementor' ),
+				'separator' => 'none',
+				'condition' => [
+					$control_id => self::TEMPLATE_CANVAS,
+				],
+			]
+		);
 
-			$document->add_control(
-				$control_id,
-				[
-					'label' => __( 'Template', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => 'default',
-					'options' => $options,
-				]
-			);
-		}
+		$document->add_control(
+			$control_id . '_header_footer_description',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'This template includes the header, full-width content and footer', 'elementor' ),
+				'separator' => 'none',
+				'condition' => [
+					$control_id => self::TEMPLATE_HEADER_FOOTER,
+				],
+			]
+		);
 
 		$document->end_injection();
 	}

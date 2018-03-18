@@ -64,18 +64,22 @@ class Element_Section extends Element_Base {
 
 		return [
 			'duplicate' => [
+				/* translators: %s: Section Label */
 				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $section_label ),
 				'icon' => 'clone',
 			],
 			'add' => [
+				/* translators: %s: Section Label */
 				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
 				'icon' => 'plus',
 			],
 			'save' => [
+				/* translators: %s: Section Label */
 				'title' => sprintf( __( 'Save %s', 'elementor' ), $section_label ),
 				'icon' => 'save',
 			],
 			'remove' => [
+				/* translators: %s: Section Label */
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
 				'icon' => 'close',
 			],
@@ -773,12 +777,12 @@ class Element_Section extends Element_Base {
 						[
 							'name' => 'background_background',
 							'operator' => '!==',
-							'value' => ''
+							'value' => '',
 						], [
 							'name' => 'border_border',
 							'operator' => '!==',
-							'value' => ''
-						]
+							'value' => '',
+						],
 					],
 				],
 				'selectors' => [
@@ -957,7 +961,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
+		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes(), true ) ) {
 			$this->add_control(
 				'colors_warning',
 				[
@@ -1260,20 +1264,22 @@ class Element_Section extends Element_Base {
 	 * @access protected
 	 */
 	protected function render_edit_tools() {
+		// translators: %s: Section Label
+		$edit_title = sprintf( __( 'Edit %s', 'elementor' ), __( 'Section', 'elementor' ) );
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php printf( __( 'Edit %s', 'elementor' ),  __( 'Section', 'elementor' ) ); ?>">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php echo esc_attr( $edit_title ); ?>">
 					<i class="eicon-section" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php printf( __( 'Edit %s', 'elementor' ), __( 'Section', 'elementor' ) ); ?></span>
+					<span class="elementor-screen-only"><?php echo esc_html( $edit_title ); ?></span>
 				</li>
-				<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# if ( ! isInner ) { #>
 					<?php endif; ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
-						<i class="eicon-<?php echo $edit_tool['icon']; ?>" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_html( $edit_tool['title'] ); ?>">
+						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
 					</li>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# } #>
@@ -1320,7 +1326,7 @@ class Element_Section extends Element_Base {
 		$settings = $this->get_settings_for_display();
 
 		?>
-		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<<?php echo esc_html( $this->get_html_tag() ); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
@@ -1337,8 +1343,8 @@ class Element_Section extends Element_Base {
 				endif;
 			endif;
 
-			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ||
-									  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ] );
+			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
+									  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
 			if ( $has_background_overlay ) :
 			?>
@@ -1371,7 +1377,7 @@ class Element_Section extends Element_Base {
 		?>
 				</div>
 			</div>
-		</<?php echo $this->get_html_tag(); ?>>
+		</<?php echo esc_html( $this->get_html_tag() ); ?>>
 		<?php
 	}
 
@@ -1449,7 +1455,7 @@ class Element_Section extends Element_Base {
 		$base_setting_key = "shape_divider_$side";
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
 		?>
-		<div class="elementor-shape elementor-shape-<?php echo $side; ?>" data-negative="<?php echo var_export( $negative ); ?>">
+		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php echo var_export( $negative ); ?>">
 			<?php include Shapes::get_shape_path( $settings[ $base_setting_key ], ! empty( $settings[ $base_setting_key . '_negative' ] ) ); ?>
 		</div>
 		<?php

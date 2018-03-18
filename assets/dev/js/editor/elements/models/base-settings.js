@@ -37,9 +37,20 @@ BaseSettingsModel = Backbone.Model.extend( {
 				defaults[ controlName ] = control['default'] || control.default_value;
 			}
 
-			var isDynamicControl = control.dynamic && control.dynamic.active && undefined !== attrs[ elementor.dynamicTags.getStaticSettingKey( controlName ) ];
+			var isDynamicControl = control.dynamic && control.dynamic.active,
+				hasDynamicSettings = isDynamicControl && attrs.__dynamic__ && attrs.__dynamic__[ controlName ];
 
-			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! isDynamicControl ) {
+			if ( isDynamicControl && ! hasDynamicSettings && control.dynamic['default'] ) {
+				if ( ! attrs.__dynamic__ ) {
+					attrs.__dynamic__ = {};
+				}
+
+				attrs.__dynamic__[ controlName ] = control.dynamic['default'];
+
+				hasDynamicSettings = true;
+			}
+
+			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! hasDynamicSettings ) {
 				elementor.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
@@ -182,13 +193,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		jQuery.each( controls, function() {
 			var control = this,
-				valueToParse = settings[ control.name ];
-
-			if ( ! valueToParse ) {
-				return;
-			}
+				valueToParse;
 
 			if ( 'repeater' === control.type ) {
+				valueToParse = settings[ control.name ];
 				valueToParse.forEach( function( value, key ) {
 					valueToParse[ key ] = self.parseDynamicSettings( value, options, control.fields );
 				} );
@@ -196,7 +204,9 @@ BaseSettingsModel = Backbone.Model.extend( {
 				return;
 			}
 
-			if ( undefined === settings[ elementor.dynamicTags.getStaticSettingKey( control.name ) ] ) {
+			valueToParse = settings.__dynamic__ && settings.__dynamic__[ control.name ];
+
+			if ( ! valueToParse ) {
 				return;
 			}
 
@@ -208,10 +218,6 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 			if ( ! dynamicSettings || ! dynamicSettings.active ) {
 				return;
-			}
-
-			if ( dynamicSettings.property ) {
-				valueToParse = valueToParse[ dynamicSettings.property ];
 			}
 
 			var dynamicValue;
