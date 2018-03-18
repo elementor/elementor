@@ -5,6 +5,7 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 use Elementor\Group_Control_Background;
+use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
@@ -101,6 +102,8 @@ class Post extends Document {
 		);
 
 		$document->end_controls_section();
+
+		Plugin::$instance->controls_manager->add_custom_css_controls( $document, Controls_Manager::TAB_STYLE );
 	}
 
 	/**
