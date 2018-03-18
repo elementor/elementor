@@ -85,6 +85,15 @@ class Settings extends Settings_Page {
 	public function register_pro_menu() {
 		add_submenu_page(
 			self::PAGE_ID,
+			__( 'Custom Fonts', 'elementor' ),
+			__( 'Custom Fonts', 'elementor' ),
+			'manage_options',
+			'elementor_custom_fonts',
+			[ $this, 'elementor_custom_fonts' ]
+		);
+
+		add_submenu_page(
+			self::PAGE_ID,
 			'',
 			'<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . __( 'Go Pro', 'elementor' ),
 			'manage_options',
@@ -108,6 +117,15 @@ class Settings extends Settings_Page {
 			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
 			die;
 		}
+	}
+
+	public function elementor_custom_fonts() {
+		?>
+		<div class="wrap">
+			<h1><?php _e( 'Add Your Custom Fonts', 'elementor' ); ?></h1>
+			<div><?php _e( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></div>
+		</div><!-- /.wrap -->
+		<?php
 	}
 
 	/**
@@ -202,14 +220,6 @@ class Settings extends Settings_Page {
 									'type' => 'checkbox_list_cpt',
 									'std' => [ 'page', 'post' ],
 									'exclude' => [ 'attachment', 'elementor_library' ],
-								],
-								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
-							],
-							'exclude_user_roles' => [
-								'label' => __( 'Exclude Roles', 'elementor' ),
-								'field_args' => [
-									'type' => 'checkbox_list_roles',
-									'exclude' => [ 'administrator' ],
 								],
 								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
 							],

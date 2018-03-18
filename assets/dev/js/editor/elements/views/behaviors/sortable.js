@@ -49,6 +49,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	activate: function() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
 		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
 			return;
 		}

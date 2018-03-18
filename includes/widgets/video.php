@@ -665,10 +665,15 @@ class Widget_Video extends Widget_Base {
 					];
 
 					$this->add_render_attribute( 'image-overlay', [
-						'class' => 'elementor-clickable',
 						'data-elementor-open-lightbox' => 'yes',
 						'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
 					] );
+
+					if ( Plugin::$instance->editor->is_edit_mode() ) {
+						$this->add_render_attribute( 'image-overlay', [
+							'class' => 'elementor-clickable',
+						] );
+					}
 				} else {
 					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . Group_Control_Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings ) . ');' );
 				}

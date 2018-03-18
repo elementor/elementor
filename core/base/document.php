@@ -238,7 +238,7 @@ abstract class Document extends Controls_Stack {
 		$this->start_controls_section(
 			'document_settings',
 			[
-				'label' => __( 'Document Settings', 'elementor' ),
+				'label' => __( 'General Settings', 'elementor' ),
 				'tab' => Controls_Manager::TAB_SETTINGS,
 			]
 		);

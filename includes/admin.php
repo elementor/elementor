@@ -410,7 +410,7 @@ class Admin {
 	 */
 	public function admin_footer_text( $footer_text ) {
 		$current_screen = get_current_screen();
-		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->base, 'elementor' ) );
+		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->id, 'elementor' ) );
 
 		if ( $is_elementor_screen ) {
 			$footer_text = sprintf(

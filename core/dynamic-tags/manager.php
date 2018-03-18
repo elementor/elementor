@@ -3,9 +3,10 @@ namespace Elementor\Core\DynamicTags;
 
 use Elementor\Plugin;
 use Elementor\User;
-use Elementor\Utils;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Manager {
 
@@ -14,6 +15,8 @@ class Manager {
 	const MODE_RENDER = 'render';
 
 	const MODE_REMOVE = 'remove';
+
+	const DYNAMIC_SETTING_KEY = '__dynamic__';
 
 	private $tags_groups = [];
 
@@ -54,9 +57,7 @@ class Manager {
 
 	public function get_tag_text_data( $tag_text ) {
 		preg_match( '/id="(.+?(?="))"/', $tag_text, $tag_id_match );
-
 		preg_match( '/name="(.+?(?="))"/', $tag_text, $tag_name_match );
-
 		preg_match( '/settings="(.+?(?="]))/', $tag_text, $tag_settings_match );
 
 		if ( ! $tag_id_match || ! $tag_name_match || ! $tag_settings_match ) {
@@ -71,11 +72,11 @@ class Manager {
 	}
 
 	/**
-	 * @param Tag $tag
+	 * @param Base_Tag $tag
 	 *
 	 * @return string
 	 */
-	public function tag_to_text( Tag $tag ) {
+	public function tag_to_text( Base_Tag $tag ) {
 		return sprintf( '[%1$s id="%2$s" name="%3$s" settings="%4$s"]', self::TAG_LABEL, $tag->get_id(), $tag->get_name(), wp_json_encode( $tag->get_settings(), JSON_FORCE_OBJECT ) );
 	}
 
@@ -209,22 +210,20 @@ class Manager {
 		];
 	}
 
-	public function get_static_setting_key( $key ) {
-		return $key . '__static__';
-	}
-
 	public function ajax_render_tags() {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
-		if ( empty( $_POST['post_id'] ) ) {
+		$posted = $_POST; // WPCS: CSRF OK.
+
+		if ( empty( $posted['post_id'] ) ) {
 			throw new \Exception( 'Missing post id.' );
 		}
 
-		if ( ! User::is_current_user_can_edit( $_POST['post_id'] ) ) {
+		if ( ! User::is_current_user_can_edit( $posted['post_id'] ) ) {
 			throw new \Exception( 'Access denied.' );
 		}
 
-		Plugin::$instance->db->switch_to_post( $_POST['post_id'] );
+		Plugin::$instance->db->switch_to_post( $posted['post_id'] );
 
 		/**
 		 * Before dynamic tags rendered.
@@ -237,7 +236,7 @@ class Manager {
 
 		$tags_data = [];
 
-		foreach ( $_POST['tags'] as $tag_key ) {
+		foreach ( $posted['tags'] as $tag_key ) {
 			$tag_key_parts = explode( '-', $tag_key );
 
 			$tag_name = base64_decode( $tag_key_parts[0] );

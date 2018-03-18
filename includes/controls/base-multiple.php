@@ -67,16 +67,6 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 		);
 	}
 
-	public function parse_tags( $value, $dynamic_settings ) {
-		$parsed_value = parent::parse_tags( $value, $dynamic_settings );
-
-		if ( ! $parsed_value ) {
-			$parsed_value = $this->get_default_value();
-		}
-
-		return $parsed_value;
-	}
-
 	/**
 	 * Get multiple control style value.
 	 *

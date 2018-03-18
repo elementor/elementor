@@ -93,6 +93,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'label' => __( 'Add Images', 'elementor' ),
 				'type' => Controls_Manager::GALLERY,
+				'show_label' => false,
 				'dynamic' => [
 					'active' => true,
 				],
@@ -370,10 +371,15 @@ class Widget_Image_Gallery extends Widget_Base {
 		<div class="elementor-image-gallery">
 			<?php
 			$this->add_render_attribute( 'link', [
-				'class' => 'elementor-clickable',
 				'data-elementor-open-lightbox' => $settings['open_lightbox'],
 				'data-elementor-lightbox-slideshow' => $this->get_id(),
 			] );
+
+			if ( Plugin::$instance->editor->is_edit_mode() ) {
+				$this->add_render_attribute( 'link', [
+					'class' => 'elementor-clickable',
+				] );
+			}
 
 			add_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ] );
 

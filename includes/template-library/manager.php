@@ -263,13 +263,6 @@ class Manager {
 	 *                               was updated, `WP_Error` otherwise.
 	 */
 	public function update_template( array $template_data ) {
-		// TODO: Temp patch since 1.5.0.
-		if ( isset( $template_data['data'] ) ) {
-			$template_data['content'] = $template_data['data'];
-
-			unset( $template_data['data'] );
-		}
-		// END Patch.
 		$validate_args = $this->ensure_args( [ 'source', 'content', 'type' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
