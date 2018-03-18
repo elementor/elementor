@@ -160,11 +160,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Control fields.
 	 */
 	final public function get_fields() {
-		// TODO: Temp - compatibility for posts group
-		if ( method_exists( $this, '_get_controls' ) ) {
-			return $this->_get_controls( $this->get_args() );
-		}
-
 		if ( null === static::$fields ) {
 			static::$fields = $this->init_fields();
 		}

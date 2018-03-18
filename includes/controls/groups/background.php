@@ -98,15 +98,14 @@ class Group_Control_Background extends Group_Control_Base {
 	 */
 	public static function get_background_types() {
 		if ( null === self::$background_types ) {
-			self::$background_types = self::init_background_types();
+			self::$background_types = self::get_default_background_types();
 		}
 
 		return self::$background_types;
 	}
 
-	/* TODO: rename to `default_background_types()` */
 	/**
-	 * Default background types.
+	 * Get Default background types.
 	 *
 	 * Retrieve background control initial types.
 	 *
@@ -116,7 +115,7 @@ class Group_Control_Background extends Group_Control_Base {
 	 *
 	 * @return array Default background types.
 	 */
-	private static function init_background_types() {
+	private static function get_default_background_types() {
 		return [
 			'classic' => [
 				'title' => _x( 'Classic', 'Background Control', 'elementor' ),
