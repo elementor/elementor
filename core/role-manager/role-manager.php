@@ -133,14 +133,11 @@ class Role_Manager extends Settings_Page {
 	}
 
 	public function get_go_pro_link_html() {
-		static $link = false;
-		if ( ! $link ) {
-			$link = Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' );
-		}
+		$pro_link = Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' );
 		?>
 		<div class="elementor-role-go-pro">
 			<div class="elementor-role-go-pro__desc"><?php esc_html_e( 'Want to give access only to content?', 'elementor' ); ?></div>
-			<div class="elementor-role-go-pro__link"><a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( $link ); ?>"><?php esc_html_e( 'Go Pro', 'elementor' ); ?></a></div>
+			<div class="elementor-role-go-pro__link"><a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( $pro_link ); ?>"><?php esc_html_e( 'Go Pro', 'elementor' ); ?></a></div>
 		</div>
 		<?php
 	}
