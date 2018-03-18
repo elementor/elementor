@@ -43,18 +43,18 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	behaviors: function() {
 		var behaviors = {},
-			dynamicData = this.options.model.get( 'dynamic' );
+			dynamicSettings = this.options.model.get( 'dynamic' );
 
-		if ( dynamicData && dynamicData.active ) {
+		if ( dynamicSettings && dynamicSettings.active ) {
 			var tags = _.filter( elementor.dynamicTags.getConfig( 'tags' ), function( tag ) {
-				return _.intersection( tag.categories, dynamicData.categories ).length;
+				return _.intersection( tag.categories, dynamicSettings.categories ).length;
 			} );
 
 			if ( tags.length ) {
 				behaviors.tags = {
 					behaviorClass: TagsBehavior,
 					tags: tags,
-					property: dynamicData.property
+					dynamicSettings: dynamicSettings
 				};
 			}
 		}

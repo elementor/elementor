@@ -332,10 +332,10 @@
 					$controls = $row.find( self.selectors.controlsContainer );
 
 				$controls.toggleClass( 'hidden' );
-				if ( $controls.hasClass( 'hidden') ) {
+				if ( $controls.hasClass( 'hidden' ) ) {
 					$toggleHandleIcon.removeClass( self.selectors.arrowUp ).addClass( self.selectors.arrowDown );
 				} else {
-					$toggleHandleIcon.removeClass( self.selectors.arrowDown ).addClass( self.selectors.arrowUp);
+					$toggleHandleIcon.removeClass( self.selectors.arrowDown ).addClass( self.selectors.arrowUp );
 				}
 				self.updateLabel( $row );
 			},
@@ -355,7 +355,7 @@
 					$controls = $row.find( 'input[type="checkbox"]' ).not( self.selectors.excludedField );
 
 				$controls.each( function( index, input ) {
-					$(input).prop( 'disabled', state );
+					$( input ).prop( 'disabled', state );
 				});
 			},
 			bind: function() {
@@ -371,7 +371,7 @@
 			},
 			init: function() {
 				var self = this;
-				if ( ! $( 'body' ).hasClass( self.selectors.body ) ){
+				if ( ! $( 'body' ).hasClass( self.selectors.body ) ) {
 					return;
 				}
 				self.bind();

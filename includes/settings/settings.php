@@ -223,14 +223,6 @@ class Settings extends Settings_Page {
 								],
 								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
 							],
-							'exclude_user_roles' => [
-								'label' => __( 'Exclude Roles', 'elementor' ),
-								'field_args' => [
-									'type' => 'checkbox_list_roles',
-									'exclude' => [ 'administrator' ],
-								],
-								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
-							],
 							'disable_color_schemes' => [
 								'label' => __( 'Disable Default Colors', 'elementor' ),
 								'field_args' => [

@@ -110,7 +110,7 @@ App = Marionette.Application.extend( {
 		}
 	},
 
-	userCan: function ( capability ) {
+	userCan: function( capability ) {
 		return ! ( this.config.user.restrictions.indexOf( capability ) > -1 );
 	},
 
@@ -155,7 +155,6 @@ App = Marionette.Application.extend( {
 		var isInner = modelElement.get( 'isInner' ),
 			controls = {},
 			userCanEditStyle = elementor.userCan( 'style' );
-
 
 		_.each( elementData.controls, function( controlData, controlKey ) {
 			if ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top ) {

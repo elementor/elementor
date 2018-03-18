@@ -37,9 +37,20 @@ BaseSettingsModel = Backbone.Model.extend( {
 				defaults[ controlName ] = control['default'] || control.default_value;
 			}
 
-			var isDynamicControl = control.dynamic && control.dynamic.active && attrs.__dynamic__ && attrs.__dynamic__[ controlName ];
+			var isDynamicControl = control.dynamic && control.dynamic.active,
+				hasDynamicSettings = isDynamicControl && attrs.__dynamic__ && attrs.__dynamic__[ controlName ];
 
-			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! isDynamicControl ) {
+			if ( isDynamicControl && ! hasDynamicSettings && control.dynamic['default'] ) {
+				if ( ! attrs.__dynamic__ ) {
+					attrs.__dynamic__ = {};
+				}
+
+				attrs.__dynamic__[ controlName ] = control.dynamic['default'];
+
+				hasDynamicSettings = true;
+			}
+
+			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! hasDynamicSettings ) {
 				elementor.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
