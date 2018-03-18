@@ -478,6 +478,7 @@ class Plugin {
 		$this->modules_manager = new Modules_Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
 
+		Upgrades::add_actions();
 		Api::init();
 		Tracker::init();
 
