@@ -3,6 +3,7 @@ namespace Elementor\Core\RoleManager;
 
 use Elementor\Settings_Page;
 use Elementor\Settings;
+use Elementor\Settings_Validations;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,7 +47,6 @@ class Role_Manager extends Settings_Page {
 	 * @access protected
 	 */
 	protected function create_tabs() {
-		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
 		return [
 			'general' => [
 				'label' => __( 'General', 'elementor' ),
@@ -59,7 +59,9 @@ class Role_Manager extends Settings_Page {
 									'type' => 'checkbox_list_roles',
 									'exclude' => [ 'administrator' ],
 								],
-								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
+								'setting_args' => [
+									'sanitize_callback' => [ Settings_Validations::class, 'checkbox_list' ],
+								],
 							],
 						],
 					],
