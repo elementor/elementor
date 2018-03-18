@@ -56,12 +56,10 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<?php if ( Plugin::$instance->role_manager->user_can( 'design' ) ) : ?>
-	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo __( 'Settings', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_html_e( 'Settings', 'elementor' ); ?>">
 		<i class="fa fa-cog" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php esc_html( $document::get_title() . ' ' . __( 'Settings', 'elementor' ) ); ?></span>
 	</div>
-	<?php endif; ?>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool">
 		<i class="eicon-device-desktop tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only">
