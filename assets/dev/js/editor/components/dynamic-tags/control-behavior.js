@@ -129,7 +129,8 @@ module.exports = Marionette.Behavior.extend( {
 		return this.view.elementSettingsModel.get( '__dynamic__' )[ this.view.model.get( 'name' ) ];
 	},
 
-	getDynamicControlSettings: function( settingKey ) {
+	getDynamicControlSettings: function() {
+
 		return {
 			control: {
 				name: '__dynamic__',
