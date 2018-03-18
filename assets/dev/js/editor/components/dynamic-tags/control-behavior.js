@@ -23,6 +23,10 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	renderTools: function() {
+		if ( this.getOption( 'dynamicSettings' )['default'] ) {
+			return;
+		}
+
 		var $dynamicSwitcher = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-dynamic-switcher' ) );
 
 		this.ui.controlTitle[ this.view.model.get( 'label_block' ) ? 'after' : 'before' ]( $dynamicSwitcher );
