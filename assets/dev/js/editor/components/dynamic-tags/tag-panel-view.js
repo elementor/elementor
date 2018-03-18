@@ -37,6 +37,7 @@ module.exports = Marionette.ItemView.extend( {
 			templateFunction = Marionette.TemplateCache.get( '#tmpl-elementor-control-dynamic-cover' ),
 			renderedTemplate = Marionette.Renderer.render( templateFunction, {
 				hasSettings: this.hasSettings(),
+				isRemovable: ! this.getOption( 'dynamicSettings' )['default'],
 				title: config.title,
 				content: config.panel_template
 			} );
