@@ -128,6 +128,13 @@ class Settings extends Settings_Page {
 		<?php
 	}
 
+	public function on_admin_init() {
+		$this->go_elementor_pro();
+
+		// Save general settings in one list for a future usage
+		$this->handle_general_settings_update();
+	}
+
 	/**
 	 * Change "Settings" menu name.
 	 *
@@ -161,7 +168,7 @@ class Settings extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'admin_init', [ $this, 'go_elementor_pro' ] );
+		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
