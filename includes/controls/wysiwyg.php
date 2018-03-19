@@ -47,6 +47,9 @@ class Control_Wysiwyg extends Base_Data_Control {
 			<div class="elementor-control-title">{{{ data.label }}}</div>
 			<div class="elementor-control-input-wrapper elementor-control-tag-area"></div>
 		</div>
+		<# if ( data.description ) { #>
+		<div class="elementor-control-field-description">{{{ data.description }}}</div>
+		<# } #>
 		<?php
 	}
 
