@@ -45,6 +45,7 @@ class Control_Textarea extends Base_Data_Control {
 		return [
 			'label_block' => true,
 			'rows' => 5,
+			'placeholder' => '',
 			'dynamic' => [
 				'categories' => [ TagsModule::TEXT_CATEGORY ],
 			],

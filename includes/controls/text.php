@@ -69,6 +69,8 @@ class Control_Text extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'input_type' => 'text',
+			'placeholder' => '',
+			'title' => '',
 			'dynamic' => [
 				'categories' => [ TagsModule::TEXT_CATEGORY ],
 			],
