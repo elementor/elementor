@@ -51,9 +51,11 @@ class Module extends BaseModule {
 		if ( is_singular() ) {
 			$document = Plugin::$instance->documents->get_doc_or_auto_save();
 
-			$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
-			if ( $template_path ) {
-				$template = $template_path;
+			if ( $document ) {
+				$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
+				if ( $template_path ) {
+					$template = $template_path;
+				}
 			}
 		}
 
