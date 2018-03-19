@@ -46,6 +46,8 @@ class Control_Repeater extends Base_Data_Control {
 	 */
 	protected function get_default_settings() {
 		return [
+			'fields' => [],
+			'title_field' => '',
 			'prevent_empty' => true,
 			'is_repeater' => true,
 		];
