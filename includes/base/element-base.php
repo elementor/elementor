@@ -198,6 +198,9 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return array Element edit tools.
 	 */
 	final public static function get_edit_tools() {
+		if ( ! Plugin::instance()->role_manager->user_can( 'design' ) ) {
+			return [];
+		}
 		if ( null === static::$_edit_tools ) {
 			self::_init_edit_tools();
 		}
@@ -287,10 +290,6 @@ abstract class Element_Base extends Controls_Stack {
 	 * @static
 	 */
 	private static function _init_edit_tools() {
-		if ( ! Plugin::instance()->role_manager->user_can( 'design' ) ) {
-			static::$_edit_tools = [];
-			return;
-		}
 		static::$_edit_tools = static::get_default_edit_tools();
 	}
 

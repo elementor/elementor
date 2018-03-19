@@ -1105,8 +1105,7 @@ class Source_Local extends Source_Base {
 				}
 
 				$type_url = add_query_arg( self::TAXONOMY_TYPE_SLUG, $template_type, $baseurl );
-
-				$type_label = ucwords( str_replace( '_', ' ', $template_type ) );
+				$type_label = $this->get_template_label_by_type( $template_type );
 
 				echo "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_label}</a>";
 			endforeach;
@@ -1154,7 +1153,7 @@ class Source_Local extends Source_Base {
 			$inline_style .= '#elementor-template-library-tabs-wrapper {display: none;}';
 		}
 
-		$current_type_label = ucwords( $current_type );
+		$current_type_label = $this->get_template_label_by_type( $current_type );
 		?>
 		<style type="text/css"><?php echo $inline_style; ?></style>
 		<div class="elementor-template_library-blank_state">
@@ -1292,6 +1291,14 @@ class Source_Local extends Source_Base {
 		header( 'Cache-Control: must-revalidate' );
 		header( 'Pragma: public' );
 		header( 'Content-Length: ' . $file_size );
+	}
+
+	private function get_template_label_by_type( $template_type ) {
+		if ( 'page' === $template_type ) {
+			return 'Content';
+		}
+
+		return ucwords( str_replace( '_', ' ', $template_type ) );
 	}
 
 	/**
