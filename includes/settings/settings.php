@@ -1,6 +1,9 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Settings\General\Manager as General_Settings_Manager;
+use Elementor\Core\Settings\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -132,6 +135,13 @@ class Settings extends Settings_Page {
 		<?php
 	}
 
+	public function on_admin_init() {
+		$this->go_elementor_pro();
+
+		// Save general settings in one list for a future usage
+		$this->handle_general_settings_update();
+	}
+
 	/**
 	 * Change "Settings" menu name.
 	 *
@@ -165,7 +175,7 @@ class Settings extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'admin_init', [ $this, 'go_elementor_pro' ] );
+		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
@@ -384,5 +394,29 @@ class Settings extends Settings_Page {
 	 */
 	protected function get_page_title() {
 		return __( 'Elementor', 'elementor' );
+	}
+
+	private function handle_general_settings_update() {
+		if ( ! empty( $_POST['option_page'] ) && self::PAGE_ID === $_POST['option_page'] && ! empty( $_POST['action'] ) && 'update' === $_POST['action']  ) {
+			check_admin_referer( 'elementor-options' );
+
+			$saved_general_settings = get_option( General_Settings_Manager::META_KEY );
+
+			if ( ! $saved_general_settings ) {
+				$saved_general_settings = [];
+			}
+
+			$general_settings = Manager::get_settings_managers( 'general' )->get_model()->get_settings();
+
+			foreach ( $general_settings as $setting_key => $setting ) {
+				if ( ! empty( $_POST[ $setting_key ] ) ) {
+					$pure_setting_key = str_replace( 'elementor_', '', $setting_key );
+
+					$saved_general_settings[ $pure_setting_key ] = $_POST[ $setting_key ];
+				}
+			}
+
+			update_option( General_Settings_Manager::META_KEY, $saved_general_settings );
+		}
 	}
 }

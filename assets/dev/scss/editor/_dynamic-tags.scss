@@ -2,6 +2,8 @@
 	display: none;
 	position: absolute;
 	width: 260px;
+	max-height: 300px;
+	overflow: auto;
 	padding-bottom: 5px;
 	background-color: #fff;
 	border: 1px solid $editor-light;

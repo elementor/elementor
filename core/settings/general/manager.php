@@ -156,7 +156,7 @@ class Manager extends BaseManager {
 			}
 		}
 
-		// Save all settings in one list for future usage
+		// Save all settings in one list for a future usage
 		if ( ! empty( $one_list_settings ) ) {
 			update_option( self::META_KEY, $one_list_settings );
 		} else {
