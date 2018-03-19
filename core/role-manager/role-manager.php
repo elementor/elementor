@@ -46,7 +46,7 @@ class Role_Manager extends Settings_Page {
 	 * @access protected
 	 */
 	protected function create_tabs() {
-		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
+		$validation_class = 'Elementor\Settings_Validations';
 		return [
 			'general' => [
 				'label' => __( 'General', 'elementor' ),
@@ -59,7 +59,9 @@ class Role_Manager extends Settings_Page {
 									'type' => 'checkbox_list_roles',
 									'exclude' => [ 'administrator' ],
 								],
-								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
+								'setting_args' => [
+									'sanitize_callback' => [ $validation_class, 'checkbox_list' ],
+								],
 							],
 						],
 					],
@@ -133,7 +135,7 @@ class Role_Manager extends Settings_Page {
 	}
 
 	public function get_go_pro_link_html() {
-		$pro_link = Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' );
+		$pro_link = Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash' );
 		?>
 		<div class="elementor-role-go-pro">
 			<div class="elementor-role-go-pro__desc"><?php esc_html_e( 'Want to give access only to content?', 'elementor' ); ?></div>
