@@ -45,7 +45,7 @@ ImagesManager = function() {
 
 			if ( 'custom' === image.size ) {
 
-				if ( elementor.getPanelView() && 'editor' === elementor.getPanelView().currentPageName && image.model ) {
+				if ( elementor.getPanelView() && 'editor' === elementor.getPanelView().getCurrentPageName() && image.model ) {
 					// Trigger change again, so it's will load from the cache
 					self.onceTriggerChange( image.model );
 				}

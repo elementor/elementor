@@ -4,8 +4,6 @@ var ControlsStack = require( 'elementor-views/controls-stack' ),
 module.exports = ControlsStack.extend( {
 	activeTab: 'content',
 
-	activeSection: 'settings',
-
 	template: _.noop,
 
 	emptyView: EmptyView,
@@ -21,5 +19,7 @@ module.exports = ControlsStack.extend( {
 		};
 	},
 
-	onRenderTemplate: _.noop
+	onRenderTemplate: function() {
+		this.activateFirstSection();
+	}
 } );
