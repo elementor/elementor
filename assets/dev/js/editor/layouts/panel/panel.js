@@ -109,6 +109,12 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	setPage: function( page, title, viewOptions ) {
+		if ( 'elements' === page && ! elementor.userCan( 'design' ) ) {
+			var pages = this.getPages();
+			if ( pages.hasOwnProperty( 'page_settings' ) ) {
+				page = 'page_settings';
+			}
+		}
 		var pageData = this.getPages( page );
 
 		if ( ! pageData ) {

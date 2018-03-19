@@ -72,11 +72,11 @@ class Manager {
 	}
 
 	/**
-	 * @param Tag $tag
+	 * @param Base_Tag $tag
 	 *
 	 * @return string
 	 */
-	public function tag_to_text( Tag $tag ) {
+	public function tag_to_text( Base_Tag $tag ) {
 		return sprintf( '[%1$s id="%2$s" name="%3$s" settings="%4$s"]', self::TAG_LABEL, $tag->get_id(), $tag->get_name(), wp_json_encode( $tag->get_settings(), JSON_FORCE_OBJECT ) );
 	}
 
@@ -224,6 +224,14 @@ class Manager {
 		}
 
 		Plugin::$instance->db->switch_to_post( $posted['post_id'] );
+
+		/**
+		 * Before dynamic tags rendered.
+		 *
+		 * Fires before Elementor renders the dynamic tags.
+		 *
+		 * @since 2.0.0
+		 */
 		do_action( 'elementor/dynamic_tags/before_render' );
 
 		$tags_data = [];
@@ -240,6 +248,13 @@ class Manager {
 			$tags_data[ $tag_key ] = $tag->get_content();
 		}
 
+		/**
+		 * After dynamic tags rendered.
+		 *
+		 * Fires after Elementor renders the dynamic tags.
+		 *
+		 * @since 2.0.0
+		 */
 		do_action( 'elementor/dynamic_tags/after_render' );
 
 		wp_send_json_success( $tags_data );
