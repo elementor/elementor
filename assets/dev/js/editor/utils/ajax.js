@@ -139,6 +139,13 @@ Ajax = {
 						}
 					}
 				} );
+			},
+			error: function( data ) {
+				_.each( requests, function( args, id ) {
+					if ( args.options ) {
+						args.options.deferred.reject( data );
+					}
+				} );
 			}
 		} );
 	},
