@@ -47,7 +47,10 @@ module.exports = Marionette.Behavior.extend( {
 	createTagsList: function() {
 		var tags = _.groupBy( this.getOption( 'tags' ), 'group' ),
 			groups = elementor.dynamicTags.getConfig( 'groups' ),
-			$tagsList = this.ui.tagsList = jQuery( '<div>', { 'class': 'elementor-tags-list' } );
+			$tagsList = this.ui.tagsList = jQuery( '<div>', { 'class': 'elementor-tags-list' } ),
+			$tagsListInner = jQuery( '<div>', { 'class': 'elementor-tags-list__inner' } );
+
+		$tagsList.append( $tagsListInner );
 
 		jQuery.each( groups, function( groupName ) {
 			var groupTags = tags[ groupName ];
@@ -59,18 +62,18 @@ module.exports = Marionette.Behavior.extend( {
 			var group = this,
 				$groupTitle = jQuery( '<div>', { 'class': 'elementor-tags-list__group-title' } ).text( group.title );
 
-			$tagsList.append( $groupTitle );
+			$tagsListInner.append( $groupTitle );
 
 			groupTags.forEach( function( tag ) {
 				var $tag = jQuery( '<div>', { 'class': 'elementor-tags-list__item' } );
 
 				$tag.text( tag.title ).attr( 'data-tag-name', tag.name );
 
-				$tagsList.append( $tag );
+				$tagsListInner.append( $tag );
 			} );
 		} );
 
-		$tagsList.on( 'click', '.elementor-tags-list__item', this.onTagsListItemClick.bind( this ) );
+		$tagsListInner.on( 'click', '.elementor-tags-list__item', this.onTagsListItemClick.bind( this ) );
 
 		elementor.$body.append( $tagsList );
 	},
