@@ -172,6 +172,7 @@ class Module extends BaseModule {
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => __( 'Default Page Template from your theme', 'elementor' ),
 				'separator' => 'none',
+				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => 'default',
 				],
@@ -184,6 +185,7 @@ class Module extends BaseModule {
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => __( 'No header, no footer, just Elementor', 'elementor' ),
 				'separator' => 'none',
+				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => self::TEMPLATE_CANVAS,
 				],
@@ -196,6 +198,7 @@ class Module extends BaseModule {
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => __( 'This template includes the header, full-width content and footer', 'elementor' ),
 				'separator' => 'none',
+				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => self::TEMPLATE_HEADER_FOOTER,
 				],
