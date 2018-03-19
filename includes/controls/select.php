@@ -31,6 +31,23 @@ class Control_Select extends Base_Data_Control {
 	}
 
 	/**
+	 * Get select control default settings.
+	 *
+	 * Retrieve the default settings of the select control. Used to return the
+	 * default settings while initializing the select control.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Control default settings.
+	 */
+	protected function get_default_settings() {
+		return [
+			'options' => [],
+		];
+	}
+
+	/**
 	 * Render select control output in the editor.
 	 *
 	 * Used to generate the control HTML in the editor using Underscore JS
