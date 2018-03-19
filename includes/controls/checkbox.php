@@ -60,10 +60,12 @@ class Control_Checkbox extends Base_Data_Control {
 	 */
 	public function content_template() {
 		?>
-		<label class="elementor-control-title">
-			<input type="checkbox" data-setting="{{ data.name }}" />
-			<span>{{{ data.label }}}</span>
-		</label>
+		<div class="elementor-control-field">
+			<label class="elementor-control-title">
+				<input type="checkbox" data-setting="{{ data.name }}" />
+				<span>{{{ data.label }}}</span>
+			</label>
+		</div>
 		<# if ( data.description ) { #>
 			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 			<# } #>
