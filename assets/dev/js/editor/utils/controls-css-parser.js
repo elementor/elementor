@@ -76,7 +76,7 @@ ControlsCSSParser = ViewModule.extend( {
 	addRepeaterControlsStyleRules: function( repeaterValues, repeaterControls, controls, placeholders, replacements ) {
 		var self = this;
 
-		if ( ! repeaterValues instanceof Backbone.Collection ) {
+		if ( ! ( repeaterValues instanceof Backbone.Collection ) ) {
 			repeaterValues = new Backbone.Collection( repeaterValues );
 		}
 
