@@ -568,6 +568,13 @@ html.elementor-html {
 					}
 				}
 			}
+
+			.elementor-editor-element-trigger {
+
+				@media(min-width: $screen-lg-min) {
+					cursor: pointer;
+				}
+			}
 		}
 	}
 }
