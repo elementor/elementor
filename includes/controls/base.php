@@ -28,9 +28,9 @@ abstract class Base_Control {
 	private $_base_settings = [
 		'label' => '',
 		'description' => '',
-		'separator' => 'default',
 		'show_label' => true,
 		'label_block' => false,
+		'separator' => 'default',
 	];
 
 	/**

@@ -107,6 +107,7 @@ class Control_Color extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'alpha' => true,
+			'scheme' => '',
 		];
 	}
 }
