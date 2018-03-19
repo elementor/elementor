@@ -44,6 +44,8 @@ class Control_Number extends Base_Data_Control {
 			'min' => '',
 			'max' => '',
 			'step' => '',
+			'placeholder' => '',
+			'title' => '',
 		];
 	}
 
