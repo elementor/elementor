@@ -53,7 +53,7 @@
 		.elementor-icon-list-item {
 
 			&, a {
-				justify-content: flex-end;
+				justify-content: getValueByDirection(flex-end, flex-start);
 				text-align: $end;
 			}
 		}
