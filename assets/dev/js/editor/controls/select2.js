@@ -8,6 +8,7 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 		return {
 			allowClear: true,
 			placeholder: placeholder
+			dir: elementor.config.is_rtl ? 'rtl' : 'ltr'
 		};
 	},
 
