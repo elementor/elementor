@@ -2,12 +2,14 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlSelect2ItemView;
 
 ControlSelect2ItemView = ControlBaseDataView.extend( {
-	getSelect2Options: function() {
-		var placeholder = this.ui.select.children( 'option:first[value=""]' ).text();
+	getSelect2Placeholder: function() {
+		return this.ui.select.children( 'option:first[value=""]' ).text();
+	},
 
+	getSelect2Options: function() {
 		return {
 			allowClear: true,
-			placeholder: placeholder
+			placeholder: this.getSelect2Placeholder(),
 			dir: elementor.config.is_rtl ? 'rtl' : 'ltr'
 		};
 	},
