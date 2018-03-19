@@ -14,24 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * allows you to set the `min`, `max` and `step` values per unit type.
  *
  * @since 1.0.0
- *
- * @param array $default      {
- *     Optional. Default slider value.
- *
- *     @type int $size Optional. The initial size of slider. Default is empty.
- * }
- * @param array $range        {
- *     The range parameter is populated by default with ranges for each register
- *     size (e.g. px|em|rem|%|deg). @see Control_Base_Units::get_default_settings()
- *
- *     {
- *      @type integer $min  Optional.The minimum value of range.
- *      @type integer $max  Optional.The maximum value of range.
- *      @type integer $step Optional.The intervals value that will be incremented
- *                          or decremented when using the controls' spinners.
- *     },
- *     ...
- * }
  */
 class Control_Slider extends Control_Base_Units {
 

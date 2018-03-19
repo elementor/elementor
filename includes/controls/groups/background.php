@@ -11,36 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base control for creating background control. Displays input fields to define
  * the background color, background image, background gradient or background video.
  *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- * ```php
- * $this->add_group_control(
- * 	Group_Control_Background::get_type(),
- * 	[
- * 		'name' => 'background',
- * 		'types' => [ 'classic', 'gradient', 'video' ],
- * 		'selector' => '{{WRAPPER}} .wrapper',
- * 		'separator' => 'before',
- * 	]
- * );
- * ```
- *
  * @since 1.2.2
- *
- * @param string $name           The field name.
- * @param array  $types          Optional. Define specific types to use. Available
- *                               types are `classic`, `gradient` and `video`. Default
- *                               is an empty array, including all the types.
- * @param array  $fields_options Optional. An array of arrays containing data that
- *                               overrides control settings. Default is an empty array.
- * @param string $separator      Optional. Set the position of the control separator.
- *                               Available values are 'default', 'before', 'after'
- *                               and 'none'. 'default' will position the separator
- *                               depending on the control type. 'before' / 'after'
- *                               will position the separator before/after the
- *                               control. 'none' will hide the separator. Default
- *                               is 'default'.
  */
 class Group_Control_Background extends Group_Control_Base {
 
