@@ -177,7 +177,7 @@ class Widget_Icon_List extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => __( 'Start', 'elementor' ),
+						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
@@ -185,7 +185,7 @@ class Widget_Icon_List extends Widget_Base {
 						'icon' => 'eicon-h-align-center',
 					],
 					'right' => [
-						'title' => __( 'End', 'elementor' ),
+						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
 				],
