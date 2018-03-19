@@ -9,62 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor image size control.
  *
  * A base control for creating image size control. Displays input fields to define
- * one of the default image sizes (thumbnail, medium, medium_large, large) or set
- * a custom dimension.
- *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- * ```php
- * $this->add_group_control(
- * 	Group_Control_Image_Size::get_type(),
- * 	[
- * 		'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
- * 		'default' => 'large',
- * 		'exclude' => [ 'custom' ],
- * 		'include' => [],
- * 		'separator' => 'before',
- * 	]
- * );
- * ```
- *
- * PHP usage (inside `Widget_Base::render()` method):
- *
- * ```php
- * // Get image HTML
- * $settings = $this->get_settings();
- * echo Group_Control_Image_Size::get_attachment_image_html( $settings, 'thumbnail' );
- * ```
- *
- * JS usage (inside `Widget_Base::_content_template()` method):
- *
- * ```js
- * <#
- * var image = {
- * 	id: settings.image.id,
- * 	url: settings.image.url,
- * 	size: settings.thumbnail_size,
- * 	dimension: settings.thumbnail_custom_dimension,
- * 	model: view.getEditModel()
- * };
- * var image_url = elementor.imagesManager.getImageUrl( image );
- * #>
- * <img src="{{{ image_url }}}" />';
- * ```
+ * one of the default image sizes (thumbnail, medium, medium_large, large) or custom
+ * image dimensions.
  *
  * @since 1.0.0
- *
- * @param string $name        The field name.
- * @param string $default     Optional. The default image size. Default is empty.
- * @param array  $exclude     Optional. Image size to exclude. Default is empty.
- * @param array  $include     Optional. Image size to include. Default is empty.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
  */
 class Group_Control_Image_Size extends Group_Control_Base {
 
