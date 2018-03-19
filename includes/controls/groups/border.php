@@ -88,6 +88,7 @@ class Group_Control_Border extends Group_Control_Base {
 				'double' => _x( 'Double', 'Border Control', 'elementor' ),
 				'dotted' => _x( 'Dotted', 'Border Control', 'elementor' ),
 				'dashed' => _x( 'Dashed', 'Border Control', 'elementor' ),
+				'groove' => _x( 'Groove', 'Border Control', 'elementor' ),
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'border-style: {{VALUE}};',
