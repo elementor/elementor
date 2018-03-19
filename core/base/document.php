@@ -212,6 +212,10 @@ abstract class Document extends Controls_Stack {
 	protected function init_controls() {
 		parent::init_controls();
 
+		if ( ! Plugin::$instance->role_manager->user_can( 'design' ) ) {
+			return;
+		}
+
 		$this->start_controls_section(
 			'advanced_settings',
 			[
@@ -529,6 +533,10 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function get_autosave_id( $user_id = 0 ) {
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
 		$autosave = Utils::get_post_autosave( $this->post->ID, $user_id );
 		if ( $autosave ) {
 			return $autosave->ID;

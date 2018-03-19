@@ -1105,8 +1105,7 @@ class Source_Local extends Source_Base {
 				}
 
 				$type_url = add_query_arg( self::TAXONOMY_TYPE_SLUG, $template_type, $baseurl );
-
-				$type_label = ucwords( str_replace( '_', ' ', $template_type ) );
+				$type_label = $this->get_template_label_by_type( $template_type );
 
 				echo "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_label}</a>";
 			endforeach;
@@ -1154,7 +1153,7 @@ class Source_Local extends Source_Base {
 			$inline_style .= '#elementor-template-library-tabs-wrapper {display: none;}';
 		}
 
-		$current_type_label = ucwords( $current_type );
+		$current_type_label = $this->get_template_label_by_type( $current_type );
 		?>
 		<style type="text/css"><?php echo $inline_style; ?></style>
 		<div class="elementor-template_library-blank_state">
@@ -1162,7 +1161,7 @@ class Source_Local extends Source_Base {
 				<i class="eicon-folder"></i>
 				<h2><?php printf( __( 'Create Your First %s', 'elementor' ), esc_html( $current_type_label ) ); ?></h2>
 				<p><?php _e( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimised workflow.', 'elementor' ); ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_attr( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php _e( 'Add New' ); ?> <?php echo esc_html( $current_type_label ); ?></a>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_attr( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php _e( 'Add New', 'elementor' ); ?> <?php echo esc_html( $current_type_label ); ?></a>
 			</div>
 		</div>
 		<?php
@@ -1292,6 +1291,14 @@ class Source_Local extends Source_Base {
 		header( 'Cache-Control: must-revalidate' );
 		header( 'Pragma: public' );
 		header( 'Content-Length: ' . $file_size );
+	}
+
+	private function get_template_label_by_type( $template_type ) {
+		if ( 'page' === $template_type ) {
+			return 'Content';
+		}
+
+		return ucwords( str_replace( '_', ' ', $template_type ) );
 	}
 
 	/**

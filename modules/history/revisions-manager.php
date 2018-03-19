@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\History;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Settings\Manager;
 use Elementor\Plugin;
 use Elementor\Post_CSS_File;
@@ -209,8 +210,14 @@ class Revisions_Manager {
 		}
 	}
 
-	public static function on_ajax_save_builder_data( $return_data, $post_id ) {
-		$post_id = $_POST['post_id'];
+	/**
+	 * @param array $return_data
+	 * @param Document $document
+	 *
+	 * @return array
+	 */
+	public static function on_ajax_save_builder_data( $return_data, $document ) {
+		$post_id = $document->get_main_id();
 
 		$latest_revisions = self::get_revisions(
 			$post_id, [
@@ -287,7 +294,7 @@ class Revisions_Manager {
 		add_action( 'edit_form_after_title', [ __CLASS__, 'remove_temp_post_content' ] );
 
 		if ( Utils::is_ajax() ) {
-			add_filter( 'elementor/ajax_save_builder/return_data', [ __CLASS__, 'on_ajax_save_builder_data' ], 10, 2 );
+			add_filter( 'elementor/documents/ajax_save/return_data', [ __CLASS__, 'on_ajax_save_builder_data' ], 10, 2 );
 			add_action( 'wp_ajax_elementor_get_revision_data', [ __CLASS__, 'on_revision_data_request' ] );
 			add_action( 'wp_ajax_elementor_delete_revision', [ __CLASS__, 'on_delete_revision_request' ] );
 		}

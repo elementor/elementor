@@ -76,8 +76,8 @@ class Control_Choose extends Base_Data_Control {
 	 */
 	protected function get_default_settings() {
 		return [
-			'options' => [],
 			'label_block' => true,
+			'options' => [],
 			'toggle' => true,
 		];
 	}

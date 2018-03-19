@@ -42,8 +42,8 @@ class Control_Date_Time extends Base_Data_Control {
 	 */
 	protected function get_default_settings() {
 		return [
-			'picker_options' => [],
 			'label_block' => true,
+			'picker_options' => [],
 		];
 	}
 
