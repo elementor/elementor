@@ -10,6 +10,7 @@ use Elementor\Editor;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -242,7 +243,16 @@ class Source_Local extends Source_Base {
 							</select>
 						</div>
 					</div>
-					<?php do_action( 'elementor/template-library/create_new_dialog_fields' ); ?>
+					<?php
+					/**
+					 * Template library dialog fields.
+					 *
+					 * Fires after Elementor template library dialog fields are displayed.
+					 *
+					 * @since 2.0.0
+					 */
+					do_action( 'elementor/template-library/create_new_dialog_fields' );
+					?>
 
 					<div id="elementor-new-template__form__post-title__wrapper" class="elementor-form-field">
 						<label for="elementor-new-template__form__post-title" class="elementor-form-field__label">
@@ -252,7 +262,7 @@ class Source_Local extends Source_Base {
 							<input type="text" placeholder="<?php echo esc_attr( __( 'Enter template name (optional)', 'elementor' ) );?>" id="elementor-new-template__form__post-title" class="elementor-form-field__text" name="post_data[post_title]">
 						</div>
 					</div>
-					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create Template', 'elementor' ); ?></button>		
+					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create Template', 'elementor' ); ?></button>
 				</form>
 			</div>
 		</div>
@@ -1148,11 +1158,11 @@ class Source_Local extends Source_Base {
 		?>
 		<style type="text/css"><?php echo $inline_style; ?></style>
 		<div class="elementor-template_library-blank_state">
-			<div class="blank_state-inner">
+			<div class="elementor-blank_state">
 				<i class="eicon-folder"></i>
-				<h2>Create Your First <?php echo esc_html( $current_type_label ); ?></h2>
-				<p>Add templates and reuse them across your website. Easily export and import them to any other project, for an optimised workflow.</p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="#">Add New <?php echo esc_html( $current_type_label ); ?></a>
+				<h2><?php printf( __( 'Create Your First %s', 'elementor' ), esc_html( $current_type_label ) ); ?></h2>
+				<p><?php _e( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimised workflow.', 'elementor' ); ?></p>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_attr( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php _e( 'Add New' ); ?> <?php echo esc_html( $current_type_label ); ?></a>
 			</div>
 		</div>
 		<?php
