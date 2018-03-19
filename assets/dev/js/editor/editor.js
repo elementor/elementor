@@ -111,7 +111,7 @@ App = Marionette.Application.extend( {
 	},
 
 	userCan: function( capability ) {
-		return ! ( this.config.user.restrictions.indexOf( capability ) > -1 );
+		return -1 === this.config.user.restrictions.indexOf( capability );
 	},
 
 	_defaultDeviceMode: 'desktop',

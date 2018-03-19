@@ -8,6 +8,10 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onDestroy: function() {
-		elementor.getPanelView().getCurrentPageView().showView( 'search' );
+		var panel = elementor.getPanelView();
+
+		if ( 'elements' === panel.getCurrentPageName() ) {
+			panel.getCurrentPageView().showView( 'search' );
+		}
 	}
 } );
