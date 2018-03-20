@@ -756,7 +756,7 @@ class Admin {
 		}
 
 		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
-		$meta = isset( $_GET['meta'] ) ? $_GET['meta'] : [];
+		$meta = apply_filters( 'elementor/admin/create_new_post/meta', [] );
 
 		$post_data['post_type'] = $post_type;
 

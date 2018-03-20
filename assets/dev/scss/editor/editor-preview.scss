@@ -22,11 +22,11 @@ html.elementor-html {
 
 .elementor-editor-active {
 
-	.elementor-inner {
-		margin-top: 25px;
-	}
-
 	.elementor.elementor-edit-mode {
+
+		.elementor-inner {
+			margin-top: 25px;
+		}
 
 		.elementor-element-empty {
 
@@ -566,6 +566,13 @@ html.elementor-html {
 							display: none;
 						}
 					}
+				}
+			}
+
+			.elementor-editor-element-trigger {
+
+				@media(min-width: $screen-lg-min) {
+					cursor: pointer;
 				}
 			}
 		}

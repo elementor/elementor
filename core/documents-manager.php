@@ -95,6 +95,7 @@ class Documents_Manager {
 		if ( ! $id ) {
 			$id = get_the_ID();
 		}
+
 		$document = $this->get( $id );
 		if ( $document && $document->get_autosave_id( $user_id ) ) {
 			$document = $document->get_autosave( $user_id );
