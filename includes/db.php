@@ -97,14 +97,18 @@ class DB {
 	 * Retrieve editor data from the database.
 	 *
 	 * @since 1.0.0
+	 * @since 2.0.0 New `$with_html_content` parameter added.
+	 *
 	 * @access public
 	 *
-	 * @param int    $post_id Post ID.
-	 * @param string $status  Optional. Post status. Default is `publish`.
+	 * @param int     $post_id           Post ID.
+	 * @param string  $status            Optional. Post status. Default is `publish`.
+	 * @param boolean $with_html_content Optional. Whether to return the
+	 *                                   data with HTML content or without
 	 *
 	 * @return array Editor data.
 	 */
-	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
+	public function get_builder( $post_id, $status = self::STATUS_PUBLISH, $with_html_content = true ) {
 		if ( self::STATUS_DRAFT === $status ) {
 			$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
 		} else {
@@ -112,7 +116,7 @@ class DB {
 		}
 
 		if ( $document ) {
-			$editor_data = $document->get_elements_raw_data( null, true );
+			$editor_data = $document->get_elements_raw_data( null, $with_html_content );
 		} else {
 			$editor_data = [];
 		}
