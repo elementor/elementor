@@ -11,30 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base control for creating border control. Displays input fields to define
  * border type, border width and border color.
  *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- * ```php
- * $this->add_group_control(
- * 	Group_Control_Border::get_type(),
- * 	[
- * 		'name' => 'border',
- * 		'selector' => '{{WRAPPER}} .wrapper',
- * 		'separator' => 'before',
- * 	]
- * );
- * ```
- *
  * @since 1.0.0
- *
- * @param string $name        The field name.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
  */
 class Group_Control_Border extends Group_Control_Base {
 
