@@ -142,7 +142,7 @@ module.exports = Module.extend( {
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
 	},
 
-	cleanCache: function () {
+	cleanCache: function() {
 		this.cache = {};
 	},
 
