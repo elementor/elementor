@@ -144,9 +144,12 @@
 
 #elementor-panel-saver-publish {
 	width: 80px;
-	@extend .elementor-button-success;
 
-	.elementor-button.elementor-button-state {
+	.elementor-button-state {
+
+		i {
+			@include margin-end(0);
+		}
 
 		#elementor-panel-saver-button-publish-label {
 			display: none;
