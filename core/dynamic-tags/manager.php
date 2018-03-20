@@ -67,7 +67,7 @@ class Manager {
 		return [
 			'id' => $tag_id_match[1],
 			'name' => $tag_name_match[1],
-			'settings' => json_decode( $tag_settings_match[1], true ),
+			'settings' => json_decode( urldecode( $tag_settings_match[1] ), true ),
 		];
 	}
 
@@ -77,7 +77,7 @@ class Manager {
 	 * @return string
 	 */
 	public function tag_to_text( Base_Tag $tag ) {
-		return sprintf( '[%1$s id="%2$s" name="%3$s" settings="%4$s"]', self::TAG_LABEL, $tag->get_id(), $tag->get_name(), wp_json_encode( $tag->get_settings(), JSON_FORCE_OBJECT ) );
+		return sprintf( '[%1$s id="%2$s" name="%3$s" settings="%4$s"]', self::TAG_LABEL, $tag->get_id(), $tag->get_name(), urlencode( wp_json_encode( $tag->get_settings(), JSON_FORCE_OBJECT ) ) );
 	}
 
 	/**
