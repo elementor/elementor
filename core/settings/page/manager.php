@@ -156,7 +156,7 @@ class Manager extends BaseManager {
 			}
 		}
 
-		if ( isset( $data['post_featured_image'] ) && post_type_supports( $post->post_type, 'thumbnail' )) {
+		if ( isset( $data['post_featured_image'] ) && post_type_supports( $post->post_type, 'thumbnail' ) ) {
 			if ( empty( $data['post_featured_image']['id'] ) ) {
 				delete_post_thumbnail( $post->ID );
 			} else {
