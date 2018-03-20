@@ -142,6 +142,10 @@ module.exports = Module.extend( {
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
 	},
 
+	cleanCache: function () {
+		this.cache = {};
+	},
+
 	onInit: function() {
 		this.loadCacheRequests = _.debounce( this.loadCacheRequests, 300 );
 	}
