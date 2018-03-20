@@ -82,7 +82,7 @@ module.exports = Module.extend( {
 	},
 
 	parseTagText: function( tagText, settings, parseCallback ) {
-		var tagData = this.getTagTextData( tagText );
+		var tagData = this.tagTextToTagData( tagText );
 
 		if ( ! tagData ) {
 			if ( 'object' === settings.returnType ) {
@@ -95,7 +95,7 @@ module.exports = Module.extend( {
 		return parseCallback( tagData.id, tagData.name, tagData.settings );
 	},
 
-	getTagTextData: function( tagText ) {
+	tagTextToTagData: function( tagText ) {
 		var tagIDMatch = tagText.match( /id="(.+?(?="))"/ ),
 			tagNameMatch = tagText.match( /name="(.+?(?="))"/ ),
 			tagSettingsMatch = tagText.match( /settings="(.+?(?="]))/ );

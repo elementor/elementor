@@ -42,7 +42,7 @@ class Manager {
 	}
 
 	public function parse_tag_text( $tag_text, array $settings, $parse_callback ) {
-		$tag_data = $this->get_tag_text_data( $tag_text );
+		$tag_data = $this->tag_text_to_tag_data( $tag_text );
 
 		if ( ! $tag_data ) {
 			if ( ! empty( $settings['returnType'] ) && 'object' === $settings['returnType'] ) {
@@ -55,7 +55,7 @@ class Manager {
 		return call_user_func_array( $parse_callback, $tag_data );
 	}
 
-	public function get_tag_text_data( $tag_text ) {
+	public function tag_text_to_tag_data( $tag_text ) {
 		preg_match( '/id="(.+?(?="))"/', $tag_text, $tag_id_match );
 		preg_match( '/name="(.+?(?="))"/', $tag_text, $tag_name_match );
 		preg_match( '/settings="(.+?(?="]))/', $tag_text, $tag_settings_match );
