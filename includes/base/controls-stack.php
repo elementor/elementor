@@ -1730,7 +1730,7 @@ abstract class Controls_Stack {
 
 			$value_to_check =  $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ];
 
-			$tag_text_data = Plugin::$instance->dynamic_tags->get_tag_text_data( $value_to_check );
+			$tag_text_data = Plugin::$instance->dynamic_tags->tag_text_to_tag_data( $value_to_check );
 
 			if ( ! Plugin::$instance->dynamic_tags->get_tag_info( $tag_text_data['name'] ) ) {
 				unset( $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] );

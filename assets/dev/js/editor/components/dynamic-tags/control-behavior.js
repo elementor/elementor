@@ -123,7 +123,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	setDefaultTagView: function() {
-		var tagData = elementor.dynamicTags.getTagTextData( this.getDynamicValue() );
+		var tagData = elementor.dynamicTags.tagTextToTagData( this.getDynamicValue() );
 
 		this.setTagView( tagData.id, tagData.name, tagData.settings );
 	},
