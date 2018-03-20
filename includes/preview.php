@@ -135,6 +135,7 @@ class Preview {
 		if ( get_the_ID() === $this->post_id ) {
 			$content = '<div id="elementor" class="elementor elementor-edit-mode"></div>';
 		}
+
 		return $content;
 	}
 
