@@ -107,7 +107,7 @@ module.exports = Module.extend( {
 		return {
 			id: tagIDMatch[1],
 			name: tagNameMatch[1],
-			settings: JSON.parse( tagSettingsMatch[1] )
+			settings: JSON.parse( decodeURIComponent( tagSettingsMatch[1] ) )
 		};
 	},
 
@@ -137,7 +137,7 @@ module.exports = Module.extend( {
 	},
 
 	tagDataToTagText: function( tagID, tagName, tagSettings ) {
-		tagSettings = JSON.stringify( tagSettings && tagSettings.toJSON( { removeDefault: true } ) || {} );
+		tagSettings = encodeURIComponent( JSON.stringify( tagSettings && tagSettings.toJSON( { removeDefault: true } ) || {} ) );
 
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
 	},
