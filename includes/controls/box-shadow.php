@@ -64,16 +64,6 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 	 */
 	public function get_sliders() {
 		return [
-			'blur' => [
-				'label' => __( 'Blur', 'elementor' ),
-				'min' => 0,
-				'max' => 100,
-			],
-			'spread' => [
-				'label' => __( 'Spread', 'elementor' ),
-				'min' => -100,
-				'max' => 100,
-			],
 			'horizontal' => [
 				'label' => __( 'Horizontal', 'elementor' ),
 				'min' => -100,
@@ -81,6 +71,16 @@ class Control_Box_Shadow extends Control_Base_Multiple {
 			],
 			'vertical' => [
 				'label' => __( 'Vertical', 'elementor' ),
+				'min' => -100,
+				'max' => 100,
+			],
+			'blur' => [
+				'label' => __( 'Blur', 'elementor' ),
+				'min' => 0,
+				'max' => 100,
+			],
+			'spread' => [
+				'label' => __( 'Spread', 'elementor' ),
 				'min' => -100,
 				'max' => 100,
 			],

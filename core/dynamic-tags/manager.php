@@ -42,7 +42,7 @@ class Manager {
 	}
 
 	public function parse_tag_text( $tag_text, array $settings, $parse_callback ) {
-		$tag_data = $this->get_tag_text_data( $tag_text );
+		$tag_data = $this->tag_text_to_tag_data( $tag_text );
 
 		if ( ! $tag_data ) {
 			if ( ! empty( $settings['returnType'] ) && 'object' === $settings['returnType'] ) {
@@ -55,7 +55,7 @@ class Manager {
 		return call_user_func_array( $parse_callback, $tag_data );
 	}
 
-	public function get_tag_text_data( $tag_text ) {
+	public function tag_text_to_tag_data( $tag_text ) {
 		preg_match( '/id="(.+?(?="))"/', $tag_text, $tag_id_match );
 		preg_match( '/name="(.+?(?="))"/', $tag_text, $tag_name_match );
 		preg_match( '/settings="(.+?(?="]))/', $tag_text, $tag_settings_match );
@@ -67,7 +67,7 @@ class Manager {
 		return [
 			'id' => $tag_id_match[1],
 			'name' => $tag_name_match[1],
-			'settings' => json_decode( $tag_settings_match[1], true ),
+			'settings' => json_decode( urldecode( $tag_settings_match[1] ), true ),
 		];
 	}
 
@@ -77,7 +77,7 @@ class Manager {
 	 * @return string
 	 */
 	public function tag_to_text( Base_Tag $tag ) {
-		return sprintf( '[%1$s id="%2$s" name="%3$s" settings="%4$s"]', self::TAG_LABEL, $tag->get_id(), $tag->get_name(), wp_json_encode( $tag->get_settings(), JSON_FORCE_OBJECT ) );
+		return sprintf( '[%1$s id="%2$s" name="%3$s" settings="%4$s"]', self::TAG_LABEL, $tag->get_id(), $tag->get_name(), urlencode( wp_json_encode( $tag->get_settings(), JSON_FORCE_OBJECT ) ) );
 	}
 
 	/**

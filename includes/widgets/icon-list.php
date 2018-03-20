@@ -315,6 +315,18 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'icon_color_hover',
+			[
+				'label' => __( 'Hover Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:hover .elementor-icon-list-icon i' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
 		$this->add_responsive_control(
 			'icon_size',
 			[
@@ -346,22 +358,6 @@ class Widget_Icon_List extends Widget_Base {
 		);
 
 		$this->add_control(
-			'text_indent',
-			[
-				'label' => __( 'Text Indent', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 50,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-text' => is_rtl() ? 'padding-right: {{SIZE}}{{UNIT}};' : 'padding-left: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->add_control(
 			'text_color',
 			[
 				'label' => __( 'Text Color', 'elementor' ),
@@ -373,6 +369,34 @@ class Widget_Icon_List extends Widget_Base {
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_2,
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_color_hover',
+			[
+				'label' => __( 'Hover Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:hover .elementor-icon-list-text' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_indent',
+			[
+				'label' => __( 'Text Indent', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 50,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-text' => is_rtl() ? 'padding-right: {{SIZE}}{{UNIT}};' : 'padding-left: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -466,7 +490,6 @@ class Widget_Icon_List extends Widget_Base {
 			view.addRenderAttribute( 'list_item', 'class', 'elementor-icon-list-item' );
 
 			if ( 'inline' == settings.view ) {
-
 				view.addRenderAttribute( 'icon_list', 'class', 'elementor-grid' );
 				view.addRenderAttribute( 'list_item', 'class', 'elementor-grid-item' );
 			}
