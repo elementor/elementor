@@ -54,6 +54,16 @@ class Modules_Manager {
 		}
 	}
 
+	/**
+	 * Get modules names.
+	 *
+	 * Retrieve the modules names.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return string Modules names.
+	 */
 	public function get_modules_names() {
 		return [
 			'history',
@@ -64,9 +74,16 @@ class Modules_Manager {
 	}
 
 	/**
-	 * @param string $module_name
+	 * Get modules.
 	 *
-	 * @return Module|Module[]
+	 * Retrieve all the registered modules or a specific module.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param string $module_name Module name.
+	 *
+	 * @return null|Module|Module[] All the registered modules or a specific module.
 	 */
 	public function get_modules( $module_name ) {
 		if ( $module_name ) {
@@ -80,6 +97,16 @@ class Modules_Manager {
 		return $this->modules;
 	}
 
+	/**
+	 * Get modules namespace prefix.
+	 *
+	 * Retrieve the modules namespace prefix.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @return string Modules namespace prefix.
+	 */
 	protected function get_modules_namespace_prefix() {
 		return 'Elementor';
 	}
