@@ -85,7 +85,7 @@ class Fonts {
 			 *
 			 * Filters the fonts groups used by Elementor.
 			 *
-			 * @since 2.0.0
+			 * @since 1.9.4
 			 *
 			 * @param array $font_groups Font groups.
 			 */
