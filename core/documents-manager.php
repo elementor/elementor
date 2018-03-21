@@ -237,7 +237,8 @@ class Documents_Manager {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param array $return_data The returned data. Default is an empty array.
+		 * @param array    $return_data The returned data. Default is an empty array.
+		 * @param Document $document    The document instance.
 		 */
 		$return_data = apply_filters( 'elementor/documents/ajax_save/return_data', $return_data, $document );
 
