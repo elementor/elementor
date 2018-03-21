@@ -311,6 +311,8 @@ class Widgets_Manager {
 
 		Plugin::$instance->db->switch_to_post( $request['post_id'] );
 
+		Plugin::$instance->documents->switch_to_document( $document );
+
 		$render_html = $document->render_element( $request['data'] );
 
 		$editor->set_edit_mode( $is_edit_mode );
