@@ -80,7 +80,7 @@ abstract class Document extends Controls_Stack {
 
 	public function get_wp_preview_url() {
 		$main_post_id = $this->get_main_id();
-		$wp_preview_url = get_preview_post_link(
+		$url = get_preview_post_link(
 			$main_post_id,
 			[
 				'preview_nonce' => wp_create_nonce( 'post_preview_' . $main_post_id ),
@@ -88,30 +88,36 @@ abstract class Document extends Controls_Stack {
 		);
 
 		/**
-		 * Filters the Wordpress preview URL.
+		 * Document "WordPress preview" URL.
+		 *
+		 * Filters the WordPress preview URL.
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param string $wp_preview_url URL with chosen scheme.
-		 * @param Document $this Document.
+		 * @param string   $url  WordPress preview URL.
+		 * @param Document $this The document instance.
 		 */
-		return apply_filters( 'elementor/document/wp_preview_url', $wp_preview_url, $this );
+		$url = apply_filters( 'elementor/document/wp_preview_url', $url, $this );
+
+		return $url;
 	}
 
 	public function get_exit_to_dashboard_url() {
-		$exit_url = get_edit_post_link( $this->get_main_id(), 'raw' );
+		$url = get_edit_post_link( $this->get_main_id(), 'raw' );
 
 		/**
-		 * Filters the Exit To Dashboard URL.
+		 * Document "exit to dashboard" URL.
+		 *
+		 * Filters the "Exit To Dashboard" URL.
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param string $exit_url Default exit URL.
-		 * @param Document $this Document.
+		 * @param string   $url  The exit URL
+		 * @param Document $this The document instance.
 		 */
-		$exit_url = apply_filters( 'elementor/document/urls/exit_to_dashboard', $exit_url, $this );
+		$url = apply_filters( 'elementor/document/exit_to_dashboard_url', $url, $this );
 
-		return $exit_url;
+		return $url;
 	}
 
 	/**
@@ -337,7 +343,7 @@ abstract class Document extends Controls_Stack {
 	 * @return mixed
 	 */
 	public function get_edit_url() {
-		$edit_link = add_query_arg(
+		$url = add_query_arg(
 			[
 				'post' => $this->get_main_id(),
 				'action' => 'elementor',
@@ -345,7 +351,19 @@ abstract class Document extends Controls_Stack {
 			admin_url( 'post.php' )
 		);
 
-		return apply_filters( 'elementor/document/get_edit_link', $edit_link, $this );
+		/**
+		 * Document edit url.
+		 *
+		 * Filters the document edit url.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string   $url  The edit url.
+		 * @param Document $this The document instance.
+		 */
+		$url = apply_filters( 'elementor/document/edit_url', $url, $this );
+
+		return $url;
 	}
 
 	/**
@@ -365,6 +383,16 @@ abstract class Document extends Controls_Stack {
 				'ver' => time(),
 			] , $this->get_permalink() ) );
 
+			/**
+			 * Document preview URL.
+			 *
+			 * Filters the document preview URL.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param string   $url  The preview URL.
+			 * @param Document $this The document instance.
+			 */
 			$url = apply_filters( 'elementor/document/preview_url', $url, $this );
 		}
 

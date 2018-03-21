@@ -1533,15 +1533,21 @@ abstract class Controls_Stack {
 
 		$template_content = ob_get_clean();
 
+		$element_type = $this->get_type();
+
 		/**
-		 * Filters the controls stack template before it's printed in the editor.
+		 * Template content.
+		 *
+		 * Filters the controls stack template content before it's printed in the editor.
+		 *
+		 * The dynamic portion of the hook name, `$element_type`, refers to the element type.
 		 *
 		 * @since 1.0.0
 		 *
 		 * @param string         $content_template The controls stack template in the editor.
 		 * @param Controls_Stack $this             The controls stack.
 		 */
-		$template_content = apply_filters( 'elementor/' . $this->get_type() . '/print_template', $template_content, $this );
+		$template_content = apply_filters( "elementor/{$element_type}/print_template", $template_content, $this );
 
 		if ( empty( $template_content ) ) {
 			return;
