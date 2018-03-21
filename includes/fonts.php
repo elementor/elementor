@@ -40,7 +40,7 @@ class Fonts {
 	 *
 	 * Used to hold additional fonts.
 	 *
-	 * @since 2.0.0
+	 * @since 1.9.4
 	 * @access private
 	 * @static
 	 *
@@ -53,7 +53,7 @@ class Fonts {
 	 *
 	 * Used to hold font types/groups.
 	 *
-	 * @since 2.0.0
+	 * @since 1.9.4
 	 * @access private
 	 * @static
 	 *
