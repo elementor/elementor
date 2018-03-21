@@ -126,7 +126,7 @@ class Post extends Document {
 			);
 		}
 
-		if ( current_theme_supports( 'post-thumbnails' ) ) {
+		if ( current_theme_supports( 'post-thumbnails' ) && post_type_supports( $document->post->post_type, 'thumbnail' ) ) {
 			$document->add_control(
 				'post_featured_image',
 				[
