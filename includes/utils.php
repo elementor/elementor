@@ -76,7 +76,7 @@ class Utils {
 		 * Filters the Elementor edit link.
 		 *
 		 * @since 1.0.0
-		 * @deprecated 2.0.0
+		 * @deprecated 2.0.0 Use `elementor/document/edit_url` filter instead.
 		 *
 		 * @param string $edit_link New URL query string (unescaped).
 		 * @param int    $post_id   Post ID.
@@ -149,7 +149,7 @@ class Utils {
 		 * Filters the Elementor preview URL.
 		 *
 		 * @since 1.6.4
-		 * @deprecated 2.0.0
+		 * @deprecated 2.0.0 Use `elementor/document/preview_url` filter instead.
 		 *
 		 * @param string $preview_url URL with chosen scheme.
 		 * @param int    $post_id     Post ID.
@@ -185,7 +185,7 @@ class Utils {
 		 * Filters the WordPress preview URL.
 		 *
 		 * @since 1.9.0
-		 * @deprecated 2.0.0
+		 * @deprecated 2.0.0 Use `elementor/document/wp_preview_url` filter instead.
 		 *
 		 * @param string $wp_preview_url WordPress preview URL.
 		 * @param int    $post_id        Post ID.
