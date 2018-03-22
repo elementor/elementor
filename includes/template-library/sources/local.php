@@ -600,7 +600,7 @@ class Source_Local extends Source_Base {
 
 		// TODO: Validate the data (in JS too!).
 		if ( ! empty( $args['display'] ) ) {
-			$content = $db->get_builder( $template_id, DB::STATUS_PUBLISH, false );
+			$content = $db->get_builder( $template_id );
 		} else {
 			$content = $db->get_plain_editor( $template_id );
 		}
