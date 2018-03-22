@@ -62,7 +62,7 @@ class Ajax_Manager {
 	 * @since  2.0.0
 	 * @access public
 	 */
-	public function send_success() {
+	protected function send_success() {
 		wp_send_json_success( [
 			'responses' => $this->response_data,
 		] );
@@ -78,7 +78,7 @@ class Ajax_Manager {
 	 *
 	 * @param null $code
 	 */
-	public function send_error( $code = null ) {
+	protected function send_error( $code = null ) {
 		wp_send_json_error( [
 			'responses' => $this->response_data,
 		], $code );
@@ -117,19 +117,19 @@ class Ajax_Manager {
 	public function handle_ajax_request() {
 		if ( ! Plugin::$instance->editor->verify_request_nonce() ) {
 			$this->add_response_data( false, __( 'Token Expired.', '' ) )
-			     ->send_error( Exceptions::UNAUTHORIZED );
+				->send_error( Exceptions::UNAUTHORIZED );
 		}
 
 		if ( empty( $_REQUEST['actions'] ) || empty( $_REQUEST['editor_post_id'] ) ) {
 			$this->add_response_data( false, __( 'Actions and Post ID are required.', '' ) )
-			     ->send_error( Exceptions::BAD_REQUEST );
+				->send_error( Exceptions::BAD_REQUEST );
 		}
 
 		$editor_post_id = absint( $_REQUEST['editor_post_id'] );
 
 		if ( ! get_post( $editor_post_id ) ) {
 			$this->add_response_data( false, __( 'Post not found.', '' ) )
-			     ->send_error( Exceptions::NOT_FOUND );
+				->send_error( Exceptions::NOT_FOUND );
 		}
 
 		Plugin::$instance->db->switch_to_post( $editor_post_id );
