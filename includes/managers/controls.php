@@ -97,11 +97,6 @@ class Controls_Manager {
 	const ORDER = 'order';
 
 	/**
-	 * @deprecated 1.5.4 Use `SWITCHER` const instead.
-	 */
-	const CHECKBOX = 'checkbox';
-
-	/**
 	 * Controls.
 	 *
 	 * Holds the list of all the controls. Default is `null`.
@@ -270,8 +265,6 @@ class Controls_Manager {
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
 			self::ORDER,
-
-			self::CHECKBOX,
 		];
 
 		foreach ( $available_controls as $control_id ) {
