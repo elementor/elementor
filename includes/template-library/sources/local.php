@@ -1294,11 +1294,15 @@ class Source_Local extends Source_Base {
 	}
 
 	private function get_template_label_by_type( $template_type ) {
+		$template_label = ucwords( str_replace( '_', ' ', $template_type ) );
+
 		if ( 'page' === $template_type ) {
-			return 'Content';
+			$template_label = 'Content';
 		}
 
-		return ucwords( str_replace( '_', ' ', $template_type ) );
+		$template_label = apply_filters( 'elementor/template-library/get_template_label_by_type', $template_label, $template_type );
+
+		return $template_label;
 	}
 
 	/**

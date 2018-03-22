@@ -96,7 +96,7 @@ class Ajax_Manager {
 	 * @param string   $tag      Ajax request name/tag.
 	 * @param callable $callback The callback function.
 	 *
-	 * @return Ajax_Manager An instance of ajax manager.
+	 * @return Ajax_Manager An instance of the ajax manager.
 	 */
 	public function register_ajax_action( $tag, $callback ) {
 		if ( ! did_action( 'elementor/ajax/register_actions' ) ) {
@@ -145,7 +145,7 @@ class Ajax_Manager {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param Ajax_Manager $this The ajax manager.
+		 * @param Ajax_Manager $this An instance of ajax manager.
 		 */
 		do_action( 'elementor/ajax/register_actions', $this );
 
