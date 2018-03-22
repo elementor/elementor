@@ -789,6 +789,10 @@ html.elementor-html {
 
 		svg {
 			height: 50px;
+
+			@if 'rtl' == $direction {
+				transform: rotate(180deg);
+			}
 		}
 	}
 }
