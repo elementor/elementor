@@ -48,6 +48,8 @@ class Controls_Manager {
 	const TAB = 'tab';
 	/** This control is documented in includes/controls/tabs.php */
 	const TABS = 'tabs';
+	/** This control is documented in includes/controls/divider.php */
+	const DIVIDER = 'divider';
 
 	/** This control is documented in includes/controls/color.php */
 	const COLOR = 'color';
@@ -245,6 +247,7 @@ class Controls_Manager {
 			self::SECTION,
 			self::TAB,
 			self::TABS,
+			self::DIVIDER,
 
 			self::COLOR,
 			self::MEDIA,
