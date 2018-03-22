@@ -520,13 +520,13 @@ class Manager {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
 		if ( empty( $_REQUEST['editor_post_id'] ) ) {
-			wp_send_json_error(  __( 'Post ID is required.', '' ) );
+			wp_send_json_error(  __( 'Post ID is required.', 'elementor' ) );
 		}
 
 		$editor_post_id = absint( $_REQUEST['editor_post_id'] );
 
 		if ( ! get_post( $editor_post_id ) ) {
-			wp_send_json_error(  __( 'Post not found.', '' ) );
+			wp_send_json_error(  __( 'Post not found.', 'elementor' ) );
 		}
 
 		Plugin::$instance->db->switch_to_post( $editor_post_id );

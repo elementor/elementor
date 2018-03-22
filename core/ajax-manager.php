@@ -116,19 +116,19 @@ class Ajax_Manager {
 	 */
 	public function handle_ajax_request() {
 		if ( ! Plugin::$instance->editor->verify_request_nonce() ) {
-			$this->add_response_data( false, __( 'Token Expired.', '' ) )
+			$this->add_response_data( false, __( 'Token Expired.', 'elementor' ) )
 				->send_error( Exceptions::UNAUTHORIZED );
 		}
 
 		if ( empty( $_REQUEST['actions'] ) || empty( $_REQUEST['editor_post_id'] ) ) {
-			$this->add_response_data( false, __( 'Actions and Post ID are required.', '' ) )
+			$this->add_response_data( false, __( 'Actions and Post ID are required.', 'elementor' ) )
 				->send_error( Exceptions::BAD_REQUEST );
 		}
 
 		$editor_post_id = absint( $_REQUEST['editor_post_id'] );
 
 		if ( ! get_post( $editor_post_id ) ) {
-			$this->add_response_data( false, __( 'Post not found.', '' ) )
+			$this->add_response_data( false, __( 'Post not found.', 'elementor' ) )
 				->send_error( Exceptions::NOT_FOUND );
 		}
 
@@ -152,7 +152,7 @@ class Ajax_Manager {
 		foreach ( $requests as $id => $action_data ) {
 			$this->current_action_id = $id;
 			if ( ! isset( $this->ajax_actions[ $action_data['action'] ] ) ) {
-				$this->add_response_data( false, __( 'Action not found.', '' ), Exceptions::BAD_REQUEST );
+				$this->add_response_data( false, __( 'Action not found.', 'elementor' ), Exceptions::BAD_REQUEST );
 				continue;
 			}
 
