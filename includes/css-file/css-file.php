@@ -301,6 +301,15 @@ abstract class CSS_File {
 		do_action( "elementor/css-file/{$name}/enqueue", $this );
 	}
 
+	/**
+	 * Print CSS.
+	 *
+	 * Output the final CSS inside the `<style>` tags and all the frontend fonts in
+	 * use.
+	 *
+	 * @since 1.9.5
+	 * @access public
+	 */
 	public function print_css() {
 		echo '<style>' . $this->get_css() . '</style>'; // XSS ok.
 		Plugin::$instance->frontend->print_fonts_links();
@@ -766,6 +775,20 @@ abstract class CSS_File {
 			->add_device( 'desktop', $breakpoints['lg'] );
 	}
 
+	/**
+	 * Add repeater control style rules.
+	 *
+	 * Register new style rules for the repeater control.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 *
+	 * @param Controls_Stack $controls_stack    The control stack.
+	 * @param array          $repeater_controls The repeater controls.
+	 * @param array          $repeater_values   Repeater values array.
+	 * @param array          $placeholders      Placeholders.
+	 * @param array          $replacements      Replacements.
+	 */
 	private function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_controls, array $repeater_values, array $placeholders, array $replacements ) {
 		$placeholders = array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] );
 
@@ -780,6 +803,17 @@ abstract class CSS_File {
 		}
 	}
 
+	/**
+	 * Add dynamic control style rules.
+	 *
+	 * Register new style rules for the dynamic control.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 *
+	 * @param array  $control The control.
+	 * @param string $value   The value.
+	 */
 	private function add_dynamic_control_style_rules( array $control, $value ) {
 		Plugin::$instance->dynamic_tags->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
 			$tag = Plugin::$instance->dynamic_tags->create_tag( $id, $name, $settings );
