@@ -147,6 +147,8 @@ module.exports = Module.extend( {
 
 		self.isChangedDuringSave = false;
 
+		settings.post_status = options.status;
+
 		elementor.ajax.addRequest( 'save_builder', {
 			data: {
 				post_id: elementor.config.document.id,
