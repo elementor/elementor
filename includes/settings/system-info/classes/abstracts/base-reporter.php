@@ -153,8 +153,6 @@ abstract class Base_Reporter {
 	 *
 	 * @param array $key   Property key.
 	 * @param array $value Optional. Property value. Default is `null`.
-	 *
-	 * @return array An array of updated properties.
 	 */
 	final public function set_properties( $key, $value = null ) {
 		if ( is_array( $key ) ) {
