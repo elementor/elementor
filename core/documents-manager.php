@@ -183,11 +183,7 @@ class Documents_Manager {
 	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
 	 */
 	public function ajax_save( $request ) {
-		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'Missing post id.' );
-		}
-
-		$document = $this->get( $request['post_id'] );
+		$document = $this->get( $request['editor_post_id'] );
 
 		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
 			throw new \Exception( 'Access denied.' );
@@ -246,11 +242,7 @@ class Documents_Manager {
 	}
 
 	public function ajax_discard_changes( $request ) {
-		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'Missing post id.', Exceptions::BAD_REQUEST );
-		}
-
-		$document = $this->get( $request['post_id'] );
+		$document = $this->get( $request['editor_post_id'] );
 
 		$autosave = $document->get_autosave();
 

@@ -163,9 +163,12 @@ Ajax = {
 		if ( ajaxParams.data instanceof FormData ) {
 			ajaxParams.data.append( 'action', action );
 			ajaxParams.data.append( '_nonce', elementor.config.nonce );
+			ajaxParams.data.append( 'editor_post_id', elementor.config.document.id );
+
 		} else {
 			ajaxParams.data.action = action;
 			ajaxParams.data._nonce = elementor.config.nonce;
+			ajaxParams.data.editor_post_id = elementor.config.document.id;
 		}
 
 		var successCallback = ajaxParams.success,

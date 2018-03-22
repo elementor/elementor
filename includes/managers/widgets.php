@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Utils\Exceptions;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -287,20 +288,16 @@ class Widgets_Manager {
 	 * @throws \Exception
 	 */
 	public function ajax_render_widget( $request ) {
-		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'Missing post id.' );
-		}
-
-		$document = Plugin::$instance->documents->get( $request['post_id'] );
+		$document = Plugin::$instance->documents->get( $request['editor_post_id'] );
 
 		if ( ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'Access denied.' );
+			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
 		}
 
 		// Override the global $post for the render.
 		query_posts(
 			[
-				'p' => $request['post_id'],
+				'p' => $request['editor_post_id'],
 				'post_type' => 'any',
 			]
 		);
@@ -308,8 +305,6 @@ class Widgets_Manager {
 		$editor = Plugin::$instance->editor;
 		$is_edit_mode = $editor->is_edit_mode();
 		$editor->set_edit_mode( true );
-
-		Plugin::$instance->db->switch_to_post( $request['post_id'] );
 
 		$render_html = $document->render_element( $request['data'] );
 
