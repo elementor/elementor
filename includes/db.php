@@ -97,10 +97,11 @@ class DB {
 	 * Retrieve editor data from the database.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @access public
 	 *
-	 * @param int    $post_id Post ID.
-	 * @param string $status  Optional. Post status. Default is `publish`.
+	 * @param int     $post_id           Post ID.
+	 * @param string  $status            Optional. Post status. Default is `publish`.
 	 *
 	 * @return array Editor data.
 	 */
