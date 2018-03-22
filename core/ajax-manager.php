@@ -101,7 +101,8 @@ class Ajax_Manager {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
 		if ( empty( $_REQUEST['actions'] ) ) {
-			wp_send_json_error( new \WP_Error( 'missing_action', 'Action required.' ) );
+			$this->add_response_data( false, __( 'Action required.', 'elementor' ) )
+			     ->send();
 		}
 
 		/**
