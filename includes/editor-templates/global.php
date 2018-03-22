@@ -22,12 +22,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-add-new-section">
-			<button class="elementor-add-section-button elementor-button"><?php _e( 'Add New Section', 'elementor' ); ?></button>
-			<button class="elementor-add-template-button elementor-button"><?php _e( 'Add Template', 'elementor' ); ?></button>
-			<div class="elementor-add-section-drag-title"><?php _e( 'Or drag widget here', 'elementor' ); ?></div>
+			<button class="elementor-add-section-button elementor-button"><?php echo __( 'Add New Section', 'elementor' ); ?></button>
+			<button class="elementor-add-template-button elementor-button"><?php echo __( 'Add Template', 'elementor' ); ?></button>
+			<div class="elementor-add-section-drag-title"><?php echo __( 'Or drag widget here', 'elementor' ); ?></div>
 		</div>
 		<div class="elementor-select-preset">
-			<div class="elementor-select-preset-title"><?php _e( 'Select your Structure', 'elementor' ); ?></div>
+			<div class="elementor-select-preset-title"><?php echo __( 'Select your Structure', 'elementor' ); ?></div>
 			<ul class="elementor-select-preset-list">
 				<#
 					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 60, 34 ];
