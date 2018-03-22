@@ -113,6 +113,6 @@ body {
 	}
 
 	.ps-scrollbar-y-rail {
-		z-index: 2;
+		z-index: 2; // Avoid panel elements (like divider control) from appearing above the scrollbar
 	}
 }
