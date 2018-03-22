@@ -4,6 +4,7 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
 /**
  * A UI only control. Show a divider between controls
  *
