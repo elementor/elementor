@@ -141,7 +141,7 @@ Ajax = {
 				} );
 			},
 			error: function( data ) {
-				_.each( requests, function( args, id ) {
+				_.each( requests, function( args ) {
 					if ( args.options ) {
 						args.options.deferred.reject( data );
 					}

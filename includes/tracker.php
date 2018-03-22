@@ -154,7 +154,7 @@ class Tracker {
 
 		add_filter( 'https_ssl_verify', '__return_false' );
 
-		$response = wp_safe_remote_post(
+		wp_safe_remote_post(
 			self::$_api_url,
 			[
 				'timeout' => 25,

@@ -301,7 +301,7 @@ SectionView = BaseElementView.extend( {
 		elementor.helpers.enableElementEvents( $iframes );
 	},
 
-	onChildviewRequestResize: function( columnView, ui, event ) {
+	onChildviewRequestResize: function( columnView, ui ) {
 		// Get current column details
 		var currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
 
