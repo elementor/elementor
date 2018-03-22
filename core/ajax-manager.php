@@ -78,8 +78,6 @@ class Ajax_Manager {
 	 *
 	 * @param string   $tag      Ajax request name/tag.
 	 * @param callable $callback The callback function.
-	 *
-	 * @return Ajax_Manager An instance of the ajax manager.
 	 */
 	public function register_ajax_action( $tag, $callback ) {
 		if ( ! did_action( 'elementor/ajax/register_actions' ) ) {
@@ -103,7 +101,8 @@ class Ajax_Manager {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
 		if ( empty( $_REQUEST['actions'] ) ) {
-			wp_send_json_error( new \WP_Error( 'missing_action', 'Action required.' ) );
+			$this->add_response_data( false, __( 'Action required.', 'elementor' ) )
+			     ->send();
 		}
 
 		/**
