@@ -127,8 +127,8 @@ class Settings extends Settings_Page {
         <div class="wrap">
             <div class="elementor-blank_state">
                 <i class="eicon-nerd-chuckle"></i>
-                <h2><?php _e( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
-                <p><?php _e( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
+                <h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
+                <p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
                 <a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="#"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
             </div>
         </div><!-- /.wrap -->
