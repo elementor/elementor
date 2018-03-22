@@ -91,6 +91,17 @@ App = Marionette.Application.extend( {
 			Number: require( 'elementor-controls/number' ),
 			Popover_toggle: require( 'elementor-controls/popover-toggle' )
 		},
+		layouts: {
+			panel: {
+				pages: {
+					elements: {
+						views: {
+							Global: require( 'elementor-panel/pages/elements/views/global' )
+						}
+					}
+				}
+			}
+		},
 		saver: {
 			footerBehavior: require( './components/saver/behaviors/footer-saver' )
 		},

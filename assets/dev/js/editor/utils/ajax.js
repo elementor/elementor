@@ -88,7 +88,7 @@ Ajax = {
 			options.unique_id = action;
 		}
 
-		options.deferred = jQuery.Deferred().done( options.success ).fail( options.error );
+		options.deferred = jQuery.Deferred().done( options.success ).fail( options.error ).always( options.complete );
 
 		var request = {
 			action: action,
