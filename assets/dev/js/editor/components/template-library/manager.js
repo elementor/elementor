@@ -4,7 +4,6 @@ var TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layo
 
 TemplateLibraryManager = function() {
 	var self = this,
-		modal,
 		deleteDialog,
 		errorDialog,
 		layout,
