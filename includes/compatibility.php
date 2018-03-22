@@ -45,7 +45,7 @@ class Compatibility {
 	 * Filters the "Exit To Dashboard URL" and replace it with the classic editor
 	 * URL.
 	 *
-	 * Fired by `elementor/document/exit_to_dashboard_url` filter.
+	 * Fired by `elementor/document/urls/exit_to_dashboard` filter.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -216,7 +216,7 @@ class Compatibility {
 		// Gutenberg
 		if ( function_exists( 'gutenberg_init' ) ) {
 			add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
-			add_filter( 'elementor/document/exit_to_dashboard_url', [ __CLASS__, 'exit_to_classic_editor' ] );
+			add_filter( 'elementor/document/urls/exit_to_dashboard', [ __CLASS__, 'exit_to_classic_editor' ] );
 		}
 	}
 

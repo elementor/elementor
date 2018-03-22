@@ -97,7 +97,7 @@ abstract class Document extends Controls_Stack {
 		 * @param string   $url  WordPress preview URL.
 		 * @param Document $this The document instance.
 		 */
-		$url = apply_filters( 'elementor/document/wp_preview_url', $url, $this );
+		$url = apply_filters( 'elementor/document/urls/wp_preview', $url, $this );
 
 		return $url;
 	}
@@ -115,7 +115,7 @@ abstract class Document extends Controls_Stack {
 		 * @param string   $url  The exit URL
 		 * @param Document $this The document instance.
 		 */
-		$url = apply_filters( 'elementor/document/exit_to_dashboard_url', $url, $this );
+		$url = apply_filters( 'elementor/document/urls/exit_to_dashboard', $url, $this );
 
 		return $url;
 	}
@@ -361,7 +361,7 @@ abstract class Document extends Controls_Stack {
 		 * @param string   $url  The edit url.
 		 * @param Document $this The document instance.
 		 */
-		$url = apply_filters( 'elementor/document/edit_url', $url, $this );
+		$url = apply_filters( 'elementor/document/urls/edit ', $url, $this );
 
 		return $url;
 	}
@@ -393,7 +393,7 @@ abstract class Document extends Controls_Stack {
 			 * @param string   $url  The preview URL.
 			 * @param Document $this The document instance.
 			 */
-			$url = apply_filters( 'elementor/document/preview_url', $url, $this );
+			$url = apply_filters( 'elementor/document/urls/preview', $url, $this );
 		}
 
 		return $url;
