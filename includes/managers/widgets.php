@@ -306,6 +306,8 @@ class Widgets_Manager {
 		$is_edit_mode = $editor->is_edit_mode();
 		$editor->set_edit_mode( true );
 
+		Plugin::$instance->documents->switch_to_document( $document );
+
 		$render_html = $document->render_element( $request['data'] );
 
 		$editor->set_edit_mode( $is_edit_mode );
