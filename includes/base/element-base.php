@@ -419,7 +419,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * Retrieve the element parent. Used to check which element it belongs to.
 	 *
 	 * @since 1.0.0
-	 * @deprecated
+	 * @deprecated 1.7.6
 	 * @access public
 	 *
 	 * @return Element_Base Parent element.

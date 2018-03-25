@@ -283,7 +283,7 @@ class Widget_Alert extends Widget_Base {
 			if ( 'show' === $settings['show_dismiss'] ) { ?>
 				<button type="button" class="elementor-alert-dismiss">
 					<span aria-hidden="true">&times;</span>
-					<span class="elementor-screen-only"><?php esc_html_e( 'Dismiss alert', 'elementor' ); ?></span>
+					<span class="elementor-screen-only"><?php echo __( 'Dismiss alert', 'elementor' ); ?></span>
 				</button>
 			<?php } ?>
 		</div>
@@ -315,7 +315,7 @@ class Widget_Alert extends Widget_Base {
 				<# if ( 'show' === settings.show_dismiss ) { #>
 					<button type="button" class="elementor-alert-dismiss">
 						<span aria-hidden="true">&times;</span>
-						<span class="elementor-screen-only"><?php esc_html_e( 'Dismiss alert', 'elementor' ); ?></span>
+						<span class="elementor-screen-only"><?php echo __( 'Dismiss alert', 'elementor' ); ?></span>
 					</button>
 				<# } #>
 			</div>

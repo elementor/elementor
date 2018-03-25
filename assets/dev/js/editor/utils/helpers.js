@@ -54,6 +54,10 @@ helpers = {
 		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
 	},
 
+	resetEnqueuedFontsCache: function() {
+		this._enqueuedFonts = [];
+	},
+
 	getElementChildType: function( elementType, container ) {
 		if ( ! container ) {
 			container = this.elementsHierarchy;
@@ -92,6 +96,9 @@ helpers = {
 		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
+	/*
+	 * @deprecated 2.0.0
+	 */
 	stringReplaceAll: function( string, replaces ) {
 		var re = new RegExp( Object.keys( replaces ).join( '|' ), 'gi' );
 

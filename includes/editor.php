@@ -667,7 +667,7 @@ class Editor {
 			$config = array_replace_recursive( $config, $localized_settings );
 		}
 
-		echo '<script type="text/javascript">' . PHP_EOL;
+		echo '<script>' . PHP_EOL;
 		echo '/* <![CDATA[ */' . PHP_EOL;
 		$config_json = wp_json_encode( $config );
 		unset( $config );

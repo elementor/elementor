@@ -80,10 +80,10 @@ class Control_Gallery extends Base_Data_Control {
 				<div class="elementor-control-media elementor-control-tag-area">
 					<div class="elementor-control-gallery-status">
 						<span class="elementor-control-gallery-status-title"></span>
-						<span class="elementor-control-gallery-clear">(<?php _e( 'Clear', 'elementor' ); ?>)</span>
+						<span class="elementor-control-gallery-clear">(<?php echo __( 'Clear', 'elementor' ); ?>)</span>
 					</div>
 					<div class="elementor-control-gallery-thumbnails"></div>
-					<button class="elementor-button elementor-control-gallery-add"><?php _e( 'Add Images', 'elementor' ); ?></button>
+					<button class="elementor-button elementor-control-gallery-add"><?php echo __( 'Add Images', 'elementor' ); ?></button>
 				</div>
 			</div>
 		</div>
