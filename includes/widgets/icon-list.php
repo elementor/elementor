@@ -318,7 +318,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'icon_color_hover',
 			[
-				'label' => __( 'Hover Color', 'elementor' ),
+				'label' => __( 'Hover', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -376,7 +376,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'text_color_hover',
 			[
-				'label' => __( 'Hover Color', 'elementor' ),
+				'label' => __( 'Hover', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
