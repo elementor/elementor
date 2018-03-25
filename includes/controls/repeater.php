@@ -147,7 +147,7 @@ class Control_Repeater extends Base_Data_Control {
 		<div class="elementor-repeater-fields-wrapper"></div>
 		<div class="elementor-button-wrapper">
 			<button class="elementor-button elementor-button-default elementor-repeater-add" type="button">
-				<i class="eicon-plus" aria-hidden="true"></i><?php _e( 'Add Item', 'elementor' ); ?>
+				<i class="eicon-plus" aria-hidden="true"></i><?php echo __( 'Add Item', 'elementor' ); ?>
 			</button>
 		</div>
 		<?php

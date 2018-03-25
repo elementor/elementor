@@ -16,7 +16,7 @@ module.exports = Module.extend( {
 	startTimer: function( hasChanges ) {
 		clearTimeout( this.autoSaveTimer );
 		if ( hasChanges ) {
-			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), this.autosaveInterval );
+			this.autoSaveTimer = setTimeout( _.bind( this.doAutoSave, this ), this.autosaveInterval );
 		}
 	},
 
