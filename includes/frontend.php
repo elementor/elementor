@@ -533,7 +533,7 @@ class Frontend {
 	 * @access public
 	 */
 	public function wp_footer() {
-		if ( ! $this->_has_elementor_in_page && ! Plugin::$instance->preview->is_preview_mode() ) {
+		if ( ! $this->_has_elementor_in_page ) {
 			return;
 		}
 
