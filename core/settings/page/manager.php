@@ -99,7 +99,7 @@ class Manager extends BaseManager {
 			$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 		}
 
-		$model = $this->get_model( $post_id );
+		$model = $this->get_model( $document->get_post()->ID );
 
 		if ( $document->is_autosave() ) {
 			$model->set_settings( 'post_status', $document->get_main_post()->post_status );
@@ -302,9 +302,12 @@ class Manager extends BaseManager {
 	public function save_post_status( $post_id, $status ) {
 		$parent_id = wp_is_post_revision( $post_id );
 
-		if ( ! $parent_id ) {
-			$parent_id = $post_id;
+		if ( $parent_id ) {
+			// Don't update revisions post-status
+			return;
 		}
+
+		$parent_id = $post_id;
 
 		$post = get_post( $parent_id );
 
