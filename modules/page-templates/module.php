@@ -4,6 +4,8 @@ namespace Elementor\Modules\PageTemplates;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\DocumentTypes\Post as PostDocument;
+use Elementor\Modules\Library\Documents\Page as PageDocument;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -132,7 +134,7 @@ class Module extends BaseModule {
 	 * @param Document $document
 	 */
 	public function action_register_template_control( $document ) {
-		if ( $document instanceof \Elementor\Core\DocumentTypes\Post || $document instanceof \Elementor\Modules\Library\Documents\Page ) {
+		if ( $document instanceof PostDocument || $document instanceof PageDocument ) {
 			$this->register_template_control( $document );
 		}
 	}
