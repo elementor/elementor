@@ -56,18 +56,18 @@ class Control_Repeater extends Base_Data_Control {
 	/**
 	 * Get repeater control value.
 	 *
-	 * Retrieve the value of the repeater control from a specific widget.
+	 * Retrieve the value of the repeater control from a specific Controls_Stack.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $control Control
-	 * @param array $widget  Widget
+	 * @param array $control  Control
+	 * @param array $settings Controls_Stack settings
 	 *
 	 * @return mixed Control values.
 	 */
-	public function get_value( $control, $widget ) {
-		$value = parent::get_value( $control, $widget );
+	public function get_value( $control, $settings ) {
+		$value = parent::get_value( $control, $settings );
 
 		if ( ! empty( $value ) ) {
 			foreach ( $value as &$item ) {

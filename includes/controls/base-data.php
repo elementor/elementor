@@ -51,7 +51,7 @@ abstract class Base_Data_Control extends Base_Control {
 	/**
 	 * Get data control value.
 	 *
-	 * Retrieve the value of the data control from a specific widget settings.
+	 * Retrieve the value of the data control from a specific Controls_Stack settings.
 	 *
 	 * @since 1.5.0
 	 * @access public
