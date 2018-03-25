@@ -27,7 +27,7 @@ module.exports = Marionette.ItemView.extend( {
 	behaviors: function() {
 		var behaviors = {
 			saver: {
-				behaviorClass: elementor.modules.saver.footerBehavior
+				behaviorClass: elementor.modules.components.saver.behaviors.FooterSaver
 			}
 		};
 
