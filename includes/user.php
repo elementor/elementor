@@ -132,7 +132,7 @@ class User {
 	 *
 	 * @return array A list of user notices.
 	 */
-	private static function _get_user_notices() {
+	private static function get_user_notices() {
 		return get_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, true );
 	}
 
@@ -150,7 +150,7 @@ class User {
 	 * @return bool Whether the notice was viewed by the user.
 	 */
 	public static function is_user_notice_viewed( $notice_id ) {
-		$notices = self::_get_user_notices();
+		$notices = self::get_user_notices();
 		if ( empty( $notices ) || empty( $notices[ $notice_id ] ) ) {
 			return false;
 		}
@@ -174,7 +174,7 @@ class User {
 			die;
 		}
 
-		$notices = self::_get_user_notices();
+		$notices = self::get_user_notices();
 		if ( empty( $notices ) ) {
 			$notices = [];
 		}
