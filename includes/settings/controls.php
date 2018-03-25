@@ -152,7 +152,7 @@ class Settings_Controls {
 		?>
 		<select name="<?php echo esc_attr( $field['id'] ); ?>">
 			<?php if ( ! empty( $field['show_select'] ) ) : ?>
-				<option value="">— <?php _e( 'Select', 'elementor' ); ?> —</option>
+				<option value="">— <?php echo __( 'Select', 'elementor' ); ?> —</option>
 			<?php endif; ?>
 
 			<?php foreach ( $field['options'] as $value => $label ) : ?>

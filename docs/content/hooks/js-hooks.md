@@ -16,7 +16,7 @@ Argument     | Type        | Description
 ```javascript
 jQuery( function( $ ) {
 	// Add space for Elementor Menu Anchor link
-	if ( undefined !== window.elementorFrontend ) {
+	if ( window.elementorFrontend ) {
 		elementorFrontend.hooks.addFilter( 'frontend/handlers/menu_anchor/scroll_top_distance', function( scrollTop ) {
 			return scrollTop - 30;
 		} );
@@ -33,7 +33,7 @@ add_action( 'wp_footer', function() {
 	<script>
 		jQuery( function( $ ) {
 			// Add space for Elementor Menu Anchor link
-			if ( undefined !== window.elementorFrontend ) {
+			if ( window.elementorFrontend ) {
 				elementorFrontend.hooks.addFilter( 'frontend/handlers/menu_anchor/scroll_top_distance', function( scrollTop ) {
 					return scrollTop - 30;
 				} );
