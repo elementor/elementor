@@ -156,6 +156,8 @@ class Preview {
 		// Hold-on all jQuery plugins after all HTML markup render.
 		wp_add_inline_script( 'jquery-migrate', 'jQuery.holdReady( true );' );
 
+		$this->enqueue_fonts();
+
 		Plugin::$instance->frontend->enqueue_styles();
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
@@ -236,5 +238,24 @@ class Preview {
 	 */
 	public function __construct() {
 		add_action( 'template_redirect', [ $this, 'init' ], 0 );
+	}
+
+	protected function enqueue_fonts() {
+		$post_id = $this->get_post_id();
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
+		if ( $document->is_autosave() ) {
+			$post_id = $document->get_post()->ID;
+		}
+
+		$css_file = new Post_CSS_File( $post_id );
+
+		// Update the CSS.
+		$css_file->get_css();
+
+		$fonts = $css_file->get_fonts();
+
+		foreach ( $fonts as $font ) {
+			Plugin::$instance->frontend->enqueue_font( $font );
+		}
 	}
 }
