@@ -56,9 +56,9 @@ class Manager {
 	}
 
 	public function tag_text_to_tag_data( $tag_text ) {
-		preg_match( '/id="(.+?(?="))"/', $tag_text, $tag_id_match );
-		preg_match( '/name="(.+?(?="))"/', $tag_text, $tag_name_match );
-		preg_match( '/settings="(.+?(?="]))/', $tag_text, $tag_settings_match );
+		preg_match( '/id="(.*?(?="))"/', $tag_text, $tag_id_match );
+		preg_match( '/name="(.*?(?="))"/', $tag_text, $tag_name_match );
+		preg_match( '/settings="(.*?(?="]))/', $tag_text, $tag_settings_match );
 
 		if ( ! $tag_id_match || ! $tag_name_match || ! $tag_settings_match ) {
 			return null;

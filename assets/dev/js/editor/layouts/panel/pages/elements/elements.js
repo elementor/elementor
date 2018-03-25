@@ -1,7 +1,7 @@
 var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsCollection = require( './collections/elements' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
-	PanelElementsElementsView = elementor.modules.templateLibrary.ElementsCollectionView,
+	PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
 	PanelElementsSearchView = require( './views/search' ),
 	PanelElementsGlobalView = require( './views/global' ),
 	PanelElementsLayoutView;

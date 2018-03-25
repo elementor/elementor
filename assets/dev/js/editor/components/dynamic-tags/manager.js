@@ -96,9 +96,9 @@ module.exports = Module.extend( {
 	},
 
 	tagTextToTagData: function( tagText ) {
-		var tagIDMatch = tagText.match( /id="(.+?(?="))"/ ),
-			tagNameMatch = tagText.match( /name="(.+?(?="))"/ ),
-			tagSettingsMatch = tagText.match( /settings="(.+?(?="]))/ );
+		var tagIDMatch = tagText.match( /id="(.*?(?="))"/ ),
+			tagNameMatch = tagText.match( /name="(.*?(?="))"/ ),
+			tagSettingsMatch = tagText.match( /settings="(.*?(?="]))/ );
 
 		if ( ! tagIDMatch || ! tagNameMatch || ! tagSettingsMatch ) {
 			return false;

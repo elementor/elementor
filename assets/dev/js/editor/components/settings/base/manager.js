@@ -109,7 +109,7 @@ module.exports = ViewModule.extend( {
 				pageName: this.getSettings( 'name' ) + '_settings'
 			};
 
-		elementor.modules.panel.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
+		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
 	},
 
 	onInit: function() {

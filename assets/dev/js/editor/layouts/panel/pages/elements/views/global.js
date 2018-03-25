@@ -11,7 +11,13 @@ module.exports = Marionette.ItemView.extend( {
 		var panel = elementor.getPanelView();
 
 		if ( 'elements' === panel.getCurrentPageName() ) {
-			panel.getCurrentPageView().showView( 'search' );
+			setTimeout( function() {
+				var elementsPageView = panel.getCurrentPageView();
+
+				if ( ! elementsPageView.search.currentView ) {
+					elementsPageView.showView( 'search' );
+				}
+			} );
 		}
 	}
 } );
