@@ -202,7 +202,7 @@ abstract class Element_Base extends Controls_Stack {
 			return [];
 		}
 		if ( null === static::$_edit_tools ) {
-			self::_init_edit_tools();
+			self::init_edit_tools();
 		}
 
 		return static::$_edit_tools;
@@ -231,7 +231,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	final public static function add_edit_tool( $tool_name, $tool_data, $after = null ) {
 		if ( null === static::$_edit_tools ) {
-			self::_init_edit_tools();
+			self::init_edit_tools();
 		}
 
 		// Adding the tool at specific position
@@ -289,7 +289,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access private
 	 * @static
 	 */
-	private static function _init_edit_tools() {
+	private static function init_edit_tools() {
 		static::$_edit_tools = static::get_default_edit_tools();
 	}
 
