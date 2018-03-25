@@ -88,10 +88,16 @@ class Post_Preview_CSS extends Post_CSS_File {
 		// Parse CSS first, to get the fonts list.
 		$css = $this->get_css();
 
-		return [
+		$meta = [
 			'status' => self::CSS_STATUS_INLINE,
 			'fonts' => $this->get_fonts(),
 			'css' => $css,
 		];
+
+		if ( $property ) {
+			return isset( $meta[ $property ] ) ? $meta[ $property ] : null;
+		}
+
+		return $meta;
 	}
 }
