@@ -295,7 +295,7 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
-		if ( DB::STATUS_AUTOSAVE === $this->post->post_status ) {
+		if ( DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 			if ( ! defined( 'DOING_AUTOSAVE' ) ) {
 				define( 'DOING_AUTOSAVE', true );
 			}
