@@ -54,6 +54,10 @@ helpers = {
 		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
 	},
 
+	resetEnqueuedFontsCache: function() {
+		this._enqueuedFonts = [];
+	},
+
 	getElementChildType: function( elementType, container ) {
 		if ( ! container ) {
 			container = this.elementsHierarchy;
