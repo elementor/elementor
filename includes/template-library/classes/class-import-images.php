@@ -40,12 +40,12 @@ class Import_Images {
 	 *
 	 * @return string Image hash.
 	 */
-	private function _get_hash_image( $attachment_url ) {
+	private function get_hash_image( $attachment_url ) {
 		return sha1( $attachment_url );
 	}
 
 	/**
-	 * Return saved image.
+	 * Get saved image.
 	 *
 	 * Retrieve new image ID, if the image has a new ID after the import.
 	 *
@@ -56,7 +56,7 @@ class Import_Images {
 	 *
 	 * @return false|array New image ID  or false.
 	 */
-	private function _return_saved_image( $attachment ) {
+	private function get_saved_image( $attachment ) {
 		global $wpdb;
 
 		if ( isset( $this->_replace_image_ids[ $attachment['id'] ] ) ) {
@@ -69,7 +69,7 @@ class Import_Images {
 					WHERE `meta_key` = \'_elementor_source_image_hash\'
 						AND `meta_value` = %s
 				;',
-				$this->_get_hash_image( $attachment['url'] )
+				$this->get_hash_image( $attachment['url'] )
 			)
 		);
 
@@ -101,7 +101,8 @@ class Import_Images {
 	 * @return false|array Imported image data, or false.
 	 */
 	public function import( $attachment ) {
-		$saved_image = $this->_return_saved_image( $attachment );
+		$saved_image = $this->get_saved_image( $attachment );
+
 		if ( $saved_image ) {
 			return $saved_image;
 		}
@@ -140,7 +141,7 @@ class Import_Images {
 			$post_id,
 			wp_generate_attachment_metadata( $post_id, $upload['file'] )
 		);
-		update_post_meta( $post_id, '_elementor_source_image_hash', $this->_get_hash_image( $attachment['url'] ) );
+		update_post_meta( $post_id, '_elementor_source_image_hash', $this->get_hash_image( $attachment['url'] ) );
 
 		$new_attachment = [
 			'id' => $post_id,

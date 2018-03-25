@@ -274,7 +274,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 * @return array Processed fields.
 	 */
 	protected function prepare_fields( $fields ) {
-		$image_sizes = $this->_get_image_sizes();
+		$image_sizes = $this->get_image_sizes();
 
 		$args = $this->get_args();
 
@@ -307,7 +307,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 *
 	 * @return array Filtered image sizes.
 	 */
-	private function _get_image_sizes() {
+	private function get_image_sizes() {
 		$wp_image_sizes = self::get_all_image_sizes();
 
 		$args = $this->get_args();

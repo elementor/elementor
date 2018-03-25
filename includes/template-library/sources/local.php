@@ -562,7 +562,7 @@ class Source_Local extends Source_Base {
 			'author' => $user->display_name,
 			'hasPageSettings' => ! empty( $page_settings ),
 			'tags' => [],
-			'export_link' => $this->_get_export_link( $template_id ),
+			'export_link' => $this->get_export_link( $template_id ),
 			'url' => get_permalink( $post->ID ),
 		];
 
@@ -819,7 +819,7 @@ class Source_Local extends Source_Base {
 	public function post_row_actions( $actions, \WP_Post $post ) {
 		if ( self::is_base_templates_screen() ) {
 			if ( $this->is_template_supports_export( $post->ID ) ) {
-				$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+				$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
 			}
 
 			unset( $actions['inline hide-if-no-js'] );
@@ -951,7 +951,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @return string Template export URL.
 	 */
-	private function _get_export_link( $template_id ) {
+	private function get_export_link( $template_id ) {
 		return add_query_arg(
 			[
 				'action' => 'elementor_export_template',
