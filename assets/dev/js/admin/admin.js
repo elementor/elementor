@@ -68,7 +68,7 @@
 					$( document ).on( 'heartbeat-tick.autosave', function() {
 						self.cache.$window.off( 'beforeunload.edit-post' );
 
-						location = self.cache.$goToEditLink.attr( 'href' );
+						location.href = self.cache.$goToEditLink.attr( 'href' );
 					} );
 				}
 
