@@ -699,7 +699,6 @@ abstract class CSS_File {
 		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, $this->get_file_name() );
 
 		$this->path = $wp_upload_dir['basedir'] . $relative_path;
-
 		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
 	}
 
