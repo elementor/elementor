@@ -51,7 +51,7 @@ class Module extends BaseModule {
 	 */
 	public function template_include( $template ) {
 		if ( is_singular() ) {
-			$document = Plugin::$instance->documents->get_doc_or_auto_save();
+			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
 
 			if ( $document ) {
 				$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
@@ -212,11 +212,27 @@ class Module extends BaseModule {
 		$document->end_injection();
 	}
 
+	public function filter_update_meta( $value, $object_id, $meta_key ) {
+		// Don't allow WP to update the parent page template.
+		// (during `wp_update_post` from page-settings or save_plain_text).
+		$is_elementor_action = isset( $_POST['action'] ) && 'elementor_ajax' === $_POST['action'];
+
+		if ( $is_elementor_action && '_wp_page_template' === $meta_key && ! wp_is_post_autosave( $object_id ) ) {
+			$value = false;
+		}
+
+		return $value;
+	}
+
 	public function __construct() {
 		add_action( 'init', [ $this, 'add_wp_templates_support' ] );
 
 		add_filter( 'template_include', [ $this, 'template_include' ] );
 
 		add_action( 'elementor/documents/register_controls', [ $this, 'action_register_template_control' ] );
+
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			add_filter( 'update_post_metadata', [ $this, 'filter_update_meta' ], 10, 3 );
+		}
 	}
 }
