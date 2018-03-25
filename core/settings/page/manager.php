@@ -149,8 +149,9 @@ class Manager extends BaseManager {
 
 		wp_update_post( $post );
 
-		if ( DB::STATUS_PUBLISH === $post->post_status ) {
-			$autosave = Utils::get_post_autosave( $post->ID );
+		// Check updated status
+		if ( DB::STATUS_PUBLISH === get_post_status( $id ) ) {
+			$autosave = wp_get_post_autosave( $post->ID );
 			if ( $autosave ) {
 				wp_delete_post_revision( $autosave->ID );
 			}
