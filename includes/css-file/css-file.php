@@ -343,7 +343,6 @@ abstract class CSS_File {
 				$output_css_property = preg_replace_callback(
 					'/\{\{(?:([^.}]+)\.)?([^}]*)}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
 						$parser_control = $control;
-
 						$value_to_insert = $value;
 
 						if ( ! empty( $matches[1] ) ) {
@@ -352,7 +351,6 @@ abstract class CSS_File {
 							}
 
 							$parser_control = $controls_stack[ $matches[1] ];
-
 							$value_to_insert = call_user_func( $value_callback, $parser_control );
 						}
 
@@ -362,7 +360,6 @@ abstract class CSS_File {
 
 						/** @var Base_Data_Control $control_obj */
 						$control_obj = Plugin::$instance->controls_manager->get_control( $parser_control['type'] );
-
 						$parsed_value = $control_obj->get_style_value( strtolower( $matches[2] ), $value_to_insert );
 
 						if ( '' === $parsed_value ) {
