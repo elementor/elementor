@@ -199,7 +199,7 @@ module.exports = Marionette.Behavior.extend( {
 		if ( this.previewWindow ) {
 			// Refresh URL form updated config.
 			try {
-				this.previewWindow.location = elementor.config.document.urls.wp_preview;
+				this.previewWindow.location.href = elementor.config.document.urls.wp_preview;
 			} catch ( e ) {
 				// If the this.previewWindow is closed or it's domain was changed.
 				// Do nothing.
