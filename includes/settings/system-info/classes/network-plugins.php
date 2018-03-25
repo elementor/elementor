@@ -53,7 +53,7 @@ class Network_Plugins_Reporter extends Base_Reporter {
 	 *
 	 * @return array Active network plugins.
 	 */
-	private function _get_network_plugins() {
+	private function get_network_plugins() {
 		if ( ! $this->plugins ) {
 			$active_plugins = get_site_option( 'active_sitewide_plugins' );
 			$this->plugins = array_intersect_key( get_plugins(),  $active_plugins );
@@ -77,7 +77,7 @@ class Network_Plugins_Reporter extends Base_Reporter {
 			return false;
 		};
 
-		return ! ! $this->_get_network_plugins();
+		return ! ! $this->get_network_plugins();
 	}
 
 	/**
@@ -112,7 +112,7 @@ class Network_Plugins_Reporter extends Base_Reporter {
 	 */
 	public function get_network_active_plugins() {
 		return [
-			'value' => $this->_get_network_plugins(),
+			'value' => $this->get_network_plugins(),
 		];
 	}
 }

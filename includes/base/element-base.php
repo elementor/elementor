@@ -390,7 +390,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	public function get_children() {
 		if ( null === $this->_children ) {
-			$this->_init_children();
+			$this->init_children();
 		}
 
 		return $this->_children;
@@ -442,10 +442,10 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	public function add_child( array $child_data, array $child_args = [] ) {
 		if ( null === $this->_children ) {
-			$this->_init_children();
+			$this->init_children();
 		}
 
-		$child_type = $this->_get_child_type( $child_data );
+		$child_type = $this->get_child_type( $child_data );
 
 		if ( ! $child_type ) {
 			return false;
@@ -822,7 +822,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return Element_Base|false Child type or false if type not found.
 	 */
-	private function _get_child_type( $element_data ) {
+	private function get_child_type( $element_data ) {
 		$child_type = $this->_get_default_child_type( $element_data );
 
 		// If it's not a valid widget ( like a deactivated plugin )
@@ -854,7 +854,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private function _init_children() {
+	private function init_children() {
 		$this->_children = [];
 
 		$children_data = $this->get_data( 'elements' );
