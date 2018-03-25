@@ -51,7 +51,7 @@ class Module extends BaseModule {
 	 */
 	public function template_include( $template ) {
 		if ( is_singular() ) {
-			$document = Plugin::$instance->documents->get_doc_or_auto_save();
+			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
 
 			if ( $document ) {
 				$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
