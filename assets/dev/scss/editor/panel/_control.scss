@@ -18,9 +18,35 @@
 		}
 	}
 
+	&.elementor-control-type-divider {
+		padding: 0;
+		margin-bottom: -1px; // Cover next control's separator before
+		z-index: 1; // Cover next control's separator before
+		background-color: transparent;
+
+		hr {
+			border-bottom-width: 0;
+			border-top-width: 1px;
+			border-color: $editor-background;
+			border-style: solid;
+
+			&.elementor-divider-style {
+
+				&--thick {
+					border-top-width: 3px;
+				}
+
+				&--default {
+					margin-right: 20px;
+					margin-left: 20px;
+				}
+			}
+		}
+	}
+
 	&.elementor-control-separator- {
 
-		&default {
+		&default:not(.elementor-control-type-divider) {
 
 			&:before {
 				content: '';

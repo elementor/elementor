@@ -7,7 +7,7 @@
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
 **Stable tag:** 1.9.8  
-**Beta tag:** 2.0.0-beta3  
+**Beta tag:** 2.0.0-beta4  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -192,7 +192,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 2.0.0 Beta 3 - Available For Beta Testing ###
+### 2.0.0 Beta 4 - Available For Beta Testing ###
 * [Read more about v2.0](https://github.com/pojome/elementor/issues/3706/)
 * [Sign Up Now For Our Elite Group Of Early Access Testers](https://my.elementor.com/beta/)
 
