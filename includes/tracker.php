@@ -154,7 +154,7 @@ class Tracker {
 
 		add_filter( 'https_ssl_verify', '__return_false' );
 
-		$response = wp_safe_remote_post(
+		wp_safe_remote_post(
 			self::$_api_url,
 			[
 				'timeout' => 25,
@@ -261,8 +261,8 @@ class Tracker {
 		$tracker_description_text = apply_filters( 'elementor/tracker/admin_description_text', $tracker_description_text );
 		?>
 		<div class="updated">
-			<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php _e( 'Learn more.', 'elementor' ); ?></a></p>
-			<p><a href="<?php echo $optin_url; ?>" class="button-primary"><?php _e( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php _e( 'No thanks', 'elementor' ); ?></a></p>
+			<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php echo __( 'Learn more.', 'elementor' ); ?></a></p>
+			<p><a href="<?php echo $optin_url; ?>" class="button-primary"><?php echo __( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php echo __( 'No thanks', 'elementor' ); ?></a></p>
 		</div>
 		<?php
 	}

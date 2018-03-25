@@ -437,25 +437,6 @@ class DB {
 	}
 
 	/**
-	 * Has Elementor in post.
-	 *
-	 * Check whether the post has Elementor data in the post.
-	 *
-	 * @since 1.0.10
-	 * @deprecated 1.4.0 Use `is_built_with_elementor` instead.
-	 * @access public
-	 *
-	 * @param int $post_id Post ID.
-	 *
-	 * @return bool Whether the post was built with Elementor.
-	 */
-	public function has_elementor_in_post( $post_id ) {
-		_deprecated_function( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), '1.4.0', 'is_built_with_elementor()' );
-
-		return $this->is_built_with_elementor( $post_id );
-	}
-
-	/**
 	 * Switch to post.
 	 *
 	 * Change the global WordPress post to the requested post.
