@@ -132,10 +132,10 @@ class Admin {
 		<div id="elementor-switch-mode">
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo Plugin::$instance->db->is_built_with_elementor( $post->ID ); ?>" />
 			<button id="elementor-switch-mode-button" type="button" class="button button-primary button-hero">
-				<span class="elementor-switch-mode-on"><?php _e( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
+				<span class="elementor-switch-mode-on"><?php echo __( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 				<span class="elementor-switch-mode-off">
 					<i class="eicon-elementor" aria-hidden="true"></i>
-					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
+					<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
 				</span>
 			</button>
 		</div>
@@ -143,7 +143,7 @@ class Admin {
 			<a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
 				<div id="elementor-editor-button" class="button button-primary button-hero">
 					<i class="eicon-elementor" aria-hidden="true"></i>
-					<?php _e( 'Edit with Elementor', 'elementor' ); ?>
+					<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
 				</div>
 				<div class="elementor-loader-wrapper">
 					<div class="elementor-loader">
@@ -152,7 +152,7 @@ class Admin {
 						<div class="elementor-loader-box"></div>
 						<div class="elementor-loader-box"></div>
 					</div>
-					<div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
+					<div class="elementor-loading-title"><?php echo __( 'Loading', 'elementor' ); ?></div>
 				</div>
 			</a>
 		</div>
@@ -364,7 +364,7 @@ class Admin {
 					<i class="eicon-elementor-square" aria-hidden="true"></i>
 				</div>
 				<div class="elementor-message-content">
-					<strong><?php _e( 'Update Notification', 'elementor' ); ?></strong>
+					<strong><?php echo __( 'Update Notification', 'elementor' ); ?></strong>
 					<p>
 					<?php
 						printf(
@@ -386,7 +386,7 @@ class Admin {
 				<div class="elementor-message-action">
 					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>">
 						<i class="dashicons dashicons-update" aria-hidden="true"></i>
-						<?php _e( 'Update Now', 'elementor' ); ?>
+						<?php echo __( 'Update Now', 'elementor' ); ?>
 					</a>
 				</div>
 			</div>

@@ -120,9 +120,8 @@ class Elements_Manager {
 	 *
 	 * @param string $category_name       Category name.
 	 * @param array  $category_properties Category properties.
-	 * @param int    $deprecated          Deprecated parameter.
 	 */
-	public function add_category( $category_name, $category_properties, $deprecated = null ) {
+	public function add_category( $category_name, $category_properties ) {
 		if ( null === $this->categories ) {
 			$this->get_categories();
 		}

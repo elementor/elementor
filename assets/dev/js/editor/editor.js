@@ -230,7 +230,7 @@ App = Marionette.Application.extend( {
 		this.dynamicTags = new DynamicTags();
 
 		/**
-		 * @deprecated - use `this.settings.page` instead
+		 * @deprecated 1.6.0 - use `this.settings.page` instead
 		 */
 		this.pageSettings = this.settings.page;
 

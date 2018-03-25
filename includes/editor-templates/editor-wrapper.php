@@ -44,7 +44,7 @@ if ( ! Plugin::$instance->role_manager->user_can( 'design' ) ) {
 					<div class="elementor-loader-box"></div>
 					<div class="elementor-loader-box"></div>
 				</div>
-				<div class="elementor-loading-title"><?php _e( 'Loading', 'elementor' ); ?></div>
+				<div class="elementor-loading-title"><?php echo __( 'Loading', 'elementor' ); ?></div>
 			</div>
 		</div>
 		<div id="elementor-preview-responsive-wrapper" class="elementor-device-desktop elementor-device-rotate-portrait">
