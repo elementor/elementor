@@ -35,17 +35,7 @@ App = Marionette.Application.extend( {
 
 	// Exporting modules that can be used externally
 	modules: {
-		element: {
-			Model: require( 'elementor-elements/models/element' )
-		},
-		ControlsStack: require( 'elementor-views/controls-stack' ),
 		Module: require( 'elementor-utils/module' ),
-		RepeaterRowView: require( 'elementor-controls/repeater-row' ),
-		SettingsModel: require( 'elementor-elements/models/base-settings' ),
-		WidgetView: require( 'elementor-elements/views/widget' ),
-		panel: {
-			Menu: require( 'elementor-panel/pages/menu/menu' )
-		},
 		components: {
 			templateLibrary: {
 				views: {
@@ -56,57 +46,73 @@ App = Marionette.Application.extend( {
 					},
 					BaseModalLayout: require( 'elementor-templates/views/base-modal-layout' )
 				}
+			},
+			saver: {
+				behaviors: {
+					FooterSaver: require( './components/saver/behaviors/footer-saver' )
+				}
 			}
 		},
 		controls: {
+			Animation: require( 'elementor-controls/select2' ),
 			Base: require( 'elementor-controls/base' ),
 			BaseData: require( 'elementor-controls/base-data' ),
 			BaseMultiple: require( 'elementor-controls/base-multiple' ),
+			Box_shadow: require( 'elementor-controls/box-shadow' ),
 			Button: require( 'elementor-controls/button' ),
+			Choose: require( 'elementor-controls/choose' ),
+			Code: require( 'elementor-controls/code' ),
 			Color: require( 'elementor-controls/color' ),
+			Date_time: require( 'elementor-controls/date-time' ),
 			Dimensions: require( 'elementor-controls/dimensions' ),
+			Font: require( 'elementor-controls/font' ),
+			Gallery: require( 'elementor-controls/gallery' ),
+			Hover_animation: require( 'elementor-controls/select2' ),
+			Icon: require( 'elementor-controls/icon' ),
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
 			Media: require( 'elementor-controls/media' ),
-			Slider: require( 'elementor-controls/slider' ),
-			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
-			Choose: require( 'elementor-controls/choose' ),
-			Url: require( 'elementor-controls/base-multiple' ),
-			Font: require( 'elementor-controls/font' ),
-			Section: require( 'elementor-controls/section' ),
-			Tab: require( 'elementor-controls/tab' ),
-			Repeater: require( 'elementor-controls/repeater' ),
-			Wp_widget: require( 'elementor-controls/wp_widget' ),
-			Icon: require( 'elementor-controls/icon' ),
-			Gallery: require( 'elementor-controls/gallery' ),
-			Select2: require( 'elementor-controls/select2' ),
-			Date_time: require( 'elementor-controls/date-time' ),
-			Code: require( 'elementor-controls/code' ),
-			Box_shadow: require( 'elementor-controls/box-shadow' ),
-			Text_shadow: require( 'elementor-controls/box-shadow' ),
-			Structure: require( 'elementor-controls/structure' ),
-			Animation: require( 'elementor-controls/select2' ),
-			Hover_animation: require( 'elementor-controls/select2' ),
-			Order: require( 'elementor-controls/order' ),
-			Switcher: require( 'elementor-controls/switcher' ),
 			Number: require( 'elementor-controls/number' ),
-			Popover_toggle: require( 'elementor-controls/popover-toggle' )
+			Order: require( 'elementor-controls/order' ),
+			Popover_toggle: require( 'elementor-controls/popover-toggle' ),
+			Repeater: require( 'elementor-controls/repeater' ),
+			RepeaterRow: require( 'elementor-controls/repeater-row' ),
+			Section: require( 'elementor-controls/section' ),
+			Select2: require( 'elementor-controls/select2' ),
+			Slider: require( 'elementor-controls/slider' ),
+			Structure: require( 'elementor-controls/structure' ),
+			Switcher: require( 'elementor-controls/switcher' ),
+			Tab: require( 'elementor-controls/tab' ),
+			Text_shadow: require( 'elementor-controls/box-shadow' ),
+			Url: require( 'elementor-controls/base-multiple' ),
+			Wp_widget: require( 'elementor-controls/wp_widget' ),
+			Wysiwyg: require( 'elementor-controls/wysiwyg' )
+		},
+		elements: {
+			models: {
+				BaseSettings: require( 'elementor-elements/models/base-settings' ),
+				Element: require( 'elementor-elements/models/element' )
+			},
+			views: {
+				Widget: require( 'elementor-elements/views/widget' )
+			}
 		},
 		layouts: {
 			panel: {
 				pages: {
 					elements: {
 						views: {
-							Global: require( 'elementor-panel/pages/elements/views/global' )
+							Global: require( 'elementor-panel/pages/elements/views/global' ),
+							Elements: require( 'elementor-panel/pages/elements/views/elements' )
 						}
+					},
+					menu: {
+						Menu: require( 'elementor-panel/pages/menu/menu' )
 					}
 				}
 			}
 		},
-		saver: {
-			footerBehavior: require( './components/saver/behaviors/footer-saver' )
-		},
-		templateLibrary: {
-			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
+		views: {
+			ControlsStack: require( 'elementor-views/controls-stack' )
 		}
 	},
 
