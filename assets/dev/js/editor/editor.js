@@ -518,7 +518,6 @@ App = Marionette.Application.extend( {
 							var panel = elementor.getPanelView();
 
 							panel.setPage( 'historyPage' );
-
 							panel.getCurrentPageView().activateTab( 'revisions' );
 						}
 					}
@@ -549,7 +548,6 @@ App = Marionette.Application.extend( {
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
 		this.initComponents();
-
 		this.initEnvData();
 
 		if ( ! this.checkEnvCompatibility() ) {
@@ -561,13 +559,11 @@ App = Marionette.Application.extend( {
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.initClearPageDialog();
-
 		this.addBackgroundClickArea( document );
 
 		this.$window.trigger( 'elementor:init' );
 
 		this.initPreview();
-
 		this.logSite();
 	},
 
@@ -593,9 +589,7 @@ App = Marionette.Application.extend( {
 		}
 
 		this.initFrontend();
-
 		this.initElements();
-
 		this.initHotKeys();
 
 		this.heartbeat.init();
@@ -606,7 +600,6 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.schemes.init();
-
 		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
@@ -636,7 +629,6 @@ App = Marionette.Application.extend( {
 		}
 
 		this.setResizablePanel();
-
 		this.changeDeviceMode( this._defaultDeviceMode );
 
 		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
@@ -646,9 +638,7 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.enqueueTypographyFonts();
-
 		this.onEditModeSwitched();
-
 		this.openLibraryOnStart();
 
 		this.trigger( 'preview:loaded' );
@@ -813,6 +803,8 @@ App = Marionette.Application.extend( {
 	enqueueTypographyFonts: function() {
 		var self = this,
 			typographyScheme = this.schemes.getScheme( 'typography' );
+
+		self.helpers.resetEnqueuedFontsCache();
 
 		_.each( typographyScheme.items, function( item ) {
 			self.helpers.enqueueFont( item.value.font_family );
