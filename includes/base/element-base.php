@@ -556,7 +556,7 @@ abstract class Element_Base extends Controls_Stack {
 		$attributes = [];
 
 		foreach ( $render_attributes as $attribute_key => $attribute_values ) {
-			$attributes[] = sprintf( '%s="%s"', $attribute_key, esc_attr( implode( ' ', $attribute_values ) ) );
+			$attributes[] = sprintf( '%1$s="%2$s"', $attribute_key, esc_attr( implode( ' ', $attribute_values ) ) );
 		}
 
 		return implode( ' ', $attributes );

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Settings;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -118,15 +120,20 @@ class Manager {
 	public static function get_settings_managers_config() {
 		$config = [];
 
+		$user_can = Plugin::instance()->role_manager->user_can( 'design' );
 		foreach ( self::$settings_managers as $name => $manager ) {
 			$settings_model = $manager->get_model_for_config();
 
+			$tabs = $settings_model->get_tabs_controls();
+			if ( ! $user_can ) {
+				unset( $tabs['style'] );
+			}
 			$config[ $name ] = [
 				'name' => $manager->get_name(),
 				'panelPage' => $settings_model->get_panel_page_settings(),
 				'cssWrapperSelector' => $settings_model->get_css_wrapper_selector(),
 				'controls' => $settings_model->get_controls(),
-				'tabs' => $settings_model->get_tabs_controls(),
+				'tabs' => $tabs,
 				'settings' => $settings_model->get_settings(),
 			];
 		}
