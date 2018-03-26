@@ -69,7 +69,7 @@ class Api {
 	 *
 	 * @return array|false Info data, or false.
 	 */
-	private static function _get_info_data( $force_update = false ) {
+	private static function get_info_data( $force_update = false ) {
 		$cache_key = 'elementor_remote_info_api_data_' . ELEMENTOR_VERSION;
 
 		$info_data = get_transient( $cache_key );
@@ -133,7 +133,7 @@ class Api {
 	 * @return array|false Upgrade notice, or false none exist.
 	 */
 	public static function get_upgrade_notice() {
-		$data = self::_get_info_data();
+		$data = self::get_info_data();
 
 		if ( empty( $data['upgrade_notice'] ) ) {
 			return false;
@@ -157,7 +157,7 @@ class Api {
 	 * @return array The templates data.
 	 */
 	public static function get_library_data( $force_update = false ) {
-		self::_get_info_data( $force_update );
+		self::get_info_data( $force_update );
 
 		$library_data = get_option( self::LIBRARY_OPTION_KEY );
 
@@ -183,7 +183,7 @@ class Api {
 	 * @return array Feed data.
 	 */
 	public static function get_feed_data( $force_update = false ) {
-		self::_get_info_data( $force_update );
+		self::get_info_data( $force_update );
 
 		$feed = get_option( self::FEED_OPTION_KEY );
 
@@ -294,7 +294,7 @@ class Api {
 	public static function ajax_reset_api_data() {
 		check_ajax_referer( 'elementor_reset_library', '_nonce' );
 
-		self::_get_info_data( true );
+		self::get_info_data( true );
 
 		wp_send_json_success();
 	}

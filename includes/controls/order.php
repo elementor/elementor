@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * box.
  *
  * @since 1.0.0
+ * @deprecated 2.0.0
  */
 class Control_Order extends Control_Base_Multiple {
 
@@ -45,6 +46,25 @@ class Control_Order extends Control_Base_Multiple {
 			'order_by' => '',
 			'reverse_order' => '',
 		];
+	}
+
+	/**
+	 * Retrieve checkbox control value.
+	 *
+	 * Get the value of the order control from a specific Controls_Stack.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param array $control  Control
+	 * @param array $settings Controls_Stack settings
+	 *
+	 * @return mixed Control values.
+	 */
+	public function get_value( $control, $settings ) {
+		_deprecated_file( __CLASS__, '2.0.0' );
+
+		return parent::get_value( $control, $settings );
 	}
 
 	/**

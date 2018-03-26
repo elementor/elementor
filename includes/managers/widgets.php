@@ -39,7 +39,7 @@ class Widgets_Manager {
 	 * @since 1.0.0
 	 * @access private
 	*/
-	private function _init_widgets() {
+	private function init_widgets() {
 		$build_widgets_filename = [
 			'common',
 			'heading',
@@ -83,7 +83,7 @@ class Widgets_Manager {
 			$this->register_widget_type( new $class_name() );
 		}
 
-		$this->_register_wp_widgets();
+		$this->register_wp_widgets();
 
 		/**
 		 * After widgets registered.
@@ -108,7 +108,7 @@ class Widgets_Manager {
 	 * @since 1.0.0
 	 * @access private
 	*/
-	private function _register_wp_widgets() {
+	private function register_wp_widgets() {
 		global $wp_widget_factory;
 
 		// Skip Pojo widgets.
@@ -168,7 +168,7 @@ class Widgets_Manager {
 	 * @since 1.0.0
 	 * @access private
 	*/
-	private function _require_files() {
+	private function require_files() {
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
 	}
 
@@ -186,7 +186,7 @@ class Widgets_Manager {
 	*/
 	public function register_widget_type( Widget_Base $widget ) {
 		if ( is_null( $this->_widget_types ) ) {
-			$this->_init_widgets();
+			$this->init_widgets();
 		}
 
 		$this->_widget_types[ $widget->get_name() ] = $widget;
@@ -230,7 +230,7 @@ class Widgets_Manager {
 	*/
 	public function get_widget_types( $widget_name = null ) {
 		if ( is_null( $this->_widget_types ) ) {
-			$this->_init_widgets();
+			$this->init_widgets();
 		}
 
 		if ( null !== $widget_name ) {
@@ -480,7 +480,7 @@ class Widgets_Manager {
 	 * @access public
 	*/
 	public function __construct() {
-		$this->_require_files();
+		$this->require_files();
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}

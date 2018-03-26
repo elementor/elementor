@@ -187,7 +187,7 @@ class Elements_Manager {
 	 */
 	public function get_element_types( $element_name = null ) {
 		if ( is_null( $this->_element_types ) ) {
-			$this->_init_elements();
+			$this->init_elements();
 		}
 
 		if ( null !== $element_name ) {
@@ -299,7 +299,7 @@ class Elements_Manager {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private function _init_elements() {
+	private function init_elements() {
 		$this->_element_types = [];
 
 		foreach ( [ 'section', 'column' ] as $element_name ) {
