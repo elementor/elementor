@@ -35,7 +35,7 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	/**
 	 * Get multiple control value.
 	 *
-	 * Retrieve the value of the multiple control from a specific widget settings.
+	 * Retrieve the value of the multiple control from a specific Controls_Stack settings.
 	 *
 	 * @since 1.0.0
 	 * @access public

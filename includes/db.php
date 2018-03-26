@@ -274,7 +274,7 @@ class DB {
 	 *
 	 * @param array $element_data Element data.
 	 */
-	private function _render_element_plain_content( $element_data ) {
+	private function render_element_plain_content( $element_data ) {
 		if ( 'widget' === $element_data['elType'] ) {
 			/** @var Widget_Base $widget */
 			$widget = Plugin::$instance->elements_manager->create_element_instance( $element_data );
@@ -286,7 +286,7 @@ class DB {
 
 		if ( ! empty( $element_data['elements'] ) ) {
 			foreach ( $element_data['elements'] as $element ) {
-				$this->_render_element_plain_content( $element );
+				$this->render_element_plain_content( $element );
 			}
 		}
 	}
@@ -580,7 +580,7 @@ class DB {
 		ob_start();
 		if ( $data ) {
 			foreach ( $data as $element_data ) {
-				$this->_render_element_plain_content( $element_data );
+				$this->render_element_plain_content( $element_data );
 			}
 		}
 

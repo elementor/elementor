@@ -42,10 +42,10 @@ class Settings_Controls {
 
 		$field = array_merge( $defaults, $field );
 
-		$method_name = '_' . $field['type'];
+		$method_name = $field['type'];
 
 		if ( ! method_exists( __CLASS__, $method_name ) ) {
-			$method_name = '_text';
+			$method_name = 'text';
 		}
 
 		self::$method_name( $field );
@@ -62,7 +62,7 @@ class Settings_Controls {
 	 *
 	 * @param array $field Field data.
 	 */
-	private static function _text( array $field ) {
+	private static function text( array $field ) {
 		if ( empty( $field['classes'] ) ) {
 			$field['classes'] = [ 'regular-text' ];
 		}
@@ -90,7 +90,7 @@ class Settings_Controls {
 	 *
 	 * @param array $field Field data.
 	 */
-	private static function _checkbox( array $field ) {
+	private static function checkbox( array $field ) {
 		?>
 		<label>
 			<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo $field['value']; ?>"<?php checked( $field['value'], get_option( $field['id'], $field['std'] ) ); ?> />
@@ -117,7 +117,7 @@ class Settings_Controls {
 	 *
 	 * @param array $field Field data.
 	 */
-	private static function _checkbox_list( array $field ) {
+	private static function checkbox_list( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		if ( ! is_array( $old_value ) ) {
 			$old_value = [];
@@ -147,7 +147,7 @@ class Settings_Controls {
 	 *
 	 * @param array $field Field data.
 	 */
-	private static function _select( array $field ) {
+	private static function select( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		?>
 		<select name="<?php echo esc_attr( $field['id'] ); ?>">
@@ -177,7 +177,7 @@ class Settings_Controls {
 	 *
 	 * @param array $field Field data.
 	 */
-	private static function _checkbox_list_cpt( array $field ) {
+	private static function checkbox_list_cpt( array $field ) {
 		$defaults = [
 			'exclude' => [],
 		];
@@ -197,7 +197,7 @@ class Settings_Controls {
 			$field['options'][ $cpt_slug ] = $post_type->labels->name;
 		}
 
-		self::_checkbox_list( $field );
+		self::checkbox_list( $field );
 	}
 
 	/**
@@ -211,7 +211,7 @@ class Settings_Controls {
 	 *
 	 * @param array $field Field data.
 	 */
-	private static function _checkbox_list_roles( array $field ) {
+	private static function checkbox_list_roles( array $field ) {
 		$defaults = [
 			'exclude' => [],
 		];
@@ -226,7 +226,7 @@ class Settings_Controls {
 			$field['options'][ $role_slug ] = $role_data['name'];
 		}
 
-		self::_checkbox_list( $field );
+		self::checkbox_list( $field );
 	}
 
 	/**
@@ -240,7 +240,7 @@ class Settings_Controls {
 	 *
 	 * @param array $field Field data.
 	 */
-	private static function _raw_html( array $field ) {
+	private static function raw_html( array $field ) {
 		if ( empty( $field['html'] ) ) {
 			return;
 		}
