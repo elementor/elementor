@@ -155,7 +155,7 @@ class Widget_Counter extends Widget_Base {
 					'thousand_separator' => 'yes',
 				],
 				'options' => [
-					',' => 'Default',
+					'' => 'Default',
 					'.' => 'Dot',
 					' ' => 'Space',
 				],
@@ -294,7 +294,8 @@ class Widget_Counter extends Widget_Base {
 		] );
 
 		if ( ! empty( $settings['thousand_separator'] ) ) {
-			$this->add_render_attribute( 'counter', 'data-delimiter', ',' );
+			$delimiter = empty( $settings['thousand_separator_char'] ) ? ',' : $settings['thousand_separator_char'];
+			$this->add_render_attribute( 'counter', 'data-delimiter', $delimiter );
 		}
 		?>
 		<div class="elementor-counter">
