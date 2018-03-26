@@ -165,7 +165,18 @@ class Role_Manager extends Settings_Page {
 	private function get_user_restrictions() {
 		static $restrictions = false;
 		if ( ! $restrictions ) {
-			$restrictions = apply_filters( 'elementor/editor/user/restrictions', [] );
+			$restrictions = [];
+
+			/**
+			 * Editor user restrictions.
+			 *
+			 * Filters the user restrictions in the editor.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param array $restrictions User restrictions.
+			 */
+			$restrictions = apply_filters( 'elementor/editor/user/restrictions', $restrictions );
 		}
 		return $restrictions;
 	}

@@ -36,14 +36,30 @@ class Fonts {
 	const LOCAL = 'local';
 
 	/**
-	 * Used to hold additional fonts
+	 * Additional fonts.
+	 *
+	 * Used to hold additional fonts.
+	 *
+	 * @since 1.9.4
+	 * @access private
+	 * @static
+	 *
+	 * @var null|array
 	 */
-	private static $additional_fonts =  null;
+	private static $additional_fonts = null;
 
 	/**
-	 * Used to hold font types/groups
+	 * Font groups.
+	 *
+	 * Used to hold font types/groups.
+	 *
+	 * @since 1.9.4
+	 * @access private
+	 * @static
+	 *
+	 * @var null|array
 	 */
-	private static $font_groups =  null;
+	private static $font_groups = null;
 
 	/**
 	 * Get font Groups.
@@ -64,7 +80,18 @@ class Fonts {
 				self::EARLYACCESS => __( 'Google Early Access', 'elementor' ),
 			];
 
-			self::$font_groups = apply_filters( 'elementor/fonts/groups', $font_groups );
+			/**
+			 * Font groups.
+			 *
+			 * Filters the fonts groups used by Elementor.
+			 *
+			 * @since 1.9.4
+			 *
+			 * @param array $font_groups Font groups.
+			 */
+			$font_groups = apply_filters( 'elementor/fonts/groups', $font_groups );
+
+			self::$font_groups = $font_groups;
 		}
 
 		return self::$font_groups;
@@ -83,14 +110,20 @@ class Fonts {
 	 */
 	public static function get_fonts() {
 		if ( null === self::$additional_fonts ) {
+			$additional_fonts = [];
+
 			/**
-			 * Allows adding additional fonts to elementor
+			 * Additional fonts.
+			 *
+			 * Filters the fonts used by Elementor to add additional fonts.
 			 *
 			 * @since 1.9.4
 			 *
-			 * @param array $additional_fonts
+			 * @param array $additional_fonts Additional Elementor fonts.
 			 */
-			self::$additional_fonts = apply_filters( 'elementor/fonts/additional_fonts', [] );
+			$additional_fonts = apply_filters( 'elementor/fonts/additional_fonts', $additional_fonts );
+
+			self::$additional_fonts = $additional_fonts;
 		}
 
 		return array_merge( self::get_native_fonts(), self::$additional_fonts );

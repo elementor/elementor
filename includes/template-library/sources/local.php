@@ -196,6 +196,16 @@ class Source_Local extends Source_Base {
 			}
 		}
 
+		/**
+		 * Create new template library dialog types.
+		 *
+		 * Filters the dialog types when printing new template dialog.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array    $types          Types data.
+		 * @param Document $document_types Document types.
+		 */
 		$types = apply_filters( 'elementor/template-library/create_new_dialog_types', $types, $document_types );
 		?>
 		<div id="elementor-new-template-dialog" style="display: none">
