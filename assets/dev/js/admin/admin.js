@@ -315,7 +315,7 @@
 
 		roleManager: {
 			selectors: {
-				body: 'elementor_page_elementor-role-manager',
+				body: 'elementor-role-manager',
 				row: '.elementor-role-row',
 				label: '.elementor-role-label',
 				excludedIndicator: '.elementor-role-excluded-indicator',
@@ -371,7 +371,7 @@
 			},
 			init: function() {
 				var self = this;
-				if ( ! $( 'body' ).hasClass( self.selectors.body ) ) {
+				if ( ! $( 'body[class*="' + self.selectors.body +'"]' ).length ) {
 					return;
 				}
 				self.bind();

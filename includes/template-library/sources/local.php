@@ -957,6 +957,7 @@ class Source_Local extends Source_Base {
 				'action' => 'elementor_export_template',
 				'source' => $this->get_id(),
 				'_nonce' => Plugin::$instance->editor->create_nonce( self::CPT ),
+				'editor_post_id' => get_the_ID(),
 				'template_id' => $template_id,
 			],
 			admin_url( 'admin-ajax.php' )
