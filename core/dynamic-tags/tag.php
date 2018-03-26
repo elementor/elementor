@@ -9,6 +9,7 @@ abstract class Tag extends Base_Tag {
 
 	final public function get_content( array $options = [] ) {
 		$settings = $this->get_settings();
+
 		ob_start();
 
 		if ( ! empty( $options['wrap'] ) ) : ?>

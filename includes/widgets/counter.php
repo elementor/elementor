@@ -147,6 +147,22 @@ class Widget_Counter extends Widget_Base {
 		);
 
 		$this->add_control(
+			'thousand_separator_char',
+			[
+				'label' => __( 'Separator', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'condition' => [
+					'thousand_separator' => 'yes',
+				],
+				'options' => [
+					',' => 'Default',
+					'.' => 'Dot',
+					' ' => 'Space',
+				],
+			]
+		);
+
+		$this->add_control(
 			'title',
 			[
 				'label' => __( 'Title', 'elementor' ),
@@ -250,7 +266,7 @@ class Widget_Counter extends Widget_Base {
 		<div class="elementor-counter">
 			<div class="elementor-counter-number-wrapper">
 				<span class="elementor-counter-number-prefix">{{{ settings.prefix }}}</span>
-				<span class="elementor-counter-number" data-duration="{{ settings.duration }}" data-to-value="{{ settings.ending_number }}" data-delimiter="{{ settings.thousand_separator ? ',' : '' }}">{{{ settings.starting_number }}}</span>
+				<span class="elementor-counter-number" data-duration="{{ settings.duration }}" data-to-value="{{ settings.ending_number }}" data-delimiter="{{ settings.thousand_separator ? settings.thousand_separator_char || ',' : '' }}">{{{ settings.starting_number }}}</span>
 				<span class="elementor-counter-number-suffix">{{{ settings.suffix }}}</span>
 			</div>
 			<# if ( settings.title ) {

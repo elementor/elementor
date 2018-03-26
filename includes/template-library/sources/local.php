@@ -562,7 +562,7 @@ class Source_Local extends Source_Base {
 			'author' => $user->display_name,
 			'hasPageSettings' => ! empty( $page_settings ),
 			'tags' => [],
-			'export_link' => $this->_get_export_link( $template_id ),
+			'export_link' => $this->get_export_link( $template_id ),
 			'url' => get_permalink( $post->ID ),
 		];
 
@@ -819,7 +819,7 @@ class Source_Local extends Source_Base {
 	public function post_row_actions( $actions, \WP_Post $post ) {
 		if ( self::is_base_templates_screen() ) {
 			if ( $this->is_template_supports_export( $post->ID ) ) {
-				$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->_get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+				$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
 			}
 
 			unset( $actions['inline hide-if-no-js'] );
@@ -851,6 +851,7 @@ class Source_Local extends Source_Base {
 				<div id="elementor-import-template-title"><?php echo __( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_import_template">
+					<input type="hidden" name="editor_post_id" value="<?php the_ID(); ?>">
 					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
@@ -951,7 +952,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @return string Template export URL.
 	 */
-	private function _get_export_link( $template_id ) {
+	private function get_export_link( $template_id ) {
 		return add_query_arg(
 			[
 				'action' => 'elementor_export_template',

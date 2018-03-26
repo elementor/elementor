@@ -88,7 +88,7 @@ class Tracker {
 			return;
 		}
 
-		$last_send = self::_get_last_send_time();
+		$last_send = self::get_last_send_time();
 
 		/**
 		 * Tracker override send.
@@ -131,12 +131,12 @@ class Tracker {
 
 		// Send here..
 		$params = [
-			'system' => self::_get_system_reports_data(),
+			'system' => self::get_system_reports_data(),
 			'site_lang' => get_bloginfo( 'language' ),
 			'email' => get_option( 'admin_email' ),
 			'usages' => [
-				'posts' => self::_get_posts_usage(),
-				'library' => self::_get_library_usage(),
+				'posts' => self::get_posts_usage(),
+				'library' => self::get_library_usage(),
 			],
 			'is_first_time' => empty( $last_send ),
 		];
@@ -227,7 +227,7 @@ class Tracker {
 	 */
 	public static function admin_notices() {
 		// Show tracker notice after 24 hours from installed time.
-		if ( self::_get_installed_time() > strtotime( '-24 hours' ) ) {
+		if ( self::get_installed_time() > strtotime( '-24 hours' ) ) {
 			return;
 		}
 
@@ -278,7 +278,7 @@ class Tracker {
 	 *
 	 * @return int Unix timestamp when Elementor was installed.
 	 */
-	private static function _get_installed_time() {
+	private static function get_installed_time() {
 		$installed_time = get_option( '_elementor_installed_time' );
 		if ( ! $installed_time ) {
 			$installed_time = time();
@@ -298,7 +298,7 @@ class Tracker {
 	 *
 	 * @return array The data from system reports.
 	 */
-	private static function _get_system_reports_data() {
+	private static function get_system_reports_data() {
 		$reports = Plugin::$instance->system_info->load_reports( System_Info\Main::get_allowed_reports() );
 
 		$system_reports = [];
@@ -323,7 +323,7 @@ class Tracker {
 	 * @return int|false The last time tracking data was sent, or false if
 	 *                   tracking data never sent.
 	 */
-	private static function _get_last_send_time() {
+	private static function get_last_send_time() {
 		$last_send_time = get_option( 'elementor_tracker_last_send', false );
 
 		/**
@@ -353,7 +353,7 @@ class Tracker {
 	 * @return array The number of posts using Elementor grouped by post types
 	 *               and post status.
 	 */
-	private static function _get_posts_usage() {
+	private static function get_posts_usage() {
 		global $wpdb;
 
 		$usage = [];
@@ -389,7 +389,7 @@ class Tracker {
 	 * @return array The number of Elementor library items grouped by post types
 	 *               and meta value.
 	 */
-	private static function _get_library_usage() {
+	private static function get_library_usage() {
 		global $wpdb;
 
 		$usage = [];
