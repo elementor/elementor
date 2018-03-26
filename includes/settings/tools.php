@@ -206,7 +206,7 @@ class Tools extends Settings_Page {
 							$intro_text = sprintf(
 								/* translators: %s: Codex URL */
 								__( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" href="%s">backup your database</a> before using Replace URL.', 'elementor' ),
-								esc_url( 'https://codex.wordpress.org/WordPress_Backups' )
+								'https://codex.wordpress.org/WordPress_Backups'
 							);
 							$intro_text = '<div>' . $intro_text . '</div>';
 
