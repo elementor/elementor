@@ -371,7 +371,7 @@
 			},
 			init: function() {
 				var self = this;
-				if ( ! $( 'body[class*="' + self.selectors.body +'"]' ).length ) {
+				if ( ! $( 'body[class*="' + self.selectors.body + '"]' ).length ) {
 					return;
 				}
 				self.bind();
