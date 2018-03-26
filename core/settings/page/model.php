@@ -42,6 +42,8 @@ class Model extends BaseModel {
 	 *
 	 * @since 1.6.0
 	 * @access public
+	 *
+	 * @param array $data Optional. Model data. Default is an empty array.
 	 */
 	public function __construct( array $data = [] ) {
 		$this->post = get_post( $data['id'] );

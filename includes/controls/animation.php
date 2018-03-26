@@ -46,11 +46,11 @@ class Control_Animation extends Base_Data_Control {
 	 *
 	 * Retrieve the list of all the available animations.
 	 *
-	 * @static
 	 * @since 1.0.0
 	 * @access public
+	 * @static
 	 *
-	 * @return string Control type.
+	 * @return array Control type.
 	 */
 	public static function get_animations() {
 		if ( is_null( self::$_animations ) ) {

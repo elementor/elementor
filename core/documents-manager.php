@@ -41,7 +41,7 @@ class Documents_Manager {
 	 * @since 2.0.0
 	 * @access protected
 	 *
-	 * @var array
+	 * @var Document[]
 	 */
 	protected $types = [];
 
@@ -148,6 +148,9 @@ class Documents_Manager {
 	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param string   $type  Document type name.
+	 * @param fallback $class The
 	 *
 	 * @return Documents_Manager The updated document manager instance.
 	 */

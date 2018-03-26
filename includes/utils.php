@@ -367,7 +367,7 @@ class Utils {
 	 * @param string $tag         The name of the action hook.
 	 * @param array  $args        Array of additional function arguments to be passed to `do_action()`.
 	 * @param string $version     The version of WordPress that deprecated the hook.
-	 * @param string $replacement Optional. The hook that should have been used.
+	 * @param bool   $replacement Optional. The hook that should have been used.
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
@@ -391,7 +391,7 @@ class Utils {
 	 * @param string $tag         The name of the filter hook.
 	 * @param array  $args        Array of additional function arguments to be passed to `apply_filters()`.
 	 * @param string $version     The version of WordPress that deprecated the hook.
-	 * @param string $replacement Optional. The hook that should have been used.
+	 * @param bool   $replacement Optional. The hook that should have been used.
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
