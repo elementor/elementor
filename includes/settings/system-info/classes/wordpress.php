@@ -90,7 +90,7 @@ class WordPress_Reporter extends Base_Reporter {
 				/* translators: 1: Minimum recommended_memory, 2: Codex URL */
 				_x( 'We recommend setting memory to at least %1$s. For more information, read about <a href="%2$s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
 				$min_recommended_memory,
-				esc_url( 'https://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP' )
+				'https://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP'
 			);
 
 			$result['warning'] = true;
