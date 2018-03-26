@@ -442,7 +442,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function save_item( $template_data ) {
 		if ( ! isset( self::$_template_types[ $template_data['type'] ] ) ) {
-			return new \WP_Error( 'save_error', sprintf( 'Invalid template type `%s`.', $template_data['type'] ) );
+			return new \WP_Error( 'save_error', sprintf( 'Invalid template type "%s".', $template_data['type'] ) );
 		}
 
 		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
@@ -706,7 +706,7 @@ class Source_Local extends Source_Base {
 			$put_contents = file_put_contents( $complete_path, $file_data['content'] );
 
 			if ( ! $put_contents ) {
-				return new \WP_Error( '404', sprintf( 'Cannot create file %s.', $file_data['name'] ) );
+				return new \WP_Error( '404', sprintf( 'Cannot create file "%s".', $file_data['name'] ) );
 			}
 
 			$files[] = [
