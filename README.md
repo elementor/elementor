@@ -131,7 +131,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 ### Minimum Requirements ###
 
-* WordPress 4.5 or greater
+* WordPress 4.6 or greater
 * PHP version 5.4 or greater
 * MySQL version 5.0 or greater
 
@@ -139,7 +139,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 * PHP version 7.0 or greater
 * MySQL version 5.6 or greater
-* WP Memory limit of 64 MB or greater (128 MB or higher is preferred)
+* WordPress Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
 https://www.youtube.com/watch?v=Ypn6fltn_7s
 
@@ -177,7 +177,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
+No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
 
 ## Screenshots ##
 
@@ -196,7 +196,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * New: Added new page template "Elementor Full Width"
 * New: Document Type method to register new template types ([#3409](https://github.com/pojome/elementor/issues/3409))
 * New: Added new social icons for 500px, Steam and StumbleUpon ([#3106](https://github.com/pojome/elementor/issues/3106), [#3636](https://github.com/pojome/elementor/issues/3636))
-* Tweak: Dropped Support WP 4.5, now supporting WP 4.6 and higher
+* Tweak: Dropped Support WordPress 4.5, now supporting WordPress 4.6 and higher
 * Tweak: New settings interface for Role Manager
 * Tweak: Reintroduce divider control for UI panel ([Developer API](https://developers.elementor.com/elementor-controls/divider-control/))
 * Tweak: Added inline view for icon-list widget ([#1624](https://github.com/pojome/elementor/issues/1624))
