@@ -192,9 +192,45 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 2.0.0 Beta 4 - Available For Beta Testing ###
-* [Read more about v2.0](https://github.com/pojome/elementor/issues/3706/)
-* [Sign Up Now For Our Elite Group Of Early Access Testers](https://my.elementor.com/beta/)
+### 2.0.0 - 2018-03-26 ###
+* New: Added new library tab for pre-design "Blocks"
+* New: Added new page template "Elementor Full Width"
+* New: Document Type method to register new template types ([#3409](https://github.com/pojome/elementor/issues/3409))
+* New: Added new social icons for 500px, Steam and StumbleUpon ([#3106](https://github.com/pojome/elementor/issues/3106), [#3636](https://github.com/pojome/elementor/issues/3636))
+* Tweak: Dropped Support WP 4.5, now supporting WP 4.6 and higher
+* Tweak: New settings interface for Role Manager
+* Tweak: Reintroduce divider control for UI panel ([Developer API](https://developers.elementor.com/elementor-controls/divider-control/))
+* Tweak: Added inline view for icon-list widget ([#1624](https://github.com/pojome/elementor/issues/1624))
+* Tweak: Added "Featured Image" control to document settings ([#3429](https://github.com/pojome/elementor/issues/3429))
+* Tweak: Added custom thousand separator in Counter widget ([#3459](https://github.com/pojome/elementor/issues/3459))
+* Tweak: Added "Image Size" control to the "Video" widget overlay image ([#3488](https://github.com/pojome/elementor/issues/3488))
+* Tweak: Added "Image Size" control to the "Image Box" widget ([#3251](https://github.com/pojome/elementor/issues/3251))
+* Tweak: Added "Image Size" control to the "Testimonial" widget ([#3472](https://github.com/pojome/elementor/issues/3472))
+* Tweak: Added "Link" control to the "Testimonial" widget ([#3480](https://github.com/pojome/elementor/issues/3480))
+* Tweak: Added "Caption Spacing" control to the "Image" widget ([#3452](https://github.com/pojome/elementor/issues/3452))
+* Tweak: Added responsive control to the text padding in the "Button" widget
+* Tweak: Added compatibility for the future release of Elementor
+* Tweak: Added `Groove` style to the "Border" control
+* Tweak: Decreasing column minimum width to 2%
+* Tweak: Decreasing section minimum height in edit mode
+* Tweak: Match HTML tags for the section and the column ([#3471](https://github.com/pojome/elementor/issues/3471))
+* Tweak: Renamed the `clear_page` section in the document settings
+* Tweak: Renamed the `general-elements` widgets category to `general` ([#3729](https://github.com/pojome/elementor/issues/3729))
+* Tweak: Remember the last library tab and search/filters that was open
+* Tweak: Replace the select control with a switcher control in the Video widget "Play Icon" control ([#3262](https://github.com/pojome/elementor/issues/3262))
+* Tweak: Video widget accessibility - added `role="button"` attribute to the Play button ([#3270](https://github.com/pojome/elementor/issues/3270))
+* Tweak: Button widget accessibility - added `role="button"` attribute ([#3271](https://github.com/pojome/elementor/issues/3271))
+* Tweak: Icon widget accessibility - added `aria-hidden` attribute to the `i` tag ([#3272](https://github.com/pojome/elementor/issues/3272))
+* Tweak: Icon Box widget accessibility - added `aria-hidden` attribute to the `i` tag ([#3273](https://github.com/pojome/elementor/issues/3273))
+* Tweak: Google Maps widget accessibility - added `aria-label` attribute to the `iframe` tag ([#3274](https://github.com/pojome/elementor/issues/3274))
+* Tweak: Moved `placeholder` and `title` settings from base control settings into individual controls that use them ([#3795](https://github.com/pojome/elementor/issues/3795))
+* Tweak: Updated the "Icon Box" widget to handle cases where no icon is set
+* Tweak: Updated the way widget categories are registered in Elementor ([#3729](https://github.com/pojome/elementor/issues/3729))
+* Tweak: Slick.js library Updated to v1.8.1 ([#3538](https://github.com/pojome/elementor/issues/3538))
+* Tweak: Updated Eicons to v3.0.0
+* Tweak: Updated Select2 to v4.0.5
+* Fix: Document settings now saved as revisions on auto save ([#3510](https://github.com/pojome/elementor/issues/3510))
+* Fix: Show preset section in the right side for RTL
 
 ### 1.9.8 - 2018-03-12 ###
 * Fix: Activate publish button if there is an auto-save version
