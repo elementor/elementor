@@ -442,7 +442,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function save_item( $template_data ) {
 		if ( ! isset( self::$_template_types[ $template_data['type'] ] ) ) {
-			return new \WP_Error( 'save_error', sprintf( 'Invalid template type `%s`.', $template_data['type'] ) );
+			return new \WP_Error( 'save_error', sprintf( 'Invalid template type "%s".', $template_data['type'] ) );
 		}
 
 		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
@@ -706,7 +706,7 @@ class Source_Local extends Source_Base {
 			$put_contents = file_put_contents( $complete_path, $file_data['content'] );
 
 			if ( ! $put_contents ) {
-				return new \WP_Error( '404', sprintf( 'Cannot create file %s.', $file_data['name'] ) );
+				return new \WP_Error( '404', sprintf( 'Cannot create file "%s".', $file_data['name'] ) );
 			}
 
 			$files[] = [
@@ -819,7 +819,7 @@ class Source_Local extends Source_Base {
 	public function post_row_actions( $actions, \WP_Post $post ) {
 		if ( self::is_base_templates_screen() ) {
 			if ( $this->is_template_supports_export( $post->ID ) ) {
-				$actions['export-template'] = sprintf( '<a href="%s">%s</a>', $this->get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+				$actions['export-template'] = sprintf( '<a href="%1$s">%2$s</a>', $this->get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
 			}
 
 			unset( $actions['inline hide-if-no-js'] );

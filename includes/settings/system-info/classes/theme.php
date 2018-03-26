@@ -190,7 +190,7 @@ class Theme_Reporter extends Base_Reporter {
 			$result['recommendation'] = sprintf(
 				/* translators: %s: Codex URL */
 				_x( 'If you want to modify the source code of your theme, we recommend using a <a href="%s">child theme</a>.', 'System Info', 'elementor' ),
-				esc_url( 'https://codex.wordpress.org/Child_Themes' )
+				'https://codex.wordpress.org/Child_Themes'
 			);
 		}
 

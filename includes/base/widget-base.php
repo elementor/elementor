@@ -65,12 +65,12 @@ abstract class Widget_Base extends Element_Base {
 
 		return [
 			'duplicate' => [
-				/* translators: %s: Widget Label */
+				/* translators: %s: Widget label */
 				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
 				'icon' => 'clone',
 			],
 			'remove' => [
-				/* translators: %s: Widget Label */
+				/* translators: %s: Widget label */
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
 				'icon' => 'close',
 			],
@@ -374,7 +374,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @access protected
 	 */
 	protected function render_edit_tools() {
-		// translators: %s: Widget Label.
+		/* translators: %s: Widget label */
 		$edit_title = sprintf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) );
 		?>
 		<div class="elementor-element-overlay">

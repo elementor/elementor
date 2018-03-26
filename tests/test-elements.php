@@ -72,7 +72,7 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 					continue;
 				}
 
-				$error_msg = sprintf( 'Element: %s, Control: %s', $element->get_name(), $control['name'] );
+				$error_msg = sprintf( 'Element: %1$s, Control: %2$s', $element->get_name(), $control['name'] );
 
 				if ( empty( $control['default'] ) ) {
 					$this->assertTrue( isset( $control['options'][''] ), $error_msg );
