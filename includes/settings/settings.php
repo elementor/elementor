@@ -264,7 +264,7 @@ class Settings extends Settings_Page {
 									'type' => 'checkbox',
 									'value' => 'yes',
 									'default' => '',
-									'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to updates. We guarantee no sensitive data is collected.', 'elementor' ) . sprintf( ' <a href="%s" target="_blank">%s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
+									'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to updates. We guarantee no sensitive data is collected.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
 								],
 								'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
 							],

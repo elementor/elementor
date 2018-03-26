@@ -44,14 +44,17 @@ class Element_Column extends Element_Base {
 
 		return [
 			'duplicate' => [
+				/* translators: %s: Column label */
 				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $column_label ),
 				'icon' => 'clone',
 			],
 			'add' => [
+				/* translators: %s: Column label */
 				'title' => sprintf( __( 'Add %s', 'elementor' ), $column_label ),
 				'icon' => 'plus',
 			],
 			'remove' => [
+				/* translators: %s: Column label */
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $column_label ),
 				'icon' => 'close',
 			],

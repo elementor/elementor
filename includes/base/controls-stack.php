@@ -1263,7 +1263,7 @@ abstract class Controls_Stack {
 		$this->add_control( $section_id, $args );
 
 		if ( null !== $this->_current_section ) {
-			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section: `%s`', $this->_current_section['section'] ) ); // XSS ok.
+			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section "%s".', $this->_current_section['section'] ) ); // XSS ok.
 		}
 
 		$this->_current_section = $this->get_section_args( $section_id );
@@ -1395,7 +1395,7 @@ abstract class Controls_Stack {
 	 */
 	public function start_controls_tabs( $tabs_id ) {
 		if ( null !== $this->_current_tab ) {
-			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs: `%s`', $this->_current_tab['tabs_wrapper'] ) ); // XSS ok.
+			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs "%s".', $this->_current_tab['tabs_wrapper'] ) ); // XSS ok.
 		}
 
 		$this->add_control(
@@ -1447,7 +1447,7 @@ abstract class Controls_Stack {
 	 */
 	public function start_controls_tab( $tab_id, $args ) {
 		if ( ! empty( $this->_current_tab['inner_tab'] ) ) {
-			wp_die( sprintf( 'Elementor: You can\'t start a tab before the end of the previous tab: `%s`', $this->_current_tab['inner_tab'] ) ); // XSS ok.
+			wp_die( sprintf( 'Elementor: You can\'t start a tab before the end of the previous tab "%s".', $this->_current_tab['inner_tab'] ) ); // XSS ok.
 		}
 
 		$args['type'] = Controls_Manager::TAB;

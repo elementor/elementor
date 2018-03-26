@@ -206,7 +206,7 @@ class Tools extends Settings_Page {
 							$intro_text = sprintf(
 								/* translators: %s: Codex URL */
 								__( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" href="%s">backup your database</a> before using Replace URL.', 'elementor' ),
-								'https://codex.wordpress.org/WordPress_Backups'
+								esc_url( 'https://codex.wordpress.org/WordPress_Backups' )
 							);
 							$intro_text = '<div>' . $intro_text . '</div>';
 
@@ -262,11 +262,7 @@ class Tools extends Settings_Page {
 					'beta' => [
 						'label' => __( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							$intro_text = sprintf(
-								/* translators: %s: Elementor version */
-								__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ),
-								ELEMENTOR_VERSION
-							);
+							$intro_text = __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' );
 							$intro_text = '<p>' . $intro_text . '</p>';
 
 							echo $intro_text;
