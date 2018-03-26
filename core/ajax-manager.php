@@ -30,6 +30,8 @@ class Ajax_Manager {
 	 */
 	protected $ajax_actions = [];
 
+	protected $requests = [];
+
 	/**
 	 * Ajax response data.
 	 *
@@ -147,9 +149,9 @@ class Ajax_Manager {
 		 */
 		do_action( 'elementor/ajax/register_actions', $this );
 
-		$requests = json_decode( stripslashes( $_REQUEST['actions'] ), true );
+		$this->requests = json_decode( stripslashes( $_REQUEST['actions'] ), true );
 
-		foreach ( $requests as $id => $action_data ) {
+		foreach ( $this->requests as $id => $action_data ) {
 			$this->current_action_id = $id;
 			if ( ! isset( $this->ajax_actions[ $action_data['action'] ] ) ) {
 				$this->add_response_data( false, __( 'Action not found.', 'elementor' ), Exceptions::BAD_REQUEST );
@@ -175,6 +177,14 @@ class Ajax_Manager {
 		$this->current_action_id = null;
 
 		$this->send_success();
+	}
+
+	public function get_current_action_data() {
+		if ( ! $this->current_action_id ) {
+			return false;
+		}
+
+		return $this->requests[ $this->current_action_id ];
 	}
 
 	/**
