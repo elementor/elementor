@@ -3,11 +3,10 @@
 
 **Contributors:** [pojo.me](https://profiles.wordpress.org/pojo.me), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [bainternet](https://profiles.wordpress.org/bainternet), [ramiy](https://profiles.wordpress.org/ramiy), [yehudah](https://profiles.wordpress.org/yehudah)  
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
-**Requires at least:** 4.5  
+**Requires at least:** 4.6  
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
-**Stable tag:** 1.9.8  
-**Beta tag:** 2.0.0-beta4  
+**Stable tag:** 2.0.0  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
