@@ -64,22 +64,22 @@ class Element_Section extends Element_Base {
 
 		return [
 			'duplicate' => [
-				/* translators: %s: Section Label */
+				/* translators: %s: Section label */
 				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $section_label ),
 				'icon' => 'clone',
 			],
 			'add' => [
-				/* translators: %s: Section Label */
+				/* translators: %s: Section label */
 				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
 				'icon' => 'plus',
 			],
 			'save' => [
-				/* translators: %s: Section Label */
+				/* translators: %s: Section label */
 				'title' => sprintf( __( 'Save %s', 'elementor' ), $section_label ),
 				'icon' => 'save',
 			],
 			'remove' => [
-				/* translators: %s: Section Label */
+				/* translators: %s: Section label */
 				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
 				'icon' => 'close',
 			],
@@ -274,7 +274,7 @@ class Element_Section extends Element_Base {
 				'prefix_class' => 'elementor-',
 				'render_type' => 'template',
 				'hide_in_inner' => true,
-				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%s" target="_blank">%s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
+				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
 			]
 		);
 
@@ -1264,7 +1264,7 @@ class Element_Section extends Element_Base {
 	 * @access protected
 	 */
 	protected function render_edit_tools() {
-		// translators: %s: Section Label
+		/* translators: %s: Section label */
 		$edit_title = sprintf( __( 'Edit %s', 'elementor' ), __( 'Section', 'elementor' ) );
 		?>
 		<div class="elementor-element-overlay">

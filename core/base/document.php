@@ -188,7 +188,7 @@ abstract class Document extends Controls_Stack {
 			'type' => $this->get_name(),
 			'last_edited' => $this->get_last_edited(),
 			'messages' => [
-				/* translators: %s = the document title. */
+				/* translators: %s: the document title. */
 				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), $this::get_title() ),
 			],
 			'urls' => [

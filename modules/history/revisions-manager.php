@@ -273,7 +273,7 @@ class Revisions_Manager {
 				'revisions_disabled_2' => sprintf(
 					/* translators: %s: Codex URL */
 					__( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ),
-					'https://codex.wordpress.org/Revisions#Revision_Options'
+					esc_url( 'https://codex.wordpress.org/Revisions#Revision_Options' )
 				),
 			],
 		] );
