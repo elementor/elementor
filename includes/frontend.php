@@ -596,6 +596,9 @@ class Frontend {
 	 *
 	 * @since 1.0.0
 	 * @access private
+	 *
+	 * @param array $google_fonts Optional. Google fonts to print in the frontend.
+     *                            Default is an empty array.
 	 */
 	private function print_google_fonts( $google_fonts = [] ) {
 		static $google_fonts_index = 0;
@@ -668,6 +671,8 @@ class Frontend {
 	 *
 	 * @since 1.2.0
 	 * @access public
+	 *
+	 * @param array $font Fonts to enqueue in the frontend.
 	 */
 	public function enqueue_font( $font ) {
 		if ( in_array( $font, $this->registered_fonts ) ) {
@@ -923,7 +928,7 @@ class Frontend {
 	 * @since 1.4.3
 	 * @access public
 	 *
-	 * @param string $post_excerpt The post excerpt.
+	 * @param string $excerpt The post excerpt.
 	 *
 	 * @return string The post excerpt.
 	 */
@@ -940,7 +945,7 @@ class Frontend {
 	 * @since 1.4.3
 	 * @access public
 	 *
-	 * @param string $post_excerpt The post excerpt.
+	 * @param string $excerpt The post excerpt.
 	 *
 	 * @return string The post excerpt.
 	 */

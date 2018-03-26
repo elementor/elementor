@@ -126,7 +126,7 @@ abstract class Scheme_Base implements Scheme_Interface {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return string The scheme.
+	 * @return array The scheme.
 	 */
 	public function get_scheme() {
 		$scheme = [];
