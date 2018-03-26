@@ -74,6 +74,8 @@ abstract class Manager {
 	 * @since 1.6.0
 	 * @access public
 	 * @abstract
+	 *
+	 * @return Model The model object.
 	 */
 	abstract public function get_model_for_config();
 

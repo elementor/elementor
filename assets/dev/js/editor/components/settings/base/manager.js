@@ -146,6 +146,7 @@ module.exports = ViewModule.extend( {
 		this.updateStylesheet();
 
 		this.addPanelPage();
+
 		if ( ! elementor.userCan( 'design' ) ) {
 			elementor.panel.currentView.setPage( 'page_settings' );
 		}
