@@ -8,7 +8,6 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
 use Elementor\Editor;
 use Elementor\Plugin;
-use Elementor\Post_CSS_File;
 use Elementor\Settings;
 use Elementor\User;
 use Elementor\Utils;
@@ -510,19 +509,11 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|true True if template updated, `WP_Error` otherwise.
 	 */
 	public function update_item( $new_data ) {
-		// TODO: use $document->save() that checks permissions.
-		// Currently the `save` method is conflicted with the pro global widget.
 		if ( ! current_user_can( $this->post_type_object->cap->edit_post, $new_data['id'] ) ) {
 			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
 		}
 
-		$document = Plugin::$instance->documents->get( $new_data['id'] );
-		if ( $document ) {
-			$document->save_elements( $new_data['content'] );
-
-			// Remove Post CSS
-			delete_post_meta( $new_data['id'], Post_CSS_File::META_KEY );
-		}
+		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
 
 		/**
 		 * After template library update.

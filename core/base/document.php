@@ -494,7 +494,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @param array $elements
 	 */
-	public function save_elements( $elements ) {
+	protected function save_elements( $elements ) {
 		$editor_data = $this->get_elements_raw_data( $elements );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
