@@ -100,7 +100,7 @@ class Tools extends Settings_Page {
 		} else {
 			Plugin::$instance->posts_css_manager->clear_cache();
 			wp_send_json_success( sprintf(
-				/* translators: %s: Number of rows */
+				/* translators: %d: Number of rows */
 				__( '%d Rows Affected', 'elementor' ),
 				$rows_affected
 			) );
@@ -262,11 +262,7 @@ class Tools extends Settings_Page {
 					'beta' => [
 						'label' => __( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							$intro_text = sprintf(
-								/* translators: %s: Elementor version */
-								__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ),
-								ELEMENTOR_VERSION
-							);
+							$intro_text = __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' );
 							$intro_text = '<p>' . $intro_text . '</p>';
 
 							echo $intro_text;
