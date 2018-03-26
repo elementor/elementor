@@ -63,7 +63,7 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] )
 					continue;
 				
-				$error_msg = sprintf( 'Widget: %s, Control: %s', $widget->get_name(), $control['name'] );
+				$error_msg = sprintf( 'Widget: %1$s, Control: %2$s', $widget->get_name(), $control['name'] );
 
 				if ( empty( $control['default'] ) ) {
 					$this->assertTrue( isset( $control['options'][''] ), $error_msg );

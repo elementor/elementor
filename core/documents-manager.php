@@ -233,8 +233,7 @@ class Documents_Manager {
 	 */
 	public function create( $type, $post_data = [], $meta_data = [] ) {
 		if ( ! isset( $this->types[ $type ] ) ) {
-			/* translators: %s: document type name */
-			wp_die( esc_html( sprintf( __( 'Type %s does not exist.', 'elementor' ), $type ) ) );
+			wp_die( sprintf( 'Type %s does not exist.', $type ) );
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {

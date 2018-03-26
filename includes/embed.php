@@ -154,7 +154,7 @@ class Embed {
 			if ( is_numeric( $attribute_key ) ) {
 				$attributes_for_print[] = $attribute_value;
 			} else {
-				$attributes_for_print[] = sprintf( '%s="%s"', $attribute_key, $attribute_value );
+				$attributes_for_print[] = sprintf( '%1$s="%2$s"', $attribute_key, $attribute_value );
 			}
 		}
 
