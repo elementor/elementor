@@ -100,7 +100,7 @@ class Tools extends Settings_Page {
 		} else {
 			Plugin::$instance->posts_css_manager->clear_cache();
 			wp_send_json_success( sprintf(
-				/* translators: %s: Number of rows */
+				/* translators: %d: Number of rows */
 				__( '%d Rows Affected', 'elementor' ),
 				$rows_affected
 			) );

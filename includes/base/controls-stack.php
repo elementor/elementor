@@ -667,7 +667,7 @@ abstract class Controls_Stack {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
 		if ( ! $group ) {
-			wp_die( sprintf( '%1$s::%2$s: Group `%3$s` not found.', get_called_class(), __FUNCTION__, $group_name ) );
+			wp_die( sprintf( '%1$s::%2$s: Group "%3$s" not found.', get_called_class(), __FUNCTION__, $group_name ) );
 		}
 
 		$group->add_controls( $this, $args, $options );
