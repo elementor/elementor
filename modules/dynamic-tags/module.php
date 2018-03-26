@@ -40,7 +40,7 @@ class Module extends BaseModule {
 	public function get_groups() {
 		return [
 			self::BASE_GROUP => [
-				'title' => __( 'Base Tags', 'elementor' ),
+				'title' => 'Base Tags',
 			],
 		];
 	}

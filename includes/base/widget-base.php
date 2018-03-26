@@ -247,7 +247,7 @@ abstract class Widget_Base extends Element_Base {
 		static $is_first_section = true;
 
 		if ( $is_first_section ) {
-			$this->_register_skin_control();
+			$this->register_skin_control();
 
 			$is_first_section = false;
 		}
@@ -262,7 +262,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private function _register_skin_control() {
+	private function register_skin_control() {
 		$skins = $this->get_skins();
 		if ( ! empty( $skins ) ) {
 			$skin_options = [];

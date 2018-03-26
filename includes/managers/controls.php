@@ -95,7 +95,10 @@ class Controls_Manager {
 	const ANIMATION = 'animation';
 	/** This control is documented in includes/controls/hover-animation.php */
 	const HOVER_ANIMATION = 'hover_animation';
-	/** This control is documented in includes/controls/order.php */
+
+	/**
+	 * @deprecated 2.0.0
+	 */
 	const ORDER = 'order';
 
 	/**
@@ -267,6 +270,7 @@ class Controls_Manager {
 			self::TEXT_SHADOW,
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
+
 			self::ORDER,
 		];
 

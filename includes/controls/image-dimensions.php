@@ -76,7 +76,7 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	 * @access public
 	 */
 	public function content_template() {
-		if ( ! $this->_is_image_editor_supports() ) : ?>
+		if ( ! $this->is_image_editor_supports() ) : ?>
 			<div class="elementor-panel-alert elementor-panel-alert-danger">
 				<?php echo __( 'The server does not have ImageMagick or GD installed and/or enabled! Any of these libraries are required for WordPress to be able to resize images. Please contact your server administrator to enable this before continuing.', 'elementor' ); ?>
 			</div>
@@ -117,7 +117,7 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	 *
 	 * @return bool Whether the editor supports the given mime-type.
 	 */
-	private function _is_image_editor_supports() {
+	private function is_image_editor_supports() {
 		$arg = [
 			'mime_type' => 'image/jpeg',
 		];

@@ -83,7 +83,7 @@ BaseElementView = BaseContainer.extend( {
 		} else if ( 'column' === elType ) {
 			ChildView = require( 'elementor-elements/views/column' );
 		} else {
-			ChildView = elementor.modules.WidgetView;
+			ChildView = elementor.modules.elements.views.Widget;
 		}
 
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
