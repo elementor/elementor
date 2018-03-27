@@ -191,12 +191,20 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.0.1 - 2018-03-27 ###
+* Fix: Removed promotion in the Role Manager area ([#3903](https://github.com/pojome/elementor/issues/3903))
+* Fix: Improved responsive style for My Template modal ([#3914](https://github.com/pojome/elementor/issues/3914))
+* Fix: Issue with conditional repeater field ([#3886](https://github.com/pojome/elementor/issues/3886), [#3865](https://github.com/pojome/elementor/issues/3865))
+* Fix: The notifications toast goes down when you change the page layout
+* Fix: Custom delimiter char for frontend template in the Counter widget
+* Fix: Import template from WP Admin
+
 ### 2.0.0 - 2018-03-26 ###
 * New: Added new library tab for pre-design "Blocks"
 * New: Added new page template "Elementor Full Width"
 * New: Document Type method to register new template types ([#3409](https://github.com/pojome/elementor/issues/3409))
 * New: Added new social icons for 500px, Steam and StumbleUpon ([#3106](https://github.com/pojome/elementor/issues/3106), [#3636](https://github.com/pojome/elementor/issues/3636))
-* Tweak: Dropped Support WordPress 4.5, now supporting WordPress 4.6 and higher
+* Tweak: Dropped Support WP 4.5, now supporting WP 4.6 and higher
 * Tweak: New settings interface for Role Manager
 * Tweak: Reintroduce divider control for UI panel ([Developer API](https://developers.elementor.com/elementor-controls/divider-control/))
 * Tweak: Added inline view for icon-list widget ([#1624](https://github.com/pojome/elementor/issues/1624))
@@ -723,7 +731,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Fix: Smooth scrolling for anchor links, now limited only to links with `.elementor-element` or `.elementor-menu-anchor` classes ([#1478](https://github.com/pojome/elementor/issues/1478))
 
 ### 1.3.5 - 2017-03-20 ###
-* Tweak: Minimum WP version is now v4.5
+* Tweak: Minimum WordPress version is now v4.5
 * Fix: Shape divider glitch on some screen widths
 * Fix: Shape divider flip bug in safari browser
 * Fix: Conflict with jQuery FitVids plugin ([Topic](https://wordpress.org/support/topic/video-lightbox-4/))

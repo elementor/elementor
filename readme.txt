@@ -189,6 +189,14 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.0.1 - 2018-03-27 =
+* Fix: Removed promotion in the Role Manager area ([#3903](https://github.com/pojome/elementor/issues/3903))
+* Fix: Improved responsive style for My Template modal ([#3914](https://github.com/pojome/elementor/issues/3914))
+* Fix: Issue with conditional repeater field ([#3886](https://github.com/pojome/elementor/issues/3886), [#3865](https://github.com/pojome/elementor/issues/3865))
+* Fix: The notifications toast goes down when you change the page layout
+* Fix: Custom delimiter char for frontend template in the Counter widget
+* Fix: Import template from WP Admin
+
 = 2.0.0 - 2018-03-26 =
 * New: Added new library tab for pre-design "Blocks"
 * New: Added new page template "Elementor Full Width"
