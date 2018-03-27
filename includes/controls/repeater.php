@@ -33,6 +33,10 @@ class Control_Repeater extends Base_Data_Control {
 		return 'repeater';
 	}
 
+	public function get_default_value() {
+		return [];
+	}
+
 	/**
 	 * Get repeater control default settings.
 	 *
