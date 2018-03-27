@@ -264,7 +264,7 @@ class Scheme_Color extends Scheme_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 *
-	 * @return array The system color schemes.
+	 * @return string The system color schemes.
 	 */
 	protected function _get_system_schemes_to_print() {
 		return $this->get_system_schemes();

@@ -259,6 +259,8 @@ class Widget_Audio extends Widget_Base {
 	 * @access public
 	 *
 	 * @param string $html The HTML returned by the oEmbed provider.
+	 *
+	 * @return string Filtered audio widget oEmbed HTML.
 	 */
 	public function filter_oembed_result( $html ) {
 		$param_keys = [

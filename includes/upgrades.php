@@ -57,7 +57,7 @@ class Upgrades {
 	/**
 	 * Check upgrades.
 	 *
-	 * Checks whether the Elementor version need the be upgraded.
+	 * Checks whether a given Elementor version needs to be upgraded.
 	 *
 	 * If an upgrade required for a specific Elementor version, it will update
 	 * the `elementor_upgrades` option in the database.
@@ -65,6 +65,8 @@ class Upgrades {
 	 * @static
 	 * @since 1.0.10
 	 * @access private
+	 *
+	 * @param string $elementor_version
 	 */
 	private static function check_upgrades( $elementor_version ) {
 		// It's a new install.
@@ -75,8 +77,8 @@ class Upgrades {
 		$elementor_upgrades = get_option( 'elementor_upgrades', [] );
 
 		$upgrades = [
-			'0.3.2'  => 'upgrade_v032',
-			'0.9.2'  => 'upgrade_v092',
+			'0.3.2' => 'upgrade_v032',
+			'0.9.2' => 'upgrade_v092',
 			'0.11.0' => 'upgrade_v0110',
 			'2.0.0' => 'upgrade_v200',
 		];
