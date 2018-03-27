@@ -1717,7 +1717,7 @@ abstract class Controls_Stack {
 
 		foreach ( $controls as $control ) {
 			if ( 'repeater' === $control['type'] ) {
-				if ( ! isset( $settings[ $control['name'] ] ) || ! is_array( $settings[ $control['name'] ]  ) ) {
+				if ( ! isset( $settings[ $control['name'] ] ) || ! is_array( $settings[ $control['name'] ] ) ) {
 					continue;
 				}
 
