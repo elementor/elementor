@@ -266,7 +266,7 @@ class Source_Local extends Source_Base {
 
 					<div id="elementor-new-template__form__post-title__wrapper" class="elementor-form-field">
 						<label for="elementor-new-template__form__post-title" class="elementor-form-field__label">
-							<?php echo __( 'Name Your Template', 'elementor' ); ?>
+							<?php echo __( 'Name your template', 'elementor' ); ?>
 						</label>
 						<div class="elementor-form-field__text__wrapper">
 							<input type="text" placeholder="<?php echo esc_attr( __( 'Enter template name (optional)', 'elementor' ) );?>" id="elementor-new-template__form__post-title" class="elementor-form-field__text" name="post_data[post_title]">
@@ -662,6 +662,8 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param int $template_id The template ID.
+	 *
+	 * @return array|\WP_Error WordPress error if template export failed.
 	 */
 	public function export_template( $template_id ) {
 		$file_data = $this->prepare_template_export( $template_id );
@@ -692,6 +694,8 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param array $template_ids An array of template IDs.
+	 *
+	 * @return \WP_Error WordPress error if export failed.
 	 */
 	public function export_multiple_templates( array $template_ids ) {
 		$files = [];
@@ -1080,9 +1084,9 @@ class Source_Local extends Source_Base {
 	 * @since 1.6.0
 	 * @access public
 	 *
-	 * @param string $redirect_url The redirect URL.
-	 * @param string $action       The action being taken.
-	 * @param array  $items        The items to take the action on.
+	 * @param string $redirect_to The redirect URL.
+	 * @param string $action      The action being taken.
+	 * @param array  $post_ids    The items to take the action on.
 	 *
 	 * @return string The redirect URL.
 	 */

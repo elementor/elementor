@@ -302,7 +302,7 @@ abstract class Manager {
 	/**
 	 * Get CSS file for update.
 	 *
-	 * Retrieve the CSS file before updating the it.
+	 * Retrieve the CSS file before updating it.
 	 *
 	 * @since 1.6.0
 	 * @access protected

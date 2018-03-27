@@ -656,7 +656,7 @@ abstract class Controls_Stack {
 	 *
 	 *     @type string $name      Base Control name.
 	 *     @type string $selector  CSS Selector
-	 *     @type string $scheme    Globel scheme to be used.
+	 *     @type string $scheme    Global scheme to be used.
 	 *     @type array  $condition Display control based on predefined conditional
 	 *                             logic.
 	 * }
@@ -1717,6 +1717,10 @@ abstract class Controls_Stack {
 
 		foreach ( $controls as $control ) {
 			if ( 'repeater' === $control['type'] ) {
+				if ( empty( $settings[ $control['name'] ] ) ) {
+					continue;
+				}
+
 				foreach ( $settings[ $control['name'] ] as $index => $repeater_row_data ) {
 					$sanitized_row_data = $this->sanitize_initial_data( [
 						'settings' => $repeater_row_data,
@@ -1835,6 +1839,8 @@ abstract class Controls_Stack {
 	 *
 	 * @since 1.4.0
 	 * @access protected
+	 *
+	 * @param array $data Initial data.
 	 */
 	protected function _init( $data ) {
 		$this->_data = array_merge( $this->get_default_data(), $data );

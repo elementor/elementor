@@ -196,7 +196,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @access public
 	 * @static
 	 *
-	 * @param array $attachment Media attachment.
+	 * @param array $instance Media attachment.
 	 *
 	 * @return string Image alt.
 	 */

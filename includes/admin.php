@@ -404,7 +404,7 @@ class Admin {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string $text The content that will be printed.
+	 * @param string $footer_text The content that will be printed.
 	 *
 	 * @return string The content that will be printed.
 	 */
