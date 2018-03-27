@@ -408,7 +408,7 @@ class DB {
 
 		foreach ( $from_post_meta as $meta_key => $values ) {
 			// Copy only meta with the `_elementor` prefix
-			if ( 0 === strpos( $meta_key, '_elementor' ) || in_array( $meta_key, $core_meta ) ) {
+			if ( 0 === strpos( $meta_key, '_elementor' ) || in_array( $meta_key, $core_meta, true ) ) {
 				$value = $values[0];
 
 				// The elementor JSON needs slashes before saving
