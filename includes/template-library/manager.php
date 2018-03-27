@@ -519,17 +519,15 @@ class Manager {
 	private function handle_ajax_request( $ajax_request ) {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
-		if ( empty( $_REQUEST['editor_post_id'] ) ) {
-			wp_send_json_error( __( 'Post ID is required.', 'elementor' ) );
+		if ( ! empty( $_REQUEST['editor_post_id'] ) ) {
+			$editor_post_id = absint( $_REQUEST['editor_post_id'] );
+
+			if ( ! get_post( $editor_post_id ) ) {
+				wp_send_json_error( __( 'Post not found.', 'elementor' ) );
+			}
+
+			Plugin::$instance->db->switch_to_post( $editor_post_id );
 		}
-
-		$editor_post_id = absint( $_REQUEST['editor_post_id'] );
-
-		if ( ! get_post( $editor_post_id ) ) {
-			wp_send_json_error( __( 'Post not found.', 'elementor' ) );
-		}
-
-		Plugin::$instance->db->switch_to_post( $editor_post_id );
 
 		$result = call_user_func( [ $this, $ajax_request ], $_REQUEST );
 
