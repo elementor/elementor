@@ -199,8 +199,11 @@ class Controls_Manager {
 	 * @since 1.6.0
 	 * @access public
 	 * @static
+	 *
+	 * @param string $tab_name  Tab name.
+	 * @param string $tab_label Tab label.
 	 */
-	public static function add_tab( $tab_name, $tab_title ) {
+	public static function add_tab( $tab_name, $tab_label ) {
 		if ( ! self::$tabs ) {
 			self::init_tabs();
 		}
@@ -209,7 +212,7 @@ class Controls_Manager {
 			return;
 		}
 
-		self::$tabs[ $tab_name ] = $tab_title;
+		self::$tabs[ $tab_name ] = $tab_label;
 	}
 
 	/**

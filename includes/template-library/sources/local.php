@@ -662,6 +662,8 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param int $template_id The template ID.
+	 *
+	 * @return array|\WP_Error WordPress error if template export failed.
 	 */
 	public function export_template( $template_id ) {
 		$file_data = $this->prepare_template_export( $template_id );
@@ -692,6 +694,8 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param array $template_ids An array of template IDs.
+	 *
+	 * @return \WP_Error WordPress error if export failed.
 	 */
 	public function export_multiple_templates( array $template_ids ) {
 		$files = [];
@@ -1080,9 +1084,9 @@ class Source_Local extends Source_Base {
 	 * @since 1.6.0
 	 * @access public
 	 *
-	 * @param string $redirect_url The redirect URL.
-	 * @param string $action       The action being taken.
-	 * @param array  $items        The items to take the action on.
+	 * @param string $redirect_to The redirect URL.
+	 * @param string $action      The action being taken.
+	 * @param array  $post_ids    The items to take the action on.
 	 *
 	 * @return string The redirect URL.
 	 */

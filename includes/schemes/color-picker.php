@@ -191,7 +191,7 @@ class Scheme_Color_Picker extends Scheme_Color {
 	 * @since 1.0.0
 	 * @access protected
 	 *
-	 * @return array The system color picker schemes.
+	 * @return string The system color picker schemes.
 	 */
 	protected function _get_system_schemes_to_print() {
 		$schemes = $this->get_system_schemes();

@@ -54,7 +54,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	 * @access public
 	 * @static
 	 *
-	 * @return string Scheme fields keys.
+	 * @return array Scheme fields keys.
 	 */
 	public static function get_scheme_fields_keys() {
 		return self::$_scheme_fields_keys;
