@@ -674,15 +674,11 @@ App = Marionette.Application.extend( {
 			} );
 
 			var PanelLayoutView = require( 'elementor-layouts/panel/panel' );
-
 			this.panel.show( new PanelLayoutView() );
 
 			this.setResizablePanel();
-
 			this.heartbeat.init();
-
 			this.checkPageStatus();
-
 			this.openLibraryOnStart();
 
 			this.previewLoadedOnce = true;
