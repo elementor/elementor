@@ -12,6 +12,8 @@ Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, opti
 };
 
 App = Marionette.Application.extend( {
+	previewLoadedOnce: false,
+
 	helpers: require( 'elementor-editor-utils/helpers' ),
 	heartbeat: require( 'elementor-editor-utils/heartbeat' ),
 	imagesManager: require( 'elementor-editor-utils/images-manager' ),
@@ -309,9 +311,7 @@ App = Marionette.Application.extend( {
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		this.$preview
-			.on( 'load', this.onPreviewLoaded.bind( this ) )
-			.one( 'load', this.checkPageStatus.bind( this ) );
+		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	},
 
 	initFrontend: function() {
@@ -624,8 +624,6 @@ App = Marionette.Application.extend( {
 		this.initElements();
 		this.initHotKeys();
 
-		this.heartbeat.init();
-
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
 			el: $previewElementorEl[0]
@@ -638,19 +636,15 @@ App = Marionette.Application.extend( {
 
 		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
 
-		var Preview = require( 'elementor-views/preview' ),
-			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
-
 		this.addRegions( {
-			sections: iframeRegion,
-			panel: '#elementor-panel'
+			sections: iframeRegion
 		} );
+
+		var Preview = require( 'elementor-views/preview' );
 
 		this.getRegion( 'sections' ).show( new Preview( {
 			collection: this.elements
 		} ) );
-
-		this.getRegion( 'panel' ).show( new PanelLayoutView() );
 
 		this.$previewContents.children().addClass( 'elementor-html' );
 
@@ -660,7 +654,6 @@ App = Marionette.Application.extend( {
 			elementorFrontend.getElements( '$body' ).addClass( 'elementor-editor-content-only' );
 		}
 
-		this.setResizablePanel();
 		this.changeDeviceMode( this._defaultDeviceMode );
 
 		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
@@ -670,8 +663,30 @@ App = Marionette.Application.extend( {
 		} );
 
 		this.enqueueTypographyFonts();
+
 		this.onEditModeSwitched();
-		this.openLibraryOnStart();
+
+		if ( this.previewLoadedOnce ) {
+			this.getPanelView().setPage( 'elements' );
+		} else {
+			this.addRegions( {
+				panel: '#elementor-panel'
+			} );
+
+			var PanelLayoutView = require( 'elementor-layouts/panel/panel' );
+
+			this.panel.show( new PanelLayoutView() );
+
+			this.setResizablePanel();
+
+			this.heartbeat.init();
+
+			this.checkPageStatus();
+
+			this.openLibraryOnStart();
+
+			this.previewLoadedOnce = true;
+		}
 
 		this.trigger( 'preview:loaded' );
 	},
