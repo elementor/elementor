@@ -581,15 +581,22 @@ $remote-templates-items-space: 30px;
 		font-weight: 500;
 	}
 
-	.elementor-template-library-template-name, .elementor-template-library-template-meta {
+	.elementor-template-library-template-name,
+	.elementor-template-library-template-meta {
 		@include padding-end(20px);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 
 	.elementor-template-library-template-meta {
 		color: $editor-light;
+	}
+
+	.elementor-template-library-template-name,
+	.elementor-template-library-template-meta,
+	.elementor-template-library-template-preview,
+	.elementor-template-library-template-action {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.elementor-template-library-template-controls {
@@ -637,7 +644,7 @@ $remote-templates-items-space: 30px;
 
 	.elementor-template-library-template-action {
 		padding: 8px 18px;
-		margin: 0 20px;
+		margin: 0 5%;
 	}
 
 	.elementor-template-library-template-more {
