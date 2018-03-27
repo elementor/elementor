@@ -435,6 +435,8 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @since 1.2.2
 	 * @access private
 	 *
+	 * @param array $selectors An array of selectors to process.
+	 *
 	 * @return array Processed selectors.
 	 */
 	private function handle_selectors( $selectors ) {

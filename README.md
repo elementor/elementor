@@ -131,7 +131,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 ### Minimum Requirements ###
 
-* WordPress 4.5 or greater
+* WordPress 4.6 or greater
 * PHP version 5.4 or greater
 * MySQL version 5.0 or greater
 
@@ -139,7 +139,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 * PHP version 7.0 or greater
 * MySQL version 5.6 or greater
-* WP Memory limit of 64 MB or greater (128 MB or higher is preferred)
+* WordPress Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
 https://www.youtube.com/watch?v=Ypn6fltn_7s
 
@@ -177,7 +177,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
+No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
 
 ## Screenshots ##
 
@@ -190,6 +190,14 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.0.1 - 2018-03-27 ###
+* Fix: Removed promotion in the Role Manager area ([#3903](https://github.com/pojome/elementor/issues/3903))
+* Fix: Improved responsive style for My Template modal ([#3914](https://github.com/pojome/elementor/issues/3914))
+* Fix: Issue with conditional repeater field ([#3886](https://github.com/pojome/elementor/issues/3886), [#3865](https://github.com/pojome/elementor/issues/3865))
+* Fix: The notifications toast goes down when you change the page layout
+* Fix: Custom delimiter char for frontend template in the Counter widget
+* Fix: Import template from WP Admin
 
 ### 2.0.0 - 2018-03-26 ###
 * New: Added new library tab for pre-design "Blocks"
@@ -723,7 +731,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix: Smooth scrolling for anchor links, now limited only to links with `.elementor-element` or `.elementor-menu-anchor` classes ([#1478](https://github.com/pojome/elementor/issues/1478))
 
 ### 1.3.5 - 2017-03-20 ###
-* Tweak: Minimum WP version is now v4.5
+* Tweak: Minimum WordPress version is now v4.5
 * Fix: Shape divider glitch on some screen widths
 * Fix: Shape divider flip bug in safari browser
 * Fix: Conflict with jQuery FitVids plugin ([Topic](https://wordpress.org/support/topic/video-lightbox-4/))

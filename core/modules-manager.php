@@ -62,7 +62,7 @@ class Modules_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @return string Modules names.
+	 * @return string[] Modules names.
 	 */
 	public function get_modules_names() {
 		return [
