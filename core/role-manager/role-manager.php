@@ -139,7 +139,7 @@ class Role_Manager extends Settings_Page {
 		?>
 		<div class="elementor-role-go-pro">
 			<div class="elementor-role-go-pro__desc"><?php echo __( 'Want to give access only to content?', 'elementor' ); ?></div>
-			<div class="elementor-role-go-pro__link"><a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( $pro_link ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a></div>
+			<div class="elementor-role-go-pro__link"><a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( $pro_link ); ?>">Get Pro 2.0 Beta</a></div>
 		</div>
 		<?php
 	}
