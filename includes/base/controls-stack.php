@@ -1717,6 +1717,10 @@ abstract class Controls_Stack {
 
 		foreach ( $controls as $control ) {
 			if ( 'repeater' === $control['type'] ) {
+				if ( ! isset( $settings[ $control['name'] ] ) || ! is_array( $settings[ $control['name'] ] ) ) {
+					continue;
+				}
+
 				foreach ( $settings[ $control['name'] ] as $index => $repeater_row_data ) {
 					$sanitized_row_data = $this->sanitize_initial_data( [
 						'settings' => $repeater_row_data,
