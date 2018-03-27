@@ -174,6 +174,8 @@ class Documents_Manager {
 	 * @return false|Document Document data or false if post ID was not entered.
 	 */
 	public function get( $post_id, $from_cache = true ) {
+		$post_id = absint( $post_id );
+
 		if ( ! $post_id ) {
 			return false;
 		}

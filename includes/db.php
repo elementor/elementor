@@ -401,10 +401,14 @@ class DB {
 	 */
 	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
 		$from_post_meta = get_post_meta( $from_post_id );
+		$core_meta = [
+			'_wp_page_template',
+			'_thumbnail_id',
+		];
 
 		foreach ( $from_post_meta as $meta_key => $values ) {
 			// Copy only meta with the `_elementor` prefix
-			if ( 0 === strpos( $meta_key, '_elementor' ) ) {
+			if ( 0 === strpos( $meta_key, '_elementor' ) || in_array( $meta_key, $core_meta, true ) ) {
 				$value = $values[0];
 
 				// The elementor JSON needs slashes before saving
