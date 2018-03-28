@@ -189,6 +189,12 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.0.2 - 2018-03-28 =
+* Fix: Title changing on auto-save
+* Fix: Page templates reverts to default on preview ([#3933](https://github.com/pojome/elementor/issues/3933))
+* Fix: Editor won't load when a custom image size is used ([#3926](https://github.com/pojome/elementor/issues/3926))
+* Fix: WordPress Widgets not loading saved settings ([#3930](https://github.com/pojome/elementor/issues/3930))
+
 = 2.0.1 - 2018-03-27 =
 * Fix: Removed promotion in the Role Manager area ([#3903](https://github.com/pojome/elementor/issues/3903))
 * Fix: Improved responsive style for My Template modal ([#3914](https://github.com/pojome/elementor/issues/3914))
