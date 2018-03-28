@@ -375,6 +375,18 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
+							'context_menu' => [
+								'label' => __( 'Widgets Context Menu', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => 'on',
+									'options' => [
+										'' => __( 'Disable', 'elementor' ),
+										'on' => __( 'Enable', 'elementor' ),
+									],
+									'desc' => __( 'Bla bla bla bla bla', 'elementor' ),
+								],
+							]
 						],
 					],
 				],
