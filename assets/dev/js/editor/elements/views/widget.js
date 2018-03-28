@@ -24,7 +24,9 @@ WidgetView = BaseElementView.extend( {
 
 		events.click = 'onClickEdit';
 
-		events.contextmenu = 'onContextMenu';
+		if ( elementor.config.contextMenuEnabled ) {
+			events.contextmenu = 'onContextMenu';
+		}
 
 		return events;
 	},
@@ -56,7 +58,9 @@ WidgetView = BaseElementView.extend( {
 			editModel.renderRemoteServer();
 		}
 
-		this.initContextMenu();
+		if ( elementor.config.contextMenuEnabled ) {
+			this.initContextMenu();
+		}
 
 		var onRenderMethod = this.onRender;
 

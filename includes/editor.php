@@ -534,6 +534,7 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
+			'contextMenuEnabled' => ! ! get_option( 'elementor_context_menu', true ),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
