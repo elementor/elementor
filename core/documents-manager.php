@@ -3,7 +3,6 @@ namespace Elementor\Core;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\Post;
-use Elementor\Core\Utils\Exceptions;
 use Elementor\DB;
 use Elementor\Plugin;
 
