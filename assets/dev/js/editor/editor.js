@@ -636,6 +636,12 @@ App = Marionette.Application.extend( {
 
 		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
 
+		if ( this.previewLoadedOnce ) {
+			this.getPanelView().setPage( 'elements' );
+		} else {
+			this.onFirstPreviewLoaded();
+		}
+
 		this.addRegions( {
 			sections: iframeRegion
 		} );
@@ -666,25 +672,23 @@ App = Marionette.Application.extend( {
 
 		this.onEditModeSwitched();
 
-		if ( this.previewLoadedOnce ) {
-			this.getPanelView().setPage( 'elements' );
-		} else {
-			this.addRegions( {
-				panel: '#elementor-panel'
-			} );
-
-			var PanelLayoutView = require( 'elementor-layouts/panel/panel' );
-			this.panel.show( new PanelLayoutView() );
-
-			this.setResizablePanel();
-			this.heartbeat.init();
-			this.checkPageStatus();
-			this.openLibraryOnStart();
-
-			this.previewLoadedOnce = true;
-		}
-
 		this.trigger( 'preview:loaded' );
+	},
+
+	onFirstPreviewLoaded: function() {
+		this.addRegions( {
+			panel: '#elementor-panel'
+		} );
+
+		var PanelLayoutView = require( 'elementor-layouts/panel/panel' );
+		this.panel.show( new PanelLayoutView() );
+
+		this.setResizablePanel();
+		this.heartbeat.init();
+		this.checkPageStatus();
+		this.openLibraryOnStart();
+
+		this.previewLoadedOnce = true;
 	},
 
 	onEditModeSwitched: function() {

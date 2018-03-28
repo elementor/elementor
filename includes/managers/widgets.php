@@ -340,13 +340,11 @@ class Widgets_Manager {
 			$request['data'] = [];
 		}
 
-		$data = json_decode( stripslashes( $request['data'] ), true );
-
 		$element_data = [
 			'id' => $request['id'],
 			'elType' => 'widget',
 			'widgetType' => $request['widget_type'],
-			'settings' => $data,
+			'settings' => $request['data'],
 		];
 
 		/**
