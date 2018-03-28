@@ -638,6 +638,13 @@ class Editor {
 				'server_connection_lost' => __( 'Connection Lost', 'elementor' ),
 				'unknown_error' => __( 'Unknown Error', 'elementor' ),
 
+				// Context Menu
+				'edit' => __( 'Edit', 'elementor' ),
+				'duplicate' => __( 'Duplicate', 'elementor' ),
+				'copy_style' => __( 'Copy Style', 'elementor' ),
+				'paste_style' => __( 'Paste Style', 'elementor' ),
+				'save_as_global' => __( 'Save as a Global', 'elementor' ),
+
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'elementor_docs' => __( 'Documentation', 'elementor' ),
