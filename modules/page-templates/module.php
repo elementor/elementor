@@ -5,6 +5,7 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DocumentTypes\Post as PostDocument;
+use Elementor\DB;
 use Elementor\Modules\Library\Documents\Page as PageDocument;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -213,12 +214,16 @@ class Module extends BaseModule {
 	}
 
 	public function filter_update_meta( $value, $object_id, $meta_key ) {
-		// Don't allow WP to update the parent page template.
-		// (during `wp_update_post` from page-settings or save_plain_text).
-		$is_elementor_action = isset( $_POST['action'] ) && 'elementor_ajax' === $_POST['action'];
+		if ( '_wp_page_template' === $meta_key ) {
+			$ajax_data = Plugin::$instance->ajax->get_current_action_data();
 
-		if ( $is_elementor_action && '_wp_page_template' === $meta_key && ! wp_is_post_autosave( $object_id ) ) {
-			$value = false;
+			$is_autosave_action = $ajax_data && 'save_builder' === $ajax_data['action'] && DB::STATUS_AUTOSAVE === $ajax_data['data']['status'];
+
+			// Don't allow WP to update the parent page template.
+			// (during `wp_update_post` from page-settings or save_plain_text).
+			if ( $is_autosave_action && ! wp_is_post_autosave( $object_id ) ) {
+				$value = false;
+			}
 		}
 
 		return $value;
@@ -231,8 +236,6 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/documents/register_controls', [ $this, 'action_register_template_control' ] );
 
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			add_filter( 'update_post_metadata', [ $this, 'filter_update_meta' ], 10, 3 );
-		}
+		add_filter( 'update_post_metadata', [ $this, 'filter_update_meta' ], 10, 3 );
 	}
 }
