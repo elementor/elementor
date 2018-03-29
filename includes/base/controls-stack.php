@@ -1845,9 +1845,9 @@ abstract class Controls_Stack {
 	protected function _init( $data ) {
 		$this->_data = array_merge( $this->get_default_data(), $data );
 
-		$this->_data = $this->sanitize_initial_data( $this->_data );
-
 		$this->_id = $data['id'];
+
+		$this->_data = $this->sanitize_initial_data( $this->_data );
 
 		$this->_settings = $this->_get_parsed_settings();
 	}
