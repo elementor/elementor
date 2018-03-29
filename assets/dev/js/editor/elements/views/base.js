@@ -128,6 +128,76 @@ BaseElementView = BaseContainer.extend( {
 		elementor.getPanelView().openEditor( this.getEditModel(), this );
 	},
 
+	copyStyle: function() {
+		var settings = this.getEditModel().get( 'settings' ),
+			styleSettings = {},
+			controls = _.filter( settings.controls, function( control ) {
+				return 'content' !== control.tab;
+			} );
+
+		controls.forEach( function( control ) {
+			if ( undefined === settings.attributes[ control.name ] ) {
+				return;
+			}
+
+			styleSettings[ control.name ] = settings.attributes[ control.name ];
+		} );
+
+		elementor.channels.editor.reply( 'styleClipboard', styleSettings );
+	},
+
+	pasteStyle: function() {
+		var styleClipboard = elementor.channels.editor.request( 'styleClipboard' );
+
+		if ( ! styleClipboard ) {
+			return;
+		}
+
+		var editModel = this.getEditModel(),
+			settingsAttributes = editModel.get( 'settings' ).attributes,
+			diffSettings = {};
+
+		jQuery.each( styleClipboard, function( key ) {
+			if ( undefined === settingsAttributes[ key ] ) {
+				return;
+			}
+
+			if ( 'object' === typeof styleClipboard[ key ] ) {
+				if ( 'object' !== typeof settingsAttributes[ key ] ) {
+					return;
+				}
+
+				var isEqual = true;
+
+				jQuery.each( styleClipboard[ key ], function( propertyKey ) {
+					if ( styleClipboard[ key ][ propertyKey ] !== settingsAttributes[ key ][ propertyKey ] ) {
+						return isEqual = false;
+					}
+				} );
+
+				if ( isEqual ) {
+					return;
+				}
+			} else {
+				if ( styleClipboard[ key ] === settingsAttributes[ key ] ) {
+					return;
+				}
+			}
+
+			diffSettings[ key ] = styleClipboard[ key ];
+		} );
+
+		this.allowRender = false;
+
+		jQuery.each( diffSettings, function( key, value ) {
+			editModel.setSetting( key, value );
+		} );
+
+		this.allowRender = true;
+
+		this.renderOnChange();
+	},
+
 	addElementFromPanel: function( options ) {
 		var elementView = elementor.channels.panelElements.request( 'element:selected' );
 
