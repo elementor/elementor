@@ -84,10 +84,12 @@ WidgetView = BaseElementView.extend( {
 				callback: this.duplicate.bind( this )
 			}, {
 				name: 'copyStyle',
-				title: elementor.translate( 'copy_style' )
+				title: elementor.translate( 'copy_style' ),
+				callback: this.copyStyle.bind( this )
 			}, {
 				name: 'pasteStyle',
-				title: elementor.translate( 'paste_style' )
+				title: elementor.translate( 'paste_style' ),
+				callback: this.pasteStyle.bind( this )
 			}, {
 				name: '__divider__'
 			}, {
