@@ -203,7 +203,7 @@ abstract class Controls_Stack {
 	 * will be returned.
 	 *
 	 * @since 1.4.0
-	 * @access private
+	 * @access protected
 	 * @static
 	 *
 	 * @param array  $haystack An array of items.
@@ -1018,6 +1018,23 @@ abstract class Controls_Stack {
 		return array_merge( $settings_mask, $active_settings );
 	}
 
+	/**
+	 * Get settings for display.
+	 *
+	 * Retrieve all the settings or, when requested, a specific setting for display.
+     *
+	 * Unlike `get_settings()` method, this method retrieves only active settings
+	 * that passed all the conditions, rendered all the shortcodes and all the dynamic
+	 * tags.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @param string $setting_key Optional. The key of the requested setting.
+	 *                            Default is null.
+	 *
+	 * @return array The settings.
+	 */
 	public function get_settings_for_display( $setting_key = null ) {
 		if ( $setting_key ) {
 			$settings = [ $setting_key => $this->get_settings( $setting_key ) ];
@@ -1034,6 +1051,20 @@ abstract class Controls_Stack {
 		return $parsed_settings;
 	}
 
+	/**
+	 * Parse dynamic settings.
+	 *
+	 * Retrieve the settings with rendered dynamic tags.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @param array $settings     Optional. The requested setting. Default is null.
+	 * @param array $controls     Optional. The controls array. Default is null.
+	 * @param array $all_settings Optional. All the settings. Default is null.
+	 *
+	 * @return array The settings with rendered dynamic tags.
+	 */
 	public function parse_dynamic_settings( $settings, $controls = null, $all_settings = null ) {
 		if ( null === $all_settings ) {
 			$all_settings = $this->get_settings();
@@ -1708,6 +1739,20 @@ abstract class Controls_Stack {
 		return $settings;
 	}
 
+	/**
+	 * Sanitize initial data.
+	 *
+	 * Performs data cleaning and sanitization.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+     *
+	 * @param array $data     Data to sanitize.
+	 * @param array $controls Optional. An array of controls. Default is an
+	 *                        empty array.
+	 *
+	 * @return array Sanitized data.
+	 */
 	protected function sanitize_initial_data( $data, array $controls = [] ) {
 		if ( ! $controls ) {
 			$controls = $this->get_controls();
@@ -1804,6 +1849,17 @@ abstract class Controls_Stack {
 	 */
 	protected function render() {}
 
+	/**
+	 * Print content template.
+	 *
+	 * Used to generate the content template on the editor, using a
+	 * Backbone JavaScript template.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param string $template_content Template content.
+	 */
 	protected function print_template_content( $template_content ) {
 		echo $template_content;
 	}

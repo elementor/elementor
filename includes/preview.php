@@ -101,7 +101,7 @@ class Preview {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param int $post_id
+	 * @param int $post_id Optional. Post ID. Default is `0`.
 	 *
 	 * @return bool Whether preview mode is active.
 	 */
@@ -130,7 +130,7 @@ class Preview {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string $content
+	 * @param string $content The content of the builder.
 	 *
 	 * @return string HTML wrapper for the builder.
 	 */

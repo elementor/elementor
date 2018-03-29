@@ -372,6 +372,17 @@ abstract class Element_Base extends Controls_Stack {
 		return false;
 	}
 
+	/**
+	 * Print element content template.
+	 *
+	 * Used to generate the element content template on the editor, using a
+	 * Backbone JavaScript template.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param string $template_content Template content.
+	 */
 	protected function print_template_content( $template_content ) {
 		$this->render_edit_tools();
 
@@ -562,6 +573,14 @@ abstract class Element_Base extends Controls_Stack {
 		return implode( ' ', $attributes );
 	}
 
+	/**
+	 * Print render attribute string.
+	 *
+	 * Used to output the rendered attribute.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function print_render_attribute_string( $element ) {
 		echo $this->get_render_attribute_string( $element ); // XSS ok.
 	}

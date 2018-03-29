@@ -30,6 +30,16 @@ class Ajax_Manager {
 	 */
 	protected $ajax_actions = [];
 
+	/**
+	 * Ajax $requests.
+	 *
+	 * Holds all the register ajax $requests.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @var array
+	 */
 	protected $requests = [];
 
 	/**

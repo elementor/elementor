@@ -50,15 +50,25 @@ class DB {
 	/**
 	 * Switched post data.
 	 *
-	 * Holds the post data.
+	 * Holds the switched post data.
 	 *
 	 * @since 1.5.0
 	 * @access protected
 	 *
-	 * @var array Post data. Default is an empty array.
+	 * @var array Switched post data. Default is an empty array.
 	 */
 	protected $switched_post_data = [];
 
+	/**
+	 * Switched data.
+	 *
+	 * Holds the switched data.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @var array Switched data. Default is an empty array.
+	 */
 	protected $switched_data = [];
 
 	/**
@@ -448,7 +458,7 @@ class DB {
 	 * @since 1.5.0
 	 * @access public
 	 *
-	 * @param int $post_id Post ID.
+	 * @param int $post_id Post ID to switch to.
 	 */
 	public function switch_to_post( $post_id ) {
 		$post_id = absint( $post_id );
@@ -495,9 +505,15 @@ class DB {
 
 
 	/**
+	 * Switch to query.
+	 *
+	 * Change the WordPress query to a new query with the requested
+	 * query variables.
+	 *
+	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param $query_vars array
+	 * @param array $query_vars New query variables.
 	 */
 	public function switch_to_query( $query_vars ) {
 		global $wp_query;
@@ -528,6 +544,11 @@ class DB {
 	}
 
 	/**
+	 * Restore current query.
+	 *
+	 * Rollback to the previous query, rolling back from `DB::switch_to_query()`.
+	 *
+	 * @since 2.0.0
 	 * @access public
 	 */
 	public function restore_current_query() {

@@ -15,8 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Api {
 
+	/**
+	 * Elementor library option key.
+	 */
 	const LIBRARY_OPTION_KEY = 'elementor_remote_info_library';
 
+	/**
+	 * Elementor feed option key.
+	 */
 	const FEED_OPTION_KEY = 'elementor_remote_info_feed_data';
 
 	/**
