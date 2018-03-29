@@ -101,7 +101,18 @@ class Settings extends Settings_Page {
 			'<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . __( 'Go Pro', 'elementor' ),
 			'manage_options',
 			'go_elementor_pro',
-			[ $this, 'go_elementor_pro' ]
+			[ $this, 'handle_external_redirects' ]
+		);
+	}
+
+	public function register_knowledge_base_menu() {
+		add_submenu_page(
+			self::PAGE_ID,
+			'',
+			__( 'Knowledge Base', 'elementor' ),
+			'manage_options',
+			'go_knowledge_base_site',
+			[ $this, 'handle_external_redirects' ]
 		);
 	}
 
@@ -115,9 +126,18 @@ class Settings extends Settings_Page {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function go_elementor_pro() {
-		if ( isset( $_GET['page'] ) && 'go_elementor_pro' === $_GET['page'] ) {
+	public function handle_external_redirects() {
+		if ( empty( $_GET['page'] ) ) {
+			return;
+		}
+
+		if ( 'go_elementor_pro' === $_GET['page'] ) {
 			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
+			die;
+		}
+
+		if ( 'go_knowledge_base_site' === $_GET['page'] ) {
+			wp_redirect( 'https://go.elementor.com/docs-admin-menu/' );
 			die;
 		}
 	}
@@ -136,7 +156,7 @@ class Settings extends Settings_Page {
 	}
 
 	public function on_admin_init() {
-		$this->go_elementor_pro();
+		$this->handle_external_redirects();
 
 		// Save general settings in one list for a future usage
 		$this->handle_general_settings_update();
@@ -162,27 +182,6 @@ class Settings extends Settings_Page {
 			$submenu['elementor'][0] = $submenu['elementor'][1];
 			$submenu['elementor'][1] = $hold_menu_data;
 		}
-	}
-
-	/**
-	 * Settings page constructor.
-	 *
-	 * Initializing Elementor "Settings" page.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct();
-
-		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
-		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
-		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
-
-		// Clear CSS Meta after change print method.
-		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
-		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 	}
 
 	/**
@@ -419,4 +418,27 @@ class Settings extends Settings_Page {
 			update_option( General_Settings_Manager::META_KEY, $saved_general_settings );
 		}
 	}
+
+	/**
+	 * Settings page constructor.
+	 *
+	 * Initializing Elementor "Settings" page.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
+	public function __construct() {
+		parent::__construct();
+
+		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
+		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
+		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
+		add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
+
+		// Clear CSS Meta after change print method.
+		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+	}
+
 }
