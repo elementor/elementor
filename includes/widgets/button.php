@@ -94,6 +94,16 @@ class Widget_Button extends Widget_Base {
 		];
 	}
 
+	public static function get_button_types() {
+		return [
+			'' => __( 'Default', 'elementor' ),
+			'info' => __( 'Info', 'elementor' ),
+			'success' => __( 'Success', 'elementor' ),
+			'warning' => __( 'Warning', 'elementor' ),
+			'danger' => __( 'Danger', 'elementor' ),
+		];
+	}
+
 	/**
 	 * Register button widget controls.
 	 *
@@ -116,13 +126,7 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
-				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'info' => __( 'Info', 'elementor' ),
-					'success' => __( 'Success', 'elementor' ),
-					'warning' => __( 'Warning', 'elementor' ),
-					'danger' => __( 'Danger', 'elementor' ),
-				],
+				'options' => self::get_button_types(),
 				'prefix_class' => 'elementor-button-',
 			]
 		);
