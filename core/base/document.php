@@ -308,9 +308,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
-			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
-			$page_settings_manager->ajax_before_save_settings( $data['settings'], $this->post->ID );
-			$page_settings_manager->save_settings( $data['settings'], $this->post->ID );
+			$this->save_settings( $data['settings'] );
 		}
 
 		// Refresh post after save settings.
@@ -647,5 +645,11 @@ abstract class Document extends Controls_Stack {
 		}
 
 		parent::__construct( $data );
+	}
+
+	protected function save_settings( $settings ) {
+		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+		$page_settings_manager->ajax_before_save_settings( $settings, $this->post->ID );
+		$page_settings_manager->save_settings( $settings, $this->post->ID );
 	}
 }
