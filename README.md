@@ -191,6 +191,12 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.0.3 - 2018-03-29 ###
+* Tweak: Added Knowledge Base link to WordPress admin menu
+* Tweak: Improved performance in the editor using internal caching
+* Fix: Avoid WordPress override page template in auto-save status ([Topic](https://wordpress.org/support/topic/save-draft-will-revert-page-layout-into-default-instead-of-elementor-canvas/))
+* Fix: Set element ID before sanitizing data
+
 ### 2.0.2 - 2018-03-28 ###
 * Fix: Title changing on auto-save
 * Fix: Page templates reverts to default on preview ([#3933](https://github.com/pojome/elementor/issues/3933))
