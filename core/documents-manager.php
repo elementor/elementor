@@ -3,7 +3,6 @@ namespace Elementor\Core;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\Post;
-use Elementor\Core\Utils\Exceptions;
 use Elementor\DB;
 use Elementor\Plugin;
 
@@ -179,7 +178,7 @@ class Documents_Manager {
 		if ( ! $post_id ) {
 			return false;
 		}
-		if ( $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
+		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
 			$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 
 			$doc_type_class = $this->get_document_type( $doc_type );

@@ -728,13 +728,21 @@ App = Marionette.Application.extend( {
 	},
 
 	onPreviewElNotFound: function() {
-		this.showFatalErrorDialog( {
-			headerMessage: this.translate( 'preview_el_not_found_header' ),
-			message: this.translate( 'preview_el_not_found_message' ),
-			onConfirm: function() {
-				open( elementor.config.help_the_content_url, '_blank' );
-			}
-		} );
+		var args = this.$preview[0].contentWindow.elementorPreviewErrorArgs;
+
+		if ( ! args ) {
+			args = {
+				headerMessage: this.translate( 'preview_el_not_found_header' ),
+				message: this.translate( 'preview_el_not_found_message' ),
+				confirmURL: elementor.config.help_the_content_url
+			};
+		}
+
+		args.onConfirm = function() {
+			open( args.confirmURL, '_blank' );
+		};
+
+		this.showFatalErrorDialog( args );
 	},
 
 	onBackgroundClick: function( event ) {
