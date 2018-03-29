@@ -94,6 +94,17 @@ class Widget_Button extends Widget_Base {
 		];
 	}
 
+	/**
+	 * Get button styles.
+	 *
+	 * Retrieve an array of button styles for the button widget.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @static
+	 *
+	 * @return array An array containing button styles.
+	 */
 	public static function get_button_types() {
 		return [
 			'' => __( 'Default', 'elementor' ),
