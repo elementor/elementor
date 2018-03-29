@@ -590,8 +590,13 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function update_meta( $key, $value ) {
-		// Use `update_metadata` in order to save also for revisions.
+		// Use `update_metadata` in order to work also with revisions.
 		return update_metadata( 'post', $this->post->ID, $key, $value );
+	}
+
+	public function delete_meta( $key, $value = '' ) {
+		// Use `delete_metadata` in order to work also with revisions.
+		return delete_metadata( 'post', $this->post->ID, $key, $value );
 	}
 
 	public function get_last_edited() {
