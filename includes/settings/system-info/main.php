@@ -129,7 +129,7 @@ class Main {
 	 * @access private
 	 */
 	private function add_actions() {
-		add_action( 'admin_menu', [ $this, 'register_menu' ], 501 );
+		add_action( 'admin_menu', [ $this, 'register_menu' ], 500 );
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
 	}
 
