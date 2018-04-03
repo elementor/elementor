@@ -393,6 +393,8 @@ class Utils {
 	 * @param string $version     The version of WordPress that deprecated the hook.
 	 * @param bool   $replacement Optional. The hook that should have been used.
 	 * @param string $message     Optional. A message regarding the change.
+	 *
+	 * @return mixed The filtered value after all hooked functions are applied to it.
 	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
 		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `apply_filters_deprecated()` function.
@@ -486,9 +488,15 @@ class Utils {
 	}
 
 	/**
+	 * Is CPT supports custom templates.
+	 *
+	 * Whether the Custom Post Type supports templates.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 * @static
+	 *
+	 * @return bool True is templates are supported, False otherwise.
 	 */
 	public static function is_cpt_custom_templates_supported() {
 		require_once ABSPATH . '/wp-admin/includes/theme.php';
