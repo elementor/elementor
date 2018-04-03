@@ -77,7 +77,7 @@ class DB {
 	 * Save data from the editor to the database.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->save()` method instead.
 	 *
 	 * @access public
 	 *
@@ -88,7 +88,7 @@ class DB {
 	 * @return bool
 	 */
 	public function save_editor( $post_id, $data, $status = self::STATUS_PUBLISH ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->save()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->save()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
@@ -165,7 +165,7 @@ class DB {
 	 * was parsed by elementor.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get_elements_data()` method instead.
 	 *
 	 * @access public
 	 *
@@ -175,7 +175,7 @@ class DB {
 	 * @return array Post data.
 	 */
 	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_elements_data()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get_elements_data()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
@@ -188,7 +188,7 @@ class DB {
 	 * Retrieve the auto-saved post revision that is newer than current post.
 	 *
 	 * @since 1.9.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get_newer_autosave()` method instead.
 	 *
 	 * @access public
 	 *
@@ -196,9 +196,8 @@ class DB {
 	 *
 	 * @return \WP_Post|false The auto-saved post, or false.
 	 */
-
 	public function get_newer_autosave( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_newer_autosave()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get_newer_autosave()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
