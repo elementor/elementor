@@ -72,7 +72,7 @@ class Ajax_Manager {
 	 * Send a JSON response data back to the ajax request, indicating success.
 	 *
 	 * @since 2.0.0
-	 * @access public
+	 * @access protected
 	 */
 	protected function send_success() {
 		wp_send_json_success( [
@@ -86,7 +86,7 @@ class Ajax_Manager {
 	 * Send a JSON response data back to the ajax request, indicating failure.
 	 *
 	 * @since 2.0.0
-	 * @access public
+	 * @access protected
 	 *
 	 * @param null $code
 	 */
