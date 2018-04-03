@@ -492,7 +492,7 @@ class Frontend {
 	 */
 	public function enqueue_styles() {
 		/**
-		 * Before frontend enqueue styles.
+		 * Before frontend styles enqueued.
 		 *
 		 * Fires before Elementor frontend styles are enqueued.
 		 *
@@ -506,7 +506,7 @@ class Frontend {
 		wp_enqueue_style( 'elementor-frontend' );
 
 		/**
-		 * After frontend enqueue styles.
+		 * After frontend styles enqueued.
 		 *
 		 * Fires after Elementor frontend styles are enqueued.
 		 *
