@@ -202,12 +202,14 @@ class Manager extends BaseManager {
 	 *
 	 * Retrieve the CSS file before updating it.
 	 *
+	 * This method overrides the parent method to disallow updating CSS files for pages.
+	 *
 	 * @since 1.6.0
 	 * @access protected
 	 *
 	 * @param int $id Post ID.
 	 *
-	 * @return Post_CSS_File The post CSS file object.
+	 * @return false Disallow The updating CSS files for pages.
 	 */
 	protected function get_css_file_for_update( $id ) {
 		return false;

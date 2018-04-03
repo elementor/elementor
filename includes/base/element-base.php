@@ -217,16 +217,11 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 * @static
 	 *
-	 * @param string $tool_name Edit tool name.
-	 * @param array  $tool_data {
-	 *     Edit tool data.
-	 *
-	 *     @type string $title  Edit tool title.
-	 *     @type string $icon   Edit tool icon.
-	 * }
-	 * @param string $after     Optional. If tool ID defined, the new edit tool
-	 *                          will be added after it. If null, the new edit
-	 *                          tool will be added at the end. Default is null.
+	 * @param string   $tool_name Edit tool name.
+	 * @param string[] $tool_data Edit tool data.
+	 * @param string   $after     Optional. If tool ID defined, the new edit tool
+	 *                            will be added after it. If null, the new edit
+	 *                            tool will be added at the end. Default is null.
 	 *
 	 */
 	final public static function add_edit_tool( $tool_name, $tool_data, $after = null ) {
@@ -582,6 +577,8 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param array|string $element The element.
 	 */
 	public function print_render_attribute_string( $element ) {
 		echo $this->get_render_attribute_string( $element ); // XSS ok.
