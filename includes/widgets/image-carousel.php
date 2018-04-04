@@ -362,7 +362,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'arrows_position',
 			[
-				'label' => __( 'Arrows Position', 'elementor' ),
+				'label' => __( 'Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'inside',
 				'options' => [
@@ -378,7 +378,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'arrows_size',
 			[
-				'label' => __( 'Arrows Size', 'elementor' ),
+				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -398,7 +398,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'arrows_color',
 			[
-				'label' => __( 'Arrows Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-prev:before, {{WRAPPER}} .elementor-image-carousel-wrapper .slick-slider .slick-next:before' => 'color: {{VALUE}};',
@@ -424,7 +424,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'dots_position',
 			[
-				'label' => __( 'Dots Position', 'elementor' ),
+				'label' => __( 'Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'outside',
 				'options' => [
@@ -440,7 +440,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'dots_size',
 			[
-				'label' => __( 'Dots Size', 'elementor' ),
+				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -460,7 +460,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'dots_color',
 			[
-				'label' => __( 'Dots Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-dots li button:before' => 'color: {{VALUE}};',
