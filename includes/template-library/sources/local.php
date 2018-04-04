@@ -868,7 +868,7 @@ class Source_Local extends Source_Base {
 					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php echo __( 'Import Now', 'elementor' ); ?>">
+						<input type="submit" class="button" value="<?php echo esc_attr__( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
