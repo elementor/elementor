@@ -55,7 +55,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'_section_style',
 			[
-				'label' => __( 'Element Style', 'elementor' ),
+				'label' => __( 'Advanced', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
