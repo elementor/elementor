@@ -356,7 +356,7 @@ abstract class Controls_Stack {
 
 			if ( null !== $target_section_args ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
-					_doing_it_wrong( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', esc_html( $id ) ), '1.0.0' );
+					_doing_it_wrong( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', $id ), '1.0.0' );
 				}
 
 				$args = array_replace_recursive( $target_section_args, $args );

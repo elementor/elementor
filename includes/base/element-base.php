@@ -675,7 +675,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _render_settings() {
-		_deprecated_function( esc_html( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ) ), '1.8.0', 'render_edit_tools()' );
+		_deprecated_function( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), '1.8.0', 'render_edit_tools()' );
 
 		$this->render_edit_tools();
 	}
