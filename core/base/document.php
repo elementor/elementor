@@ -629,7 +629,7 @@ abstract class Document extends Controls_Stack {
 				$this->post = get_post( $data['post_id'] );
 
 				if ( ! $this->post ) {
-					throw new \Exception( sprintf( 'Post ID #%s is not exist.', $data['post_id'] ), Exceptions::NOT_FOUND );
+					throw new \Exception( sprintf( 'Post ID #%s does not exist.', $data['post_id'] ), Exceptions::NOT_FOUND );
 				}
 			}
 
