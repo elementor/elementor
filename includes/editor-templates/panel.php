@@ -166,7 +166,7 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
 	<i class="elementor-panel-nerd-box-icon eicon-nerd" aria-hidden="true"></i>
-	<div class="elementor-panel-nerd-box-title">{{{ '<?php echo __( '{0} are disabled', 'elementor' ); ?>'.replace( '{0}', disabledTitle ) }}}</div>
+	<div class="elementor-panel-nerd-box-title">{{{ '<?php echo sprintf( __( '%s are disabled', 'elementor' ), '{0}' ); ?>'.replace( '{0}', disabledTitle ) }}}</div>
 	<div class="elementor-panel-nerd-box-message"><?php printf( __( 'You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?></div>
 </script>
 
