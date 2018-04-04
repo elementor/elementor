@@ -114,7 +114,7 @@ class Control_Dimensions extends Control_Base_Units {
 								disabled
 								<# } #>
 									/>
-							<label for="<?php echo $control_uid; ?>" class="elementor-control-dimension-label"><?php echo $dimension_title; ?></label>
+							<label for="<?php echo esc_attr( $control_uid ); ?>" class="elementor-control-dimension-label"><?php echo $dimension_title; ?></label>
 						</li>
 					<?php endforeach; ?>
 					<li>
