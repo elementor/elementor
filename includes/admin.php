@@ -598,7 +598,7 @@ class Admin {
 				</div>
 				<?php if ( ! empty( $create_new_cpt ) ) : ?>
 				<div class="e-overview__create">
-					<a href="<?php echo esc_attr( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
+					<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
 				</div>
 				<?php endif; ?>
 			</div>
