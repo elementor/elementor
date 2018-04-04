@@ -199,7 +199,7 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 				<div class="elementor-panel-scheme-item-title elementor-control-title"><?php echo $option['label']; ?></div>
 				<div class="elementor-panel-scheme-typography-item-value">
 					<?php if ( 'select' === $option['type'] ) : ?>
-						<select name="<?php echo $option_name; ?>" class="elementor-panel-scheme-typography-item-field">
+						<select name="<?php echo esc_attr( $option_name ); ?>" class="elementor-panel-scheme-typography-item-field">
 							<?php foreach ( $option['options'] as $field_key => $field_value ) : ?>
 								<option value="<?php echo esc_attr( $field_key ); ?>"><?php echo $field_value; ?></option>
 							<?php endforeach; ?>
