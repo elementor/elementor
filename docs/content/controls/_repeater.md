@@ -40,6 +40,40 @@ $this->add_control(
 );
 ```
 
+### Alternative Example
+
+Alternatively, you could use the `Repeater` class, which provides a better readability and maintainability for repeaters with many fields:
+
+```php
+$repeater = new Repeater();
+
+$repeater->add_control( 'list_title', [
+	'label' => __( 'Title', 'plugin-domain' ),
+	'type' => Controls_Manager::TEXT,
+	'default' => __( 'List Title' , 'plugin-domain' ),
+	'label_block' => true,
+]);
+
+$repeater->add_control( 'list_content', [
+	'name' => 'list_content',
+	'label' => __( 'Content', 'plugin-domain' ),
+	'type' => Controls_Manager::WYSIWYG,
+	'default' => __( 'List Content' , 'plugin-domain' ),
+	'show_label' => false,
+]);
+
+$this->add_control(
+	'list',
+	[
+		'label' => __( 'Repeater List', 'plugin-domain' ),
+		'type' => Controls_Manager::REPEATER,
+		'default' => [/* same as above */],
+		'fields' => array_values( $repeater->get_controls() );,
+	]
+);
+```
+
+
 ## Usage
 
 **PHP** *(Under `render()` method)*
@@ -65,6 +99,34 @@ if ( $list ) {
 	<# }); #>
 	</dl>
 <# } #>
+```
+
+## Selectors
+You can also target repeater items via CSS selectors:
+
+```php
+$repeater->add_control( 'color', [
+	'name' => 'color',
+	'type' => Controls_Manager::COLOR,
+	'selectors' => [
+		'{{WRAPPER}} {{CURRENT_ITEM}}' => 'color: {{VALUE}}'
+	],
+]);
+```
+
+In order to make this work, the render element should have a special class name (above example, simplified):
+
+```php
+foreach ( $list as $item ) {
+	$className = 'elementor-repeater-item-' . $item['_id'];
+	echo '<dt class="' . $className . '">';
+```
+
+Also in JS  (above example, simplified):
+
+```html
+<# _.each( settings.list, function( item ) { #>
+	<dt class="elementor-repeater-item-{{ item._id }}"> {{ item.tab_title }} </dt>
 ```
 
 ## Arguments
