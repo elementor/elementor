@@ -175,9 +175,10 @@ class Documents_Manager {
 	public function get( $post_id, $from_cache = true ) {
 		$post_id = absint( $post_id );
 
-		if ( ! $post_id ) {
+		if ( ! $post_id || ! get_post( $post_id ) ) {
 			return false;
 		}
+
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
 			$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 
