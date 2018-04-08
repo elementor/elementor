@@ -725,7 +725,7 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Add render attributes.
 	 *
-	 * Used to add render attributes to the element.
+	 * Used to add attributes to the current element wrapper HTML tag.
 	 *
 	 * @since 1.3.0
 	 * @access protected
