@@ -425,7 +425,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * Retrieve the element parent. Used to check which element it belongs to.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 1.7.6 Use `$this->get_data( 'parent' )` instead.
+	 * @deprecated 1.7.6 Use `Element_Base::get_data( 'parent' )` instead.
 	 * @access public
 	 *
 	 * @return Element_Base Parent element.
@@ -689,7 +689,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * Used to generate the edit tools HTML.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 1.8.0 Use `$this->render_edit_tools()` instead.
+	 * @deprecated 1.8.0 Use `Element_Base::render_edit_tools()` instead.
 	 * @access protected
 	 */
 	protected function _render_settings() {
