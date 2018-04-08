@@ -147,9 +147,9 @@ class Maintenance_Mode {
 	 * Register settings fields.
 	 *
 	 * Adds new "Maintenance Mode" settings fields to Elementor admin page.
-     *
-     * The method need to receive the an instance of the Tools settings page
-     * to add the new maintenance mode functionality.
+	 *
+	 * The method need to receive the an instance of the Tools settings page
+	 * to add the new maintenance mode functionality.
 	 *
 	 * Fired by `elementor/admin/after_create_settings/{$page_id}` action.
 	 *
