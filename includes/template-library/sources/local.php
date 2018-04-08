@@ -888,7 +888,7 @@ class Source_Local extends Source_Base {
 					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php echo __( 'Import Now', 'elementor' ); ?>">
+						<input type="submit" class="button" value="<?php echo esc_attr__( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
@@ -1143,7 +1143,7 @@ class Source_Local extends Source_Base {
 		$baseurl = admin_url( 'edit.php?post_type=' . self::CPT );
 		?>
 		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
-			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php esc_attr_e( 'All', 'elementor' ); ?></a>
+			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php echo __( 'All', 'elementor' ); ?></a>
 			<?php
 			foreach ( self::$_template_types as $template_type ) :
 				$active_class = '';
@@ -1220,9 +1220,9 @@ class Source_Local extends Source_Base {
 		<div class="elementor-template_library-blank_state">
 			<div class="elementor-blank_state">
 				<i class="eicon-folder"></i>
-				<h2><?php printf( __( 'Create Your First %s', 'elementor' ), esc_html( $current_type_label ) ); ?></h2>
+				<h2><?php printf( __( 'Create Your First %s', 'elementor' ), $current_type_label ); ?></h2>
 				<p><?php echo __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimised workflow.', 'elementor' ); ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_attr( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php echo __( 'Add New', 'elementor' ); ?> <?php echo esc_html( $current_type_label ); ?></a>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php echo __( 'Add New', 'elementor' ); ?> <?php echo esc_html( $current_type_label ); ?></a>
 			</div>
 		</div>
 		<?php

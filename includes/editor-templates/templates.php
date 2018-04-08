@@ -112,7 +112,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# } #>
 		<div id="elementor-template-library-filter-text-wrapper">
 			<label for="elementor-template-library-filter-text" class="elementor-screen-only"><?php echo __( 'Search Templates:', 'elementor' ); ?></label>
-			<input id="elementor-template-library-filter-text" placeholder="<?php echo __( 'Search', 'elementor' ); ?>">
+			<input id="elementor-template-library-filter-text" placeholder="<?php echo esc_attr__( 'Search', 'elementor' ); ?>">
 		</div>
 	</div>
 	<# if ( 'local' === activeSource ) { #>
@@ -227,7 +227,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
 	<form id="elementor-template-library-save-template-form">
 		<input type="hidden" name="post_id" value="<?php echo get_the_ID(); ?>">
-		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo __( 'Enter Template Name', 'elementor' ); ?>" required>
+		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success">
 			<span class="elementor-state-icon">
 				<i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>

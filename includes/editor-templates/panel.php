@@ -56,9 +56,9 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo __( 'Settings', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
 		<i class="fa fa-cog" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php esc_html( $document::get_title() . ' ' . __( 'Settings', 'elementor' ) ); ?></span>
+		<span class="elementor-screen-only"><?php echo sprintf( esc_html__( '%s Settings', 'elementor' ), $document::get_title() ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool">
 		<i class="eicon-device-desktop tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
@@ -199,7 +199,7 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 				<div class="elementor-panel-scheme-item-title elementor-control-title"><?php echo $option['label']; ?></div>
 				<div class="elementor-panel-scheme-typography-item-value">
 					<?php if ( 'select' === $option['type'] ) : ?>
-						<select name="<?php echo $option_name; ?>" class="elementor-panel-scheme-typography-item-field">
+						<select name="<?php echo esc_attr( $option_name ); ?>" class="elementor-panel-scheme-typography-item-field">
 							<?php foreach ( $option['options'] as $field_key => $field_value ) : ?>
 								<option value="<?php echo esc_attr( $field_key ); ?>"><?php echo $field_value; ?></option>
 							<?php endforeach; ?>

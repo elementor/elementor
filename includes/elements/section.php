@@ -1277,7 +1277,7 @@ class Element_Section extends Element_Base {
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# if ( ! isInner ) { #>
 					<?php endif; ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_html( $edit_tool['title'] ); ?>">
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
 						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
 					</li>
