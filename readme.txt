@@ -85,7 +85,7 @@ We've integrated RTL and multi language support within the framework of our page
 
 = Developer API. =
 Elementor page builder is free and open source. It's the perfect page builder plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons already developed.
-We have created an extensive [API documentation](https://github.com/pojome/elementor/tree/master/docs), to help you get started and learn just how to integrate with Elementor.
+To help you get started and learn just how to integrate with Elementor, we have created the [Official Elementor Developer Resources](https://developers.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and the [Code Reference](https://code.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 = Translations =
 - [English (Australia)](https://translate.wordpress.org/locale/en-au/default/wp-plugins/elementor) - (en_AU)
