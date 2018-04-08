@@ -442,6 +442,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'title_field' => '{{{ attribute_key }}}',
 				'prevent_empty' => false,
+				'show_label' => false,
 			]
 		);
 
