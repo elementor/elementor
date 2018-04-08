@@ -654,6 +654,7 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
+				'label_block' => false,
 			]
 		);
 
@@ -664,7 +665,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
-				'label_block' => true,
+				'label_block' => false,
 				'frontend_available' => true,
 			]
 		);
@@ -709,8 +710,8 @@ class Element_Column extends Element_Base {
 				'label' => __( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
-				'label_block' => true,
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
 			]
 		);
 
@@ -721,8 +722,8 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'prefix_class' => '',
-				'label_block' => true,
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'label_block' => false,
 			]
 		);
 
