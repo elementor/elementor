@@ -651,15 +651,7 @@ abstract class Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $group_name Group control name.
-	 * @param array  $args       {
-	 *     Group control arguments. Default is an empty array.
-	 *
-	 *     @type string $name      Base Control name.
-	 *     @type string $selector  CSS Selector
-	 *     @type string $scheme    Global scheme to be used.
-	 *     @type array  $condition Display control based on predefined conditional
-	 *                             logic.
-	 * }
+	 * @param array  $args       Group control arguments. Default is an empty array.
 	 * @param array  $options    Optional. Group control options. Default is an
 	 *                           empty array.
 	 */
