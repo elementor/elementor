@@ -538,7 +538,11 @@ class Editor {
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
-				'edit_element' => sprintf( __( 'Edit %s', 'elementor' ), '{0}' ),
+				'edit_element' => sprintf(
+					/* translators: %s: Element name. */
+					__( 'Edit %s', 'elementor' ),
+					'{0}'
+				),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
@@ -578,7 +582,11 @@ class Editor {
 				'library' => __( 'Library', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'page' => __( 'Page', 'elementor' ),
-				'save_your_template' => sprintf( __( 'Save Your %s to Library', 'elementor' ), '{0}' ),
+				'save_your_template' => sprintf(
+					/* translators: %s: Template type. */
+					__( 'Save Your %s to Library', 'elementor' ),
+					'{0}'
+				),
 				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				'section' => __( 'Section', 'elementor' ),
 				'templates_empty_message' => __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
@@ -605,18 +613,34 @@ class Editor {
 				// Gallery.
 				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
 				'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
-				'gallery_images_selected' => sprintf( __( '%s Images Selected', 'elementor' ), '{0}' ),
+				'gallery_images_selected' => sprintf(
+					/* translators: %s: The number of images. */
+					__( '%s Images Selected', 'elementor' ),
+					'{0}'
+				),
 				'gallery_no_images_selected' => __( 'No Images Selected', 'elementor' ),
 				'insert_media' => __( 'Insert Media', 'elementor' ),
 
 				// Take Over.
-				'dialog_user_taken_over' => sprintf( __( '%s has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ), '{0}' ),
+				'dialog_user_taken_over' => sprintf(
+					/* translators: %s: User name. */
+					__( '%s has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ),
+					'{0}'
+				),
 				'go_back' => __( 'Go Back', 'elementor' ),
 				'take_over' => __( 'Take Over', 'elementor' ),
 
 				// Revisions.
-				'delete_element' => sprintf( __( 'Delete %s', 'elementor' ), '{0}' ),
-				'dialog_confirm_delete' => sprintf( __( 'Are you sure you want to remove this %s?', 'elementor' ), '{0}' ),
+				'delete_element' => sprintf(
+					/* translators: %s: Element type. */
+					__( 'Delete %s', 'elementor' ),
+					'{0}'
+				),
+				'dialog_confirm_delete' => sprintf(
+					/* translators: %s: Template type. */
+					__( 'Are you sure you want to remove this %s?', 'elementor' ),
+					'{0}'
+				),
 
 				// Saver.
 				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
