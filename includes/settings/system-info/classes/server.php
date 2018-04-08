@@ -269,7 +269,7 @@ class Server_Reporter extends Base_Reporter {
 
 		return [
 			'value' => $value,
-			'warning' => !! $write_problems,
+			'warning' => ! ! $write_problems,
 		];
 	}
 

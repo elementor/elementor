@@ -173,13 +173,33 @@ class Source_Local extends Source_Base {
 		return __( 'Local', 'elementor' );
 	}
 
+	/**
+	 * Enqueue admin scripts.
+	 *
+	 * Registers all the admin scripts and enqueues them.
+	 *
+	 * Fired by `admin_enqueue_scripts` action.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function admin_enqueue_scripts() {
-		if ( in_array( get_current_screen()->id, [ 'elementor_library', 'edit-elementor_library' ] ) ) {
+		if ( in_array( get_current_screen()->id, [ 'elementor_library', 'edit-elementor_library' ], true ) ) {
 			wp_enqueue_script( 'elementor-dialog' );
 			add_action( 'admin_footer', [ $this, 'print_new_template_dialog' ] );
 		}
 	}
 
+	/**
+	 * Print new template dialog.
+	 *
+	 * Used to output the new template dialog.
+	 *
+	 * Fired by `admin_footer` action.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function print_new_template_dialog() {
 		$document_types = Plugin::$instance->documents->get_document_types();
 		$types = [];
@@ -269,7 +289,7 @@ class Source_Local extends Source_Base {
 							<?php echo __( 'Name your template', 'elementor' ); ?>
 						</label>
 						<div class="elementor-form-field__text__wrapper">
-							<input type="text" placeholder="<?php echo esc_attr__( 'Enter template name (optional)', 'elementor' );?>" id="elementor-new-template__form__post-title" class="elementor-form-field__text" name="post_data[post_title]">
+							<input type="text" placeholder="<?php echo esc_attr__( 'Enter template name (optional)', 'elementor' ); ?>" id="elementor-new-template__form__post-title" class="elementor-form-field__text" name="post_data[post_title]">
 						</div>
 					</div>
 					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create Template', 'elementor' ); ?></button>
@@ -1098,6 +1118,20 @@ class Source_Local extends Source_Base {
 		return $redirect_to;
 	}
 
+	/**
+	 * Print admin tabs.
+	 *
+	 * Used to output the template library tabs with their labels.
+	 *
+	 * Fired by `views_edit-elementor_library` filter.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param array $views An array of available list table views.
+	 *
+	 * @return array An updated array of available list table views.
+	 */
 	public function admin_print_tabs( $views ) {
 		$current_type = '';
 		$active_class = ' nav-tab-active';
@@ -1129,6 +1163,19 @@ class Source_Local extends Source_Base {
 		return $views;
 	}
 
+	/**
+	 * Maybe render blank state.
+	 *
+	 * When the template library has no saved templates, display a blank admin page offering
+	 * to create the very first template.
+	 *
+	 * Fired by `manage_posts_extra_tablenav` action.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
 	public function maybe_render_blank_state( $which ) {
 		global $post_type;
 
@@ -1307,6 +1354,18 @@ class Source_Local extends Source_Base {
 		header( 'Content-Length: ' . $file_size );
 	}
 
+	/**
+	 * Get template label by type.
+	 *
+	 * Retrieve the template label for any given template type.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 *
+	 * @param string $template_type Template type.
+	 *
+	 * @return string Template label.
+	 */
 	private function get_template_label_by_type( $template_type ) {
 		$template_label = ucwords( str_replace( '_', ' ', $template_type ) );
 
@@ -1314,6 +1373,16 @@ class Source_Local extends Source_Base {
 			$template_label = 'Content';
 		}
 
+		/**
+		 * Template label by template type.
+		 *
+		 * Filters the template label by template type in the template library .
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string $template_label Template label.
+		 * @param string $template_type  Template type.
+		 */
 		$template_label = apply_filters( 'elementor/template-library/get_template_label_by_type', $template_label, $template_type );
 
 		return $template_label;
