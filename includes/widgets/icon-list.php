@@ -204,6 +204,9 @@ class Widget_Icon_List extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'content: ""',
 				],
+				'condition' => [
+					'view' => 'traditional',
+				],
 				'separator' => 'before',
 			]
 		);
@@ -221,6 +224,7 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'default' => 'solid',
 				'condition' => [
+					'view' => 'traditional',
 					'divider' => 'yes',
 				],
 				'selectors' => [
@@ -244,6 +248,7 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'condition' => [
+					'view' => 'traditional',
 					'divider' => 'yes',
 				],
 				'selectors' => [
@@ -263,6 +268,7 @@ class Widget_Icon_List extends Widget_Base {
 					'value' => Scheme_Color::COLOR_3,
 				],
 				'condition' => [
+					'view' => 'traditional',
 					'divider' => 'yes',
 				],
 				'selectors' => [
@@ -281,6 +287,7 @@ class Widget_Icon_List extends Widget_Base {
 					'unit' => '%',
 				],
 				'condition' => [
+					'view' => 'traditional',
 					'divider' => 'yes',
 				],
 				'selectors' => [
