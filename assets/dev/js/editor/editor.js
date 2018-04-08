@@ -878,7 +878,18 @@ App = Marionette.Application.extend( {
 		}
 
 		if ( templateArgs ) {
+			// TODO: bc since 2.0.4
 			string = string.replace( /{(\d+)}/g, function( match, number ) {
+				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
+			} );
+
+			string = string.replace( /%(?:(\d+)\$)?s/g, function( match, number ) {
+				if ( ! number ) {
+					number = 1;
+				}
+
+				number--;
+
 				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
 			} );
 		}
