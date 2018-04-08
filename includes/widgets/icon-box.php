@@ -630,12 +630,12 @@ class Widget_Icon_Box extends Widget_Base {
 		view.addInlineEditingAttributes( 'description_text' );
 		#>
 		<div class="elementor-icon-box-wrapper">
-	        <# if ( settings.icon ) { #>
-            <div class="elementor-icon-box-icon">
-                <{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
-                    <i class="{{ settings.icon }}" aria-hidden="true"></i>
-                </{{{ iconTag }}}>
-            </div>
+			<# if ( settings.icon ) { #>
+			<div class="elementor-icon-box-icon">
+				<{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
+				<i class="{{ settings.icon }}" aria-hidden="true"></i>
+			</{{{ iconTag }}}>
+		</div>
 			<# } #>
 			<div class="elementor-icon-box-content">
 				<{{{ settings.title_size }}} class="elementor-icon-box-title">
