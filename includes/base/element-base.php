@@ -471,13 +471,17 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Add render attribute.
 	 *
-	 * Used to add render attribute to specific HTML elements.
+	 * Used to add attributes to a specific HTML element.
+	 *
+	 * The HTML tag is represented by the element parameter, then you need to
+	 * define the attribute key and the attribute key. The final result will be:
+	 * `<element attribute_key="attribute_value">`.
 	 *
 	 * Example usage:
 	 *
 	 * `$this->add_render_attribute( 'wrapper', 'class', 'custom-widget-wrapper-class' );`
-	 * `$this->add_render_attribute( 'widget', 'id', 'custom-widget-id' );
-	 * `$this->add_render_attribute( 'button', [ 'class' => 'custom-button-class', 'id' => 'custom-button-id' ] );
+	 * `$this->add_render_attribute( 'widget', 'id', 'custom-widget-id' );`
+	 * `$this->add_render_attribute( 'button', [ 'class' => 'custom-button-class', 'id' => 'custom-button-id' ] );`
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -725,7 +729,7 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Add render attributes.
 	 *
-	 * Used to add render attributes to the element.
+	 * Used to add attributes to the current element wrapper HTML tag.
 	 *
 	 * @since 1.3.0
 	 * @access protected
