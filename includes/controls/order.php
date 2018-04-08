@@ -49,9 +49,9 @@ class Control_Order extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve checkbox control value.
+	 * Get order control value.
 	 *
-	 * Get the value of the order control from a specific Controls_Stack.
+	 * Retrieve the value of the order control from a specific Controls_Stack.
 	 *
 	 * @since 2.0.0
 	 * @access public

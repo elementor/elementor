@@ -381,11 +381,8 @@ class Widget_Testimonial extends Widget_Base {
 		}
 
 		$has_content = ! ! $settings['testimonial_content'];
-
 		$has_image = ! ! $settings['testimonial_image']['url'];
-
 		$has_name = ! ! $settings['testimonial_name'];
-
 		$has_job = ! ! $settings['testimonial_job'];
 
 		if ( ! $has_content && ! $has_image && ! $has_name && ! $has_job ) {
@@ -405,13 +402,13 @@ class Widget_Testimonial extends Widget_Base {
 		}
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-
-			<?php if ( $has_content ) :
+			<?php
+			if ( $has_content ) :
 				$this->add_render_attribute( 'testimonial_content', 'class', 'elementor-testimonial-content' );
 
 				$this->add_inline_editing_attributes( 'testimonial_content' );
 				?>
-				<div <?php echo $this->get_render_attribute_string( 'testimonial_content' );  ?>><?php echo $settings['testimonial_content']; ?></div>
+				<div <?php echo $this->get_render_attribute_string( 'testimonial_content' ); ?>><?php echo $settings['testimonial_content']; ?></div>
 			<?php endif; ?>
 
 			<?php if ( $has_image || $has_name || $has_job ) : ?>
@@ -431,7 +428,8 @@ class Widget_Testimonial extends Widget_Base {
 
 					<?php if ( $has_name || $has_job ) : ?>
 					<div class="elementor-testimonial-details">
-						<?php if ( $has_name ) :
+						<?php
+						if ( $has_name ) :
 							$this->add_render_attribute( 'testimonial_name', 'class', 'elementor-testimonial-name' );
 
 							$this->add_inline_editing_attributes( 'testimonial_name', 'none' );
@@ -441,10 +439,10 @@ class Widget_Testimonial extends Widget_Base {
 								$testimonial_name_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $testimonial_name_html . '</a>';
 							endif;
 							?>
-							<div <?php echo $this->get_render_attribute_string( 'testimonial_name' );  ?>><?php echo $testimonial_name_html; ?></div>
+							<div <?php echo $this->get_render_attribute_string( 'testimonial_name' ); ?>><?php echo $testimonial_name_html; ?></div>
 						<?php endif; ?>
-
-						<?php if ( $has_job ) :
+						<?php
+						if ( $has_job ) :
 							$this->add_render_attribute( 'testimonial_job', 'class', 'elementor-testimonial-job' );
 
 							$this->add_inline_editing_attributes( 'testimonial_job', 'none' );
@@ -454,7 +452,7 @@ class Widget_Testimonial extends Widget_Base {
 								$testimonial_job_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $testimonial_job_html . '</a>';
 							endif;
 							?>
-							<div <?php echo $this->get_render_attribute_string( 'testimonial_job' );  ?>><?php echo $testimonial_job_html; ?></div>
+							<div <?php echo $this->get_render_attribute_string( 'testimonial_job' ); ?>><?php echo $testimonial_job_html; ?></div>
 						<?php endif; ?>
 					</div>
 					<?php endif; ?>

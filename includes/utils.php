@@ -52,7 +52,7 @@ class Utils {
 	 * Retrieve Elementor edit link.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_edit_url()` method instead.
 	 *
 	 * @access public
 	 * @static
@@ -62,7 +62,7 @@ class Utils {
 	 * @return string Post edit link.
 	 */
 	public static function get_edit_link( $post_id = 0 ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_edit_url()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_edit_url()' );
 
 		if ( ! $post_id ) {
 			$post_id = get_the_ID();
@@ -76,11 +76,10 @@ class Utils {
 		 * Filters the Elementor edit link.
 		 *
 		 * @since 1.0.0
-		 * @deprecated 2.0.0 Use `elementor/document/urls/edit ` filter instead.
+		 * @deprecated 2.0.0 Use `elementor/document/urls/edit` filter instead.
 		 *
 		 * @param string $edit_link New URL query string (unescaped).
 		 * @param int    $post_id   Post ID.
-		 *
 		 */
 		$edit_link = apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
 
@@ -129,7 +128,7 @@ class Utils {
 	 * Retrieve the post preview URL.
 	 *
 	 * @since 1.6.4
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_preview_url()` method instead.
 	 *
 	 * @access public
 	 * @static
@@ -139,7 +138,7 @@ class Utils {
 	 * @return string Post preview URL.
 	 */
 	public static function get_preview_url( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_preview_url()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_preview_url()' );
 
 		$url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 
@@ -165,7 +164,7 @@ class Utils {
 	 * Retrieve WordPress preview URL for any given post ID.
 	 *
 	 * @since 1.9.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_wp_preview_url()` method instead.
 	 *
 	 * @access public
 	 * @static
@@ -175,7 +174,7 @@ class Utils {
 	 * @return string WordPress preview URL.
 	 */
 	public static function get_wp_preview_url( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_wp_preview_url()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_wp_preview_url()' );
 
 		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
 
@@ -202,7 +201,7 @@ class Utils {
 	 * Retrieve WordPress preview URL for any given post ID.
 	 *
 	 * @since 1.9.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url()` method instead.
 	 *
 	 * @access public
 	 * @static
@@ -212,7 +211,8 @@ class Utils {
 	 * @return string Exit to dashboard URL.
 	 */
 	public static function get_exit_to_dashboard_url( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_exit_to_dashboard_url()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url()' );
+
 		return Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url();
 	}
 
@@ -393,6 +393,8 @@ class Utils {
 	 * @param string $version     The version of WordPress that deprecated the hook.
 	 * @param bool   $replacement Optional. The hook that should have been used.
 	 * @param string $message     Optional. A message regarding the change.
+	 *
+	 * @return mixed The filtered value after all hooked functions are applied to it.
 	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
 		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `apply_filters_deprecated()` function.
@@ -409,7 +411,7 @@ class Utils {
 	 * Retrieve a string saying when the post was saved or the last time it was edited.
 	 *
 	 * @since 1.9.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get()` method instead.
 	 *
 	 * @access public
 	 * @static
@@ -419,7 +421,7 @@ class Utils {
 	 * @return string Last edited string.
 	 */
 	public static function get_last_edited( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_last_edited()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
@@ -486,9 +488,15 @@ class Utils {
 	}
 
 	/**
+	 * Is CPT supports custom templates.
+	 *
+	 * Whether the Custom Post Type supports templates.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 * @static
+	 *
+	 * @return bool True is templates are supported, False otherwise.
 	 */
 	public static function is_cpt_custom_templates_supported() {
 		require_once ABSPATH . '/wp-admin/includes/theme.php';
