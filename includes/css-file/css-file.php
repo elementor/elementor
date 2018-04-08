@@ -278,10 +278,9 @@ abstract class CSS_File {
 		 *
 		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
-		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
-		 *
 		 * @since 1.9.0
 		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action instead.
+		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
 		 * @param CSS_File $this The current CSS file.
 		 */
@@ -657,10 +656,9 @@ abstract class CSS_File {
 		 *
 		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
-		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
-		 *
 		 * @since 1.2.0
 		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action instead.
+		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
 		 * @param CSS_File $this The current CSS file.
 		 */

@@ -148,10 +148,15 @@ class Maintenance_Mode {
 	 *
 	 * Adds new "Maintenance Mode" settings fields to Elementor admin page.
 	 *
+	 * The method need to receive the an instance of the Tools settings page
+	 * to add the new maintenance mode functionality.
+	 *
 	 * Fired by `elementor/admin/after_create_settings/{$page_id}` action.
 	 *
-	 * @since 1.4.0
+	 * @since  1.4.0
 	 * @access public
+	 *
+	 * @param Tools $tools An instance of the Tools settings page.
 	 */
 	public function register_settings_fields( Tools $tools ) {
 		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( [ 'type' => 'page' ] );
