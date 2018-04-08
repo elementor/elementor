@@ -142,6 +142,14 @@ class Settings extends Settings_Page {
 		}
 	}
 
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the custom fonts page.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function elementor_custom_fonts() {
 		?>
 		<div class="wrap">
@@ -155,6 +163,16 @@ class Settings extends Settings_Page {
 		<?php
 	}
 
+	/**
+	 * On admin init.
+	 *
+	 * Preform actions on WordPress admin initialization.
+	 *
+	 * Fired by `admin_init` action.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function on_admin_init() {
 		$this->handle_external_redirects();
 
@@ -397,6 +415,14 @@ class Settings extends Settings_Page {
 		return __( 'Elementor', 'elementor' );
 	}
 
+	/**
+	 * Handle general settings update.
+	 *
+	 * Save general settings in one list for a future usage.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 */
 	private function handle_general_settings_update() {
 		if ( ! empty( $_POST['option_page'] ) && self::PAGE_ID === $_POST['option_page'] && ! empty( $_POST['action'] ) && 'update' === $_POST['action'] ) {
 			check_admin_referer( 'elementor-options' );
