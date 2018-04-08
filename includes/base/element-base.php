@@ -761,6 +761,12 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
 
+		if ( ! empty( $settings['_attributes'] ) ) {
+			foreach (  $settings['_attributes'] as $attr ) {
+				$this->add_render_attribute( '_wrapper', trim( $attr['attribute_key'] ), trim( $attr['attribute_value'] ) );
+			}
+		}
+
 		$frontend_settings = $this->get_frontend_settings();
 
 		if ( $frontend_settings ) {

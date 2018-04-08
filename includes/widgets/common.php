@@ -415,6 +415,38 @@ class Widget_Common extends Widget_Base {
 
 		$this->end_controls_section();
 
+		$this->start_controls_section(
+			'_section_attributes',
+			[
+				'label' => __( 'Attributes', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'_attributes',
+			[
+				'label' => __( 'Attributes', 'elementor' ),
+				'type' => Controls_Manager::REPEATER,
+				'fields' => [
+					[
+						'name' => 'attribute_key',
+						'label' => __( 'Attribute Key', 'elementor' ),
+						'type' => Controls_Manager::TEXT,
+					],
+					[
+						'name' => 'attribute_value',
+						'label' => __( 'Attribute Value', 'elementor' ),
+						'type' => Controls_Manager::TEXT,
+					],
+				],
+				'title_field' => '{{{ attribute_key }}}',
+				'prevent_empty' => false,
+			]
+		);
+
+		$this->end_controls_section();
+
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 }
