@@ -763,7 +763,9 @@ abstract class Element_Base extends Controls_Stack {
 
 		if ( ! empty( $settings['_attributes'] ) ) {
 			foreach (  $settings['_attributes'] as $attr ) {
-				$this->add_render_attribute( '_wrapper', trim( $attr['attribute_key'] ), trim( $attr['attribute_value'] ) );
+				if ( ! empty( $attr['attribute_key'] ) ) {
+					$this->add_render_attribute( '_wrapper', trim( $attr['attribute_key'] ), trim( $attr['attribute_value'] ) );
+				}
 			}
 		}
 
