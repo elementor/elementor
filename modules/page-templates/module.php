@@ -221,7 +221,7 @@ class Module extends BaseModule {
 
 			// Don't allow WP to update the parent page template.
 			// (during `wp_update_post` from page-settings or save_plain_text).
-			if ( $is_autosave_action && ! wp_is_post_autosave( $object_id ) ) {
+			if ( $is_autosave_action && ! wp_is_post_autosave( $object_id ) && DB::STATUS_DRAFT !== get_post_status( $object_id ) ) {
 				$value = false;
 			}
 		}
