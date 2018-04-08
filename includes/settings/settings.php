@@ -144,14 +144,14 @@ class Settings extends Settings_Page {
 
 	public function elementor_custom_fonts() {
 		?>
-        <div class="wrap">
-            <div class="elementor-blank_state">
-                <i class="eicon-nerd-chuckle"></i>
-                <h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
-                <p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
-                <a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="#"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
-            </div>
-        </div><!-- /.wrap -->
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<i class="eicon-nerd-chuckle"></i>
+				<h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="#"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
 		<?php
 	}
 
@@ -176,11 +176,13 @@ class Settings extends Settings_Page {
 		global $submenu;
 
 		if ( isset( $submenu['elementor'] ) ) {
+			// @codingStandardsIgnoreStart
 			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
 
 			$hold_menu_data = $submenu['elementor'][0];
 			$submenu['elementor'][0] = $submenu['elementor'][1];
 			$submenu['elementor'][1] = $hold_menu_data;
+			// @codingStandardsIgnoreEnd
 		}
 	}
 
@@ -396,7 +398,7 @@ class Settings extends Settings_Page {
 	}
 
 	private function handle_general_settings_update() {
-		if ( ! empty( $_POST['option_page'] ) && self::PAGE_ID === $_POST['option_page'] && ! empty( $_POST['action'] ) && 'update' === $_POST['action']  ) {
+		if ( ! empty( $_POST['option_page'] ) && self::PAGE_ID === $_POST['option_page'] && ! empty( $_POST['action'] ) && 'update' === $_POST['action'] ) {
 			check_admin_referer( 'elementor-options' );
 
 			$saved_general_settings = get_option( General_Settings_Manager::META_KEY );

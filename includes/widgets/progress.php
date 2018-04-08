@@ -243,7 +243,7 @@ class Widget_Progress extends Widget_Base {
 			'aria-valuemin' => '0',
 			'aria-valuemax' => '100',
 			'aria-valuenow' => $settings['percent']['size'],
-			'aria-valuetext' => $settings['inner_text']
+			'aria-valuetext' => $settings['inner_text'],
 		] );
 
 		if ( ! empty( $settings['progress_type'] ) ) {

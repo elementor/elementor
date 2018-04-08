@@ -598,7 +598,7 @@ class Frontend {
 	 * @access private
 	 *
 	 * @param array $google_fonts Optional. Google fonts to print in the frontend.
-     *                            Default is an empty array.
+	 *                            Default is an empty array.
 	 */
 	private function print_google_fonts( $google_fonts = [] ) {
 		static $google_fonts_index = 0;
