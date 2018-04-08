@@ -251,7 +251,7 @@ abstract class Controls_Stack {
 	 * Get controls.
 	 *
 	 * Retrieve all the controls or, when requested, a specific control.
- 	 *
+	 *
 	 * @since 1.4.0
 	 * @access public
 	 *
@@ -341,7 +341,7 @@ abstract class Controls_Stack {
 			$options['index'] = $this->injection_point['index']++;
 		}
 
-		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ], true ) ) {
 			$target_section_args = $this->_current_section;
 
 			$target_tab = $this->_current_tab;
@@ -501,8 +501,8 @@ abstract class Controls_Stack {
 		$position = array_merge( $default_position, $position );
 
 		if (
-			'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ] ) ||
-			'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ] )
+			'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ], true ) ||
+			'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ], true )
 		) {
 			_doing_it_wrong( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' );
 
@@ -842,7 +842,9 @@ abstract class Controls_Stack {
 			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
 
 			if ( ! empty( $options['overwrite'] ) ) {
-				$this->update_control( $id . $id_suffix, $control_args, [ 'recursive' => ! empty( $options['recursive'] ) ] );
+				$this->update_control( $id . $id_suffix, $control_args, [
+					'recursive' => ! empty( $options['recursive'] ),
+				] );
 			} else {
 				$this->add_control( $id . $id_suffix, $control_args, $options );
 			}
@@ -864,7 +866,10 @@ abstract class Controls_Stack {
 	 * @param array  $options Optional. Additional options.
 	 */
 	final public function update_responsive_control( $id, array $args, array $options = [] ) {
-		$this->add_responsive_control( $id, $args, [ 'overwrite' => true, 'recursive' => ! empty( $options['recursive'] ) ] );
+		$this->add_responsive_control( $id, $args, [
+			'overwrite' => true,
+			'recursive' => ! empty( $options['recursive'] ),
+		] );
 	}
 
 	/**
@@ -970,7 +975,7 @@ abstract class Controls_Stack {
 	 * Get the raw data.
 	 *
 	 * Retrieve all the items or, when requested, a specific item.
- 	 *
+	 *
 	 * @since 1.4.0
 	 * @access public
 	 *
@@ -986,7 +991,7 @@ abstract class Controls_Stack {
 	 * Get the settings.
 	 *
 	 * Retrieve all the settings or, when requested, a specific setting.
- 	 *
+	 *
 	 * @since 1.4.0
 	 * @access public
 	 *
@@ -1020,7 +1025,9 @@ abstract class Controls_Stack {
 
 	public function get_settings_for_display( $setting_key = null ) {
 		if ( $setting_key ) {
-			$settings = [ $setting_key => $this->get_settings( $setting_key ) ];
+			$settings = [
+				$setting_key => $this->get_settings( $setting_key ),
+			];
 		} else {
 			$settings = $this->get_active_settings();
 		}
