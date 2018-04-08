@@ -273,19 +273,20 @@ class Widget_Alert extends Widget_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<span <?php echo $this->get_render_attribute_string( 'alert_title' ); ?>><?php echo $settings['alert_title']; ?></span>
-			<?php if ( ! empty( $settings['alert_description'] ) ) {
+			<?php
+			if ( ! empty( $settings['alert_description'] ) ) :
 				$this->add_render_attribute( 'alert_description', 'class', 'elementor-alert-description' );
 
 				$this->add_inline_editing_attributes( 'alert_description' );
 				?>
 				<span <?php echo $this->get_render_attribute_string( 'alert_description' ); ?>><?php echo $settings['alert_description']; ?></span>
-			<?php }
-			if ( 'show' === $settings['show_dismiss'] ) { ?>
+			<?php endif; ?>
+			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
 				<button type="button" class="elementor-alert-dismiss">
 					<span aria-hidden="true">&times;</span>
 					<span class="elementor-screen-only"><?php echo __( 'Dismiss alert', 'elementor' ); ?></span>
 				</button>
-			<?php } ?>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

@@ -190,6 +190,19 @@ class Documents_Manager {
 		return $this->documents[ $post_id ];
 	}
 
+	/**
+	 * Get document or autosave.
+	 *
+	 * Retrieve either the document or the autosave.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param int $id      Optional. Post ID. Default is `0`.
+	 * @param int $user_id Optional. User ID. Default is `0`.
+	 *
+	 * @return false|Document The document if it exist, False otherwise.
+	 */
 	public function get_doc_or_auto_save( $id = 0, $user_id = 0 ) {
 		if ( ! $id ) {
 			$id = get_the_ID();
@@ -203,6 +216,18 @@ class Documents_Manager {
 		return $document;
 	}
 
+	/**
+	 * Get document for frontend.
+	 *
+	 * Retrieve the document for frontend use.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param int $post_id Optional. Post ID. Default is `0`.
+	 *
+	 * @return false|Document The document if it exist, False otherwise.
+	 */
 	public function get_doc_for_frontend( $post_id = 0 ) {
 		// TODO: remove on release 2.0.0.
 		if ( 0 === $post_id ) {
@@ -218,23 +243,49 @@ class Documents_Manager {
 		return $document;
 	}
 
+	/**
+	 * Get document type.
+	 *
+	 * Retrieve the type of any given document.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param string $type
+	 *
+	 * @return Document The type of the document.
+	 */
 	public function get_document_type( $type ) {
 		return isset( $this->types[ $type ] ) ? $this->types[ $type ] : $this->types['post'];
 	}
 
 	/**
-	 * @return Document[]
+	 * Get document types.
+	 *
+	 * Retrieve the all the registered document types.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return Document[] All the registered document types.
 	 */
 	public function get_document_types() {
 		return $this->types;
 	}
 
 	/**
-	 * @param string $type
-	 * @param array $post_data
-	 * @param array $meta_data
+	 * Create a document.
 	 *
-	 * @return Document
+	 * Create a new document using any given parameters.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param string $type      Document type.
+	 * @param array  $post_data An array containing the post data.
+	 * @param array  $meta_data An array containing the post meta data.
+	 *
+	 * @return Document The type of the document.
 	 */
 	public function create( $type, $post_data = [], $meta_data = [] ) {
 		if ( ! isset( $this->types[ $type ] ) ) {
@@ -277,13 +328,18 @@ class Documents_Manager {
 	}
 
 	/**
+	 * Save document data using ajax.
+	 *
+	 * Save the document on the builder using ajax, when saving the changes, and refresh the editor.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param $request
+	 * @param $request Post ID.
 	 *
-	 * @return array
 	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
+	 *
+	 * @return array The document data after saving.
 	 */
 	public function ajax_save( $request ) {
 		$document = $this->get( $request['editor_post_id'] );
@@ -337,7 +393,7 @@ class Documents_Manager {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param array    $return_data The returned data. Default is an empty array.
+		 * @param array    $return_data The returned data.
 		 * @param Document $document    The document instance.
 		 */
 		$return_data = apply_filters( 'elementor/documents/ajax_save/return_data', $return_data, $document );
@@ -345,6 +401,18 @@ class Documents_Manager {
 		return $return_data;
 	}
 
+	/**
+	 * Ajax discard changes.
+	 *
+	 * Load the document data from an autosave, deleting unsaved changes.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param $request
+	 *
+	 * @return bool True if changes discarded, False otherwise.
+	 */
 	public function ajax_discard_changes( $request ) {
 		$document = $this->get( $request['editor_post_id'] );
 
@@ -362,7 +430,7 @@ class Documents_Manager {
 	/**
 	 * Switch to document.
 	 *
-	 * Change the document to a new document type.
+	 * Change the document to any new given document type.
 	 *
 	 * @since 2.0.0
 	 * @access public
