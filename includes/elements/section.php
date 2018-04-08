@@ -1384,7 +1384,7 @@ class Element_Section extends Element_Base {
 	/**
 	 * Add section render attributes.
 	 *
-	 * Used to add render attributes to the section element.
+	 * Used to add attributes to the current section wrapper HTML tag.
 	 *
 	 * @since 1.3.0
 	 * @access protected

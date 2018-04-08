@@ -509,11 +509,11 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Add render attributes.
+	 * Add widget render attributes.
 	 *
-	 * Used to add several attributes to current widget `_wrapper` element.
+	 * Used to add attributes to the current widget wrapper HTML tag.
 	 *
-	 * @since 1.0.0
+	 * @since 1.3.0
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {

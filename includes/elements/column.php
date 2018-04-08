@@ -882,7 +882,7 @@ class Element_Column extends Element_Base {
 	/**
 	 * Add column render attributes.
 	 *
-	 * Used to add render attributes to the column element.
+	 * Used to add attributes to the current column wrapper HTML tag.
 	 *
 	 * @since 1.3.0
 	 * @access protected
