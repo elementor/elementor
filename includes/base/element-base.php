@@ -733,12 +733,7 @@ abstract class Element_Base extends Controls_Stack {
 	protected function _add_render_attributes() {
 		$id = $this->get_id();
 
-		$this->add_render_attribute(
-			'_wrapper', 'class', [
-				'elementor-element',
-				'elementor-element-' . $id,
-			]
-		);
+		$this->add_render_attribute( '_wrapper', 'class', [ 'elementor-element', 'elementor-element-' . $id ] );
 
 		$settings = $this->get_active_settings();
 
