@@ -64,7 +64,7 @@ class Admin {
 
 		wp_enqueue_script( 'elementor-admin-app' );
 
-		if ( in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ] ) ) {
+		if ( in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ], true ) ) {
 			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 
 			$this->enqueue_feedback_dialog_scripts();
@@ -249,7 +249,7 @@ class Admin {
 	public function body_status_classes( $classes ) {
 		global $pagenow;
 
-		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ] ) && Utils::is_post_type_support() ) {
+		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ], true ) && Utils::is_post_type_support() ) {
 			$post = get_post();
 
 			$mode_class = Plugin::$instance->db->is_built_with_elementor( $post->ID ) ? 'elementor-editor-active' : 'elementor-editor-inactive';
@@ -334,7 +334,7 @@ class Admin {
 			return;
 		}
 
-		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ] ) ) {
+		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true ) ) {
 			return;
 		}
 
@@ -546,7 +546,9 @@ class Admin {
 			'e-dashboard-overview' => $dashboard['e-dashboard-overview'],
 		];
 
+		// @codingStandardsIgnoreStart
 		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $ours, $dashboard );
+		// @codingStandardsIgnoreEnd
 	}
 
 	/**
