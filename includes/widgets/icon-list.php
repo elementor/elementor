@@ -442,7 +442,8 @@ class Widget_Icon_List extends Widget_Base {
 				$this->add_inline_editing_attributes( $repeater_setting_key );
 				?>
 				<li class="elementor-icon-list-item" >
-					<?php if ( ! empty( $item['link']['url'] ) ) {
+					<?php
+					if ( ! empty( $item['link']['url'] ) ) {
 						$link_key = 'link_' . $index;
 
 						$this->add_render_attribute( $link_key, 'href', $item['link']['url'] );
@@ -458,7 +459,8 @@ class Widget_Icon_List extends Widget_Base {
 						echo '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 					}
 
-					if ( ! empty( $item['icon'] ) ) : ?>
+					if ( ! empty( $item['icon'] ) ) :
+						?>
 						<span class="elementor-icon-list-icon">
 							<i class="<?php echo esc_attr( $item['icon'] ); ?>" aria-hidden="true"></i>
 						</span>

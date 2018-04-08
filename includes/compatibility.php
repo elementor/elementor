@@ -85,7 +85,7 @@ class Compatibility {
 					return;
 				}
 
-				var url = '<?php echo esc_attr( Utils::get_create_new_post_url( $typenow ) ); ?>';
+				var url = '<?php echo esc_url( Utils::get_create_new_post_url( $typenow ) ); ?>';
 
 				dropdown.insertAdjacentHTML( 'afterbegin', '<a href="' + url + '">Elementor</a>' );
 			} );
@@ -220,6 +220,15 @@ class Compatibility {
 		}
 	}
 
+	/**
+	 * Polylang compatibility.
+	 *
+	 * Fix Polylang compatibility with Elementor.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 * @static
+	 */
 	private static function polylang_compatibility() {
 		// Fix language if the `get_user_locale` is difference from the `get_locale
 		if ( isset( $_REQUEST['action'] ) && 0 === strpos( $_REQUEST['action'], 'elementor' ) ) {
@@ -246,8 +255,9 @@ class Compatibility {
 	/**
 	 * Save polylang meta.
 	 *
-	 * Copy elementor data while polylang creates a translation copy. Fired by
-	 * `pll_copy_post_metas` filter.
+	 * Copy elementor data while polylang creates a translation copy.
+	 *
+	 * Fired by `pll_copy_post_metas` filter.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -255,8 +265,8 @@ class Compatibility {
 	 *
 	 * @param array $keys List of custom fields names.
 	 * @param bool  $sync True if it is synchronization, false if it is a copy.
-	 * @param int   $from ID of the post from which we copy informations.
-	 * @param int   $to   ID of the post to which we paste informations.
+	 * @param int   $from ID of the post from which we copy information.
+	 * @param int   $to   ID of the post to which we paste information.
 	 *
 	 * @return array List of custom fields names.
 	 */
