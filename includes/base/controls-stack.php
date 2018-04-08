@@ -1027,7 +1027,7 @@ abstract class Controls_Stack {
 	 * Get settings for display.
 	 *
 	 * Retrieve all the settings or, when requested, a specific setting for display.
-     *
+	 *
 	 * Unlike `get_settings()` method, this method retrieves only active settings
 	 * that passed all the conditions, rendered all the shortcodes and all the dynamic
 	 * tags.
@@ -1236,9 +1236,9 @@ abstract class Controls_Stack {
 			 * otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
 			 */
 			if ( is_array( $condition_value ) && ! empty( $condition_value ) ) {
-				$is_contains = in_array( $instance_value, $condition_value );
+				$is_contains = in_array( $instance_value, $condition_value, true );
 			} elseif ( is_array( $instance_value ) && ! empty( $instance_value ) ) {
-				$is_contains = in_array( $condition_value, $instance_value );
+				$is_contains = in_array( $condition_value, $instance_value, true );
 			} else {
 				$is_contains = $instance_value === $condition_value;
 			}
@@ -1549,11 +1549,17 @@ abstract class Controls_Stack {
 
 		$last_control_key = $this->get_control_key( $this->get_pointer_index() - 1 );
 
- 		$this->update_control( $last_control_key, [
+		$args = [
 			'popover' => [
 				'end' => true,
 			],
-		], [ 'recursive' => true ] );
+		];
+
+		$options = [
+			'recursive' => true,
+		];
+
+		$this->update_control( $last_control_key, $args, $options );
 	}
 
 	/**
@@ -1753,7 +1759,7 @@ abstract class Controls_Stack {
 	 *
 	 * @since 2.0.0
 	 * @access protected
-     *
+	 *
 	 * @param array $data     Data to sanitize.
 	 * @param array $controls Optional. An array of controls. Default is an
 	 *                        empty array.
@@ -1790,7 +1796,7 @@ abstract class Controls_Stack {
 				continue;
 			}
 
-			$value_to_check =  $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ];
+			$value_to_check = $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ];
 
 			$tag_text_data = Plugin::$instance->dynamic_tags->tag_text_to_tag_data( $value_to_check );
 

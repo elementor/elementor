@@ -308,9 +308,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
-			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
-			$page_settings_manager->ajax_before_save_settings( $data['settings'], $this->post->ID );
-			$page_settings_manager->save_settings( $data['settings'], $this->post->ID );
+			$this->save_settings( $data['settings'] );
 		}
 
 		// Refresh post after save settings.
@@ -585,6 +583,14 @@ abstract class Document extends Controls_Stack {
 		return get_post_meta( $this->get_main_id(), $key, true );
 	}
 
+	public function update_main_meta( $key, $value ) {
+		return update_post_meta( $this->get_main_id(), $key, $value );
+	}
+
+	public function delete_main_meta( $key, $value = '' ) {
+		return delete_post_meta( $this->get_main_id(), $key, $value );
+	}
+
 	public function get_meta( $key ) {
 		return get_post_meta( $this->post->ID, $key, true );
 	}
@@ -629,7 +635,7 @@ abstract class Document extends Controls_Stack {
 				$this->post = get_post( $data['post_id'] );
 
 				if ( ! $this->post ) {
-					throw new \Exception( sprintf( 'Post ID #%s is not exist.', $data['post_id'] ), Exceptions::NOT_FOUND );
+					throw new \Exception( sprintf( 'Post ID #%s does not exist.', $data['post_id'] ), Exceptions::NOT_FOUND );
 				}
 			}
 
@@ -647,5 +653,11 @@ abstract class Document extends Controls_Stack {
 		}
 
 		parent::__construct( $data );
+	}
+
+	protected function save_settings( $settings ) {
+		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+		$page_settings_manager->ajax_before_save_settings( $settings, $this->post->ID );
+		$page_settings_manager->save_settings( $settings, $this->post->ID );
 	}
 }
