@@ -414,8 +414,9 @@ class Admin {
 
 		if ( $is_elementor_screen ) {
 			$footer_text = sprintf(
-				/* translators: %s: Link to plugin review */
-				__( 'Enjoyed <strong>Elementor</strong>? Please leave us a %s rating. We really appreciate your support!', 'elementor' ),
+				/* translators: 1: Elementor, 2: Link to plugin review */
+				__( 'Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!', 'elementor' ),
+				'<strong>' . __( 'Elementor', 'elementor' ) . '</strong>',
 				'<a href="https://wordpress.org/support/plugin/elementor/reviews/?filter=5#new-post" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 			);
 		}
