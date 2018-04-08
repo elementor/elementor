@@ -207,10 +207,10 @@ class Manager {
 		];
 	}
 
-	 /**
- 	 * Save template.
- 	 *
- 	 * Save new or update existing template on the database.
+	/**
+	 * Save template.
+	 *
+	 * Save new or update existing template on the database.
 	 *
 	 * @since 1.0.0
 	 * @access public

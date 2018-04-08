@@ -679,8 +679,7 @@ class Widget_Video extends Widget_Base {
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
-					<?php
-					if ( $settings['lightbox'] ) : ?>
+					<?php if ( $settings['lightbox'] ) : ?>
 						<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings, 'image_overlay' ); ?>
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
