@@ -739,7 +739,7 @@ class Editor {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.1.0'
+			'3.2.0'
 		);
 
 		wp_register_style(
