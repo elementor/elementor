@@ -189,6 +189,15 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.0.4 - 2018-04-09 =
+* Tweak: Update Google Fonts list with more then 30 new fonts
+* Tweak: Updated Eicons to v3.2.0
+* Fix: Page template doesn't work in draft status ([#3706](https://github.com/pojome/elementor/issues/3706))
+* Fix: Make sure that document settings works only on existing posts ([#3993](https://github.com/pojome/elementor/issues/3993), [Topic](https://wordpress.org/support/topic/php-fatal-error-after-last-update/))
+* Fix: Removed some duplicate strings
+* Fix: Undefined index when save editor using old method
+* Fix: Use `&nbsp;` to add spaces before/after for tags with HTML ([#3826](https://github.com/pojome/elementor/issues/3826))
+
 = 2.0.3 - 2018-03-29 =
 * Tweak: Added Knowledge Base link to WordPress admin menu
 * Tweak: Improved performance in the editor using internal caching
