@@ -91,7 +91,10 @@ class Editor {
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
 		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
-		query_posts( [ 'p' => $this->_post_id, 'post_type' => get_post_type( $this->_post_id ) ] );
+		query_posts( [
+			'p' => $this->_post_id,
+			'post_type' => get_post_type( $this->_post_id ),
+		] );
 
 		Plugin::$instance->db->switch_to_post( $this->_post_id );
 
@@ -303,8 +306,8 @@ class Editor {
 		$plugin = Plugin::$instance;
 
 		// Reset global variable
-		$wp_styles = new \WP_Styles();
-		$wp_scripts = new \WP_Scripts();
+		$wp_styles = new \WP_Styles(); // WPCS: override ok.
+		$wp_scripts = new \WP_Scripts(); // WPCS: override ok.
 
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
@@ -580,7 +583,7 @@ class Editor {
 				'no' => __( 'No', 'elementor' ),
 				'page' => __( 'Page', 'elementor' ),
 				/* translators: %s: Template type. */
-				'save_your_template' =>  __( 'Save Your %s to Library', 'elementor' ),
+				'save_your_template' => __( 'Save Your %s to Library', 'elementor' ),
 				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				'section' => __( 'Section', 'elementor' ),
 				'templates_empty_message' => __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),

@@ -20,6 +20,7 @@
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 		<exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped" />
 		<exclude name="WordPress.CSRF.NonceVerification.NoNonceVerification" />
+		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
 	</rule>
 
 	<rule ref="WordPress.WP.DeprecatedFunctions">

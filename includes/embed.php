@@ -102,7 +102,9 @@ class Embed {
 
 		$embed_pattern = self::$embed_patterns[ $video_properties['provider'] ];
 
-		$replacements = [ '{VIDEO_ID}' => $video_properties['video_id'] ];
+		$replacements = [
+			'{VIDEO_ID}' => $video_properties['video_id'],
+		];
 
 		if ( 'youtube' === $video_properties['provider'] ) {
 			$replacements['{NO_COOKIE}'] = ! empty( $options['privacy'] ) ? '-nocookie' : '';
@@ -132,7 +134,7 @@ class Embed {
 	 *
 	 * @return string The embed HTML.
 	 */
-	public static function get_embed_html( $video_url, array $embed_url_params = [], array $options = [],  array $frame_attributes = [] ) {
+	public static function get_embed_html( $video_url, array $embed_url_params = [], array $options = [], array $frame_attributes = [] ) {
 		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
 
 		if ( ! $video_embed_url ) {
