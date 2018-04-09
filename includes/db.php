@@ -475,7 +475,8 @@ class DB {
 			'original_id' => get_the_ID(), // Note, it can be false if the global isn't set
 		];
 
-		$GLOBALS['post'] = get_post( $post_id );
+		$GLOBALS['post'] = get_post( $post_id ); // WPCS: override ok.
+
 		setup_postdata( $GLOBALS['post'] );
 	}
 
@@ -501,7 +502,8 @@ class DB {
 			return;
 		}
 
-		$GLOBALS['post'] = get_post( $data['original_id'] );
+		$GLOBALS['post'] = get_post( $data['original_id'] ); // WPCS: override ok.
+
 		setup_postdata( $GLOBALS['post'] );
 	}
 
@@ -534,13 +536,14 @@ class DB {
 			'original' => $wp_query,
 		];
 
-		$wp_query = $new_query;
+		$wp_query = $new_query; // WPCS: override ok.
 
 		// Ensure the global post is set only if needed
 		unset( $GLOBALS['post'] );
 
 		if ( $new_query->is_singular() && isset( $new_query->posts[0] ) ) {
-			$GLOBALS['post'] = $new_query->posts[0];
+			$GLOBALS['post'] = $new_query->posts[0]; // WPCS: override ok.
+
 			setup_postdata( $GLOBALS['post'] );
 		}
 	}
@@ -563,13 +566,13 @@ class DB {
 
 		global $wp_query;
 
-		$wp_query = $data['original'];
+		$wp_query = $data['original']; // WPCS: override ok.
 
 		// Ensure the global post is set only if needed
 		unset( $GLOBALS['post'] );
 
 		if ( $wp_query->is_singular() && isset( $wp_query->posts[0] ) ) {
-			$GLOBALS['post'] = $wp_query->posts[0];
+			$GLOBALS['post'] = $wp_query->posts[0]; // WPCS: override ok.
 			setup_postdata( $GLOBALS['post'] );
 		}
 	}
