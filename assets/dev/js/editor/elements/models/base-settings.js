@@ -274,7 +274,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 				var control = controls[ key ];
 
 				if ( control ) {
-					if ( ( 'text' === control.type || 'textarea' === control.type ) && data[ key ] ) {
+					// TODO: use `save_default` in text|textarea controls.
+					if ( control.save_default || ( ( 'text' === control.type || 'textarea' === control.type ) && data[ key ] ) ) {
 						return;
 					}
 
