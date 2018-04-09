@@ -235,7 +235,7 @@ class Source_Local extends Source_Base {
 					<span class="elementor-templates-modal__header__logo__icon-wrapper">
 						<i class="eicon-elementor"></i>
 					</span>
-					<span><?php echo __( 'Template Library', 'elementor' ); ?></span>
+					<span><?php echo __( 'New Template', 'elementor' ); ?></span>
 					</div>
 				</div>
 				<div class="elementor-templates-modal__header__items-area">
@@ -247,13 +247,14 @@ class Source_Local extends Source_Base {
 			</div>
 			<div id="elementor-new-template-dialog-content">
 				<div id="elementor-new-template__description">
-					<div id="elementor-new-template__description__get-started"><?php echo __( 'Templates Help You', 'elementor' ); ?></div>
-					<div id="elementor-new-template__description__elementor-builder"><?php echo __( 'Work Efficiently', 'elementor' ); ?></div>
+					<div id="elementor-new-template__description__title"><?php echo __( 'Templates Help You <span>Work Efficiently</span>', 'elementor' ); ?></div>
 					<div id="elementor-new-template__description__content"><?php echo __( 'Use templates to create the different pieces of your site, and reuse them with one click whenever needed.', 'elementor' ); ?></div>
+					<?php /*
 					<div id="elementor-new-template__take_a_tour">
 						<i class="eicon-play-o"></i>
 						<a href="#"><?php echo __( 'Take The Video Tour', 'elementor' ); ?></a>
 					</div>
+                    */ ?>
 				</div>
 				<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
 					<input type="hidden" name="post_type" value="elementor_library">
