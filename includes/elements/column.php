@@ -178,7 +178,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => 20,
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-column-wrap > .elementor-widget-wrap > .elementor-widget:not(:last-child)' => 'margin-bottom: {{VALUE}}px',//Need the full path for exclude the inner section
+					'{{WRAPPER}} > .elementor-column-wrap > .elementor-widget-wrap > .elementor-widget:not(:last-child)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
 				],
 			]
 		);
@@ -492,12 +492,12 @@ class Element_Column extends Element_Base {
 						[
 							'name' => 'background_background',
 							'operator' => '!==',
-							'value' => ''
+							'value' => '',
 						], [
 							'name' => 'border_border',
 							'operator' => '!==',
-							'value' => ''
-						]
+							'value' => '',
+						],
 					],
 				],
 				'selectors' => [
@@ -523,7 +523,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
+		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes(), true ) ) {
 			$this->add_control(
 				'colors_warning',
 				[
@@ -654,6 +654,7 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
+				'label_block' => false,
 			]
 		);
 
@@ -664,7 +665,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
-				'label_block' => true,
+				'label_block' => false,
 				'frontend_available' => true,
 			]
 		);
@@ -709,8 +710,8 @@ class Element_Column extends Element_Base {
 				'label' => __( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
-				'label_block' => true,
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
 			]
 		);
 
@@ -721,8 +722,8 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'prefix_class' => '',
-				'label_block' => true,
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'label_block' => false,
 			]
 		);
 
@@ -802,7 +803,7 @@ class Element_Column extends Element_Base {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-column-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php printf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ); ?>">
+				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php echo esc_attr( sprintf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ) ); ?>">
 					<i class="eicon-column" aria-hidden="true"></i>
 					<span class="elementor-screen-only"><?php printf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ); ?></span>
 				</li>
@@ -846,8 +847,8 @@ class Element_Column extends Element_Base {
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
 
-		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ||
-								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ] );
+		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
+								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
 		$column_wrap_class = 'elementor-column-wrap';
 		if ( $this->get_children() ) {
