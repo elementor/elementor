@@ -249,12 +249,14 @@ class Source_Local extends Source_Base {
 				<div id="elementor-new-template__description">
 					<div id="elementor-new-template__description__title"><?php echo __( 'Templates Help You <span>Work Efficiently</span>', 'elementor' ); ?></div>
 					<div id="elementor-new-template__description__content"><?php echo __( 'Use templates to create the different pieces of your site, and reuse them with one click whenever needed.', 'elementor' ); ?></div>
-					<?php /*
+					<?php
+					/*
 					<div id="elementor-new-template__take_a_tour">
 						<i class="eicon-play-o"></i>
 						<a href="#"><?php echo __( 'Take The Video Tour', 'elementor' ); ?></a>
 					</div>
-                    */ ?>
+                    */
+					?>
 				</div>
 				<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
 					<input type="hidden" name="post_type" value="elementor_library">
@@ -1221,7 +1223,12 @@ class Source_Local extends Source_Base {
 		<div class="elementor-template_library-blank_state">
 			<div class="elementor-blank_state">
 				<i class="eicon-folder"></i>
-				<h2><?php printf( __( 'Create Your First %s', 'elementor' ), $current_type_label ); ?></h2>
+				<h2>
+					<?php
+					/* translators: %s: Current Type Label */
+					printf( __( 'Create Your First %s', 'elementor' ), $current_type_label );
+					?>
+				</h2>
 				<p><?php echo __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimised workflow.', 'elementor' ); ?></p>
 				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php echo __( 'Add New', 'elementor' ); ?> <?php echo esc_html( $current_type_label ); ?></a>
 			</div>

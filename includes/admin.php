@@ -546,9 +546,7 @@ class Admin {
 			'e-dashboard-overview' => $dashboard['e-dashboard-overview'],
 		];
 
-		// @codingStandardsIgnoreStart
-		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $ours, $dashboard );
-		// @codingStandardsIgnoreEnd
+		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $ours, $dashboard ); // WPCS: override ok.
 	}
 
 	/**

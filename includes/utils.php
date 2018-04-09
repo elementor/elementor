@@ -481,7 +481,7 @@ class Utils {
 			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
 		}
 
-		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'" );
+		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'" ); // WPCS: unprepared SQL ok.
 
 		if ( $revision ) {
 			$revision = new \WP_Post( $revision );

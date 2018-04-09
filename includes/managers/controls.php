@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Elementor controls manager class.
@@ -762,8 +764,8 @@ class Controls_Manager {
 			'custom_css_pro',
 			[
 				'type' => self::RAW_HTML,
-				'raw' => '<div class="elementor-panel-nerd-box">
-							<i class="elementor-panel-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
+				'raw' => '<div class="elementor-panel-nerd-box">' .
+						'<i class="elementor-panel-nerd-box-icon eicon-hypster" aria-hidden="true"></i>
 						<div class="elementor-panel-nerd-box-title">' .
 							__( 'Meet Our Custom CSS', 'elementor' ) .
 						'</div>
