@@ -132,7 +132,7 @@ module.exports = Module.extend( {
 
 		var self = this,
 			elements = elementor.elements.toJSON( { removeDefault: true } ),
-			settings = elementor.settings.page.model.toJSON(),
+			settings = elementor.settings.page.model.toJSON( { removeDefault: true } ),
 			oldStatus = elementor.settings.page.model.get( 'post_status' ),
 			statusChanged = oldStatus !== options.status;
 
