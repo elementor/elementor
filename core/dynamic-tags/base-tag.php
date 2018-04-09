@@ -58,8 +58,8 @@ abstract class Base_Tag extends Controls_Stack {
 				} else if ( controlSettings.groups ) {
 					var label = _.filter( _.pluck( _.pluck( controls.key.groups, 'options' ), key ) );
 
-					if ( label ) {
-						key = label;
+					if ( label[0] ) {
+						key = label[0];
 					}
 				}
 			}

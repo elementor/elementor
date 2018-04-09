@@ -68,7 +68,12 @@ class Utils {
 			$post_id = get_the_ID();
 		}
 
-		$edit_link = Plugin::$instance->documents->get( $post_id )->get_edit_url();
+		$edit_link = '';
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( $document ) {
+			$edit_link = $document->get_edit_url();
+		}
 
 		/**
 		 * Get edit link.
