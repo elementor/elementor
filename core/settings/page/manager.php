@@ -54,14 +54,14 @@ class Manager extends BaseManager {
 	 * Whether the Custom Post Type supports templates.
 	 *
 	 * @since 1.6.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Utils::is_cpt_custom_templates_supported()` method instead.
 	 * @access public
 	 * @static
 	 *
 	 * @return bool True is templates are supported, False otherwise.
 	 */
 	public static function is_cpt_custom_templates_supported() {
-		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported' );
+		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported()' );
 
 		return Utils::is_cpt_custom_templates_supported();
 	}
@@ -202,12 +202,14 @@ class Manager extends BaseManager {
 	 *
 	 * Retrieve the CSS file before updating it.
 	 *
+	 * This method overrides the parent method to disallow updating CSS files for pages.
+	 *
 	 * @since 1.6.0
 	 * @access protected
 	 *
 	 * @param int $id Post ID.
 	 *
-	 * @return Post_CSS_File The post CSS file object.
+	 * @return false Disallow The updating CSS files for pages.
 	 */
 	protected function get_css_file_for_update( $id ) {
 		return false;

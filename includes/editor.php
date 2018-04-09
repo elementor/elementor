@@ -538,7 +538,8 @@ class Editor {
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
-				'edit_element' => __( 'Edit {0}', 'elementor' ),
+				/* translators: %s: Element name. */
+				'edit_element' => __( 'Edit %s', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
@@ -578,7 +579,8 @@ class Editor {
 				'library' => __( 'Library', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'page' => __( 'Page', 'elementor' ),
-				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
+				/* translators: %s: Template type. */
+				'save_your_template' =>  __( 'Save Your %s to Library', 'elementor' ),
 				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				'section' => __( 'Section', 'elementor' ),
 				'templates_empty_message' => __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
@@ -605,18 +607,22 @@ class Editor {
 				// Gallery.
 				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
 				'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
-				'gallery_images_selected' => __( '{0} Images Selected', 'elementor' ),
+				/* translators: %s: The number of images. */
+				'gallery_images_selected' => __( '%s Images Selected', 'elementor' ),
 				'gallery_no_images_selected' => __( 'No Images Selected', 'elementor' ),
 				'insert_media' => __( 'Insert Media', 'elementor' ),
 
 				// Take Over.
-				'dialog_user_taken_over' => __( '{0} has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ),
+				/* translators: %s: User name. */
+				'dialog_user_taken_over' => __( '%s has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ),
 				'go_back' => __( 'Go Back', 'elementor' ),
 				'take_over' => __( 'Take Over', 'elementor' ),
 
 				// Revisions.
-				'delete_element' => __( 'Delete {0}', 'elementor' ),
-				'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),
+				/* translators: %s: Element type. */
+				'delete_element' => __( 'Delete %s', 'elementor' ),
+				/* translators: %s: Template type. */
+				'dialog_confirm_delete' => __( 'Are you sure you want to remove this %s?', 'elementor' ),
 
 				// Saver.
 				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),

@@ -65,9 +65,9 @@ module.exports = ViewModule.extend( {
 	reset: function() {
 		var css = {};
 
-		css.width = 'auto';
+		css.width = '';
 
-		css[ this.getSettings( 'direction' ) ] = 0;
+		css[ this.getSettings( 'direction' ) ] = '';
 
 		this.elements.$element.css( css );
 	}

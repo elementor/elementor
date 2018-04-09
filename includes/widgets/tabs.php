@@ -309,7 +309,8 @@ class Widget_Tabs extends Widget_Base {
 		?>
 		<div class="elementor-tabs" role="tablist">
 			<div class="elementor-tabs-wrapper">
-				<?php foreach ( $tabs as $index => $item ) :
+				<?php
+				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
 
 					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
@@ -327,7 +328,8 @@ class Widget_Tabs extends Widget_Base {
 				<?php endforeach; ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper">
-				<?php foreach ( $tabs as $index => $item ) :
+				<?php
+				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
 
 					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );

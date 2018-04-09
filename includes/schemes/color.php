@@ -146,7 +146,7 @@ class Scheme_Color extends Scheme_Base {
 			</div>
 			<div class="elementor-panel-box-content">
 				<?php foreach ( $this->_get_system_schemes_to_print() as $scheme_name => $scheme ) : ?>
-					<div class="elementor-panel-scheme-color-system-scheme" data-scheme-name="<?php echo $scheme_name; ?>">
+					<div class="elementor-panel-scheme-color-system-scheme" data-scheme-name="<?php echo esc_attr( $scheme_name ); ?>">
 						<div class="elementor-panel-scheme-color-system-items">
 							<?php foreach ( $scheme['items'] as $color_value ) : ?>
 								<div class="elementor-panel-scheme-color-system-item" style="background-color: <?php echo esc_attr( $color_value ); ?>;"></div>
