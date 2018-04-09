@@ -878,7 +878,18 @@ App = Marionette.Application.extend( {
 		}
 
 		if ( templateArgs ) {
+			// TODO: bc since 2.0.4
 			string = string.replace( /{(\d+)}/g, function( match, number ) {
+				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
+			} );
+
+			string = string.replace( /%(?:(\d+)\$)?s/g, function( match, number ) {
+				if ( ! number ) {
+					number = 1;
+				}
+
+				number--;
+
 				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
 			} );
 		}
@@ -937,12 +948,14 @@ App = Marionette.Application.extend( {
 		} else {
 			text += '%c00';
 
-			style = 'line-height: 1.6; font-size: 20px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat; background-size: cover';
+			style = 'font-size: 22px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
 		}
 
-		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
+		setTimeout( console.log.bind( console, text, style ) );
 
-		setTimeout( console.log.bind( console, text, style, 'color: #9B0A46', '' ) );
+		text = '%cLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
+
+		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) );
 	}
 } );
 

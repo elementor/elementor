@@ -135,8 +135,8 @@ class Widget_Button extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'default' => __( 'Click me', 'elementor' ),
-				'placeholder' => __( 'Click me', 'elementor' ),
+				'default' => __( 'Click here', 'elementor' ),
+				'placeholder' => __( 'Click here', 'elementor' ),
 			]
 		);
 
