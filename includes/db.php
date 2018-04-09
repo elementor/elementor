@@ -98,6 +98,9 @@ class DB {
 
 		return $document->save( [
 			'elements' => $data,
+			'settings' => [
+				'post_status' => $status,
+			],
 		] );
 	}
 
