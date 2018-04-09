@@ -16,15 +16,13 @@
 		max-width: 300px;
 		@include padding-end(100px);
 
-		&__get-started {
+		&__title {
 			font-size: 30px;
 			color: $editor-darker;
-		}
 
-		&__elementor-builder {
-			font-size: 30px;
-			color: $editor-darker;
-			font-weight: bold;
+			span {
+				font-weight: bold;
+			}
 		}
 
 		&__content {
