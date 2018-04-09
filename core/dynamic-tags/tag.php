@@ -18,13 +18,15 @@ abstract class Tag extends Base_Tag {
 		endif;
 
 		if ( ! empty( $settings['before'] ) ) {
-			echo wp_kses_post( $settings['before'] );
+			$before = str_replace( ' ', '&nbsp;', $settings['before'] );
+			echo wp_kses_post( $before );
 		}
 
 		$this->render();
 
 		if ( ! empty( $settings['after'] ) ) {
-			echo wp_kses_post( $settings['after'] );
+			$after = str_replace( ' ', '&nbsp;', $settings['after'] );
+			echo wp_kses_post( $after );
 		}
 
 		if ( ! empty( $options['wrap'] ) ) :
