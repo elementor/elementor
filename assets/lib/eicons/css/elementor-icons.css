@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?3.2.0");
-  src: url("../fonts/eicons.eot?3.2.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?3.2.0") format("woff2"), url("../fonts/eicons.woff?3.2.0") format("woff"), url("../fonts/eicons.ttf?3.2.0") format("truetype"), url("../fonts/eicons.svg?3.2.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?3.2.1");
+  src: url("../fonts/eicons.eot?3.2.1#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?3.2.1") format("woff2"), url("../fonts/eicons.woff?3.2.1") format("woff"), url("../fonts/eicons.ttf?3.2.1") format("truetype"), url("../fonts/eicons.svg?3.2.1#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -584,12 +584,6 @@
 
 .eicon-site-logo:before {
   content: '\e985'; }
-
-.eicon-site-search:before {
-  content: '\e986'; }
-
-.eicon-site-title:before {
-  content: '\e987'; }
 
 .eicon-editor-link:before {
   content: '\e500'; }
