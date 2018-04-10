@@ -434,16 +434,17 @@ class Frontend {
 			],
 		];
 
+		$elementor_frontend_config['settings'] = SettingsManager::get_settings_frontend_config();
+
 		if ( is_singular() ) {
 			$post = get_post();
-			$elementor_frontend_config['settings'] = SettingsManager::get_settings_frontend_config();
+
 			$elementor_frontend_config['post'] = [
 				'id' => $post->ID,
 				'title' => $post->post_title,
 				'excerpt' => $post->post_excerpt,
 			];
 		} else {
-			$elementor_frontend_config['settings'] = [];
 			$elementor_frontend_config['post'] = [
 				'id' => 0,
 				'title' => wp_get_document_title(),
