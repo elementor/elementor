@@ -240,6 +240,17 @@ class Widget_Button extends Widget_Base {
 		);
 
 		$this->add_control(
+			'button_css_id',
+			[
+				'label' => __( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -444,6 +455,10 @@ class Widget_Button extends Widget_Base {
 			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 
+		if ( $settings['button_css_id'] ) {
+			$this->add_render_attribute( 'button', 'id', $settings['button_css_id'] );
+		}
+
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<a <?php echo $this->get_render_attribute_string( 'button' ); ?>>
@@ -467,9 +482,13 @@ class Widget_Button extends Widget_Base {
 		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
 
 		view.addInlineEditingAttributes( 'text', 'none' );
+
+        if ( settings.button_css_id ) {
+            view.addRenderAttribute( 'button', 'id', settings.button_css_id );
+        }
 		#>
 		<div class="elementor-button-wrapper">
-			<a class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
+			<a {{{ view.getRenderAttributeString( 'button' ) }}} class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
 				<span class="elementor-button-content-wrapper">
 					<# if ( settings.icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
