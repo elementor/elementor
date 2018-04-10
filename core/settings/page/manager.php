@@ -91,7 +91,7 @@ class Manager extends BaseManager {
 	 * @return BaseModel The model object.
 	 */
 	public function get_model_for_config() {
-		if ( is_archive() ) {
+		if ( ! is_singular() && ! Plugin::$instance->editor->is_edit_mode() ) {
 			return null;
 		}
 
