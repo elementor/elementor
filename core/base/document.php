@@ -647,7 +647,7 @@ abstract class Document extends Controls_Stack {
 			}
 
 			$saved_settings = get_post_meta( $this->post->ID, '_elementor_page_settings', true );
-			if ( ! empty( $saved_settings ) ) {
+			if ( ! empty( $saved_settings ) && is_array( $saved_settings ) ) {
 				$data['settings'] += $saved_settings;
 			}
 		}
