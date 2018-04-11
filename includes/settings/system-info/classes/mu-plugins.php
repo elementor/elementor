@@ -34,7 +34,7 @@ class MU_Plugins_Reporter extends Base_Reporter {
 	 *
 	 * Retrieve the must-use plugins.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return array Must-Use plugins.

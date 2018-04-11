@@ -126,7 +126,7 @@ class User {
 	 *
 	 * Retrieve the list of notices for the current user.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *

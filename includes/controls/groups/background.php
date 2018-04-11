@@ -80,7 +80,7 @@ class Group_Control_Background extends Group_Control_Base {
 	 *
 	 * Retrieve background control initial types.
 	 *
-	 * @since 1.2.2
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
