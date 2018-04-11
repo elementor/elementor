@@ -7,6 +7,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Section extends Library_Document {
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
@@ -16,10 +21,19 @@ class Section extends Library_Document {
 		return $properties;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_name() {
 		return 'section';
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_title() {
 		return __( 'Section', 'elementor' );
 	}
