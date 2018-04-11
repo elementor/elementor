@@ -9,6 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Page extends Library_Document {
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
@@ -16,14 +21,27 @@ class Page extends Library_Document {
 		return $properties;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_name() {
 		return 'page';
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_title() {
 		return __( 'Page', 'elementor' );
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		parent::_register_controls();
 

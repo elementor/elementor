@@ -66,7 +66,7 @@ class Api {
 	 *
 	 * This function notifies the user of upgrade notices, new templates and contributors.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
