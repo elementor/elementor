@@ -33,6 +33,9 @@ class Control_Repeater extends Base_Data_Control {
 		return 'repeater';
 	}
 
+	/**
+	 * @access public
+	 */
 	public function get_default_value() {
 		return [];
 	}

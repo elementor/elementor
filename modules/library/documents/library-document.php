@@ -11,6 +11,11 @@ abstract class Library_Document extends Document {
 
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
@@ -21,6 +26,10 @@ abstract class Library_Document extends Document {
 		return $properties;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function save_type() {
 		parent::save_type();
 

@@ -24,10 +24,18 @@ class Manager {
 
 	private $parsing_mode = self::MODE_RENDER;
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function __construct() {
 		$this->add_actions();
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function parse_tags_text( $text, array $settings, callable $parse_callback ) {
 		if ( ! empty( $settings['returnType'] ) && 'object' === $settings['returnType'] ) {
 			$value = $this->parse_tag_text( $text, $settings, $parse_callback );
@@ -41,6 +49,10 @@ class Manager {
 		return $value;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function parse_tag_text( $tag_text, array $settings, $parse_callback ) {
 		$tag_data = $this->tag_text_to_tag_data( $tag_text );
 
@@ -55,6 +67,10 @@ class Manager {
 		return call_user_func_array( $parse_callback, $tag_data );
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function tag_text_to_tag_data( $tag_text ) {
 		preg_match( '/id="(.*?(?="))"/', $tag_text, $tag_id_match );
 		preg_match( '/name="(.*?(?="))"/', $tag_text, $tag_name_match );
@@ -72,6 +88,8 @@ class Manager {
 	}
 
 	/**
+	 * @since 2.0.0
+	 * @access public
 	 * @param Base_Tag $tag
 	 *
 	 * @return string
@@ -81,6 +99,8 @@ class Manager {
 	}
 
 	/**
+	 * @since 2.0.0
+	 * @access public
 	 * @param string $tag_id
 	 * @param string $tag_name
 	 * @param array  $settings
@@ -98,6 +118,8 @@ class Manager {
 	}
 
 	/**
+	 * @since 2.0.0
+	 * @access public
 	 * @param string $tag_id
 	 * @param string $tag_name
 	 * @param array  $settings
@@ -119,6 +141,10 @@ class Manager {
 		] );
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_tag_data_content( $tag_id, $tag_name, array $settings = [] ) {
 		if ( self::MODE_REMOVE === $this->parsing_mode ) {
 			return null;
@@ -135,6 +161,10 @@ class Manager {
 		] );
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_tag_info( $tag_name ) {
 		if ( empty( $this->tags_info[ $tag_name ] ) ) {
 			return null;
@@ -143,6 +173,10 @@ class Manager {
 		return $this->tags_info[ $tag_name ];
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function register_tag( $class ) {
 		/** @var Tag $tag */
 		$tag = new $class();
@@ -153,6 +187,10 @@ class Manager {
 		];
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function register_group( $group_name, array $group_settings ) {
 		$default_group_settings = [
 			'title' => '',
@@ -163,6 +201,10 @@ class Manager {
 		$this->tags_groups[ $group_name ] = $group_settings;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function print_templates() {
 		foreach ( $this->tags_info as $tag_name => $tag_info ) {
 			$tag = $tag_info['instance'];
@@ -175,6 +217,10 @@ class Manager {
 		}
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_tags_config() {
 		$config = [];
 
@@ -203,6 +249,10 @@ class Manager {
 		return $config;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_config() {
 		return [
 			'tags' => $this->get_tags_config(),
@@ -210,6 +260,10 @@ class Manager {
 		];
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function ajax_render_tags() {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
@@ -260,14 +314,26 @@ class Manager {
 		wp_send_json_success( $tags_data );
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function set_parsing_mode( $mode ) {
 		$this->parsing_mode = $mode;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_parsing_mode() {
 		return $this->parsing_mode;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access private
+	 */
 	private function add_actions() {
 		add_action( 'wp_ajax_elementor_render_tags', [ $this, 'ajax_render_tags' ] );
 	}

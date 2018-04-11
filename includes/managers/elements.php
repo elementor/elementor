@@ -239,7 +239,7 @@ class Elements_Manager {
 	 *
 	 * Fired by `wp_ajax_elementor_discard_changes` action.
 	 *
-	 * @since  1.9.0
+	 * @since 1.9.0
 	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->ajax_discard_changes()` method instead.
 	 * @access public
 	 *
@@ -300,7 +300,7 @@ class Elements_Manager {
 	 * Initialize Elementor elements by registering the supported elements.
 	 * Elementor supports by default `section` element and `column` element.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 */
 	private function init_elements() {

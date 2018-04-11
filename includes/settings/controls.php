@@ -56,7 +56,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for text controls.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -84,7 +84,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for checkbox controls.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -111,7 +111,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for checkbox list controls.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -141,7 +141,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for select controls.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -171,7 +171,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for checkbox list controls populated with Custom Post Types.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -205,7 +205,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for checkbox list controls populated with user roles.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -234,7 +234,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for raw HTML controls.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
