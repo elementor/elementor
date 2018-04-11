@@ -614,7 +614,7 @@ class Widget_Video extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_active_settings();
+		$settings = $this->get_settings_for_display();
 
 		$video_link = 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
 
@@ -703,7 +703,7 @@ class Widget_Video extends Widget_Base {
 	 * @access public
 	 */
 	public function render_plain_content() {
-		$settings = $this->get_active_settings();
+		$settings = $this->get_settings_for_display();
 		$url = 'youtube' === $settings['video_type'] ? $settings['link'] : $settings['vimeo_link'];
 
 		echo esc_url( $url );
@@ -756,40 +756,6 @@ class Widget_Video extends Widget_Base {
 			$params['autopause'] = '0';
 		}
 
-		return $params;
-	}
-
-	/**
-	 * Get hosted params.
-	 *
-	 * Retrieve video widget hosted parameters.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 *
-	 * @return array Video hosted parameters.
-	 */
-	protected function get_hosted_params() {
-		$settings = $this->get_settings_for_display();
-
-		$params = [];
-
-		$params['src'] = $settings['hosted_link'];
-
-		$hosted_options = [ 'autoplay', 'loop' ];
-
-		foreach ( $hosted_options as $key => $option ) {
-			$value = ( 'yes' === $settings[ 'hosted_' . $option ] ) ? '1' : '0';
-			$params[ $option ] = $value;
-		}
-
-		if ( ! empty( $settings['hosted_width'] ) ) {
-			$params['width'] = $settings['hosted_width'];
-		}
-
-		if ( ! empty( $settings['hosted_height'] ) ) {
-			$params['height'] = $settings['hosted_height'];
-		}
 		return $params;
 	}
 
