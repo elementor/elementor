@@ -10,8 +10,12 @@ abstract class Tag extends Base_Tag {
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param array $options
+	 *
+	 * @return string
 	 */
-	final public function get_content( array $options = [] ) {
+	public function get_content( array $options = [] ) {
 		$settings = $this->get_settings();
 
 		ob_start();
