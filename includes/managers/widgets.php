@@ -36,7 +36,7 @@ class Widgets_Manager {
 	 * Initialize Elementor widgets manager. Include all the the widgets files
 	 * and register each Elementor and WordPress widget.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	*/
 	private function init_widgets() {
@@ -105,7 +105,7 @@ class Widgets_Manager {
 	 * Exclude the widgets that are in Elementor widgets black list. Theme and
 	 * plugin authors can filter the black list.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	*/
 	private function register_wp_widgets() {
@@ -165,7 +165,7 @@ class Widgets_Manager {
 	 *
 	 * Require Elementor widget base class.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	*/
 	private function require_files() {
