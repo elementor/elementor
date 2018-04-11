@@ -546,6 +546,8 @@ class DB {
 			$GLOBALS['post'] = $new_query->posts[0]; // WPCS: override ok.
 
 			setup_postdata( $GLOBALS['post'] );
+		} elseif ( $new_query->is_author() ) {
+			$GLOBALS['authordata'] = get_userdata( $new_query->get( 'author' ) ); // WPCS: override ok.
 		}
 	}
 
@@ -569,12 +571,15 @@ class DB {
 
 		$wp_query = $data['original']; // WPCS: override ok.
 
-		// Ensure the global post is set only if needed
+		// Ensure the global post/authordata is set only if needed.
 		unset( $GLOBALS['post'] );
+		unset( $GLOBALS['authordata'] );
 
 		if ( $wp_query->is_singular() && isset( $wp_query->posts[0] ) ) {
 			$GLOBALS['post'] = $wp_query->posts[0]; // WPCS: override ok.
 			setup_postdata( $GLOBALS['post'] );
+		} elseif ( $wp_query->is_author() ) {
+			$GLOBALS['authordata'] = get_userdata( $wp_query->get( 'author' ) ); // WPCS: override ok.
 		}
 	}
 
