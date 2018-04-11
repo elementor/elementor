@@ -32,6 +32,10 @@ class Module extends BaseModule {
 	 */
 	protected $print_callback;
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_name() {
 		return 'page-templates';
 	}
@@ -43,7 +47,7 @@ class Module extends BaseModule {
 	 *
 	 * Fired by `template_include` filter.
 	 *
-	 * @since 1.6.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @param string $template The path of the template to include.
@@ -65,6 +69,10 @@ class Module extends BaseModule {
 		return $template;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function add_wp_templates_support() {
 		$post_types = get_post_types_by_support( 'elementor' );
 
@@ -80,7 +88,7 @@ class Module extends BaseModule {
 	 *
 	 * Fired by `theme_{$post_type}_templates` filter.
 	 *
-	 * @since 1.6.0
+	 * @since 2.0.0
 	 * @access public
 	 * @static
 	 *
@@ -98,10 +106,18 @@ class Module extends BaseModule {
 		return $page_templates;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function set_print_callback( $callback ) {
 		$this->print_callback = $callback;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function print_callback() {
 		while ( have_posts() ) :
 			the_post();
@@ -109,6 +125,10 @@ class Module extends BaseModule {
 		endwhile;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function print_content() {
 		if ( ! $this->print_callback ) {
 			$this->print_callback = [ $this, 'print_callback' ];
@@ -117,6 +137,10 @@ class Module extends BaseModule {
 		call_user_func( $this->print_callback );
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_template_path( $page_template ) {
 		$template_path = '';
 		switch ( $page_template ) {
@@ -132,6 +156,8 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * @since 2.0.0
+	 * @access public
 	 * @param Document $document
 	 */
 	public function action_register_template_control( $document ) {
@@ -141,6 +167,8 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * @since 2.0.0
+	 * @access public
 	 * @param Document $document
 	 * @param string $control_id
 	 */
@@ -213,6 +241,10 @@ class Module extends BaseModule {
 		$document->end_injection();
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function filter_update_meta( $value, $object_id, $meta_key ) {
 		if ( '_wp_page_template' === $meta_key ) {
 			$ajax_data = Plugin::$instance->ajax->get_current_action_data();
@@ -229,6 +261,10 @@ class Module extends BaseModule {
 		return $value;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function __construct() {
 		add_action( 'init', [ $this, 'add_wp_templates_support' ] );
 
