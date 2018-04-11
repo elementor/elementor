@@ -311,6 +311,10 @@ class Manager extends BaseManager {
 		];
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function save_post_status( $post_id, $status ) {
 		$parent_id = wp_is_post_revision( $post_id );
 

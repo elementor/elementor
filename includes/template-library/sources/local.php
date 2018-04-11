@@ -981,7 +981,7 @@ class Source_Local extends Source_Base {
 	 * Retrieve the link used to export a single template based on the template
 	 * ID.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @param int $template_id The template ID.
@@ -1401,7 +1401,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * Register filters and actions for the template library.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 */
 	private function add_actions() {

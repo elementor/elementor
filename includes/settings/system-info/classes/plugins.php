@@ -34,7 +34,7 @@ class Plugins_Reporter extends Base_Reporter {
 	 *
 	 * Retrieve the active plugins from the list of all the installed plugins.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return array Active plugins.

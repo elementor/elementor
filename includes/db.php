@@ -281,7 +281,7 @@ class DB {
 	 * When saving data in the editor, this method renders recursively the plain
 	 * content containing only the content and the HTML. No CSS data.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @param array $element_data Element data.
@@ -376,6 +376,7 @@ class DB {
 	 * auto-save. Only then copy elementor meta from one post to another using
 	 * `copy_elementor_meta()`.
 	 *
+	 * @since 1.9.2
 	 * @access public
 	 *
 	 * @param int $from_post_id Original post ID.
@@ -600,6 +601,7 @@ class DB {
 	 *
 	 * Retrieve the post plain text from any given Elementor data.
 	 *
+	 * @since 1.9.2
 	 * @access public
 	 *
 	 * @param array $data Post ID.

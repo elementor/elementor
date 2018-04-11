@@ -153,7 +153,7 @@ class Maintenance_Mode {
 	 *
 	 * Fired by `elementor/admin/after_create_settings/{$page_id}` action.
 	 *
-	 * @since  1.4.0
+	 * @since 1.4.0
 	 * @access public
 	 *
 	 * @param Tools $tools An instance of the Tools settings page.

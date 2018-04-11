@@ -36,7 +36,7 @@ class Control_Select extends Base_Data_Control {
 	 * Retrieve the default settings of the select control. Used to return the
 	 * default settings while initializing the select control.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.

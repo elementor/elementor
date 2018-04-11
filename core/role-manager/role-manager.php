@@ -14,12 +14,16 @@ class Role_Manager extends Settings_Page {
 	const PAGE_ID = 'elementor-role-manager';
 	const ROLE_MANAGER_OPTION_NAME = 'exclude_user_roles';
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_role_manager_options() {
 		return get_option( 'elementor_' . self::ROLE_MANAGER_OPTION_NAME, [] );
 	}
 
 	/**
-	 * @since ??
+	 * @since 2.0.0
 	 * @access protected
 	 */
 	protected function get_page_title() {
@@ -27,7 +31,7 @@ class Role_Manager extends Settings_Page {
 	}
 
 	/**
-	 * @since ??
+	 * @since 2.0.0
 	 * @access public
 	 */
 	public function register_admin_menu() {
@@ -42,7 +46,7 @@ class Role_Manager extends Settings_Page {
 	}
 
 	/**
-	 * @since ??
+	 * @since 2.0.0
 	 * @access protected
 	 */
 	protected function create_tabs() {
@@ -71,7 +75,7 @@ class Role_Manager extends Settings_Page {
 	}
 
 	/**
-	 * @since 1.5.0
+	 * @since 2.0.0
 	 * @access public
 	 */
 	public function display_settings_page() {
@@ -100,6 +104,10 @@ class Role_Manager extends Settings_Page {
 		<?php
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access private
+	 */
 	private function display_role_controls( $role_slug, $role_data ) {
 		static $excluded_options = false;
 		if ( false === $excluded_options ) {
@@ -134,6 +142,10 @@ class Role_Manager extends Settings_Page {
 		<?php
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_go_pro_link_html() {
 		$pro_link = Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash' );
 		?>
@@ -144,6 +156,10 @@ class Role_Manager extends Settings_Page {
 		<?php
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_user_restrictions_array() {
 		$user  = wp_get_current_user();
 		$user_roles = $user->roles;
@@ -162,6 +178,10 @@ class Role_Manager extends Settings_Page {
 		return array_unique( $restrictions );
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access private
+	 */
 	private function get_user_restrictions() {
 		static $restrictions = false;
 		if ( ! $restrictions ) {
@@ -181,6 +201,10 @@ class Role_Manager extends Settings_Page {
 		return $restrictions;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function user_can( $capability ) {
 		$options = $this->get_user_restrictions_array();
 
@@ -192,7 +216,7 @@ class Role_Manager extends Settings_Page {
 	}
 
 	/**
-	 * @since ??
+	 * @since 2.0.0
 	 * @access public
 	 */
 	public function __construct() {
