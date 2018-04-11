@@ -23,20 +23,36 @@ class Module extends BaseModule {
 
 	const GALLERY_CATEGORY = 'gallery';
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function __construct() {
 		$this->register_groups();
 
 		$this->register_tags();
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_name() {
 		return 'dynamic_tags';
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_tag_classes_names() {
 		return [];
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_groups() {
 		return [
 			self::BASE_GROUP => [
@@ -45,12 +61,20 @@ class Module extends BaseModule {
 		];
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access private
+	 */
 	private function register_groups() {
 		foreach ( $this->get_groups() as $group_name => $group_settings ) {
 			Plugin::$instance->dynamic_tags->register_group( $group_name, $group_settings );
 		}
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access private
+	 */
 	private function register_tags() {
 		foreach ( $this->get_tag_classes_names() as $tag_class ) {
 			/** @var Tag $class_name */
