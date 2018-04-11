@@ -9,6 +9,7 @@ use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Post_CSS_File;
+use Elementor\Post_Preview_CSS;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -276,7 +277,16 @@ class Manager extends BaseManager {
 			return null;
 		}
 
-		return $this->get_model( $css_file->get_post_id() );
+		$post_id = $css_file->get_post_id();
+
+		if ( $css_file instanceof Post_Preview_CSS ) {
+			$autosave = Utils::get_post_autosave( $post_id );
+			if ( $autosave ) {
+				$post_id = $autosave->ID;
+			}
+		}
+
+		return $this->get_model( $post_id );
 	}
 
 	/**
