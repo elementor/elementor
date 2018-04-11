@@ -194,7 +194,7 @@ class Ajax_Manager {
 	 *
 	 * Retrieve the data for the current ajax request.
 	 *
-	 * @since 2.0.0
+	 * @since 2.0.1
 	 * @access public
 	 *
 	 * @return bool|mixed Ajax request data if action exist, False otherwise.

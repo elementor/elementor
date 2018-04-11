@@ -280,7 +280,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Register default edit tools.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 */
@@ -373,8 +373,8 @@ abstract class Element_Base extends Controls_Stack {
 	 * Used to generate the element content template on the editor, using a
 	 * Backbone JavaScript template.
 	 *
+	 * @access protected
 	 * @since 2.0.0
-	 * @access public
 	 *
 	 * @param string $template_content Template content.
 	 */
@@ -837,7 +837,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Retrieve the element child type based on element data.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @param array $element_data Element ID.
@@ -873,7 +873,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Initializing the element child elements.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 */
 	private function init_children() {

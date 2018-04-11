@@ -105,6 +105,10 @@ class Settings extends Settings_Page {
 		);
 	}
 
+	/**
+	 * @since 2.0.3
+	 * @access public
+	 */
 	public function register_knowledge_base_menu() {
 		add_submenu_page(
 			self::PAGE_ID,
@@ -123,7 +127,7 @@ class Settings extends Settings_Page {
 	 *
 	 * Fired by `admin_init` action.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.3
 	 * @access public
 	 */
 	public function handle_external_redirects() {
