@@ -302,7 +302,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 *
 	 * Retrieve available image sizes after filtering `include` and `exclude` arguments.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return array Filtered image sizes.
