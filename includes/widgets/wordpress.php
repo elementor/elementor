@@ -35,7 +35,7 @@ class Widget_WordPress extends Widget_Base {
 	/**
 	 * Whether the widget is a Pojo widget or not.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return bool

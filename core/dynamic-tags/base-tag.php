@@ -10,28 +10,70 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Base_Tag extends Controls_Stack {
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
 	final public static function get_type() {
 		return 'tag';
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @abstract
+	 */
 	abstract public function get_categories();
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @abstract
+	 */
 	abstract public function get_group();
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @abstract
+	 */
 	abstract public function get_title();
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @abstract
+	 */
 	abstract public function get_content( array $options = [] );
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @abstract
+	 */
 	abstract public function get_content_type();
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_panel_template_setting_key() {
 		return '';
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function is_settings_required() {
 		return false;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function print_panel_template() {
 		$panel_template_setting_key = $this->get_panel_template_setting_key();
 
@@ -70,12 +112,24 @@ abstract class Base_Tag extends Controls_Stack {
 		<?php
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	final public function get_unique_name() {
 		return 'tag-' . $this->get_name();
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access protected
+	 */
 	protected function register_advanced_section() {}
 
+	/**
+	 * @since 2.0.0
+	 * @access protected
+	 */
 	final protected function init_controls() {
 		Plugin::$instance->controls_manager->open_stack( $this );
 

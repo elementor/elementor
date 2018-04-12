@@ -21,6 +21,7 @@ class Module extends BaseModule {
 	 *
 	 * Retrieve the history module name.
 	 *
+	 * @since 1.7.0
 	 * @access public
 	 *
 	 * @return string Module name.
@@ -36,6 +37,7 @@ class Module extends BaseModule {
 	 *
 	 * Fired by `elementor/editor/localize_settings` filter.
 	 *
+	 * @since 1.7.0
 	 * @access public
 	 *
 	 * @param string $settings Localized settings.
@@ -64,6 +66,7 @@ class Module extends BaseModule {
 	 *
 	 * Initializing Elementor history module.
 	 *
+	 * @since 1.7.0
 	 * @access public
 	 */
 	public function __construct() {
