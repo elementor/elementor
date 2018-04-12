@@ -462,6 +462,7 @@ class Utils {
 	 *
 	 * Retrieve an autosave for any given post.
 	 *
+	 * @since 1.9.2
 	 * @access public
 	 * @static
 	 *

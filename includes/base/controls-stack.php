@@ -1024,7 +1024,7 @@ abstract class Controls_Stack {
 	 * that passed all the conditions, rendered all the shortcodes and all the dynamic
 	 * tags.
 	 *
-	 * @since  2.0.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @param string $setting_key Optional. The key of the requested setting.
@@ -1055,7 +1055,7 @@ abstract class Controls_Stack {
 	 *
 	 * Retrieve the settings with rendered dynamic tags.
 	 *
-	 * @since  2.0.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @param array $settings     Optional. The requested setting. Default is null.
@@ -1559,7 +1559,7 @@ abstract class Controls_Stack {
 	 *
 	 * Used to generate the element template on the editor.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access public
 	 */
 	public function print_template() {
@@ -1649,6 +1649,7 @@ abstract class Controls_Stack {
 	 * Retrieve the injection point in the stack where new controls and sections
 	 * will be inserted.
 	 *
+	 * @since 1.9.2
 	 * @access public
 	 *
 	 * @return array|null An array when an injection point is defined, null
@@ -1849,7 +1850,7 @@ abstract class Controls_Stack {
 	 *
 	 * Generates the final HTML on the frontend.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access protected
 	 */
 	protected function render() {}
@@ -1860,8 +1861,8 @@ abstract class Controls_Stack {
 	 * Used to generate the content template on the editor, using a
 	 * Backbone JavaScript template.
 	 *
+	 * @access protected
 	 * @since 2.0.0
-	 * @access public
 	 *
 	 * @param string $template_content Template content.
 	 */
@@ -1874,7 +1875,7 @@ abstract class Controls_Stack {
 	 *
 	 * Used to generate the live preview, using a Backbone JavaScript template.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access protected
 	 */
 	protected function _content_template() {}
@@ -1884,7 +1885,7 @@ abstract class Controls_Stack {
 	 *
 	 * Register the all controls added by `_register_controls()`.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 * @access protected
 	 */
 	protected function init_controls() {

@@ -16,18 +16,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Post extends Document {
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_name() {
 		return 'post';
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_title() {
 		return __( 'Page', 'elementor' );
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_css_wrapper_selector() {
 		return 'body.elementor-page-' . $this->get_main_id();
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		parent::_register_controls();
 
@@ -39,6 +56,9 @@ class Post extends Document {
 	}
 
 	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
 	 * @param Document $document
 	 */
 	public static function register_hide_title_control( $document ) {
@@ -74,6 +94,9 @@ class Post extends Document {
 	}
 
 	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
 	 * @param Document $document
 	 */
 	public static function register_style_controls( $document ) {
@@ -110,6 +133,9 @@ class Post extends Document {
 	}
 
 	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
 	 * @param Document $document
 	 */
 	public static function register_post_fields_control( $document ) {
@@ -146,6 +172,10 @@ class Post extends Document {
 		$document->end_injection();
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
 			$template = get_post_meta( $data['post_id'], '_wp_page_template', true );

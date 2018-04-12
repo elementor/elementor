@@ -11,10 +11,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_name() {
 		return 'library';
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function localize_settings( $settings ) {
 		$settings = array_replace_recursive( $settings, [
 			'i18n' => [],
@@ -23,6 +31,10 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function __construct() {
 		Plugin::$instance->documents
 			->register_document_type( 'page', Documents\Page::get_class_full_name() )

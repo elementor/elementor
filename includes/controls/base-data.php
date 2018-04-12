@@ -36,6 +36,7 @@ abstract class Base_Data_Control extends Base_Control {
 	 * Get the default settings of the control. Used to return the default
 	 * settings while initializing the control.
 	 *
+	 * @since 2.0.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -75,6 +76,10 @@ abstract class Base_Data_Control extends Base_Control {
 		return $value;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function parse_tags( $dynamic_value, $dynamic_settings ) {
 		$current_dynamic_settings = $this->get_settings( 'dynamic' );
 
