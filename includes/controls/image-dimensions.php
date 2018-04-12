@@ -112,7 +112,7 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	 *
 	 * Used to determine whether the editor supports a given image mime-type.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return bool Whether the editor supports the given mime-type.

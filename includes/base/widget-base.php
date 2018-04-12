@@ -259,7 +259,7 @@ abstract class Widget_Base extends Element_Base {
 	 * An internal method that is used to add a skin control to the widget.
 	 * Added at the top of the controls section.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 */
 	private function register_skin_control() {
@@ -349,8 +349,8 @@ abstract class Widget_Base extends Element_Base {
 	 * Used to generate the widget content template on the editor, using a
 	 * Backbone JavaScript template.
 	 *
-	 * @since 1.0.0
-	 * @access public
+	 * @since 2.0.0
+	 * @access protected
 	 *
 	 * @param string $template_content Template content.
 	 */
@@ -513,7 +513,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Used to add attributes to the current widget wrapper HTML tag.
 	 *
-	 * @since 1.3.0
+	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {

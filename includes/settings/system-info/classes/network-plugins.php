@@ -48,7 +48,7 @@ class Network_Plugins_Reporter extends Base_Reporter {
 	 *
 	 * Retrieve the active network plugins from the list of active site-wide plugins.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return array Active network plugins.
