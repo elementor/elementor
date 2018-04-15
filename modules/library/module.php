@@ -20,16 +20,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	/**
+	 * Get module name.
+	 *
+	 * Retrieve the library module name.
+	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @return string Module name.
 	 */
 	public function get_name() {
 		return 'library';
 	}
 
 	/**
+	 * Localize settings.
+	 *
+	 * Add new localized settings for the library module.
+	 *
+	 * Fired by `elementor/editor/localize_settings` filter.
+	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param array $settings Localized settings.
+	 *
+	 * @return array Localized settings.
 	 */
 	public function localize_settings( $settings ) {
 		$settings = array_replace_recursive( $settings, [
@@ -40,6 +56,10 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Library module constructor.
+	 *
+	 * Initializing Elementor library module.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 */
