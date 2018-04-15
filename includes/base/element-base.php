@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Element Base.
+ * Elementor base element.
  *
  * An abstract class to register new Elementor elements. It extended the
  * `Controls_Stack` class to inherit its properties.

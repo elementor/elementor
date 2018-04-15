@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor base data control.
  *
- * A base control for creating data controls.
+ * An abstract class for creating new data controls in the panel.
  *
  * @since 1.5.0
  * @abstract
