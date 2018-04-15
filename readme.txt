@@ -197,8 +197,10 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Added `elementor/get_document/post_id` filter for `get document` - compatibility for translation plugins
 * Tweak: Print container classes per document
 * Tweak: Added `elementor-edit-area-preview` and `elementor-edit-area-active` classes
+* Tweak: Removed wrapper for dynamic data
 * Fix: Per device Visibility for editor with multiple elementor areas
 * Fix: CSS glitch for URL input with dynamic
+* Fix: Dynamic Show Before/After only when value is not empty
 
 = 2.0.5 - 2018-04-11 =
 * Fix: Avoid merge for incorrect page settings data
