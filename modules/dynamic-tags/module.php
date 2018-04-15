@@ -9,6 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor dynamic tags module.
+ *
+ * Elementor dynamic tags module handler class is responsible for registering
+ * and managing Elementor dynamic tags modules.
+ *
+ * @since 2.0.0
+ */
 class Module extends BaseModule {
 
 	const BASE_GROUP = 'base';

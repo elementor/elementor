@@ -15,6 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Elementor page templates module.
+ *
+ * Elementor page templates module handler class is responsible for registering
+ * and managing Elementor page templates modules.
+ *
+ * @since 2.0.0
+ */
 class Module extends BaseModule {
 
 	/**

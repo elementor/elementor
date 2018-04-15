@@ -11,6 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor revisions manager.
+ *
+ * Elementor revisions manager handler class is responsible for registering
+ * and managing Elementor revisions manager.
+ *
+ * @since 1.7.0
+ */
 class Revisions_Manager {
 
 	const MAX_REVISIONS_TO_DISPLAY = 100;
