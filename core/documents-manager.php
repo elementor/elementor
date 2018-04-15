@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor documents manager class.
+ * Elementor documents manager.
  *
  * Elementor documents manager handler class is responsible for registering and
  * managing Elementor documents.

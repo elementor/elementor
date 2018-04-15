@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor template library local source class.
+ * Elementor template library local source.
  *
  * Elementor template library local source handler class is responsible for
  * handling local Elementor templates saved by the user locally on his site.

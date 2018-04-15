@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor plugin class.
+ * Elementor plugin.
  *
  * The main plugin handler class is responsible for initializing Elementor. The
  * class registers and all the components required to run the plugin.

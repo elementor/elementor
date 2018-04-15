@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor posts CSS manager class.
+ * Elementor posts CSS manager.
  *
  * Elementor posts CSS manager handler class is responsible for creating custom
  * CSS file for posts.
