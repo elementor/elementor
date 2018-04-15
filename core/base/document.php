@@ -119,7 +119,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function get_container_classes() {
-		return 'elementor elementor-' . $this->post->ID;
+		return 'elementor elementor-' . $this->get_main_id();
 	}
 
 	/**
