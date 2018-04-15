@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Tag extends Base_Tag {
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	final public function get_content( array $options = [] ) {
 		$settings = $this->get_settings();
 
@@ -44,10 +48,18 @@ abstract class Tag extends Base_Tag {
 		return $value;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	final public function get_content_type() {
 		return 'ui';
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access protected
+	 */
 	protected function register_advanced_section() {
 		$this->start_controls_section(
 			'advanced',
