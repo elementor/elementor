@@ -667,8 +667,8 @@ class Editor {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param string $localized_settings Localized settings.
-		 * @param int    $post_id            The ID of the current post being edited.
+		 * @param array $localized_settings Localized settings.
+		 * @param int   $post_id            The ID of the current post being edited.
 		 */
 		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings, $this->_post_id );
 
