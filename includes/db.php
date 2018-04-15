@@ -281,7 +281,7 @@ class DB {
 	 * When saving data in the editor, this method renders recursively the plain
 	 * content containing only the content and the HTML. No CSS data.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @param array $element_data Element data.
@@ -376,6 +376,7 @@ class DB {
 	 * auto-save. Only then copy elementor meta from one post to another using
 	 * `copy_elementor_meta()`.
 	 *
+	 * @since 1.9.2
 	 * @access public
 	 *
 	 * @param int $from_post_id Original post ID.
@@ -545,6 +546,8 @@ class DB {
 			$GLOBALS['post'] = $new_query->posts[0]; // WPCS: override ok.
 
 			setup_postdata( $GLOBALS['post'] );
+		} elseif ( $new_query->is_author() ) {
+			$GLOBALS['authordata'] = get_userdata( $new_query->get( 'author' ) ); // WPCS: override ok.
 		}
 	}
 
@@ -568,12 +571,15 @@ class DB {
 
 		$wp_query = $data['original']; // WPCS: override ok.
 
-		// Ensure the global post is set only if needed
+		// Ensure the global post/authordata is set only if needed.
 		unset( $GLOBALS['post'] );
+		unset( $GLOBALS['authordata'] );
 
 		if ( $wp_query->is_singular() && isset( $wp_query->posts[0] ) ) {
 			$GLOBALS['post'] = $wp_query->posts[0]; // WPCS: override ok.
 			setup_postdata( $GLOBALS['post'] );
+		} elseif ( $wp_query->is_author() ) {
+			$GLOBALS['authordata'] = get_userdata( $wp_query->get( 'author' ) ); // WPCS: override ok.
 		}
 	}
 
@@ -600,6 +606,7 @@ class DB {
 	 *
 	 * Retrieve the post plain text from any given Elementor data.
 	 *
+	 * @since 1.9.2
 	 * @access public
 	 *
 	 * @param array $data Post ID.

@@ -306,7 +306,7 @@ abstract class CSS_File {
 	 * Output the final CSS inside the `<style>` tags and all the frontend fonts in
 	 * use.
 	 *
-	 * @since 1.9.5
+	 * @since 1.9.4
 	 * @access public
 	 */
 	public function print_css() {
