@@ -77,8 +77,18 @@ abstract class Base_Data_Control extends Base_Control {
 	}
 
 	/**
+	 * Parse dynamic tags.
+	 *
+	 * Goes through all the controls and renders all the dynamic tags.
+	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param $dynamic_value    The dynamic tag text.
+	 * @param $dynamic_settings The dynamic tag settings.
+	 *
+	 * @return string|string[]|mixed A string or an array of strings with the
+	 *                               return value from each tag callback function.
 	 */
 	public function parse_tags( $dynamic_value, $dynamic_settings ) {
 		$current_dynamic_settings = $this->get_settings( 'dynamic' );

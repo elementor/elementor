@@ -34,7 +34,15 @@ class Control_Repeater extends Base_Data_Control {
 	}
 
 	/**
+	 * Get repeater control default value.
+	 *
+	 * Retrieve the default value of the data control. Used to return the default
+	 * values while initializing the repeater control.
+	 *
+	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @return array Control default value.
 	 */
 	public function get_default_value() {
 		return [];
