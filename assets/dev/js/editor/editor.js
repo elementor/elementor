@@ -611,10 +611,9 @@ App = Marionette.Application.extend( {
 		}
 
 		this.$previewContents = this.$preview.contents();
+		this.$previewElementorEl = this.$previewContents.find( '#elementor' );
 
-		var $previewElementorEl = this.$previewContents.find( '#elementor' );
-
-		if ( ! $previewElementorEl.length ) {
+		if ( ! this.$previewElementorEl.length ) {
 			this.onPreviewElNotFound();
 
 			return;
@@ -626,7 +625,7 @@ App = Marionette.Application.extend( {
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
-			el: $previewElementorEl[0]
+			el: this.$previewElementorEl[0]
 		} );
 
 		this.schemes.init();
@@ -803,6 +802,10 @@ App = Marionette.Application.extend( {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
+		this.$previewElementorEl
+			.removeClass( 'elementor-edit-area-active' )
+			.addClass( 'elementor-edit-area-preview' );
+
 		if ( hidePanel ) {
 			// Handle panel resize
 			this.$previewWrapper.css( this.config.is_rtl ? 'right' : 'left', '' );
@@ -815,6 +818,10 @@ App = Marionette.Application.extend( {
 		elementorFrontend.getElements( '$body' ).add( this.$body )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
+
+		this.$previewElementorEl
+			.removeClass( 'elementor-edit-area-preview' )
+			.addClass( 'elementor-edit-area-active' );
 	},
 
 	changeEditMode: function( newMode ) {
