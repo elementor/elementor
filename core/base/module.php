@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor module class.
  *
- * A base abstract class that provides the needed properties and methods to
+ * An abstract class that provides the needed properties and methods to
  * manage and handle modules in inheriting classes.
  *
  * @since 1.7.0

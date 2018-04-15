@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor abstract settings page class.
+ * Elementor settings page class.
  *
  * An abstract class that provides the needed properties and methods to handle
- * WordPress dashboard settings page in inheriting classes.
+ * WordPress dashboard settings pages in inheriting classes.
  *
  * @since 1.0.0
  * @abstract
