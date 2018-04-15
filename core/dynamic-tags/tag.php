@@ -20,32 +20,26 @@ abstract class Tag extends Base_Tag {
 
 		ob_start();
 
-		if ( ! empty( $options['wrap'] ) ) : ?>
-			<span id="elementor-tag-<?php echo esc_attr( $this->get_id() ); ?>" class="elementor-tag">
-		<?php
-		endif;
-
-		if ( ! empty( $settings['before'] ) ) {
-			$before = str_replace( ' ', '&nbsp;', $settings['before'] );
-			echo wp_kses_post( $before );
-		}
-
 		$this->render();
-
-		if ( ! empty( $settings['after'] ) ) {
-			$after = str_replace( ' ', '&nbsp;', $settings['after'] );
-			echo wp_kses_post( $after );
-		}
-
-		if ( ! empty( $options['wrap'] ) ) :
-		?>
-			</span>
-		<?php
-		endif;
 
 		$value = ob_get_clean();
 
-		if ( ! $value && ! empty( $settings['fallback'] ) ) {
+		if ( $value ) {
+			if ( ! empty( $settings['before'] ) ) {
+				$before = str_replace( ' ', '&nbsp;', $settings['before'] );
+				$value = wp_kses_post( $before ) . $value;
+			}
+
+			if ( ! empty( $settings['after'] ) ) {
+				$after = str_replace( ' ', '&nbsp;', $settings['after'] );
+				$value .= wp_kses_post( $after );
+			}
+
+			if ( ! empty( $options['wrap'] ) ) :
+				$value = '<span id="elementor-tag-' . esc_attr( $this->get_id() ) . '" class="elementor-tag">' . $value . '</span>';
+			endif;
+
+		} elseif ( ! empty( $settings['fallback'] ) ) {
 			$value = $settings['fallback'];
 		}
 
