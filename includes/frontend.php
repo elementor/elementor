@@ -807,7 +807,7 @@ class Frontend {
 		}
 
 		?>
-		<div class="elementor elementor-<?php echo esc_attr( $post_id ); ?>">
+		<div class="<?php echo esc_attr( $document->get_container_classes() ); ?>">
 			<div class="elementor-inner">
 				<div class="elementor-section-wrap">
 					<?php $this->_print_elements( $data ); ?>
