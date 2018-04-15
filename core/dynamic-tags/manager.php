@@ -156,9 +156,7 @@ class Manager {
 			return null;
 		}
 
-		return $tag->get_content( [
-			'wrap' => true,
-		] );
+		return $tag->get_content();
 	}
 
 	/**
