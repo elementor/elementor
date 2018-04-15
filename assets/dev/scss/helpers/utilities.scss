@@ -18,14 +18,10 @@
 	border: 0;
 }
 
-.elementor-clearfix {
-
-	&:before,
-	&:after {
-		content: '';
-		display: block;
-		clear: both;
-		width: 0;
-		height: 0;
-	}
+.elementor-clearfix:after{
+	content: '';
+	display: block;
+	clear: both;
+	width: 0;
+	height: 0;
 }
