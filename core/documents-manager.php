@@ -179,6 +179,8 @@ class Documents_Manager {
 			return false;
 		}
 
+		$post_id = apply_filters( 'elementor/get_document/post_id', $post_id );
+
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
 			$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 
