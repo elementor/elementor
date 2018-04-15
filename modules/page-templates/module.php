@@ -10,7 +10,6 @@ use Elementor\Modules\Library\Documents\Page as PageDocument;
 use Elementor\Plugin;
 use Elementor\Utils;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -36,13 +35,26 @@ class Module extends BaseModule {
 	const TEMPLATE_HEADER_FOOTER = 'elementor_header_footer';
 
 	/**
+	 * Print callback.
+	 *
+	 * Holds the page template callback content.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
 	 * @var callable
 	 */
 	protected $print_callback;
 
 	/**
+	 * Get module name.
+	 *
+	 * Retrieve the page templates module name.
+	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @return string Module name.
 	 */
 	public function get_name() {
 		return 'page-templates';
@@ -78,6 +90,13 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Add WordPress templates.
+	 *
+	 * Adds Elementor templates to all the post types that support
+	 * Elementor.
+	 *
+	 * Fired by `init` action.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 */
@@ -92,7 +111,7 @@ class Module extends BaseModule {
 	/**
 	 * Add page templates.
 	 *
-	 * Add the Elementor Canvas page templates to the theme templates.
+	 * Add the Elementor page templates to the theme templates.
 	 *
 	 * Fired by `theme_{$post_type}_templates` filter.
 	 *
@@ -101,7 +120,7 @@ class Module extends BaseModule {
 	 * @static
 	 *
 	 * @param array $page_templates Array of page templates. Keys are filenames,
-	 *                              values are translated names.
+	 *                              checks are translated names.
 	 *
 	 * @return array Page templates.
 	 */
@@ -115,14 +134,24 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * Set print callback.
+	 *
+	 * Set the page template callback.
+	 *
+	 * @since  2.0.0
 	 * @access public
+	 *
+	 * @param callable $callback
 	 */
 	public function set_print_callback( $callback ) {
 		$this->print_callback = $callback;
 	}
 
 	/**
+	 * Print callback.
+	 *
+	 * Prints the page template content using WordPress loop.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 */
@@ -134,6 +163,10 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Print content.
+	 *
+	 * Prints the page template content.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 */
@@ -146,8 +179,16 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * Get page template path.
+	 *
+	 * Retrieve the path for any given page template.
+	 *
+	 * @since  2.0.0
 	 * @access public
+	 *
+	 * @param string $page_template The page template name.
+	 *
+	 * @return string Page template path.
 	 */
 	public function get_template_path( $page_template ) {
 		$template_path = '';
@@ -164,9 +205,16 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Register template control.
+	 *
+	 * Adds custom controls to any given document.
+	 *
+	 * Fired by `update_post_metadata` action.
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * @param Document $document
+	 *
+	 * @param Document $document The document instance.
 	 */
 	public function action_register_template_control( $document ) {
 		if ( $document instanceof PostDocument || $document instanceof PageDocument ) {
@@ -175,10 +223,15 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Register template control.
+	 *
+	 * Adds custom controls to any given document.
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * @param Document $document
-	 * @param string $control_id
+	 *
+	 * @param Document $document   The document instance.
+	 * @param string   $control_id Optional. The control ID. Default is `template`.
 	 */
 	public function register_template_control( $document, $control_id = 'template' ) {
 		if ( ! Utils::is_cpt_custom_templates_supported() ) {
@@ -250,10 +303,25 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * Filter metadata update.
+	 *
+	 * Filters whether to update metadata of a specific type.
+	 *
+	 * Elementor don't allow WordPress to update the parent page template
+	 * during `wp_update_post`.
+	 *
+	 * Fired by `update_{$meta_type}_metadata` filter.
+	 *
+	 * @since  2.0.0
 	 * @access public
+	 *
+	 * @param bool   $check     Whether to allow updating metadata for the given type.
+	 * @param int    $object_id Object ID.
+	 * @param string $meta_key  Meta key.
+	 *
+	 * @return bool Whether to allow updating metadata of a specific type.
 	 */
-	public function filter_update_meta( $value, $object_id, $meta_key ) {
+	public function filter_update_meta( $check, $object_id, $meta_key ) {
 		if ( '_wp_page_template' === $meta_key ) {
 			$ajax_data = Plugin::$instance->ajax->get_current_action_data();
 
@@ -262,14 +330,18 @@ class Module extends BaseModule {
 			// Don't allow WP to update the parent page template.
 			// (during `wp_update_post` from page-settings or save_plain_text).
 			if ( $is_autosave_action && ! wp_is_post_autosave( $object_id ) && DB::STATUS_DRAFT !== get_post_status( $object_id ) ) {
-				$value = false;
+				$check = false;
 			}
 		}
 
-		return $value;
+		return $check;
 	}
 
 	/**
+	 * Page templates module constructor.
+	 *
+	 * Initializing Elementor page templates module.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 */
