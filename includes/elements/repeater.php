@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor repeater element class.
+ * Elementor repeater element.
  *
  * Elementor repeater handler class is responsible for initializing the repeater.
  *

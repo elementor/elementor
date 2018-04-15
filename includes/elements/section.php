@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor section element class.
+ * Elementor section element.
  *
- * Elementor repeater handler class is responsible for initializing the section
+ * Elementor section handler class is responsible for initializing the section
  * element.
  *
  * @since 1.0.0

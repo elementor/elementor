@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor ajax manager class.
+ * Elementor ajax manager.
  *
  * Elementor ajax manager handler class is responsible for handling Elementor
  * ajax requests, ajax responses and registering actions applied on them.

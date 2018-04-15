@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor settings manager class.
+ * Elementor settings manager.
  *
  * Elementor settings manager handler class is responsible for registering and
  * managing Elementor settings managers.

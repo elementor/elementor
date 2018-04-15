@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor preview class.
+ * Elementor preview.
  *
  * Elementor preview handler class is responsible for initializing Elementor in
  * preview mode.

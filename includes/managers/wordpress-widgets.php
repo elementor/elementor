@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor WordPress widgets manager class.
+ * Elementor WordPress widgets manager.
  *
  * Elementor WordPress widgets manager handler class is responsible for
  * registering and initializing all the supported controls, both regular

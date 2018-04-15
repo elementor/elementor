@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor controls manager class.
+ * Elementor controls manager.
  *
  * Elementor controls manager handler class is responsible for registering and
  * initializing all the supported controls, both regular controls and the group

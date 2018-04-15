@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor page settings manager class.
+ * Elementor page settings manager.
  *
  * Elementor page settings manager handler class is responsible for registering
  * and managing Elementor page settings managers.
