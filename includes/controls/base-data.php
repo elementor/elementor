@@ -79,7 +79,7 @@ abstract class Base_Data_Control extends Base_Control {
 	/**
 	 * Parse dynamic tags.
 	 *
-	 * Goes through all the controls and renders all the dynamic tags.
+	 * Iterates through all the controls and renders all the dynamic tags.
 	 *
 	 * @since 2.0.0
 	 * @access public

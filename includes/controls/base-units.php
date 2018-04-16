@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor base units control.
+ * Elementor control base units.
  *
  * An abstract class for creating new unit controls in the panel.
  *

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor base scheme.
+ * Elementor scheme base.
  *
  * An abstract class implementing the scheme interface, responsible for
  * creating new schemes.

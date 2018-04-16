@@ -17,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Library_Document extends Document {
 
+	/**
+	 * The taxonomy type slug for the library document.
+	 */
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
 	/**
