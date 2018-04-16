@@ -88,3 +88,22 @@
     //Footer
     @import "footer";
 }
+
+// WP Media Modal Compatibility
+.media-modal.wp-core-ui {
+
+	input {
+		width: auto;
+	}
+
+	fieldset {
+		padding: 0;
+		border: 0;
+	}
+
+	.wp-clearfix::after {
+		content: '';
+		display: table;
+		clear: both;
+	}
+}
