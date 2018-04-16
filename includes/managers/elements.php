@@ -38,18 +38,6 @@ class Elements_Manager {
 	private $categories;
 
 	/**
-	 * Elements constructor.
-	 *
-	 * Initializing Elementor elements manager.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function __construct() {
-		$this->require_files();
-	}
-
-	/**
 	 * Create element instance.
 	 *
 	 * This method creates a new element instance for any given element.
@@ -306,7 +294,7 @@ class Elements_Manager {
 	private function init_elements() {
 		$this->_element_types = [];
 
-		foreach ( [ 'section', 'column' ] as $element_name ) {
+		foreach ( [ 'Section', 'Column' ] as $element_name ) {
 			$class_name = __NAMESPACE__ . '\Element_' . $element_name;
 
 			$this->register_element_type( new $class_name() );
@@ -374,22 +362,5 @@ class Elements_Manager {
 			'title' => __( 'WordPress', 'elementor' ),
 			'icon' => 'eicon-wordpress',
 		];
-	}
-
-	/**
-	 * Require files.
-	 *
-	 * Require Elementor element base class and column, section and repeater
-	 * elements.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
-	private function require_files() {
-		require_once ELEMENTOR_PATH . 'includes/base/element-base.php';
-
-		require ELEMENTOR_PATH . 'includes/elements/column.php';
-		require ELEMENTOR_PATH . 'includes/elements/section.php';
-		require ELEMENTOR_PATH . 'includes/elements/repeater.php';
 	}
 }
