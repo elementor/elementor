@@ -161,18 +161,6 @@ class Widgets_Manager {
 	}
 
 	/**
-	 * Require files.
-	 *
-	 * Require Elementor widget base class.
-	 *
-	 * @since 2.0.0
-	 * @access private
-	*/
-	private function require_files() {
-		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
-	}
-
-	/**
 	 * Register widget type.
 	 *
 	 * Add a new widget type to the list of registered widget types.
@@ -478,8 +466,6 @@ class Widgets_Manager {
 	 * @access public
 	*/
 	public function __construct() {
-		$this->require_files();
-
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
