@@ -306,7 +306,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'background_overlay_opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
@@ -346,7 +346,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
