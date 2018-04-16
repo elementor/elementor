@@ -99,8 +99,8 @@ class Module extends BaseModule {
 	 */
 	public function add_page_templates( $page_templates ) {
 		$page_templates = [
-			self::TEMPLATE_CANVAS => __( 'Elementor', 'elementor' ) . ' ' . __( 'Canvas', 'elementor' ),
-			self::TEMPLATE_HEADER_FOOTER => __( 'Elementor', 'elementor' ) . ' ' . __( 'Full Width', 'elementor' ),
+			self::TEMPLATE_CANVAS => _x( 'Elementor Canvas', 'Page Template', 'elementor' ),
+			self::TEMPLATE_HEADER_FOOTER => _x( 'Elementor Full Width', 'Page Template', 'elementor' ),
 		] + $page_templates;
 
 		return $page_templates;
