@@ -166,6 +166,8 @@ class Widget_Icon_List extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-grid) .elementor-icon-list-item:not(:first-child)' => 'margin-top: calc({{SIZE}}{{UNIT}}/2)',
 					'{{WRAPPER}} .elementor-icon-list-items.elementor-grid .elementor-icon-list-item' => 'margin-right: calc({{SIZE}}{{UNIT}}/2); margin-left: calc({{SIZE}}{{UNIT}}/2)',
 					'{{WRAPPER}} .elementor-icon-list-items.elementor-grid' => 'margin-right: calc(-{{SIZE}}{{UNIT}}/2); margin-left: calc(-{{SIZE}}{{UNIT}}/2)',
+					'body.rtl {{WRAPPER}} .elementor-icon-list-items.elementor-grid .elementor-icon-list-item:after' => 'left: calc(-{{SIZE}}{{UNIT}}/2)',
+					'body:not(.rtl) {{WRAPPER}} .elementor-icon-list-items.elementor-grid .elementor-icon-list-item:after' => 'right: calc(-{{SIZE}}{{UNIT}}/2)',
 				],
 			]
 		);
@@ -224,7 +226,8 @@ class Widget_Icon_List extends Widget_Base {
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-style: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-grid) .elementor-icon-list-item:not(:last-child):after' => 'border-top-style: {{VALUE}}',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-grid .elementor-icon-list-item:not(:last-child):after' => 'border-left-style: {{VALUE}}',
 				],
 			]
 		);
@@ -240,14 +243,36 @@ class Widget_Icon_List extends Widget_Base {
 				'range' => [
 					'px' => [
 						'min' => 1,
-						'max' => 10,
+						'max' => 20,
 					],
 				],
 				'condition' => [
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-grid) .elementor-icon-list-item:not(:last-child):after' => 'border-top-width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-grid .elementor-icon-list-item:not(:last-child):after' => 'border-left-width: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_height',
+			[
+				'label' => __( 'Height', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'units' => [ '%' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'condition' => [
+					'divider' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'height: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'layout' => 'inline',
 				],
 			]
 		);
@@ -266,7 +291,7 @@ class Widget_Icon_List extends Widget_Base {
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-color: {{VALUE}}',
 				],
 			]
 		);
@@ -282,6 +307,7 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'condition' => [
 					'divider' => 'yes',
+					'layout!' => 'inline',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'width: {{SIZE}}{{UNIT}}',
