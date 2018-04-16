@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor base skin.
+ * Elementor skin base.
  *
  * An abstract class to register new skins for Elementor widgets. Skins allows
  * you to add new templates, set custom controls and more.

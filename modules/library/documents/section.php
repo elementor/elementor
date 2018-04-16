@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor section document.
+ * Elementor section library document.
  *
- * Elementor section document handler class is responsible for handling
- * a document of a section type.
+ * Elementor section library document handler class is responsible for
+ * handling a document of a section type.
  *
  * @since 2.0.0
  */

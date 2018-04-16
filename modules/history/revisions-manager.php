@@ -12,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor revisions manager.
+ * Elementor history revisions manager.
  *
- * Elementor revisions manager handler class is responsible for registering
- * and managing Elementor revisions manager.
+ * Elementor history revisions manager handler class is responsible for
+ * registering and managing Elementor revisions manager.
  *
  * @since 1.7.0
  */

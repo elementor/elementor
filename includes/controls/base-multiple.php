@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor base multiple control.
+ * Elementor control base multiple.
  *
  * An abstract class for creating new controls in the panel that return
  * more than a single value. Each value of the multi-value control will

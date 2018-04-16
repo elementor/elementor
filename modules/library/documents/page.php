@@ -8,10 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor page document.
+ * Elementor page library document.
  *
- * Elementor page document handler class is responsible for handling
- * a document of a page type.
+ * Elementor page library document handler class is responsible for
+ * handling a document of a page type.
  *
  * @since 2.0.0
  */
