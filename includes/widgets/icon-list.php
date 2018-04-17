@@ -280,9 +280,19 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Height', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'units' => [ '%' ],
+				'size_units' => [ '%', 'px' ],
 				'default' => [
 					'unit' => '%',
+				],
+				'range' => [
+					'px' => [
+						'min' => 1,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => 1,
+						'max' => 100,
+					],
 				],
 				'condition' => [
 					'divider' => 'yes',
@@ -534,9 +544,11 @@ class Widget_Icon_List extends Widget_Base {
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
 						<# } #>
+						<# if ( item.icon ) { #>
 						<span class="elementor-icon-list-icon">
 							<i class="{{ item.icon }}" aria-hidden="true"></i>
 						</span>
+						<# } #>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
 						<# if ( item.link && item.link.url ) { #>
 							</a>
