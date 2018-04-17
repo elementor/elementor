@@ -12,7 +12,6 @@
 		.elementor-icon-list-item {
 			margin-right: 8px;
 			margin-left: 8px;
-			align-items: center;
 
 			&:after {
 				width: auto;
@@ -27,6 +26,51 @@
 				border-style: solid;
 				@include end(-8px);
 			}
+		}
+	}
+
+	.elementor-icon-list-items {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.elementor-icon-list-item {
+		margin: 0;
+		padding: 0;
+		position: relative;
+
+		&:after {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+		}
+
+		&, a {
+			display: flex;
+			align-items: center;
+		}
+
+		a {
+			width: 100%;
+		}
+	}
+
+	.elementor-icon-list-icon {
+	}
+
+	.elementor-icon-list-icon + .elementor-icon-list-text {
+		align-self: center;
+		@include padding-start(5px);
+	}
+
+	.elementor-icon-list-icon {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		i {
+			vertical-align: middle;
 		}
 	}
 
@@ -235,45 +279,6 @@
 					@include end(0);
 				}
 			}
-		}
-	}
-
-	.elementor-icon-list-items {
-		list-style-type: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.elementor-icon-list-item {
-		margin: 0;
-		padding: 0;
-		position: relative;
-
-		&:after {
-			position: absolute;
-			bottom: 0;
-			width: 100%;
-		}
-
-		&, a {
-			display: flex;
-		}
-
-		a {
-			width: 100%;
-		}
-	}
-
-	.elementor-icon-list-icon + .elementor-icon-list-text {
-		align-self: center;
-		@include padding-start(5px);
-	}
-
-	.elementor-icon-list-icon {
-		text-align: center;
-
-		i {
-			vertical-align: middle;
 		}
 	}
 }
