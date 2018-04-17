@@ -192,7 +192,6 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'prefix_class' => 'elementor%s-align-',
-				'classes' => 'elementor-control-start-end',
 			]
 		);
 
@@ -206,6 +205,7 @@ class Widget_Icon_List extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'content: ""',
 				],
+				'return_value' => 'yes',
 				'separator' => 'before',
 			]
 		);
@@ -257,6 +257,25 @@ class Widget_Icon_List extends Widget_Base {
 		);
 
 		$this->add_control(
+			'divider_width',
+			[
+				'label' => __( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'units' => [ '%' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'condition' => [
+					'divider' => 'yes',
+					'view!' => 'inline',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'width: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
 			'divider_height',
 			[
 				'label' => __( 'Height', 'elementor-pro' ),
@@ -267,12 +286,10 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'condition' => [
 					'divider' => 'yes',
+					'view' => 'inline',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'height: {{SIZE}}{{UNIT}}',
-				],
-				'condition' => [
-					'layout' => 'inline',
 				],
 			]
 		);
@@ -292,25 +309,6 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control(
-			'divider_width',
-			[
-				'label' => __( 'Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'units' => [ '%' ],
-				'default' => [
-					'unit' => '%',
-				],
-				'condition' => [
-					'divider' => 'yes',
-					'layout!' => 'inline',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'width: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);

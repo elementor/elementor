@@ -12,14 +12,14 @@
 		.elementor-icon-list-item {
 			margin-right: 8px;
 			margin-left: 8px;
+			align-items: center;
 
 			&:after {
 				width: auto;
 				left: auto;
 				right: auto;
 				position: relative;
-				top: 50%;
-				transform: translateY(-50%);
+				height: 100%;
 				border-top: 0;
 				border-bottom: 0;
 				border-right: 0;
@@ -73,7 +73,7 @@
 			}
 		}
 
-		.elementor-grid {
+		.elementor-icon-list-items {
 			justify-content: getValueByDirection(flex-end, flex-start);
 		}
 	}
@@ -101,6 +101,10 @@
 	@media (max-width: $screen-md-max) {
 		&.elementor-tablet-align-center {
 
+			.elementor-icon-list-items {
+				justify-content: center;
+			}
+
 			.elementor-icon-list-item {
 
 				&, a {
@@ -115,10 +119,14 @@
 
 		&.elementor-tablet-align-left {
 
+			.elementor-icon-list-items {
+				justify-content: getValueByDirection( flex-start, flex-end );
+			}
+
 			.elementor-icon-list-item {
 
 				&, a {
-					justify-content: flex-start;
+					justify-content: getValueByDirection( flex-start, flex-end );
 					text-align: $start;
 				}
 			}
@@ -126,10 +134,14 @@
 
 		&.elementor-tablet-align-right {
 
+			.elementor-icon-list-items {
+				justify-content: getValueByDirection( flex-end, flex-start );
+			}
+
 			.elementor-icon-list-item {
 
 				&, a {
-					justify-content: flex-end;
+					justify-content: getValueByDirection( flex-end, flex-start );
 					text-align: $end;
 				}
 			}
@@ -159,6 +171,10 @@
 	@media (max-width: $screen-sm-max) {
 		&.elementor-mobile-align-center {
 
+			.elementor-icon-list-items {
+				justify-content: center;
+			}
+
 			.elementor-icon-list-item {
 
 				&, a {
@@ -173,10 +189,14 @@
 
 		&.elementor-mobile-align-left {
 
+			.elementor-icon-list-items {
+				justify-content: getValueByDirection( flex-start, flex-end );
+			}
+
 			.elementor-icon-list-item {
 
 				&, a {
-					justify-content: flex-start;
+					justify-content: getValueByDirection( flex-start, flex-end );
 					text-align: $start;
 				}
 			}
@@ -184,10 +204,14 @@
 
 		&.elementor-mobile-align-right {
 
+			.elementor-icon-list-items {
+				justify-content: getValueByDirection( flex-end, flex-start );
+			}
+
 			.elementor-icon-list-item {
 
 				&, a {
-					justify-content: flex-end;
+					justify-content: getValueByDirection( flex-end, flex-start );
 					text-align: $end;
 				}
 			}
