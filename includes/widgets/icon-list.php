@@ -278,7 +278,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'divider_height',
 			[
-				'label' => __( 'Height', 'elementor-pro' ),
+				'label' => __( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ '%', 'px' ],
 				'default' => [
