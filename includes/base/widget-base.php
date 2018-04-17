@@ -181,7 +181,7 @@ abstract class Widget_Base extends Element_Base {
 			/** @var Widget_Common $common_widget */
 			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
 
-			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
+			$stack['controls'] = array_merge( $stack['controls'], array_replace_recursive( $common_widget->get_controls(), $this->get_common_args() ) );
 
 			$stack['tabs'] = array_merge( $stack['tabs'], $common_widget->get_tabs_controls() );
 		}
@@ -803,5 +803,9 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function get_skins() {
 		return Plugin::$instance->skins_manager->get_skins( $this );
+	}
+
+	protected function get_common_args() {
+		return [];
 	}
 }
