@@ -408,12 +408,22 @@ abstract class Widget_Base extends Element_Base {
 	 * @return string Parsed content.
 	 */
 	protected function parse_text_editor( $content ) {
+		$widget_text_do_shortcode_priority = has_filter( 'widget_text', 'do_shortcode' );
+		if ( false !== $widget_text_do_shortcode_priority ) {
+			remove_filter( 'widget_text', 'do_shortcode', $widget_text_do_shortcode_priority );
+		}
+		
 		/** This filter is documented in wp-includes/widgets/class-wp-widget-text.php */
 		$content = apply_filters( 'widget_text', $content, $this->get_settings() );
+		
+		// Undo suspension of legacy plugin-supplied shortcode handling.
+		if ( false !== $widget_text_do_shortcode_priority ) {
+			add_filter( 'widget_text', 'do_shortcode', $widget_text_do_shortcode_priority );
+		}
 
 		$content = shortcode_unautop( $content );
-		$content = do_shortcode( $content );
 		$content = wptexturize( $content );
+		$content = do_shortcode( $content );
 
 		if ( $GLOBALS['wp_embed'] instanceof \WP_Embed ) {
 			$content = $GLOBALS['wp_embed']->autoembed( $content );
