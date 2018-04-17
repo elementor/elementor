@@ -94,6 +94,9 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::GALLERY,
 				'default' => [],
 				'show_label' => false,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
