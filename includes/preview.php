@@ -136,7 +136,15 @@ class Preview {
 	 */
 	public function builder_wrapper( $content ) {
 		if ( get_the_ID() === $this->post_id ) {
-			$content = '<div id="elementor" class="elementor elementor-edit-mode"></div>';
+			$classes = 'elementor-edit-mode';
+
+			$document = Plugin::$instance->documents->get( $this->post_id );
+
+			if ( $document ) {
+				$classes .= ' ' . $document->get_container_classes();
+			}
+
+			$content = '<div id="elementor" class="' . $classes . '"></div>';
 		}
 
 		return $content;
