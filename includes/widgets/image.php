@@ -277,7 +277,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
