@@ -166,6 +166,8 @@ class Widget_Icon_List extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-grid) .elementor-icon-list-item:not(:first-child)' => 'margin-top: calc({{SIZE}}{{UNIT}}/2)',
 					'{{WRAPPER}} .elementor-icon-list-items.elementor-grid .elementor-icon-list-item' => 'margin-right: calc({{SIZE}}{{UNIT}}/2); margin-left: calc({{SIZE}}{{UNIT}}/2)',
 					'{{WRAPPER}} .elementor-icon-list-items.elementor-grid' => 'margin-right: calc(-{{SIZE}}{{UNIT}}/2); margin-left: calc(-{{SIZE}}{{UNIT}}/2)',
+					'body.rtl {{WRAPPER}} .elementor-icon-list-items.elementor-grid .elementor-icon-list-item:after' => 'left: calc(-{{SIZE}}{{UNIT}}/2)',
+					'body:not(.rtl) {{WRAPPER}} .elementor-icon-list-items.elementor-grid .elementor-icon-list-item:after' => 'right: calc(-{{SIZE}}{{UNIT}}/2)',
 				],
 			]
 		);
@@ -190,7 +192,6 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'prefix_class' => 'elementor%s-align-',
-				'classes' => 'elementor-control-start-end',
 			]
 		);
 
@@ -204,6 +205,7 @@ class Widget_Icon_List extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'content: ""',
 				],
+				'return_value' => 'yes',
 				'separator' => 'before',
 			]
 		);
@@ -224,7 +226,8 @@ class Widget_Icon_List extends Widget_Base {
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-style: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-grid) .elementor-icon-list-item:not(:last-child):after' => 'border-top-style: {{VALUE}}',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-grid .elementor-icon-list-item:not(:last-child):after' => 'border-left-style: {{VALUE}}',
 				],
 			]
 		);
@@ -240,14 +243,63 @@ class Widget_Icon_List extends Widget_Base {
 				'range' => [
 					'px' => [
 						'min' => 1,
-						'max' => 10,
+						'max' => 20,
 					],
 				],
 				'condition' => [
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-grid) .elementor-icon-list-item:not(:last-child):after' => 'border-top-width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-grid .elementor-icon-list-item:not(:last-child):after' => 'border-left-width: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_width',
+			[
+				'label' => __( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'units' => [ '%' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'condition' => [
+					'divider' => 'yes',
+					'view!' => 'inline',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'width: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_height',
+			[
+				'label' => __( 'Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%', 'px' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'range' => [
+					'px' => [
+						'min' => 1,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => 1,
+						'max' => 100,
+					],
+				],
+				'condition' => [
+					'divider' => 'yes',
+					'view' => 'inline',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'height: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -266,25 +318,7 @@ class Widget_Icon_List extends Widget_Base {
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'divider_width',
-			[
-				'label' => __( 'Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'units' => [ '%' ],
-				'default' => [
-					'unit' => '%',
-				],
-				'condition' => [
-					'divider' => 'yes',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-color: {{VALUE}}',
 				],
 			]
 		);
@@ -510,9 +544,11 @@ class Widget_Icon_List extends Widget_Base {
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
 						<# } #>
+						<# if ( item.icon ) { #>
 						<span class="elementor-icon-list-icon">
 							<i class="{{ item.icon }}" aria-hidden="true"></i>
 						</span>
+						<# } #>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
 						<# if ( item.link && item.link.url ) { #>
 							</a>
