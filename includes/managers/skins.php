@@ -98,4 +98,16 @@ class Skins_Manager {
 
 		return $this->_skins[ $widget_name ];
 	}
+
+	/**
+	 * Skins manager constructor.
+	 *
+	 * Initializing Elementor skins manager by requiring the skin base class.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
+	public function __construct() {
+		require ELEMENTOR_PATH . 'includes/base/skin-base.php';
+	}
 }
