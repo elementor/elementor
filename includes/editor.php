@@ -209,7 +209,7 @@ class Editor {
 		}
 
 		if ( empty( $post_id ) ) {
-			$post_id = Plugin::$instance->editor->get_post_id();
+			$post_id = $this->_post_id;
 		}
 
 		if ( ! User::is_current_user_can_edit( $post_id ) ) {
