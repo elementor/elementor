@@ -356,6 +356,14 @@ abstract class Source_Base {
 			if ( method_exists( $control_class, $method ) ) {
 				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ), $control );
 			}
+
+			// Remove the `on_` prefix, and check if the control has an argument like 'export' => false.
+			$action = substr( $method, strlen( 'on_' ) );
+			if ( isset( $control[ $action ] ) ) {
+				if ( false === $control[ $action ] ) {
+					unset( $element_data['settings'][ $control['name'] ] );
+				}
+			}
 		}
 
 		return $element_data;
