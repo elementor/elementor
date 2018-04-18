@@ -1316,9 +1316,7 @@ class Source_Local extends Source_Base {
 
 		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
 
-		$template_type = self::get_template_type( $template_id );
-
-		if ( 'page' === $template_type ) {
+		if ( get_post_meta( $template_id, '_elementor_page_settings', true ) ) {
 			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $template_id );
 
 			$page_settings_data = $this->process_element_export_import_content( $page, 'on_export' );
