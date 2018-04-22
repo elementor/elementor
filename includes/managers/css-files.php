@@ -143,7 +143,7 @@ class Posts_CSS_Manager {
 		 *
 		 * @since 2.0.8
 		 */
-		do_action( 'elementor/css-file/clear' );
+		do_action( 'elementor/css-file/clear_cache' );
 
 		return $errors;
 	}
