@@ -136,6 +136,15 @@ class Posts_CSS_Manager {
 			}
 		}
 
+		/**
+		 * Elementor clear CSS files.
+		 *
+		 * Fires after Elementor clears CSS files
+		 *
+		 * @since 2.0.8
+		 */
+		do_action( 'elementor/css-file/clear' );
+
 		return $errors;
 	}
 
