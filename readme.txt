@@ -97,10 +97,11 @@ To help you get started and learn just how to integrate with Elementor, we have 
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
-- [Swedish](https://translate.wordpress.org/locale/se/default/wp-plugins/elementor) - (sv_SE)
+- [Swedish](https://translate.wordpress.org/locale/sv/default/wp-plugins/elementor) - (sv_SE)
 - [Dutch](https://translate.wordpress.org/locale/nl/default/wp-plugins/elementor) - (nl_NL)
 - [Danish](https://translate.wordpress.org/locale/da/default/wp-plugins/elementor) - (da_DK)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
+- [Chinese (China)](https://translate.wordpress.org/locale/zh-cn/default/wp-plugins/elementor) - (zh_CN)
 - [Chinese (Taiwan)](https://translate.wordpress.org/locale/zh-tw/default/wp-plugins/elementor) - (zh_TW)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
@@ -108,7 +109,10 @@ To help you get started and learn just how to integrate with Elementor, we have 
 - [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
 - [Bulgarian](https://translate.wordpress.org/locale/bg/default/wp-plugins/elementor) - (bg_BG)
 - [Greek](https://translate.wordpress.org/locale/el/default/wp-plugins/elementor) - (el)
+- [Catalan](https://translate.wordpress.org/locale/ca/default/wp-plugins/elementor) - (ca)
 - [Czech](https://translate.wordpress.org/locale/cs/default/wp-plugins/elementor) - ( cs_CZ)
+- [Croatian](https://translate.wordpress.org/locale/hr/default/wp-plugins/elementor) - (hr)
+- [Finnish](https://translate.wordpress.org/locale/fi/default/wp-plugins/elementor) - (fi)
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
