@@ -4,7 +4,7 @@
 
 .elementor-widget {
 
-	.elementor-icon-list-items.elementor-grid {
+	.elementor-icon-list-items.elementor-inline-items {
 
 		margin-right: -8px;
 		margin-left: -8px;
@@ -85,7 +85,7 @@
 			}
 		}
 
-		.elementor-grid {
+		.elementor-inline-items {
 			justify-content: center;
 		}
 	}
@@ -100,7 +100,7 @@
 			}
 		}
 
-		.elementor-grid {
+		.elementor-inline-items {
 			justify-content: getValueByDirection(flex-start, flex-end);
 		}
 	}
