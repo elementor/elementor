@@ -182,7 +182,11 @@ class DB {
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
-		return $document->get_elements_data( $status );
+		if ( $document ) {
+			return $document->get_elements_data( $status );
+		}
+
+		return [];
 	}
 
 	/**

@@ -1316,9 +1316,7 @@ class Source_Local extends Source_Base {
 
 		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
 
-		$template_type = self::get_template_type( $template_id );
-
-		if ( 'page' === $template_type ) {
+		if ( get_post_meta( $template_id, '_elementor_page_settings', true ) ) {
 			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $template_id );
 
 			$page_settings_data = $this->process_element_export_import_content( $page, 'on_export' );
@@ -1375,7 +1373,7 @@ class Source_Local extends Source_Base {
 	 * @return string Template label.
 	 */
 	private function get_template_label_by_type( $template_type ) {
-		$template_label = ucwords( str_replace( '_', ' ', $template_type ) );
+		$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
 
 		if ( 'page' === $template_type ) {
 			$template_label = 'Content';
@@ -1417,6 +1415,10 @@ class Source_Local extends Source_Base {
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
+			// Template type column.
+			add_action( 'manage_' . Source_Local::CPT . '_posts_columns', [ $this, 'admin_columns_headers' ] );
+			add_action( 'manage_' . Source_Local::CPT . '_posts_custom_column', [ $this, 'admin_columns_content' ] , 10, 2 );
+
 			// Template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );
 			add_filter( 'handle_bulk_actions-edit-elementor_library', [ $this, 'admin_export_multiple_templates' ], 10, 3 );
@@ -1429,6 +1431,31 @@ class Source_Local extends Source_Base {
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
+	}
+
+	public function admin_columns_content( $column_name, $post_id ) {
+		if ( 'elementor_library_type' === $column_name ) {
+			/** @var Document $document */
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$admin_filter_url = admin_url( '/edit.php?post_type=elementor_library&elementor_library_type=' . $document->get_name() );
+				printf( '<a href="%s">%s</a>', $admin_filter_url, $document->get_title() );
+			}
+		}
+	}
+
+	public function admin_columns_headers( $posts_columns ) {
+		// Replace original column that bind to the taxonomy - with another column.
+		unset( $posts_columns['taxonomy-elementor_library_type'] );
+
+		$offset = 2;
+
+		$posts_columns = array_slice( $posts_columns, 0, $offset, true ) + [
+				'elementor_library_type' => __( 'Type', 'elementor' ),
+			] + array_slice( $posts_columns, $offset, null, true );
+
+		return $posts_columns;
 	}
 
 	/**

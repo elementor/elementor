@@ -45,7 +45,7 @@ module.exports = ViewModule.extend( {
 			$wpAdminBar = elementorFrontend.getElements( '$wpAdminBar' );
 
 		if ( $wpAdminBar.length > 0 ) {
-			scrollTop -= this.elements.$wpAdminBar.height();
+			scrollTop -= $wpAdminBar.height();
 		}
 
 		event.preventDefault();

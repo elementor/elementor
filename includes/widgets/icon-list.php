@@ -162,10 +162,12 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-grid) .elementor-icon-list-item:not(:last-child)' => 'padding-bottom: calc({{SIZE}}{{UNIT}}/2)',
-					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-grid) .elementor-icon-list-item:not(:first-child)' => 'margin-top: calc({{SIZE}}{{UNIT}}/2)',
-					'{{WRAPPER}} .elementor-icon-list-items.elementor-grid .elementor-icon-list-item' => 'margin-right: calc({{SIZE}}{{UNIT}}/2); margin-left: calc({{SIZE}}{{UNIT}}/2)',
-					'{{WRAPPER}} .elementor-icon-list-items.elementor-grid' => 'margin-right: calc(-{{SIZE}}{{UNIT}}/2); margin-left: calc(-{{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:last-child)' => 'padding-bottom: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:first-child)' => 'margin-top: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item' => 'margin-right: calc({{SIZE}}{{UNIT}}/2); margin-left: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-inline-items' => 'margin-right: calc(-{{SIZE}}{{UNIT}}/2); margin-left: calc(-{{SIZE}}{{UNIT}}/2)',
+					'body.rtl {{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item:after' => 'left: calc(-{{SIZE}}{{UNIT}}/2)',
+					'body:not(.rtl) {{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item:after' => 'right: calc(-{{SIZE}}{{UNIT}}/2)',
 				],
 			]
 		);
@@ -190,7 +192,6 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'prefix_class' => 'elementor%s-align-',
-				'classes' => 'elementor-control-start-end',
 			]
 		);
 
@@ -203,9 +204,6 @@ class Widget_Icon_List extends Widget_Base {
 				'label_on' => __( 'On', 'elementor' ),
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'content: ""',
-				],
-				'condition' => [
-					'view' => 'traditional',
 				],
 				'separator' => 'before',
 			]
@@ -224,11 +222,11 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'default' => 'solid',
 				'condition' => [
-					'view' => 'traditional',
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-style: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:last-child):after' => 'border-top-style: {{VALUE}}',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item:not(:last-child):after' => 'border-left-style: {{VALUE}}',
 				],
 			]
 		);
@@ -244,15 +242,63 @@ class Widget_Icon_List extends Widget_Base {
 				'range' => [
 					'px' => [
 						'min' => 1,
-						'max' => 10,
+						'max' => 20,
 					],
 				],
 				'condition' => [
-					'view' => 'traditional',
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:last-child):after' => 'border-top-width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-inline-items .elementor-icon-list-item:not(:last-child):after' => 'border-left-width: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_width',
+			[
+				'label' => __( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'units' => [ '%' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'condition' => [
+					'divider' => 'yes',
+					'view!' => 'inline',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'width: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'divider_height',
+			[
+				'label' => __( 'Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%', 'px' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'range' => [
+					'px' => [
+						'min' => 1,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => 1,
+						'max' => 100,
+					],
+				],
+				'condition' => [
+					'divider' => 'yes',
+					'view' => 'inline',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'height: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -268,30 +314,10 @@ class Widget_Icon_List extends Widget_Base {
 					'value' => Scheme_Color::COLOR_3,
 				],
 				'condition' => [
-					'view' => 'traditional',
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-top-color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'divider_width',
-			[
-				'label' => __( 'Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'units' => [ '%' ],
-				'default' => [
-					'unit' => '%',
-				],
-				'condition' => [
-					'view' => 'traditional',
-					'divider' => 'yes',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'border-color: {{VALUE}}',
 				],
 			]
 		);
@@ -367,7 +393,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_control(
 			'text_color',
 			[
-				'label' => __( 'Color', 'elementor' ),
+				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -435,8 +461,8 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_render_attribute( 'list_item', 'class', 'elementor-icon-list-item' );
 
 		if ( 'inline' === $settings['view'] ) {
-			$this->add_render_attribute( 'icon_list', 'class', 'elementor-grid' );
-			$this->add_render_attribute( 'list_item', 'class', 'elementor-grid-item' );
+			$this->add_render_attribute( 'icon_list', 'class', 'elementor-inline-items' );
+			$this->add_render_attribute( 'list_item', 'class', 'elementor-inline-item' );
 		}
 		?>
 		<ul <?php echo $this->get_render_attribute_string( 'icon_list' ); ?>>
@@ -499,8 +525,8 @@ class Widget_Icon_List extends Widget_Base {
 			view.addRenderAttribute( 'list_item', 'class', 'elementor-icon-list-item' );
 
 			if ( 'inline' == settings.view ) {
-				view.addRenderAttribute( 'icon_list', 'class', 'elementor-grid' );
-				view.addRenderAttribute( 'list_item', 'class', 'elementor-grid-item' );
+				view.addRenderAttribute( 'icon_list', 'class', 'elementor-inline-items' );
+				view.addRenderAttribute( 'list_item', 'class', 'elementor-inline-item' );
 			}
 		#>
 		<# if ( settings.icon_list ) { #>
@@ -517,9 +543,11 @@ class Widget_Icon_List extends Widget_Base {
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
 						<# } #>
+						<# if ( item.icon ) { #>
 						<span class="elementor-icon-list-icon">
 							<i class="{{ item.icon }}" aria-hidden="true"></i>
 						</span>
+						<# } #>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
 						<# if ( item.link && item.link.url ) { #>
 							</a>

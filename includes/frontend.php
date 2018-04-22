@@ -142,7 +142,8 @@ class Frontend {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		}
 
-		add_action( 'wp_head', [ $this, 'print_fonts_links' ] );
+		// Priority 7 to allow google fonts in header template to load in <head> tag
+		add_action( 'wp_head', [ $this, 'print_fonts_links' ], 7 );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar.
@@ -585,7 +586,7 @@ class Frontend {
 		}
 		$this->fonts_to_enqueue = [];
 
-		$this->print_google_fonts( $google_fonts );
+		$this->enqueue_google_fonts( $google_fonts );
 	}
 
 	/**
@@ -601,7 +602,7 @@ class Frontend {
 	 * @param array $google_fonts Optional. Google fonts to print in the frontend.
 	 *                            Default is an empty array.
 	 */
-	private function print_google_fonts( $google_fonts = [] ) {
+	private function enqueue_google_fonts( $google_fonts = [] ) {
 		static $google_fonts_index = 0;
 
 		$print_google_fonts = true;
@@ -808,7 +809,7 @@ class Frontend {
 		}
 
 		?>
-		<div class="elementor elementor-<?php echo esc_attr( $post_id ); ?>">
+		<div class="<?php echo esc_attr( $document->get_container_classes() ); ?>">
 			<div class="elementor-inner">
 				<div class="elementor-section-wrap">
 					<?php $this->_print_elements( $data ); ?>
