@@ -191,6 +191,14 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.0.7 - 2018-04-17 ###
+* Tweak: Rename filter `elementor/get_document/post_id` to `elementor/documents/get/post_id`
+* Tweak: Added Divider control for Icon List widget on inline skin
+* Tweak: Added CSS classes per document in Preview
+* Fix: Support for editing images in WP Media Modal ([#3062](https://github.com/pojome/elementor/issues/3062))
+* Fix: Inline alignment responsive for Icon List widget
+* Fix: Added higher priority to support GoogleFonts in locations
+
 ### 2.0.6 - 2018-04-15 ###
 * New: Image widget - added new control for Image width
 * Tweak: Added support for dynamic video via ACF
