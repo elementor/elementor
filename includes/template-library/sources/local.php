@@ -1373,7 +1373,7 @@ class Source_Local extends Source_Base {
 	 * @return string Template label.
 	 */
 	private function get_template_label_by_type( $template_type ) {
-		$template_label = ucwords( str_replace( '_', ' ', $template_type ) );
+		$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
 
 		if ( 'page' === $template_type ) {
 			$template_label = 'Content';
