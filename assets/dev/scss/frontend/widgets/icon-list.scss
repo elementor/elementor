@@ -4,7 +4,7 @@
 
 .elementor-widget {
 
-	.elementor-icon-list-items.elementor-grid {
+	.elementor-icon-list-items.elementor-inline-items {
 
 		margin-right: -8px;
 		margin-left: -8px;
@@ -48,15 +48,12 @@
 
 		&, a {
 			display: flex;
-			align-items: center;
+			align-items: flex-start;
 		}
 
 		a {
 			width: 100%;
 		}
-	}
-
-	.elementor-icon-list-icon {
 	}
 
 	.elementor-icon-list-icon + .elementor-icon-list-text {
@@ -69,6 +66,7 @@
 		justify-content: center;
 		align-items: center;
 		text-align: center;
+		min-height: 1.5em;
 		i {
 			vertical-align: middle;
 		}
@@ -87,7 +85,7 @@
 			}
 		}
 
-		.elementor-grid {
+		.elementor-inline-items {
 			justify-content: center;
 		}
 	}
@@ -102,7 +100,7 @@
 			}
 		}
 
-		.elementor-grid {
+		.elementor-inline-items {
 			justify-content: getValueByDirection(flex-start, flex-end);
 		}
 	}
