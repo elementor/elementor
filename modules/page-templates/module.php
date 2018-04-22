@@ -95,9 +95,19 @@ class Module extends BaseModule {
 	 * @param array $page_templates Array of page templates. Keys are filenames,
 	 *                              values are translated names.
 	 *
+	 * @param \WP_Theme $wp_theme
+	 * @param \WP_Post $post
+	 *
 	 * @return array Page templates.
 	 */
-	public function add_page_templates( $page_templates ) {
+	public function add_page_templates( $page_templates, $wp_theme, $post ) {
+		if ( $post ) {
+			$document = Plugin::$instance->documents->get( $post->ID );
+			if ( $document && ! $document::get_property( 'support_wp_page_templates' ) ) {
+				return $page_templates;
+			}
+		}
+
 		$page_templates = [
 			self::TEMPLATE_CANVAS => _x( 'Elementor Canvas', 'Page Template', 'elementor' ),
 			self::TEMPLATE_HEADER_FOOTER => _x( 'Elementor Full Width', 'Page Template', 'elementor' ),
