@@ -17,6 +17,7 @@ class Page extends Library_Document {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
+		$properties['support_wp_page_templates'] = true;
 		$properties['group'] = 'pages';
 		return $properties;
 	}

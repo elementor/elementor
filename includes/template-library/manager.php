@@ -339,6 +339,8 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
+		do_action( 'elementor/template-library/before_get_source_data', $args, $source );
+
 		return $source->get_data( $args );
 	}
 
