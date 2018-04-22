@@ -158,7 +158,9 @@ class Manager {
 		foreach ( self::$settings_managers as $name => $manager ) {
 			$settings_model = $manager->get_model_for_config();
 
-			$config[ $name ] = $settings_model->get_frontend_settings();
+			if ( $settings_model ) {
+				$config[ $name ] = $settings_model->get_frontend_settings();
+			}
 		}
 
 		return $config;
