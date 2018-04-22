@@ -100,10 +100,14 @@ class Manager extends BaseManager {
 			$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 		}
 
-		$model = $this->get_model( $document->get_post()->ID );
+		if ( $document ) {
+			$model = $this->get_model( $document->get_post()->ID );
 
-		if ( $document->is_autosave() ) {
-			$model->set_settings( 'post_status', $document->get_main_post()->post_status );
+			if ( $document->is_autosave() ) {
+				$model->set_settings( 'post_status', $document->get_main_post()->post_status );
+			}
+		} else {
+			$model = $this->get_model( $post_id );
 		}
 
 		return $model;
