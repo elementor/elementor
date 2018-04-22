@@ -16,6 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Post extends Document {
 
+	public static function get_properties() {
+		$properties = parent::get_properties();
+
+		$properties['support_wp_page_templates'] = true;
+
+		return $properties;
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
