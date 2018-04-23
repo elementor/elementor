@@ -92,7 +92,7 @@
 
 			&, a {
 				justify-content: getValueByDirection(flex-start, flex-end);
-				text-align: $start;
+				text-align: left;
 			}
 		}
 
@@ -107,7 +107,7 @@
 
 			&, a {
 				justify-content: getValueByDirection(flex-end, flex-start);
-				text-align: $end;
+				text-align: right;
 			}
 		}
 
@@ -165,7 +165,7 @@
 
 				&, a {
 					justify-content: getValueByDirection( flex-start, flex-end );
-					text-align: $start;
+					text-align: left;
 				}
 			}
 		}
@@ -180,7 +180,7 @@
 
 				&, a {
 					justify-content: getValueByDirection( flex-end, flex-start );
-					text-align: $end;
+					text-align: right;
 				}
 			}
 		}
@@ -235,7 +235,7 @@
 
 				&, a {
 					justify-content: getValueByDirection( flex-start, flex-end );
-					text-align: $start;
+					text-align: left;
 				}
 			}
 		}
@@ -250,7 +250,7 @@
 
 				&, a {
 					justify-content: getValueByDirection( flex-end, flex-start );
-					text-align: $end;
+					text-align: right;
 				}
 			}
 		}
