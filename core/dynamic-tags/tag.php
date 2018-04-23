@@ -5,6 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Elementor tag.
+ *
+ * An abstract class to register new Elementor tag.
+ *
+ * @since 2.0.0
+ * @abstract
+ */
 abstract class Tag extends Base_Tag {
 
 	/**

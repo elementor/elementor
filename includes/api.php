@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor API class.
+ * Elementor API.
  *
  * Elementor API handler class is responsible for communicating with Elementor
  * remote servers retrieving templates data and to send uninstall feedback.
