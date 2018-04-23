@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor page settings manager class.
+ * Elementor page settings manager.
  *
  * Elementor page settings manager handler class is responsible for registering
  * and managing Elementor page settings managers.
@@ -92,12 +92,20 @@ class Manager extends BaseManager {
 	 * @return BaseModel The model object.
 	 */
 	public function get_model_for_config() {
+		if ( ! is_singular() && ! Plugin::$instance->editor->is_edit_mode() ) {
+			return null;
+		}
+
 		$post_id = get_the_ID();
 
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
 		} else {
 			$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+		}
+
+		if ( ! $document ) {
+			return null;
 		}
 
 		$model = $this->get_model( $document->get_post()->ID );

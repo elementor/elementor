@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor frontend class.
+ * Elementor frontend.
  *
  * Elementor frontend handler class is responsible for initializing Elementor in
  * the frontend.
@@ -435,16 +435,16 @@ class Frontend {
 			],
 		];
 
+		$elementor_frontend_config['settings'] = SettingsManager::get_settings_frontend_config();
+
 		if ( is_singular() ) {
 			$post = get_post();
-			$elementor_frontend_config['settings'] = SettingsManager::get_settings_frontend_config();
 			$elementor_frontend_config['post'] = [
 				'id' => $post->ID,
 				'title' => $post->post_title,
 				'excerpt' => $post->post_excerpt,
 			];
 		} else {
-			$elementor_frontend_config['settings'] = [];
 			$elementor_frontend_config['post'] = [
 				'id' => 0,
 				'title' => wp_get_document_title(),
@@ -578,7 +578,11 @@ class Frontend {
 					 *
 					 * Fires when Elementor frontend fonts are printed on the HEAD tag.
 					 *
+					 * The dynamic portion of the hook name, `$font_type`, refers to the font type.
+					 *
 					 * @since 2.0.0
+					 *
+					 * @param string $font Font name.
 					 */
 					do_action( "elementor/fonts/print_font_links/{$font_type}", $font );
 			}

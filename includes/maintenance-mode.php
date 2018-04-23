@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor maintenance mode class.
+ * Elementor maintenance mode.
  *
  * Elementor maintenance mode handler class is responsible for the Elementor
  * "Maintenance Mode" and the "Coming Soon" features.
