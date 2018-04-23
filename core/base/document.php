@@ -598,6 +598,10 @@ abstract class Document extends Controls_Stack {
 		return get_permalink( $this->get_main_id() );
 	}
 
+	public function get_content( $with_css = false ) {
+		return Plugin::$instance->frontend->get_builder_content( $this->post->ID, $with_css );
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
