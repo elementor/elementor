@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor CSS file class.
+ * Elementor CSS file.
  *
  * Elementor CSS file handler class is responsible for generating CSS files.
  *

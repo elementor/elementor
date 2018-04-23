@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor base group control.
+ * Elementor group control base.
  *
- * A base control for creating group control.
+ * An abstract class for creating new group controls in the panel.
  *
  * @since 1.0.0
  * @abstract

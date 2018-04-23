@@ -106,6 +106,12 @@ class Settings extends Settings_Page {
 	}
 
 	/**
+	 * Register Elementor knowledge base sub-menu.
+	 *
+	 * Add new Elementor knowledge base sub-menu under the main Elementor menu.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
 	 * @since 2.0.3
 	 * @access public
 	 */
