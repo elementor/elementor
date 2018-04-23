@@ -16,6 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Elementor document.
+ *
+ * An abstract class that provides the needed properties and methods to
+ * manage and handle documents in inheriting classes.
+ *
+ * @since 2.0.0
+ * @abstract
+ */
 abstract class Document extends Controls_Stack {
 
 	const TYPE_META_KEY = '_elementor_template_type';

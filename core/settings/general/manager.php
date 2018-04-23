@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor general settings manager class.
+ * Elementor general settings manager.
  *
  * Elementor general settings manager handler class is responsible for registering
  * and managing Elementor general settings managers.

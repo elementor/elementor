@@ -33,8 +33,21 @@ class Manager {
 	}
 
 	/**
+	 * Parse dynamic tags text.
+	 *
+	 * Receives the dynamic tag text, and returns a single value or multiple values
+	 * from the tag callback function.
+	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param string   $text           Dynamic tag text.
+	 * @param array    $settings       The dynamic tag settings.
+	 * @param callable $parse_callback The functions that renders the dynamic tag.
+	 *
+	 * @return string|string[]|mixed A single string or an array of strings with
+	 *                               the return values from each tag callback
+	 *                               function.
 	 */
 	public function parse_tags_text( $text, array $settings, callable $parse_callback ) {
 		if ( ! empty( $settings['returnType'] ) && 'object' === $settings['returnType'] ) {
@@ -50,10 +63,23 @@ class Manager {
 	}
 
 	/**
+	 * Parse dynamic tag text.
+	 *
+	 * Receives the dynamic tag text, and returns the value from the callback
+	 * function.
+	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param string   $tag_text       Dynamic tag text.
+	 * @param array    $settings       The dynamic tag settings.
+	 * @param callable $parse_callback The functions that renders the dynamic tag.
+	 *
+	 * @return string|array|mixed If the tag was not found an empty string or an
+	 *                            empty array will be returned, otherwise the
+	 *                            return value from the tag callback function.
 	 */
-	public function parse_tag_text( $tag_text, array $settings, $parse_callback ) {
+	public function parse_tag_text( $tag_text, array $settings, callable $parse_callback ) {
 		$tag_data = $this->tag_text_to_tag_data( $tag_text );
 
 		if ( ! $tag_data ) {
