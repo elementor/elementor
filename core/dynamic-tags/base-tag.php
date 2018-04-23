@@ -8,6 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor base tag.
+ *
+ * An abstract class to register new Elementor tags.
+ *
+ * @since 2.0.0
+ * @abstract
+ */
 abstract class Base_Tag extends Controls_Stack {
 
 	/**

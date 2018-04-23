@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor embed class.
+ * Elementor embed.
  *
  * Elementor embed handler class is responsible for Elementor embed functionality.
  * The class holds the supported providers with their embed patters, and handles

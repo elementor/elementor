@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor responsive class.
+ * Elementor responsive.
  *
  * Elementor responsive handler class is responsible for setting up Elementor
  * responsive break points.

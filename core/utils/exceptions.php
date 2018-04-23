@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor exceptions class.
+ * Elementor exceptions.
  *
  * Elementor exceptions handler class is responsible for handling exceptions.
  *

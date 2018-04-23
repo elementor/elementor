@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor stylesheet class.
+ * Elementor stylesheet.
  *
  * Elementor stylesheet handler class responsible for setting up CSS rules and
  * properties, and all the CSS `@media` rule with supported viewport width.
