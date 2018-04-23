@@ -197,7 +197,6 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Added action hook for caching plugins when clearing CSS files `do_action( 'elementor/css-file/clear_cache' );` ([#4179](https://github.com/pojome/elementor/issues/4179))
 * Tweak: Added Page Templates support only for layout pages
 * Fix: Smooth scrolling not working ([#4168](https://github.com/pojome/elementor/issues/4168))
-* Fix: Masonry not working in edge cases
 * Fix: Stretch section for archive pages
 * Fix: Icon vertical alignment in icon list widget
 
