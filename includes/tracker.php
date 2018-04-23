@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor tracker class.
+ * Elementor tracker.
  *
  * Elementor tracker handler class is responsible for sending anonymous plugin
  * data to Elementor servers for users that actively allowed data tracking.

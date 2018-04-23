@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor widgets manager class.
+ * Elementor widgets manager.
  *
  * Elementor widgets manager handler class is responsible for registering and
  * initializing all the supported Elementor widgets.

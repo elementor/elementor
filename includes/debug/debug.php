@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor debug class.
+ * Elementor debug.
  *
  * Elementor debug handler class is responsible for logging errors and
  * generating debug reports.

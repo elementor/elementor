@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor template library import images class.
+ * Elementor template library import images.
  *
  * Elementor template library import images handler class is responsible for
  * importing remote images used by the template library.

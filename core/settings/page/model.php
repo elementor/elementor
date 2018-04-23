@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor page settings model class.
+ * Elementor page settings model.
  *
  * Elementor page settings model handler class is responsible for registering
  * and managing Elementor page settings models.
