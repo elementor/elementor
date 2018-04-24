@@ -252,22 +252,7 @@ class Manager {
 			/** @var Tag $tag */
 			$tag = $tag_info['instance'];
 
-			ob_start();
-
-			$tag->print_panel_template();
-
-			$panel_template = ob_get_clean();
-
-			$config[ $tag_name ] = [
-				'name' => $tag_name,
-				'title' => $tag->get_title(),
-				'panel_template' => $panel_template,
-				'categories' => $tag->get_categories(),
-				'group' => $tag->get_group(),
-				'controls' => $tag->get_controls(),
-				'content_type' => $tag->get_content_type(),
-				'settings_required' => $tag->is_settings_required(),
-			];
+			$config[ $tag_name ] = $tag->get_editor_config();
 		}
 
 		return $config;
