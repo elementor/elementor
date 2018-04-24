@@ -423,6 +423,29 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Add widget render attributes.
+	 *
+	 * Used to add attributes to the current widget wrapper HTML tag.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
+	protected function _add_render_attributes() {
+		parent::_add_render_attributes();
+
+		$this->add_render_attribute(
+			'_wrapper', 'class', [
+				'elementor-widget',
+				$this->get_html_wrapper_class(),
+			]
+		);
+
+		$settings = $this->get_settings();
+
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
+	}
+
+	/**
 	 * Render widget output on the frontend.
 	 *
 	 * Used to generate the final HTML displayed on the frontend.
@@ -506,29 +529,6 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function render_plain_content() {
 		$this->render_content();
-	}
-
-	/**
-	 * Add widget render attributes.
-	 *
-	 * Used to add attributes to the current widget wrapper HTML tag.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
-	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
-
-		$this->add_render_attribute(
-			'_wrapper', 'class', [
-				'elementor-widget',
-				'elementor-widget-' . $this->get_name(),
-			]
-		);
-
-		$settings = $this->get_settings();
-
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
 	}
 
 	/**
