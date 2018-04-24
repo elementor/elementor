@@ -422,6 +422,10 @@ abstract class Widget_Base extends Element_Base {
 		return $content;
 	}
 
+	protected function get_html_wrapper_class() {
+		return 'elementor-widget-' . $this->get_name();
+	}
+
 	/**
 	 * Add widget render attributes.
 	 *
