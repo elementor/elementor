@@ -15,7 +15,9 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
+		var baseClasses = BaseElementView.prototype.className.apply( this, arguments );
+
+		return baseClasses + ' elementor-widget ' + elementor.getElementData( this.getEditModel() ).html_wrapper_class;
 	},
 
 	events: function() {
