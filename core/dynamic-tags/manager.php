@@ -190,11 +190,21 @@ class Manager {
 	 * @access public
 	 */
 	public function get_tag_info( $tag_name ) {
-		if ( empty( $this->tags_info[ $tag_name ] ) ) {
+		$tags = $this->get_tags();
+
+		if ( empty( $tags[ $tag_name ] ) ) {
 			return null;
 		}
 
-		return $this->tags_info[ $tag_name ];
+		return $tags[ $tag_name ];
+	}
+
+	public function get_tags() {
+		if ( ! did_action( 'elementor/dynamic_tags/register_tags' ) ) {
+			do_action( 'elementor/dynamic_tags/register_tags', $this );
+		}
+
+		return $this->tags_info;
 	}
 
 	/**
@@ -209,6 +219,15 @@ class Manager {
 			'class' => $class,
 			'instance' => $tag,
 		];
+	}
+
+	/**
+	 * @access public
+	 *
+	 * @param string $tag_name
+	 */
+	public function unregister_tag( $tag_name ) {
+		unset ( $this->tags_info[ $tag_name ] );
 	}
 
 	/**
@@ -230,7 +249,7 @@ class Manager {
 	 * @access public
 	 */
 	public function print_templates() {
-		foreach ( $this->tags_info as $tag_name => $tag_info ) {
+		foreach ( $this->get_tags() as $tag_name => $tag_info ) {
 			$tag = $tag_info['instance'];
 
 			if ( ! $tag instanceof Tag ) {
@@ -248,7 +267,7 @@ class Manager {
 	public function get_tags_config() {
 		$config = [];
 
-		foreach ( $this->tags_info as $tag_name => $tag_info ) {
+		foreach ( $this->get_tags() as $tag_name => $tag_info ) {
 			/** @var Tag $tag */
 			$tag = $tag_info['instance'];
 
