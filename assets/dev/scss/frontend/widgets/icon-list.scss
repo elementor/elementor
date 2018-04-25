@@ -62,14 +62,7 @@
 	}
 
 	.elementor-icon-list-icon {
-		display: flex;
-		justify-content: center;
-		align-items: center;
 		text-align: center;
-		min-height: 1.5em;
-		i {
-			vertical-align: middle;
-		}
 	}
 
 	&.elementor-align-center {
@@ -96,7 +89,7 @@
 
 			&, a {
 				justify-content: getValueByDirection(flex-start, flex-end);
-				text-align: $start;
+				text-align: left;
 			}
 		}
 
@@ -111,7 +104,7 @@
 
 			&, a {
 				justify-content: getValueByDirection(flex-end, flex-start);
-				text-align: $end;
+				text-align: right;
 			}
 		}
 
@@ -169,7 +162,7 @@
 
 				&, a {
 					justify-content: getValueByDirection( flex-start, flex-end );
-					text-align: $start;
+					text-align: left;
 				}
 			}
 		}
@@ -184,7 +177,7 @@
 
 				&, a {
 					justify-content: getValueByDirection( flex-end, flex-start );
-					text-align: $end;
+					text-align: right;
 				}
 			}
 		}
@@ -239,7 +232,7 @@
 
 				&, a {
 					justify-content: getValueByDirection( flex-start, flex-end );
-					text-align: $start;
+					text-align: left;
 				}
 			}
 		}
@@ -254,7 +247,7 @@
 
 				&, a {
 					justify-content: getValueByDirection( flex-end, flex-start );
-					text-align: $end;
+					text-align: right;
 				}
 			}
 		}

@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Controls Stack.
+ * Elementor controls stack.
  *
- * A base abstract class that provides the needed properties and methods to
+ * An abstract class that provides the needed properties and methods to
  * manage and handle controls in the editor panel to inheriting classes.
  *
  * @since 1.4.0

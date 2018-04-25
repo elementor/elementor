@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor main system info page class.
+ * Elementor main system info page.
  *
  * Elementor main system info page handler class responsible for creating system info
  * reports and displaying them on WordPress dashboard under Elementor setting.
