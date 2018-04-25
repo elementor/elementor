@@ -262,3 +262,33 @@
 		word-break: break-word;
 	}
 }
+
+// Simple 12 Columns responsive grid (needs to move to elementor core)
+.elementor-grid {
+	display: grid;
+
+	.elementor-grid-item {
+		word-break: break-word;
+	}
+}
+
+.elementor-grid {
+	@mixin grid_loop($device) {
+		@for $i from 1 through 12 {
+
+			&#{$device}-#{$i} {
+				.elementor-grid {
+					grid-template-columns: repeat(#{$i} , 1fr);
+				}
+			}
+		}
+	}
+	@include grid_loop('');
+
+	@media (max-width: $screen-md-max) {
+		@include grid_loop(-tablet);
+	}
+	@media (max-width: $screen-sm-max) {
+		@include grid_loop(-mobile);
+	}
+}
