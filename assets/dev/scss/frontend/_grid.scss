@@ -252,27 +252,27 @@
 }
 
 
-// Minimal simple Grid
+// Elementor inline items
 
-.elementor-grid, ul.elementor-icon-list-items.elementor-grid {
+.elementor-inline-items, ul.elementor-icon-list-items.elementor-inline-items {
 	display: flex;
 	flex-wrap: wrap;
 
-	.elementor-grid-item {
+	.elementor-inline-item {
 		word-break: break-word;
 	}
 }
 
-// Simple 12 Columns responsive grid (needs to move to elementor core)
+
+// Simple 12 Columns responsive grid (moved to free since v2.1)
+
 .elementor-grid {
 	display: grid;
 
 	.elementor-grid-item {
 		word-break: break-word;
 	}
-}
 
-.elementor-grid {
 	@mixin grid_loop($device) {
 		@for $i from 1 through 12 {
 
@@ -283,11 +283,13 @@
 			}
 		}
 	}
+
 	@include grid_loop('');
 
 	@media (max-width: $screen-md-max) {
 		@include grid_loop(-tablet);
 	}
+
 	@media (max-width: $screen-sm-max) {
 		@include grid_loop(-mobile);
 	}
