@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor template library source base class.
+ * Elementor template library source base.
  *
  * Elementor template library source base handler class is responsible for
  * initializing all the methods controlling the source of Elementor templates.

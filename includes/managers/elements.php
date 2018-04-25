@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor elements manager class.
+ * Elementor elements manager.
  *
  * Elementor elements manager handler class is responsible for registering and
  * initializing all the supported elements.

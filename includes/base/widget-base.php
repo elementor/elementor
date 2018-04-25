@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Widget Base.
+ * Elementor widget base.
  *
  * An abstract class to register new Elementor widgets. It extended the
  * `Element_Base` class to inherit its properties.

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor heartbeat class.
+ * Elementor heartbeat.
  *
  * Elementor heartbeat handler class is responsible for initializing Elementor
  * heartbeat. The class communicates with WordPress Heartbeat API while working
