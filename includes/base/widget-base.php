@@ -423,6 +423,15 @@ abstract class Widget_Base extends Element_Base {
 		return $content;
 	}
 
+	/**
+	 * Get HTML wrapper class.
+	 *
+	 * Retrieve the widget container class. Can be used to override the
+	 * container class for specific widgets.
+	 *
+	 * @since 2.0.9
+	 * @access protected
+	 */
 	protected function get_html_wrapper_class() {
 		return 'elementor-widget-' . $this->get_name();
 	}
