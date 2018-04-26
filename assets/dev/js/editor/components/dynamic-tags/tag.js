@@ -49,11 +49,15 @@ module.exports = Marionette.ItemView.extend( {
 		if ( 'ui' === contentType ) {
 			this.render();
 
-			if ( data ) {
-				this.$el.html( data );
+			if ( this.hasTemplate ) {
+				return this.el.outerHTML;
 			}
 
-			return this.el.outerHTML;
+			if ( this.getConfig( 'wrapped_tag' ) ) {
+				data = jQuery( data ).html();
+			}
+
+			this.$el.html( data );
 		}
 
 		return data;
