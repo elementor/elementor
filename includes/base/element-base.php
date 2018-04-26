@@ -772,7 +772,7 @@ abstract class Element_Base extends Controls_Stack {
 			 *
 			 * @param array $black_list A black list of attributes.
 			 */
-			$black_list = apply_filters( 'elementor/attributes/black_list', $black_list );
+			$black_list = apply_filters( 'elementor/element/attributes/black_list', $black_list );
 
 			foreach ( $attributes as $attribute ) {
 				if ( ! empty( $attribute ) ) {
