@@ -733,9 +733,13 @@ abstract class Element_Base extends Controls_Stack {
 	protected function _add_render_attributes() {
 		$id = $this->get_id();
 
-		$this->add_render_attribute( '_wrapper', 'class', [ 'elementor-element', 'elementor-element-' . $id ] );
-
 		$settings = $this->get_active_settings();
+
+		if ( ! empty( $settings['_element_id'] ) ) {
+			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
+		}
+
+		$this->add_render_attribute( '_wrapper', 'class', [ 'elementor-element', 'elementor-element-' . $id ] );
 
 		foreach ( self::get_class_controls() as $control ) {
 			if ( empty( $settings[ $control['name'] ] ) ) {
@@ -750,14 +754,34 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
 		}
 
-		if ( ! empty( $settings['_element_id'] ) ) {
-			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
-		}
-
 		if ( ! empty( $settings['_attributes'] ) ) {
-			foreach (  $settings['_attributes'] as $attr ) {
-				if ( ! empty( $attr['attribute_key'] ) ) {
-					$this->add_render_attribute( '_wrapper', trim( $attr['attribute_key'] ), trim( $attr['attribute_value'] ) );
+			$attributes = explode( "\n", $settings['_attributes'] );
+
+			// Not allowed attributes
+			$black_list = [ 'id', 'data-id', 'data-settings', 'data-element_type', 'data-model-cid', 'onload', 'onclick', 'onfocus', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown' ];
+
+			/**
+			 * Elementor attributes black list.
+			 *
+			 * Filters the attributes that won't be rendered in the wrapper element.
+			 *
+			 * By default Elementor don't render some attributes to prevent things
+			 * from breaking down. But this list of attributes can be changed.
+			 *
+			 * @since 2.1.0
+			 *
+			 * @param array $black_list A black list of attributes.
+			 */
+			$black_list = apply_filters( 'elementor/attributes/black_list', $black_list );
+
+			foreach ( $attributes as $attribute ) {
+				if ( ! empty( $attribute ) ) {
+					$attr = explode( "|", $attribute, 2 );
+					if ( ! isset( $attr[1] ) ) $attr[1] = '';
+
+					if ( ! in_array( strtolower( $attr[0] ), $black_list ) ) {
+						$this->add_render_attribute( '_wrapper', trim( $attr[0] ), trim( $attr[1] ) );
+					}
 				}
 			}
 		}

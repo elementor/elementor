@@ -427,22 +427,9 @@ class Widget_Common extends Widget_Base {
 			'_attributes',
 			[
 				'label' => __( 'Attributes', 'elementor' ),
-				'type' => Controls_Manager::REPEATER,
-				'fields' => [
-					[
-						'name' => 'attribute_key',
-						'label' => __( 'Attribute Key', 'elementor' ),
-						'type' => Controls_Manager::TEXT,
-					],
-					[
-						'name' => 'attribute_value',
-						'label' => __( 'Attribute Value', 'elementor' ),
-						'type' => Controls_Manager::TEXT,
-					],
-				],
-				'title_field' => '{{{ attribute_key }}}',
-				'prevent_empty' => false,
-				'show_label' => false,
+				'type' => Controls_Manager::TEXTAREA,
+				'placeholder' => __( 'key|value', 'elementor' ),
+				'description' => __( 'Set custom HTML attributes for the wrapper element. Each attribute in a separate line. Separate attribute key from attribute value using | character.', 'elementor' ),
 			]
 		);
 
