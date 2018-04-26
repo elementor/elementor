@@ -78,6 +78,25 @@ abstract class Base_Tag extends Controls_Stack {
 		return false;
 	}
 
+	public function get_editor_config() {
+		 ob_start();
+
+		$this->print_panel_template();
+
+		$panel_template = ob_get_clean();
+
+		return [
+			'name' => $this->get_name(),
+			'title' => $this->get_title(),
+			'panel_template' => $panel_template,
+			'categories' => $this->get_categories(),
+			'group' => $this->get_group(),
+			'controls' => $this->get_controls(),
+			'content_type' => $this->get_content_type(),
+			'settings_required' => $this->is_settings_required(),
+		];
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
