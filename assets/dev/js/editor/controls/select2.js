@@ -6,12 +6,16 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 		return this.ui.select.children( 'option:first[value=""]' ).text();
 	},
 
-	getSelect2Options: function() {
+	getSelect2DefaultOptions: function() {
 		return {
 			allowClear: true,
 			placeholder: this.getSelect2Placeholder(),
 			dir: elementor.config.is_rtl ? 'rtl' : 'ltr'
 		};
+	},
+
+	getSelect2Options: function() {
+		return jQuery.extend( this.getSelect2DefaultOptions(), this.model.get( 'select2options' ) );
 	},
 
 	onReady: function() {

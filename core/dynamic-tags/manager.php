@@ -236,7 +236,7 @@ class Manager {
 	 * @param string $tag_name
 	 */
 	public function unregister_tag( $tag_name ) {
-		unset ( $this->tags_info[ $tag_name ] );
+		unset( $this->tags_info[ $tag_name ] );
 	}
 
 	/**

@@ -27,8 +27,10 @@ Never again work on the backend and guess what the frontend will look like. With
 = Surprises you won’t see anywhere else. =
 With Elementor's unique features, you can create websites that have that certain 'designer touch'. Among our page builder features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
 
-= Template Library. =
-We've added [Template Library](https://library.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme), which includes a collection of 100+ beautiful WordPress templates, made for you by our top notch designers. You can save and reuse them on different pages, or export them to whole different websites with our page builder.
+= Pre-Designed Templates & Blocks =
+Choose from 100+ of beautiful full page [WordPress templates](https://library.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and customize them to make them your own. You can also build your page by choosing from 300+ Blocks.
+
+Blocks are pre-designed section templates that can be easily combined into any page. Blocks include a variety of categories: services, testimonials, call to action and more. Save and reuse Elementor templates on different pages, or export them to a different website with a click.
 
 = Mobile First. Mobile Editing. =
 Elementor Page Builder comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size, padding and margin per device, to reverse column ordering, this is the most powerful mobile page builder for creating perfect responsive websites.
@@ -42,10 +44,26 @@ Design your entire page in the page builder. No header, no footer, just Elemento
 = Built-in Maintenance Mode & Under Construction. =
 Need to get your site offline for maintenance? Use Elementor page builder's built in Maintenance Mode & Coming Soon feature to show your visitors an under construction / coming soon page.
 
-= Try Elementor Pro. The Best Page Builder For WordPress. =
-If you thought Elementor is full of useful features, check out Elementor Pro! Elementor Pro extends the basic features even further, and allows you to control your entire website with Elementor.
+= Try Elementor Pro. The Best page Builder for WordPress. =
+[Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) vastly improves your design workflow and lets you design faster and better than ever. With Elementor Pro, everything is done visually and without code.
 
-Design [forms](https://elementor.com/pro-v140-form-integrations/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)  live on the frontend, customize your blog posts visually, incorporate slides, WooCommerce, global widgets, custom CSS and much more. [Upgrade now to Elementor Pro!](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
+Making changes to your theme shouldn't be so hard. Endless coding, dealing with developers, switching themes. The [Theme Builder](https://elementor.com/theme-builder/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) in Elementor Pro turns the entire process of creating WordPress websites 100% visual including your site's header, footer, single post and archive page design.
+
+There are many other [features](https://elementor.com/features/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to help you build better websites:
+
+* Visual and intuitive form builder
+* Marketing automation and CRM integrations
+* Custom fonts
+* Role manager
+* Blog post layout widget
+* Image & video sliders
+* WooCommerce
+* Global widgets
+* Custom CSS
+* Animated headlines
+* And much more.
+
+Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
 
 = 28 free widgets and counting =
 We packed 28 of the most useful widgets into our page builder. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
@@ -197,7 +215,6 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Added action hook for caching plugins when clearing CSS files `do_action( 'elementor/css-file/clear_cache' );` ([#4179](https://github.com/pojome/elementor/issues/4179))
 * Tweak: Added Page Templates support only for layout pages
 * Fix: Smooth scrolling not working ([#4168](https://github.com/pojome/elementor/issues/4168))
-* Fix: Masonry not working in edge cases
 * Fix: Stretch section for archive pages
 * Fix: Icon vertical alignment in icon list widget
 
