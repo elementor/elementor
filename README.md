@@ -1,9 +1,13 @@
-<h1 align="center">Elementor Page Builder</h1>
+<h1 align="center"><a href="https://elemenetor.com/">Elementor Page Builder</a></h1>
 
 <p align="center">
-
-[![Build Status](https://travis-ci.org/pojome/elementor.svg?branch=master)](https://travis-ci.org/pojome/elementor) [![Coverage Status](https://coveralls.io/repos/github/pojome/elementor/badge.svg?branch=master)](https://coveralls.io/github/pojome/elementor?branch=pojome/elementor) [![Dependency Status](https://david-dm.org/pojome/elementor/dev-status.svg)](https://david-dm.org/pojome/elementor#info=devDependencies) [![WordPress](https://img.shields.io/wordpress/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/r/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/v/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/) [![WordPress](https://img.shields.io/wordpress/plugin/dt/elementor.svg?style=flat-square)](https://wordpress.org/plugins/elementor/)
-
+<a href="https://travis-ci.org/pojome/elementor"><img src="https://travis-ci.org/pojome/elementor.svg?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/github/pojome/elementor?branch=pojome/elementor"><img src="https://coveralls.io/repos/github/pojome/elementor/badge.svg?branch=master" alt="Coverage Status"></a>
+<a href="https://david-dm.org/pojome/elementor#info=devDependencies"><img src="https://david-dm.org/pojome/elementor/dev-status.svg" alt="Dependency Status"></a>
+<a href="https://wordpress.org/plugins/elementor/"><img src="https://img.shields.io/wordpress/v/elementor.svg?style=flat-square" alt="WordPress"></a>
+<a href="https://wordpress.org/plugins/elementor/"><img src="https://img.shields.io/wordpress/plugin/r/elementor.svg?style=flat-square" alt="WordPress"></a>
+<a href="https://wordpress.org/plugins/elementor/"><img src="https://img.shields.io/wordpress/plugin/v/elementor.svg?style=flat-square" alt="WordPress"></a>
+<a href="https://wordpress.org/plugins/elementor/"><img src="https://img.shields.io/wordpress/plugin/dt/elementor.svg?style=flat-square" alt="WordPress"></a>
 </p>
 
 Welcome to the GitHub repository of **[Elementor](https://elementor.com/?utm_source=gitHub&utm_medium=link&utm_campaign=readme)**, the most advanced frontend drag & drop page builder. Here you can browse the plugin source code, report issues and follow the development.
