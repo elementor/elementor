@@ -27,16 +27,33 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Document extends Controls_Stack {
 
-	const TYPE_META_KEY = '_elementor_template_type';
 	/**
-	 * @var \WP_Post
+	 * Document type meta key.
+	 */
+	const TYPE_META_KEY = '_elementor_template_type';
+
+	/**
+	 * Document post data.
+	 *
+	 * Holds the document post data.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @var \WP_Post WordPress post data.
 	 */
 	protected $post;
 
 	/**
+	 * Get properties.
+	 *
+	 * Retrieve the document properties.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 * @static
+	 *
+	 * @return array Document properties.
 	 */
 	public static function get_properties() {
 		return [
@@ -45,18 +62,50 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Set post data.
+	 *
+	 * Set new post data to the document.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param \WP_Post $post WordPress post data.
+	 *
+	 * @return Document Document post data.
+	 */
+	public function setPost( $post ) {
+		$this->post = $post;
+
+		return $this;
+	}
+
+	/**
+	 * Get element title.
+	 *
+	 * Retrieve the element title.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 * @static
+	 *
+	 * @return string Element title.
 	 */
 	public static function get_title() {
 		return __( 'Document', 'elementor' );
 	}
 
 	/**
+	 * Get property.
+	 *
+	 * Retrieve the document property.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 * @static
+	 *
+	 * @param string $key The property key.
+	 *
+	 * @return mixed The property value.
 	 */
 	public static function get_property( $key ) {
 		return self::_get_items( static::get_properties(), $key );
@@ -421,9 +470,9 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @static
 	 * @since 2.0.0
 	 * @access public
+	 * @static
 	 *
 	 * @return mixed
 	 */
@@ -452,7 +501,6 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @static
 	 * @since 2.0.0
 	 * @access public
 	 */
