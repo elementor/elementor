@@ -758,7 +758,7 @@ abstract class Element_Base extends Controls_Stack {
 			$attributes = explode( "\n", $settings['_attributes'] );
 
 			// Not allowed attributes
-			$black_list = [ 'id', 'class', 'data-id', 'data-settings', 'data-element_type', 'data-model-cid', 'onload', 'onclick', 'onfocus', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown' ];
+			$black_list = [ 'id', 'class', 'data-id', 'data-settings', 'data-element_type', 'data-model-cid', 'onload', 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup' ];
 
 			/**
 			 * Elementor attributes black list.
