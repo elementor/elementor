@@ -1373,10 +1373,7 @@ class Source_Local extends Source_Base {
 	 * @return string Template label.
 	 */
 	private function get_template_label_by_type( $template_type ) {
-		static $document_types = null;
-		if ( null === $document_types ) {
-			$document_types = Plugin::instance()->documents->get_document_types();
-		}
+		$document_types = Plugin::instance()->documents->get_document_types();
 
 		if ( isset( $document_types[ $template_type ] ) ) {
 			$template_label = call_user_func( [ $document_types[ $template_type ], 'get_title' ] );
