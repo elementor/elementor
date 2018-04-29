@@ -25,6 +25,10 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		'click @ui.itemTitle': 'click:edit'
 	},
 
+	modelEvents: {
+		change: 'onModelChange'
+	},
+
 	templateHelpers: function() {
 		return {
 			itemIndex: this.getOption( 'itemIndex' )
@@ -50,14 +54,13 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	},
 
 	setTitle: function() {
-		var self = this,
-			titleField = self.getOption( 'titleField' ),
+		var titleField = this.getOption( 'titleField' ),
 			title = '';
 
 		if ( titleField ) {
 			var values = {};
 
-			self.children.each( function( child ) {
+			this.children.each( function( child ) {
 				if ( ! ( child instanceof ControlBaseDataView ) ) {
 					return;
 				}
@@ -65,32 +68,31 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 				values[ child.model.get( 'name' ) ] = child.getControlValue();
 			} );
 
-			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( self.model.parseDynamicSettings() );
+			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( this.model.parseDynamicSettings() );
 		}
 
 		if ( ! title ) {
-			title = elementor.translate( 'Item #{0}', [ self.getOption( 'itemIndex' ) ] );
+			title = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
 		}
 
-		self.ui.itemTitle.html( title );
+		this.ui.itemTitle.html( title );
 	},
 
 	initialize: function( options ) {
-		var self = this;
-
-		self.itemIndex = 0;
+		this.itemIndex = 0;
 
 		// Collection for Controls list
-		self.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( options.controlFields ) ) );
-
-		if ( options.titleField ) {
-			self.listenTo( self.model, 'change', self.setTitle );
-		}
+		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( options.controlFields ) ) );
 	},
 
 	onRender: function() {
 		this.setTitle();
+	},
 
+	onModelChange: function() {
+		if ( this.getOption( 'titleField' ) ) {
+			this.setTitle();
+		}
 	},
 
 	onChildviewResponsiveSwitcherClick: function( childView, device ) {
