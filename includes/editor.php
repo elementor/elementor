@@ -386,7 +386,7 @@ class Editor {
 
 		wp_register_script(
 			'jquery-select2',
-			ELEMENTOR_ASSETS_URL . 'lib/select2/js/select2' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/select2/js/select2.full' . $suffix . '.js',
 			[
 				'jquery',
 			],
