@@ -201,6 +201,15 @@ class Manager {
 
 	public function get_tags() {
 		if ( ! did_action( 'elementor/dynamic_tags/register_tags' ) ) {
+			/**
+			 * Register dynamic tags.
+			 *
+			 * Fires when Elementor registers dynamic tags.
+			 *
+			 * @since 2.0.9
+			 *
+			 * @param Manager $this Dynamic tags  manager.
+			 */
 			do_action( 'elementor/dynamic_tags/register_tags', $this );
 		}
 
