@@ -297,21 +297,6 @@ module.exports = function( grunt ) {
 			}
 		},
 
-		wp_readme_to_markdown: {
-			github: {
-				options: {
-					wordpressPluginSlug: 'elementor',
-					travisUrlRepo: 'https://travis-ci.org/pojome/elementor',
-					gruntDependencyStatusUrl: 'https://david-dm.org/pojome/elementor',
-					coverallsRepo: 'pojome/elementor',
-					screenshot_url: 'assets/{screenshot}.png'
-				},
-				files: {
-					'README.md': 'readme.txt'
-				}
-			}
-		},
-
 		bumpup: {
 			options: {
 				updateProps: {
@@ -439,7 +424,6 @@ module.exports = function( grunt ) {
 	// Default task(s).
 	grunt.registerTask( 'default', [
 		'i18n',
-		'wp_readme_to_markdown',
 		'scripts',
 		'styles'
 	] );
