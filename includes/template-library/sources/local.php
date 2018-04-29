@@ -1373,10 +1373,16 @@ class Source_Local extends Source_Base {
 	 * @return string Template label.
 	 */
 	private function get_template_label_by_type( $template_type ) {
-		$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
+		$document_types = Plugin::instance()->documents->get_document_types();
+
+		if ( isset( $document_types[ $template_type ] ) ) {
+			$template_label = call_user_func( [ $document_types[ $template_type ], 'get_title' ] );
+		} else {
+			$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
+		}
 
 		if ( 'page' === $template_type ) {
-			$template_label = 'Content';
+			$template_label = __( 'Content', 'elementor' );
 		}
 
 		/**

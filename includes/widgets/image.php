@@ -234,7 +234,7 @@ class Widget_Image extends Widget_Base {
 					],
 					'px' => [
 						'min' => 1,
-						'max' => 1999,
+						'max' => 1000,
 					],
 					'vw' => [
 						'min' => 1,
