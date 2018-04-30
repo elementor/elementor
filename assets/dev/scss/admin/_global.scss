@@ -1,4 +1,48 @@
 
+// Dashboard Icon
+#adminmenu {
+
+	#toplevel_page_elementor,
+	#toplevel_page_edit-post_type-elementor_library {
+
+		div.wp-menu-image:before {
+			content: "\e800";
+			font-family: eicons;
+			font-size: 14px;
+			margin-top: 3px;
+		}
+
+		// Menu Go Pro
+		a[href="admin.php?page=go_elementor_pro"] {
+			color: #d54e21;
+		}
+
+		.dashicons.dashicons-star-filled {
+			height: auto;
+		}
+	}
+}
+
+.elementor-plugins-gopro {
+	color: $editor-success;
+	font-weight: bold;
+}
+
+
+// Switcher Editor
+#elementor-switch-mode {
+	margin: 15px 0;
+}
+
+#elementor-editor-button {
+	outline: none;
+	cursor: pointer;
+
+	.eicon-elementor {
+		@include margin-end(5px);
+	}
+}
+
 body {
 
 	&.elementor-editor-active {
@@ -50,47 +94,39 @@ body {
 	}
 }
 
-// Dashboard Icon
-#adminmenu {
+// Gutenberg Support
+body {
 
-	#toplevel_page_elementor,
-	#toplevel_page_edit-post_type-elementor_library {
+	&.elementor-editor-active {
 
-		div.wp-menu-image:before {
-			content: "\e800";
-			font-family: eicons;
-			font-size: 14px;
-			margin-top: 3px;
+		.editor-block-list__layout {
+			display: none;
 		}
 
-		// Menu Go Pro
-		a[href="admin.php?page=go_elementor_pro"] {
-			color: #d54e21;
+		.edit-post-layout__content .edit-post-visual-editor {
+			flex-basis: auto;
 		}
 
-		.dashicons.dashicons-star-filled {
-			height: auto;
+		#elementor-editor {
+			margin-bottom: 50px;
 		}
 	}
-}
 
-.elementor-plugins-gopro {
-	color: $editor-success;
-	font-weight: bold;
-}
+	.gutenberg {
 
+		#elementor-switch-mode {
+			margin: 0 15px;
 
-// Switcher Editor
-#elementor-switch-mode {
-	margin: 15px 0;
-}
+			.button {
+				height: 33px;
+				line-height: 32px;
 
-#elementor-editor-button {
-	outline: none;
-	cursor: pointer;
-
-	.eicon-elementor {
-		@include margin-end(5px);
+				i {
+					font-size: 125%;
+					@include padding-end(5px);
+				}
+			}
+		}
 	}
 }
 
