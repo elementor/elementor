@@ -60,8 +60,7 @@ class Preview {
 
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
 
-		// Enqueue Style, Scripts & Fonts for external templates
-		add_action( 'wp_footer', [ Plugin::$instance->frontend, 'wp_footer' ] );
+		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
@@ -210,7 +209,6 @@ class Preview {
 	 */
 	private function enqueue_scripts() {
 		Plugin::$instance->frontend->register_scripts();
-		Plugin::$instance->frontend->enqueue_scripts();
 
 		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
 
@@ -232,6 +230,27 @@ class Preview {
 		 * @since 1.5.4
 		 */
 		do_action( 'elementor/preview/enqueue_scripts' );
+	}
+
+	/**
+	 * Elementor Preview footer scripts and styles.
+	 *
+	 * Handle styles and scripts from frontend.
+	 *
+	 * Fired by `wp_footer` action.
+	 *
+	 * @since 2.0.9
+	 * @access public
+	 */
+	public function wp_footer() {
+		$frontend = Plugin::$instance->frontend;
+		if ( $frontend->has_elementor_in_page() ) {
+			// Has header/footer/widget-template - enqueue all style/scripts/fonts.
+			$frontend->wp_footer();
+		} else {
+			// Enqueue only scripts.
+			$frontend->enqueue_scripts();
+		}
 	}
 
 	/**
