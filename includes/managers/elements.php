@@ -345,7 +345,7 @@ class Elements_Manager {
 				'icon' => 'font',
 			],
 			'woocommerce-elements' => [
-				'title' => __( 'Woocommerce Elements', 'elementor' ),
+				'title' => __( 'WooCommerce Elements', 'elementor' ),
 				'icon' => 'font',
 			],
 			'general' => [
