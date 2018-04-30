@@ -19,6 +19,7 @@
 		"autoprefixer": "~8.4.1",
 		"cssnano": "~3.10.0",
 		"grunt-checktextdomain": "~1.0.1",
+		"grunt-wp-readme-to-markdown-with-extra": "~2.2.0",
 		"grunt-bumpup": "~0.6.3",
 		"grunt-shell": "~2.1.0",
 		"grunt-text-replace": "~0.4.0",
