@@ -268,17 +268,28 @@ abstract class Controls_Stack {
 	/**
 	 * Get active controls.
 	 *
-	 * Retrieve an array of all the active controls that meet the condition field.
+	 * Retrieve an array of active controls that meet the condition field.
+	 *
+	 * If specific controls was given as a parameter, retrieve active controls
+	 * from that list, otherwise check for all the controls available.
 	 *
 	 * @since 1.4.0
+	 * @since 2.0.9 Added the `controls` and the `settings` parameters.
 	 * @access public
+	 *
+	 * @param array $controls Optional. An array of controls. Default is null.
+	 * @param array $settings Optional. Controls settings. Default is null.
 	 *
 	 * @return array Active controls.
 	 */
-	public function get_active_controls() {
-		$controls = $this->get_controls();
+	public function get_active_controls( array $controls = null, array $settings = null ) {
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
 
-		$settings = $this->get_controls_settings();
+		if ( ! $settings ) {
+			$settings = $this->get_controls_settings();
+		}
 
 		$active_controls = array_reduce(
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
@@ -692,16 +703,16 @@ abstract class Controls_Stack {
 	 * a specific set of controls.
 	 *
 	 * @since 1.4.0
+	 * @since 2.0.9 Added the `settings` parameter.
 	 * @access public
 	 *
 	 * @param array $controls Optional. Controls list. Default is null.
+	 * @param array $settings Optional. Controls settings. Default is null.
 	 *
 	 * @return array Style controls.
 	 */
-	final public function get_style_controls( $controls = null ) {
-		if ( null === $controls ) {
-			$controls = $this->get_active_controls();
-		}
+	final public function get_style_controls( array $controls = null, array $settings = null ) {
+		$controls = $this->get_active_controls( $controls, $settings );
 
 		$style_controls = [];
 
@@ -715,7 +726,13 @@ abstract class Controls_Stack {
 			$control = array_merge( $control_obj->get_settings(), $control );
 
 			if ( Controls_Manager::REPEATER === $control['type'] ) {
-				$control['style_fields'] = $this->get_style_controls( $control['fields'] );
+				$style_fields = [];
+
+				foreach ( $this->get_settings( $control_name ) as $item ) {
+					$style_fields[] = $this->get_style_controls( $control['fields'], $item );
+				}
+
+				$control['style_fields'] = $style_fields;
 			}
 
 			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || ! empty( $control['style_fields'] ) ) {
