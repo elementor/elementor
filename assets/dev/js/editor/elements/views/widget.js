@@ -15,7 +15,9 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
+		var baseClasses = BaseElementView.prototype.className.apply( this, arguments );
+
+		return baseClasses + ' elementor-widget ' + elementor.getElementData( this.getEditModel() ).html_wrapper_class;
 	},
 
 	events: function() {
@@ -158,7 +160,6 @@ WidgetView = BaseElementView.extend( {
         self.$el
 	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
             .removeClass( 'elementor-widget-empty' )
-	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) + ' elementor-widget-can-edit' )
             .children( '.elementor-widget-empty-icon' )
             .remove();
 

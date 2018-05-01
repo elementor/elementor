@@ -338,6 +338,7 @@ abstract class Widget_Base extends Element_Base {
 			'widget_type' => $this->get_name(),
 			'keywords' => $this->get_keywords(),
 			'categories' => $this->get_categories(),
+			'html_wrapper_class' => $this->get_html_wrapper_class(),
 		];
 
 		return array_merge( parent::_get_initial_config(), $config );
@@ -420,6 +421,42 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Get HTML wrapper class.
+	 *
+	 * Retrieve the widget container class. Can be used to override the
+	 * container class for specific widgets.
+	 *
+	 * @since 2.0.9
+	 * @access protected
+	 */
+	protected function get_html_wrapper_class() {
+		return 'elementor-widget-' . $this->get_name();
+	}
+
+	/**
+	 * Add widget render attributes.
+	 *
+	 * Used to add attributes to the current widget wrapper HTML tag.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
+	protected function _add_render_attributes() {
+		parent::_add_render_attributes();
+
+		$this->add_render_attribute(
+			'_wrapper', 'class', [
+				'elementor-widget',
+				$this->get_html_wrapper_class(),
+			]
+		);
+
+		$settings = $this->get_settings();
+
+		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
 	}
 
 	/**
@@ -506,29 +543,6 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function render_plain_content() {
 		$this->render_content();
-	}
-
-	/**
-	 * Add widget render attributes.
-	 *
-	 * Used to add attributes to the current widget wrapper HTML tag.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
-	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
-
-		$this->add_render_attribute(
-			'_wrapper', 'class', [
-				'elementor-widget',
-				'elementor-widget-' . $this->get_name(),
-			]
-		);
-
-		$settings = $this->get_settings();
-
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
 	}
 
 	/**

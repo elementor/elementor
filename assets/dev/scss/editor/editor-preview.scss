@@ -462,7 +462,7 @@ html.elementor-html {
 			transition: all .1s;
 		}
 
-		&.elementor-element-editable, &.elementor-widget-can-edit:hover {
+		&.elementor-element-editable, &.elementor-element-edit-mode:hover {
 			outline: 1px solid $editor-info;
 		}
 

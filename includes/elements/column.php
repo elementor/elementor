@@ -187,6 +187,7 @@ class Element_Column extends Element_Base {
 			'div',
 			'header',
 			'footer',
+			'main',
 			'article',
 			'section',
 			'aside',

@@ -1373,10 +1373,16 @@ class Source_Local extends Source_Base {
 	 * @return string Template label.
 	 */
 	private function get_template_label_by_type( $template_type ) {
-		$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
+		$document_types = Plugin::instance()->documents->get_document_types();
+
+		if ( isset( $document_types[ $template_type ] ) ) {
+			$template_label = call_user_func( [ $document_types[ $template_type ], 'get_title' ] );
+		} else {
+			$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
+		}
 
 		if ( 'page' === $template_type ) {
-			$template_label = 'Content';
+			$template_label = __( 'Content', 'elementor' );
 		}
 
 		/**
@@ -1416,8 +1422,8 @@ class Source_Local extends Source_Base {
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
 			// Template type column.
-			add_action( 'manage_' . Source_Local::CPT . '_posts_columns', [ $this, 'admin_columns_headers' ] );
-			add_action( 'manage_' . Source_Local::CPT . '_posts_custom_column', [ $this, 'admin_columns_content' ] , 10, 2 );
+			add_action( 'manage_' . self::CPT . '_posts_columns', [ $this, 'admin_columns_headers' ] );
+			add_action( 'manage_' . self::CPT . '_posts_custom_column', [ $this, 'admin_columns_content' ] , 10, 2 );
 
 			// Template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );

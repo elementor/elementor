@@ -366,7 +366,7 @@ class Frontend {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.2.1'
+			'3.3.0'
 		);
 
 		wp_register_style(

@@ -205,7 +205,6 @@ class Widget_Icon_List extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:not(:last-child):after' => 'content: ""',
 				],
-				'return_value' => 'yes',
 				'separator' => 'before',
 			]
 		);
