@@ -84,8 +84,8 @@ abstract class Base_Data_Control extends Base_Control {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param $dynamic_value    The dynamic tag text.
-	 * @param $dynamic_settings The dynamic tag settings.
+	 * @param string $dynamic_value    The dynamic tag text.
+	 * @param array  $dynamic_settings The dynamic tag settings.
 	 *
 	 * @return string|string[]|mixed A string or an array of strings with the
 	 *                               return value from each tag callback function.

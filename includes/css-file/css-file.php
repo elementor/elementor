@@ -777,22 +777,22 @@ abstract class CSS_File {
 	 * @since 2.0.0
 	 * @access private
 	 *
-	 * @param Controls_Stack $controls_stack    The control stack.
-	 * @param array          $repeater_controls The repeater controls.
-	 * @param array          $repeater_values   Repeater values array.
-	 * @param array          $placeholders      Placeholders.
-	 * @param array          $replacements      Replacements.
+	 * @param Controls_Stack $controls_stack          The control stack.
+	 * @param array          $repeater_controls_items The repeater controls items.
+	 * @param array          $repeater_values         Repeater values array.
+	 * @param array          $placeholders            Placeholders.
+	 * @param array          $replacements            Replacements.
 	 */
-	private function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_controls, array $repeater_values, array $placeholders, array $replacements ) {
+	private function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_controls_items, array $repeater_values, array $placeholders, array $replacements ) {
 		$placeholders = array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] );
 
-		foreach ( $repeater_values as $field_value ) {
+		foreach ( $repeater_controls_items as $index => $item ) {
 			$this->add_controls_stack_style_rules(
 				$controls_stack,
-				$repeater_controls,
-				$field_value,
+				$item,
+				$repeater_values[ $index ],
 				$placeholders,
-				array_merge( $replacements, [ '.elementor-repeater-item-' . $field_value['_id'] ] )
+				array_merge( $replacements, [ '.elementor-repeater-item-' . $repeater_values[ $index ]['_id'] ] )
 			);
 		}
 	}
