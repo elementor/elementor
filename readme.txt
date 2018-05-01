@@ -216,6 +216,20 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.0.9 - 2018-05-01 =
+* Tweak: Added ability to add Dynamic Tags from 3rd party applications
+* Tweak: Added ability to add custom classes to the wrapper for extending widgets
+* Tweak: Using full version of Select2.js in the admin
+* Tweak: Update Eicons v3.3
+* Fix: My Template tabs are not translatable ([#4221](https://github.com/pojome/elementor/issues/4221))
+* Fix: Added compatibility for domain mapping with filter tag ([#4307](https://github.com/pojome/elementor/issues/4307))
+* Fix: Popover closes after clicking on select2 search container ([#4310](https://github.com/pojome/elementor/issues/4310))
+* Fix: Wrapping Dynamic Tag in the editor
+* Fix: Removed unnecessary condition from Transition Duration control
+* Fix: Removed listening to parent model on Repeater control
+* Fix: Controls styling in repeater
+* Fix: Ensure the frontend scripts are enqueued once in the editor preview
+
 = 2.0.8 - 2018-04-23 =
 * Tweak: Added action hook for caching plugins when clearing CSS files `do_action( 'elementor/css-file/clear_cache' );` ([#4179](https://github.com/pojome/elementor/issues/4179))
 * Tweak: Added Page Templates support only for layout pages
