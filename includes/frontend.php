@@ -998,6 +998,10 @@ class Frontend {
 		$this->content_removed_filters = [];
 	}
 
+	public function has_elementor_in_page() {
+		return $this->_has_elementor_in_page;
+	}
+
 	/**
 	 * Front End constructor.
 	 *
