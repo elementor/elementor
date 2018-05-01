@@ -208,7 +208,7 @@ class Manager {
 			 *
 			 * @since 2.0.9
 			 *
-			 * @param Manager $this Dynamic tags  manager.
+			 * @param Manager $this Dynamic tags manager.
 			 */
 			do_action( 'elementor/dynamic_tags/register_tags', $this );
 		}
