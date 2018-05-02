@@ -384,12 +384,19 @@ abstract class Widget_Base extends Element_Base {
 					<i class="eicon-edit" aria-hidden="true"></i>
 					<span class="elementor-screen-only"><?php echo esc_html( $edit_title ); ?></span>
 				</li>
-				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+				<?php
+				$is_context_menu_enabled = ! ! get_option( 'elementor_context_menu', true );
+
+				foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) {
+					if ( $is_context_menu_enabled && 'edit' !== $edit_tool_name ) {
+						continue;
+					}
+					?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
 						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
 					</li>
-				<?php endforeach; ?>
+				<?php } ?>
 			</ul>
 		</div>
 		<?php
