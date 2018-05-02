@@ -30,6 +30,8 @@
 			elements.$body = $( 'body' );
 
 			elements.$elementor = elements.$document.find( '.elementor' );
+
+			elements.$wpAdminBar = elements.$document.find( '#wpadminbar' );
 		};
 
 		var bindEvents = function() {

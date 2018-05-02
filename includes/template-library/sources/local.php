@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor template library local source class.
+ * Elementor template library local source.
  *
  * Elementor template library local source handler class is responsible for
  * handling local Elementor templates saved by the user locally on his site.
@@ -173,13 +173,33 @@ class Source_Local extends Source_Base {
 		return __( 'Local', 'elementor' );
 	}
 
+	/**
+	 * Enqueue admin scripts.
+	 *
+	 * Registers all the admin scripts and enqueues them.
+	 *
+	 * Fired by `admin_enqueue_scripts` action.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function admin_enqueue_scripts() {
-		if ( in_array( get_current_screen()->id, [ 'elementor_library', 'edit-elementor_library' ] ) ) {
+		if ( in_array( get_current_screen()->id, [ 'elementor_library', 'edit-elementor_library' ], true ) ) {
 			wp_enqueue_script( 'elementor-dialog' );
 			add_action( 'admin_footer', [ $this, 'print_new_template_dialog' ] );
 		}
 	}
 
+	/**
+	 * Print new template dialog.
+	 *
+	 * Used to output the new template dialog.
+	 *
+	 * Fired by `admin_footer` action.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function print_new_template_dialog() {
 		$document_types = Plugin::$instance->documents->get_document_types();
 		$types = [];
@@ -215,7 +235,7 @@ class Source_Local extends Source_Base {
 					<span class="elementor-templates-modal__header__logo__icon-wrapper">
 						<i class="eicon-elementor"></i>
 					</span>
-					<span><?php echo __( 'Template Library', 'elementor' ); ?></span>
+					<span><?php echo __( 'New Template', 'elementor' ); ?></span>
 					</div>
 				</div>
 				<div class="elementor-templates-modal__header__items-area">
@@ -227,13 +247,16 @@ class Source_Local extends Source_Base {
 			</div>
 			<div id="elementor-new-template-dialog-content">
 				<div id="elementor-new-template__description">
-					<div id="elementor-new-template__description__get-started"><?php echo __( 'Templates Help You', 'elementor' ); ?></div>
-					<div id="elementor-new-template__description__elementor-builder"><?php echo __( 'Work Efficiently', 'elementor' ); ?></div>
+					<div id="elementor-new-template__description__title"><?php echo __( 'Templates Help You <span>Work Efficiently</span>', 'elementor' ); ?></div>
 					<div id="elementor-new-template__description__content"><?php echo __( 'Use templates to create the different pieces of your site, and reuse them with one click whenever needed.', 'elementor' ); ?></div>
+					<?php
+					/*
 					<div id="elementor-new-template__take_a_tour">
 						<i class="eicon-play-o"></i>
 						<a href="#"><?php echo __( 'Take The Video Tour', 'elementor' ); ?></a>
 					</div>
+                    */
+					?>
 				</div>
 				<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
 					<input type="hidden" name="post_type" value="elementor_library">
@@ -269,7 +292,7 @@ class Source_Local extends Source_Base {
 							<?php echo __( 'Name your template', 'elementor' ); ?>
 						</label>
 						<div class="elementor-form-field__text__wrapper">
-							<input type="text" placeholder="<?php echo esc_attr( __( 'Enter template name (optional)', 'elementor' ) );?>" id="elementor-new-template__form__post-title" class="elementor-form-field__text" name="post_data[post_title]">
+							<input type="text" placeholder="<?php echo esc_attr__( 'Enter template name (optional)', 'elementor' ); ?>" id="elementor-new-template__form__post-title" class="elementor-form-field__text" name="post_data[post_title]">
 						</div>
 					</div>
 					<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo __( 'Create Template', 'elementor' ); ?></button>
@@ -868,7 +891,7 @@ class Source_Local extends Source_Base {
 					<input type="hidden" name="_nonce" value="<?php echo Plugin::$instance->editor->create_nonce( self::CPT ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php echo __( 'Import Now', 'elementor' ); ?>">
+						<input type="submit" class="button" value="<?php echo esc_attr__( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
@@ -958,7 +981,7 @@ class Source_Local extends Source_Base {
 	 * Retrieve the link used to export a single template based on the template
 	 * ID.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @param int $template_id The template ID.
@@ -1098,6 +1121,20 @@ class Source_Local extends Source_Base {
 		return $redirect_to;
 	}
 
+	/**
+	 * Print admin tabs.
+	 *
+	 * Used to output the template library tabs with their labels.
+	 *
+	 * Fired by `views_edit-elementor_library` filter.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param array $views An array of available list table views.
+	 *
+	 * @return array An updated array of available list table views.
+	 */
 	public function admin_print_tabs( $views ) {
 		$current_type = '';
 		$active_class = ' nav-tab-active';
@@ -1109,7 +1146,7 @@ class Source_Local extends Source_Base {
 		$baseurl = admin_url( 'edit.php?post_type=' . self::CPT );
 		?>
 		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
-			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php esc_attr_e( 'All', 'elementor' ); ?></a>
+			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php echo __( 'All', 'elementor' ); ?></a>
 			<?php
 			foreach ( self::$_template_types as $template_type ) :
 				$active_class = '';
@@ -1129,6 +1166,19 @@ class Source_Local extends Source_Base {
 		return $views;
 	}
 
+	/**
+	 * Maybe render blank state.
+	 *
+	 * When the template library has no saved templates, display a blank admin page offering
+	 * to create the very first template.
+	 *
+	 * Fired by `manage_posts_extra_tablenav` action.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
 	public function maybe_render_blank_state( $which ) {
 		global $post_type;
 
@@ -1173,9 +1223,14 @@ class Source_Local extends Source_Base {
 		<div class="elementor-template_library-blank_state">
 			<div class="elementor-blank_state">
 				<i class="eicon-folder"></i>
-				<h2><?php printf( __( 'Create Your First %s', 'elementor' ), esc_html( $current_type_label ) ); ?></h2>
+				<h2>
+					<?php
+					/* translators: %s: Current Type Label */
+					printf( __( 'Create Your First %s', 'elementor' ), $current_type_label );
+					?>
+				</h2>
 				<p><?php echo __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimised workflow.', 'elementor' ); ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_attr( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php echo __( 'Add New', 'elementor' ); ?> <?php echo esc_html( $current_type_label ); ?></a>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php echo __( 'Add New', 'elementor' ); ?> <?php echo esc_html( $current_type_label ); ?></a>
 			</div>
 		</div>
 		<?php
@@ -1261,9 +1316,7 @@ class Source_Local extends Source_Base {
 
 		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
 
-		$template_type = self::get_template_type( $template_id );
-
-		if ( 'page' === $template_type ) {
+		if ( get_post_meta( $template_id, '_elementor_page_settings', true ) ) {
 			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $template_id );
 
 			$page_settings_data = $this->process_element_export_import_content( $page, 'on_export' );
@@ -1307,13 +1360,41 @@ class Source_Local extends Source_Base {
 		header( 'Content-Length: ' . $file_size );
 	}
 
+	/**
+	 * Get template label by type.
+	 *
+	 * Retrieve the template label for any given template type.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 *
+	 * @param string $template_type Template type.
+	 *
+	 * @return string Template label.
+	 */
 	private function get_template_label_by_type( $template_type ) {
-		$template_label = ucwords( str_replace( '_', ' ', $template_type ) );
+		$document_types = Plugin::instance()->documents->get_document_types();
 
-		if ( 'page' === $template_type ) {
-			$template_label = 'Content';
+		if ( isset( $document_types[ $template_type ] ) ) {
+			$template_label = call_user_func( [ $document_types[ $template_type ], 'get_title' ] );
+		} else {
+			$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
 		}
 
+		if ( 'page' === $template_type ) {
+			$template_label = __( 'Content', 'elementor' );
+		}
+
+		/**
+		 * Template label by template type.
+		 *
+		 * Filters the template label by template type in the template library .
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string $template_label Template label.
+		 * @param string $template_type  Template type.
+		 */
 		$template_label = apply_filters( 'elementor/template-library/get_template_label_by_type', $template_label, $template_type );
 
 		return $template_label;
@@ -1324,7 +1405,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * Register filters and actions for the template library.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 */
 	private function add_actions() {
@@ -1340,6 +1421,10 @@ class Source_Local extends Source_Base {
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
+			// Template type column.
+			add_action( 'manage_' . self::CPT . '_posts_columns', [ $this, 'admin_columns_headers' ] );
+			add_action( 'manage_' . self::CPT . '_posts_custom_column', [ $this, 'admin_columns_content' ] , 10, 2 );
+
 			// Template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );
 			add_filter( 'handle_bulk_actions-edit-elementor_library', [ $this, 'admin_export_multiple_templates' ], 10, 3 );
@@ -1352,6 +1437,31 @@ class Source_Local extends Source_Base {
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
+	}
+
+	public function admin_columns_content( $column_name, $post_id ) {
+		if ( 'elementor_library_type' === $column_name ) {
+			/** @var Document $document */
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$admin_filter_url = admin_url( '/edit.php?post_type=elementor_library&elementor_library_type=' . $document->get_name() );
+				printf( '<a href="%s">%s</a>', $admin_filter_url, $document->get_title() );
+			}
+		}
+	}
+
+	public function admin_columns_headers( $posts_columns ) {
+		// Replace original column that bind to the taxonomy - with another column.
+		unset( $posts_columns['taxonomy-elementor_library_type'] );
+
+		$offset = 2;
+
+		$posts_columns = array_slice( $posts_columns, 0, $offset, true ) + [
+				'elementor_library_type' => __( 'Type', 'elementor' ),
+			] + array_slice( $posts_columns, $offset, null, true );
+
+		return $posts_columns;
 	}
 
 	/**

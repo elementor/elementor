@@ -9,6 +9,7 @@ use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Post_CSS_File;
+use Elementor\Post_Preview_CSS;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor page settings manager class.
+ * Elementor page settings manager.
  *
  * Elementor page settings manager handler class is responsible for registering
  * and managing Elementor page settings managers.
@@ -54,14 +55,14 @@ class Manager extends BaseManager {
 	 * Whether the Custom Post Type supports templates.
 	 *
 	 * @since 1.6.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Utils::is_cpt_custom_templates_supported()` method instead.
 	 * @access public
 	 * @static
 	 *
 	 * @return bool True is templates are supported, False otherwise.
 	 */
 	public static function is_cpt_custom_templates_supported() {
-		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported' );
+		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported()' );
 
 		return Utils::is_cpt_custom_templates_supported();
 	}
@@ -91,12 +92,20 @@ class Manager extends BaseManager {
 	 * @return BaseModel The model object.
 	 */
 	public function get_model_for_config() {
+		if ( ! is_singular() && ! Plugin::$instance->editor->is_edit_mode() ) {
+			return null;
+		}
+
 		$post_id = get_the_ID();
 
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
 		} else {
 			$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+		}
+
+		if ( ! $document ) {
+			return null;
 		}
 
 		$model = $this->get_model( $document->get_post()->ID );
@@ -202,12 +211,14 @@ class Manager extends BaseManager {
 	 *
 	 * Retrieve the CSS file before updating it.
 	 *
+	 * This method overrides the parent method to disallow updating CSS files for pages.
+	 *
 	 * @since 1.6.0
 	 * @access protected
 	 *
 	 * @param int $id Post ID.
 	 *
-	 * @return Post_CSS_File The post CSS file object.
+	 * @return false Disallow The updating CSS files for pages.
 	 */
 	protected function get_css_file_for_update( $id ) {
 		return false;
@@ -274,7 +285,16 @@ class Manager extends BaseManager {
 			return null;
 		}
 
-		return $this->get_model( $css_file->get_post_id() );
+		$post_id = $css_file->get_post_id();
+
+		if ( $css_file instanceof Post_Preview_CSS ) {
+			$autosave = Utils::get_post_autosave( $post_id );
+			if ( $autosave ) {
+				$post_id = $autosave->ID;
+			}
+		}
+
+		return $this->get_model( $post_id );
 	}
 
 	/**
@@ -299,6 +319,10 @@ class Manager extends BaseManager {
 		];
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function save_post_status( $post_id, $status ) {
 		$parent_id = wp_is_post_revision( $post_id );
 

@@ -8,8 +8,7 @@ module.exports = ViewModule.extend( {
 			selectors: {
 				links: 'a[href*="#"]',
 				targets: '.elementor-element, .elementor-menu-anchor',
-				scrollable: 'html, body',
-				wpAdminBar: '#wpadminbar'
+				scrollable: 'html, body'
 			}
 		};
 	},
@@ -19,8 +18,7 @@ module.exports = ViewModule.extend( {
 			selectors = this.getSettings( 'selectors' );
 
 		return {
-			$scrollable: $( selectors.scrollable ),
-			$wpAdminBar: $( selectors.wpAdminBar )
+			$scrollable: $( selectors.scrollable )
 		};
 	},
 
@@ -43,11 +41,11 @@ module.exports = ViewModule.extend( {
 			return;
 		}
 
-		var hasAdminBar = ( 1 <= this.elements.$wpAdminBar.length ),
-			scrollTop = $anchor.offset().top;
+		var scrollTop = $anchor.offset().top,
+			$wpAdminBar = elementorFrontend.getElements( '$wpAdminBar' );
 
-		if ( hasAdminBar ) {
-			scrollTop -= this.elements.$wpAdminBar.height();
+		if ( $wpAdminBar.length > 0 ) {
+			scrollTop -= $wpAdminBar.height();
 		}
 
 		event.preventDefault();

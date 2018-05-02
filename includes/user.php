@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor user class.
+ * Elementor user.
  *
  * Elementor user handler class is responsible for checking if the user can edit
  * with Elementor and displaying different admin notices.
@@ -126,7 +126,7 @@ class User {
 	 *
 	 * Retrieve the list of notices for the current user.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *

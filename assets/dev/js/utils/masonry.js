@@ -26,17 +26,15 @@ module.exports = ViewModule.extend( {
 
 		distanceFromTop += parseInt( this.elements.$container.css( 'margin-top' ), 10 );
 
-		this.elements.$container.height( '' );
-
 		this.elements.$items.each( function( index ) {
 			var row = Math.floor( index / columnsCount ),
-				indexAtRow = index % columnsCount,
 				$item = jQuery( this ),
-				itemPosition = $item.position(),
 				itemHeight = $item[0].getBoundingClientRect().height + settings.verticalSpaceBetween;
 
 			if ( row ) {
-				var pullHeight = itemPosition.top - distanceFromTop - heights[ indexAtRow ];
+				var itemPosition = $item.position(),
+                    indexAtRow = index % columnsCount,
+                    pullHeight = itemPosition.top - distanceFromTop - heights[ indexAtRow ];
 
 				pullHeight -= parseInt( $item.css( 'margin-top' ), 10 );
 
@@ -44,12 +42,10 @@ module.exports = ViewModule.extend( {
 
 				$item.css( 'margin-top', pullHeight + 'px' );
 
-				heights[ indexAtRow ] += itemHeight;
+                heights[ indexAtRow ] += itemHeight;
 			} else {
 				heights.push( itemHeight );
 			}
 		} );
-
-		this.elements.$container.height( Math.max.apply( Math, heights ) );
 	}
 } );

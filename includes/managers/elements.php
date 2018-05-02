@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor elements manager class.
+ * Elementor elements manager.
  *
  * Elementor elements manager handler class is responsible for registering and
  * initializing all the supported elements.
@@ -239,7 +239,8 @@ class Elements_Manager {
 	 *
 	 * Fired by `wp_ajax_elementor_discard_changes` action.
 	 *
-	 * @since  1.9.0
+	 * @since 1.9.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->ajax_discard_changes()` method instead.
 	 * @access public
 	 *
 	 * @throws \Exception If the request has no post id.
@@ -263,6 +264,7 @@ class Elements_Manager {
 	 * Fired by `wp_ajax_elementor_save_builder` action.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->ajax_save()` method instead.
 	 * @access public
 	 *
 	 * @throws \Exception If the request has no post id.
@@ -278,10 +280,12 @@ class Elements_Manager {
 		$return_data = Plugin::$instance->documents->ajax_save( $request );
 
 		/**
+		 * Returned ajax data.
 		 *
 		 * Filters the ajax data returned when saving the post on the builder.
 		 *
 		 * @since 1.0.0
+		 * @deprecated 2.0.0 Use `elementor/documents/ajax_save/return_data` filter instead.
 		 *
 		 * @param array $return_data The returned data. Default is an empty array.
 		 */
@@ -296,7 +300,7 @@ class Elements_Manager {
 	 * Initialize Elementor elements by registering the supported elements.
 	 * Elementor supports by default `section` element and `column` element.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 */
 	private function init_elements() {
@@ -338,6 +342,10 @@ class Elements_Manager {
 			],
 			'theme-elements' => [
 				'title' => __( 'Theme Elements', 'elementor' ),
+				'icon' => 'font',
+			],
+			'woocommerce-elements' => [
+				'title' => __( 'Woocommerce Elements', 'elementor' ),
 				'icon' => 'font',
 			],
 			'general' => [

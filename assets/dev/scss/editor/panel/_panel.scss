@@ -57,10 +57,6 @@
 		width: 100%;
 	}
 
-	.elementor-panel-hide {
-		display: none;
-	}
-
 	// Global
 	@import "global";
 
@@ -87,4 +83,23 @@
 
     //Footer
     @import "footer";
+}
+
+// WP Media Modal Compatibility
+.media-modal.wp-core-ui {
+
+	input {
+		width: auto;
+	}
+
+	fieldset {
+		padding: 0;
+		border: 0;
+	}
+
+	.wp-clearfix::after {
+		content: '';
+		display: table;
+		clear: both;
+	}
 }

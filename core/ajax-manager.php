@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor ajax manager class.
+ * Elementor ajax manager.
  *
  * Elementor ajax manager handler class is responsible for handling Elementor
  * ajax requests, ajax responses and registering actions applied on them.
@@ -30,6 +30,16 @@ class Ajax_Manager {
 	 */
 	protected $ajax_actions = [];
 
+	/**
+	 * Ajax requests.
+	 *
+	 * Holds all the register ajax requests.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @var array
+	 */
 	protected $requests = [];
 
 	/**
@@ -45,9 +55,9 @@ class Ajax_Manager {
 	protected $response_data = [];
 
 	/**
-	 * Current action ID.
+	 * Current ajax action ID.
 	 *
-	 * Holds all the ID for the current action.
+	 * Holds all the ID for the current ajax action.
 	 *
 	 * @since 2.0.0
 	 * @access protected
@@ -57,12 +67,12 @@ class Ajax_Manager {
 	protected $current_action_id = null;
 
 	/**
-	 * Send ajax request.
+	 * Ajax success response.
 	 *
 	 * Send a JSON response data back to the ajax request, indicating success.
 	 *
-	 * @since  2.0.0
-	 * @access public
+	 * @since 2.0.0
+	 * @access protected
 	 */
 	protected function send_success() {
 		wp_send_json_success( [
@@ -71,12 +81,12 @@ class Ajax_Manager {
 	}
 
 	/**
-	 * Send ajax request.
+	 * Ajax failure response.
 	 *
-	 * Send a JSON response data back to the ajax request, indicating success.
+	 * Send a JSON response data back to the ajax request, indicating failure.
 	 *
-	 * @since  2.0.0
-	 * @access public
+	 * @since 2.0.0
+	 * @access protected
 	 *
 	 * @param null $code
 	 */
@@ -179,6 +189,16 @@ class Ajax_Manager {
 		$this->send_success();
 	}
 
+	/**
+	 * Get current action data.
+	 *
+	 * Retrieve the data for the current ajax request.
+	 *
+	 * @since 2.0.1
+	 * @access public
+	 *
+	 * @return bool|mixed Ajax request data if action exist, False otherwise.
+	 */
 	public function get_current_action_data() {
 		if ( ! $this->current_action_id ) {
 			return false;
@@ -192,7 +212,7 @@ class Ajax_Manager {
 	 *
 	 * Add new response data to the array of all the ajax requests.
 	 *
-	 * @since  2.0.0
+	 * @since 2.0.0
 	 * @access protected
 	 *
 	 * @param bool  $success True if the requests returned successfully, False

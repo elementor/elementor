@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor plugin class.
+ * Elementor plugin.
  *
  * The main plugin handler class is responsible for initializing Elementor. The
  * class registers and all the components required to run the plugin.
@@ -86,6 +86,13 @@ class Plugin {
 	public $debug;
 
 	/**
+	 * Documents manager.
+	 *
+	 * Holds the documents manager.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
 	 * @var Documents_Manager
 	 */
 	public $documents;
@@ -151,15 +158,25 @@ class Plugin {
 	public $maintenance_mode;
 
 	/**
-	 * Document settings manager.
-	 * Holds the document settings manager.
+	 * Page settings manager.
+	 *
+	 * Holds the page settings manager.
+	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
 	 * @var Page_Settings_Manager
 	 */
 	public $page_settings_manager;
 
 	/**
+	 * Dynamic tags manager.
+	 *
+	 * Holds the dynamic tags manager.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
 	 * @var Dynamic_Tags_Manager
 	 */
 	public $dynamic_tags;
@@ -181,7 +198,7 @@ class Plugin {
 	 *
 	 * Holds the plugin Role Manager
 	 *
-	 * @since ???
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @var \Elementor\Core\RoleManager\Role_Manager
@@ -326,7 +343,7 @@ class Plugin {
 	 * Holds the modules manager.
 	 *
 	 * @since 1.0.0
-	 * @access private
+	 * @access public
 	 *
 	 * @var Modules_Manager
 	 */
@@ -357,7 +374,7 @@ class Plugin {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
 	}
 
 	/**
@@ -370,7 +387,7 @@ class Plugin {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
 	}
 
 	/**

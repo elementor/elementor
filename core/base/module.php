@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor module class.
+ * Elementor module.
  *
- * A base abstract class that provides the needed properties and methods to
+ * An abstract class that provides the needed properties and methods to
  * manage and handle modules in inheriting classes.
  *
  * @since 1.7.0
@@ -84,6 +84,11 @@ abstract class Module {
 		return static::$_instances[ static::class_name() ];
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 */
 	public static function is_active() {
 		return true;
 	}
@@ -114,7 +119,7 @@ abstract class Module {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
 	}
 
 	/**
@@ -127,9 +132,13 @@ abstract class Module {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function get_reflection() {
 		if ( null === $this->reflection ) {
 			$this->reflection = new \ReflectionClass( $this );

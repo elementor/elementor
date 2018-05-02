@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor admin class.
+ * Elementor admin.
  *
  * Elementor admin handler class is responsible for initializing Elementor in
  * WordPress admin.
@@ -64,7 +64,7 @@ class Admin {
 
 		wp_enqueue_script( 'elementor-admin-app' );
 
-		if ( in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ] ) ) {
+		if ( in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ], true ) ) {
 			add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 
 			$this->enqueue_feedback_dialog_scripts();
@@ -90,7 +90,7 @@ class Admin {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.1.0'
+			'3.3.0'
 		);
 
 		wp_register_style(
@@ -249,7 +249,7 @@ class Admin {
 	public function body_status_classes( $classes ) {
 		global $pagenow;
 
-		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ] ) && Utils::is_post_type_support() ) {
+		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ], true ) && Utils::is_post_type_support() ) {
 			$post = get_post();
 
 			$mode_class = Plugin::$instance->db->is_built_with_elementor( $post->ID ) ? 'elementor-editor-active' : 'elementor-editor-inactive';
@@ -334,7 +334,7 @@ class Admin {
 			return;
 		}
 
-		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ] ) ) {
+		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true ) ) {
 			return;
 		}
 
@@ -414,8 +414,9 @@ class Admin {
 
 		if ( $is_elementor_screen ) {
 			$footer_text = sprintf(
-				/* translators: %s: Link to plugin review */
-				__( 'Enjoyed <strong>Elementor</strong>? Please leave us a %s rating. We really appreciate your support!', 'elementor' ),
+				/* translators: 1: Elementor, 2: Link to plugin review */
+				__( 'Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!', 'elementor' ),
+				'<strong>' . __( 'Elementor', 'elementor' ) . '</strong>',
 				'<a href="https://wordpress.org/support/plugin/elementor/reviews/?filter=5#new-post" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 			);
 		}
@@ -545,7 +546,7 @@ class Admin {
 			'e-dashboard-overview' => $dashboard['e-dashboard-overview'],
 		];
 
-		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $ours, $dashboard );
+		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $ours, $dashboard ); // WPCS: override ok.
 	}
 
 	/**
@@ -584,7 +585,7 @@ class Admin {
 			<div class="e-overview__header">
 				<div class="e-overview__logo"><i class="eicon-elementor-square"></i></div>
 				<div class="e-overview__versions">
-					<span class="e-overview__version"><?php echo __( 'Elementor', 'elementor' ); ?> v<?php echo esc_html( ELEMENTOR_VERSION ); ?></span>
+					<span class="e-overview__version"><?php echo __( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?></span>
 					<?php
 					/**
 					 * Elementor dashboard widget after the version.
@@ -598,7 +599,7 @@ class Admin {
 				</div>
 				<?php if ( ! empty( $create_new_cpt ) ) : ?>
 				<div class="e-overview__create">
-					<a href="<?php echo esc_attr( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
+					<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
 				</div>
 				<?php endif; ?>
 			</div>
@@ -756,7 +757,19 @@ class Admin {
 		}
 
 		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
-		$meta = apply_filters( 'elementor/admin/create_new_post/meta', [] );
+
+		$meta = [];
+
+		/**
+		 * Create new post meta data.
+		 *
+		 * Filters the meta data of any new post created.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $meta Post meta data.
+		 */
+		$meta = apply_filters( 'elementor/admin/create_new_post/meta', $meta );
 
 		$post_data['post_type'] = $post_type;
 

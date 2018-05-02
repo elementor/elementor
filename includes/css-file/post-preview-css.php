@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor post preview CSS file class.
+ * Elementor post preview CSS file.
  *
  * Elementor CSS file handler class is responsible for generating the post
  * preview CSS file.

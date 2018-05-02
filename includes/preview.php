@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor preview class.
+ * Elementor preview.
  *
  * Elementor preview handler class is responsible for initializing Elementor in
  * preview mode.
@@ -60,8 +60,7 @@ class Preview {
 
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
 
-		// Enqueue Style, Scripts & Fonts for external templates
-		add_action( 'wp_footer', [ Plugin::$instance->frontend, 'wp_footer' ] );
+		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
@@ -101,7 +100,7 @@ class Preview {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param int $post_id
+	 * @param int $post_id Optional. Post ID. Default is `0`.
 	 *
 	 * @return bool Whether preview mode is active.
 	 */
@@ -130,13 +129,21 @@ class Preview {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string $content
+	 * @param string $content The content of the builder.
 	 *
 	 * @return string HTML wrapper for the builder.
 	 */
 	public function builder_wrapper( $content ) {
 		if ( get_the_ID() === $this->post_id ) {
-			$content = '<div id="elementor" class="elementor elementor-edit-mode"></div>';
+			$classes = 'elementor-edit-mode';
+
+			$document = Plugin::$instance->documents->get( $this->post_id );
+
+			if ( $document ) {
+				$classes .= ' ' . $document->get_container_classes();
+			}
+
+			$content = '<div id="elementor" class="' . $classes . '"></div>';
 		}
 
 		return $content;
@@ -202,7 +209,6 @@ class Preview {
 	 */
 	private function enqueue_scripts() {
 		Plugin::$instance->frontend->register_scripts();
-		Plugin::$instance->frontend->enqueue_scripts();
 
 		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
 
@@ -224,6 +230,27 @@ class Preview {
 		 * @since 1.5.4
 		 */
 		do_action( 'elementor/preview/enqueue_scripts' );
+	}
+
+	/**
+	 * Elementor Preview footer scripts and styles.
+	 *
+	 * Handle styles and scripts from frontend.
+	 *
+	 * Fired by `wp_footer` action.
+	 *
+	 * @since 2.0.9
+	 * @access public
+	 */
+	public function wp_footer() {
+		$frontend = Plugin::$instance->frontend;
+		if ( $frontend->has_elementor_in_page() ) {
+			// Has header/footer/widget-template - enqueue all style/scripts/fonts.
+			$frontend->wp_footer();
+		} else {
+			// Enqueue only scripts.
+			$frontend->enqueue_scripts();
+		}
 	}
 
 	/**

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor autoloader class.
+ * Elementor autoloader.
  *
  * Elementor autoloader handler class is responsible for loading the different
  * classes needed to run the plugin.
@@ -52,6 +52,7 @@ class Autoloader {
 		'Group_Control_Base' => 'includes/controls/groups/base.php',
 		'Group_Control_Border' => 'includes/controls/groups/border.php',
 		'Group_Control_Box_Shadow' => 'includes/controls/groups/box-shadow.php',
+		'Group_Control_Css_Filter' => 'includes/controls/groups/css-filter.php',
 		'Group_Control_Image_Size' => 'includes/controls/groups/image-size.php',
 		'Group_Control_Interface' => 'includes/interfaces/group-control.php',
 		'Group_Control_Text_Shadow' => 'includes/controls/groups/text-shadow.php',

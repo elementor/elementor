@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor tracker class.
+ * Elementor tracker.
  *
  * Elementor tracker handler class is responsible for sending anonymous plugin
  * data to Elementor servers for users that actively allowed data tracking.
@@ -272,7 +272,7 @@ class Tracker {
 	 *
 	 * Retrieve the time when Elementor was installed.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -292,7 +292,7 @@ class Tracker {
 	 *
 	 * Retrieve the data from system reports.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -316,7 +316,7 @@ class Tracker {
 	 *
 	 * Retrieve the last time tracking data was sent.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -346,7 +346,7 @@ class Tracker {
 	 *
 	 * Retrieve the number of posts using Elementor.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -382,7 +382,7 @@ class Tracker {
 	 *
 	 * Retrieve the number of Elementor library items saved.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *

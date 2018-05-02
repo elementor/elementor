@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor maintenance mode class.
+ * Elementor maintenance mode.
  *
  * Elementor maintenance mode handler class is responsible for the Elementor
  * "Maintenance Mode" and the "Coming Soon" features.
@@ -106,7 +106,7 @@ class Maintenance_Mode {
 		}
 
 		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`.
-		$GLOBALS['post'] = get_post( self::get( 'template_id' ) );
+		$GLOBALS['post'] = get_post( self::get( 'template_id' ) ); // WPCS: override ok.
 
 		add_filter( 'template_include', [ $this, 'template_include' ], 1 );
 	}
@@ -148,13 +148,20 @@ class Maintenance_Mode {
 	 *
 	 * Adds new "Maintenance Mode" settings fields to Elementor admin page.
 	 *
+	 * The method need to receive the an instance of the Tools settings page
+	 * to add the new maintenance mode functionality.
+	 *
 	 * Fired by `elementor/admin/after_create_settings/{$page_id}` action.
 	 *
 	 * @since 1.4.0
 	 * @access public
+	 *
+	 * @param Tools $tools An instance of the Tools settings page.
 	 */
 	public function register_settings_fields( Tools $tools ) {
-		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( [ 'type' => 'page' ] );
+		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( [
+			'type' => 'page',
+		] );
 
 		$templates_options = [];
 
@@ -174,9 +181,8 @@ class Maintenance_Mode {
 								 __( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ) .
 								 '<br>' .
 								 sprintf(
-									/* translators: %s: Create page URL */
-									__( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ),
-									admin_url( 'post-new.php?post_type=' . Source_Local::CPT )
+									 /* translators: %s: Create page URL */
+									 __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT )
 								 ) .
 								 '</span>';
 

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor editor class.
+ * Elementor editor.
  *
  * Elementor editor handler class is responsible for initializing Elementor
  * editor and register all the actions needed to display the editor.
@@ -91,7 +91,10 @@ class Editor {
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
 		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
-		query_posts( [ 'p' => $this->_post_id, 'post_type' => get_post_type( $this->_post_id ) ] );
+		query_posts( [
+			'p' => $this->_post_id,
+			'post_type' => get_post_type( $this->_post_id ),
+		] );
 
 		Plugin::$instance->db->switch_to_post( $this->_post_id );
 
@@ -205,6 +208,10 @@ class Editor {
 			return $this->_is_edit_mode;
 		}
 
+		if ( empty( $post_id ) ) {
+			$post_id = $this->_post_id;
+		}
+
 		if ( ! User::is_current_user_can_edit( $post_id ) ) {
 			return false;
 		}
@@ -303,8 +310,8 @@ class Editor {
 		$plugin = Plugin::$instance;
 
 		// Reset global variable
-		$wp_styles = new \WP_Styles();
-		$wp_scripts = new \WP_Scripts();
+		$wp_styles = new \WP_Styles(); // WPCS: override ok.
+		$wp_scripts = new \WP_Scripts(); // WPCS: override ok.
 
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
@@ -379,7 +386,7 @@ class Editor {
 
 		wp_register_script(
 			'jquery-select2',
-			ELEMENTOR_ASSETS_URL . 'lib/select2/js/select2' . $suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/select2/js/select2.full' . $suffix . '.js',
 			[
 				'jquery',
 			],
@@ -539,7 +546,8 @@ class Editor {
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
-				'edit_element' => __( 'Edit {0}', 'elementor' ),
+				/* translators: %s: Element name. */
+				'edit_element' => __( 'Edit %s', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
@@ -579,7 +587,8 @@ class Editor {
 				'library' => __( 'Library', 'elementor' ),
 				'no' => __( 'No', 'elementor' ),
 				'page' => __( 'Page', 'elementor' ),
-				'save_your_template' => __( 'Save Your {0} to Library', 'elementor' ),
+				/* translators: %s: Template type. */
+				'save_your_template' => __( 'Save Your %s to Library', 'elementor' ),
 				'save_your_template_description' => __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				'section' => __( 'Section', 'elementor' ),
 				'templates_empty_message' => __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
@@ -606,18 +615,22 @@ class Editor {
 				// Gallery.
 				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
 				'dialog_confirm_gallery_delete' => __( 'Are you sure you want to reset this gallery?', 'elementor' ),
-				'gallery_images_selected' => __( '{0} Images Selected', 'elementor' ),
+				/* translators: %s: The number of images. */
+				'gallery_images_selected' => __( '%s Images Selected', 'elementor' ),
 				'gallery_no_images_selected' => __( 'No Images Selected', 'elementor' ),
 				'insert_media' => __( 'Insert Media', 'elementor' ),
 
 				// Take Over.
-				'dialog_user_taken_over' => __( '{0} has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ),
+				/* translators: %s: User name. */
+				'dialog_user_taken_over' => __( '%s has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ),
 				'go_back' => __( 'Go Back', 'elementor' ),
 				'take_over' => __( 'Take Over', 'elementor' ),
 
 				// Revisions.
-				'delete_element' => __( 'Delete {0}', 'elementor' ),
-				'dialog_confirm_delete' => __( 'Are you sure you want to remove this {0}?', 'elementor' ),
+				/* translators: %s: Element type. */
+				'delete_element' => __( 'Delete %s', 'elementor' ),
+				/* translators: %s: Template type. */
+				'dialog_confirm_delete' => __( 'Are you sure you want to remove this %s?', 'elementor' ),
 
 				// Saver.
 				'before_unload_alert' => __( 'Please note: All unsaved changes will be lost.', 'elementor' ),
@@ -666,8 +679,8 @@ class Editor {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param string $localized_settings Localized settings.
-		 * @param int    $post_id            The ID of the current post being edited.
+		 * @param array $localized_settings Localized settings.
+		 * @param int   $post_id            The ID of the current post being edited.
 		 */
 		$localized_settings = apply_filters( 'elementor/editor/localize_settings', $localized_settings, $this->_post_id );
 
@@ -741,7 +754,7 @@ class Editor {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.1.0'
+			'3.3.0'
 		);
 
 		wp_register_style(
