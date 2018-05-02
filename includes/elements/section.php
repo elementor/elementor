@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor section element class.
+ * Elementor section element.
  *
- * Elementor repeater handler class is responsible for initializing the section
+ * Elementor section handler class is responsible for initializing the section
  * element.
  *
  * @since 1.0.0
@@ -454,6 +454,7 @@ class Element_Section extends Element_Base {
 			'div',
 			'header',
 			'footer',
+			'main',
 			'article',
 			'section',
 			'aside',
@@ -592,7 +593,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'background_overlay_opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
@@ -632,7 +633,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
@@ -913,7 +914,7 @@ class Element_Section extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'transform: rotateY(180deg)',
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'transform: translateX(-50%) rotateY(180deg)',
 					],
 				]
 			);
@@ -1052,7 +1053,7 @@ class Element_Section extends Element_Base {
 		$this->start_controls_section(
 			'section_advanced',
 			[
-				'label' => __( 'Element Style', 'elementor' ),
+				'label' => __( 'Advanced', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -1098,6 +1099,7 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
+				'label_block' => false,
 			]
 		);
 
@@ -1108,7 +1110,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
-				'label_block' => true,
+				'label_block' => false,
 				'frontend_available' => true,
 			]
 		);
@@ -1153,8 +1155,8 @@ class Element_Section extends Element_Base {
 				'label' => __( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
-				'label_block' => true,
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
 			]
 		);
 
@@ -1165,8 +1167,8 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'prefix_class' => '',
-				'label_block' => true,
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'label_block' => false,
 			]
 		);
 
@@ -1277,7 +1279,7 @@ class Element_Section extends Element_Base {
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# if ( ! isInner ) { #>
 					<?php endif; ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_html( $edit_tool['title'] ); ?>">
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
 						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
 					</li>
@@ -1384,7 +1386,7 @@ class Element_Section extends Element_Base {
 	/**
 	 * Add section render attributes.
 	 *
-	 * Used to add render attributes to the section element.
+	 * Used to add attributes to the current section wrapper HTML tag.
 	 *
 	 * @since 1.3.0
 	 * @access protected

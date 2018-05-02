@@ -2,13 +2,14 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * Elementor template library remote source class.
+ * Elementor template library remote source.
  *
  * Elementor template library remote source handler class is responsible for
  * handling remote templates from Elementor.com servers.
@@ -211,6 +212,12 @@ class Source_Remote extends Source_Base {
 
 		$data['content'] = $this->replace_elements_ids( $data['content'] );
 		$data['content'] = $this->process_export_import_content( $data['content'], 'on_import' );
+
+		$post_id = $_POST['editor_post_id'];
+		$document = Plugin::$instance->documents->get( $post_id );
+		if ( $document ) {
+			$data['content'] = $document->get_elements_raw_data( $data['content'], true );
+		}
 
 		return $data;
 	}

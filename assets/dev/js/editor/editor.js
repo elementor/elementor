@@ -121,7 +121,7 @@ App = Marionette.Application.extend( {
 	backgroundClickListeners: {
 		popover: {
 			element: '.elementor-controls-popover',
-			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label'
+			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container'
 		},
 		tagsList: {
 			element: '.elementor-tags-list',
@@ -611,10 +611,9 @@ App = Marionette.Application.extend( {
 		}
 
 		this.$previewContents = this.$preview.contents();
+		this.$previewElementorEl = this.$previewContents.find( '#elementor' );
 
-		var $previewElementorEl = this.$previewContents.find( '#elementor' );
-
-		if ( ! $previewElementorEl.length ) {
+		if ( ! this.$previewElementorEl.length ) {
 			this.onPreviewElNotFound();
 
 			return;
@@ -626,7 +625,7 @@ App = Marionette.Application.extend( {
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
-			el: $previewElementorEl[0]
+			el: this.$previewElementorEl[0]
 		} );
 
 		this.schemes.init();
@@ -728,13 +727,21 @@ App = Marionette.Application.extend( {
 	},
 
 	onPreviewElNotFound: function() {
-		this.showFatalErrorDialog( {
-			headerMessage: this.translate( 'preview_el_not_found_header' ),
-			message: this.translate( 'preview_el_not_found_message' ),
-			onConfirm: function() {
-				open( elementor.config.help_the_content_url, '_blank' );
-			}
-		} );
+		var args = this.$preview[0].contentWindow.elementorPreviewErrorArgs;
+
+		if ( ! args ) {
+			args = {
+				headerMessage: this.translate( 'preview_el_not_found_header' ),
+				message: this.translate( 'preview_el_not_found_message' ),
+				confirmURL: elementor.config.help_the_content_url
+			};
+		}
+
+		args.onConfirm = function() {
+			open( args.confirmURL, '_blank' );
+		};
+
+		this.showFatalErrorDialog( args );
 	},
 
 	onBackgroundClick: function( event ) {
@@ -795,6 +802,10 @@ App = Marionette.Application.extend( {
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
+		this.$previewElementorEl
+			.removeClass( 'elementor-edit-area-active' )
+			.addClass( 'elementor-edit-area-preview' );
+
 		if ( hidePanel ) {
 			// Handle panel resize
 			this.$previewWrapper.css( this.config.is_rtl ? 'right' : 'left', '' );
@@ -807,6 +818,10 @@ App = Marionette.Application.extend( {
 		elementorFrontend.getElements( '$body' ).add( this.$body )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
+
+		this.$previewElementorEl
+			.removeClass( 'elementor-edit-area-preview' )
+			.addClass( 'elementor-edit-area-active' );
 	},
 
 	changeEditMode: function( newMode ) {
@@ -870,7 +885,18 @@ App = Marionette.Application.extend( {
 		}
 
 		if ( templateArgs ) {
+			// TODO: bc since 2.0.4
 			string = string.replace( /{(\d+)}/g, function( match, number ) {
+				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
+			} );
+
+			string = string.replace( /%(?:(\d+)\$)?s/g, function( match, number ) {
+				if ( ! number ) {
+					number = 1;
+				}
+
+				number--;
+
 				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
 			} );
 		}
@@ -929,12 +955,14 @@ App = Marionette.Application.extend( {
 		} else {
 			text += '%c00';
 
-			style = 'line-height: 1.6; font-size: 20px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat; background-size: cover';
+			style = 'font-size: 22px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
 		}
 
-		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
+		setTimeout( console.log.bind( console, text, style ) );
 
-		setTimeout( console.log.bind( console, text, style, 'color: #9B0A46', '' ) );
+		text = '%cLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
+
+		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) );
 	}
 } );
 

@@ -5,47 +5,76 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Elementor tag.
+ *
+ * An abstract class to register new Elementor tag.
+ *
+ * @since 2.0.0
+ * @abstract
+ */
 abstract class Tag extends Base_Tag {
 
-	final public function get_content( array $options = [] ) {
+	const WRAPPED_TAG = false;
+
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param array $options
+	 *
+	 * @return string
+	 */
+	public function get_content( array $options = [] ) {
 		$settings = $this->get_settings();
 
 		ob_start();
 
-		if ( ! empty( $options['wrap'] ) ) : ?>
-			<span id="elementor-tag-<?php echo esc_attr( $this->get_id() ); ?>" class="elementor-tag">
-		<?php
-		endif;
-
-		if ( ! empty( $settings['before'] ) ) {
-			echo wp_kses_post( $settings['before'] );
-		}
-
 		$this->render();
-
-		if ( ! empty( $settings['after'] ) ) {
-			echo wp_kses_post( $settings['after'] );
-		}
-
-		if ( ! empty( $options['wrap'] ) ) :
-		?>
-			</span>
-		<?php
-		endif;
 
 		$value = ob_get_clean();
 
-		if ( ! $value && ! empty( $settings['fallback'] ) ) {
+		if ( $value ) {
+			// TODO: fix spaces in `before`/`after` if WRAPPED_TAG ( conflicted with .elementor-tag { display: inline-flex; } );
+			if ( ! empty( $settings['before'] ) ) {
+				$value = wp_kses_post( $settings['before'] ) . $value;
+			}
+
+			if ( ! empty( $settings['after'] ) ) {
+				$value .= wp_kses_post( $settings['after'] );
+			}
+
+			if ( self::WRAPPED_TAG ) :
+				$value = '<span id="elementor-tag-' . esc_attr( $this->get_id() ) . '" class="elementor-tag">' . $value . '</span>';
+			endif;
+
+		} elseif ( ! empty( $settings['fallback'] ) ) {
 			$value = $settings['fallback'];
 		}
 
 		return $value;
 	}
 
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
 	final public function get_content_type() {
 		return 'ui';
 	}
 
+	public function get_editor_config() {
+		$config = parent::get_editor_config();
+
+		$config['wrapped_tag'] = $this::WRAPPED_TAG;
+
+		return $config;
+	}
+
+	/**
+	 * @since 2.0.0
+	 * @access protected
+	 */
 	protected function register_advanced_section() {
 		$this->start_controls_section(
 			'advanced',

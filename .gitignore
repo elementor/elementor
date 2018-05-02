@@ -5,6 +5,7 @@ build/
 log/
 vendor/
 composer.lock
+package-lock.json
 .project
 .vscode
 Thumbs.db

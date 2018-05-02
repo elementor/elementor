@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor template library import images class.
+ * Elementor template library import images.
  *
  * Elementor template library import images handler class is responsible for
  * importing remote images used by the template library.
@@ -33,7 +33,7 @@ class Import_Images {
 	 *
 	 * Retrieve the sha1 hash of the image URL.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @param string $attachment_url The attachment URL.
@@ -49,7 +49,7 @@ class Import_Images {
 	 *
 	 * Retrieve new image ID, if the image has a new ID after the import.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @param array $attachment The attachment.

@@ -9,10 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor history module class.
+ * Elementor history module.
  *
  * Elementor history module handler class is responsible for registering and
  * managing Elementor history modules.
+ *
+ * @since 1.7.0
  */
 class Module extends BaseModule {
 
@@ -21,6 +23,7 @@ class Module extends BaseModule {
 	 *
 	 * Retrieve the history module name.
 	 *
+	 * @since 1.7.0
 	 * @access public
 	 *
 	 * @return string Module name.
@@ -36,11 +39,12 @@ class Module extends BaseModule {
 	 *
 	 * Fired by `elementor/editor/localize_settings` filter.
 	 *
+	 * @since 1.7.0
 	 * @access public
 	 *
-	 * @param string $settings Localized settings.
+	 * @param array $settings Localized settings.
 	 *
-	 * @return string Localized settings.
+	 * @return array Localized settings.
 	 */
 	public function localize_settings( $settings ) {
 		$settings = array_replace_recursive( $settings, [
@@ -64,6 +68,7 @@ class Module extends BaseModule {
 	 *
 	 * Initializing Elementor history module.
 	 *
+	 * @since 1.7.0
 	 * @access public
 	 */
 	public function __construct() {

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor database class.
+ * Elementor database.
  *
  * Elementor database handler class is responsible for communicating with the
  * DB, save and retrieve Elementor data and meta data.
@@ -50,15 +50,25 @@ class DB {
 	/**
 	 * Switched post data.
 	 *
-	 * Holds the post data.
+	 * Holds the switched post data.
 	 *
 	 * @since 1.5.0
 	 * @access protected
 	 *
-	 * @var array Post data. Default is an empty array.
+	 * @var array Switched post data. Default is an empty array.
 	 */
 	protected $switched_post_data = [];
 
+	/**
+	 * Switched data.
+	 *
+	 * Holds the switched data.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @var array Switched data. Default is an empty array.
+	 */
 	protected $switched_data = [];
 
 	/**
@@ -67,7 +77,7 @@ class DB {
 	 * Save data from the editor to the database.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->save()` method instead.
 	 *
 	 * @access public
 	 *
@@ -78,7 +88,7 @@ class DB {
 	 * @return bool
 	 */
 	public function save_editor( $post_id, $data, $status = self::STATUS_PUBLISH ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->save()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->save()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
@@ -88,6 +98,9 @@ class DB {
 
 		return $document->save( [
 			'elements' => $data,
+			'settings' => [
+				'post_status' => $status,
+			],
 		] );
 	}
 
@@ -155,7 +168,7 @@ class DB {
 	 * was parsed by elementor.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get_elements_data()` method instead.
 	 *
 	 * @access public
 	 *
@@ -165,11 +178,15 @@ class DB {
 	 * @return array Post data.
 	 */
 	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_elements_data()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get_elements_data()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
-		return $document->get_elements_data( $status );
+		if ( $document ) {
+			return $document->get_elements_data( $status );
+		}
+
+		return [];
 	}
 
 	/**
@@ -178,7 +195,7 @@ class DB {
 	 * Retrieve the auto-saved post revision that is newer than current post.
 	 *
 	 * @since 1.9.0
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get_newer_autosave()` method instead.
 	 *
 	 * @access public
 	 *
@@ -186,9 +203,8 @@ class DB {
 	 *
 	 * @return \WP_Post|false The auto-saved post, or false.
 	 */
-
 	public function get_newer_autosave( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', '$document->get_newer_autosave()' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get_newer_autosave()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
@@ -269,7 +285,7 @@ class DB {
 	 * When saving data in the editor, this method renders recursively the plain
 	 * content containing only the content and the HTML. No CSS data.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @param array $element_data Element data.
@@ -364,6 +380,7 @@ class DB {
 	 * auto-save. Only then copy elementor meta from one post to another using
 	 * `copy_elementor_meta()`.
 	 *
+	 * @since 1.9.2
 	 * @access public
 	 *
 	 * @param int $from_post_id Original post ID.
@@ -448,7 +465,7 @@ class DB {
 	 * @since 1.5.0
 	 * @access public
 	 *
-	 * @param int $post_id Post ID.
+	 * @param int $post_id Post ID to switch to.
 	 */
 	public function switch_to_post( $post_id ) {
 		$post_id = absint( $post_id );
@@ -463,7 +480,8 @@ class DB {
 			'original_id' => get_the_ID(), // Note, it can be false if the global isn't set
 		];
 
-		$GLOBALS['post'] = get_post( $post_id );
+		$GLOBALS['post'] = get_post( $post_id ); // WPCS: override ok.
+
 		setup_postdata( $GLOBALS['post'] );
 	}
 
@@ -489,15 +507,22 @@ class DB {
 			return;
 		}
 
-		$GLOBALS['post'] = get_post( $data['original_id'] );
+		$GLOBALS['post'] = get_post( $data['original_id'] ); // WPCS: override ok.
+
 		setup_postdata( $GLOBALS['post'] );
 	}
 
 
 	/**
+	 * Switch to query.
+	 *
+	 * Change the WordPress query to a new query with the requested
+	 * query variables.
+	 *
+	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param $query_vars array
+	 * @param array $query_vars New query variables.
 	 */
 	public function switch_to_query( $query_vars ) {
 		global $wp_query;
@@ -516,18 +541,26 @@ class DB {
 			'original' => $wp_query,
 		];
 
-		$wp_query = $new_query;
+		$wp_query = $new_query; // WPCS: override ok.
 
 		// Ensure the global post is set only if needed
 		unset( $GLOBALS['post'] );
 
 		if ( $new_query->is_singular() && isset( $new_query->posts[0] ) ) {
-			$GLOBALS['post'] = $new_query->posts[0];
+			$GLOBALS['post'] = $new_query->posts[0]; // WPCS: override ok.
+
 			setup_postdata( $GLOBALS['post'] );
+		} elseif ( $new_query->is_author() ) {
+			$GLOBALS['authordata'] = get_userdata( $new_query->get( 'author' ) ); // WPCS: override ok.
 		}
 	}
 
 	/**
+	 * Restore current query.
+	 *
+	 * Rollback to the previous query, rolling back from `DB::switch_to_query()`.
+	 *
+	 * @since 2.0.0
 	 * @access public
 	 */
 	public function restore_current_query() {
@@ -540,14 +573,17 @@ class DB {
 
 		global $wp_query;
 
-		$wp_query = $data['original'];
+		$wp_query = $data['original']; // WPCS: override ok.
 
-		// Ensure the global post is set only if needed
+		// Ensure the global post/authordata is set only if needed.
 		unset( $GLOBALS['post'] );
+		unset( $GLOBALS['authordata'] );
 
 		if ( $wp_query->is_singular() && isset( $wp_query->posts[0] ) ) {
-			$GLOBALS['post'] = $wp_query->posts[0];
+			$GLOBALS['post'] = $wp_query->posts[0]; // WPCS: override ok.
 			setup_postdata( $GLOBALS['post'] );
+		} elseif ( $wp_query->is_author() ) {
+			$GLOBALS['authordata'] = get_userdata( $wp_query->get( 'author' ) ); // WPCS: override ok.
 		}
 	}
 
@@ -574,6 +610,7 @@ class DB {
 	 *
 	 * Retrieve the post plain text from any given Elementor data.
 	 *
+	 * @since 1.9.2
 	 * @access public
 	 *
 	 * @param array $data Post ID.

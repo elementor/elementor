@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor API class.
+ * Elementor API.
  *
  * Elementor API handler class is responsible for communicating with Elementor
  * remote servers retrieving templates data and to send uninstall feedback.
@@ -15,8 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Api {
 
+	/**
+	 * Elementor library option key.
+	 */
 	const LIBRARY_OPTION_KEY = 'elementor_remote_info_library';
 
+	/**
+	 * Elementor feed option key.
+	 */
 	const FEED_OPTION_KEY = 'elementor_remote_info_feed_data';
 
 	/**
@@ -60,7 +66,7 @@ class Api {
 	 *
 	 * This function notifies the user of upgrade notices, new templates and contributors.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -147,7 +153,7 @@ class Api {
 	 *
 	 * Retrieve the templates data from a remote server.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access public
 	 * @static
 	 *

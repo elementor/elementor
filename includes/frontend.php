@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor frontend class.
+ * Elementor frontend.
  *
  * Elementor frontend handler class is responsible for initializing Elementor in
  * the frontend.
@@ -142,7 +142,8 @@ class Frontend {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		}
 
-		add_action( 'wp_head', [ $this, 'print_fonts_links' ] );
+		// Priority 7 to allow google fonts in header template to load in <head> tag
+		add_action( 'wp_head', [ $this, 'print_fonts_links' ], 7 );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Add Edit with the Elementor in Admin Bar.
@@ -365,7 +366,7 @@ class Frontend {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.1.0'
+			'3.3.0'
 		);
 
 		wp_register_style(
@@ -434,16 +435,16 @@ class Frontend {
 			],
 		];
 
+		$elementor_frontend_config['settings'] = SettingsManager::get_settings_frontend_config();
+
 		if ( is_singular() ) {
 			$post = get_post();
-			$elementor_frontend_config['settings'] = SettingsManager::get_settings_frontend_config();
 			$elementor_frontend_config['post'] = [
 				'id' => $post->ID,
 				'title' => $post->post_title,
 				'excerpt' => $post->post_excerpt,
 			];
 		} else {
-			$elementor_frontend_config['settings'] = [];
 			$elementor_frontend_config['post'] = [
 				'id' => 0,
 				'title' => wp_get_document_title(),
@@ -492,7 +493,7 @@ class Frontend {
 	 */
 	public function enqueue_styles() {
 		/**
-		 * Before frontend enqueue styles.
+		 * Before frontend styles enqueued.
 		 *
 		 * Fires before Elementor frontend styles are enqueued.
 		 *
@@ -506,7 +507,7 @@ class Frontend {
 		wp_enqueue_style( 'elementor-frontend' );
 
 		/**
-		 * After frontend enqueue styles.
+		 * After frontend styles enqueued.
 		 *
 		 * Fires after Elementor frontend styles are enqueued.
 		 *
@@ -577,14 +578,18 @@ class Frontend {
 					 *
 					 * Fires when Elementor frontend fonts are printed on the HEAD tag.
 					 *
+					 * The dynamic portion of the hook name, `$font_type`, refers to the font type.
+					 *
 					 * @since 2.0.0
+					 *
+					 * @param string $font Font name.
 					 */
 					do_action( "elementor/fonts/print_font_links/{$font_type}", $font );
 			}
 		}
 		$this->fonts_to_enqueue = [];
 
-		$this->print_google_fonts( $google_fonts );
+		$this->enqueue_google_fonts( $google_fonts );
 	}
 
 	/**
@@ -598,9 +603,9 @@ class Frontend {
 	 * @access private
 	 *
 	 * @param array $google_fonts Optional. Google fonts to print in the frontend.
-     *                            Default is an empty array.
+	 *                            Default is an empty array.
 	 */
-	private function print_google_fonts( $google_fonts = [] ) {
+	private function enqueue_google_fonts( $google_fonts = [] ) {
 		static $google_fonts_index = 0;
 
 		$print_google_fonts = true;
@@ -807,7 +812,7 @@ class Frontend {
 		}
 
 		?>
-		<div class="elementor elementor-<?php echo esc_attr( $post_id ); ?>">
+		<div class="<?php echo esc_attr( $document->get_container_classes() ); ?>">
 			<div class="elementor-inner">
 				<div class="elementor-section-wrap">
 					<?php $this->_print_elements( $data ); ?>
@@ -991,6 +996,10 @@ class Frontend {
 			add_filter( 'the_content', $filter );
 		}
 		$this->content_removed_filters = [];
+	}
+
+	public function has_elementor_in_page() {
+		return $this->_has_elementor_in_page;
 	}
 
 	/**

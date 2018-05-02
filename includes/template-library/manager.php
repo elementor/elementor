@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor template library manager class.
+ * Elementor template library manager.
  *
  * Elementor template library manager handler class is responsible for
  * initializing the template library.
@@ -207,10 +207,10 @@ class Manager {
 		];
 	}
 
-	 /**
- 	 * Save template.
- 	 *
- 	 * Save new or update existing template on the database.
+	/**
+	 * Save template.
+	 *
+	 * Save new or update existing template on the database.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -338,6 +338,8 @@ class Manager {
 		if ( ! $source ) {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
+
+		do_action( 'elementor/template-library/before_get_source_data', $args, $source );
 
 		return $source->get_data( $args );
 	}

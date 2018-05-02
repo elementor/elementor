@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Element Base.
+ * Elementor element base.
  *
  * An abstract class to register new Elementor elements. It extended the
  * `Controls_Stack` class to inherit its properties.
@@ -217,16 +217,11 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 * @static
 	 *
-	 * @param string $tool_name Edit tool name.
-	 * @param array  $tool_data {
-	 *     Edit tool data.
-	 *
-	 *     @type string $title  Edit tool title.
-	 *     @type string $icon   Edit tool icon.
-	 * }
-	 * @param string $after     Optional. If tool ID defined, the new edit tool
-	 *                          will be added after it. If null, the new edit
-	 *                          tool will be added at the end. Default is null.
+	 * @param string   $tool_name Edit tool name.
+	 * @param string[] $tool_data Edit tool data.
+	 * @param string   $after     Optional. If tool ID defined, the new edit tool
+	 *                            will be added after it. If null, the new edit
+	 *                            tool will be added at the end. Default is null.
 	 *
 	 */
 	final public static function add_edit_tool( $tool_name, $tool_data, $after = null ) {
@@ -285,7 +280,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Register default edit tools.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 */
@@ -372,6 +367,17 @@ abstract class Element_Base extends Controls_Stack {
 		return false;
 	}
 
+	/**
+	 * Print element content template.
+	 *
+	 * Used to generate the element content template on the editor, using a
+	 * Backbone JavaScript template.
+	 *
+	 * @access protected
+	 * @since 2.0.0
+	 *
+	 * @param string $template_content Template content.
+	 */
 	protected function print_template_content( $template_content ) {
 		$this->render_edit_tools();
 
@@ -419,12 +425,14 @@ abstract class Element_Base extends Controls_Stack {
 	 * Retrieve the element parent. Used to check which element it belongs to.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 1.7.6
+	 * @deprecated 1.7.6 Use `Element_Base::get_data( 'parent' )` instead.
 	 * @access public
 	 *
 	 * @return Element_Base Parent element.
 	 */
 	public function get_parent() {
+		// Todo: _deprecated_function( __METHOD__, '1.7.6', '$this->get_data( 'parent' )' );
+
 		return $this->get_data( 'parent' );
 	}
 
@@ -463,13 +471,17 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Add render attribute.
 	 *
-	 * Used to add render attribute to specific HTML elements.
+	 * Used to add attributes to a specific HTML element.
+	 *
+	 * The HTML tag is represented by the element parameter, then you need to
+	 * define the attribute key and the attribute key. The final result will be:
+	 * `<element attribute_key="attribute_value">`.
 	 *
 	 * Example usage:
 	 *
 	 * `$this->add_render_attribute( 'wrapper', 'class', 'custom-widget-wrapper-class' );`
-	 * `$this->add_render_attribute( 'widget', 'id', 'custom-widget-id' );
-	 * `$this->add_render_attribute( 'button', [ 'class' => 'custom-button-class', 'id' => 'custom-button-id' ] );
+	 * `$this->add_render_attribute( 'widget', 'id', 'custom-widget-id' );`
+	 * `$this->add_render_attribute( 'button', [ 'class' => 'custom-button-class', 'id' => 'custom-button-id' ] );`
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -562,6 +574,16 @@ abstract class Element_Base extends Controls_Stack {
 		return implode( ' ', $attributes );
 	}
 
+	/**
+	 * Print render attribute string.
+	 *
+	 * Used to output the rendered attribute.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param array|string $element The element.
+	 */
 	public function print_render_attribute_string( $element ) {
 		echo $this->get_render_attribute_string( $element ); // XSS ok.
 	}
@@ -671,11 +693,11 @@ abstract class Element_Base extends Controls_Stack {
 	 * Used to generate the edit tools HTML.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 1.8.0 Use `render_edit_tools()` instead.
+	 * @deprecated 1.8.0 Use `Element_Base::render_edit_tools()` instead.
 	 * @access protected
 	 */
 	protected function _render_settings() {
-		_deprecated_function( esc_html( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ) ), '1.8.0', 'render_edit_tools()' );
+		_deprecated_function( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), '1.8.0', '$this->render_edit_tools()' );
 
 		$this->render_edit_tools();
 	}
@@ -707,7 +729,7 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Add render attributes.
 	 *
-	 * Used to add render attributes to the element.
+	 * Used to add attributes to the current element wrapper HTML tag.
 	 *
 	 * @since 1.3.0
 	 * @access protected
@@ -815,7 +837,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Retrieve the element child type based on element data.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @param array $element_data Element ID.
@@ -851,7 +873,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Initializing the element child elements.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 */
 	private function init_children() {

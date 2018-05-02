@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor main system info page class.
+ * Elementor main system info page.
  *
  * Elementor main system info page handler class responsible for creating system info
  * reports and displaying them on WordPress dashboard under Elementor setting.
@@ -129,7 +129,7 @@ class Main {
 	 * @access private
 	 */
 	private function add_actions() {
-		add_action( 'admin_menu', [ $this, 'register_menu' ], 501 );
+		add_action( 'admin_menu', [ $this, 'register_menu' ], 500 );
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
 	}
 

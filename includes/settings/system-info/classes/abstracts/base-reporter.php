@@ -8,10 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor reporter base class.
+ * Elementor base reporter.
  *
  * A base abstract class that provides the needed properties and methods to
- * manage and handle reporter inheriting classes.
+ * manage and handle reporter in inheriting classes.
  *
  * @since 1.0.0
  * @abstract

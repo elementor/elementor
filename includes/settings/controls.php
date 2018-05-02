@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor settings controls class.
+ * Elementor settings controls.
  *
  * Elementor settings controls handler class responsible for creating the final
  * HTML for various input field types used in Elementor settings pages.
@@ -56,7 +56,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for text controls.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -67,7 +67,7 @@ class Settings_Controls {
 			$field['classes'] = [ 'regular-text' ];
 		}
 		?>
-		<input type="<?php echo esc_attr( $field['type'] ); ?>" class="<?php echo esc_attr( implode( ' ', $field['classes'] ) ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo esc_attr( get_option( $field['id'], $field['std'] ) ); ?>"<?php echo ! empty( $field['placeholder'] ) ? ' placeholder="' . $field['placeholder'] . '"' : ''; ?> />
+		<input type="<?php echo esc_attr( $field['type'] ); ?>" class="<?php echo esc_attr( implode( ' ', $field['classes'] ) ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo esc_attr( get_option( $field['id'], $field['std'] ) ); ?>"<?php echo ! empty( $field['placeholder'] ) ? ' placeholder="' . esc_attr( $field['placeholder'] ) . '"' : ''; ?> />
 		<?php
 		if ( ! empty( $field['sub_desc'] ) ) :
 			echo $field['sub_desc'];
@@ -84,7 +84,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for checkbox controls.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -111,7 +111,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for checkbox list controls.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -141,7 +141,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for select controls.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -171,7 +171,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for checkbox list controls populated with Custom Post Types.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -205,7 +205,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for checkbox list controls populated with user roles.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *
@@ -234,7 +234,7 @@ class Settings_Controls {
 	 *
 	 * Generates the final HTML for raw HTML controls.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 * @static
 	 *

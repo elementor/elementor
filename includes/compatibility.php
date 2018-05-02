@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor compatibility class.
+ * Elementor compatibility.
  *
  * Elementor compatibility handler class is responsible for compatibility with
  * external plugins. The class resolves different issues with non-compatible
@@ -85,7 +85,7 @@ class Compatibility {
 					return;
 				}
 
-				var url = '<?php echo esc_attr( Utils::get_create_new_post_url( $typenow ) ); ?>';
+				var url = '<?php echo esc_url( Utils::get_create_new_post_url( $typenow ) ); ?>';
 
 				dropdown.insertAdjacentHTML( 'afterbegin', '<a href="' + url + '">Elementor</a>' );
 			} );
@@ -201,7 +201,7 @@ class Compatibility {
 
 		// Fix Preview URL for https://premium.wpmudev.org/project/domain-mapping/ plugin
 		if ( class_exists( 'domain_map' ) ) {
-			add_filter( 'elementor/utils/preview_url', function( $preview_url ) {
+			add_filter( 'elementor/document/urls/preview', function( $preview_url ) {
 				if ( wp_parse_url( $preview_url, PHP_URL_HOST ) !== $_SERVER['HTTP_HOST'] ) {
 					$preview_url = \domain_map::utils()->unswap_url( $preview_url );
 					$preview_url = add_query_arg( [
@@ -220,6 +220,15 @@ class Compatibility {
 		}
 	}
 
+	/**
+	 * Polylang compatibility.
+	 *
+	 * Fix Polylang compatibility with Elementor.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 * @static
+	 */
 	private static function polylang_compatibility() {
 		// Fix language if the `get_user_locale` is difference from the `get_locale
 		if ( isset( $_REQUEST['action'] ) && 0 === strpos( $_REQUEST['action'], 'elementor' ) ) {
@@ -246,8 +255,9 @@ class Compatibility {
 	/**
 	 * Save polylang meta.
 	 *
-	 * Copy elementor data while polylang creates a translation copy. Fired by
-	 * `pll_copy_post_metas` filter.
+	 * Copy elementor data while polylang creates a translation copy.
+	 *
+	 * Fired by `pll_copy_post_metas` filter.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -255,8 +265,8 @@ class Compatibility {
 	 *
 	 * @param array $keys List of custom fields names.
 	 * @param bool  $sync True if it is synchronization, false if it is a copy.
-	 * @param int   $from ID of the post from which we copy informations.
-	 * @param int   $to   ID of the post to which we paste informations.
+	 * @param int   $from ID of the post from which we copy information.
+	 * @param int   $to   ID of the post to which we paste information.
 	 *
 	 * @return array List of custom fields names.
 	 */

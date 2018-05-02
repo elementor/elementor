@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor page settings model class.
+ * Elementor page settings model.
  *
  * Elementor page settings model handler class is responsible for registering
  * and managing Elementor page settings models.
@@ -100,7 +100,7 @@ class Model extends BaseModel {
 	 * @return string CSS wrapper selector.
 	 */
 	public function get_css_wrapper_selector() {
-		return 'body.elementor-page-' . $this->get_id();
+		return 'body.elementor-page-' . $this->post_parent->ID;
 	}
 
 	/**

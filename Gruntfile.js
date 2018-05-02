@@ -153,6 +153,7 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
 					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
+					'assets/js/gutenberg.js': [ 'assets/dev/js/admin/gutenberg.js' ],
 					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ]
 				},
 				options: pkgInfo.browserify
@@ -186,6 +187,9 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/admin-feedback.min.js': [
 						'assets/js/admin-feedback.js'
+					],
+					'assets/js/gutenberg.min.js': [
+						'assets/js/gutenberg.js'
 					],
 					'assets/js/frontend.min.js': [
 						'assets/js/frontend.js'
@@ -405,6 +409,7 @@ module.exports = function( grunt ) {
 					'!vendor/**',
 					'!Gruntfile.js',
 					'!package.json',
+					'!package-lock.json',
 					'!npm-debug.log',
 					'!composer.json',
 					'!composer.lock',

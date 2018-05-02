@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Controls Stack.
+ * Elementor controls stack.
  *
- * A base abstract class that provides the needed properties and methods to
+ * An abstract class that provides the needed properties and methods to
  * manage and handle controls in the editor panel to inheriting classes.
  *
  * @since 1.4.0
@@ -203,7 +203,7 @@ abstract class Controls_Stack {
 	 * will be returned.
 	 *
 	 * @since 1.4.0
-	 * @access private
+	 * @access protected
 	 * @static
 	 *
 	 * @param array  $haystack An array of items.
@@ -251,7 +251,7 @@ abstract class Controls_Stack {
 	 * Get controls.
 	 *
 	 * Retrieve all the controls or, when requested, a specific control.
- 	 *
+	 *
 	 * @since 1.4.0
 	 * @access public
 	 *
@@ -268,17 +268,28 @@ abstract class Controls_Stack {
 	/**
 	 * Get active controls.
 	 *
-	 * Retrieve an array of all the active controls that meet the condition field.
+	 * Retrieve an array of active controls that meet the condition field.
+	 *
+	 * If specific controls was given as a parameter, retrieve active controls
+	 * from that list, otherwise check for all the controls available.
 	 *
 	 * @since 1.4.0
+	 * @since 2.0.9 Added the `controls` and the `settings` parameters.
 	 * @access public
+	 *
+	 * @param array $controls Optional. An array of controls. Default is null.
+	 * @param array $settings Optional. Controls settings. Default is null.
 	 *
 	 * @return array Active controls.
 	 */
-	public function get_active_controls() {
-		$controls = $this->get_controls();
+	public function get_active_controls( array $controls = null, array $settings = null ) {
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
 
-		$settings = $this->get_controls_settings();
+		if ( ! $settings ) {
+			$settings = $this->get_controls_settings();
+		}
 
 		$active_controls = array_reduce(
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
@@ -341,7 +352,7 @@ abstract class Controls_Stack {
 			$options['index'] = $this->injection_point['index']++;
 		}
 
-		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ] ) ) {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ], true ) ) {
 			$target_section_args = $this->_current_section;
 
 			$target_tab = $this->_current_tab;
@@ -356,7 +367,7 @@ abstract class Controls_Stack {
 
 			if ( null !== $target_section_args ) {
 				if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
-					_doing_it_wrong( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', esc_html( $id ) ), '1.0.0' );
+					_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', $id ), '1.0.0' );
 				}
 
 				$args = array_replace_recursive( $target_section_args, $args );
@@ -365,7 +376,7 @@ abstract class Controls_Stack {
 					$args = array_merge( $args, $target_tab );
 				}
 			} elseif ( empty( $args['section'] ) && ( ! $options['overwrite'] || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id ) ) ) ) {
-				wp_die( sprintf( '%1$s::%2$s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) );
+				wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) );
 			}
 		}
 
@@ -501,10 +512,10 @@ abstract class Controls_Stack {
 		$position = array_merge( $default_position, $position );
 
 		if (
-			'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ] ) ||
-			'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ] )
+			'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ], true ) ||
+			'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ], true )
 		) {
-			_doing_it_wrong( sprintf( '%1$s::%2$s', get_called_class(), __FUNCTION__ ), 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' );
+			_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' );
 
 			return false;
 		}
@@ -651,15 +662,7 @@ abstract class Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $group_name Group control name.
-	 * @param array  $args       {
-	 *     Group control arguments. Default is an empty array.
-	 *
-	 *     @type string $name      Base Control name.
-	 *     @type string $selector  CSS Selector
-	 *     @type string $scheme    Global scheme to be used.
-	 *     @type array  $condition Display control based on predefined conditional
-	 *                             logic.
-	 * }
+	 * @param array  $args       Group control arguments. Default is an empty array.
 	 * @param array  $options    Optional. Group control options. Default is an
 	 *                           empty array.
 	 */
@@ -667,7 +670,7 @@ abstract class Controls_Stack {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
 		if ( ! $group ) {
-			wp_die( sprintf( '%1$s::%2$s: Group "%3$s" not found.', get_called_class(), __FUNCTION__, $group_name ) );
+			wp_die( sprintf( '%s::%s: Group "%s" not found.', get_called_class(), __FUNCTION__, $group_name ) );
 		}
 
 		$group->add_controls( $this, $args, $options );
@@ -700,16 +703,16 @@ abstract class Controls_Stack {
 	 * a specific set of controls.
 	 *
 	 * @since 1.4.0
+	 * @since 2.0.9 Added the `settings` parameter.
 	 * @access public
 	 *
 	 * @param array $controls Optional. Controls list. Default is null.
+	 * @param array $settings Optional. Controls settings. Default is null.
 	 *
 	 * @return array Style controls.
 	 */
-	final public function get_style_controls( $controls = null ) {
-		if ( null === $controls ) {
-			$controls = $this->get_active_controls();
-		}
+	final public function get_style_controls( array $controls = null, array $settings = null ) {
+		$controls = $this->get_active_controls( $controls, $settings );
 
 		$style_controls = [];
 
@@ -723,7 +726,13 @@ abstract class Controls_Stack {
 			$control = array_merge( $control_obj->get_settings(), $control );
 
 			if ( Controls_Manager::REPEATER === $control['type'] ) {
-				$control['style_fields'] = $this->get_style_controls( $control['fields'] );
+				$style_fields = [];
+
+				foreach ( $this->get_settings( $control_name ) as $item ) {
+					$style_fields[] = $this->get_style_controls( $control['fields'], $item );
+				}
+
+				$control['style_fields'] = $style_fields;
 			}
 
 			if ( ! empty( $control['selectors'] ) || ! empty( $control['dynamic'] ) || ! empty( $control['style_fields'] ) ) {
@@ -842,7 +851,9 @@ abstract class Controls_Stack {
 			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
 
 			if ( ! empty( $options['overwrite'] ) ) {
-				$this->update_control( $id . $id_suffix, $control_args, [ 'recursive' => ! empty( $options['recursive'] ) ] );
+				$this->update_control( $id . $id_suffix, $control_args, [
+					'recursive' => ! empty( $options['recursive'] ),
+				] );
 			} else {
 				$this->add_control( $id . $id_suffix, $control_args, $options );
 			}
@@ -864,7 +875,10 @@ abstract class Controls_Stack {
 	 * @param array  $options Optional. Additional options.
 	 */
 	final public function update_responsive_control( $id, array $args, array $options = [] ) {
-		$this->add_responsive_control( $id, $args, [ 'overwrite' => true, 'recursive' => ! empty( $options['recursive'] ) ] );
+		$this->add_responsive_control( $id, $args, [
+			'overwrite' => true,
+			'recursive' => ! empty( $options['recursive'] ),
+		] );
 	}
 
 	/**
@@ -970,7 +984,7 @@ abstract class Controls_Stack {
 	 * Get the raw data.
 	 *
 	 * Retrieve all the items or, when requested, a specific item.
- 	 *
+	 *
 	 * @since 1.4.0
 	 * @access public
 	 *
@@ -986,7 +1000,7 @@ abstract class Controls_Stack {
 	 * Get the settings.
 	 *
 	 * Retrieve all the settings or, when requested, a specific setting.
- 	 *
+	 *
 	 * @since 1.4.0
 	 * @access public
 	 *
@@ -1018,9 +1032,28 @@ abstract class Controls_Stack {
 		return array_merge( $settings_mask, $active_settings );
 	}
 
+	/**
+	 * Get settings for display.
+	 *
+	 * Retrieve all the settings or, when requested, a specific setting for display.
+	 *
+	 * Unlike `get_settings()` method, this method retrieves only active settings
+	 * that passed all the conditions, rendered all the shortcodes and all the dynamic
+	 * tags.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param string $setting_key Optional. The key of the requested setting.
+	 *                            Default is null.
+	 *
+	 * @return array The settings.
+	 */
 	public function get_settings_for_display( $setting_key = null ) {
 		if ( $setting_key ) {
-			$settings = [ $setting_key => $this->get_settings( $setting_key ) ];
+			$settings = [
+				$setting_key => $this->get_settings( $setting_key ),
+			];
 		} else {
 			$settings = $this->get_active_settings();
 		}
@@ -1034,6 +1067,20 @@ abstract class Controls_Stack {
 		return $parsed_settings;
 	}
 
+	/**
+	 * Parse dynamic settings.
+	 *
+	 * Retrieve the settings with rendered dynamic tags.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param array $settings     Optional. The requested setting. Default is null.
+	 * @param array $controls     Optional. The controls array. Default is null.
+	 * @param array $all_settings Optional. All the settings. Default is null.
+	 *
+	 * @return array The settings with rendered dynamic tags.
+	 */
 	public function parse_dynamic_settings( $settings, $controls = null, $all_settings = null ) {
 		if ( null === $all_settings ) {
 			$all_settings = $this->get_settings();
@@ -1198,9 +1245,9 @@ abstract class Controls_Stack {
 			 * otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
 			 */
 			if ( is_array( $condition_value ) && ! empty( $condition_value ) ) {
-				$is_contains = in_array( $instance_value, $condition_value );
+				$is_contains = in_array( $instance_value, $condition_value, true );
 			} elseif ( is_array( $instance_value ) && ! empty( $instance_value ) ) {
-				$is_contains = in_array( $condition_value, $instance_value );
+				$is_contains = in_array( $condition_value, $instance_value, true );
 			} else {
 				$is_contains = $instance_value === $condition_value;
 			}
@@ -1511,11 +1558,17 @@ abstract class Controls_Stack {
 
 		$last_control_key = $this->get_control_key( $this->get_pointer_index() - 1 );
 
- 		$this->update_control( $last_control_key, [
+		$args = [
 			'popover' => [
 				'end' => true,
 			],
-		], [ 'recursive' => true ] );
+		];
+
+		$options = [
+			'recursive' => true,
+		];
+
+		$this->update_control( $last_control_key, $args, $options );
 	}
 
 	/**
@@ -1523,7 +1576,7 @@ abstract class Controls_Stack {
 	 *
 	 * Used to generate the element template on the editor.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access public
 	 */
 	public function print_template() {
@@ -1613,6 +1666,7 @@ abstract class Controls_Stack {
 	 * Retrieve the injection point in the stack where new controls and sections
 	 * will be inserted.
 	 *
+	 * @since 1.9.2
 	 * @access public
 	 *
 	 * @return array|null An array when an injection point is defined, null
@@ -1708,6 +1762,20 @@ abstract class Controls_Stack {
 		return $settings;
 	}
 
+	/**
+	 * Sanitize initial data.
+	 *
+	 * Performs data cleaning and sanitization.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @param array $data     Data to sanitize.
+	 * @param array $controls Optional. An array of controls. Default is an
+	 *                        empty array.
+	 *
+	 * @return array Sanitized data.
+	 */
 	protected function sanitize_initial_data( $data, array $controls = [] ) {
 		if ( ! $controls ) {
 			$controls = $this->get_controls();
@@ -1738,7 +1806,7 @@ abstract class Controls_Stack {
 				continue;
 			}
 
-			$value_to_check =  $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ];
+			$value_to_check = $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ];
 
 			$tag_text_data = Plugin::$instance->dynamic_tags->tag_text_to_tag_data( $value_to_check );
 
@@ -1799,11 +1867,22 @@ abstract class Controls_Stack {
 	 *
 	 * Generates the final HTML on the frontend.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access protected
 	 */
 	protected function render() {}
 
+	/**
+	 * Print content template.
+	 *
+	 * Used to generate the content template on the editor, using a
+	 * Backbone JavaScript template.
+	 *
+	 * @access protected
+	 * @since 2.0.0
+	 *
+	 * @param string $template_content Template content.
+	 */
 	protected function print_template_content( $template_content ) {
 		echo $template_content;
 	}
@@ -1813,7 +1892,7 @@ abstract class Controls_Stack {
 	 *
 	 * Used to generate the live preview, using a Backbone JavaScript template.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access protected
 	 */
 	protected function _content_template() {}
@@ -1823,7 +1902,7 @@ abstract class Controls_Stack {
 	 *
 	 * Register the all controls added by `_register_controls()`.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 * @access protected
 	 */
 	protected function init_controls() {
@@ -1845,9 +1924,9 @@ abstract class Controls_Stack {
 	protected function _init( $data ) {
 		$this->_data = array_merge( $this->get_default_data(), $data );
 
-		$this->_data = $this->sanitize_initial_data( $this->_data );
-
 		$this->_id = $data['id'];
+
+		$this->_data = $this->sanitize_initial_data( $this->_data );
 
 		$this->_settings = $this->_get_parsed_settings();
 	}

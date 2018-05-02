@@ -101,7 +101,28 @@ class Settings extends Settings_Page {
 			'<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . __( 'Go Pro', 'elementor' ),
 			'manage_options',
 			'go_elementor_pro',
-			[ $this, 'go_elementor_pro' ]
+			[ $this, 'handle_external_redirects' ]
+		);
+	}
+
+	/**
+	 * Register Elementor knowledge base sub-menu.
+	 *
+	 * Add new Elementor knowledge base sub-menu under the main Elementor menu.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
+	 * @since 2.0.3
+	 * @access public
+	 */
+	public function register_knowledge_base_menu() {
+		add_submenu_page(
+			self::PAGE_ID,
+			'',
+			__( 'Knowledge Base', 'elementor' ),
+			'manage_options',
+			'go_knowledge_base_site',
+			[ $this, 'handle_external_redirects' ]
 		);
 	}
 
@@ -112,31 +133,58 @@ class Settings extends Settings_Page {
 	 *
 	 * Fired by `admin_init` action.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.3
 	 * @access public
 	 */
-	public function go_elementor_pro() {
-		if ( isset( $_GET['page'] ) && 'go_elementor_pro' === $_GET['page'] ) {
+	public function handle_external_redirects() {
+		if ( empty( $_GET['page'] ) ) {
+			return;
+		}
+
+		if ( 'go_elementor_pro' === $_GET['page'] ) {
 			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
+			die;
+		}
+
+		if ( 'go_knowledge_base_site' === $_GET['page'] ) {
+			wp_redirect( 'https://go.elementor.com/docs-admin-menu/' );
 			die;
 		}
 	}
 
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the custom fonts page.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function elementor_custom_fonts() {
 		?>
-        <div class="wrap">
-            <div class="elementor-blank_state">
-                <i class="eicon-nerd-chuckle"></i>
-                <h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
-                <p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
-                <a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="#"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
-            </div>
-        </div><!-- /.wrap -->
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<i class="eicon-nerd-chuckle"></i>
+				<h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="#"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
 		<?php
 	}
 
+	/**
+	 * On admin init.
+	 *
+	 * Preform actions on WordPress admin initialization.
+	 *
+	 * Fired by `admin_init` action.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
 	public function on_admin_init() {
-		$this->go_elementor_pro();
+		$this->handle_external_redirects();
 
 		// Save general settings in one list for a future usage
 		$this->handle_general_settings_update();
@@ -156,33 +204,14 @@ class Settings extends Settings_Page {
 		global $submenu;
 
 		if ( isset( $submenu['elementor'] ) ) {
+			// @codingStandardsIgnoreStart
 			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
 
 			$hold_menu_data = $submenu['elementor'][0];
 			$submenu['elementor'][0] = $submenu['elementor'][1];
 			$submenu['elementor'][1] = $hold_menu_data;
+			// @codingStandardsIgnoreEnd
 		}
-	}
-
-	/**
-	 * Settings page constructor.
-	 *
-	 * Initializing Elementor "Settings" page.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct();
-
-		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
-		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
-		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
-
-		// Clear CSS Meta after change print method.
-		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
-		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 	}
 
 	/**
@@ -408,8 +437,16 @@ class Settings extends Settings_Page {
 		return __( 'Elementor', 'elementor' );
 	}
 
+	/**
+	 * Handle general settings update.
+	 *
+	 * Save general settings in one list for a future usage.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 */
 	private function handle_general_settings_update() {
-		if ( ! empty( $_POST['option_page'] ) && self::PAGE_ID === $_POST['option_page'] && ! empty( $_POST['action'] ) && 'update' === $_POST['action']  ) {
+		if ( ! empty( $_POST['option_page'] ) && self::PAGE_ID === $_POST['option_page'] && ! empty( $_POST['action'] ) && 'update' === $_POST['action'] ) {
 			check_admin_referer( 'elementor-options' );
 
 			$saved_general_settings = get_option( General_Settings_Manager::META_KEY );
@@ -431,4 +468,27 @@ class Settings extends Settings_Page {
 			update_option( General_Settings_Manager::META_KEY, $saved_general_settings );
 		}
 	}
+
+	/**
+	 * Settings page constructor.
+	 *
+	 * Initializing Elementor "Settings" page.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
+	public function __construct() {
+		parent::__construct();
+
+		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
+		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
+		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
+		add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
+
+		// Clear CSS Meta after change print method.
+		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+	}
+
 }

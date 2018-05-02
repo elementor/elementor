@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor upgrades class.
+ * Elementor upgrades.
  *
  * Elementor upgrades handler class is responsible for updating different
  * Elementor versions.
@@ -98,8 +98,8 @@ class Upgrades {
 	 *
 	 * Change the image widget link URL, setting is to `custom` link.
 	 *
+	 * @since 2.0.0
 	 * @static
-	 * @since 1.0.0
 	 * @access private
 	 */
 	private static function upgrade_v032() {
@@ -145,8 +145,8 @@ class Upgrades {
 	 *
 	 * Change the image widget, setting the image size to full image size.
 	 *
+	 * @since 2.0.0
 	 * @static
-	 * @since 1.0.0
 	 * @access private
 	 */
 	private static function upgrade_v092() {
@@ -198,8 +198,8 @@ class Upgrades {
 	 *
 	 * Change the button widget sizes, setting up new button sizes.
 	 *
+	 * @since 2.0.0
 	 * @static
-	 * @since 1.0.0
 	 * @access private
 	 */
 	private static function upgrade_v0110() {
@@ -291,8 +291,8 @@ class Upgrades {
 	 *
 	 * Fix post titles for old autosave drafts that saved with the format 'Auto Save...'.
 	 *
+	 * @since 2.0.2
 	 * @static
-	 * @since 2.0.1
 	 * @access private
 	 */
 	private static function upgrade_v201() {
