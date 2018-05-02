@@ -435,6 +435,16 @@ BaseElementView = BaseContainer.extend( {
 		return data;
 	},
 
+	save: function() {
+		var model = this.model;
+
+		elementor.templates.startModal( {
+			onReady: function() {
+				elementor.templates.getLayout().showSaveTemplateView( model );
+			}
+		} );
+	},
+
 	onBeforeRender: function() {
 		this.renderAttributes = {};
 	},
@@ -518,13 +528,7 @@ BaseElementView = BaseContainer.extend( {
 	onClickSave: function( event ) {
 		event.preventDefault();
 
-		var model = this.model;
-
-		elementor.templates.startModal( {
-			onReady: function() {
-				elementor.templates.getLayout().showSaveTemplateView( model );
-			}
-		} );
+		this.save();
 	},
 
 	onDestroy: function() {
