@@ -324,19 +324,6 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.attr( 'id', customElementID );
 	},
 
-	getModelForRender: function() {
-		return elementor.hooks.applyFilters( 'element/templateHelpers/editModel', this.getEditModel(), this );
-	},
-
-	renderUIOnly: function() {
-		var editModel = this.getModelForRender();
-
-		this.renderStyles( editModel.get( 'settings' ) );
-		this.renderCustomClasses();
-		this.renderCustomElementID();
-		this.enqueueFonts();
-	},
-
 	renderUI: function() {
 		this.renderStyles();
 		this.renderCustomClasses();
@@ -407,7 +394,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			if ( ! isContentChanged ) {
-				this.renderUIOnly();
+				this.renderUI();
 				return;
 			}
 		}
@@ -446,6 +433,16 @@ BaseElementView = BaseContainer.extend( {
 		data.settings = this.getEditModel().get( 'settings' ).parseDynamicSettings( data.settings, this.getDynamicParsingSettings() );
 
 		return data;
+	},
+
+	save: function() {
+		var model = this.model;
+
+		elementor.templates.startModal( {
+			onReady: function() {
+				elementor.templates.getLayout().showSaveTemplateView( model );
+			}
+		} );
 	},
 
 	onBeforeRender: function() {
@@ -531,13 +528,7 @@ BaseElementView = BaseContainer.extend( {
 	onClickSave: function( event ) {
 		event.preventDefault();
 
-		var model = this.model;
-
-		elementor.templates.startModal( {
-			onReady: function() {
-				elementor.templates.getLayout().showSaveTemplateView( model );
-			}
-		} );
+		this.save();
 	},
 
 	onDestroy: function() {

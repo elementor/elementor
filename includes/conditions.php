@@ -86,7 +86,13 @@ class Conditions {
 					$value = $value[ $parsed_name[2] ];
 				}
 
-				$comparison_result = self::compare( $value, $term['value'], $term['operator'] );
+				$operator = null;
+
+				if ( ! empty( $term['operator'] ) ) {
+					$operator = $term['operator'];
+				}
+
+				$comparison_result = self::compare( $value, $term['value'], $operator );
 			}
 
 			if ( $is_or_condition ) {

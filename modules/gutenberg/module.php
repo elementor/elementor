@@ -67,10 +67,10 @@ class Module extends BaseModule {
 		?>
 		<script id="elementor-gutenberg-button-switch-mode" type="text/html">
 			<div id="elementor-switch-mode">
-				<button id="elementor-switch-mode-button" type="button" class="button button-primary button-hero">
+				<button id="elementor-switch-mode-button" type="button" class="button button-primary button-large">
 					<span class="elementor-switch-mode-on"><?php echo __( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 					<span class="elementor-switch-mode-off">
-						<i class="eicon-elementor" aria-hidden="true" />
+						<i class="eicon-elementor-square" aria-hidden="true" />
 						<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
 					</span>
 				</button>
