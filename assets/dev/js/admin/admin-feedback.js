@@ -4,8 +4,6 @@
 
 	var ElementorAdminDialogApp = {
 
-		dialogsManager: new DialogsManager.Instance(),
-
 		cacheElements: function() {
 			this.cache = {
 				$deactivateLink: $( '#the-list' ).find( '[data-slug="elementor"] span.deactivate a' ),
@@ -34,7 +32,7 @@
 
 			self.getModal = function() {
 				if ( ! modal ) {
-					modal = self.dialogsManager.createWidget( 'lightbox', {
+					modal = elementorAdmin.getDialogsManager().createWidget( 'lightbox', {
 						id: 'elementor-deactivate-feedback-modal',
 						headerMessage: self.cache.$dialogHeader,
 						message: self.cache.$dialogForm,

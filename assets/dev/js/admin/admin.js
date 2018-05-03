@@ -147,8 +147,7 @@
 							$this.addClass( 'success' );
 						}
 
-						var dialogsManager = new DialogsManager.Instance();
-							dialogsManager.createWidget( 'alert', {
+						self.getDialogsManager().createWidget( 'alert', {
 								message: response.data
 							} ).show();
 					} );
@@ -172,10 +171,9 @@
 			$( '.elementor-rollback-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 
-				var $this = $( this ),
-					dialogsManager = new DialogsManager.Instance();
+				var $this = $( this );
 
-				dialogsManager.createWidget( 'confirm', {
+				self.getDialogsManager().createWidget( 'confirm', {
 					headerMessage: self.config.i18n.rollback_to_previous_version,
 					message:  self.config.i18n.rollback_confirm,
 					strings: {
@@ -203,6 +201,8 @@
 
 			this.bindEvents();
 
+			this.initDialogsManager();
+
 			this.initTemplatesImport();
 
 			this.initNewTemplateDialog();
@@ -214,15 +214,25 @@
 			this.roleManager.init();
 		},
 
+		initDialogsManager: function() {
+			var dialogsManager;
+
+			this.getDialogsManager = function() {
+				if ( ! dialogsManager ) {
+					dialogsManager = new DialogsManager.Instance();
+				}
+
+				return dialogsManager;
+			};
+		},
+
 		initNewTemplateDialog: function() {
 			var self = this,
 				modal;
 
 			self.getNewTemplateModal = function() {
 				if ( ! modal ) {
-					var dialogsManager = new DialogsManager.Instance();
-
-					modal = dialogsManager.createWidget( 'lightbox', {
+					modal = self.getDialogsManager().createWidget( 'lightbox', {
 						id: 'elementor-new-template-modal',
 						className: 'elementor-templates-modal',
 						headerMessage: self.cache.$addNewDialogHeader,
