@@ -239,7 +239,7 @@ class Source_Local extends Source_Base {
 					</div>
 				</div>
 				<div class="elementor-templates-modal__header__items-area">
-					<div class="elementor-templates-modal__header__close-modal elementor-templates-modal__header__item">
+					<div class="elementor-templates-modal__header__close elementor-templates-modal__header__item">
 						<i class="eicon-close" aria-hidden="true" title="Close"></i>
 						<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 					</div>

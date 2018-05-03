@@ -23,7 +23,7 @@
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 				$addNew: $( '.post-type-elementor_library #wpbody-content .page-title-action:first, #elementor-template-library-add-new' ),
 				$addNewDialogHeader:  $( '.elementor-templates-modal__header' ),
-				$addNewDialogClose:  $( '.elementor-templates-modal__header__close-modal' ),
+				$addNewDialogClose:  $( '.elementor-templates-modal__header__close' ),
 				$addNewDialogContent:  $( '#elementor-new-template-dialog-content' )
 			};
 

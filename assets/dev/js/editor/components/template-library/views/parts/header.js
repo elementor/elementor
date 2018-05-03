@@ -13,7 +13,7 @@ TemplateLibraryHeaderView = Marionette.LayoutView.extend( {
 	},
 
 	ui: {
-		closeModal: '.elementor-templates-modal__header__close-modal'
+		closeModal: '.elementor-templates-modal__header__close'
 	},
 
 	events: {
