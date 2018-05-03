@@ -1,14 +1,12 @@
 #elementor-new-template {
 
-	&-modal {
-
-		.dialog-message {
-			display: flex;
-			align-items: center;
-			text-align: $start;
-			padding: 0 120px;
-			color: $editor-dark;
-		}
+	&-dialog-content {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		text-align: $start;
+		padding: 0 120px;
+		color: $editor-dark;
 	}
 
 	&__description {
