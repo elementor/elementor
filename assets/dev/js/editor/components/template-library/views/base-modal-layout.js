@@ -24,7 +24,7 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	initialize: function() {
-		this.modalHeader.show( new TemplateLibraryHeaderView() );
+		this.modalHeader.show( new TemplateLibraryHeaderView( this.getHeaderOptions() ) );
 	},
 
 	initModal: function() {
@@ -56,6 +56,10 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	getLogoOptions: function() {
+		return {};
+	},
+
+	getHeaderOptions: function() {
 		return {};
 	},
 

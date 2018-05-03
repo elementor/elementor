@@ -20,6 +20,12 @@ TemplateLibraryHeaderView = Marionette.LayoutView.extend( {
 		'click @ui.closeModal': 'onCloseModalClick'
 	},
 
+	templateHelpers: function() {
+		return {
+			closeType: this.getOption( 'closeType' )
+		};
+	},
+
 	onCloseModalClick: function() {
 		this._parent._parent._parent.hideModal();
 	}
