@@ -38,9 +38,13 @@ module.exports = Marionette.LayoutView.extend( {
 
 		jQuery.extend( true, modalOptions, this.getModalOptions() );
 
-		this.modal = elementor.dialogsManager.createWidget( 'lightbox', modalOptions );
+		this.modal = this.getDialogsManager().createWidget( 'lightbox', modalOptions );
 
 		this.modal.getElements( 'message' ).append( this.modal.addElement( 'content' ), this.modal.addElement( 'loading' ) );
+	},
+
+	getDialogsManager: function() {
+		return elementor.dialogsManager;
 	},
 
 	showModal: function() {
