@@ -492,7 +492,7 @@ class Admin {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function print_deactivate_feedback_dialog() {
+	public function print_feedback_dialog() {
 		$deactivate_reasons = [
 			'no_longer_needed' => [
 				'title' => __( 'I no longer need the plugin', 'elementor' ),
