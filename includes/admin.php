@@ -68,6 +68,7 @@ class Admin {
 					'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
 					'yes' => __( 'Yes', 'elementor' ),
 					'cancel' => __( 'Cancel', 'elementor' ),
+					'new_template' => __( 'New Template', 'elementor' ),
 				],
 			]
 		);
@@ -797,6 +798,27 @@ class Admin {
 		die;
 	}
 
+	public function print_new_template_template() {
+		$this->print_library_layout_template();
+
+		include ELEMENTOR_PATH . 'includes/admin-templates/new-template.php';
+	}
+
+	public function enqueue_new_template_scripts() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script(
+			'elementor-new-template',
+			ELEMENTOR_ASSETS_URL . 'js/new-template' . $suffix . '.js',
+			[
+				'backbone-marionette',
+				'elementor-dialog',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
 	/**
 	 * Admin constructor.
 	 *
@@ -832,5 +854,13 @@ class Admin {
 
 		// Admin Actions
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
+
+	private function init_new_template() {
+		if ( 'edit-elementor_library' === get_current_screen()->id ) {
+			add_action( 'admin_footer', [ $this, 'print_new_template_template' ] );
+
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
+		}
+	}
 	}
 }
