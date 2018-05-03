@@ -5,6 +5,8 @@
 
 		maintenanceMode: null,
 
+		config: ElementorAdminConfig,
+
 		cacheElements: function() {
 			this.cache = {
 				$window: $( window ),
@@ -174,11 +176,11 @@
 					dialogsManager = new DialogsManager.Instance();
 
 				dialogsManager.createWidget( 'confirm', {
-					headerMessage: ElementorAdminConfig.i18n.rollback_to_previous_version,
-					message: ElementorAdminConfig.i18n.rollback_confirm,
+					headerMessage: self.config.i18n.rollback_to_previous_version,
+					message:  self.config.i18n.rollback_confirm,
 					strings: {
-						confirm: ElementorAdminConfig.i18n.yes,
-						cancel: ElementorAdminConfig.i18n.cancel
+						confirm:  self.config.i18n.yes,
+						cancel:  self.config.i18n.cancel
 					},
 					onConfirm: function() {
 						$this.addClass( 'loading' );
