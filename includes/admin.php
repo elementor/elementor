@@ -94,10 +94,18 @@ class Admin {
 		);
 
 		wp_register_style(
+			'google-font-roboto',
+			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
 			'elementor-admin-app',
 			ELEMENTOR_ASSETS_URL . 'css/admin' . $direction_suffix . $suffix . '.css',
 			[
 				'elementor-icons',
+				'google-font-roboto',
 			],
 			ELEMENTOR_VERSION
 		);
