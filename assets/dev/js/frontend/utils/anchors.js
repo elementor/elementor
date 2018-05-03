@@ -52,7 +52,7 @@ module.exports = ViewModule.extend( {
 
 		// Offset height of tallest sticky
 		if ( $activeStickys.length > 0 ) {
-			 maxStickyHeight = Math.max.apply( null, $activeStickys.map( function () {
+			 maxStickyHeight = Math.max.apply( null, $activeStickys.map( function() {
 				return jQuery( this ).height();
 			} ).get() );
 
