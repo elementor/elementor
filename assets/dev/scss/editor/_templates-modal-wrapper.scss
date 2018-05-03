@@ -16,23 +16,34 @@ $library_screen_breakpoint: $screen-lg-max;
 		}
 	}
 
-	.dialog-widget-header {
-		padding: 0;
-		background-color: #fff;
-		box-shadow: $panel-bottom-shadow;
-		position: relative; // Show the shadow above the scrolled list
-		z-index: 1;
-	}
+	.dialog {
 
-	.dialog-buttons-wrapper {
-		display: none;
-	}
+		&-widget-header {
+			padding: 0;
+			background-color: #fff;
+			box-shadow: $panel-bottom-shadow;
+			position: relative; // Show the shadow above the scrolled list
+			z-index: 1;
+		}
 
-	.dialog-message {
-		height: 750px;
-		max-height: 85vh;
-		overflow: auto;
-		padding: 25px 30px 30px;
+		&-buttons-wrapper {
+			display: none;
+		}
+
+		&-message {
+			height: 750px;
+			max-height: 85vh;
+			overflow: auto;
+			padding: 25px 30px 30px;
+		}
+
+		&-content {
+			height: 100%;
+		}
+
+		&-loading {
+			display: none;
+		}
 	}
 
 	&__header {
