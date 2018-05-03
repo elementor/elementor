@@ -1047,6 +1047,7 @@ class Editor {
 			'panel',
 			'panel-elements',
 			'repeater',
+			'library-layout',
 			'templates',
 		];
 
