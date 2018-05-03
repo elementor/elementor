@@ -583,10 +583,10 @@ class Admin {
 
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
 			$create_new_label = __( 'Create New Page', 'elementor' );
-			$create_new_cpt = 'page';
+			$create_new_post_type = 'page';
 		} elseif ( User::is_current_user_can_edit_post_type( 'post' ) ) {
 			$create_new_label = __( 'Create New Post', 'elementor' );
-			$create_new_cpt = 'post';
+			$create_new_post_type = 'post';
 		}
 		?>
 		<div class="e-dashboard-widget">
@@ -605,9 +605,9 @@ class Admin {
 					do_action( 'elementor/admin/dashboard_overview_widget/after_version' );
 					?>
 				</div>
-				<?php if ( ! empty( $create_new_cpt ) ) : ?>
+				<?php if ( ! empty( $create_new_post_type ) ) : ?>
 				<div class="e-overview__create">
-					<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
+					<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_post_type ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
 				</div>
 				<?php endif; ?>
 			</div>
