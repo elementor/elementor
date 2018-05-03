@@ -20,6 +20,8 @@ class User {
 	 */
 	const ADMIN_NOTICES_KEY = 'elementor_admin_notices';
 
+	const GET_STARTED_KEY = 'elementor_get_started';
+
 	/**
 	 * Init.
 	 *
@@ -183,6 +185,22 @@ class User {
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 
 		die;
+	}
+
+	public static function set_get_started_viewed() {
+		$user = wp_get_current_user();
+
+		update_user_meta( $user->ID, self::GET_STARTED_KEY, true );
+	}
+
+	public static function is_user_should_view_get_started() {
+		$user = wp_get_current_user();
+
+		if ( get_user_meta( $user->ID, self::GET_STARTED_KEY ) ) {
+			return false;
+		}
+
+		return true;
 	}
 }
 
