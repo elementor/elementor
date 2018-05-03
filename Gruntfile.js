@@ -175,7 +175,6 @@ module.exports = function( grunt ) {
 		},
 
 		uglify: {
-			//pkg: grunt.file.readJSON( 'package.json' ),
 			options: {},
 			dist: {
 				files: {
