@@ -94,9 +94,9 @@ $library_screen_breakpoint: $screen-lg-max;
 			}
 		}
 
-		&__close-modal {
 			width: 45px;
 			@include border-start(1px solid $editor-background);
+		&__close {
 
 			i {
 				font-size: 18px;
