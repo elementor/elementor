@@ -244,7 +244,7 @@ App = Marionette.Application.extend( {
 	},
 
 	initEnvData: function() {
-		this.envData = _.pick( tinymce.EditorManager.Env, [ 'desktop', 'webkit', 'gecko', 'ie', 'opera' ] );
+		this.envData = _.pick( tinymce.Env, [ 'desktop', 'mac', 'webkit', 'gecko', 'ie', 'opera' ] );
 	},
 
 	initComponents: function() {
