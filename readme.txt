@@ -198,7 +198,7 @@ Absolutely not! Elementor is a live frontend page builder, that lets you reach a
 
 **Will Elementor work with RTL or other languages?**
 
-Yeah! Elementor enables to seamlessly build RTL pages as well as other translated pages in any language. You can read more about translation and localization here: https://go.elementor.com/translate/
+Yeah! Elementor enables to seamlessly build RTL pages as well as other translated pages in any language. You can read more about [translation and localization](https://go.elementor.com/translate/).
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
