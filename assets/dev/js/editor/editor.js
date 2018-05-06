@@ -79,6 +79,7 @@ App = Marionette.Application.extend( {
 			Repeater: require( 'elementor-controls/repeater' ),
 			RepeaterRow: require( 'elementor-controls/repeater-row' ),
 			Section: require( 'elementor-controls/section' ),
+			Select: require( 'elementor-controls/select' ),
 			Select2: require( 'elementor-controls/select2' ),
 			Slider: require( 'elementor-controls/slider' ),
 			Structure: require( 'elementor-controls/structure' ),
