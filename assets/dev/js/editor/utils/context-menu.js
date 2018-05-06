@@ -82,7 +82,7 @@ ContextMenu = Module.extend( {
 			},
 			position: {
 				my: 'left top',
-				collision: 'none'
+				collision: 'fit'
 			}
 		} );
 	},
