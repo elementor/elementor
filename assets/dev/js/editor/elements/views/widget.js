@@ -91,7 +91,10 @@ WidgetView = BaseElementView.extend( {
 			}, {
 				name: 'pasteStyle',
 				title: elementor.translate( 'paste_style' ),
-				callback: this.pasteStyle.bind( this )
+				callback: this.pasteStyle.bind( this ),
+				isEnabled: function() {
+					return !! elementor.channels.editor.request( 'styleClipboard' );
+				}
 			}, {
 				name: '__divider__'
 			}, {
