@@ -82,14 +82,19 @@ WidgetView = BaseElementView.extend( {
 			}, {
 				name: 'duplicate',
 				title: elementor.translate( 'duplicate' ),
-				shortcut: '⌘+D',
+				shortcut: ( elementor.envData.mac ? '⌘' : '^' ) + 'D',
 				callback: this.duplicate.bind( this )
 			}, {
 				name: 'copyStyle',
-				title: elementor.translate( 'copy_style' )
+				title: elementor.translate( 'copy_style' ),
+				callback: this.copyStyle.bind( this )
 			}, {
 				name: 'pasteStyle',
-				title: elementor.translate( 'paste_style' )
+				title: elementor.translate( 'paste_style' ),
+				callback: this.pasteStyle.bind( this ),
+				isEnabled: function() {
+					return !! elementor.channels.editor.request( 'styleClipboard' );
+				}
 			}, {
 				name: '__divider__'
 			}, {
@@ -100,7 +105,7 @@ WidgetView = BaseElementView.extend( {
 			}, {
 				name: 'delete',
 				title: elementor.translate( 'delete' ),
-				shortcut: 'del',
+				shortcut: 'Del',
 				callback: this.removeElement.bind( this )
 			}
 		];

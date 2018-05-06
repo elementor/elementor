@@ -413,7 +413,7 @@ class Settings extends Settings_Page {
 										'' => __( 'Disable', 'elementor' ),
 										'on' => __( 'Enable', 'elementor' ),
 									],
-									'desc' => __( 'Bla bla bla bla bla', 'elementor' ),
+									'desc' => __( 'Control widget actions by right clicking on it', 'elementor' ),
 								],
 							]
 						],
