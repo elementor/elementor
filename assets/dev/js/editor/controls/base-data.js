@@ -266,6 +266,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 	// Static methods
 	getStyleValue: function( placeholder, controlValue ) {
 		return controlValue;
+	},
+
+	onPasteStyle: function() {
+		return true;
 	}
 } );
 

@@ -154,23 +154,28 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		var editModel = this.getEditModel(),
-			settingsAttributes = editModel.get( 'settings' ).attributes,
+			settings = editModel.get( 'settings' ),
+			settingsAttributes = settings.attributes,
+			controls = settings.controls,
 			diffSettings = {};
 
-		jQuery.each( styleClipboard, function( key ) {
-			if ( undefined === settingsAttributes[ key ] ) {
+		jQuery.each( controls, function( controlName, control ) {
+			var clipboardValue = styleClipboard[ controlName ],
+				targetValue = settingsAttributes[ controlName ];
+
+			if ( undefined === clipboardValue || undefined === targetValue ) {
 				return;
 			}
 
-			if ( 'object' === typeof styleClipboard[ key ] ) {
-				if ( 'object' !== typeof settingsAttributes[ key ] ) {
+			if ( 'object' === typeof clipboardValue ) {
+				if ( 'object' !== typeof targetValue ) {
 					return;
 				}
 
 				var isEqual = true;
 
-				jQuery.each( styleClipboard[ key ], function( propertyKey ) {
-					if ( styleClipboard[ key ][ propertyKey ] !== settingsAttributes[ key ][ propertyKey ] ) {
+				jQuery.each( clipboardValue, function( propertyKey ) {
+					if ( clipboardValue[ propertyKey ] !== targetValue[ propertyKey ] ) {
 						return isEqual = false;
 					}
 				} );
@@ -179,12 +184,18 @@ BaseElementView = BaseContainer.extend( {
 					return;
 				}
 			} else {
-				if ( styleClipboard[ key ] === settingsAttributes[ key ] ) {
+				if ( clipboardValue === targetValue ) {
 					return;
 				}
 			}
 
-			diffSettings[ key ] = styleClipboard[ key ];
+			var ControlView = elementor.getControlView( control.type );
+
+			if ( ! ControlView.onPasteStyle( control, clipboardValue ) ) {
+				return;
+			}
+
+			diffSettings[ controlName ] = clipboardValue;
 		} );
 
 		this.allowRender = false;
