@@ -243,8 +243,6 @@ class Elements_Manager {
 	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->ajax_discard_changes()` method instead.
 	 * @access public
 	 *
-	 * @throws \Exception If the request has no post id.
-	 *
 	 * @param $request
 	 *
 	 * @return bool
@@ -266,9 +264,6 @@ class Elements_Manager {
 	 * @since 1.0.0
 	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->ajax_save()` method instead.
 	 * @access public
-	 *
-	 * @throws \Exception If the request has no post id.
-	 * @throws \Exception If current user don't have permissions to edit the post.
 	 *
 	 * @param array $request
 	 *

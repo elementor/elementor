@@ -217,6 +217,10 @@ class Role_Manager extends Settings_Page {
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param $capability
+	 *
+	 * @return bool
 	 */
 	public function user_can( $capability ) {
 		$options = $this->get_user_restrictions_array();
