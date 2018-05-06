@@ -128,6 +128,87 @@ BaseElementView = BaseContainer.extend( {
 		elementor.getPanelView().openEditor( this.getEditModel(), this );
 	},
 
+	copyStyle: function() {
+		var settings = this.getEditModel().get( 'settings' ),
+			styleSettings = {},
+			controls = _.filter( settings.controls, function( control ) {
+				return 'content' !== control.tab;
+			} );
+
+		controls.forEach( function( control ) {
+			if ( undefined === settings.attributes[ control.name ] ) {
+				return;
+			}
+
+			styleSettings[ control.name ] = settings.attributes[ control.name ];
+		} );
+
+		elementor.channels.editor.reply( 'styleClipboard', styleSettings );
+	},
+
+	pasteStyle: function() {
+		var styleClipboard = elementor.channels.editor.request( 'styleClipboard' );
+
+		if ( ! styleClipboard ) {
+			return;
+		}
+
+		var editModel = this.getEditModel(),
+			settings = editModel.get( 'settings' ),
+			settingsAttributes = settings.attributes,
+			controls = settings.controls,
+			diffSettings = {};
+
+		jQuery.each( controls, function( controlName, control ) {
+			var clipboardValue = styleClipboard[ controlName ],
+				targetValue = settingsAttributes[ controlName ];
+
+			if ( undefined === clipboardValue || undefined === targetValue ) {
+				return;
+			}
+
+			if ( 'object' === typeof clipboardValue ) {
+				if ( 'object' !== typeof targetValue ) {
+					return;
+				}
+
+				var isEqual = true;
+
+				jQuery.each( clipboardValue, function( propertyKey ) {
+					if ( clipboardValue[ propertyKey ] !== targetValue[ propertyKey ] ) {
+						return isEqual = false;
+					}
+				} );
+
+				if ( isEqual ) {
+					return;
+				}
+			} else {
+				if ( clipboardValue === targetValue ) {
+					return;
+				}
+			}
+
+			var ControlView = elementor.getControlView( control.type );
+
+			if ( ! ControlView.onPasteStyle( control, clipboardValue ) ) {
+				return;
+			}
+
+			diffSettings[ controlName ] = clipboardValue;
+		} );
+
+		this.allowRender = false;
+
+		jQuery.each( diffSettings, function( key, value ) {
+			editModel.setSetting( key, value );
+		} );
+
+		this.allowRender = true;
+
+		this.renderOnChange();
+	},
+
 	addElementFromPanel: function( options ) {
 		var elementView = elementor.channels.panelElements.request( 'element:selected' );
 
