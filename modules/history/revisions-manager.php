@@ -21,11 +21,27 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Revisions_Manager {
 
+	/**
+	 * Maximum number of revisions to display.
+	 */
 	const MAX_REVISIONS_TO_DISPLAY = 100;
 
+	/**
+	 * Authors list.
+	 *
+	 * Holds all the authors.
+	 *
+	 * @access private
+	 *
+	 * @var array
+	 */
 	private static $authors = [];
 
 	/**
+	 * History revisions manager constructor.
+	 *
+	 * Initializing Elementor history revisions manager.
+	 *
 	 * @since 1.7.0
 	 * @access public
 	 */
@@ -76,6 +92,12 @@ class Revisions_Manager {
 	 * @since 1.7.0
 	 * @access public
 	 * @static
+	 *
+	 * @param int   $post_id
+	 * @param array $query_args
+	 * @param bool  $parse_result
+	 *
+	 * @return array
 	 */
 	public static function get_revisions( $post_id = 0, $query_args = [], $parse_result = true ) {
 		$post = get_post( $post_id );
@@ -324,6 +346,12 @@ class Revisions_Manager {
 	}
 
 	/**
+	 * Localize settings.
+	 *
+	 * Add new localized settings for the revisions manager.
+	 *
+	 * Fired by `elementor/editor/localize_settings` filter.
+	 *
 	 * @since 1.7.0
 	 * @access public
 	 * @static

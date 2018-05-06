@@ -16,89 +16,214 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Controls_Manager {
 
+	/**
+	 * Content tab.
+	 */
 	const TAB_CONTENT = 'content';
+
+	/**
+	 * Style tab.
+	 */
 	const TAB_STYLE = 'style';
+
+	/**
+	 * Advanced tab.
+	 */
 	const TAB_ADVANCED = 'advanced';
+
+	/**
+	 * Responsive tab.
+	 */
 	const TAB_RESPONSIVE = 'responsive';
+
+	/**
+	 * Layout tab.
+	 */
 	const TAB_LAYOUT = 'layout';
+
+	/**
+	 * Settings tab.
+	 */
 	const TAB_SETTINGS = 'settings';
 
-	/** This control is documented in includes/controls/text.php */
+	/**
+	 * Text control.
+	 */
 	const TEXT = 'text';
-	/** This control is documented in includes/controls/number.php */
+
+	/**
+	 * Number control.
+	 */
 	const NUMBER = 'number';
-	/** This control is documented in includes/controls/textarea.php */
+
+	/**
+	 * Textarea control.
+	 */
 	const TEXTAREA = 'textarea';
-	/** This control is documented in includes/controls/select.php */
+
+	/**
+	 * Select control.
+	 */
 	const SELECT = 'select';
-	/** This control is documented in includes/controls/switcher.php */
+
+	/**
+	 * Switcher control.
+	 */
 	const SWITCHER = 'switcher';
 
-	/** This control is documented in includes/controls/button.php */
+	/**
+	 * Button control.
+	 */
 	const BUTTON = 'button';
-	/** This control is documented in includes/controls/hidden.php */
+
+	/**
+	 * Hidden control.
+	 */
 	const HIDDEN = 'hidden';
-	/** This control is documented in includes/controls/heading.php */
+
+	/**
+	 * Heading control.
+	 */
 	const HEADING = 'heading';
-	/** This control is documented in includes/controls/raw-html.php */
+
+	/**
+	 * Raw HTML control.
+	 */
 	const RAW_HTML = 'raw_html';
-	/** This control is documented in includes/controls/popover-toggle.php */
+
+	/**
+	 * Popover Toggle control.
+	 */
 	const POPOVER_TOGGLE = 'popover_toggle';
-	/** This control is documented in includes/controls/section.php */
+
+	/**
+	 * Section control.
+	 */
 	const SECTION = 'section';
-	/** This control is documented in includes/controls/tab.php */
+
+	/**
+	 * Tab control.
+	 */
 	const TAB = 'tab';
-	/** This control is documented in includes/controls/tabs.php */
+
+	/**
+	 * Tabs control.
+	 */
 	const TABS = 'tabs';
-	/** This control is documented in includes/controls/divider.php */
+
+	/**
+	 * Divider control.
+	 */
 	const DIVIDER = 'divider';
 
-	/** This control is documented in includes/controls/color.php */
+	/**
+	 * Color control.
+	 */
 	const COLOR = 'color';
-	/** This control is documented in includes/controls/media.php */
+
+	/**
+	 * Media control.
+	 */
 	const MEDIA = 'media';
-	/** This control is documented in includes/controls/slider.php */
+
+	/**
+	 * Slider control.
+	 */
 	const SLIDER = 'slider';
-	/** This control is documented in includes/controls/dimensions.php */
+
+	/**
+	 * Dimensions control.
+	 */
 	const DIMENSIONS = 'dimensions';
-	/** This control is documented in includes/controls/choose.php */
+
+	/**
+	 * Choose control.
+	 */
 	const CHOOSE = 'choose';
-	/** This control is documented in includes/controls/wysiwyg.php */
+
+	/**
+	 * WYSIWYG control.
+	 */
 	const WYSIWYG = 'wysiwyg';
-	/** This control is documented in includes/controls/code.php */
+
+	/**
+	 * Code control.
+	 */
 	const CODE = 'code';
-	/** This control is documented in includes/controls/font.php */
+
+	/**
+	 * Font control.
+	 */
 	const FONT = 'font';
-	/** This control is documented in includes/controls/image-dimensions.php */
+
+	/**
+	 * Image dimensions control.
+	 */
 	const IMAGE_DIMENSIONS = 'image_dimensions';
 
-	/** This control is documented in includes/controls/wp-widget.php */
+	/**
+	 * WordPress widget control.
+	 */
 	const WP_WIDGET = 'wp_widget';
 
-	/** This control is documented in includes/controls/url.php */
+	/**
+	 * URL control.
+	 */
 	const URL = 'url';
-	/** This control is documented in includes/controls/repeater.php */
+
+	/**
+	 * Repeater control.
+	 */
 	const REPEATER = 'repeater';
-	/** This control is documented in includes/controls/icon.php */
+
+	/**
+	 * Icon control.
+	 */
 	const ICON = 'icon';
-	/** This control is documented in includes/controls/gallery.php */
+
+	/**
+	 * Gallery control.
+	 */
 	const GALLERY = 'gallery';
-	/** This control is documented in includes/controls/structure.php */
+
+	/**
+	 * Structure control.
+	 */
 	const STRUCTURE = 'structure';
-	/** This control is documented in includes/controls/select2.php */
+
+	/**
+	 * Select2 control.
+	 */
 	const SELECT2 = 'select2';
-	/** This control is documented in includes/controls/date-time.php */
+
+	/**
+	 * Date/Time control.
+	 */
 	const DATE_TIME = 'date_time';
-	/** This control is documented in includes/controls/box-shadow.php */
+
+	/**
+	 * Box shadow control.
+	 */
 	const BOX_SHADOW = 'box_shadow';
-	/** This control is documented in includes/controls/text-shadow.php */
+
+	/**
+	 * Text shadow control.
+	 */
 	const TEXT_SHADOW = 'text_shadow';
-	/** This control is documented in includes/controls/animation.php */
+
+	/**
+	 * Entrance animation control.
+	 */
 	const ANIMATION = 'animation';
-	/** This control is documented in includes/controls/hover-animation.php */
+
+	/**
+	 * Hover animation control.
+	 */
 	const HOVER_ANIMATION = 'hover_animation';
 
 	/**
+	 * Order control.
+	 *
 	 * @deprecated 2.0.0
 	 */
 	const ORDER = 'order';
