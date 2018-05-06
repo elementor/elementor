@@ -79,6 +79,7 @@ App = Marionette.Application.extend( {
 			Repeater: require( 'elementor-controls/repeater' ),
 			RepeaterRow: require( 'elementor-controls/repeater-row' ),
 			Section: require( 'elementor-controls/section' ),
+			Select: require( 'elementor-controls/select' ),
 			Select2: require( 'elementor-controls/select2' ),
 			Slider: require( 'elementor-controls/slider' ),
 			Structure: require( 'elementor-controls/structure' ),
@@ -243,7 +244,7 @@ App = Marionette.Application.extend( {
 	},
 
 	initEnvData: function() {
-		this.envData = _.pick( tinymce.EditorManager.Env, [ 'desktop', 'webkit', 'gecko', 'ie', 'opera' ] );
+		this.envData = _.pick( tinymce.Env, [ 'desktop', 'mac', 'webkit', 'gecko', 'ie', 'opera' ] );
 	},
 
 	initComponents: function() {

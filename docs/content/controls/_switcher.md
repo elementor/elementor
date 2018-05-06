@@ -14,7 +14,7 @@ $this->add_control(
 		'default' => '',
 		'label_on' => __( 'Show', 'your-plugin' ),
 		'label_off' => __( 'Hide', 'your-plugin' ),
-		'return_value' => 'yes',
+		'return_value' => 'show',
 	]
 );
 ```
