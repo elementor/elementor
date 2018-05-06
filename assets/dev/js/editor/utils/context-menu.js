@@ -42,15 +42,11 @@ ContextMenu = Module.extend( {
 
 		if ( action.callback ) {
 			$item.on( 'click', function() {
-				action.callback();
-
-				self.modal.hide();
+				self.runAction( action );
 			} );
 		}
 
-		if ( ! action.callback && ! action.actions ) {
-			$item.addClass( classes.itemDisabled );
-		}
+		action.$item = $item;
 
 		return $item;
 	},
@@ -66,6 +62,28 @@ ContextMenu = Module.extend( {
 		} );
 
 		return $list;
+	},
+
+	toggleActionItem: function( action ) {
+		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! this.isActionEnabled( action ) );
+	},
+
+	isActionEnabled: function( action ) {
+		if ( ! action.callback && ! action.actions ) {
+			return false;
+		}
+
+		return action.isEnabled ? action.isEnabled() : true;
+	},
+
+	runAction: function( action ) {
+		if ( ! this.isActionEnabled( action ) ) {
+			return;
+		}
+
+		action.callback();
+
+		this.modal.hide();
 	},
 
 	initModal: function() {
@@ -88,15 +106,25 @@ ContextMenu = Module.extend( {
 	},
 
 	show: function( event ) {
-		if ( ! this.modal ) {
-			this.initModal();
+		var self = this;
+
+		if ( ! self.modal ) {
+			self.initModal();
 		}
 
-		this.modal.setSettings( 'position', {
+		self.modal.setSettings( 'position', {
 			of: event
 		} );
 
-		this.modal.show();
+		jQuery.each( self.getSettings( 'actions' ), function() {
+			if ( '__divider__' === this.name ) {
+				return;
+			}
+
+			self.toggleActionItem( this );
+		} );
+
+		self.modal.show();
 	},
 
 	destroy: function() {
