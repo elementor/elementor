@@ -258,6 +258,9 @@ class Module extends BaseModule {
 
 		$document->start_injection( [
 			'of' => 'post_status',
+			'fallback' => [
+				'of' => 'post_title',
+			],
 		] );
 
 		$document->add_control(
