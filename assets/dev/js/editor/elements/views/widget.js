@@ -82,7 +82,7 @@ WidgetView = BaseElementView.extend( {
 			}, {
 				name: 'duplicate',
 				title: elementor.translate( 'duplicate' ),
-				shortcut: '⌘+D',
+				shortcut: ( elementor.envData.mac ? '⌘' : '^' ) + 'D',
 				callback: this.duplicate.bind( this )
 			}, {
 				name: 'copyStyle',
@@ -102,7 +102,7 @@ WidgetView = BaseElementView.extend( {
 			}, {
 				name: 'delete',
 				title: elementor.translate( 'delete' ),
-				shortcut: 'del',
+				shortcut: 'Del',
 				callback: this.removeElement.bind( this )
 			}
 		];
