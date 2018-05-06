@@ -488,13 +488,16 @@ abstract class Controls_Stack {
 	 * @param array $position {
 	 *     The injection position.
 	 *
-	 *     @type string $type Injection type, either `control` or `section`.
-	 *                        Default is `control`.
-	 *     @type string $at   Where to inject. If `$type` is `control` accepts
-	 *                        `before` and `after`. If `$type` is `section`
-	 *                        accepts `start` and `end`. Default values based on
-	 *                        the `type`.
-	 *     @type string $of   Control/Section ID.
+	 *     @type string $type     Injection type, either `control` or `section`.
+	 *                            Default is `control`.
+	 *     @type string $at       Where to inject. If `$type` is `control` accepts
+	 *                            `before` and `after`. If `$type` is `section`
+	 *                            accepts `start` and `end`. Default values based on
+	 *                            the `type`.
+	 *     @type string $of       Control/Section ID.
+	 *     @type array  $fallback Fallback injection position. When the position is
+	 *                            not found it will try to fetch the fallback
+	 *                            position.
 	 * }
 	 *
 	 * @return bool|array Position info.
@@ -523,6 +526,10 @@ abstract class Controls_Stack {
 		$target_control_index = $this->get_control_index( $position['of'] );
 
 		if ( false === $target_control_index ) {
+			if ( ! empty( $position['fallback'] ) ) {
+				return $this->get_position_info( $position['fallback'] );
+			}
+
 			return false;
 		}
 

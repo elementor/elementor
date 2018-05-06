@@ -76,6 +76,9 @@ class Post extends Document {
 
 		$document->start_injection( [
 			'of' => 'post_status',
+			'fallback' => [
+				'of' => 'post_title',
+			],
 		] );
 
 		$document->add_control(
@@ -145,6 +148,9 @@ class Post extends Document {
 	public static function register_post_fields_control( $document ) {
 		$document->start_injection( [
 			'of' => 'post_status',
+			'fallback' => [
+				'of' => 'post_title',
+			],
 		] );
 
 		if ( post_type_supports( $document->post->post_type, 'excerpt' ) ) {
