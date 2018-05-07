@@ -1025,18 +1025,46 @@ abstract class Controls_Stack {
 	 * Retrieve the settings from all the active controls.
 	 *
 	 * @since 1.4.0
+	 * @since 2.1.0 Added the `controls` and the `settings` parameters.
 	 * @access public
+	 *
+	 * @param array $controls Optional. An array of controls. Default is null.
+	 * @param array $settings Optional. Controls settings. Default is null.
 	 *
 	 * @return array Active settings.
 	 */
-	public function get_active_settings() {
-		$settings = $this->get_settings();
+	public function get_active_settings( $settings = null, $controls = null ) {
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
 
-		$active_settings = array_intersect_key( $settings, $this->get_active_controls() );
+		if ( ! $settings ) {
+			$settings = $this->get_controls_settings();
+		}
 
-		$settings_mask = array_fill_keys( array_keys( $settings ), null );
+		$active_settings = [];
 
-		return array_merge( $settings_mask, $active_settings );
+		foreach ( $settings as $setting_key => $setting ) {
+			if ( ! isset( $controls[ $setting_key ] ) ) {
+				continue;
+			}
+
+			$control = $controls[ $setting_key ];
+
+			if ( $this->is_control_visible( $control, $settings ) ) {
+				if ( Controls_Manager::REPEATER === $control['type'] ) {
+					foreach ( $setting as & $item ) {
+						$item = $this->get_active_settings( $item, $control['fields'] );
+					}
+				}
+
+				$active_settings[ $setting_key ] = $setting;
+			} else {
+				$active_settings[ $setting_key ] = null;
+			}
+		}
+
+		return $active_settings;
 	}
 
 	/**
