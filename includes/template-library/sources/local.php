@@ -9,7 +9,6 @@ use Elementor\Core\Settings\Page\Model;
 use Elementor\Editor;
 use Elementor\Plugin;
 use Elementor\Settings;
-use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
