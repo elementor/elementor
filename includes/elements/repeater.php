@@ -107,6 +107,7 @@ class Repeater extends Element_Base {
 	 * Retrieve the fields from the current repeater control.
 	 *
 	 * @since 1.5.0
+	 * @deprecated 2.1.0 Use `Repeater::get_controls()` instead.
 	 * @access public
 	 *
 	 * @return array Repeater fields.
