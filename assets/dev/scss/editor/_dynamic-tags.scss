@@ -41,8 +41,14 @@
 	box-sizing: border-box; // overriding for TinyMCE environment
 
 	&__settings {
-		color: $editor-lightest;
-		cursor: pointer;
+
+		i {
+			color: $editor-lightest;
+
+			&.fa-wrench {
+				cursor: pointer;
+			}
+		}
 	}
 
 	&__title {
