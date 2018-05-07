@@ -757,6 +757,7 @@ abstract class Controls_Stack {
 	 * controls
 	 *
 	 * @since 1.4.0
+	 * @deprecated 2.1.0
 	 * @access public
 	 *
 	 * @return array Class controls.
