@@ -94,11 +94,45 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'text',
+			[
+				'label' => __( 'Text', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'label_block' => true,
+				'placeholder' => __( 'List Item', 'elementor' ),
+				'default' => __( 'List Item', 'elementor' ),
+			]
+		);
+
+		$repeater->add_control(
+			'icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'label_block' => true,
+				'default' => 'fa fa-check',
+			]
+		);
+
+		$repeater->add_control(
+			'link',
+			[
+				'label' => __( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'label_block' => true,
+				'placeholder' => __( 'https://your-link.com', 'elementor' ),
+			]
+		);
+
 		$this->add_control(
 			'icon_list',
 			[
 				'label' => '',
 				'type' => Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
 						'text' => __( 'List Item #1', 'elementor' ),
@@ -111,30 +145,6 @@ class Widget_Icon_List extends Widget_Base {
 					[
 						'text' => __( 'List Item #3', 'elementor' ),
 						'icon' => 'fa fa-dot-circle-o',
-					],
-				],
-				'fields' => [
-					[
-						'name' => 'text',
-						'label' => __( 'Text', 'elementor' ),
-						'type' => Controls_Manager::TEXT,
-						'label_block' => true,
-						'placeholder' => __( 'List Item', 'elementor' ),
-						'default' => __( 'List Item', 'elementor' ),
-					],
-					[
-						'name' => 'icon',
-						'label' => __( 'Icon', 'elementor' ),
-						'type' => Controls_Manager::ICON,
-						'label_block' => true,
-						'default' => 'fa fa-check',
-					],
-					[
-						'name' => 'link',
-						'label' => __( 'Link', 'elementor' ),
-						'type' => Controls_Manager::URL,
-						'label_block' => true,
-						'placeholder' => __( 'https://your-link.com', 'elementor' ),
 					],
 				],
 				'title_field' => '<i class="{{ icon }}" aria-hidden="true"></i> {{{ text }}}',
