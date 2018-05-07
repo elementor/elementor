@@ -185,6 +185,8 @@ class Post extends Document {
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param array $data
 	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {

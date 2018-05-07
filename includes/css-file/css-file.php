@@ -329,6 +329,8 @@ abstract class CSS_File {
 	 * @param callable $value_callback Callback function for the value.
 	 * @param array    $placeholders   Placeholders.
 	 * @param array    $replacements   Replacements.
+	 *
+	 * @throws \Exception If no parsed value.
 	 */
 	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
 		$value = call_user_func( $value_callback, $control );
