@@ -42,10 +42,21 @@ module.exports = ViewModule.extend( {
 		}
 
 		var scrollTop = $anchor.offset().top,
-			$wpAdminBar = elementorFrontend.getElements( '$wpAdminBar' );
+			$wpAdminBar = elementorFrontend.getElements( '$wpAdminBar' ),
+			$activeStickys = jQuery( '.elementor-sticky--active' ),
+			maxStickyHeight = 0;
 
 		if ( $wpAdminBar.length > 0 ) {
 			scrollTop -= $wpAdminBar.height();
+		}
+
+		// Offset height of tallest sticky
+		if ( $activeStickys.length > 0 ) {
+			 maxStickyHeight = Math.max.apply( null, $activeStickys.map( function() {
+				return jQuery( this ).height();
+			} ).get() );
+
+			scrollTop -= maxStickyHeight;
 		}
 
 		event.preventDefault();
