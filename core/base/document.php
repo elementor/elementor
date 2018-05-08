@@ -623,7 +623,7 @@ abstract class Document extends Controls_Stack {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			if ( empty( $elements ) && empty( $autosave_elements ) ) {
 				// Convert to Elementor.
-				$elements = Plugin::$instance->db->_get_new_editor_from_wp_editor( $this->post->ID );
+				$elements = Plugin::$instance->db->get_new_editor_from_wp_editor( $this->post->ID );
 				if ( $this->is_autosave() ) {
 					Plugin::$instance->db->copy_elementor_meta( $this->post->post_parent, $this->post->ID );
 				}
