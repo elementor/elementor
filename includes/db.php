@@ -259,6 +259,26 @@ class DB {
 	}
 
 	/**
+	 * Get new editor from WordPress editor.
+	 *
+	 * When editing the with Elementor the first time, the current page content
+	 * is parsed into Text Editor Widget that contains the original data.
+	 *
+	 * @since 1.0.0
+	 * @deprecated 2.1.0 Use DB::get_new_editor_from_wp_editor() instead
+	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return array Content in Elementor format.
+	 */
+	public function _get_new_editor_from_wp_editor( $post_id ) {
+		// TODO: _deprecated_function( __METHOD__, '2.1.0', __CLASS__ . '::get_new_editor_from_wp_editor()' );
+
+		return $this->get_new_editor_from_wp_editor( $post_id );
+	}
+
+	/**
 	 * Is using Elementor.
 	 *
 	 * Set whether the page is using Elementor or not.
