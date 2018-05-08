@@ -431,7 +431,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return Element_Base Parent element.
 	 */
 	public function get_parent() {
-		// Todo: _deprecated_function( __METHOD__, '1.7.6', '$this->get_data( 'parent' )' );
+		_deprecated_function( __METHOD__, '1.7.6', __CLASS__ . '::get_data( \'parent\' )' );
 
 		return $this->get_data( 'parent' );
 	}
