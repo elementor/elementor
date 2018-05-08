@@ -173,7 +173,7 @@ class Preview {
 			'elementor-select2',
 			ELEMENTOR_ASSETS_URL . 'lib/e-select2/css/e-select2' . $suffix . '.css',
 			[],
-			'4.0.5'
+			'4.0.6-rc.1'
 		);
 
 		wp_register_style(
