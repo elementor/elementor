@@ -213,8 +213,7 @@ class Widget_Heading extends Widget_Base {
 					'value' => Scheme_Color::COLOR_1,
 				],
 				'selectors' => [
-					// Stronger selector to avoid section style from overwriting
-					'{{WRAPPER}}.elementor-widget-heading .elementor-heading-title' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
 				],
 			]
 		);

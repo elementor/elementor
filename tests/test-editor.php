@@ -53,7 +53,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 
 		$styles = [
 			'font-awesome',
-			'select2',
+			'elementor-select2',
 			'elementor-icons',
 			'wp-auth-check',
 			'google-font-roboto',
