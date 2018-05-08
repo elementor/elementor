@@ -56,8 +56,18 @@ abstract class Document extends Controls_Stack {
 	 * @return array Document properties.
 	 */
 	public static function get_properties() {
+
 		return [
 			'is_editable' => true,
+			'panel_config' => [
+				'categories' => [
+					'inactive' => [ 'wordpress' ],
+				],
+				'messages' => [
+					/* translators: %s: the document title. */
+					'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), self::get_title() ),
+				],
+			],
 		];
 	}
 
@@ -324,10 +334,7 @@ abstract class Document extends Controls_Stack {
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
 			'last_edited' => $this->get_last_edited(),
-			'messages' => [
-				/* translators: %s: the document title. */
-				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), $this::get_title() ),
-			],
+			'panel' => self::get_property( 'panel_config' ),
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
 				'preview' => $this->get_preview_url(),
