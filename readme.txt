@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.6
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 2.0.9
+Stable tag: 2.0.10
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -215,6 +215,12 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.0.10 - 2018-05-08 =
+* Fix: Added icon for Dynamic Tag without settings
+* Fix: Added offset for anchor scroll section is sticky ([#4323](https://github.com/pojome/elementor/issues/4323))
+* Fix: Title changing on auto-save for various languages
+* Fix: Cannot scroll in the library modal ([#4325](https://github.com/pojome/elementor/issues/4325))
 
 = 2.0.9 - 2018-05-01 =
 * Tweak: Added ability to add Dynamic Tags from 3rd party applications
