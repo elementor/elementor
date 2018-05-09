@@ -283,8 +283,9 @@ module.exports = function( grunt ) {
 					'assets/dev/scss/**/*.scss',
 					'modules/**/*.scss'
 				],
-				tasks: [ 'styles' ],
+				tasks: [ 'styles:true' ],
 				options: {
+					spawn: false,
 					livereload: true
 				}
 			},
@@ -294,8 +295,9 @@ module.exports = function( grunt ) {
 					'assets/dev/js/**/*.js',
 					'modules/**/*.js'
 				],
-				tasks: [ 'scripts' ],
+				tasks: [ 'scripts:true' ],
 				options: {
+					spawn: false,
 					livereload: true
 				}
 			}
@@ -453,17 +455,27 @@ module.exports = function( grunt ) {
 		'checktextdomain'
 	] );
 
-	grunt.registerTask( 'scripts', [
-		'jshint',
-		'browserify',
-		'exorcise',
-		'uglify'
-	] );
+	grunt.registerTask( 'scripts', function( isDevMode ) {
+		isDevMode = isDevMode ? isDevMode : false;
 
-	grunt.registerTask( 'styles', [
-		'sass',
-		'postcss'
-	] );
+		grunt.task.run( 'jshint' );
+		grunt.task.run( 'browserify' );
+
+		if ( ! isDevMode ) {
+			grunt.task.run( 'exorcise' );
+			grunt.task.run( 'uglify' );
+		}
+	} );
+
+	grunt.registerTask( 'styles', function( isDevMode ) {
+		isDevMode = isDevMode ? isDevMode : false;
+
+		grunt.task.run( 'sass' );
+
+		if ( ! isDevMode ) {
+			grunt.task.run( 'postcss' );
+		}
+	} );
 
 	grunt.registerTask( 'build', [
 		'default',
