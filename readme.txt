@@ -216,6 +216,10 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.0.11 - 2018-05-09 =
+* Fix: Stronger selector for heading widget color, to avoid section style override ([#4266](https://github.com/pojome/elementor/issues/4266))
+* Fix: style missing when role manager in content only mode
+
 = 2.0.10 - 2018-05-08 =
 * Fix: Added icon for Dynamic Tag without settings
 * Fix: Added offset for anchor scroll section is sticky ([#4323](https://github.com/pojome/elementor/issues/4323))
