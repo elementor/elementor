@@ -196,15 +196,10 @@ App = Marionette.Application.extend( {
 		}
 
 		var isInner = modelElement.get( 'isInner' ),
-			controls = {},
-			userCanEditStyle = elementor.userCan( 'design' );
+			controls = {};
 
 		_.each( elementData.controls, function( controlData, controlKey ) {
 			if ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top ) {
-				return;
-			}
-
-			if ( ! userCanEditStyle && 'content' !== controlData.tab ) {
 				return;
 			}
 
