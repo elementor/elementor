@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor utils class.
+ * Elementor utils.
  *
  * Elementor utils handler class is responsible for different utility methods
  * used by Elementor.

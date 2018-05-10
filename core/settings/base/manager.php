@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor settings base manager class.
+ * Elementor settings base manager.
  *
  * Elementor settings base manager handler class is responsible for registering
  * and managing Elementor settings base managers.

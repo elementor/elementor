@@ -31,8 +31,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	childViewOptions: function() {
 		return {
 			controlFields: this.model.get( 'fields' ),
-			titleField: this.model.get( 'title_field' ),
-			parentModel: this.elementSettingsModel // For parentConditions in repeaterRow
+			titleField: this.model.get( 'title_field' )
 		};
 	},
 

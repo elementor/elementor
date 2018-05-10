@@ -73,16 +73,14 @@ ControlsCSSParser = ViewModule.extend( {
 		return value;
 	},
 
-	addRepeaterControlsStyleRules: function( repeaterValues, repeaterControls, controls, placeholders, replacements ) {
+	addRepeaterControlsStyleRules: function( repeaterValues, repeaterControlsItems, controls, placeholders, replacements ) {
 		var self = this;
 
-		if ( ! ( repeaterValues instanceof Backbone.Collection ) ) {
-			repeaterValues = new Backbone.Collection( repeaterValues );
-		}
+		repeaterControlsItems.forEach( function( item, index ) {
+			var itemModel = repeaterValues.models[ index ];
 
-		repeaterValues.each( function( itemModel ) {
 			self.addStyleRules(
-				repeaterControls,
+				item,
 				itemModel.attributes,
 				controls,
 				placeholders.concat( [ '{{CURRENT_ITEM}}' ] ),

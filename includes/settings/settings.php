@@ -106,6 +106,12 @@ class Settings extends Settings_Page {
 	}
 
 	/**
+	 * Register Elementor knowledge base sub-menu.
+	 *
+	 * Add new Elementor knowledge base sub-menu under the main Elementor menu.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
 	 * @since 2.0.3
 	 * @access public
 	 */
@@ -398,6 +404,18 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
+							'context_menu' => [
+								'label' => __( 'Widgets Context Menu', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => 'on',
+									'options' => [
+										'' => __( 'Disable', 'elementor' ),
+										'on' => __( 'Enable', 'elementor' ),
+									],
+									'desc' => __( 'Control widget actions by right clicking on it', 'elementor' ),
+								],
+							]
 						],
 					],
 				],

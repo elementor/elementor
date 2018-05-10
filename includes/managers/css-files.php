@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor posts CSS manager class.
+ * Elementor posts CSS manager.
  *
  * Elementor posts CSS manager handler class is responsible for creating custom
  * CSS file for posts.
@@ -135,6 +135,15 @@ class Posts_CSS_Manager {
 				$errors['files'] = 'Cannot delete files cache';
 			}
 		}
+
+		/**
+		 * Elementor clear CSS files.
+		 *
+		 * Fires after Elementor clears CSS files
+		 *
+		 * @since 2.0.8
+		 */
+		do_action( 'elementor/css-file/clear_cache' );
 
 		return $errors;
 	}

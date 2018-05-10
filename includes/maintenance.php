@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor maintenance class.
+ * Elementor maintenance.
  *
  * Elementor maintenance handler class is responsible for setting up Elementor
  * activation and uninstallation hooks.

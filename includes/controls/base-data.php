@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor base data control.
  *
- * A base control for creating data controls.
+ * An abstract class for creating new data controls in the panel.
  *
  * @since 1.5.0
  * @abstract
@@ -77,8 +77,18 @@ abstract class Base_Data_Control extends Base_Control {
 	}
 
 	/**
+	 * Parse dynamic tags.
+	 *
+	 * Iterates through all the controls and renders all the dynamic tags.
+	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param string $dynamic_value    The dynamic tag text.
+	 * @param array  $dynamic_settings The dynamic tag settings.
+	 *
+	 * @return string|string[]|mixed A string or an array of strings with the
+	 *                               return value from each tag callback function.
 	 */
 	public function parse_tags( $dynamic_value, $dynamic_settings ) {
 		$current_dynamic_settings = $this->get_settings( 'dynamic' );

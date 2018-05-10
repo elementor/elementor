@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor documents manager class.
+ * Elementor documents manager.
  *
  * Elementor documents manager handler class is responsible for registering and
  * managing Elementor documents.
@@ -178,6 +178,8 @@ class Documents_Manager {
 		if ( ! $post_id || ! get_post( $post_id ) ) {
 			return false;
 		}
+
+		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
 			$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );

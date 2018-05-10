@@ -1,4 +1,5 @@
 var BaseElementView = require( 'elementor-elements/views/base' ),
+	ContextMenu = require( 'elementor-editor-utils/context-menu' ),
 	WidgetView;
 
 WidgetView = BaseElementView.extend( {
@@ -15,13 +16,19 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	className: function() {
-		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
+		var baseClasses = BaseElementView.prototype.className.apply( this, arguments );
+
+		return baseClasses + ' elementor-widget ' + elementor.getElementData( this.getEditModel() ).html_wrapper_class;
 	},
 
 	events: function() {
 		var events = BaseElementView.prototype.events.apply( this, arguments );
 
 		events.click = 'onClickEdit';
+
+		if ( elementor.config.contextMenuEnabled ) {
+			events.contextmenu = 'onContextMenu';
+		}
 
 		return events;
 	},
@@ -53,6 +60,10 @@ WidgetView = BaseElementView.extend( {
 			editModel.renderRemoteServer();
 		}
 
+		if ( elementor.config.contextMenuEnabled ) {
+			this.initContextMenu();
+		}
+
 		var onRenderMethod = this.onRender;
 
 		this.render = _.throttle( this.render, 300 );
@@ -60,6 +71,50 @@ WidgetView = BaseElementView.extend( {
 		this.onRender = function() {
 			_.defer( onRenderMethod.bind( this ) );
 		};
+	},
+
+	initContextMenu: function() {
+		var contextMenuActions = [
+			{
+				name: 'edit',
+				title: elementor.translate( 'edit' ),
+				callback: this.edit.bind( this )
+			}, {
+				name: 'duplicate',
+				title: elementor.translate( 'duplicate' ),
+				shortcut: ( elementor.envData.mac ? '⌘' : '^' ) + 'D',
+				callback: this.duplicate.bind( this )
+			}, {
+				name: 'copyStyle',
+				title: elementor.translate( 'copy_style' ),
+				callback: this.copyStyle.bind( this )
+			}, {
+				name: 'pasteStyle',
+				title: elementor.translate( 'paste_style' ),
+				callback: this.pasteStyle.bind( this ),
+				isEnabled: function() {
+					return !! elementor.channels.editor.request( 'styleClipboard' );
+				}
+			}, {
+				name: '__divider__'
+			}, {
+				name: 'save',
+				title: elementor.translate( 'save_as_global' )
+			}, {
+				name: '__divider__'
+			}, {
+				name: 'delete',
+				title: elementor.translate( 'delete' ),
+				shortcut: 'Del',
+				callback: this.removeElement.bind( this )
+			}
+		];
+
+		contextMenuActions = elementor.hooks.applyFilters( 'elements/widget/contextMenuActions', contextMenuActions, this );
+
+		this.contextMenu = new ContextMenu( {
+			actions: contextMenuActions
+		} );
 	},
 
 	render: function() {
@@ -147,6 +202,18 @@ WidgetView = BaseElementView.extend( {
 		this.render();
 	},
 
+	onContextMenu: function( event ) {
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'edit' !== activeMode ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		this.contextMenu.show( event );
+	},
+
 	onRender: function() {
         var self = this;
 
@@ -158,7 +225,6 @@ WidgetView = BaseElementView.extend( {
         self.$el
 	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
             .removeClass( 'elementor-widget-empty' )
-	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) + ' elementor-widget-can-edit' )
             .children( '.elementor-widget-empty-icon' )
             .remove();
 
@@ -171,6 +237,12 @@ WidgetView = BaseElementView.extend( {
 			}, 200 );
 			// Is element empty?
 		} );
+	},
+
+	onDestroy: function() {
+		BaseElementView.prototype.onDestroy.apply( this, arguments );
+
+		this.contextMenu.destroy();
 	}
 } );
 

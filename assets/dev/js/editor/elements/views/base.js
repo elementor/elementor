@@ -128,6 +128,87 @@ BaseElementView = BaseContainer.extend( {
 		elementor.getPanelView().openEditor( this.getEditModel(), this );
 	},
 
+	copyStyle: function() {
+		var settings = this.getEditModel().get( 'settings' ),
+			styleSettings = {},
+			controls = _.filter( settings.controls, function( control ) {
+				return 'content' !== control.tab;
+			} );
+
+		controls.forEach( function( control ) {
+			if ( undefined === settings.attributes[ control.name ] ) {
+				return;
+			}
+
+			styleSettings[ control.name ] = settings.attributes[ control.name ];
+		} );
+
+		elementor.channels.editor.reply( 'styleClipboard', styleSettings );
+	},
+
+	pasteStyle: function() {
+		var styleClipboard = elementor.channels.editor.request( 'styleClipboard' );
+
+		if ( ! styleClipboard ) {
+			return;
+		}
+
+		var editModel = this.getEditModel(),
+			settings = editModel.get( 'settings' ),
+			settingsAttributes = settings.attributes,
+			controls = settings.controls,
+			diffSettings = {};
+
+		jQuery.each( controls, function( controlName, control ) {
+			var clipboardValue = styleClipboard[ controlName ],
+				targetValue = settingsAttributes[ controlName ];
+
+			if ( undefined === clipboardValue || undefined === targetValue ) {
+				return;
+			}
+
+			if ( 'object' === typeof clipboardValue ) {
+				if ( 'object' !== typeof targetValue ) {
+					return;
+				}
+
+				var isEqual = true;
+
+				jQuery.each( clipboardValue, function( propertyKey ) {
+					if ( clipboardValue[ propertyKey ] !== targetValue[ propertyKey ] ) {
+						return isEqual = false;
+					}
+				} );
+
+				if ( isEqual ) {
+					return;
+				}
+			} else {
+				if ( clipboardValue === targetValue ) {
+					return;
+				}
+			}
+
+			var ControlView = elementor.getControlView( control.type );
+
+			if ( ! ControlView.onPasteStyle( control, clipboardValue ) ) {
+				return;
+			}
+
+			diffSettings[ controlName ] = clipboardValue;
+		} );
+
+		this.allowRender = false;
+
+		jQuery.each( diffSettings, function( key, value ) {
+			editModel.setSetting( key, value );
+		} );
+
+		this.allowRender = true;
+
+		this.renderOnChange();
+	},
+
 	addElementFromPanel: function( options ) {
 		var elementView = elementor.channels.panelElements.request( 'element:selected' );
 
@@ -324,19 +405,6 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.attr( 'id', customElementID );
 	},
 
-	getModelForRender: function() {
-		return elementor.hooks.applyFilters( 'element/templateHelpers/editModel', this.getEditModel(), this );
-	},
-
-	renderUIOnly: function() {
-		var editModel = this.getModelForRender();
-
-		this.renderStyles( editModel.get( 'settings' ) );
-		this.renderCustomClasses();
-		this.renderCustomElementID();
-		this.enqueueFonts();
-	},
-
 	renderUI: function() {
 		this.renderStyles();
 		this.renderCustomClasses();
@@ -407,7 +475,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			if ( ! isContentChanged ) {
-				this.renderUIOnly();
+				this.renderUI();
 				return;
 			}
 		}
@@ -446,6 +514,16 @@ BaseElementView = BaseContainer.extend( {
 		data.settings = this.getEditModel().get( 'settings' ).parseDynamicSettings( data.settings, this.getDynamicParsingSettings() );
 
 		return data;
+	},
+
+	save: function() {
+		var model = this.model;
+
+		elementor.templates.startModal( {
+			onReady: function() {
+				elementor.templates.getLayout().showSaveTemplateView( model );
+			}
+		} );
 	},
 
 	onBeforeRender: function() {
@@ -531,13 +609,7 @@ BaseElementView = BaseContainer.extend( {
 	onClickSave: function( event ) {
 		event.preventDefault();
 
-		var model = this.model;
-
-		elementor.templates.startModal( {
-			onReady: function() {
-				elementor.templates.getLayout().showSaveTemplateView( model );
-			}
-		} );
+		this.save();
 	},
 
 	onDestroy: function() {

@@ -9,7 +9,6 @@ use Elementor\Core\Settings\Page\Model;
 use Elementor\Editor;
 use Elementor\Plugin;
 use Elementor\Settings;
-use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor template library local source class.
+ * Elementor template library local source.
  *
  * Elementor template library local source handler class is responsible for
  * handling local Elementor templates saved by the user locally on his site.
@@ -1225,12 +1224,17 @@ class Source_Local extends Source_Base {
 				<i class="eicon-folder"></i>
 				<h2>
 					<?php
-					/* translators: %s: Current Type Label */
+					/* translators: %s: Template type label. */
 					printf( __( 'Create Your First %s', 'elementor' ), $current_type_label );
 					?>
 				</h2>
-				<p><?php echo __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimised workflow.', 'elementor' ); ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>"><?php echo __( 'Add New', 'elementor' ); ?> <?php echo esc_html( $current_type_label ); ?></a>
+				<p><?php echo __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ); ?></p>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>">
+					<?php
+					/* translators: %s: Template type label. */
+					printf( __( 'Add New %s', 'elementor' ), $current_type_label );
+					?>
+				</a>
 			</div>
 		</div>
 		<?php
@@ -1316,9 +1320,7 @@ class Source_Local extends Source_Base {
 
 		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
 
-		$template_type = self::get_template_type( $template_id );
-
-		if ( 'page' === $template_type ) {
+		if ( get_post_meta( $template_id, '_elementor_page_settings', true ) ) {
 			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $template_id );
 
 			$page_settings_data = $this->process_element_export_import_content( $page, 'on_export' );
@@ -1375,10 +1377,16 @@ class Source_Local extends Source_Base {
 	 * @return string Template label.
 	 */
 	private function get_template_label_by_type( $template_type ) {
-		$template_label = ucwords( str_replace( '_', ' ', $template_type ) );
+		$document_types = Plugin::instance()->documents->get_document_types();
+
+		if ( isset( $document_types[ $template_type ] ) ) {
+			$template_label = call_user_func( [ $document_types[ $template_type ], 'get_title' ] );
+		} else {
+			$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
+		}
 
 		if ( 'page' === $template_type ) {
-			$template_label = 'Content';
+			$template_label = __( 'Content', 'elementor' );
 		}
 
 		/**
@@ -1417,6 +1425,10 @@ class Source_Local extends Source_Base {
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
+			// Template type column.
+			add_action( 'manage_' . self::CPT . '_posts_columns', [ $this, 'admin_columns_headers' ] );
+			add_action( 'manage_' . self::CPT . '_posts_custom_column', [ $this, 'admin_columns_content' ] , 10, 2 );
+
 			// Template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );
 			add_filter( 'handle_bulk_actions-edit-elementor_library', [ $this, 'admin_export_multiple_templates' ], 10, 3 );
@@ -1429,6 +1441,31 @@ class Source_Local extends Source_Base {
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
+	}
+
+	public function admin_columns_content( $column_name, $post_id ) {
+		if ( 'elementor_library_type' === $column_name ) {
+			/** @var Document $document */
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$admin_filter_url = admin_url( '/edit.php?post_type=elementor_library&elementor_library_type=' . $document->get_name() );
+				printf( '<a href="%s">%s</a>', $admin_filter_url, $document->get_title() );
+			}
+		}
+	}
+
+	public function admin_columns_headers( $posts_columns ) {
+		// Replace original column that bind to the taxonomy - with another column.
+		unset( $posts_columns['taxonomy-elementor_library_type'] );
+
+		$offset = 2;
+
+		$posts_columns = array_slice( $posts_columns, 0, $offset, true ) + [
+				'elementor_library_type' => __( 'Type', 'elementor' ),
+			] + array_slice( $posts_columns, $offset, null, true );
+
+		return $posts_columns;
 	}
 
 	/**

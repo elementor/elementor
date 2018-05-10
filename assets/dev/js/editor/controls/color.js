@@ -2,6 +2,12 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlColorItemView;
 
 ControlColorItemView = ControlBaseDataView.extend( {
+	applySavedValue: function() {
+		if ( this.ui.input.wpColorPicker( 'instance' ) ) {
+			this.ui.input.wpColorPicker( 'color', this.getControlValue() );
+		}
+	},
+
 	onReady: function() {
 		var self = this;
 

@@ -101,10 +101,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 		} );
 	},
 
-	getStyleControls: function( controls ) {
+	getStyleControls: function( controls, attributes ) {
 		var self = this;
 
-		controls = elementor.helpers.cloneObject( controls || self.getActiveControls() );
+		controls = elementor.helpers.cloneObject( self.getActiveControls( controls, attributes ) );
 
 		var styleControls = [];
 
@@ -115,7 +115,13 @@ BaseSettingsModel = Backbone.Model.extend( {
 			control = jQuery.extend( {}, controlDefaultSettings, control );
 
 			if ( control.fields ) {
-				control.styleFields = self.getStyleControls( control.fields );
+				var styleFields = [];
+
+				self.attributes[ control.name ].each( function( item ) {
+					styleFields.push( self.getStyleControls( control.fields, item.attributes ) );
+				} );
+
+				control.styleFields = styleFields;
 			}
 
 			if ( control.fields || ( control.dynamic && control.dynamic.active ) || self.isStyleControl( control.name, controls ) ) {
@@ -158,17 +164,24 @@ BaseSettingsModel = Backbone.Model.extend( {
 		} );
 	},
 
-	getActiveControls: function() {
-		var self = this,
-			controls = {};
+	getActiveControls: function( controls, attributes ) {
+		var activeControls = {};
 
-		_.each( self.controls, function( control, controlKey ) {
-			if ( elementor.helpers.isActiveControl( control, self.attributes ) ) {
-				controls[ controlKey ] = control;
+		if ( ! controls ) {
+			controls = this.controls;
+		}
+
+		if ( ! attributes ) {
+			attributes = this.attributes;
+		}
+
+		_.each( controls, function( control, controlKey ) {
+			if ( elementor.helpers.isActiveControl( control, attributes ) ) {
+				activeControls[ controlKey ] = control;
 			}
 		} );
 
-		return controls;
+		return activeControls;
 	},
 
 	clone: function() {

@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor page settings manager class.
+ * Elementor page settings manager.
  *
  * Elementor page settings manager handler class is responsible for registering
  * and managing Elementor page settings managers.
@@ -322,6 +322,9 @@ class Manager extends BaseManager {
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param $post_id
+	 * @param $status
 	 */
 	public function save_post_status( $post_id, $status ) {
 		$parent_id = wp_is_post_revision( $post_id );
