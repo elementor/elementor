@@ -265,7 +265,7 @@ class Widget_Image_Box extends Widget_Base {
 
 		$this->start_controls_tab( 'normal',
 			[
-				'label' => __( 'Normal', 'elementor-pro' ),
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -280,7 +280,7 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_control(
 			'image_opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -319,7 +319,7 @@ class Widget_Image_Box extends Widget_Base {
 
 		$this->start_controls_tab( 'hover',
 			[
-				'label' => __( 'Hover', 'elementor-pro' ),
+				'label' => __( 'Hover', 'elementor' ),
 			]
 		);
 

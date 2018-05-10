@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor modules manager class.
+ * Elementor modules manager.
  *
  * Elementor modules manager handler class is responsible for registering and
  * managing Elementor modules.
@@ -70,6 +70,7 @@ class Modules_Manager {
 			'library',
 			'dynamic-tags',
 			'page-templates',
+			'gutenberg',
 		];
 	}
 

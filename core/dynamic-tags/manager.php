@@ -25,6 +25,10 @@ class Manager {
 	private $parsing_mode = self::MODE_RENDER;
 
 	/**
+	 * Dynamic tags manager constructor.
+	 *
+	 * Initializing Elementor dynamic tags manager.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 */
@@ -33,8 +37,21 @@ class Manager {
 	}
 
 	/**
+	 * Parse dynamic tags text.
+	 *
+	 * Receives the dynamic tag text, and returns a single value or multiple values
+	 * from the tag callback function.
+	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param string   $text           Dynamic tag text.
+	 * @param array    $settings       The dynamic tag settings.
+	 * @param callable $parse_callback The functions that renders the dynamic tag.
+	 *
+	 * @return string|string[]|mixed A single string or an array of strings with
+	 *                               the return values from each tag callback
+	 *                               function.
 	 */
 	public function parse_tags_text( $text, array $settings, callable $parse_callback ) {
 		if ( ! empty( $settings['returnType'] ) && 'object' === $settings['returnType'] ) {
@@ -50,10 +67,23 @@ class Manager {
 	}
 
 	/**
+	 * Parse dynamic tag text.
+	 *
+	 * Receives the dynamic tag text, and returns the value from the callback
+	 * function.
+	 *
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param string   $tag_text       Dynamic tag text.
+	 * @param array    $settings       The dynamic tag settings.
+	 * @param callable $parse_callback The functions that renders the dynamic tag.
+	 *
+	 * @return string|array|mixed If the tag was not found an empty string or an
+	 *                            empty array will be returned, otherwise the
+	 *                            return value from the tag callback function.
 	 */
-	public function parse_tag_text( $tag_text, array $settings, $parse_callback ) {
+	public function parse_tag_text( $tag_text, array $settings, callable $parse_callback ) {
 		$tag_data = $this->tag_text_to_tag_data( $tag_text );
 
 		if ( ! $tag_data ) {
@@ -70,6 +100,10 @@ class Manager {
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param string $tag_text
+	 *
+	 * @return array|null
 	 */
 	public function tag_text_to_tag_data( $tag_text ) {
 		preg_match( '/id="(.*?(?="))"/', $tag_text, $tag_id_match );
@@ -88,11 +122,16 @@ class Manager {
 	}
 
 	/**
+	 * Dynamic tag to text.
+	 *
+	 * Retrieve the shortcode that represents the dynamic tag.
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * @param Base_Tag $tag
 	 *
-	 * @return string
+	 * @param Base_Tag $tag An instance of the dynamic tag.
+	 *
+	 * @return string The shortcode that represents the dynamic tag.
 	 */
 	public function tag_to_text( Base_Tag $tag ) {
 		return sprintf( '[%1$s id="%2$s" name="%3$s" settings="%4$s"]', self::TAG_LABEL, $tag->get_id(), $tag->get_name(), urlencode( wp_json_encode( $tag->get_settings(), JSON_FORCE_OBJECT ) ) );
@@ -144,6 +183,12 @@ class Manager {
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param       $tag_id
+	 * @param       $tag_name
+	 * @param array $settings
+	 *
+	 * @return null|string
 	 */
 	public function get_tag_data_content( $tag_id, $tag_name, array $settings = [] ) {
 		if ( self::MODE_REMOVE === $this->parsing_mode ) {
@@ -156,26 +201,49 @@ class Manager {
 			return null;
 		}
 
-		return $tag->get_content( [
-			'wrap' => true,
-		] );
+		return $tag->get_content();
 	}
 
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param $tag_name
+	 *
+	 * @return mixed|null
 	 */
 	public function get_tag_info( $tag_name ) {
-		if ( empty( $this->tags_info[ $tag_name ] ) ) {
+		$tags = $this->get_tags();
+
+		if ( empty( $tags[ $tag_name ] ) ) {
 			return null;
 		}
 
-		return $this->tags_info[ $tag_name ];
+		return $tags[ $tag_name ];
+	}
+
+	public function get_tags() {
+		if ( ! did_action( 'elementor/dynamic_tags/register_tags' ) ) {
+			/**
+			 * Register dynamic tags.
+			 *
+			 * Fires when Elementor registers dynamic tags.
+			 *
+			 * @since 2.0.9
+			 *
+			 * @param Manager $this Dynamic tags manager.
+			 */
+			do_action( 'elementor/dynamic_tags/register_tags', $this );
+		}
+
+		return $this->tags_info;
 	}
 
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param string $class
 	 */
 	public function register_tag( $class ) {
 		/** @var Tag $tag */
@@ -188,8 +256,20 @@ class Manager {
 	}
 
 	/**
+	 * @access public
+	 *
+	 * @param string $tag_name
+	 */
+	public function unregister_tag( $tag_name ) {
+		unset( $this->tags_info[ $tag_name ] );
+	}
+
+	/**
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param       $group_name
+	 * @param array $group_settings
 	 */
 	public function register_group( $group_name, array $group_settings ) {
 		$default_group_settings = [
@@ -206,7 +286,7 @@ class Manager {
 	 * @access public
 	 */
 	public function print_templates() {
-		foreach ( $this->tags_info as $tag_name => $tag_info ) {
+		foreach ( $this->get_tags() as $tag_name => $tag_info ) {
 			$tag = $tag_info['instance'];
 
 			if ( ! $tag instanceof Tag ) {
@@ -224,26 +304,11 @@ class Manager {
 	public function get_tags_config() {
 		$config = [];
 
-		foreach ( $this->tags_info as $tag_name => $tag_info ) {
+		foreach ( $this->get_tags() as $tag_name => $tag_info ) {
 			/** @var Tag $tag */
 			$tag = $tag_info['instance'];
 
-			ob_start();
-
-			$tag->print_panel_template();
-
-			$panel_template = ob_get_clean();
-
-			$config[ $tag_name ] = [
-				'name' => $tag_name,
-				'title' => $tag->get_title(),
-				'panel_template' => $panel_template,
-				'categories' => $tag->get_categories(),
-				'group' => $tag->get_group(),
-				'controls' => $tag->get_controls(),
-				'content_type' => $tag->get_content_type(),
-				'settings_required' => $tag->is_settings_required(),
-			];
+			$config[ $tag_name ] = $tag->get_editor_config();
 		}
 
 		return $config;
@@ -261,8 +326,11 @@ class Manager {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since  2.0.0
 	 * @access public
+	 *
+	 * @throws \Exception If post ID is missing.
+	 * @throws \Exception If current user don't have permissions to edit the post.
 	 */
 	public function ajax_render_tags() {
 		Plugin::$instance->editor->verify_ajax_nonce();
@@ -317,6 +385,8 @@ class Manager {
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 *
+	 * @param $mode
 	 */
 	public function set_parsing_mode( $mode ) {
 		$this->parsing_mode = $mode;

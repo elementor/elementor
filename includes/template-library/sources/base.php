@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor template library source base class.
+ * Elementor template library source base.
  *
  * Elementor template library source base handler class is responsible for
  * initializing all the methods controlling the source of Elementor templates.
@@ -355,6 +355,11 @@ abstract class Source_Base {
 
 			if ( method_exists( $control_class, $method ) ) {
 				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ), $control );
+			}
+
+			// On Export, check if the control has an argument 'export' => false.
+			if ( 'on_export' === $method && isset( $control['export'] ) && false === $control['export'] ) {
+				unset( $element_data['settings'][ $control['name'] ] );
 			}
 		}
 

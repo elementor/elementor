@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor beta testers class.
+ * Elementor beta testers.
  *
  * Elementor beta testers handler class is responsible for the Beta Testers
  * feature that allows developers to test Elementor beta versions.

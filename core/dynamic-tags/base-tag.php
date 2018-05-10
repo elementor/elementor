@@ -8,6 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor base tag.
+ *
+ * An abstract class to register new Elementor tags.
+ *
+ * @since 2.0.0
+ * @abstract
+ */
 abstract class Base_Tag extends Controls_Stack {
 
 	/**
@@ -44,6 +52,8 @@ abstract class Base_Tag extends Controls_Stack {
 	 * @since 2.0.0
 	 * @access public
 	 * @abstract
+	 *
+	 * @param array $options
 	 */
 	abstract public function get_content( array $options = [] );
 
@@ -68,6 +78,25 @@ abstract class Base_Tag extends Controls_Stack {
 	 */
 	public function is_settings_required() {
 		return false;
+	}
+
+	public function get_editor_config() {
+		 ob_start();
+
+		$this->print_panel_template();
+
+		$panel_template = ob_get_clean();
+
+		return [
+			'name' => $this->get_name(),
+			'title' => $this->get_title(),
+			'panel_template' => $panel_template,
+			'categories' => $this->get_categories(),
+			'group' => $this->get_group(),
+			'controls' => $this->get_controls(),
+			'content_type' => $this->get_content_type(),
+			'settings_required' => $this->is_settings_required(),
+		];
 	}
 
 	/**

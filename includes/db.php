@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor database class.
+ * Elementor database.
  *
  * Elementor database handler class is responsible for communicating with the
  * DB, save and retrieve Elementor data and meta data.
@@ -182,7 +182,11 @@ class DB {
 
 		$document = Plugin::$instance->documents->get( $post_id );
 
-		return $document->get_elements_data( $status );
+		if ( $document ) {
+			return $document->get_elements_data( $status );
+		}
+
+		return [];
 	}
 
 	/**

@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor column element class.
+ * Elementor column element.
  *
- * Elementor repeater handler class is responsible for initializing the column
+ * Elementor column handler class is responsible for initializing the column
  * element.
  *
  * @since 1.0.0
@@ -187,6 +187,7 @@ class Element_Column extends Element_Base {
 			'div',
 			'header',
 			'footer',
+			'main',
 			'article',
 			'section',
 			'aside',
@@ -306,7 +307,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'background_overlay_opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
@@ -346,7 +347,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,

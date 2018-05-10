@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor model helper class.
+ * Elementor model helper.
  *
  * Elementor model helper handler class is responsible for filtering properties.
  *

@@ -153,6 +153,7 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
 					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
+					'assets/js/gutenberg.js': [ 'assets/dev/js/admin/gutenberg.js' ],
 					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ]
 				},
 				options: pkgInfo.browserify
@@ -186,6 +187,9 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/admin-feedback.min.js': [
 						'assets/js/admin-feedback.js'
+					],
+					'assets/js/gutenberg.min.js': [
+						'assets/js/gutenberg.js'
 					],
 					'assets/js/frontend.min.js': [
 						'assets/js/frontend.js'
@@ -279,8 +283,9 @@ module.exports = function( grunt ) {
 					'assets/dev/scss/**/*.scss',
 					'modules/**/*.scss'
 				],
-				tasks: [ 'styles' ],
+				tasks: [ 'styles:true' ],
 				options: {
+					spawn: false,
 					livereload: true
 				}
 			},
@@ -290,8 +295,9 @@ module.exports = function( grunt ) {
 					'assets/dev/js/**/*.js',
 					'modules/**/*.js'
 				],
-				tasks: [ 'scripts' ],
+				tasks: [ 'scripts:true' ],
 				options: {
+					spawn: false,
 					livereload: true
 				}
 			}
@@ -405,6 +411,7 @@ module.exports = function( grunt ) {
 					'!vendor/**',
 					'!Gruntfile.js',
 					'!package.json',
+					'!package-lock.json',
 					'!npm-debug.log',
 					'!composer.json',
 					'!composer.lock',
@@ -448,17 +455,27 @@ module.exports = function( grunt ) {
 		'checktextdomain'
 	] );
 
-	grunt.registerTask( 'scripts', [
-		'jshint',
-		'browserify',
-		'exorcise',
-		'uglify'
-	] );
+	grunt.registerTask( 'scripts', function( isDevMode ) {
+		isDevMode = isDevMode ? isDevMode : false;
 
-	grunt.registerTask( 'styles', [
-		'sass',
-		'postcss'
-	] );
+		grunt.task.run( 'jshint' );
+		grunt.task.run( 'browserify' );
+
+		if ( ! isDevMode ) {
+			grunt.task.run( 'exorcise' );
+			grunt.task.run( 'uglify' );
+		}
+	} );
+
+	grunt.registerTask( 'styles', function( isDevMode ) {
+		isDevMode = isDevMode ? isDevMode : false;
+
+		grunt.task.run( 'sass' );
+
+		if ( ! isDevMode ) {
+			grunt.task.run( 'postcss' );
+		}
+	} );
 
 	grunt.registerTask( 'build', [
 		'default',
