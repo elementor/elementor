@@ -1390,6 +1390,11 @@ class Source_Local extends Source_Base {
 			$template_label = __( 'Content', 'elementor' );
 		}
 
+		// TODO: remove this when global widgets becomes a document type with `get_title()` method.
+		if ( 'widget' === $template_type ) {
+			$template_label = __( 'Global Widget', 'elementor' );
+		}
+
 		/**
 		 * Template label by template type.
 		 *
