@@ -128,6 +128,11 @@ abstract class Document extends Controls_Stack {
 		return $this->get_name() . '-' . $this->post->ID;
 	}
 
+
+	public function get_remote_library_type() {
+		return $this->get_name();
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
@@ -323,6 +328,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
+			'remote_type' => $this->get_remote_library_type(),
 			'last_edited' => $this->get_last_edited(),
 			'messages' => [
 				/* translators: %s: the document title. */
