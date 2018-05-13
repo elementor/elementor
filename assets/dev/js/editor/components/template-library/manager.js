@@ -288,7 +288,7 @@ TemplateLibraryManager = function() {
 		self.requestLibraryData( {
 			onBeforeUpdate: layout.showLoadingView.bind( layout ),
 			onUpdate: function() {
-				var documentType = elementor.config.document.type,
+				var documentType = elementor.config.document.remote_type,
 					isBlockType = -1 !== config.categories.indexOf( documentType ),
 					oldStartIntent = Object.create( startIntent );
 
