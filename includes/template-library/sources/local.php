@@ -1414,9 +1414,6 @@ class Source_Local extends Source_Base {
 	 * @access private
 	 */
 	private function add_actions() {
-		self::add_template_type( 'page' );
-		self::add_template_type( 'section' );
-
 		if ( is_admin() ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
 			add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ], 11 );

@@ -5,6 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\Post;
 use Elementor\DB;
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -156,6 +157,11 @@ class Documents_Manager {
 	 */
 	public function register_document_type( $type, $class ) {
 		$this->types[ $type ] = $class;
+
+		if ( 'post' !== $type ) {
+			Source_Local::add_template_type( $type );
+		}
+
 		return $this;
 	}
 
