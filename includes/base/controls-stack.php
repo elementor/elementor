@@ -1047,6 +1047,8 @@ abstract class Controls_Stack {
 
 		foreach ( $settings as $setting_key => $setting ) {
 			if ( ! isset( $controls[ $setting_key ] ) ) {
+				$active_settings[ $setting_key ] = $setting;
+
 				continue;
 			}
 
