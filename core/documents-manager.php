@@ -150,7 +150,7 @@ class Documents_Manager {
 	 * @access public
 	 *
 	 * @param string $type  Document type name.
-	 * @param string $class The name of the class that registers the document type.
+	 * @param Document $class The name of the class that registers the document type.
 	 *                      Full name with the namespace.
 	 *
 	 * @return Documents_Manager The updated document manager instance.
@@ -158,7 +158,7 @@ class Documents_Manager {
 	public function register_document_type( $type, $class ) {
 		$this->types[ $type ] = $class;
 
-		if ( 'post' !== $type ) {
+		if ( $class::get_property( 'register_type' ) ) {
 			Source_Local::add_template_type( $type );
 		}
 
