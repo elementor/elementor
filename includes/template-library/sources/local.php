@@ -1068,7 +1068,7 @@ class Source_Local extends Source_Base {
 		$library_screen_id = 'edit-' . self::CPT;
 		$current_screen = get_current_screen();
 
-		if ( ! isset( $current_screen->id ) || $library_screen_id !== $current_screen->id ) {
+		if ( ! isset( $current_screen->id ) || $library_screen_id !== $current_screen->id || ! empty( $query->query_vars['meta_key'] ) ) {
 			return;
 		}
 
