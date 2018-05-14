@@ -1,6 +1,11 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\File;
+use Elementor\Core\Files\CSS;
+use Elementor\Core\Files\Global_CSS;
+use Elementor\Core\Files\Post_CSS;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -65,7 +70,7 @@ class Posts_CSS_Manager {
 			return;
 		}
 
-		$css_file = new Post_CSS_File( $post_id );
+		$css_file = new Post_CSS( $post_id );
 
 		$css_file->delete();
 	}
@@ -87,7 +92,7 @@ class Posts_CSS_Manager {
 	 * @return bool Whether to skip the post CSS meta.
 	 */
 	public function on_export_post_meta( $skip, $meta_key ) {
-		if ( Post_CSS_File::META_KEY === $meta_key ) {
+		if ( Post_CSS::META_KEY === $meta_key ) {
 			$skip = true;
 		}
 
@@ -113,13 +118,13 @@ class Posts_CSS_Manager {
 
 		$wpdb->delete(
 			$wpdb->postmeta, [
-				'meta_key' => Post_CSS_File::META_KEY,
+				'meta_key' => Post_CSS::META_KEY,
 			]
 		);
 
 		$wpdb->delete(
 			$wpdb->options, [
-				'option_name' => Global_CSS_File::META_KEY,
+				'option_name' => Global_CSS::META_KEY,
 			]
 		);
 

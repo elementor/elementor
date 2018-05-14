@@ -1,5 +1,7 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Files;
+
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.9.0
  */
-class Post_Preview_CSS extends Post_CSS_File {
+class Post_Preview_CSS extends Post_CSS {
 
 	/**
 	 * Preview ID.

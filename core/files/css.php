@@ -1,8 +1,16 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Files;
 
+use Elementor\Base_Data_Control;
+use Elementor\Controls_Manager;
+use Elementor\Controls_Stack;
+use Elementor\Core\Base\File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Element_Base;
+use Elementor\Plugin;
+use Elementor\Responsive;
+use Elementor\Stylesheet;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.2.0
  * @abstract
  */
-abstract class CSS_File {
+abstract class CSS extends File {
 
 	/**
 	 * Elementor CSS files base folder.
@@ -282,7 +290,7 @@ abstract class CSS_File {
 		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action instead.
 		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
-		 * @param CSS_File $this The current CSS file.
+		 * @param CSS $this The current CSS file.
 		 */
 		do_action( "elementor/{$name}-css-file/enqueue", $this );
 
@@ -295,7 +303,7 @@ abstract class CSS_File {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param CSS_File $this The current CSS file.
+		 * @param CSS $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/enqueue", $this );
 	}
@@ -662,7 +670,7 @@ abstract class CSS_File {
 		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action instead.
 		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
-		 * @param CSS_File $this The current CSS file.
+		 * @param CSS $this The current CSS file.
 		 */
 		do_action( "elementor/{$name}-css-file/parse", $this );
 
@@ -675,7 +683,7 @@ abstract class CSS_File {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param CSS_File $this The current CSS file.
+		 * @param CSS $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
