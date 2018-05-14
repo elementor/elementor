@@ -1,5 +1,9 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Files;
+
+use Elementor\Controls_Stack;
+use Elementor\Element_Base;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Post_CSS_File extends CSS_File {
+class Post_CSS extends CSS {
 
 	/**
 	 * Elementor post CSS file meta key.
@@ -279,7 +283,7 @@ class Post_CSS_File extends CSS_File {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Post_CSS_File $this    The post CSS file.
+		 * @param Post_CSS $this         The post CSS file.
 		 * @param Element_Base  $element The element.
 		 */
 		do_action( 'elementor/element/before_parse_css', $this, $element );
@@ -295,7 +299,7 @@ class Post_CSS_File extends CSS_File {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Post_CSS_File $this    The post CSS file.
+		 * @param Post_CSS $this    The post CSS file.
 		 * @param Element_Base  $element The element.
 		 */
 		do_action( 'elementor/element/parse_css', $this, $element );

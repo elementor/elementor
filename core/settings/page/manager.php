@@ -1,15 +1,14 @@
 <?php
 namespace Elementor\Core\Settings\Page;
 
+use Elementor\Core\Files\CSS;
+use Elementor\Core\Files\Post_CSS;
+use Elementor\Core\Files\Post_Preview_CSS;
 use Elementor\Core\Utils\Exceptions;
-use Elementor\CSS_File;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
-use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\DB;
 use Elementor\Plugin;
-use Elementor\Post_CSS_File;
-use Elementor\Post_Preview_CSS;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -258,12 +257,12 @@ class Manager extends BaseManager {
 	 * @since 1.6.0
 	 * @access protected
 	 *
-	 * @param CSS_File $css_file The requested CSS file.
+	 * @param CSS $css_file The requested CSS file.
 	 *
 	 * @return BaseModel The model object.
 	 */
-	protected function get_model_for_css_file( CSS_File $css_file ) {
-		if ( ! $css_file instanceof Post_CSS_File ) {
+	protected function get_model_for_css_file( CSS $css_file ) {
+		if ( ! $css_file instanceof Post_CSS ) {
 			return null;
 		}
 

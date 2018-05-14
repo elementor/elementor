@@ -1,5 +1,9 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Files;
+
+use Elementor\Plugin;
+use Elementor\Scheme_Base;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Global_CSS_File extends CSS_File {
+class Global_CSS extends CSS {
 
 	/**
 	 * Elementor global CSS file meta key.

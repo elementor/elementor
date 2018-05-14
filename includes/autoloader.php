@@ -39,7 +39,6 @@ class Autoloader {
 		'Control_Base_Units' => 'includes/controls/base-units.php',
 		'Controls_Manager' => 'includes/managers/controls.php',
 		'Controls_Stack' => 'includes/base/controls-stack.php',
-		'CSS_File' => 'includes/css-file/css-file.php',
 		'DB' => 'includes/db.php',
 		'Debug\Debug' => 'includes/debug/debug.php',
 		'Editor' => 'includes/editor.php',
@@ -47,7 +46,6 @@ class Autoloader {
 		'Embed' => 'includes/embed.php',
 		'Fonts' => 'includes/fonts.php',
 		'Frontend' => 'includes/frontend.php',
-		'Global_CSS_File' => 'includes/css-file/global-css-file.php',
 		'Group_Control_Background' => 'includes/controls/groups/background.php',
 		'Group_Control_Base' => 'includes/controls/groups/base.php',
 		'Group_Control_Border' => 'includes/controls/groups/border.php',
@@ -61,8 +59,6 @@ class Autoloader {
 		'Images_Manager' => 'includes/managers/image.php',
 		'Maintenance' => 'includes/maintenance.php',
 		'Maintenance_Mode' => 'includes/maintenance-mode.php',
-		'Post_CSS_File' => 'includes/css-file/post-css-file.php',
-		'Post_Preview_CSS' => 'includes/css-file/post-preview-css.php',
 		'Posts_CSS_Manager' => 'includes/managers/css-files.php',
 		'Preview' => 'includes/preview.php',
 		'Responsive' => 'includes/responsive.php',
@@ -111,6 +107,22 @@ class Autoloader {
 		'Control_Base' => 'Base_Data_Control',
 		'PageSettings\Manager' => 'Core\Settings\Page\Manager',
 		'Revisions_Manager' => 'Modules\History\Revisions_Manager',
+		'CSS_File' => [
+			'replacement' => 'Core\Files\CSS',
+			'version' => '2.1.0',
+		],
+		'Global_CSS_File' => [
+			'replacement' => 'Core\Files\Global_CSS',
+			'version' => '2.1.0',
+		],
+		'Post_CSS_File' => [
+			'replacement' => 'Core\Files\Post_CSS',
+			'version' => '2.1.0',
+		],
+		'Post_Preview_CSS' => [
+			'replacement' => 'Core\Files\Post_Preview_CSS',
+			'version' => '2.1.0',
+		],
 	];
 
 	/**
