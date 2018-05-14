@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Autoloader {
 
+	const ALIASES_DEPRECATION_RANGE = 0.2;
+
 	/**
 	 * Classes map.
 	 *
@@ -104,9 +106,18 @@ class Autoloader {
 	 * @var array Classes aliases.
 	 */
 	private static $classes_aliases = [
-		'Control_Base' => 'Base_Data_Control',
-		'PageSettings\Manager' => 'Core\Settings\Page\Manager',
-		'Revisions_Manager' => 'Modules\History\Revisions_Manager',
+		'Control_Base' => [
+			'replacement' => 'Base_Data_Control',
+			'version' => '1.6.0',
+		],
+		'PageSettings\Manager' => [
+			'replacement' => 'Core\Settings\Page\Manager',
+			'version' => '1.6.0',
+		],
+		'Revisions_Manager' => [
+			'replacement' => 'Modules\History\Revisions_Manager',
+			'version' => '1.7.0',
+		],
 		'CSS_File' => [
 			'replacement' => 'Core\Files\CSS',
 			'version' => '2.1.0',
@@ -206,7 +217,11 @@ class Autoloader {
 
 		// Backward Compatibility: Save old class name for set an alias after the new class is loaded
 		if ( $has_class_alias ) {
-			$relative_class_name = self::$classes_aliases[ $relative_class_name ];
+			$old_class_name = $relative_class_name;
+
+			$alias_data = self::$classes_aliases[ $relative_class_name ];
+
+			$relative_class_name = $alias_data['replacement'];
 		}
 
 		$final_class_name = __NAMESPACE__ . '\\' . $relative_class_name;
@@ -217,6 +232,18 @@ class Autoloader {
 
 		if ( $has_class_alias ) {
 			class_alias( $final_class_name, $class );
+
+			preg_match( '/^[0-9]+\.[0-9]+/', ELEMENTOR_VERSION, $current_version_as_float );
+
+			$current_version_as_float = (float) $current_version_as_float[0];
+
+			preg_match( '/^[0-9]+\.[0-9]+/', $alias_data['version'], $alias_version_as_float );
+
+			$alias_version_as_float = (float) $alias_version_as_float[0];
+
+			if ( $current_version_as_float - $alias_version_as_float >= self::ALIASES_DEPRECATION_RANGE ) {
+				_deprecated_file( $old_class_name, $alias_data['version'], $alias_data['replacement'] );
+			}
 		}
 	}
 }
