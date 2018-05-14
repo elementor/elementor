@@ -657,7 +657,8 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function get_panel_page_settings() {
 		return [
-			'title' => self::get_title() . ' ' . __( 'Settings', 'elementor' ),
+			/* translators: %s: Document title */
+			'title' => sprintf( __( '%s Settings', 'elementor' ), self::get_title() ),
 		];
 	}
 
