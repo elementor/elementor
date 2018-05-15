@@ -5,6 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\Post;
 use Elementor\DB;
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -89,8 +90,8 @@ class Documents_Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->register_default_types();
-
+		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
+		add_action( 'elementor/init', [ $this, 'register_default_types' ], 11 );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
@@ -149,13 +150,18 @@ class Documents_Manager {
 	 * @access public
 	 *
 	 * @param string $type  Document type name.
-	 * @param string $class The name of the class that registers the document type.
+	 * @param Document $class The name of the class that registers the document type.
 	 *                      Full name with the namespace.
 	 *
 	 * @return Documents_Manager The updated document manager instance.
 	 */
 	public function register_document_type( $type, $class ) {
 		$this->types[ $type ] = $class;
+
+		if ( $class::get_property( 'register_type' ) ) {
+			Source_Local::add_template_type( $type );
+		}
+
 		return $this;
 	}
 
@@ -289,7 +295,11 @@ class Documents_Manager {
 		if ( empty( $post_data['post_title'] ) ) {
 			$post_data['post_title'] = __( 'Elementor', 'elementor' );
 			if ( 'post' !== $type ) {
-				$post_data['post_title'] .= ' ' . call_user_func( [ $this->types[ $type ], 'get_title' ] );
+				$post_data['post_title'] = sprintf(
+					/* translators: %s: Document title */
+					__( 'Elementor %s', 'elementor' ),
+					call_user_func( [ $this->types[ $type ], 'get_title' ] )
+				);
 			}
 			$update_title = true;
 		}
