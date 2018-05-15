@@ -218,6 +218,13 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.0.12 - 2018-05-15 ###
+* Tweak: Added new method `add_body_class`
+* Tweak: Set library filter by the document
+* Tweak: Allow 3rd party developers to register documents on init
+* Fix: Set attach uploaded images to the current post
+* Fix: Scroll not working in the library modal ([#4394](https://github.com/pojome/elementor/issues/4394))
+
 ### 2.0.11 - 2018-05-09 ###
 * Fix: Stronger selector for heading widget color, to avoid section style override ([#4266](https://github.com/pojome/elementor/issues/4266))
 * Fix: style missing when role manager in content only mode
