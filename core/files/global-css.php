@@ -44,34 +44,6 @@ class Global_CSS extends CSS {
 	}
 
 	/**
-	 * Load meta data.
-	 *
-	 * Retrieve the global CSS file meta data.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 *
-	 * @return array Global CSS file meta data.
-	 */
-	protected function load_meta() {
-		return get_option( self::META_KEY );
-	}
-
-	/**
-	 * Update meta data.
-	 *
-	 * Update the global CSS file meta data.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 *
-	 * @param string $meta New meta data.
-	 */
-	protected function update_meta( $meta ) {
-		update_option( self::META_KEY, $meta );
-	}
-
-	/**
 	 * Get file handle ID.
 	 *
 	 * Retrieve the handle ID for the global post CSS file.
