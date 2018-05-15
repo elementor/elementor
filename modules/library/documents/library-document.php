@@ -37,6 +37,7 @@ abstract class Library_Document extends Document {
 		$properties = parent::get_properties();
 
 		$properties['show_in_library'] = true;
+		$properties['register_type'] = true;
 		$properties['library_view'] = 'grid';
 		$properties['group'] = 'blocks';
 
