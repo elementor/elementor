@@ -114,6 +114,13 @@ class Frontend {
 	private $admin_bar_edit_documents = [];
 
 	/**
+	 * @var string[]
+	 */
+	private $body_classes = [
+		'elementor-default',
+	];
+
+	/**
 	 * Init.
 	 *
 	 * Initialize Elementor front end. Hooks the needed actions to run Elementor
@@ -173,6 +180,17 @@ class Frontend {
 	}
 
 	/**
+	 * @param string|array $class
+	 */
+	public function add_body_class( $class ) {
+		if ( is_array( $class ) ) {
+			$this->body_classes = array_merge( $this->body_classes, $class );
+		} else {
+			$this->body_classes[] = $class;
+		}
+	}
+
+	/**
 	 * Body tag classes.
 	 *
 	 * Add new elementor classes to the body tag.
@@ -188,7 +206,7 @@ class Frontend {
 	 * @return array Body tag classes.
 	 */
 	public function body_class( $classes = [] ) {
-		$classes[] = 'elementor-default';
+		$classes = array_merge( $classes, $this->body_classes );
 
 		$id = get_the_ID();
 
