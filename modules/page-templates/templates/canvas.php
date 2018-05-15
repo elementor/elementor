@@ -3,6 +3,9 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+\Elementor\Plugin::$instance->frontend->add_body_class( 'elementor-template-canvas' );
+
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>

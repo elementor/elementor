@@ -4,6 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+\Elementor\Plugin::$instance->frontend->add_body_class( 'elementor-template-full-width' );
+
 get_header();
 /**
  * Before Header-Footer page template content.
