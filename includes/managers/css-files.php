@@ -29,28 +29,7 @@ class Posts_CSS_Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->init();
 		$this->register_actions();
-	}
-
-	/**
-	 * Init.
-	 *
-	 * Initialize Elementor posts CSS manager and create the css directory, if
-	 * it doesn't exist.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 */
-	public function init() {
-		$wp_upload_dir = wp_upload_dir( null, false );
-
-		$css_path = $wp_upload_dir['basedir'] . CSS_File::FILE_BASE_DIR;
-
-		// Create the css directory, if it doesn't exist.
-		if ( ! is_dir( $css_path ) ) {
-			wp_mkdir_p( $css_path );
-		}
 	}
 
 	/**
@@ -129,9 +108,7 @@ class Posts_CSS_Manager {
 		);
 
 		// Delete files.
-		$wp_upload_dir = wp_upload_dir( null, false );
-
-		$path = sprintf( '%s%s%s*', $wp_upload_dir['basedir'], CSS_File::FILE_BASE_DIR, '/' );
+		$path = File::get_base_uploads_dir() . CSS::DEFAULT_FILES_DIR . '*';
 
 		foreach ( glob( $path ) as $file ) {
 			$deleted = unlink( $file );

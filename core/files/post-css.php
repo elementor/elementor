@@ -127,6 +127,18 @@ class Post_CSS extends CSS {
 	}
 
 	/**
+	 * Delete meta.
+	 *
+	 * Delete the file meta data.
+	 *
+	 * @since  2.1.0
+	 * @access protected
+	 */
+	protected function delete_meta() {
+		delete_post_meta( $this->post_id, static::META_KEY );
+	}
+
+	/**
 	 * Get post data.
 	 *
 	 * Retrieve raw post data from the database.
