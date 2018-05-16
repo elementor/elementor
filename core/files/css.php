@@ -9,7 +9,7 @@ use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Element_Base;
 use Elementor\Plugin;
-use Elementor\Responsive;
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Stylesheet;
 
 if ( ! defined( 'ABSPATH' ) ) {
