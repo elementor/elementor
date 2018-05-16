@@ -63,7 +63,6 @@ class Autoloader {
 		'Maintenance_Mode' => 'includes/maintenance-mode.php',
 		'Posts_CSS_Manager' => 'includes/managers/css-files.php',
 		'Preview' => 'includes/preview.php',
-		'Responsive' => 'includes/responsive.php',
 		'Rollback' => 'includes/rollback.php',
 		'Scheme_Base' => 'includes/schemes/base.php',
 		'Scheme_Color' => 'includes/schemes/color.php',
@@ -132,6 +131,10 @@ class Autoloader {
 		],
 		'Post_Preview_CSS' => [
 			'replacement' => 'Core\Files\Post_Preview_CSS',
+			'version' => '2.1.0',
+		],
+		'Responsive' => [
+			'replacement' => 'Core\Responsive\Responsive',
 			'version' => '2.1.0',
 		],
 	];
