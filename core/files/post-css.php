@@ -51,7 +51,7 @@ class Post_CSS extends CSS {
 	public function __construct( $post_id ) {
 		$this->post_id = $post_id;
 
-		parent::__construct();
+		parent::__construct( self::FILE_PREFIX . $post_id . '.css' );
 	}
 
 	/**
@@ -261,20 +261,6 @@ class Post_CSS extends CSS {
 	 */
 	protected function get_file_handle_id() {
 		return 'elementor-post-' . $this->post_id;
-	}
-
-	/**
-	 * Get file name.
-	 *
-	 * Retrieve the name of the post CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 *
-	 * @return string File name.
-	 */
-	protected function get_file_name() {
-		return self::FILE_PREFIX . $this->post_id;
 	}
 
 	/**
