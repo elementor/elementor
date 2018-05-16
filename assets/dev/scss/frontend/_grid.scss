@@ -264,8 +264,9 @@ ul.elementor-icon-list-items.elementor-inline-items {
 }
 
 
-// Simple 12 Columns responsive grid (moved to free since v2.1)
-
+// Simple 12 Columns responsive grid
+// TODO: uncomment on v2.1
+/*
 .elementor-grid {
 	display: grid;
 
@@ -293,4 +294,4 @@ ul.elementor-icon-list-items.elementor-inline-items {
 	@media (max-width: $screen-sm-max) {
 		@include grid_loop(-mobile);
 	}
-}
+} */
