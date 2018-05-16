@@ -719,7 +719,7 @@ class Frontend {
 	 * @access protected
 	 */
 	protected function parse_global_css_code() {
-		$scheme_css_file = new Global_CSS();
+		$scheme_css_file = new Global_CSS( 'global.css' );
 
 		$scheme_css_file->enqueue();
 	}
