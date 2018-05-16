@@ -193,7 +193,7 @@ class Manager extends BaseManager {
 	 * @return Global_CSS The global CSS file object.
 	 */
 	protected function get_css_file_for_update( $id ) {
-		return new Global_CSS();
+		return new Global_CSS( 'global.css' );
 	}
 
 	/**

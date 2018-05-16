@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class File {
+abstract class File {
 
 	const UPLOADS_DIR = 'elementor/';
 
@@ -54,12 +54,10 @@ class File {
 		return $wp_upload_dir['baseurl'] . '/' . self::UPLOADS_DIR;
 	}
 
-	public function __construct( $file_name = null, $files_dir = null ) {
-		$this->set_files_dir( $files_dir ? $files_dir : static::DEFAULT_FILES_DIR );
+	public function __construct( $file_name, $files_dir = null ) {
+		$this->set_file_name( $file_name );
 
-		if ( $file_name ) {
-			$this->set_file_name( $file_name );
-		}
+		$this->set_files_dir( $files_dir ? $files_dir : static::DEFAULT_FILES_DIR );
 
 		$this->set_path();
 	}
@@ -72,14 +70,14 @@ class File {
 		$this->file_name = $file_name;
 	}
 
+	public function get_file_name() {
+		return $this->file_name;
+	}
+
 	public function get_url() {
 		$url = set_url_scheme( self::get_base_uploads_url() . $this->files_dir . $this->file_name );
 
 		return add_query_arg( [ 'ver' => $this->get_meta( 'time' ) ], $url );
-	}
-
-	public function set_content( $content ) {
-		$this->content = $content;
 	}
 
 	public function get_content() {
@@ -87,14 +85,20 @@ class File {
 	}
 
 	public function update() {
+		$this->update_file();
+
 		$meta = $this->get_meta();
 
 		$meta['time'] = time();
 
-		if ( $this->get_content() ) {
-			$this->write();
+		$this->update_meta( $meta );
+	}
 
-			$this->update_meta( $meta );
+	public function update_file() {
+		$this->content = $this->parse_content();
+
+		if ( $this->content ) {
+			$this->write();
 		} else {
 			$this->delete();
 		}
@@ -138,6 +142,8 @@ class File {
 
 		return $meta;
 	}
+
+	protected abstract function parse_content();
 
 	/**
 	 * Load meta.

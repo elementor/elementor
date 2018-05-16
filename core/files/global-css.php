@@ -70,20 +70,6 @@ class Global_CSS extends CSS {
 	}
 
 	/**
-	 * Get file name.
-	 *
-	 * Retrieve the name of the global CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 *
-	 * @return string File name.
-	 */
-	protected function get_file_name() {
-		return 'global';
-	}
-
-	/**
 	 * Get inline dependency.
 	 *
 	 * Retrieve the name of the stylesheet used by `wp_add_inline_style()`.

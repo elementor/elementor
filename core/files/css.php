@@ -107,12 +107,8 @@ abstract class CSS extends File {
 	 * @since 1.2.0
 	 * @access public
 	 */
-	public function __construct() {
-		if ( $this->use_external_file() ) {
-			$this->set_file_name( $this->get_file_name() . '.css' );
-
-			parent::__construct();
-		}
+	public function __construct( $file_name ) {
+		parent::__construct( $file_name );
 
 		$this->init_stylesheet();
 	}
@@ -143,7 +139,7 @@ abstract class CSS extends File {
 	 * @access public
 	 */
 	public function update() {
-		$this->parse_css();
+		$this->update_file();
 
 		$meta = $this->get_meta();
 
@@ -152,19 +148,12 @@ abstract class CSS extends File {
 		$content = $this->get_content();
 
 		if ( empty( $content ) ) {
-			$this->delete();
-
 			$meta['status'] = self::CSS_STATUS_EMPTY;
 			$meta['css'] = '';
 		} else {
-			$file_created = false;
 			$use_external_file = $this->use_external_file();
 
 			if ( $use_external_file ) {
-				$file_created = $this->write();
-			}
-
-			if ( $file_created ) {
 				$meta['status'] = self::CSS_STATUS_FILE;
 			} else {
 				$meta['status'] = self::CSS_STATUS_INLINE;
@@ -173,6 +162,12 @@ abstract class CSS extends File {
 		}
 
 		$this->update_meta( $meta );
+	}
+
+	public function write() {
+		if ( $this->use_external_file() ) {
+			parent::write();
+		}
 	}
 
 	/**
@@ -406,7 +401,7 @@ abstract class CSS extends File {
 		$content = parent::get_content();
 
 		if ( ! $content ) {
-			$this->parse_css();
+			$this->parse_content();
 		}
 
 		return parent::get_content();
@@ -488,19 +483,6 @@ abstract class CSS extends File {
 	 */
 	abstract protected function render_css();
 
-	/**
-	 * Get file name.
-	 *
-	 * Retrieve the name of the CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 * @abstract
-	 *
-	 * @return string File name.
-	 */
-	abstract protected function get_file_name();
-
 	protected function get_default_meta() {
 		return array_merge ( parent::get_default_meta(), [
 			'fonts' => array_unique( $this->fonts ),
@@ -559,7 +541,7 @@ abstract class CSS extends File {
 	 * @since 1.2.0
 	 * @access protected
 	 */
-	protected function parse_css() {
+	protected function parse_content() {
 		$this->render_css();
 
 		$name = $this->get_name();
@@ -592,7 +574,7 @@ abstract class CSS extends File {
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
-		$this->set_content( $this->stylesheet_obj->__toString() );
+		return $this->stylesheet_obj->__toString();
 	}
 
 	/**
