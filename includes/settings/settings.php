@@ -318,20 +318,24 @@ class Settings extends Settings_Page {
 							'container_width' => [
 								'label' => __( 'Content Width', 'elementor' ),
 								'field_args' => [
-									'type' => 'text',
-									'placeholder' => '1140',
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => '1140',
+										'class' => 'medium-text',
+									],
 									'sub_desc' => 'px',
-									'class' => 'medium-text',
 									'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 								],
 							],
 							'space_between_widgets' => [
 								'label' => __( 'Space Between Widgets', 'elementor' ),
 								'field_args' => [
-									'type' => 'text',
-									'placeholder' => '20',
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => '20',
+										'class' => 'medium-text',
+									],
 									'sub_desc' => 'px',
-									'class' => 'medium-text',
 									'desc' => __( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
 								],
 							],
@@ -339,8 +343,10 @@ class Settings extends Settings_Page {
 								'label' => __( 'Stretched Section Fit To', 'elementor' ),
 								'field_args' => [
 									'type' => 'text',
-									'placeholder' => 'body',
-									'class' => 'medium-text',
+									'attributes' => [
+										'placeholder' => 'body',
+										'class' => 'medium-text',
+									],
 									'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
 								],
 							],
@@ -348,8 +354,10 @@ class Settings extends Settings_Page {
 								'label' => __( 'Page Title Selector', 'elementor' ),
 								'field_args' => [
 									'type' => 'text',
-									'placeholder' => 'h1.entry-title',
-									'class' => 'medium-text',
+									'attributes' => [
+										'placeholder' => 'h1.entry-title',
+										'class' => 'medium-text',
+									],
 									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
 								],
 							],
