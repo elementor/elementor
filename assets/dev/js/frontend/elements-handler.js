@@ -22,7 +22,8 @@ ElementsHandler = function( $ ) {
 
 	var addGlobalHandlers = function() {
 		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', require( 'elementor-frontend/handlers/global' ) );
-		elementorFrontend.hooks.addAction( 'frontend/element_ready/widget', require( 'elementor-frontend/handlers/widget' ) );
+		// @deprecated - the `runElementsHandlers` function is already run the triggers.
+		// elementorFrontend.hooks.addAction( 'frontend/element_ready/widget', require( 'elementor-frontend/handlers/widget' ) );
 	};
 
 	var addElementsHandlers = function() {
