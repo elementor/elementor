@@ -262,36 +262,3 @@ ul.elementor-icon-list-items.elementor-inline-items {
 		word-break: break-word;
 	}
 }
-
-
-// Simple 12 Columns responsive grid
-// TODO: uncomment on v2.1
-/*
-.elementor-grid {
-	display: grid;
-
-	.elementor-grid-item {
-		word-break: break-word;
-	}
-
-	@mixin grid_loop($device) {
-		@for $i from 1 through 12 {
-
-			&#{$device}-#{$i} {
-				.elementor-grid {
-					grid-template-columns: repeat(#{$i} , 1fr);
-				}
-			}
-		}
-	}
-
-	@include grid_loop('');
-
-	@media (max-width: $screen-md-max) {
-		@include grid_loop(-tablet);
-	}
-
-	@media (max-width: $screen-sm-max) {
-		@include grid_loop(-mobile);
-	}
-} */
