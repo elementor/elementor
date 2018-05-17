@@ -526,6 +526,11 @@ abstract class CSS_File {
 				$this->add_dynamic_control_style_rules( $control, $control[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] );
 			}
 
+			if ( ! empty( $parsed_dynamic_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] ) ) {
+				unset( $parsed_dynamic_settings[ $control['name'] ] );
+				continue;
+			}
+
 			if ( empty( $control['selectors'] ) ) {
 				continue;
 			}
@@ -713,7 +718,7 @@ abstract class CSS_File {
 	 * @param array $placeholders Placeholders.
 	 * @param array $replacements Replacements.
 	 */
-	private function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
+	protected function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
 
@@ -785,7 +790,7 @@ abstract class CSS_File {
 	 * @param array          $placeholders            Placeholders.
 	 * @param array          $replacements            Replacements.
 	 */
-	private function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_controls_items, array $repeater_values, array $placeholders, array $replacements ) {
+	protected function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_controls_items, array $repeater_values, array $placeholders, array $replacements ) {
 		$placeholders = array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] );
 
 		foreach ( $repeater_controls_items as $index => $item ) {
@@ -810,7 +815,7 @@ abstract class CSS_File {
 	 * @param array  $control The control.
 	 * @param string $value   The value.
 	 */
-	private function add_dynamic_control_style_rules( array $control, $value ) {
+	protected function add_dynamic_control_style_rules( array $control, $value ) {
 		Plugin::$instance->dynamic_tags->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
 			$tag = Plugin::$instance->dynamic_tags->create_tag( $id, $name, $settings );
 
