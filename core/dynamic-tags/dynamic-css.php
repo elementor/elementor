@@ -66,9 +66,11 @@ class Dynamic_CSS extends Post_CSS_File {
 
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
 		$dynamic_settings = $controls_stack->get_settings( '__dynamic__' );
-		$controls = array_filter( $controls, function( $control ) use ( $dynamic_settings ) {
-			return ! empty( $dynamic_settings[ $control['name'] ] );
-		} );
+		if ( empty( $dynamic_settings ) ) {
+			return;
+		}
+
+		$controls = array_intersect_key( $controls, $dynamic_settings );
 
 		$all_controls = $controls_stack->get_controls();
 
