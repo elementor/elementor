@@ -118,6 +118,14 @@ class Post extends Document {
 			Group_Control_Background::get_type(),
 			[
 				'name'  => 'background',
+				'fields_options' => [
+					'image' => [
+						// Currently isn't supported.
+						'dynamic' => [
+							'active' => false,
+						],
+					],
+				],
 			]
 		);
 
