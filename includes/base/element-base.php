@@ -431,7 +431,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return Element_Base Parent element.
 	 */
 	public function get_parent() {
-		// Todo: _deprecated_function( __METHOD__, '1.7.6', '$this->get_data( 'parent' )' );
+		_deprecated_function( __METHOD__, '1.7.6', __CLASS__ . '::get_data( \'parent\' )' );
 
 		return $this->get_data( 'parent' );
 	}
@@ -748,12 +748,18 @@ abstract class Element_Base extends Controls_Stack {
 
 		$settings = $this->get_active_settings();
 
-		foreach ( self::get_class_controls() as $control ) {
-			if ( empty( $settings[ $control['name'] ] ) ) {
+		$controls = $this->get_controls();
+
+		$class_settings = array_filter( $settings, function( $setting_key ) use( $controls ) {
+			return isset( $controls[ $setting_key ]['prefix_class'] );
+		}, ARRAY_FILTER_USE_KEY );
+
+		foreach ( $class_settings as $setting_key => $setting ) {
+			if ( ! $setting ) {
 				continue;
 			}
 
-			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+			$this->add_render_attribute( '_wrapper', 'class', $controls[ $setting_key ]['prefix_class'] . $setting );
 		}
 
 		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
