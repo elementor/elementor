@@ -110,10 +110,16 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				return;
 			}
 
+			var categoriesActivationList = elementor.config.document.panel.categories,
+				categoryOutOfWhiteList = categoriesActivationList.active && -1 === categoriesActivationList.active.indexOf( categoryName ),
+				categoryInBlackList = categoriesActivationList.inactive && -1 !== categoriesActivationList.inactive.indexOf( categoryName ),
+				isActiveCategory = ! categoryOutOfWhiteList && ! categoryInBlackList;
+
 			categoriesCollection.add( {
 				name: categoryName,
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
+				defaultActive: isActiveCategory,
 				items: categories[ categoryName ]
 			} );
 		} );

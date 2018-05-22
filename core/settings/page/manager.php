@@ -32,24 +32,6 @@ class Manager extends BaseManager {
 	const META_KEY = '_elementor_page_settings';
 
 	/**
-	 * Get page data.
-	 *
-	 * Retrieves page data for any given a page ID.
-	 *
-	 * @since 1.6.0
-	 * @deprecated 1.6.0
-	 * @access public
-	 * @static
-	 *
-	 * @param int $id Page ID.
-	 *
-	 * @return BaseModel
-	 */
-	public static function get_page( $id ) {
-		return SettingsManager::get_settings_managers( 'page' )->get_model( $id );
-	}
-
-	/**
 	 * Is CPT supports custom templates.
 	 *
 	 * Whether the Custom Post Type supports templates.
