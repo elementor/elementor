@@ -397,16 +397,6 @@ abstract class CSS extends File {
 		return $this->get_content();
 	}
 
-	public function get_content() {
-		$content = parent::get_content();
-
-		if ( ! $content ) {
-			$this->parse_content();
-		}
-
-		return parent::get_content();
-	}
-
 	/**
 	 * Get stylesheet.
 	 *
