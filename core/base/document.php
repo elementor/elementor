@@ -56,8 +56,18 @@ abstract class Document extends Controls_Stack {
 	 * @return array Document properties.
 	 */
 	public static function get_properties() {
+
 		return [
 			'is_editable' => true,
+			'panel_config' => [
+				'categories' => [
+					'inactive' => [ 'wordpress' ],
+				],
+				'messages' => [
+					/* translators: %s: the document title. */
+					'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), self::get_title() ),
+				],
+			],
 		];
 	}
 
@@ -330,10 +340,7 @@ abstract class Document extends Controls_Stack {
 			'type' => $this->get_name(),
 			'remote_type' => $this->get_remote_library_type(),
 			'last_edited' => $this->get_last_edited(),
-			'messages' => [
-				/* translators: %s: the document title. */
-				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), $this::get_title() ),
-			],
+			'panel' => self::get_property( 'panel_config' ),
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
 				'preview' => $this->get_preview_url(),
@@ -629,7 +636,7 @@ abstract class Document extends Controls_Stack {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			if ( empty( $elements ) && empty( $autosave_elements ) ) {
 				// Convert to Elementor.
-				$elements = Plugin::$instance->db->_get_new_editor_from_wp_editor( $this->post->ID );
+				$elements = Plugin::$instance->db->get_new_editor_from_wp_editor( $this->post->ID );
 				if ( $this->is_autosave() ) {
 					Plugin::$instance->db->copy_elementor_meta( $this->post->post_parent, $this->post->ID );
 				}
