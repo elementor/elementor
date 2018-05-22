@@ -1,12 +1,12 @@
 <?php
 namespace Elementor\Core\Base;
 
+use Elementor\Core\Files\Post_CSS;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\DB;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
-use Elementor\Post_CSS_File;
 use Elementor\User;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
@@ -474,7 +474,7 @@ abstract class Document extends Controls_Stack {
 		$this->save_elements( $data['elements'] );
 
 		// Remove Post CSS
-		delete_post_meta( $this->post->ID, Post_CSS_File::META_KEY );
+		delete_post_meta( $this->post->ID, Post_CSS::META_KEY );
 
 		return true;
 	}
