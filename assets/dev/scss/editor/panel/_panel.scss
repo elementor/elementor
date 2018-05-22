@@ -19,11 +19,11 @@
 		background-color: $editor-background;
 	}
 
-	@media (max-width: $screen-lg-max) {
+	@media (max-width: $editor-screen-lg-max) {
 		width: $panel-width;
 	}
 
-	@media (min-width: $screen-xl-min) {
+	@media (min-width: $editor-screen-xl-min) {
 		width: $panel-xl-width;
 	}
 

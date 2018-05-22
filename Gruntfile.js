@@ -2,6 +2,7 @@ module.exports = function( grunt ) {
 	'use strict';
 
 	var remapify = require( 'remapify' ),
+		fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' );
 
 	require( 'matchdep' ).filterDev( 'grunt-*' ).forEach( grunt.loadNpmTasks );
@@ -223,10 +224,10 @@ module.exports = function( grunt ) {
 		},
 
 		sass: {
-			options: {
-				sourceMap: true
-			},
 			dist: {
+				options: {
+					sourceMap: true
+				},
 				files: [ {
 					expand: true,
 					cwd: 'assets/dev/scss/direction',
@@ -456,8 +457,6 @@ module.exports = function( grunt ) {
 	] );
 
 	grunt.registerTask( 'scripts', function( isDevMode ) {
-		isDevMode = isDevMode ? isDevMode : false;
-
 		grunt.task.run( 'jshint' );
 		grunt.task.run( 'browserify' );
 
@@ -468,13 +467,37 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'styles', function( isDevMode ) {
-		isDevMode = isDevMode ? isDevMode : false;
+		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "values";' );
 
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
 			grunt.task.run( 'postcss' );
+			grunt.task.run( 'css_templates' );
 		}
+	} );
+
+	grunt.registerTask( 'css_templates', function() {
+		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "templates";' );
+
+		grunt.config( 'sass.dist', {
+			files: [ {
+				expand: true,
+				cwd: 'assets/dev/scss/direction',
+				src: [ 'frontend.scss', 'frontend-rtl.scss' ],
+				dest: 'assets/css-templates',
+				ext: '.css'
+			} ]
+		} );
+
+		grunt.task.run( 'sass' );
+
+		grunt.config( 'postcss.minify.files.0.src', [
+			'assets/css-templates/*.css',
+			'!assets/css-templates/*.min.css'
+		] );
+
+		grunt.task.run( 'postcss:minify' );
 	} );
 
 	grunt.registerTask( 'build', [
