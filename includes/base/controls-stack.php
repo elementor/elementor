@@ -757,6 +757,7 @@ abstract class Controls_Stack {
 	 * controls
 	 *
 	 * @since 1.4.0
+	 * @deprecated 2.1.0
 	 * @access public
 	 *
 	 * @return array Class controls.
@@ -1046,6 +1047,8 @@ abstract class Controls_Stack {
 
 		foreach ( $settings as $setting_key => $setting ) {
 			if ( ! isset( $controls[ $setting_key ] ) ) {
+				$active_settings[ $setting_key ] = $setting;
+
 				continue;
 			}
 
