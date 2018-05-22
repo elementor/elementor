@@ -74,6 +74,20 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return ['button','action','submit'];
+	}
+
+	/**
 	 * Get button sizes.
 	 *
 	 * Retrieve an array of button sizes for the button widget.
