@@ -201,7 +201,7 @@ abstract class File {
 		$dir_path = self::get_base_uploads_dir() . $this->files_dir;
 
 		if ( ! is_dir( $dir_path ) ) {
-			mkdir( $dir_path, 0777, true );
+			wp_mkdir_p( $dir_path );
 		}
 
 		$this->path = $dir_path . $this->file_name;
