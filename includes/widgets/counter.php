@@ -75,7 +75,7 @@ class Widget_Counter extends Widget_Base {
 	 *
 	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
 	 * @return array Widget keywords.
