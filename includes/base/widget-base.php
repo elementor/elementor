@@ -96,7 +96,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Retrieve the widget keywords.
 	 *
-	 * @since 1.0.10
+	 * @since 2.1.0
 	 * @access public
 	 *
 	 * @return array Widget keywords.
