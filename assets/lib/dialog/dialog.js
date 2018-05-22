@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.2.1
+ * Dialogs Manager v4.3.2
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -131,18 +131,30 @@
 
 		var bindEvents = function () {
 
-			elements.window.on('keyup', onWindowKeyUp);
+			var windows = [elements.window];
 
-			if (settings.hide.onOutsideClick) {
-				elements.window[0].addEventListener('click', hideOnOutsideClick, true);
+			if (elements.iframe) {
+				windows.push(jQuery(elements.iframe[0].contentWindow));
 			}
+
+			windows.forEach(function(window) {
+				window.on('keyup', onWindowKeyUp);
+
+				if (settings.hide.onOutsideClick) {
+					window[0].addEventListener('click', hideOnOutsideClick, true);
+				}
+
+				if (settings.hide.onOutsideContextMenu) {
+					window[0].addEventListener('contextmenu', hideOnOutsideClick, true);
+				}
+
+				if (settings.position.autoRefresh) {
+					window.on('resize', self.refreshPosition);
+				}
+			});
 
 			if (settings.hide.onClick || settings.hide.onBackgroundClick) {
 				elements.widget.on('click', hideOnClick);
-			}
-
-			if (settings.position.autoRefresh) {
-				elements.window.on('resize', self.refreshPosition);
 			}
 		};
 
@@ -181,6 +193,68 @@
 			});
 		};
 
+		var fixIframePosition = function(position) {
+			if (! position.my) {
+				return;
+			}
+
+			var horizontalOffsetRegex = /left|right/,
+				extraOffsetRegex = /(\+|-[0-9]+)?$/,
+				iframeOffset = elements.iframe.offset(),
+				iframeWindow = elements.iframe[0].contentWindow,
+				myParts = position.my.split(' '),
+				fixedParts = [];
+
+			myParts.forEach(function( part ) {
+				var fixedPart = part.replace(extraOffsetRegex, function( partOffset ) {
+					partOffset = +partOffset || 0;
+
+					if (horizontalOffsetRegex.test(part)) {
+						partOffset += iframeOffset.left - iframeWindow.scrollX;
+					} else {
+						partOffset += iframeOffset.top - iframeWindow.scrollY;
+					}
+
+					if (partOffset > 0) {
+						partOffset = '+' + partOffset;
+					}
+
+					return partOffset;
+				});
+
+				fixedParts.push(fixedPart);
+			});
+
+			position.my = fixedParts.join(' ');
+		};
+
+		var hideOnClick = function(event) {
+
+			if(isContextMenuClickEvent(event)) {
+				return;
+			}
+
+			if (settings.hide.onClick) {
+
+				if ($(event.target).closest(settings.selectors.preventClose).length) {
+					return;
+				}
+			} else if (event.target !== this) {
+				return;
+			}
+
+			self.hide();
+		};
+
+		var hideOnOutsideClick = function(event) {
+
+			if (isContextMenuClickEvent(event) || $(event.target).closest(elements.widget).length) {
+				return;
+			}
+
+			self.hide();
+		};
+
 		var initElements = function () {
 
 			self.addElement('widget');
@@ -190,6 +264,10 @@
 			self.addElement('window', window);
 
 			self.addElement('container', settings.container);
+
+			if (settings.iframe) {
+				self.addElement('iframe', settings.iframe);
+			}
 
 			var id = self.getSettings('id');
 
@@ -205,7 +283,7 @@
 
 			classes.push(self.getSettings('className'));
 
-			self.getElements('widget').addClass(classes.join(' '));
+			elements.widget.addClass(classes.join(' '));
 		};
 
 		var initSettings = function (parent, userSettings) {
@@ -222,6 +300,7 @@
 					preventClose: '.' + parentSettings.classPrefix + '-prevent-close'
 				},
 				container: 'body',
+				iframe: null,
 				position: {
 					element: 'widget',
 					my: 'center',
@@ -235,6 +314,7 @@
 					autoDelay: 5000,
 					onClick: false,
 					onOutsideClick: true,
+					onOutsideContextMenu: false,
 					onBackgroundClick: true
 				}
 			};
@@ -260,34 +340,17 @@
 			});
 		};
 
+		var isContextMenuClickEvent = function (event) {
+			// Firefox fires `click` event on every `contextmenu` event.
+			return event.type === 'click' && event.button === 2;
+		};
+
 		var normalizeClassName = function (name) {
 
 			return name.replace(/([a-z])([A-Z])/g, function () {
 
 				return arguments[1] + '-' + arguments[2].toLowerCase();
 			});
-		};
-
-		var hideOnClick = function(event) {
-
-			if (settings.hide.onClick) {
-
-				if ($(event.target).closest(settings.selectors.preventClose).length) {
-					return;
-				}
-			} else if (event.target !== this) {
-				return;
-			}
-
-			self.hide();
-		};
-
-		var hideOnOutsideClick = function(event) {
-			if ($(event.target).closest(elements.widget).length) {
-				return;
-			}
-
-			self.hide();
 		};
 
 		var onWindowKeyUp = function(event) {
@@ -301,18 +364,30 @@
 
 		var unbindEvents = function() {
 
-			elements.window.off('keyup', onWindowKeyUp);
+			var windows = [elements.window];
 
-			if (settings.hide.onOutsideClick) {
-				elements.window[0].removeEventListener('click', hideOnOutsideClick, true);
+			if (elements.iframe) {
+				windows.push(jQuery(elements.iframe[0].contentWindow));
 			}
+
+			windows.forEach(function(window) {
+				window.off('keyup', onWindowKeyUp);
+
+				if (settings.hide.onOutsideClick) {
+					window[0].removeEventListener('click', hideOnOutsideClick, true);
+				}
+
+				if (settings.hide.onOutsideContextMenu) {
+					window[0].removeEventListener('contextmenu', hideOnOutsideClick, true);
+				}
+
+				if (settings.position.autoRefresh) {
+					window.off('resize', self.refreshPosition);
+				}
+			});
 
 			if (settings.hide.onClick || settings.hide.onBackgroundClick) {
 				elements.widget.off('click', hideOnClick);
-			}
-
-			if (settings.position.autoRefresh) {
-				elements.window.off('resize', self.refreshPosition);
 			}
 		};
 
@@ -335,6 +410,22 @@
 			return $newElement;
 		};
 
+		this.destroy = function() {
+
+			unbindEvents();
+
+			elements.widget.remove();
+
+			self.trigger('destroy');
+
+			return self;
+		};
+
+		this.getElements = function (item) {
+
+			return item ? elements[item] : elements;
+		};
+
 		this.getSettings = function (setting) {
 
 			var copy = Object.create(settings);
@@ -344,6 +435,19 @@
 			}
 
 			return copy;
+		};
+
+		this.hide = function () {
+
+			clearTimeout(hideTimeOut);
+
+			callEffect('hide', arguments);
+
+			unbindEvents();
+
+			self.trigger('hide');
+
+			return self;
 		};
 
 		this.init = function (parent, properties) {
@@ -367,24 +471,6 @@
 			}
 
 			self.trigger('ready');
-
-			return self;
-		};
-
-		this.getElements = function (item) {
-
-			return item ? elements[item] : elements;
-		};
-
-		this.hide = function () {
-
-			clearTimeout(hideTimeOut);
-
-			callEffect('hide', arguments);
-
-			unbindEvents();
-
-			self.trigger('hide');
 
 			return self;
 		};
@@ -417,16 +503,35 @@
 			return self;
 		};
 
-		this.setMessage = function (message) {
+		this.refreshPosition = function () {
 
-			elements.message.html(message);
+			if (! settings.position.enable) {
+				return;
+			}
 
-			return self;
+			var position = $.extend({}, settings.position);
+
+			if (elements[position.of]) {
+				position.of = elements[position.of];
+			}
+
+			if (elements.iframe) {
+				fixIframePosition(position);
+			}
+
+			elements[position.element].position(position);
 		};
 
 		this.setID = function (id) {
 
-			self.getElements('widget').attr('id', id);
+			elements.widget.attr('id', id);
+
+			return self;
+		};
+
+		this.setMessage = function (message) {
+
+			elements.message.html(message);
 
 			return self;
 		};
@@ -463,21 +568,6 @@
 			return self;
 		};
 
-		this.refreshPosition = function () {
-
-			if (! settings.position.enable) {
-				return;
-			}
-
-			var position = $.extend({}, settings.position);
-
-			if (elements[position.of]) {
-				position.of = elements[position.of];
-			}
-
-			elements[position.element].position(position);
-		};
-
 		this.trigger = function (eventName, params) {
 
 			var methodName = 'on' + eventName[0].toUpperCase() + eventName.slice(1);
@@ -496,17 +586,6 @@
 
 				callback.call(self, params);
 			});
-
-			return self;
-		};
-
-		this.destroy = function() {
-
-			unbindEvents();
-
-			elements.widget.remove();
-
-			self.trigger('destroy');
 
 			return self;
 		};
@@ -560,6 +639,10 @@
 			}
 		},
 		activeKeyDown: function (event) {
+
+			if (!this.focusedButton) {
+				return;
+			}
 
 			var TAB_KEY = 9;
 
