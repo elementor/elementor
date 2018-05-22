@@ -56,6 +56,19 @@ class Widget_Testimonial extends Widget_Base {
 		return 'eicon-testimonial';
 	}
 
+	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return ['testimonial','blockquote'];
+	}
 
 	/**
 	 * Register testimonial widget controls.
