@@ -222,6 +222,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Allow 3rd party developers to register documents on init
 * Fix: Set attach uploaded images to the current post
 * Fix: Scroll not working in the library modal ([#4394](https://github.com/pojome/elementor/issues/4394))
+* Fix: Blocks dropdown menu escapes container on scroll ([#3947](https://github.com/pojome/elementor/issues/3947))
 
 = 2.0.11 - 2018-05-09 =
 * Fix: Stronger selector for heading widget color, to avoid section style override ([#4266](https://github.com/pojome/elementor/issues/4266))
