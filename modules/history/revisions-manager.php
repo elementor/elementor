@@ -2,9 +2,9 @@
 namespace Elementor\Modules\History;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Files\Post_CSS;
 use Elementor\Core\Settings\Manager;
 use Elementor\Plugin;
-use Elementor\Post_CSS_File;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -216,7 +216,7 @@ class Revisions_Manager {
 
 		Plugin::$instance->db->copy_elementor_meta( $revision_id, $parent_id );
 
-		$post_css = new Post_CSS_File( $parent_id );
+		$post_css = new Post_CSS( $parent_id );
 
 		$post_css->update();
 	}
