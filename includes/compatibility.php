@@ -243,7 +243,9 @@ class Compatibility {
 			add_action( 'pll_pre_init', function( $polylang ) {
 				if ( isset( $_REQUEST['post'] ) ) {
 					$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
-					$_REQUEST['lang'] = $post_language->locale;
+					if ( ! empty( $post_language ) ) {
+						$_REQUEST['lang'] = $post_language->locale;
+					}
 				}
 			} );
 		}
