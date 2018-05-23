@@ -436,7 +436,7 @@ class Editor {
 			[
 				'jquery-ui-position',
 			],
-			'4.2.1',
+			'4.3.2',
 			true
 		);
 
