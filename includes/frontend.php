@@ -2,6 +2,10 @@
 namespace Elementor;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Base\File;
+use Elementor\Core\Files\Global_CSS;
+use Elementor\Core\Files\Post_CSS;
+use Elementor\Core\Files\Post_Preview_CSS;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -536,7 +540,7 @@ class Frontend {
 		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
 			$this->parse_global_css_code();
 
-			$css_file = new Post_CSS_File( get_the_ID() );
+			$css_file = new Post_CSS( get_the_ID() );
 			$css_file->enqueue();
 		}
 	}
@@ -715,7 +719,7 @@ class Frontend {
 	 * @access protected
 	 */
 	protected function parse_global_css_code() {
-		$scheme_css_file = new Global_CSS_File();
+		$scheme_css_file = new Global_CSS( 'global.css' );
 
 		$scheme_css_file->enqueue();
 	}
@@ -812,7 +816,7 @@ class Frontend {
 			if ( $document->is_autosave() ) {
 				$css_file = new Post_Preview_CSS( $document->get_post()->ID );
 			} else {
-				$css_file = new Post_CSS_File( $post_id );
+				$css_file = new Post_CSS( $post_id );
 			}
 
 			$css_file->enqueue();

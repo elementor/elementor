@@ -56,7 +56,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	}
 
 	public function test_replaceStyleValues() {
-		$post_css_file = new \Elementor\Post_CSS_File( 0 );
+		$post_css_file = new Elementor\Core\Files\Post_CSS( 0 );
 
 		$controls_stack = [
 			'margin' => [
