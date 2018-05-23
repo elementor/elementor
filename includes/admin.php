@@ -133,7 +133,7 @@ class Admin {
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo Plugin::$instance->db->is_built_with_elementor( $post->ID ); ?>" />
 			<button id="elementor-switch-mode-button" type="button" class="button button-primary button-hero">
 				<span class="elementor-switch-mode-on">
-					<i class="eicon-arrow-<?php echo ( is_rtl() ) ? 'right' : 'left'; ?>"></i>
+					<i class="eicon-arrow-<?php echo ( is_rtl() ) ? 'right' : 'left'; ?>" aria-hidden="true"></i>
 					<?php echo __( 'Back to WordPress Editor', 'elementor' ); ?>
 				</span>
 				<span class="elementor-switch-mode-off">
