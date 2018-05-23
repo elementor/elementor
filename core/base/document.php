@@ -32,6 +32,8 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 
+	private static $properties = [];
+
 	/**
 	 * Document post data.
 	 *
@@ -125,7 +127,12 @@ abstract class Document extends Controls_Stack {
 	 * @return mixed The property value.
 	 */
 	public static function get_property( $key ) {
-		return self::_get_items( static::get_properties(), $key );
+		$id = static::get_class_full_name();
+		if ( ! isset( self::$properties[ $id ] ) ) {
+			self::$properties[ $id ] = static::get_properties();
+		}
+
+		return self::_get_items( self::$properties[ $id ], $key );
 	}
 
 	/**
