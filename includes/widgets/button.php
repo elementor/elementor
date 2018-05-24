@@ -251,7 +251,7 @@ class Widget_Button extends Widget_Base {
 		$this->add_control(
 			'button_css_id',
 			[
-				'label' => __( 'CSS ID', 'elementor' ),
+				'label' => __( 'Button CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
