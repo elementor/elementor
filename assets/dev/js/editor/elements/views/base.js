@@ -200,9 +200,13 @@ BaseElementView = BaseContainer.extend( {
 
 		this.allowRender = false;
 
+		elementor.channels.data.trigger( 'element:before:paste:style', editModel );
+
 		jQuery.each( diffSettings, function( key, value ) {
 			editModel.setSetting( key, value );
 		} );
+
+		elementor.channels.data.trigger( 'element:after:paste:style', editModel );
 
 		this.allowRender = true;
 
