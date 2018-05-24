@@ -32,6 +32,8 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 
+	private static $properties = [];
+
 	/**
 	 * Document post data.
 	 *
@@ -43,6 +45,10 @@ abstract class Document extends Controls_Stack {
 	 * @var \WP_Post WordPress post data.
 	 */
 	protected $post;
+
+	protected static function get_editor_panel_categories() {
+		return Plugin::$instance->elements_manager->get_categories();
+	}
 
 	/**
 	 * Get properties.
@@ -56,17 +62,20 @@ abstract class Document extends Controls_Stack {
 	 * @return array Document properties.
 	 */
 	public static function get_properties() {
-
 		return [
 			'is_editable' => true,
-			'panel_config' => [
-				'categories' => [
-					'inactive' => [ 'wordpress' ],
-				],
-				'messages' => [
-					/* translators: %s: the document title. */
-					'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), self::get_title() ),
-				],
+		];
+	}
+
+	public static function get_editor_panel_config() {
+		return  [
+			'elements_categories' => static::get_editor_panel_categories(),
+			'categories' => [
+				'inactive' => [ 'wordpress' ],
+			],
+			'messages' => [
+				/* translators: %s: the document title. */
+				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), self::get_title() ),
 			],
 		];
 	}
@@ -118,7 +127,12 @@ abstract class Document extends Controls_Stack {
 	 * @return mixed The property value.
 	 */
 	public static function get_property( $key ) {
-		return self::_get_items( static::get_properties(), $key );
+		$id = static::get_class_full_name();
+		if ( ! isset( self::$properties[ $id ] ) ) {
+			self::$properties[ $id ] = static::get_properties();
+		}
+
+		return self::_get_items( self::$properties[ $id ], $key );
 	}
 
 	/**
@@ -340,7 +354,7 @@ abstract class Document extends Controls_Stack {
 			'type' => $this->get_name(),
 			'remote_type' => $this->get_remote_library_type(),
 			'last_edited' => $this->get_last_edited(),
-			'panel' => self::get_property( 'panel_config' ),
+			'panel' => static::get_editor_panel_config(),
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
 				'preview' => $this->get_preview_url(),

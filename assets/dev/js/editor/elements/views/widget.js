@@ -205,6 +205,10 @@ WidgetView = BaseElementView.extend( {
 	onContextMenu: function( event ) {
 		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
 
+		if ( event.ctrlKey ) {
+			return;
+		}
+
 		if ( 'edit' !== activeMode ) {
 			return;
 		}
