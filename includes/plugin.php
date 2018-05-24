@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Debug\Debugger;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
@@ -362,6 +363,11 @@ class Plugin {
 	public $beta_testers;
 
 	/**
+	 * @var Debugger
+	 */
+	public $debugger;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -455,6 +461,7 @@ class Plugin {
 	 */
 	private function init_components() {
 		// Allow all components to use AJAX.
+		$this->debugger = new Debugger();
 		$this->ajax = new Ajax_Manager();
 
 		Settings_Manager::run();
