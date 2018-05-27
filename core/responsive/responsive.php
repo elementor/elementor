@@ -120,7 +120,7 @@ class Responsive {
 	}
 
 	public static function get_templates_path() {
-		return ELEMENTOR_ASSETS_PATH . 'css-templates/';
+		return ELEMENTOR_ASSETS_PATH . 'css/templates/';
 	}
 
 	public static function compile_templates() {
