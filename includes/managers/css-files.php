@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\File;
 use Elementor\Core\Files\CSS;
+use Elementor\Core\Responsive\Files\Frontend;
 use Elementor\Core\Files\Global_CSS;
 use Elementor\Core\Files\Post_CSS;
 
@@ -104,6 +105,12 @@ class Posts_CSS_Manager {
 		$wpdb->delete(
 			$wpdb->options, [
 				'option_name' => Global_CSS::META_KEY,
+			]
+		);
+
+		$wpdb->delete(
+			$wpdb->options, [
+				'option_name' => Frontend::META_KEY,
 			]
 		);
 
