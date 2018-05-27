@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Responsive;
 
-use Elementor\Core\Files\Frontend;
+use Elementor\Core\Responsive\Files\Frontend;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

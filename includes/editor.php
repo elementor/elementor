@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -785,6 +786,12 @@ class Editor {
 		);
 
 		wp_enqueue_style( 'elementor-editor' );
+
+		if ( Responsive::has_custom_breakpoints() ) {
+			$breakpoints = Responsive::get_breakpoints();
+
+			wp_add_inline_style( 'elementor-editor', '.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . $breakpoints['md'] . 'px; }' );
+		}
 
 		/**
 		 * After editor enqueue styles.

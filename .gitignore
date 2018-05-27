@@ -15,4 +15,5 @@ Thumbs.db
 *.map
 
 assets/css/
+assets/css-templates/
 assets/js/

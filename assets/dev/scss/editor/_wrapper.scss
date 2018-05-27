@@ -48,11 +48,11 @@ body {
 
 		#elementor-preview {
 
-			@media (max-width: $screen-lg-max) {
+			@media (max-width: $editor-screen-lg-max) {
 				@include start($panel-width);
 			}
 
-			@media (min-width: $screen-xl-min) {
+			@media (min-width: $editor-screen-xl-min) {
 				@include start($panel-xl-width);
 			}
 
@@ -81,11 +81,11 @@ body {
 
 		#elementor-panel {
 
-			@media (max-width: $screen-lg-max) {
+			@media (max-width: $editor-screen-lg-max) {
 				@include start(-$panel-width);
 			}
 
-			@media (min-width: $screen-xl-min) {
+			@media (min-width: $editor-screen-xl-min) {
 				@include start(-$panel-xl-width);
 			}
 
