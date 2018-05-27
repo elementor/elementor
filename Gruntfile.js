@@ -282,7 +282,8 @@ module.exports = function( grunt ) {
 			styles: {
 				files: [
 					'assets/dev/scss/**/*.scss',
-					'modules/**/*.scss'
+					'modules/**/*.scss',
+					'!assets/dev/scss/frontend/breakpoints/proxy.scss'
 				],
 				tasks: [ 'styles:true' ],
 				options: {
