@@ -251,11 +251,14 @@ class Widget_Button extends Widget_Base {
 		$this->add_control(
 			'button_css_id',
 			[
-				'label' => __( 'Button CSS ID', 'elementor' ),
+				'label' => __( 'Button ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
+				'description' => __( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'elementor-pro' ),
+				'separator' => 'before',
+
 			]
 		);
 
