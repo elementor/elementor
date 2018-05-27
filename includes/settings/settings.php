@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\General\Manager as General_Settings_Manager;
 use Elementor\Core\Settings\Manager;
 
@@ -242,6 +243,8 @@ class Settings extends Settings_Page {
 	protected function create_tabs() {
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
 
+		$default_breakpoints = Responsive::get_default_breakpoints();
+
 		return [
 			self::TAB_GENERAL => [
 				'label' => __( 'General', 'elementor' ),
@@ -373,6 +376,39 @@ class Settings extends Settings_Page {
 							],
 						],
 					],
+					'breakpoints' => [
+						'label' => __( 'Breakpoints', 'elementor' ),
+						'fields' => [
+							'viewport_lg' => [
+								'label' => __( 'Desktop', 'elementor' ),
+								'field_args' => [
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => $default_breakpoints['lg'],
+										'min' => $default_breakpoints['md'] + 1,
+										'max' => $default_breakpoints['xl'] - 1,
+										'class' => 'medium-text',
+									],
+									'sub_desc' => 'px',
+									'desc' => __( 'Sets the breakpoint between desktop and tablet devices  (Default: ' . $default_breakpoints['lg'] . ')', 'elementor' ),
+								],
+							],
+							'viewport_md' => [
+								'label' => __( 'Tablet', 'elementor' ),
+								'field_args' => [
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => $default_breakpoints['md'],
+										'min' => $default_breakpoints['sm'] + 1,
+										'max' => $default_breakpoints['lg'] - 1,
+										'class' => 'medium-text',
+									],
+									'sub_desc' => 'px',
+									'desc' => __( 'Sets the breakpoint between tablet and mobile devices  (Default: ' . $default_breakpoints['md'] . ')', 'elementor' ),
+								],
+							],
+						],
+					],
 				],
 			],
 			self::TAB_INTEGRATIONS => [
@@ -497,6 +533,11 @@ class Settings extends Settings_Page {
 		// Clear CSS Meta after change print method.
 		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
-	}
 
+		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
+			foreach ( [ 'add', 'update' ] as $action ) {
+				add_action( "{$action}_option_elementor_viewport_{$breakpoint_key}", [ 'Elementor\Responsive', 'compile_templates' ] );
+			}
+		}
+	}
 }

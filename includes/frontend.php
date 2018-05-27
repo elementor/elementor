@@ -3,9 +3,11 @@ namespace Elementor;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\File;
+use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\Global_CSS;
 use Elementor\Core\Files\Post_CSS;
 use Elementor\Core\Files\Post_Preview_CSS;
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -412,11 +414,29 @@ class Frontend {
 			'4.1.4'
 		);
 
+		$frontend_file_name = 'frontend' . $direction_suffix . $suffix . '.css';
+
+		$has_custom_file = Responsive::has_custom_breakpoints();
+
+		if ( $has_custom_file ) {
+			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name );
+
+			$time = $frontend_file->get_meta( 'time' );
+
+			if ( ! $time ) {
+				$frontend_file->update();
+			}
+
+			$frontend_file_url = $frontend_file->get_url();
+		} else {
+			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
+		}
+
 		wp_register_style(
 			'elementor-frontend',
-			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
+			$frontend_file_url,
 			[],
-			ELEMENTOR_VERSION
+			$has_custom_file ? null : ELEMENTOR_VERSION
 		);
 
 		/**
