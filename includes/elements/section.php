@@ -1301,7 +1301,6 @@ class Element_Section extends Element_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-background-video-fallback"></div>
 		<# if ( settings.background_video_link ) { #>
 			<div class="elementor-background-video-container elementor-hidden-phone">
 				<div class="elementor-background-video-embed"></div>
