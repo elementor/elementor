@@ -57,6 +57,7 @@ class Module extends BaseModule {
 				'moved' => __( 'Moved', 'elementor' ),
 				'duplicated' => __( 'Duplicated', 'elementor' ),
 				'editing_started' => __( 'Editing Started', 'elementor' ),
+				'style_pasted' => __( 'Style Pasted', 'elementor' ),
 			],
 		] );
 

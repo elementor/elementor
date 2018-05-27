@@ -60,20 +60,20 @@
 		display: inline-block;
 
 		&:not(:nth-child(4n)) {
-			@media(max-width: $screen-lg-max) {
+			@media(max-width: $editor-screen-lg-max) {
 				@include margin-end(13px);
 			}
 
-			@media(min-width: $screen-xl-min) {
+			@media(min-width: $editor-screen-xl-min) {
 				@include margin-end(19px);
 			}
 
 			[class*="wp-version-4-9"] &, [class*="wp-version-5"] & {
-				@media(max-width: $screen-lg-max) {
+				@media(max-width: $editor-screen-lg-max) {
 					@include margin-end(5px);
 				}
 
-				@media(min-width: $screen-xl-min) {
+				@media(min-width: $editor-screen-xl-min) {
 					@include margin-end(12px);
 				}
 			}
@@ -90,20 +90,20 @@
 			transform: translateY(10px);
 
 			.wp-color-result {
-				@media(max-width: $screen-lg-max) {
+				@media(max-width: $editor-screen-lg-max) {
 					margin-right: 4px;
 				}
 
-				@media(min-width: $screen-xl-min) {
+				@media(min-width: $editor-screen-xl-min) {
 					margin-right: 6px;
 				}
 
 				[class*="wp-version-4-9"] &, [class*="wp-version-5"] & {
-					@media(max-width: $screen-lg-max) {
+					@media(max-width: $editor-screen-lg-max) {
 						margin-right: 10px;
 					}
 
-					@media(min-width: $screen-xl-min) {
+					@media(min-width: $editor-screen-xl-min) {
 						margin-right: 9px;
 					}
 				}

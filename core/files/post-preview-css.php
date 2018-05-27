@@ -45,6 +45,10 @@ class Post_Preview_CSS extends Post_CSS {
 		parent::__construct( $parent_id );
 	}
 
+	public function get_preview_id() {
+		return $this->preview_id;
+	}
+
 	/**
 	 * Get data.
 	 *

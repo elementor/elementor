@@ -2,6 +2,7 @@
 namespace Elementor\Core\DynamicTags;
 
 use Elementor\Plugin;
+use Elementor\Post_CSS_File;
 use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -401,10 +402,19 @@ class Manager {
 	}
 
 	/**
+	 * @param Post_CSS_File $css_file
+	 */
+	public function after_enqueue_post_css( $css_file ) {
+		$css_file = new Dynamic_CSS( $css_file );
+		$css_file->enqueue();
+	}
+
+	/**
 	 * @since 2.0.0
 	 * @access private
 	 */
 	private function add_actions() {
 		add_action( 'wp_ajax_elementor_render_tags', [ $this, 'ajax_render_tags' ] );
+		add_action( 'elementor/css-file/post/enqueue', [ $this, 'after_enqueue_post_css' ] );
 	}
 }

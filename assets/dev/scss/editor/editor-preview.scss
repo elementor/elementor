@@ -3,6 +3,7 @@
 //
 @import "../helpers/variables";
 @import "../helpers/mixins";
+@import "breakpoints";
 @import "panel/global";
 @import "panel/control";
 @import "panel/color-picker";
@@ -250,7 +251,7 @@ html.elementor-html {
 					background-color: darken($editor-info, 20%);
 				}
 
-				@media (min-width: $screen-lg-min) {
+				@media (min-width: $editor-screen-lg-min) {
 
 					&:first-child {
 						@include padding-start(1px);
@@ -280,7 +281,7 @@ html.elementor-html {
 					background-color: $editor-darkest;
 				}
 
-				@media (min-width: $screen-lg-min) {
+				@media (min-width: $editor-screen-lg-min) {
 
 					&:first-child {
 						@include padding-start(1px);
@@ -312,7 +313,7 @@ html.elementor-html {
 					background-color: darken($editor-info, 20%);
 				}
 
-				@media (min-width: $screen-lg-min) {
+				@media (min-width: $editor-screen-lg-min) {
 
 					&:first-child {
 						@include padding-end(1px);
@@ -331,7 +332,7 @@ html.elementor-html {
 
 		.elementor-editor-element-trigger {
 
-			@media(min-width: $screen-lg-min) {
+			@media(min-width: $editor-screen-lg-min) {
 				cursor: move;
 			}
 		}
@@ -340,7 +341,7 @@ html.elementor-html {
 
 			&:not(.elementor-editor-element-trigger) {
 
-				@media (max-width: $screen-md-max) {
+				@media (max-width: $editor-screen-md-max) {
 					display: none;
 				}
 			}
@@ -426,7 +427,7 @@ html.elementor-html {
 				}
 			}
 
-			@media (max-width: $screen-md-max) {
+			@media (max-width: $editor-screen-md-max) {
 				> .ui-resizable-e, > .ui-resizable-w {
 					display: none !important;
 				}
@@ -441,7 +442,7 @@ html.elementor-html {
 			.elementor-widget-wrap {
 				min-height: 30px; // In case of section with non-default content position
 
-				@media (min-width: $screen-md-min) {
+				@media (min-width: $editor-screen-md-min) {
 					margin: 10px;
 				}
 			}
@@ -571,7 +572,7 @@ html.elementor-html {
 
 			.elementor-editor-element-trigger {
 
-				@media(min-width: $screen-lg-min) {
+				@media(min-width: $editor-screen-lg-min) {
 					cursor: pointer;
 				}
 			}
@@ -677,7 +678,7 @@ html.elementor-html {
 		}
 	}
 
-	@media (max-width: $screen-xs-max) {
+	@media (max-width: $editor-screen-xs-max) {
 		display: none;
 	}
 }

@@ -82,7 +82,7 @@ abstract class File {
 
 	public function get_content() {
 		if ( ! $this->content ) {
-			$this->parse_content();
+			$this->content = $this->parse_content();
 		}
 
 		return $this->content;

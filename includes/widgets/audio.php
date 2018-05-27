@@ -66,6 +66,20 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return ['audio','player','soundcloud','embed'];
+	}
+
+	/**
 	 * Register audio widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.

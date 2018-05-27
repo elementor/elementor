@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Responsive;
 
-use Elementor\Core\Files\Frontend;
+use Elementor\Core\Responsive\Files\Frontend;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -120,7 +120,7 @@ class Responsive {
 	}
 
 	public static function get_templates_path() {
-		return ELEMENTOR_ASSETS_PATH . 'css-templates/';
+		return ELEMENTOR_ASSETS_PATH . 'css/templates/';
 	}
 
 	public static function compile_templates() {
