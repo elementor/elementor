@@ -162,7 +162,7 @@ module.exports = function( grunt ) {
 
 		},
 
-		// Extract sourcemap to separate file
+		// Extract sourcemap to a separated file
 		exorcise: {
 			bundle: {
 				options: {},
@@ -282,7 +282,8 @@ module.exports = function( grunt ) {
 			styles: {
 				files: [
 					'assets/dev/scss/**/*.scss',
-					'modules/**/*.scss'
+					'modules/**/*.scss',
+					'!assets/dev/scss/frontend/breakpoints/proxy.scss'
 				],
 				tasks: [ 'styles:true' ],
 				options: {
@@ -467,8 +468,6 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'styles', function( isDevMode ) {
-		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "values";' );
-
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
@@ -478,7 +477,7 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'css_templates', function() {
-		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "templates";' );
+		grunt.task.run( 'css_templates_proxy:templates' );
 
 		grunt.config( 'sass.dist', {
 			files: [ {
@@ -498,6 +497,13 @@ module.exports = function( grunt ) {
 		] );
 
 		grunt.task.run( 'postcss:minify' );
+
+		grunt.task.run( 'css_templates_proxy:values' );
+	} );
+
+	// Writing the proxy file as a grunt task, in order to fit in with the tasks queue
+	grunt.registerTask( 'css_templates_proxy', function( mode ) {
+		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "' + mode + '";' );
 	} );
 
 	grunt.registerTask( 'build', [
