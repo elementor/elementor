@@ -1303,7 +1303,9 @@ class Element_Section extends Element_Base {
 		?>
 		<div class="elementor-background-video-container elementor-hidden-phone">
 			<div class="elementor-background-video-embed"></div>
-			<video class="elementor-background-video-hosted" autoplay loop muted></video>
+			<# if ( settings.background_video_link ) {
+				#><video class="elementor-background-video-hosted" autoplay loop muted></video><#
+			} #>	
 		</div>
 		<div class="elementor-background-video-fallback"></div>
 		<div class="elementor-background-overlay"></div>
