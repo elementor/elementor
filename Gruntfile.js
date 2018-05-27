@@ -467,8 +467,6 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'styles', function( isDevMode ) {
-		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "values";' );
-
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
@@ -498,6 +496,8 @@ module.exports = function( grunt ) {
 		] );
 
 		grunt.task.run( 'postcss:minify' );
+
+		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "values";' );
 	} );
 
 	grunt.registerTask( 'build', [
