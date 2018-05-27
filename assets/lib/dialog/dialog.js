@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.3.0
+ * Dialogs Manager v4.3.2
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -228,6 +228,33 @@
 			position.my = fixedParts.join(' ');
 		};
 
+		var hideOnClick = function(event) {
+
+			if(isContextMenuClickEvent(event)) {
+				return;
+			}
+
+			if (settings.hide.onClick) {
+
+				if ($(event.target).closest(settings.selectors.preventClose).length) {
+					return;
+				}
+			} else if (event.target !== this) {
+				return;
+			}
+
+			self.hide();
+		};
+
+		var hideOnOutsideClick = function(event) {
+
+			if (isContextMenuClickEvent(event) || $(event.target).closest(elements.widget).length) {
+				return;
+			}
+
+			self.hide();
+		};
+
 		var initElements = function () {
 
 			self.addElement('widget');
@@ -313,34 +340,17 @@
 			});
 		};
 
+		var isContextMenuClickEvent = function (event) {
+			// Firefox fires `click` event on every `contextmenu` event.
+			return event.type === 'click' && event.button === 2;
+		};
+
 		var normalizeClassName = function (name) {
 
 			return name.replace(/([a-z])([A-Z])/g, function () {
 
 				return arguments[1] + '-' + arguments[2].toLowerCase();
 			});
-		};
-
-		var hideOnClick = function(event) {
-
-			if (settings.hide.onClick) {
-
-				if ($(event.target).closest(settings.selectors.preventClose).length) {
-					return;
-				}
-			} else if (event.target !== this) {
-				return;
-			}
-
-			self.hide();
-		};
-
-		var hideOnOutsideClick = function(event) {
-			if ($(event.target).closest(elements.widget).length) {
-				return;
-			}
-
-			self.hide();
 		};
 
 		var onWindowKeyUp = function(event) {
@@ -400,6 +410,22 @@
 			return $newElement;
 		};
 
+		this.destroy = function() {
+
+			unbindEvents();
+
+			elements.widget.remove();
+
+			self.trigger('destroy');
+
+			return self;
+		};
+
+		this.getElements = function (item) {
+
+			return item ? elements[item] : elements;
+		};
+
 		this.getSettings = function (setting) {
 
 			var copy = Object.create(settings);
@@ -409,6 +435,19 @@
 			}
 
 			return copy;
+		};
+
+		this.hide = function () {
+
+			clearTimeout(hideTimeOut);
+
+			callEffect('hide', arguments);
+
+			unbindEvents();
+
+			self.trigger('hide');
+
+			return self;
 		};
 
 		this.init = function (parent, properties) {
@@ -432,24 +471,6 @@
 			}
 
 			self.trigger('ready');
-
-			return self;
-		};
-
-		this.getElements = function (item) {
-
-			return item ? elements[item] : elements;
-		};
-
-		this.hide = function () {
-
-			clearTimeout(hideTimeOut);
-
-			callEffect('hide', arguments);
-
-			unbindEvents();
-
-			self.trigger('hide');
 
 			return self;
 		};
@@ -482,16 +503,35 @@
 			return self;
 		};
 
-		this.setMessage = function (message) {
+		this.refreshPosition = function () {
 
-			elements.message.html(message);
+			if (! settings.position.enable) {
+				return;
+			}
 
-			return self;
+			var position = $.extend({}, settings.position);
+
+			if (elements[position.of]) {
+				position.of = elements[position.of];
+			}
+
+			if (elements.iframe) {
+				fixIframePosition(position);
+			}
+
+			elements[position.element].position(position);
 		};
 
 		this.setID = function (id) {
 
 			elements.widget.attr('id', id);
+
+			return self;
+		};
+
+		this.setMessage = function (message) {
+
+			elements.message.html(message);
 
 			return self;
 		};
@@ -528,25 +568,6 @@
 			return self;
 		};
 
-		this.refreshPosition = function () {
-
-			if (! settings.position.enable) {
-				return;
-			}
-
-			var position = $.extend({}, settings.position);
-
-			if (elements[position.of]) {
-				position.of = elements[position.of];
-			}
-
-			if (elements.iframe) {
-				fixIframePosition(position);
-			}
-
-			elements[position.element].position(position);
-		};
-
 		this.trigger = function (eventName, params) {
 
 			var methodName = 'on' + eventName[0].toUpperCase() + eventName.slice(1);
@@ -565,17 +586,6 @@
 
 				callback.call(self, params);
 			});
-
-			return self;
-		};
-
-		this.destroy = function() {
-
-			unbindEvents();
-
-			elements.widget.remove();
-
-			self.trigger('destroy');
 
 			return self;
 		};
@@ -629,6 +639,10 @@
 			}
 		},
 		activeKeyDown: function (event) {
+
+			if (!this.focusedButton) {
+				return;
+			}
 
 			var TAB_KEY = 9;
 
