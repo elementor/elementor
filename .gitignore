@@ -15,7 +15,6 @@ Thumbs.db
 *.map
 
 assets/css/
-assets/css-templates/
 assets/dev/scss/frontend/breakpoints/proxy.scss
 
 assets/js/

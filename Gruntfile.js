@@ -485,7 +485,7 @@ module.exports = function( grunt ) {
 				expand: true,
 				cwd: 'assets/dev/scss/direction',
 				src: [ 'frontend.scss', 'frontend-rtl.scss' ],
-				dest: 'assets/css-templates',
+				dest: 'assets/css/templates',
 				ext: '.css'
 			} ]
 		} );
@@ -493,8 +493,8 @@ module.exports = function( grunt ) {
 		grunt.task.run( 'sass' );
 
 		grunt.config( 'postcss.minify.files.0.src', [
-			'assets/css-templates/*.css',
-			'!assets/css-templates/*.min.css'
+			'assets/css/templates/*.css',
+			'!assets/css/templates/*.min.css'
 		] );
 
 		grunt.task.run( 'postcss:minify' );
