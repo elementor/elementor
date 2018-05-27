@@ -77,7 +77,7 @@ function elementor_load_plugin_textdomain() {
  */
 function elementor_fail_php_version() {
 	/* translators: %s: PHP version */
-	$message = sprintf( esc_html__( 'Elementor requires PHP version %s+, plugin is currently NOT ACTIVE.', 'elementor' ), '5.4' );
+	$message = sprintf( esc_html__( 'Elementor requires PHP version %s+, plugin is currently Not Running.', 'elementor' ), '5.4' );
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );
 }
@@ -93,7 +93,7 @@ function elementor_fail_php_version() {
  */
 function elementor_fail_wp_version() {
 	/* translators: %s: WordPress version */
-	$message = sprintf( esc_html__( 'Elementor requires WordPress version %s+. Because you are using an earlier version, the plugin is currently NOT ACTIVE.', 'elementor' ), '4.6' );
+	$message = sprintf( esc_html__( 'Elementor requires WordPress version %s+. Because you are using an earlier version, the plugin is currently Not Running.', 'elementor' ), '4.6' );
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );
 }
