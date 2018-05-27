@@ -162,7 +162,7 @@ module.exports = function( grunt ) {
 
 		},
 
-		// Extract sourcemap to separate file
+		// Extract sourcemap to a separated file
 		exorcise: {
 			bundle: {
 				options: {},
