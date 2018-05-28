@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.3.2
+ * Dialogs Manager v4.3.3
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -215,7 +215,7 @@
 						partOffset += iframeOffset.top - iframeWindow.scrollY;
 					}
 
-					if (partOffset > 0) {
+					if (partOffset >= 0) {
 						partOffset = '+' + partOffset;
 					}
 
