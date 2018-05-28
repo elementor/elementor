@@ -54,10 +54,10 @@ abstract class File {
 		return $wp_upload_dir['baseurl'] . '/' . self::UPLOADS_DIR;
 	}
 
-	public function __construct( $file_name, $files_dir = null ) {
+	public function __construct( $file_name ) {
 		$this->set_file_name( $file_name );
 
-		$this->set_files_dir( $files_dir ? $files_dir : static::DEFAULT_FILES_DIR );
+		$this->set_files_dir( static::DEFAULT_FILES_DIR );
 
 		$this->set_path();
 	}
