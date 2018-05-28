@@ -552,6 +552,30 @@ App = Marionette.Application.extend( {
 		}
 	},
 
+	getStorage: function( key ) {
+		var elementorStorage = localStorage.getItem( 'elementor' );
+
+		if ( elementorStorage ) {
+			elementorStorage = JSON.parse( elementorStorage );
+		} else {
+			elementorStorage = {};
+		}
+
+		if ( key ) {
+			return elementorStorage[ key ];
+		}
+
+		return elementorStorage;
+	},
+
+	setStorage: function( key, value ) {
+		var elementorStorage = this.getStorage();
+
+		elementorStorage[ key ] = value;
+
+		localStorage.setItem( 'elementor', JSON.stringify( elementorStorage ) );
+	},
+
 	openLibraryOnStart: function() {
 		if ( '#library' === location.hash ) {
 			elementor.templates.startModal();

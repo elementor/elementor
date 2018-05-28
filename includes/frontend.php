@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Base\Document;
-use Elementor\Core\Base\File;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\Global_CSS;
 use Elementor\Core\Files\Post_CSS;
@@ -419,7 +418,7 @@ class Frontend {
 		$has_custom_file = Responsive::has_custom_breakpoints();
 
 		if ( $has_custom_file ) {
-			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name );
+			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Responsive::get_stylesheet_templates_path() . $frontend_file_name );
 
 			$time = $frontend_file->get_meta( 'time' );
 
@@ -472,6 +471,7 @@ class Frontend {
 		$elementor_frontend_config = [
 			'isEditMode' => Plugin::$instance->preview->is_preview_mode(),
 			'is_rtl' => is_rtl(),
+			'breakpoints' => Responsive::get_breakpoints(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
