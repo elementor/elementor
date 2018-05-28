@@ -119,17 +119,29 @@ class Responsive {
 		return ! ! array_diff( self::$default_breakpoints, self::get_breakpoints() );
 	}
 
-	public static function get_templates_path() {
+	public static function get_stylesheet_templates_path() {
 		return ELEMENTOR_ASSETS_PATH . 'css/templates/';
 	}
 
-	public static function compile_templates() {
-		foreach ( glob( self::get_templates_path() . '*.css' ) as $file ) {
-			$file_name = basename( $file );
-
-			$file = new Frontend( 'custom-' . $file_name );
+	public static function compile_stylesheet_templates() {
+		foreach ( self::get_stylesheet_templates() as $file_name => $template_path ) {
+			$file = new Frontend( $file_name, $template_path );
 
 			$file->update();
 		}
+	}
+
+	private static function get_stylesheet_templates() {
+		$templates_paths = glob( self::get_stylesheet_templates_path() . '*.css' );
+
+		$templates = [];
+
+		foreach ( $templates_paths as $template_path ) {
+			$file_name = 'custom-' . basename( $template_path );
+
+			$templates[ $file_name ] = $template_path;
+		}
+
+		return apply_filters( 'elementor/core/responsive/get_templates', $templates );
 	}
 }
