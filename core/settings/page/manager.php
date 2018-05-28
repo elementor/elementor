@@ -96,11 +96,11 @@ class Manager extends BaseManager {
 			return null;
 		}
 
-		$post_id = get_the_ID();
-
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			$post_id = Plugin::$instance->editor->get_post_id();
 			$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
 		} else {
+			$post_id = get_the_ID();
 			$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 		}
 
