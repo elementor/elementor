@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Base\Document;
-use Elementor\Core\Base\File;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\Global_CSS;
 use Elementor\Core\Files\Post_CSS;
