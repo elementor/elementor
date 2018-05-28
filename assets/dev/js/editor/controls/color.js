@@ -3,8 +3,16 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 
 ControlColorItemView = ControlBaseDataView.extend( {
 	applySavedValue: function() {
-		if ( this.ui.input.wpColorPicker( 'instance' ) ) {
-			this.ui.input.wpColorPicker( 'color', this.getControlValue() );
+		var value = this.getControlValue(),
+			colorInstance = this.ui.input.wpColorPicker( 'instance' );
+
+		if ( colorInstance ) {
+			this.ui.input.wpColorPicker( 'color', value );
+
+			if ( ! value ) {
+				// Trigger `change` event manually, since it will not be triggered automatically on empty value
+				this.ui.input.data( 'a8cIris' )._change();
+			}
 		}
 	},
 
