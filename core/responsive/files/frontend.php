@@ -15,16 +15,20 @@ class Frontend extends File {
 
 	const DEFAULT_FILES_DIR = 'css/';
 
+	private $template_file;
+
+	public function __construct( $file_name, $template_file ) {
+		$this->template_file = $template_file;
+
+		parent::__construct( $file_name );
+	}
+
 	public function parse_content() {
-		$template_file_name = str_replace( 'custom-', '', $this->get_file_name() );
-
-		$template_file = Responsive::get_templates_path() . $template_file_name;
-
 		$breakpoints = Responsive::get_breakpoints();
 
 		$breakpoints_keys = array_keys( $breakpoints );
 
-		$file_content = file_get_contents( $template_file );
+		$file_content = file_get_contents( $this->template_file );
 
 		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z]+)_([A-Z]+)/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {
 			$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys );

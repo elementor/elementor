@@ -124,12 +124,24 @@ class Responsive {
 	}
 
 	public static function compile_templates() {
-		foreach ( glob( self::get_templates_path() . '*.css' ) as $file ) {
-			$file_name = basename( $file );
-
-			$file = new Frontend( 'custom-' . $file_name );
+		foreach ( self::get_templates() as $file_name => $template_path ) {
+			$file = new Frontend( $file_name, $template_path );
 
 			$file->update();
 		}
+	}
+
+	private static function get_templates() {
+		$templates_paths = glob( self::get_templates_path() . '*.css' );
+
+		$templates = [];
+
+		foreach ( $templates_paths as $template_path ) {
+			$file_name = 'custom-' . basename( $template_path );
+
+			$templates[ $file_name ] = $template_path;
+		}
+
+		return apply_filters( 'elementor/core/responsive/get_templates', $templates );
 	}
 }
