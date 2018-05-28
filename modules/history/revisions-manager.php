@@ -375,7 +375,7 @@ class Revisions_Manager {
 				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
 				'revisions_disabled_2' => sprintf(
 					/* translators: %s: Codex URL */
-					__( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ),
+					__( 'Learn more about <a target="_blank" href="%s">WordPress revisions</a>', 'elementor' ),
 					'https://codex.wordpress.org/Revisions#Revision_Options'
 				),
 			],
