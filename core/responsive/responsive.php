@@ -142,6 +142,6 @@ class Responsive {
 			$templates[ $file_name ] = $template_path;
 		}
 
-		return apply_filters( 'elementor/core/responsive/get_templates', $templates );
+		return apply_filters( 'elementor/core/responsive/get_stylesheet_templates', $templates );
 	}
 }
