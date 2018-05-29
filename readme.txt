@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.6
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 2.0.11
+Stable tag: 2.0.13
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -216,12 +216,24 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.0.13 - 2018-05-28 =
+* New: Dynamic Image Backgrounds ([#3971](https://github.com/pojome/elementor/issues/3971))
+* Tweak: Updated Dialog Manager v4.3.2
+* Tweak: Better accessibility for Back to Editor button
+* Tweak: Confusing error message ([#4546](https://github.com/pojome/elementor/issues/4546))
+* Fix: Panel buttons style glitch in edge cases
+* Fix: PHP notice in Polylang compatibility
+* Fix: Editor won't load for users without publishing capabilities
+* Fix: Media queries ordering in CSS file for mixed min and max break points
+* Fix: Improved video background loading method
+
 = 2.0.12 - 2018-05-15 =
 * Tweak: Added new method `add_body_class`
 * Tweak: Set library filter by the document
 * Tweak: Allow 3rd party developers to register documents on init
 * Fix: Set attach uploaded images to the current post
 * Fix: Scroll not working in the library modal ([#4394](https://github.com/pojome/elementor/issues/4394))
+* Fix: Blocks dropdown menu escapes container on scroll ([#3947](https://github.com/pojome/elementor/issues/3947))
 
 = 2.0.11 - 2018-05-09 =
 * Fix: Stronger selector for heading widget color, to avoid section style override ([#4266](https://github.com/pojome/elementor/issues/4266))
