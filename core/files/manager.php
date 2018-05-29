@@ -156,7 +156,5 @@ class Manager {
 	private function register_actions() {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
-
-		add_action( 'elementor/css-file/clear_cache', '__return_false' );
 	}
 }
