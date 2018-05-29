@@ -57,6 +57,18 @@ abstract class Controls_Stack {
 	private $_settings;
 
 	/**
+	 * Parsed Dynamic Settings.
+	 *
+	 * Holds the dynamic settings, which is the data entered by the user and processed
+	 * by elementor includes the dynamic value.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
+	private $_dynamic_settings;
+
+	/**
 	 * Raw Data.
 	 *
 	 * Holds all the raw data including the element type, the child elements,
@@ -317,7 +329,7 @@ abstract class Controls_Stack {
 	 * @return array Controls settings.
 	 */
 	public function get_controls_settings() {
-		return array_intersect_key( $this->get_settings(), $this->get_controls() );
+		return array_intersect_key( $this->_dynamic_settings, $this->get_controls() );
 	}
 
 	/**
@@ -1936,6 +1948,8 @@ abstract class Controls_Stack {
 		$this->_data = $this->sanitize_initial_data( $this->_data );
 
 		$this->_settings = $this->_get_parsed_settings();
+
+		$this->_dynamic_settings = $this->parse_dynamic_settings( $this->_settings );
 	}
 
 	/**
