@@ -57,6 +57,18 @@ abstract class Controls_Stack {
 	private $_settings;
 
 	/**
+	 * Parsed Dynamic Settings.
+	 *
+	 * Holds the dynamic settings, which is the data entered by the user and processed
+	 * by elementor includes the dynamic value.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
+	private $parsed_dynamic_settings;
+
+	/**
 	 * Raw Data.
 	 *
 	 * Holds all the raw data including the element type, the child elements,
@@ -1017,6 +1029,14 @@ abstract class Controls_Stack {
 	 */
 	public function get_settings( $setting = null ) {
 		return self::_get_items( $this->_settings, $setting );
+	}
+
+	public function get_parsed_dynamic_settings( $setting = null ) {
+		if ( null === $this->parsed_dynamic_settings ) {
+			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->_settings );
+		}
+
+		return self::_get_items( $this->parsed_dynamic_settings, $setting );
 	}
 
 	/**
