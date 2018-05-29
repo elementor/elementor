@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Core\Settings\Page;
 
-use Elementor\Core\Files\CSS;
-use Elementor\Core\Files\Post_CSS;
-use Elementor\Core\Files\Post_Preview_CSS;
+use Elementor\Core\Files\CSS\Base;
+use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
@@ -257,18 +257,18 @@ class Manager extends BaseManager {
 	 * @since 1.6.0
 	 * @access protected
 	 *
-	 * @param CSS $css_file The requested CSS file.
+	 * @param Base $css_file The requested CSS file.
 	 *
 	 * @return BaseModel The model object.
 	 */
-	protected function get_model_for_css_file( CSS $css_file ) {
-		if ( ! $css_file instanceof Post_CSS ) {
+	protected function get_model_for_css_file( Base $css_file ) {
+		if ( ! $css_file instanceof Post ) {
 			return null;
 		}
 
 		$post_id = $css_file->get_post_id();
 
-		if ( $css_file instanceof Post_Preview_CSS ) {
+		if ( $css_file instanceof Post_Preview ) {
 			$autosave = Utils::get_post_autosave( $post_id );
 			if ( $autosave ) {
 				$post_id = $autosave->ID;

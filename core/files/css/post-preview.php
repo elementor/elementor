@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Files;
+namespace Elementor\Core\Files\CSS;
 
 use Elementor\Plugin;
 
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.9.0
  */
-class Post_Preview_CSS extends Post_CSS {
+class Post_Preview extends Post {
 
 	/**
 	 * Preview ID.

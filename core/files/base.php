@@ -1,18 +1,18 @@
 <?php
 
-namespace Elementor\Core\Base;
+namespace Elementor\Core\Files;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class File {
+abstract class Base {
 
 	const UPLOADS_DIR = 'elementor/';
 
 	const META_KEY = 'elementor_file';
 
-	const DEFAULT_FILES_DIR = 'files/';
+	const DEFAULT_FILES_DIR = 'css/';
 
 	private static $wp_uploads_dir;
 
