@@ -216,6 +216,12 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.0.14 - 2018-05-29 =
+* Fix: Missing Dynamic Image Background properties on front-end ([#4577](https://github.com/pojome/elementor/issues/4577))
+* Fix: Avoid page settings global `$post` being overwritten by 3rd party plugins ([#4563](https://github.com/pojome/elementor/issues/4563))
+* Fix: Editor won’t load for users without publishing capabilities
+* Fix: Only show Caption style section for Image widget if needed
+
 = 2.0.13 - 2018-05-28 =
 * New: Dynamic Image Backgrounds ([#3971](https://github.com/pojome/elementor/issues/3971))
 * Tweak: Updated Dialog Manager v4.3.2
