@@ -227,7 +227,7 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function update_css_print_method() {
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 	}
 
 	/**

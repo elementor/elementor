@@ -1,30 +1,28 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Files;
 
-use Elementor\Core\Base\File;
-use Elementor\Core\Files\CSS;
 use Elementor\Core\Responsive\Files\Frontend;
-use Elementor\Core\Files\Global_CSS;
-use Elementor\Core\Files\Post_CSS;
+use Elementor\Core\Files\CSS\Global_CSS;
+use Elementor\Core\Files\CSS\Post;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * Elementor posts CSS manager.
+ * Elementor files manager.
  *
- * Elementor posts CSS manager handler class is responsible for creating custom
- * CSS file for posts.
+ * Elementor files manager handler class is responsible for creating files.
  *
  * @since 1.2.0
  */
-class Posts_CSS_Manager {
+class Manager {
 
 	/**
-	 * Posts CSS manager constructor.
+	 * Files manager constructor.
 	 *
-	 * Initializing the Elementor posts CSS manager.
+	 * Initializing the Elementor files manager.
 	 *
 	 * @since 1.2.0
 	 * @access public
@@ -50,7 +48,7 @@ class Posts_CSS_Manager {
 			return;
 		}
 
-		$css_file = new Post_CSS( $post_id );
+		$css_file = new Post( $post_id );
 
 		$css_file->delete();
 	}
@@ -72,7 +70,7 @@ class Posts_CSS_Manager {
 	 * @return bool Whether to skip the post CSS meta.
 	 */
 	public function on_export_post_meta( $skip, $meta_key ) {
-		if ( Post_CSS::META_KEY === $meta_key ) {
+		if ( Post::META_KEY === $meta_key ) {
 			$skip = true;
 		}
 
@@ -82,8 +80,8 @@ class Posts_CSS_Manager {
 	/**
 	 * Clear cache.
 	 *
-	 * Delete post meta containing the post CSS file data. And delete the actual
-	 * CSS files from the upload directory.
+	 * Delete all meta containing files data. And delete the actual
+	 * files from the upload directory.
 	 *
 	 * @since 1.2.0
 	 * @access public
@@ -98,7 +96,7 @@ class Posts_CSS_Manager {
 
 		$wpdb->delete(
 			$wpdb->postmeta, [
-				'meta_key' => Post_CSS::META_KEY,
+				'meta_key' => Post::META_KEY,
 			]
 		);
 
@@ -115,7 +113,7 @@ class Posts_CSS_Manager {
 		);
 
 		// Delete files.
-		$path = File::get_base_uploads_dir() . CSS::DEFAULT_FILES_DIR . '*';
+		$path = Base::get_base_uploads_dir() . Base::DEFAULT_FILES_DIR . '*';
 
 		foreach ( glob( $path ) as $file ) {
 			$deleted = unlink( $file );
@@ -126,13 +124,23 @@ class Posts_CSS_Manager {
 		}
 
 		/**
-		 * Elementor clear CSS files.
+		 * Elementor clear files.
 		 *
-		 * Fires after Elementor clears CSS files
+		 * Fires after Elementor clears files
 		 *
 		 * @since 2.0.8
+		 * @deprecated 2.1.0 Use `elementor/core/files/clear_cache` instead
 		 */
-		do_action( 'elementor/css-file/clear_cache' );
+		do_action_deprecated( 'elementor/css-file/clear_cache', [], '2.1.0', 'elementor/core/files/clear_cache' );
+
+		/**
+		 * Elementor clear files.
+		 *
+		 * Fires after Elementor clears files
+		 *
+		 * @since 2.1.0
+		 */
+		do_action( 'elementor/core/files/clear_cache' );
 
 		return $errors;
 	}
@@ -140,7 +148,7 @@ class Posts_CSS_Manager {
 	/**
 	 * Register actions.
 	 *
-	 * Register filters and actions for the posts CSS manager.
+	 * Register filters and actions for the files manager.
 	 *
 	 * @since 1.2.0
 	 * @access private
@@ -148,5 +156,7 @@ class Posts_CSS_Manager {
 	private function register_actions() {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
+
+		add_action( 'elementor/css-file/clear_cache', '__return_false' );
 	}
 }

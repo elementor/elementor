@@ -3,24 +3,24 @@ namespace Elementor\Core\DynamicTags;
 
 use Elementor\Controls_Stack;
 
-use Elementor\Core\Files\Post_CSS;
-use Elementor\Core\Files\Post_Preview_CSS;
+use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Dynamic_CSS extends Post_CSS {
+class Dynamic_CSS extends Post {
 
 	protected $post_id_for_data;
 	/**
 	 * Dynamic_CSS constructor.
 	 *
-	 * @param Post_CSS|Post_Preview_CSS $css_file
+	 * @param Post|Post_Preview $css_file
 	 */
 	public function __construct( $css_file ) {
-		if ( $css_file instanceof Post_Preview_CSS ) {
+		if ( $css_file instanceof Post_Preview ) {
 			$this->post_id_for_data = $css_file->get_preview_id();
 		} else {
 			$this->post_id_for_data = $css_file->get_post_id();

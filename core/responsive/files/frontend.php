@@ -2,18 +2,16 @@
 
 namespace Elementor\Core\Responsive\Files;
 
-use Elementor\Core\Base\File;
+use Elementor\Core\Files\Base;
 use Elementor\Core\Responsive\Responsive;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Frontend extends File {
+class Frontend extends Base {
 
 	const META_KEY = 'elementor_frontend_css';
-
-	const DEFAULT_FILES_DIR = 'css/';
 
 	private $template_file;
 

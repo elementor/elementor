@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Files;
+namespace Elementor\Core\Files\CSS;
 
 use Elementor\Controls_Stack;
 use Elementor\Element_Base;
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Post_CSS extends CSS {
+class Post extends Base {
 
 	/**
 	 * Elementor post CSS file meta key.
@@ -281,8 +281,8 @@ class Post_CSS extends CSS {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Post_CSS $this         The post CSS file.
-		 * @param Element_Base  $element The element.
+		 * @param Post         $this    The post CSS file.
+		 * @param Element_Base $element The element.
 		 */
 		do_action( 'elementor/element/before_parse_css', $this, $element );
 
@@ -297,8 +297,8 @@ class Post_CSS extends CSS {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Post_CSS $this    The post CSS file.
-		 * @param Element_Base  $element The element.
+		 * @param Post         $this    The post CSS file.
+		 * @param Element_Base $element The element.
 		 */
 		do_action( 'elementor/element/parse_css', $this, $element );
 	}
