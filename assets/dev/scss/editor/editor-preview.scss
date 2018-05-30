@@ -651,20 +651,15 @@ html.elementor-html {
 .elementor-add-new-section {
 	display: inline-block; // For smooth dragging above
 
-	.elementor-button {
-		color: #fff;
-		background-image: none; // Reset for some themes
-		font-size: 13px;
-		font-family: Arial, Helvetica, sans-serif;
-		font-weight: normal;
-		font-style: normal;
-		text-transform: uppercase;
-		line-height: 1;
+	.elementor-add-section-area-button  {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		height: 40px;
-		min-width: 170px;
-		padding: 0 20px;
-		border: none;
-		border-radius: 3px;
+		width: 40px;
+		color: #fff;
+		border-radius: 50%;
+		transition: all .3s;
 		cursor: pointer;
 
 		&:hover {
@@ -683,7 +678,7 @@ html.elementor-html {
 
 	.elementor-add-template-button {
 		background-color: $editor-dark;
-		@include margin-start(25px);
+		@include margin-start(5px);
 	}
 }
 
