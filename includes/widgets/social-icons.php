@@ -131,6 +131,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'fa fa-steam',
 					'fa fa-stumbleupon',
 					'fa fa-telegram',
+					'fa fa-thumb-tack',
 					'fa fa-tripadvisor',
 					'fa fa-tumblr',
 					'fa fa-twitch',
