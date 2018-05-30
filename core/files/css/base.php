@@ -94,8 +94,7 @@ abstract class Base extends Base_File {
 	/**
 	 * CSS file constructor.
 	 *
-	 * Initializing Elementor CSS file. If using external files, set path and
-	 * URL, otherwise initiate stylesheet.
+	 * Initializing Elementor CSS file.
 	 *
 	 * @since 1.2.0
 	 * @access public

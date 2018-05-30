@@ -20,11 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_CSS extends Base {
 
 	/**
-	 * Elementor global CSS file meta key.
-	 */
-	const META_KEY = '_elementor_global_css';
-
-	/**
 	 * Elementor global CSS file handler ID.
 	 */
 	const FILE_HANDLER_ID = 'elementor-global';
@@ -41,6 +36,10 @@ class Global_CSS extends Base {
 	 */
 	public function get_name() {
 		return 'global';
+	}
+
+	public function get_meta_key() {
+		return '_elementor_global_css';
 	}
 
 	/**
