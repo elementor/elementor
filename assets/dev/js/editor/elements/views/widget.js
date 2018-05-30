@@ -197,12 +197,6 @@ WidgetView = BaseElementView.extend( {
 
 	onClickEdit: function() {
 		this.edit();
-	},
-
-	onDestroy: function() {
-		BaseElementView.prototype.onDestroy.apply( this, arguments );
-
-		this.contextMenu.destroy();
 	}
 } );
 
