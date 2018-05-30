@@ -53,5 +53,11 @@ module.exports = Marionette.Behavior.extend( {
 		event.preventDefault();
 
 		this.getContextMenu().show( event );
+	},
+
+	onDestroy: function() {
+		if ( this.contextMenu ) {
+			this.contextMenu.destroy();
+		}
 	}
 } );
