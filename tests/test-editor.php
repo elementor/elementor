@@ -38,8 +38,6 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 			'elementor-dialog',
 			'ace',
 			'ace-language-tools',
-			'jquery-hover-intent',
-
 			'elementor-editor',
 		];
 

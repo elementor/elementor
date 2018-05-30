@@ -10,6 +10,8 @@ ContextMenu = Module.extend( {
 			actions: {},
 			classes: {
 				list: 'elementor-context-menu-list',
+				group: 'elementor-context-menu-list__group',
+				groupPrefix: 'elementor-context-menu-list__group-',
 				item: 'elementor-context-menu-list__item',
 				itemTypePrefix: 'elementor-context-menu-list__item-',
 				itemTitle: 'elementor-context-menu-list__item__title',
@@ -21,15 +23,9 @@ ContextMenu = Module.extend( {
 	},
 
 	buildActionItem: function( action ) {
-		var self = this;
-
-		var classes = self.getSettings( 'classes' );
-
-		if ( '__divider__' === action.name ) {
-			return jQuery( '<div>', { 'class': classes.divider } );
-		}
-
-		var $item = jQuery( '<div>', { 'class': classes.item + ' ' + classes.itemTypePrefix + action.name } ),
+		var self = this,
+			classes = self.getSettings( 'classes' ),
+			$item = jQuery( '<div>', { 'class': classes.item + ' ' + classes.itemTypePrefix + action.name } ),
 			$itemTitle = jQuery( '<div>', { 'class': classes.itemTitle } ).text( action.title );
 
 		$item.html( $itemTitle );
@@ -54,11 +50,17 @@ ContextMenu = Module.extend( {
 	buildActionsList: function() {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
-			actions = self.getSettings( 'actions' ),
+			groups = self.getSettings( 'groups' ),
 			$list = jQuery( '<div>', { 'class': classes.list } );
 
-		actions.forEach( function( action ) {
-			$list.append( self.buildActionItem( action ) );
+		groups.forEach( function( group ) {
+			var $group = jQuery( '<div>', { 'class': classes.group + ' ' + classes.groupPrefix + group.name } );
+
+			group.actions.forEach( function( action ) {
+				$group.append( self.buildActionItem( action ) );
+			} );
+
+			$list.append( $group );
 		} );
 
 		return $list;
@@ -69,7 +71,7 @@ ContextMenu = Module.extend( {
 	},
 
 	isActionEnabled: function( action ) {
-		if ( ! action.callback && ! action.actions ) {
+		if ( ! action.callback && ! action.groups ) {
 			return false;
 		}
 
@@ -99,7 +101,7 @@ ContextMenu = Module.extend( {
 				onOutsideContextMenu: true
 			},
 			position: {
-				my: 'left top',
+				my: ( elementor.config.is_rtl ? 'right' : 'left' ) + ' top',
 				collision: 'fit'
 			}
 		} );
@@ -116,12 +118,10 @@ ContextMenu = Module.extend( {
 			of: event
 		} );
 
-		jQuery.each( self.getSettings( 'actions' ), function() {
-			if ( '__divider__' === this.name ) {
-				return;
-			}
-
-			self.toggleActionItem( this );
+		self.getSettings( 'groups' ).forEach( function( group ) {
+			group.actions.forEach( function( action ) {
+				self.toggleActionItem( action );
+			} );
 		} );
 
 		self.modal.show();

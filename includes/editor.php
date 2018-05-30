@@ -424,14 +424,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'jquery-hover-intent',
-			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
-			[],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
 			'elementor-dialog',
 			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
@@ -460,7 +452,6 @@ class Editor {
 				'elementor-dialog',
 				'ace',
 				'ace-language-tools',
-				'jquery-hover-intent',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -540,7 +531,6 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
-			'contextMenuEnabled' => ! ! get_option( 'elementor_context_menu', true ),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
@@ -654,9 +644,13 @@ class Editor {
 				// Context Menu
 				'edit' => __( 'Edit', 'elementor' ),
 				'duplicate' => __( 'Duplicate', 'elementor' ),
+				'copy' => __( 'Copy', 'elementor' ),
+				'paste' => __( 'Paste', 'elementor' ),
 				'copy_style' => __( 'Copy Style', 'elementor' ),
 				'paste_style' => __( 'Paste Style', 'elementor' ),
+				'reset_style' => __( 'Reset Style', 'elementor' ),
 				'save_as_global' => __( 'Save as a Global', 'elementor' ),
+				'new_column' => __( 'New Column', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),

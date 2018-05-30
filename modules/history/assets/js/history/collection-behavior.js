@@ -61,7 +61,7 @@ module.exports = Marionette.Behavior.extend( {
 	add: function( models, toView, position ) {
 		if ( 'section' === models[0].elType ) {
 			_.each( models, function( model ) {
-				model.dontFillEmpty = true;
+				model.allowEmpty = true;
 			} );
 		}
 
