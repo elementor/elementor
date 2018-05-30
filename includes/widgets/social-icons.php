@@ -96,6 +96,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'label_block' => true,
 				'default' => 'fa fa-wordpress',
 				'include' => [
+					'fa fa-android',
 					'fa fa-apple',
 					'fa fa-behance',
 					'fa fa-bitbucket',
