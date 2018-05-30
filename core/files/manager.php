@@ -1,8 +1,6 @@
 <?php
 namespace Elementor\Core\Files;
 
-use Elementor\Core\Responsive\Files\Frontend;
-use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Utils;
 
@@ -70,7 +68,7 @@ class Manager {
 	 * @return bool Whether to skip the post CSS meta.
 	 */
 	public function on_export_post_meta( $skip, $meta_key ) {
-		if ( Post::META_KEY === $meta_key ) {
+		if ( '_elementor_css' === $meta_key ) {
 			$skip = true;
 		}
 
@@ -85,42 +83,36 @@ class Manager {
 	 *
 	 * @since 1.2.0
 	 * @access public
-	 *
-	 * @return array Errors, if had files could not be deleted.
 	 */
 	public function clear_cache() {
-		$errors = [];
-
-		// Delete post meta.
-		global $wpdb;
-
-		$wpdb->delete(
-			$wpdb->postmeta, [
-				'meta_key' => Post::META_KEY,
-			]
-		);
-
-		$wpdb->delete(
-			$wpdb->options, [
-				'option_name' => Global_CSS::META_KEY,
-			]
-		);
-
-		$wpdb->delete(
-			$wpdb->options, [
-				'option_name' => Frontend::META_KEY,
-			]
-		);
+		$files_classes = [
+			'post' => 'Files\CSS\Post',
+			'global' => 'Files\CSS\Global_CSS',
+			'custom' => 'Responsive\Files\Frontend',
+		];
 
 		// Delete files.
 		$path = Base::get_base_uploads_dir() . Base::DEFAULT_FILES_DIR . '*';
 
-		foreach ( glob( $path ) as $file ) {
-			$deleted = unlink( $file );
+		foreach ( glob( $path ) as $file_path ) {
+			$file_name = basename( $file_path );
 
-			if ( ! $deleted ) {
-				$errors['files'] = 'Cannot delete files cache';
+			preg_match( '/^[a-z]+/', $file_name, $file_prefix );
+
+			$file_prefix = $file_prefix[0];
+
+			$class = 'Elementor\Core\\' . $files_classes[ $file_prefix ];
+
+			if ( 'post' === $file_prefix ) {
+				preg_match( '/[0-9]+/', $file_name, $post_id_match );
+
+				$file_name = $post_id_match[0];
 			}
+
+			/** @var Base $file */
+			$file = new $class( $file_name );
+
+			$file->delete();
 		}
 
 		/**
@@ -141,8 +133,6 @@ class Manager {
 		 * @since 2.1.0
 		 */
 		do_action( 'elementor/core/files/clear_cache' );
-
-		return $errors;
 	}
 
 	/**

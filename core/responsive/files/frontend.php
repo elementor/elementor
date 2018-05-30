@@ -11,14 +11,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Frontend extends Base {
 
-	const META_KEY = 'elementor_frontend_css';
-
 	private $template_file;
 
-	public function __construct( $file_name, $template_file ) {
+	public function __construct( $file_name, $template_file = null ) {
 		$this->template_file = $template_file;
 
 		parent::__construct( $file_name );
+	}
+
+	public function get_meta_key() {
+		return 'elementor-' . pathinfo( $this->get_file_name(), PATHINFO_FILENAME );
 	}
 
 	public function parse_content() {
