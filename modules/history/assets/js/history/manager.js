@@ -15,7 +15,6 @@ var	Manager = function() {
 		remove: elementor.translate( 'removed' ),
 		change: elementor.translate( 'edited' ),
 		move: elementor.translate( 'moved' ),
-		duplicate: elementor.translate( 'duplicated' ),
 		paste_style: elementor.translate( 'style_pasted' )
 	};
 
@@ -107,9 +106,6 @@ var	Manager = function() {
 
 			.on( 'element:before:remove', self.startRemoveElement )
 			.on( 'element:after:remove', self.endItem )
-
-			.on( 'element:before:duplicate', self.startDuplicateElement )
-			.on( 'element:after:duplicate', self.endItem )
 
 			.on( 'element:before:paste:style', self.startPasteStyle )
 			.on( 'element:after:paste:style', self.endItem )
@@ -339,7 +335,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'move',
 			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' )
+			elementType: model.elType || model.get( 'elType' )
 		} );
 	};
 
@@ -366,14 +362,6 @@ var	Manager = function() {
 			type: 'add',
 			title: self.getModelLabel( model ),
 			elementType: model.elType
-		} );
-	};
-
-	this.startDuplicateElement = function( model ) {
-		elementor.history.history.startItem( {
-			type: 'duplicate',
-			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' )
 		} );
 	};
 
