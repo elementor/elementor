@@ -1,6 +1,18 @@
 // Panel elements categories
 
 .elementor-panel-category {
+	position: relative;
+
+	&:after {
+		content: '';
+		position: absolute;
+		@include start(0);
+		bottom: 0;
+		width: 100%;
+		height: 8px;
+		background: linear-gradient(rgba(0,0,0,0.03), transparent);
+		transform: translateY(100%);
+	}
 
 	&:first-child {
 
@@ -18,29 +30,17 @@
 		cursor: pointer;
 
 		&:before {
-			content: '\f078';
-			font-family: FontAwesome;
-			font-size: 9px;
+			content: getValueByDirection( '\e907', '\e908' );
+			font-family: eicons;
 			position: absolute;
 			@include end(0);
+			transition: transform .3s;
 		}
 
-		&:not(.elementor-active) {
-			margin-bottom: 8px;
+		&.elementor-active {
 
-			&:after {
-				content: '';
-				position: absolute;
-				@include start(0);
-				bottom: 0;
-				width: 100%;
-				height: 8px;
-				background: linear-gradient(rgba(0,0,0,0.03), transparent);
-				transform: translateY(100%);
-			}
-
-			+ .elementor-panel-category-items {
-				display: none;
+			&:before {
+				transform: rotate(getValueByDirection(90deg, -90deg));
 			}
 		}
 	}
@@ -48,5 +48,6 @@
 	&-items {
 		overflow: hidden;
 		padding: 0 5px;
+		display: none;
 	}
 }

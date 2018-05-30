@@ -7,7 +7,8 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-category',
 
 	ui: {
-		title: '.elementor-panel-category-title'
+		title: '.elementor-panel-category-title',
+		items: '.elementor-panel-category-items'
 	},
 
 	events: {
@@ -26,8 +27,29 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		this.collection = new PanelElementsElementsCollection( this.model.get( 'items' ) );
 	},
 
-	onTitleClick: function( event ) {
-		jQuery( event.currentTarget ).toggleClass( 'elementor-active' );
+	onRender: function() {
+		if ( this.model.get( 'defaultActive' ) ) {
+			this.ui.title.addClass( 'elementor-active' );
+
+			this.ui.items.show();
+		}
+	},
+
+	onTitleClick: function() {
+		var $title = this.ui.title,
+			$items = this.ui.items,
+			activeClass = 'elementor-active',
+			isTitleActive = $title.hasClass( activeClass );
+
+		if ( isTitleActive ) {
+			$title.removeClass( activeClass );
+
+			$items.slideUp( 300 );
+		} else {
+			$title.addClass( activeClass );
+
+			$items.slideDown( 300 );
+		}
 	}
 } );
 
