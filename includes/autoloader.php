@@ -118,19 +118,19 @@ class Autoloader {
 			'version' => '1.7.0',
 		],
 		'CSS_File' => [
-			'replacement' => 'Core\Files\CSS',
+			'replacement' => 'Core\Files\CSS\Base',
 			'version' => '2.1.0',
 		],
 		'Global_CSS_File' => [
-			'replacement' => 'Core\Files\Global_CSS',
+			'replacement' => 'Core\Files\CSS\Global_CSS',
 			'version' => '2.1.0',
 		],
 		'Post_CSS_File' => [
-			'replacement' => 'Core\Files\Post_CSS',
+			'replacement' => 'Core\Files\CSS\Post',
 			'version' => '2.1.0',
 		],
 		'Post_Preview_CSS' => [
-			'replacement' => 'Core\Files\Post_Preview_CSS',
+			'replacement' => 'Core\Files\CSS\Post_Preview',
 			'version' => '2.1.0',
 		],
 		'Responsive' => [

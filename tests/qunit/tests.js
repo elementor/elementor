@@ -119,7 +119,7 @@ function testPreview() {
 		var sectionView = elementor.sections.currentView.children.first(),
 			columnView = sectionView.children.first(),
 			columnButtons = {
-				trigger: columnView.$el.find( '.elementor-editor-element-trigger' ),
+				trigger: columnView.$el.find( '.elementor-editor-element-edit' ),
 				add: columnView.$el.find( '.elementor-editor-element-add' ),
 				duplicate: columnView.$el.find( '.elementor-editor-element-duplicate' ),
 				remove: columnView.$el.find( '.elementor-editor-element-remove' )

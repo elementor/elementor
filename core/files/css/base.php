@@ -1,10 +1,10 @@
 <?php
-namespace Elementor\Core\Files;
+namespace Elementor\Core\Files\CSS;
 
 use Elementor\Base_Data_Control;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
-use Elementor\Core\Base\File;
+use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Element_Base;
@@ -24,14 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.2.0
  * @abstract
  */
-abstract class CSS extends File {
-
-	/**
-	 * Elementor CSS files base folder.
-	 *
-	 * Relative folder in the WordPress uploads folder.
-	 */
-	const DEFAULT_FILES_DIR = 'css/';
+abstract class Base extends Base_File {
 
 	/**
 	 * Elementor CSS file generated status.
@@ -101,8 +94,7 @@ abstract class CSS extends File {
 	/**
 	 * CSS file constructor.
 	 *
-	 * Initializing Elementor CSS file. If using external files, set path and
-	 * URL, otherwise initiate stylesheet.
+	 * Initializing Elementor CSS file.
 	 *
 	 * @since 1.2.0
 	 * @access public
@@ -234,7 +226,7 @@ abstract class CSS extends File {
 		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action instead.
 		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
-		 * @param CSS $this The current CSS file.
+		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/{$name}-css-file/enqueue", $this );
 
@@ -247,7 +239,7 @@ abstract class CSS extends File {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param CSS $this The current CSS file.
+		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/enqueue", $this );
 	}
@@ -552,7 +544,7 @@ abstract class CSS extends File {
 		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action instead.
 		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
-		 * @param CSS $this The current CSS file.
+		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/{$name}-css-file/parse", $this );
 
@@ -565,7 +557,7 @@ abstract class CSS extends File {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param CSS $this The current CSS file.
+		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
 

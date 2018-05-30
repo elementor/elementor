@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Ajax_Manager;
 use Elementor\Core\Debug\Debugger;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Files\Manager as Files_Manager;
 use Elementor\Core\Modules_Manager;
 use Elementor\Debug\Debug;
 use Elementor\Core\Settings\Manager as Settings_Manager;
@@ -315,16 +316,29 @@ class Plugin {
 	public $skins_manager;
 
 	/**
-	 * Posts CSS manager.
+	 * Files Manager.
 	 *
-	 * Holds the posts CSS manager.
+	 * Holds the files manager.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @var Files_Manager
+	 */
+	public $files_manager;
+
+	/**
+	 * Files Manager.
+	 *
+	 * Holds the files manager.
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 2.1.0 Use `Plugin::$files_manager` instead
 	 *
-	 * @var Posts_CSS_Manager
+	 * @var Files_Manager
 	 */
-	public $posts_css_manager;
+	public $post_css_manager;
 
 	/**
 	 * WordPress widgets manager.
@@ -473,7 +487,10 @@ class Plugin {
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
-		$this->posts_css_manager = new Posts_CSS_Manager();
+		/*
+		 * @TODO: Remove deprecated alias
+		 */
+		$this->files_manager = $this->post_css_manager = new Files_Manager();
 		$this->settings = new Settings();
 		$this->editor = new Editor();
 		$this->preview = new Preview();

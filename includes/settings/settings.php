@@ -227,7 +227,7 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function update_css_print_method() {
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 	}
 
 	/**
@@ -448,18 +448,6 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
-							'context_menu' => [
-								'label' => __( 'Widgets Context Menu', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'std' => 'on',
-									'options' => [
-										'' => __( 'Disable', 'elementor' ),
-										'on' => __( 'Enable', 'elementor' ),
-									],
-									'desc' => __( 'Control widget actions by right clicking on it', 'elementor' ),
-								],
-							]
 						],
 					],
 				],

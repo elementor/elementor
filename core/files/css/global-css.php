@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Files;
+namespace Elementor\Core\Files\CSS;
 
 use Elementor\Plugin;
 use Elementor\Scheme_Base;
@@ -17,12 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Global_CSS extends CSS {
-
-	/**
-	 * Elementor global CSS file meta key.
-	 */
-	const META_KEY = '_elementor_global_css';
+class Global_CSS extends Base {
 
 	/**
 	 * Elementor global CSS file handler ID.
@@ -41,6 +36,10 @@ class Global_CSS extends CSS {
 	 */
 	public function get_name() {
 		return 'global';
+	}
+
+	public function get_meta_key() {
+		return '_elementor_global_css';
 	}
 
 	/**
