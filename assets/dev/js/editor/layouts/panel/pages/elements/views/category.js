@@ -29,24 +29,23 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	onRender: function() {
 		if ( this.model.get( 'defaultActive' ) ) {
-			this.ui.title.addClass( 'elementor-active' );
+			this.$el.addClass( 'elementor-active' );
 
 			this.ui.items.show();
 		}
 	},
 
 	onTitleClick: function() {
-		var $title = this.ui.title,
-			$items = this.ui.items,
+		var $items = this.ui.items,
 			activeClass = 'elementor-active',
-			isTitleActive = $title.hasClass( activeClass );
+			isActive = this.$el.hasClass( activeClass );
 
-		if ( isTitleActive ) {
-			$title.removeClass( activeClass );
+		if ( isActive ) {
+			this.$el.removeClass( activeClass );
 
 			$items.slideUp( 300 );
 		} else {
-			$title.addClass( activeClass );
+			this.$el.addClass( activeClass );
 
 			$items.slideDown( 300 );
 		}
