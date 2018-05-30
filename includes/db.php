@@ -265,7 +265,7 @@ class DB {
 	 * is parsed into Text Editor Widget that contains the original data.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.1.0 Use DB::get_new_editor_from_wp_editor() instead
+	 * @deprecated 2.1.0 Use `DB::get_new_editor_from_wp_editor()` instead
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.

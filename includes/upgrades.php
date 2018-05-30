@@ -49,7 +49,7 @@ class Upgrades {
 
 		self::check_upgrades( $elementor_version );
 
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 
 		update_option( 'elementor_version', ELEMENTOR_VERSION );
 	}

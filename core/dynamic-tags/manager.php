@@ -1,8 +1,9 @@
 <?php
 namespace Elementor\Core\DynamicTags;
 
+use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Plugin;
-use Elementor\Post_CSS_File;
 use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -402,10 +403,19 @@ class Manager {
 	}
 
 	/**
-	 * @param Post_CSS_File $css_file
+	 * @param Post $css_file
 	 */
 	public function after_enqueue_post_css( $css_file ) {
-		$css_file = new Dynamic_CSS( $css_file );
+		$post_id = $css_file->get_post_id();
+
+		if ( $css_file instanceof Post_Preview ) {
+			$post_id_for_data = $css_file->get_preview_id();
+		} else {
+			$post_id_for_data = $post_id;
+		}
+
+		$css_file = new Dynamic_CSS( $post_id, $post_id_for_data );
+
 		$css_file->enqueue();
 	}
 

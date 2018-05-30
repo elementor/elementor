@@ -2,25 +2,25 @@
 
 namespace Elementor\Core\Responsive\Files;
 
-use Elementor\Core\Base\File;
+use Elementor\Core\Files\Base;
 use Elementor\Core\Responsive\Responsive;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Frontend extends File {
-
-	const META_KEY = 'elementor_frontend_css';
-
-	const DEFAULT_FILES_DIR = 'css/';
+class Frontend extends Base {
 
 	private $template_file;
 
-	public function __construct( $file_name, $template_file ) {
+	public function __construct( $file_name, $template_file = null ) {
 		$this->template_file = $template_file;
 
 		parent::__construct( $file_name );
+	}
+
+	public function get_meta_key() {
+		return 'elementor-' . pathinfo( $this->get_file_name(), PATHINFO_FILENAME );
 	}
 
 	public function parse_content() {

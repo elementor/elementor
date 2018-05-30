@@ -1,18 +1,16 @@
 <?php
 
-namespace Elementor\Core\Base;
+namespace Elementor\Core\Files;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class File {
+abstract class Base {
 
 	const UPLOADS_DIR = 'elementor/';
 
-	const META_KEY = 'elementor_file';
-
-	const DEFAULT_FILES_DIR = 'files/';
+	const DEFAULT_FILES_DIR = 'css/';
 
 	private static $wp_uploads_dir;
 
@@ -53,6 +51,8 @@ abstract class File {
 
 		return $wp_upload_dir['baseurl'] . '/' . self::UPLOADS_DIR;
 	}
+
+	public abstract function get_meta_key();
 
 	public function __construct( $file_name ) {
 		$this->set_file_name( $file_name );
@@ -116,6 +116,8 @@ abstract class File {
 		if ( file_exists( $this->path ) ) {
 			unlink( $this->path );
 		}
+
+		$this->delete_meta();
 	}
 
 	/**
@@ -158,7 +160,7 @@ abstract class File {
 	 * @access protected
 	 */
 	protected function load_meta() {
-		return get_option( static::META_KEY );
+		return get_option( $this->get_meta_key() );
 	}
 
 	/**
@@ -172,7 +174,7 @@ abstract class File {
 	 * @param array $meta New meta data.
 	 */
 	protected function update_meta( $meta ) {
-		update_option( static::META_KEY, $meta );
+		update_option( $this->get_meta_key(), $meta );
 	}
 
 	/**
@@ -184,7 +186,7 @@ abstract class File {
 	 * @access protected
 	 */
 	protected function delete_meta() {
-		delete_option( static::META_KEY );
+		delete_option( $this->get_meta_key() );
 	}
 
 	protected function get_default_meta() {

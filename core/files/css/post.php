@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Files;
+namespace Elementor\Core\Files\CSS;
 
 use Elementor\Controls_Stack;
 use Elementor\Element_Base;
@@ -17,12 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Post_CSS extends CSS {
-
-	/**
-	 * Elementor post CSS file meta key.
-	 */
-	const META_KEY = '_elementor_css';
+class Post extends Base {
 
 	/**
 	 * Elementor post CSS file prefix.
@@ -52,6 +47,10 @@ class Post_CSS extends CSS {
 		$this->post_id = $post_id;
 
 		parent::__construct( self::FILE_PREFIX . $post_id . '.css' );
+	}
+
+	public function get_meta_key() {
+		return '_elementor_css';
 	}
 
 	/**
@@ -109,7 +108,7 @@ class Post_CSS extends CSS {
 	 * @return array Post CSS file meta data.
 	 */
 	protected function load_meta() {
-		return get_post_meta( $this->post_id, static::META_KEY, true );
+		return get_post_meta( $this->post_id, $this->get_meta_key(), true );
 	}
 
 	/**
@@ -123,7 +122,7 @@ class Post_CSS extends CSS {
 	 * @param array $meta New meta data.
 	 */
 	protected function update_meta( $meta ) {
-		update_post_meta( $this->post_id, static::META_KEY, $meta );
+		update_post_meta( $this->post_id, $this->get_meta_key(), $meta );
 	}
 
 	/**
@@ -135,7 +134,7 @@ class Post_CSS extends CSS {
 	 * @access protected
 	 */
 	protected function delete_meta() {
-		delete_post_meta( $this->post_id, static::META_KEY );
+		delete_post_meta( $this->post_id, $this->get_meta_key() );
 	}
 
 	/**
@@ -281,8 +280,8 @@ class Post_CSS extends CSS {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Post_CSS $this         The post CSS file.
-		 * @param Element_Base  $element The element.
+		 * @param Post         $this    The post CSS file.
+		 * @param Element_Base $element The element.
 		 */
 		do_action( 'elementor/element/before_parse_css', $this, $element );
 
@@ -297,8 +296,8 @@ class Post_CSS extends CSS {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Post_CSS $this    The post CSS file.
-		 * @param Element_Base  $element The element.
+		 * @param Post         $this    The post CSS file.
+		 * @param Element_Base $element The element.
 		 */
 		do_action( 'elementor/element/parse_css', $this, $element );
 	}

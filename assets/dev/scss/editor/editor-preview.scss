@@ -180,7 +180,6 @@ html.elementor-html {
 		// General - Overlay Settings
 		.elementor-editor-element-settings {
 			position: absolute;
-			overflow: hidden;
 			display: flex;
 			height: 26px;
 			list-style: none;
@@ -193,35 +192,6 @@ html.elementor-html {
 			line-height: 1;
 			z-index: $first-layer;
 			pointer-events: all;
-
-			.elementor-editor-element-trigger {
-
-				&.elementor-active {
-
-					~ .elementor-editor-element-setting {
-						@include margin-start(0)
-					}
-				}
-
-				&:not(.elementor-active) {
-
-					~ .elementor-editor-element-setting {
-						width: 0;
-						font-size: 0;
-						padding: 0;
-					}
-				}
-			}
-
-			.elementor-editor-element-remove {
-
-				&:hover {
-
-					.fa {
-						color: $editor-danger;
-					}
-				}
-			}
 		}
 
 		.elementor-editor-element-setting {
@@ -241,28 +211,54 @@ html.elementor-html {
 		.elementor-editor-section-settings {
 			top: 1px;
 			@include start(50%);
-			background-image: linear-gradient(to bottom, darken($editor-info, 10%), $editor-info);
-			border-radius: 3px 3px 0 0;
 			transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
 
 			.elementor-editor-element-setting {
+				background-color: $editor-info;
 
 				&:hover {
 					background-color: darken($editor-info, 20%);
 				}
 
-				@media (min-width: $editor-screen-lg-min) {
+				&:first-child {
+					border-radius: getValueByDirection(3px 0 0 0, 0 3px 0 0);
 
-					&:first-child {
-						@include padding-start(1px);
-
-						&:not(.elementor-active) {
-							@include padding-end(1px);
-						}
+					&:before {
+						content: '';
+						position: absolute;
+						border: solid transparent;
+						top: 2px;
+						@include border-end-property(color, $editor-info);
+						border-width: getValueByDirection(24px 7px 0 0, 24px 0 0 7px);
+						@include end(100%);
 					}
 
-					&:last-child {
-						@include padding-end(1px);
+					&:hover {
+
+						&:before {
+							@include border-end-property(color, darken($editor-info, 20%));
+						}
+					}
+				}
+
+				&:last-child {
+					border-radius: getValueByDirection(0 3px 0 0, 3px 0 0 0);
+
+					&:after {
+						content: '';
+						position: absolute;
+						border: solid transparent;
+						top: 2px;
+						@include border-start-property(color, $editor-info);
+						border-width: getValueByDirection(24px 0 0 7px, 24px 7px 0 0);
+						@include start(100%);
+					}
+
+					&:hover {
+
+						&:after {
+							@include border-start-property(color, darken($editor-info, 20%));
+						}
 					}
 				}
 			}
@@ -272,28 +268,13 @@ html.elementor-html {
 		.elementor-editor-column-settings {
 			top: -1px;
 			@include start(-1px);
-			border-radius: getValueByDirection(0 0 3px 0, 0 3px 0 0);
-			background-image: linear-gradient(to bottom, $editor-dark, $editor-darker);
 
 			.elementor-editor-element-setting {
+				border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
+				background-color: $editor-darkest;
 
-				&:hover {
-					background-color: $editor-darkest;
-				}
-
-				@media (min-width: $editor-screen-lg-min) {
-
-					&:first-child {
-						@include padding-start(1px);
-
-						&:not(.elementor-active) {
-							@include padding-end(1px);
-						}
-					}
-
-					&:last-child {
-						@include padding-end(1px);
-					}
+				&:not(:hover) {
+					background-image: linear-gradient(to bottom, $editor-dark, $editor-darker);
 				}
 			}
 		}
@@ -303,34 +284,19 @@ html.elementor-html {
 			z-index: $second-layer;
 			top: -1px;
 			@include end(-1px);
-			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
-			border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
 			flex-direction: row-reverse;
 
 			.elementor-editor-element-setting {
+				background-color: darken($editor-info, 20%);
+				border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
 
-				&:hover {
-					background-color: darken($editor-info, 20%);
-				}
-
-				@media (min-width: $editor-screen-lg-min) {
-
-					&:first-child {
-						@include padding-end(1px);
-
-						&:not(.elementor-active) {
-							@include padding-start(1px);
-						}
-					}
-
-					&:last-child {
-						@include padding-start(1px);
-					}
+				&:not(:hover) {
+					background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
 				}
 			}
 		}
 
-		.elementor-editor-element-trigger {
+		.elementor-editor-element-edit {
 
 			@media(min-width: $editor-screen-lg-min) {
 				cursor: move;
@@ -339,7 +305,7 @@ html.elementor-html {
 
 		.elementor-editor-element-setting {
 
-			&:not(.elementor-editor-element-trigger) {
+			&:not(.elementor-editor-element-edit) {
 
 				@media (max-width: $editor-screen-md-max) {
 					display: none;
@@ -349,13 +315,6 @@ html.elementor-html {
 
 		// Section Full (No more columns) - Overlay
 		.elementor-section-filled {
-
-			.elementor-editor-column-settings {
-
-				.elementor-editor-element-add, .elementor-editor-element-duplicate {
-					display: none;
-				}
-			}
 
 			.elementor-sortable-placeholder {
 
@@ -570,7 +529,7 @@ html.elementor-html {
 				}
 			}
 
-			.elementor-editor-element-trigger {
+			.elementor-editor-element-edit {
 
 				@media(min-width: $editor-screen-lg-min) {
 					cursor: pointer;

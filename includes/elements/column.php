@@ -16,50 +16,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Element_Column extends Element_Base {
 
 	/**
-	 * Column edit tools.
+	 * Element edit tools.
 	 *
-	 * Holds the column edit tools.
+	 * Holds all the edit tools of the element. For example: delete, duplicate etc.
 	 *
-	 * @since 1.0.0
 	 * @access protected
 	 * @static
 	 *
-	 * @var array Column edit tools.
+	 * @var array
 	 */
 	protected static $_edit_tools;
-
-	/**
-	 * Get default edit tools.
-	 *
-	 * Retrieve the column default edit tools. Used to set initial tools.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 * @static
-	 *
-	 * @return array Default column edit tools.
-	 */
-	protected static function get_default_edit_tools() {
-		$column_label = __( 'Column', 'elementor' );
-
-		return [
-			'duplicate' => [
-				/* translators: %s: Column label */
-				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $column_label ),
-				'icon' => 'clone',
-			],
-			'add' => [
-				/* translators: %s: Column label */
-				'title' => sprintf( __( 'Add %s', 'elementor' ), $column_label ),
-				'icon' => 'plus',
-			],
-			'remove' => [
-				/* translators: %s: Column label */
-				'title' => sprintf( __( 'Remove %s', 'elementor' ), $column_label ),
-				'icon' => 'close',
-			],
-		];
-	}
 
 	/**
 	 * Get column name.
@@ -72,6 +38,21 @@ class Element_Column extends Element_Base {
 	 * @return string Column name.
 	 */
 	public function get_name() {
+		return 'column';
+	}
+
+	/**
+	 * Get element type.
+	 *
+	 * Retrieve the element type, in this case `column`.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 * @static
+	 *
+	 * @return string The type.
+	 */
+	public static function get_type() {
 		return 'column';
 	}
 
@@ -101,6 +82,27 @@ class Element_Column extends Element_Base {
 	 */
 	public function get_icon() {
 		return 'eicon-column';
+	}
+
+	/**
+	 * Get default edit tools.
+	 *
+	 * Retrieve the element default edit tools. Used to set initial tools.
+	 *
+	 * @since 2.1.0
+	 * @access protected
+	 * @static
+	 *
+	 * @return array Default edit tools.
+	 */
+	protected static function get_default_edit_tools() {
+
+		return [
+			'edit' => [
+				'title' => __( 'Edit', 'elementor' ),
+				'icon' => 'column',
+			],
+		];
 	}
 
 	/**
@@ -790,34 +792,6 @@ class Element_Column extends Element_Base {
 		$this->end_controls_section();
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
-	}
-
-	/**
-	 * Render column edit tools.
-	 *
-	 * Used to generate the edit tools HTML.
-	 *
-	 * @since 1.8.0
-	 * @access protected
-	 */
-	protected function render_edit_tools() {
-		?>
-		<div class="elementor-element-overlay">
-			<ul class="elementor-editor-element-settings elementor-editor-column-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php echo esc_attr( sprintf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ) ); ?>">
-					<i class="eicon-column" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php printf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ); ?></span>
-				</li>
-				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
-						<i class="eicon-<?php echo $edit_tool['icon']; ?>" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
-					</li>
-				<?php endforeach; ?>
-			</ul>
-			<div class="elementor-column-percents-tooltip"></div>
-		</div>
-		<?php
 	}
 
 	/**
