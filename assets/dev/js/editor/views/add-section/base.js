@@ -1,4 +1,5 @@
-var AddSectionView;
+var AddSectionView,
+	ContextMenu = require( 'elementor-editor-utils/context-menu' );
 
 AddSectionView = Marionette.ItemView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-add-section' ),
@@ -23,12 +24,21 @@ AddSectionView = Marionette.ItemView.extend( {
 		'click @ui.presets': 'onPresetSelected'
 	},
 
+	behaviors: function() {
+		return {
+			contextMenu: {
+				behaviorClass: require( 'elementor-behaviors/context-menu' ),
+				groups: this.getContextMenuGroups()
+			}
+		};
+	},
+
 	className: function() {
 		return 'elementor-add-section elementor-visible-desktop';
 	},
 
 	addSection: function( properties, options ) {
-		return elementor.sections.currentView.addSection( properties, options );
+		return elementor.sections.currentView.addChildElement( properties, options );
 	},
 
 	setView: function( view ) {
@@ -45,6 +55,48 @@ AddSectionView = Marionette.ItemView.extend( {
 
 	getTemplatesModalOptions: function() {
 		return {};
+	},
+
+	getContextMenuGroups: function() {
+		return [
+			{
+				name: 'general',
+				actions: [
+					{
+						name: 'paste',
+						title: elementor.translate( 'paste' ),
+						callback: this.paste.bind( this ),
+						isEnabled: function() {
+							return elementor.getStorage( 'transport' );
+						}
+					}
+				]
+			}
+		];
+	},
+
+	paste: function() {
+		var model = elementor.getStorage( 'transport' ).model;
+
+		model.id = elementor.helpers.getUniqueID();
+
+		elementor.channels.data.trigger( 'element:before:add', model );
+
+		if ( 'section' === model.elType ) {
+			this.addSection( model );
+		} else if ( 'column' === model.elType ) {
+			var section = this.addSection( { allowEmpty: true } );
+
+			section.model.unset( 'allowEmpty' );
+
+			section.addChildElement( model );
+
+			section.redefineLayout();
+		} else {
+			this.addSection().addChildElement( model );
+		}
+
+		elementor.channels.data.trigger( 'element:after:add' );
 	},
 
 	onAddSectionButtonClick: function() {
@@ -96,7 +148,9 @@ AddSectionView = Marionette.ItemView.extend( {
 
 	onDropping: function() {
 		elementor.channels.data.trigger( 'section:before:drop' );
+
 		this.addSection().addElementFromPanel();
+
 		elementor.channels.data.trigger( 'section:after:drop' );
 	}
 } );

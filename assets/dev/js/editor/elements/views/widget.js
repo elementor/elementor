@@ -1,5 +1,4 @@
 var BaseElementView = require( 'elementor-elements/views/base' ),
-	ContextMenu = require( 'elementor-editor-utils/context-menu' ),
 	WidgetView;
 
 WidgetView = BaseElementView.extend( {
@@ -9,7 +8,7 @@ WidgetView = BaseElementView.extend( {
 		var editModel = this.getEditModel();
 
 		if ( 'remote' !== this.getTemplateType() ) {
-			return Marionette.TemplateCache.get( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
+			return Marionette.TemplateCache.get( '#tmpl-elementor-' + editModel.get( 'widgetType' ) + '-content' );
 		} else {
 			return _.template( '' );
 		}
@@ -25,10 +24,6 @@ WidgetView = BaseElementView.extend( {
 		var events = BaseElementView.prototype.events.apply( this, arguments );
 
 		events.click = 'onClickEdit';
-
-		if ( elementor.config.contextMenuEnabled ) {
-			events.contextmenu = 'onContextMenu';
-		}
 
 		return events;
 	},
@@ -60,10 +55,6 @@ WidgetView = BaseElementView.extend( {
 			editModel.renderRemoteServer();
 		}
 
-		if ( elementor.config.contextMenuEnabled ) {
-			this.initContextMenu();
-		}
-
 		var onRenderMethod = this.onRender;
 
 		this.render = _.throttle( this.render, 300 );
@@ -73,48 +64,25 @@ WidgetView = BaseElementView.extend( {
 		};
 	},
 
-	initContextMenu: function() {
-		var contextMenuActions = [
-			{
-				name: 'edit',
-				title: elementor.translate( 'edit' ),
-				callback: this.edit.bind( this )
-			}, {
-				name: 'duplicate',
-				title: elementor.translate( 'duplicate' ),
-				shortcut: ( elementor.envData.mac ? '⌘' : '^' ) + 'D',
-				callback: this.duplicate.bind( this )
-			}, {
-				name: 'copyStyle',
-				title: elementor.translate( 'copy_style' ),
-				callback: this.copyStyle.bind( this )
-			}, {
-				name: 'pasteStyle',
-				title: elementor.translate( 'paste_style' ),
-				callback: this.pasteStyle.bind( this ),
-				isEnabled: function() {
-					return !! elementor.channels.editor.request( 'styleClipboard' );
+	getContextMenuGroups: function() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+			styleGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'style' } ) );
+
+		groups.splice( styleGroupIndex + 1, 0, {
+			name: 'save',
+			actions: [
+				{
+					name: 'save',
+					title: elementor.translate( 'save_as_global' )
 				}
-			}, {
-				name: '__divider__'
-			}, {
-				name: 'save',
-				title: elementor.translate( 'save_as_global' )
-			}, {
-				name: '__divider__'
-			}, {
-				name: 'delete',
-				title: elementor.translate( 'delete' ),
-				shortcut: 'Del',
-				callback: this.removeElement.bind( this )
-			}
-		];
-
-		contextMenuActions = elementor.hooks.applyFilters( 'elements/widget/contextMenuActions', contextMenuActions, this );
-
-		this.contextMenu = new ContextMenu( {
-			actions: contextMenuActions
+			]
 		} );
+
+		return groups;
+	},
+
+	getContextMenuEventTargets: function() {
+		return [ 'el' ];
 	},
 
 	render: function() {
@@ -140,7 +108,7 @@ WidgetView = BaseElementView.extend( {
 	getTemplateType: function() {
 		if ( null === this._templateType ) {
 			var editModel = this.getEditModel(),
-				$template = jQuery( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
+				$template = jQuery( '#tmpl-elementor-' + editModel.get( 'widgetType' ) + '-content' );
 
 			this._templateType = $template.length ? 'js' : 'remote';
 		}
@@ -202,22 +170,6 @@ WidgetView = BaseElementView.extend( {
 		this.render();
 	},
 
-	onContextMenu: function( event ) {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( event.ctrlKey ) {
-			return;
-		}
-
-		if ( 'edit' !== activeMode ) {
-			return;
-		}
-
-		event.preventDefault();
-
-		this.contextMenu.show( event );
-	},
-
 	onRender: function() {
         var self = this;
 
@@ -241,6 +193,10 @@ WidgetView = BaseElementView.extend( {
 			}, 200 );
 			// Is element empty?
 		} );
+	},
+
+	onClickEdit: function() {
+		this.edit();
 	},
 
 	onDestroy: function() {

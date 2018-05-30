@@ -1,6 +1,7 @@
 var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
+	ContextMenu = require( 'elementor-editor-utils/context-menu' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
@@ -8,8 +9,6 @@ BaseElementView = BaseContainer.extend( {
 	tagName: 'div',
 
 	controlsCSSParser: null,
-
-	toggleEditTools: true,
 
 	allowRender: true,
 
@@ -34,17 +33,20 @@ BaseElementView = BaseContainer.extend( {
 
 	ui: function() {
 		return {
-			triggerButton: '> .elementor-element-overlay .elementor-editor-element-trigger',
-			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-duplicate',
-			removeButton: '> .elementor-element-overlay .elementor-editor-element-remove',
-			saveButton: '> .elementor-element-overlay .elementor-editor-element-save',
-			settingsList: '> .elementor-element-overlay .elementor-editor-element-settings',
-			addButton: '> .elementor-element-overlay .elementor-editor-element-add'
+			editButton: '> .elementor-element-overlay .elementor-editor-element-edit'
 		};
 	},
 
 	behaviors: function() {
-		var behaviors = {};
+		var groups = elementor.hooks.applyFilters( 'elements/' + this.options.model.get( 'elType' ) + '/contextMenuGroups', this.getContextMenuGroups(), this );
+
+		var behaviors = {
+			contextMenu: {
+				behaviorClass: require( 'elementor-behaviors/context-menu' ),
+				groups: groups,
+				eventTargets: this.getContextMenuEventTargets()
+			}
+		};
 
 		return elementor.hooks.applyFilters( 'elements/base/behaviors', behaviors, this );
 	},
@@ -55,10 +57,7 @@ BaseElementView = BaseContainer.extend( {
 
 	events: function() {
 		return {
-			'click @ui.removeButton': 'onClickRemove',
-			'click @ui.saveButton': 'onClickSave',
-			'click @ui.duplicateButton': 'onClickDuplicate',
-			'click @ui.triggerButton': 'onClickEdit'
+			'click @ui.editButton': 'onEditButtonClick'
 		};
 	},
 
@@ -106,6 +105,84 @@ BaseElementView = BaseContainer.extend( {
 		return this.model;
 	},
 
+	getContextMenuGroups: function() {
+		var self = this;
+
+		return [
+			{
+				name: 'general',
+				actions: [
+					{
+						name: 'edit',
+						title: elementor.translate( 'edit' ),
+						callback: self.edit.bind( self )
+					}, {
+						name: 'duplicate',
+						title: elementor.translate( 'duplicate' ),
+						shortcut: ( elementor.envData.mac ? '⌘' : '^' ) + 'D',
+						callback: self.duplicate.bind( self )
+					}
+				]
+			}, {
+				name: 'transport',
+				actions: [
+					{
+						name: 'copy',
+						title: elementor.translate( 'copy' ),
+						callback: self.copy.bind( self )
+					}, {
+						name: 'paste',
+						title: elementor.translate( 'paste' ),
+						callback: self.paste.bind( self ),
+						isEnabled: function() {
+							var transportData = elementor.getStorage( 'transport' );
+
+							if ( ! transportData || self.isCollectionFilled() ) {
+								return false;
+							}
+
+							return self.getElementType() === transportData.model.elType;
+						}
+					}
+				]
+			}, {
+				name: 'style',
+				actions: [
+					{
+						name: 'copyStyle',
+						title: elementor.translate( 'copy_style' ),
+						callback: self.copyStyle.bind( self )
+					}, {
+						name: 'pasteStyle',
+						title: elementor.translate( 'paste_style' ),
+						callback: self.pasteStyle.bind( self ),
+						isEnabled: function() {
+							return !! elementor.channels.editor.request( 'styleClipboard' );
+						}
+					}, {
+						name: 'resetStyle',
+						title: elementor.translate( 'reset_style' ),
+						callback: self.resetStyle.bind( self )
+					}
+				]
+			}, {
+				name: 'delete',
+				actions: [
+					{
+						name: 'delete',
+						title: elementor.translate( 'delete' ),
+						shortcut: 'Del',
+						callback: self.removeElement.bind( self )
+					}
+				]
+			}
+		];
+	},
+
+	getContextMenuEventTargets: function() {
+		return [ '@ui.editButton' ];
+	},
+
 	initialize: function() {
 		// grab the child collection from the parent model
 		// so that we can render the collection as children
@@ -125,7 +202,42 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	edit: function() {
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'edit' !== activeMode ) {
+			return;
+		}
+
 		elementor.getPanelView().openEditor( this.getEditModel(), this );
+	},
+
+	startTransport: function( type ) {
+		elementor.setStorage( 'transport', {
+			type: type,
+			model: this.model.toJSON( { copyHtmlCache: true } )
+		} );
+	},
+
+	copy: function() {
+		this.startTransport( 'copy' );
+	},
+
+	cut: function() {
+		this.startTransport( 'cut' );
+	},
+
+	paste: function() {
+		this.trigger( 'request:paste' );
+	},
+
+	duplicate: function() {
+		var oldTransport = elementor.getStorage( 'transport' );
+
+		this.copy();
+
+		this.paste();
+
+		elementor.setStorage( 'transport', oldTransport );
 	},
 
 	copyStyle: function() {
@@ -213,18 +325,37 @@ BaseElementView = BaseContainer.extend( {
 		this.renderOnChange();
 	},
 
+	resetStyle: function() {
+		var editModel = this.getEditModel(),
+			controls = editModel.get( 'settings' ).controls;
+
+		this.allowRender = false;
+
+		jQuery.each( controls, function( controlName ) {
+			if ( 'content' === this.tab || undefined === this.default_value ) {
+				return;
+			}
+
+			editModel.setSetting( controlName, this.default_value );
+		} );
+
+		this.allowRender = true;
+
+		this.renderOnChange();
+	},
+
 	addElementFromPanel: function( options ) {
+		options = options || {};
+
 		var elementView = elementor.channels.panelElements.request( 'element:selected' );
 
 		var itemData = {
-			id: elementor.helpers.getUniqueID(),
 			elType: elementView.model.get( 'elType' )
 		};
 
 		if ( 'widget' === itemData.elType ) {
 			itemData.widgetType = elementView.model.get( 'widgetType' );
 		} else if ( 'section' === itemData.elType ) {
-			itemData.elements = [];
 			itemData.isInner = true;
 		} else {
 			return;
@@ -233,19 +364,16 @@ BaseElementView = BaseContainer.extend( {
 		var customData = elementView.model.get( 'custom' );
 
 		if ( customData ) {
-			_.extend( itemData, customData );
+			jQuery.extend( itemData, customData );
 		}
 
-		elementor.channels.data.trigger( 'element:before:add', itemData );
+		options.onAfterAdd = function( newModel, newView ) {
+			if ( 'section' === newView.getElementType() && newView.isInner() ) {
+				newView.addChildElement();
+			}
+		};
 
-		var newView = this.addChildElement( itemData, options );
-
-		if ( 'section' === newView.getElementType() && newView.isInner() ) {
-			newView.addEmptyColumn();
-		}
-
-		elementor.channels.data.trigger( 'element:after:add', itemData );
-
+		this.addChildElement( itemData, options );
 	},
 
 	addControlValidator: function( controlName, validationCallback ) {
@@ -312,10 +440,6 @@ BaseElementView = BaseContainer.extend( {
 		} );
 
 		return attributes.join( ' ' );
-	},
-
-	isCollectionFilled: function() {
-		return false;
 	},
 
 	isInner: function() {
@@ -432,10 +556,6 @@ BaseElementView = BaseContainer.extend( {
 		return 'elementor-element-' + this.getID();
 	},
 
-	duplicate: function() {
-		this.trigger( 'request:duplicate' );
-	},
-
 	renderOnChange: function( settings ) {
 		if ( ! this.allowRender ) {
 			return;
@@ -530,6 +650,20 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
+	removeElement: function() {
+		elementor.channels.data.trigger( 'element:before:remove', this.model );
+
+		var parent = this._parent;
+
+		parent.isManualRemoving = true;
+
+		this.model.destroy();
+
+		parent.isManualRemoving = false;
+
+		elementor.channels.data.trigger( 'element:after:remove', this.model );
+	},
+
 	onBeforeRender: function() {
 		this.renderAttributes = {};
 	},
@@ -540,16 +674,6 @@ BaseElementView = BaseContainer.extend( {
 		self.renderUI();
 
 		self.runReadyTrigger();
-
-		if ( self.toggleEditTools ) {
-			var triggerButton = self.ui.triggerButton;
-
-			self.ui.settingsList.hoverIntent( function() {
-				triggerButton.addClass( 'elementor-active' );
-			}, function() {
-				triggerButton.removeClass( 'elementor-active' );
-			}, { timeout: 500 } );
-		}
 	},
 
 	onCollectionChanged: function() {
@@ -567,53 +691,8 @@ BaseElementView = BaseContainer.extend( {
 		this.renderOnChange( changedModel );
 	},
 
-	onClickEdit: function( event ) {
-		if ( ! jQuery( event.target ).closest( '.elementor-clickable' ).length ) {
-			event.preventDefault();
-
-			event.stopPropagation();
-		}
-
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'edit' !== activeMode ) {
-			return;
-		}
-
+	onEditButtonClick: function() {
 		this.edit();
-	},
-
-	onClickDuplicate: function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.duplicate();
-	},
-
-	removeElement: function() {
-		elementor.channels.data.trigger( 'element:before:remove', this.model );
-
-		var parent = this._parent;
-
-		parent.isManualRemoving = true;
-
-		this.model.destroy();
-
-		parent.isManualRemoving = false;
-
-		elementor.channels.data.trigger( 'element:after:remove', this.model );
-	},
-
-	onClickRemove: function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-		this.removeElement();
-	},
-
-	onClickSave: function( event ) {
-		event.preventDefault();
-
-		this.save();
 	},
 
 	onDestroy: function() {

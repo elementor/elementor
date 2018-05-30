@@ -183,7 +183,7 @@ abstract class Controls_Stack {
 	/**
 	 * Get the type.
 	 *
-	 * Retrieve the type, e.g. 'stack', 'element', 'widget' etc.
+	 * Retrieve the type, e.g. 'stack', 'section', 'widget' etc.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1644,7 +1644,7 @@ abstract class Controls_Stack {
 			return;
 		}
 		?>
-		<script type="text/html" id="tmpl-elementor-<?php echo $this->get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
+		<script type="text/html" id="tmpl-elementor-<?php echo esc_attr( $this->get_name() ); ?>-content">
 			<?php $this->print_template_content( $template_content ); ?>
 		</script>
 		<?php
