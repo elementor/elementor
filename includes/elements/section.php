@@ -224,7 +224,7 @@ class Element_Section extends Element_Base {
 			'edit' => [
 				/* translators: %s: Section label */
 				'title' => sprintf( __( 'Edit %s', 'elementor' ), $section_label ),
-				'icon' => 'navigation-horizontal',
+				'icon' => 'handle',
 			],
 			'remove' => [
 				/* translators: %s: Section label */
