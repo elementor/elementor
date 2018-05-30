@@ -27,6 +27,7 @@
 	}
 
 	&- {
+		&android		{ background-color: $android; }
 		&apple			{ background-color: $apple; }
 		&behance		{ background-color: $behance; }
 		&bitbucket		{ background-color: $bitbucket; }
