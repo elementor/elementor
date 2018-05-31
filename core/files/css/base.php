@@ -581,7 +581,6 @@ abstract class Base extends Base_File {
 	protected function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
-
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements
 		);

@@ -4,7 +4,7 @@ namespace Elementor;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Global_CSS;
-use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -560,7 +560,7 @@ class Frontend {
 		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
 			$this->parse_global_css_code();
 
-			$css_file = new Post( get_the_ID() );
+			$css_file = new Post_CSS( get_the_ID() );
 			$css_file->enqueue();
 		}
 	}
@@ -836,7 +836,7 @@ class Frontend {
 			if ( $document->is_autosave() ) {
 				$css_file = new Post_Preview( $document->get_post()->ID );
 			} else {
-				$css_file = new Post( $post_id );
+				$css_file = new Post_CSS( $post_id );
 			}
 
 			$css_file->enqueue();

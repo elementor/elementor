@@ -50,9 +50,11 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( -1 === childTypes.indexOf( elType ) ) {
-			delete options.at;
-
 			return this.children.last().addChildElement( newItem, options );
+		}
+
+		if ( options.clone ) {
+			newItem = this.cloneItem( newItem );
 		}
 
 		if ( options.trigger ) {
@@ -81,6 +83,22 @@ module.exports = Marionette.CompositeView.extend( {
 		return newView;
 	},
 
+	cloneItem: function( item ) {
+		var self = this;
+
+		if ( item instanceof Backbone.Model ) {
+			return item.clone();
+		}
+
+		item.id = elementor.helpers.getUniqueID();
+
+		item.elements.forEach( function( childItem, index ) {
+			item.elements[ index ] = self.cloneItem( childItem );
+		} );
+
+		return item;
+	},
+
 	isCollectionFilled: function() {
 		return false;
 	},
@@ -96,21 +114,19 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onChildviewRequestPaste: function( childView ) {
-		if ( this.isCollectionFilled() ) {
+		var self = this;
+
+		if ( self.isCollectionFilled() ) {
 			return;
 		}
 
-		var newModel = elementor.getStorage( 'transport' ).model,
-			currentIndex = this.collection.indexOf( childView.model );
+		var elements = elementor.getStorage( 'transfer' ).elements,
+			index = self.collection.indexOf( childView.model );
 
-		newModel.id = elementor.helpers.getUniqueID();
+		elements.forEach( function( item ) {
+			index++;
 
-		this.addChildElement( newModel, {
-			at: currentIndex + 1,
-			trigger: {
-				beforeAdd: 'element:before:add',
-				afterAdd: 'element:after:add'
-			}
+			self.addChildElement( item, { at: index, clone: true } );
 		} );
 	}
 } );

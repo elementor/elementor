@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Files;
 
-use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,7 +46,7 @@ class Manager {
 			return;
 		}
 
-		$css_file = new Post( $post_id );
+		$css_file = new Post_CSS( $post_id );
 
 		$css_file->delete();
 	}

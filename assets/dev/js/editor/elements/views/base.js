@@ -1,7 +1,6 @@
 var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
-	ContextMenu = require( 'elementor-editor-utils/context-menu' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
@@ -124,7 +123,7 @@ BaseElementView = BaseContainer.extend( {
 					}
 				]
 			}, {
-				name: 'transport',
+				name: 'transfer',
 				actions: [
 					{
 						name: 'copy',
@@ -135,13 +134,13 @@ BaseElementView = BaseContainer.extend( {
 						title: elementor.translate( 'paste' ),
 						callback: self.paste.bind( self ),
 						isEnabled: function() {
-							var transportData = elementor.getStorage( 'transport' );
+							var transferData = elementor.getStorage( 'transfer' );
 
-							if ( ! transportData || self.isCollectionFilled() ) {
+							if ( ! transferData || self.isCollectionFilled() ) {
 								return false;
 							}
 
-							return self.getElementType() === transportData.model.elType;
+							return self.getElementType() === transferData.elementsType;
 						}
 					}
 				]
@@ -212,9 +211,10 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	startTransport: function( type ) {
-		elementor.setStorage( 'transport', {
+		elementor.setStorage( 'transfer', {
 			type: type,
-			model: this.model.toJSON( { copyHtmlCache: true } )
+			elementsType: this.getElementType(),
+			elements: [ this.model.toJSON( { copyHtmlCache: true } ) ]
 		} );
 	},
 
@@ -231,13 +231,13 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	duplicate: function() {
-		var oldTransport = elementor.getStorage( 'transport' );
+		var oldTransport = elementor.getStorage( 'transfer' );
 
 		this.copy();
 
 		this.paste();
 
-		elementor.setStorage( 'transport', oldTransport );
+		elementor.setStorage( 'transfer', oldTransport );
 	},
 
 	copyStyle: function() {
@@ -545,6 +545,15 @@ BaseElementView = BaseContainer.extend( {
 
 		_.defer( function() {
 			elementorFrontend.elementsHandler.runReadyTrigger( self.$el );
+
+			if ( ! elementorFrontend.isEditMode() ) {
+				return;
+			}
+
+			// In edit mode - handle an external elements which loaded by another elements like shortcode etc.
+			self.$el.find( '.elementor-element:not(.elementor-element-edit-mode)' ).each( function() {
+				elementorFrontend.elementsHandler.runReadyTrigger( jQuery( this ) );
+			} );
 		} );
 	},
 
