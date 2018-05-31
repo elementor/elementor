@@ -84,7 +84,6 @@ class Model extends BaseModel {
 	 * @return array Controls list.
 	 */
 	public static function get_controls_list() {
-
 		return [
 			Controls_Manager::TAB_STYLE => [
 				'style' => [

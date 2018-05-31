@@ -1,11 +1,35 @@
 // Panel elements categories
-
 .elementor-panel-category {
+	position: relative;
 
 	&:first-child {
 
 		.elementor-panel-category-title {
 			padding-top: 14px;
+		}
+	}
+
+	&.elementor-active {
+
+		.elementor-panel-category-title {
+
+			&:before {
+				transform: rotate(getValueByDirection(90deg, -90deg));
+			}
+		}
+	}
+
+	&:not(.elementor-active) {
+
+		&:after {
+			content: '';
+			position: absolute;
+			@include start(0);
+			bottom: 0;
+			width: 100%;
+			height: 8px;
+			background: linear-gradient(rgba(0,0,0,0.03), transparent);
+			transform: translateY(100%);
 		}
 	}
 
@@ -18,35 +42,17 @@
 		cursor: pointer;
 
 		&:before {
-			content: '\f078';
-			font-family: FontAwesome;
-			font-size: 9px;
+			content: getValueByDirection( '\e907', '\e908' );
+			font-family: eicons;
 			position: absolute;
 			@include end(0);
-		}
-
-		&:not(.elementor-active) {
-			margin-bottom: 8px;
-
-			&:after {
-				content: '';
-				position: absolute;
-				@include start(0);
-				bottom: 0;
-				width: 100%;
-				height: 8px;
-				background: linear-gradient(rgba(0,0,0,0.03), transparent);
-				transform: translateY(100%);
-			}
-
-			+ .elementor-panel-category-items {
-				display: none;
-			}
+			transition: transform .3s;
 		}
 	}
 
 	&-items {
 		overflow: hidden;
 		padding: 0 5px;
+		display: none;
 	}
 }
