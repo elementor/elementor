@@ -428,6 +428,9 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Caption', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'caption!' => '',
+				],
 			]
 		);
 
