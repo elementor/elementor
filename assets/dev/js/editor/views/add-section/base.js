@@ -71,6 +71,10 @@ AddSectionView = Marionette.ItemView.extend( {
 				name: 'general',
 				actions: [
 					{
+						name: 'copy_all_content',
+						title: elementor.translate( 'copy_all_content' ),
+						callback: this.copyAllContent.bind( this )
+					},	{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						callback: this.paste.bind( this ),
@@ -81,6 +85,14 @@ AddSectionView = Marionette.ItemView.extend( {
 				]
 			}
 		];
+	},
+
+	copyAllContent: function() {
+		elementor.setStorage( 'transfer', {
+			type: 'copy',
+			elementsType: 'section',
+			elements: elementor.elements.toJSON( { copyHtmlCache: true } )
+		} );
 	},
 
 	paste: function() {
