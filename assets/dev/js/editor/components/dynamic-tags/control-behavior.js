@@ -139,7 +139,6 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	getDynamicControlSettings: function() {
-
 		return {
 			control: {
 				name: '__dynamic__',
