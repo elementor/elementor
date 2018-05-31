@@ -2,7 +2,7 @@
 namespace Elementor\Modules\History;
 
 use Elementor\Core\Base\Document;
-use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -216,7 +216,7 @@ class Revisions_Manager {
 
 		Plugin::$instance->db->copy_elementor_meta( $revision_id, $parent_id );
 
-		$post_css = new Post( $parent_id );
+		$post_css = new Post_CSS( $parent_id );
 
 		$post_css->update();
 	}
