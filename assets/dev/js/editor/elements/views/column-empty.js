@@ -1,7 +1,4 @@
-var ElementEmptyView,
-	ContextMenu = require( 'elementor-editor-utils/context-menu' );
-
-ElementEmptyView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-empty-preview',
 
 	className: 'elementor-empty-view',
@@ -31,19 +28,17 @@ ElementEmptyView = Marionette.ItemView.extend( {
 						title: elementor.translate( 'paste' ),
 						callback: self.paste.bind( self ),
 						isEnabled: function() {
-							var transportData = elementor.getStorage( 'transport' );
+							var transferData = elementor.getStorage( 'transfer' );
 
-							if ( ! transportData ) {
+							if ( ! transferData ) {
 								return false;
 							}
 
-							var model = transportData.model;
-
-							if ( 'section' === model.elType ) {
-								return model.isInner && ! self._parent.isInner();
+							if ( 'section' === transferData.elementsType ) {
+								return transferData.elements[0].isInner && ! self._parent.isInner();
 							}
 
-							return 'widget' === model.elType;
+							return 'widget' === transferData.elementsType;
 						}
 					}
 				]
@@ -52,12 +47,18 @@ ElementEmptyView = Marionette.ItemView.extend( {
 	},
 
 	paste: function() {
-		this._parent.addChildModel( elementor.getStorage( 'transport' ).model );
+		var self = this,
+			elements = elementor.getStorage( 'transfer' ).elements,
+			index = 0;
+
+		elements.forEach( function( item ) {
+			self._parent.addChildElement( item, { at: index, clone: true } );
+
+			index++;
+		} );
 	},
 
 	onClickAdd: function() {
 		elementor.getPanelView().setPage( 'elements' );
 	}
 } );
-
-module.exports = ElementEmptyView;
