@@ -1,28 +1,9 @@
 var BaseAddSectionView = require( 'elementor-views/add-section/base' );
 
 module.exports = BaseAddSectionView.extend( {
-	options: {
-		atIndex: null
-	},
 
 	className: function() {
 		return BaseAddSectionView.prototype.className.apply( this, arguments ) + ' elementor-add-section-inline';
-	},
-
-	addSection: function( properties, options ) {
-		options = options || {};
-
-		options.at = this.getOption( 'atIndex' );
-
-		return BaseAddSectionView.prototype.addSection.call( this, properties, options );
-	},
-
-	getTemplatesModalOptions: function() {
-		return _.extend( BaseAddSectionView.prototype.getTemplatesModalOptions.apply( this, arguments ), {
-			importOptions: {
-				at: this.getOption( 'atIndex' )
-			}
-		} );
 	},
 
 	fadeToDeath: function() {
