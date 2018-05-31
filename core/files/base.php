@@ -52,7 +52,7 @@ abstract class Base {
 		return $wp_upload_dir['baseurl'] . '/' . self::UPLOADS_DIR;
 	}
 
-	public abstract function get_meta_key();
+	abstract public function get_meta_key();
 
 	public function __construct( $file_name ) {
 		$this->set_file_name( $file_name );
