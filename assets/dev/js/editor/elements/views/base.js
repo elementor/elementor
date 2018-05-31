@@ -546,6 +546,15 @@ BaseElementView = BaseContainer.extend( {
 
 		_.defer( function() {
 			elementorFrontend.elementsHandler.runReadyTrigger( self.$el );
+
+			if ( ! elementorFrontend.isEditMode() ) {
+				return;
+			}
+
+			// In edit mode - handle an external elements which loaded by another elements like shortcode etc.
+			self.$el.find( '.elementor-element:not(.elementor-element-edit-mode)' ).each( function() {
+				elementorFrontend.elementsHandler.runReadyTrigger( jQuery( this ) );
+			} );
 		} );
 	},
 
