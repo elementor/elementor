@@ -1,7 +1,4 @@
-var AddSectionView,
-	ContextMenu = require( 'elementor-editor-utils/context-menu' );
-
-AddSectionView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-add-section' ),
 
 	options: {
@@ -211,5 +208,3 @@ AddSectionView = Marionette.ItemView.extend( {
 		elementor.channels.data.trigger( 'section:after:drop' );
 	}
 } );
-
-module.exports = AddSectionView;
