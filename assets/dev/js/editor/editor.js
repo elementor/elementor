@@ -238,6 +238,10 @@ App = Marionette.Application.extend( {
 		return this.getRegion( 'panel' ).currentView;
 	},
 
+	getPreviewView: function() {
+		return this.sections.currentView;
+	},
+
 	initEnvData: function() {
 		this.envData = _.pick( tinymce.Env, [ 'desktop', 'mac', 'webkit', 'gecko', 'ie', 'opera' ] );
 	},
