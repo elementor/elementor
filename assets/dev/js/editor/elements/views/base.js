@@ -104,7 +104,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getContextMenuGroups: function() {
-		var self = this;
+		var self = this,
+			elementType = this.options.model.get( 'elType' );
 
 		return [
 			{
@@ -112,7 +113,7 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'edit',
-						title: elementor.translate( 'edit' ),
+						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
 						callback: self.edit.bind( self )
 					}, {
 						name: 'duplicate',
