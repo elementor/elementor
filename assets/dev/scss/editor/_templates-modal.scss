@@ -101,6 +101,7 @@ $remote-templates-items-space: 30px;
 		#elementor-template-library-templates-container {
 			box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, .03);
 			margin-top: 10px;
+			margin-bottom: 45px;
 		}
 
 		.elementor-template-library-order-input {
@@ -575,7 +576,6 @@ $remote-templates-items-space: 30px;
 
 	&:last-child {
 		border-radius: 0 0 3px 3px;
-		margin-bottom: 45px;
 	}
 
 	.elementor-template-library-template-name {
