@@ -93,6 +93,8 @@
 
 			&__select {
 				appearance: none;
+				-webkit-appearance: none;
+				-moz-appearance: none;
 				cursor: pointer;
 
 				&__wrapper {
@@ -118,7 +120,7 @@
 	}
 }
 
-@media (max-width: $screen-md-max) {
+@media (max-width: $editor-screen-md-max) {
 
 	#elementor-new-template {
 
@@ -129,7 +131,7 @@
 	}
 }
 
-@media (max-width: $screen-sm-max) {
+@media (max-width: $editor-screen-sm-max) {
 
 	#elementor-new-template__description {
 		display: none;

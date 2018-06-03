@@ -201,6 +201,7 @@ abstract class Element_Base extends Controls_Stack {
 		if ( ! Plugin::instance()->role_manager->user_can( 'design' ) ) {
 			return [];
 		}
+
 		if ( null === static::$_edit_tools ) {
 			self::init_edit_tools();
 		}
@@ -242,21 +243,6 @@ abstract class Element_Base extends Controls_Stack {
 		} else {
 			static::$_edit_tools[ $tool_name ] = $tool_data;
 		}
-	}
-
-	/**
-	 * Get element type.
-	 *
-	 * Retrieve the element type, in this case `element`.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 *
-	 * @return string Control type.
-	 */
-	public static function get_type() {
-		return 'element';
 	}
 
 	/**
@@ -431,7 +417,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return Element_Base Parent element.
 	 */
 	public function get_parent() {
-		// Todo: _deprecated_function( __METHOD__, '1.7.6', '$this->get_data( 'parent' )' );
+		_deprecated_function( __METHOD__, '1.7.6', __CLASS__ . '::get_data( \'parent\' )' );
 
 		return $this->get_data( 'parent' );
 	}
@@ -597,7 +583,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 */
 	public function print_element() {
-		$element_type = static::get_type();
+		$element_type = $this->get_type();
 
 		/**
 		 * Before frontend element render.
@@ -710,7 +696,22 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.8.0
 	 * @access protected
 	 */
-	protected function render_edit_tools() {}
+	protected function render_edit_tools() {
+		?>
+		<div class="elementor-element-overlay">
+			<ul class="elementor-editor-element-settings elementor-editor-<?php echo $this->get_type(); ?>-settings">
+				<?php
+				foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) {
+					?>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
+						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
+					</li>
+				<?php } ?>
+			</ul>
+		</div>
+		<?php
+	}
 
 	/**
 	 * Is type instance.
@@ -748,12 +749,18 @@ abstract class Element_Base extends Controls_Stack {
 
 		$settings = $this->get_active_settings();
 
-		foreach ( self::get_class_controls() as $control ) {
-			if ( empty( $settings[ $control['name'] ] ) ) {
+		$controls = $this->get_controls();
+
+		$class_settings = array_filter( $settings, function( $setting_key ) use( $controls ) {
+			return isset( $controls[ $setting_key ]['prefix_class'] );
+		}, ARRAY_FILTER_USE_KEY );
+
+		foreach ( $class_settings as $setting_key => $setting ) {
+			if ( ! $setting ) {
 				continue;
 			}
 
-			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+			$this->add_render_attribute( '_wrapper', 'class', $controls[ $setting_key ]['prefix_class'] . $setting );
 		}
 
 		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {

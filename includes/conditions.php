@@ -39,9 +39,9 @@ class Conditions {
 			case '!==':
 				return $left_value !== $right_value;
 			case 'in':
-				return -1 !== array_search( $left_value, $right_value );
+				return false !== array_search( $left_value, $right_value );
 			case '!in':
-				return -1 === array_search( $left_value, $right_value );
+				return false === array_search( $left_value, $right_value );
 			case '<':
 				return $left_value < $right_value;
 			case '<=':

@@ -20,14 +20,14 @@ ControlsCSSParser = ViewModule.extend( {
 	},
 
 	initStylesheet: function() {
-		var viewportBreakpoints = elementor.config.viewportBreakpoints;
+		var breakpoints = elementorFrontend.config.breakpoints;
 
 		this.stylesheet = new Stylesheet();
 
 		this.stylesheet
 			.addDevice( 'mobile', 0 )
-			.addDevice( 'tablet', viewportBreakpoints.md )
-			.addDevice( 'desktop', viewportBreakpoints.lg );
+			.addDevice( 'tablet', breakpoints.md )
+			.addDevice( 'desktop', breakpoints.lg );
 	},
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {

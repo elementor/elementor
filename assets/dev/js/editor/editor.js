@@ -197,15 +197,10 @@ App = Marionette.Application.extend( {
 		}
 
 		var isInner = modelElement.get( 'isInner' ),
-			controls = {},
-			userCanEditStyle = elementor.userCan( 'design' );
+			controls = {};
 
 		_.each( elementData.controls, function( controlData, controlKey ) {
 			if ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top ) {
-				return;
-			}
-
-			if ( ! userCanEditStyle && 'content' !== controlData.tab ) {
 				return;
 			}
 
@@ -555,6 +550,30 @@ App = Marionette.Application.extend( {
 				]
 			} );
 		}
+	},
+
+	getStorage: function( key ) {
+		var elementorStorage = localStorage.getItem( 'elementor' );
+
+		if ( elementorStorage ) {
+			elementorStorage = JSON.parse( elementorStorage );
+		} else {
+			elementorStorage = {};
+		}
+
+		if ( key ) {
+			return elementorStorage[ key ];
+		}
+
+		return elementorStorage;
+	},
+
+	setStorage: function( key, value ) {
+		var elementorStorage = this.getStorage();
+
+		elementorStorage[ key ] = value;
+
+		localStorage.setItem( 'elementor', JSON.stringify( elementorStorage ) );
 	},
 
 	openLibraryOnStart: function() {

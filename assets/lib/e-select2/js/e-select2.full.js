@@ -2,6 +2,8 @@
  * Select2 4.0.6-rc.1
  * https://select2.github.io
  *
+ * With a fix by Elementor team at line 4329
+ *
  * Released under the MIT license
  * https://github.com/select2/select2/blob/master/LICENSE.md
  */
@@ -4324,8 +4326,7 @@ S2.define('select2/dropdown/attachBody',[
     });
 
     $watchers.on(scrollEvent, function (ev) {
-      var position = Utils.GetData(this, 'select2-scroll-position');
-      $(this).scrollTop(position.y);
+	    self._positionDropdown();
     });
 
     $(window).on(scrollEvent + ' ' + resizeEvent + ' ' + orientationEvent,

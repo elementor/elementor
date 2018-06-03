@@ -52,6 +52,8 @@ abstract class Base_Tag extends Controls_Stack {
 	 * @since 2.0.0
 	 * @access public
 	 * @abstract
+	 *
+	 * @param array $options
 	 */
 	abstract public function get_content( array $options = [] );
 

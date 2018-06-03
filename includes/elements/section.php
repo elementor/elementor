@@ -49,41 +49,18 @@ class Element_Section extends Element_Base {
 	private static $presets = [];
 
 	/**
-	 * Get default edit tools.
+	 * Get element type.
 	 *
-	 * Retrieve the section default edit tools. Used to set initial tools.
+	 * Retrieve the element type, in this case `section`.
 	 *
-	 * @since 1.0.0
-	 * @access protected
+	 * @since 2.1.0
+	 * @access public
 	 * @static
 	 *
-	 * @return array Default section edit tools.
+	 * @return string The type.
 	 */
-	protected static function get_default_edit_tools() {
-		$section_label = __( 'Section', 'elementor' );
-
-		return [
-			'duplicate' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $section_label ),
-				'icon' => 'clone',
-			],
-			'add' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
-				'icon' => 'plus',
-			],
-			'save' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Save %s', 'elementor' ), $section_label ),
-				'icon' => 'save',
-			],
-			'remove' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
-				'icon' => 'close',
-			],
-		];
+	public static function get_type() {
+		return 'section';
 	}
 
 	/**
@@ -222,6 +199,39 @@ class Element_Section extends Element_Base {
 				$preset['key'] = $columns_count . $preset_index;
 			}
 		}
+	}
+
+	/**
+	 * Get default edit tools.
+	 *
+	 * Retrieve the section default edit tools. Used to set initial tools.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 * @static
+	 *
+	 * @return array Default section edit tools.
+	 */
+	protected static function get_default_edit_tools() {
+		$section_label = __( 'Section', 'elementor' );
+
+		return [
+			'add' => [
+				/* translators: %s: Section label */
+				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
+				'icon' => 'plus',
+			],
+			'edit' => [
+				/* translators: %s: Section label */
+				'title' => sprintf( __( 'Edit %s', 'elementor' ), $section_label ),
+				'icon' => 'handle',
+			],
+			'remove' => [
+				/* translators: %s: Section label */
+				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
+				'icon' => 'close',
+			],
+		];
 	}
 
 	/**
@@ -1266,15 +1276,9 @@ class Element_Section extends Element_Base {
 	 * @access protected
 	 */
 	protected function render_edit_tools() {
-		/* translators: %s: Section label */
-		$edit_title = sprintf( __( 'Edit %s', 'elementor' ), __( 'Section', 'elementor' ) );
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php echo esc_attr( $edit_title ); ?>">
-					<i class="eicon-section" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php echo esc_html( $edit_title ); ?></span>
-				</li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# if ( ! isInner ) { #>
@@ -1302,11 +1306,12 @@ class Element_Section extends Element_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-background-video-container elementor-hidden-phone">
-			<div class="elementor-background-video-embed"></div>
-			<video class="elementor-background-video-hosted" autoplay loop muted></video>
-		</div>
-		<div class="elementor-background-video-fallback"></div>
+		<# if ( settings.background_video_link ) { #>
+			<div class="elementor-background-video-container elementor-hidden-phone">
+				<div class="elementor-background-video-embed"></div>
+				<video class="elementor-background-video-hosted" autoplay loop muted></video>
+			</div>
+		<# } #>
 		<div class="elementor-background-overlay"></div>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>

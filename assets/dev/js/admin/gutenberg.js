@@ -76,8 +76,11 @@
 		},
 
 		init: function() {
-			this.cacheElements();
-			this.bindEvents();
+			var self = this;
+			setTimeout( function() {
+				self.cacheElements();
+				self.bindEvents();
+			}, 1 );
 		}
 	};
 

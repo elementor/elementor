@@ -1,5 +1,9 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Files\CSS;
+
+use Elementor\Plugin;
+use Elementor\Scheme_Base;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,12 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Global_CSS_File extends CSS_File {
-
-	/**
-	 * Elementor global CSS file meta key.
-	 */
-	const META_KEY = '_elementor_global_css';
+class Global_CSS extends Base {
 
 	/**
 	 * Elementor global CSS file handler ID.
@@ -39,32 +38,8 @@ class Global_CSS_File extends CSS_File {
 		return 'global';
 	}
 
-	/**
-	 * Load meta data.
-	 *
-	 * Retrieve the global CSS file meta data.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 *
-	 * @return array Global CSS file meta data.
-	 */
-	protected function load_meta() {
-		return get_option( self::META_KEY );
-	}
-
-	/**
-	 * Update meta data.
-	 *
-	 * Update the global CSS file meta data.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 *
-	 * @param string $meta New meta data.
-	 */
-	protected function update_meta( $meta ) {
-		update_option( self::META_KEY, $meta );
+	public function get_meta_key() {
+		return '_elementor_global_css';
 	}
 
 	/**
@@ -91,20 +66,6 @@ class Global_CSS_File extends CSS_File {
 	 */
 	protected function render_css() {
 		$this->render_schemes_css();
-	}
-
-	/**
-	 * Get file name.
-	 *
-	 * Retrieve the name of the global CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 *
-	 * @return string File name.
-	 */
-	protected function get_file_name() {
-		return 'global';
 	}
 
 	/**

@@ -49,6 +49,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * Create a media modal select frame, and store it so the instance can be reused when needed.
 	 */
 	initFrame: function() {
+		// Set current doc id to attach uploaded images.
+		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
 				text: elementor.translate( 'insert_media' )

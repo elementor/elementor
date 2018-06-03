@@ -54,6 +54,7 @@ $progress-bg:	#eeeeee;
 $progress-text:	#ffffff;
 
 //Official Social / Sharing Colors
+$android:		#A4C639;
 $apple:			#999999;
 $behance:		#1769ff;
 $bitbucket: 	#205081;
@@ -90,6 +91,7 @@ $stack-overflow:#fe7a15;
 $steam:			#00adee;
 $stumbleupon:	#EB4924;
 $telegram:		#2CA5E0;
+$thumbtack:		#1aa1d8;
 $tripadvisor:	#589442;
 $tumblr:		#35465c;
 $twitch:		#6441A5;
@@ -187,15 +189,3 @@ $breakpoints: (
 	xl: 1440px, // Larger devices
 	xxl: 1600px // Largest devices
 );
-
-// Media Queries
-$screen-xs-max: map_get($breakpoints, sm) - 1;
-$screen-sm-min: map_get($breakpoints, sm);
-$screen-sm-max: map_get($breakpoints, md) - 1;
-$screen-md-min: map_get($breakpoints, md);
-$screen-md-max: map_get($breakpoints, lg) - 1;
-$screen-lg-min: map_get($breakpoints, lg);
-$screen-lg-max: map_get($breakpoints, xl) - 1;
-$screen-xl-min: map_get($breakpoints, xl);
-$screen-xl-max: map_get($breakpoints, xxl) - 1;
-$screen-xxl-min: map_get($breakpoints, xxl);
