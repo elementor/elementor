@@ -65,7 +65,19 @@ module.exports = Marionette.ItemView.extend( {
 	getContextMenuGroups: function() {
 		return [
 			{
-				name: 'general',
+				name: 'paste',
+				actions: [
+					{
+						name: 'paste',
+						title: elementor.translate( 'paste' ),
+						callback: this.paste.bind( this ),
+						isEnabled: function() {
+							return elementor.getStorage( 'transfer' );
+						}
+					}
+				]
+			}, {
+				name: 'content',
 				actions: [
 					{
 						name: 'copy_all_content',
@@ -75,13 +87,6 @@ module.exports = Marionette.ItemView.extend( {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
 						callback: elementor.clearPage.bind( elementor )
-					},	{
-						name: 'paste',
-						title: elementor.translate( 'paste' ),
-						callback: this.paste.bind( this ),
-						isEnabled: function() {
-							return elementor.getStorage( 'transfer' );
-						}
 					}
 				]
 			}
