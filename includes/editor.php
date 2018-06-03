@@ -642,7 +642,6 @@ class Editor {
 				'unknown_error' => __( 'Unknown Error', 'elementor' ),
 
 				// Context Menu
-				'edit' => __( 'Edit', 'elementor' ),
 				'duplicate' => __( 'Duplicate', 'elementor' ),
 				'copy' => __( 'Copy', 'elementor' ),
 				'paste' => __( 'Paste', 'elementor' ),
