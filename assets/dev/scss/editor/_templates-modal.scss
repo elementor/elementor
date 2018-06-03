@@ -93,6 +93,7 @@ $remote-templates-items-space: 30px;
 		#elementor-template-library-templates-container {
 			box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, .03);
 			margin-top: 10px;
+			margin-bottom: 45px;
 		}
 
 		.elementor-template-library-order-input {
@@ -371,7 +372,7 @@ $remote-templates-items-space: 30px;
 		position: relative;
 	}
 
-	@media (max-width: $screen-lg-min) {
+	@media (max-width: $editor-screen-lg-min) {
 
 		.elementor-template-library-template-body {
 			height: 300px;
@@ -479,7 +480,7 @@ $remote-templates-items-space: 30px;
 		width: calc(20% - #{$remote-templates-items-space});
 	}
 
-	@media (max-width: $screen-lg-min) {
+	@media (max-width: $editor-screen-lg-min) {
 		width: calc(33.333% - #{$remote-templates-items-space});
 	}
 
@@ -567,7 +568,6 @@ $remote-templates-items-space: 30px;
 
 	&:last-child {
 		border-radius: 0 0 3px 3px;
-		margin-bottom: 45px;
 	}
 
 	.elementor-template-library-template-name {
@@ -889,7 +889,7 @@ $remote-templates-items-space: 30px;
 	}
 }
 
-@media (max-width: $screen-md-max) {
+@media (max-width: $editor-screen-md-max) {
 
 	.elementor-template-library-local-column-3 {
 		display: none;

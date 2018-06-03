@@ -10,12 +10,6 @@ BaseSectionsContainerView = BaseContainer.extend( {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'section'
-			},
-			HandleDuplicate: {
-				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-			},
-			HandleAddMode: {
-				behaviorClass: require( 'elementor-behaviors/duplicate' )
 			}
 		};
 
@@ -24,7 +18,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 
 	getSortableOptions: function() {
 		return {
-			handle: '> .elementor-element-overlay .elementor-editor-section-settings .elementor-editor-element-trigger',
+			handle: '> .elementor-element-overlay .elementor-editor-section-settings .elementor-editor-element-edit',
 			items: '> .elementor-section'
 		};
 	},
@@ -33,32 +27,11 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		return [ 'section' ];
 	},
 
-	isCollectionFilled: function() {
-		return false;
-	},
-
 	initialize: function() {
 		this
 			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
 			.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
 			.listenTo( elementor.channels.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
-	},
-
-	addSection: function( properties, options ) {
-		var newSection = {
-			id: elementor.helpers.getUniqueID(),
-			elType: 'section',
-			settings: {},
-			elements: []
-		};
-
-		if ( properties ) {
-			_.extend( newSection, properties );
-		}
-
-		var newModel = this.addChildModel( newSection, options );
-
-		return this.children.findByModelCid( newModel.cid );
 	},
 
 	onCollectionChanged: function() {

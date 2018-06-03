@@ -1,5 +1,7 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Files\CSS;
+
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.9.0
  */
-class Post_Preview_CSS extends Post_CSS_File {
+class Post_Preview extends Post {
 
 	/**
 	 * Preview ID.
@@ -41,6 +43,10 @@ class Post_Preview_CSS extends Post_CSS_File {
 		$parent_id = wp_get_post_parent_id( $post_id );
 
 		parent::__construct( $parent_id );
+	}
+
+	public function get_preview_id() {
+		return $this->preview_id;
 	}
 
 	/**
@@ -86,7 +92,7 @@ class Post_Preview_CSS extends Post_CSS_File {
 	 */
 	public function get_meta( $property = null ) {
 		// Parse CSS first, to get the fonts list.
-		$css = $this->get_css();
+		$css = $this->get_content();
 
 		$meta = [
 			'status' => self::CSS_STATUS_INLINE,

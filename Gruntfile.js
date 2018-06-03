@@ -2,6 +2,7 @@ module.exports = function( grunt ) {
 	'use strict';
 
 	var remapify = require( 'remapify' ),
+		fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' );
 
 	require( 'matchdep' ).filterDev( 'grunt-*' ).forEach( grunt.loadNpmTasks );
@@ -163,7 +164,7 @@ module.exports = function( grunt ) {
 
 		},
 
-		// Extract sourcemap to separate file
+		// Extract sourcemap to a separated file
 		exorcise: {
 			bundle: {
 				options: {},
@@ -232,10 +233,10 @@ module.exports = function( grunt ) {
 		},
 
 		sass: {
-			options: {
-				sourceMap: true
-			},
 			dist: {
+				options: {
+					sourceMap: true
+				},
 				files: [ {
 					expand: true,
 					cwd: 'assets/dev/scss/direction',
@@ -290,10 +291,12 @@ module.exports = function( grunt ) {
 			styles: {
 				files: [
 					'assets/dev/scss/**/*.scss',
-					'modules/**/*.scss'
+					'modules/**/*.scss',
+					'!assets/dev/scss/frontend/breakpoints/proxy.scss'
 				],
-				tasks: [ 'styles' ],
+				tasks: [ 'styles:true' ],
 				options: {
+					spawn: false,
 					livereload: true
 				}
 			},
@@ -303,8 +306,9 @@ module.exports = function( grunt ) {
 					'assets/dev/js/**/*.js',
 					'modules/**/*.js'
 				],
-				tasks: [ 'scripts' ],
+				tasks: [ 'scripts:true' ],
 				options: {
+					spawn: false,
 					livereload: true
 				}
 			}
@@ -462,17 +466,54 @@ module.exports = function( grunt ) {
 		'checktextdomain'
 	] );
 
-	grunt.registerTask( 'scripts', [
-		'jshint',
-		'browserify',
-		'exorcise',
-		'uglify'
-	] );
+	grunt.registerTask( 'scripts', function( isDevMode ) {
+		grunt.task.run( 'jshint' );
+		grunt.task.run( 'browserify' );
 
-	grunt.registerTask( 'styles', [
-		'sass',
-		'postcss'
-	] );
+		if ( ! isDevMode ) {
+			grunt.task.run( 'exorcise' );
+			grunt.task.run( 'uglify' );
+		}
+	} );
+
+	grunt.registerTask( 'styles', function( isDevMode ) {
+		grunt.task.run( 'sass' );
+
+		if ( ! isDevMode ) {
+			grunt.task.run( 'postcss' );
+			grunt.task.run( 'css_templates' );
+		}
+	} );
+
+	grunt.registerTask( 'css_templates', function() {
+		grunt.task.run( 'css_templates_proxy:templates' );
+
+		grunt.config( 'sass.dist', {
+			files: [ {
+				expand: true,
+				cwd: 'assets/dev/scss/direction',
+				src: [ 'frontend.scss', 'frontend-rtl.scss' ],
+				dest: 'assets/css/templates',
+				ext: '.css'
+			} ]
+		} );
+
+		grunt.task.run( 'sass' );
+
+		grunt.config( 'postcss.minify.files.0.src', [
+			'assets/css/templates/*.css',
+			'!assets/css/templates/*.min.css'
+		] );
+
+		grunt.task.run( 'postcss:minify' );
+
+		grunt.task.run( 'css_templates_proxy:values' );
+	} );
+
+	// Writing the proxy file as a grunt task, in order to fit in with the tasks queue
+	grunt.registerTask( 'css_templates_proxy', function( mode ) {
+		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "' + mode + '";' );
+	} );
 
 	grunt.registerTask( 'build', [
 		'default',

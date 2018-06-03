@@ -1,5 +1,9 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Files\CSS;
+
+use Elementor\Controls_Stack;
+use Elementor\Element_Base;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,12 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Post_CSS_File extends CSS_File {
-
-	/**
-	 * Elementor post CSS file meta key.
-	 */
-	const META_KEY = '_elementor_css';
+class Post extends Base {
 
 	/**
 	 * Elementor post CSS file prefix.
@@ -47,7 +46,11 @@ class Post_CSS_File extends CSS_File {
 	public function __construct( $post_id ) {
 		$this->post_id = $post_id;
 
-		parent::__construct();
+		parent::__construct( self::FILE_PREFIX . $post_id . '.css' );
+	}
+
+	public function get_meta_key() {
+		return '_elementor_css';
 	}
 
 	/**
@@ -105,7 +108,7 @@ class Post_CSS_File extends CSS_File {
 	 * @return array Post CSS file meta data.
 	 */
 	protected function load_meta() {
-		return get_post_meta( $this->post_id, static::META_KEY, true );
+		return get_post_meta( $this->post_id, $this->get_meta_key(), true );
 	}
 
 	/**
@@ -119,7 +122,19 @@ class Post_CSS_File extends CSS_File {
 	 * @param array $meta New meta data.
 	 */
 	protected function update_meta( $meta ) {
-		update_post_meta( $this->post_id, static::META_KEY, $meta );
+		update_post_meta( $this->post_id, $this->get_meta_key(), $meta );
+	}
+
+	/**
+	 * Delete meta.
+	 *
+	 * Delete the file meta data.
+	 *
+	 * @since  2.1.0
+	 * @access protected
+	 */
+	protected function delete_meta() {
+		delete_post_meta( $this->post_id, $this->get_meta_key() );
 	}
 
 	/**
@@ -248,20 +263,6 @@ class Post_CSS_File extends CSS_File {
 	}
 
 	/**
-	 * Get file name.
-	 *
-	 * Retrieve the name of the post CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 *
-	 * @return string File name.
-	 */
-	protected function get_file_name() {
-		return self::FILE_PREFIX . $this->post_id;
-	}
-
-	/**
 	 * Render styles.
 	 *
 	 * Parse the CSS for any given element.
@@ -279,14 +280,14 @@ class Post_CSS_File extends CSS_File {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Post_CSS_File $this    The post CSS file.
-		 * @param Element_Base  $element The element.
+		 * @param Post         $this    The post CSS file.
+		 * @param Element_Base $element The element.
 		 */
 		do_action( 'elementor/element/before_parse_css', $this, $element );
 
 		$element_settings = $element->get_settings();
 
-		$this->add_controls_stack_style_rules( $element, $element->get_style_controls(), $element_settings,  [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
+		$this->add_controls_stack_style_rules( $element, $element->get_style_controls( null, $element->get_parsed_dynamic_settings() ), $element_settings,  [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
 
 		/**
 		 * After element parse CSS.
@@ -295,8 +296,8 @@ class Post_CSS_File extends CSS_File {
 		 *
 		 * @since 1.2.0
 		 *
-		 * @param Post_CSS_File $this    The post CSS file.
-		 * @param Element_Base  $element The element.
+		 * @param Post         $this    The post CSS file.
+		 * @param Element_Base $element The element.
 		 */
 		do_action( 'elementor/element/parse_css', $this, $element );
 	}

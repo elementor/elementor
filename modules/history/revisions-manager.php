@@ -2,9 +2,9 @@
 namespace Elementor\Modules\History;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Manager;
 use Elementor\Plugin;
-use Elementor\Post_CSS_File;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,11 +21,27 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Revisions_Manager {
 
+	/**
+	 * Maximum number of revisions to display.
+	 */
 	const MAX_REVISIONS_TO_DISPLAY = 100;
 
+	/**
+	 * Authors list.
+	 *
+	 * Holds all the authors.
+	 *
+	 * @access private
+	 *
+	 * @var array
+	 */
 	private static $authors = [];
 
 	/**
+	 * History revisions manager constructor.
+	 *
+	 * Initializing Elementor history revisions manager.
+	 *
 	 * @since 1.7.0
 	 * @access public
 	 */
@@ -76,6 +92,12 @@ class Revisions_Manager {
 	 * @since 1.7.0
 	 * @access public
 	 * @static
+	 *
+	 * @param int   $post_id
+	 * @param array $query_args
+	 * @param bool  $parse_result
+	 *
+	 * @return array
 	 */
 	public static function get_revisions( $post_id = 0, $query_args = [], $parse_result = true ) {
 		$post = get_post( $post_id );
@@ -194,7 +216,7 @@ class Revisions_Manager {
 
 		Plugin::$instance->db->copy_elementor_meta( $revision_id, $parent_id );
 
-		$post_css = new Post_CSS_File( $parent_id );
+		$post_css = new Post_CSS( $parent_id );
 
 		$post_css->update();
 	}
@@ -324,6 +346,12 @@ class Revisions_Manager {
 	}
 
 	/**
+	 * Localize settings.
+	 *
+	 * Add new localized settings for the revisions manager.
+	 *
+	 * Fired by `elementor/editor/localize_settings` filter.
+	 *
 	 * @since 1.7.0
 	 * @access public
 	 * @static
@@ -347,7 +375,7 @@ class Revisions_Manager {
 				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
 				'revisions_disabled_2' => sprintf(
 					/* translators: %s: Codex URL */
-					__( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ),
+					__( 'Learn more about <a target="_blank" href="%s">WordPress revisions</a>', 'elementor' ),
 					'https://codex.wordpress.org/Revisions#Revision_Options'
 				),
 			],

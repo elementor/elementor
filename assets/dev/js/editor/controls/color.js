@@ -3,22 +3,29 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 
 ControlColorItemView = ControlBaseDataView.extend( {
 	applySavedValue: function() {
-		if ( this.ui.input.wpColorPicker( 'instance' ) ) {
-			this.ui.input.wpColorPicker( 'color', this.getControlValue() );
-		}
-	},
+		ControlBaseDataView.prototype.applySavedValue.apply( this, arguments );
 
-	onReady: function() {
-		var self = this;
+		var self = this,
+			value = self.getControlValue(),
+			colorInstance = self.ui.input.wpColorPicker( 'instance' );
 
-		elementor.helpers.wpColorPicker( self.ui.input, {
-			change: function() {
-				self.ui.input.val( self.ui.input.wpColorPicker( 'color' ) ).trigger( 'input' );
-			},
-			clear: function() {
-				self.setValue( '' );
+		if ( colorInstance ) {
+			self.ui.input.wpColorPicker( 'color', value );
+
+			if ( ! value ) {
+				// Trigger `change` event manually, since it will not be triggered automatically on empty value
+				self.ui.input.data( 'a8cIris' )._change();
 			}
-		} );
+		} else {
+			elementor.helpers.wpColorPicker( self.ui.input, {
+				change: function() {
+					self.ui.input.val( self.ui.input.wpColorPicker( 'color' ) ).trigger( 'input' );
+				},
+				clear: function() {
+					self.setValue( '' );
+				}
+			} );
+		}
 	},
 
 	onBeforeDestroy: function() {

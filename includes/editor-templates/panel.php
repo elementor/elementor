@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -75,7 +77,8 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="tablet">
 					<i class="elementor-icon eicon-device-tablet" aria-hidden="true"></i>
 					<span class="elementor-title"><?php echo __( 'Tablet', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php echo __( 'Preview for 768px', 'elementor' ); ?></span>
+					<?php $breakpoints = Responsive::get_breakpoints(); ?>
+					<span class="elementor-description"><?php echo sprintf( __( 'Preview for %s', 'elementor' ), $breakpoints['md'] . 'px' ); ?></span>
 				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile">
 					<i class="elementor-icon eicon-device-mobile" aria-hidden="true"></i>
@@ -248,11 +251,9 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-cover">
-	<# if ( hasSettings ) { #>
-		<div class="elementor-dynamic-cover__settings">
-			<i class="fa fa-wrench"></i>
-		</div>
-	<# } #>
+    <div class="elementor-dynamic-cover__settings">
+        <i class="fa fa-{{ hasSettings ? 'wrench' : 'database' }}"></i>
+    </div>
 	<div class="elementor-dynamic-cover__title" title="{{{ title + ' ' + content }}}">{{{ title + ' ' + content }}}</div>
 	<# if ( isRemovable ) { #>
 		<div class="elementor-dynamic-cover__remove">

@@ -166,11 +166,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 	onRender: function() {
 		ControlBaseView.prototype.onRender.apply( this, arguments );
 
-		this.applySavedValue();
-
 		if ( this.model.get( 'responsive' ) ) {
 			this.renderResponsiveSwitchers();
 		}
+
+		this.applySavedValue();
 
 		this.triggerMethod( 'ready' );
 

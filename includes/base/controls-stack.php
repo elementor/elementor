@@ -57,6 +57,18 @@ abstract class Controls_Stack {
 	private $_settings;
 
 	/**
+	 * Parsed Dynamic Settings.
+	 *
+	 * Holds the dynamic settings, which is the data entered by the user and processed
+	 * by elementor includes the dynamic value.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
+	private $parsed_dynamic_settings;
+
+	/**
 	 * Raw Data.
 	 *
 	 * Holds all the raw data including the element type, the child elements,
@@ -183,7 +195,7 @@ abstract class Controls_Stack {
 	/**
 	 * Get the type.
 	 *
-	 * Retrieve the type, e.g. 'stack', 'element', 'widget' etc.
+	 * Retrieve the type, e.g. 'stack', 'section', 'widget' etc.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -488,13 +500,16 @@ abstract class Controls_Stack {
 	 * @param array $position {
 	 *     The injection position.
 	 *
-	 *     @type string $type Injection type, either `control` or `section`.
-	 *                        Default is `control`.
-	 *     @type string $at   Where to inject. If `$type` is `control` accepts
-	 *                        `before` and `after`. If `$type` is `section`
-	 *                        accepts `start` and `end`. Default values based on
-	 *                        the `type`.
-	 *     @type string $of   Control/Section ID.
+	 *     @type string $type     Injection type, either `control` or `section`.
+	 *                            Default is `control`.
+	 *     @type string $at       Where to inject. If `$type` is `control` accepts
+	 *                            `before` and `after`. If `$type` is `section`
+	 *                            accepts `start` and `end`. Default values based on
+	 *                            the `type`.
+	 *     @type string $of       Control/Section ID.
+	 *     @type array  $fallback Fallback injection position. When the position is
+	 *                            not found it will try to fetch the fallback
+	 *                            position.
 	 * }
 	 *
 	 * @return bool|array Position info.
@@ -523,6 +538,10 @@ abstract class Controls_Stack {
 		$target_control_index = $this->get_control_index( $position['of'] );
 
 		if ( false === $target_control_index ) {
+			if ( ! empty( $position['fallback'] ) ) {
+				return $this->get_position_info( $position['fallback'] );
+			}
+
 			return false;
 		}
 
@@ -750,6 +769,7 @@ abstract class Controls_Stack {
 	 * controls
 	 *
 	 * @since 1.4.0
+	 * @deprecated 2.1.0
 	 * @access public
 	 *
 	 * @return array Class controls.
@@ -1012,24 +1032,62 @@ abstract class Controls_Stack {
 		return self::_get_items( $this->_settings, $setting );
 	}
 
+	public function get_parsed_dynamic_settings( $setting = null ) {
+		if ( null === $this->parsed_dynamic_settings ) {
+			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->_settings );
+		}
+
+		return self::_get_items( $this->parsed_dynamic_settings, $setting );
+	}
+
 	/**
 	 * Get active settings.
 	 *
 	 * Retrieve the settings from all the active controls.
 	 *
 	 * @since 1.4.0
+	 * @since 2.1.0 Added the `controls` and the `settings` parameters.
 	 * @access public
+	 *
+	 * @param array $controls Optional. An array of controls. Default is null.
+	 * @param array $settings Optional. Controls settings. Default is null.
 	 *
 	 * @return array Active settings.
 	 */
-	public function get_active_settings() {
-		$settings = $this->get_settings();
+	public function get_active_settings( $settings = null, $controls = null ) {
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
 
-		$active_settings = array_intersect_key( $settings, $this->get_active_controls() );
+		if ( ! $settings ) {
+			$settings = $this->get_controls_settings();
+		}
 
-		$settings_mask = array_fill_keys( array_keys( $settings ), null );
+		$active_settings = [];
 
-		return array_merge( $settings_mask, $active_settings );
+		foreach ( $settings as $setting_key => $setting ) {
+			if ( ! isset( $controls[ $setting_key ] ) ) {
+				$active_settings[ $setting_key ] = $setting;
+
+				continue;
+			}
+
+			$control = $controls[ $setting_key ];
+
+			if ( $this->is_control_visible( $control, $settings ) ) {
+				if ( Controls_Manager::REPEATER === $control['type'] ) {
+					foreach ( $setting as & $item ) {
+						$item = $this->get_active_settings( $item, $control['fields'] );
+					}
+				}
+
+				$active_settings[ $setting_key ] = $setting;
+			} else {
+				$active_settings[ $setting_key ] = null;
+			}
+		}
+
+		return $active_settings;
 	}
 
 	/**
@@ -1606,7 +1664,7 @@ abstract class Controls_Stack {
 			return;
 		}
 		?>
-		<script type="text/html" id="tmpl-elementor-<?php echo $this->get_type(); ?>-<?php echo esc_attr( $this->get_name() ); ?>-content">
+		<script type="text/html" id="tmpl-elementor-<?php echo esc_attr( $this->get_name() ); ?>-content">
 			<?php $this->print_template_content( $template_content ); ?>
 		</script>
 		<?php

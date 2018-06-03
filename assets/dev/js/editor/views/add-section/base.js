@@ -1,7 +1,9 @@
-var AddSectionView;
-
-AddSectionView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-add-section' ),
+
+	options: {
+		atIndex: null
+	},
 
 	attributes: {
 		'data-view': 'choose-action'
@@ -23,12 +25,21 @@ AddSectionView = Marionette.ItemView.extend( {
 		'click @ui.presets': 'onPresetSelected'
 	},
 
+	behaviors: function() {
+		return {
+			contextMenu: {
+				behaviorClass: require( 'elementor-behaviors/context-menu' ),
+				groups: this.getContextMenuGroups()
+			}
+		};
+	},
+
 	className: function() {
 		return 'elementor-add-section elementor-visible-desktop';
 	},
 
 	addSection: function( properties, options ) {
-		return elementor.sections.currentView.addSection( properties, options );
+		return elementor.sections.currentView.addChildElement( properties, jQuery.extend( {}, this.options, options ) );
 	},
 
 	setView: function( view ) {
@@ -44,7 +55,102 @@ AddSectionView = Marionette.ItemView.extend( {
 	},
 
 	getTemplatesModalOptions: function() {
-		return {};
+		return {
+			importOptions: {
+				at: this.getOption( 'atIndex' )
+			}
+		};
+	},
+
+	getContextMenuGroups: function() {
+		return [
+			{
+				name: 'general',
+				actions: [
+					{
+						name: 'copy_all_content',
+						title: elementor.translate( 'copy_all_content' ),
+						callback: this.copyAllContent.bind( this )
+					},	{
+						name: 'paste',
+						title: elementor.translate( 'paste' ),
+						callback: this.paste.bind( this ),
+						isEnabled: function() {
+							return elementor.getStorage( 'transfer' );
+						}
+					}
+				]
+			}
+		];
+	},
+
+	copyAllContent: function() {
+		elementor.setStorage( 'transfer', {
+			type: 'copy',
+			elementsType: 'section',
+			elements: elementor.elements.toJSON( { copyHtmlCache: true } )
+		} );
+	},
+
+	paste: function() {
+		var self = this,
+			transferData = elementor.getStorage( 'transfer' ),
+			section,
+			index;
+
+		elementor.channels.data.trigger( 'element:before:add', transferData.elements[0] );
+
+		if ( 'section' === transferData.elementsType ) {
+			index = this.getOption( 'atIndex' );
+
+			if ( null !== index ) {
+				index++;
+			} else {
+				index = elementor.sections.currentView.collection.length;
+			}
+
+			transferData.elements.forEach( function( element ) {
+				self.addSection( element, {
+					at: index,
+					edit: false,
+					clone: true
+				} );
+
+				index++;
+			} );
+		} else if ( 'column' === transferData.elementsType ) {
+			section = self.addSection( { allowEmpty: true } );
+
+			section.model.unset( 'allowEmpty' );
+
+			index = 0;
+
+			transferData.elements.forEach( function( element ) {
+				section.addChildElement( element, {
+					at: index,
+					clone: true
+				} );
+
+				index++;
+			} );
+
+			section.redefineLayout();
+		} else {
+			section = self.addSection();
+
+			index = 0;
+
+			transferData.elements.forEach( function( element ) {
+				section.addChildElement( element, {
+					at: index,
+					clone: true
+				} );
+
+				index++;
+			} );
+		}
+
+		elementor.channels.data.trigger( 'element:after:add', transferData.elements[0] );
 	},
 
 	onAddSectionButtonClick: function() {
@@ -96,9 +202,9 @@ AddSectionView = Marionette.ItemView.extend( {
 
 	onDropping: function() {
 		elementor.channels.data.trigger( 'section:before:drop' );
+
 		this.addSection().addElementFromPanel();
+
 		elementor.channels.data.trigger( 'section:after:drop' );
 	}
 } );
-
-module.exports = AddSectionView;

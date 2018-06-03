@@ -55,7 +55,7 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_clear_cache() {
 		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 
 		wp_send_json_success();
 	}
@@ -98,7 +98,7 @@ class Tools extends Settings_Page {
 		if ( false === $rows_affected ) {
 			wp_send_json_error( __( 'An error occurred', 'elementor' ) );
 		} else {
-			Plugin::$instance->posts_css_manager->clear_cache();
+			Plugin::$instance->files_manager->clear_cache();
 			wp_send_json_success( sprintf(
 				/* translators: %d: Number of rows */
 				_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),

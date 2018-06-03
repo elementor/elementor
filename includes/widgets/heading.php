@@ -73,6 +73,20 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return ['heading','title','text'];
+	}
+
+	/**
 	 * Register heading widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -213,7 +227,8 @@ class Widget_Heading extends Widget_Base {
 					'value' => Scheme_Color::COLOR_1,
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
+					// Stronger selector to avoid section style from overwriting
+					'{{WRAPPER}}.elementor-widget-heading .elementor-heading-title' => 'color: {{VALUE}};',
 				],
 			]
 		);
