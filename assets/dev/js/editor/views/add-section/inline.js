@@ -14,6 +14,12 @@ module.exports = BaseAddSectionView.extend( {
 		} );
 	},
 
+	paste: function() {
+		BaseAddSectionView.prototype.paste.apply( this, arguments );
+
+		this.destroy();
+	},
+
 	onCloseButtonClick: function() {
 		this.fadeToDeath();
 	},
