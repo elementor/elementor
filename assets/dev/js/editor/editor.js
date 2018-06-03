@@ -161,7 +161,7 @@ App = Marionette.Application.extend( {
 	_defaultDeviceMode: 'desktop',
 
 	addControlView: function( controlID, ControlView ) {
-		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
+		this.modules.controls[ elementor.helpers.firstLetterUppercase( controlID ) ] = ControlView;
 	},
 
 	checkEnvCompatibility: function() {
@@ -221,7 +221,7 @@ App = Marionette.Application.extend( {
 	},
 
 	getControlView: function( controlID ) {
-		var capitalizedControlName = controlID[0].toUpperCase() + controlID.slice( 1 ),
+		var capitalizedControlName = elementor.helpers.firstLetterUppercase( controlID ),
 			View = this.modules.controls[ capitalizedControlName ];
 
 		if ( ! View ) {
