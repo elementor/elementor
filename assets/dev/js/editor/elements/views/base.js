@@ -310,7 +310,7 @@ BaseElementView = BaseContainer.extend( {
 
 			var isVisible = elementor.helpers.isActiveControl( control, settings.attributes );
 
-			if ( isVisible && ! _.isEmpty( classValue ) ) {
+			if ( isVisible && ( classValue || 0 === classValue ) ) {
 				self.$el.addClass( control.prefix_class + classValue );
 			}
 		} );
