@@ -21,6 +21,10 @@ Preview = BaseSectionsContainerView.extend( {
 	},
 
 	getContextMenuGroups: function() {
+		var hasContent = function() {
+			return elementor.elements.length > 0;
+		};
+
 		return [
 			{
 				name: 'paste',
@@ -40,11 +44,13 @@ Preview = BaseSectionsContainerView.extend( {
 					{
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
-						callback: this.copy.bind( this )
+						callback: this.copy.bind( this ),
+						isEnabled: hasContent
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
-						callback: elementor.clearPage.bind( elementor )
+						callback: elementor.clearPage.bind( elementor ),
+						isEnabled: hasContent
 					}
 				]
 			}
