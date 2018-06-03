@@ -42,8 +42,7 @@ BaseElementView = BaseContainer.extend( {
 		var behaviors = {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
-				groups: groups,
-				eventTargets: this.getContextMenuEventTargets()
+				groups: groups
 			}
 		};
 
@@ -172,10 +171,6 @@ BaseElementView = BaseContainer.extend( {
 				]
 			}
 		];
-	},
-
-	getContextMenuEventTargets: function() {
-		return [ '@ui.editButton' ];
 	},
 
 	initialize: function() {
