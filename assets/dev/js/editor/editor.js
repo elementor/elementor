@@ -235,7 +235,7 @@ App = Marionette.Application.extend( {
 	},
 
 	getPanelView: function() {
-		return this.getRegion( 'panel' ).currentView;
+		return this.panel.currentView;
 	},
 
 	getPreviewView: function() {
