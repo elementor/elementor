@@ -52,6 +52,8 @@ module.exports = Marionette.Behavior.extend( {
 
 		event.preventDefault();
 
+		event.stopPropagation();
+
 		this.getContextMenu().show( event );
 	},
 

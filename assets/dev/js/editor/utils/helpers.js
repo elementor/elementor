@@ -166,6 +166,10 @@ helpers = {
 		return JSON.parse( JSON.stringify( object ) );
 	},
 
+	firstLetterUppercase: function( string ) {
+		return string[0].toUpperCase() + string.slice( 1 );
+	},
+
 	disableElementEvents: function( $element ) {
 		$element.each( function() {
 			var currentPointerEvents = this.style.pointerEvents;
