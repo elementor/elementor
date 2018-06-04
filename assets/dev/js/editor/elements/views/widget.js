@@ -81,10 +81,6 @@ WidgetView = BaseElementView.extend( {
 		return groups;
 	},
 
-	getContextMenuEventTargets: function() {
-		return [ 'el' ];
-	},
-
 	render: function() {
 		if ( this.model.isRemoteRequestActive() ) {
 			this.handleEmptyWidget();

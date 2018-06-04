@@ -18,7 +18,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 
 	getSortableOptions: function() {
 		return {
-			handle: '> .elementor-element-overlay .elementor-editor-section-settings .elementor-editor-element-edit',
+			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
 			items: '> .elementor-section'
 		};
 	},
