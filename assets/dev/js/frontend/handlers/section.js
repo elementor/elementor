@@ -53,7 +53,13 @@ var BackgroundVideo = HandlerModule.extend( {
 
 	prepareYTVideo: function( YT, videoID ) {
 		var self = this,
-			$backgroundVideoContainer = self.elements.$backgroundVideoContainer;
+			$backgroundVideoContainer = self.elements.$backgroundVideoContainer,
+			startStateCode = YT.PlayerState.PLAYING;
+
+		// Since version 67, Chrome doesn't fire the `PLAYING` state at start time
+		if ( window.chrome ) {
+			startStateCode = YT.PlayerState.UNSTARTED;
+		}
 
 		$backgroundVideoContainer.addClass( 'elementor-loading elementor-invisible' );
 
@@ -69,7 +75,7 @@ var BackgroundVideo = HandlerModule.extend( {
 				},
 				onStateChange: function( event ) {
 					switch ( event.data ) {
-						case YT.PlayerState.PLAYING:
+						case startStateCode:
 							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
 
 							break;
