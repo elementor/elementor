@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\DebugMode;
 
+use Elementor\Tools;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -12,79 +14,71 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function __construct() {
-		parent::__construct();
+		add_action( 'elementor/admin/after_create_settings/elementor-tools', [ $this, 'add_admin_button' ] );
 
-		add_action( 'admin_action_elementor', [ $this, 'check_debug_mode' ], 0 );
-		add_filter( 'template_include', [ $this, 'template_redirect' ], 0 );
+		add_action( 'add_option_elementor_debug_mode', [ $this, 'update_debug_mode' ], 10, 2 );
+		add_action( 'update_option_elementor_debug_mode', [ $this, 'update_debug_mode' ], 10, 2 );
 	}
 
-	public function template_redirect( $template ) {
-		$settings = get_option( 'elementor_debug_mode', [] );
-
-		if ( ! empty( $settings ) ) {
-			$template = __DIR__ . '/views/template-debug.php';
-		}
-
-		return $template;
+	/**
+	 * @param Tools $tools_page
+	 *
+	 */
+	public function add_admin_button( $tools_page ) {
+		$tools_page->add_tab( 'debug_mode', [
+			'label' => __( 'Debug mode', 'elementor' ),
+			'sections' => [
+				'debug_mode' => [
+					'fields' => [
+						'debug_mode' => [
+							'label' => __( 'Enable Debug Mode', 'elementor' ),
+							'field_args' => [
+								'type' => 'checkbox',
+								'value' => 'yes',
+								'sub_desc' => __( 'Enable Debug mode. <a href="#">Learn More</a>.', 'elementor' ),
+							],
+						],
+					],
+				],
+			],
+		] );
 	}
 
-	public function check_debug_mode() {
-		$settings = get_option( 'elementor_debug_mode', [] );
-
-		if ( empty( $settings ) ) {
-			if ( isset( $_GET['debug_action'] ) && 'start' === $_GET['debug_action'] ) {
-				$settings['active_plugins'] = get_option( 'active_plugins' );
-				$new_active_plugins = [
-					ELEMENTOR_PLUGIN_BASE,
-					ELEMENTOR_PRO_PLUGIN_BASE,
-				];
-
-				update_option( 'active_plugins', $new_active_plugins );
-
-				$settings['template'] = get_option( 'template' );
-				$settings['stylesheet'] = get_option( 'stylesheet' );
-
-				add_option( 'elementor_debug_mode', $settings );
-
-				update_option( 'template', '' );
-				update_option( 'stylesheet', '' );
-
-				wp_redirect( remove_query_arg( 'debug_action' ) );
-			} elseif ( isset( $_GET['mode'] ) && 'debug' === $_GET['mode'] ) {
-				wp_die(
-					sprintf( '<a href="%s">Enter Debug Mode?</a>', add_query_arg( 'debug_action', 'start' ) ),
-					__( 'Elementor Debuge Mode', '' ),
-					[
-						'back_link' => true,
-					]
-				);
-			}
+	public function update_debug_mode( $option, $value ) {
+		if ( 'yes' === $value ) {
+			$this->enable_debug_mode();
 		} else {
-			if ( isset( $_GET['debug_action'] ) && 'end' === $_GET['debug_action'] ) {
-				update_option( 'template', $settings['template'] );
-				update_option( 'stylesheet', $settings['stylesheet'] );
-				delete_option( 'elementor_debug_mode' );
-
-				wp_redirect( remove_query_arg( [
-					'mode',
-					'debug_action',
-				] ) );
-			}
-
-			add_action( 'elementor/editor/footer', [ $this, 'debug_mode_message' ] );
+			$this->disable_debug_mode();
 		}
 	}
 
-	public function debug_mode_message() {
-		?>
-		<div style="position: absolute;z-index: 3;bottom: 0;min-width: 200px;height: 30px;line-height: 30px;background: yellow;right: 0;text-align: center;">
-			<a style="color: black;" href="<?php echo add_query_arg( [
-				'mode' => 'debug',
-				'debug_action' => 'end',
-			] ); ?>">
-			Exit Debug mode
-			</a>
-		</div>
-		<?php
+	public function disable_debug_mode() {
+		$file_path = WP_CONTENT_DIR . '/mu-plugins/elementor-debug-mode.php';
+		if ( file_exists( $file_path ) ) {
+			unlink( $file_path );
+		}
+
+		delete_option( 'elementor_debug_mode' );
+		delete_option( 'elementor_debug_mode_allowed_plugins' );
+	}
+
+	public function enable_debug_mode() {
+		WP_Filesystem();
+
+		$allowed_plugins = [
+			'elementor' => ELEMENTOR_PLUGIN_BASE,
+		];
+
+		if ( defined( 'ELEMENTOR_PRO_PLUGIN_BASE' ) ) {
+			$allowed_plugins['elementor_pro'] = ELEMENTOR_PRO_PLUGIN_BASE;
+		}
+
+		add_option( 'elementor_debug_mode_allowed_plugins', $allowed_plugins );
+
+		if ( ! is_dir( WPMU_PLUGIN_DIR ) ) {
+			wp_mkdir_p( WPMU_PLUGIN_DIR );
+		}
+
+		copy_dir( __DIR__ . '/mu-plugin/', WPMU_PLUGIN_DIR );
 	}
 }
