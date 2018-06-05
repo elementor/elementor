@@ -68,9 +68,10 @@
 	}
 
 	.elementor-background-video-embed {
-		max-width: none;
+		max-width: none; //Stretch the background video on all section
 		position: absolute;
 		top: 50%;
+		left: 0; //reset when the parent has set text-align: center;
 		transform: translateY(-50%);
 	}
 
@@ -175,6 +176,10 @@
 	&.swiper-button-disabled {
 		opacity: 0.3;
 	}
+}
+
+.elementor-tag {
+	display: inline-flex;
 }
 
 // Alignment for Tablet

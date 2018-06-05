@@ -9,36 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor image size control.
  *
  * A base control for creating image size control. Displays input fields to define
- * one of the default image sizes (thumbnail, medium, medium_large, large) or set
- * a custom dimension.
- *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- *    $this->add_group_control(
- *    	Group_Control_Image_Size::get_type(),
- *    	[
- *    		'name' => 'thumbnail',
- *    		'default' => 'large',
- *    		'exclude' => [],
- *    		'include' => [],
- *    		'separator' => 'before',
- *    	]
- *    );
+ * one of the default image sizes (thumbnail, medium, medium_large, large) or custom
+ * image dimensions.
  *
  * @since 1.0.0
- *
- * @param string $name        The field name.
- * @param string $default     Optional. The default image size. Default is empty.
- * @param array  $exclude     Optional. Image size to exclude. Default is empty.
- * @param array  $include     Optional. Image size to include. Default is empty.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
  */
 class Group_Control_Image_Size extends Group_Control_Base {
 
@@ -300,7 +274,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 * @return array Processed fields.
 	 */
 	protected function prepare_fields( $fields ) {
-		$image_sizes = $this->_get_image_sizes();
+		$image_sizes = $this->get_image_sizes();
 
 		$args = $this->get_args();
 
@@ -328,12 +302,12 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 *
 	 * Retrieve available image sizes after filtering `include` and `exclude` arguments.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return array Filtered image sizes.
 	 */
-	private function _get_image_sizes() {
+	private function get_image_sizes() {
 		$wp_image_sizes = self::get_all_image_sizes();
 
 		$args = $this->get_args();

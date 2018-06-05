@@ -2,7 +2,7 @@
 
 	&.wp-picker-active {
 		position: absolute;
-		z-index: 1;
+		z-index: 10000;
 		top: 0;
 		@include end(7px);
 		background-color: #fff;
@@ -40,6 +40,37 @@
 
 	.iris-picker {
 		border: none;
+	}
+
+	&:not(.wp-picker-active) {
+		float: $end;
+
+		.wp-color-result {
+			margin: 0;
+		}
+	}
+
+	&.wp-picker-active {
+		transform: translateY(6px);
+
+		[class*="wp-version-4-9"] #elementor-controls &,
+		[class*="wp-version-5"] #elementor-controls & {
+			padding-top: 9px;
+		}
+
+		.wp-color-result {
+			margin-right: 3px;
+		}
+	}
+
+	input[type="text"].wp-color-picker {
+		float: left;
+		width: 100px;
+		max-width: 136px;
+		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		font-size: 11px;
+		line-height: 12px;
+		padding: 7px 3px;
 	}
 }
 
@@ -82,23 +113,19 @@
 		width: 48px;
 		padding: 0;
 		background-color: $editor-lightest;
-		border-radius: 0 3px 3px 0;
+		border-radius: getValueByDirection(0 3px 3px 0 , 3px 0 0 3px);
 		margin: 0;
 	}
-}
-
-.wp-color-picker {
-	float: left;
-	width: 100px;
-	max-width: 100px;
-	border-radius: 3px 0 0 3px;
-	line-height: 1;
 }
 
 .wp-picker-holder {
 
 	* {
 		box-sizing: content-box;
+	}
+
+	.iris-square-value {
+		transition: none;
 	}
 }
 
@@ -107,31 +134,5 @@
 	~ .wp-picker-holder {
 		clear: both;
 		margin-bottom: 15px;
-	}
-}
-
-.elementor-control {
-
-	.wp-picker-container {
-
-		.iris-square-value {
-			transition: none;
-		}
-
-		&:not(.wp-picker-active) {
-			float: $end;
-
-			.wp-color-result {
-				margin: 0;
-			}
-		}
-
-		&.wp-picker-active {
-			transform: translateY(6px);
-
-			.wp-color-result {
-				margin-right: 3px;
-			}
-		}
 	}
 }

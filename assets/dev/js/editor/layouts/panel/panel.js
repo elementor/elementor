@@ -44,7 +44,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 				view: require( 'elementor-panel/pages/editor' )
 			},
 			menu: {
-				view: elementor.modules.panel.Menu,
+				view: elementor.modules.layouts.panel.pages.menu.Menu,
 				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
 			},
 			colorScheme: {
@@ -109,6 +109,12 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	setPage: function( page, title, viewOptions ) {
+		if ( 'elements' === page && ! elementor.userCan( 'design' ) ) {
+			var pages = this.getPages();
+			if ( pages.hasOwnProperty( 'page_settings' ) ) {
+				page = 'page_settings';
+			}
+		}
 		var pageData = this.getPages( page );
 
 		if ( ! pageData ) {
@@ -125,13 +131,13 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			View = pageData.getView();
 		}
 
+		this.currentPageName = page;
+
 		this.currentPageView = new View( viewOptions );
 
 		this.showChildView( 'content', this.currentPageView );
 
 		this.getHeaderView().setTitle( title || pageData.title );
-
-		this.currentPageName = page;
 
 		this
 			.trigger( 'set:page', this.currentPageView )
@@ -154,6 +160,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementData.title ] ), {
 			model: model,
+			controls: elementor.getElementControls( model ),
 			editedElementView: view
 		} );
 

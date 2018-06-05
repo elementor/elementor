@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor base group control.
+ * Elementor group control base.
  *
- * A base control for creating group control.
+ * An abstract class for creating new group controls in the panel.
  *
  * @since 1.0.0
  * @abstract
@@ -160,11 +160,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Control fields.
 	 */
 	final public function get_fields() {
-		// TODO: Temp - compatibility for posts group
-		if ( method_exists( $this, '_get_controls' ) ) {
-			return $this->_get_controls( $this->get_args() );
-		}
-
 		if ( null === static::$fields ) {
 			static::$fields = $this->init_fields();
 		}
@@ -353,7 +348,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 				'starter_name' => 'popover_toggle',
 				'starter_value' => 'custom',
 				'starter_title' => '',
-				'toggle_type' => 'switcher',
 			],
 		];
 
@@ -440,6 +434,8 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @since 1.2.2
 	 * @access private
 	 *
+	 * @param array $selectors An array of selectors to process.
+	 *
 	 * @return array Processed selectors.
 	 */
 	private function handle_selectors( $selectors ) {
@@ -494,7 +490,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$control_params = [
 			'type' => Controls_Manager::POPOVER_TOGGLE,
 			'label' => $label,
-			'toggle_type' => $popover_options['toggle_type'],
 			'return_value' => $popover_options['starter_value'],
 		];
 

@@ -37,14 +37,19 @@ module.exports = Marionette.ItemView.extend( {
 		var currentSource = elementor.templates.getFilter( 'source' ),
 			$sourceItem = this.ui.menuItems.filter( '[data-template-source="' + currentSource + '"]' );
 
+		if ( 'remote' === currentSource ) {
+			$sourceItem = $sourceItem.filter( '[data-template-type="' + elementor.templates.getFilter( 'type' ) + '"]' );
+		}
+
 		this.activateMenuItem( $sourceItem );
 	},
 
 	onMenuItemClick: function( event ) {
-		var item = event.currentTarget;
+		var item = event.currentTarget,
+			itemData = item.dataset;
 
 		this.activateMenuItem( jQuery( item ) );
 
-		elementor.templates.setTemplatesSource( item.dataset.templateSource );
+		elementor.templates.setTemplatesPage( item.dataset.templateSource, itemData.templateType );
 	}
 } );

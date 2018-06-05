@@ -66,7 +66,9 @@ ElementModel = Backbone.Model.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
-		settings = new SettingsModel( settings );
+		settings = new SettingsModel( settings, {
+			controls: elementor.getElementControls( this )
+		} );
 
 		this.set( 'settings', settings );
 
@@ -98,8 +100,6 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	onCloseEditor: function() {
-		this.initEditSettings();
-
 		if ( this.renderOnLeave ) {
 			this.renderRemoteServer();
 		}
@@ -167,7 +167,6 @@ ElementModel = Backbone.Model.extend( {
 		return elementor.ajax.addRequest( 'render_widget', {
 			unique_id: this.cid,
 			data: {
-				post_id: elementor.config.post_id,
 				data: data
 			},
 			success: this.onRemoteGetHtml.bind( this )

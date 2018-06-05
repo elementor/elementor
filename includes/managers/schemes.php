@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor scheme manager class.
+ * Elementor scheme manager.
  *
  * Elementor scheme manager handler class is responsible for registering and
  * initializing all the supported schemes.

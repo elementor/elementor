@@ -6,7 +6,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 ControlRepeaterItemView = ControlBaseDataView.extend( {
 	ui: {
 		btnAddRow: '.elementor-repeater-add',
-		fieldContainer: '.elementor-repeater-fields'
+		fieldContainer: '.elementor-repeater-fields-wrapper'
 	},
 
 	events: function() {
@@ -20,7 +20,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	childView: RepeaterRowView,
 
-	childViewContainer: '.elementor-repeater-fields',
+	childViewContainer: '.elementor-repeater-fields-wrapper',
 
 	templateHelpers: function() {
 		return {
@@ -31,8 +31,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	childViewOptions: function() {
 		return {
 			controlFields: this.model.get( 'fields' ),
-			titleField: this.model.get( 'title_field' ),
-			parentModel: this.elementSettingsModel // For parentConditions in repeaterRow
+			titleField: this.model.get( 'title_field' )
 		};
 	},
 
@@ -52,10 +51,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		var controlName = this.model.get( 'name' );
 		this.collection = this.elementSettingsModel.get( controlName );
 
+		// Hack for history redo/undo
 		if ( ! ( this.collection instanceof Backbone.Collection ) ) {
 			this.collection = new Backbone.Collection( this.collection, {
 				// Use `partial` to supply the `this` as an argument, but not as context
-				// the `_` i sa place holder for original arguments: `attrs` & `options`
+				// the `_` is a place holder for original arguments: `attrs` & `options`
 				model: _.partial( this.createItemModel, _, _, this )
 			} );
 
@@ -133,6 +133,8 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 		this.children.each( function( view ) {
 			view.updateIndex( collection.indexOf( view.model ) + 1 );
+
+			view.setTitle();
 		} );
 	},
 

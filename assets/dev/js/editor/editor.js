@@ -12,6 +12,8 @@ Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, opti
 };
 
 App = Marionette.Application.extend( {
+	previewLoadedOnce: false,
+
 	helpers: require( 'elementor-editor-utils/helpers' ),
 	heartbeat: require( 'elementor-editor-utils/heartbeat' ),
 	imagesManager: require( 'elementor-editor-utils/images-manager' ),
@@ -35,69 +37,131 @@ App = Marionette.Application.extend( {
 
 	// Exporting modules that can be used externally
 	modules: {
-		element: {
-			Model: require( 'elementor-elements/models/element' )
-		},
-		ControlsStack: require( 'elementor-views/controls-stack' ),
 		Module: require( 'elementor-utils/module' ),
-		RepeaterRowView: require( 'elementor-controls/repeater-row' ),
-		SettingsModel: require( 'elementor-elements/models/base-settings' ),
-		WidgetView: require( 'elementor-elements/views/widget' ),
-		panel: {
-			Menu: require( 'elementor-panel/pages/menu/menu' )
+		components: {
+			templateLibrary: {
+				views: {
+					parts: {
+						headerParts: {
+							logo: require( 'elementor-templates/views/parts/header-parts/logo' )
+						}
+					},
+					BaseModalLayout: require( 'elementor-templates/views/base-modal-layout' )
+				}
+			},
+			saver: {
+				behaviors: {
+					FooterSaver: require( './components/saver/behaviors/footer-saver' )
+				}
+			}
 		},
 		controls: {
+			Animation: require( 'elementor-controls/select2' ),
 			Base: require( 'elementor-controls/base' ),
 			BaseData: require( 'elementor-controls/base-data' ),
 			BaseMultiple: require( 'elementor-controls/base-multiple' ),
+			Box_shadow: require( 'elementor-controls/box-shadow' ),
 			Button: require( 'elementor-controls/button' ),
+			Choose: require( 'elementor-controls/choose' ),
+			Code: require( 'elementor-controls/code' ),
 			Color: require( 'elementor-controls/color' ),
+			Date_time: require( 'elementor-controls/date-time' ),
 			Dimensions: require( 'elementor-controls/dimensions' ),
+			Font: require( 'elementor-controls/font' ),
+			Gallery: require( 'elementor-controls/gallery' ),
+			Hover_animation: require( 'elementor-controls/select2' ),
+			Icon: require( 'elementor-controls/icon' ),
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
 			Media: require( 'elementor-controls/media' ),
-			Slider: require( 'elementor-controls/slider' ),
-			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
-			Choose: require( 'elementor-controls/choose' ),
-			Url: require( 'elementor-controls/base-multiple' ),
-			Font: require( 'elementor-controls/font' ),
-			Section: require( 'elementor-controls/section' ),
-			Tab: require( 'elementor-controls/tab' ),
-			Repeater: require( 'elementor-controls/repeater' ),
-			Wp_widget: require( 'elementor-controls/wp_widget' ),
-			Icon: require( 'elementor-controls/icon' ),
-			Gallery: require( 'elementor-controls/gallery' ),
-			Select2: require( 'elementor-controls/select2' ),
-			Date_time: require( 'elementor-controls/date-time' ),
-			Code: require( 'elementor-controls/code' ),
-			Box_shadow: require( 'elementor-controls/box-shadow' ),
-			Text_shadow: require( 'elementor-controls/box-shadow' ),
-			Structure: require( 'elementor-controls/structure' ),
-			Animation: require( 'elementor-controls/select2' ),
-			Hover_animation: require( 'elementor-controls/select2' ),
-			Order: require( 'elementor-controls/order' ),
-			Switcher: require( 'elementor-controls/switcher' ),
 			Number: require( 'elementor-controls/number' ),
-			Popover_toggle: require( 'elementor-controls/popover-toggle' )
+			Order: require( 'elementor-controls/order' ),
+			Popover_toggle: require( 'elementor-controls/popover-toggle' ),
+			Repeater: require( 'elementor-controls/repeater' ),
+			RepeaterRow: require( 'elementor-controls/repeater-row' ),
+			Section: require( 'elementor-controls/section' ),
+			Select: require( 'elementor-controls/select' ),
+			Select2: require( 'elementor-controls/select2' ),
+			Slider: require( 'elementor-controls/slider' ),
+			Structure: require( 'elementor-controls/structure' ),
+			Switcher: require( 'elementor-controls/switcher' ),
+			Tab: require( 'elementor-controls/tab' ),
+			Text_shadow: require( 'elementor-controls/box-shadow' ),
+			Url: require( 'elementor-controls/base-multiple' ),
+			Wp_widget: require( 'elementor-controls/wp_widget' ),
+			Wysiwyg: require( 'elementor-controls/wysiwyg' )
 		},
-		saver: {
-			footerBehavior: require( './components/saver/behaviors/footer-saver' )
+		elements: {
+			models: {
+				BaseSettings: require( 'elementor-elements/models/base-settings' ),
+				Element: require( 'elementor-elements/models/element' )
+			},
+			views: {
+				Widget: require( 'elementor-elements/views/widget' )
+			}
 		},
-		templateLibrary: {
-			ElementsCollectionView: require( 'elementor-panel/pages/elements/views/elements' )
+		layouts: {
+			panel: {
+				pages: {
+					elements: {
+						views: {
+							Global: require( 'elementor-panel/pages/elements/views/global' ),
+							Elements: require( 'elementor-panel/pages/elements/views/elements' )
+						}
+					},
+					menu: {
+						Menu: require( 'elementor-panel/pages/menu/menu' )
+					}
+				}
+			}
+		},
+		views: {
+			ControlsStack: require( 'elementor-views/controls-stack' )
 		}
 	},
 
 	backgroundClickListeners: {
 		popover: {
 			element: '.elementor-controls-popover',
-			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label'
+			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container'
+		},
+		tagsList: {
+			element: '.elementor-tags-list',
+			ignore: '.elementor-control-dynamic-switcher'
 		}
+	},
+
+	// TODO: Temp modules bc method since 2.0.0
+	initModulesBC: function() {
+		var bcModules = {
+			ControlsStack: this.modules.views.ControlsStack,
+			element: {
+				Model: this.modules.elements.models.Element
+			},
+			RepeaterRowView: this.modules.controls.RepeaterRow,
+			WidgetView: this.modules.elements.views.Widget,
+			panel: {
+				Menu: this.modules.layouts.panel.pages.menu.Menu
+			},
+			saver: {
+				footerBehavior: this.modules.components.saver.behaviors.FooterSaver
+			},
+			SettingsModel: this.modules.elements.models.BaseSettings,
+			templateLibrary: {
+				ElementsCollectionView: this.modules.layouts.panel.pages.elements.views.Elements
+			}
+		};
+
+		jQuery.extend( this.modules, bcModules );
+	},
+
+	userCan: function( capability ) {
+		return -1 === this.config.user.restrictions.indexOf( capability );
 	},
 
 	_defaultDeviceMode: 'desktop',
 
 	addControlView: function( controlID, ControlView ) {
-		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
+		this.modules.controls[ elementor.helpers.firstLetterUppercase( controlID ) ] = ControlView;
 	},
 
 	checkEnvCompatibility: function() {
@@ -140,14 +204,24 @@ App = Marionette.Application.extend( {
 				return;
 			}
 
-			controls[ controlKey ] = _.extend( {}, self.config.controls[ controlData.type ], controlData  );
+			controls[ controlKey ] = controlData;
+		} );
+
+		return controls;
+	},
+
+	mergeControlsSettings: function( controls ) {
+		var  self = this;
+
+		_.each( controls, function( controlData, controlKey ) {
+			controls[ controlKey ] = jQuery.extend( true, {}, self.config.controls[ controlData.type ], controlData  );
 		} );
 
 		return controls;
 	},
 
 	getControlView: function( controlID ) {
-		var capitalizedControlName = controlID[0].toUpperCase() + controlID.slice( 1 ),
+		var capitalizedControlName = elementor.helpers.firstLetterUppercase( controlID ),
 			View = this.modules.controls[ capitalizedControlName ];
 
 		if ( ! View ) {
@@ -161,15 +235,20 @@ App = Marionette.Application.extend( {
 	},
 
 	getPanelView: function() {
-		return this.getRegion( 'panel' ).currentView;
+		return this.panel.currentView;
+	},
+
+	getPreviewView: function() {
+		return this.sections.currentView;
 	},
 
 	initEnvData: function() {
-		this.envData = _.pick( tinymce.EditorManager.Env, [ 'desktop', 'webkit', 'gecko', 'ie', 'opera' ] );
+		this.envData = _.pick( tinymce.Env, [ 'desktop', 'mac', 'webkit', 'gecko', 'ie', 'opera' ] );
 	},
 
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
+			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
 			Settings = require( 'elementor-editor/components/settings/settings' ),
 			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
@@ -180,8 +259,10 @@ App = Marionette.Application.extend( {
 
 		this.settings = new Settings();
 
+		this.dynamicTags = new DynamicTags();
+
 		/**
-		 * @deprecated - use `this.settings.page` instead
+		 * @deprecated 1.6.0 - use `this.settings.page` instead
 		 */
 		this.pageSettings = this.settings.page;
 
@@ -223,16 +304,14 @@ App = Marionette.Application.extend( {
 		if ( ! this.$preview ) {
 			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
-				src: this.config.preview_link + '&' + ( new Date().getTime() ),
+				src: this.config.document.urls.preview,
 				allowfullscreen: 1
 			} );
 
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		this.$preview
-			.on( 'load', this.onPreviewLoaded.bind( this ) )
-			.one( 'load', this.checkPageStatus.bind( this ) );
+		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	},
 
 	initFrontend: function() {
@@ -308,7 +387,7 @@ App = Marionette.Application.extend( {
 						return false;
 					}
 
-					return ! $target.closest( '.elementor-inline-editing' ).length;
+					return ! $target.closest( '[contenteditable="true"]' ).length;
 				},
 				handle: function() {
 					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
@@ -339,7 +418,7 @@ App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
 				},
 				handle: function() {
-					elementor.templates.showTemplatesModal();
+					elementor.templates.startModal();
 				}
 			}
 		};
@@ -458,7 +537,7 @@ App = Marionette.Application.extend( {
 	},
 
 	checkPageStatus: function() {
-		if ( elementor.config.current_revision_id !== elementor.config.post_id ) {
+		if ( elementor.config.current_revision_id !== elementor.config.document.id ) {
 			this.notifications.showToast( {
 				message: this.translate( 'working_on_draft_notification' ),
 				buttons: [
@@ -469,7 +548,6 @@ App = Marionette.Application.extend( {
 							var panel = elementor.getPanelView();
 
 							panel.setPage( 'historyPage' );
-
 							panel.getCurrentPageView().activateTab( 'revisions' );
 						}
 					}
@@ -478,8 +556,42 @@ App = Marionette.Application.extend( {
 		}
 	},
 
+	getStorage: function( key ) {
+		var elementorStorage = localStorage.getItem( 'elementor' );
+
+		if ( elementorStorage ) {
+			elementorStorage = JSON.parse( elementorStorage );
+		} else {
+			elementorStorage = {};
+		}
+
+		if ( key ) {
+			return elementorStorage[ key ];
+		}
+
+		return elementorStorage;
+	},
+
+	setStorage: function( key, value ) {
+		var elementorStorage = this.getStorage();
+
+		elementorStorage[ key ] = value;
+
+		localStorage.setItem( 'elementor', JSON.stringify( elementorStorage ) );
+	},
+
+	openLibraryOnStart: function() {
+		if ( '#library' === location.hash ) {
+			elementor.templates.startModal();
+
+			location.hash = '';
+		}
+	},
+
 	onStart: function() {
 		this.$window = jQuery( window );
+
+		this.$body = jQuery( 'body' );
 
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -489,8 +601,9 @@ App = Marionette.Application.extend( {
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
-		this.initComponents();
+		this.initModulesBC();
 
+		this.initComponents();
 		this.initEnvData();
 
 		if ( ! this.checkEnvCompatibility() ) {
@@ -502,13 +615,11 @@ App = Marionette.Application.extend( {
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.initClearPageDialog();
-
 		this.addBackgroundClickArea( document );
 
 		this.$window.trigger( 'elementor:init' );
 
 		this.initPreview();
-
 		this.logSite();
 	},
 
@@ -524,57 +635,53 @@ App = Marionette.Application.extend( {
 		}
 
 		this.$previewContents = this.$preview.contents();
+		this.$previewElementorEl = this.$previewContents.find( '#elementor' );
 
-		var $previewElementorEl = this.$previewContents.find( '#elementor' );
-
-		if ( ! $previewElementorEl.length ) {
+		if ( ! this.$previewElementorEl.length ) {
 			this.onPreviewElNotFound();
 
 			return;
 		}
 
 		this.initFrontend();
-
 		this.initElements();
-
 		this.initHotKeys();
-
-		this.heartbeat.init();
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
-			el: $previewElementorEl[0]
+			el: this.$previewElementorEl[0]
 		} );
 
 		this.schemes.init();
-
 		this.schemes.printSchemesStyle();
 
 		this.preventClicksInsideEditor();
 
 		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
 
-		var Preview = require( 'elementor-views/preview' ),
-			PanelLayoutView = require( 'elementor-layouts/panel/panel' );
+		if ( this.previewLoadedOnce ) {
+			this.getPanelView().setPage( 'elements' );
+		} else {
+			this.onFirstPreviewLoaded();
+		}
 
 		this.addRegions( {
-			sections: iframeRegion,
-			panel: '#elementor-panel'
+			sections: iframeRegion
 		} );
+
+		var Preview = require( 'elementor-views/preview' );
 
 		this.getRegion( 'sections' ).show( new Preview( {
 			collection: this.elements
 		} ) );
 
-		this.getRegion( 'panel' ).show( new PanelLayoutView() );
+		this.$previewContents.children().addClass( 'elementor-html' );
 
-		this.$previewContents
-		    .children() // <html>
-		    .addClass( 'elementor-html' )
-		    .children( 'body' )
-		    .addClass( 'elementor-editor-active' );
+		elementorFrontend.getElements( '$body' ).addClass( 'elementor-editor-active' );
 
-		this.setResizablePanel();
+		if ( ! elementor.userCan( 'design' ) ) {
+			elementorFrontend.getElements( '$body' ).addClass( 'elementor-editor-content-only' );
+		}
 
 		this.changeDeviceMode( this._defaultDeviceMode );
 
@@ -589,6 +696,22 @@ App = Marionette.Application.extend( {
 		this.onEditModeSwitched();
 
 		this.trigger( 'preview:loaded' );
+	},
+
+	onFirstPreviewLoaded: function() {
+		this.addRegions( {
+			panel: '#elementor-panel'
+		} );
+
+		var PanelLayoutView = require( 'elementor-layouts/panel/panel' );
+		this.panel.show( new PanelLayoutView() );
+
+		this.setResizablePanel();
+		this.heartbeat.init();
+		this.checkPageStatus();
+		this.openLibraryOnStart();
+
+		this.previewLoadedOnce = true;
 	},
 
 	onEditModeSwitched: function() {
@@ -628,13 +751,21 @@ App = Marionette.Application.extend( {
 	},
 
 	onPreviewElNotFound: function() {
-		this.showFatalErrorDialog( {
-			headerMessage: this.translate( 'preview_el_not_found_header' ),
-			message: this.translate( 'preview_el_not_found_message' ),
-			onConfirm: function() {
-				open( elementor.config.help_the_content_url, '_blank' );
-			}
-		} );
+		var args = this.$preview[0].contentWindow.elementorPreviewErrorArgs;
+
+		if ( ! args ) {
+			args = {
+				headerMessage: this.translate( 'preview_el_not_found_header' ),
+				message: this.translate( 'preview_el_not_found_message' ),
+				confirmURL: elementor.config.help_the_content_url
+			};
+		}
+
+		args.onConfirm = function() {
+			open( args.confirmURL, '_blank' );
+		};
+
+		this.showFatalErrorDialog( args );
 	},
 
 	onBackgroundClick: function( event ) {
@@ -685,30 +816,36 @@ App = Marionette.Application.extend( {
 	},
 
 	enterPreviewMode: function( hidePanel ) {
-		var $elements = this.$previewContents.find( 'body' );
+		var $elements = elementorFrontend.getElements( '$body' );
 
 		if ( hidePanel ) {
-			$elements = $elements.add( 'body' );
+			$elements = $elements.add( this.$body );
 		}
 
 		$elements
 			.removeClass( 'elementor-editor-active' )
 			.addClass( 'elementor-editor-preview' );
 
+		this.$previewElementorEl
+			.removeClass( 'elementor-edit-area-active' )
+			.addClass( 'elementor-edit-area-preview' );
+
 		if ( hidePanel ) {
 			// Handle panel resize
-			this.$previewWrapper.css( elementor.config.is_rtl ? 'right' : 'left', '' );
+			this.$previewWrapper.css( this.config.is_rtl ? 'right' : 'left', '' );
 
 			this.panel.$el.css( 'width', '' );
 		}
 	},
 
 	exitPreviewMode: function() {
-		this.$previewContents
-			.find( 'body' )
-			.add( 'body' )
+		elementorFrontend.getElements( '$body' ).add( this.$body )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
+
+		this.$previewElementorEl
+			.removeClass( 'elementor-edit-area-preview' )
+			.addClass( 'elementor-edit-area-active' );
 	},
 
 	changeEditMode: function( newMode ) {
@@ -739,7 +876,7 @@ App = Marionette.Application.extend( {
 			return;
 		}
 
-		jQuery( 'body' )
+		this.$body
 			.removeClass( 'elementor-device-' + oldDeviceMode )
 			.addClass( 'elementor-device-' + newDeviceMode );
 
@@ -752,6 +889,8 @@ App = Marionette.Application.extend( {
 	enqueueTypographyFonts: function() {
 		var self = this,
 			typographyScheme = this.schemes.getScheme( 'typography' );
+
+		self.helpers.resetEnqueuedFontsCache();
 
 		_.each( typographyScheme.items, function( item ) {
 			self.helpers.enqueueFont( item.value.font_family );
@@ -770,7 +909,18 @@ App = Marionette.Application.extend( {
 		}
 
 		if ( templateArgs ) {
+			// TODO: bc since 2.0.4
 			string = string.replace( /{(\d+)}/g, function( match, number ) {
+				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
+			} );
+
+			string = string.replace( /%(?:(\d+)\$)?s/g, function( match, number ) {
+				if ( ! number ) {
+					number = 1;
+				}
+
+				number--;
+
 				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
 			} );
 		}
@@ -829,12 +979,14 @@ App = Marionette.Application.extend( {
 		} else {
 			text += '%c00';
 
-			style = 'line-height: 1.6; font-size: 20px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat; background-size: cover';
+			style = 'font-size: 22px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
 		}
 
-		text += '%c\nLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
+		setTimeout( console.log.bind( console, text, style ) );
 
-		setTimeout( console.log.bind( console, text, style, 'color: #9B0A46', '' ) );
+		text = '%cLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
+
+		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) );
 	}
 } );
 

@@ -53,7 +53,13 @@ var BackgroundVideo = HandlerModule.extend( {
 
 	prepareYTVideo: function( YT, videoID ) {
 		var self = this,
-			$backgroundVideoContainer = self.elements.$backgroundVideoContainer;
+			$backgroundVideoContainer = self.elements.$backgroundVideoContainer,
+			startStateCode = YT.PlayerState.PLAYING;
+
+		// Since version 67, Chrome doesn't fire the `PLAYING` state at start time
+		if ( window.chrome ) {
+			startStateCode = YT.PlayerState.UNSTARTED;
+		}
 
 		$backgroundVideoContainer.addClass( 'elementor-loading elementor-invisible' );
 
@@ -69,7 +75,7 @@ var BackgroundVideo = HandlerModule.extend( {
 				},
 				onStateChange: function( event ) {
 					switch ( event.data ) {
-						case YT.PlayerState.PLAYING:
+						case startStateCode:
 							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
 
 							break;
@@ -142,25 +148,23 @@ var StretchedSection = HandlerModule.extend( {
 	stretchElement: null,
 
 	bindEvents: function() {
-		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretchSection );
+		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretch );
 	},
 
 	initStretch: function() {
 		this.stretchElement = new elementorFrontend.modules.StretchElement( { element: this.$element } );
 	},
 
-	stretchSection: function() {
+	stretch: function() {
 		var isStretched = this.$element.hasClass( 'elementor-section-stretched' );
 
-		if ( elementorFrontend.isEditMode() || isStretched ) {
-			this.stretchElement.reset();
+		if ( ! isStretched ) {
+			return;
 		}
 
-		if ( isStretched ) {
-			this.stretchElement.setSettings( 'selectors.container', elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window );
+		this.stretchElement.setSettings( 'selectors.container', elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window );
 
-			this.stretchElement.stretch();
-		}
+		this.stretchElement.stretch();
 	},
 
 	onInit: function() {
@@ -168,12 +172,18 @@ var StretchedSection = HandlerModule.extend( {
 
 		this.initStretch();
 
-		this.stretchSection();
+		var isStretched = this.$element.hasClass( 'elementor-section-stretched' );
+
+		if ( elementorFrontend.isEditMode() || isStretched ) {
+			this.stretchElement.reset();
+		}
+
+		this.stretch();
 	},
 
 	onGeneralSettingsChange: function( changed ) {
 		if ( 'elementor_stretched_section_container' in changed ) {
-			this.stretchSection();
+			this.stretch();
 		}
 	}
 } );
@@ -268,7 +278,7 @@ module.exports = function( $scope ) {
 	}
 
 	if ( elementorFrontend.isEditMode() ) {
-		new Shapes( { $element:  $scope } );
+		new Shapes( { $element: $scope } );
 	}
 
 	new BackgroundVideo( { $element: $scope } );

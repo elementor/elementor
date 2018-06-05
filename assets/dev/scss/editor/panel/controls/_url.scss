@@ -9,8 +9,10 @@
 
 	.elementor-control-url-external-show {
 
-		input {
+		.elementor-input,
+		.elementor-input-style {
 			padding-right: 46px;
+			height: 26px;
 		}
 	}
 
@@ -26,7 +28,7 @@
 			right: 0;
 			height: 26px;
 			width: 40px;
-			border-left: 1px solid;
+			border-left: 1px solid $editor-lightest;
 			cursor: pointer;
 			font-size: 10px;
 			border-radius: 0 3px 3px 0;
@@ -60,8 +62,8 @@
 		}
 	}
 
-	input[type=url], .elementor-input[data-setting=url] {
-		direction: ltr; // Force ltr also in RTL languages
+	.elementor-input {
+		direction: ltr; // Force LTR also in RTL languages
 
 		&:not(:focus) {
 

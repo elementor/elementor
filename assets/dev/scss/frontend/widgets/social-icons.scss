@@ -27,6 +27,7 @@
 	}
 
 	&- {
+		&android		{ background-color: $android; }
 		&apple			{ background-color: $apple; }
 		&behance		{ background-color: $behance; }
 		&bitbucket		{ background-color: $bitbucket; }
@@ -58,7 +59,10 @@
 		&soundcloud		{ background-color: $soundcloud; }
 		&spotify		{ background-color: $spotify; }
 		&stack-overflow { background-color: $stack-overflow; }
+		&steam 			{ background-color: $steam; }
+		&stumbleupon 	{ background-color: $stumbleupon; }
 		&telegram		{ background-color: $telegram; }
+		&thumb-tack		{ background-color: $thumbtack; }
 		&tripadvisor	{ background-color: $tripadvisor; }
 		&tumblr			{ background-color: $tumblr; }
 		&twitch			{ background-color: $twitch; }
@@ -72,6 +76,7 @@
 		&xing			{ background-color: $xing; }
 		&yelp			{ background-color: $yelp; }
 		&youtube		{ background-color: $youtube; }
+		&500px			{ background-color: $five-h-px; }
 	}
 }
 

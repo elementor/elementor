@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor section element class.
+ * Elementor section element.
  *
- * Elementor repeater handler class is responsible for initializing the section
+ * Elementor section handler class is responsible for initializing the section
  * element.
  *
  * @since 1.0.0
@@ -49,37 +49,18 @@ class Element_Section extends Element_Base {
 	private static $presets = [];
 
 	/**
-	 * Get default edit tools.
+	 * Get element type.
 	 *
-	 * Retrieve the section default edit tools. Used to set initial tools.
+	 * Retrieve the element type, in this case `section`.
 	 *
-	 * @since 1.0.0
-	 * @access protected
+	 * @since 2.1.0
+	 * @access public
 	 * @static
 	 *
-	 * @return array Default section edit tools.
+	 * @return string The type.
 	 */
-	protected static function get_default_edit_tools() {
-		$section_label = __( 'Section', 'elementor' );
-
-		return [
-			'duplicate' => [
-				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $section_label ),
-				'icon' => 'clone',
-			],
-			'add' => [
-				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
-				'icon' => 'plus',
-			],
-			'save' => [
-				'title' => sprintf( __( 'Save %s', 'elementor' ), $section_label ),
-				'icon' => 'save',
-			],
-			'remove' => [
-				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
-				'icon' => 'close',
-			],
-		];
+	public static function get_type() {
+		return 'section';
 	}
 
 	/**
@@ -221,6 +202,39 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Get default edit tools.
+	 *
+	 * Retrieve the section default edit tools. Used to set initial tools.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 * @static
+	 *
+	 * @return array Default section edit tools.
+	 */
+	protected static function get_default_edit_tools() {
+		$section_label = __( 'Section', 'elementor' );
+
+		return [
+			'add' => [
+				/* translators: %s: Section label */
+				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
+				'icon' => 'plus',
+			],
+			'edit' => [
+				/* translators: %s: Section label */
+				'title' => sprintf( __( 'Edit %s', 'elementor' ), $section_label ),
+				'icon' => 'handle',
+			],
+			'remove' => [
+				/* translators: %s: Section label */
+				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
+				'icon' => 'close',
+			],
+		];
+	}
+
+	/**
 	 * Get initial config.
 	 *
 	 * Retrieve the current section initial configuration.
@@ -270,7 +284,7 @@ class Element_Section extends Element_Base {
 				'prefix_class' => 'elementor-',
 				'render_type' => 'template',
 				'hide_in_inner' => true,
-				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%s" target="_blank">%s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
+				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
 			]
 		);
 
@@ -447,13 +461,14 @@ class Element_Section extends Element_Base {
 		);
 
 		$possible_tags = [
-			'section',
+			'div',
 			'header',
 			'footer',
-			'aside',
+			'main',
 			'article',
+			'section',
+			'aside',
 			'nav',
-			'div',
 		];
 
 		$options = [
@@ -588,7 +603,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'background_overlay_opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
@@ -628,7 +643,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
@@ -767,6 +782,20 @@ class Element_Section extends Element_Base {
 						'step' => 0.1,
 					],
 				],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'background_background',
+							'operator' => '!==',
+							'value' => '',
+						], [
+							'name' => 'border_border',
+							'operator' => '!==',
+							'value' => '',
+						],
+					],
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
 					'{{WRAPPER}} > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
@@ -895,7 +924,7 @@ class Element_Section extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'transform: rotateY(180deg)',
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'transform: translateX(-50%) rotateY(180deg)',
 					],
 				]
 			);
@@ -943,7 +972,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes() ) ) {
+		if ( in_array( Scheme_Color::get_type(), Schemes_Manager::get_enabled_schemes(), true ) ) {
 			$this->add_control(
 				'colors_warning',
 				[
@@ -1034,7 +1063,7 @@ class Element_Section extends Element_Base {
 		$this->start_controls_section(
 			'section_advanced',
 			[
-				'label' => __( 'Element Style', 'elementor' ),
+				'label' => __( 'Advanced', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -1080,6 +1109,7 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
+				'label_block' => false,
 			]
 		);
 
@@ -1090,7 +1120,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::ANIMATION,
 				'default' => '',
 				'prefix_class' => 'animated ',
-				'label_block' => true,
+				'label_block' => false,
 				'frontend_available' => true,
 			]
 		);
@@ -1135,8 +1165,8 @@ class Element_Section extends Element_Base {
 				'label' => __( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
-				'label_block' => true,
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
 			]
 		);
 
@@ -1147,8 +1177,8 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'prefix_class' => '',
-				'label_block' => true,
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'label_block' => false,
 			]
 		);
 
@@ -1249,17 +1279,13 @@ class Element_Section extends Element_Base {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php printf( __( 'Edit %s', 'elementor' ),  __( 'Section', 'elementor' ) ); ?>">
-					<i class="eicon-section" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php printf( __( 'Edit %s', 'elementor' ), __( 'Section', 'elementor' ) ); ?></span>
-				</li>
-				<?php foreach ( Element_Section::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# if ( ! isInner ) { #>
 					<?php endif; ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
-						<i class="eicon-<?php echo $edit_tool['icon']; ?>" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
+						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
 					</li>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# } #>
@@ -1280,11 +1306,12 @@ class Element_Section extends Element_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<div class="elementor-background-video-container elementor-hidden-phone">
-			<div class="elementor-background-video-embed"></div>
-			<video class="elementor-background-video-hosted" autoplay loop muted></video>
-		</div>
-		<div class="elementor-background-video-fallback"></div>
+		<# if ( settings.background_video_link ) { #>
+			<div class="elementor-background-video-container elementor-hidden-phone">
+				<div class="elementor-background-video-embed"></div>
+				<video class="elementor-background-video-hosted" autoplay loop muted></video>
+			</div>
+		<# } #>
 		<div class="elementor-background-overlay"></div>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
@@ -1303,9 +1330,10 @@ class Element_Section extends Element_Base {
 	 * @access public
 	 */
 	public function before_render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
+
 		?>
-		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<<?php echo esc_html( $this->get_html_tag() ); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
@@ -1322,8 +1350,8 @@ class Element_Section extends Element_Base {
 				endif;
 			endif;
 
-			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ] ) ||
-									  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ] );
+			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
+									  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
 			if ( $has_background_overlay ) :
 			?>
@@ -1356,14 +1384,14 @@ class Element_Section extends Element_Base {
 		?>
 				</div>
 			</div>
-		</<?php echo $this->get_html_tag(); ?>>
+		</<?php echo esc_html( $this->get_html_tag() ); ?>>
 		<?php
 	}
 
 	/**
 	 * Add section render attributes.
 	 *
-	 * Used to add render attributes to the section element.
+	 * Used to add attributes to the current section wrapper HTML tag.
 	 *
 	 * @since 1.3.0
 	 * @access protected
@@ -1434,7 +1462,7 @@ class Element_Section extends Element_Base {
 		$base_setting_key = "shape_divider_$side";
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
 		?>
-		<div class="elementor-shape elementor-shape-<?php echo $side; ?>" data-negative="<?php echo var_export( $negative ); ?>">
+		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php echo var_export( $negative ); ?>">
 			<?php include Shapes::get_shape_path( $settings[ $base_setting_key ], ! empty( $settings[ $base_setting_key . '_negative' ] ) ); ?>
 		</div>
 		<?php

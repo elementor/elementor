@@ -34,12 +34,12 @@ class Plugins_Reporter extends Base_Reporter {
 	 *
 	 * Retrieve the active plugins from the list of all the installed plugins.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return array Active plugins.
 	 */
-	private function _get_plugins() {
+	private function get_plugins() {
 		if ( ! $this->plugins ) {
 			// Ensure get_plugins function is loaded
 			if ( ! function_exists( 'get_plugins' ) ) {
@@ -78,7 +78,7 @@ class Plugins_Reporter extends Base_Reporter {
 	 * @return bool True if the site has active plugins, False otherwise.
 	 */
 	public function is_enabled() {
-		return ! ! $this->_get_plugins();
+		return ! ! $this->get_plugins();
 	}
 
 	/**
@@ -113,7 +113,7 @@ class Plugins_Reporter extends Base_Reporter {
 	 */
 	public function get_active_plugins() {
 		return [
-			'value' => $this->_get_plugins(),
+			'value' => $this->get_plugins(),
 		];
 	}
 }

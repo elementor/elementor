@@ -35,7 +35,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.jqueryXhr = elementor.history.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: function( data ) {
-				elementor.history.revisions.setEditorData( data );
+				elementor.history.revisions.setEditorData( data.elements );
+				elementor.settings.page.model.set( data.settings );
 
 				self.setRevisionsButtonsActive( true );
 
@@ -78,7 +79,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 				self.currentPreviewId = null;
 			},
-			error: function( data ) {
+			error: function() {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				alert( 'An error occurred' );
@@ -201,8 +202,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	onChildviewDeleteClick: function( childView ) {
 		var self = this,
-			type = childView.model.get( 'type' ),
-			id = childView.model.get( 'id' );
+			type = childView.model.get( 'type' );
 
 		var removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
 			message: elementor.translate( 'dialog_confirm_delete', [ type ] ),

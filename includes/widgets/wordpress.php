@@ -35,12 +35,12 @@ class Widget_WordPress extends Widget_Base {
 	/**
 	 * Whether the widget is a Pojo widget or not.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return bool
 	 */
-	private function _is_pojo_widget() {
+	private function is_pojo_widget() {
 		return $this->get_widget_instance() instanceof \Pojo_Widget_Base;
 	}
 
@@ -85,7 +85,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @return array Widget categories. Returns either a WordPress category or Pojo category.
 	 */
 	public function get_categories() {
-		if ( $this->_is_pojo_widget() ) {
+		if ( $this->is_pojo_widget() ) {
 			$category = 'pojo';
 		} else {
 			$category = 'wordpress'; // WPCS: spelling ok.
@@ -104,10 +104,24 @@ class Widget_WordPress extends Widget_Base {
 	 * @return string Widget icon. Returns either a WordPress icon or Pojo icon.
 	 */
 	public function get_icon() {
-		if ( $this->_is_pojo_widget() ) {
+		if ( $this->is_pojo_widget() ) {
 			return 'eicon-pojome';
 		}
 		return 'eicon-wordpress';
+	}
+
+	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return ['wordpress','widget'];
 	}
 
 	/**
@@ -180,7 +194,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @access protected
 	 * @since 1.0.0
 	 *
-	 * @return \WP_Widget
+	 * @return array Parsed settings.
 	 */
 	protected function _get_parsed_settings() {
 		$settings = parent::_get_parsed_settings();

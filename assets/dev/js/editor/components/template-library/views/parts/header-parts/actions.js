@@ -24,11 +24,15 @@ module.exports = Marionette.ItemView.extend( {
 
 		self.ui.sync.addClass( 'eicon-animation-spin' );
 
-		elementor.templates.requestLibraryData( function() {
-			self.ui.sync.removeClass( 'eicon-animation-spin' );
+		elementor.templates.requestLibraryData( {
+			onUpdate: function() {
+				self.ui.sync.removeClass( 'eicon-animation-spin' );
 
-			elementor.templates.showTemplates();
-		}, true, true );
+				elementor.templates.setTemplatesPage( elementor.templates.getFilter( 'source' ), elementor.templates.getFilter( 'type' ) );
+			},
+			forceUpdate: true,
+			forceSync: true
+		} );
 	},
 
 	onSaveClick: function() {

@@ -55,7 +55,7 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_clear_cache() {
 		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 
 		wp_send_json_success();
 	}
@@ -98,10 +98,10 @@ class Tools extends Settings_Page {
 		if ( false === $rows_affected ) {
 			wp_send_json_error( __( 'An error occurred', 'elementor' ) );
 		} else {
-			Plugin::$instance->posts_css_manager->clear_cache();
+			Plugin::$instance->files_manager->clear_cache();
 			wp_send_json_success( sprintf(
-				/* translators: %s: Number of rows */
-				__( '%d Rows Affected', 'elementor' ),
+				/* translators: %d: Number of rows */
+				_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
 				$rows_affected
 			) );
 		}
@@ -262,11 +262,7 @@ class Tools extends Settings_Page {
 					'beta' => [
 						'label' => __( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							$intro_text = sprintf(
-								/* translators: %s: Elementor version */
-								__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ),
-								ELEMENTOR_VERSION
-							);
+							$intro_text = __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' );
 							$intro_text = '<p>' . $intro_text . '</p>';
 
 							echo $intro_text;

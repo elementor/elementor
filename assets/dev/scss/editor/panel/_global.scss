@@ -2,57 +2,6 @@
 // Panel Global
 //
 
-.elementor-panel-heading {
-	display: table;
-	table-layout: fixed;
-	height: 40px;
-	padding: 0 20px;
-	width: 100%;
-	border-bottom: 1px solid $editor-background;
-	cursor: pointer;
-
-	&:not(.elementor-open) {
-
-		.elementor-panel-heading-toggle {
-
-			.fa {
-
-				&:before {
-					content: getValueByDirection('\f0da', '\f0d9');
-				}
-			}
-		}
-	}
-
-	&.elementor-open {
-
-		.elementor-panel-heading-toggle {
-
-			.fa {
-
-				&:before {
-					content: '\f0d7';
-				}
-			}
-		}
-	}
-
-	> * {
-		display: table-cell;
-		vertical-align: middle;
-	}
-}
-
-.elementor-panel-heading-toggle {
-	width: 20px;
-	color: $editor-darkest;
-}
-
-.elementor-panel-heading-title {
-	color: $editor-darkest;
-	font-weight: bold;
-}
-
 .elementor-panel-box {
 	margin-top: 10px;
 	background-color: #fff;
@@ -68,65 +17,6 @@
 
 .elementor-button {
 	display: inline-block;
-}
-
-// select2
-.select2-container {
-	width: 100% !important;
-
-	&:not(.select2-container--open):not(.select2-container--focus) {
-
-		.select2-selection--single,
-		.select2-selection--multiple {
-			border-color: $editor-lightest;
-		}
-	}
-
-	&.select2-container--open,
-	&.select2-container--focus {
-
-		.select2-selection--single,
-		.select2-selection--multiple {
-			border-color: $editor-light;
-		}
-	}
-
-	&.select2-container--default {
-
-		.select2-selection--multiple {
-
-			.select2-selection__clear {
-				display: none;
-			}
-
-			.select2-selection__choice {
-				line-height: 1.5;
-				font-size: 0.9em;
-				border: none;
-				border-radius: 0;
-			}
-		}
-	}
-}
-
-.select2-selection--single {
-	height: 27px;
-}
-
-.select2-selection__rendered {
-	line-height: 27px;
-}
-
-.select2-selection__arrow {
-	height: 27px;
-	top: 0;
-}
-
-// Pojo Theme Support
-#elementor-controls {
-	.pojo-widget-button-collapse {
-		display: none;
-	}
 }
 
 // Alert
@@ -250,12 +140,13 @@
 	display: none;
 	position: absolute;
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
 	left: 0;
 	right: 0;
 	margin: -4px auto 5px;
 	padding-top: 15px;
 	width: 90%;
-	z-index: 1;
+	z-index: 2; // 2 instead of 1 fix to overcome divider control
 	background-color: #fff;
 
 	$triangle-size: 8px;
@@ -270,6 +161,7 @@
 	}
 
 	div.elementor-control { // Harder selector to override default settings
+		background-color: transparent; // Makes the popover's border-radius visible
 
 		&:before {
 			content: none;
@@ -281,5 +173,17 @@
 
 	.elementor-panel-nerd-box-message {
 		text-transform: uppercase;
+	}
+}
+
+// Select2 support
+.select2-container {
+	width: 100% !important;
+}
+
+// Pojo Theme Support
+#elementor-controls {
+	.pojo-widget-button-collapse {
+		display: none;
 	}
 }

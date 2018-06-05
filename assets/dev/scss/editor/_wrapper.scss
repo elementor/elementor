@@ -48,11 +48,11 @@ body {
 
 		#elementor-preview {
 
-			@media (max-width: $screen-lg-max) {
+			@media (max-width: $editor-screen-lg-max) {
 				@include start($panel-width);
 			}
 
-			@media (min-width: $screen-xl-min) {
+			@media (min-width: $editor-screen-xl-min) {
 				@include start($panel-xl-width);
 			}
 
@@ -81,11 +81,11 @@ body {
 
 		#elementor-panel {
 
-			@media (max-width: $screen-lg-max) {
+			@media (max-width: $editor-screen-lg-max) {
 				@include start(-$panel-width);
 			}
 
-			@media (min-width: $screen-xl-min) {
+			@media (min-width: $editor-screen-xl-min) {
 				@include start(-$panel-xl-width);
 			}
 
@@ -110,5 +110,9 @@ body {
 
 	&:not(.ui-resizable-resizing) {
 		transition: $start .5s, width 0.5s;
+	}
+
+	.ps-scrollbar-y-rail {
+		z-index: 2; // Avoid panel elements (like divider control) from appearing above the scrollbar
 	}
 }

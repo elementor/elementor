@@ -5,6 +5,7 @@ module.exports = Marionette.Behavior.extend( {
 		return {
 			buttonPreview: '#elementor-panel-saver-button-preview',
 			buttonPublish: '#elementor-panel-saver-button-publish',
+			buttonSaveOptions: '#elementor-panel-saver-button-save-options',
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
 			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
 			lastEditedWrapper: '.elementor-last-edited-wrapper'
@@ -32,7 +33,10 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	activateSaveButtons: function( hasChanges ) {
+		hasChanges = hasChanges || 'draft' === elementor.settings.page.model.get( 'post_status' );
+
 		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-saver-disabled', ! hasChanges );
+		this.ui.buttonSaveOptions.toggleClass( 'elementor-saver-disabled', ! hasChanges );
 	},
 
 	onRender: function() {
@@ -58,13 +62,13 @@ module.exports = Marionette.Behavior.extend( {
 	onPageStatusChange: function( newStatus ) {
 		if ( 'publish' === newStatus ) {
 			elementor.notifications.showToast( {
-				message: elementor.translate( 'publish_notification' ),
+				message: elementor.config.document.panel.messages.publish_notification,
 				buttons: [
 					{
 						name: 'view_page',
 						text: elementor.translate( 'have_a_look' ),
 						callback: function() {
-							open( elementor.config.post_link );
+							open( elementor.config.document.urls.permalink );
 						}
 					}
 				]
@@ -103,7 +107,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	onClickButtonPreview: function() {
 		// Open immediately in order to avoid popup blockers.
-		this.previewWindow = open( elementor.config.wp_preview.url, elementor.config.wp_preview.target );
+		this.previewWindow = open( elementor.config.document.urls.wp_preview, 'wp-preview-' + elementor.config.document.id );
 
 		if ( elementor.saver.isEditorChanged() ) {
 			// Force save even if it's saving now.
@@ -116,11 +120,12 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickButtonPublish: function() {
-		if ( ! elementor.saver.isEditorChanged() ) {
+		var postStatus = elementor.settings.page.model.get( 'post_status' );
+
+		if ( this.ui.buttonPublish.hasClass( 'elementor-saver-disabled' ) ) {
 			return;
 		}
 
-		var postStatus = elementor.settings.page.model.get( 'post_status' );
 		switch ( postStatus ) {
 			case 'publish':
 			case 'private':
@@ -155,11 +160,18 @@ module.exports = Marionette.Behavior.extend( {
 			case 'publish':
 			case 'private':
 				publishLabel = 'update';
+
+				if ( elementor.config.current_revision_id !== elementor.config.document.id ) {
+					this.activateSaveButtons( true );
+				}
+
 				break;
 			case 'draft':
 				if ( ! elementor.config.current_user_can_publish ) {
 					publishLabel = 'submit';
 				}
+
+				this.activateSaveButtons( true );
 				break;
 			case 'pending': // User cannot change post status
 			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
@@ -187,7 +199,7 @@ module.exports = Marionette.Behavior.extend( {
 		if ( this.previewWindow ) {
 			// Refresh URL form updated config.
 			try {
-				this.previewWindow.location = elementor.config.wp_preview.url;
+				this.previewWindow.location.href = elementor.config.document.urls.wp_preview;
 			} catch ( e ) {
 				// If the this.previewWindow is closed or it's domain was changed.
 				// Do nothing.

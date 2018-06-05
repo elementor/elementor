@@ -1,10 +1,9 @@
-var TemplateLibraryLayoutView = require( 'elementor-templates/views/layout' ),
+var TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' ),
 	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
 	TemplateLibraryManager;
 
 TemplateLibraryManager = function() {
 	var self = this,
-		modal,
 		deleteDialog,
 		errorDialog,
 		layout,
@@ -27,7 +26,7 @@ TemplateLibraryManager = function() {
 				success: function( data ) {
 					self.getTemplatesCollection().add( data );
 
-					self.setTemplatesSource( 'local' );
+					self.setTemplatesPage( 'local' );
 				},
 				error: function( data ) {
 					self.showErrorDialog( data );
@@ -61,20 +60,22 @@ TemplateLibraryManager = function() {
 					} );
 				}
 			},
+			type: {},
+			subtype: {},
 			favorite: {}
 		};
+	};
 
-		jQuery.each( startIntent.filters, function( filterName ) {
-			if ( filterTerms[ filterName ] ) {
-				jQuery.extend( filterTerms[ filterName ], this );
-			} else {
-				filterTerms[ filterName ] = this;
-			}
+	var setIntentFilters = function() {
+		jQuery.each( startIntent.filters, function( filterKey, filterValue ) {
+			self.setFilter( filterKey, filterValue, true );
 		} );
 	};
 
 	this.init = function() {
 		registerDefaultTemplateTypes();
+
+		registerDefaultFilterTerms();
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more'
@@ -133,7 +134,7 @@ TemplateLibraryManager = function() {
 
 				elementor.channels.data.trigger( 'template:before:insert', templateModel );
 
-				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
+				elementor.getPreviewView().addChildModel( data.content, startIntent.importOptions || {} );
 
 				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 
@@ -143,6 +144,9 @@ TemplateLibraryManager = function() {
 			},
 			error: function( data ) {
 				self.showErrorDialog( data );
+			},
+			complete: function() {
+				layout.hideLoadingView();
 			}
 		} );
 	};
@@ -225,20 +229,6 @@ TemplateLibraryManager = function() {
 		return errorDialog;
 	};
 
-	this.getModal = function() {
-		if ( ! modal ) {
-			modal = elementor.dialogsManager.createWidget( 'lightbox', {
-				id: 'elementor-template-library-modal',
-				closeButton: false,
-				hide: {
-					onOutsideClick: false
-				}
-			} );
-		}
-
-		return modal;
-	};
-
 	this.getLayout = function() {
 		return layout;
 	};
@@ -255,59 +245,79 @@ TemplateLibraryManager = function() {
 		return config;
 	};
 
-	this.requestLibraryData = function( callback, forceUpdate, forceSync ) {
-		if ( templatesCollection && ! forceUpdate ) {
-			if ( callback ) {
-				callback();
+	this.requestLibraryData = function( options ) {
+		if ( templatesCollection && ! options.forceUpdate ) {
+			if ( options.onUpdate ) {
+				options.onUpdate();
 			}
 
 			return;
 		}
 
-		var options = {
+		if ( options.onBeforeUpdate ) {
+			options.onBeforeUpdate();
+		}
+
+		var ajaxOptions = {
 			data: {},
 			success: function( data ) {
 				templatesCollection = new TemplateLibraryCollection( data.templates );
 
 				config = data.config;
 
-				if ( callback ) {
-					callback();
+				if ( options.onUpdate ) {
+					options.onUpdate();
 				}
 			}
 		};
 
-		if ( forceSync ) {
-			options.data.sync = true;
+		if ( options.forceSync ) {
+			ajaxOptions.data.sync = true;
 		}
 
-		elementor.ajax.send( 'get_library_data', options );
+		elementor.ajax.send( 'get_library_data', ajaxOptions );
 	};
 
 	this.startModal = function( customStartIntent ) {
-		startIntent = customStartIntent || {};
-
-		registerDefaultFilterTerms();
-
-		self.getModal().show();
-
-		self.setTemplatesSource( 'remote', true );
-
 		if ( ! layout ) {
 			initLayout();
 		}
 
-		layout.showLoadingView();
+		layout.showModal();
 
-		self.requestLibraryData( function() {
-			if ( startIntent.onReady ) {
+		self.requestLibraryData( {
+			onBeforeUpdate: layout.showLoadingView.bind( layout ),
+			onUpdate: function() {
+				var documentType = elementor.config.document.remote_type,
+					isBlockType = -1 !== config.categories.indexOf( documentType ),
+					oldStartIntent = Object.create( startIntent );
+
+				startIntent = jQuery.extend( {
+					filters: {
+						source: 'remote',
+						type: isBlockType ? 'block' : 'page',
+						subtype: isBlockType ? documentType : null
+					},
+					onReady: self.showTemplates
+				}, customStartIntent );
+
+				var isSameIntent = _.isEqual( Object.getPrototypeOf( oldStartIntent ), startIntent );
+
+				if ( isSameIntent && 'elementor-template-library-templates' === layout.modalContent.currentView.id ) {
+					return;
+				}
+
+				layout.hideLoadingView();
+
+				setIntentFilters();
+
 				startIntent.onReady();
 			}
 		} );
 	};
 
 	this.closeModal = function() {
-		self.getModal().hide();
+		layout.hideModal();
 	};
 
 	this.getFilter = function( name ) {
@@ -330,10 +340,14 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setTemplatesSource = function( source, silent ) {
+	this.setTemplatesPage = function( source, type, silent ) {
 		elementor.channels.templates.stopReplying();
 
-		self.setFilter( 'source', source );
+		self.setFilter( 'source', source, true );
+
+		if ( type ) {
+			self.setFilter( 'type', type, true );
+		}
 
 		if ( ! silent ) {
 			self.showTemplates();
@@ -354,12 +368,6 @@ TemplateLibraryManager = function() {
 		} );
 
 		layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
-	};
-
-	this.showTemplatesModal = function() {
-		self.startModal( {
-			onReady: self.showTemplates
-		} );
 	};
 
 	this.showErrorDialog = function( errorMessage ) {

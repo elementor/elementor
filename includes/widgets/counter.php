@@ -57,22 +57,6 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
-	 *
-	 * Retrieve the list of categories the counter widget belongs to.
-	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return array Widget categories.
-	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
-	}
-
-	/**
 	 * Retrieve the list of scripts the counter widget depended on.
 	 *
 	 * Used to set scripts dependencies required to run the widget.
@@ -84,6 +68,20 @@ class Widget_Counter extends Widget_Base {
 	 */
 	public function get_script_depends() {
 		return [ 'jquery-numerator' ];
+	}
+
+	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return ['counter'];
 	}
 
 	/**
@@ -159,6 +157,22 @@ class Widget_Counter extends Widget_Base {
 				'default' => 'yes',
 				'label_on' => __( 'Show', 'elementor' ),
 				'label_off' => __( 'Hide', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'thousand_separator_char',
+			[
+				'label' => __( 'Separator', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'condition' => [
+					'thousand_separator' => 'yes',
+				],
+				'options' => [
+					'' => 'Default',
+					'.' => 'Dot',
+					' ' => 'Space',
+				],
 			]
 		);
 
@@ -266,7 +280,7 @@ class Widget_Counter extends Widget_Base {
 		<div class="elementor-counter">
 			<div class="elementor-counter-number-wrapper">
 				<span class="elementor-counter-number-prefix">{{{ settings.prefix }}}</span>
-				<span class="elementor-counter-number" data-duration="{{ settings.duration }}" data-to-value="{{ settings.ending_number }}" data-delimiter="{{ settings.thousand_separator ? ',' : '' }}">{{{ settings.starting_number }}}</span>
+				<span class="elementor-counter-number" data-duration="{{ settings.duration }}" data-to-value="{{ settings.ending_number }}" data-delimiter="{{ settings.thousand_separator ? settings.thousand_separator_char || ',' : '' }}">{{{ settings.starting_number }}}</span>
 				<span class="elementor-counter-number-suffix">{{{ settings.suffix }}}</span>
 			</div>
 			<# if ( settings.title ) {
@@ -285,7 +299,7 @@ class Widget_Counter extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'counter', [
 			'class' => 'elementor-counter-number',
@@ -294,7 +308,8 @@ class Widget_Counter extends Widget_Base {
 		] );
 
 		if ( ! empty( $settings['thousand_separator'] ) ) {
-			$this->add_render_attribute( 'counter', 'data-delimiter', ',' );
+			$delimiter = empty( $settings['thousand_separator_char'] ) ? ',' : $settings['thousand_separator_char'];
+			$this->add_render_attribute( 'counter', 'data-delimiter', $delimiter );
 		}
 		?>
 		<div class="elementor-counter">

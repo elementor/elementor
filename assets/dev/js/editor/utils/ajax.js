@@ -41,17 +41,15 @@ Ajax = {
 		options.ids.forEach( function( objectId ) {
 			deferredArray.push( self.load( {
 				action: options.action,
-				unique_id: options.data.object_type + objectId,
+				unique_id: options.data.unique_id + objectId,
 				data: jQuery.extend( { id: objectId }, options.data )
-			} ).done( function( response ) {
-				dataCollection = jQuery.extend( dataCollection, response.data );
+			} ).done( function( data ) {
+				dataCollection = jQuery.extend( dataCollection, data );
 			}) );
 		} );
 
 		jQuery.when.apply( jQuery, deferredArray ).done( function() {
-			options.success( {
-				data: dataCollection
-			} );
+			options.success( dataCollection );
 		} );
 	},
 
@@ -71,15 +69,13 @@ Ajax = {
 		if ( _.has( self.cache, cacheKey ) ) {
 			deferred = jQuery.Deferred()
 				.done( request.success )
-				.resolve( {
-					data: self.cache[ cacheKey ]
-				} );
+				.resolve( self.cache[ cacheKey ] );
 		} else {
 			deferred = self.addRequest( request.action, {
 				data: request.data,
 				unique_id: request.unique_id,
-				success: function( response ) {
-					self.cache[ cacheKey ] = response.data;
+				success: function( data ) {
+					self.cache[ cacheKey ] = data;
 				}
 			} ).done( request.success );
 		}
@@ -92,7 +88,7 @@ Ajax = {
 			options.unique_id = action;
 		}
 
-		options.deferred = jQuery.Deferred().done( options.success ).fail( options.error );
+		options.deferred = jQuery.Deferred().done( options.success ).fail( options.error ).always( options.complete );
 
 		var request = {
 			action: action,
@@ -145,6 +141,11 @@ Ajax = {
 				} );
 			},
 			error: function( data ) {
+				_.each( requests, function( args ) {
+					if ( args.options ) {
+						args.options.deferred.reject( data );
+					}
+				} );
 			}
 		} );
 	},
@@ -162,9 +163,12 @@ Ajax = {
 		if ( ajaxParams.data instanceof FormData ) {
 			ajaxParams.data.append( 'action', action );
 			ajaxParams.data.append( '_nonce', elementor.config.nonce );
+			ajaxParams.data.append( 'editor_post_id', elementor.config.document.id );
+
 		} else {
 			ajaxParams.data.action = action;
 			ajaxParams.data._nonce = elementor.config.nonce;
+			ajaxParams.data.editor_post_id = elementor.config.document.id;
 		}
 
 		var successCallback = ajaxParams.success,
@@ -187,6 +191,10 @@ Ajax = {
 				};
 			} else {
 				ajaxParams.error = function( XMLHttpRequest ) {
+					if ( 0 === XMLHttpRequest.readyState && 'abort' === XMLHttpRequest.statusText ) {
+						return;
+					}
+
 					var message = self.createErrorMessage( XMLHttpRequest );
 
 					elementor.notifications.showToast( {

@@ -6,6 +6,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.controlMedia = '.elementor-control-media';
+		ui.mediaImage = '.elementor-control-media-image';
 		ui.frameOpeners = '.elementor-control-media-upload-button, .elementor-control-media-image';
 		ui.deleteButton = '.elementor-control-media-delete';
 
@@ -19,10 +20,12 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 	},
 
-	onReady: function() {
-		if ( _.isEmpty( this.getControlValue( 'url' ) ) ) {
-			this.ui.controlMedia.addClass( 'media-empty' );
-		}
+	applySavedValue: function() {
+		var url = this.getControlValue( 'url' );
+
+		this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
+
+		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
 	},
 
 	openFrame: function() {
@@ -39,13 +42,15 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			id: ''
 		} );
 
-		this.render();
+		this.applySavedValue();
 	},
 
 	/**
 	 * Create a media modal select frame, and store it so the instance can be reused when needed.
 	 */
 	initFrame: function() {
+		// Set current doc id to attach uploaded images.
+		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
 				text: elementor.translate( 'insert_media' )
@@ -80,7 +85,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				id: attachment.id
 			} );
 
-			this.render();
+			this.applySavedValue();
 		}
 
 		this.trigger( 'after:select' );

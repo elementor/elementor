@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor module class.
+ * Elementor module.
  *
- * A base abstract class that provides the needed properties and methods to
+ * An abstract class that provides the needed properties and methods to
  * manage and handle modules in inheriting classes.
  *
  * @since 1.7.0
@@ -53,46 +53,17 @@ abstract class Module {
 	protected static $_instances = [];
 
 	/**
-	 * Clone.
+	 * Get module name.
 	 *
-	 * Disable class cloning and throw an error on object clone.
-	 *
-	 * The whole idea of the singleton design pattern is that there is a single
-	 * object. Therefore, we don't want the object to be cloned.
+	 * Retrieve the module name.
 	 *
 	 * @since 1.7.0
 	 * @access public
+	 * @abstract
+	 *
+	 * @return string Module name.
 	 */
-	public function __clone() {
-		// Cloning instances of the class is forbidden
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
-	}
-
-	/**
-	 * Wakeup.
-	 *
-	 * Disable unserializing of the class.
-	 *
-	 * @since 1.7.0
-	 * @access public
-	 */
-	public function __wakeup() {
-		// Unserializing instances of the class is forbidden
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'elementor' ), '1.0.0' );
-	}
-
-	/**
-	 * Class name.
-	 *
-	 * Retrieve the name of the class.
-	 *
-	 * @since 1.7.0
-	 * @access public
-	 * @static
-	 */
-	public static function class_name() {
-		return get_called_class();
-	}
+	abstract public function get_name();
 
 	/**
 	 * Instance.
@@ -114,28 +85,66 @@ abstract class Module {
 	}
 
 	/**
-	 * Get module name.
-	 *
-	 * Retrieve the module name.
-	 *
-	 * @since 1.7.0
+	 * @since 2.0.0
 	 * @access public
-	 * @abstract
-	 *
-	 * @return string Module name.
+	 * @static
 	 */
-	abstract public function get_name();
+	public static function is_active() {
+		return true;
+	}
 
 	/**
-	 * Module constructor.
+	 * Class name.
 	 *
-	 * Initializing Elementor module.
+	 * Retrieve the name of the class.
+	 *
+	 * @since 1.7.0
+	 * @access public
+	 * @static
+	 */
+	public static function class_name() {
+		return get_called_class();
+	}
+
+	/**
+	 * Clone.
+	 *
+	 * Disable class cloning and throw an error on object clone.
+	 *
+	 * The whole idea of the singleton design pattern is that there is a single
+	 * object. Therefore, we don't want the object to be cloned.
 	 *
 	 * @since 1.7.0
 	 * @access public
 	 */
-	public function __construct() {
-		$this->reflection = new \ReflectionClass( $this );
+	public function __clone() {
+		// Cloning instances of the class is forbidden
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
+	}
+
+	/**
+	 * Wakeup.
+	 *
+	 * Disable unserializing of the class.
+	 *
+	 * @since 1.7.0
+	 * @access public
+	 */
+	public function __wakeup() {
+		// Unserializing instances of the class is forbidden
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
+	}
+
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 */
+	public function get_reflection() {
+		if ( null === $this->reflection ) {
+			$this->reflection = new \ReflectionClass( $this );
+		}
+
+		return $this->reflection;
 	}
 
 	/**

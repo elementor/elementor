@@ -8,32 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor base control.
  *
- * A base control for creating controls in the panel. Each control accepts all
- * the params listed below.
+ * An abstract class for creating new controls in the panel.
  *
  * @since 1.0.0
  * @abstract
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $title       Optional. The field title that appears on mouse
- *                            hover. Default is empty.
- * @param string $placeholder Optional. The field placeholder that appears when
- *                            the field has no values. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param mixed  $default     Optional. The field default value.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is false.
  */
 abstract class Base_Control {
 
@@ -48,12 +26,10 @@ abstract class Base_Control {
 	 */
 	private $_base_settings = [
 		'label' => '',
-		'title' => '',
-		'placeholder' => '',
 		'description' => '',
-		'separator' => 'default',
 		'show_label' => true,
 		'label_block' => false,
+		'separator' => 'default',
 	];
 
 	/**

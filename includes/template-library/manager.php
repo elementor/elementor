@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor template library manager class.
+ * Elementor template library manager.
  *
  * Elementor template library manager handler class is responsible for
  * initializing the template library.
@@ -197,20 +197,20 @@ class Manager {
 	 * @return array Library data.
 	 */
 	public function get_library_data( array $args ) {
-		if ( ! empty( $args['sync'] ) ) {
-			Api::get_templates_data( true );
-		}
+		$library_data = Api::get_library_data( ! empty( $args['sync'] ) );
 
 		return [
 			'templates' => $this->get_templates(),
-			'config' => [],
+			'config' => [
+				'categories' => $library_data['categories'],
+			],
 		];
 	}
 
-	 /**
- 	 * Save template.
- 	 *
- 	 * Save new or update existing template on the database.
+	/**
+	 * Save template.
+	 *
+	 * Save new or update existing template on the database.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -263,13 +263,6 @@ class Manager {
 	 *                               was updated, `WP_Error` otherwise.
 	 */
 	public function update_template( array $template_data ) {
-		// TODO: Temp patch since 1.5.0.
-		if ( isset( $template_data['data'] ) ) {
-			$template_data['content'] = $template_data['data'];
-
-			unset( $template_data['data'] );
-		}
-		// END Patch.
 		$validate_args = $this->ensure_args( [ 'source', 'content', 'type' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -345,6 +338,8 @@ class Manager {
 		if ( ! $source ) {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
+
+		do_action( 'elementor/template-library/before_get_source_data', $args, $source );
 
 		return $source->get_data( $args );
 	}
@@ -526,6 +521,16 @@ class Manager {
 	private function handle_ajax_request( $ajax_request ) {
 		Plugin::$instance->editor->verify_ajax_nonce();
 
+		if ( ! empty( $_REQUEST['editor_post_id'] ) ) {
+			$editor_post_id = absint( $_REQUEST['editor_post_id'] );
+
+			if ( ! get_post( $editor_post_id ) ) {
+				wp_send_json_error( __( 'Post not found.', 'elementor' ) );
+			}
+
+			Plugin::$instance->db->switch_to_post( $editor_post_id );
+		}
+
 		$result = call_user_func( [ $this, $ajax_request ], $_REQUEST );
 
 		$request_type = ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ? 'ajax' : 'direct';
@@ -611,7 +616,7 @@ class Manager {
 		$not_specified_args = array_diff( $required_args, array_keys( array_filter( $specified_args ) ) );
 
 		if ( $not_specified_args ) {
-			return new \WP_Error( 'arguments_not_specified', sprintf( 'The required argument(s) `%s` not specified.', implode( ', ', $not_specified_args ) ) );
+			return new \WP_Error( 'arguments_not_specified', sprintf( 'The required argument(s) "%s" not specified.', implode( ', ', $not_specified_args ) ) );
 		}
 
 		return true;

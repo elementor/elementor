@@ -1,19 +1,21 @@
 <?php
 namespace Elementor\Core;
 
+use Elementor\Core\Base\Module;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * Elementor modules manager class.
+ * Elementor modules manager.
  *
  * Elementor modules manager handler class is responsible for registering and
  * managing Elementor modules.
  *
  * @since 1.6.0
  */
-final class Modules_Manager {
+class Modules_Manager {
 
 	/**
 	 * Registered modules.
@@ -25,7 +27,7 @@ final class Modules_Manager {
 	 *
 	 * @var array
 	 */
-	private $modules = null;
+	private $modules = [];
 
 	/**
 	 * Modules manager constructor.
@@ -36,17 +38,78 @@ final class Modules_Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		$modules = [
-			'history',
-			'debug-mode',
-		];
+		$modules_namespace_prefix = $this->get_modules_namespace_prefix();
 
-		foreach ( $modules as $module_id ) {
-			$class_name = str_replace( '-', ' ', $module_id );
+		foreach ( $this->get_modules_names() as $module_name ) {
+			$class_name = str_replace( '-', ' ', $module_name );
+
 			$class_name = str_replace( ' ', '', ucwords( $class_name ) );
-			$class_name = 'Elementor\\Modules\\' . $class_name . '\Module';
 
-			$this->modules[ $module_id ] = $class_name::instance();
+			$class_name = $modules_namespace_prefix . '\\Modules\\' . $class_name . '\Module';
+
+			/** @var Module $class_name */
+			if ( $class_name::is_active() ) {
+				$this->modules[ $module_name ] = $class_name::instance();
+			}
 		}
+	}
+
+	/**
+	 * Get modules names.
+	 *
+	 * Retrieve the modules names.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return string[] Modules names.
+	 */
+	public function get_modules_names() {
+		return [
+			'history',
+			'library',
+			'debug-mode',
+			'dynamic-tags',
+			'page-templates',
+			'gutenberg',
+		];
+	}
+
+	/**
+	 * Get modules.
+	 *
+	 * Retrieve all the registered modules or a specific module.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param string $module_name Module name.
+	 *
+	 * @return null|Module|Module[] All the registered modules or a specific module.
+	 */
+	public function get_modules( $module_name ) {
+		if ( $module_name ) {
+			if ( isset( $this->modules[ $module_name ] ) ) {
+				return $this->modules[ $module_name ];
+			}
+
+			return null;
+		}
+
+		return $this->modules;
+	}
+
+	/**
+	 * Get modules namespace prefix.
+	 *
+	 * Retrieve the modules namespace prefix.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @return string Modules namespace prefix.
+	 */
+	protected function get_modules_namespace_prefix() {
+		return 'Elementor';
 	}
 }

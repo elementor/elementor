@@ -58,19 +58,17 @@ class Widget_Tabs extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the tabs widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return ['tabs','accordion','toggle'];
 	}
 
 	/**
@@ -89,11 +87,36 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'tab_title',
+			[
+				'label' => __( 'Title & Content', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => __( 'Tab Title', 'elementor' ),
+				'placeholder' => __( 'Tab Title', 'elementor' ),
+				'label_block' => true,
+			]
+		);
+
+		$repeater->add_control(
+			'tab_content',
+			[
+				'label' => __( 'Content', 'elementor' ),
+				'default' => __( 'Tab Content', 'elementor' ),
+				'placeholder' => __( 'Tab Content', 'elementor' ),
+				'type' => Controls_Manager::WYSIWYG,
+				'show_label' => false,
+			]
+		);
+
 		$this->add_control(
 			'tabs',
 			[
 				'label' => __( 'Tabs Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
 						'tab_title' => __( 'Tab #1', 'elementor' ),
@@ -102,24 +125,6 @@ class Widget_Tabs extends Widget_Base {
 					[
 						'tab_title' => __( 'Tab #2', 'elementor' ),
 						'tab_content' => __( 'I am tab content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					],
-				],
-				'fields' => [
-					[
-						'name' => 'tab_title',
-						'label' => __( 'Title & Content', 'elementor' ),
-						'type' => Controls_Manager::TEXT,
-						'default' => __( 'Tab Title', 'elementor' ),
-						'placeholder' => __( 'Tab Title', 'elementor' ),
-						'label_block' => true,
-					],
-					[
-						'name' => 'tab_content',
-						'label' => __( 'Content', 'elementor' ),
-						'default' => __( 'Tab Content', 'elementor' ),
-						'placeholder' => __( 'Tab Content', 'elementor' ),
-						'type' => Controls_Manager::WYSIWYG,
-						'show_label' => false,
 					],
 				],
 				'title_field' => '{{{ tab_title }}}',
@@ -319,13 +324,14 @@ class Widget_Tabs extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$tabs = $this->get_settings( 'tabs' );
+		$tabs = $this->get_settings_for_display( 'tabs' );
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-tabs" role="tablist">
 			<div class="elementor-tabs-wrapper">
-				<?php foreach ( $tabs as $index => $item ) :
+				<?php
+				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
 
 					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
@@ -343,7 +349,8 @@ class Widget_Tabs extends Widget_Base {
 				<?php endforeach; ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper">
-				<?php foreach ( $tabs as $index => $item ) :
+				<?php
+				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
 
 					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );

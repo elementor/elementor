@@ -34,12 +34,12 @@ class MU_Plugins_Reporter extends Base_Reporter {
 	 *
 	 * Retrieve the must-use plugins.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return array Must-Use plugins.
 	 */
-	private function _get_must_use_plugins() {
+	private function get_mu_plugins() {
 		if ( ! $this->plugins ) {
 			$this->plugins = get_mu_plugins();
 		}
@@ -58,7 +58,7 @@ class MU_Plugins_Reporter extends Base_Reporter {
 	 * @return bool True if the site has must-use plugins, False otherwise.
 	 */
 	public function is_enabled() {
-		return ! ! $this->_get_must_use_plugins();
+		return ! ! $this->get_mu_plugins();
 	}
 
 	/**
@@ -107,7 +107,7 @@ class MU_Plugins_Reporter extends Base_Reporter {
 	 */
 	public function get_must_use_plugins() {
 		return [
-			'value' => $this->_get_must_use_plugins(),
+			'value' => $this->get_mu_plugins(),
 		];
 	}
 }

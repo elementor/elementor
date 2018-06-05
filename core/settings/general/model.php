@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor global settings model class.
+ * Elementor global settings model.
  *
  * Elementor global settings model handler class is responsible for registering
  * and managing Elementor global settings models.
@@ -60,7 +60,7 @@ class Model extends BaseModel {
 	 *
 	 *    @type string $title The panel title.
 	 *    @type array  $menu  The panel menu.
- 	 * }
+	 * }
 	 */
 	public function get_panel_page_settings() {
 		return [
@@ -84,7 +84,6 @@ class Model extends BaseModel {
 	 * @return array Controls list.
 	 */
 	public static function get_controls_list() {
-
 		return [
 			Controls_Manager::TAB_STYLE => [
 				'style' => [
@@ -149,7 +148,6 @@ class Model extends BaseModel {
 							'label' => __( 'Enable In Editor', 'elementor' ),
 							'type' => Controls_Manager::SWITCHER,
 							'default' => 'yes',
-							'description' => __( '', 'elementor' ),
 							'frontend_available' => true,
 						],
 						'elementor_lightbox_color' => [

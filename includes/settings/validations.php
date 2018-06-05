@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor settings validations class.
+ * Elementor settings validations.
  *
- * Elementor settings validations handler class is responsible for validating settings fields.
+ * Elementor settings validations handler class is responsible for validating settings
+ * fields.
  *
  * @since 1.0.0
  */
@@ -67,7 +68,7 @@ class Settings_Validations {
 	 * @return mixed Input field.
 	 */
 	public static function clear_cache( $input ) {
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 
 		return $input;
 	}

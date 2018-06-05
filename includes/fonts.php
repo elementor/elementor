@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor fonts class.
+ * Elementor fonts.
  *
  * Elementor fonts handler class is responsible for registering the supported
  * fonts used by Elementor.
@@ -36,6 +36,68 @@ class Fonts {
 	const LOCAL = 'local';
 
 	/**
+	 * Additional fonts.
+	 *
+	 * Used to hold additional fonts.
+	 *
+	 * @since 1.9.4
+	 * @access private
+	 * @static
+	 *
+	 * @var null|array
+	 */
+	private static $additional_fonts = null;
+
+	/**
+	 * Font groups.
+	 *
+	 * Used to hold font types/groups.
+	 *
+	 * @since 1.9.4
+	 * @access private
+	 * @static
+	 *
+	 * @var null|array
+	 */
+	private static $font_groups = null;
+
+	/**
+	 * Get font Groups.
+	 *
+	 * Retrieve the list of font groups.
+	 *
+	 * @since 1.9.4
+	 * @access public
+	 * @static
+	 *
+	 * @return array Supported font groups/types.
+	 */
+	public static function get_font_groups() {
+		if ( null === self::$font_groups ) {
+			$font_groups = [
+				self::SYSTEM => __( 'System', 'elementor' ),
+				self::GOOGLE => __( 'Google', 'elementor' ),
+				self::EARLYACCESS => __( 'Google Early Access', 'elementor' ),
+			];
+
+			/**
+			 * Font groups.
+			 *
+			 * Filters the fonts groups used by Elementor.
+			 *
+			 * @since 1.9.4
+			 *
+			 * @param array $font_groups Font groups.
+			 */
+			$font_groups = apply_filters( 'elementor/fonts/groups', $font_groups );
+
+			self::$font_groups = $font_groups;
+		}
+
+		return self::$font_groups;
+	}
+
+	/**
 	 * Get fonts.
 	 *
 	 * Retrieve the list of supported fonts.
@@ -47,6 +109,38 @@ class Fonts {
 	 * @return array Supported fonts.
 	 */
 	public static function get_fonts() {
+		if ( null === self::$additional_fonts ) {
+			$additional_fonts = [];
+
+			/**
+			 * Additional fonts.
+			 *
+			 * Filters the fonts used by Elementor to add additional fonts.
+			 *
+			 * @since 1.9.4
+			 *
+			 * @param array $additional_fonts Additional Elementor fonts.
+			 */
+			$additional_fonts = apply_filters( 'elementor/fonts/additional_fonts', $additional_fonts );
+
+			self::$additional_fonts = $additional_fonts;
+		}
+
+		return array_merge( self::get_native_fonts(), self::$additional_fonts );
+	}
+
+	/**
+	 * Get Elementor native fonts.
+	 *
+	 * Retrieve the list of supported fonts.
+	 *
+	 * @since 1.9.4
+	 * @access private
+	 * @static
+	 *
+	 * @return array Supported fonts.
+	 */
+	private static function get_native_fonts() {
 		return [
 			// System fonts.
 			'Arial' => self::SYSTEM,
@@ -57,7 +151,7 @@ class Fonts {
 			'Trebuchet MS' => self::SYSTEM,
 			'Georgia' => self::SYSTEM,
 
-			// Google Fonts (last update: 19/11/2017).
+			// Google Fonts (last update: 08/04/2018).
 			'ABeeZee' => self::GOOGLE,
 			'Abel' => self::GOOGLE,
 			'Abhaya Libre' => self::GOOGLE,
@@ -178,6 +272,8 @@ class Fonts {
 			'BioRhyme Expanded' => self::GOOGLE,
 			'Biryani' => self::GOOGLE,
 			'Bitter' => self::GOOGLE,
+			'Black And White Picture' => self::GOOGLE,
+			'Black Han Sans' => self::GOOGLE,
 			'Black Ops One' => self::GOOGLE,
 			'Bokor' => self::GOOGLE,
 			'Bonbon' => self::GOOGLE,
@@ -271,6 +367,7 @@ class Fonts {
 			'Croissant One' => self::GOOGLE,
 			'Crushed' => self::GOOGLE,
 			'Cuprum' => self::GOOGLE,
+			'Cute Font' => self::GOOGLE,
 			'Cutive' => self::GOOGLE,
 			'Cutive Mono' => self::GOOGLE,
 			'Damion' => self::GOOGLE,
@@ -290,6 +387,8 @@ class Fonts {
 			'Didact Gothic' => self::GOOGLE,
 			'Diplomata' => self::GOOGLE,
 			'Diplomata SC' => self::GOOGLE,
+			'Do Hyeon' => self::GOOGLE,
+			'Dokdo' => self::GOOGLE,
 			'Domine' => self::GOOGLE,
 			'Donegal One' => self::GOOGLE,
 			'Doppio One' => self::GOOGLE,
@@ -302,6 +401,7 @@ class Fonts {
 			'Dynalight' => self::GOOGLE,
 			'EB Garamond' => self::GOOGLE,
 			'Eagle Lake' => self::GOOGLE,
+			'East Sea Dokdo' => self::GOOGLE,
 			'Eater' => self::GOOGLE,
 			'Economica' => self::GOOGLE,
 			'Eczar' => self::GOOGLE,
@@ -363,10 +463,12 @@ class Fonts {
 			'GFS Didot' => self::GOOGLE,
 			'GFS Neohellenic' => self::GOOGLE,
 			'Gabriela' => self::GOOGLE,
+			'Gaegu' => self::GOOGLE,
 			'Gafata' => self::GOOGLE,
 			'Galada' => self::GOOGLE,
 			'Galdeano' => self::GOOGLE,
 			'Galindo' => self::GOOGLE,
+			'Gamja Flower' => self::GOOGLE,
 			'Gentium Basic' => self::GOOGLE,
 			'Gentium Book Basic' => self::GOOGLE,
 			'Geo' => self::GOOGLE,
@@ -382,6 +484,7 @@ class Fonts {
 			'Goblin One' => self::GOOGLE,
 			'Gochi Hand' => self::GOOGLE,
 			'Gorditas' => self::GOOGLE,
+			'Gothic A1' => self::GOOGLE,
 			'Goudy Bookletter 1911' => self::GOOGLE,
 			'Graduate' => self::GOOGLE,
 			'Grand Hotel' => self::GOOGLE,
@@ -390,6 +493,7 @@ class Fonts {
 			'Griffy' => self::GOOGLE,
 			'Gruppo' => self::GOOGLE,
 			'Gudea' => self::GOOGLE,
+			'Gugi' => self::GOOGLE,
 			'Gurajada' => self::GOOGLE,
 			'Habibi' => self::GOOGLE,
 			'Halant' => self::GOOGLE,
@@ -404,6 +508,7 @@ class Fonts {
 			'Heebo' => self::GOOGLE,
 			'Henny Penny' => self::GOOGLE,
 			'Herr Von Muellerhoff' => self::GOOGLE,
+			'Hi Melody' => self::GOOGLE,
 			'Hind' => self::GOOGLE,
 			'Hind Guntur' => self::GOOGLE,
 			'Hind Madurai' => self::GOOGLE,
@@ -412,6 +517,10 @@ class Fonts {
 			'Holtwood One SC' => self::GOOGLE,
 			'Homemade Apple' => self::GOOGLE,
 			'Homenaje' => self::GOOGLE,
+			'IBM Plex Mono' => self::GOOGLE,
+			'IBM Plex Sans' => self::GOOGLE,
+			'IBM Plex Sans Condensed' => self::GOOGLE,
+			'IBM Plex Serif' => self::GOOGLE,
 			'IM Fell DW Pica' => self::GOOGLE,
 			'IM Fell DW Pica SC' => self::GOOGLE,
 			'IM Fell Double Pica' => self::GOOGLE,
@@ -445,6 +554,7 @@ class Fonts {
 			'Josefin Sans' => self::GOOGLE,
 			'Josefin Slab' => self::GOOGLE,
 			'Joti One' => self::GOOGLE,
+			'Jua' => self::GOOGLE,
 			'Judson' => self::GOOGLE,
 			'Julee' => self::GOOGLE,
 			'Julius Sans One' => self::GOOGLE,
@@ -470,6 +580,7 @@ class Fonts {
 			'Khand' => self::GOOGLE,
 			'Khmer' => self::GOOGLE,
 			'Khula' => self::GOOGLE,
+			'Kirang Haerang' => self::GOOGLE,
 			'Kite One' => self::GOOGLE,
 			'Knewave' => self::GOOGLE,
 			'Kotta One' => self::GOOGLE,
@@ -561,6 +672,7 @@ class Fonts {
 			'Milonga' => self::GOOGLE,
 			'Miltonian' => self::GOOGLE,
 			'Miltonian Tattoo' => self::GOOGLE,
+			'Mina' => self::GOOGLE,
 			'Miniver' => self::GOOGLE,
 			'Miriam Libre' => self::GOOGLE,
 			'Mirza' => self::GOOGLE,
@@ -596,6 +708,11 @@ class Fonts {
 			'Muli' => self::GOOGLE,
 			'Mystery Quest' => self::GOOGLE,
 			'NTR' => self::GOOGLE,
+			'Nanum Brush Script' => self::GOOGLE,
+			'Nanum Gothic' => self::GOOGLE,
+			'Nanum Gothic Coding' => self::GOOGLE,
+			'Nanum Myeongjo' => self::GOOGLE,
+			'Nanum Pen Script' => self::GOOGLE,
 			'Neucha' => self::GOOGLE,
 			'Neuton' => self::GOOGLE,
 			'New Rocker' => self::GOOGLE,
@@ -690,6 +807,7 @@ class Fonts {
 			'Poly' => self::GOOGLE,
 			'Pompiere' => self::GOOGLE,
 			'Pontano Sans' => self::GOOGLE,
+			'Poor Story' => self::GOOGLE,
 			'Poppins' => self::GOOGLE,
 			'Port Lligat Sans' => self::GOOGLE,
 			'Port Lligat Slab' => self::GOOGLE,
@@ -815,6 +933,7 @@ class Fonts {
 			'Snowburst One' => self::GOOGLE,
 			'Sofadi One' => self::GOOGLE,
 			'Sofia' => self::GOOGLE,
+			'Song Myung' => self::GOOGLE,
 			'Sonsie One' => self::GOOGLE,
 			'Sorts Mill Goudy' => self::GOOGLE,
 			'Source Code Pro' => self::GOOGLE,
@@ -837,9 +956,11 @@ class Fonts {
 			'Stint Ultra Expanded' => self::GOOGLE,
 			'Stoke' => self::GOOGLE,
 			'Strait' => self::GOOGLE,
+			'Stylish' => self::GOOGLE,
 			'Sue Ellen Francisco' => self::GOOGLE,
 			'Suez One' => self::GOOGLE,
 			'Sumana' => self::GOOGLE,
+			'Sunflower' => self::GOOGLE,
 			'Sunshiney' => self::GOOGLE,
 			'Supermercado One' => self::GOOGLE,
 			'Sura' => self::GOOGLE,
@@ -848,6 +969,7 @@ class Fonts {
 			'Suwannaphum' => self::GOOGLE,
 			'Swanky and Moo Moo' => self::GOOGLE,
 			'Syncopate' => self::GOOGLE,
+			'Tajawal' => self::GOOGLE,
 			'Tangerine' => self::GOOGLE,
 			'Taprom' => self::GOOGLE,
 			'Tauri' => self::GOOGLE,
@@ -908,6 +1030,7 @@ class Fonts {
 			'Yantramanav' => self::GOOGLE,
 			'Yatra One' => self::GOOGLE,
 			'Yellowtail' => self::GOOGLE,
+			'Yeon Sung' => self::GOOGLE,
 			'Yeseva One' => self::GOOGLE,
 			'Yesteryear' => self::GOOGLE,
 			'Yrsa' => self::GOOGLE,

@@ -1,7 +1,7 @@
 var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsCollection = require( './collections/elements' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
-	PanelElementsElementsView = elementor.modules.templateLibrary.ElementsCollectionView,
+	PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
 	PanelElementsSearchView = require( './views/search' ),
 	PanelElementsGlobalView = require( './views/global' ),
 	PanelElementsLayoutView;
@@ -105,15 +105,21 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
-		_.each( elementor.config.elements_categories, function( categoryConfig, categoryName ) {
+		_.each( elementor.config.document.panel.elements_categories, function( categoryConfig, categoryName ) {
 			if ( ! categories[ categoryName ] ) {
 				return;
 			}
+
+			var categoriesActivationList = elementor.config.document.panel.categories,
+				categoryOutOfWhiteList = categoriesActivationList.active && -1 === categoriesActivationList.active.indexOf( categoryName ),
+				categoryInBlackList = categoriesActivationList.inactive && -1 !== categoriesActivationList.inactive.indexOf( categoryName ),
+				isActiveCategory = ! categoryOutOfWhiteList && ! categoryInBlackList;
 
 			categoriesCollection.add( {
 				name: categoryName,
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
+				defaultActive: isActiveCategory,
 				items: categories[ categoryName ]
 			} );
 		} );
@@ -123,9 +129,9 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	activateTab: function( tabName ) {
 		this.ui.tabs
-			.removeClass( 'active' )
+			.removeClass( 'elementor-active' )
 			.filter( '[data-view="' + tabName + '"]' )
-			.addClass( 'active' );
+			.addClass( 'elementor-active' );
 
 		this.showView( tabName );
 	},

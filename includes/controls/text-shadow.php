@@ -12,43 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * horizontal shadow, vertical shadow, shadow blur and shadow color.
  *
  * @since 1.6.0
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param string $placeholder Optional. The field placeholder that appears when
- *                            the field has no values. Default is empty.
- * @param array $default      {
- *     Optional. Default text shadow values.
- *
- *     @type int    $horizontal Optional. Horizontal shadow. Default is 0.
- *     @type int    $vertical   Optional. Vertical shadow. Default is 0.
- *     @type int    $blur       Optional. Shadow blur. Default is 10.
- *     @type string $color      Optional. Shadow color. Available values are
- *                              `rgb`, `rgba`, `hex` or `format`. Default is
- *                              `rgba(0,0,0,0.3)`.
- * }
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is false.
- *
- * @return array {
- *     Text shadow values.
- *
- *     @type int    $horizontal Horizontal shadow.
- *     @type int    $vertical   Vertical shadow.
- *     @type int    $blur       Shadow blur.
- *     @type string $color      Shadow color.
- * }
  */
 class Control_Text_Shadow extends Control_Base_Multiple {
 
@@ -137,7 +100,7 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 		}
 		#>
 		<div class="elementor-control-field">
-			<label class="elementor-control-title"><?php _e( 'Color', 'elementor' ); ?></label>
+			<label class="elementor-control-title"><?php echo __( 'Color', 'elementor' ); ?></label>
 			<div class="elementor-control-input-wrapper">
 				<input data-setting="color" class="elementor-shadow-color-picker" type="text" placeholder="<?php echo esc_attr( 'Hex/rgba', 'elementor' ); ?>" data-alpha="true"{{{ defaultColorValue }}} />
 			</div>
@@ -147,11 +110,11 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 			$control_uid = $this->get_control_uid( $slider_name );
 			?>
 			<div class="elementor-shadow-slider">
-				<label for="<?php echo $control_uid; ?>" class="elementor-control-title"><?php echo $slider['label']; ?></label>
+				<label for="<?php echo esc_attr( $control_uid ); ?>" class="elementor-control-title"><?php echo $slider['label']; ?></label>
 				<div class="elementor-control-input-wrapper">
-					<div class="elementor-slider" data-input="<?php echo $slider_name; ?>"></div>
+					<div class="elementor-slider" data-input="<?php echo esc_attr( $slider_name ); ?>"></div>
 					<div class="elementor-slider-input">
-						<input id="<?php echo $control_uid; ?>" type="number" min="<?php echo $slider['min']; ?>" max="<?php echo $slider['max']; ?>" data-setting="<?php echo $slider_name; ?>"/>
+						<input id="<?php echo esc_attr( $control_uid ); ?>" type="number" min="<?php echo esc_attr( $slider['min'] ); ?>" max="<?php echo esc_attr( $slider['max'] ); ?>" data-setting="<?php echo esc_attr( $slider_name ); ?>"/>
 					</div>
 				</div>
 			</div>

@@ -16,16 +16,16 @@ module.exports = Module.extend( {
 	startTimer: function( hasChanges ) {
 		clearTimeout( this.autoSaveTimer );
 		if ( hasChanges ) {
-			this.autoSaveTimer = window.setTimeout( _.bind( this.doAutoSave, this ), this.autosaveInterval );
+			this.autoSaveTimer = setTimeout( _.bind( this.doAutoSave, this ), this.autosaveInterval );
 		}
 	},
 
 	saveDraft: function() {
-		if ( ! this.isEditorChanged() ) {
+		var postStatus = elementor.settings.page.model.get( 'post_status' );
+
+		if ( ! elementor.saver.isEditorChanged() && 'draft' !== postStatus ) {
 			return;
 		}
-
-		var postStatus = elementor.settings.page.model.get( 'post_status' );
 
 		switch ( postStatus ) {
 			case 'publish':
@@ -72,13 +72,9 @@ module.exports = Module.extend( {
 	discard: function() {
 		var self = this;
 		elementor.ajax.addRequest( 'discard_changes', {
-			data: {
-				post_id: elementor.config.post_id
-			},
-
 			success: function() {
 				self.setFlagEditorChange( false );
-				location.href = elementor.config.exit_to_dashboard_url;
+				location.href = elementor.config.document.urls.exit_to_dashboard;
 			}
 		} );
 	},
@@ -135,7 +131,8 @@ module.exports = Module.extend( {
 		}, options );
 
 		var self = this,
-			newData = elementor.elements.toJSON( { removeDefault: true } ),
+			elements = elementor.elements.toJSON( { removeDefault: true } ),
+			settings = elementor.settings.page.model.toJSON( { removeDefault: true } ),
 			oldStatus = elementor.settings.page.model.get( 'post_status' ),
 			statusChanged = oldStatus !== options.status;
 
@@ -146,29 +143,34 @@ module.exports = Module.extend( {
 
 		self.isChangedDuringSave = false;
 
-		if ( 'autosave' !== options.status && statusChanged ) {
-			elementor.settings.page.model.set( 'post_status', options.status );
-		}
+		settings.post_status = options.status;
 
 		elementor.ajax.addRequest( 'save_builder', {
 			data: {
-				post_id: elementor.config.post_id,
 				status: options.status,
-				data: newData
+				elements: elements,
+				settings: settings
 			},
 
 			success: function( data ) {
 				self.afterAjax();
 
-				if ( ! self.isChangedDuringSave ) {
-					self.setFlagEditorChange( false );
+				if ( 'autosave' !== options.status ) {
+					if ( statusChanged ) {
+						elementor.settings.page.model.set( 'post_status', options.status );
+					}
+
+					// Notice: Must be after update page.model.post_status to the new status.
+					if ( ! self.isChangedDuringSave ) {
+						self.setFlagEditorChange( false );
+					}
 				}
 
 				if ( data.config ) {
 					jQuery.extend( true, elementor.config, data.config );
 				}
 
-				elementor.config.data = newData;
+				elementor.config.data = elements;
 
 				elementor.channels.editor.trigger( 'saved', data );
 
@@ -191,7 +193,9 @@ module.exports = Module.extend( {
 
 				var message;
 
-				if ( data.statusText ) {
+				if ( _.isString( data ) ) {
+					message = data;
+				} else if ( data.statusText ) {
 					message = elementor.ajax.createErrorMessage( data );
 
 					if ( 0 === data.readyState ) {

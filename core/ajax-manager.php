@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core;
 
+use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -8,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor ajax manager class.
+ * Elementor ajax manager.
  *
  * Elementor ajax manager handler class is responsible for handling Elementor
  * ajax requests, ajax responses and registering actions applied on them.
@@ -30,6 +31,18 @@ class Ajax_Manager {
 	protected $ajax_actions = [];
 
 	/**
+	 * Ajax requests.
+	 *
+	 * Holds all the register ajax requests.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @var array
+	 */
+	protected $requests = [];
+
+	/**
 	 * Ajax response data.
 	 *
 	 * Holds all the response data for all the ajax requests.
@@ -42,9 +55,9 @@ class Ajax_Manager {
 	protected $response_data = [];
 
 	/**
-	 * Current action ID.
+	 * Current ajax action ID.
 	 *
-	 * Holds all the ID for the current action.
+	 * Holds all the ID for the current ajax action.
 	 *
 	 * @since 2.0.0
 	 * @access protected
@@ -54,17 +67,33 @@ class Ajax_Manager {
 	protected $current_action_id = null;
 
 	/**
-	 * Send ajax request.
+	 * Ajax success response.
 	 *
 	 * Send a JSON response data back to the ajax request, indicating success.
 	 *
 	 * @since 2.0.0
-	 * @access public
+	 * @access protected
 	 */
-	public function send() {
+	protected function send_success() {
 		wp_send_json_success( [
 			'responses' => $this->response_data,
 		] );
+	}
+
+	/**
+	 * Ajax failure response.
+	 *
+	 * Send a JSON response data back to the ajax request, indicating failure.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @param null $code
+	 */
+	protected function send_error( $code = null ) {
+		wp_send_json_error( [
+			'responses' => $this->response_data,
+		], $code );
 	}
 
 	/**
@@ -78,12 +107,10 @@ class Ajax_Manager {
 	 *
 	 * @param string   $tag      Ajax request name/tag.
 	 * @param callable $callback The callback function.
-	 *
-	 * @return Ajax_Manager An instance of ajax manager.
 	 */
 	public function register_ajax_action( $tag, $callback ) {
 		if ( ! did_action( 'elementor/ajax/register_actions' ) ) {
-			doing_it_wrong( __METHOD__, __( 'Use `elementor/ajax/register_actions` hook to register ajax action.', 'elementor' ), '2.0.0' );
+			_doing_it_wrong( __METHOD__, esc_html( __( 'Use `elementor/ajax/register_actions` hook to register ajax action.', 'elementor' ) ), '2.0.0' );
 		}
 
 		$this->ajax_actions[ $tag ] = compact( 'tag', 'callback' );
@@ -100,11 +127,24 @@ class Ajax_Manager {
 	 * @access public
 	 */
 	public function handle_ajax_request() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( empty( $_REQUEST['actions'] ) ) {
-			wp_send_json_error( new \WP_Error( 'missing_action', 'Action required.' ) );
+		if ( ! Plugin::$instance->editor->verify_request_nonce() ) {
+			$this->add_response_data( false, __( 'Token Expired.', 'elementor' ) )
+				->send_error( Exceptions::UNAUTHORIZED );
 		}
+
+		if ( empty( $_REQUEST['actions'] ) || empty( $_REQUEST['editor_post_id'] ) ) {
+			$this->add_response_data( false, __( 'Actions and Post ID are required.', 'elementor' ) )
+				->send_error( Exceptions::BAD_REQUEST );
+		}
+
+		$editor_post_id = absint( $_REQUEST['editor_post_id'] );
+
+		if ( ! get_post( $editor_post_id ) ) {
+			$this->add_response_data( false, __( 'Post not found.', 'elementor' ) )
+				->send_error( Exceptions::NOT_FOUND );
+		}
+
+		Plugin::$instance->db->switch_to_post( $editor_post_id );
 
 		/**
 		 * Register ajax actions.
@@ -115,21 +155,21 @@ class Ajax_Manager {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param Ajax_Manager $this The ajax manager.
+		 * @param Ajax_Manager $this An instance of ajax manager.
 		 */
 		do_action( 'elementor/ajax/register_actions', $this );
 
-		$responses = [];
-		$requests = json_decode( stripslashes( $_REQUEST['actions'] ), true );
+		$this->requests = json_decode( stripslashes( $_REQUEST['actions'] ), true );
 
-		foreach ( $requests as $id => $action_data ) {
+		foreach ( $this->requests as $id => $action_data ) {
 			$this->current_action_id = $id;
 			if ( ! isset( $this->ajax_actions[ $action_data['action'] ] ) ) {
-				$responses[ $id ] = [
-					'error' => 'Action not found.',
-				];
-
+				$this->add_response_data( false, __( 'Action not found.', 'elementor' ), Exceptions::BAD_REQUEST );
 				continue;
+			}
+
+			if ( empty( $action_data['data']['editor_post_id'] ) ) {
+				$action_data['data']['editor_post_id'] = $editor_post_id;
 			}
 
 			try {
@@ -140,13 +180,31 @@ class Ajax_Manager {
 					$this->add_response_data( true, $results );
 				}
 			} catch ( \Exception $e ) {
-				$this->add_response_data( false, $e->getMessage() );
+				$this->add_response_data( false, $e->getMessage(), $e->getCode() );
 			}
 		}
 
 		$this->current_action_id = null;
 
-		$this->send();
+		$this->send_success();
+	}
+
+	/**
+	 * Get current action data.
+	 *
+	 * Retrieve the data for the current ajax request.
+	 *
+	 * @since 2.0.1
+	 * @access public
+	 *
+	 * @return bool|mixed Ajax request data if action exist, False otherwise.
+	 */
+	public function get_current_action_data() {
+		if ( ! $this->current_action_id ) {
+			return false;
+		}
+
+		return $this->requests[ $this->current_action_id ];
 	}
 
 	/**
@@ -161,11 +219,14 @@ class Ajax_Manager {
 	 *                       otherwise.
 	 * @param mixed $data    Optional. Response data. Default is null.
 	 *
+	 * @param int   $code    Optional. Response code. Default is 200.
+	 *
 	 * @return Ajax_Manager An instance of ajax manager.
 	 */
-	protected function add_response_data( $success, $data = null ) {
+	protected function add_response_data( $success, $data = null, $code = 200 ) {
 		$this->response_data[ $this->current_action_id ] = [
 			'success' => $success,
+			'code' => $code,
 			'data' => $data,
 		];
 

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Controls_Stack;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -9,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor template library source base class.
+ * Elementor template library source base.
  *
  * Elementor template library source base handler class is responsible for
  * initializing all the methods controlling the source of Elementor templates.
@@ -336,7 +337,7 @@ abstract class Source_Base {
 	 *
 	 * @return array Processed element data.
 	 */
-	protected function process_element_export_import_content( $element, $method ) {
+	protected function process_element_export_import_content( Controls_Stack $element, $method ) {
 		$element_data = $element->get_data();
 
 		if ( method_exists( $element, $method ) ) {
@@ -354,6 +355,11 @@ abstract class Source_Base {
 
 			if ( method_exists( $control_class, $method ) ) {
 				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ), $control );
+			}
+
+			// On Export, check if the control has an argument 'export' => false.
+			if ( 'on_export' === $method && isset( $control['export'] ) && false === $control['export'] ) {
+				unset( $element_data['settings'][ $control['name'] ] );
 			}
 		}
 

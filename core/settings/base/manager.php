@@ -2,7 +2,7 @@
 namespace Elementor\Core\Settings\Base;
 
 use Elementor\Core\Ajax_Manager;
-use Elementor\CSS_File;
+use Elementor\Core\Files\CSS\Base;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor settings base manager class.
+ * Elementor settings base manager.
  *
  * Elementor settings base manager handler class is responsible for registering
  * and managing Elementor settings base managers.
@@ -59,11 +59,11 @@ abstract class Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_handler The ajax handler.
+	 * @param Ajax_Manager $ajax_manager
 	 */
-	public function register_ajax_actions( $ajax_handler ) {
+	public function register_ajax_actions( $ajax_manager ) {
 		$name = $this->get_name();
-		$ajax_handler->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
+		$ajax_manager->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
 	}
 
 	/**
@@ -74,6 +74,8 @@ abstract class Manager {
 	 * @since 1.6.0
 	 * @access public
 	 * @abstract
+	 *
+	 * @return Model The model object.
 	 */
 	abstract public function get_model_for_config();
 
@@ -130,7 +132,6 @@ abstract class Manager {
 		}
 
 		$this->ajax_before_save_settings( $data, $id );
-
 		$this->save_settings( $data, $id );
 
 		$settings_name = $this->get_name();
@@ -204,7 +205,9 @@ abstract class Manager {
 
 		$css_file = $this->get_css_file_for_update( $id );
 
-		$css_file->update();
+		if ( $css_file ) {
+			$css_file->update();
+		}
 	}
 
 	/**
@@ -217,9 +220,9 @@ abstract class Manager {
 	 * @since 1.6.0
 	 * @access public
 	 *
-	 * @param CSS_File $css_file The requested CSS file.
+	 * @param Base $css_file The requested CSS file.
 	 */
-	public function add_settings_css_rules( CSS_File $css_file ) {
+	public function add_settings_css_rules( Base $css_file ) {
 		$model = $this->get_model_for_css_file( $css_file );
 
 		$css_file->add_controls_stack_style_rules(
@@ -292,14 +295,14 @@ abstract class Manager {
 	 * @access protected
 	 * @abstract
 	 *
-	 * @param CSS_File $css_file The requested CSS file.
+	 * @param Base $css_file The requested CSS file.
 	 */
-	abstract protected function get_model_for_css_file( CSS_File $css_file );
+	abstract protected function get_model_for_css_file( Base $css_file );
 
 	/**
 	 * Get CSS file for update.
 	 *
-	 * Retrieve the CSS file before updating the it.
+	 * Retrieve the CSS file before updating it.
 	 *
 	 * @since 1.6.0
 	 * @access protected
@@ -330,12 +333,12 @@ abstract class Manager {
 	 * Validate the data before saving it and updating the data in the database.
 	 *
 	 * @since 1.6.0
-	 * @access protected
+	 * @access public
 	 *
 	 * @param array $data Post data.
 	 * @param int   $id   Post ID.
 	 */
-	protected function ajax_before_save_settings( array $data, $id ) {}
+	public function ajax_before_save_settings( array $data, $id ) {}
 
 	/**
 	 * Print the setting template content in the editor.
@@ -352,13 +355,13 @@ abstract class Manager {
 	protected function print_editor_template_content( $name ) {
 		?>
 		<div class="elementor-panel-navigation">
-			<# _.each( elementor.config.settings.<?php echo $name; ?>.tabs, function( tabTitle, tabSlug ) { #>
+			<# _.each( elementor.config.settings.<?php echo esc_html( $name ); ?>.tabs, function( tabTitle, tabSlug ) { #>
 				<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 					<a href="#">{{{ tabTitle }}}</a>
 				</div>
 				<# } ); #>
 		</div>
-		<div id="elementor-panel-<?php echo $name; ?>-settings-controls"></div>
+		<div id="elementor-panel-<?php echo esc_attr( $name ); ?>-settings-controls"></div>
 		<?php
 	}
 
@@ -401,7 +404,7 @@ abstract class Manager {
 
 		ob_start();
 		?>
-		<script type="text/template" id="tmpl-elementor-panel-<?php echo $name; ?>-settings">
+		<script type="text/template" id="tmpl-elementor-panel-<?php echo esc_attr( $name ); ?>-settings">
 			<?php $this->print_editor_template_content( $name ); ?>
 		</script>
 		<?php

@@ -11,36 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base control for creating heading control. Displays a text heading between
  * controls in the panel.
  *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- *    $this->add_control(
- *    	'title',
- *    	[
- *    		'label' => __( 'Title', 'plugin-domain' ),
- *    		'type' => Controls_Manager::HEADING,
- *    		'description' => __( 'My Header', 'plugin-domain' ),
- *    		'separator' => 'before',
- *    	]
- *    );
- *
  * @since 1.0.0
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is true.
  */
 class Control_Heading extends Base_UI_Control {
 

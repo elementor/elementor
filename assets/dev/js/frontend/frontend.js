@@ -30,6 +30,8 @@
 			elements.$body = $( 'body' );
 
 			elements.$elementor = elements.$document.find( '.elementor' );
+
+			elements.$wpAdminBar = elements.$document.find( '#wpadminbar' );
 		};
 
 		var bindEvents = function() {
@@ -44,7 +46,8 @@
 			};
 
 			self.modules = {
-				StretchElement: require( 'elementor-frontend/modules/stretch-element' )
+				StretchElement: require( 'elementor-frontend/modules/stretch-element' ),
+				Masonry: require( 'elementor-utils/masonry' )
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
