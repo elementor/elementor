@@ -68,6 +68,7 @@ class Modules_Manager {
 		return [
 			'history',
 			'library',
+			'debug-mode',
 			'dynamic-tags',
 			'page-templates',
 			'gutenberg',
