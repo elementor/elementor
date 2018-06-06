@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.6
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 2.0.14
+Stable tag: 2.0.15
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -215,6 +215,14 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.0.15 - 2018-06-05 =
+* Fix: Background video in Chrome v67+
+* Fix: CSS glitch in local library modal
+* Fix: CSS glitch with dynamic buttons in a repeater
+* Fix: Divider control on top of controls popover
+* Fix: Conditions check for `in` & `!in`
+* Fix: Prefix class when the value is numeric
 
 = 2.0.14 - 2018-05-29 =
 * Fix: Missing Dynamic Image Background properties on front-end ([#4577](https://github.com/pojome/elementor/issues/4577))
