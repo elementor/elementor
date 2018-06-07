@@ -39,7 +39,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	addSection: function( properties, options ) {
-		return elementor.sections.currentView.addChildElement( properties, jQuery.extend( {}, this.options, options ) );
+		return elementor.getPreviewView().addChildElement( properties, jQuery.extend( {}, this.options, options ) );
 	},
 
 	setView: function( view ) {
@@ -63,15 +63,15 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	getContextMenuGroups: function() {
+		var hasContent = function() {
+			return elementor.elements.length > 0;
+		};
+
 		return [
 			{
-				name: 'general',
+				name: 'paste',
 				actions: [
 					{
-						name: 'copy_all_content',
-						title: elementor.translate( 'copy_all_content' ),
-						callback: this.copyAllContent.bind( this )
-					},	{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						callback: this.paste.bind( this ),
@@ -80,77 +80,31 @@ module.exports = Marionette.ItemView.extend( {
 						}
 					}
 				]
+			}, {
+				name: 'content',
+				actions: [
+					{
+						name: 'copy_all_content',
+						title: elementor.translate( 'copy_all_content' ),
+						callback: this.copy.bind( this ),
+						isEnabled: hasContent
+					}, {
+						name: 'delete_all_content',
+						title: elementor.translate( 'delete_all_content' ),
+						callback: elementor.clearPage.bind( elementor ),
+						isEnabled: hasContent
+					}
+				]
 			}
 		];
 	},
 
-	copyAllContent: function() {
-		elementor.setStorage( 'transfer', {
-			type: 'copy',
-			elementsType: 'section',
-			elements: elementor.elements.toJSON( { copyHtmlCache: true } )
-		} );
+	copy: function() {
+		elementor.getPreviewView().copy();
 	},
 
 	paste: function() {
-		var self = this,
-			transferData = elementor.getStorage( 'transfer' ),
-			section,
-			index;
-
-		elementor.channels.data.trigger( 'element:before:add', transferData.elements[0] );
-
-		if ( 'section' === transferData.elementsType ) {
-			index = this.getOption( 'atIndex' );
-
-			if ( null !== index ) {
-				index++;
-			} else {
-				index = elementor.sections.currentView.collection.length;
-			}
-
-			transferData.elements.forEach( function( element ) {
-				self.addSection( element, {
-					at: index,
-					edit: false,
-					clone: true
-				} );
-
-				index++;
-			} );
-		} else if ( 'column' === transferData.elementsType ) {
-			section = self.addSection( { allowEmpty: true } );
-
-			section.model.unset( 'allowEmpty' );
-
-			index = 0;
-
-			transferData.elements.forEach( function( element ) {
-				section.addChildElement( element, {
-					at: index,
-					clone: true
-				} );
-
-				index++;
-			} );
-
-			section.redefineLayout();
-		} else {
-			section = self.addSection();
-
-			index = 0;
-
-			transferData.elements.forEach( function( element ) {
-				section.addChildElement( element, {
-					at: index,
-					clone: true
-				} );
-
-				index++;
-			} );
-		}
-
-		elementor.channels.data.trigger( 'element:after:add', transferData.elements[0] );
+		elementor.getPreviewView().paste( this.getOption( 'atIndex' ) );
 	},
 
 	onAddSectionButtonClick: function() {

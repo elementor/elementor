@@ -21,6 +21,7 @@
 		&__item {
 			padding: 5px 20px;
 			display: flex;
+			cursor: pointer;
 
 			&--disabled {
 				cursor: default;

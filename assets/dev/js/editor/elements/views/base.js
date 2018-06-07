@@ -42,8 +42,7 @@ BaseElementView = BaseContainer.extend( {
 		var behaviors = {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
-				groups: groups,
-				eventTargets: this.getContextMenuEventTargets()
+				groups: groups
 			}
 		};
 
@@ -105,7 +104,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getContextMenuGroups: function() {
-		var self = this;
+		var self = this,
+			elementType = this.options.model.get( 'elType' );
 
 		return [
 			{
@@ -113,7 +113,7 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'edit',
-						title: elementor.translate( 'edit' ),
+						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
 						callback: self.edit.bind( self )
 					}, {
 						name: 'duplicate',
@@ -148,15 +148,11 @@ BaseElementView = BaseContainer.extend( {
 				name: 'style',
 				actions: [
 					{
-						name: 'copyStyle',
-						title: elementor.translate( 'copy_style' ),
-						callback: self.copyStyle.bind( self )
-					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
 						callback: self.pasteStyle.bind( self ),
 						isEnabled: function() {
-							return !! elementor.channels.editor.request( 'styleClipboard' );
+							return !! elementor.getStorage( 'transfer' );
 						}
 					}, {
 						name: 'resetStyle',
@@ -176,10 +172,6 @@ BaseElementView = BaseContainer.extend( {
 				]
 			}
 		];
-	},
-
-	getContextMenuEventTargets: function() {
-		return [ '@ui.editButton' ];
 	},
 
 	initialize: function() {
@@ -240,54 +232,37 @@ BaseElementView = BaseContainer.extend( {
 		elementor.setStorage( 'transfer', oldTransport );
 	},
 
-	copyStyle: function() {
-		var settings = this.getEditModel().get( 'settings' ),
-			styleSettings = {},
-			controls = _.filter( settings.controls, function( control ) {
-				return 'content' !== control.tab;
-			} );
-
-		controls.forEach( function( control ) {
-			if ( undefined === settings.attributes[ control.name ] ) {
-				return;
-			}
-
-			styleSettings[ control.name ] = settings.attributes[ control.name ];
-		} );
-
-		elementor.channels.editor.reply( 'styleClipboard', styleSettings );
-	},
-
 	pasteStyle: function() {
-		var styleClipboard = elementor.channels.editor.request( 'styleClipboard' );
-
-		if ( ! styleClipboard ) {
-			return;
-		}
-
-		var editModel = this.getEditModel(),
+		var transferData = elementor.getStorage( 'transfer' ),
+			sourceElement = transferData.elements[0],
+			sourceSettings = sourceElement.settings,
+			editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' ),
 			settingsAttributes = settings.attributes,
 			controls = settings.controls,
 			diffSettings = {};
 
 		jQuery.each( controls, function( controlName, control ) {
-			var clipboardValue = styleClipboard[ controlName ],
-				targetValue = settingsAttributes[ controlName ];
-
-			if ( undefined === clipboardValue || undefined === targetValue ) {
+			if ( 'content' === control.tab ) {
 				return;
 			}
 
-			if ( 'object' === typeof clipboardValue ) {
+			var sourceValue = sourceSettings[ controlName ],
+				targetValue = settingsAttributes[ controlName ];
+
+			if ( undefined === sourceValue || undefined === targetValue ) {
+				return;
+			}
+
+			if ( 'object' === typeof sourceValue ) {
 				if ( 'object' !== typeof targetValue ) {
 					return;
 				}
 
 				var isEqual = true;
 
-				jQuery.each( clipboardValue, function( propertyKey ) {
-					if ( clipboardValue[ propertyKey ] !== targetValue[ propertyKey ] ) {
+				jQuery.each( sourceValue, function( propertyKey ) {
+					if ( sourceValue[ propertyKey ] !== targetValue[ propertyKey ] ) {
 						return isEqual = false;
 					}
 				} );
@@ -296,18 +271,18 @@ BaseElementView = BaseContainer.extend( {
 					return;
 				}
 			} else {
-				if ( clipboardValue === targetValue ) {
+				if ( sourceValue === targetValue ) {
 					return;
 				}
 			}
 
 			var ControlView = elementor.getControlView( control.type );
 
-			if ( ! ControlView.onPasteStyle( control, clipboardValue ) ) {
+			if ( ! ControlView.onPasteStyle( control, sourceValue ) ) {
 				return;
 			}
 
-			diffSettings[ controlName ] = clipboardValue;
+			diffSettings[ controlName ] = sourceValue;
 		} );
 
 		this.allowRender = false;
@@ -519,12 +494,12 @@ BaseElementView = BaseContainer.extend( {
 
 			var isVisible = elementor.helpers.isActiveControl( control, settings.attributes );
 
-			if ( isVisible && ! _.isEmpty( classValue ) ) {
-				self.$el
-					.addClass( control.prefix_class + classValue )
-					.addClass( _.result( self, 'className' ) );
+			if ( isVisible && ( classValue || 0 === classValue ) ) {
+				self.$el.addClass( control.prefix_class + classValue );
 			}
 		} );
+
+		self.$el.addClass( _.result( self, 'className' ) );
 	},
 
 	renderCustomElementID: function() {

@@ -29,8 +29,9 @@ QUnit.test( 'Frontend CSS loaded', function( assert ) {
 function testPreview() {
 
 	QUnit.module( 'Widgets' );
-	var firstSectionModel = elementor.sections.currentView.collection.first(),
-		firstSectionView = elementor.sections.currentView.children.findByModel( firstSectionModel ),
+	var previewView = elementor.getPreviewView(),
+		firstSectionModel = previewView.collection.first(),
+		firstSectionView = previewView.children.findByModel( firstSectionModel ),
 		firstColumnModel = firstSectionModel.get( 'elements' ).first(),
 		firstColumnView = firstSectionView.children.findByModel( firstColumnModel ),
 		elements = [
@@ -100,7 +101,7 @@ function testPreview() {
 		// Click on `Add section`
 		pQuery( '.elementor-add-section-button' ).click();
 
-		var sectionsCollection = elementor.sections.currentView.collection,
+		var sectionsCollection = elementor.getPreviewView().collection,
 			historyItems = elementor.history.history.getItems(),
 			presetsStructureButton = pQuery( '.elementor-add-section-inner [data-structure="10"]' );
 
@@ -116,7 +117,7 @@ function testPreview() {
 			assert.equal( historyItems.first().get( 'type' ), 'add', 'History type is `add`' );
 		} );
 
-		var sectionView = elementor.sections.currentView.children.first(),
+		var sectionView = elementor.getPreviewView().children.first(),
 			columnView = sectionView.children.first(),
 			columnButtons = {
 				trigger: columnView.$el.find( '.elementor-editor-element-edit' ),
