@@ -2,6 +2,7 @@
 namespace Elementor\Modules\WpCli;
 
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -48,6 +49,34 @@ class Commands extends \WP_CLI_Command {
 			Plugin::$instance->files_manager->clear_cache();
 
 			\WP_CLI::success( 'Regenerated the Elementor CSS' );
+		}
+	}
+
+	/**
+	 * Replace old URLs to new URLs in all Elementor pages data.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  1. wp elementor search-replace <from> <to>
+	 *      - This will replace all <from> URLs with the <to> URL.
+	 *
+	 * @alias replace-urls
+	 */
+
+	public function replace_urls( $args, $assoc_args ) {
+		if ( empty( $args[0] ) ) {
+			\WP_CLI::error( 'Please set the `from` URL' );
+		}
+
+		if ( empty( $args[1] ) ) {
+			\WP_CLI::error( 'Please set the `to` URL' );
+		}
+
+		try {
+			$results = Utils::replace_urls( $args[0], $args[1] );
+			\WP_CLI::success( $results );
+		} catch ( \Exception $e ) {
+			\WP_CLI::error( $e->getMessage() );
 		}
 	}
 }
