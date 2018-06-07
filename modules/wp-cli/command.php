@@ -7,6 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Elementor Page Builder cli tools.
+ */
 class Command extends \WP_CLI_Command {
 
 	/**
