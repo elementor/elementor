@@ -56,11 +56,12 @@ abstract class Controls_Stack {
 	 */
 	private $settings;
 
+	private $active_settings;
+
+	private $parsed_active_settings;
+
 	/**
 	 * Parsed Dynamic Settings.
-	 *
-	 * Holds the dynamic settings, which is the data entered by the user and processed
-	 * by elementor includes the dynamic value.
 	 *
 	 * @access private
 	 *
@@ -1055,12 +1056,16 @@ abstract class Controls_Stack {
 	 * @return array Active settings.
 	 */
 	public function get_active_settings( $settings = null, $controls = null ) {
-		if ( ! $controls ) {
-			$controls = $this->get_controls();
-		}
+		$is_first_request = ! $settings && ! $this->active_settings;
 
 		if ( ! $settings ) {
+			if ( $this->active_settings ) {
+				return $this->active_settings;
+			}
+
 			$settings = $this->get_controls_settings();
+
+			$controls = $this->get_controls();
 		}
 
 		$active_settings = [];
@@ -1087,6 +1092,10 @@ abstract class Controls_Stack {
 			}
 		}
 
+		if ( $is_first_request ) {
+			$this->active_settings = $active_settings;
+		}
+
 		return $active_settings;
 	}
 
@@ -1108,21 +1117,15 @@ abstract class Controls_Stack {
 	 * @return array The settings.
 	 */
 	public function get_settings_for_display( $setting_key = null ) {
-		if ( $setting_key ) {
-			$settings = [
-				$setting_key => $this->get_settings( $setting_key ),
-			];
-		} else {
-			$settings = $this->get_active_settings();
+		if ( ! $this->parsed_active_settings ) {
+			$parsed_settings = $this->get_parsed_dynamic_settings();
+
+			$active_settings = $this->get_active_settings();
+
+			$this->parsed_active_settings = array_replace_recursive( $parsed_settings, $active_settings );
 		}
 
-		$parsed_settings = $this->parse_dynamic_settings( $settings );
-
-		if ( $setting_key ) {
-			return $parsed_settings[ $setting_key ];
-		}
-
-		return $parsed_settings;
+		return self::_get_items( $this->parsed_dynamic_settings, $setting_key );
 	}
 
 	/**
