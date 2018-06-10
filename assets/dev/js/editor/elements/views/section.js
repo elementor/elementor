@@ -251,7 +251,7 @@ SectionView = BaseElementView.extend( {
 
 		var myIndex = this.model.collection.indexOf( this.model ),
 			addSectionView = new AddSectionView( {
-				atIndex: myIndex
+				at: myIndex
 			} );
 
 		addSectionView.render();
