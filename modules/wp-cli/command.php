@@ -7,7 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Commands extends \WP_CLI_Command {
+/**
+ * Elementor Page Builder cli tools.
+ */
+class Command extends \WP_CLI_Command {
 
 	/**
 	 * Regenerate the Elementor Page Builder CSS.
@@ -21,7 +24,7 @@ class Commands extends \WP_CLI_Command {
 	 *      - This will regenerate the CSS files for elementor page builder.
 	 *
 	 *  2. wp elementor regenerate-css --network
-	 *  	- This will regenerate the CSS files for elementor page builder on all the sites in network.
+	 *      - This will regenerate the CSS files for elementor page builder on all the sites in network.
 	 *
 	 * @alias regenerate-css
 	 */
