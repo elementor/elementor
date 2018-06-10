@@ -17,7 +17,7 @@ class Command extends \WP_CLI_Command {
 	 * Regenerate the Elementor Page Builder CSS.
 	 *
 	 * [--network]
-	 *      Regenerate CSS of for all the sites in the network.
+	 *      Regenerate CSS for all the sites in the network.
 	 *
 	 * ## EXAMPLES
 	 *
