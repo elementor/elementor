@@ -238,7 +238,7 @@ BaseElementView = BaseContainer.extend( {
 			diffSettings = {};
 
 		jQuery.each( controls, function( controlName, control ) {
-			if ( 'content' === control.tab ) {
+			if ( 'content' === control.tab && ! control.styleTransfer || false === control.styleTransfer ) {
 				return;
 			}
 
