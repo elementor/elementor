@@ -22,7 +22,7 @@ class Module extends BaseModule {
 	}
 
 	public static function is_active() {
-		return defined( 'WP_CLI' );
+		return defined( 'WP_CLI' ) && WP_CLI;
 	}
 
 	/**
@@ -31,6 +31,6 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		\WP_CLI::add_command( 'elementor', '\Elementor\Modules\WpCli\Commands' );
+		\WP_CLI::add_command( 'elementor', '\Elementor\Modules\WpCli\Command' );
 	}
 }
