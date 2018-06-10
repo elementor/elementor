@@ -74,6 +74,8 @@ class Post extends Document {
 			$page_title_selector = 'h1.entry-title';
 		}
 
+		$page_title_selector .= ', .elementor-widget-theme-post-title';
+
 		$document->start_injection( [
 			'of' => 'post_status',
 			'fallback' => [
