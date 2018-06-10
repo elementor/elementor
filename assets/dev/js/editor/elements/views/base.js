@@ -142,12 +142,7 @@ BaseElementView = BaseContainer.extend( {
 
 							return self.getElementType() === transferData.elementsType;
 						}
-					}
-				]
-			}, {
-				name: 'style',
-				actions: [
-					{
+					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
 						callback: self.pasteStyle.bind( self ),
