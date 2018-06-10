@@ -68,9 +68,9 @@ SectionView = BaseElementView.extend( {
 
 	getContextMenuGroups: function() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
-			styleGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'style' } ) );
+			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'transfer' } ) );
 
-		groups.splice( styleGroupIndex + 1, 0, {
+		groups.splice( transferGroupIndex + 1, 0, {
 			name: 'save',
 			actions: [
 				{
