@@ -107,7 +107,7 @@ LightboxModule = ViewModule.extend( {
 
 				break;
 			case 'video':
-				self.setVideoContent( options.url );
+				self.setVideoContent( options );
 
 				break;
 			case 'slideshow':
@@ -136,18 +136,30 @@ LightboxModule = ViewModule.extend( {
 		self.getModal().setMessage( $item );
 	},
 
-	setVideoContent: function( videoEmbedURL ) {
-		videoEmbedURL = videoEmbedURL.replace( '&autoplay=0', '' ) + '&autoplay=1';
-
+	setVideoContent: function( options ) {
 		var classes = this.getSettings( 'classes' ),
 			$videoContainer = jQuery( '<div>', { 'class': classes.videoContainer } ),
 			$videoWrapper = jQuery( '<div>', { 'class': classes.videoWrapper } ),
-			$videoFrame = jQuery( '<iframe>', { src: videoEmbedURL, allowfullscreen: 1 } ),
+			$videoElement,
 			modal = this.getModal();
+
+		if ( 'hosted' === options.videoType ) {
+			var videoParams = { src: options.url };
+
+			options.videoParams.forEach( function( param ) {
+				videoParams[ param ] = '';
+			} );
+
+			$videoElement = jQuery( '<video>', videoParams );
+		} else {
+			var videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
+
+			$videoElement = jQuery( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
+		}
 
 		$videoContainer.append( $videoWrapper );
 
-		$videoWrapper.append( $videoFrame );
+		$videoWrapper.append( $videoElement );
 
 		modal.setMessage( $videoContainer );
 
