@@ -1,7 +1,6 @@
 var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
-	ContextMenu = require( 'elementor-editor-utils/context-menu' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
@@ -43,8 +42,7 @@ BaseElementView = BaseContainer.extend( {
 		var behaviors = {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
-				groups: groups,
-				eventTargets: this.getContextMenuEventTargets()
+				groups: groups
 			}
 		};
 
@@ -106,7 +104,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getContextMenuGroups: function() {
-		var self = this;
+		var self = this,
+			elementType = this.options.model.get( 'elType' );
 
 		return [
 			{
@@ -114,7 +113,7 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'edit',
-						title: elementor.translate( 'edit' ),
+						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
 						callback: self.edit.bind( self )
 					}, {
 						name: 'duplicate',
@@ -124,7 +123,7 @@ BaseElementView = BaseContainer.extend( {
 					}
 				]
 			}, {
-				name: 'transport',
+				name: 'transfer',
 				actions: [
 					{
 						name: 'copy',
@@ -135,29 +134,20 @@ BaseElementView = BaseContainer.extend( {
 						title: elementor.translate( 'paste' ),
 						callback: self.paste.bind( self ),
 						isEnabled: function() {
-							var transportData = elementor.getStorage( 'transport' );
+							var transferData = elementor.getStorage( 'transfer' );
 
-							if ( ! transportData || self.isCollectionFilled() ) {
+							if ( ! transferData || self.isCollectionFilled() ) {
 								return false;
 							}
 
-							return self.getElementType() === transportData.model.elType;
+							return self.getElementType() === transferData.elementsType;
 						}
-					}
-				]
-			}, {
-				name: 'style',
-				actions: [
-					{
-						name: 'copyStyle',
-						title: elementor.translate( 'copy_style' ),
-						callback: self.copyStyle.bind( self )
 					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
 						callback: self.pasteStyle.bind( self ),
 						isEnabled: function() {
-							return !! elementor.channels.editor.request( 'styleClipboard' );
+							return !! elementor.getStorage( 'transfer' );
 						}
 					}, {
 						name: 'resetStyle',
@@ -177,10 +167,6 @@ BaseElementView = BaseContainer.extend( {
 				]
 			}
 		];
-	},
-
-	getContextMenuEventTargets: function() {
-		return [ '@ui.editButton' ];
 	},
 
 	initialize: function() {
@@ -212,9 +198,10 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	startTransport: function( type ) {
-		elementor.setStorage( 'transport', {
+		elementor.setStorage( 'transfer', {
 			type: type,
-			model: this.model.toJSON( { copyHtmlCache: true } )
+			elementsType: this.getElementType(),
+			elements: [ this.model.toJSON( { copyHtmlCache: true } ) ]
 		} );
 	},
 
@@ -231,63 +218,46 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	duplicate: function() {
-		var oldTransport = elementor.getStorage( 'transport' );
+		var oldTransport = elementor.getStorage( 'transfer' );
 
 		this.copy();
 
 		this.paste();
 
-		elementor.setStorage( 'transport', oldTransport );
-	},
-
-	copyStyle: function() {
-		var settings = this.getEditModel().get( 'settings' ),
-			styleSettings = {},
-			controls = _.filter( settings.controls, function( control ) {
-				return 'content' !== control.tab;
-			} );
-
-		controls.forEach( function( control ) {
-			if ( undefined === settings.attributes[ control.name ] ) {
-				return;
-			}
-
-			styleSettings[ control.name ] = settings.attributes[ control.name ];
-		} );
-
-		elementor.channels.editor.reply( 'styleClipboard', styleSettings );
+		elementor.setStorage( 'transfer', oldTransport );
 	},
 
 	pasteStyle: function() {
-		var styleClipboard = elementor.channels.editor.request( 'styleClipboard' );
-
-		if ( ! styleClipboard ) {
-			return;
-		}
-
-		var editModel = this.getEditModel(),
+		var transferData = elementor.getStorage( 'transfer' ),
+			sourceElement = transferData.elements[0],
+			sourceSettings = sourceElement.settings,
+			editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' ),
 			settingsAttributes = settings.attributes,
 			controls = settings.controls,
 			diffSettings = {};
 
 		jQuery.each( controls, function( controlName, control ) {
-			var clipboardValue = styleClipboard[ controlName ],
-				targetValue = settingsAttributes[ controlName ];
-
-			if ( undefined === clipboardValue || undefined === targetValue ) {
+			if ( 'content' === control.tab ) {
 				return;
 			}
 
-			if ( 'object' === typeof clipboardValue ) {
+			var sourceValue = sourceSettings[ controlName ],
+				targetValue = settingsAttributes[ controlName ];
+
+			if ( undefined === sourceValue || undefined === targetValue ) {
+				return;
+			}
+
+			if ( 'object' === typeof sourceValue ) {
 				if ( 'object' !== typeof targetValue ) {
 					return;
 				}
 
 				var isEqual = true;
 
-				jQuery.each( clipboardValue, function( propertyKey ) {
-					if ( clipboardValue[ propertyKey ] !== targetValue[ propertyKey ] ) {
+				jQuery.each( sourceValue, function( propertyKey ) {
+					if ( sourceValue[ propertyKey ] !== targetValue[ propertyKey ] ) {
 						return isEqual = false;
 					}
 				} );
@@ -296,18 +266,18 @@ BaseElementView = BaseContainer.extend( {
 					return;
 				}
 			} else {
-				if ( clipboardValue === targetValue ) {
+				if ( sourceValue === targetValue ) {
 					return;
 				}
 			}
 
 			var ControlView = elementor.getControlView( control.type );
 
-			if ( ! ControlView.onPasteStyle( control, clipboardValue ) ) {
+			if ( ! ControlView.onPasteStyle( control, sourceValue ) ) {
 				return;
 			}
 
-			diffSettings[ controlName ] = clipboardValue;
+			diffSettings[ controlName ] = sourceValue;
 		} );
 
 		this.allowRender = false;
@@ -545,6 +515,15 @@ BaseElementView = BaseContainer.extend( {
 
 		_.defer( function() {
 			elementorFrontend.elementsHandler.runReadyTrigger( self.$el );
+
+			if ( ! elementorFrontend.isEditMode() ) {
+				return;
+			}
+
+			// In edit mode - handle an external elements which loaded by another elements like shortcode etc.
+			self.$el.find( '.elementor-element:not(.elementor-element-edit-mode)' ).each( function() {
+				elementorFrontend.elementsHandler.runReadyTrigger( jQuery( this ) );
+			} );
 		} );
 	},
 

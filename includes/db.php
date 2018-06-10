@@ -231,7 +231,26 @@ class DB {
 			return [];
 		}
 
-		$text_editor_widget_type = Plugin::$instance->widgets_manager->get_widget_types( 'text-editor' );
+		// Check if it's only a shortcode.
+		preg_match_all( '/' . get_shortcode_regex() . '/', $post->post_content, $matches, PREG_SET_ORDER );
+		if ( ! empty( $matches ) ) {
+			foreach ( $matches as $shortcode ) {
+				if ( trim( $post->post_content ) === $shortcode[0] ) {
+					$widget_type = Plugin::$instance->widgets_manager->get_widget_types( 'shortcode' );
+					$settings = [
+						'shortcode' => $post->post_content,
+					];
+					break;
+				}
+			}
+		}
+
+		if ( empty( $widget_type ) ) {
+			$widget_type = Plugin::$instance->widgets_manager->get_widget_types( 'text-editor' );
+			$settings = [
+				'editor' => $post->post_content,
+			];
+		}
 
 		// TODO: Better coding to start template for editor
 		return [
@@ -245,11 +264,9 @@ class DB {
 						'elements' => [
 							[
 								'id' => Utils::generate_random_string(),
-								'elType' => $text_editor_widget_type::get_type(),
-								'widgetType' => $text_editor_widget_type->get_name(),
-								'settings' => [
-									'editor' => $post->post_content,
-								],
+								'elType' => $widget_type::get_type(),
+								'widgetType' => $widget_type->get_name(),
+								'settings' => $settings,
 							],
 						],
 					],

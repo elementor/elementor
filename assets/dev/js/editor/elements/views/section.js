@@ -68,9 +68,9 @@ SectionView = BaseElementView.extend( {
 
 	getContextMenuGroups: function() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
-			styleGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'style' } ) );
+			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'transfer' } ) );
 
-		groups.splice( styleGroupIndex + 1, 0, {
+		groups.splice( transferGroupIndex + 1, 0, {
 			name: 'save',
 			actions: [
 				{
@@ -102,7 +102,7 @@ SectionView = BaseElementView.extend( {
 
 		return {
 			connectWith: sectionConnectClass + ' > .elementor-container > .elementor-row',
-			handle: '> .elementor-element-overlay .elementor-editor-column-settings .elementor-editor-element-edit',
+			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
 			items: '> .elementor-column',
 			forcePlaceholderSize: true,
 			tolerance: 'pointer'

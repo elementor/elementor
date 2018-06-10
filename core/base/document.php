@@ -365,44 +365,6 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * Initialize controls.
-	 *
-	 * Register the all controls added by `_register_controls()`.
-	 * and add the `advanced_settings` at end of Settings Tab
-	 *
-	 * @since 2.0.0
-	 * @access protected
-	 */
-	protected function init_controls() {
-		parent::init_controls();
-
-		if ( ! Plugin::$instance->role_manager->user_can( 'design' ) ) {
-			return;
-		}
-
-		$this->start_controls_section(
-			'advanced_settings',
-			[
-				'label' => __( 'Advanced', 'elementor' ),
-				'tab' => Controls_Manager::TAB_SETTINGS,
-			]
-		);
-
-		$this->add_control(
-			'clear_page',
-			[
-				'type' => Controls_Manager::BUTTON,
-				'label' => __( 'Delete All Content', 'elementor' ),
-				'text' => __( 'Delete', 'elementor' ),
-				'separator' => 'before',
-				'event' => 'elementor:clearPage',
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
-	/**
 	 * @since 2.0.0
 	 * @access protected
 	 */

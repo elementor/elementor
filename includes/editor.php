@@ -642,7 +642,6 @@ class Editor {
 				'unknown_error' => __( 'Unknown Error', 'elementor' ),
 
 				// Context Menu
-				'edit' => __( 'Edit', 'elementor' ),
 				'duplicate' => __( 'Duplicate', 'elementor' ),
 				'copy' => __( 'Copy', 'elementor' ),
 				'paste' => __( 'Paste', 'elementor' ),
@@ -651,6 +650,8 @@ class Editor {
 				'reset_style' => __( 'Reset Style', 'elementor' ),
 				'save_as_global' => __( 'Save as a Global', 'elementor' ),
 				'new_column' => __( 'New Column', 'elementor' ),
+				'copy_all_content' => __( 'Copy All Content', 'elementor' ),
+				'delete_all_content' => __( 'Delete All Content', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
