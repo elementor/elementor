@@ -129,7 +129,10 @@ class Module extends BaseModule {
 	 */
 	public function add_page_templates( $page_templates, $wp_theme, $post ) {
 		if ( $post ) {
-			$document = Plugin::$instance->documents->get( $post->ID );
+			// FIX ME: Gutenberg not send $post as WP_Post object, just the post ID.
+			$post_id = ! empty( $post->ID ) ? $post->ID : $post;
+
+			$document = Plugin::$instance->documents->get( $post_id );
 			if ( $document && ! $document::get_property( 'support_wp_page_templates' ) ) {
 				return $page_templates;
 			}
