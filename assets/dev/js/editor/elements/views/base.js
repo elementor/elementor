@@ -337,6 +337,11 @@ BaseElementView = BaseContainer.extend( {
 			jQuery.extend( itemData, customData );
 		}
 
+		options.trigger = {
+			beforeAdd: 'element:before:add',
+			afterAdd: 'element:after:add'
+		};
+
 		options.onAfterAdd = function( newModel, newView ) {
 			if ( 'section' === newView.getElementType() && newView.isInner() ) {
 				newView.addChildElement();
