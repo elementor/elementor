@@ -199,6 +199,54 @@ class Utils {
 		return $wp_preview_url;
 	}
 
+	/**
+	 * Replace URLs.
+	 *
+	 * Replace old URLs to new URLs. This method also updates all the Elementor data.
+	 *
+	 * @since  2.1.0
+	 * @access public
+	 *
+	 * @param $from
+	 * @param $to
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public static function replace_urls( $from, $to ) {
+		$from = trim( $from );
+		$to = trim( $to );
+
+		if ( $from === $to ) {
+			throw new \Exception( __( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
+		}
+
+		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
+		if ( ! $is_valid_urls ) {
+			throw new \Exception( __( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
+		}
+
+		global $wpdb;
+
+		// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
+		$rows_affected = $wpdb->query(
+			"UPDATE {$wpdb->postmeta} " .
+			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
+			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
+		// @codingStandardsIgnoreEnd
+
+		if ( false === $rows_affected ) {
+			throw new \Exception( __( 'An error occurred', 'elementor' ) );
+		}
+
+		Plugin::$instance->files_manager->clear_cache();
+
+		return sprintf(
+			/* translators: %d: Number of rows */
+			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
+			$rows_affected
+		);
+	}
 
 	/**
 	 * Get exit to dashboard URL.
