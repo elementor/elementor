@@ -134,7 +134,7 @@ TemplateLibraryManager = function() {
 
 				elementor.channels.data.trigger( 'template:before:insert', templateModel );
 
-				elementor.sections.currentView.addChildModel( data.content, startIntent.importOptions || {} );
+				elementor.getPreviewView().addChildModel( data.content, startIntent.importOptions || {} );
 
 				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 

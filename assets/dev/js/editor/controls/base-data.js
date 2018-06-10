@@ -170,9 +170,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 			this.renderResponsiveSwitchers();
 		}
 
-		this.triggerMethod( 'ready' );
-
 		this.applySavedValue();
+
+		this.triggerMethod( 'ready' );
 
 		this.toggleControlVisibility();
 

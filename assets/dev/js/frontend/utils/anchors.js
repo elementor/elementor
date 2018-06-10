@@ -2,7 +2,6 @@ var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
 	getDefaultSettings: function() {
-
 		return {
 			scrollDuration: 500,
 			selectors: {

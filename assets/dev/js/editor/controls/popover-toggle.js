@@ -19,6 +19,11 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 	onPopoverToggleClick: function() {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
+}, {
+
+	onPasteStyle: function( control, clipboardValue ) {
+		return ! clipboardValue || clipboardValue === control.return_value;
+	}
 } );
 
 module.exports = ControlPopoverStarterView;

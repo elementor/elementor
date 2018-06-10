@@ -338,7 +338,7 @@ class Plugin {
 	 *
 	 * @var Files_Manager
 	 */
-	public $post_css_manager;
+	public $posts_css_manager;
 
 	/**
 	 * WordPress widgets manager.
@@ -490,7 +490,7 @@ class Plugin {
 		/*
 		 * @TODO: Remove deprecated alias
 		 */
-		$this->files_manager = $this->post_css_manager = new Files_Manager();
+		$this->files_manager = $this->posts_css_manager = new Files_Manager();
 		$this->settings = new Settings();
 		$this->editor = new Editor();
 		$this->preview = new Preview();

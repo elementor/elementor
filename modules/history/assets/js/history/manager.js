@@ -311,7 +311,7 @@ var	Manager = function() {
 			founded = false;
 
 		if ( ! views ) {
-			views = elementor.sections.currentView.children;
+			views = elementor.getPreviewView().children;
 		}
 
 		_.each( views._views, function( view ) {

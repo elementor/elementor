@@ -96,7 +96,6 @@ class Element_Column extends Element_Base {
 	 * @return array Default edit tools.
 	 */
 	protected static function get_default_edit_tools() {
-
 		return [
 			'edit' => [
 				'title' => __( 'Edit', 'elementor' ),

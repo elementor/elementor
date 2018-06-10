@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-category">
-	<div class="elementor-panel-category-title{{{ defaultActive ? ' elementor-active' : '' }}}">{{{ title }}}</div>
+	<div class="elementor-panel-category-title">{{{ title }}}</div>
 	<div class="elementor-panel-category-items"></div>
 </script>
 
