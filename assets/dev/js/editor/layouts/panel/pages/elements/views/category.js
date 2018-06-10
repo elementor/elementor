@@ -28,7 +28,13 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	},
 
 	onRender: function() {
-		if ( this.model.get( 'defaultActive' ) ) {
+		var isActive = elementor.channels.panelElements.request( 'category:' + this.model.get( 'name' ) + ':active' );
+
+		if ( undefined === isActive ) {
+			isActive = this.model.get( 'defaultActive' );
+		}
+
+		if ( isActive ) {
 			this.$el.addClass( 'elementor-active' );
 
 			this.ui.items.show();
@@ -38,17 +44,16 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	onTitleClick: function() {
 		var $items = this.ui.items,
 			activeClass = 'elementor-active',
-			isActive = this.$el.hasClass( activeClass );
+			isActive = this.$el.hasClass( activeClass ),
+			slideFn = isActive ? 'slideUp' : 'slideDown';
 
-		if ( isActive ) {
-			this.$el.removeClass( activeClass );
+		elementor.channels.panelElements.reply( 'category:' + this.model.get( 'name' ) + ':active', ! isActive );
 
-			$items.slideUp( 300 );
-		} else {
-			this.$el.addClass( activeClass );
+		this.$el.toggleClass( activeClass, ! isActive );
 
-			$items.slideDown( 300 );
-		}
+		$items[ slideFn ]( 300, function() {
+			elementor.getPanelView().updateScrollbar();
+		} );
 	}
 } );
 
