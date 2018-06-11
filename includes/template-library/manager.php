@@ -416,7 +416,7 @@ class Manager {
 		/** @var Source_Local $source */
 		$source = $this->get_source( 'local' );
 
-		return $source->import_template();
+		return $source->import_template( $_FILES['file']['name'], $_FILES['file']['tmp_name'] );
 	}
 
 	/**
