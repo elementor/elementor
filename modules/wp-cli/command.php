@@ -57,23 +57,23 @@ class Command extends \WP_CLI_Command {
 	}
 
 	/**
-	 * Replace old URLs to new URLs in all Elementor pages data.
+	 * Replace old URLs with new URLs in all Elementor pages.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *  1. wp elementor search-replace <from> <to>
-	 *      - This will replace all <from> URLs with the <to> URL.
+	 *  1. wp elementor search-replace <old> <new>
+	 *      - This will replace all <old> URLs with the <new> URL.
 	 *
 	 * @alias replace-urls
 	 */
 
 	public function replace_urls( $args, $assoc_args ) {
 		if ( empty( $args[0] ) ) {
-			\WP_CLI::error( 'Please set the `from` URL' );
+			\WP_CLI::error( 'Please set the `old` URL' );
 		}
 
 		if ( empty( $args[1] ) ) {
-			\WP_CLI::error( 'Please set the `to` URL' );
+			\WP_CLI::error( 'Please set the `new` URL' );
 		}
 
 		try {
@@ -90,7 +90,7 @@ class Command extends \WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *  1. wp elementor sync-library
-	 *      - This will sync the library with Elementor Server library.
+	 *      - This will sync the library with Elementor cloud library.
 	 *
 	 * @alias sync-library
 	 */
