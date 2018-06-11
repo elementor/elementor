@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\WpCli;
 
+use Elementor\Api;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -17,7 +18,7 @@ class Command extends \WP_CLI_Command {
 	 * Regenerate the Elementor Page Builder CSS.
 	 *
 	 * [--network]
-	 *      Regenerate CSS of for all the sites in the network.
+	 *      Regenerate CSS for all the sites in the network.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -81,5 +82,25 @@ class Command extends \WP_CLI_Command {
 		} catch ( \Exception $e ) {
 			\WP_CLI::error( $e->getMessage() );
 		}
+	}
+
+	/**
+	 * Sync Elementor Library.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  1. wp elementor sync-library
+	 *      - This will sync the library with Elementor Server library.
+	 *
+	 * @alias sync-library
+	 */
+	public function sync_library( $args, $assoc_args ) {
+		$data = Api::get_library_data( true );
+
+		if ( empty( $data ) ) {
+			\WP_CLI::error( 'Cannot sync library.' );
+		}
+
+		\WP_CLI::success( 'Library has been synced.' );
 	}
 }
