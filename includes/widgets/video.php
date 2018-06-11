@@ -183,15 +183,14 @@ class Widget_Video extends Widget_Base {
 			'hosted_url',
 			[
 				'label' => __( 'URL', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
+				'type' => Controls_Manager::MEDIA,
+				'media_type' => 'video',
 				'dynamic' => [
 					'active' => true,
 					'categories' => [
 						TagsModule::POST_META_CATEGORY,
 					],
 				],
-				'placeholder' => __( 'Enter your video URL', 'elementor' ),
-				'label_block' => true,
 				'condition' => [
 					'video_type' => 'hosted',
 				],
@@ -681,6 +680,10 @@ class Widget_Video extends Widget_Base {
 
 		$video_url = $settings[ $settings['video_type'] . '_url' ];
 
+		if ( 'hosted' === $settings['video_type'] ) {
+			$video_url = $this->get_hosted_video_url();
+		}
+
 		if ( empty( $video_url ) ) {
 			return;
 		}
@@ -922,12 +925,16 @@ class Widget_Video extends Widget_Base {
 		return $video_params;
 	}
 
-	private function render_hosted_video() {
+	private function get_hosted_video_url() {
 		$settings = $this->get_settings_for_display();
 
-		$video_params = $this->get_hosted_params();
+		$video_url = $settings['hosted_url']['url'];
 
-		$video_url = $settings['hosted_url'] . '#t=';
+		if ( ! $video_url ) {
+			return '';
+		}
+
+		$video_url .= '#t=';
 
 		if ( $settings['start'] ) {
 			$video_url .= $settings['start'];
@@ -936,6 +943,14 @@ class Widget_Video extends Widget_Base {
 		if ( $settings['end'] ) {
 			$video_url .= ',' . $settings['end'];
 		}
+
+		return $video_url;
+	}
+
+	private function render_hosted_video() {
+		$video_params = $this->get_hosted_params();
+
+		$video_url = $this->get_hosted_video_url();
 		?>
 		<video src="<?php echo esc_url( $video_url ); ?>" <?php echo implode( ' ', $video_params ); ?>></video>
 		<?php
