@@ -199,6 +199,28 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'start',
+			[
+				'label' => __( 'Start Time', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'description' => __( 'The video start time (in seconds)', 'elementor' ),
+				'condition' => [],
+			]
+		);
+
+		$this->add_control(
+			'end',
+			[
+				'label' => __( 'End Time', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'description' => __( 'The video end time (in seconds)', 'elementor' ),
+				'condition' => [
+					'video_type' => [ 'youtube', 'hosted' ],
+				],
+			]
+		);
+
+		$this->add_control(
 			'video_options',
 			[
 				'label' => __( 'Video Options', 'elementor' ),
@@ -230,28 +252,6 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
 					'video_type!' => 'dailymotion',
-				],
-			]
-		);
-
-		$this->add_control(
-			'start',
-			[
-				'label' => __( 'Start Time', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'description' => __( 'The video start time (in seconds)', 'elementor' ),
-				'condition' => [],
-			]
-		);
-
-		$this->add_control(
-			'end',
-			[
-				'label' => __( 'End Time', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'description' => __( 'The video end time (in seconds)', 'elementor' ),
-				'condition' => [
-					'video_type' => [ 'youtube', 'hosted' ],
 				],
 			]
 		);
