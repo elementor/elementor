@@ -87,43 +87,20 @@ class Command extends \WP_CLI_Command {
 	/**
 	 * Sync Elementor Library.
 	 *
-	 * [--network]
-	 *      Sync Elementor Library for all the sites in the network.
-	 *
 	 * ## EXAMPLES
 	 *
 	 *  1. wp elementor sync-library
 	 *      - This will sync the library with Elementor Server library.
 	 *
-	 *  2. wp elementor sync-library --network
-	 *      - This will sync the library with Elementor Server library on all the sites in network.
-	 *
 	 * @alias sync-library
 	 */
 	public function sync_library( $args, $assoc_args ) {
-		$network = ! empty( $assoc_args['network'] ) && is_multisite();
+		$data = Api::get_library_data( true );
 
-		if ( $network ) {
-			/** @var \WP_Site[] $blogs */
-			$blogs = get_sites();
-
-			foreach ( $blogs as $keys => $blog ) {
-				// Cast $blog as an array instead of  object
-				$blog_id = $blog->blog_id;
-
-				switch_to_blog( $blog_id );
-
-				Api::get_library_data( true );
-
-				\WP_CLI::success( 'Library synced for site - ' . get_option( 'home' ) );
-
-				restore_current_blog();
-			}
-		} else {
-			Api::get_library_data( true );
-
-			\WP_CLI::success( 'Library synced.' );
+		if ( empty( $data ) ) {
+			\WP_CLI::error( 'Cannot sync library.' );
 		}
-	}
 
+		\WP_CLI::success( 'Library has been synced.' );
+	}
 }
