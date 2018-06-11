@@ -15,22 +15,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Command extends \WP_CLI_Command {
 
 	/**
-	 * Regenerate the Elementor Page Builder CSS.
+	 * Flush the Elementor Page Builder CSS Cache.
 	 *
 	 * [--network]
-	 *      Regenerate CSS for all the sites in the network.
+	 *      Flush CSS Cache for all the sites in the network.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *  1. wp elementor regenerate-css
-	 *      - This will regenerate the CSS files for elementor page builder.
+	 *  1. wp elementor flush-css
+	 *      - This will flush the CSS files for elementor page builder.
 	 *
-	 *  2. wp elementor regenerate-css --network
-	 *      - This will regenerate the CSS files for elementor page builder on all the sites in network.
+	 *  2. wp elementor flush-css --network
+	 *      - This will flush the CSS files for elementor page builder for all the sites in the network.
 	 *
-	 * @alias regenerate-css
+	 * @alias flush-css
 	 */
-	public function regenerate_css( $args, $assoc_args ) {
+	public function flush_css( $args, $assoc_args ) {
 		$network = ! empty( $assoc_args['network'] ) && is_multisite();
 
 		if ( $network ) {
@@ -45,14 +45,14 @@ class Command extends \WP_CLI_Command {
 
 				Plugin::$instance->files_manager->clear_cache();
 
-				\WP_CLI::success( 'Regenerated the Elementor CSS for site - ' . get_option( 'home' ) );
+				\WP_CLI::success( 'Flushed the Elementor CSS Cache for site - ' . get_option( 'home' ) );
 
 				restore_current_blog();
 			}
 		} else {
 			Plugin::$instance->files_manager->clear_cache();
 
-			\WP_CLI::success( 'Regenerated the Elementor CSS' );
+			\WP_CLI::success( 'Flushed the Elementor CSS Cache' );
 		}
 	}
 
