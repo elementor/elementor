@@ -107,14 +107,14 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'video_type',
 			[
-				'label' => __( 'Video Type', 'elementor' ),
+				'label' => __( 'Source', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'youtube',
 				'options' => [
 					'youtube' => __( 'YouTube', 'elementor' ),
 					'vimeo' => __( 'Vimeo', 'elementor' ),
 					'dailymotion' => __( 'Dailymotion', 'elementor' ),
-					'hosted' => __( 'HTML5 Video', 'elementor' ),
+					'hosted' => __( 'Self Hosted', 'elementor' ),
 				],
 			]
 		);
@@ -202,7 +202,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Start Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'description' => __( 'The video start time (in seconds)', 'elementor' ),
+				'description' => __( 'Specify a start time (in seconds)', 'elementor' ),
 				'condition' => [],
 			]
 		);
@@ -212,7 +212,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'End Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'description' => __( 'The video end time (in seconds)', 'elementor' ),
+				'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
 				'condition' => [
 					'video_type' => [ 'youtube', 'hosted' ],
 				],
