@@ -3,6 +3,7 @@ namespace Elementor\Modules\WpCli;
 
 use Elementor\Api;
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -102,5 +103,35 @@ class Command extends \WP_CLI_Command {
 		}
 
 		\WP_CLI::success( 'Library has been synced.' );
+	}
+
+	/**
+	 * Import template files to the Library.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  1. wp elementor import-library <file-path>
+	 *      - This will import a file or a zip of multiple files to the library.
+	 *
+	 * @alias import-library
+	 */
+	public function import_library( $args, $assoc_args ) {
+		if ( empty( $args[0] ) ) {
+			\WP_CLI::error( 'Please set file path.' );
+		}
+
+		if ( ! is_readable( $args[0] ) ) {
+			\WP_CLI::error( 'Cannot read file.' );
+		}
+		/** @var Source_Local $source */
+		$source = Plugin::$instance->templates_manager->get_source( 'local' );
+
+		$imported_items = $source->import_template( basename( $args[0] ), $args[0] );
+
+		if ( empty( $imported_items ) ) {
+			\WP_CLI::error( 'Cannot import.' );
+		}
+
+		\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );
 	}
 }
