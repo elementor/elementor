@@ -159,7 +159,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onChildviewChildrenRender: function() {
-		this.updateElementsScrollbar();
+		elementor.getPanelView().updateScrollbar();
 	},
 
 	onChildviewSearchChangeInput: function( child ) {
@@ -178,10 +178,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	onTabClick: function( event ) {
 		this.activateTab( event.currentTarget.dataset.view );
-	},
-
-	updateElementsScrollbar: function() {
-		elementor.channels.data.trigger( 'scrollbar:update' );
 	}
 } );
 
