@@ -104,8 +104,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getContextMenuGroups: function() {
-		var self = this,
-			elementType = this.options.model.get( 'elType' );
+		var elementType = this.options.model.get( 'elType' ),
+			controlSign = elementor.envData.mac ? '⌘' : '^';
 
 		return [
 			{
@@ -114,12 +114,12 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
-						callback: self.edit.bind( self )
+						callback: this.edit.bind( this )
 					}, {
 						name: 'duplicate',
 						title: elementor.translate( 'duplicate' ),
-						shortcut: ( elementor.envData.mac ? '⌘' : '^' ) + '+D',
-						callback: self.duplicate.bind( self )
+						shortcut: controlSign + '+D',
+						callback: this.duplicate.bind( this )
 					}
 				]
 			}, {
@@ -128,23 +128,25 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'copy',
 						title: elementor.translate( 'copy' ),
-						callback: self.copy.bind( self )
+						shortcut: controlSign + '+C',
+						callback: this.copy.bind( this )
 					}, {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						callback: self.paste.bind( self ),
+						shortcut: controlSign + '+V',
+						callback: this.paste.bind( this ),
 						isEnabled: this.isPasteEnabled.bind( this )
 					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
-						callback: self.pasteStyle.bind( self ),
+						callback: this.pasteStyle.bind( this ),
 						isEnabled: function() {
 							return !! elementor.getStorage( 'transfer' );
 						}
 					}, {
 						name: 'resetStyle',
 						title: elementor.translate( 'reset_style' ),
-						callback: self.resetStyle.bind( self )
+						callback: this.resetStyle.bind( this )
 					}
 				]
 			}, {
@@ -154,7 +156,7 @@ BaseElementView = BaseContainer.extend( {
 						name: 'delete',
 						title: elementor.translate( 'delete' ),
 						shortcut: '⌦',
-						callback: self.removeElement.bind( self )
+						callback: this.removeElement.bind( this )
 					}
 				]
 			}
