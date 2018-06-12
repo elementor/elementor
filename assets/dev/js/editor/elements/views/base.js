@@ -118,7 +118,7 @@ BaseElementView = BaseContainer.extend( {
 					}, {
 						name: 'duplicate',
 						title: elementor.translate( 'duplicate' ),
-						shortcut: ( elementor.envData.mac ? '⌘' : '^' ) + 'D',
+						shortcut: ( elementor.envData.mac ? '⌘' : '^' ) + '+D',
 						callback: self.duplicate.bind( self )
 					}
 				]
