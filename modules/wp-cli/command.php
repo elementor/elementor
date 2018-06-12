@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Modules\WpCli;
 
+use Elementor\Api;
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,22 +16,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Command extends \WP_CLI_Command {
 
 	/**
-	 * Regenerate the Elementor Page Builder CSS.
+	 * Flush the Elementor Page Builder CSS Cache.
 	 *
 	 * [--network]
-	 *      Regenerate CSS of for all the sites in the network.
+	 *      Flush CSS Cache for all the sites in the network.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *  1. wp elementor regenerate-css
-	 *      - This will regenerate the CSS files for elementor page builder.
+	 *  1. wp elementor flush-css
+	 *      - This will flush the CSS files for elementor page builder.
 	 *
-	 *  2. wp elementor regenerate-css --network
-	 *      - This will regenerate the CSS files for elementor page builder on all the sites in network.
+	 *  2. wp elementor flush-css --network
+	 *      - This will flush the CSS files for elementor page builder for all the sites in the network.
 	 *
-	 * @alias regenerate-css
+	 * @alias flush-css
 	 */
-	public function regenerate_css( $args, $assoc_args ) {
+	public function flush_css( $args, $assoc_args ) {
 		$network = ! empty( $assoc_args['network'] ) && is_multisite();
 
 		if ( $network ) {
@@ -44,35 +46,35 @@ class Command extends \WP_CLI_Command {
 
 				Plugin::$instance->files_manager->clear_cache();
 
-				\WP_CLI::success( 'Regenerated the Elementor CSS for site - ' . get_option( 'home' ) );
+				\WP_CLI::success( 'Flushed the Elementor CSS Cache for site - ' . get_option( 'home' ) );
 
 				restore_current_blog();
 			}
 		} else {
 			Plugin::$instance->files_manager->clear_cache();
 
-			\WP_CLI::success( 'Regenerated the Elementor CSS' );
+			\WP_CLI::success( 'Flushed the Elementor CSS Cache' );
 		}
 	}
 
 	/**
-	 * Replace old URLs to new URLs in all Elementor pages data.
+	 * Replace old URLs with new URLs in all Elementor pages.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *  1. wp elementor search-replace <from> <to>
-	 *      - This will replace all <from> URLs with the <to> URL.
+	 *  1. wp elementor search-replace <old> <new>
+	 *      - This will replace all <old> URLs with the <new> URL.
 	 *
 	 * @alias replace-urls
 	 */
 
 	public function replace_urls( $args, $assoc_args ) {
 		if ( empty( $args[0] ) ) {
-			\WP_CLI::error( 'Please set the `from` URL' );
+			\WP_CLI::error( 'Please set the `old` URL' );
 		}
 
 		if ( empty( $args[1] ) ) {
-			\WP_CLI::error( 'Please set the `to` URL' );
+			\WP_CLI::error( 'Please set the `new` URL' );
 		}
 
 		try {
@@ -81,5 +83,55 @@ class Command extends \WP_CLI_Command {
 		} catch ( \Exception $e ) {
 			\WP_CLI::error( $e->getMessage() );
 		}
+	}
+
+	/**
+	 * Sync Elementor Library.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  1. wp elementor sync-library
+	 *      - This will sync the library with Elementor cloud library.
+	 *
+	 * @alias sync-library
+	 */
+	public function sync_library( $args, $assoc_args ) {
+		$data = Api::get_library_data( true );
+
+		if ( empty( $data ) ) {
+			\WP_CLI::error( 'Cannot sync library.' );
+		}
+
+		\WP_CLI::success( 'Library has been synced.' );
+	}
+
+	/**
+	 * Import template files to the Library.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  1. wp elementor import-library <file-path>
+	 *      - This will import a file or a zip of multiple files to the library.
+	 *
+	 * @alias import-library
+	 */
+	public function import_library( $args, $assoc_args ) {
+		if ( empty( $args[0] ) ) {
+			\WP_CLI::error( 'Please set file path.' );
+		}
+
+		if ( ! is_readable( $args[0] ) ) {
+			\WP_CLI::error( 'Cannot read file.' );
+		}
+		/** @var Source_Local $source */
+		$source = Plugin::$instance->templates_manager->get_source( 'local' );
+
+		$imported_items = $source->import_template( basename( $args[0] ), $args[0] );
+
+		if ( empty( $imported_items ) ) {
+			\WP_CLI::error( 'Cannot import.' );
+		}
+
+		\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );
 	}
 }
