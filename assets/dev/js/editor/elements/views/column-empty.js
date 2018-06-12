@@ -17,8 +17,6 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	getContextMenuGroups: function() {
-		var self = this;
-
 		return [
 			{
 				name: 'general',
@@ -26,7 +24,7 @@ module.exports = Marionette.ItemView.extend( {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						callback: self.paste.bind( self ),
+						callback: this.paste.bind( this ),
 						isEnabled: this.isPasteEnabled.bind( this )
 					}
 				]
