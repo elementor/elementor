@@ -1387,7 +1387,7 @@ class Source_Local extends Source_Base {
 		}
 
 		if ( 'page' === $template_type ) {
-			$template_label = __( 'Content', 'elementor' );
+			$template_label = __( 'Content Page', 'elementor' );
 		}
 
 		/**
