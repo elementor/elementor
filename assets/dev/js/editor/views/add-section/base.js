@@ -2,7 +2,7 @@ module.exports = Marionette.ItemView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-add-section' ),
 
 	options: {
-		atIndex: null
+		at: null
 	},
 
 	attributes: {
@@ -57,7 +57,7 @@ module.exports = Marionette.ItemView.extend( {
 	getTemplatesModalOptions: function() {
 		return {
 			importOptions: {
-				at: this.getOption( 'atIndex' )
+				at: this.getOption( 'at' )
 			}
 		};
 	},
@@ -104,7 +104,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	paste: function() {
-		elementor.getPreviewView().paste( this.getOption( 'atIndex' ) );
+		elementor.getPreviewView().paste( this.getOption( 'at' ) );
 	},
 
 	onAddSectionButtonClick: function() {

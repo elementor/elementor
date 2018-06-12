@@ -142,12 +142,7 @@ BaseElementView = BaseContainer.extend( {
 
 							return self.getElementType() === transferData.elementsType;
 						}
-					}
-				]
-			}, {
-				name: 'style',
-				actions: [
-					{
+					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
 						callback: self.pasteStyle.bind( self ),
@@ -243,7 +238,7 @@ BaseElementView = BaseContainer.extend( {
 			diffSettings = {};
 
 		jQuery.each( controls, function( controlName, control ) {
-			if ( 'content' === control.tab ) {
+			if ( 'content' === control.tab && ! control.selectors && ! control.styleTransfer || false === control.styleTransfer ) {
 				return;
 			}
 
@@ -341,6 +336,11 @@ BaseElementView = BaseContainer.extend( {
 		if ( customData ) {
 			jQuery.extend( itemData, customData );
 		}
+
+		options.trigger = {
+			beforeAdd: 'element:before:add',
+			afterAdd: 'element:after:add'
+		};
 
 		options.onAfterAdd = function( newModel, newView ) {
 			if ( 'section' === newView.getElementType() && newView.isInner() ) {
