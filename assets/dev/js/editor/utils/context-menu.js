@@ -31,7 +31,7 @@ ContextMenu = Module.extend( {
 		$item.html( $itemTitle );
 
 		if ( action.shortcut ) {
-			var $itemShortcut = jQuery( '<div>', { 'class': classes.itemShortcut } ).text( action.shortcut );
+			var $itemShortcut = jQuery( '<div>', { 'class': classes.itemShortcut } ).html( action.shortcut );
 
 			$item.append( $itemShortcut );
 		}
