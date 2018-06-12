@@ -133,15 +133,7 @@ BaseElementView = BaseContainer.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						callback: self.paste.bind( self ),
-						isEnabled: function() {
-							var transferData = elementor.getStorage( 'transfer' );
-
-							if ( ! transferData || self.isCollectionFilled() ) {
-								return false;
-							}
-
-							return self.getElementType() === transferData.elementsType;
-						}
+						isEnabled: this.isPasteEnabled.bind( this )
 					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
@@ -215,6 +207,16 @@ BaseElementView = BaseContainer.extend( {
 
 	paste: function() {
 		this.trigger( 'request:paste' );
+	},
+
+	isPasteEnabled: function() {
+		var transferData = elementor.getStorage( 'transfer' );
+
+		if ( ! transferData || this.isCollectionFilled() ) {
+			return false;
+		}
+
+		return this.getElementType() === transferData.elementsType;
 	},
 
 	duplicate: function() {
