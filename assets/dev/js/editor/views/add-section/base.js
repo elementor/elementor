@@ -75,9 +75,7 @@ module.exports = Marionette.ItemView.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						callback: this.paste.bind( this ),
-						isEnabled: function() {
-							return elementor.getStorage( 'transfer' );
-						}
+						isEnabled: this.isPasteEnabled.bind( this )
 					}
 				]
 			}, {
@@ -105,6 +103,10 @@ module.exports = Marionette.ItemView.extend( {
 
 	paste: function() {
 		elementor.getPreviewView().paste( this.getOption( 'at' ) );
+	},
+
+	isPasteEnabled: function() {
+		return elementor.getStorage( 'transfer' );
 	},
 
 	onAddSectionButtonClick: function() {
