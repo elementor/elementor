@@ -161,7 +161,7 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'delete',
 						title: elementor.translate( 'delete' ),
-						shortcut: 'Del',
+						shortcut: '⌦',
 						callback: self.removeElement.bind( self )
 					}
 				]
