@@ -71,6 +71,7 @@ class Modules_Manager {
 			'dynamic-tags',
 			'page-templates',
 			'gutenberg',
+			'wp-cli',
 		];
 	}
 
