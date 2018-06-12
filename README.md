@@ -218,6 +218,11 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.0.16 - 2018-06-12 ###
+* Fix: Dynamic Tag CSS not working on columns & widgets ([#4662](https://github.com/pojome/elementor/issues/4662))
+* Fix: Hide title now also hides Post Title widget
+* Fix: Trigger Elementor ready only once
+
 ### 2.0.15 - 2018-06-05 ###
 * Fix: Background video in Chrome v67+
 * Fix: CSS glitch in local library modal
