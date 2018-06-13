@@ -2,7 +2,7 @@ module.exports = Marionette.ItemView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-add-section' ),
 
 	options: {
-		atIndex: null
+		at: null
 	},
 
 	attributes: {
@@ -57,7 +57,7 @@ module.exports = Marionette.ItemView.extend( {
 	getTemplatesModalOptions: function() {
 		return {
 			importOptions: {
-				at: this.getOption( 'atIndex' )
+				at: this.getOption( 'at' )
 			}
 		};
 	},
@@ -75,9 +75,7 @@ module.exports = Marionette.ItemView.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						callback: this.paste.bind( this ),
-						isEnabled: function() {
-							return elementor.getStorage( 'transfer' );
-						}
+						isEnabled: this.isPasteEnabled.bind( this )
 					}
 				]
 			}, {
@@ -104,7 +102,11 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	paste: function() {
-		elementor.getPreviewView().paste( this.getOption( 'atIndex' ) );
+		elementor.getPreviewView().paste( this.getOption( 'at' ) );
+	},
+
+	isPasteEnabled: function() {
+		return elementor.getStorage( 'transfer' );
 	},
 
 	onAddSectionButtonClick: function() {

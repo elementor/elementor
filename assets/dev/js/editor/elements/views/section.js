@@ -75,7 +75,7 @@ SectionView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'save',
-					title: elementor.translate( 'save_as_global' ),
+					title: elementor.translate( 'save_as_block' ),
 					callback: this.save.bind( this )
 				}
 			]
@@ -251,7 +251,7 @@ SectionView = BaseElementView.extend( {
 
 		var myIndex = this.model.collection.indexOf( this.model ),
 			addSectionView = new AddSectionView( {
-				atIndex: myIndex
+				at: myIndex
 			} );
 
 		addSectionView.render();

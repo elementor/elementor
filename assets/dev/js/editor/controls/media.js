@@ -7,7 +7,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		ui.controlMedia = '.elementor-control-media';
 		ui.mediaImage = '.elementor-control-media-image';
-		ui.frameOpeners = '.elementor-control-media-upload-button, .elementor-control-media-image';
+		ui.mediaVideo = '.elementor-control-media-video';
+		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.deleteButton = '.elementor-control-media-delete';
 
 		return ui;
@@ -20,10 +21,19 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 	},
 
-	applySavedValue: function() {
-		var url = this.getControlValue( 'url' );
+	getMediaType: function() {
+		return this.model.get( 'media_type' );
+	},
 
-		this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
+	applySavedValue: function() {
+		var url = this.getControlValue( 'url' ),
+			mediaType = this.getMediaType();
+
+		if ( 'image' === mediaType ) {
+			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
+		} else if ( 'video' === mediaType ) {
+			this.ui.mediaVideo.attr( 'src', url );
+		}
 
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
 	},
@@ -36,7 +46,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.frame.open();
 	},
 
-	deleteImage: function() {
+	deleteImage: function( event ) {
+		event.stopPropagation();
+
 		this.setValue( {
 			url: '',
 			id: ''
@@ -58,7 +70,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			states: [
 				new wp.media.controller.Library( {
 					title: elementor.translate( 'insert_media' ),
-					library: wp.media.query( { type: 'image' } ),
+					library: wp.media.query( { type: this.getMediaType() } ),
 					multiple: false,
 					date: false
 				} )

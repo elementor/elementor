@@ -42,7 +42,6 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 		$this->assertInstanceOf( $control_class, $control );
 
 		$this->assertTrue( Elementor\Plugin::$instance->controls_manager->unregister_control( $control_id ) );
-
 		$this->assertFalse( Elementor\Plugin::$instance->controls_manager->unregister_control( $control_id ) );
 
 		// Return the control for next tests..

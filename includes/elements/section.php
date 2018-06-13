@@ -526,6 +526,12 @@ class Element_Section extends Element_Base {
 					'video_link' => [
 						'frontend_available' => true,
 					],
+					'video_start' => [
+						'frontend_available' => true,
+					],
+					'video_end' => [
+						'frontend_available' => true,
+					],
 				],
 			]
 		);
