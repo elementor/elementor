@@ -25,7 +25,7 @@ tests_add_filter(
 	'muplugins_loaded',
 	function() {
 		// Manually load plugin
-		require dirname( __DIR__ ) . '/' . PLUGIN_FILE;
+		//require dirname( __DIR__ ) . '/' . PLUGIN_FILE;
 	}
 );
 
@@ -43,8 +43,8 @@ function fix_qunit_html_urls( $html ){
 	$html = str_replace( home_url().'file:', 'file:', $html );
 
 	// For local tests in browser
-//	$html = str_replace( 'file:///srv/www/wordpress-develop/public_html/src', 'http://src.wordpress-develop.dev', $html );
-//	$html = str_replace( 'file:///srv/www/elementor/public_html', 'http://wordpress.dev', $html );
+	// $html = str_replace( 'file:///srv/www/wordpress-develop/public_html/src', 'http://src.wordpress-develop.dev', $html );
+	// $html = str_replace( 'file:///srv/www/elementor/public_html', 'http://wordpress.dev', $html );
 
 	return $html;
 }
