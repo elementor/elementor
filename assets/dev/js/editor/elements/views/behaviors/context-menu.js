@@ -29,6 +29,8 @@ module.exports = Marionette.Behavior.extend( {
 		this.contextMenu = new ContextMenu( {
 			groups: contextMenuGroups
 		} );
+
+		this.contextMenu.getModal().on( 'hide', this.onContextMenuHide );
 	},
 
 	getContextMenu: function() {
@@ -55,6 +57,12 @@ module.exports = Marionette.Behavior.extend( {
 		event.stopPropagation();
 
 		this.getContextMenu().show( event );
+
+		elementor.channels.editor.reply( 'contextMenu:targetView', this.view );
+	},
+
+	onContextMenuHide: function() {
+		elementor.channels.editor.reply( 'contextMenu:targetView', null );
 	},
 
 	onDestroy: function() {

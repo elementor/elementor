@@ -73,7 +73,8 @@ WidgetView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'save',
-					title: elementor.translate( 'save_as_global' )
+					title: elementor.translate( 'save_as_global' ),
+					shortcut: jQuery( '<i>', { 'class': 'eicon-pro-icon' } )
 				}
 			]
 		} );
