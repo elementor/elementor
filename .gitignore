@@ -14,5 +14,7 @@ Thumbs.db
 *.log
 *.map
 
+tests/qunit/*.html
+
 assets/css/
 assets/js/
