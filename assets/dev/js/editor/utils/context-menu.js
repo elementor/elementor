@@ -3,8 +3,6 @@ var Module = require( 'elementor-utils/module' ),
 
 ContextMenu = Module.extend( {
 
-	modal: null,
-
 	getDefaultSettings: function() {
 		return {
 			actions: {},
@@ -31,7 +29,7 @@ ContextMenu = Module.extend( {
 		$item.html( $itemTitle );
 
 		if ( action.shortcut ) {
-			var $itemShortcut = jQuery( '<div>', { 'class': classes.itemShortcut } ).text( action.shortcut );
+			var $itemShortcut = jQuery( '<div>', { 'class': classes.itemShortcut } ).html( action.shortcut );
 
 			$item.append( $itemShortcut );
 		}
@@ -85,36 +83,41 @@ ContextMenu = Module.extend( {
 
 		action.callback();
 
-		this.modal.hide();
+		this.getModal().hide();
 	},
 
 	initModal: function() {
-		this.modal = elementor.dialogsManager.createWidget( 'simple', {
-			className: 'elementor-context-menu',
-			message: this.buildActionsList(),
-			iframe: elementor.$preview,
-			effects: {
-				hide: 'hide',
-				show: 'show'
-			},
-			hide: {
-				onOutsideContextMenu: true
-			},
-			position: {
-				my: ( elementor.config.is_rtl ? 'right' : 'left' ) + ' top',
-				collision: 'fit'
+		var modal;
+
+		this.getModal = function() {
+			if ( ! modal ) {
+				modal = elementor.dialogsManager.createWidget( 'simple', {
+					className: 'elementor-context-menu',
+					message: this.buildActionsList(),
+					iframe: elementor.$preview,
+					effects: {
+						hide: 'hide',
+						show: 'show'
+					},
+					hide: {
+						onOutsideContextMenu: true
+					},
+					position: {
+						my: ( elementor.config.is_rtl ? 'right' : 'left' ) + ' top',
+						collision: 'fit'
+					}
+				} );
 			}
-		} );
+
+			return modal;
+		};
 	},
 
 	show: function( event ) {
-		var self = this;
+		var self = this,
+			modal = self.getModal();
 
-		if ( ! self.modal ) {
-			self.initModal();
-		}
-
-		self.modal.setSettings( 'position', {
+		modal.setSettings( 'position', {
 			of: event
 		} );
 
@@ -124,13 +127,15 @@ ContextMenu = Module.extend( {
 			} );
 		} );
 
-		self.modal.show();
+		modal.show();
 	},
 
 	destroy: function() {
-		if ( this.modal ) {
-			this.modal.destroy();
-		}
+		this.getModal().destroy();
+	},
+
+	onInit: function() {
+		this.initModal();
 	}
 } );
 

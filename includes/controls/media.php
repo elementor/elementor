@@ -127,12 +127,17 @@ class Control_Media extends Control_Base_Multiple {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<div class="elementor-control-media elementor-control-tag-area elementor-control-preview-area">
+				<div class="elementor-control-media elementor-control-tag-area elementor-control-preview-area elementor-aspect-ratio-169">
 					<div class="elementor-control-media-upload-button">
 						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 					</div>
-					<div class="elementor-control-media-image-area">
-						<div class="elementor-control-media-image"></div>
+					<div class="elementor-control-media-area{{{ 'video' === data.media_type ? ' elementor-fit-aspect-ratio' : '' }}}">
+						<# if( 'image' === data.media_type ) { #>
+							<div class="elementor-control-media-image"></div>
+						<# } else if( 'video' === data.media_type ) { #>
+							<video class="elementor-control-media-video" preload="metadata"></video>
+							<i class="fa fa-video-camera"></i>
+						<# } #>
 						<div class="elementor-control-media-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>
 					</div>
 				</div>
@@ -159,6 +164,7 @@ class Control_Media extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
+			'media_type' => 'image',
 			'dynamic' => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',

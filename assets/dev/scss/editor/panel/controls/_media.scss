@@ -23,7 +23,7 @@
 
 		&.elementor-media-empty {
 
-			.elementor-control-media-image-area {
+			.elementor-control-media-area {
 				display: none;
 			}
 		}
@@ -51,7 +51,7 @@
 		font-size: 20px;
 	}
 
-	.elementor-control-media-image-area {
+	.elementor-control-media-area {
 
 		background-image: linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd);
 		background-size: 16px 16px;
@@ -70,6 +70,15 @@
 			.elementor-control-media-image {
 				opacity: .5;
 			}
+		}
+
+		i {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			color: rgba(255, 255, 255, 0.7);
+			font-size: 21px;
 		}
 	}
 
