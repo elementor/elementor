@@ -26,16 +26,9 @@ BaseSettingsModel = Backbone.Model.extend( {
 			if ( isUIControl ) {
 				return;
 			}
+			var controlName = control.name;
 
-			// Check if the value is a plain object ( and not an array )
-			var controlName = control.name,
-				isMultipleControl = jQuery.isPlainObject( control.default_value );
-
-			if ( isMultipleControl  ) {
-				defaults[ controlName ] = _.extend( {}, control.default_value, control['default'] || {} );
-			} else {
-				defaults[ controlName ] = control['default'] || control.default_value;
-			}
+			defaults[ controlName ] = control['default'];
 
 			var isDynamicControl = control.dynamic && control.dynamic.active,
 				hasDynamicSettings = isDynamicControl && attrs.__dynamic__ && attrs.__dynamic__[ controlName ];
@@ -49,6 +42,9 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 				hasDynamicSettings = true;
 			}
+
+			// Check if the value is a plain object ( and not an array )
+			var isMultipleControl = jQuery.isPlainObject( control['default'] );
 
 			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! hasDynamicSettings ) {
 				elementor.debug.addCustomError(
