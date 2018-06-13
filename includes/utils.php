@@ -425,6 +425,8 @@ class Utils {
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		_deprecated_function( __METHOD__, '2.1.0', 'do_action_deprecated()' );
+
 		do_action_deprecated( $tag, $args, $version, $replacement, $message );
 	}
 
@@ -447,6 +449,8 @@ class Utils {
 	 * @return mixed The filtered value after all hooked functions are applied to it.
 	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
+		_deprecated_function( __METHOD__, '2.1.0', 'apply_filters_deprecated()' );
+
 		return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
 	}
 
