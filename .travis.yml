@@ -34,8 +34,6 @@ env:
     - WP_VERSION=4.8 WP_MULTISITE=1
     - WP_VERSION=4.7 WP_MULTISITE=0
     - WP_VERSION=4.7 WP_MULTISITE=1
-    - WP_VERSION=4.6 WP_MULTISITE=0
-    - WP_VERSION=4.6 WP_MULTISITE=1
 
 install:
   - curl -s http://getcomposer.org/installer | php
