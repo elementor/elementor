@@ -17,8 +17,6 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	getContextMenuGroups: function() {
-		var self = this;
-
 		return [
 			{
 				name: 'general',
@@ -26,20 +24,8 @@ module.exports = Marionette.ItemView.extend( {
 					{
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
-						callback: self.paste.bind( self ),
-						isEnabled: function() {
-							var transferData = elementor.getStorage( 'transfer' );
-
-							if ( ! transferData ) {
-								return false;
-							}
-
-							if ( 'section' === transferData.elementsType ) {
-								return transferData.elements[0].isInner && ! self._parent.isInner();
-							}
-
-							return 'widget' === transferData.elementsType;
-						}
+						callback: this.paste.bind( this ),
+						isEnabled: this.isPasteEnabled.bind( this )
 					}
 				]
 			}
@@ -56,6 +42,20 @@ module.exports = Marionette.ItemView.extend( {
 
 			index++;
 		} );
+	},
+
+	isPasteEnabled: function() {
+		var transferData = elementor.getStorage( 'transfer' );
+
+		if ( ! transferData ) {
+			return false;
+		}
+
+		if ( 'section' === transferData.elementsType ) {
+			return transferData.elements[0].isInner && ! this._parent.isInner();
+		}
+
+		return 'widget' === transferData.elementsType;
 	},
 
 	onClickAdd: function() {

@@ -205,16 +205,16 @@ html.elementor-html {
 			color: #fff;
 			width: 25px;
 			transition: margin .3s, width .3s, font .3s;
-			box-sizing: content-box;
 		}
 
 		.elementor-editor-section-settings {
 			top: 1px;
 			@include start(50%);
 			transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
+			background-color: $editor-info;
+			border-radius: 3px 3px 0 0;
 
 			.elementor-editor-element-setting {
-				background-color: $editor-info;
 
 				&:hover {
 					background-color: darken($editor-info, 20%);
@@ -227,10 +227,10 @@ html.elementor-html {
 						content: '';
 						position: absolute;
 						border: solid transparent;
-						top: 2px;
+						top: 0;
 						@include border-end-property(color, $editor-info);
-						border-width: getValueByDirection(24px 7px 0 0, 24px 0 0 7px);
-						@include end(100%);
+						border-width: getValueByDirection(26px 8px 0 0, 26px 0 0 8px);
+						@include end(calc(100% - 1px));
 					}
 
 					&:hover {
@@ -248,10 +248,10 @@ html.elementor-html {
 						content: '';
 						position: absolute;
 						border: solid transparent;
-						top: 2px;
+						top: 0;
 						@include border-start-property(color, $editor-info);
-						border-width: getValueByDirection(24px 0 0 7px, 24px 7px 0 0);
-						@include start(100%);
+						border-width: getValueByDirection(26px 0 0 8px, 26px 8px 0 0);
+						@include start(calc(100% - 1px));
 					}
 
 					&:hover {
@@ -658,6 +658,7 @@ html.elementor-html {
 		height: 40px;
 		width: 40px;
 		color: #fff;
+		font-size: 16px;
 		border-radius: 50%;
 		transition: all .3s;
 		cursor: pointer;

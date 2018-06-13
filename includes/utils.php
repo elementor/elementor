@@ -416,6 +416,7 @@ class Utils {
 	 * @since 1.0.10
 	 * @access public
 	 * @static
+	 * @deprecated 2.1.0 Use `do_action_deprecated()` instead
 	 *
 	 * @param string $tag         The name of the action hook.
 	 * @param array  $args        Array of additional function arguments to be passed to `do_action()`.
@@ -424,12 +425,9 @@ class Utils {
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
-		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `do_action_deprecated()` function.
-		if ( function_exists( 'do_action_deprecated' ) ) { /* WP >= 4.6 */
-			do_action_deprecated( $tag, $args, $version, $replacement, $message );
-		} else {
-			do_action_ref_array( $tag, $args );
-		}
+		_deprecated_function( __METHOD__, '2.1.0', 'do_action_deprecated()' );
+
+		do_action_deprecated( $tag, $args, $version, $replacement, $message );
 	}
 
 	/**
@@ -440,6 +438,7 @@ class Utils {
 	 * @since 1.0.10
 	 * @access public
 	 * @static
+	 * @deprecated 2.1.0 Use `apply_filters_deprecated()` instead
 	 *
 	 * @param string $tag         The name of the filter hook.
 	 * @param array  $args        Array of additional function arguments to be passed to `apply_filters()`.
@@ -450,12 +449,9 @@ class Utils {
 	 * @return mixed The filtered value after all hooked functions are applied to it.
 	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
-		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `apply_filters_deprecated()` function.
-		if ( function_exists( 'apply_filters_deprecated' ) ) { /* WP >= 4.6 */
-			return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
-		} else {
-			return apply_filters_ref_array( $tag, $args );
-		}
+		_deprecated_function( __METHOD__, '2.1.0', 'apply_filters_deprecated()' );
+
+		return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
 	}
 
 	/**

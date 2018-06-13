@@ -360,12 +360,14 @@ App = Marionette.Application.extend( {
 
 	initHotKeys: function() {
 		var keysDictionary = {
-			del: 46,
+			c: 67,
 			d: 68,
+			del: 46,
 			l: 76,
 			m: 77,
 			p: 80,
-			s: 83
+			s: 83,
+			v: 86
 		};
 
 		var $ = jQuery,
@@ -462,6 +464,60 @@ App = Marionette.Application.extend( {
 				},
 				handle: function() {
 					elementor.saver.saveDraft();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.c ] = {
+			copyElement: {
+				isWorthHandling: function( event ) {
+					if ( ! hotKeysManager.isControlEvent( event ) ) {
+						return false;
+					}
+
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
+
+					if ( ! isEditorOpen ) {
+						return false;
+					}
+
+					var textSelection = getSelection() + elementorFrontend.getElements( 'window' ).getSelection();
+
+					return ! textSelection;
+				},
+				handle: function() {
+					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).copy();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.v ] = {
+			pasteElement: {
+				isWorthHandling: function( event ) {
+					if ( ! hotKeysManager.isControlEvent( event ) ) {
+						return false;
+					}
+
+					return -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.getElements( 'window' ).document.activeElement.tagName;
+				},
+				handle: function() {
+					var targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
+
+					if ( ! targetElement ) {
+						var panel = elementor.getPanelView();
+
+						if ( 'editor' === panel.getCurrentPageName() ) {
+							targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
+						}
+					}
+
+					if ( ! targetElement ) {
+						targetElement = elementor.getPreviewView();
+					}
+
+					if ( targetElement.isPasteEnabled() ) {
+						targetElement.paste();
+					}
 				}
 			}
 		};
@@ -806,7 +862,7 @@ App = Marionette.Application.extend( {
 					.removeClass( 'ui-resizable-resizing' )
 					.css( 'pointer-events', '' );
 
-				elementor.channels.data.trigger( 'scrollbar:update' );
+				elementor.getPanelView().updateScrollbar();
 			},
 			resize: function( event, ui ) {
 				self.$previewWrapper

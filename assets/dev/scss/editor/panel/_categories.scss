@@ -24,11 +24,11 @@
 		&:after {
 			content: '';
 			position: absolute;
-			@include start(0);
+			left: 15px;
+			right: 15px;
 			bottom: 0;
-			width: 100%;
 			height: 8px;
-			background: linear-gradient(rgba(0,0,0,0.03), transparent);
+			background: linear-gradient(rgba(0, 0, 0, 0.03), transparent);
 			transform: translateY(100%);
 		}
 	}

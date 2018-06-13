@@ -1125,7 +1125,7 @@ abstract class Controls_Stack {
 			$this->parsed_active_settings = array_replace_recursive( $parsed_settings, $active_settings );
 		}
 
-		return self::_get_items( $this->parsed_dynamic_settings, $setting_key );
+		return self::_get_items( $this->parsed_active_settings, $setting_key );
 	}
 
 	/**
