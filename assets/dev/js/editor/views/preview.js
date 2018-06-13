@@ -33,9 +33,7 @@ Preview = BaseSectionsContainerView.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						callback: this.paste.bind( this ),
-						isEnabled: function() {
-							return elementor.getStorage( 'transfer' );
-						}
+						isEnabled: this.isPasteEnabled.bind( this )
 					}
 				]
 			}, {
@@ -116,6 +114,10 @@ Preview = BaseSectionsContainerView.extend( {
 		}
 
 		elementor.channels.data.trigger( 'element:after:add', transferData.elements[0] );
+	},
+
+	isPasteEnabled: function() {
+		return elementor.getStorage( 'transfer' );
 	},
 
 	onRender: function() {
