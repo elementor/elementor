@@ -25,7 +25,7 @@ tests_add_filter(
 	'muplugins_loaded',
 	function() {
 		// Manually load plugin
-		require dirname( __DIR__ ) . '/' . PLUGIN_FILE;
+		//require dirname( __DIR__ ) . '/' . PLUGIN_FILE;
 	}
 );
 
