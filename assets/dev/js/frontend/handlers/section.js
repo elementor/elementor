@@ -51,9 +51,33 @@ var BackgroundVideo = HandlerModule.extend( {
 		$video.width( size.width ).height( size.height );
 	},
 
+	startVideoLoop: function() {
+		var self = this;
+
+		// If the section has been removed
+		if ( ! self.player.getIframe().contentWindow ) {
+			return;
+		}
+
+		var elementSettings = self.getElementSettings(),
+			startPoint = elementSettings.background_video_start || 0,
+			endPoint = elementSettings.background_video_end;
+
+		self.player.seekTo( startPoint );
+
+		if ( undefined !== endPoint ) {
+			var durationToEnd = endPoint - startPoint + 1;
+
+			setTimeout( function() {
+				self.startVideoLoop();
+			}, durationToEnd * 1000 );
+		}
+	},
+
 	prepareYTVideo: function( YT, videoID ) {
 		var self = this,
 			$backgroundVideoContainer = self.elements.$backgroundVideoContainer,
+			elementSettings = self.getElementSettings(),
 			startStateCode = YT.PlayerState.PLAYING;
 
 		// Since version 67, Chrome doesn't fire the `PLAYING` state at start time
@@ -71,6 +95,8 @@ var BackgroundVideo = HandlerModule.extend( {
 
 					self.changeVideoSize();
 
+					self.startVideoLoop();
+
 					self.player.playVideo();
 				},
 				onStateChange: function( event ) {
@@ -80,7 +106,7 @@ var BackgroundVideo = HandlerModule.extend( {
 
 							break;
 						case YT.PlayerState.ENDED:
-							self.player.seekTo( 0 );
+							self.player.seekTo( elementSettings.background_video_start || 0 );
 					}
 				}
 			},
