@@ -565,7 +565,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function __construct() {
-		$this->register_autoloader();
+		$this->register_autoloader();die;
 
 		Compatibility::register_actions();
 
