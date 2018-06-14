@@ -4,6 +4,7 @@
 		padding: 7px;
 		border: 1px solid;
 		height: 150px;
+		transition: all .2s ease-in-out;
 
 		&:not(:hover) {
 			border-color: $editor-lightest;
@@ -57,18 +58,20 @@
 		background-size: 16px 16px;
 		background-position: 0 0, 8px 8px;
 		background-color: #f6f6f6;
+		overflow: hidden;
 
 		&:not(:hover) {
 
 			.elementor-control-media-delete {
-				display: none;
+				box-shadow: none;
+				bottom: -30px;
 			}
 		}
 
 		&:hover {
 
 			.elementor-control-media-image {
-				opacity: .5;
+				opacity: .9;
 			}
 		}
 
@@ -93,6 +96,8 @@
 		color: #fff;
 		background-color: $editor-light;
 		text-transform: uppercase;
+		transition: all .2s ease-in-out;
+		box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
 	}
 
 	.elementor-control-media-image {
