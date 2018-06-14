@@ -1420,7 +1420,7 @@ abstract class Controls_Stack {
 	 * @access public
 	 */
 	public function end_controls_section() {
-		$section_name = $this->get_name();
+		$stack_name = $this->get_name();
 
 		// Save the current section for the action.
 		$current_section = $this->current_section;
@@ -1447,14 +1447,14 @@ abstract class Controls_Stack {
 		 *
 		 * Fires before Elementor section ends in the editor panel.
 		 *
-		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
+		 * The dynamic portions of the hook name, `$stack_name` and `$section_id`, refers to the stack name and section ID, respectively.
 		 *
 		 * @since 1.4.0
 		 *
 		 * @param Controls_Stack $this The control.
 		 * @param array          $args Section arguments.
 		 */
-		do_action( "elementor/element/{$section_name}/{$section_id}/before_section_end", $this, $args );
+		do_action( "elementor/element/{$stack_name}/{$section_id}/before_section_end", $this, $args );
 
 		$this->current_section = null;
 
@@ -1476,14 +1476,14 @@ abstract class Controls_Stack {
 		 *
 		 * Fires after Elementor section ends in the editor panel.
 		 *
-		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
+		 * The dynamic portions of the hook name, `$stack_name` and `$section_id`, refers to the section name and section ID, respectively.
 		 *
 		 * @since 1.4.0
 		 *
 		 * @param Controls_Stack $this The control.
 		 * @param array          $args Section arguments.
 		 */
-		do_action( "elementor/element/{$section_name}/{$section_id}/after_section_end", $this, $args );
+		do_action( "elementor/element/{$stack_name}/{$section_id}/after_section_end", $this, $args );
 	}
 
 	/**
