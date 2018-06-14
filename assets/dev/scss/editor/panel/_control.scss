@@ -48,19 +48,15 @@
 
 		&default:not(.elementor-control-type-divider) {
 
-			&:before {
-				content: '';
-				height: 1px;
-				display: block;
-				margin-bottom: 15px;
-				background-color: $editor-background;
-			}
-
 			// WP Widgets
 			&.elementor-control-wp {
 				margin-top: 15px;
 
 				&:before {
+					content: '';
+					height: 1px;
+					display: block;
+					margin-bottom: 15px;
 					background-color: transparent;
 				}
 			}
@@ -72,7 +68,7 @@
 			&:before {
 				content: '';
 				position: absolute;
-				height: 3px;
+				height: 1px;
 				width: 100%;
 				top: 0;
 				left: 0;
@@ -85,7 +81,7 @@
 			&:after {
 				content: '';
 				position: absolute;
-				height: 3px;
+				height: 1px;
 				width: 100%;
 				bottom: 0;
 				left: 0;
@@ -373,7 +369,7 @@
 	background-color: $editor-light;
 	border-radius: 5px;
 	position: relative;
-	width: 67%;
+	width: 70%;
 
 	.ui-slider-handle {
 		height: 16px;
@@ -390,12 +386,13 @@
 }
 
 .elementor-slider-input {
-	width: 33%;
+	width: 30%;
 	float: $end;
 
 	input {
-		width: 80%;
+		width: 50px;
 		float: $end;
+		padding: 5px 5px;
 	}
 }
 
