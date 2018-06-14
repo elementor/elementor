@@ -50,9 +50,9 @@ module.exports = ViewModule.extend( {
 		}
 
 		// Offset height of tallest sticky
-				return jQuery( this ).height();
 		if ( $activeStickies.length > 0 ) {
 			 maxStickyHeight = Math.max.apply( null, $activeStickies.map( function() {
+				return jQuery( this ).outerHeight();
 			} ).get() );
 
 			scrollTop -= maxStickyHeight;
