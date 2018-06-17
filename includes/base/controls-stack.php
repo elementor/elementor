@@ -776,7 +776,7 @@ abstract class Controls_Stack {
 	final public function get_class_controls() {
 		return array_filter(
 			$this->get_active_controls(), function( $control ) {
-				return ( isset( $control['prefix_class'] ) );
+				return ( isset( $control['prefix_class'] ) || isset( $control['suffix_class'] ) );
 			}
 		);
 	}
@@ -847,6 +847,11 @@ abstract class Controls_Stack {
 				$device_to_replace = self::RESPONSIVE_DESKTOP === $device_name ? '' : '-' . $device_name;
 
 				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
+			}
+			if ( ! empty( $args['suffix_class'] ) ) {
+				$device_to_replace = self::RESPONSIVE_DESKTOP === $device_name ? '' : '-' . $device_name;
+
+				$control_args['suffix_class'] = sprintf( $args['suffix_class'], $device_to_replace );
 			}
 
 			$control_args['responsive']['max'] = $device_name;
