@@ -183,6 +183,10 @@ HandlerModule = ViewModule.extend( {
 
 	onDestroy: function() {
 		this.removeEditorListeners();
+
+		if ( this.unbindEvents ) {
+			this.unbindEvents();
+		}
 	}
 } );
 
