@@ -123,10 +123,14 @@ module.exports = Marionette.CompositeView.extend( {
 		var elements = elementor.getStorage( 'transfer' ).elements,
 			index = self.collection.indexOf( childView.model );
 
+		elementor.channels.data.trigger( 'element:before:add', elements[0] );
+
 		elements.forEach( function( item ) {
 			index++;
 
 			self.addChildElement( item, { at: index, clone: true } );
 		} );
+
+		elementor.channels.data.trigger( 'element:after:add', elements[0] );
 	}
 } );

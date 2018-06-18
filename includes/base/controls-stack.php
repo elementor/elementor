@@ -1118,11 +1118,7 @@ abstract class Controls_Stack {
 	 */
 	public function get_settings_for_display( $setting_key = null ) {
 		if ( ! $this->parsed_active_settings ) {
-			$parsed_settings = $this->get_parsed_dynamic_settings();
-
-			$active_settings = $this->get_active_settings();
-
-			$this->parsed_active_settings = array_replace_recursive( $parsed_settings, $active_settings );
+			$this->parsed_active_settings = $this->get_active_settings( $this->get_parsed_dynamic_settings(), $this->get_controls() );
 		}
 
 		return self::_get_items( $this->parsed_active_settings, $setting_key );

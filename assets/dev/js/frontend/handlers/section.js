@@ -178,17 +178,22 @@ var StretchedSection = HandlerModule.extend( {
 	},
 
 	initStretch: function() {
-		this.stretchElement = new elementorFrontend.modules.StretchElement( { element: this.$element } );
+		this.stretchElement = new elementorFrontend.modules.StretchElement( {
+			element: this.$element,
+			selectors: {
+				container: this.getStretchContainer()
+			}
+		} );
+	},
+
+	getStretchContainer: function() {
+		return elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window;
 	},
 
 	stretch: function() {
-		var isStretched = this.$element.hasClass( 'elementor-section-stretched' );
-
-		if ( ! isStretched ) {
+		if ( ! this.getElementSettings( 'stretch_section' ) ) {
 			return;
 		}
-
-		this.stretchElement.setSettings( 'selectors.container', elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window );
 
 		this.stretchElement.stretch();
 	},
@@ -198,7 +203,7 @@ var StretchedSection = HandlerModule.extend( {
 
 		this.initStretch();
 
-		var isStretched = this.$element.hasClass( 'elementor-section-stretched' );
+		var isStretched = this.getElementSettings( 'stretch_section' );
 
 		if ( elementorFrontend.isEditMode() || isStretched ) {
 			this.stretchElement.reset();
@@ -207,8 +212,20 @@ var StretchedSection = HandlerModule.extend( {
 		this.stretch();
 	},
 
+	onElementChange: function( propertyName ) {
+		if ( 'stretch_section' === propertyName ) {
+			if ( this.getElementSettings( 'stretch_section' ) ) {
+				this.stretch();
+			} else {
+				this.stretchElement.reset();
+			}
+		}
+	},
+
 	onGeneralSettingsChange: function( changed ) {
 		if ( 'elementor_stretched_section_container' in changed ) {
+			this.stretchElement.setSettings( 'selectors.container', this.getStretchContainer() );
+
 			this.stretch();
 		}
 	}
