@@ -169,6 +169,7 @@
 				line-height: inherit;
 				flex-basis: 100%;
 				@include padding-end(20px);
+				cursor: pointer;
 			}
 
 			&:before {
@@ -224,6 +225,10 @@
 					border: none;
 					border-radius: 0;
 				}
+			}
+
+			.select2-selection__rendered {
+				line-height: 27px;
 			}
 		}
 	}
