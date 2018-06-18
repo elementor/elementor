@@ -526,7 +526,7 @@ class Admin {
 								<input class="elementor-feedback-text" type="text" name="reason_<?php echo esc_attr( $reason_key ); ?>" placeholder="<?php echo esc_attr( $reason['input_placeholder'] ); ?>" />
 							<?php endif; ?>
 							<?php if ( ! empty( $reason['alert'] ) ) : ?>
-								<div class="elementor-feedback-text error-text"><?php echo esc_html( $reason['alert'] ); ?></div>
+								<div class="elementor-feedback-text"><?php echo esc_html( $reason['alert'] ); ?></div>
 							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>
