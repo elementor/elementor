@@ -33,7 +33,7 @@
 			&.elementor-divider-style {
 
 				&--thick {
-					border-top-width: 3px;
+					border-top-width: 1px;
 				}
 
 				&--default {
@@ -41,6 +41,10 @@
 					margin-left: 20px;
 				}
 			}
+		}
+
+		+ .elementor-control:not(.elementor-control-type-section) {
+			padding-top: 15px;
 		}
 	}
 
@@ -145,6 +149,41 @@
 		}
 	}
 
+	//Select
+	&.elementor-control-type-select {
+
+		.elementor-control-input-wrapper {
+			position: relative;
+
+			select {
+				appearance: none;
+				-webkit-appearance: none;
+				-moz-appearance: none;
+				color: $editor-darkest;
+				font-size: 12px;
+				font-family: inherit;
+				font-weight: inherit;
+				font-style: inherit;
+				text-transform: inherit;
+				letter-spacing: inherit;
+				line-height: inherit;
+				flex-basis: 100%;
+				@include padding-end(20px);
+			}
+
+			&:before {
+				font-family: eicons;
+				content: '\e955';
+				font-size: 12px;
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				@include end(5px);
+				pointer-events: none;
+			}
+		}
+	}
+
 	// select2
 	.select2-container {
 		width: 100% !important;
@@ -168,6 +207,10 @@
 		}
 
 		&.select2-container--default {
+
+			.select2-selection {
+				border-radius: 3px;
+			}
 
 			.select2-selection--multiple {
 
@@ -350,6 +393,14 @@
 		&:not(:checked) + .elementor-choices-label {
 			background-color: #fff;
 			color: $editor-light;
+
+			&:nth-child(2) {
+				border-radius: 3px 0 0 3px;
+			}
+
+			&:last-child {
+				border-radius: 0 3px 3px 0;
+			}
 		}
 	}
 
