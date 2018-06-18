@@ -354,6 +354,14 @@
 		&:not(:checked) + .elementor-choices-label {
 			background-color: #fff;
 			color: $editor-light;
+
+			&:nth-child(2) {
+				border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			}
+
+			&:last-child {
+				border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+			}
 		}
 	}
 
