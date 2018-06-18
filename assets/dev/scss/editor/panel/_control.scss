@@ -33,7 +33,7 @@
 			&.elementor-divider-style {
 
 				&--thick {
-					border-top-width: 3px;
+					border-top-width: 1px;
 				}
 
 				&--default {
@@ -41,6 +41,10 @@
 					margin-left: 20px;
 				}
 			}
+		}
+
+		+ .elementor-control:not(.elementor-control-type-section) {
+			padding-top: 15px;
 		}
 	}
 
