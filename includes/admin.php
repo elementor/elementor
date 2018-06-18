@@ -485,6 +485,11 @@ class Admin {
 				'title' => __( 'I found a better plugin', 'elementor' ),
 				'input_placeholder' => __( 'Please share which plugin', 'elementor' ),
 			],
+			'elementor_pro' => [
+				'title' => __( 'I have Elementor Pro', 'elementor' ),
+				'input_placeholder' => '',
+				'alert' => __( 'Wait! Don\'t deactivate Elementor. You have to activate both Elementor and Elementor Pro in order for the plugin to work.', 'elementor' ),
+			],
 			'couldnt_get_the_plugin_to_work' => [
 				'title' => __( 'I couldn\'t get the plugin to work', 'elementor' ),
 				'input_placeholder' => '',
@@ -519,6 +524,9 @@ class Admin {
 							<label for="elementor-deactivate-feedback-<?php echo esc_attr( $reason_key ); ?>" class="elementor-deactivate-feedback-dialog-label"><?php echo esc_html( $reason['title'] ); ?></label>
 							<?php if ( ! empty( $reason['input_placeholder'] ) ) : ?>
 								<input class="elementor-feedback-text" type="text" name="reason_<?php echo esc_attr( $reason_key ); ?>" placeholder="<?php echo esc_attr( $reason['input_placeholder'] ); ?>" />
+							<?php endif; ?>
+							<?php if ( ! empty( $reason['alert'] ) ) : ?>
+								<div class="elementor-feedback-text error-text"><?php echo esc_html( $reason['alert'] ); ?></div>
 							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>

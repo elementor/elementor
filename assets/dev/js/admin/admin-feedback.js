@@ -48,6 +48,10 @@
 						onReady: function() {
 							DialogsManager.getWidgetType( 'lightbox' ).prototype.onReady.apply( this, arguments );
 
+							self.cache.$dialogForm.find( '.elementor-deactivate-feedback-dialog-input' ).on( 'change', function() {
+								self.cache.$dialogForm.attr( 'data-feedback-selected', $( this ).val() );
+							} ).trigger( 'change' );
+
 							this.addButton( {
 								name: 'submit',
 								text: ElementorAdminFeedbackArgs.i18n.submit_n_deactivate,
