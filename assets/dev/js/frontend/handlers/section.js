@@ -184,7 +184,7 @@ var StretchedSection = HandlerModule.extend( {
 	},
 
 	unbindEvents: function() {
-		elementorFrontend.removeListeners( this.$element.data( 'model-cid' ), 'resize', this.stretch );
+		elementorFrontend.removeListeners( this.getUniqueHandlerID(), 'resize', this.stretch );
 	},
 
 	initStretch: function() {
