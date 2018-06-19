@@ -174,12 +174,13 @@ var StretchedSection = HandlerModule.extend( {
 	stretchElement: null,
 
 	bindEvents: function() {
-		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretch );
+		var handlerID = this.getUniqueHandlerID();
 
-		this.$element.on( {
-			'sticky:stick': this.stretch,
-			'sticky:unstick': this.stretch
-		} );
+		elementorFrontend.addListenerOnce( handlerID, 'resize', this.stretch );
+
+		elementorFrontend.addListenerOnce( handlerID, 'sticky:stick', this.stretch, this.$element );
+
+		elementorFrontend.addListenerOnce( handlerID, 'sticky:unstick', this.stretch, this.$element );
 	},
 
 	unbindEvents: function() {
