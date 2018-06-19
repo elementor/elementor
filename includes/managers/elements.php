@@ -332,11 +332,11 @@ class Elements_Manager {
 				'icon' => 'eicon-font',
 			],
 			'pro-elements' => [
-				'title' => __( 'Pro Elements', 'elementor' ),
+				'title' => __( 'Pro', 'elementor' ),
 				'icon' => 'font',
 			],
 			'general' => [
-				'title' => __( 'General Elements', 'elementor' ),
+				'title' => __( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
 		];
