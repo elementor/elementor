@@ -364,23 +364,8 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
 								],
 							],
-							'global_image_lightbox' => [
-								'label' => __( 'Image Lightbox', 'elementor' ),
-								'field_args' => [
-									'type' => 'checkbox',
-									'value' => 'yes',
-									'std' => 'yes',
-									'sub_desc' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
-									'desc' => __( 'You can customize the lightbox design by going to: Top-left hamburger icon > Global Settings > Lightbox.', 'elementor' ),
-								],
-							],
-						],
-					],
-					'breakpoints' => [
-						'label' => __( 'Breakpoints', 'elementor' ),
-						'fields' => [
 							'viewport_lg' => [
-								'label' => __( 'Desktop', 'elementor' ),
+								'label' => __( 'Tablet Breakpoint', 'elementor' ),
 								'field_args' => [
 									'type' => 'number',
 									'attributes' => [
@@ -394,7 +379,7 @@ class Settings extends Settings_Page {
 								],
 							],
 							'viewport_md' => [
-								'label' => __( 'Tablet', 'elementor' ),
+								'label' => __( 'Mobile Breakpoint', 'elementor' ),
 								'field_args' => [
 									'type' => 'number',
 									'attributes' => [
@@ -405,6 +390,16 @@ class Settings extends Settings_Page {
 									],
 									'sub_desc' => 'px',
 									'desc' => __( 'Sets the breakpoint between tablet and mobile devices  (Default: ' . $default_breakpoints['md'] . ')', 'elementor' ),
+								],
+							],
+							'global_image_lightbox' => [
+								'label' => __( 'Image Lightbox', 'elementor' ),
+								'field_args' => [
+									'type' => 'checkbox',
+									'value' => 'yes',
+									'std' => 'yes',
+									'sub_desc' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
+									'desc' => __( 'You can customize the lightbox design by going to: Top-left hamburger icon > Global Settings > Lightbox.', 'elementor' ),
 								],
 							],
 						],

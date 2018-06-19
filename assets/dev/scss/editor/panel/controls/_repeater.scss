@@ -25,6 +25,10 @@
 
 	.elementor-repeater-fields {
 		margin: 10px 0;
+
+		&-wrapper {
+			overflow: hidden;
+		}
 	}
 
 	.elementor-repeater-row-controls {
