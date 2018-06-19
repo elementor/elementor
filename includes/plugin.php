@@ -495,6 +495,10 @@ class Plugin {
 				new Images_Manager();
 			}
 		}
+
+		if ( defined( 'WP_CLI' ) ) {
+			require_once ELEMENTOR_PATH . '/includes/wp-cli-commands.php';
+		}
 	}
 
 	/**
