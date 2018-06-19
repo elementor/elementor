@@ -20,6 +20,17 @@
 		width: 550px;
 	}
 
+	#elementor-deactivate-feedback-dialog-form {
+
+		&[data-feedback-selected="elementor_pro"] {
+
+			.elementor-feedback-text {
+				color: $editor-warning;
+				padding: 0;
+			}
+		}
+	}
+
 	.dialog-close-button {
 		transition: $transition-hover;
 	}
@@ -75,7 +86,7 @@
 		color: #fff;
 		line-height: 1;
 		padding: 12px 20px;
-		font-size: 14px;
+		font-size: 13px;
 		width: 180px;
 		height: 38px;
 
