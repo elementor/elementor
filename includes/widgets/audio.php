@@ -171,6 +171,20 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->add_control(
+			'sc_show_artwork',
+			[
+				'label' => __( 'Artwork', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
+				'default' => 'yes',
+				'condition' => [
+					'visual' => 'no',
+				],
+			]
+		);
+
+		$this->add_control(
 			'sc_sharing',
 			[
 				'label' => __( 'Share Button', 'elementor' ),
@@ -286,6 +300,7 @@ class Widget_Audio extends Widget_Base {
 			'show_comments',
 			'show_playcount',
 			'show_user',
+			'show_artwork',
 		];
 
 		$params = [];
