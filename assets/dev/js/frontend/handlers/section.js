@@ -175,6 +175,15 @@ var StretchedSection = HandlerModule.extend( {
 
 	bindEvents: function() {
 		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretch );
+
+		this.$element.on( {
+			'sticky:stick': this.stretch,
+			'sticky:unstick': this.stretch
+		} );
+	},
+
+	unbindEvents: function() {
+		elementorFrontend.removeListeners( this.$element.data( 'model-cid' ), 'resize', this.stretch );
 	},
 
 	initStretch: function() {
