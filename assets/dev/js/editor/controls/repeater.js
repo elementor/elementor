@@ -119,7 +119,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	updateActiveRow: function() {
-		var activeItemIndex = 0;
+		var activeItemIndex = 1;
 
 		if ( this.currentEditableChild ) {
 			activeItemIndex = this.currentEditableChild.itemIndex;
@@ -184,15 +184,6 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	onAddChild: function() {
-		this.updateChildIndexes();
-		this.updateActiveRow();
-	},
-
-	onRemoveChild: function( childView ) {
-		if ( childView === this.currentEditableChild ) {
-			delete this.currentEditableChild;
-		}
-
 		this.updateChildIndexes();
 		this.updateActiveRow();
 	},
@@ -262,18 +253,24 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			newChildView = this.children.findByModel( newModel );
 
 		this.editRow( newChildView );
-		this.render();
 	},
 
 	onChildviewClickRemove: function( childView ) {
 		childView.model.destroy();
-		this.render();
+
+		if ( childView === this.currentEditableChild ) {
+			delete this.currentEditableChild;
+		}
+
+		this.updateChildIndexes();
+
+		this.updateActiveRow();
 	},
 
 	onChildviewClickDuplicate: function( childView ) {
 		var newModel = this.createItemModel( childView.model.toJSON(), {}, this );
+
 		this.addRow( newModel, { at: childView.itemIndex } );
-		this.render();
 	},
 
 	onChildviewClickEdit: function( childView ) {
