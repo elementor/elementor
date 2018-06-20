@@ -142,6 +142,28 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-plus',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'icon_active',
+			[
+				'label' => __( 'Active Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-minus',
+				'condition' => [
+					'icon!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
 			'title_html_tag',
 			[
 				'label' => __( 'Title HTML Tag', 'elementor' ),
@@ -157,29 +179,6 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'default' => 'div',
 				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'icon',
-			[
-				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-plus',
-				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
-			'icon_active',
-			[
-				'label' => __( 'Active Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-minus',
-				'label_block' => true,
-				'condition' => [
-					'icon!' => '',
-				],
 			]
 		);
 

@@ -485,11 +485,6 @@ class Admin {
 				'title' => __( 'I found a better plugin', 'elementor' ),
 				'input_placeholder' => __( 'Please share which plugin', 'elementor' ),
 			],
-			'elementor_pro' => [
-				'title' => __( 'I have Elementor Pro', 'elementor' ),
-				'input_placeholder' => '',
-				'alert' => __( 'Wait! Don\'t deactivate Elementor. You have to activate both Elementor and Elementor Pro in order for the plugin to work.', 'elementor' ),
-			],
 			'couldnt_get_the_plugin_to_work' => [
 				'title' => __( 'I couldn\'t get the plugin to work', 'elementor' ),
 				'input_placeholder' => '',
@@ -497,6 +492,11 @@ class Admin {
 			'temporary_deactivation' => [
 				'title' => __( 'It\'s a temporary deactivation', 'elementor' ),
 				'input_placeholder' => '',
+			],
+			'elementor_pro' => [
+				'title' => __( 'I have Elementor Pro', 'elementor' ),
+				'input_placeholder' => '',
+				'alert' => __( 'Wait! Don\'t deactivate Elementor. You have to activate both Elementor and Elementor Pro in order for the plugin to work.', 'elementor' ),
 			],
 			'other' => [
 				'title' => __( 'Other', 'elementor' ),
