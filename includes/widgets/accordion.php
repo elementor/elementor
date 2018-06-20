@@ -163,7 +163,6 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
-
 		$this->add_control(
 			'title_html_tag',
 			[
