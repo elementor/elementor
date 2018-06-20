@@ -689,6 +689,8 @@ BaseElementView = BaseContainer.extend( {
 
 	onDestroy: function() {
 		this.controlsCSSParser.removeStyleFromDocument();
+
+		elementor.channels.data.trigger( 'element:destroy', this.model );
 	}
 } );
 
