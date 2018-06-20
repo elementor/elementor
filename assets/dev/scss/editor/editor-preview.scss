@@ -181,7 +181,7 @@ html.elementor-html {
 		.elementor-editor-element-settings {
 			position: absolute;
 			display: flex;
-			height: 26px;
+			height: 24px;
 			list-style: none;
 			margin: 0;
 			padding: 0;
@@ -212,7 +212,7 @@ html.elementor-html {
 			@include start(50%);
 			transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
 			background-color: $editor-info;
-			border-radius: 3px 3px 0 0;
+			border-radius: 5px 5px 0 0;
 
 			.elementor-editor-element-setting {
 
@@ -221,15 +221,15 @@ html.elementor-html {
 				}
 
 				&:first-child {
-					border-radius: getValueByDirection(3px 0 0 0, 0 3px 0 0);
+					border-radius: getValueByDirection(5px 0 0 0, 0 5px 0 0);
 
 					&:before {
 						content: '';
 						position: absolute;
 						border: solid transparent;
-						top: 0;
+						top: 2px;
 						@include border-end-property(color, $editor-info);
-						border-width: getValueByDirection(26px 8px 0 0, 26px 0 0 8px);
+						border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
 						@include end(calc(100% - 1px));
 					}
 
@@ -242,15 +242,15 @@ html.elementor-html {
 				}
 
 				&:last-child {
-					border-radius: getValueByDirection(0 3px 0 0, 3px 0 0 0);
+					border-radius: getValueByDirection(0 5px 0 0, 5px 0 0 0);
 
 					&:after {
 						content: '';
 						position: absolute;
 						border: solid transparent;
-						top: 0;
+						top: 2px;
 						@include border-start-property(color, $editor-info);
-						border-width: getValueByDirection(26px 0 0 8px, 26px 8px 0 0);
+						border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
 						@include start(calc(100% - 1px));
 					}
 
