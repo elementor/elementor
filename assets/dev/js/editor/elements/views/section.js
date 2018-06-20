@@ -109,14 +109,6 @@ SectionView = BaseElementView.extend( {
 		};
 	},
 
-	onSettingsChanged: function( settingsModel ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		if ( settingsModel.changed.structure ) {
-			this.redefineLayout();
-		}
-	},
-
 	getColumnPercentSize: function( element, size ) {
 		return +( size / element.parent().width() * 100 ).toFixed( 3 );
 	},
@@ -240,6 +232,14 @@ SectionView = BaseElementView.extend( {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
 		this._checkIsFull();
+	},
+
+	onSettingsChanged: function( settingsModel ) {
+		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
+
+		if ( settingsModel.changed.structure ) {
+			this.redefineLayout();
+		}
 	},
 
 	onClickAdd: function() {
