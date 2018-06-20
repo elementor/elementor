@@ -23,7 +23,11 @@ html.elementor-html {
 
 .elementor-editor-active {
 
-	.elementor.elementor-edit-mode {
+	.elementor.elementor-edit-area-active {
+
+		.elementor-inner {
+			margin-top: 24px;
+		}
 
 		.elementor-top-section {
 
