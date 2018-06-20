@@ -305,6 +305,8 @@ BaseElementView = BaseContainer.extend( {
 
 		this.allowRender = false;
 
+		elementor.channels.data.trigger( 'element:before:reset:style', editModel );
+
 		jQuery.each( controls, function( controlName ) {
 			if ( 'content' === this.tab || undefined === this.default_value ) {
 				return;
@@ -312,6 +314,8 @@ BaseElementView = BaseContainer.extend( {
 
 			editModel.setSetting( controlName, this.default_value );
 		} );
+
+		elementor.channels.data.trigger( 'element:after:reset:style', editModel );
 
 		this.allowRender = true;
 
