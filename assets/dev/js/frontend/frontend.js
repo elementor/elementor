@@ -171,12 +171,28 @@
 				return;
 			}
 
+			this.removeListeners( listenerID, event, to );
+
 			if ( to instanceof jQuery ) {
 				var eventNS = event + '.' + listenerID;
 
-				to.off( eventNS ).on( eventNS, callback );
+				to.on( eventNS, callback );
 			} else {
-				to.off( event, null, listenerID ).on( event, callback, listenerID );
+				to.on( event, callback, listenerID );
+			}
+		};
+
+		this.removeListeners = function( listenerID, event, callback, from ) {
+			if ( ! from ) {
+				from = self.getElements( '$window' );
+			}
+
+			if ( from instanceof jQuery ) {
+				var eventNS = event + '.' + listenerID;
+
+				from.off( eventNS, callback );
+			} else {
+				from.off( event, callback, listenerID );
 			}
 		};
 

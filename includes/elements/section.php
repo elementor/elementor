@@ -282,9 +282,10 @@ class Element_Section extends Element_Base {
 				'default' => '',
 				'return_value' => 'section-stretched',
 				'prefix_class' => 'elementor-',
-				'render_type' => 'template',
 				'hide_in_inner' => true,
 				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
+				'render_type' => 'none',
+				'frontend_available' => true,
 			]
 		);
 
@@ -526,6 +527,12 @@ class Element_Section extends Element_Base {
 					'video_link' => [
 						'frontend_available' => true,
 					],
+					'video_start' => [
+						'frontend_available' => true,
+					],
+					'video_end' => [
+						'frontend_available' => true,
+					],
 				],
 			]
 		);
@@ -619,6 +626,29 @@ class Element_Section extends Element_Base {
 				],
 				'condition' => [
 					'background_overlay_background' => [ 'classic', 'gradient' ],
+				],
+			]
+		);
+
+		$this->add_control(
+			'overlay_blend_mode',
+			[
+				'label' => __( 'Blend Mode', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => __( 'Normal', 'elementor' ),
+					'multiply' => 'Multiply',
+					'screen' => 'Screen',
+					'overlay' => 'Overlay',
+					'darken' => 'Darken',
+					'lighten' => 'Lighten',
+					'color-dodge' => 'Color Dodge',
+					'saturation' => 'Saturation',
+					'color' => 'Color',
+					'luminosity' => 'Luminosity',
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
 				],
 			]
 		);
@@ -1105,7 +1135,6 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
-				'placeholder' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],

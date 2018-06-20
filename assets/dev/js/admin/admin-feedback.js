@@ -61,6 +61,17 @@
 									}
 								} );
 							}
+						},
+
+						onShow: function() {
+							var $dialogModal = $( '#elementor-deactivate-feedback-modal' ),
+								radioSelector = '.elementor-deactivate-feedback-dialog-input';
+
+							$dialogModal.find( radioSelector ).on( 'change', function() {
+								$dialogModal.attr( 'data-feedback-selected', $( this ).val() );
+							} );
+
+							$dialogModal.find( radioSelector + ':checked' ).trigger( 'change' );
 						}
 					} );
 				}
