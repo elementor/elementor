@@ -75,15 +75,19 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
-		_.each( elementor.config.widgets, function( element ) {
+		_.each( elementor.config.widgets, function( widget ) {
+			if ( ! widget.show_in_panel ) {
+				return;
+			}
+
 			elementsCollection.add( {
-				title: element.title,
-				elType: element.elType,
-				categories: element.categories,
-				keywords: element.keywords,
-				icon: element.icon,
-				widgetType: element.widget_type,
-				custom: element.custom
+				title: widget.title,
+				elType: widget.elType,
+				categories: widget.categories,
+				keywords: widget.keywords,
+				icon: widget.icon,
+				widgetType: widget.widget_type,
+				custom: widget.custom
 			} );
 		} );
 
