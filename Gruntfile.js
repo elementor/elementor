@@ -5,6 +5,39 @@ module.exports = function( grunt ) {
 		fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' );
 
+	var getBuildFiles = function() {
+		return [
+			'**',
+			'!node_modules/**',
+			'!docs/**',
+			'!build/**',
+			'!bin/**',
+			'!.git/**',
+			'!tests/**',
+			'!.github/**',
+			'!.travis.yml',
+			'!.jscsrc',
+			'!.jshintignore',
+			'!.jshintrc',
+			'!ruleset.xml',
+			'!README.md',
+			'!phpunit.xml',
+			'!vendor/**',
+			'!Gruntfile.js',
+			'!package.json',
+			'!package-lock.json',
+			'!npm-debug.log',
+			'!composer.json',
+			'!composer.lock',
+			'!.gitignore',
+			'!.gitmodules',
+
+			'!assets/dev/**',
+			'!assets/**/*.map',
+			'!*~'
+		];
+	};
+
 	require( 'matchdep' ).filterDev( 'grunt-*' ).forEach( grunt.loadNpmTasks );
 
 	// Project configuration
@@ -403,38 +436,14 @@ module.exports = function( grunt ) {
 
 		copy: {
 			main: {
-				src: [
-					'**',
-					'!node_modules/**',
-					'!docs/**',
-					'!build/**',
-					'!bin/**',
-					'!.git/**',
-					'!tests/**',
-					'!.github/**',
-					'!.travis.yml',
-					'!.jscsrc',
-					'!.jshintignore',
-					'!.jshintrc',
-					'!ruleset.xml',
-					'!README.md',
-					'!phpunit.xml',
-					'!vendor/**',
-					'!Gruntfile.js',
-					'!package.json',
-					'!package-lock.json',
-					'!npm-debug.log',
-					'!composer.json',
-					'!composer.lock',
-					'!.gitignore',
-					'!.gitmodules',
-
-					'!assets/dev/**',
-					'!assets/**/*.map',
-					'!*~'
-				],
+				src: getBuildFiles(),
 				expand: true,
 				dest: 'build/'
+			},
+			secondary: {
+				src: getBuildFiles(),
+				expand: true,
+				dest: '/tmp/elementor-builds/<%= pkg.version %>/'
 			}
 		},
 

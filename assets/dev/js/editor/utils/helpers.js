@@ -140,7 +140,7 @@ helpers = {
 				return true;
 			}
 
-			if ( conditionSubKey && Array.isArray( controlValue ) ) {
+			if ( conditionSubKey && 'object' === typeof controlValue ) {
 				controlValue = controlValue[ conditionSubKey ];
 			}
 

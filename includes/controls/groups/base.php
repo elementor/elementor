@@ -289,12 +289,14 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$field_args['classes'] = $this->get_base_group_classes() . ' elementor-group-control-' . $control_id;
 
-		if ( ! empty( $args['condition'] ) ) {
-			if ( empty( $field_args['condition'] ) ) {
-				$field_args['condition'] = [];
-			}
+		foreach ( [ 'condition', 'conditions' ] as $condition_type ) {
+			if ( ! empty( $args[ $condition_type ] ) ) {
+				if ( empty( $field_args[ $condition_type ] ) ) {
+					$field_args[ $condition_type ] = [];
+				}
 
-			$field_args['condition'] += $args['condition'];
+				$field_args[ $condition_type ] += $args[ $condition_type ];
+			}
 		}
 
 		return $field_args;

@@ -4,6 +4,7 @@ namespace Elementor\Core\DynamicTags;
 use Elementor\Controls_Stack;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Plugin;
+use Elementor\Element_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -59,27 +60,30 @@ class Dynamic_CSS extends Post {
 
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
 		$dynamic_settings = $controls_stack->get_settings( '__dynamic__' );
-		if ( empty( $dynamic_settings ) ) {
-			return;
+		if ( ! empty( $dynamic_settings ) ) {
+			$controls = array_intersect_key( $controls, $dynamic_settings );
+
+			$all_controls = $controls_stack->get_controls();
+
+			$parsed_dynamic_settings = $controls_stack->parse_dynamic_settings( $values, $controls );
+
+			foreach ( $controls as $control ) {
+				if ( ! empty( $control['style_fields'] ) ) {
+					$this->add_repeater_control_style_rules( $controls_stack, $control['style_fields'], $values[ $control['name'] ], $placeholders, $replacements );
+				}
+
+				if ( empty( $control['selectors'] ) ) {
+					continue;
+				}
+
+				$this->add_control_style_rules( $control, $parsed_dynamic_settings, $all_controls, $placeholders, $replacements );
+			}
 		}
 
-		$controls = array_intersect_key( $controls, $dynamic_settings );
-
-		$all_controls = $controls_stack->get_controls();
-
-		$parsed_dynamic_settings = $controls_stack->parse_dynamic_settings( $values, $controls );
-
-		foreach ( $controls as $control ) {
-			if ( ! empty( $control['style_fields'] ) ) {
-				$this->add_repeater_control_style_rules( $controls_stack, $control['style_fields'], $values[ $control['name'] ], $placeholders, $replacements );
+		if ( $controls_stack instanceof Element_Base ) {
+			foreach ( $controls_stack->get_children() as $child_element ) {
+				$this->render_styles( $child_element );
 			}
-
-			if ( empty( $control['selectors'] ) ) {
-				continue;
-			}
-
-			$this->add_control_style_rules( $control, $parsed_dynamic_settings, $all_controls, $placeholders, $replacements );
 		}
 	}
 }
-

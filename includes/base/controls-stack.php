@@ -1118,14 +1118,10 @@ abstract class Controls_Stack {
 	 */
 	public function get_settings_for_display( $setting_key = null ) {
 		if ( ! $this->parsed_active_settings ) {
-			$parsed_settings = $this->get_parsed_dynamic_settings();
-
-			$active_settings = $this->get_active_settings();
-
-			$this->parsed_active_settings = array_replace_recursive( $parsed_settings, $active_settings );
+			$this->parsed_active_settings = $this->get_active_settings( $this->get_parsed_dynamic_settings(), $this->get_controls() );
 		}
 
-		return self::_get_items( $this->parsed_dynamic_settings, $setting_key );
+		return self::_get_items( $this->parsed_active_settings, $setting_key );
 	}
 
 	/**
@@ -1420,7 +1416,7 @@ abstract class Controls_Stack {
 	 * @access public
 	 */
 	public function end_controls_section() {
-		$section_name = $this->get_name();
+		$stack_name = $this->get_name();
 
 		// Save the current section for the action.
 		$current_section = $this->current_section;
@@ -1447,14 +1443,14 @@ abstract class Controls_Stack {
 		 *
 		 * Fires before Elementor section ends in the editor panel.
 		 *
-		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
+		 * The dynamic portions of the hook name, `$stack_name` and `$section_id`, refers to the stack name and section ID, respectively.
 		 *
 		 * @since 1.4.0
 		 *
 		 * @param Controls_Stack $this The control.
 		 * @param array          $args Section arguments.
 		 */
-		do_action( "elementor/element/{$section_name}/{$section_id}/before_section_end", $this, $args );
+		do_action( "elementor/element/{$stack_name}/{$section_id}/before_section_end", $this, $args );
 
 		$this->current_section = null;
 
@@ -1476,14 +1472,14 @@ abstract class Controls_Stack {
 		 *
 		 * Fires after Elementor section ends in the editor panel.
 		 *
-		 * The dynamic portions of the hook name, `$section_name` and `$section_id`, refers to the section name and section ID, respectively.
+		 * The dynamic portions of the hook name, `$stack_name` and `$section_id`, refers to the section name and section ID, respectively.
 		 *
 		 * @since 1.4.0
 		 *
 		 * @param Controls_Stack $this The control.
 		 * @param array          $args Section arguments.
 		 */
-		do_action( "elementor/element/{$section_name}/{$section_id}/after_section_end", $this, $args );
+		do_action( "elementor/element/{$stack_name}/{$section_id}/after_section_end", $this, $args );
 	}
 
 	/**
