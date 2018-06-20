@@ -308,7 +308,7 @@ BaseElementView = BaseContainer.extend( {
 		elementor.channels.data.trigger( 'element:before:reset:style', editModel );
 
 		jQuery.each( controls, function( controlName ) {
-			if ( 'content' === this.tab || undefined === this.default_value ) {
+			if ( 'content' === this.tab && ! this.selectors || undefined === this.default_value ) {
 				return;
 			}
 
