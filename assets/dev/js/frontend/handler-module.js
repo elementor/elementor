@@ -51,7 +51,7 @@ HandlerModule = ViewModule.extend( {
 
 		self.editorListeners = [
 			{
-				event: 'element:after:remove',
+				event: 'element:destroy',
 				to: elementor.channels.data,
 				callback: function( removedModel ) {
 					if ( removedModel.cid !== self.getModelCID() ) {

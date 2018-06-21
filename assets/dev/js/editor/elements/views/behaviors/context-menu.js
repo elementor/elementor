@@ -10,6 +10,10 @@ module.exports = Marionette.Behavior.extend( {
 	events: function() {
 		var events = {};
 
+		if ( ! elementor.userCan( 'design' ) ) {
+			return events;
+		}
+
 		this.getOption( 'eventTargets' ).forEach( function( eventTarget ) {
 			var eventName = 'contextmenu';
 
