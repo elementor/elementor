@@ -342,6 +342,7 @@ abstract class Widget_Base extends Element_Base {
 			'keywords' => $this->get_keywords(),
 			'categories' => $this->get_categories(),
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
+			'show_in_panel' => $this->show_in_panel(),
 		];
 
 		return array_merge( parent::_get_initial_config(), $config );
