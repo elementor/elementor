@@ -25,10 +25,6 @@ html.elementor-html {
 
 	.elementor.elementor-edit-area-active {
 
-		.elementor-inner {
-			margin-top: 24px;
-		}
-
 		.elementor-top-section {
 
 			> .elementor-container {
@@ -288,7 +284,7 @@ html.elementor-html {
 .elementor-editor-element-settings {
 	position: absolute;
 	display: flex;
-	height: 24px;
+	height: 26px;
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -330,6 +326,7 @@ html.elementor-html {
 
 // Section - Overlay Settings
 .elementor-editor-section-settings {
+	height: 24px;
 	top: 1px;
 	@include start(50%);
 	transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
@@ -419,9 +416,9 @@ html.elementor-html {
 	}
 }
 
-.elementor-section--handles-inside {
+.elementor-section--handles-inside, .elementor-section:first-child {
 
-	> .elementor-element-overlay > .elementor-editor-section-settings {
+	.elementor-editor-section-settings {
 		transform: translateX(-50%);
 		border-radius: 0 0 5px 5px;
 
