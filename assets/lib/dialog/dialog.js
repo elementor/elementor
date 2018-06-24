@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.3.4
+ * Dialogs Manager v4.4.0
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -90,8 +90,6 @@
 			properties = properties || {};
 
 			widget.init(self, properties);
-
-			widget.setMessage(properties.message);
 
 			return widget;
 		};
@@ -199,7 +197,7 @@
 			}
 
 			var horizontalOffsetRegex = /left|right/,
-				extraOffsetRegex = /(\+|-[0-9]+)?$/,
+				extraOffsetRegex = /([+-]\d+)?$/,
 				iframeOffset = elements.iframe.offset(),
 				iframeWindow = elements.iframe[0].contentWindow,
 				myParts = position.my.split(' '),
@@ -267,6 +265,8 @@
 
 			self.addElement('widget');
 
+			self.addElement('header');
+
 			self.addElement('message');
 
 			self.addElement('window', window);
@@ -299,6 +299,8 @@
 			var parentSettings = $.extend(true, {}, parent.getSettings());
 
 			settings = {
+				headerMessage: '',
+				message: '',
 				effects: parentSettings.effects,
 				classes: {
 					globalPrefix: parentSettings.classPrefix,
@@ -537,6 +539,13 @@
 			return self;
 		};
 
+		this.setHeaderMessage = function (message) {
+
+			this.getElements('header').html(message);
+
+			return this;
+		};
+
 		this.setMessage = function (message) {
 
 			elements.message.html(message);
@@ -604,9 +613,14 @@
 	// Inheritable widget methods
 	DialogsManager.Widget.prototype.buildWidget = function () {
 
-		var elements = this.getElements();
+		var elements = this.getElements(),
+			settings = this.getSettings();
 
-		elements.widget.html(elements.message);
+		elements.widget.append(elements.header, elements.message);
+
+		this.setHeaderMessage(settings.headerMessage);
+
+		this.setMessage(settings.message);
 	};
 
 	DialogsManager.Widget.prototype.getDefaultSettings = function () {
@@ -781,7 +795,6 @@
 			var settings = DialogsManager.getWidgetType('buttons').prototype.getDefaultSettings.apply(this, arguments);
 
 			return $.extend(true, settings, {
-				headerMessage: '',
 				contentWidth: 'auto',
 				contentHeight: 'auto',
 				closeButton: false,
@@ -797,12 +810,10 @@
 
 			DialogsManager.getWidgetType('buttons').prototype.buildWidget.apply(this, arguments);
 
-			var $widgetHeader = this.addElement('widgetHeader'),
-				$widgetContent = this.addElement('widgetContent');
+			var $widgetContent = this.addElement('widgetContent'),
+				elements = this.getElements();
 
-			var elements = this.getElements();
-
-			$widgetContent.append($widgetHeader, elements.message, elements.buttonsWrapper);
+			$widgetContent.append(elements.header, elements.message, elements.buttonsWrapper);
 
 			elements.widget.html($widgetContent);
 
@@ -831,14 +842,6 @@
 			if ('auto' !== settings.contentHeight) {
 				elements.message.height(settings.contentHeight);
 			}
-
-			this.setHeaderMessage(settings.headerMessage);
-		},
-		setHeaderMessage: function (message) {
-
-			this.getElements('widgetHeader').html(message);
-
-			return this;
 		}
 	}));
 
