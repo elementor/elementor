@@ -35,7 +35,7 @@
 		min-height: 50px;
 	}
 
-	.dialog-widget-header, .dialog-message {
+	.dialog-header, .dialog-message {
 		text-align: center;
 	}
 
@@ -94,7 +94,7 @@
 .dialog-lightbox-widget,
 .dialog-confirm-widget {
 
-	.dialog-widget-header {
+	.dialog-header {
 		font-size: 15px;
 		color: $editor-darkest;
 	}
