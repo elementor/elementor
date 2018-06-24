@@ -30,6 +30,11 @@
 		width: 375px;
 	}
 
+	.dialog-header {
+		padding: 20px 0;
+		font-weight: 500;
+	}
+
 	.dialog-message {
 		padding: 0 20px 20px;
 		min-height: 50px;
@@ -72,11 +77,6 @@
 			}
 		}
 	}
-}
-
-.dialog-widget-header {
-	padding: 20px 0;
-	font-weight: 500;
 }
 
 .dialog-close-button {
