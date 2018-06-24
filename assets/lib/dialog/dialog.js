@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.3.3
+ * Dialogs Manager v4.3.4
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -205,11 +205,19 @@
 				myParts = position.my.split(' '),
 				fixedParts = [];
 
-			myParts.forEach(function( part ) {
-				var fixedPart = part.replace(extraOffsetRegex, function( partOffset ) {
+			if (myParts.length === 1) {
+				if (horizontalOffsetRegex.test(myParts[0])) {
+					myParts.push('center');
+				} else {
+					myParts.unshift('center');
+				}
+			}
+
+			myParts.forEach(function(part, index) {
+				var fixedPart = part.replace(extraOffsetRegex, function(partOffset) {
 					partOffset = +partOffset || 0;
 
-					if (horizontalOffsetRegex.test(part)) {
+					if (! index) {
 						partOffset += iframeOffset.left - iframeWindow.scrollX;
 					} else {
 						partOffset += iframeOffset.top - iframeWindow.scrollY;
