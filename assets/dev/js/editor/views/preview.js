@@ -10,14 +10,21 @@ Preview = BaseSectionsContainerView.extend( {
 	childViewContainer: '.elementor-section-wrap',
 
 	behaviors: function() {
-		var behaviors = BaseSectionsContainerView.prototype.behaviors.apply( this, arguments );
+		var parentBehaviors = BaseSectionsContainerView.prototype.behaviors.apply( this, arguments ),
+			behaviors = {
+				contextMenu: {
+					behaviorClass: require( 'elementor-behaviors/context-menu' ),
+					groups: this.getContextMenuGroups()
+				}
+			};
 
-		return jQuery.extend( behaviors, {
-			contextMenu: {
-				behaviorClass: require( 'elementor-behaviors/context-menu' ),
-				groups: this.getContextMenuGroups()
-			}
-		} );
+		if ( elementor.config.user.introduction ) {
+			behaviors.introduction = {
+				behaviorClass: require( 'elementor-behaviors/introduction' )
+			};
+		}
+
+		return jQuery.extend( parentBehaviors, behaviors );
 	},
 
 	getContextMenuGroups: function() {

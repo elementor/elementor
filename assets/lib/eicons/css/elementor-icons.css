@@ -654,6 +654,33 @@
 .eicon-products:before {
   content: '\e1008'; }
 
+.eicon-bag-light:before {
+  content: '\e1009'; }
+
+.eicon-bag-medium:before {
+  content: '\e1010'; }
+
+.eicon-bag-solid:before {
+  content: '\e1011'; }
+
+.eicon-basket-light:before {
+  content: '\e1012'; }
+
+.eicon-basket-medium:before {
+  content: '\e1013'; }
+
+.eicon-basket-solid:before {
+  content: '\e1014'; }
+
+.eicon-cart-light:before {
+  content: '\e1015'; }
+
+.eicon-cart-medium:before {
+  content: '\e1016'; }
+
+.eicon-cart-solid:before {
+  content: '\e1017'; }
+
 .eicon-editor-link:before {
   content: '\e500'; }
 

@@ -12,6 +12,8 @@ abstract class Base {
 
 	const DEFAULT_FILES_DIR = 'css/';
 
+	const META_KEY = '';
+
 	private static $wp_uploads_dir;
 
 	private $files_dir;
@@ -51,8 +53,6 @@ abstract class Base {
 
 		return $wp_upload_dir['baseurl'] . '/' . self::UPLOADS_DIR;
 	}
-
-	abstract public function get_meta_key();
 
 	public function __construct( $file_name ) {
 		$this->set_file_name( $file_name );
@@ -160,7 +160,7 @@ abstract class Base {
 	 * @access protected
 	 */
 	protected function load_meta() {
-		return get_option( $this->get_meta_key() );
+		return get_option( static::META_KEY );
 	}
 
 	/**
@@ -174,7 +174,7 @@ abstract class Base {
 	 * @param array $meta New meta data.
 	 */
 	protected function update_meta( $meta ) {
-		update_option( $this->get_meta_key(), $meta );
+		update_option( static::META_KEY, $meta );
 	}
 
 	/**
@@ -186,7 +186,7 @@ abstract class Base {
 	 * @access protected
 	 */
 	protected function delete_meta() {
-		delete_option( $this->get_meta_key() );
+		delete_option( static::META_KEY );
 	}
 
 	protected function get_default_meta() {

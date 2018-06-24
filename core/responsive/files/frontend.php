@@ -11,16 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Frontend extends Base {
 
+	const META_KEY = 'elementor-custom-breakpoints-files';
+
 	private $template_file;
 
 	public function __construct( $file_name, $template_file = null ) {
 		$this->template_file = $template_file;
 
 		parent::__construct( $file_name );
-	}
-
-	public function get_meta_key() {
-		return 'elementor-' . pathinfo( $this->get_file_name(), PATHINFO_FILENAME );
 	}
 
 	public function parse_content() {
@@ -49,5 +47,81 @@ class Frontend extends Base {
 		}, $file_content );
 
 		return $file_content;
+	}
+
+	/**
+	 * Load meta.
+	 *
+	 * Retrieve the file meta data.
+	 *
+	 * @since  2.1.0
+	 * @access protected
+	 */
+	protected function load_meta() {
+		$option = $this->load_meta_option();
+
+		$file_meta_key = $this->get_file_meta_key();
+
+		if ( empty( $option[ $file_meta_key ] ) ) {
+			return [];
+		}
+
+		return $option[ $file_meta_key ];
+	}
+
+	/**
+	 * Update meta.
+	 *
+	 * Update the file meta data.
+	 *
+	 * @since  2.1.0
+	 * @access protected
+	 *
+	 * @param array $meta New meta data.
+	 */
+	protected function update_meta( $meta ) {
+		$option = $this->load_meta_option();
+
+		$option[ $this->get_file_meta_key() ] = $meta;
+
+		update_option( static::META_KEY, $option );
+	}
+
+	/**
+	 * Delete meta.
+	 *
+	 * Delete the file meta data.
+	 *
+	 * @since  2.1.0
+	 * @access protected
+	 */
+	protected function delete_meta() {
+		$option = $this->load_meta_option();
+
+		$file_meta_key = $this->get_file_meta_key();
+
+		if ( isset( $option[ $file_meta_key ] ) ) {
+			unset( $option[ $file_meta_key ] );
+		}
+
+		if ( $option ) {
+			update_option( static::META_KEY, $option );
+		} else {
+			delete_option( static::META_KEY );
+		}
+	}
+
+	private function get_file_meta_key() {
+		return pathinfo( $this->get_file_name(), PATHINFO_FILENAME );
+	}
+
+	private function load_meta_option() {
+		$option = get_option( static::META_KEY );
+
+		if ( ! $option ) {
+			$option = [];
+		}
+
+		return $option;
 	}
 }
