@@ -24,6 +24,8 @@ class Global_CSS extends Base {
 	 */
 	const FILE_HANDLER_ID = 'elementor-global';
 
+	const META_KEY = '_elementor_global_css';
+
 	/**
 	 * Get CSS file name.
 	 *
@@ -36,10 +38,6 @@ class Global_CSS extends Base {
 	 */
 	public function get_name() {
 		return 'global';
-	}
-
-	public function get_meta_key() {
-		return '_elementor_global_css';
 	}
 
 	/**

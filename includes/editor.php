@@ -429,7 +429,7 @@ class Editor {
 			[
 				'jquery-ui-position',
 			],
-			'4.3.4',
+			'4.4.0',
 			true
 		);
 
@@ -523,6 +523,7 @@ class Editor {
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
+				'introduction' => User::is_should_view_introduction()
 			],
 			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
@@ -653,6 +654,11 @@ class Editor {
 				'new_column' => __( 'Add New Column', 'elementor' ),
 				'copy_all_content' => __( 'Copy All Content', 'elementor' ),
 				'delete_all_content' => __( 'Delete All Content', 'elementor' ),
+
+				// Right Click Introduction
+				'meet_right_click_header' => __( 'Meet Right Click', 'elementor' ),
+				'meet_right_click_message' => __( 'Now you can access all editing actions much more easily using right click. Just click on the framed area of a widget, column or section.', 'elementor' ),
+				'got_it' => __( 'Got It', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
