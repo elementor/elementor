@@ -20,6 +20,10 @@ class User {
 	 */
 	const ADMIN_NOTICES_KEY = 'elementor_admin_notices';
 
+	const INTRODUCTION_KEY = 'elementor_introduction';
+
+	const INTRODUCTION_VERSION = 2;
+
 	/**
 	 * Init.
 	 *
@@ -31,6 +35,12 @@ class User {
 	 */
 	public static function init() {
 		add_action( 'wp_ajax_elementor_set_admin_notice_viewed', [ __CLASS__, 'ajax_set_admin_notice_viewed' ] );
+
+		add_action( 'elementor/ajax/register_actions', [ __CLASS__, 'register_ajax_actions' ] );
+	}
+
+	public static function register_ajax_actions() {
+		Plugin::$instance->ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
 	}
 
 	/**
@@ -183,6 +193,28 @@ class User {
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 
 		die;
+	}
+
+	public static function set_introduction_viewed() {
+		$user_introduction_meta = self::get_introduction_meta();
+
+		if ( ! $user_introduction_meta ) {
+			$user_introduction_meta = [];
+		}
+
+		$user_introduction_meta[ self::INTRODUCTION_VERSION ] = true;
+
+		update_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, $user_introduction_meta );
+	}
+
+	public static function is_should_view_introduction() {
+		$user_introduction_meta = self::get_introduction_meta();
+
+		return empty( $user_introduction_meta[ self::INTRODUCTION_VERSION ] );
+	}
+
+	private static function get_introduction_meta() {
+		return get_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, true );
 	}
 }
 
