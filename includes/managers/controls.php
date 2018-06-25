@@ -530,10 +530,6 @@ class Controls_Manager {
 
 		foreach ( $this->get_controls() as $name => $control ) {
 			$controls_data[ $name ] = $control->get_settings();
-
-			if ( $control instanceof Base_Data_Control ) {
-				$controls_data[ $name ]['default_value'] = $control->get_default_value();
-			}
 		}
 
 		return $controls_data;
