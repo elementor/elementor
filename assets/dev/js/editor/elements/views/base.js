@@ -240,10 +240,11 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	pasteStyle: function() {
-		var transferData = elementor.getStorage( 'transfer' ),
+		var self = this,
+			transferData = elementor.getStorage( 'transfer' ),
 			sourceElement = transferData.elements[0],
 			sourceSettings = sourceElement.settings,
-			editModel = this.getEditModel(),
+			editModel = self.getEditModel(),
 			settings = editModel.get( 'settings' ),
 			settingsAttributes = settings.attributes,
 			controls = settings.controls,
@@ -292,42 +293,44 @@ BaseElementView = BaseContainer.extend( {
 			diffSettings[ controlName ] = sourceValue;
 		} );
 
-		this.allowRender = false;
+		self.allowRender = false;
 
 		elementor.channels.data.trigger( 'element:before:paste:style', editModel );
 
-		jQuery.each( diffSettings, function( key, value ) {
-			editModel.setSetting( key, value );
-		} );
+		editModel.setSetting( diffSettings );
 
 		elementor.channels.data.trigger( 'element:after:paste:style', editModel );
 
-		this.allowRender = true;
+		self.allowRender = true;
 
-		this.renderOnChange();
+		self.renderOnChange();
 	},
 
 	resetStyle: function() {
-		var editModel = this.getEditModel(),
-			controls = editModel.get( 'settings' ).controls;
+		var self = this,
+			editModel = self.getEditModel(),
+			controls = editModel.get( 'settings' ).controls,
+			defaultValues = {};
 
-		this.allowRender = false;
+		self.allowRender = false;
 
 		elementor.channels.data.trigger( 'element:before:reset:style', editModel );
 
-		jQuery.each( controls, function( controlName ) {
+		jQuery.each( controls, function( controlName, control ) {
 			if ( ! self.isStyleTransferControl( control ) ) {
 				return;
 			}
 
-			editModel.setSetting( controlName, this.default_value );
+			defaultValues[ controlName ] = control[ 'default' ];
 		} );
+
+		editModel.setSetting( defaultValues );
 
 		elementor.channels.data.trigger( 'element:after:reset:style', editModel );
 
-		this.allowRender = true;
+		self.allowRender = true;
 
-		this.renderOnChange();
+		self.renderOnChange();
 	},
 
 	addElementFromPanel: function( options ) {
