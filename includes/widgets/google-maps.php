@@ -85,7 +85,7 @@ class Widget_Google_Maps extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['google','map','embed'];
+		return [ 'google', 'map', 'embed' ];
 	}
 
 	/**

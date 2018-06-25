@@ -67,7 +67,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['image','photo','visual','gallery'];
+		return [ 'image', 'photo', 'visual', 'gallery' ];
 	}
 
 	/**

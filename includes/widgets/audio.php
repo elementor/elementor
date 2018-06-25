@@ -76,7 +76,7 @@ class Widget_Audio extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['audio','player','soundcloud','embed'];
+		return [ 'audio', 'player', 'soundcloud', 'embed' ];
 	}
 
 	/**

@@ -84,7 +84,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['text','editor'];
+		return [ 'text', 'editor' ];
 	}
 
 	/**

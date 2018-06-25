@@ -67,7 +67,7 @@ class Widget_Shortcode extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['shortcode','code'];
+		return [ 'shortcode', 'code' ];
 	}
 
 	/**

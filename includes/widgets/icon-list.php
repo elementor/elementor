@@ -67,7 +67,7 @@ class Widget_Icon_List extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['icon list','icon','list'];
+		return [ 'icon list', 'icon', 'list' ];
 	}
 
 	/**

@@ -68,7 +68,7 @@ class Widget_Accordion extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['accordion','tabs','toggle'];
+		return [ 'accordion', 'tabs', 'toggle' ];
 	}
 
 	/**

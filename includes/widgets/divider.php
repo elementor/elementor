@@ -84,7 +84,7 @@ class Widget_Divider extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['divider','hr','line','border'];
+		return [ 'divider', 'hr', 'line', 'border' ];
 	}
 
 	/**

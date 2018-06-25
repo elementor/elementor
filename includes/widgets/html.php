@@ -67,7 +67,7 @@ class Widget_Html extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['html','code'];
+		return [ 'html', 'code' ];
 	}
 
 	/**
