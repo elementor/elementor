@@ -106,16 +106,19 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	setSetting: function( key, value ) {
-		var keyParts = key.split( '.' ),
-			isRepeaterKey = 3 === keyParts.length,
-			settings = this.get( 'settings' );
+		var settings = this.get( 'settings' );
 
-		key = keyParts[0];
+		if ( 'object' !== typeof key ) {
+			var keyParts = key.split( '.' ),
+				isRepeaterKey = 3 === keyParts.length;
 
-		if ( isRepeaterKey ) {
-			settings = settings.get( key ).models[ keyParts[1] ];
+			key = keyParts[0];
 
-			key = keyParts[2];
+			if ( isRepeaterKey ) {
+				settings = settings.get( key ).models[ keyParts[1] ];
+
+				key = keyParts[2];
+			}
 		}
 
 		settings.setExternalChange( key, value );

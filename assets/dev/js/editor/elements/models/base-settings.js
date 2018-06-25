@@ -185,10 +185,22 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	setExternalChange: function( key, value ) {
-		this.set( key, value );
+		var self = this,
+			settingsToChange;
 
-		this.trigger( 'change:external', key, value )
-			.trigger( 'change:external:' + key, value );
+		if ( 'object' === typeof key ) {
+			settingsToChange = key;
+		} else {
+			settingsToChange = {};
+
+			settingsToChange[ key ] = value;
+		}
+
+		self.set( settingsToChange );
+
+		jQuery.each( settingsToChange, function( changedKey, changedValue ) {
+			self.trigger( 'change:external:' + changedKey, changedValue );
+		} );
 	},
 
 	parseDynamicSettings: function( settings, options, controls ) {

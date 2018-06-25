@@ -28,12 +28,17 @@ module.exports = Marionette.Behavior.extend( {
 						my: 'center top+5',
 						at: 'center bottom',
 						collision: 'fit'
+					},
+					hide: {
+						onOutsideClick: false,
+						onBackgroundClick: false
 					}
 				} );
 
 				dialog.addButton( {
 					name: 'ok',
-					text: elementor.translate( 'got_it' )
+					text: elementor.translate( 'got_it' ),
+					callback: this.setIntroductionViewed.bind( this )
 				} );
 
 				dialog.getElements( 'ok' ).addClass( 'elementor-button elementor-button-success' );
@@ -55,8 +60,6 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 
 		dialog.show();
-
-		this.setIntroductionViewed();
 	},
 
 	setIntroductionViewed: function() {
