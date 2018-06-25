@@ -68,7 +68,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.registerValidators();
 
-		this.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onSettingsExternalChange );
+		this.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
 	},
 
 	getControlValue: function() {
@@ -217,12 +217,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 		elementor.changeDeviceMode( device );
 
 		this.triggerMethod( 'responsive:switcher:click', device );
-	},
-
-	onSettingsExternalChange: function() {
-		this.applySavedValue();
-
-		this.triggerMethod( 'after:external:change' );
 	},
 
 	renderResponsiveSwitchers: function() {
