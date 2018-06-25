@@ -3,6 +3,7 @@
 //
 @import "../helpers/variables";
 @import "../helpers/mixins";
+@import "breakpoints";
 @import "panel/global";
 @import "panel/control";
 @import "panel/color-picker";
@@ -22,135 +23,7 @@ html.elementor-html {
 
 .elementor-editor-active {
 
-	.elementor.elementor-edit-mode {
-
-		.elementor-inner {
-			margin-top: 25px;
-		}
-
-		.elementor-element-empty {
-
-			.elementor-sortable-placeholder {
-				display: none;
-			}
-		}
-
-		.elementor-empty-view {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			z-index: $first-layer;
-		}
-
-		.elementor-first-add {
-			text-align: center;
-			border: 1px dashed $editor-lightest;
-			display: flex;
-			height: 100%;
-			align-items: center;
-			justify-content: center;
-
-			.elementor-icon {
-				font-size: 19px;
-				color: $editor-light;
-				cursor: pointer;
-			}
-		}
-
-		.elementor-element {
-
-			> .elementor-element-overlay {
-				position: absolute;
-				top: 0;
-				@include end(0);
-				letter-spacing: 0; // Hack for front-end style themes
-				z-index: $element-overlay;
-				pointer-events: none;
-			}
-
-			&.elementor-widget-empty {
-				background-color: fade_out($editor-lightest, .2);
-
-				.elementor-widget-empty-icon {
-					color: $editor-lighter;
-					font-size: 22px;
-					display: block;
-					text-align: center;
-					padding: 10px 0;
-				}
-			}
-
-			&:not(:hover) {
-
-				&:not(.elementor-element-editable) {
-
-					> .elementor-element-overlay {
-
-						.elementor-editor-element-settings {
-							display: none;
-						}
-					}
-				}
-			}
-
-			&[data-side="top"], &[data-side="bottom"] + .elementor-element {
-
-				&:before {
-					content: '';
-					background-color: $editor-info;
-					transition-timing-function: ease-out;
-					opacity: .9;
-					height: $widget-placeholder-size;
-					animation: placeholder-widget 500ms;
-					display: block;
-				}
-			}
-
-			&[data-side="bottom"]:last-child {
-
-				&:after {
-					content: '';
-					background-color: $editor-info;
-					transition-timing-function: ease-out;
-					opacity: .9;
-					height: $widget-placeholder-size;
-					animation: placeholder-widget 500ms;
-					display: block;
-				}
-			}
-		}
-
-		// Section
-		.elementor-section {
-
-			> .elementor-element-overlay {
-				@include start(0);
-				bottom: 0;
-
-				&:after {
-					position: absolute;
-					left: 2px;
-					right: 2px;
-					top: 2px;
-					bottom: 2px;
-					outline: 2px solid $editor-info;
-					animation: section-outline .75s;
-				}
-			}
-
-			&:hover,
-			&.elementor-element-editable {
-
-				> .elementor-element-overlay {
-
-					&:after {
-						content: '';
-					}
-				}
-			}
-		}
+	.elementor.elementor-edit-area-active {
 
 		.elementor-top-section {
 
@@ -175,263 +48,6 @@ html.elementor-html {
 				}
 			}
 		}
-
-		// General - Overlay Settings
-		.elementor-editor-element-settings {
-			position: absolute;
-			overflow: hidden;
-			display: flex;
-			height: 26px;
-			list-style: none;
-			margin: 0;
-			padding: 0;
-			font-family: Arial, Helvetica, sans-serif;
-			font-size: 13px;
-			font-weight: normal;
-			font-style: normal;
-			line-height: 1;
-			z-index: $first-layer;
-			pointer-events: all;
-
-			.elementor-editor-element-trigger {
-
-				&.elementor-active {
-
-					~ .elementor-editor-element-setting {
-						@include margin-start(0)
-					}
-				}
-
-				&:not(.elementor-active) {
-
-					~ .elementor-editor-element-setting {
-						width: 0;
-						font-size: 0;
-						padding: 0;
-					}
-				}
-			}
-
-			.elementor-editor-element-remove {
-
-				&:hover {
-
-					.fa {
-						color: $editor-danger;
-					}
-				}
-			}
-		}
-
-		.elementor-editor-element-setting {
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding: 0;
-			margin: 0;
-			font-size: 11px;
-			color: #fff;
-			width: 25px;
-			transition: margin .3s, width .3s, font .3s;
-			box-sizing: content-box;
-		}
-
-		.elementor-editor-section-settings {
-			top: 1px;
-			@include start(50%);
-			background-image: linear-gradient(to bottom, darken($editor-info, 10%), $editor-info);
-			border-radius: 3px 3px 0 0;
-			transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
-
-			.elementor-editor-element-setting {
-
-				&:hover {
-					background-color: darken($editor-info, 20%);
-				}
-
-				@media (min-width: $screen-lg-min) {
-
-					&:first-child {
-						@include padding-start(1px);
-
-						&:not(.elementor-active) {
-							@include padding-end(1px);
-						}
-					}
-
-					&:last-child {
-						@include padding-end(1px);
-					}
-				}
-			}
-		}
-
-		// Column - Overlay Settings
-		.elementor-editor-column-settings {
-			top: -1px;
-			@include start(-1px);
-			border-radius: getValueByDirection(0 0 3px 0, 0 3px 0 0);
-			background-image: linear-gradient(to bottom, $editor-dark, $editor-darker);
-
-			.elementor-editor-element-setting {
-
-				&:hover {
-					background-color: $editor-darkest;
-				}
-
-				@media (min-width: $screen-lg-min) {
-
-					&:first-child {
-						@include padding-start(1px);
-
-						&:not(.elementor-active) {
-							@include padding-end(1px);
-						}
-					}
-
-					&:last-child {
-						@include padding-end(1px);
-					}
-				}
-			}
-		}
-
-		// Widget - Overlay Settings
-		.elementor-editor-widget-settings {
-			z-index: $second-layer;
-			top: -1px;
-			@include end(-1px);
-			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
-			border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
-			flex-direction: row-reverse;
-
-			.elementor-editor-element-setting {
-
-				&:hover {
-					background-color: darken($editor-info, 20%);
-				}
-
-				@media (min-width: $screen-lg-min) {
-
-					&:first-child {
-						@include padding-end(1px);
-
-						&:not(.elementor-active) {
-							@include padding-start(1px);
-						}
-					}
-
-					&:last-child {
-						@include padding-start(1px);
-					}
-				}
-			}
-		}
-
-		.elementor-editor-element-trigger {
-
-			@media(min-width: $screen-lg-min) {
-				cursor: move;
-			}
-		}
-
-		.elementor-editor-element-setting {
-
-			&:not(.elementor-editor-element-trigger) {
-
-				@media (max-width: $screen-md-max) {
-					display: none;
-				}
-			}
-		}
-
-		// Section Full (No more columns) - Overlay
-		.elementor-section-filled {
-
-			.elementor-editor-column-settings {
-
-				.elementor-editor-element-add, .elementor-editor-element-duplicate {
-					display: none;
-				}
-			}
-
-			.elementor-sortable-placeholder {
-
-				&.elementor-column {
-					display: none;
-				}
-			}
-
-			.elementor-row {
-
-				&.elementor-draggable-over {
-					border: 1px solid $editor-danger;
-				}
-			}
-		}
-
-		// Column
-		.elementor-column {
-
-			> .elementor-element-overlay {
-				@include start(0);
-				bottom: 0;
-
-				&:after {
-					position: absolute;
-					left: 0;
-					right: 0;
-					top: 0;
-					bottom: 0;
-					outline: 1px dashed $editor-dark;
-				}
-			}
-
-			&:hover,
-			&.elementor-element-editable {
-
-				> .elementor-element-overlay {
-					border: 1px solid $white;
-
-					&:after {
-						content: '';
-					}
-				}
-			}
-
-			&.elementor-dragging-on-child {
-
-				> .elementor-element-overlay {
-					border: 1px solid $editor-info;
-
-					&:after {
-						display: none;
-					}
-				}
-			}
-
-			> .ui-resizable-e, > .ui-resizable-w {
-				cursor: col-resize;
-				width: 7px;
-				position: absolute;
-				@include end(-5px);
-				top: 0;
-				height: 100%;
-			}
-
-			&:last-of-type {
-				> .ui-resizable-e, > .ui-resizable-w {
-					display: none !important;
-				}
-			}
-
-			@media (max-width: $screen-md-max) {
-				> .ui-resizable-e, > .ui-resizable-w {
-					display: none !important;
-				}
-			}
-		}
 	}
 
 	.elementor-column-wrap {
@@ -441,7 +57,7 @@ html.elementor-html {
 			.elementor-widget-wrap {
 				min-height: 30px; // In case of section with non-default content position
 
-				@media (min-width: $screen-md-min) {
+				@media (min-width: $editor-screen-md-min) {
 					margin: 10px;
 				}
 			}
@@ -478,103 +94,469 @@ html.elementor-html {
 		display: none; //TEMP
 	}
 
-	.elementor-sortable-helper {
-		position: absolute;
-		border-radius: 3px;
-		background-color: #fff;
-		text-align: center;
-		color: $editor-darker;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-		cursor: move;
-
-		.icon {
-			font-size: 28px;
-			padding-top: 15px;
-			line-height: 1;
-		}
-
-		.elementor-element-title-wrapper {
-			display: table;
-			width: 100%;
-		}
-
-		.title {
-			font-size: 11px;
-			font-family: Arial, Helvetica, sans-serif;
-			font-weight: normal;
-			font-style: normal;
-			display: table-cell;
-			vertical-align: middle;
-			height: 40px;
-		}
-	}
-
 	.elementor-inline-editing {
 		min-height: 15px;
 	}
+}
 
-	//Content Only (writing mode)
-	&.elementor-editor-content-only {
+// Element
+.elementor-element {
 
-		.elementor.elementor-edit-mode {
+	> .elementor-element-overlay {
+		position: absolute;
+		top: 0;
+		@include end(0);
+		letter-spacing: 0; // Hack for front-end style themes
+		z-index: $element-overlay;
+		pointer-events: none;
+	}
 
-			//Empty Section
-			.elementor-first-add {
+	&-empty {
+
+		.elementor-sortable-placeholder {
+			display: none;
+		}
+	}
+
+	&.elementor-widget-empty {
+		background-color: fade_out($editor-lightest, .2);
+
+		.elementor-widget-empty-icon {
+			color: $editor-lighter;
+			font-size: 22px;
+			display: block;
+			text-align: center;
+			padding: 10px 0;
+		}
+	}
+
+	&:not(:hover) {
+
+		&:not(.elementor-element-editable) {
+
+			> .elementor-element-overlay {
+
+				.elementor-editor-element-settings {
+					display: none;
+				}
+			}
+		}
+	}
+
+	&[data-side="top"], &[data-side="bottom"] + .elementor-element {
+
+		&:before {
+			content: '';
+			background-color: $editor-info;
+			transition-timing-function: ease-out;
+			opacity: .9;
+			height: $widget-placeholder-size;
+			animation: placeholder-widget 500ms;
+			display: block;
+		}
+	}
+
+	&[data-side="bottom"]:last-child {
+
+		&:after {
+			content: '';
+			background-color: $editor-info;
+			transition-timing-function: ease-out;
+			opacity: .9;
+			height: $widget-placeholder-size;
+			animation: placeholder-widget 500ms;
+			display: block;
+		}
+	}
+}
+
+// Section
+.elementor-section {
+
+	> .elementor-element-overlay {
+		@include start(0);
+		bottom: 0;
+
+		&:after {
+			position: absolute;
+			left: 2px;
+			right: 2px;
+			top: 2px;
+			bottom: 2px;
+			outline: 2px solid $editor-info;
+			animation: section-outline .75s;
+		}
+	}
+
+	&:hover,
+	&.elementor-element-editable {
+
+		> .elementor-element-overlay {
+
+			&:after {
+				content: '';
+			}
+		}
+	}
+
+	// Section Full (No more columns) - Overlay
+	&-filled {
+
+		.elementor-sortable-placeholder {
+
+			&.elementor-column {
 				display: none;
 			}
+		}
 
-			// Section
-			.elementor-section {
+		.elementor-row {
 
-				> .elementor-element-overlay {
+			&.elementor-draggable-over {
+				border: 1px solid $editor-danger;
+			}
+		}
+	}
+}
+
+// Column
+.elementor-column {
+
+	> .elementor-element-overlay {
+		@include start(0);
+		bottom: 0;
+
+		&:after {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			outline: 1px dashed $editor-dark;
+		}
+	}
+
+	&:hover,
+	&.elementor-element-editable {
+
+		> .elementor-element-overlay {
+			border: 1px solid $white;
+
+			&:after {
+				content: '';
+			}
+		}
+	}
+
+	&.elementor-dragging-on-child {
+
+		> .elementor-element-overlay {
+			border: 1px solid $editor-info;
+
+			&:after {
+				display: none;
+			}
+		}
+	}
+
+	> .ui-resizable-e, > .ui-resizable-w {
+		cursor: col-resize;
+		width: 7px;
+		position: absolute;
+		@include end(-5px);
+		top: 0;
+		height: 100%;
+	}
+
+	&:last-of-type {
+		> .ui-resizable-e, > .ui-resizable-w {
+			display: none !important;
+		}
+	}
+
+	@media (max-width: $editor-screen-md-max) {
+		> .ui-resizable-e, > .ui-resizable-w {
+			display: none !important;
+		}
+	}
+}
+
+// General - Overlay Settings
+.elementor-editor-element-settings {
+	position: absolute;
+	display: flex;
+	height: 26px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: normal;
+	font-style: normal;
+	line-height: 1;
+	z-index: $first-layer;
+	pointer-events: all;
+}
+
+.elementor-editor-element-setting {
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	margin: 0;
+	font-size: 11px;
+	color: #fff;
+	width: 25px;
+	transition: margin .3s, width .3s, font .3s;
+
+	&:not(.elementor-editor-element-edit) {
+
+		@media (max-width: $editor-screen-md-max) {
+			display: none;
+		}
+	}
+}
+
+.elementor-editor-element-edit {
+
+	@media(min-width: $editor-screen-lg-min) {
+		cursor: move;
+	}
+}
+
+// Section - Overlay Settings
+.elementor-editor-section-settings {
+	height: 24px;
+	top: 1px;
+	@include start(50%);
+	transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
+	background-color: $editor-info;
+	border-radius: 5px 5px 0 0;
+	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
+
+	.elementor-editor-element-setting {
+
+		&:hover {
+			background-color: darken($editor-info, 20%);
+		}
+
+		&:first-child {
+			border-radius: getValueByDirection(5px 0 0 0, 0 5px 0 0);
+
+			&:before {
+				content: '';
+				position: absolute;
+				border: solid transparent;
+				top: 2px;
+				@include border-end-property(color, $editor-info);
+				border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
+				@include end(calc(100% - 1px));
+			}
+
+			&:hover {
+
+				&:before {
+					@include border-end-property(color, darken($editor-info, 20%));
+				}
+			}
+		}
+
+		&:last-child {
+			border-radius: getValueByDirection(0 5px 0 0, 5px 0 0 0);
+
+			&:after {
+				content: '';
+				position: absolute;
+				border: solid transparent;
+				top: 2px;
+				@include border-start-property(color, $editor-info);
+				border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
+				@include start(calc(100% - 1px));
+			}
+
+			&:hover {
+
+				&:after {
+					@include border-start-property(color, darken($editor-info, 20%));
+				}
+			}
+		}
+	}
+}
+
+// Column - Overlay Settings
+.elementor-editor-column-settings {
+	top: -1px;
+	@include start(-1px);
+
+	.elementor-editor-element-setting {
+		border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
+		background-color: $editor-darkest;
+
+		&:not(:hover) {
+			background-image: linear-gradient(to bottom, $editor-dark, $editor-darker);
+		}
+	}
+}
+
+// Widget - Overlay Settings
+.elementor-editor-widget-settings {
+	z-index: $second-layer;
+	top: -1px;
+	@include end(-1px);
+	flex-direction: row-reverse;
+
+	.elementor-editor-element-setting {
+		background-color: darken($editor-info, 20%);
+		border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
+
+		&:not(:hover) {
+			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
+		}
+	}
+}
+
+.elementor-section--handles-inside, .elementor-section:first-child {
+
+	.elementor-editor-section-settings {
+		transform: translateX(-50%);
+		border-radius: 0 0 5px 5px;
+
+		.elementor-editor-element-setting {
+
+			&:first-child {
+				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
+
+				&:before {
+					top: 0;
+					border-width: getValueByDirection(0 12px 22px 0, 22px 12px 0 0);
+				}
+			}
+
+			&:last-child {
+				border-radius: getValueByDirection(0 0 5px 0, 0 5px 0 0);
+
+				&:after {
+					top: 0;
+					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
+				}
+			}
+		}
+	}
+}
+
+.elementor-empty-view {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: $first-layer;
+}
+
+.elementor-first-add {
+	text-align: center;
+	border: 1px dashed $editor-lightest;
+	display: flex;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+
+	.elementor-icon {
+		font-size: 19px;
+		color: $editor-light;
+		cursor: pointer;
+	}
+}
+
+.elementor-sortable-helper {
+	position: absolute;
+	border-radius: 3px;
+	background-color: #fff;
+	text-align: center;
+	color: $editor-darker;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+	cursor: move;
+
+	.icon {
+		font-size: 28px;
+		padding-top: 15px;
+		line-height: 1;
+	}
+
+	.elementor-element-title-wrapper {
+		display: table;
+		width: 100%;
+	}
+
+	.title {
+		font-size: 11px;
+		font-family: Arial, Helvetica, sans-serif;
+		font-weight: normal;
+		font-style: normal;
+		display: table-cell;
+		vertical-align: middle;
+		height: 40px;
+	}
+}
+
+//Content Only (writing mode)
+.elementor-editor-content-only {
+	//Empty Section
+	.elementor-first-add {
+		display: none;
+	}
+
+	// Section
+	.elementor-section {
+
+		> .elementor-element-overlay {
+			display: none;
+
+			&:after {
+				display: none;
+			}
+		}
+
+		&:hover,
+		&.elementor-element-editable {
+
+			> .elementor-element-overlay {
+
+				&:after {
 					display: none;
-
-					&:after {
-						display: none;
-					}
-				}
-
-				&:hover,
-				&.elementor-element-editable {
-
-					> .elementor-element-overlay {
-
-						&:after {
-							display: none;
-						}
-					}
 				}
 			}
+		}
+	}
 
-			// Column
-			.elementor-column {
+	// Column
+	.elementor-column {
 
-				> .elementor-element-overlay {
+		> .elementor-element-overlay {
+			display: none;
+
+			&:after {
+				display: none;
+			}
+		}
+
+		&:hover,
+		&.elementor-element-editable {
+
+			> .elementor-element-overlay {
+
+				&:after {
 					display: none;
-
-					&:after {
-						display: none;
-					}
-				}
-
-				&:hover,
-				&.elementor-element-editable {
-
-					> .elementor-element-overlay {
-
-						&:after {
-							display: none;
-						}
-					}
 				}
 			}
+		}
+	}
 
-			.elementor-editor-element-trigger {
+	.elementor-editor-element-edit {
 
-				@media(min-width: $screen-lg-min) {
-					cursor: pointer;
-				}
-			}
+		@media(min-width: $editor-screen-lg-min) {
+			cursor: pointer;
 		}
 	}
 }
@@ -677,7 +659,7 @@ html.elementor-html {
 		}
 	}
 
-	@media (max-width: $screen-xs-max) {
+	@media (max-width: $editor-screen-xs-max) {
 		display: none;
 	}
 }
@@ -691,20 +673,16 @@ html.elementor-html {
 .elementor-add-new-section {
 	display: inline-block; // For smooth dragging above
 
-	.elementor-button {
-		color: #fff;
-		background-image: none; // Reset for some themes
-		font-size: 13px;
-		font-family: Arial, Helvetica, sans-serif;
-		font-weight: normal;
-		font-style: normal;
-		text-transform: uppercase;
-		line-height: 1;
+	.elementor-add-section-area-button  {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		height: 40px;
-		min-width: 170px;
-		padding: 0 20px;
-		border: none;
-		border-radius: 3px;
+		width: 40px;
+		color: #fff;
+		font-size: 16px;
+		border-radius: 50%;
+		transition: all .3s;
 		cursor: pointer;
 
 		&:hover {
@@ -723,7 +701,7 @@ html.elementor-html {
 
 	.elementor-add-template-button {
 		background-color: $editor-dark;
-		@include margin-start(25px);
+		@include margin-start(5px);
 	}
 }
 

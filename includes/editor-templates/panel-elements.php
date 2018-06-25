@@ -25,8 +25,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-category">
-	<div class="panel-elements-category-title panel-elements-category-title-{{ name }}">{{{ title }}}</div>
-	<div class="panel-elements-category-items"></div>
+	<div class="elementor-panel-category-title">{{{ title }}}</div>
+	<div class="elementor-panel-category-items"></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-element-search">

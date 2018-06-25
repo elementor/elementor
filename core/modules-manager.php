@@ -70,6 +70,8 @@ class Modules_Manager {
 			'library',
 			'dynamic-tags',
 			'page-templates',
+			'gutenberg',
+			'wp-cli',
 		];
 	}
 

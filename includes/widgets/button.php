@@ -190,6 +190,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'sm',
 				'options' => self::get_button_sizes(),
+				'style_transfer' => true,
 			]
 		);
 
@@ -245,6 +246,20 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
+			]
+		);
+
+		$this->add_control(
+			'button_css_id',
+			[
+				'label' => __( 'Button ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
+				'description' => __( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'elementor' ),
+				'separator' => 'before',
+
 			]
 		);
 
@@ -436,6 +451,10 @@ class Widget_Button extends Widget_Base {
 		$this->add_render_attribute( 'button', 'class', 'elementor-button' );
 		$this->add_render_attribute( 'button', 'role', 'button' );
 
+		if ( ! empty( $settings['button_css_id'] ) ) {
+			$this->add_render_attribute( 'button', 'id', $settings['button_css_id'] );
+		}
+
 		if ( ! empty( $settings['size'] ) ) {
 			$this->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
 		}
@@ -469,7 +488,7 @@ class Widget_Button extends Widget_Base {
 		view.addInlineEditingAttributes( 'text', 'none' );
 		#>
 		<div class="elementor-button-wrapper">
-			<a class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
+			<a id="{{ settings.button_css_id }}" class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
 				<span class="elementor-button-content-wrapper">
 					<# if ( settings.icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">

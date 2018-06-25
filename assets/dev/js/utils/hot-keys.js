@@ -1,10 +1,6 @@
 var HotKeys = function() {
 	var hotKeysHandlers = {};
 
-	var isMac = function() {
-		return -1 !== navigator.userAgent.indexOf( 'Mac OS X' );
-	};
-
 	var applyHotKey = function( event ) {
 		var handlers = hotKeysHandlers[ event.which ];
 
@@ -31,7 +27,7 @@ var HotKeys = function() {
 	};
 
 	this.isControlEvent = function( event ) {
-		return event[ isMac() ? 'metaKey' : 'ctrlKey' ];
+		return event[ elementor.envData.mac ? 'metaKey' : 'ctrlKey' ];
 	};
 
 	this.addHotKeyHandler = function( keyCode, handlerName, handler ) {

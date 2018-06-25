@@ -33,6 +33,18 @@ abstract class Widget_Base extends Element_Base {
 	protected $_has_template_content = true;
 
 	/**
+	 * Element edit tools.
+	 *
+	 * Holds all the edit tools of the element. For example: delete, duplicate etc.
+	 *
+	 * @access protected
+	 * @static
+	 *
+	 * @var array
+	 */
+	protected static $_edit_tools;
+
+	/**
 	 * Get element type.
 	 *
 	 * Retrieve the element type, in this case `widget`.
@@ -41,40 +53,10 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 * @static
 	 *
-	 * @return string Control type.
+	 * @return string The type.
 	 */
 	public static function get_type() {
 		return 'widget';
-	}
-
-	/**
-	 * Get default edit tools.
-	 *
-	 * Retrieve the default edit tools of the widget. This method is used to set
-	 * initial tools - it adds Duplicate and Remove on top of of Edit and Save
-	 * tools.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 * @static
-	 *
-	 * @return array Default edit tools.
-	 */
-	protected static function get_default_edit_tools() {
-		$widget_label = __( 'Widget', 'elementor' );
-
-		return [
-			'duplicate' => [
-				/* translators: %s: Widget label */
-				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
-				'icon' => 'clone',
-			],
-			'remove' => [
-				/* translators: %s: Widget label */
-				'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
-				'icon' => 'close',
-			],
-		];
 	}
 
 	/**
@@ -303,6 +285,27 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get default edit tools.
+	 *
+	 * Retrieve the element default edit tools. Used to set initial tools.
+	 * By default the element has no edit tools.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 * @static
+	 *
+	 * @return array Default edit tools.
+	 */
+	protected static function get_default_edit_tools() {
+		return [
+			'edit' => [
+				'title' => __( 'Edit', 'elementor' ),
+				'icon' => 'edit',
+			],
+		];
+	}
+
+	/**
 	 * Register widget skins.
 	 *
 	 * This method is activated while initializing the widget base class. It is
@@ -339,6 +342,7 @@ abstract class Widget_Base extends Element_Base {
 			'keywords' => $this->get_keywords(),
 			'categories' => $this->get_categories(),
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
+			'show_in_panel' => $this->show_in_panel(),
 		];
 
 		return array_merge( parent::_get_initial_config(), $config );
@@ -362,35 +366,6 @@ abstract class Widget_Base extends Element_Base {
 			<?php
 			echo $template_content; // XSS ok.
 			?>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Render widget edit tools.
-	 *
-	 * Used to generate the edit tools HTML.
-	 *
-	 * @since 1.8.0
-	 * @access protected
-	 */
-	protected function render_edit_tools() {
-		/* translators: %s: Widget label */
-		$edit_title = sprintf( __( 'Edit %s', 'elementor' ), __( 'Widget', 'elementor' ) );
-		?>
-		<div class="elementor-element-overlay">
-			<ul class="elementor-editor-element-settings elementor-editor-widget-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php echo esc_attr( $edit_title ); ?>">
-					<i class="eicon-edit" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php echo esc_html( $edit_title ); ?></span>
-				</li>
-				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
-						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
-					</li>
-				<?php endforeach; ?>
-			</ul>
 		</div>
 		<?php
 	}

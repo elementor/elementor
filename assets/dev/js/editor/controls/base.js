@@ -64,7 +64,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 
-		elementor.channels.data.trigger( 'scrollbar:update' );
+		elementor.getPanelView().updateScrollbar();
 	},
 
 	onRender: function() {

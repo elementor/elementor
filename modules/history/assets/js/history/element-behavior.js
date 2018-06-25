@@ -134,12 +134,7 @@ module.exports = Marionette.Behavior.extend( {
 		} );
 
 		// Set at once.
-		settings.set( restoredValues );
-
-		// Trigger each field for `baseControl.onSettingsExternalChange`
-		_.each( history.changed, function( values, key ) {
-			settings.trigger( 'change:external:' + key );
-		} );
+		settings.setExternalChange( restoredValues );
 
 		historyItem.set( 'status', isRedo ? 'not_applied' : 'applied' );
 

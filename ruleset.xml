@@ -25,7 +25,7 @@
 
 	<rule ref="WordPress.WP.DeprecatedFunctions">
 		<properties>
-			<property name="minimum_supported_version" value="4.6" />
+			<property name="minimum_supported_version" value="4.7" />
 		</properties>
 	</rule>
 

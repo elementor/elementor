@@ -11,7 +11,7 @@ module.exports = Marionette.LayoutView.extend( {
 
 	regions: function() {
 		return {
-			modalHeader: '.dialog-widget-header',
+			modalHeader: '.dialog-header',
 			modalContent: '.dialog-lightbox-content',
 			modalLoading: '.dialog-lightbox-loading'
 		};

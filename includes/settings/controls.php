@@ -34,8 +34,7 @@ class Settings_Controls {
 
 		$defaults = [
 			'type' => '',
-			'placeholder' => '',
-			'classes' => [],
+			'attributes' => [],
 			'std' => '',
 			'desc' => '',
 		];
@@ -63,11 +62,19 @@ class Settings_Controls {
 	 * @param array $field Field data.
 	 */
 	private static function text( array $field ) {
-		if ( empty( $field['classes'] ) ) {
-			$field['classes'] = [ 'regular-text' ];
+		$attributes = [];
+
+		if ( empty( $field['attributes']['class'] ) ) {
+			$field['attributes']['class'] = 'regular-text';
 		}
+
+		foreach ( $field['attributes'] as $attribute_key => $attribute_values ) {
+			$attributes[] = sprintf( '%1$s="%2$s"', $attribute_key, esc_attr( $attribute_values ) );
+		}
+
+		$attributes = implode( ' ', $attributes );
 		?>
-		<input type="<?php echo esc_attr( $field['type'] ); ?>" class="<?php echo esc_attr( implode( ' ', $field['classes'] ) ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo esc_attr( get_option( $field['id'], $field['std'] ) ); ?>"<?php echo ! empty( $field['placeholder'] ) ? ' placeholder="' . esc_attr( $field['placeholder'] ) . '"' : ''; ?> />
+		<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo esc_attr( get_option( $field['id'], $field['std'] ) ); ?>" <?php echo $attributes; ?>/>
 		<?php
 		if ( ! empty( $field['sub_desc'] ) ) :
 			echo $field['sub_desc'];

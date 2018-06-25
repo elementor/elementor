@@ -2,10 +2,10 @@
 namespace Elementor\Core\Settings\General;
 
 use Elementor\Controls_Manager;
-use Elementor\CSS_File;
+use Elementor\Core\Files\CSS\Base;
+use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
-use Elementor\Global_CSS_File;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -172,11 +172,11 @@ class Manager extends BaseManager {
 	 * @since 1.6.0
 	 * @access protected
 	 *
-	 * @param CSS_File $css_file The requested CSS file.
+	 * @param Base $css_file The requested CSS file.
 	 *
 	 * @return BaseModel The model object.
 	 */
-	protected function get_model_for_css_file( CSS_File $css_file ) {
+	protected function get_model_for_css_file( Base $css_file ) {
 		return $this->get_model();
 	}
 
@@ -190,10 +190,10 @@ class Manager extends BaseManager {
 	 *
 	 * @param int $id Post ID.
 	 *
-	 * @return Global_CSS_File The global CSS file object.
+	 * @return Global_CSS The global CSS file object.
 	 */
 	protected function get_css_file_for_update( $id ) {
-		return new Global_CSS_File();
+		return new Global_CSS( 'global.css' );
 	}
 
 	/**

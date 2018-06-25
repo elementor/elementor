@@ -2,7 +2,7 @@
 namespace Elementor\Core\Settings\Base;
 
 use Elementor\Core\Ajax_Manager;
-use Elementor\CSS_File;
+use Elementor\Core\Files\CSS\Base;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -220,9 +220,9 @@ abstract class Manager {
 	 * @since 1.6.0
 	 * @access public
 	 *
-	 * @param CSS_File $css_file The requested CSS file.
+	 * @param Base $css_file The requested CSS file.
 	 */
-	public function add_settings_css_rules( CSS_File $css_file ) {
+	public function add_settings_css_rules( Base $css_file ) {
 		$model = $this->get_model_for_css_file( $css_file );
 
 		$css_file->add_controls_stack_style_rules(
@@ -295,9 +295,9 @@ abstract class Manager {
 	 * @access protected
 	 * @abstract
 	 *
-	 * @param CSS_File $css_file The requested CSS file.
+	 * @param Base $css_file The requested CSS file.
 	 */
-	abstract protected function get_model_for_css_file( CSS_File $css_file );
+	abstract protected function get_model_for_css_file( Base $css_file );
 
 	/**
 	 * Get CSS file for update.

@@ -23,7 +23,8 @@ ImageCarouselHandler = HandlerModule.extend( {
 
 		var elementSettings = this.getElementSettings(),
 			slidesToShow = +elementSettings.slides_to_show || 3,
-			isSingleSlide = 1 === slidesToShow;
+			isSingleSlide = 1 === slidesToShow,
+			breakpoints = elementorFrontend.config.breakpoints;
 
 		var slickOptions = {
 			slidesToShow: slidesToShow,
@@ -37,14 +38,14 @@ ImageCarouselHandler = HandlerModule.extend( {
 			rtl: 'rtl' === elementSettings.direction,
 			responsive: [
 				{
-					breakpoint: 1025,
+					breakpoint: breakpoints.lg,
 					settings: {
 						slidesToShow: +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 ),
 						slidesToScroll: 1
 					}
 				},
 				{
-					breakpoint: 768,
+					breakpoint: breakpoints.md,
 					settings: {
 						slidesToShow: +elementSettings.slides_to_show_mobile || 1,
 						slidesToScroll: 1

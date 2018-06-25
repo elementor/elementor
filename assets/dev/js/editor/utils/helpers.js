@@ -140,7 +140,7 @@ helpers = {
 				return true;
 			}
 
-			if ( conditionSubKey && Array.isArray( controlValue ) ) {
+			if ( conditionSubKey && 'object' === typeof controlValue ) {
 				controlValue = controlValue[ conditionSubKey ];
 			}
 
@@ -164,6 +164,10 @@ helpers = {
 
 	cloneObject: function( object ) {
 		return JSON.parse( JSON.stringify( object ) );
+	},
+
+	firstLetterUppercase: function( string ) {
+		return string[0].toUpperCase() + string.slice( 1 );
 	},
 
 	disableElementEvents: function( $element ) {

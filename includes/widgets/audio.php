@@ -66,6 +66,20 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return ['audio','player','soundcloud','embed'];
+	}
+
+	/**
 	 * Register audio widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -153,6 +167,20 @@ class Widget_Audio extends Widget_Base {
 				'label_off' => __( 'Hide', 'elementor' ),
 				'label_on' => __( 'Show', 'elementor' ),
 				'default' => 'yes',
+			]
+		);
+
+		$this->add_control(
+			'sc_show_artwork',
+			[
+				'label' => __( 'Artwork', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
+				'default' => 'yes',
+				'condition' => [
+					'visual' => 'no',
+				],
 			]
 		);
 
@@ -272,6 +300,7 @@ class Widget_Audio extends Widget_Base {
 			'show_comments',
 			'show_playcount',
 			'show_user',
+			'show_artwork',
 		];
 
 		$params = [];

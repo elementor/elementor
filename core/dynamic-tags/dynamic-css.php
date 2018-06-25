@@ -2,32 +2,25 @@
 namespace Elementor\Core\DynamicTags;
 
 use Elementor\Controls_Stack;
-
+use Elementor\Core\Files\CSS\Post;
 use Elementor\Plugin;
-use Elementor\Post_CSS_File;
-use Elementor\Post_Preview_CSS;
 use Elementor\Element_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Dynamic_CSS extends Post_CSS_File {
+class Dynamic_CSS extends Post {
 
 	protected $post_id_for_data;
 	/**
 	 * Dynamic_CSS constructor.
 	 *
-	 * @param Post_CSS_File|Post_Preview_CSS $css_file
+	 * @param int $post_id Post ID
+	 * @param int $post_id_for_data
 	 */
-	public function __construct( $css_file ) {
-		if ( $css_file instanceof Post_Preview_CSS ) {
-			$this->post_id_for_data = $css_file->get_preview_id();
-		} else {
-			$this->post_id_for_data = $css_file->get_post_id();
-		}
-
-		$post_id = $css_file->get_post_id();
+	public function __construct( $post_id, $post_id_for_data ) {
+		$this->post_id_for_data = $post_id_for_data;
 
 		parent::__construct( $post_id );
 	}
@@ -50,10 +43,10 @@ class Dynamic_CSS extends Post_CSS_File {
 
 	public function get_meta( $property = null ) {
 		// Parse CSS first, to get the fonts list.
-		$css = $this->get_css();
+		$css = $this->get_content();
 
 		$meta = [
-			'status' => self::CSS_STATUS_INLINE,
+			'status' => $css ? self::CSS_STATUS_INLINE : self::CSS_STATUS_EMPTY,
 			'fonts' => $this->get_fonts(),
 			'css' => $css,
 		];

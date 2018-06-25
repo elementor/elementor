@@ -79,6 +79,7 @@ App = Marionette.Application.extend( {
 			Repeater: require( 'elementor-controls/repeater' ),
 			RepeaterRow: require( 'elementor-controls/repeater-row' ),
 			Section: require( 'elementor-controls/section' ),
+			Select: require( 'elementor-controls/select' ),
 			Select2: require( 'elementor-controls/select2' ),
 			Slider: require( 'elementor-controls/slider' ),
 			Structure: require( 'elementor-controls/structure' ),
@@ -160,7 +161,7 @@ App = Marionette.Application.extend( {
 	_defaultDeviceMode: 'desktop',
 
 	addControlView: function( controlID, ControlView ) {
-		this.modules.controls[ controlID[0].toUpperCase() + controlID.slice( 1 ) ] = ControlView;
+		this.modules.controls[ elementor.helpers.firstLetterUppercase( controlID ) ] = ControlView;
 	},
 
 	checkEnvCompatibility: function() {
@@ -220,7 +221,7 @@ App = Marionette.Application.extend( {
 	},
 
 	getControlView: function( controlID ) {
-		var capitalizedControlName = controlID[0].toUpperCase() + controlID.slice( 1 ),
+		var capitalizedControlName = elementor.helpers.firstLetterUppercase( controlID ),
 			View = this.modules.controls[ capitalizedControlName ];
 
 		if ( ! View ) {
@@ -234,11 +235,15 @@ App = Marionette.Application.extend( {
 	},
 
 	getPanelView: function() {
-		return this.getRegion( 'panel' ).currentView;
+		return this.panel.currentView;
+	},
+
+	getPreviewView: function() {
+		return this.sections.currentView;
 	},
 
 	initEnvData: function() {
-		this.envData = _.pick( tinymce.EditorManager.Env, [ 'desktop', 'webkit', 'gecko', 'ie', 'opera' ] );
+		this.envData = _.pick( tinymce.Env, [ 'desktop', 'mac', 'webkit', 'gecko', 'ie', 'opera' ] );
 	},
 
 	initComponents: function() {
@@ -355,12 +360,14 @@ App = Marionette.Application.extend( {
 
 	initHotKeys: function() {
 		var keysDictionary = {
-			del: 46,
+			c: 67,
 			d: 68,
+			del: 46,
 			l: 76,
 			m: 77,
 			p: 80,
-			s: 83
+			s: 83,
+			v: 86
 		};
 
 		var $ = jQuery,
@@ -461,6 +468,60 @@ App = Marionette.Application.extend( {
 			}
 		};
 
+		hotKeysHandlers[ keysDictionary.c ] = {
+			copyElement: {
+				isWorthHandling: function( event ) {
+					if ( ! hotKeysManager.isControlEvent( event ) ) {
+						return false;
+					}
+
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
+
+					if ( ! isEditorOpen ) {
+						return false;
+					}
+
+					var textSelection = getSelection() + elementorFrontend.getElements( 'window' ).getSelection();
+
+					return ! textSelection;
+				},
+				handle: function() {
+					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).copy();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.v ] = {
+			pasteElement: {
+				isWorthHandling: function( event ) {
+					if ( ! hotKeysManager.isControlEvent( event ) ) {
+						return false;
+					}
+
+					return -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.getElements( 'window' ).document.activeElement.tagName;
+				},
+				handle: function() {
+					var targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
+
+					if ( ! targetElement ) {
+						var panel = elementor.getPanelView();
+
+						if ( 'editor' === panel.getCurrentPageName() ) {
+							targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
+						}
+					}
+
+					if ( ! targetElement ) {
+						targetElement = elementor.getPreviewView();
+					}
+
+					if ( targetElement.isPasteEnabled() ) {
+						targetElement.paste();
+					}
+				}
+			}
+		};
+
 		_.each( hotKeysHandlers, function( handlers, keyCode ) {
 			_.each( handlers, function( handler, handlerName ) {
 				hotKeysManager.addHotKeyHandler( keyCode, handlerName, handler );
@@ -549,6 +610,30 @@ App = Marionette.Application.extend( {
 				]
 			} );
 		}
+	},
+
+	getStorage: function( key ) {
+		var elementorStorage = localStorage.getItem( 'elementor' );
+
+		if ( elementorStorage ) {
+			elementorStorage = JSON.parse( elementorStorage );
+		} else {
+			elementorStorage = {};
+		}
+
+		if ( key ) {
+			return elementorStorage[ key ];
+		}
+
+		return elementorStorage;
+	},
+
+	setStorage: function( key, value ) {
+		var elementorStorage = this.getStorage();
+
+		elementorStorage[ key ] = value;
+
+		localStorage.setItem( 'elementor', JSON.stringify( elementorStorage ) );
 	},
 
 	openLibraryOnStart: function() {
@@ -777,7 +862,7 @@ App = Marionette.Application.extend( {
 					.removeClass( 'ui-resizable-resizing' )
 					.css( 'pointer-events', '' );
 
-				elementor.channels.data.trigger( 'scrollbar:update' );
+				elementor.getPanelView().updateScrollbar();
 			},
 			resize: function( event, ui ) {
 				self.$previewWrapper

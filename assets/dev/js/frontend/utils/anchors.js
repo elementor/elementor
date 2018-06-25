@@ -2,7 +2,6 @@ var ViewModule = require( '../../utils/view-module' );
 
 module.exports = ViewModule.extend( {
 	getDefaultSettings: function() {
-
 		return {
 			scrollDuration: 500,
 			selectors: {
@@ -43,7 +42,7 @@ module.exports = ViewModule.extend( {
 
 		var scrollTop = $anchor.offset().top,
 			$wpAdminBar = elementorFrontend.getElements( '$wpAdminBar' ),
-			$activeStickys = jQuery( '.elementor-sticky--active' ),
+			$activeStickies = jQuery( '.elementor-sticky--active' ),
 			maxStickyHeight = 0;
 
 		if ( $wpAdminBar.length > 0 ) {
@@ -51,9 +50,9 @@ module.exports = ViewModule.extend( {
 		}
 
 		// Offset height of tallest sticky
-		if ( $activeStickys.length > 0 ) {
-			 maxStickyHeight = Math.max.apply( null, $activeStickys.map( function() {
-				return jQuery( this ).height();
+		if ( $activeStickies.length > 0 ) {
+			 maxStickyHeight = Math.max.apply( null, $activeStickies.map( function() {
+				return jQuery( this ).outerHeight();
 			} ).get() );
 
 			scrollTop -= maxStickyHeight;

@@ -49,7 +49,7 @@ class Upgrades {
 
 		self::check_upgrades( $elementor_version );
 
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 
 		update_option( 'elementor_version', ELEMENTOR_VERSION );
 	}
@@ -83,6 +83,7 @@ class Upgrades {
 			'2.0.0' => 'upgrade_v200',
 			'2.0.1' => 'upgrade_v201',
 			'2.0.10' => 'upgrade_v2010',
+			'2.1.0' => 'upgrade_v210',
 		];
 
 		foreach ( $upgrades as $version => $function ) {
@@ -357,5 +358,74 @@ class Upgrades {
 				'post_title' => $title,
 			] );
 		}
+	}
+
+	private static function upgrade_v210() {
+		global $wpdb;
+
+		// upgrade `video` widget settings (merge providers).
+		$post_ids = $wpdb->get_col(
+			'SELECT `post_id` FROM `' . $wpdb->postmeta . '` WHERE `meta_key` = "_elementor_data" AND `meta_value` LIKE \'%"widgetType":"video"%\';'
+		);
+
+		if ( empty( $post_ids ) ) {
+			return;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$do_update = false;
+			$data = Plugin::$instance->db->get_plain_editor( $post_id );
+			if ( empty( $data ) ) {
+				continue;
+			}
+
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update ) {
+				if ( empty( $element['widgetType'] ) || 'video' !== $element['widgetType'] ) {
+					return $element;
+				}
+
+				$replacements = [];
+
+				if ( empty( $element['settings']['video_type'] ) || 'youtube' === $element['settings']['video_type'] ) {
+					$replacements = [
+						'yt_autoplay' => 'autoplay',
+						'yt_controls' => 'controls',
+						'yt_mute' => 'mute',
+						'yt_showinfo' => 'showinfo',
+						'yt_rel' => 'rel',
+						'link' => 'youtube_url',
+					];
+				} elseif ( 'vimeo' === $element['settings']['video_type'] ) {
+					$replacements = [
+						'vimeo_autoplay' => 'autoplay',
+						'vimeo_loop' => 'loop',
+						'vimeo_color' => 'color',
+						'vimeo_link' => 'vimeo_url',
+					];
+				}
+
+				// cleanup old unused settings.
+				unset( $element['settings']['yt_rel_videos'] );
+
+				foreach ( $replacements as $old => $new ) {
+					if ( ! empty( $element['settings'][ $old ] ) ) {
+						$element['settings'][ $new ] = $element['settings'][ $old ];
+						$do_update = true;
+					}
+				}
+
+				return $element;
+			} );
+
+			// Only update if needed.
+			if ( ! $do_update ) {
+				continue;
+			}
+
+			// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+			$json_value = wp_slash( wp_json_encode( $data ) );
+
+			update_metadata( 'post', $post_id, '_elementor_data', $json_value );
+		} // End foreach().
 	}
 }

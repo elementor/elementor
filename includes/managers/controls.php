@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -295,8 +296,6 @@ class Controls_Manager {
 			self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
 			self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
 		];
-
-		self::$tabs = Utils::apply_filters_deprecated( 'elementor/controls/get_available_tabs_controls', [ self::$tabs ], '1.6.0', '`' . __CLASS__ . '::add_tab( $tab_name, $tab_title )`' );
 	}
 
 	/**
@@ -422,6 +421,7 @@ class Controls_Manager {
 		$this->control_groups['typography'] = new Group_Control_Typography();
 		$this->control_groups['image-size'] = new Group_Control_Image_Size();
 		$this->control_groups['box-shadow'] = new Group_Control_Box_Shadow();
+		$this->control_groups['css-filter'] = new Group_Control_Css_Filter();
 		$this->control_groups['text-shadow'] = new Group_Control_Text_Shadow();
 
 		/**
@@ -530,10 +530,6 @@ class Controls_Manager {
 
 		foreach ( $this->get_controls() as $name => $control ) {
 			$controls_data[ $name ] = $control->get_settings();
-
-			if ( $control instanceof Base_Data_Control ) {
-				$controls_data[ $name ]['default_value'] = $control->get_default_value();
-			}
 		}
 
 		return $controls_data;
