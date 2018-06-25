@@ -15,7 +15,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 			select: 'select[data-setting]',
 			textarea: 'textarea[data-setting]',
 			responsiveSwitchers: '.elementor-responsive-switcher',
-			contentEditable: '[contenteditable="true"]'
+			contentEditable: '[contenteditable="true"]',
+			tooltipTarget: '.tooltip-target'
 		} );
 
 		return ui;
@@ -238,7 +239,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	addTooltip: function() {
 		// Create tooltip on controls
-		this.$( '.tooltip-target' ).tipsy( {
+		this.ui.tooltipTarget.tipsy( {
 			gravity: function() {
 				// `n` for down, `s` for up
 				var gravity = jQuery( this ).data( 'tooltip-pos' );
@@ -256,7 +257,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	hideTooltip: function() {
-		jQuery( '.tipsy' ).hide();
+		this.ui.tooltipTarget.tipsy( 'hide' );
 	},
 
 	updateElementModel: function( value ) {
