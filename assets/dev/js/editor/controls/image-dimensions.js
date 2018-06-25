@@ -3,12 +3,16 @@ var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 
 ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 	ui: function() {
-		return {
+		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
+
+		jQuery.extend( ui, {
 			inputWidth: 'input[data-setting="width"]',
 			inputHeight: 'input[data-setting="height"]',
 
 			btnApply: 'button.elementor-image-dimensions-apply-button'
-		};
+		} );
+
+		return ui;
 	},
 
 	// Override the base events
