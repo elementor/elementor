@@ -15,7 +15,8 @@ var	Manager = function() {
 		remove: elementor.translate( 'removed' ),
 		change: elementor.translate( 'edited' ),
 		move: elementor.translate( 'moved' ),
-		paste_style: elementor.translate( 'style_pasted' )
+		paste_style: elementor.translate( 'style_pasted' ),
+		reset_style: elementor.translate( 'style_reset' )
 	};
 
 	var addBehaviors = function( behaviors ) {
@@ -109,6 +110,9 @@ var	Manager = function() {
 
 			.on( 'element:before:paste:style', self.startPasteStyle )
 			.on( 'element:after:paste:style', self.endItem )
+
+			.on( 'element:before:reset:style', self.startResetStyle )
+			.on( 'element:after:reset:style', self.endItem )
 
 			.on( 'section:before:drop', self.startDropElement )
 			.on( 'section:after:drop', self.endItem )
@@ -368,6 +372,14 @@ var	Manager = function() {
 	this.startPasteStyle = function( model ) {
 		elementor.history.history.startItem( {
 			type: 'paste_style',
+			title: self.getModelLabel( model ),
+			elementType: model.get( 'elType' )
+		} );
+	};
+
+	this.startResetStyle = function( model ) {
+		elementor.history.history.startItem( {
+			type: 'reset_style',
 			title: self.getModelLabel( model ),
 			elementType: model.get( 'elType' )
 		} );

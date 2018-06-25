@@ -84,6 +84,8 @@ Ajax = {
 	},
 
 	addRequest: function( action, options, immediately ) {
+		options = options || {};
+
 		if ( ! options.unique_id ) {
 			options.unique_id = action;
 		}

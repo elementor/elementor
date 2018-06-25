@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Core\Files;
 
+use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Responsive\Files\Frontend;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -68,7 +70,7 @@ class Manager {
 	 * @return bool Whether to skip the post CSS meta.
 	 */
 	public function on_export_post_meta( $skip, $meta_key ) {
-		if ( '_elementor_css' === $meta_key ) {
+		if ( Post_CSS::META_KEY === $meta_key ) {
 			$skip = true;
 		}
 
@@ -85,34 +87,28 @@ class Manager {
 	 * @access public
 	 */
 	public function clear_cache() {
-		$files_classes = [
-			'post' => 'Files\CSS\Post',
-			'global' => 'Files\CSS\Global_CSS',
-			'custom' => 'Responsive\Files\Frontend',
-		];
+		// Delete post meta.
+		global $wpdb;
+
+		$wpdb->delete(
+			$wpdb->postmeta, [
+				'meta_key' => Post_CSS::META_KEY,
+			]
+		);
+
+		$wpdb->delete(
+			$wpdb->options, [
+				'option_name' => Global_CSS::META_KEY,
+			]
+		);
+
+		delete_option( Frontend::META_KEY );
 
 		// Delete files.
 		$path = Base::get_base_uploads_dir() . Base::DEFAULT_FILES_DIR . '*';
 
 		foreach ( glob( $path ) as $file_path ) {
-			$file_name = basename( $file_path );
-
-			preg_match( '/^[a-z]+/', $file_name, $file_prefix );
-
-			$file_prefix = $file_prefix[0];
-
-			$class = 'Elementor\Core\\' . $files_classes[ $file_prefix ];
-
-			if ( 'post' === $file_prefix ) {
-				preg_match( '/[0-9]+/', $file_name, $post_id_match );
-
-				$file_name = $post_id_match[0];
-			}
-
-			/** @var Base $file */
-			$file = new $class( $file_name );
-
-			$file->delete();
+			unlink( $file_path );
 		}
 
 		/**

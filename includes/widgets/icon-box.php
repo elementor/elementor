@@ -89,7 +89,7 @@ class Widget_Icon_Box extends Widget_Base {
 		$this->add_control(
 			'icon',
 			[
-				'label' => __( 'Choose Icon', 'elementor' ),
+				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
 				'default' => 'fa fa-star',
 			]

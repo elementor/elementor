@@ -203,7 +203,29 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Start Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'description' => __( 'Specify a start time (in seconds)', 'elementor' ),
-				'condition' => [],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'video_type',
+							'operator' => '!=',
+							'value' => 'hosted',
+						],
+						[
+							'relation' => 'and',
+							'terms' => [
+								[
+									'name' => 'video_type',
+									'value' => 'hosted',
+								],
+								[
+									'name' => 'loop',
+									'value' => '',
+								],
+							],
+						],
+					],
+				],
 			]
 		);
 
@@ -213,8 +235,27 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'End Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
-				'condition' => [
-					'video_type' => [ 'youtube', 'hosted' ],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'video_type',
+							'value' => 'youtube',
+						],
+						[
+							'relation' => 'and',
+							'terms' => [
+								[
+									'name' => 'video_type',
+									'value' => 'hosted',
+								],
+								[
+									'name' => 'loop',
+									'value' => '',
+								],
+							],
+						],
+					],
 				],
 			]
 		);
