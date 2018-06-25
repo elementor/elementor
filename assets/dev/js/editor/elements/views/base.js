@@ -226,7 +226,7 @@ BaseElementView = BaseContainer.extend( {
 			return control.style_transfer;
 		}
 
-		return 'content' !== control.tab || control.selectors;
+		return 'content' !== control.tab || control.selectors || control.prefix_class;
 	},
 
 	duplicate: function() {
