@@ -99,6 +99,7 @@ class Widget_Alert extends Widget_Base {
 					'warning' => __( 'Warning', 'elementor' ),
 					'danger' => __( 'Danger', 'elementor' ),
 				],
+				'style_transfer' => true,
 			]
 		);
 
