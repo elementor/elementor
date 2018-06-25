@@ -221,6 +221,14 @@ BaseElementView = BaseContainer.extend( {
 		return this.getElementType() === transferData.elementsType;
 	},
 
+	isStyleTransferControl: function( control ) {
+		if ( undefined !== control.style_transfer ) {
+			return control.style_transfer;
+		}
+
+		return 'content' !== control.tab || control.selectors;
+	},
+
 	duplicate: function() {
 		var oldTransport = elementor.getStorage( 'transfer' );
 
@@ -242,7 +250,7 @@ BaseElementView = BaseContainer.extend( {
 			diffSettings = {};
 
 		jQuery.each( controls, function( controlName, control ) {
-			if ( 'content' === control.tab && ! control.selectors && ! control.styleTransfer || false === control.styleTransfer ) {
+			if ( ! self.isStyleTransferControl( control ) ) {
 				return;
 			}
 
@@ -308,7 +316,7 @@ BaseElementView = BaseContainer.extend( {
 		elementor.channels.data.trigger( 'element:before:reset:style', editModel );
 
 		jQuery.each( controls, function( controlName ) {
-			if ( 'content' === this.tab && ! this.selectors || undefined === this.default_value ) {
+			if ( ! self.isStyleTransferControl( control ) ) {
 				return;
 			}
 
