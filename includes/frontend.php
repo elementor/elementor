@@ -335,7 +335,7 @@ class Frontend {
 			[
 				'jquery-ui-position',
 			],
-			'4.3.3',
+			'4.4.0',
 			true
 		);
 
@@ -389,7 +389,7 @@ class Frontend {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.4.1'
+			'3.6.0'
 		);
 
 		wp_register_style(

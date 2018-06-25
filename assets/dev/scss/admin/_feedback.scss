@@ -20,22 +20,11 @@
 		width: 550px;
 	}
 
-	#elementor-deactivate-feedback-dialog-form {
-
-		&[data-feedback-selected="elementor_pro"] {
-
-			.elementor-feedback-text {
-				color: $editor-warning;
-				padding: 0;
-			}
-		}
-	}
-
 	.dialog-close-button {
 		transition: $transition-hover;
 	}
 
-	.dialog-widget-header {
+	.dialog-header {
 		padding: 18px 15px;
 		box-shadow: $panel-bottom-shadow;
 		text-align: $start;
@@ -78,6 +67,7 @@
 		border-top: none;
 		text-align: $start;
 		padding: 20px 30px 30px;
+		overflow: hidden;
 	}
 
 	.dialog-submit {
@@ -107,6 +97,18 @@
 		background: none;
 		float: $end;
 		width: auto;
+	}
+
+	&[data-feedback-selected="elementor_pro"] {
+
+		.elementor-feedback-text {
+			color: $editor-warning;
+			padding: 0;
+		}
+
+		.dialog-submit {
+			display: none;
+		}
 	}
 }
 
