@@ -190,6 +190,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'sm',
 				'options' => self::get_button_sizes(),
+				'style_transfer' => true,
 			]
 		);
 
