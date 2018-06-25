@@ -4,6 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 4.9
 Requires PHP: 5.4
+Beta tag: 2.1.0-beta1
 Stable tag: 2.0.16
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
