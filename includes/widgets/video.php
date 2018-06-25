@@ -171,12 +171,43 @@ class Widget_Video extends Widget_Base {
 				'separator' => 'before',
 			]
 		);
+		
+		$this->add_control(
+			'yt_vq',
+			[
+				'label' => __( 'Force Video Quality', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'small' => __( '240P', 'elementor' ),
+					'medium' => __( '360P', 'elementor' ),
+					'large' => __( '480P', 'elementor' ),
+					'hd720' => __( '720P', 'elementor' ),
+					'hd1080' => __( '1080P', 'elementor' ),
+					'highres' => __( 'Highest Quality', 'elementor' ),
+				],
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+			]
+		);
 
 		// YouTube.
 		$this->add_control(
 			'yt_autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+			]
+		);
+		
+		$this->add_control(
+			'yt_loop',
+			[
+				'label' => __( 'Loop', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
 					'video_type' => 'youtube',
@@ -725,9 +756,14 @@ class Widget_Video extends Widget_Base {
 		$params = [];
 
 		if ( 'youtube' === $settings['video_type'] ) {
-			$youtube_options = [ 'autoplay', 'rel', 'controls', 'showinfo', 'mute' ];
+			$youtube_options = [ 'autoplay', 'loop', 'vq', 'rel', 'controls', 'showinfo', 'mute' ];
 
 			foreach ( $youtube_options as $option ) {
+				if ( 'vq' === $option ) {
+					$params[ $option ] = $settings[ 'yt_' . $option ];
+					continue;
+				}
+				
 				if ( 'autoplay' === $option && $this->has_image_overlay() ) {
 					continue;
 				}
