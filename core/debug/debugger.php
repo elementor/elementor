@@ -33,8 +33,11 @@ class Debugger {
 			return;
 		}
 
-		$this->log[] = [
-			'module' => $module,
+		if ( ! isset( $this->log[ $module ] ) ) {
+			$this->log[ $module ] = [];
+		}
+
+		$this->log[ $module ][] = [
 			'title' => $title,
 			'url' => $url,
 		];
@@ -50,20 +53,30 @@ class Debugger {
 			'title' => __( 'Elementor Debugger', 'elementor' ),
 		] );
 
-		foreach ( $this->log as $index => $log ) {
-			$url = $log['url'];
-
-			unset( $log['url'] );
+		foreach ( $this->log as $module => $log ) {
+			$module_id = sanitize_key( $module );
 
 			$wp_admin_bar->add_menu( [
-				'id' => 'elementor_debugger_log_' . $index,
+				'id' => 'elementor_debugger_' . $module_id,
 				'parent' => 'elementor_debugger',
-				'href' => $url,
-				'title' => implode( ' > ', $log ),
-				'meta' => [
-					'target' => '_blank',
-				],
+				'title' => $module,
 			] );
+
+			foreach ( $log as $index => $row ) {
+				$url = $row['url'];
+
+				unset( $row['url'] );
+
+				$wp_admin_bar->add_menu( [
+					'id' => 'elementor_debugger_log_' . $index,
+					'parent' => 'elementor_debugger_' . $module_id,
+					'href' => $url,
+					'title' => implode( ' > ', $row ),
+					'meta' => [
+						'target' => '_blank',
+					],
+				] );
+			}
 		}
 	}
 }
