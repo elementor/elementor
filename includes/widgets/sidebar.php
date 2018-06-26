@@ -67,7 +67,7 @@ class Widget_Sidebar extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['sidebar','widget'];
+		return [ 'sidebar', 'widget' ];
 	}
 
 	/**
