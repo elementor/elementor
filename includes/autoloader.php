@@ -129,6 +129,10 @@ class Autoloader {
 			'replacement' => 'Core\Files\CSS\Post',
 			'version' => '2.1.0',
 		],
+		'Posts_CSS_Manager' => [
+			'replacement' => 'Core\Files\Manager',
+			'version' => '2.1.0',
+		],
 		'Post_Preview_CSS' => [
 			'replacement' => 'Core\Files\CSS\Post_Preview',
 			'version' => '2.1.0',
