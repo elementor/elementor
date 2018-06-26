@@ -224,8 +224,6 @@ class Autoloader {
 
 		// Backward Compatibility: Save old class name for set an alias after the new class is loaded
 		if ( $has_class_alias ) {
-			$old_class_name = $relative_class_name;
-
 			$alias_data = self::$classes_aliases[ $relative_class_name ];
 
 			$relative_class_name = $alias_data['replacement'];
@@ -249,7 +247,7 @@ class Autoloader {
 			$alias_version_as_float = (float) $alias_version_as_float[0];
 
 			if ( $current_version_as_float - $alias_version_as_float >= self::ALIASES_DEPRECATION_RANGE ) {
-				_deprecated_file( $old_class_name, $alias_data['version'], $alias_data['replacement'] );
+				_deprecated_file( $class, $alias_data['version'], $final_class_name );
 			}
 		}
 	}
