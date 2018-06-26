@@ -5,14 +5,12 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
-		jQuery.extend( ui, {
+		return {
 			inputWidth: 'input[data-setting="width"]',
 			inputHeight: 'input[data-setting="height"]',
 
 			btnApply: 'button.elementor-image-dimensions-apply-button'
-		} );
-
-		return ui;
+		};
 	},
 
 	// Override the base events
