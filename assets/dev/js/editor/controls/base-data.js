@@ -232,8 +232,12 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	addTooltip: function() {
+		if ( ! this.ui.tooltipTarget ) {
+			return;
+		}
+
 		// Create tooltip on controls
-		this.$( '.tooltip-target' ).tipsy( {
+		this.ui.tooltipTarget.tipsy( {
 			gravity: function() {
 				// `n` for down, `s` for up
 				var gravity = jQuery( this ).data( 'tooltip-pos' );
@@ -251,7 +255,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	hideTooltip: function() {
-		jQuery( '.tipsy' ).hide();
+		if ( this.ui.tooltipTarget ) {
+			this.ui.tooltipTarget.tipsy( 'hide' );
+		}
 	},
 
 	updateElementModel: function( value ) {
