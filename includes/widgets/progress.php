@@ -67,7 +67,7 @@ class Widget_Progress extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['progress','bar'];
+		return [ 'progress', 'bar' ];
 	}
 
 	/**

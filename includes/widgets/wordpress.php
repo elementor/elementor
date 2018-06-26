@@ -121,7 +121,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['wordpress','widget'];
+		return [ 'wordpress', 'widget' ];
 	}
 
 	/**
