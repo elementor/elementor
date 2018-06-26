@@ -3,8 +3,6 @@ var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 
 ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 	ui: function() {
-		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
-
 		return {
 			inputWidth: 'input[data-setting="width"]',
 			inputHeight: 'input[data-setting="height"]',
