@@ -366,6 +366,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => __( 'Start Time', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'description' => __( 'Specify a start time (in seconds)', 'elementor' ),
+			'placeholder' => 10,
 			'condition' => [
 				'background' => [ 'video' ],
 			],
@@ -376,6 +377,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => __( 'End Time', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
+			'placeholder' => 70,
 			'condition' => [
 				'background' => [ 'video' ],
 			],
