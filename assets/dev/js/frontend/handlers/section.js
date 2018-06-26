@@ -65,7 +65,7 @@ var BackgroundVideo = HandlerModule.extend( {
 
 		self.player.seekTo( startPoint );
 
-		if ( undefined !== endPoint ) {
+		if ( endPoint ) {
 			var durationToEnd = endPoint - startPoint + 1;
 
 			setTimeout( function() {
