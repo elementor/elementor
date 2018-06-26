@@ -185,12 +185,6 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'URL', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'media_type' => 'video',
-				'dynamic' => [
-					'active' => true,
-					'categories' => [
-						TagsModule::POST_META_CATEGORY,
-					],
-				],
 				'condition' => [
 					'video_type' => 'hosted',
 				],
