@@ -936,9 +936,12 @@ class Frontend {
 	 *
 	 * @param int $post_id The post ID.
 	 *
+	 * @param bool $with_css Optional. Whether to retrieve the content with CSS
+	 *                       or not. Default is false.
+	 *
 	 * @return string The post content.
 	 */
-	public function get_builder_content_for_display( $post_id ) {
+	public function get_builder_content_for_display( $post_id, $with_css = false ) {
 		if ( ! get_post( $post_id ) ) {
 			return '';
 		}
@@ -959,7 +962,9 @@ class Frontend {
 		$is_edit_mode = $editor->is_edit_mode();
 		$editor->set_edit_mode( false );
 
-		$content = $this->get_builder_content( $post_id, $is_edit_mode );
+		$with_css = $with_css ? true : $is_edit_mode;
+
+		$content = $this->get_builder_content( $post_id, $with_css );
 
 		// Restore edit mode state
 		Plugin::$instance->editor->set_edit_mode( $is_edit_mode );
