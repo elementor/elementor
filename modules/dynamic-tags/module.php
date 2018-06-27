@@ -41,6 +41,11 @@ class Module extends BaseModule {
 	const IMAGE_CATEGORY = 'image';
 
 	/**
+	 * Dynamic tags media category.
+	 */
+	const MEDIA_CATEGORY = 'media';
+
+	/**
 	 * Dynamic tags post meta category.
 	 */
 	const POST_META_CATEGORY = 'post_meta';
