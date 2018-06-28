@@ -13,6 +13,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	onDeleteAllContent: function( collection, event ) {
 		if ( ! elementor.history.history.getActive() ) {
+			// On Redo the History Listener is not active - stop here for better performance.
 			return;
 		}
 
@@ -39,6 +40,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	saveCollectionHistory: function( collection, event ) {
 		if ( ! elementor.history.history.getActive() ) {
+			// On Redo the History Listener is not active - stop here for better performance.
 			return;
 		}
 
