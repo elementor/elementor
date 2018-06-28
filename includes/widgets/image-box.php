@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -239,33 +241,36 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
-			'image_size',
-			[
-				'label' => __( 'Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 30,
-					'unit' => '%',
+		$default_options = [];
+
+		foreach ( Responsive::get_breakpoints() as $breakpoint ) {
+			if ( Responsive::DESKTOP == $breakpoint['name'] ) {
+				continue;
+			}
+
+			$default_options[ $breakpoint['name'] . '_default' ] = [ 'unit' => '%', ];
+		}
+
+		$image_size_options = [
+			'label' => __( 'Width', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'default' => [
+				'size' => 30,
+				'unit' => '%',
+			],
+			'size_units' => [ '%' ],
+			'range' => [
+				'%' => [
+					'min' => 5,
+					'max' => 100,
 				],
-				'tablet_default' => [
-					'unit' => '%',
-				],
-				'mobile_default' => [
-					'unit' => '%',
-				],
-				'size_units' => [ '%' ],
-				'range' => [
-					'%' => [
-						'min' => 5,
-						'max' => 100,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img' => 'width: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
+			],
+			'selectors' => [
+				'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img' => 'width: {{SIZE}}{{UNIT}};',
+			],
+		];
+
+		$this->add_responsive_control( 'image_size', array_merge( $image_size_options, $default_options ) );
 
 		$this->add_control(
 			'hover_animation',

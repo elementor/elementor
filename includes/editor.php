@@ -788,11 +788,7 @@ class Editor {
 
 		wp_enqueue_style( 'elementor-editor' );
 
-		if ( Responsive::has_custom_breakpoints() ) {
-			$breakpoints = Responsive::get_breakpoints();
-
-			wp_add_inline_style( 'elementor-editor', '.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . $breakpoints['md'] . 'px; }' );
-		}
+		$this->add_custom_breakpoints_style();
 
 		/**
 		 * After editor enqueue styles.
@@ -1060,5 +1056,33 @@ class Editor {
 		foreach ( $template_names as $template_name ) {
 			$this->add_editor_template( __DIR__ . "/editor-templates/$template_name.php" );
 		}
+	}
+
+	private function add_custom_breakpoints_style() {
+		$breakpoints = Responsive::get_breakpoints();
+
+		$stylesheet = new Stylesheet();
+
+		foreach ( $breakpoints as $breakpoint ) {
+			$stylesheet->add_rules(
+				'body:not(.elementor-device-' . $breakpoint['name'] . ') .elementor-control.elementor-control-responsive-' . $breakpoint['name'] . '',
+				[
+					'display' => 'none',
+				]
+			);
+
+			if ( Responsive::DESKTOP === $breakpoint['name'] || empty( $breakpoint['custom'] ) ) {
+				continue;
+			}
+
+			$stylesheet->add_rules(
+				'.elementor-device-' . $breakpoint['name'] . ' #elementor-preview-responsive-wrapper',
+				[
+					'width' => $breakpoint['value'] . 'px',
+				]
+			);
+		}
+
+		wp_add_inline_style( 'elementor-editor', $stylesheet );
 	}
 }

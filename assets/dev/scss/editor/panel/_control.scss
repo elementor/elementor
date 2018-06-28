@@ -125,30 +125,6 @@
 		}
 	}
 
-	&.elementor-control-responsive- {
-
-		&desktop {
-
-			body:not(.elementor-device-desktop) & {
-				display: none;
-			}
-		}
-
-		&tablet {
-
-			body:not(.elementor-device-tablet) & {
-				display: none;
-			}
-		}
-
-		&mobile {
-
-			body:not(.elementor-device-mobile) & {
-				display: none;
-			}
-		}
-	}
-
 	//Select
 	&.elementor-control-type-select {
 

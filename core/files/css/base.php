@@ -67,6 +67,19 @@ abstract class Base extends Base_File {
 	 *
 	 * @var Stylesheet
 	 */
+	protected $stylesheet;
+
+	/**
+	 * Stylesheet object.
+	 *
+	 * Holds the CSS file stylesheet instance.
+	 *
+	 * @access protected
+	 *
+	 * @deprecated 2.1.0 Use `Base::$stylesheet` instead
+	 *
+	 * @var Stylesheet
+	 */
 	protected $stylesheet_obj;
 
 	/**
@@ -334,7 +347,7 @@ abstract class Base extends Base_File {
 				$pure_device_rules = $pure_device_rules[1];
 
 				foreach ( $pure_device_rules as $device_rule ) {
-					if ( Element_Base::RESPONSIVE_DESKTOP === $device_rule ) {
+					if ( Responsive::DESKTOP === $device_rule ) {
 						continue;
 					}
 
@@ -351,12 +364,12 @@ abstract class Base extends Base_File {
 			if ( ! $query && ! empty( $control['responsive'] ) ) {
 				$query = array_intersect_key( $control['responsive'], array_flip( [ 'min', 'max' ] ) );
 
-				if ( ! empty( $query['max'] ) && Element_Base::RESPONSIVE_DESKTOP === $query['max'] ) {
+				if ( ! empty( $query['max'] ) && Responsive::DESKTOP === $query['max'] ) {
 					unset( $query['max'] );
 				}
 			}
 
-			$this->stylesheet_obj->add_rules( $parsed_selector, $output_css_property, $query );
+			$this->stylesheet->add_rules( $parsed_selector, $output_css_property, $query );
 		}
 	}
 
@@ -400,7 +413,7 @@ abstract class Base extends Base_File {
 	 * @return Stylesheet The stylesheet object.
 	 */
 	public function get_stylesheet() {
-		return $this->stylesheet_obj;
+		return $this->stylesheet;
 	}
 
 	/**
@@ -561,7 +574,7 @@ abstract class Base extends Base_File {
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
-		return $this->stylesheet_obj->__toString();
+		return $this->stylesheet->__toString();
 	}
 
 	/**
@@ -625,14 +638,13 @@ abstract class Base extends Base_File {
 	 * @access private
 	 */
 	private function init_stylesheet() {
-		$this->stylesheet_obj = new Stylesheet();
+		$this->stylesheet = new Stylesheet();
 
-		$breakpoints = Responsive::get_breakpoints();
+		$this->stylesheet_obj = $this->stylesheet;
 
-		$this->stylesheet_obj
-			->add_device( 'mobile', 0 )
-			->add_device( 'tablet', $breakpoints['md'] )
-			->add_device( 'desktop', $breakpoints['lg'] );
+		foreach ( Responsive::get_breakpoints() as $breakpoint_key => $breakpoint ) {
+			$this->stylesheet->add_device( $breakpoint['name'], $breakpoint['value'] );
+		}
 	}
 
 	/**

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -226,67 +228,59 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
-			'width',
-			[
-				'label' => __( 'Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'unit' => '%',
-				],
-				'tablet_default' => [
-					'unit' => '%',
-				],
-				'mobile_default' => [
-					'unit' => '%',
-				],
-				'size_units' => [ '%', 'px', 'vw' ],
-				'range' => [
-					'%' => [
-						'min' => 1,
-						'max' => 100,
-					],
-					'px' => [
-						'min' => 1,
-						'max' => 1000,
-					],
-					'vw' => [
-						'min' => 1,
-						'max' => 100,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image img' => 'width: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
+		$default_options = [];
 
-		$this->add_responsive_control(
-			'space',
-			[
-				'label' => __( 'Max Width', 'elementor' ) . ' (%)',
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'unit' => '%',
+		foreach ( Responsive::get_breakpoints() as $breakpoint ) {
+			$default_key = 'default';
+
+			if ( Responsive::DESKTOP !== $breakpoint['name'] ) {
+				$default_key = $breakpoint['name'] . '_' . $default_key;
+			}
+
+			$default_options[ $default_key ] = [ 'unit' => '%', ];
+		}
+
+		$width_control_options = [
+			'label' => __( 'Width', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ '%', 'px', 'vw' ],
+			'range' => [
+				'%' => [
+					'min' => 1,
+					'max' => 100,
 				],
-				'tablet_default' => [
-					'unit' => '%',
+				'px' => [
+					'min' => 1,
+					'max' => 1000,
 				],
-				'mobile_default' => [
-					'unit' => '%',
+				'vw' => [
+					'min' => 1,
+					'max' => 100,
 				],
-				'size_units' => [ '%' ],
-				'range' => [
-					'%' => [
-						'min' => 1,
-						'max' => 100,
-					],
+			],
+			'selectors' => [
+				'{{WRAPPER}} .elementor-image img' => 'width: {{SIZE}}{{UNIT}};',
+			],
+		];
+
+		$this->add_responsive_control( 'width', array_merge( $width_control_options, $default_options ) );
+
+		$space_control_options = [
+			'label' => __( 'Max Width', 'elementor' ) . ' (%)',
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ '%' ],
+			'range' => [
+				'%' => [
+					'min' => 1,
+					'max' => 100,
 				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image img' => 'max-width: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
+			],
+			'selectors' => [
+				'{{WRAPPER}} .elementor-image img' => 'max-width: {{SIZE}}{{UNIT}};',
+			],
+		];
+
+		$this->add_responsive_control( 'space', array_merge( $space_control_options, $default_options ) );
 
 		$this->start_controls_tabs( 'image_effects' );
 

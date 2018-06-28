@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Files\CSS;
 
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Plugin;
 use Elementor\Scheme_Base;
 use Elementor\Settings;
@@ -64,6 +65,8 @@ class Global_CSS extends Base {
 	 */
 	protected function render_css() {
 		$this->render_schemes_css();
+
+		$this->render_breakpoints_css();
 	}
 
 	/**
@@ -144,6 +147,16 @@ class Global_CSS extends Base {
 					}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ]
 				);
 			}
+		}
+	}
+
+	private function render_breakpoints_css() {
+		foreach ( Responsive::get_breakpoints() as $breakpoint ) {
+			if ( false !== array_search( $breakpoint['name'], [ Responsive::DESKTOP, Responsive::MOBILE ] ) ) {
+				continue;
+			}
+
+			$this->stylesheet->add_rules( '.elementor:after', [ 'content' => "'" . $breakpoint['name'] . "'" ], [ 'min' => $breakpoint['name'], 'max' => $breakpoint['name'] ] );
 		}
 	}
 }

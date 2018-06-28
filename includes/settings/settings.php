@@ -245,7 +245,7 @@ class Settings extends Settings_Page {
 
 		$default_breakpoints = Responsive::get_default_breakpoints();
 
-		return [
+		$tabs = [
 			self::TAB_GENERAL => [
 				'label' => __( 'General', 'elementor' ),
 				'sections' => [
@@ -364,90 +364,88 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
 								],
 							],
-							'viewport_lg' => [
-								'label' => __( 'Tablet Breakpoint', 'elementor' ),
-								'field_args' => [
-									'type' => 'number',
-									'attributes' => [
-										'placeholder' => $default_breakpoints['lg'],
-										'min' => $default_breakpoints['md'] + 1,
-										'max' => $default_breakpoints['xl'] - 1,
-										'class' => 'medium-text',
-									],
-									'sub_desc' => 'px',
-									'desc' => __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: ' . $default_breakpoints['lg'] . ').', 'elementor' ),
-								],
-							],
-							'viewport_md' => [
-								'label' => __( 'Mobile Breakpoint', 'elementor' ),
-								'field_args' => [
-									'type' => 'number',
-									'attributes' => [
-										'placeholder' => $default_breakpoints['md'],
-										'min' => $default_breakpoints['sm'] + 1,
-										'max' => $default_breakpoints['lg'] - 1,
-										'class' => 'medium-text',
-									],
-									'sub_desc' => 'px',
-									'desc' => __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: ' . $default_breakpoints['md'] . ').', 'elementor' ),
-								],
-							],
-							'global_image_lightbox' => [
-								'label' => __( 'Image Lightbox', 'elementor' ),
-								'field_args' => [
-									'type' => 'checkbox',
-									'value' => 'yes',
-									'std' => 'yes',
-									'sub_desc' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
-									'desc' => __( 'You can customize the lightbox design by going to: Top-left hamburger icon > Global Settings > Lightbox.', 'elementor' ),
-								],
-							],
 						],
 					],
 				],
 			],
-			self::TAB_INTEGRATIONS => [
-				'label' => __( 'Integrations', 'elementor' ),
-				'sections' => [],
+		];
+
+		foreach ( $default_breakpoints as $breakpoint_key => $breakpoint ) {
+			if ( Responsive::MOBILE === $breakpoint['name'] ) {
+				continue;
+			}
+
+			$previous_breakpoint = Responsive::get_previous_breakpoint( $breakpoint_key );
+
+			$tabs[ self::TAB_STYLE ]['sections']['style']['fields'][ 'viewport_' . $breakpoint_key ] = [
+				'label' => sprintf( __( '%s Breakpoint', 'elementor' ), $breakpoint['title'] ),
+				'field_args' => [
+					'type' => 'number',
+					'attributes' => [
+						'placeholder' => $breakpoint['value'],
+						'class' => 'medium-text',
+					],
+					'sub_desc' => 'px',
+					'desc' => sprintf( __( 'Sets the breakpoint between %1$s and %2$s devices. Below this breakpoint %2$s layout will appear (Default: %3$s).', 'elementor' ), strtolower( $breakpoint['title'] ), strtolower( $previous_breakpoint['title'] ), $breakpoint['value'] ),
+				],
+			];
+		}
+
+		$tabs[ self::TAB_STYLE ]['sections']['style']['fields']['global_image_lightbox'] = [
+			'label' => __( 'Image Lightbox', 'elementor' ),
+			'field_args' => [
+				'type' => 'checkbox',
+				'value' => 'yes',
+				'std' => 'yes',
+				'sub_desc' => __( 'Open all image links in a lightbox popup window. The lightbox will automatically work on any link that leads to an image file.', 'elementor' ),
+				'desc' => __( 'You can customize the lightbox design by going to: Top-left hamburger icon > Global Settings > Lightbox.', 'elementor' ),
 			],
-			self::TAB_ADVANCED => [
-				'label' => __( 'Advanced', 'elementor' ),
-				'sections' => [
-					'advanced' => [
-						'fields' => [
-							'css_print_method' => [
-								'label' => __( 'CSS Print Method', 'elementor' ),
-								'field_args' => [
-									'class' => 'elementor_css_print_method',
-									'type' => 'select',
-									'options' => [
-										'external' => __( 'External File', 'elementor' ),
-										'internal' => __( 'Internal Embedding', 'elementor' ),
-									],
-									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
-											  __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
-											  '</div>' .
-											  '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
-											  __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
-											  '</div>',
+		];
+
+		$tabs[ self::TAB_INTEGRATIONS ] = [
+			'label' => __( 'Integrations', 'elementor' ),
+			'sections' => [],
+		];
+
+		$tabs[ self::TAB_ADVANCED ] = [
+			'label' => __( 'Advanced', 'elementor' ),
+			'sections' => [
+				'advanced' => [
+					'fields' => [
+						'css_print_method' => [
+							'label' => __( 'CSS Print Method', 'elementor' ),
+							'field_args' => [
+								'class' => 'elementor_css_print_method',
+								'type' => 'select',
+								'options' => [
+									'external' => __( 'External File', 'elementor' ),
+									'internal' => __( 'Internal Embedding', 'elementor' ),
 								],
+								'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
+								          __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
+								          '</div>' .
+								          '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
+								          __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
+								          '</div>',
 							],
-							'editor_break_lines' => [
-								'label' => __( 'Switch Editor Loader Method', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'options' => [
-										'' => __( 'Disable', 'elementor' ),
-										1 => __( 'Enable', 'elementor' ),
-									],
-									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
+						],
+						'editor_break_lines' => [
+							'label' => __( 'Switch Editor Loader Method', 'elementor' ),
+							'field_args' => [
+								'type' => 'select',
+								'options' => [
+									'' => __( 'Disable', 'elementor' ),
+									1 => __( 'Enable', 'elementor' ),
 								],
+								'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 							],
 						],
 					],
 				],
 			],
 		];
+
+		return $tabs;
 	}
 
 	/**
@@ -517,7 +515,11 @@ class Settings extends Settings_Page {
 		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 
-		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
+		foreach ( Responsive::get_breakpoints() as $breakpoint_key => $breakpoint ) {
+			if ( Responsive::MOBILE === $breakpoint['name'] ) {
+				continue;
+			}
+
 			foreach ( [ 'add', 'update' ] as $action ) {
 				add_action( "{$action}_option_elementor_viewport_{$breakpoint_key}", [ 'Elementor\Responsive', 'compile_stylesheet_templates' ] );
 			}

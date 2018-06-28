@@ -18,10 +18,6 @@
 			content: 'desktop';
 		}
 
-		@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-			content: 'tablet';
-		}
-
 		@media (max-width: $screen-sm-max) {
 			content: 'mobile';
 		}

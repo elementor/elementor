@@ -130,10 +130,10 @@
 			}
 
 			if ( ! styleRules ) {
-				var parsedRules = selector.match( /[^{]+\{[^}]+}/g );
+				var parsedRules = selector.match( /[^{]+{[^}]+}/g );
 
 				$.each( parsedRules, function() {
-					var parsedRule = this.match( /([^{]+)\{([^}]+)}/ );
+					var parsedRule = this.match( /([^{]+){([^}]+)}/ );
 
 					if ( parsedRule ) {
 						self.addRules( parsedRule[1].trim(), parsedRule[2].trim(), query );

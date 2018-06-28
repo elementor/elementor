@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\DynamicTags\Manager;
+use Elementor\Core\Responsive\Responsive;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,16 +21,22 @@ abstract class Controls_Stack {
 
 	/**
 	 * Responsive 'desktop' device name.
+	 *
+	 * @deprecated 2.1.0 Use `Elementor\Core\Responsive::DESKTOP` instead
 	 */
 	const RESPONSIVE_DESKTOP = 'desktop';
 
 	/**
 	 * Responsive 'tablet' device name.
+	 *
+	 * @deprecated 2.1.0 Use `Elementor\Core\Responsive::TABLET` instead
 	 */
 	const RESPONSIVE_TABLET = 'tablet';
 
 	/**
 	 * Responsive 'mobile' device name.
+	 *
+	 * @deprecated 2.1.0 Use `Elementor\Core\Responsive::MOBILE` instead
 	 */
 	const RESPONSIVE_MOBILE = 'mobile';
 
@@ -814,11 +821,11 @@ abstract class Controls_Stack {
 	final public function add_responsive_control( $id, array $args, $options = [] ) {
 		$args['responsive'] = [];
 
-		$devices = [
-			self::RESPONSIVE_DESKTOP,
-			self::RESPONSIVE_TABLET,
-			self::RESPONSIVE_MOBILE,
-		];
+		$devices = [];
+
+		foreach ( Responsive::get_breakpoints() as $breakpoint_key => $breakpoint ) {
+			$devices[] = $breakpoint['name'];
+		}
 
 		if ( isset( $args['devices'] ) ) {
 			$devices = array_intersect( $devices, $args['devices'] );
@@ -846,7 +853,7 @@ abstract class Controls_Stack {
 			}
 
 			if ( ! empty( $args['prefix_class'] ) ) {
-				$device_to_replace = self::RESPONSIVE_DESKTOP === $device_name ? '' : '-' . $device_name;
+				$device_to_replace = Responsive::DESKTOP === $device_name ? '' : '-' . $device_name;
 
 				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
 			}
@@ -865,11 +872,11 @@ abstract class Controls_Stack {
 				$control_args['default'] = $control_args[ $device_name . '_default' ];
 			}
 
-			unset( $control_args['desktop_default'] );
-			unset( $control_args['tablet_default'] );
-			unset( $control_args['mobile_default'] );
+			foreach ( $devices as $internal_device_name ) {
+				unset( $control_args[ $internal_device_name . '_default'] );
+			}
 
-			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
+			$id_suffix = Responsive::DESKTOP === $device_name ? '' : '_' . $device_name;
 
 			if ( ! empty( $options['overwrite'] ) ) {
 				$this->update_control( $id . $id_suffix, $control_args, [
@@ -913,14 +920,8 @@ abstract class Controls_Stack {
 	 * @param string $id Responsive control ID.
 	 */
 	final public function remove_responsive_control( $id ) {
-		$devices = [
-			self::RESPONSIVE_DESKTOP,
-			self::RESPONSIVE_TABLET,
-			self::RESPONSIVE_MOBILE,
-		];
-
-		foreach ( $devices as $device_name ) {
-			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
+		foreach ( Responsive::get_breakpoints() as $breakpoint_key => $breakpoint ) {
+			$id_suffix = Responsive::DESKTOP === $breakpoint['name'] ? '' : '_' . $breakpoint['name'];
 
 			$this->remove_control( $id . $id_suffix );
 		}

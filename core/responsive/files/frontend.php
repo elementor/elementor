@@ -37,7 +37,7 @@ class Frontend extends Base {
 				$breakpoint_index++;
 			}
 
-			$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ];
+			$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]['value'];
 
 			if ( $is_max_point ) {
 				$value--;

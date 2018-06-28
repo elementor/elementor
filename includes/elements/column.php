@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -122,6 +124,31 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$device_args = [];
+
+		$breakpoints = Responsive::get_breakpoints();
+
+		foreach ( $breakpoints as $breakpoint ) {
+			if ( Responsive::DESKTOP === $breakpoint['name'] ) {
+				continue;
+			}
+
+			$device_args[ $breakpoint['name'] ] = [
+				'max' => 100,
+				'required' => false,
+			];
+		}
+
+		$min_affected_device = [];
+
+		foreach ( $breakpoints as $breakpoint ) {
+			if ( Responsive::MOBILE === $breakpoint['name'] ) {
+				continue;
+			}
+
+			$min_affected_device[ $breakpoint['name'] ] = Responsive::TABLET;
+		}
+
 		$this->add_responsive_control(
 			'_inline_size',
 			[
@@ -130,20 +157,8 @@ class Element_Column extends Element_Base {
 				'min' => 2,
 				'max' => 98,
 				'required' => true,
-				'device_args' => [
-					Controls_Stack::RESPONSIVE_TABLET => [
-						'max' => 100,
-						'required' => false,
-					],
-					Controls_Stack::RESPONSIVE_MOBILE => [
-						'max' => 100,
-						'required' => false,
-					],
-				],
-				'min_affected_device' => [
-					Controls_Stack::RESPONSIVE_DESKTOP => Controls_Stack::RESPONSIVE_TABLET,
-					Controls_Stack::RESPONSIVE_TABLET => Controls_Stack::RESPONSIVE_TABLET,
-				],
+				'device_args' => $device_args,
+				'min_affected_device' => $min_affected_device,
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}%',
 				],

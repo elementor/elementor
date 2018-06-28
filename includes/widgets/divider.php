@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -157,32 +159,35 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
-			'width',
-			[
-				'label' => __( 'Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px' ],
-				'range' => [
-					'px' => [
-						'max' => 1000,
-					],
+		$default_options = [];
+
+		foreach ( Responsive::get_breakpoints() as $breakpoint ) {
+			if ( Responsive::DESKTOP == $breakpoint['name'] ) {
+				continue;
+			}
+
+			$default_options[ $breakpoint['name'] . '_default' ] = [ 'unit' => '%', ];
+		}
+
+		$width_control_options = [
+			'label' => __( 'Width', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ '%', 'px' ],
+			'range' => [
+				'px' => [
+					'max' => 1000,
 				],
-				'default' => [
-					'size' => 100,
-					'unit' => '%',
-				],
-				'tablet_default' => [
-					'unit' => '%',
-				],
-				'mobile_default' => [
-					'unit' => '%',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-divider-separator' => 'width: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
+			],
+			'default' => [
+				'size' => 100,
+				'unit' => '%',
+			],
+			'selectors' => [
+				'{{WRAPPER}} .elementor-divider-separator' => 'width: {{SIZE}}{{UNIT}};',
+			],
+		];
+
+		$this->add_responsive_control( 'width', array_merge( $width_control_options, $default_options ) );
 
 		$this->add_responsive_control(
 			'align',

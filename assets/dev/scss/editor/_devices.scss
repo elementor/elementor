@@ -33,6 +33,11 @@
 		height: 100%;
 	}
 
+	.elementor-device-laptop & {
+		width: $editor-screen-md-min;
+		padding: 40px 10px 70px;
+	}
+
 	.elementor-device-tablet & {
 		width: $editor-screen-md-min;
 		height: $editor-screen-lg-min;

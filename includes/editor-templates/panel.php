@@ -69,22 +69,26 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 		</span>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<div class="elementor-panel-footer-sub-menu">
-				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="desktop">
-					<i class="elementor-icon eicon-device-desktop" aria-hidden="true"></i>
-					<span class="elementor-title"><?php echo __( 'Desktop', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php echo __( 'Default Preview', 'elementor' ); ?></span>
-				</div>
-				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="tablet">
-					<i class="elementor-icon eicon-device-tablet" aria-hidden="true"></i>
-					<span class="elementor-title"><?php echo __( 'Tablet', 'elementor' ); ?></span>
-					<?php $breakpoints = Responsive::get_breakpoints(); ?>
-					<span class="elementor-description"><?php echo sprintf( __( 'Preview for %s', 'elementor' ), $breakpoints['md'] . 'px' ); ?></span>
-				</div>
-				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile">
-					<i class="elementor-icon eicon-device-mobile" aria-hidden="true"></i>
-					<span class="elementor-title"><?php echo __( 'Mobile', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php echo __( 'Preview for 360px', 'elementor' ); ?></span>
-				</div>
+				<?php
+				$breakpoints = Responsive::get_breakpoints();
+
+				foreach ( $breakpoints as $breakpoint ) {
+					if ( Responsive::DESKTOP === $breakpoint['name'] ) {
+						$description = __( 'Default Preview', 'elementor' );
+					} else {
+						$size = ! empty( $breakpoint['preview_size'] ) ? $breakpoint['preview_size'] : $breakpoint['value'];
+
+						$description = sprintf( __( 'Preview for %s', 'elementor' ), $size . 'px' );
+					}
+					?>
+					<div class="elementor-panel-footer-sub-menu-item" data-device-mode="<?php echo $breakpoint['name']; ?>">
+						<i class="elementor-icon eicon-device-<?php echo $breakpoint['name']; ?>" aria-hidden="true"></i>
+						<span class="elementor-title"><?php echo $breakpoint['title']; ?></span>
+						<span class="elementor-description"><?php echo $description; ?></span>
+					</div>
+					<?php
+				}
+				?>
 			</div>
 		</div>
 	</div>
@@ -230,7 +234,13 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 <script type="text/template" id="tmpl-elementor-control-responsive-switchers">
 	<div class="elementor-control-responsive-switchers">
 		<#
-			var devices = responsive.devices || [ 'desktop', 'tablet', 'mobile' ];
+			var devices = responsive.devices || [];
+
+			if ( ! devices.length ) {
+				jQuery.each( elementorFrontend.config.breakpoints, function() {
+					devices.push( this.name );
+				} );
+			}
 
 			_.each( devices, function( device ) { #>
 				<a class="elementor-responsive-switcher elementor-responsive-switcher-{{ device }}" data-device="{{ device }}">

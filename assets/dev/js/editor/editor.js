@@ -372,7 +372,12 @@ App = Marionette.Application.extend( {
 
 		var $ = jQuery,
 			hotKeysHandlers = {},
-			hotKeysManager = this.hotKeys;
+			hotKeysManager = this.hotKeys,
+			breakpointNames = [];
+
+		jQuery.each( elementor.config.breakpoints, function() {
+			breakpointNames.push( this.name );
+		} );
 
 		hotKeysHandlers[ keysDictionary.del ] = {
 			deleteElement: {
@@ -427,7 +432,7 @@ App = Marionette.Application.extend( {
 
 		hotKeysHandlers[ keysDictionary.m ] = {
 			changeDeviceMode: {
-				devices: [ 'desktop', 'tablet', 'mobile' ],
+				devices: breakpointNames,
 				isWorthHandling: function( event ) {
 					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
 				},

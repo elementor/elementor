@@ -43,7 +43,22 @@
 
 // Visibility (for preview mode or front-end)
 .elementor:not(.elementor-edit-area-active) {
-	@include visibility() {
-		display: none;
-	};
+
+	@media (max-width: $screen-sm-max) {
+		.elementor-hidden-mobile {
+			display: none;
+		}
+	}
+
+	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+		.elementor-hidden-tablet {
+			display: none;
+		}
+	}
+
+	@media (min-width: $screen-lg-min) {
+		.elementor-hidden-desktop {
+			display: none;
+		}
+	}
 }

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -862,6 +864,18 @@ class Element_Section extends Element_Base {
 			$shapes_options[ $shape_name ] = $shape_props['title'];
 		}
 
+		$default_options = [];
+
+		foreach ( Responsive::get_breakpoints() as $breakpoint ) {
+			$default_key = 'default';
+
+			if ( Responsive::DESKTOP !== $breakpoint['name'] ) {
+				$default_key = $breakpoint['name'] . '_' . $default_key;
+			}
+
+			$default_options[ $default_key ] = [ 'unit' => '%', ];
+		}
+
 		foreach ( [
 			'top' => __( 'Top', 'elementor' ),
 			'bottom' => __( 'Bottom', 'elementor' ),
@@ -900,35 +914,25 @@ class Element_Section extends Element_Base {
 				]
 			);
 
-			$this->add_responsive_control(
-				$base_control_key . '_width',
-				[
-					'label' => __( 'Width', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'units' => [ '%' ],
-					'default' => [
-						'unit' => '%',
+			$width_control_options = [
+				'label' => __( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'units' => [ '%' ],
+				'range' => [
+					'%' => [
+						'min' => 100,
+						'max' => 300,
 					],
-					'tablet_default' => [
-						'unit' => '%',
-					],
-					'mobile_default' => [
-						'unit' => '%',
-					],
-					'range' => [
-						'%' => [
-							'min' => 100,
-							'max' => 300,
-						],
-					],
-					'condition' => [
-						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'height_only', Shapes::FILTER_EXCLUDE ) ),
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1.3px)',
-					],
-				]
-			);
+				],
+				'condition' => [
+					"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'height_only', Shapes::FILTER_EXCLUDE ) ),
+				],
+				'selectors' => [
+					"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1.3px)',
+				],
+			];
+
+			$this->add_responsive_control( $base_control_key . '_width', array_merge( $width_control_options, $default_options ) );
 
 			$this->add_responsive_control(
 				$base_control_key . '_height',
@@ -1291,7 +1295,7 @@ class Element_Section extends Element_Base {
 				'prefix_class' => 'elementor-',
 				'label_on' => __( 'Hide', 'elementor' ),
 				'label_off' => __( 'Show', 'elementor' ),
-				'return_value' => 'hidden-phone',
+				'return_value' => 'hidden-mobile',
 			]
 		);
 
@@ -1340,7 +1344,7 @@ class Element_Section extends Element_Base {
 	protected function _content_template() {
 		?>
 		<# if ( settings.background_video_link ) { #>
-			<div class="elementor-background-video-container elementor-hidden-phone">
+			<div class="elementor-background-video-container elementor-hidden-mobile">
 				<div class="elementor-background-video-embed"></div>
 				<video class="elementor-background-video-hosted" autoplay loop muted></video>
 			</div>
@@ -1372,7 +1376,7 @@ class Element_Section extends Element_Base {
 				if ( $settings['background_video_link'] ) :
 					$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
 					?>
-					<div class="elementor-background-video-container elementor-hidden-phone">
+					<div class="elementor-background-video-container elementor-hidden-mobile">
 						<?php if ( $video_properties ) : ?>
 							<div class="elementor-background-video-embed"></div>
 						<?php else : ?>

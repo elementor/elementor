@@ -396,7 +396,7 @@ class Widget_Common extends Widget_Base {
 				'prefix_class' => 'elementor-',
 				'label_on' => 'Hide',
 				'label_off' => 'Show',
-				'return_value' => 'hidden-phone',
+				'return_value' => 'hidden-mobile',
 			]
 		);
 

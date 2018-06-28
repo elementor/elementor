@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -302,31 +304,33 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
-			'icon_padding',
-			[
-				'label' => __( 'Padding', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon' => 'padding: {{SIZE}}{{UNIT}};',
+		$default_options = [];
+
+		foreach ( Responsive::get_breakpoints() as $breakpoint ) {
+			$default_key = 'default';
+
+			if ( Responsive::DESKTOP !== $breakpoint['name'] ) {
+				$default_key = $breakpoint['name'] . '_' . $default_key;
+			}
+
+			$default_options[ $default_key ] = [ 'unit' => 'em', ];
+		}
+
+		$icon_padding_control_options = [
+			'label' => __( 'Padding', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'selectors' => [
+				'{{WRAPPER}} .elementor-social-icon' => 'padding: {{SIZE}}{{UNIT}};',
+			],
+			'range' => [
+				'em' => [
+					'min' => 0,
+					'max' => 5,
 				],
-				'default' => [
-					'unit' => 'em',
-				],
-				'tablet_default' => [
-					'unit' => 'em',
-				],
-				'mobile_default' => [
-					'unit' => 'em',
-				],
-				'range' => [
-					'em' => [
-						'min' => 0,
-						'max' => 5,
-					],
-				],
-			]
-		);
+			],
+		];
+
+		$this->add_responsive_control( 'icon_padding', array_merge( $icon_padding_control_options, $default_options ) );
 
 		$icon_spacing = is_rtl() ? 'margin-left: {{SIZE}}{{UNIT}};' : 'margin-right: {{SIZE}}{{UNIT}};';
 

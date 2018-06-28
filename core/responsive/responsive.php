@@ -23,6 +23,39 @@ class Responsive {
 	const BREAKPOINT_OPTION_PREFIX = 'elementor_viewport_';
 
 	/**
+	 * 'desktop' device name.
+	 */
+	const DESKTOP = 'desktop';
+
+	/**
+	 * 'laptop' device name.
+	 */
+	const LAPTOP = 'laptop';
+
+	/**
+	 * 'tablet' device name.
+	 */
+	const TABLET = 'tablet';
+
+	/**
+	 * 'mobile' device name.
+	 */
+	const MOBILE = 'mobile';
+
+	/**
+	 * Breakpoints.
+	 *
+	 * Holds the responsive breakpoints.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 * @static
+	 *
+	 * @var array Breakpoints.
+	 */
+	private static $breakpoints;
+
+	/**
 	 * Default breakpoints.
 	 *
 	 * Holds the default responsive breakpoints.
@@ -33,30 +66,7 @@ class Responsive {
 	 *
 	 * @var array Default breakpoints.
 	 */
-	private static $default_breakpoints = [
-		'xs' => 0,
-		'sm' => 480,
-		'md' => 768,
-		'lg' => 1025,
-		'xl' => 1440,
-		'xxl' => 1600,
-	];
-
-	/**
-	 * Editable breakpoint keys.
-	 *
-	 * Holds the editable breakpoint keys.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @static
-	 *
-	 * @var array Editable breakpoint keys.
-	 */
-	private static $editable_breakpoints_keys = [
-		'md',
-		'lg',
-	];
+	private static $default_breakpoints;
 
 	/**
 	 * Get default breakpoints.
@@ -70,6 +80,32 @@ class Responsive {
 	 * @return array Default breakpoints.
 	 */
 	public static function get_default_breakpoints() {
+		if ( ! self::$default_breakpoints ) {
+			self::$default_breakpoints = [
+				'lg' => [
+					'value' => 1025,
+					'name' => self::DESKTOP,
+					'title' => __( 'Desktop', 'elementor' ),
+				],
+				'lt' => [
+					'value' => 900,
+					'name' => self::LAPTOP,
+					'title' => __( 'Laptop', 'elementor' ),
+				],
+				'md' => [
+					'value' => 768,
+					'name' => self::TABLET,
+					'title' => __( 'Tablet', 'elementor' ),
+				],
+				'sm' => [
+					'value' => 0,
+					'name' => self::MOBILE,
+					'title' => __( 'Mobile', 'elementor' ),
+					'preview_size' => 360,
+				],
+			];
+		}
+
 		return self::$default_breakpoints;
 	}
 
@@ -79,13 +115,14 @@ class Responsive {
 	 * Retrieve the editable breakpoints.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.1.0
 	 * @access public
 	 * @static
 	 *
 	 * @return array Editable breakpoints.
 	 */
 	public static function get_editable_breakpoints() {
-		return array_intersect_key( self::get_breakpoints(), array_flip( self::$editable_breakpoints_keys ) );
+		return [ 'md', 'lt', 'lg' ];
 	}
 
 	/**
@@ -100,23 +137,45 @@ class Responsive {
 	 * @return array Responsive breakpoints.
 	 */
 	public static function get_breakpoints() {
-		return array_reduce(
-			array_keys( self::$default_breakpoints ),  function( $new_array, $breakpoint_key ) {
-				if ( ! in_array( $breakpoint_key, self::$editable_breakpoints_keys ) ) {
-					$new_array[ $breakpoint_key ] = self::$default_breakpoints[ $breakpoint_key ];
-				} else {
-					$saved_option = get_option( self::BREAKPOINT_OPTION_PREFIX . $breakpoint_key );
+		if ( ! self::$breakpoints ) {
+			self::$breakpoints = self::get_default_breakpoints();
 
-					$new_array[ $breakpoint_key ] = $saved_option ? (int) $saved_option : self::$default_breakpoints[ $breakpoint_key ];
+			foreach ( self::$breakpoints as $breakpoint_key => $breakpoint ) {
+				if ( Responsive::MOBILE === $breakpoint['name'] ) {
+					continue;
 				}
 
-				return $new_array;
-			}, []
-		);
+				$saved_option = get_option( self::BREAKPOINT_OPTION_PREFIX . $breakpoint_key );
+
+				if ( $saved_option ) {
+					self::$breakpoints[ $breakpoint_key ]['value'] = (int) $saved_option;
+
+					self::$breakpoints[ $breakpoint_key ]['custom'] = true;
+				}
+			}
+		}
+
+		return self::$breakpoints;
+	}
+
+	public static function get_next_breakpoint( $breakpoint_key ) {
+		return self::get_sibling_breakpoint( $breakpoint_key, -1 );
+	}
+
+	public static function get_previous_breakpoint( $breakpoint_key ) {
+		return self::get_sibling_breakpoint( $breakpoint_key, 1 );
 	}
 
 	public static function has_custom_breakpoints() {
-		return ! ! array_diff( self::$default_breakpoints, self::get_breakpoints() );
+		$default_breakpoints = self::get_default_breakpoints();
+
+		foreach ( self::get_breakpoints() as $breakpoint_key => $breakpoint ) {
+			if ( $breakpoint['value'] !== $default_breakpoints[ $breakpoint_key ]['value'] ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public static function get_stylesheet_templates_path() {
@@ -129,6 +188,20 @@ class Responsive {
 
 			$file->update();
 		}
+	}
+
+	private static function get_sibling_breakpoint( $breakpoint_key, $step ) {
+		$breakpoints = self::get_breakpoints();
+
+		$breakpoints_keys = array_keys( $breakpoints );
+
+		$breakpoint_index = array_search( $breakpoint_key, $breakpoints_keys );
+
+		if ( false === $breakpoint_index || ! isset( $breakpoints[ $breakpoints_keys[ $breakpoint_index + $step ] ] ) ) {
+			return null;
+		}
+
+		return $breakpoints[ $breakpoints_keys[ $breakpoint_index + $step ] ];
 	}
 
 	private static function get_stylesheet_templates() {
