@@ -9,7 +9,6 @@ use Elementor\Core\Settings\Page\Model;
 use Elementor\Editor;
 use Elementor\Plugin;
 use Elementor\Settings;
-use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -790,18 +789,19 @@ class Source_Local extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @param string $name - The file name
+	 * @param string $path - The file path
+	 *
 	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
-	public function import_template() {
-		$import_file = $_FILES['file']['tmp_name'];
-
-		if ( empty( $import_file ) ) {
+	public function import_template( $name, $path ) {
+		if ( empty( $path ) ) {
 			return new \WP_Error( 'file_error', 'Please upload a file to import.' );
 		}
 
 		$items = [];
 
-		$file_extension = pathinfo( $_FILES['file']['name'], PATHINFO_EXTENSION );
+		$file_extension = pathinfo( $name, PATHINFO_EXTENSION );
 
 		if ( 'zip' === $file_extension ) {
 			if ( ! class_exists( '\ZipArchive' ) ) {
@@ -814,7 +814,7 @@ class Source_Local extends Source_Base {
 
 			$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR . '/' . uniqid();
 
-			$zip->open( $import_file );
+			$zip->open( $path );
 
 			$zip->extractTo( $temp_path );
 
@@ -832,7 +832,7 @@ class Source_Local extends Source_Base {
 
 			rmdir( $temp_path );
 		} else {
-			$items[] = $this->import_single_template( $import_file );
+			$items[] = $this->import_single_template( $path );
 		}
 
 		return $items;

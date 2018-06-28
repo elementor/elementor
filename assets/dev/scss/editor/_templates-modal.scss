@@ -380,7 +380,7 @@ $remote-templates-items-space: 30px;
 		position: relative;
 	}
 
-	@media (max-width: $screen-lg-min) {
+	@media (max-width: $editor-screen-lg-min) {
 
 		.elementor-template-library-template-body {
 			height: 300px;
@@ -488,7 +488,7 @@ $remote-templates-items-space: 30px;
 		width: calc(20% - #{$remote-templates-items-space});
 	}
 
-	@media (max-width: $screen-lg-min) {
+	@media (max-width: $editor-screen-lg-min) {
 		width: calc(33.333% - #{$remote-templates-items-space});
 	}
 
@@ -897,7 +897,7 @@ $remote-templates-items-space: 30px;
 	}
 }
 
-@media (max-width: $screen-md-max) {
+@media (max-width: $editor-screen-md-max) {
 
 	.elementor-template-library-local-column-3 {
 		display: none;

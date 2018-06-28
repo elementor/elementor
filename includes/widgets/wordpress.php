@@ -111,6 +111,20 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'wordpress', 'widget' ];
+	}
+
+	/**
 	 * Whether the reload preview is required or not.
 	 *
 	 * Used to determine whether the reload preview is required.

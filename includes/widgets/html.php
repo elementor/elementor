@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -57,6 +59,20 @@ class Widget_Html extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'html', 'code' ];
+	}
+
+	/**
 	 * Register HTML widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -77,6 +93,13 @@ class Widget_Html extends Widget_Base {
 			[
 				'label' => '',
 				'type' => Controls_Manager::CODE,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::TEXT,
+					],
+				],
 				'default' => '',
 				'placeholder' => __( 'Enter your code', 'elementor' ),
 				'show_label' => false,

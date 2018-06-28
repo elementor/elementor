@@ -1,51 +1,34 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Files;
+
+use Elementor\Core\Files\CSS\Global_CSS;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Responsive\Files\Frontend;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * Elementor posts CSS manager.
+ * Elementor files manager.
  *
- * Elementor posts CSS manager handler class is responsible for creating custom
- * CSS file for posts.
+ * Elementor files manager handler class is responsible for creating files.
  *
  * @since 1.2.0
  */
-class Posts_CSS_Manager {
+class Manager {
 
 	/**
-	 * Posts CSS manager constructor.
+	 * Files manager constructor.
 	 *
-	 * Initializing the Elementor posts CSS manager.
+	 * Initializing the Elementor files manager.
 	 *
 	 * @since 1.2.0
 	 * @access public
 	 */
 	public function __construct() {
-		$this->init();
 		$this->register_actions();
-	}
-
-	/**
-	 * Init.
-	 *
-	 * Initialize Elementor posts CSS manager and create the css directory, if
-	 * it doesn't exist.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 */
-	public function init() {
-		$wp_upload_dir = wp_upload_dir( null, false );
-
-		$css_path = $wp_upload_dir['basedir'] . CSS_File::FILE_BASE_DIR;
-
-		// Create the css directory, if it doesn't exist.
-		if ( ! is_dir( $css_path ) ) {
-			wp_mkdir_p( $css_path );
-		}
 	}
 
 	/**
@@ -65,7 +48,7 @@ class Posts_CSS_Manager {
 			return;
 		}
 
-		$css_file = new Post_CSS_File( $post_id );
+		$css_file = new Post_CSS( $post_id );
 
 		$css_file->delete();
 	}
@@ -87,7 +70,7 @@ class Posts_CSS_Manager {
 	 * @return bool Whether to skip the post CSS meta.
 	 */
 	public function on_export_post_meta( $skip, $meta_key ) {
-		if ( Post_CSS_File::META_KEY === $meta_key ) {
+		if ( Post_CSS::META_KEY === $meta_key ) {
 			$skip = true;
 		}
 
@@ -97,61 +80,61 @@ class Posts_CSS_Manager {
 	/**
 	 * Clear cache.
 	 *
-	 * Delete post meta containing the post CSS file data. And delete the actual
-	 * CSS files from the upload directory.
+	 * Delete all meta containing files data. And delete the actual
+	 * files from the upload directory.
 	 *
 	 * @since 1.2.0
 	 * @access public
-	 *
-	 * @return array Errors, if had files could not be deleted.
 	 */
 	public function clear_cache() {
-		$errors = [];
-
 		// Delete post meta.
 		global $wpdb;
 
 		$wpdb->delete(
 			$wpdb->postmeta, [
-				'meta_key' => Post_CSS_File::META_KEY,
+				'meta_key' => Post_CSS::META_KEY,
 			]
 		);
 
 		$wpdb->delete(
 			$wpdb->options, [
-				'option_name' => Global_CSS_File::META_KEY,
+				'option_name' => Global_CSS::META_KEY,
 			]
 		);
 
+		delete_option( Frontend::META_KEY );
+
 		// Delete files.
-		$wp_upload_dir = wp_upload_dir( null, false );
+		$path = Base::get_base_uploads_dir() . Base::DEFAULT_FILES_DIR . '*';
 
-		$path = sprintf( '%s%s%s*', $wp_upload_dir['basedir'], CSS_File::FILE_BASE_DIR, '/' );
-
-		foreach ( glob( $path ) as $file ) {
-			$deleted = unlink( $file );
-
-			if ( ! $deleted ) {
-				$errors['files'] = 'Cannot delete files cache';
-			}
+		foreach ( glob( $path ) as $file_path ) {
+			unlink( $file_path );
 		}
 
 		/**
-		 * Elementor clear CSS files.
+		 * Elementor clear files.
 		 *
-		 * Fires after Elementor clears CSS files
+		 * Fires after Elementor clears files
 		 *
 		 * @since 2.0.8
+		 * @deprecated 2.1.0 Use `elementor/core/files/clear_cache` instead
 		 */
-		do_action( 'elementor/css-file/clear_cache' );
+		do_action_deprecated( 'elementor/css-file/clear_cache', [], '2.1.0', 'elementor/core/files/clear_cache' );
 
-		return $errors;
+		/**
+		 * Elementor clear files.
+		 *
+		 * Fires after Elementor clears files
+		 *
+		 * @since 2.1.0
+		 */
+		do_action( 'elementor/core/files/clear_cache' );
 	}
 
 	/**
 	 * Register actions.
 	 *
-	 * Register filters and actions for the posts CSS manager.
+	 * Register filters and actions for the files manager.
 	 *
 	 * @since 1.2.0
 	 * @access private

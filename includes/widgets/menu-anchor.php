@@ -58,6 +58,20 @@ class Widget_Menu_Anchor extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'menu', 'anchor', 'link' ];
+	}
+
+	/**
 	 * Register menu anchor widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.

@@ -75,15 +75,19 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
-		_.each( elementor.config.widgets, function( element ) {
+		_.each( elementor.config.widgets, function( widget ) {
+			if ( ! widget.show_in_panel ) {
+				return;
+			}
+
 			elementsCollection.add( {
-				title: element.title,
-				elType: element.elType,
-				categories: element.categories,
-				keywords: element.keywords,
-				icon: element.icon,
-				widgetType: element.widget_type,
-				custom: element.custom
+				title: widget.title,
+				elType: widget.elType,
+				categories: widget.categories,
+				keywords: widget.keywords,
+				icon: widget.icon,
+				widgetType: widget.widget_type,
+				custom: widget.custom
 			} );
 		} );
 
@@ -105,15 +109,21 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
-		_.each( elementor.config.elements_categories, function( categoryConfig, categoryName ) {
+		_.each( elementor.config.document.panel.elements_categories, function( categoryConfig, categoryName ) {
 			if ( ! categories[ categoryName ] ) {
 				return;
 			}
+
+			var categoriesActivationList = elementor.config.document.panel.categories,
+				categoryOutOfWhiteList = categoriesActivationList.active && -1 === categoriesActivationList.active.indexOf( categoryName ),
+				categoryInBlackList = categoriesActivationList.inactive && -1 !== categoriesActivationList.inactive.indexOf( categoryName ),
+				isActiveCategory = ! categoryOutOfWhiteList && ! categoryInBlackList;
 
 			categoriesCollection.add( {
 				name: categoryName,
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
+				defaultActive: isActiveCategory,
 				items: categories[ categoryName ]
 			} );
 		} );
@@ -153,7 +163,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onChildviewChildrenRender: function() {
-		this.updateElementsScrollbar();
+		elementor.getPanelView().updateScrollbar();
 	},
 
 	onChildviewSearchChangeInput: function( child ) {
@@ -172,10 +182,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	onTabClick: function( event ) {
 		this.activateTab( event.currentTarget.dataset.view );
-	},
-
-	updateElementsScrollbar: function() {
-		elementor.channels.data.trigger( 'scrollbar:update' );
 	}
 } );
 

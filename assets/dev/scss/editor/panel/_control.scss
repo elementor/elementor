@@ -33,7 +33,7 @@
 			&.elementor-divider-style {
 
 				&--thick {
-					border-top-width: 3px;
+					border-top-width: 1px;
 				}
 
 				&--default {
@@ -42,25 +42,25 @@
 				}
 			}
 		}
+
+		+ .elementor-control:not(.elementor-control-type-section) {
+			padding-top: 15px;
+		}
 	}
 
 	&.elementor-control-separator- {
 
 		&default:not(.elementor-control-type-divider) {
 
-			&:before {
-				content: '';
-				height: 1px;
-				display: block;
-				margin-bottom: 15px;
-				background-color: $editor-background;
-			}
-
 			// WP Widgets
 			&.elementor-control-wp {
 				margin-top: 15px;
 
 				&:before {
+					content: '';
+					height: 1px;
+					display: block;
+					margin-bottom: 15px;
 					background-color: transparent;
 				}
 			}
@@ -72,7 +72,7 @@
 			&:before {
 				content: '';
 				position: absolute;
-				height: 3px;
+				height: 1px;
 				width: 100%;
 				top: 0;
 				left: 0;
@@ -85,7 +85,7 @@
 			&:after {
 				content: '';
 				position: absolute;
-				height: 3px;
+				height: 1px;
 				width: 100%;
 				bottom: 0;
 				left: 0;
@@ -149,6 +149,43 @@
 		}
 	}
 
+	//Select
+	&.elementor-control-type-select {
+
+		.elementor-control-input-wrapper {
+			position: relative;
+
+			select {
+				appearance: none;
+				-webkit-appearance: none;
+				-moz-appearance: none;
+				color: $editor-darkest;
+				font-size: 12px;
+				font-family: inherit;
+				font-weight: inherit;
+				font-style: inherit;
+				text-transform: inherit;
+				letter-spacing: inherit;
+				line-height: inherit;
+				flex-basis: 100%;
+				@include padding-start(5px); //fix for Chrome
+				@include padding-end(20px);
+				cursor: pointer;
+			}
+
+			&:after {
+				font-family: eicons;
+				content: '\e955';
+				font-size: 12px;
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				@include end(5px);
+				pointer-events: none;
+			}
+		}
+	}
+
 	// select2
 	.select2-container {
 		width: 100% !important;
@@ -173,6 +210,10 @@
 
 		&.select2-container--default {
 
+			.select2-selection {
+				border-radius: 3px;
+			}
+
 			.select2-selection--multiple {
 
 				.select2-selection__clear {
@@ -185,6 +226,10 @@
 					border: none;
 					border-radius: 0;
 				}
+			}
+
+			.select2-selection__rendered {
+				line-height: 27px;
 			}
 		}
 	}
@@ -354,6 +399,14 @@
 		&:not(:checked) + .elementor-choices-label {
 			background-color: #fff;
 			color: $editor-light;
+
+			&:nth-child(2) {
+				border-radius: 3px 0 0 3px;
+			}
+
+			&:last-child {
+				border-radius: 0 3px 3px 0;
+			}
 		}
 	}
 
@@ -373,7 +426,7 @@
 	background-color: $editor-light;
 	border-radius: 5px;
 	position: relative;
-	width: 67%;
+	width: 70%;
 
 	.ui-slider-handle {
 		height: 16px;
@@ -390,12 +443,13 @@
 }
 
 .elementor-slider-input {
-	width: 33%;
+	width: 30%;
 	float: $end;
 
 	input {
-		width: 80%;
+		width: 50px;
 		float: $end;
+		padding: 5px 5px;
 	}
 }
 

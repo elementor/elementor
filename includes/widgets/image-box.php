@@ -57,6 +57,20 @@ class Widget_Image_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'image', 'photo', 'visual', 'box' ];
+	}
+
+	/**
 	 * Register image box widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -254,13 +268,34 @@ class Widget_Image_Box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+			]
+		);
+
+		$this->start_controls_tabs( 'image_effects' );
+
+		$this->start_controls_tab( 'normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} .elementor-image-box-img img',
+			]
+		);
+
+		$this->add_control(
 			'image_opacity',
 			[
 				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 1,
-				],
 				'range' => [
 					'px' => [
 						'max' => 1,
@@ -269,18 +304,68 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'opacity: {{SIZE}};',
+					'{{WRAPPER}} .elementor-image-box-img img' => 'opacity: {{SIZE}};',
 				],
 			]
 		);
 
 		$this->add_control(
-			'hover_animation',
+			'background_hover_transition',
 			[
-				'label' => __( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-img img' => 'transition-duration: {{SIZE}}s',
+				],
 			]
 		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-image-box-img img',
+			]
+		);
+
+		$this->add_control(
+			'image_opacity_hover',
+			[
+				'label' => __( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}:hover .elementor-image-box-img img' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 

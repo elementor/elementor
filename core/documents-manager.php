@@ -81,6 +81,8 @@ class Documents_Manager {
 	 */
 	protected $switched_data = [];
 
+	protected $cpt = [];
+
 	/**
 	 * Documents manager constructor.
 	 *
@@ -158,6 +160,13 @@ class Documents_Manager {
 	public function register_document_type( $type, $class ) {
 		$this->types[ $type ] = $class;
 
+		$cpt = $class::get_property( 'cpt' );
+		if ( $cpt ) {
+			foreach ( $cpt as $post_type ) {
+				$this->cpt[ $post_type ] = $type;
+			}
+		}
+
 		if ( $class::get_property( 'register_type' ) ) {
 			Source_Local::add_template_type( $type );
 		}
@@ -188,7 +197,18 @@ class Documents_Manager {
 		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
-			$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+
+			if ( wp_is_post_autosave( $post_id ) ) {
+				$post_type = get_post_type( wp_get_post_parent_id( $post_id ) );
+			} else {
+				$post_type = get_post_type( $post_id );
+			}
+
+			if ( isset( $this->cpt[ $post_type ] ) ) {
+				$doc_type = $this->cpt[ $post_type ];
+			} else {
+				$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+			}
 
 			$doc_type_class = $this->get_document_type( $doc_type );
 			$this->documents[ $post_id ] = new $doc_type_class( [

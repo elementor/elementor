@@ -1,5 +1,7 @@
 // Core variables and mixins
 @import "../helpers/variables";
+@import "../editor/breakpoints";
+@import "breakpoints/breakpoints";
 @import "../helpers/mixins";
 
 // Common

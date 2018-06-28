@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -423,20 +424,12 @@ class Editor {
 		);
 
 		wp_register_script(
-			'jquery-hover-intent',
-			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
-			[],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
 			'elementor-dialog',
 			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
 				'jquery-ui-position',
 			],
-			'4.3.2',
+			'4.4.0',
 			true
 		);
 
@@ -459,7 +452,6 @@ class Editor {
 				'elementor-dialog',
 				'ace',
 				'ace-language-tools',
-				'jquery-hover-intent',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -510,7 +502,6 @@ class Editor {
 			'document' => $document->get_config(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'current_user_can_publish' => $current_user_can_publish,
-			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
 			'widgets' => $plugin->widgets_manager->get_widget_types_config(),
@@ -532,10 +523,10 @@ class Editor {
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
+				'introduction' => User::is_should_view_introduction()
 			],
 			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
-			'viewportBreakpoints' => Responsive::get_breakpoints(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
 			'page_title_selector' => $page_title_selector,
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
@@ -651,6 +642,24 @@ class Editor {
 				'server_connection_lost' => __( 'Connection Lost', 'elementor' ),
 				'unknown_error' => __( 'Unknown Error', 'elementor' ),
 
+				// Context Menu
+				'duplicate' => __( 'Duplicate', 'elementor' ),
+				'copy' => __( 'Copy', 'elementor' ),
+				'paste' => __( 'Paste', 'elementor' ),
+				'copy_style' => __( 'Copy Style', 'elementor' ),
+				'paste_style' => __( 'Paste Style', 'elementor' ),
+				'reset_style' => __( 'Reset Style', 'elementor' ),
+				'save_as_global' => __( 'Save as a Global', 'elementor' ),
+				'save_as_block' => __( 'Save as Template', 'elementor' ),
+				'new_column' => __( 'Add New Column', 'elementor' ),
+				'copy_all_content' => __( 'Copy All Content', 'elementor' ),
+				'delete_all_content' => __( 'Delete All Content', 'elementor' ),
+
+				// Right Click Introduction
+				'meet_right_click_header' => __( 'Meet Right Click', 'elementor' ),
+				'meet_right_click_message' => __( 'Now you can access all editing actions much more easily using right click. Just click on the framed area of a widget, column or section.', 'elementor' ),
+				'got_it' => __( 'Got It', 'elementor' ),
+
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'elementor_docs' => __( 'Documentation', 'elementor' ),
@@ -746,7 +755,7 @@ class Editor {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.3.0'
+			'3.6.0'
 		);
 
 		wp_register_style(
@@ -778,6 +787,12 @@ class Editor {
 		);
 
 		wp_enqueue_style( 'elementor-editor' );
+
+		if ( Responsive::has_custom_breakpoints() ) {
+			$breakpoints = Responsive::get_breakpoints();
+
+			wp_add_inline_style( 'elementor-editor', '.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . $breakpoints['md'] . 'px; }' );
+		}
 
 		/**
 		 * After editor enqueue styles.

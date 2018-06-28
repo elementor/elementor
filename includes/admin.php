@@ -34,7 +34,7 @@ class Admin {
 			[
 				'jquery-ui-position',
 			],
-			'4.3.2',
+			'4.4.0',
 			true
 		);
 
@@ -90,7 +90,7 @@ class Admin {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.3.0'
+			'3.6.0'
 		);
 
 		wp_register_style(
@@ -493,6 +493,11 @@ class Admin {
 				'title' => __( 'It\'s a temporary deactivation', 'elementor' ),
 				'input_placeholder' => '',
 			],
+			'elementor_pro' => [
+				'title' => __( 'I have Elementor Pro', 'elementor' ),
+				'input_placeholder' => '',
+				'alert' => __( 'Wait! Don\'t deactivate Elementor. You have to activate both Elementor and Elementor Pro in order for the plugin to work.', 'elementor' ),
+			],
 			'other' => [
 				'title' => __( 'Other', 'elementor' ),
 				'input_placeholder' => __( 'Please share the reason', 'elementor' ),
@@ -519,6 +524,9 @@ class Admin {
 							<label for="elementor-deactivate-feedback-<?php echo esc_attr( $reason_key ); ?>" class="elementor-deactivate-feedback-dialog-label"><?php echo esc_html( $reason['title'] ); ?></label>
 							<?php if ( ! empty( $reason['input_placeholder'] ) ) : ?>
 								<input class="elementor-feedback-text" type="text" name="reason_<?php echo esc_attr( $reason_key ); ?>" placeholder="<?php echo esc_attr( $reason['input_placeholder'] ); ?>" />
+							<?php endif; ?>
+							<?php if ( ! empty( $reason['alert'] ) ) : ?>
+								<div class="elementor-feedback-text"><?php echo esc_html( $reason['alert'] ); ?></div>
 							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>

@@ -42,7 +42,6 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 		$this->assertInstanceOf( $control_class, $control );
 
 		$this->assertTrue( Elementor\Plugin::$instance->controls_manager->unregister_control( $control_id ) );
-
 		$this->assertFalse( Elementor\Plugin::$instance->controls_manager->unregister_control( $control_id ) );
 
 		// Return the control for next tests..
@@ -56,7 +55,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 	}
 
 	public function test_replaceStyleValues() {
-		$post_css_file = new \Elementor\Post_CSS_File( 0 );
+		$post_css_file = new \Elementor\Core\Files\CSS\Post( 0 );
 
 		$controls_stack = [
 			'margin' => [

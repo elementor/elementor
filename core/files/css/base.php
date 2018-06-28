@@ -1,8 +1,16 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Files\CSS;
 
+use Elementor\Base_Data_Control;
+use Elementor\Controls_Manager;
+use Elementor\Controls_Stack;
+use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Element_Base;
+use Elementor\Plugin;
+use Elementor\Core\Responsive\Responsive;
+use Elementor\Stylesheet;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,21 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.2.0
  * @abstract
  */
-abstract class CSS_File {
-
-	/**
-	 * Elementor CSS files base folder.
-	 *
-	 * Relative folder in the WordPress uploads folder.
-	 */
-	const FILE_BASE_DIR = '/elementor/css';
-
-	/**
-	 * Elementor CSS file name pattern.
-	 *
-	 * %s: Base folder; %s: file name
-	 */
-	const FILE_NAME_PATTERN = '%s/%s.css';
+abstract class Base extends Base_File {
 
 	/**
 	 * Elementor CSS file generated status.
@@ -52,39 +46,6 @@ abstract class CSS_File {
 	 * The parsing result when an empty CSS returned.
 	 */
 	const CSS_STATUS_EMPTY = 'empty';
-
-	/**
-	 * CSS file path.
-	 *
-	 * Holds the CSS file path.
-	 *
-	 * @access private
-	 *
-	 * @var string
-	 */
-	private $path;
-
-	/**
-	 * CSS file URL.
-	 *
-	 * Holds the CSS file URL.
-	 *
-	 * @access private
-	 *
-	 * @var string
-	 */
-	private $url;
-
-	/**
-	 * CSS.
-	 *
-	 * Holds the CSS.
-	 *
-	 * @access private
-	 *
-	 * @var string
-	 */
-	private $css;
 
 	/**
 	 * Fonts.
@@ -133,16 +94,13 @@ abstract class CSS_File {
 	/**
 	 * CSS file constructor.
 	 *
-	 * Initializing Elementor CSS file. If using external files, set path and
-	 * URL, otherwise initiate stylesheet.
+	 * Initializing Elementor CSS file.
 	 *
 	 * @since 1.2.0
 	 * @access public
 	 */
-	public function __construct() {
-		if ( $this->use_external_file() ) {
-			$this->set_path_and_url();
-		}
+	public function __construct( $file_name ) {
+		parent::__construct( $file_name );
 
 		$this->init_stylesheet();
 	}
@@ -173,48 +131,34 @@ abstract class CSS_File {
 	 * @access public
 	 */
 	public function update() {
-		$this->parse_css();
+		$this->update_file();
 
-		$meta = [
-			'time' => time(),
-			'fonts' => array_unique( $this->fonts ),
-		];
+		$meta = $this->get_meta();
 
-		if ( empty( $this->css ) ) {
-			$this->delete();
+		$meta['time'] = time();
 
+		$content = $this->get_content();
+
+		if ( empty( $content ) ) {
 			$meta['status'] = self::CSS_STATUS_EMPTY;
 			$meta['css'] = '';
 		} else {
-			$file_created = false;
 			$use_external_file = $this->use_external_file();
 
-			if ( $use_external_file && wp_is_writable( dirname( $this->path ) ) ) {
-				$file_created = file_put_contents( $this->path, $this->css );
-			}
-
-			if ( $file_created ) {
+			if ( $use_external_file ) {
 				$meta['status'] = self::CSS_STATUS_FILE;
 			} else {
 				$meta['status'] = self::CSS_STATUS_INLINE;
-				$meta['css'] = $this->css;
+				$meta['css'] = $content;
 			}
 		}
 
 		$this->update_meta( $meta );
 	}
 
-	/**
-	 * Delete the CSS file.
-	 *
-	 * If the CSS file exist, delete it.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 */
-	public function delete() {
-		if ( file_exists( $this->path ) ) {
-			unlink( $this->path );
+	public function write() {
+		if ( $this->use_external_file() ) {
+			parent::write();
 		}
 	}
 
@@ -259,7 +203,7 @@ abstract class CSS_File {
 				wp_add_inline_style( $dep , $meta['css'] );
 			}
 		} elseif ( self::CSS_STATUS_FILE === $meta['status'] ) { // Re-check if it's not empty after CSS update.
-			wp_enqueue_style( $this->get_file_handle_id(), $this->url, $this->get_enqueue_dependencies(), $meta['time'] );
+			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null );
 		}
 
 		// Handle fonts.
@@ -282,7 +226,7 @@ abstract class CSS_File {
 		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action instead.
 		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
-		 * @param CSS_File $this The current CSS file.
+		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/{$name}-css-file/enqueue", $this );
 
@@ -295,7 +239,7 @@ abstract class CSS_File {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param CSS_File $this The current CSS file.
+		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/enqueue", $this );
 	}
@@ -310,7 +254,7 @@ abstract class CSS_File {
 	 * @access public
 	 */
 	public function print_css() {
-		echo '<style>' . $this->get_css() . '</style>'; // XSS ok.
+		echo '<style>' . $this->get_content() . '</style>'; // XSS ok.
 		Plugin::$instance->frontend->print_fonts_links();
 	}
 
@@ -329,8 +273,6 @@ abstract class CSS_File {
 	 * @param callable $value_callback Callback function for the value.
 	 * @param array    $placeholders   Placeholders.
 	 * @param array    $replacements   Replacements.
-	 *
-	 * @throws \Exception If no parsed value.
 	 */
 	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements ) {
 		$value = call_user_func( $value_callback, $control );
@@ -439,15 +381,12 @@ abstract class CSS_File {
 	 *
 	 * @since 1.2.0
 	 * @access public
+	 * @deprecated 2.1.0 Use `CSS_File::get_content()` method instead
 	 *
 	 * @return string The CSS.
 	 */
 	public function get_css() {
-		if ( empty( $this->css ) ) {
-			$this->parse_css();
-		}
-
-		return $this->css;
+		return $this->get_content();
 	}
 
 	/**
@@ -462,38 +401,6 @@ abstract class CSS_File {
 	 */
 	public function get_stylesheet() {
 		return $this->stylesheet_obj;
-	}
-
-	/**
-	 * Get meta data.
-	 *
-	 * Retrieve the CSS file meta data. Returns an array of all the data, or if
-	 * custom property is given it will return the property value, or `null` if
-	 * the property does not exist.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 *
-	 * @param string $property Optional. Custom meta data property. Default is
-	 *                         null.
-	 *
-	 * @return array|null An array of all the data, or if custom property is
-	 *                    given it will return the property value, or `null` if
-	 *                    the property does not exist.
-	 */
-	public function get_meta( $property = null ) {
-		$defaults = [
-			'status' => '',
-			'time' => 0,
-		];
-
-		$meta = array_merge( $defaults, (array) $this->load_meta() );
-
-		if ( $property ) {
-			return isset( $meta[ $property ] ) ? $meta[ $property ] : null;
-		}
-
-		return $meta;
 	}
 
 	/**
@@ -540,30 +447,6 @@ abstract class CSS_File {
 	}
 
 	/**
-	 * Load meta data.
-	 *
-	 * Retrieve the CSS file meta data.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 * @abstract
-	 */
-	abstract protected function load_meta();
-
-	/**
-	 * Update meta data.
-	 *
-	 * Update the global CSS file meta data.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 * @abstract
-	 *
-	 * @param array $meta New meta data.
-	 */
-	abstract protected function update_meta( $meta );
-
-	/**
 	 * Get file handle ID.
 	 *
 	 * Retrieve the file handle ID.
@@ -587,18 +470,12 @@ abstract class CSS_File {
 	 */
 	abstract protected function render_css();
 
-	/**
-	 * Get file name.
-	 *
-	 * Retrieve the name of the CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 * @abstract
-	 *
-	 * @return string File name.
-	 */
-	abstract protected function get_file_name();
+	protected function get_default_meta() {
+		return array_merge ( parent::get_default_meta(), [
+			'fonts' => array_unique( $this->fonts ),
+			'status' => '',
+		] );
+	}
 
 	/**
 	 * Get enqueue dependencies.
@@ -651,7 +528,7 @@ abstract class CSS_File {
 	 * @since 1.2.0
 	 * @access protected
 	 */
-	protected function parse_css() {
+	protected function parse_content() {
 		$this->render_css();
 
 		$name = $this->get_name();
@@ -667,7 +544,7 @@ abstract class CSS_File {
 		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action instead.
 		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
-		 * @param CSS_File $this The current CSS file.
+		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/{$name}-css-file/parse", $this );
 
@@ -680,28 +557,11 @@ abstract class CSS_File {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param CSS_File $this The current CSS file.
+		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
-		$this->css = $this->stylesheet_obj->__toString();
-	}
-
-	/**
-	 * Set path and URL.
-	 *
-	 * Define the CSS file path and file URL.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 */
-	protected function set_path_and_url() {
-		$wp_upload_dir = wp_upload_dir( null, false );
-
-		$relative_path = sprintf( self::FILE_NAME_PATTERN, self::FILE_BASE_DIR, $this->get_file_name() );
-
-		$this->path = $wp_upload_dir['basedir'] . $relative_path;
-		$this->url = set_url_scheme( $wp_upload_dir['baseurl'] . $relative_path );
+		return $this->stylesheet_obj->__toString();
 	}
 
 	/**
@@ -721,7 +581,6 @@ abstract class CSS_File {
 	protected function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
 		$this->add_control_rules(
 			$control, $controls, function( $control ) use ( $values ) {
-
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements
 		);

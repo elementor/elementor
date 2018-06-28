@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?3.3.0");
-  src: url("../fonts/eicons.eot?3.3.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?3.3.0") format("woff2"), url("../fonts/eicons.woff?3.3.0") format("woff"), url("../fonts/eicons.ttf?3.3.0") format("truetype"), url("../fonts/eicons.svg?3.3.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?3.6.0");
+  src: url("../fonts/eicons.eot?3.6.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?3.6.0") format("woff2"), url("../fonts/eicons.woff?3.6.0") format("woff"), url("../fonts/eicons.ttf?3.6.0") format("truetype"), url("../fonts/eicons.svg?3.6.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -590,6 +590,96 @@
 
 .eicon-minus-square:before {
   content: '\e987'; }
+
+.eicon-cloud-check:before {
+  content: '\e988'; }
+
+.eicon-drag-n-drop:before {
+  content: '\e989'; }
+
+.eicon-home-heart:before {
+  content: '\e990'; }
+
+.eicon-handle:before {
+  content: '\e991'; }
+
+.eicon-cart:before {
+  content: '\e992'; }
+
+.eicon-product-add-to-cart:before {
+  content: '\e993'; }
+
+.eicon-product-breadcrumbs:before {
+  content: '\e994'; }
+
+.eicon-product-categories:before {
+  content: '\e995'; }
+
+.eicon-product-description:before {
+  content: '\e996'; }
+
+.eicon-product-images:before {
+  content: '\e997'; }
+
+.eicon-product-info:before {
+  content: '\e998'; }
+
+.eicon-product-meta:before {
+  content: '\e999'; }
+
+.eicon-product-pages:before {
+  content: '\e1000'; }
+
+.eicon-product-price:before {
+  content: '\e1001'; }
+
+.eicon-product-rating:before {
+  content: '\e1002'; }
+
+.eicon-product-related:before {
+  content: '\e1003'; }
+
+.eicon-product-stock:before {
+  content: '\e1004'; }
+
+.eicon-product-tabs:before {
+  content: '\e1005'; }
+
+.eicon-product-title:before {
+  content: '\e1006'; }
+
+.eicon-product-upsell:before {
+  content: '\e1007'; }
+
+.eicon-products:before {
+  content: '\e1008'; }
+
+.eicon-bag-light:before {
+  content: '\e1009'; }
+
+.eicon-bag-medium:before {
+  content: '\e1010'; }
+
+.eicon-bag-solid:before {
+  content: '\e1011'; }
+
+.eicon-basket-light:before {
+  content: '\e1012'; }
+
+.eicon-basket-medium:before {
+  content: '\e1013'; }
+
+.eicon-basket-solid:before {
+  content: '\e1014'; }
+
+.eicon-cart-light:before {
+  content: '\e1015'; }
+
+.eicon-cart-medium:before {
+  content: '\e1016'; }
+
+.eicon-cart-solid:before {
+  content: '\e1017'; }
 
 .eicon-editor-link:before {
   content: '\e500'; }

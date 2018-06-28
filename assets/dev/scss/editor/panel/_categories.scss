@@ -1,26 +1,58 @@
 // Panel elements categories
-
 .elementor-panel-category {
+	position: relative;
 
 	&:first-child {
 
-		.panel-elements-category-title {
+		.elementor-panel-category-title {
 			padding-top: 14px;
 		}
 	}
-}
 
-.panel-elements-category-title-basic {
-	display: none;
-}
+	&.elementor-active {
 
-.panel-elements-category-title {
-	padding: 12px 15px;
-	text-transform: uppercase;
-	font-size: 11px;
-}
+		.elementor-panel-category-title {
 
-.panel-elements-category-items {
-	overflow: hidden;
-	padding: 0 5px;
+			&:before {
+				transform: rotate(getValueByDirection(90deg, -90deg));
+			}
+		}
+	}
+
+	&:not(.elementor-active) {
+
+		&:after {
+			content: '';
+			position: absolute;
+			left: 15px;
+			right: 15px;
+			bottom: 0;
+			height: 8px;
+			background: linear-gradient(rgba(0, 0, 0, 0.03), transparent);
+			transform: translateY(100%);
+		}
+	}
+
+	&-title {
+		margin: 0 15px;
+		padding: 20px 0;
+		position: relative;
+		text-transform: uppercase;
+		font-size: 11px;
+		cursor: pointer;
+
+		&:before {
+			content: getValueByDirection( '\e907', '\e908' );
+			font-family: eicons;
+			position: absolute;
+			@include end(0);
+			transition: transform .3s;
+		}
+	}
+
+	&-items {
+		overflow: hidden;
+		padding: 0 5px;
+		display: none;
+	}
 }

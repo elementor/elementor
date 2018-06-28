@@ -56,6 +56,19 @@ class Widget_Testimonial extends Widget_Base {
 		return 'eicon-testimonial';
 	}
 
+	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'testimonial', 'blockquote' ];
+	}
 
 	/**
 	 * Register testimonial widget controls.
@@ -153,6 +166,7 @@ class Widget_Testimonial extends Widget_Base {
 					'testimonial_image[url]!' => '',
 				],
 				'separator' => 'before',
+				'style_transfer' => true,
 			]
 		);
 
@@ -177,6 +191,7 @@ class Widget_Testimonial extends Widget_Base {
 					],
 				],
 				'label_block' => false,
+				'style_transfer' => true,
 			]
 		);
 

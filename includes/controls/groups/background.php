@@ -362,6 +362,28 @@ class Group_Control_Background extends Group_Control_Base {
 			'of_type' => 'video',
 		];
 
+		$fields['video_start'] = [
+			'label' => __( 'Start Time', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'description' => __( 'Specify a start time (in seconds)', 'elementor' ),
+			'placeholder' => 10,
+			'condition' => [
+				'background' => [ 'video' ],
+			],
+			'of_type' => 'video',
+		];
+
+		$fields['video_end'] = [
+			'label' => __( 'End Time', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
+			'placeholder' => 70,
+			'condition' => [
+				'background' => [ 'video' ],
+			],
+			'of_type' => 'video',
+		];
+
 		$fields['video_fallback'] = [
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
 			'description' => __( 'This cover image will replace the background video on mobile and tablet devices.', 'elementor' ),

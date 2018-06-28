@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Autoloader {
 
+	const ALIASES_DEPRECATION_RANGE = 0.2;
+
 	/**
 	 * Classes map.
 	 *
@@ -39,7 +41,6 @@ class Autoloader {
 		'Control_Base_Units' => 'includes/controls/base-units.php',
 		'Controls_Manager' => 'includes/managers/controls.php',
 		'Controls_Stack' => 'includes/base/controls-stack.php',
-		'CSS_File' => 'includes/css-file/css-file.php',
 		'DB' => 'includes/db.php',
 		'Debug\Debug' => 'includes/debug/debug.php',
 		'Editor' => 'includes/editor.php',
@@ -47,11 +48,11 @@ class Autoloader {
 		'Embed' => 'includes/embed.php',
 		'Fonts' => 'includes/fonts.php',
 		'Frontend' => 'includes/frontend.php',
-		'Global_CSS_File' => 'includes/css-file/global-css-file.php',
 		'Group_Control_Background' => 'includes/controls/groups/background.php',
 		'Group_Control_Base' => 'includes/controls/groups/base.php',
 		'Group_Control_Border' => 'includes/controls/groups/border.php',
 		'Group_Control_Box_Shadow' => 'includes/controls/groups/box-shadow.php',
+		'Group_Control_Css_Filter' => 'includes/controls/groups/css-filter.php',
 		'Group_Control_Image_Size' => 'includes/controls/groups/image-size.php',
 		'Group_Control_Interface' => 'includes/interfaces/group-control.php',
 		'Group_Control_Text_Shadow' => 'includes/controls/groups/text-shadow.php',
@@ -60,11 +61,8 @@ class Autoloader {
 		'Images_Manager' => 'includes/managers/image.php',
 		'Maintenance' => 'includes/maintenance.php',
 		'Maintenance_Mode' => 'includes/maintenance-mode.php',
-		'Post_CSS_File' => 'includes/css-file/post-css-file.php',
-		'Post_Preview_CSS' => 'includes/css-file/post-preview-css.php',
 		'Posts_CSS_Manager' => 'includes/managers/css-files.php',
 		'Preview' => 'includes/preview.php',
-		'Responsive' => 'includes/responsive.php',
 		'Rollback' => 'includes/rollback.php',
 		'Scheme_Base' => 'includes/schemes/base.php',
 		'Scheme_Color' => 'includes/schemes/color.php',
@@ -107,9 +105,42 @@ class Autoloader {
 	 * @var array Classes aliases.
 	 */
 	private static $classes_aliases = [
-		'Control_Base' => 'Base_Data_Control',
-		'PageSettings\Manager' => 'Core\Settings\Page\Manager',
-		'Revisions_Manager' => 'Modules\History\Revisions_Manager',
+		'Control_Base' => [
+			'replacement' => 'Base_Data_Control',
+			'version' => '1.6.0',
+		],
+		'PageSettings\Manager' => [
+			'replacement' => 'Core\Settings\Page\Manager',
+			'version' => '1.6.0',
+		],
+		'Revisions_Manager' => [
+			'replacement' => 'Modules\History\Revisions_Manager',
+			'version' => '1.7.0',
+		],
+		'CSS_File' => [
+			'replacement' => 'Core\Files\CSS\Base',
+			'version' => '2.1.0',
+		],
+		'Global_CSS_File' => [
+			'replacement' => 'Core\Files\CSS\Global_CSS',
+			'version' => '2.1.0',
+		],
+		'Post_CSS_File' => [
+			'replacement' => 'Core\Files\CSS\Post',
+			'version' => '2.1.0',
+		],
+		'Posts_CSS_Manager' => [
+			'replacement' => 'Core\Files\Manager',
+			'version' => '2.1.0',
+		],
+		'Post_Preview_CSS' => [
+			'replacement' => 'Core\Files\CSS\Post_Preview',
+			'version' => '2.1.0',
+		],
+		'Responsive' => [
+			'replacement' => 'Core\Responsive\Responsive',
+			'version' => '2.1.0',
+		],
 	];
 
 	/**
@@ -193,7 +224,9 @@ class Autoloader {
 
 		// Backward Compatibility: Save old class name for set an alias after the new class is loaded
 		if ( $has_class_alias ) {
-			$relative_class_name = self::$classes_aliases[ $relative_class_name ];
+			$alias_data = self::$classes_aliases[ $relative_class_name ];
+
+			$relative_class_name = $alias_data['replacement'];
 		}
 
 		$final_class_name = __NAMESPACE__ . '\\' . $relative_class_name;
@@ -204,6 +237,18 @@ class Autoloader {
 
 		if ( $has_class_alias ) {
 			class_alias( $final_class_name, $class );
+
+			preg_match( '/^[0-9]+\.[0-9]+/', ELEMENTOR_VERSION, $current_version_as_float );
+
+			$current_version_as_float = (float) $current_version_as_float[0];
+
+			preg_match( '/^[0-9]+\.[0-9]+/', $alias_data['version'], $alias_version_as_float );
+
+			$alias_version_as_float = (float) $alias_version_as_float[0];
+
+			if ( $current_version_as_float - $alias_version_as_float >= self::ALIASES_DEPRECATION_RANGE ) {
+				_deprecated_file( $class, $alias_data['version'], $final_class_name );
+			}
 		}
 	}
 }

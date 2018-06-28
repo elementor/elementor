@@ -57,6 +57,20 @@ class Widget_Progress extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'progress', 'bar' ];
+	}
+
+	/**
 	 * Register progress widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -77,6 +91,9 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'My Skill', 'elementor' ),
 				'label_block' => true,
@@ -127,6 +144,9 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Inner Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'e.g. Web Designer', 'elementor' ),
 				'default' => __( 'Web Designer', 'elementor' ),
 				'label_block' => true,

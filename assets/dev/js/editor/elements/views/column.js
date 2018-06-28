@@ -3,7 +3,7 @@ var BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnView;
 
 ColumnView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-column-content' ),
+	template: Marionette.TemplateCache.get( '#tmpl-elementor-column-content' ),
 
 	emptyView: ColumnEmptyView,
 
@@ -19,12 +19,6 @@ ColumnView = BaseElementView.extend( {
 			},
 			Resizable: {
 				behaviorClass: require( 'elementor-behaviors/resizable' )
-			},
-			HandleDuplicate: {
-				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-			},
-			HandleAddMode: {
-				behaviorClass: require( 'elementor-behaviors/duplicate' )
 			}
 		} );
 
@@ -52,14 +46,28 @@ ColumnView = BaseElementView.extend( {
 		return ui;
 	},
 
-	triggers: {
-		'click @ui.addButton': 'click:new'
-	},
-
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
+	},
+
+	getContextMenuGroups: function() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+			generalGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'general' } ) );
+
+		groups.splice( generalGroupIndex + 1, 0, {
+			name: 'addNew',
+			actions: [
+				{
+					name: 'addNew',
+					title: elementor.translate( 'new_column' ),
+					callback: this.addNewColumn.bind( this )
+				}
+			]
+		} );
+
+		return groups;
 	},
 
 	isDroppingAllowed: function() {
@@ -121,6 +129,10 @@ ColumnView = BaseElementView.extend( {
 		} else {
 			this.ui.columnInner.removeClass( emptyClass ).addClass( populatedClass );
 		}
+	},
+
+	addNewColumn: function() {
+		this.trigger( 'request:add:new' );
 	},
 
 	// Events

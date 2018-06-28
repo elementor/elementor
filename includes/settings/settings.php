@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\General\Manager as General_Settings_Manager;
 use Elementor\Core\Settings\Manager;
 
@@ -226,7 +227,7 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function update_css_print_method() {
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 	}
 
 	/**
@@ -241,6 +242,8 @@ class Settings extends Settings_Page {
 	 */
 	protected function create_tabs() {
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
+
+		$default_breakpoints = Responsive::get_default_breakpoints();
 
 		return [
 			self::TAB_GENERAL => [
@@ -318,20 +321,24 @@ class Settings extends Settings_Page {
 							'container_width' => [
 								'label' => __( 'Content Width', 'elementor' ),
 								'field_args' => [
-									'type' => 'text',
-									'placeholder' => '1140',
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => '1140',
+										'class' => 'medium-text',
+									],
 									'sub_desc' => 'px',
-									'class' => 'medium-text',
 									'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 								],
 							],
 							'space_between_widgets' => [
 								'label' => __( 'Space Between Widgets', 'elementor' ),
 								'field_args' => [
-									'type' => 'text',
-									'placeholder' => '20',
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => '20',
+										'class' => 'medium-text',
+									],
 									'sub_desc' => 'px',
-									'class' => 'medium-text',
 									'desc' => __( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
 								],
 							],
@@ -339,8 +346,10 @@ class Settings extends Settings_Page {
 								'label' => __( 'Stretched Section Fit To', 'elementor' ),
 								'field_args' => [
 									'type' => 'text',
-									'placeholder' => 'body',
-									'class' => 'medium-text',
+									'attributes' => [
+										'placeholder' => 'body',
+										'class' => 'medium-text',
+									],
 									'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
 								],
 							],
@@ -348,9 +357,39 @@ class Settings extends Settings_Page {
 								'label' => __( 'Page Title Selector', 'elementor' ),
 								'field_args' => [
 									'type' => 'text',
-									'placeholder' => 'h1.entry-title',
-									'class' => 'medium-text',
+									'attributes' => [
+										'placeholder' => 'h1.entry-title',
+										'class' => 'medium-text',
+									],
 									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
+								],
+							],
+							'viewport_lg' => [
+								'label' => __( 'Tablet Breakpoint', 'elementor' ),
+								'field_args' => [
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => $default_breakpoints['lg'],
+										'min' => $default_breakpoints['md'] + 1,
+										'max' => $default_breakpoints['xl'] - 1,
+										'class' => 'medium-text',
+									],
+									'sub_desc' => 'px',
+									'desc' => __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: ' . $default_breakpoints['lg'] . ').', 'elementor' ),
+								],
+							],
+							'viewport_md' => [
+								'label' => __( 'Mobile Breakpoint', 'elementor' ),
+								'field_args' => [
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => $default_breakpoints['md'],
+										'min' => $default_breakpoints['sm'] + 1,
+										'max' => $default_breakpoints['lg'] - 1,
+										'class' => 'medium-text',
+									],
+									'sub_desc' => 'px',
+									'desc' => __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: ' . $default_breakpoints['md'] . ').', 'elementor' ),
 								],
 							],
 							'global_image_lightbox' => [
@@ -477,6 +516,11 @@ class Settings extends Settings_Page {
 		// Clear CSS Meta after change print method.
 		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
-	}
 
+		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
+			foreach ( [ 'add', 'update' ] as $action ) {
+				add_action( "{$action}_option_elementor_viewport_{$breakpoint_key}", [ 'Elementor\Responsive', 'compile_stylesheet_templates' ] );
+			}
+		}
+	}
 }

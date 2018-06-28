@@ -33,32 +33,10 @@ class Compatibility {
 
 		self::polylang_compatibility();
 
-		if ( is_admin() ) {
+		if ( defined( 'WP_LOAD_IMPORTERS' ) ) {
 			add_filter( 'wp_import_post_meta', [ __CLASS__, 'on_wp_import_post_meta' ] );
 			add_filter( 'wxr_importer.pre_process.post_meta', [ __CLASS__, 'on_wxr_importer_pre_process_post_meta' ] );
 		}
-	}
-
-	/**
-	 * Exit to classic editor.
-	 *
-	 * Filters the "Exit To Dashboard URL" and replace it with the classic editor
-	 * URL.
-	 *
-	 * Fired by `elementor/document/urls/exit_to_dashboard` filter.
-	 *
-	 * @since 1.9.0
-	 * @access public
-	 * @static
-	 *
-	 * @param string $exit_url Default exit URL.
-	 *
-	 * @return string Classic editor URL.
-	 */
-	public static function exit_to_classic_editor( $exit_url ) {
-		$exit_url = add_query_arg( 'classic-editor', '', $exit_url );
-
-		return $exit_url;
 	}
 
 	/**
@@ -216,7 +194,6 @@ class Compatibility {
 		// Gutenberg
 		if ( function_exists( 'gutenberg_init' ) ) {
 			add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
-			add_filter( 'elementor/document/urls/exit_to_dashboard', [ __CLASS__, 'exit_to_classic_editor' ] );
 		}
 	}
 

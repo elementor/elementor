@@ -2,6 +2,11 @@
 namespace Elementor;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
+use Elementor\Core\Files\CSS\Global_CSS;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Files\CSS\Post_Preview;
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -310,7 +315,7 @@ class Frontend {
 			[
 				'jquery',
 			],
-			'3.4.2',
+			'4.4.3',
 			true
 		);
 
@@ -330,7 +335,7 @@ class Frontend {
 			[
 				'jquery-ui-position',
 			],
-			'4.3.2',
+			'4.4.0',
 			true
 		);
 
@@ -384,7 +389,7 @@ class Frontend {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.3.0'
+			'3.6.0'
 		);
 
 		wp_register_style(
@@ -408,11 +413,29 @@ class Frontend {
 			'4.1.4'
 		);
 
+		$frontend_file_name = 'frontend' . $direction_suffix . $suffix . '.css';
+
+		$has_custom_file = Responsive::has_custom_breakpoints();
+
+		if ( $has_custom_file ) {
+			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Responsive::get_stylesheet_templates_path() . $frontend_file_name );
+
+			$time = $frontend_file->get_meta( 'time' );
+
+			if ( ! $time ) {
+				$frontend_file->update();
+			}
+
+			$frontend_file_url = $frontend_file->get_url();
+		} else {
+			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
+		}
+
 		wp_register_style(
 			'elementor-frontend',
-			ELEMENTOR_ASSETS_URL . 'css/frontend' . $direction_suffix . $suffix . '.css',
+			$frontend_file_url,
 			[],
-			ELEMENTOR_VERSION
+			$has_custom_file ? null : ELEMENTOR_VERSION
 		);
 
 		/**
@@ -448,6 +471,7 @@ class Frontend {
 		$elementor_frontend_config = [
 			'isEditMode' => Plugin::$instance->preview->is_preview_mode(),
 			'is_rtl' => is_rtl(),
+			'breakpoints' => Responsive::get_breakpoints(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
@@ -536,7 +560,7 @@ class Frontend {
 		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
 			$this->parse_global_css_code();
 
-			$css_file = new Post_CSS_File( get_the_ID() );
+			$css_file = new Post_CSS( get_the_ID() );
 			$css_file->enqueue();
 		}
 	}
@@ -715,7 +739,7 @@ class Frontend {
 	 * @access protected
 	 */
 	protected function parse_global_css_code() {
-		$scheme_css_file = new Global_CSS_File();
+		$scheme_css_file = new Global_CSS( 'global.css' );
 
 		$scheme_css_file->enqueue();
 	}
@@ -810,9 +834,9 @@ class Frontend {
 
 		if ( ! $this->_is_excerpt ) {
 			if ( $document->is_autosave() ) {
-				$css_file = new Post_Preview_CSS( $document->get_post()->ID );
+				$css_file = new Post_Preview( $document->get_post()->ID );
 			} else {
-				$css_file = new Post_CSS_File( $post_id );
+				$css_file = new Post_CSS( $post_id );
 			}
 
 			$css_file->enqueue();
@@ -912,9 +936,12 @@ class Frontend {
 	 *
 	 * @param int $post_id The post ID.
 	 *
+	 * @param bool $with_css Optional. Whether to retrieve the content with CSS
+	 *                       or not. Default is false.
+	 *
 	 * @return string The post content.
 	 */
-	public function get_builder_content_for_display( $post_id ) {
+	public function get_builder_content_for_display( $post_id, $with_css = false ) {
 		if ( ! get_post( $post_id ) ) {
 			return '';
 		}
@@ -935,7 +962,9 @@ class Frontend {
 		$is_edit_mode = $editor->is_edit_mode();
 		$editor->set_edit_mode( false );
 
-		$content = $this->get_builder_content( $post_id, $is_edit_mode );
+		$with_css = $with_css ? true : $is_edit_mode;
+
+		$content = $this->get_builder_content( $post_id, $with_css );
 
 		// Restore edit mode state
 		Plugin::$instance->editor->set_edit_mode( $is_edit_mode );

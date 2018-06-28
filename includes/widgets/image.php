@@ -73,6 +73,20 @@ class Widget_Image extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'image', 'photo', 'visual' ];
+	}
+
+	/**
 	 * Register image widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -274,6 +288,22 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->start_controls_tabs( 'image_effects' );
+
+		$this->start_controls_tab( 'normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} .elementor-image img',
+			]
+		);
+
 		$this->add_control(
 			'opacity',
 			[
@@ -292,6 +322,60 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}} .elementor-image:hover img',
+			]
+		);
+
+		$this->add_control(
+			'opacity_hover',
+			[
+				'label' => __( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image:hover img' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image img' => 'transition-duration: {{SIZE}}s',
+				],
+			]
+		);
+
 		$this->add_control(
 			'hover_animation',
 			[
@@ -299,6 +383,10 @@ class Widget_Image extends Widget_Base {
 				'type' => Controls_Manager::HOVER_ANIMATION,
 			]
 		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->add_group_control(
 			Group_Control_Border::get_type(),

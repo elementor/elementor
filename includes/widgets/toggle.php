@@ -58,6 +58,20 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'tabs', 'accordion', 'toggle' ];
+	}
+
+	/**
 	 * Register toggle widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -73,11 +87,34 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'tab_title',
+			[
+				'label' => __( 'Title & Content', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => __( 'Toggle Title' , 'elementor' ),
+				'label_block' => true,
+			]
+		);
+
+		$repeater->add_control(
+			'tab_content',
+			[
+				'label' => __( 'Content', 'elementor' ),
+				'type' => Controls_Manager::WYSIWYG,
+				'default' => __( 'Toggle Content', 'elementor' ),
+				'show_label' => false,
+			]
+		);
+
 		$this->add_control(
 			'tabs',
 			[
 				'label' => __( 'Toggle Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
 						'tab_title' => __( 'Toggle #1', 'elementor' ),
@@ -86,22 +123,6 @@ class Widget_Toggle extends Widget_Base {
 					[
 						'tab_title' => __( 'Toggle #2', 'elementor' ),
 						'tab_content' => __( 'I am item content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					],
-				],
-				'fields' => [
-					[
-						'name' => 'tab_title',
-						'label' => __( 'Title & Content', 'elementor' ),
-						'type' => Controls_Manager::TEXT,
-						'default' => __( 'Toggle Title' , 'elementor' ),
-						'label_block' => true,
-					],
-					[
-						'name' => 'tab_content',
-						'label' => __( 'Content', 'elementor' ),
-						'type' => Controls_Manager::WYSIWYG,
-						'default' => __( 'Toggle Content', 'elementor' ),
-						'show_label' => false,
 					],
 				],
 				'title_field' => '{{{ tab_title }}}',
@@ -114,6 +135,28 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
+			]
+		);
+
+		$this->add_control(
+			'icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => is_rtl() ? 'fa fa-caret-left' : 'fa fa-caret-right',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'icon_active',
+			[
+				'label' => __( 'Active Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-caret-up',
+				'condition' => [
+					'icon!' => '',
+				],
 			]
 		);
 
@@ -133,29 +176,6 @@ class Widget_Toggle extends Widget_Base {
 				],
 				'default' => 'div',
 				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'icon',
-			[
-				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => is_rtl() ? 'fa fa-caret-left' : 'fa fa-caret-right',
-				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
-			'icon_active',
-			[
-				'label' => __( 'Active Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-caret-up',
-				'label_block' => true,
-				'condition' => [
-					'icon!' => '',
-				],
 			]
 		);
 

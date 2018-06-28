@@ -57,6 +57,20 @@ class Widget_Social_Icons extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'social', 'icon', 'link' ];
+	}
+
+	/**
 	 * Register social icons widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -72,11 +86,89 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'social',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'label_block' => true,
+				'default' => 'fa fa-wordpress',
+				'include' => [
+					'fa fa-android',
+					'fa fa-apple',
+					'fa fa-behance',
+					'fa fa-bitbucket',
+					'fa fa-codepen',
+					'fa fa-delicious',
+					'fa fa-digg',
+					'fa fa-dribbble',
+					'fa fa-envelope',
+					'fa fa-facebook',
+					'fa fa-flickr',
+					'fa fa-foursquare',
+					'fa fa-github',
+					'fa fa-google-plus',
+					'fa fa-houzz',
+					'fa fa-instagram',
+					'fa fa-jsfiddle',
+					'fa fa-linkedin',
+					'fa fa-medium',
+					'fa fa-odnoklassniki',
+					'fa fa-meetup',
+					'fa fa-pinterest',
+					'fa fa-product-hunt',
+					'fa fa-reddit',
+					'fa fa-rss',
+					'fa fa-shopping-cart',
+					'fa fa-skype',
+					'fa fa-slideshare',
+					'fa fa-snapchat',
+					'fa fa-soundcloud',
+					'fa fa-spotify',
+					'fa fa-stack-overflow',
+					'fa fa-steam',
+					'fa fa-stumbleupon',
+					'fa fa-telegram',
+					'fa fa-thumb-tack',
+					'fa fa-tripadvisor',
+					'fa fa-tumblr',
+					'fa fa-twitch',
+					'fa fa-twitter',
+					'fa fa-vimeo',
+					'fa fa-vk',
+					'fa fa-weibo',
+					'fa fa-weixin',
+					'fa fa-whatsapp',
+					'fa fa-wordpress',
+					'fa fa-xing',
+					'fa fa-yelp',
+					'fa fa-youtube',
+					'fa fa-500px',
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'link',
+			[
+				'label' => __( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'label_block' => true,
+				'default' => [
+					'is_external' => 'true',
+				],
+				'placeholder' => __( 'https://your-link.com', 'elementor' ),
+			]
+		);
+
 		$this->add_control(
 			'social_icon_list',
 			[
 				'label' => __( 'Social Icons', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
 						'social' => 'fa fa-facebook',
@@ -86,75 +178,6 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 					[
 						'social' => 'fa fa-google-plus',
-					],
-				],
-				'fields' => [
-					[
-						'name' => 'social',
-						'label' => __( 'Icon', 'elementor' ),
-						'type' => Controls_Manager::ICON,
-						'label_block' => true,
-						'default' => 'fa fa-wordpress',
-						'include' => [
-							'fa fa-apple',
-							'fa fa-behance',
-							'fa fa-bitbucket',
-							'fa fa-codepen',
-							'fa fa-delicious',
-							'fa fa-digg',
-							'fa fa-dribbble',
-							'fa fa-envelope',
-							'fa fa-facebook',
-							'fa fa-flickr',
-							'fa fa-foursquare',
-							'fa fa-github',
-							'fa fa-google-plus',
-							'fa fa-houzz',
-							'fa fa-instagram',
-							'fa fa-jsfiddle',
-							'fa fa-linkedin',
-							'fa fa-medium',
-							'fa fa-odnoklassniki',
-							'fa fa-meetup',
-							'fa fa-pinterest',
-							'fa fa-product-hunt',
-							'fa fa-reddit',
-							'fa fa-rss',
-							'fa fa-shopping-cart',
-							'fa fa-skype',
-							'fa fa-slideshare',
-							'fa fa-snapchat',
-							'fa fa-soundcloud',
-							'fa fa-spotify',
-							'fa fa-stack-overflow',
-							'fa fa-steam',
-							'fa fa-stumbleupon',
-							'fa fa-telegram',
-							'fa fa-tripadvisor',
-							'fa fa-tumblr',
-							'fa fa-twitch',
-							'fa fa-twitter',
-							'fa fa-vimeo',
-							'fa fa-vk',
-							'fa fa-weibo',
-							'fa fa-weixin',
-							'fa fa-whatsapp',
-							'fa fa-wordpress',
-							'fa fa-xing',
-							'fa fa-yelp',
-							'fa fa-youtube',
-							'fa fa-500px',
-						],
-					],
-					[
-						'name' => 'link',
-						'label' => __( 'Link', 'elementor' ),
-						'type' => Controls_Manager::URL,
-						'label_block' => true,
-						'default' => [
-							'is_external' => 'true',
-						],
-						'placeholder' => __( 'https://your-link.com', 'elementor' ),
 					],
 				],
 				'title_field' => '<i class="{{ social }}"></i> {{{ social.replace( \'fa fa-\', \'\' ).replace( \'-\', \' \' ).replace( /\b\w/g, function( letter ){ return letter.toUpperCase() } ) }}}',

@@ -49,41 +49,18 @@ class Element_Section extends Element_Base {
 	private static $presets = [];
 
 	/**
-	 * Get default edit tools.
+	 * Get element type.
 	 *
-	 * Retrieve the section default edit tools. Used to set initial tools.
+	 * Retrieve the element type, in this case `section`.
 	 *
-	 * @since 1.0.0
-	 * @access protected
+	 * @since 2.1.0
+	 * @access public
 	 * @static
 	 *
-	 * @return array Default section edit tools.
+	 * @return string The type.
 	 */
-	protected static function get_default_edit_tools() {
-		$section_label = __( 'Section', 'elementor' );
-
-		return [
-			'duplicate' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $section_label ),
-				'icon' => 'clone',
-			],
-			'add' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
-				'icon' => 'plus',
-			],
-			'save' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Save %s', 'elementor' ), $section_label ),
-				'icon' => 'save',
-			],
-			'remove' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
-				'icon' => 'close',
-			],
-		];
+	public static function get_type() {
+		return 'section';
 	}
 
 	/**
@@ -225,6 +202,39 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
+	 * Get default edit tools.
+	 *
+	 * Retrieve the section default edit tools. Used to set initial tools.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 * @static
+	 *
+	 * @return array Default section edit tools.
+	 */
+	protected static function get_default_edit_tools() {
+		$section_label = __( 'Section', 'elementor' );
+
+		return [
+			'add' => [
+				/* translators: %s: Section label */
+				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
+				'icon' => 'plus',
+			],
+			'edit' => [
+				/* translators: %s: Section label */
+				'title' => sprintf( __( 'Edit %s', 'elementor' ), $section_label ),
+				'icon' => 'handle',
+			],
+			'remove' => [
+				/* translators: %s: Section label */
+				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
+				'icon' => 'close',
+			],
+		];
+	}
+
+	/**
 	 * Get initial config.
 	 *
 	 * Retrieve the current section initial configuration.
@@ -272,9 +282,10 @@ class Element_Section extends Element_Base {
 				'default' => '',
 				'return_value' => 'section-stretched',
 				'prefix_class' => 'elementor-',
-				'render_type' => 'template',
 				'hide_in_inner' => true,
 				'description' => __( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/stretch-section/', __( 'Learn more.', 'elementor' ) ),
+				'render_type' => 'none',
+				'frontend_available' => true,
 			]
 		);
 
@@ -454,6 +465,7 @@ class Element_Section extends Element_Base {
 			'div',
 			'header',
 			'footer',
+			'main',
 			'article',
 			'section',
 			'aside',
@@ -470,6 +482,7 @@ class Element_Section extends Element_Base {
 				'label' => __( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
+				'separator' => 'before',
 			]
 		);
 
@@ -515,6 +528,12 @@ class Element_Section extends Element_Base {
 					'video_link' => [
 						'frontend_available' => true,
 					],
+					'video_start' => [
+						'frontend_available' => true,
+					],
+					'video_end' => [
+						'frontend_available' => true,
+					],
 				],
 			]
 		);
@@ -551,6 +570,7 @@ class Element_Section extends Element_Base {
 					],
 				],
 				'render_type' => 'ui',
+				'separator' => 'before',
 			]
 		);
 
@@ -612,6 +632,29 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'overlay_blend_mode',
+			[
+				'label' => __( 'Blend Mode', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => __( 'Normal', 'elementor' ),
+					'multiply' => 'Multiply',
+					'screen' => 'Screen',
+					'overlay' => 'Overlay',
+					'darken' => 'Darken',
+					'lighten' => 'Lighten',
+					'color-dodge' => 'Color Dodge',
+					'saturation' => 'Saturation',
+					'color' => 'Color',
+					'luminosity' => 'Luminosity',
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
+				],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
@@ -667,6 +710,7 @@ class Element_Section extends Element_Base {
 					],
 				],
 				'render_type' => 'ui',
+				'separator' => 'before',
 			]
 		);
 
@@ -762,6 +806,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'separator' => 'before',
 				'default' => [
 					'size' => 0.3,
 				],
@@ -913,7 +958,7 @@ class Element_Section extends Element_Base {
 						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'transform: rotateY(180deg)',
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'transform: translateX(-50%) rotateY(180deg)',
 					],
 				]
 			);
@@ -1094,7 +1139,6 @@ class Element_Section extends Element_Base {
 				'label' => __( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
-				'placeholder' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
@@ -1265,15 +1309,9 @@ class Element_Section extends Element_Base {
 	 * @access protected
 	 */
 	protected function render_edit_tools() {
-		/* translators: %s: Section label */
-		$edit_title = sprintf( __( 'Edit %s', 'elementor' ), __( 'Section', 'elementor' ) );
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger elementor-active" title="<?php echo esc_attr( $edit_title ); ?>">
-					<i class="eicon-section" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php echo esc_html( $edit_title ); ?></span>
-				</li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<?php if ( 'add' === $edit_tool_name ) : ?>
 						<# if ( ! isInner ) { #>

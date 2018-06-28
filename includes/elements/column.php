@@ -16,50 +16,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Element_Column extends Element_Base {
 
 	/**
-	 * Column edit tools.
+	 * Element edit tools.
 	 *
-	 * Holds the column edit tools.
+	 * Holds all the edit tools of the element. For example: delete, duplicate etc.
 	 *
-	 * @since 1.0.0
 	 * @access protected
 	 * @static
 	 *
-	 * @var array Column edit tools.
+	 * @var array
 	 */
 	protected static $_edit_tools;
-
-	/**
-	 * Get default edit tools.
-	 *
-	 * Retrieve the column default edit tools. Used to set initial tools.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 * @static
-	 *
-	 * @return array Default column edit tools.
-	 */
-	protected static function get_default_edit_tools() {
-		$column_label = __( 'Column', 'elementor' );
-
-		return [
-			'duplicate' => [
-				/* translators: %s: Column label */
-				'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $column_label ),
-				'icon' => 'clone',
-			],
-			'add' => [
-				/* translators: %s: Column label */
-				'title' => sprintf( __( 'Add %s', 'elementor' ), $column_label ),
-				'icon' => 'plus',
-			],
-			'remove' => [
-				/* translators: %s: Column label */
-				'title' => sprintf( __( 'Remove %s', 'elementor' ), $column_label ),
-				'icon' => 'close',
-			],
-		];
-	}
 
 	/**
 	 * Get column name.
@@ -72,6 +38,21 @@ class Element_Column extends Element_Base {
 	 * @return string Column name.
 	 */
 	public function get_name() {
+		return 'column';
+	}
+
+	/**
+	 * Get element type.
+	 *
+	 * Retrieve the element type, in this case `column`.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 * @static
+	 *
+	 * @return string The type.
+	 */
+	public static function get_type() {
 		return 'column';
 	}
 
@@ -101,6 +82,26 @@ class Element_Column extends Element_Base {
 	 */
 	public function get_icon() {
 		return 'eicon-column';
+	}
+
+	/**
+	 * Get default edit tools.
+	 *
+	 * Retrieve the element default edit tools. Used to set initial tools.
+	 *
+	 * @since 2.1.0
+	 * @access protected
+	 * @static
+	 *
+	 * @return array Default edit tools.
+	 */
+	protected static function get_default_edit_tools() {
+		return [
+			'edit' => [
+				'title' => __( 'Edit', 'elementor' ),
+				'icon' => 'column',
+			],
+		];
 	}
 
 	/**
@@ -187,6 +188,7 @@ class Element_Column extends Element_Base {
 			'div',
 			'header',
 			'footer',
+			'main',
 			'article',
 			'section',
 			'aside',
@@ -265,6 +267,7 @@ class Element_Column extends Element_Base {
 					],
 				],
 				'render_type' => 'ui',
+				'separator' => 'before',
 			]
 		);
 
@@ -381,6 +384,7 @@ class Element_Column extends Element_Base {
 					],
 				],
 				'render_type' => 'ui',
+				'separator' => 'before',
 			]
 		);
 
@@ -477,6 +481,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'separator' => 'before',
 				'default' => [
 					'size' => 0.3,
 				],
@@ -650,7 +655,6 @@ class Element_Column extends Element_Base {
 				'label' => __( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
-				'placeholder' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
@@ -729,65 +733,6 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
-		$this->start_controls_section(
-			'section_responsive',
-			[
-				'label' => __( 'Responsive', 'elementor' ),
-				'tab' => Controls_Manager::TAB_ADVANCED,
-			]
-		);
-
-		$this->add_control(
-			'screen_sm',
-			[
-				'label' => __( 'Mobile Width', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => [
-					'default' => __( 'Default', 'elementor' ),
-					'custom' => __( 'Custom', 'elementor' ),
-				],
-				'classes' => 'elementor-control-deprecated',
-				'description' => __( 'Deprecated: Mobile Width control is no longer supported. Please use the Column Width control in the Layout tab instead.', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
-			'screen_sm_width',
-			[
-				'label' => __( 'Column Width', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'10' => '10%',
-					'11' => '11%',
-					'12' => '12%',
-					'14' => '14%',
-					'16' => '16%',
-					'20' => '20%',
-					'25' => '25%',
-					'30' => '30%',
-					'33' => '33%',
-					'40' => '40%',
-					'50' => '50%',
-					'60' => '60%',
-					'66' => '66%',
-					'70' => '70%',
-					'75' => '75%',
-					'80' => '80%',
-					'83' => '83%',
-					'90' => '90%',
-					'100' => '100%',
-				],
-				'default' => '100',
-				'condition' => [
-					'screen_sm' => [ 'custom' ],
-				],
-				'prefix_class' => 'elementor-sm-',
-			]
-		);
-
-		$this->end_controls_section();
-
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
@@ -803,10 +748,6 @@ class Element_Column extends Element_Base {
 		?>
 		<div class="elementor-element-overlay">
 			<ul class="elementor-editor-element-settings elementor-editor-column-settings">
-				<li class="elementor-editor-element-setting elementor-editor-element-trigger" title="<?php echo esc_attr( sprintf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ) ); ?>">
-					<i class="eicon-column" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php printf( __( 'Edit %s', 'elementor' ), __( 'Column', 'elementor' ) ); ?></span>
-				</li>
 				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
 					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
 						<i class="eicon-<?php echo $edit_tool['icon']; ?>" aria-hidden="true"></i>
