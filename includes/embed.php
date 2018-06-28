@@ -152,6 +152,7 @@ class Embed {
 		}
 
 		$default_frame_attributes = [
+			'class' => 'elementor-video-iframe',
 			'src' => $video_embed_url,
 			'allowfullscreen',
 		];
