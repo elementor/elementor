@@ -53,7 +53,7 @@ class Dynamic_CSS extends Post_CSS_File {
 		$css = $this->get_css();
 
 		$meta = [
-			'status' => self::CSS_STATUS_INLINE,
+			'status' => $css ? self::CSS_STATUS_INLINE : self::CSS_STATUS_EMPTY,
 			'fonts' => $this->get_fonts(),
 			'css' => $css,
 		];
