@@ -576,6 +576,18 @@
 	}
 }
 
+// = Set direction control by class
+.elementor-control-direction- {
+
+	&ltr {
+		direction: ltr;
+	}
+
+	&rtl {
+		direction: rtl;
+	}
+}
+
 @import "controls/media";
 
 @import "controls/dimensions";
