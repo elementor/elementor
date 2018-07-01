@@ -6,8 +6,8 @@ VideoModule = HandlerModule.extend( {
 		return {
 			selectors: {
 				imageOverlay: '.elementor-custom-embed-image-overlay',
-				videoWrapper: '.elementor-wrapper',
-				videoFrame: 'iframe'
+				video: '.elementor-video',
+				videoIframe: '.elementor-video-iframe'
 			}
 		};
 	},
@@ -15,14 +15,11 @@ VideoModule = HandlerModule.extend( {
 	getDefaultElements: function() {
 		var selectors = this.getSettings( 'selectors' );
 
-		var elements = {
+		return {
 			$imageOverlay: this.$element.find( selectors.imageOverlay ),
-			$videoWrapper: this.$element.find( selectors.videoWrapper )
+			$video: this.$element.find( selectors.video ),
+			$videoIframe: this.$element.find( selectors.videoIframe )
 		};
-
-		elements.$videoFrame = elements.$videoWrapper.find( selectors.videoFrame );
-
-		return elements;
 	},
 
 	getLightBox: function() {
@@ -38,10 +35,16 @@ VideoModule = HandlerModule.extend( {
 	},
 
 	playVideo: function() {
-		var $videoFrame = this.elements.$videoFrame,
-			newSourceUrl = $videoFrame[0].src.replace( '&autoplay=0', '' );
+		if ( this.elements.$video.length ) {
+			this.elements.$video[0].play();
 
-		$videoFrame[0].src = newSourceUrl + '&autoplay=1';
+			return;
+		}
+
+		var $videoIframe = this.elements.$videoIframe,
+			newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
+
+		$videoIframe[0].src = newSourceUrl + '&autoplay=1';
 	},
 
 	animateVideo: function() {
