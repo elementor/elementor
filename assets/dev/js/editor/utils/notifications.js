@@ -56,7 +56,9 @@ module.exports = Module.extend( {
 					} );
 				}
 			},
-			buttonTag: 'div'
+			button: {
+				tag: 'div'
+			}
 		} );
 
 		this.getToast = function() {

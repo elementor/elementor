@@ -36,6 +36,15 @@ module.exports = Marionette.Behavior.extend( {
 				} );
 
 				dialog.addButton( {
+					name: 'learn-more',
+					text: elementor.translate( 'learn_more' ),
+					tag: 'div',
+					callback: function() {
+						open( elementor.config.help_right_click_url, '_blank' );
+					}
+				} );
+
+				dialog.addButton( {
 					name: 'ok',
 					text: elementor.translate( 'got_it' ),
 					callback: this.setIntroductionViewed.bind( this )

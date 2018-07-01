@@ -309,9 +309,13 @@ html.elementor-html {
 	width: 25px;
 	transition: margin .3s, width .3s, font .3s;
 
-	&:not(.elementor-editor-element-edit) {
+	@media (max-width: $editor-screen-md-max) {
 
-		@media (max-width: $editor-screen-md-max) {
+		&.elementor-editor-element-edit {
+			border-radius: 5px 5px 0 0;
+		}
+
+		&:not(.elementor-editor-element-edit) {
 			display: none;
 		}
 	}
@@ -444,6 +448,10 @@ html.elementor-html {
 					top: 0;
 					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
 				}
+			}
+
+			@media (max-width: $editor-screen-md-max) {
+				border-radius: 0 0 5px 5px;
 			}
 		}
 	}
