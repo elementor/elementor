@@ -213,12 +213,6 @@ var StretchedSection = HandlerModule.extend( {
 
 		this.initStretch();
 
-		var isStretched = this.getElementSettings( 'stretch_section' );
-
-		if ( elementorFrontend.isEditMode() || isStretched ) {
-			this.stretchElement.reset();
-		}
-
 		this.stretch();
 	},
 
