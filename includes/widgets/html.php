@@ -97,7 +97,7 @@ class Widget_Html extends Widget_Base {
 					'active' => true,
 					'categories' => [
 						TagsModule::POST_META_CATEGORY,
-						TagsModule::TEXT,
+						TagsModule::TEXT_CATEGORY,
 					],
 				],
 				'default' => '',
