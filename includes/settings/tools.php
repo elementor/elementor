@@ -255,7 +255,7 @@ class Tools extends Settings_Page {
 										'no' => __( 'Disable', 'elementor' ),
 										'yes' => __( 'Enable', 'elementor' ),
 									],
-									'desc' => __( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ),
+									'desc' => '<span style="color: red;">' . __( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) . '</span>',
 								],
 							],
 						],
