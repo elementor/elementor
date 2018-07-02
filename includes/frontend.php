@@ -468,8 +468,10 @@ class Frontend {
 
 		wp_enqueue_script( 'elementor-frontend' );
 
+		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
+
 		$elementor_frontend_config = [
-			'isEditMode' => Plugin::$instance->preview->is_preview_mode(),
+			'isEditMode' => $is_preview_mode,
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'urls' => [
@@ -494,7 +496,7 @@ class Frontend {
 			];
 		}
 
-		if ( Plugin::$instance->preview->is_preview_mode() ) {
+		if ( $is_preview_mode ) {
 			$elements_manager = Plugin::$instance->elements_manager;
 
 			$elements_frontend_keys = [
