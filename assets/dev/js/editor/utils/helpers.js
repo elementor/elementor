@@ -239,6 +239,34 @@ helpers = {
 				scrollTop: view.$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
 			} );
 		}, 500 );
+	},
+
+	compareVersions: function( versionA, versionB, operator ) {
+		var prepareVersion = function( version ) {
+			version = version + '';
+
+			return version.replace( /[^\d.]+/, '.-1.' );
+		};
+
+		versionA  = prepareVersion( versionA );
+		versionB = prepareVersion( versionB );
+
+		if ( versionA === versionB ) {
+			return ! operator || /^={2,3}$/.test( operator );
+		}
+
+		var versionAParts = versionA.split( '.' ).map( Number ),
+			versionBParts = versionB.split( '.' ).map( Number ),
+			longestVersionParts = Math.max( versionAParts.length, versionBParts.length );
+
+		for ( var i = 0; i < longestVersionParts; i++ ) {
+			var valueA = versionAParts[ i ] || 0,
+				valueB = versionBParts[ i ] || 0;
+
+			if ( valueA !== valueB ) {
+				return this.conditions.compare( valueA, valueB, operator );
+			}
+		}
 	}
 };
 
