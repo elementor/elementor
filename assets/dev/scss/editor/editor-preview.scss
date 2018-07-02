@@ -90,6 +90,20 @@ html.elementor-html {
 		}
 	}
 
+	// It's here in order to override some themes default css
+	.elementor-editor-element-setting {
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		margin: 0;
+		font-size: 11px;
+		color: #fff;
+		width: 25px;
+		transition: margin .3s, width .3s, font .3s;
+	}
+
 	.handle {
 		display: none; //TEMP
 	}
@@ -298,16 +312,6 @@ html.elementor-html {
 }
 
 .elementor-editor-element-setting {
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0;
-	margin: 0;
-	font-size: 11px;
-	color: #fff;
-	width: 25px;
-	transition: margin .3s, width .3s, font .3s;
 
 	@media (max-width: $editor-screen-md-max) {
 
