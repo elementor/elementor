@@ -225,7 +225,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * New: Copy/Paste element style ([#1479](https://github.com/pojome/elementor/issues/1479))
 * New: Copy/Paste between pages
 * New: Reset element style
-* New: Added `copy_all_content` action
+* New: Added `copy_all_content` option
 * New: Change mobile & tablet breakpoints ([#78](https://github.com/pojome/elementor/issues/78))
 * New: Introducing Elementor WP-CLI integration ([#2161](https://github.com/pojome/elementor/issues/2161))
 * New: Added collapsable panel categories ([#3805](https://github.com/pojome/elementor/issues/3805))
