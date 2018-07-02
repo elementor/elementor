@@ -654,7 +654,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'units' => [ '%' ],
 				'default' => [
 					'unit' => '%',
 				],

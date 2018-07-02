@@ -285,7 +285,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'units' => [ '%' ],
 				'default' => [
 					'unit' => '%',
 				],
