@@ -644,6 +644,179 @@ App = Marionette.Application.extend( {
 		}
 	},
 
+	setResizablePanel: function() {
+		var self = this,
+			side = elementor.config.is_rtl ? 'right' : 'left';
+
+		self.panel.$el.resizable( {
+			handles: elementor.config.is_rtl ? 'w' : 'e',
+			minWidth: 200,
+			maxWidth: 680,
+			start: function() {
+				self.$previewWrapper
+					.addClass( 'ui-resizable-resizing' )
+					.css( 'pointer-events', 'none' );
+			},
+			stop: function() {
+				self.$previewWrapper
+					.removeClass( 'ui-resizable-resizing' )
+					.css( 'pointer-events', '' );
+
+				elementor.getPanelView().updateScrollbar();
+			},
+			resize: function( event, ui ) {
+				self.$previewWrapper
+					.css( side, ui.size.width );
+			}
+		} );
+	},
+
+	enterPreviewMode: function( hidePanel ) {
+		var $elements = elementorFrontend.getElements( '$body' );
+
+		if ( hidePanel ) {
+			$elements = $elements.add( this.$body );
+		}
+
+		$elements
+			.removeClass( 'elementor-editor-active' )
+			.addClass( 'elementor-editor-preview' );
+
+		this.$previewElementorEl
+			.removeClass( 'elementor-edit-area-active' )
+			.addClass( 'elementor-edit-area-preview' );
+
+		if ( hidePanel ) {
+			// Handle panel resize
+			this.$previewWrapper.css( this.config.is_rtl ? 'right' : 'left', '' );
+
+			this.panel.$el.css( 'width', '' );
+		}
+	},
+
+	exitPreviewMode: function() {
+		elementorFrontend.getElements( '$body' ).add( this.$body )
+			.removeClass( 'elementor-editor-preview' )
+			.addClass( 'elementor-editor-active' );
+
+		this.$previewElementorEl
+			.removeClass( 'elementor-edit-area-preview' )
+			.addClass( 'elementor-edit-area-active' );
+	},
+
+	changeEditMode: function( newMode ) {
+		var dataEditMode = elementor.channels.dataEditMode,
+			oldEditMode = dataEditMode.request( 'activeMode' );
+
+		dataEditMode.reply( 'activeMode', newMode );
+
+		if ( newMode !== oldEditMode ) {
+			dataEditMode.trigger( 'switch', newMode );
+		}
+	},
+
+	reloadPreview: function() {
+		jQuery( '#elementor-preview-loading' ).show();
+
+		this.$preview[0].contentWindow.location.reload( true );
+	},
+
+	clearPage: function() {
+		this.getClearPageDialog().show();
+	},
+
+	changeDeviceMode: function( newDeviceMode ) {
+		var oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
+
+		if ( oldDeviceMode === newDeviceMode ) {
+			return;
+		}
+
+		this.$body
+			.removeClass( 'elementor-device-' + oldDeviceMode )
+			.addClass( 'elementor-device-' + newDeviceMode );
+
+		this.channels.deviceMode
+			.reply( 'previousMode', oldDeviceMode )
+			.reply( 'currentMode', newDeviceMode )
+			.trigger( 'change' );
+	},
+
+	enqueueTypographyFonts: function() {
+		var self = this,
+			typographyScheme = this.schemes.getScheme( 'typography' );
+
+		self.helpers.resetEnqueuedFontsCache();
+
+		_.each( typographyScheme.items, function( item ) {
+			self.helpers.enqueueFont( item.value.font_family );
+		} );
+	},
+
+	translate: function( stringKey, templateArgs, i18nStack ) {
+		if ( ! i18nStack ) {
+			i18nStack = this.config.i18n;
+		}
+
+		var string = i18nStack[ stringKey ];
+
+		if ( undefined === string ) {
+			string = stringKey;
+		}
+
+		if ( templateArgs ) {
+			// TODO: bc since 2.0.4
+			string = string.replace( /{(\d+)}/g, function( match, number ) {
+				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
+			} );
+
+			string = string.replace( /%(?:(\d+)\$)?s/g, function( match, number ) {
+				if ( ! number ) {
+					number = 1;
+				}
+
+				number--;
+
+				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
+			} );
+		}
+
+		return string;
+	},
+
+	logSite: function() {
+		var text = '',
+			style = '';
+
+		if ( this.envData.gecko ) {
+			var asciiText = [
+				' ;;;;;;;;;;;;;;; ',
+				';;;  ;;       ;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;       ;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;;;;;;;;;;;',
+				';;;  ;;       ;;;',
+				' ;;;;;;;;;;;;;;; '
+			];
+
+			text += '%c' + asciiText.join( '\n' ) + '\n';
+
+			style = 'color: #C42961';
+		} else {
+			text += '%c00';
+
+			style = 'font-size: 22px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
+		}
+
+		setTimeout( console.log.bind( console, text, style ) );
+
+		text = '%cLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
+
+		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) );
+	},
+
 	onStart: function() {
 		this.$window = jQuery( window );
 
@@ -842,179 +1015,6 @@ App = Marionette.Application.extend( {
 
 			jQuery( elementToHide ).not( $clickedTargetClosestElement ).hide();
 		} );
-	},
-
-	setResizablePanel: function() {
-		var self = this,
-			side = elementor.config.is_rtl ? 'right' : 'left';
-
-		self.panel.$el.resizable( {
-			handles: elementor.config.is_rtl ? 'w' : 'e',
-			minWidth: 200,
-			maxWidth: 680,
-			start: function() {
-				self.$previewWrapper
-					.addClass( 'ui-resizable-resizing' )
-					.css( 'pointer-events', 'none' );
-			},
-			stop: function() {
-				self.$previewWrapper
-					.removeClass( 'ui-resizable-resizing' )
-					.css( 'pointer-events', '' );
-
-				elementor.getPanelView().updateScrollbar();
-			},
-			resize: function( event, ui ) {
-				self.$previewWrapper
-					.css( side, ui.size.width );
-			}
-		} );
-	},
-
-	enterPreviewMode: function( hidePanel ) {
-		var $elements = elementorFrontend.getElements( '$body' );
-
-		if ( hidePanel ) {
-			$elements = $elements.add( this.$body );
-		}
-
-		$elements
-			.removeClass( 'elementor-editor-active' )
-			.addClass( 'elementor-editor-preview' );
-
-		this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-active' )
-			.addClass( 'elementor-edit-area-preview' );
-
-		if ( hidePanel ) {
-			// Handle panel resize
-			this.$previewWrapper.css( this.config.is_rtl ? 'right' : 'left', '' );
-
-			this.panel.$el.css( 'width', '' );
-		}
-	},
-
-	exitPreviewMode: function() {
-		elementorFrontend.getElements( '$body' ).add( this.$body )
-			.removeClass( 'elementor-editor-preview' )
-			.addClass( 'elementor-editor-active' );
-
-		this.$previewElementorEl
-			.removeClass( 'elementor-edit-area-preview' )
-			.addClass( 'elementor-edit-area-active' );
-	},
-
-	changeEditMode: function( newMode ) {
-		var dataEditMode = elementor.channels.dataEditMode,
-			oldEditMode = dataEditMode.request( 'activeMode' );
-
-		dataEditMode.reply( 'activeMode', newMode );
-
-		if ( newMode !== oldEditMode ) {
-			dataEditMode.trigger( 'switch', newMode );
-		}
-	},
-
-	reloadPreview: function() {
-		jQuery( '#elementor-preview-loading' ).show();
-
-		this.$preview[0].contentWindow.location.reload( true );
-	},
-
-	clearPage: function() {
-		this.getClearPageDialog().show();
-	},
-
-	changeDeviceMode: function( newDeviceMode ) {
-		var oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
-
-		if ( oldDeviceMode === newDeviceMode ) {
-			return;
-		}
-
-		this.$body
-			.removeClass( 'elementor-device-' + oldDeviceMode )
-			.addClass( 'elementor-device-' + newDeviceMode );
-
-		this.channels.deviceMode
-			.reply( 'previousMode', oldDeviceMode )
-			.reply( 'currentMode', newDeviceMode )
-			.trigger( 'change' );
-	},
-
-	enqueueTypographyFonts: function() {
-		var self = this,
-			typographyScheme = this.schemes.getScheme( 'typography' );
-
-		self.helpers.resetEnqueuedFontsCache();
-
-		_.each( typographyScheme.items, function( item ) {
-			self.helpers.enqueueFont( item.value.font_family );
-		} );
-	},
-
-	translate: function( stringKey, templateArgs, i18nStack ) {
-		if ( ! i18nStack ) {
-			i18nStack = this.config.i18n;
-		}
-
-		var string = i18nStack[ stringKey ];
-
-		if ( undefined === string ) {
-			string = stringKey;
-		}
-
-		if ( templateArgs ) {
-			// TODO: bc since 2.0.4
-			string = string.replace( /{(\d+)}/g, function( match, number ) {
-				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
-			} );
-
-			string = string.replace( /%(?:(\d+)\$)?s/g, function( match, number ) {
-				if ( ! number ) {
-					number = 1;
-				}
-
-				number--;
-
-				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
-			} );
-		}
-
-		return string;
-	},
-
-	logSite: function() {
-		var text = '',
-			style = '';
-
-		if ( this.envData.gecko ) {
-			var asciiText = [
-				' ;;;;;;;;;;;;;;; ',
-				';;;  ;;       ;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;       ;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;       ;;;',
-				' ;;;;;;;;;;;;;;; '
-			];
-
-			text += '%c' + asciiText.join( '\n' ) + '\n';
-
-			style = 'color: #C42961';
-		} else {
-			text += '%c00';
-
-			style = 'font-size: 22px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
-		}
-
-		setTimeout( console.log.bind( console, text, style ) );
-
-		text = '%cLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
-
-		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) );
 	}
 } );
 
