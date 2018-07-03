@@ -285,9 +285,8 @@ LightboxModule = ViewModule.extend( {
 			return;
 		}
 
-		var classes = this.getSettings( 'classes' );
-
-		var $videoContainer = jQuery( '<div>', { 'class': classes.videoContainer + ' ' + classes.invisible } ),
+		var classes = this.getSettings( 'classes' ),
+			$videoContainer = jQuery( '<div>', { 'class': classes.videoContainer + ' ' + classes.invisible } ),
 			$videoWrapper = jQuery( '<div>', { 'class': classes.videoWrapper } ),
 			$videoFrame = jQuery( '<iframe>', { src: videoURL } ),
 			$playIcon = $activeSlide.children( '.' + classes.playButton );

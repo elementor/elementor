@@ -85,7 +85,7 @@ class Widget_Video extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'video', 'player', 'embed' ];
+		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion' ];
 	}
 
 	/**
@@ -128,6 +128,7 @@ class Widget_Video extends Widget_Base {
 					'active' => true,
 					'categories' => [
 						TagsModule::POST_META_CATEGORY,
+						TagsModule::URL_CATEGORY,
 					],
 				],
 				'placeholder' => __( 'Enter your YouTube URL', 'elementor' ),
@@ -148,6 +149,7 @@ class Widget_Video extends Widget_Base {
 					'active' => true,
 					'categories' => [
 						TagsModule::POST_META_CATEGORY,
+						TagsModule::URL_CATEGORY,
 					],
 				],
 				'placeholder' => __( 'Enter your Vimeo URL', 'elementor' ),
@@ -168,6 +170,7 @@ class Widget_Video extends Widget_Base {
 					'active' => true,
 					'categories' => [
 						TagsModule::POST_META_CATEGORY,
+						TagsModule::URL_CATEGORY,
 					],
 				],
 				'placeholder' => __( 'Enter your Dailymotion URL', 'elementor' ),
@@ -184,6 +187,13 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'URL', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::MEDIA_CATEGORY,
+					],
+				],
 				'media_type' => 'video',
 				'condition' => [
 					'video_type' => 'hosted',
@@ -986,7 +996,7 @@ class Widget_Video extends Widget_Base {
 
 		$video_url = $this->get_hosted_video_url();
 		?>
-		<video src="<?php echo esc_url( $video_url ); ?>" <?php echo implode( ' ', $video_params ); ?>></video>
+		<video class="elementor-video" src="<?php echo esc_url( $video_url ); ?>" <?php echo implode( ' ', $video_params ); ?>></video>
 		<?php
 	}
 }

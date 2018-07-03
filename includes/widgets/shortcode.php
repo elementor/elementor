@@ -105,6 +105,9 @@ class Widget_Shortcode extends Widget_Base {
 			[
 				'label' => __( 'Enter your shortcode', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => '[gallery id="123" size="medium"]',
 				'default' => '',
 			]
