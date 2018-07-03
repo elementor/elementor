@@ -340,11 +340,11 @@ class Elements_Manager {
 				'icon' => 'eicon-font',
 			],
 			'theme-elements' => [
-				'title' => __( 'Site', 'elementor-pro' ),
+				'title' => __( 'Site', 'elementor' ),
 				'icon' => 'font',
 			],
 			'woocommerce-elements' => [
-				'title' => __( 'WooCommerce', 'elementor-pro' ),
+				'title' => __( 'WooCommerce', 'elementor' ),
 				'icon' => 'font',
 			],
 		];
