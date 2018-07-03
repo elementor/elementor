@@ -143,29 +143,6 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'_element_id',
-			[
-				'label' => __( 'CSS ID', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'label_block' => false,
-			]
-		);
-
-		$this->add_control(
-			'_css_classes',
-			[
-				'label' => __( 'CSS Classes', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'prefix_class' => '',
-				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
-				'label_block' => false,
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -397,6 +374,49 @@ class Widget_Common extends Widget_Base {
 				'label_on' => 'Hide',
 				'label_off' => 'Show',
 				'return_value' => 'hidden-phone',
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'_section_attributes',
+			[
+				'label' => __( 'Attributes', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'_element_id',
+			[
+				'label' => __( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
+			]
+		);
+
+		$this->add_control(
+			'_css_classes',
+			[
+				'label' => __( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'prefix_class' => '',
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'label_block' => false,
+			]
+		);
+
+		$this->add_control(
+			'_attributes',
+			[
+				'label' => __( 'Custom Attributes', 'elementor' ),
+				'type' => Controls_Manager::TEXTAREA,
+				'placeholder' => __( 'key|value', 'elementor' ),
+				'description' => sprintf( __( 'Set custom attributes for the wrapper element. Each attribute in a separate line. Separate attribute key from the value using %s character.', 'elementor' ), '<code>|</code>' ),
 			]
 		);
 

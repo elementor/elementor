@@ -738,16 +738,13 @@ abstract class Element_Base extends Controls_Stack {
 	protected function _add_render_attributes() {
 		$id = $this->get_id();
 
-		$this->add_render_attribute( '_wrapper', 'data-id', $id );
-
-		$this->add_render_attribute(
-			'_wrapper', 'class', [
-				'elementor-element',
-				'elementor-element-' . $id,
-			]
-		);
-
 		$settings = $this->get_active_settings();
+
+		if ( ! empty( $settings['_element_id'] ) ) {
+			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
+		}
+
+		$this->add_render_attribute( '_wrapper', 'class', [ 'elementor-element', 'elementor-element-' . $id ] );
 
 		$controls = $this->get_controls();
 
@@ -768,9 +765,39 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
 		}
 
-		if ( ! empty( $settings['_element_id'] ) ) {
-			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
+		if ( ! empty( $settings['_attributes'] ) ) {
+			$attributes = explode( "\n", $settings['_attributes'] );
+
+			// Not allowed attributes
+			$black_list = [ 'id', 'class', 'data-id', 'data-settings', 'data-element_type', 'data-model-cid', 'onload', 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup' ];
+
+			/**
+			 * Elementor attributes black list.
+			 *
+			 * Filters the attributes that won't be rendered in the wrapper element.
+			 *
+			 * By default Elementor don't render some attributes to prevent things
+			 * from breaking down. But this list of attributes can be changed.
+			 *
+			 * @since 2.1.0
+			 *
+			 * @param array $black_list A black list of attributes.
+			 */
+			$black_list = apply_filters( 'elementor/element/attributes/black_list', $black_list );
+
+			foreach ( $attributes as $attribute ) {
+				if ( ! empty( $attribute ) ) {
+					$attr = explode( "|", $attribute, 2 );
+					if ( ! isset( $attr[1] ) ) $attr[1] = '';
+
+					if ( ! in_array( strtolower( $attr[0] ), $black_list ) ) {
+						$this->add_render_attribute( '_wrapper', trim( $attr[0] ), trim( $attr[1] ) );
+					}
+				}
+			}
 		}
+
+		$this->add_render_attribute( '_wrapper', 'data-id', $id );
 
 		$frontend_settings = $this->get_frontend_settings();
 
