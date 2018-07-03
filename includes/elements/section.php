@@ -905,7 +905,6 @@ class Element_Section extends Element_Base {
 				[
 					'label' => __( 'Width', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'units' => [ '%' ],
 					'default' => [
 						'unit' => '%',
 					],
