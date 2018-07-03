@@ -339,6 +339,14 @@ class Elements_Manager {
 				'title' => __( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
+			'theme-elements' => [
+				'title' => __( 'Site', 'elementor-pro' ),
+				'icon' => 'font',
+			],
+			'woocommerce-elements' => [
+				'title' => __( 'WooCommerce', 'elementor-pro' ),
+				'icon' => 'font',
+			],
 		];
 
 		/**
