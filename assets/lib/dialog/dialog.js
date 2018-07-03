@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.4.0
+ * Dialogs Manager v4.4.1
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -696,13 +696,15 @@
 		addButton: function (options) {
 
 			var self = this,
-				$button = self.addElement(options.name, $('<' + this.getSettings('buttonTag') + '>').text(options.text), 'button');
+				settings = self.getSettings(),
+				buttonSettings = jQuery.extend(settings.button, options),
+				$button = self.addElement(options.name, $('<' + buttonSettings.tag + '>').text(options.text), 'button');
 
 			self.buttons.push($button);
 
 			var buttonFn = function () {
 
-				if (self.getSettings('hide').onButtonClick) {
+				if (settings.hide.onButtonClick) {
 					self.hide();
 				}
 
@@ -753,7 +755,9 @@
 				hide: {
 					onButtonClick: true
 				},
-				buttonTag: 'button'
+				button: {
+					tag: 'button'
+				}
 			};
 		},
 		onHide: function () {
