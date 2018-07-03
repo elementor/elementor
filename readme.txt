@@ -5,7 +5,7 @@ Requires at least: 4.7
 Tested up to: 4.9
 Requires PHP: 5.4
 Beta tag: 2.1.0-beta3
-Stable tag: 2.0.16
+Stable tag: 3.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -217,7 +217,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 2.1.0 - 2018-07-02 =
+= 2.1.0 - 2018-07-03 =
 * New: Introducing Elementor Context Menu
 * New: Copy/Paste elements ([#4151](https://github.com/pojome/elementor/issues/4151))
 * New: Copy/Paste element style ([#1479](https://github.com/pojome/elementor/issues/1479))
