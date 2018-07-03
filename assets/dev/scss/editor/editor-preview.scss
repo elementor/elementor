@@ -90,6 +90,20 @@ html.elementor-html {
 		}
 	}
 
+	// It's here in order to override some themes default css
+	.elementor-editor-element-setting {
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		margin: 0;
+		font-size: 11px;
+		color: #fff;
+		width: 25px;
+		transition: margin .3s, width .3s, font .3s;
+	}
+
 	.handle {
 		display: none; //TEMP
 	}
@@ -298,20 +312,14 @@ html.elementor-html {
 }
 
 .elementor-editor-element-setting {
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0;
-	margin: 0;
-	font-size: 11px;
-	color: #fff;
-	width: 25px;
-	transition: margin .3s, width .3s, font .3s;
 
-	&:not(.elementor-editor-element-edit) {
+	@media (max-width: $editor-screen-md-max) {
 
-		@media (max-width: $editor-screen-md-max) {
+		&.elementor-editor-element-edit {
+			border-radius: 5px 5px 0 0;
+		}
+
+		&:not(.elementor-editor-element-edit) {
 			display: none;
 		}
 	}
@@ -333,6 +341,10 @@ html.elementor-html {
 	background-color: $editor-info;
 	border-radius: 5px 5px 0 0;
 	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
+
+	i.eicon-handle {
+		font-size: 13px;
+	}
 
 	.elementor-editor-element-setting {
 
@@ -440,6 +452,10 @@ html.elementor-html {
 					top: 0;
 					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
 				}
+			}
+
+			@media (max-width: $editor-screen-md-max) {
+				border-radius: 0 0 5px 5px;
 			}
 		}
 	}
