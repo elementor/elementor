@@ -756,7 +756,7 @@ abstract class Element_Base extends Controls_Stack {
 		}, ARRAY_FILTER_USE_KEY );
 
 		foreach ( $class_settings as $setting_key => $setting ) {
-			if ( ! $setting ) {
+			if ( empty( $setting ) && '0' !== $setting ) {
 				continue;
 			}
 
