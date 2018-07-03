@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
-**Beta tag:** 2.1.0-beta1  
+**Beta tag:** 2.1.0-beta3  
 **Stable tag:** 2.0.16  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
@@ -218,6 +218,42 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.1.0 - 2018-07-02 ###
+* New: Introducing Elementor Context Menu
+* New: Copy/Paste elements ([#4151](https://github.com/pojome/elementor/issues/4151))
+* New: Copy/Paste element style ([#1479](https://github.com/pojome/elementor/issues/1479))
+* New: Copy/Paste between pages
+* New: Reset element style
+* New: Added `copy_all_content` option
+* New: Change mobile & tablet breakpoints ([#78](https://github.com/pojome/elementor/issues/78))
+* New: Introducing Elementor WP-CLI integration ([#2161](https://github.com/pojome/elementor/issues/2161))
+* New: Added collapsable panel categories ([#3805](https://github.com/pojome/elementor/issues/3805))
+* New: Added Self hosted videos with HTML5 for Video widget ([#3313](https://github.com/pojome/elementor/issues/3313))
+* New: Added Dailymotion provider for Video widget ([#2285](https://github.com/pojome/elementor/issues/2285))
+* New: Added start/end controls for Video widget ([#3565](https://github.com/pojome/elementor/issues/3565))
+* New: Added new icons to Social Icons widget: Android & Thumbtack ([#4235](https://github.com/pojome/elementor/issues/4235), [#4486](https://github.com/pojome/elementor/issues/4486))
+* New: Hotkey: Ctrl / Cmd + C = Copy
+* New: Hotkey: Ctrl / Cmd + V = Paste
+* Tweak: Added CSS Filter group control ([#3260](https://github.com/pojome/elementor/issues/3260))
+* Tweak: Added CSS Filters to Image & Image Box widgets
+* Tweak: Added compatibility with Gutenberg 3.0.+ ([#2631](https://github.com/pojome/elementor/issues/2631))
+* Tweak: Added CSS ID for Button widget ([#4535](https://github.com/pojome/elementor/issues/4535))
+* Tweak: Added keywords to all widgets for more accurate filtering
+* Tweak: Replace hover section with tabs Icon & Icon Box widgets
+* Tweak: Moved `delete all content` to the page level right click
+* Tweak: When converting content with only a shortcode to Elementor, a shortcode widget used instead of Text Editor widget (#4616)
+* Tweak: Updated Swiper library to v4.3.3 ([#4170](https://github.com/pojome/elementor/issues/4170))
+* Tweak: Added `elementor/shapes/additional_shapes` filter hook to allow custom shape dividers (#4759)
+* Tweak: Added video support to media control ([#4066](https://github.com/pojome/elementor/issues/4066))
+* Tweak: Dropped Support for WP v4.6, now supporting WP v4.7+
+* Fix: The `wpColorPicker` will not be updated after emptying the value
+* Fix: Added fallback for injection position when the injection control does not exist
+* Fix: Focus state behavior in the Repeater control ([#4596](https://github.com/pojome/elementor/issues/4596))
+* Deprecated: `Repeater::get_fields()` is replaced by `Repeater::get_controls()`
+* Deprecated: `Element_Base::get_parent()` is replaced by `Element_Base::get_data( 'parent' )`
+* Deprecated: `get_class_controls` is no longer supported
+* Deprecated: `\Elementor\settings\page\manager::get_page()` is now removed ([#4870](https://github.com/pojome/elementor/issues/4870))
 
 ### 2.0.16 - 2018-06-12 ###
 * Fix: Dynamic Tag CSS not working on columns & widgets ([#4662](https://github.com/pojome/elementor/issues/4662))
