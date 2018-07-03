@@ -249,6 +249,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Dropped Support for WP v4.6, now supporting WP v4.7+
 * Fix: The `wpColorPicker` will not be updated after emptying the value
 * Fix: Added fallback for injection position when the injection control does not exist
+* Fix: Focus state behavior in the Repeater control ([#4596](https://github.com/pojome/elementor/issues/4596))
 * Deprecated: `Repeater::get_fields()` is replaced by `Repeater::get_controls()`
 * Deprecated: `Element_Base::get_parent()` is replaced by `Element_Base::get_data( 'parent' )`
 * Deprecated: `get_class_controls` is no longer supported
