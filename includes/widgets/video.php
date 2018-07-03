@@ -85,7 +85,7 @@ class Widget_Video extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'video', 'player', 'embed' ];
+		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion' ];
 	}
 
 	/**
