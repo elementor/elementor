@@ -68,7 +68,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['menu','anchor','link'];
+		return [ 'menu', 'anchor', 'link' ];
 	}
 
 	/**

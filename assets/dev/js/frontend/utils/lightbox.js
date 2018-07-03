@@ -227,14 +227,20 @@ LightboxModule = ViewModule.extend( {
 			onShowMethod();
 
 			var swiperOptions = {
-				prevButton: $prevButton,
-				nextButton: $nextButton,
-				paginationClickable: true,
+				navigation: {
+					prevEl: $prevButton,
+					nextEl: $nextButton
+				},
+				pagination: {
+					clickable: true
+				},
+				on: {
+					slideChangeTransitionEnd: self.onSlideChange
+				},
 				grabCursor: true,
-				onSlideChangeEnd: self.onSlideChange,
 				runCallbacksOnInit: false,
 				loop: true,
-				keyboardControl: true
+				keyboard: true
 			};
 
 			if ( options.swiper ) {
@@ -268,7 +274,7 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	getSlide: function( slideState ) {
-		return this.swiper.slides.filter( this.getSettings( 'selectors.slideshow.' + slideState + 'Slide' ) );
+		return jQuery( this.swiper.slides ).filter( this.getSettings( 'selectors.slideshow.' + slideState + 'Slide' ) );
 	},
 
 	playSlideVideo: function() {
@@ -279,9 +285,8 @@ LightboxModule = ViewModule.extend( {
 			return;
 		}
 
-		var classes = this.getSettings( 'classes' );
-
-		var $videoContainer = jQuery( '<div>', { 'class': classes.videoContainer + ' ' + classes.invisible } ),
+		var classes = this.getSettings( 'classes' ),
+			$videoContainer = jQuery( '<div>', { 'class': classes.videoContainer + ' ' + classes.invisible } ),
 			$videoWrapper = jQuery( '<div>', { 'class': classes.videoWrapper } ),
 			$videoFrame = jQuery( '<iframe>', { src: videoURL } ),
 			$playIcon = $activeSlide.children( '.' + classes.playButton );

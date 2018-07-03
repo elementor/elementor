@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -67,7 +69,7 @@ class Widget_Html extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['html','code'];
+		return [ 'html', 'code' ];
 	}
 
 	/**
@@ -91,6 +93,13 @@ class Widget_Html extends Widget_Base {
 			[
 				'label' => '',
 				'type' => Controls_Manager::CODE,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::TEXT_CATEGORY,
+					],
+				],
 				'default' => '',
 				'placeholder' => __( 'Enter your code', 'elementor' ),
 				'show_label' => false,

@@ -65,7 +65,7 @@ var BackgroundVideo = HandlerModule.extend( {
 
 		self.player.seekTo( startPoint );
 
-		if ( undefined !== endPoint ) {
+		if ( endPoint ) {
 			var durationToEnd = endPoint - startPoint + 1;
 
 			setTimeout( function() {
@@ -212,12 +212,6 @@ var StretchedSection = HandlerModule.extend( {
 		HandlerModule.prototype.onInit.apply( this, arguments );
 
 		this.initStretch();
-
-		var isStretched = this.getElementSettings( 'stretch_section' );
-
-		if ( elementorFrontend.isEditMode() || isStretched ) {
-			this.stretchElement.reset();
-		}
 
 		this.stretch();
 	},

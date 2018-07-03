@@ -67,7 +67,7 @@ class Widget_Social_Icons extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['social','icon','link'];
+		return [ 'social', 'icon', 'link' ];
 	}
 
 	/**

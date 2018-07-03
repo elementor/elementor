@@ -48,6 +48,11 @@
 
 				self.animateLoader();
 
+				var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
+				if ( ! documentTitle ) {
+					wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
+				}
+
 				wp.data.dispatch( 'core/editor' ).savePost();
 				self.redirectWhenSave();
 			} );

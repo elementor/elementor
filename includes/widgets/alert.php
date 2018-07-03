@@ -68,7 +68,7 @@ class Widget_Alert extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['alert','notice','message'];
+		return [ 'alert', 'notice', 'message' ];
 	}
 
 	/**
@@ -99,6 +99,7 @@ class Widget_Alert extends Widget_Base {
 					'warning' => __( 'Warning', 'elementor' ),
 					'danger' => __( 'Danger', 'elementor' ),
 				],
+				'style_transfer' => true,
 			]
 		);
 

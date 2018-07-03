@@ -83,7 +83,7 @@ class Widget_Heading extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['heading','title','text'];
+		return [ 'heading', 'title', 'text' ];
 	}
 
 	/**

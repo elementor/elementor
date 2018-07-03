@@ -67,7 +67,7 @@ class Widget_Progress extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['progress','bar'];
+		return [ 'progress', 'bar' ];
 	}
 
 	/**
@@ -91,6 +91,9 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'My Skill', 'elementor' ),
 				'label_block' => true,
@@ -141,6 +144,9 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Inner Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'e.g. Web Designer', 'elementor' ),
 				'default' => __( 'Web Designer', 'elementor' ),
 				'label_block' => true,

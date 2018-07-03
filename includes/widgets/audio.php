@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -76,7 +78,7 @@ class Widget_Audio extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['audio','player','soundcloud','embed'];
+		return [ 'audio', 'player', 'soundcloud', 'embed' ];
 	}
 
 	/**
@@ -100,6 +102,13 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::URL_CATEGORY,
+					],
+				],
 				'default' => [
 					'url' => 'https://soundcloud.com/shchxango/john-coltrane-1963-my-favorite',
 				],
