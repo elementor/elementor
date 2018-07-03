@@ -325,6 +325,29 @@ var Shapes = HandlerModule.extend( {
 	}
 } );
 
+var HandlesPosition = HandlerModule.extend( {
+
+    isFirst: function() {
+        return this.$element.is( '.elementor-edit-mode .elementor-top-section:first-of-type' );
+    },
+
+    isOffset: function() {
+        var offset = this.$element.offset();
+        return offset.top > 24;
+    },
+
+    onInit: function() {
+        var self = this;
+
+        if ( self.isFirst() ) {
+            if ( ! self.isOffset() ) {
+                self.$element.addClass( 'elementor-section--handles-inside' );
+                console.log( 'this section is offset' );
+            }
+        }
+    }
+} );
+
 module.exports = function( $scope ) {
 	if ( elementorFrontend.isEditMode() || $scope.hasClass( 'elementor-section-stretched' ) ) {
 		new StretchedSection( { $element: $scope } );
@@ -332,6 +355,7 @@ module.exports = function( $scope ) {
 
 	if ( elementorFrontend.isEditMode() ) {
 		new Shapes( { $element: $scope } );
+		new HandlesPosition( { $element: $scope } );
 	}
 
 	new BackgroundVideo( { $element: $scope } );
