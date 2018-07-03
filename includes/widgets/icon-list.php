@@ -67,7 +67,7 @@ class Widget_Icon_List extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['icon list','icon','list'];
+		return [ 'icon list', 'icon', 'list' ];
 	}
 
 	/**
@@ -105,6 +105,7 @@ class Widget_Icon_List extends Widget_Base {
 				'render_type' => 'template',
 				'classes' => 'elementor-control-start-end',
 				'label_block' => false,
+				'style_transfer' => true,
 			]
 		);
 
@@ -284,7 +285,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'units' => [ '%' ],
 				'default' => [
 					'unit' => '%',
 				],

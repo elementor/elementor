@@ -1,7 +1,7 @@
 .elementor-introduction {
 	position: absolute;
-	width: 250px;
-	padding: 25px;
+	width: 270px;
+	padding: 30px 20px;
 	background-color: #fff;
 	box-shadow: 0 2px 10px 0 rgba(0,0,0,0.07);
 	text-align: center;
@@ -20,20 +20,37 @@
 	.dialog {
 
 		&-header {
-			color: $editor-darkest;
-			font-size: 12px;
+			color: $editor-dark;
+			font-size: 16px;
 		}
 
 		&-message {
-			font-size: 11px;
+			font-size: 13px;
 			line-height: 1.6;
 			margin-top: 10px;
+			color: $editor-light;
+		}
+
+		&-buttons-wrapper {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-top: 25px;
+		}
+
+		&-button {
+			font-size: 11px;
 		}
 
 		&-ok {
-			padding: 6px 18px;
-			font-size: 11px;
-			margin-top: 20px;
+			padding: 7px 27px;
+			text-transform: capitalize;
+		}
+
+		&-learn-more {
+			color: $editor-success;
+			@include margin-end(15px);
+			cursor: pointer;
 		}
 	}
 }

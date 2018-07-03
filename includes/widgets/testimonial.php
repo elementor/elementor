@@ -67,7 +67,7 @@ class Widget_Testimonial extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return ['testimonial','blockquote'];
+		return [ 'testimonial', 'blockquote' ];
 	}
 
 	/**
@@ -166,6 +166,7 @@ class Widget_Testimonial extends Widget_Base {
 					'testimonial_image[url]!' => '',
 				],
 				'separator' => 'before',
+				'style_transfer' => true,
 			]
 		);
 
@@ -190,6 +191,7 @@ class Widget_Testimonial extends Widget_Base {
 					],
 				],
 				'label_block' => false,
+				'style_transfer' => true,
 			]
 		);
 

@@ -15,7 +15,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 			select: 'select[data-setting]',
 			textarea: 'textarea[data-setting]',
 			responsiveSwitchers: '.elementor-responsive-switcher',
-			contentEditable: '[contenteditable="true"]'
+			contentEditable: '[contenteditable="true"]',
+			tooltipTarget: '.tooltip-target'
 		} );
 
 		return ui;
@@ -67,7 +68,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.registerValidators();
 
-		this.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onSettingsExternalChange );
+		this.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
 	},
 
 	getControlValue: function() {
@@ -218,12 +219,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.triggerMethod( 'responsive:switcher:click', device );
 	},
 
-	onSettingsExternalChange: function() {
-		this.applySavedValue();
-
-		this.triggerMethod( 'after:external:change' );
-	},
-
 	renderResponsiveSwitchers: function() {
 		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
@@ -237,8 +232,12 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	addTooltip: function() {
+		if ( ! this.ui.tooltipTarget ) {
+			return;
+		}
+
 		// Create tooltip on controls
-		this.$( '.tooltip-target' ).tipsy( {
+		this.ui.tooltipTarget.tipsy( {
 			gravity: function() {
 				// `n` for down, `s` for up
 				var gravity = jQuery( this ).data( 'tooltip-pos' );
@@ -256,7 +255,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	hideTooltip: function() {
-		jQuery( '.tipsy' ).hide();
+		if ( this.ui.tooltipTarget ) {
+			this.ui.tooltipTarget.tipsy( 'hide' );
+		}
 	},
 
 	updateElementModel: function( value ) {

@@ -221,6 +221,14 @@ BaseElementView = BaseContainer.extend( {
 		return this.getElementType() === transferData.elementsType;
 	},
 
+	isStyleTransferControl: function( control ) {
+		if ( undefined !== control.style_transfer ) {
+			return control.style_transfer;
+		}
+
+		return 'content' !== control.tab || control.selectors || control.prefix_class;
+	},
+
 	duplicate: function() {
 		var oldTransport = elementor.getStorage( 'transfer' );
 
@@ -232,17 +240,18 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	pasteStyle: function() {
-		var transferData = elementor.getStorage( 'transfer' ),
+		var self = this,
+			transferData = elementor.getStorage( 'transfer' ),
 			sourceElement = transferData.elements[0],
 			sourceSettings = sourceElement.settings,
-			editModel = this.getEditModel(),
+			editModel = self.getEditModel(),
 			settings = editModel.get( 'settings' ),
 			settingsAttributes = settings.attributes,
 			controls = settings.controls,
 			diffSettings = {};
 
 		jQuery.each( controls, function( controlName, control ) {
-			if ( 'content' === control.tab && ! control.selectors && ! control.styleTransfer || false === control.styleTransfer ) {
+			if ( ! self.isStyleTransferControl( control ) ) {
 				return;
 			}
 
@@ -284,42 +293,44 @@ BaseElementView = BaseContainer.extend( {
 			diffSettings[ controlName ] = sourceValue;
 		} );
 
-		this.allowRender = false;
+		self.allowRender = false;
 
 		elementor.channels.data.trigger( 'element:before:paste:style', editModel );
 
-		jQuery.each( diffSettings, function( key, value ) {
-			editModel.setSetting( key, value );
-		} );
+		editModel.setSetting( diffSettings );
 
 		elementor.channels.data.trigger( 'element:after:paste:style', editModel );
 
-		this.allowRender = true;
+		self.allowRender = true;
 
-		this.renderOnChange();
+		self.renderOnChange();
 	},
 
 	resetStyle: function() {
-		var editModel = this.getEditModel(),
-			controls = editModel.get( 'settings' ).controls;
+		var self = this,
+			editModel = self.getEditModel(),
+			controls = editModel.get( 'settings' ).controls,
+			defaultValues = {};
 
-		this.allowRender = false;
+		self.allowRender = false;
 
 		elementor.channels.data.trigger( 'element:before:reset:style', editModel );
 
-		jQuery.each( controls, function( controlName ) {
-			if ( 'content' === this.tab && ! this.selectors || undefined === this.default_value ) {
+		jQuery.each( controls, function( controlName, control ) {
+			if ( ! self.isStyleTransferControl( control ) ) {
 				return;
 			}
 
-			editModel.setSetting( controlName, this.default_value );
+			defaultValues[ controlName ] = control[ 'default' ];
 		} );
+
+		editModel.setSetting( defaultValues );
 
 		elementor.channels.data.trigger( 'element:after:reset:style', editModel );
 
-		this.allowRender = true;
+		self.allowRender = true;
 
-		this.renderOnChange();
+		self.renderOnChange();
 	},
 
 	addElementFromPanel: function( options ) {

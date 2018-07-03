@@ -737,6 +737,30 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * Render column edit tools.
+	 *
+	 * Used to generate the edit tools HTML.
+	 *
+	 * @since 1.8.0
+	 * @access protected
+	 */
+	protected function render_edit_tools() {
+		?>
+		<div class="elementor-element-overlay">
+			<ul class="elementor-editor-element-settings elementor-editor-column-settings">
+				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo $edit_tool_name; ?>" title="<?php echo $edit_tool['title']; ?>">
+						<i class="eicon-<?php echo $edit_tool['icon']; ?>" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php echo $edit_tool['title']; ?></span>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+			<div class="elementor-column-percents-tooltip"></div>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Render column output in the editor.
 	 *
 	 * Used to generate the live preview, using a Backbone JavaScript template.
