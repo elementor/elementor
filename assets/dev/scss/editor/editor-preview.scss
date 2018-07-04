@@ -313,6 +313,12 @@ html.elementor-html {
 
 .elementor-editor-element-setting {
 
+	// Avoid conflict between v2.1+ & Pro 2.1-
+	// TODO: Remove this in v2.4
+	&.elementor-editor-element-save {
+		display: none;
+	}
+
 	@media (max-width: $editor-screen-md-max) {
 
 		&.elementor-editor-element-edit {
