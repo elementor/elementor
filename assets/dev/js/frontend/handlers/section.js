@@ -325,20 +325,36 @@ var HandlesPosition = HandlerModule.extend( {
         return this.$element.is( '.elementor-edit-mode .elementor-top-section:first-of-type' );
     },
 
-    isOffset: function() {
+    getOffset: function() {
         var offset = this.$element.offset();
-        return offset.top > 24;
+        return offset.top;
     },
 
-    onInit: function() {
+    setHandlesPosition: function() {
         var self = this;
 
         if ( self.isFirst() ) {
-            if ( ! self.isOffset() ) {
-                self.$element.addClass( 'elementor-section--handles-inside' );
-                console.log( 'this section is offset' );
+            var offset = self.getOffset(),
+                $handlesElement = self.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
+                insideHandleClass = 'elementor-section--handles-inside';
+
+            if ( offset < 25 ) {
+                self.$element.addClass( insideHandleClass );
+
+                if ( offset < -5 ) {
+                    $handlesElement.css( 'top', -( offset ) );
+                } else {
+                    $handlesElement.css( 'top', '' );
+                }
+            } else {
+                self.$element.removeClass( insideHandleClass );
             }
         }
+    },
+
+    onInit: function() {
+        this.setHandlesPosition();
+        this.$element.on( 'hover', this.setHandlesPosition );
     }
 } );
 
