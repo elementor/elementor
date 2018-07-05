@@ -7,6 +7,7 @@ use Elementor\Group_Control_Background;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -20,6 +21,19 @@ class Post extends Document {
 		$properties['support_wp_page_templates'] = true;
 
 		return $properties;
+	}
+
+	protected static function get_editor_panel_categories() {
+		return Utils::array_inject(
+			parent::get_editor_panel_categories(),
+			'theme-elements',
+			[
+				'theme-elements-single' => [
+					'title' => __( 'Single', 'elementor-pro' ),
+					'active' => false,
+				],
+			]
+		);
 	}
 
 	/**
