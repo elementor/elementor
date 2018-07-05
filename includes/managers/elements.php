@@ -340,9 +340,11 @@ class Elements_Manager {
 			],
 			'theme-elements' => [
 				'title' => __( 'Site', 'elementor-pro' ),
+				'active' => false,
 			],
 			'woocommerce-elements' => [
 				'title' => __( 'WooCommerce', 'elementor-pro' ),
+				'active' => false,
 			],
 		];
 
@@ -369,6 +371,7 @@ class Elements_Manager {
 		$this->categories['wordpress'] = [
 			'title' => __( 'WordPress', 'elementor' ),
 			'icon' => 'eicon-wordpress',
+			'active' => false,
 		];
 	}
 
