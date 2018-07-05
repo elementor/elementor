@@ -553,4 +553,12 @@ class Utils {
 
 		return method_exists( wp_get_theme(), 'get_post_templates' );
 	}
+
+	public static function array_inject( $array, $key, $insert ) {
+		$length = array_search( $key, array_keys( $array ), true ) + 1;
+
+		return array_slice( $array, 0, $length, true ) +
+				$insert +
+				array_slice( $array, $length, null, true );
+	}
 }
