@@ -333,7 +333,6 @@ class Elements_Manager {
 			],
 			'pro-elements' => [
 				'title' => __( 'Pro', 'elementor' ),
-				'icon' => 'font',
 			],
 			'general' => [
 				'title' => __( 'General', 'elementor' ),
@@ -341,11 +340,11 @@ class Elements_Manager {
 			],
 			'theme-elements' => [
 				'title' => __( 'Site', 'elementor' ),
-				'icon' => 'font',
+				'active' => false,
 			],
 			'woocommerce-elements' => [
 				'title' => __( 'WooCommerce', 'elementor' ),
-				'icon' => 'font',
+				'active' => false,
 			],
 		];
 
@@ -372,6 +371,7 @@ class Elements_Manager {
 		$this->categories['wordpress'] = [
 			'title' => __( 'WordPress', 'elementor' ),
 			'icon' => 'eicon-wordpress',
+			'active' => false,
 		];
 	}
 
