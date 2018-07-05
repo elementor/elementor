@@ -119,6 +119,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				categoryInBlackList = categoriesActivationList.inactive && -1 !== categoriesActivationList.inactive.indexOf( categoryName ),
 				isActiveCategory = ! categoryOutOfWhiteList && ! categoryInBlackList;
 
+			if ( 'undefined' === typeof categoryConfig.icon ) {
+				categoryConfig.icon = 'font';
+			}
+
 			categoriesCollection.add( {
 				name: categoryName,
 				title: categoryConfig.title,
