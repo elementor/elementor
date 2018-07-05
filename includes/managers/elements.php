@@ -333,7 +333,6 @@ class Elements_Manager {
 			],
 			'pro-elements' => [
 				'title' => __( 'Pro', 'elementor' ),
-				'icon' => 'font',
 			],
 			'general' => [
 				'title' => __( 'General', 'elementor' ),
@@ -341,11 +340,9 @@ class Elements_Manager {
 			],
 			'theme-elements' => [
 				'title' => __( 'Site', 'elementor-pro' ),
-				'icon' => 'font',
 			],
 			'woocommerce-elements' => [
 				'title' => __( 'WooCommerce', 'elementor-pro' ),
-				'icon' => 'font',
 			],
 		];
 
