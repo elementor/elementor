@@ -322,12 +322,11 @@ var Shapes = HandlerModule.extend( {
 var HandlesPosition = HandlerModule.extend( {
 
     isFirst: function() {
-        return this.$element.is( '.elementor-edit-mode .elementor-top-section:first-of-type' );
+        return this.$element.is( '.elementor-edit-mode .elementor-top-section:first' );
     },
 
     getOffset: function() {
-        var offset = this.$element.offset();
-        return offset.top;
+        return this.$element.offset().top;
     },
 
     setHandlesPosition: function() {
@@ -342,7 +341,7 @@ var HandlesPosition = HandlerModule.extend( {
                 self.$element.addClass( insideHandleClass );
 
                 if ( offset < -5 ) {
-                    $handlesElement.css( 'top', -( offset ) );
+                    $handlesElement.css( 'top', -offset );
                 } else {
                     $handlesElement.css( 'top', '' );
                 }
@@ -354,7 +353,7 @@ var HandlesPosition = HandlerModule.extend( {
 
     onInit: function() {
         this.setHandlesPosition();
-        this.$element.on( 'hover', this.setHandlesPosition );
+        this.$element.on( 'mouseenter', this.setHandlesPosition );
     }
 } );
 
