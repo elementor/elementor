@@ -250,6 +250,33 @@ class Widget_Heading extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'blend_mode',
+			[
+				'label' => __( 'Blend Mode', 'elementor-pro' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => __( 'Normal', 'elementor-pro' ),
+					'multiply' => 'Multiply',
+					'screen' => 'Screen',
+					'overlay' => 'Overlay',
+					'darken' => 'Darken',
+					'lighten' => 'Lighten',
+					'color-dodge' => 'Color Dodge',
+					'saturation' => 'Saturation',
+					'color' => 'Color',
+					'difference' => 'Difference',
+					'exclusion' => 'Exclusion',
+					'hue' => 'Hue',
+					'luminosity' => 'Luminosity',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'mix-blend-mode: {{VALUE}}',
+				],
+				'separator' => 'none',
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
