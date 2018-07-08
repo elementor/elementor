@@ -93,13 +93,6 @@ class Widget_Html extends Widget_Base {
 			[
 				'label' => '',
 				'type' => Controls_Manager::CODE,
-				'dynamic' => [
-					'active' => true,
-					'categories' => [
-						TagsModule::POST_META_CATEGORY,
-						TagsModule::TEXT_CATEGORY,
-					],
-				],
 				'default' => '',
 				'placeholder' => __( 'Enter your code', 'elementor' ),
 				'show_label' => false,
