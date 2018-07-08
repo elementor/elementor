@@ -1,26 +1,16 @@
-# Heading
-A UI only control. Show a text heading between controls.
+## Documentation has Moved
 
-## Example
-```php
-$this->add_control(
-    'more_options',
-    [
-        'label' => __( 'Additional Options', 'elementor' ),
-        'type' => Controls_Manager::HEADING,
-        'separator' => 'before',
-    ]
-);
-```
+This document in now available on [Developer API for Elementor](developers.elementor.com)
 
-## Usage
-The `heading` gets automatically outputted in the panel.
+### Quick Links
 
-## Arguments
-
-Argument           | Required   | Type         | Default                      | Description
-------------       | :--------: | :------:     | ---------------------------- | ---------------------------------------------
-`type`             | yes        | *`string`*   | `Controls_Manager::HEADING`  | The type of the control
-`label`            | yes        | *`string`*   |                              | The heading text
-`description`      | no         | *`string`*   |                              | A description text to display below the control
-`separator`        | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator
+* [Getting Started](https://developers.elementor.com/getting-started/)
+* [The Editor](https://developers.elementor.com/elementor-editor/)
+* [The Widgets](https://developers.elementor.com/elementor-widgets/)
+* [The Controls](https://developers.elementor.com/elementor-controls/)
+* [Code Reference](https://code.elementor.com)
+* [PHP Hooks](https://code.elementor.com/php-hooks/)
+* [JS Hooks](https://code.elementor.com/js-hooks/)
+* [Classes](https://code.elementor.com/classes/)
+* [Methods](https://code.elementor.com/methods/)
+* [Functions](https://code.elementor.com/functions/)
