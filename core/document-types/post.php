@@ -29,7 +29,7 @@ class Post extends Document {
 			'theme-elements',
 			[
 				'theme-elements-single' => [
-					'title' => __( 'Single', 'elementor-pro' ),
+					'title' => __( 'Single', 'elementor' ),
 					'active' => false,
 				],
 			]
