@@ -1,10 +1,6 @@
 module.exports = Marionette.ItemView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-add-section' ),
 
-	options: {
-		at: null
-	},
-
 	attributes: {
 		'data-view': 'choose-action'
 	},

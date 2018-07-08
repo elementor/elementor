@@ -114,16 +114,20 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				return;
 			}
 
-			var categoriesActivationList = elementor.config.document.panel.categories,
-				categoryOutOfWhiteList = categoriesActivationList.active && -1 === categoriesActivationList.active.indexOf( categoryName ),
-				categoryInBlackList = categoriesActivationList.inactive && -1 !== categoriesActivationList.inactive.indexOf( categoryName ),
-				isActiveCategory = ! categoryOutOfWhiteList && ! categoryInBlackList;
+			// Set defaults.
+			if ( 'undefined' === typeof categoryConfig.active ) {
+				categoryConfig.active = true;
+			}
+
+			if ( 'undefined' === typeof categoryConfig.icon ) {
+				categoryConfig.icon = 'font';
+			}
 
 			categoriesCollection.add( {
 				name: categoryName,
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
-				defaultActive: isActiveCategory,
+				defaultActive: categoryConfig.active,
 				items: categories[ categoryName ]
 			} );
 		} );
