@@ -1,18 +1,45 @@
 <?php
 namespace Elementor\Core\Debug;
 
+use Elementor\Settings;
+use Elementor\Tools;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Inspector {
 
+	protected $is_enabled = false;
+
 	protected $log = [];
 
 	public function __construct() {
-		if ( WP_DEBUG ) {
+		$this->is_enabled = 'yes' === get_option( 'elementor_enable_inspector' );
+
+		if ( $this->is_enabled ) {
 			add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 201 );
 		}
+
+		add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_fields' ], 50 );
+	}
+
+	public function is_enabled() {
+		return $this->is_enabled;
+	}
+
+	public function register_admin_tools_fields( Tools $tools ) {
+		$tools->add_fields( Settings::TAB_GENERAL, 'tools', [
+			'enable_inspector' => [
+				'label' => __( 'Inspector', 'elementor' ),
+				'field_args' => [
+					'type' => 'checkbox',
+					'value' => 'yes',
+					'sub_desc' => __( 'Enable Inspector', 'elementor' ),
+					'desc' => __( 'Inspector adds an admin bar menu showing a list of templates that are loaded for a certain page on your site', 'elementor' ),
+				],
+			],
+		] );
 	}
 
 	public function parse_template_path( $template ) {
@@ -29,7 +56,7 @@ class Inspector {
 	}
 
 	public function add_log( $module, $title, $url = '' ) {
-		if ( ! WP_DEBUG ) {
+		if ( ! $this->is_enabled ) {
 			return;
 		}
 
