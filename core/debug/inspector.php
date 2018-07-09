@@ -100,7 +100,7 @@ class Inspector {
 				unset( $row['url'] );
 
 				$wp_admin_bar->add_menu( [
-					'id' => 'elementor_inspector_log_' . $index,
+					'id' => 'elementor_inspector_log_' . $module_id . '_' . $index,
 					'parent' => 'elementor_inspector_' . $module_id,
 					'href' => $url,
 					'title' => implode( ' > ', $row ),
