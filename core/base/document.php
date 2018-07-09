@@ -70,9 +70,6 @@ abstract class Document extends Controls_Stack {
 	public static function get_editor_panel_config() {
 		return  [
 			'elements_categories' => static::get_editor_panel_categories(),
-			'categories' => [
-				'inactive' => [ 'wordpress' ],
-			],
 			'messages' => [
 				/* translators: %s: the document title. */
 				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), self::get_title() ),

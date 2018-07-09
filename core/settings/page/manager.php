@@ -5,6 +5,7 @@ use Elementor\Core\Files\CSS\Base;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\DB;
@@ -46,6 +47,27 @@ class Manager extends BaseManager {
 		// Todo: _deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported()' );
 
 		return Utils::is_cpt_custom_templates_supported();
+	}
+
+	/**
+	 * Get page data.
+	 *
+	 * Retrieves page data for any given a page ID.
+	 *
+	 * @since      1.6.0
+	 * @deprecated 1.6.0
+	 * @access     public
+	 * @static
+	 *
+	 * @param int $id Page ID.
+	 *
+	 * @return BaseModel
+	 */
+	public static function get_page( $id ) {
+		// translators: %s Elementor Document Settings API URL
+		_deprecated_file( __METHOD__, '1.6.0', __( 'the new settings API', 'elementor' ), sprintf( __( 'See <a href="%s">Elementor Document Settings</a> for more information.', 'elementor' ), 'https://developers.elementor.com/elementor-document-settings/' ) );
+
+		return SettingsManager::get_settings_managers( 'page' )->get_model( $id );
 	}
 
 	/**

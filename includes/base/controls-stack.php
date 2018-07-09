@@ -1266,7 +1266,6 @@ abstract class Controls_Stack {
 			$values = $this->get_settings();
 		}
 
-		// Repeater fields
 		if ( ! empty( $control['conditions'] ) ) {
 			return Conditions::check( $control['conditions'], $values );
 		}

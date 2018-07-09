@@ -29,8 +29,11 @@ module.exports = Marionette.Behavior.extend( {
 						at: 'center bottom',
 						collision: 'fit'
 					},
+					effects: {
+						hide: 'hide',
+						show: 'show'
+					},
 					hide: {
-						onOutsideClick: false,
 						onBackgroundClick: false
 					}
 				} );
