@@ -364,7 +364,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		add_action( 'init', [ $this, 'add_wp_templates_support' ] );
 
-		add_filter( 'template_include', [ $this, 'template_include' ] );
+		add_filter( 'template_include', [ $this, 'template_include' ], 11 /* After Plugins/WooCommerce */ );
 
 		add_action( 'elementor/documents/register_controls', [ $this, 'action_register_template_control' ] );
 

@@ -4,8 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 4.9
 Requires PHP: 5.4
-Beta tag: 2.1.0-beta3
-Stable tag: 2.0.16
+Stable tag: 2.1.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -23,7 +22,7 @@ It's time for **[Elementor Page Builder](https://elementor.com/?utm_source=wp-re
 Instant reaction was a key feature we wanted to achieve. And we did. Instant drag & drop page builder, instant live edit, instant page load. The speed of Elementor is not matched by any other page builder, free or paid. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
 
 = Live design. Truly live. =
-Never again work on the backend and guess what the frontend will look like. With Elementor page builder, you edit the page and simultaneously see exactly how it looks like. Elementor features live design & inline editing, so the whole process of writing and designing is done directly on the page, with no need to press update or go to preview mode.
+Never again work on the backend and guess what the frontend will look like. With Elementor page builder, you edit the page and simultaneously see exactly how it looks like. Elementor features live design & inline editing, so the whole process of writing and designing is done directly on the page, with no need to press update or go to preview mode. It also works perfectly with or without Gutenberg.
 
 = Surprises you won’t see anywhere else. =
 With Elementor's unique features, you can create websites that have that certain 'designer touch'. Among our page builder features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
@@ -217,7 +216,23 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 2.1.0 - 2018-07-02 =
+= 2.1.2 - 2018-07-08 =
+* Tweak: Set active/inactive category by `'active' => false` (default is `true`)
+* Tweak: Added forms input style compatibility for some themes
+* Fix: XML Demo Import compatibility for admin based imports ([#4947](https://github.com/pojome/elementor/issues/4947))
+* Fix: Set correct `post_id` when call `enqueue_scripts` from preview mode
+* Fix: Conditions not working on dynamic backgrounds
+* Fix: Paste of multiple content in Add Section Area
+* Fix: Set lower priority to `template_include` hook to override 3rd party plugins, e.g. WooCommerce
+* Fix: Hide Save Widget as Global button for old versions
+* Fix: Added RTL style for section with handles inside
+* Deprecated: Restore `get_page` method as hard deprecated ([#4870](https://github.com/pojome/elementor/issues/4870))
+
+= 2.1.1 - 2018-07-03 =
+* Tweak: Compatibility Gutenberg classic editor
+* Fix: Compatibility for PHP < 5.6
+
+= 2.1.0 - 2018-07-03 =
 * New: Introducing Elementor Context Menu
 * New: Copy/Paste elements ([#4151](https://github.com/pojome/elementor/issues/4151))
 * New: Copy/Paste element style ([#1479](https://github.com/pojome/elementor/issues/1479))

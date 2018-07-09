@@ -38,6 +38,7 @@
 
 	.elementor-field-textual {
 		width: 100%;
+		max-width: 100%; // Tweak for themes that set this property
 		border: 1px solid $gray;
 		background-color: transparent;
 		color: $gray-darker;
