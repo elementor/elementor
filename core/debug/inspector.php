@@ -52,6 +52,11 @@ class Inspector {
 			return wp_get_theme()->get( 'Name' ) . ' - ' . basename( $template );
 		}
 
+		$plugins_dir = dirname( ELEMENTOR_PATH );
+		if ( 0 === strpos( $template, $plugins_dir ) ) {
+			return ltrim( str_replace( $plugins_dir, '', $template ), '/\\' );
+		}
+
 		return str_replace( WP_CONTENT_DIR, '', $template );
 	}
 
