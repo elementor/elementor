@@ -29,9 +29,21 @@ module.exports = Marionette.Behavior.extend( {
 						at: 'center bottom',
 						collision: 'fit'
 					},
+					effects: {
+						hide: 'hide',
+						show: 'show'
+					},
 					hide: {
-						onOutsideClick: false,
 						onBackgroundClick: false
+					}
+				} );
+
+				dialog.addButton( {
+					name: 'learn-more',
+					text: elementor.translate( 'learn_more' ),
+					tag: 'div',
+					callback: function() {
+						open( elementor.config.help_right_click_url, '_blank' );
 					}
 				} );
 

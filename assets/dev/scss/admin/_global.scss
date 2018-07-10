@@ -110,6 +110,12 @@ body {
 		#elementor-editor {
 			margin-bottom: 50px;
 		}
+
+		.edit-post-text-editor__body {
+			.editor-post-text-editor {
+				display: none;
+			}
+		}
 	}
 
 	.gutenberg {

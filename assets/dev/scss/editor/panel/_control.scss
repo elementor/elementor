@@ -18,6 +18,12 @@
 		}
 	}
 
+	//Avoid collapsing margin in the repeater control
+	.elementor-control-content {
+		display: flex;
+		flex-direction: column;
+	}
+
 	&.elementor-control-type-divider {
 		padding: 0;
 		margin-bottom: -1px; // Cover next control's separator before
@@ -549,6 +555,18 @@
 
 	.elementor-choices {
 		direction: ltr; // Force ltr also in RTL languages
+	}
+}
+
+// = Set direction control by class
+.elementor-control-direction- {
+
+	&ltr {
+		direction: ltr;
+	}
+
+	&rtl {
+		direction: rtl;
 	}
 }
 

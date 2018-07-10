@@ -917,7 +917,6 @@ class Element_Section extends Element_Base {
 			$width_control_options = [
 				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'units' => [ '%' ],
 				'range' => [
 					'%' => [
 						'min' => 100,

@@ -2,7 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Ajax_Manager;
-use Elementor\Core\Debug\Debugger;
+use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Files\Manager as Files_Manager;
 use Elementor\Core\Modules_Manager;
@@ -377,9 +377,15 @@ class Plugin {
 	public $beta_testers;
 
 	/**
-	 * @var Debugger
+	 * @var Inspector
+	 * @deprecated 2.1.2 Use $inspector.
 	 */
 	public $debugger;
+
+	/**
+	 * @var Inspector
+	 */
+	public $inspector;
 
 	/**
 	 * Clone.
@@ -474,8 +480,10 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
+		$this->inspector = new Inspector();
+		$this->debugger = $this->inspector;
+
 		// Allow all components to use AJAX.
-		$this->debugger = new Debugger();
 		$this->ajax = new Ajax_Manager();
 
 		Settings_Manager::run();

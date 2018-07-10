@@ -1,45 +1,16 @@
-# The Editor
+## Documentation has Moved
 
-Each element in the editor consists of functions and definitions for four main areas:
+This document in now available on [Developer API for Elementor](developers.elementor.com)
 
-## Elements Panel
+### Quick Links
 
-This area contains elements which the user can drag & drop onto the page.
-
-![](images/elements-panel.jpg "Elements Panel")
-
-###### Elements Panel extension options:
-                                                                          
-* Add new elements
-* Add new categories of elements
-
-## Editing Panel
-    
-This area allows to edit the properties and settings of each element.
-
-![](images/editing-panel.jpg "Editing Panel")
-
-###### Editing panel extension options:
-
-* Add / Change / Remove attributes of existing elements
-
-## Preview
-
-This area displays a live preview of the element, rendered by a JavaScript engine, typically without loading from the server side.
-
-![](images/preview.png "Preview")
-
-###### Preview extension options:
-
-* Add / change / remove HTML while rendering the JavaScript
-* Add action controls to every element
-
-## Frontend - Visitor display
-
-The final result displayed to the visitors on the frontend, is comprised of PHP rendered markup and a page-specific CSS file generated on the server side.
-
-###### Frontend extension options:
- 
- * Add / Change / Remove HTML while rendering the PHP
-
-![](images/frontend.jpg "Frontend")
+* [Getting Started](https://developers.elementor.com/getting-started/)
+* [The Editor](https://developers.elementor.com/elementor-editor/)
+* [The Widgets](https://developers.elementor.com/elementor-widgets/)
+* [The Controls](https://developers.elementor.com/elementor-controls/)
+* [Code Reference](https://code.elementor.com)
+* [PHP Hooks](https://code.elementor.com/php-hooks/)
+* [JS Hooks](https://code.elementor.com/js-hooks/)
+* [Classes](https://code.elementor.com/classes/)
+* [Methods](https://code.elementor.com/methods/)
+* [Functions](https://code.elementor.com/functions/)

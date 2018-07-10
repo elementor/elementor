@@ -136,6 +136,10 @@ helpers = {
 				isNegativeCondition = !! conditionNameParts[3],
 				controlValue = values[ conditionRealName ];
 
+			if ( values.__dynamic__ && values.__dynamic__[ conditionRealName ] ) {
+				controlValue = values.__dynamic__[ conditionRealName ];
+			}
+
 			if ( undefined === controlValue ) {
 				return true;
 			}
@@ -148,6 +152,7 @@ helpers = {
 			// If the controlValue is a non empty array - check if the controlValue contains the conditionValue
 			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
 			var isContains;
+
 			if ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) {
 				isContains = _.contains( conditionValue, controlValue );
 			} else if ( _.isArray( controlValue ) && ! _.isEmpty( controlValue ) ) {

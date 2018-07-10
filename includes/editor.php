@@ -429,7 +429,7 @@ class Editor {
 			[
 				'jquery-ui-position',
 			],
-			'4.4.0',
+			'4.4.1',
 			true
 		);
 
@@ -518,12 +518,13 @@ class Editor {
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
+			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'locked_user' => $locked_user,
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
-				'introduction' => User::is_should_view_introduction()
+				'introduction' => User::is_should_view_introduction(),
 			],
 			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
@@ -657,7 +658,7 @@ class Editor {
 
 				// Right Click Introduction
 				'meet_right_click_header' => __( 'Meet Right Click', 'elementor' ),
-				'meet_right_click_message' => __( 'Now you can access all editing actions much more easily using right click. Just click on the framed area of a widget, column or section.', 'elementor' ),
+				'meet_right_click_message' => __( 'Now you can access all editing actions using right click.', 'elementor' ),
 				'got_it' => __( 'Got It', 'elementor' ),
 
 				// TODO: Remove.

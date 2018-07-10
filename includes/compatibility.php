@@ -33,7 +33,7 @@ class Compatibility {
 
 		self::polylang_compatibility();
 
-		if ( is_admin() ) {
+		if ( is_admin() || defined( 'WP_LOAD_IMPORTERS' ) ) {
 			add_filter( 'wp_import_post_meta', [ __CLASS__, 'on_wp_import_post_meta' ] );
 			add_filter( 'wxr_importer.pre_process.post_meta', [ __CLASS__, 'on_wxr_importer_pre_process_post_meta' ] );
 		}

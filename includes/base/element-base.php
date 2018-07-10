@@ -751,12 +751,16 @@ abstract class Element_Base extends Controls_Stack {
 
 		$controls = $this->get_controls();
 
-		$class_settings = array_filter( $settings, function( $setting_key ) use( $controls ) {
-			return isset( $controls[ $setting_key ]['prefix_class'] );
-		}, ARRAY_FILTER_USE_KEY );
+		$class_settings = [];
+
+		foreach ( $settings as $setting_key => $setting ) {
+			if ( isset( $controls[ $setting_key ]['prefix_class'] ) ) {
+				$class_settings[ $setting_key ] = $setting;
+			}
+		}
 
 		foreach ( $class_settings as $setting_key => $setting ) {
-			if ( ! $setting ) {
+			if ( empty( $setting ) && '0' !== $setting ) {
 				continue;
 			}
 
