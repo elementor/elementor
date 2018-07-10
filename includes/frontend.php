@@ -761,7 +761,7 @@ class Frontend {
 	public function apply_builder_in_content( $content ) {
 		$this->restore_content_filters();
 
-		if ( ! $this->_is_frontend_mode || $this->_is_excerpt ) {
+		if ( Plugin::$instance->preview->is_preview_mode() || $this->_is_excerpt ) {
 			return $content;
 		}
 
