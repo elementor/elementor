@@ -510,10 +510,15 @@ abstract class Document extends Controls_Stack {
 		static $url;
 
 		if ( empty( $url ) ) {
+
+			add_filter( 'pre_option_permalink_structure', '__return_empty_string' );
+
 			$url = set_url_scheme( add_query_arg( [
 				'elementor-preview' => $this->get_main_id(),
 				'ver' => time(),
 			] , $this->get_permalink() ) );
+
+			remove_filter( 'pre_option_permalink_structure', '__return_empty_string' );
 
 			/**
 			 * Document preview URL.
