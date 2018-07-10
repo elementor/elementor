@@ -64,18 +64,6 @@ class Frontend {
 	private $registered_fonts = [];
 
 	/**
-	 * Whether the front end mode is active.
-	 *
-	 * Used to determine whether we are in front end mode.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 *
-	 * @var bool Whether the front end mode is active. Default is false.
-	 */
-	private $_is_frontend_mode = false;
-
-	/**
 	 * Whether the page is using Elementor.
 	 *
 	 * Used to determine whether the current page is using Elementor.
@@ -148,7 +136,6 @@ class Frontend {
 		}
 
 		$this->post_id = get_the_ID();
-		$this->_is_frontend_mode = true;
 
 		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $this->post_id ) ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
