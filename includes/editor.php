@@ -524,7 +524,7 @@ class Editor {
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
-				'introduction' => User::is_should_view_introduction()
+				'introduction' => User::is_should_view_introduction(),
 			],
 			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),

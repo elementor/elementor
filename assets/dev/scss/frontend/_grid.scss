@@ -263,7 +263,6 @@ ul.elementor-icon-list-items.elementor-inline-items {
 	}
 }
 
-
 // Simple 12 Columns responsive grid
 .elementor-grid {
 	display: grid;
@@ -291,5 +290,12 @@ ul.elementor-icon-list-items.elementor-inline-items {
 
 	@media (max-width: $screen-sm-max) {
 		@include grid_loop(-mobile);
+	}
+}
+
+.elementor-grid-0 {
+	.elementor-grid {
+		display: flex;
+		overflow: hidden;
 	}
 }

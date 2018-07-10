@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Debugger {
+class Inspector {
 
 	protected $log = [];
 
@@ -49,16 +49,16 @@ class Debugger {
 		}
 
 		$wp_admin_bar->add_node( [
-			'id' => 'elementor_debugger',
-			'title' => __( 'Elementor Debugger', 'elementor' ),
+			'id' => 'elementor_inspector',
+			'title' => __( 'Elementor Inspector', 'elementor' ),
 		] );
 
 		foreach ( $this->log as $module => $log ) {
 			$module_id = sanitize_key( $module );
 
 			$wp_admin_bar->add_menu( [
-				'id' => 'elementor_debugger_' . $module_id,
-				'parent' => 'elementor_debugger',
+				'id' => 'elementor_inspector_' . $module_id,
+				'parent' => 'elementor_inspector',
 				'title' => $module,
 			] );
 
@@ -68,8 +68,8 @@ class Debugger {
 				unset( $row['url'] );
 
 				$wp_admin_bar->add_menu( [
-					'id' => 'elementor_debugger_log_' . $index,
-					'parent' => 'elementor_debugger_' . $module_id,
+					'id' => 'elementor_inspector_log_' . $index,
+					'parent' => 'elementor_inspector_' . $module_id,
 					'href' => $url,
 					'title' => implode( ' > ', $row ),
 					'meta' => [
