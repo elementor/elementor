@@ -319,6 +319,44 @@ var Shapes = HandlerModule.extend( {
 	}
 } );
 
+var HandlesPosition = HandlerModule.extend( {
+
+    isFirst: function() {
+        return this.$element.is( '.elementor-edit-mode .elementor-top-section:first' );
+    },
+
+    getOffset: function() {
+        return this.$element.offset().top;
+    },
+
+    setHandlesPosition: function() {
+        var self = this;
+
+        if ( self.isFirst() ) {
+            var offset = self.getOffset(),
+                $handlesElement = self.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
+                insideHandleClass = 'elementor-section--handles-inside';
+
+            if ( offset < 25 ) {
+                self.$element.addClass( insideHandleClass );
+
+                if ( offset < -5 ) {
+                    $handlesElement.css( 'top', -offset );
+                } else {
+                    $handlesElement.css( 'top', '' );
+                }
+            } else {
+                self.$element.removeClass( insideHandleClass );
+            }
+        }
+    },
+
+    onInit: function() {
+        this.setHandlesPosition();
+        this.$element.on( 'mouseenter', this.setHandlesPosition );
+    }
+} );
+
 module.exports = function( $scope ) {
 	if ( elementorFrontend.isEditMode() || $scope.hasClass( 'elementor-section-stretched' ) ) {
 		new StretchedSection( { $element: $scope } );
@@ -326,6 +364,7 @@ module.exports = function( $scope ) {
 
 	if ( elementorFrontend.isEditMode() ) {
 		new Shapes( { $element: $scope } );
+		new HandlesPosition( { $element: $scope } );
 	}
 
 	new BackgroundVideo( { $element: $scope } );

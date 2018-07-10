@@ -313,6 +313,12 @@ html.elementor-html {
 
 .elementor-editor-element-setting {
 
+	// Avoid conflict between v2.1+ & Pro 2.1-
+	// TODO: Remove this in v2.4
+	&.elementor-editor-element-save {
+		display: none;
+	}
+
 	@media (max-width: $editor-screen-md-max) {
 
 		&.elementor-editor-element-edit {
@@ -396,6 +402,40 @@ html.elementor-html {
 	}
 }
 
+// Top Section (Handles inside)
+.elementor-section--handles-inside {
+
+	.elementor-editor-section-settings {
+		transform: translateX(-50%);
+		border-radius: 0 0 5px 5px;
+
+		.elementor-editor-element-setting {
+
+			&:first-child {
+				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
+
+				&:before {
+					top: 0;
+					border-width: getValueByDirection(0 12px 22px 0, 0 0 22px 12px);
+				}
+			}
+
+			&:last-child {
+				border-radius: getValueByDirection(0 0 5px 0, 0 0 0 5px);
+
+				&:after {
+					top: 0;
+					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
+				}
+			}
+
+			@media (max-width: $editor-screen-md-max) {
+				border-radius: 0 0 5px 5px;
+			}
+		}
+	}
+}
+
 // Column - Overlay Settings
 .elementor-editor-column-settings {
 	top: -1px;
@@ -424,39 +464,6 @@ html.elementor-html {
 
 		&:not(:hover) {
 			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
-		}
-	}
-}
-
-.elementor-section--handles-inside, .elementor-section:first-child {
-
-	.elementor-editor-section-settings {
-		transform: translateX(-50%);
-		border-radius: 0 0 5px 5px;
-
-		.elementor-editor-element-setting {
-
-			&:first-child {
-				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
-
-				&:before {
-					top: 0;
-					border-width: getValueByDirection(0 12px 22px 0, 22px 12px 0 0);
-				}
-			}
-
-			&:last-child {
-				border-radius: getValueByDirection(0 0 5px 0, 0 5px 0 0);
-
-				&:after {
-					top: 0;
-					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
-				}
-			}
-
-			@media (max-width: $editor-screen-md-max) {
-				border-radius: 0 0 5px 5px;
-			}
 		}
 	}
 }
