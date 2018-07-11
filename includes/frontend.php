@@ -150,28 +150,6 @@ class Frontend {
 	}
 
 	/**
-	 * Print elements.
-	 *
-	 * Used to generate the element final HTML on the frontend.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 *
-	 * @param array $elements_data Element data.
-	 */
-	protected function _print_elements( $elements_data ) {
-		foreach ( $elements_data as $element_data ) {
-			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
-
-			if ( ! $element ) {
-				continue;
-			}
-
-			$element->print_element();
-		}
-	}
-
-	/**
 	 * @param string|array $class
 	 */
 	public function add_body_class( $class ) {
@@ -842,15 +820,8 @@ class Frontend {
 			$css_file->print_css();
 		}
 
-		?>
-		<div class="<?php echo esc_attr( $document->get_container_classes() ); ?>">
-			<div class="elementor-inner">
-				<div class="elementor-section-wrap">
-					<?php $this->_print_elements( $data ); ?>
-				</div>
-			</div>
-		</div>
-		<?php
+		$document->print_elements_with_wrapper( $data );
+
 		$content = ob_get_clean();
 
 		/**
