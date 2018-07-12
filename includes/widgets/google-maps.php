@@ -136,6 +136,7 @@ class Widget_Google_Maps extends Widget_Base {
 						'max' => 20,
 					],
 				],
+				'separator' => 'before',
 			]
 		);
 
