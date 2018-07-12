@@ -650,7 +650,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function get_css_wrapper_selector() {
-		return 'elementor-' . $this->get_id();
+		return '';
 	}
 
 	/**
