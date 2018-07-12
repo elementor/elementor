@@ -182,7 +182,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->start_controls_section(
 			'section_map_style',
 			[
-				'label' => __( 'Style', 'elementor' ),
+				'label' => __( 'Map', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
