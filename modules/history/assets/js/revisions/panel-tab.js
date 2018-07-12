@@ -126,6 +126,8 @@ module.exports = Marionette.CompositeView.extend( {
 		this.isRevisionApplied = true;
 
 		this.currentPreviewId = null;
+
+		elementor.history.history.getItems().reset();
 	},
 
 	onDiscardClick: function() {
