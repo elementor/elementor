@@ -178,14 +178,12 @@ class Manager extends BaseManager {
 		}
 
 		if ( Utils::is_cpt_custom_templates_supported() ) {
-			$template = 'default';
-
 			if ( isset( $data['template'] ) ) {
 				$template = $data['template'];
+				
+				// Use `update_metadata` in order to save also for revisions.
+				update_metadata( 'post', $post->ID, '_wp_page_template', $template );
 			}
-
-			// Use `update_metadata` in order to save also for revisions.
-			update_metadata( 'post', $post->ID, '_wp_page_template', $template );
 		}
 	}
 
