@@ -56,7 +56,10 @@ RevisionsManager = function() {
 	this.setEditorData = function( data ) {
 		var collection = elementor.getRegion( 'sections' ).currentView.collection;
 
+		// Don't track in history.
+		elementor.history.history.setActive( false );
 		collection.reset( data );
+		elementor.history.history.setActive( true );
 	};
 
 	this.getRevisionDataAsync = function( id, options ) {
