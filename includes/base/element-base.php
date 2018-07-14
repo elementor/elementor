@@ -590,11 +590,11 @@ abstract class Element_Base extends Controls_Stack {
 		 *
 		 * Fires before Elementor element is rendered in the frontend.
 		 *
-		 * @since 2.1.0
+		 * @since 2.2.0
 		 *
 		 * @param Element_Base $this The element.
 		 */
-		do_action( "elementor/frontend/before_render", $this );
+		do_action( 'elementor/frontend/before_render', $this );
 
 		/**
 		 * Before frontend element render.
