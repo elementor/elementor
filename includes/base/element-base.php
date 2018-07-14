@@ -590,6 +590,17 @@ abstract class Element_Base extends Controls_Stack {
 		 *
 		 * Fires before Elementor element is rendered in the frontend.
 		 *
+		 * @since 2.2.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/frontend/before_render', $this );
+
+		/**
+		 * Before frontend element render.
+		 *
+		 * Fires before Elementor element is rendered in the frontend.
+		 *
 		 * The dynamic portion of the hook name, `$element_type`, refers to the element type.
 		 *
 		 * @since 1.0.0
