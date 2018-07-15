@@ -321,7 +321,7 @@ class Widget_Image extends Widget_Base {
 				],
 			]
 		);
-        
+
 		$this->add_group_control(
 			Group_Control_Css_Filter::get_type(),
 			[
