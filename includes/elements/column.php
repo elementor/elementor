@@ -404,7 +404,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters_hover',
-				'selector' => ':hover > .elementor-element-populated >  .elementor-background-overlay',
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
 			]
 		);
 
