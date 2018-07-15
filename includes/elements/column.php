@@ -329,6 +329,14 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
+			]
+		);
+
 		$this->add_control(
 			'overlay_blend_mode',
 			[
@@ -389,6 +397,14 @@ class Element_Column extends Element_Base {
 				'condition' => [
 					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => ':hover > .elementor-element-populated >  .elementor-background-overlay',
 			]
 		);
 
