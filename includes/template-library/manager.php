@@ -341,7 +341,11 @@ class Manager {
 
 		do_action( 'elementor/template-library/before_get_source_data', $args, $source );
 
-		return $source->get_data( $args );
+		$data = $source->get_data( $args );
+
+		do_action( 'elementor/template-library/after_get_source_data', $args, $source );
+
+		return $data;
 	}
 
 	/**
