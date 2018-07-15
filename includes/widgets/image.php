@@ -288,6 +288,14 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'separator_panel_style',
+			[
+				'type' => Controls_Manager::DIVIDER,
+				'style' => 'thick',
+			]
+		);
+
 		$this->start_controls_tabs( 'image_effects' );
 
 		$this->start_controls_tab( 'normal',
