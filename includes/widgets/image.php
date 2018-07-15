@@ -304,14 +304,6 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'css_filters',
-				'selector' => '{{WRAPPER}} .elementor-image img',
-			]
-		);
-
 		$this->add_control(
 			'opacity',
 			[
@@ -329,20 +321,20 @@ class Widget_Image extends Widget_Base {
 				],
 			]
 		);
+        
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} .elementor-image img',
+			]
+		);
 
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'hover',
 			[
 				'label' => __( 'Hover', 'elementor' ),
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'css_filters_hover',
-				'selector' => '{{WRAPPER}} .elementor-image:hover img',
 			]
 		);
 
@@ -361,6 +353,14 @@ class Widget_Image extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image:hover img' => 'opacity: {{SIZE}};',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}} .elementor-image:hover img',
 			]
 		);
 
