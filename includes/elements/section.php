@@ -228,7 +228,7 @@ class Element_Section extends Element_Base {
 			],
 			'remove' => [
 				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
+				'title' => sprintf( __( 'Delete %s', 'elementor' ), $section_label ),
 				'icon' => 'close',
 			],
 		];

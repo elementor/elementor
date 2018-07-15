@@ -105,34 +105,6 @@ class Maintenance_Mode {
 			return;
 		}
 
-		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`.
-		$GLOBALS['post'] = get_post( self::get( 'template_id' ) ); // WPCS: override ok.
-
-		add_filter( 'template_include', [ $this, 'template_include' ], 1 );
-	}
-
-	/**
-	 * Template include.
-	 *
-	 * Update the path of the current template before including it. Used to
-	 * change the "Maintenance Mode" path and the HTTP header data.
-	 *
-	 * Fired by `template_include` filter.
-	 *
-	 * @since 1.4.0
-	 * @access public
-	 *
-	 * @param string $template The path of the template to include.
-	 *
-	 * @return string Updated path of the template to include.
-	 */
-	public function template_include( $template ) {
-		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
-		query_posts( [
-			'p' => self::get( 'template_id' ),
-			'post_type' => Source_Local::CPT,
-		] );
-
 		if ( 'maintenance' === self::get( 'mode' ) ) {
 			$protocol = wp_get_server_protocol();
 			header( "$protocol 503 Service Unavailable", true, 503 );
@@ -140,7 +112,14 @@ class Maintenance_Mode {
 			header( 'Retry-After: 600' );
 		}
 
-		return $template;
+		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`.
+		$GLOBALS['post'] = get_post( self::get( 'template_id' ) ); // WPCS: override ok.
+
+		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
+		query_posts( [
+			'p' => self::get( 'template_id' ),
+			'post_type' => Source_Local::CPT,
+		] );
 	}
 
 	/**
@@ -340,6 +319,8 @@ class Maintenance_Mode {
 		}
 
 		add_filter( 'body_class', [ $this, 'body_class' ] );
-		add_action( 'template_redirect', [ $this, 'template_redirect' ], 1 );
+
+		// Priority = 11 that is *after* WP default filter `redirect_canonical` in order to avoid redirection loop.
+		add_action( 'template_redirect', [ $this, 'template_redirect' ], 11 );
 	}
 }

@@ -532,6 +532,10 @@ App = Marionette.Application.extend( {
 	},
 
 	preventClicksInsideEditor: function() {
+		this.$previewContents.on( 'submit', function( event ) {
+			event.preventDefault();
+		} );
+
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
