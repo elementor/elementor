@@ -24,15 +24,6 @@
 		width: $panel-xl-width;
 	}
 
-	> .ui-resizable-e, > .ui-resizable-w {
-		position: absolute;
-		top: 0;
-		height: 100%;
-		width: 7px;
-		@include end(-5px);
-		cursor: ew-resize;
-	}
-
 	.ps-scrollbar-y-rail {
 		z-index: 2; // Avoid panel elements (like divider control) from appearing above the scrollbar
 	}
