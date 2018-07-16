@@ -77,7 +77,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( options.edit ) {
-			newView.edit();
+			newModel.trigger( 'request:edit' );
 		}
 
 		return newView;

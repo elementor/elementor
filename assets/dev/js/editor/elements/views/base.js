@@ -114,7 +114,7 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
-						callback: this.edit.bind( this )
+						callback: this.options.model.trigger.bind( this.options.model, 'request:edit' )
 					}, {
 						name: 'duplicate',
 						title: elementor.translate( 'duplicate' ),
@@ -181,16 +181,6 @@ BaseElementView = BaseContainer.extend( {
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
-	},
-
-	edit: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'edit' !== activeMode ) {
-			return;
-		}
-
-		elementor.getPanelView().openEditor( this.getEditModel(), this );
 	},
 
 	startTransport: function( type ) {
@@ -697,7 +687,19 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditButtonClick: function() {
-		this.edit();
+		this.model.trigger( 'request:edit' );
+	},
+
+	onEditRequest: function() {
+		elementor.helpers.scrollToView( this.$el, 200 );
+
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'edit' !== activeMode ) {
+			return;
+		}
+
+		elementor.getPanelView().openEditor( this.getEditModel(), this );
 	},
 
 	onDestroy: function() {
