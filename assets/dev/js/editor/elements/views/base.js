@@ -164,10 +164,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	initialize: function() {
-		// grab the child collection from the parent model
-		// so that we can render the collection as children
-		// of this parent element
-		this.collection = this.model.get( 'elements' );
+		BaseContainer.prototype.initialize.apply( this, arguments );
 
 		if ( this.collection ) {
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );

@@ -289,6 +289,10 @@ App = Marionette.Application.extend( {
 		}
 
 		this.elements = new ElementCollection( config );
+
+		this.elementsModel = new Backbone.Model( {
+			elements: this.elements
+		} );
 	},
 
 	initPreview: function() {
@@ -906,9 +910,7 @@ App = Marionette.Application.extend( {
 
 		var Preview = require( 'elementor-views/preview' );
 
-		this.getRegion( 'sections' ).show( new Preview( {
-			collection: this.elements
-		} ) );
+		this.sections.show( new Preview( { model: this.elementsModel } ) );
 
 		this.$previewContents.children().addClass( 'elementor-html' );
 
