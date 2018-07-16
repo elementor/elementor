@@ -14,6 +14,8 @@ module.exports = Marionette.CompositeView.extend( {
 		'click @ui.item': 'onItemClick',
 		'click @ui.toggle': 'onToggleClick',
 		'sortstart @ui.elements': 'onSortStart',
+		'sortover @ui.elements': 'onSortOver',
+		'sortout @ui.elements': 'onSortOut',
 		'sortstop @ui.elements': 'onSortStop',
 		'sortupdate @ui.elements': 'onSortUpdate',
 		'sortreceive @ui.elements': 'onSortReceive'
@@ -226,6 +228,18 @@ module.exports = Marionette.CompositeView.extend( {
 
 	onSortStop: function() {
 		elementor.navigator.getLayout().deactivateElementsMouseInteraction();
+	},
+
+	onSortOver: function( event ) {
+		event.stopPropagation();
+
+		this.$el.addClass( 'elementor-dragging-on-child' );
+	},
+
+	onSortOut: function( event ) {
+		event.stopPropagation();
+
+		this.$el.removeClass( 'elementor-dragging-on-child' );
 	},
 
 	onSortUpdate: function( event, ui ) {
