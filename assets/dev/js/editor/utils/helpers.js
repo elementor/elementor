@@ -237,13 +237,34 @@ helpers = {
 		);
 	},
 
-	scrollToView: function( view ) {
-		// Timeout according to preview resize css animation duration
+	scrollToView: function( $element, timeout, $parent ) {
+		if ( undefined === timeout ) {
+			timeout = 500;
+		}
+
+		var $scrolled = $parent,
+			$elementorFrontendWindow = elementorFrontend.getElements( '$window' );
+
+		if ( ! $parent ) {
+			$parent = $elementorFrontendWindow;
+
+			$scrolled = elementor.$previewContents.find( 'html, body' );
+		}
+
 		setTimeout( function() {
-			elementor.$previewContents.find( 'html, body' ).animate( {
-				scrollTop: view.$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
-			} );
-		}, 500 );
+			var parentHeight = $parent.height(),
+				parentScrollTop = $parent.scrollTop(),
+				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[0].offsetTop,
+				topToCheck = elementTop - parentScrollTop;
+
+			if ( topToCheck > 0 && topToCheck < parentHeight ) {
+				return;
+			}
+
+			var scrolling = elementTop - parentHeight / 2;
+
+			$scrolled.animate( { scrollTop: scrolling } );
+		}, timeout );
 	},
 
 	compareVersions: function( versionA, versionB, operator ) {
