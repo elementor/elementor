@@ -355,7 +355,7 @@ class Element_Column extends Element_Base {
 					'luminosity' => 'Luminosity',
 				],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
+					'{{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
 				],
 			]
 		);
