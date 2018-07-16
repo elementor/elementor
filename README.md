@@ -218,6 +218,22 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.1.3 - 2018-07-16 ###
+* Tweak: Added CSS filter control for Map, Video, Section and Column
+* Tweak: Added Inspector option in Tools page
+* Tweak: Added Inspector log for Canvas & Full Width templates
+* Tweak: The preview is now loading via plain URL to avoid errors in some server configurations
+* Tweak: Added `print_elements_with_wrapper` method to allow a document to overwrite it's wrapper
+* Tweak: Added action hook `elementor/template-library/after_get_source_data`
+* Fix: Page template missing after import ([#4498](https://github.com/pojome/elementor/issues/4498))
+* Fix: Maintenance Mode override theme template
+* Fix: Removed focus and active states from Hover Animations
+* Fix: Prevent submit forms in the preview
+* Fix: Disable history tracking when restoring a revision
+* Fix: Empty history changes after restoring a revision
+* Fix: Paste style on control with groups
+* Fix: Avoid overwrite `_wp_page_template` in edge cases
+
 ### 2.1.2 - 2018-07-08 ###
 * Tweak: Set active/inactive category by `'active' => false` (default is `true`)
 * Tweak: Added forms input style compatibility for some themes
