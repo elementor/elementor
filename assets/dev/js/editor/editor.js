@@ -350,7 +350,7 @@ App = Marionette.Application.extend( {
 					cancel: elementor.translate( 'cancel' )
 				},
 				onConfirm: function() {
-					self.getRegion( 'sections' ).currentView.collection.reset();
+					self.elements.reset();
 				}
 			} );
 
