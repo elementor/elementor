@@ -46,3 +46,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-navigator__elements--empty">
 	<div class="elementor-empty-view__title"><?php echo __( 'Empty', 'elementor' ); ?></div>
 </script>
+
+<script type="text/template" id="tmpl-elementor-navigator__root--empty">
+	<i class="elementor-nerd-box-icon eicon-nerd" aria-hidden="true"></i>
+	<div class="elementor-nerd-box-title"><?php echo __( 'No Content, No Navigate!', 'elementor' ); ?></div>
+	<div class="elementor-nerd-box-message"><?php echo __( 'Once you start working, you’ll be able to view the elements on your page and edit them from the panel.', 'elementor' ); ?></div>
+</script>
