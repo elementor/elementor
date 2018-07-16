@@ -1,0 +1,173 @@
+#elementor-navigator {
+	position: fixed;
+	top: 100px;
+	width: 230px;
+	height: 300px;
+	@include end(30px);
+	background-color: #fff;
+	border-radius: 3px;
+	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
+	user-select: none;
+	overflow: hidden; // Ensure the bottom border radius is visible
+	z-index: 2;
+
+	&__inner {
+		height: 100%;
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px;
+		border-bottom: 1px solid $editor-background;
+	}
+
+	&__toggle-all {
+		font-size: 14px;
+		cursor: pointer;
+	}
+
+	&__close {
+		font-size: 12px;
+		cursor: pointer;
+	}
+
+	&__elements {
+		height: calc(100% - 50px);
+		overflow: auto;
+		position: relative;
+	}
+
+	&__footer {
+		position: absolute;
+		width: 100%;
+		left: 0;
+		bottom: 0;
+		text-align: center;
+		background-color: #fff;
+		box-shadow: 1px 2px 15px 0 rgba(0, 0, 0, 0.13);
+
+		.elementor-navigator-docked & {
+			display: none;
+		}
+	}
+}
+
+.elementor-navigator {
+
+	&__item {
+		display: flex;
+		align-items: center;
+		padding: 10px 0;
+		@include padding-end(15px);
+		font-size: 11px;
+		border-bottom: 1px solid $editor-background;
+		cursor: pointer;
+
+		&:not(:hover) {
+
+			.elementor-navigator__element__toggle {
+				display: none;
+			}
+		}
+
+		&:not(.elementor-active) {
+
+			.elementor-navigator__element__list-toggle {
+				transform: rotate(getValueByDirection(-90deg, 90deg));
+			}
+		}
+
+		+ .elementor-navigator__elements {
+			display: none;
+		}
+	}
+
+	&__elements {
+
+		.elementor-empty-view {
+			padding: 10px;
+			border-bottom: 1px solid $editor-background;
+
+			&__title {
+				@include margin-start(23px);
+				color: $editor-lighter;
+				font-size: 10px;
+				font-style: italic;
+			}
+		}
+
+		.ui-sortable-helper {
+			background-color: #fff;
+			box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.1);
+			transform: rotate(4deg);
+			border: 1px solid $editor-background;
+			pointer-events: none;
+		}
+
+		.ui-sortable-placeholder {
+			background-color: $editor-background-light;
+		}
+	}
+
+	&__element {
+
+		&:not(.elementor-navigator__element--has-children) {
+
+			.elementor-navigator__element__list-toggle {
+				visibility: hidden;
+			}
+		}
+
+		&:not(.elementor-navigator__element--hidden) {
+
+			> .elementor-navigator__item {
+
+				.elementor-navigator__element__toggle {
+					color: $editor-info;
+				}
+
+				&.elementor-editing {
+					background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
+
+					> * {
+						color: #fff;
+					}
+				}
+			}
+		}
+
+		&__list-toggle {
+			@include margin-end(7px);
+			transition: transform .3s;
+		}
+
+		&__element-type {
+			@include margin-end(8px);
+		}
+
+		&__title {
+			flex-grow: 1;
+		}
+
+		&--hidden {
+
+			.elementor-navigator__element__title,
+			.elementor-navigator__element__toggle {
+				opacity: .5;
+			}
+		}
+
+		&-column {
+			background-color: lighten($editor-background-light, 3%);
+
+			> .elementor-navigator__item {
+
+				.elementor-navigator__element__element-type {
+					color: $editor-light;
+				}
+			}
+		}
+	}
+}

@@ -531,6 +531,10 @@ App = Marionette.Application.extend( {
 		hotKeysManager.bindListener( this.$window.add( elementorFrontend.getElements( '$window' ) ) );
 	},
 
+	initNavigator: function() {
+		this.addRegions( { navigator: require( 'elementor-layouts/navigator/navigator' ) } );
+	},
+
 	preventClicksInsideEditor: function() {
 		this.$previewContents.on( 'click', function( event ) {
 			var $target = jQuery( event.target ),
@@ -893,6 +897,8 @@ App = Marionette.Application.extend( {
 		} else {
 			this.onFirstPreviewLoaded();
 		}
+
+		this.initNavigator();
 
 		this.addRegions( {
 			sections: iframeRegion

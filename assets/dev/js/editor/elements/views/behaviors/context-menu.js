@@ -27,8 +27,23 @@ module.exports = Marionette.Behavior.extend( {
 		return events;
 	},
 
+	initialize: function() {
+		this.listenTo( this.view.options.model, 'request:contextmenu', this.onRequestContextMenu );
+	},
+
 	initContextMenu: function() {
 		var contextMenuGroups = this.getOption( 'groups' );
+
+		contextMenuGroups.push( {
+			name: 'tools',
+			actions: [
+				{
+					name: 'navigator',
+					title: elementor.translate( 'navigator' ),
+					callback: elementor.navigator.open.bind( elementor.navigator, this.view.model )
+				}
+			]
+		} );
 
 		this.contextMenu = new ContextMenu( {
 			groups: contextMenuGroups
@@ -63,6 +78,17 @@ module.exports = Marionette.Behavior.extend( {
 		this.getContextMenu().show( event );
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', this.view );
+	},
+
+	onRequestContextMenu: function( event ) {
+		var modal = this.getContextMenu().getModal(),
+			iframe = modal.getSettings( 'iframe' );
+
+		modal.setSettings( 'iframe', null );
+
+		this.onContextMenu( event );
+
+		modal.setSettings( 'iframe', iframe );
 	},
 
 	onContextMenuHide: function() {

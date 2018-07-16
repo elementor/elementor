@@ -103,6 +103,19 @@ body {
 			}
 		}
 	}
+
+	&.elementor-navigator-docked {
+
+		#elementor-preview {
+			@include end(230px);
+		}
+
+		#elementor-navigator {
+			top: 0;
+			@include end(0);
+			height: 100%;
+		}
+	}
 }
 
 #elementor-preview,
