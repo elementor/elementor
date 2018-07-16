@@ -228,7 +228,7 @@ class Element_Section extends Element_Base {
 			],
 			'remove' => [
 				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
+				'title' => sprintf( __( 'Delete %s', 'elementor' ), $section_label ),
 				'icon' => 'close',
 			],
 		];
@@ -632,6 +632,14 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} .elementor-background-overlay',
+			]
+		);
+
 		$this->add_control(
 			'overlay_blend_mode',
 			[
@@ -692,6 +700,14 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}}:hover > .elementor-background-overlay',
 			]
 		);
 

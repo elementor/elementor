@@ -44,6 +44,9 @@ class Preview {
 
 		$this->post_id = get_the_ID();
 
+		// Don't redirect to permalink.
+		remove_action( 'template_redirect', 'redirect_canonical' );
+
 		// Compatibility with Yoast SEO plugin when 'Removes unneeded query variables from the URL' enabled.
 		// TODO: Move this code to `includes/compatibility.php`.
 		if ( class_exists( 'WPSEO_Frontend' ) ) {
