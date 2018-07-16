@@ -142,8 +142,7 @@ class Editor {
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
 
-		// Print the panel
-		$this->print_panel_html();
+		$this->print_editor_template();
 
 		// From the action it's an empty string, from tests its `false`
 		if ( false !== $die ) {
@@ -286,9 +285,22 @@ class Editor {
 	 * Include the wrapper template of the editor.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.2.0 Use `Editor::print_editor_template` instead
 	 * @access public
 	 */
 	public function print_panel_html() {
+		include( 'editor-templates/editor-wrapper.php' );
+	}
+
+	/**
+	 * Print Editor Template.
+	 *
+	 * Include the wrapper template of the editor.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 */
+	public function print_editor_template() {
 		include( 'editor-templates/editor-wrapper.php' );
 	}
 
