@@ -178,7 +178,7 @@ class Manager extends BaseManager {
 		}
 
 		if ( Utils::is_cpt_custom_templates_supported() ) {
-			$template = get_metadata( 'post', $post->ID, '_wp_page_template' );
+			$template = get_metadata( 'post', $post->ID, '_wp_page_template', true );
 
 			if ( isset( $data['template'] ) ) {
 				$template = $data['template'];
