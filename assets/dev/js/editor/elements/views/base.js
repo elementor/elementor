@@ -661,11 +661,9 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onRender: function() {
-		var self = this;
+		this.renderUI();
 
-		self.renderUI();
-
-		self.runReadyTrigger();
+		this.runReadyTrigger();
 	},
 
 	onCollectionChanged: function() {
