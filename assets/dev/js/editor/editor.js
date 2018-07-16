@@ -535,6 +535,10 @@ App = Marionette.Application.extend( {
 		hotKeysManager.bindListener( this.$window.add( elementorFrontend.getElements( '$window' ) ) );
 	},
 
+	initPanel: function() {
+		this.addRegions( { panel: require( 'elementor-layouts/panel/panel' ) } );
+	},
+
 	initNavigator: function() {
 		this.addRegions( { navigator: require( 'elementor-layouts/navigator/navigator' ) } );
 	},
@@ -650,33 +654,6 @@ App = Marionette.Application.extend( {
 
 			location.hash = '';
 		}
-	},
-
-	setResizablePanel: function() {
-		var self = this,
-			side = elementor.config.is_rtl ? 'right' : 'left';
-
-		self.panel.$el.resizable( {
-			handles: elementor.config.is_rtl ? 'w' : 'e',
-			minWidth: 200,
-			maxWidth: 680,
-			start: function() {
-				self.$previewWrapper
-					.addClass( 'ui-resizable-resizing' )
-					.css( 'pointer-events', 'none' );
-			},
-			stop: function() {
-				self.$previewWrapper
-					.removeClass( 'ui-resizable-resizing' )
-					.css( 'pointer-events', '' );
-
-				elementor.getPanelView().updateScrollbar();
-			},
-			resize: function( event, ui ) {
-				self.$previewWrapper
-					.css( side, ui.size.width );
-			}
-		} );
 	},
 
 	enterPreviewMode: function( hidePanel ) {
@@ -936,16 +913,12 @@ App = Marionette.Application.extend( {
 	},
 
 	onFirstPreviewLoaded: function() {
-		this.addRegions( {
-			panel: '#elementor-panel'
-		} );
+		this.initPanel();
 
-		var PanelLayoutView = require( 'elementor-layouts/panel/panel' );
-		this.panel.show( new PanelLayoutView() );
-
-		this.setResizablePanel();
 		this.heartbeat.init();
+
 		this.checkPageStatus();
+
 		this.openLibraryOnStart();
 
 		this.previewLoadedOnce = true;
