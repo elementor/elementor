@@ -579,7 +579,9 @@ class Source_Local extends Source_Base {
 
 		$user = get_user_by( 'id', $post->post_author );
 
-		$page_settings = get_post_meta( $post->ID, PageSettingsManager::META_KEY, true );
+		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $template_id );
+
+		$page_settings = $page->get_data( 'settings' );
 
 		$date = strtotime( $post->post_date );
 

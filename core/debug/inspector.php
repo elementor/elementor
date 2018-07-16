@@ -15,7 +15,7 @@ class Inspector {
 	protected $log = [];
 
 	public function __construct() {
-		$this->is_enabled = 'yes' === get_option( 'elementor_enable_inspector' );
+		$this->is_enabled = 'enable' === get_option( 'elementor_enable_inspector' );
 
 		if ( $this->is_enabled ) {
 			add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 201 );
@@ -33,10 +33,13 @@ class Inspector {
 			'enable_inspector' => [
 				'label' => __( 'Inspector', 'elementor' ),
 				'field_args' => [
-					'type' => 'checkbox',
-					'value' => 'yes',
+					'type' => 'select',
+					'options' => [
+						'' => __( 'Disable', 'elementor' ),
+						'enable' => __( 'Enable', 'elementor' ),
+					],
 					'sub_desc' => __( 'Enable Inspector', 'elementor' ),
-					'desc' => __( 'Inspector adds an admin bar menu showing a list of templates that are loaded for a certain page on your site', 'elementor' ),
+					'desc' => __( 'Inspector adds an admin bar menu that lists all the templates that are used on a page that is being displayed.', 'elementor' ),
 				],
 			],
 		] );
