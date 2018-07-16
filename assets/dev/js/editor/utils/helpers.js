@@ -267,6 +267,27 @@ helpers = {
 		}, timeout );
 	},
 
+	cssWithBackup: function( $element, backupState, rules ) {
+		var backup = {},
+			elementStyle = $element[0].style;
+
+		jQuery.each( rules, function( propertyName ) {
+			backup[ propertyName ] = undefined !== elementStyle[ propertyName ] ? elementStyle[ propertyName ] : '';
+
+			elementStyle[ propertyName ] = this;
+		} );
+
+		$element.data( 'css-backup-' + backupState, backup );
+	},
+
+	recoverCSSBackup: function( $element, backupState ) {
+		var backupKey = 'css-backup-' + backupState;
+
+		$element.css( $element.data( backupKey ) );
+
+		$element.removeData( backupKey );
+	},
+
 	compareVersions: function( versionA, versionB, operator ) {
 		var prepareVersion = function( version ) {
 			version = version + '';
