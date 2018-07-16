@@ -56,6 +56,7 @@ if ( ! Plugin::$instance->role_manager->user_can( 'design' ) ) {
 		</div>
 	</div>
 	<div id="elementor-panel" class="elementor-panel"></div>
+	<div id="elementor-navigator"></div>
 </div>
 <?php
 	wp_footer();

@@ -15,7 +15,10 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched )
-			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange )
+			.listenTo( this.view.options.model, 'request:sort:start', this.startSort )
+			.listenTo( this.view.options.model, 'request:sort:update', this.updateSort )
+			.listenTo( this.view.options.model, 'request:sort:receive', this.receiveSort );
 	},
 
 	onEditModeSwitched: function( activeMode ) {
@@ -91,13 +94,85 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 	},
 
-	onSortStart: function( event, ui ) {
+	startSort: function( event, ui ) {
 		event.stopPropagation();
 
 		var model = this.view.collection.get( {
 			cid: ui.item.data( 'model-cid' )
 		} );
 
+		elementor.channels.data
+			.reply( 'dragging:model', model )
+			.reply( 'dragging:parent:view', this.view )
+			.trigger( 'drag:start', model )
+			.trigger( model.get( 'elType' ) + ':drag:start' );
+	},
+
+	updateSort: function( ui ) {
+		var model = elementor.channels.data.request( 'dragging:model' ),
+			$childElement = ui.item,
+			collection = this.view.collection,
+			newIndex = $childElement.parent().children().index( $childElement ),
+			child = this.view.children.findByModelCid( model.cid );
+
+		this.view.addChildElement( model, {
+			at: newIndex,
+			trigger: {
+				beforeAdd: 'drag:before:update',
+				afterAdd: 'drag:after:update'
+			},
+			onBeforeAdd: function() {
+				child._isRendering = true;
+
+				collection.remove( model );
+			}
+		} );
+
+		elementor.saver.setFlagEditorChange( true );
+	},
+
+	receiveSort: function( event, ui ) {
+		event.stopPropagation();
+
+		if ( this.view.isCollectionFilled() ) {
+			jQuery( ui.sender ).sortable( 'cancel' );
+
+			return;
+		}
+
+		var model = elementor.channels.data.request( 'dragging:model' ),
+			draggedElType = model.get( 'elType' ),
+			draggedIsInnerSection = 'section' === draggedElType && model.get( 'isInner' ),
+			targetIsInnerColumn = 'column' === this.view.getElementType() && this.view.isInner();
+
+		if ( draggedIsInnerSection && targetIsInnerColumn ) {
+			jQuery( ui.sender ).sortable( 'cancel' );
+
+			return;
+		}
+
+		var newIndex = ui.item.index(),
+			modelData = model.toJSON( { copyHtmlCache: true } );
+
+		this.view.addChildElement( modelData, {
+			at: newIndex,
+			trigger: {
+				beforeAdd: 'drag:before:update',
+				afterAdd: 'drag:after:update'
+			},
+			onAfterAdd: function() {
+				var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
+
+				senderSection.isManualRemoving = true;
+
+				model.destroy();
+
+				senderSection.isManualRemoving = false;
+			}
+		} );
+	},
+
+	onSortStart: function( event, ui ) {
 		if ( 'column' === this.options.elChildType ) {
 			var uiData = ui.item.data( 'sortableItem' ),
 				uiItems = uiData.items,
@@ -113,11 +188,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			ui.placeholder.height( itemHeight );
 		}
 
-		elementor.channels.data
-			.reply( 'dragging:model', model )
-			.reply( 'dragging:parent:view', this.view )
-			.trigger( 'drag:start', model )
-			.trigger( model.get( 'elType' ) + ':drag:start' );
+		this.startSort( event, ui );
 	},
 
 	onSortOver: function( event ) {
@@ -146,73 +217,17 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onSortReceive: function( event, ui ) {
-		event.stopPropagation();
-
-		if ( this.view.isCollectionFilled() ) {
-			jQuery( ui.sender ).sortable( 'cancel' );
-
-			return;
-		}
-
-		var model = elementor.channels.data.request( 'dragging:model' ),
-			draggedElType = model.get( 'elType' ),
-			draggedIsInnerSection = 'section' === draggedElType && model.get( 'isInner' ),
-			targetIsInnerColumn = 'column' === this.view.getElementType() && this.view.isInner();
-
-		if ( draggedIsInnerSection && targetIsInnerColumn ) {
-			jQuery( ui.sender ).sortable( 'cancel' );
-
-			return;
-		}
-
-		var newIndex = ui.item.parent().children().index( ui.item ),
-			modelData = model.toJSON( { copyHtmlCache: true } );
-
-		this.view.addChildElement( modelData, {
-			at: newIndex,
-			trigger: {
-				beforeAdd: 'drag:before:update',
-				afterAdd: 'drag:after:update'
-			},
-			onAfterAdd: function() {
-				var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
-
-				senderSection.isManualRemoving = true;
-
-				model.destroy();
-
-				senderSection.isManualRemoving = false;
-			}
-		} );
+		this.receiveSort( event, ui );
 	},
 
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
-		if ( this.getChildViewContainer()[0] !== ui.item.parent()[0] ) {
+		if ( ! this.el.contains( ui.item[0] ) ) {
 			return;
 		}
 
-		var model = elementor.channels.data.request( 'dragging:model' ),
-			$childElement = ui.item,
-			collection = this.view.collection,
-			newIndex = $childElement.parent().children().index( $childElement ),
-			child = this.view.children.findByModelCid( model.cid );
-
-		this.view.addChildElement( model, {
-			at: newIndex,
-			trigger: {
-				beforeAdd: 'drag:before:update',
-				afterAdd: 'drag:after:update'
-			},
-			onBeforeAdd: function() {
-				child._isRendering = true;
-
-				collection.remove( model );
-			}
-		} );
-
-		elementor.saver.setFlagEditorChange( true );
+		this.updateSort( ui );
 	},
 
 	onAddChild: function( view ) {

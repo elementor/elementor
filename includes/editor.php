@@ -655,6 +655,7 @@ class Editor {
 				'new_column' => __( 'Add New Column', 'elementor' ),
 				'copy_all_content' => __( 'Copy All Content', 'elementor' ),
 				'delete_all_content' => __( 'Delete All Content', 'elementor' ),
+				'navigator' => __( 'Navigator', 'elementor' ),
 
 				// Right Click Introduction
 				'meet_right_click_header' => __( 'Meet Right Click', 'elementor' ),
@@ -1056,6 +1057,7 @@ class Editor {
 			'panel-elements',
 			'repeater',
 			'templates',
+			'navigator',
 		];
 
 		foreach ( $template_names as $template_name ) {
