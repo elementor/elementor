@@ -58,6 +58,10 @@ module.exports = Marionette.Region.extend( {
 
 	close: function() {
 		this.$el.hide();
+
+		if ( this.isDocked ) {
+			this.undock();
+		}
 	},
 
 	isSnapping: function() {
