@@ -322,6 +322,16 @@ BaseElementView = BaseContainer.extend( {
 		self.renderOnChange();
 	},
 
+	toggleVisibility: function() {
+		this.model.set( 'hidden', ! this.model.get( 'hidden' ) );
+
+		this.toggleVisibilityClass();
+	},
+
+	toggleVisibilityClass: function() {
+		this.$el.toggleClass( 'elementor-edit-hidden', ! ! this.model.get( 'hidden' ) );
+	},
+
 	addElementFromPanel: function( options ) {
 		options = options || {};
 
@@ -508,6 +518,8 @@ BaseElementView = BaseContainer.extend( {
 		} );
 
 		self.$el.addClass( _.result( self, 'className' ) );
+
+		self.toggleVisibilityClass();
 	},
 
 	renderCustomElementID: function() {
