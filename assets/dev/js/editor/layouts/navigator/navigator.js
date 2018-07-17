@@ -114,7 +114,7 @@ module.exports = Marionette.Region.extend( {
 	dock: function() {
 		elementor.$body.addClass( 'elementor-navigator-docked' );
 
-		elementor.helpers.cssWithBackup( this.$el, 'undocked', {
+		this.$el.css( {
 			width: '',
 			height: '',
 			top: '',
@@ -144,9 +144,9 @@ module.exports = Marionette.Region.extend( {
 	undock: function( silent ) {
 		elementor.$body.removeClass( 'elementor-navigator-docked' );
 
-		elementor.helpers.recoverCSSBackup( this.$el, 'undocked' );
-
 		elementor.$previewWrapper.css( elementor.config.is_rtl ? 'left' : 'right', '' );
+
+		this.setSize();
 
 		this.$el.resizable( 'destroy' );
 
@@ -206,8 +206,10 @@ module.exports = Marionette.Region.extend( {
 	},
 
 	onDragStop: function() {
-		this.isDraggingNeedsStop = false;
-
-		this.saveSize();
+		if ( this.isDraggingNeedsStop ) {
+			this.isDraggingNeedsStop = false;
+		} else {
+			this.saveSize();
+		}
 	}
 } );
