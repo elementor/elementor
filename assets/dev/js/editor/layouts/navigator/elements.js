@@ -5,6 +5,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	ui: {
 		item: '> .elementor-navigator__item',
+		title: '> .elementor-navigator__item .elementor-navigator__element__title',
 		toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
 		toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
 		elements: '> .elementor-navigator__elements'
@@ -15,6 +16,8 @@ module.exports = Marionette.CompositeView.extend( {
 		'click @ui.item': 'onItemClick',
 		'click @ui.toggle': 'onToggleClick',
 		'click @ui.toggleList': 'onToggleListClick',
+		'dblclick @ui.title': 'onTitleDoubleClick',
+		'keydown @ui.title': 'onTitleKeyDown',
 		'sortstart @ui.elements': 'onSortStart',
 		'sortover @ui.elements': 'onSortOver',
 		'sortout @ui.elements': 'onSortOut',
@@ -62,11 +65,29 @@ module.exports = Marionette.CompositeView.extend( {
 		};
 	},
 
+	templateHelpers: function() {
+		return {
+			title: this.getTitle()
+		};
+	},
+
 	initialize: function() {
 		this.collection = this.model.get( 'elements' );
 
 		this.listenTo( this.model, 'request:edit', this.onEditRequest )
 			.listenTo( this.model, 'change', this.onModelChange );
+	},
+
+	getDefaultTitle: function() {
+		return elementor.helpers.firstLetterUppercase( this.model.get( 'widgetType' ) || this.model.get( 'elType' ) );
+	},
+
+	getTitle: function() {
+		if ( this.isRoot() ) {
+			return;
+		}
+
+		return this.model.getSetting( '_title' ) || this.getDefaultTitle();
 	},
 
 	getDistance: function() {
@@ -192,6 +213,32 @@ module.exports = Marionette.CompositeView.extend( {
 		this.ui.item.removeClass( 'elementor-editing' );
 	},
 
+	enterNameEditing: function() {
+		this.ui.title.attr( 'contenteditable', true ).focus();
+
+		elementor.addBackgroundClickListener( 'navigator', {
+			ignore: this.ui.title,
+			callback: this.exitNameEditing.bind( this )
+		} );
+	},
+
+	exitNameEditing: function() {
+		this.ui.title.attr( 'contenteditable', false );
+
+		var newTitle = this.ui.title.text().trim(),
+			settings = this.model.get( 'settings' );
+
+		if ( newTitle ) {
+			settings.set( '_title', newTitle, { silent: true } );
+		} else {
+			settings.unset( '_title', { silent: true } );
+
+			this.ui.title.text( this.getDefaultTitle() );
+		}
+
+		elementor.removeBackgroundClickListener( 'navigator' );
+	},
+
 	onRender: function() {
 		var self = this;
 
@@ -200,7 +247,8 @@ module.exports = Marionette.CompositeView.extend( {
 			placeholder: 'ui-sortable-placeholder',
 			axis: 'y',
 			forcePlaceholderSize: true,
-			connectWith: '.elementor-navigator__element-' + self.model.get( 'elType' ) + ' ' + self.ui.elements.selector
+			connectWith: '.elementor-navigator__element-' + self.model.get( 'elType' ) + ' ' + self.ui.elements.selector,
+			cancel: '[contenteditable="true"]'
 		} );
 
 		this.ui.item.css( 'padding-' + ( elementor.config.is_rtl ? 'right' : 'left' ), this.getDistance() );
@@ -222,6 +270,18 @@ module.exports = Marionette.CompositeView.extend( {
 		event.stopPropagation();
 
 		this.model.trigger( 'request:toggleVisibility' );
+	},
+
+	onTitleDoubleClick: function() {
+		this.enterNameEditing();
+	},
+
+	onTitleKeyDown: function( event ) {
+		if ( 13 === event.which ) {
+			event.preventDefault();
+
+			this.exitNameEditing();
+		}
 	},
 
 	onToggleListClick: function( event ) {
