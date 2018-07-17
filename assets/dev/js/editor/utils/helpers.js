@@ -263,7 +263,7 @@ helpers = {
 
 			var scrolling = elementTop - parentHeight / 2;
 
-			$scrolled.animate( { scrollTop: scrolling } );
+			$scrolled.stop( true ).animate( { scrollTop: scrolling }, 1000 );
 		}, timeout );
 	},
 
