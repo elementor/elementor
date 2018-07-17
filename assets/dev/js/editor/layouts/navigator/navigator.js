@@ -14,6 +14,8 @@ module.exports = Marionette.Region.extend( {
 	constructor: function() {
 		Marionette.Region.prototype.constructor.apply( this, arguments );
 
+		this.ensurePosition = this.ensurePosition.bind( this );
+
 		var savedStorage = elementor.getStorage( 'navigator' );
 
 		if ( savedStorage ) {
@@ -90,6 +92,10 @@ module.exports = Marionette.Region.extend( {
 		}
 
 		this.saveStorage( 'visible', true );
+
+		this.ensurePosition();
+
+		elementor.$window.on( 'resize', this.ensurePosition );
 	},
 
 	close: function() {
@@ -100,6 +106,8 @@ module.exports = Marionette.Region.extend( {
 		}
 
 		this.saveStorage( 'visible', false );
+
+		elementor.$window.off( 'resize', this.ensurePosition );
 	},
 
 	isSnapping: function() {
@@ -172,6 +180,28 @@ module.exports = Marionette.Region.extend( {
 	setSize: function() {
 		if ( this.storage.size ) {
 			this.$el.css( this.storage.size );
+		}
+	},
+
+	ensurePosition: function() {
+		if ( this.isDocked ) {
+			return;
+		}
+
+		var offset = this.$el.offset();
+
+		if ( offset.left > innerWidth ) {
+			this.$el.css({
+				left: '',
+				right: ''
+			} );
+		}
+
+		if ( offset.top > innerHeight ) {
+			this.$el.css( {
+				top: '',
+				bottom: ''
+			} );
 		}
 	},
 
