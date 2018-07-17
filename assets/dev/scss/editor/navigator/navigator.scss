@@ -59,8 +59,7 @@
 
 	&__item {
 		display: flex;
-		align-items: center;
-		padding: 10px 0;
+		height: 32px;
 		@include padding-end(15px);
 		font-size: 11px;
 		border-bottom: 1px solid $editor-background;
@@ -69,8 +68,16 @@
 		&:not(.elementor-active) {
 
 			.elementor-navigator__element__list-toggle {
-				transform: rotate(getValueByDirection(-90deg, 90deg));
+
+				i {
+					transform: rotate(getValueByDirection(-90deg, 90deg));
+				}
 			}
+		}
+
+		> * {
+			display: flex;
+			align-items: center;
 		}
 
 		+ .elementor-navigator__elements {
@@ -174,6 +181,12 @@
 
 		&__title {
 			flex-grow: 1;
+			outline: none;
+			align-self: center;
+		}
+
+		&__toggle {
+			text-align: $end;
 		}
 
 		&--hidden {

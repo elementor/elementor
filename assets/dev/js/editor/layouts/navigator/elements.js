@@ -6,6 +6,7 @@ module.exports = Marionette.CompositeView.extend( {
 	ui: {
 		item: '> .elementor-navigator__item',
 		toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
+		toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
 		elements: '> .elementor-navigator__elements'
 	},
 
@@ -13,6 +14,7 @@ module.exports = Marionette.CompositeView.extend( {
 		'contextmenu': 'onContextMenu',
 		'click @ui.item': 'onItemClick',
 		'click @ui.toggle': 'onToggleClick',
+		'click @ui.toggleList': 'onToggleListClick',
 		'sortstart @ui.elements': 'onSortStart',
 		'sortover @ui.elements': 'onSortOver',
 		'sortout @ui.elements': 'onSortOut',
@@ -214,14 +216,18 @@ module.exports = Marionette.CompositeView.extend( {
 
 	onItemClick: function() {
 		this.model.trigger( 'request:edit' );
-
-		this.toggleList();
 	},
 
 	onToggleClick: function( event ) {
 		event.stopPropagation();
 
 		this.model.trigger( 'request:toggleVisibility' );
+	},
+
+	onToggleListClick: function( event ) {
+		event.stopPropagation();
+
+		this.toggleList();
 	},
 
 	onSortStart: function( event, ui ) {
