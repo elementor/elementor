@@ -32,7 +32,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( this.hasChildren() ) {
-			return require( 'elementor-layouts/navigator/elements-empty' );
+			return require( 'elementor-layouts/navigator/element-empty' );
 		}
 
 		return null;
