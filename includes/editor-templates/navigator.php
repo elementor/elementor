@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <script type="text/template" id="tmpl-elementor-navigator">
 	<div id="elementor-navigator__header">
-		<i id="elementor-navigator__toggle-all" class="eicon-menu-bar" data-elementor-action="expand"></i>
+		<i id="elementor-navigator__toggle-all" class="eicon-exchange" data-elementor-action="expand"></i>
 		<div id="elementor-navigator__header__title"><?php echo __( 'Navigator', 'elementor' ); ?></div>
 		<i id="elementor-navigator__close" class="eicon-close"></i>
 	</div>
@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-navigator__element__title">{{{ title }}}</div>
 			<# if ( 'section' === elType ) { #>
 				<div class="elementor-navigator__element__toggle">
-					<i class="fa fa-eye"></i>
+					<i class="eicon-eye"></i>
 				</div>
 			<# } #>
 		</div>
