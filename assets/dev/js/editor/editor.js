@@ -988,8 +988,7 @@ App = Marionette.Application.extend( {
 
 	onBackgroundClick: function( event ) {
 		jQuery.each( this.backgroundClickListeners, function() {
-			var elementToHide = this.element,
-				$clickedTarget = jQuery( event.target );
+			var $clickedTarget = jQuery( event.target );
 
 			// If it's a label that associated with an input
 			if ( $clickedTarget[0].control ) {
@@ -1000,9 +999,15 @@ App = Marionette.Application.extend( {
 				return;
 			}
 
-			var $clickedTargetClosestElement = $clickedTarget.closest( elementToHide );
+			if ( this.callback ) {
+				this.callback();
 
-			jQuery( elementToHide ).not( $clickedTargetClosestElement ).hide();
+				return;
+			}
+
+			var $clickedTargetClosestElement = $clickedTarget.closest( this.element );
+
+			jQuery( this.element ).not( $clickedTargetClosestElement ).hide();
 		} );
 	}
 } );
