@@ -236,6 +236,8 @@ module.exports = Marionette.CompositeView.extend( {
 			this.ui.title.text( this.getDefaultTitle() );
 		}
 
+		elementor.saver.setFlagEditorChange( true );
+
 		elementor.removeBackgroundClickListener( 'navigator' );
 	},
 
