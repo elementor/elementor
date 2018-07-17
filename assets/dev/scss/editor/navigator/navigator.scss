@@ -10,6 +10,7 @@
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
 	z-index: 2;
+	display: none;
 
 	&__inner {
 		height: 100%;
