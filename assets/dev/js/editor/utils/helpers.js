@@ -267,17 +267,23 @@ helpers = {
 		}, timeout );
 	},
 
-	cssWithBackup: function( $element, backupState, rules ) {
-		var backup = {},
+	getElementInlineStyle: function( $element, properties ) {
+		var style = {},
 			elementStyle = $element[0].style;
 
-		jQuery.each( rules, function( propertyName ) {
-			backup[ propertyName ] = undefined !== elementStyle[ propertyName ] ? elementStyle[ propertyName ] : '';
-
-			elementStyle[ propertyName ] = this;
+		properties.forEach( function( property ) {
+			style[ property ] = undefined !== elementStyle[ property ] ? elementStyle[ property ] : '';
 		} );
 
-		$element.data( 'css-backup-' + backupState, backup );
+		return style;
+	},
+
+	cssWithBackup: function( $element, backupState, rules ) {
+		var cssBackup = this.getElementInlineStyle( $element, Object.keys( rules ) );
+
+		$element
+			.data( 'css-backup-' + backupState, cssBackup )
+			.css( rules );
 	},
 
 	recoverCSSBackup: function( $element, backupState ) {
