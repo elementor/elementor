@@ -622,7 +622,7 @@ class Admin {
 					while ( $recently_edited_query->have_posts() ) :
 						$recently_edited_query->the_post();
 
-						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_time( 'U' ) );
+						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
 					?>
 					<li class="e-overview__post">
 						 <a href="<?php echo esc_attr( Utils::get_edit_link( get_the_ID() ) ); ?>" class="e-overview__post-link"><?php the_title(); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; ?>, <?php the_time(); ?></span>
