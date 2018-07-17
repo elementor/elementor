@@ -580,6 +580,10 @@ App = Marionette.Application.extend( {
 		this.backgroundClickListeners[ key ] = listener;
 	},
 
+	removeBackgroundClickListener: function( key ) {
+		delete this.backgroundClickListeners[ key ];
+	},
+
 	showFatalErrorDialog: function( options ) {
 		var defaultOptions = {
 			id: 'elementor-fatal-error-dialog',
