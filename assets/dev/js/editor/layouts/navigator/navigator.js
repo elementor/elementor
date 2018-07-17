@@ -5,16 +5,24 @@ module.exports = Marionette.Region.extend( {
 
 	isDraggingNeedsStop: false,
 
+	opened: false,
+
+	storage: {
+		visible: true
+	},
+
 	constructor: function() {
 		Marionette.Region.prototype.constructor.apply( this, arguments );
 
-		var NavigatorLayoutView = require( 'elementor-layouts/navigator/layout' );
+		var savedStorage = elementor.getStorage( 'navigator' );
 
-		this.show( new NavigatorLayoutView() );
+		if ( savedStorage ) {
+			this.storage = savedStorage;
+		}
 
-		this.$el.draggable( this.getDraggableOptions() );
-
-		this.$el.resizable( this.getResizableOptions() );
+		if ( this.storage.visible ) {
+			this.open();
+		}
 	},
 
 	getLayout: function() {
@@ -33,6 +41,8 @@ module.exports = Marionette.Region.extend( {
 	},
 
 	getResizableOptions: function() {
+		var self = this;
+
 		return {
 			handles: 'all',
 			containment: 'document',
@@ -44,24 +54,52 @@ module.exports = Marionette.Region.extend( {
 			},
 			stop: function() {
 				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
+
+				self.saveSize();
 			}
 		};
 	},
 
+	beforeFirstOpen: function() {
+		var NavigatorLayoutView = require( 'elementor-layouts/navigator/layout' );
+
+		this.show( new NavigatorLayoutView() );
+
+		this.$el.draggable( this.getDraggableOptions() );
+
+		this.$el.resizable( this.getResizableOptions() );
+	},
+
 	open: function( model ) {
+		if ( ! this.opened ) {
+			this.beforeFirstOpen();
+
+			this.opened = true;
+		}
+
 		this.$el.show();
+
+		if ( this.storage.docked ) {
+			this.dock();
+		} else {
+			this.setSize();
+		}
 
 		if ( model ) {
 			model.trigger( 'request:edit' );
 		}
+
+		this.saveStorage( 'visible', true );
 	},
 
 	close: function() {
 		this.$el.hide();
 
 		if ( this.isDocked ) {
-			this.undock();
+			this.undock( true );
 		}
+
+		this.saveStorage( 'visible', false );
 	},
 
 	isSnapping: function() {
@@ -99,9 +137,11 @@ module.exports = Marionette.Region.extend( {
 		this.$el.resizable( resizableOptions );
 
 		this.isDocked = true;
+
+		this.saveStorage( 'docked', true );
 	},
 
-	undock: function() {
+	undock: function( silent ) {
 		elementor.$body.removeClass( 'elementor-navigator-docked' );
 
 		elementor.helpers.recoverCSSBackup( this.$el, 'undocked' );
@@ -113,6 +153,26 @@ module.exports = Marionette.Region.extend( {
 		this.$el.resizable( this.getResizableOptions() );
 
 		this.isDocked = false;
+
+		if ( ! silent ) {
+			this.saveStorage( 'docked', false );
+		}
+	},
+
+	saveStorage: function( key, value ) {
+		this.storage[ key ] = value;
+
+		elementor.setStorage( 'navigator', this.storage );
+	},
+
+	saveSize: function() {
+		this.saveStorage( 'size', elementor.helpers.getElementInlineStyle( this.$el, [ 'width', 'height', 'top', 'bottom', 'right', 'left' ] ) );
+	},
+
+	setSize: function() {
+		if ( this.storage.size ) {
+			this.$el.css( this.storage.size );
+		}
 	},
 
 	onDrag: function( event, ui ) {
@@ -147,5 +207,7 @@ module.exports = Marionette.Region.extend( {
 
 	onDragStop: function() {
 		this.isDraggingNeedsStop = false;
+
+		this.saveSize();
 	}
 } );
