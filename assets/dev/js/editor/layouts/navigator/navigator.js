@@ -8,7 +8,9 @@ module.exports = Marionette.Region.extend( {
 	opened: false,
 
 	storage: {
-		visible: true
+		visible: true,
+		size: {},
+		dockedSize: {}
 	},
 
 	constructor: function() {
@@ -57,7 +59,11 @@ module.exports = Marionette.Region.extend( {
 			stop: function() {
 				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
 
-				self.saveSize();
+				if ( self.isDocked ) {
+					self.saveDockedSize();
+				} else {
+					self.saveSize();
+				}
 			}
 		};
 	},
@@ -123,7 +129,7 @@ module.exports = Marionette.Region.extend( {
 		elementor.$body.addClass( 'elementor-navigator-docked' );
 
 		this.$el.css( {
-			width: '',
+			width: this.storage.dockedSize.width,
 			height: '',
 			top: '',
 			bottom: '',
@@ -175,6 +181,10 @@ module.exports = Marionette.Region.extend( {
 
 	saveSize: function() {
 		this.saveStorage( 'size', elementor.helpers.getElementInlineStyle( this.$el, [ 'width', 'height', 'top', 'bottom', 'right', 'left' ] ) );
+	},
+
+	saveDockedSize: function() {
+		this.saveStorage( 'dockedSize', elementor.helpers.getElementInlineStyle( this.$el, [ 'width' ] ) );
 	},
 
 	setSize: function() {
