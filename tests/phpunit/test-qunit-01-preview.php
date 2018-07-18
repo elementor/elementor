@@ -17,6 +17,8 @@ class Elementor_Test_Qunit_Preview extends WP_UnitTestCase {
 
 		query_posts( [ 'p' => $GLOBALS['post']->ID, 'post_type' => 'any' ] );
 
+		$_GET['elementor-preview'] = $GLOBALS['post']->ID;
+
 		\Elementor\Plugin::$instance->preview->init();
 
 		// Load the theme template.

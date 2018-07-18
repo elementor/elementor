@@ -42,9 +42,13 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 
 		$html = ob_get_clean();
 
+		$preview_url = \Elementor\Plugin::$instance->documents->get( $_REQUEST['post'] )->get_preview_url();
+
+		$html = str_replace( json_encode($preview_url), '"./preview.html?"', $html, $count );
+
 		$html = fix_qunit_html_urls( $html );
 
-		$html = str_replace( wp_json_encode( add_query_arg( 'elementor-preview', '', get_permalink( $_REQUEST['post'] ) ) ), '"./preview.html?"', $html );
+		var_dump($preview_url, $count );
 
 		$quint = '<div id="qunit" style="z-index:1;position:relative;overflow:scroll;height:100%;"></div>' .
 		         '<div id="qunit-fixture"></div>' .
