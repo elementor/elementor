@@ -130,10 +130,18 @@ ElementModel = Backbone.Model.extend( {
 		return this._htmlCache;
 	},
 
-	getTitle: function() {
-		var elementData = elementor.getElementData( this );
+	getDefaultTitle: function() {
+		return elementor.getElementData( this ).title;
+	},
 
-		return ( elementData ) ? elementData.title : 'Unknown';
+	getTitle: function() {
+		var title = this.getSetting( '_title' );
+
+		if ( ! title ) {
+			title = this.getDefaultTitle();
+		}
+
+		return title;
 	},
 
 	getIcon: function() {

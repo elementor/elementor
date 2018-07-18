@@ -66,9 +66,13 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	templateHelpers: function() {
-		return {
-			title: this.getTitle()
-		};
+		var helpers = {};
+
+		if ( ! this.isRoot() ) {
+			helpers.title = this.model.getTitle();
+		}
+
+		return helpers;
 	},
 
 	initialize: function() {
@@ -76,18 +80,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.listenTo( this.model, 'request:edit', this.onEditRequest )
 			.listenTo( this.model, 'change', this.onModelChange );
-	},
-
-	getDefaultTitle: function() {
-		return elementor.helpers.firstLetterUppercase( this.model.get( 'widgetType' ) || this.model.get( 'elType' ) );
-	},
-
-	getTitle: function() {
-		if ( this.isRoot() ) {
-			return;
-		}
-
-		return this.model.getSetting( '_title' ) || this.getDefaultTitle();
 	},
 
 	getDistance: function() {
@@ -233,7 +225,7 @@ module.exports = Marionette.CompositeView.extend( {
 		} else {
 			settings.unset( '_title', { silent: true } );
 
-			this.ui.title.text( this.getDefaultTitle() );
+			this.ui.title.text( this.model.getDefaultTitle() );
 		}
 
 		elementor.saver.setFlagEditorChange( true );
