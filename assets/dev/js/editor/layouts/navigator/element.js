@@ -70,6 +70,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 		if ( ! this.isRoot() ) {
 			helpers.title = this.model.getTitle();
+
+			helpers.icon = 'section' === this.model.get( 'elType' ) ? '' : this.model.getIcon();
 		}
 
 		return helpers;

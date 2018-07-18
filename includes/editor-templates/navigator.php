@@ -25,14 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<i class="eicon-sort-down"></i>
 			</div>
 			<#
-			var icon;
-
-			if ( 'column' === elType ) {
-				icon = 'eicon-column';
-			} else if ( 'widget' === elType ) {
-				icon = elementor.config.widgets[ widgetType ].icon;
-			}
-
 			if ( icon ) { #>
 				<div class="elementor-navigator__element__element-type">
 					<i class="{{{ icon }}}"></i>
