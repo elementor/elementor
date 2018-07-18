@@ -771,7 +771,7 @@ class Element_Column extends Element_Base {
 		);
 
 		// TODO: Backward comparability for deprecated controls
-        $this->add_control(
+		$this->add_control(
 			'screen_sm',
 			[
 				'type' => Controls_Manager::HIDDEN,
@@ -788,7 +788,6 @@ class Element_Column extends Element_Base {
 				'prefix_class' => 'elementor-sm-',
 			]
 		);
-
 		// END Backward comparability
 
 		$this->end_controls_section();
