@@ -216,6 +216,16 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.1.4 - 2018-07-18 =
+* Tweak: Show modified date instead of publish date on Dashboard widget ([#4169](https://github.com/pojome/elementor/issues/4169))
+* Fix: Selector for CSS Filters control in column
+* Fix: CSS Filters for self hosted video
+* Fix: Avoid creating unnecessary CSS for widgets
+* Fix: Added backward comparability for deprecated controls
+* Fix: Color Picker control value change detection
+* Fix: Avoid multiple ready trigger in preview
+* Fix: Save default page template
+
 = 2.1.3 - 2018-07-16 =
 * Tweak: Added CSS filter control for Map, Video, Section and Column
 * Tweak: Added Inspector option in Tools page
