@@ -253,9 +253,9 @@ module.exports = Marionette.Region.extend( {
 	},
 
 	onDragStop: function() {
-		if ( this.isDraggingNeedsStop ) {
-			this.isDraggingNeedsStop = false;
-		} else {
+		this.isDraggingNeedsStop = false;
+
+		if ( ! this.isDocked ) {
 			this.saveSize();
 		}
 	}
