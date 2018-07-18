@@ -89,8 +89,10 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	deactivate: function() {
-		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
-			this.getChildViewContainer().sortable( 'destroy' );
+		var childViewContainer = this.getChildViewContainer();
+
+		if ( childViewContainer.sortable( 'instance' ) ) {
+			childViewContainer.sortable( 'destroy' );
 		}
 	},
 
