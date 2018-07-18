@@ -19,7 +19,7 @@ ControlColorItemView = ControlBaseDataView.extend( {
 		} else {
 			elementor.helpers.wpColorPicker( self.ui.input, {
 				change: function() {
-					self.ui.input.trigger( 'input' );
+					self.setValue( self.ui.input.wpColorPicker( 'color' ) );
 				},
 				clear: function() {
 					self.setValue( '' );
