@@ -17,7 +17,9 @@ module.exports = Marionette.Region.extend( {
 			right: '',
 			left: ''
 		},
-		dockedSize: {}
+		dockedSize: {
+			width: 250
+		}
 	},
 
 	constructor: function() {
@@ -135,8 +137,12 @@ module.exports = Marionette.Region.extend( {
 	dock: function() {
 		elementor.$body.addClass( 'elementor-navigator-docked' );
 
+		var side = elementor.config.is_rtl ? 'left' : 'right',
+			dockedWidth = this.storage.dockedSize.width,
+			resizableOptions = this.getResizableOptions();
+
 		this.$el.css( {
-			width: this.storage.dockedSize.width,
+			width: dockedWidth,
 			height: '',
 			top: '',
 			bottom: '',
@@ -144,10 +150,9 @@ module.exports = Marionette.Region.extend( {
 			right: ''
 		} );
 
-		this.$el.resizable( 'destroy' );
+		elementor.$previewWrapper.css( side, dockedWidth );
 
-		var resizableOptions = this.getResizableOptions(),
-			side = elementor.config.is_rtl ? 'left' : 'right';
+		this.$el.resizable( 'destroy' );
 
 		resizableOptions.handles = elementor.config.is_rtl ? 'e' : 'w';
 
