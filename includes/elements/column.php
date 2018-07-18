@@ -770,6 +770,27 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		// TODO: Backward comparability for deprecated controls
+        $this->add_control(
+			'screen_sm',
+			[
+				'type' => Controls_Manager::HIDDEN,
+			]
+		);
+
+		$this->add_control(
+			'screen_sm_width',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'condition' => [
+					'screen_sm' => [ 'custom' ],
+				],
+				'prefix_class' => 'elementor-sm-',
+			]
+		);
+
+		// END Backward comparability
+
 		$this->end_controls_section();
 
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
