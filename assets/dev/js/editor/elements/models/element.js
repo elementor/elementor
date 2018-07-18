@@ -83,26 +83,6 @@ ElementModel = Backbone.Model.extend( {
 		elementorFrontend.config.elements.editSettings[ this.cid ] = editSettings;
 	},
 
-	onDestroy: function() {
-		// Clean the memory for all use instances
-		var settings = this.get( 'settings' ),
-			elements = this.get( 'elements' );
-
-		if ( undefined !== elements ) {
-			_.each( _.clone( elements.models ), function( model ) {
-				model.destroy();
-			} );
-		}
-
-		settings.destroy();
-	},
-
-	onCloseEditor: function() {
-		if ( this.renderOnLeave ) {
-			this.renderRemoteServer();
-		}
-	},
-
 	setSetting: function( key, value ) {
 		var settings = this.get( 'settings' );
 
@@ -234,6 +214,26 @@ ElementModel = Backbone.Model.extend( {
 		}
 
 		return data;
+	},
+
+	onCloseEditor: function() {
+		if ( this.renderOnLeave ) {
+			this.renderRemoteServer();
+		}
+	},
+
+	onDestroy: function() {
+		// Clean the memory for all use instances
+		var settings = this.get( 'settings' ),
+			elements = this.get( 'elements' );
+
+		if ( undefined !== elements ) {
+			_.each( _.clone( elements.models ), function( model ) {
+				model.destroy();
+			} );
+		}
+
+		settings.destroy();
 	}
 
 } );
