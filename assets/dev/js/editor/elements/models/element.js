@@ -145,9 +145,7 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	getIcon: function() {
-		var elementData = elementor.getElementData( this );
-
-		return ( elementData ) ? elementData.icon : 'unknown';
+		return elementor.getElementData( this ).icon;
 	},
 
 	createRemoteRenderRequest: function() {
