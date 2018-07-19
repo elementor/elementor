@@ -548,7 +548,7 @@ class Widget_Video extends Widget_Base {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters',
-				'selector' => '{{WRAPPER}} iframe',
+				'selector' => '{{WRAPPER}} .elementor-wrapper',
 			]
 		);
 

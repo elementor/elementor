@@ -6,6 +6,7 @@ use Elementor\Core\DocumentTypes\Post;
 use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -389,6 +390,12 @@ class Documents_Manager {
 			if ( in_array( $document->get_post()->post_status, [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE ], true ) ) {
 				$document = $document->get_autosave( 0, true );
 			}
+		}
+
+		// Set default page template because the footer-saver doesn't send default values,
+		// But if the template was changed from canvas to default - it needed to save.
+		if ( Utils::is_cpt_custom_templates_supported() && ! isset( $request['settings']['template'] ) ) {
+			$request['settings']['template'] = 'default';
 		}
 
 		$data = [
