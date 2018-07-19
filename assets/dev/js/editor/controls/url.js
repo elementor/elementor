@@ -22,6 +22,7 @@ module.exports = BaseMultiple.extend( {
 				self.ui.input.prev().show();
 
 				$.post( window.ajaxurl, {
+					editor: 'elementor',
 					action: 'wp-link-ajax',
 					page: 1,
 					search: request.term,
