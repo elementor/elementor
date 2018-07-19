@@ -111,24 +111,26 @@
 	cursor: default;
 
 	.ui-menu-item {
+		display: flex;
+		justify-content: space-between;
+		align-self: baseline;
 		padding: 5px 8px;
 		color: #6c7781;
 		font-size: 13px;
 		background: #fff;
 		width: 100%;
-		line-height: 1.5;
+		line-height: 1.2;
 		cursor: pointer;
 
 		&.ui-state-hover,
 		&.ui-state-active,
 		&.ui-state-focus {
 			background: $editor-background;
-			color: #212121;
 		}
 	}
 
 	.elementor-autocomplete-item-info {
-		float: $end;
 		font-size: 10px;
+		padding-top: 3px;
 	}
 }
