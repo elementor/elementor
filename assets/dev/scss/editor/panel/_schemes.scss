@@ -146,13 +146,10 @@
 
 .elementor-panel-scheme-item {
 
-	.elementor-panel-heading {
+	&:not(.elementor-open) {
 
-		&:not(.elementor-open) {
-
-			+ .elementor-panel-scheme-typography-items {
-				display: none;
-			}
+		.elementor-panel-scheme-typography-items {
+			display: none;
 		}
 	}
 }
