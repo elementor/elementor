@@ -82,11 +82,16 @@ module.exports = Marionette.Behavior.extend( {
 
 	onRequestContextMenu: function( event ) {
 		var modal = this.getContextMenu().getModal(),
-			iframe = modal.getSettings( 'iframe' );
+			iframe = modal.getSettings( 'iframe' ),
+			toolsGroup = _.findWhere( this.contextMenu.getSettings( 'groups' ), { name: 'tools' } );
+
+		toolsGroup.isVisible = false;
 
 		modal.setSettings( 'iframe', null );
 
 		this.onContextMenu( event );
+
+		toolsGroup.isVisible = true;
 
 		modal.setSettings( 'iframe', iframe );
 	},
