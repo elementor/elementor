@@ -50,7 +50,7 @@ module.exports = BaseMultiple.extend( {
 				return false;
 			},
 			open: function( event  ) {
-				jQuery( event.target ).data( 'uiAutocomplete' ).menu.activeMenu.addClass( 'elementor-control-url-autocomplete-menu' );
+				jQuery( event.target ).data( 'uiAutocomplete' ).menu.activeMenu.addClass( 'elementor-autocomplete-menu' );
 			},
 			minLength: 2,
 			position: {
@@ -63,7 +63,7 @@ module.exports = BaseMultiple.extend( {
 					title = item.title ? item.title : fallbackTitle;
 
 				return $( '<li role="option" id="mce-wp-autocomplete-' + item.ID + '">' )
-					.append( '<span>' + title + '</span>&nbsp;<span class="elementor-control-url-autocomplete-item-info">' + item.info + '</span>' )
+					.append( '<span>' + title + '</span>&nbsp;<span class="elementor-autocomplete-item-info">' + item.info + '</span>' )
 					.appendTo( ul );
 			};
 		},

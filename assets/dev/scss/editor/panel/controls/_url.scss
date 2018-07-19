@@ -1,72 +1,3 @@
-// It's in body, not within the panel.
-.elementor-control-url-autocomplete-menu {
-	position: absolute;
-	cursor: default;
-	list-style:none;
-	padding: 2px;
-	margin: 0;
-	display:block;
-	float: left;
-	border: 1px solid #aaaaaa;
-	background: #ffffff;
-	color: #222222;
-
-	.ui-menu-item {
-		margin:0;
-		padding: 0;
-		zoom: 1;
-		float: left;
-		clear: left;
-		width: 100%;
-
-		a {
-			text-decoration:none;
-			display:block;
-			padding:.2em .4em;
-			line-height:1.5;
-			zoom:1;
-			color: #222222;
-		}
-
-		.ui-state-hover,
-		.ui-state-active {
-			font-weight: normal;
-			margin: -1px;
-		}
-	}
-
-	.elementor-control-url-autocomplete-item-info {
-		float: $end;
-	}
-
-	.ui-state-hover,
-	.ui-state-focus {
-		border: 1px solid #999999;
-		background: #dadada;
-		font-weight: normal;
-		color: #212121;
-	}
-
-	.ui-state-hover a, .ui-state-hover a:hover {
-		color: #212121;
-		text-decoration: none;
-	}
-
-	.ui-state-active {
-		border: 1px solid #aaaaaa;
-		background: #ffffff;
-		font-weight: normal;
-		color: #212121;
-	}
-
-	.ui-state-active a,
-	.ui-state-active a:link,
-	.ui-state-active a:visited {
-		color: #212121;
-		text-decoration: none;
-	}
-}
-
 .elementor-control-type-url {
 
 	.elementor-control-url-external-hide {
@@ -156,5 +87,48 @@
 				border-color: $editor-light;
 			}
 		}
+	}
+}
+
+//Autocomplete URL
+.elementor-autocomplete-menu {
+	position: absolute;
+	background: #fff;
+	color: $editor-darkest;
+	border: 1px solid $editor-light;
+	margin: 0;
+	font-size: 12px;
+	list-style: none;
+	padding: 4px 0;
+	height: auto;
+	width: 100%;
+	min-width: 260px;
+	max-width: 300px;
+	max-height: 200px;
+	overflow-y: auto;
+	border-radius: 3px;
+	transition: all .3s ease-in-out;
+	cursor: default;
+
+	.ui-menu-item {
+		padding: 5px 8px;
+		color: #6c7781;
+		font-size: 13px;
+		background: #fff;
+		width: 100%;
+		line-height: 1.5;
+		cursor: pointer;
+
+		&.ui-state-hover,
+		&.ui-state-active,
+		&.ui-state-focus {
+			background: $editor-background;
+			color: #212121;
+		}
+	}
+
+	.elementor-autocomplete-item-info {
+		float: $end;
+		font-size: 10px;
 	}
 }
