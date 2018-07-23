@@ -137,6 +137,16 @@ abstract class Controls_Stack {
 	 */
 	private $injection_point;
 
+
+	/**
+	 * Data sanitized.
+	 *
+	 * @access private
+	 *
+	 * @var bool
+	 */
+	private $data_sanitized = false;
+
 	/**
 	 * Get element name.
 	 *
@@ -1014,6 +1024,12 @@ abstract class Controls_Stack {
 	 * @return mixed The raw data.
 	 */
 	public function get_data( $item = null ) {
+		if ( ! $this->data_sanitized ) {
+			$this->data = $this->sanitize_initial_data( $this->data );
+
+			$this->data_sanitized = true;
+		}
+
 		return self::_get_items( $this->data, $item );
 	}
 
@@ -1030,12 +1046,16 @@ abstract class Controls_Stack {
 	 * @return mixed The settings.
 	 */
 	public function get_settings( $setting = null ) {
+		if (  ! $this->settings ) {
+			$this->settings = $this->_get_parsed_settings();
+		}
+
 		return self::_get_items( $this->settings, $setting );
 	}
 
 	public function get_parsed_dynamic_settings( $setting = null ) {
 		if ( null === $this->parsed_dynamic_settings ) {
-			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->settings );
+			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->get_settings() );
 		}
 
 		return self::_get_items( $this->parsed_dynamic_settings, $setting );
@@ -1745,6 +1765,10 @@ abstract class Controls_Stack {
 	 *                            `$key` is an array. Default is null.
 	 */
 	final public function set_settings( $key, $value = null ) {
+		if ( ! $this->settings ) {
+			$this->get_settings();
+		}
+
 		// strict check if override all settings.
 		if ( is_array( $key ) ) {
 			$this->settings = $key;
@@ -1801,7 +1825,7 @@ abstract class Controls_Stack {
 	 * @return array Parsed settings.
 	 */
 	protected function _get_parsed_settings() {
-		$settings = $this->data['settings'];
+		$settings = $this->get_data( 'settings' );
 
 		foreach ( $this->get_controls() as $control ) {
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
@@ -1981,10 +2005,6 @@ abstract class Controls_Stack {
 		$this->data = array_merge( $this->get_default_data(), $data );
 
 		$this->id = $data['id'];
-
-		$this->data = $this->sanitize_initial_data( $this->data );
-
-		$this->settings = $this->_get_parsed_settings();
 	}
 
 	/**
