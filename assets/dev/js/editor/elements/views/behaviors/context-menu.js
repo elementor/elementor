@@ -32,9 +32,15 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	initContextMenu: function() {
-		var contextMenuGroups = this.getOption( 'groups' );
+		var contextMenuGroups = this.getOption( 'groups' ),
+			deleteGroup = _.findWhere( contextMenuGroups, { name: 'delete' } ),
+			afterGroupIndex = contextMenuGroups.indexOf( deleteGroup );
 
-		contextMenuGroups.push( {
+		if ( -1 === afterGroupIndex ) {
+			afterGroupIndex = contextMenuGroups.length;
+		}
+
+		contextMenuGroups.splice( afterGroupIndex, 0, {
 			name: 'tools',
 			actions: [
 				{
