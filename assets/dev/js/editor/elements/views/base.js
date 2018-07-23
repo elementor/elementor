@@ -113,10 +113,12 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'edit',
+						icon: 'eicon-edit',
 						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
 						callback: this.edit.bind( this )
 					}, {
 						name: 'duplicate',
+						icon: 'eicon-clone',
 						title: elementor.translate( 'duplicate' ),
 						shortcut: controlSign + '+D',
 						callback: this.duplicate.bind( this )
@@ -154,6 +156,7 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'delete',
+						icon: 'eicon-trash',
 						title: elementor.translate( 'delete' ),
 						shortcut: '⌦',
 						callback: this.removeElement.bind( this )
