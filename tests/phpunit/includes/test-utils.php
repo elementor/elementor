@@ -13,18 +13,18 @@ class Elementor_Test_Utils extends WP_UnitTestCase {
 	}
 
 	private function create_and_get_parent_and_child_posts() {
-		$user_id          = $this->factory->user->create( [ 'display_name' => 'elementor' ] );
-		$post_id          = $this->factory->post->create( [
+		$user_id = $this->factory->user->create( [ 'display_name' => 'elementor' ] );
+		$post_id = $this->factory->post->create( [
 			'post_author' => $user_id,
-			'post_date'   => '2014-11-11 23:45:30',
-			'post_type'   => 'revision',
+			'post_date' => '2014-11-11 23:45:30',
+			'post_type' => 'revision',
 		] );
 		$inherent_post_id = $this->factory->post->create( [
-			'post_date'   => '2014-11-12 23:45:30',
-			'post_type'   => 'revision',
+			'post_date' => '2014-11-12 23:45:30',
+			'post_type' => 'revision',
 			'post_author' => $user_id,
 			'post_parent' => $post_id,
-			'post_name'   => $post_id . '-autosave',
+			'post_name' => $post_id . '-autosave',
 		] );
 
 		return [ 'parent_id' => $post_id, 'child_id' => $inherent_post_id, 'user_id' => $user_id ];
@@ -47,7 +47,7 @@ class Elementor_Test_Utils extends WP_UnitTestCase {
 	public function test_should_return_elemnentor_pro_link_elementor_partner_id() {
 		$id = 'zcpo7c3r2ytm5or';
 		define( 'ELEMENTOR_PARTNER_ID', $id );
-		$theme    = sanitize_key( wp_get_theme() );
+		$theme = sanitize_key( wp_get_theme() );
 		$baseLink = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 		$this->assertSame( $baseLink . "&utm_term=$theme&partner_id=$id", Utils::get_pro_link( $baseLink ) );
 	}
@@ -91,6 +91,9 @@ class Elementor_Test_Utils extends WP_UnitTestCase {
 		                   . "&preview=true", Utils::get_wp_preview_url( $post_id ) );
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function test_should_replace_0_urls() {
 		$this->assertSame( '0 rows affected.', Utils::replace_urls( 'http://' . home_url() . '/elementor', 'https://' . home_url() . '/elementor' ) );
 	}
@@ -145,7 +148,7 @@ class Elementor_Test_Utils extends WP_UnitTestCase {
 	}
 
 	public function test_should_get_when_and_how_edited_the_post_last() {
-		$user    = $this->factory->user->create( [ 'display_name' => 'elementor' ] );
+		$user = $this->factory->user->create( [ 'display_name' => 'elementor' ] );
 		$post_id = $this->factory->post->create( [ 'post_author' => $user, 'post_date' => '2014-11-11 23:45:30' ] );
 		$this->assertSame( "Last edited on <time>Nov 11, 23:45</time> by elementor", Utils::get_last_edited( $post_id ) );
 	}
@@ -162,7 +165,7 @@ class Elementor_Test_Utils extends WP_UnitTestCase {
 
 
 	public function test_getYoutubeId() {
-		$youtube_id   = '9uOETcuFjbE';
+		$youtube_id = '9uOETcuFjbE';
 		$youtube_urls = [
 			'https://www.youtube.com/watch?v=' . $youtube_id,
 			'https://www.youtube.com/watch?v=' . $youtube_id . '&feature=player_embedded',

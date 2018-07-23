@@ -48,8 +48,6 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 
 		$html = fix_qunit_html_urls( $html );
 
-		var_dump($preview_url, $count );
-
 		$quint = '<div id="qunit" style="z-index:1;position:relative;overflow:scroll;height:100%;"></div>' .
 		         '<div id="qunit-fixture"></div>' .
 		         '<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">' .
