@@ -53,6 +53,10 @@ class Elementor_Test_User extends WP_Ajax_UnitTestCase {
 		$this->_handleAjax( 'elementor_set_admin_notice_viewed' );
 	}
 
+	public function test_should_not_notice_viewed() {
+		$this->assertFalse(User::is_user_notice_viewed(1));
+	}
+
 	/**
 	 *
 	 */
