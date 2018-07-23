@@ -546,7 +546,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			// In edit mode - handle an external elements which loaded by another elements like shortcode etc.
-			self.$el.find( '.elementor-element:not(.elementor-element-edit-mode)' ).each( function() {
+			self.$el.find( '.elementor-element.elementor-' + self.model.get( 'elType' ) + ':not(.elementor-element-edit-mode)' ).each( function() {
 				elementorFrontend.elementsHandler.runReadyTrigger( jQuery( this ) );
 			} );
 		} );

@@ -56,6 +56,7 @@ before_script:
   - composer require satooshi/php-coveralls '~1.0'
   - composer global require wp-coding-standards/wpcs
   - phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+  - composer global require --dev jakub-onderka/php-parallel-lint
 #  - npm install -g grunt-cli
 #  - npm install
 
@@ -64,6 +65,7 @@ script:
   - jscs -c .jscsrc .
   - jshint .
   - phpunit --coverage-clover=build/logs/clover.xml
+  - parallel-lint --blame --exclude node_modules --exclude vendor .
 #  - grunt test --verbose
 
 after_success:

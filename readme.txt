@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 2.1.3
+Stable tag: 2.1.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -215,6 +215,16 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.1.4 - 2018-07-18 =
+* Tweak: Show modified date instead of publish date on Dashboard widget ([#4169](https://github.com/pojome/elementor/issues/4169))
+* Fix: Selector for CSS Filters control in column
+* Fix: CSS Filters for self hosted video
+* Fix: Avoid creating unnecessary CSS for widgets
+* Fix: Added backward comparability for deprecated controls
+* Fix: Color Picker control value change detection
+* Fix: Avoid multiple ready trigger in preview
+* Fix: Save default page template
 
 = 2.1.3 - 2018-07-16 =
 * Tweak: Added CSS filter control for Map, Video, Section and Column
