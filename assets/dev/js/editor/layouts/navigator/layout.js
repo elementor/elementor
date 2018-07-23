@@ -19,7 +19,7 @@ module.exports = Marionette.LayoutView.extend( {
 
 	toggleAll: function() {
 		var state = 'expand' === this.ui.toggleAll.data( 'elementor-action' ),
-			classes = [ 'eicon-menu-bar', 'eicon-menu-bar' ];
+			classes = [ 'eicon-collapse', 'eicon-expand' ];
 
 		this.ui.toggleAll
 			.data( 'elementor-action', state ? 'collapse' : 'expand' )
