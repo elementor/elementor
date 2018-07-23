@@ -86,7 +86,7 @@ App = Marionette.Application.extend( {
 			Switcher: require( 'elementor-controls/switcher' ),
 			Tab: require( 'elementor-controls/tab' ),
 			Text_shadow: require( 'elementor-controls/box-shadow' ),
-			Url: require( 'elementor-controls/base-multiple' ),
+			Url: require( 'elementor-controls/url' ),
 			Wp_widget: require( 'elementor-controls/wp_widget' ),
 			Wysiwyg: require( 'elementor-controls/wysiwyg' )
 		},
