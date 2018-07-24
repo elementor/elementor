@@ -96,12 +96,36 @@ class Element_Column extends Element_Base {
 	 * @return array Default edit tools.
 	 */
 	protected static function get_default_edit_tools() {
-		return [
+		$column_label = __( 'Column', 'elementor' );
+
+		$edit_tools = [
 			'edit' => [
 				'title' => __( 'Edit', 'elementor' ),
 				'icon' => 'column',
 			],
 		];
+
+		if ( self::is_edit_buttons_enabled() ) {
+			$edit_tools += [
+				'duplicate' => [
+					/* translators: %s: Column label */
+					'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $column_label ),
+					'icon' => 'clone',
+				],
+				'add' => [
+					/* translators: %s: Column label */
+					'title' => sprintf( __( 'Add %s', 'elementor' ), $column_label ),
+					'icon' => 'plus',
+				],
+				'remove' => [
+					/* translators: %s: Column label */
+					'title' => sprintf( __( 'Remove %s', 'elementor' ), $column_label ),
+					'icon' => 'close',
+				],
+			];
+		}
+
+		return $edit_tools;
 	}
 
 	/**

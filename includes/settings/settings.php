@@ -443,6 +443,18 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
+							'edit_buttons' => [
+								'label' => __( 'Editing Handles', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '',
+									'options' => [
+										'' => __( 'Hide', 'elementor' ),
+										'on' => __( 'Show', 'elementor' ),
+									],
+									'desc' => __( 'Show editing handles when hovering over the element edit button', 'elementor' ),
+								],
+							]
 						],
 					],
 				],
