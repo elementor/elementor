@@ -157,6 +157,23 @@ html.elementor-html {
 		}
 	}
 
+	&--toggle-edit-tools {
+
+		> .elementor-element-overlay {
+
+			.elementor-editor-element-edit {
+
+				&:not(.elementor-active) {
+
+					~ * {
+						width: 0;
+						font-size: 0;
+					}
+				}
+			}
+		}
+	}
+
 	&[data-side="top"], &[data-side="bottom"] + .elementor-element {
 
 		&:before {
@@ -440,9 +457,10 @@ html.elementor-html {
 .elementor-editor-column-settings {
 	top: -1px;
 	@include start(-1px);
+	border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
+	overflow: hidden;
 
 	.elementor-editor-element-setting {
-		border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
 		background-color: $editor-darkest;
 
 		&:not(:hover) {
@@ -457,10 +475,11 @@ html.elementor-html {
 	top: -1px;
 	@include end(-1px);
 	flex-direction: row-reverse;
+	border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
+	overflow: hidden;
 
 	.elementor-editor-element-setting {
 		background-color: darken($editor-info, 20%);
-		border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
 
 		&:not(:hover) {
 			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
