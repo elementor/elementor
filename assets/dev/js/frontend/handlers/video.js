@@ -28,9 +28,22 @@ VideoModule = HandlerModule.extend( {
 
 	handleVideo: function() {
 		if ( ! this.getElementSettings( 'lightbox' ) ) {
-			this.elements.$imageOverlay.remove();
+			var lazy_load = this.elements.$imageOverlay.data( 'lazy-load' );
+			if ( lazy_load ) {
+				var self = this,
+					iframe = document.createElement( 'iframe');
+				iframe.setAttribute( 'src', lazy_load + '&autoplay=1' );
+				iframe.setAttribute( 'class', 'elementor-video-iframe' );
+				iframe.setAttribute( 'allowfullscreen', 'allowfullscreen' );
+				// Chrome 67 Iframe delegation https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#iframe
+				iframe.setAttribute( 'allow', 'autoplay' );
+				this.elements.$imageOverlay.before( iframe );
+				self.elements.$imageOverlay.remove();
 
-			this.playVideo();
+			} else {
+				this.elements.$imageOverlay.remove();
+				this.playVideo();
+			}
 		}
 	},
 
