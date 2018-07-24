@@ -60,7 +60,7 @@ module.exports = BaseMultiple.extend( {
 		} )
 		// The `_renderItem` cannot be override via the arguments.
 			.autocomplete( 'instance' )._renderItem = function( ul, item ) {
-				var fallbackTitle = ( typeof window.wpLinkL10n !== 'undefined' ) ? window.wpLinkL10n.noTitle : '',
+				var fallbackTitle = window.wpLinkL10n ? window.wpLinkL10n.noTitle : '',
 					title = item.title ? item.title : fallbackTitle;
 
 				return $( '<li role="option" id="mce-wp-autocomplete-' + item.ID + '">' )
