@@ -481,7 +481,33 @@ App = Marionette.Application.extend( {
 						return false;
 					}
 
-					var textSelection = getSelection() + elementorFrontend.getElements( 'window' ).getSelection();
+					var frontendWindow = elementorFrontend.getElements( 'window' ),
+						textSelection = getSelection() + frontendWindow.getSelection();
+
+					if ( ! textSelection && elementor.envData.gecko ) {
+						textSelection = [ window, frontendWindow ].some( function( window ) {
+							var activeElement = window.document.activeElement;
+
+							if ( ! activeElement || -1 === [ 'INPUT', 'TEXTAREA' ].indexOf( activeElement.tagName ) ) {
+								return;
+							}
+
+							var originalInputType;
+
+							// Some of input types can't retrieve a selection
+							if ( 'INPUT' === activeElement.tagName ) {
+								originalInputType = activeElement.type;
+
+								activeElement.type = 'text';
+							}
+
+							var selection = activeElement.value.substring( activeElement.selectionStart, activeElement.selectionEnd );
+
+							activeElement.type = originalInputType;
+
+							return ! ! selection;
+						} );
+					}
 
 					return ! textSelection;
 				},
