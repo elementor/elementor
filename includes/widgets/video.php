@@ -477,6 +477,18 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'lazy_load',
+			[
+				'label' => __( 'Lazy Load', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'show_image_overlay' => 'yes',
+					'video_type!' => 'hosted',
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
@@ -770,7 +782,7 @@ class Widget_Video extends Widget_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'video-wrapper' ); ?>>
 			<?php
-			if ( ! $settings['lightbox'] ) {
+			if ( ! $settings['lightbox'] && ( ! $this->has_image_overlay() || empty( $settings['lazy_load'] ) ) ) {
 				echo $video_html; // XSS ok.
 			}
 
@@ -811,6 +823,9 @@ class Widget_Video extends Widget_Base {
 					}
 				} else {
 					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . Group_Control_Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings ) . ');' );
+					if ( ! empty( $settings['lazy_load'] ) ) {
+						$this->add_render_attribute( 'image-overlay', 'data-lazy-load', Embed::get_embed_url( $video_url, $embed_params, $embed_options ) );
+					}
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
