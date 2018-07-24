@@ -21,12 +21,12 @@ module.exports = BaseMultiple.extend( {
 				// Show Spinner.
 				self.ui.input.prev().show();
 
-				$.post( window.ajaxurl, {
+				jQuery.post( window.ajaxurl, {
 					editor: 'elementor',
 					action: 'wp-link-ajax',
 					page: 1,
 					search: request.term,
-					_ajax_linking_nonce: $( '#_ajax_linking_nonce' ).val()
+					_ajax_linking_nonce: jQuery( '#_ajax_linking_nonce' ).val()
 				}, function( data ) {
 					cache = data;
 					response( data );
@@ -60,10 +60,10 @@ module.exports = BaseMultiple.extend( {
 		} )
 		// The `_renderItem` cannot be override via the arguments.
 			.autocomplete( 'instance' )._renderItem = function( ul, item ) {
-				var fallbackTitle = ( typeof window.wpLinkL10n !== 'undefined' ) ? window.wpLinkL10n.noTitle : '',
+				var fallbackTitle = window.wpLinkL10n ? window.wpLinkL10n.noTitle : '',
 					title = item.title ? item.title : fallbackTitle;
 
-				return $( '<li role="option" id="mce-wp-autocomplete-' + item.ID + '">' )
+				return jQuery( '<li role="option" id="mce-wp-autocomplete-' + item.ID + '">' )
 					.append( '<span>' + title + '</span>&nbsp;<span class="elementor-autocomplete-item-info">' + item.info + '</span>' )
 					.appendTo( ul );
 			};
