@@ -273,6 +273,8 @@ App = Marionette.Application.extend( {
 		this.notifications = new Notifications();
 
 		this.ajax.init();
+
+		this.initEnvData();
 	},
 
 	initDialogsManager: function() {
@@ -690,7 +692,6 @@ App = Marionette.Application.extend( {
 		this.initModulesBC();
 
 		this.initComponents();
-		this.initEnvData();
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
@@ -701,11 +702,13 @@ App = Marionette.Application.extend( {
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.initClearPageDialog();
+
 		this.addBackgroundClickArea( document );
 
 		this.$window.trigger( 'elementor:init' );
 
 		this.initPreview();
+
 		this.logSite();
 	},
 
