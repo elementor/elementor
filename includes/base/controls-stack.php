@@ -1024,8 +1024,8 @@ abstract class Controls_Stack {
 	 * @return mixed The raw data.
 	 */
 	public function get_data( $item = null ) {
-			$this->data = $this->sanitize_initial_data( $this->data );
 		if ( ! $this->settings_sanitized && ( ! $item || 'settings' === $item ) ) {
+			$this->data['settings'] = $this->sanitize_settings( $this->data['settings'] );
 
 			$this->settings_sanitized = true;
 		}
