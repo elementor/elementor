@@ -28,22 +28,8 @@ VideoModule = HandlerModule.extend( {
 
 	handleVideo: function() {
 		if ( ! this.getElementSettings( 'lightbox' ) ) {
-			var lazy_load = this.elements.$imageOverlay.data( 'lazy-load' );
-			if ( lazy_load ) {
-				var self = this,
-					iframe = document.createElement( 'iframe');
-				iframe.setAttribute( 'src', lazy_load + '&autoplay=1' );
-				iframe.setAttribute( 'class', 'elementor-video-iframe' );
-				iframe.setAttribute( 'allowfullscreen', 'allowfullscreen' );
-				// Chrome 67 Iframe delegation https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#iframe
-				iframe.setAttribute( 'allow', 'autoplay' );
-				this.elements.$imageOverlay.before( iframe );
-				self.elements.$imageOverlay.remove();
-
-			} else {
-				this.elements.$imageOverlay.remove();
-				this.playVideo();
-			}
+			this.elements.$imageOverlay.remove();
+			this.playVideo();
 		}
 	},
 
@@ -55,7 +41,11 @@ VideoModule = HandlerModule.extend( {
 		}
 
 		var $videoIframe = this.elements.$videoIframe,
-			newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
+			lazyLoad = $videoIframe.data( 'lazy-load' );
+		if ( lazyLoad ) {
+			$videoIframe.attr( 'src', lazyLoad );
+		}
+		var	newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
 
 		$videoIframe[0].src = newSourceUrl + '&autoplay=1';
 	},

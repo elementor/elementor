@@ -823,9 +823,7 @@ class Widget_Video extends Widget_Base {
 					}
 				} else {
 					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . Group_Control_Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings ) . ');' );
-					if ( ! empty( $settings['lazy_load'] ) ) {
-						$this->add_render_attribute( 'image-overlay', 'data-lazy-load', Embed::get_embed_url( $video_url, $embed_params, $embed_options ) );
-					}
+					echo $video_html;
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
@@ -966,10 +964,12 @@ class Widget_Video extends Widget_Base {
 		$embed_options = [];
 
 		if ( 'youtube' === $settings['video_type'] ) {
-			$embed_options[ 'privacy' ] = $settings['yt_privacy'];
+			$embed_options['privacy'] = $settings['yt_privacy'];
 		} elseif ( 'vimeo' === $settings['video_type'] ) {
-			$embed_options[ 'start' ] = $settings['start'];
+			$embed_options['start'] = $settings['start'];
 		}
+
+		$embed_options['lazy_load'] = ! empty( $settings['lazy_load'] );
 
 		return $embed_options;
 	}
