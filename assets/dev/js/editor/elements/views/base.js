@@ -11,10 +11,18 @@ BaseElementView = BaseContainer.extend( {
 
 	allowRender: true,
 
+	toggleEditTools: false,
+
 	renderAttributes: {},
 
 	className: function() {
-		return 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
+		var classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
+
+		if ( this.toggleEditTools ) {
+			classes += ' elementor-element--toggle-edit-tools';
+		}
+
+		return classes;
 	},
 
 	attributes: function() {
@@ -32,7 +40,11 @@ BaseElementView = BaseContainer.extend( {
 
 	ui: function() {
 		return {
-			editButton: '> .elementor-element-overlay .elementor-editor-element-edit'
+			tools: '> .elementor-element-overlay > .elementor-editor-element-settings',
+			editButton: '> .elementor-element-overlay .elementor-editor-element-edit',
+			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-duplicate',
+			addButton: '> .elementor-element-overlay .elementor-editor-element-add',
+			removeButton: '> .elementor-element-overlay .elementor-editor-element-remove'
 		};
 	},
 
@@ -55,7 +67,10 @@ BaseElementView = BaseContainer.extend( {
 
 	events: function() {
 		return {
-			'click @ui.editButton': 'onEditButtonClick'
+			'click @ui.editButton': 'onEditButtonClick',
+			'click @ui.duplicateButton': 'onDuplicateButtonClick',
+			'click @ui.addButton': 'onAddButtonClick',
+			'click @ui.removeButton': 'onRemoveButtonClick'
 		};
 	},
 
@@ -113,10 +128,12 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'edit',
+						icon: 'eicon-edit',
 						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
 						callback: this.options.model.trigger.bind( this.options.model, 'request:edit' )
 					}, {
 						name: 'duplicate',
+						icon: 'eicon-clone',
 						title: elementor.translate( 'duplicate' ),
 						shortcut: controlSign + '+D',
 						callback: this.duplicate.bind( this )
@@ -154,6 +171,7 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'delete',
+						icon: 'eicon-trash',
 						title: elementor.translate( 'delete' ),
 						shortcut: '⌦',
 						callback: this.removeElement.bind( this )
@@ -676,6 +694,16 @@ BaseElementView = BaseContainer.extend( {
 		this.renderUI();
 
 		this.runReadyTrigger();
+
+		if ( this.toggleEditTools ) {
+			var editButton = this.ui.editButton;
+
+			this.ui.tools.hoverIntent( function() {
+				editButton.addClass( 'elementor-active' );
+			}, function() {
+				editButton.removeClass( 'elementor-active' );
+			}, { timeout: 500 } );
+		}
 	},
 
 	onCollectionChanged: function() {
@@ -707,6 +735,18 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		elementor.getPanelView().openEditor( this.getEditModel(), this );
+	},
+
+	onDuplicateButtonClick: function( event ) {
+		event.stopPropagation();
+
+		this.duplicate();
+	},
+
+	onRemoveButtonClick: function( event ) {
+		event.stopPropagation();
+
+		this.removeElement();
 	},
 
 	onDestroy: function() {
