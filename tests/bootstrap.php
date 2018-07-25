@@ -53,3 +53,11 @@ function fix_qunit_html_urls( $html ) {
 }
 
 require $_tests_dir . '/includes/bootstrap.php';
+require 'phpunit/base/local-factory.php';
+require 'phpunit/base/base-class.php';
+
+/*\Elementor\Plugin::instance();
+
+// Run fake actions
+do_action( 'init' );
+do_action( 'plugins_loaded' );*/
