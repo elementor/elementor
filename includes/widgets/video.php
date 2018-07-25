@@ -782,7 +782,7 @@ class Widget_Video extends Widget_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'video-wrapper' ); ?>>
 			<?php
-			if ( ! $settings['lightbox'] && ( ! $this->has_image_overlay() || empty( $settings['lazy_load'] ) ) ) {
+			if ( ! $settings['lightbox'] ) {
 				echo $video_html; // XSS ok.
 			}
 
@@ -823,7 +823,6 @@ class Widget_Video extends Widget_Base {
 					}
 				} else {
 					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . Group_Control_Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings ) . ');' );
-					echo $video_html;
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
