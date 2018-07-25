@@ -1973,6 +1973,58 @@ abstract class Controls_Stack {
 	}
 
 	/**
+	 * Sanitize initial data.
+	 *
+	 * Performs settings cleaning and sanitization.
+	 *
+	 * @since 2.1.5
+	 * @access private
+	 *
+	 * @param array $settings Settings to sanitize.
+	 * @param array $controls Optional. An array of controls. Default is an
+	 *                        empty array.
+	 *
+	 * @return array Sanitized settings.
+	 */
+	private function sanitize_settings( array $settings, array $controls = [] ) {
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
+
+		foreach ( $controls as $control ) {
+			if ( 'repeater' === $control['type'] ) {
+				if ( empty( $settings[ $control['name'] ] ) ) {
+					continue;
+				}
+
+				foreach ( $settings[ $control['name'] ] as $index => $repeater_row_data ) {
+					$sanitized_row_data = $this->sanitize_settings( $repeater_row_data, $control['fields'] );
+
+					$settings[ $control['name'] ][ $index ] = $sanitized_row_data;
+				}
+
+				continue;
+			}
+
+			$is_dynamic = isset( $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] );
+
+			if ( ! $is_dynamic ) {
+				continue;
+			}
+
+			$value_to_check = $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ];
+
+			$tag_text_data = Plugin::$instance->dynamic_tags->tag_text_to_tag_data( $value_to_check );
+
+			if ( ! Plugin::$instance->dynamic_tags->get_tag_info( $tag_text_data['name'] ) ) {
+				unset( $settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] );
+			}
+		}
+
+		return $settings;
+	}
+
+	/**
 	 * Controls stack constructor.
 	 *
 	 * Initializing the control stack class using `$data`. The `$data` is required
