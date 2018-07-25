@@ -51,6 +51,16 @@
 			&__shortcut {
 				color: $editor-lightest;
 			}
+
+			&.elementor-context-menu-list__item-delete {
+
+				&:not(.elementor-context-menu-list__item--disabled) {
+
+					&:hover {
+						background-color: $editor-alert;
+					}
+				}
+			}
 		}
 	}
 
