@@ -273,6 +273,10 @@ App = Marionette.Application.extend( {
 		this.notifications = new Notifications();
 
 		this.ajax.init();
+
+		this.initHotKeys();
+
+		this.initEnvData();
 	},
 
 	initDialogsManager: function() {
@@ -554,7 +558,7 @@ App = Marionette.Application.extend( {
 			} );
 		} );
 
-		hotKeysManager.bindListener( this.$window.add( elementorFrontend.getElements( '$window' ) ) );
+		hotKeysManager.bindListener( this.$window );
 	},
 
 	preventClicksInsideEditor: function() {
@@ -690,7 +694,6 @@ App = Marionette.Application.extend( {
 		this.initModulesBC();
 
 		this.initComponents();
-		this.initEnvData();
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
@@ -701,11 +704,13 @@ App = Marionette.Application.extend( {
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.initClearPageDialog();
+
 		this.addBackgroundClickArea( document );
 
 		this.$window.trigger( 'elementor:init' );
 
 		this.initPreview();
+
 		this.logSite();
 	},
 
@@ -730,8 +735,8 @@ App = Marionette.Application.extend( {
 		}
 
 		this.initFrontend();
+
 		this.initElements();
-		this.initHotKeys();
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
@@ -780,6 +785,8 @@ App = Marionette.Application.extend( {
 		this.enqueueTypographyFonts();
 
 		this.onEditModeSwitched();
+
+		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		this.trigger( 'preview:loaded' );
 	},
