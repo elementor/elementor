@@ -145,7 +145,7 @@ abstract class Controls_Stack {
 	 *
 	 * @var bool
 	 */
-	private $data_sanitized = false;
+	private $settings_sanitized = false;
 
 	/**
 	 * Get element name.
@@ -1024,10 +1024,10 @@ abstract class Controls_Stack {
 	 * @return mixed The raw data.
 	 */
 	public function get_data( $item = null ) {
-		if ( ! $this->data_sanitized ) {
 			$this->data = $this->sanitize_initial_data( $this->data );
+		if ( ! $this->settings_sanitized && ( ! $item || 'settings' === $item ) ) {
 
-			$this->data_sanitized = true;
+			$this->settings_sanitized = true;
 		}
 
 		return self::_get_items( $this->data, $item );
