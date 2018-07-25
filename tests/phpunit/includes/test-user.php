@@ -1,12 +1,12 @@
 <?php
 
 use \Elementor\User;
-use \Elementor\Core\Ajax_Manager;
 
 class Elementor_Test_User extends WP_Ajax_UnitTestCase {
 
 
 	public function test_should_return_false_when_sending_bad_type_to_is_current_user_can_edit() {
+
 		$post_id = $this->factory->post->create( [ 'post_type' => 'banana' ] );
 		$this->assertFalse( User::is_current_user_can_edit( $post_id ) );
 	}
@@ -18,7 +18,7 @@ class Elementor_Test_User extends WP_Ajax_UnitTestCase {
 
 	public function test_should_tell_if_current_user_can_edit_user_cant_edit() {
 		$post_id = $this->factory->post->create( [ 'post_status' => 'post' ] );
-		$this->assertFalse(User::is_current_user_can_edit($post_id));
+		$this->assertFalse( User::is_current_user_can_edit( $post_id ) );
 	}
 
 	public function test_should_tell_if_current_user_can_edit_passes_all() {
@@ -26,7 +26,7 @@ class Elementor_Test_User extends WP_Ajax_UnitTestCase {
 
 		$post_id = $this->factory->post->create( [ 'post_status' => 'post' ] );
 
-		$this->assertTrue(User::is_current_user_can_edit($post_id));
+		$this->assertTrue( User::is_current_user_can_edit( $post_id ) );
 	}
 
 	public function test_is_current_user_can_edit_post_type_should_return_true() {
@@ -54,7 +54,7 @@ class Elementor_Test_User extends WP_Ajax_UnitTestCase {
 	}
 
 	public function test_should_not_notice_viewed() {
-		$this->assertFalse(User::is_user_notice_viewed(1));
+		$this->assertFalse( User::is_user_notice_viewed( 1 ) );
 	}
 
 	/**
@@ -83,9 +83,6 @@ class Elementor_Test_User extends WP_Ajax_UnitTestCase {
 		$this->assertSame( '', 'asd' );
 	}*/
 	// TODO end.
-
-
-
 
 
 }
