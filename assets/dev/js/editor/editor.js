@@ -274,6 +274,8 @@ App = Marionette.Application.extend( {
 
 		this.ajax.init();
 
+		this.initHotKeys();
+
 		this.initEnvData();
 	},
 
@@ -556,7 +558,7 @@ App = Marionette.Application.extend( {
 			} );
 		} );
 
-		hotKeysManager.bindListener( this.$window.add( elementorFrontend.getElements( '$window' ) ) );
+		hotKeysManager.bindListener( this.$window );
 	},
 
 	preventClicksInsideEditor: function() {
@@ -733,8 +735,8 @@ App = Marionette.Application.extend( {
 		}
 
 		this.initFrontend();
+
 		this.initElements();
-		this.initHotKeys();
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
@@ -783,6 +785,8 @@ App = Marionette.Application.extend( {
 		this.enqueueTypographyFonts();
 
 		this.onEditModeSwitched();
+
+		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		this.trigger( 'preview:loaded' );
 	},
