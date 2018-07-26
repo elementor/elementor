@@ -125,7 +125,7 @@ class Widget_Shortcode extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$shortcode = $this->get_settings( 'shortcode' );
+		$shortcode = $this->get_settings_for_display( 'shortcode' );
 
 		$shortcode = do_shortcode( shortcode_unautop( $shortcode ) );
 		?>
