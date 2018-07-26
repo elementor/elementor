@@ -476,7 +476,7 @@ abstract class Document extends Controls_Stack {
 		 * @param string   $url  The edit url.
 		 * @param Document $this The document instance.
 		 */
-		$url = apply_filters( 'elementor/document/urls/edit ', $url, $this );
+		$url = apply_filters( 'elementor/document/urls/edit', $url, $this );
 
 		return $url;
 	}
