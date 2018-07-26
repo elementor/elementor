@@ -1,15 +1,14 @@
-<?php
+<?php /** @noinspection PhpParamsInspection */
 
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
-use Elementor\Plugin;
 use \Elementor\TemplateLibrary\Manager;
 
 class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
 
     public function setUp() {
         parent::setUp();
-        wp_set_current_user($this->factory->user->create(['role' => 'administrator']));
+        wp_set_current_user($this->factory()->user->create(['role' => 'administrator']));
     }
 
     public function test_should_return_true_from_register_source() {
@@ -87,7 +86,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
     }
 
     public function test_should_return_wp_error_save_error_from_update_template() {
-        wp_set_current_user($this->factory->user->create(['role' => 'subscriber']));
+        wp_set_current_user($this->factory()->user->create(['role' => 'subscriber']));
         $this->assertWPError(
             $this->manager->update_template(
                 [
@@ -105,31 +104,25 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
      * @covers Manager::update_templates()
      */
     public function test_should_return_template_data_from_update_template() {
-        $this->markTestSkipped();
         $template_data = [
             'source' => 'local',
             'content' => 'banana',
             'type' => 'post',
-            'id' => 8
+            'id' => $this->factory()->post->create(),
         ];
 
         $remote_remote = [
-            'template_id' => '5533',
+            'template_id' => 9,
             'source' => 'local',
-            'type' => 'block',
-            'subtype' => 'about',
-            'title' => 'About 15',
-            'thumbnail' => 'https://library.elementor.com/wp-content/uploads/2018/03/about_black_10.png',
-            'author' => 'Elementor',
-            'tags' => ['About'],
-            'isPro' => false,
-            'trendIndex' => 41,
-            'hasPageSettings' => false,
-            'url' => 'https://library.elementor.com/blocks/about-15/?utm_source=library&utm_medium=wp-dash&utm_campaign=preview',
-            'favorite' => false,
+            'type' => '',
+            'title' => 'Post title 70',
+            'thumbnail' => false,
+            'author' => 'User 69',
+            'hasPageSettings' => true,
+            'tags' => [],
+            'url' => 'http://example.org/?p=9',
         ];
-        //$this->assertArraySubset($remote_remote, $this->manager->update_template($template_data));
-        $this->assertSame($remote_remote, $this->manager->update_template($template_data));
+        $this->assertArraySubset($remote_remote, $this->manager->update_template($template_data));
     }
 
     /**
@@ -149,11 +142,12 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
      */
     public function test_should_export_template() {
         $this->markTestSkipped();
+        echo \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id();
         $this->assertFalse($this->manager
             ->export_template(
                 [
                     'source' => 'local',
-                    'template_id' => '8',
+                    'template_id' => \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id(),
                 ]
             ));
     }
@@ -163,14 +157,39 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
      * @covers Manager::delete_template
      */
     public function test_should_delete_template() {
-        $this->markTestSkipped();
-        //var_dump(wp_get_current_user());
-        $this->assertFalse($this->manager->delete_template(
+        $template_ditails = ['ID' => 11,
+            'post_content' => '',
+            'post_title' => 'new template',
+            'post_excerpt' => '',
+            'post_status' => 'publish',
+            'comment_status' => 'closed',
+            'ping_status' => 'closed',
+            'post_password' => '',
+            'post_name' => 'new-template',
+            'to_ping' => '',
+            'pinged' => '',
+            'post_content_filtered' => '',
+            'post_parent' => 0,
+            'guid' => 'http://example.org/?elementor_library=new-template',
+            'menu_order' => 0,
+            'post_type' => 'elementor_library',
+            'post_mime_type' => '',
+            'comment_count' => '0',
+            'filter' => 'raw',
+        ];
+        /**
+         * @var \WP_Post
+         */
+        $ret = $this->manager->delete_template(
             [
                 'source' => 'local',
-                'template_id' => '8',
+                'template_id' => \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id(),
             ]
-        ));
+        );
+        //var_dump($ret->);
+        $this->mockGetTemplate();
+        $this->
+        $this->assertArraySubset($template_ditails, [$ret]);
     }
 
     /**

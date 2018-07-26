@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpParamsInspection */
 
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
@@ -60,7 +60,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Manager_general {
     }
 
     public function test_should_return_remote_template_data_from_update_template() {
-        wp_set_current_user($this->factory->user->create(['role' => 'administrator']));
+        wp_set_current_user($this->factory()->user->create(['role' => 'administrator']));
         $template_data = [
             'source' => 'remote',
             'content' => 'banana',

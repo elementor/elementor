@@ -5,9 +5,9 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
 
-		$GLOBALS['post'] = $this->factory->post->create_and_get();
+		$GLOBALS['post'] = $this->factory()->post->create_and_get();
 
 		add_post_meta( $GLOBALS['post']->ID, '_elementor_edit_mode', 'builder' );
 
@@ -56,11 +56,11 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 
 		$html = str_replace( '</body>', $quint . '</body>', $html );
 
-		file_put_contents( __DIR__ . '/../qunit/index.html', $html );
+		file_put_contents( __DIR__ . '/../../qunit/index.html', $html );
 
 	}
 
 	public function test_staticIndexExist() {
-		$this->assertNotFalse( file_exists(__DIR__ . '/../qunit/index.html') );
+		$this->assertNotFalse( file_exists(__DIR__ . '/../../qunit/index.html') );
 	}
 }

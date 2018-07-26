@@ -167,7 +167,7 @@ class Elementor_Test_Manager_general extends \WP_UnitTestCase {
                     'source' => 'local',
                     'content' => 'banana',
                     'type' => 'comment',
-                    'id' => $this->factory->post->create([])
+                    'id' => $this->factory()->post->create([])
                 ]
             ]
         ];

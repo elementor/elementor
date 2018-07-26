@@ -5,9 +5,9 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
 
-		$GLOBALS['post'] = $this->factory->post->create_and_get();
+		$GLOBALS['post'] = $this->factory()->post->create_and_get();
 	}
 
 	public function test_getInstance() {
