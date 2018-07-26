@@ -218,6 +218,20 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.1.5 - 2018-07-26 ###
+* Tweak: Added `Ctrl/Cmd + Y` for redo action ([#5090](https://github.com/pojome/elementor/issues/5090))
+* Tweak: Clear WP cache in upgrade steps
+* Fix: Corrected conditions for start/end times with loop in Video widget
+* Fix: Padding for first active control in section
+* Fix: Loader styling for some languages
+* Fix: RTL style for Choose control
+* Fix: Possible memory leak by parsing and sanitizing data and settings only when it's necessary
+* Fix: Fixed text selection detection in FireFox
+* Fix: `on-paste` check for Choose control
+* Fix: `fixed` positions for Color Picker
+* Fix: Removed empty space from `elementor/document/urls/edit` hook name ([#5216](https://github.com/pojome/elementor/issues/5216))
+* Fix: Dynamic tags support in Shortcode widget ([#5214](https://github.com/pojome/elementor/issues/5214))
+
 ### 2.1.4 - 2018-07-18 ###
 * Tweak: Show modified date instead of publish date on Dashboard widget ([#4169](https://github.com/pojome/elementor/issues/4169))
 * Fix: Selector for CSS Filters control in column
