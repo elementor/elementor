@@ -45,7 +45,7 @@ VideoModule = HandlerModule.extend( {
 		if ( lazyLoad ) {
 			$videoIframe.attr( 'src', lazyLoad );
 		}
-		var	newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
+		var newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
 
 		$videoIframe[0].src = newSourceUrl + '&autoplay=1';
 	},
