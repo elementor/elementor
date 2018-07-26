@@ -61,6 +61,6 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 	}
 
 	public function test_staticIndexExist() {
-		$this->assertNotFalse( file_exists( __DIR__ . '/../qunit/index.html' ) );
+		$this->assertNotFalse( file_exists(__DIR__ . '/../qunit/index.html') );
 	}
 }

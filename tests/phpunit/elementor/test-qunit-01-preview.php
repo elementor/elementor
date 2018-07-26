@@ -50,6 +50,6 @@ class Elementor_Test_Qunit_Preview extends WP_UnitTestCase {
 	}
 
 	public function test_staticPreviewExist() {
-		$this->assertNotFalse( file_exists( __DIR__ . '/../qunit/preview.html' ) );
+		$this->assertNotFalse( file_exists(__DIR__ . '/../qunit/preview.html') );
 	}
 }
