@@ -192,7 +192,7 @@ class User {
 		$notices[ $_POST['notice_id'] ] = 'true';
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 
-        wp_send_json_success();
+		wp_send_json_success();
 	}
 
 	public static function set_introduction_viewed() {
