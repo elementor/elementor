@@ -1,10 +1,11 @@
 <?php
 
+namespace Elementor\Testing;
+
 class Elementor_Test_bootstrap extends Elementor_Test_Base {
 
     public function setUp() {
 		parent::setUp();
-		require_once __DIR__ . '/local-factory.php';
 
 		//wp_set_current_user( $this->get_administrator_user()->ID );
 		wp_set_current_user( self::$local_factory->get_administrator_user()->ID );
