@@ -245,6 +245,10 @@ abstract class Element_Base extends Controls_Stack {
 		}
 	}
 
+	final public static function is_edit_buttons_enabled() {
+		return get_option( 'elementor_edit_buttons' );
+	}
+
 	/**
 	 * Get default edit tools.
 	 *
@@ -584,6 +588,17 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	public function print_element() {
 		$element_type = $this->get_type();
+
+		/**
+		 * Before frontend element render.
+		 *
+		 * Fires before Elementor element is rendered in the frontend.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/frontend/before_render', $this );
 
 		/**
 		 * Before frontend element render.

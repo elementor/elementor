@@ -9,6 +9,8 @@ ColumnView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
+	toggleEditTools: true,
+
 	behaviors: function() {
 		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
@@ -207,6 +209,12 @@ ColumnView = BaseElementView.extend( {
 		}
 
 		return errors;
+	},
+
+	onAddButtonClick: function( event ) {
+		event.stopPropagation();
+
+		this.addNewColumn();
 	}
 } );
 

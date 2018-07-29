@@ -181,7 +181,7 @@ class User {
 	 */
 	public static function ajax_set_admin_notice_viewed() {
 		if ( empty( $_POST['notice_id'] ) ) {
-			die;
+			wp_send_json_error();
 		}
 
 		$notices = self::get_user_notices();
@@ -192,7 +192,7 @@ class User {
 		$notices[ $_POST['notice_id'] ] = 'true';
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 
-		die;
+		wp_send_json_success();
 	}
 
 	public static function set_introduction_viewed() {

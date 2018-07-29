@@ -1,11 +1,14 @@
 <?php
 
-class Elementor_Test_Base extends WP_UnitTestCase {
+namespace Elementor\Testing;
 
-	public function setUp() {
+class Elementor_Test_bootstrap extends Elementor_Test_Base {
+
+    public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		//wp_set_current_user( $this->get_administrator_user()->ID );
+		wp_set_current_user( self::$local_factory->get_administrator_user()->ID );
 
 		// Make sure the main class is running
 		\Elementor\Plugin::instance();

@@ -424,6 +424,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'jquery-hover-intent',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
+			[],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
 			'elementor-dialog',
 			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
@@ -452,6 +460,7 @@ class Editor {
 				'elementor-dialog',
 				'ace',
 				'ace-language-tools',
+				'jquery-hover-intent',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -963,6 +972,22 @@ class Editor {
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
+		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
+	}
+
+	public function filter_wp_link_query( $results ) {
+		if ( isset( $_POST['editor'] ) && 'elementor' === $_POST['editor'] ) {
+			$post_type_object = get_post_type_object( 'post' );
+			$post_label = $post_type_object->labels->singular_name;
+
+			foreach ( $results as & $result ) {
+				if ( 'post' === get_post_type( $result['ID'] ) ) {
+					$result['info'] = $post_label;
+				}
+			}
+		}
+
+		return $results;
 	}
 
 	/**

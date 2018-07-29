@@ -14,6 +14,7 @@ ContextMenu = Module.extend( {
 				itemTypePrefix: 'elementor-context-menu-list__item-',
 				itemTitle: 'elementor-context-menu-list__item__title',
 				itemShortcut: 'elementor-context-menu-list__item__shortcut',
+				iconShortcut: 'elementor-context-menu-list__item__icon',
 				itemDisabled: 'elementor-context-menu-list__item--disabled',
 				divider: 'elementor-context-menu-list__divider'
 			}
@@ -24,9 +25,14 @@ ContextMenu = Module.extend( {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
 			$item = jQuery( '<div>', { 'class': classes.item + ' ' + classes.itemTypePrefix + action.name } ),
-			$itemTitle = jQuery( '<div>', { 'class': classes.itemTitle } ).text( action.title );
+			$itemTitle = jQuery( '<div>', { 'class': classes.itemTitle } ).text( action.title ),
+			$itemIcon = jQuery( '<div>', { 'class': classes.iconShortcut } );
 
-		$item.html( $itemTitle );
+		if ( action.icon ) {
+			$itemIcon.html( jQuery( '<i>', { 'class': action.icon } ) );
+		}
+
+		$item.append( $itemIcon, $itemTitle );
 
 		if ( action.shortcut ) {
 			var $itemShortcut = jQuery( '<div>', { 'class': classes.itemShortcut } ).html( action.shortcut );

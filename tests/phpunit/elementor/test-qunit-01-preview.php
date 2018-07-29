@@ -9,13 +9,15 @@ class Elementor_Test_Qunit_Preview extends WP_UnitTestCase {
 		define( 'WP_USE_THEMES', true );
 		$_GET['elementor-preview'] = 1;
 
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
 
-		$GLOBALS['post'] = $this->factory->post->create_and_get();
+		$GLOBALS['post'] = $this->factory()->post->create_and_get();
 
 		add_post_meta( $GLOBALS['post']->ID, '_elementor_edit_mode', 'builder' );
 
 		query_posts( [ 'p' => $GLOBALS['post']->ID, 'post_type' => 'any' ] );
+
+		$_GET['elementor-preview'] = $GLOBALS['post']->ID;
 
 		\Elementor\Plugin::$instance->preview->init();
 
@@ -44,10 +46,10 @@ class Elementor_Test_Qunit_Preview extends WP_UnitTestCase {
 
 		$html = fix_qunit_html_urls( $html );
 
-		file_put_contents( __DIR__ . '/../qunit/preview.html', $html );
+		file_put_contents( __DIR__ . '/../../qunit/preview.html', $html );
 	}
 
 	public function test_staticPreviewExist() {
-		$this->assertNotFalse( file_exists( __DIR__ . '/../qunit/preview.html' ) );
+		$this->assertNotFalse( file_exists(__DIR__ . '/../../qunit/preview.html') );
 	}
 }

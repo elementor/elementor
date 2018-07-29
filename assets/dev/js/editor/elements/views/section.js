@@ -38,26 +38,6 @@ SectionView = BaseElementView.extend( {
 		columnWidthTooSmall: 'New column width is too small'
 	},
 
-	ui: function() {
-		var ui = BaseElementView.prototype.ui.apply( this, arguments );
-
-		ui.removeButton = '> .elementor-element-overlay .elementor-editor-element-remove';
-
-		ui.addButton = '> .elementor-element-overlay .elementor-editor-element-add';
-
-		return ui;
-	},
-
-	events: function() {
-		var events = BaseElementView.prototype.events.apply( this, arguments );
-
-		events[ 'click @ui.addButton' ] = 'onClickAdd';
-
-		events[ 'click @ui.removeButton' ] = 'onClickRemove';
-
-		return events;
-	},
-
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
@@ -242,7 +222,7 @@ SectionView = BaseElementView.extend( {
 		}
 	},
 
-	onClickAdd: function() {
+	onAddButtonClick: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.fadeToDeath();
 
@@ -284,10 +264,6 @@ SectionView = BaseElementView.extend( {
 		this._checkIsEmpty();
 
 		this.resetLayout();
-	},
-
-	onClickRemove: function() {
-		this.removeElement();
 	},
 
 	onChildviewRequestResizeStart: function( columnView ) {

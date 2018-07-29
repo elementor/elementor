@@ -5,9 +5,9 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
 
-		$GLOBALS['post'] = $this->factory->post->create_and_get();
+		$GLOBALS['post'] = $this->factory()->post->create_and_get();
 
 		add_post_meta( $GLOBALS['post']->ID, '_elementor_edit_mode', 'builder' );
 
@@ -42,9 +42,11 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 
 		$html = ob_get_clean();
 
-		$html = fix_qunit_html_urls( $html );
+		$preview_url = \Elementor\Plugin::$instance->documents->get( $_REQUEST['post'] )->get_preview_url();
 
-		$html = str_replace( wp_json_encode( add_query_arg( 'elementor-preview', '', get_permalink( $_REQUEST['post'] ) ) ), '"./preview.html?"', $html );
+		$html = str_replace( json_encode($preview_url), '"./preview.html?"', $html, $count );
+
+		$html = fix_qunit_html_urls( $html );
 
 		$quint = '<div id="qunit" style="z-index:1;position:relative;overflow:scroll;height:100%;"></div>' .
 		         '<div id="qunit-fixture"></div>' .
@@ -54,11 +56,11 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 
 		$html = str_replace( '</body>', $quint . '</body>', $html );
 
-		file_put_contents( __DIR__ . '/../qunit/index.html', $html );
+		file_put_contents( __DIR__ . '/../../qunit/index.html', $html );
 
 	}
 
 	public function test_staticIndexExist() {
-		$this->assertNotFalse( file_exists( __DIR__ . '/../qunit/index.html' ) );
+		$this->assertNotFalse( file_exists(__DIR__ . '/../../qunit/index.html') );
 	}
 }
