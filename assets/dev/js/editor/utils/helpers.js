@@ -237,13 +237,89 @@ helpers = {
 		);
 	},
 
-	scrollToView: function( view ) {
-		// Timeout according to preview resize css animation duration
+	scrollToView: function( $element, timeout, $parent ) {
+		if ( undefined === timeout ) {
+			timeout = 500;
+		}
+
+		var $scrolled = $parent,
+			$elementorFrontendWindow = elementorFrontend.getElements( '$window' );
+
+		if ( ! $parent ) {
+			$parent = $elementorFrontendWindow;
+
+			$scrolled = elementor.$previewContents.find( 'html, body' );
+		}
+
 		setTimeout( function() {
-			elementor.$previewContents.find( 'html, body' ).animate( {
-				scrollTop: view.$el.offset().top - elementor.$preview[0].contentWindow.innerHeight / 2
-			} );
-		}, 500 );
+			var parentHeight = $parent.height(),
+				parentScrollTop = $parent.scrollTop(),
+				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[0].offsetTop,
+				topToCheck = elementTop - parentScrollTop;
+
+			if ( topToCheck > 0 && topToCheck < parentHeight ) {
+				return;
+			}
+
+			var scrolling = elementTop - parentHeight / 2;
+
+			$scrolled.stop( true ).animate( { scrollTop: scrolling }, 1000 );
+		}, timeout );
+	},
+
+	getElementInlineStyle: function( $element, properties ) {
+		var style = {},
+			elementStyle = $element[0].style;
+
+		properties.forEach( function( property ) {
+			style[ property ] = undefined !== elementStyle[ property ] ? elementStyle[ property ] : '';
+		} );
+
+		return style;
+	},
+
+	cssWithBackup: function( $element, backupState, rules ) {
+		var cssBackup = this.getElementInlineStyle( $element, Object.keys( rules ) );
+
+		$element
+			.data( 'css-backup-' + backupState, cssBackup )
+			.css( rules );
+	},
+
+	recoverCSSBackup: function( $element, backupState ) {
+		var backupKey = 'css-backup-' + backupState;
+
+		$element.css( $element.data( backupKey ) );
+
+		$element.removeData( backupKey );
+	},
+
+	compareVersions: function( versionA, versionB, operator ) {
+		var prepareVersion = function( version ) {
+			version = version + '';
+
+			return version.replace( /[^\d.]+/, '.-1.' );
+		};
+
+		versionA  = prepareVersion( versionA );
+		versionB = prepareVersion( versionB );
+
+		if ( versionA === versionB ) {
+			return ! operator || /^={2,3}$/.test( operator );
+		}
+
+		var versionAParts = versionA.split( '.' ).map( Number ),
+			versionBParts = versionB.split( '.' ).map( Number ),
+			longestVersionParts = Math.max( versionAParts.length, versionBParts.length );
+
+		for ( var i = 0; i < longestVersionParts; i++ ) {
+			var valueA = versionAParts[ i ] || 0,
+				valueB = versionBParts[ i ] || 0;
+
+			if ( valueA !== valueB ) {
+				return this.conditions.compare( valueA, valueB, operator );
+			}
+		}
 	}
 };
 

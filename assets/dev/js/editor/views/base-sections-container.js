@@ -28,6 +28,8 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	initialize: function() {
+		BaseContainer.prototype.initialize.apply( this, arguments );
+
 		this
 			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
 			.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
