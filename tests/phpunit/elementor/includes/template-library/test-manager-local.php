@@ -142,7 +142,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
      */
     public function test_should_export_template() {
         $this->markTestSkipped();
-         $ret = $this->manager->export_template(
+        $ret = $this->manager->export_template(
             [
                 'source' => 'local',
                 'template_id' => \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id(),

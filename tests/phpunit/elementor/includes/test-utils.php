@@ -1,8 +1,11 @@
 <?php
 
-use \Elementor\Utils;
+namespace Elementor\Testing\Includes;
 
-class Elementor_Test_Utils extends WP_UnitTestCase {
+use \Elementor\Utils;
+use \Elementor\Testing\Elementor_Test_Base;
+
+class Elementor_Test_Utils extends Elementor_Test_Base {
 
     /**
      * create new post from factory and returns it's id.

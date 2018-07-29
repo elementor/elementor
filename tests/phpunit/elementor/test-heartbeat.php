@@ -1,42 +1,44 @@
 <?php
 
-class Elementor_Test_Heartbeat extends WP_UnitTestCase {
+namespace Elementor\Testing;
 
-	protected $user_own_post;
-	protected $user_editor;
+class Elementor_Test_Heartbeat extends Elementor_Test_Base {
 
-	public function setUp() {
-		parent::setUp();
+    protected $user_own_post;
+    protected $user_editor;
 
-		// Create new instance again
-		new \Elementor\Heartbeat;
-	}
+    public function setUp() {
+        parent::setUp();
 
-	public function test_postLock() {
-		$this->user_own_post = $this->factory()->user->create( [ 'role' => 'administrator' ] );
-		$this->user_editor = $this->factory()->user->create( [ 'role' => 'administrator' ] );
+        // Create new instance again
+        new \Elementor\Heartbeat;
+    }
 
-		wp_set_current_user( $this->user_own_post );
+    public function test_postLock() {
+        $this->user_own_post = $this->factory()->user->create(['role' => 'administrator']);
+        $this->user_editor = $this->factory()->user->create(['role' => 'administrator']);
 
-		$post = $this->factory()->post->create_and_get();
+        wp_set_current_user($this->user_own_post);
 
-		$data = [
-			'elementor_post_lock' => [
-				'post_ID' => $post->ID,
-			],
-		];
+        $post = $this->factory()->post->create_and_get();
 
-		/** This filter is documented in wp-admin/includes/ajax-actions.php */
-		$response = apply_filters( 'heartbeat_received', [], $data, '' );
+        $data = [
+            'elementor_post_lock' => [
+                'post_ID' => $post->ID,
+            ],
+        ];
 
-		// Switch to other user
-		wp_set_current_user( $this->user_editor );
+        /** This filter is documented in wp-admin/includes/ajax-actions.php */
+        $response = apply_filters('heartbeat_received', [], $data, '');
 
-		$this->assertEquals( $this->user_own_post, wp_check_post_lock( $post->ID ) );
+        // Switch to other user
+        wp_set_current_user($this->user_editor);
 
-		/** This filter is documented in wp-admin/includes/ajax-actions.php */
-		$response = apply_filters( 'heartbeat_received', [], $data, '' );
+        $this->assertEquals($this->user_own_post, wp_check_post_lock($post->ID));
 
-		$this->assertArrayHasKey( 'locked_user', $response );
-	}
+        /** This filter is documented in wp-admin/includes/ajax-actions.php */
+        $response = apply_filters('heartbeat_received', [], $data, '');
+
+        $this->assertArrayHasKey('locked_user', $response);
+    }
 }

@@ -1,74 +1,78 @@
 <?php
 
-class Elementor_Test_Editor extends WP_UnitTestCase {
+namespace Elementor\Testing;
 
-	public function setUp() {
-		parent::setUp();
+use \Elementor\Plugin;
 
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+class Elementor_Test_Editor extends Elementor_Test_Base {
 
-		$GLOBALS['post'] = $this->factory()->post->create_and_get();
-	}
+    public function setUp() {
+        parent::setUp();
 
-	public function test_getInstance() {
-		$this->assertInstanceOf( '\Elementor\Editor', Elementor\Plugin::$instance->editor );
-	}
+        wp_set_current_user($this->factory()->user->create(['role' => 'administrator']));
 
-	/*
-	public function test_enqueueScripts() {
-		ini_set( 'memory_limit', '85M' );
+        $GLOBALS['post'] = $this->factory()->post->create_and_get();
+    }
 
-		ob_start();
-		Elementor\Plugin::$instance->editor->enqueue_scripts();
-		ob_end_clean();
+    public function test_getInstance() {
+        $this->assertInstanceOf('\Elementor\Editor', Plugin::$instance->editor);
+    }
 
-		$scripts = [
-			'wp-auth-check',
-			'jquery-ui-sortable',
-			'jquery-ui-resizable',
-			'backbone-marionette',
-			'backbone-radio',
-			'perfect-scrollbar',
-			'nprogress',
-			'tipsy',
-			'imagesloaded',
-			'heartbeat',
-			'jquery-select2',
-			'flatpickr',
-			'elementor-dialog',
-			'ace',
-			'ace-language-tools',
-			'elementor-editor',
-		];
+    /*
+    public function test_enqueueScripts() {
+        ini_set( 'memory_limit', '85M' );
 
-		foreach ( $scripts as $script ) {
-			$this->assertTrue( wp_script_is( $script ) );
-		}
-	}*/
+        ob_start();
+        Elementor\Plugin::$instance->editor->enqueue_scripts();
+        ob_end_clean();
 
-	public function test_enqueueStyles() {
-		Elementor\Plugin::$instance->editor->enqueue_styles();
+        $scripts = [
+            'wp-auth-check',
+            'jquery-ui-sortable',
+            'jquery-ui-resizable',
+            'backbone-marionette',
+            'backbone-radio',
+            'perfect-scrollbar',
+            'nprogress',
+            'tipsy',
+            'imagesloaded',
+            'heartbeat',
+            'jquery-select2',
+            'flatpickr',
+            'elementor-dialog',
+            'ace',
+            'ace-language-tools',
+            'elementor-editor',
+        ];
 
-		$styles = [
-			'font-awesome',
-			'elementor-select2',
-			'elementor-icons',
-			'wp-auth-check',
-			'google-font-roboto',
+        foreach ( $scripts as $script ) {
+            $this->assertTrue( wp_script_is( $script ) );
+        }
+    }*/
 
-			'elementor-editor',
-		];
+    public function test_enqueueStyles() {
+        Plugin::$instance->editor->enqueue_styles();
 
-		foreach ( $styles as $style ) {
-			$this->assertTrue( wp_style_is( $style ) );
-		}
-	}
+        $styles = [
+            'font-awesome',
+            'elementor-select2',
+            'elementor-icons',
+            'wp-auth-check',
+            'google-font-roboto',
 
-	/*public function test_renderFooter() {
-		ob_start();
-		Elementor\Plugin::$instance->editor->wp_footer();
-		$buffer = ob_get_clean();
+            'elementor-editor',
+        ];
 
-		$this->assertNotEmpty( $buffer );
-	}*/
+        foreach ($styles as $style) {
+            $this->assertTrue(wp_style_is($style));
+        }
+    }
+
+    /*public function test_renderFooter() {
+        ob_start();
+        Elementor\Plugin::$instance->editor->wp_footer();
+        $buffer = ob_get_clean();
+
+        $this->assertNotEmpty( $buffer );
+    }*/
 }

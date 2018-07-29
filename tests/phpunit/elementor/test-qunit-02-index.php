@@ -1,66 +1,68 @@
 <?php
 
-class Elementor_Test_Qunit extends WP_UnitTestCase {
+namespace Elementor\Testing;
 
-	public function setUp() {
-		parent::setUp();
+class Elementor_Test_Qunit extends Elementor_Test_Base {
 
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+    public function setUp() {
+        parent::setUp();
 
-		$GLOBALS['post'] = $this->factory()->post->create_and_get();
+        wp_set_current_user($this->factory()->user->create(['role' => 'administrator']));
 
-		add_post_meta( $GLOBALS['post']->ID, '_elementor_edit_mode', 'builder' );
+        $GLOBALS['post'] = $this->factory()->post->create_and_get();
 
-		$_REQUEST['post'] = $GLOBALS['post']->ID;
-		$_REQUEST['action'] = 'elementor';
+        add_post_meta($GLOBALS['post']->ID, '_elementor_edit_mode', 'builder');
 
-		/* Because it's not wp-admin,  */
-		add_action( 'elementor/editor/before_enqueue_scripts', function() {
-			// WP >= 4.8.0
-			if ( function_exists( 'wp_enqueue_editor' ) ) {
-				wp_enqueue_editor();
-			}
+        $_REQUEST['post'] = $GLOBALS['post']->ID;
+        $_REQUEST['action'] = 'elementor';
 
-			wp_register_script( 'iris', 'file://' . ABSPATH . 'wp-admin/js/iris.min.js', [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
+        /* Because it's not wp-admin,  */
+        add_action('elementor/editor/before_enqueue_scripts', function () {
+            // WP >= 4.8.0
+            if (function_exists('wp_enqueue_editor')) {
+                wp_enqueue_editor();
+            }
 
-			wp_register_script( 'wp-color-picker', 'file://' . ABSPATH . 'wp-admin/js/color-picker.js', [ 'iris' ], false, 1 );
+            wp_register_script('iris', 'file://' . ABSPATH . 'wp-admin/js/iris.min.js', ['jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch'], '1.0.7', 1);
 
-			wp_localize_script( 'wp-color-picker', 'wpColorPickerL10n', [
-					'clear' => __( 'Clear' ),
-					'defaultString' => __( 'Default' ),
-					'pick' => __( 'Select Color' ),
-					'current' => __( 'Current Color' ),
-				]
-			);
+            wp_register_script('wp-color-picker', 'file://' . ABSPATH . 'wp-admin/js/color-picker.js', ['iris'], false, 1);
 
-			wp_enqueue_script( 'wp-color-picker' );
-		} );
+            wp_localize_script('wp-color-picker', 'wpColorPickerL10n', [
+                    'clear' => __('Clear'),
+                    'defaultString' => __('Default'),
+                    'pick' => __('Select Color'),
+                    'current' => __('Current Color'),
+                ]
+            );
 
-		ob_start();
+            wp_enqueue_script('wp-color-picker');
+        });
 
-		\Elementor\Plugin::$instance->editor->init( false );
+        ob_start();
 
-		$html = ob_get_clean();
+        \Elementor\Plugin::$instance->editor->init(false);
 
-		$preview_url = \Elementor\Plugin::$instance->documents->get( $_REQUEST['post'] )->get_preview_url();
+        $html = ob_get_clean();
 
-		$html = str_replace( json_encode($preview_url), '"./preview.html?"', $html, $count );
+        $preview_url = \Elementor\Plugin::$instance->documents->get($_REQUEST['post'])->get_preview_url();
 
-		$html = fix_qunit_html_urls( $html );
+        $html = str_replace(json_encode($preview_url), '"./preview.html?"', $html, $count);
 
-		$quint = '<div id="qunit" style="z-index:1;position:relative;overflow:scroll;height:100%;"></div>' .
-		         '<div id="qunit-fixture"></div>' .
-		         '<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">' .
-		         '<script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>' .
-		         '<script src="tests.js"></script>';
+        $html = fix_qunit_html_urls($html);
 
-		$html = str_replace( '</body>', $quint . '</body>', $html );
+        $quint = '<div id="qunit" style="z-index:1;position:relative;overflow:scroll;height:100%;"></div>' .
+            '<div id="qunit-fixture"></div>' .
+            '<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">' .
+            '<script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>' .
+            '<script src="tests.js"></script>';
 
-		file_put_contents( __DIR__ . '/../../qunit/index.html', $html );
+        $html = str_replace('</body>', $quint . '</body>', $html);
 
-	}
+        file_put_contents(__DIR__ . '/../../qunit/index.html', $html);
 
-	public function test_staticIndexExist() {
-		$this->assertNotFalse( file_exists(__DIR__ . '/../../qunit/index.html') );
-	}
+    }
+
+    public function test_staticIndexExist() {
+        $this->assertNotFalse(file_exists(__DIR__ . '/../../qunit/index.html'));
+    }
 }

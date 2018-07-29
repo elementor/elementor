@@ -1,8 +1,10 @@
 <?php
 
+namespace Elementor\Testing\Includes;
+
 use \Elementor\User;
 
-class Elementor_Test_User extends WP_Ajax_UnitTestCase {
+class Elementor_Test_User extends \WP_Ajax_UnitTestCase {
 
 
     public function test_should_return_false_when_sending_bad_type_to_is_current_user_can_edit() {
@@ -67,7 +69,7 @@ class Elementor_Test_User extends WP_Ajax_UnitTestCase {
         $_POST['notice_id'] = '123';
         try {
             $this->_handleAjax('elementor_set_admin_notice_viewed');
-        } catch (WPAjaxDieContinueException $e) {
+        } catch (\WPAjaxDieContinueException $e) {
             unset($e);
         }
 

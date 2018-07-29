@@ -4,8 +4,9 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
+use Elementor\Testing\Elementor_Test_Base;
 
-class Elementor_Test_Manager_general extends \WP_UnitTestCase {
+class Elementor_Test_Manager_general extends Elementor_Test_Base {
     /**
      * @var Manager
      */
@@ -110,8 +111,6 @@ class Elementor_Test_Manager_general extends \WP_UnitTestCase {
             ),
             'template_error');
     }
-
-
 
 
     public function test_should_return_wp_error_arguments_not_specified_from_update_template() {

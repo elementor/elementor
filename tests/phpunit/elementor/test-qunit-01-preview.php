@@ -1,55 +1,57 @@
 <?php
 
-class Elementor_Test_Qunit_Preview extends WP_UnitTestCase {
+namespace Elementor\Testing;
 
-	public function setUp() {
-		parent::setUp();
+class Elementor_Test_Qunit_Preview extends Elementor_Test_Base {
 
-		define( 'WP_ADMIN', false );
-		define( 'WP_USE_THEMES', true );
-		$_GET['elementor-preview'] = 1;
+    public function setUp() {
+        parent::setUp();
 
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+        define('WP_ADMIN', false);
+        define('WP_USE_THEMES', true);
+        $_GET['elementor-preview'] = 1;
 
-		$GLOBALS['post'] = $this->factory()->post->create_and_get();
+        wp_set_current_user($this->factory()->user->create(['role' => 'administrator']));
 
-		add_post_meta( $GLOBALS['post']->ID, '_elementor_edit_mode', 'builder' );
+        $GLOBALS['post'] = $this->factory()->post->create_and_get();
 
-		query_posts( [ 'p' => $GLOBALS['post']->ID, 'post_type' => 'any' ] );
+        add_post_meta($GLOBALS['post']->ID, '_elementor_edit_mode', 'builder');
 
-		$_GET['elementor-preview'] = $GLOBALS['post']->ID;
+        query_posts(['p' => $GLOBALS['post']->ID, 'post_type' => 'any']);
 
-		\Elementor\Plugin::$instance->preview->init();
+        $_GET['elementor-preview'] = $GLOBALS['post']->ID;
 
-		// Load the theme template.
-		$template = get_index_template();
+        \Elementor\Plugin::$instance->preview->init();
 
-		/** This filter is documented in wp-includes/template-loader.php */
-		$template = apply_filters( 'template_include', $template );
+        // Load the theme template.
+        $template = get_index_template();
 
-		// Recreate the frontend instance because it's scripts hooks are removed in previous test
-		\Elementor\Plugin::$instance->frontend = new \Elementor\Frontend();
+        /** This filter is documented in wp-includes/template-loader.php */
+        $template = apply_filters('template_include', $template);
 
-		ob_start();
+        // Recreate the frontend instance because it's scripts hooks are removed in previous test
+        \Elementor\Plugin::$instance->frontend = new \Elementor\Frontend();
 
-		require $template;
+        ob_start();
 
-		$html = ob_get_clean();
+        require $template;
 
-		$plugin_path = str_replace( '\\', '/', ELEMENTOR_PATH );
-		$quint = '' .
-		'<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.js"></script>' .
-		'<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.ext.js"></script>' .
-		'<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.drag-n-drop.js"></script>';
+        $html = ob_get_clean();
 
-		$html = str_replace( '</body>', $quint . '</body>', $html );
+        $plugin_path = str_replace('\\', '/', ELEMENTOR_PATH);
+        $quint = '' .
+            '<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.js"></script>' .
+            '<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.ext.js"></script>' .
+            '<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.drag-n-drop.js"></script>';
 
-		$html = fix_qunit_html_urls( $html );
+        $html = str_replace('</body>', $quint . '</body>', $html);
 
-		file_put_contents( __DIR__ . '/../../qunit/preview.html', $html );
-	}
+        $html = fix_qunit_html_urls($html);
 
-	public function test_staticPreviewExist() {
-		$this->assertNotFalse( file_exists(__DIR__ . '/../../qunit/preview.html') );
-	}
+        file_put_contents(__DIR__ . '/../../qunit/preview.html', $html);
+    }
+
+    public function test_staticPreviewExist() {
+        $this->assertNotFalse(file_exists(__DIR__ . '/../../qunit/preview.html'));
+    }
 }
