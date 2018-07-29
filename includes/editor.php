@@ -291,7 +291,7 @@ class Editor {
 	public function print_panel_html() {
 		_deprecated_function( __METHOD__, '2.2.0', 'Editor::print_editor_template' );
 
-		include( 'editor-templates/editor-wrapper.php' );
+		$this->print_editor_template();
 	}
 
 	/**
