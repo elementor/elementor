@@ -16,7 +16,8 @@ ContextMenu = Module.extend( {
 				itemShortcut: 'elementor-context-menu-list__item__shortcut',
 				iconShortcut: 'elementor-context-menu-list__item__icon',
 				itemDisabled: 'elementor-context-menu-list__item--disabled',
-				divider: 'elementor-context-menu-list__divider'
+				divider: 'elementor-context-menu-list__divider',
+				hidden: 'elementor-hidden'
 			}
 		};
 	},
@@ -65,13 +66,23 @@ ContextMenu = Module.extend( {
 			} );
 
 			$list.append( $group );
+
+			group.$item = $group;
 		} );
 
 		return $list;
 	},
 
-	toggleActionItem: function( action ) {
-		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! this.isActionEnabled( action ) );
+	toggleGroupVisibility: function( group, state ) {
+		group.$item.toggleClass( this.getSettings( 'classes.hidden' ), ! state );
+	},
+
+	toggleActionVisibility: function( action, state ) {
+		action.$item.toggleClass( this.getSettings( 'classes.hidden' ), ! state );
+	},
+
+	toggleActionUsability: function( action, state ) {
+		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! state );
 	},
 
 	isActionEnabled: function( action ) {
@@ -128,9 +139,21 @@ ContextMenu = Module.extend( {
 		} );
 
 		self.getSettings( 'groups' ).forEach( function( group ) {
-			group.actions.forEach( function( action ) {
-				self.toggleActionItem( action );
-			} );
+			var isGroupVisible = false !== group.isVisible;
+
+			self.toggleGroupVisibility( group, isGroupVisible );
+
+			if ( isGroupVisible ) {
+				group.actions.forEach( function( action ) {
+					var isActionVisible = false !== action.isVisible;
+
+					self.toggleActionVisibility( action, isActionVisible );
+
+					if ( isActionVisible ) {
+						self.toggleActionUsability( action, self.isActionEnabled( action ) );
+					}
+				} );
+			}
 		} );
 
 		modal.show();

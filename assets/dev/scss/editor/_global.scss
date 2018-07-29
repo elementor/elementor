@@ -87,6 +87,80 @@
 	}
 }
 
+// Resizable
+.ui-resizable {
+
+	&-n {
+		top: -5px;
+	}
+
+	&-e {
+		right: -5px;
+	}
+
+	&-s {
+		bottom: -5px;
+	}
+
+	&-w {
+		left: -5px;
+	}
+
+	&-ne {
+		top: -5px;
+		right: -5px;
+	}
+
+	&-nw {
+		top: -5px;
+		left: -5px;
+	}
+
+	&-se {
+		bottom: -5px;
+		right: -5px;
+	}
+
+	&-sw {
+		bottom: -5px;
+		left: -5px;
+	}
+
+	&-n, &-s {
+		left: 0;
+		height: 10px;
+		width: 100%;
+		cursor: ns-resize;
+	}
+
+	&-e, &-w {
+		top: 0;
+		height: 100%;
+		width: 10px;
+		cursor: ew-resize;
+	}
+
+	&-ne, &-nw, &-se, &-sw {
+		height: 15px;
+		width: 15px;
+	}
+
+	&-nw, &-se {
+		cursor: nwse-resize;
+	}
+
+	&-ne, &-sw {
+		cursor: nesw-resize;
+	}
+
+	&-handle {
+		position: absolute;
+	}
+
+	&-resizing {
+		pointer-events: none;
+	}
+}
 
 // Modal Confirm (the_content missing)
 #elementor-fatal-error-dialog {
@@ -98,6 +172,41 @@
 	.dialog-header {
 		font-size: 13px;
 		color: $editor-dark;
+	}
+}
+
+.elementor-nerd-box {
+	padding: 30px 20px;
+	text-align: center;
+
+	&-icon {
+		font-size: 52px;
+		color: $editor-light;
+	}
+
+	&-title {
+		margin-top: 20px;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	&-message {
+		margin-top: 20px;
+		line-height: 1.4;
+		font-size: 11px;
+	}
+
+	.elementor-button.elementor-nerd-box-link {
+		background-color: $editor-orange;
+		color: #ffffff;
+		padding: 7px 25px;
+		margin-top: 20px;
+		box-shadow: 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1);
+		transition: .5s;
+
+		&:hover {
+			background-color: lighten($editor-orange, 10%);
+		}
 	}
 }
 
