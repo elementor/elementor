@@ -207,16 +207,16 @@ module.exports = Marionette.CompositeView.extend( {
 		this.ui.item.removeClass( 'elementor-editing' );
 	},
 
-	enterNameEditing: function() {
+	enterTitleEditing: function() {
 		this.ui.title.attr( 'contenteditable', true ).focus();
 
 		elementor.addBackgroundClickListener( 'navigator', {
 			ignore: this.ui.title,
-			callback: this.exitNameEditing.bind( this )
+			callback: this.exitTitleEditing.bind( this )
 		} );
 	},
 
-	exitNameEditing: function() {
+	exitTitleEditing: function() {
 		this.ui.title.attr( 'contenteditable', false );
 
 		var newTitle = this.ui.title.text().trim(),
@@ -269,14 +269,14 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onTitleDoubleClick: function() {
-		this.enterNameEditing();
+		this.enterTitleEditing();
 	},
 
 	onTitleKeyDown: function( event ) {
 		if ( 13 === event.which ) {
 			event.preventDefault();
 
-			this.exitNameEditing();
+			this.exitTitleEditing();
 		}
 	},
 
