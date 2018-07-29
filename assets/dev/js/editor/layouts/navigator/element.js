@@ -273,7 +273,9 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onTitleKeyDown: function( event ) {
-		if ( 13 === event.which ) {
+		var ENTER_KEY = 13;
+
+		if ( ENTER_KEY === event.which ) {
 			event.preventDefault();
 
 			this.exitTitleEditing();
