@@ -29,7 +29,6 @@ VideoModule = HandlerModule.extend( {
 	handleVideo: function() {
 		if ( ! this.getElementSettings( 'lightbox' ) ) {
 			this.elements.$imageOverlay.remove();
-
 			this.playVideo();
 		}
 	},
@@ -42,7 +41,11 @@ VideoModule = HandlerModule.extend( {
 		}
 
 		var $videoIframe = this.elements.$videoIframe,
-			newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
+			lazyLoad = $videoIframe.data( 'lazy-load' );
+		if ( lazyLoad ) {
+			$videoIframe.attr( 'src', lazyLoad );
+		}
+		var newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
 
 		$videoIframe[0].src = newSourceUrl + '&autoplay=1';
 	},
