@@ -4,6 +4,9 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use \Elementor\TemplateLibrary\Manager;
 
+require_once 'test-manager-general.php';
+
+
 class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
 
     public function setUp() {
@@ -56,11 +59,9 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
             'type' => 'page',
             'title' => '(no title)',
             'thumbnail' => false,
-            'author' => 'User 63',
-            'tags' => [],
             'hasPageSettings' => true,
+            'tags' => [],
             'url' => 'http://example.org/?elementor_library=no-title',
-            'human_date' => 'July 26, 2018',
         ];
         $this->assertArraySubset($remote_remote, $this->manager->save_template($template_data));
     }
@@ -100,8 +101,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
     }
 
     /**
-     * @requires PHP 5.3
-     * @covers Manager::update_templates()
+     *
      */
     public function test_should_return_template_data_from_update_template() {
         $template_data = [
@@ -142,14 +142,13 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
      */
     public function test_should_export_template() {
         $this->markTestSkipped();
-        echo \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id();
-        $this->assertFalse($this->manager
-            ->export_template(
-                [
-                    'source' => 'local',
-                    'template_id' => \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id(),
-                ]
-            ));
+         $ret = $this->manager->export_template(
+            [
+                'source' => 'local',
+                'template_id' => \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id(),
+            ]
+        );
+        $this->assertSame($ret, '');
     }
 
     /**
@@ -157,39 +156,18 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_general {
      * @covers Manager::delete_template
      */
     public function test_should_delete_template() {
-        $template_ditails = ['ID' => 11,
-            'post_content' => '',
-            'post_title' => 'new template',
-            'post_excerpt' => '',
-            'post_status' => 'publish',
-            'comment_status' => 'closed',
-            'ping_status' => 'closed',
-            'post_password' => '',
-            'post_name' => 'new-template',
-            'to_ping' => '',
-            'pinged' => '',
-            'post_content_filtered' => '',
-            'post_parent' => 0,
-            'guid' => 'http://example.org/?elementor_library=new-template',
-            'menu_order' => 0,
-            'post_type' => 'elementor_library',
-            'post_mime_type' => '',
-            'comment_count' => '0',
-            'filter' => 'raw',
-        ];
-        /**
-         * @var \WP_Post
-         */
+        $this->markTestSkipped();
+        $template_id = \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id();
+        $template = get_post($template_id);
+
         $ret = $this->manager->delete_template(
             [
                 'source' => 'local',
-                'template_id' => \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id(),
+                'template_id' => $template_id,
             ]
         );
-        //var_dump($ret->);
-        $this->mockGetTemplate();
-        $this->
-        $this->assertArraySubset($template_ditails, [$ret]);
+
+        $this->assertEquals($ret, $template);
     }
 
     /**

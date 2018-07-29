@@ -41,7 +41,7 @@ class Local_Factory extends \WP_UnitTestCase {
      * @return int|\WP_Error
      */
     public function get_local_template_id() {
-        if (! $this->local_template_id) {
+        if (!$this->local_template_id) {
             $this->local_template_id = $this->create_template();
         }
 

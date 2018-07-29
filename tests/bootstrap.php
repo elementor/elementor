@@ -59,15 +59,8 @@ require 'phpunit/base-class.php';
 require 'phpunit/manager.php';
 \Elementor\Testing\Manager::instance();
 
-
 //\Elementor\Plugin::instance();
 
 // Run fake actions
-do_action('init');
-do_action('plugins_loaded');
-
-/*\Elementor\Plugin::instance();
-
-// Run fake actions
-do_action( 'init' );
-do_action( 'plugins_loaded' );*/
+/*do_action('init');
+do_action('plugins_loaded');*/

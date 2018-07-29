@@ -75,17 +75,14 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Manager_general {
             'subtype' => 'about',
             'title' => 'About 15',
             'thumbnail' => 'https://library.elementor.com/wp-content/uploads/2018/03/about_black_10.png',
-            'date' => 1520443534,
             'author' => 'Elementor',
             'tags' => ['About'],
             'isPro' => false,
-            'popularityIndex' => 58,
-            'trendIndex' => 41,
             'hasPageSettings' => false,
             'url' => 'https://library.elementor.com/blocks/about-15/?utm_source=library&utm_medium=wp-dash&utm_campaign=preview',
             'favorite' => false,
         ];
-        $this->assertEquals($remote_remote, $this->manager->update_template($template_data));
+        $this->assertArraySubset($remote_remote, $this->manager->update_template($template_data));
     }
 
     public function test_should_return_data_from_get_template_data() {
