@@ -477,6 +477,18 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'lazy_load',
+			[
+				'label' => __( 'Lazy Load', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'show_image_overlay' => 'yes',
+					'video_type!' => 'hosted',
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
@@ -951,10 +963,12 @@ class Widget_Video extends Widget_Base {
 		$embed_options = [];
 
 		if ( 'youtube' === $settings['video_type'] ) {
-			$embed_options[ 'privacy' ] = $settings['yt_privacy'];
+			$embed_options['privacy'] = $settings['yt_privacy'];
 		} elseif ( 'vimeo' === $settings['video_type'] ) {
-			$embed_options[ 'start' ] = $settings['start'];
+			$embed_options['start'] = $settings['start'];
 		}
+
+		$embed_options['lazy_load'] = ! empty( $settings['lazy_load'] );
 
 		return $embed_options;
 	}
