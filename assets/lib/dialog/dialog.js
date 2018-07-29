@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.4.1
+ * Dialogs Manager v4.4.2
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -525,7 +525,7 @@
 				position.of = elements[position.of];
 			}
 
-			if (elements.iframe) {
+			if (settings.iframe) {
 				fixIframePosition(position);
 			}
 
@@ -555,7 +555,7 @@
 
 		this.setSettings = function(key, value) {
 
-			if ('object' === typeof value) {
+			if (jQuery.isPlainObject(value)) {
 				$.extend(true, settings[key], value);
 			} else {
 				settings[key] = value;
