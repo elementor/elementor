@@ -232,6 +232,27 @@ html.elementor-html {
 	}
 }
 
+// Inner Section
+.elementor-inner-section {
+
+	@media (max-width: $editor-screen-md-max) {
+
+		> .elementor-element-overlay {
+
+			.elementor-editor-element-settings {
+				overflow: hidden;
+			}
+
+			.elementor-editor-element-setting {
+
+				&:not(.elementor-editor-element-edit) {
+					display: none;
+				}
+			}
+		}
+	}
+}
+
 // Column
 .elementor-column {
 
@@ -321,11 +342,8 @@ html.elementor-html {
 
 	@media (max-width: $editor-screen-md-max) {
 
-		&.elementor-editor-element-edit {
-			border-radius: 5px 5px 0 0;
-		}
-
 		&:not(.elementor-editor-element-edit) {
+			pointer-events: none;
 
 			i {
 				display: none;
@@ -430,10 +448,6 @@ html.elementor-html {
 					top: 0;
 					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
 				}
-			}
-
-			@media (max-width: $editor-screen-md-max) {
-				border-radius: 0 0 5px 5px;
 			}
 		}
 	}
