@@ -40,7 +40,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	childViewOptions: function() {
 		return {
-			distance: this.getDistance() + 10
+			indent: this.getIndent() + 10
 		};
 	},
 
@@ -84,8 +84,8 @@ module.exports = Marionette.CompositeView.extend( {
 			.listenTo( this.model, 'change', this.onModelChange );
 	},
 
-	getDistance: function() {
-		return this.getOption( 'distance' ) || 0;
+	getIndent: function() {
+		return this.getOption( 'indent' ) || 0;
 	},
 
 	isRoot: function() {
@@ -247,7 +247,7 @@ module.exports = Marionette.CompositeView.extend( {
 			cancel: '[contenteditable="true"]'
 		} );
 
-		this.ui.item.css( 'padding-' + ( elementor.config.is_rtl ? 'right' : 'left' ), this.getDistance() );
+		this.ui.item.css( 'padding-' + ( elementor.config.is_rtl ? 'right' : 'left' ), this.getIndent() );
 
 		this.toggleHiddenClass();
 	},
