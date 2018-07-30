@@ -78,24 +78,6 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * Set post data.
-	 *
-	 * Set new post data to the document.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @param \WP_Post $post WordPress post data.
-	 *
-	 * @return Document Document post data.
-	 */
-	public function setPost( $post ) {
-		$this->post = $post;
-
-		return $this;
-	}
-
-	/**
 	 * Get element title.
 	 *
 	 * Retrieve the element title.
@@ -494,7 +476,7 @@ abstract class Document extends Controls_Stack {
 		 * @param string   $url  The edit url.
 		 * @param Document $this The document instance.
 		 */
-		$url = apply_filters( 'elementor/document/urls/edit ', $url, $this );
+		$url = apply_filters( 'elementor/document/urls/edit', $url, $this );
 
 		return $url;
 	}
