@@ -20,6 +20,8 @@
 		<exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped" />
 		<exclude name="WordPress.CSRF.NonceVerification.NoNonceVerification" />
 		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
+		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
+		<exclude name="WordPress.Arrays.MultipleStatementAlignment" />
 	</rule>
 
 	<rule ref="WordPress.WP.DeprecatedFunctions">
