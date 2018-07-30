@@ -9,6 +9,10 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-elements',
 
+	options: {
+		autoFocusSearch: true
+	},
+
 	regions: {
 		elements: '#elementor-panel-elements-wrapper',
 		search: '#elementor-panel-elements-search-area'
@@ -166,6 +170,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.clearSearchInput();
 	},
 
+	focusSearch: function() {
+		this.search.currentView.ui.input.focus();
+	},
+
 	onChildviewChildrenRender: function() {
 		elementor.getPanelView().updateScrollbar();
 	},
@@ -182,6 +190,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.showView( 'categories' );
 
 		this.showView( 'search' );
+
+		if ( this.options.autoFocusSearch ) {
+			console.log( this.options );
+			setTimeout( this.focusSearch.bind( this ) );
+		}
 	},
 
 	onTabClick: function( event ) {
