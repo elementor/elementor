@@ -55,6 +55,7 @@ BaseElementView = BaseContainer.extend( {
 
 	events: function() {
 		return {
+			'mousedown': 'onMouseDown',
 			'click @ui.editButton': 'onEditButtonClick'
 		};
 	},
@@ -696,6 +697,17 @@ BaseElementView = BaseContainer.extend( {
 
 	onEditButtonClick: function() {
 		this.edit();
+	},
+
+	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`
+	 * event on the currently active element. Therefor, we need to blur the active element manually.
+	 */
+	onMouseDown: function( event ) {
+		if ( jQuery( event.target ).closest( '.elementor-inline-editing' ).length ) {
+			return;
+		}
+
+		elementorFrontend.getElements( '$document' )[0].activeElement.blur();
 	},
 
 	onDestroy: function() {
