@@ -122,7 +122,7 @@ class Settings extends Settings_Page {
 			'',
 			__( 'Getting Started', 'elementor' ),
 			'manage_options',
-			'elementor_getting_started',
+			'elementor-getting-started',
 			[ $this, 'elementor_getting_started' ]
 		);
 
@@ -530,6 +530,17 @@ class Settings extends Settings_Page {
 	}
 
 	private function maybe_remove_all_admin_notices() {
+		$elementor_pages = [
+			'elementor-getting-started',
+			'elementor-role-manager',
+			'elementor_custom_fonts',
+			'elementor-license',
+		];
+
+		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {
+			return;
+		}
+
 		remove_all_actions( 'admin_notices' );
 	}
 
