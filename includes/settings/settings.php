@@ -120,6 +120,15 @@ class Settings extends Settings_Page {
 		add_submenu_page(
 			self::PAGE_ID,
 			'',
+			__( 'Getting Started', 'elementor' ),
+			'manage_options',
+			'elementor-getting-started',
+			[ $this, 'elementor_getting_started' ]
+		);
+
+		add_submenu_page(
+			self::PAGE_ID,
+			'',
 			__( 'Knowledge Base', 'elementor' ),
 			'manage_options',
 			'go_knowledge_base_site',
@@ -151,6 +160,16 @@ class Settings extends Settings_Page {
 			wp_redirect( 'https://go.elementor.com/docs-admin-menu/' );
 			die;
 		}
+	}
+
+	public function elementor_getting_started() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<h2><?php echo __( 'Getting Started', 'elementor' ); ?></h2>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
 	}
 
 	/**
@@ -189,6 +208,8 @@ class Settings extends Settings_Page {
 
 		// Save general settings in one list for a future usage
 		$this->handle_general_settings_update();
+
+		$this->maybe_remove_all_admin_notices();
 	}
 
 	/**
@@ -443,6 +464,18 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
+							'edit_buttons' => [
+								'label' => __( 'Editing Handles', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '',
+									'options' => [
+										'' => __( 'Hide', 'elementor' ),
+										'on' => __( 'Show', 'elementor' ),
+									],
+									'desc' => __( 'Show editing handles when hovering over the element edit button', 'elementor' ),
+								],
+							]
 						],
 					],
 				],
@@ -494,6 +527,21 @@ class Settings extends Settings_Page {
 
 			update_option( General_Settings_Manager::META_KEY, $saved_general_settings );
 		}
+	}
+
+	private function maybe_remove_all_admin_notices() {
+		$elementor_pages = [
+			'elementor-getting-started',
+			'elementor-role-manager',
+			'elementor_custom_fonts',
+			'elementor-license',
+		];
+
+		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {
+			return;
+		}
+
+		remove_all_actions( 'admin_notices' );
 	}
 
 	/**

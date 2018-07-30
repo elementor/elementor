@@ -10,6 +10,10 @@ module.exports = Marionette.CompositeView.extend( {
 		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
 
+	initialize: function() {
+		this.collection = this.model.get( 'elements' );
+	},
+
 	addChildModel: function( model, options ) {
 		return this.collection.add( model, options, true );
 	},
@@ -77,7 +81,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( options.edit ) {
-			newView.edit();
+			newModel.trigger( 'request:edit' );
 		}
 
 		return newView;

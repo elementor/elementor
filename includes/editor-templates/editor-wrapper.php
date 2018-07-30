@@ -34,6 +34,7 @@ if ( ! Plugin::$instance->role_manager->user_can( 'design' ) ) {
 </head>
 <body class="<?php echo implode( ' ', $body_classes ); ?>">
 <div id="elementor-editor-wrapper">
+	<div id="elementor-panel" class="elementor-panel"></div>
 	<div id="elementor-preview">
 		<div id="elementor-loading">
 			<div class="elementor-loader-wrapper">
@@ -55,7 +56,7 @@ if ( ! Plugin::$instance->role_manager->user_can( 'design' ) ) {
 			?>
 		</div>
 	</div>
-	<div id="elementor-panel" class="elementor-panel"></div>
+	<div id="elementor-navigator"></div>
 </div>
 <?php
 	wp_footer();

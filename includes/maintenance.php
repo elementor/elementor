@@ -62,5 +62,3 @@ class Maintenance {
 		register_uninstall_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'uninstall' ] );
 	}
 }
-
-Maintenance::init();
