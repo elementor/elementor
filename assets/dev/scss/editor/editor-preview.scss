@@ -347,7 +347,10 @@ html.elementor-html {
 		}
 
 		&:not(.elementor-editor-element-edit) {
-			display: none;
+
+			i {
+				display: none;
+			}
 		}
 	}
 }
@@ -370,7 +373,7 @@ html.elementor-html {
 	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
 
 	i.eicon-handle {
-		font-size: 13px;
+		font-size: 16px;
 	}
 
 	.elementor-editor-element-setting {

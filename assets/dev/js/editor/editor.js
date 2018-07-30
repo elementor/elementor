@@ -273,6 +273,10 @@ App = Marionette.Application.extend( {
 		this.notifications = new Notifications();
 
 		this.ajax.init();
+
+		this.initHotKeys();
+
+		this.initEnvData();
 	},
 
 	initDialogsManager: function() {
@@ -485,7 +489,33 @@ App = Marionette.Application.extend( {
 						return false;
 					}
 
-					var textSelection = getSelection() + elementorFrontend.getElements( 'window' ).getSelection();
+					var frontendWindow = elementorFrontend.getElements( 'window' ),
+						textSelection = getSelection() + frontendWindow.getSelection();
+
+					if ( ! textSelection && elementor.envData.gecko ) {
+						textSelection = [ window, frontendWindow ].some( function( window ) {
+							var activeElement = window.document.activeElement;
+
+							if ( ! activeElement || -1 === [ 'INPUT', 'TEXTAREA' ].indexOf( activeElement.tagName ) ) {
+								return;
+							}
+
+							var originalInputType;
+
+							// Some of input types can't retrieve a selection
+							if ( 'INPUT' === activeElement.tagName ) {
+								originalInputType = activeElement.type;
+
+								activeElement.type = 'text';
+							}
+
+							var selection = activeElement.value.substring( activeElement.selectionStart, activeElement.selectionEnd );
+
+							activeElement.type = originalInputType;
+
+							return ! ! selection;
+						} );
+					}
 
 					return ! textSelection;
 				},
@@ -532,7 +562,7 @@ App = Marionette.Application.extend( {
 			} );
 		} );
 
-		hotKeysManager.bindListener( this.$window.add( elementorFrontend.getElements( '$window' ) ) );
+		hotKeysManager.bindListener( this.$window );
 	},
 
 	initPanel: function() {
@@ -826,7 +856,6 @@ App = Marionette.Application.extend( {
 		this.initModulesBC();
 
 		this.initComponents();
-		this.initEnvData();
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
@@ -837,11 +866,13 @@ App = Marionette.Application.extend( {
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		this.initClearPageDialog();
+
 		this.addBackgroundClickArea( document );
 
 		this.$window.trigger( 'elementor:init' );
 
 		this.initPreview();
+
 		this.logSite();
 	},
 
@@ -866,8 +897,8 @@ App = Marionette.Application.extend( {
 		}
 
 		this.initFrontend();
+
 		this.initElements();
-		this.initHotKeys();
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
@@ -916,6 +947,8 @@ App = Marionette.Application.extend( {
 		this.enqueueTypographyFonts();
 
 		this.onEditModeSwitched();
+
+		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		this.trigger( 'preview:loaded' );
 	},

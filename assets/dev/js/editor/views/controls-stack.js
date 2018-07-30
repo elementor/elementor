@@ -157,7 +157,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			} );
 
 		if ( activeSectionView[0] ) {
-			activeSectionView[0].ui.heading.addClass( 'elementor-open' );
+			activeSectionView[0].$el.addClass( 'elementor-open' );
 		}
 	},
 
@@ -199,7 +199,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onChildviewControlSectionClicked: function( childView ) {
-		var isSectionOpen = childView.ui.heading.hasClass( 'elementor-open' );
+		var isSectionOpen = childView.$el.hasClass( 'elementor-open' );
 
 		this.activateSection( isSectionOpen ? null : childView.model.get( 'name' ) );
 

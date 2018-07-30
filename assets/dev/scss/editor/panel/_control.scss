@@ -258,27 +258,8 @@
 	}
 }
 
-.elementor-panel-heading {
-	display: table;
-	table-layout: fixed;
-	height: 40px;
-	padding: 0 20px;
-	width: 100%;
-	border-bottom: 1px solid $editor-background;
-	cursor: pointer;
-
-	&:not(.elementor-open) {
-
-		.elementor-panel-heading-toggle {
-
-			.fa {
-
-				&:before {
-					content: getValueByDirection('\f0da', '\f0d9');
-				}
-			}
-		}
-	}
+.elementor-control,
+.elementor-panel-scheme-item {
 
 	&.elementor-open {
 
@@ -292,6 +273,29 @@
 			}
 		}
 	}
+
+	&:not(.elementor-open) {
+
+		.elementor-panel-heading-toggle {
+
+			.fa {
+
+				&:before {
+					content: getValueByDirection('\f0da', '\f0d9');
+				}
+			}
+		}
+	}
+}
+
+.elementor-panel-heading {
+	display: table;
+	table-layout: fixed;
+	height: 40px;
+	padding: 0 20px;
+	width: 100%;
+	border-bottom: 1px solid $editor-background;
+	cursor: pointer;
 
 	> * {
 		display: table-cell;
@@ -407,11 +411,11 @@
 			color: $editor-light;
 
 			&:nth-child(2) {
-				border-radius: 3px 0 0 3px;
+				border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);;
 			}
 
 			&:last-child {
-				border-radius: 0 3px 3px 0;
+				border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);;
 			}
 		}
 	}
