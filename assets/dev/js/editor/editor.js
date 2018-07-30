@@ -751,7 +751,7 @@ App = Marionette.Application.extend( {
 		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
 
 		if ( this.previewLoadedOnce ) {
-			this.getPanelView().setPage( 'elements' );
+			this.getPanelView().setPage( 'elements', null, { autoFocusSearch: false } );
 		} else {
 			this.onFirstPreviewLoaded();
 		}

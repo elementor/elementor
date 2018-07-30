@@ -20,7 +20,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			this.setPage( 'elements' );
 		},
 		'editor:destroy': function() {
-			this.setPage( 'elements' );
+			this.setPage( 'elements', null, { autoFocusSearch: false } );
 		}
 	},
 
