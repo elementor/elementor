@@ -120,6 +120,15 @@ class Settings extends Settings_Page {
 		add_submenu_page(
 			self::PAGE_ID,
 			'',
+			__( 'Getting Started', 'elementor' ),
+			'manage_options',
+			'elementor_getting_started',
+			[ $this, 'elementor_getting_started' ]
+		);
+
+		add_submenu_page(
+			self::PAGE_ID,
+			'',
 			__( 'Knowledge Base', 'elementor' ),
 			'manage_options',
 			'go_knowledge_base_site',
@@ -151,6 +160,16 @@ class Settings extends Settings_Page {
 			wp_redirect( 'https://go.elementor.com/docs-admin-menu/' );
 			die;
 		}
+	}
+
+	public function elementor_getting_started() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<h2><?php echo __( 'Getting Started', 'elementor' ); ?></h2>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
 	}
 
 	/**
@@ -189,6 +208,8 @@ class Settings extends Settings_Page {
 
 		// Save general settings in one list for a future usage
 		$this->handle_general_settings_update();
+
+		$this->maybe_remove_all_admin_notices();
 	}
 
 	/**
@@ -506,6 +527,10 @@ class Settings extends Settings_Page {
 
 			update_option( General_Settings_Manager::META_KEY, $saved_general_settings );
 		}
+	}
+
+	private function maybe_remove_all_admin_notices() {
+		remove_all_actions( 'admin_notices' );
 	}
 
 	/**
