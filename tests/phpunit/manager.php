@@ -1,12 +1,15 @@
 <?php
 
-namespace  Elementor\Testing;
+namespace Elementor\Testing;
 
 class Manager {
 	/**
 	 * @var self
 	 */
 	public static $instance = null;
+	/**
+	 * @var \Elementor\Testing\Local_Factory
+	 */
 	private $local_factory;
 
 	public function __construct() {
@@ -17,6 +20,7 @@ class Manager {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 		}
+
 		return self::$instance;
 	}
 

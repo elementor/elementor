@@ -15,12 +15,12 @@ class Elementor_Test_Heartbeat extends Elementor_Test_Base {
 	}
 
 	public function test_postLock() {
-		$this->user_own_post = $this->factory()->user->create( [ 'role' => 'administrator' ] );
-		$this->user_editor = $this->factory()->user->create( [ 'role' => 'administrator' ] );
+		$this->user_own_post = $this->factory()->create_and_get_administrator_user()->ID;
+		$this->user_editor = $this->factory()->create_and_get_administrator_user()->ID;
 
 		wp_set_current_user( $this->user_own_post );
 
-		$post = $this->factory()->post->create_and_get();
+		$post = $this->factory()->create_and_get_default_Post();
 
 		$data = [
 			'elementor_post_lock' => [

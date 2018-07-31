@@ -7,9 +7,9 @@ class Elementor_Test_Qunit extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 
-		$GLOBALS['post'] = $this->factory()->post->create_and_get();
+		$GLOBALS['post'] = $this->factory()->create_and_get_default_Post();
 
 		add_post_meta( $GLOBALS['post']->ID, '_elementor_edit_mode', 'builder' );
 
@@ -19,26 +19,32 @@ class Elementor_Test_Qunit extends Elementor_Test_Base {
 		/* Because it's not wp-admin,  */
 		add_action(
 			'elementor/editor/before_enqueue_scripts', function () {
-				// WP >= 4.8.0
-				if ( function_exists( 'wp_enqueue_editor' ) ) {
-					wp_enqueue_editor();
-				}
-
-				wp_register_script( 'iris', 'file://' . ABSPATH . 'wp-admin/js/iris.min.js', [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
-
-				wp_register_script( 'wp-color-picker', 'file://' . ABSPATH . 'wp-admin/js/color-picker.js', [ 'iris' ], false, 1 );
-
-				wp_localize_script(
-					'wp-color-picker', 'wpColorPickerL10n', [
-						'clear' => __( 'Clear' ),
-						'defaultString' => __( 'Default' ),
-						'pick' => __( 'Select Color' ),
-						'current' => __( 'Current Color' ),
-					]
-				);
-
-				wp_enqueue_script( 'wp-color-picker' );
+			// WP >= 4.8.0
+			if ( function_exists( 'wp_enqueue_editor' ) ) {
+				wp_enqueue_editor();
 			}
+
+			wp_register_script(
+				'iris', 'file://' . ABSPATH . 'wp-admin/js/iris.min.js', [
+				'jquery-ui-draggable',
+				'jquery-ui-slider',
+				'jquery-touch-punch',
+			], '1.0.7', 1
+			);
+
+			wp_register_script( 'wp-color-picker', 'file://' . ABSPATH . 'wp-admin/js/color-picker.js', [ 'iris' ], false, 1 );
+
+			wp_localize_script(
+				'wp-color-picker', 'wpColorPickerL10n', [
+					'clear' => __( 'Clear' ),
+					'defaultString' => __( 'Default' ),
+					'pick' => __( 'Select Color' ),
+					'current' => __( 'Current Color' ),
+				]
+			);
+
+			wp_enqueue_script( 'wp-color-picker' );
+		}
 		);
 
 		ob_start();
@@ -54,10 +60,10 @@ class Elementor_Test_Qunit extends Elementor_Test_Base {
 		$html = fix_qunit_html_urls( $html );
 
 		$quint = '<div id="qunit" style="z-index:1;position:relative;overflow:scroll;height:100%;"></div>' .
-			'<div id="qunit-fixture"></div>' .
-			'<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">' .
-			'<script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>' .
-			'<script src="tests.js"></script>';
+		         '<div id="qunit-fixture"></div>' .
+		         '<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">' .
+		         '<script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>' .
+		         '<script src="tests.js"></script>';
 
 		$html = str_replace( '</body>', $quint . '</body>', $html );
 

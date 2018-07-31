@@ -20,7 +20,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 
 	public function setUp() {
 		parent::setUp();
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 	}
 
 	public function test_should_return_true_from_register_source() {
@@ -41,7 +41,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_wp_error_save_error_from_save_template() {
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'subscriber' ] ) );
+		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
 		$this->assertWPError(
 			self::$manager->save_template(
 				[
@@ -55,24 +55,27 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_template_data_from_save_template() {
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 		$template_data = [
-			'post_id' => $this->factory()->post->create( [ 'post_date' => '2014-11-11 23:45:30' ] ),
+			'post_id' => $this->factory()->get_custom_post( [ 'post_date' => '2014-11-11 23:45:30' ] )->ID,
 			'source' => 'local',
 			'content' => 'banana',
 			'type' => 'page',
 		];
 
 		$remote_remote = [
-			'template_id' => 8,
-			'source' => 'local',
-			'type' => 'page',
-			'title' => '(no title)',
-			'thumbnail' => false,
-			'hasPageSettings' => true,
-			'tags' => [],
-			'url' => 'http://example.org/?elementor_library=no-title',
+			'template_id',
+			'source',
+			'type',
+			'title',
+			'thumbnail',
+			'hasPageSettings',
+			'tags',
+			'url',
 		];
-		$this->assertArraySubset( $remote_remote, self::$manager->save_template( $template_data ) );
+		$res = self::$manager->save_template( $template_data );
+		$this->assertArrayHaveKeys( $remote_remote, $res );
+		//$this->assertArraySubset( $remote_remote,  );
 	}
 
 
@@ -94,7 +97,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_wp_error_save_error_from_update_template() {
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'subscriber' ] ) );
+		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
 		$this->assertWPError(
 			self::$manager->update_template(
 				[
@@ -111,7 +114,8 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	 *
 	 */
 	public function test_should_return_template_data_from_update_template() {
-		$post_id = $this->factory()->post->create();
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+		$post_id = $this->factory()->create_and_get_default_Post()->ID;
 		$template_data = [
 			'source' => 'local',
 			'content' => 'banana',
@@ -120,17 +124,18 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		];
 
 		$remote_remote = [
-			'template_id' => $post_id,
-			'source' => 'local',
-			'type' => '',
-			'title' => 'Post title 70',
-			'thumbnail' => false,
-			'author' => 'User 69',
-			'hasPageSettings' => true,
-			'tags' => [],
-			'url' => 'http://example.org/?p=9',
+			'template_id',
+			'source',
+			'type',
+			'title',
+			'thumbnail',
+			'author',
+			'hasPageSettings',
+			'tags',
+			'url',
 		];
-		$this->assertArraySubset( $remote_remote, self::$manager->update_template( $template_data ) );
+		$res = self::$manager->update_template( $template_data );
+		$this->assertArrayHaveKeys( $remote_remote, $res );
 	}
 
 	/**

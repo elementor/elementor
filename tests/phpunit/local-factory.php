@@ -29,8 +29,9 @@ class Local_Factory extends \WP_UnitTestCase {
 	 * @return \WP_Post
 	 */
 	public function create_and_get_default_Post() {
-		$this->administrator_user = $this->factory()->post->create_and_get();
-		return $this->administrator_user;
+		$this->default_post = $this->factory()->post->create_and_get();
+
+		return $this->default_post;
 	}
 
 	/**
@@ -44,6 +45,15 @@ class Local_Factory extends \WP_UnitTestCase {
 		$this->factory()->post->update_object( $this->custom_post->ID, $args );
 
 		return $this->custom_post;
+	}
+
+	/**
+	 * @param $args
+	 *
+	 * @return array|null|\WP_Post
+	 */
+	public function create_and_get_custom_post( $args ) {
+		return $this->factory()->post->create_and_get( $args );
 	}
 
 	/**
@@ -94,12 +104,17 @@ class Local_Factory extends \WP_UnitTestCase {
 	 *
 	 * @return int|\WP_Error template id
 	 */
-	public function create_and_get_template( $rags ) {
+	public function create_and_get_template_id( $rags ) {
 		return $this->create_template( $rags );
 	}
 
+	/**
+	 * @return \WP_User
+	 */
 	public function create_and_get_administrator_user() {
-		return $this->factory()->user->create_and_get( [ 'role' => 'administrator' ] );
+		$this->administrator_user = $this->factory()->user->create_and_get( [ 'role' => 'administrator' ] );
+
+		return $this->administrator_user;
 	}
 
 	/**

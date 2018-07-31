@@ -7,46 +7,6 @@ use \Elementor\Testing\Elementor_Test_Base;
 
 class Elementor_Test_Utils extends Elementor_Test_Base {
 
-
-	/**
-	 * create new post from factory and returns it's id.
-	 *
-	 * @return integer the newly created post id.
-	 */
-	private function create_and_get_post_id() {
-		return $this->factory()->post->create();
-	}
-
-	private function create_and_get_parent_and_child_posts() {
-		$user_id = $this->factory()->user->create( [ 'display_name' => 'elementor' ] );
-		$post_id = $this->factory()->post->create(
-			[
-				'post_author' => $user_id,
-				'post_date' => '2014-11-11 23:45:30',
-				'post_type' => 'revision',
-			]
-		);
-		$inherent_post_id = $this->factory()->post->create(
-			[
-				'post_date' => '2014-11-12 23:45:30',
-				'post_type' => 'revision',
-				'post_author' => $user_id,
-				'post_parent' => $post_id,
-				'post_name' => $post_id . '-autosave',
-
-			]
-		);
-
-		return [
-			'parent_id' => $post_id,
-			'child_id' => $inherent_post_id,
-			'user_id' => $user_id,
-		];
-	}
-
-	/**
-	 *
-	 */
 	public function test_should_return_elementor_pro_link() {
 		$base_link = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 		$this->assertSame( $base_link . '&utm_term=twentysixteen', Utils::get_pro_link( $base_link ) );
@@ -75,7 +35,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_edit_link() {
-		$post_id = $this->create_and_get_post_id();
+		$post_id = $this->factory()->create_and_get_default_Post()->ID;
 		$this->assertSame( home_url() . "/wp-admin/post.php?post=$post_id&action=elementor", Utils::get_edit_link( $post_id ) );
 	}
 
@@ -93,12 +53,12 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_get_preview_url() {
-		$post_id = $this->create_and_get_post_id();
+		$post_id = $this->factory()->create_and_get_default_Post()->ID;
 		$this->assertSame( home_url() . "/?p=$post_id&elementor-preview=$post_id&ver=" . time(), Utils::get_preview_url( $post_id ) );
 	}
 
 	public function test_should_get_wordpress_preview_url() {
-		$post_id = $this->create_and_get_post_id();
+		$post_id = $this->factory()->create_and_get_default_Post()->ID;
 		$this->assertSame( home_url() . "/?p=$post_id&preview_nonce=" . wp_create_nonce( 'post_preview_' . $post_id ) . '&preview=true', Utils::get_wp_preview_url( $post_id ) );
 	}
 
@@ -132,7 +92,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_not_get_exit_to_dashboard_url() {
-		$post_id = $this->create_and_get_post_id();
+		$post_id = $this->factory()->create_and_get_default_Post()->ID;
 		$this->assertNull( Utils::get_exit_to_dashboard_url( $post_id ) );
 	}
 
@@ -162,18 +122,18 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_get_when_and_how_edited_the_post_last() {
-		$user = $this->factory->user->create( [ 'display_name' => 'elementor' ] );
-		$post_id = $this->factory->post->create(
+		$user_id = $this->factory()->get_administrator_user()->ID;
+		$post_id = $this->factory()->create_and_get_custom_post(
 			[
-				'post_author' => $user,
+				'post_author' => $user_id,
 				'post_date' => '2014-11-11 23:45:30',
 			]
-		);
-		$this->assertSame( 'Last edited on <time>Nov 11, 23:45</time> by elementor', Utils::get_last_edited( $post_id ) );
+		)->ID;
+		$this->assertRegExp( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Utils::get_last_edited( $post_id ) );
 	}
 
 	public function test_should_get_post_auto_save() {
-		$posts = $this->create_and_get_parent_and_child_posts();
+		$posts = $this->factory()->create_and_get_parent_and_child_posts();
 		$this->assertEquals( get_post( $posts['child_id'] )->ID, Utils::get_post_autosave( $posts['parent_id'], $posts['user_id'] )->ID );
 	}
 

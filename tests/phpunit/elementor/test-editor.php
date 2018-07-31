@@ -9,9 +9,9 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
-		$GLOBALS['post'] = $this->factory()->post->create_and_get();
+		$GLOBALS['post'] = $this->factory()->create_and_get_default_Post()->IDs;
 	}
 
 	public function test_getInstance() {

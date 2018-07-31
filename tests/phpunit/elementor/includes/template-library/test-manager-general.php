@@ -134,7 +134,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_true_from_update_templates() {
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 		$templates = [
 			'templates' => [
 				[
@@ -147,7 +147,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 					'source' => 'local',
 					'content' => 'banana',
 					'type' => 'comment',
-					'id' => $this->factory()->post->create( [] ),
+					'id' => $this->factory()->create_and_get_default_Post()->ID,
 				],
 			],
 		];

@@ -9,14 +9,15 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 	private static $local_factory;
 
 	public function __get( $name ) {
-		if ( 'local_factory' === $name ) {
-			return self::local_factory();
+		if ( 'factory' === $name ) {
+			return self::factory();
 		}
-
-		return parent::__get( $name );
 	}
 
-	protected static function local_factory() {
+	/**
+	 * @return \Elementor\Testing\Local_Factory|\WP_UnitTest_Factory
+	 */
+	protected static function factory() {
 		if ( ! self::$local_factory ) {
 			self::$local_factory = Manager::$instance->get_local_factory();
 		}
@@ -31,7 +32,7 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 	 * @param array|\ArrayAccess $array
 	 * @param string $message
 	 */
-	protected function assertArrayHaveKeys( $keys, $array, $message ) {
+	protected function assertArrayHaveKeys( $keys, $array, $message = '' ) {
 		if ( ! is_array( $keys ) ) {
 			throw \PHPUnit_Util_InvalidArgumentHelper::factory(
 				1,

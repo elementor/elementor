@@ -7,7 +7,7 @@ class Elementor_Test_Bootstrap extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->local_factory()->get_administrator_user()->ID );
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
 		// Make sure the main class is running
 		\Elementor\Plugin::instance();

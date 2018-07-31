@@ -11,9 +11,9 @@ class Elementor_Test_Qunit_Preview extends Elementor_Test_Base {
 		define( 'WP_USE_THEMES', true );
 		$_GET['elementor-preview'] = 1;
 
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 
-		$GLOBALS['post'] = $this->factory()->post->create_and_get();
+		$GLOBALS['post'] = $this->factory()->create_and_get_default_Post();
 
 		add_post_meta( $GLOBALS['post']->ID, '_elementor_edit_mode', 'builder' );
 

@@ -74,7 +74,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_remote_template_data_from_update_template() {
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 		$template_data = [
 			'source' => 'remote',
 			'content' => 'banana',
@@ -83,20 +83,20 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 		];
 
 		$remote_remote = [
-			'template_id' => 5533,
-			'source' => 'remote',
-			'type' => 'block',
-			'subtype' => 'about',
-			'title' => 'About 15',
-			'thumbnail' => 'https://library.elementor.com/wp-content/uploads/2018/03/about_black_10.png',
-			'author' => 'Elementor',
-			'tags' => [ 'About' ],
-			'isPro' => false,
-			'hasPageSettings' => false,
-			'url' => 'https://library.elementor.com/blocks/about-15/?utm_source=library&utm_medium=wp-dash&utm_campaign=preview',
-			'favorite' => false,
+			'template_id',
+			'source',
+			'type',
+			'subtype',
+			'title',
+			'thumbnail',
+			'author',
+			'tags',
+			'isPro',
+			'hasPageSettings',
+			'url',
+			'favorite',
 		];
-		$this->assertArraySubset( $remote_remote, self::$manager->update_template( $template_data ) );
+		$this->assertArrayHaveKeys( $remote_remote, self::$manager->update_template( $template_data ) );
 	}
 
 	public function test_should_return_data_from_get_template_data() {
