@@ -16,17 +16,7 @@ class Manager {
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
-
-			/**
-			 * Elementor loaded.
-			 *
-			 * Fires when Elementor was fully loaded and instantiated.
-			 *
-			 * @since 1.0.0
-			 */
-			do_action( 'elementor/loaded' );
 		}
-
 		return self::$instance;
 	}
 

@@ -2,11 +2,13 @@
 
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
+require_once 'test-manager-general.php';
+
 class Elementor_Test_Manager_Remote extends Elementor_Test_Manager_General {
 
 	public function test_should_mark_template_as_favorite() {
 		$this->assertFalse(
-			$this->manager->mark_template_as_favorite(
+			self::$manager->mark_template_as_favorite(
 				[
 					'source' => 'remote',
 					'template_id' => '777',
@@ -17,20 +19,20 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Manager_General {
 	}
 
 	public function test_should_return_true_from_register_source() {
-		$this->assertTrue( $this->manager->register_source( 'Elementor\TemplateLibrary\Source_Remote' ) );
+		$this->assertTrue( self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Remote' ) );
 	}
 
 	public function test_should_return_true_from_unregister_source() {
-		$this->assertTrue( $this->manager->unregister_source( 'remote' ) );
+		$this->assertTrue( self::$manager->unregister_source( 'remote' ) );
 	}
 
 	public function test_should_return_registered_sources() {
-		$this->manager->register_source( 'Elementor\TemplateLibrary\Source_Remote' );
-		$this->assertEquals( $this->manager->get_registered_sources()['remote'], new \Elementor\TemplateLibrary\Source_Remote() );
+		self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Remote' );
+		$this->assertEquals( self::$manager->get_registered_sources()['remote'], new \Elementor\TemplateLibrary\Source_Remote() );
 	}
 
 	public function test_should_return_source() {
-		$this->assertEquals( $this->manager->get_source( 'remote' ), new \Elementor\TemplateLibrary\Source_Remote() );
+		$this->assertEquals( self::$manager->get_source( 'remote' ), new \Elementor\TemplateLibrary\Source_Remote() );
 	}
 
 	public function test_should_return_template_data_from_save_template() {
@@ -57,7 +59,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Manager_General {
 			'url' => 'https://library.elementor.com/blocks/about-14/?utm_source=library&utm_medium=wp-dash&utm_campaign=preview',
 			'favorite' => false,
 		];
-		$this->assertArraySubset( $remote_remote, $this->manager->save_template( $template_data ) );
+		$this->assertArraySubset( $remote_remote, self::$manager->save_template( $template_data ) );
 	}
 
 	public function test_should_return_remote_template_data_from_update_template() {
@@ -83,11 +85,11 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Manager_General {
 			'url' => 'https://library.elementor.com/blocks/about-15/?utm_source=library&utm_medium=wp-dash&utm_campaign=preview',
 			'favorite' => false,
 		];
-		$this->assertArraySubset( $remote_remote, $this->manager->update_template( $template_data ) );
+		$this->assertArraySubset( $remote_remote, self::$manager->update_template( $template_data ) );
 	}
 
 	public function test_should_return_data_from_get_template_data() {
-		$ret = $this->manager->get_template_data(
+		$ret = self::$manager->get_template_data(
 			[
 				'source' => 'local',
 				'template_id' => '777',
@@ -99,7 +101,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Manager_General {
 
 	public function test_should_delete_template() {
 		$this->assertFalse(
-			$this->manager->delete_template(
+			self::$manager->delete_template(
 				[
 					'source' => 'remote',
 					'template_id' => '777',

@@ -6,7 +6,6 @@ use \Elementor\TemplateLibrary\Manager;
 
 require_once 'test-manager-general.php';
 
-
 class Elementor_Test_Manager_Local extends Elementor_Test_Manager_General {
 
 	public function setUp() {
@@ -15,26 +14,26 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_General {
 	}
 
 	public function test_should_return_true_from_register_source() {
-		$this->assertTrue( $this->manager->register_source( 'Elementor\TemplateLibrary\Source_Local' ) );
+		$this->assertTrue( self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Local' ) );
 	}
 
 	public function test_should_return_true_from_unregister_source() {
-		$this->assertTrue( $this->manager->unregister_source( 'local' ) );
+		$this->assertTrue( self::$manager->unregister_source( 'local' ) );
 	}
 
 	public function test_should_return_registered_sources() {
-		$this->manager->register_source( 'Elementor\TemplateLibrary\Source_Local' );
-		$this->assertEquals( $this->manager->get_registered_sources()['local'], new \Elementor\TemplateLibrary\Source_Local() );
+		self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Local' );
+		$this->assertEquals( self::$manager->get_registered_sources()['local'], new \Elementor\TemplateLibrary\Source_Local() );
 	}
 
 	public function test_should_return_source() {
-		$this->assertEquals( $this->manager->get_source( 'local' ), new \Elementor\TemplateLibrary\Source_Local() );
+		$this->assertEquals( self::$manager->get_source( 'local' ), new \Elementor\TemplateLibrary\Source_Local() );
 	}
 
 	public function test_should_return_wp_error_save_error_from_save_template() {
 		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'subscriber' ] ) );
 		$this->assertWPError(
-			$this->manager->save_template(
+			self::$manager->save_template(
 				[
 					'post_id' => '123',
 					'source' => 'local',
@@ -63,18 +62,18 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_General {
 			'tags' => [],
 			'url' => 'http://example.org/?elementor_library=no-title',
 		];
-		$this->assertArraySubset( $remote_remote, $this->manager->save_template( $template_data ) );
+		$this->assertArraySubset( $remote_remote, self::$manager->save_template( $template_data ) );
 	}
 
 
 	public function test_should_return_wp_error_arguments_not_specified_from_update_template() {
-		$this->assertWPError( $this->manager->update_template( [ 'post_id' => '123' ] ), 'arguments_not_specified' );
+		$this->assertWPError( self::$manager->update_template( [ 'post_id' => '123' ] ), 'arguments_not_specified' );
 	}
 
 
 	public function test_should_return_wp_error_template_error_from_update_template() {
 		$this->assertWPError(
-			$this->manager->update_template(
+			self::$manager->update_template(
 				[
 					'source' => 'banana',
 					'content' => 'banana',
@@ -87,7 +86,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_General {
 	public function test_should_return_wp_error_save_error_from_update_template() {
 		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'subscriber' ] ) );
 		$this->assertWPError(
-			$this->manager->update_template(
+			self::$manager->update_template(
 				[
 					'source' => 'local',
 					'content' => 'banana',
@@ -121,14 +120,14 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_General {
 			'tags' => [],
 			'url' => 'http://example.org/?p=9',
 		];
-		$this->assertArraySubset( $remote_remote, $this->manager->update_template( $template_data ) );
+		$this->assertArraySubset( $remote_remote, self::$manager->update_template( $template_data ) );
 	}
 
 	/**
 	 * @covers \Elementor\TemplateLibrary\Manager::get_template_data()
 	 */
 	public function test_should_return_data_from_get_template_data() {
-		$ret = $this->manager->get_template_data(
+		$ret = self::$manager->get_template_data(
 			[
 				'source' => 'local',
 				'template_id' => '8',
@@ -143,7 +142,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_General {
 	 */
 	public function test_should_export_template() {
 		$this->markTestSkipped();
-		$ret = $this->manager->export_template(
+		$ret = self::$manager->export_template(
 			[
 				'source' => 'local',
 				'template_id' => \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id(),
@@ -161,7 +160,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_General {
 		$template_id = \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id();
 		$template = get_post( $template_id );
 
-		$ret = $this->manager->delete_template(
+		$ret = self::$manager->delete_template(
 			[
 				'source' => 'local',
 				'template_id' => $template_id,
@@ -183,7 +182,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_General {
 				'tmp_name' => 'http://example.org/?elementor_library=no-title',
 			],
 		];
-		var_dump( $this->manager->import_template() );
+		var_dump( self::$manager->import_template() );
 	}
 
 	/*    public function () {
@@ -192,7 +191,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Manager_General {
 
 
 	/*	public function test_should_fail_to_mark_template_as_favorite() {
-			$this->assertTrue( is_wp_error( $this->manager->mark_template_as_favorite( [ 'source' => 'remote' ] ) ) );
+			$this->assertTrue( is_wp_error( self::$manager->mark_template_as_favorite( [ 'source' => 'remote' ] ) ) );
 		}*/
 
 }
