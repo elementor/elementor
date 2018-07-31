@@ -24,7 +24,24 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 		return self::$local_factory;
 	}
 
-	/*public function __construct( $name = null, array $data = [], $data_name = '' ) {
-		parent::__construct( $name, $data, $data_name );
-	}*/
+	/**
+	 * Asserts that an array have specified keys.
+	 *
+	 * @param array $keys
+	 * @param array|\ArrayAccess $array
+	 * @param string $message
+	 */
+	protected function assertArrayHaveKeys( $keys, $array, $message ) {
+		if ( ! is_array( $keys ) ) {
+			throw \PHPUnit_Util_InvalidArgumentHelper::factory(
+				1,
+				'only array'
+			);
+		}
+
+		foreach ( $keys as $key ) {
+			$this->assertArrayHasKey( $key, $array, $message );
+		}
+
+	}
 }
