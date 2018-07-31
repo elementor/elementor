@@ -26,6 +26,14 @@ class Local_Factory extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * @return \WP_Post
+	 */
+	public function create_and_get_default_Post() {
+		$this->administrator_user = $this->factory()->post->create_and_get();
+		return $this->administrator_user;
+	}
+
+	/**
 	 * @param array $args
 	 *
 	 * @return \WP_Post
@@ -36,6 +44,36 @@ class Local_Factory extends \WP_UnitTestCase {
 		$this->factory()->post->update_object( $this->custom_post->ID, $args );
 
 		return $this->custom_post;
+	}
+
+	/**
+	 * @return array parent_id | WP_Post; child_id | WP_Post; user_id | WP_User.
+	 */
+	public function create_and_get_parent_and_child_posts() {
+		$user_id = $this->factory()->user->create( [ 'display_name' => 'elementor' ] );
+		$post_id = $this->factory()->post->create(
+			[
+				'post_author' => $user_id,
+				'post_date' => '2014-11-11 23:45:30',
+				'post_type' => 'revision',
+			]
+		);
+		$inherent_post_id = $this->factory()->post->create(
+			[
+				'post_date' => '2014-11-12 23:45:30',
+				'post_type' => 'revision',
+				'post_author' => $user_id,
+				'post_parent' => $post_id,
+				'post_name' => $post_id . '-autosave',
+
+			]
+		);
+
+		return [
+			'parent_id' => $post_id,
+			'child_id' => $inherent_post_id,
+			'user_id' => $user_id,
+		];
 	}
 
 	/**
@@ -58,6 +96,10 @@ class Local_Factory extends \WP_UnitTestCase {
 	 */
 	public function create_and_get_template( $rags ) {
 		return $this->create_template( $rags );
+	}
+
+	public function create_and_get_administrator_user() {
+		return $this->factory()->user->create_and_get( [ 'role' => 'administrator' ] );
 	}
 
 	/**
