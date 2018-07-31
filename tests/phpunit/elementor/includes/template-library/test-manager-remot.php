@@ -2,9 +2,20 @@
 
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
+use Elementor\Testing\Elementor_Test_Base;
+
 require_once 'test-manager-general.php';
 
-class Elementor_Test_Manager_Remote extends Elementor_Test_Manager_General {
+class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
+
+	/**
+	 * @var Manager
+	 */
+	protected static $manager;
+
+	public static function setUpBeforeClass() {
+		self::$manager = \Elementor\Plugin::instance()->templates_manager;
+	}
 
 	public function test_should_mark_template_as_favorite() {
 		$this->assertFalse(

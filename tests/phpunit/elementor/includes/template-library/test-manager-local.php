@@ -3,10 +3,20 @@
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use \Elementor\TemplateLibrary\Manager;
+use Elementor\Testing\Elementor_Test_Base;
 
 require_once 'test-manager-general.php';
 
-class Elementor_Test_Manager_Local extends Elementor_Test_Manager_General {
+class Elementor_Test_Manager_Local extends Elementor_Test_Base {
+
+	/**
+	 * @var Manager
+	 */
+	protected static $manager;
+
+	public static function setUpBeforeClass() {
+		self::$manager = \Elementor\Plugin::instance()->templates_manager;
+	}
 
 	public function setUp() {
 		parent::setUp();
