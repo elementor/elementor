@@ -218,6 +218,12 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.1.6 - 2018-07-31 ###
+* Fix: Removed reference to source map file in Swiper minified file
+* Fix: Handle element style glitch in mobile view
+* Fix: Delete element with hotkey after text editing
+* Fix: Allow to determine whether to focus the search input on view rendered
+
 ### 2.1.5 - 2018-07-26 ###
 * Tweak: Added `Ctrl/Cmd + Y` for redo action ([#5090](https://github.com/pojome/elementor/issues/5090))
 * Tweak: Clear WP cache in upgrade steps
