@@ -426,6 +426,9 @@ class Upgrades {
 			$json_value = wp_slash( wp_json_encode( $data ) );
 
 			update_metadata( 'post', $post_id, '_elementor_data', $json_value );
+
+			// Clear WP cache for next step.
+			wp_cache_flush();
 		} // End foreach().
 	}
 }

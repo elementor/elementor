@@ -111,6 +111,10 @@ html.elementor-html {
 	.elementor-inline-editing {
 		min-height: 15px;
 	}
+
+	.elementor-edit-hidden {
+		display: none;
+	}
 }
 
 // Element
@@ -249,6 +253,27 @@ html.elementor-html {
 	}
 }
 
+// Inner Section
+.elementor-inner-section {
+
+	@media (max-width: $editor-screen-md-max) {
+
+		> .elementor-element-overlay {
+
+			.elementor-editor-element-settings {
+				overflow: hidden;
+			}
+
+			.elementor-editor-element-setting {
+
+				&:not(.elementor-editor-element-edit) {
+					display: none;
+				}
+			}
+		}
+	}
+}
+
 // Column
 .elementor-column {
 
@@ -338,12 +363,12 @@ html.elementor-html {
 
 	@media (max-width: $editor-screen-md-max) {
 
-		&.elementor-editor-element-edit {
-			border-radius: 5px 5px 0 0;
-		}
-
 		&:not(.elementor-editor-element-edit) {
-			display: none;
+			pointer-events: none;
+
+			i {
+				display: none;
+			}
 		}
 	}
 }
@@ -366,7 +391,7 @@ html.elementor-html {
 	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
 
 	i.eicon-handle {
-		font-size: 13px;
+		font-size: 16px;
 	}
 
 	.elementor-editor-element-setting {
@@ -444,10 +469,6 @@ html.elementor-html {
 					top: 0;
 					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
 				}
-			}
-
-			@media (max-width: $editor-screen-md-max) {
-				border-radius: 0 0 5px 5px;
 			}
 		}
 	}

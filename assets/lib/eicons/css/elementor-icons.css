@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?3.6.0");
-  src: url("../fonts/eicons.eot?3.6.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?3.6.0") format("woff2"), url("../fonts/eicons.woff?3.6.0") format("woff"), url("../fonts/eicons.ttf?3.6.0") format("truetype"), url("../fonts/eicons.svg?3.6.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?3.8.0");
+  src: url("../fonts/eicons.eot?3.8.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?3.8.0") format("woff2"), url("../fonts/eicons.woff?3.8.0") format("woff"), url("../fonts/eicons.ttf?3.8.0") format("truetype"), url("../fonts/eicons.svg?3.8.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -680,6 +680,24 @@
 
 .eicon-cart-solid:before {
   content: '\e1017'; }
+
+.eicon-exchange:before {
+  content: '\e1018'; }
+
+.eicon-eye:before {
+  content: '\e1019'; }
+
+.eicon-laptop:before {
+  content: '\e1020'; }
+
+.eicon-collapse:before {
+  content: '\e1021'; }
+
+.eicon-expand:before {
+  content: '\e1022'; }
+
+.eicon-navigator:before {
+  content: '\e1023'; }
 
 .eicon-editor-link:before {
   content: '\e500'; }

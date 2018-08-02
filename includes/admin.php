@@ -15,6 +15,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Admin {
 
+	public function maybe_redirect_to_getting_started() {
+		if ( ! get_transient( 'elementor_activation_redirect' ) ) {
+			return;
+		}
+
+		delete_transient( 'elementor_activation_redirect' );
+
+		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) {
+			return;
+		}
+
+		wp_safe_redirect( admin_url( 'index.php?page=elementor-getting-started' ) );
+		exit;
+	}
+
 	/**
 	 * Enqueue admin scripts.
 	 *
@@ -90,7 +105,7 @@ class Admin {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.6.0'
+			'3.8.0'
 		);
 
 		wp_register_style(
@@ -799,6 +814,8 @@ class Admin {
 	 * @access public
 	 */
 	public function __construct() {
+		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
+
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
