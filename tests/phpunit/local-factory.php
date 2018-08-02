@@ -140,7 +140,7 @@ class Local_Factory extends \WP_UnitTestCase {
 	}
 
 	private function create_template( $template_data = [ 'title' => 'new template' ] ) {
-		$template_id = wp_insert_post(
+		$template_id  = $this->factory()->post->create(
 			[
 				'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
 				'post_status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
