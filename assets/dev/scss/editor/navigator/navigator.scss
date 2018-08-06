@@ -12,6 +12,12 @@
 	z-index: 2;
 	display: none;
 
+	.elementor-navigator-docked & {
+		top: 0;
+		@include end(0);
+		height: 100%;
+	}
+
 	&__inner {
 		height: 100%;
 	}
@@ -22,6 +28,7 @@
 		justify-content: space-between;
 		padding: 10px;
 		border-bottom: 1px solid $editor-background;
+		cursor: move;
 	}
 
 	&__toggle-all {
@@ -39,6 +46,10 @@
 		overflow: auto;
 		position: relative;
 		background-color: $editor-background;
+
+		.elementor-navigator-docked & {
+			height: 100%;
+		}
 	}
 
 	&__footer {
