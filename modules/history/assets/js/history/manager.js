@@ -63,16 +63,8 @@ var	Manager = function() {
 
 	var addHotKeys = function() {
 		var H_KEY = 72,
+			Y_KEY = 89,
 			Z_KEY = 90;
-
-		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
-			isWorthHandling: function( event ) {
-				return items.length && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
-			},
-			handle: function( event ) {
-				navigate( Z_KEY === event.which && event.shiftKey );
-			}
-		} );
 
 		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showHistoryPage', {
 			isWorthHandling: function( event ) {
@@ -80,6 +72,24 @@ var	Manager = function() {
 			},
 			handle: function() {
 				elementor.getPanelView().setPage( 'historyPage' );
+			}
+		} );
+
+		var navigationWorthHandling = function( event ) {
+			return items.length && elementor.hotKeys.isControlEvent( event ) && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
+		};
+
+		elementor.hotKeys.addHotKeyHandler( Y_KEY, 'historyNavigationRedo', {
+			isWorthHandling: navigationWorthHandling,
+			handle: function( event ) {
+				navigate( true );
+			}
+		} );
+
+		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
+			isWorthHandling: navigationWorthHandling,
+			handle: function( event ) {
+				navigate( event.shiftKey );
 			}
 		} );
 	};

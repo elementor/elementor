@@ -49,7 +49,7 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 }, {
 
 	onPasteStyle: function( control, clipboardValue ) {
-		return undefined !== control.options[ clipboardValue ];
+		return '' === clipboardValue || undefined !== control.options[ clipboardValue ];
 	}
 } );
 
