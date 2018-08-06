@@ -29,16 +29,15 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_should_return_true_from_register_source() {
-		$this->assertTrue( self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Remote' ) );
-	}
-
 	public function test_should_return_true_from_unregister_source() {
 		$this->assertTrue( self::$manager->unregister_source( 'remote' ) );
 	}
 
+	public function test_should_return_true_from_register_source() {
+		$this->assertTrue( self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Remote' ) );
+	}
+
 	public function test_should_return_registered_sources() {
-		self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Remote' );
 		$this->assertEquals( self::$manager->get_registered_sources()['remote'], new \Elementor\TemplateLibrary\Source_Remote() );
 	}
 
@@ -82,12 +81,14 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 
 	public function test_should_delete_template() {
 
-		$this->assertWPError( self::$manager->delete_template(
-			[
-				'source' => 'remote',
-				'template_id' => '777',
-			]
-		), 'cannot delete template from remote source' );
+		$this->assertWPError(
+			self::$manager->delete_template(
+				[
+					'source' => 'remote',
+					'template_id' => '777',
+				]
+			), 'cannot delete template from remote source'
+		);
 
 	}
 }

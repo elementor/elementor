@@ -23,16 +23,15 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 	}
 
-	public function test_should_return_true_from_register_source() {
-		$this->assertTrue( self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Local' ) );
-	}
-
 	public function test_should_return_true_from_unregister_source() {
 		$this->assertTrue( self::$manager->unregister_source( 'local' ) );
 	}
 
+	public function test_should_return_true_from_register_source() {
+		$this->assertTrue( self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Local' ) );
+	}
+
 	public function test_should_return_registered_sources() {
-		self::$manager->register_source( 'Elementor\TemplateLibrary\Source_Local' );
 		$this->assertEquals( self::$manager->get_registered_sources()['local'], new \Elementor\TemplateLibrary\Source_Local() );
 	}
 
