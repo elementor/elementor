@@ -54,23 +54,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 			'type' => 'page',
 		];
 
-		$remote_remote = [
-			'template_id',
-			'source',
-			'type',
-			'subtype',
-			'title',
-			'thumbnail',
-			'date',
-			'author',
-			'tags',
-			'isPro',
-			'popularityIndex',
-			'hasPageSettings',
-			'url',
-			'favorite',
-		];
-		$this->assertArrayHaveKeys( $remote_remote, self::$manager->save_template( $template_data ) );
+		$this->assertWPError( self::$manager->save_template( $template_data ), 'cannot save template from remote source' );
 	}
 
 	public function test_should_return_remote_template_data_from_update_template() {
@@ -82,21 +66,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 			'id' => 1,
 		];
 
-		$remote_remote = [
-			'template_id',
-			'source',
-			'type',
-			'subtype',
-			'title',
-			'thumbnail',
-			'author',
-			'tags',
-			'isPro',
-			'hasPageSettings',
-			'url',
-			'favorite',
-		];
-		$this->assertArrayHaveKeys( $remote_remote, self::$manager->update_template( $template_data ) );
+		$this->assertWPError( self::$manager->update_template( $template_data ), 'cannot update template from remote source' );
 	}
 
 	public function test_should_return_data_from_get_template_data() {
@@ -111,13 +81,13 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 	}
 
 	public function test_should_delete_template() {
-		$this->assertFalse(
-			self::$manager->delete_template(
-				[
-					'source' => 'remote',
-					'template_id' => '777',
-				]
-			)
-		);
+
+		$this->assertWPError( self::$manager->delete_template(
+			[
+				'source' => 'remote',
+				'template_id' => '777',
+			]
+		), 'cannot delete template from remote source' );
+
 	}
 }
