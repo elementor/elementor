@@ -29,9 +29,7 @@ class Local_Factory extends \WP_UnitTestCase {
 	 * @return \WP_Post
 	 */
 	public function create_and_get_default_Post() {
-		$this->default_post = $this->factory()->post->create_and_get();
-
-		return $this->default_post;
+		return $this->factory()->post->create_and_get();
 	}
 
 	/**
