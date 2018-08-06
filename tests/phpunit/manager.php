@@ -12,7 +12,7 @@ class Manager {
 	 */
 	private $local_factory;
 
-	public function __construct() {
+	private function __construct() {
 		$this->local_factory = new Local_Factory();
 	}
 
