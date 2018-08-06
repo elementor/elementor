@@ -575,6 +575,7 @@ class Plugin {
 	private function __construct() {
 		$this->register_autoloader();
 
+		Maintenance::init();
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
