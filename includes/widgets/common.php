@@ -215,9 +215,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0.3,
-				],
 				'range' => [
 					'px' => [
 						'max' => 3,
@@ -323,9 +320,6 @@ class Widget_Common extends Widget_Base {
 				'label' => __( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
-				'default' => [
-					'size' => 0.3,
-				],
 				'range' => [
 					'px' => [
 						'max' => 3,

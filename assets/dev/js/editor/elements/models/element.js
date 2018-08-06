@@ -83,28 +83,6 @@ ElementModel = Backbone.Model.extend( {
 		elementorFrontend.config.elements.editSettings[ this.cid ] = editSettings;
 	},
 
-	onDestroy: function() {
-		// Clean the memory for all use instances
-		var settings = this.get( 'settings' ),
-			elements = this.get( 'elements' );
-
-		if ( undefined !== elements ) {
-			_.each( _.clone( elements.models ), function( model ) {
-				model.destroy();
-			} );
-		}
-
-		if ( settings instanceof BaseSettingsModel ) {
-			settings.destroy();
-		}
-	},
-
-	onCloseEditor: function() {
-		if ( this.renderOnLeave ) {
-			this.renderRemoteServer();
-		}
-	},
-
 	setSetting: function( key, value ) {
 		var settings = this.get( 'settings' );
 
@@ -152,16 +130,22 @@ ElementModel = Backbone.Model.extend( {
 		return this._htmlCache;
 	},
 
-	getTitle: function() {
-		var elementData = elementor.getElementData( this );
+	getDefaultTitle: function() {
+		return elementor.getElementData( this ).title;
+	},
 
-		return ( elementData ) ? elementData.title : 'Unknown';
+	getTitle: function() {
+		var title = this.getSetting( '_title' );
+
+		if ( ! title ) {
+			title = this.getDefaultTitle();
+		}
+
+		return title;
 	},
 
 	getIcon: function() {
-		var elementData = elementor.getElementData( this );
-
-		return ( elementData ) ? elementData.icon : 'unknown';
+		return elementor.getElementData( this ).icon;
 	},
 
 	createRemoteRenderRequest: function() {
@@ -236,6 +220,26 @@ ElementModel = Backbone.Model.extend( {
 		}
 
 		return data;
+	},
+
+	onCloseEditor: function() {
+		if ( this.renderOnLeave ) {
+			this.renderRemoteServer();
+		}
+	},
+
+	onDestroy: function() {
+		// Clean the memory for all use instances
+		var settings = this.get( 'settings' ),
+			elements = this.get( 'elements' );
+
+		if ( undefined !== elements ) {
+			_.each( _.clone( elements.models ), function( model ) {
+				model.destroy();
+			} );
+		}
+
+		settings.destroy();
 	}
 
 } );
