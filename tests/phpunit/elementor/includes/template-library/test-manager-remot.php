@@ -9,7 +9,7 @@ require_once 'test-manager-general.php';
 class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 
 	/**
-	 * @var Manager
+	 * @var \Elementor\TemplateLibrary\Manager
 	 */
 	protected static $manager;
 
@@ -55,22 +55,22 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 		];
 
 		$remote_remote = [
-			'template_id' => '5525',
-			'source' => 'remote',
-			'type' => 'block',
-			'subtype' => 'about',
-			'title' => 'About 14',
-			'thumbnail' => 'https://library.elementor.com/wp-content/uploads/2018/03/about_white_10.png',
-			'date' => '1520443532',
-			'author' => 'Elementor',
-			'tags' => [ 'About' ],
-			'isPro' => false,
-			'popularityIndex' => 29,
-			'hasPageSettings' => false,
-			'url' => 'https://library.elementor.com/blocks/about-14/?utm_source=library&utm_medium=wp-dash&utm_campaign=preview',
-			'favorite' => false,
+			'template_id',
+			'source',
+			'type',
+			'subtype',
+			'title',
+			'thumbnail',
+			'date',
+			'author',
+			'tags',
+			'isPro',
+			'popularityIndex',
+			'hasPageSettings',
+			'url',
+			'favorite',
 		];
-		$this->assertArraySubset( $remote_remote, self::$manager->save_template( $template_data ) );
+		$this->assertArrayHaveKeys( $remote_remote, self::$manager->save_template( $template_data ) );
 	}
 
 	public function test_should_return_remote_template_data_from_update_template() {
