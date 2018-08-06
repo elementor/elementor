@@ -12,6 +12,12 @@
 	z-index: 2;
 	display: none;
 
+	.elementor-navigator-docked & {
+		top: 0;
+		@include end(0);
+		height: 100%;
+	}
+
 	&__inner {
 		height: 100%;
 	}
