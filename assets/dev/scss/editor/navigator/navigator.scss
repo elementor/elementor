@@ -46,6 +46,10 @@
 		overflow: auto;
 		position: relative;
 		background-color: $editor-background;
+
+		.elementor-navigator-docked & {
+			height: 100%;
+		}
 	}
 
 	&__footer {
