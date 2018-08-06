@@ -115,7 +115,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	 */
 	public function test_should_return_template_data_from_update_template() {
 		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
-		$post_id = $this->factory()->create_and_get_default_Post()->ID;
+		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$template_data = [
 			'source' => 'local',
 			'content' => 'banana',

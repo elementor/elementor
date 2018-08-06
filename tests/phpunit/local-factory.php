@@ -17,7 +17,7 @@ class Local_Factory extends \WP_UnitTestCase {
 	/**
 	 * @return \WP_Post
 	 */
-	public function get_default_Post() {
+	public function get_default_post() {
 		if ( ! $this->default_post ) {
 			$this->default_post = $this->factory()->post->create_and_get();
 		}
@@ -28,7 +28,7 @@ class Local_Factory extends \WP_UnitTestCase {
 	/**
 	 * @return \WP_Post
 	 */
-	public function create_and_get_default_Post() {
+	public function create_and_get_default_post() {
 		return $this->factory()->post->create_and_get();
 	}
 
@@ -38,7 +38,7 @@ class Local_Factory extends \WP_UnitTestCase {
 	 * @return \WP_Post
 	 */
 	public function get_custom_post( $args ) {
-		$this->custom_post = clone $this->get_default_Post();
+		$this->custom_post = clone $this->get_default_post();
 
 		$this->factory()->post->update_object( $this->custom_post->ID, $args );
 

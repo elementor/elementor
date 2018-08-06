@@ -11,7 +11,7 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
-		$GLOBALS['post'] = $this->factory()->create_and_get_default_Post()->IDs;
+		$GLOBALS['post'] = $this->factory()->create_and_get_default_post()->IDs;
 	}
 
 	public function test_getInstance() {

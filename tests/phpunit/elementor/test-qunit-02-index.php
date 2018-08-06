@@ -9,7 +9,7 @@ class Elementor_Test_Qunit extends Elementor_Test_Base {
 
 		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 
-		$GLOBALS['post'] = $this->factory()->create_and_get_default_Post();
+		$GLOBALS['post'] = $this->factory()->create_and_get_default_post();
 
 		add_post_meta( $GLOBALS['post']->ID, '_elementor_edit_mode', 'builder' );
 

@@ -20,7 +20,7 @@ class Elementor_Test_Heartbeat extends Elementor_Test_Base {
 
 		wp_set_current_user( $this->user_own_post );
 
-		$post = $this->factory()->create_and_get_default_Post();
+		$post = $this->factory()->create_and_get_default_post();
 
 		$data = [
 			'elementor_post_lock' => [

@@ -35,7 +35,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_edit_link() {
-		$post_id = $this->factory()->create_and_get_default_Post()->ID;
+		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$this->assertSame( home_url() . "/wp-admin/post.php?post=$post_id&action=elementor", Utils::get_edit_link( $post_id ) );
 	}
 
@@ -55,12 +55,12 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_get_preview_url() {
-		$post_id = $this->factory()->create_and_get_default_Post()->ID;
+		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$this->assertSame( home_url() . "/?p=$post_id&elementor-preview=$post_id&ver=" . time(), Utils::get_preview_url( $post_id ) );
 	}
 
 	public function test_should_get_wordpress_preview_url() {
-		$post_id = $this->factory()->create_and_get_default_Post()->ID;
+		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$this->assertSame( home_url() . "/?p=$post_id&preview_nonce=" . wp_create_nonce( 'post_preview_' . $post_id ) . '&preview=true', Utils::get_wp_preview_url( $post_id ) );
 	}
 
@@ -94,7 +94,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_not_get_exit_to_dashboard_url() {
-		$post_id = $this->factory()->create_and_get_default_Post()->ID;
+		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$this->assertNull( Utils::get_exit_to_dashboard_url( $post_id ) );
 	}
 

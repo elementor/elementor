@@ -133,7 +133,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 					'source' => 'local',
 					'content' => 'content',
 					'type' => 'comment',
-					'id' => $this->factory()->create_and_get_default_Post()->ID,
+					'id' => $this->factory()->create_and_get_default_post()->ID,
 				],
 			],
 		];

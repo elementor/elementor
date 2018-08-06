@@ -41,7 +41,7 @@ class Controls_Stack extends Elementor_Test_Base {
 		self::assertEquals( $this->manager->get_active_controls(), [] );
 	}
 
-	public function test_Should_add_control() {
+	public function test_should_add_control() {
 		$this->manager->start_controls_section(
 			'poppy',
 			[
