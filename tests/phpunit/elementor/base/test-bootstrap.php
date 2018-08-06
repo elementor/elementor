@@ -38,4 +38,14 @@ class Elementor_Test_Bootstrap extends Elementor_Test_Base {
 	public function test_Wakeup() {
 		unserialize( serialize( \Elementor\Plugin::$instance ) );
 	}
+
+	public function test_should_echo_fail_php_version_massage() {
+		$this->expectOutputRegex( '/Elementor requires PHP version 5\.4.*/' );
+		elementor_fail_php_version();
+	}
+
+	public function test_should_echo_fail_wp_version_massage() {
+		$this->expectOutputRegex( '/Elementor requires WordPress version 4\.6.*/' );
+		elementor_fail_wp_version();
+	}
 }
