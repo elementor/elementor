@@ -245,6 +245,10 @@ abstract class Element_Base extends Controls_Stack {
 		}
 	}
 
+	final public static function is_edit_buttons_enabled() {
+		return get_option( 'elementor_edit_buttons' );
+	}
+
 	/**
 	 * Get default edit tools.
 	 *

@@ -11,10 +11,18 @@ BaseElementView = BaseContainer.extend( {
 
 	allowRender: true,
 
+	toggleEditTools: false,
+
 	renderAttributes: {},
 
 	className: function() {
-		return 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
+		var classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
+
+		if ( this.toggleEditTools ) {
+			classes += ' elementor-element--toggle-edit-tools';
+		}
+
+		return classes;
 	},
 
 	attributes: function() {
@@ -32,7 +40,11 @@ BaseElementView = BaseContainer.extend( {
 
 	ui: function() {
 		return {
-			editButton: '> .elementor-element-overlay .elementor-editor-element-edit'
+			tools: '> .elementor-element-overlay > .elementor-editor-element-settings',
+			editButton: '> .elementor-element-overlay .elementor-editor-element-edit',
+			duplicateButton: '> .elementor-element-overlay .elementor-editor-element-duplicate',
+			addButton: '> .elementor-element-overlay .elementor-editor-element-add',
+			removeButton: '> .elementor-element-overlay .elementor-editor-element-remove'
 		};
 	},
 
@@ -55,7 +67,11 @@ BaseElementView = BaseContainer.extend( {
 
 	events: function() {
 		return {
-			'click @ui.editButton': 'onEditButtonClick'
+			'mousedown': 'onMouseDown',
+			'click @ui.editButton': 'onEditButtonClick',
+			'click @ui.duplicateButton': 'onDuplicateButtonClick',
+			'click @ui.addButton': 'onAddButtonClick',
+			'click @ui.removeButton': 'onRemoveButtonClick'
 		};
 	},
 
@@ -113,10 +129,12 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'edit',
+						icon: 'eicon-edit',
 						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
-						callback: this.edit.bind( this )
+						callback: this.options.model.trigger.bind( this.options.model, 'request:edit' )
 					}, {
 						name: 'duplicate',
+						icon: 'eicon-clone',
 						title: elementor.translate( 'duplicate' ),
 						shortcut: controlSign + '+D',
 						callback: this.duplicate.bind( this )
@@ -154,6 +172,7 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'delete',
+						icon: 'eicon-trash',
 						title: elementor.translate( 'delete' ),
 						shortcut: '⌦',
 						callback: this.removeElement.bind( this )
@@ -164,10 +183,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	initialize: function() {
-		// grab the child collection from the parent model
-		// so that we can render the collection as children
-		// of this parent element
-		this.collection = this.model.get( 'elements' );
+		BaseContainer.prototype.initialize.apply( this, arguments );
 
 		if ( this.collection ) {
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
@@ -175,20 +191,12 @@ BaseElementView = BaseContainer.extend( {
 
 		var editModel = this.getEditModel();
 
-		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged, this );
-		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged, this );
+		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged )
+			.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
+			.listenTo( this.model, 'request:edit', this.onEditRequest )
+			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
-	},
-
-	edit: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'edit' !== activeMode ) {
-			return;
-		}
-
-		elementor.getPanelView().openEditor( this.getEditModel(), this );
 	},
 
 	startTransport: function( type ) {
@@ -331,6 +339,16 @@ BaseElementView = BaseContainer.extend( {
 		self.allowRender = true;
 
 		self.renderOnChange();
+	},
+
+	toggleVisibility: function() {
+		this.model.set( 'hidden', ! this.model.get( 'hidden' ) );
+
+		this.toggleVisibilityClass();
+	},
+
+	toggleVisibilityClass: function() {
+		this.$el.toggleClass( 'elementor-edit-hidden', ! ! this.model.get( 'hidden' ) );
 	},
 
 	addElementFromPanel: function( options ) {
@@ -519,6 +537,8 @@ BaseElementView = BaseContainer.extend( {
 		} );
 
 		self.$el.addClass( _.result( self, 'className' ) );
+
+		self.toggleVisibilityClass();
 	},
 
 	renderCustomElementID: function() {
@@ -545,7 +565,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			// In edit mode - handle an external elements which loaded by another elements like shortcode etc.
-			self.$el.find( '.elementor-element:not(.elementor-element-edit-mode)' ).each( function() {
+			self.$el.find( '.elementor-element.elementor-' + self.model.get( 'elType' ) + ':not(.elementor-element-edit-mode)' ).each( function() {
 				elementorFrontend.elementsHandler.runReadyTrigger( jQuery( this ) );
 			} );
 		} );
@@ -672,11 +692,19 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onRender: function() {
-		var self = this;
+		this.renderUI();
 
-		self.renderUI();
+		this.runReadyTrigger();
 
-		self.runReadyTrigger();
+		if ( this.toggleEditTools ) {
+			var editButton = this.ui.editButton;
+
+			this.ui.tools.hoverIntent( function() {
+				editButton.addClass( 'elementor-active' );
+			}, function() {
+				editButton.removeClass( 'elementor-active' );
+			}, { timeout: 500 } );
+		}
 	},
 
 	onCollectionChanged: function() {
@@ -695,7 +723,42 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditButtonClick: function() {
-		this.edit();
+		this.model.trigger( 'request:edit' );
+	},
+
+	onEditRequest: function() {
+		elementor.helpers.scrollToView( this.$el, 200 );
+
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'edit' !== activeMode ) {
+			return;
+		}
+
+		elementor.getPanelView().openEditor( this.getEditModel(), this );
+	},
+
+	onDuplicateButtonClick: function( event ) {
+		event.stopPropagation();
+
+		this.duplicate();
+	},
+
+	onRemoveButtonClick: function( event ) {
+		event.stopPropagation();
+
+		this.removeElement();
+	},
+
+	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`
+	 * event on the currently active element. Therefor, we need to blur the active element manually.
+	 */
+	onMouseDown: function( event ) {
+		if ( jQuery( event.target ).closest( '.elementor-inline-editing' ).length ) {
+			return;
+		}
+
+		elementorFrontend.getElements( '$document' )[0].activeElement.blur();
 	},
 
 	onDestroy: function() {

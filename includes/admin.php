@@ -15,6 +15,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Admin {
 
+	public function maybe_redirect_to_getting_started() {
+		if ( ! get_transient( 'elementor_activation_redirect' ) ) {
+			return;
+		}
+
+		delete_transient( 'elementor_activation_redirect' );
+
+		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) {
+			return;
+		}
+
+		wp_safe_redirect( admin_url( 'index.php?page=elementor-getting-started' ) );
+		exit;
+	}
+
 	/**
 	 * Enqueue admin scripts.
 	 *
@@ -96,7 +111,7 @@ class Admin {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.6.0'
+			'3.8.0'
 		);
 
 		wp_register_style(
@@ -636,7 +651,7 @@ class Admin {
 					while ( $recently_edited_query->have_posts() ) :
 						$recently_edited_query->the_post();
 
-						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_time( 'U' ) );
+						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
 					?>
 					<li class="e-overview__post">
 						 <a href="<?php echo esc_attr( Utils::get_edit_link( get_the_ID() ) ); ?>" class="e-overview__post-link"><?php the_title(); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; ?>, <?php the_time(); ?></span>
@@ -855,6 +870,8 @@ class Admin {
 	 * @access public
 	 */
 	public function __construct() {
+		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
+
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
