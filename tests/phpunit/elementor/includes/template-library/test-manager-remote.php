@@ -11,6 +11,8 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 	 * @var \Elementor\TemplateLibrary\Manager
 	 */
 	protected static $manager;
+	private $fake_template_id = '777';
+
 
 	public static function setUpBeforeClass() {
 		self::$manager = \Elementor\Plugin::instance()->templates_manager;
@@ -21,7 +23,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 			self::$manager->mark_template_as_favorite(
 				[
 					'source' => 'remote',
-					'template_id' => '777',
+					'template_id' => $this->fake_template_id,
 					'favorite' => 'false',
 				]
 			)
@@ -46,9 +48,9 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 
 	public function test_should_return_wp_error_from_save_template() {
 		$template_data = [
-			'post_id' => '777',
+			'post_id' => $this->fake_template_id,
 			'source' => 'remote',
-			'content' => 'banana',
+			'content' => 'content',
 			'type' => 'page',
 		];
 
@@ -59,32 +61,40 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 		$template_data = [
 			'source' => 'remote',
-			'content' => 'banana',
+			'content' => 'content',
 			'type' => 'comment',
-			'id' => 1,
+			'id' => $this->fake_template_id,
 		];
 
 		$this->assertWPError( self::$manager->update_template( $template_data ), 'cannot update template from remote source' );
 	}
 
 	public function test_should_return_data_from_get_template_data() {
+		$template = self::$manager->get_templates()[0];
+		$_POST['editor_post_id'] = $this->factory()->create_and_get_default_post()->ID;
+
 		$ret = self::$manager->get_template_data(
 			[
-				'source' => 'local',
-				'template_id' => '777',
+				'source' => 'remote',
+				'template_id' => $template['template_id'],
 			]
 		);
-
-		$this->assertEquals( $ret, [ 'content' => [] ] );
+		$this->assertArrayHaveKeys( [ 'content', 'page_settings' ], $ret );
+		$this->assertArrayHaveKeys( [
+			'id',
+			'elType',
+			'settings',
+			'elements',
+			'isInner',
+		], $ret['content'][0] );
 	}
 
 	public function test_should_return_wp_error_from_delete_template() {
-
 		$this->assertWPError(
 			self::$manager->delete_template(
 				[
 					'source' => 'remote',
-					'template_id' => '777',
+					'template_id' => $this->fake_template_id,
 				]
 			), 'cannot delete template from remote source'
 		);
