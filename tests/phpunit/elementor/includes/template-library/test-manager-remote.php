@@ -80,13 +80,15 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 			]
 		);
 		$this->assertArrayHaveKeys( [ 'content', 'page_settings' ], $ret );
-		$this->assertArrayHaveKeys( [
-			'id',
-			'elType',
-			'settings',
-			'elements',
-			'isInner',
-		], $ret['content'][0] );
+		$this->assertArrayHaveKeys(
+			[
+				'id',
+				'elType',
+				'settings',
+				'elements',
+				'isInner',
+			], $ret['content'][0]
+		);
 	}
 
 	public function test_should_return_wp_error_from_delete_template() {
