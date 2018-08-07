@@ -26,7 +26,7 @@ class Admin {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'index.php?page=elementor-getting-started' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
 		exit;
 	}
 
@@ -609,7 +609,7 @@ class Admin {
 		?>
 		<div class="e-dashboard-widget">
 			<div class="e-overview__header">
-				<div class="e-overview__logo"><i class="eicon-elementor-square"></i></div>
+				<div class="e-overview__logo"><div class="e-logo-wrapper"><i class="eicon-elementor"></i></div></div>
 				<div class="e-overview__versions">
 					<span class="e-overview__version"><?php echo __( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?></span>
 					<?php
