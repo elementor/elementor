@@ -38,7 +38,6 @@ class Inspector {
 						'' => __( 'Disable', 'elementor' ),
 						'enable' => __( 'Enable', 'elementor' ),
 					],
-					'sub_desc' => __( 'Enable Inspector', 'elementor' ),
 					'desc' => __( 'Inspector adds an admin bar menu that lists all the templates that are used on a page that is being displayed.', 'elementor' ),
 				],
 			],
