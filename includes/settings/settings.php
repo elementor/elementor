@@ -205,7 +205,7 @@ class Settings extends Settings_Page {
                         <div class="e-getting-started__actions e-getting-started__content--narrow">
 
                             <a href="#" class="button button-primary button-hero"><?php echo __( 'Create your First Page', 'elementor' ); ?></a>
-                            <a href="#" class="button button-secondary button-hero"><?php echo __( 'Read the Full Article', 'elementor' ); ?></a>
+                            <a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Read the Full Article', 'elementor' ); ?></a>
                         </div>
                     </div>
 
