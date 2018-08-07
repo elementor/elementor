@@ -15,17 +15,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		self::$manager = \Elementor\Plugin::instance()->templates_manager;
 	}
 
-	public function mockGetTemplate() {
-		$templates_array = [];
-		$source_array['local'] = new \Elementor\TemplateLibrary\Source_Local();
-		$source_array['remote'] = new \Elementor\TemplateLibrary\Source_Remote();
-		foreach ( $source_array as $source ) {
-			$templates_array = array_merge( $templates_array, $source->get_items() );
-		}
-
-		return $templates_array;
-	}
-
 	public function test_should_return_import_images_instance() {
 		$this->assertEquals( self::$manager->get_import_images_instance(), new \Elementor\TemplateLibrary\Classes\Import_Images() );
 	}
@@ -48,7 +37,19 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_templates() {
-		$this->assertEquals( self::$manager->get_templates(), $this->mockGetTemplate() );
+		$templates = self::$manager->get_templates();
+		$this->assertGreaterThan( 0, count( $templates ) );
+		$template_structure = [
+			'template_id',
+			'source',
+			'type',
+			'title',
+			'thumbnail',
+			'hasPageSettings',
+			'tags',
+			'url',
+		];
+		$this->assertArrayHaveKeys( $template_structure, $templates[0] );
 	}
 
 	public function test_should_return_library_data() {
