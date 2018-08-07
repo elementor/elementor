@@ -284,7 +284,7 @@ class Utils {
 	 */
 	public static function is_post_type_support( $post_id = 0 ) {
 		$post_type = get_post_type( $post_id );
-		$is_supported = post_type_supports( $post_type, 'elementor' );
+		$is_supported = self::is_post_type_support_elementor( $post_type );
 
 		/**
 		 * Is post type support.
@@ -560,5 +560,30 @@ class Utils {
 		return array_slice( $array, 0, $length, true ) +
 				$insert +
 				array_slice( $array, $length, null, true );
+	}
+
+	/**
+	 * Is post type support elementor.
+	 *
+	 * Whether the given post type is supported by elementor.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 * @static
+	 *
+	 * @param string The post type slug to check.
+	 *
+	 * @return bool True on success, False otherwise.
+	 */
+	public static function is_post_type_support_elementor( $post_type ) {
+		if ( ! post_type_exists( $post_type ) ) {
+			return false;
+		}
+
+		if ( ! post_type_supports( $post_type, 'elementor' ) ) {
+			return false;
+		}
+
+		return true;
 	}
 }
