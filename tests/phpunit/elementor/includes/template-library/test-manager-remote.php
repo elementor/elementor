@@ -44,7 +44,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 		$this->assertEquals( self::$manager->get_source( 'remote' ), new \Elementor\TemplateLibrary\Source_Remote() );
 	}
 
-	public function test_should_return_WP_Error_from_save_template() {
+	public function test_should_return_wp_error_from_save_template() {
 		$template_data = [
 			'post_id' => '777',
 			'source' => 'remote',
@@ -55,7 +55,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 		$this->assertWPError( self::$manager->save_template( $template_data ), 'cannot save template from remote source' );
 	}
 
-	public function test_should_return_WP_Error_from_update_template() {
+	public function test_should_return_wp_error_from_update_template() {
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 		$template_data = [
 			'source' => 'remote',
@@ -78,7 +78,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 		$this->assertEquals( $ret, [ 'content' => [] ] );
 	}
 
-	public function test_should_return_WP_Error_from_delete_template() {
+	public function test_should_return_wp_error_from_delete_template() {
 
 		$this->assertWPError(
 			self::$manager->delete_template(
