@@ -56,7 +56,7 @@ class Source_Remote extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function register_data() { }
+	public function register_data() {}
 
 	/**
 	 * Get remote templates.
@@ -121,7 +121,7 @@ class Source_Remote extends Source_Base {
 	 * @return \WP_Error
 	 */
 	public function save_item( $template_data ) {
-		return new \WP_Error( 'invalid_request', 'cannot save template from remote source' );
+		return new \WP_Error( 'invalid_request', 'cannot save template to a remote source' );
 	}
 
 	/**
@@ -138,7 +138,7 @@ class Source_Remote extends Source_Base {
 	 * @return \WP_Error
 	 */
 	public function update_item( $new_data ) {
-		return new \WP_Error( 'invalid_request', 'cannot update template from remote source' );
+		return new \WP_Error( 'invalid_request', 'cannot update template to a remote source' );
 	}
 
 	/**
@@ -155,7 +155,7 @@ class Source_Remote extends Source_Base {
 	 * @return \WP_Error
 	 */
 	public function delete_template( $template_id ) {
-		return new \WP_Error( 'invalid_request', 'cannot delete template from remote source' );
+		return new \WP_Error( 'invalid_request', 'cannot delete template from a remote source' );
 	}
 
 	/**
@@ -172,7 +172,7 @@ class Source_Remote extends Source_Base {
 	 * @return \WP_Error
 	 */
 	public function export_template( $template_id ) {
-		return new \WP_Error( 'invalid_request', 'cannot export template from remote source' );
+		return new \WP_Error( 'invalid_request', 'cannot export template from a remote source' );
 	}
 
 	/**
