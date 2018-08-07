@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use Elementor\Testing\Elementor_Test_Base;

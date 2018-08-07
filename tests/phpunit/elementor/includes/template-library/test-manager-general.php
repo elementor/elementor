@@ -49,6 +49,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			'tags',
 			'url',
 		];
+
 		$this->assertArrayHaveKeys( $template_structure, $templates[0] );
 	}
 
@@ -106,16 +107,17 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 					'source' => 'invalid content 1 ',
 					'content' => 'content',
 					'type' => 'comment',
-					'id' => 1,
+					'id' => $this->fake_post_id,
 				],
 				[
 					'source' => 'invalid content 2',
 					'content' => 'content',
 					'type' => 'comment',
-					'id' => 1,
+					'id' => $this->fake_post_id,
 				],
 			],
 		];
+
 		$this->assertWPError( self::$manager->update_templates( $templates ) );
 	}
 
@@ -137,6 +139,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				],
 			],
 		];
+
 		$this->assertTrue( self::$manager->update_templates( $templates ) );
 	}
 

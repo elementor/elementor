@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use \Elementor\TemplateLibrary\Manager;
@@ -10,6 +10,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	 * @var Manager
 	 */
 	protected static $manager;
+	private $fake_post_id = '123';
 
 	public static function setUpBeforeClass() {
 		self::$manager = \Elementor\Plugin::instance()->templates_manager;
@@ -41,9 +42,9 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$this->assertWPError(
 			self::$manager->save_template(
 				[
-					'post_id' => '123',
+					'post_id' => $this->fake_post_id,
 					'source' => 'local',
-					'content' => 'banana',
+					'content' => 'content',
 					'type' => 'comment',
 				]
 			), 'save_error'
@@ -55,7 +56,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$template_data = [
 			'post_id' => $this->factory()->get_default_post()->ID,
 			'source' => 'local',
-			'content' => 'banana',
+			'content' => 'content',
 			'type' => 'page',
 		];
 
@@ -69,14 +70,14 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 			'tags',
 			'url',
 		];
-		$res = self::$manager->save_template( $template_data );
-		$this->assertArrayHaveKeys( $remote_remote, $res );
-		//$this->assertArraySubset( $remote_remote,  );
+		$saved_template = self::$manager->save_template( $template_data );
+
+		$this->assertArrayHaveKeys( $remote_remote, $saved_template );
 	}
 
 
 	public function test_should_return_wp_error_arguments_not_specified_from_update_template() {
-		$this->assertWPError( self::$manager->update_template( [ 'post_id' => '123' ] ), 'arguments_not_specified' );
+		$this->assertWPError( self::$manager->update_template( [ 'post_id' => $this->fake_post_id ] ), 'arguments_not_specified' );
 	}
 
 
@@ -84,8 +85,8 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$this->assertWPError(
 			self::$manager->update_template(
 				[
-					'source' => 'banana',
-					'content' => 'banana',
+					'source' => 'content',
+					'content' => 'content',
 					'type' => 'page',
 				]
 			), 'template_error'
@@ -98,9 +99,9 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 			self::$manager->update_template(
 				[
 					'source' => 'local',
-					'content' => 'banana',
+					'content' => 'content',
 					'type' => 'comment',
-					'id' => '777',
+					'id' => $this->fake_post_id,
 				]
 			), 'save_error'
 		);
@@ -114,7 +115,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$template_data = [
 			'source' => 'local',
-			'content' => 'banana',
+			'content' => 'content',
 			'type' => 'post',
 			'id' => $post_id,
 		];
@@ -130,8 +131,9 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 			'tags',
 			'url',
 		];
-		$res = self::$manager->update_template( $template_data );
-		$this->assertArrayHaveKeys( $remote_remote, $res );
+		$updated_template = self::$manager->update_template( $template_data );
+
+		$this->assertArrayHaveKeys( $remote_remote, $updated_template );
 	}
 
 	/**
@@ -141,7 +143,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$ret = self::$manager->get_template_data(
 			[
 				'source' => 'local',
-				'template_id' => '8',
+				'template_id' => $this->fake_post_id,
 			]
 		);
 
@@ -159,6 +161,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 				'template_id' => \Elementor\Testing\Manager::$instance->get_local_factory()->get_local_template_id(),
 			]
 		);
+
 		$this->assertSame( $ret, '' );
 	}
 
