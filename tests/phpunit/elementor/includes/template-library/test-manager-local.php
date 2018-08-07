@@ -55,7 +55,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	public function test_should_return_template_data_from_save_template() {
 		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 		$template_data = [
-			'post_id' => $this->factory()->get_custom_post( [ 'post_date' => '2014-11-11 23:45:30' ] )->ID,
+			'post_id' => $this->factory()->get_default_post()->ID,
 			'source' => 'local',
 			'content' => 'banana',
 			'type' => 'page',
