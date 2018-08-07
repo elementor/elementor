@@ -26,7 +26,7 @@ class Admin {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'index.php?page=elementor-getting-started' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
 		exit;
 	}
 
