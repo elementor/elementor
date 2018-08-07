@@ -33,6 +33,8 @@ module.exports = Marionette.Region.extend( {
 			this.storage = savedStorage;
 		}
 
+		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
+
 		if ( this.storage.visible ) {
 			this.open();
 		}
@@ -113,14 +115,16 @@ module.exports = Marionette.Region.extend( {
 		elementor.$window.on( 'resize', this.ensurePosition );
 	},
 
-	close: function() {
+	close: function( silent ) {
 		this.$el.hide();
 
 		if ( this.isDocked ) {
 			this.undock( true );
 		}
 
-		this.saveStorage( 'visible', false );
+		if ( ! silent ) {
+			this.saveStorage( 'visible', false );
+		}
 
 		elementor.$window.off( 'resize', this.ensurePosition );
 	},
@@ -262,6 +266,16 @@ module.exports = Marionette.Region.extend( {
 
 		if ( ! this.isDocked ) {
 			this.saveSize();
+		}
+	},
+
+	onEditModeSwitched: function() {
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'edit' === activeMode && this.storage.visible ) {
+			this.open();
+		} else {
+			this.close( true );
 		}
 	}
 } );

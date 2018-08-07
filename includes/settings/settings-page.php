@@ -78,7 +78,9 @@ abstract class Settings_Page {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'admin_init', [ $this, 'register_settings_fields' ] );
+		if ( ! empty( $_POST['option_page'] ) && static::PAGE_ID === $_POST['option_page'] ) {
+			add_action( 'admin_init', [ $this, 'register_settings_fields' ] );
+		}
 	}
 
 	/**
@@ -281,6 +283,8 @@ abstract class Settings_Page {
 	 * @access public
 	 */
 	public function display_settings_page() {
+		$this->register_settings_fields();
+
 		$tabs = $this->get_tabs();
 		?>
 		<div class="wrap">
