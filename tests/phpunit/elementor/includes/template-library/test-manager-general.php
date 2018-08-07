@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use Elementor\TemplateLibrary\Manager;

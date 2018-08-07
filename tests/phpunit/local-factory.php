@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Testing;
 
 class Local_Factory extends \WP_UnitTestCase {

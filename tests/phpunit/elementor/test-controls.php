@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Testing;
 
 use  \Elementor\Plugin;

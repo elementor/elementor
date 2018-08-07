@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Testing;
 
 class Elementor_Test_Qunit_Preview extends Elementor_Test_Base {

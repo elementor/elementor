@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Testing\Base;
 
 use Elementor\Testing\Elementor_Test_Base;
