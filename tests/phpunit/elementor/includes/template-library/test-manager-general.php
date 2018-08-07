@@ -20,7 +20,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_wp_error_source_class_name_not_exists_from_register_source() {
-		$this->assertWPError( self::$manager->register_source( 'pop' ), 'source_class_name_not_exists' );
+		$this->assertWPError( self::$manager->register_source( 'invalid class' ), 'source_class_name_not_exists' );
 	}
 
 
