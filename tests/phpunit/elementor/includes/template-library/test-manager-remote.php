@@ -3,8 +3,6 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use Elementor\Testing\Elementor_Test_Base;
 
-require_once 'test-manager-general.php';
-
 class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 
 	/**

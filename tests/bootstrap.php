@@ -57,10 +57,3 @@ require 'phpunit/local-factory.php';
 require 'phpunit/base-class.php';
 require 'phpunit/manager.php';
 \Elementor\Testing\Manager::instance();
-
-global $argv;
-if ( in_array( '--filter', $argv ) ) {
-	Elementor\Plugin::instance();
-	do_action( 'init' );
-	do_action( 'plugins_loaded' );
-}
