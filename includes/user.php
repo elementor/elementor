@@ -63,6 +63,10 @@ class User {
 
 		$post = get_post( $post_id );
 
+		if ( ! $post ) {
+			return false;
+		}
+
 		if ( 'trash' === get_post_status( $post_id ) ) {
 			return false;
 		}
