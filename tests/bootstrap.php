@@ -24,7 +24,7 @@ require_once $_tests_dir . '/includes/functions.php';
 
 tests_add_filter(
 	'muplugins_loaded',
-	function () {
+	function() {
 		// Manually load plugin
 		require dirname( __DIR__ ) . '/' . PLUGIN_FILE;
 	}

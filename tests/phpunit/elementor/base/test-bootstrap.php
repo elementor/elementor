@@ -1,6 +1,10 @@
 <?php
 namespace Elementor\Testing;
 
+remove_action( 'admin_init', '_maybe_update_themes' );
+remove_action( 'admin_init', '_maybe_update_core' );
+remove_action( 'admin_init', '_maybe_update_plugins' );
+
 class Elementor_Test_Bootstrap extends Elementor_Test_Base {
 
 	public function setUp() {
