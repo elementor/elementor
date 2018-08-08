@@ -44,7 +44,7 @@ class Manager {
 	 * @param string $post_id Post ID.
 	 */
 	public function on_delete_post( $post_id ) {
-		if ( ! Utils::is_post_type_support( $post_id ) ) {
+		if ( ! Utils::is_post_support( $post_id ) ) {
 			return;
 		}
 
