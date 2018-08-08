@@ -23,15 +23,14 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_edit_link() {
+		$this->assertSame( '', Utils::get_edit_link() );
+
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$edit_link = Utils::get_edit_link( $post_id );
 		$this->assertContains( '/post.php?post=', $edit_link );
 		$this->assertContains( '&action=elementor', $edit_link );
 	}
 
-	public function test_should_return_empty_link() {
-		$this->assertSame( '', Utils::get_edit_link() );
-	}
 
 	/**
 	 * @todo need to test when DOING_AJAX is 100% defined and when it's not.
@@ -89,7 +88,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	 * @throws                   \Exception
 	 */
 	public function test_should_throw_error_because_urls_are_invalid() {
-		//$this->expectExceptionMessage( 'The `from` and `to` URL\'s must be valid URL\'s' );
 		Utils::replace_urls( 'elementor', '/elementor' );
 	}
 
