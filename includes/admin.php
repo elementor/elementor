@@ -252,7 +252,7 @@ class Admin {
 	public function body_status_classes( $classes ) {
 		global $pagenow;
 
-		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ], true ) && Utils::is_post_type_support() ) {
+		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ], true ) && Utils::is_post_support() ) {
 			$post = get_post();
 
 			$mode_class = Plugin::$instance->db->is_built_with_elementor( $post->ID ) ? 'elementor-editor-active' : 'elementor-editor-inactive';
