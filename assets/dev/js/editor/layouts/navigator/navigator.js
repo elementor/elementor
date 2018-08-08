@@ -250,9 +250,7 @@ module.exports = Marionette.Region.extend( {
 		}
 
 		if ( 0 > ui.position.top ) {
-			this.$el.css( 'top', 0 );
-
-			return false;
+			ui.position.top = 0;
 		}
 
 		if ( this.isSnapping() ) {
