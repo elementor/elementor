@@ -132,7 +132,7 @@ class User {
 			return false;
 		}
 
-		if ( ! Utils::is_post_type_support_elementor( $post_type ) ) {
+		if ( ! Utils::is_post_type_support( $post_type ) ) {
 			return false;
 		}
 
