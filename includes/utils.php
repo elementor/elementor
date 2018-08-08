@@ -599,7 +599,7 @@ class Utils {
 		$length = array_search( $key, array_keys( $array ), true ) + 1;
 
 		return array_slice( $array, 0, $length, true ) +
-		       $insert +
-		       array_slice( $array, $length, null, true );
+			$insert +
+			array_slice( $array, $length, null, true );
 	}
 }
