@@ -9,10 +9,18 @@ class Elementor_Test_User extends \WP_Ajax_UnitTestCase {
 	private static $subscriber;
 	private $fake_notice_id = '123';
 
+	private static function get_administrator() {
+		return self::factory()->user->create( [ 'role' => 'administrator' ] );
+	}
+
+	private static function get_subscriber() {
+		return self::factory()->user->create( [ 'role' => 'subscriber' ] );
+	}
+
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
-		self::$administrator = self::factory()->user->create( [ 'role' => 'administrator' ] );
-		self::$subscriber = self::factory()->user->create( [ 'role' => 'subscriber' ] );
+		self::$administrator = self::get_administrator();
+		self::$subscriber = self::get_subscriber();
 	}
 
 	public function test_should_return_false_because_of_invalid_post_type() {
@@ -27,11 +35,11 @@ class Elementor_Test_User extends \WP_Ajax_UnitTestCase {
 
 	public function test_if_current_user_can_edit() {
 		$post_id = $this->factory()->post->create();
-		wp_set_current_user( self::$subscriber );
+		wp_set_current_user( self::get_subscriber() );
 
 		$this->assertFalse( User::is_current_user_can_edit( $post_id ) );
 
-		wp_set_current_user( self::$administrator );
+		wp_set_current_user( self::get_administrator() );
 
 		$this->assertTrue( User::is_current_user_can_edit( $post_id ) );
 	}
