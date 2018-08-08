@@ -102,7 +102,7 @@ class User {
 	 *
 	 * @return bool True if can access, False otherwise.
 	 */
-	public static function is_current_user_can_access_elementor() {
+	public static function is_current_user_in_editing_black_list() {
 		$user = wp_get_current_user();
 		$exclude_roles = get_option( 'elementor_exclude_user_roles', [] );
 
