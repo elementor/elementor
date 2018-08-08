@@ -45,7 +45,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_false_from_is_script_debug() {
-		$this->assertFalse( Utils::is_script_debug() );
+		$this->assertSame( Utils::is_script_debug(), defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG );
 	}
 
 	public function test_should_get_preview_url() {
