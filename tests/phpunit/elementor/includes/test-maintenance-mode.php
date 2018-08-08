@@ -2,7 +2,6 @@
 namespace Elementor\Testing\Includes;
 
 use Elementor\Maintenance_Mode;
-use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
 
 class Elementor_Test_Maintenance_Mode extends Elementor_Test_Base {

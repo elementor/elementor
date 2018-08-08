@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes;
 
-use \Elementor\User;
+use Elementor\User;
 
 class Elementor_Test_User extends \WP_Ajax_UnitTestCase {
 

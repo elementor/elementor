@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Testing\Includes;
 
-use \Elementor\Utils;
-use \Elementor\Testing\Elementor_Test_Base;
+use Elementor\Utils;
+use Elementor\Testing\Elementor_Test_Base;
 
 class Elementor_Test_Utils extends Elementor_Test_Base {
 

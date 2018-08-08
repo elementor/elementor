@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
-use \Elementor\TemplateLibrary\Manager;
+use Elementor\TemplateLibrary\Manager;
 use Elementor\Testing\Elementor_Test_Base;
 
 class Elementor_Test_Manager_Local extends Elementor_Test_Base {
