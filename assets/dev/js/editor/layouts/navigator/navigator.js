@@ -50,6 +50,7 @@ module.exports = Marionette.Region.extend( {
 			handle: '#elementor-navigator__header',
 			snap: 'body',
 			snapMode: 'inner',
+			snapTolerance: 15,
 			drag: this.onDrag.bind( this ),
 			stop: this.onDragStop.bind( this )
 		};
