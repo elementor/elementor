@@ -84,7 +84,7 @@ class Utils {
 		 * @deprecated 2.0.0 Use `elementor/document/urls/edit` filter instead.
 		 *
 		 * @param string $edit_link New URL query string (unescaped).
-		 * @param int $post_id Post ID.
+		 * @param int    $post_id   Post ID.
 		 */
 		$edit_link = apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
 
@@ -156,7 +156,7 @@ class Utils {
 		 * @deprecated 2.0.0 Use `elementor/document/urls/preview` filter instead.
 		 *
 		 * @param string $preview_url URL with chosen scheme.
-		 * @param int $post_id Post ID.
+		 * @param int    $post_id     Post ID.
 		 */
 		$url = apply_filters( 'elementor/utils/preview_url', $url, $post_id );
 
@@ -192,7 +192,7 @@ class Utils {
 		 * @deprecated 2.0.0 Use `elementor/document/urls/wp_preview` filter instead.
 		 *
 		 * @param string $wp_preview_url WordPress preview URL.
-		 * @param int $post_id Post ID.
+		 * @param int    $post_id        Post ID.
 		 */
 		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
 
@@ -242,7 +242,7 @@ class Utils {
 		Plugin::$instance->files_manager->clear_cache();
 
 		return sprintf(
-		/* translators: %d: Number of rows */
+			/* translators: %d: Number of rows */
 			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
@@ -459,11 +459,11 @@ class Utils {
 	 * @static
 	 * @deprecated 2.1.0 Use `do_action_deprecated()` instead
 	 *
-	 * @param string $tag The name of the action hook.
-	 * @param array $args Array of additional function arguments to be passed to `do_action()`.
-	 * @param string $version The version of WordPress that deprecated the hook.
-	 * @param bool $replacement Optional. The hook that should have been used.
-	 * @param string $message Optional. A message regarding the change.
+	 * @param string $tag         The name of the action hook.
+	 * @param array  $args        Array of additional function arguments to be passed to `do_action()`.
+	 * @param string $version     The version of WordPress that deprecated the hook.
+	 * @param bool   $replacement Optional. The hook that should have been used.
+	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
 		_deprecated_function( __METHOD__, '2.1.0', 'do_action_deprecated()' );
@@ -481,11 +481,11 @@ class Utils {
 	 * @static
 	 * @deprecated 2.1.0 Use `apply_filters_deprecated()` instead
 	 *
-	 * @param string $tag The name of the filter hook.
-	 * @param array $args Array of additional function arguments to be passed to `apply_filters()`.
-	 * @param string $version The version of WordPress that deprecated the hook.
-	 * @param bool $replacement Optional. The hook that should have been used.
-	 * @param string $message Optional. A message regarding the change.
+	 * @param string $tag         The name of the filter hook.
+	 * @param array  $args        Array of additional function arguments to be passed to `apply_filters()`.
+	 * @param string $version     The version of WordPress that deprecated the hook.
+	 * @param bool   $replacement Optional. The hook that should have been used.
+	 * @param string $message     Optional. A message regarding the change.
 	 *
 	 * @return mixed The filtered value after all hooked functions are applied to it.
 	 */
@@ -561,11 +561,7 @@ class Utils {
 
 		$post = get_post( $post_id );
 
-		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s AND post_modified_gmt > %s', [
-			$post_id,
-			"{$post_id}-autosave%",
-			$post->post_modified_gmt,
-		] );
+		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s AND post_modified_gmt > %s', [ $post_id, "{$post_id}-autosave%", $post->post_modified_gmt ] );
 
 		if ( $user_id ) {
 			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
