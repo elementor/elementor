@@ -8,7 +8,6 @@
 	<exclude-pattern>build/</exclude-pattern>
 	<exclude-pattern>node_modules/</exclude-pattern>
 	<exclude-pattern>includes/libraries/</exclude-pattern>
-	<exclude-pattern>tests/*.php</exclude-pattern>
 
 	<rule ref="WordPress-Extra">
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
@@ -21,6 +20,8 @@
 		<exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped" />
 		<exclude name="WordPress.CSRF.NonceVerification.NoNonceVerification" />
 		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
+		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
+		<exclude name="WordPress.Arrays.MultipleStatementAlignment" />
 	</rule>
 
 	<rule ref="WordPress.WP.DeprecatedFunctions">

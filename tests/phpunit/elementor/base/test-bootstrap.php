@@ -1,11 +1,16 @@
 <?php
+namespace Elementor\Testing;
 
-class Elementor_Test_Base extends WP_UnitTestCase {
+remove_action( 'admin_init', '_maybe_update_themes' );
+remove_action( 'admin_init', '_maybe_update_core' );
+remove_action( 'admin_init', '_maybe_update_plugins' );
+
+class Elementor_Test_Bootstrap extends Elementor_Test_Base {
 
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
 		// Make sure the main class is running
 		\Elementor\Plugin::instance();
@@ -35,5 +40,15 @@ class Elementor_Test_Base extends WP_UnitTestCase {
 	 */
 	public function test_Wakeup() {
 		unserialize( serialize( \Elementor\Plugin::$instance ) );
+	}
+
+	public function test_should_echo_fail_php_version_massage() {
+		$this->expectOutputRegex( '/Elementor requires PHP version 5\.4.*/' );
+		elementor_fail_php_version();
+	}
+
+	public function test_should_echo_fail_wp_version_massage() {
+		$this->expectOutputRegex( '/Elementor requires WordPress version 4\.6.*/' );
+		elementor_fail_wp_version();
 	}
 }

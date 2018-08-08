@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
@@ -84,7 +85,7 @@ class Manager {
 	 * @access public
 	 *
 	 * @param string $source_class The name of source class.
-	 * @param array  $args         Optional. Class arguments. Default is an
+	 * @param array $args Optional. Class arguments. Default is an
 	 *                             empty array.
 	 *
 	 * @return \WP_Error|true True if the source was registered, `WP_Error`
@@ -609,7 +610,7 @@ class Manager {
 	 * @since 1.0.0
 	 * @access private
 	 *
-	 * @param array $required_args  Required arguments to check whether they
+	 * @param array $required_args Required arguments to check whether they
 	 *                              exist.
 	 * @param array $specified_args The list of all the specified arguments to
 	 *                              check against.

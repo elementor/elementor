@@ -1,6 +1,7 @@
 <?php
+namespace Elementor\Testing;
 
-class Elementor_Test_Heartbeat extends WP_UnitTestCase {
+class Elementor_Test_Heartbeat extends Elementor_Test_Base {
 
 	protected $user_own_post;
 	protected $user_editor;
@@ -9,16 +10,16 @@ class Elementor_Test_Heartbeat extends WP_UnitTestCase {
 		parent::setUp();
 
 		// Create new instance again
-		new \Elementor\Heartbeat;
+		new \Elementor\Heartbeat();
 	}
 
 	public function test_postLock() {
-		$this->user_own_post = $this->factory->user->create( [ 'role' => 'administrator' ] );
-		$this->user_editor = $this->factory->user->create( [ 'role' => 'administrator' ] );
+		$this->user_own_post = $this->factory()->create_and_get_administrator_user()->ID;
+		$this->user_editor = $this->factory()->create_and_get_administrator_user()->ID;
 
 		wp_set_current_user( $this->user_own_post );
 
-		$post = $this->factory->post->create_and_get();
+		$post = $this->factory()->create_and_get_default_post();
 
 		$data = [
 			'elementor_post_lock' => [

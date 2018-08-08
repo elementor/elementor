@@ -1,31 +1,33 @@
 <phpunit
-		bootstrap="tests/bootstrap.php"
-		backupGlobals="false"
-		colors="true"
-		convertErrorsToExceptions="true"
-		convertNoticesToExceptions="true"
-		convertWarningsToExceptions="true"
-		>
-	<php>
-		<env name="PLUGIN_FILE" value="elementor.php" />
-	</php>
-	
-	<testsuites>
-		<testsuite>
-			<directory prefix="test-" suffix=".php">./tests/phpunit/</directory>
-		</testsuite>
-	</testsuites>
+        bootstrap="tests/bootstrap.php"
+        backupGlobals="false"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+>
+    <php>
+        <env name="PLUGIN_FILE" value="elementor.php"/>
+    </php>
 
-	<filter>
-		<whitelist processUncoveredFilesFromWhitelist="false">
-			<directory suffix=".php">./</directory>
-			<exclude>
-				<directory suffix=".php">tests</directory>
-				<directory suffix=".php">vendor</directory>
-				<directory suffix=".php">libraries</directory>
-				<directory suffix=".php">node_modules</directory>
-			</exclude>
-		</whitelist>
-	</filter>
-	
+    <testsuites>
+        <testsuite>
+            <directory prefix="test-" suffix=".php">./tests/phpunit/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="false" processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">./</directory>
+            <exclude>
+                <directory suffix=".php">tests</directory>
+                <directory suffix=".php">vendor</directory>
+                <directory suffix=".php">libraries</directory>
+                <directory>node_modules</directory>
+                <directory>assets</directory>
+                <directory>build</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
 </phpunit>
