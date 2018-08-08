@@ -57,10 +57,6 @@ class User {
 	 * @return bool Whether the current user can edit the post.
 	 */
 	public static function is_current_user_can_edit( $post_id = 0 ) {
-		if ( empty( $post_id ) ) {
-			$post_id = get_the_ID();
-		}
-
 		$post = get_post( $post_id );
 
 		if ( ! $post ) {
@@ -71,10 +67,11 @@ class User {
 			return false;
 		}
 
-		$post_type_object = get_post_type_object( get_post_type( $post_id ) );
 		if ( ! self::is_current_user_can_edit_post_type( $post->post_type ) ) {
 			return false;
 		}
+
+		$post_type_object = get_post_type_object( $post->post_type );
 
 		if ( ! isset( $post_type_object->cap->edit_post ) ) {
 			return false;
@@ -128,7 +125,7 @@ class User {
 	 * @return bool True if can edit, False otherwise.
 	 */
 	public static function is_current_user_can_edit_post_type( $post_type ) {
-		if ( ! self::is_current_user_can_access_elementor() ) {
+		if ( ! self::is_current_user_in_editing_black_list() ) {
 			return false;
 		}
 
