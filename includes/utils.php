@@ -84,7 +84,7 @@ class Utils {
 		 * @deprecated 2.0.0 Use `elementor/document/urls/edit` filter instead.
 		 *
 		 * @param string $edit_link New URL query string (unescaped).
-		 * @param int    $post_id   Post ID.
+		 * @param int $post_id Post ID.
 		 */
 		$edit_link = apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
 
@@ -156,7 +156,7 @@ class Utils {
 		 * @deprecated 2.0.0 Use `elementor/document/urls/preview` filter instead.
 		 *
 		 * @param string $preview_url URL with chosen scheme.
-		 * @param int    $post_id     Post ID.
+		 * @param int $post_id Post ID.
 		 */
 		$url = apply_filters( 'elementor/utils/preview_url', $url, $post_id );
 
@@ -192,7 +192,7 @@ class Utils {
 		 * @deprecated 2.0.0 Use `elementor/document/urls/wp_preview` filter instead.
 		 *
 		 * @param string $wp_preview_url WordPress preview URL.
-		 * @param int    $post_id        Post ID.
+		 * @param int $post_id Post ID.
 		 */
 		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
 
@@ -242,7 +242,7 @@ class Utils {
 		Plugin::$instance->files_manager->clear_cache();
 
 		return sprintf(
-			/* translators: %d: Number of rows */
+		/* translators: %d: Number of rows */
 			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
@@ -270,9 +270,9 @@ class Utils {
 	}
 
 	/**
-	 * Is post type supports Elementor.
+	 * Is post supports Elementor.
 	 *
-	 * Whether the post type supports editing with Elementor.
+	 * Whether the post supports editing with Elementor.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -280,11 +280,12 @@ class Utils {
 	 *
 	 * @param int $post_id Optional. Post ID. Default is `0`.
 	 *
-	 * @return string True if post type supports editing with Elementor, false otherwise.
+	 * @return string True if post supports editing with Elementor, false otherwise.
 	 */
-	public static function is_post_type_support( $post_id = 0 ) {
+	public static function is_post_support( $post_id = 0 ) {
 		$post_type = get_post_type( $post_id );
-		$is_supported = self::is_post_type_support_elementor( $post_type );
+
+		$is_supported = self::is_post_type_support( $post_type );
 
 		/**
 		 * Is post type support.
@@ -292,14 +293,54 @@ class Utils {
 		 * Filters whether the post type supports editing with Elementor.
 		 *
 		 * @since 1.0.0
+		 * @deprecated 2.2.0 Use `elementor/utils/is_post_support` Instead
 		 *
-		 * @param bool   $is_supported Whether the post type supports editing with Elementor.
-		 * @param int    $post_id      Post ID.
-		 * @param string $post_type    Post type.
+		 * @param bool $is_supported Whether the post type supports editing with Elementor.
+		 * @param int $post_id Post ID.
+		 * @param string $post_type Post type.
 		 */
 		$is_supported = apply_filters( 'elementor/utils/is_post_type_support', $is_supported, $post_id, $post_type );
 
+		/**
+		 * Is post support.
+		 *
+		 * Filters whether the post supports editing with Elementor.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param bool $is_supported Whether the post type supports editing with Elementor.
+		 * @param int $post_id Post ID.
+		 * @param string $post_type Post type.
+		 */
+		$is_supported = apply_filters( 'elementor/utils/is_post_support', $is_supported, $post_id, $post_type );
+
 		return $is_supported;
+	}
+
+
+	/**
+	 * Is post type supports Elementor.
+	 *
+	 * Whether the post type supports editing with Elementor.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 * @static
+	 *
+	 * @param string $post_type Post Type.
+	 *
+	 * @return string True if post type supports editing with Elementor, false otherwise.
+	 */
+	public static function is_post_type_support( $post_type ) {
+		if ( ! post_type_exists( $post_type ) ) {
+			return false;
+		}
+
+		if ( ! post_type_supports( $post_type, 'elementor' ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -418,11 +459,11 @@ class Utils {
 	 * @static
 	 * @deprecated 2.1.0 Use `do_action_deprecated()` instead
 	 *
-	 * @param string $tag         The name of the action hook.
-	 * @param array  $args        Array of additional function arguments to be passed to `do_action()`.
-	 * @param string $version     The version of WordPress that deprecated the hook.
-	 * @param bool   $replacement Optional. The hook that should have been used.
-	 * @param string $message     Optional. A message regarding the change.
+	 * @param string $tag The name of the action hook.
+	 * @param array $args Array of additional function arguments to be passed to `do_action()`.
+	 * @param string $version The version of WordPress that deprecated the hook.
+	 * @param bool $replacement Optional. The hook that should have been used.
+	 * @param string $message Optional. A message regarding the change.
 	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
 		_deprecated_function( __METHOD__, '2.1.0', 'do_action_deprecated()' );
@@ -440,11 +481,11 @@ class Utils {
 	 * @static
 	 * @deprecated 2.1.0 Use `apply_filters_deprecated()` instead
 	 *
-	 * @param string $tag         The name of the filter hook.
-	 * @param array  $args        Array of additional function arguments to be passed to `apply_filters()`.
-	 * @param string $version     The version of WordPress that deprecated the hook.
-	 * @param bool   $replacement Optional. The hook that should have been used.
-	 * @param string $message     Optional. A message regarding the change.
+	 * @param string $tag The name of the filter hook.
+	 * @param array $args Array of additional function arguments to be passed to `apply_filters()`.
+	 * @param string $version The version of WordPress that deprecated the hook.
+	 * @param bool $replacement Optional. The hook that should have been used.
+	 * @param string $message Optional. A message regarding the change.
 	 *
 	 * @return mixed The filtered value after all hooked functions are applied to it.
 	 */
@@ -520,7 +561,11 @@ class Utils {
 
 		$post = get_post( $post_id );
 
-		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s AND post_modified_gmt > %s', [ $post_id, "{$post_id}-autosave%", $post->post_modified_gmt ] );
+		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s AND post_modified_gmt > %s', [
+			$post_id,
+			"{$post_id}-autosave%",
+			$post->post_modified_gmt,
+		] );
 
 		if ( $user_id ) {
 			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
@@ -558,32 +603,7 @@ class Utils {
 		$length = array_search( $key, array_keys( $array ), true ) + 1;
 
 		return array_slice( $array, 0, $length, true ) +
-				$insert +
-				array_slice( $array, $length, null, true );
-	}
-
-	/**
-	 * Is post type support elementor.
-	 *
-	 * Whether the given post type is supported by elementor.
-	 *
-	 * @since 1.9.0
-	 * @access public
-	 * @static
-	 *
-	 * @param string The post type slug to check.
-	 *
-	 * @return bool True on success, False otherwise.
-	 */
-	public static function is_post_type_support_elementor( $post_type ) {
-		if ( ! post_type_exists( $post_type ) ) {
-			return false;
-		}
-
-		if ( ! post_type_supports( $post_type, 'elementor' ) ) {
-			return false;
-		}
-
-		return true;
+		       $insert +
+		       array_slice( $array, $length, null, true );
 	}
 }
