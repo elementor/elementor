@@ -249,6 +249,12 @@ module.exports = Marionette.Region.extend( {
 			return;
 		}
 
+		if ( 0 > ui.position.top ) {
+			this.$el.css( 'top', 0 );
+
+			return false;
+		}
+
 		if ( this.isSnapping() ) {
 			var elementRight = ui.position.left + this.$el.outerWidth();
 
