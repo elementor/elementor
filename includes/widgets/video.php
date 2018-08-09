@@ -509,6 +509,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'169' => '16:9',
+					'219' => '21:9',
 					'43' => '4:3',
 					'32' => '3:2',
 				],
