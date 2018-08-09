@@ -48,7 +48,7 @@
 		background-color: $editor-background;
 
 		.elementor-navigator-docked & {
-			height: 100%;
+			height: calc(100% - 35px);
 		}
 	}
 
