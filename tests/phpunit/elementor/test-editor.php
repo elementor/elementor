@@ -1,8 +1,6 @@
 <?php
 namespace Elementor\Testing;
 
-use \Elementor\Plugin;
-
 class Elementor_Test_Editor extends Elementor_Test_Base {
 
 	public function setUp() {
@@ -14,7 +12,7 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 	}
 
 	public function test_getInstance() {
-		$this->assertInstanceOf( '\Elementor\Editor', Plugin::$instance->editor );
+		$this->assertInstanceOf( '\Elementor\Editor', $this->elementor()->editor );
 	}
 
 	/*
@@ -22,7 +20,7 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 		ini_set( 'memory_limit', '85M' );
 
 		ob_start();
-		Elementor\Plugin::$instance->editor->enqueue_scripts();
+		Elementor\ $this->plugin()->editor->enqueue_scripts();
 		ob_end_clean();
 
 		$scripts = [
@@ -50,7 +48,7 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 	}*/
 
 	public function test_enqueueStyles() {
-		Plugin::$instance->editor->enqueue_styles();
+		$this->elementor()->editor->enqueue_styles();
 
 		$styles = [
 			'font-awesome',
@@ -69,7 +67,7 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 
 	/*public function test_renderFooter() {
 		ob_start();
-		Elementor\Plugin::$instance->editor->wp_footer();
+		Elementor\ $this->plugin()->editor->wp_footer();
 		$buffer = ob_get_clean();
 
 		$this->assertNotEmpty( $buffer );
