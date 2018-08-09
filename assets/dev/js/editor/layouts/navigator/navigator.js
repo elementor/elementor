@@ -16,9 +16,6 @@ module.exports = Marionette.Region.extend( {
 			bottom: '',
 			right: '',
 			left: ''
-		},
-		dockedSize: {
-			width: 250
 		}
 	},
 
@@ -72,7 +69,9 @@ module.exports = Marionette.Region.extend( {
 				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
 
 				if ( self.isDocked ) {
-					self.saveDockedSize();
+					self.storage.size.width = elementor.helpers.getElementInlineStyle( self.$el, [ 'width' ] ).width;
+
+					elementor.setStorage( 'navigator', self.storage );
 				} else {
 					self.saveSize();
 				}
@@ -143,11 +142,9 @@ module.exports = Marionette.Region.extend( {
 		elementor.$body.addClass( 'elementor-navigator-docked' );
 
 		var side = elementor.config.is_rtl ? 'left' : 'right',
-			dockedWidth = this.storage.dockedSize.width,
 			resizableOptions = this.getResizableOptions();
 
 		this.$el.css( {
-			width: dockedWidth,
 			height: '',
 			top: '',
 			bottom: '',
@@ -155,7 +152,7 @@ module.exports = Marionette.Region.extend( {
 			right: ''
 		} );
 
-		elementor.$previewWrapper.css( side, dockedWidth );
+		elementor.$previewWrapper.css( side, this.storage.size.width );
 
 		this.$el.resizable( 'destroy' );
 
@@ -198,10 +195,6 @@ module.exports = Marionette.Region.extend( {
 
 	saveSize: function() {
 		this.saveStorage( 'size', elementor.helpers.getElementInlineStyle( this.$el, [ 'width', 'height', 'top', 'bottom', 'right', 'left' ] ) );
-	},
-
-	saveDockedSize: function() {
-		this.saveStorage( 'dockedSize', elementor.helpers.getElementInlineStyle( this.$el, [ 'width' ] ) );
 	},
 
 	setSize: function() {
@@ -254,7 +247,7 @@ module.exports = Marionette.Region.extend( {
 		}
 
 		if ( this.isSnapping() ) {
-			var elementRight = ui.position.left + this.$el.outerWidth();
+			var elementRight = ui.position.left + this.el.offsetWidth;
 
 			if ( elementRight >= innerWidth ) {
 				this.dock();
