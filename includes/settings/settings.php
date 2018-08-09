@@ -518,7 +518,7 @@ class Settings extends Settings_Page {
 									],
 									'desc' => __( 'Show editing handles when hovering over the element edit button', 'elementor' ),
 								],
-							]
+							],
 						],
 					],
 				],
