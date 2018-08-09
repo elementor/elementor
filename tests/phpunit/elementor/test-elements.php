@@ -58,7 +58,7 @@ class Elementor_Test_Elements extends WP_UnitTestCase {
 					foreach ( explode( ',', $selector ) as $item ) {
 						preg_match( '/\{\{(WRAPPER)|(ID)\}\}/', $item, $matches );
 
-						$this->assertTrue( !! $matches );
+						$this->assertTrue( ! ! $matches );
 					}
 				}
 			}

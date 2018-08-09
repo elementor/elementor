@@ -63,15 +63,15 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 				'type' => \Elementor\Controls_Manager::DIMENSIONS,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element' => 'margin: {{TOP}}px {{RIGHT}}px {{BOTTOM}}px {{LEFT}}px;',
-				]
+				],
 			],
 			'color' => [
 				'name' => 'color',
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element' => 'color: {{VALUE}};',
-				]
-			]
+				],
+			],
 		];
 
 		$values = [
@@ -81,10 +81,10 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 				'right' => '2',
 				'bottom' => '3',
 				'left' => '4',
-			]
+			],
 		];
 
-		$value_callback = function ( $control ) use ( $values ) {
+		$value_callback = function( $control ) use ( $values ) {
 			return $values[ $control['name'] ];
 		};
 
@@ -116,7 +116,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 			'id' => 'test_id',
 			'settings' => [
 				'control_1' => 'value',
-			]
+			],
 		] );
 
 		$this->assertTrue( $element_obj->is_control_visible( [] ) );
@@ -128,7 +128,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 			],
 		];
 
-		$this->assertFalse( $element_obj->is_control_visible( $control_option) );
+		$this->assertFalse( $element_obj->is_control_visible( $control_option ) );
 
 		$control_option = [
 			'name' => 'control_2',
@@ -137,7 +137,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 			],
 		];
 
-		$this->assertTrue( $element_obj->is_control_visible( $control_option) );
+		$this->assertTrue( $element_obj->is_control_visible( $control_option ) );
 
 		$control_option = [
 			'name' => 'control_2',
@@ -145,19 +145,19 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 				'control_1!' => 'value',
 			],
 		];
-		$this->assertFalse( $element_obj->is_control_visible( $control_option) );
+		$this->assertFalse( $element_obj->is_control_visible( $control_option ) );
 	}
 
 	public function test_getDefaultValue() {
 		// Text Control
 		$text_control = Elementor\Plugin::$instance->controls_manager->get_control( \Elementor\Controls_Manager::TEXT );
-		
+
 		$control_option = [
 			'name' => 'key',
 			'default' => 'value',
 		];
 		$this->assertEquals( 'value', $text_control->get_value( $control_option, [] ) );
-		
+
 		// URL Control
 		$url_control = Elementor\Plugin::$instance->controls_manager->get_control( \Elementor\Controls_Manager::URL );
 		$control_option = [
@@ -166,8 +166,12 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 				'url' => 'THE_LINK',
 			],
 		];
-		$this->assertEquals( [ 'url' => 'THE_LINK', 'is_external' => '', 'nofollow' => '' ], $url_control->get_value( $control_option, [ 'key' => [ 'is_external' => '' ] ] ) );
-		
+		$this->assertEquals( [
+			'url' => 'THE_LINK',
+			'is_external' => '',
+			'nofollow' => '',
+		], $url_control->get_value( $control_option, [ 'key' => [ 'is_external' => '' ] ] ) );
+
 		// Repeater Control
 		$repeater_control = \Elementor\Plugin::$instance->controls_manager->get_control( \Elementor\Controls_Manager::REPEATER );
 		$control_option = [
@@ -185,7 +189,7 @@ class Elementor_Test_Controls extends WP_UnitTestCase {
 		$expected = [
 			[
 				'one' => 'value',
-			]
+			],
 		];
 		$this->assertEquals( $expected, $repeater_control->get_value( $control_option, [ [] ] ) );
 	}

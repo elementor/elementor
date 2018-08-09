@@ -50,7 +50,7 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 					foreach ( explode( ',', $selector ) as $item ) {
 						preg_match( '/\{\{(WRAPPER)|(ID)\}\}/', $item, $matches );
 
-						$this->assertTrue( !! $matches );
+						$this->assertTrue( ! ! $matches );
 					}
 				}
 			}
@@ -60,9 +60,10 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 	public function test_controlsDefaultData() {
 		foreach ( Elementor\Plugin::$instance->widgets_manager->get_widget_types() as $widget ) {
 			foreach ( $widget->get_controls() as $control ) {
-				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] )
+				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] ) {
 					continue;
-				
+				}
+
 				$error_msg = sprintf( 'Widget: %1$s, Control: %2$s', $widget->get_name(), $control['name'] );
 
 				if ( empty( $control['default'] ) ) {
