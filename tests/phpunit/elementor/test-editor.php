@@ -1,17 +1,20 @@
 <?php
+namespace Elementor\Testing;
 
-class Elementor_Test_Editor extends WP_UnitTestCase {
+use \Elementor\Plugin;
+
+class Elementor_Test_Editor extends Elementor_Test_Base {
 
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
-		$GLOBALS['post'] = $this->factory->post->create_and_get();
+		$GLOBALS['post'] = $this->factory()->create_and_get_default_post()->IDs;
 	}
 
 	public function test_getInstance() {
-		$this->assertInstanceOf( '\Elementor\Editor', Elementor\Plugin::$instance->editor );
+		$this->assertInstanceOf( '\Elementor\Editor', Plugin::$instance->editor );
 	}
 
 	/*
@@ -47,7 +50,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 	}*/
 
 	public function test_enqueueStyles() {
-		Elementor\Plugin::$instance->editor->enqueue_styles();
+		Plugin::$instance->editor->enqueue_styles();
 
 		$styles = [
 			'font-awesome',

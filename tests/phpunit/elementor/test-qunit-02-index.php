@@ -58,11 +58,11 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 
 		$html = str_replace( '</body>', $quint . '</body>', $html );
 
-		file_put_contents( __DIR__ . '/../qunit/index.html', $html );
+		file_put_contents( __DIR__ . '/../../qunit/index.html', $html );
 
 	}
 
 	public function test_staticIndexExist() {
-		$this->assertNotFalse( file_exists( __DIR__ . '/../qunit/index.html' ) );
+		$this->assertNotFalse( file_exists( __DIR__ . '/../../qunit/index.html' ) );
 	}
 }

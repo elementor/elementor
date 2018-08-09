@@ -1,17 +1,20 @@
 <?php
+namespace Elementor\Testing;
 
-class Elementor_Test_Widgets extends WP_UnitTestCase {
+use \Elementor\Plugin;
+
+class Elementor_Test_Widgets extends Elementor_Test_Base {
 
 	public function test_getInstance() {
-		$this->assertInstanceOf( '\Elementor\Widgets_Manager', Elementor\Plugin::$instance->widgets_manager );
+		$this->assertInstanceOf( '\Elementor\Widgets_Manager', Plugin::$instance->widgets_manager );
 	}
 
 	public function test_getWidgets() {
-		$this->assertNotEmpty( Elementor\Plugin::$instance->widgets_manager->get_widget_types() );
+		$this->assertNotEmpty( Plugin::$instance->widgets_manager->get_widget_types() );
 	}
 
 	public function test_elementMethods() {
-		foreach ( Elementor\Plugin::$instance->widgets_manager->get_widget_types() as $widget_type ) {
+		foreach ( Plugin::$instance->widgets_manager->get_widget_types() as $widget_type ) {
 			$name = $widget_type->get_name();
 
 			if ( 'common' === $name ) {
@@ -28,19 +31,19 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 		$widget_class = '\Elementor\Widget_Text_editor';
 		$widget_id = 'text-editor';
 
-		$this->assertTrue( Elementor\Plugin::$instance->widgets_manager->register_widget_type( new $widget_class() ) );
+		$this->assertTrue( Plugin::$instance->widgets_manager->register_widget_type( new $widget_class() ) );
 
-		$widget = Elementor\Plugin::$instance->widgets_manager->get_widget_types( $widget_id );
+		$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_id );
 		$this->assertInstanceOf( $widget_class, $widget );
 
-		$this->assertTrue( Elementor\Plugin::$instance->widgets_manager->unregister_widget_type( $widget_id ) );
-		$this->assertFalse( Elementor\Plugin::$instance->widgets_manager->unregister_widget_type( $widget_id ) );
+		$this->assertTrue( Plugin::$instance->widgets_manager->unregister_widget_type( $widget_id ) );
+		$this->assertFalse( Plugin::$instance->widgets_manager->unregister_widget_type( $widget_id ) );
 
-		$this->assertNull( Elementor\Plugin::$instance->widgets_manager->get_widget_types( $widget_id ) );
+		$this->assertNull( Plugin::$instance->widgets_manager->get_widget_types( $widget_id ) );
 	}
 
 	public function test_controlsSelectorsData() {
-		foreach ( Elementor\Plugin::$instance->widgets_manager->get_widget_types() as $widget ) {
+		foreach ( Plugin::$instance->widgets_manager->get_widget_types() as $widget ) {
 			foreach ( $widget->get_controls() as $control ) {
 				if ( empty( $control['selectors'] ) ) {
 					continue;
@@ -58,7 +61,7 @@ class Elementor_Test_Widgets extends WP_UnitTestCase {
 	}
 
 	public function test_controlsDefaultData() {
-		foreach ( Elementor\Plugin::$instance->widgets_manager->get_widget_types() as $widget ) {
+		foreach ( Plugin::$instance->widgets_manager->get_widget_types() as $widget ) {
 			foreach ( $widget->get_controls() as $control ) {
 				if ( \Elementor\Controls_Manager::SELECT !== $control['type'] ) {
 					continue;
