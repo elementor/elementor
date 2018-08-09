@@ -182,7 +182,7 @@ class Source_Remote extends Source_Base {
 	 * @since 1.5.0
 	 * @access public
 	 *
-	 * @param array $args Custom template arguments.
+	 * @param array  $args    Custom template arguments.
 	 * @param string $context Optional. The context. Default is `display`.
 	 *
 	 * @return array Remote Template data.
