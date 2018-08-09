@@ -1462,8 +1462,8 @@ class Source_Local extends Source_Base {
 		$offset = 2;
 
 		$posts_columns = array_slice( $posts_columns, 0, $offset, true ) + [
-				'elementor_library_type' => __( 'Type', 'elementor' ),
-			] + array_slice( $posts_columns, $offset, null, true );
+			'elementor_library_type' => __( 'Type', 'elementor' ),
+		] + array_slice( $posts_columns, $offset, null, true );
 
 		return $posts_columns;
 	}
