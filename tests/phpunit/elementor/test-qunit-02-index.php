@@ -21,7 +21,11 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 				wp_enqueue_editor();
 			}
 
-			wp_register_script( 'iris', 'file://' . ABSPATH . 'wp-admin/js/iris.min.js', [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
+			wp_register_script( 'iris', 'file://' . ABSPATH . 'wp-admin/js/iris.min.js', [
+				'jquery-ui-draggable',
+				'jquery-ui-slider',
+				'jquery-touch-punch',
+			], '1.0.7', 1 );
 
 			wp_register_script( 'wp-color-picker', 'file://' . ABSPATH . 'wp-admin/js/color-picker.js', [ 'iris' ], false, 1 );
 

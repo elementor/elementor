@@ -9,7 +9,7 @@ class Elementor_Test_Utils extends WP_UnitTestCase {
 			'https://www.youtube.com/watch?v=' . $youtube_id . '&feature=player_embedded',
 			'https://youtu.be/' . $youtube_id,
 		];
-		
+
 		foreach ( $youtube_urls as $youtube_url ) {
 			$video_properties = \Elementor\Embed::get_video_properties( $youtube_url );
 
