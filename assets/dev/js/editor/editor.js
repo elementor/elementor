@@ -370,37 +370,63 @@ App = Marionette.Application.extend( {
 		var keysDictionary = {
 			c: 67,
 			d: 68,
-			del: 46,
 			l: 76,
 			m: 77,
 			p: 80,
 			s: 83,
-			v: 86
+			v: 86,
+			del: 46
 		};
 
 		var $ = jQuery,
 			hotKeysHandlers = {},
 			hotKeysManager = this.hotKeys;
 
-		hotKeysHandlers[ keysDictionary.del ] = {
-			deleteElement: {
+		hotKeysHandlers[ keysDictionary.c ] = {
+			copyElement: {
 				isWorthHandling: function( event ) {
+					if ( ! hotKeysManager.isControlEvent( event ) ) {
+						return false;
+					}
+
 					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
 
 					if ( ! isEditorOpen ) {
 						return false;
 					}
 
-					var $target = $( event.target );
+					var frontendWindow = elementorFrontend.getElements( 'window' ),
+						textSelection = getSelection() + frontendWindow.getSelection();
 
-					if ( $target.is( ':input, .elementor-input' ) ) {
-						return false;
+					if ( ! textSelection && elementor.envData.gecko ) {
+						textSelection = [ window, frontendWindow ].some( function( window ) {
+							var activeElement = window.document.activeElement;
+
+							if ( ! activeElement || -1 === [ 'INPUT', 'TEXTAREA' ].indexOf( activeElement.tagName ) ) {
+								return;
+							}
+
+							var originalInputType;
+
+							// Some of input types can't retrieve a selection
+							if ( 'INPUT' === activeElement.tagName ) {
+								originalInputType = activeElement.type;
+
+								activeElement.type = 'text';
+							}
+
+							var selection = activeElement.value.substring( activeElement.selectionStart, activeElement.selectionEnd );
+
+							activeElement.type = originalInputType;
+
+							return ! ! selection;
+						} );
 					}
 
-					return ! $target.closest( '[contenteditable="true"]' ).length;
+					return ! textSelection;
 				},
 				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
+					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).copy();
 				}
 			}
 		};
@@ -476,55 +502,6 @@ App = Marionette.Application.extend( {
 			}
 		};
 
-		hotKeysHandlers[ keysDictionary.c ] = {
-			copyElement: {
-				isWorthHandling: function( event ) {
-					if ( ! hotKeysManager.isControlEvent( event ) ) {
-						return false;
-					}
-
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
-
-					if ( ! isEditorOpen ) {
-						return false;
-					}
-
-					var frontendWindow = elementorFrontend.getElements( 'window' ),
-						textSelection = getSelection() + frontendWindow.getSelection();
-
-					if ( ! textSelection && elementor.envData.gecko ) {
-						textSelection = [ window, frontendWindow ].some( function( window ) {
-							var activeElement = window.document.activeElement;
-
-							if ( ! activeElement || -1 === [ 'INPUT', 'TEXTAREA' ].indexOf( activeElement.tagName ) ) {
-								return;
-							}
-
-							var originalInputType;
-
-							// Some of input types can't retrieve a selection
-							if ( 'INPUT' === activeElement.tagName ) {
-								originalInputType = activeElement.type;
-
-								activeElement.type = 'text';
-							}
-
-							var selection = activeElement.value.substring( activeElement.selectionStart, activeElement.selectionEnd );
-
-							activeElement.type = originalInputType;
-
-							return ! ! selection;
-						} );
-					}
-
-					return ! textSelection;
-				},
-				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).copy();
-				}
-			}
-		};
-
 		hotKeysHandlers[ keysDictionary.v ] = {
 			pasteElement: {
 				isWorthHandling: function( event ) {
@@ -552,6 +529,29 @@ App = Marionette.Application.extend( {
 					if ( targetElement.isPasteEnabled() ) {
 						targetElement.paste();
 					}
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.del ] = {
+			deleteElement: {
+				isWorthHandling: function( event ) {
+					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
+
+					if ( ! isEditorOpen ) {
+						return false;
+					}
+
+					var $target = $( event.target );
+
+					if ( $target.is( ':input, .elementor-input' ) ) {
+						return false;
+					}
+
+					return ! $target.closest( '[contenteditable="true"]' ).length;
+				},
+				handle: function() {
+					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
 				}
 			}
 		};
