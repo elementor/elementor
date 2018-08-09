@@ -44,9 +44,9 @@ class Elementor_Test_Qunit_Preview extends Elementor_Test_Base {
 
 		$plugin_path = str_replace( '\\', '/', ELEMENTOR_PATH );
 		$quint = '' .
-			'<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.js"></script>' .
-			'<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.ext.js"></script>' .
-			'<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.drag-n-drop.js"></script>';
+		         '<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.js"></script>' .
+		         '<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.ext.js"></script>' .
+		         '<script src="file://' . $plugin_path . 'tests/qunit/vendor/j-ulrich/jquery-simulate-ext/jquery.simulate.drag-n-drop.js"></script>';
 
 		$html = str_replace( '</body>', $quint . '</body>', $html );
 
