@@ -87,7 +87,7 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 			],
 		];
 
-		$value_callback = function ( $control ) use ( $values ) {
+		$value_callback = function( $control ) use ( $values ) {
 			return $values[ $control['name'] ];
 		};
 
