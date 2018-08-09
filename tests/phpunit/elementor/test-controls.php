@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing;
 
-use  \Elementor\Plugin;
+use \Elementor\Plugin;
 use \Elementor\Controls_Manager;
 
 class Elementor_Test_Controls extends Elementor_Test_Base {
