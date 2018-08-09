@@ -39,7 +39,7 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @expectedIncorrectUsage  Elementor\Controls_Manager::add_control_to_stack
+	 * @expectedIncorrectUsage Elementor\Controls_Manager::add_control_to_stack
 	 */
 	public function test_redeclareControl() {
 		$element_obj = Plugin::$instance->elements_manager->get_element_types( 'section' );

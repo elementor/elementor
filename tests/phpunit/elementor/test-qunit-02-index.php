@@ -14,7 +14,7 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 		$_REQUEST['post'] = $GLOBALS['post']->ID;
 		$_REQUEST['action'] = 'elementor';
 
-		/* Because it's not wp-admin,  */
+		/* Because it's not wp-admin, */
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			// WP >= 4.8.0
 			if ( function_exists( 'wp_enqueue_editor' ) ) {
