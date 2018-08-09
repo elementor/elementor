@@ -1,7 +1,8 @@
 <?php
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
-if ( ! $_tests_dir )
+if ( ! $_tests_dir ) {
 	$_tests_dir = '/tmp/wordpress-tests-lib';
+}
 
 define( 'ELEMENTOR_TESTS', true );
 
@@ -33,14 +34,14 @@ tests_add_filter(
 // Do this action last
 tests_add_filter( 'shutdown', 'drop_tables', 999999 );
 
-function fix_qunit_html_urls( $html ){
+function fix_qunit_html_urls( $html ) {
 	// fix wp assets url
 	$html = str_replace( home_url( '/wp-includes' ), 'file://' . ABSPATH . 'wp-includes', $html );
 	$html = str_replace( home_url( '/wp-admin' ), 'file://' . ABSPATH . 'wp-admin', $html );
 	$html = str_replace( home_url( '/wp-content' ), 'file://' . ABSPATH . 'wp-content', $html );
 
 	// fix elementor assets url
-	$html = str_replace( home_url().'file:', 'file:', $html );
+	$html = str_replace( home_url() . 'file:', 'file:', $html );
 
 	// For local tests in browser
 	// $html = str_replace( 'file:///srv/www/wordpress-develop/public_html/src', 'http://src.wordpress-develop.dev', $html );
@@ -50,3 +51,7 @@ function fix_qunit_html_urls( $html ){
 }
 
 require $_tests_dir . '/includes/bootstrap.php';
+require __DIR__ . '/phpunit/local-factory.php';
+require __DIR__ . '/phpunit/base-class.php';
+require __DIR__ . '/phpunit/manager.php';
+\Elementor\Testing\Manager::instance();
