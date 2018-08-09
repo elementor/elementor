@@ -111,13 +111,13 @@ class Embed {
 		if ( 'youtube' === $video_properties['provider'] ) {
 			$replacements['{NO_COOKIE}'] = ! empty( $options['privacy'] ) ? '-nocookie' : '';
 		} elseif ( 'vimeo' === $video_properties['provider'] ) {
-			$timeText = '';
+			$time_text = '';
 
 			if ( ! empty( $options['start'] ) ) {
-				$timeText = date( 'H\hi\ms\s', $options['start'] );
+				$time_text = date( 'H\hi\ms\s', $options['start'] );
 			}
 
-			$replacements['{TIME}'] = $timeText;
+			$replacements['{TIME}'] = $time_text;
 		}
 
 		$embed_pattern = str_replace( array_keys( $replacements ), $replacements, $embed_pattern );
