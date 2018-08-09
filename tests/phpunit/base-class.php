@@ -8,15 +8,15 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 	 * @var Local_Factory
 	 */
 	private static $local_factory;
-	private static $plugin;
+	private static $elementor;
 
 	public function __get( $name ) {
 		switch ($name) {
 			case 'factory':
 				return self::factory();
 				break;
-			case 'plugin':
-				return self::plugin();
+			case 'elementor':
+				return self::elementor();
 				break;
 		}
 	}
@@ -35,12 +35,12 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 	/**
 	 * @return \Elementor\Plugin
 	 */
-	protected static function plugin() {
-		if ( ! self::$plugin ) {
-			self::$plugin = Plugin::$instance;
+	protected static function elementor() {
+		if ( ! self::$elementor ) {
+			self::$elementor = Plugin::$instance;
 		}
 
-		return self::$plugin;
+		return self::$elementor;
 	}
 
 	/**
