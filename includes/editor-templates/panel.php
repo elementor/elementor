@@ -197,7 +197,7 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 		$scheme_fields = array_intersect_key( $typography_fields, array_flip( $scheme_fields_keys ) );
 
 		foreach ( $scheme_fields as $option_name => $option ) :
-		?>
+			?>
 			<div class="elementor-panel-scheme-typography-item">
 				<div class="elementor-panel-scheme-item-title elementor-control-title"><?php echo $option['label']; ?></div>
 				<div class="elementor-panel-scheme-typography-item-value">

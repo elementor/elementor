@@ -1409,7 +1409,7 @@ class Element_Section extends Element_Base {
 							<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
 						<?php endif; ?>
 					</div>
-				<?php
+					<?php
 				endif;
 			endif;
 
@@ -1417,9 +1417,9 @@ class Element_Section extends Element_Base {
 									  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
 			if ( $has_background_overlay ) :
-			?>
+				?>
 				<div class="elementor-background-overlay"></div>
-			<?php
+				<?php
 			endif;
 
 			if ( $settings['shape_divider_top'] ) {
