@@ -1,15 +1,23 @@
 <?php
 namespace Elementor\Testing;
 
+use Elementor\Plugin;
+
 class Elementor_Test_Base extends \WP_UnitTestCase {
 	/**
 	 * @var Local_Factory
 	 */
 	private static $local_factory;
+	private static $plugin;
 
 	public function __get( $name ) {
-		if ( 'factory' === $name ) {
-			return self::factory();
+		switch ($name) {
+			case 'factory':
+				return self::factory();
+				break;
+			case 'plugin':
+				return self::plugin();
+				break;
 		}
 	}
 
@@ -22,6 +30,17 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 		}
 
 		return self::$local_factory;
+	}
+
+	/**
+	 * @return \Elementor\Plugin
+	 */
+	protected static function plugin() {
+		if ( ! self::$plugin ) {
+			self::$plugin = Plugin::$instance;
+		}
+
+		return self::$plugin;
 	}
 
 	/**
