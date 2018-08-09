@@ -50,3 +50,7 @@ function fix_qunit_html_urls( $html ){
 }
 
 require $_tests_dir . '/includes/bootstrap.php';
+require 'phpunit/local-factory.php';
+require 'phpunit/base-class.php';
+require 'phpunit/manager.php';
+\Elementor\Testing\Manager::instance();
