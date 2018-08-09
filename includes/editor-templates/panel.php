@@ -251,9 +251,9 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-cover">
-    <div class="elementor-dynamic-cover__settings">
-        <i class="fa fa-{{ hasSettings ? 'wrench' : 'database' }}"></i>
-    </div>
+	<div class="elementor-dynamic-cover__settings">
+		<i class="fa fa-{{ hasSettings ? 'wrench' : 'database' }}"></i>
+	</div>
 	<div class="elementor-dynamic-cover__title" title="{{{ title + ' ' + content }}}">{{{ title + ' ' + content }}}</div>
 	<# if ( isRemovable ) { #>
 		<div class="elementor-dynamic-cover__remove">

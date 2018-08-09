@@ -254,7 +254,7 @@ class Source_Local extends Source_Base {
 						<i class="eicon-play-o"></i>
 						<a href="#"><?php echo __( 'Take The Video Tour', 'elementor' ); ?></a>
 					</div>
-                    */
+					*/
 					?>
 				</div>
 				<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
