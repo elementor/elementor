@@ -620,7 +620,7 @@ abstract class Document extends Controls_Stack {
 		<div class="<?php echo esc_attr( $this->get_container_classes() ); ?>">
 			<div class="elementor-inner">
 				<div class="elementor-section-wrap">
-					<?php $this->print_elements( $elements_data ) ?>
+					<?php $this->print_elements( $elements_data ); ?>
 				</div>
 			</div>
 		</div>
