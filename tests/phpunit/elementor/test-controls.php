@@ -1,33 +1,32 @@
 <?php
 namespace Elementor\Testing;
 
-use \Elementor\Plugin;
-use \Elementor\Controls_Manager;
+use Elementor\Controls_Manager;
 
 class Elementor_Test_Controls extends Elementor_Test_Base {
 
 	public function test_getInstance() {
-		$this->assertInstanceOf( '\Elementor\Controls_Manager', Plugin::$instance->controls_manager );
+		$this->assertInstanceOf( '\Elementor\Controls_Manager', $this->elementor()->controls_manager );
 	}
 
 	public function test_getControls() {
-		$this->assertNotEmpty( Plugin::$instance->controls_manager->get_controls() );
+		$this->assertNotEmpty( $this->elementor()->controls_manager->get_controls() );
 	}
 
 	public function test_renderControls() {
 		ob_start();
-		Plugin::$instance->controls_manager->render_controls();
+		$this->elementor()->controls_manager->render_controls();
 		$this->assertNotEmpty( ob_get_clean() );
 	}
 
 	public function test_enqueueControlScripts() {
 		ob_start();
-		Plugin::$instance->controls_manager->enqueue_control_scripts();
+		$this->elementor()->controls_manager->enqueue_control_scripts();
 		$this->assertEmpty( ob_get_clean() );
 	}
 
 	public function test_getTypes() {
-		foreach ( Plugin::$instance->controls_manager->get_controls() as $control ) {
+		foreach ( $this->elementor()->controls_manager->get_controls() as $control ) {
 			$this->assertNotEmpty( $control->get_type() );
 		}
 	}
@@ -39,21 +38,21 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 
 		$control_instance = new $control_class();
 
-		Plugin::$instance->controls_manager->register_control( $control_id, new $control_instance() );
+		$this->elementor()->controls_manager->register_control( $control_id, new $control_instance() );
 
-		$control = Plugin::$instance->controls_manager->get_control( $control_id );
+		$control = $this->elementor()->controls_manager->get_control( $control_id );
 
 		$this->assertInstanceOf( $control_class, $control );
 
-		$this->assertTrue( Plugin::$instance->controls_manager->unregister_control( $control_id ) );
-		$this->assertFalse( Plugin::$instance->controls_manager->unregister_control( $control_id ) );
+		$this->assertTrue( $this->elementor()->controls_manager->unregister_control( $control_id ) );
+		$this->assertFalse( $this->elementor()->controls_manager->unregister_control( $control_id ) );
 
 		// Return the control for next tests..
-		Plugin::$instance->controls_manager->register_control( $control_id, $control_instance );
+		$this->elementor()->controls_manager->register_control( $control_id, $control_instance );
 	}
 
 	public function test_groupControlsGetTypes() {
-		foreach ( Plugin::$instance->controls_manager->get_control_groups() as $control_group ) {
+		foreach ( $this->elementor()->controls_manager->get_control_groups() as $control_group ) {
 			$this->assertNotEmpty( $control_group->get_type() );
 		}
 	}
@@ -112,9 +111,9 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 	}
 
 	public function test_checkCondition() {
-		Plugin::$instance->widgets_manager->get_widget_types(); // Ensure the widgets initialized
+		$this->elementor()->widgets_manager->get_widget_types(); // Ensure the widgets initialized
 
-		$element_obj = Plugin::$instance->elements_manager->create_element_instance(
+		$element_obj = $this->elementor()->elements_manager->create_element_instance(
 			[
 				'elType' => 'widget',
 				'widgetType' => 'text-editor',
@@ -156,7 +155,7 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 
 	public function test_getDefaultValue() {
 		// Text Control
-		$text_control = Plugin::$instance->controls_manager->get_control( Controls_Manager::TEXT );
+		$text_control = $this->elementor()->controls_manager->get_control( Controls_Manager::TEXT );
 
 		$control_option = [
 			'name' => 'key',
@@ -165,7 +164,7 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 		$this->assertEquals( 'value', $text_control->get_value( $control_option, [] ) );
 
 		// URL Control
-		$url_control = Plugin::$instance->controls_manager->get_control( Controls_Manager::URL );
+		$url_control = $this->elementor()->controls_manager->get_control( Controls_Manager::URL );
 		$control_option = [
 			'name' => 'key',
 			'default' => [
@@ -181,7 +180,7 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 		);
 
 		// Repeater Control
-		$repeater_control = Plugin::$instance->controls_manager->get_control( Controls_Manager::REPEATER );
+		$repeater_control = $this->elementor()->controls_manager->get_control( Controls_Manager::REPEATER );
 		$control_option = [
 			'name' => 'key',
 			'default' => [ [] ],

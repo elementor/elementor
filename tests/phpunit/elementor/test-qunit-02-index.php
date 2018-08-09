@@ -1,13 +1,14 @@
 <?php
+namespace Elementor\Testing;
 
-class Elementor_Test_Qunit extends WP_UnitTestCase {
+class Elementor_Test_Qunit extends Elementor_Test_Base {
 
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 
-		$GLOBALS['post'] = $this->factory->post->create_and_get();
+		$GLOBALS['post'] = $this->factory()->create_and_get_default_post();
 
 		add_post_meta( $GLOBALS['post']->ID, '_elementor_edit_mode', 'builder' );
 
@@ -42,7 +43,7 @@ class Elementor_Test_Qunit extends WP_UnitTestCase {
 
 		ob_start();
 
-		\Elementor\Plugin::$instance->editor->init( false );
+		$this->elementor()->editor->init( false );
 
 		$html = ob_get_clean();
 

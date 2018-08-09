@@ -25,7 +25,7 @@ class Elementor_Test_Qunit_Preview extends Elementor_Test_Base {
 
 		$_GET['elementor-preview'] = $GLOBALS['post']->ID;
 
-		\Elementor\Plugin::$instance->preview->init();
+		$this->elementor()->preview->init();
 
 		// Load the theme template.
 		$template = get_index_template();
@@ -34,7 +34,7 @@ class Elementor_Test_Qunit_Preview extends Elementor_Test_Base {
 		$template = apply_filters( 'template_include', $template );
 
 		// Recreate the frontend instance because it's scripts hooks are removed in previous test
-		\Elementor\Plugin::$instance->frontend = new \Elementor\Frontend();
+		$this->elementor()->frontend = new \Elementor\Frontend();
 
 		ob_start();
 
