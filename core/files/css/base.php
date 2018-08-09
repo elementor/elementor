@@ -471,7 +471,7 @@ abstract class Base extends Base_File {
 	abstract protected function render_css();
 
 	protected function get_default_meta() {
-		return array_merge ( parent::get_default_meta(), [
+		return array_merge( parent::get_default_meta(), [
 			'fonts' => array_unique( $this->fonts ),
 			'status' => '',
 		] );
