@@ -854,7 +854,7 @@ class Widget_Video extends Widget_Base {
 			if ( $settings['loop'] ) {
 				$video_properties = Embed::get_video_properties( $settings['youtube_url'] );
 
-				$params[ 'playlist' ] = $video_properties['video_id'];
+				$params['playlist'] = $video_properties['video_id'];
 			}
 
 			$params['start'] = $settings['start'];
