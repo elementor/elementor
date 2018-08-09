@@ -1,17 +1,18 @@
 <?php
+namespace Elementor\Testing;
 
-class Elementor_Test_Editor extends WP_UnitTestCase {
+class Elementor_Test_Editor extends Elementor_Test_Base {
 
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
-		$GLOBALS['post'] = $this->factory->post->create_and_get();
+		$GLOBALS['post'] = $this->factory()->create_and_get_default_post()->IDs;
 	}
 
 	public function test_getInstance() {
-		$this->assertInstanceOf( '\Elementor\Editor', Elementor\Plugin::$instance->editor );
+		$this->assertInstanceOf( '\Elementor\Editor', $this->elementor()->editor );
 	}
 
 	/*
@@ -19,7 +20,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 		ini_set( 'memory_limit', '85M' );
 
 		ob_start();
-		Elementor\Plugin::$instance->editor->enqueue_scripts();
+		Elementor\ $this->plugin()->editor->enqueue_scripts();
 		ob_end_clean();
 
 		$scripts = [
@@ -47,7 +48,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 	}*/
 
 	public function test_enqueueStyles() {
-		Elementor\Plugin::$instance->editor->enqueue_styles();
+		$this->elementor()->editor->enqueue_styles();
 
 		$styles = [
 			'font-awesome',
@@ -66,7 +67,7 @@ class Elementor_Test_Editor extends WP_UnitTestCase {
 
 	/*public function test_renderFooter() {
 		ob_start();
-		Elementor\Plugin::$instance->editor->wp_footer();
+		Elementor\ $this->plugin()->editor->wp_footer();
 		$buffer = ob_get_clean();
 
 		$this->assertNotEmpty( $buffer );
