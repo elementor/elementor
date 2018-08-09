@@ -1,6 +1,7 @@
 <?php
+namespace Elementor\Testing;
 
-class Elementor_Test_Utils extends WP_UnitTestCase {
+class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_getYoutubeId() {
 		$youtube_id = '9uOETcuFjbE';
