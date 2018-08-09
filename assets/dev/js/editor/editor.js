@@ -370,6 +370,7 @@ App = Marionette.Application.extend( {
 		var keysDictionary = {
 			c: 67,
 			d: 68,
+			i: 73,
 			l: 76,
 			m: 77,
 			p: 80,
@@ -444,6 +445,21 @@ App = Marionette.Application.extend( {
 					}
 
 					panel.getCurrentPageView().getOption( 'editedElementView' ).duplicate();
+				}
+			}
+		};
+
+		hotKeysHandlers[ keysDictionary.i ] = {
+			navigator: {
+				isWorthHandling: function( event ) {
+					return hotKeysManager.isControlEvent( event ) && 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
+				},
+				handle: function() {
+					if ( elementor.navigator.storage.visible ) {
+						elementor.navigator.close();
+					} else {
+						elementor.navigator.open();
+					}
 				}
 			}
 		};
