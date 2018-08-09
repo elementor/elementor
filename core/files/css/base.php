@@ -200,7 +200,7 @@ abstract class Base extends Base_File {
 			if ( wp_styles()->query( $dep, 'done' ) ) {
 				printf( '<style id="%1$s">%2$s</style>', $this->get_file_handle_id(), $meta['css'] ); // XSS ok.
 			} else {
-				wp_add_inline_style( $dep , $meta['css'] );
+				wp_add_inline_style( $dep, $meta['css'] );
 			}
 		} elseif ( self::CSS_STATUS_FILE === $meta['status'] ) { // Re-check if it's not empty after CSS update.
 			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null );
