@@ -1296,7 +1296,7 @@ class Source_Local extends Source_Base {
 
 			// Template type column.
 			add_action( 'manage_' . self::CPT . '_posts_columns', [ $this, 'admin_columns_headers' ] );
-			add_action( 'manage_' . self::CPT . '_posts_custom_column', [ $this, 'admin_columns_content' ] , 10, 2 );
+			add_action( 'manage_' . self::CPT . '_posts_custom_column', [ $this, 'admin_columns_content' ], 10, 2 );
 
 			// Template library bulk actions.
 			add_filter( 'bulk_actions-edit-elementor_library', [ $this, 'admin_add_bulk_export_action' ] );
@@ -1331,8 +1331,8 @@ class Source_Local extends Source_Base {
 		$offset = 2;
 
 		$posts_columns = array_slice( $posts_columns, 0, $offset, true ) + [
-				'elementor_library_type' => __( 'Type', 'elementor' ),
-			] + array_slice( $posts_columns, $offset, null, true );
+			'elementor_library_type' => __( 'Type', 'elementor' ),
+		] + array_slice( $posts_columns, $offset, null, true );
 
 		return $posts_columns;
 	}

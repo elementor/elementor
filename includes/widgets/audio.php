@@ -283,7 +283,7 @@ class Widget_Audio extends Widget_Base {
 			<div class="elementor-soundcloud-wrapper">
 				<?php echo $video_html; ?>
 			</div>
-		<?php
+			<?php
 		endif;
 	}
 

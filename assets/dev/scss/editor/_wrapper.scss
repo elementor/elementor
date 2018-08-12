@@ -59,10 +59,6 @@ body {
 			@include end(0);
 		}
 
-		#elementor-panel {
-			@include start(0);
-		}
-
 		#elementor-mode-switcher-preview {
 
 			.fa {
@@ -79,21 +75,6 @@ body {
 			left: 0;
 		}
 
-		#elementor-panel {
-
-			@media (max-width: $editor-screen-lg-max) {
-				@include start(-$panel-width);
-			}
-
-			@media (min-width: $editor-screen-xl-min) {
-				@include start(-$panel-xl-width);
-			}
-
-			> .ui-resizable-e, > .ui-resizable-w {
-				display: none;
-			}
-		}
-
 		#elementor-mode-switcher-preview {
 
 			.fa {
@@ -101,15 +82,6 @@ body {
 					content: getValueByDirection('\f105', '\f104');
 				}
 			}
-		}
-	}
-
-	&.elementor-navigator-docked {
-
-		#elementor-navigator {
-			top: 0;
-			@include end(0);
-			height: 100%;
 		}
 	}
 }

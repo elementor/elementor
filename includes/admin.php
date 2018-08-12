@@ -26,7 +26,7 @@ class Admin {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'index.php?page=elementor-getting-started' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
 		exit;
 	}
 
@@ -412,7 +412,7 @@ class Admin {
 							esc_url( $upgrade_url ),
 							esc_attr( __( 'Update Elementor Now', 'elementor' ) )
 						);
-						?>
+					?>
 					</p>
 				</div>
 				<div class="elementor-message-action">
@@ -623,7 +623,7 @@ class Admin {
 		?>
 		<div class="e-dashboard-widget">
 			<div class="e-overview__header">
-				<div class="e-overview__logo"><i class="eicon-elementor-square"></i></div>
+				<div class="e-overview__logo"><div class="e-logo-wrapper"><i class="eicon-elementor"></i></div></div>
 				<div class="e-overview__versions">
 					<span class="e-overview__version"><?php echo __( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?></span>
 					<?php
@@ -652,7 +652,7 @@ class Admin {
 						$recently_edited_query->the_post();
 
 						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
-					?>
+						?>
 					<li class="e-overview__post">
 						 <a href="<?php echo esc_attr( Utils::get_edit_link( get_the_ID() ) ); ?>" class="e-overview__post-link"><?php the_title(); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; ?>, <?php the_time(); ?></span>
 					</li>

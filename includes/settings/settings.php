@@ -162,11 +162,54 @@ class Settings extends Settings_Page {
 		}
 	}
 
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the getting started page.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 */
 	public function elementor_getting_started() {
 		?>
 		<div class="wrap">
-			<div class="elementor-blank_state">
-				<h2><?php echo __( 'Getting Started', 'elementor' ); ?></h2>
+			<div class="e-getting-started">
+
+				<div class="e-getting-started__box postbox">
+
+					<div class="e-getting-started__header">
+						<div class="e-getting-started__title">
+
+							<div class="e-logo-wrapper"><i class="eicon-elementor"></i></div>
+
+							<?php echo __( 'Getting Started', 'elementor' ); ?>
+						</div>
+
+						<a class="e-getting-started__skip" href="#">
+							<i class="eicon-close" aria-hidden="true" title="<?php esc_attr_e( 'Skip', 'elementor' ); ?>"></i>
+							<span class="elementor-screen-only"><?php echo __( 'Skip', 'elementor' ); ?></span>
+						</a>
+					</div>
+
+					<div class="e-getting-started__content">
+
+						<div class="e-getting-started__content--narrow">
+							<h2><?php echo __( 'Welcome to Elementor', 'elementor' ); ?></h2>
+							<p><?php echo __( ' This defines the default behaviour for how flex items are laid out along the cross axis. Think of it as the justify-content version for the cross-axis.', 'elementor' ); ?></p>
+						</div>
+
+						<div class="e-getting-started__video">
+							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/43j6h3oCm0U?rel=0&amp;controls=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+						</div>
+
+						<div class="e-getting-started__actions e-getting-started__content--narrow">
+
+							<a href="#" class="button button-primary button-hero"><?php echo __( 'Create your First Page', 'elementor' ); ?></a>
+							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Read the Full Article', 'elementor' ); ?></a>
+						</div>
+					</div>
+
+				</div>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -183,7 +226,7 @@ class Settings extends Settings_Page {
 	public function elementor_custom_fonts() {
 		?>
 		<div class="wrap">
-			<div class="elementor-blank_state">
+			<div class="elementor-blank_stateז">
 				<i class="eicon-nerd-chuckle"></i>
 				<h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
 				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
@@ -396,7 +439,8 @@ class Settings extends Settings_Page {
 										'class' => 'medium-text',
 									],
 									'sub_desc' => 'px',
-									'desc' => __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: ' . $default_breakpoints['lg'] . ').', 'elementor' ),
+									/* translators: %d: Breakpoint value */
+									'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
 								],
 							],
 							'viewport_md' => [
@@ -410,7 +454,8 @@ class Settings extends Settings_Page {
 										'class' => 'medium-text',
 									],
 									'sub_desc' => 'px',
-									'desc' => __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: ' . $default_breakpoints['md'] . ').', 'elementor' ),
+									/* translators: %d: Breakpoint value */
+									'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
 								],
 							],
 							'global_image_lightbox' => [
@@ -475,7 +520,7 @@ class Settings extends Settings_Page {
 									],
 									'desc' => __( 'Show editing handles when hovering over the element edit button', 'elementor' ),
 								],
-							]
+							],
 						],
 					],
 				],
