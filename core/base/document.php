@@ -68,7 +68,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public static function get_editor_panel_config() {
-		return  [
+		return [
 			'elements_categories' => static::get_editor_panel_categories(),
 			'messages' => [
 				/* translators: %s: the document title. */
@@ -498,7 +498,7 @@ abstract class Document extends Controls_Stack {
 			$url = set_url_scheme( add_query_arg( [
 				'elementor-preview' => $this->get_main_id(),
 				'ver' => time(),
-			] , $this->get_permalink() ) );
+			], $this->get_permalink() ) );
 
 			remove_filter( 'pre_option_permalink_structure', '__return_empty_string' );
 
@@ -620,7 +620,7 @@ abstract class Document extends Controls_Stack {
 		<div class="<?php echo esc_attr( $this->get_container_classes() ); ?>">
 			<div class="elementor-inner">
 				<div class="elementor-section-wrap">
-					<?php $this->print_elements( $elements_data ) ?>
+					<?php $this->print_elements( $elements_data ); ?>
 				</div>
 			</div>
 		</div>
@@ -848,7 +848,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		$date = date_i18n( _x( 'M j, H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
-		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
+		$display_name = get_the_author_meta( 'display_name', $post->post_author );
 
 		if ( $autosave_post || 'revision' === $post->post_type ) {
 			/* translators: 1: Saving date, 2: Author display name */
