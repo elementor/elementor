@@ -36,8 +36,8 @@ class Maintenance {
 			return;
 		}
 
-        set_transient( 'elementor_activation_redirect', true, MINUTE_IN_SECONDS );
-    }
+		set_transient( 'elementor_activation_redirect', true, MINUTE_IN_SECONDS );
+	}
 
 	/**
 	 * Uninstall Elementor.

@@ -94,7 +94,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Title & Content', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => __( 'Toggle Title' , 'elementor' ),
+				'default' => __( 'Toggle Title', 'elementor' ),
 				'label_block' => true,
 			]
 		);

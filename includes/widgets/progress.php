@@ -287,7 +287,7 @@ class Widget_Progress extends Widget_Base {
 				<?php } ?>
 			</div>
 		</div>
-	<?php
+		<?php
 	}
 
 	/**
