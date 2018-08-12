@@ -188,7 +188,6 @@ module.exports = function( grunt ) {
 					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
 					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
 					'assets/js/gutenberg.js': [ 'assets/dev/js/admin/gutenberg.js' ],
-					'assets/js/get-started.js': [ 'assets/dev/js/admin/get-started/get-started.js' ],
 					'assets/js/new-template.js': [ 'assets/dev/js/admin/new-template/new-template.js' ],
 					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ]
 				},
@@ -205,7 +204,6 @@ module.exports = function( grunt ) {
 					'assets/js/editor.js.map': [ 'assets/js/editor.js' ],
 					'assets/js/admin.js.map': [ 'assets/js/admin.js' ],
 					'assets/js/admin-feedback.js.map': [ 'assets/js/admin-feedback.js' ],
-					'assets/js/get-started.js.map': [ 'assets/js/get-started.js' ],
 					'assets/js/new-template.js.map': [ 'assets/js/new-template.js' ],
 					'assets/js/frontend.js.map': [ 'assets/js/frontend.js' ]
 				}
@@ -227,9 +225,6 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/gutenberg.min.js': [
 						'assets/js/gutenberg.js'
-					],
-					'assets/js/get-started.min.js': [
-						'assets/js/get-started.js'
 					],
 					'assets/js/new-template.min.js': [
 						'assets/js/new-template.js'
