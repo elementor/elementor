@@ -100,6 +100,8 @@ module.exports = Marionette.Region.extend( {
 
 		if ( this.storage.docked ) {
 			this.dock();
+
+			this.setDockedSize();
 		} else {
 			this.setSize();
 		}
@@ -201,6 +203,10 @@ module.exports = Marionette.Region.extend( {
 		if ( this.storage.size ) {
 			this.$el.css( this.storage.size );
 		}
+	},
+
+	setDockedSize: function() {
+		this.$el.css( 'width', this.storage.size.width );
 	},
 
 	ensurePosition: function() {
