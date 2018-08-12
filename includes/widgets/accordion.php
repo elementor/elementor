@@ -94,7 +94,7 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Title & Content', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => __( 'Accordion Title' , 'elementor' ),
+				'default' => __( 'Accordion Title', 'elementor' ),
 				'dynamic' => [
 					'active' => true,
 				],
