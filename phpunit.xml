@@ -17,7 +17,7 @@
 	</testsuites>
 
 	<filter>
-		<whitelist addUncoveredFilesFromWhitelist="false" processUncoveredFilesFromWhitelist="false">
+		<whitelist>
 			<directory suffix=".php">./</directory>
 			<exclude>
 				<directory>.github</directory>
@@ -27,7 +27,7 @@
 				<directory>docs</directory>
 				<directory>node_modules</directory>
 				<directory>tests</directory>
-				<directory>libraries</directory>
+				<directory>includes/libraries</directory>
 				<directory>vendor</directory>
 			</exclude>
 		</whitelist>
