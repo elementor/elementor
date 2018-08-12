@@ -509,6 +509,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'169' => '16:9',
+					'219' => '21:9',
 					'43' => '4:3',
 					'32' => '3:2',
 				],
@@ -800,7 +801,7 @@ class Widget_Video extends Widget_Base {
 				</div>
 			<?php } ?>
 		</div>
-	<?php
+		<?php
 	}
 
 	/**
@@ -853,7 +854,7 @@ class Widget_Video extends Widget_Base {
 			if ( $settings['loop'] ) {
 				$video_properties = Embed::get_video_properties( $settings['youtube_url'] );
 
-				$params[ 'playlist' ] = $video_properties['video_id'];
+				$params['playlist'] = $video_properties['video_id'];
 			}
 
 			$params['start'] = $settings['start'];

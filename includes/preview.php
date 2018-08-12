@@ -221,7 +221,7 @@ class Preview {
 			'elementor-inline-editor',
 			ELEMENTOR_ASSETS_URL . 'lib/inline-editor/js/inline-editor' . $suffix . '.js',
 			[],
-			'',
+			ELEMENTOR_VERSION,
 			true
 		);
 
