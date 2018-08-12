@@ -228,7 +228,7 @@ class Compatibility {
 		}
 
 		// Copy elementor data while polylang creates a translation copy
-		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10 , 4 );
+		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10, 4 );
 	}
 
 	/**

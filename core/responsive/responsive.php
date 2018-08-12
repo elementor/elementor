@@ -101,7 +101,7 @@ class Responsive {
 	 */
 	public static function get_breakpoints() {
 		return array_reduce(
-			array_keys( self::$default_breakpoints ),  function( $new_array, $breakpoint_key ) {
+			array_keys( self::$default_breakpoints ), function( $new_array, $breakpoint_key ) {
 				if ( ! in_array( $breakpoint_key, self::$editable_breakpoints_keys ) ) {
 					$new_array[ $breakpoint_key ] = self::$default_breakpoints[ $breakpoint_key ];
 				} else {

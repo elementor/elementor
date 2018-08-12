@@ -1,11 +1,15 @@
 <?php
+namespace Elementor\Testing;
 
-class Elementor_Test_Base extends WP_UnitTestCase {
+class Elementor_Test_Bootstrap extends Elementor_Test_Base {
 
-	public function setUp() {
-		parent::setUp();
+	public static function setUpBeforeClass() {
+		parent::setUpBeforeClass();
+		remove_action( 'admin_init', '_maybe_update_themes' );
+		remove_action( 'admin_init', '_maybe_update_core' );
+		remove_action( 'admin_init', '_maybe_update_plugins' );
 
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( self::factory()->get_administrator_user()->ID );
 
 		// Make sure the main class is running
 		\Elementor\Plugin::instance();

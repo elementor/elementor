@@ -661,7 +661,7 @@ class Frontend {
 				$fonts_url .= '&subset=' . $subsets[ $locale ];
 			}
 
-			wp_enqueue_style( 'google-fonts-' . $google_fonts_index, $fonts_url );
+			wp_enqueue_style( 'google-fonts-' . $google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
@@ -672,7 +672,7 @@ class Frontend {
 
 				$font_url = sprintf( 'https://fonts.googleapis.com/earlyaccess/%s.css', strtolower( str_replace( ' ', '', $current_font ) ) );
 
-				wp_enqueue_style( 'google-earlyaccess-' . $google_fonts_index, $font_url );
+				wp_enqueue_style( 'google-earlyaccess-' . $google_fonts_index, $font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
 

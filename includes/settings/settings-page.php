@@ -65,7 +65,7 @@ abstract class Settings_Page {
 	 *
 	 * @return string Settings page URL.
 	 */
-	public final static function get_url() {
+	final public static function get_url() {
 		return admin_url( 'admin.php?page=' . static::PAGE_ID );
 	}
 
@@ -78,7 +78,9 @@ abstract class Settings_Page {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'admin_init', [ $this, 'register_settings_fields' ] );
+		if ( ! empty( $_POST['option_page'] ) && static::PAGE_ID === $_POST['option_page'] ) {
+			add_action( 'admin_init', [ $this, 'register_settings_fields' ] );
+		}
 	}
 
 	/**
@@ -91,7 +93,7 @@ abstract class Settings_Page {
 	 *
 	 * @return array Settings page tabs, sections and fields.
 	 */
-	public final function get_tabs() {
+	final public function get_tabs() {
 		$this->ensure_tabs();
 
 		return $this->tabs;
@@ -108,7 +110,7 @@ abstract class Settings_Page {
 	 * @param string $tab_id   Tab ID.
 	 * @param array  $tab_args Optional. Tab arguments. Default is an empty array.
 	 */
-	public final function add_tab( $tab_id, array $tab_args = [] ) {
+	final public function add_tab( $tab_id, array $tab_args = [] ) {
 		$this->ensure_tabs();
 
 		if ( isset( $this->tabs[ $tab_id ] ) ) {
@@ -136,7 +138,7 @@ abstract class Settings_Page {
 	 * @param array  $section_args Optional. Section arguments. Default is an
 	 *                             empty array.
 	 */
-	public final function add_section( $tab_id, $section_id, array $section_args = [] ) {
+	final public function add_section( $tab_id, $section_id, array $section_args = [] ) {
 		$this->ensure_tabs();
 
 		if ( ! isset( $this->tabs[ $tab_id ] ) ) {
@@ -169,7 +171,7 @@ abstract class Settings_Page {
 	 * @param string $field_id   Field ID.
 	 * @param array  $field_args Field arguments.
 	 */
-	public final function add_field( $tab_id, $section_id, $field_id, array $field_args ) {
+	final public function add_field( $tab_id, $section_id, $field_id, array $field_args ) {
 		$this->ensure_tabs();
 
 		if ( ! isset( $this->tabs[ $tab_id ] ) ) {
@@ -207,7 +209,7 @@ abstract class Settings_Page {
 	 *    @type array  $field_args Field arguments.
 	 * }
 	 */
-	public final function add_fields( $tab_id, $section_id, array $fields ) {
+	final public function add_fields( $tab_id, $section_id, array $fields ) {
 		foreach ( $fields as $field_id => $field_args ) {
 			$this->add_field( $tab_id, $section_id, $field_id, $field_args );
 		}
@@ -222,7 +224,7 @@ abstract class Settings_Page {
 	 * @since 1.5.0
 	 * @access public
 	 */
-	public final function register_settings_fields() {
+	final public function register_settings_fields() {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
 
 		$tabs = $this->get_tabs();
@@ -281,6 +283,8 @@ abstract class Settings_Page {
 	 * @access public
 	 */
 	public function display_settings_page() {
+		$this->register_settings_fields();
+
 		$tabs = $this->get_tabs();
 		?>
 		<div class="wrap">

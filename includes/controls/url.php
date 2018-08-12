@@ -97,7 +97,7 @@ class Control_URL extends Control_Base_Multiple {
 			<div class="elementor-control-input-wrapper">
 				<i class="elementor-control-url-autocomplete-spinner fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>
 				<input id="<?php echo $control_uid; ?>" class="elementor-control-tag-area elementor-input" data-setting="url" placeholder="{{ data.placeholder }}" />
-				<input id="_ajax_linking_nonce" type="hidden" value="<?php echo wp_create_nonce( 'internal-linking' ) ?>" />
+				<input id="_ajax_linking_nonce" type="hidden" value="<?php echo wp_create_nonce( 'internal-linking' ); ?>" />
 
 				<label for="<?php echo $more_input_control_uid; ?>" class="elementor-control-url-more tooltip-target" data-tooltip="<?php echo __( 'Link Options', 'elementor' ); ?>">
 					<i class="fa fa-cog" aria-hidden="true"></i>

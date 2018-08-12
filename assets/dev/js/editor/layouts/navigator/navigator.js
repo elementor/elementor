@@ -16,9 +16,6 @@ module.exports = Marionette.Region.extend( {
 			bottom: '',
 			right: '',
 			left: ''
-		},
-		dockedSize: {
-			width: 250
 		}
 	},
 
@@ -32,6 +29,8 @@ module.exports = Marionette.Region.extend( {
 		if ( savedStorage ) {
 			this.storage = savedStorage;
 		}
+
+		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		if ( this.storage.visible ) {
 			this.open();
@@ -48,6 +47,7 @@ module.exports = Marionette.Region.extend( {
 			handle: '#elementor-navigator__header',
 			snap: 'body',
 			snapMode: 'inner',
+			snapTolerance: 15,
 			drag: this.onDrag.bind( this ),
 			stop: this.onDragStop.bind( this )
 		};
@@ -69,7 +69,9 @@ module.exports = Marionette.Region.extend( {
 				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
 
 				if ( self.isDocked ) {
-					self.saveDockedSize();
+					self.storage.size.width = elementor.helpers.getElementInlineStyle( self.$el, [ 'width' ] ).width;
+
+					elementor.setStorage( 'navigator', self.storage );
 				} else {
 					self.saveSize();
 				}
@@ -98,6 +100,8 @@ module.exports = Marionette.Region.extend( {
 
 		if ( this.storage.docked ) {
 			this.dock();
+
+			this.setDockedSize();
 		} else {
 			this.setSize();
 		}
@@ -113,14 +117,16 @@ module.exports = Marionette.Region.extend( {
 		elementor.$window.on( 'resize', this.ensurePosition );
 	},
 
-	close: function() {
+	close: function( silent ) {
 		this.$el.hide();
 
 		if ( this.isDocked ) {
 			this.undock( true );
 		}
 
-		this.saveStorage( 'visible', false );
+		if ( ! silent ) {
+			this.saveStorage( 'visible', false );
+		}
 
 		elementor.$window.off( 'resize', this.ensurePosition );
 	},
@@ -138,11 +144,9 @@ module.exports = Marionette.Region.extend( {
 		elementor.$body.addClass( 'elementor-navigator-docked' );
 
 		var side = elementor.config.is_rtl ? 'left' : 'right',
-			dockedWidth = this.storage.dockedSize.width,
 			resizableOptions = this.getResizableOptions();
 
 		this.$el.css( {
-			width: dockedWidth,
 			height: '',
 			top: '',
 			bottom: '',
@@ -150,7 +154,7 @@ module.exports = Marionette.Region.extend( {
 			right: ''
 		} );
 
-		elementor.$previewWrapper.css( side, dockedWidth );
+		elementor.$previewWrapper.css( side, this.storage.size.width );
 
 		this.$el.resizable( 'destroy' );
 
@@ -195,14 +199,14 @@ module.exports = Marionette.Region.extend( {
 		this.saveStorage( 'size', elementor.helpers.getElementInlineStyle( this.$el, [ 'width', 'height', 'top', 'bottom', 'right', 'left' ] ) );
 	},
 
-	saveDockedSize: function() {
-		this.saveStorage( 'dockedSize', elementor.helpers.getElementInlineStyle( this.$el, [ 'width' ] ) );
-	},
-
 	setSize: function() {
 		if ( this.storage.size ) {
 			this.$el.css( this.storage.size );
 		}
+	},
+
+	setDockedSize: function() {
+		this.$el.css( 'width', this.storage.size.width );
 	},
 
 	ensurePosition: function() {
@@ -244,8 +248,12 @@ module.exports = Marionette.Region.extend( {
 			return;
 		}
 
+		if ( 0 > ui.position.top ) {
+			ui.position.top = 0;
+		}
+
 		if ( this.isSnapping() ) {
-			var elementRight = ui.position.left + this.$el.outerWidth();
+			var elementRight = ui.position.left + this.el.offsetWidth;
 
 			if ( elementRight >= innerWidth ) {
 				this.dock();
@@ -262,6 +270,16 @@ module.exports = Marionette.Region.extend( {
 
 		if ( ! this.isDocked ) {
 			this.saveSize();
+		}
+	},
+
+	onEditModeSwitched: function() {
+		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
+
+		if ( 'edit' === activeMode && this.storage.visible ) {
+			this.open();
+		} else {
+			this.close( true );
 		}
 	}
 } );
