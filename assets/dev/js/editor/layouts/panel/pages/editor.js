@@ -26,7 +26,7 @@ EditorView = ControlsStack.extend( {
 	},
 
 	scrollToEditedElement: function() {
-		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ) );
+		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ).$el );
 	},
 
 	getControlView: function( name ) {

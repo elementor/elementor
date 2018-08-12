@@ -59,10 +59,6 @@ body {
 			@include end(0);
 		}
 
-		#elementor-panel {
-			@include start(0);
-		}
-
 		#elementor-mode-switcher-preview {
 
 			.fa {
@@ -79,21 +75,6 @@ body {
 			left: 0;
 		}
 
-		#elementor-panel {
-
-			@media (max-width: $editor-screen-lg-max) {
-				@include start(-$panel-width);
-			}
-
-			@media (min-width: $editor-screen-xl-min) {
-				@include start(-$panel-xl-width);
-			}
-
-			> .ui-resizable-e, > .ui-resizable-w {
-				display: none;
-			}
-		}
-
 		#elementor-mode-switcher-preview {
 
 			.fa {
@@ -105,14 +86,10 @@ body {
 	}
 }
 
-#elementor-preview,
-#elementor-panel {
+#elementor-panel,
+#elementor-preview {
 
 	&:not(.ui-resizable-resizing) {
 		transition: $start .5s, width 0.5s;
-	}
-
-	.ps-scrollbar-y-rail {
-		z-index: 2; // Avoid panel elements (like divider control) from appearing above the scrollbar
 	}
 }

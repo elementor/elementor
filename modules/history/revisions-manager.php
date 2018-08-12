@@ -157,7 +157,7 @@ class Revisions_Manager {
 			if ( ! isset( self::$authors[ $revision->post_author ] ) ) {
 				self::$authors[ $revision->post_author ] = [
 					'avatar' => get_avatar( $revision->post_author, 22 ),
-					'display_name' => get_the_author_meta( 'display_name' , $revision->post_author ),
+					'display_name' => get_the_author_meta( 'display_name', $revision->post_author ),
 				];
 			}
 

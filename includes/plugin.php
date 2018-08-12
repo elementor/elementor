@@ -495,10 +495,11 @@ class Plugin {
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
+		$this->files_manager = new Files_Manager();
 		/*
 		 * @TODO: Remove deprecated alias
 		 */
-		$this->files_manager = $this->posts_css_manager = new Files_Manager();
+		$this->posts_css_manager = $this->files_manager;
 		$this->settings = new Settings();
 		$this->editor = new Editor();
 		$this->preview = new Preview();
@@ -575,6 +576,7 @@ class Plugin {
 	private function __construct() {
 		$this->register_autoloader();
 
+		Maintenance::init();
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );

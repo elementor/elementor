@@ -100,7 +100,8 @@ class Model extends BaseModel {
 	 * @return string CSS wrapper selector.
 	 */
 	public function get_css_wrapper_selector() {
-		return 'body.elementor-page-' . $this->post_parent->ID;
+		$document = Plugin::$instance->documents->get( $this->post_parent->ID );
+		return $document->get_css_wrapper_selector();
 	}
 
 	/**

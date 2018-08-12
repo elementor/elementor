@@ -4,6 +4,8 @@ var BaseElementView = require( 'elementor-elements/views/base' ),
 WidgetView = BaseElementView.extend( {
 	_templateType: null,
 
+	toggleEditTools: true,
+
 	getTemplate: function() {
 		var editModel = this.getEditModel();
 
@@ -193,7 +195,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onClickEdit: function() {
-		this.edit();
+		this.model.trigger( 'request:edit' );
 	}
 } );
 

@@ -68,31 +68,13 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public static function get_editor_panel_config() {
-		return  [
+		return [
 			'elements_categories' => static::get_editor_panel_categories(),
 			'messages' => [
 				/* translators: %s: the document title. */
 				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), self::get_title() ),
 			],
 		];
-	}
-
-	/**
-	 * Set post data.
-	 *
-	 * Set new post data to the document.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @param \WP_Post $post WordPress post data.
-	 *
-	 * @return Document Document post data.
-	 */
-	public function setPost( $post ) {
-		$this->post = $post;
-
-		return $this;
 	}
 
 	/**
@@ -494,7 +476,7 @@ abstract class Document extends Controls_Stack {
 		 * @param string   $url  The edit url.
 		 * @param Document $this The document instance.
 		 */
-		$url = apply_filters( 'elementor/document/urls/edit ', $url, $this );
+		$url = apply_filters( 'elementor/document/urls/edit', $url, $this );
 
 		return $url;
 	}
@@ -510,10 +492,15 @@ abstract class Document extends Controls_Stack {
 		static $url;
 
 		if ( empty( $url ) ) {
+
+			add_filter( 'pre_option_permalink_structure', '__return_empty_string' );
+
 			$url = set_url_scheme( add_query_arg( [
 				'elementor-preview' => $this->get_main_id(),
 				'ver' => time(),
-			] , $this->get_permalink() ) );
+			], $this->get_permalink() ) );
+
+			remove_filter( 'pre_option_permalink_structure', '__return_empty_string' );
 
 			/**
 			 * Document preview URL.
@@ -625,12 +612,27 @@ abstract class Document extends Controls_Stack {
 		return $elements;
 	}
 
+	public function print_elements_with_wrapper( $elements_data = null ) {
+		if ( ! $elements_data ) {
+			$elements_data = $this->get_elements_data();
+		}
+		?>
+		<div class="<?php echo esc_attr( $this->get_container_classes() ); ?>">
+			<div class="elementor-inner">
+				<div class="elementor-section-wrap">
+					<?php $this->print_elements( $elements_data ); ?>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
 	 */
 	public function get_css_wrapper_selector() {
-		return 'elementor-' . $this->get_id();
+		return '';
 	}
 
 	/**
@@ -846,7 +848,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		$date = date_i18n( _x( 'M j, H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
-		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
+		$display_name = get_the_author_meta( 'display_name', $post->post_author );
 
 		if ( $autosave_post || 'revision' === $post->post_type ) {
 			/* translators: 1: Saving date, 2: Author display name */
@@ -905,5 +907,17 @@ abstract class Document extends Controls_Stack {
 		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
 		$page_settings_manager->ajax_before_save_settings( $settings, $this->post->ID );
 		$page_settings_manager->save_settings( $settings, $this->post->ID );
+	}
+
+	protected function print_elements( $elements_data ) {
+		foreach ( $elements_data as $element_data ) {
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			if ( ! $element ) {
+				continue;
+			}
+
+			$element->print_element();
+		}
 	}
 }

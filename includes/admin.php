@@ -15,6 +15,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Admin {
 
+	public function maybe_redirect_to_getting_started() {
+		if ( ! get_transient( 'elementor_activation_redirect' ) ) {
+			return;
+		}
+
+		delete_transient( 'elementor_activation_redirect' );
+
+		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) {
+			return;
+		}
+
+		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
+		exit;
+	}
+
 	/**
 	 * Enqueue admin scripts.
 	 *
@@ -90,7 +105,7 @@ class Admin {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.6.0'
+			'3.8.0'
 		);
 
 		wp_register_style(
@@ -383,7 +398,7 @@ class Admin {
 							esc_url( $upgrade_url ),
 							esc_attr( __( 'Update Elementor Now', 'elementor' ) )
 						);
-						?>
+					?>
 					</p>
 				</div>
 				<div class="elementor-message-action">
@@ -594,7 +609,7 @@ class Admin {
 		?>
 		<div class="e-dashboard-widget">
 			<div class="e-overview__header">
-				<div class="e-overview__logo"><i class="eicon-elementor-square"></i></div>
+				<div class="e-overview__logo"><div class="e-logo-wrapper"><i class="eicon-elementor"></i></div></div>
 				<div class="e-overview__versions">
 					<span class="e-overview__version"><?php echo __( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?></span>
 					<?php
@@ -622,8 +637,8 @@ class Admin {
 					while ( $recently_edited_query->have_posts() ) :
 						$recently_edited_query->the_post();
 
-						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_time( 'U' ) );
-					?>
+						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
+						?>
 					<li class="e-overview__post">
 						 <a href="<?php echo esc_attr( Utils::get_edit_link( get_the_ID() ) ); ?>" class="e-overview__post-link"><?php the_title(); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; ?>, <?php the_time(); ?></span>
 					</li>
@@ -799,6 +814,8 @@ class Admin {
 	 * @access public
 	 */
 	public function __construct() {
+		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
+
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
