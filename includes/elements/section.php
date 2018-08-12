@@ -215,7 +215,7 @@ class Element_Section extends Element_Base {
 	protected static function get_default_edit_tools() {
 		$section_label = __( 'Section', 'elementor' );
 
-		return [
+		$edit_tools = [
 			'add' => [
 				/* translators: %s: Section label */
 				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
@@ -226,12 +226,27 @@ class Element_Section extends Element_Base {
 				'title' => sprintf( __( 'Edit %s', 'elementor' ), $section_label ),
 				'icon' => 'handle',
 			],
+		];
+
+		if ( self::is_edit_buttons_enabled() ) {
+			$edit_tools += [
+				'duplicate' => [
+					/* translators: %s: Section label */
+					'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $section_label ),
+					'icon' => 'clone',
+				],
+			];
+		}
+
+		$edit_tools += [
 			'remove' => [
 				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Remove %s', 'elementor' ), $section_label ),
+				'title' => sprintf( __( 'Delete %s', 'elementor' ), $section_label ),
 				'icon' => 'close',
 			],
 		];
+
+		return $edit_tools;
 	}
 
 	/**
@@ -632,6 +647,14 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} .elementor-background-overlay',
+			]
+		);
+
 		$this->add_control(
 			'overlay_blend_mode',
 			[
@@ -692,6 +715,14 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}}:hover > .elementor-background-overlay',
 			]
 		);
 
@@ -823,7 +854,8 @@ class Element_Section extends Element_Base {
 							'name' => 'background_background',
 							'operator' => '!==',
 							'value' => '',
-						], [
+						],
+						[
 							'name' => 'border_border',
 							'operator' => '!==',
 							'value' => '',
@@ -1378,7 +1410,7 @@ class Element_Section extends Element_Base {
 							<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
 						<?php endif; ?>
 					</div>
-				<?php
+					<?php
 				endif;
 			endif;
 
@@ -1386,9 +1418,9 @@ class Element_Section extends Element_Base {
 									  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
 			if ( $has_background_overlay ) :
-			?>
+				?>
 				<div class="elementor-background-overlay"></div>
-			<?php
+				<?php
 			endif;
 
 			if ( $settings['shape_divider_top'] ) {

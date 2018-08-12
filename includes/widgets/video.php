@@ -207,28 +207,8 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Start Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'description' => __( 'Specify a start time (in seconds)', 'elementor' ),
-				'conditions' => [
-					'relation' => 'or',
-					'terms' => [
-						[
-							'name' => 'video_type',
-							'operator' => '!=',
-							'value' => 'hosted',
-						],
-						[
-							'relation' => 'and',
-							'terms' => [
-								[
-									'name' => 'video_type',
-									'value' => 'hosted',
-								],
-								[
-									'name' => 'loop',
-									'value' => '',
-								],
-							],
-						],
-					],
+				'condition' => [
+					'loop' => '',
 				],
 			]
 		);
@@ -239,27 +219,9 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'End Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
-				'conditions' => [
-					'relation' => 'or',
-					'terms' => [
-						[
-							'name' => 'video_type',
-							'value' => 'youtube',
-						],
-						[
-							'relation' => 'and',
-							'terms' => [
-								[
-									'name' => 'video_type',
-									'value' => 'hosted',
-								],
-								[
-									'name' => 'loop',
-									'value' => '',
-								],
-							],
-						],
-					],
+				'condition' => [
+					'loop' => '',
+					'video_type' => [ 'youtube', 'hosted' ],
 				],
 			]
 		);
@@ -477,6 +439,18 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'lazy_load',
+			[
+				'label' => __( 'Lazy Load', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'show_image_overlay' => 'yes',
+					'video_type!' => 'hosted',
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
@@ -535,12 +509,21 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'169' => '16:9',
+					'219' => '21:9',
 					'43' => '4:3',
 					'32' => '3:2',
 				],
 				'default' => '169',
 				'prefix_class' => 'elementor-aspect-ratio-',
 				'frontend_available' => true,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} .elementor-wrapper',
 			]
 		);
 
@@ -553,6 +536,7 @@ class Widget_Video extends Widget_Base {
 					'show_image_overlay' => 'yes',
 					'show_play_icon' => 'yes',
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -564,7 +548,6 @@ class Widget_Video extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-custom-embed-play i' => 'color: {{VALUE}}',
 				],
-				'separator' => 'before',
 				'condition' => [
 					'show_image_overlay' => 'yes',
 					'show_play_icon' => 'yes',
@@ -818,7 +801,7 @@ class Widget_Video extends Widget_Base {
 				</div>
 			<?php } ?>
 		</div>
-	<?php
+		<?php
 	}
 
 	/**
@@ -871,7 +854,7 @@ class Widget_Video extends Widget_Base {
 			if ( $settings['loop'] ) {
 				$video_properties = Embed::get_video_properties( $settings['youtube_url'] );
 
-				$params[ 'playlist' ] = $video_properties['video_id'];
+				$params['playlist'] = $video_properties['video_id'];
 			}
 
 			$params['start'] = $settings['start'];
@@ -943,10 +926,12 @@ class Widget_Video extends Widget_Base {
 		$embed_options = [];
 
 		if ( 'youtube' === $settings['video_type'] ) {
-			$embed_options[ 'privacy' ] = $settings['yt_privacy'];
+			$embed_options['privacy'] = $settings['yt_privacy'];
 		} elseif ( 'vimeo' === $settings['video_type'] ) {
-			$embed_options[ 'start' ] = $settings['start'];
+			$embed_options['start'] = $settings['start'];
 		}
+
+		$embed_options['lazy_load'] = ! empty( $settings['lazy_load'] );
 
 		return $embed_options;
 	}

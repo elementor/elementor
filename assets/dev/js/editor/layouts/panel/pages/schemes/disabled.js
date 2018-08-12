@@ -5,7 +5,7 @@ PanelSchemeDisabledView = Marionette.ItemView.extend( {
 
 	id: 'elementor-panel-schemes-disabled',
 
-	className: 'elementor-panel-nerd-box',
+	className: 'elementor-nerd-box',
 
 	disabledTitle: '',
 

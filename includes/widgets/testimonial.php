@@ -475,7 +475,7 @@ class Widget_Testimonial extends Widget_Base {
 			</div>
 			<?php endif; ?>
 		</div>
-	<?php
+		<?php
 	}
 
 	/**
@@ -555,6 +555,6 @@ class Widget_Testimonial extends Widget_Base {
 				</div>
 			</div>
 		</div>
-	<?php
+		<?php
 	}
 }

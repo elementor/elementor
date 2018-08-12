@@ -64,18 +64,6 @@ class Frontend {
 	private $registered_fonts = [];
 
 	/**
-	 * Whether the front end mode is active.
-	 *
-	 * Used to determine whether we are in front end mode.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 *
-	 * @var bool Whether the front end mode is active. Default is false.
-	 */
-	private $_is_frontend_mode = false;
-
-	/**
 	 * Whether the page is using Elementor.
 	 *
 	 * Used to determine whether the current page is using Elementor.
@@ -148,7 +136,6 @@ class Frontend {
 		}
 
 		$this->post_id = get_the_ID();
-		$this->_is_frontend_mode = true;
 
 		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $this->post_id ) ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
@@ -160,28 +147,6 @@ class Frontend {
 
 		// Add Edit with the Elementor in Admin Bar.
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
-	}
-
-	/**
-	 * Print elements.
-	 *
-	 * Used to generate the element final HTML on the frontend.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 *
-	 * @param array $elements_data Element data.
-	 */
-	protected function _print_elements( $elements_data ) {
-		foreach ( $elements_data as $element_data ) {
-			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
-
-			if ( ! $element ) {
-				continue;
-			}
-
-			$element->print_element();
-		}
 	}
 
 	/**
@@ -389,7 +354,7 @@ class Frontend {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.6.0'
+			'3.8.0'
 		);
 
 		wp_register_style(
@@ -696,7 +661,7 @@ class Frontend {
 				$fonts_url .= '&subset=' . $subsets[ $locale ];
 			}
 
-			wp_enqueue_style( 'google-fonts-' . $google_fonts_index, $fonts_url );
+			wp_enqueue_style( 'google-fonts-' . $google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
@@ -707,7 +672,7 @@ class Frontend {
 
 				$font_url = sprintf( 'https://fonts.googleapis.com/earlyaccess/%s.css', strtolower( str_replace( ' ', '', $current_font ) ) );
 
-				wp_enqueue_style( 'google-earlyaccess-' . $google_fonts_index, $font_url );
+				wp_enqueue_style( 'google-earlyaccess-' . $google_fonts_index, $font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
 
@@ -761,7 +726,7 @@ class Frontend {
 	public function apply_builder_in_content( $content ) {
 		$this->restore_content_filters();
 
-		if ( ! $this->_is_frontend_mode || $this->_is_excerpt ) {
+		if ( Plugin::$instance->preview->is_preview_mode() || $this->_is_excerpt ) {
 			return $content;
 		}
 
@@ -855,15 +820,8 @@ class Frontend {
 			$css_file->print_css();
 		}
 
-		?>
-		<div class="<?php echo esc_attr( $document->get_container_classes() ); ?>">
-			<div class="elementor-inner">
-				<div class="elementor-section-wrap">
-					<?php $this->_print_elements( $data ); ?>
-				</div>
-			</div>
-		</div>
-		<?php
+		$document->print_elements_with_wrapper( $data );
+
 		$content = ob_get_clean();
 
 		/**

@@ -168,9 +168,9 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<i class="elementor-panel-nerd-box-icon eicon-nerd" aria-hidden="true"></i>
-	<div class="elementor-panel-nerd-box-title">{{{ '<?php echo __( '%s are disabled', 'elementor' ); ?>'.replace( '%s', disabledTitle ) }}}</div>
-	<div class="elementor-panel-nerd-box-message"><?php printf( __( 'You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?></div>
+	<i class="elementor-nerd-box-icon eicon-nerd" aria-hidden="true"></i>
+	<div class="elementor-nerd-box-title">{{{ '<?php echo __( '%s are disabled', 'elementor' ); ?>'.replace( '%s', disabledTitle ) }}}</div>
+	<div class="elementor-nerd-box-message"><?php printf( __( 'You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">
@@ -197,7 +197,7 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 		$scheme_fields = array_intersect_key( $typography_fields, array_flip( $scheme_fields_keys ) );
 
 		foreach ( $scheme_fields as $option_name => $option ) :
-		?>
+			?>
 			<div class="elementor-panel-scheme-typography-item">
 				<div class="elementor-panel-scheme-item-title elementor-control-title"><?php echo $option['label']; ?></div>
 				<div class="elementor-panel-scheme-typography-item-value">
@@ -251,9 +251,9 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-cover">
-    <div class="elementor-dynamic-cover__settings">
-        <i class="fa fa-{{ hasSettings ? 'wrench' : 'database' }}"></i>
-    </div>
+	<div class="elementor-dynamic-cover__settings">
+		<i class="fa fa-{{ hasSettings ? 'wrench' : 'database' }}"></i>
+	</div>
 	<div class="elementor-dynamic-cover__title" title="{{{ title + ' ' + content }}}">{{{ title + ' ' + content }}}</div>
 	<# if ( isRemovable ) { #>
 		<div class="elementor-dynamic-cover__remove">
