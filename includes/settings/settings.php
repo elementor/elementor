@@ -439,7 +439,8 @@ class Settings extends Settings_Page {
 										'class' => 'medium-text',
 									],
 									'sub_desc' => 'px',
-									'desc' => __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: ' . $default_breakpoints['lg'] . ').', 'elementor' ),
+									/* translators: %d: Breakpoint value */
+									'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
 								],
 							],
 							'viewport_md' => [
@@ -453,7 +454,8 @@ class Settings extends Settings_Page {
 										'class' => 'medium-text',
 									],
 									'sub_desc' => 'px',
-									'desc' => __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: ' . $default_breakpoints['md'] . ').', 'elementor' ),
+									/* translators: %d: Breakpoint value */
+									'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
 								],
 							],
 							'global_image_lightbox' => [
