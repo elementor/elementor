@@ -31,7 +31,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertContains( '&action=elementor', $edit_link );
 	}
 
-
 	/**
 	 * @todo need to test when DOING_AJAX is 100% defined and when it's not.
 	 */
@@ -98,13 +97,11 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 
 	public function test_should_get_updated_timezone_string() {
-		for ( $time_offset = 0; $time_offset < 13; $time_offset ++ ) {
+		for ( $time_offset = 0; $time_offset < 13; $time_offset++ ) {
 			update_option( 'gmt_offset', $time_offset );
 			$this->assertSame( "UTC+$time_offset", Utils::get_timezone_string() );
 		}
 	}
-
-
 
 	public function test_should_get_timezone_string_default_option() {
 		delete_option( 'timezone_string' );
@@ -113,7 +110,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_get_negative_timezone_string() {
-		for ( $time_offset = -1; $time_offset > -13; $time_offset -- ) {
+		for ( $time_offset = -1; $time_offset > -13; $time_offset-- ) {
 			update_option( 'gmt_offset', $time_offset );
 			$this->assertSame( "UTC$time_offset", Utils::get_timezone_string() );
 		}
@@ -134,7 +131,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertContains( 'edit.php?action=elementor_new_post&amp;post_type=', $new_post_url );
 		$this->assertContains( '&amp;_wpnonce=', $new_post_url );
 	}
-
 
 	public function test_getYoutubeId() {
 		$youtube_id = '9uOETcuFjbE';
