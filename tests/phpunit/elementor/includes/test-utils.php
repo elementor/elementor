@@ -6,16 +6,16 @@ use Elementor\Testing\Elementor_Test_Base;
 
 class Elementor_Test_Utils extends Elementor_Test_Base {
 
+	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
+
 	public function test_should_return_elementor_pro_link() {
-		$base_link = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
-		$this->assertSame( $base_link . '&utm_term=twentysixteen', Utils::get_pro_link( $base_link ) );
+		$this->assertSame( self::BASE_LINK . '&utm_term=twentysixteen', Utils::get_pro_link( self::BASE_LINK ) );
 	}
 
 	public function test_should_return_elementor_pro_link_with_partner_id() {
 		$id = 'invalid_partner_id';
 		define( 'ELEMENTOR_PARTNER_ID', $id );
-		$base_link = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
-		$this->assertSame( $base_link . "&utm_term=twentysixteen&partner_id=$id", Utils::get_pro_link( $base_link ) );
+		$this->assertSame( self::BASE_LINK . "&utm_term=twentysixteen&partner_id=$id", Utils::get_pro_link( self::BASE_LINK ) );
 	}
 
 	public function test_should_return_source_of_placeholder_image() {
@@ -70,7 +70,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 *
 	 * @expectedExceptionMessage The `from` and `to` URL's must be different
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
@@ -81,7 +80,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 *
 	 * @expectedExceptionMessage The `from` and `to` URL's must be valid URL's
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
@@ -89,6 +87,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	public function test_should_throw_error_because_urls_are_invalid() {
 		Utils::replace_urls( 'elementor', '/elementor' );
 	}
+
 
 	public function test_should_not_get_exit_to_dashboard_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
