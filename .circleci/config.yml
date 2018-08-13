@@ -58,7 +58,8 @@ job-references:
     - run:
         name: "Run PHPUnit on Single Site"
         command: |
-          phpunit --coverage-clover=build/logs/clover.xml
+          mkdir -p ~/phpunit
+          phpunit --coverage-clover=build/logs/clover.xml --log-junit ~/phpunit/junit.xml
     - run:
         name: "Run PHPUnit on Multi Site"
         command: |
@@ -67,6 +68,10 @@ job-references:
         name: "Run PHP Parallel Lint"
         command: |
           parallel-lint --blame --exclude node_modules --exclude vendor .
+    - store_test_results:
+        path: ~/phpunit
+    - store_artifacts:
+        path: ~/phpunit
 
 jobs:
   php54-wp-latest-build:
