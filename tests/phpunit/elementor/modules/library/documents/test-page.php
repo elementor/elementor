@@ -16,8 +16,8 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 	 * @throws \Exception
 	 */
 	public function setUp() {
-		$this->page = new Page( [ 'post_id' => self::factory()->create_and_get_default_post()->ID ] );
 		parent::setUp();
+		$this->page = new Page( [ 'post_id' => self::factory()->create_and_get_default_post()->ID ] );
 	}
 
 	public function test_should_return_properties() {
