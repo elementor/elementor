@@ -20,8 +20,7 @@ workflows:
     - php72-wp-latest-build
     - php72-wp48-build
     - php72-wp47-build
-    - php-lint
-    - js-lint
+    - php-js-lints
 
 version: 2
 
@@ -59,7 +58,8 @@ job-references:
     - run:
         name: "Run PHPUnit on Single Site"
         command: |
-          phpunit --coverage-clover=build/logs/clover.xml
+          mkdir -p ~/phpunit
+          phpunit --coverage-clover=build/logs/clover.xml --log-junit ~/phpunit/junit.xml
     - run:
         name: "Run PHPUnit on Multi Site"
         command: |
@@ -68,6 +68,10 @@ job-references:
         name: "Run PHP Parallel Lint"
         command: |
           parallel-lint --blame --exclude node_modules --exclude vendor .
+    - store_test_results:
+        path: ~/phpunit
+    - store_artifacts:
+        path: ~/phpunit
 
 jobs:
   php54-wp-latest-build:
@@ -202,7 +206,7 @@ jobs:
     - image: pojome/php-cli:7.2
     - image: *mysql_image
 
-  js-lint:
+  php-js-lints:
     docker:
     - image: pojome/php-js-lints
     steps:
@@ -210,17 +214,16 @@ jobs:
     - run:
         name: "Run JS lint"
         command: |
-          jscs -c .jscsrc .
+          mkdir -p /root/junit
+          jscs -c .jscsrc . --reporter=junit > /root/junit/jscs.xml
           jshint .
-
-  php-lint:
-    docker:
-    - image: pojome/php-js-lints
-    steps:
-    - checkout
     - run:
         name: "Run PHP lint"
         command: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
           phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-          phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
+          phpcs -p -s -n . --standard=./ruleset.xml --extensions=php --report=gitblame --report-junit=/root/junit/phpcs.xml
+    - store_test_results:
+        path: ~/junit
+    - store_artifacts:
+        path: ~/junit
