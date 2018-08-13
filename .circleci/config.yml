@@ -2,6 +2,12 @@ workflows:
   version: 2
   tests:
     jobs:
+    - php54-wp-latest-build
+    - php54-wp48-build
+    - php54-wp47-build
+    - php55-wp-latest-build
+    - php55-wp48-build
+    - php55-wp47-build
     - php56-wp-latest-build
     - php56-wp48-build
     - php56-wp47-build
@@ -62,6 +68,50 @@ job-references:
           parallel-lint --blame --exclude node_modules --exclude vendor .
 
 jobs:
+  php54-wp-latest-build:
+    <<: *php_job
+    docker:
+    - image: pojome/php-cli:5.4
+    - image: *mysql_image
+
+  php54-wp48-build:
+    <<: *php_job
+    environment:
+    - WP_VERSION: "4.8"
+    docker:
+    - image: pojome/php-cli:5.4
+    - image: *mysql_image
+
+  php54-wp47-build:
+    <<: *php_job
+    environment:
+    - WP_VERSION: "4.7"
+    docker:
+    - image: pojome/php-cli:5.4
+    - image: *mysql_image
+
+  php55-wp-latest-build:
+    <<: *php_job
+    docker:
+    - image: pojome/php-cli:5.5
+    - image: *mysql_image
+
+  php55-wp48-build:
+    <<: *php_job
+    environment:
+    - WP_VERSION: "4.8"
+    docker:
+    - image: pojome/php-cli:5.5
+    - image: *mysql_image
+
+  php55-wp47-build:
+    <<: *php_job
+    environment:
+    - WP_VERSION: "4.7"
+    docker:
+    - image: pojome/php-cli:5.5
+    - image: *mysql_image
+
   php56-wp-latest-build:
     <<: *php_job
     docker:
