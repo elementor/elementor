@@ -205,7 +205,7 @@ class Settings extends Settings_Page {
 						</div>
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
-							<?php if ( ! empty( $create_xxnew_cpt ) ) : ?>
+							<?php if ( ! empty( $create_new_cpt ) ) : ?>
 							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
 							<?php endif; ?>
 
