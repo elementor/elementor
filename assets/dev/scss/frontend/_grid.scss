@@ -265,7 +265,6 @@ ul.elementor-icon-list-items.elementor-inline-items {
 
 // Simple 12 Columns responsive grid
 .elementor-grid {
-	display: grid;
 
 	.elementor-grid-item {
 		word-break: break-word;
@@ -274,9 +273,18 @@ ul.elementor-icon-list-items.elementor-inline-items {
 	@mixin grid_loop($device) {
 		@for $i from 1 through 12 {
 
+			&#{$device}-0 {
+				.elementor-grid {
+					display: flex;
+					overflow: hidden;
+					flex-wrap: wrap;
+				}
+			}
+
 			&#{$device}-#{$i} {
 				.elementor-grid {
 					grid-template-columns: repeat(#{$i} , 1fr);
+					display: grid;
 				}
 			}
 		}
@@ -290,12 +298,5 @@ ul.elementor-icon-list-items.elementor-inline-items {
 
 	@media (max-width: $screen-sm-max) {
 		@include grid_loop(-mobile);
-	}
-}
-
-.elementor-grid-0 {
-	.elementor-grid {
-		display: flex;
-		overflow: hidden;
 	}
 }
