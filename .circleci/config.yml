@@ -20,8 +20,7 @@ workflows:
     - php72-wp-latest-build
     - php72-wp48-build
     - php72-wp47-build
-    - php-lint
-    - js-lint
+    - php-js-lint
 
 version: 2
 
@@ -212,12 +211,6 @@ jobs:
         command: |
           jscs -c .jscsrc .
           jshint .
-
-  php-lint:
-    docker:
-    - image: pojome/php-js-lints
-    steps:
-    - checkout
     - run:
         name: "Run PHP lint"
         command: |
