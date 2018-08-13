@@ -20,7 +20,7 @@ workflows:
     - php72-wp-latest-build
     - php72-wp48-build
     - php72-wp47-build
-    - php-js-lint
+    - php-js-lints
 
 version: 2
 
@@ -201,7 +201,7 @@ jobs:
     - image: pojome/php-cli:7.2
     - image: *mysql_image
 
-  js-lint:
+  php-js-lints:
     docker:
     - image: pojome/php-js-lints
     steps:
