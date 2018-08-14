@@ -3,8 +3,6 @@ module.exports = Marionette.Region.extend( {
 
 	isDocked: false,
 
-	isDraggingNeedsStop: false,
-
 	opened: false,
 
 	storage: {
@@ -45,9 +43,6 @@ module.exports = Marionette.Region.extend( {
 		return {
 			iframeFix: true,
 			handle: '#elementor-navigator__header',
-			snap: 'body',
-			snapMode: 'inner',
-			snapTolerance: 15,
 			drag: this.onDrag.bind( this ),
 			stop: this.onDragStop.bind( this )
 		};
@@ -129,15 +124,6 @@ module.exports = Marionette.Region.extend( {
 		}
 
 		elementor.$window.off( 'resize', this.ensurePosition );
-	},
-
-	isSnapping: function() {
-		var draggableInstance = this.$el.draggable( 'instance' ),
-			snapElements = draggableInstance.snapElements;
-
-		return snapElements.some( function( element ) {
-			return element.snapping;
-		} );
 	},
 
 	dock: function() {
@@ -232,10 +218,6 @@ module.exports = Marionette.Region.extend( {
 	},
 
 	onDrag: function( event, ui ) {
-		if ( this.isDraggingNeedsStop ) {
-			return false;
-		}
-
 		if ( this.isDocked ) {
 			if ( ui.position.left === ui.originalPosition.left ) {
 				if ( ui.position.top !== ui.originalPosition.top ) {
@@ -252,25 +234,27 @@ module.exports = Marionette.Region.extend( {
 			ui.position.top = 0;
 		}
 
-		if ( this.isSnapping() ) {
-			var elementRight = ui.position.left + this.el.offsetWidth;
-
-			if ( elementRight >= innerWidth ) {
-				this.dock();
-
-				this.isDraggingNeedsStop = true;
-
-				return false;
-			}
+		if ( 0 > ui.position.left ) {
+			ui.position.left = 0;
 		}
+
+		elementor.$body.toggleClass( 'elementor-navigator--dock-hint', ui.position.left + this.el.offsetWidth > innerWidth );
 	},
 
-	onDragStop: function() {
-		this.isDraggingNeedsStop = false;
-
-		if ( ! this.isDocked ) {
-			this.saveSize();
+	onDragStop: function( event, ui ) {
+		if ( this.isDocked ) {
+			return;
 		}
+
+		this.saveSize();
+
+		var elementRight = ui.position.left + this.el.offsetWidth;
+
+		if ( elementRight >= innerWidth ) {
+			this.dock();
+		}
+
+		elementor.$body.removeClass( 'elementor-navigator--dock-hint' );
 	},
 
 	onEditModeSwitched: function() {
