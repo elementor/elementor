@@ -26,6 +26,14 @@ class Admin {
 			return;
 		}
 
+		global $wpdb;
+
+		$has_elementor_page = ! ! $wpdb->get_var( "SELECT `post_id` FROM {$wpdb->postmeta} WHERE `meta_key` = '_elementor_edit_mode' LIMIT 1;" );
+
+		if ( $has_elementor_page ) {
+			return;
+		}
+
 		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
 		exit;
 	}
