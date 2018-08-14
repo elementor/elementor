@@ -95,6 +95,27 @@ class Widget_Button extends Widget_Base {
 	}
 
 	/**
+	 * Get button styles.
+	 *
+	 * Retrieve an array of button styles for the button widget.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @static
+	 *
+	 * @return array An array containing button styles.
+	 */
+	public static function get_button_types() {
+		return [
+			'' => __( 'Default', 'elementor' ),
+			'info' => __( 'Info', 'elementor' ),
+			'success' => __( 'Success', 'elementor' ),
+			'warning' => __( 'Warning', 'elementor' ),
+			'danger' => __( 'Danger', 'elementor' ),
+		];
+	}
+
+	/**
 	 * Register button widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -116,13 +137,7 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
-				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'info' => __( 'Info', 'elementor' ),
-					'success' => __( 'Success', 'elementor' ),
-					'warning' => __( 'Warning', 'elementor' ),
-					'danger' => __( 'Danger', 'elementor' ),
-				],
+				'options' => self::get_button_types(),
 				'prefix_class' => 'elementor-button-',
 			]
 		);
