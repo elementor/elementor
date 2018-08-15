@@ -92,6 +92,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 		item.id = elementor.helpers.getUniqueID();
 
+		item.settings._element_id = '';
+
 		item.elements.forEach( function( childItem, index ) {
 			item.elements[ index ] = self.cloneItem( childItem );
 		} );
