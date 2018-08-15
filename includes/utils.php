@@ -270,9 +270,9 @@ class Utils {
 	}
 
 	/**
-	 * Is post type supports Elementor.
+	 * Is post supports Elementor.
 	 *
-	 * Whether the post type supports editing with Elementor.
+	 * Whether the post supports editing with Elementor.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -280,11 +280,12 @@ class Utils {
 	 *
 	 * @param int $post_id Optional. Post ID. Default is `0`.
 	 *
-	 * @return string True if post type supports editing with Elementor, false otherwise.
+	 * @return string True if post supports editing with Elementor, false otherwise.
 	 */
-	public static function is_post_type_support( $post_id = 0 ) {
+	public static function is_post_support( $post_id = 0 ) {
 		$post_type = get_post_type( $post_id );
-		$is_supported = post_type_supports( $post_type, 'elementor' );
+
+		$is_supported = self::is_post_type_support( $post_type );
 
 		/**
 		 * Is post type support.
@@ -292,14 +293,54 @@ class Utils {
 		 * Filters whether the post type supports editing with Elementor.
 		 *
 		 * @since 1.0.0
+		 * @deprecated 2.2.0 Use `elementor/utils/is_post_support` Instead
 		 *
-		 * @param bool   $is_supported Whether the post type supports editing with Elementor.
-		 * @param int    $post_id      Post ID.
-		 * @param string $post_type    Post type.
+		 * @param bool $is_supported Whether the post type supports editing with Elementor.
+		 * @param int $post_id Post ID.
+		 * @param string $post_type Post type.
 		 */
 		$is_supported = apply_filters( 'elementor/utils/is_post_type_support', $is_supported, $post_id, $post_type );
 
+		/**
+		 * Is post support.
+		 *
+		 * Filters whether the post supports editing with Elementor.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param bool $is_supported Whether the post type supports editing with Elementor.
+		 * @param int $post_id Post ID.
+		 * @param string $post_type Post type.
+		 */
+		$is_supported = apply_filters( 'elementor/utils/is_post_support', $is_supported, $post_id, $post_type );
+
 		return $is_supported;
+	}
+
+
+	/**
+	 * Is post type supports Elementor.
+	 *
+	 * Whether the post type supports editing with Elementor.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 * @static
+	 *
+	 * @param string $post_type Post Type.
+	 *
+	 * @return string True if post type supports editing with Elementor, false otherwise.
+	 */
+	public static function is_post_type_support( $post_type ) {
+		if ( ! post_type_exists( $post_type ) ) {
+			return false;
+		}
+
+		if ( ! post_type_supports( $post_type, 'elementor' ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -558,7 +599,7 @@ class Utils {
 		$length = array_search( $key, array_keys( $array ), true ) + 1;
 
 		return array_slice( $array, 0, $length, true ) +
-				$insert +
-				array_slice( $array, $length, null, true );
+			$insert +
+			array_slice( $array, $length, null, true );
 	}
 }
