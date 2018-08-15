@@ -252,7 +252,7 @@ class Admin {
 	public function body_status_classes( $classes ) {
 		global $pagenow;
 
-		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ], true ) && Utils::is_post_type_support() ) {
+		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ], true ) && Utils::is_post_support() ) {
 			$post = get_post();
 
 			$mode_class = Plugin::$instance->db->is_built_with_elementor( $post->ID ) ? 'elementor-editor-active' : 'elementor-editor-inactive';
@@ -343,10 +343,23 @@ class Admin {
 
 		// Check if have any upgrades.
 		$update_plugins = get_site_transient( 'update_plugins' );
-		if ( empty( $update_plugins ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ] ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ]->package ) ) {
+
+		$has_remote_update_package = ! ( empty( $update_plugins ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ] ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ]->package ) );
+
+		if ( ! $has_remote_update_package && empty( $upgrade_notice['update_link'] ) ) {
 			return;
 		}
-		$product = $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ];
+
+		if ( $has_remote_update_package ) {
+			$product = $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ];
+
+			$details_url = self_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $product->slug . '&section=changelog&TB_iframe=true&width=600&height=800' );
+			$upgrade_url = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . ELEMENTOR_PLUGIN_BASE ), 'upgrade-plugin_' . ELEMENTOR_PLUGIN_BASE );
+			$new_version = $product->new_version;
+		} else {
+			$details_url = $upgrade_url = $upgrade_notice['update_link'];
+			$new_version = $upgrade_notice['version'];
+		}
 
 		// Check if have upgrade notices to show.
 		if ( version_compare( ELEMENTOR_VERSION, $upgrade_notice['version'], '>=' ) ) {
@@ -357,9 +370,6 @@ class Admin {
 		if ( User::is_user_notice_viewed( $notice_id ) ) {
 			return;
 		}
-
-		$details_url = self_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $product->slug . '&section=changelog&TB_iframe=true&width=600&height=800' );
-		$upgrade_url = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . ELEMENTOR_PLUGIN_BASE ), 'upgrade-plugin_' . ELEMENTOR_PLUGIN_BASE );
 		?>
 		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
 			<div class="elementor-message-inner">
@@ -377,9 +387,9 @@ class Admin {
 							esc_attr( sprintf(
 								/* translators: %s: Elementor version */
 								__( 'View Elementor version %s details', 'elementor' ),
-								$product->new_version
+								$new_version
 							) ),
-							$product->new_version,
+							$new_version,
 							esc_url( $upgrade_url ),
 							esc_attr( __( 'Update Elementor Now', 'elementor' ) )
 						);
