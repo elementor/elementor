@@ -377,7 +377,9 @@ class Admin {
 			$upgrade_url = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . ELEMENTOR_PLUGIN_BASE ), 'upgrade-plugin_' . ELEMENTOR_PLUGIN_BASE );
 			$new_version = $product->new_version;
 		} else {
-			$details_url = $upgrade_url = $upgrade_notice['update_link'];
+			$upgrade_url = $upgrade_notice['update_link'];
+			$details_url = $upgrade_url;
+
 			$new_version = $upgrade_notice['version'];
 		}
 
