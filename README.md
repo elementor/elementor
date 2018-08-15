@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.1.5  
+**Stable tag:** 2.1.6  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -217,6 +217,12 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.1.6 - 2018-07-31 ###
+* Fix: Removed reference to source map file in Swiper minified file
+* Fix: Element handle style glitch in mobile view
+* Fix: Delete element with hotkey after text editing
+* Fix: Avoid auto focus on the widget panel search field after deleting an element
 
 ### 2.1.5 - 2018-07-26 ###
 * Tweak: Added `Ctrl/Cmd + Y` for redo action ([#5090](https://github.com/pojome/elementor/issues/5090))
