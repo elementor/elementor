@@ -721,6 +721,16 @@ class Admin {
 		);
 	}
 
+	public function init_new_template() {
+		if ( 'edit-elementor_library' !== get_current_screen()->id ) {
+			return;
+		}
+
+		add_action( 'admin_footer', [ $this, 'print_new_template_template' ] );
+
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
+	}
+
 	/**
 	 * Admin constructor.
 	 *
@@ -758,17 +768,7 @@ class Admin {
 		// Admin Actions
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 
-		add_action( 'current_screen', function () {
-			$this->init_new_template();
-		} );
-	}
-
-	private function init_new_template() {
-		if ( 'edit-elementor_library' === get_current_screen()->id ) {
-			add_action( 'admin_footer', [ $this, 'print_new_template_template' ] );
-
-			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
-		}
+		add_action( 'current_screen', [ $this, 'init_new_template' ] );
 	}
 
 	private function print_library_layout_template() {
