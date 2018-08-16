@@ -398,6 +398,19 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+				'download_button',
+				[
+					'label' => __( 'Download Button', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_off' => __( 'Hide', 'elementor' ),
+					'label_on' => __( 'Show', 'elementor' ),
+					'condition' => [
+						'video_type' => 'hosted',
+					],
+				]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -949,6 +962,10 @@ class Widget_Video extends Widget_Base {
 
 		if ( $settings['mute'] ) {
 			$video_params[] = 'muted';
+		}
+
+		if ( ! $settings['download_button'] ) {
+			$video_params[] = 'controlsList="nodownload"';
 		}
 
 		return $video_params;
