@@ -31,18 +31,28 @@
 		background-color: #fff;
 		border-bottom: 1px solid $editor-background;
 		cursor: move;
+
+		&__title {
+			font-weight: 500;
+		}
+	}
+
+	&__close,
+	&__toggle-all {
+		transition: color .5s;
+		cursor: pointer;
+
+		&:not(:hover) {
+			color: $editor-light;
+		}
 	}
 
 	&__toggle-all {
 		font-size: 14px;
-		cursor: pointer;
-		color: $editor-light;
 	}
 
 	&__close {
 		font-size: 11px;
-		cursor: pointer;
-		color: $editor-light;
 	}
 
 	&__elements {
@@ -76,7 +86,7 @@
 		display: flex;
 		height: 32px;
 		@include padding-end(9px);
-		font-size: 11px;
+		font-size: 12px;
 		border-bottom: 1px solid $editor-background;
 		cursor: pointer;
 
