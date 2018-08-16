@@ -23,6 +23,8 @@ php:
     - 5.5
     - 5.6
     - 7.0
+    - 7.1
+    - 7.2
 
 # WordPress version used in first build configuration.
 env:
@@ -32,10 +34,6 @@ env:
     - WP_VERSION=4.8 WP_MULTISITE=1
     - WP_VERSION=4.7 WP_MULTISITE=0
     - WP_VERSION=4.7 WP_MULTISITE=1
-    - WP_VERSION=4.6 WP_MULTISITE=0
-    - WP_VERSION=4.6 WP_MULTISITE=1
-    - WP_VERSION=4.5 WP_MULTISITE=0
-    - WP_VERSION=4.5 WP_MULTISITE=1
 
 install:
   - curl -s http://getcomposer.org/installer | php
@@ -55,9 +53,10 @@ before_script:
       else
         composer global require "phpunit/phpunit=4.8.*"
       fi
-  - composer require satooshi/php-coveralls '~1.0'
+  - composer require php-coveralls/php-coveralls '~1.1'
   - composer global require wp-coding-standards/wpcs
   - phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+  - composer global require --dev jakub-onderka/php-parallel-lint
 #  - npm install -g grunt-cli
 #  - npm install
 
@@ -66,6 +65,7 @@ script:
   - jscs -c .jscsrc .
   - jshint .
   - phpunit --coverage-clover=build/logs/clover.xml
+  - parallel-lint --blame --exclude node_modules --exclude vendor .
 #  - grunt test --verbose
 
 after_success:

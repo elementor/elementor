@@ -6,11 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor base multiple control.
+ * Elementor control base multiple.
  *
- * A base control for creating controls that return more than a single value.
- * Each value of the multi-value control will be returned as an item in a
- * key => value array.
+ * An abstract class for creating new controls in the panel that return
+ * more than a single value. Each value of the multi-value control will
+ * be returned as an item in a `key => value` array.
  *
  * @since 1.0.0
  * @abstract
@@ -18,9 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Control_Base_Multiple extends Base_Data_Control {
 
 	/**
-	 * Retrieve multiple control default value.
+	 * Get multiple control default value.
 	 *
-	 * Get the default value of the multiple control. Used to return the default
+	 * Retrieve the default value of the multiple control. Used to return the default
 	 * values while initializing the multiple control.
 	 *
 	 * @since 1.0.0
@@ -33,20 +33,20 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve multiple control value.
+	 * Get multiple control value.
 	 *
-	 * Get the value of the multiple control from a specific widget settings.
+	 * Retrieve the value of the multiple control from a specific Controls_Stack settings.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $control Control
-	 * @param array $widget  Widget
+	 * @param array $control  Control
+	 * @param array $settings Settings
 	 *
 	 * @return mixed Control values.
 	 */
-	public function get_value( $control, $widget ) {
-		$value = parent::get_value( $control, $widget );
+	public function get_value( $control, $settings ) {
+		$value = parent::get_value( $control, $settings );
 
 		if ( empty( $control['default'] ) ) {
 			$control['default'] = [];
@@ -68,16 +68,16 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve multiple control style value.
+	 * Get multiple control style value.
 	 *
-	 * Get the style of the control. Used when adding CSS rules to the control
+	 * Retrieve the style of the control. Used when adding CSS rules to the control
 	 * while extracting CSS from the `selectors` data argument.
 	 *
 	 * @since 1.0.5
 	 * @access public
 	 *
 	 * @param string $css_property  CSS property.
-	 * @param string $control_value Control value.
+	 * @param array $control_value Control value.
 	 *
 	 * @return array Control style value.
 	 */

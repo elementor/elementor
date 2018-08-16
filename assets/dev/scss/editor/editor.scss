@@ -1,6 +1,7 @@
 // Core variables and mixins
 @import "../helpers/variables";
 @import "../helpers/mixins";
+@import "breakpoints";
 
 // Common
 @import "../common/common";
@@ -18,11 +19,17 @@
 @import "perfect-scrollbar";
 @import "nprogress";
 @import "panel/panel";
+@import "panel/control";
+@import "panel/color-picker";
 @import "mode-switcher";
 @import "../../../../modules/history/assets/scss/revisions";
 @import "../../../../modules/history/assets/scss/history";
 
 @import "devices";
 @import "tipsy";
+@import "templates-modal-wrapper";
 @import "templates-modal";
+@import "dynamic-tags";
 @import "notifications";
+@import "context-menu";
+@import "introduction";

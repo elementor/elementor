@@ -57,19 +57,17 @@ class Widget_Progress extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the progress widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return [ 'progress', 'bar' ];
 	}
 
 	/**
@@ -93,6 +91,9 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'My Skill', 'elementor' ),
 				'label_block' => true,
@@ -143,6 +144,9 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => __( 'Inner Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'e.g. Web Designer', 'elementor' ),
 				'default' => __( 'Web Designer', 'elementor' ),
 				'label_block' => true,
@@ -251,7 +255,7 @@ class Widget_Progress extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'wrapper', [
 			'class' => 'elementor-progress-wrapper',
@@ -259,7 +263,7 @@ class Widget_Progress extends Widget_Base {
 			'aria-valuemin' => '0',
 			'aria-valuemax' => '100',
 			'aria-valuenow' => $settings['percent']['size'],
-			'aria-valuetext' => $settings['inner_text']
+			'aria-valuetext' => $settings['inner_text'],
 		] );
 
 		if ( ! empty( $settings['progress_type'] ) ) {

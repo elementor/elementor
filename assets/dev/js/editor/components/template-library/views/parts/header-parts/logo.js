@@ -1,13 +1,23 @@
 module.exports = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-template-library-header-logo',
+	template: '#tmpl-elementor-templates-modal__header__logo',
 
-	id: 'elementor-template-library-header-logo',
+	className: 'elementor-templates-modal__header__logo',
 
 	events: {
 		'click': 'onClick'
 	},
 
+	templateHelpers: function() {
+		return {
+			title: this.getOption( 'title' )
+		};
+	},
+
 	onClick: function() {
-		elementor.templates.setTemplatesSource( 'remote' );
+		var clickCallback = this.getOption( 'click' );
+
+		if ( clickCallback ) {
+			clickCallback();
+		}
 	}
 } );

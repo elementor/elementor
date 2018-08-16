@@ -2,13 +2,14 @@
 namespace Elementor;
 
 use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Utils\Exceptions;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * Elementor widgets manager class.
+ * Elementor widgets manager.
  *
  * Elementor widgets manager handler class is responsible for registering and
  * initializing all the supported Elementor widgets.
@@ -35,10 +36,10 @@ class Widgets_Manager {
 	 * Initialize Elementor widgets manager. Include all the the widgets files
 	 * and register each Elementor and WordPress widget.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	*/
-	private function _init_widgets() {
+	private function init_widgets() {
 		$build_widgets_filename = [
 			'common',
 			'heading',
@@ -82,7 +83,7 @@ class Widgets_Manager {
 			$this->register_widget_type( new $class_name() );
 		}
 
-		$this->_register_wp_widgets();
+		$this->register_wp_widgets();
 
 		/**
 		 * After widgets registered.
@@ -104,10 +105,10 @@ class Widgets_Manager {
 	 * Exclude the widgets that are in Elementor widgets black list. Theme and
 	 * plugin authors can filter the black list.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	*/
-	private function _register_wp_widgets() {
+	private function register_wp_widgets() {
 		global $wp_widget_factory;
 
 		// Skip Pojo widgets.
@@ -164,10 +165,10 @@ class Widgets_Manager {
 	 *
 	 * Require Elementor widget base class.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	*/
-	private function _require_files() {
+	private function require_files() {
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
 	}
 
@@ -185,7 +186,7 @@ class Widgets_Manager {
 	*/
 	public function register_widget_type( Widget_Base $widget ) {
 		if ( is_null( $this->_widget_types ) ) {
-			$this->_init_widgets();
+			$this->init_widgets();
 		}
 
 		$this->_widget_types[ $widget->get_name() ] = $widget;
@@ -225,11 +226,11 @@ class Widgets_Manager {
 	 *
 	 * @param string $widget_name Optional. Widget name. Default is null.
 	 *
-	 * @return null|Widget_Base[] Registered widget types.
+	 * @return Widget_Base|Widget_Base[]|null Registered widget types.
 	*/
 	public function get_widget_types( $widget_name = null ) {
 		if ( is_null( $this->_widget_types ) ) {
-			$this->_init_widgets();
+			$this->init_widgets();
 		}
 
 		if ( null !== $widget_name ) {
@@ -253,10 +254,6 @@ class Widgets_Manager {
 		$config = [];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
-			if ( ! $widget->show_in_panel() ) {
-				continue;
-			}
-
 			$config[ $widget_key ] = $widget->get_config();
 		}
 
@@ -273,45 +270,40 @@ class Widgets_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $request
+	 * @throws \Exception If current user don't have permissions to edit the post.
 	 *
-	 * @return array
-	 * @throws \Exception
+	 * @param array $request Ajax request.
+	 *
+	 * @return array {
+	 *     Rendered widget.
+	 *
+	 *     @type string $render The rendered HTML.
+	 * }
 	 */
 	public function ajax_render_widget( $request ) {
-		if ( empty( $request['post_id'] ) ) {
-			throw new \Exception( 'no_post_id' );
-		}
+		$document = Plugin::$instance->documents->get( $request['editor_post_id'] );
 
-		if ( ! User::is_current_user_can_edit( $request['post_id'] ) ) {
-			throw new \Exception( 'no_access' );
+		if ( ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
 		}
 
 		// Override the global $post for the render.
 		query_posts(
 			[
-				'p' => $request['post_id'],
+				'p' => $request['editor_post_id'],
 				'post_type' => 'any',
 			]
 		);
 
-		Plugin::$instance->db->switch_to_post( $request['post_id'] );
+		$editor = Plugin::$instance->editor;
+		$is_edit_mode = $editor->is_edit_mode();
+		$editor->set_edit_mode( true );
 
-		$data = $request['data'];
+		Plugin::$instance->documents->switch_to_document( $document );
 
-		// Start buffering
-		ob_start();
+		$render_html = $document->render_element( $request['data'] );
 
-		/** @var Widget_Base $widget */
-		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
-
-		if ( ! $widget ) {
-			throw new \Exception( 'Widget Not Found' );
-		}
-
-		$widget->render_content();
-
-		$render_html = ob_get_clean();
+		$editor->set_edit_mode( $is_edit_mode );
 
 		return [
 			'render' => $render_html,
@@ -328,9 +320,9 @@ class Widgets_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $request
+	 * @param array $request Ajax request.
 	 *
-	 * @return bool|string
+	 * @return bool|string Rendered widget form.
 	 */
 	public function ajax_get_wp_widget_form( $request ) {
 		if ( empty( $request['widget_type'] ) ) {
@@ -341,13 +333,11 @@ class Widgets_Manager {
 			$request['data'] = [];
 		}
 
-		$data = json_decode( stripslashes( $request['data'] ), true );
-
 		$element_data = [
 			'id' => $request['id'],
 			'elType' => 'widget',
 			'widgetType' => $request['widget_type'],
-			'settings' => $data,
+			'settings' => $request['data'],
 		];
 
 		/**
@@ -481,19 +471,23 @@ class Widgets_Manager {
 	 * @access public
 	*/
 	public function __construct() {
-		$this->_require_files();
+		$this->require_files();
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
 	/**
+	 * Register ajax actions.
+	 *
+	 * Add new actions to handle data after an ajax requests returned.
+	 *
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_handler
+	 * @param Ajax_Manager $ajax_manager
 	 */
-	public function register_ajax_actions( $ajax_handler ) {
-		$ajax_handler->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
-		$ajax_handler->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
+	public function register_ajax_actions( $ajax_manager ) {
+		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
+		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 	}
 }

@@ -14,29 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * the content typography including font size, font family, font weight, text
  * transform, font style, line height and letter spacing.
  *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- *    $this->add_group_control(
- *    	Group_Control_Typography::get_type(),
- *    	[
- *    		'name' => 'content_typography',
- *    		'scheme' => Scheme_Typography::TYPOGRAPHY_1,
- *    		'selector' => '{{WRAPPER}} .text',
- *    		'separator' => 'before',
- *    	]
- *    );
- *
  * @since 1.0.0
- *
- * @param string $name        The field name.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
  */
 class Group_Control_Typography extends Group_Control_Base {
 
@@ -68,24 +46,24 @@ class Group_Control_Typography extends Group_Control_Base {
 	private static $_scheme_fields_keys = [ 'font_family', 'font_weight' ];
 
 	/**
-	 * Retrieve scheme fields keys.
+	 * Get scheme fields keys.
 	 *
-	 * Get all the available typography control scheme fields keys.
+	 * Retrieve all the available typography control scheme fields keys.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
-	 * @return string Scheme fields keys.
+	 * @return array Scheme fields keys.
 	 */
 	public static function get_scheme_fields_keys() {
 		return self::$_scheme_fields_keys;
 	}
 
 	/**
-	 * Retrieve type.
-	 *
 	 * Get typography control type.
+	 *
+	 * Retrieve the control type, in this case `typography`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -287,8 +265,15 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	/**
+	 * Get default options.
+	 *
+	 * Retrieve the default options of the typography control. Used to return the
+	 * default options while initializing the typography control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default typography control options.
 	 */
 	protected function get_default_options() {
 		return [

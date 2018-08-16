@@ -2,7 +2,41 @@ module.exports = function( grunt ) {
 	'use strict';
 
 	var remapify = require( 'remapify' ),
+		fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' );
+
+	var getBuildFiles = function() {
+		return [
+			'**',
+			'!node_modules/**',
+			'!docs/**',
+			'!build/**',
+			'!bin/**',
+			'!.git/**',
+			'!tests/**',
+			'!.github/**',
+			'!.travis.yml',
+			'!.jscsrc',
+			'!.jshintignore',
+			'!.jshintrc',
+			'!ruleset.xml',
+			'!README.md',
+			'!phpunit.xml',
+			'!vendor/**',
+			'!Gruntfile.js',
+			'!package.json',
+			'!package-lock.json',
+			'!npm-debug.log',
+			'!composer.json',
+			'!composer.lock',
+			'!.gitignore',
+			'!.gitmodules',
+
+			'!assets/dev/**',
+			'!assets/**/*.map',
+			'!*~'
+		];
+	};
 
 	require( 'matchdep' ).filterDev( 'grunt-*' ).forEach( grunt.loadNpmTasks );
 
@@ -105,6 +139,11 @@ module.exports = function( grunt ) {
 							expose: 'elementor-templates'
 						},
 						{
+							cwd: 'assets/dev/js/editor/components/dynamic-tags',
+							src: '**/*.js',
+							expose: 'elementor-dynamic-tags'
+						},
+						{
 							cwd: 'assets/dev/js/frontend',
 							src: '**/*.js',
 							expose: 'elementor-frontend'
@@ -148,6 +187,7 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
 					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
+					'assets/js/gutenberg.js': [ 'assets/dev/js/admin/gutenberg.js' ],
 					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ]
 				},
 				options: pkgInfo.browserify
@@ -155,7 +195,7 @@ module.exports = function( grunt ) {
 
 		},
 
-		// Extract sourcemap to separate file
+		// Extract sourcemap to a separated file
 		exorcise: {
 			bundle: {
 				options: {},
@@ -182,6 +222,9 @@ module.exports = function( grunt ) {
 					'assets/js/admin-feedback.min.js': [
 						'assets/js/admin-feedback.js'
 					],
+					'assets/js/gutenberg.min.js': [
+						'assets/js/gutenberg.js'
+					],
 					'assets/js/frontend.min.js': [
 						'assets/js/frontend.js'
 					]
@@ -197,9 +240,7 @@ module.exports = function( grunt ) {
 				files: {
 					src: [
 						'assets/js/*.js',
-						'assets/css/*.css',
-
-						'!assets/css/animations.min.css'
+						'assets/css/*.css'
 					]
 				}
 			}
@@ -216,10 +257,10 @@ module.exports = function( grunt ) {
 		},
 
 		sass: {
-			options: {
-				sourceMap: true
-			},
 			dist: {
+				options: {
+					sourceMap: true
+				},
 				files: [ {
 					expand: true,
 					cwd: 'assets/dev/scss/direction',
@@ -274,10 +315,12 @@ module.exports = function( grunt ) {
 			styles: {
 				files: [
 					'assets/dev/scss/**/*.scss',
-					'modules/**/*.scss'
+					'modules/**/*.scss',
+					'!assets/dev/scss/frontend/breakpoints/proxy.scss'
 				],
-				tasks: [ 'styles' ],
+				tasks: [ 'styles:true' ],
 				options: {
+					spawn: false,
 					livereload: true
 				}
 			},
@@ -287,8 +330,9 @@ module.exports = function( grunt ) {
 					'assets/dev/js/**/*.js',
 					'modules/**/*.js'
 				],
-				tasks: [ 'scripts' ],
+				tasks: [ 'scripts:true' ],
 				options: {
+					spawn: false,
 					livereload: true
 				}
 			}
@@ -383,37 +427,14 @@ module.exports = function( grunt ) {
 
 		copy: {
 			main: {
-				src: [
-					'**',
-					'!node_modules/**',
-					'!docs/**',
-					'!build/**',
-					'!bin/**',
-					'!.git/**',
-					'!tests/**',
-					'!.github/**',
-					'!.travis.yml',
-					'!.jscsrc',
-					'!.jshintignore',
-					'!.jshintrc',
-					'!ruleset.xml',
-					'!README.md',
-					'!phpunit.xml',
-					'!vendor/**',
-					'!Gruntfile.js',
-					'!package.json',
-					'!npm-debug.log',
-					'!composer.json',
-					'!composer.lock',
-					'!.gitignore',
-					'!.gitmodules',
-
-					'!assets/dev/**',
-					'!assets/**/*.map',
-					'!*~'
-				],
+				src: getBuildFiles(),
 				expand: true,
 				dest: 'build/'
+			},
+			secondary: {
+				src: getBuildFiles(),
+				expand: true,
+				dest: '/tmp/elementor-builds/<%= pkg.version %>/'
 			}
 		},
 
@@ -445,17 +466,54 @@ module.exports = function( grunt ) {
 		'checktextdomain'
 	] );
 
-	grunt.registerTask( 'scripts', [
-		'jshint',
-		'browserify',
-		'exorcise',
-		'uglify'
-	] );
+	grunt.registerTask( 'scripts', function( isDevMode ) {
+		grunt.task.run( 'jshint' );
+		grunt.task.run( 'browserify' );
 
-	grunt.registerTask( 'styles', [
-		'sass',
-		'postcss'
-	] );
+		if ( ! isDevMode ) {
+			grunt.task.run( 'exorcise' );
+			grunt.task.run( 'uglify' );
+		}
+	} );
+
+	grunt.registerTask( 'styles', function( isDevMode ) {
+		grunt.task.run( 'sass' );
+
+		if ( ! isDevMode ) {
+			grunt.task.run( 'postcss' );
+			grunt.task.run( 'css_templates' );
+		}
+	} );
+
+	grunt.registerTask( 'css_templates', function() {
+		grunt.task.run( 'css_templates_proxy:templates' );
+
+		grunt.config( 'sass.dist', {
+			files: [ {
+				expand: true,
+				cwd: 'assets/dev/scss/direction',
+				src: [ 'frontend.scss', 'frontend-rtl.scss' ],
+				dest: 'assets/css/templates',
+				ext: '.css'
+			} ]
+		} );
+
+		grunt.task.run( 'sass' );
+
+		grunt.config( 'postcss.minify.files.0.src', [
+			'assets/css/templates/*.css',
+			'!assets/css/templates/*.min.css'
+		] );
+
+		grunt.task.run( 'postcss:minify' );
+
+		grunt.task.run( 'css_templates_proxy:values' );
+	} );
+
+	// Writing the proxy file as a grunt task, in order to fit in with the tasks queue
+	grunt.registerTask( 'css_templates_proxy', function( mode ) {
+		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "' + mode + '";' );
+	} );
 
 	grunt.registerTask( 'build', [
 		'default',

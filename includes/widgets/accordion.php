@@ -58,19 +58,17 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the accordion widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return [ 'accordion', 'tabs', 'toggle' ];
 	}
 
 	/**
@@ -89,11 +87,37 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'tab_title',
+			[
+				'label' => __( 'Title & Content', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => __( 'Accordion Title' , 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+			]
+		);
+
+		$repeater->add_control(
+			'tab_content',
+			[
+				'label' => __( 'Content', 'elementor' ),
+				'type' => Controls_Manager::WYSIWYG,
+				'default' => __( 'Accordion Content', 'elementor' ),
+				'show_label' => false,
+			]
+		);
+
 		$this->add_control(
 			'tabs',
 			[
 				'label' => __( 'Accordion Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
 						'tab_title' => __( 'Accordion #1', 'elementor' ),
@@ -102,22 +126,6 @@ class Widget_Accordion extends Widget_Base {
 					[
 						'tab_title' => __( 'Accordion #2', 'elementor' ),
 						'tab_content' => __( 'I am item content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					],
-				],
-				'fields' => [
-					[
-						'name' => 'tab_title',
-						'label' => __( 'Title & Content', 'elementor' ),
-						'type' => Controls_Manager::TEXT,
-						'default' => __( 'Accordion Title' , 'elementor' ),
-						'label_block' => true,
-					],
-					[
-						'name' => 'tab_content',
-						'label' => __( 'Content', 'elementor' ),
-						'type' => Controls_Manager::WYSIWYG,
-						'default' => __( 'Accordion Content', 'elementor' ),
-						'show_label' => false,
 					],
 				],
 				'title_field' => '{{{ tab_title }}}',
@@ -130,6 +138,28 @@ class Widget_Accordion extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
+			]
+		);
+
+		$this->add_control(
+			'icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-plus',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'icon_active',
+			[
+				'label' => __( 'Active Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-minus',
+				'condition' => [
+					'icon!' => '',
+				],
 			]
 		);
 
@@ -149,29 +179,6 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'default' => 'div',
 				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'icon',
-			[
-				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-plus',
-				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
-			'icon_active',
-			[
-				'label' => __( 'Active Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-minus',
-				'label_block' => true,
-				'condition' => [
-					'icon!' => '',
-				],
 			]
 		);
 
@@ -447,12 +454,13 @@ class Widget_Accordion extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
 		<div class="elementor-accordion" role="tablist">
-			<?php foreach ( $settings['tabs'] as $index => $item ) :
+			<?php
+			foreach ( $settings['tabs'] as $index => $item ) :
 				$tab_count = $index + 1;
 
 				$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );

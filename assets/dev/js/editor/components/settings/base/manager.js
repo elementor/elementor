@@ -3,8 +3,6 @@ var ViewModule = require( 'elementor-utils/view-module' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
 module.exports = ViewModule.extend( {
-	controlsCSS: null,
-
 	model: null,
 
 	hasChange: false,
@@ -29,19 +27,22 @@ module.exports = ViewModule.extend( {
 			title: this.getSettings( 'panelPage.title' ),
 			options: {
 				model: this.model,
+				controls: this.model.controls,
 				name: name
 			}
 		} );
 	},
 
 	updateStylesheet: function( keepOldEntries ) {
+		var controlsCSS = this.getControlsCSS();
+
 		if ( ! keepOldEntries ) {
-			this.controlsCSS.stylesheet.empty();
+			controlsCSS.stylesheet.empty();
 		}
 
-		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
+		controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
-		this.controlsCSS.addStyleToDocument();
+		controlsCSS.addStyleToDocument();
 	},
 
 	initModel: function() {
@@ -51,7 +52,23 @@ module.exports = ViewModule.extend( {
 	},
 
 	initControlsCSSParser: function() {
-		this.controlsCSS = new ControlsCSSParser( { id: this.getSettings( 'name' ) } );
+		var controlsCSS;
+
+		this.getControlsCSS = function() {
+			if ( ! controlsCSS ) {
+				controlsCSS = new ControlsCSSParser( {
+					id: this.getSettings( 'name' ),
+					settingsModel: this.model
+				} );
+
+				/*
+				 * @deprecated 2.1.0
+				 */
+				this.controlsCSS = controlsCSS;
+			}
+
+			return controlsCSS;
+		};
 	},
 
 	getDataToSave: function( data ) {
@@ -105,7 +122,7 @@ module.exports = ViewModule.extend( {
 				pageName: this.getSettings( 'name' ) + '_settings'
 			};
 
-		elementor.modules.panel.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
+		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
 	},
 
 	onInit: function() {
@@ -125,7 +142,7 @@ module.exports = ViewModule.extend( {
 
 		self.hasChange = true;
 
-		this.controlsCSS.stylesheet.empty();
+		this.getControlsCSS().stylesheet.empty();
 
 		_.each( model.changed, function( value, key ) {
 			if ( self.changeCallbacks[ key ] ) {
@@ -142,5 +159,9 @@ module.exports = ViewModule.extend( {
 		this.updateStylesheet();
 
 		this.addPanelPage();
+
+		if ( ! elementor.userCan( 'design' ) ) {
+			elementor.panel.currentView.setPage( 'page_settings' );
+		}
 	}
 } );

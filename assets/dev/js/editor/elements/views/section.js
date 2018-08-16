@@ -3,11 +3,9 @@ var BaseElementView = require( 'elementor-elements/views/base' ),
 	SectionView;
 
 SectionView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-section-content' ),
+	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
 
 	addSectionView: null,
-
-	toggleEditTools: false,
 
 	className: function() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
@@ -29,12 +27,6 @@ SectionView = BaseElementView.extend( {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'column'
-			},
-			HandleDuplicate: {
-				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-			},
-			HandleAddMode: {
-				behaviorClass: require( 'elementor-behaviors/duplicate' )
 			}
 		} );
 
@@ -46,10 +38,22 @@ SectionView = BaseElementView.extend( {
 		columnWidthTooSmall: 'New column width is too small'
 	},
 
+	ui: function() {
+		var ui = BaseElementView.prototype.ui.apply( this, arguments );
+
+		ui.removeButton = '> .elementor-element-overlay .elementor-editor-element-remove';
+
+		ui.addButton = '> .elementor-element-overlay .elementor-editor-element-add';
+
+		return ui;
+	},
+
 	events: function() {
 		var events = BaseElementView.prototype.events.apply( this, arguments );
 
 		events[ 'click @ui.addButton' ] = 'onClickAdd';
+
+		events[ 'click @ui.removeButton' ] = 'onClickRemove';
 
 		return events;
 	},
@@ -62,13 +66,22 @@ SectionView = BaseElementView.extend( {
 		this._checkIsEmpty();
 	},
 
-	addEmptyColumn: function() {
-		this.addChildModel( {
-			id: elementor.helpers.getUniqueID(),
-			elType: 'column',
-			settings: {},
-			elements: []
+	getContextMenuGroups: function() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'transfer' } ) );
+
+		groups.splice( transferGroupIndex + 1, 0, {
+			name: 'save',
+			actions: [
+				{
+					name: 'save',
+					title: elementor.translate( 'save_as_block' ),
+					callback: this.save.bind( this )
+				}
+			]
 		} );
+
+		return groups;
 	},
 
 	addChildModel: function( model, options ) {
@@ -89,19 +102,11 @@ SectionView = BaseElementView.extend( {
 
 		return {
 			connectWith: sectionConnectClass + ' > .elementor-container > .elementor-row',
-			handle: '> .elementor-element-overlay .elementor-editor-column-settings .elementor-editor-element-trigger',
+			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
 			items: '> .elementor-column',
 			forcePlaceholderSize: true,
 			tolerance: 'pointer'
 		};
-	},
-
-	onSettingsChanged: function( settingsModel ) {
-		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
-
-		if ( settingsModel.changed.structure ) {
-			this.redefineLayout();
-		}
 	},
 
 	getColumnPercentSize: function( element, size ) {
@@ -157,8 +162,8 @@ SectionView = BaseElementView.extend( {
 	},
 
 	_checkIsEmpty: function() {
-		if ( ! this.collection.length && ! this.model.get( 'dontFillEmpty' ) ) {
-			this.addEmptyColumn();
+		if ( ! this.collection.length && ! this.model.get( 'allowEmpty' ) ) {
+			this.addChildElement( null, { edit: false } );
 		}
 	},
 
@@ -199,7 +204,7 @@ SectionView = BaseElementView.extend( {
 			throw new ReferenceError( 'There is not any next column' );
 		}
 
-		var minColumnSize = 10,
+		var minColumnSize = 2,
 			$nextElement = nextChildView.$el,
 			nextElementCurrentSize = +nextChildView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( $nextElement, $nextElement[0].getBoundingClientRect().width ),
 			nextElementNewSize = +( currentSize + nextElementCurrentSize - newSize ).toFixed( 3 );
@@ -229,6 +234,14 @@ SectionView = BaseElementView.extend( {
 		this._checkIsFull();
 	},
 
+	onSettingsChanged: function( settingsModel ) {
+		BaseElementView.prototype.onSettingsChanged.apply( this, arguments );
+
+		if ( settingsModel.changed.structure ) {
+			this.redefineLayout();
+		}
+	},
+
 	onClickAdd: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
 			this.addSectionView.fadeToDeath();
@@ -238,7 +251,7 @@ SectionView = BaseElementView.extend( {
 
 		var myIndex = this.model.collection.indexOf( this.model ),
 			addSectionView = new AddSectionView( {
-				atIndex: myIndex
+				at: myIndex
 			} );
 
 		addSectionView.render();
@@ -256,7 +269,7 @@ SectionView = BaseElementView.extend( {
 	},
 
 	onAddChild: function() {
-		if ( ! this.isBuffering && ! this.model.get( 'dontFillEmpty' ) ) {
+		if ( ! this.isBuffering && ! this.model.get( 'allowEmpty' ) ) {
 			// Reset the layout just when we have really add/remove element.
 			this.resetLayout();
 		}
@@ -271,6 +284,10 @@ SectionView = BaseElementView.extend( {
 		this._checkIsEmpty();
 
 		this.resetLayout();
+	},
+
+	onClickRemove: function() {
+		this.removeElement();
 	},
 
 	onChildviewRequestResizeStart: function( columnView ) {
@@ -301,7 +318,7 @@ SectionView = BaseElementView.extend( {
 		elementor.helpers.enableElementEvents( $iframes );
 	},
 
-	onChildviewRequestResize: function( columnView, ui, event ) {
+	onChildviewRequestResize: function( columnView, ui ) {
 		// Get current column details
 		var currentSize = +columnView.model.getSetting( '_inline_size' ) || this.getColumnPercentSize( columnView.$el, columnView.$el.data( 'originalWidth' ) );
 

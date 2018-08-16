@@ -1,5 +1,7 @@
 // Core variables and mixins
 @import "../helpers/variables";
+@import "../editor/breakpoints";
+@import "breakpoints/breakpoints";
 @import "../helpers/mixins";
 
 // Common
@@ -33,11 +35,14 @@
 // Shapes
 @import "shapes";
 
+// Admin Bar
+@import "admin-bar";
+
 // Compatibility
 @import "compatibility";
 
 // Visibility (for preview mode or front-end)
-body:not(.elementor-editor-active) {
+.elementor:not(.elementor-edit-area-active) {
 	@include visibility() {
 		display: none;
 	};

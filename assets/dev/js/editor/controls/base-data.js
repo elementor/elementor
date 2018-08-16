@@ -1,4 +1,5 @@
 var ControlBaseView = require( 'elementor-controls/base' ),
+	TagsBehavior = require( 'elementor-dynamic-tags/control-behavior' ),
 	Validator = require( 'elementor-validator/base' ),
 	ControlBaseDataView;
 
@@ -13,7 +14,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 			radio: 'input[data-setting][type="radio"]',
 			select: 'select[data-setting]',
 			textarea: 'textarea[data-setting]',
-			responsiveSwitchers: '.elementor-responsive-switcher'
+			responsiveSwitchers: '.elementor-responsive-switcher',
+			contentEditable: '[contenteditable="true"]',
+			tooltipTarget: '.tooltip-target'
 		} );
 
 		return ui;
@@ -34,8 +37,30 @@ ControlBaseDataView = ControlBaseView.extend( {
 			'change @ui.radio': 'onBaseInputChange',
 			'input @ui.textarea': 'onBaseInputChange',
 			'change @ui.select': 'onBaseInputChange',
-			'click @ui.responsiveSwitchers': 'onSwitcherClick'
+			'input @ui.contentEditable': 'onBaseInputChange',
+			'click @ui.responsiveSwitchers': 'onResponsiveSwitchersClick'
 		};
+	},
+
+	behaviors: function() {
+		var behaviors = {},
+			dynamicSettings = this.options.model.get( 'dynamic' );
+
+		if ( dynamicSettings && dynamicSettings.active ) {
+			var tags = _.filter( elementor.dynamicTags.getConfig( 'tags' ), function( tag ) {
+				return _.intersection( tag.categories, dynamicSettings.categories ).length;
+			} );
+
+			if ( tags.length ) {
+				behaviors.tags = {
+					behaviorClass: TagsBehavior,
+					tags: tags,
+					dynamicSettings: dynamicSettings
+				};
+			}
+		}
+
+		return behaviors;
 	},
 
 	initialize: function( options ) {
@@ -43,7 +68,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.registerValidators();
 
-		this.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onSettingsExternalChange );
+		this.listenTo( this.elementSettingsModel, 'change:external:' + this.model.get( 'name' ), this.onAfterExternalChange );
 	},
 
 	getControlValue: function() {
@@ -81,8 +106,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	getInputValue: function( input ) {
-		var $input = this.$( input ),
-			inputValue = $input.val(),
+		var $input = this.$( input );
+
+		if ( $input.is( '[contenteditable="true"]' ) ) {
+			return $input.html();
+		}
+
+		var inputValue = $input.val(),
 			inputType = $input.attr( 'type' );
 
 		if ( -1 !== [ 'radio', 'checkbox' ].indexOf( inputType ) ) {
@@ -134,20 +164,14 @@ ControlBaseDataView = ControlBaseView.extend( {
 		}
 	},
 
-	onSettingsError: function() {
-		this.$el.addClass( 'elementor-error' );
-	},
-
-	onSettingsChange: function() {
-		this.$el.removeClass( 'elementor-error' );
-	},
-
 	onRender: function() {
 		ControlBaseView.prototype.onRender.apply( this, arguments );
 
-		this.applySavedValue();
+		if ( this.model.get( 'responsive' ) ) {
+			this.renderResponsiveSwitchers();
+		}
 
-		this.renderResponsiveSwitchers();
+		this.applySavedValue();
 
 		this.triggerMethod( 'ready' );
 
@@ -187,7 +211,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.triggerMethod( 'input:change', event );
 	},
 
-	onSwitcherClick: function( event ) {
+	onResponsiveSwitchersClick: function( event ) {
 		var device = jQuery( event.currentTarget ).data( 'device' );
 
 		elementor.changeDeviceMode( device );
@@ -195,16 +219,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.triggerMethod( 'responsive:switcher:click', device );
 	},
 
-	onSettingsExternalChange: function() {
-		this.applySavedValue();
-		this.triggerMethod( 'after:external:change' );
-	},
-
 	renderResponsiveSwitchers: function() {
-		if ( _.isEmpty( this.model.get( 'responsive' ) ) ) {
-			return;
-		}
-
 		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
 		this.ui.controlTitle.after( templateHtml );
@@ -212,12 +227,17 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	onAfterExternalChange: function() {
 		this.hideTooltip();
-		this.render();
+
+		this.applySavedValue();
 	},
 
 	addTooltip: function() {
+		if ( ! this.ui.tooltipTarget ) {
+			return;
+		}
+
 		// Create tooltip on controls
-		this.$( '.tooltip-target' ).tipsy( {
+		this.ui.tooltipTarget.tipsy( {
 			gravity: function() {
 				// `n` for down, `s` for up
 				var gravity = jQuery( this ).data( 'tooltip-pos' );
@@ -235,7 +255,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	hideTooltip: function() {
-		jQuery( '.tipsy' ).hide();
+		if ( this.ui.tooltipTarget ) {
+			this.ui.tooltipTarget.tipsy( 'hide' );
+		}
 	},
 
 	updateElementModel: function( value ) {
@@ -245,6 +267,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 	// Static methods
 	getStyleValue: function( placeholder, controlValue ) {
 		return controlValue;
+	},
+
+	onPasteStyle: function() {
+		return true;
 	}
 } );
 

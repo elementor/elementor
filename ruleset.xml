@@ -18,11 +18,20 @@
 		<exclude name="Squiz.Commenting.ClassComment.Missing" />
 		<exclude name="Squiz.Commenting.VariableComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
+		<exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped" />
+		<exclude name="WordPress.CSRF.NonceVerification.NoNonceVerification" />
+		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
 	</rule>
 
 	<rule ref="WordPress.WP.DeprecatedFunctions">
 		<properties>
-			<property name="minimum_supported_version" value="4.5" />
+			<property name="minimum_supported_version" value="4.7" />
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.ValidHookName">
+		<properties>
+			<property name="additionalWordDelimiters" value="/-" />
 		</properties>
 	</rule>
 </ruleset>

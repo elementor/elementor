@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor base group control.
+ * Elementor group control base.
  *
- * A base control for creating group control.
+ * An abstract class for creating new group controls in the panel.
  *
  * @since 1.0.0
  * @abstract
@@ -40,9 +40,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	private $options;
 
 	/**
-	 * Retrieve options.
+	 * Get options.
 	 *
-	 * Get group control options. If options are not set, it will initialize default options.
+	 * Retrieve group control options. If options are not set, it will initialize default options.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -136,9 +136,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve arguments.
+	 * Get arguments.
 	 *
-	 * Get group control arguments.
+	 * Retrieve group control arguments.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -150,9 +150,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve fields.
+	 * Get fields.
 	 *
-	 * Get group control fields.
+	 * Retrieve group control fields.
 	 *
 	 * @since 1.2.2
 	 * @access public
@@ -160,11 +160,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Control fields.
 	 */
 	final public function get_fields() {
-		// TODO: Temp - compatibility for posts group
-		if ( method_exists( $this, '_get_controls' ) ) {
-			return $this->_get_controls( $this->get_args() );
-		}
-
 		if ( null === static::$fields ) {
 			static::$fields = $this->init_fields();
 		}
@@ -173,9 +168,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve controls prefix.
+	 * Get controls prefix.
 	 *
-	 * Get the prefix of the group control, which is `{{ControlName}}_`.
+	 * Retrieve the prefix of the group control, which is `{{ControlName}}_`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -187,9 +182,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve group control classes.
+	 * Get group control classes.
 	 *
-	 * Get the classes of the group control.
+	 * Retrieve the classes of the group control.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -212,9 +207,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	abstract protected function init_fields();
 
 	/**
-	 * Retrieve default options.
+	 * Get default options.
 	 *
-	 * Get the default options of the group control. Used to return the
+	 * Retrieve the default options of the group control. Used to return the
 	 * default options while initializing the group control.
 	 *
 	 * @since 1.9.0
@@ -227,9 +222,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve child default arguments.
+	 * Get child default arguments.
 	 *
-	 * Get the default arguments for all the child controls for a specific group
+	 * Retrieve the default arguments for all the child controls for a specific group
 	 * control.
 	 *
 	 * @since 1.2.2
@@ -294,12 +289,14 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$field_args['classes'] = $this->get_base_group_classes() . ' elementor-group-control-' . $control_id;
 
-		if ( ! empty( $args['condition'] ) ) {
-			if ( empty( $field_args['condition'] ) ) {
-				$field_args['condition'] = [];
-			}
+		foreach ( [ 'condition', 'conditions' ] as $condition_type ) {
+			if ( ! empty( $args[ $condition_type ] ) ) {
+				if ( empty( $field_args[ $condition_type ] ) ) {
+					$field_args[ $condition_type ] = [];
+				}
 
-			$field_args['condition'] += $args['condition'];
+				$field_args[ $condition_type ] += $args[ $condition_type ];
+			}
 		}
 
 		return $field_args;
@@ -353,7 +350,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 				'starter_name' => 'popover_toggle',
 				'starter_value' => 'custom',
 				'starter_title' => '',
-				'toggle_type' => 'switcher',
 			],
 		];
 
@@ -375,9 +371,9 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	}
 
 	/**
-	 * Retrieve default arguments.
+	 * Get default arguments.
 	 *
-	 * Get the default arguments of the group control. Used to return the
+	 * Retrieve the default arguments of the group control. Used to return the
 	 * default arguments while initializing the group control.
 	 *
 	 * @since 1.2.2
@@ -432,13 +428,15 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * Used to process the CSS selector of group control fields. When using
 	 * group control, Elementor needs to apply the selector to different fields.
-	 * This method handels the process.
+	 * This method handles the process.
 	 *
-	 * In addition, it handels selector values from other fields and process the
+	 * In addition, it handles selector values from other fields and process the
 	 * css.
 	 *
 	 * @since 1.2.2
 	 * @access private
+	 *
+	 * @param array $selectors An array of selectors to process.
 	 *
 	 * @return array Processed selectors.
 	 */
@@ -494,7 +492,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$control_params = [
 			'type' => Controls_Manager::POPOVER_TOGGLE,
 			'label' => $label,
-			'toggle_type' => $popover_options['toggle_type'],
 			'return_value' => $popover_options['starter_value'],
 		];
 

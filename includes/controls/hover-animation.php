@@ -11,45 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base control for creating hover animation control. Displays a select box
  * with the available hover animation effects @see Control_Hover_Animation::get_animations()
  *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- *    $this->add_control(
- *    	'hover_animation',
- *    	[
- *    		'label' => __( 'Hover Animation', 'plugin-domain' ),
- *    		'type' => Controls_Manager::HOVER_ANIMATION,
- *    		'prefix_class' => 'elementor-animation-',
- *    	]
- *    );
- *
- * PHP usage (inside `Widget_Base::render()` method):
- *
- *    echo '<div class="' . $this->get_settings( 'hover_animation' ) . '"> ... </div>';
- *
- * JS usage (inside `Widget_Base::_content_template()` method):
- *
- *    <div class="{{ settings.hover_animation }}"> ... </div>
- *
  * @since 1.0.0
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param string $default     Optional. The selected animation key. Default is
- *                            empty.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is true.
  */
 class Control_Hover_Animation extends Base_Data_Control {
 
@@ -66,7 +28,9 @@ class Control_Hover_Animation extends Base_Data_Control {
 	private static $_animations;
 
 	/**
-	 * Retrieve hover animation control type.
+	 * Get hover animation control type.
+	 *
+	 * Retrieve the control type, in this case `hover_animation`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -78,9 +42,9 @@ class Control_Hover_Animation extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve animations.
+	 * Get animations.
 	 *
-	 * Get the available hover animation effects.
+	 * Retrieve the available hover animation effects.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -141,7 +105,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<select id="<?php echo $control_uid; ?>" data-setting="{{ data.name }}">
-					<option value=""><?php _e( 'None', 'elementor' ); ?></option>
+					<option value=""><?php echo __( 'None', 'elementor' ); ?></option>
 					<?php foreach ( self::get_animations() as $animation_name => $animation_title ) : ?>
 						<option value="<?php echo $animation_name; ?>"><?php echo $animation_title; ?></option>
 					<?php endforeach; ?>
@@ -155,9 +119,9 @@ class Control_Hover_Animation extends Base_Data_Control {
 	}
 
 	/**
-	 * Retrieve hover animation control default settings.
+	 * Get hover animation control default settings.
 	 *
-	 * Get the default settings of the hover animation control. Used to return
+	 * Retrieve the default settings of the hover animation control. Used to return
 	 * the default settings while initializing the hover animation control.
 	 *
 	 * @since 1.0.0

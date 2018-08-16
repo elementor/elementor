@@ -19,11 +19,11 @@
 		background-color: $editor-background;
 	}
 
-	@media (max-width: $screen-lg-max) {
+	@media (max-width: $editor-screen-lg-max) {
 		width: $panel-width;
 	}
 
-	@media (min-width: $screen-xl-min) {
+	@media (min-width: $editor-screen-xl-min) {
 		width: $panel-xl-width;
 	}
 
@@ -57,10 +57,6 @@
 		width: 100%;
 	}
 
-	.elementor-panel-hide {
-		display: none;
-	}
-
 	// Global
 	@import "global";
 
@@ -85,12 +81,25 @@
 	// Element Edit
     @import "element-settings";
 
-    // Controls
-    @import "control";
-
-	// Color Picker
-	@import "color-picker";
-
     //Footer
     @import "footer";
+}
+
+// WP Media Modal Compatibility
+.media-modal.wp-core-ui {
+
+	input {
+		width: auto;
+	}
+
+	fieldset {
+		padding: 0;
+		border: 0;
+	}
+
+	.wp-clearfix::after {
+		content: '';
+		display: table;
+		clear: both;
+	}
 }

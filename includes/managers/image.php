@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor images manager class.
+ * Elementor images manager.
  *
- * Elementor images manager handler class is responsible for retrieve images
+ * Elementor images manager handler class is responsible for retrieving image
  * details.
  *
  * @since 1.0.0
@@ -99,7 +99,6 @@ class Images_Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'wp_ajax_elementor_get_image_details', [ $this, 'get_image_details' ] );
 		add_action( 'wp_ajax_elementor_get_images_details', [ $this, 'get_images_details' ] );
 	}
 }

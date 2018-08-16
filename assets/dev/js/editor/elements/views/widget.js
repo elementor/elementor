@@ -8,14 +8,16 @@ WidgetView = BaseElementView.extend( {
 		var editModel = this.getEditModel();
 
 		if ( 'remote' !== this.getTemplateType() ) {
-			return Marionette.TemplateCache.get( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
+			return Marionette.TemplateCache.get( '#tmpl-elementor-' + editModel.get( 'widgetType' ) + '-content' );
 		} else {
 			return _.template( '' );
 		}
 	},
 
 	className: function() {
-		return BaseElementView.prototype.className.apply( this, arguments ) + ' elementor-widget';
+		var baseClasses = BaseElementView.prototype.className.apply( this, arguments );
+
+		return baseClasses + ' elementor-widget ' + elementor.getElementData( this.getEditModel() ).html_wrapper_class;
 	},
 
 	events: function() {
@@ -62,6 +64,24 @@ WidgetView = BaseElementView.extend( {
 		};
 	},
 
+	getContextMenuGroups: function() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'transfer' } ) );
+
+		groups.splice( transferGroupIndex + 1, 0, {
+			name: 'save',
+			actions: [
+				{
+					name: 'save',
+					title: elementor.translate( 'save_as_global' ),
+					shortcut: jQuery( '<i>', { 'class': 'eicon-pro-icon' } )
+				}
+			]
+		} );
+
+		return groups;
+	},
+
 	render: function() {
 		if ( this.model.isRemoteRequestActive() ) {
 			this.handleEmptyWidget();
@@ -85,7 +105,7 @@ WidgetView = BaseElementView.extend( {
 	getTemplateType: function() {
 		if ( null === this._templateType ) {
 			var editModel = this.getEditModel(),
-				$template = jQuery( '#tmpl-elementor-' + editModel.get( 'elType' ) + '-' + editModel.get( 'widgetType' ) + '-content' );
+				$template = jQuery( '#tmpl-elementor-' + editModel.get( 'widgetType' ) + '-content' );
 
 			this._templateType = $template.length ? 'js' : 'remote';
 		}
@@ -158,7 +178,6 @@ WidgetView = BaseElementView.extend( {
         self.$el
 	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
             .removeClass( 'elementor-widget-empty' )
-	        .addClass( 'elementor-widget-' + editModel.get( 'widgetType' ) + ' elementor-widget-can-edit' )
             .children( '.elementor-widget-empty-icon' )
             .remove();
 
@@ -171,6 +190,10 @@ WidgetView = BaseElementView.extend( {
 			}, 200 );
 			// Is element empty?
 		} );
+	},
+
+	onClickEdit: function() {
+		this.edit();
 	}
 } );
 

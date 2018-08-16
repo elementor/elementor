@@ -16,7 +16,7 @@ heartbeat = {
 		jQuery( document ).on( {
 			'heartbeat-send': function( event, data ) {
 				data.elementor_post_lock = {
-					post_ID: elementor.config.post_id
+					post_ID: elementor.config.document.id
 				};
 			},
 			'heartbeat-tick': function( event, response ) {

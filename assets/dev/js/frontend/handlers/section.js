@@ -51,9 +51,39 @@ var BackgroundVideo = HandlerModule.extend( {
 		$video.width( size.width ).height( size.height );
 	},
 
+	startVideoLoop: function() {
+		var self = this;
+
+		// If the section has been removed
+		if ( ! self.player.getIframe().contentWindow ) {
+			return;
+		}
+
+		var elementSettings = self.getElementSettings(),
+			startPoint = elementSettings.background_video_start || 0,
+			endPoint = elementSettings.background_video_end;
+
+		self.player.seekTo( startPoint );
+
+		if ( endPoint ) {
+			var durationToEnd = endPoint - startPoint + 1;
+
+			setTimeout( function() {
+				self.startVideoLoop();
+			}, durationToEnd * 1000 );
+		}
+	},
+
 	prepareYTVideo: function( YT, videoID ) {
 		var self = this,
-			$backgroundVideoContainer = self.elements.$backgroundVideoContainer;
+			$backgroundVideoContainer = self.elements.$backgroundVideoContainer,
+			elementSettings = self.getElementSettings(),
+			startStateCode = YT.PlayerState.PLAYING;
+
+		// Since version 67, Chrome doesn't fire the `PLAYING` state at start time
+		if ( window.chrome ) {
+			startStateCode = YT.PlayerState.UNSTARTED;
+		}
 
 		$backgroundVideoContainer.addClass( 'elementor-loading elementor-invisible' );
 
@@ -65,16 +95,18 @@ var BackgroundVideo = HandlerModule.extend( {
 
 					self.changeVideoSize();
 
+					self.startVideoLoop();
+
 					self.player.playVideo();
 				},
 				onStateChange: function( event ) {
 					switch ( event.data ) {
-						case YT.PlayerState.PLAYING:
+						case startStateCode:
 							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
 
 							break;
 						case YT.PlayerState.ENDED:
-							self.player.seekTo( 0 );
+							self.player.seekTo( elementSettings.background_video_start || 0 );
 					}
 				}
 			},
@@ -142,25 +174,38 @@ var StretchedSection = HandlerModule.extend( {
 	stretchElement: null,
 
 	bindEvents: function() {
-		elementorFrontend.addListenerOnce( this.$element.data( 'model-cid' ), 'resize', this.stretchSection );
+		var handlerID = this.getUniqueHandlerID();
+
+		elementorFrontend.addListenerOnce( handlerID, 'resize', this.stretch );
+
+		elementorFrontend.addListenerOnce( handlerID, 'sticky:stick', this.stretch, this.$element );
+
+		elementorFrontend.addListenerOnce( handlerID, 'sticky:unstick', this.stretch, this.$element );
+	},
+
+	unbindEvents: function() {
+		elementorFrontend.removeListeners( this.getUniqueHandlerID(), 'resize', this.stretch );
 	},
 
 	initStretch: function() {
-		this.stretchElement = new elementorFrontend.modules.StretchElement( { element: this.$element } );
+		this.stretchElement = new elementorFrontend.modules.StretchElement( {
+			element: this.$element,
+			selectors: {
+				container: this.getStretchContainer()
+			}
+		} );
 	},
 
-	stretchSection: function() {
-		var isStretched = this.$element.hasClass( 'elementor-section-stretched' );
+	getStretchContainer: function() {
+		return elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window;
+	},
 
-		if ( elementorFrontend.isEditMode() || isStretched ) {
-			this.stretchElement.reset();
+	stretch: function() {
+		if ( ! this.getElementSettings( 'stretch_section' ) ) {
+			return;
 		}
 
-		if ( isStretched ) {
-			this.stretchElement.setSettings( 'selectors.container', elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window );
-
-			this.stretchElement.stretch();
-		}
+		this.stretchElement.stretch();
 	},
 
 	onInit: function() {
@@ -168,12 +213,24 @@ var StretchedSection = HandlerModule.extend( {
 
 		this.initStretch();
 
-		this.stretchSection();
+		this.stretch();
+	},
+
+	onElementChange: function( propertyName ) {
+		if ( 'stretch_section' === propertyName ) {
+			if ( this.getElementSettings( 'stretch_section' ) ) {
+				this.stretch();
+			} else {
+				this.stretchElement.reset();
+			}
+		}
 	},
 
 	onGeneralSettingsChange: function( changed ) {
 		if ( 'elementor_stretched_section_container' in changed ) {
-			this.stretchSection();
+			this.stretchElement.setSettings( 'selectors.container', this.getStretchContainer() );
+
+			this.stretch();
 		}
 	}
 } );
@@ -262,13 +319,52 @@ var Shapes = HandlerModule.extend( {
 	}
 } );
 
+var HandlesPosition = HandlerModule.extend( {
+
+    isFirst: function() {
+        return this.$element.is( '.elementor-edit-mode .elementor-top-section:first' );
+    },
+
+    getOffset: function() {
+        return this.$element.offset().top;
+    },
+
+    setHandlesPosition: function() {
+        var self = this;
+
+        if ( self.isFirst() ) {
+            var offset = self.getOffset(),
+                $handlesElement = self.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
+                insideHandleClass = 'elementor-section--handles-inside';
+
+            if ( offset < 25 ) {
+                self.$element.addClass( insideHandleClass );
+
+                if ( offset < -5 ) {
+                    $handlesElement.css( 'top', -offset );
+                } else {
+                    $handlesElement.css( 'top', '' );
+                }
+            } else {
+                self.$element.removeClass( insideHandleClass );
+            }
+        }
+    },
+
+    onInit: function() {
+        this.setHandlesPosition();
+        this.$element.on( 'mouseenter', this.setHandlesPosition );
+    }
+} );
+
 module.exports = function( $scope ) {
 	if ( elementorFrontend.isEditMode() || $scope.hasClass( 'elementor-section-stretched' ) ) {
 		new StretchedSection( { $element: $scope } );
 	}
 
 	if ( elementorFrontend.isEditMode() ) {
-		new Shapes( { $element:  $scope } );
+		new Shapes( { $element: $scope } );
+		new HandlesPosition( { $element: $scope } );
 	}
 
 	new BackgroundVideo( { $element: $scope } );

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor upgrades class.
+ * Elementor upgrades.
  *
  * Elementor upgrades handler class is responsible for updating different
  * Elementor versions.
@@ -18,7 +18,7 @@ class Upgrades {
 	/**
 	 * Add actions.
 	 *
-	 * Hook into WordPress actions and launce Elementor upgrades.
+	 * Hook into WordPress actions and launch Elementor upgrades.
 	 *
 	 * @static
 	 * @since 1.0.0
@@ -49,7 +49,7 @@ class Upgrades {
 
 		self::check_upgrades( $elementor_version );
 
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 
 		update_option( 'elementor_version', ELEMENTOR_VERSION );
 	}
@@ -57,7 +57,7 @@ class Upgrades {
 	/**
 	 * Check upgrades.
 	 *
-	 * Checks whether the Elementor version need the be upgraded.
+	 * Checks whether a given Elementor version needs to be upgraded.
 	 *
 	 * If an upgrade required for a specific Elementor version, it will update
 	 * the `elementor_upgrades` option in the database.
@@ -65,6 +65,8 @@ class Upgrades {
 	 * @static
 	 * @since 1.0.10
 	 * @access private
+	 *
+	 * @param string $elementor_version
 	 */
 	private static function check_upgrades( $elementor_version ) {
 		// It's a new install.
@@ -75,9 +77,13 @@ class Upgrades {
 		$elementor_upgrades = get_option( 'elementor_upgrades', [] );
 
 		$upgrades = [
-			'0.3.2'  => '_upgrade_v032',
-			'0.9.2'  => '_upgrade_v092',
-			'0.11.0' => '_upgrade_v0110',
+			'0.3.2' => 'upgrade_v032',
+			'0.9.2' => 'upgrade_v092',
+			'0.11.0' => 'upgrade_v0110',
+			'2.0.0' => 'upgrade_v200',
+			'2.0.1' => 'upgrade_v201',
+			'2.0.10' => 'upgrade_v2010',
+			'2.1.0' => 'upgrade_v210',
 		];
 
 		foreach ( $upgrades as $version => $function ) {
@@ -94,11 +100,11 @@ class Upgrades {
 	 *
 	 * Change the image widget link URL, setting is to `custom` link.
 	 *
+	 * @since 2.0.0
 	 * @static
-	 * @since 1.0.0
 	 * @access private
 	 */
-	private static function _upgrade_v032() {
+	private static function upgrade_v032() {
 		global $wpdb;
 
 		$post_ids = $wpdb->get_col(
@@ -141,11 +147,11 @@ class Upgrades {
 	 *
 	 * Change the image widget, setting the image size to full image size.
 	 *
+	 * @since 2.0.0
 	 * @static
-	 * @since 1.0.0
 	 * @access private
 	 */
-	private static function _upgrade_v092() {
+	private static function upgrade_v092() {
 		global $wpdb;
 
 		// Fix Icon/Icon Box Widgets padding.
@@ -194,11 +200,11 @@ class Upgrades {
 	 *
 	 * Change the button widget sizes, setting up new button sizes.
 	 *
+	 * @since 2.0.0
 	 * @static
-	 * @since 1.0.0
 	 * @access private
 	 */
-	private static function _upgrade_v0110() {
+	private static function upgrade_v0110() {
 		global $wpdb;
 
 		// Fix Button widget to new sizes options.
@@ -247,6 +253,182 @@ class Upgrades {
 			Plugin::$instance->db->save_editor( $post_id, $data );
 		}
 	}
-}
 
-Upgrades::add_actions();
+	/**
+	 * Upgrade Elementor 2.0.0
+	 *
+	 * Fix post titles for old autosave drafts that saved with the format 'Auto Save 2018-03-18 17:24'.
+	 *
+	 * @static
+	 * @since 2.0.0
+	 * @access private
+	 */
+	private static function upgrade_v200() {
+		global $wpdb;
+
+		$posts = $wpdb->get_results(
+			'SELECT `ID`, `post_title`, `post_parent`
+					FROM `' . $wpdb->posts . '` p
+					LEFT JOIN `' . $wpdb->postmeta . '` m ON p.ID = m.post_id
+					WHERE `post_status` = \'inherit\'
+					AND `post_title` = CONCAT(\'Auto Save \', DATE_FORMAT(post_date, "%Y-%m-%d %H:%i"))
+					AND  m.`meta_key` = \'_elementor_data\';'
+		);
+
+		if ( empty( $posts ) ) {
+			return;
+		}
+
+		foreach ( $posts as $post ) {
+			wp_update_post( [
+				'ID' => $post->ID,
+				'post_title' => get_the_title( $post->post_parent ),
+			] );
+		}
+	}
+
+	/**
+	 * Upgrade Elementor 2.0.1
+	 *
+	 * Fix post titles for old autosave drafts that saved with the format 'Auto Save...'.
+	 *
+	 * @since 2.0.2
+	 * @static
+	 * @access private
+	 */
+	private static function upgrade_v201() {
+		global $wpdb;
+
+		$posts = $wpdb->get_results(
+			'SELECT `ID`, `post_title`, `post_parent`
+					FROM `' . $wpdb->posts . '` p
+					LEFT JOIN `' . $wpdb->postmeta . '` m ON p.ID = m.post_id
+					WHERE `post_status` = \'inherit\'
+					AND `post_title` REGEXP \'^Auto Save [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$\'
+					AND  m.`meta_key` = \'_elementor_data\';'
+		);
+
+		if ( empty( $posts ) ) {
+			return;
+		}
+
+		foreach ( $posts as $post ) {
+			$parent = get_post( $post->post_parent );
+			$title = isset( $parent->post_title ) ? $parent->post_title : '';
+
+			wp_update_post( [
+				'ID' => $post->ID,
+				'post_title' => $title,
+			] );
+		}
+	}
+
+	/**
+	 * Upgrade Elementor 2.0.10
+	 *
+	 * Fix post titles for old autosave drafts that saved with the format 'Auto Save...'.
+	 * Fix also Translated titles.
+	 *
+	 * @since 2.0.10
+	 * @static
+	 * @access private
+	 */
+	private static function upgrade_v2010() {
+		global $wpdb;
+
+		$posts = $wpdb->get_results(
+			'SELECT `ID`, `post_title`, `post_parent`
+					FROM `' . $wpdb->posts . '` p
+					LEFT JOIN `' . $wpdb->postmeta . '` m ON p.ID = m.post_id
+					WHERE `post_status` = \'inherit\'
+					AND `post_title` REGEXP \'[[:alnum:]]+ [[:alnum:]]+ [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$\'
+					AND  m.`meta_key` = \'_elementor_data\';'
+		);
+
+		if ( empty( $posts ) ) {
+			return;
+		}
+
+		foreach ( $posts as $post ) {
+			$parent = get_post( $post->post_parent );
+			$title = isset( $parent->post_title ) ? $parent->post_title : '';
+
+			wp_update_post( [
+				'ID' => $post->ID,
+				'post_title' => $title,
+			] );
+		}
+	}
+
+	private static function upgrade_v210() {
+		global $wpdb;
+
+		// upgrade `video` widget settings (merge providers).
+		$post_ids = $wpdb->get_col(
+			'SELECT `post_id` FROM `' . $wpdb->postmeta . '` WHERE `meta_key` = "_elementor_data" AND `meta_value` LIKE \'%"widgetType":"video"%\';'
+		);
+
+		if ( empty( $post_ids ) ) {
+			return;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$do_update = false;
+			$data = Plugin::$instance->db->get_plain_editor( $post_id );
+			if ( empty( $data ) ) {
+				continue;
+			}
+
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update ) {
+				if ( empty( $element['widgetType'] ) || 'video' !== $element['widgetType'] ) {
+					return $element;
+				}
+
+				$replacements = [];
+
+				if ( empty( $element['settings']['video_type'] ) || 'youtube' === $element['settings']['video_type'] ) {
+					$replacements = [
+						'yt_autoplay' => 'autoplay',
+						'yt_controls' => 'controls',
+						'yt_mute' => 'mute',
+						'yt_showinfo' => 'showinfo',
+						'yt_rel' => 'rel',
+						'link' => 'youtube_url',
+					];
+				} elseif ( 'vimeo' === $element['settings']['video_type'] ) {
+					$replacements = [
+						'vimeo_autoplay' => 'autoplay',
+						'vimeo_loop' => 'loop',
+						'vimeo_color' => 'color',
+						'vimeo_link' => 'vimeo_url',
+					];
+				}
+
+				// cleanup old unused settings.
+				unset( $element['settings']['yt_rel_videos'] );
+
+				foreach ( $replacements as $old => $new ) {
+					if ( ! empty( $element['settings'][ $old ] ) ) {
+						$element['settings'][ $new ] = $element['settings'][ $old ];
+						$do_update = true;
+					}
+				}
+
+				return $element;
+			} );
+
+			// Only update if needed.
+			if ( ! $do_update ) {
+				continue;
+			}
+
+			// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+			$json_value = wp_slash( wp_json_encode( $data ) );
+
+			update_metadata( 'post', $post_id, '_elementor_data', $json_value );
+
+			// Clear WP cache for next step.
+			wp_cache_flush();
+		} // End foreach().
+	}
+}

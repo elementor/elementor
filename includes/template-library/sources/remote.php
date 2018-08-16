@@ -2,17 +2,17 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
-use Elementor\PageSettings\Page;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * Elementor template library remote source class.
+ * Elementor template library remote source.
  *
  * Elementor template library remote source handler class is responsible for
- * hendaling remote templates from Elementor.com servers.
+ * handling remote templates from Elementor.com servers.
  *
  * @since 1.0.0
  */
@@ -71,12 +71,12 @@ class Source_Remote extends Source_Base {
 	 * @return array Remote templates.
 	 */
 	public function get_items( $args = [] ) {
-		$templates_data = Api::get_templates_data();
+		$library_data = Api::get_library_data();
 
 		$templates = [];
 
-		if ( ! empty( $templates_data ) ) {
-			foreach ( $templates_data as $template_data ) {
+		if ( ! empty( $library_data['templates'] ) ) {
+			foreach ( $library_data['templates'] as $template_data ) {
 				$templates[] = $this->get_item( $template_data );
 			}
 		}
@@ -106,6 +106,8 @@ class Source_Remote extends Source_Base {
 		return [
 			'template_id' => $template_data['id'],
 			'source' => $this->get_id(),
+			'type' => $template_data['type'],
+			'subtype' => $template_data['subtype'],
 			'title' => $template_data['title'],
 			'thumbnail' => $template_data['thumbnail'],
 			'date' => $template_data['tmpl_created'],
@@ -208,22 +210,13 @@ class Source_Remote extends Source_Base {
 			return $data;
 		}
 
-		// TODO: since 1.5.0 to content container named `content` instead of `data`.
-		if ( ! empty( $data['data'] ) ) {
-			$data['content'] = $data['data'];
-			unset( $data['data'] );
-		}
-
 		$data['content'] = $this->replace_elements_ids( $data['content'] );
 		$data['content'] = $this->process_export_import_content( $data['content'], 'on_import' );
 
-		if ( ! empty( $args['page_settings'] ) && ! empty( $data['page_settings'] ) ) {
-			$page = new Page( [
-				'settings' => $data['page_settings'],
-			] );
-
-			$page_settings_data = $this->process_element_export_import_content( $page, 'on_import' );
-			$data['page_settings'] = $page_settings_data['settings'];
+		$post_id = $_POST['editor_post_id'];
+		$document = Plugin::$instance->documents->get( $post_id );
+		if ( $document ) {
+			$data['content'] = $document->get_elements_raw_data( $data['content'], true );
 		}
 
 		return $data;

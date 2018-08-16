@@ -8,10 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor reporter base class.
+ * Elementor base reporter.
  *
  * A base abstract class that provides the needed properties and methods to
- * manage and handle reporter inheriting classes.
+ * manage and handle reporter in inheriting classes.
  *
  * @since 1.0.0
  * @abstract
@@ -44,7 +44,7 @@ abstract class Base_Reporter {
 	/**
 	 * Get report fields.
 	 *
-	 * Retrieve the fields of the report.
+	 * Retrieve the required fields for the report.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -129,7 +129,7 @@ abstract class Base_Reporter {
 	/**
 	 * Filter possible properties.
 	 *
-	 * Retrieve possible properties filtered property keys.
+	 * Retrieve possible properties filtered by property keys.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -137,7 +137,7 @@ abstract class Base_Reporter {
 	 *
 	 * @param array $properties Properties to filter.
 	 *
-	 * @return array
+	 * @return array Possible properties filtered by property keys.
 	 */
 	final public static function filter_possible_properties( $properties ) {
 		return Model_Helper::filter_possible_properties( self::get_properties_keys(), $properties );
@@ -153,8 +153,6 @@ abstract class Base_Reporter {
 	 *
 	 * @param array $key   Property key.
 	 * @param array $value Optional. Property value. Default is `null`.
-	 *
-	 * @return array An array of updated properties.
 	 */
 	final public function set_properties( $key, $value = null ) {
 		if ( is_array( $key ) ) {

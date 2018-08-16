@@ -8,51 +8,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor button control.
  *
- * A base control for creating a button control. Displays a button that can trigger an event.
- *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- *    $this->add_control(
- *    	'delete_content',
- *    	[
- *    		'label' => __( 'Delete Content', 'plugin-domain' ),
- *    		'type' => Controls_Manager::BUTTON,
- *    		'button_type' => 'success',
- *    		'text' => __( 'Delete', 'plugin-domain' ),
- *    		'event' => 'namespace:editor:delete',
- *    		'separator' => 'before',
- *    	]
- *    );
+ * A base control for creating a button control. Displays a button that can
+ * trigger an event.
  *
  * @since 1.9.0
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $button_type Optional. Set button type. Available values are
- *                            'default', 'success'. Default is 'default'.
- * @param string $text        Set button text. Default is empty.
- * @param string $event       Set the event the button will trigger. The event will
- *                            be triggered via `elementor.channels.editor.on( event )`
- *                            Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is true.
  */
 class Control_Button extends Base_UI_Control {
 
 	/**
-	 * Retrieve button control type.
+	 * Get button control type.
+	 *
+	 * Retrieve the control type, in this case `button`.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -64,9 +30,9 @@ class Control_Button extends Base_UI_Control {
 	}
 
 	/**
-	 * Retrieve button control default settings.
+	 * Get button control default settings.
 	 *
-	 * Get the default settings of the button control. Used to
+	 * Retrieve the default settings of the button control. Used to
 	 * return the default settings while initializing the button
 	 * control.
 	 *
@@ -77,6 +43,8 @@ class Control_Button extends Base_UI_Control {
 	 */
 	protected function get_default_settings() {
 		return [
+			'text' => '',
+			'event' => '',
 			'button_type' => 'default',
 		];
 	}

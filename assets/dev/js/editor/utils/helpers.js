@@ -48,7 +48,14 @@ helpers = {
 		if ( ! _.isEmpty( fontUrl ) ) {
 			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + fontUrl + '" rel="stylesheet" type="text/css">' );
 		}
+
 		this._enqueuedFonts.push( font );
+
+		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
+	},
+
+	resetEnqueuedFontsCache: function() {
+		this._enqueuedFonts = [];
 	},
 
 	getElementChildType: function( elementType, container ) {
@@ -89,6 +96,9 @@ helpers = {
 		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
+	/*
+	 * @deprecated 2.0.0
+	 */
 	stringReplaceAll: function( string, replaces ) {
 		var re = new RegExp( Object.keys( replaces ).join( '|' ), 'gi' );
 
@@ -126,11 +136,15 @@ helpers = {
 				isNegativeCondition = !! conditionNameParts[3],
 				controlValue = values[ conditionRealName ];
 
+			if ( values.__dynamic__ && values.__dynamic__[ conditionRealName ] ) {
+				controlValue = values.__dynamic__[ conditionRealName ];
+			}
+
 			if ( undefined === controlValue ) {
 				return true;
 			}
 
-			if ( conditionSubKey ) {
+			if ( conditionSubKey && 'object' === typeof controlValue ) {
 				controlValue = controlValue[ conditionSubKey ];
 			}
 
@@ -138,6 +152,7 @@ helpers = {
 			// If the controlValue is a non empty array - check if the controlValue contains the conditionValue
 			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
 			var isContains;
+
 			if ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) {
 				isContains = _.contains( conditionValue, controlValue );
 			} else if ( _.isArray( controlValue ) && ! _.isEmpty( controlValue ) ) {
@@ -154,6 +169,10 @@ helpers = {
 
 	cloneObject: function( object ) {
 		return JSON.parse( JSON.stringify( object ) );
+	},
+
+	firstLetterUppercase: function( string ) {
+		return string[0].toUpperCase() + string.slice( 1 );
 	},
 
 	disableElementEvents: function( $element ) {

@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Scheme base class.
+ * Elementor scheme base.
  *
- * Elementor base class for schemes is an abstract class implementing the scheme
- * interface. The class is responsible for creating base schemes.
+ * An abstract class implementing the scheme interface, responsible for
+ * creating new schemes.
  *
  * @since 1.0.0
  * @abstract
@@ -126,7 +126,7 @@ abstract class Scheme_Base implements Scheme_Interface {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return string The scheme.
+	 * @return array The scheme.
 	 */
 	public function get_scheme() {
 		$scheme = [];
@@ -159,17 +159,17 @@ abstract class Scheme_Base implements Scheme_Interface {
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-reset">
 					<button class="elementor-button">
 						<i class="fa fa-undo" aria-hidden="true"></i>
-						<?php _e( 'Reset', 'elementor' ); ?>
+						<?php echo __( 'Reset', 'elementor' ); ?>
 					</button>
 				</div>
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
 					<button class="elementor-button">
 						<i class="fa fa-times" aria-hidden="true"></i>
-						<?php _e( 'Discard', 'elementor' ); ?>
+						<?php echo __( 'Discard', 'elementor' ); ?>
 					</button>
 				</div>
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-					<button class="elementor-button elementor-button-success" disabled><?php _e( 'Apply', 'elementor' ); ?></button>
+					<button class="elementor-button elementor-button-success" disabled><?php echo __( 'Apply', 'elementor' ); ?></button>
 				</div>
 			</div>
 			<?php $this->print_template_content(); ?>

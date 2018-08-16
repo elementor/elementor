@@ -57,19 +57,17 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the icon box widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return [ 'icon box', 'icon' ];
 	}
 
 	/**
@@ -89,6 +87,15 @@ class Widget_Icon_Box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-star',
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -100,15 +107,9 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'default' => 'default',
 				'prefix_class' => 'elementor-view-',
-			]
-		);
-
-		$this->add_control(
-			'icon',
-			[
-				'label' => __( 'Choose Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-star',
+				'condition' => [
+					'icon!' => '',
+				],
 			]
 		);
 
@@ -124,6 +125,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'default' => 'circle',
 				'condition' => [
 					'view!' => 'default',
+					'icon!' => '',
 				],
 				'prefix_class' => 'elementor-shape-',
 			]
@@ -134,6 +136,9 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => __( 'Title & Description', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => __( 'This is the heading', 'elementor' ),
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'label_block' => true,
@@ -145,6 +150,9 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => '',
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 				'placeholder' => __( 'Enter your description', 'elementor' ),
 				'rows' => 10,
@@ -158,6 +166,9 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => __( 'Link to', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'separator' => 'before',
 			]
@@ -185,6 +196,9 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-position-',
 				'toggle' => false,
+				'condition' => [
+					'icon!' => '',
+				],
 			]
 		);
 
@@ -215,6 +229,18 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'icon!' => '',
+				],
+			]
+		);
+
+		$this->start_controls_tabs( 'icon_colors' );
+
+		$this->start_controls_tab(
+			'icon_colors_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -250,6 +276,56 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 			]
 		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'icon_colors_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'hover_primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'condition' => [
+					'view!' => 'default',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->add_responsive_control(
 			'icon_space',
@@ -352,53 +428,6 @@ class Widget_Icon_Box extends Widget_Base {
 				'condition' => [
 					'view!' => 'default',
 				],
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_hover',
-			[
-				'label' => __( 'Icon Hover', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'hover_primary_color',
-			[
-				'label' => __( 'Primary Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'hover_secondary_color',
-			[
-				'label' => __( 'Secondary Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'condition' => [
-					'view!' => 'default',
-				],
-				'selectors' => [
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'hover_animation',
-			[
-				'label' => __( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
 			]
 		);
 
@@ -553,11 +582,12 @@ class Widget_Icon_Box extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $settings['hover_animation'] ] );
 
 		$icon_tag = 'span';
+		$has_icon = ! empty( $settings['icon'] );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$this->add_render_attribute( 'link', 'href', $settings['link']['url'] );
@@ -572,7 +602,10 @@ class Widget_Icon_Box extends Widget_Base {
 			}
 		}
 
-		$this->add_render_attribute( 'i', 'class', $settings['icon'] );
+		if ( $has_icon ) {
+			$this->add_render_attribute( 'i', 'class', $settings['icon'] );
+			$this->add_render_attribute( 'i', 'aria-hidden', 'true' );
+		}
 
 		$icon_attributes = $this->get_render_attribute_string( 'icon' );
 		$link_attributes = $this->get_render_attribute_string( 'link' );
@@ -580,22 +613,23 @@ class Widget_Icon_Box extends Widget_Base {
 		$this->add_render_attribute( 'description_text', 'class', 'elementor-icon-box-description' );
 
 		$this->add_inline_editing_attributes( 'title_text', 'none' );
-
 		$this->add_inline_editing_attributes( 'description_text' );
 		?>
-        <div class="elementor-icon-box-wrapper">
-            <div class="elementor-icon-box-icon">
-                <<?php echo implode( ' ', [ $icon_tag, $icon_attributes, $link_attributes ] ); ?>>
-                    <i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i>
-                </<?php echo $icon_tag; ?>>
-            </div>
-            <div class="elementor-icon-box-content">
-                <<?php echo $settings['title_size']; ?> class="elementor-icon-box-title">
-                    <<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?> <?php echo $this->get_render_attribute_string( 'title_text' ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
-                </<?php echo $settings['title_size']; ?>>
-                <p <?php echo $this->get_render_attribute_string( 'description_text' ); ?>><?php echo $settings['description_text']; ?></p>
-            </div>
-        </div>
+		<div class="elementor-icon-box-wrapper">
+		<?php if ( $has_icon ) : ?>
+			<div class="elementor-icon-box-icon">
+				<<?php echo implode( ' ', [ $icon_tag, $icon_attributes, $link_attributes ] ); ?>>
+				<i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i>
+				</<?php echo $icon_tag; ?>>
+			</div>
+			<?php endif; ?>
+			<div class="elementor-icon-box-content">
+				<<?php echo $settings['title_size']; ?> class="elementor-icon-box-title">
+					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?><?php echo $this->get_render_attribute_string( 'title_text' ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
+				</<?php echo $settings['title_size']; ?>>
+				<p <?php echo $this->get_render_attribute_string( 'description_text' ); ?>><?php echo $settings['description_text']; ?></p>
+			</div>
+		</div>
 		<?php
 	}
 
@@ -609,28 +643,30 @@ class Widget_Icon_Box extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
-        <#
-        var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+		<#
+		var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 			iconTag = link ? 'a' : 'span';
 
-        view.addRenderAttribute( 'description_text', 'class', 'elementor-icon-box-description' );
+		view.addRenderAttribute( 'description_text', 'class', 'elementor-icon-box-description' );
 
-        view.addInlineEditingAttributes( 'title_text', 'none' );
-        view.addInlineEditingAttributes( 'description_text' );
-        #>
-        <div class="elementor-icon-box-wrapper">
-            <div class="elementor-icon-box-icon">
-                <{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
-                    <i class="{{ settings.icon }}"></i>
-                </{{{ iconTag }}}>
-            </div>
-            <div class="elementor-icon-box-content">
-                <{{{ settings.title_size }}} class="elementor-icon-box-title">
-                    <{{{ iconTag + ' ' + link }}} {{{ view.getRenderAttributeString( 'title_text' ) }}}>{{{ settings.title_text }}}</{{{ iconTag }}}>
-                </{{{ settings.title_size }}}>
-                <p {{{ view.getRenderAttributeString( 'description_text' ) }}}>{{{ settings.description_text }}}</p>
-            </div>
-        </div>
+		view.addInlineEditingAttributes( 'title_text', 'none' );
+		view.addInlineEditingAttributes( 'description_text' );
+		#>
+		<div class="elementor-icon-box-wrapper">
+			<# if ( settings.icon ) { #>
+			<div class="elementor-icon-box-icon">
+				<{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
+				<i class="{{ settings.icon }}" aria-hidden="true"></i>
+			</{{{ iconTag }}}>
+		</div>
+			<# } #>
+			<div class="elementor-icon-box-content">
+				<{{{ settings.title_size }}} class="elementor-icon-box-title">
+					<{{{ iconTag + ' ' + link }}} {{{ view.getRenderAttributeString( 'title_text' ) }}}>{{{ settings.title_text }}}</{{{ iconTag }}}>
+				</{{{ settings.title_size }}}>
+				<p {{{ view.getRenderAttributeString( 'description_text' ) }}}>{{{ settings.description_text }}}</p>
+			</div>
+		</div>
 		<?php
 	}
 }

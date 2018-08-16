@@ -8,7 +8,7 @@ module.exports = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
-		buttonSave: '#elementor-panel-saver-button-publish, #elementor-panel-saver-menu-save-draft', // Compatibility for Pro <= 1.9.5
+		buttonSave: '#elementor-panel-saver-button-publish, #elementor-panel-saver-menu-save-draft', // TODO: remove. Compatibility for Pro <= 1.9.5
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
@@ -27,7 +27,7 @@ module.exports = Marionette.ItemView.extend( {
 	behaviors: function() {
 		var behaviors = {
 			saver: {
-				behaviorClass: elementor.modules.saver.footerBehavior
+				behaviorClass: elementor.modules.components.saver.behaviors.FooterSaver
 			}
 		};
 

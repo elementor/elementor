@@ -13,95 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * for the user to choose from. The control also accepts a range argument that
  * allows you to set the `min`, `max` and `step` values per unit type.
  *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- *    $this->add_control(
- *    	'width',
- *    	[
- *    		'label' => __( 'Width', 'plugin-domain' ),
- *    		'type' => Controls_Manager::SLIDER,
- *    		'default' => [
- *    			'size' => 1,
- *    		],
- *    		'size_units' => [ 'px', '%' ],
- *    		'range' => [
- *    			'px' => [
- *    				'min' => 0,
- *    				'max' => 1000,
- *    				'step' => 5,
- *    			],
- *    			'%' => [
- *    				'min' => 0,
- *    				'max' => 100,
- *    			],
- *    		],
- *    		'selectors' => [
- *    			'{{WRAPPER}} .box' => 'width: {{SIZE}}{{UNIT}};',
- *    		],
- *    	]
- *    );
- *
- * PHP usage (inside `Widget_Base::render()` method):
- *
- *    $width = $this->get_settings( 'width' );
- *    echo '<div style="width: ' . $width['size'] . $width['unit'] '"> ... </div>';
- *
- * JS usage (inside `Widget_Base::_content_template()` method):
- *
- *    <div style="width: {{ settings.width.size }}{{ settings.width.unit }}"> ... </div>';
- *
  * @since 1.0.0
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $title       Optional. The field title that appears on mouse
- *                            hover. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param array $default      {
- *     Optional. Defautl slider value.
- *
- *     @type int $size Optional. The initial size of slider. Default is empty.
- * }
- * @param array $size_units   Optional. An array of available CSS units like
- *                            'px', '%' and 'em'. Default is `[ 'px' ]`.
- *
- * @param array $range        {
- *     The range parameter is populated by default with ranges for each register
- *     size (e.g. px|em|rem|%|deg). @see Control_Base_Units::get_default_settings()
- *
- *     {
- *      @type integer $min  Optional.The minimum value of range.
- *      @type integer $max  Optional.The maximum value of range.
- *      @type integer $step Optional.The intervals value that will be incremented
- *                          or decremented when using the controls' spinners.
- *     },
- *     ...
- * }
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is true.
- *
- * @return array {
- *     An array containing the size and the unit: `[ 'size' => '', 'unit' => '' ]`.
- *
- *     @type int    $size Selected size.
- *     @type string $unit Selected unit.
- * }
  */
 class Control_Slider extends Control_Base_Units {
 
 	/**
-	 * Retrieve slider control type.
+	 * Get slider control type.
+	 *
+	 * Retrieve the control type, in this case `slider`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -113,9 +32,9 @@ class Control_Slider extends Control_Base_Units {
 	}
 
 	/**
-	 * Retrieve slider control default values.
+	 * Get slider control default values.
 	 *
-	 * Get the default value of the slider control. Used to return the default
+	 * Retrieve the default value of the slider control. Used to return the default
 	 * values while initializing the slider control.
 	 *
 	 * @since 1.0.0
@@ -132,9 +51,9 @@ class Control_Slider extends Control_Base_Units {
 	}
 
 	/**
-	 * Retrieve slider control default settings.
+	 * Get slider control default settings.
 	 *
-	 * Get the default settings of the slider control. Used to return the
+	 * Retrieve the default settings of the slider control. Used to return the
 	 * default settings while initializing the slider control.
 	 *
 	 * @since 1.0.0

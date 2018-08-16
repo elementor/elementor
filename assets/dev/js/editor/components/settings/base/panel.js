@@ -17,9 +17,5 @@ module.exports = ControlsStack.extend( {
 		return {
 			elementSettingsModel: this.model
 		};
-	},
-
-	initialize: function() {
-		this.collection = new Backbone.Collection( _.values( this.model.controls ) );
 	}
 } );

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor scheme manager class.
+ * Elementor scheme manager.
  *
  * Elementor scheme manager handler class is responsible for registering and
  * initializing all the supported schemes.
@@ -288,13 +288,15 @@ class Schemes_Manager {
 			/**
 			 * Enabled schemes.
 			 *
-			 * Filters the enabled schemes.
+			 * Filters the list of enabled schemes.
 			 *
 			 * @since 1.0.0
 			 *
 			 * @param array $enabled_schemes The list of enabled schemes.
 			 */
-			self::$_enabled_schemes = apply_filters( 'elementor/schemes/enabled_schemes', $enabled_schemes );
+			$enabled_schemes = apply_filters( 'elementor/schemes/enabled_schemes', $enabled_schemes );
+
+			self::$_enabled_schemes = $enabled_schemes;
 		}
 		return self::$_enabled_schemes;
 	}
@@ -304,7 +306,7 @@ class Schemes_Manager {
 	 *
 	 * Add a default schemes to the register schemes list.
 	 *
-	 * This methode is used to set initial schemes when initializing the class.
+	 * This method is used to set initial schemes when initializing the class.
 	 *
 	 * @since 1.7.12
 	 * @access private

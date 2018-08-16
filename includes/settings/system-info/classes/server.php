@@ -8,19 +8,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor server environment report.
+ *
+ * Elementor system report handler class responsible for generating a report for
+ * the server environment.
+ *
+ * @since 1.0.0
+ */
 class Server_Reporter extends Base_Reporter {
 
 	/**
-	 * @access public
+	 * Get server environment reporter title.
+	 *
+	 * Retrieve server environment reporter title.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Reporter title.
 	 */
 	public function get_title() {
 		return 'Server Environment';
 	}
 
 	/**
-	 * @access public
+	 * Get server environment report fields.
+	 *
+	 * Retrieve the required fields for the server environment report.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
 		return [
@@ -31,14 +51,25 @@ class Server_Reporter extends Base_Reporter {
 			'php_max_input_vars' => 'PHP Max Input Vars',
 			'php_max_post_size' => 'PHP Max Post Size',
 			'gd_installed' => 'GD Installed',
+			'zip_installed' => 'ZIP Installed',
 			'write_permissions' => 'Write Permissions',
 			'elementor_library' => 'Elementor Library',
 		];
 	}
 
 	/**
-	 * @access public
+	 * Get server operating system.
+	 *
+	 * Retrieve the server operating system.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value Server operating system.
+	 * }
 	 */
 	public function get_os() {
 		return [
@@ -47,8 +78,18 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get server software.
+	 *
+	 * Retrieve the server software.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value Server software.
+	 * }
 	 */
 	public function get_software() {
 		return [
@@ -57,8 +98,20 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get PHP version.
+	 *
+	 * Retrieve the PHP version.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value          PHP version.
+	 *    @type string $recommendation Minimum PHP version recommendation.
+	 *    @type bool   $warning        Whether to display a warning.
+	 * }
 	 */
 	public function get_php_version() {
 		$result = [
@@ -75,8 +128,18 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get PHP `max_input_vars`.
+	 *
+	 * Retrieve the value of `max_input_vars` from `php.ini` configuration file.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value PHP `max_input_vars`.
+	 * }
 	 */
 	public function get_php_max_input_vars() {
 		return [
@@ -85,8 +148,18 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get PHP `post_max_size`.
+	 *
+	 * Retrieve the value of `post_max_size` from `php.ini` configuration file.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value PHP `post_max_size`.
+	 * }
 	 */
 	public function get_php_max_post_size() {
 		return [
@@ -95,8 +168,19 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get GD installed.
+	 *
+	 * Whether the GD extension is installed.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value   Yes if the GD extension is installed, No otherwise.
+	 *    @type bool   $warning Whether to display a warning. True if the GD extension is installed, False otherwise.
+	 * }
 	 */
 	public function get_gd_installed() {
 		$gd_installed = extension_loaded( 'gd' );
@@ -108,8 +192,42 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	/**
+	 * Get ZIP installed.
+	 *
+	 * Whether the ZIP extension is installed.
+	 *
+	 * @since 2.1.0
 	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value   Yes if the ZIP extension is installed, No otherwise.
+	 *    @type bool   $warning Whether to display a warning. True if the ZIP extension is installed, False otherwise.
+	 * }
+	 */
+	public function get_zip_installed() {
+		$zip_installed = extension_loaded( 'zip' );
+
+		return [
+			'value' => $zip_installed ? 'Yes' : 'No',
+			'warning' => ! $zip_installed,
+		];
+	}
+
+	/**
+	 * Get MySQL version.
+	 *
+	 * Retrieve the MySQL version.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value MySQL version.
+	 * }
 	 */
 	public function get_mysql_version() {
 		global $wpdb;
@@ -120,8 +238,20 @@ class Server_Reporter extends Base_Reporter {
 	}
 
 	/**
+	 * Get write permissions.
+	 *
+	 * Check whether the required folders has writing permissions.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value   Writing permissions status.
+	 *    @type bool   $warning Whether to display a warning. True if some required
+	 *                          folders don't have writing permissions, False otherwise.
+	 * }
 	 */
 	public function get_write_permissions() {
 		$paths_to_check = [
@@ -164,13 +294,25 @@ class Server_Reporter extends Base_Reporter {
 
 		return [
 			'value' => $value,
-			'warning' => !! $write_problems,
+			'warning' => ! ! $write_problems,
 		];
 	}
 
 	/**
-	 * @access public
+	 * Check for elementor library connectivity.
+	 *
+	 * Check whether the remote elementor library is reachable.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value   The status of elementor library connectivity.
+	 *    @type bool   $warning Whether to display a warning. True if elementor
+	 * *                        library is not reachable, False otherwise.
+	 * }
 	 */
 	public function get_elementor_library() {
 		$response = wp_remote_post(

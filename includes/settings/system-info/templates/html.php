@@ -21,7 +21,7 @@ foreach ( $reports as $report_name => $report ) : ?>
 			<?php
 			foreach ( $report['report'] as $field_name => $field ) :
 
-				if ( in_array( $report_name, [ 'plugins', 'network_plugins', 'mu_plugins' ] ) ) :
+				if ( in_array( $report_name, [ 'plugins', 'network_plugins', 'mu_plugins' ], true ) ) :
 					foreach ( $field['value'] as $plugin ) :
 					?>
 						<tr>
@@ -40,7 +40,6 @@ foreach ( $reports as $report_name => $report ) : ?>
 							?></td>
 							<td><?php
 								if ( $plugin['Author'] ) :
-
 									if ( $plugin['AuthorURI'] ) :
 										$author = "<a href='{$plugin['AuthorURI']}'>{$plugin['Author']}</a>";
 									else :
@@ -61,11 +60,10 @@ foreach ( $reports as $report_name => $report ) : ?>
 						<td><?php echo $field['label']; ?>:</td>
 						<td><?php echo $field['value']; ?></td>
 						<td><?php
-						if ( ! empty( $field['recommendation'] ) ) :
+							if ( ! empty( $field['recommendation'] ) ) {
 								echo $field['recommendation'];
-							endif;
-							?>
-						</td>
+							}
+						?></td>
 					</tr>
 				<?php
 				endif;

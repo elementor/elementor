@@ -4,13 +4,43 @@ module.exports = Marionette.Behavior.extend( {
 	// use beforeRender that runs after the collection is exist
 	onBeforeRender: function() {
 		if ( this.view.collection && ! this.listenerAttached ) {
-			this.view.collection.on( 'update', this.saveCollectionHistory, this );
+			this.view.collection
+				.on( 'update', this.saveCollectionHistory, this )
+				.on( 'reset', this.onDeleteAllContent, this );
 			this.listenerAttached = true;
 		}
 	},
 
+	onDeleteAllContent: function( collection, event ) {
+		if ( ! elementor.history.history.getActive() ) {
+			// On Redo the History Listener is not active - stop here for better performance.
+			return;
+		}
+
+		var modelsJSON = [];
+
+		_.each( event.previousModels, function( model ) {
+			modelsJSON.push( model.toJSON( { copyHtmlCache: true } ) );
+		} );
+
+		var historyItem = {
+			type: 'remove',
+			elementType: 'section',
+			title: elementor.translate( 'all_content' ),
+			history: {
+				behavior: this,
+				collection: event.previousModels,
+				event: event,
+				models: modelsJSON
+			}
+		};
+
+		elementor.history.history.addItem( historyItem );
+	},
+
 	saveCollectionHistory: function( collection, event ) {
 		if ( ! elementor.history.history.getActive() ) {
+			// On Redo the History Listener is not active - stop here for better performance.
 			return;
 		}
 
@@ -61,8 +91,13 @@ module.exports = Marionette.Behavior.extend( {
 	add: function( models, toView, position ) {
 		if ( 'section' === models[0].elType ) {
 			_.each( models, function( model ) {
-				model.dontFillEmpty = true;
+				model.allowEmpty = true;
 			} );
+		}
+
+		// Fix for case the iframe has been reloaded and the old `elementor-inner` is not exist.
+		if ( toView.$el.hasClass( 'elementor-inner' ) && toView.$el[0].ownerDocument !== elementor.$previewContents[0] ) {
+			toView = elementor.getPreviewView();
 		}
 
 		toView.addChildModel( models, { at: position, silent: 0 } );
