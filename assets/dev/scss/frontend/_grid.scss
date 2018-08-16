@@ -268,6 +268,7 @@ ul.elementor-icon-list-items.elementor-inline-items {
 
 	.elementor-grid-item {
 		word-break: break-word;
+		min-width: 0; // Prevent columns from overflowing the grid area in Firefox browser
 	}
 
 	@mixin grid_loop($device) {
