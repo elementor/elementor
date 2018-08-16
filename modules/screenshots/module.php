@@ -18,6 +18,20 @@ class Module extends BaseModule {
 		return 'screenshots';
 	}
 
+	public function screenshot_proxy() {
+		if ( ! wp_verify_nonce( $_REQUEST['nonce'], 'screenshot_proxy' ) ) {
+			echo '';
+		}
+
+		if ( ! empty( $_REQUEST['href'] ) ) {
+			$response = wp_remote_get( utf8_decode( $_REQUEST['href'] ) );
+			$body =  wp_remote_retrieve_body( $response );
+			if ( $body ) {
+				echo $body;
+			}
+		}
+	}
+
 	public function save_screenshot() {
 		if ( empty( $_REQUEST['screenshot'] ) ) {
 			return;
@@ -94,6 +108,8 @@ class Module extends BaseModule {
 		$config = [
 			'selector' => '.elementor-' . $post_id,
 			'post_id' => $post_id,
+			'nonce' => wp_create_nonce( 'screenshot_proxy' ),
+			'home_url' => home_url(),
 			'ajax_url' => admin_url( '/admin-ajax.php' ),
 		];
 
@@ -116,5 +132,9 @@ class Module extends BaseModule {
 	public function __construct() {
 		add_filter( 'template_redirect', [ $this, 'template_redirect' ], 0 );
 		add_action( 'wp_ajax_elementor_save_screenshot', [ $this, 'save_screenshot' ] );
+		if ( isset( $_REQUEST['screenshot_proxy'] ) ) {
+			$this->screenshot_proxy();
+			die;
+		}
 	}
 }
