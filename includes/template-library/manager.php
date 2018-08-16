@@ -198,7 +198,9 @@ class Manager {
 	 */
 	public function get_library_data( array $args ) {
 		$library_data = Api::get_library_data( ! empty( $args['sync'] ) );
-
+		if (empty($library_data['categories'])) {
+			$library_data['categories'] = [];
+		}
 		return [
 			'templates' => $this->get_templates(),
 			'config' => [
