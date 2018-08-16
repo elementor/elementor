@@ -1,5 +1,6 @@
 var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
+	Masonry = require( 'elementor-utils/masonry' ),
 	TemplateLibraryCollectionView;
 
 TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
@@ -18,14 +19,16 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	ui: {
-		filterText: '#elementor-template-library-filter-text',
+		textFilter: '#elementor-template-library-filter-text',
+		selectFilter: '.elementor-template-library-filter-select',
 		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
 		orderInputs: '.elementor-template-library-order-input',
 		orderLabels: '.elementor-template-library-order-label'
 	},
 
 	events: {
-		'input @ui.filterText': 'onFilterTextInput',
+		'input @ui.textFilter': 'onTextFilterInput',
+		'change @ui.selectFilter': 'onSelectFilterChange',
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick'
 	},
@@ -71,7 +74,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			passingFilter = true;
 
 		jQuery.each( filterTerms, function( filterTermName ) {
-			var filterValue = this.value || elementor.templates.getFilter( filterTermName );
+			var filterValue = elementor.templates.getFilter( filterTermName );
 
 			if ( ! filterValue ) {
 				return;
@@ -142,6 +145,25 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
+	setFiltersUI: function() {
+		var $filters = this.$( this.ui.selectFilter );
+
+		$filters.select2( {
+			placeholder: elementor.translate( 'category' ),
+			allowClear: true,
+			width: 150
+		} );
+	},
+
+	setMasonrySkin: function() {
+		var masonry = new Masonry( {
+			container: this.$childViewContainer,
+			items: this.$childViewContainer.children()
+		} );
+
+		this.$childViewContainer.imagesLoaded( masonry.run.bind( masonry ) );
+	},
+
 	toggleFilterClass: function() {
 		this.$el.toggleClass( 'elementor-templates-filter-active', !! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
 	},
@@ -150,14 +172,27 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.addSourceData();
 
 		this.toggleFilterClass();
+
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'block' === elementor.templates.getFilter( 'type' ) ) {
+			this.setFiltersUI();
+
+			this.setMasonrySkin();
+		}
 	},
 
 	onBeforeRenderEmpty: function() {
 		this.addSourceData();
 	},
 
-	onFilterTextInput: function() {
-		elementor.templates.setFilter( 'text', this.ui.filterText.val() );
+	onTextFilterInput: function() {
+		elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
+	},
+
+	onSelectFilterChange: function( event ) {
+		var $select = jQuery( event.currentTarget ),
+			filterName = $select.data( 'elementor-filter' );
+
+		elementor.templates.setFilter( filterName, $select.val() );
 	},
 
 	onMyFavoritesFilterChange: function(  ) {

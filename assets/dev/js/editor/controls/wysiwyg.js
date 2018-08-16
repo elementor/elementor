@@ -3,6 +3,18 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 
 ControlWysiwygItemView = ControlBaseDataView.extend( {
 
+	editor: null,
+
+	ui: function() {
+		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
+
+		jQuery.extend( ui, {
+			inputWrapper: '.elementor-control-input-wrapper'
+		} );
+
+		return ui;
+	},
+
 	events: function() {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
 			'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
@@ -58,10 +70,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 			id: self.editorID,
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
-				// Save the bind callback to allow overwrite it externally
-				self.saveEditor = self.saveEditor.bind( self, editor );
-
-				editor.on( 'keyup change undo redo SetContent', self.saveEditor );
+				self.editor = editor;
 			}
 		};
 
@@ -72,18 +81,23 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	saveEditor: function( editor ) {
-		editor.save();
+	applySavedValue: function() {
+		if ( ! this.editor ) {
+			return;
+		}
 
-		this.setValue( editor.getContent() );
+		var controlValue = this.getControlValue();
+
+		this.editor.setContent( controlValue );
+
+		// Update also the plain textarea
+		jQuery( '#' + this.editorID ).val( controlValue );
 	},
 
-	attachElContent: function() {
-		var editorTemplate = elementor.config.wp_editor.replace( /elementorwpeditor/g, this.editorID ).replace( '%%EDITORCONTENT%%', this.getControlValue() );
+	saveEditor: function() {
+		this.editor.save();
 
-		this.$el.html( editorTemplate );
-
-		return this;
+		this.setValue( this.editor.getContent() );
 	},
 
 	moveButtons: function( buttonsToMove, from, to ) {
@@ -135,13 +149,16 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
 	},
 
-	onAfterExternalChange: function() {
-		var controlValue = this.getControlValue();
+	onReady: function() {
+		var self = this;
 
-		tinymce.get( this.editorID ).setContent( controlValue );
+		var $editor = jQuery( elementor.config.wp_editor.replace( /elementorwpeditor/g, self.editorID ).replace( '%%EDITORCONTENT%%', self.getControlValue() ) );
 
-		// Update also the plain textarea
-		jQuery( '#' + this.editorID ).val( controlValue );
+		self.ui.inputWrapper.html( $editor );
+
+		setTimeout( function() {
+			self.editor.on( 'keyup change undo redo SetContent', self.saveEditor.bind( self ) );
+		}, 100 );
 	},
 
 	onBeforeDestroy: function() {

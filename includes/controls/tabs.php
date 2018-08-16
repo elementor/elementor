@@ -19,7 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Tabs extends Base_UI_Control {
 
 	/**
-	 * Retrieve tabs control type.
+	 * Get tabs control type.
+	 *
+	 * Retrieve the control type, in this case `tabs`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -43,9 +45,9 @@ class Control_Tabs extends Base_UI_Control {
 	public function content_template() {}
 
 	/**
-	 * Retrieve tabs control default settings.
+	 * Get tabs control default settings.
 	 *
-	 * Get the default settings of the tabs control. Used to return the
+	 * Retrieve the default settings of the tabs control. Used to return the
 	 * default settings while initializing the tabs control.
 	 *
 	 * @since 1.0.0

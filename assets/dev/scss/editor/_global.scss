@@ -12,16 +12,16 @@
 }
 
 .elementor-loader-wrapper {
-	$size: 100px;
-
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translateX(-50%) translateY(-50%);
-	width: $size;
+	width: 200px;
 
 	.elementor-loader {
-		height: $size;
+		height: 100px;
+		width: 100px;
+		margin: auto;
 		position: relative;
 	}
 
@@ -75,6 +75,10 @@
 }
 
 // Select2
+.select2-container {
+	z-index: $editor-layer;
+}
+
 .select2-dropdown {
 	border-color: $editor-light;
 
@@ -91,7 +95,7 @@
 		color: $editor-info;
 	}
 
-	.dialog-widget-header {
+	.dialog-header {
 		font-size: 13px;
 		color: $editor-dark;
 	}

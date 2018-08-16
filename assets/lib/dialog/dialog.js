@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.1.0
+ * Dialogs Manager v4.4.1
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -91,8 +91,6 @@
 
 			widget.init(self, properties);
 
-			widget.setMessage(properties.message);
-
 			return widget;
 		};
 
@@ -131,18 +129,30 @@
 
 		var bindEvents = function () {
 
-			elements.window.on('keyup', onWindowKeyUp);
+			var windows = [elements.window];
 
-			if (settings.hide.onOutsideClick) {
-				elements.window[0].addEventListener('click', hideOnOutsideClick, true);
+			if (elements.iframe) {
+				windows.push(jQuery(elements.iframe[0].contentWindow));
 			}
+
+			windows.forEach(function(window) {
+				window.on('keyup', onWindowKeyUp);
+
+				if (settings.hide.onOutsideClick) {
+					window[0].addEventListener('click', hideOnOutsideClick, true);
+				}
+
+				if (settings.hide.onOutsideContextMenu) {
+					window[0].addEventListener('contextmenu', hideOnOutsideClick, true);
+				}
+
+				if (settings.position.autoRefresh) {
+					window.on('resize', self.refreshPosition);
+				}
+			});
 
 			if (settings.hide.onClick || settings.hide.onBackgroundClick) {
 				elements.widget.on('click', hideOnClick);
-			}
-
-			if (settings.position.autoRefresh) {
-				elements.window.on('resize', self.refreshPosition);
 			}
 		};
 
@@ -181,15 +191,91 @@
 			});
 		};
 
+		var fixIframePosition = function(position) {
+			if (! position.my) {
+				return;
+			}
+
+			var horizontalOffsetRegex = /left|right/,
+				extraOffsetRegex = /([+-]\d+)?$/,
+				iframeOffset = elements.iframe.offset(),
+				iframeWindow = elements.iframe[0].contentWindow,
+				myParts = position.my.split(' '),
+				fixedParts = [];
+
+			if (myParts.length === 1) {
+				if (horizontalOffsetRegex.test(myParts[0])) {
+					myParts.push('center');
+				} else {
+					myParts.unshift('center');
+				}
+			}
+
+			myParts.forEach(function(part, index) {
+				var fixedPart = part.replace(extraOffsetRegex, function(partOffset) {
+					partOffset = +partOffset || 0;
+
+					if (! index) {
+						partOffset += iframeOffset.left - iframeWindow.scrollX;
+					} else {
+						partOffset += iframeOffset.top - iframeWindow.scrollY;
+					}
+
+					if (partOffset >= 0) {
+						partOffset = '+' + partOffset;
+					}
+
+					return partOffset;
+				});
+
+				fixedParts.push(fixedPart);
+			});
+
+			position.my = fixedParts.join(' ');
+		};
+
+		var hideOnClick = function(event) {
+
+			if(isContextMenuClickEvent(event)) {
+				return;
+			}
+
+			if (settings.hide.onClick) {
+
+				if ($(event.target).closest(settings.selectors.preventClose).length) {
+					return;
+				}
+			} else if (event.target !== this) {
+				return;
+			}
+
+			self.hide();
+		};
+
+		var hideOnOutsideClick = function(event) {
+
+			if (isContextMenuClickEvent(event) || $(event.target).closest(elements.widget).length) {
+				return;
+			}
+
+			self.hide();
+		};
+
 		var initElements = function () {
 
 			self.addElement('widget');
+
+			self.addElement('header');
 
 			self.addElement('message');
 
 			self.addElement('window', window);
 
 			self.addElement('container', settings.container);
+
+			if (settings.iframe) {
+				self.addElement('iframe', settings.iframe);
+			}
 
 			var id = self.getSettings('id');
 
@@ -205,7 +291,7 @@
 
 			classes.push(self.getSettings('className'));
 
-			self.getElements('widget').addClass(classes.join(' '));
+			elements.widget.addClass(classes.join(' '));
 		};
 
 		var initSettings = function (parent, userSettings) {
@@ -213,6 +299,8 @@
 			var parentSettings = $.extend(true, {}, parent.getSettings());
 
 			settings = {
+				headerMessage: '',
+				message: '',
 				effects: parentSettings.effects,
 				classes: {
 					globalPrefix: parentSettings.classPrefix,
@@ -222,6 +310,7 @@
 					preventClose: '.' + parentSettings.classPrefix + '-prevent-close'
 				},
 				container: 'body',
+				iframe: null,
 				position: {
 					element: 'widget',
 					my: 'center',
@@ -235,6 +324,7 @@
 					autoDelay: 5000,
 					onClick: false,
 					onOutsideClick: true,
+					onOutsideContextMenu: false,
 					onBackgroundClick: true
 				}
 			};
@@ -260,34 +350,17 @@
 			});
 		};
 
+		var isContextMenuClickEvent = function (event) {
+			// Firefox fires `click` event on every `contextmenu` event.
+			return event.type === 'click' && event.button === 2;
+		};
+
 		var normalizeClassName = function (name) {
 
 			return name.replace(/([a-z])([A-Z])/g, function () {
 
 				return arguments[1] + '-' + arguments[2].toLowerCase();
 			});
-		};
-
-		var hideOnClick = function(event) {
-
-			if (settings.hide.onClick) {
-
-				if ($(event.target).closest(settings.selectors.preventClose).length) {
-					return;
-				}
-			} else if (event.target !== this) {
-				return;
-			}
-
-			self.hide();
-		};
-
-		var hideOnOutsideClick = function(event) {
-			if ($(event.target).closest(elements.widget).length) {
-				return;
-			}
-
-			self.hide();
 		};
 
 		var onWindowKeyUp = function(event) {
@@ -301,18 +374,30 @@
 
 		var unbindEvents = function() {
 
-			elements.window.off('keyup', onWindowKeyUp);
+			var windows = [elements.window];
 
-			if (settings.hide.onOutsideClick) {
-				elements.window[0].removeEventListener('click', hideOnOutsideClick, true);
+			if (elements.iframe) {
+				windows.push(jQuery(elements.iframe[0].contentWindow));
 			}
+
+			windows.forEach(function(window) {
+				window.off('keyup', onWindowKeyUp);
+
+				if (settings.hide.onOutsideClick) {
+					window[0].removeEventListener('click', hideOnOutsideClick, true);
+				}
+
+				if (settings.hide.onOutsideContextMenu) {
+					window[0].removeEventListener('contextmenu', hideOnOutsideClick, true);
+				}
+
+				if (settings.position.autoRefresh) {
+					window.off('resize', self.refreshPosition);
+				}
+			});
 
 			if (settings.hide.onClick || settings.hide.onBackgroundClick) {
 				elements.widget.off('click', hideOnClick);
-			}
-
-			if (settings.position.autoRefresh) {
-				elements.window.off('resize', self.refreshPosition);
 			}
 		};
 
@@ -335,6 +420,22 @@
 			return $newElement;
 		};
 
+		this.destroy = function() {
+
+			unbindEvents();
+
+			elements.widget.remove();
+
+			self.trigger('destroy');
+
+			return self;
+		};
+
+		this.getElements = function (item) {
+
+			return item ? elements[item] : elements;
+		};
+
 		this.getSettings = function (setting) {
 
 			var copy = Object.create(settings);
@@ -344,6 +445,19 @@
 			}
 
 			return copy;
+		};
+
+		this.hide = function () {
+
+			clearTimeout(hideTimeOut);
+
+			callEffect('hide', arguments);
+
+			unbindEvents();
+
+			self.trigger('hide');
+
+			return self;
 		};
 
 		this.init = function (parent, properties) {
@@ -371,22 +485,9 @@
 			return self;
 		};
 
-		this.getElements = function (item) {
+		this.isVisible = function() {
 
-			return item ? elements[item] : elements;
-		};
-
-		this.hide = function () {
-
-			clearTimeout(hideTimeOut);
-
-			callEffect('hide', arguments);
-
-			unbindEvents();
-
-			self.trigger('hide');
-
-			return self;
+			return elements.widget.is(':visible');
 		};
 
 		this.on = function (eventName, callback) {
@@ -412,16 +513,42 @@
 			return self;
 		};
 
-		this.setMessage = function (message) {
+		this.refreshPosition = function () {
 
-			elements.message.html(message);
+			if (! settings.position.enable) {
+				return;
+			}
 
-			return self;
+			var position = $.extend({}, settings.position);
+
+			if (elements[position.of]) {
+				position.of = elements[position.of];
+			}
+
+			if (elements.iframe) {
+				fixIframePosition(position);
+			}
+
+			elements[position.element].position(position);
 		};
 
 		this.setID = function (id) {
 
-			self.getElements('widget').attr('id', id);
+			elements.widget.attr('id', id);
+
+			return self;
+		};
+
+		this.setHeaderMessage = function (message) {
+
+			this.getElements('header').html(message);
+
+			return this;
+		};
+
+		this.setMessage = function (message) {
+
+			elements.message.html(message);
 
 			return self;
 		};
@@ -439,6 +566,8 @@
 
 		this.show = function () {
 
+			clearTimeout(hideTimeOut);
+
 			elements.widget.appendTo(elements.container).hide();
 
 			callEffect('show', arguments);
@@ -454,21 +583,6 @@
 			self.trigger('show');
 
 			return self;
-		};
-
-		this.refreshPosition = function () {
-
-			if (! settings.position.enable) {
-				return;
-			}
-
-			var position = $.extend({}, settings.position);
-
-			if (elements[position.of]) {
-				position.of = elements[position.of];
-			}
-
-			elements[position.element].position(position);
 		};
 
 		this.trigger = function (eventName, params) {
@@ -492,17 +606,6 @@
 
 			return self;
 		};
-
-		this.destroy = function() {
-
-			unbindEvents();
-
-			elements.widget.remove();
-
-			self.trigger('destroy');
-
-			return self;
-		};
 	};
 
 	DialogsManager.Widget.prototype.types = [];
@@ -510,9 +613,14 @@
 	// Inheritable widget methods
 	DialogsManager.Widget.prototype.buildWidget = function () {
 
-		var elements = this.getElements();
+		var elements = this.getElements(),
+			settings = this.getSettings();
 
-		elements.widget.html(elements.message);
+		elements.widget.append(elements.header, elements.message);
+
+		this.setHeaderMessage(settings.headerMessage);
+
+		this.setMessage(settings.message);
 	};
 
 	DialogsManager.Widget.prototype.getDefaultSettings = function () {
@@ -554,6 +662,10 @@
 		},
 		activeKeyDown: function (event) {
 
+			if (!this.focusedButton) {
+				return;
+			}
+
 			var TAB_KEY = 9;
 
 			if (event.which === TAB_KEY) {
@@ -584,13 +696,15 @@
 		addButton: function (options) {
 
 			var self = this,
-				$button = self.addElement(options.name, $('<' + this.getSettings('buttonTag') + '>').text(options.text), 'button');
+				settings = self.getSettings(),
+				buttonSettings = jQuery.extend(settings.button, options),
+				$button = self.addElement(options.name, $('<' + buttonSettings.tag + '>').text(options.text), 'button');
 
 			self.buttons.push($button);
 
 			var buttonFn = function () {
 
-				if (self.getSettings('hide').onButtonClick) {
+				if (settings.hide.onButtonClick) {
 					self.hide();
 				}
 
@@ -641,7 +755,9 @@
 				hide: {
 					onButtonClick: true
 				},
-				buttonTag: 'button'
+				button: {
+					tag: 'button'
+				}
 			};
 		},
 		onHide: function () {
@@ -683,7 +799,6 @@
 			var settings = DialogsManager.getWidgetType('buttons').prototype.getDefaultSettings.apply(this, arguments);
 
 			return $.extend(true, settings, {
-				headerMessage: '',
 				contentWidth: 'auto',
 				contentHeight: 'auto',
 				closeButton: false,
@@ -699,12 +814,10 @@
 
 			DialogsManager.getWidgetType('buttons').prototype.buildWidget.apply(this, arguments);
 
-			var $widgetHeader = this.addElement('widgetHeader'),
-				$widgetContent = this.addElement('widgetContent');
+			var $widgetContent = this.addElement('widgetContent'),
+				elements = this.getElements();
 
-			var elements = this.getElements();
-
-			$widgetContent.append($widgetHeader, elements.message, elements.buttonsWrapper);
+			$widgetContent.append(elements.header, elements.message, elements.buttonsWrapper);
 
 			elements.widget.html($widgetContent);
 
@@ -733,14 +846,6 @@
 			if ('auto' !== settings.contentHeight) {
 				elements.message.height(settings.contentHeight);
 			}
-
-			this.setHeaderMessage(settings.headerMessage);
-		},
-		setHeaderMessage: function (message) {
-
-			this.getElements('widgetHeader').html(message);
-
-			return this;
 		}
 	}));
 
@@ -817,4 +922,7 @@
 
 	// Exporting the DialogsManager variable to global
 	global.DialogsManager = DialogsManager;
-})(typeof require === 'function' ? require('jquery') : jQuery, typeof module !== 'undefined' ? module.exports : window);
+})(
+	typeof jQuery !== 'undefined' ? jQuery : typeof require === 'function' && require('jquery'),
+	typeof module !== 'undefined' ? module.exports : window
+);

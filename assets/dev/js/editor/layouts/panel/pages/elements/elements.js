@@ -1,13 +1,17 @@
 var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsCollection = require( './collections/elements' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
-	PanelElementsElementsView = elementor.modules.templateLibrary.ElementsCollectionView,
+	PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
 	PanelElementsSearchView = require( './views/search' ),
 	PanelElementsGlobalView = require( './views/global' ),
 	PanelElementsLayoutView;
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-elements',
+
+	options: {
+		autoFocusSearch: true
+	},
 
 	regions: {
 		elements: '#elementor-panel-elements-wrapper',
@@ -75,15 +79,19 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
-		_.each( elementor.config.widgets, function( element ) {
+		_.each( elementor.config.widgets, function( widget ) {
+			if ( ! widget.show_in_panel ) {
+				return;
+			}
+
 			elementsCollection.add( {
-				title: element.title,
-				elType: element.elType,
-				categories: element.categories,
-				keywords: element.keywords,
-				icon: element.icon,
-				widgetType: element.widget_type,
-				custom: element.custom
+				title: widget.title,
+				elType: widget.elType,
+				categories: widget.categories,
+				keywords: widget.keywords,
+				icon: widget.icon,
+				widgetType: widget.widget_type,
+				custom: widget.custom
 			} );
 		} );
 
@@ -105,15 +113,25 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
-		_.each( elementor.config.elements_categories, function( categoryConfig, categoryName ) {
+		_.each( elementor.config.document.panel.elements_categories, function( categoryConfig, categoryName ) {
 			if ( ! categories[ categoryName ] ) {
 				return;
+			}
+
+			// Set defaults.
+			if ( 'undefined' === typeof categoryConfig.active ) {
+				categoryConfig.active = true;
+			}
+
+			if ( 'undefined' === typeof categoryConfig.icon ) {
+				categoryConfig.icon = 'font';
 			}
 
 			categoriesCollection.add( {
 				name: categoryName,
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
+				defaultActive: categoryConfig.active,
 				items: categories[ categoryName ]
 			} );
 		} );
@@ -123,9 +141,9 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	activateTab: function( tabName ) {
 		this.ui.tabs
-			.removeClass( 'active' )
+			.removeClass( 'elementor-active' )
 			.filter( '[data-view="' + tabName + '"]' )
-			.addClass( 'active' );
+			.addClass( 'elementor-active' );
 
 		this.showView( tabName );
 	},
@@ -152,8 +170,12 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.clearSearchInput();
 	},
 
+	focusSearch: function() {
+		this.search.currentView.ui.input.focus();
+	},
+
 	onChildviewChildrenRender: function() {
-		this.updateElementsScrollbar();
+		elementor.getPanelView().updateScrollbar();
 	},
 
 	onChildviewSearchChangeInput: function( child ) {
@@ -168,14 +190,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.showView( 'categories' );
 
 		this.showView( 'search' );
+
+		if ( this.options.autoFocusSearch ) {
+			setTimeout( this.focusSearch.bind( this ) );
+		}
 	},
 
 	onTabClick: function( event ) {
 		this.activateTab( event.currentTarget.dataset.view );
-	},
-
-	updateElementsScrollbar: function() {
-		elementor.channels.data.trigger( 'scrollbar:update' );
 	}
 } );
 

@@ -15,7 +15,8 @@ var	Manager = function() {
 		remove: elementor.translate( 'removed' ),
 		change: elementor.translate( 'edited' ),
 		move: elementor.translate( 'moved' ),
-		duplicate: elementor.translate( 'duplicated' )
+		paste_style: elementor.translate( 'style_pasted' ),
+		reset_style: elementor.translate( 'style_reset' )
 	};
 
 	var addBehaviors = function( behaviors ) {
@@ -62,16 +63,8 @@ var	Manager = function() {
 
 	var addHotKeys = function() {
 		var H_KEY = 72,
+			Y_KEY = 89,
 			Z_KEY = 90;
-
-		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
-			isWorthHandling: function( event ) {
-				return items.length && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
-			},
-			handle: function( event ) {
-				navigate( Z_KEY === event.which && event.shiftKey );
-			}
-		} );
 
 		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showHistoryPage', {
 			isWorthHandling: function( event ) {
@@ -79,6 +72,24 @@ var	Manager = function() {
 			},
 			handle: function() {
 				elementor.getPanelView().setPage( 'historyPage' );
+			}
+		} );
+
+		var navigationWorthHandling = function( event ) {
+			return items.length && elementor.hotKeys.isControlEvent( event ) && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
+		};
+
+		elementor.hotKeys.addHotKeyHandler( Y_KEY, 'historyNavigationRedo', {
+			isWorthHandling: navigationWorthHandling,
+			handle: function( event ) {
+				navigate( true );
+			}
+		} );
+
+		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
+			isWorthHandling: navigationWorthHandling,
+			handle: function( event ) {
+				navigate( event.shiftKey );
 			}
 		} );
 	};
@@ -107,8 +118,11 @@ var	Manager = function() {
 			.on( 'element:before:remove', self.startRemoveElement )
 			.on( 'element:after:remove', self.endItem )
 
-			.on( 'element:before:duplicate', self.startDuplicateElement )
-			.on( 'element:after:duplicate', self.endItem )
+			.on( 'element:before:paste:style', self.startPasteStyle )
+			.on( 'element:after:paste:style', self.endItem )
+
+			.on( 'element:before:reset:style', self.startResetStyle )
+			.on( 'element:after:reset:style', self.endItem )
 
 			.on( 'section:before:drop', self.startDropElement )
 			.on( 'section:after:drop', self.endItem )
@@ -208,7 +222,7 @@ var	Manager = function() {
 	};
 
 	this.doItem = function( index ) {
-		// Don't track while restore the item
+		// Don't track while restoring the item
 		this.setActive( false );
 
 		var item = items.at( index );
@@ -311,7 +325,7 @@ var	Manager = function() {
 			founded = false;
 
 		if ( ! views ) {
-			views = elementor.sections.currentView.children;
+			views = elementor.getPreviewView().children;
 		}
 
 		_.each( views._views, function( view ) {
@@ -335,7 +349,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'move',
 			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' )
+			elementType: model.elType || model.get( 'elType' )
 		} );
 	};
 
@@ -365,9 +379,17 @@ var	Manager = function() {
 		} );
 	};
 
-	this.startDuplicateElement = function( model ) {
+	this.startPasteStyle = function( model ) {
 		elementor.history.history.startItem( {
-			type: 'duplicate',
+			type: 'paste_style',
+			title: self.getModelLabel( model ),
+			elementType: model.get( 'elType' )
+		} );
+	};
+
+	this.startResetStyle = function( model ) {
+		elementor.history.history.startItem( {
+			type: 'reset_style',
 			title: self.getModelLabel( model ),
 			elementType: model.get( 'elType' )
 		} );

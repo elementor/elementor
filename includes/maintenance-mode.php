@@ -3,8 +3,12 @@ namespace Elementor;
 
 use Elementor\TemplateLibrary\Source_Local;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
- * Elementor maintenance mode class.
+ * Elementor maintenance mode.
  *
  * Elementor maintenance mode handler class is responsible for the Elementor
  * "Maintenance Mode" and the "Coming Soon" features.
@@ -101,34 +105,6 @@ class Maintenance_Mode {
 			return;
 		}
 
-		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`.
-		$GLOBALS['post'] = get_post( self::get( 'template_id' ) );
-
-		add_filter( 'template_include', [ $this, 'template_include' ], 1 );
-	}
-
-	/**
-	 * Template include.
-	 *
-	 * Update the path of the current template before including it. Used to
-	 * change the "Maintenance Mode" path and the HTTP header data.
-	 *
-	 * Fired by `template_include` filter.
-	 *
-	 * @since 1.4.0
-	 * @access public
-	 *
-	 * @param string $template The path of the template to include.
-	 *
-	 * @return string Updated path of the template to include.
-	 */
-	public function template_include( $template ) {
-		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
-		query_posts( [
-			'p' => self::get( 'template_id' ),
-			'post_type' => Source_Local::CPT,
-		] );
-
 		if ( 'maintenance' === self::get( 'mode' ) ) {
 			$protocol = wp_get_server_protocol();
 			header( "$protocol 503 Service Unavailable", true, 503 );
@@ -136,7 +112,14 @@ class Maintenance_Mode {
 			header( 'Retry-After: 600' );
 		}
 
-		return $template;
+		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`.
+		$GLOBALS['post'] = get_post( self::get( 'template_id' ) ); // WPCS: override ok.
+
+		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
+		query_posts( [
+			'p' => self::get( 'template_id' ),
+			'post_type' => Source_Local::CPT,
+		] );
 	}
 
 	/**
@@ -144,13 +127,20 @@ class Maintenance_Mode {
 	 *
 	 * Adds new "Maintenance Mode" settings fields to Elementor admin page.
 	 *
+	 * The method need to receive the an instance of the Tools settings page
+	 * to add the new maintenance mode functionality.
+	 *
 	 * Fired by `elementor/admin/after_create_settings/{$page_id}` action.
 	 *
 	 * @since 1.4.0
 	 * @access public
+	 *
+	 * @param Tools $tools An instance of the Tools settings page.
 	 */
 	public function register_settings_fields( Tools $tools ) {
-		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( [ 'type' => 'page' ] );
+		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( [
+			'type' => 'page',
+		] );
 
 		$templates_options = [];
 
@@ -158,12 +148,21 @@ class Maintenance_Mode {
 			$templates_options[ $template['template_id'] ] = $template['title'];
 		}
 
-		$template_description = sprintf( ' <a target="_blank" class="elementor-edit-template" style="display: none" href="%s">%s</a>', Utils::get_edit_link( self::get( 'template_id' ) ), __( 'Edit Template', 'elementor' ) );
+		$template_id = self::get( 'template_id' );
+		$edit_url = '';
+		if ( $template_id && get_post( $template_id ) ) {
+			$edit_url = Utils::get_edit_link( $template_id );
+		}
+
+		$template_description = sprintf( ' <a target="_blank" class="elementor-edit-template" style="display: none" href="%1$s">%2$s</a>', $edit_url, __( 'Edit Template', 'elementor' ) );
 
 		$template_description .= '<span class="elementor-maintenance-mode-error" style="display: none">' .
 								 __( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ) .
 								 '<br>' .
-								 sprintf( __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) .
+								 sprintf(
+									 /* translators: %s: Create page URL */
+									 __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT )
+								 ) .
 								 '</span>';
 
 		$tools->add_tab(
@@ -320,6 +319,8 @@ class Maintenance_Mode {
 		}
 
 		add_filter( 'body_class', [ $this, 'body_class' ] );
-		add_action( 'template_redirect', [ $this, 'template_redirect' ], 1 );
+
+		// Priority = 11 that is *after* WP default filter `redirect_canonical` in order to avoid redirection loop.
+		add_action( 'template_redirect', [ $this, 'template_redirect' ], 11 );
 	}
 }

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor preview class.
+ * Elementor preview.
  *
  * Elementor preview handler class is responsible for initializing Elementor in
  * preview mode.
@@ -44,6 +44,9 @@ class Preview {
 
 		$this->post_id = get_the_ID();
 
+		// Don't redirect to permalink.
+		remove_action( 'template_redirect', 'redirect_canonical' );
+
 		// Compatibility with Yoast SEO plugin when 'Removes unneeded query variables from the URL' enabled.
 		// TODO: Move this code to `includes/compatibility.php`.
 		if ( class_exists( 'WPSEO_Frontend' ) ) {
@@ -59,6 +62,8 @@ class Preview {
 		} );
 
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
+
+		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
@@ -98,14 +103,20 @@ class Preview {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @param int $post_id Optional. Post ID. Default is `0`.
+	 *
 	 * @return bool Whether preview mode is active.
 	 */
-	public function is_preview_mode() {
-		if ( ! User::is_current_user_can_edit() ) {
+	public function is_preview_mode( $post_id = 0 ) {
+		if ( empty( $post_id ) ) {
+			$post_id = get_the_ID();
+		}
+
+		if ( ! User::is_current_user_can_edit( $post_id ) ) {
 			return false;
 		}
 
-		if ( ! isset( $_GET['elementor-preview'] ) ) {
+		if ( ! isset( $_GET['elementor-preview'] ) || $post_id !== (int) $_GET['elementor-preview'] ) {
 			return false;
 		}
 
@@ -121,10 +132,24 @@ class Preview {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @param string $content The content of the builder.
+	 *
 	 * @return string HTML wrapper for the builder.
 	 */
-	public function builder_wrapper() {
-		return '<div id="elementor" class="elementor elementor-edit-mode"></div>';
+	public function builder_wrapper( $content ) {
+		if ( get_the_ID() === $this->post_id ) {
+			$classes = 'elementor-edit-mode';
+
+			$document = Plugin::$instance->documents->get( $this->post_id );
+
+			if ( $document ) {
+				$classes .= ' ' . $document->get_container_classes();
+			}
+
+			$content = '<div id="elementor" class="' . $classes . '"></div>';
+		}
+
+		return $content;
 	}
 
 	/**
@@ -148,9 +173,18 @@ class Preview {
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
 		wp_register_style(
+			'elementor-select2',
+			ELEMENTOR_ASSETS_URL . 'lib/e-select2/css/e-select2' . $suffix . '.css',
+			[],
+			'4.0.6-rc.1'
+		);
+
+		wp_register_style(
 			'editor-preview',
 			ELEMENTOR_ASSETS_URL . 'css/editor-preview' . $direction_suffix . $suffix . '.css',
-			[],
+			[
+				'elementor-select2',
+			],
 			ELEMENTOR_VERSION
 		);
 
@@ -178,7 +212,6 @@ class Preview {
 	 */
 	private function enqueue_scripts() {
 		Plugin::$instance->frontend->register_scripts();
-		Plugin::$instance->frontend->enqueue_scripts();
 
 		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
 
@@ -200,6 +233,27 @@ class Preview {
 		 * @since 1.5.4
 		 */
 		do_action( 'elementor/preview/enqueue_scripts' );
+	}
+
+	/**
+	 * Elementor Preview footer scripts and styles.
+	 *
+	 * Handle styles and scripts from frontend.
+	 *
+	 * Fired by `wp_footer` action.
+	 *
+	 * @since 2.0.9
+	 * @access public
+	 */
+	public function wp_footer() {
+		$frontend = Plugin::$instance->frontend;
+		if ( $frontend->has_elementor_in_page() ) {
+			// Has header/footer/widget-template - enqueue all style/scripts/fonts.
+			$frontend->wp_footer();
+		} else {
+			// Enqueue only scripts.
+			$frontend->enqueue_scripts();
+		}
 	}
 
 	/**

@@ -3,7 +3,14 @@ var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behavi
 
 TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	className: function() {
-		var classes = 'elementor-template-library-template elementor-template-library-template-' + this.model.get( 'source' );
+		var classes = 'elementor-template-library-template',
+			source = this.model.get( 'source' );
+
+		classes += ' elementor-template-library-template-' + source;
+
+		if ( 'remote' === source ) {
+			classes += ' elementor-template-library-template-' + this.model.get( 'type' );
+		}
 
 		if ( this.model.get( 'isPro' ) ) {
 			classes += ' elementor-template-library-pro-template';

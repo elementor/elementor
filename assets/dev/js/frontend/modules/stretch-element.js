@@ -19,36 +19,49 @@ module.exports = ViewModule.extend( {
 
 	stretch: function() {
 		var containerSelector = this.getSettings( 'selectors.container' ),
-			$element = this.elements.$element,
-			$container = jQuery( containerSelector ),
-			isSpecialContainer = window !== $container[0];
+			$container;
+
+		try {
+			$container = jQuery( containerSelector );
+		} catch ( e ) {}
+
+		if ( ! $container || ! $container.length ) {
+			$container = jQuery( this.getDefaultSettings().selectors.container );
+		}
 
 		this.reset();
 
-		var containerWidth = $container.outerWidth(),
-			elementWidth = $element.outerWidth(),
+		var $element = this.elements.$element,
+			containerWidth = $container.outerWidth(),
 			elementOffset = $element.offset().left,
-			correctOffset = elementOffset;
+			isFixed = 'fixed' === $element.css( 'position' ),
+			correctOffset = isFixed ? 0 : elementOffset;
 
-		if ( isSpecialContainer ) {
+		if ( window !== $container[0] ) {
 			var containerOffset = $container.offset().left;
 
-			if ( elementOffset > containerOffset ) {
-				correctOffset = elementOffset - containerOffset;
+			if ( isFixed ) {
+				correctOffset = containerOffset;
 			} else {
-				correctOffset = 0;
+				if ( elementOffset > containerOffset ) {
+					correctOffset = elementOffset - containerOffset;
+				}
 			}
 		}
 
-		if ( elementorFrontend.config.is_rtl ) {
-			correctOffset = containerWidth - ( elementWidth + correctOffset );
+		if ( ! isFixed ) {
+			if ( elementorFrontend.config.is_rtl ) {
+				correctOffset = containerWidth - ( $element.outerWidth() + correctOffset );
+			}
+
+			correctOffset = -correctOffset;
 		}
 
 		var css = {};
 
 		css.width = containerWidth + 'px';
 
-		css[ this.getSettings( 'direction' ) ] = -correctOffset + 'px';
+		css[ this.getSettings( 'direction' ) ] = correctOffset + 'px';
 
 		$element.css( css );
 	},
@@ -56,9 +69,9 @@ module.exports = ViewModule.extend( {
 	reset: function() {
 		var css = {};
 
-		css.width = 'auto';
+		css.width = '';
 
-		css[ this.getSettings( 'direction' ) ] = 0;
+		css[ this.getSettings( 'direction' ) ] = '';
 
 		this.elements.$element.css( css );
 	}

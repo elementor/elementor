@@ -9,36 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor image size control.
  *
  * A base control for creating image size control. Displays input fields to define
- * one of the default image sizes (thumbnail, medium, medium_large, large) or set
- * a custom dimension.
- *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- *    $this->add_group_control(
- *    	Group_Control_Image_Size::get_type(),
- *    	[
- *    		'name' => 'thumbnail',
- *    		'default' => 'large',
- *    		'exclude' => [],
- *    		'include' => [],
- *    		'separator' => 'before',
- *    	]
- *    );
+ * one of the default image sizes (thumbnail, medium, medium_large, large) or custom
+ * image dimensions.
  *
  * @since 1.0.0
- *
- * @param string $name        The field name.
- * @param string $default     Optional. The default image size. Default is empty.
- * @param array  $exclude     Optional. Image size to exclude. Default is empty.
- * @param array  $include     Optional. Image size to include. Default is empty.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
  */
 class Group_Control_Image_Size extends Group_Control_Base {
 
@@ -56,9 +30,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	protected static $fields;
 
 	/**
-	 * Retrieve type.
-	 *
 	 * Get image size control type.
+	 *
+	 * Retrieve the control type, in this case `image-size`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -71,39 +45,43 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve attachment image HTML.
+	 * Get attachment image HTML.
 	 *
-	 * Get the attachment image HTML code.
+	 * Retrieve the attachment image HTML code.
+	 *
+	 * Note that some widgets use the same key for the media control that allows
+	 * the image selection and for the image size control that allows the user
+	 * to select the image size, in this case the third parameter should be null
+	 * or the same as the second parameter. But when the widget uses different
+	 * keys for the media control and the image size control, when calling this
+	 * method you should pass the keys.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
-	 * @param array  $settings    {
-	 *     Control settings.
-	 *
-	 *     @type array  $image           {
-	 *         Optional. Image data.
-	 *
-	 *         @type string $id  Optional. Image ID.
-	 *         @type string $url Optional. Image URL.
-	 *     }
-	 *     @type string $image_size      Optional. Image size.
-	 *     @type string $hover_animation Optional. Hover animation.
-	 * }
-	 * @param string $setting_key Optional. Settings key. Default is `image`.
+	 * @param array  $settings       Control settings.
+	 * @param string $image_size_key Optional. Settings key for image size.
+	 *                               Default is `image`.
+	 * @param string $image_key      Optional. Settings key for image. Default
+	 *                               is null. If not defined uses image size key
+	 *                               as the image key.
 	 *
 	 * @return string Image HTML.
 	 */
-	public static function get_attachment_image_html( $settings, $setting_key = 'image' ) {
-		$id  = $settings[ $setting_key ]['id'];
-
-		// Old version of image settings.
-		if ( ! isset( $settings[ $setting_key . '_size' ] ) ) {
-			$settings[ $setting_key . '_size' ] = '';
+	public static function get_attachment_image_html( $settings, $image_size_key = 'image', $image_key = null ) {
+		if ( ! $image_key ) {
+			$image_key = $image_size_key;
 		}
 
-		$size = $settings[ $setting_key . '_size' ];
+		$image = $settings[ $image_key ];
+
+		// Old version of image settings.
+		if ( ! isset( $settings[ $image_size_key . '_size' ] ) ) {
+			$settings[ $image_size_key . '_size' ] = '';
+		}
+
+		$size = $settings[ $image_size_key . '_size' ];
 
 		$image_class = ! empty( $settings['hover_animation'] ) ? 'elementor-animation-' . $settings['hover_animation'] : '';
 
@@ -114,24 +92,24 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		$image_sizes[] = 'full';
 
-		if ( ! empty( $id ) && in_array( $size, $image_sizes ) && ! isset( $_GET['elementor-screenshot'] ) ) {
+		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) && ! isset( $_GET['elementor-screenshot'] ) ) {
 			$image_class .= " attachment-$size size-$size";
 			$image_attr = [
 				'class' => trim( $image_class ),
 			];
 
-			$html .= wp_get_attachment_image( $id, $size, false, $image_attr );
+			$html .= wp_get_attachment_image( $image['id'], $size, false, $image_attr );
 		} else {
-			$image_src = self::get_attachment_image_src( $id, $setting_key, $settings );
+			$image_src = self::get_attachment_image_src( $image['id'], $image_size_key, $settings );
 
-			if ( ! $image_src && isset( $settings[ $setting_key ]['url'] ) ) {
-				$image_src = $settings[ $setting_key ]['url'] ;
+			if ( ! $image_src && isset( $image['url'] ) ) {
+				$image_src = $image['url'] ;
 			}
 
 			if ( ! empty( $image_src ) ) {
 				$image_class_html = ! empty( $image_class ) ? ' class="' . $image_class . '"' : '';
 
-				$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $settings[ $setting_key ] ), Control_Media::get_image_alt( $settings[ $setting_key ] ), $image_class_html );
+				$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $image ), Control_Media::get_image_alt( $image ), $image_class_html );
 			}
 		}
 
@@ -139,9 +117,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve all image sizes.
+	 * Get all image sizes.
 	 *
-	 * Get available image sizes with data like `width`, `height` and `crop`.
+	 * Retrieve available image sizes with data like `width`, `height` and `crop`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -182,17 +160,17 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 * @static
 	 *
 	 * @param string $attachment_id The attachment ID.
-	 * @param string $group_name    Group name.
+	 * @param string $image_size_key Settings key for image size.
 	 * @param array  $settings      Control settings.
 	 *
 	 * @return string Attachment image source URL.
 	 */
-	public static function get_attachment_image_src( $attachment_id, $group_name, array $settings ) {
+	public static function get_attachment_image_src( $attachment_id, $image_size_key, array $settings ) {
 		if ( empty( $attachment_id ) ) {
 			return false;
 		}
 
-		$size = $settings[ $group_name . '_size' ];
+		$size = $settings[ $image_size_key . '_size' ];
 
 		if ( 'custom' !== $size ) {
 			$attachment_size = $size;
@@ -201,7 +179,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			// TODO: Please rewrite this code.
 			require_once( ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' );
 
-			$custom_dimension = $settings[ $group_name . '_custom_dimension' ];
+			$custom_dimension = $settings[ $image_size_key . '_custom_dimension' ];
 
 			$attachment_size = [
 				// Defaults sizes
@@ -234,9 +212,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve child default arguments.
+	 * Get child default arguments.
 	 *
-	 * Get the default arguments for all the child controls for a specific group
+	 * Retrieve the default arguments for all the child controls for a specific group
 	 * control.
 	 *
 	 * @since 1.2.2
@@ -296,7 +274,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 * @return array Processed fields.
 	 */
 	protected function prepare_fields( $fields ) {
-		$image_sizes = $this->_get_image_sizes();
+		$image_sizes = $this->get_image_sizes();
 
 		$args = $this->get_args();
 
@@ -320,16 +298,16 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
-	 * Retrieve image sizes.
+	 * Get image sizes.
 	 *
-	 * Get available image sizes after filtering `include` and `exclude` arguments.
+	 * Retrieve available image sizes after filtering `include` and `exclude` arguments.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @access private
 	 *
 	 * @return array Filtered image sizes.
 	 */
-	private function _get_image_sizes() {
+	private function get_image_sizes() {
 		$wp_image_sizes = self::get_all_image_sizes();
 
 		$args = $this->get_args();
@@ -361,8 +339,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	}
 
 	/**
+	 * Get default options.
+	 *
+	 * Retrieve the default options of the image size control. Used to return the
+	 * default options while initializing the image size control.
+	 *
 	 * @since 1.9.0
 	 * @access protected
+	 *
+	 * @return array Default image size control options.
 	 */
 	protected function get_default_options() {
 		return [

@@ -10,19 +10,47 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor template library manager.
+ *
+ * Elementor template library manager handler class is responsible for
+ * initializing the template library.
+ *
+ * @since 1.0.0
+ */
 class Manager {
 
 	/**
+	 * Registered template sources.
+	 *
+	 * Holds a list of all the supported sources with their instances.
+	 *
+	 * @access protected
+	 *
 	 * @var Source_Base[]
 	 */
 	protected $_registered_sources = [];
 
+	/**
+	 * Imported template images.
+	 *
+	 * Holds an instance of `Import_Images` class.
+	 *
+	 * @access private
+	 *
+	 * @var Import_Images
+	 */
 	private $_import_images = null;
 
 	/**
+	 * Template library manager constructor.
+	 *
+	 * Initializing the template library manager by registering default template
+	 * sources and initializing ajax calls.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		$this->register_default_sources();
 
@@ -30,9 +58,14 @@ class Manager {
 	}
 
 	/**
+	 * Get `Import_Images` instance.
+	 *
+	 * Retrieve the instance of the `Import_Images` class.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @return Import_Images
+	 *
+	 * @return Import_Images Imported images instance.
 	 */
 	public function get_import_images_instance() {
 		if ( null === $this->_import_images ) {
@@ -43,9 +76,20 @@ class Manager {
 	}
 
 	/**
+	 * Register template source.
+	 *
+	 * Used to register new template sources displayed in the template library.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param string $source_class The name of source class.
+	 * @param array  $args         Optional. Class arguments. Default is an
+	 *                             empty array.
+	 *
+	 * @return \WP_Error|true True if the source was registered, `WP_Error`
+	 *                        otherwise.
+	 */
 	public function register_source( $source_class, $args = [] ) {
 		if ( ! class_exists( $source_class ) ) {
 			return new \WP_Error( 'source_class_name_not_exists' );
@@ -62,9 +106,18 @@ class Manager {
 	}
 
 	/**
+	 * Unregister template source.
+	 *
+	 * Remove an existing template sources from the list of registered template
+	 * sources.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param string $id The source ID.
+	 *
+	 * @return bool Whether the source was unregistered.
+	 */
 	public function unregister_source( $id ) {
 		if ( ! isset( $this->_registered_sources[ $id ] ) ) {
 			return false;
@@ -76,17 +129,31 @@ class Manager {
 	}
 
 	/**
+	 * Get registered template sources.
+	 *
+	 * Retrieve registered template sources.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return Source_Base[] Registered template sources.
+	 */
 	public function get_registered_sources() {
 		return $this->_registered_sources;
 	}
 
 	/**
+	 * Get template source.
+	 *
+	 * Retrieve single template sources for a given template ID.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param string $id The source ID.
+	 *
+	 * @return false|Source_Base Template sources if one exist, False otherwise.
+	 */
 	public function get_source( $id ) {
 		$sources = $this->get_registered_sources();
 
@@ -98,9 +165,15 @@ class Manager {
 	}
 
 	/**
+	 * Get templates.
+	 *
+	 * Retrieve all the templates from all the registered sources.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return array Templates array.
+	 */
 	public function get_templates() {
 		$templates = [];
 
@@ -112,24 +185,40 @@ class Manager {
 	}
 
 	/**
+	 * Get library data.
+	 *
+	 * Retrieve the library data.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 *
+	 * @param array $args Library arguments.
+	 *
+	 * @return array Library data.
 	 */
 	public function get_library_data( array $args ) {
-		if ( ! empty( $args['sync'] ) ) {
-			Api::get_templates_data( true );
-		}
+		$library_data = Api::get_library_data( ! empty( $args['sync'] ) );
 
 		return [
 			'templates' => $this->get_templates(),
-			'config' => [],
+			'config' => [
+				'categories' => $library_data['categories'],
+			],
 		];
 	}
 
 	/**
+	 * Save template.
+	 *
+	 * Save new or update existing template on the database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $args Template arguments.
+	 *
+	 * @return \WP_Error|int The ID of the saved/updated template.
+	 */
 	public function save_template( array $args ) {
 		$validate_args = $this->ensure_args( [ 'post_id', 'source', 'content', 'type' ], $args );
 
@@ -161,17 +250,19 @@ class Manager {
 	}
 
 	/**
+	 * Update template.
+	 *
+	 * Update template on the database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $template_data New template data.
+	 *
+	 * @return \WP_Error|Source_Base Template sources instance if the templates
+	 *                               was updated, `WP_Error` otherwise.
+	 */
 	public function update_template( array $template_data ) {
-		// TODO: Temp patch since 1.5.0.
-		if ( isset( $template_data['data'] ) ) {
-			$template_data['content'] = $template_data['data'];
-
-			unset( $template_data['data'] );
-		}
-		// END Patch.
 		$validate_args = $this->ensure_args( [ 'source', 'content', 'type' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -196,9 +287,17 @@ class Manager {
 	}
 
 	/**
+	 * Update templates.
+	 *
+	 * Update template on the database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $args Template arguments.
+	 *
+	 * @return \WP_Error|true True if templates updated, `WP_Error` otherwise.
+	 */
 	public function update_templates( array $args ) {
 		foreach ( $args['templates'] as $template_data ) {
 			$result = $this->update_template( $template_data );
@@ -212,11 +311,16 @@ class Manager {
 	}
 
 	/**
+	 * Get template data.
+	 *
+	 * Retrieve the template data.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	 * @param array $args
 	 *
-	 * @return array|bool|\WP_Error
+	 * @param array $args Template arguments.
+	 *
+	 * @return \WP_Error|bool|array ??
 	 */
 	public function get_template_data( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
@@ -235,13 +339,28 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		return $source->get_data( $args );
+		do_action( 'elementor/template-library/before_get_source_data', $args, $source );
+
+		$data = $source->get_data( $args );
+
+		do_action( 'elementor/template-library/after_get_source_data', $args, $source );
+
+		return $data;
 	}
 
 	/**
+	 * Delete template.
+	 *
+	 * Delete template from the database.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $args Template arguments.
+	 *
+	 * @return \WP_Post|\WP_Error|false|null Post data on success, false or null
+	 *                                       or 'WP_Error' on failure.
+	 */
 	public function delete_template( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
@@ -259,9 +378,17 @@ class Manager {
 	}
 
 	/**
+	 * Export template.
+	 *
+	 * Export template to a file.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param array $args Template arguments.
+	 *
+	 * @return mixed Whether the export succeeded or failed.
+	 */
 	public function export_template( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
@@ -280,19 +407,33 @@ class Manager {
 	}
 
 	/**
+	 * Import template.
+	 *
+	 * Import template from a file.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @return mixed Whether the export succeeded or failed.
+	 */
 	public function import_template() {
 		/** @var Source_Local $source */
 		$source = $this->get_source( 'local' );
 
-		return $source->import_template();
+		return $source->import_template( $_FILES['file']['name'], $_FILES['file']['tmp_name'] );
 	}
 
 	/**
+	 * Mark template as favorite.
+	 *
+	 * Add the template to the user favorite templates.
+	 *
 	 * @since 1.9.0
 	 * @access public
+	 *
+	 * @param array $args Template arguments.
+	 *
+	 * @return mixed Whether the template marked as favorite.
 	 */
 	public function mark_template_as_favorite( $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id', 'favorite' ], $args );
@@ -307,33 +448,56 @@ class Manager {
 	}
 
 	/**
+	 * On successful template import.
+	 *
+	 * Redirect the user to the template library after template import was
+	 * successful finished.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 */
 	public function on_import_template_success() {
 		wp_redirect( admin_url( 'edit.php?post_type=' . Source_Local::CPT ) );
 	}
 
 	/**
+	 * On failed template import.
+	 *
+	 * Echo the error messages after template import was failed.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param \WP_Error $error WordPress error instance.
+	 */
 	public function on_import_template_error( \WP_Error $error ) {
 		echo $error->get_error_message();
 	}
 
 	/**
+	 * On failed template export.
+	 *
+	 * Kill WordPress execution and display HTML error messages after template
+	 * export was failed.
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 *
+	 * @param \WP_Error $error WordPress error instance.
+	 */
 	public function on_export_template_error( \WP_Error $error ) {
 		_default_wp_die_handler( $error->get_error_message(), 'Elementor Library' );
 	}
 
 	/**
+	 * Register default template sources.
+	 *
+	 * Register the 'local' and 'remote' template sources that Elementor use by
+	 * default.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private function register_default_sources() {
 		$sources = [
 			'local',
@@ -349,11 +513,27 @@ class Manager {
 	}
 
 	/**
+	 * Handle ajax request.
+	 *
+	 * Fire authenticated ajax actions for any given ajax request.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 *
+	 * @param string $ajax_request Ajax request.
+	 */
 	private function handle_ajax_request( $ajax_request ) {
 		Plugin::$instance->editor->verify_ajax_nonce();
+
+		if ( ! empty( $_REQUEST['editor_post_id'] ) ) {
+			$editor_post_id = absint( $_REQUEST['editor_post_id'] );
+
+			if ( ! get_post( $editor_post_id ) ) {
+				wp_send_json_error( __( 'Post not found.', 'elementor' ) );
+			}
+
+			Plugin::$instance->db->switch_to_post( $editor_post_id );
+		}
 
 		$result = call_user_func( [ $this, $ajax_request ], $_REQUEST );
 
@@ -395,9 +575,13 @@ class Manager {
 	}
 
 	/**
+	 * Init ajax calls.
+	 *
+	 * Initialize template library ajax calls for allowed ajax requests.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 */
 	private function init_ajax_calls() {
 		$allowed_ajax_requests = [
 			'get_library_data',
@@ -418,14 +602,25 @@ class Manager {
 	}
 
 	/**
+	 * Ensure arguments exist.
+	 *
+	 * Checks whether the required arguments exist in the specified arguments.
+	 *
 	 * @since 1.0.0
 	 * @access private
-	*/
+	 *
+	 * @param array $required_args  Required arguments to check whether they
+	 *                              exist.
+	 * @param array $specified_args The list of all the specified arguments to
+	 *                              check against.
+	 *
+	 * @return \WP_Error|true True on success, 'WP_Error' otherwise.
+	 */
 	private function ensure_args( array $required_args, array $specified_args ) {
 		$not_specified_args = array_diff( $required_args, array_keys( array_filter( $specified_args ) ) );
 
 		if ( $not_specified_args ) {
-			return new \WP_Error( 'arguments_not_specified', sprintf( 'The required argument(s) `%s` not specified.', implode( ', ', $not_specified_args ) ) );
+			return new \WP_Error( 'arguments_not_specified', sprintf( 'The required argument(s) "%s" not specified.', implode( ', ', $not_specified_args ) ) );
 		}
 
 		return true;

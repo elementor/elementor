@@ -23,8 +23,24 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	},
 
 	startEditing: function( $element ) {
+		var elementorSettingKey = $element.data().elementorSettingKey,
+			settingKey = elementorSettingKey,
+			keyParts = elementorSettingKey.split( '.' ),
+			isRepeaterKey = 3 === keyParts.length,
+			settingsModel = this.view.getEditModel().get( 'settings' );
+
+		if ( isRepeaterKey ) {
+			settingsModel = settingsModel.get( keyParts[0] ).models[ keyParts[1] ];
+
+			settingKey = keyParts[2];
+		}
+
+		var dynamicSettings = settingsModel.get( '__dynamic__' ),
+			isDynamic = dynamicSettings && dynamicSettings[ settingKey ];
+
 		if (
 			this.editing ||
+			isDynamic ||
 			'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ||
 			this.view.model.isRemoteRequestActive()
 		) {

@@ -9,10 +9,10 @@ var Module = function() {
 			return;
 		}
 
-		var url = elementor.config.preview_link.replace( 'elementor-preview', 'elementor-screenshot' );
+		var url = elementor.config.document.urls.preview.replace( 'elementor-preview', 'elementor-screenshot' );
 		var iframe = document.createElement( 'iframe' );
 		iframe.src = url;
-		iframe.width = 1000;
+		iframe.width = '1000';
 		iframe.style = 'visibable: hidden;';
 		jQuery( 'body' ).append( iframe );
 	};

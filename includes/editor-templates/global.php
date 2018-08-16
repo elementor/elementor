@@ -19,15 +19,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-add-section-inner">
 		<div class="elementor-add-section-close">
 			<i class="eicon-close" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php esc_html_e( 'Close', 'elementor' ); ?></span>
+			<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-add-new-section">
-			<button class="elementor-add-section-button elementor-button"><?php _e( 'Add New Section', 'elementor' ); ?></button>
-			<button class="elementor-add-template-button elementor-button"><?php _e( 'Add Template', 'elementor' ); ?></button>
-			<div class="elementor-add-section-drag-title"><?php _e( 'Or drag widget here', 'elementor' ); ?></div>
+			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo __( 'Add New Section', 'elementor' ); ?>">
+				<i class="eicon-plus"></i>
+			</div>
+			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo __( 'Add Template', 'elementor' ); ?>">
+				<i class="fa fa-folder"></i>
+			</div>
+			<div class="elementor-add-section-drag-title"><?php echo __( 'Drag widget here', 'elementor' ); ?></div>
 		</div>
 		<div class="elementor-select-preset">
-			<div class="elementor-select-preset-title"><?php _e( 'Select your Structure', 'elementor' ); ?></div>
+			<div class="elementor-select-preset-title"><?php echo __( 'Select your Structure', 'elementor' ); ?></div>
 			<ul class="elementor-select-preset-list">
 				<#
 					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 60, 34 ];
@@ -42,4 +46,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</ul>
 		</div>
 	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-tag-controls-stack-empty">
+	<?php echo __( 'This tag has no settings.', 'elementor' ); ?>
 </script>

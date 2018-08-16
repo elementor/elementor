@@ -7,24 +7,51 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor theme report.
+ *
+ * Elementor system report handler class responsible for generating a report for
+ * the theme.
+ *
+ * @since 1.0.0
+ */
 class Theme_Reporter extends Base_Reporter {
 
 	/**
-	 * @var \WP_Theme
+	 * Theme.
+	 *
+	 * Holds the sites theme object.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var \WP_Theme WordPress theme object.
 	 */
 	private $theme = null;
 
 	/**
-	 * @access public
+	 * Get theme reporter title.
+	 *
+	 * Retrieve theme reporter title.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Reporter title.
 	 */
 	public function get_title() {
 		return 'Theme';
 	}
 
 	/**
-	 * @access public
+	 * Get theme report fields.
+	 *
+	 * Retrieve the required fields for the theme report.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
 		$fields = [
@@ -47,8 +74,14 @@ class Theme_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access protected
+	 * Get theme.
+	 *
+	 * Retrieve the theme.
+	 *
 	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return \WP_Theme WordPress theme object.
 	 */
 	protected function _get_theme() {
 		if ( is_null( $this->theme ) ) {
@@ -58,16 +91,32 @@ class Theme_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access protected
+	 * Get parent theme.
+	 *
+	 * Retrieve the parent theme.
+	 *
 	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return \WP_Theme|false WordPress theme object, or false if the current theme is not a child theme.
 	 */
 	protected function get_parent_theme() {
 		return $this->_get_theme()->parent();
 	}
 
 	/**
-	 * @access public
+	 * Get theme name.
+	 *
+	 * Retrieve the theme name.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value The theme name.
+	 * }
 	 */
 	public function get_name() {
 		return [
@@ -76,8 +125,18 @@ class Theme_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get theme author.
+	 *
+	 * Retrieve the theme author.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value The theme author.
+	 * }
 	 */
 	public function get_author() {
 		return [
@@ -86,8 +145,18 @@ class Theme_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get theme version.
+	 *
+	 * Retrieve the theme version.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value The theme version.
+	 * }
 	 */
 	public function get_version() {
 		return [
@@ -96,8 +165,19 @@ class Theme_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Is the theme is a child theme.
+	 *
+	 * Whether the theme is a child theme.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value          Yes if the theme is a child theme, No otherwise.
+	 *    @type string $recommendation Theme source code modification recommendation.
+	 * }
 	 */
 	public function get_is_child_theme() {
 		$is_child_theme = is_child_theme();
@@ -110,7 +190,7 @@ class Theme_Reporter extends Base_Reporter {
 			$result['recommendation'] = sprintf(
 				/* translators: %s: Codex URL */
 				_x( 'If you want to modify the source code of your theme, we recommend using a <a href="%s">child theme</a>.', 'System Info', 'elementor' ),
-				esc_url( 'https://codex.wordpress.org/Child_Themes' )
+				'https://codex.wordpress.org/Child_Themes'
 			);
 		}
 
@@ -118,8 +198,18 @@ class Theme_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get parent theme version.
+	 *
+	 * Retrieve the parent theme version.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value The parent theme version.
+	 * }
 	 */
 	public function get_parent_version() {
 		return [
@@ -128,8 +218,18 @@ class Theme_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get parent theme author.
+	 *
+	 * Retrieve the parent theme author.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value The parent theme author.
+	 * }
 	 */
 	public function get_parent_author() {
 		return [
@@ -138,8 +238,18 @@ class Theme_Reporter extends Base_Reporter {
 	}
 
 	/**
-	 * @access public
+	 * Get parent theme name.
+	 *
+	 * Retrieve the parent theme name.
+	 *
 	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value The parent theme name.
+	 * }
 	 */
 	public function get_parent_name() {
 		return [

@@ -37,12 +37,15 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			success: function( data ) {
 				elementor.templates.getTemplatesCollection().add( data );
 
-				elementor.templates.setTemplatesSource( 'local' );
+				elementor.templates.setTemplatesPage( 'local' );
 			},
 			error: function( data ) {
 				elementor.templates.showErrorDialog( data );
 
 				layout.showImportView();
+			},
+			complete: function() {
+				layout.hideLoadingView();
 			}
 		};
 

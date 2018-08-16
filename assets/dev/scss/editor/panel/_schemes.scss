@@ -18,6 +18,12 @@
 	height: 40px;
 	background-color: #fff;
 	box-shadow: $panel-bottom-shadow;
+
+	.elementor-button {
+		font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+		font-size: 11px;
+		font-weight: 400;
+	}
 }
 
 .elementor-panel-scheme-button-wrapper {
@@ -49,7 +55,6 @@
 	}
 }
 
-
 .elementor-panel-scheme-color {
 
 	.elementor-panel-scheme-items {
@@ -60,46 +65,48 @@
 		display: inline-block;
 
 		&:not(:nth-child(4n)) {
-			@media(max-width: $screen-lg-max) {
+			@media(max-width: $editor-screen-lg-max) {
 				@include margin-end(13px);
 			}
 
-			@media(min-width: $screen-xl-min) {
+			@media(min-width: $editor-screen-xl-min) {
 				@include margin-end(19px);
-			}
-
-			[class*="wp-version-4-9"] &, [class*="wp-version-5"] & {
-				@media(max-width: $screen-lg-max) {
-					@include margin-end(5px);
-				}
-
-				@media(min-width: $screen-xl-min) {
-					@include margin-end(12px);
-				}
 			}
 		}
 	}
 
 	.wp-picker-container {
 
+		&:not(.wp-picker-active) {
+			float: none;
+		}
+
 		&.wp-picker-active {
-			transform: translateY(10px);
+			top: 10px;
+
+			@media(max-width: $editor-screen-lg-max) {
+				border-width: 0 4px 0 5px;
+			}
+
+			@media(min-width: $editor-screen-xl-min) {
+				border-width: 0 7px 0 5px;
+			}
 
 			.wp-color-result {
-				@media(max-width: $screen-lg-max) {
+				@media(max-width: $editor-screen-lg-max) {
 					margin-right: 4px;
 				}
 
-				@media(min-width: $screen-xl-min) {
+				@media(min-width: $editor-screen-xl-min) {
 					margin-right: 6px;
 				}
 
 				[class*="wp-version-4-9"] &, [class*="wp-version-5"] & {
-					@media(max-width: $screen-lg-max) {
+					@media(max-width: $editor-screen-lg-max) {
 						margin-right: 10px;
 					}
 
-					@media(min-width: $screen-xl-min) {
+					@media(min-width: $editor-screen-xl-min) {
 						margin-right: 9px;
 					}
 				}
@@ -137,13 +144,10 @@
 
 .elementor-panel-scheme-item {
 
-	.elementor-panel-heading {
+	&:not(.elementor-open) {
 
-		&:not(.elementor-open) {
-
-			+ .elementor-panel-scheme-typography-items {
-				display: none;
-			}
+		.elementor-panel-scheme-typography-items {
+			display: none;
 		}
 	}
 }

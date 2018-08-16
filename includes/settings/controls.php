@@ -5,13 +5,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor settings controls.
+ *
+ * Elementor settings controls handler class responsible for creating the final
+ * HTML for various input field types used in Elementor settings pages.
+ *
+ * @since 1.0.0
+ */
 class Settings_Controls {
 
 	/**
-	 * @static
+	 * Render settings control.
+	 *
+	 * Generates the final HTML on the frontend for any given field based on
+	 * the field type (text, select, checkbox, raw HTML, etc.).
+	 *
 	 * @since 1.0.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @param array $field Optional. Field data. Default is an empty array.
+	 */
 	public static function render( $field = [] ) {
 		if ( empty( $field ) || empty( $field['id'] ) ) {
 			return;
@@ -19,34 +34,47 @@ class Settings_Controls {
 
 		$defaults = [
 			'type' => '',
-			'placeholder' => '',
-			'classes' => [],
+			'attributes' => [],
 			'std' => '',
 			'desc' => '',
 		];
 
 		$field = array_merge( $defaults, $field );
 
-		$method_name = '_' . $field['type'];
+		$method_name = $field['type'];
 
 		if ( ! method_exists( __CLASS__, $method_name ) ) {
-			$method_name = '_text';
+			$method_name = 'text';
 		}
 
 		self::$method_name( $field );
 	}
 
 	/**
-	 * @static
-	 * @since 1.0.0
+	 * Render text control.
+	 *
+	 * Generates the final HTML for text controls.
+	 *
+	 * @since 2.0.0
 	 * @access private
-	*/
-	private static function _text( array $field ) {
-		if ( empty( $field['classes'] ) ) {
-			$field['classes'] = [ 'regular-text' ];
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
+	private static function text( array $field ) {
+		$attributes = [];
+
+		if ( empty( $field['attributes']['class'] ) ) {
+			$field['attributes']['class'] = 'regular-text';
 		}
+
+		foreach ( $field['attributes'] as $attribute_key => $attribute_values ) {
+			$attributes[] = sprintf( '%1$s="%2$s"', $attribute_key, esc_attr( $attribute_values ) );
+		}
+
+		$attributes = implode( ' ', $attributes );
 		?>
-		<input type="<?php echo esc_attr( $field['type'] ); ?>" class="<?php echo esc_attr( implode( ' ', $field['classes'] ) ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo esc_attr( get_option( $field['id'], $field['std'] ) ); ?>"<?php echo ! empty( $field['placeholder'] ) ? ' placeholder="' . $field['placeholder'] . '"' : ''; ?> />
+		<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo esc_attr( get_option( $field['id'], $field['std'] ) ); ?>" <?php echo $attributes; ?>/>
 		<?php
 		if ( ! empty( $field['sub_desc'] ) ) :
 			echo $field['sub_desc'];
@@ -59,11 +87,17 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
-	 * @since 1.0.0
+	 * Render checkbox control.
+	 *
+	 * Generates the final HTML for checkbox controls.
+	 *
+	 * @since 2.0.0
 	 * @access private
-	*/
-	private static function _checkbox( array $field ) {
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
+	private static function checkbox( array $field ) {
 		?>
 		<label>
 			<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo $field['value']; ?>"<?php checked( $field['value'], get_option( $field['id'], $field['std'] ) ); ?> />
@@ -80,11 +114,17 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
-	 * @since 1.0.0
+	 * Render checkbox list control.
+	 *
+	 * Generates the final HTML for checkbox list controls.
+	 *
+	 * @since 2.0.0
 	 * @access private
-	*/
-	private static function _checkbox_list( array $field ) {
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
+	private static function checkbox_list( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		if ( ! is_array( $old_value ) ) {
 			$old_value = [];
@@ -104,16 +144,22 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
-	 * @since 1.4.0
+	 * Render select control.
+	 *
+	 * Generates the final HTML for select controls.
+	 *
+	 * @since 2.0.0
 	 * @access private
-	*/
-	private static function _select( array $field ) {
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
+	private static function select( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		?>
 		<select name="<?php echo esc_attr( $field['id'] ); ?>">
 			<?php if ( ! empty( $field['show_select'] ) ) : ?>
-				<option value="">— <?php _e( 'Select', 'elementor' ); ?> —</option>
+				<option value="">— <?php echo __( 'Select', 'elementor' ); ?> —</option>
 			<?php endif; ?>
 
 			<?php foreach ( $field['options'] as $value => $label ) : ?>
@@ -128,11 +174,17 @@ class Settings_Controls {
 	}
 
 	/**
-	 * @static
-	 * @since 1.0.0
+	 * Render checkbox list control for CPT.
+	 *
+	 * Generates the final HTML for checkbox list controls populated with Custom Post Types.
+	 *
+	 * @since 2.0.0
 	 * @access private
-	*/
-	private static function _checkbox_list_cpt( array $field ) {
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
+	private static function checkbox_list_cpt( array $field ) {
 		$defaults = [
 			'exclude' => [],
 		];
@@ -152,15 +204,21 @@ class Settings_Controls {
 			$field['options'][ $cpt_slug ] = $post_type->labels->name;
 		}
 
-		self::_checkbox_list( $field );
+		self::checkbox_list( $field );
 	}
 
 	/**
-	 * @static
-	 * @since 1.0.0
+	 * Render checkbox list control for user roles.
+	 *
+	 * Generates the final HTML for checkbox list controls populated with user roles.
+	 *
+	 * @since 2.0.0
 	 * @access private
-	*/
-	private static function _checkbox_list_roles( array $field ) {
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
+	private static function checkbox_list_roles( array $field ) {
 		$defaults = [
 			'exclude' => [],
 		];
@@ -175,15 +233,21 @@ class Settings_Controls {
 			$field['options'][ $role_slug ] = $role_data['name'];
 		}
 
-		self::_checkbox_list( $field );
+		self::checkbox_list( $field );
 	}
 
 	/**
-	 * @static
-	 * @since 1.0.0
+	 * Render raw HTML control.
+	 *
+	 * Generates the final HTML for raw HTML controls.
+	 *
+	 * @since 2.0.0
 	 * @access private
-	*/
-	private static function _raw_html( array $field ) {
+	 * @static
+	 *
+	 * @param array $field Field data.
+	 */
+	private static function raw_html( array $field ) {
 		if ( empty( $field['html'] ) ) {
 			return;
 		}

@@ -1,8 +1,8 @@
 //
 // Image
 //
-
 .elementor-widget-image {
+	text-align: center;
 
 	.elementor-image {
 
@@ -13,6 +13,7 @@
 
 		img {
 			vertical-align: middle;
+			display: inline-block;
 		}
 
 		&.elementor-image-shape- {

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor stylesheet class.
+ * Elementor stylesheet.
  *
  * Elementor stylesheet handler class responsible for setting up CSS rules and
  * properties, and all the CSS `@media` rule with supported viewport width.
@@ -283,7 +283,7 @@ class Stylesheet {
 	 * @since 1.2.0
 	 * @access private
 	 *
-	 * @throw \RangeException If max value for this device is out of range.
+	 * @throws \RangeException If max value for this device is out of range.
 	 *
 	 * @param string $device_name Device name.
 	 *
@@ -391,7 +391,21 @@ class Stylesheet {
 				}
 
 				if ( isset( $a_query['min'] ) ) {
-					return $a_query['min'] - $b_query['min'];
+					$range = $a_query['min'] - $b_query['min'];
+
+					if ( $range ) {
+						return $range;
+					}
+
+					$a_has_max = isset( $a_query['max'] );
+
+					if ( $a_has_max xor isset( $b_query['max'] ) ) {
+						return $a_has_max ? 1 : -1;
+					}
+
+					if ( ! $a_has_max ) {
+						return 0;
+					}
 				}
 
 				return $b_query['max'] - $a_query['max'];

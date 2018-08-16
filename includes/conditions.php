@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor conditions class.
+ * Elementor conditions.
  *
  * Elementor conditions handler class introduce the compare conditions and the
  * check conditions methods.
@@ -39,9 +39,9 @@ class Conditions {
 			case '!==':
 				return $left_value !== $right_value;
 			case 'in':
-				return -1 !== array_search( $left_value, $right_value );
+				return false !== array_search( $left_value, $right_value );
 			case '!in':
-				return -1 === array_search( $left_value, $right_value );
+				return false === array_search( $left_value, $right_value );
 			case '<':
 				return $left_value < $right_value;
 			case '<=':
@@ -86,7 +86,13 @@ class Conditions {
 					$value = $value[ $parsed_name[2] ];
 				}
 
-				$comparison_result = self::compare( $value, $term['value'], $term['operator'] );
+				$operator = null;
+
+				if ( ! empty( $term['operator'] ) ) {
+					$operator = $term['operator'];
+				}
+
+				$comparison_result = self::compare( $value, $term['value'], $operator );
 			}
 
 			if ( $is_or_condition ) {

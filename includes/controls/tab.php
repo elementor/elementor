@@ -15,20 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * and in the end `$widget->end_controls_tab()`.
  *
  * @since 1.0.0
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param int    $tab         Optional. The tab control. Available values are
- *                            `Controls_Manager::TAB_CONTENT`, `Controls_Manager::TAB_STYLE`,
- *                            `Controls_Manager::TAB_ADVANCED`, `Controls_Manager::TAB_RESPONSIVE`,
- *                            `Controls_Manager::TAB_LAYOUT` or `Controls_Manager::TAB_SETTINGS`.
  */
 class Control_Tab extends Base_UI_Control {
 
 	/**
-	 * Retrieve tab control type.
+	 * Get tab control type.
+	 *
+	 * Retrieve the control type, in this case `tab`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -58,9 +51,9 @@ class Control_Tab extends Base_UI_Control {
 	}
 
 	/**
-	 * Retrieve tab control default settings.
+	 * Get tab control default settings.
 	 *
-	 * Get the default settings of the tab control. Used to return the
+	 * Retrieve the default settings of the tab control. Used to return the
 	 * default settings while initializing the tab control.
 	 *
 	 * @since 1.0.0

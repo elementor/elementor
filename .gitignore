@@ -5,9 +5,17 @@ build/
 log/
 vendor/
 composer.lock
+package-lock.json
+yarn.lock
 .project
+.vscode
 Thumbs.db
 *.DS_Store
 
 *.log
 *.map
+
+tests/qunit/*.html
+
+assets/css/
+assets/js/

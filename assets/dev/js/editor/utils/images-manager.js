@@ -29,7 +29,7 @@ ImagesManager = function() {
 	};
 
 	self.onceTriggerChange = _.once( function( model ) {
-		window.setTimeout( function() {
+		setTimeout( function() {
 			model.get( 'settings' ).trigger( 'change', model.get( 'settings' ) );
 		}, 700 );
 	} );
@@ -45,7 +45,7 @@ ImagesManager = function() {
 
 			if ( 'custom' === image.size ) {
 
-				if ( elementor.getPanelView() && 'editor' === elementor.getPanelView().currentPageName && image.model ) {
+				if ( elementor.getPanelView() && 'editor' === elementor.getPanelView().getCurrentPageName() && image.model ) {
 					// Trigger change again, so it's will load from the cache
 					self.onceTriggerChange( image.model );
 				}
@@ -101,10 +101,7 @@ ImagesManager = function() {
 		if ( 0 === registeredItemsLength ) {
 			return;
 		} else if ( 1 === registeredItemsLength ) {
-			for ( index in registeredItems ) {
-				image = registeredItems[ index ];
-				break;
-			}
+			image = registeredItems[ Object.keys( registeredItems )[0] ];
 
 			if ( image && image.model ) {
 				image.model.renderRemoteServer();
@@ -126,7 +123,7 @@ ImagesManager = function() {
 			} );
 		}
 
-		window.elementor.ajax.send(
+		elementor.ajax.send(
 			'get_images_details', {
 				data: {
 					items: requestedItems

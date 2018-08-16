@@ -4,209 +4,18 @@
 
 // Core variables and mixins
 @import "../helpers/variables";
+@import "../editor/breakpoints";
 @import "../helpers/mixins";
+@import "../helpers/utilities";
 
 // Common
 @import "../common/common";
 
-body {
+@import "../editor/buttons";
+@import "../editor/templates-modal-wrapper";
 
-	&.elementor-editor-active {
-
-		.elementor-switch-mode-off {
-			display: none;
-		}
-
-		#elementor-switch-mode-button {
-			background-color: #f7f7f7;
-			color: #555;
-			border-color: #ccc;
-			box-shadow: 0 1px 0 #ccc !important;
-			text-shadow: unset;
-
-			&:hover {
-				background-color: #e9e9e9;
-			}
-
-			&:active {
-				box-shadow: inset 0 1px 0 #ccc;
-				transform: translateY(1px);
-			}
-		}
-
-		#elementor-editor {
-			display: table;
-		}
-
-		#postdivrich {
-			display: none !important;
-		}
-	}
-
-	&.elementor-editor-inactive {
-
-		.elementor-switch-mode-on {
-			display: none;
-		}
-
-		#elementor-editor {
-			display: none;
-		}
-	}
-}
-
-// Dashboard Icon
-#adminmenu {
-
-	#toplevel_page_elementor,
-	#toplevel_page_edit-post_type-elementor_library {
-
-		div.wp-menu-image:before {
-			content: "\e800";
-			font-family: eicons;
-			font-size: 14px;
-			margin-top: 3px;
-		}
-
-		// Menu Go Pro
-		a[href="admin.php?page=go_elementor_pro"] {
-			color: #d54e21;
-		}
-
-		.dashicons.dashicons-star-filled {
-			height: auto;
-		}
-	}
-}
-
-.elementor-plugins-gopro {
-	color: $editor-success;
-	font-weight: bold;
-}
-
-
-// Switcher Editor
-#elementor-switch-mode {
-	margin: 15px 0;
-}
-
-.elementor-button {
-	padding: 12.5px 25px;
-	display: inline-block;
-	line-height: 1;
-	border: 1px solid;
-	border-radius: 3px;
-	outline: none;
-	cursor: pointer;
-
-	.eicon-elementor {
-		@include margin-end(5px);
-	}
-}
-
-#elementor-editor {
-	background-color: #F7F7F7;
-	border: 1px solid #DDD;
-	height: 300px;
-	width: 100%;
-	transition: all 0.5s ease;
-
-	&:hover {
-		background-color: #ffffff;
-	}
-
-	@import "../editor/loader";
-
-	.elementor-loader-box {
-		background-color: $editor-light;
-	}
-
-}
-
-#elementor-go-to-edit-page-link {
-	display: table-cell;
-	vertical-align: middle;
-	text-align: center;
-	text-decoration: none;
-
-	&.elementor-animate {
-
-		#elementor-editor-button {
-			display: none;
-		}
-	}
-
-	&:not(.elementor-animate) {
-
-		.elementor-loader-wrapper {
-			display: none;
-		}
-	}
-}
-
-.elementor-loader-wrapper {
-	margin: auto;
-	width: 80px;
-}
-
-.elementor-loader {
-	height: 80px;
-	position: relative;
-}
-
-.elementor-loading-title {
-	color: $editor-light;
-	text-transform: uppercase;
-	margin-top: 15px;
-	font-size: 11px;
-	letter-spacing: 5px;
-}
-
-// Tools
-.elementor-button-spinner {
-	&:before {
-		font: normal 20px/.5 dashicons;
-		speak: none;
-		display: inline-block;
-		padding: 0;
-		top: 8px;
-		@include start(-4px);
-		position: relative;
-		vertical-align: top;
-		content: "\f463";
-	}
-	
-	&.loading:before {
-		-webkit-animation: rotation 1s infinite linear;
-		animation: rotation 1s infinite linear;
-	}
-	
-	&.success:before {
-		content: "\f147";
-		color: #46b450;
-	}
-}
-
-// Customizer widget icon
-#available-widgets [class*="elementor-template"] .widget-title:before {
-	content: "\e801";
-	font-family: eicons;
-	font-size: 17px;
-}
-
-
-// Settings
-.elementor-settings-form-page {
-	padding-top: 30px;
-
-	&:not(.elementor-active) {
-		display: none;
-	}
-}
-
-._elementor_settings_update_time {
-	display: none;
-}
+// Admin Global
+@import "global";
 
 @import "message";
 @import "system_info";
@@ -214,3 +23,6 @@ body {
 @import "import-template";
 @import "maintenance-mode";
 @import "dashboard-widget";
+@import "template-library";
+@import "new-template-dialog";
+@import "role-manager";

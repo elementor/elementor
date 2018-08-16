@@ -46,6 +46,11 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 			this.ui.inputs.filter( '[value="' + currentValue + '"]' ).prop( 'checked', true );
 		}
 	}
+}, {
+
+	onPasteStyle: function( control, clipboardValue ) {
+		return '' === clipboardValue || undefined !== control.options[ clipboardValue ];
+	}
 } );
 
 module.exports = ControlChooseItemView;

@@ -58,19 +58,17 @@ class Widget_Alert extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the alert widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return [ 'alert', 'notice', 'message' ];
 	}
 
 	/**
@@ -101,6 +99,7 @@ class Widget_Alert extends Widget_Base {
 					'warning' => __( 'Warning', 'elementor' ),
 					'danger' => __( 'Danger', 'elementor' ),
 				],
+				'style_transfer' => true,
 			]
 		);
 
@@ -271,7 +270,7 @@ class Widget_Alert extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['alert_title'] ) ) {
 			return;
@@ -289,19 +288,20 @@ class Widget_Alert extends Widget_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<span <?php echo $this->get_render_attribute_string( 'alert_title' ); ?>><?php echo $settings['alert_title']; ?></span>
-			<?php if ( ! empty( $settings['alert_description'] ) ) {
+			<?php
+			if ( ! empty( $settings['alert_description'] ) ) :
 				$this->add_render_attribute( 'alert_description', 'class', 'elementor-alert-description' );
 
 				$this->add_inline_editing_attributes( 'alert_description' );
 				?>
 				<span <?php echo $this->get_render_attribute_string( 'alert_description' ); ?>><?php echo $settings['alert_description']; ?></span>
-			<?php }
-			if ( 'show' === $settings['show_dismiss'] ) { ?>
+			<?php endif; ?>
+			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
 				<button type="button" class="elementor-alert-dismiss">
 					<span aria-hidden="true">&times;</span>
-					<span class="elementor-screen-only"><?php esc_html_e( 'Dismiss alert', 'elementor' ); ?></span>
+					<span class="elementor-screen-only"><?php echo __( 'Dismiss alert', 'elementor' ); ?></span>
 				</button>
-			<?php } ?>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -331,7 +331,7 @@ class Widget_Alert extends Widget_Base {
 				<# if ( 'show' === settings.show_dismiss ) { #>
 					<button type="button" class="elementor-alert-dismiss">
 						<span aria-hidden="true">&times;</span>
-						<span class="elementor-screen-only"><?php esc_html_e( 'Dismiss alert', 'elementor' ); ?></span>
+						<span class="elementor-screen-only"><?php echo __( 'Dismiss alert', 'elementor' ); ?></span>
 					</button>
 				<# } #>
 			</div>

@@ -17,6 +17,10 @@ Conditions = function() {
 				return -1 !== rightValue.indexOf( leftValue );
 			case '!in':
 				return -1 === rightValue.indexOf( leftValue );
+			case 'contains':
+				return -1 !== leftValue.indexOf( rightValue );
+			case '!contains':
+				return -1 === leftValue.indexOf( rightValue );
 			case '<':
 				return leftValue < rightValue;
 			case '<=':

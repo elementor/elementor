@@ -1,10 +1,10 @@
 === Elementor Page Builder ===
-Contributors: pojo.me, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet, yehudah
+Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet, ramiy, yehudah
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
-Requires at least: 4.5
+Requires at least: 4.7
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 1.9.2
+Stable tag: 2.1.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -22,13 +22,15 @@ It's time for **[Elementor Page Builder](https://elementor.com/?utm_source=wp-re
 Instant reaction was a key feature we wanted to achieve. And we did. Instant drag & drop page builder, instant live edit, instant page load. The speed of Elementor is not matched by any other page builder, free or paid. This makes the interface fun and easy to work with, as well as reduces the time it takes to design.
 
 = Live design. Truly live. =
-Never again work on the backend and guess what the frontend will look like. With Elementor page builder, you edit the page and simultaneously see exactly how it looks like. Elementor features live design & inline editing, so the whole process of writing and designing is done directly on the page, with no need to press update or go to preview mode.
+Never again work on the backend and guess what the frontend will look like. With Elementor page builder, you edit the page and simultaneously see exactly how it looks like. Elementor features live design & inline editing, so the whole process of writing and designing is done directly on the page, with no need to press update or go to preview mode. It also works perfectly with or without Gutenberg.
 
 = Surprises you won’t see anywhere else. =
 With Elementor's unique features, you can create websites that have that certain 'designer touch'. Among our page builder features are: Box Shadows, Background Overlays, Hover Effects, Headline Effects, Animations, Shape Dividers, Gradient Backgrounds and much more.
 
-= Template Library. =
-We've added [Template Library](https://library.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme), which includes a collection of 100+ beautiful WordPress templates, made for you by our top notch designers. You can save and reuse them on different pages, or export them to whole different websites with our page builder.
+= Pre-Designed Templates & Blocks =
+Choose from 100+ of beautiful full page [WordPress templates](https://library.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and customize them to make them your own. You can also build your page by choosing from 300+ Blocks.
+
+Blocks are pre-designed section templates that can be easily combined into any page. Blocks include a variety of categories: services, testimonials, call to action and more. Save and reuse Elementor templates on different pages, or export them to a different website with a click.
 
 = Mobile First. Mobile Editing. =
 Elementor Page Builder comes with an exclusive toolset, that lets you create truly a responsive website in a whole new and visual way. From different font size, padding and margin per device, to reverse column ordering, this is the most powerful mobile page builder for creating perfect responsive websites.
@@ -42,10 +44,26 @@ Design your entire page in the page builder. No header, no footer, just Elemento
 = Built-in Maintenance Mode & Under Construction. =
 Need to get your site offline for maintenance? Use Elementor page builder's built in Maintenance Mode & Coming Soon feature to show your visitors an under construction / coming soon page.
 
-= Try Elementor Pro. The Best Page Builder For WordPress. =
-If you thought Elementor is full of useful features, check out Elementor Pro! Elementor Pro extends the basic features even further, and allows you to control your entire website with Elementor.
+= Try Elementor Pro. The Best page Builder for WordPress. =
+[Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) vastly improves your design workflow and lets you design faster and better than ever. With Elementor Pro, everything is done visually and without code.
 
-Design [forms](https://elementor.com/pro-v140-form-integrations/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)  live on the frontend, customize your blog posts visually, incorporate slides, WooCommerce, global widgets, custom CSS and much more. [Upgrade now to Elementor Pro!](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
+Making changes to your theme shouldn't be so hard. Endless coding, dealing with developers, switching themes. The [Theme Builder](https://elementor.com/theme-builder/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) in Elementor Pro turns the entire process of creating WordPress websites 100% visual including your site's header, footer, single post and archive page design.
+
+There are many other [features](https://elementor.com/features/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to help you build better websites:
+
+* Visual and intuitive form builder
+* Marketing automation and CRM integrations
+* Custom fonts
+* Role manager
+* Blog post layout widget
+* Image & video sliders
+* WooCommerce
+* Global widgets
+* Custom CSS
+* Animated headlines
+* And much more.
+
+Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
 
 = 28 free widgets and counting =
 We packed 28 of the most useful widgets into our page builder. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
@@ -85,10 +103,14 @@ We've integrated RTL and multi language support within the framework of our page
 
 = Developer API. =
 Elementor page builder is free and open source. It's the perfect page builder plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons already developed.
-We have created an extensive [API documentation](https://github.com/pojome/elementor/tree/master/docs), to help you get started and learn just how to integrate with Elementor.
+To help you get started and learn just how to integrate with Elementor, we have created the [Official Elementor Developer Resources](https://developers.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and the [Code Reference](https://code.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 = Translations =
+- [English (Australia)](https://translate.wordpress.org/locale/en-au/default/wp-plugins/elementor) - (en_AU)
+- [English (UK)](https://translate.wordpress.org/locale/en-gb/default/wp-plugins/elementor) - (en_GB)
+- [English (Canada)](https://translate.wordpress.org/locale/en-ca/default/wp-plugins/elementor) - (en_CA)
 - [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR)
+- [French (Belgium)](https://translate.wordpress.org/locale/fr-be/default/wp-plugins/elementor) - (fr_BE)
 - [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
 - [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT)
 - [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES)
@@ -96,14 +118,24 @@ We have created an extensive [API documentation](https://github.com/pojome/eleme
 - [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
 - [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt/default/wp-plugins/elementor) - (pt_PT)
 - [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
-- [Swedish](https://translate.wordpress.org/locale/se/default/wp-plugins/elementor) - (sv_SE)
+- [Swedish](https://translate.wordpress.org/locale/sv/default/wp-plugins/elementor) - (sv_SE)
+- [Dutch](https://translate.wordpress.org/locale/nl/default/wp-plugins/elementor) - (nl_NL)
+- [Danish](https://translate.wordpress.org/locale/da/default/wp-plugins/elementor) - (da_DK)
 - [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
+- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT)
+- [Chinese (China)](https://translate.wordpress.org/locale/zh-cn/default/wp-plugins/elementor) - (zh_CN)
 - [Chinese (Taiwan)](https://translate.wordpress.org/locale/zh-tw/default/wp-plugins/elementor) - (zh_TW)
 - [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
 - [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
+- [Russian](https://translate.wordpress.org/locale/ru/default/wp-plugins/elementor) - (ru_RU)
 - [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
-- [Arabic](https://translate.wordpress.org/locale/ar/default/wp-plugins/elementor) - (ar) - in progress
-- [Hungarian](https://translate.wordpress.org/locale/hu/default/wp-plugins/elementor) - (hu_HU) - in progress
+- [Bulgarian](https://translate.wordpress.org/locale/bg/default/wp-plugins/elementor) - (bg_BG)
+- [Greek](https://translate.wordpress.org/locale/el/default/wp-plugins/elementor) - (el)
+- [Catalan](https://translate.wordpress.org/locale/ca/default/wp-plugins/elementor) - (ca)
+- [Czech](https://translate.wordpress.org/locale/cs/default/wp-plugins/elementor) - (cs_CZ)
+- [Hungarian](https://translate.wordpress.org/locale/hu/default/wp-plugins/elementor) - (hu_HU)
+- [Croatian](https://translate.wordpress.org/locale/hr/default/wp-plugins/elementor) - (hr)
+- [Finnish](https://translate.wordpress.org/locale/fi/default/wp-plugins/elementor) - (fi)
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
@@ -124,7 +156,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 = Minimum Requirements =
 
-* WordPress 4.5 or greater
+* WordPress 4.6 or greater
 * PHP version 5.4 or greater
 * MySQL version 5.0 or greater
 
@@ -132,7 +164,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 * PHP version 7.0 or greater
 * MySQL version 5.6 or greater
-* WP Memory limit of 64 MB or greater (128 MB or higher is preferred)
+* WordPress Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
 https://www.youtube.com/watch?v=Ypn6fltn_7s
 
@@ -166,11 +198,11 @@ Absolutely not! Elementor is a live frontend page builder, that lets you reach a
 
 **Will Elementor work with RTL or other languages?**
 
-Yeah! Elementor enables to seamlessly build RTL pages as well as other translated pages in any language. You can read more about translation and localization here: https://go.elementor.com/translate/
+Yeah! Elementor enables to seamlessly build RTL pages as well as other translated pages in any language. You can read more about [translation and localization](https://go.elementor.com/translate/).
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
+No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
 
 == Screenshots ==
 
@@ -183,6 +215,316 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.1.6 - 2018-07-31 =
+* Fix: Removed reference to source map file in Swiper minified file
+* Fix: Element handle style glitch in mobile view
+* Fix: Delete element with hotkey after text editing
+* Fix: Avoid auto focus on the widget panel search field after deleting an element
+
+= 2.1.5 - 2018-07-26 =
+* Tweak: Added `Ctrl/Cmd + Y` for redo action ([#5090](https://github.com/pojome/elementor/issues/5090))
+* Tweak: Clear WP cache in upgrade steps
+* Fix: Corrected conditions for start/end times with loop in Video widget
+* Fix: Padding for first active control in section
+* Fix: Loader styling for some languages
+* Fix: RTL style for Choose control
+* Fix: Possible memory leak by parsing and sanitizing data and settings only when it's necessary
+* Fix: Fixed text selection detection in FireFox
+* Fix: `on-paste` check for Choose control
+* Fix: `fixed` positions for Color Picker
+* Fix: Removed empty space from `elementor/document/urls/edit` hook name ([#5216](https://github.com/pojome/elementor/issues/5216))
+* Fix: Dynamic tags support in Shortcode widget ([#5214](https://github.com/pojome/elementor/issues/5214))
+
+= 2.1.4 - 2018-07-18 =
+* Tweak: Show modified date instead of publish date on Dashboard widget ([#4169](https://github.com/pojome/elementor/issues/4169))
+* Fix: Selector for CSS Filters control in column
+* Fix: CSS Filters for self hosted video
+* Fix: Avoid creating unnecessary CSS for widgets
+* Fix: Added backward comparability for deprecated controls
+* Fix: Color Picker control value change detection
+* Fix: Avoid multiple ready trigger in preview
+* Fix: Save default page template
+
+= 2.1.3 - 2018-07-16 =
+* Tweak: Added CSS filter control for Map, Video, Section and Column
+* Tweak: Added Inspector option in Tools page
+* Tweak: Added Inspector log for Canvas & Full Width templates
+* Tweak: The preview is now loading via plain URL to avoid errors in some server configurations
+* Tweak: Added `print_elements_with_wrapper` method to allow a document to overwrite it's wrapper
+* Tweak: Added action hook `elementor/template-library/after_get_source_data`
+* Fix: Page template missing after import ([#4498](https://github.com/pojome/elementor/issues/4498))
+* Fix: Maintenance Mode override theme template
+* Fix: Removed focus and active states from Hover Animations
+* Fix: Prevent submit forms in the preview
+* Fix: Disable history tracking when restoring a revision
+* Fix: Empty history changes after restoring a revision
+* Fix: Paste style on control with groups
+* Fix: Avoid overwrite `_wp_page_template` in edge cases
+
+= 2.1.2 - 2018-07-08 =
+* Tweak: Set active/inactive category by `'active' => false` (default is `true`)
+* Tweak: Added forms input style compatibility for some themes
+* Fix: XML Demo Import compatibility for admin based imports ([#4947](https://github.com/pojome/elementor/issues/4947))
+* Fix: Set correct `post_id` when call `enqueue_scripts` from preview mode
+* Fix: Conditions not working on dynamic backgrounds
+* Fix: Paste of multiple content in Add Section Area
+* Fix: Set lower priority to `template_include` hook to override 3rd party plugins, e.g. WooCommerce
+* Fix: Hide Save Widget as Global button for old versions
+* Fix: Added RTL style for section with handles inside
+* Deprecated: Restore `get_page` method as hard deprecated ([#4870](https://github.com/pojome/elementor/issues/4870))
+
+= 2.1.1 - 2018-07-03 =
+* Tweak: Compatibility Gutenberg classic editor
+* Fix: Compatibility for PHP < 5.6
+
+= 2.1.0 - 2018-07-03 =
+* New: Introducing Elementor Context Menu
+* New: Copy/Paste elements ([#4151](https://github.com/pojome/elementor/issues/4151))
+* New: Copy/Paste element style ([#1479](https://github.com/pojome/elementor/issues/1479))
+* New: Copy/Paste between pages
+* New: Reset element style
+* New: Added `copy_all_content` option
+* New: Change mobile & tablet breakpoints ([#78](https://github.com/pojome/elementor/issues/78))
+* New: Introducing Elementor WP-CLI integration ([#2161](https://github.com/pojome/elementor/issues/2161))
+* New: Added collapsable panel categories ([#3805](https://github.com/pojome/elementor/issues/3805))
+* New: Added Self hosted videos with HTML5 for Video widget ([#3313](https://github.com/pojome/elementor/issues/3313))
+* New: Added Dailymotion provider for Video widget ([#2285](https://github.com/pojome/elementor/issues/2285))
+* New: Added start/end controls for Video widget ([#3565](https://github.com/pojome/elementor/issues/3565))
+* New: Added new icons to Social Icons widget: Android & Thumbtack ([#4235](https://github.com/pojome/elementor/issues/4235), [#4486](https://github.com/pojome/elementor/issues/4486))
+* New: Hotkey: Ctrl / Cmd + C = Copy
+* New: Hotkey: Ctrl / Cmd + V = Paste
+* Tweak: Added CSS Filter group control ([#3260](https://github.com/pojome/elementor/issues/3260))
+* Tweak: Added CSS Filters to Image & Image Box widgets
+* Tweak: Added compatibility with Gutenberg 3.0.+ ([#2631](https://github.com/pojome/elementor/issues/2631))
+* Tweak: Added CSS ID for Button widget ([#4535](https://github.com/pojome/elementor/issues/4535))
+* Tweak: Added keywords to all widgets for more accurate filtering
+* Tweak: Replace hover section with tabs Icon & Icon Box widgets
+* Tweak: Moved `delete all content` to the page level right click
+* Tweak: When converting content with only a shortcode to Elementor, a shortcode widget used instead of Text Editor widget (#4616)
+* Tweak: Updated Swiper library to v4.3.3 ([#4170](https://github.com/pojome/elementor/issues/4170))
+* Tweak: Added `elementor/shapes/additional_shapes` filter hook to allow custom shape dividers (#4759)
+* Tweak: Added video support to media control ([#4066](https://github.com/pojome/elementor/issues/4066))
+* Tweak: Dropped Support for WP v4.6, now supporting WP v4.7+
+* Fix: The `wpColorPicker` will not be updated after emptying the value
+* Fix: Added fallback for injection position when the injection control does not exist
+* Fix: Focus state behavior in the Repeater control ([#4596](https://github.com/pojome/elementor/issues/4596))
+* Deprecated: `Repeater::get_fields()` is replaced by `Repeater::get_controls()`
+* Deprecated: `Element_Base::get_parent()` is replaced by `Element_Base::get_data( 'parent' )`
+* Deprecated: `get_class_controls` is no longer supported
+* Deprecated: `\Elementor\settings\page\manager::get_page()` is now removed ([#4870](https://github.com/pojome/elementor/issues/4870))
+
+= 2.0.16 - 2018-06-12 =
+* Fix: Dynamic Tag CSS not working on columns & widgets ([#4662](https://github.com/pojome/elementor/issues/4662))
+* Fix: Hide title now also hides Post Title widget
+* Fix: Trigger Elementor ready only once
+
+= 2.0.15 - 2018-06-05 =
+* Fix: Background video in Chrome v67+
+* Fix: CSS glitch in local library modal
+* Fix: CSS glitch with dynamic buttons in a repeater
+* Fix: Divider control on top of controls popover
+* Fix: Conditions check for `in` & `!in`
+* Fix: Prefix class when the value is numeric
+
+= 2.0.14 - 2018-05-29 =
+* Fix: Missing Dynamic Image Background properties on front-end ([#4577](https://github.com/pojome/elementor/issues/4577))
+* Fix: Avoid page settings global `$post` being overwritten by 3rd party plugins ([#4563](https://github.com/pojome/elementor/issues/4563))
+* Fix: Editor won’t load for users without publishing capabilities
+* Fix: Only show Caption style section for Image widget if needed
+
+= 2.0.13 - 2018-05-28 =
+* New: Dynamic Image Backgrounds ([#3971](https://github.com/pojome/elementor/issues/3971))
+* Tweak: Updated Dialog Manager v4.3.2
+* Tweak: Better accessibility for Back to Editor button
+* Tweak: Confusing error message ([#4546](https://github.com/pojome/elementor/issues/4546))
+* Fix: Panel buttons style glitch in edge cases
+* Fix: PHP notice in Polylang compatibility
+* Fix: Editor won't load for users without publishing capabilities
+* Fix: Media queries ordering in CSS file for mixed min and max break points
+* Fix: Improved video background loading method
+
+= 2.0.12 - 2018-05-15 =
+* Tweak: Added new method `add_body_class`
+* Tweak: Set library filter by the document
+* Tweak: Allow 3rd party developers to register documents on init
+* Fix: Set attach uploaded images to the current post
+* Fix: Scroll not working in the library modal ([#4394](https://github.com/pojome/elementor/issues/4394))
+* Fix: Blocks dropdown menu escapes container on scroll ([#3947](https://github.com/pojome/elementor/issues/3947))
+
+= 2.0.11 - 2018-05-09 =
+* Fix: Stronger selector for heading widget color, to avoid section style override ([#4266](https://github.com/pojome/elementor/issues/4266))
+* Fix: style missing when role manager in content only mode
+
+= 2.0.10 - 2018-05-08 =
+* Fix: Added icon for Dynamic Tag without settings
+* Fix: Added offset for anchor scroll section is sticky ([#4323](https://github.com/pojome/elementor/issues/4323))
+* Fix: Title changing on auto-save for various languages
+* Fix: Cannot scroll in the library modal ([#4325](https://github.com/pojome/elementor/issues/4325))
+
+= 2.0.9 - 2018-05-01 =
+* Tweak: Added ability to add Dynamic Tags from 3rd party applications
+* Tweak: Added ability to add custom classes to the wrapper for extending widgets
+* Tweak: Using full version of Select2.js in the admin
+* Tweak: Update Eicons v3.3
+* Fix: My Template tabs are not translatable ([#4221](https://github.com/pojome/elementor/issues/4221))
+* Fix: Added compatibility for domain mapping with filter tag ([#4307](https://github.com/pojome/elementor/issues/4307))
+* Fix: Popover closes after clicking on select2 search container ([#4310](https://github.com/pojome/elementor/issues/4310))
+* Fix: Wrapping Dynamic Tag in the editor
+* Fix: Removed unnecessary condition from Transition Duration control
+* Fix: Removed listening to parent model on Repeater control
+* Fix: Controls styling in repeater
+* Fix: Ensure the frontend scripts are enqueued once in the editor preview
+
+= 2.0.8 - 2018-04-23 =
+* Tweak: Added action hook for caching plugins when clearing CSS files `do_action( 'elementor/css-file/clear_cache' );` ([#4179](https://github.com/pojome/elementor/issues/4179))
+* Tweak: Added Page Templates support only for layout pages
+* Fix: Smooth scrolling not working ([#4168](https://github.com/pojome/elementor/issues/4168), [#4125](https://github.com/pojome/elementor/issues/4125))
+* Fix: Stretch section for archive pages
+* Fix: Icon vertical alignment in icon list widget
+
+= 2.0.7 - 2018-04-18 =
+* Tweak: Rename filter `elementor/get_document/post_id` to `elementor/documents/get/post_id`
+* Tweak: Added Divider control for Icon List widget on inline skin
+* Tweak: Added CSS classes per document in Preview
+* Tweak: Added option to avoid export data by adding `export=false` to control args
+* Fix: Support for editing images in WP Media Modal ([#3062](https://github.com/pojome/elementor/issues/3062))
+* Fix: Responsive inline alignment for Icon List widget
+* Fix: Added higher priority to support Google Fonts in locations
+* Fix: Import templates with Dynamic data
+* Fix: Editing buttons missing when preview set as archive
+* Fix: Export document settings for all template types
+
+= 2.0.6 - 2018-04-15 =
+* New: Image widget - added new control for Image width
+* Tweak: Added support for dynamic video via ACF
+* Tweak: Reorder admin columns in My Templates
+* Tweak: Update Eicons v3.2.2
+* Tweak: Added `elementor/get_document/post_id` filter for `get document` - compatibility for translation plugins
+* Tweak: Print container classes per document
+* Tweak: Added `elementor-edit-area-preview` and `elementor-edit-area-active` classes
+* Tweak: Removed wrapper for dynamic data
+* Fix: Per device Visibility for editor with multiple Elementor areas
+* Fix: CSS glitch for URL input with dynamic
+* Fix: Dynamic Show Before/After only when value is not empty
+
+= 2.0.5 - 2018-04-11 =
+* Fix: Avoid merge for incorrect page settings data
+* Fix: Style tab on document settings not saving on autosave
+* Fix: Duplicate icons by updated Eicons library
+
+= 2.0.4 - 2018-04-09 =
+* Tweak: Update Google Fonts list with more then 30 new fonts
+* Tweak: Updated Eicons to v3.2.0
+* Fix: Page template doesn't work in draft status ([#3706](https://github.com/pojome/elementor/issues/3706))
+* Fix: Make sure that document settings works only on existing posts ([#3993](https://github.com/pojome/elementor/issues/3993), [Topic](https://wordpress.org/support/topic/php-fatal-error-after-last-update/))
+* Fix: Removed some duplicate strings
+* Fix: Undefined index when save editor using old method
+* Fix: Use `&nbsp;` to add spaces before/after for tags with HTML ([#3826](https://github.com/pojome/elementor/issues/3826))
+
+= 2.0.3 - 2018-03-29 =
+* Tweak: Added Knowledge Base link to WordPress admin menu
+* Tweak: Improved performance in the editor using internal caching
+* Fix: Avoid WordPress override page template in auto-save status ([Topic](https://wordpress.org/support/topic/save-draft-will-revert-page-layout-into-default-instead-of-elementor-canvas/))
+* Fix: Set element ID before sanitizing data
+
+= 2.0.2 - 2018-03-28 =
+* Fix: Title changing on auto-save
+* Fix: Page templates reverts to default on preview ([#3933](https://github.com/pojome/elementor/issues/3933))
+* Fix: Editor won't load when a custom image size is used ([#3926](https://github.com/pojome/elementor/issues/3926))
+* Fix: WordPress Widgets not loading saved settings ([#3930](https://github.com/pojome/elementor/issues/3930))
+
+= 2.0.1 - 2018-03-27 =
+* Fix: Removed promotion in the Role Manager area ([#3903](https://github.com/pojome/elementor/issues/3903))
+* Fix: Improved responsive style for My Template modal ([#3914](https://github.com/pojome/elementor/issues/3914))
+* Fix: Issue with conditional repeater field ([#3886](https://github.com/pojome/elementor/issues/3886), [#3865](https://github.com/pojome/elementor/issues/3865))
+* Fix: The notifications toast goes down when you change the page layout
+* Fix: Custom delimiter char for frontend template in the Counter widget
+* Fix: Import template from WP Admin
+
+= 2.0.0 - 2018-03-26 =
+* New: Added new library tab for pre-design "Blocks"
+* New: Added new page template "Elementor Full Width"
+* New: Document Type method to register new template types ([#3409](https://github.com/pojome/elementor/issues/3409))
+* New: Added new social icons for 500px, Steam and StumbleUpon ([#3106](https://github.com/pojome/elementor/issues/3106), [#3636](https://github.com/pojome/elementor/issues/3636))
+* Tweak: Dropped Support WP 4.5, now supporting WP 4.6 and higher
+* Tweak: New settings interface for Role Manager
+* Tweak: Reintroduce divider control for UI panel ([Developer API](https://developers.elementor.com/elementor-controls/divider-control/))
+* Tweak: Added inline view for icon-list widget ([#1624](https://github.com/pojome/elementor/issues/1624))
+* Tweak: Added "Featured Image" control to document settings ([#3429](https://github.com/pojome/elementor/issues/3429))
+* Tweak: Added custom thousand separator in Counter widget ([#3459](https://github.com/pojome/elementor/issues/3459))
+* Tweak: Added "Image Size" control to the "Video" widget overlay image ([#3488](https://github.com/pojome/elementor/issues/3488))
+* Tweak: Added "Image Size" control to the "Image Box" widget ([#3251](https://github.com/pojome/elementor/issues/3251))
+* Tweak: Added "Image Size" control to the "Testimonial" widget ([#3472](https://github.com/pojome/elementor/issues/3472))
+* Tweak: Added "Link" control to the "Testimonial" widget ([#3480](https://github.com/pojome/elementor/issues/3480))
+* Tweak: Added "Caption Spacing" control to the "Image" widget ([#3452](https://github.com/pojome/elementor/issues/3452))
+* Tweak: Added responsive control to the text padding in the "Button" widget
+* Tweak: Added compatibility for the future release of Elementor
+* Tweak: Added `Groove` style to the "Border" control
+* Tweak: Decreasing column minimum width to 2%
+* Tweak: Decreasing section minimum height in edit mode
+* Tweak: Match HTML tags for the section and the column ([#3471](https://github.com/pojome/elementor/issues/3471))
+* Tweak: Renamed the `clear_page` section in the document settings
+* Tweak: Renamed the `general-elements` widgets category to `general` ([#3729](https://github.com/pojome/elementor/issues/3729))
+* Tweak: Remember the last library tab and search/filters that was open
+* Tweak: Replace the select control with a switcher control in the Video widget "Play Icon" control ([#3262](https://github.com/pojome/elementor/issues/3262))
+* Tweak: Video widget accessibility - added `role="button"` attribute to the Play button ([#3270](https://github.com/pojome/elementor/issues/3270))
+* Tweak: Button widget accessibility - added `role="button"` attribute ([#3271](https://github.com/pojome/elementor/issues/3271))
+* Tweak: Icon widget accessibility - added `aria-hidden` attribute to the `i` tag ([#3272](https://github.com/pojome/elementor/issues/3272))
+* Tweak: Icon Box widget accessibility - added `aria-hidden` attribute to the `i` tag ([#3273](https://github.com/pojome/elementor/issues/3273))
+* Tweak: Google Maps widget accessibility - added `aria-label` attribute to the `iframe` tag ([#3274](https://github.com/pojome/elementor/issues/3274))
+* Tweak: Moved `placeholder` and `title` settings from base control settings into individual controls that use them ([#3795](https://github.com/pojome/elementor/issues/3795))
+* Tweak: Updated the "Icon Box" widget to handle cases where no icon is set
+* Tweak: Updated the way widget categories are registered in Elementor ([#3729](https://github.com/pojome/elementor/issues/3729))
+* Tweak: Slick.js library Updated to v1.8.1 ([#3538](https://github.com/pojome/elementor/issues/3538))
+* Tweak: Updated Eicons to v3.0.0
+* Tweak: Updated Select2 to v4.0.5
+* Fix: Document settings now saved as revisions on auto save ([#3510](https://github.com/pojome/elementor/issues/3510))
+* Fix: Show preset section in the right side for RTL
+
+= 1.9.8 - 2018-03-12 =
+* Fix: Activate publish button if there is an auto-save version
+* Fix: Server error message missing in edge cases
+* Fix: Updated dialog library ([#3668](https://github.com/pojome/elementor/issues/3668))
+* Fix: Text Decoration option in Button Widget ([#3701](https://github.com/pojome/elementor/issues/3701))
+* Fix: Added `autopause=0` in order to allow multiple autoplay in Vimeo video
+* Fix: Added missing translation string to control in the Image Carousel widget
+
+= 1.9.7 - 2018-02-27 =
+* Tweak: `Element_Base::get_style_depends()` method is now overwritable ([#3494](https://github.com/pojome/elementor/issues/3494))
+* Fix: "Enter" key triggers Elementor mode instead of default submit action ([#3556](https://github.com/pojome/elementor/issues/3556))
+* Fix: Stop showing Connection Lost notification when editing widgets
+* Fix: Counter widget - Allow spacing between prefix and suffix
+
+= 1.9.6 - 2018-02-21 =
+* Fix: When selecting a color with alpha, the value is not fully visible ([#3320](https://github.com/pojome/elementor/issues/3320))
+* Fix: "Create new Page" button in dashboard widget ([#3491](https://github.com/pojome/elementor/issues/3491))
+* Fix: `safe_copy_elementor_meta` for editor revisions
+* Fix: Clear filters when syncing library
+* Fix: Background attachment fixed only on desktop
+
+= 1.9.5 - 2018-02-14 =
+* Fix: Added reset for background video when the parent has set `text-align: center;`
+* Fix: Print global and post CSS files after all 3rd party plugins styles
+* Fix: Avoid setting editor changed-flag on auto-saving
+* Fix: Stretch section fallback to body when selector not found or the container doesn't exist
+
+= 1.9.4 - 2018-02-07 =
+* Tweak: Added draft posts to Elementor dashboard widget ([#3379](https://github.com/pojome/elementor/issues/3379))
+* Tweak: Removed CodeMirror script for WP Custom HTML widget to improve performance
+* Fix: Fonts not loaded in edit mode for widget template ([#3352](https://github.com/pojome/elementor/issues/3352))
+* Fix: Prevent template library modal close on actions in edge cases
+* Fix: Set save button as disabled if there is nothing to save
+* Fix: Added publish to editor translations
+* Fix: Added a flex-basis patch for better support in Firefox browser
+* Fix: Image Box heading link now works without an image ([#2854](https://github.com/pojome/elementor/issues/2854))
+
+= 1.9.3 - 2018-01-21 =
+* Fix: Enqueue style/script if when not needed ([#3094](https://github.com/pojome/elementor/issues/3094))
+* Fix: Added compatibility for Safari browser accessibility
+* Fix: Error message in saver
+* Fix: Elementor missing WP editor content ([#3139](https://github.com/pojome/elementor/issues/3139))
+* Fix: Changes lost on revisions panel tab destroy ([#3242](https://github.com/pojome/elementor/issues/3242))
 
 = 1.9.2 - 2018-01-16 =
 * Tweak: Improved querying for revisions to reduce load time on posts with lots of revisions
@@ -202,7 +544,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 = 1.9.0 - 2018-01-09 =
 * New: Added Autosave capability for editor
-* New: Added save as draft option
+* New: Added save as draft option ([#2824](https://github.com/pojome/elementor/issues/2824))
 * New: Brand new Template Library
 * New: Added filter & sorting (new, trend & popular) to Template Library ([#1711](https://github.com/pojome/elementor/issues/1711))
 * New: Added import & sync tools to Template Library ([#2402](https://github.com/pojome/elementor/issues/2402))
@@ -234,7 +576,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak: Accordion widget accessibility - added `id`, `role` and `aria` attributes ([#2836](https://github.com/pojome/elementor/issues/2836))
 * Tweak: Social Icons widget accessibility - added labels for screen readers
 * Tweak: Added Browser support notification for unsupported browsers
-* Tweak: Depended styles, various elements can set stylesheet dependencies
+* Tweak: Depended styles, various elements can set stylesheet dependencies ([#1636](https://github.com/pojome/elementor/issues/1636))
 * Tweak: Added option to set control as required by `required => true`
 * Fix: Added `wptexturize` filter to match WordPress native text formatting
 * Fix: Alignment issue with Icon widget
@@ -435,7 +777,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 
 = 1.6.2 - 2017-08-03 =
 * Fix: More compatibility for some server configuration ([#2119](https://github.com/pojome/elementor/issues/2119))
-* Fix: Added lightobx control for image gallery widget ([#2121](https://github.com/pojome/elementor/issues/2121))
+* Fix: Added lightbox control for image gallery widget ([#2121](https://github.com/pojome/elementor/issues/2121))
 * Fix: Conflict with TablePress and other plugins that add buttons to TinyMCE ([Topic](https://wordpress.org/support/topic/cant-view-editor-in-1-6-after-update/))
 
 = 1.6.1 - 2017-08-02 =
@@ -466,7 +808,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak: Added Mute option for YouTube in Video widget ([#1897](https://github.com/pojome/elementor/issues/1897))
 * Twaek! - Added compatibility for Polylang plugin ([#1959](https://github.com/pojome/elementor/issues/1959))
 * Fix: Unknown text input in Group Controls ([#1926](https://github.com/pojome/elementor/issues/1926))
-* Fix: Show edit with elementor button on admin bar in regular posts
+* Fix: Show edit with Elementor button on admin bar in regular posts
 * Fix: Inherit style for select field from field
 * Fix: Conflict with ManageWP on Multisite ([#1600](https://github.com/pojome/elementor/issues/1600), [#1456](https://github.com/pojome/elementor/issues/1456))
 * Deprecated: `elementor/controls/get_available_tabs_controls` filter, please use `\Elementor\Controls_Manager::add_tab( $tab_name, $tab_title )` instead of
@@ -632,7 +974,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix: Smooth scrolling for anchor links, now limited only to links with `.elementor-element` or `.elementor-menu-anchor` classes ([#1478](https://github.com/pojome/elementor/issues/1478))
 
 = 1.3.5 - 2017-03-20 =
-* Tweak: Minimum WP version is now v4.5
+* Tweak: Minimum WordPress version is now v4.5
 * Fix: Shape divider glitch on some screen widths
 * Fix: Shape divider flip bug in safari browser
 * Fix: Conflict with jQuery FitVids plugin ([Topic](https://wordpress.org/support/topic/video-lightbox-4/))
@@ -691,7 +1033,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak: Added filter to change the menu anchor distance
 * Tweak: Regenerate CSS run after editor saved for quicker saving
 * Tweak: Major performance improvement by optimizing backend method calls
-* Fix: Selector `elementor:after` added spacing after the elementor content
+* Fix: Selector `elementor:after` added spacing after the Elementor content
 * Fix: Removed inline CSS from default section in frontend
 
 = 1.2.1 - 2017-02-08 =
@@ -721,7 +1063,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Deprecated: `Plugin::get_version()` method removed
 
 = 1.1.6 - 2017-01-18 =
-* Fix: Improving enqueue assets if elementor exists on the page
+* Fix: Improving enqueue assets if Elementor exists on the page
 * Fix: Inner Tabs in the section panel is broken
 
 = 1.1.5 - 2017-01-17 =
@@ -757,7 +1099,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * New: Hotkey: Ctrl / Cmd + Shift + H = Go to Revision History
 * New: Hotkey: Ctrl / Cmd + Shift + M = Mobile Editing Preview
 * New: Added Background Overlay Settings for Column ([#810](https://github.com/pojome/elementor/issues/810))
-* Tweak: Enqueue assets only if elementor exists on the page
+* Tweak: Enqueue assets only if Elementor exists on the page
 * Tweak: Move all element ID's in editor mode to classes (Start working on [#939](https://github.com/pojome/elementor/issues/939))
 * Fix: Added missing translation strings for media modal ([#1126](https://github.com/pojome/elementor/issues/1126))
 
@@ -772,7 +1114,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak: Changed 'Prevent Scroll' control type to switcher in Map widget
 * Tweak: Updated Dialog Manager v3.0.2
 * Fix: Library modal 'Go Pro' button in FireFox
-* Fix: Bug load elementor in front page in some server configuration
+* Fix: Bug load Elementor in front page in some server configuration
 * Fix: Ninja Forms widget conflict
 * Deprecated: `elementor/frontend/enqueue_scripts/after` is no longer available
 * Deprecated: `elementor/elements/print_template` is replaced by `elementor/element/print_template`
@@ -787,7 +1129,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix: Issue with post-css-file in HTTPS ([#1077](https://github.com/pojome/elementor/issues/1077))
 
 = 1.0.7 - 2016-12-25 =
-* Fix: Validate export import for elementor template
+* Fix: Validate export import for Elementor template
 * Fix: Excluded `elementor_library` custom post type from the sitemap by Yoast SEO
 * Fix: Prevent Scroll BUG in Google Map widget
 * Fix: Added unique name for repeater control
@@ -838,7 +1180,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak: Update Waypoints library to v4.0.1
 * Tweak: Added support for multiple icon fonts in Choose control
 * Fix: Progress Bar "glitch" on page refresh ([#909](https://github.com/pojome/elementor/issues/909))
-* Fix: post-css-file don't enqueue if isn't elementor post ([#902](https://github.com/pojome/elementor/issues/902))
+* Fix: post-css-file don't enqueue if isn't Elementor post ([#902](https://github.com/pojome/elementor/issues/902))
 * Fix: Columns widget not render on search ([#862](https://github.com/pojome/elementor/issues/862))
 * Fix: Conflict with Bootstrap 3 Shortcodes plugin ([#924](https://github.com/pojome/elementor/issues/924))
 * Fix: Don't generate or enqueue CSS file if post not built with elementor
@@ -848,7 +1190,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Fix: Draggable line for columns widget
 
 = 0.11.2 - 2016-11-21 =
-* Fix: Don't Generate CSS if it's not build with Elementor
+* Fix: Don't Generate CSS if it's not built with Elementor
 * Fix: Global font goes wrong after changing weight ([#888](https://github.com/pojome/elementor/issues/888))
 
 = 0.11.1 - 2016-11-17 =
@@ -964,7 +1306,7 @@ No. Elementor supports WordPress 4.5 or greater, and is compatible with PHP 5.4 
 * Tweak: Removed quick link to Edit with Elementor for non-Elementor pages ([#539](https://github.com/pojome/elementor/issues/539))
 * Fix: Correcting title link color in Image Box widget ([#531](https://github.com/pojome/elementor/issues/531))
 * Fix: Resolved responsive bug in Image Gallery widget
-* Fix: Resolved bug in editor for safari ([#530](https://github.com/pojome/elementor/issues/530), [#540](https://github.com/pojome/elementor/issues/540))
+* Fix: Resolved bug in editor for Safari ([#530](https://github.com/pojome/elementor/issues/530), [#540](https://github.com/pojome/elementor/issues/540))
 
 = 0.8.0 - 2016-09-07 =
 * New: Added columns ordering on mobile normal / reverse

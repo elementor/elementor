@@ -18,7 +18,11 @@
 				$importButton: $( '#elementor-import-template-trigger' ),
 				$importArea: $( '#elementor-import-template-area' ),
 				$settingsForm: $( '#elementor-settings-form' ),
-				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' )
+				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
+				$addNew: $( '.post-type-elementor_library #wpbody-content .page-title-action:first, #elementor-template-library-add-new' ),
+				$addNewDialogHeader:  $( '.elementor-templates-modal__header' ),
+				$addNewDialogClose:  $( '.elementor-templates-modal__header__close-modal' ),
+				$addNewDialogContent:  $( '#elementor-new-template-dialog-content' )
 			};
 
 			this.cache.$settingsFormPages = this.cache.$settingsForm.find( '.elementor-settings-form-page' );
@@ -64,11 +68,16 @@
 					$( document ).on( 'heartbeat-tick.autosave', function() {
 						self.cache.$window.off( 'beforeunload.edit-post' );
 
-						window.location = self.cache.$goToEditLink.attr( 'href' );
+						location.href = self.cache.$goToEditLink.attr( 'href' );
 					} );
 				}
 
 				self.toggleStatus();
+			} );
+
+			self.cache.$addNew.on( 'click', function( event ) {
+				event.preventDefault();
+				self.getNewTemplateModal().show();
 			} );
 
 			self.cache.$goToEditLink.on( 'click', function() {
@@ -194,9 +203,48 @@
 
 			this.initTemplatesImport();
 
+			this.initNewTemplateDialog();
+
 			this.initMaintenanceMode();
 
 			this.goToSettingsTabFromHash();
+
+			this.roleManager.init();
+		},
+
+		initNewTemplateDialog: function() {
+			var self = this,
+				modal;
+
+			self.getNewTemplateModal = function() {
+				if ( ! modal ) {
+					var dialogsManager = new DialogsManager.Instance();
+
+					modal = dialogsManager.createWidget( 'lightbox', {
+						id: 'elementor-new-template-modal',
+						className: 'elementor-templates-modal',
+						headerMessage: self.cache.$addNewDialogHeader,
+						message: self.cache.$addNewDialogContent.children(),
+						hide: {
+							onButtonClick: false
+						},
+						position: {
+							my: 'center',
+							at: 'center'
+						},
+						onReady: function() {
+							DialogsManager.getWidgetType( 'lightbox' ).prototype.onReady.apply( this, arguments );
+
+							self.cache.$addNewDialogClose.on( 'click', function() {
+								modal.hide();
+							} );
+						}
+					} );
+				}
+
+				return modal;
+			};
+
 		},
 
 		initTemplatesImport: function() {
@@ -263,6 +311,74 @@
 			this.cache.$activeSettingsPage = $activePage;
 
 			this.cache.$activeSettingsTab = $activeTab;
+		},
+
+		roleManager: {
+			selectors: {
+				body: 'elementor-role-manager',
+				row: '.elementor-role-row',
+				label: '.elementor-role-label',
+				excludedIndicator: '.elementor-role-excluded-indicator',
+				excludedField: 'input[name="elementor_exclude_user_roles[]"]',
+				controlsContainer: '.elementor-role-controls',
+				toggleHandle: '.elementor-role-toggle',
+				arrowUp: 'dashicons-arrow-up',
+				arrowDown: 'dashicons-arrow-down'
+			},
+			toggle: function( $trigger ) {
+				var self = this,
+					$row = $trigger.closest( self.selectors.row ),
+					$toggleHandleIcon = $row.find( self.selectors.toggleHandle ).find( '.dashicons' ),
+					$controls = $row.find( self.selectors.controlsContainer );
+
+				$controls.toggleClass( 'hidden' );
+				if ( $controls.hasClass( 'hidden' ) ) {
+					$toggleHandleIcon.removeClass( self.selectors.arrowUp ).addClass( self.selectors.arrowDown );
+				} else {
+					$toggleHandleIcon.removeClass( self.selectors.arrowDown ).addClass( self.selectors.arrowUp );
+				}
+				self.updateLabel( $row );
+			},
+			updateLabel: function( $row ) {
+				var self = this,
+					$indicator = $row.find( self.selectors.excludedIndicator ),
+					excluded = $row.find( self.selectors.excludedField ).is( ':checked' );
+				if ( excluded ) {
+					$indicator.html( $indicator.data( 'excluded-label' ) );
+				} else {
+					$indicator.html( '' );
+				}
+				self.setAdvancedState( $row, excluded );
+			},
+			setAdvancedState: function( $row, state ) {
+				var self = this,
+					$controls = $row.find( 'input[type="checkbox"]' ).not( self.selectors.excludedField );
+
+				$controls.each( function( index, input ) {
+					$( input ).prop( 'disabled', state );
+				});
+			},
+			bind: function() {
+				var self = this;
+				$( document ).on( 'click', self.selectors.label + ',' + self.selectors.toggleHandle, function( event ) {
+					event.stopPropagation();
+					event.preventDefault();
+					self.toggle( $( this ) );
+				} ).on( 'change', self.selectors.excludedField, function() {
+					self.updateLabel( $( this ).closest( self.selectors.row ) );
+				});
+
+			},
+			init: function() {
+				var self = this;
+				if ( ! $( 'body[class*="' + self.selectors.body + '"]' ).length ) {
+					return;
+				}
+				self.bind();
+				$( self.selectors.row ).each( function( index, row ) {
+					self.updateLabel( $( row ) );
+				});
+			}
 		}
 	};
 

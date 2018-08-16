@@ -3,8 +3,12 @@ namespace Elementor\Debug;
 
 use Elementor\System_Info\Main;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
- * Elementor debug class.
+ * Elementor debug.
  *
  * Elementor debug handler class is responsible for logging errors and
  * generating debug reports.
@@ -119,7 +123,7 @@ class Debug {
 	private function add_system_info_report() {
 		Main::add_report(
 			self::REPORT_NAME, [
-				'file_name' => __DIR__ . '/' . 'debug-reporter.php',
+				'file_name' => __DIR__ . '/debug-reporter.php',
 				'class_name' => __NAMESPACE__ . '\Debug_Reporter',
 			]
 		);

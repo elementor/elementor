@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor embed class.
+ * Elementor embed.
  *
  * Elementor embed handler class is responsible for Elementor embed functionality.
  * The class holds the supported providers with their embed patters, and handles
@@ -28,8 +28,9 @@ class Embed {
 	 * @var array Provider URL structure regex.
 	 */
 	private static $provider_match_masks = [
-		'youtube' => '/^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^\?&\"\'>]+)/',
-		'vimeo' => '/(?:https?:\/\/)?(?:www\.)?(?:player\.)?vimeo\.com\/(?:[a-z]*\/)*([‌​0-9]{6,11})[?]?.*/',
+		'youtube' => '/^.*(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^\?&\"\'>]+)/',
+		'vimeo' => '/^.*vimeo\.com\/(?:[a-z]*\/)*([‌​0-9]{6,11})[?]?.*/',
+		'dailymotion' => '/^.*dailymotion.com\/(?:video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/',
 	];
 
 	/**
@@ -45,7 +46,8 @@ class Embed {
 	 */
 	private static $embed_patterns = [
 		'youtube' => 'https://www.youtube{NO_COOKIE}.com/embed/{VIDEO_ID}?feature=oembed',
-		'vimeo' => 'https://player.vimeo.com/video/{VIDEO_ID}',
+		'vimeo' => 'https://player.vimeo.com/video/{VIDEO_ID}#t={TIME}',
+		'dailymotion' => 'https://dailymotion.com/embed/video/{VIDEO_ID}',
 	];
 
 	/**
@@ -102,10 +104,20 @@ class Embed {
 
 		$embed_pattern = self::$embed_patterns[ $video_properties['provider'] ];
 
-		$replacements = [ '{VIDEO_ID}' => $video_properties['video_id'] ];
+		$replacements = [
+			'{VIDEO_ID}' => $video_properties['video_id'],
+		];
 
 		if ( 'youtube' === $video_properties['provider'] ) {
 			$replacements['{NO_COOKIE}'] = ! empty( $options['privacy'] ) ? '-nocookie' : '';
+		} elseif ( 'vimeo' === $video_properties['provider'] ) {
+			$timeText = '';
+
+			if ( ! empty( $options['start'] ) ) {
+				$timeText = date( 'H\hi\ms\s', $options['start'] );
+			}
+
+			$replacements['{TIME}'] = $timeText;
 		}
 
 		$embed_pattern = str_replace( array_keys( $replacements ), $replacements, $embed_pattern );
@@ -116,7 +128,7 @@ class Embed {
 	/**
 	 * Get embed HTML.
 	 *
-	 * Retrieve the final HTML of the embeded URL.
+	 * Retrieve the final HTML of the embedded URL.
 	 *
 	 * @since 1.5.0
 	 * @access public
@@ -132,7 +144,7 @@ class Embed {
 	 *
 	 * @return string The embed HTML.
 	 */
-	public static function get_embed_html( $video_url, array $embed_url_params = [], array $options = [],  array $frame_attributes = [] ) {
+	public static function get_embed_html( $video_url, array $embed_url_params = [], array $options = [], array $frame_attributes = [] ) {
 		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
 
 		if ( ! $video_embed_url ) {
@@ -140,6 +152,7 @@ class Embed {
 		}
 
 		$default_frame_attributes = [
+			'class' => 'elementor-video-iframe',
 			'src' => $video_embed_url,
 			'allowfullscreen',
 		];
@@ -154,7 +167,7 @@ class Embed {
 			if ( is_numeric( $attribute_key ) ) {
 				$attributes_for_print[] = $attribute_value;
 			} else {
-				$attributes_for_print[] = sprintf( '%s="%s"', $attribute_key, $attribute_value );
+				$attributes_for_print[] = sprintf( '%1$s="%2$s"', $attribute_key, $attribute_value );
 			}
 		}
 

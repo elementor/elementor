@@ -8,10 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor compatibility class.
+ * Elementor compatibility.
  *
  * Elementor compatibility handler class is responsible for compatibility with
- * external plugins. The class resolves different issues with non-compatibile
+ * external plugins. The class resolves different issues with non-compatible
  * plugins.
  *
  * @since 1.0.0
@@ -31,38 +31,12 @@ class Compatibility {
 	public static function register_actions() {
 		add_action( 'init', [ __CLASS__, 'init' ] );
 
-		if ( is_admin() ) {
+		self::polylang_compatibility();
+
+		if ( is_admin() || defined( 'WP_LOAD_IMPORTERS' ) ) {
 			add_filter( 'wp_import_post_meta', [ __CLASS__, 'on_wp_import_post_meta' ] );
 			add_filter( 'wxr_importer.pre_process.post_meta', [ __CLASS__, 'on_wxr_importer_pre_process_post_meta' ] );
-
-			if ( function_exists( 'gutenberg_init' ) ) {
-				add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
-
-				add_filter( 'elementor/utils/exit_to_dashboard_url', [ __CLASS__, 'exit_to_classic_editor' ] );
-			}
 		}
-	}
-
-	/**
-	 * Exit to classic editor.
-	 *
-	 * Filters the "Exit To Dashboard URL" and replace it with the clasic editor
-	 * URL.
-	 *
-	 * Fired by `elementor/utils/exit_to_dashboard_url` filter.
-	 *
-	 * @since 1.9.0
-	 * @access public
-	 * @static
-	 *
-	 * @param string $exit_url Default exit URL.
-	 *
-	 * @return string Classic editor URL.
-	 */
-	public static function exit_to_classic_editor( $exit_url ) {
-		$exit_url = add_query_arg( 'classic-editor', '', $exit_url );
-
-		return $exit_url;
 	}
 
 	/**
@@ -89,7 +63,7 @@ class Compatibility {
 					return;
 				}
 
-				var url = '<?php echo esc_attr( Utils::get_create_new_post_url( $typenow ) ); ?>';
+				var url = '<?php echo esc_url( Utils::get_create_new_post_url( $typenow ) ); ?>';
 
 				dropdown.insertAdjacentHTML( 'afterbegin', '<a href="' + url + '">Elementor</a>' );
 			} );
@@ -205,7 +179,7 @@ class Compatibility {
 
 		// Fix Preview URL for https://premium.wpmudev.org/project/domain-mapping/ plugin
 		if ( class_exists( 'domain_map' ) ) {
-			add_filter( 'elementor/utils/preview_url', function( $preview_url ) {
+			add_filter( 'elementor/document/urls/preview', function( $preview_url ) {
 				if ( wp_parse_url( $preview_url, PHP_URL_HOST ) !== $_SERVER['HTTP_HOST'] ) {
 					$preview_url = \domain_map::utils()->unswap_url( $preview_url );
 					$preview_url = add_query_arg( [
@@ -217,6 +191,42 @@ class Compatibility {
 			} );
 		}
 
+		// Gutenberg
+		if ( function_exists( 'gutenberg_init' ) ) {
+			add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
+		}
+	}
+
+	/**
+	 * Polylang compatibility.
+	 *
+	 * Fix Polylang compatibility with Elementor.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 * @static
+	 */
+	private static function polylang_compatibility() {
+		// Fix language if the `get_user_locale` is difference from the `get_locale
+		if ( isset( $_REQUEST['action'] ) && 0 === strpos( $_REQUEST['action'], 'elementor' ) ) {
+			add_action( 'set_current_user', function() {
+				global $current_user;
+				$current_user->locale = get_locale();
+			} );
+
+			// Fix for Polylang
+			define( 'PLL_AJAX_ON_FRONT', true );
+
+			add_action( 'pll_pre_init', function( $polylang ) {
+				if ( isset( $_REQUEST['post'] ) ) {
+					$post_language = $polylang->model->post->get_language( $_REQUEST['post'], 'locale' );
+					if ( ! empty( $post_language ) ) {
+						$_REQUEST['lang'] = $post_language->locale;
+					}
+				}
+			} );
+		}
+
 		// Copy elementor data while polylang creates a translation copy
 		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10 , 4 );
 	}
@@ -224,8 +234,9 @@ class Compatibility {
 	/**
 	 * Save polylang meta.
 	 *
-	 * Copy elementor data while polylang creates a translation copy. Fired by
-	 * `pll_copy_post_metas` filter.
+	 * Copy elementor data while polylang creates a translation copy.
+	 *
+	 * Fired by `pll_copy_post_metas` filter.
 	 *
 	 * @since 1.6.0
 	 * @access public
@@ -233,8 +244,8 @@ class Compatibility {
 	 *
 	 * @param array $keys List of custom fields names.
 	 * @param bool  $sync True if it is synchronization, false if it is a copy.
-	 * @param int   $from ID of the post from which we copy informations.
-	 * @param int   $to   ID of the post to which we paste informations.
+	 * @param int   $from ID of the post from which we copy information.
+	 * @param int   $to   ID of the post to which we paste information.
 	 *
 	 * @return array List of custom fields names.
 	 */

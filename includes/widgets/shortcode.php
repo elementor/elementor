@@ -57,19 +57,17 @@ class Widget_Shortcode extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the shortcode widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return [ 'shortcode', 'code' ];
 	}
 
 	/**
@@ -107,6 +105,9 @@ class Widget_Shortcode extends Widget_Base {
 			[
 				'label' => __( 'Enter your shortcode', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => '[gallery id="123" size="medium"]',
 				'default' => '',
 			]
@@ -124,7 +125,7 @@ class Widget_Shortcode extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$shortcode = $this->get_settings( 'shortcode' );
+		$shortcode = $this->get_settings_for_display( 'shortcode' );
 
 		$shortcode = do_shortcode( shortcode_unautop( $shortcode ) );
 		?>
@@ -135,7 +136,7 @@ class Widget_Shortcode extends Widget_Base {
 	/**
 	 * Render shortcode widget as plain content.
 	 *
-	 * Override the default behavior by printing the shortcode insted of rendering it.
+	 * Override the default behavior by printing the shortcode instead of rendering it.
 	 *
 	 * @since 1.0.0
 	 * @access public

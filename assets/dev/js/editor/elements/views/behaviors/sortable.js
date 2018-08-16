@@ -49,6 +49,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	activate: function() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
 		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
 			return;
 		}
@@ -147,6 +150,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		if ( this.view.isCollectionFilled() ) {
 			jQuery( ui.sender ).sortable( 'cancel' );
+
 			return;
 		}
 
@@ -161,47 +165,54 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		elementor.channels.data.trigger( 'drag:before:update', model );
-
 		var newIndex = ui.item.parent().children().index( ui.item ),
-			modelJSON = model.toJSON( { copyHtmlCache: true } );
+			modelData = model.toJSON( { copyHtmlCache: true } );
 
-		var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
+		this.view.addChildElement( modelData, {
+			at: newIndex,
+			trigger: {
+				beforeAdd: 'drag:before:update',
+				afterAdd: 'drag:after:update'
+			},
+			onAfterAdd: function() {
+				var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
 
-		senderSection.isManualRemoving = true;
+				senderSection.isManualRemoving = true;
 
-		model.destroy();
+				model.destroy();
 
-		senderSection.isManualRemoving = false;
-
-		this.view.addChildElement( modelJSON, { at: newIndex } );
-
-		elementor.channels.data.trigger( 'drag:after:update', model );
+				senderSection.isManualRemoving = false;
+			}
+		} );
 	},
 
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
-		if ( this.getChildViewContainer()[0] === ui.item.parent()[0] ) {
-			var model = elementor.channels.data.request( 'dragging:model' ),
-				$childElement = ui.item,
-				collection = this.view.collection,
-				newIndex = $childElement.parent().children().index( $childElement );
-
-			elementor.channels.data.trigger( 'drag:before:update', model );
-
-			var child = this.view.children.findByModelCid( model.cid );
-
-			child._isRendering = true;
-
-			collection.remove( model );
-
-			this.view.addChildElement( model, { at: newIndex } );
-
-			elementor.saver.setFlagEditorChange( true );
-
-			elementor.channels.data.trigger( 'drag:after:update', model );
+		if ( this.getChildViewContainer()[0] !== ui.item.parent()[0] ) {
+			return;
 		}
+
+		var model = elementor.channels.data.request( 'dragging:model' ),
+			$childElement = ui.item,
+			collection = this.view.collection,
+			newIndex = $childElement.parent().children().index( $childElement ),
+			child = this.view.children.findByModelCid( model.cid );
+
+		this.view.addChildElement( model, {
+			at: newIndex,
+			trigger: {
+				beforeAdd: 'drag:before:update',
+				afterAdd: 'drag:after:update'
+			},
+			onBeforeAdd: function() {
+				child._isRendering = true;
+
+				collection.remove( model );
+			}
+		} );
+
+		elementor.saver.setFlagEditorChange( true );
 	},
 
 	onAddChild: function( view ) {

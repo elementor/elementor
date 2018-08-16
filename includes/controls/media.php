@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -11,70 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base control for creating a media chooser control. Based on the WordPress
  * media library. Used to select an image from the WordPress media library.
  *
- * Creating new control in the editor (inside `Widget_Base::_register_controls()`
- * method):
- *
- *    $this->add_control(
- *    	'image',
- *    	[
- *    		'label' => __( 'Choose Image', 'plugin-domain' ),
- *    		'type' => Controls_Manager::MEDIA,
- *    		'default' => [
- *    			'url' => Utils::get_placeholder_image_src(),
- *    		]
- *    	]
- *    );
- *
- * PHP usage (inside `Widget_Base::render()` method):
- *
- *    $image = $this->get_settings( 'image' );
- *    // Get image URL
- *    echo '<img src="' . $image['url'] . '">';
- *    // Get image thumbnail by ID
- *    echo wp_get_attachment_image( $image['id'], 'thumbnail' );
- *
- * JS usage (inside `Widget_Base::_content_template()` method):
- *
- *    <img src="{{ settings.image.url }}">
- *
  * @since 1.0.0
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $title       Optional. The field title that appears on mouse
- *                            hover. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param array $default      {
- *     Optional. Defautl media values.
- *
- *     @type int    $id  Optional. Media id. Default is empty.
- *     @type string $url Optional. Media url. Use `Utils::get_placeholder_image_src()`
- *                       to retrieve Elementor image placeholder. Default is empty.
- * }
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is true.
- *
- * @return array {
- *     An array containing the media ID and URL: `[ 'id' => '', 'url' => '' ]`.
- *
- *     @type int    $id  Media id.
- *     @type string $url Media url.
- * }
  */
 class Control_Media extends Control_Base_Multiple {
 
 	/**
-	 * Retrieve media control type.
+	 * Get media control type.
+	 *
+	 * Retrieve the control type, in this case `media`.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -86,9 +32,9 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control default values.
+	 * Get media control default values.
 	 *
-	 * Get the default value of the media control. Used to return the default
+	 * Retrieve the default value of the media control. Used to return the default
 	 * values while initializing the media control.
 	 *
 	 * @since 1.0.0
@@ -181,13 +127,18 @@ class Control_Media extends Control_Base_Multiple {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<div class="elementor-control-media">
+				<div class="elementor-control-media elementor-control-tag-area elementor-control-preview-area elementor-aspect-ratio-169">
 					<div class="elementor-control-media-upload-button">
 						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 					</div>
-					<div class="elementor-control-media-image-area">
-						<div class="elementor-control-media-image" style="background-image: url({{ data.controlValue.url }});"></div>
-						<div class="elementor-control-media-delete"><?php _e( 'Delete', 'elementor' ); ?></div>
+					<div class="elementor-control-media-area{{{ 'video' === data.media_type ? ' elementor-fit-aspect-ratio' : '' }}}">
+						<# if( 'image' === data.media_type ) { #>
+							<div class="elementor-control-media-image"></div>
+						<# } else if( 'video' === data.media_type ) { #>
+							<video class="elementor-control-media-video" preload="metadata"></video>
+							<i class="fa fa-video-camera"></i>
+						<# } #>
+						<div class="elementor-control-media-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>
 					</div>
 				</div>
 			</div>
@@ -200,9 +151,9 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control default settings.
+	 * Get media control default settings.
 	 *
-	 * Get the default settings of the media control. Used to return the default
+	 * Retrieve the default settings of the media control. Used to return the default
 	 * settings while initializing the media control.
 	 *
 	 * @since 1.0.0
@@ -213,13 +164,18 @@ class Control_Media extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
+			'media_type' => 'image',
+			'dynamic' => [
+				'categories' => [ TagsModule::IMAGE_CATEGORY ],
+				'returnType' => 'object',
+			],
 		];
 	}
 
 	/**
-	 * Retrieve media control image title.
+	 * Get media control image title.
 	 *
-	 * Get the title of the image selected by the media control.
+	 * Retrieve the `title` of the image selected by the media control.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -238,15 +194,15 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Retrieve media control image alt.
+	 * Get media control image alt.
 	 *
-	 * Get the alt value of the image selected by the media control.
+	 * Retrieve the `alt` value of the image selected by the media control.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
-	 * @param array $attachment Media attachment.
+	 * @param array $instance Media attachment.
 	 *
 	 * @return string Image alt.
 	 */

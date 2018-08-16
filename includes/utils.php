@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor utils class.
+ * Elementor utils.
  *
  * Elementor utils handler class is responsible for different utility methods
  * used by Elementor.
@@ -27,14 +27,14 @@ class Utils {
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
 	 */
 	public static function is_ajax() {
-		// TODO: When minimum required version of Elementor will be 4.7, use `wp_doing_ajax()` instead.
+		// TODO: When minimum required version of WordPress will be 4.7, use `wp_doing_ajax()` instead.
 		return defined( 'DOING_AJAX' ) && DOING_AJAX;
 	}
 
 	/**
 	 * Is script debug.
 	 *
-	 * Whether script debug is ebanled or not.
+	 * Whether script debug is enabled or not.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -52,6 +52,8 @@ class Utils {
 	 * Retrieve Elementor edit link.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_edit_url()` method instead.
+	 *
 	 * @access public
 	 * @static
 	 *
@@ -60,7 +62,18 @@ class Utils {
 	 * @return string Post edit link.
 	 */
 	public static function get_edit_link( $post_id = 0 ) {
-		$edit_link = add_query_arg( [ 'post' => $post_id, 'action' => 'elementor' ], admin_url( 'post.php' ) );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_edit_url()' );
+
+		if ( ! $post_id ) {
+			$post_id = get_the_ID();
+		}
+
+		$edit_link = '';
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( $document ) {
+			$edit_link = $document->get_edit_url();
+		}
 
 		/**
 		 * Get edit link.
@@ -68,6 +81,7 @@ class Utils {
 		 * Filters the Elementor edit link.
 		 *
 		 * @since 1.0.0
+		 * @deprecated 2.0.0 Use `elementor/document/urls/edit` filter instead.
 		 *
 		 * @param string $edit_link New URL query string (unescaped).
 		 * @param int    $post_id   Post ID.
@@ -119,6 +133,8 @@ class Utils {
 	 * Retrieve the post preview URL.
 	 *
 	 * @since 1.6.4
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_preview_url()` method instead.
+	 *
 	 * @access public
 	 * @static
 	 *
@@ -127,7 +143,9 @@ class Utils {
 	 * @return string Post preview URL.
 	 */
 	public static function get_preview_url( $post_id ) {
-		$preview_url = set_url_scheme( add_query_arg( 'elementor-preview', '', get_permalink( $post_id ) ) );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_preview_url()' );
+
+		$url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 
 		/**
 		 * Preview URL.
@@ -135,28 +153,35 @@ class Utils {
 		 * Filters the Elementor preview URL.
 		 *
 		 * @since 1.6.4
+		 * @deprecated 2.0.0 Use `elementor/document/urls/preview` filter instead.
 		 *
 		 * @param string $preview_url URL with chosen scheme.
 		 * @param int    $post_id     Post ID.
 		 */
-		$preview_url = apply_filters( 'elementor/utils/preview_url', $preview_url, $post_id );
+		$url = apply_filters( 'elementor/utils/preview_url', $url, $post_id );
 
-		return $preview_url;
+		return $url;
 	}
 
 	/**
+	 * Get WordPress preview url.
+	 *
+	 * Retrieve WordPress preview URL for any given post ID.
+	 *
 	 * @since 1.9.0
-	 * @static
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_wp_preview_url()` method instead.
+	 *
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string WordPress preview URL.
 	 */
 	public static function get_wp_preview_url( $post_id ) {
-		$query_args = [];
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_wp_preview_url()' );
 
-		$nonce = wp_create_nonce( 'post_preview_' . $post_id );
-		$query_args['preview_nonce'] = $nonce;
-		$query_args['preview'] = 'true';
-
-		$wp_preview_url = get_preview_post_link( $post_id, $query_args );
+		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
 
 		/**
 		 * WordPress preview URL.
@@ -164,8 +189,9 @@ class Utils {
 		 * Filters the WordPress preview URL.
 		 *
 		 * @since 1.9.0
+		 * @deprecated 2.0.0 Use `elementor/document/urls/wp_preview` filter instead.
 		 *
-		 * @param string $wp_preview_url WordPress preview URL with chosen scheme.
+		 * @param string $wp_preview_url WordPress preview URL.
 		 * @param int    $post_id        Post ID.
 		 */
 		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
@@ -173,34 +199,80 @@ class Utils {
 		return $wp_preview_url;
 	}
 
-
 	/**
-	 * @since 1.9.0
-	 * @static
+	 * Replace URLs.
+	 *
+	 * Replace old URLs to new URLs. This method also updates all the Elementor data.
+	 *
+	 * @since  2.1.0
 	 * @access public
+	 *
+	 * @param $from
+	 * @param $to
+	 *
+	 * @return string
+	 * @throws \Exception
 	 */
-	public static function get_exit_to_dashboard_url( $post_id ) {
-		$exit_url = get_edit_post_link( $post_id, 'raw' );
+	public static function replace_urls( $from, $to ) {
+		$from = trim( $from );
+		$to = trim( $to );
 
-		/**
-		 * Exit To Dashboard URL.
-		 *
-		 * Filters the Exit To Dashboard URL.
-		 *
-		 * @since 1.9.0
-		 *
-		 * @param string $exit_url Default exit URL.
-		 * @param int    $post_id  Post ID.
-		 */
-		$exit_url = apply_filters( 'elementor/utils/exit_to_dashboard_url', $exit_url, $post_id );
+		if ( $from === $to ) {
+			throw new \Exception( __( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
+		}
 
-		return $exit_url;
+		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
+		if ( ! $is_valid_urls ) {
+			throw new \Exception( __( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
+		}
+
+		global $wpdb;
+
+		// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
+		$rows_affected = $wpdb->query(
+			"UPDATE {$wpdb->postmeta} " .
+			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
+			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
+		// @codingStandardsIgnoreEnd
+
+		if ( false === $rows_affected ) {
+			throw new \Exception( __( 'An error occurred', 'elementor' ) );
+		}
+
+		Plugin::$instance->files_manager->clear_cache();
+
+		return sprintf(
+			/* translators: %d: Number of rows */
+			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
+			$rows_affected
+		);
 	}
 
 	/**
-	 * Is post type supports Elementor.
+	 * Get exit to dashboard URL.
 	 *
-	 * Whether the post type supports editing with Elementor.
+	 * Retrieve WordPress preview URL for any given post ID.
+	 *
+	 * @since 1.9.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url()` method instead.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string Exit to dashboard URL.
+	 */
+	public static function get_exit_to_dashboard_url( $post_id ) {
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url()' );
+
+		return Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url();
+	}
+
+	/**
+	 * Is post supports Elementor.
+	 *
+	 * Whether the post supports editing with Elementor.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -208,11 +280,12 @@ class Utils {
 	 *
 	 * @param int $post_id Optional. Post ID. Default is `0`.
 	 *
-	 * @return string True if post type supports editing with Elementor, false otherwise.
+	 * @return string True if post supports editing with Elementor, false otherwise.
 	 */
-	public static function is_post_type_support( $post_id = 0 ) {
+	public static function is_post_support( $post_id = 0 ) {
 		$post_type = get_post_type( $post_id );
-		$is_supported = post_type_supports( $post_type, 'elementor' );
+
+		$is_supported = self::is_post_type_support( $post_type );
 
 		/**
 		 * Is post type support.
@@ -220,14 +293,54 @@ class Utils {
 		 * Filters whether the post type supports editing with Elementor.
 		 *
 		 * @since 1.0.0
+		 * @deprecated 2.2.0 Use `elementor/utils/is_post_support` Instead
 		 *
-		 * @param bool   $is_supported Whether the post type supports editing with Elementor.
-		 * @param int    $post_id      Post ID.
-		 * @param string $post_type    Post type.
+		 * @param bool $is_supported Whether the post type supports editing with Elementor.
+		 * @param int $post_id Post ID.
+		 * @param string $post_type Post type.
 		 */
 		$is_supported = apply_filters( 'elementor/utils/is_post_type_support', $is_supported, $post_id, $post_type );
 
+		/**
+		 * Is post support.
+		 *
+		 * Filters whether the post supports editing with Elementor.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param bool $is_supported Whether the post type supports editing with Elementor.
+		 * @param int $post_id Post ID.
+		 * @param string $post_type Post type.
+		 */
+		$is_supported = apply_filters( 'elementor/utils/is_post_support', $is_supported, $post_id, $post_type );
+
 		return $is_supported;
+	}
+
+
+	/**
+	 * Is post type supports Elementor.
+	 *
+	 * Whether the post type supports editing with Elementor.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 * @static
+	 *
+	 * @param string $post_type Post Type.
+	 *
+	 * @return string True if post type supports editing with Elementor, false otherwise.
+	 */
+	public static function is_post_type_support( $post_type ) {
+		if ( ! post_type_exists( $post_type ) ) {
+			return false;
+		}
+
+		if ( ! post_type_supports( $post_type, 'elementor' ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -261,7 +374,7 @@ class Utils {
 	/**
 	 * Generate random string.
 	 *
-	 * Returns a string containing a hexadecimal representation of randon number.
+	 * Returns a string containing a hexadecimal representation of random number.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -344,20 +457,18 @@ class Utils {
 	 * @since 1.0.10
 	 * @access public
 	 * @static
+	 * @deprecated 2.1.0 Use `do_action_deprecated()` instead
 	 *
 	 * @param string $tag         The name of the action hook.
 	 * @param array  $args        Array of additional function arguments to be passed to `do_action()`.
 	 * @param string $version     The version of WordPress that deprecated the hook.
-	 * @param string $replacement Optional. The hook that should have been used.
+	 * @param bool   $replacement Optional. The hook that should have been used.
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
-		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `do_action_deprecated()` function.
-		if ( function_exists( 'do_action_deprecated' ) ) { /* WP >= 4.6 */
-			do_action_deprecated( $tag, $args, $version, $replacement, $message );
-		} else {
-			do_action_ref_array( $tag, $args );
-		}
+		_deprecated_function( __METHOD__, '2.1.0', 'do_action_deprecated()' );
+
+		do_action_deprecated( $tag, $args, $version, $replacement, $message );
 	}
 
 	/**
@@ -368,48 +479,43 @@ class Utils {
 	 * @since 1.0.10
 	 * @access public
 	 * @static
+	 * @deprecated 2.1.0 Use `apply_filters_deprecated()` instead
 	 *
 	 * @param string $tag         The name of the filter hook.
 	 * @param array  $args        Array of additional function arguments to be passed to `apply_filters()`.
 	 * @param string $version     The version of WordPress that deprecated the hook.
-	 * @param string $replacement Optional. The hook that should have been used.
+	 * @param bool   $replacement Optional. The hook that should have been used.
 	 * @param string $message     Optional. A message regarding the change.
+	 *
+	 * @return mixed The filtered value after all hooked functions are applied to it.
 	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
-		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `apply_filters_deprecated()` function.
-		if ( function_exists( 'apply_filters_deprecated' ) ) { /* WP >= 4.6 */
-			return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
-		} else {
-			return apply_filters_ref_array( $tag, $args );
-		}
+		_deprecated_function( __METHOD__, '2.1.0', 'apply_filters_deprecated()' );
+
+		return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
 	}
 
 	/**
+	 * Get last edited string.
+	 *
+	 * Retrieve a string saying when the post was saved or the last time it was edited.
+	 *
 	 * @since 1.9.0
-	 * @static
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get()` method instead.
+	 *
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string Last edited string.
 	 */
 	public static function get_last_edited( $post_id ) {
-		$post = get_post( $post_id );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get()' );
 
-		$autosave_post = Utils::get_post_autosave( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id );
 
-		if ( $autosave_post ) {
-			$post = $autosave_post;
-		}
-
-		$date = date_i18n( _x( 'M j, H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
-		$display_name = get_the_author_meta( 'display_name' , $post->post_author );
-
-		if ( $autosave_post ) {
-			/* translators: 1: Saving date, 2: Author display name */
-			$last_edited = sprintf( __( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
-		} else {
-			/* translators: 1: Editing date, 2: Author display name */
-			$last_edited = sprintf( __( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
-		}
-
-		return $last_edited;
+		return $document->get_last_edited();
 	}
 
 	/**
@@ -437,19 +543,31 @@ class Utils {
 	}
 
 	/**
-	 * @static
+	 * Get post autosave.
+	 *
+	 * Retrieve an autosave for any given post.
+	 *
+	 * @since 1.9.2
 	 * @access public
+	 * @static
+	 *
+	 * @param int $post_id Post ID.
+	 * @param int $user_id Optional. User ID. Default is `0`.
+	 *
+	 * @return \WP_Post|false Post autosave or false.
 	 */
 	public static function get_post_autosave( $post_id, $user_id = 0 ) {
 		global $wpdb;
 
-		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s', [ $post_id, "{$post_id}-autosave%" ] );
+		$post = get_post( $post_id );
+
+		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s AND post_modified_gmt > %s', [ $post_id, "{$post_id}-autosave%", $post->post_modified_gmt ] );
 
 		if ( $user_id ) {
 			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
 		}
 
-		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'" );
+		$revision = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE $where AND post_type = 'revision'" ); // WPCS: unprepared SQL ok.
 
 		if ( $revision ) {
 			$revision = new \WP_Post( $revision );
@@ -458,5 +576,30 @@ class Utils {
 		}
 
 		return $revision;
+	}
+
+	/**
+	 * Is CPT supports custom templates.
+	 *
+	 * Whether the Custom Post Type supports templates.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 * @static
+	 *
+	 * @return bool True is templates are supported, False otherwise.
+	 */
+	public static function is_cpt_custom_templates_supported() {
+		require_once ABSPATH . '/wp-admin/includes/theme.php';
+
+		return method_exists( wp_get_theme(), 'get_post_templates' );
+	}
+
+	public static function array_inject( $array, $key, $insert ) {
+		$length = array_search( $key, array_keys( $array ), true ) + 1;
+
+		return array_slice( $array, 0, $length, true ) +
+			$insert +
+			array_slice( $array, $length, null, true );
 	}
 }

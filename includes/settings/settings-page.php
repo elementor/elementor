@@ -5,46 +5,92 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Elementor settings page.
+ *
+ * An abstract class that provides the needed properties and methods to handle
+ * WordPress dashboard settings pages in inheriting classes.
+ *
+ * @since 1.0.0
+ * @abstract
+ */
 abstract class Settings_Page {
-	private $tabs;
 
+	/**
+	 * Settings page ID.
+	 */
 	const PAGE_ID = '';
 
 	/**
-	 * @abstract
+	 * Tabs.
+	 *
+	 * Holds the settings page tabs, sections and fields.
+	 *
+	 * @access private
+	 *
+	 * @var array
+	 */
+	private $tabs;
+
+	/**
+	 * Create tabs.
+	 *
+	 * Return the settings page tabs, sections and fields.
+	 *
 	 * @since 1.5.0
 	 * @access protected
-	*/
+	 * @abstract
+	 */
 	abstract protected function create_tabs();
 
 	/**
-	 * @abstract
+	 * Get settings page title.
+	 *
+	 * Retrieve the title for the settings page.
+	 *
 	 * @since 1.5.0
 	 * @access protected
-	*/
+	 * @abstract
+	 */
 	abstract protected function get_page_title();
 
 	/**
-	 * @static
+	 * Get settings page URL.
+	 *
+	 * Retrieve the URL of the settings page.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 * @static
+	 *
+	 * @return string Settings page URL.
+	 */
 	public final static function get_url() {
 		return admin_url( 'admin.php?page=' . static::PAGE_ID );
 	}
 
 	/**
+	 * Settings page constructor.
+	 *
+	 * Initializing Elementor settings page.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 */
 	public function __construct() {
 		add_action( 'admin_init', [ $this, 'register_settings_fields' ] );
 	}
 
 	/**
+	 * Get tabs.
+	 *
+	 * Retrieve the settings page tabs, sections and fields.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 *
+	 * @return array Settings page tabs, sections and fields.
+	 */
 	public final function get_tabs() {
 		$this->ensure_tabs();
 
@@ -52,9 +98,16 @@ abstract class Settings_Page {
 	}
 
 	/**
+	 * Add tab.
+	 *
+	 * Register a new tab to a settings page.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 *
+	 * @param string $tab_id   Tab ID.
+	 * @param array  $tab_args Optional. Tab arguments. Default is an empty array.
+	 */
 	public final function add_tab( $tab_id, array $tab_args = [] ) {
 		$this->ensure_tabs();
 
@@ -71,9 +124,18 @@ abstract class Settings_Page {
 	}
 
 	/**
+	 * Add section.
+	 *
+	 * Register a new section to a tab.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 *
+	 * @param string $tab_id       Tab ID.
+	 * @param string $section_id   Section ID.
+	 * @param array  $section_args Optional. Section arguments. Default is an
+	 *                             empty array.
+	 */
 	public final function add_section( $tab_id, $section_id, array $section_args = [] ) {
 		$this->ensure_tabs();
 
@@ -95,9 +157,18 @@ abstract class Settings_Page {
 	}
 
 	/**
+	 * Add field.
+	 *
+	 * Register a new field to a section.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 *
+	 * @param string $tab_id     Tab ID.
+	 * @param string $section_id Section ID.
+	 * @param string $field_id   Field ID.
+	 * @param array  $field_args Field arguments.
+	 */
 	public final function add_field( $tab_id, $section_id, $field_id, array $field_args ) {
 		$this->ensure_tabs();
 
@@ -120,19 +191,37 @@ abstract class Settings_Page {
 	}
 
 	/**
+	 * Add fields.
+	 *
+	 * Register multiple fields to a section.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 *
+	 * @param string $tab_id     Tab ID.
+	 * @param string $section_id Section ID.
+	 * @param array  $fields     {
+	 *    An array of fields.
+	 *
+	 *    @type string $field_id   Field ID.
+	 *    @type array  $field_args Field arguments.
+	 * }
+	 */
 	public final function add_fields( $tab_id, $section_id, array $fields ) {
-		foreach ( $fields as $field_id => $field ) {
-			$this->add_field( $tab_id, $section_id, $field_id, $field );
+		foreach ( $fields as $field_id => $field_args ) {
+			$this->add_field( $tab_id, $section_id, $field_id, $field_args );
 		}
 	}
 
 	/**
+	 * Register settings fields.
+	 *
+	 * In each tab register his inner sections, and in each section register his
+	 * inner fields.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 */
 	public final function register_settings_fields() {
 		$controls_class_name = __NAMESPACE__ . '\Settings_Controls';
 
@@ -184,9 +273,13 @@ abstract class Settings_Page {
 	}
 
 	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the settings page.
+	 *
 	 * @since 1.5.0
 	 * @access public
-	*/
+	 */
 	public function display_settings_page() {
 		$tabs = $this->get_tabs();
 		?>
@@ -255,9 +348,14 @@ abstract class Settings_Page {
 	}
 
 	/**
+	 * Ensure tabs.
+	 *
+	 * Make sure the settings page has tabs before inserting any new sections or
+	 * fields.
+	 *
 	 * @since 1.5.0
 	 * @access private
-	*/
+	 */
 	private function ensure_tabs() {
 		if ( null === $this->tabs ) {
 			$this->tabs = $this->create_tabs();

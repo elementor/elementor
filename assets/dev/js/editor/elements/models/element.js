@@ -66,7 +66,9 @@ ElementModel = Backbone.Model.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
-		settings = new SettingsModel( settings );
+		settings = new SettingsModel( settings, {
+			controls: elementor.getElementControls( this )
+		} );
 
 		this.set( 'settings', settings );
 
@@ -98,24 +100,25 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	onCloseEditor: function() {
-		this.initEditSettings();
-
 		if ( this.renderOnLeave ) {
 			this.renderRemoteServer();
 		}
 	},
 
 	setSetting: function( key, value ) {
-		var keyParts = key.split( '.' ),
-			isRepeaterKey = 3 === keyParts.length,
-			settings = this.get( 'settings' );
+		var settings = this.get( 'settings' );
 
-		key = keyParts[0];
+		if ( 'object' !== typeof key ) {
+			var keyParts = key.split( '.' ),
+				isRepeaterKey = 3 === keyParts.length;
 
-		if ( isRepeaterKey ) {
-			settings = settings.get( key ).models[ keyParts[1] ];
+			key = keyParts[0];
 
-			key = keyParts[2];
+			if ( isRepeaterKey ) {
+				settings = settings.get( key ).models[ keyParts[1] ];
+
+				key = keyParts[2];
+			}
 		}
 
 		settings.setExternalChange( key, value );
@@ -167,7 +170,6 @@ ElementModel = Backbone.Model.extend( {
 		return elementor.ajax.addRequest( 'render_widget', {
 			unique_id: this.cid,
 			data: {
-				post_id: elementor.config.post_id,
 				data: data
 			},
 			success: this.onRemoteGetHtml.bind( this )

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -66,19 +68,17 @@ class Widget_Audio extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
+	 * Get widget keywords.
 	 *
-	 * Retrieve the list of categories the audio widget belongs to.
+	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
+	 * @return array Widget keywords.
 	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_keywords() {
+		return [ 'audio', 'player', 'soundcloud', 'embed' ];
 	}
 
 	/**
@@ -102,6 +102,13 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+					'categories' => [
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::URL_CATEGORY,
+					],
+				],
 				'default' => [
 					'url' => 'https://soundcloud.com/shchxango/john-coltrane-1963-my-favorite',
 				],
@@ -169,6 +176,20 @@ class Widget_Audio extends Widget_Base {
 				'label_off' => __( 'Hide', 'elementor' ),
 				'label_on' => __( 'Show', 'elementor' ),
 				'default' => 'yes',
+			]
+		);
+
+		$this->add_control(
+			'sc_show_artwork',
+			[
+				'label' => __( 'Artwork', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
+				'default' => 'yes',
+				'condition' => [
+					'visual' => 'no',
+				],
 			]
 		);
 
@@ -246,7 +267,7 @@ class Widget_Audio extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['link'] ) ) {
 			return;
@@ -275,6 +296,8 @@ class Widget_Audio extends Widget_Base {
 	 * @access public
 	 *
 	 * @param string $html The HTML returned by the oEmbed provider.
+	 *
+	 * @return string Filtered audio widget oEmbed HTML.
 	 */
 	public function filter_oembed_result( $html ) {
 		$param_keys = [
@@ -286,6 +309,7 @@ class Widget_Audio extends Widget_Base {
 			'show_comments',
 			'show_playcount',
 			'show_user',
+			'show_artwork',
 		];
 
 		$params = [];

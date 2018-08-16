@@ -12,6 +12,7 @@
 
 			> input, > textarea, > .elementor-select-wrapper, .elementor-field-subgroup {
 				flex-basis: 100%;
+				max-width: 100%; // Fix for Firefox browser
 			}
 		}
 	}
@@ -37,6 +38,7 @@
 
 	.elementor-field-textual {
 		width: 100%;
+		max-width: 100%; // Tweak for themes that set this property
 		border: 1px solid $gray;
 		background-color: transparent;
 		color: $gray-darker;
@@ -59,6 +61,8 @@
 
 		select {
 			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
 			color: inherit;
 			font-size: inherit;
 			font-family: inherit;
@@ -294,4 +298,3 @@
 		}
 	}
 }
-

@@ -3,6 +3,7 @@
 //
 
 .elementor-button {
+	font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
 	text-transform: uppercase;
 	outline: none;
 	border: none;
@@ -68,12 +69,6 @@
 		}
 	}
 
-	&.elementor-button-go-pro {
-		color: #fff;
-		background-color: $editor-orange;
-
-	}
-
 	&.elementor-edit-template {
 		display: inline-block;
 		margin-top: 15px;
@@ -98,6 +93,11 @@
 		&:visited {
 			color: #fff;
 		}
+	}
+
+	&.elementor-button-go-pro {
+		color: #fff;
+		background-color: $editor-orange;
 	}
 
 	i {

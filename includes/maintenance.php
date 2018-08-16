@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor maintenance class.
+ * Elementor maintenance.
  *
  * Elementor maintenance handler class is responsible for setting up Elementor
  * activation and uninstallation hooks.
@@ -62,5 +62,3 @@ class Maintenance {
 		register_uninstall_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'uninstall' ] );
 	}
 }
-
-Maintenance::init();

@@ -8,32 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor base control.
  *
- * A base control for creating controls in the panel. Each control accepts all
- * the params listed below.
+ * An abstract class for creating new controls in the panel.
  *
  * @since 1.0.0
  * @abstract
- *
- * @param string $label       Optional. The label that appears above of the
- *                            field. Default is empty.
- * @param string $title       Optional. The field title that appears on mouse
- *                            hover. Default is empty.
- * @param string $placeholder Optional. The field placeholder that appears when
- *                            the field has no values. Default is empty.
- * @param string $description Optional. The description that appears below the
- *                            field. Default is empty.
- * @param mixed  $default     Optional. The field default value.
- * @param string $separator   Optional. Set the position of the control separator.
- *                            Available values are 'default', 'before', 'after'
- *                            and 'none'. 'default' will position the separator
- *                            depending on the control type. 'before' / 'after'
- *                            will position the separator before/after the
- *                            control. 'none' will hide the separator. Default
- *                            is 'default'.
- * @param bool   $show_label  Optional. Whether to display the label. Default is
- *                            true.
- * @param bool   $label_block Optional. Whether to display the label in a
- *                            separate line. Default is false.
  */
 abstract class Base_Control {
 
@@ -48,12 +26,10 @@ abstract class Base_Control {
 	 */
 	private $_base_settings = [
 		'label' => '',
-		'title' => '',
-		'placeholder' => '',
 		'description' => '',
-		'separator' => 'default',
 		'show_label' => true,
 		'label_block' => false,
+		'separator' => 'default',
 	];
 
 	/**
@@ -68,9 +44,9 @@ abstract class Base_Control {
 	private $_settings = [];
 
 	/**
-	 * Retrieve features.
+	 * Get features.
 	 *
-	 * Get the list of all the available features. Currently Elementor uses only
+	 * Retrieve the list of all the available features. Currently Elementor uses only
 	 * the `UI` feature.
 	 *
 	 * @since 1.5.0
@@ -84,7 +60,9 @@ abstract class Base_Control {
 	}
 
 	/**
-	 * Retrieve control type.
+	 * Get control type.
+	 *
+	 * Retrieve the control type.
 	 *
 	 * @since 1.5.0
 	 * @access public
@@ -117,9 +95,9 @@ abstract class Base_Control {
 	public function enqueue() {}
 
 	/**
-	 * Retrieve control settings.
+	 * Get control settings.
 	 *
-	 * Get the control settings or a specific setting value.
+	 * Retrieve the control settings or a specific setting value.
 	 *
 	 * @since 1.5.0
 	 * @access public
@@ -127,7 +105,7 @@ abstract class Base_Control {
 	 * @param string $setting_key Optional. Specific key to return from the
 	 *                            settings. If key set it will return the
 	 *                            specific value of the key, otherwise the
-	 *                            entire key array will be returned. Dafault is
+	 *                            entire key array will be returned. Default is
 	 *                            null.
 	 *
 	 * @return mixed The control settings, or specific setting value.
@@ -195,9 +173,9 @@ abstract class Base_Control {
 	}
 
 	/**
-	 * Retrieve default control settings.
+	 * Get default control settings.
 	 *
-	 * Get the default settings of the control. Used to return the default
+	 * Retrieve the default settings of the control. Used to return the default
 	 * settings while initializing the control.
 	 *
 	 * @since 1.5.0
