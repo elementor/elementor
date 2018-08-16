@@ -398,16 +398,16 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-				'download_button',
-				[
-					'label' => __( 'Download Button', 'elementor' ),
-					'type' => Controls_Manager::SWITCHER,
-					'label_off' => __( 'Hide', 'elementor' ),
-					'label_on' => __( 'Show', 'elementor' ),
-					'condition' => [
-						'video_type' => 'hosted',
-					],
-				]
+			'download_button',
+			[
+				'label' => __( 'Download Button', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
+				'condition' => [
+					'video_type' => 'hosted',
+				],
+			]
 		);
 
 		$this->add_control(
