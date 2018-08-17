@@ -1,3 +1,17 @@
+.elementor-loader {
+	border-radius: 5px;
+	margin: auto;
+	padding: 30px;
+	height: 140px;
+	width: 140px;
+}
+
+.elementor-loader-boxes {
+	height: 80px;
+	width: 80px;
+	position: relative;
+}
+
 .elementor-loader-box {
 	$animation-time: 1.8s;
 
@@ -43,4 +57,27 @@
 	100% {
 		opacity: .3;
 	}
+}
+
+.elementor-loading-title {
+
+	@keyframes load-title {
+		0% {
+			opacity: 1;
+		}
+		50% {
+			opacity: .6;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	color: $editor-darkest;
+	text-align: center;
+	text-transform: uppercase;
+	margin-top: 30px;
+	letter-spacing: 7px;
+	font-size: 10px;
+	animation: load-title 1.5s linear infinite;
 }
