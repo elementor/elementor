@@ -218,6 +218,10 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.1.8 - 2018-08-19 ###
+* Fix: Prevent columns from overflowing the grid area in Firefox browser ([#5442](https://github.com/pojome/elementor/issues/5442))
+* Fix: Style glitch in the panel separator
+
 ### 2.1.7 - 2018-08-15 ###
 * Fix: Avoid copying custom CSS ID when pasting style ([#5416](https://github.com/pojome/elementor/issues/5416))
 * Fix: Responsive CSS for minimal grid utility ([#5375](https://github.com/pojome/elementor/issues/5375))
