@@ -18,6 +18,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	events: {
+		'click @ui.menuButtons': 'onMenuButtonsClick',
 		'click @ui.settings': 'onClickSettings',
 		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
 		'click @ui.saveTemplate': 'onClickSaveTemplate',
@@ -42,20 +43,23 @@ module.exports = Marionette.ItemView.extend( {
 		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
-	onPanelClick: function( event ) {
-		var $target = jQuery( event.target ),
-			isClickInsideOfTool = $target.closest( '.elementor-panel-footer-sub-menu-wrapper' ).length;
+	onMenuButtonsClick: function( event ) {
+		var $tool = jQuery( event.currentTarget ),
+			isToggleable = $tool.hasClass( 'elementor-toggle-state' );
 
-		if ( isClickInsideOfTool ) {
+		if ( ! isToggleable ) {
 			return;
 		}
 
-		var $tool = $target.closest( '.elementor-panel-footer-tool' ),
-			isClosedTool = $tool.length && ! $tool.hasClass( 'elementor-open' );
+		var isOpen = $tool.hasClass( 'elementor-open' );
 
-		this.ui.menuButtons.filter( ':not(.elementor-leave-open)' ).removeClass( 'elementor-open' );
+		if ( isOpen ) {
+			if ( $tool.hasClass( 'elementor-leave-open' ) ) {
+				return;
+			}
 
-		if ( isClosedTool ) {
+			$tool.removeClass( 'elementor-open' );
+		} else {
 			$tool.addClass( 'elementor-open' );
 		}
 	},
@@ -103,13 +107,5 @@ module.exports = Marionette.ItemView.extend( {
 		if ( 'historyPage' !== elementor.getPanelView().getCurrentPageName() ) {
 			elementor.getPanelView().setPage( 'historyPage' );
 		}
-	},
-
-	onRender: function() {
-		var self = this;
-
-		_.defer( function() {
-			elementor.getPanelView().$el.on( 'click', self.onPanelClick.bind( self ) );
-		} );
 	}
 } );
