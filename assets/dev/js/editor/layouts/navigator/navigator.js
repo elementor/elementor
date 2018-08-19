@@ -238,11 +238,18 @@ module.exports = Marionette.Region.extend( {
 			ui.position.top = 0;
 		}
 
-		if ( 0 > ui.position.left ) {
+		var isOutOfLeft = 0 > ui.position.left,
+			isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth;
+
+		if ( elementor.config.is_rtl ) {
+			if ( isOutOfRight ) {
+				ui.position.left = innerWidth - this.el.offsetWidth;
+			}
+		} else if ( isOutOfLeft ) {
 			ui.position.left = 0;
 		}
 
-		elementor.$body.toggleClass( 'elementor-navigator--dock-hint', ui.position.left + this.el.offsetWidth > innerWidth );
+		elementor.$body.toggleClass( 'elementor-navigator--dock-hint', elementor.config.is_rtl ? isOutOfLeft : isOutOfRight );
 	},
 
 	onDragStop: function( event, ui ) {
@@ -254,7 +261,7 @@ module.exports = Marionette.Region.extend( {
 
 		var elementRight = ui.position.left + this.el.offsetWidth;
 
-		if ( elementRight >= innerWidth ) {
+		if ( 0 > ui.position.left || elementRight > innerWidth ) {
 			this.dock();
 		}
 
