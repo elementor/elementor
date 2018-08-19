@@ -38,9 +38,9 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	onShow: function() {
-		var ElementsView = require( 'elementor-layouts/navigator/element' );
+		var ElementView = require( 'elementor-layouts/navigator/element' );
 
-		this.elements.show( new ElementsView( {
+		this.elements.show( new ElementView( {
 			model: elementor.elementsModel
 		} ) );
 	},
