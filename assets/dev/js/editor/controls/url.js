@@ -4,6 +4,7 @@ module.exports = BaseMultiple.extend( {
 
 	onReady: function() {
 		var self = this,
+			positionBase = elementor.config.is_rtl ? 'right' : 'left',
 			last, cache;
 
 		// Based on /wp-includes/js/tinymce/plugins/wplink/plugin.js.
@@ -55,7 +56,8 @@ module.exports = BaseMultiple.extend( {
 			},
 			minLength: 2,
 			position: {
-				my: 'left top+2'
+				my: positionBase + ' top+2',
+				at: positionBase + ' top'
 			}
 		} )
 		// The `_renderItem` cannot be override via the arguments.
