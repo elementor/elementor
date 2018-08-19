@@ -85,12 +85,12 @@ class Module extends BaseModule {
 					</div>
 					<div class="elementor-loader-wrapper">
 						<div class="elementor-loader">
-                            <div class="elementor-loader-boxes">
-                                <div class="elementor-loader-box"></div>
-                                <div class="elementor-loader-box"></div>
-                                <div class="elementor-loader-box"></div>
-                                <div class="elementor-loader-box"></div>
-                            </div>
+							<div class="elementor-loader-boxes">
+								<div class="elementor-loader-box"></div>
+								<div class="elementor-loader-box"></div>
+								<div class="elementor-loader-box"></div>
+								<div class="elementor-loader-box"></div>
+							</div>
 						</div>
 						<div class="elementor-loading-title"><?php echo __( 'Loading', 'elementor' ); ?></div>
 					</div>
