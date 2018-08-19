@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.1.6  
+**Stable tag:** 2.1.7  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -217,6 +217,11 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.1.7 - 2018-08-15 ###
+* Fix: Avoid copying custom CSS ID when pasting style ([#5416](https://github.com/pojome/elementor/issues/5416))
+* Fix: Responsive CSS for minimal grid utility ([#5375](https://github.com/pojome/elementor/issues/5375))
+* Fix: Make Elementor Canvas compatible with iPhone X landscape orientation
 
 ### 2.1.6 - 2018-07-31 ###
 * Fix: Removed reference to source map file in Swiper minified file

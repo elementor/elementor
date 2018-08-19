@@ -176,7 +176,7 @@
 }
 
 .elementor-nerd-box {
-	padding: 30px 20px;
+	padding: 30px;
 	text-align: center;
 
 	&-icon {
@@ -188,11 +188,12 @@
 		margin-top: 20px;
 		font-size: 16px;
 		font-weight: bold;
+		line-height: 1.4;
 	}
 
 	&-message {
 		margin-top: 20px;
-		line-height: 1.4;
+		line-height: 1.8;
 		font-size: 11px;
 	}
 
