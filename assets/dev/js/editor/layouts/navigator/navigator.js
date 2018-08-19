@@ -6,7 +6,7 @@ module.exports = Marionette.Region.extend( {
 	opened: false,
 
 	storage: {
-		visible: true,
+		visible: false,
 		size: {
 			width: '',
 			height: '',
