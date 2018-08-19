@@ -59,7 +59,7 @@ MaintenanceModeModule = ViewModule.extend( {
 				return;
 			}
 
-			var editUrl = ElementorAdminConfig.home_url + '?p=' + templateID + '&elementor';
+			var editUrl = elementorAdmin.config.home_url + '?p=' + templateID + '&elementor';
 
 			elements.$editTemplateButton
 				.prop( 'href', editUrl )
