@@ -254,9 +254,10 @@ var	Manager = function() {
 
 			// Try scroll to affected element.
 			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
-				var oldView = item.get( 'items' ).first().get( 'history' ).behavior.view;
-				if ( oldView.model ) {
-					viewToScroll = self.findView( oldView.model.get( 'id' ) ) ;
+				var history = item.get( 'items' ).first().get( 'history' );
+
+				if ( history && history.behavior.view.model ) {
+					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) ) ;
 				}
 			}
 		}
