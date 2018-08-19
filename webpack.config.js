@@ -1,4 +1,5 @@
 const path = require('path');
+UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const aliasList = {
 	alias: {
 		'elementor-editor': path.resolve(__dirname, 'assets/dev/js/editor'),
@@ -20,6 +21,35 @@ const aliasList = {
 	}
 };
 
+const moduleRules = {
+	rules: [
+		{
+			test: /\.js$/,
+			exclude: /node_modules/,
+			use: [
+				{
+					loader: 'babel-loader',
+					query: {
+						presets: ['env'],
+					}
+				}
+			],
+		}
+	]
+};
+
+const entry = {
+	'admin': path.resolve(__dirname, 'assets/dev/js/admin/admin.js'),
+	'admin-feedback': path.resolve(__dirname, 'assets/dev/js/admin/admin-feedback.js'),
+	'gutenberg': path.resolve(__dirname, 'assets/dev/js/admin/gutenberg.js'),
+	'frontend': path.resolve(__dirname, 'assets/dev/js/frontend/frontend.js'),
+	'editor': [
+		path.resolve(__dirname, 'assets/dev/js/editor/utils/jquery-serialize-object.js'),
+		path.resolve(__dirname, 'assets/dev/js/editor/utils/jquery-html5-dnd.js'),
+		path.resolve(__dirname, 'assets/dev/js/editor/editor.js'),
+	],
+};
+
 const webpackConfig = {
 	target: 'web',
 	context: __dirname,
@@ -27,36 +57,43 @@ const webpackConfig = {
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, 'assets/js' ),
+		filename: '[name].js',
+	},
+	module: moduleRules,
+	resolve: aliasList,
+	entry: entry
+};
+
+const webpackProductionConfig = {
+	target: 'web',
+	context: __dirname,
+	devtool: 'source-map',
+	mode: 'production',
+	output: {
+		path: path.resolve( __dirname, 'assets/js' ),
 		filename: '[name].js'
 	},
-	module: {
-		rules: [
-			{
-				test: /\.js$/,
-				exclude: /node_modules/,
-				use: [
-					{
-						loader: 'babel-loader',
-						query: {
-							presets: ['env'],
-						}
-					}
-				],
-			}
-		]
-	},
+	module: moduleRules,
 	resolve: aliasList,
-	entry: {
-		'admin': path.resolve(__dirname, 'assets/dev/js/admin/admin.js'),
-		'admin-feedback': path.resolve(__dirname, 'assets/dev/js/admin/admin-feedback.js'),
-		'gutenberg': path.resolve(__dirname, 'assets/dev/js/admin/gutenberg.js'),
-		'frontend': path.resolve(__dirname, 'assets/dev/js/frontend/frontend.js'),
-		'editor': [
-			path.resolve(__dirname, 'assets/dev/js/editor/editor.js'),
-			path.resolve(__dirname, 'assets/dev/js/editor/utils/jquery-serialize-object.js'),
-			path.resolve(__dirname, 'assets/dev/js/editor/utils/jquery-html5-dnd.js')
+	entry: {},
+	performance: { hints: false },
+	optimization: {
+		minimize: true,
+		minimizer: [
+			new UglifyJsPlugin({
+				include: /\.min\.js$/
+			})
 		]
 	}
 };
 
-module.exports = webpackConfig;
+// Add minified entry points
+for ( var entryPoint  in  entry ) {
+	webpackProductionConfig.entry[ entryPoint ] = entry[ entryPoint ];
+	webpackProductionConfig.entry[ entryPoint + '.min' ] = entry[ entryPoint ];
+}
+
+module.exports = {
+	dev: webpackConfig,
+	prod: webpackProductionConfig
+};

@@ -1,21 +1,4 @@
-var webpackDevConfig = require('./webpack.config'),
-	webpackConfig = JSON.parse( JSON.stringify( webpackDevConfig ) ),
-	UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-
-// Setup for production
-webpackConfig.mode = 'production';
-// Add minified entry points
-for ( var entryPoint  in  webpackConfig.entry ) {
-	webpackConfig.entry[ entryPoint + '.min' ] = webpackConfig.entry[ entryPoint ];
-}
-webpackConfig.optimization = {
-	minimize: true,
-		minimizer: [
-		new UglifyJsPlugin({
-			include: /\.min\.js$/
-		})
-	]
-};
+var webpackConfig = require('./webpack.config');
 
 module.exports = function( grunt ) {
 	'use strict';
@@ -330,8 +313,8 @@ module.exports = function( grunt ) {
 			options: {
 				stats: !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 			},
-			dev: webpackDevConfig,
-			prod: webpackConfig
+			dev: webpackConfig.dev,
+			prod: webpackConfig.prod
 		}
 	} );
 
