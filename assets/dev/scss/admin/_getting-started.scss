@@ -31,6 +31,7 @@
 	&__skip {
 		@include border-start(1px solid #eee);
 		font-size: 16px;
+		color: inherit;
 
 		i {
 			padding: 15px;
