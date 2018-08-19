@@ -1,3 +1,22 @@
+var webpackDevConfig = require('./webpack.config'),
+	webpackConfig = JSON.parse( JSON.stringify( webpackDevConfig ) ),
+	UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+// Setup for production
+webpackConfig.mode = 'production';
+// Add minified entry points
+for ( var entryPoint  in  webpackConfig.entry ) {
+	webpackConfig.entry[ entryPoint + '.min' ] = webpackConfig.entry[ entryPoint ];
+}
+webpackConfig.optimization = {
+	minimize: true,
+		minimizer: [
+		new UglifyJsPlugin({
+			include: /\.min\.js$/
+		})
+	]
+};
+
 module.exports = function( grunt ) {
 	'use strict';
 
@@ -83,152 +102,6 @@ module.exports = function( grunt ) {
 					],
 					expand: true
 				} ]
-			}
-		},
-
-		browserify: {
-			options: {
-				browserifyOptions: {
-					debug: true
-				},
-				preBundleCB: function( bundle ) {
-					bundle.plugin( remapify, [
-						{
-							cwd: 'assets/dev/js/editor',
-							src: '**/*.js',
-							expose: 'elementor-editor'
-						},
-						{
-							cwd: 'assets/dev/js/editor/elements/views/behaviors',
-							src: '**/*.js',
-							expose: 'elementor-behaviors'
-						},
-						{
-							cwd: 'assets/dev/js/editor/layouts',
-							src: '**/*.js',
-							expose: 'elementor-layouts'
-						},
-						{
-							cwd: 'assets/dev/js/editor/controls',
-							src: '**/*.js',
-							expose: 'elementor-controls'
-						},
-						{
-							cwd: 'assets/dev/js/editor/elements',
-							src: '**/*.js',
-							expose: 'elementor-elements'
-						},
-						{
-							cwd: 'assets/dev/js/editor/views',
-							src: '**/*.js',
-							expose: 'elementor-views'
-						},
-						{
-							cwd: 'assets/dev/js/editor/utils',
-							src: '**/*.js',
-							expose: 'elementor-editor-utils'
-						},
-						{
-							cwd: 'assets/dev/js/editor/layouts/panel',
-							src: '**/*.js',
-							expose: 'elementor-panel'
-						},
-						{
-							cwd: 'assets/dev/js/editor/components/template-library',
-							src: '**/*.js',
-							expose: 'elementor-templates'
-						},
-						{
-							cwd: 'assets/dev/js/editor/components/dynamic-tags',
-							src: '**/*.js',
-							expose: 'elementor-dynamic-tags'
-						},
-						{
-							cwd: 'assets/dev/js/frontend',
-							src: '**/*.js',
-							expose: 'elementor-frontend'
-						},
-						{
-							cwd: 'assets/dev/js/editor/components/revisions',
-							src: '**/*.js',
-							expose: 'elementor-revisions'
-						},
-						{
-							cwd: 'assets/dev/js/editor/components/validator',
-							src: '**/*.js',
-							expose: 'elementor-validator'
-						},
-						{
-							cwd: 'assets/dev/js/utils',
-							src: '**/*.js',
-							expose: 'elementor-utils'
-						},
-						{
-							cwd: 'assets/dev/js/admin',
-							src: '**/*.js',
-							expose: 'elementor-admin'
-						},
-						{
-							cwd: 'modules',
-							src: '**/*.js',
-							expose: 'modules'
-						}
-					] );
-				}
-			},
-
-			dist: {
-				files: {
-					'assets/js/editor.js': [
-						'assets/dev/js/editor/utils/jquery-html5-dnd.js',
-						'assets/dev/js/editor/utils/jquery-serialize-object.js',
-
-						'assets/dev/js/editor/editor.js'
-					],
-					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
-					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
-					'assets/js/gutenberg.js': [ 'assets/dev/js/admin/gutenberg.js' ],
-					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ]
-				},
-				options: pkgInfo.browserify
-			}
-
-		},
-
-		// Extract sourcemap to a separated file
-		exorcise: {
-			bundle: {
-				options: {},
-				files: {
-					'assets/js/editor.js.map': [ 'assets/js/editor.js' ],
-					'assets/js/admin.js.map': [ 'assets/js/admin.js' ],
-					'assets/js/admin-feedback.js.map': [ 'assets/js/admin-feedback.js' ],
-					'assets/js/frontend.js.map': [ 'assets/js/frontend.js' ]
-				}
-			}
-		},
-
-		uglify: {
-			//pkg: grunt.file.readJSON( 'package.json' ),
-			options: {},
-			dist: {
-				files: {
-					'assets/js/editor.min.js': [
-						'assets/js/editor.js'
-					],
-					'assets/js/admin.min.js': [
-						'assets/js/admin.js'
-					],
-					'assets/js/admin-feedback.min.js': [
-						'assets/js/admin-feedback.js'
-					],
-					'assets/js/gutenberg.min.js': [
-						'assets/js/gutenberg.js'
-					],
-					'assets/js/frontend.min.js': [
-						'assets/js/frontend.js'
-					]
-				}
 			}
 		},
 
@@ -451,6 +324,14 @@ module.exports = function( grunt ) {
 				'tests/qunit/index.html',
 				'tests/qunit/preview.html'
 			]
+		},
+
+		webpack: {
+			options: {
+				stats: !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
+			},
+			dev: webpackDevConfig,
+			prod: webpackConfig
 		}
 	} );
 
@@ -468,11 +349,10 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'scripts', function( isDevMode ) {
 		grunt.task.run( 'jshint' );
-		grunt.task.run( 'browserify' );
-
 		if ( ! isDevMode ) {
-			grunt.task.run( 'exorcise' );
-			grunt.task.run( 'uglify' );
+			grunt.task.run('webpack:prod');
+		} else {
+			grunt.task.run('webpack:dev');
 		}
 	} );
 
