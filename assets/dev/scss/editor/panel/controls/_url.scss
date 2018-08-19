@@ -68,7 +68,7 @@
 		width: 12px;
 		height: 12px;
 		top: 7px;
-		@include end( 44px );
+		@include start(44px);
 	}
 
 	.elementor-input {
@@ -108,6 +108,7 @@
 	border-radius: 3px;
 	transition: all .3s ease-in-out;
 	cursor: default;
+	z-index: 1;
 
 	.ui-menu-item {
 		display: flex;
