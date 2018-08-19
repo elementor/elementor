@@ -3,6 +3,7 @@ $library_screen_breakpoint: $editor-screen-lg-max;
 .elementor-templates-modal {
 
 	.dialog-widget-content {
+		font-family: Roboto, Arial, Helvetica, Verdana, sans-serif; // Default fonts for admin
 		background-color: $editor-background-light;
 		width: 100%;
 
@@ -15,23 +16,34 @@ $library_screen_breakpoint: $editor-screen-lg-max;
 		}
 	}
 
-	.dialog-header {
-		padding: 0;
-		background-color: #fff;
-		box-shadow: $panel-bottom-shadow;
-		position: relative; // Show the shadow above the scrolled list
-		z-index: 1;
-	}
+	.dialog {
 
-	.dialog-buttons-wrapper {
-		display: none;
-	}
+		&-header {
+			padding: 0;
+			background-color: #fff;
+			box-shadow: $panel-bottom-shadow;
+			position: relative; // Show the shadow above the scrolled list
+			z-index: 1;
+		}
 
-	.dialog-message {
-		height: 750px;
-		max-height: 85vh;
-		overflow: auto;
-		padding: 25px 30px 30px;
+		&-buttons-wrapper {
+			display: none;
+		}
+
+		&-message {
+			height: 750px;
+			max-height: 85vh;
+			overflow: auto;
+			padding: 25px 30px 30px;
+		}
+
+		&-content {
+			height: 100%;
+		}
+
+		&-loading {
+			display: none;
+		}
 	}
 
 	&__header {
@@ -60,7 +72,7 @@ $library_screen_breakpoint: $editor-screen-lg-max;
 
 			&__icon-wrapper {
 				padding: 4px 7px 6px;
-				background-image: linear-gradient(-135deg, #EF295A, #434363);
+				background-image: linear-gradient(-135deg, $brand-color-light, $brand-color-dark);
 				border-radius: 2px;
 				@include margin-end(10px);
 			}
@@ -94,12 +106,40 @@ $library_screen_breakpoint: $editor-screen-lg-max;
 			}
 		}
 
-		&__close-modal {
-			width: 45px;
-			@include border-start(1px solid $editor-background);
+		&__close {
 
-			i {
-				font-size: 18px;
+			&--normal {
+				width: 45px;
+				@include border-start(1px solid $editor-background);
+
+				i {
+					font-size: 18px;
+				}
+			}
+
+			&--skip {
+				padding: 10px;
+				@include padding-start(20px);
+				@include margin-end(10px);
+				color: #fff;
+				background-color: $editor-light;
+				font-size: 11px;
+				font-weight: normal;
+				line-height: 1;
+				text-transform: uppercase;
+				border-radius: 2px;
+				cursor: pointer;
+
+				> i {
+					font-size: inherit;
+					@include padding-start(10px);
+					@include margin-start(15px);
+					@include border-start(1px solid);
+
+					&:not(:hover) { // Overwrite the default
+						color: #fff;
+					}
+				}
 			}
 		}
 	}
