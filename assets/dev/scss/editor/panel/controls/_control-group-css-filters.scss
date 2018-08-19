@@ -1,0 +1,49 @@
+.elementor-group-control-css-filter {
+	.elementor-slider {
+		height: 8px;
+		box-shadow: 0 0 1px 1px inset rgba(0, 0, 0, 0.2);
+	}
+
+	.elementor-slider .ui-slider-handle {
+		box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
+	}
+
+	.elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
+		margin-top: 0;
+		margin-bottom: 5px;
+	}
+}
+
+.elementor-group-control-blur {
+	.elementor-slider {
+		background: url("../images/blur.png");
+		background-size: cover;
+		background-position: center;
+	}
+}
+
+.elementor-group-control-contrast {
+	.elementor-slider {
+		background: url("../images/contrast.png");
+		background-size: 100% 100%;
+	}
+}
+
+.elementor-group-control-hue {
+	.elementor-slider {
+		background-image: linear-gradient(to right, red, orange, yellow, greenyellow, limegreen, deepskyblue, blue, darkviolet 95%);
+
+	}
+}
+
+.elementor-group-control-saturate {
+	.elementor-slider {
+		background-image: linear-gradient(to right, gray , red);
+	}
+}
+
+.elementor-group-control-brightness {
+	.elementor-slider {
+		background-image: linear-gradient(to right, black , white);
+	}
+}

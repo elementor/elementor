@@ -398,6 +398,19 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'download_button',
+			[
+				'label' => __( 'Download Button', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Hide', 'elementor' ),
+				'label_on' => __( 'Show', 'elementor' ),
+				'condition' => [
+					'video_type' => 'hosted',
+				],
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -509,6 +522,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'169' => '16:9',
+					'219' => '21:9',
 					'43' => '4:3',
 					'32' => '3:2',
 				],
@@ -800,7 +814,7 @@ class Widget_Video extends Widget_Base {
 				</div>
 			<?php } ?>
 		</div>
-	<?php
+		<?php
 	}
 
 	/**
@@ -853,7 +867,7 @@ class Widget_Video extends Widget_Base {
 			if ( $settings['loop'] ) {
 				$video_properties = Embed::get_video_properties( $settings['youtube_url'] );
 
-				$params[ 'playlist' ] = $video_properties['video_id'];
+				$params['playlist'] = $video_properties['video_id'];
 			}
 
 			$params['start'] = $settings['start'];
@@ -948,6 +962,10 @@ class Widget_Video extends Widget_Base {
 
 		if ( $settings['mute'] ) {
 			$video_params[] = 'muted';
+		}
+
+		if ( ! $settings['download_button'] ) {
+			$video_params[] = 'controlsList="nodownload"';
 		}
 
 		return $video_params;

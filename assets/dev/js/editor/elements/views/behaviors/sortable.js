@@ -15,7 +15,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched )
-			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange )
 			.listenTo( this.view.options.model, 'request:sort:start', this.startSort )
 			.listenTo( this.view.options.model, 'request:sort:update', this.updateSort )
 			.listenTo( this.view.options.model, 'request:sort:receive', this.receiveSort );
@@ -23,16 +22,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	onEditModeSwitched: function( activeMode ) {
 		if ( 'edit' === activeMode ) {
-			this.activate();
-		} else {
-			this.deactivate();
-		}
-	},
-
-	onDeviceModeChange: function() {
-		var deviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-
-		if ( 'desktop' === deviceMode ) {
 			this.activate();
 		} else {
 			this.deactivate();
