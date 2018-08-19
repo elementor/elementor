@@ -171,31 +171,33 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function elementor_getting_started() {
+		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
+			$create_new_label = __( 'Create your First Page', 'elementor' );
+			$create_new_cpt = 'page';
+		} elseif ( User::is_current_user_can_edit_post_type( 'post' ) ) {
+			$create_new_label = __( 'Create your First Post', 'elementor' );
+			$create_new_cpt = 'post';
+		}
+
 		?>
 		<div class="wrap">
 			<div class="e-getting-started">
-
 				<div class="e-getting-started__box postbox">
-
 					<div class="e-getting-started__header">
 						<div class="e-getting-started__title">
-
 							<div class="e-logo-wrapper"><i class="eicon-elementor"></i></div>
 
 							<?php echo __( 'Getting Started', 'elementor' ); ?>
 						</div>
-
-						<a class="e-getting-started__skip" href="#">
+						<a class="e-getting-started__skip" href="<?php echo esc_url( admin_url() ); ?>">
 							<i class="eicon-close" aria-hidden="true" title="<?php esc_attr_e( 'Skip', 'elementor' ); ?>"></i>
 							<span class="elementor-screen-only"><?php echo __( 'Skip', 'elementor' ); ?></span>
 						</a>
 					</div>
-
 					<div class="e-getting-started__content">
-
 						<div class="e-getting-started__content--narrow">
 							<h2><?php echo __( 'Welcome to Elementor', 'elementor' ); ?></h2>
-							<p><?php echo __( ' This defines the default behaviour for how flex items are laid out along the cross axis. Think of it as the justify-content version for the cross-axis.', 'elementor' ); ?></p>
+							<p><?php echo __( 'We recommend you watch this 2 minute getting started video, and then try the editor yourself by dragging and dropping elements to create your first page.', 'elementor' ); ?></p>
 						</div>
 
 						<div class="e-getting-started__video">
@@ -203,12 +205,13 @@ class Settings extends Settings_Page {
 						</div>
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
+							<?php if ( ! empty( $create_new_cpt ) ) : ?>
+							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
+							<?php endif; ?>
 
-							<a href="#" class="button button-primary button-hero"><?php echo __( 'Create your First Page', 'elementor' ); ?></a>
 							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Read the Full Article', 'elementor' ); ?></a>
 						</div>
 					</div>
-
 				</div>
 			</div>
 		</div><!-- /.wrap -->
