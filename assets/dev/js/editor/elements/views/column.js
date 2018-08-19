@@ -63,6 +63,7 @@ ColumnView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'addNew',
+                    icon: 'eicon-plus',
 					title: elementor.translate( 'new_column' ),
 					callback: this.addNewColumn.bind( this )
 				}
