@@ -1,0 +1,249 @@
+#elementor-navigator {
+	position: fixed;
+	top: 100px;
+	width: 250px;
+	height: 300px;
+	@include end(30px);
+	background-color: #fff;
+	border-radius: 3px;
+	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
+	user-select: none;
+	overflow: hidden; // Ensure the bottom border radius is visible
+	z-index: 2;
+	display: none;
+
+	.elementor-navigator-docked & {
+		top: 0;
+		@include end(0);
+		height: 100%;
+	}
+
+	&__inner {
+		height: 100%;
+		background-color: $editor-background;
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px;
+		background-color: #fff;
+		border-bottom: 1px solid $editor-background;
+		cursor: move;
+
+		&__title {
+			font-weight: 500;
+		}
+	}
+
+	&__close,
+	&__toggle-all {
+		transition: color .5s;
+		cursor: pointer;
+
+		&:not(:hover) {
+			color: $editor-light;
+		}
+	}
+
+	&__toggle-all {
+		font-size: 14px;
+	}
+
+	&__close {
+		font-size: 11px;
+	}
+
+	&__elements {
+		height: calc(100% - 50px);
+		overflow: auto;
+		position: relative;
+
+		.elementor-navigator-docked & {
+			height: calc(100% - 35px);
+		}
+	}
+
+	&__footer {
+		position: absolute;
+		width: 100%;
+		left: 0;
+		bottom: 0;
+		text-align: center;
+		background-color: #fff;
+		border-top: 1px solid $editor-background;
+
+		.elementor-navigator-docked & {
+			display: none;
+		}
+	}
+}
+
+.elementor-navigator {
+
+	&__item {
+		display: flex;
+		height: 32px;
+		@include padding-end(9px);
+		font-size: 12px;
+		border-bottom: 1px solid $editor-background;
+		cursor: pointer;
+
+		&:not(.elementor-active) {
+
+			.elementor-navigator__element__list-toggle {
+
+				i {
+					transform: rotate(getValueByDirection(-90deg, 90deg));
+				}
+			}
+		}
+
+		> * {
+			display: flex;
+			align-items: center;
+		}
+
+		+ .elementor-navigator__elements {
+			display: none;
+		}
+	}
+
+	&__elements {
+
+		.elementor-empty-view {
+			padding: 10px;
+			border-bottom: 1px solid $editor-background;
+
+			&__title {
+				@include margin-start(23px);
+				color: $editor-lighter;
+				font-size: 10px;
+				font-style: italic;
+			}
+		}
+
+		.ui-sortable-helper {
+			background-color: #fff;
+			box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.1);
+			transform: rotate(4deg);
+			border: 1px solid $editor-background;
+			pointer-events: none;
+		}
+
+		.ui-sortable-placeholder {
+			background-color: $editor-background-light;
+		}
+	}
+
+	&__element {
+
+		&.elementor-dragging-on-child {
+
+			> .elementor-navigator__elements {
+
+				> .elementor-empty-view {
+					border-top: 2px solid $editor-info;
+
+					.elementor-empty-view__title {
+						display: none;
+					}
+
+					+ .ui-sortable-placeholder {
+						display: none;
+					}
+				}
+			}
+		}
+
+		&:not(.elementor-navigator__element--has-children) {
+
+			.elementor-navigator__element__list-toggle {
+				visibility: hidden;
+			}
+		}
+
+		&:not(.elementor-navigator__element--hidden) {
+
+			> .elementor-navigator__item {
+
+				.elementor-navigator__element__toggle {
+					color: $editor-info;
+				}
+
+				&:not(:hover) {
+
+					.elementor-navigator__element__toggle {
+						display: none;
+					}
+				}
+			}
+
+			&:not(.ui-sortable-helper) {
+
+				> .elementor-navigator__item {
+
+					&.elementor-editing {
+						background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
+
+						> * {
+							color: #fff;
+						}
+					}
+				}
+			}
+		}
+
+		&__list-toggle {
+			@include margin-end(7px);
+			transition: transform .3s;
+			color: $editor-light;
+		}
+
+		&__element-type {
+			@include margin-end(8px);
+		}
+
+		&__title {
+			flex-grow: 1;
+			outline: none;
+			align-self: center;
+
+			&[contenteditable="true"] {
+
+				&::selection {
+					background-color: #529ac9;
+				}
+			}
+		}
+
+		&__toggle {
+			text-align: $end;
+			font-size: 13px;
+		}
+
+		&--hidden {
+
+			.elementor-navigator__element__title,
+			.elementor-navigator__element__toggle {
+				opacity: .5;
+			}
+		}
+
+		&-column {
+			background-color: lighten($editor-background-light, 3%);
+
+			> .elementor-navigator__item {
+
+				.elementor-navigator__element__element-type {
+					color: $editor-light;
+				}
+			}
+		}
+
+		&-section {
+			background-color: #fff;
+		}
+	}
+}

@@ -3,8 +3,8 @@
 	"slug": "elementor",
 	"version": "2.1.8",
 	"prev_stable_version": "2.0.16",
-	"author": "Pojo Team",
-	"homepage": "http://pojo.me/",
+	"author": "Elementor Team",
+	"homepage": "https://elementor.com/",
 	"devDependencies": {
 		"browserify": "^16.2.2",
 		"browserify-shim": "^3.8.14",

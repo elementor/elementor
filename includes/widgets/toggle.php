@@ -94,7 +94,7 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Title & Content', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => __( 'Toggle Title' , 'elementor' ),
+				'default' => __( 'Toggle Title', 'elementor' ),
 				'label_block' => true,
 			]
 		);
@@ -118,11 +118,11 @@ class Widget_Toggle extends Widget_Base {
 				'default' => [
 					[
 						'tab_title' => __( 'Toggle #1', 'elementor' ),
-						'tab_content' => __( 'I am item content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
+						'tab_content' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 					],
 					[
 						'tab_title' => __( 'Toggle #2', 'elementor' ),
-						'tab_content' => __( 'I am item content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
+						'tab_content' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 					],
 				],
 				'title_field' => '{{{ tab_title }}}',

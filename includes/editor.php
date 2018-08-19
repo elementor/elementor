@@ -142,8 +142,7 @@ class Editor {
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
 
-		// Print the panel
-		$this->print_panel_html();
+		$this->print_editor_template();
 
 		// From the action it's an empty string, from tests its `false`
 		if ( false !== $die ) {
@@ -286,9 +285,24 @@ class Editor {
 	 * Include the wrapper template of the editor.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.2.0 Use `Editor::print_editor_template` instead
 	 * @access public
 	 */
 	public function print_panel_html() {
+		_deprecated_function( __METHOD__, '2.2.0', 'Editor::print_editor_template' );
+
+		$this->print_editor_template();
+	}
+
+	/**
+	 * Print Editor Template.
+	 *
+	 * Include the wrapper template of the editor.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 */
+	public function print_editor_template() {
 		include( 'editor-templates/editor-wrapper.php' );
 	}
 
@@ -424,6 +438,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'jquery-hover-intent',
+			ELEMENTOR_ASSETS_URL . 'lib/jquery-hover-intent/jquery-hover-intent' . $suffix . '.js',
+			[],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
 			'elementor-dialog',
 			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
@@ -452,6 +474,7 @@ class Editor {
 				'elementor-dialog',
 				'ace',
 				'ace-language-tools',
+				'jquery-hover-intent',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -655,6 +678,7 @@ class Editor {
 				'new_column' => __( 'Add New Column', 'elementor' ),
 				'copy_all_content' => __( 'Copy All Content', 'elementor' ),
 				'delete_all_content' => __( 'Delete All Content', 'elementor' ),
+				'navigator' => __( 'Navigator', 'elementor' ),
 
 				// Right Click Introduction
 				'meet_right_click_header' => __( 'Meet Right Click', 'elementor' ),
@@ -756,7 +780,7 @@ class Editor {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.6.0'
+			'3.8.0'
 		);
 
 		wp_register_style(
@@ -963,6 +987,22 @@ class Editor {
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
+		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
+	}
+
+	public function filter_wp_link_query( $results ) {
+		if ( isset( $_POST['editor'] ) && 'elementor' === $_POST['editor'] ) {
+			$post_type_object = get_post_type_object( 'post' );
+			$post_label = $post_type_object->labels->singular_name;
+
+			foreach ( $results as & $result ) {
+				if ( 'post' === get_post_type( $result['ID'] ) ) {
+					$result['info'] = $post_label;
+				}
+			}
+		}
+
+		return $results;
 	}
 
 	/**
@@ -1055,7 +1095,9 @@ class Editor {
 			'panel',
 			'panel-elements',
 			'repeater',
+			'library-layout',
 			'templates',
+			'navigator',
 		];
 
 		foreach ( $template_names as $template_name ) {

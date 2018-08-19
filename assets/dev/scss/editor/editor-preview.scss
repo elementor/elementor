@@ -111,6 +111,10 @@ html.elementor-html {
 	.elementor-inline-editing {
 		min-height: 15px;
 	}
+
+	.elementor-edit-hidden {
+		display: none;
+	}
 }
 
 // Element
@@ -152,6 +156,23 @@ html.elementor-html {
 
 				.elementor-editor-element-settings {
 					display: none;
+				}
+			}
+		}
+	}
+
+	&--toggle-edit-tools {
+
+		> .elementor-element-overlay {
+
+			.elementor-editor-element-edit {
+
+				&:not(.elementor-active) {
+
+					~ * {
+						width: 0;
+						font-size: 0;
+					}
 				}
 			}
 		}
@@ -339,17 +360,6 @@ html.elementor-html {
 	&.elementor-editor-element-save {
 		display: none;
 	}
-
-	@media (max-width: $editor-screen-md-max) {
-
-		&:not(.elementor-editor-element-edit) {
-			pointer-events: none;
-
-			i {
-				display: none;
-			}
-		}
-	}
 }
 
 .elementor-editor-element-edit {
@@ -457,9 +467,10 @@ html.elementor-html {
 .elementor-editor-column-settings {
 	top: -1px;
 	@include start(-1px);
+	border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
+	overflow: hidden;
 
 	.elementor-editor-element-setting {
-		border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
 		background-color: $editor-darkest;
 
 		&:not(:hover) {
@@ -474,10 +485,11 @@ html.elementor-html {
 	top: -1px;
 	@include end(-1px);
 	flex-direction: row-reverse;
+	border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
+	overflow: hidden;
 
 	.elementor-editor-element-setting {
 		background-color: darken($editor-info, 20%);
-		border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
 
 		&:not(:hover) {
 			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
@@ -678,11 +690,17 @@ html.elementor-html {
 	position: relative;
 
 	&:not(.elementor-dragging-on-child) {
-		border: 2px dashed $editor-lightest;
+
+		.elementor-add-section-inner {
+			border: 2px dashed $editor-lightest;
+		}
 	}
 
 	&.elementor-dragging-on-child {
-		border: 3px dashed $editor-info;
+
+		.elementor-add-section-inner {
+			border: 3px dashed $editor-info;
+		}
 	}
 
 	&[data-view="choose-action"] {
@@ -706,7 +724,7 @@ html.elementor-html {
 
 .elementor-add-section-inner {
 	text-align: center;
-	margin-top: 10px;
+	margin: 20px;
 	padding: 40px 0;
 }
 
@@ -757,7 +775,7 @@ html.elementor-html {
 
 .elementor-add-section-close {
 	position: absolute;
-	right: 20px;
+	right: 40px;
 	top: 20px;
 	font-size: 20px;
 	cursor: pointer;
@@ -790,6 +808,7 @@ html.elementor-html {
 		margin: 0;
 		padding: 10px;
 		float: $start;
+		max-width: 33.333%;
 
 		&:hover {
 
@@ -807,6 +826,7 @@ html.elementor-html {
 
 		svg {
 			height: 50px;
+			width: 100%;
 
 			@if 'rtl' == $direction {
 				transform: rotate(180deg);

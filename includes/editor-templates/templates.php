@@ -5,25 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 ?>
-<script type="text/template" id="tmpl-elementor-templates-modal__header">
-	<div class="elementor-templates-modal__header__logo-area"></div>
-	<div class="elementor-templates-modal__header__menu-area"></div>
-	<div class="elementor-templates-modal__header__items-area">
-		<div class="elementor-templates-modal__header__close-modal elementor-templates-modal__header__item">
-			<i class="eicon-close" aria-hidden="true" title="<?php esc_attr_e( 'Close', 'elementor' ); ?>"></i>
-			<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
-		</div>
-		<div id="elementor-template-library-header-tools"></div>
-	</div>
-</script>
-
-<script type="text/template" id="tmpl-elementor-templates-modal__header__logo">
-	<span class="elementor-templates-modal__header__logo__icon-wrapper">
-		<i class="eicon-elementor"></i>
-	</span>
-	<span class="elementor-templates-modal__header__logo__title">{{{ title }}}</span>
-</script>
-
 <script type="text/template" id="tmpl-elementor-template-library-header-actions">
 	<div id="elementor-template-library-header-import" class="elementor-templates-modal__header__item">
 		<i class="eicon-upload-circle-o" aria-hidden="true" title="<?php esc_attr_e( 'Import Template', 'elementor' ); ?>"></i>
@@ -59,10 +40,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-loading">
 	<div class="elementor-loader-wrapper">
 		<div class="elementor-loader">
-			<div class="elementor-loader-box"></div>
-			<div class="elementor-loader-box"></div>
-			<div class="elementor-loader-box"></div>
-			<div class="elementor-loader-box"></div>
+			<div class="elementor-loader-boxes">
+				<div class="elementor-loader-box"></div>
+				<div class="elementor-loader-box"></div>
+				<div class="elementor-loader-box"></div>
+				<div class="elementor-loader-box"></div>
+			</div>
 		</div>
 		<div class="elementor-loading-title"><?php echo __( 'Loading', 'elementor' ); ?></div>
 	</div>

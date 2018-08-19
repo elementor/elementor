@@ -1,6 +1,7 @@
 <?php
+namespace Elementor\Testing;
 
-class Elementor_Test_Fonts extends WP_UnitTestCase {
+class Elementor_Test_Fonts extends Elementor_Test_Base {
 
 	public function test_getAllFonts() {
 		$this->assertNotEmpty( \Elementor\Fonts::get_fonts() );

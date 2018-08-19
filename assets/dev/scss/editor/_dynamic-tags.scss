@@ -8,6 +8,7 @@
 	background-color: #fff;
 	border: 1px solid $editor-light;
 	border-radius: 3px;
+	z-index: $first-layer;
 
 	&__group-title {
 		color: $editor-darkest;

@@ -77,7 +77,7 @@ class Source_Remote extends Source_Base {
 
 		if ( ! empty( $library_data['templates'] ) ) {
 			foreach ( $library_data['templates'] as $template_data ) {
-				$templates[] = $this->get_item( $template_data );
+				$templates[] = $this->prepare_template( $template_data );
 			}
 		}
 
@@ -96,30 +96,14 @@ class Source_Remote extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $template_data Remote template data.
+	 * @param int $template_id The template ID.
 	 *
 	 * @return array Remote template.
 	 */
-	public function get_item( $template_data ) {
-		$favorite_templates = $this->get_user_meta( 'favorites' );
+	public function get_item( $template_id ) {
+		$templates = $this->get_items();
 
-		return [
-			'template_id' => $template_data['id'],
-			'source' => $this->get_id(),
-			'type' => $template_data['type'],
-			'subtype' => $template_data['subtype'],
-			'title' => $template_data['title'],
-			'thumbnail' => $template_data['thumbnail'],
-			'date' => $template_data['tmpl_created'],
-			'author' => $template_data['author'],
-			'tags' => json_decode( $template_data['tags'] ),
-			'isPro' => ( '1' === $template_data['is_pro'] ),
-			'popularityIndex' => (int) $template_data['popularity_index'],
-			'trendIndex' => (int) $template_data['trend_index'],
-			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),
-			'url' => $template_data['url'],
-			'favorite' => ! empty( $favorite_templates[ $template_data['id'] ] ),
-		];
+		return $templates[ $template_id ];
 	}
 
 	/**
@@ -133,10 +117,10 @@ class Source_Remote extends Source_Base {
 	 *
 	 * @param array $template_data Remote template data.
 	 *
-	 * @return bool Return false.
+	 * @return \WP_Error
 	 */
 	public function save_item( $template_data ) {
-		return false;
+		return new \WP_Error( 'invalid_request', 'Cannot save template to a remote source' );
 	}
 
 	/**
@@ -150,10 +134,10 @@ class Source_Remote extends Source_Base {
 	 *
 	 * @param array $new_data New template data.
 	 *
-	 * @return bool Return false.
+	 * @return \WP_Error
 	 */
 	public function update_item( $new_data ) {
-		return false;
+		return new \WP_Error( 'invalid_request', 'Cannot update template to a remote source' );
 	}
 
 	/**
@@ -167,10 +151,10 @@ class Source_Remote extends Source_Base {
 	 *
 	 * @param int $template_id The template ID.
 	 *
-	 * @return bool Return false.
+	 * @return \WP_Error
 	 */
 	public function delete_template( $template_id ) {
-		return false;
+		return new \WP_Error( 'invalid_request', 'Cannot delete template from a remote source' );
 	}
 
 	/**
@@ -184,10 +168,10 @@ class Source_Remote extends Source_Base {
 	 *
 	 * @param int $template_id The template ID.
 	 *
-	 * @return bool Return false.
+	 * @return \WP_Error
 	 */
 	public function export_template( $template_id ) {
-		return false;
+		return new \WP_Error( 'invalid_request', 'Cannot export template from a remote source' );
 	}
 
 	/**
@@ -220,5 +204,27 @@ class Source_Remote extends Source_Base {
 		}
 
 		return $data;
+	}
+
+	private function prepare_template( array $template_data ) {
+		$favorite_templates = $this->get_user_meta( 'favorites' );
+
+		return [
+			'template_id' => $template_data['id'],
+			'source' => $this->get_id(),
+			'type' => $template_data['type'],
+			'subtype' => $template_data['subtype'],
+			'title' => $template_data['title'],
+			'thumbnail' => $template_data['thumbnail'],
+			'date' => $template_data['tmpl_created'],
+			'author' => $template_data['author'],
+			'tags' => json_decode( $template_data['tags'] ),
+			'isPro' => ( '1' === $template_data['is_pro'] ),
+			'popularityIndex' => (int) $template_data['popularity_index'],
+			'trendIndex' => (int) $template_data['trend_index'],
+			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),
+			'url' => $template_data['url'],
+			'favorite' => ! empty( $favorite_templates[ $template_data['id'] ] ),
+		];
 	}
 }
