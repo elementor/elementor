@@ -31,6 +31,7 @@ module.exports = function( grunt ) {
 			'!composer.lock',
 			'!.gitignore',
 			'!.gitmodules',
+			'!yarn.lock',
 
 			'!assets/dev/**',
 			'!assets/**/*.map',
