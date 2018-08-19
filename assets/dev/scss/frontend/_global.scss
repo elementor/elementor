@@ -260,8 +260,8 @@
 
 // Admin Bar - Icon (Front-End)
 #wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
-	content: "\e800";
+	content: "\e801";
 	font-family: eicons;
-	font-size: 12px;
-	margin-top: 5px;
+	top: 3px;
+	font-size: 18px;
 }

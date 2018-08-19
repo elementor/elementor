@@ -10,6 +10,7 @@
 		box-shadow: 1px 2px 3px -2px #222;
 		background-color: $editor-dark;
 		position: fixed;
+		overflow: hidden;
 		border-radius: 3px;
 		z-index: 9998;
 
@@ -48,16 +49,6 @@
 			background: $editor-darker;
 		}
 
-		&:first-of-type {
-			border-top-left-radius: 3px;
-			border-bottom-left-radius: 3px;
-		}
-
-		&:last-of-type {
-			border-top-right-radius: 3px;
-			border-bottom-right-radius: 3px;
-		}
-
 		&[data-group],
 		&[data-action="closeGroup"] {
 			display: none;
@@ -68,7 +59,7 @@
 			&:before {
 				content: '';
 				position: absolute;
-				left: 0;
+				@include start(0);
 				height: 60%;
 				width: 1px;
 				background-color: $editor-darker;
@@ -102,7 +93,9 @@
 				line-height: 1.5;
 				padding: 0;
 				@include padding-start(10px);
+				@include padding-end(10px);
 				width: 250px;
+				direction: ltr; // Force LTR also in RTL languages
 
 				&, &:focus {
 					background-color: transparent;
@@ -120,6 +113,7 @@
 
 		&-label {
 			margin: 0;
+			@include margin-end(-1px);
 		}
 	}
 
