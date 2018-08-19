@@ -126,6 +126,10 @@ module.exports = Marionette.Region.extend( {
 		elementor.$window.off( 'resize', this.ensurePosition );
 	},
 
+	isOpen: function() {
+		return this.$el.is( ':visible' );
+	},
+
 	dock: function() {
 		elementor.$body.addClass( 'elementor-navigator-docked' );
 
