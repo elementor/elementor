@@ -192,7 +192,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.showView( 'search' );
 
 		if ( this.options.autoFocusSearch ) {
-			console.log( this.options );
 			setTimeout( this.focusSearch.bind( this ) );
 		}
 	},

@@ -116,7 +116,7 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 
 		$this->add_control(
-			'drop_cap',[
+			'drop_cap', [
 				'label' => __( 'Drop Cap', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => __( 'Off', 'elementor' ),
@@ -317,7 +317,7 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 
 		$this->add_control(
-			'drop_cap_border_width',[
+			'drop_cap_border_width', [
 				'label' => __( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'selectors' => [

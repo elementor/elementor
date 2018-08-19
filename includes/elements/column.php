@@ -561,7 +561,8 @@ class Element_Column extends Element_Base {
 							'name' => 'background_background',
 							'operator' => '!==',
 							'value' => '',
-						], [
+						],
+						[
 							'name' => 'border_border',
 							'operator' => '!==',
 							'value' => '',
@@ -779,6 +780,7 @@ class Element_Column extends Element_Base {
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
+				'style_transfer' => false,
 			]
 		);
 
