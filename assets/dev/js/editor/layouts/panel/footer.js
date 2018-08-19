@@ -19,10 +19,10 @@ module.exports = Marionette.ItemView.extend( {
 
 	events: {
 		'click @ui.menuButtons': 'onMenuButtonsClick',
-		'click @ui.settings': 'onClickSettings',
-		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
-		'click @ui.saveTemplate': 'onClickSaveTemplate',
-		'click @ui.history': 'onClickHistory'
+		'click @ui.settings': 'onSettingsClick',
+		'click @ui.deviceModeButtons': 'onResponsiveButtonsClick',
+		'click @ui.saveTemplate': 'onSaveTemplateClick',
+		'click @ui.history': 'onHistoryClick',
 	},
 
 	behaviors: function() {
@@ -64,7 +64,7 @@ module.exports = Marionette.ItemView.extend( {
 		}
 	},
 
-	onClickSettings: function() {
+	onSettingsClick: function() {
 		var self = this;
 
 		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
@@ -88,14 +88,14 @@ module.exports = Marionette.ItemView.extend( {
 		this.ui.deviceModeIcon.removeClass( 'eicon-device-' + previousDeviceMode ).addClass( 'eicon-device-' + currentDeviceMode );
 	},
 
-	onClickResponsiveButtons: function( event ) {
+	onResponsiveButtonsClick: function( event ) {
 		var $clickedButton = this.$( event.currentTarget ),
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
 		elementor.changeDeviceMode( newDeviceMode );
 	},
 
-	onClickSaveTemplate: function() {
+	onSaveTemplateClick: function() {
 		elementor.templates.startModal( {
 			onReady: function() {
 				elementor.templates.getLayout().showSaveTemplateView();
@@ -103,7 +103,7 @@ module.exports = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onClickHistory: function() {
+	onHistoryClick: function() {
 		if ( 'historyPage' !== elementor.getPanelView().getCurrentPageName() ) {
 			elementor.getPanelView().setPage( 'historyPage' );
 		}
