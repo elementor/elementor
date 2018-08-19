@@ -14,7 +14,8 @@ module.exports = Marionette.ItemView.extend( {
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
 		saveTemplate: '#elementor-panel-saver-menu-save-template',
-		history: '#elementor-panel-footer-history'
+		history: '#elementor-panel-footer-history',
+		navigator: '#elementor-panel-footer-navigator'
 	},
 
 	events: {
@@ -23,6 +24,7 @@ module.exports = Marionette.ItemView.extend( {
 		'click @ui.deviceModeButtons': 'onResponsiveButtonsClick',
 		'click @ui.saveTemplate': 'onSaveTemplateClick',
 		'click @ui.history': 'onHistoryClick',
+		'click @ui.navigator': 'onNavigatorClick'
 	},
 
 	behaviors: function() {
@@ -106,6 +108,14 @@ module.exports = Marionette.ItemView.extend( {
 	onHistoryClick: function() {
 		if ( 'historyPage' !== elementor.getPanelView().getCurrentPageName() ) {
 			elementor.getPanelView().setPage( 'historyPage' );
+		}
+	},
+
+	onNavigatorClick: function() {
+		if ( elementor.navigator.isOpen() ) {
+			elementor.navigator.close();
+		} else {
+			elementor.navigator.open();
 		}
 	}
 } );
