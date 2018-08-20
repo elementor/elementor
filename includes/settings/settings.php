@@ -172,10 +172,10 @@ class Settings extends Settings_Page {
 	 */
 	public function elementor_getting_started() {
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
-			$create_new_label = __( 'Create your First Page', 'elementor' );
+			$create_new_label = __( 'Create Your First Page', 'elementor' );
 			$create_new_cpt = 'page';
 		} elseif ( User::is_current_user_can_edit_post_type( 'post' ) ) {
-			$create_new_label = __( 'Create your First Post', 'elementor' );
+			$create_new_label = __( 'Create Your First Post', 'elementor' );
 			$create_new_cpt = 'post';
 		}
 
