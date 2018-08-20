@@ -1,320 +1,34 @@
-var webpackConfig = require('./webpack.config');
-
 module.exports = function( grunt ) {
 	'use strict';
 
-	var remapify = require( 'remapify' ),
-		fs = require( 'fs' ),
+	var fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' );
 
-	var getBuildFiles = function() {
-		return [
-			'**',
-			'!node_modules/**',
-			'!docs/**',
-			'!build/**',
-			'!bin/**',
-			'!.git/**',
-			'!tests/**',
-			'!.github/**',
-			'!.travis.yml',
-			'!.jscsrc',
-			'!.jshintignore',
-			'!.jshintrc',
-			'!ruleset.xml',
-			'!README.md',
-			'!phpunit.xml',
-			'!vendor/**',
-			'!Gruntfile.js',
-			'!package.json',
-			'!package-lock.json',
-			'!npm-debug.log',
-			'!composer.json',
-			'!composer.lock',
-			'!.gitignore',
-			'!.gitmodules',
-
-			'!assets/dev/**',
-			'!assets/**/*.map',
-			'!*~'
-		];
-	};
-
-	require( 'matchdep' ).filterDev( 'grunt-*' ).forEach( grunt.loadNpmTasks );
+	require('load-grunt-tasks')(grunt);
 
 	// Project configuration
 	grunt.initConfig( {
-		pkg: grunt.file.readJSON( 'package.json' ),
+		pkg: pkgInfo,
 
 		banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
 				'<%= grunt.template.today("dd-mm-yyyy") %> */',
 
-		checktextdomain: {
-			standard: {
-				options:{
-					text_domain: 'elementor',
-					correct_domain: true,
-					keywords: [
-						// WordPress keywords
-						'__:1,2d',
-						'_e:1,2d',
-						'_x:1,2c,3d',
-						'esc_html__:1,2d',
-						'esc_html_e:1,2d',
-						'esc_html_x:1,2c,3d',
-						'esc_attr__:1,2d',
-						'esc_attr_e:1,2d',
-						'esc_attr_x:1,2c,3d',
-						'_ex:1,2c,3d',
-						'_n:1,2,4d',
-						'_nx:1,2,4c,5d',
-						'_n_noop:1,2,3d',
-						'_nx_noop:1,2,3c,4d'
-					]
-				},
-				files: [ {
-					src: [
-						'**/*.php',
-						'!docs/**',
-						'!node_modules/**',
-						'!build/**',
-						'!tests/**',
-						'!.github/**',
-						'!vendor/**',
-						'!*~'
-					],
-					expand: true
-				} ]
-			}
-		},
-
-		usebanner: {
-			dist: {
-				options: {
-					banner: '<%= banner %>'
-				},
-				files: {
-					src: [
-						'assets/js/*.js',
-						'assets/css/*.css'
-					]
-				}
-			}
-		},
-
-		jshint: {
-			options: {
-				jshintrc: '.jshintrc'
-			},
-			all: [
-				'Gruntfile.js',
-				'assets/js/dev/**/*.js'
-			]
-		},
-
-		sass: {
-			dist: {
-				options: {
-					sourceMap: true
-				},
-				files: [ {
-					expand: true,
-					cwd: 'assets/dev/scss/direction',
-					src: '*.scss',
-					dest: 'assets/css',
-					ext: '.css'
-				} ]
-			}
-		},
-
-		postcss: {
-			dev: {
-				options: {
-					map: true,
-
-					processors: [
-						require( 'autoprefixer' )( {
-							browsers: 'last 10 versions'
-						} )
-					]
-				},
-				files: [ {
-					src: [
-						'assets/css/*.css',
-						'!assets/css/*.min.css'
-					]
-				} ]
-			},
-			minify: {
-				options: {
-					processors: [
-						require( 'autoprefixer' )( {
-							browsers: 'last 10 versions'
-						} ),
-						require( 'cssnano' )( {
-							reduceIdents: false
-						} )
-					]
-				},
-				files: [ {
-					expand: true,
-					src: [
-						'assets/css/*.css',
-						'!assets/css/*.min.css'
-					],
-					ext: '.min.css'
-				} ]
-			}
-		},
-
-		watch:  {
-			styles: {
-				files: [
-					'assets/dev/scss/**/*.scss',
-					'modules/**/*.scss',
-					'!assets/dev/scss/frontend/breakpoints/proxy.scss'
-				],
-				tasks: [ 'styles:true' ],
-				options: {
-					spawn: false,
-					livereload: true
-				}
-			},
-
-			scripts: {
-				files: [
-					'assets/dev/js/**/*.js',
-					'modules/**/*.js'
-				],
-				tasks: [ 'scripts:true' ],
-				options: {
-					spawn: false,
-					livereload: true
-				}
-			}
-		},
-
-		wp_readme_to_markdown: {
-			github: {
-				options: {
-					wordpressPluginSlug: 'elementor',
-					travisUrlRepo: 'https://travis-ci.org/pojome/elementor',
-					gruntDependencyStatusUrl: 'https://david-dm.org/pojome/elementor',
-					coverallsRepo: 'pojome/elementor',
-					screenshot_url: 'assets/{screenshot}.png'
-				},
-				files: {
-					'README.md': 'readme.txt'
-				}
-			}
-		},
-
-		bumpup: {
-			options: {
-				updateProps: {
-					pkg: 'package.json'
-				}
-			},
-			file: 'package.json'
-		},
-
-		replace: {
-			plugin_main: {
-				src: [ 'elementor.php' ],
-				overwrite: true,
-				replacements: [
-					{
-						from: /Version: \d{1,1}\.\d{1,2}\.\d{1,2}/g,
-						to: 'Version: <%= pkg.version %>'
-					},
-					{
-						from: /ELEMENTOR_VERSION', '.*?'/g,
-						to: 'ELEMENTOR_VERSION\', \'<%= pkg.version %>\''
-					},
-					{
-						from: /ELEMENTOR_PREVIOUS_STABLE_VERSION', '.*?'/g,
-						to: 'ELEMENTOR_PREVIOUS_STABLE_VERSION\', \'<%= grunt.config.get( \'prev_stable_version\' ) %>\''
-					}
-				]
-			},
-
-			readme: {
-				src: [ 'readme.txt' ],
-				overwrite: true,
-				replacements: [
-					{
-						from: /Stable tag: \d{1,1}\.\d{1,2}\.\d{1,2}/g,
-						to: 'Stable tag: <%= pkg.version %>'
-					}
-				]
-			},
-
-			packageFile: {
-				src: [ 'package.json' ],
-				overwrite: true,
-				replacements: [
-					{
-						from: /prev_stable_version": ".*?"/g,
-						to: 'prev_stable_version": "<%= grunt.config.get( \'prev_stable_version\' ) %>"'
-			}
-				]
-			}
-		},
-
-		shell: {
-			git_add_all: {
-				command: [
-					'git add --all',
-					'git commit -m "Bump to <%= pkg.version %>"'
-				].join( '&&' )
-			}
-		},
-
-		release: {
-			options: {
-				bump: false,
-				npm: false,
-				commit: false,
-				tagName: 'v<%= version %>',
-				commitMessage: 'released v<%= version %>',
-				tagMessage: 'Tagged as v<%= version %>'
-			}
-		},
-
-		copy: {
-			main: {
-				src: getBuildFiles(),
-				expand: true,
-				dest: 'build/'
-			},
-			secondary: {
-				src: getBuildFiles(),
-				expand: true,
-				dest: '/tmp/elementor-builds/<%= pkg.version %>/'
-			}
-		},
-
+		checktextdomain: require( './.grunt/checktextdomain' ),
+		usebanner: require( './.grunt/usebanner' ),
+		jshint: require( './.grunt/jshint' ),
+		sass: require( './.grunt/sass' ),
+		postcss: require( './.grunt/postcss' ),
+		watch:  require( './.grunt/watch' ),
+		wp_readme_to_markdown: require( './.grunt/wp_readme_to_markdown' ),
+		bumpup: require( './.grunt/bumpup' ),
+		replace: require( './.grunt/replace' ),
+		shell: require( './.grunt/shell' ),
+		release: require( './.grunt/release' ),
+		copy: require( './.grunt/copy' ),
+		clean: require( './.grunt/clean' ),
+		webpack: require( './.grunt/webpack' ),
 		qunit: {
 			src: 'tests/qunit/index.html'
-		},
-
-		clean: {
-			//Clean up build folder
-			main: [
-				'build'
-			],
-			qunit: [
-				'tests/qunit/index.html',
-				'tests/qunit/preview.html'
-			]
-		},
-
-		webpack: {
-			options: {
-				stats: !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
-			},
-			dev: webpackConfig.dev,
-			prod: webpackConfig.prod
 		}
 	} );
 
