@@ -98,7 +98,8 @@
 				background-color: $editor-lightest;
 			}
 
-			+ .elementor-control-type-tabs {
+			+ .elementor-control-type-tabs,
+			+ .elementor-control-separator-default {
 				padding-top: 15px;
 			}
 		}
