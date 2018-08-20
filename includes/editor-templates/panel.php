@@ -112,7 +112,7 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 			</span>
 		</button>
 	</div>
-	<div id="elementor-panel-saver-save-options" class="elementor-panel-footer-tool" >
+	<div id="elementor-panel-saver-save-options" class="elementor-panel-footer-tool elementor-toggle-state">
 		<button id="elementor-panel-saver-button-save-options" class="elementor-button elementor-button-success tooltip-target elementor-saver-disabled" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>">
 			<i class="fa fa-caret-up" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo __( 'Save Options', 'elementor' ); ?></span>
