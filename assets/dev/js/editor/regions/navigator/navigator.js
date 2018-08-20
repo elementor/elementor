@@ -268,9 +268,7 @@ module.exports = Marionette.Region.extend( {
 		elementor.$body.removeClass( 'elementor-navigator--dock-hint' );
 	},
 
-	onEditModeSwitched: function() {
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
+	onEditModeSwitched: function( activeMode ) {
 		if ( 'edit' === activeMode && this.storage.visible ) {
 			this.open();
 		} else {
