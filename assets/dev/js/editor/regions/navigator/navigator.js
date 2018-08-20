@@ -75,7 +75,7 @@ module.exports = Marionette.Region.extend( {
 	},
 
 	beforeFirstOpen: function() {
-		var NavigatorLayoutView = require( 'elementor-layouts/navigator/layout' );
+		var NavigatorLayoutView = require( 'elementor-regions/navigator/layout' );
 
 		this.show( new NavigatorLayoutView() );
 

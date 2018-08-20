@@ -105,9 +105,9 @@ module.exports = function( grunt ) {
 							expose: 'elementor-behaviors'
 						},
 						{
-							cwd: 'assets/dev/js/editor/layouts',
+							cwd: 'assets/dev/js/editor/regions',
 							src: '**/*.js',
-							expose: 'elementor-layouts'
+							expose: 'elementor-regions'
 						},
 						{
 							cwd: 'assets/dev/js/editor/controls',
@@ -130,7 +130,7 @@ module.exports = function( grunt ) {
 							expose: 'elementor-editor-utils'
 						},
 						{
-							cwd: 'assets/dev/js/editor/layouts/panel',
+							cwd: 'assets/dev/js/editor/regions/panel',
 							src: '**/*.js',
 							expose: 'elementor-panel'
 						},
