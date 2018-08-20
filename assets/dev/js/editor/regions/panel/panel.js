@@ -1,20 +1,22 @@
-module.exports = Marionette.Region.extend( {
+var BaseRegion = require( 'elementor-regions/base' );
+
+module.exports = BaseRegion.extend( {
 	el: '#elementor-panel',
 
-	storage: {
-		size: {
-			width: ''
-		}
+	getStorageKey: function() {
+		return 'panel';
+	},
+
+	getDefaultStorage: function() {
+		return {
+			size: {
+				width: ''
+			}
+		};
 	},
 
 	constructor: function() {
-		Marionette.Region.prototype.constructor.apply( this, arguments );
-
-		var savedStorage = elementor.getStorage( 'panel' );
-
-		if ( savedStorage ) {
-			this.storage = savedStorage;
-		}
+		BaseRegion.prototype.constructor.apply( this, arguments );
 
 		var PanelLayoutView = require( 'elementor-regions/panel/layout' );
 
@@ -25,16 +27,6 @@ module.exports = Marionette.Region.extend( {
 		this.setSize();
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
-	},
-
-	saveStorage: function( key, value ) {
-		this.storage[ key ] = value;
-
-		elementor.setStorage( 'panel', this.storage );
-	},
-
-	saveSize: function() {
-		this.saveStorage( 'size', elementor.helpers.getElementInlineStyle( this.$el, [ 'width' ] ) );
 	},
 
 	setSize: function() {
