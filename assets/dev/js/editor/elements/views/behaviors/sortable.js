@@ -106,7 +106,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			newIndex = $childElement.parent().children().index( $childElement ),
 			child = this.view.children.findByModelCid( model.cid );
 
-		this.view.addChildElement( model, {
+		this.view.addChildElement( model.clone(), {
 			at: newIndex,
 			trigger: {
 				beforeAdd: 'drag:before:update',

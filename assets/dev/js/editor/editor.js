@@ -527,7 +527,7 @@ App = Marionette.Application.extend( {
 
 					return -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.getElements( 'window' ).document.activeElement.tagName;
 				},
-				handle: function() {
+				handle: function( event ) {
 					var targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
 
 					if ( ! targetElement ) {
@@ -536,6 +536,14 @@ App = Marionette.Application.extend( {
 						if ( 'editor' === panel.getCurrentPageName() ) {
 							targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
 						}
+					}
+
+					if ( event.shiftKey ) {
+						if ( targetElement && targetElement.pasteStyle && elementor.getStorage( 'transfer' ) ) {
+							targetElement.pasteStyle();
+						}
+
+						return;
 					}
 
 					if ( ! targetElement ) {
