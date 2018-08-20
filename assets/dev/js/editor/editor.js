@@ -590,11 +590,11 @@ App = Marionette.Application.extend( {
 	},
 
 	initPanel: function() {
-		this.addRegions( { panel: require( 'elementor-layouts/panel/panel' ) } );
+		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 	},
 
 	initNavigator: function() {
-		this.addRegions( { navigator: require( 'elementor-layouts/navigator/navigator' ) } );
+		this.addRegions( { navigator: require( 'elementor-regions/navigator/navigator' ) } );
 	},
 
 	preventClicksInsideEditor: function() {
