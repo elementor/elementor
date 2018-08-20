@@ -55,13 +55,9 @@ module.exports = Marionette.ItemView.extend( {
 
 		var isOpen = $tool.hasClass( 'elementor-open' );
 
-		if ( isOpen ) {
-			if ( $tool.hasClass( 'elementor-leave-open' ) ) {
-				return;
-			}
+		this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'elementor-open' );
 
-			$tool.removeClass( 'elementor-open' );
-		} else {
+		if ( ! isOpen ) {
 			$tool.addClass( 'elementor-open' );
 		}
 	},
