@@ -31,6 +31,7 @@ module.exports = function( grunt ) {
 			'!composer.lock',
 			'!.gitignore',
 			'!.gitmodules',
+			'!yarn.lock',
 
 			'!assets/dev/**',
 			'!assets/**/*.map',
@@ -188,6 +189,7 @@ module.exports = function( grunt ) {
 					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
 					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
 					'assets/js/gutenberg.js': [ 'assets/dev/js/admin/gutenberg.js' ],
+					'assets/js/new-template.js': [ 'assets/dev/js/admin/new-template/new-template.js' ],
 					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ]
 				},
 				options: pkgInfo.browserify
@@ -203,13 +205,13 @@ module.exports = function( grunt ) {
 					'assets/js/editor.js.map': [ 'assets/js/editor.js' ],
 					'assets/js/admin.js.map': [ 'assets/js/admin.js' ],
 					'assets/js/admin-feedback.js.map': [ 'assets/js/admin-feedback.js' ],
+					'assets/js/new-template.js.map': [ 'assets/js/new-template.js' ],
 					'assets/js/frontend.js.map': [ 'assets/js/frontend.js' ]
 				}
 			}
 		},
 
 		uglify: {
-			//pkg: grunt.file.readJSON( 'package.json' ),
 			options: {},
 			dist: {
 				files: {
@@ -224,6 +226,9 @@ module.exports = function( grunt ) {
 					],
 					'assets/js/gutenberg.min.js': [
 						'assets/js/gutenberg.js'
+					],
+					'assets/js/new-template.min.js': [
+						'assets/js/new-template.js'
 					],
 					'assets/js/frontend.min.js': [
 						'assets/js/frontend.js'
