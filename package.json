@@ -30,6 +30,8 @@
 		"grunt-text-replace": "~0.4.0",
 		"grunt-webpack": "^3.1.2",
 		"grunt-wp-readme-to-markdown-with-extra": "~2.2.0",
+		"jshint-stylish": "^2.2.1",
+		"load-grunt-tasks": "^4.0.0",
 		"matchdep": "~2.0.0",
 		"path": "^0.12.7",
 		"remapify": "2.1.0",
