@@ -40,6 +40,8 @@ abstract class Module {
 	 */
 	private $components = [];
 
+	private $settings = [];
+
 	/**
 	 * Module instance.
 	 *
@@ -163,6 +165,13 @@ abstract class Module {
 	}
 
 	/**
+	 * @return Module[]
+	 */
+	public function get_components() {
+		return $this->components;
+	}
+
+	/**
 	 * Get module component.
 	 *
 	 * Retrieve the module component.
@@ -181,5 +190,43 @@ abstract class Module {
 		}
 
 		return false;
+	}
+
+	public function get_settings() {
+		return $this->settings;
+	}
+
+	public function get_setting( $key, $default = null ) {
+		return isset( $this->settings[ $key ] ) ? $this->settings[ $key ] : $default;
+	}
+
+	public function set_setting( $key, $value = null ) {
+		if ( is_array( $key ) ) {
+			$this->settings = array_replace_recursive( $this->settings, $key );
+		} else {
+			$this->settings[ $key ] = $value;
+		}
+	}
+
+	public function delete_setting( $key = null ) {
+		if ( $key ) {
+			unset( $this->settings[ $key ] );
+		} else {
+			$this->settings = [];
+		}
+	}
+
+	public function add_setting( $key, $value, $default = '' ) {
+		$new_value = $this->get_setting( $key, $default );
+
+		if ( is_array( $new_value ) ) {
+			$new_value[] = $value;
+		} elseif ( is_string( $new_value ) ) {
+			$new_value .= $value;
+		} elseif ( is_numeric( $new_value ) ) {
+			$new_value += $value;
+		}
+
+		$this->set_setting( $key, $new_value );
 	}
 }
