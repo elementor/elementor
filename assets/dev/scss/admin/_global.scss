@@ -173,6 +173,8 @@ body {
 	@import "../editor/loader";
 
 	.elementor-loader {
+		height: 80px;
+		width: 80px;
 		background-color: $editor-background-light;
 	}
 
