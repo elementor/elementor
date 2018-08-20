@@ -1,32 +1,34 @@
-module.exports = Marionette.Region.extend( {
+var BaseRegion = require( 'elementor-regions/base' );
+
+module.exports = BaseRegion.extend( {
 	el: '#elementor-navigator',
 
 	isDocked: false,
 
 	opened: false,
 
-	storage: {
-		visible: false,
-		size: {
-			width: '',
-			height: '',
-			top: '',
-			bottom: '',
-			right: '',
-			left: ''
-		}
+	getStorageKey: function() {
+		return 'navigator';
+	},
+
+	getDefaultStorage: function() {
+		return {
+			visible: false,
+			size: {
+				width: '',
+				height: '',
+				top: '',
+				bottom: '',
+				right: '',
+				left: ''
+			}
+		};
 	},
 
 	constructor: function() {
-		Marionette.Region.prototype.constructor.apply( this, arguments );
+		BaseRegion.prototype.constructor.apply( this, arguments );
 
 		this.ensurePosition = this.ensurePosition.bind( this );
-
-		var savedStorage = elementor.getStorage( 'navigator' );
-
-		if ( savedStorage ) {
-			this.storage = savedStorage;
-		}
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
@@ -177,16 +179,6 @@ module.exports = Marionette.Region.extend( {
 		if ( ! silent ) {
 			this.saveStorage( 'docked', false );
 		}
-	},
-
-	saveStorage: function( key, value ) {
-		this.storage[ key ] = value;
-
-		elementor.setStorage( 'navigator', this.storage );
-	},
-
-	saveSize: function() {
-		this.saveStorage( 'size', elementor.helpers.getElementInlineStyle( this.$el, [ 'width', 'height', 'top', 'bottom', 'right', 'left' ] ) );
 	},
 
 	setSize: function() {
