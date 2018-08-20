@@ -217,7 +217,6 @@
 }
 
 // Responsive Grid
-
 @media (min-width: $screen-md-min) {
 
 	.elementor-column {
@@ -257,6 +256,10 @@
 
 @media (max-width: $screen-sm-max) {
 	@include reverse-columns(-mobile);
+
+	.elementor-column {
+		width: 100%; //Default width for mobile
+	}
 }
 
 // Minimal simple Grid
