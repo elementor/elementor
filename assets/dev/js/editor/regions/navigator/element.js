@@ -28,11 +28,11 @@ module.exports = Marionette.CompositeView.extend( {
 
 	getEmptyView: function() {
 		if ( this.isRoot() ) {
-			return require( 'elementor-layouts/navigator/root-empty' );
+			return require( 'elementor-regions/navigator/root-empty' );
 		}
 
 		if ( this.hasChildren() ) {
-			return require( 'elementor-layouts/navigator/element-empty' );
+			return require( 'elementor-regions/navigator/element-empty' );
 		}
 
 		return null;
