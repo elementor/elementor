@@ -1,7 +1,7 @@
 module.exports = function( grunt ) {
 	'use strict';
 
-	var fs = require( 'fs' ),
+	const fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' );
 
 	require('load-grunt-tasks')(grunt);
@@ -15,7 +15,6 @@ module.exports = function( grunt ) {
 
 		checktextdomain: require( './.grunt/checktextdomain' ),
 		usebanner: require( './.grunt/usebanner' ),
-		jshint: require( './.grunt/jshint' ),
 		sass: require( './.grunt/sass' ),
 		postcss: require( './.grunt/postcss' ),
 		watch:  require( './.grunt/watch' ),
@@ -45,7 +44,6 @@ module.exports = function( grunt ) {
 	] );
 
 	grunt.registerTask( 'scripts', function( isDevMode ) {
-		grunt.task.run( 'jshint' );
 		if ( ! isDevMode ) {
 			grunt.task.run('webpack:prod');
 		} else {
