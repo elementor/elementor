@@ -1,7 +1,7 @@
 module.exports = function( grunt ) {
 	'use strict';
 
-	const fs = require( 'fs' ),
+	var fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' );
 
 	require('load-grunt-tasks')(grunt);
@@ -13,19 +13,19 @@ module.exports = function( grunt ) {
 		banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
 				'<%= grunt.template.today("dd-mm-yyyy") %> */',
 
-		checktextdomain: require( './.grunt/checktextdomain' ),
-		usebanner: require( './.grunt/usebanner' ),
-		sass: require( './.grunt/sass' ),
-		postcss: require( './.grunt/postcss' ),
-		watch:  require( './.grunt/watch' ),
-		wp_readme_to_markdown: require( './.grunt/wp_readme_to_markdown' ),
-		bumpup: require( './.grunt/bumpup' ),
-		replace: require( './.grunt/replace' ),
-		shell: require( './.grunt/shell' ),
-		release: require( './.grunt/release' ),
-		copy: require( './.grunt/copy' ),
-		clean: require( './.grunt/clean' ),
-		webpack: require( './.grunt/webpack' ),
+		checktextdomain: require( './.grunt-config/checktextdomain' ),
+		usebanner: require( './.grunt-config/usebanner' ),
+		sass: require( './.grunt-config/sass' ),
+		postcss: require( './.grunt-config/postcss' ),
+		watch:  require( './.grunt-config/watch' ),
+		wp_readme_to_markdown: require( './.grunt-config/wp_readme_to_markdown' ),
+		bumpup: require( './.grunt-config/bumpup' ),
+		replace: require( './.grunt-config/replace' ),
+		shell: require( './.grunt-config/shell' ),
+		release: require( './.grunt-config/release' ),
+		copy: require( './.grunt-config/copy' ),
+		clean: require( './.grunt-config/clean' ),
+		webpack: require( './.grunt-config/webpack' ),
 		qunit: {
 			src: 'tests/qunit/index.html'
 		}
