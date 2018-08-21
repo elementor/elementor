@@ -157,6 +157,7 @@ BaseElementView = BaseContainer.extend( {
 					}, {
 						name: 'pasteStyle',
 						title: elementor.translate( 'paste_style' ),
+						shortcut: controlSign + '+⇧+V',
 						callback: this.pasteStyle.bind( this ),
 						isEnabled: function() {
 							return !! elementor.getStorage( 'transfer' );

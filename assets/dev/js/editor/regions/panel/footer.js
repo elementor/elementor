@@ -14,14 +14,17 @@ module.exports = Marionette.ItemView.extend( {
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
 		saveTemplate: '#elementor-panel-saver-menu-save-template',
-		history: '#elementor-panel-footer-history'
+		history: '#elementor-panel-footer-history',
+		navigator: '#elementor-panel-footer-navigator'
 	},
 
 	events: {
-		'click @ui.settings': 'onClickSettings',
-		'click @ui.deviceModeButtons': 'onClickResponsiveButtons',
-		'click @ui.saveTemplate': 'onClickSaveTemplate',
-		'click @ui.history': 'onClickHistory'
+		'click @ui.menuButtons': 'onMenuButtonsClick',
+		'click @ui.settings': 'onSettingsClick',
+		'click @ui.deviceModeButtons': 'onResponsiveButtonsClick',
+		'click @ui.saveTemplate': 'onSaveTemplateClick',
+		'click @ui.history': 'onHistoryClick',
+		'click @ui.navigator': 'onNavigatorClick'
 	},
 
 	behaviors: function() {
@@ -42,25 +45,24 @@ module.exports = Marionette.ItemView.extend( {
 		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
-	onPanelClick: function( event ) {
-		var $target = jQuery( event.target ),
-			isClickInsideOfTool = $target.closest( '.elementor-panel-footer-sub-menu-wrapper' ).length;
+	onMenuButtonsClick: function( event ) {
+		var $tool = jQuery( event.currentTarget );
 
-		if ( isClickInsideOfTool ) {
+		// If the tool is not toggleable or the click is inside of a tool
+		if ( ! $tool.hasClass( 'elementor-toggle-state' || jQuery( event.target ).closest( '.elementor-panel-footer-sub-menu-item' ).length ) ) {
 			return;
 		}
 
-		var $tool = $target.closest( '.elementor-panel-footer-tool' ),
-			isClosedTool = $tool.length && ! $tool.hasClass( 'elementor-open' );
+		var isOpen = $tool.hasClass( 'elementor-open' );
 
-		this.ui.menuButtons.filter( ':not(.elementor-leave-open)' ).removeClass( 'elementor-open' );
+		this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'elementor-open' );
 
-		if ( isClosedTool ) {
+		if ( ! isOpen ) {
 			$tool.addClass( 'elementor-open' );
 		}
 	},
 
-	onClickSettings: function() {
+	onSettingsClick: function() {
 		var self = this;
 
 		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
@@ -84,14 +86,14 @@ module.exports = Marionette.ItemView.extend( {
 		this.ui.deviceModeIcon.removeClass( 'eicon-device-' + previousDeviceMode ).addClass( 'eicon-device-' + currentDeviceMode );
 	},
 
-	onClickResponsiveButtons: function( event ) {
+	onResponsiveButtonsClick: function( event ) {
 		var $clickedButton = this.$( event.currentTarget ),
 			newDeviceMode = $clickedButton.data( 'device-mode' );
 
 		elementor.changeDeviceMode( newDeviceMode );
 	},
 
-	onClickSaveTemplate: function() {
+	onSaveTemplateClick: function() {
 		elementor.templates.startModal( {
 			onReady: function() {
 				elementor.templates.getLayout().showSaveTemplateView();
@@ -99,17 +101,17 @@ module.exports = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onClickHistory: function() {
+	onHistoryClick: function() {
 		if ( 'historyPage' !== elementor.getPanelView().getCurrentPageName() ) {
 			elementor.getPanelView().setPage( 'historyPage' );
 		}
 	},
 
-	onRender: function() {
-		var self = this;
-
-		_.defer( function() {
-			elementor.getPanelView().$el.on( 'click', self.onPanelClick.bind( self ) );
-		} );
+	onNavigatorClick: function() {
+		if ( elementor.navigator.isOpen() ) {
+			elementor.navigator.close();
+		} else {
+			elementor.navigator.open();
+		}
 	}
 } );

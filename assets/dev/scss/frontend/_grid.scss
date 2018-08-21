@@ -217,7 +217,6 @@
 }
 
 // Responsive Grid
-
 @media (min-width: $screen-md-min) {
 
 	.elementor-column {
@@ -240,17 +239,28 @@
 	}
 }
 
-@media (max-width: $screen-sm-max) {
+@mixin reverse-columns($device) {
 
-	.elementor-column {
-		width: 100%;
-	}
-
-	.elementor-reverse-mobile > .elementor-container > .elementor-row {
-		flex-direction: column-reverse;
+	.elementor-reverse#{$device} > .elementor-container > .elementor-row {
+		@for $i from 1 through 10 {
+			> :nth-child(#{$i}) {
+				order: -$i + 11;
+			}
+		}
 	}
 }
 
+@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+	@include reverse-columns(-tablet);
+}
+
+@media (max-width: $screen-sm-max) {
+	@include reverse-columns(-mobile);
+
+	.elementor-column {
+		width: 100%; //Default width for mobile
+	}
+}
 
 // Minimal simple Grid
 
