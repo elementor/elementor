@@ -8,9 +8,16 @@
 	"devDependencies": {
 		"autoprefixer": "~8.5.0",
 		"babel-core": "^6.26.3",
+		"babel-eslint": "^8.2.6",
 		"babel-loader": "^7.1.5",
 		"babel-preset-env": "^1.7.0",
 		"cssnano": "~3.10.0",
+		"eslint": "^5.4.0",
+		"eslint-config-wordpress": "^2.0.0",
+		"eslint-loader": "^2.1.0",
+		"eslint-plugin-jsx-a11y": "^6.1.1",
+		"eslint-plugin-react": "^7.11.1",
+		"eslint-plugin-wordpress": "git://github.com/WordPress-Coding-Standards/eslint-plugin-wordpress.git#1774343f6226052a46b081e01db3fca8793cc9f1",
 		"extract-text-webpack-plugin": "^3.0.2",
 		"grunt": "^1.0.2",
 		"grunt-banner": "~0.6.0",
@@ -30,37 +37,12 @@
 		"grunt-text-replace": "~0.4.0",
 		"grunt-webpack": "^3.1.2",
 		"grunt-wp-readme-to-markdown-with-extra": "~2.2.0",
+		"jshint": "^2.9.6",
 		"jshint-stylish": "^2.2.1",
 		"load-grunt-tasks": "^4.0.0",
 		"matchdep": "~2.0.0",
 		"path": "^0.12.7",
-		"remapify": "2.1.0",
-		"webpack": "^4.16.5",
-		"webpack-dev-server": "^3.1.5"
-	},
-	"browserify": {
-		"transform": [
-			"browserify-shim"
-		]
-	},
-	"browserify-shim": {
-		"jquery": "global:jQuery",
-		"underscore": "global:_",
-		"backbone": {
-			"exports": "global:Backbone",
-			"depends": [
-				"jquery",
-				"underscore"
-			]
-		},
-		"marionette": {
-			"exports": "global:Marionette",
-			"depends": [
-				"jquery",
-				"underscore",
-				"backbone"
-			]
-		}
+		"webpack": "^4.16.5"
 	},
 	"dependencies": {}
 }
