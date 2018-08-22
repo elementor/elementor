@@ -54,7 +54,7 @@ class Local_Factory extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * @return array parent_id | WP_Post; child_id | WP_Post; user_id | WP_User.
+	 * @return array parent_id | int; child_id | int; user_id | int.
 	 */
 	public function create_and_get_parent_and_child_posts() {
 		$user_id = $this->factory()->user->create( [ 'display_name' => 'elementor' ] );
