@@ -11,7 +11,7 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 	private static $elementor;
 
 	public function __get( $name ) {
-		switch ($name) {
+		switch ( $name ) {
 			case 'factory':
 				return self::factory();
 				break;
@@ -61,6 +61,29 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 		foreach ( $keys as $key ) {
 			$this->assertArrayHasKey( $key, $array, $message );
 		}
+	}
 
+	/**
+	 * assert that an action has been registered for this hook.
+	 *
+	 * @param string $tag
+	 * @param false|callable $function_to_check
+	 */
+	protected function assertHasHook( $tag, $function_to_check = false ) {
+		if ( ! is_string( $tag ) ) {
+			throw \PHPUnit_Util_InvalidArgumentHelper::factory(
+				1,
+				'only string'
+			);
+		}
+
+		if ( ! ( is_callable( $function_to_check ) ||  ( ! $function_to_check )) ) {
+			throw \PHPUnit_Util_InvalidArgumentHelper::factory(
+				1,
+				'only callback of false'
+			);
+		}
+
+		$this->assertNotFalse( has_filter( $tag, $function_to_check ) );
 	}
 }
