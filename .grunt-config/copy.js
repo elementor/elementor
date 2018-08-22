@@ -27,6 +27,7 @@ const getBuildFiles = [
 	'!composer.lock',
 	'!.gitignore',
 	'!.gitmodules',
+	'!yarn.lock',
 
 	'!assets/dev/**',
 	'!assets/**/*.map',
