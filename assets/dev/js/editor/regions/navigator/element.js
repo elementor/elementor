@@ -210,6 +210,8 @@ module.exports = Marionette.CompositeView.extend( {
 	enterTitleEditing: function() {
 		this.ui.title.attr( 'contenteditable', true ).focus();
 
+		document.execCommand( 'selectAll' );
+
 		elementor.addBackgroundClickListener( 'navigator', {
 			ignore: this.ui.title,
 			callback: this.exitTitleEditing.bind( this )
