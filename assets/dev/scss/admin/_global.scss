@@ -6,10 +6,10 @@
 	#toplevel_page_edit-post_type-elementor_library {
 
 		div.wp-menu-image:before {
-			content: "\e800";
+			content: "\e801";
 			font-family: eicons;
-			font-size: 14px;
-			margin-top: 3px;
+			font-size: 18px;
+			margin-top: 1px;
 		}
 
 		// Menu Go Pro
@@ -138,8 +138,10 @@ body {
 			margin: 0 15px;
 
 			.button {
+				margin: 2px;
 				height: 33px;
-				line-height: 32px;
+				font-size: 13px;
+				line-height: 1;
 
 				i {
 					font-size: 125%;
@@ -170,6 +172,12 @@ body {
 
 	@import "../editor/loader";
 
+	.elementor-loader {
+		height: 80px;
+		width: 80px;
+		background-color: $editor-background-light;
+	}
+
 	.elementor-loader-box {
 		background-color: $editor-light;
 	}
@@ -195,24 +203,6 @@ body {
 			display: none;
 		}
 	}
-}
-
-.elementor-loader-wrapper {
-	margin: auto;
-	width: 80px;
-}
-
-.elementor-loader {
-	height: 80px;
-	position: relative;
-}
-
-.elementor-loading-title {
-	color: $editor-light;
-	text-transform: uppercase;
-	margin-top: 15px;
-	font-size: 11px;
-	letter-spacing: 5px;
 }
 
 // Tools

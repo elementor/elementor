@@ -1231,6 +1231,7 @@ class Element_Section extends Element_Base {
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
+				'style_transfer' => false,
 			]
 		);
 
@@ -1258,14 +1259,24 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'reverse_order_tablet',
+			[
+				'label' => __( 'Reverse Columns', 'elementor' ) . ' (' . __( 'Tablet', 'elementor' ) . ')',
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'return_value' => 'reverse-tablet',
+			]
+		);
+
+		$this->add_control(
 			'reverse_order_mobile',
 			[
-				'label' => __( 'Reverse Columns', 'elementor' ),
+				'label' => __( 'Reverse Columns', 'elementor' ) . ' (' . __( 'Mobile', 'elementor' ) . ')',
 				'type' => Controls_Manager::SWITCHER,
 				'default' => '',
 				'prefix_class' => 'elementor-',
 				'return_value' => 'reverse-mobile',
-				'description' => __( 'Reverse column order - When on mobile, the column order is reversed, so the last column appears on top and vice versa.', 'elementor' ),
 			]
 		);
 

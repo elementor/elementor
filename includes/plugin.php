@@ -520,7 +520,7 @@ class Plugin {
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->system_info = new System_Info\Main();
-			$this->admin = new Admin();
+			$this->admin = new Core\Admin\Admin();
 			$this->tools = new Tools();
 			$this->beta_testers = new Beta_Testers();
 

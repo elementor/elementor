@@ -36,6 +36,17 @@ body {
     text-transform: none;
     overflow: hidden;
 
+	&:after {
+		content: '';
+		position: absolute;
+		top: 0;
+		@include end(0);
+		height: 100%;
+		width: 0;
+		background-color: $editor-info;
+		transition: width .5s;
+	}
+
 	a {
 		color: $editor-info;
 
@@ -78,10 +89,18 @@ body {
 		#elementor-mode-switcher-preview {
 
 			.fa {
+
 				&:before {
 					content: getValueByDirection('\f105', '\f104');
 				}
 			}
+		}
+	}
+
+	&.elementor-navigator--dock-hint {
+
+		&:after {
+			width: 30px;
 		}
 	}
 }
