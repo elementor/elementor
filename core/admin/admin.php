@@ -55,6 +55,16 @@ class Admin {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script(
+			'backbone-marionette',
+			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.marionette' . $suffix . '.js',
+			[
+				'backbone',
+			],
+			'2.4.5',
+			true
+		);
+
+		wp_register_script(
 			'elementor-dialog',
 			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
 			[
@@ -84,6 +94,7 @@ class Admin {
 					'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
 					'yes' => __( 'Yes', 'elementor' ),
 					'cancel' => __( 'Cancel', 'elementor' ),
+					'new_template' => __( 'New Template', 'elementor' ),
 				],
 			]
 		);
@@ -170,10 +181,12 @@ class Admin {
 				</div>
 				<div class="elementor-loader-wrapper">
 					<div class="elementor-loader">
-						<div class="elementor-loader-box"></div>
-						<div class="elementor-loader-box"></div>
-						<div class="elementor-loader-box"></div>
-						<div class="elementor-loader-box"></div>
+						<div class="elementor-loader-boxes">
+							<div class="elementor-loader-box"></div>
+							<div class="elementor-loader-box"></div>
+							<div class="elementor-loader-box"></div>
+							<div class="elementor-loader-box"></div>
+						</div>
 					</div>
 					<div class="elementor-loading-title"><?php echo __( 'Loading', 'elementor' ); ?></div>
 				</div>
@@ -509,10 +522,10 @@ class Admin {
 
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
 			$create_new_label = __( 'Create New Page', 'elementor' );
-			$create_new_cpt = 'page';
+			$create_new_post_type = 'page';
 		} elseif ( User::is_current_user_can_edit_post_type( 'post' ) ) {
 			$create_new_label = __( 'Create New Post', 'elementor' );
-			$create_new_cpt = 'post';
+			$create_new_post_type = 'post';
 		}
 		?>
 		<div class="e-dashboard-widget">
@@ -531,9 +544,9 @@ class Admin {
 					do_action( 'elementor/admin/dashboard_overview_widget/after_version' );
 					?>
 				</div>
-				<?php if ( ! empty( $create_new_cpt ) ) : ?>
+				<?php if ( ! empty( $create_new_post_type ) ) : ?>
 					<div class="e-overview__create">
-						<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
+						<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_post_type ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
 					</div>
 				<?php endif; ?>
 			</div>
@@ -681,6 +694,37 @@ class Admin {
 		die;
 	}
 
+	public function print_new_template_template() {
+		$this->print_library_layout_template();
+
+		include ELEMENTOR_PATH . 'includes/admin-templates/new-template.php';
+	}
+
+	public function enqueue_new_template_scripts() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script(
+			'elementor-new-template',
+			ELEMENTOR_ASSETS_URL . 'js/new-template' . $suffix . '.js',
+			[
+				'backbone-marionette',
+				'elementor-dialog',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	public function init_new_template() {
+		if ( 'edit-elementor_library' !== get_current_screen()->id ) {
+			return;
+		}
+
+		add_action( 'admin_footer', [ $this, 'print_new_template_template' ] );
+
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
+	}
+
 	/**
 	 * Admin constructor.
 	 *
@@ -717,5 +761,11 @@ class Admin {
 
 		// Admin Actions
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
+
+		add_action( 'current_screen', [ $this, 'init_new_template' ] );
+	}
+
+	private function print_library_layout_template() {
+		include ELEMENTOR_PATH . 'includes/editor-templates/library-layout.php';
 	}
 }

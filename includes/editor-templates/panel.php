@@ -58,11 +58,19 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-toggle-state elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
 		<i class="fa fa-cog" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), $document::get_title() ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool">
+	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?>">
+		<i class="eicon-navigator" aria-hidden="true"></i>
+		<span class="elementor-screen-only"><?php echo __( 'Navigator', 'elementor' ); ?></span>
+	</div>
+	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target elementor-toggle-state" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
+		<i class="fa fa-history" aria-hidden="true"></i>
+		<span class="elementor-screen-only"><?php echo __( 'History', 'elementor' ); ?></span>
+	</div>
+	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state">
 		<i class="eicon-device-desktop tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only">
 			<?php echo __( 'Responsive Mode', 'elementor' ); ?>
@@ -88,10 +96,6 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 			</div>
 		</div>
 	</div>
-	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
-		<i class="fa fa-history" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php echo __( 'History', 'elementor' ); ?></span>
-	</div>
 	<div id="elementor-panel-saver-button-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
 		<span id="elementor-panel-saver-button-preview-label">
 			<i class="fa fa-eye" aria-hidden="true"></i>
@@ -108,7 +112,7 @@ $document = Plugin::$instance->documents->get( $this->get_post_id() );
 			</span>
 		</button>
 	</div>
-	<div id="elementor-panel-saver-save-options" class="elementor-panel-footer-tool" >
+	<div id="elementor-panel-saver-save-options" class="elementor-panel-footer-tool elementor-toggle-state">
 		<button id="elementor-panel-saver-button-save-options" class="elementor-button elementor-button-success tooltip-target elementor-saver-disabled" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>">
 			<i class="fa fa-caret-up" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo __( 'Save Options', 'elementor' ); ?></span>
