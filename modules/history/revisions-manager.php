@@ -185,9 +185,7 @@ class Revisions_Manager {
 	 * @static
 	 */
 	public static function update_autosave( $autosave_data ) {
-		$revision_id = $autosave_data['ID'];
-
-		Plugin::$instance->db->safe_copy_elementor_meta( $autosave_data['post_parent'], $revision_id );
+		self::save_revision( $autosave_data['ID'] );
 	}
 
 	/**
