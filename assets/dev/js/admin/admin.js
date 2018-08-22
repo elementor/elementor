@@ -5,6 +5,8 @@
 
 		maintenanceMode: null,
 
+		config: ElementorAdminConfig,
+
 		cacheElements: function() {
 			this.cache = {
 				$window: $( window ),
@@ -18,11 +20,7 @@
 				$importButton: $( '#elementor-import-template-trigger' ),
 				$importArea: $( '#elementor-import-template-area' ),
 				$settingsForm: $( '#elementor-settings-form' ),
-				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
-				$addNew: $( '.post-type-elementor_library #wpbody-content .page-title-action:first, #elementor-template-library-add-new' ),
-				$addNewDialogHeader:  $( '.elementor-templates-modal__header' ),
-				$addNewDialogClose:  $( '.elementor-templates-modal__header__close-modal' ),
-				$addNewDialogContent:  $( '#elementor-new-template-dialog-content' )
+				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' )
 			};
 
 			this.cache.$settingsFormPages = this.cache.$settingsForm.find( '.elementor-settings-form-page' );
@@ -73,11 +71,6 @@
 				}
 
 				self.toggleStatus();
-			} );
-
-			self.cache.$addNew.on( 'click', function( event ) {
-				event.preventDefault();
-				self.getNewTemplateModal().show();
 			} );
 
 			self.cache.$goToEditLink.on( 'click', function() {
@@ -145,8 +138,7 @@
 							$this.addClass( 'success' );
 						}
 
-						var dialogsManager = new DialogsManager.Instance();
-							dialogsManager.createWidget( 'alert', {
+						self.getDialogsManager().createWidget( 'alert', {
 								message: response.data
 							} ).show();
 					} );
@@ -170,15 +162,14 @@
 			$( '.elementor-rollback-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 
-				var $this = $( this ),
-					dialogsManager = new DialogsManager.Instance();
+				var $this = $( this );
 
-				dialogsManager.createWidget( 'confirm', {
-					headerMessage: ElementorAdminConfig.i18n.rollback_to_previous_version,
-					message: ElementorAdminConfig.i18n.rollback_confirm,
+				self.getDialogsManager().createWidget( 'confirm', {
+					headerMessage: self.config.i18n.rollback_to_previous_version,
+					message:  self.config.i18n.rollback_confirm,
 					strings: {
-						confirm: ElementorAdminConfig.i18n.yes,
-						cancel: ElementorAdminConfig.i18n.cancel
+						confirm:  self.config.i18n.yes,
+						cancel:  self.config.i18n.cancel
 					},
 					onConfirm: function() {
 						$this.addClass( 'loading' );
@@ -196,14 +187,30 @@
 			} ).trigger( 'change' );
 		},
 
+		setMarionetteTemplateCompiler: function() {
+			if ( 'undefined' !== typeof Marionette ) {
+				Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
+					options = {
+						evaluate: /<#([\s\S]+?)#>/g,
+						interpolate: /{{{([\s\S]+?)}}}/g,
+						escape: /{{([^}]+?)}}(?!})/g
+					};
+
+					return _.template( rawTemplate, options );
+				};
+			}
+		},
+
 		init: function() {
+			this.setMarionetteTemplateCompiler();
+
 			this.cacheElements();
 
 			this.bindEvents();
 
-			this.initTemplatesImport();
+			this.initDialogsManager();
 
-			this.initNewTemplateDialog();
+			this.initTemplatesImport();
 
 			this.initMaintenanceMode();
 
@@ -212,39 +219,16 @@
 			this.roleManager.init();
 		},
 
-		initNewTemplateDialog: function() {
-			var self = this,
-				modal;
+		initDialogsManager: function() {
+			var dialogsManager;
 
-			self.getNewTemplateModal = function() {
-				if ( ! modal ) {
-					var dialogsManager = new DialogsManager.Instance();
-
-					modal = dialogsManager.createWidget( 'lightbox', {
-						id: 'elementor-new-template-modal',
-						className: 'elementor-templates-modal',
-						headerMessage: self.cache.$addNewDialogHeader,
-						message: self.cache.$addNewDialogContent.children(),
-						hide: {
-							onButtonClick: false
-						},
-						position: {
-							my: 'center',
-							at: 'center'
-						},
-						onReady: function() {
-							DialogsManager.getWidgetType( 'lightbox' ).prototype.onReady.apply( this, arguments );
-
-							self.cache.$addNewDialogClose.on( 'click', function() {
-								modal.hide();
-							} );
-						}
-					} );
+			this.getDialogsManager = function() {
+				if ( ! dialogsManager ) {
+					dialogsManager = new DialogsManager.Instance();
 				}
 
-				return modal;
+				return dialogsManager;
 			};
-
 		},
 
 		initTemplatesImport: function() {
