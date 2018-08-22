@@ -207,13 +207,15 @@
 
 		&__title {
 			flex-grow: 1;
-			outline: none;
-			padding: 10px 0;
 
-			&[contenteditable="true"] {
+			&__text {
 
-				&::selection {
-					background-color: #529ac9;
+				&[contenteditable="true"] {
+					outline: none;
+
+					&::selection {
+						background-color: #529ac9;
+					}
 				}
 			}
 		}
