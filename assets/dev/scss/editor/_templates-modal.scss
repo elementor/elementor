@@ -11,14 +11,6 @@ $remote-templates-items-space: 30px;
 			font-weight: 500;
 		}
 	}
-
-	.dialog-lightbox-content {
-		height: 100%;
-	}
-
-	.dialog-lightbox-loading {
-		display: none;
-	}
 }
 
 #elementor-template-library-header-menu {
@@ -79,17 +71,6 @@ $remote-templates-items-space: 30px;
 		&:before {
 			content: getValueByDirection( '\e908', '\e907' );
 		}
-	}
-}
-
-#elementor-template-library-loading {
-
-	.elementor-loading-title {
-		color: $editor-light;
-	}
-
-	.elementor-loader-box {
-		background-color: $editor-lightest;
 	}
 }
 

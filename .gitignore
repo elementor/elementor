@@ -6,6 +6,7 @@ log/
 vendor/
 composer.lock
 package-lock.json
+yarn.lock
 .project
 .vscode
 Thumbs.db

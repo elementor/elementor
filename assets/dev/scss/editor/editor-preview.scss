@@ -360,17 +360,6 @@ html.elementor-html {
 	&.elementor-editor-element-save {
 		display: none;
 	}
-
-	@media (max-width: $editor-screen-md-max) {
-
-		&:not(.elementor-editor-element-edit) {
-			pointer-events: none;
-
-			i {
-				display: none;
-			}
-		}
-	}
 }
 
 .elementor-editor-element-edit {
@@ -701,11 +690,17 @@ html.elementor-html {
 	position: relative;
 
 	&:not(.elementor-dragging-on-child) {
-		border: 2px dashed $editor-lightest;
+
+		.elementor-add-section-inner {
+			border: 2px dashed $editor-lightest;
+		}
 	}
 
 	&.elementor-dragging-on-child {
-		border: 3px dashed $editor-info;
+
+		.elementor-add-section-inner {
+			border: 3px dashed $editor-info;
+		}
 	}
 
 	&[data-view="choose-action"] {
@@ -721,15 +716,11 @@ html.elementor-html {
 			display: none;
 		}
 	}
-
-	@media (max-width: $editor-screen-xs-max) {
-		display: none;
-	}
 }
 
 .elementor-add-section-inner {
 	text-align: center;
-	margin-top: 10px;
+	margin: 20px;
 	padding: 40px 0;
 }
 
@@ -780,7 +771,7 @@ html.elementor-html {
 
 .elementor-add-section-close {
 	position: absolute;
-	right: 20px;
+	right: 40px;
 	top: 20px;
 	font-size: 20px;
 	cursor: pointer;
@@ -813,6 +804,7 @@ html.elementor-html {
 		margin: 0;
 		padding: 10px;
 		float: $start;
+		max-width: 33.333%;
 
 		&:hover {
 
@@ -830,6 +822,7 @@ html.elementor-html {
 
 		svg {
 			height: 50px;
+			width: 100%;
 
 			@if 'rtl' == $direction {
 				transform: rotate(180deg);

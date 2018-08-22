@@ -18,41 +18,15 @@
 	transform: translateX(-50%) translateY(-50%);
 	width: 200px;
 
+	@import "loader";
+
 	.elementor-loader {
-		height: 100px;
-		width: 100px;
-		margin: auto;
-		position: relative;
+		background-color: $editor-lightest;
 	}
 
 	.elementor-loader-box {
 		background-color: $editor-darkest;
 	}
-
-	@import "loader";
-}
-
-.elementor-loading-title {
-
-	@keyframes load-title {
-		0% {
-			opacity: 1;
-		}
-		50% {
-			opacity: .6;
-		}
-		100% {
-			opacity: 1;
-		}
-	}
-
-	color: $editor-darkest;
-	text-align: center;
-	text-transform: uppercase;
-	margin-top: 30px;
-	letter-spacing: 7px;
-	font-size: 10px;
-	animation: load-title 1.5s linear infinite;
 }
 
 // Loading after APPLY button
@@ -176,7 +150,7 @@
 }
 
 .elementor-nerd-box {
-	padding: 30px 20px;
+	padding: 30px;
 	text-align: center;
 
 	&-icon {
@@ -188,11 +162,12 @@
 		margin-top: 20px;
 		font-size: 16px;
 		font-weight: bold;
+		line-height: 1.4;
 	}
 
 	&-message {
 		margin-top: 20px;
-		line-height: 1.4;
+		line-height: 1.8;
 		font-size: 11px;
 	}
 

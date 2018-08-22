@@ -1,4 +1,4 @@
-var EditModeItemView = require( 'elementor-layouts/edit-mode' ),
+var EditModeItemView = require( 'elementor-regions/panel/edit-mode' ),
 	PanelLayoutView;
 
 PanelLayoutView = Marionette.LayoutView.extend( {
@@ -174,8 +174,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onBeforeShow: function() {
-		var PanelFooterItemView = require( 'elementor-layouts/panel/footer' ),
-			PanelHeaderItemView = require( 'elementor-layouts/panel/header' );
+		var PanelFooterItemView = require( 'elementor-regions/panel/footer' ),
+			PanelHeaderItemView = require( 'elementor-regions/panel/header' );
 
 		// Edit Mode
 		this.showChildView( 'modeSwitcher', new EditModeItemView() );
