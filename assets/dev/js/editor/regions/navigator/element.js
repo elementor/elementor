@@ -5,7 +5,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	ui: {
 		item: '> .elementor-navigator__item',
-		title: '> .elementor-navigator__item .elementor-navigator__element__title',
+		title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
 		toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
 		toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
 		elements: '> .elementor-navigator__elements'
