@@ -14,7 +14,7 @@ class Elementor_Test_Library_Document extends Elementor_Test_Base {
 		self::assertSame( $properties['library_view'], 'grid' );
 	}
 
-	public function test__() {
+	public function test_should_save_type() {
 		$library_document = $this->getMockForAbstractClass( 'Elementor\Modules\Library\Documents\Library_Document',
 			[ [ 'id' => '', 'post_id' => self::factory()->create_and_get_default_post()->ID ] ] );
 		$library_document->method('get_name')->willReturn('libraryTypeExample');
