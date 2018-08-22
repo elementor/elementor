@@ -903,3 +903,7 @@ html.elementor-html {
 		display: none;
 	}
 }
+
+.elementor.elementor-edit-area-active [class*='elementor-hidden'] {
+	display: block;
+}
