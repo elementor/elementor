@@ -904,6 +904,11 @@ html.elementor-html {
 	}
 }
 
-.elementor.elementor-edit-area-active [class*='elementor-hidden'] {
-	display: block;
+.elementor.elementor-edit-area-active {
+
+	.elementor-hidden-desktop,
+	.elementor-hidden-tablet,
+	.elementor-hidden-phone {
+		display: block;
+	}
 }
