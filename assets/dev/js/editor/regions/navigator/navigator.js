@@ -58,7 +58,7 @@ module.exports = BaseRegion.extend( {
 			containment: 'document',
 			minWidth: 150,
 			maxWidth: 500,
-			minHeight: 210,
+			minHeight: 240,
 			start: function() {
 				elementor.$previewWrapper.addClass( 'ui-resizable-resizing' );
 			},
