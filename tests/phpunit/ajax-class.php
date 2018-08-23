@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing;
 
-class Elementor_Test_Base extends \WP_UnitTestCase {
+class Elementor_Test_AJAX extends \WP_Ajax_UnitTestCase {
 	use Elementor_Test;
 
 	public function getSelf() {
