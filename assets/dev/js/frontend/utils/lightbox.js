@@ -385,11 +385,14 @@ LightboxModule = ViewModule.extend( {
 			uniqueLinks = {};
 
 		$allSlideshowLinks.each( function() {
-			if ( uniqueLinks[ this.href ] ) {
+			var slideVideo = this.dataset.elementorLightboxVideo,
+				uniqueID = slideVideo || this.href;
+
+			if ( uniqueLinks[ uniqueID ] ) {
 				return;
 			}
 
-			uniqueLinks[ this.href ] = true;
+			uniqueLinks[ uniqueID ] = true;
 
 			var slideIndex = this.dataset.elementorLightboxIndex;
 
@@ -402,8 +405,8 @@ LightboxModule = ViewModule.extend( {
 				index: slideIndex
 			};
 
-			if ( this.dataset.elementorLightboxVideo ) {
-				slideData.video = this.dataset.elementorLightboxVideo;
+			if ( slideVideo ) {
+				slideData.video = slideVideo;
 			}
 
 			slides.push( slideData );
