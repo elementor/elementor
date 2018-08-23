@@ -201,7 +201,7 @@ LightboxModule = ViewModule.extend( {
 				$slide.append( $playIcon );
 			} else {
 				var $zoomContainer = $( '<div>', { 'class': 'swiper-zoom-container' } ),
-					$slideImage = $( '<img>', { 'class': classes.image + ' ' + classes.preventClose } ).attr( 'src', slide.image );
+					$slideImage = $( '<img>', { 'class': classes.image + ' ' + classes.preventClose, src: slide.image } );
 
 				$zoomContainer.append( $slideImage );
 
@@ -350,7 +350,7 @@ LightboxModule = ViewModule.extend( {
 
 		event.preventDefault();
 
-		if ( elementorFrontend.isEditMode() && ! elementorFrontend.getGeneralSettings( 'elementor_enable_lightbox_in_editor' ) ) {
+		if ( editMode && ! elementorFrontend.getGeneralSettings( 'elementor_enable_lightbox_in_editor' ) ) {
 			return;
 		}
 
