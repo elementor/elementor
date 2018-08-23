@@ -118,19 +118,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 			'type',
 			'gravatar',
 		], $ret[0] );
-
-
-		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$ret = Revisions_Manager::get_revisions( $post_id );
-		self::assertEquals( 1, count( $ret ) );
-		$this->assertArrayHaveKeys( [
-			'id',
-			'author',
-			'timestamp',
-			'date',
-			'type',
-			'gravatar',
-		], $ret[0] );
 	}
 
 	public function test_should_update_autosave() {
@@ -195,7 +182,7 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 	public function test_should_return_editor_settings() {
 		$parent_and_child_posts = $this->factory()->create_and_get_parent_and_child_posts();
 
-		$settings = Revisions_Manager::editor_settings( [], $parent_and_child_posts['child_id'] );
+		$settings = Revisions_Manager::editor_settings( [], $parent_and_child_posts['parent_id'] );
 
 		$settings_keys = [ 'revisions', 'revisions_enabled', 'current_revision_id', 'i18n' ];
 		$this->assertArrayHaveKeys( $settings_keys, $settings );
