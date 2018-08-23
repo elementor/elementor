@@ -403,13 +403,6 @@ class Frontend {
 			$has_custom_file ? null : ELEMENTOR_VERSION
 		);
 
-		wp_register_style(
-			'elementor-frontend-msie',
-			ELEMENTOR_ASSETS_URL . 'css/frontend-msie' . $suffix . '.css',
-			[],
-			$has_custom_file ? null : ELEMENTOR_VERSION
-		);
-
 		/**
 		 * After frontend register styles.
 		 *
@@ -521,8 +514,6 @@ class Frontend {
 		wp_enqueue_style( 'font-awesome' );
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
-		wp_enqueue_style( 'elementor-frontend-msie' );
-		wp_style_add_data( 'elementor-frontend-msie', 'conditional', 'IE' );
 
 		/**
 		 * After frontend styles enqueued.
