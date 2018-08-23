@@ -69,10 +69,21 @@
 			return settingsObject;
 		};
 
+		var addIeFlag = function() {
+			var isIE = 'Microsoft Internet Explorer' === navigator.appName ||  !! navigator.userAgent.match( /Trident/g ) ||  !! navigator.userAgent.match( /MSIE/g ) || !! navigator.userAgent.match( /rv:11/ );
+
+			if ( ! isIE ) {
+				return;
+			}
+			elements.$body.addClass( 'elementor-is-msie' );
+		};
+
 		this.init = function() {
 			self.hooks = new EventManager();
 
 			initElements();
+
+			addIeFlag();
 
 			bindEvents();
 
