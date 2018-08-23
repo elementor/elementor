@@ -56,7 +56,7 @@
 	}
 
 	&__elements {
-		height: calc(100% - 50px);
+		height: calc(100% - 49px);
 		overflow: auto;
 		position: relative;
 
@@ -72,7 +72,6 @@
 		bottom: 0;
 		text-align: center;
 		background-color: #fff;
-		border-top: 1px solid $editor-background;
 
 		.elementor-navigator-docked & {
 			display: none;
@@ -180,16 +179,13 @@
 				}
 			}
 
-			&:not(.ui-sortable-helper) {
+			> .elementor-navigator__item {
 
-				> .elementor-navigator__item {
+				&.elementor-editing {
+					background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
 
-					&.elementor-editing {
-						background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
-
-						> * {
-							color: #fff;
-						}
+					> * {
+						color: #fff;
 					}
 				}
 			}
@@ -212,10 +208,10 @@
 
 				&[contenteditable="true"] {
 					outline: none;
-
-					&::selection {
-						background-color: #529ac9;
-					}
+					color: $editor-dark;
+					background-color: #fff;
+					padding: 2px 3px;
+					box-shadow: 0 0 4px rgba(0,0,0,0.2);
 				}
 			}
 		}
