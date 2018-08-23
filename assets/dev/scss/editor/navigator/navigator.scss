@@ -82,7 +82,7 @@
 	&__item {
 		display: flex;
 		height: 32px;
-		@include padding-end(9px);
+		@include padding-end(4px);
 		font-size: 12px;
 		border-bottom: 1px solid $editor-background;
 		cursor: pointer;
@@ -201,8 +201,12 @@
 
 		&__title {
 			flex-grow: 1;
+			overflow: hidden;
 
 			&__text {
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				overflow: hidden;
 
 				&[contenteditable="true"] {
 					outline: none;
@@ -217,6 +221,7 @@
 		&__toggle {
 			text-align: $end;
 			font-size: 13px;
+			padding: 0 5px;
 		}
 
 		&--hidden {
