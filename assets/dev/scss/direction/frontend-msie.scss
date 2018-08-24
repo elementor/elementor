@@ -8,7 +8,7 @@ $direction: ltr;
 @import "../frontend/breakpoints/breakpoints";
 @import "../helpers/mixins";
 
-.elementor-is-msie {
+.elementor-msie {
 
 	.elementor-grid {
 		display: flex;
