@@ -75,10 +75,10 @@
 			if ( ! isIE ) {
 				return;
 			}
-			elements.$body.addClass( 'elementor-is-msie' );
+			elements.$body.addClass( 'elementor-msie' );
 
 			var $frontendCss = jQuery( '#elementor-frontend-css' ),
-				msieCss = $frontendCss[0].outerHTML.replace( 'css/frontend', 'css/frontend-msie' );
+				msieCss = $frontendCss[0].outerHTML.replace( 'css/frontend', 'css/frontend-msie' ).replace( 'elementor-frontend-css', 'elementor-frontend-msie-css' );
 
 				$frontendCss.after( msieCss );
 			};
