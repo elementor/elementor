@@ -187,6 +187,7 @@ module.exports = function( grunt ) {
 						'assets/dev/js/editor/editor.js'
 					],
 					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
+					'assets/js/app.js': [ 'assets/dev/js/app/app.js' ],
 					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
 					'assets/js/gutenberg.js': [ 'assets/dev/js/admin/gutenberg.js' ],
 					'assets/js/new-template.js': [ 'assets/dev/js/admin/new-template/new-template.js' ],

@@ -388,6 +388,11 @@ class Plugin {
 	public $inspector;
 
 	/**
+	 * @var Core\App\Module
+	 */
+	public $app;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -480,6 +485,8 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
+		$this->app = new Core\App\Module();
+
 		$this->inspector = new Inspector();
 		$this->debugger = $this->inspector;
 
