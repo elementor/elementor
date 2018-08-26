@@ -1,14 +1,27 @@
+.elementor-loader-wrapper {
+	position: absolute;
+	width: 200px;
+	left: 50%;
+	top: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
 .elementor-loader {
-	border-radius: 5px;
-	margin: auto;
-	padding: 30px;
-	height: 140px;
-	width: 140px;
+	border-radius: 7px;
+	padding: 40px;
+	height: 150px;
+	width: 150px;
+	background-color: rgba(255, 255, 255, 0.9);
+	box-sizing: border-box; // For admin
+	box-shadow: 2px 2px 20px 4px rgba(0, 0, 0, .02);
 }
 
 .elementor-loader-boxes {
-	height: 80px;
-	width: 80px;
+	height: 100%;
+	width: 100%;
 	position: relative;
 }
 
@@ -16,6 +29,7 @@
 	$animation-time: 1.8s;
 
 	position: absolute;
+	background-color: $editor-background;
 	animation: load $animation-time linear infinite;
 
 	&:nth-of-type(1) {
@@ -60,24 +74,10 @@
 }
 
 .elementor-loading-title {
-
-	@keyframes load-title {
-		0% {
-			opacity: 1;
-		}
-		50% {
-			opacity: .6;
-		}
-		100% {
-			opacity: 1;
-		}
-	}
-
-	color: $editor-darkest;
+	color: $editor-light;
 	text-align: center;
 	text-transform: uppercase;
-	margin-top: 30px;
+	margin-top: 20px;
 	letter-spacing: 7px;
 	font-size: 10px;
-	animation: load-title 1.5s linear infinite;
 }
