@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Testing\Modules\history;
+namespace Elementor\Testing\Modules\History;
 
 use Elementor\Modules\History\Module;
 use Elementor\Testing\Elementor_Test_Base;
