@@ -5,7 +5,7 @@
 .notice {
 
 	&.elementor-message {
-		@include border-start-property(color, $editor-accent !important);
+		border: none;
 		padding: 20px;
 
 		.elementor-message-inner {
@@ -21,8 +21,7 @@
 		}
 
 		.elementor-message-icon {
-			color: $editor-accent;
-			font-size: 40px;
+			font-size: 20px;
 			width: 40px;
 		}
 
@@ -64,6 +63,14 @@
 					box-shadow: inset 0 1px 0 #7c1337;
 					transform: translateY(1px);
 				}
+			}
+		}
+
+		.elementor-message-actions {
+			margin-top: 10px;
+
+			.button.button-primary {
+				@include margin-end(5px);
 			}
 		}
 	}

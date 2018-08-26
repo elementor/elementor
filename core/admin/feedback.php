@@ -185,12 +185,14 @@ class Feedback {
 		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
 			<div class="elementor-message-inner">
 				<div class="elementor-message-icon">
-					<i class="eicon-elementor-square" aria-hidden="true"></i>
+                    <div class="e-logo-wrapper">
+                        <i class="eicon-elementor" aria-hidden="true"></i>
+                    </div>
 				</div>
 				<div class="elementor-message-content">
-					<p><strong><?php echo __( 'Congrats!', 'elementor' ); ?></strong> <?php _e( 'You just created your 10th+ page - you are a true Elementor hero! If you can spare a minute, I\'d really appreciate leaving us a five star review.', 'elementor' ); ?></p>
+					<p><strong><?php echo __( 'Congrats!', 'elementor' ); ?></strong> <?php _e( 'You created over 10 pages - you are a true Elementor hero! If you can spare a minute, please help us by leaving a five star review on WordPress.org.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
-						<a href="https://wordpress.org/support/plugin/elementor/reviews/?filter=5#new-post" target="_blank" class="button button-primary"><?php _e( 'Happy to Help', 'elementor' ); ?></a>
+						<a href="https://go.elementor.com/admin-review/" target="_blank" class="button button-primary"><?php _e( 'Happy To Help', 'elementor' ); ?></a>
 						<a href="#" class="button elementor-button-notice-dismiss"><?php _e( 'Hide Notification', 'elementor' ); ?></a>
 					</p>
 				</div>

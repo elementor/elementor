@@ -408,9 +408,11 @@ class Admin {
 		?>
 		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
 			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<i class="eicon-elementor-square" aria-hidden="true"></i>
-				</div>
+                <div class="elementor-message-icon">
+                    <div class="e-logo-wrapper">
+                        <i class="eicon-elementor" aria-hidden="true"></i>
+                    </div>
+                </div>
 				<div class="elementor-message-content">
 					<strong><?php echo __( 'Update Notification', 'elementor' ); ?></strong>
 					<p>
@@ -465,7 +467,7 @@ class Admin {
 				/* translators: 1: Elementor, 2: Link to plugin review */
 				__( 'Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!', 'elementor' ),
 				'<strong>' . __( 'Elementor', 'elementor' ) . '</strong>',
-				'<a href="https://wordpress.org/support/plugin/elementor/reviews/?filter=5#new-post" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+				'<a href="https://go.elementor.com/admin-review/" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 			);
 		}
 
