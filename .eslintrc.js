@@ -1,7 +1,7 @@
 module.exports = {
 	extends: [
 		'wordpress',
-		//'plugin:wordpress/esnext',
+		'plugin:wordpress/esnext',
 		//'plugin:react/recommended',
 	],
 	plugins: [
@@ -20,13 +20,6 @@ module.exports = {
 		elementor: true,
 		DialogsManager: true,
 		module: true,
-	},
-	'parserOptions': {
-		'ecmaVersion': 6,
-		'sourceType': 'module',
-		'ecmaFeatures': {
-			'jsx': true
-		}
 	},
 	rules: {
 		// custom canceled rules
