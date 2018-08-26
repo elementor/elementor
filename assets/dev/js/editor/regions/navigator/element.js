@@ -18,6 +18,7 @@ module.exports = Marionette.CompositeView.extend( {
 		'click @ui.toggleList': 'onToggleListClick',
 		'dblclick @ui.title': 'onTitleDoubleClick',
 		'keydown @ui.title': 'onTitleKeyDown',
+		'paste @ui.title': 'onTitlePaste',
 		'sortstart @ui.elements': 'onSortStart',
 		'sortover @ui.elements': 'onSortOver',
 		'sortout @ui.elements': 'onSortOut',
@@ -284,6 +285,12 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 	},
 
+	onTitlePaste: function( event ) {
+		event.preventDefault();
+
+		document.execCommand( 'insertHTML', false, event.originalEvent.clipboardData.getData( 'text/plain' ) );
+	},
+
 	onToggleListClick: function( event ) {
 		event.stopPropagation();
 
@@ -292,6 +299,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 	onSortStart: function( event, ui ) {
 		this.model.trigger( 'request:sort:start', event, ui );
+
+		jQuery( ui.item ).children( '.elementor-navigator__item' ).trigger( 'click' );
 
 		elementor.navigator.getLayout().activateElementsMouseInteraction();
 	},
