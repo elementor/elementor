@@ -1,17 +1,21 @@
 <?php
 namespace Elementor\Testing\Modules\history;
 
+use Elementor\Editor;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Testing\Elementor_Test_AJAX;
+use Elementor\Utils;
 
 class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 
 	private $revisions_manager;
+	private $fake_post_id = 1234;
 
 	public function setUp() {
 		parent::setUp();
 		if ( ! $this->revisions_manager ) {
-			$this->revisions_manager = $this->elementor()->revisions_manager;
+			$this->define_doing_ajax();
+			$this->revisions_manager = new Revisions_Manager();
 		}
 	}
 
@@ -163,6 +167,51 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 		$this->assertTrue( $this->check_revisions( $post_id, $autosave_post_id ) );
 	}
 
+
+	public function test_should_not_revision_data_on_request_because_of_unset_revision_ID() {
+		$response = $this->setUp_test_for_on_revision_data_request();
+
+		$this->assertFalse( $response['success'],
+			'the function "on_revision_data_request" should return "success = false"' );
+		$this->assertEquals( 'You must set the revision ID.', $response['data'],
+			'the function "on_revision_data_request" should return "data = You must set the revision ID."' );
+	}
+
+	public function test_should_not_revision_data_on_request_because_of_invalid_revision() {
+		$_POST['id'] = $this->fake_post_id;
+
+		$response = $this->setUp_test_for_on_revision_data_request();
+
+		$this->assertFalse( $response['success'],
+			'the function "on_revision_data_request" should return "success = false"' );
+		$this->assertEquals( 'Invalid revision.', $response['data'],
+			'the function "on_revision_data_request" should return "data = Invalid revision."' );
+	}
+
+
+	public function test_should_not_revision_data_on_request_because_of_access_denied() {
+		$_POST['id'] = $this->factory()->get_default_post();
+		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
+
+		$response = $this->setUp_test_for_on_revision_data_request();
+
+		$this->assertFalse( $response['success'],
+			'the function "on_revision_data_request" should return "success = false"' );
+		$this->assertEquals( __( 'Access denied.', 'elementor' ), $response['data'],
+			'the function "on_revision_data_request" should return "data = ' . __( 'Access denied.', 'elementor' ) . '"' );
+	}
+
+	public function test_should_revision_data_on_request() {
+		$_POST['id'] = $this->factory()->get_default_post();
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+
+		$response = $this->setUp_test_for_on_revision_data_request();
+
+		$this->assertTrue( $response['success'],
+			'the function "on_revision_data_request" should return "success = false"' );
+		$this->assertArrayHaveKeys( [ 'settings', 'elements' ], $response['data'] );
+	}
+
 	public function test_should_add_revision_support_for_all_post_types() {
 		Revisions_Manager::add_revision_support_for_all_post_types();
 
@@ -219,5 +268,17 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 		$child_elementor_meta_data = get_post_meta( $autosave_post_id, '_elementor_meta_data', true );
 
 		return $child_elementor_meta_data === $parent_elementor_meta_data;
+	}
+
+	private function define_doing_ajax() {
+		if ( ! Utils::is_ajax() ) {
+			define( 'DOING_AJAX', true );
+		}
+	}
+
+	private function setUp_test_for_on_revision_data_request() {
+		$_POST['_nonce'] = wp_create_nonce( Editor::EDITING_NONCE_KEY );
+
+		return $this->_handleAjaxAndDecode( 'elementor_get_revision_data' );
 	}
 }
