@@ -69,10 +69,26 @@
 			return settingsObject;
 		};
 
+		var addIeCompatibility = function() {
+			var isIE = 'Microsoft Internet Explorer' === navigator.appName ||  !! navigator.userAgent.match( /Trident/g ) ||  !! navigator.userAgent.match( /MSIE/g ) || !! navigator.userAgent.match( /rv:11/ );
+
+			if ( ! isIE ) {
+				return;
+			}
+			elements.$body.addClass( 'elementor-msie' );
+
+			var $frontendCss = jQuery( '#elementor-frontend-css' ),
+				msieCss = $frontendCss[0].outerHTML.replace( 'css/frontend', 'css/frontend-msie' ).replace( 'elementor-frontend-css', 'elementor-frontend-msie-css' );
+
+				$frontendCss.after( msieCss );
+			};
+
 		this.init = function() {
 			self.hooks = new EventManager();
 
 			initElements();
+
+			addIeCompatibility();
 
 			bindEvents();
 
