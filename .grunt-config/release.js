@@ -1,7 +1,6 @@
 /**
  * Grunt release task config
  * @package Elementor
- * @type {{options: {bump: boolean, npm: boolean, commit: boolean, tagName: string, commitMessage: string, tagMessage: string}}}
  */
 module.exports = {
 	options: {

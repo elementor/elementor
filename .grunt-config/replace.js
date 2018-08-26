@@ -1,7 +1,3 @@
-/**
- *
- * @type {{plugin_main: {src: string[], overwrite: boolean, replacements: *[]}, readme: {src: string[], overwrite: boolean, replacements: {from: RegExp, to: string}[]}, packageFile: {src: string[], overwrite: boolean, replacements: {from: RegExp, to: string}[]}}}
- */
 module.exports = {
 	plugin_main: {
 		src: [ 'elementor.php' ],

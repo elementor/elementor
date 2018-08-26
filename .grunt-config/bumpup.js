@@ -1,7 +1,6 @@
 /**
  * Grunt bumpup task config
  * @package Elementor
- * @type {{options: {updateProps: {pkg: string}}, file: string}}
  */
 module.exports = {
 	options: {

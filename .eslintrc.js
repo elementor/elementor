@@ -21,6 +21,13 @@ module.exports = {
 		DialogsManager: true,
 		module: true,
 	},
+	'parserOptions': {
+		'ecmaVersion': 6,
+		'sourceType': 'module',
+		'ecmaFeatures': {
+			'jsx': true
+		}
+	},
 	rules: {
 		// custom canceled rules
 		'no-var': 'off',

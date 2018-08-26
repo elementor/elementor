@@ -1,6 +1,4 @@
 /* global ElementorConfig */
-var App;
-
 Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
 	options = {
 		evaluate: /<#([\s\S]+?)#>/g,
@@ -11,7 +9,7 @@ Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, opti
 	return _.template( rawTemplate, options );
 };
 
-App = Marionette.Application.extend( {
+const App = Marionette.Application.extend( {
 	previewLoadedOnce: false,
 
 	helpers: require( 'elementor-editor-utils/helpers' ),
