@@ -263,12 +263,14 @@ class Tracker {
 		<div class="notice updated elementor-message">
 			<div class="elementor-message-inner">
 				<div class="elementor-message-icon">
-					<i class="eicon-elementor-square" aria-hidden="true"></i>
+                    <div class="e-logo-wrapper">
+                        <i class="eicon-elementor" aria-hidden="true"></i>
+                    </div>
 				</div>
 				<div class="elementor-message-content">
 					<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php echo __( 'Learn more.', 'elementor' ); ?></a></p>
 					<p class="elementor-message-actions">
-						<a href="<?php echo $optin_url; ?>" class="button-primary"><?php echo __( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php echo __( 'No thanks', 'elementor' ); ?></a>
+						<a href="<?php echo $optin_url; ?>" class="button button-primary"><?php echo __( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php echo __( 'No thanks', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
