@@ -204,9 +204,7 @@
 			overflow: hidden;
 
 			&__text {
-				text-overflow: ellipsis;
 				white-space: nowrap;
-				overflow: hidden;
 
 				&[contenteditable="true"] {
 					outline: none;
@@ -214,6 +212,11 @@
 					background-color: #fff;
 					padding: 2px 3px;
 					box-shadow: 0 0 4px rgba(0,0,0,0.2);
+				}
+
+				&:not([contenteditable="true"]) {
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 			}
 		}
