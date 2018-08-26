@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Testing\Modules\History;
 
-use Elementor\Core\Base\Document;
 use Elementor\Editor;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Testing\Elementor_Test_AJAX;
@@ -76,7 +75,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 
 		$ret = Revisions_Manager::get_revisions( $child_post_id, [], false );
 		$this->assertEquals( $ret[0], $child_post_id );
-
 
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 
@@ -168,7 +166,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 		$this->assertTrue( $this->check_revisions( $post_id, $autosave_post_id ) );
 	}
 
-
 	public function test_should_not_get_revision_data_on_request_because_of_unset_revision_ID() {
 		$response = $this->setUp_test_for_on_revision_data_request();
 
@@ -188,7 +185,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 		$this->assertEquals( 'Invalid revision.', $response['data'],
 			'the function "on_revision_data_request" should return "data = Invalid revision."' );
 	}
-
 
 	public function test_should_not_get_revision_data_on_request_because_of_access_denied() {
 		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
@@ -232,7 +228,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 		$this->assertEquals( 'Invalid revision.', $response['data'],
 			'the function "on_delete_revision_request" should return "data = Invalid revision."' );
 	}
-
 
 	public function test_should_not_delete_revision_on_request_because_of_access_denied() {
 		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
@@ -287,8 +282,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 		$this->assertEquals( $child_id, $ret['config']['current_revision_id'] );
 		$this->assertEquals( 2, count( $ret['latest_revisions'] ) );
 		$this->assertEquals( [ $parent_id, $child_id ], $ret['revisions_ids'] );
-
-
 	}
 
 	public function test_should_add_revision_support_for_all_post_types() {
