@@ -300,6 +300,8 @@ module.exports = Marionette.CompositeView.extend( {
 	onSortStart: function( event, ui ) {
 		this.model.trigger( 'request:sort:start', event, ui );
 
+		jQuery( ui.item ).children( '.elementor-navigator__item' ).trigger( 'click' );
+
 		elementor.navigator.getLayout().activateElementsMouseInteraction();
 	},
 
