@@ -1,11 +1,11 @@
 #elementor-navigator {
 	position: fixed;
 	top: 100px;
-	width: 250px;
+	width: 220px;
 	height: 300px;
 	@include end(30px);
 	background-color: #fff;
-	border-radius: 3px;
+	border-radius: 5px;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
@@ -27,14 +27,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 10px;
+		padding: 12px 10px;
 		background-color: #fff;
 		border-bottom: 1px solid $editor-background;
 		cursor: move;
-
-		&__title {
-			font-weight: 500;
-		}
 	}
 
 	&__close,
@@ -48,7 +44,7 @@
 	}
 
 	&__toggle-all {
-		font-size: 14px;
+		font-size: 13px;
 	}
 
 	&__close {
@@ -56,7 +52,7 @@
 	}
 
 	&__elements {
-		height: calc(100% - 50px);
+		height: calc(100% - 49px);
 		overflow: auto;
 		position: relative;
 
@@ -73,6 +69,7 @@
 		text-align: center;
 		background-color: #fff;
 		border-top: 1px solid $editor-background;
+		color: $editor-light;
 
 		.elementor-navigator-docked & {
 			display: none;
@@ -85,7 +82,7 @@
 	&__item {
 		display: flex;
 		height: 32px;
-		@include padding-end(9px);
+		@include padding-end(4px);
 		font-size: 12px;
 		border-bottom: 1px solid $editor-background;
 		cursor: pointer;
@@ -180,16 +177,13 @@
 				}
 			}
 
-			&:not(.ui-sortable-helper) {
+			> .elementor-navigator__item {
 
-				> .elementor-navigator__item {
+				&.elementor-editing {
+					background-color: $editor-info;
 
-					&.elementor-editing {
-						background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
-
-						> * {
-							color: #fff;
-						}
+					> * {
+						color: #fff;
 					}
 				}
 			}
@@ -207,13 +201,22 @@
 
 		&__title {
 			flex-grow: 1;
-			outline: none;
-			align-self: center;
+			overflow: hidden;
 
-			&[contenteditable="true"] {
+			&__text {
+				white-space: nowrap;
 
-				&::selection {
-					background-color: #529ac9;
+				&[contenteditable="true"] {
+					outline: none;
+					color: $editor-dark;
+					background-color: #fff;
+					padding: 2px 3px;
+					box-shadow: 0 0 4px rgba(0,0,0,0.2);
+				}
+
+				&:not([contenteditable="true"]) {
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 			}
 		}
@@ -221,6 +224,7 @@
 		&__toggle {
 			text-align: $end;
 			font-size: 13px;
+			padding: 0 5px;
 		}
 
 		&--hidden {
