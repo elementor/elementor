@@ -78,6 +78,7 @@ const webpackConfig = {
 	module: moduleRules,
 	resolve: aliasList,
 	entry: entry,
+	watch: true,
 };
 
 const webpackProductionConfig = {
