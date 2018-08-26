@@ -168,11 +168,11 @@ App = Marionette.Application.extend( {
 		return this.envData.gecko || this.envData.webkit;
 	},
 
-	getElementData: function( modelElement ) {
-		var elType = modelElement.get( 'elType' );
+	getElementData: function( model ) {
+		var elType = model.get( 'elType' );
 
 		if ( 'widget' === elType ) {
-			var widgetType = modelElement.get( 'widgetType' );
+			var widgetType = model.get( 'widgetType' );
 
 			if ( ! this.config.widgets[ widgetType ] ) {
 				return false;
@@ -185,7 +185,13 @@ App = Marionette.Application.extend( {
 			return false;
 		}
 
-		return this.config.elements[ elType ];
+		var elementConfig = this.helpers.cloneObject( this.config.elements[ elType ] );
+
+		if ( 'section' === elType && model.get( 'isInner' ) ) {
+			elementConfig.title = elementor.translate( 'inner_section' );
+		}
+
+		return elementConfig;
 	},
 
 	getElementControls: function( modelElement ) {
