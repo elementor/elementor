@@ -2,9 +2,9 @@
 namespace Elementor\Testing\Modules\history;
 
 use Elementor\Modules\History\Revisions_Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Testing\Elementor_Test_AJAX;
 
-class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
+class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 
 	private $revisions_manager;
 
