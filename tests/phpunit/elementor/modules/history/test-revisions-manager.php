@@ -4,7 +4,6 @@ namespace Elementor\Testing\Modules\History;
 use Elementor\Editor;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Testing\Elementor_Test_AJAX;
-use Elementor\Utils;
 
 class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 
@@ -340,12 +339,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 		$child_elementor_meta_data = get_post_meta( $autosave_post_id, '_elementor_meta_data', true );
 
 		return $child_elementor_meta_data === $parent_elementor_meta_data;
-	}
-
-	private function define_doing_ajax() {
-		if ( ! Utils::is_ajax() ) {
-			define( 'DOING_AJAX', true );
-		}
 	}
 
 	private function setUp_test_for_on_revision_data_request() {
