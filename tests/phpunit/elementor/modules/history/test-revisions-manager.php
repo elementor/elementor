@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Testing\Modules\history;
+namespace Elementor\Testing\Modules\History;
 
 use Elementor\Editor;
 use Elementor\Modules\History\Revisions_Manager;
