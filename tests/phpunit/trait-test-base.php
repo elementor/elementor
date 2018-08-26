@@ -9,7 +9,7 @@ trait Elementor_Test {
 	/**
 	 * @return \WP_UnitTestCase
 	 */
-	abstract function getSelf();
+	abstract protected function getSelf();
 
 	public function __get( $name ) {
 		switch ( $name ) {
