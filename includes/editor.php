@@ -573,7 +573,7 @@ class Editor {
 				'settings' => __( 'Settings', 'elementor' ),
 
 				// Elements.
-				'inner_section' => __( 'Columns', 'elementor' ),
+				'inner_section' => __( 'Inner Section', 'elementor' ),
 
 				// Control Order.
 				'asc' => __( 'Ascending order', 'elementor' ),

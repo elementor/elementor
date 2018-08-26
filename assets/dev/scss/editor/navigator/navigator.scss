@@ -1,11 +1,11 @@
 #elementor-navigator {
 	position: fixed;
 	top: 100px;
-	width: 250px;
+	width: 220px;
 	height: 300px;
 	@include end(30px);
 	background-color: #fff;
-	border-radius: 3px;
+	border-radius: 5px;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
@@ -27,14 +27,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 10px;
+		padding: 12px 10px;
 		background-color: #fff;
 		border-bottom: 1px solid $editor-background;
 		cursor: move;
-
-		&__title {
-			font-weight: 500;
-		}
 	}
 
 	&__close,
@@ -48,7 +44,7 @@
 	}
 
 	&__toggle-all {
-		font-size: 14px;
+		font-size: 13px;
 	}
 
 	&__close {
@@ -72,6 +68,8 @@
 		bottom: 0;
 		text-align: center;
 		background-color: #fff;
+		border-top: 1px solid $editor-background;
+		color: $editor-light;
 
 		.elementor-navigator-docked & {
 			display: none;
@@ -84,7 +82,7 @@
 	&__item {
 		display: flex;
 		height: 32px;
-		@include padding-end(9px);
+		@include padding-end(4px);
 		font-size: 12px;
 		border-bottom: 1px solid $editor-background;
 		cursor: pointer;
@@ -182,7 +180,7 @@
 			> .elementor-navigator__item {
 
 				&.elementor-editing {
-					background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
+					background-color: $editor-info;
 
 					> * {
 						color: #fff;
@@ -203,8 +201,10 @@
 
 		&__title {
 			flex-grow: 1;
+			overflow: hidden;
 
 			&__text {
+				white-space: nowrap;
 
 				&[contenteditable="true"] {
 					outline: none;
@@ -213,12 +213,18 @@
 					padding: 2px 3px;
 					box-shadow: 0 0 4px rgba(0,0,0,0.2);
 				}
+
+				&:not([contenteditable="true"]) {
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
 			}
 		}
 
 		&__toggle {
 			text-align: $end;
 			font-size: 13px;
+			padding: 0 5px;
 		}
 
 		&--hidden {

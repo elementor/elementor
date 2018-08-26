@@ -65,7 +65,7 @@ class Manager extends BaseManager {
 	 */
 	public static function get_page( $id ) {
 		// translators: %s Elementor Document Settings API URL
-		_deprecated_file( __METHOD__, '1.6.0', __( 'the new settings API', 'elementor' ), sprintf( __( 'See <a href="%s">Elementor Document Settings</a> for more information.', 'elementor' ), 'https://developers.elementor.com/elementor-document-settings/' ) );
+		_deprecated_file( __METHOD__, '1.6.0', 'the new settings API', sprintf( 'See <a href="%s">Elementor Document Settings</a> for more information.', 'https://developers.elementor.com/elementor-document-settings/' ) );
 
 		return SettingsManager::get_settings_managers( 'page' )->get_model( $id );
 	}
