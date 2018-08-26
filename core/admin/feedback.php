@@ -3,6 +3,7 @@ namespace Elementor\Core\Admin;
 
 use Elementor\Api;
 use Elementor\Tracker;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -156,10 +157,55 @@ class Feedback {
 		wp_send_json_success();
 	}
 
+	public function admin_notices() {
+		$notice_id = 'rate_us_feedback';
+		if ( User::is_user_notice_viewed( $notice_id ) ) {
+			return;
+		}
+
+		if ( ! in_array( get_current_screen()->id, [ 'dashboard' ], true ) ) {
+			return;
+		}
+
+		$elementor_pages = new \WP_Query( [
+			'post_type' => 'any',
+			'post_status' => 'publish',
+			'fields' => 'ids',
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			'meta_key' => '_elementor_edit_mode',
+			'meta_value' => 'builder',
+		] );
+
+		if ( 10 > $elementor_pages->post_count ) {
+			return;
+		}
+
+		?>
+		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<i class="eicon-elementor-square" aria-hidden="true"></i>
+				</div>
+				<div class="elementor-message-content">
+					<p><strong><?php echo __( 'Congrats!', 'elementor' ); ?></strong> <?php _e( 'You just created your 10th+ page - you are a true Elementor hero! If you can spare a minute, I\'d really appreciate leaving us a five star review.', 'elementor' ); ?></p>
+					<p class="elementor-message-actions">
+						<a href="https://wordpress.org/support/plugin/elementor/reviews/?filter=5#new-post" target="_blank" class="button button-primary"><?php _e( 'Happy to Help', 'elementor' ); ?></a>
+						<a href="#" class="button elementor-button-notice-dismiss"><?php _e( 'Hide Notification', 'elementor' ); ?></a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
 	public function __construct() {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_feedback_dialog_scripts' ] );
 
 		// Ajax.
 		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
+
+		// Review Plugin
+		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 	}
 }
