@@ -76,7 +76,7 @@ trait Elementor_Test {
 			);
 		}
 
-		if ( ! ( is_callable( $function_to_check ) ||  ( ! $function_to_check )) ) {
+		if ( ! ( is_callable( $function_to_check ) || ( ! $function_to_check ) ) ) {
 			throw \PHPUnit_Util_InvalidArgumentHelper::factory(
 				1,
 				'only callback of false'
@@ -84,5 +84,11 @@ trait Elementor_Test {
 		}
 
 		$this->getSelf()->assertNotFalse( has_filter( $tag, $function_to_check ) );
+	}
+
+	public function define_doing_ajax() {
+		if ( ! \Elementor\Utils::is_ajax() ) {
+			define( 'DOING_AJAX', true );
+		}
 	}
 }
