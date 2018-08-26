@@ -208,7 +208,7 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 		$response = $this->setUp_test_for_on_revision_data_request();
 
 		$this->assertTrue( $response['success'],
-			'the function "on_revision_data_request" should return "success = false"' );
+			'the function "on_revision_data_request" should return "success = true"' );
 		$this->assertArrayHaveKeys( [ 'settings', 'elements' ], $response['data'] );
 	}
 
