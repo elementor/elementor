@@ -82,10 +82,6 @@ body {
 			}
 		}
 
-		#elementor-editor {
-			display: table;
-		}
-
 		#postdivrich {
 			display: none !important;
 		}
@@ -160,35 +156,30 @@ body {
 }
 
 #elementor-editor {
-	background-color: #F7F7F7;
-	border: 1px solid #DDD;
 	height: 300px;
 	width: 100%;
 	transition: all 0.5s ease;
+
+	@import "../editor/loader";
+}
+
+#elementor-go-to-edit-page-link {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid #DDD;
+	background-color: #F7F7F7;
+	text-decoration: none;
+	position: relative;
 
 	&:hover {
 		background-color: #ffffff;
 	}
 
-	@import "../editor/loader";
-
-	.elementor-loader {
-		height: 80px;
-		width: 80px;
-		background-color: $editor-background-light;
+	&:focus {
+		box-shadow: none;
 	}
-
-	.elementor-loader-box {
-		background-color: $editor-light;
-	}
-
-}
-
-#elementor-go-to-edit-page-link {
-	display: table-cell;
-	vertical-align: middle;
-	text-align: center;
-	text-decoration: none;
 
 	&.elementor-animate {
 
