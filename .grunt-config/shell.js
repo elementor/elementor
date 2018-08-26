@@ -1,7 +1,4 @@
-/**
- *
- * @type {{git_add_all: {command: string}}}
- */
+
 const shell = {
 	git_add_all: {
 		command: [

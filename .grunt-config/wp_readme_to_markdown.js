@@ -1,6 +1,3 @@
-/**
- * @type {{github: {options: {wordpressPluginSlug: string, travisUrlRepo: string, gruntDependencyStatusUrl: string, coverallsRepo: string, screenshot_url: string}, files: {"README.md": string}}}}
- */
 module.exports = {
 	github: {
 		options: {

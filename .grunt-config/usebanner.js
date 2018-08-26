@@ -1,7 +1,6 @@
 /**
  * Grunt usebanner task config
  * @package Elementor
- * @type {{dist: {options: {banner: string}, files: {src: string[]}}}}
  */
 module.exports = {
 	dist: {

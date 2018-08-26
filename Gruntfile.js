@@ -1,10 +1,10 @@
 module.exports = function( grunt ) {
 	'use strict';
 
-	var fs = require( 'fs' ),
+	const fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' );
 
-	require('load-grunt-tasks')(grunt);
+	require( 'load-grunt-tasks' )( grunt );
 
 	// Project configuration
 	grunt.initConfig( {
@@ -43,15 +43,17 @@ module.exports = function( grunt ) {
 		'checktextdomain'
 	] );
 
-	grunt.registerTask( 'scripts', function( isDevMode ) {
-		if ( ! isDevMode ) {
-			grunt.task.run('webpack:prod');
-		} else {
-			grunt.task.run('webpack:dev');
+	grunt.registerTask( 'scripts', ( isDevMode = false ) => {
+		let taskName = 'webpack:production';
+
+		if ( isDevMode ) {
+			taskName = 'webpack:development';
 		}
+
+		grunt.task.run( taskName );
 	} );
 
-	grunt.registerTask( 'styles', function( isDevMode ) {
+	grunt.registerTask( 'styles', ( isDevMode = false ) => {
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
@@ -60,7 +62,7 @@ module.exports = function( grunt ) {
 		}
 	} );
 
-	grunt.registerTask( 'css_templates', function() {
+	grunt.registerTask( 'css_templates', () => {
 		grunt.task.run( 'css_templates_proxy:templates' );
 
 		grunt.config( 'sass.dist', {
@@ -86,7 +88,7 @@ module.exports = function( grunt ) {
 	} );
 
 	// Writing the proxy file as a grunt task, in order to fit in with the tasks queue
-	grunt.registerTask( 'css_templates_proxy', function( mode ) {
+	grunt.registerTask( 'css_templates_proxy', ( mode ) => {
 		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "' + mode + '";' );
 	} );
 
@@ -98,7 +100,7 @@ module.exports = function( grunt ) {
 		'default' // Remove banners for GitHub
 	] );
 
-	grunt.registerTask( 'publish', function( releaseType ) {
+	grunt.registerTask( 'publish', ( releaseType ) => {
 		releaseType = releaseType ? releaseType : 'patch';
 
 		var prevStableVersion = 'patch' === releaseType ? pkgInfo.prev_stable_version : pkgInfo.version;

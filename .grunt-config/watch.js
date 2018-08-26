@@ -1,7 +1,6 @@
 /**
  * Grunt watch task config
  * @package Elementor
- * @type {{styles: {files: string[], tasks: string[], options: {spawn: boolean, livereload: boolean}}, scripts: {files: string[], tasks: string[], options: {spawn: boolean, livereload: boolean}}}}
  */
 const watch = {
 	styles: {

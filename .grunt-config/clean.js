@@ -1,7 +1,6 @@
 /**
  * Grunt clean task config
  * @package Elementor
- * @type {{main: string[], qunit: string[]}}
  */
 module.exports = {
 	//Clean up build folder
