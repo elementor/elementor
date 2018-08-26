@@ -7,9 +7,8 @@ use Elementor\Testing\Elementor_Test_AJAX;
 
 class Elementor_Test_Revisions_Manager_Ajax extends Elementor_Test_AJAX {
 
-	private $fake_post_id = 1234;
-
 	private $revisions_manager;
+	private $fake_post_id = 1234;
 
 	public function setUp() {
 		parent::setUp();
