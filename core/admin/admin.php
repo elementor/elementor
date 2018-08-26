@@ -168,7 +168,7 @@ class Admin {
 					<?php echo __( 'Back to WordPress Editor', 'elementor' ); ?>
 				</span>
 				<span class="elementor-switch-mode-off">
-					<i class="eicon-elementor" aria-hidden="true"></i>
+					<i class="eicon-elementor-square" aria-hidden="true"></i>
 					<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
 				</span>
 			</button>
@@ -176,7 +176,7 @@ class Admin {
 		<div id="elementor-editor">
 			<a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
 				<div id="elementor-editor-button" class="button button-primary button-hero">
-					<i class="eicon-elementor" aria-hidden="true"></i>
+					<i class="eicon-elementor-square" aria-hidden="true"></i>
 					<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
 				</div>
 				<div class="elementor-loader-wrapper">

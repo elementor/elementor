@@ -48,12 +48,14 @@
 	margin: 15px 0;
 }
 
+#elementor-switch-mode-button,
 #elementor-editor-button {
 	outline: none;
 	cursor: pointer;
 
-	.eicon-elementor {
-		@include margin-end(5px);
+	i {
+		@include margin-end(3px);
+		font-size: 19px;
 	}
 }
 
@@ -172,6 +174,7 @@ body {
 	background-color: #F7F7F7;
 	text-decoration: none;
 	position: relative;
+	font-family: Sans-serif;
 
 	&:hover {
 		background-color: #ffffff;
