@@ -168,7 +168,7 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 	}
 
 
-	public function test_should_not_revision_data_on_request_because_of_unset_revision_ID() {
+	public function test_should_not_get_revision_data_on_request_because_of_unset_revision_ID() {
 		$response = $this->setUp_test_for_on_revision_data_request();
 
 		$this->assertFalse( $response['success'],
@@ -177,7 +177,7 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 			'the function "on_revision_data_request" should return "data = You must set the revision ID."' );
 	}
 
-	public function test_should_not_revision_data_on_request_because_of_invalid_revision() {
+	public function test_should_not_get_revision_data_on_request_because_of_invalid_revision() {
 		$_POST['id'] = $this->fake_post_id;
 
 		$response = $this->setUp_test_for_on_revision_data_request();
@@ -189,9 +189,9 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 	}
 
 
-	public function test_should_not_revision_data_on_request_because_of_access_denied() {
-		$_POST['id'] = $this->factory()->get_default_post();
+	public function test_should_not_get_revision_data_on_request_because_of_access_denied() {
 		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
+		$_POST['id'] = $this->factory()->get_default_post();
 
 		$response = $this->setUp_test_for_on_revision_data_request();
 
@@ -201,9 +201,9 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_AJAX {
 			'the function "on_revision_data_request" should return "data = ' . __( 'Access denied.', 'elementor' ) . '"' );
 	}
 
-	public function test_should_revision_data_on_request() {
-		$_POST['id'] = $this->factory()->get_default_post();
-		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+	public function test_should_get_revision_data_on_request() {
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+		$_POST['id'] = $this->factory()->create_and_get_default_post();
 
 		$response = $this->setUp_test_for_on_revision_data_request();
 
