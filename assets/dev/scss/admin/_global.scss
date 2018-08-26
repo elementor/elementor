@@ -48,12 +48,14 @@
 	margin: 15px 0;
 }
 
+#elementor-switch-mode-button,
 #elementor-editor-button {
 	outline: none;
 	cursor: pointer;
 
-	.eicon-elementor {
-		@include margin-end(5px);
+	i {
+		@include margin-end(3px);
+		font-size: 19px;
 	}
 }
 
@@ -80,10 +82,6 @@ body {
 				box-shadow: inset 0 1px 0 #ccc;
 				transform: translateY(1px);
 			}
-		}
-
-		#elementor-editor {
-			display: table;
 		}
 
 		#postdivrich {
@@ -160,35 +158,31 @@ body {
 }
 
 #elementor-editor {
-	background-color: #F7F7F7;
-	border: 1px solid #DDD;
 	height: 300px;
 	width: 100%;
 	transition: all 0.5s ease;
+
+	@import "../editor/loader";
+}
+
+#elementor-go-to-edit-page-link {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid #DDD;
+	background-color: #F7F7F7;
+	text-decoration: none;
+	position: relative;
+	font-family: Sans-serif;
 
 	&:hover {
 		background-color: #ffffff;
 	}
 
-	@import "../editor/loader";
-
-	.elementor-loader {
-		height: 80px;
-		width: 80px;
-		background-color: $editor-background-light;
+	&:focus {
+		box-shadow: none;
 	}
-
-	.elementor-loader-box {
-		background-color: $editor-light;
-	}
-
-}
-
-#elementor-go-to-edit-page-link {
-	display: table-cell;
-	vertical-align: middle;
-	text-align: center;
-	text-decoration: none;
 
 	&.elementor-animate {
 

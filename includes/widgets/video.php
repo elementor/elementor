@@ -131,7 +131,7 @@ class Widget_Video extends Widget_Base {
 						TagsModule::URL_CATEGORY,
 					],
 				],
-				'placeholder' => __( 'Enter your YouTube URL', 'elementor' ),
+				'placeholder' => __( 'Enter your URL', 'elementor' ) . ' (YouTube)',
 				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
 				'label_block' => true,
 				'condition' => [
@@ -152,7 +152,7 @@ class Widget_Video extends Widget_Base {
 						TagsModule::URL_CATEGORY,
 					],
 				],
-				'placeholder' => __( 'Enter your Vimeo URL', 'elementor' ),
+				'placeholder' => __( 'Enter your URL', 'elementor' ) . ' (Vimeo)',
 				'default' => 'https://vimeo.com/235215203',
 				'label_block' => true,
 				'condition' => [
@@ -173,7 +173,7 @@ class Widget_Video extends Widget_Base {
 						TagsModule::URL_CATEGORY,
 					],
 				],
-				'placeholder' => __( 'Enter your Dailymotion URL', 'elementor' ),
+				'placeholder' => __( 'Enter your URL', 'elementor' ) . ' (Dailymotion)',
 				'default' => 'https://www.dailymotion.com/video/x6koazf',
 				'label_block' => true,
 				'condition' => [
