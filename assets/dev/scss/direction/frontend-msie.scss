@@ -10,11 +10,11 @@ $direction: ltr;
 
 .elementor-msie {
 
-	.elementor-grid {
+	ul.products, .elementor-grid {
 		display: flex;
 		flex-wrap: wrap;
 
-		.elementor-grid-item {
+		li.product, .elementor-grid-item {
 			word-break: break-word;
 		}
 	}
@@ -39,16 +39,38 @@ $direction: ltr;
 		}
 	}
 
+	.elementor-element.elementor-wc-products.elementor-products-columns {
+		@mixin product_loop($device) {
+			@for $i from 1 through 12 {
+				&#{$device}-#{$i} {
+					ul.products li.product {
+						width: 100% / $i;
+					}
+				}
+			}
+		}
+		@include product_loop('');
+
+		@media (max-width: $screen-md-max) {
+			@include product_loop(-tablet);
+		}
+		@media (max-width: $screen-sm-max) {
+			@include product_loop(-mobile);
+		}
+	}
+
 	// TODO: This needs to be removed after pro update.
-	.elementor-posts {
+	.elementor-element.elementor-wc-products ul.products, .elementor-posts {
 		margin-right: -10px;
 		margin-left: -10px;
 
-		.elementor-post {
-			display: flex;
+		li.product, .elementor-post {
 			padding-right: 10px;
 			padding-left: 10px;
 			margin-bottom: 20px;
+		}
+		.elementor-post {
+			display: flex;
 		}
 	}
 }

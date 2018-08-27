@@ -38,5 +38,5 @@ var NewTemplateModule = ViewModule.extend( {
 } );
 
 jQuery( function() {
-	new NewTemplateModule();
+	window.elementorNewTemplate = new NewTemplateModule();
 } );

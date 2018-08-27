@@ -70,7 +70,7 @@ class Admin {
 			[
 				'jquery-ui-position',
 			],
-			'4.4.1',
+			'4.5.0',
 			true
 		);
 
@@ -168,7 +168,7 @@ class Admin {
 					<?php echo __( 'Back to WordPress Editor', 'elementor' ); ?>
 				</span>
 				<span class="elementor-switch-mode-off">
-					<i class="eicon-elementor" aria-hidden="true"></i>
+					<i class="eicon-elementor-square" aria-hidden="true"></i>
 					<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
 				</span>
 			</button>
@@ -176,7 +176,7 @@ class Admin {
 		<div id="elementor-editor">
 			<a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
 				<div id="elementor-editor-button" class="button button-primary button-hero">
-					<i class="eicon-elementor" aria-hidden="true"></i>
+					<i class="eicon-elementor-square" aria-hidden="true"></i>
 					<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
 				</div>
 				<div class="elementor-loader-wrapper">
@@ -409,7 +409,9 @@ class Admin {
 		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
 			<div class="elementor-message-inner">
 				<div class="elementor-message-icon">
-					<i class="eicon-elementor-square" aria-hidden="true"></i>
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
 				</div>
 				<div class="elementor-message-content">
 					<strong><?php echo __( 'Update Notification', 'elementor' ); ?></strong>
@@ -465,7 +467,7 @@ class Admin {
 				/* translators: 1: Elementor, 2: Link to plugin review */
 				__( 'Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!', 'elementor' ),
 				'<strong>' . __( 'Elementor', 'elementor' ) . '</strong>',
-				'<a href="https://wordpress.org/support/plugin/elementor/reviews/?filter=5#new-post" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+				'<a href="https://go.elementor.com/admin-review/" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 			);
 		}
 
