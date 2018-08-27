@@ -1,14 +1,14 @@
 ( function( $ ) {
-	'use strict';
+	var ViewModule = require( 'elementor-utils/view-module' );
 
-	var ElementorAdminApp = {
+	var ElementorAdmin = ViewModule.extend( {
 
 		maintenanceMode: null,
 
 		config: ElementorAdminConfig,
 
-		cacheElements: function() {
-			this.cache = {
+		getDefaultElements: function() {
+			var elements = {
 				$window: $( window ),
 				$body: $( 'body' ),
 				$switchMode: $( '#elementor-switch-mode' ),
@@ -23,19 +23,21 @@
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' )
 			};
 
-			this.cache.$settingsFormPages = this.cache.$settingsForm.find( '.elementor-settings-form-page' );
+			elements.$settingsFormPages = elements.$settingsForm.find( '.elementor-settings-form-page' );
 
-			this.cache.$activeSettingsPage = this.cache.$settingsFormPages.filter( '.elementor-active' );
+			elements.$activeSettingsPage = elements.$settingsFormPages.filter( '.elementor-active' );
 
-			this.cache.$settingsTabs = this.cache.$settingsTabsWrapper.children();
+			elements.$settingsTabs = elements.$settingsTabsWrapper.children();
 
-			this.cache.$activeSettingsTab = this.cache.$settingsTabs.filter( '.nav-tab-active' );
+			elements.$activeSettingsTab = elements.$settingsTabs.filter( '.nav-tab-active' );
+
+			return elements;
 		},
 
 		toggleStatus: function() {
 			var isElementorMode = this.isElementorMode();
 
-			this.cache.$body
+			this.elements.$body
 			    .toggleClass( 'elementor-editor-active', isElementorMode )
 			    .toggleClass( 'elementor-editor-inactive', ! isElementorMode );
 		},
@@ -43,13 +45,13 @@
 		bindEvents: function() {
 			var self = this;
 
-			self.cache.$switchModeButton.on( 'click', function( event ) {
+			self.elements.$switchModeButton.on( 'click', function( event ) {
 				event.preventDefault();
 
 				if ( self.isElementorMode() ) {
-					self.cache.$switchModeInput.val( '' );
+					self.elements.$switchModeInput.val( '' );
 				} else {
-					self.cache.$switchModeInput.val( true );
+					self.elements.$switchModeInput.val( true );
 
 					var $wpTitle = $( '#title' );
 
@@ -64,16 +66,16 @@
 					self.animateLoader();
 
 					$( document ).on( 'heartbeat-tick.autosave', function() {
-						self.cache.$window.off( 'beforeunload.edit-post' );
+						self.elements.$window.off( 'beforeunload.edit-post' );
 
-						location.href = self.cache.$goToEditLink.attr( 'href' );
+						location.href = self.elements.$goToEditLink.attr( 'href' );
 					} );
 				}
 
 				self.toggleStatus();
 			} );
 
-			self.cache.$goToEditLink.on( 'click', function() {
+			self.elements.$goToEditLink.on( 'click', function() {
 				self.animateLoader();
 			} );
 
@@ -144,7 +146,7 @@
 					} );
 			} );
 
-			self.cache.$settingsTabs.on( {
+			self.elements.$settingsTabs.on( {
 				click: function( event ) {
 					event.preventDefault();
 
@@ -201,12 +203,10 @@
 			}
 		},
 
-		init: function() {
+		onInit: function() {
+			ViewModule.prototype.onInit.apply( this, arguments );
+
 			this.setMarionetteTemplateCompiler();
-
-			this.cacheElements();
-
-			this.bindEvents();
 
 			this.initDialogsManager();
 
@@ -232,19 +232,19 @@
 		},
 
 		initTemplatesImport: function() {
-			if ( ! this.cache.$body.hasClass( 'post-type-elementor_library' ) ) {
+			if ( ! this.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
 				return;
 			}
 
 			var self = this,
-				$importButton = self.cache.$importButton,
-				$importArea = self.cache.$importArea;
+				$importButton = self.elements.$importButton,
+				$importArea = self.elements.$importArea;
 
-			self.cache.$formAnchor = $( 'h1' );
+			self.elements.$formAnchor = $( 'h1' );
 
 			$( '#wpbody-content' ).find( '.page-title-action:last' ).after( $importButton );
 
-			self.cache.$formAnchor.after( $importArea );
+			self.elements.$formAnchor.after( $importArea );
 
 			$importButton.on( 'click', function() {
 				$( '#elementor-import-template-area' ).toggle();
@@ -258,11 +258,11 @@
 		},
 
 		isElementorMode: function() {
-			return !! this.cache.$switchModeInput.val();
+			return !! this.elements.$switchModeInput.val();
 		},
 
 		animateLoader: function() {
-			this.cache.$goToEditLink.addClass( 'elementor-animate' );
+			this.elements.$goToEditLink.addClass( 'elementor-animate' );
 		},
 
 		goToSettingsTabFromHash: function() {
@@ -274,27 +274,27 @@
 		},
 
 		goToSettingsTab: function( tabName ) {
-			var $activePage = this.cache.$settingsFormPages.filter( '#' + tabName );
+			var $activePage = this.elements.$settingsFormPages.filter( '#' + tabName );
 
 			if ( ! $activePage.length ) {
 				return;
 			}
 
-			this.cache.$activeSettingsPage.removeClass( 'elementor-active' );
+			this.elements.$activeSettingsPage.removeClass( 'elementor-active' );
 
-			this.cache.$activeSettingsTab.removeClass( 'nav-tab-active' );
+			this.elements.$activeSettingsTab.removeClass( 'nav-tab-active' );
 
-			var $activeTab = this.cache.$settingsTabs.filter( '#elementor-settings-' + tabName );
+			var $activeTab = this.elements.$settingsTabs.filter( '#elementor-settings-' + tabName );
 
 			$activePage.addClass( 'elementor-active' );
 
 			$activeTab.addClass( 'nav-tab-active' );
 
-			this.cache.$settingsForm.attr( 'action', 'options.php#' + tabName  );
+			this.elements.$settingsForm.attr( 'action', 'options.php#' + tabName  );
 
-			this.cache.$activeSettingsPage = $activePage;
+			this.elements.$activeSettingsPage = $activePage;
 
-			this.cache.$activeSettingsTab = $activeTab;
+			this.elements.$activeSettingsTab = $activeTab;
 		},
 
 		roleManager: {
@@ -364,11 +364,11 @@
 				});
 			}
 		}
-	};
-
-	$( function() {
-		ElementorAdminApp.init();
 	} );
 
-	window.elementorAdmin = ElementorAdminApp;
+	$( function() {
+		window.elementorAdmin = new ElementorAdmin();
+
+		elementorAdmin.elements.$window.trigger( 'elementor/admin/init' );
+	} );
 }( jQuery ) );
