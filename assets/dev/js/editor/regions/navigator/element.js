@@ -5,7 +5,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	ui: {
 		item: '> .elementor-navigator__item',
-		title: '> .elementor-navigator__item .elementor-navigator__element__title',
+		title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
 		toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
 		toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
 		elements: '> .elementor-navigator__elements'
@@ -18,6 +18,7 @@ module.exports = Marionette.CompositeView.extend( {
 		'click @ui.toggleList': 'onToggleListClick',
 		'dblclick @ui.title': 'onTitleDoubleClick',
 		'keydown @ui.title': 'onTitleKeyDown',
+		'paste @ui.title': 'onTitlePaste',
 		'sortstart @ui.elements': 'onSortStart',
 		'sortover @ui.elements': 'onSortOver',
 		'sortout @ui.elements': 'onSortOut',
@@ -210,6 +211,8 @@ module.exports = Marionette.CompositeView.extend( {
 	enterTitleEditing: function() {
 		this.ui.title.attr( 'contenteditable', true ).focus();
 
+		document.execCommand( 'selectAll' );
+
 		elementor.addBackgroundClickListener( 'navigator', {
 			ignore: this.ui.title,
 			callback: this.exitTitleEditing.bind( this )
@@ -282,6 +285,12 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 	},
 
+	onTitlePaste: function( event ) {
+		event.preventDefault();
+
+		document.execCommand( 'insertHTML', false, event.originalEvent.clipboardData.getData( 'text/plain' ) );
+	},
+
 	onToggleListClick: function( event ) {
 		event.stopPropagation();
 
@@ -290,6 +299,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 	onSortStart: function( event, ui ) {
 		this.model.trigger( 'request:sort:start', event, ui );
+
+		jQuery( ui.item ).children( '.elementor-navigator__item' ).trigger( 'click' );
 
 		elementor.navigator.getLayout().activateElementsMouseInteraction();
 	},

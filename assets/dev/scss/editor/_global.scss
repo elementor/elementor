@@ -11,24 +11,6 @@
 	z-index: $editor-layer;
 }
 
-.elementor-loader-wrapper {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translateX(-50%) translateY(-50%);
-	width: 200px;
-
-	@import "loader";
-
-	.elementor-loader {
-		background-color: $editor-lightest;
-	}
-
-	.elementor-loader-box {
-		background-color: $editor-darkest;
-	}
-}
-
 // Loading after APPLY button
 
 #elementor-preview-loading {

@@ -75,6 +75,7 @@
 	width: 260px;
 	background-color: $editor-background;
 	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
+	z-index: 1;
 
 	&:before {
 		$triangle-size: 10px;

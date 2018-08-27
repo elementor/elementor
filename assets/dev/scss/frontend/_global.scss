@@ -259,9 +259,17 @@
 }
 
 // Admin Bar - Icon (Front-End)
-#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
-	content: "\e801";
-	font-family: eicons;
-	top: 3px;
-	font-size: 18px;
+#wpadminbar {
+
+	#wp-admin-bar-elementor_edit_page > .ab-item::before {
+		content: "\e801";
+		font-family: eicons;
+		top: 3px;
+		font-size: 18px;
+	}
+
+	#wp-admin-bar-elementor_inspector > .ab-item::before {
+		content: "\f348";
+		top: 2px;
+	}
 }
