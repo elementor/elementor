@@ -163,6 +163,10 @@ class Feedback {
 			return;
 		}
 
+		if ( Tracker::is_notice_shown() ) {
+			return;
+		}
+
 		if ( ! in_array( get_current_screen()->id, [ 'dashboard' ], true ) ) {
 			return;
 		}
@@ -208,6 +212,6 @@ class Feedback {
 		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
 
 		// Review Plugin
-		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
+		add_action( 'admin_notices', [ $this, 'admin_notices' ], 20 );
 	}
 }

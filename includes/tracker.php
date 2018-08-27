@@ -27,6 +27,8 @@ class Tracker {
 	 */
 	private static $_api_url = 'http://my.elementor.com/api/v1/tracker/';
 
+	private static $notice_shown = false;
+
 	/**
 	 * Init.
 	 *
@@ -243,6 +245,8 @@ class Tracker {
 			return;
 		}
 
+		self::$notice_shown = true;
+
 		// TODO: Skip for development env.
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
@@ -276,6 +280,10 @@ class Tracker {
 			</div>
 		</div>
 		<?php
+	}
+
+	public static function is_notice_shown() {
+		return self::$notice_shown;
 	}
 
 	/**
