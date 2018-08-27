@@ -79,12 +79,19 @@
 				self.animateLoader();
 			} );
 
-			$( 'div.notice.elementor-message-dismissed' ).on( 'click', 'button.notice-dismiss', function( event ) {
+			$( 'div.notice.elementor-message-dismissed' ).on( 'click', 'button.notice-dismiss, .elementor-button-notice-dismiss', function( event ) {
 				event.preventDefault();
 
 				$.post( ajaxurl, {
 					action: 'elementor_set_admin_notice_viewed',
 					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' )
+				} );
+
+				var $wrapperElm = $( this ).closest( '.elementor-message-dismissed' );
+				$wrapperElm.fadeTo( 100, 0, function() {
+					$wrapperElm.slideUp( 100, function() {
+						$wrapperElm.remove();
+					} );
 				} );
 			} );
 
