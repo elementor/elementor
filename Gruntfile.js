@@ -53,6 +53,10 @@ module.exports = function( grunt ) {
 		grunt.task.run( taskName );
 	} );
 
+	grunt.registerTask( 'watch_scripts', () => {
+		grunt.task.run( 'webpack:development' );
+	} );
+
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {
 		grunt.task.run( 'sass' );
 
@@ -60,6 +64,10 @@ module.exports = function( grunt ) {
 			grunt.task.run( 'postcss' );
 			grunt.task.run( 'css_templates' );
 		}
+	} );
+
+	grunt.registerTask( 'watch_styles', () => {
+		grunt.task.run( 'watch:styles' );
 	} );
 
 	grunt.registerTask( 'css_templates', () => {
