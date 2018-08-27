@@ -253,27 +253,6 @@ html.elementor-html {
 	}
 }
 
-// Inner Section
-.elementor-inner-section {
-
-	@media (max-width: $editor-screen-md-max) {
-
-		> .elementor-element-overlay {
-
-			.elementor-editor-element-settings {
-				overflow: hidden;
-			}
-
-			.elementor-editor-element-setting {
-
-				&:not(.elementor-editor-element-edit) {
-					display: none;
-				}
-			}
-		}
-	}
-}
-
 // Column
 .elementor-column {
 
@@ -685,14 +664,14 @@ html.elementor-html {
 
 // Add new Section
 .elementor-add-section {
-	background-color: rgba(255, 255, 255, .5);
-	max-width: 1140px;
+	max-width: 1160px;
 	position: relative;
 
 	&:not(.elementor-dragging-on-child) {
 
 		.elementor-add-section-inner {
 			border: 2px dashed $editor-lightest;
+			background-color: rgba(255, 255, 255, .5);
 		}
 	}
 
@@ -901,5 +880,14 @@ html.elementor-html {
 	.elementor-element-empty,
 	.elementor-widget-empty {
 		display: none;
+	}
+}
+
+.elementor.elementor-edit-area-active {
+
+	.elementor-hidden-desktop,
+	.elementor-hidden-tablet,
+	.elementor-hidden-phone {
+		display: block;
 	}
 }

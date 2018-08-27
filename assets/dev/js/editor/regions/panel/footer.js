@@ -49,7 +49,7 @@ module.exports = Marionette.ItemView.extend( {
 		var $tool = jQuery( event.currentTarget );
 
 		// If the tool is not toggleable or the click is inside of a tool
-		if ( ! $tool.hasClass( 'elementor-toggle-state' || jQuery( event.target ).closest( '.elementor-panel-footer-sub-menu-item' ).length ) ) {
+		if ( ! $tool.hasClass( 'elementor-toggle-state' ) || jQuery( event.target ).closest( '.elementor-panel-footer-sub-menu-item' ).length ) {
 			return;
 		}
 

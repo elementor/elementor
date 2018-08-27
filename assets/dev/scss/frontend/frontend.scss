@@ -42,7 +42,7 @@
 @import "compatibility";
 
 // Visibility (for preview mode or front-end)
-.elementor:not(.elementor-edit-area-active) {
+.elementor {
 	@include visibility() {
 		display: none;
 	};

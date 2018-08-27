@@ -57,7 +57,7 @@ module.exports = BaseMultiple.extend( {
 			minLength: 2,
 			position: {
 				my: positionBase + ' top+2',
-				at: positionBase + ' top'
+				at: positionBase + ' bottom'
 			}
 		} )
 		// The `_renderItem` cannot be override via the arguments.
