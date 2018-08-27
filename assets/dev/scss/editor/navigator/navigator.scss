@@ -1,21 +1,24 @@
 #elementor-navigator {
 	position: fixed;
 	top: 100px;
-	width: 220px;
-	height: 300px;
+	width: 240px;
+	height: 339px;
 	@include end(30px);
 	background-color: #fff;
-	border-radius: 5px;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
 	z-index: 2;
 	display: none;
 
-	.elementor-navigator-docked & {
+	body.elementor-navigator-docked & {
 		top: 0;
 		@include end(0);
 		height: 100%;
+	}
+
+	body:not(.elementor-navigator-docked) & {
+		border-radius: 5px;
 	}
 
 	&__inner {
@@ -204,9 +207,7 @@
 			overflow: hidden;
 
 			&__text {
-				text-overflow: ellipsis;
 				white-space: nowrap;
-				overflow: hidden;
 
 				&[contenteditable="true"] {
 					outline: none;
@@ -214,6 +215,11 @@
 					background-color: #fff;
 					padding: 2px 3px;
 					box-shadow: 0 0 4px rgba(0,0,0,0.2);
+				}
+
+				&:not([contenteditable="true"]) {
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 			}
 		}

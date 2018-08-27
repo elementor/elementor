@@ -27,6 +27,8 @@ class Tracker {
 	 */
 	private static $_api_url = 'http://my.elementor.com/api/v1/tracker/';
 
+	private static $notice_shown = false;
+
 	/**
 	 * Init.
 	 *
@@ -243,6 +245,8 @@ class Tracker {
 			return;
 		}
 
+		self::$notice_shown = true;
+
 		// TODO: Skip for development env.
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
@@ -260,11 +264,26 @@ class Tracker {
 		 */
 		$tracker_description_text = apply_filters( 'elementor/tracker/admin_description_text', $tracker_description_text );
 		?>
-		<div class="updated">
-			<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php echo __( 'Learn more.', 'elementor' ); ?></a></p>
-			<p><a href="<?php echo $optin_url; ?>" class="button-primary"><?php echo __( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php echo __( 'No thanks', 'elementor' ); ?></a></p>
+		<div class="notice updated elementor-message">
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php echo __( 'Learn more.', 'elementor' ); ?></a></p>
+					<p class="elementor-message-actions">
+						<a href="<?php echo $optin_url; ?>" class="button button-primary"><?php echo __( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php echo __( 'No thanks', 'elementor' ); ?></a>
+					</p>
+				</div>
+			</div>
 		</div>
 		<?php
+	}
+
+	public static function is_notice_shown() {
+		return self::$notice_shown;
 	}
 
 	/**

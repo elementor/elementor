@@ -253,27 +253,6 @@ html.elementor-html {
 	}
 }
 
-// Inner Section
-.elementor-inner-section {
-
-	@media (max-width: $editor-screen-md-max) {
-
-		> .elementor-element-overlay {
-
-			.elementor-editor-element-settings {
-				overflow: hidden;
-			}
-
-			.elementor-editor-element-setting {
-
-				&:not(.elementor-editor-element-edit) {
-					display: none;
-				}
-			}
-		}
-	}
-}
-
 // Column
 .elementor-column {
 
