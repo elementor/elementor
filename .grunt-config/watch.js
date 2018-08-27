@@ -15,18 +15,6 @@ const watch = {
 			livereload: true
 		}
 	},
-
-	scripts: {
-		files: [
-			'assets/dev/js/**/*.js',
-			'modules/**/*.js'
-		],
-		tasks: [ 'scripts:true' ],
-		options: {
-			spawn: false,
-			livereload: true
-		}
-	}
 };
 
 module.exports = watch;
