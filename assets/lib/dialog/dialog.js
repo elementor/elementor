@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.4.2
+ * Dialogs Manager v4.5.0
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -509,6 +509,27 @@
 
 				events[singleEventName].push(callback);
 			});
+
+			return self;
+		};
+
+		this.off = function(eventName, callback) {
+
+			if (! events[ eventName ]) {
+				return self;
+			}
+
+			if (! callback) {
+				delete events[ eventName ];
+
+				return self;
+			}
+
+			var callbackIndex = events[ eventName ].indexOf(callback);
+
+			if (-1 !== callbackIndex) {
+				delete events[ eventName ][ callbackIndex ];
+			}
 
 			return self;
 		};
