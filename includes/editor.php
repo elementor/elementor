@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -987,7 +988,19 @@ class Editor {
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
+
+		// Handle autocomplete feature for URL control.
+		add_filter( 'wp_link_query_args', [ $this, 'filter_wp_link_query_args' ] );
 		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
+	}
+
+	public function filter_wp_link_query_args( $query ) {
+		$library_cpt_key = array_search( Source_Local::CPT, $query['post_type'], true );
+		if ( false !== $library_cpt_key ) {
+			unset( $query['post_type'][ $library_cpt_key ] );
+		}
+
+		return $query;
 	}
 
 	public function filter_wp_link_query( $results ) {
