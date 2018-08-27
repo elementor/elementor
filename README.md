@@ -219,6 +219,33 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.2.0 - 2018-08-27 ###
+* New: Introducing Navigator Panel ([#1165](https://github.com/pojome/elementor/issues/1165))
+* New: Added Autocomplete URL functionality for Internal Linking ([#255](https://github.com/pojome/elementor/issues/255))
+* New: Added `Cmd/Ctrl + I` hotkey for the Navigator
+* New: Added `Cmd/Ctrl + Shift + V` hotkey for paste style
+* New: Added "Getting Started" page after new installation
+* New: Added reverse columns for tablet screen resolution ([#2070](https://github.com/pojome/elementor/issues/2070))
+* Tweak: Changed the name of Columns widget to Inner Section to reduce confusion
+* Tweak: Added option to restore Editing Handles ([#4981](https://github.com/pojome/elementor/issues/4981))
+* Tweak: Remember Editor panel width in localStorage ([#2414](https://github.com/pojome/elementor/issues/2414))
+* Tweak: Added official color option on hover state in Social Icons Widget ([#2032](https://github.com/pojome/elementor/issues/2032))
+* Tweak: New user interface for CSS Filters control
+* Tweak: Added `Hue` filter to CSS Filters control
+* Tweak: Added a Lazy Load option for the Video widget ([#5189](https://github.com/pojome/elementor/issues/5189))
+* Tweak: Added Mixcloud icon to Social Icons widget ([#5417](https://github.com/pojome/elementor/issues/5417))
+* Tweak: Added an additional aspect ratio (21:9) in Video widget
+* Tweak: Added edit capabilities in the responsive mode
+* Tweak: Removed default transparency on hover button ([#4406](https://github.com/pojome/elementor/issues/4406))
+* Tweak: Redesign `E` loader
+* Tweak: Added `elementor/frontend/before_render` hook to `element-base`
+* Fix: Reverse column bug in responsive columns ([#5421](https://github.com/pojome/elementor/issues/5421))
+* Fix: Compatibility for IE11 by adding IE CSS via JS ([#5510](https://github.com/pojome/elementor/issues/5510), [#5530](https://github.com/pojome/elementor/issues/5530))
+* Fix: IE11 bug in case of `min-height` mixed with `align-items: center`
+* Fix: Resize the columns via the `Column Width` after moving the section ([#5393](https://github.com/pojome/elementor/issues/5393))
+* Fix: Different videos with the same image showing the same video
+* Fix: Inline editing in Progress Bar widget
+
 ### 2.1.8 - 2018-08-19 ###
 * Fix: Prevent columns from overflowing the grid area in Firefox browser ([#5442](https://github.com/pojome/elementor/issues/5442))
 * Fix: Style glitch in the panel separator
