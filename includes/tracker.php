@@ -263,9 +263,9 @@ class Tracker {
 		<div class="notice updated elementor-message">
 			<div class="elementor-message-inner">
 				<div class="elementor-message-icon">
-                    <div class="e-logo-wrapper">
-                        <i class="eicon-elementor" aria-hidden="true"></i>
-                    </div>
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
 				</div>
 				<div class="elementor-message-content">
 					<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php echo __( 'Learn more.', 'elementor' ); ?></a></p>
