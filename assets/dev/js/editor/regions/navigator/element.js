@@ -324,7 +324,7 @@ module.exports = Marionette.CompositeView.extend( {
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
-		if ( ! this.el.contains( ui.item[0] ) ) {
+		if ( ! this.ui.elements.is( ui.item.parent() ) ) {
 			return;
 		}
 
