@@ -7,10 +7,10 @@ class AddSectionBase extends Marionette.ItemView {
 	attributes() {
 		return {
 			'data-view': 'choose-action',
-		}
+		};
 	}
 
-	ui() {
+	get ui() {
 		return {
 			addNewSection: '.elementor-add-new-section',
 			closeButton: '.elementor-add-section-close',
