@@ -7,7 +7,7 @@ class AddSectionBase extends Marionette.ItemView {
 	attributes() {
 		return {
 			'data-view': 'choose-action',
-		}
+		};
 	}
 
 	ui() {

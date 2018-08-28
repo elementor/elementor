@@ -2,7 +2,7 @@ import BaseAddSectionView from './base';
 
 class AddSectionView extends BaseAddSectionView {
 
-	id() {
+	get id() {
 		return 'elementor-add-new-section';
 	}
 
