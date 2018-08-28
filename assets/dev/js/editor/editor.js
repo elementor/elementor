@@ -1,4 +1,5 @@
 /* global ElementorConfig */
+import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 
 Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
@@ -15,7 +16,6 @@ const App = Marionette.Application.extend( {
 	previewLoadedOnce: false,
 
 	helpers: require( 'elementor-editor-utils/helpers' ),
-	heartbeat: require( 'elementor-editor-utils/heartbeat' ),
 	imagesManager: require( 'elementor-editor-utils/images-manager' ),
 	debug: require( 'elementor-editor-utils/debug' ),
 	schemes: require( 'elementor-editor-utils/schemes' ),
@@ -991,7 +991,7 @@ const App = Marionette.Application.extend( {
 	onFirstPreviewLoaded: function() {
 		this.initPanel();
 
-		this.heartbeat.init();
+		this.heartbeat = new Heartbeat();
 
 		this.checkPageStatus();
 

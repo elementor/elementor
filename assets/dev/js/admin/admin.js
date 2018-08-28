@@ -38,8 +38,8 @@
 			var isElementorMode = this.isElementorMode();
 
 			this.elements.$body
-			    .toggleClass( 'elementor-editor-active', isElementorMode )
-			    .toggleClass( 'elementor-editor-inactive', ! isElementorMode );
+				.toggleClass( 'elementor-editor-active', isElementorMode )
+				.toggleClass( 'elementor-editor-inactive', ! isElementorMode );
 		},
 
 		bindEvents: function() {

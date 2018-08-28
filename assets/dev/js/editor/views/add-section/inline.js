@@ -1,8 +1,9 @@
 import BaseAddSectionView from './base';
 
 class AddSectionView extends BaseAddSectionView {
+
 	className() {
-		return BaseAddSectionView.prototype.className.apply( this, arguments ) + ' elementor-add-section-inline';
+		return super.className() + ' elementor-add-section-inline';
 	}
 
 	fadeToDeath() {
@@ -14,7 +15,7 @@ class AddSectionView extends BaseAddSectionView {
 	}
 
 	paste() {
-		BaseAddSectionView.prototype.paste.apply( this, arguments );
+		super.paste();
 
 		this.destroy();
 	}
@@ -24,19 +25,19 @@ class AddSectionView extends BaseAddSectionView {
 	}
 
 	onPresetSelected() {
-		BaseAddSectionView.prototype.onPresetSelected.apply( this, arguments );
+		super.onPresetSelected();
 
 		this.destroy();
 	}
 
 	onAddTemplateButtonClick() {
-		BaseAddSectionView.prototype.onAddTemplateButtonClick.apply( this, arguments );
+		super.onAddTemplateButtonClick();
 
 		this.destroy();
 	}
 
 	onDropping() {
-		BaseAddSectionView.prototype.onDropping.apply( this, arguments );
+		super.onDropping();
 
 		this.destroy();
 	}
