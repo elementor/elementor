@@ -219,7 +219,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 2.2.0 - 2018-08-27 ###
+### 2.2.0 - 2018-08-28 ###
 * New: Introducing Navigator Panel ([#1165](https://github.com/pojome/elementor/issues/1165))
 * New: Added Autocomplete URL functionality for Internal Linking ([#255](https://github.com/pojome/elementor/issues/255))
 * New: Added `Cmd/Ctrl + I` hotkey for the Navigator
