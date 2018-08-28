@@ -214,7 +214,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
-		if ( ! this.el.contains( ui.item[0] ) ) {
+		if ( this.getChildViewContainer()[0] !== ui.item.parent()[0] ) {
 			return;
 		}
 
