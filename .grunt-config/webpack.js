@@ -4,7 +4,7 @@
  */
 const path = require( 'path' );
 
-UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 
 const aliasList = {
 	alias: {
@@ -106,7 +106,7 @@ const webpackProductionConfig = {
 };
 
 // Add minified entry points
-for ( var entryPoint  in  entry ) {
+for ( let entryPoint in entry ) {
 	webpackProductionConfig.entry[ entryPoint ] = entry[ entryPoint ];
 	webpackProductionConfig.entry[ entryPoint + '.min' ] = entry[ entryPoint ];
 }
