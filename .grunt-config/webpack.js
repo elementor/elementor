@@ -74,6 +74,7 @@ const webpackConfig = {
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
 		filename: '[name].js',
+		devtoolModuleFilenameTemplate: '../[resource]'
 	},
 	module: moduleRules,
 	resolve: aliasList,
