@@ -106,7 +106,7 @@ const webpackProductionConfig = {
 };
 
 // Add minified entry points
-for ( let entryPoint in entry ) {
+for ( const entryPoint in entry ) {
 	webpackProductionConfig.entry[ entryPoint ] = entry[ entryPoint ];
 	webpackProductionConfig.entry[ entryPoint + '.min' ] = entry[ entryPoint ];
 }
