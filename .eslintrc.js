@@ -21,6 +21,9 @@ module.exports = {
 		DialogsManager: true,
 		module: true,
 	},
+	'parserOptions': {
+		'sourceType': 'module',
+	},
 	rules: {
 		// custom canceled rules
 		'no-var': 'off',

@@ -1,44 +1,45 @@
-var BaseAddSectionView = require( 'elementor-views/add-section/base' );
+import BaseAddSectionView from './base';
 
-module.exports = BaseAddSectionView.extend( {
-
-	className: function() {
+class AddSectionView extends BaseAddSectionView {
+	className() {
 		return BaseAddSectionView.prototype.className.apply( this, arguments ) + ' elementor-add-section-inline';
-	},
+	}
 
-	fadeToDeath: function() {
+	fadeToDeath() {
 		var self = this;
 
 		self.$el.slideUp( function() {
 			self.destroy();
 		} );
-	},
+	}
 
-	paste: function() {
+	paste() {
 		BaseAddSectionView.prototype.paste.apply( this, arguments );
 
 		this.destroy();
-	},
+	}
 
-	onCloseButtonClick: function() {
+	onCloseButtonClick() {
 		this.fadeToDeath();
-	},
+	}
 
-	onPresetSelected: function() {
+	onPresetSelected() {
 		BaseAddSectionView.prototype.onPresetSelected.apply( this, arguments );
 
 		this.destroy();
-	},
+	}
 
-	onAddTemplateButtonClick: function() {
+	onAddTemplateButtonClick() {
 		BaseAddSectionView.prototype.onAddTemplateButtonClick.apply( this, arguments );
 
 		this.destroy();
-	},
+	}
 
-	onDropping: function() {
+	onDropping() {
 		BaseAddSectionView.prototype.onDropping.apply( this, arguments );
 
 		this.destroy();
 	}
-} );
+}
+
+export default AddSectionView;

@@ -1,64 +1,73 @@
-module.exports = Marionette.ItemView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-add-section' ),
+class AddSectionBase extends Marionette.ItemView {
 
-	attributes: {
-		'data-view': 'choose-action'
-	},
+	template() {
+		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
+	}
 
-	ui: {
-		addNewSection: '.elementor-add-new-section',
-		closeButton: '.elementor-add-section-close',
-		addSectionButton: '.elementor-add-section-button',
-		addTemplateButton: '.elementor-add-template-button',
-		selectPreset: '.elementor-select-preset',
-		presets: '.elementor-preset'
-	},
+	attributes() {
+		return {
+			'data-view': 'choose-action',
+		}
+	}
 
-	events: {
-		'click @ui.addSectionButton': 'onAddSectionButtonClick',
-		'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
-		'click @ui.closeButton': 'onCloseButtonClick',
-		'click @ui.presets': 'onPresetSelected'
-	},
+	ui() {
+		return {
+			addNewSection: '.elementor-add-new-section',
+			closeButton: '.elementor-add-section-close',
+			addSectionButton: '.elementor-add-section-button',
+			addTemplateButton: '.elementor-add-template-button',
+			selectPreset: '.elementor-select-preset',
+			presets: '.elementor-preset'
+		};
+	}
 
-	behaviors: function() {
+	events() {
+		return {
+			'click @ui.addSectionButton': 'onAddSectionButtonClick',
+			'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
+			'click @ui.closeButton': 'onCloseButtonClick',
+			'click @ui.presets': 'onPresetSelected'
+		};
+	}
+
+	behaviors() {
 		return {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
 				groups: this.getContextMenuGroups()
 			}
 		};
-	},
+	}
 
-	className: function() {
+	className() {
 		return 'elementor-add-section elementor-visible-desktop';
-	},
+	}
 
-	addSection: function( properties, options ) {
+	addSection( properties, options ) {
 		return elementor.getPreviewView().addChildElement( properties, jQuery.extend( {}, this.options, options ) );
-	},
+	}
 
-	setView: function( view ) {
+	setView( view ) {
 		this.$el.attr( 'data-view', view );
-	},
+	}
 
-	showSelectPresets: function() {
+	showSelectPresets() {
 		this.setView( 'select-preset' );
-	},
+	}
 
-	closeSelectPresets: function() {
+	closeSelectPresets() {
 		this.setView( 'choose-action' );
-	},
+	}
 
-	getTemplatesModalOptions: function() {
+	getTemplatesModalOptions() {
 		return {
 			importOptions: {
 				at: this.getOption( 'at' )
 			}
 		};
-	},
+	}
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		var hasContent = function() {
 			return elementor.elements.length > 0;
 		};
@@ -91,29 +100,29 @@ module.exports = Marionette.ItemView.extend( {
 				]
 			}
 		];
-	},
+	}
 
-	copy: function() {
+	copy() {
 		elementor.getPreviewView().copy();
-	},
+	}
 
-	paste: function() {
+	paste() {
 		elementor.getPreviewView().paste( this.getOption( 'at' ) );
-	},
+	}
 
-	isPasteEnabled: function() {
+	isPasteEnabled() {
 		return elementor.getStorage( 'transfer' );
-	},
+	}
 
-	onAddSectionButtonClick: function() {
+	onAddSectionButtonClick() {
 		this.showSelectPresets();
-	},
+	}
 
-	onAddTemplateButtonClick: function() {
+	onAddTemplateButtonClick() {
 		elementor.templates.startModal( this.getTemplatesModalOptions() );
-	},
+	}
 
-	onRender: function() {
+	onRender() {
 		this.$el.html5Droppable( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
@@ -122,9 +131,9 @@ module.exports = Marionette.ItemView.extend( {
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			onDropping: this.onDropping.bind( this )
 		} );
-	},
+	}
 
-	onPresetSelected: function( event ) {
+	onPresetSelected( event ) {
 		this.closeSelectPresets();
 
 		var selectedStructure = event.currentTarget.dataset.structure,
@@ -150,13 +159,15 @@ module.exports = Marionette.ItemView.extend( {
 		newSection.setStructure( selectedStructure );
 
 		elementor.channels.data.trigger( 'element:after:add' );
-	},
+	}
 
-	onDropping: function() {
+	onDropping() {
 		elementor.channels.data.trigger( 'section:before:drop' );
 
 		this.addSection().addElementFromPanel();
 
 		elementor.channels.data.trigger( 'section:after:drop' );
 	}
-} );
+}
+
+export default AddSectionBase;
