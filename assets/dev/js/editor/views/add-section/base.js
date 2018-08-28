@@ -10,7 +10,7 @@ class AddSectionBase extends Marionette.ItemView {
 		};
 	}
 
-	get ui() {
+	ui() {
 		return {
 			addNewSection: '.elementor-add-new-section',
 			closeButton: '.elementor-add-section-close',
