@@ -1,6 +1,7 @@
 var BaseSectionsContainerView = require( 'elementor-views/base-sections-container' ),
-	AddSectionView = require( 'elementor-views/add-section/independent' ),
 	Preview;
+
+import AddSectionView from './add-section/independent';
 
 Preview = BaseSectionsContainerView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-preview' ),

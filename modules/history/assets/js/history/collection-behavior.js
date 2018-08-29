@@ -113,8 +113,10 @@ module.exports = Marionette.Behavior.extend( {
 			didAction = false,
 			behavior;
 
-		// Find the new behavior and work with him
-		if ( history.behavior.view.model ) {
+		var BaseElementView = require( 'elementor-elements/views/base' );
+
+		// Find the new behavior and work with him.
+		if ( history.behavior.view instanceof BaseElementView ) {
 			var modelID = history.behavior.view.model.get( 'id' ),
 				view = elementor.history.history.findView( modelID );
 			if ( view ) {

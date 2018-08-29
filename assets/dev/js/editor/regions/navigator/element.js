@@ -1,53 +1,65 @@
-module.exports = Marionette.CompositeView.extend( {
-	template: '#tmpl-elementor-navigator__elements',
+import ElementEmpty from './element-empty';
+import RootEmpty from './root-empty';
 
-	childViewContainer: '.elementor-navigator__elements',
+export default class extends Marionette.CompositeView {
+	getTemplate() {
+		return '#tmpl-elementor-navigator__elements';
+	}
 
-	ui: {
-		item: '> .elementor-navigator__item',
-		title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
-		toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
-		toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
-		elements: '> .elementor-navigator__elements'
-	},
+	getChildViewContainer() {
+		return this.$( '.elementor-navigator__elements' );
+	}
 
-	events: {
-		'contextmenu': 'onContextMenu',
-		'click @ui.item': 'onItemClick',
-		'click @ui.toggle': 'onToggleClick',
-		'click @ui.toggleList': 'onToggleListClick',
-		'dblclick @ui.title': 'onTitleDoubleClick',
-		'keydown @ui.title': 'onTitleKeyDown',
-		'paste @ui.title': 'onTitlePaste',
-		'sortstart @ui.elements': 'onSortStart',
-		'sortover @ui.elements': 'onSortOver',
-		'sortout @ui.elements': 'onSortOut',
-		'sortstop @ui.elements': 'onSortStop',
-		'sortupdate @ui.elements': 'onSortUpdate',
-		'sortreceive @ui.elements': 'onSortReceive'
-	},
+	ui() {
+		return {
+			item: '> .elementor-navigator__item',
+			title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
+			toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
+			toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
+			elements: '> .elementor-navigator__elements'
+		};
+	}
 
-	getEmptyView: function() {
+	events() {
+		return {
+			'contextmenu': 'onContextMenu',
+			'click @ui.item': 'onItemClick',
+			'click @ui.toggle': 'onToggleClick',
+			'click @ui.toggleList': 'onToggleListClick',
+			'dblclick @ui.title': 'onTitleDoubleClick',
+			'keydown @ui.title': 'onTitleKeyDown',
+			'paste @ui.title': 'onTitlePaste',
+			'sortstart @ui.elements': 'onSortStart',
+			'sortover @ui.elements': 'onSortOver',
+			'sortout @ui.elements': 'onSortOut',
+			'sortstop @ui.elements': 'onSortStop',
+			'sortupdate @ui.elements': 'onSortUpdate',
+			'sortreceive @ui.elements': 'onSortReceive'
+		};
+	}
+
+	getEmptyView() {
 		if ( this.isRoot() ) {
-			return require( 'elementor-regions/navigator/root-empty' );
+			return RootEmpty;
 		}
 
 		if ( this.hasChildren() ) {
-			return require( 'elementor-regions/navigator/element-empty' );
+			return ElementEmpty;
 		}
 
 		return null;
-	},
+	}
 
-	childViewOptions: function() {
+	childViewOptions() {
 		return {
 			indent: this.getIndent() + 10
 		};
-	},
+	}
 
-	className: function() {
-		var classes = 'elementor-navigator__element',
-			elType = this.model.get( 'elType' );
+	className() {
+		const elType = this.model.get( 'elType' );
+
+		let classes = 'elementor-navigator__element';
 
 		if ( elType ) {
 			classes += ' elementor-navigator__element-' + elType;
@@ -58,16 +70,16 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		return classes;
-	},
+	}
 
-	attributes: function() {
+	attributes() {
 		return {
 			'data-model-cid': this.model.cid
 		};
-	},
+	}
 
-	templateHelpers: function() {
-		var helpers = {};
+	templateHelpers() {
+		const helpers = {};
 
 		if ( ! this.isRoot() ) {
 			helpers.title = this.model.getTitle();
@@ -76,33 +88,34 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		return helpers;
-	},
+	}
 
-	initialize: function() {
+	initialize() {
 		this.collection = this.model.get( 'elements' );
 
 		this.listenTo( this.model, 'request:edit', this.onEditRequest )
-			.listenTo( this.model, 'change', this.onModelChange );
-	},
+            .listenTo( this.model, 'change', this.onModelChange )
+			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
+	}
 
-	getIndent: function() {
+	getIndent() {
 		return this.getOption( 'indent' ) || 0;
-	},
+	}
 
-	isRoot: function() {
+	isRoot() {
 		return ! this.model.get( 'elType' );
-	},
+	}
 
-	hasChildren: function() {
+	hasChildren() {
 		return 'widget' !== this.model.get( 'elType' );
-	},
+	}
 
-	toggleList: function( state, callback ) {
+	toggleList( state, callback ) {
 		if ( ! this.hasChildren() || this.isRoot() ) {
 			return;
 		}
 
-		var isActive = this.ui.item.hasClass( 'elementor-active' );
+		const isActive = this.ui.item.hasClass( 'elementor-active' );
 
 		if ( isActive === state ) {
 			return;
@@ -110,87 +123,76 @@ module.exports = Marionette.CompositeView.extend( {
 
 		this.ui.item.toggleClass( 'elementor-active', state );
 
-		var slideMethod = 'slideToggle';
+		let slideMethod = 'slideToggle';
 
 		if ( undefined !== state ) {
 			slideMethod = 'slide' + ( state ? 'Down' : 'Up' );
 		}
 
 		this.ui.elements[ slideMethod ]( 300, callback );
-	},
+	}
 
-	toggleHiddenClass: function() {
+	toggleHiddenClass() {
 		this.$el.toggleClass( 'elementor-navigator__element--hidden', !! this.model.get( 'hidden' ) );
-	},
+	}
 
-	recursiveChildInvoke: function() {
-		var args = Array.prototype.slice.call( arguments ),
-			method = args.slice( 0, 1 ),
-			restArgs = args.slice( 1 );
-
+	recursiveChildInvoke( method, ...restArgs ) {
 		this[ method ].apply( this, restArgs );
 
-		this.children.each( function( child ) {
-			if ( ! ( child instanceof module.exports ) ) {
+		this.children.each( ( child ) => {
+			if ( ! ( child instanceof this.constructor ) ) {
 				return;
 			}
 
-			child.recursiveChildInvoke.apply( child, args );
+			child.recursiveChildInvoke.apply( child, arguments );
 		} );
-	},
+	}
 
-	recursiveParentInvoke: function() {
-		var args = Array.prototype.slice.call( arguments ),
-			method = args.slice( 0, 1 ),
-			restArgs = args.slice( 1 );
-
-		if ( ! ( this._parent instanceof module.exports ) ) {
+	recursiveParentInvoke( method, ...restArgs ) {
+		if ( ! ( this._parent instanceof this.constructor ) ) {
 			return;
 		}
 
 		this._parent[ method ].apply( this._parent, restArgs );
 
-		this._parent.recursiveParentInvoke.apply( this._parent, args );
-	},
+		this._parent.recursiveParentInvoke.apply( this._parent, arguments );
+	}
 
-	recursiveChildAgreement: function() {
-		var args = Array.prototype.slice.call( arguments ),
-			method = args.slice( 0, 1 ),
-			restArgs = args.slice( 1 );
-
+	recursiveChildAgreement( method, ...restArgs ) {
 		if ( ! this[ method ].apply( this, restArgs ) ) {
 			return false;
 		}
 
-		var hasAgreement = true;
+		let hasAgreement = true;
 
-		// Using jQuery loop to allow break
-		jQuery.each( this.children._views, function() {
-			if ( ! ( this instanceof module.exports ) ) {
-				return;
+		for ( const child of Object.values( this.children._views ) ) {
+			if ( ! ( child instanceof this.constructor ) ) {
+				continue;
 			}
 
-			if ( ! this.recursiveChildAgreement.apply( this, args ) ) {
-				return hasAgreement = false;
+			if ( ! child.recursiveChildAgreement.apply( child, arguments ) ) {
+				hasAgreement = false;
+
+				break;
 			}
-		} );
+		}
 
 		return hasAgreement;
-	},
+	}
 
-	activateMouseInteraction: function() {
+	activateMouseInteraction() {
 		this.$el.on( {
 			mouseenter: this.onMouseEnter.bind( this ),
 			mouseleave: this.onMouseLeave.bind( this )
 		} );
-	},
+	}
 
-	deactivateMouseInteraction: function() {
+	deactivateMouseInteraction() {
 		this.$el.off( 'mouseenter mouseleave' );
-	},
+	}
 
-	dragShouldBeIgnored: function( draggedModel ) {
-		var childTypes = elementor.helpers.getElementChildType( this.model.get( 'elType' ) ),
+	dragShouldBeIgnored( draggedModel ) {
+		const childTypes = elementor.helpers.getElementChildType( this.model.get( 'elType' ) ),
 			draggedElType = draggedModel.get( 'elType' );
 
 		if ( 'section' === draggedElType && ! draggedModel.get( 'isInner' ) ) {
@@ -198,17 +200,17 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		return ! childTypes || -1 === childTypes.indexOf( draggedModel.get( 'elType' ) );
-	},
+	}
 
-	addEditingClass: function() {
+	addEditingClass() {
 		this.ui.item.addClass( 'elementor-editing' );
-	},
+	}
 
-	removeEditingClass: function() {
+	removeEditingClass() {
 		this.ui.item.removeClass( 'elementor-editing' );
-	},
+	}
 
-	enterTitleEditing: function() {
+	enterTitleEditing() {
 		this.ui.title.attr( 'contenteditable', true ).focus();
 
 		document.execCommand( 'selectAll' );
@@ -217,153 +219,154 @@ module.exports = Marionette.CompositeView.extend( {
 			ignore: this.ui.title,
 			callback: this.exitTitleEditing.bind( this )
 		} );
-	},
+	}
 
-	exitTitleEditing: function() {
+	exitTitleEditing() {
 		this.ui.title.attr( 'contenteditable', false );
 
-		var newTitle = this.ui.title.text().trim(),
-			settings = this.model.get( 'settings' );
+		const newTitle = this.ui.title.text().trim();
 
-		if ( newTitle ) {
-			settings.set( '_title', newTitle, { silent: true } );
-		} else {
-			settings.unset( '_title', { silent: true } );
-
-			this.ui.title.text( this.model.getDefaultTitle() );
-		}
-
-		elementor.saver.setFlagEditorChange( true );
+		this.model.get( 'settings' ).set( '_title', newTitle );
 
 		elementor.removeBackgroundClickListener( 'navigator' );
-	},
+	}
 
-	onRender: function() {
-		var self = this;
+	activateSortable() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
 
-		self.ui.elements.sortable( {
+		this.ui.elements.sortable( {
 			items: '> .elementor-navigator__element',
 			placeholder: 'ui-sortable-placeholder',
 			axis: 'y',
 			forcePlaceholderSize: true,
-			connectWith: '.elementor-navigator__element-' + self.model.get( 'elType' ) + ' ' + self.ui.elements.selector,
+			connectWith: '.elementor-navigator__element-' + this.model.get( 'elType' ) + ' ' + this.ui.elements.selector,
 			cancel: '[contenteditable="true"]'
 		} );
+	}
+
+	onRender() {
+		this.activateSortable();
 
 		this.ui.item.css( 'padding-' + ( elementor.config.is_rtl ? 'right' : 'left' ), this.getIndent() );
 
 		this.toggleHiddenClass();
-	},
+	}
 
-	onModelChange: function() {
+	onModelChange() {
 		if ( undefined !== this.model.changed.hidden ) {
 			this.toggleHiddenClass();
 		}
-	},
+	}
 
-	onItemClick: function() {
+	onModelSettingsChange( settingsModel ) {
+		if ( undefined !== settingsModel.changed._title ) {
+			this.ui.title.text( this.model.getTitle() );
+		}
+	}
+
+	onItemClick() {
 		this.model.trigger( 'request:edit' );
-	},
+	}
 
-	onToggleClick: function( event ) {
+	onToggleClick( event ) {
 		event.stopPropagation();
 
 		this.model.trigger( 'request:toggleVisibility' );
-	},
+	}
 
-	onTitleDoubleClick: function() {
+	onTitleDoubleClick() {
 		this.enterTitleEditing();
-	},
+	}
 
-	onTitleKeyDown: function( event ) {
-		var ENTER_KEY = 13;
+	onTitleKeyDown( event ) {
+		const ENTER_KEY = 13;
 
 		if ( ENTER_KEY === event.which ) {
 			event.preventDefault();
 
 			this.exitTitleEditing();
 		}
-	},
+	}
 
-	onTitlePaste: function( event ) {
+	onTitlePaste( event ) {
 		event.preventDefault();
 
 		document.execCommand( 'insertHTML', false, event.originalEvent.clipboardData.getData( 'text/plain' ) );
-	},
+	}
 
-	onToggleListClick: function( event ) {
+	onToggleListClick( event ) {
 		event.stopPropagation();
 
 		this.toggleList();
-	},
+	}
 
-	onSortStart: function( event, ui ) {
+	onSortStart( event, ui ) {
 		this.model.trigger( 'request:sort:start', event, ui );
 
 		jQuery( ui.item ).children( '.elementor-navigator__item' ).trigger( 'click' );
 
 		elementor.navigator.getLayout().activateElementsMouseInteraction();
-	},
+	}
 
-	onSortStop: function() {
+	onSortStop() {
 		elementor.navigator.getLayout().deactivateElementsMouseInteraction();
-	},
+	}
 
-	onSortOver: function( event ) {
+	onSortOver( event ) {
 		event.stopPropagation();
 
 		this.$el.addClass( 'elementor-dragging-on-child' );
-	},
+	}
 
-	onSortOut: function( event ) {
+	onSortOut( event ) {
 		event.stopPropagation();
 
 		this.$el.removeClass( 'elementor-dragging-on-child' );
-	},
+	}
 
-	onSortUpdate: function( event, ui ) {
+	onSortUpdate( event, ui ) {
 		event.stopPropagation();
 
-		if ( ! this.el.contains( ui.item[0] ) ) {
+		if ( ! this.ui.elements.is( ui.item.parent() ) ) {
 			return;
 		}
 
 		this.model.trigger( 'request:sort:update', ui );
-	},
+	}
 
-	onSortReceive: function( event, ui ) {
+	onSortReceive( event, ui ) {
 		this.model.trigger( 'request:sort:receive', event, ui );
-	},
+	}
 
-	onMouseEnter: function( event ) {
+	onMouseEnter( event ) {
 		event.stopPropagation();
 
-		var self = this;
-
-		var dragShouldBeIgnored = this.recursiveChildAgreement( 'dragShouldBeIgnored', elementor.channels.data.request( 'dragging:model' ) );
+		const dragShouldBeIgnored = this.recursiveChildAgreement( 'dragShouldBeIgnored', elementor.channels.data.request( 'dragging:model' ) );
 
 		if ( dragShouldBeIgnored ) {
 			return;
 		}
 
-		self.autoExpandTimeout = setTimeout( function() {
-			self.toggleList( true, function() {
-				self.ui.elements.sortable( 'refreshPositions' );
+		this.autoExpandTimeout = setTimeout( () => {
+			this.toggleList( true, () => {
+				this.ui.elements.sortable( 'refreshPositions' );
 			} );
 		}, 500 );
-	},
+	}
 
-	onMouseLeave: function( event ) {
+	onMouseLeave( event ) {
 		event.stopPropagation();
 
 		clearTimeout( this.autoExpandTimeout );
-	},
+	}
 
-	onContextMenu: function( event ) {
+	onContextMenu( event ) {
 		this.model.trigger( 'request:contextmenu', event );
-	},
+	}
 
-	onEditRequest: function() {
+	onEditRequest() {
 		this.recursiveParentInvoke( 'toggleList', true );
 
 		elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
@@ -372,4 +375,4 @@ module.exports = Marionette.CompositeView.extend( {
 
 		elementor.helpers.scrollToView( this.$el, 400, elementor.navigator.getLayout().elements.$el );
 	}
-} );
+}

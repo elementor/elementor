@@ -75,6 +75,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			title: elementor.translate( 'inner_section' ),
 			elType: 'section',
 			categories: [ 'basic' ],
+			keywords: [ 'row', 'columns', 'nested' ],
 			icon: sectionConfig.icon
 		} );
 
@@ -171,6 +172,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	focusSearch: function() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
 		this.search.currentView.ui.input.focus();
 	},
 

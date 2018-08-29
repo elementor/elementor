@@ -1,5 +1,9 @@
-module.exports = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-navigator__root--empty',
+export default class extends Marionette.ItemView {
+	getTemplate() {
+		return '#tmpl-elementor-navigator__root--empty';
+	}
 
-	className: 'elementor-nerd-box'
-} );
+	className() {
+		return 'elementor-nerd-box';
+	}
+}

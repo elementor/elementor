@@ -6,11 +6,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	events: {
-		'sortstart': 'onSortStart',
-		'sortreceive': 'onSortReceive',
-		'sortupdate': 'onSortUpdate',
-		'sortover': 'onSortOver',
-		'sortout': 'onSortOut'
+		sortstart: 'onSortStart',
+		sortreceive: 'onSortReceive',
+		sortupdate: 'onSortUpdate',
+		sortover: 'onSortOver',
+		sortout: 'onSortOut'
 	},
 
 	initialize: function() {
@@ -44,6 +44,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
+
 		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
 			return;
 		}
@@ -214,7 +215,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
-		if ( ! this.el.contains( ui.item[0] ) ) {
+		if ( this.getChildViewContainer()[0] !== ui.item.parent()[0] ) {
 			return;
 		}
 
