@@ -1,24 +1,36 @@
-module.exports = Marionette.LayoutView.extend( {
-	template: '#tmpl-elementor-navigator',
+import ElementView from './element';
 
-	id: 'elementor-navigator__inner',
+export default class extends Marionette.LayoutView {
+	getTemplate() {
+		return '#tmpl-elementor-navigator';
+	}
 
-	ui: {
-		toggleAll: '#elementor-navigator__toggle-all',
-		close: '#elementor-navigator__close'
-	},
+	id() {
+		return 'elementor-navigator__inner';
+	}
 
-	events: {
-		'click @ui.toggleAll': 'toggleAll',
-		'click @ui.close': 'onCloseClick'
-	},
+	ui() {
+		return {
+			toggleAll: '#elementor-navigator__toggle-all',
+			close: '#elementor-navigator__close'
+		};
+	}
 
-	regions: {
-		elements: '#elementor-navigator__elements'
-	},
+	events() {
+		return {
+			'click @ui.toggleAll': 'toggleAll',
+			'click @ui.close': 'onCloseClick'
+		};
+	}
 
-	toggleAll: function() {
-		var state = 'expand' === this.ui.toggleAll.data( 'elementor-action' ),
+	regions() {
+		return {
+			elements: '#elementor-navigator__elements'
+		};
+	}
+
+	toggleAll() {
+		const state = 'expand' === this.ui.toggleAll.data( 'elementor-action' ),
 			classes = [ 'eicon-collapse', 'eicon-expand' ];
 
 		this.ui.toggleAll
@@ -27,25 +39,23 @@ module.exports = Marionette.LayoutView.extend( {
 			.addClass( classes[ +! state ] );
 
 		this.elements.currentView.recursiveChildInvoke( 'toggleList', state );
-	},
+	}
 
-	activateElementsMouseInteraction: function() {
+	activateElementsMouseInteraction() {
 		this.elements.currentView.recursiveChildInvoke( 'activateMouseInteraction' );
-	},
+	}
 
-	deactivateElementsMouseInteraction: function() {
+	deactivateElementsMouseInteraction() {
 		this.elements.currentView.recursiveChildInvoke( 'deactivateMouseInteraction' );
-	},
+	}
 
-	onShow: function() {
-		var ElementView = require( 'elementor-regions/navigator/element' );
-
+	onShow() {
 		this.elements.show( new ElementView( {
 			model: elementor.elementsModel
 		} ) );
-	},
+	}
 
-	onCloseClick: function() {
+	onCloseClick() {
 		elementor.navigator.close();
 	}
-} );
+}
