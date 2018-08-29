@@ -28,7 +28,7 @@ BaseElementView = BaseContainer.extend( {
 	attributes: function() {
 		var type = this.model.get( 'elType' );
 
-		if ( 'widget'  === type ) {
+		if ( 'widget' === type ) {
 			type = this.model.get( 'widgetType' );
 		}
 
@@ -728,15 +728,20 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditRequest: function() {
-		elementor.helpers.scrollToView( this.$el, 200 );
-
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'edit' !== activeMode ) {
+		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
 			return;
 		}
 
-		elementor.getPanelView().openEditor( this.getEditModel(), this );
+		const model = this.getEditModel(),
+			panel = elementor.getPanelView();
+
+		if ( 'editor' === panel.getCurrentPageName() && panel.getCurrentPageView().model === model ) {
+			return;
+		}
+
+		elementor.helpers.scrollToView( this.$el, 200 );
+
+		panel.openEditor( model, this );
 	},
 
 	onDuplicateButtonClick: function( event ) {

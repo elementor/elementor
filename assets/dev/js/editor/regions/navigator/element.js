@@ -94,7 +94,8 @@ export default class extends Marionette.CompositeView {
 		this.collection = this.model.get( 'elements' );
 
 		this.listenTo( this.model, 'request:edit', this.onEditRequest )
-            .listenTo( this.model, 'change', this.onModelChange );
+            .listenTo( this.model, 'change', this.onModelChange )
+			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 	}
 
 	getIndent() {
@@ -223,23 +224,18 @@ export default class extends Marionette.CompositeView {
 	exitTitleEditing() {
 		this.ui.title.attr( 'contenteditable', false );
 
-		const newTitle = this.ui.title.text().trim(),
-			settings = this.model.get( 'settings' );
+		const newTitle = this.ui.title.text().trim();
 
-		if ( newTitle ) {
-			settings.set( '_title', newTitle, { silent: true } );
-		} else {
-			settings.unset( '_title', { silent: true } );
-
-			this.ui.title.text( this.model.getDefaultTitle() );
-		}
-
-		elementor.saver.setFlagEditorChange( true );
+		this.model.get( 'settings' ).set( '_title', newTitle );
 
 		elementor.removeBackgroundClickListener( 'navigator' );
 	}
 
-	onRender() {
+	activateSortable() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
 		this.ui.elements.sortable( {
 			items: '> .elementor-navigator__element',
 			placeholder: 'ui-sortable-placeholder',
@@ -248,6 +244,10 @@ export default class extends Marionette.CompositeView {
 			connectWith: '.elementor-navigator__element-' + this.model.get( 'elType' ) + ' ' + this.ui.elements.selector,
 			cancel: '[contenteditable="true"]'
 		} );
+	}
+
+	onRender() {
+		this.activateSortable();
 
 		this.ui.item.css( 'padding-' + ( elementor.config.is_rtl ? 'right' : 'left' ), this.getIndent() );
 
@@ -257,6 +257,12 @@ export default class extends Marionette.CompositeView {
 	onModelChange() {
 		if ( undefined !== this.model.changed.hidden ) {
 			this.toggleHiddenClass();
+		}
+	}
+
+	onModelSettingsChange( settingsModel ) {
+		if ( undefined !== settingsModel.changed._title ) {
+			this.ui.title.text( this.model.getTitle() );
 		}
 	}
 

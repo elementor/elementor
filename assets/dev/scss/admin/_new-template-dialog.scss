@@ -1,5 +1,12 @@
 #elementor-new-template {
 
+	&-modal {
+
+		.dialog-message {
+			max-height: 70vh;
+		}
+	}
+
 	&-dialog-content {
 		display: flex;
 		align-items: center;
