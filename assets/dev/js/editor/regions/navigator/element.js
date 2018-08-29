@@ -265,7 +265,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onItemClick() {
-		this.model.trigger( 'request:edit' );
+		this.model.trigger( 'request:edit', { scrollIntoView: true } );
 	}
 
 	onToggleClick( event ) {

@@ -727,7 +727,9 @@ BaseElementView = BaseContainer.extend( {
 		this.model.trigger( 'request:edit' );
 	},
 
-	onEditRequest: function() {
+	onEditRequest: function( options ) {
+		options = options || {};
+
 		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
 			return;
 		}
@@ -739,7 +741,9 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		elementor.helpers.scrollToView( this.$el, 200 );
+		if ( options.scrollIntoView ) {
+			elementor.helpers.scrollToView( this.$el, 200 );
+		}
 
 		panel.openEditor( model, this );
 	},
