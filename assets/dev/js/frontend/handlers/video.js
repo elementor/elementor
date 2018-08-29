@@ -41,12 +41,14 @@ VideoModule = HandlerModule.extend( {
 			return;
 		}
 
-		var $videoIframe = this.elements.$videoIframe,
+		const $videoIframe = this.elements.$videoIframe,
 			lazyLoad = $videoIframe.data( 'lazy-load' );
+
 		if ( lazyLoad ) {
 			$videoIframe.attr( 'src', lazyLoad );
 		}
-		var newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
+
+		const newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
 
 		$videoIframe[0].src = newSourceUrl + '&autoplay=1';
 	},
