@@ -8,14 +8,14 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	events: function() {
-		var events = {};
 
 		if ( ! elementor.userCan( 'design' ) ) {
 			return events;
 		}
+		const events = {};
 
 		this.getOption( 'eventTargets' ).forEach( function( eventTarget ) {
-			var eventName = 'contextmenu';
+			let eventName = 'contextmenu';
 
 			if ( 'el' !== eventTarget ) {
 				eventName += ' ' + eventTarget;
@@ -71,9 +71,7 @@ module.exports = Marionette.Behavior.extend( {
 			return;
 		}
 
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'edit' !== activeMode ) {
+		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
 			return;
 		}
 

@@ -6,11 +6,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	events: {
-		'sortstart': 'onSortStart',
-		'sortreceive': 'onSortReceive',
-		'sortupdate': 'onSortUpdate',
-		'sortover': 'onSortOver',
-		'sortout': 'onSortOut'
+		sortstart: 'onSortStart',
+		sortreceive: 'onSortReceive',
+		sortupdate: 'onSortUpdate',
+		sortover: 'onSortOver',
+		sortout: 'onSortOut'
 	},
 
 	initialize: function() {
