@@ -62,7 +62,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			disabledSchemes = _.difference( schemesTypes, elementor.schemes.getEnabledSchemesTypes() );
 
 		_.each( disabledSchemes, function( schemeType ) {
-			var scheme  = elementor.schemes.getScheme( schemeType );
+			var scheme = elementor.schemes.getScheme( schemeType );
 
 			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' ).extend( {
 				disabledTitle: scheme.disabled_title
@@ -109,13 +109,15 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	setPage: function( page, title, viewOptions ) {
+		const pages = this.getPages();
+
 		if ( 'elements' === page && ! elementor.userCan( 'design' ) ) {
-			var pages = this.getPages();
-			if ( pages.hasOwnProperty( 'page_settings' ) ) {
+			if ( pages.page_settings ) {
 				page = 'page_settings';
 			}
 		}
-		var pageData = this.getPages( page );
+
+		const pageData = pages[ page ];
 
 		if ( ! pageData ) {
 			throw new ReferenceError( 'Elementor panel doesn\'t have page named \'' + page + '\'' );
@@ -125,7 +127,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			viewOptions = _.extend( pageData.options, viewOptions );
 		}
 
-		var View = pageData.view;
+		let View = pageData.view;
 
 		if ( pageData.getView ) {
 			View = pageData.getView();
