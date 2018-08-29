@@ -4,7 +4,6 @@ var ViewModule = require( 'elementor-utils/view-module' ),
 var NewTemplateModule = ViewModule.extend( {
 
 	getDefaultSettings: function() {
-
 		return {
 			selectors: {
 				addButton: '.page-title-action:first, #elementor-template-library-add-new'

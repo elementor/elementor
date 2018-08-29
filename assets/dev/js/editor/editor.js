@@ -1,5 +1,6 @@
 /* global ElementorConfig */
 import Heartbeat from './utils/heartbeat';
+import Navigator from './regions/navigator/navigator';
 
 Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
 	options = {
@@ -599,7 +600,12 @@ const App = Marionette.Application.extend( {
 	},
 
 	initNavigator: function() {
-		this.addRegions( { navigator: require( 'elementor-regions/navigator/navigator' ) } );
+		this.addRegions( {
+			navigator: {
+				el: '#elementor-navigator',
+				regionClass: Navigator
+			}
+		} );
 	},
 
 	preventClicksInsideEditor: function() {
