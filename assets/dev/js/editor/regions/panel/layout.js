@@ -145,26 +145,13 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	openEditor: function( model, view ) {
-		var currentPageName = this.getCurrentPageName();
-
-		if ( 'editor' === currentPageName ) {
-			var currentPageView = this.getCurrentPageView(),
-				currentEditableModel = currentPageView.model;
-
-			if ( currentEditableModel === model ) {
-				return;
-			}
-		}
-
-		var elementData = elementor.getElementData( model );
-
-		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementData.title ] ), {
+		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ), {
 			model: model,
 			controls: elementor.getElementControls( model ),
 			editedElementView: view
 		} );
 
-		var action = 'panel/open_editor/' + model.get( 'elType' );
+		const action = 'panel/open_editor/' + model.get( 'elType' );
 
 		// Example: panel/open_editor/widget
 		elementor.hooks.doAction( action, this, model, view );
