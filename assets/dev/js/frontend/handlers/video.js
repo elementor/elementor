@@ -29,6 +29,7 @@ VideoModule = HandlerModule.extend( {
 	handleVideo: function() {
 		if ( ! this.getElementSettings( 'lightbox' ) ) {
 			this.elements.$imageOverlay.remove();
+
 			this.playVideo();
 		}
 	},
