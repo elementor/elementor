@@ -446,6 +446,9 @@ class Widget_Video extends Widget_Base {
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
 				],
