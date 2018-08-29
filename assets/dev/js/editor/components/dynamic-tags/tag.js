@@ -64,6 +64,6 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		this.el.id = 'elementor-tag-' + this.getOption( 'id' );
+		AddSectionView.id = 'elementor-tag-' + this.getOption( 'id' );
 	}
 } );

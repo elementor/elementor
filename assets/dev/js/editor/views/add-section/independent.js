@@ -1,9 +1,14 @@
-var BaseAddSectionView = require( 'elementor-views/add-section/base' );
+import BaseAddSectionView from './base';
 
-module.exports = BaseAddSectionView.extend( {
-	id: 'elementor-add-new-section',
+class AddSectionView extends BaseAddSectionView {
 
-	onCloseButtonClick: function() {
+	get id() {
+		return 'elementor-add-new-section';
+	}
+
+	onCloseButtonClick() {
 		this.closeSelectPresets();
 	}
-} );
+}
+
+export default AddSectionView;

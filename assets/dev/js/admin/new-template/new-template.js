@@ -4,7 +4,6 @@ var ViewModule = require( 'elementor-utils/view-module' ),
 var NewTemplateModule = ViewModule.extend( {
 
 	getDefaultSettings: function() {
-
 		return {
 			selectors: {
 				addButton: '.page-title-action:first, #elementor-template-library-add-new'
@@ -38,5 +37,5 @@ var NewTemplateModule = ViewModule.extend( {
 } );
 
 jQuery( function() {
-	new NewTemplateModule();
+	window.elementorNewTemplate = new NewTemplateModule();
 } );

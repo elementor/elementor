@@ -70,7 +70,7 @@ class Admin {
 			[
 				'jquery-ui-position',
 			],
-			'4.4.1',
+			'4.5.0',
 			true
 		);
 
@@ -408,11 +408,11 @@ class Admin {
 		?>
 		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
 			<div class="elementor-message-inner">
-                <div class="elementor-message-icon">
-                    <div class="e-logo-wrapper">
-                        <i class="eicon-elementor" aria-hidden="true"></i>
-                    </div>
-                </div>
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
 				<div class="elementor-message-content">
 					<strong><?php echo __( 'Update Notification', 'elementor' ); ?></strong>
 					<p>

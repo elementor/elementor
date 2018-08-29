@@ -1,32 +1,14 @@
-var BaseRegion = require( 'elementor-regions/base' );
+const BaseRegion = require( 'elementor-regions/base' );
 
-module.exports = BaseRegion.extend( {
-	el: '#elementor-navigator',
+import NavigatorLayout from './layout';
 
-	isDocked: false,
+export default class extends BaseRegion {
+	constructor( options ) {
+		super( options );
 
-	opened: false,
+		this.isDocked = false;
 
-	getStorageKey: function() {
-		return 'navigator';
-	},
-
-	getDefaultStorage: function() {
-		return {
-			visible: false,
-			size: {
-				width: '',
-				height: '',
-				top: '',
-				bottom: '',
-				right: '',
-				left: ''
-			}
-		};
-	},
-
-	constructor: function() {
-		BaseRegion.prototype.constructor.apply( this, arguments );
+		this.opened = false;
 
 		this.ensurePosition = this.ensurePosition.bind( this );
 
@@ -35,58 +17,72 @@ module.exports = BaseRegion.extend( {
 		if ( this.storage.visible ) {
 			this.open();
 		}
-	},
+	}
 
-	getLayout: function() {
+	getStorageKey() {
+		return 'navigator';
+	}
+
+	getDefaultStorage() {
+		return {
+			visible: false,
+			size: {
+				width: '',
+				height: '',
+				top: '',
+				bottom: '',
+				right: '',
+				left: '',
+			}
+		};
+	}
+
+	getLayout() {
 		return this.currentView;
-	},
+	}
 
-	getDraggableOptions: function() {
+	getDraggableOptions() {
 		return {
 			iframeFix: true,
 			handle: '#elementor-navigator__header',
 			drag: this.onDrag.bind( this ),
 			stop: this.onDragStop.bind( this )
 		};
-	},
+	}
 
-	getResizableOptions: function() {
-		var self = this;
-
+	getResizableOptions() {
 		return {
 			handles: 'all',
 			containment: 'document',
 			minWidth: 150,
 			maxWidth: 500,
 			minHeight: 240,
-			start: function() {
+			start: () => {
 				elementor.$previewWrapper.addClass( 'ui-resizable-resizing' );
 			},
-			stop: function() {
+			stop: () => {
 				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
 
-				if ( self.isDocked ) {
-					self.storage.size.width = elementor.helpers.getElementInlineStyle( self.$el, [ 'width' ] ).width;
+				if ( this.isDocked ) {
+					this.storage.size.width = elementor.helpers.getElementInlineStyle( this.$el, [ 'width' ] ).width;
 
-					elementor.setStorage( 'navigator', self.storage );
+					elementor.setStorage( 'navigator', this.storage );
 				} else {
-					self.saveSize();
+					this.saveSize();
 				}
 			}
 		};
-	},
+	}
 
-	beforeFirstOpen: function() {
-		var NavigatorLayoutView = require( 'elementor-regions/navigator/layout' );
-
-		this.show( new NavigatorLayoutView() );
+	beforeFirstOpen() {
+		this.show( new NavigatorLayout() );
 
 		this.$el.draggable( this.getDraggableOptions() );
 
 		this.$el.resizable( this.getResizableOptions() );
-	},
+	}
 
-	open: function( model ) {
+	open( model ) {
 		if ( ! this.opened ) {
 			this.beforeFirstOpen();
 
@@ -112,9 +108,9 @@ module.exports = BaseRegion.extend( {
 		this.ensurePosition();
 
 		elementor.$window.on( 'resize', this.ensurePosition );
-	},
+	}
 
-	close: function( silent ) {
+	close( silent ) {
 		this.$el.hide();
 
 		if ( this.isDocked ) {
@@ -126,16 +122,16 @@ module.exports = BaseRegion.extend( {
 		}
 
 		elementor.$window.off( 'resize', this.ensurePosition );
-	},
+	}
 
-	isOpen: function() {
+	isOpen() {
 		return this.$el.is( ':visible' );
-	},
+	}
 
-	dock: function() {
+	dock() {
 		elementor.$body.addClass( 'elementor-navigator-docked' );
 
-		var side = elementor.config.is_rtl ? 'left' : 'right',
+		const side = elementor.config.is_rtl ? 'left' : 'right',
 			resizableOptions = this.getResizableOptions();
 
 		this.$el.css( {
@@ -152,7 +148,7 @@ module.exports = BaseRegion.extend( {
 
 		resizableOptions.handles = elementor.config.is_rtl ? 'e' : 'w';
 
-		resizableOptions.resize = function( event, ui ) {
+		resizableOptions.resize = ( event, ui ) => {
 			elementor.$previewWrapper.css( side, ui.size.width );
 		};
 
@@ -161,9 +157,9 @@ module.exports = BaseRegion.extend( {
 		this.isDocked = true;
 
 		this.saveStorage( 'docked', true );
-	},
+	}
 
-	undock: function( silent ) {
+	undock( silent ) {
 		elementor.$body.removeClass( 'elementor-navigator-docked' );
 
 		elementor.$previewWrapper.css( elementor.config.is_rtl ? 'left' : 'right', '' );
@@ -179,24 +175,24 @@ module.exports = BaseRegion.extend( {
 		if ( ! silent ) {
 			this.saveStorage( 'docked', false );
 		}
-	},
+	}
 
-	setSize: function() {
+	setSize() {
 		if ( this.storage.size ) {
 			this.$el.css( this.storage.size );
 		}
-	},
+	}
 
-	setDockedSize: function() {
+	setDockedSize() {
 		this.$el.css( 'width', this.storage.size.width );
-	},
+	}
 
-	ensurePosition: function() {
+	ensurePosition() {
 		if ( this.isDocked ) {
 			return;
 		}
 
-		var offset = this.$el.offset();
+		const offset = this.$el.offset();
 
 		if ( offset.left > innerWidth ) {
 			this.$el.css({
@@ -211,9 +207,9 @@ module.exports = BaseRegion.extend( {
 				bottom: ''
 			} );
 		}
-	},
+	}
 
-	onDrag: function( event, ui ) {
+	onDrag( event, ui ) {
 		if ( this.isDocked ) {
 			if ( ui.position.left === ui.originalPosition.left ) {
 				if ( ui.position.top !== ui.originalPosition.top ) {
@@ -230,7 +226,7 @@ module.exports = BaseRegion.extend( {
 			ui.position.top = 0;
 		}
 
-		var isOutOfLeft = 0 > ui.position.left,
+		const isOutOfLeft = 0 > ui.position.left,
 			isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth;
 
 		if ( elementor.config.is_rtl ) {
@@ -242,29 +238,29 @@ module.exports = BaseRegion.extend( {
 		}
 
 		elementor.$body.toggleClass( 'elementor-navigator--dock-hint', elementor.config.is_rtl ? isOutOfLeft : isOutOfRight );
-	},
+	}
 
-	onDragStop: function( event, ui ) {
+	onDragStop( event, ui ) {
 		if ( this.isDocked ) {
 			return;
 		}
 
 		this.saveSize();
 
-		var elementRight = ui.position.left + this.el.offsetWidth;
+		const elementRight = ui.position.left + this.el.offsetWidth;
 
 		if ( 0 > ui.position.left || elementRight > innerWidth ) {
 			this.dock();
 		}
 
 		elementor.$body.removeClass( 'elementor-navigator--dock-hint' );
-	},
+	}
 
-	onEditModeSwitched: function( activeMode ) {
+	onEditModeSwitched( activeMode ) {
 		if ( 'edit' === activeMode && this.storage.visible ) {
 			this.open();
 		} else {
 			this.close( true );
 		}
 	}
-} );
+}

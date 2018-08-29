@@ -1,5 +1,6 @@
 /* global ElementorConfig */
-var App;
+import Heartbeat from './utils/heartbeat';
+import Navigator from './regions/navigator/navigator';
 
 Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
 	options = {
@@ -11,11 +12,10 @@ Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, opti
 	return _.template( rawTemplate, options );
 };
 
-App = Marionette.Application.extend( {
+const App = Marionette.Application.extend( {
 	previewLoadedOnce: false,
 
 	helpers: require( 'elementor-editor-utils/helpers' ),
-	heartbeat: require( 'elementor-editor-utils/heartbeat' ),
 	imagesManager: require( 'elementor-editor-utils/images-manager' ),
 	debug: require( 'elementor-editor-utils/debug' ),
 	schemes: require( 'elementor-editor-utils/schemes' ),
@@ -24,7 +24,7 @@ App = Marionette.Application.extend( {
 	ajax: require( 'elementor-editor-utils/ajax' ),
 	conditions: require( 'elementor-editor-utils/conditions' ),
 	hotKeys: require( 'elementor-utils/hot-keys' ),
-	history:  require( 'modules/history/assets/js/module' ),
+	history: require( 'modules/history/assets/js/module' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -600,7 +600,12 @@ App = Marionette.Application.extend( {
 	},
 
 	initNavigator: function() {
-		this.addRegions( { navigator: require( 'elementor-regions/navigator/navigator' ) } );
+		this.addRegions( {
+			navigator: {
+				el: '#elementor-navigator',
+				regionClass: Navigator
+			}
+		} );
 	},
 
 	preventClicksInsideEditor: function() {
@@ -986,7 +991,7 @@ App = Marionette.Application.extend( {
 	onFirstPreviewLoaded: function() {
 		this.initPanel();
 
-		this.heartbeat.init();
+		this.heartbeat = new Heartbeat();
 
 		this.checkPageStatus();
 

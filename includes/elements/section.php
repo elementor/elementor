@@ -290,6 +290,15 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
+			'_title',
+			[
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::HIDDEN,
+				'render_type' => 'none',
+			]
+		);
+
+		$this->add_control(
 			'stretch_section',
 			[
 				'label' => __( 'Stretch Section', 'elementor' ),

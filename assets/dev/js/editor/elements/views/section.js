@@ -1,6 +1,7 @@
 var BaseElementView = require( 'elementor-elements/views/base' ),
-	AddSectionView = require( 'elementor-views/add-section/inline' ),
 	SectionView;
+
+import AddSectionView from '../../views/add-section/inline';
 
 SectionView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
