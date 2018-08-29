@@ -172,6 +172,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	focusSearch: function() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
 		this.search.currentView.ui.input.focus();
 	},
 
