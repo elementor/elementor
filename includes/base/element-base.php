@@ -751,6 +751,12 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
+		$settings = $this->get_active_settings();
+
+		$frontend_settings = $this->get_frontend_settings();
+
+		$controls = $this->get_controls();
+
 		$id = $this->get_id();
 
 		$this->add_render_attribute( '_wrapper', 'data-id', $id );
@@ -761,10 +767,6 @@ abstract class Element_Base extends Controls_Stack {
 				'elementor-element-' . $id,
 			]
 		);
-
-		$settings = $this->get_active_settings();
-
-		$controls = $this->get_controls();
 
 		$class_settings = [];
 
@@ -790,8 +792,6 @@ abstract class Element_Base extends Controls_Stack {
 		if ( ! empty( $settings['_element_id'] ) ) {
 			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
-
-		$frontend_settings = $this->get_frontend_settings();
 
 		if ( $frontend_settings ) {
 			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
