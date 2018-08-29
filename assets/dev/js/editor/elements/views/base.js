@@ -28,7 +28,7 @@ BaseElementView = BaseContainer.extend( {
 	attributes: function() {
 		var type = this.model.get( 'elType' );
 
-		if ( 'widget'  === type ) {
+		if ( 'widget' === type ) {
 			type = this.model.get( 'widgetType' );
 		}
 
