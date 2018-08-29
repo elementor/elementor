@@ -8,10 +8,6 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	events: function() {
-
-		if ( ! elementor.userCan( 'design' ) ) {
-			return events;
-		}
 		const events = {};
 
 		this.getOption( 'eventTargets' ).forEach( function( eventTarget ) {
@@ -67,7 +63,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onContextMenu: function( event ) {
-		if ( elementor.hotKeys.isControlEvent( event ) ) {
+		if ( elementor.hotKeys.isControlEvent( event ) || ! elementor.userCan( 'design' ) ) {
 			return;
 		}
 

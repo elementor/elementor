@@ -231,7 +231,11 @@ export default class extends Marionette.CompositeView {
 		elementor.removeBackgroundClickListener( 'navigator' );
 	}
 
-	onRender() {
+	activateSortable() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
 		this.ui.elements.sortable( {
 			items: '> .elementor-navigator__element',
 			placeholder: 'ui-sortable-placeholder',
@@ -240,6 +244,10 @@ export default class extends Marionette.CompositeView {
 			connectWith: '.elementor-navigator__element-' + this.model.get( 'elType' ) + ' ' + this.ui.elements.selector,
 			cancel: '[contenteditable="true"]'
 		} );
+	}
+
+	onRender() {
+		this.activateSortable();
 
 		this.ui.item.css( 'padding-' + ( elementor.config.is_rtl ? 'right' : 'left' ), this.getIndent() );
 
