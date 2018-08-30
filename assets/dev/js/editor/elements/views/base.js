@@ -727,9 +727,7 @@ BaseElementView = BaseContainer.extend( {
 		this.model.trigger( 'request:edit' );
 	},
 
-	onEditRequest: function( options ) {
-		options = options || {};
-
+	onEditRequest: function( options = {} ) {
 		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
 			return;
 		}
