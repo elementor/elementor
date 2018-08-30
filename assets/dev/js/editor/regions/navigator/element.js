@@ -6,10 +6,6 @@ export default class extends Marionette.CompositeView {
 		return '#tmpl-elementor-navigator__elements';
 	}
 
-	getChildViewContainer() {
-		return this.$( '.elementor-navigator__elements' );
-	}
-
 	ui() {
 		return {
 			item: '> .elementor-navigator__item',
@@ -92,6 +88,8 @@ export default class extends Marionette.CompositeView {
 
 	initialize() {
 		this.collection = this.model.get( 'elements' );
+
+		this.childViewContainer = '.elementor-navigator__elements';
 
 		this.listenTo( this.model, 'request:edit', this.onEditRequest )
             .listenTo( this.model, 'change', this.onModelChange )
@@ -267,7 +265,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onItemClick() {
-		this.model.trigger( 'request:edit' );
+		this.model.trigger( 'request:edit', { scrollIntoView: true } );
 	}
 
 	onToggleClick( event ) {
