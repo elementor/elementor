@@ -208,6 +208,7 @@
 
 			&__text {
 				white-space: nowrap;
+				-webkit-user-select: text;
 
 				&[contenteditable="true"] {
 					outline: none;
