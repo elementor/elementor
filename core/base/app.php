@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class App extends Module {
 
-	final protected function get_assets_url( $file_name, $file_extension, $relative_url = null ) {
+	final protected function get_assets_url( $file_name, $file_extension, $relative_url = null, $add_suffix = true ) {
 		static $suffix = null;
 
 		if ( null === $suffix ) {
@@ -19,15 +19,22 @@ abstract class App extends Module {
 			$relative_url = $this->get_assets_relative_url() . $file_extension . '/';
 		}
 
-		return ELEMENTOR_URL . $relative_url . $file_name . $suffix . '.' . $file_extension;
+		$url = ELEMENTOR_URL . $relative_url . $file_name;
+
+		if ( $add_suffix ) {
+			$url .= $suffix;
+		}
+
+		return $url . '.' . $file_extension;
 	}
 
-	final protected function get_js_assets_url( $file_name, $relative_url = null ) {
-		return $this->get_assets_url( $file_name, 'js', $relative_url );
+	final protected function get_js_assets_url( $file_name, $relative_url = null, $add_suffix = true ) {
+		return $this->get_assets_url( $file_name, 'js', $relative_url, $add_suffix );
 	}
 
-	final protected function get_css_assets_url( $file_name, $relative_url = null ) {
-		return $this->get_assets_url( $file_name, 'css', $relative_url );
+	final protected function get_css_assets_url( $file_name, $relative_url = null, $add_suffix = true ) {
+		return $this->get_assets_url( $file_name, 'css', $relative_url, $add_suffix );
+	}
 	}
 
 	protected function get_assets_relative_url() {
