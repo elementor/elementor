@@ -2,6 +2,7 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
+use Elementor\Core\Base\App;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -11,12 +12,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Admin {
+class Admin extends App {
 
 	/**
 	 * @var \Elementor\Core\Admin\Feedback
 	 */
 	private $feedback;
+
+	/**
+	 * Get module name.
+	 *
+	 * Retrieve the module name.
+	 *
+	 * @since  2.3.0
+	 * @access public
+	 *
+	 * @return string Module name.
+	 */
+	public function get_name() {
+		return 'admin';
+	}
 
 	public function maybe_redirect_to_getting_started() {
 		if ( ! get_transient( 'elementor_activation_redirect' ) ) {
@@ -52,11 +67,9 @@ class Admin {
 	 * @access public
 	 */
 	public function enqueue_scripts() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		wp_register_script(
-			'elementor-admin-app',
-			ELEMENTOR_ASSETS_URL . 'js/admin' . $suffix . '.js',
+			'elementor-admin',
+			$this->get_js_assets_url( 'admin' ),
 			[
 				'jquery',
 			],
@@ -64,22 +77,9 @@ class Admin {
 			true
 		);
 
-		wp_localize_script(
-			'elementor-admin-app',
-			'ElementorAdminConfig',
-			[
-				'home_url' => home_url(),
-				'i18n' => [
-					'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
-					'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
-					'yes' => __( 'Yes', 'elementor' ),
-					'cancel' => __( 'Cancel', 'elementor' ),
-					'new_template' => __( 'New Template', 'elementor' ),
-				],
-			]
-		);
+		wp_enqueue_script( 'elementor-admin' );
 
-		wp_enqueue_script( 'elementor-admin-app' );
+		$this->print_config();
 	}
 
 	/**
@@ -93,27 +93,25 @@ class Admin {
 	 * @access public
 	 */
 	public function enqueue_styles() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
 		wp_register_style(
 			'elementor-icons',
-			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
+			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
 			'3.8.0'
 		);
 
 		wp_register_style(
-			'elementor-admin-app',
-			ELEMENTOR_ASSETS_URL . 'css/admin' . $direction_suffix . $suffix . '.css',
+			'elementor-admin',
+			$this->get_css_assets_url( 'admin' . $direction_suffix ),
 			[
 				'elementor-icons',
 			],
 			ELEMENTOR_VERSION
 		);
 
-		wp_enqueue_style( 'elementor-admin-app' );
+		wp_enqueue_style( 'elementor-admin' );
 
 		// It's for upgrade notice.
 		// TODO: enqueue this just if needed.
@@ -746,6 +744,20 @@ class Admin {
 
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
 	}
+
+	protected function get_init_settings() {
+		return [
+			'home_url' => home_url(),
+			'i18n' => [
+				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
+				'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
+				'yes' => __( 'Yes', 'elementor' ),
+				'cancel' => __( 'Cancel', 'elementor' ),
+				'new_template' => __( 'New Template', 'elementor' ),
+			]
+		];
+	}
+
 
 	private function print_library_layout_template() {
 		include ELEMENTOR_PATH . 'includes/editor-templates/library-layout.php';
