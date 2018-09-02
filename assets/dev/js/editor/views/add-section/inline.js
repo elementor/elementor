@@ -24,8 +24,8 @@ class AddSectionView extends BaseAddSectionView {
 		this.fadeToDeath();
 	}
 
-	onPresetSelected() {
-		super.onPresetSelected();
+	onPresetSelected( event ) {
+		super.onPresetSelected( event );
 
 		this.destroy();
 	}
