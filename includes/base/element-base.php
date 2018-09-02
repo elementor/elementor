@@ -627,7 +627,7 @@ abstract class Element_Base extends Controls_Stack {
 		 *
 		 * Fires after Elementor element is rendered in the frontend.
 		 *
-		 * @since 2.2.0
+		 * @since 2.3.0
 		 *
 		 * @param Element_Base $this The element.
 		 */
