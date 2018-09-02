@@ -751,6 +751,18 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
+		/**
+		 * Before frontend element attribute rendered.
+		 *
+		 * Fires before Elementor element attribute of the current element
+		 * wrapper HTML tag is rendered in the frontend.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/frontend/before_attribute_render', $this );
+
 		$settings = $this->get_active_settings();
 
 		$frontend_settings = $this->get_frontend_settings();
@@ -796,6 +808,18 @@ abstract class Element_Base extends Controls_Stack {
 		if ( $frontend_settings ) {
 			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
 		}
+
+		/**
+		 * After frontend element attribute rendered.
+		 *
+		 * Fires after Elementor element attribute of the current element
+		 * wrapper HTML tag is rendered in the frontend.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/frontend/after_attribute_render', $this );
 	}
 
 	/**
