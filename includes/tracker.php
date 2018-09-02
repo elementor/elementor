@@ -245,6 +245,20 @@ class Tracker {
 			return;
 		}
 
+		$elementor_pages = new \WP_Query( [
+			'post_type' => 'any',
+			'post_status' => 'publish',
+			'fields' => 'ids',
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			'meta_key' => '_elementor_edit_mode',
+			'meta_value' => 'builder',
+		] );
+
+		if ( 2 > $elementor_pages->post_count ) {
+			return;
+		}
+
 		self::$notice_shown = true;
 
 		// TODO: Skip for development env.
