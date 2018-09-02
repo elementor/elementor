@@ -61,6 +61,7 @@ const entry = {
 	],
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
+	'common': path.resolve( __dirname, '../assets/dev/js/common/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
 	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),

@@ -343,26 +343,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'backbone-marionette',
-			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.marionette' . $suffix . '.js',
-			[
-				'backbone',
-			],
-			'2.4.5',
-			true
-		);
-
-		wp_register_script(
-			'backbone-radio',
-			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.radio' . $suffix . '.js',
-			[
-				'backbone',
-			],
-			'1.0.4',
-			true
-		);
-
-		wp_register_script(
 			'perfect-scrollbar',
 			ELEMENTOR_ASSETS_URL . 'lib/perfect-scrollbar/perfect-scrollbar.jquery' . $suffix . '.js',
 			[
@@ -447,24 +427,12 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'4.5.0',
-			true
-		);
-
-		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',
-				'backbone-marionette',
-				'backbone-radio',
 				'perfect-scrollbar',
 				'nprogress',
 				'tipsy',
@@ -472,7 +440,6 @@ class Editor {
 				'heartbeat',
 				'jquery-elementor-select2',
 				'flatpickr',
-				'elementor-dialog',
 				'ace',
 				'ace-language-tools',
 				'jquery-hover-intent',
