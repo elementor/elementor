@@ -752,16 +752,15 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	protected function _add_render_attributes() {
 		/**
-		 * Before frontend element attribute rendered.
+		 * Before element attribute rendered.
 		 *
-		 * Fires before Elementor element attribute of the current element
-		 * wrapper HTML tag is rendered in the frontend.
+		 * Fires before the attributes of the element HTML tag are rendered.
 		 *
 		 * @since 2.3.0
 		 *
 		 * @param Element_Base $this The element.
 		 */
-		do_action( 'elementor/frontend/before_attribute_render', $this );
+		do_action( 'elementor/element/before_attribute_render', $this );
 
 		$settings = $this->get_active_settings();
 
@@ -810,16 +809,15 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		/**
-		 * After frontend element attribute rendered.
+		 * After element attribute rendered.
 		 *
-		 * Fires after Elementor element attribute of the current element
-		 * wrapper HTML tag is rendered in the frontend.
+		 * Fires after the attributes of the element HTML tag are rendered.
 		 *
 		 * @since 2.3.0
 		 *
 		 * @param Element_Base $this The element.
 		 */
-		do_action( 'elementor/frontend/after_attribute_render', $this );
+		do_action( 'elementor/element/after_attribute_render', $this );
 	}
 
 	/**
