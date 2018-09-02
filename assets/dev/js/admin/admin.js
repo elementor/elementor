@@ -5,7 +5,7 @@
 
 		maintenanceMode: null,
 
-		config: ElementorAdminConfig,
+		config: elementorAdminConfig,
 
 		getDefaultElements: function() {
 			var elements = {
