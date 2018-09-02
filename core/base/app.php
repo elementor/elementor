@@ -35,9 +35,24 @@ abstract class App extends Module {
 	final protected function get_css_assets_url( $file_name, $relative_url = null, $add_suffix = true ) {
 		return $this->get_assets_url( $file_name, 'css', $relative_url, $add_suffix );
 	}
+
+	final protected function print_config() {
+		$name = $this->get_name();
+
+		wp_localize_script( 'elementor-' . $name, 'elementor' . ucfirst( $name ) . 'Config', $this->get_settings() + $this->get_components_config() );
 	}
 
 	protected function get_assets_relative_url() {
 		return 'assets/';
+	}
+
+	private function get_components_config(){
+		$settings = [];
+
+		foreach ( $this->get_components() as $id => $instance ) {
+			$settings[ $id ] = $instance->get_settings();
+		}
+
+		return $settings;
 	}
 }
