@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Base_Object;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -13,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  * @abstract
  */
-abstract class Base_Control {
+abstract class Base_Control extends Base_Object {
 
 	/**
 	 * Base settings.
@@ -31,17 +33,6 @@ abstract class Base_Control {
 		'label_block' => false,
 		'separator' => 'default',
 	];
-
-	/**
-	 * Settings.
-	 *
-	 * Holds all the settings of the control.
-	 *
-	 * @access private
-	 *
-	 * @var array
-	 */
-	private $_settings = [];
 
 	/**
 	 * Get features.
@@ -79,9 +70,9 @@ abstract class Base_Control {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->_settings = array_merge( $this->_base_settings, $this->get_default_settings() );
+		$this->set_settings( array_merge( $this->_base_settings, $this->get_default_settings() ) );
 
-		$this->_settings['features'] = static::get_features();
+		$this->set_settings( 'features', static::get_features() );
 	}
 
 	/**
@@ -93,49 +84,6 @@ abstract class Base_Control {
 	 * @access public
 	 */
 	public function enqueue() {}
-
-	/**
-	 * Get control settings.
-	 *
-	 * Retrieve the control settings or a specific setting value.
-	 *
-	 * @since 1.5.0
-	 * @access public
-	 *
-	 * @param string $setting_key Optional. Specific key to return from the
-	 *                            settings. If key set it will return the
-	 *                            specific value of the key, otherwise the
-	 *                            entire key array will be returned. Default is
-	 *                            null.
-	 *
-	 * @return mixed The control settings, or specific setting value.
-	 */
-	final public function get_settings( $setting_key = null ) {
-		if ( $setting_key ) {
-			if ( isset( $this->_settings[ $setting_key ] ) ) {
-				return $this->_settings[ $setting_key ];
-			}
-
-			return null;
-		}
-
-		return $this->_settings;
-	}
-
-	/**
-	 * Set control settings.
-	 *
-	 * Used to set or to update the settings of an existing control.
-	 *
-	 * @since 1.5.0
-	 * @access public
-	 *
-	 * @param string $key   Control settings key.
-	 * @param mixed  $value Control settings value.
-	 */
-	final public function set_settings( $key, $value ) {
-		$this->_settings[ $key ] = $value;
-	}
 
 	/**
 	 * Control content template.

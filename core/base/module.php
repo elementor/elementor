@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.7.0
  * @abstract
  */
-abstract class Module {
+abstract class Module extends Base_Object {
 
 	/**
 	 * Module class reflection.
@@ -39,8 +39,6 @@ abstract class Module {
 	 * @var array
 	 */
 	private $components = [];
-
-	private $settings = [];
 
 	/**
 	 * Module instance.
@@ -79,11 +77,13 @@ abstract class Module {
 	 * @return Module An instance of the class.
 	 */
 	public static function instance() {
-		if ( empty( static::$_instances[ static::class_name() ] ) ) {
-			static::$_instances[ static::class_name() ] = new static();
+		$class_name = static::class_name();
+
+		if ( empty( static::$_instances[ $class_name ] ) ) {
+			static::$_instances[ $class_name ] = new static();
 		}
 
-		return static::$_instances[ static::class_name() ];
+		return static::$_instances[ $class_name ];
 	}
 
 	/**
@@ -190,43 +190,5 @@ abstract class Module {
 		}
 
 		return false;
-	}
-
-	public function get_settings() {
-		return $this->settings;
-	}
-
-	public function get_setting( $key, $default = null ) {
-		return isset( $this->settings[ $key ] ) ? $this->settings[ $key ] : $default;
-	}
-
-	public function set_setting( $key, $value = null ) {
-		if ( is_array( $key ) ) {
-			$this->settings = array_replace_recursive( $this->settings, $key );
-		} else {
-			$this->settings[ $key ] = $value;
-		}
-	}
-
-	public function delete_setting( $key = null ) {
-		if ( $key ) {
-			unset( $this->settings[ $key ] );
-		} else {
-			$this->settings = [];
-		}
-	}
-
-	public function add_setting( $key, $value, $default = '' ) {
-		$new_value = $this->get_setting( $key, $default );
-
-		if ( is_array( $new_value ) ) {
-			$new_value[] = $value;
-		} elseif ( is_string( $new_value ) ) {
-			$new_value .= $value;
-		} elseif ( is_numeric( $new_value ) ) {
-			$new_value += $value;
-		}
-
-		$this->set_setting( $key, $new_value );
 	}
 }

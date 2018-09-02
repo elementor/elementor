@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.4.0
  * @abstract
  */
-abstract class Controls_Stack {
+abstract class Controls_Stack extends Base_Object {
 
 	/**
 	 * Responsive 'desktop' device name.
@@ -43,18 +44,6 @@ abstract class Controls_Stack {
 	 * @var string
 	 */
 	private $id;
-
-	/**
-	 * Parsed Settings.
-	 *
-	 * Holds the settings, which is the data entered by the user and processed
-	 * by elementor.
-	 *
-	 * @access private
-	 *
-	 * @var null|array
-	 */
-	private $settings;
 
 	private $active_settings;
 
@@ -226,6 +215,7 @@ abstract class Controls_Stack {
 	 * will be returned.
 	 *
 	 * @since 1.4.0
+	 * @deprecated 2.3.0 Use `Controls_Stack::get_items()` instead
 	 * @access protected
 	 * @static
 	 *
@@ -285,7 +275,7 @@ abstract class Controls_Stack {
 	 * @return mixed Controls list.
 	 */
 	public function get_controls( $control_id = null ) {
-		return self::_get_items( $this->get_stack()['controls'], $control_id );
+		return self::get_items( $this->get_stack()['controls'], $control_id );
 	}
 
 	/**
@@ -1030,7 +1020,7 @@ abstract class Controls_Stack {
 			$this->settings_sanitized = true;
 		}
 
-		return self::_get_items( $this->data, $item );
+		return self::get_items( $this->data, $item );
 	}
 
 	/**
@@ -1038,19 +1028,20 @@ abstract class Controls_Stack {
 	 *
 	 * Retrieve all the settings or, when requested, a specific setting.
 	 *
-	 * @since 1.4.0
+	 * @since  1.4.0
 	 * @access public
 	 *
 	 * @param string $setting Optional. The requested setting. Default is null.
 	 *
+	 * @param mixed  $default  Optional. Default value to return when the needle was
+	 *                         not found. Default is null.
+	 *
 	 * @return mixed The settings.
 	 */
-	public function get_settings( $setting = null ) {
-		if ( ! $this->settings ) {
-			$this->settings = $this->_get_parsed_settings();
-		}
+	public function get_settings( $setting = null, $default = null ) {
+		$this->ensure_settings();
 
-		return self::_get_items( $this->settings, $setting );
+		return parent::get_settings( $setting );
 	}
 
 	public function get_parsed_dynamic_settings( $setting = null ) {
@@ -1058,7 +1049,7 @@ abstract class Controls_Stack {
 			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->get_settings() );
 		}
 
-		return self::_get_items( $this->parsed_dynamic_settings, $setting );
+		return self:: get_items( $this->parsed_dynamic_settings, $setting );
 	}
 
 	/**
@@ -1141,7 +1132,7 @@ abstract class Controls_Stack {
 			$this->parsed_active_settings = $this->get_active_settings( $this->get_parsed_dynamic_settings(), $this->get_controls() );
 		}
 
-		return self::_get_items( $this->parsed_active_settings, $setting_key );
+		return self::get_items( $this->parsed_active_settings, $setting_key );
 	}
 
 	/**
@@ -1765,16 +1756,9 @@ abstract class Controls_Stack {
 	 *                            `$key` is an array. Default is null.
 	 */
 	final public function set_settings( $key, $value = null ) {
-		if ( ! $this->settings ) {
-			$this->get_settings();
-		}
+		$this->ensure_settings();
 
-		// strict check if override all settings.
-		if ( is_array( $key ) ) {
-			$this->settings = $key;
-		} else {
-			$this->settings[ $key ] = $value;
-		}
+		parent::set_settings( $key, $value );
 	}
 
 	/**
@@ -2022,6 +2006,12 @@ abstract class Controls_Stack {
 		}
 
 		return $settings;
+	}
+
+	private function ensure_settings() {
+		if ( ! $this->settings ) {
+			$this->settings = $this->_get_parsed_settings();
+		}
 	}
 
 	/**
