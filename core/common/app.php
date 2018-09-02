@@ -55,17 +55,7 @@ class App extends BaseApp {
 
 		wp_enqueue_script( 'elementor-common' );
 
-		wp_localize_script( 'elementor-common', 'elementorAppConfig', json_encode( $this->get_components_settings() ) );
-	}
-
-	private function get_components_settings(){
-		$settings = [];
-
-		foreach ( $this->get_components() as $id => $instance ) {
-			$settings[ $id ] = $instance->get_settings();
-		}
-
-		return $settings;
+		$this->print_config();
 	}
 
 	public function __construct() {
