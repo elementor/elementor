@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Files\Manager as Files_Manager;
@@ -387,10 +388,7 @@ class Plugin {
 	 */
 	public $inspector;
 
-	/**
-	 * @var Core\App\Module
-	 */
-	public $app;
+	public $common;
 
 	/**
 	 * Clone.
@@ -485,10 +483,10 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
-		$this->app = new Core\App\Module();
-
 		$this->inspector = new Inspector();
 		$this->debugger = $this->inspector;
+
+		$this->common = new CommonApp();
 
 		// Allow all components to use AJAX.
 		$this->ajax = new Ajax_Manager();
