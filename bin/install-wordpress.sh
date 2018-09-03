@@ -6,7 +6,7 @@
 # Exit if any command fails.
 set -e
 
-# Gutenberg script includes.
+# Elementor script includes.
 . "$(dirname "$0")/includes.sh"
 
 # Set up environment variables
@@ -15,13 +15,13 @@ set -e
 # These are the containers and values for the development site.
 CLI='cli'
 CONTAINER='wordpress'
-SITE_TITLE='Gutenberg Dev'
+SITE_TITLE='Elementor Dev'
 
 # If we're installing/re-installing the test site, change the containers used.
 if [ "$1" == '--e2e_tests' ]; then
 	CLI="${CLI}_e2e_tests"
 	CONTAINER="${CONTAINER}_e2e_tests"
-	SITE_TITLE='Gutenberg Testing'
+	SITE_TITLE='Elementor Testing'
 
 	if ! docker ps | grep -q $CONTAINER; then
 		echo -e $(error_message "WordPress e2e tests run in their own Docker container, but that container wasn't found.")
@@ -69,6 +69,6 @@ if [ "$CURRENT_URL" != "http://localhost:$HOST_PORT" ]; then
 	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update siteurl "http://localhost:$HOST_PORT" >/dev/null
 fi
 
-# Activate Gutenberg.
-echo -e $(status_message "Activating Gutenberg...")
-docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI plugin activate gutenberg >/dev/null
+# Activate Elementor.
+echo -e $(status_message "Activating Elementor...")
+docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI plugin activate elementor >/dev/null
