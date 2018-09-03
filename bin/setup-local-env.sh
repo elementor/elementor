@@ -12,6 +12,8 @@ set -e
 # Change to the expected directory
 cd "$(dirname "$0")/.."
 
+npm i
+
 # Check Docker is installed and running
 . "$(dirname "$0")/install-docker.sh"
 
