@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -217,6 +217,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 == Changelog ==
 
 = 2.2.1 - 2018-09-03 =
+* Fix: Auto scrolling when clicking on long element ([#5591](https://github.com/pojome/elementor/issues/5591))
 * Fix: Increased number input width besides slider control ([#5521](https://github.com/pojome/elementor/issues/5521))
 * Fix: Typography line-height default unit for all devices ([#5527](https://github.com/pojome/elementor/issues/5527))
 * Fix: Added Navigator compatibility for Role Manager ([#5599](https://github.com/pojome/elementor/issues/5599))
@@ -224,7 +225,6 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Fix: E loader RTL style glitch
 * Fix: History undo after adding a section
 * Fix: Styling issue with Testimonial widget image
-* Fix: Auto scrolling when clicking on long element ([#5591](https://github.com/pojome/elementor/issues/5591))
 * Fix: Panel elements search error when the user is in `content only` mode
 * Fix: Better Navigator support for safari versions
 
