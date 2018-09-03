@@ -590,7 +590,7 @@ abstract class Element_Base extends Controls_Stack {
 		 *
 		 * Filters if the element should be rendered on frontend.		 
 		 *
-		 * @since 2.1.8
+		 * @since 2.2.1
 		 *
 		 * @param bool true The element.
 		 * @param Element_Base $this The element.
