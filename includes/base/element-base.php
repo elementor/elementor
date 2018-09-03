@@ -621,10 +621,11 @@ abstract class Element_Base extends Controls_Stack {
 
 		$this->enqueue_scripts();
 		$this->enqueue_styles();
+
 		/**
 		 * After frontend element render.
 		 *
-		 * Fires after Elementor element was rendered in the frontend.
+		 * Fires after Elementor element is rendered in the frontend.
 		 *
 		 * The dynamic portion of the hook name, `$element_type`, refers to the element type.
 		 *
@@ -633,6 +634,17 @@ abstract class Element_Base extends Controls_Stack {
 		 * @param Element_Base $this The element.
 		 */
 		do_action( "elementor/frontend/{$element_type}/after_render", $this );
+
+		/**
+		 * After frontend element render.
+		 *
+		 * Fires after Elementor element is rendered in the frontend.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/frontend/after_render', $this );
 	}
 
 	/**
