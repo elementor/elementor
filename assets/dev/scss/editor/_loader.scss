@@ -1,6 +1,6 @@
 .elementor-loader-wrapper {
 	position: absolute;
-	width: 150px;
+	width: 300px;
 	left: 50%;
 	top: 50%;
 	transform: translateX(-50%) translateY(-50%);
@@ -13,7 +13,7 @@
 	border-radius: 7px;
 	padding: 40px;
 	height: 150px;
-	width: 100%;
+	width: 150px;
 	background-color: rgba(255, 255, 255, 0.9);
 	box-sizing: border-box; // For admin
 	box-shadow: 2px 2px 20px 4px rgba(0, 0, 0, .02);
@@ -80,4 +80,5 @@
 	margin-top: 30px;
 	letter-spacing: 7px;
 	font-size: 10px;
+	width: 100%;
 }
