@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# credit: "https://github.com/WordPress/gutenberg"
+# under GPL license
+
 # Exit if any command fails.
 set -e
 

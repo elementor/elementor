@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# credit: "https://github.com/WordPress/gutenberg"
+# under GPL license
+
 ##
 # Ask a Yes/No question, and way for a reply.
 #
