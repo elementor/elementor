@@ -23,7 +23,7 @@ const aliasList = {
 		'elementor-validator': path.resolve( __dirname, '../assets/dev/js/editor/components/validator' ),
 		'elementor-utils': path.resolve( __dirname, '../assets/dev/js/utils' ),
 		'elementor-admin': path.resolve( __dirname, '../assets/dev/js/admin' ),
-		'modules': path.resolve( __dirname, '../modules' ),
+		'elementor-modules': path.resolve( __dirname, '../modules' ),
 	}
 };
 
