@@ -53,6 +53,7 @@ class Admin extends App {
 		}
 
 		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
+
 		exit;
 	}
 
@@ -674,10 +675,8 @@ class Admin extends App {
 		die;
 	}
 
-	public function print_new_template_template() {
-		$this->print_library_layout_template();
-
-		include ELEMENTOR_PATH . 'includes/admin-templates/new-template.php';
+	public function add_new_template_template() {
+		Plugin::$instance->common->add_template( ELEMENTOR_PATH . 'includes/admin-templates/new-template.php' );
 	}
 
 	public function enqueue_new_template_scripts() {
@@ -686,10 +685,7 @@ class Admin extends App {
 		wp_enqueue_script(
 			'elementor-new-template',
 			ELEMENTOR_ASSETS_URL . 'js/new-template' . $suffix . '.js',
-			[
-				'backbone-marionette',
-				'elementor-dialog',
-			],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -700,7 +696,7 @@ class Admin extends App {
 			return;
 		}
 
-		add_action( 'admin_footer', [ $this, 'print_new_template_template' ] );
+		$this->add_new_template_template();
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
 	}
@@ -746,7 +742,7 @@ class Admin extends App {
 	}
 
 	protected function get_init_settings() {
-		return [
+		$settings = [
 			'home_url' => home_url(),
 			'i18n' => [
 				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
@@ -756,10 +752,7 @@ class Admin extends App {
 				'new_template' => __( 'New Template', 'elementor' ),
 			]
 		];
-	}
 
-
-	private function print_library_layout_template() {
-		include ELEMENTOR_PATH . 'includes/editor-templates/library-layout.php';
+		return apply_filters( 'elementor/admin/localize_settings', $settings );
 	}
 }

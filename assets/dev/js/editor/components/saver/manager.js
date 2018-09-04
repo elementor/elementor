@@ -113,7 +113,7 @@ module.exports = Module.extend( {
 
 	setWorkSaver: function() {
 		var self = this;
-		elementor.$window.on( 'beforeunload', function() {
+		elementorCommon.elements.$window.on( 'beforeunload', function() {
 			if ( self.isEditorChanged() ) {
 				return elementor.translate( 'before_unload_alert' );
 			}

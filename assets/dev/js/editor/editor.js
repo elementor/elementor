@@ -2,16 +2,6 @@
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 
-Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
-	options = {
-		evaluate: /<#([\s\S]+?)#>/g,
-		interpolate: /{{{([\s\S]+?)}}}/g,
-		escape: /{{([^}]+?)}}(?!})/g
-	};
-
-	return _.template( rawTemplate, options );
-};
-
 const App = Marionette.Application.extend( {
 	previewLoadedOnce: false,
 
@@ -23,8 +13,7 @@ const App = Marionette.Application.extend( {
 	templates: require( 'elementor-templates/manager' ),
 	ajax: require( 'elementor-editor-utils/ajax' ),
 	conditions: require( 'elementor-editor-utils/conditions' ),
-	hotKeys: require( 'elementor-utils/hot-keys' ),
-	history: require( 'modules/history/assets/js/module' ),
+	history: require( 'elementor-modules/history/assets/js/module' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -165,7 +154,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	checkEnvCompatibility: function() {
-		return this.envData.gecko || this.envData.webkit;
+		return elementorCommon.envData.firefox || elementorCommon.envData.webkit;
 	},
 
 	getElementData: function( model ) {
@@ -248,10 +237,6 @@ const App = Marionette.Application.extend( {
 		return this.sections.currentView;
 	},
 
-	initEnvData: function() {
-		this.envData = _.pick( tinymce.Env, [ 'desktop', 'mac', 'webkit', 'gecko', 'ie', 'opera' ] );
-	},
-
 	initComponents: function() {
 		var EventManager = require( 'elementor-utils/hooks' ),
 			DynamicTags = require( 'elementor-dynamic-tags/manager' ),
@@ -281,8 +266,6 @@ const App = Marionette.Application.extend( {
 		this.ajax.init();
 
 		this.initHotKeys();
-
-		this.initEnvData();
 	},
 
 	initDialogsManager: function() {
@@ -373,7 +356,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	initHotKeys: function() {
-		var keysDictionary = {
+		const keysDictionary = {
 			c: 67,
 			d: 68,
 			i: 73,
@@ -387,7 +370,7 @@ const App = Marionette.Application.extend( {
 
 		var $ = jQuery,
 			hotKeysHandlers = {},
-			hotKeysManager = this.hotKeys;
+			hotKeysManager = elementorCommon.hotKeys;
 
 		hotKeysHandlers[ keysDictionary.c ] = {
 			copyElement: {
@@ -405,7 +388,7 @@ const App = Marionette.Application.extend( {
 					var frontendWindow = elementorFrontend.getElements( 'window' ),
 						textSelection = getSelection() + frontendWindow.getSelection();
 
-					if ( ! textSelection && elementor.envData.gecko ) {
+					if ( ! textSelection && elementorCommon.envData.firefox ) {
 						textSelection = [ window, frontendWindow ].some( function( window ) {
 							var activeElement = window.document.activeElement;
 
@@ -591,8 +574,6 @@ const App = Marionette.Application.extend( {
 				hotKeysManager.addHotKeyHandler( keyCode, handlerName, handler );
 			} );
 		} );
-
-		hotKeysManager.bindListener( this.$window );
 	},
 
 	initPanel: function() {
@@ -733,7 +714,7 @@ const App = Marionette.Application.extend( {
 		var $elements = elementorFrontend.getElements( '$body' );
 
 		if ( hidePanel ) {
-			$elements = $elements.add( this.$body );
+			$elements = $elements.add( elementorCommon.elements.$body );
 		}
 
 		$elements
@@ -753,7 +734,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	exitPreviewMode: function() {
-		elementorFrontend.getElements( '$body' ).add( this.$body )
+		elementorFrontend.getElements( '$body' ).add( elementorCommon.elements.$body )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
 
@@ -790,7 +771,7 @@ const App = Marionette.Application.extend( {
 			return;
 		}
 
-		this.$body
+		elementorCommon.elements.$body
 			.removeClass( 'elementor-device-' + oldDeviceMode )
 			.addClass( 'elementor-device-' + newDeviceMode );
 
@@ -846,7 +827,7 @@ const App = Marionette.Application.extend( {
 		var text = '',
 			style = '';
 
-		if ( this.envData.gecko ) {
+		if ( elementorCommon.envData.firefox ) {
 			var asciiText = [
 				' ;;;;;;;;;;;;;;; ',
 				';;;  ;;       ;;;',
@@ -876,10 +857,6 @@ const App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
-		this.$window = jQuery( window );
-
-		this.$body = jQuery( 'body' );
-
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
@@ -904,7 +881,7 @@ const App = Marionette.Application.extend( {
 
 		this.addBackgroundClickArea( document );
 
-		this.$window.trigger( 'elementor:init' );
+		elementorCommon.elements.$window.trigger( 'elementor:init' );
 
 		this.initPreview();
 
@@ -983,7 +960,7 @@ const App = Marionette.Application.extend( {
 
 		this.onEditModeSwitched();
 
-		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
+		elementorCommon.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		this.trigger( 'preview:loaded' );
 	},

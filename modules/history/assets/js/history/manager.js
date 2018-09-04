@@ -66,9 +66,9 @@ var	Manager = function() {
 			Y_KEY = 89,
 			Z_KEY = 90;
 
-		elementor.hotKeys.addHotKeyHandler( H_KEY, 'showHistoryPage', {
+		elementorCommon.hotKeys.addHotKeyHandler( H_KEY, 'showHistoryPage', {
 			isWorthHandling: function( event ) {
-				return elementor.hotKeys.isControlEvent( event ) && event.shiftKey;
+				return elementorCommon.hotKeys.isControlEvent( event ) && event.shiftKey;
 			},
 			handle: function() {
 				elementor.getPanelView().setPage( 'historyPage' );
@@ -76,17 +76,17 @@ var	Manager = function() {
 		} );
 
 		var navigationWorthHandling = function( event ) {
-			return items.length && elementor.hotKeys.isControlEvent( event ) && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
+			return items.length && elementorCommon.hotKeys.isControlEvent( event ) && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
 		};
 
-		elementor.hotKeys.addHotKeyHandler( Y_KEY, 'historyNavigationRedo', {
+		elementorCommon.hotKeys.addHotKeyHandler( Y_KEY, 'historyNavigationRedo', {
 			isWorthHandling: navigationWorthHandling,
 			handle: function( event ) {
 				navigate( true );
 			}
 		} );
 
-		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
+		elementorCommon.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
 			isWorthHandling: navigationWorthHandling,
 			handle: function( event ) {
 				navigate( event.shiftKey );

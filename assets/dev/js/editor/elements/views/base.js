@@ -121,7 +121,7 @@ BaseElementView = BaseContainer.extend( {
 
 	getContextMenuGroups: function() {
 		var elementType = this.options.model.get( 'elType' ),
-			controlSign = elementor.envData.mac ? '⌘' : '^';
+			controlSign = elementorCommon.envData.mac ? '⌘' : '^';
 
 		return [
 			{

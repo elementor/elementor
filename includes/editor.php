@@ -54,18 +54,6 @@ class Editor {
 	private $_is_edit_mode;
 
 	/**
-	 * Editor templates.
-	 *
-	 * Holds the editor templates used by Marionette.js.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 *
-	 * @var array Editor templates.
-	 */
-	private $_editor_templates = [];
-
-	/**
 	 * Init.
 	 *
 	 * Initialize Elementor editor. Registers all needed actions to run Elementor,
@@ -870,6 +858,7 @@ class Editor {
 	 * Registers new editor templates.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->add_template( $template, $type )`
 	 * @access public
 	 *
 	 * @param string $template Can be either a link to template file or template
@@ -878,15 +867,7 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
-		if ( 'path' === $type ) {
-			ob_start();
-
-			include $template;
-
-			$template = ob_get_clean();
-		}
-
-		$this->_editor_templates[] = $template;
+		Plugin::$instance->common->add_template( $template, $type );
 	}
 
 	/**
@@ -912,10 +893,6 @@ class Editor {
 		$plugin->dynamic_tags->print_templates();
 
 		$this->init_editor_templates();
-
-		foreach ( $this->_editor_templates as $editor_template ) {
-			echo $editor_template;
-		}
 
 		/**
 		 * Elementor editor footer.
@@ -1075,13 +1052,12 @@ class Editor {
 			'panel',
 			'panel-elements',
 			'repeater',
-			'library-layout',
 			'templates',
 			'navigator',
 		];
 
 		foreach ( $template_names as $template_name ) {
-			$this->add_editor_template( __DIR__ . "/editor-templates/$template_name.php" );
+			Plugin::$instance->common->add_template( __DIR__ . "/editor-templates/$template_name.php" );
 		}
 	}
 }

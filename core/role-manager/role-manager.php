@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Role_Manager extends Settings_Page {
 
 	const PAGE_ID = 'elementor-role-manager';
+
 	const ROLE_MANAGER_OPTION_NAME = 'exclude_user_roles';
 
 	/**
