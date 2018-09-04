@@ -23,10 +23,6 @@ module.exports = BaseModalLayout.extend( {
 		this.showContentView();
 	},
 
-	getDialogsManager: function() {
-		return elementorAdmin.getDialogsManager();
-	},
-
 	showContentView: function() {
 		this.modalContent.show( new NewTemplateView() );
 	}

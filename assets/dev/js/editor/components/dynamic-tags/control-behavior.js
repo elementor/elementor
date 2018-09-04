@@ -75,7 +75,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		$tagsListInner.on( 'click', '.elementor-tags-list__item', this.onTagsListItemClick.bind( this ) );
 
-		elementor.$body.append( $tagsList );
+		elementorCommon.elements.$body.append( $tagsList );
 	},
 
 	getTagsList: function() {

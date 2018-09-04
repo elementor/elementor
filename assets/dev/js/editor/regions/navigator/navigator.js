@@ -107,7 +107,7 @@ export default class extends BaseRegion {
 
 		this.ensurePosition();
 
-		elementor.$window.on( 'resize', this.ensurePosition );
+		elementorCommon.elements.$window.on( 'resize', this.ensurePosition );
 	}
 
 	close( silent ) {
@@ -121,7 +121,7 @@ export default class extends BaseRegion {
 			this.saveStorage( 'visible', false );
 		}
 
-		elementor.$window.off( 'resize', this.ensurePosition );
+		elementorCommon.elements.$window.off( 'resize', this.ensurePosition );
 	}
 
 	isOpen() {
@@ -129,7 +129,7 @@ export default class extends BaseRegion {
 	}
 
 	dock() {
-		elementor.$body.addClass( 'elementor-navigator-docked' );
+		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
 
 		const side = elementor.config.is_rtl ? 'left' : 'right',
 			resizableOptions = this.getResizableOptions();
@@ -160,7 +160,7 @@ export default class extends BaseRegion {
 	}
 
 	undock( silent ) {
-		elementor.$body.removeClass( 'elementor-navigator-docked' );
+		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
 
 		elementor.$previewWrapper.css( elementor.config.is_rtl ? 'left' : 'right', '' );
 
@@ -237,7 +237,7 @@ export default class extends BaseRegion {
 			ui.position.left = 0;
 		}
 
-		elementor.$body.toggleClass( 'elementor-navigator--dock-hint', elementor.config.is_rtl ? isOutOfLeft : isOutOfRight );
+		elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', elementor.config.is_rtl ? isOutOfLeft : isOutOfRight );
 	}
 
 	onDragStop( event, ui ) {
@@ -253,7 +253,7 @@ export default class extends BaseRegion {
 			this.dock();
 		}
 
-		elementor.$body.removeClass( 'elementor-navigator--dock-hint' );
+		elementorCommon.elements.$body.removeClass( 'elementor-navigator--dock-hint' );
 	}
 
 	onEditModeSwitched( activeMode ) {

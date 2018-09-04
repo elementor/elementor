@@ -388,6 +388,9 @@ class Plugin {
 	 */
 	public $inspector;
 
+	/**
+	 * @var CommonApp
+	 */
 	public $common;
 
 	/**
@@ -487,6 +490,8 @@ class Plugin {
 		$this->debugger = $this->inspector;
 
 		$this->common = new CommonApp();
+
+		$this->common->init_components();
 
 		// Allow all components to use AJAX.
 		$this->ajax = new Ajax_Manager();

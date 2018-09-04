@@ -46,6 +46,7 @@ abstract class Manager {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		$name = $this->get_css_file_name();
+
 		add_action( "elementor/css-file/{$name}/parse", [ $this, 'add_settings_css_rules' ] );
 	}
 
@@ -245,7 +246,7 @@ abstract class Manager {
 	 * @access public
 	 */
 	public function on_elementor_init() {
-		Plugin::$instance->editor->add_editor_template( $this->get_editor_template(), 'text' );
+		Plugin::$instance->common->add_template( $this->get_editor_template(), 'text' );
 	}
 
 	/**

@@ -31,6 +31,8 @@
 	}
 
 	.dialog-header {
+		font-size: 15px;
+		color: $editor-darkest;
 		padding: 20px 0;
 		font-weight: 500;
 	}
@@ -49,6 +51,7 @@
 		text-align: center;
 
 		> button {
+			width: 50%;
 			border: none;
 			background: none;
 			font-size: 15px;
@@ -58,6 +61,11 @@
 
 			&:first-child {
 				color: $editor-dark;
+				@include border-end(1px solid $editor-background);
+			}
+
+			&:hover {
+				background-color: lighten( $editor-background, 5%);
 			}
 
 			&.dialog-ok {
@@ -88,30 +96,6 @@
 
 	&:not(:hover) {
 		opacity: .4;
-	}
-}
-
-.dialog-lightbox-widget,
-.dialog-confirm-widget {
-
-	.dialog-header {
-		font-size: 15px;
-		color: $editor-darkest;
-	}
-
-	.dialog-buttons-wrapper {
-
-		> button {
-			width: 50%;
-
-			&:first-child {
-				@include border-end(1px solid $editor-background);
-			}
-
-			&:hover {
-				background-color: lighten( $editor-background, 5%);
-			}
-		}
 	}
 }
 
