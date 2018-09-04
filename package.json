@@ -6,7 +6,10 @@
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
-		"test:phpunit": "docker-compose run --rm wordpress_phpunit phpunit"
+		"test:phpunit": "docker-compose run --rm wordpress_phpunit phpunit",
+		"build": "grunt build",
+		"pree2e": "concurrently \"./bin/reset-e2e-tests.sh || exit 0\" \"npm run build || exit 0\"",
+		"e2e": "codeceptjs"
 	},
 	"devDependencies": {
 		"autoprefixer": "~8.5.0",
@@ -14,6 +17,7 @@
 		"babel-eslint": "^8.2.6",
 		"babel-loader": "^7.1.5",
 		"babel-preset-env": "^1.7.0",
+		"concurrently": "^4.0.1",
 		"cssnano": "~3.10.0",
 		"eslint": "^5.4.0",
 		"eslint-config-wordpress": "^2.0.0",
