@@ -150,7 +150,7 @@ const App = Marionette.Application.extend( {
 	_defaultDeviceMode: 'desktop',
 
 	addControlView: function( controlID, ControlView ) {
-		this.modules.controls[ elementor.helpers.firstLetterUppercase( controlID ) ] = ControlView;
+		this.modules.controls[ elementorCommon.helpers.firstLetterUppercase( controlID ) ] = ControlView;
 	},
 
 	checkEnvCompatibility: function() {
@@ -174,7 +174,7 @@ const App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elementConfig = this.helpers.cloneObject( this.config.elements[ elType ] );
+		var elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
 			elementConfig.title = elementor.translate( 'inner_section' );
@@ -216,7 +216,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	getControlView: function( controlID ) {
-		var capitalizedControlName = elementor.helpers.firstLetterUppercase( controlID ),
+		var capitalizedControlName = elementorCommon.helpers.firstLetterUppercase( controlID ),
 			View = this.modules.controls[ capitalizedControlName ];
 
 		if ( ! View ) {
