@@ -1,5 +1,6 @@
 import Assistant from 'elementor/core/common/modules/assistant/assets/js/assistant';
 import HotKeys from './utils/hot-keys';
+import Helpers from './utils/helpers';
 
 const ViewModule = require( 'elementor-utils/view-module' );
 
@@ -32,6 +33,8 @@ class ElementorCommonApp extends ViewModule {
 	}
 
 	initComponents() {
+		this.helpers = new Helpers();
+
 		this.hotKeys = new HotKeys();
 
 		this.dialogsManager = new DialogsManager.Instance();

@@ -101,7 +101,7 @@ HandlerModule = ViewModule.extend( {
 		}
 
 		[ 'page', 'general' ].forEach( function( settingsType ) {
-			var listenerMethodName = 'on' + elementor.helpers.firstLetterUppercase( settingsType ) + 'SettingsChange';
+			var listenerMethodName = 'on' + elementorCommon.helpers.firstLetterUppercase( settingsType ) + 'SettingsChange';
 
 			if ( self[ listenerMethodName ] ) {
 				self.editorListeners.push( {

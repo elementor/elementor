@@ -15,7 +15,7 @@ presetsFactory = {
 	},
 
 	getAbsolutePresetValues: function( preset ) {
-		var clonedPreset = elementor.helpers.cloneObject( preset ),
+		var clonedPreset = elementorCommon.helpers.cloneObject( preset ),
 			presetDictionary = this.getPresetsDictionary();
 
 		_.each( clonedPreset, function( unitValue, unitIndex ) {
@@ -28,7 +28,7 @@ presetsFactory = {
 	},
 
 	getPresets: function( columnsCount, presetIndex ) {
-		var presets = elementor.helpers.cloneObject( elementor.config.elements.section.presets );
+		var presets = elementorCommon.helpers.cloneObject( elementor.config.elements.section.presets );
 
 		if ( columnsCount ) {
 			presets = presets[ columnsCount ];

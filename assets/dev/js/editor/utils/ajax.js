@@ -154,7 +154,7 @@ Ajax = {
 
 	send: function( action, options ) {
 		var self = this,
-			ajaxParams = elementor.helpers.cloneObject( this.config.ajaxParams );
+			ajaxParams = elementorCommon.helpers.cloneObject( this.config.ajaxParams );
 
 		options = options || {};
 

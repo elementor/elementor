@@ -130,7 +130,7 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						icon: 'eicon-edit',
-						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
+						title: elementor.translate( 'edit_element', [ elementorCommon.helpers.firstLetterUppercase( elementType ) ] ),
 						callback: this.options.model.trigger.bind( this.options.model, 'request:edit' )
 					}, {
 						name: 'duplicate',
