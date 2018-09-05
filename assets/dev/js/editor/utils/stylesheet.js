@@ -104,7 +104,7 @@
 
 			var sortedDevices = {};
 
-			deviceNames.forEach( deviceName =>
+			deviceNames.forEach( (deviceName) =>
 				sortedDevices[ deviceName ] = devices[ deviceName ]
 			);
 

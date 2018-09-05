@@ -28,7 +28,7 @@ Schemes = function() {
 	};
 
 	const fetchControlStyles = function( control, controlsStack, widgetType ) {
-		ControlsCSSParser.addControlStyleRules( stylesheet, control, controlsStack, schemeControl =>
+		ControlsCSSParser.addControlStyleRules( stylesheet, control, controlsStack, (schemeControl) =>
 			self.getSchemeValue( schemeControl.scheme.type, schemeControl.scheme.value, schemeControl.scheme.key ).value,
 			[ '{{WRAPPER}}' ], [ settings.selectorWrapperPrefix + widgetType ] );
 	};

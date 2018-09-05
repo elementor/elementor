@@ -56,7 +56,7 @@ ControlsCSSParser = ViewModule.extend( {
 			this.stylesheet,
 			control,
 			controls,
-			styleControl => this.getStyleControlValue( styleControl, values ),
+			(styleControl) => this.getStyleControlValue( styleControl, values ),
 			placeholders,
 			replacements
 		);
