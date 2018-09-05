@@ -34,11 +34,12 @@ fi
 
 # Get the host port for the WordPress container.
 HOST_PORT=$(docker-compose $DOCKER_COMPOSE_FILE_OPTIONS port $CONTAINER 80 | awk -F : '{printf $2}')
+HOST_IP=$(docker network inspect bridge | grep -o \"Gateway\":.* | awk -F : '{printf $2}' | sed -e 's/\"//g')
 
 # Wait until the Docker containers are running and the WordPress site is
 # responding to requests.
 echo -en $(status_message "Attempting to connect to WordPress...")
-until $(curl -L http://localhost:$HOST_PORT -so - 2>&1 | grep -q "WordPress"); do
+until $(curl -L http://$HOST_IP:$HOST_PORT -so - 2>&1 | grep -q "WordPress"); do
     echo -n '.'
     sleep 5
 done
@@ -64,9 +65,9 @@ fi
 
 # If the 'wordpress' volume wasn't during the down/up earlier, but the post port has changed, we need to update it.
 CURRENT_URL=$(docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run -T --rm $CLI option get siteurl)
-if [ "$CURRENT_URL" != "http://localhost:$HOST_PORT" ]; then
-	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update home "http://localhost:$HOST_PORT" >/dev/null
-	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update siteurl "http://localhost:$HOST_PORT" >/dev/null
+if [ "$CURRENT_URL" != "http://HOST_IP:$HOST_PORT" ]; then
+	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update home "http://HOST_IP:$HOST_PORT" >/dev/null
+	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update siteurl "http://HOST_IP:$HOST_PORT" >/dev/null
 fi
 
 # Activate Elementor.
