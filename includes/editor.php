@@ -131,6 +131,8 @@ class Editor {
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
 
+		do_action( 'elementor/editor/init' );
+
 		$this->print_editor_template();
 
 		// From the action it's an empty string, from tests its `false`
