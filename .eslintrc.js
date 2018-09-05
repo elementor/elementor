@@ -36,6 +36,7 @@ module.exports = {
 		'dot-notation': 'warn',
 		'no-shadow': 'warn',
 		'no-lonely-if': 'warn',
+		'no-nested-ternary' : 'error',
 		'no-cond-assign': 'warn',
 		'space-in-parens': [ 'off', 'always' ],
 		'no-multi-spaces': 'warn',

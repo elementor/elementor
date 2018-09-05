@@ -135,7 +135,12 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 				return 1;
 			}
 
-			return l < r ? 1 : l > r ? -1 : 0;
+			if ( l < r ) {
+				return 1;
+			} else if ( l > r ) {
+				return -1;
+			}
+			return 0;
 		};
 	},
 
