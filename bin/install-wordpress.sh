@@ -16,6 +16,7 @@ set -e
 CLI='cli'
 CONTAINER='wordpress'
 SITE_TITLE='Elementor Dev'
+HOST_IP='localhost'
 
 # If we're installing/re-installing the test site, change the containers used.
 if [ "$1" == '--e2e_tests' ]; then
@@ -32,9 +33,11 @@ if [ "$1" == '--e2e_tests' ]; then
 	fi
 fi
 
+if command_exists "docker-machine"; then
+	HOST_IP=$(docker-machine ip default)
+fi
 # Get the host port for the WordPress container.
 HOST_PORT=$(docker-compose $DOCKER_COMPOSE_FILE_OPTIONS port $CONTAINER 80 | awk -F : '{printf $2}')
-HOST_IP=$(docker network inspect bridge | grep -o \"Gateway\":.* | awk -F : '{printf $2}' | sed -e 's/\"//g')
 
 # Wait until the Docker containers are running and the WordPress site is
 # responding to requests.
@@ -65,9 +68,9 @@ fi
 
 # If the 'wordpress' volume wasn't during the down/up earlier, but the post port has changed, we need to update it.
 CURRENT_URL=$(docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run -T --rm $CLI option get siteurl)
-if [ "$CURRENT_URL" != "http://HOST_IP:$HOST_PORT" ]; then
-	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update home "http://HOST_IP:$HOST_PORT" >/dev/null
-	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update siteurl "http://HOST_IP:$HOST_PORT" >/dev/null
+if [ "$CURRENT_URL" != "http://$HOST_IP:$HOST_PORT" ]; then
+	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update home "http://$HOST_IP:$HOST_PORT" >/dev/null
+	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update siteurl "http://$HOST_IP:$HOST_PORT" >/dev/null
 fi
 
 # Activate Elementor.
