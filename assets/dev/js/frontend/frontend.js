@@ -70,7 +70,7 @@
 		};
 
 		var addIeCompatibility = function() {
-			var isIE = 'Microsoft Internet Explorer' === navigator.appName ||  !! navigator.userAgent.match( /Trident/g ) ||  !! navigator.userAgent.match( /MSIE/g ) || !! navigator.userAgent.match( /rv:11/ );
+			var isIE = 'Microsoft Internet Explorer' === navigator.appName || !! navigator.userAgent.match( /Trident/g ) || !! navigator.userAgent.match( /MSIE/g ) || !! navigator.userAgent.match( /rv:11/ );
 
 			if ( ! isIE ) {
 				return;

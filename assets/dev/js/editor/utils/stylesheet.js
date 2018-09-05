@@ -1,5 +1,4 @@
 ( function( $ ) {
-
 	var Stylesheet = function() {
 		var self = this,
 			rules = {},
@@ -89,8 +88,8 @@
 			return '@media' + styleFormat.join( ' and ' );
 		};
 
-		this.addDevice = function( deviceName, deviceValue ) {
-			devices[ deviceName ] = deviceValue;
+		this.addDevice = function( newDeviceName, deviceValue ) {
+			devices[ newDeviceName ] = deviceValue;
 
 			var deviceNames = Object.keys( devices );
 
@@ -105,9 +104,9 @@
 
 			var sortedDevices = {};
 
-			deviceNames.forEach( function( deviceName ) {
-				sortedDevices[ deviceName ] = devices[ deviceName ];
-			} );
+			deviceNames.forEach( deviceName =>
+				sortedDevices[ deviceName ] = devices[ deviceName ]
+			);
 
 			devices = sortedDevices;
 

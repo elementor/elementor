@@ -109,7 +109,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 		} else {
 			items.push( itemData );
 		}
-
 	}
 } );
 

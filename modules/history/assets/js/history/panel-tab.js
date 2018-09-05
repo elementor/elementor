@@ -24,7 +24,7 @@ module.exports = Marionette.CompositeView.extend( {
 			// Set current item - the first not applied item
 			if ( self.children.length ) {
 				var currentItem = self.collection.find( function( model ) {
-						return 'not_applied' ===  model.get( 'status' );
+						return 'not_applied' === model.get( 'status' );
 					} ),
 					currentView = self.children.findByModel( currentItem );
 

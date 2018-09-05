@@ -195,7 +195,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		elementor.templates.setFilter( filterName, $select.val() );
 	},
 
-	onMyFavoritesFilterChange: function(  ) {
+	onMyFavoritesFilterChange: function() {
 		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
 	},
 

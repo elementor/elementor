@@ -1,7 +1,6 @@
 import BaseAddSectionView from './base';
 
 class AddSectionView extends BaseAddSectionView {
-
 	className() {
 		return super.className() + ' elementor-add-section-inline';
 	}
