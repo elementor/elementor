@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Admin;
 use Elementor\Core\Ajax_Manager;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
