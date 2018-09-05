@@ -11,7 +11,7 @@ ControlSectionItemView = ControlBaseView.extend( {
 	},
 
 	triggers: {
-		'click': 'control:section:clicked'
+		click: 'control:section:clicked'
 	}
 } );
 

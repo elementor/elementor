@@ -108,7 +108,6 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 			if ( isAllowedDimension && $element.length && _.isEmpty( $element.val() ) ) {
 				$element.val( defaultDimensionValue );
 			}
-
 		} );
 	},
 

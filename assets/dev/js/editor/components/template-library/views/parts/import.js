@@ -34,19 +34,17 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			data: data,
 			processData: false,
 			contentType: false,
-			success: function( data ) {
-				elementor.templates.getTemplatesCollection().add( data );
+			success: ( successData ) => {
+				elementor.templates.getTemplatesCollection().add( successData );
 
 				elementor.templates.setTemplatesPage( 'local' );
 			},
-			error: function( data ) {
-				elementor.templates.showErrorDialog( data );
+			error: ( errorData ) => {
+				elementor.templates.showErrorDialog( errorData );
 
 				layout.showImportView();
 			},
-			complete: function() {
-				layout.hideLoadingView();
-			}
+			complete: () => layout.hideLoadingView()
 		};
 
 		elementor.ajax.send( 'import_template', options );

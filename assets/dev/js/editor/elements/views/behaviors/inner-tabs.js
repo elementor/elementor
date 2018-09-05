@@ -24,16 +24,14 @@ InnerTabsBehavior = Marionette.Behavior.extend( {
 				_.each( tabs, function( childView, index ) {
 					view._addChildView( childView );
 
-					var tabId = childView.model.get( 'name' ),
-					controlsUnderTab = parent.children.filter( function( view ) {
-						return ( tabId === view.model.get( 'inner_tab' ) );
-					} );
+					const tabId = childView.model.get( 'name' ),
+						controlsUnderTab = parent.children.filter( ( controlsView ) => tabId === controlsView.model.get( 'inner_tab' ) );
 
 					if ( 0 === index ) {
 						childView.$el.addClass( activeClass );
 					} else {
-						_.each( controlsUnderTab, function( view ) {
-							view.$el.addClass( closedClass );
+						_.each( controlsUnderTab, ( controlsView ) => {
+							controlsView.$el.addClass( closedClass );
 						} );
 					}
 				} );

@@ -17,7 +17,7 @@ HandlerModule = ViewModule.extend( {
 	isEdit: null,
 
 	__construct: function( settings ) {
-		this.$element  = settings.$element;
+		this.$element = settings.$element;
 
 		this.isEdit = this.$element.hasClass( 'elementor-element-edit-mode' );
 
@@ -81,7 +81,7 @@ HandlerModule = ViewModule.extend( {
 						return;
 					}
 
-					self.onElementChange( controlView.model.get( 'name' ),  controlView, elementView );
+					self.onElementChange( controlView.model.get( 'name' ), controlView, elementView );
 				}
 			} );
 		}

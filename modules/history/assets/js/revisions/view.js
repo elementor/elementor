@@ -1,4 +1,4 @@
-module.exports =  Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-revisions-revision-item',
 
 	className: 'elementor-revision-item',

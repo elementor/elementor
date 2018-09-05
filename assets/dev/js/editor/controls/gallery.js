@@ -45,7 +45,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		}
 
 		this.getControlValue().forEach( function( image ) {
-			var $thumbnail = jQuery( '<div>', { 'class': 'elementor-control-gallery-thumbnail' } );
+			var $thumbnail = jQuery( '<div>', { class: 'elementor-control-gallery-thumbnail' } );
 
 			$thumbnail.css( 'background-image', 'url(' + image.url + ')' );
 
@@ -71,7 +71,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		};
 
 		var options = {
-			frame:  'post',
+			frame: 'post',
 			multiple: true,
 			state: frameStates[ action ],
 			button: {
@@ -87,7 +87,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		// When a file is selected, run a callback.
 		this.frame.on( {
-			'update': this.select,
+			update: this.select,
 			'menu:render:default': this.menuRender,
 			'content:render:browse': this.gallerySettings
 		}, this );

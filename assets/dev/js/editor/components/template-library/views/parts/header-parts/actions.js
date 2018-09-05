@@ -4,7 +4,7 @@ module.exports = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-header-actions',
 
 	ui: {
-		'import': '#elementor-template-library-header-import i',
+		import: '#elementor-template-library-header-import i',
 		sync: '#elementor-template-library-header-sync i',
 		save: '#elementor-template-library-header-save i'
 	},

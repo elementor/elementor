@@ -18,7 +18,7 @@ export default class extends Marionette.CompositeView {
 
 	events() {
 		return {
-			'contextmenu': 'onContextMenu',
+			contextmenu: 'onContextMenu',
 			'click @ui.item': 'onItemClick',
 			'click @ui.toggle': 'onToggleClick',
 			'click @ui.toggleList': 'onToggleListClick',

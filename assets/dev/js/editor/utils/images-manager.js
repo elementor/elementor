@@ -42,9 +42,7 @@ ImagesManager = function() {
 
 		// If it's not in cache, like a new dropped widget or a custom size - get from settings
 		if ( ! imageUrl ) {
-
 			if ( 'custom' === image.size ) {
-
 				if ( elementor.getPanelView() && 'editor' === elementor.getPanelView().getCurrentPageName() && image.model ) {
 					// Trigger change again, so it's will load from the cache
 					self.onceTriggerChange( image.model );
@@ -62,7 +60,7 @@ ImagesManager = function() {
 
 	self.getItem = function( image ) {
 		var size = getNormalizedSize( image ),
-			id =  image.id;
+			id = image.id;
 
 		if ( ! size ) {
 			return false;
@@ -112,13 +110,13 @@ ImagesManager = function() {
 		for ( index in registeredItems ) {
 			image = registeredItems[ index ];
 
-			var size = getNormalizedSize( image ),
-				id = image.id,
-				isFirstTime = ! cache[ id ] || 0 === Object.keys( cache[ id ] ).length;
+			var imageSize = getNormalizedSize( image ),
+				imageId = image.id,
+				isFirstTime = ! cache[ imageId ] || 0 === Object.keys( cache[ imageId ] ).length;
 
 			requestedItems.push( {
-				id: id,
-				size: size,
+				id: imageId,
+				size: imageSize,
 				is_first_time: isFirstTime
 			} );
 		}

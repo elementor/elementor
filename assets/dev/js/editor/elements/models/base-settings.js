@@ -28,23 +28,23 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 			var controlName = control.name;
 
-			defaults[ controlName ] = control['default'];
+			defaults[ controlName ] = control.default;
 
 			var isDynamicControl = control.dynamic && control.dynamic.active,
 				hasDynamicSettings = isDynamicControl && attrs.__dynamic__ && attrs.__dynamic__[ controlName ];
 
-			if ( isDynamicControl && ! hasDynamicSettings && control.dynamic['default'] ) {
+			if ( isDynamicControl && ! hasDynamicSettings && control.dynamic.default ) {
 				if ( ! attrs.__dynamic__ ) {
 					attrs.__dynamic__ = {};
 				}
 
-				attrs.__dynamic__[ controlName ] = control.dynamic['default'];
+				attrs.__dynamic__[ controlName ] = control.dynamic.default;
 
 				hasDynamicSettings = true;
 			}
 
 			// Check if the value is a plain object ( and not an array )
-			var isMultipleControl = jQuery.isPlainObject( control['default'] );
+			var isMultipleControl = jQuery.isPlainObject( control.default );
 
 			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! hasDynamicSettings ) {
 				elementor.debug.addCustomError(
@@ -74,16 +74,16 @@ BaseSettingsModel = Backbone.Model.extend( {
 				// TODO: Apply defaults on each field in repeater fields
 				if ( ! ( attrs[ field.name ] instanceof Backbone.Collection ) ) {
 					attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
-						model: function( attrs, options ) {
+						model: function( attributes, options ) {
 							options = options || {};
 
 							options.controls = field.fields;
 
-							if ( ! attrs._id ) {
-								attrs._id = elementor.helpers.getUniqueID();
+							if ( ! attributes._id ) {
+								attributes._id = elementor.helpers.getUniqueID();
 							}
 
-							return new BaseSettingsModel( attrs, options );
+							return new BaseSettingsModel( attributes, options );
 						}
 					} );
 				}
@@ -302,7 +302,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 					if ( data[ key ] && 'object' === typeof data[ key ] ) {
 						// First check length difference
-						if ( Object.keys( data[ key ] ).length !== Object.keys( control[ 'default' ] ).length ) {
+						if ( Object.keys( data[ key ] ).length !== Object.keys( control.default ).length ) {
 							return;
 						}
 
@@ -310,7 +310,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 						var isEqual = true;
 
 						_.each( data[ key ], function( propertyValue, propertyKey ) {
-							if ( data[ key ][ propertyKey ] !== control[ 'default' ][ propertyKey ] ) {
+							if ( data[ key ][ propertyKey ] !== control.default[ propertyKey ] ) {
 								return isEqual = false;
 							}
 						} );
@@ -318,10 +318,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 						if ( isEqual ) {
 							delete data[ key ];
 						}
-					} else {
-						if ( data[ key ] === control[ 'default' ] ) {
-							delete data[ key ];
-						}
+					} else if ( data[ key ] === control.default ) {
+						delete data[ key ];
 					}
 				}
 			} );
