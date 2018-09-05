@@ -21,12 +21,12 @@ helpers = {
 			fontUrl,
 
 			subsets = {
-				'ru_RU': 'cyrillic',
-				'uk': 'cyrillic',
-				'bg_BG': 'cyrillic',
-				'vi': 'vietnamese',
-				'el': 'greek',
-				'he_IL': 'hebrew'
+				ru_RU: 'cyrillic',
+				uk: 'cyrillic',
+				bg_BG: 'cyrillic',
+				vi: 'vietnamese',
+				el: 'greek',
+				he_IL: 'hebrew'
 			};
 
 		switch ( fontType ) {
@@ -64,7 +64,6 @@ helpers = {
 		}
 
 		if ( undefined !== container[ elementType ] ) {
-
 			if ( jQuery.isPlainObject( container[ elementType ] ) ) {
 				return Object.keys( container[ elementType ] );
 			}
@@ -73,7 +72,6 @@ helpers = {
 		}
 
 		for ( var type in container ) {
-
 			if ( ! container.hasOwnProperty( type ) ) {
 				continue;
 			}
@@ -305,7 +303,7 @@ helpers = {
 			return version.replace( /[^\d.]+/, '.-1.' );
 		};
 
-		versionA  = prepareVersion( versionA );
+		versionA = prepareVersion( versionA );
 		versionB = prepareVersion( versionB );
 
 		if ( versionA === versionB ) {
