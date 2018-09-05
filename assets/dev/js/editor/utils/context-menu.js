@@ -25,18 +25,18 @@ ContextMenu = Module.extend( {
 	buildActionItem: function( action ) {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
-			$item = jQuery( '<div>', { 'class': classes.item + ' ' + classes.itemTypePrefix + action.name } ),
-			$itemTitle = jQuery( '<div>', { 'class': classes.itemTitle } ).text( action.title ),
-			$itemIcon = jQuery( '<div>', { 'class': classes.iconShortcut } );
+			$item = jQuery( '<div>', { class: classes.item + ' ' + classes.itemTypePrefix + action.name } ),
+			$itemTitle = jQuery( '<div>', { class: classes.itemTitle } ).text( action.title ),
+			$itemIcon = jQuery( '<div>', { class: classes.iconShortcut } );
 
 		if ( action.icon ) {
-			$itemIcon.html( jQuery( '<i>', { 'class': action.icon } ) );
+			$itemIcon.html( jQuery( '<i>', { class: action.icon } ) );
 		}
 
 		$item.append( $itemIcon, $itemTitle );
 
 		if ( action.shortcut ) {
-			var $itemShortcut = jQuery( '<div>', { 'class': classes.itemShortcut } ).html( action.shortcut );
+			var $itemShortcut = jQuery( '<div>', { class: classes.itemShortcut } ).html( action.shortcut );
 
 			$item.append( $itemShortcut );
 		}
@@ -56,10 +56,10 @@ ContextMenu = Module.extend( {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
 			groups = self.getSettings( 'groups' ),
-			$list = jQuery( '<div>', { 'class': classes.list } );
+			$list = jQuery( '<div>', { class: classes.list } );
 
 		groups.forEach( function( group ) {
-			var $group = jQuery( '<div>', { 'class': classes.group + ' ' + classes.groupPrefix + group.name } );
+			var $group = jQuery( '<div>', { class: classes.group + ' ' + classes.groupPrefix + group.name } );
 
 			group.actions.forEach( function( action ) {
 				$group.append( self.buildActionItem( action ) );

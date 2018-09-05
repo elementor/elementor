@@ -52,11 +52,14 @@ ControlsCSSParser = ViewModule.extend( {
 	},
 
 	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		var self = this;
-
-		ControlsCSSParser.addControlStyleRules( self.stylesheet, control, controls, function( control ) {
-			return self.getStyleControlValue( control, values );
-		}, placeholders, replacements );
+		ControlsCSSParser.addControlStyleRules(
+			this.stylesheet,
+			control,
+			controls,
+			styleControl => this.getStyleControlValue( styleControl, values ),
+			placeholders,
+			replacements
+		);
 	},
 
 	getStyleControlValue: function( control, values ) {
@@ -181,8 +184,10 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 				pureDeviceRules = [],
 				matches;
 
-			while ( matches = pureDevicePattern.exec( deviceRules ) ) {
+			matches = pureDevicePattern.exec( deviceRules );
+			while ( matches ) {
 				pureDeviceRules.push( matches[1] );
+				matches = pureDevicePattern.exec( deviceRules );
 			}
 
 			_.each( pureDeviceRules, function( deviceRule ) {

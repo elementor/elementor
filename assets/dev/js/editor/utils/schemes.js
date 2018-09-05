@@ -11,11 +11,11 @@ Schemes = function() {
 		},
 		elements = {};
 
-	var buildUI = function() {
+	const buildUI = function() {
 		elements.$previewHead.append( elements.$style );
 	};
 
-	var initElements = function() {
+	const initElements = function() {
 		elements.$style = jQuery( '<style>', {
 			id: 'elementor-style-scheme'
 		});
@@ -23,27 +23,27 @@ Schemes = function() {
 		elements.$previewHead = elementor.$previewContents.find( 'head' );
 	};
 
-	var initSchemes = function() {
+	const initSchemes = function() {
 		schemes = elementor.helpers.cloneObject( elementor.config.schemes.items );
 	};
 
-	var fetchControlStyles = function( control, controlsStack, widgetType ) {
-		ControlsCSSParser.addControlStyleRules( stylesheet, control, controlsStack, function( control ) {
-			return self.getSchemeValue( control.scheme.type, control.scheme.value, control.scheme.key ).value;
-		}, [ '{{WRAPPER}}' ], [ settings.selectorWrapperPrefix + widgetType ] );
+	const fetchControlStyles = function( control, controlsStack, widgetType ) {
+		ControlsCSSParser.addControlStyleRules( stylesheet, control, controlsStack, schemeControl =>
+			self.getSchemeValue( schemeControl.scheme.type, schemeControl.scheme.value, schemeControl.scheme.key ).value,
+			[ '{{WRAPPER}}' ], [ settings.selectorWrapperPrefix + widgetType ] );
 	};
 
-	var fetchWidgetControlsStyles = function( widget ) {
-		var widgetSchemeControls = self.getWidgetSchemeControls( widget );
+	const fetchWidgetControlsStyles = function( widget ) {
+		const widgetSchemeControls = self.getWidgetSchemeControls( widget );
 
 		_.each( widgetSchemeControls, function( control ) {
 			fetchControlStyles( control, widgetSchemeControls, widget.widget_type );
 		} );
 	};
 
-	var fetchAllWidgetsSchemesStyle = function() {
+	const fetchAllWidgetsSchemesStyle = function() {
 		_.each( elementor.config.widgets, function( widget ) {
-			fetchWidgetControlsStyles(  widget  );
+			fetchWidgetControlsStyles( widget );
 		} );
 	};
 

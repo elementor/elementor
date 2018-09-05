@@ -49,12 +49,12 @@ var	Manager = function() {
 
 	var navigate = function( isRedo ) {
 		var currentItem = items.find( function( model ) {
-				return 'not_applied' ===  model.get( 'status' );
+				return 'not_applied' === model.get( 'status' );
 			} ),
 			currentItemIndex = items.indexOf( currentItem ),
 			requiredIndex = isRedo ? currentItemIndex - 1 : currentItemIndex + 1;
 
-		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0  || requiredIndex >= items.length ) {
+		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0 || requiredIndex >= items.length ) {
 			return;
 		}
 
@@ -81,9 +81,7 @@ var	Manager = function() {
 
 		elementor.hotKeys.addHotKeyHandler( Y_KEY, 'historyNavigationRedo', {
 			isWorthHandling: navigationWorthHandling,
-			handle: function( event ) {
-				navigate( true );
-			}
+			handle: () => navigate( true )
 		} );
 
 		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
@@ -253,11 +251,11 @@ var	Manager = function() {
 			}
 
 			// Try scroll to affected element.
-			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
+			if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
 				var history = item.get( 'items' ).first().get( 'history' );
 
 				if ( history && history.behavior.view.model ) {
-					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) ) ;
+					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
 				}
 			}
 		}
@@ -322,14 +320,13 @@ var	Manager = function() {
 	};
 
 	this.findView = function( modelID, views ) {
-		var self = this,
-			founded = false;
+		var founded = false;
 
 		if ( ! views ) {
 			views = elementor.getPreviewView().children;
 		}
 
-		_.each( views._views, function( view ) {
+		_.each( views._views, ( view ) => {
 			if ( founded ) {
 				return;
 			}
@@ -339,7 +336,7 @@ var	Manager = function() {
 			if ( modelID === model.get( 'id' ) ) {
 				founded = view;
 			} else if ( view.children && view.children.length ) {
-				founded = self.findView( modelID, view.children );
+				founded = this.findView( modelID, view.children );
 			}
 		} );
 

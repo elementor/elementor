@@ -3,7 +3,7 @@ var ControlBaseView = require( 'elementor-controls/base' ),
 
 ControlTabItemView = ControlBaseView.extend( {
 	triggers: {
-		'click': {
+		click: {
 			event: 'control:tab:clicked',
 			stopPropagation: false
 		}

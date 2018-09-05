@@ -42,10 +42,8 @@ module.exports = ViewModule.extend( {
 
 			if ( isFixed ) {
 				correctOffset = containerOffset;
-			} else {
-				if ( elementOffset > containerOffset ) {
-					correctOffset = elementOffset - containerOffset;
-				}
+			} else if ( elementOffset > containerOffset ) {
+				correctOffset = elementOffset - containerOffset;
 			}
 		}
 
