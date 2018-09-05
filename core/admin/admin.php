@@ -15,11 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin extends App {
 
 	/**
-	 * @var \Elementor\Core\Admin\Feedback
-	 */
-	private $feedback;
-
-	/**
 	 * Get module name.
 	 *
 	 * Retrieve the module name.
@@ -710,7 +705,7 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->feedback = new Feedback();
+		$this->add_component( 'feedback', new Feedback() );
 
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
