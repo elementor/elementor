@@ -1,4 +1,6 @@
 /* global elementorFrontendConfig */
+import HotKeys from '../common/utils/hot-keys';
+
 ( function( $ ) {
 	var elements = {},
 		EventManager = require( '../utils/hooks' ),
@@ -54,7 +56,7 @@
 		};
 
 		var initHotKeys = function() {
-			self.hotKeys = require( 'elementor-utils/hot-keys' );
+			self.hotKeys = new HotKeys();
 
 			self.hotKeys.bindListener( elements.$window );
 		};
