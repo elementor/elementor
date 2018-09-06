@@ -2,7 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Admin;
-use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
@@ -61,7 +61,7 @@ class Plugin {
 	 * @since 1.9.0
 	 * @access public
 	 *
-	 * @var Ajax_Manager
+	 * @var Ajax
 	 */
 	public $ajax;
 
@@ -495,7 +495,7 @@ class Plugin {
 		$this->common->init_components();
 
 		// Allow all components to use AJAX.
-		$this->ajax = new Ajax_Manager();
+		$this->ajax = new Ajax();
 
 		Settings_Manager::run();
 
