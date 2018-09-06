@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core;
+namespace Elementor\Core\Common\Modules\Ajax;
 
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 2.0.0
  */
-class Ajax_Manager {
+class Module {
 
 	/**
 	 * Ajax actions.
@@ -155,7 +155,7 @@ class Ajax_Manager {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param Ajax_Manager $this An instance of ajax manager.
+		 * @param Ajax $this An instance of ajax manager.
 		 */
 		do_action( 'elementor/ajax/register_actions', $this );
 
@@ -224,7 +224,7 @@ class Ajax_Manager {
 	 *
 	 * @param int   $code    Optional. Response code. Default is 200.
 	 *
-	 * @return Ajax_Manager An instance of ajax manager.
+	 * @return Module An instance of ajax manager.
 	 */
 	protected function add_response_data( $success, $data = null, $code = 200 ) {
 		$this->response_data[ $this->current_action_id ] = [

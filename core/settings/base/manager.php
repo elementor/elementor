@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Settings\Base;
 
-use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Base;
 use Elementor\Plugin;
 
@@ -60,7 +60,7 @@ abstract class Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_manager
+	 * @param Ajax $ajax_manager
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
 		$name = $this->get_name();
