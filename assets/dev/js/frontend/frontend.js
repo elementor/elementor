@@ -19,25 +19,24 @@ import HotKeys from '../common/utils/hot-keys';
 		this.Module = Module;
 
 		var setDeviceModeData = function() {
-			elements.$body.attr( 'data-elementor-device-mode', self.getCurrentDeviceMode() );
+			elementorCommon.elements.$body.attr( 'data-elementor-device-mode', self.getCurrentDeviceMode() );
 		};
 
 		var initElements = function() {
 			elements.window = window;
 
-			elements.$window = $( window );
+			elements.$elementor = elementorCommon.elements.$document.find( '.elementor' );
 
+			/**
+			 * @deprecated since 2.3.0 Use elementorCommon.elements.$document
+			 */
 			elements.$document = $( document );
 
-			elements.$body = $( 'body' );
-
-			elements.$elementor = elements.$document.find( '.elementor' );
-
-			elements.$wpAdminBar = elements.$document.find( '#wpadminbar' );
+			elements.$wpAdminBar = elementorCommon.elements.$document.find( '#wpadminbar' );
 		};
 
 		var bindEvents = function() {
-			elements.$window.on( 'resize', setDeviceModeData );
+			elementorCommon.elements.$window.on( 'resize', setDeviceModeData );
 		};
 
 		var initOnReadyComponents = function() {
@@ -57,8 +56,6 @@ import HotKeys from '../common/utils/hot-keys';
 
 		var initHotKeys = function() {
 			self.hotKeys = new HotKeys();
-
-			self.hotKeys.bindListener( elements.$window );
 		};
 
 		var getSiteSettings = function( settingType, settingName ) {
@@ -76,7 +73,7 @@ import HotKeys from '../common/utils/hot-keys';
 				return;
 			}
 
-			elements.$body.addClass( 'elementor-msie' );
+			elementorCommon.elements.$body.addClass( 'elementor-msie' );
 
 			var $frontendCss = jQuery( '#elementor-frontend-css' ),
 				msieCss = $frontendCss[0].outerHTML.replace( 'css/frontend', 'css/frontend-msie' ).replace( 'elementor-frontend-css', 'elementor-frontend-msie-css' );
@@ -95,7 +92,7 @@ import HotKeys from '../common/utils/hot-keys';
 
 			setDeviceModeData();
 
-			elements.$window.trigger( 'elementor/frontend/init' );
+			elementorCommon.elements.$window.trigger( 'elementor/frontend/init' );
 
 			if ( ! self.isEditMode() ) {
 				initHotKeys();
@@ -179,7 +176,7 @@ import HotKeys from '../common/utils/hot-keys';
 
 		this.addListenerOnce = function( listenerID, event, callback, to ) {
 			if ( ! to ) {
-				to = self.getElements( '$window' );
+				to = elementorCommon.elements.$window;
 			}
 
 			if ( ! self.isEditMode() ) {
@@ -201,7 +198,7 @@ import HotKeys from '../common/utils/hot-keys';
 
 		this.removeListeners = function( listenerID, event, callback, from ) {
 			if ( ! from ) {
-				from = self.getElements( '$window' );
+				from = elementorCommon.elements.$window;
 			}
 
 			if ( from instanceof jQuery ) {

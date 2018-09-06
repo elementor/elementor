@@ -766,7 +766,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		elementorFrontend.getElements( '$document' )[0].activeElement.blur();
+		elementorFrontend.getElements( 'window' ).document.activeElement.blur();
 	},
 
 	onDestroy: function() {

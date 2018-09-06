@@ -437,7 +437,7 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	bindEvents: function() {
-		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
+		elementorCommon.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
 	},
 
 	onInit: function() {
