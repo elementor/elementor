@@ -53,7 +53,6 @@ module.exports = {
 		'no-else-return': 'warn',
 		'no-console': 'warn',
 		//end of custom canceled rules
-		'arrow-parens': [ 'error', 'always' ],
 		'arrow-spacing': 'error',
 		'brace-style': [ 'error', '1tbs' ],
 		camelcase: [ 'error', { properties: 'never' } ],
