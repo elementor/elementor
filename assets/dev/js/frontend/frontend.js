@@ -72,11 +72,10 @@ import HotKeys from '../common/utils/hot-keys';
 		};
 
 		var addIeCompatibility = function() {
-			var isIE = 'Microsoft Internet Explorer' === navigator.appName ||  !! navigator.userAgent.match( /Trident/g ) ||  !! navigator.userAgent.match( /MSIE/g ) || !! navigator.userAgent.match( /rv:11/ );
-
-			if ( ! isIE ) {
+			if ( ! elementorCommon.envData.ie ) {
 				return;
 			}
+
 			elements.$body.addClass( 'elementor-msie' );
 
 			var $frontendCss = jQuery( '#elementor-frontend-css' ),
