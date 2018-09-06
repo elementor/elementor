@@ -86,7 +86,7 @@ class App extends BaseApp {
 	public function enqueue_styles() {
 		wp_register_style(
 			'elementor-common',
-			$this->get_css_assets_url( 'common', null, true, true ),
+			$this->get_css_assets_url( 'common', null, 'default', true ),
 			[],
 			ELEMENTOR_VERSION
 		);

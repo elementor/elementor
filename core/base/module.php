@@ -192,11 +192,11 @@ abstract class Module extends Base_Object {
 		return false;
 	}
 
-	final protected function get_assets_url( $file_name, $file_extension, $relative_url = null, $add_suffix = true ) {
-		static $suffix = null;
+	final protected function get_assets_url( $file_name, $file_extension, $relative_url = null, $add_min_suffix = 'default' ) {
+		static $is_test_mode = null;
 
-		if ( ! $suffix ) {
-			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
+		if ( null === $is_test_mode ) {
+			$is_test_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
 		}
 
 		if ( ! $relative_url ) {
@@ -205,18 +205,22 @@ abstract class Module extends Base_Object {
 
 		$url = ELEMENTOR_URL . $relative_url . $file_name;
 
-		if ( $add_suffix ) {
-			$url .= $suffix;
+		if ( 'default' === $add_min_suffix ) {
+			$add_min_suffix = ! $is_test_mode;
+		}
+
+		if ( $add_min_suffix ) {
+			$url .= '.min';
 		}
 
 		return $url . '.' . $file_extension;
 	}
 
-	final protected function get_js_assets_url( $file_name, $relative_url = null, $add_suffix = true ) {
-		return $this->get_assets_url( $file_name, 'js', $relative_url, $add_suffix );
+	final protected function get_js_assets_url( $file_name, $relative_url = null, $add_min_suffix = 'default' ) {
+		return $this->get_assets_url( $file_name, 'js', $relative_url, $add_min_suffix );
 	}
 
-	final protected function get_css_assets_url( $file_name, $relative_url = null, $add_suffix = true, $add_direction_suffix = false ) {
+	final protected function get_css_assets_url( $file_name, $relative_url = null, $add_min_suffix = 'default', $add_direction_suffix = false ) {
 		static $direction_suffix = null;
 
 		if ( ! $direction_suffix ) {
@@ -227,7 +231,7 @@ abstract class Module extends Base_Object {
 			$file_name .= $direction_suffix;
 		}
 
-		return $this->get_assets_url( $file_name, 'css', $relative_url, $add_suffix );
+		return $this->get_assets_url( $file_name, 'css', $relative_url, $add_min_suffix );
 	}
 
 	protected function get_assets_relative_url() {
