@@ -122,6 +122,14 @@ class App extends BaseApp {
 		}
 	}
 
+	protected function get_init_settings() {
+		return [
+			'urls' => [
+				'assets' => ELEMENTOR_ASSETS_URL,
+			]
+		];
+	}
+
 	private function add_default_templates() {
 		$default_templates = [
 			'includes/editor-templates/library-layout.php',
