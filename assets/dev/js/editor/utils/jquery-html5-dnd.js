@@ -180,7 +180,7 @@
 
 			var elementPosition = currentElement.getBoundingClientRect();
 
-			currentSide = event.clientY > elementPosition.top + elementHeight / 2 ? 'bottom' : 'top';
+			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
 
 		var insertPlaceholder = function() {

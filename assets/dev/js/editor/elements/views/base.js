@@ -611,7 +611,7 @@ BaseElementView = BaseContainer.extend( {
 					return;
 				}
 
-				if ( 'template' === control.render_type || ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && '_element_id' !== settingKey ) {
+				if ( 'template' === control.render_type || (! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && '_element_id' !== settingKey) ) {
 					isContentChanged = true;
 				}
 			} );

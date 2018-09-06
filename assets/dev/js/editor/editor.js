@@ -206,7 +206,7 @@ const App = Marionette.Application.extend( {
 			controls = {};
 
 		_.each( elementData.controls, function( controlData, controlKey ) {
-			if ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top ) {
+			if ( ( isInner && controlData.hide_in_inner ) || ( ! isInner && controlData.hide_in_top ) ) {
 				return;
 			}
 
@@ -617,7 +617,7 @@ const App = Marionette.Application.extend( {
 				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'edit' === editMode || ! isTargetInsideDocument ) {
+			if ( ( isClickInsideElementor && 'edit' === editMode ) || ! isTargetInsideDocument ) {
 				return;
 			}
 
