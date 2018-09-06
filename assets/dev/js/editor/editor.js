@@ -711,7 +711,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	enterPreviewMode: function( hidePanel ) {
-		var $elements = elementorFrontend.getElements( '$body' );
+		var $elements = elementorFrontend.getElements( 'window' ).elementorCommon.elements.$body;
 
 		if ( hidePanel ) {
 			$elements = $elements.add( elementorCommon.elements.$body );
@@ -734,7 +734,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	exitPreviewMode: function() {
-		elementorFrontend.getElements( '$body' ).add( elementorCommon.elements.$body )
+		elementorFrontend.getElements( 'window' ).elementorCommon.elements.$body.add( elementorCommon.elements.$body )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
 
@@ -922,7 +922,7 @@ const App = Marionette.Application.extend( {
 
 		this.preventClicksInsideEditor();
 
-		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
+		this.addBackgroundClickArea( elementorFrontend.getElements( 'window' ).document );
 
 		if ( this.previewLoadedOnce ) {
 			this.getPanelView().setPage( 'elements', null, { autoFocusSearch: false } );
@@ -942,10 +942,12 @@ const App = Marionette.Application.extend( {
 
 		this.$previewContents.children().addClass( 'elementor-html' );
 
-		elementorFrontend.getElements( '$body' ).addClass( 'elementor-editor-active' );
+		const $frontendBody = elementorFrontend.getElements( 'window' ).elementorCommon.elements.$body;
+
+		$frontendBody.addClass( 'elementor-editor-active' );
 
 		if ( ! elementor.userCan( 'design' ) ) {
-			elementorFrontend.getElements( '$body' ).addClass( 'elementor-editor-content-only' );
+			$frontendBody.addClass( 'elementor-editor-content-only' );
 		}
 
 		this.changeDeviceMode( this._defaultDeviceMode );
@@ -960,7 +962,7 @@ const App = Marionette.Application.extend( {
 
 		this.onEditModeSwitched();
 
-		elementorCommon.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
+		elementorCommon.hotKeys.bindListener( elementorFrontend.getElements( 'window' ).elementorCommon.elements.$window );
 
 		this.trigger( 'preview:loaded' );
 	},

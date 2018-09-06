@@ -20,7 +20,8 @@ class ElementorCommonApp extends ViewModule {
 	getDefaultElements() {
 		return {
 			$window: jQuery( window ),
-			$body: jQuery( 'body' )
+			$document: jQuery( document ),
+			$body: jQuery( document.body )
 		};
 	}
 

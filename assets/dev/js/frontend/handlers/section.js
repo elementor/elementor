@@ -117,7 +117,7 @@ var BackgroundVideo = HandlerModule.extend( {
 			}
 		} );
 
-		elementorFrontend.getElements( '$window' ).on( 'resize', self.changeVideoSize );
+		elementorFrontend.getElements( 'window' ).elementorCommon.elements.$window.on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
