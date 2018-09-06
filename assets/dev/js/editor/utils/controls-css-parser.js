@@ -43,7 +43,7 @@ ControlsCSSParser = ViewModule.extend({
 				self.addDynamicControlStyleRules(values.__dynamic__[ control.name ], control);
 			}
 
-			if (!control.selectors) {
+			if ( ! control.selectors) {
 				return;
 			}
 
@@ -69,7 +69,7 @@ ControlsCSSParser = ViewModule.extend({
 			value = control.selectors_dictionary[ value ] || value;
 		}
 
-		if (!_.isNumber(value) && _.isEmpty(value)) {
+		if ( ! _.isNumber(value) && _.isEmpty(value)) {
 			return;
 		}
 
@@ -98,14 +98,14 @@ ControlsCSSParser = ViewModule.extend({
 		elementor.dynamicTags.parseTagsText(value, control.dynamic, function(id, name, settings) {
 			var tag = elementor.dynamicTags.createTag(id, name, settings);
 
-			if (!tag) {
+			if ( ! tag) {
 				return;
 			}
 
 			var tagSettingsModel = tag.model,
 				styleControls = tagSettingsModel.getStyleControls();
 
-			if (!styleControls.length) {
+			if ( ! styleControls.length) {
 				return;
 			}
 
@@ -148,7 +148,7 @@ ControlsCSSParser.addControlStyleRules = function(stylesheet, control, controls,
 				if (controlName) {
 					parserControl = _.findWhere(controls, { name: controlName });
 
-					if (!parserControl) {
+					if ( ! parserControl) {
 						return '';
 					}
 
@@ -210,7 +210,7 @@ ControlsCSSParser.addControlStyleRules = function(stylesheet, control, controls,
 			selector = selector.replace(placeholderPattern, replacements[ index ]);
 		});
 
-		if (!Object.keys(query).length && control.responsive) {
+		if ( ! Object.keys(query).length && control.responsive) {
 			query = _.pick(elementor.helpers.cloneObject(control.responsive), [ 'min', 'max' ]);
 
 			if ('desktop' === query.max) {
