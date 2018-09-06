@@ -846,7 +846,7 @@ const App = Marionette.Application.extend( {
 		} else {
 			text += '%c00';
 
-			style = 'font-size: 22px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
+			style = 'font-size: 22px; background-image: url("' + elementorCommon.config.urls.assets + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
 		}
 
 		setTimeout( console.log.bind( console, text, style ) );
