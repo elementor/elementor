@@ -37,7 +37,9 @@ class Admin {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
+		if( ! wp_doing_ajax() ){
+			wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
+		}
 		exit;
 	}
 
