@@ -1,60 +1,56 @@
-var Ajax;
-
-Ajax = {
-	config: {},
-	requests: {},
-	cache: {},
-
-	initConfig: function() {
+export default class Ajax {
+	initConfig() {
 		this.config = {
 			ajaxParams: {
 				type: 'POST',
-				url: elementor.config.ajaxurl,
+				url: elementorCommon.config.urls.ajax,
 				data: {}
 			},
 			actionPrefix: 'elementor_'
 		};
-	},
+	}
 
-	init: function() {
+	constructor() {
+		this.requests = {};
+
+		this.cache = {};
+
 		this.initConfig();
 
 		this.debounceSendBatch = _.debounce( this.sendBatch.bind( this ), 500 );
-	},
+	}
 
-	getCacheKey: function( request ) {
+	getCacheKey( request ) {
 		return JSON.stringify( {
 			unique_id: request.unique_id,
 			data: request.data
 		} );
-	},
+	}
 
-	loadObjects: function( options ) {
-		var self = this,
-			dataCollection = {},
-			deferredArray = [];
+	loadObjects( options ) {
+		let dataCollection = {};
+
+		const deferredArray = [];
 
 		if ( options.before ) {
 			options.before();
 		}
 
-		options.ids.forEach( function( objectId ) {
-			deferredArray.push( self.load( {
-				action: options.action,
-				unique_id: options.data.unique_id + objectId,
-				data: jQuery.extend( { id: objectId }, options.data )
-			} ).done( function( data ) {
-				dataCollection = jQuery.extend( dataCollection, data );
-			}) );
+		options.ids.forEach( objectId => {
+			deferredArray.push(
+				this.load( {
+						action: options.action,
+						unique_id: options.data.unique_id + objectId,
+						data: jQuery.extend( { id: objectId }, options.data )
+					} )
+					.done( data => dataCollection = jQuery.extend( dataCollection, data ) )
+			);
 		} );
 
-		jQuery.when.apply( jQuery, deferredArray ).done( function() {
-			options.success( dataCollection );
-		} );
-	},
+		jQuery.when.apply( jQuery, deferredArray ).done( () => options.success( dataCollection ) );
+	}
 
-	load: function( request ) {
-		var self = this;
+	load( request ) {
 		if ( ! request.unique_id ) {
 			request.unique_id = request.action;
 		}
@@ -63,27 +59,26 @@ Ajax = {
 			request.before();
 		}
 
-		var deferred,
-			cacheKey = self.getCacheKey( request );
+		let deferred;
 
-		if ( _.has( self.cache, cacheKey ) ) {
+		const cacheKey = this.getCacheKey( request );
+
+		if ( _.has( this.cache, cacheKey ) ) {
 			deferred = jQuery.Deferred()
 				.done( request.success )
-				.resolve( self.cache[ cacheKey ] );
+				.resolve( this.cache[ cacheKey ] );
 		} else {
-			deferred = self.addRequest( request.action, {
+			deferred = this.addRequest( request.action, {
 				data: request.data,
 				unique_id: request.unique_id,
-				success: function( data ) {
-					self.cache[ cacheKey ] = data;
-				}
+				success: data => this.cache[ cacheKey ] = data
 			} ).done( request.success );
 		}
 
 		return deferred;
-	},
+	}
 
-	addRequest: function( action, options, immediately ) {
+	addRequest( action, options, immediately ) {
 		options = options || {};
 
 		if ( ! options.unique_id ) {
@@ -92,25 +87,28 @@ Ajax = {
 
 		options.deferred = jQuery.Deferred().done( options.success ).fail( options.error ).always( options.complete );
 
-		var request = {
+		const request = {
 			action: action,
 			options: options
 		};
 
 		if ( immediately ) {
-			var requests = {};
+			const requests = {};
+
 			requests[ options.unique_id ] = request;
+
 			options.deferred.jqXhr = this.sendBatch( requests );
 		} else {
 			this.requests[ options.unique_id ] = request;
+
 			this.debounceSendBatch();
 		}
 
 		return options.deferred;
-	},
+	}
 
-	sendBatch: function( requests ) {
-		var actions = {};
+	sendBatch( requests ) {
+		const actions = {};
 
 		if ( ! requests ) {
 			requests = this.requests;
@@ -119,20 +117,19 @@ Ajax = {
 			this.requests = {};
 		}
 
-		_( requests ).each( function( request, id ) {
-			actions[ id ] = {
-				action: request.action,
-				data: request.options.data
-			};
+		Object.entries( requests ).forEach( ( [ id, request ] ) => actions[ id ] = {
+			action: request.action,
+			data: request.options.data
 		} );
 
 		return this.send( 'ajax', {
 			data: {
 				actions: JSON.stringify( actions )
 			},
-			success: function( data ) {
-				_.each( data.responses, function( response, id ) {
-					var options = requests[ id ].options;
+			success: data => {
+				Object.entries( data.responses ).forEach( ( [ id, response ] ) => {
+					const options = requests[ id ].options;
+
 					if ( options ) {
 						if ( response.success ) {
 							options.deferred.resolve( response.data );
@@ -142,19 +139,17 @@ Ajax = {
 					}
 				} );
 			},
-			error: function( data ) {
-				_.each( requests, function( args ) {
+			error: data =>
+				Object.values( requests ).forEach( args => {
 					if ( args.options ) {
 						args.options.deferred.reject( data );
 					}
-				} );
-			}
+				} )
 		} );
-	},
+	}
 
-	send: function( action, options ) {
-		var self = this,
-			ajaxParams = elementorCommon.helpers.cloneObject( this.config.ajaxParams );
+	send( action, options ) {
+		const ajaxParams = elementorCommon.helpers.cloneObject( this.config.ajaxParams );
 
 		options = options || {};
 
@@ -166,18 +161,17 @@ Ajax = {
 			ajaxParams.data.append( 'action', action );
 			ajaxParams.data.append( '_nonce', elementor.config.nonce );
 			ajaxParams.data.append( 'editor_post_id', elementor.config.document.id );
-
 		} else {
 			ajaxParams.data.action = action;
 			ajaxParams.data._nonce = elementor.config.nonce;
 			ajaxParams.data.editor_post_id = elementor.config.document.id;
 		}
 
-		var successCallback = ajaxParams.success,
+		const successCallback = ajaxParams.success,
 			errorCallback = ajaxParams.error;
 
 		if ( successCallback || errorCallback ) {
-			ajaxParams.success = function( response ) {
+			ajaxParams.success = response => {
 				if ( response.success && successCallback ) {
 					successCallback( response.data );
 				}
@@ -188,16 +182,14 @@ Ajax = {
 			};
 
 			if ( errorCallback ) {
-				ajaxParams.error = function( data ) {
-					errorCallback( data );
-				};
+				ajaxParams.error = data => errorCallback( data );
 			} else {
-				ajaxParams.error = function( XMLHttpRequest ) {
+				ajaxParams.error = XMLHttpRequest => {
 					if ( 0 === XMLHttpRequest.readyState && 'abort' === XMLHttpRequest.statusText ) {
 						return;
 					}
 
-					var message = self.createErrorMessage( XMLHttpRequest );
+					const message = this.createErrorMessage( XMLHttpRequest );
 
 					elementor.notifications.showToast( {
 						message: message
@@ -207,12 +199,14 @@ Ajax = {
 		}
 
 		return jQuery.ajax( ajaxParams );
-	},
+	}
 
-	createErrorMessage: function( XMLHttpRequest ) {
-		var message;
+	createErrorMessage( XMLHttpRequest ) {
+		let message;
+
 		if ( 4 === XMLHttpRequest.readyState ) {
 			message = elementor.translate( 'server_error' );
+
 			if ( 200 !== XMLHttpRequest.status ) {
 				message += ' (' + XMLHttpRequest.status + ' ' + XMLHttpRequest.statusText + ')';
 			}
@@ -224,6 +218,4 @@ Ajax = {
 
 		return message + '.';
 	}
-};
-
-module.exports = Ajax;
+}

@@ -71,7 +71,7 @@ module.exports = Module.extend( {
 
 	discard: function() {
 		var self = this;
-		elementor.ajax.addRequest( 'discard_changes', {
+		elementorCommon.ajax.addRequest( 'discard_changes', {
 			success: function() {
 				self.setFlagEditorChange( false );
 				location.href = elementor.config.document.urls.exit_to_dashboard;
@@ -145,7 +145,7 @@ module.exports = Module.extend( {
 
 		settings.post_status = options.status;
 
-		elementor.ajax.addRequest( 'save_builder', {
+		elementorCommon.ajax.addRequest( 'save_builder', {
 			data: {
 				status: options.status,
 				elements: elements,
@@ -196,7 +196,7 @@ module.exports = Module.extend( {
 				if ( _.isString( data ) ) {
 					message = data;
 				} else if ( data.statusText ) {
-					message = elementor.ajax.createErrorMessage( data );
+					message = elementorCommon.ajax.createErrorMessage( data );
 
 					if ( 0 === data.readyState ) {
 						message += ' ' + elementor.translate( 'saving_disabled' );

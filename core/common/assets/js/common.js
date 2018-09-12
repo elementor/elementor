@@ -1,5 +1,6 @@
 import HotKeys from './utils/hot-keys';
 import Helpers from './utils/helpers';
+import Ajax from '../../modules/ajax/assets/js/ajax';
 
 const ViewModule = require( 'elementor-utils/view-module' );
 
@@ -41,6 +42,8 @@ class ElementorCommonApp extends ViewModule {
 		this.hotKeys = new HotKeys();
 
 		this.dialogsManager = new DialogsManager.Instance();
+
+		this.ajax = new Ajax();
 	}
 
 	onInit() {

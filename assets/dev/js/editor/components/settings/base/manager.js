@@ -89,7 +89,7 @@ module.exports = ViewModule.extend( {
 
 		NProgress.start();
 
-		elementor.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
+		elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data: data,
 			success: function() {
 				NProgress.done();

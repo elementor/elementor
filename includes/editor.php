@@ -474,7 +474,6 @@ class Editor {
 
 		$config = [
 			'version' => ELEMENTOR_VERSION,
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
 			'data' => $editor_data,
