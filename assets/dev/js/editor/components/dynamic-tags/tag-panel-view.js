@@ -60,7 +60,7 @@ module.exports = Marionette.ItemView.extend( {
 			}
 		};
 
-		var settingsPopup = elementor.dialogsManager.createWidget( 'buttons', settingsPopupOptions );
+		var settingsPopup = elementorCommon.dialogsManager.createWidget( 'buttons', settingsPopupOptions );
 
 		this.getSettingsPopup = function() {
 			return settingsPopup;

@@ -109,14 +109,6 @@ import HotKeys from '../common/utils/hot-keys';
 			return elements;
 		};
 
-		this.getDialogsManager = function() {
-			if ( ! dialogsManager ) {
-				dialogsManager = new DialogsManager.Instance();
-			}
-
-			return dialogsManager;
-		};
-
 		this.getPageSettings = function( settingName ) {
 			return getSiteSettings( 'page', settingName );
 		};

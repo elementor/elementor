@@ -108,7 +108,7 @@ ContextMenu = Module.extend( {
 
 		this.getModal = function() {
 			if ( ! modal ) {
-				modal = elementor.dialogsManager.createWidget( 'simple', {
+				modal = elementorCommon.dialogsManager.createWidget( 'simple', {
 					className: 'elementor-context-menu',
 					message: this.buildActionsList(),
 					iframe: elementor.$preview,

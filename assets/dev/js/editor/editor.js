@@ -267,8 +267,9 @@ const App = Marionette.Application.extend( {
 		this.initHotKeys();
 	},
 
+	// TODO: BC method since 2.3.0
 	initDialogsManager: function() {
-		this.dialogsManager = new DialogsManager.Instance();
+		this.dialogsManager = elementorCommon.dialogsManager;
 	},
 
 	initElements: function() {
@@ -333,7 +334,7 @@ const App = Marionette.Application.extend( {
 				return dialog;
 			}
 
-			dialog = this.dialogsManager.createWidget( 'confirm', {
+			dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 				id: 'elementor-clear-page-dialog',
 				headerMessage: elementor.translate( 'clear_page' ),
 				message: elementor.translate( 'dialog_confirm_clear_page' ),
@@ -654,7 +655,7 @@ const App = Marionette.Application.extend( {
 
 		options = jQuery.extend( true, defaultOptions, options );
 
-		this.dialogsManager.createWidget( 'confirm', options ).show();
+		elementorCommon.dialogsManager.createWidget( 'confirm', options ).show();
 	},
 
 	checkPageStatus: function() {

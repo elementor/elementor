@@ -220,7 +220,7 @@ TemplateLibraryManager = function() {
 
 	this.getErrorDialog = function() {
 		if ( ! errorDialog ) {
-			errorDialog = elementor.dialogsManager.createWidget( 'alert', {
+			errorDialog = elementorCommon.dialogsManager.createWidget( 'alert', {
 				id: 'elementor-template-library-error-dialog',
 				headerMessage: elementor.translate( 'an_error_occurred' )
 			} );

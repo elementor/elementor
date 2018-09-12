@@ -157,7 +157,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		this.getRemoveDialog = function() {
 			if ( ! removeDialog ) {
-				removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
+				removeDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 					message: elementor.translate( 'dialog_confirm_gallery_delete' ),
 					headerMessage: elementor.translate( 'delete_gallery' ),
 					strings: {
