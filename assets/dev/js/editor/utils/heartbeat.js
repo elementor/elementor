@@ -1,5 +1,4 @@
 class Heartbeat {
-
 	constructor() {
 		let modal;
 

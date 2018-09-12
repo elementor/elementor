@@ -19,8 +19,8 @@ TextEditor = HandlerModule.extend( {
 	getDefaultElements: function() {
 		var selectors = this.getSettings( 'selectors' ),
 			classes = this.getSettings( 'classes' ),
-			$dropCap = jQuery( '<span>', { 'class': classes.dropCap } ),
-			$dropCapLetter = jQuery( '<span>', { 'class': classes.dropCapLetter } );
+			$dropCap = jQuery( '<span>', { class: classes.dropCap } ),
+			$dropCapLetter = jQuery( '<span>', { class: classes.dropCapLetter } );
 
 		$dropCap.append( $dropCapLetter );
 

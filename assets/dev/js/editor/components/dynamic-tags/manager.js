@@ -137,7 +137,7 @@ module.exports = Module.extend( {
 	},
 
 	tagDataToTagText: function( tagID, tagName, tagSettings ) {
-		tagSettings = encodeURIComponent( JSON.stringify( tagSettings && tagSettings.toJSON( { removeDefault: true } ) || {} ) );
+		tagSettings = encodeURIComponent( JSON.stringify( ( tagSettings && tagSettings.toJSON( { removeDefault: true } ) ) || {} ) );
 
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
 	},

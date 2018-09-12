@@ -135,7 +135,12 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 				return 1;
 			}
 
-			return l < r ? 1 : l > r ? -1 : 0;
+			if ( l < r ) {
+				return 1;
+			} else if ( l > r ) {
+				return -1;
+			}
+			return 0;
 		};
 	},
 
@@ -195,7 +200,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		elementor.templates.setFilter( filterName, $select.val() );
 	},
 
-	onMyFavoritesFilterChange: function(  ) {
+	onMyFavoritesFilterChange: function() {
 		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
 	},
 
