@@ -132,13 +132,15 @@ registerBlockType( 'elementor/template', {
 			});
 		}
 
+		const selectTemplate = <SelectControl
+			value={ props.attributes.selectedTemplate }
+			onChange={ onChangeSelectTemplate }
+			options={ templates } />;
+
 
 		return (
 			<div className={ className }>
-				<SelectControl
-					value={ props.attributes.selectedTemplate }
-					onChange={ onChangeSelectTemplate }
-					options={ templates } />
+				{ selectedTemplate }
 				{ display }
 			</div>
 		);
