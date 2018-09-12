@@ -77,10 +77,9 @@
 			}
 			elements.$body.addClass( 'elementor-msie' );
 
-			var $frontendCss = jQuery( '#elementor-frontend-css' ),
-				msieCss = $frontendCss[0].outerHTML.replace( 'css/frontend', 'css/frontend-msie' ).replace( 'elementor-frontend-css', 'elementor-frontend-msie-css' );
+			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie"  href="' + elementorFrontend.config.urls.assets  + 'css/frontend-msie.min.css?' + elementorFrontend.config.version + '" type="text/css" />';
 
-				$frontendCss.after( msieCss );
+				elements.$body.append( msieCss );
 			};
 
 		this.init = function() {
