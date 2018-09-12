@@ -42,4 +42,8 @@ docker-compose $DOCKER_COMPOSE_FILE_OPTIONS up -d >/dev/null
 
 # Install the PHPUnit test scaffolding.
 echo -e $(status_message "Installing PHPUnit test scaffolding...")
-docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm wordpress_phpunit /app/bin/install-wp-tests.sh wordpress_test root example mysql $WP_VERSION false > /dev/null
+if command_exists "systeminfo"; then
+	WP_TESTS_DIR=../tmp/wordpress-tests-lib
+	WP_CORE_DIR=../tmp/wordpress/
+fi
+docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm wordpress_phpunit bin/install-wp-tests.sh wordpress_test1 root example mysql $WP_VERSION false> /dev/null
