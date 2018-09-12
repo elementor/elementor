@@ -60,7 +60,7 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	initModal: function() {
-		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
+		var modal = LightboxModule.modal = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			className: 'elementor-lightbox',
 			closeButton: true,
 			closeButtonClass: 'eicon-close',
