@@ -70,9 +70,11 @@
 		};
 
 		var addIeCompatibility = function() {
-			var isIE = 'Microsoft Internet Explorer' === navigator.appName ||  !! navigator.userAgent.match( /Trident/g ) ||  !! navigator.userAgent.match( /MSIE/g ) || !! navigator.userAgent.match( /rv:11/ );
+			var isIE = 'Microsoft Internet Explorer' === navigator.appName || !! navigator.userAgent.match( /Trident/g ) || !! navigator.userAgent.match( /MSIE/g ) || !! navigator.userAgent.match( /rv:11/ ),
+				el = document.createElement( 'div' ),
+				supportsGrid = 'string' === typeof el.style.grid;
 
-			if ( ! isIE ) {
+			if ( ! isIE || supportsGrid ) {
 				return;
 			}
 			elements.$body.addClass( 'elementor-msie' );
