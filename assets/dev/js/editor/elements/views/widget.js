@@ -11,9 +11,8 @@ WidgetView = BaseElementView.extend( {
 
 		if ( 'remote' !== this.getTemplateType() ) {
 			return Marionette.TemplateCache.get( '#tmpl-elementor-' + editModel.get( 'widgetType' ) + '-content' );
-		} else {
-			return _.template( '' );
 		}
+		return _.template( '' );
 	},
 
 	className: function() {
@@ -76,7 +75,7 @@ WidgetView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: elementor.translate( 'save_as_global' ),
-					shortcut: jQuery( '<i>', { 'class': 'eicon-pro-icon' } )
+					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } )
 				}
 			]
 		} );
@@ -136,7 +135,7 @@ WidgetView = BaseElementView.extend( {
 
 	addInlineEditingAttributes: function( key, toolbar ) {
 		this.addRenderAttribute( key, {
-			'class': 'elementor-inline-editing',
+			class: 'elementor-inline-editing',
 			'data-elementor-setting-key': key
 		} );
 
@@ -174,11 +173,11 @@ WidgetView = BaseElementView.extend( {
 
 		BaseElementView.prototype.onRender.apply( self, arguments );
 
-	    var editModel = self.getEditModel(),
-	        skinType = editModel.getSetting( '_skin' ) || 'default';
+		var editModel = self.getEditModel(),
+			skinType = editModel.getSetting( '_skin' ) || 'default';
 
         self.$el
-	        .attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
+			.attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
             .removeClass( 'elementor-widget-empty' )
             .children( '.elementor-widget-empty-icon' )
             .remove();

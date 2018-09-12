@@ -31,7 +31,7 @@ ImageCarouselHandler = HandlerModule.extend( {
 			autoplay: 'yes' === elementSettings.autoplay,
 			autoplaySpeed: elementSettings.autoplay_speed,
 			infinite: 'yes' === elementSettings.infinite,
-			pauseOnHover: 'yes' ===  elementSettings.pause_on_hover,
+			pauseOnHover: 'yes' === elementSettings.pause_on_hover,
 			speed: elementSettings.speed,
 			arrows: -1 !== [ 'arrows', 'both' ].indexOf( elementSettings.navigation ),
 			dots: -1 !== [ 'dots', 'both' ].indexOf( elementSettings.navigation ),

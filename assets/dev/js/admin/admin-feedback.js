@@ -99,5 +99,4 @@
 	$( function() {
 		ElementorAdminDialogApp.init();
 	} );
-
 }( jQuery ) );

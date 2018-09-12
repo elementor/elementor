@@ -175,10 +175,10 @@
 
 				self.getDialogsManager().createWidget( 'confirm', {
 					headerMessage: self.config.i18n.rollback_to_previous_version,
-					message:  self.config.i18n.rollback_confirm,
+					message: self.config.i18n.rollback_confirm,
 					strings: {
-						confirm:  self.config.i18n.yes,
-						cancel:  self.config.i18n.cancel
+						confirm: self.config.i18n.yes,
+						cancel: self.config.i18n.cancel
 					},
 					onConfirm: function() {
 						$this.addClass( 'loading' );
@@ -297,7 +297,7 @@
 
 			$activeTab.addClass( 'nav-tab-active' );
 
-			this.elements.$settingsForm.attr( 'action', 'options.php#' + tabName  );
+			this.elements.$settingsForm.attr( 'action', 'options.php#' + tabName );
 
 			this.elements.$activeSettingsPage = $activePage;
 
@@ -358,7 +358,6 @@
 				} ).on( 'change', self.selectors.excludedField, function() {
 					self.updateLabel( $( this ).closest( self.selectors.row ) );
 				});
-
 			},
 			init: function() {
 				var self = this;

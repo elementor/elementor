@@ -63,7 +63,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return behaviors;
 	},
 
-	initialize: function( options ) {
+	initialize: function() {
 		ControlBaseView.prototype.initialize.apply( this, arguments );
 
 		this.registerValidators();
@@ -244,9 +244,8 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 				if ( undefined !== gravity ) {
 					return gravity;
-				} else {
-					return 'n';
 				}
+				return 'n';
 			},
 			title: function() {
 				return this.getAttribute( 'data-tooltip' );

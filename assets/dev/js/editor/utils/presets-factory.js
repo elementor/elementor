@@ -83,7 +83,7 @@ presetsFactory = {
 	},
 
 	_generatePresetSVGPath: function( preset, svgWidth, svgHeight, separatorWidth ) {
-		var DRAW_SIZE = svgWidth - separatorWidth * ( preset.length - 1 );
+		var DRAW_SIZE = svgWidth - ( separatorWidth * ( preset.length - 1 ) );
 
 		var xPointer = 0,
 			dOutput = '';

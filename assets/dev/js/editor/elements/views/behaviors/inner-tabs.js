@@ -25,15 +25,15 @@ InnerTabsBehavior = Marionette.Behavior.extend( {
 					view._addChildView( childView );
 
 					var tabId = childView.model.get( 'name' ),
-					controlsUnderTab = parent.children.filter( function( view ) {
-						return ( tabId === view.model.get( 'inner_tab' ) );
+					controlsUnderTab = parent.children.filter( function( controlView ) {
+						return ( tabId === controlView.model.get( 'inner_tab' ) );
 					} );
 
 					if ( 0 === index ) {
 						childView.$el.addClass( activeClass );
 					} else {
-						_.each( controlsUnderTab, function( view ) {
-							view.$el.addClass( closedClass );
+						_.each( controlsUnderTab, function( controlView ) {
+							controlView.$el.addClass( closedClass );
 						} );
 					}
 				} );

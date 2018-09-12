@@ -32,7 +32,7 @@ module.exports = HandlerModule.extend( {
 	activateDefaultTab: function() {
 		var settings = this.getSettings();
 
-		if ( ! settings.autoExpand || 'editor' === settings.autoExpand && ! this.isEdit ) {
+		if ( ! settings.autoExpand || 'editor' === ( settings.autoExpand && ! this.isEdit ) ) {
 			return;
 		}
 
