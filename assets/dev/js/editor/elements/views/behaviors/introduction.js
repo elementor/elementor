@@ -77,6 +77,6 @@ module.exports = Marionette.Behavior.extend( {
 	setIntroductionViewed: function() {
 		this.introductionViewed = true;
 
-		elementor.ajax.addRequest( 'introduction_viewed' );
+		elementorCommon.ajax.addRequest( 'introduction_viewed' );
 	}
 } );

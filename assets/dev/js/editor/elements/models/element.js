@@ -151,7 +151,7 @@ ElementModel = Backbone.Model.extend( {
 	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
-		return elementor.ajax.addRequest( 'render_widget', {
+		return elementorCommon.ajax.addRequest( 'render_widget', {
 			unique_id: this.cid,
 			data: {
 				data: data

@@ -69,7 +69,7 @@ RevisionsManager = function() {
 			}
 		} );
 
-		return elementor.ajax.send( 'get_revision_data', options );
+		return elementorCommon.ajax.send( 'get_revision_data', options );
 	};
 
 	this.addRevisions = function( items ) {
@@ -111,7 +111,7 @@ RevisionsManager = function() {
 			params.error = options.error;
 		}
 
-		elementor.ajax.send( 'delete_revision', params );
+		elementorCommon.ajax.send( 'delete_revision', params );
 	};
 
 	this.init = function() {

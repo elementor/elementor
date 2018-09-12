@@ -102,7 +102,7 @@ TemplateLibraryManager = function() {
 				options.onConfirm();
 			}
 
-			elementor.ajax.send( 'delete_template', {
+			elementorCommon.ajax.send( 'delete_template', {
 				data: {
 					source: templateModel.get( 'source' ),
 					template_id: templateModel.get( 'template_id' )
@@ -171,7 +171,7 @@ TemplateLibraryManager = function() {
 			_.extend( ajaxParams, templateType.ajaxParams );
 		}
 
-		elementor.ajax.send( 'save_template', ajaxParams );
+		elementorCommon.ajax.send( 'save_template', ajaxParams );
 	};
 
 	this.requestTemplateContent = function( source, id, ajaxOptions ) {
@@ -188,7 +188,7 @@ TemplateLibraryManager = function() {
 			jQuery.extend( true, options, ajaxOptions );
 		}
 
-		return elementor.ajax.send( 'get_template_data', options );
+		return elementorCommon.ajax.send( 'get_template_data', options );
 	};
 
 	this.markAsFavorite = function( templateModel, favorite ) {
@@ -200,12 +200,12 @@ TemplateLibraryManager = function() {
 			}
 		};
 
-		return elementor.ajax.send( 'mark_template_as_favorite', options );
+		return elementorCommon.ajax.send( 'mark_template_as_favorite', options );
 	};
 
 	this.getDeleteDialog = function() {
 		if ( ! deleteDialog ) {
-			deleteDialog = elementor.dialogsManager.createWidget( 'confirm', {
+			deleteDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 				id: 'elementor-template-library-delete-dialog',
 				headerMessage: elementor.translate( 'delete_template' ),
 				message: elementor.translate( 'delete_template_confirm' ),
@@ -275,7 +275,7 @@ TemplateLibraryManager = function() {
 			ajaxOptions.data.sync = true;
 		}
 
-		elementor.ajax.send( 'get_library_data', ajaxOptions );
+		elementorCommon.ajax.send( 'get_library_data', ajaxOptions );
 	};
 
 	this.startModal = function( customStartIntent ) {

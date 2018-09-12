@@ -11,7 +11,8 @@ const App = Marionette.Application.extend( {
 	schemes: require( 'elementor-editor-utils/schemes' ),
 	presetsFactory: require( 'elementor-editor-utils/presets-factory' ),
 	templates: require( 'elementor-templates/manager' ),
-	ajax: require( 'elementor-editor-utils/ajax' ),
+	// TODO: BC Since 2.3.0
+	ajax: elementorCommon.ajax,
 	conditions: require( 'elementor-editor-utils/conditions' ),
 	history: require( 'elementor-modules/history/assets/js/module' ),
 
@@ -262,8 +263,6 @@ const App = Marionette.Application.extend( {
 		this.initDialogsManager();
 
 		this.notifications = new Notifications();
-
-		this.ajax.init();
 
 		this.initHotKeys();
 	},
