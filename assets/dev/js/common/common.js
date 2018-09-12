@@ -1,4 +1,3 @@
-import Assistant from 'elementor/core/common/modules/assistant/assets/js/assistant';
 import HotKeys from './utils/hot-keys';
 import Helpers from './utils/helpers';
 
@@ -42,8 +41,6 @@ class ElementorCommonApp extends ViewModule {
 		this.hotKeys = new HotKeys();
 
 		this.dialogsManager = new DialogsManager.Instance();
-
-		this.assistant = new Assistant( this.config.assistant );
 	}
 
 	onInit() {

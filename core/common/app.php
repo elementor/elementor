@@ -2,7 +2,6 @@
 namespace Elementor\Core\Common;
 
 use Elementor\Core\Base\App as BaseApp;
-use Elementor\Core\Common\Modules\Assistant\Module as AssistantModule;
 
 class App extends BaseApp {
 
@@ -27,7 +26,6 @@ class App extends BaseApp {
 	}
 
 	public function init_components() {
-		$this->add_component( 'assistant', new AssistantModule() );
 	}
 
 	public function get_name() {
