@@ -33,7 +33,7 @@ if [ "$1" == '--e2e_tests' ]; then
 	fi
 fi
 
-if command_exists "docker-machine"; then
+if command_exists "systeminfo"; then
 	HOST_IP=$(docker-machine ip default)
 fi
 # Get the host port for the WordPress container.
