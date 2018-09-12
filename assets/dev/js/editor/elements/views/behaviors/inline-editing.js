@@ -14,7 +14,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	events: function() {
 		return {
 			'click @ui.inlineEditingArea': 'onInlineEditingClick',
-			'input @ui.inlineEditingArea':'onInlineEditingUpdate'
+			'input @ui.inlineEditingArea': 'onInlineEditingUpdate'
 		};
 	},
 
@@ -81,7 +81,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			editor: this.$currentEditingArea[0],
 			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
-			cleanAttrs: ['id', 'class', 'name'],
+			cleanAttrs: [ 'id', 'class', 'name' ],
 			placeholder: elementor.translate( 'type_here' ) + '...',
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {

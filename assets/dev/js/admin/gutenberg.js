@@ -106,5 +106,4 @@
 	$( function() {
 		ElementorGutenbergApp.init();
 	} );
-
 }( jQuery ) );

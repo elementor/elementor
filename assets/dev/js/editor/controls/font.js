@@ -15,7 +15,7 @@ module.exports = ControlSelect2View.extend( {
 			var filteredFonts = {};
 
 			_.each( fonts, function( fontType, fontName ) {
-				if ( _.isArray( groups ) && _.contains( groups, fontType ) || fontType === groups ) {
+				if ( ( _.isArray( groups ) && _.contains( groups, fontType ) ) || fontType === groups ) {
 					filteredFonts[ fontName ] = fontName;
 				}
 			} );

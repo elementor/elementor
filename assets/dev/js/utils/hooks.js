@@ -126,7 +126,9 @@ var EventManager = function() {
 	 * @private
 	 */
 	function _runHook( type, hook, args ) {
-		var handlers = STORAGE[ type ][ hook ], i, len;
+		var handlers = STORAGE[ type ][ hook ],
+			i,
+			len;
 
 		if ( ! handlers ) {
 			return ( 'filters' === type ) ? args[ 0 ] : false;

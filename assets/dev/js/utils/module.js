@@ -52,7 +52,7 @@ var Module = function() {
 				return;
 			}
 
-			return this.getItems(  items[ currentKey ], keyStack.join( '.' ) );
+			return this.getItems( items[ currentKey ], keyStack.join( '.' ) );
 		}
 
 		return items;

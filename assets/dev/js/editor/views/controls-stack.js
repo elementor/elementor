@@ -32,7 +32,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	modelEvents: {
-		'destroy': 'onModelDestroy'
+		destroy: 'onModelDestroy'
 	},
 
 	behaviors: {
@@ -133,7 +133,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			if ( popover.start ) {
 				popoverStarted = true;
 
-				$popover = jQuery( '<div>', { 'class': self.classes.popover } );
+				$popover = jQuery( '<div>', { class: self.classes.popover } );
 
 				child.$el.before( $popover );
 

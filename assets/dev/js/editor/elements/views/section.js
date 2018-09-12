@@ -65,7 +65,7 @@ SectionView = BaseElementView.extend( {
 		return groups;
 	},
 
-	addChildModel: function( model, options ) {
+	addChildModel: function( model ) {
 		var isModelInstance = model instanceof Backbone.Model,
 			isInner = this.isInner();
 

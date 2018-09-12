@@ -4,7 +4,7 @@ module.exports = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-header-preview-back',
 
 	events: {
-		'click': 'onClick'
+		click: 'onClick'
 	},
 
 	onClick: function() {

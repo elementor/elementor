@@ -66,7 +66,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	initialize: function( options ) {
+	initialize: function() {
 		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
 		this.fillCollection();
@@ -206,7 +206,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		settings._previousAttributes = {};
 		settings._previousAttributes[ controlName ] = collectionCloned.toJSON();
 
-		settings.trigger( 'change', settings,  settings._pending );
+		settings.trigger( 'change', settings, settings._pending );
 
 		delete settings.changed;
 		delete settings._previousAttributes;
@@ -232,7 +232,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		collectionCloned[ modelIndex ] = model._previousAttributes;
 
 		settings.changed = {};
-		settings.changed[ controlName ] =  model.collection;
+		settings.changed[ controlName ] = model.collection;
 
 		settings._previousAttributes = {};
 		settings._previousAttributes[ controlName ] = collectionCloned;
@@ -246,7 +246,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	onButtonAddRowClick: function() {
 		var defaults = {};
 		_.each( this.model.get( 'fields' ), function( field ) {
-			defaults[ field.name ] = field['default'];
+			defaults[ field.name ] = field.default;
 		} );
 
 		var newModel = this.addRow( defaults ),

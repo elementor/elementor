@@ -206,7 +206,7 @@ const App = Marionette.Application.extend( {
 			controls = {};
 
 		_.each( elementData.controls, function( controlData, controlKey ) {
-			if ( isInner && controlData.hide_in_inner || ! isInner && controlData.hide_in_top ) {
+			if ( ( isInner && controlData.hide_in_inner ) || ( ! isInner && controlData.hide_in_top ) ) {
 				return;
 			}
 
@@ -217,10 +217,8 @@ const App = Marionette.Application.extend( {
 	},
 
 	mergeControlsSettings: function( controls ) {
-		var  self = this;
-
-		_.each( controls, function( controlData, controlKey ) {
-			controls[ controlKey ] = jQuery.extend( true, {}, self.config.controls[ controlData.type ], controlData  );
+		_.each( controls, ( controlData, controlKey ) => {
+			controls[ controlKey ] = jQuery.extend( true, {}, this.config.controls[ controlData.type ], controlData );
 		} );
 
 		return controls;
@@ -619,7 +617,7 @@ const App = Marionette.Application.extend( {
 				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[0] );
 
-			if ( isClickInsideElementor && 'edit' === editMode || ! isTargetInsideDocument ) {
+			if ( ( isClickInsideElementor && 'edit' === editMode ) || ! isTargetInsideDocument ) {
 				return;
 			}
 
@@ -868,11 +866,11 @@ const App = Marionette.Application.extend( {
 			style = 'font-size: 22px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
 		}
 
-		setTimeout( console.log.bind( console, text, style ) );
+		setTimeout( console.log.bind( console, text, style ) ); // eslint-disable-line
 
 		text = '%cLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/pojome/elementor';
 
-		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) );
+		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) ); // eslint-disable-line
 	},
 
 	onStart: function() {
