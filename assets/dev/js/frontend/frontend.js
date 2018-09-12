@@ -1,6 +1,4 @@
 /* global elementorFrontendConfig */
-import HotKeys from '../common/utils/hot-keys';
-
 ( function( $ ) {
 	var elements = {},
 		EventManager = require( '../utils/hooks' ),
@@ -54,10 +52,6 @@ import HotKeys from '../common/utils/hot-keys';
 			self.elementsHandler = new ElementsHandler( $ );
 		};
 
-		var initHotKeys = function() {
-			self.hotKeys = new HotKeys();
-		};
-
 		var getSiteSettings = function( settingType, settingName ) {
 			var settingsObject = self.isEditMode() ? elementor.settings[ settingType ].model.attributes : self.config.settings[ settingType ];
 
@@ -93,10 +87,6 @@ import HotKeys from '../common/utils/hot-keys';
 			setDeviceModeData();
 
 			elementorCommon.elements.$window.trigger( 'elementor/frontend/init' );
-
-			if ( ! self.isEditMode() ) {
-				initHotKeys();
-			}
 
 			initOnReadyComponents();
 		};
