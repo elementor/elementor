@@ -1,0 +1,23 @@
+//Gutenberg Block
+.editor-block-list__block[data-type="elementor/template"] {
+	background-color: #D30C5C;
+	color: #ffffff;
+
+	.wp-block-elementor-template {
+		padding: 20PX 15PX 10px 15PX;
+		p {
+			text-align: $start;
+			color: #fff;
+		}
+
+		a.elementor-edit-link {
+			float: $end;
+		}
+	}
+
+	iframe {
+		width: 1170px;
+		overflow: hidden;
+		transform-origin: top left;
+	}
+}

@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Gutenberg;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\Gutenberg\Blocks\Template_Block;
 use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
@@ -13,6 +14,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	protected $is_gutenberg_editor_active = false;
+
+	protected $blocks = [];
+
+	public function get_blocks( $block = null ) {
+		if ( isset( $this->blocks[ $block ] ) ) {
+			return $this->blocks[ $block ];
+		}
+		return $this->blocks;
+	}
+
+	private function add_block( $block ) {
+		$this->blocks[ $block->get_name() ] = $block;
+	}
 
 	public function get_name() {
 		return 'gutenberg';
@@ -99,9 +113,35 @@ class Module extends BaseModule {
 		<?php
 	}
 
+	public function register_blocks() {
+		if ( ! self::is_active() ) {
+			return;
+		}
+		$this->add_block( new Template_Block() );
+	}
+
+	public function template_include( $template ) {
+		if ( isset( $_REQUEST['elementor-block'] ) && User::is_current_user_can_edit() ) {
+			add_filter( 'show_admin_bar', '__return_false' );
+			return ELEMENTOR_PATH . 'modules/page-templates/templates/canvas.php';
+		}
+		return $template;
+	}
+
 	public function __construct() {
+		add_theme_support('gutenberg', [ 'wide-images' => true ] );
 		add_action( 'rest_api_init', [ $this, 'register_elementor_rest_field' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_footer', [ $this, 'print_admin_js_template' ] );
+		add_action( 'init', [ $this, 'register_blocks' ] );
+		add_filter( 'template_include', [ $this, 'template_include' ], 12 /* After WooCommerce & Elementor Pro - Locations Manager */ );
 	}
 }
+
+/**
+ * Register support for Gutenberg wide images in your theme
+ */
+function mytheme_setup() {
+	add_theme_support( 'align-wide' );
+}
+add_action( 'after_setup_theme', 'mytheme_setup' );
