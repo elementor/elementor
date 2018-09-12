@@ -7,9 +7,8 @@
 	"homepage": "https://elementor.com/",
 	"scripts": {
 		"test:phpunit": "docker-compose run --rm wordpress_phpunit phpunit",
-		"build": "grunt build",
-		"pree2e": "concurrently \"./bin/reset-e2e-tests.sh || exit 0\" \"npm run build || exit 0\"",
-		"e2e": "codeceptjs"
+		"pree2e": "concurrently \"./bin/reset-e2e-tests.sh || exit 0\" \"grunt || exit 0\"",
+		"dev": "grunt && grunt watch"
 	},
 	"devDependencies": {
 		"autoprefixer": "~8.5.0",
