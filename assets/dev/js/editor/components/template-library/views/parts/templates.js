@@ -202,14 +202,14 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onMyFavoritesFilterChange: function() {
-		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
+		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[ 0 ].checked );
 	},
 
 	onOrderLabelsClick: function( event ) {
 		var $clickedInput = jQuery( event.currentTarget.control ),
 			toggle;
 
-		if ( ! $clickedInput[0].checked ) {
+		if ( ! $clickedInput[ 0 ].checked ) {
 			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
 		}
 

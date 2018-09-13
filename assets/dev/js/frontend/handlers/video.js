@@ -36,7 +36,7 @@ VideoModule = HandlerModule.extend( {
 
 	playVideo: function() {
 		if ( this.elements.$video.length ) {
-			this.elements.$video[0].play();
+			this.elements.$video[ 0 ].play();
 
 			return;
 		}
@@ -48,9 +48,9 @@ VideoModule = HandlerModule.extend( {
 			$videoIframe.attr( 'src', lazyLoad );
 		}
 
-		const newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
+		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
 
-		$videoIframe[0].src = newSourceUrl + '&autoplay=1';
+		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
 	},
 
 	animateVideo: function() {

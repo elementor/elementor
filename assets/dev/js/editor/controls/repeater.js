@@ -195,9 +195,9 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			controlName = this.model.get( 'name' );
 
 		if ( event.add ) {
-			collectionCloned.remove( event.changes.added[0] );
+			collectionCloned.remove( event.changes.added[ 0 ] );
 		} else {
-			collectionCloned.add( event.changes.removed[0], { at: event.index } );
+			collectionCloned.add( event.changes.removed[ 0 ], { at: event.index } );
 		}
 
 		settings.changed = {};

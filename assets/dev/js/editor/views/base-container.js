@@ -41,7 +41,7 @@ module.exports = Marionette.CompositeView.extend( {
 		} else {
 			newItem = {
 				id: elementor.helpers.getUniqueID(),
-				elType: childTypes[0],
+				elType: childTypes[ 0 ],
 				settings: {},
 				elements: [],
 			};
@@ -129,7 +129,7 @@ module.exports = Marionette.CompositeView.extend( {
 		var elements = elementor.getStorage( 'transfer' ).elements,
 			index = self.collection.indexOf( childView.model );
 
-		elementor.channels.data.trigger( 'element:before:add', elements[0] );
+		elementor.channels.data.trigger( 'element:before:add', elements[ 0 ] );
 
 		elements.forEach( function( item ) {
 			index++;
@@ -137,6 +137,6 @@ module.exports = Marionette.CompositeView.extend( {
 			self.addChildElement( item, { at: index, clone: true } );
 		} );
 
-		elementor.channels.data.trigger( 'element:after:add', elements[0] );
+		elementor.channels.data.trigger( 'element:after:add', elements[ 0 ] );
 	},
 } );

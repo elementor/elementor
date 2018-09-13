@@ -175,7 +175,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 			query = {};
 
 		if ( deviceRules ) {
-			deviceRules = deviceRules[0];
+			deviceRules = deviceRules[ 0 ];
 
 			selector = selector.replace( devicePattern, '' );
 
@@ -185,7 +185,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 
 			matches = pureDevicePattern.exec( deviceRules );
 			while ( matches ) {
-				pureDeviceRules.push( matches[1] );
+				pureDeviceRules.push( matches[ 1 ] );
 				matches = pureDevicePattern.exec( deviceRules );
 			}
 

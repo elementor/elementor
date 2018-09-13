@@ -51,11 +51,11 @@ module.exports = Marionette.Behavior.extend( {
 
 		if ( event.add ) {
 			models = event.changes.added;
-			firstModel = models[0];
+			firstModel = models[ 0 ];
 			type = 'add';
 		} else {
 			models = event.changes.removed;
-			firstModel = models[0];
+			firstModel = models[ 0 ];
 			type = 'remove';
 		}
 
@@ -89,14 +89,14 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	add: function( models, toView, position ) {
-		if ( 'section' === models[0].elType ) {
+		if ( 'section' === models[ 0 ].elType ) {
 			_.each( models, function( model ) {
 				model.allowEmpty = true;
 			} );
 		}
 
 		// Fix for case the iframe has been reloaded and the old `elementor-inner` is not exist.
-		if ( toView.$el.hasClass( 'elementor-inner' ) && toView.$el[0].ownerDocument !== elementor.$previewContents[0] ) {
+		if ( toView.$el.hasClass( 'elementor-inner' ) && toView.$el[ 0 ].ownerDocument !== elementor.$previewContents[ 0 ] ) {
 			toView = elementor.getPreviewView();
 		}
 

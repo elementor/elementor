@@ -64,7 +64,7 @@ TextEditor = HandlerModule.extend( {
 			return;
 		}
 
-		var firstLetter = firstLetterMatch[1],
+		var firstLetter = firstLetterMatch[ 1 ],
 			trimmedFirstLetter = firstLetter.trim();
 
 		// Don't apply drop cap when the content starting with an HTML tag

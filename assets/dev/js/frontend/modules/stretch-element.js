@@ -37,7 +37,7 @@ module.exports = ViewModule.extend( {
 			isFixed = 'fixed' === $element.css( 'position' ),
 			correctOffset = isFixed ? 0 : elementOffset;
 
-		if ( window !== $container[0] ) {
+		if ( window !== $container[ 0 ] ) {
 			var containerOffset = $container.offset().left;
 
 			if ( isFixed ) {

@@ -278,7 +278,7 @@ var Shapes = HandlerModule.extend( {
 		var svgURL = self.getSettings( 'svgURL' ) + fileName + '.svg';
 
 		jQuery.get( svgURL, function( data ) {
-			$svgContainer.append( data.childNodes[0] );
+			$svgContainer.append( data.childNodes[ 0 ] );
 		} );
 
 		this.setNegative( side );
@@ -304,7 +304,7 @@ var Shapes = HandlerModule.extend( {
 		var shapeChange = propertyName.match( /^shape_divider_(top|bottom)$/ );
 
 		if ( shapeChange ) {
-			this.buildSVG( shapeChange[1] );
+			this.buildSVG( shapeChange[ 1 ] );
 
 			return;
 		}
@@ -312,9 +312,9 @@ var Shapes = HandlerModule.extend( {
 		var negativeChange = propertyName.match( /^shape_divider_(top|bottom)_negative$/ );
 
 		if ( negativeChange ) {
-			this.buildSVG( negativeChange[1] );
+			this.buildSVG( negativeChange[ 1 ] );
 
-			this.setNegative( negativeChange[1] );
+			this.setNegative( negativeChange[ 1 ] );
 		}
 	},
 } );

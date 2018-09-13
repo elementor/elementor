@@ -52,7 +52,7 @@ module.exports = Marionette.ItemView.extend( {
 		}
 
 		if ( 'section' === transferData.elementsType ) {
-			return transferData.elements[0].isInner && ! this._parent.isInner();
+			return transferData.elements[ 0 ].isInner && ! this._parent.isInner();
 		}
 
 		return 'widget' === transferData.elementsType;

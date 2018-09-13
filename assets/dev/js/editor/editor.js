@@ -327,7 +327,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	initFrontend: function() {
-		var frontendWindow = this.$preview[0].contentWindow;
+		var frontendWindow = this.$preview[ 0 ].contentWindow;
 
 		window.elementorFrontend = frontendWindow.elementorFrontend;
 
@@ -615,7 +615,7 @@ const App = Marionette.Application.extend( {
 			var $target = jQuery( event.target ),
 				editMode = elementor.channels.dataEditMode.request( 'activeMode' ),
 				isClickInsideElementor = !! $target.closest( '#elementor, .pen-menu' ).length,
-				isTargetInsideDocument = this.contains( $target[0] );
+				isTargetInsideDocument = this.contains( $target[ 0 ] );
 
 			if ( ( isClickInsideElementor && 'edit' === editMode ) || ! isTargetInsideDocument ) {
 				return;
@@ -774,7 +774,7 @@ const App = Marionette.Application.extend( {
 	reloadPreview: function() {
 		jQuery( '#elementor-preview-loading' ).show();
 
-		this.$preview[0].contentWindow.location.reload( true );
+		this.$preview[ 0 ].contentWindow.location.reload( true );
 	},
 
 	clearPage: function() {
@@ -912,7 +912,7 @@ const App = Marionette.Application.extend( {
 	onPreviewLoaded: function() {
 		NProgress.done();
 
-		var previewWindow = this.$preview[0].contentWindow;
+		var previewWindow = this.$preview[ 0 ].contentWindow;
 
 		if ( ! previewWindow.elementorFrontend ) {
 			this.onPreviewLoadingError();
@@ -935,7 +935,7 @@ const App = Marionette.Application.extend( {
 
 		var iframeRegion = new Marionette.Region( {
 			// Make sure you get the DOM object out of the jQuery object
-			el: this.$previewElementorEl[0],
+			el: this.$previewElementorEl[ 0 ],
 		} );
 
 		this.schemes.init();
@@ -943,7 +943,7 @@ const App = Marionette.Application.extend( {
 
 		this.preventClicksInsideEditor();
 
-		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[0] );
+		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[ 0 ] );
 
 		if ( this.previewLoadedOnce ) {
 			this.getPanelView().setPage( 'elements', null, { autoFocusSearch: false } );
@@ -1035,7 +1035,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	onPreviewElNotFound: function() {
-		var args = this.$preview[0].contentWindow.elementorPreviewErrorArgs;
+		var args = this.$preview[ 0 ].contentWindow.elementorPreviewErrorArgs;
 
 		if ( ! args ) {
 			args = {
@@ -1057,8 +1057,8 @@ const App = Marionette.Application.extend( {
 			var $clickedTarget = jQuery( event.target );
 
 			// If it's a label that associated with an input
-			if ( $clickedTarget[0].control ) {
-				$clickedTarget = $clickedTarget.add( $clickedTarget[0].control );
+			if ( $clickedTarget[ 0 ].control ) {
+				$clickedTarget = $clickedTarget.add( $clickedTarget[ 0 ].control );
 			}
 
 			if ( this.ignore && $clickedTarget.closest( this.ignore ).length ) {

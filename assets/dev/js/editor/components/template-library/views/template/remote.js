@@ -21,7 +21,7 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onFavoriteCheckboxChange: function() {
-		var isFavorite = this.ui.favoriteCheckbox[0].checked;
+		var isFavorite = this.ui.favoriteCheckbox[ 0 ].checked;
 
 		this.model.set( 'favorite', isFavorite );
 

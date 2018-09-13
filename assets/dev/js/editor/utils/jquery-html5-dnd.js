@@ -142,7 +142,7 @@
 				return false;
 			}
 
-			sensitivity = sensitivity[0];
+			sensitivity = sensitivity[ 0 ];
 
 			isPercentValue = /%$/.test( settings.horizontalSensitivity );
 

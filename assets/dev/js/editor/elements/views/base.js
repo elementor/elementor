@@ -251,7 +251,7 @@ BaseElementView = BaseContainer.extend( {
 	pasteStyle: function() {
 		var self = this,
 			transferData = elementor.getStorage( 'transfer' ),
-			sourceElement = transferData.elements[0],
+			sourceElement = transferData.elements[ 0 ],
 			sourceSettings = sourceElement.settings,
 			editModel = self.getEditModel(),
 			settings = editModel.get( 'settings' ),
@@ -765,7 +765,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		elementorFrontend.getElements( '$document' )[0].activeElement.blur();
+		elementorFrontend.getElements( '$document' )[ 0 ].activeElement.blur();
 	},
 
 	onDestroy: function() {

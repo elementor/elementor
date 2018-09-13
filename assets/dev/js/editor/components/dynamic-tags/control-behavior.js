@@ -208,7 +208,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		dynamicSettings = elementor.helpers.cloneObject( dynamicSettings );
 
-		delete dynamicSettings[settingKey ];
+		delete dynamicSettings[ settingKey ];
 
 		if ( Object.keys( dynamicSettings ).length ) {
 			this.view.elementSettingsModel.set( '__dynamic__', dynamicSettings, this.getDynamicControlSettings( settingKey ) );

@@ -105,9 +105,9 @@ module.exports = Module.extend( {
 		}
 
 		return {
-			id: tagIDMatch[1],
-			name: tagNameMatch[1],
-			settings: JSON.parse( decodeURIComponent( tagSettingsMatch[1] ) ),
+			id: tagIDMatch[ 1 ],
+			name: tagNameMatch[ 1 ],
+			settings: JSON.parse( decodeURIComponent( tagSettingsMatch[ 1 ] ) ),
 		};
 	},
 

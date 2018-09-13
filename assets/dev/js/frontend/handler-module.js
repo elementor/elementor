@@ -95,7 +95,7 @@ HandlerModule = ViewModule.extend( {
 						return;
 					}
 
-					self.onEditSettingsChange( Object.keys( changedModel.changed )[0] );
+					self.onEditSettingsChange( Object.keys( changedModel.changed )[ 0 ] );
 				},
 			} );
 		}
@@ -140,7 +140,7 @@ HandlerModule = ViewModule.extend( {
 	},
 
 	getElementName: function() {
-		return this.$element.data( 'element_type' ).split( '.' )[0];
+		return this.$element.data( 'element_type' ).split( '.' )[ 0 ];
 	},
 
 	getID: function() {

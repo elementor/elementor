@@ -32,7 +32,7 @@ class Heartbeat {
 				elementor.config.nonce = response.elementorNonce;
 			},
 			'heartbeat-tick.wp-refresh-nonces': ( event, response ) => {
-				const nonces = response['elementor-refresh-nonces'];
+				const nonces = response[ 'elementor-refresh-nonces' ];
 
 				if ( nonces ) {
 					if ( nonces.heartbeatNonce ) {
