@@ -128,8 +128,8 @@ LightboxModule = ViewModule.extend( {
 	setImageContent: function( imageURL ) {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
-			$item = jQuery( '<div>', { 'class': classes.item } ),
-			$image = jQuery( '<img>', { src: imageURL, 'class': classes.image + ' ' + classes.preventClose } );
+			$item = jQuery( '<div>', { class: classes.item } ),
+			$image = jQuery( '<img>', { src: imageURL, class: classes.image + ' ' + classes.preventClose } );
 
 		$item.append( $image );
 
@@ -138,8 +138,8 @@ LightboxModule = ViewModule.extend( {
 
 	setVideoContent: function( options ) {
 		var classes = this.getSettings( 'classes' ),
-			$videoContainer = jQuery( '<div>', { 'class': classes.videoContainer } ),
-			$videoWrapper = jQuery( '<div>', { 'class': classes.videoWrapper } ),
+			$videoContainer = jQuery( '<div>', { class: classes.videoContainer } ),
+			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
 			$videoElement,
 			modal = this.getModal();
 
@@ -179,29 +179,29 @@ LightboxModule = ViewModule.extend( {
 			self = this,
 			classes = self.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
-			$container = $( '<div>', { 'class': slideshowClasses.container } ),
-			$slidesWrapper = $( '<div>', { 'class': slideshowClasses.slidesWrapper } ),
-			$prevButton = $( '<div>', { 'class': slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { 'class': slideshowClasses.prevButtonIcon } ) ),
-			$nextButton = $( '<div>', { 'class': slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { 'class': slideshowClasses.nextButtonIcon } ) );
+			$container = $( '<div>', { class: slideshowClasses.container } ),
+			$slidesWrapper = $( '<div>', { class: slideshowClasses.slidesWrapper } ),
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) ),
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
 
 		options.slides.forEach( function( slide ) {
-			var slideClass =  slideshowClasses.slide + ' ' + classes.item;
+			var slideClass = slideshowClasses.slide + ' ' + classes.item;
 
 			if ( slide.video ) {
 				slideClass += ' ' + classes.video;
 			}
 
-			var $slide = $( '<div>', { 'class': slideClass } );
+			var $slide = $( '<div>', { class: slideClass } );
 
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
 
-				var $playIcon = $( '<div>', { 'class': classes.playButton } ).html( $( '<i>', { 'class': classes.playButtonIcon } ) );
+				var $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon } ) );
 
 				$slide.append( $playIcon );
 			} else {
-				var $zoomContainer = $( '<div>', { 'class': 'swiper-zoom-container' } ),
-					$slideImage = $( '<img>', { 'class': classes.image + ' ' + classes.preventClose, src: slide.image } );
+				var $zoomContainer = $( '<div>', { class: 'swiper-zoom-container' } ),
+					$slideImage = $( '<img>', { class: classes.image + ' ' + classes.preventClose, src: slide.image } );
 
 				$zoomContainer.append( $slideImage );
 
@@ -286,8 +286,8 @@ LightboxModule = ViewModule.extend( {
 		}
 
 		var classes = this.getSettings( 'classes' ),
-			$videoContainer = jQuery( '<div>', { 'class': classes.videoContainer + ' ' + classes.invisible } ),
-			$videoWrapper = jQuery( '<div>', { 'class': classes.videoWrapper } ),
+			$videoContainer = jQuery( '<div>', { class: classes.videoContainer + ' ' + classes.invisible } ),
+			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
 			$videoFrame = jQuery( '<iframe>', { src: videoURL } ),
 			$playIcon = $activeSlide.children( '.' + classes.playButton );
 
@@ -330,7 +330,7 @@ LightboxModule = ViewModule.extend( {
 		var generalOpenInLightbox = elementorFrontend.getGeneralSettings( 'elementor_global_image_lightbox' ),
 			currentLinkOpenInLightbox = element.dataset.elementorOpenLightbox;
 
-		return 'yes' === currentLinkOpenInLightbox || generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox;
+		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );
 	},
 
 	openLink: function( event ) {
@@ -340,7 +340,6 @@ LightboxModule = ViewModule.extend( {
 			isClickInsideElementor = !! $target.closest( '#elementor' ).length;
 
 		if ( ! this.isLightboxLink( element ) ) {
-
 			if ( editMode && isClickInsideElementor ) {
 				event.preventDefault();
 			}

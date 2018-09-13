@@ -1,5 +1,4 @@
 class AddSectionBase extends Marionette.ItemView {
-
 	template() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
 	}

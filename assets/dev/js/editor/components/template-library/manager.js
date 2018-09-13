@@ -23,13 +23,13 @@ TemplateLibraryManager = function() {
 				description: elementor.translate( 'save_your_template_description' )
 			},
 			ajaxParams: {
-				success: function( data ) {
-					self.getTemplatesCollection().add( data );
+				success: function( successData ) {
+					self.getTemplatesCollection().add( successData );
 
 					self.setTemplatesPage( 'local' );
 				},
-				error: function( data ) {
-					self.showErrorDialog( data );
+				error: function( errorData ) {
+					self.showErrorDialog( errorData );
 				}
 			}
 		};
@@ -386,8 +386,8 @@ TemplateLibraryManager = function() {
 		}
 
 		self.getErrorDialog()
-		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
-		    .show();
+			.setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
+			.show();
 	};
 };
 

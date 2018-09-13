@@ -6,7 +6,7 @@ ElementsHandler = function( $ ) {
 	// element-type.skin-type
 	var handlers = {
 		// Elements
-		'section': require( 'elementor-frontend/handlers/section' ),
+		section: require( 'elementor-frontend/handlers/section' ),
 
 		// Widgets
 		'accordion.default': require( 'elementor-frontend/handlers/accordion' ),

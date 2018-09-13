@@ -39,7 +39,7 @@ module.exports = BaseMultiple.extend( {
 
 				last = request.term;
 			},
-			focus: function( event, ui ) {
+			focus: function( event ) {
 				/*
 				 * Don't empty the URL input field, when using the arrow keys to
 				 * highlight items. See api.jqueryui.com/autocomplete/#event-focus
@@ -51,7 +51,7 @@ module.exports = BaseMultiple.extend( {
 				self.setValue( 'url', ui.item.permalink );
 				return false;
 			},
-			open: function( event  ) {
+			open: function( event ) {
 				jQuery( event.target ).data( 'uiAutocomplete' ).menu.activeMenu.addClass( 'elementor-autocomplete-menu' );
 			},
 			minLength: 2,

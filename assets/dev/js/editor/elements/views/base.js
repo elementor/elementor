@@ -67,7 +67,7 @@ BaseElementView = BaseContainer.extend( {
 
 	events: function() {
 		return {
-			'mousedown': 'onMouseDown',
+			mousedown: 'onMouseDown',
 			'click @ui.editButton': 'onEditButtonClick',
 			'click @ui.duplicateButton': 'onDuplicateButtonClick',
 			'click @ui.addButton': 'onAddButtonClick',
@@ -287,10 +287,9 @@ BaseElementView = BaseContainer.extend( {
 				if ( isEqual ) {
 					return;
 				}
-			} else {
-				if ( sourceValue === targetValue ) {
-					return;
-				}
+			}
+			if ( sourceValue === targetValue ) {
+				return;
 			}
 
 			var ControlView = elementor.getControlView( control.type );
@@ -330,7 +329,7 @@ BaseElementView = BaseContainer.extend( {
 				return;
 			}
 
-			defaultValues[ controlName ] = control[ 'default' ];
+			defaultValues[ controlName ] = control.default;
 		} );
 
 		editModel.setSetting( defaultValues );
@@ -613,7 +612,7 @@ BaseElementView = BaseContainer.extend( {
 					return;
 				}
 
-				if ( 'template' === control.render_type || ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && '_element_id' !== settingKey ) {
+				if ( 'template' === control.render_type || ( ! settings.isStyleControl( settingKey ) && ! settings.isClassControl( settingKey ) && '_element_id' !== settingKey ) ) {
 					isContentChanged = true;
 				}
 			} );

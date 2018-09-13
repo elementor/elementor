@@ -28,9 +28,14 @@ Schemes = function() {
 	};
 
 	var fetchControlStyles = function( control, controlsStack, widgetType ) {
-		ControlsCSSParser.addControlStyleRules( stylesheet, control, controlsStack, function( control ) {
-			return self.getSchemeValue( control.scheme.type, control.scheme.value, control.scheme.key ).value;
-		}, [ '{{WRAPPER}}' ], [ settings.selectorWrapperPrefix + widgetType ] );
+		ControlsCSSParser.addControlStyleRules(
+			stylesheet,
+			control,
+			controlsStack,
+			( controlStyles ) => self.getSchemeValue( controlStyles.scheme.type, controlStyles.scheme.value, controlStyles.scheme.key ).value,
+			[ '{{WRAPPER}}' ],
+			[ settings.selectorWrapperPrefix + widgetType ]
+		);
 	};
 
 	var fetchWidgetControlsStyles = function( widget ) {
@@ -43,7 +48,7 @@ Schemes = function() {
 
 	var fetchAllWidgetsSchemesStyle = function() {
 		_.each( elementor.config.widgets, function( widget ) {
-			fetchWidgetControlsStyles(  widget  );
+			fetchWidgetControlsStyles( widget );
 		} );
 	};
 

@@ -29,7 +29,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		changedAttributes[ control.name ] = {
 			old: this.oldValues[ control.name ],
-			'new': newValue
+			new: newValue
 		};
 
 		var historyItem = {
@@ -86,7 +86,7 @@ module.exports = Marionette.Behavior.extend( {
 		_.each( changed, function( controlName ) {
 			changedAttributes[ controlName ] = {
 				old: model.previous( controlName ),
-				'new': model.get( controlName )
+				new: model.get( controlName )
 			};
 		} );
 
@@ -127,7 +127,7 @@ module.exports = Marionette.Behavior.extend( {
 		var restoredValues = {};
 		_.each( history.changed, function( values, key ) {
 			if ( isRedo ) {
-				restoredValues[ key ] = values['new'];
+				restoredValues[ key ] = values.new;
 			} else {
 				restoredValues[ key ] = values.old;
 			}
