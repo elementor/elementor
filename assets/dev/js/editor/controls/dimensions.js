@@ -13,7 +13,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 
 	events: function() {
 		return _.extend( ControlBaseUnitsItemView.prototype.events.apply( this, arguments ), {
-			'click @ui.link': 'onLinkDimensionsClicked'
+			'click @ui.link': 'onLinkDimensionsClicked',
 		} );
 	},
 
@@ -31,7 +31,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 			'top',
 			'right',
 			'bottom',
-			'left'
+			'left',
 		];
 	},
 
@@ -160,7 +160,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 
 	isLinkedDimensions: function() {
 		return this.getControlValue( 'isLinked' );
-	}
+	},
 } );
 
 module.exports = ControlDimensionsItemView;

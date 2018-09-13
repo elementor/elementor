@@ -84,7 +84,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 							}
 
 							return new BaseSettingsModel( attributes, options );
-						}
+						},
 					} );
 				}
 			}
@@ -327,7 +327,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		}
 
 		return elementor.helpers.cloneObject( data );
-	}
+	},
 } );
 
 module.exports = BaseSettingsModel;

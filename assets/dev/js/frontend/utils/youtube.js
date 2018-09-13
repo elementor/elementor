@@ -6,14 +6,14 @@ module.exports = ViewModule.extend( {
 			isInserted: false,
 			APISrc: 'https://www.youtube.com/iframe_api',
 			selectors: {
-				firstScript: 'script:first'
-			}
+				firstScript: 'script:first',
+			},
 		};
 	},
 
 	getDefaultElements: function() {
 		return {
-			$firstScript: jQuery( this.getSettings( 'selectors.firstScript' ) )
+			$firstScript: jQuery( this.getSettings( 'selectors.firstScript' ) ),
 		};
 	},
 
@@ -44,5 +44,5 @@ module.exports = ViewModule.extend( {
 		var videoIDParts = url.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^?&"'>]+)/ );
 
 		return videoIDParts && videoIDParts[1];
-	}
+	},
 } );

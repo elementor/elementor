@@ -7,7 +7,7 @@ PanelSchemeItemView = Marionette.ItemView.extend( {
 
 	className: function() {
 		return 'elementor-panel-scheme-item';
-	}
+	},
 } );
 
 module.exports = PanelSchemeItemView;

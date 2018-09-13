@@ -14,7 +14,7 @@ var EventManager = function() {
 	 */
 	var STORAGE = {
 		actions: {},
-		filters: {}
+		filters: {},
 	};
 
 	/**
@@ -88,7 +88,7 @@ var EventManager = function() {
 		var hookObject = {
 			callback: callback,
 			priority: priority,
-			context: context
+			context: context,
 		};
 
 		// Utilize 'prop itself' : http://jsperf.com/hasownproperty-vs-in-vs-undefined/19
@@ -249,7 +249,7 @@ var EventManager = function() {
 		addFilter: addFilter,
 		removeAction: removeAction,
 		doAction: doAction,
-		addAction: addAction
+		addAction: addAction,
 	};
 
 	// return all of the publicly available methods

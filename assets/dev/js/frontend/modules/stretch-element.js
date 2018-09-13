@@ -6,14 +6,14 @@ module.exports = ViewModule.extend( {
 			element: null,
 			direction: elementorFrontend.config.is_rtl ? 'right' : 'left',
 			selectors: {
-				container: window
-			}
+				container: window,
+			},
 		};
 	},
 
 	getDefaultElements: function() {
 		return {
-			$element: jQuery( this.getSettings( 'element' ) )
+			$element: jQuery( this.getSettings( 'element' ) ),
 		};
 	},
 
@@ -73,5 +73,5 @@ module.exports = ViewModule.extend( {
 		css[ this.getSettings( 'direction' ) ] = '';
 
 		this.elements.$element.css( css );
-	}
+	},
 } );

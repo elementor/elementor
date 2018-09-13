@@ -7,12 +7,12 @@ TextEditor = HandlerModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
-				paragraph: 'p:first'
+				paragraph: 'p:first',
 			},
 			classes: {
 				dropCap: 'elementor-drop-cap',
-				dropCapLetter: 'elementor-drop-cap-letter'
-			}
+				dropCapLetter: 'elementor-drop-cap-letter',
+			},
 		};
 	},
 
@@ -27,7 +27,7 @@ TextEditor = HandlerModule.extend( {
 		return {
 			$paragraph: this.$element.find( selectors.paragraph ),
 			$dropCap: $dropCap,
-			$dropCapLetter: $dropCapLetter
+			$dropCapLetter: $dropCapLetter,
 		};
 	},
 
@@ -93,7 +93,7 @@ TextEditor = HandlerModule.extend( {
 		if ( 'drop_cap' === propertyName ) {
 			this.wrapDropCap();
 		}
-	}
+	},
 } );
 
 module.exports = function( $scope ) {

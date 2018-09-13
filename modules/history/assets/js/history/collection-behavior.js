@@ -31,8 +31,8 @@ module.exports = Marionette.Behavior.extend( {
 				behavior: this,
 				collection: event.previousModels,
 				event: event,
-				models: modelsJSON
-			}
+				models: modelsJSON,
+			},
 		};
 
 		elementor.history.history.addItem( historyItem );
@@ -81,8 +81,8 @@ module.exports = Marionette.Behavior.extend( {
 				behavior: this,
 				collection: collection,
 				event: event,
-				models: modelsJSON
-			}
+				models: modelsJSON,
+			},
 		};
 
 		elementor.history.history.addItem( historyItem );
@@ -157,6 +157,6 @@ module.exports = Marionette.Behavior.extend( {
 		behavior.view.collection.on( 'update', behavior.saveCollectionHistory, history.behavior );
 
 		return didAction;
-	}
+	},
 } );
 

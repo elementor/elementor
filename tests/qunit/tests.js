@@ -61,7 +61,7 @@ function testPreview() {
 			[ 'general', 'shortcode' ],
 			[ 'general', 'html' ],
 			[ 'general', 'menu-anchor' ],
-			[ 'general', 'sidebar' ]
+			[ 'general', 'sidebar' ],
 			//,
 			// ['wordpress', 'wp-widget-pages'],
 			// ['wordpress', 'wp-widget-calendar'],
@@ -122,7 +122,7 @@ function testPreview() {
 				trigger: columnView.$el.find( '.elementor-editor-element-edit' ),
 				add: columnView.$el.find( '.elementor-editor-element-add' ),
 				duplicate: columnView.$el.find( '.elementor-editor-element-duplicate' ),
-				remove: columnView.$el.find( '.elementor-editor-element-remove' )
+				remove: columnView.$el.find( '.elementor-editor-element-remove' ),
 		};
 
 		QUnit.module( 'Check columns buttons', function() {

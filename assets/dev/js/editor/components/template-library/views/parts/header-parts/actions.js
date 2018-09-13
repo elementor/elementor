@@ -6,13 +6,13 @@ module.exports = Marionette.ItemView.extend( {
 	ui: {
 		import: '#elementor-template-library-header-import i',
 		sync: '#elementor-template-library-header-sync i',
-		save: '#elementor-template-library-header-save i'
+		save: '#elementor-template-library-header-save i',
 	},
 
 	events: {
 		'click @ui.import': 'onImportClick',
 		'click @ui.sync': 'onSyncClick',
-		'click @ui.save': 'onSaveClick'
+		'click @ui.save': 'onSaveClick',
 	},
 
 	onImportClick: function() {
@@ -31,11 +31,11 @@ module.exports = Marionette.ItemView.extend( {
 				elementor.templates.setTemplatesPage( elementor.templates.getFilter( 'source' ), elementor.templates.getFilter( 'type' ) );
 			},
 			forceUpdate: true,
-			forceSync: true
+			forceSync: true,
 		} );
 	},
 
 	onSaveClick: function() {
 		elementor.templates.getLayout().showSaveTemplateView();
-	}
+	},
 } );

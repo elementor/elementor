@@ -10,15 +10,15 @@ var BackgroundVideo = HandlerModule.extend( {
 			selectors: {
 				backgroundVideoContainer: '.elementor-background-video-container',
 				backgroundVideoEmbed: '.elementor-background-video-embed',
-				backgroundVideoHosted: '.elementor-background-video-hosted'
-			}
+				backgroundVideoHosted: '.elementor-background-video-hosted',
+			},
 		};
 	},
 
 	getDefaultElements: function() {
 		var selectors = this.getSettings( 'selectors' ),
 			elements = {
-				$backgroundVideoContainer: this.$element.find( selectors.backgroundVideoContainer )
+				$backgroundVideoContainer: this.$element.find( selectors.backgroundVideoContainer ),
 			};
 
 		elements.$backgroundVideoEmbed = elements.$backgroundVideoContainer.children( selectors.backgroundVideoEmbed );
@@ -40,7 +40,7 @@ var BackgroundVideo = HandlerModule.extend( {
 
 		return {
 			width: isWidthFixed ? containerWidth : ratioHeight,
-			height: isWidthFixed ? ratioWidth : containerHeight
+			height: isWidthFixed ? ratioWidth : containerHeight,
 		};
 	},
 
@@ -108,13 +108,13 @@ var BackgroundVideo = HandlerModule.extend( {
 						case YT.PlayerState.ENDED:
 							self.player.seekTo( elementSettings.background_video_start || 0 );
 					}
-				}
+				},
 			},
 			playerVars: {
 				controls: 0,
 				showinfo: 0,
-				rel: 0
-			}
+				rel: 0,
+			},
 		} );
 
 		elementorFrontend.getElements( '$window' ).on( 'resize', self.changeVideoSize );
@@ -166,7 +166,7 @@ var BackgroundVideo = HandlerModule.extend( {
 		if ( 'background_background' === propertyName ) {
 			this.run();
 		}
-	}
+	},
 } );
 
 var StretchedSection = HandlerModule.extend( {
@@ -191,8 +191,8 @@ var StretchedSection = HandlerModule.extend( {
 		this.stretchElement = new elementorFrontend.modules.StretchElement( {
 			element: this.$element,
 			selectors: {
-				container: this.getStretchContainer()
-			}
+				container: this.getStretchContainer(),
+			},
 		} );
 	},
 
@@ -232,7 +232,7 @@ var StretchedSection = HandlerModule.extend( {
 
 			this.stretch();
 		}
-	}
+	},
 } );
 
 var Shapes = HandlerModule.extend( {
@@ -240,9 +240,9 @@ var Shapes = HandlerModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
-				container: '> .elementor-shape-%s'
+				container: '> .elementor-shape-%s',
 			},
-			svgURL: elementorFrontend.config.urls.assets + 'shapes/'
+			svgURL: elementorFrontend.config.urls.assets + 'shapes/',
 		};
 	},
 
@@ -316,7 +316,7 @@ var Shapes = HandlerModule.extend( {
 
 			this.setNegative( negativeChange[1] );
 		}
-	}
+	},
 } );
 
 var HandlesPosition = HandlerModule.extend( {
@@ -354,7 +354,7 @@ var HandlesPosition = HandlerModule.extend( {
     onInit: function() {
         this.setHandlesPosition();
         this.$element.on( 'mouseenter', this.setHandlesPosition );
-    }
+    },
 } );
 
 module.exports = function( $scope ) {

@@ -6,11 +6,11 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 	id: 'elementor-panel-elements-search-wrapper',
 
 	ui: {
-		input: 'input'
+		input: 'input',
 	},
 
 	events: {
-		'input @ui.input': 'onInputChanged'
+		'input @ui.input': 'onInputChanged',
 	},
 
 	clearInput: function() {
@@ -25,7 +25,7 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 		}
 
 		this.triggerMethod( 'search:change:input' );
-	}
+	},
 } );
 
 module.exports = PanelElementsSearchView;

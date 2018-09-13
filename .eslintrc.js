@@ -30,7 +30,7 @@ module.exports = {
 		'vars-on-top': 'off',
 		'wrap-iife': 'off',
 		'computed-property-spacing': 'off',
-		'comma-dangle': 'off',
+		'comma-dangle': [ 'error', 'always-multiline' ],
 		'no-undef': 'off',
 		'no-unused-vars': 'error',
 		'dot-notation': 'error',

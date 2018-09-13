@@ -5,8 +5,8 @@ ImageCarouselHandler = HandlerModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
-				carousel: '.elementor-image-carousel'
-			}
+				carousel: '.elementor-image-carousel',
+			},
 		};
 	},
 
@@ -14,7 +14,7 @@ ImageCarouselHandler = HandlerModule.extend( {
 		var selectors = this.getSettings( 'selectors' );
 
 		return {
-			$carousel: this.$element.find( selectors.carousel )
+			$carousel: this.$element.find( selectors.carousel ),
 		};
 	},
 
@@ -41,17 +41,17 @@ ImageCarouselHandler = HandlerModule.extend( {
 					breakpoint: breakpoints.lg,
 					settings: {
 						slidesToShow: +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 ),
-						slidesToScroll: 1
-					}
+						slidesToScroll: 1,
+					},
 				},
 				{
 					breakpoint: breakpoints.md,
 					settings: {
 						slidesToShow: +elementSettings.slides_to_show_mobile || 1,
-						slidesToScroll: 1
-					}
-				}
-			]
+						slidesToScroll: 1,
+					},
+				},
+			],
 		};
 
 		if ( isSingleSlide ) {
@@ -61,7 +61,7 @@ ImageCarouselHandler = HandlerModule.extend( {
 		}
 
 		this.elements.$carousel.slick( slickOptions );
-	}
+	},
 } );
 
 module.exports = function( $scope ) {

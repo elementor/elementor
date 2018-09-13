@@ -8,11 +8,11 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	ui: {
 		title: '.elementor-panel-category-title',
-		items: '.elementor-panel-category-items'
+		items: '.elementor-panel-category-items',
 	},
 
 	events: {
-		'click @ui.title': 'onTitleClick'
+		'click @ui.title': 'onTitleClick',
 	},
 
 	id: function() {
@@ -54,7 +54,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		$items[ slideFn ]( 300, function() {
 			elementor.getPanelView().updateScrollbar();
 		} );
-	}
+	},
 } );
 
 module.exports = PanelElementsCategoryView;

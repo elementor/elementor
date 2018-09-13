@@ -22,5 +22,5 @@ module.exports = Marionette.Region.extend( {
 
 	saveSize: function() {
 		this.saveStorage( 'size', elementor.helpers.getElementInlineStyle( this.$el, this.storageSizeKeys ) );
-	}
+	},
 } );

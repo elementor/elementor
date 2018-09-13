@@ -7,9 +7,9 @@ helpers = {
 		section: {
 			column: {
 				widget: null,
-				section: null
-			}
-		}
+				section: null,
+			},
+		},
 	},
 
 	enqueueFont: function( font ) {
@@ -26,7 +26,7 @@ helpers = {
 				bg_BG: 'cyrillic',
 				vi: 'vietnamese',
 				el: 'greek',
-				he_IL: 'hebrew'
+				he_IL: 'hebrew',
 			};
 
 		switch ( fontType ) {
@@ -214,7 +214,7 @@ helpers = {
 			} ),
 			defaultOptions = {
 				width: window.innerWidth >= 1440 ? 271 : 251,
-				palettes: _.pluck( items, 'value' )
+				palettes: _.pluck( items, 'value' ),
 			};
 
 		if ( options ) {
@@ -318,7 +318,7 @@ helpers = {
 				return this.conditions.compare( valueA, valueB, operator );
 			}
 		}
-	}
+	},
 };
 
 module.exports = helpers;

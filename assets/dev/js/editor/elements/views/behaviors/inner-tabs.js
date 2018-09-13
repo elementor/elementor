@@ -66,7 +66,7 @@ InnerTabsBehavior = Marionette.Behavior.extend( {
 			} );
 
 			elementor.getPanelView().updateScrollbar();
-	}
+	},
 } );
 
 module.exports = InnerTabsBehavior;

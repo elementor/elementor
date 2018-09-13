@@ -15,13 +15,13 @@ Preview = BaseSectionsContainerView.extend( {
 			behaviors = {
 				contextMenu: {
 					behaviorClass: require( 'elementor-behaviors/context-menu' ),
-					groups: this.getContextMenuGroups()
-				}
+					groups: this.getContextMenuGroups(),
+				},
 			};
 
 		if ( elementor.config.user.introduction ) {
 			behaviors.introduction = {
-				behaviorClass: require( 'elementor-behaviors/introduction' )
+				behaviorClass: require( 'elementor-behaviors/introduction' ),
 			};
 		}
 
@@ -41,9 +41,9 @@ Preview = BaseSectionsContainerView.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						callback: this.paste.bind( this ),
-						isEnabled: this.isPasteEnabled.bind( this )
-					}
-				]
+						isEnabled: this.isPasteEnabled.bind( this ),
+					},
+				],
 			}, {
 				name: 'content',
 				actions: [
@@ -51,15 +51,15 @@ Preview = BaseSectionsContainerView.extend( {
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
 						callback: this.copy.bind( this ),
-						isEnabled: hasContent
+						isEnabled: hasContent,
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
 						callback: elementor.clearPage.bind( elementor ),
-						isEnabled: hasContent
-					}
-				]
-			}
+						isEnabled: hasContent,
+					},
+				],
+			},
 		];
 	},
 
@@ -67,7 +67,7 @@ Preview = BaseSectionsContainerView.extend( {
 		elementor.setStorage( 'transfer', {
 			type: 'copy',
 			elementsType: 'section',
-			elements: elementor.elements.toJSON( { copyHtmlCache: true } )
+			elements: elementor.elements.toJSON( { copyHtmlCache: true } ),
 		} );
 	},
 
@@ -84,7 +84,7 @@ Preview = BaseSectionsContainerView.extend( {
 				self.addChildElement( element, {
 					at: index,
 					edit: false,
-					clone: true
+					clone: true,
 				} );
 
 				index++;
@@ -99,7 +99,7 @@ Preview = BaseSectionsContainerView.extend( {
 			transferData.elements.forEach( function( element ) {
 				section.addChildElement( element, {
 					at: index,
-					clone: true
+					clone: true,
 				} );
 
 				index++;
@@ -114,7 +114,7 @@ Preview = BaseSectionsContainerView.extend( {
 			transferData.elements.forEach( function( element ) {
 				section.addChildElement( element, {
 					at: index,
-					clone: true
+					clone: true,
 				} );
 
 				index++;
@@ -137,7 +137,7 @@ Preview = BaseSectionsContainerView.extend( {
 		addNewSectionView.render();
 
 		this.$el.append( addNewSectionView.$el );
-	}
+	},
 } );
 
 module.exports = Preview;

@@ -6,13 +6,13 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 
 	ui: function() {
 		return jQuery.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
-			favoriteCheckbox: '.elementor-template-library-template-favorite-input'
+			favoriteCheckbox: '.elementor-template-library-template-favorite-input',
 		} );
 	},
 
 	events: function() {
 		return jQuery.extend( TemplateLibraryTemplateView.prototype.events.apply( this, arguments ), {
-			'change @ui.favoriteCheckbox': 'onFavoriteCheckboxChange'
+			'change @ui.favoriteCheckbox': 'onFavoriteCheckboxChange',
 		} );
 	},
 
@@ -30,7 +30,7 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 		if ( ! isFavorite && elementor.templates.getFilter( 'favorite' ) ) {
 			elementor.channels.templates.trigger( 'filter:change' );
 		}
-	}
+	},
 } );
 
 module.exports = TemplateLibraryTemplateRemoteView;
