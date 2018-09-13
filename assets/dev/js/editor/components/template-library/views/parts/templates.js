@@ -23,7 +23,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		selectFilter: '.elementor-template-library-filter-select',
 		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
 		orderInputs: '.elementor-template-library-order-input',
-		orderLabels: '.elementor-template-library-order-label'
+		orderLabels: 'label.elementor-template-library-order-label'
 	},
 
 	events: {
