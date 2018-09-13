@@ -8,7 +8,7 @@ module.exports = Marionette.Behavior.extend( {
 			buttonSaveOptions: '#elementor-panel-saver-button-save-options',
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
 			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
-			lastEditedWrapper: '.elementor-last-edited-wrapper'
+			lastEditedWrapper: '.elementor-last-edited-wrapper',
 		};
 	},
 
@@ -16,7 +16,7 @@ module.exports = Marionette.Behavior.extend( {
 		return {
 			'click @ui.buttonPreview': 'onClickButtonPreview',
 			'click @ui.buttonPublish': 'onClickButtonPublish',
-			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft'
+			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
 		};
 	},
 
@@ -69,9 +69,9 @@ module.exports = Marionette.Behavior.extend( {
 						text: elementor.translate( 'have_a_look' ),
 						callback: function() {
 							open( elementor.config.document.urls.permalink );
-						}
-					}
-				]
+						},
+					},
+				],
 			} );
 		}
 	},
@@ -191,7 +191,7 @@ module.exports = Marionette.Behavior.extend( {
 			gravity: 's',
 			title: function() {
 				return this.getAttribute( 'data-tooltip' );
-			}
+			},
 		} );
 	},
 
@@ -205,5 +205,5 @@ module.exports = Marionette.Behavior.extend( {
 				// Do nothing.
 			}
 		}
-	}
+	},
 } );

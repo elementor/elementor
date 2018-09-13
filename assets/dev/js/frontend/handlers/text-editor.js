@@ -7,12 +7,12 @@ TextEditor = HandlerModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
-				paragraph: 'p:first'
+				paragraph: 'p:first',
 			},
 			classes: {
 				dropCap: 'elementor-drop-cap',
-				dropCapLetter: 'elementor-drop-cap-letter'
-			}
+				dropCapLetter: 'elementor-drop-cap-letter',
+			},
 		};
 	},
 
@@ -27,7 +27,7 @@ TextEditor = HandlerModule.extend( {
 		return {
 			$paragraph: this.$element.find( selectors.paragraph ),
 			$dropCap: $dropCap,
-			$dropCapLetter: $dropCapLetter
+			$dropCapLetter: $dropCapLetter,
 		};
 	},
 
@@ -64,7 +64,7 @@ TextEditor = HandlerModule.extend( {
 			return;
 		}
 
-		var firstLetter = firstLetterMatch[1],
+		var firstLetter = firstLetterMatch[ 1 ],
 			trimmedFirstLetter = firstLetter.trim();
 
 		// Don't apply drop cap when the content starting with an HTML tag
@@ -78,7 +78,7 @@ TextEditor = HandlerModule.extend( {
 
 		var restoredParagraphContent = paragraphContent.slice( firstLetter.length ).replace( /^ */, function( match ) {
 			return new Array( match.length + 1 ).join( '&nbsp;' );
-		});
+		} );
 
 		$paragraph.html( restoredParagraphContent ).prepend( this.elements.$dropCap );
 	},
@@ -93,7 +93,7 @@ TextEditor = HandlerModule.extend( {
 		if ( 'drop_cap' === propertyName ) {
 			this.wrapDropCap();
 		}
-	}
+	},
 } );
 
 module.exports = function( $scope ) {

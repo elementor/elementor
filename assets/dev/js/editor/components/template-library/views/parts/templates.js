@@ -23,14 +23,14 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		selectFilter: '.elementor-template-library-filter-select',
 		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
 		orderInputs: '.elementor-template-library-order-input',
-		orderLabels: 'label.elementor-template-library-order-label'
+		orderLabels: 'label.elementor-template-library-order-label',
 	},
 
 	events: {
 		'input @ui.textFilter': 'onTextFilterInput',
 		'change @ui.selectFilter': 'onSelectFilterChange',
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
-		'mousedown @ui.orderLabels': 'onOrderLabelsClick'
+		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
 	},
 
 	comparators: {
@@ -54,7 +54,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			}
 
 			return -trendIndex;
-		}
+		},
 	},
 
 	getChildView: function( childModel ) {
@@ -157,14 +157,14 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		$filters.select2( {
 			placeholder: elementor.translate( 'category' ),
 			allowClear: true,
-			width: 150
+			width: 150,
 		} );
 	},
 
 	setMasonrySkin: function() {
 		var masonry = new Masonry( {
 			container: this.$childViewContainer,
-			items: this.$childViewContainer.children()
+			items: this.$childViewContainer.children(),
 		} );
 
 		this.$childViewContainer.imagesLoaded( masonry.run.bind( masonry ) );
@@ -202,21 +202,21 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onMyFavoritesFilterChange: function() {
-		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[0].checked );
+		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[ 0 ].checked );
 	},
 
 	onOrderLabelsClick: function( event ) {
 		var $clickedInput = jQuery( event.currentTarget.control ),
 			toggle;
 
-		if ( ! $clickedInput[0].checked ) {
+		if ( ! $clickedInput[ 0 ].checked ) {
 			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
 		}
 
 		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
 
 		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
-	}
+	},
 } );
 
 module.exports = TemplateLibraryCollectionView;

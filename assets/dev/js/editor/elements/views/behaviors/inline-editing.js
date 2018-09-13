@@ -7,14 +7,14 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 	ui: function() {
 		return {
-			inlineEditingArea: '.' + this.getOption( 'inlineEditingClass' )
+			inlineEditingArea: '.' + this.getOption( 'inlineEditingClass' ),
 		};
 	},
 
 	events: function() {
 		return {
 			'click @ui.inlineEditingArea': 'onInlineEditingClick',
-			'input @ui.inlineEditingArea': 'onInlineEditingUpdate'
+			'input @ui.inlineEditingArea': 'onInlineEditingUpdate',
 		};
 	},
 
@@ -30,9 +30,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			settingsModel = this.view.getEditModel().get( 'settings' );
 
 		if ( isRepeaterKey ) {
-			settingsModel = settingsModel.get( keyParts[0] ).models[ keyParts[1] ];
+			settingsModel = settingsModel.get( keyParts[ 0 ] ).models[ keyParts[ 1 ] ];
 
-			settingKey = keyParts[2];
+			settingKey = keyParts[ 2 ];
 		}
 
 		var dynamicSettings = settingsModel.get( '__dynamic__' ),
@@ -78,7 +78,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.editor = new ElementorInlineEditor( {
 			linksInNewWindow: true,
 			stay: false,
-			editor: this.$currentEditingArea[0],
+			editor: this.$currentEditingArea[ 0 ],
 			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			cleanAttrs: [ 'id', 'class', 'name' ],
@@ -86,33 +86,33 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
 				externalLink: {
-					className: 'eicon-editor-external-link'
+					className: 'eicon-editor-external-link',
 				},
 				list: {
-					className: 'eicon-editor-list-ul'
+					className: 'eicon-editor-list-ul',
 				},
 				insertOrderedList: {
-					className: 'eicon-editor-list-ol'
+					className: 'eicon-editor-list-ol',
 				},
 				insertUnorderedList: {
-					className: 'eicon-editor-list-ul'
+					className: 'eicon-editor-list-ul',
 				},
 				createlink: {
-					className: 'eicon-editor-link'
+					className: 'eicon-editor-link',
 				},
 				unlink: {
-					className: 'eicon-editor-unlink'
+					className: 'eicon-editor-unlink',
 				},
 				blockquote: {
-					className: 'eicon-editor-quote'
+					className: 'eicon-editor-quote',
 				},
 				p: {
-					className: 'eicon-editor-paragraph'
+					className: 'eicon-editor-paragraph',
 				},
 				pre: {
-					className: 'eicon-editor-code'
-				}
-			}
+					className: 'eicon-editor-code',
+				},
+			},
 		} );
 
 		var $menuItems = jQuery( this.editor._menu ).children();
@@ -180,7 +180,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 	onInlineEditingUpdate: function() {
 		this.view.getEditModel().setSetting( this.getEditingSettingKey(), this.editor.getContent() );
-	}
+	},
 } );
 
 module.exports = InlineEditingBehavior;

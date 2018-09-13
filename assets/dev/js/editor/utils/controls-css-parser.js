@@ -9,13 +9,13 @@ ControlsCSSParser = ViewModule.extend( {
 		return {
 			id: 0,
 			settingsModel: null,
-			dynamicParsing: {}
+			dynamicParsing: {},
 		};
 	},
 
 	getDefaultElements: function() {
 		return {
-			$stylesheetElement: jQuery( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } )
+			$stylesheetElement: jQuery( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } ),
 		};
 	},
 
@@ -53,7 +53,7 @@ ControlsCSSParser = ViewModule.extend( {
 
 	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
 		ControlsCSSParser.addControlStyleRules(
-			self.stylesheet,
+			this.stylesheet,
 			control,
 			controls,
 			( StyleControl ) => this.getStyleControlValue( StyleControl, values ),
@@ -126,7 +126,7 @@ ControlsCSSParser = ViewModule.extend( {
 		ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.initStylesheet();
-	}
+	},
 } );
 
 ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls, valueCallback, placeholders, replacements ) {
@@ -175,7 +175,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 			query = {};
 
 		if ( deviceRules ) {
-			deviceRules = deviceRules[0];
+			deviceRules = deviceRules[ 0 ];
 
 			selector = selector.replace( devicePattern, '' );
 
@@ -184,8 +184,8 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 				matches;
 
 			matches = pureDevicePattern.exec( deviceRules );
-			while ( matches) {
-				pureDeviceRules.push( matches[1] );
+			while ( matches ) {
+				pureDeviceRules.push( matches[ 1 ] );
 				matches = pureDevicePattern.exec( deviceRules );
 			}
 

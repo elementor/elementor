@@ -39,7 +39,7 @@ GlobalHandler = HandlerModule.extend( {
 		if ( /^_?animation/.test( propertyName ) ) {
 			this.animate();
 		}
-	}
+	},
 } );
 
 module.exports = function( $scope ) {

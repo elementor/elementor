@@ -33,7 +33,7 @@ export default class extends BaseRegion {
 				bottom: '',
 				right: '',
 				left: '',
-			}
+			},
 		};
 	}
 
@@ -46,7 +46,7 @@ export default class extends BaseRegion {
 			iframeFix: true,
 			handle: '#elementor-navigator__header',
 			drag: this.onDrag.bind( this ),
-			stop: this.onDragStop.bind( this )
+			stop: this.onDragStop.bind( this ),
 		};
 	}
 
@@ -70,7 +70,7 @@ export default class extends BaseRegion {
 				} else {
 					this.saveSize();
 				}
-			}
+			},
 		};
 	}
 
@@ -139,7 +139,7 @@ export default class extends BaseRegion {
 			top: '',
 			bottom: '',
 			left: '',
-			right: ''
+			right: '',
 		} );
 
 		elementor.$previewWrapper.css( side, this.storage.size.width );
@@ -195,16 +195,16 @@ export default class extends BaseRegion {
 		const offset = this.$el.offset();
 
 		if ( offset.left > innerWidth ) {
-			this.$el.css({
+			this.$el.css( {
 				left: '',
-				right: ''
+				right: '',
 			} );
 		}
 
 		if ( offset.top > innerHeight ) {
 			this.$el.css( {
 				top: '',
-				bottom: ''
+				bottom: '',
 			} );
 		}
 	}

@@ -12,20 +12,20 @@ export default class extends Marionette.LayoutView {
 	ui() {
 		return {
 			toggleAll: '#elementor-navigator__toggle-all',
-			close: '#elementor-navigator__close'
+			close: '#elementor-navigator__close',
 		};
 	}
 
 	events() {
 		return {
 			'click @ui.toggleAll': 'toggleAll',
-			'click @ui.close': 'onCloseClick'
+			'click @ui.close': 'onCloseClick',
 		};
 	}
 
 	regions() {
 		return {
-			elements: '#elementor-navigator__elements'
+			elements: '#elementor-navigator__elements',
 		};
 	}
 
@@ -51,7 +51,7 @@ export default class extends Marionette.LayoutView {
 
 	onShow() {
 		this.elements.show( new ElementView( {
-			model: elementor.elementsModel
+			model: elementor.elementsModel,
 		} ) );
 	}
 
