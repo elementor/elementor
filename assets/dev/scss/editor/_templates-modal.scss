@@ -192,9 +192,12 @@ $remote-templates-items-space: 30px;
 
 .elementor-template-library-order-label {
 	text-transform: uppercase;
-	cursor: pointer;
 	@include padding-end(22px);
 	user-select: none;
+}
+
+label.elementor-template-library-order-label {
+	cursor: pointer;
 
 	&:hover {
 		color: $editor-darker;
