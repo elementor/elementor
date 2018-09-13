@@ -117,7 +117,9 @@ module.exports = {
 			},
 		} ],
 		'valid-typeof': 'error',
-		yoda: 'off',
+		yoda: [ 'error', 'always', {
+			'onlyEquality': true,
+		} ],
 		// 'react/display-name': 'off',
 		// 'react/jsx-curly-spacing': [ 'error', {
 		// 	when: 'always',
