@@ -318,7 +318,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 						if ( isEqual ) {
 							delete data[ key ];
 						}
-					} else if ( data[ key ] === control.default ) {
+					}
+					if ( data[ key ] === control.default ) {
 							delete data[ key ];
 					}
 				}

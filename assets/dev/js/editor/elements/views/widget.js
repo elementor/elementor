@@ -169,18 +169,18 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
-        var self = this;
+		var self = this;
 
 		BaseElementView.prototype.onRender.apply( self, arguments );
 
 		var editModel = self.getEditModel(),
 			skinType = editModel.getSetting( '_skin' ) || 'default';
 
-        self.$el
+		self.$el
 			.attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
-            .removeClass( 'elementor-widget-empty' )
-            .children( '.elementor-widget-empty-icon' )
-            .remove();
+			.removeClass( 'elementor-widget-empty' )
+			.children( '.elementor-widget-empty-icon' )
+			.remove();
 
 		// TODO: Find better way to detect if all images are loaded
 		self.$el.imagesLoaded().always( function() {

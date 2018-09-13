@@ -287,7 +287,8 @@ BaseElementView = BaseContainer.extend( {
 				if ( isEqual ) {
 					return;
 				}
-			} else if ( sourceValue === targetValue ) {
+			}
+			if ( sourceValue === targetValue ) {
 				return;
 			}
 
