@@ -347,7 +347,7 @@
 
 				$controls.each( function( index, input ) {
 					$( input ).prop( 'disabled', state );
-				});
+				} );
 			},
 			bind: function() {
 				var self = this;
@@ -357,7 +357,7 @@
 					self.toggle( $( this ) );
 				} ).on( 'change', self.selectors.excludedField, function() {
 					self.updateLabel( $( this ).closest( self.selectors.row ) );
-				});
+				} );
 			},
 			init: function() {
 				var self = this;
@@ -367,7 +367,7 @@
 				self.bind();
 				$( self.selectors.row ).each( function( index, row ) {
 					self.updateLabel( $( row ) );
-				});
+				} );
 			}
 		}
 	} );

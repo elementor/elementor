@@ -16,7 +16,7 @@ var Module = function() {
 			self[ methodName ] = function() {
 				return oldMethod.apply( self, arguments );
 			};
-		});
+		} );
 	};
 
 	var initSettings = function() {

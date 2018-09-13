@@ -1,7 +1,7 @@
 /**
  * HTML5 - Drag and Drop
  */
-(function( $ ) {
+( function( $ ) {
 	var hasFullDataTransferSupport = function( event ) {
 		try {
 			event.originalEvent.dataTransfer.setData( 'test', 'test' );
@@ -406,4 +406,4 @@
 			return this;
 		};
 	} );
-})( jQuery );
+} )( jQuery );

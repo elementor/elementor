@@ -15,16 +15,16 @@ QUnit.module( 'Loading' );
 
 QUnit.test( 'Elementor exist', function( assert ) {
 	assert.ok( elementor );
-});
+} );
 
 QUnit.test( 'Preview loaded', function( assert ) {
 	assert.ok( elementor.$previewContents, 'Preview Exist' );
 	assert.equal( 1, elementor.$previewContents.find( '.elementor-editor-active' ).length, 'Elementor area Exist' );
-});
+} );
 
 QUnit.test( 'Frontend CSS loaded', function( assert ) {
 	assert.equal( elementor.$previewContents.find( '#elementor-frontend-css' ).length, 1 );
-});
+} );
 
 function testPreview() {
 	QUnit.module( 'Widgets' );
@@ -81,14 +81,14 @@ function testPreview() {
 			// ['wordpress', 'wp-widget-elementor-library']
 		];
 
-	_( elements ).each(function( element ) {
+	_( elements ).each( function( element ) {
 		QUnit.test( 'addElementFromPanel:' + element[0] + ':' + element[1], function( assert ) {
 			elementorTests.setPanelSelectedElement( element[0], element[1] );
 			firstColumnView.addElementFromPanel( { at: 0 } );
 
 			assert.equal( element[1], firstColumnView.model.get( 'elements' ).first().get( 'widgetType' ) );
-		});
-	});
+		} );
+	} );
 
 	QUnit.test( 'Add New Section', function( assert ) {
 		// Clear Page
@@ -165,4 +165,4 @@ function testPreview() {
 elementor.on( 'preview:loaded', function() {
 	window.pQuery = elementor.$preview[0].contentWindow.jQuery;
 	pQuery( elementor.$preview[0].contentDocument ).ready( testPreview );
-});
+} );

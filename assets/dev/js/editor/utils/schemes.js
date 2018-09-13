@@ -18,7 +18,7 @@ Schemes = function() {
 	var initElements = function() {
 		elements.$style = jQuery( '<style>', {
 			id: 'elementor-style-scheme'
-		});
+		} );
 
 		elements.$previewHead = elementor.$previewContents.find( 'head' );
 	};

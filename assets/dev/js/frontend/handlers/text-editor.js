@@ -78,7 +78,7 @@ TextEditor = HandlerModule.extend( {
 
 		var restoredParagraphContent = paragraphContent.slice( firstLetter.length ).replace( /^ */, function( match ) {
 			return new Array( match.length + 1 ).join( '&nbsp;' );
-		});
+		} );
 
 		$paragraph.html( restoredParagraphContent ).prepend( this.elements.$dropCap );
 	},

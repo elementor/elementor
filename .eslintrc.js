@@ -39,7 +39,7 @@ module.exports = {
 		'no-mixed-operators': 'error',
 		'no-nested-ternary': 'error',
 		'no-cond-assign': 'error',
-		'space-in-parens': [ 'off', 'always' ],
+		'space-in-parens': [ 'error', 'always' ],
 		'no-multi-spaces': 'error',
 		'semi-spacing': 'error',
 		'quote-props': [ 'error', 'as-needed' ],
