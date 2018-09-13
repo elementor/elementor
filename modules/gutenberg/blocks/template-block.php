@@ -69,7 +69,7 @@ class Template_Block {
 				'lang'   => is_admin() ? get_user_locale() : get_locale(),
 			],
 			'Elementor Template' => [ __( 'Elementor Template', 'elementor' ) ],
-			'Edit with Elementor' => [ __( 'Edit with Elementor', 'elementor' ) ],
+			'Edit Template with Elementor' => [ __( 'Edit Template with Elementor', 'elementor' ) ],
 			'Selected Elementor Template' => [ __( 'Selected Elementor Template', 'elementor' ) ],
 			'No Template Selected' => [ __( 'No Template Selected', 'elementor' ) ],
 			'Select a Template' => [ __( 'Select a Template', 'elementor' ) ],
