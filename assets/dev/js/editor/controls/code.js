@@ -20,7 +20,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 
 		var langTools = ace.require( 'ace/ext/language_tools' );
 
-		self.editor = ace.edit( this.ui.editor[0] );
+		self.editor = ace.edit( this.ui.editor[ 0 ] );
 
 		jQuery( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor' );
 

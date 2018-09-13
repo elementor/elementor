@@ -90,12 +90,12 @@ ElementModel = Backbone.Model.extend( {
 			var keyParts = key.split( '.' ),
 				isRepeaterKey = 3 === keyParts.length;
 
-			key = keyParts[0];
+			key = keyParts[ 0 ];
 
 			if ( isRepeaterKey ) {
-				settings = settings.get( key ).models[ keyParts[1] ];
+				settings = settings.get( key ).models[ keyParts[ 1 ] ];
 
-				key = keyParts[2];
+				key = keyParts[ 2 ];
 			}
 		}
 
@@ -107,7 +107,7 @@ ElementModel = Backbone.Model.extend( {
 			isRepeaterKey = 3 === keyParts.length,
 			settings = this.get( 'settings' );
 
-		key = keyParts[0];
+		key = keyParts[ 0 ];
 
 		var value = settings.get( key );
 
@@ -116,7 +116,7 @@ ElementModel = Backbone.Model.extend( {
 		}
 
 		if ( isRepeaterKey ) {
-			value = value.models[ keyParts[1] ].get( keyParts[2] );
+			value = value.models[ keyParts[ 1 ] ].get( keyParts[ 2 ] );
 		}
 
 		return value;

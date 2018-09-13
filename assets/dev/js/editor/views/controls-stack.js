@@ -91,7 +91,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
 		} );
 
-		if ( ! sectionControls[0] ) {
+		if ( ! sectionControls[ 0 ] ) {
 			return;
 		}
 
@@ -99,11 +99,11 @@ ControlsStack = Marionette.CompositeView.extend( {
 			return self.activeSection === controlModel.get( 'name' );
 		} );
 
-		if ( preActivatedSection[0] ) {
+		if ( preActivatedSection[ 0 ] ) {
 			return;
 		}
 
-		self.activateSection( sectionControls[0].get( 'name' ) );
+		self.activateSection( sectionControls[ 0 ].get( 'name' ) );
 	},
 
 	getChildView: function( item ) {
@@ -156,8 +156,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 				return activeSection === view.model.get( 'name' );
 			} );
 
-		if ( activeSectionView[0] ) {
-			activeSectionView[0].$el.addClass( 'elementor-open' );
+		if ( activeSectionView[ 0 ] ) {
+			activeSectionView[ 0 ].$el.addClass( 'elementor-open' );
 		}
 	},
 

@@ -29,7 +29,7 @@ module.exports = ViewModule.extend( {
 		this.elements.$items.each( function( index ) {
 			var row = Math.floor( index / columnsCount ),
 				$item = jQuery( this ),
-				itemHeight = $item[0].getBoundingClientRect().height + settings.verticalSpaceBetween;
+				itemHeight = $item[ 0 ].getBoundingClientRect().height + settings.verticalSpaceBetween;
 
 			if ( row ) {
 				var itemPosition = $item.position(),

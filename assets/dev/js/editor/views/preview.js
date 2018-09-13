@@ -77,7 +77,7 @@ Preview = BaseSectionsContainerView.extend( {
 			section,
 			index = undefined !== atIndex ? atIndex : this.collection.length;
 
-		elementor.channels.data.trigger( 'element:before:add', transferData.elements[0] );
+		elementor.channels.data.trigger( 'element:before:add', transferData.elements[ 0 ] );
 
 		if ( 'section' === transferData.elementsType ) {
 			transferData.elements.forEach( function( element ) {
@@ -121,7 +121,7 @@ Preview = BaseSectionsContainerView.extend( {
 			} );
 		}
 
-		elementor.channels.data.trigger( 'element:after:add', transferData.elements[0] );
+		elementor.channels.data.trigger( 'element:after:add', transferData.elements[ 0 ] );
 	},
 
 	isPasteEnabled: function() {

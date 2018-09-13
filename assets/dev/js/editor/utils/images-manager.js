@@ -99,7 +99,7 @@ ImagesManager = function() {
 		if ( 0 === registeredItemsLength ) {
 			return;
 		} else if ( 1 === registeredItemsLength ) {
-			image = registeredItems[ Object.keys( registeredItems )[0] ];
+			image = registeredItems[ Object.keys( registeredItems )[ 0 ] ];
 
 			if ( image && image.model ) {
 				image.model.renderRemoteServer();

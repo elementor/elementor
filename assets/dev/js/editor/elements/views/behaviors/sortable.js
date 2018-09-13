@@ -171,7 +171,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 				itemHeight = 0;
 
 			uiItems.forEach( function( item ) {
-				if ( item.item[0] === ui.item[0] ) {
+				if ( item.item[ 0 ] === ui.item[ 0 ] ) {
 					itemHeight = item.height;
 					return false;
 				}
@@ -215,7 +215,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
-		if ( this.getChildViewContainer()[0] !== ui.item.parent()[0] ) {
+		if ( this.getChildViewContainer()[ 0 ] !== ui.item.parent()[ 0 ] ) {
 			return;
 		}
 

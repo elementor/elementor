@@ -90,7 +90,7 @@
 
 			elements.$window.trigger( 'elementor/frontend/init' );
 
-			if ( ! self.isEditMode( ) ) {
+			if ( ! self.isEditMode() ) {
 				initHotKeys();
 			}
 

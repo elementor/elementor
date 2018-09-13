@@ -30,9 +30,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			settingsModel = this.view.getEditModel().get( 'settings' );
 
 		if ( isRepeaterKey ) {
-			settingsModel = settingsModel.get( keyParts[0] ).models[ keyParts[1] ];
+			settingsModel = settingsModel.get( keyParts[ 0 ] ).models[ keyParts[ 1 ] ];
 
-			settingKey = keyParts[2];
+			settingKey = keyParts[ 2 ];
 		}
 
 		var dynamicSettings = settingsModel.get( '__dynamic__' ),
@@ -78,7 +78,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.editor = new ElementorInlineEditor( {
 			linksInNewWindow: true,
 			stay: false,
-			editor: this.$currentEditingArea[0],
+			editor: this.$currentEditingArea[ 0 ],
 			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			cleanAttrs: [ 'id', 'class', 'name' ],

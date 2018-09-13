@@ -129,9 +129,9 @@ helpers = {
 
 		var hasFields = _.filter( condition, function( conditionValue, conditionName ) {
 			var conditionNameParts = conditionName.match( /([a-z_0-9]+)(?:\[([a-z_]+)])?(!?)$/i ),
-				conditionRealName = conditionNameParts[1],
-				conditionSubKey = conditionNameParts[2],
-				isNegativeCondition = !! conditionNameParts[3],
+				conditionRealName = conditionNameParts[ 1 ],
+				conditionSubKey = conditionNameParts[ 2 ],
+				isNegativeCondition = !! conditionNameParts[ 3 ],
 				controlValue = values[ conditionRealName ];
 
 			if ( values.__dynamic__ && values.__dynamic__[ conditionRealName ] ) {
@@ -170,7 +170,7 @@ helpers = {
 	},
 
 	firstLetterUppercase: function( string ) {
-		return string[0].toUpperCase() + string.slice( 1 );
+		return string[ 0 ].toUpperCase() + string.slice( 1 );
 	},
 
 	disableElementEvents: function( $element ) {
@@ -252,7 +252,7 @@ helpers = {
 		setTimeout( function() {
 			var parentHeight = $parent.height(),
 				parentScrollTop = $parent.scrollTop(),
-				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[0].offsetTop,
+				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[ 0 ].offsetTop,
 				topToCheck = elementTop - parentScrollTop;
 
 			if ( topToCheck > 0 && topToCheck < parentHeight ) {
@@ -267,7 +267,7 @@ helpers = {
 
 	getElementInlineStyle: function( $element, properties ) {
 		var style = {},
-			elementStyle = $element[0].style;
+			elementStyle = $element[ 0 ].style;
 
 		properties.forEach( function( property ) {
 			style[ property ] = undefined !== elementStyle[ property ] ? elementStyle[ property ] : '';

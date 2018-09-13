@@ -82,11 +82,11 @@ function testPreview() {
 		];
 
 	_( elements ).each( function( element ) {
-		QUnit.test( 'addElementFromPanel:' + element[0] + ':' + element[1], function( assert ) {
-			elementorTests.setPanelSelectedElement( element[0], element[1] );
+		QUnit.test( 'addElementFromPanel:' + element[ 0 ] + ':' + element[ 1 ], function( assert ) {
+			elementorTests.setPanelSelectedElement( element[ 0 ], element[ 1 ] );
 			firstColumnView.addElementFromPanel( { at: 0 } );
 
-			assert.equal( element[1], firstColumnView.model.get( 'elements' ).first().get( 'widgetType' ) );
+			assert.equal( element[ 1 ], firstColumnView.model.get( 'elements' ).first().get( 'widgetType' ) );
 		} );
 	} );
 
@@ -163,6 +163,6 @@ function testPreview() {
 }
 
 elementor.on( 'preview:loaded', function() {
-	window.pQuery = elementor.$preview[0].contentWindow.jQuery;
-	pQuery( elementor.$preview[0].contentDocument ).ready( testPreview );
+	window.pQuery = elementor.$preview[ 0 ].contentWindow.jQuery;
+	pQuery( elementor.$preview[ 0 ].contentDocument ).ready( testPreview );
 } );

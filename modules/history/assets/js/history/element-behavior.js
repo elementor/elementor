@@ -56,7 +56,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		var self = this,
 			changed = Object.keys( model.changed ),
-			control = model.controls[ changed[0] ];
+			control = model.controls[ changed[ 0 ] ];
 
 		if ( ! control && options && options.control ) {
 			control = options.control;

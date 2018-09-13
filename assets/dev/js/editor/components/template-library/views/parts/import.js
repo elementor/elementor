@@ -21,13 +21,13 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			data = new FormData();
 
 		if ( this.droppedFiles ) {
-			data.append( 'file', this.droppedFiles[0] );
+			data.append( 'file', this.droppedFiles[ 0 ] );
 
 			this.droppedFiles = null;
 		} else {
-			data.append( 'file', this.ui.fileInput[0].files[0] );
+			data.append( 'file', this.ui.fileInput[ 0 ].files[ 0 ] );
 
-			this.ui.uploadForm[0].reset();
+			this.ui.uploadForm[ 0 ].reset();
 		}
 
 		var options = {

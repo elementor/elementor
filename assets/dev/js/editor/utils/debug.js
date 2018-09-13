@@ -84,9 +84,9 @@ var Debug = function() {
 			var stackInfo = error.stack.match( /\n {4}at (.*?(?=:(\d+):(\d+)))/ );
 
 			if ( stackInfo ) {
-				errorInfo.url = stackInfo[1];
-				errorInfo.line = stackInfo[2];
-				errorInfo.column = stackInfo[3];
+				errorInfo.url = stackInfo[ 1 ];
+				errorInfo.line = stackInfo[ 2 ];
+				errorInfo.column = stackInfo[ 3 ];
 			}
 		}
 
