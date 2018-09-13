@@ -125,11 +125,11 @@ class Module extends BaseModule {
 			add_filter( 'show_admin_bar', '__return_false' );
 			return ELEMENTOR_PATH . 'modules/page-templates/templates/canvas.php';
 		}
+
 		return $template;
 	}
 
 	public function __construct() {
-		add_theme_support('gutenberg', [ 'wide-images' => true ] );
 		add_action( 'rest_api_init', [ $this, 'register_elementor_rest_field' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_footer', [ $this, 'print_admin_js_template' ] );
