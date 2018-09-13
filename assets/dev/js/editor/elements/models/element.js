@@ -135,7 +135,7 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	getTitle: function() {
-		var title = this.getSetting( '_title' );
+		let title = this.getSetting( '_title' );
 
 		if ( ! title ) {
 			title = this.getDefaultTitle();
