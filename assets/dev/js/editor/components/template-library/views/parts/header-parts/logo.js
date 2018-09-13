@@ -4,7 +4,7 @@ module.exports = Marionette.ItemView.extend( {
 	className: 'elementor-templates-modal__header__logo',
 
 	events: {
-		'click': 'onClick'
+		click: 'onClick'
 	},
 
 	templateHelpers: function() {

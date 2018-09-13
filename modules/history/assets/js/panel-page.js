@@ -30,7 +30,7 @@ module.exports = Marionette.LayoutView.extend( {
 		var historyItems = elementor.history.history.getItems(),
 			revisionsItems = elementor.history.revisions.getItems();
 
-		this.regionViews  = {
+		this.regionViews = {
 			history: {
 				region: this.content,
 				view: function() {

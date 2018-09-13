@@ -4,7 +4,7 @@ module.exports = Marionette.ItemView.extend( {
 	className: 'elementor-empty-view',
 
 	events: {
-		'click': 'onClickAdd'
+		click: 'onClickAdd'
 	},
 
 	behaviors: function() {
