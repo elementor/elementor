@@ -184,7 +184,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 				matches;
 
 			matches = pureDevicePattern.exec( deviceRules );
-			while ( matches) {
+			while ( matches ) {
 				pureDeviceRules.push( matches[1] );
 				matches = pureDevicePattern.exec( deviceRules );
 			}

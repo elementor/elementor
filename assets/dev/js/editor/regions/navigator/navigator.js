@@ -195,7 +195,7 @@ export default class extends BaseRegion {
 		const offset = this.$el.offset();
 
 		if ( offset.left > innerWidth ) {
-			this.$el.css({
+			this.$el.css( {
 				left: '',
 				right: ''
 			} );

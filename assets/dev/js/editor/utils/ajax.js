@@ -45,7 +45,7 @@ Ajax = {
 				data: jQuery.extend( { id: objectId }, options.data )
 			} ).done( function( data ) {
 				dataCollection = jQuery.extend( dataCollection, data );
-			}) );
+			} ) );
 		} );
 
 		jQuery.when.apply( jQuery, deferredArray ).done( function() {
