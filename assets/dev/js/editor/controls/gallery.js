@@ -17,7 +17,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
 			'click @ui.addImages': 'onAddImagesClick',
 			'click @ui.clearGallery': 'onClearGalleryClick',
-			'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick'
+			'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick',
 		} );
 	},
 
@@ -67,7 +67,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		var frameStates = {
 			create: 'gallery',
 			add: 'gallery-library',
-			edit: 'gallery-edit'
+			edit: 'gallery-edit',
 		};
 
 		var options = {
@@ -75,8 +75,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			multiple: true,
 			state: frameStates[ action ],
 			button: {
-				text: elementor.translate( 'insert_media' )
-			}
+				text: elementor.translate( 'insert_media' ),
+			},
 		};
 
 		if ( this.hasImages() ) {
@@ -89,7 +89,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.frame.on( {
 			update: this.select,
 			'menu:render:default': this.menuRender,
-			'content:render:browse': this.gallerySettings
+			'content:render:browse': this.gallerySettings,
 		}, this );
 	},
 
@@ -110,12 +110,12 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			order: 'ASC',
 			type: 'image',
 			perPage: -1,
-			post__in: _.pluck( this.getControlValue(), 'id' )
+			post__in: _.pluck( this.getControlValue(), 'id' ),
 		} );
 
 		return new wp.media.model.Selection( attachments.models, {
 			props: attachments.props.toJSON(),
-			multiple: true
+			multiple: true,
 		} );
 	},
 
@@ -129,7 +129,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		selection.each( function( image ) {
 			images.push( {
 				id: image.get( 'id' ),
-				url: image.get( 'url' )
+				url: image.get( 'url' ),
 			} );
 		} );
 
@@ -162,10 +162,10 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 					headerMessage: elementor.translate( 'delete_gallery' ),
 					strings: {
 						confirm: elementor.translate( 'delete' ),
-						cancel: elementor.translate( 'cancel' )
+						cancel: elementor.translate( 'cancel' ),
 					},
 					defaultOption: 'confirm',
-					onConfirm: this.resetGallery.bind( this )
+					onConfirm: this.resetGallery.bind( this ),
 				} );
 			}
 
@@ -183,7 +183,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 	onGalleryThumbnailsClick: function() {
 		this.openFrame( 'edit' );
-	}
+	},
 } );
 
 module.exports = ControlMediaItemView;

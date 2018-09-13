@@ -7,7 +7,7 @@ Schemes = function() {
 		stylesheet = new Stylesheet(),
 		schemes = {},
 		settings = {
-			selectorWrapperPrefix: '.elementor-widget-'
+			selectorWrapperPrefix: '.elementor-widget-',
 		},
 		elements = {};
 
@@ -17,7 +17,7 @@ Schemes = function() {
 
 	var initElements = function() {
 		elements.$style = jQuery( '<style>', {
-			id: 'elementor-style-scheme'
+			id: 'elementor-style-scheme',
 		} );
 
 		elements.$previewHead = elementor.$previewContents.find( 'head' );
@@ -123,11 +123,11 @@ Schemes = function() {
 		elementor.ajax.send( 'apply_scheme', {
 			data: {
 				scheme_name: schemeName,
-				data: JSON.stringify( itemsToSave )
+				data: JSON.stringify( itemsToSave ),
 			},
 			success: function() {
 				NProgress.done();
-			}
+			},
 		} );
 	};
 

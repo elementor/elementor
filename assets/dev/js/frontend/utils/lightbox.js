@@ -29,25 +29,25 @@ LightboxModule = ViewModule.extend( {
 					nextButton: 'elementor-swiper-button elementor-swiper-button-next',
 					prevButtonIcon: 'eicon-chevron-left',
 					nextButtonIcon: 'eicon-chevron-right',
-					slide: 'swiper-slide'
-				}
+					slide: 'swiper-slide',
+				},
 			},
 			selectors: {
 				links: 'a, [data-elementor-lightbox]',
 				slideshow: {
 					activeSlide: '.swiper-slide-active',
 					prevSlide: '.swiper-slide-prev',
-					nextSlide: '.swiper-slide-next'
-				}
+					nextSlide: '.swiper-slide-next',
+				},
 			},
 			modalOptions: {
 				id: 'elementor-lightbox',
 				entranceAnimation: 'zoomIn',
 				videoAspectRatio: 169,
 				position: {
-					enable: false
-				}
-			}
+					enable: false,
+				},
+			},
 		};
 	},
 
@@ -65,11 +65,11 @@ LightboxModule = ViewModule.extend( {
 			closeButton: true,
 			closeButtonClass: 'eicon-close',
 			selectors: {
-				preventClose: '.' + this.getSettings( 'classes.preventClose' )
+				preventClose: '.' + this.getSettings( 'classes.preventClose' ),
 			},
 			hide: {
-				onClick: true
-			}
+				onClick: true,
+			},
 		} );
 
 		modal.on( 'hide', function() {
@@ -229,18 +229,18 @@ LightboxModule = ViewModule.extend( {
 			var swiperOptions = {
 				navigation: {
 					prevEl: $prevButton,
-					nextEl: $nextButton
+					nextEl: $nextButton,
 				},
 				pagination: {
-					clickable: true
+					clickable: true,
 				},
 				on: {
-					slideChangeTransitionEnd: self.onSlideChange
+					slideChangeTransitionEnd: self.onSlideChange,
 				},
 				grabCursor: true,
 				runCallbacksOnInit: false,
 				loop: true,
-				keyboard: true
+				keyboard: true,
 			};
 
 			if ( options.swiper ) {
@@ -368,7 +368,7 @@ LightboxModule = ViewModule.extend( {
 		if ( ! element.dataset.elementorLightboxSlideshow ) {
 			this.showModal( {
 				type: 'image',
-				url: element.href
+				url: element.href,
 			} );
 
 			return;
@@ -401,7 +401,7 @@ LightboxModule = ViewModule.extend( {
 
 			var slideData = {
 				image: this.href,
-				index: slideIndex
+				index: slideIndex,
 			};
 
 			if ( slideVideo ) {
@@ -424,14 +424,14 @@ LightboxModule = ViewModule.extend( {
 		this.showModal( {
 			type: 'slideshow',
 			modalOptions: {
-				id: 'elementor-lightbox-slideshow-' + slideshowID
+				id: 'elementor-lightbox-slideshow-' + slideshowID,
 			},
 			slideshow: {
 				slides: slides,
 				swiper: {
-					initialSlide: +initialSlide
-				}
-			}
+					initialSlide: +initialSlide,
+				},
+			},
 		} );
 	},
 
@@ -464,7 +464,7 @@ LightboxModule = ViewModule.extend( {
 			.remove();
 
 		this.playSlideVideo();
-	}
+	},
 } );
 
 module.exports = LightboxModule;

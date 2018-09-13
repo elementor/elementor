@@ -7,11 +7,11 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 
 	ui: {
 		uploadForm: '#elementor-template-library-import-form',
-		fileInput: '#elementor-template-library-import-form-input'
+		fileInput: '#elementor-template-library-import-form-input',
 	},
 
 	events: {
-		'change @ui.fileInput': 'onFileInputChange'
+		'change @ui.fileInput': 'onFileInputChange',
 	},
 
 	droppedFiles: null,
@@ -46,7 +46,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			},
 			complete: () => {
 				layout.hideLoadingView();
-			}
+			},
 		};
 
 		elementor.ajax.send( 'import_template', options );
@@ -59,7 +59,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			'drag dragstart dragend dragover dragenter dragleave drop': this.onFormActions.bind( this ),
 			dragenter: this.onFormDragEnter.bind( this ),
 			'dragleave drop': this.onFormDragLeave.bind( this ),
-			drop: this.onFormDrop.bind( this )
+			drop: this.onFormDrop.bind( this ),
 		} );
 	},
 
@@ -88,7 +88,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 
 	onFileInputChange: function() {
 		this.submitForm();
-	}
+	},
 } );
 
 module.exports = TemplateLibraryImportView;

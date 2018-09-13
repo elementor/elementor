@@ -8,11 +8,11 @@ module.exports = Marionette.Behavior.extend( {
 
 	ui: {
 		tagArea: '.elementor-control-tag-area',
-		dynamicSwitcher: '.elementor-control-dynamic-switcher'
+		dynamicSwitcher: '.elementor-control-dynamic-switcher',
 	},
 
 	events: {
-		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick'
+		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick',
 	},
 
 	initialize: function() {
@@ -98,7 +98,7 @@ module.exports = Marionette.Behavior.extend( {
 		$tagsList.show().position( {
 			my: 'right top',
 			at: 'right bottom+5',
-			of: this.ui.dynamicSwitcher
+			of: this.ui.dynamicSwitcher,
 		} );
 	},
 
@@ -111,7 +111,7 @@ module.exports = Marionette.Behavior.extend( {
 			id: id,
 			name: name,
 			settings: settings,
-			dynamicSettings: this.getOption( 'dynamicSettings' )
+			dynamicSettings: this.getOption( 'dynamicSettings' ),
 		} );
 
 		tagView.render();
@@ -142,8 +142,8 @@ module.exports = Marionette.Behavior.extend( {
 		return {
 			control: {
 				name: '__dynamic__',
-				label: this.view.model.get( 'label' )
-			}
+				label: this.view.model.get( 'label' ),
+			},
 		};
 	},
 
@@ -231,5 +231,5 @@ module.exports = Marionette.Behavior.extend( {
 
 	onDestroy: function() {
 		this.destroyTagView();
-	}
+	},
 } );

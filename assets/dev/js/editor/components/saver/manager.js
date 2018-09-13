@@ -55,7 +55,7 @@ module.exports = Module.extend( {
 		}
 
 		options = _.extend( {
-			status: 'autosave'
+			status: 'autosave',
 		}, options );
 
 		this.saveEditor( options );
@@ -63,7 +63,7 @@ module.exports = Module.extend( {
 
 	savePending: function( options ) {
 		options = _.extend( {
-			status: 'pending'
+			status: 'pending',
 		}, options );
 
 		this.saveEditor( options );
@@ -75,13 +75,13 @@ module.exports = Module.extend( {
 			success: function() {
 				self.setFlagEditorChange( false );
 				location.href = elementor.config.document.urls.exit_to_dashboard;
-			}
+			},
 		} );
 	},
 
 	update: function( options ) {
 		options = _.extend( {
-			status: elementor.settings.page.model.get( 'post_status' )
+			status: elementor.settings.page.model.get( 'post_status' ),
 		}, options );
 
 		this.saveEditor( options );
@@ -89,7 +89,7 @@ module.exports = Module.extend( {
 
 	publish: function( options ) {
 		options = _.extend( {
-			status: 'publish'
+			status: 'publish',
 		}, options );
 
 		this.saveEditor( options );
@@ -127,7 +127,7 @@ module.exports = Module.extend( {
 
 		options = _.extend( {
 			status: 'draft',
-			onSuccess: null
+			onSuccess: null,
 		}, options );
 
 		var self = this,
@@ -149,7 +149,7 @@ module.exports = Module.extend( {
 			data: {
 				status: options.status,
 				elements: elements,
-				settings: settings
+				settings: settings,
 			},
 
 			success: function( data ) {
@@ -206,13 +206,13 @@ module.exports = Module.extend( {
 				}
 
 				elementor.notifications.showToast( {
-					message: message
+					message: message,
 				} );
-			}
+			},
 		} );
 	},
 
 	afterAjax: function() {
 		this.isSaving = false;
-	}
+	},
 } );

@@ -16,7 +16,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 			textarea: 'textarea[data-setting]',
 			responsiveSwitchers: '.elementor-responsive-switcher',
 			contentEditable: '[contenteditable="true"]',
-			tooltipTarget: '.tooltip-target'
+			tooltipTarget: '.tooltip-target',
 		} );
 
 		return ui;
@@ -38,7 +38,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 			'input @ui.textarea': 'onBaseInputChange',
 			'change @ui.select': 'onBaseInputChange',
 			'input @ui.contentEditable': 'onBaseInputChange',
-			'click @ui.responsiveSwitchers': 'onResponsiveSwitchersClick'
+			'click @ui.responsiveSwitchers': 'onResponsiveSwitchersClick',
 		};
 	},
 
@@ -55,7 +55,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 				behaviors.tags = {
 					behaviorClass: TagsBehavior,
 					tags: tags,
-					dynamicSettings: dynamicSettings
+					dynamicSettings: dynamicSettings,
 				};
 			}
 		}
@@ -159,7 +159,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		if ( ! jQuery.isEmptyObject( validationTerms ) ) {
 			this.addValidator( new Validator( {
-				validationTerms: validationTerms
+				validationTerms: validationTerms,
 			} ) );
 		}
 	},
@@ -249,7 +249,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 			},
 			title: function() {
 				return this.getAttribute( 'data-tooltip' );
-			}
+			},
 		} );
 	},
 
@@ -261,7 +261,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	updateElementModel: function( value ) {
 		this.setValue( value );
-	}
+	},
 }, {
 	// Static methods
 	getStyleValue: function( placeholder, controlValue ) {
@@ -270,7 +270,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 	onPasteStyle: function() {
 		return true;
-	}
+	},
 } );
 
 module.exports = ControlBaseDataView;

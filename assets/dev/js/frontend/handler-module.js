@@ -59,8 +59,8 @@ HandlerModule = ViewModule.extend( {
 					}
 
 					self.onDestroy();
-				}
-			}
+				},
+			},
 		];
 
 		if ( self.onElementChange ) {
@@ -82,7 +82,7 @@ HandlerModule = ViewModule.extend( {
 					}
 
 					self.onElementChange( controlView.model.get( 'name' ), controlView, elementView );
-				}
+				},
 			} );
 		}
 
@@ -96,7 +96,7 @@ HandlerModule = ViewModule.extend( {
 					}
 
 					self.onEditSettingsChange( Object.keys( changedModel.changed )[0] );
-				}
+				},
 			} );
 		}
 
@@ -109,7 +109,7 @@ HandlerModule = ViewModule.extend( {
 					to: elementor.settings[ settingsType ].model,
 					callback: function( model ) {
 						self[ listenerMethodName ]( model.changed );
-					}
+					},
 				} );
 			}
 		} );
@@ -187,7 +187,7 @@ HandlerModule = ViewModule.extend( {
 		if ( this.unbindEvents ) {
 			this.unbindEvents();
 		}
-	}
+	},
 } );
 
 module.exports = HandlerModule;

@@ -4,15 +4,15 @@ module.exports = Marionette.ItemView.extend( {
 	className: 'elementor-empty-view',
 
 	events: {
-		click: 'onClickAdd'
+		click: 'onClickAdd',
 	},
 
 	behaviors: function() {
 		return {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
-				groups: this.getContextMenuGroups()
-			}
+				groups: this.getContextMenuGroups(),
+			},
 		};
 	},
 
@@ -25,10 +25,10 @@ module.exports = Marionette.ItemView.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						callback: this.paste.bind( this ),
-						isEnabled: this.isPasteEnabled.bind( this )
-					}
-				]
-			}
+						isEnabled: this.isPasteEnabled.bind( this ),
+					},
+				],
+			},
 		];
 	},
 
@@ -60,5 +60,5 @@ module.exports = Marionette.ItemView.extend( {
 
 	onClickAdd: function() {
 		elementor.getPanelView().setPage( 'elements' );
-	}
+	},
 } );

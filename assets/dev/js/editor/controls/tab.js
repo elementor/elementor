@@ -5,9 +5,9 @@ ControlTabItemView = ControlBaseView.extend( {
 	triggers: {
 		click: {
 			event: 'control:tab:clicked',
-			stopPropagation: false
-		}
-	}
+			stopPropagation: false,
+		},
+	},
 } );
 
 module.exports = ControlTabItemView;

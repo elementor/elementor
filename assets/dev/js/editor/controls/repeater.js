@@ -6,7 +6,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 ControlRepeaterItemView = ControlBaseDataView.extend( {
 	ui: {
 		btnAddRow: '.elementor-repeater-add',
-		fieldContainer: '.elementor-repeater-fields-wrapper'
+		fieldContainer: '.elementor-repeater-fields-wrapper',
 	},
 
 	events: function() {
@@ -14,7 +14,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			'click @ui.btnAddRow': 'onButtonAddRowClick',
 			'sortstart @ui.fieldContainer': 'onSortStart',
 			'sortupdate @ui.fieldContainer': 'onSortUpdate',
-			'sortstop @ui.fieldContainer': 'onSortStop'
+			'sortstop @ui.fieldContainer': 'onSortStop',
 		};
 	},
 
@@ -24,14 +24,14 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	templateHelpers: function() {
 		return {
-			data: _.extend( {}, this.model.toJSON(), { controlValue: [] } )
+			data: _.extend( {}, this.model.toJSON(), { controlValue: [] } ),
 		};
 	},
 
 	childViewOptions: function() {
 		return {
 			controlFields: this.model.get( 'fields' ),
-			titleField: this.model.get( 'title_field' )
+			titleField: this.model.get( 'title_field' ),
 		};
 	},
 
@@ -56,7 +56,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			this.collection = new Backbone.Collection( this.collection, {
 				// Use `partial` to supply the `this` as an argument, but not as context
 				// the `_` is a place holder for original arguments: `attrs` & `options`
-				model: _.partial( this.createItemModel, _, _, this )
+				model: _.partial( this.createItemModel, _, _, this ),
 			} );
 
 			// Set the value silent
@@ -282,7 +282,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.fillCollection();
 
 		ControlBaseDataView.prototype.onAfterExternalChange.apply( this, arguments );
-	}
+	},
 } );
 
 module.exports = ControlRepeaterItemView;

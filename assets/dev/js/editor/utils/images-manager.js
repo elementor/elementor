@@ -117,14 +117,14 @@ ImagesManager = function() {
 			requestedItems.push( {
 				id: id,
 				size: size,
-				is_first_time: isFirstTime
+				is_first_time: isFirstTime,
 			} );
 		}
 
 		elementor.ajax.send(
 			'get_images_details', {
 				data: {
-					items: requestedItems
+					items: requestedItems,
 				},
 				success: ( data ) => {
 					var imageId,
@@ -140,7 +140,7 @@ ImagesManager = function() {
 						}
 					}
 					registeredItems = [];
-				}
+				},
 			}
 		);
 	};

@@ -17,13 +17,13 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 		allFields: '.elementor-panel-scheme-typography-item-field',
 		inputFields: 'input.elementor-panel-scheme-typography-item-field',
 		selectFields: 'select.elementor-panel-scheme-typography-item-field',
-		selectFamilyFields: 'select.elementor-panel-scheme-typography-item-field[name="font_family"]'
+		selectFamilyFields: 'select.elementor-panel-scheme-typography-item-field[name="font_family"]',
 	},
 
 	events: {
 		'input @ui.inputFields': 'onFieldChange',
 		'change @ui.selectFields': 'onFieldChange',
-		'click @ui.heading': 'toggleVisibility'
+		'click @ui.heading': 'toggleVisibility',
 	},
 
 	onRender: function() {
@@ -38,7 +38,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 		} );
 
 		this.ui.selectFamilyFields.select2( {
-			dir: elementor.config.is_rtl ? 'rtl' : 'ltr'
+			dir: elementor.config.is_rtl ? 'rtl' : 'ltr',
 		} );
 	},
 
@@ -68,7 +68,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 		}
 
 		this.triggerMethod( 'value:change', currentValue );
-	}
+	},
 } );
 
 module.exports = PanelSchemeTypographyView;

@@ -4,7 +4,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	className: 'elementor-panel-controls-stack',
 
 	classes: {
-		popover: 'elementor-controls-popover'
+		popover: 'elementor-controls-popover',
 	},
 
 	activeTab: null,
@@ -13,32 +13,32 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	templateHelpers: function() {
 		return {
-			elementData: elementor.getElementData( this.model )
+			elementData: elementor.getElementData( this.model ),
 		};
 	},
 
 	ui: function() {
 		return {
 			tabs: '.elementor-panel-navigation-tab',
-			reloadButton: '.elementor-update-preview-button'
+			reloadButton: '.elementor-update-preview-button',
 		};
 	},
 
 	events: function() {
 		return {
 			'click @ui.tabs': 'onClickTabControl',
-			'click @ui.reloadButton': 'onReloadButtonClick'
+			'click @ui.reloadButton': 'onReloadButtonClick',
 		};
 	},
 
 	modelEvents: {
-		destroy: 'onModelDestroy'
+		destroy: 'onModelDestroy',
 	},
 
 	behaviors: {
 		HandleInnerTabs: {
-			behaviorClass: require( 'elementor-behaviors/inner-tabs' )
-		}
+			behaviorClass: require( 'elementor-behaviors/inner-tabs' ),
+		},
 	},
 
 	initialize: function() {
@@ -210,7 +210,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 		if ( 'desktop' === device ) {
 			this.$el.toggleClass( 'elementor-responsive-switchers-open' );
 		}
-	}
+	},
 } );
 
 module.exports = ControlsStack;

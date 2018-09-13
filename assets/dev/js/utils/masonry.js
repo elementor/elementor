@@ -7,14 +7,14 @@ module.exports = ViewModule.extend( {
 			container: null,
 			items: null,
 			columnsCount: 3,
-			verticalSpaceBetween: 30
+			verticalSpaceBetween: 30,
 		};
 	},
 
 	getDefaultElements: function() {
 		return {
 			$container: jQuery( this.getSettings( 'container' ) ),
-			$items: jQuery( this.getSettings( 'items' ) )
+			$items: jQuery( this.getSettings( 'items' ) ),
 		};
 	},
 
@@ -47,5 +47,5 @@ module.exports = ViewModule.extend( {
 				heights.push( itemHeight );
 			}
 		} );
-	}
+	},
 } );

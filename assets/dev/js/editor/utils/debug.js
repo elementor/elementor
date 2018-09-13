@@ -8,8 +8,8 @@ var Debug = function() {
 		settings = {
 			debounceDelay: 500,
 			urlsToWatch: [
-				'elementor/assets'
-			]
+				'elementor/assets',
+			],
 		};
 	};
 
@@ -45,7 +45,7 @@ var Debug = function() {
 			message: error.message,
 			url: originalEvent.filename,
 			line: originalEvent.lineno,
-			column: originalEvent.colno
+			column: originalEvent.colno,
 		} );
 	};
 
@@ -76,8 +76,8 @@ var Debug = function() {
 			column: error.columnNumber || error.column,
 			customFields: {
 				category: category || 'general',
-				tag: tag
-			}
+				tag: tag,
+			},
 		};
 
 		if ( ! errorInfo.url ) {
@@ -101,7 +101,7 @@ var Debug = function() {
 			url: null,
 			line: null,
 			column: null,
-			customFields: {}
+			customFields: {},
 		};
 
 		errorStack.push( jQuery.extend( true, defaultParams, errorParams ) );
@@ -118,14 +118,14 @@ var Debug = function() {
 			method: 'POST',
 			data: {
 				action: 'elementor_debug_log',
-				data: errorStack
+				data: errorStack,
 			},
 			success: function() {
 				errorStack = [];
 
 				// Restore error handler
 				elements.$window.on( 'error', onError );
-			}
+			},
 		} );
 	};
 

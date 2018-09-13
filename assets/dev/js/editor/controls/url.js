@@ -27,7 +27,7 @@ module.exports = BaseMultiple.extend( {
 					action: 'wp-link-ajax',
 					page: 1,
 					search: request.term,
-					_ajax_linking_nonce: jQuery( '#_ajax_linking_nonce' ).val()
+					_ajax_linking_nonce: jQuery( '#_ajax_linking_nonce' ).val(),
 				}, function( data ) {
 					cache = data;
 					response( data );
@@ -57,8 +57,8 @@ module.exports = BaseMultiple.extend( {
 			minLength: 2,
 			position: {
 				my: positionBase + ' top+2',
-				at: positionBase + ' bottom'
-			}
+				at: positionBase + ' bottom',
+			},
 		} )
 		// The `_renderItem` cannot be override via the arguments.
 			.autocomplete( 'instance' )._renderItem = function( ul, item ) {
@@ -77,5 +77,5 @@ module.exports = BaseMultiple.extend( {
 		}
 
 		this.$el.remove();
-	}
+	},
 } );

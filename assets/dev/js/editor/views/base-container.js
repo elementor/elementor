@@ -2,7 +2,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	templateHelpers: function() {
 		return {
-			view: this
+			view: this,
 		};
 	},
 
@@ -27,7 +27,7 @@ module.exports = Marionette.CompositeView.extend( {
 			trigger: false,
 			edit: true,
 			onBeforeAdd: null,
-			onAfterAdd: null
+			onAfterAdd: null,
 		}, options );
 
 		var childTypes = this.getChildType(),
@@ -43,7 +43,7 @@ module.exports = Marionette.CompositeView.extend( {
 				id: elementor.helpers.getUniqueID(),
 				elType: childTypes[0],
 				settings: {},
-				elements: []
+				elements: [],
 			};
 
 			if ( data ) {
@@ -114,8 +114,8 @@ module.exports = Marionette.CompositeView.extend( {
 			at: childView.$el.index() + 1,
 			trigger: {
 				beforeAdd: 'element:before:add',
-				afterAdd: 'element:after:add'
-			}
+				afterAdd: 'element:after:add',
+			},
 		} );
 	},
 
@@ -138,5 +138,5 @@ module.exports = Marionette.CompositeView.extend( {
 		} );
 
 		elementor.channels.data.trigger( 'element:after:add', elements[0] );
-	}
+	},
 } );

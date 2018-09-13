@@ -35,8 +35,8 @@ WidgetView = BaseElementView.extend( {
 		_.extend( behaviors, {
 			InlineEditing: {
 				behaviorClass: require( 'elementor-behaviors/inline-editing' ),
-				inlineEditingClass: 'elementor-inline-editing'
-			}
+				inlineEditingClass: 'elementor-inline-editing',
+			},
 		} );
 
 		return elementor.hooks.applyFilters( 'elements/widget/behaviors', behaviors, this );
@@ -49,7 +49,7 @@ WidgetView = BaseElementView.extend( {
 
 		editModel.on( {
 			'before:remote:render': this.onModelBeforeRemoteRender.bind( this ),
-			'remote:render': this.onModelRemoteRender.bind( this )
+			'remote:render': this.onModelRemoteRender.bind( this ),
 		} );
 
 		if ( 'remote' === this.getTemplateType() && ! this.getEditModel().getHtmlCache() ) {
@@ -75,9 +75,9 @@ WidgetView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: elementor.translate( 'save_as_global' ),
-					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } )
-				}
-			]
+					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
+				},
+			],
 		} );
 
 		return groups;
@@ -136,12 +136,12 @@ WidgetView = BaseElementView.extend( {
 	addInlineEditingAttributes: function( key, toolbar ) {
 		this.addRenderAttribute( key, {
 			class: 'elementor-inline-editing',
-			'data-elementor-setting-key': key
+			'data-elementor-setting-key': key,
 		} );
 
 		if ( toolbar ) {
 			this.addRenderAttribute( key, {
-				'data-elementor-inline-editing-toolbar': toolbar
+				'data-elementor-inline-editing-toolbar': toolbar,
 			} );
 		}
 	},
@@ -195,7 +195,7 @@ WidgetView = BaseElementView.extend( {
 
 	onClickEdit: function() {
 		this.model.trigger( 'request:edit' );
-	}
+	},
 } );
 
 module.exports = WidgetView;

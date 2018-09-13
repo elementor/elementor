@@ -12,7 +12,7 @@ export default class extends Marionette.CompositeView {
 			title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
 			toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
 			toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
-			elements: '> .elementor-navigator__elements'
+			elements: '> .elementor-navigator__elements',
 		};
 	}
 
@@ -30,7 +30,7 @@ export default class extends Marionette.CompositeView {
 			'sortout @ui.elements': 'onSortOut',
 			'sortstop @ui.elements': 'onSortStop',
 			'sortupdate @ui.elements': 'onSortUpdate',
-			'sortreceive @ui.elements': 'onSortReceive'
+			'sortreceive @ui.elements': 'onSortReceive',
 		};
 	}
 
@@ -48,7 +48,7 @@ export default class extends Marionette.CompositeView {
 
 	childViewOptions() {
 		return {
-			indent: this.getIndent() + 10
+			indent: this.getIndent() + 10,
 		};
 	}
 
@@ -70,7 +70,7 @@ export default class extends Marionette.CompositeView {
 
 	attributes() {
 		return {
-			'data-model-cid': this.model.cid
+			'data-model-cid': this.model.cid,
 		};
 	}
 
@@ -181,7 +181,7 @@ export default class extends Marionette.CompositeView {
 	activateMouseInteraction() {
 		this.$el.on( {
 			mouseenter: this.onMouseEnter.bind( this ),
-			mouseleave: this.onMouseLeave.bind( this )
+			mouseleave: this.onMouseLeave.bind( this ),
 		} );
 	}
 
@@ -215,7 +215,7 @@ export default class extends Marionette.CompositeView {
 
 		elementor.addBackgroundClickListener( 'navigator', {
 			ignore: this.ui.title,
-			callback: this.exitTitleEditing.bind( this )
+			callback: this.exitTitleEditing.bind( this ),
 		} );
 	}
 
@@ -240,7 +240,7 @@ export default class extends Marionette.CompositeView {
 			axis: 'y',
 			forcePlaceholderSize: true,
 			connectWith: '.elementor-navigator__element-' + this.model.get( 'elType' ) + ' ' + this.ui.elements.selector,
-			cancel: '[contenteditable="true"]'
+			cancel: '[contenteditable="true"]',
 		} );
 	}
 

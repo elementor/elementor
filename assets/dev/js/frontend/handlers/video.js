@@ -7,8 +7,8 @@ VideoModule = HandlerModule.extend( {
 			selectors: {
 				imageOverlay: '.elementor-custom-embed-image-overlay',
 				video: '.elementor-video',
-				videoIframe: '.elementor-video-iframe'
-			}
+				videoIframe: '.elementor-video-iframe',
+			},
 		};
 	},
 
@@ -18,7 +18,7 @@ VideoModule = HandlerModule.extend( {
 		return {
 			$imageOverlay: this.$element.find( selectors.imageOverlay ),
 			$video: this.$element.find( selectors.video ),
-			$videoIframe: this.$element.find( selectors.videoIframe )
+			$videoIframe: this.$element.find( selectors.videoIframe ),
 		};
 	},
 
@@ -83,7 +83,7 @@ VideoModule = HandlerModule.extend( {
 		if ( 'aspect_ratio' === propertyName && isLightBoxEnabled ) {
 			this.handleAspectRatio();
 		}
-	}
+	},
 } );
 
 module.exports = function( $scope ) {

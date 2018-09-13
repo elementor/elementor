@@ -8,7 +8,7 @@ ElementModel = Backbone.Model.extend( {
 		elType: '',
 		isInner: false,
 		settings: {},
-		defaultEditSettings: {}
+		defaultEditSettings: {},
 	},
 
 	remoteRender: false,
@@ -43,7 +43,7 @@ ElementModel = Backbone.Model.extend( {
 
 		this.on( {
 			destroy: this.onDestroy,
-			'editor:close': this.onCloseEditor
+			'editor:close': this.onCloseEditor,
 		} );
 	},
 
@@ -51,7 +51,7 @@ ElementModel = Backbone.Model.extend( {
 		var elType = this.get( 'elType' ),
 			settings = this.get( 'settings' ),
 			settingModels = {
-				column: ColumnSettingsModel
+				column: ColumnSettingsModel,
 			},
 			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
 
@@ -67,7 +67,7 @@ ElementModel = Backbone.Model.extend( {
 		settings.isInner = this.get( 'isInner' );
 
 		settings = new SettingsModel( settings, {
-			controls: elementor.getElementControls( this )
+			controls: elementor.getElementControls( this ),
 		} );
 
 		this.set( 'settings', settings );
@@ -154,9 +154,9 @@ ElementModel = Backbone.Model.extend( {
 		return elementor.ajax.addRequest( 'render_widget', {
 			unique_id: this.cid,
 			data: {
-				data: data
+				data: data,
 			},
-			success: this.onRemoteGetHtml.bind( this )
+			success: this.onRemoteGetHtml.bind( this ),
 		}, true ).jqXhr;
 	},
 
@@ -240,7 +240,7 @@ ElementModel = Backbone.Model.extend( {
 		}
 
 		settings.destroy();
-	}
+	},
 
 } );
 

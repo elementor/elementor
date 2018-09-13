@@ -10,7 +10,7 @@ presetsFactory = {
 			16: 100 / 6,
 			33: 100 / 3,
 			66: 2 / 3 * 100,
-			83: 5 / 6 * 100
+			83: 5 / 6 * 100,
 		};
 	},
 
@@ -52,7 +52,7 @@ presetsFactory = {
 
 		return {
 			columnsCount: structure.slice( 0, -1 ),
-			presetIndex: structure.substr( -1 )
+			presetIndex: structure.substr( -1 ),
 		};
 	},
 
@@ -109,7 +109,7 @@ presetsFactory = {
 		}
 
 		return dOutput;
-	}
+	},
 };
 
 module.exports = presetsFactory;

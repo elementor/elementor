@@ -1,6 +1,6 @@
 var childViewTypes = {
 		color: require( 'elementor-panel/pages/schemes/items/color' ),
-		typography: require( 'elementor-panel/pages/schemes/items/typography' )
+		typography: require( 'elementor-panel/pages/schemes/items/typography' ),
 	},
 	PanelSchemeBaseView;
 
@@ -31,7 +31,7 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		return {
 			saveButton: '.elementor-panel-scheme-save .elementor-button',
 			discardButton: '.elementor-panel-scheme-discard .elementor-button',
-			resetButton: '.elementor-panel-scheme-reset .elementor-button'
+			resetButton: '.elementor-panel-scheme-reset .elementor-button',
 		};
 	},
 
@@ -39,7 +39,7 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		return {
 			'click @ui.saveButton': 'saveScheme',
 			'click @ui.discardButton': 'discardScheme',
-			'click @ui.resetButton': 'setDefaultScheme'
+			'click @ui.resetButton': 'setDefaultScheme',
 		};
 	},
 
@@ -129,7 +129,7 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		this.ui.saveButton.removeProp( 'disabled' );
 
 		this.setSchemeValue( childView.model.get( 'key' ), newValue );
-	}
+	},
 } );
 
 module.exports = PanelSchemeBaseView;
