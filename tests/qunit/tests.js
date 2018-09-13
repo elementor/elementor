@@ -15,16 +15,16 @@ QUnit.module( 'Loading' );
 
 QUnit.test( 'Elementor exist', function( assert ) {
 	assert.ok( elementor );
-});
+} );
 
 QUnit.test( 'Preview loaded', function( assert ) {
 	assert.ok( elementor.$previewContents, 'Preview Exist' );
 	assert.equal( 1, elementor.$previewContents.find( '.elementor-editor-active' ).length, 'Elementor area Exist' );
-});
+} );
 
 QUnit.test( 'Frontend CSS loaded', function( assert ) {
 	assert.equal( elementor.$previewContents.find( '#elementor-frontend-css' ).length, 1 );
-});
+} );
 
 function testPreview() {
 	QUnit.module( 'Widgets' );
@@ -61,7 +61,7 @@ function testPreview() {
 			[ 'general', 'shortcode' ],
 			[ 'general', 'html' ],
 			[ 'general', 'menu-anchor' ],
-			[ 'general', 'sidebar' ]
+			[ 'general', 'sidebar' ],
 			//,
 			// ['wordpress', 'wp-widget-pages'],
 			// ['wordpress', 'wp-widget-calendar'],
@@ -81,14 +81,14 @@ function testPreview() {
 			// ['wordpress', 'wp-widget-elementor-library']
 		];
 
-	_( elements ).each(function( element ) {
-		QUnit.test( 'addElementFromPanel:' + element[0] + ':' + element[1], function( assert ) {
-			elementorTests.setPanelSelectedElement( element[0], element[1] );
+	_( elements ).each( function( element ) {
+		QUnit.test( 'addElementFromPanel:' + element[ 0 ] + ':' + element[ 1 ], function( assert ) {
+			elementorTests.setPanelSelectedElement( element[ 0 ], element[ 1 ] );
 			firstColumnView.addElementFromPanel( { at: 0 } );
 
-			assert.equal( element[1], firstColumnView.model.get( 'elements' ).first().get( 'widgetType' ) );
-		});
-	});
+			assert.equal( element[ 1 ], firstColumnView.model.get( 'elements' ).first().get( 'widgetType' ) );
+		} );
+	} );
 
 	QUnit.test( 'Add New Section', function( assert ) {
 		// Clear Page
@@ -122,7 +122,7 @@ function testPreview() {
 				trigger: columnView.$el.find( '.elementor-editor-element-edit' ),
 				add: columnView.$el.find( '.elementor-editor-element-add' ),
 				duplicate: columnView.$el.find( '.elementor-editor-element-duplicate' ),
-				remove: columnView.$el.find( '.elementor-editor-element-remove' )
+				remove: columnView.$el.find( '.elementor-editor-element-remove' ),
 		};
 
 		QUnit.module( 'Check columns buttons', function() {
@@ -163,6 +163,6 @@ function testPreview() {
 }
 
 elementor.on( 'preview:loaded', function() {
-	window.pQuery = elementor.$preview[0].contentWindow.jQuery;
-	pQuery( elementor.$preview[0].contentDocument ).ready( testPreview );
-});
+	window.pQuery = elementor.$preview[ 0 ].contentWindow.jQuery;
+	pQuery( elementor.$preview[ 0 ].contentDocument ).ready( testPreview );
+} );

@@ -44,5 +44,5 @@ module.exports = Marionette.CompositeView.extend( {
 					callback.call( childView );
 				}
 		}
-	}
+	},
 } );

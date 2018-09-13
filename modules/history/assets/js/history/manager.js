@@ -16,16 +16,16 @@ var	Manager = function() {
 		change: elementor.translate( 'edited' ),
 		move: elementor.translate( 'moved' ),
 		paste_style: elementor.translate( 'style_pasted' ),
-		reset_style: elementor.translate( 'style_reset' )
+		reset_style: elementor.translate( 'style_reset' ),
 	};
 
 	var addBehaviors = function( behaviors ) {
 		behaviors.ElementHistory = {
-			behaviorClass: ElementHistoryBehavior
+			behaviorClass: ElementHistoryBehavior,
 		};
 
 		behaviors.CollectionHistory = {
-			behaviorClass: CollectionHistoryBehavior
+			behaviorClass: CollectionHistoryBehavior,
 		};
 
 		return behaviors;
@@ -33,7 +33,7 @@ var	Manager = function() {
 
 	var addCollectionBehavior = function( behaviors ) {
 		behaviors.CollectionHistory = {
-			behaviorClass: CollectionHistoryBehavior
+			behaviorClass: CollectionHistoryBehavior,
 		};
 
 		return behaviors;
@@ -72,7 +72,7 @@ var	Manager = function() {
 			},
 			handle: function() {
 				elementor.getPanelView().setPage( 'historyPage' );
-			}
+			},
 		} );
 
 		var navigationWorthHandling = function( event ) {
@@ -83,14 +83,14 @@ var	Manager = function() {
 			isWorthHandling: navigationWorthHandling,
 			handle: () => {
 				navigate( true );
-			}
+			},
 		} );
 
 		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
 			isWorthHandling: navigationWorthHandling,
 			handle: function( event ) {
 				navigate( event.shiftKey );
-			}
+			},
 		} );
 	};
 
@@ -168,7 +168,7 @@ var	Manager = function() {
 				title: elementor.translate( 'editing_started' ),
 				subTitle: '',
 				action: '',
-				editing_started: true
+				editing_started: true,
 			} );
 		}
 
@@ -180,7 +180,7 @@ var	Manager = function() {
 		var id = currentItemID ? currentItemID : new Date().getTime();
 
 		var	currentItem = items.findWhere( {
-			id: id
+			id: id,
 		} );
 
 		if ( ! currentItem ) {
@@ -190,7 +190,7 @@ var	Manager = function() {
 				subTitle: itemData.subTitle,
 				action: getActionLabel( itemData ),
 				type: itemData.type,
-				elementType: itemData.elementType
+				elementType: itemData.elementType,
 			} );
 
 			self.startItemTitle = '';
@@ -262,7 +262,7 @@ var	Manager = function() {
 			}
 		}
 
-		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[0], elementor.$previewContents.find( 'html' )[0] ) ) {
+		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
 			elementor.helpers.scrollToView( viewToScroll.$el );
 		}
 
@@ -349,7 +349,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'move',
 			title: self.getModelLabel( model ),
-			elementType: model.elType || model.get( 'elType' )
+			elementType: model.elType || model.get( 'elType' ),
 		} );
 	};
 
@@ -358,7 +358,7 @@ var	Manager = function() {
 			type: 'add',
 			title: elementor.translate( 'template' ),
 			subTitle: model.get( 'title' ),
-			elementType: 'template'
+			elementType: 'template',
 		} );
 	};
 
@@ -367,7 +367,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'add',
 			title: self.getModelLabel( elementView.model ),
-			elementType: elementView.model.get( 'widgetType' ) || elementView.model.get( 'elType' )
+			elementType: elementView.model.get( 'widgetType' ) || elementView.model.get( 'elType' ),
 		} );
 	};
 
@@ -375,7 +375,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'add',
 			title: self.getModelLabel( model ),
-			elementType: model.elType
+			elementType: model.elType,
 		} );
 	};
 
@@ -383,7 +383,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'paste_style',
 			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' )
+			elementType: model.get( 'elType' ),
 		} );
 	};
 
@@ -391,7 +391,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'reset_style',
 			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' )
+			elementType: model.get( 'elType' ),
 		} );
 	};
 
@@ -399,7 +399,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'remove',
 			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' )
+			elementType: model.get( 'elType' ),
 		} );
 	};
 

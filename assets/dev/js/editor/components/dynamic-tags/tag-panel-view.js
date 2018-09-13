@@ -17,12 +17,12 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	ui: {
-		remove: '.elementor-dynamic-cover__remove'
+		remove: '.elementor-dynamic-cover__remove',
 	},
 
 	events: function() {
 		var events = {
-			'click @ui.remove': 'onRemoveClick'
+			'click @ui.remove': 'onRemoveClick',
 		};
 
 		if ( this.hasSettings() ) {
@@ -39,7 +39,7 @@ module.exports = Marionette.ItemView.extend( {
 				hasSettings: this.hasSettings(),
 				isRemovable: ! this.getOption( 'dynamicSettings' ).default,
 				title: config.title,
-				content: config.panel_template
+				content: config.panel_template,
 			} );
 
 		return Marionette.TemplateCache.prototype.compileTemplate( renderedTemplate.trim() );
@@ -56,8 +56,8 @@ module.exports = Marionette.ItemView.extend( {
 				my: 'left top+5',
 				at: 'left bottom',
 				of: this.$el,
-				autoRefresh: true
-			}
+				autoRefresh: true,
+			},
 		};
 
 		var settingsPopup = elementor.dialogsManager.createWidget( 'buttons', settingsPopupOptions );
@@ -89,7 +89,7 @@ module.exports = Marionette.ItemView.extend( {
 		this.tagControlsStack = new TagControlsStack( {
 			model: this.model,
 			controls: this.model.controls,
-			el: this.getSettingsPopup().getElements( 'message' )[0]
+			el: this.getSettingsPopup().getElements( 'message' )[ 0 ],
 		} );
 
 		this.tagControlsStack.render();
@@ -97,7 +97,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	initModel: function() {
 		this.model = new SettingsModel( this.getOption( 'settings' ), {
-			controls: this.getTagConfig().controls
+			controls: this.getTagConfig().controls,
 		} );
 	},
 
@@ -129,5 +129,5 @@ module.exports = Marionette.ItemView.extend( {
 		if ( this.hasSettings() ) {
 			this.getSettingsPopup().destroy();
 		}
-	}
+	},
 } );

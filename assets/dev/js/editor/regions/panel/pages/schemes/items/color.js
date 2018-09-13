@@ -7,7 +7,7 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 	},
 
 	ui: {
-		input: '.elementor-panel-scheme-color-value'
+		input: '.elementor-panel-scheme-color-value',
 	},
 
 	changeUIValue: function( newValue ) {
@@ -26,9 +26,9 @@ PanelSchemeColorView = PanelSchemeItemView.extend( {
 		elementor.helpers.wpColorPicker( self.ui.input, {
 			change: function( event, ui ) {
 				self.triggerMethod( 'value:change', ui.color.toString() );
-			}
+			},
 		} );
-	}
+	},
 } );
 
 module.exports = PanelSchemeColorView;

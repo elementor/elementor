@@ -39,7 +39,7 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 
 	onFilterEmpty: function() {
 		elementor.getPanelView().getCurrentPageView().showView( 'categories' );
-	}
+	},
 } );
 
 module.exports = PanelElementsElementsView;

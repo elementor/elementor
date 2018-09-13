@@ -34,8 +34,8 @@
 
 			hash.forEach( function( singleQuery ) {
 				var queryParts = singleQuery.split( '_' ),
-					endPoint = queryParts[0],
-					deviceName = queryParts[1];
+					endPoint = queryParts[ 0 ],
+					deviceName = queryParts[ 1 ];
 
 				query[ endPoint ] = 'max' === endPoint ? getDeviceMaxValue( deviceName ) : devices[ deviceName ];
 			} );
@@ -135,7 +135,7 @@
 					var parsedRule = this.match( /([^{]+)\{([^}]+)}/ );
 
 					if ( parsedRule ) {
-						self.addRules( parsedRule[1].trim(), parsedRule[2].trim(), query );
+						self.addRules( parsedRule[ 1 ].trim(), parsedRule[ 2 ].trim(), query );
 					}
 				} );
 
@@ -155,7 +155,7 @@
 					$.each( styleRules, function() {
 						var property = this.split( /:(.*)?/ );
 
-						orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
+						orderedRules[ property[ 0 ].trim() ] = property[ 1 ].trim().replace( ';', '' );
 					} );
 				} catch ( error ) { // At least one of the properties is incorrect
 					return;

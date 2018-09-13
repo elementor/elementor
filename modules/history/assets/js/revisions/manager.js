@@ -45,7 +45,7 @@ RevisionsManager = function() {
 			},
 			handle: function( event ) {
 				elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( UP_ARROW_KEY === event.which );
-			}
+			},
 		};
 
 		elementor.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
@@ -65,8 +65,8 @@ RevisionsManager = function() {
 	this.getRevisionDataAsync = function( id, options ) {
 		_.extend( options, {
 			data: {
-				id: id
-			}
+				id: id,
+			},
 		} );
 
 		return elementor.ajax.send( 'get_revision_data', options );
@@ -75,7 +75,7 @@ RevisionsManager = function() {
 	this.addRevisions = function( items ) {
 		items.forEach( function( item ) {
 			var existedModel = revisions.findWhere( {
-				id: item.id
+				id: item.id,
 			} );
 
 			if ( existedModel ) {
@@ -89,7 +89,7 @@ RevisionsManager = function() {
 	this.deleteRevision = function( revisionModel, options ) {
 		var params = {
 			data: {
-				id: revisionModel.get( 'id' )
+				id: revisionModel.get( 'id' ),
 			},
 			success: function() {
 				if ( options.success ) {
@@ -104,7 +104,7 @@ RevisionsManager = function() {
 						panel.getCurrentPageView().activateTab( 'revisions' );
 					}
 				}
-			}
+			},
 		};
 
 		if ( options.error ) {

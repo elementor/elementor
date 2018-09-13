@@ -1,7 +1,7 @@
 /**
  * HTML5 - Drag and Drop
  */
-(function( $ ) {
+( function( $ ) {
 	var hasFullDataTransferSupport = function( event ) {
 		try {
 			event.originalEvent.dataTransfer.setData( 'test', 'test' );
@@ -22,7 +22,7 @@
 				element: '',
 				groups: null,
 				onDragStart: null,
-				onDragEnd: null
+				onDragEnd: null,
 			};
 
 		var initSettings = function() {
@@ -46,7 +46,7 @@
 		var onDragStart = function( event ) {
 			var groups = settings.groups || [],
 				dataContainer = {
-					groups: groups
+					groups: groups,
 				};
 
 			if ( hasFullDataTransferSupport( event ) ) {
@@ -103,7 +103,7 @@
 				onDragEnter: null,
 				onDragging: null,
 				onDropping: null,
-				onDragLeave: null
+				onDragLeave: null,
 			};
 
 		var initSettings = function() {
@@ -142,7 +142,7 @@
 				return false;
 			}
 
-			sensitivity = sensitivity[0];
+			sensitivity = sensitivity[ 0 ];
 
 			isPercentValue = /%$/.test( settings.horizontalSensitivity );
 
@@ -377,7 +377,7 @@
 
 	var plugins = {
 		html5Draggable: Draggable,
-		html5Droppable: Droppable
+		html5Droppable: Droppable,
 	};
 
 	$.each( plugins, function( pluginName, Plugin ) {
@@ -406,4 +406,4 @@
 			return this;
 		};
 	} );
-})( jQuery );
+} )( jQuery );

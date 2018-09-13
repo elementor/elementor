@@ -11,7 +11,7 @@ ControlSelectItemView = ControlBaseDataView.extend( {}, {
 		}
 
 		return undefined !== control.options[ clipboardValue ];
-	}
+	},
 } );
 
 module.exports = ControlSelectItemView;

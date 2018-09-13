@@ -7,10 +7,10 @@ module.exports = Backbone.Model.extend( {
 		title: '',
 		subTitle: '',
 		action: '',
-		history: {}
+		history: {},
 	},
 
 	initialize: function() {
 		this.set( 'items', new Backbone.Collection() );
-	}
+	},
 } );

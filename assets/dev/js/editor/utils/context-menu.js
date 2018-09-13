@@ -17,8 +17,8 @@ ContextMenu = Module.extend( {
 				iconShortcut: 'elementor-context-menu-list__item__icon',
 				itemDisabled: 'elementor-context-menu-list__item--disabled',
 				divider: 'elementor-context-menu-list__divider',
-				hidden: 'elementor-hidden'
-			}
+				hidden: 'elementor-hidden',
+			},
 		};
 	},
 
@@ -114,15 +114,15 @@ ContextMenu = Module.extend( {
 					iframe: elementor.$preview,
 					effects: {
 						hide: 'hide',
-						show: 'show'
+						show: 'show',
 					},
 					hide: {
-						onOutsideContextMenu: true
+						onOutsideContextMenu: true,
 					},
 					position: {
 						my: ( elementor.config.is_rtl ? 'right' : 'left' ) + ' top',
-						collision: 'fit'
-					}
+						collision: 'fit',
+					},
 				} );
 			}
 
@@ -135,7 +135,7 @@ ContextMenu = Module.extend( {
 			modal = self.getModal();
 
 		modal.setSettings( 'position', {
-			of: event
+			of: event,
 		} );
 
 		self.getSettings( 'groups' ).forEach( function( group ) {
@@ -165,7 +165,7 @@ ContextMenu = Module.extend( {
 
 	onInit: function() {
 		this.initModal();
-	}
+	},
 } );
 
 module.exports = ContextMenu;
