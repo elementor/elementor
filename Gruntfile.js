@@ -17,7 +17,7 @@ module.exports = function( grunt ) {
 		usebanner: require( './.grunt-config/usebanner' ),
 		sass: require( './.grunt-config/sass' ),
 		postcss: require( './.grunt-config/postcss' ),
-		watch:  require( './.grunt-config/watch' ),
+		watch: require( './.grunt-config/watch' ),
 		wp_readme_to_markdown: require( './.grunt-config/wp_readme_to_markdown' ),
 		bumpup: require( './.grunt-config/bumpup' ),
 		replace: require( './.grunt-config/replace' ),
