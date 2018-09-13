@@ -52,13 +52,11 @@ ControlsCSSParser = ViewModule.extend( {
 	},
 
 	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		var self = this;
-
 		ControlsCSSParser.addControlStyleRules(
-			self.stylesheet,
+			this.stylesheet,
 			control,
 			controls,
-			( StyleControl ) => self.getStyleControlValue( StyleControl, values ),
+			( StyleControl ) => this.getStyleControlValue( StyleControl, values ),
 			placeholders,
 			replacements );
 	},
