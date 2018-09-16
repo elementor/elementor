@@ -10,20 +10,20 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-elements',
 
 	options: {
-		autoFocusSearch: true
+		autoFocusSearch: true,
 	},
 
 	regions: {
 		elements: '#elementor-panel-elements-wrapper',
-		search: '#elementor-panel-elements-search-area'
+		search: '#elementor-panel-elements-search-area',
 	},
 
 	ui: {
-		tabs: '.elementor-panel-navigation-tab'
+		tabs: '.elementor-panel-navigation-tab',
 	},
 
 	events: {
-		'click @ui.tabs': 'onTabClick'
+		'click @ui.tabs': 'onTabClick',
 	},
 
 	regionViews: {},
@@ -47,21 +47,21 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			elements: {
 				region: this.elements,
 				view: PanelElementsElementsView,
-				options: { collection: this.elementsCollection }
+				options: { collection: this.elementsCollection },
 			},
 			categories: {
 				region: this.elements,
 				view: PanelElementsCategoriesView,
-				options: { collection: this.categoriesCollection }
+				options: { collection: this.categoriesCollection },
 			},
 			search: {
 				region: this.search,
-				view: PanelElementsSearchView
+				view: PanelElementsSearchView,
 			},
 			global: {
 				region: this.elements,
-				view: PanelElementsGlobalView
-			}
+				view: PanelElementsGlobalView,
+			},
 		};
 
 		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews );
@@ -75,7 +75,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			title: elementor.translate( 'inner_section' ),
 			elType: 'section',
 			categories: [ 'basic' ],
-			icon: sectionConfig.icon
+			keywords: [ 'row', 'columns', 'nested' ],
+			icon: sectionConfig.icon,
 		} );
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
@@ -91,7 +92,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				keywords: widget.keywords,
 				icon: widget.icon,
 				widgetType: widget.widget_type,
-				custom: widget.custom
+				custom: widget.custom,
 			} );
 		} );
 
@@ -132,7 +133,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
 				defaultActive: categoryConfig.active,
-				items: categories[ categoryName ]
+				items: categories[ categoryName ],
 			} );
 		} );
 
@@ -171,6 +172,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	focusSearch: function() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
 		this.search.currentView.ui.input.focus();
 	},
 
@@ -198,7 +203,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	onTabClick: function( event ) {
 		this.activateTab( event.currentTarget.dataset.view );
-	}
+	},
 } );
 
 module.exports = PanelElementsLayoutView;

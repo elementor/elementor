@@ -28,7 +28,7 @@ var ElementsCollection = Backbone.Collection.extend( {
 		} );
 
 		return newCollection;
-	}
+	},
 } );
 
 ElementsCollection.prototype.sync = ElementsCollection.prototype.fetch = ElementsCollection.prototype.save = _.noop;

@@ -6,7 +6,7 @@ ElementsHandler = function( $ ) {
 	// element-type.skin-type
 	var handlers = {
 		// Elements
-		'section': require( 'elementor-frontend/handlers/section' ),
+		section: require( 'elementor-frontend/handlers/section' ),
 
 		// Widgets
 		'accordion.default': require( 'elementor-frontend/handlers/accordion' ),
@@ -17,7 +17,7 @@ ElementsHandler = function( $ ) {
 		'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
 		'video.default': require( 'elementor-frontend/handlers/video' ),
 		'image-carousel.default': require( 'elementor-frontend/handlers/image-carousel' ),
-		'text-editor.default': require( 'elementor-frontend/handlers/text-editor' )
+		'text-editor.default': require( 'elementor-frontend/handlers/text-editor' ),
 	};
 
 	var addGlobalHandlers = function() {

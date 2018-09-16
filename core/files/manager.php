@@ -87,20 +87,9 @@ class Manager {
 	 * @access public
 	 */
 	public function clear_cache() {
-		// Delete post meta.
-		global $wpdb;
+		delete_post_meta_by_key( Post_CSS::META_KEY );
 
-		$wpdb->delete(
-			$wpdb->postmeta, [
-				'meta_key' => Post_CSS::META_KEY,
-			]
-		);
-
-		$wpdb->delete(
-			$wpdb->options, [
-				'option_name' => Global_CSS::META_KEY,
-			]
-		);
+		delete_option( Global_CSS::META_KEY );
 
 		delete_option( Frontend::META_KEY );
 

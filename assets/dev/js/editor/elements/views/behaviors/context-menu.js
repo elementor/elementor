@@ -4,18 +4,14 @@ module.exports = Marionette.Behavior.extend( {
 
 	defaults: {
 		groups: [],
-		eventTargets: [ 'el' ]
+		eventTargets: [ 'el' ],
 	},
 
 	events: function() {
-		var events = {};
-
-		if ( ! elementor.userCan( 'design' ) ) {
-			return events;
-		}
+		const events = {};
 
 		this.getOption( 'eventTargets' ).forEach( function( eventTarget ) {
-			var eventName = 'contextmenu';
+			let eventName = 'contextmenu';
 
 			if ( 'el' !== eventTarget ) {
 				eventName += ' ' + eventTarget;
@@ -46,13 +42,13 @@ module.exports = Marionette.Behavior.extend( {
 				{
 					name: 'navigator',
 					title: elementor.translate( 'navigator' ),
-					callback: elementor.navigator.open.bind( elementor.navigator, this.view.model )
-				}
-			]
+					callback: elementor.navigator.open.bind( elementor.navigator, this.view.model ),
+				},
+			],
 		} );
 
 		this.contextMenu = new ContextMenu( {
-			groups: contextMenuGroups
+			groups: contextMenuGroups,
 		} );
 
 		this.contextMenu.getModal().on( 'hide', this.onContextMenuHide );
@@ -67,13 +63,11 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onContextMenu: function( event ) {
-		if ( elementor.hotKeys.isControlEvent( event ) ) {
+		if ( elementor.hotKeys.isControlEvent( event ) || ! elementor.userCan( 'design' ) ) {
 			return;
 		}
 
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'edit' !== activeMode ) {
+		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
 			return;
 		}
 
@@ -110,5 +104,5 @@ module.exports = Marionette.Behavior.extend( {
 		if ( this.contextMenu ) {
 			this.contextMenu.destroy();
 		}
-	}
+	},
 } );

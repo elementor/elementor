@@ -1,9 +1,13 @@
-module.exports = Marionette.ItemView.extend( {
-	template: '#tmpl-elementor-navigator__elements--empty',
+export default class extends Marionette.ItemView {
+	getTemplate() {
+		return '#tmpl-elementor-navigator__elements--empty';
+	}
 
-	className: 'elementor-empty-view',
+	className() {
+		return 'elementor-empty-view';
+	}
 
-	onRender: function() {
+	onRendr() {
 		this.$el.css( 'padding-' + ( elementor.config.is_rtl ? 'right' : 'left' ), this.getOption( 'indent' ) );
 	}
-} );
+}

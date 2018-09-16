@@ -11,7 +11,7 @@ EditorView = ControlsStack.extend( {
 	childViewOptions: function() {
 		return {
 			elementSettingsModel: this.model.get( 'settings' ),
-			elementEditSettings: this.model.get( 'editSettings' )
+			elementEditSettings: this.model.get( 'editSettings' ),
 		};
 	},
 
@@ -75,7 +75,7 @@ EditorView = ControlsStack.extend( {
 			.trigger( 'change', childView, editedElementView )
 			.trigger( 'change:' + editedElementType, childView, editedElementView )
 			.trigger( 'change:' + editedElementType + ':' + childView.model.get( 'name' ), childView, editedElementView );
-	}
+	},
 } );
 
 module.exports = EditorView;

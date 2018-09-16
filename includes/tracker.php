@@ -27,6 +27,8 @@ class Tracker {
 	 */
 	private static $_api_url = 'http://my.elementor.com/api/v1/tracker/';
 
+	private static $notice_shown = false;
+
 	/**
 	 * Init.
 	 *
@@ -243,6 +245,22 @@ class Tracker {
 			return;
 		}
 
+		$elementor_pages = new \WP_Query( [
+			'post_type' => 'any',
+			'post_status' => 'publish',
+			'fields' => 'ids',
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			'meta_key' => '_elementor_edit_mode',
+			'meta_value' => 'builder',
+		] );
+
+		if ( 2 > $elementor_pages->post_count ) {
+			return;
+		}
+
+		self::$notice_shown = true;
+
 		// TODO: Skip for development env.
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
@@ -263,9 +281,9 @@ class Tracker {
 		<div class="notice updated elementor-message">
 			<div class="elementor-message-inner">
 				<div class="elementor-message-icon">
-                    <div class="e-logo-wrapper">
-                        <i class="eicon-elementor" aria-hidden="true"></i>
-                    </div>
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
 				</div>
 				<div class="elementor-message-content">
 					<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php echo __( 'Learn more.', 'elementor' ); ?></a></p>
@@ -276,6 +294,10 @@ class Tracker {
 			</div>
 		</div>
 		<?php
+	}
+
+	public static function is_notice_shown() {
+		return self::$notice_shown;
 	}
 
 	/**

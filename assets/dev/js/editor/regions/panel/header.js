@@ -9,12 +9,12 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 		menuButton: '#elementor-panel-header-menu-button',
 		menuIcon: '#elementor-panel-header-menu-button i',
 		title: '#elementor-panel-header-title',
-		addButton: '#elementor-panel-header-add-button'
+		addButton: '#elementor-panel-header-add-button',
 	},
 
 	events: {
 		'click @ui.addButton': 'onClickAdd',
-		'click @ui.menuButton': 'onClickMenu'
+		'click @ui.menuButton': 'onClickMenu',
 	},
 
 	setTitle: function( title ) {
@@ -37,7 +37,7 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 		}
 
 		panel.setPage( nextPage );
-	}
+	},
 } );
 
 module.exports = PanelHeaderItemView;

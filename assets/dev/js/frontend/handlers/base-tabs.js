@@ -7,16 +7,16 @@ module.exports = HandlerModule.extend( {
 		return {
 			selectors: {
 				tabTitle: '.elementor-tab-title',
-				tabContent: '.elementor-tab-content'
+				tabContent: '.elementor-tab-content',
 			},
 			classes: {
-				active: 'elementor-active'
+				active: 'elementor-active',
 			},
 			showTabFn: 'show',
 			hideTabFn: 'hide',
 			toggleSelf: true,
 			hidePrevious: true,
-			autoExpand: true
+			autoExpand: true,
 		};
 	},
 
@@ -25,27 +25,27 @@ module.exports = HandlerModule.extend( {
 
 		return {
 			$tabTitles: this.findElement( selectors.tabTitle ),
-			$tabContents: this.findElement( selectors.tabContent )
+			$tabContents: this.findElement( selectors.tabContent ),
 		};
 	},
 
 	activateDefaultTab: function() {
 		var settings = this.getSettings();
 
-		if ( ! settings.autoExpand || 'editor' === settings.autoExpand && ! this.isEdit ) {
+		if ( ! settings.autoExpand || 'editor' === ( settings.autoExpand && ! this.isEdit ) ) {
 			return;
 		}
 
 		var defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
 			originalToggleMethods = {
 				showTabFn: settings.showTabFn,
-				hideTabFn: settings.hideTabFn
+				hideTabFn: settings.hideTabFn,
 			};
 
 		// Toggle tabs without animation to avoid jumping
 		this.setSettings( {
 			showTabFn: 'show',
-			hideTabFn: 'hide'
+			hideTabFn: 'hide',
 		} );
 
 		this.changeActiveTab( defaultActiveTab );
@@ -124,5 +124,5 @@ module.exports = HandlerModule.extend( {
 		if ( ! isActiveTab ) {
 			this.activateTab( tabIndex );
 		}
-	}
+	},
 } );

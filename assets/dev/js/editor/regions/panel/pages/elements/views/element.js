@@ -23,9 +23,9 @@ PanelElementsElementView = Marionette.ItemView.extend( {
 				elementor.channels.panelElements.trigger( 'element:drag:end' );
 			},
 
-			groups: [ 'elementor-element' ]
+			groups: [ 'elementor-element' ],
 		} );
-	}
+	},
 } );
 
 module.exports = PanelElementsElementView;

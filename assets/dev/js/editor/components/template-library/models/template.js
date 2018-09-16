@@ -9,6 +9,6 @@ module.exports = Backbone.Model.extend( {
 		thumbnail: '',
 		url: '',
 		export_link: '',
-		tags: []
-	}
+		tags: [],
+	},
 } );
