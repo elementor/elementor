@@ -17,7 +17,7 @@ module.exports = function( grunt ) {
 		usebanner: require( './.grunt-config/usebanner' ),
 		sass: require( './.grunt-config/sass' ),
 		postcss: require( './.grunt-config/postcss' ),
-		watch:  require( './.grunt-config/watch' ),
+		watch: require( './.grunt-config/watch' ),
 		wp_readme_to_markdown: require( './.grunt-config/wp_readme_to_markdown' ),
 		bumpup: require( './.grunt-config/bumpup' ),
 		replace: require( './.grunt-config/replace' ),
@@ -27,8 +27,8 @@ module.exports = function( grunt ) {
 		clean: require( './.grunt-config/clean' ),
 		webpack: require( './.grunt-config/webpack' ),
 		qunit: {
-			src: 'tests/qunit/index.html'
-		}
+			src: 'tests/qunit/index.html',
+		},
 	} );
 
 	// Default task(s).
@@ -36,11 +36,11 @@ module.exports = function( grunt ) {
 		'i18n',
 		'wp_readme_to_markdown',
 		'scripts',
-		'styles'
+		'styles',
 	] );
 
 	grunt.registerTask( 'i18n', [
-		'checktextdomain'
+		'checktextdomain',
 	] );
 
 	grunt.registerTask( 'scripts', ( isDevMode = false ) => {
@@ -79,15 +79,15 @@ module.exports = function( grunt ) {
 				cwd: 'assets/dev/scss/direction',
 				src: [ 'frontend.scss', 'frontend-rtl.scss' ],
 				dest: 'assets/css/templates',
-				ext: '.css'
-			} ]
+				ext: '.css',
+			} ],
 		} );
 
 		grunt.task.run( 'sass' );
 
 		grunt.config( 'postcss.minify.files.0.src', [
 			'assets/css/templates/*.css',
-			'!assets/css/templates/*.min.css'
+			'!assets/css/templates/*.min.css',
 		] );
 
 		grunt.task.run( 'postcss:minify' );
@@ -105,7 +105,7 @@ module.exports = function( grunt ) {
 		'usebanner',
 		'clean',
 		'copy',
-		'default' // Remove banners for GitHub
+		'default', // Remove banners for GitHub
 	] );
 
 	grunt.registerTask( 'publish', ( releaseType ) => {
@@ -124,6 +124,6 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'test', [
 		'qunit',
-		'clean:qunit'
+		'clean:qunit',
 	] );
 };

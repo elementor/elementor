@@ -21,21 +21,21 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 
 	ui: function() {
 		return {
-			previewButton: '.elementor-template-library-template-preview'
+			previewButton: '.elementor-template-library-template-preview',
 		};
 	},
 
 	events: function() {
 		return {
-			'click @ui.previewButton': 'onPreviewButtonClick'
+			'click @ui.previewButton': 'onPreviewButtonClick',
 		};
 	},
 
 	behaviors: {
 		insertTemplate: {
-			behaviorClass: TemplateLibraryInsertTemplateBehavior
-		}
-	}
+			behaviorClass: TemplateLibraryInsertTemplateBehavior,
+		},
+	},
 } );
 
 module.exports = TemplateLibraryTemplateView;

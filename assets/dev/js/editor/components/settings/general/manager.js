@@ -9,6 +9,6 @@ module.exports = BaseSettings.extend( {
 			titleSelectors[ newSelector ] = 'display: none';
 
 			elementor.settings.page.updateStylesheet();
-		}
-	}
+		},
+	},
 } );

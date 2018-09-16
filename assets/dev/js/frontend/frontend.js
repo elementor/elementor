@@ -42,12 +42,12 @@
 			self.utils = {
 				youtube: new YouTubeModule(),
 				anchors: new AnchorsModule(),
-				lightbox: new LightboxModule()
+				lightbox: new LightboxModule(),
 			};
 
 			self.modules = {
 				StretchElement: require( 'elementor-frontend/modules/stretch-element' ),
-				Masonry: require( 'elementor-utils/masonry' )
+				Masonry: require( 'elementor-utils/masonry' ),
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
@@ -220,7 +220,7 @@
 		this.waypoint = function( $element, callback, options ) {
 			var defaultOptions = {
 				offset: '100%',
-				triggerOnce: true
+				triggerOnce: true,
 			};
 
 			options = $.extend( defaultOptions, options );

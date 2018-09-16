@@ -10,7 +10,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		content: '#elementor-panel-content-wrapper',
 		header: '#elementor-panel-header-wrapper',
 		footer: '#elementor-panel-footer',
-		modeSwitcher: '#elementor-mode-switcher'
+		modeSwitcher: '#elementor-mode-switcher',
 	},
 
 	pages: {},
@@ -21,7 +21,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		},
 		'editor:destroy': function() {
 			this.setPage( 'elements', null, { autoFocusSearch: false } );
-		}
+		},
 	},
 
 	currentPageName: null,
@@ -38,24 +38,24 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		var pages = {
 			elements: {
 				view: require( 'elementor-panel/pages/elements/elements' ),
-				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
+				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">',
 			},
 			editor: {
-				view: require( 'elementor-panel/pages/editor' )
+				view: require( 'elementor-panel/pages/editor' ),
 			},
 			menu: {
 				view: elementor.modules.layouts.panel.pages.menu.Menu,
-				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
+				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">',
 			},
 			colorScheme: {
-				view: require( 'elementor-panel/pages/schemes/colors' )
+				view: require( 'elementor-panel/pages/schemes/colors' ),
 			},
 			typographyScheme: {
-				view: require( 'elementor-panel/pages/schemes/typography' )
+				view: require( 'elementor-panel/pages/schemes/typography' ),
 			},
 			colorPickerScheme: {
-				view: require( 'elementor-panel/pages/schemes/color-picker' )
-			}
+				view: require( 'elementor-panel/pages/schemes/color-picker' ),
+			},
 		};
 
 		var schemesTypes = Object.keys( elementor.schemes.getSchemes() ),
@@ -65,7 +65,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			var scheme = elementor.schemes.getScheme( schemeType );
 
 			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' ).extend( {
-				disabledTitle: scheme.disabled_title
+				disabledTitle: scheme.disabled_title,
 			} );
 		} );
 
@@ -150,7 +150,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ), {
 			model: model,
 			controls: elementor.getElementControls( model ),
-			editedElementView: view
+			editedElementView: view,
 		} );
 
 		const action = 'panel/open_editor/' + model.get( 'elType' );
@@ -206,7 +206,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		}
 
 		$panel.perfectScrollbar( 'update' );
-	}
+	},
 } );
 
 module.exports = PanelLayoutView;

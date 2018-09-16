@@ -4,6 +4,6 @@ module.exports = Marionette.ItemView.extend( {
 	className: 'elementor-panel-menu-item',
 
 	triggers: {
-		click: 'click'
-	}
+		click: 'click',
+	},
 } );
