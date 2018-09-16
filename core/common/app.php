@@ -123,6 +123,7 @@ class App extends BaseApp {
 	protected function get_init_settings() {
 		return [
 			'version' => ELEMENTOR_VERSION,
+			'isRTL' => is_rtl(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 				'ajax' => admin_url( 'admin-ajax.php' ),

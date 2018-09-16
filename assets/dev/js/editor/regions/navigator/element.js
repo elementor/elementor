@@ -254,7 +254,7 @@ export default class extends Marionette.CompositeView {
 	onRender() {
 		this.activateSortable();
 
-		this.ui.item.css( 'padding-' + ( elementor.config.is_rtl ? 'right' : 'left' ), this.getIndent() );
+		this.ui.item.css( 'padding-' + ( elementorCommon.config.isRTL ? 'right' : 'left' ), this.getIndent() );
 
 		this.toggleHiddenClass();
 	}

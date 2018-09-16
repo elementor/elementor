@@ -131,7 +131,7 @@ export default class extends BaseRegion {
 	dock() {
 		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
 
-		const side = elementor.config.is_rtl ? 'left' : 'right',
+		const side = elementorCommon.config.isRTL ? 'left' : 'right',
 			resizableOptions = this.getResizableOptions();
 
 		this.$el.css( {
@@ -146,7 +146,7 @@ export default class extends BaseRegion {
 
 		this.$el.resizable( 'destroy' );
 
-		resizableOptions.handles = elementor.config.is_rtl ? 'e' : 'w';
+		resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
 
 		resizableOptions.resize = ( event, ui ) => {
 			elementor.$previewWrapper.css( side, ui.size.width );
@@ -162,7 +162,7 @@ export default class extends BaseRegion {
 	undock( silent ) {
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
 
-		elementor.$previewWrapper.css( elementor.config.is_rtl ? 'left' : 'right', '' );
+		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
 
 		this.setSize();
 
@@ -229,7 +229,7 @@ export default class extends BaseRegion {
 		const isOutOfLeft = 0 > ui.position.left,
 			isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth;
 
-		if ( elementor.config.is_rtl ) {
+		if ( elementorCommon.config.isRTL ) {
 			if ( isOutOfRight ) {
 				ui.position.left = innerWidth - this.el.offsetWidth;
 			}
@@ -237,7 +237,7 @@ export default class extends BaseRegion {
 			ui.position.left = 0;
 		}
 
-		elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', elementor.config.is_rtl ? isOutOfLeft : isOutOfRight );
+		elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', elementorCommon.config.isRTL ? isOutOfLeft : isOutOfRight );
 	}
 
 	onDragStop( event, ui ) {

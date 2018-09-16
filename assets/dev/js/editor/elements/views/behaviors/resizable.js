@@ -2,7 +2,7 @@ var ResizableBehavior;
 
 ResizableBehavior = Marionette.Behavior.extend( {
 	defaults: {
-		handles: elementor.config.is_rtl ? 'w' : 'e',
+		handles: elementorCommon.config.isRTL ? 'w' : 'e',
 	},
 
 	events: {
