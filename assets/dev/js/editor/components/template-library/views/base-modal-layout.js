@@ -60,7 +60,9 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	getHeaderOptions: function() {
-		return {};
+		return {
+			closeType: 'normal',
+		};
 	},
 
 	getHeaderView: function() {
