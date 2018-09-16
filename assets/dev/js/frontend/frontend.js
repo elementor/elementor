@@ -22,15 +22,10 @@
 
 		var initElements = function() {
 			elements.window = window;
-
 			elements.$window = $( window );
-
 			elements.$document = $( document );
-
 			elements.$body = $( 'body' );
-
 			elements.$elementor = elements.$document.find( '.elementor' );
-
 			elements.$wpAdminBar = elements.$document.find( '#wpadminbar' );
 		};
 
@@ -79,10 +74,10 @@
 			}
 			elements.$body.addClass( 'elementor-msie' );
 
-			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie"  href="' + elementorFrontend.config.urls.assets  + 'css/frontend-msie.min.css?' + elementorFrontend.config.version + '" type="text/css" />';
+			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie" href="' + elementorFrontend.config.urls.assets + 'css/frontend-msie.min.css?' + elementorFrontend.config.version + '" type="text/css" />';
 
-				elements.$body.append( msieCss );
-			};
+			elements.$body.append( msieCss );
+		};
 
 		this.init = function() {
 			self.hooks = new EventManager();
