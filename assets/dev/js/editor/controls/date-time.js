@@ -11,7 +11,7 @@ ControlDateTimePickerItemView = ControlBaseDataView.extend( {
 				self.saveValue();
 			},
 			enableTime: true,
-			minuteIncrement: 1
+			minuteIncrement: 1,
 		}, this.model.get( 'picker_options' ) );
 
 		this.ui.input.flatpickr( options );
@@ -24,7 +24,7 @@ ControlDateTimePickerItemView = ControlBaseDataView.extend( {
 	onBeforeDestroy: function() {
 		this.saveValue();
 		this.ui.input.flatpickr().destroy();
-	}
+	},
 } );
 
 module.exports = ControlDateTimePickerItemView;

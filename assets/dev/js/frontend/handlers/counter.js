@@ -6,7 +6,7 @@ module.exports = function( $scope, $ ) {
 		var decimalDigits = data.toValue.toString().match( /\.(.*)/ );
 
 		if ( decimalDigits ) {
-			data.rounding = decimalDigits[1].length;
+			data.rounding = decimalDigits[ 1 ].length;
 		}
 
 		$number.numerator( data );

@@ -7,14 +7,14 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 			inputWidth: 'input[data-setting="width"]',
 			inputHeight: 'input[data-setting="height"]',
 
-			btnApply: 'button.elementor-image-dimensions-apply-button'
+			btnApply: 'button.elementor-image-dimensions-apply-button',
 		};
 	},
 
 	// Override the base events
 	events: function() {
 		return {
-			'click @ui.btnApply': 'onApplyClicked'
+			'click @ui.btnApply': 'onApplyClicked',
 		};
 	},
 
@@ -23,9 +23,9 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 
 		this.setValue( {
 			width: this.ui.inputWidth.val(),
-			height: this.ui.inputHeight.val()
+			height: this.ui.inputHeight.val(),
 		} );
-	}
+	},
 } );
 
 module.exports = ControlImageDimensionsItemView;

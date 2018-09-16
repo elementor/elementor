@@ -2,13 +2,13 @@ var ResizableBehavior;
 
 ResizableBehavior = Marionette.Behavior.extend( {
 	defaults: {
-		handles: elementor.config.is_rtl ? 'w' : 'e'
+		handles: elementor.config.is_rtl ? 'w' : 'e',
 	},
 
 	events: {
 		resizestart: 'onResizeStart',
 		resizestop: 'onResizeStop',
-		resize: 'onResize'
+		resize: 'onResize',
 	},
 
 	initialize: function() {
@@ -82,7 +82,7 @@ ResizableBehavior = Marionette.Behavior.extend( {
 
 	getChildViewContainer: function() {
 		return this.$el;
-	}
+	},
 } );
 
 module.exports = ResizableBehavior;

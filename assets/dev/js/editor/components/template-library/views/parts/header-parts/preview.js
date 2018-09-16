@@ -7,7 +7,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	behaviors: {
 		insertTemplate: {
-			behaviorClass: TemplateLibraryInsertTemplateBehavior
-		}
-	}
+			behaviorClass: TemplateLibraryInsertTemplateBehavior,
+		},
+	},
 } );

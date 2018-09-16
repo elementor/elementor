@@ -46,9 +46,9 @@ ControlIconView = ControlSelect2View.extend( {
 		return {
 			allowClear: true,
 			templateResult: this.iconsList.bind( this ),
-			templateSelection: this.iconsList.bind( this )
+			templateSelection: this.iconsList.bind( this ),
 		};
-	}
+	},
 } );
 
 module.exports = ControlIconView;

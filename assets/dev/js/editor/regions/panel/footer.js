@@ -15,7 +15,7 @@ module.exports = Marionette.ItemView.extend( {
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
 		saveTemplate: '#elementor-panel-saver-menu-save-template',
 		history: '#elementor-panel-footer-history',
-		navigator: '#elementor-panel-footer-navigator'
+		navigator: '#elementor-panel-footer-navigator',
 	},
 
 	events: {
@@ -24,14 +24,14 @@ module.exports = Marionette.ItemView.extend( {
 		'click @ui.deviceModeButtons': 'onResponsiveButtonsClick',
 		'click @ui.saveTemplate': 'onSaveTemplateClick',
 		'click @ui.history': 'onHistoryClick',
-		'click @ui.navigator': 'onNavigatorClick'
+		'click @ui.navigator': 'onNavigatorClick',
 	},
 
 	behaviors: function() {
 		var behaviors = {
 			saver: {
-				behaviorClass: elementor.modules.components.saver.behaviors.FooterSaver
-			}
+				behaviorClass: elementor.modules.components.saver.behaviors.FooterSaver,
+			},
 		};
 
 		return elementor.hooks.applyFilters( 'panel/footer/behaviors', behaviors, this );
@@ -97,7 +97,7 @@ module.exports = Marionette.ItemView.extend( {
 		elementor.templates.startModal( {
 			onReady: function() {
 				elementor.templates.getLayout().showSaveTemplateView();
-			}
+			},
 		} );
 	},
 
@@ -113,5 +113,5 @@ module.exports = Marionette.ItemView.extend( {
 		} else {
 			elementor.navigator.open();
 		}
-	}
+	},
 } );

@@ -7,15 +7,15 @@ module.exports = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-history-page',
 
 	regions: {
-		content: '#elementor-panel-history-content'
+		content: '#elementor-panel-history-content',
 	},
 
 	ui: {
-		tabs: '.elementor-panel-navigation-tab'
+		tabs: '.elementor-panel-navigation-tab',
 	},
 
 	events: {
-		'click @ui.tabs': 'onTabClick'
+		'click @ui.tabs': 'onTabClick',
 	},
 
 	regionViews: {},
@@ -30,7 +30,7 @@ module.exports = Marionette.LayoutView.extend( {
 		var historyItems = elementor.history.history.getItems(),
 			revisionsItems = elementor.history.revisions.getItems();
 
-		this.regionViews  = {
+		this.regionViews = {
 			history: {
 				region: this.content,
 				view: function() {
@@ -41,8 +41,8 @@ module.exports = Marionette.LayoutView.extend( {
 					return TabHistoryEmpty;
 				},
 				options: {
-					collection: historyItems
-				}
+					collection: historyItems,
+				},
 			},
 			revisions: {
 				region: this.content,
@@ -55,9 +55,9 @@ module.exports = Marionette.LayoutView.extend( {
 				},
 
 				options: {
-					collection: revisionsItems
-				}
-			}
+					collection: revisionsItems,
+				},
+			},
 		};
 	},
 
@@ -99,5 +99,5 @@ module.exports = Marionette.LayoutView.extend( {
 
 	onDestroy: function() {
 		elementor.getPanelView().getFooterView().ui.history.removeClass( 'elementor-open' );
-	}
+	},
 } );

@@ -8,11 +8,11 @@ module.exports = Marionette.Behavior.extend( {
 
 	ui: {
 		tagArea: '.elementor-control-tag-area',
-		dynamicSwitcher: '.elementor-control-dynamic-switcher'
+		dynamicSwitcher: '.elementor-control-dynamic-switcher',
 	},
 
 	events: {
-		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick'
+		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick',
 	},
 
 	initialize: function() {
@@ -23,7 +23,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	renderTools: function() {
-		if ( this.getOption( 'dynamicSettings' )['default'] ) {
+		if ( this.getOption( 'dynamicSettings' ).default ) {
 			return;
 		}
 
@@ -47,8 +47,8 @@ module.exports = Marionette.Behavior.extend( {
 	createTagsList: function() {
 		var tags = _.groupBy( this.getOption( 'tags' ), 'group' ),
 			groups = elementor.dynamicTags.getConfig( 'groups' ),
-			$tagsList = this.ui.tagsList = jQuery( '<div>', { 'class': 'elementor-tags-list' } ),
-			$tagsListInner = jQuery( '<div>', { 'class': 'elementor-tags-list__inner' } );
+			$tagsList = this.ui.tagsList = jQuery( '<div>', { class: 'elementor-tags-list' } ),
+			$tagsListInner = jQuery( '<div>', { class: 'elementor-tags-list__inner' } );
 
 		$tagsList.append( $tagsListInner );
 
@@ -60,12 +60,12 @@ module.exports = Marionette.Behavior.extend( {
 			}
 
 			var group = this,
-				$groupTitle = jQuery( '<div>', { 'class': 'elementor-tags-list__group-title' } ).text( group.title );
+				$groupTitle = jQuery( '<div>', { class: 'elementor-tags-list__group-title' } ).text( group.title );
 
 			$tagsListInner.append( $groupTitle );
 
 			groupTags.forEach( function( tag ) {
-				var $tag = jQuery( '<div>', { 'class': 'elementor-tags-list__item' } );
+				var $tag = jQuery( '<div>', { class: 'elementor-tags-list__item' } );
 
 				$tag.text( tag.title ).attr( 'data-tag-name', tag.name );
 
@@ -98,7 +98,7 @@ module.exports = Marionette.Behavior.extend( {
 		$tagsList.show().position( {
 			my: 'right top',
 			at: 'right bottom+5',
-			of: this.ui.dynamicSwitcher
+			of: this.ui.dynamicSwitcher,
 		} );
 	},
 
@@ -111,7 +111,7 @@ module.exports = Marionette.Behavior.extend( {
 			id: id,
 			name: name,
 			settings: settings,
-			dynamicSettings: this.getOption( 'dynamicSettings' )
+			dynamicSettings: this.getOption( 'dynamicSettings' ),
 		} );
 
 		tagView.render();
@@ -142,8 +142,8 @@ module.exports = Marionette.Behavior.extend( {
 		return {
 			control: {
 				name: '__dynamic__',
-				label: this.view.model.get( 'label' )
-			}
+				label: this.view.model.get( 'label' ),
+			},
 		};
 	},
 
@@ -208,7 +208,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		dynamicSettings = elementor.helpers.cloneObject( dynamicSettings );
 
-		delete dynamicSettings[settingKey ];
+		delete dynamicSettings[ settingKey ];
 
 		if ( Object.keys( dynamicSettings ).length ) {
 			this.view.elementSettingsModel.set( '__dynamic__', dynamicSettings, this.getDynamicControlSettings( settingKey ) );
@@ -231,5 +231,5 @@ module.exports = Marionette.Behavior.extend( {
 
 	onDestroy: function() {
 		this.destroyTagView();
-	}
+	},
 } );

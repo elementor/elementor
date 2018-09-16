@@ -3,7 +3,7 @@ var ControlBaseView;
 ControlBaseView = Marionette.CompositeView.extend( {
 	ui: function() {
 		return {
-			controlTitle: '.elementor-control-title'
+			controlTitle: '.elementor-control-title',
 		};
 	},
 
@@ -36,11 +36,11 @@ ControlBaseView = Marionette.CompositeView.extend( {
 
 	templateHelpers: function() {
 		var controlData = {
-			_cid: this.model.cid
+			_cid: this.model.cid,
 		};
 
 		return {
-			data: _.extend( {}, this.model.toJSON(), controlData )
+			data: _.extend( {}, this.model.toJSON(), controlData ),
 		};
 	},
 
@@ -81,7 +81,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		this.$el.addClass( elClasses );
 
 		this.toggleControlVisibility();
-	}
+	},
 } );
 
 module.exports = ControlBaseView;
