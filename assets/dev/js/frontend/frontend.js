@@ -74,7 +74,7 @@
 				el = document.createElement( 'div' ),
 				supportsGrid = 'string' === typeof el.style.grid;
 
-			if ( ! isIE || supportsGrid ) {
+			if ( ! isIE && supportsGrid ) {
 				return;
 			}
 			elements.$body.addClass( 'elementor-msie' );
