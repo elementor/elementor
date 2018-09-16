@@ -15,7 +15,15 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 	events: function() {
 		return {
 			'click @ui.btnApply': 'onApplyClicked',
+			'keyup @ui.inputWidth': 'onDimensionKeyUp',
+			'keyup @ui.inputHeight': 'onDimensionKeyUp'
 		};
+	},
+
+	onDimensionKeyUp: function( event ) {
+		if ( 'Enter' === event.key ) {
+			this.onApplyClicked( event );
+		}
 	},
 
 	onApplyClicked: function( event ) {
