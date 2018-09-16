@@ -291,7 +291,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Fix: Selector for CSS Filters control in column
 * Fix: CSS Filters for self hosted video
 * Fix: Avoid creating unnecessary CSS for widgets
-* Fix: Added backward comparability for deprecated controls
+* Fix: Added backward compatibility for deprecated controls
 * Fix: Color Picker control value change detection
 * Fix: Avoid multiple ready trigger in preview
 * Fix: Save default page template

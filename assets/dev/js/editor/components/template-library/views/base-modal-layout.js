@@ -13,7 +13,7 @@ module.exports = Marionette.LayoutView.extend( {
 		return {
 			modalHeader: '.dialog-header',
 			modalContent: '.dialog-lightbox-content',
-			modalLoading: '.dialog-lightbox-loading'
+			modalLoading: '.dialog-lightbox-loading',
 		};
 	},
 
@@ -32,8 +32,8 @@ module.exports = Marionette.LayoutView.extend( {
 			className: 'elementor-templates-modal',
 			closeButton: false,
 			hide: {
-				onOutsideClick: false
-			}
+				onOutsideClick: false,
+			},
 		};
 
 		jQuery.extend( true, modalOptions, this.getModalOptions() );
@@ -83,5 +83,5 @@ module.exports = Marionette.LayoutView.extend( {
 
 	showLogo: function() {
 		this.getHeaderView().logoArea.show( new TemplateLibraryHeaderLogoView( this.getLogoOptions() ) );
-	}
+	},
 } );

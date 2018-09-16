@@ -9,8 +9,7 @@
 		LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
 	var ElementorFrontend = function() {
-		var self = this,
-			dialogsManager;
+		var self = this;
 
 		this.config = elementorFrontendConfig;
 
@@ -41,12 +40,12 @@
 			self.utils = {
 				youtube: new YouTubeModule(),
 				anchors: new AnchorsModule(),
-				lightbox: new LightboxModule()
+				lightbox: new LightboxModule(),
 			};
 
 			self.modules = {
 				StretchElement: require( 'elementor-frontend/modules/stretch-element' ),
-				Masonry: require( 'elementor-utils/masonry' )
+				Masonry: require( 'elementor-utils/masonry' ),
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
@@ -69,11 +68,10 @@
 
 			elementorCommon.elements.$body.addClass( 'elementor-msie' );
 
-			var $frontendCss = jQuery( '#elementor-frontend-css' ),
-				msieCss = $frontendCss[0].outerHTML.replace( 'css/frontend', 'css/frontend-msie' ).replace( 'elementor-frontend-css', 'elementor-frontend-msie-css' );
+			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie"  href="' + elementorCommon.config.urls.assets + 'css/frontend-msie.min.css?' + elementorCommon.config.version + '" type="text/css" />';
 
-				$frontendCss.after( msieCss );
-			};
+			elements.$body.append( msieCss );
+		};
 
 		this.init = function() {
 			self.hooks = new EventManager();
@@ -199,7 +197,7 @@
 		this.waypoint = function( $element, callback, options ) {
 			var defaultOptions = {
 				offset: '100%',
-				triggerOnce: true
+				triggerOnce: true,
 			};
 
 			options = $.extend( defaultOptions, options );

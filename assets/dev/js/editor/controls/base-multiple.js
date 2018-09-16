@@ -55,7 +55,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		var key = input.dataset.setting;
 
 		this.setValue( key, value );
-	}
+	},
 }, {
 	// Static methods
 	getStyleValue: function( placeholder, controlValue ) {
@@ -64,7 +64,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		}
 
 		return controlValue[ placeholder ];
-	}
+	},
 } );
 
 module.exports = ControlBaseMultipleItemView;

@@ -1,6 +1,6 @@
 module.exports = Marionette.ItemView.extend( {
 	options: {
-		activeClass: 'elementor-active'
+		activeClass: 'elementor-active',
 	},
 
 	template: '#tmpl-elementor-template-library-header-menu',
@@ -8,11 +8,11 @@ module.exports = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-header-menu',
 
 	ui: {
-		menuItems: '.elementor-template-library-menu-item'
+		menuItems: '.elementor-template-library-menu-item',
 	},
 
 	events: {
-		'click @ui.menuItems': 'onMenuItemClick'
+		'click @ui.menuItems': 'onMenuItemClick',
 	},
 
 	$activeItem: null,
@@ -51,5 +51,5 @@ module.exports = Marionette.ItemView.extend( {
 		this.activateMenuItem( jQuery( item ) );
 
 		elementor.templates.setTemplatesPage( item.dataset.templateSource, itemData.templateType );
-	}
+	},
 } );

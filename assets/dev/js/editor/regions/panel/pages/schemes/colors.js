@@ -28,7 +28,7 @@ PanelSchemeColorsView = PanelSchemeBaseView.extend( {
 			scheme = elementor.config.system_schemes[ this.getType() ][ schemeName ].items;
 
 		this.changeChildrenUIValues( scheme );
-	}
+	},
 } );
 
 module.exports = PanelSchemeColorsView;

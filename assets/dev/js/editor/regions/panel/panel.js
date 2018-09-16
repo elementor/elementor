@@ -10,8 +10,8 @@ module.exports = BaseRegion.extend( {
 	getDefaultStorage: function() {
 		return {
 			size: {
-				width: ''
-			}
+				width: '',
+			},
 		};
 	},
 
@@ -58,7 +58,7 @@ module.exports = BaseRegion.extend( {
 			},
 			resize: function( event, ui ) {
 				elementor.$previewWrapper.css( side, ui.size.width );
-			}
+			},
 		} );
 	},
 
@@ -68,5 +68,5 @@ module.exports = BaseRegion.extend( {
 		}
 
 		this.setSize();
-	}
+	},
 } );

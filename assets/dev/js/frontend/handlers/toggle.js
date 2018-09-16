@@ -6,6 +6,6 @@ module.exports = function( $scope ) {
 		showTabFn: 'slideDown',
 		hideTabFn: 'slideUp',
 		hidePrevious: false,
-		autoExpand: 'editor'
+		autoExpand: 'editor',
 	} );
 };

@@ -17,13 +17,13 @@ const Module = function() {
 			self[ methodName ] = function() {
 				return oldMethod.apply( self, arguments );
 			};
-		});
+		} );
 	};
 
 	const initSettings = function() {
 		settings = self.getDefaultSettings();
 
-		const instanceSettings = instanceParams[0];
+		const instanceSettings = instanceParams[ 0 ];
 
 		if ( instanceSettings ) {
 			$.extend( settings, instanceSettings );
