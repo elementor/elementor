@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Ajax;
 
+use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 
@@ -16,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 2.0.0
  */
-class Module {
+class Module extends BaseModule {
 
 	/**
 	 * Ajax actions.
@@ -67,33 +68,17 @@ class Module {
 	protected $current_action_id = null;
 
 	/**
-	 * Ajax success response.
+	 * Get module name.
 	 *
-	 * Send a JSON response data back to the ajax request, indicating success.
+	 * Retrieve the module name.
 	 *
-	 * @since 2.0.0
-	 * @access protected
+	 * @since  1.7.0
+	 * @access public
+	 *
+	 * @return string Module name.
 	 */
-	protected function send_success() {
-		wp_send_json_success( [
-			'responses' => $this->response_data,
-		] );
-	}
-
-	/**
-	 * Ajax failure response.
-	 *
-	 * Send a JSON response data back to the ajax request, indicating failure.
-	 *
-	 * @since 2.0.0
-	 * @access protected
-	 *
-	 * @param null $code
-	 */
-	protected function send_error( $code = null ) {
-		wp_send_json_error( [
-			'responses' => $this->response_data,
-		], $code );
+	public function get_name() {
+		return 'ajax';
 	}
 
 	/**
@@ -208,6 +193,36 @@ class Module {
 		}
 
 		return $this->requests[ $this->current_action_id ];
+	}
+
+	/**
+	 * Ajax success response.
+	 *
+	 * Send a JSON response data back to the ajax request, indicating success.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 */
+	protected function send_success() {
+		wp_send_json_success( [
+			'responses' => $this->response_data,
+		] );
+	}
+
+	/**
+	 * Ajax failure response.
+	 *
+	 * Send a JSON response data back to the ajax request, indicating failure.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @param null $code
+	 */
+	protected function send_error( $code = null ) {
+		wp_send_json_error( [
+			'responses' => $this->response_data,
+		], $code );
 	}
 
 	/**
