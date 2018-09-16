@@ -40,7 +40,10 @@ class User {
 	}
 
 	public static function register_ajax_actions() {
-		Plugin::$instance->ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
+		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		$ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
 	}
 
 	/**
