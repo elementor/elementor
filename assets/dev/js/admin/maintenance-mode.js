@@ -12,11 +12,11 @@ MaintenanceModeModule = ViewModule.extend( {
 				excludeRolesArea: '.elementor_maintenance_mode_exclude_roles',
 				templateSelect: '.elementor_maintenance_mode_template_id select',
 				editTemplateButton: '.elementor-edit-template',
-				maintenanceModeError: '.elementor-maintenance-mode-error'
+				maintenanceModeError: '.elementor-maintenance-mode-error',
 			},
 			classes: {
-				isEnabled: 'elementor-maintenance-mode-is-enabled'
-			}
+				isEnabled: 'elementor-maintenance-mode-is-enabled',
+			},
 		};
 	},
 
@@ -66,7 +66,7 @@ MaintenanceModeModule = ViewModule.extend( {
 				.show();
 			elements.$maintenanceModeError.hide();
 		} ).trigger( 'change' );
-	}
+	},
 } );
 
 module.exports = MaintenanceModeModule;

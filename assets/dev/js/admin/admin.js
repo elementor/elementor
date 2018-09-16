@@ -18,7 +18,7 @@
 				$importButton: $( '#elementor-import-template-trigger' ),
 				$importArea: $( '#elementor-import-template-area' ),
 				$settingsForm: $( '#elementor-settings-form' ),
-				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' )
+				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
 			};
 
 			elements.$settingsFormPages = elements.$settingsForm.find( '.elementor-settings-form-page' );
@@ -82,7 +82,7 @@
 
 				$.post( ajaxurl, {
 					action: 'elementor_set_admin_notice_viewed',
-					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' )
+					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' ),
 				} );
 
 				var $wrapperElm = $( this ).closest( '.elementor-message-dismissed' );
@@ -101,7 +101,7 @@
 
 				$.post( ajaxurl, {
 					action: 'elementor_clear_cache',
-					_nonce: $thisButton.data( 'nonce' )
+					_nonce: $thisButton.data( 'nonce' ),
 				} )
 					.done( function() {
 						$thisButton.removeClass( 'loading' ).addClass( 'success' );
@@ -116,7 +116,7 @@
 
 				$.post( ajaxurl, {
 					action: 'elementor_reset_library',
-					_nonce: $thisButton.data( 'nonce' )
+					_nonce: $thisButton.data( 'nonce' ),
 				} )
 					.done( function() {
 						$thisButton.removeClass( 'loading' ).addClass( 'success' );
@@ -136,7 +136,7 @@
 					action: 'elementor_replace_url',
 					from: $from.val(),
 					to: $to.val(),
-					_nonce: $this.data( 'nonce' )
+					_nonce: $this.data( 'nonce' ),
 				} )
 					.done( function( response ) {
 						$this.removeClass( 'loading' );
@@ -146,7 +146,7 @@
 						}
 
 						elementorCommon.dialogsManager.createWidget( 'alert', {
-								message: response.data
+								message: response.data,
 							} ).show();
 					} );
 			} );
@@ -163,7 +163,7 @@
 					history.pushState( {}, '', hrefWithoutHash + this.hash );
 
 					self.goToSettingsTabFromHash();
-				}
+				},
 			} );
 
 			$( '.elementor-rollback-button' ).on( 'click', function( event ) {
@@ -176,13 +176,13 @@
 					message: self.config.i18n.rollback_confirm,
 					strings: {
 						confirm: self.config.i18n.yes,
-						cancel: self.config.i18n.cancel
+						cancel: self.config.i18n.cancel,
 					},
 					onConfirm: function() {
 						$this.addClass( 'loading' );
 
 						location.href = $this.attr( 'href' );
-					}
+					},
 				} ).show();
 			} );
 
@@ -265,7 +265,7 @@
 
 			$activeTab.addClass( 'nav-tab-active' );
 
-			this.elements.$settingsForm.attr( 'action', 'options.php#' + tabName  );
+			this.elements.$settingsForm.attr( 'action', 'options.php#' + tabName );
 
 			this.elements.$activeSettingsPage = $activePage;
 
@@ -282,7 +282,7 @@
 				controlsContainer: '.elementor-role-controls',
 				toggleHandle: '.elementor-role-toggle',
 				arrowUp: 'dashicons-arrow-up',
-				arrowDown: 'dashicons-arrow-down'
+				arrowDown: 'dashicons-arrow-down',
 			},
 			toggle: function( $trigger ) {
 				var self = this,
@@ -315,7 +315,7 @@
 
 				$controls.each( function( index, input ) {
 					$( input ).prop( 'disabled', state );
-				});
+				} );
 			},
 			bind: function() {
 				var self = this;
@@ -325,8 +325,7 @@
 					self.toggle( $( this ) );
 				} ).on( 'change', self.selectors.excludedField, function() {
 					self.updateLabel( $( this ).closest( self.selectors.row ) );
-				});
-
+				} );
 			},
 			init: function() {
 				var self = this;
@@ -336,9 +335,9 @@
 				self.bind();
 				$( self.selectors.row ).each( function( index, row ) {
 					self.updateLabel( $( row ) );
-				});
-			}
-		}
+				} );
+			},
+		},
 	} );
 
 	$( function() {

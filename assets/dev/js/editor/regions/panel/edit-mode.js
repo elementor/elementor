@@ -8,11 +8,11 @@ EditModeItemView = Marionette.ItemView.extend( {
 	ui: {
 		previewButton: '#elementor-mode-switcher-preview-input',
 		previewLabel: '#elementor-mode-switcher-preview',
-		previewLabelA11y: '#elementor-mode-switcher-preview .elementor-screen-only'
+		previewLabelA11y: '#elementor-mode-switcher-preview .elementor-screen-only',
 	},
 
 	events: {
-		'change @ui.previewButton': 'onPreviewButtonChange'
+		'change @ui.previewButton': 'onPreviewButtonChange',
 	},
 
 	initialize: function() {
@@ -47,7 +47,7 @@ EditModeItemView = Marionette.ItemView.extend( {
 
 		this.ui.previewLabel.attr( 'title', title );
 		this.ui.previewLabelA11y.text( title );
-	}
+	},
 } );
 
 module.exports = EditModeItemView;

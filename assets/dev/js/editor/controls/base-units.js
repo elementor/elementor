@@ -15,7 +15,7 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 		}
 
 		return ranges[ unit ];
-	}
+	},
 } );
 
 module.exports = ControlBaseUnitsItemView;

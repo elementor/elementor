@@ -984,9 +984,6 @@ class Frontend extends App {
 			'isEditMode' => $is_preview_mode,
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
-			'urls' => [
-				'assets' => ELEMENTOR_ASSETS_URL,
-			],
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();

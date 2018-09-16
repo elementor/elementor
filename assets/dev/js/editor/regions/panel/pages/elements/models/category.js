@@ -5,8 +5,8 @@ PanelElementsCategory = Backbone.Model.extend( {
 		name: '',
 		title: '',
 		icon: '',
-		items: []
-	}
+		items: [],
+	},
 } );
 
 module.exports = PanelElementsCategory;

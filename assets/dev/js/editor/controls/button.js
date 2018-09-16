@@ -11,12 +11,12 @@ module.exports = ControlBaseView.extend( {
 	},
 
 	events: {
-		'click @ui.button': 'onButtonClick'
+		'click @ui.button': 'onButtonClick',
 	},
 
 	onButtonClick: function() {
 		var eventName = this.model.get( 'event' );
 
 		elementor.channels.editor.trigger( eventName, this );
-	}
+	},
 } );

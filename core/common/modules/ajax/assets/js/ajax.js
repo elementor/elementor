@@ -4,9 +4,9 @@ export default class Ajax {
 			ajaxParams: {
 				type: 'POST',
 				url: elementorCommon.config.urls.ajax,
-				data: {}
+				data: {},
 			},
-			actionPrefix: 'elementor_'
+			actionPrefix: 'elementor_',
 		};
 	}
 
@@ -23,7 +23,7 @@ export default class Ajax {
 	getCacheKey( request ) {
 		return JSON.stringify( {
 			unique_id: request.unique_id,
-			data: request.data
+			data: request.data,
 		} );
 	}
 
@@ -41,7 +41,7 @@ export default class Ajax {
 				this.load( {
 						action: options.action,
 						unique_id: options.data.unique_id + objectId,
-						data: jQuery.extend( { id: objectId }, options.data )
+						data: jQuery.extend( { id: objectId }, options.data ),
 					} )
 					.done( data => dataCollection = jQuery.extend( dataCollection, data ) )
 			);
@@ -71,7 +71,7 @@ export default class Ajax {
 			deferred = this.addRequest( request.action, {
 				data: request.data,
 				unique_id: request.unique_id,
-				success: data => this.cache[ cacheKey ] = data
+				success: data => this.cache[ cacheKey ] = data,
 			} ).done( request.success );
 		}
 
@@ -89,7 +89,7 @@ export default class Ajax {
 
 		const request = {
 			action: action,
-			options: options
+			options: options,
 		};
 
 		if ( immediately ) {
@@ -119,12 +119,12 @@ export default class Ajax {
 
 		Object.entries( requests ).forEach( ( [ id, request ] ) => actions[ id ] = {
 			action: request.action,
-			data: request.options.data
+			data: request.options.data,
 		} );
 
 		return this.send( 'ajax', {
 			data: {
-				actions: JSON.stringify( actions )
+				actions: JSON.stringify( actions ),
 			},
 			success: data => {
 				Object.entries( data.responses ).forEach( ( [ id, response ] ) => {
@@ -144,7 +144,7 @@ export default class Ajax {
 					if ( args.options ) {
 						args.options.deferred.reject( data );
 					}
-				} )
+				} ),
 		} );
 	}
 
@@ -192,7 +192,7 @@ export default class Ajax {
 					const message = this.createErrorMessage( XMLHttpRequest );
 
 					elementor.notifications.showToast( {
-						message: message
+						message: message,
 					} );
 				};
 			}

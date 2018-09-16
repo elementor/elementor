@@ -20,25 +20,25 @@ TemplateLibraryManager = function() {
 	var registerDefaultTemplateTypes = function() {
 		var data = {
 			saveDialog: {
-				description: elementor.translate( 'save_your_template_description' )
+				description: elementor.translate( 'save_your_template_description' ),
 			},
 			ajaxParams: {
-				success: function( data ) {
-					self.getTemplatesCollection().add( data );
+				success: function( successData ) {
+					self.getTemplatesCollection().add( successData );
 
 					self.setTemplatesPage( 'local' );
 				},
-				error: function( data ) {
-					self.showErrorDialog( data );
-				}
-			}
+				error: function( errorData ) {
+					self.showErrorDialog( errorData );
+				},
+			},
 		};
 
 		_.each( [ 'page', 'section' ], function( type ) {
 			var safeData = jQuery.extend( true, {}, data, {
 				saveDialog: {
-					title: elementor.translate( 'save_your_template', [ elementor.translate( type ) ] )
-				}
+					title: elementor.translate( 'save_your_template', [ elementor.translate( type ) ] ),
+				},
 			} );
 
 			self.registerTemplateType( type, safeData );
@@ -58,11 +58,11 @@ TemplateLibraryManager = function() {
 					return _.any( this.get( 'tags' ), function( tag ) {
 						return tag.toLowerCase().indexOf( value ) >= 0;
 					} );
-				}
+				},
 			},
 			type: {},
 			subtype: {},
-			favorite: {}
+			favorite: {},
 		};
 	};
 
@@ -78,7 +78,7 @@ TemplateLibraryManager = function() {
 		registerDefaultFilterTerms();
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
-			element: '.elementor-template-library-template-more'
+			element: '.elementor-template-library-template-more',
 		} );
 	};
 
@@ -105,7 +105,7 @@ TemplateLibraryManager = function() {
 			elementorCommon.ajax.send( 'delete_template', {
 				data: {
 					source: templateModel.get( 'source' ),
-					template_id: templateModel.get( 'template_id' )
+					template_id: templateModel.get( 'template_id' ),
 				},
 				success: function( response ) {
 					templatesCollection.remove( templateModel, { silent: true } );
@@ -113,7 +113,7 @@ TemplateLibraryManager = function() {
 					if ( options.onSuccess ) {
 						options.onSuccess( response );
 					}
-				}
+				},
 			} );
 		};
 
@@ -127,7 +127,7 @@ TemplateLibraryManager = function() {
 
 		self.requestTemplateContent( templateModel.get( 'source' ), templateModel.get( 'template_id' ), {
 			data: {
-				page_settings: options.withPageSettings
+				page_settings: options.withPageSettings,
 			},
 			success: function( data ) {
 				self.closeModal();
@@ -147,7 +147,7 @@ TemplateLibraryManager = function() {
 			},
 			complete: function() {
 				layout.hideLoadingView();
-			}
+			},
 		} );
 	};
 
@@ -156,7 +156,7 @@ TemplateLibraryManager = function() {
 
 		_.extend( data, {
 			source: 'local',
-			type: type
+			type: type,
 		} );
 
 		if ( templateType.prepareSavedData ) {
@@ -180,8 +180,8 @@ TemplateLibraryManager = function() {
 				source: source,
 				edit_mode: true,
 				display: true,
-				template_id: id
-			}
+				template_id: id,
+			},
 		};
 
 		if ( ajaxOptions ) {
@@ -196,8 +196,8 @@ TemplateLibraryManager = function() {
 			data: {
 				source: templateModel.get( 'source' ),
 				template_id: templateModel.get( 'template_id' ),
-				favorite: favorite
-			}
+				favorite: favorite,
+			},
 		};
 
 		return elementorCommon.ajax.send( 'mark_template_as_favorite', options );
@@ -210,8 +210,8 @@ TemplateLibraryManager = function() {
 				headerMessage: elementor.translate( 'delete_template' ),
 				message: elementor.translate( 'delete_template_confirm' ),
 				strings: {
-					confirm: elementor.translate( 'delete' )
-				}
+					confirm: elementor.translate( 'delete' ),
+				},
 			} );
 		}
 
@@ -222,7 +222,7 @@ TemplateLibraryManager = function() {
 		if ( ! errorDialog ) {
 			errorDialog = elementorCommon.dialogsManager.createWidget( 'alert', {
 				id: 'elementor-template-library-error-dialog',
-				headerMessage: elementor.translate( 'an_error_occurred' )
+				headerMessage: elementor.translate( 'an_error_occurred' ),
 			} );
 		}
 
@@ -268,7 +268,7 @@ TemplateLibraryManager = function() {
 				if ( options.onUpdate ) {
 					options.onUpdate();
 				}
-			}
+			},
 		};
 
 		if ( options.forceSync ) {
@@ -296,9 +296,9 @@ TemplateLibraryManager = function() {
 					filters: {
 						source: 'remote',
 						type: isBlockType ? 'block' : 'page',
-						subtype: isBlockType ? documentType : null
+						subtype: isBlockType ? documentType : null,
 					},
-					onReady: self.showTemplates
+					onReady: self.showTemplates,
 				}, customStartIntent );
 
 				var isSameIntent = _.isEqual( Object.getPrototypeOf( oldStartIntent ), startIntent );
@@ -312,7 +312,7 @@ TemplateLibraryManager = function() {
 				setIntentFilters();
 
 				startIntent.onReady();
-			}
+			},
 		} );
 	};
 
@@ -386,8 +386,8 @@ TemplateLibraryManager = function() {
 		}
 
 		self.getErrorDialog()
-		    .setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
-		    .show();
+			.setMessage( elementor.translate( 'templates_request_error' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
+			.show();
 	};
 };
 

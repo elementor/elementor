@@ -4,12 +4,12 @@ module.exports = Marionette.ItemView.extend( {
 	className: 'elementor-templates-modal__header__logo',
 
 	events: {
-		'click': 'onClick'
+		click: 'onClick',
 	},
 
 	templateHelpers: function() {
 		return {
-			title: this.getOption( 'title' )
+			title: this.getOption( 'title' ),
 		};
 	},
 
@@ -19,5 +19,5 @@ module.exports = Marionette.ItemView.extend( {
 		if ( clickCallback ) {
 			clickCallback();
 		}
-	}
+	},
 } );

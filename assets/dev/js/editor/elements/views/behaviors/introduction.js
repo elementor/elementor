@@ -3,11 +3,11 @@ module.exports = Marionette.Behavior.extend( {
 	introductionViewed: false,
 
 	ui: {
-		editButton: '.elementor-editor-element-edit'
+		editButton: '.elementor-editor-element-edit',
 	},
 
 	events: {
-		'click @ui.editButton': 'show'
+		'click @ui.editButton': 'show',
 	},
 
 	initialize: function() {
@@ -27,15 +27,15 @@ module.exports = Marionette.Behavior.extend( {
 					position: {
 						my: 'center top+5',
 						at: 'center bottom',
-						collision: 'fit'
+						collision: 'fit',
 					},
 					effects: {
 						hide: 'hide',
-						show: 'show'
+						show: 'show',
 					},
 					hide: {
-						onBackgroundClick: false
-					}
+						onBackgroundClick: false,
+					},
 				} );
 
 				dialog.addButton( {
@@ -44,13 +44,13 @@ module.exports = Marionette.Behavior.extend( {
 					tag: 'div',
 					callback: function() {
 						open( elementor.config.help_right_click_url, '_blank' );
-					}
+					},
 				} );
 
 				dialog.addButton( {
 					name: 'ok',
 					text: elementor.translate( 'got_it' ),
-					callback: this.setIntroductionViewed.bind( this )
+					callback: this.setIntroductionViewed.bind( this ),
 				} );
 
 				dialog.getElements( 'ok' ).addClass( 'elementor-button elementor-button-success' );
@@ -68,7 +68,7 @@ module.exports = Marionette.Behavior.extend( {
 		var dialog = this.getDialog();
 
 		dialog.setSettings( 'position', {
-			of: event.currentTarget
+			of: event.currentTarget,
 		} );
 
 		dialog.show();
@@ -78,5 +78,5 @@ module.exports = Marionette.Behavior.extend( {
 		this.introductionViewed = true;
 
 		elementorCommon.ajax.addRequest( 'introduction_viewed' );
-	}
+	},
 } );

@@ -1,5 +1,4 @@
 class Heartbeat {
-
 	constructor() {
 		let modal;
 
@@ -14,14 +13,14 @@ class Heartbeat {
 		jQuery( document ).on( {
 			'heartbeat-send': ( event, data ) => {
 				data.elementor_post_lock = {
-					post_ID: elementor.config.document.id
+					post_ID: elementor.config.document.id,
 				};
 			},
 			'heartbeat-tick': ( event, response ) => {
 				if ( response.locked_user ) {
 					if ( elementor.saver.isEditorChanged() ) {
 						elementor.saver.saveEditor( {
-							status: 'autosave'
+							status: 'autosave',
 						} );
 					}
 
@@ -33,7 +32,7 @@ class Heartbeat {
 				elementor.config.nonce = response.elementorNonce;
 			},
 			'heartbeat-tick.wp-refresh-nonces': ( event, response ) => {
-				const nonces = response['elementor-refresh-nonces'];
+				const nonces = response[ 'elementor-refresh-nonces' ];
 
 				if ( nonces ) {
 					if ( nonces.heartbeatNonce ) {
@@ -44,7 +43,7 @@ class Heartbeat {
 						window.heartbeatSettings.nonce = nonces.heartbeatNonce;
 					}
 				}
-			}
+			},
 		} );
 
 		if ( elementor.config.locked_user ) {
@@ -54,7 +53,7 @@ class Heartbeat {
 
 	initModal() {
 		const modal = elementorCommon.dialogsManager.createWidget( 'lightbox', {
-			headerMessage: elementor.translate( 'take_over' )
+			headerMessage: elementor.translate( 'take_over' ),
 		} );
 
 		modal.addButton( {
@@ -62,7 +61,7 @@ class Heartbeat {
 			text: elementor.translate( 'go_back' ),
 			callback() {
 				parent.history.go( -1 );
-			}
+			},
 		} );
 
 		modal.addButton( {
@@ -71,7 +70,7 @@ class Heartbeat {
 			callback() {
 				wp.heartbeat.enqueue( 'elementor_force_post_lock', true );
 				wp.heartbeat.connectNow();
-			}
+			},
 		} );
 
 		return modal;
