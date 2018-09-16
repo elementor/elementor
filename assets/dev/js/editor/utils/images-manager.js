@@ -111,14 +111,7 @@ ImagesManager = function() {
 		// It's one item, so we can render it from remote server
 		if ( 0 === registeredItemsLength ) {
 			return;
-		} else if ( 1 === registeredItemsLength ) {
-			image = registeredItems[ Object.keys( registeredItems )[ 0 ] ];
-
-			if ( image && image.model ) {
-				image.model.renderRemoteServer();
-				return;
 			}
-		}
 
 		for ( index in registeredItems ) {
 			image = registeredItems[ index ];
