@@ -10,7 +10,7 @@ class ElementorCommonApp extends ViewModule {
 			options = {
 				evaluate: /<#([\s\S]+?)#>/g,
 				interpolate: /{{{([\s\S]+?)}}}/g,
-				escape: /{{([^}]+?)}}(?!})/g
+				escape: /{{([^}]+?)}}(?!})/g,
 			};
 
 			return _.template( rawTemplate, options );
@@ -21,7 +21,7 @@ class ElementorCommonApp extends ViewModule {
 		return {
 			$window: jQuery( window ),
 			$document: jQuery( document ),
-			$body: jQuery( document.body )
+			$body: jQuery( document.body ),
 		};
 	}
 
@@ -32,7 +32,7 @@ class ElementorCommonApp extends ViewModule {
 			webkit: -1 !== userAgent.indexOf( 'AppleWebKit' ),
 			firefox: -1 !== userAgent.indexOf( 'Firefox' ),
 			ie: /Trident|MSIE/.test( userAgent ),
-			mac: -1 !== userAgent.indexOf( 'Macintosh' )
+			mac: -1 !== userAgent.indexOf( 'Macintosh' ),
 		};
 	}
 
