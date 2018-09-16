@@ -982,6 +982,7 @@ class Frontend extends App {
 
 		$settings = [
 			'isEditMode' => $is_preview_mode,
+			// @deprecated since 2.3.0 - Use `elementorCommon.config.isRTL` instead
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 		];

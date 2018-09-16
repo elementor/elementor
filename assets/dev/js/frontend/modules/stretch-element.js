@@ -4,7 +4,7 @@ module.exports = ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			element: null,
-			direction: elementorFrontend.config.is_rtl ? 'right' : 'left',
+			direction: elementorCommon.config.isRTL ? 'right' : 'left',
 			selectors: {
 				container: window,
 			},
@@ -49,7 +49,7 @@ module.exports = ViewModule.extend( {
 		}
 
 		if ( ! isFixed ) {
-			if ( elementorFrontend.config.is_rtl ) {
+			if ( elementorCommon.config.isRTL ) {
 				correctOffset = containerWidth - ( $element.outerWidth() + correctOffset );
 			}
 

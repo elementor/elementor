@@ -120,7 +120,7 @@ ContextMenu = Module.extend( {
 						onOutsideContextMenu: true,
 					},
 					position: {
-						my: ( elementor.config.is_rtl ? 'right' : 'left' ) + ' top',
+						my: ( elementorCommon.config.isRTL ? 'right' : 'left' ) + ' top',
 						collision: 'fit',
 					},
 				} );
