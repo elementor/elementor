@@ -60,8 +60,8 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 				<select id="elementor-new-template__form__template-type" class="elementor-form-field__select" name="template_type" required>
 					<option value=""><?php echo __( 'Select', 'elementor' ); ?>...</option>
 					<?php
-					foreach ( $types as $value => $title ) {
-						printf( '<option value="%1$s" %2$s>%3$s</option>', $value, selected( $selected, $value, false ), $title );
+					foreach ( $types as $value => $type_title ) {
+						printf( '<option value="%1$s" %2$s>%3$s</option>', $value, selected( $selected, $value, false ), $type_title );
 					}
 					?>
 				</select>

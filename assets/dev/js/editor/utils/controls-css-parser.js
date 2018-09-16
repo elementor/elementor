@@ -9,13 +9,13 @@ ControlsCSSParser = ViewModule.extend( {
 		return {
 			id: 0,
 			settingsModel: null,
-			dynamicParsing: {}
+			dynamicParsing: {},
 		};
 	},
 
 	getDefaultElements: function() {
 		return {
-			$stylesheetElement: jQuery( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } )
+			$stylesheetElement: jQuery( '<style>', { id: 'elementor-style-' + this.getSettings( 'id' ) } ),
 		};
 	},
 
@@ -52,11 +52,13 @@ ControlsCSSParser = ViewModule.extend( {
 	},
 
 	addControlStyleRules: function( control, values, controls, placeholders, replacements ) {
-		var self = this;
-
-		ControlsCSSParser.addControlStyleRules( self.stylesheet, control, controls, function( control ) {
-			return self.getStyleControlValue( control, values );
-		}, placeholders, replacements );
+		ControlsCSSParser.addControlStyleRules(
+			this.stylesheet,
+			control,
+			controls,
+			( StyleControl ) => this.getStyleControlValue( StyleControl, values ),
+			placeholders,
+			replacements );
 	},
 
 	getStyleControlValue: function( control, values ) {
@@ -124,7 +126,7 @@ ControlsCSSParser = ViewModule.extend( {
 		ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.initStylesheet();
-	}
+	},
 } );
 
 ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls, valueCallback, placeholders, replacements ) {
@@ -173,7 +175,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 			query = {};
 
 		if ( deviceRules ) {
-			deviceRules = deviceRules[0];
+			deviceRules = deviceRules[ 0 ];
 
 			selector = selector.replace( devicePattern, '' );
 
@@ -181,8 +183,10 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 				pureDeviceRules = [],
 				matches;
 
-			while ( matches = pureDevicePattern.exec( deviceRules ) ) {
-				pureDeviceRules.push( matches[1] );
+			matches = pureDevicePattern.exec( deviceRules );
+			while ( matches ) {
+				pureDeviceRules.push( matches[ 1 ] );
+				matches = pureDevicePattern.exec( deviceRules );
 			}
 
 			_.each( pureDeviceRules, function( deviceRule ) {

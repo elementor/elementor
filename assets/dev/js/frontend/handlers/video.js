@@ -7,8 +7,8 @@ VideoModule = HandlerModule.extend( {
 			selectors: {
 				imageOverlay: '.elementor-custom-embed-image-overlay',
 				video: '.elementor-video',
-				videoIframe: '.elementor-video-iframe'
-			}
+				videoIframe: '.elementor-video-iframe',
+			},
 		};
 	},
 
@@ -18,7 +18,7 @@ VideoModule = HandlerModule.extend( {
 		return {
 			$imageOverlay: this.$element.find( selectors.imageOverlay ),
 			$video: this.$element.find( selectors.video ),
-			$videoIframe: this.$element.find( selectors.videoIframe )
+			$videoIframe: this.$element.find( selectors.videoIframe ),
 		};
 	},
 
@@ -29,25 +29,28 @@ VideoModule = HandlerModule.extend( {
 	handleVideo: function() {
 		if ( ! this.getElementSettings( 'lightbox' ) ) {
 			this.elements.$imageOverlay.remove();
+
 			this.playVideo();
 		}
 	},
 
 	playVideo: function() {
 		if ( this.elements.$video.length ) {
-			this.elements.$video[0].play();
+			this.elements.$video[ 0 ].play();
 
 			return;
 		}
 
-		var $videoIframe = this.elements.$videoIframe,
+		const $videoIframe = this.elements.$videoIframe,
 			lazyLoad = $videoIframe.data( 'lazy-load' );
+
 		if ( lazyLoad ) {
 			$videoIframe.attr( 'src', lazyLoad );
 		}
-		var newSourceUrl = $videoIframe[0].src.replace( '&autoplay=0', '' );
 
-		$videoIframe[0].src = newSourceUrl + '&autoplay=1';
+		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
+
+		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
 	},
 
 	animateVideo: function() {
@@ -80,7 +83,7 @@ VideoModule = HandlerModule.extend( {
 		if ( 'aspect_ratio' === propertyName && isLightBoxEnabled ) {
 			this.handleAspectRatio();
 		}
-	}
+	},
 } );
 
 module.exports = function( $scope ) {

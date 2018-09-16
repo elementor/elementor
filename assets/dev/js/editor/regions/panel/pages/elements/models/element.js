@@ -7,8 +7,8 @@ PanelElementsElementModel = Backbone.Model.extend( {
 		keywords: [],
 		icon: '',
 		elType: 'widget',
-		widgetType: ''
-	}
+		widgetType: '',
+	},
 } );
 
 module.exports = PanelElementsElementModel;

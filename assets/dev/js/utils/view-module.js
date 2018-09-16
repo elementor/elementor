@@ -18,7 +18,7 @@ ViewModule = Module.extend( {
 
 	initElements: function() {
 		this.elements = this.getDefaultElements();
-	}
+	},
 } );
 
 module.exports = ViewModule;

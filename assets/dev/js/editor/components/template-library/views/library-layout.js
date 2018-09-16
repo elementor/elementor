@@ -12,7 +12,7 @@ module.exports = BaseModalLayout.extend( {
 
 	getModalOptions: function() {
 		return {
-			id: 'elementor-template-library-modal'
+			id: 'elementor-template-library-modal',
 		};
 	},
 
@@ -21,7 +21,7 @@ module.exports = BaseModalLayout.extend( {
 			title: elementor.translate( 'library' ),
 			click: function() {
 				elementor.templates.setTemplatesPage( 'remote', 'page' );
-			}
+			},
 		};
 	},
 
@@ -46,7 +46,7 @@ module.exports = BaseModalLayout.extend( {
 
 	showTemplatesView: function( templatesCollection ) {
 		this.modalContent.show( new TemplateLibraryCollectionView( {
-			collection: templatesCollection
+			collection: templatesCollection,
 		} ) );
 
 		this.setHeaderDefaultParts();
@@ -66,7 +66,7 @@ module.exports = BaseModalLayout.extend( {
 
 	showPreviewView: function( templateModel ) {
 		this.modalContent.show( new TemplateLibraryPreviewView( {
-			url: templateModel.get( 'url' )
+			url: templateModel.get( 'url' ),
 		} ) );
 
 		var headerView = this.getHeaderView();
@@ -74,9 +74,9 @@ module.exports = BaseModalLayout.extend( {
 		headerView.menuArea.reset();
 
 		headerView.tools.show( new TemplateLibraryHeaderPreviewView( {
-			model: templateModel
+			model: templateModel,
 		} ) );
 
 		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
-	}
+	},
 } );

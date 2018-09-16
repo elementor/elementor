@@ -42,9 +42,7 @@ ImagesManager = function() {
 
 		// If it's not in cache, like a new dropped widget or a custom size - get from settings
 		if ( ! imageUrl ) {
-
 			if ( 'custom' === image.size ) {
-
 				if ( elementor.getPanelView() && 'editor' === elementor.getPanelView().getCurrentPageName() && image.model ) {
 					// Trigger change again, so it's will load from the cache
 					self.onceTriggerChange( image.model );
@@ -62,7 +60,7 @@ ImagesManager = function() {
 
 	self.getItem = function( image ) {
 		var size = getNormalizedSize( image ),
-			id =  image.id;
+			id = image.id;
 
 		if ( ! size ) {
 			return false;
@@ -101,7 +99,7 @@ ImagesManager = function() {
 		if ( 0 === registeredItemsLength ) {
 			return;
 		} else if ( 1 === registeredItemsLength ) {
-			image = registeredItems[ Object.keys( registeredItems )[0] ];
+			image = registeredItems[ Object.keys( registeredItems )[ 0 ] ];
 
 			if ( image && image.model ) {
 				image.model.renderRemoteServer();
@@ -119,30 +117,30 @@ ImagesManager = function() {
 			requestedItems.push( {
 				id: id,
 				size: size,
-				is_first_time: isFirstTime
+				is_first_time: isFirstTime,
 			} );
 		}
 
 		elementor.ajax.send(
 			'get_images_details', {
 				data: {
-					items: requestedItems
+					items: requestedItems,
 				},
-				success: function( data ) {
-					var id,
-						size;
+				success: ( data ) => {
+					var imageId,
+						imageSize;
 
-					for ( id in data ) {
-						if ( ! cache[ id ] ) {
-							cache[ id ] = {};
+					for ( imageId in data ) {
+						if ( ! cache[ imageId ] ) {
+							cache[ imageId ] = {};
 						}
 
-						for ( size in data[ id ] ) {
-							cache[ id ][ size ] = data[ id ][ size ];
+						for ( imageSize in data[ imageId ] ) {
+							cache[ imageId ][ imageSize ] = data[ imageId ][ imageSize ];
 						}
 					}
 					registeredItems = [];
-				}
+				},
 			}
 		);
 	};

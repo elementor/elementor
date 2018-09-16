@@ -300,7 +300,7 @@ class Frontend {
 			[
 				'jquery-ui-position',
 			],
-			'4.4.1',
+			'4.5.0',
 			true
 		);
 
@@ -439,6 +439,7 @@ class Frontend {
 			'isEditMode' => $is_preview_mode,
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
+			'version' => ELEMENTOR_VERSION,
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],

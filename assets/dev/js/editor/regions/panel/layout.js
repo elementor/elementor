@@ -10,7 +10,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		content: '#elementor-panel-content-wrapper',
 		header: '#elementor-panel-header-wrapper',
 		footer: '#elementor-panel-footer',
-		modeSwitcher: '#elementor-mode-switcher'
+		modeSwitcher: '#elementor-mode-switcher',
 	},
 
 	pages: {},
@@ -21,7 +21,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		},
 		'editor:destroy': function() {
 			this.setPage( 'elements', null, { autoFocusSearch: false } );
-		}
+		},
 	},
 
 	currentPageName: null,
@@ -38,34 +38,34 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		var pages = {
 			elements: {
 				view: require( 'elementor-panel/pages/elements/elements' ),
-				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
+				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">',
 			},
 			editor: {
-				view: require( 'elementor-panel/pages/editor' )
+				view: require( 'elementor-panel/pages/editor' ),
 			},
 			menu: {
 				view: elementor.modules.layouts.panel.pages.menu.Menu,
-				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
+				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">',
 			},
 			colorScheme: {
-				view: require( 'elementor-panel/pages/schemes/colors' )
+				view: require( 'elementor-panel/pages/schemes/colors' ),
 			},
 			typographyScheme: {
-				view: require( 'elementor-panel/pages/schemes/typography' )
+				view: require( 'elementor-panel/pages/schemes/typography' ),
 			},
 			colorPickerScheme: {
-				view: require( 'elementor-panel/pages/schemes/color-picker' )
-			}
+				view: require( 'elementor-panel/pages/schemes/color-picker' ),
+			},
 		};
 
 		var schemesTypes = Object.keys( elementor.schemes.getSchemes() ),
 			disabledSchemes = _.difference( schemesTypes, elementor.schemes.getEnabledSchemesTypes() );
 
 		_.each( disabledSchemes, function( schemeType ) {
-			var scheme  = elementor.schemes.getScheme( schemeType );
+			var scheme = elementor.schemes.getScheme( schemeType );
 
 			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' ).extend( {
-				disabledTitle: scheme.disabled_title
+				disabledTitle: scheme.disabled_title,
 			} );
 		} );
 
@@ -109,13 +109,15 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	setPage: function( page, title, viewOptions ) {
+		const pages = this.getPages();
+
 		if ( 'elements' === page && ! elementor.userCan( 'design' ) ) {
-			var pages = this.getPages();
-			if ( pages.hasOwnProperty( 'page_settings' ) ) {
+			if ( pages.page_settings ) {
 				page = 'page_settings';
 			}
 		}
-		var pageData = this.getPages( page );
+
+		const pageData = pages[ page ];
 
 		if ( ! pageData ) {
 			throw new ReferenceError( 'Elementor panel doesn\'t have page named \'' + page + '\'' );
@@ -125,7 +127,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			viewOptions = _.extend( pageData.options, viewOptions );
 		}
 
-		var View = pageData.view;
+		let View = pageData.view;
 
 		if ( pageData.getView ) {
 			View = pageData.getView();
@@ -145,26 +147,13 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	openEditor: function( model, view ) {
-		var currentPageName = this.getCurrentPageName();
-
-		if ( 'editor' === currentPageName ) {
-			var currentPageView = this.getCurrentPageView(),
-				currentEditableModel = currentPageView.model;
-
-			if ( currentEditableModel === model ) {
-				return;
-			}
-		}
-
-		var elementData = elementor.getElementData( model );
-
-		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementData.title ] ), {
+		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ), {
 			model: model,
 			controls: elementor.getElementControls( model ),
-			editedElementView: view
+			editedElementView: view,
 		} );
 
-		var action = 'panel/open_editor/' + model.get( 'elType' );
+		const action = 'panel/open_editor/' + model.get( 'elType' );
 
 		// Example: panel/open_editor/widget
 		elementor.hooks.doAction( action, this, model, view );
@@ -217,7 +206,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		}
 
 		$panel.perfectScrollbar( 'update' );
-	}
+	},
 } );
 
 module.exports = PanelLayoutView;

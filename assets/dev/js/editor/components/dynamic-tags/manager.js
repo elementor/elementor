@@ -6,7 +6,7 @@ module.exports = Module.extend( {
 	CACHE_KEY_NOT_FOUND_ERROR: 'Cache key not found',
 
 	tags: {
-		Base: require( 'elementor-dynamic-tags/tag' )
+		Base: require( 'elementor-dynamic-tags/tag' ),
 	},
 
 	cache: {},
@@ -47,7 +47,7 @@ module.exports = Module.extend( {
 		elementor.ajax.send( 'render_tags', {
 			data: {
 				post_id: elementor.config.document.id,
-				tags: Object.keys( cacheRequests )
+				tags: Object.keys( cacheRequests ),
 			},
 			success: function( data ) {
 				jQuery.extend( cache, data );
@@ -55,7 +55,7 @@ module.exports = Module.extend( {
 				cacheCallbacks.forEach( function( callback ) {
 					callback();
 				} );
-			}
+			},
 		} );
 	},
 
@@ -105,9 +105,9 @@ module.exports = Module.extend( {
 		}
 
 		return {
-			id: tagIDMatch[1],
-			name: tagNameMatch[1],
-			settings: JSON.parse( decodeURIComponent( tagSettingsMatch[1] ) )
+			id: tagIDMatch[ 1 ],
+			name: tagNameMatch[ 1 ],
+			settings: JSON.parse( decodeURIComponent( tagSettingsMatch[ 1 ] ) ),
 		};
 	},
 
@@ -120,7 +120,7 @@ module.exports = Module.extend( {
 
 		var TagClass = this.tags[ tagName ] || this.tags.Base,
 			model = new SettingsModel( tagSettings, {
-				controls: tagConfig.controls
+				controls: tagConfig.controls,
 			} );
 
 		return new TagClass( { id: tagID, name: tagName, model: model } );
@@ -137,7 +137,7 @@ module.exports = Module.extend( {
 	},
 
 	tagDataToTagText: function( tagID, tagName, tagSettings ) {
-		tagSettings = encodeURIComponent( JSON.stringify( tagSettings && tagSettings.toJSON( { removeDefault: true } ) || {} ) );
+		tagSettings = encodeURIComponent( JSON.stringify( ( tagSettings && tagSettings.toJSON( { removeDefault: true } ) ) || {} ) );
 
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
 	},
@@ -148,5 +148,5 @@ module.exports = Module.extend( {
 
 	onInit: function() {
 		this.loadCacheRequests = _.debounce( this.loadCacheRequests, 300 );
-	}
+	},
 } );
