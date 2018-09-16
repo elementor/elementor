@@ -15,7 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<title><?php echo wp_get_document_title(); ?></title>
 	<?php endif; ?>
 	<?php wp_head(); ?>
-	<?php // Keep the following line after `wp_head()` call, to ensure it's not overridden by another templates. ?>
+	<?php
+	// Keep the following line after `wp_head()` call, to ensure it's not overridden by another templates.
+	?>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 </head>
 <body <?php body_class(); ?>>

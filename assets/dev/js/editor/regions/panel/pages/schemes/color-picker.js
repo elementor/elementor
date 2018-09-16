@@ -18,7 +18,7 @@ PanelSchemeColorPickerView = PanelSchemeColorsView.extend( {
 
 	orderView: function( model ) {
 		return elementor.helpers.getColorPickerPaletteIndex( model.get( 'key' ) );
-	}
+	},
 } );
 
 module.exports = PanelSchemeColorPickerView;

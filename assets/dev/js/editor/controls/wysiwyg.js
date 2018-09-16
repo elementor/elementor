@@ -9,7 +9,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		jQuery.extend( ui, {
-			inputWrapper: '.elementor-control-input-wrapper'
+			inputWrapper: '.elementor-control-input-wrapper',
 		} );
 
 		return ui;
@@ -17,25 +17,25 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 
 	events: function() {
 		return _.extend( ControlBaseDataView.prototype.events.apply( this, arguments ), {
-			'keyup textarea.elementor-wp-editor': 'onBaseInputChange'
+			'keyup textarea.elementor-wp-editor': 'onBaseInputChange',
 		} );
 	},
 
 	// List of buttons to move {buttonToMove: afterButton}
 	buttons: {
 		addToBasic: {
-			underline: 'italic'
+			underline: 'italic',
 		},
 		addToAdvanced: {},
 		moveToAdvanced: {
 			blockquote: 'removeformat',
 			alignleft: 'blockquote',
 			aligncenter: 'alignleft',
-			alignright: 'aligncenter'
+			alignright: 'aligncenter',
 		},
 		moveToBasic: {},
 		removeFromBasic: [ 'unlink', 'wp_more' ],
-		removeFromAdvanced: []
+		removeFromAdvanced: [],
 	},
 
 	initialize: function() {
@@ -50,7 +50,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 			// Initialize QuickTags, and set as the default mode.
 			quicktags( {
 				buttons: 'strong,em,del,link,img,close',
-				id: self.editorID
+				id: self.editorID,
 			} );
 
 			if ( elementor.config.rich_editing_enabled ) {
@@ -71,7 +71,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 			selector: '#' + self.editorID,
 			setup: function( editor ) {
 				self.editor = editor;
-			}
+			},
 		};
 
 		tinyMCEPreInit.mceInit[ self.editorID ] = _.extend( _.clone( tinyMCEPreInit.mceInit.elementorwpeditor ), editorConfig );
@@ -174,7 +174,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		// Cleanup PreInit data
 		delete tinyMCEPreInit.mceInit[ this.editorID ];
 		delete tinyMCEPreInit.qtInit[ this.editorID ];
-	}
+	},
 } );
 
 module.exports = ControlWysiwygItemView;

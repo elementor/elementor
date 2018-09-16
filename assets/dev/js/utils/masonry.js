@@ -7,14 +7,14 @@ module.exports = ViewModule.extend( {
 			container: null,
 			items: null,
 			columnsCount: 3,
-			verticalSpaceBetween: 30
+			verticalSpaceBetween: 30,
 		};
 	},
 
 	getDefaultElements: function() {
 		return {
 			$container: jQuery( this.getSettings( 'container' ) ),
-			$items: jQuery( this.getSettings( 'items' ) )
+			$items: jQuery( this.getSettings( 'items' ) ),
 		};
 	},
 
@@ -29,7 +29,7 @@ module.exports = ViewModule.extend( {
 		this.elements.$items.each( function( index ) {
 			var row = Math.floor( index / columnsCount ),
 				$item = jQuery( this ),
-				itemHeight = $item[0].getBoundingClientRect().height + settings.verticalSpaceBetween;
+				itemHeight = $item[ 0 ].getBoundingClientRect().height + settings.verticalSpaceBetween;
 
 			if ( row ) {
 				var itemPosition = $item.position(),
@@ -47,5 +47,5 @@ module.exports = ViewModule.extend( {
 				heights.push( itemHeight );
 			}
 		} );
-	}
+	},
 } );
