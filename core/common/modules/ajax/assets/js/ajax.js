@@ -36,14 +36,14 @@ export default class Ajax {
 			options.before();
 		}
 
-		options.ids.forEach( objectId => {
+		options.ids.forEach( ( objectId ) => {
 			deferredArray.push(
 				this.load( {
 						action: options.action,
 						unique_id: options.data.unique_id + objectId,
 						data: jQuery.extend( { id: objectId }, options.data ),
 					} )
-					.done( data => dataCollection = jQuery.extend( dataCollection, data ) )
+					.done( ( data ) => dataCollection = jQuery.extend( dataCollection, data ) )
 			);
 		} );
 
@@ -71,7 +71,7 @@ export default class Ajax {
 			deferred = this.addRequest( request.action, {
 				data: request.data,
 				unique_id: request.unique_id,
-				success: data => this.cache[ cacheKey ] = data,
+				success: ( data ) => this.cache[ cacheKey ] = data,
 			} ).done( request.success );
 		}
 
@@ -126,7 +126,7 @@ export default class Ajax {
 			data: {
 				actions: JSON.stringify( actions ),
 			},
-			success: data => {
+			success: ( data ) => {
 				Object.entries( data.responses ).forEach( ( [ id, response ] ) => {
 					const options = requests[ id ].options;
 
@@ -139,8 +139,8 @@ export default class Ajax {
 					}
 				} );
 			},
-			error: data =>
-				Object.values( requests ).forEach( args => {
+			error: ( data ) =>
+				Object.values( requests ).forEach( ( args ) => {
 					if ( args.options ) {
 						args.options.deferred.reject( data );
 					}
@@ -171,7 +171,7 @@ export default class Ajax {
 			errorCallback = ajaxParams.error;
 
 		if ( successCallback || errorCallback ) {
-			ajaxParams.success = response => {
+			ajaxParams.success = ( response ) => {
 				if ( response.success && successCallback ) {
 					successCallback( response.data );
 				}
@@ -182,9 +182,9 @@ export default class Ajax {
 			};
 
 			if ( errorCallback ) {
-				ajaxParams.error = data => errorCallback( data );
+				ajaxParams.error = ( data ) => errorCallback( data );
 			} else {
-				ajaxParams.error = XMLHttpRequest => {
+				ajaxParams.error = ( XMLHttpRequest ) => {
 					if ( 0 === XMLHttpRequest.readyState && 'abort' === XMLHttpRequest.statusText ) {
 						return;
 					}
