@@ -218,6 +218,15 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.2.2 - 2018-09-16 ###
+* Tweak: Improved IE compatibility mechanism
+* Tweak: Added `remove_all_actions( 'after_wp_tiny_mce' )` hook for better compatibility with 3rd party plugins ([#5686](https://github.com/pojome/elementor/issues/5686))
+* Fix: Content styling missing when no icon for Toggle widget ([#5735](https://github.com/pojome/elementor/issues/5735))
+* Fix: Redirect issue on activation via Ajax
+* Fix: Excluded `Actions` label from ordering in Template library modal
+* Fix: Avoid setting empty title for elements in Navigator
+* Fix: Compatibility for Gutenberg Image Block
+
 ### 2.2.1 - 2018-09-03 ###
 * Fix: Auto scrolling when clicking on long element ([#5591](https://github.com/pojome/elementor/issues/5591))
 * Fix: Increased number input width besides slider control ([#5521](https://github.com/pojome/elementor/issues/5521))
