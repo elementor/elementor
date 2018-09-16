@@ -2,6 +2,7 @@
 namespace Elementor\Core\Common;
 
 use Elementor\Core\Base\App as BaseApp;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 
 class App extends BaseApp {
 
@@ -26,6 +27,7 @@ class App extends BaseApp {
 	}
 
 	public function init_components() {
+		$this->add_component( 'ajax', new Ajax() );
 	}
 
 	public function get_name() {

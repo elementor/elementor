@@ -59,6 +59,7 @@ class Plugin {
 	 * Holds the plugin ajax manager.
 	 *
 	 * @since 1.9.0
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )` instead
 	 * @access public
 	 *
 	 * @var Ajax
@@ -494,8 +495,7 @@ class Plugin {
 
 		$this->common->init_components();
 
-		// Allow all components to use AJAX.
-		$this->ajax = new Ajax();
+		$this->ajax = $this->common->get_component( 'ajax' );
 
 		Settings_Manager::run();
 
