@@ -33,6 +33,7 @@ ImagesManager = function() {
 	self.updateOnReceiveImage = function() {
 		var elementView = elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' );
 
+		elementView.$el.addClass( 'elementor-loading' );
 		// Add per cid for multiple images in a single view.
 		viewsToUpdate[ elementView.cid ] = elementView;
 
@@ -40,6 +41,7 @@ ImagesManager = function() {
 			if ( ! _.isEmpty( viewsToUpdate ) ) {
 				_( viewsToUpdate ).each( function( view ) {
 					view.render();
+					elementView.$el.removeClass( 'elementor-loading' );
 				} );
 			}
 			viewsToUpdate = {};
