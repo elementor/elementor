@@ -7,7 +7,7 @@ Manager = function() {
 	var addPanelPage = function() {
 		elementor.getPanelView().addPage( 'historyPage', {
 			view: HistoryPageView,
-			title: elementor.translate( 'history' )
+			title: elementor.translate( 'history' ),
 		} );
 	};
 

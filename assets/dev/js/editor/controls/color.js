@@ -23,7 +23,7 @@ ControlColorItemView = ControlBaseDataView.extend( {
 				},
 				clear: function() {
 					self.setValue( '' );
-				}
+				},
 			} );
 		}
 	},
@@ -34,7 +34,7 @@ ControlColorItemView = ControlBaseDataView.extend( {
 		}
 
 		this.$el.remove();
-	}
+	},
 } );
 
 module.exports = ControlColorItemView;

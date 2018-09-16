@@ -5,13 +5,13 @@ module.exports = BaseModalLayout.extend( {
 
 	getModalOptions: function() {
 		return {
-			id: 'elementor-new-template-modal'
+			id: 'elementor-new-template-modal',
 		};
 	},
 
 	getLogoOptions: function() {
 		return {
-			title: elementorAdmin.config.i18n.new_template
+			title: elementorAdmin.config.i18n.new_template,
 		};
 	},
 
@@ -29,5 +29,5 @@ module.exports = BaseModalLayout.extend( {
 
 	showContentView: function() {
 		this.modalContent.show( new NewTemplateView() );
-	}
+	},
 } );

@@ -18,7 +18,7 @@ PanelElementsCategoriesView = Marionette.CompositeView.extend( {
 		if ( elementor.channels.panelElements.request( 'filter:value' ) ) {
 			elementor.getPanelView().getCurrentPageView().showView( 'elements' );
 		}
-	}
+	},
 } );
 
 module.exports = PanelElementsCategoriesView;

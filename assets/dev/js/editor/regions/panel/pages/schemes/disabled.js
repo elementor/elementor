@@ -11,9 +11,9 @@ PanelSchemeDisabledView = Marionette.ItemView.extend( {
 
 	templateHelpers: function() {
 		return {
-			disabledTitle: this.disabledTitle
+			disabledTitle: this.disabledTitle,
 		};
-	}
+	},
 } );
 
 module.exports = PanelSchemeDisabledView;

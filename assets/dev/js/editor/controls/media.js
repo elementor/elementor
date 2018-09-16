@@ -17,7 +17,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	events: function() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
-			'click @ui.deleteButton': 'deleteImage'
+			'click @ui.deleteButton': 'deleteImage',
 		} );
 	},
 
@@ -51,7 +51,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		this.setValue( {
 			url: '',
-			id: ''
+			id: '',
 		} );
 
 		this.applySavedValue();
@@ -65,16 +65,16 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
-				text: elementor.translate( 'insert_media' )
+				text: elementor.translate( 'insert_media' ),
 			},
 			states: [
 				new wp.media.controller.Library( {
 					title: elementor.translate( 'insert_media' ),
 					library: wp.media.query( { type: this.getMediaType() } ),
 					multiple: false,
-					date: false
-				} )
-			]
+					date: false,
+				} ),
+			],
 		} );
 
 		// When a file is selected, run a callback.
@@ -94,7 +94,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		if ( attachment.url ) {
 			this.setValue( {
 				url: attachment.url,
-				id: attachment.id
+				id: attachment.id,
 			} );
 
 			this.applySavedValue();
@@ -105,7 +105,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	onBeforeDestroy: function() {
 		this.$el.remove();
-	}
+	},
 } );
 
 module.exports = ControlMediaItemView;

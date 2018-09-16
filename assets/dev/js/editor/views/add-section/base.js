@@ -1,5 +1,4 @@
 class AddSectionBase extends Marionette.ItemView {
-
 	template() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
 	}
@@ -17,7 +16,7 @@ class AddSectionBase extends Marionette.ItemView {
 			addSectionButton: '.elementor-add-section-button',
 			addTemplateButton: '.elementor-add-template-button',
 			selectPreset: '.elementor-select-preset',
-			presets: '.elementor-preset'
+			presets: '.elementor-preset',
 		};
 	}
 
@@ -26,7 +25,7 @@ class AddSectionBase extends Marionette.ItemView {
 			'click @ui.addSectionButton': 'onAddSectionButtonClick',
 			'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 			'click @ui.closeButton': 'onCloseButtonClick',
-			'click @ui.presets': 'onPresetSelected'
+			'click @ui.presets': 'onPresetSelected',
 		};
 	}
 
@@ -34,8 +33,8 @@ class AddSectionBase extends Marionette.ItemView {
 		return {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
-				groups: this.getContextMenuGroups()
-			}
+				groups: this.getContextMenuGroups(),
+			},
 		};
 	}
 
@@ -62,8 +61,8 @@ class AddSectionBase extends Marionette.ItemView {
 	getTemplatesModalOptions() {
 		return {
 			importOptions: {
-				at: this.getOption( 'at' )
-			}
+				at: this.getOption( 'at' ),
+			},
 		};
 	}
 
@@ -80,9 +79,9 @@ class AddSectionBase extends Marionette.ItemView {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						callback: this.paste.bind( this ),
-						isEnabled: this.isPasteEnabled.bind( this )
-					}
-				]
+						isEnabled: this.isPasteEnabled.bind( this ),
+					},
+				],
 			}, {
 				name: 'content',
 				actions: [
@@ -90,15 +89,15 @@ class AddSectionBase extends Marionette.ItemView {
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
 						callback: this.copy.bind( this ),
-						isEnabled: hasContent
+						isEnabled: hasContent,
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
 						callback: elementor.clearPage.bind( elementor ),
-						isEnabled: hasContent
-					}
-				]
-			}
+						isEnabled: hasContent,
+					},
+				],
+			},
 		];
 	}
 
@@ -129,7 +128,7 @@ class AddSectionBase extends Marionette.ItemView {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: this.onDropping.bind( this )
+			onDropping: this.onDropping.bind( this ),
 		} );
 	}
 
@@ -146,12 +145,12 @@ class AddSectionBase extends Marionette.ItemView {
 				id: elementor.helpers.getUniqueID(),
 				elType: 'column',
 				settings: {},
-				elements: []
+				elements: [],
 			} );
 		}
 
 		elementor.channels.data.trigger( 'element:before:add', {
-			elType: 'section'
+			elType: 'section',
 		} );
 
 		var newSection = this.addSection( { elements: elements } );
