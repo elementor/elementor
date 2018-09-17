@@ -23,6 +23,10 @@ class Admin {
 			return;
 		}
 
+		if ( Utils::is_ajax() ) {
+			return;
+		}
+
 		delete_transient( 'elementor_activation_redirect' );
 
 		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) {

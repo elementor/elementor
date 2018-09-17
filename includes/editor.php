@@ -123,6 +123,9 @@ class Editor {
 		// Handle `wp_enqueue_scripts`
 		remove_all_actions( 'wp_enqueue_scripts' );
 
+		// Also remove all scripts hooked into after_wp_tiny_mce.
+		remove_all_actions( 'after_wp_tiny_mce' );
+
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 999999 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 999999 );
 

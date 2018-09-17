@@ -19,9 +19,9 @@ module.exports = BaseSettings.extend( {
 					elementor.once( 'preview:loaded', function() {
 						elementor.getPanelView().setPage( 'page_settings' );
 					} );
-				}
+				},
 			} );
-		}
+		},
 	},
 
 	onModelChange: function() {
@@ -34,5 +34,5 @@ module.exports = BaseSettings.extend( {
 		data.id = elementor.config.document.id;
 
 		return data;
-	}
+	},
 } );

@@ -12,7 +12,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 
 	events: function() {
 		return _.extend( ControlBaseUnitsItemView.prototype.events.apply( this, arguments ), {
-			'slide @ui.slider': 'onSlideChange'
+			'slide @ui.slider': 'onSlideChange',
 		} );
 	},
 
@@ -57,7 +57,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		}
 
 		this.$el.remove();
-	}
+	},
 } );
 
 module.exports = ControlSliderItemView;

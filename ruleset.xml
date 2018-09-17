@@ -33,6 +33,9 @@
 		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralPlural" />
 		<exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped" />
 		<exclude name="WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
 	</rule>
 
 	<rule ref="WordPress.WP.DeprecatedFunctions">

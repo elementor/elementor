@@ -7,9 +7,9 @@ helpers = {
 		section: {
 			column: {
 				widget: null,
-				section: null
-			}
-		}
+				section: null,
+			},
+		},
 	},
 
 	enqueueFont: function( font ) {
@@ -21,12 +21,12 @@ helpers = {
 			fontUrl,
 
 			subsets = {
-				'ru_RU': 'cyrillic',
-				'uk': 'cyrillic',
-				'bg_BG': 'cyrillic',
-				'vi': 'vietnamese',
-				'el': 'greek',
-				'he_IL': 'hebrew'
+				ru_RU: 'cyrillic',
+				uk: 'cyrillic',
+				bg_BG: 'cyrillic',
+				vi: 'vietnamese',
+				el: 'greek',
+				he_IL: 'hebrew',
 			};
 
 		switch ( fontType ) {
@@ -64,7 +64,6 @@ helpers = {
 		}
 
 		if ( undefined !== container[ elementType ] ) {
-
 			if ( jQuery.isPlainObject( container[ elementType ] ) ) {
 				return Object.keys( container[ elementType ] );
 			}
@@ -73,7 +72,6 @@ helpers = {
 		}
 
 		for ( var type in container ) {
-
 			if ( ! container.hasOwnProperty( type ) ) {
 				continue;
 			}
@@ -131,9 +129,9 @@ helpers = {
 
 		var hasFields = _.filter( condition, function( conditionValue, conditionName ) {
 			var conditionNameParts = conditionName.match( /([a-z_0-9]+)(?:\[([a-z_]+)])?(!?)$/i ),
-				conditionRealName = conditionNameParts[1],
-				conditionSubKey = conditionNameParts[2],
-				isNegativeCondition = !! conditionNameParts[3],
+				conditionRealName = conditionNameParts[ 1 ],
+				conditionSubKey = conditionNameParts[ 2 ],
+				isNegativeCondition = !! conditionNameParts[ 3 ],
 				controlValue = values[ conditionRealName ];
 
 			if ( values.__dynamic__ && values.__dynamic__[ conditionRealName ] ) {
@@ -172,7 +170,7 @@ helpers = {
 	},
 
 	firstLetterUppercase: function( string ) {
-		return string[0].toUpperCase() + string.slice( 1 );
+		return string[ 0 ].toUpperCase() + string.slice( 1 );
 	},
 
 	disableElementEvents: function( $element ) {
@@ -216,7 +214,7 @@ helpers = {
 			} ),
 			defaultOptions = {
 				width: window.innerWidth >= 1440 ? 271 : 251,
-				palettes: _.pluck( items, 'value' )
+				palettes: _.pluck( items, 'value' ),
 			};
 
 		if ( options ) {
@@ -254,14 +252,14 @@ helpers = {
 		setTimeout( function() {
 			var parentHeight = $parent.height(),
 				parentScrollTop = $parent.scrollTop(),
-				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[0].offsetTop,
+				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[ 0 ].offsetTop,
 				topToCheck = elementTop - parentScrollTop;
 
 			if ( topToCheck > 0 && topToCheck < parentHeight ) {
 				return;
 			}
 
-			var scrolling = elementTop - parentHeight / 2;
+			var scrolling = elementTop - ( parentHeight / 2 );
 
 			$scrolled.stop( true ).animate( { scrollTop: scrolling }, 1000 );
 		}, timeout );
@@ -269,7 +267,7 @@ helpers = {
 
 	getElementInlineStyle: function( $element, properties ) {
 		var style = {},
-			elementStyle = $element[0].style;
+			elementStyle = $element[ 0 ].style;
 
 		properties.forEach( function( property ) {
 			style[ property ] = undefined !== elementStyle[ property ] ? elementStyle[ property ] : '';
@@ -301,7 +299,7 @@ helpers = {
 			return version.replace( /[^\d.]+/, '.-1.' );
 		};
 
-		versionA  = prepareVersion( versionA );
+		versionA = prepareVersion( versionA );
 		versionB = prepareVersion( versionB );
 
 		if ( versionA === versionB ) {
@@ -320,7 +318,7 @@ helpers = {
 				return this.conditions.compare( valueA, valueB, operator );
 			}
 		}
-	}
+	},
 };
 
 module.exports = helpers;

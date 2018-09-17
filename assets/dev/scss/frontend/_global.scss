@@ -31,7 +31,7 @@
 		box-shadow: none;
 	}
 
-	.elementor-widget:not(.elementor-widget-text-editor) figure {
+	.elementor-widget:not(.elementor-widget-text-editor):not(.wp-block-image) figure:not(.wp-block-image) {
 			margin: 0;
 	}
 

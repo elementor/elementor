@@ -409,9 +409,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Content', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => [
-					'icon!' => '',
-				],
 			]
 		);
 
