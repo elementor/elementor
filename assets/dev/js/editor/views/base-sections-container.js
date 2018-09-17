@@ -9,8 +9,8 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		var behaviors = {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'section'
-			}
+				elChildType: 'section',
+			},
 		};
 
 		return elementor.hooks.applyFilters( 'elements/base-section-container/behaviors', behaviors, this );
@@ -19,7 +19,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	getSortableOptions: function() {
 		return {
 			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
-			items: '> .elementor-section'
+			items: '> .elementor-section',
 		};
 	},
 
@@ -46,7 +46,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 
 	onPanelElementDragEnd: function() {
 		elementor.helpers.enableElementEvents( this.$el.find( 'iframe' ) );
-	}
+	},
 } );
 
 module.exports = BaseSectionsContainerView;

@@ -4,7 +4,7 @@ module.exports = Marionette.Behavior.extend( {
 
 	defaults: {
 		groups: [],
-		eventTargets: [ 'el' ]
+		eventTargets: [ 'el' ],
 	},
 
 	events: function() {
@@ -42,13 +42,13 @@ module.exports = Marionette.Behavior.extend( {
 				{
 					name: 'navigator',
 					title: elementor.translate( 'navigator' ),
-					callback: elementor.navigator.open.bind( elementor.navigator, this.view.model )
-				}
-			]
+					callback: elementor.navigator.open.bind( elementor.navigator, this.view.model ),
+				},
+			],
 		} );
 
 		this.contextMenu = new ContextMenu( {
-			groups: contextMenuGroups
+			groups: contextMenuGroups,
 		} );
 
 		this.contextMenu.getModal().on( 'hide', this.onContextMenuHide );
@@ -104,5 +104,5 @@ module.exports = Marionette.Behavior.extend( {
 		if ( this.contextMenu ) {
 			this.contextMenu.destroy();
 		}
-	}
+	},
 } );

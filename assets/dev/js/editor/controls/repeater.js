@@ -6,7 +6,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 ControlRepeaterItemView = ControlBaseDataView.extend( {
 	ui: {
 		btnAddRow: '.elementor-repeater-add',
-		fieldContainer: '.elementor-repeater-fields-wrapper'
+		fieldContainer: '.elementor-repeater-fields-wrapper',
 	},
 
 	events: function() {
@@ -14,7 +14,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			'click @ui.btnAddRow': 'onButtonAddRowClick',
 			'sortstart @ui.fieldContainer': 'onSortStart',
 			'sortupdate @ui.fieldContainer': 'onSortUpdate',
-			'sortstop @ui.fieldContainer': 'onSortStop'
+			'sortstop @ui.fieldContainer': 'onSortStop',
 		};
 	},
 
@@ -24,14 +24,14 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	templateHelpers: function() {
 		return {
-			data: _.extend( {}, this.model.toJSON(), { controlValue: [] } )
+			data: _.extend( {}, this.model.toJSON(), { controlValue: [] } ),
 		};
 	},
 
 	childViewOptions: function() {
 		return {
 			controlFields: this.model.get( 'fields' ),
-			titleField: this.model.get( 'title_field' )
+			titleField: this.model.get( 'title_field' ),
 		};
 	},
 
@@ -56,7 +56,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			this.collection = new Backbone.Collection( this.collection, {
 				// Use `partial` to supply the `this` as an argument, but not as context
 				// the `_` is a place holder for original arguments: `attrs` & `options`
-				model: _.partial( this.createItemModel, _, _, this )
+				model: _.partial( this.createItemModel, _, _, this ),
 			} );
 
 			// Set the value silent
@@ -66,7 +66,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	initialize: function( options ) {
+	initialize: function() {
 		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
 		this.fillCollection();
@@ -195,9 +195,9 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			controlName = this.model.get( 'name' );
 
 		if ( event.add ) {
-			collectionCloned.remove( event.changes.added[0] );
+			collectionCloned.remove( event.changes.added[ 0 ] );
 		} else {
-			collectionCloned.add( event.changes.removed[0], { at: event.index } );
+			collectionCloned.add( event.changes.removed[ 0 ], { at: event.index } );
 		}
 
 		settings.changed = {};
@@ -206,7 +206,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		settings._previousAttributes = {};
 		settings._previousAttributes[ controlName ] = collectionCloned.toJSON();
 
-		settings.trigger( 'change', settings,  settings._pending );
+		settings.trigger( 'change', settings, settings._pending );
 
 		delete settings.changed;
 		delete settings._previousAttributes;
@@ -232,7 +232,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		collectionCloned[ modelIndex ] = model._previousAttributes;
 
 		settings.changed = {};
-		settings.changed[ controlName ] =  model.collection;
+		settings.changed[ controlName ] = model.collection;
 
 		settings._previousAttributes = {};
 		settings._previousAttributes[ controlName ] = collectionCloned;
@@ -246,7 +246,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	onButtonAddRowClick: function() {
 		var defaults = {};
 		_.each( this.model.get( 'fields' ), function( field ) {
-			defaults[ field.name ] = field['default'];
+			defaults[ field.name ] = field.default;
 		} );
 
 		var newModel = this.addRow( defaults ),
@@ -282,7 +282,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.fillCollection();
 
 		ControlBaseDataView.prototype.onAfterExternalChange.apply( this, arguments );
-	}
+	},
 } );
 
 module.exports = ControlRepeaterItemView;

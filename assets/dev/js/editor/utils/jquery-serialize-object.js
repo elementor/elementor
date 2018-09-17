@@ -1,7 +1,7 @@
 /*
  * jQuery Serialize Object v1.0.1
  */
-(function( $ ) {
+( function( $ ) {
 	$.fn.elementorSerializeObject = function() {
 		var serializedArray = this.serializeArray(),
 			data = {};
@@ -43,4 +43,4 @@
 		} );
 		return data;
 	};
-})( jQuery );
+} )( jQuery );
