@@ -31,8 +31,8 @@
 		box-shadow: none;
 	}
 
-	.elementor-widget:not(.elementor-widget-text-editor):not(.wp-block-image) figure:not(.wp-block-image) {
-			margin: 0;
+	.elementor-widget:not(.elementor-widget-text-editor):not(.wp-block-image) figure:not(.wp-block-image):not(.elementor-image-box-img) {
+		margin: 0;
 	}
 
 	// Responsive Embed
