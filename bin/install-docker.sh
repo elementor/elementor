@@ -23,6 +23,12 @@ if ! docker info >/dev/null 2>&1; then
 	exit 1
 fi
 
+docker_id=$(docker-compose ps -q wordpress)
+if  [[ ! -z $(docker ps -q --filter "id=${docker_id}") ]]; then
+	echo -e $(status_message "becking up your site...")
+	docker exec elementor_mysql_1 /usr/bin/mysqldump -u root --password=example wordpress > log/backup.sql
+fi
+
 # Stop existing containers.
 echo -e $(status_message "Stopping Docker containers...")
 docker-compose $DOCKER_COMPOSE_FILE_OPTIONS down --remove-orphans >/dev/null 2>&1
@@ -47,3 +53,8 @@ if command_exists "systeminfo"; then
 	WP_CORE_DIR=../tmp/wordpress
 fi
 docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm wordpress_phpunit bash ./bin/install-wp-tests.sh wordpress_test1 root example mysql $WP_VERSION false> /dev/null
+
+if [ -f ./log/backup.sql ]; then
+    echo -e $(status_message "restoring database")
+    cat log/backup.sql | docker exec -i elementor_mysql_1 /usr/bin/mysql -u root --password=example wordpress
+fi
