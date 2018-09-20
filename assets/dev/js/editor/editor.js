@@ -1,7 +1,7 @@
 /* global ElementorConfig */
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
-import HotkeysModal from './components/hotkeys/hotkeys';
+import HotkeysScreen from './components/hotkeys/hotkeys';
 
 const App = Marionette.Application.extend( {
 	previewLoadedOnce: false,
@@ -265,7 +265,7 @@ const App = Marionette.Application.extend( {
 
 		this.initHotKeys();
 
-		this.hotkeysModal = new HotkeysModal();
+		this.hotkeysScreen = new HotkeysScreen();
 	},
 
 	// TODO: BC method since 2.3.0
