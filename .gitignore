@@ -11,6 +11,7 @@ yarn.lock
 .vscode
 Thumbs.db
 *.DS_Store
+local-site-backup.sql
 
 *.log
 *.map
