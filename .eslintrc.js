@@ -73,7 +73,7 @@ module.exports = {
 		'no-duplicate-case': 'error',
 		'no-eval': 'error',
 		'no-fallthrough': 'error',
-		'no-multiple-empty-lines': [ 'warn', { max: 1 } ],
+		'no-multiple-empty-lines': [ 'error', { max: 1 } ],
 		'no-multi-str': 'off',
 		'no-negated-in-lhs': 'error',
 		'no-redeclare': 'error',
