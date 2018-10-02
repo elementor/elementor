@@ -332,14 +332,17 @@ class Tracker {
 	 * @return array The data from system reports.
 	 */
 	private static function get_system_reports_data() {
-		$reports = Plugin::$instance->system_info->load_reports( System_Info\Main::get_allowed_reports() );
-
 		$system_reports = [];
-		foreach ( $reports as $report_key => $report_details ) {
-			$system_reports[ $report_key ] = [];
-			foreach ( $report_details['report'] as $sub_report_key => $sub_report_details ) {
-				$system_reports[ $report_key ][ $sub_report_key ] = $sub_report_details['value'];
+		try {
+			$reports = Plugin::$instance->system_info->load_reports( System_Info\Main::get_allowed_reports() );
+
+			foreach ( $reports as $report_key => $report_details ) {
+				$system_reports[ $report_key ] = [];
+				foreach ( $report_details['report'] as $sub_report_key => $sub_report_details ) {
+					$system_reports[ $report_key ][ $sub_report_key ] = $sub_report_details['value'];
+				}
 			}
+		} catch (Exception $e) {
 		}
 		return $system_reports;
 	}
