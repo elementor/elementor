@@ -6,9 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <script type="text/template" id="tmpl-elementor-hotkeys">
+
     <div class="hotkeys__content">
-
-
         <div class="hotkeys__col hotkeys__col--50 hotkeys--actions">
 
             <div class="hotkeys__header">
@@ -27,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <div class="hotkeys__item--label"><?php echo __( 'Redo', 'elementor' ); ?></div>
                     <div class="hotkeys__item--shortcut">
                         <span>Ctrl / Cmd</span>
-                        <span>Shfit</span>
+                        <span>Shift</span>
                         <span>Z</span>
                     </div>
                 </div>
@@ -52,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <div class="hotkeys__item--label"><?php echo __( 'Paste Style', 'elementor' ); ?></div>
                     <div class="hotkeys__item--shortcut">
                         <span>Ctrl / Cmd</span>
-                        <span>Shfit</span>
+                        <span>Shift</span>
                         <span>C</span>
                     </div>
                 </div>
@@ -101,7 +100,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <div class="hotkeys__item--label"><?php echo __( 'Responsive Mode', 'elementor' ); ?></div>
                     <div class="hotkeys__item--shortcut">
                         <span>Ctrl / Cmd</span>
-                        <span>Shfit</span>
+                        <span>Shift</span>
                         <span>M</span>
                     </div>
                 </div>
@@ -110,7 +109,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <div class="hotkeys__item--label"><?php echo __( 'History', 'elementor' ); ?></div>
                     <div class="hotkeys__item--shortcut">
                         <span>Ctrl / Cmd</span>
-                        <span>Shfit</span>
+                        <span>Shift</span>
                         <span>H</span>
                     </div>
                 </div>
@@ -119,7 +118,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <div class="hotkeys__item--label"><?php echo __( 'Navigator', 'elementor' ); ?></div>
                     <div class="hotkeys__item--shortcut">
                         <span>Ctrl / Cmd</span>
-                        <span>Shfit</span>
+                        <span>Shift</span>
                         <span>I</span>
                     </div>
                 </div>
@@ -128,7 +127,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <div class="hotkeys__item--label"><?php echo __( 'Template Library', 'elementor' ); ?></div>
                     <div class="hotkeys__item--shortcut">
                         <span>Ctrl / Cmd</span>
-                        <span>Shfit</span>
+                        <span>Shift</span>
                         <span>L</span>
                     </div>
                 </div>
@@ -142,7 +141,5 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </div>
             </div>
         </div>
-
-
     </div>
 </script>

@@ -133,27 +133,31 @@
 			flex-grow: 0;
 			display: flex;
 
+			@if $direction == rtl {
+				flex-direction: row-reverse;
+			}
+
 			span {
 				position: relative;
 				background-color: $gray-lighter;
 				padding: 5px 12px;
-				@include margin-end(27px);
+				margin-right: 27px;
 				border-radius: 3px;
 
 				@media (max-width: $editor-screen-xs-max) {
 					padding: 4px 9px;
-					@include margin-end(23px);
+					margin-right: 23px;
 				}
 
 				&:after {
 					content: '+';
 					position: absolute;
-					@include end(-18px);
+					right: -18px;
 					width: 9px;
 					text-align: center;
 
 					@media (max-width: $editor-screen-xs-max) {
-						@include end(-16px);
+						right: -16px;
 					}
 				}
 
