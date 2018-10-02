@@ -1,8 +1,8 @@
+import environment from './environment';
+
 export default class HotKeys {
 	constructor() {
 		this.hotKeysHandlers = {};
-
-		this.bindListener( elementorCommon.elements.$window );
 	}
 
 	applyHotKey( event ) {
@@ -29,7 +29,7 @@ export default class HotKeys {
 	}
 
 	isControlEvent( event ) {
-		return event[ elementorCommon.envData.mac ? 'metaKey' : 'ctrlKey' ];
+		return event[ environment.mac ? 'metaKey' : 'ctrlKey' ];
 	}
 
 	addHotKeyHandler( keyCode, handlerName, handler ) {
