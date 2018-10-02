@@ -25,17 +25,6 @@ class ElementorCommonApp extends ViewModule {
 		};
 	}
 
-	initEnvData() {
-		const userAgent = navigator.userAgent;
-
-		this.envData = {
-			webkit: -1 !== userAgent.indexOf( 'AppleWebKit' ),
-			firefox: -1 !== userAgent.indexOf( 'Firefox' ),
-			ie: /Trident|MSIE/.test( userAgent ),
-			mac: -1 !== userAgent.indexOf( 'Macintosh' ),
-		};
-	}
-
 	initComponents() {
 		this.helpers = new Helpers();
 
@@ -52,8 +41,6 @@ class ElementorCommonApp extends ViewModule {
 		super.onInit();
 
 		this.config = elementorCommonConfig;
-
-		this.initEnvData();
 
 		this.setMarionetteTemplateCompiler();
 	}
