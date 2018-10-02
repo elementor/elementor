@@ -1,4 +1,5 @@
 /* global elementorFrontendConfig */
+import environment from '../utils/environment';
 ( function( $ ) {
 	var elements = {},
 		EventManager = require( '../utils/hooks' ),
@@ -62,7 +63,7 @@
 		};
 
 		var addIeCompatibility = function() {
-			if ( ! elementorCommon.envData.ie ) {
+			if ( ! environment.ie ) {
 				return;
 			}
 

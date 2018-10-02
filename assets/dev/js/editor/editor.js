@@ -3,6 +3,8 @@ import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 
+import environment from '../utils/environment';
+
 const App = Marionette.Application.extend( {
 	previewLoadedOnce: false,
 
@@ -156,7 +158,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	checkEnvCompatibility: function() {
-		return elementorCommon.envData.firefox || elementorCommon.envData.webkit;
+		return environment.firefox || environment.webkit;
 	},
 
 	getElementData: function( model ) {
@@ -389,7 +391,7 @@ const App = Marionette.Application.extend( {
 					var frontendWindow = elementorFrontend.getElements( 'window' ),
 						textSelection = getSelection() + frontendWindow.getSelection();
 
-					if ( ! textSelection && elementorCommon.envData.firefox ) {
+					if ( ! textSelection && environment.firefox ) {
 						textSelection = [ window, frontendWindow ].some( function( window ) {
 							var activeElement = window.document.activeElement;
 
@@ -828,7 +830,7 @@ const App = Marionette.Application.extend( {
 		var text = '',
 			style = '';
 
-		if ( elementorCommon.envData.firefox ) {
+		if ( environment.firefox ) {
 			var asciiText = [
 				' ;;;;;;;;;;;;;;; ',
 				';;;  ;;       ;;;',

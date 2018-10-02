@@ -1,3 +1,5 @@
+import environment from '../../../utils/environment';
+
 var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -121,7 +123,7 @@ BaseElementView = BaseContainer.extend( {
 
 	getContextMenuGroups: function() {
 		var elementType = this.options.model.get( 'elType' ),
-			controlSign = elementorCommon.envData.mac ? '⌘' : '^';
+			controlSign = environment.mac ? '⌘' : '^';
 
 		return [
 			{
