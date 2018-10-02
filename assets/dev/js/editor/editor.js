@@ -714,7 +714,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	enterPreviewMode: function( hidePanel ) {
-		var $elements = elementorFrontend.getElements( 'window' ).elementorCommon.elements.$body;
+		var $elements = elementorFrontend.getElements( '$body' );
 
 		if ( hidePanel ) {
 			$elements = $elements.add( elementorCommon.elements.$body );
@@ -737,7 +737,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	exitPreviewMode: function() {
-		elementorFrontend.getElements( 'window' ).elementorCommon.elements.$body.add( elementorCommon.elements.$body )
+		elementorFrontend.getElements( '$body' ).add( elementorCommon.elements.$body )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
 
@@ -945,7 +945,7 @@ const App = Marionette.Application.extend( {
 
 		this.$previewContents.children().addClass( 'elementor-html' );
 
-		const $frontendBody = elementorFrontend.getElements( 'window' ).elementorCommon.elements.$body;
+		const $frontendBody = elementorFrontend.getElements( '$body' );
 
 		$frontendBody.addClass( 'elementor-editor-active' );
 
@@ -965,7 +965,7 @@ const App = Marionette.Application.extend( {
 
 		this.onEditModeSwitched();
 
-		elementorCommon.hotKeys.bindListener( elementorFrontend.getElements( 'window' ).elementorCommon.elements.$window );
+		elementorCommon.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		this.trigger( 'preview:loaded' );
 	},

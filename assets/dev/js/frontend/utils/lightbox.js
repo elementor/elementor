@@ -60,7 +60,7 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	initModal: function() {
-		var modal = LightboxModule.modal = elementorCommon.dialogsManager.createWidget( 'lightbox', {
+		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox',
 			closeButton: true,
 			closeButtonClass: 'eicon-close',
@@ -436,7 +436,7 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	bindEvents: function() {
-		elementorCommon.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
+		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
 	},
 
 	onInit: function() {

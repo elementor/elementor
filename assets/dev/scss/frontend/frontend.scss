@@ -1,6 +1,6 @@
-// Core variables and mixins
-@import "../helpers/variables";
-@import "../editor/breakpoints";
+// Common
+@import "../../../../core/common/assets/scss/common";
+
 @import "breakpoints/breakpoints";
 @import "../helpers/mixins";
 

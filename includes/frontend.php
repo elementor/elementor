@@ -334,9 +334,20 @@ class Frontend extends App {
 		);
 
 		wp_register_script(
+			'elementor-dialog',
+			$this->get_js_assets_url( 'dialog', 'assets/lib/dialog/' ),
+			[
+				'jquery-ui-position',
+			],
+			'4.4.1',
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
 			[
+				'elementor-dialog',
 				'elementor-waypoints',
 				'jquery-swiper',
 			],
@@ -982,10 +993,14 @@ class Frontend extends App {
 
 		$settings = [
 			'isEditMode' => $is_preview_mode,
-			// @deprecated since 2.3.0 - Use `elementorCommon.config.isRTL` instead
-			'is_rtl' => is_rtl(),
+			'isRTL' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
+			'version' => ELEMENTOR_VERSION,
+			'urls' => [
+				'assets' => ELEMENTOR_ASSETS_URL,
+			],
 		];
+
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
 
@@ -1036,6 +1051,7 @@ class Frontend extends App {
 		foreach ( $this->content_removed_filters as $filter ) {
 			add_filter( 'the_content', $filter );
 		}
+
 		$this->content_removed_filters = [];
 	}
 }

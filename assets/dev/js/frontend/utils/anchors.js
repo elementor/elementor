@@ -22,7 +22,7 @@ module.exports = ViewModule.extend( {
 	},
 
 	bindEvents: function() {
-		elementorCommon.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.handleAnchorLinks );
+		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'selectors.links' ), this.handleAnchorLinks );
 	},
 
 	handleAnchorLinks: function( event ) {

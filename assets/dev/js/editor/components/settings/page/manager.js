@@ -6,7 +6,7 @@ module.exports = BaseSettings.extend( {
 
 	changeCallbacks: {
 		post_title: function( newValue ) {
-			var $title = elementorFrontend.getElements( 'window' ).elementorCommon.elements.$document.find( elementor.config.page_title_selector );
+			var $title = elementorFrontend.getElements( '$document' ).find( elementor.config.page_title_selector );
 
 			$title.text( newValue );
 		},
