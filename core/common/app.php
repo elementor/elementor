@@ -20,10 +20,9 @@ class App extends BaseApp {
 		add_action( 'elementor/editor/footer', [ $this, 'print_templates' ] );
 		add_action( 'admin_footer', [ $this, 'print_templates' ] );
 
-		// TODO: Restrict from unauthorized users
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		/*add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
-		add_action( 'wp_footer', [ $this, 'print_templates' ] );
+		add_action( 'wp_footer', [ $this, 'print_templates' ] );*/
 	}
 
 	public function init_components() {
