@@ -749,7 +749,7 @@ class Admin extends App {
 				'yes' => __( 'Yes', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
 				'new_template' => __( 'New Template', 'elementor' ),
-			]
+			],
 		];
 
 		return apply_filters( 'elementor/admin/localize_settings', $settings );

@@ -644,7 +644,7 @@ class Editor {
 				'meet_right_click_header' => __( 'Meet Right Click', 'elementor' ),
 				'meet_right_click_message' => __( 'Now you can access all editing actions using right click.', 'elementor' ),
 				'got_it' => __( 'Got It', 'elementor' ),
-				
+
 				// Hotkeys screen
 				'keyboard_shortcuts' => __( 'Keyboard Shortcuts', 'elementor' ),
 
