@@ -1,5 +1,7 @@
 /* global elementorFrontendConfig */
+import HotKeys from '../utils/hot-keys';
 import environment from '../utils/environment';
+
 ( function( $ ) {
 	var elements = {},
 		EventManager = require( '../utils/hooks' ),
@@ -10,31 +12,39 @@ import environment from '../utils/environment';
 		LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
 	var ElementorFrontend = function() {
-		var self = this;
+		var self = this,
+			dialogsManager;
 
 		this.config = elementorFrontendConfig;
 
 		this.Module = Module;
 
 		var setDeviceModeData = function() {
-			elementorCommon.elements.$body.attr( 'data-elementor-device-mode', self.getCurrentDeviceMode() );
+			elements.$body.attr( 'data-elementor-device-mode', self.getCurrentDeviceMode() );
 		};
 
 		var initElements = function() {
 			elements.window = window;
 
-			elements.$elementor = elementorCommon.elements.$document.find( '.elementor' );
+			elements.$window = $( window );
 
-			/**
-			 * @deprecated since 2.3.0 Use elementorCommon.elements.$document
-			 */
 			elements.$document = $( document );
 
-			elements.$wpAdminBar = elementorCommon.elements.$document.find( '#wpadminbar' );
+			elements.$body = $( document.body );
+
+			elements.$elementor = elements.$document.find( '.elementor' );
+
+			elements.$wpAdminBar = elements.$document.find( '#wpadminbar' );
+		};
+
+		var initHotKeys = function() {
+			self.hotKeys = new HotKeys();
+
+			self.hotKeys.bindListener( elements.$window );
 		};
 
 		var bindEvents = function() {
-			elementorCommon.elements.$window.on( 'resize', setDeviceModeData );
+			elements.$window.on( 'resize', setDeviceModeData );
 		};
 
 		var initOnReadyComponents = function() {
@@ -67,9 +77,9 @@ import environment from '../utils/environment';
 				return;
 			}
 
-			elementorCommon.elements.$body.addClass( 'elementor-msie' );
+			elements.$body.addClass( 'elementor-msie' );
 
-			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie"  href="' + elementorCommon.config.urls.assets + 'css/frontend-msie.min.css?' + elementorCommon.config.version + '" type="text/css" />';
+			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie"  href="' + self.config.urls.assets + 'css/frontend-msie.min.css?' + self.config.version + '" type="text/css" />';
 
 			elements.$body.append( msieCss );
 		};
@@ -85,7 +95,11 @@ import environment from '../utils/environment';
 
 			setDeviceModeData();
 
-			elementorCommon.elements.$window.trigger( 'elementor/frontend/init' );
+			elements.$window.trigger( 'elementor/frontend/init' );
+
+			if ( ! self.isEditMode() ) {
+				initHotKeys();
+			}
 
 			initOnReadyComponents();
 		};
@@ -104,6 +118,14 @@ import environment from '../utils/environment';
 
 		this.getGeneralSettings = function( settingName ) {
 			return getSiteSettings( 'general', settingName );
+		};
+
+		this.getDialogsManager = function() {
+			if ( ! dialogsManager ) {
+				dialogsManager = new DialogsManager.Instance();
+			}
+
+			return dialogsManager;
 		};
 
 		this.isEditMode = function() {
@@ -157,7 +179,7 @@ import environment from '../utils/environment';
 
 		this.addListenerOnce = function( listenerID, event, callback, to ) {
 			if ( ! to ) {
-				to = elementorCommon.elements.$window;
+				to = elements.$window;
 			}
 
 			if ( ! self.isEditMode() ) {
@@ -179,7 +201,7 @@ import environment from '../utils/environment';
 
 		this.removeListeners = function( listenerID, event, callback, from ) {
 			if ( ! from ) {
-				from = elementorCommon.elements.$window;
+				from = elements.$window;
 			}
 
 			if ( from instanceof jQuery ) {

@@ -117,7 +117,7 @@ var BackgroundVideo = HandlerModule.extend( {
 			},
 		} );
 
-		elementorFrontend.getElements( 'window' ).elementorCommon.elements.$window.on( 'resize', self.changeVideoSize );
+		elementorFrontend.getElements( '$window' ).on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
@@ -242,7 +242,7 @@ var Shapes = HandlerModule.extend( {
 			selectors: {
 				container: '> .elementor-shape-%s',
 			},
-			svgURL: elementorCommon.config.urls.assets + 'shapes/',
+			svgURL: elementorFrontend.config.urls.assets + 'shapes/',
 		};
 	},
 
