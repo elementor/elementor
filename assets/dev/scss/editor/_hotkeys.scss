@@ -1,3 +1,170 @@
+//Hotkyes modal (Keyboard shortcuts)
 #elementor-hotkeys {
+	text-align: $start;
 
+	.hotkeys__content {
+		display: flex;
+		width: 100%;
+		overflow: hidden;
+		margin-bottom: 30px;
+
+		@media (max-width: $editor-screen-md-max) {
+			flex-direction: column;
+		}
+	}
+
+	.hotkeys__col {
+
+		&--50 {
+			width: 50%;
+
+			@media (max-width: $editor-screen-md-max) {
+				width: 100%;
+			}
+		}
+
+		&.hotkeys--actions {
+
+			.hotkeys__list {
+				border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+
+				@media (max-width: $editor-screen-md-max) {
+					border-radius: 3px;
+				}
+			}
+
+			.hotkeys__header,
+			.hotkeys__list {
+				@media (min-width: $editor-screen-lg-min) {
+					@include padding-end(25px);
+				}
+
+				@media (min-width: $editor-screen-xl-min) {
+					@include padding-end(50px);
+				}
+			}
+		}
+
+		&.hotkeys--navigation {
+
+			.hotkeys__list {
+				border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+
+				@media (max-width: $editor-screen-md-max) {
+					border-radius: 3px;
+				}
+			}
+
+			.hotkeys__header {
+				@media (min-width: $editor-screen-lg-min) {
+					@include padding-start(25px);
+				}
+
+				@media (min-width: $editor-screen-xl-min) {
+					@include padding-start(50px);
+				}
+			}
+
+			.hotkeys__list {
+				@media (min-width: $editor-screen-lg-min) {
+					@include padding-start(15px);
+				}
+
+				@media (min-width: $editor-screen-xl-min) {
+					@include padding-start(40px);
+				}
+			}
+		}
+	}
+
+	.hotkeys__header,
+	.hotkeys__list {
+		width: 100%;
+	}
+
+	.hotkeys__header{
+		padding: 10px 30px;
+		font-weight: 500;
+
+		@media (max-width: $editor-screen-xs-max) {
+			padding-right: 10px;
+			padding-left: 10px;
+		}
+	}
+
+	.hotkeys__list {
+		background-color: #ffffff;
+		height: 100%;
+		padding: 10px 20px;
+
+		@media (max-width: $editor-screen-xs-max) {
+			padding: 0;
+		}
+
+		@media (max-width: $editor-screen-md-max) {
+			margin-bottom: 30px;
+		}
+
+		@media (max-width: $editor-screen-md-max) {
+			height: auto;
+		}
+	}
+
+	.hotkeys__item {
+		display: flex;
+		align-items: center;
+		padding: 20px 10px;
+		border-bottom: 1px solid $gray-lighter;
+
+		&:last-child {
+			margin-bottom: 30px;
+
+			@media (max-width: $editor-screen-xs-max) {
+				margin-bottom: 0;
+			}
+		}
+
+		&--label {
+			font-weight: 500;
+			flex-grow: 1;
+		}
+
+		&--shortcut {
+			flex-grow: 0;
+			display: flex;
+
+			span {
+				position: relative;
+				background-color: $gray-lighter;
+				padding: 5px 12px;
+				@include margin-end(27px);
+				border-radius: 3px;
+
+				@media (max-width: $editor-screen-xs-max) {
+					padding: 4px 9px;
+					@include margin-end(23px);
+				}
+
+				&:after {
+					content: '+';
+					position: absolute;
+					@include end(-18px);
+					width: 9px;
+					text-align: center;
+
+					@media (max-width: $editor-screen-xs-max) {
+						@include end(-16px);
+					}
+				}
+
+				&:last-child {
+					margin-right: 0;
+
+					&:after {
+						display: none;
+					}
+				}
+			}
+		}
+	}
 }
