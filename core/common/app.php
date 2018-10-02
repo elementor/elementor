@@ -33,7 +33,7 @@ class App extends BaseApp {
 		return 'common';
 	}
 
-	public function enqueue_scripts(){
+	public function enqueue_scripts() {
 		wp_register_script(
 			'backbone-marionette',
 			$this->get_js_assets_url( 'backbone.marionette', 'assets/lib/backbone/' ),
@@ -128,7 +128,7 @@ class App extends BaseApp {
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 				'ajax' => admin_url( 'admin-ajax.php' ),
-			]
+			],
 		];
 	}
 

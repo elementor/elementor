@@ -1001,7 +1001,6 @@ class Frontend extends App {
 			],
 		];
 
-
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
 
 		if ( is_singular() ) {

@@ -1028,7 +1028,7 @@ abstract class Controls_Stack extends Base_Object {
 			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->get_settings() );
 		}
 
-		return self:: get_items( $this->parsed_dynamic_settings, $setting );
+		return self::get_items( $this->parsed_dynamic_settings, $setting );
 	}
 
 	/**
