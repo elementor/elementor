@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.2.1  
+**Stable tag:** 2.2.4  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -217,6 +217,24 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.2.4 - 2018-09-20 ###
+* Tweak: Added Poster option for Self Hosted in Video widget
+* Fix: Revert Gutenberg Image Block compatibility until stable version ([#5763](https://github.com/pojome/elementor/issues/5763))
+
+### 2.2.3 - 2018-09-17 ###
+* Tweak: Improved browser compatibility with Elementor grid
+* Fix: Toggle Widget first toggle always open on load
+* Fix: Changed Dailymotion placeholder in Video widget
+
+### 2.2.2 - 2018-09-16 ###
+* Tweak: Improved IE compatibility mechanism
+* Tweak: Added `remove_all_actions( 'after_wp_tiny_mce' )` hook for better compatibility with 3rd party plugins ([#5686](https://github.com/pojome/elementor/issues/5686))
+* Fix: Content styling missing when no icon for Toggle widget ([#5735](https://github.com/pojome/elementor/issues/5735))
+* Fix: Redirect issue on activation via Ajax
+* Fix: Excluded `Actions` label from ordering in Template library modal
+* Fix: Avoid setting empty title for elements in Navigator
+* Fix: Compatibility for Gutenberg Image Block
 
 ### 2.2.1 - 2018-09-03 ###
 * Fix: Auto scrolling when clicking on long element ([#5591](https://github.com/pojome/elementor/issues/5591))
