@@ -71,7 +71,7 @@ class Admin extends App {
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),
 			[
-				'jquery',
+				'elementor-common',
 			],
 			ELEMENTOR_VERSION,
 			true
