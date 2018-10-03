@@ -73,13 +73,16 @@ import environment from '../utils/environment';
 		};
 
 		var addIeCompatibility = function() {
-			if ( ! environment.ie ) {
+			var el = document.createElement( 'div' ),
+				supportsGrid = 'string' === typeof el.style.grid;
+
+			if ( ! environment.ie && supportsGrid ) {
 				return;
 			}
 
 			elements.$body.addClass( 'elementor-msie' );
 
-			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie"  href="' + self.config.urls.assets + 'css/frontend-msie.min.css?' + self.config.version + '" type="text/css" />';
+			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie" href="' + self.config.urls.assets + 'css/frontend-msie.min.css?' + self.config.version + '" type="text/css" />';
 
 			elements.$body.append( msieCss );
 		};
