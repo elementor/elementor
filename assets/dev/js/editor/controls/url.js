@@ -4,7 +4,7 @@ module.exports = BaseMultiple.extend( {
 
 	onReady: function() {
 		var self = this,
-			positionBase = elementor.config.is_rtl ? 'right' : 'left',
+			positionBase = elementorCommon.config.isRTL ? 'right' : 'left',
 			last, cache;
 
 		// Based on /wp-includes/js/tinymce/plugins/wplink/plugin.js.

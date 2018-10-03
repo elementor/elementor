@@ -165,11 +165,11 @@ SectionView = BaseElementView.extend( {
 	showChildrenPercentsTooltip: function( columnView, nextColumnView ) {
 		columnView.ui.percentsTooltip.show();
 
-		columnView.ui.percentsTooltip.attr( 'data-side', elementor.config.is_rtl ? 'right' : 'left' );
+		columnView.ui.percentsTooltip.attr( 'data-side', elementorCommon.config.isRTL ? 'right' : 'left' );
 
 		nextColumnView.ui.percentsTooltip.show();
 
-		nextColumnView.ui.percentsTooltip.attr( 'data-side', elementor.config.is_rtl ? 'left' : 'right' );
+		nextColumnView.ui.percentsTooltip.attr( 'data-side', elementorCommon.config.isRTL ? 'left' : 'right' );
 	},
 
 	hideChildrenPercentsTooltip: function( columnView, nextColumnView ) {

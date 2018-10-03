@@ -34,7 +34,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 			return value;
 		}
 
-		return elementor.helpers.cloneObject( values );
+		return elementorCommon.helpers.cloneObject( values );
 	},
 
 	setValue: function( key, value ) {

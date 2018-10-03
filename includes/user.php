@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -39,8 +41,8 @@ class User {
 		add_action( 'elementor/ajax/register_actions', [ __CLASS__, 'register_ajax_actions' ] );
 	}
 
-	public static function register_ajax_actions() {
-		Plugin::$instance->ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
+	public static function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
 	}
 
 	/**
@@ -172,6 +174,7 @@ class User {
 	 */
 	public static function is_user_notice_viewed( $notice_id ) {
 		$notices = self::get_user_notices();
+
 		if ( empty( $notices ) || empty( $notices[ $notice_id ] ) ) {
 			return false;
 		}

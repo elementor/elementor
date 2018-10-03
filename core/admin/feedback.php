@@ -2,6 +2,7 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
+use Elementor\Core\Base\Module;
 use Elementor\Tracker;
 use Elementor\User;
 
@@ -9,7 +10,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Feedback {
+class Feedback extends Module {
+
+	public function __construct() {
+		add_action( 'current_screen', function () {
+			if ( ! $this->is_plugins_screen() ) {
+				return;
+			}
+
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_feedback_dialog_scripts' ] );
+
+			add_filter( 'elementor/admin/localize_settings', [ $this, 'localize_feedback_dialog_settings' ] );
+		} );
+
+		// Ajax.
+		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
+
+		// Review Plugin
+		add_action( 'admin_notices', [ $this, 'admin_notices' ], 20 );
+	}
+
+	/**
+	 * Get module name.
+	 *
+	 * Retrieve the module name.
+	 *
+	 * @since  1.7.0
+	 * @access public
+	 *
+	 * @return string Module name.
+	 */
+	public function get_name() {
+		return 'feedback';
+	}
 
 	/**
 	 * Enqueue feedback dialog scripts.
@@ -20,10 +53,6 @@ class Feedback {
 	 * @access public
 	 */
 	public function enqueue_feedback_dialog_scripts() {
-		if ( ! in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ], true ) ) {
-			return;
-		}
-
 		add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
@@ -32,27 +61,20 @@ class Feedback {
 			'elementor-admin-feedback',
 			ELEMENTOR_ASSETS_URL . 'js/admin-feedback' . $suffix . '.js',
 			[
-				'jquery',
-				'underscore',
-				'elementor-dialog',
+				'elementor-common',
 			],
 			ELEMENTOR_VERSION,
 			true
 		);
 
 		wp_enqueue_script( 'elementor-admin-feedback' );
+	}
 
-		wp_localize_script(
-			'elementor-admin-feedback',
-			'ElementorAdminFeedbackArgs',
-			[
-				'is_tracker_opted_in' => Tracker::is_allow_track(),
-				'i18n' => [
-					'submit_n_deactivate' => __( 'Submit & Deactivate', 'elementor' ),
-					'skip_n_deactivate' => __( 'Skip & Deactivate', 'elementor' ),
-				],
-			]
-		);
+	public function localize_feedback_dialog_settings( $localized_settings ) {
+		$localized_settings['i18n']['submit_n_deactivate'] = __( 'Submit & Deactivate', 'elementor' );
+		$localized_settings['i18n']['skip_n_deactivate'] = __( 'Skip & Deactivate', 'elementor' );
+
+		return $localized_settings;
 	}
 
 	/**
@@ -159,15 +181,8 @@ class Feedback {
 
 	public function admin_notices() {
 		$notice_id = 'rate_us_feedback';
-		if ( User::is_user_notice_viewed( $notice_id ) ) {
-			return;
-		}
 
-		if ( Tracker::is_notice_shown() ) {
-			return;
-		}
-
-		if ( ! in_array( get_current_screen()->id, [ 'dashboard' ], true ) ) {
+		if ( 'dashboard' !== get_current_screen()->id || User::is_user_notice_viewed( $notice_id ) || Tracker::is_notice_shown() ) {
 			return;
 		}
 
@@ -205,13 +220,15 @@ class Feedback {
 		<?php
 	}
 
-	public function __construct() {
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_feedback_dialog_scripts' ] );
+	protected function get_init_settings() {
+		if ( ! $this->is_plugins_screen() ) {
+			return [];
+		}
 
-		// Ajax.
-		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
+		return [ 'is_tracker_opted_in' => Tracker::is_allow_track() ];
+	}
 
-		// Review Plugin
-		add_action( 'admin_notices', [ $this, 'admin_notices' ], 20 );
+	private function is_plugins_screen() {
+		return in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ] );
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.4.0
  * @abstract
  */
-abstract class Controls_Stack {
+abstract class Controls_Stack extends Base_Object {
 
 	/**
 	 * Responsive 'desktop' device name.
@@ -43,18 +44,6 @@ abstract class Controls_Stack {
 	 * @var string
 	 */
 	private $id;
-
-	/**
-	 * Parsed Settings.
-	 *
-	 * Holds the settings, which is the data entered by the user and processed
-	 * by elementor.
-	 *
-	 * @access private
-	 *
-	 * @var null|array
-	 */
-	private $settings;
 
 	private $active_settings;
 
@@ -226,6 +215,7 @@ abstract class Controls_Stack {
 	 * will be returned.
 	 *
 	 * @since 1.4.0
+	 * @deprecated 2.3.0 Use `Controls_Stack::get_items()` instead
 	 * @access protected
 	 * @static
 	 *
@@ -285,7 +275,7 @@ abstract class Controls_Stack {
 	 * @return mixed Controls list.
 	 */
 	public function get_controls( $control_id = null ) {
-		return self::_get_items( $this->get_stack()['controls'], $control_id );
+		return self::get_items( $this->get_stack()['controls'], $control_id );
 	}
 
 	/**
@@ -1030,27 +1020,7 @@ abstract class Controls_Stack {
 			$this->settings_sanitized = true;
 		}
 
-		return self::_get_items( $this->data, $item );
-	}
-
-	/**
-	 * Get the settings.
-	 *
-	 * Retrieve all the settings or, when requested, a specific setting.
-	 *
-	 * @since 1.4.0
-	 * @access public
-	 *
-	 * @param string $setting Optional. The requested setting. Default is null.
-	 *
-	 * @return mixed The settings.
-	 */
-	public function get_settings( $setting = null ) {
-		if ( ! $this->settings ) {
-			$this->settings = $this->_get_parsed_settings();
-		}
-
-		return self::_get_items( $this->settings, $setting );
+		return self::get_items( $this->data, $item );
 	}
 
 	public function get_parsed_dynamic_settings( $setting = null ) {
@@ -1058,7 +1028,7 @@ abstract class Controls_Stack {
 			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->get_settings() );
 		}
 
-		return self::_get_items( $this->parsed_dynamic_settings, $setting );
+		return self::get_items( $this->parsed_dynamic_settings, $setting );
 	}
 
 	/**
@@ -1141,7 +1111,7 @@ abstract class Controls_Stack {
 			$this->parsed_active_settings = $this->get_active_settings( $this->get_parsed_dynamic_settings(), $this->get_controls() );
 		}
 
-		return self::_get_items( $this->parsed_active_settings, $setting_key );
+		return self::get_items( $this->parsed_active_settings, $setting_key );
 	}
 
 	/**
@@ -1753,31 +1723,6 @@ abstract class Controls_Stack {
 	}
 
 	/**
-	 * Set settings.
-	 *
-	 * Change or add new settings to an existing control in the stack.
-	 *
-	 * @since 1.4.0
-	 * @access public
-	 *
-	 * @param string|array $key   Setting name, or an array of key/value.
-	 * @param string|null  $value Optional. Setting value. Optional field if
-	 *                            `$key` is an array. Default is null.
-	 */
-	final public function set_settings( $key, $value = null ) {
-		if ( ! $this->settings ) {
-			$this->get_settings();
-		}
-
-		// strict check if override all settings.
-		if ( is_array( $key ) ) {
-			$this->settings = $key;
-		} else {
-			$this->settings[ $key ] = $value;
-		}
-	}
-
-	/**
 	 * Register controls.
 	 *
 	 * Used to add new controls to any element type. For example, external
@@ -1810,21 +1755,7 @@ abstract class Controls_Stack {
 		];
 	}
 
-	/**
-	 * Get parsed settings.
-	 *
-	 * Retrieve the parsed settings for all the controls that represent them.
-	 * The parser set default values and process the settings.
-	 *
-	 * Classes that extend `Controls_Stack` can add new process to the settings
-	 * parser.
-	 *
-	 * @since 1.4.0
-	 * @access protected
-	 *
-	 * @return array Parsed settings.
-	 */
-	protected function _get_parsed_settings() {
+	protected function get_init_settings() {
 		$settings = $this->get_data( 'settings' );
 
 		foreach ( $this->get_controls() as $control ) {
@@ -1840,6 +1771,27 @@ abstract class Controls_Stack {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Get parsed settings.
+	 *
+	 * Retrieve the parsed settings for all the controls that represent them.
+	 * The parser set default values and process the settings.
+	 *
+	 * Classes that extend `Controls_Stack` can add new process to the settings
+	 * parser.
+	 *
+	 * @since 1.4.0
+	 * @deprecated 2.3.0 Use `Controls_Stack::get_init_settings()` instead
+	 * @access protected
+	 *
+	 * @return array Parsed settings.
+	 */
+	protected function _get_parsed_settings() {
+		_deprecated_function( __METHOD__, '2.3.0', 'Controls_Stack::get_init_settings' );
+
+		return $this->get_init_settings();
 	}
 
 	/**

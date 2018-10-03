@@ -6,13 +6,7 @@
 @import "../helpers/variables";
 @import "../editor/breakpoints";
 @import "../helpers/mixins";
-@import "../helpers/utilities";
-
-// Common
-@import "../common/common";
-
 @import "../editor/buttons";
-@import "../editor/templates-modal-wrapper";
 
 // Admin Global
 @import "global";

@@ -8,3 +8,5 @@ $editor-screen-lg-max: map_get($breakpoints, xl) - 1;
 $editor-screen-xl-min: map_get($breakpoints, xl);
 $editor-screen-xl-max: map_get($breakpoints, xxl) - 1;
 $editor-screen-xxl-min: map_get($breakpoints, xxl);
+
+$library_screen_breakpoint: $editor-screen-lg-max;

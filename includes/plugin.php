@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Admin\Admin;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Files\Manager as Files_Manager;
@@ -57,9 +59,10 @@ class Plugin {
 	 * Holds the plugin ajax manager.
 	 *
 	 * @since 1.9.0
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )` instead
 	 * @access public
 	 *
-	 * @var Ajax_Manager
+	 * @var Ajax
 	 */
 	public $ajax;
 
@@ -388,6 +391,11 @@ class Plugin {
 	public $inspector;
 
 	/**
+	 * @var CommonApp
+	 */
+	public $common;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -483,8 +491,11 @@ class Plugin {
 		$this->inspector = new Inspector();
 		$this->debugger = $this->inspector;
 
-		// Allow all components to use AJAX.
-		$this->ajax = new Ajax_Manager();
+		$this->common = new CommonApp();
+
+		$this->common->init_components();
+
+		$this->ajax = $this->common->get_component( 'ajax' );
 
 		Settings_Manager::run();
 
@@ -520,7 +531,7 @@ class Plugin {
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->system_info = new System_Info\Main();
-			$this->admin = new Core\Admin\Admin();
+			$this->admin = new Admin();
 			$this->tools = new Tools();
 			$this->beta_testers = new Beta_Testers();
 

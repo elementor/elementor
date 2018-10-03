@@ -38,7 +38,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 		} );
 
 		this.ui.selectFamilyFields.select2( {
-			dir: elementor.config.is_rtl ? 'rtl' : 'ltr',
+			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
 		} );
 	},
 

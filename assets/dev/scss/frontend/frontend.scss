@@ -1,18 +1,12 @@
-// Core variables and mixins
-@import "../helpers/variables";
-@import "../editor/breakpoints";
+// Common
+@import "../../../../core/common/assets/scss/common";
+
 @import "breakpoints/breakpoints";
 @import "../helpers/mixins";
-
-// Common
-@import "../common/common";
 
 // Core CSS
 @import "global";
 @import "grid";
-
-// Utility classes
-@import "../helpers/utilities";
 
 //Forms (Input, Textarea, Select Etc..)
 @import "forms";
