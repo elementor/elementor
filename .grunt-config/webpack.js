@@ -46,6 +46,11 @@ const moduleRules = {
 					loader: 'babel-loader',
 					query: {
 						presets: ['env'],
+						plugins: [
+							["transform-react-jsx", {
+								"pragma": "wp.element.createElement"
+							}]
+						]
 					},
 				},
 			],
@@ -62,6 +67,7 @@ const entry = {
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
+	'gutenberg-blocks': path.resolve( __dirname, '../assets/dev/js/admin/elementor-gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
 	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
 };
