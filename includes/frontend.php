@@ -993,7 +993,7 @@ class Frontend extends App {
 
 		$settings = [
 			'isEditMode' => $is_preview_mode,
-			'isRTL' => is_rtl(),
+			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
 			'urls' => [
