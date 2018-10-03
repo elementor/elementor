@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Base_Object {
 
-	private $settings = [];
+	private $settings;
 
 	final public function get_settings( $setting = null, $default = null ) {
 		$this->ensure_settings();
@@ -78,7 +78,7 @@ class Base_Object {
 	}
 
 	private function ensure_settings() {
-		if ( ! $this->settings ) {
+		if ( null === $this->settings ) {
 			$this->settings = $this->get_init_settings();
 		}
 	}
