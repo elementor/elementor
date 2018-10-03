@@ -182,15 +182,7 @@ class Feedback extends Module {
 	public function admin_notices() {
 		$notice_id = 'rate_us_feedback';
 
-		if ( User::is_user_notice_viewed( $notice_id ) ) {
-			return;
-		}
-
-		if ( Tracker::is_notice_shown() ) {
-			return;
-		}
-
-		if ( ! $this->is_plugins_screen() ) {
+		if ( 'dashboard' !== get_current_screen()->id || User::is_user_notice_viewed( $notice_id ) || Tracker::is_notice_shown() ) {
 			return;
 		}
 
@@ -237,6 +229,6 @@ class Feedback extends Module {
 	}
 
 	private function is_plugins_screen() {
-		return in_array( get_current_screen()->id, [ 'dashboard' ], true );
+		return in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ] );
 	}
 }
