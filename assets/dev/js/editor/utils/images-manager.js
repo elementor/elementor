@@ -41,7 +41,7 @@ ImagesManager = function() {
 			if ( ! _.isEmpty( viewsToUpdate ) ) {
 				_( viewsToUpdate ).each( function( view ) {
 					view.render();
-					elementView.$el.removeClass( 'elementor-loading' );
+					view.$el.removeClass( 'elementor-loading' );
 				} );
 			}
 			viewsToUpdate = {};
