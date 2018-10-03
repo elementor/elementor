@@ -61,7 +61,7 @@ class Feedback extends Module {
 			'elementor-admin-feedback',
 			ELEMENTOR_ASSETS_URL . 'js/admin-feedback' . $suffix . '.js',
 			[
-				'jquery',
+				'elementor-common',
 			],
 			ELEMENTOR_VERSION,
 			true
