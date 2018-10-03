@@ -7,29 +7,24 @@ use Elementor\Testing\Elementor_Test_Base;
 
 class Elementor_Test_Page extends Elementor_Test_Base {
 
-	/**
-	 * @var Page
-	 */
-	private $page;
+	/** @var Page */
+	private static $page;
 
-	/**
-	 * @throws \Exception
-	 */
-	public function setUp() {
+	public static function setUpBeforeClass() {
 		parent::setUp();
 
-		$this->page = new Page( [ 'post_id' => $this->factory()->create_and_get_default_post()->ID ] );
+		self::$page = new Page( [ 'post_id' => self::factory()->create_and_get_default_post()->ID ] );
 	}
 
 	public function test_should_return_properties() {
-		$properties = page::get_properties();
+		$properties = Page::get_properties();
 
 		$this->assertTrue( $properties['support_wp_page_templates'] );
 		$this->assertEquals( $properties['group'], 'pages' );
 	}
 
 	public function test_should_return_name() {
-		$name = $this->page->get_name();
+		$name = self::$page->get_name();
 
 		$this->assertEquals( 'page', $name );
 	}
@@ -41,7 +36,7 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_css_wrapper_selector() {
-		$css_wrapper = $this->page->get_css_wrapper_selector();
+		$css_wrapper = self::$page->get_css_wrapper_selector();
 
 		$this->assertContains( 'body.elementor-page-', $css_wrapper );
 	}
@@ -55,9 +50,9 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 		$method = $page_reflection->getMethod( '_register_controls' );
 		$method->setAccessible( true );
 
-		$method->invokeArgs( $this->page, [] );
+		$method->invokeArgs( self::$page, [] );
 
-		$this->assertNotNull( $this->page->get_controls( 'post_status' ) );
-		$this->assertNotNull( $this->page->get_section_controls( 'section_page_style' ) );
+		$this->assertNotNull( self::$page->get_controls( 'post_status' ) );
+		$this->assertNotNull( self::$page->get_section_controls( 'section_page_style' ) );
 	}
 }
