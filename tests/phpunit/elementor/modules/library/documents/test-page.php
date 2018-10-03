@@ -11,7 +11,7 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 	private static $page;
 
 	public static function setUpBeforeClass() {
-		parent::setUp();
+		parent::setUpBeforeClass();
 
 		self::$page = new Page( [ 'post_id' => self::factory()->create_and_get_default_post()->ID ] );
 	}
@@ -41,10 +41,6 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 		$this->assertContains( 'body.elementor-page-', $css_wrapper );
 	}
 
-	/**
-	 * @throws \ReflectionException
-	 * @throws \Exception
-	 */
 	public function test_should_register_controls() {
 		$page_reflection = new \ReflectionClass( 'Elementor\Modules\Library\Documents\Page' );
 		$method = $page_reflection->getMethod( '_register_controls' );
