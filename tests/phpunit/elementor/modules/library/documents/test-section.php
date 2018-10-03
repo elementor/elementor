@@ -6,32 +6,31 @@ use Elementor\Testing\Elementor_Test_Base;
 
 class Elementor_Test_Section extends Elementor_Test_Base {
 
-	/**
-	 * @var Section
-	 */
-	private static $page;
+	/** @var Section */
+	private static $section;
 
-	/**
-	 * @throws \Exception
-	 */
 	public static function setUpBeforeClass() {
-		self::$page = new Section();
+		self::$section = new Section();
+
 		parent::setUpBeforeClass();
 	}
 
 	public function test_should_return_properties() {
 		$properties = Section::get_properties();
+
 		$this->assertEquals( $properties['library_view'], 'list' );
 		$this->assertEquals( $properties['group'], 'blocks' );
 	}
 
 	public function test_should_return_name() {
-		$name = self::$page->get_name();
+		$name = self::$section->get_name();
+
 		$this->assertEquals( 'section', $name );
 	}
 
 	public function test_should_return_title() {
 		$title = Section::get_title();
+
 		$this->assertEquals( __( 'Section', 'elementor' ), $title );
 	}
 }

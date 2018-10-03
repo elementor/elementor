@@ -10,10 +10,11 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 	public function test_should_confirm_module_activation() {
 		self::$module = new Module();
-		$this->assertDocumentTypeRegistered('page');
-		$this->assertDocumentTypeRegistered('section');
-		$this->assertDocumentGroupRegistered('blocks');
-		$this->assertDocumentGroupRegistered('pages');
+
+		$this->assertDocumentTypeRegistered( 'page' );
+		$this->assertDocumentTypeRegistered( 'section' );
+		$this->assertDocumentGroupRegistered( 'blocks' );
+		$this->assertDocumentGroupRegistered( 'pages' );
 	}
 
 	public function test_should_return_library() {
@@ -21,23 +22,12 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_should_localize_settings() {
-		$res = self::$module->localize_settings( [] );
-		$this->assertEquals(
-			[
-				'i18n' => [],
-			], $res
-		);
+		$localize_settings = self::$module->localize_settings( [] );
 
-		$res = self::$module->localize_settings( [
-			'content one' => [],
-			'content two' => [],
-		] );
 		$this->assertEquals(
 			[
-				'content one' => [],
-				'content two' => [],
 				'i18n' => [],
-			], $res
+			], $localize_settings
 		);
 	}
 
