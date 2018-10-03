@@ -2,7 +2,7 @@
 #elementor-hotkeys {
 	text-align: $start;
 
-	.hotkeys__content {
+	&__content {
 		display: flex;
 		width: 100%;
 		overflow: hidden;
@@ -13,76 +13,76 @@
 		}
 	}
 
-	.hotkeys__col {
+	&__actions {
 
-		&--50 {
-			width: 50%;
+		.elementor-hotkeys__list {
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 
 			@media (max-width: $editor-screen-md-max) {
-				width: 100%;
+				border-radius: 3px;
 			}
 		}
 
-		&.hotkeys--actions {
-
-			.hotkeys__list {
-				border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-
-				@media (max-width: $editor-screen-md-max) {
-					border-radius: 3px;
-				}
+		.elementor-hotkeys__header,
+		.elementor-hotkeys__list {
+			@media (min-width: $editor-screen-lg-min) {
+				@include padding-end(25px);
 			}
 
-			.hotkeys__header,
-			.hotkeys__list {
-				@media (min-width: $editor-screen-lg-min) {
-					@include padding-end(25px);
-				}
-
-				@media (min-width: $editor-screen-xl-min) {
-					@include padding-end(50px);
-				}
-			}
-		}
-
-		&.hotkeys--navigation {
-
-			.hotkeys__list {
-				border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-
-				@media (max-width: $editor-screen-md-max) {
-					border-radius: 3px;
-				}
-			}
-
-			.hotkeys__header {
-				@media (min-width: $editor-screen-lg-min) {
-					@include padding-start(25px);
-				}
-
-				@media (min-width: $editor-screen-xl-min) {
-					@include padding-start(50px);
-				}
-			}
-
-			.hotkeys__list {
-				@media (min-width: $editor-screen-lg-min) {
-					@include padding-start(15px);
-				}
-
-				@media (min-width: $editor-screen-xl-min) {
-					@include padding-start(40px);
-				}
+			@media (min-width: $editor-screen-xl-min) {
+				@include padding-end(50px);
 			}
 		}
 	}
 
-	.hotkeys__header,
-	.hotkeys__list {
+	&__navigation {
+
+		.elementor-hotkeys__list {
+			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+
+			@media (max-width: $editor-screen-md-max) {
+				border-radius: 3px;
+			}
+		}
+
+		.elementor-hotkeys__header {
+			@media (min-width: $editor-screen-lg-min) {
+				@include padding-start(25px);
+			}
+
+			@media (min-width: $editor-screen-xl-min) {
+				@include padding-start(50px);
+			}
+		}
+
+		.elementor-hotkeys__list {
+			@media (min-width: $editor-screen-lg-min) {
+				@include padding-start(15px);
+			}
+
+			@media (min-width: $editor-screen-xl-min) {
+				@include padding-start(40px);
+			}
+		}
+	}
+}
+
+.elementor-hotkeys {
+
+	&__col {
+		width: 50%;
+
+		@media (max-width: $editor-screen-md-max) {
+			width: 100%;
+		}
+	}
+
+	&__header,
+	&__list {
 		width: 100%;
 	}
 
-	.hotkeys__header{
+	&__header{
 		padding: 10px 30px;
 		font-weight: 500;
 
@@ -92,7 +92,7 @@
 		}
 	}
 
-	.hotkeys__list {
+	&__list {
 		background-color: #ffffff;
 		height: 100%;
 		padding: 10px 20px;
@@ -110,7 +110,7 @@
 		}
 	}
 
-	.hotkeys__item {
+	&__item {
 		display: flex;
 		align-items: center;
 		padding: 20px 10px;
