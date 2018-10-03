@@ -11,7 +11,7 @@ module.exports = BaseModalLayout.extend( {
 
 	getLogoOptions: function() {
 		return {
-			title: elementorAdmin.config.i18n.new_template,
+			title: elementorAdmin.translate( 'new_template' ),
 		};
 	},
 
