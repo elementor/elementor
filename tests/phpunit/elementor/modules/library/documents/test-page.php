@@ -17,27 +17,32 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->page = new Page( [ 'post_id' => self::factory()->create_and_get_default_post()->ID ] );
+
+		$this->page = new Page( [ 'post_id' => $this->factory()->create_and_get_default_post()->ID ] );
 	}
 
 	public function test_should_return_properties() {
 		$properties = page::get_properties();
+
 		$this->assertTrue( $properties['support_wp_page_templates'] );
 		$this->assertEquals( $properties['group'], 'pages' );
 	}
 
 	public function test_should_return_name() {
 		$name = $this->page->get_name();
+
 		$this->assertEquals( 'page', $name );
 	}
 
 	public function test_should_return_title() {
 		$title = Page::get_title();
+
 		$this->assertEquals( __( 'Page', 'elementor' ), $title );
 	}
 
 	public function test_should_return_css_wrapper_selector() {
 		$css_wrapper = $this->page->get_css_wrapper_selector();
+
 		$this->assertContains( 'body.elementor-page-', $css_wrapper );
 	}
 
@@ -52,8 +57,7 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 
 		$method->invokeArgs( $this->page, [] );
 
-		self::assertNotNull( $this->page->get_controls( 'post_status' ) );
-		self::assertNotNull( $this->page->get_section_controls( 'section_page_style' ) );
-		//self::assertNotNull( $page->get_controls( 'post_status' ) );
+		$this->assertNotNull( $this->page->get_controls( 'post_status' ) );
+		$this->assertNotNull( $this->page->get_section_controls( 'section_page_style' ) );
 	}
 }
