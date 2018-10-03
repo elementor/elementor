@@ -1,6 +1,7 @@
 import HotKeys from '../../../../assets/dev/js/utils/hot-keys';
 import Helpers from './utils/helpers';
 import Ajax from '../../modules/ajax/assets/js/ajax';
+import Assistant from '../../modules/assistant/assets/js/assistant';
 
 const ViewModule = require( 'elementor-utils/view-module' );
 
@@ -34,7 +35,16 @@ class ElementorCommonApp extends ViewModule {
 
 		this.dialogsManager = new DialogsManager.Instance();
 
-		this.ajax = new Ajax();
+		this.initModules();
+	}
+
+	initModules() {
+		const modules = {
+			ajax: Ajax,
+			assistant: Assistant,
+		};
+
+		Object.entries( modules ).forEach( ( [ name, moduleClass ] ) => this[ name ] = new moduleClass( this.config[ name ] ) );
 	}
 
 	translate( stringKey, templateArgs, i18nStack ) {
