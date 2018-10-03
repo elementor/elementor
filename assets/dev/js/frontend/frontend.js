@@ -65,14 +65,16 @@
 		};
 
 		var addIeCompatibility = function() {
-			var isIE = 'Microsoft Internet Explorer' === navigator.appName || !! navigator.userAgent.match( /Trident/g ) || !! navigator.userAgent.match( /MSIE/g ) || !! navigator.userAgent.match( /rv:11/ );
+			var isIE = 'Microsoft Internet Explorer' === navigator.appName || !! navigator.userAgent.match( /Trident/g ) || !! navigator.userAgent.match( /MSIE/g ) || !! navigator.userAgent.match( /rv:11/ ),
+				el = document.createElement( 'div' ),
+				supportsGrid = 'string' === typeof el.style.grid;
 
-			if ( ! isIE ) {
+			if ( ! isIE && supportsGrid ) {
 				return;
 			}
 			elements.$body.addClass( 'elementor-msie' );
 
-			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie"  href="' + elementorFrontend.config.urls.assets + 'css/frontend-msie.min.css?' + elementorFrontend.config.version + '" type="text/css" />';
+			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie" href="' + elementorFrontend.config.urls.assets + 'css/frontend-msie.min.css?' + elementorFrontend.config.version + '" type="text/css" />';
 
 			elements.$body.append( msieCss );
 		};
