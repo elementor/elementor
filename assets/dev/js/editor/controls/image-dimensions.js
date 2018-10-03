@@ -16,7 +16,7 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 		return {
 			'click @ui.btnApply': 'onApplyClicked',
 			'keyup @ui.inputWidth': 'onDimensionKeyUp',
-			'keyup @ui.inputHeight': 'onDimensionKeyUp'
+			'keyup @ui.inputHeight': 'onDimensionKeyUp',
 		};
 	},
 

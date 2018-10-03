@@ -148,7 +148,7 @@ ImagesManager = function() {
 					registeredItems = [];
 
 					elementor.channels.editor.trigger( 'imagesManager:detailsReceived', data );
-				}
+				},
 			}
 		);
 	};
