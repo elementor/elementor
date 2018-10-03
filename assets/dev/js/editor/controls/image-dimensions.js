@@ -21,7 +21,9 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	onDimensionKeyUp: function( event ) {
-		if ( 'Enter' === event.key ) {
+		const ENTER_KEY = 13;
+
+		if ( ENTER_KEY === event.keyCode ) {
 			this.onApplyClicked( event );
 		}
 	},
