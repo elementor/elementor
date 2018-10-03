@@ -1,16 +1,18 @@
-var HotKeys = function() {
-	var hotKeysHandlers = {};
+import environment from './environment';
 
-	var applyHotKey = function( event ) {
-		var handlers = hotKeysHandlers[ event.which ];
+export default class HotKeys {
+	constructor() {
+		this.hotKeysHandlers = {};
+	}
+
+	applyHotKey( event ) {
+		const handlers = this.hotKeysHandlers[ event.which ];
 
 		if ( ! handlers ) {
 			return;
 		}
 
-		jQuery.each( handlers, function() {
-			var handler = this;
-
+		jQuery.each( handlers, ( key, handler ) => {
 			if ( handler.isWorthHandling && ! handler.isWorthHandling( event ) ) {
 				return;
 			}
@@ -24,23 +26,21 @@ var HotKeys = function() {
 
 			handler.handle( event );
 		} );
-	};
+	}
 
-	this.isControlEvent = function( event ) {
-		return event[ elementor.envData.mac ? 'metaKey' : 'ctrlKey' ];
-	};
+	isControlEvent( event ) {
+		return event[ environment.mac ? 'metaKey' : 'ctrlKey' ];
+	}
 
-	this.addHotKeyHandler = function( keyCode, handlerName, handler ) {
-		if ( ! hotKeysHandlers[ keyCode ] ) {
-			hotKeysHandlers[ keyCode ] = {};
+	addHotKeyHandler( keyCode, handlerName, handler ) {
+		if ( ! this.hotKeysHandlers[ keyCode ] ) {
+			this.hotKeysHandlers[ keyCode ] = {};
 		}
 
-		hotKeysHandlers[ keyCode ][ handlerName ] = handler;
-	};
+		this.hotKeysHandlers[ keyCode ][ handlerName ] = handler;
+	}
 
-	this.bindListener = function( $listener ) {
-		$listener.on( 'keydown', applyHotKey );
-	};
-};
-
-module.exports = new HotKeys();
+	bindListener( $listener ) {
+		$listener.on( 'keydown', this.applyHotKey.bind( this ) );
+	}
+}

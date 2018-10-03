@@ -28,7 +28,7 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 	onReady: function() {
 		var self = this;
 
-		elementor.ajax.addRequest( 'editor_get_wp_widget_form', {
+		elementorCommon.ajax.addRequest( 'editor_get_wp_widget_form', {
 			data: {
 				// Fake Widget ID
 				id: self.model.cid,

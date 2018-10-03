@@ -3,7 +3,7 @@ var ControlSelect2View = require( 'elementor-controls/select2' );
 module.exports = ControlSelect2View.extend( {
 	getSelect2Options: function() {
 		return {
-			dir: elementor.config.is_rtl ? 'rtl' : 'ltr',
+			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
 		};
 	},
 

@@ -266,20 +266,6 @@ class Tools extends Settings_Page {
 	}
 
 	/**
-	 * Display settings page.
-	 *
-	 * Output the content for the settings page.
-	 *
-	 * @since 1.5.2
-	 * @access public
-	 */
-	public function display_settings_page() {
-		wp_enqueue_script( 'elementor-dialog' );
-
-		parent::display_settings_page();
-	}
-
-	/**
 	 * Get tools page title.
 	 *
 	 * Retrieve the title for the tools page.

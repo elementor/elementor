@@ -19,7 +19,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		this.getDialog = function() {
 			if ( ! dialog ) {
-				dialog = elementor.dialogsManager.createWidget( 'buttons', {
+				dialog = elementorCommon.dialogsManager.createWidget( 'buttons', {
 					className: 'elementor-introduction',
 					headerMessage: elementor.translate( 'meet_right_click_header' ),
 					message: elementor.translate( 'meet_right_click_message' ),
@@ -77,6 +77,6 @@ module.exports = Marionette.Behavior.extend( {
 	setIntroductionViewed: function() {
 		this.introductionViewed = true;
 
-		elementor.ajax.addRequest( 'introduction_viewed' );
+		elementorCommon.ajax.addRequest( 'introduction_viewed' );
 	},
 } );

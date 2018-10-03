@@ -75,7 +75,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		$tagsListInner.on( 'click', '.elementor-tags-list__item', this.onTagsListItemClick.bind( this ) );
 
-		elementor.$body.append( $tagsList );
+		elementorCommon.elements.$body.append( $tagsList );
 	},
 
 	getTagsList: function() {
@@ -151,7 +151,7 @@ module.exports = Marionette.Behavior.extend( {
 		var settingKey = this.view.model.get( 'name' ),
 			dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' ) || {};
 
-		dynamicSettings = elementor.helpers.cloneObject( dynamicSettings );
+		dynamicSettings = elementorCommon.helpers.cloneObject( dynamicSettings );
 
 		dynamicSettings[ settingKey ] = value;
 
@@ -206,7 +206,7 @@ module.exports = Marionette.Behavior.extend( {
 		var settingKey = this.view.model.get( 'name' ),
 			dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' );
 
-		dynamicSettings = elementor.helpers.cloneObject( dynamicSettings );
+		dynamicSettings = elementorCommon.helpers.cloneObject( dynamicSettings );
 
 		delete dynamicSettings[ settingKey ];
 

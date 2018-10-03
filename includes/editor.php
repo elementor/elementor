@@ -54,18 +54,6 @@ class Editor {
 	private $_is_edit_mode;
 
 	/**
-	 * Editor templates.
-	 *
-	 * Holds the editor templates used by Marionette.js.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 *
-	 * @var array Editor templates.
-	 */
-	private $_editor_templates = [];
-
-	/**
 	 * Init.
 	 *
 	 * Initialize Elementor editor. Registers all needed actions to run Elementor,
@@ -145,6 +133,8 @@ class Editor {
 
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
+
+		do_action( 'elementor/editor/init' );
 
 		$this->print_editor_template();
 
@@ -346,26 +336,6 @@ class Editor {
 		);
 
 		wp_register_script(
-			'backbone-marionette',
-			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.marionette' . $suffix . '.js',
-			[
-				'backbone',
-			],
-			'2.4.5',
-			true
-		);
-
-		wp_register_script(
-			'backbone-radio',
-			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.radio' . $suffix . '.js',
-			[
-				'backbone',
-			],
-			'1.0.4',
-			true
-		);
-
-		wp_register_script(
 			'perfect-scrollbar',
 			ELEMENTOR_ASSETS_URL . 'lib/perfect-scrollbar/perfect-scrollbar.jquery' . $suffix . '.js',
 			[
@@ -450,24 +420,13 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'4.5.0',
-			true
-		);
-
-		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
+				'elementor-common',
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',
-				'backbone-marionette',
-				'backbone-radio',
 				'perfect-scrollbar',
 				'nprogress',
 				'tipsy',
@@ -475,7 +434,6 @@ class Editor {
 				'heartbeat',
 				'jquery-elementor-select2',
 				'flatpickr',
-				'elementor-dialog',
 				'ace',
 				'ace-language-tools',
 				'jquery-hover-intent',
@@ -520,7 +478,6 @@ class Editor {
 
 		$config = [
 			'version' => ELEMENTOR_VERSION,
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
 			'nonce' => $this->create_nonce( get_post_type() ),
 			'data' => $editor_data,
@@ -546,13 +503,13 @@ class Editor {
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
-			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'locked_user' => $locked_user,
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::is_should_view_introduction(),
 			],
+			// @deprecated since 2.3.0 - Use `elementorCommon.config.isRTL` instead
 			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
@@ -688,6 +645,9 @@ class Editor {
 				'meet_right_click_header' => __( 'Meet Right Click', 'elementor' ),
 				'meet_right_click_message' => __( 'Now you can access all editing actions using right click.', 'elementor' ),
 				'got_it' => __( 'Got It', 'elementor' ),
+
+				// Hotkeys screen
+				'keyboard_shortcuts' => __( 'Keyboard Shortcuts', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
@@ -906,6 +866,7 @@ class Editor {
 	 * Registers new editor templates.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->add_template( $template, $type )`
 	 * @access public
 	 *
 	 * @param string $template Can be either a link to template file or template
@@ -914,15 +875,7 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
-		if ( 'path' === $type ) {
-			ob_start();
-
-			include $template;
-
-			$template = ob_get_clean();
-		}
-
-		$this->_editor_templates[] = $template;
+		Plugin::$instance->common->add_template( $template, $type );
 	}
 
 	/**
@@ -948,10 +901,6 @@ class Editor {
 		$plugin->dynamic_tags->print_templates();
 
 		$this->init_editor_templates();
-
-		foreach ( $this->_editor_templates as $editor_template ) {
-			echo $editor_template;
-		}
 
 		/**
 		 * Elementor editor footer.
@@ -1111,13 +1060,13 @@ class Editor {
 			'panel',
 			'panel-elements',
 			'repeater',
-			'library-layout',
 			'templates',
 			'navigator',
+			'hotkeys',
 		];
 
 		foreach ( $template_names as $template_name ) {
-			$this->add_editor_template( __DIR__ . "/editor-templates/$template_name.php" );
+			Plugin::$instance->common->add_template( __DIR__ . "/editor-templates/$template_name.php" );
 		}
 	}
 }

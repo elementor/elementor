@@ -100,7 +100,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	getStyleControls: function( controls, attributes ) {
 		var self = this;
 
-		controls = elementor.helpers.cloneObject( self.getActiveControls( controls, attributes ) );
+		controls = elementorCommon.helpers.cloneObject( self.getActiveControls( controls, attributes ) );
 
 		var styleControls = [];
 
@@ -181,7 +181,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 
 	clone: function() {
-		return new BaseSettingsModel( elementor.helpers.cloneObject( this.attributes ), elementor.helpers.cloneObject( this.options ) );
+		return new BaseSettingsModel( elementorCommon.helpers.cloneObject( this.attributes ), elementorCommon.helpers.cloneObject( this.options ) );
 	},
 
 	setExternalChange: function( key, value ) {
@@ -206,7 +206,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	parseDynamicSettings: function( settings, options, controls ) {
 		var self = this;
 
-		settings = elementor.helpers.cloneObject( settings || self.attributes );
+		settings = elementorCommon.helpers.cloneObject( settings || self.attributes );
 
 		options = options || {};
 
@@ -326,7 +326,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			} );
 		}
 
-		return elementor.helpers.cloneObject( data );
+		return elementorCommon.helpers.cloneObject( data );
 	},
 } );
 

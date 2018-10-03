@@ -1,6 +1,7 @@
 <?php
-namespace Elementor\Core;
+namespace Elementor\Core\Common\Modules\Ajax;
 
+use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 
@@ -16,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 2.0.0
  */
-class Ajax_Manager {
+class Module extends BaseModule {
 
 	/**
 	 * Ajax actions.
@@ -67,33 +68,17 @@ class Ajax_Manager {
 	protected $current_action_id = null;
 
 	/**
-	 * Ajax success response.
+	 * Get module name.
 	 *
-	 * Send a JSON response data back to the ajax request, indicating success.
+	 * Retrieve the module name.
 	 *
-	 * @since 2.0.0
-	 * @access protected
+	 * @since  1.7.0
+	 * @access public
+	 *
+	 * @return string Module name.
 	 */
-	protected function send_success() {
-		wp_send_json_success( [
-			'responses' => $this->response_data,
-		] );
-	}
-
-	/**
-	 * Ajax failure response.
-	 *
-	 * Send a JSON response data back to the ajax request, indicating failure.
-	 *
-	 * @since 2.0.0
-	 * @access protected
-	 *
-	 * @param null $code
-	 */
-	protected function send_error( $code = null ) {
-		wp_send_json_error( [
-			'responses' => $this->response_data,
-		], $code );
+	public function get_name() {
+		return 'ajax';
 	}
 
 	/**
@@ -155,7 +140,7 @@ class Ajax_Manager {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param Ajax_Manager $this An instance of ajax manager.
+		 * @param Ajax $this An instance of ajax manager.
 		 */
 		do_action( 'elementor/ajax/register_actions', $this );
 
@@ -211,6 +196,36 @@ class Ajax_Manager {
 	}
 
 	/**
+	 * Ajax success response.
+	 *
+	 * Send a JSON response data back to the ajax request, indicating success.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 */
+	protected function send_success() {
+		wp_send_json_success( [
+			'responses' => $this->response_data,
+		] );
+	}
+
+	/**
+	 * Ajax failure response.
+	 *
+	 * Send a JSON response data back to the ajax request, indicating failure.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @param null $code
+	 */
+	protected function send_error( $code = null ) {
+		wp_send_json_error( [
+			'responses' => $this->response_data,
+		], $code );
+	}
+
+	/**
 	 * Add response data.
 	 *
 	 * Add new response data to the array of all the ajax requests.
@@ -224,7 +239,7 @@ class Ajax_Manager {
 	 *
 	 * @param int   $code    Optional. Response code. Default is 200.
 	 *
-	 * @return Ajax_Manager An instance of ajax manager.
+	 * @return Module An instance of ajax manager.
 	 */
 	protected function add_response_data( $success, $data = null, $code = 200 ) {
 		$this->response_data[ $this->current_action_id ] = [

@@ -49,7 +49,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			},
 		};
 
-		elementor.ajax.send( 'import_template', options );
+		elementorCommon.ajax.send( 'import_template', options );
 
 		layout.showLoadingView();
 	},

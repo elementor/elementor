@@ -23,7 +23,8 @@ const aliasList = {
 		'elementor-validator': path.resolve( __dirname, '../assets/dev/js/editor/components/validator' ),
 		'elementor-utils': path.resolve( __dirname, '../assets/dev/js/utils' ),
 		'elementor-admin': path.resolve( __dirname, '../assets/dev/js/admin' ),
-		'modules': path.resolve( __dirname, '../modules' ),
+		'elementor-modules': path.resolve( __dirname, '../modules' ),
+		'elementor': path.resolve( __dirname, '../' ),
 	}
 };
 
@@ -61,6 +62,7 @@ const entry = {
 	],
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
+	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
 	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
