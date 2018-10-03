@@ -172,11 +172,11 @@
 				var $this = $( this );
 
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
-					headerMessage: self.config.i18n.rollback_to_previous_version,
-					message: self.config.i18n.rollback_confirm,
+					headerMessage: self.translate( 'rollback_to_previous_version' ),
+					message: self.translate( 'rollback_confirm' ),
 					strings: {
-						confirm: self.config.i18n.yes,
-						cancel: self.config.i18n.cancel,
+						confirm: self.translate( 'yes' ),
+						cancel: self.translate( 'cancel' ),
 					},
 					onConfirm: function() {
 						$this.addClass( 'loading' );
@@ -270,6 +270,10 @@
 			this.elements.$activeSettingsPage = $activePage;
 
 			this.elements.$activeSettingsTab = $activeTab;
+		},
+
+		translate: function( stringKey, templateArgs ) {
+			return elementorCommon.translate( stringKey, templateArgs, this.config.i18n );
 		},
 
 		roleManager: {

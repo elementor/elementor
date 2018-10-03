@@ -37,6 +37,32 @@ class ElementorCommonApp extends ViewModule {
 		this.ajax = new Ajax();
 	}
 
+	translate( stringKey, templateArgs, i18nStack ) {
+		if ( ! i18nStack ) {
+			i18nStack = this.config.i18n;
+		}
+
+		let string = i18nStack[ stringKey ];
+
+		if ( undefined === string ) {
+			string = stringKey;
+		}
+
+		if ( templateArgs ) {
+			string = string.replace( /%(?:(\d+)\$)?s/g, function( match, number ) {
+				if ( ! number ) {
+					number = 1;
+				}
+
+				number--;
+
+				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
+			} );
+		}
+
+		return string;
+	}
+
 	onInit() {
 		super.onInit();
 
