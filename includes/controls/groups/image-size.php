@@ -208,6 +208,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		$image_src = wp_get_attachment_image_src( $attachment_id, $attachment_size );
 
+		if ( empty( $image_src[0] ) && 'thumbnail' !== $attachment_size ) {
+			$image_src = wp_get_attachment_image_src( $attachment_id );
+		}
+
 		return ! empty( $image_src[0] ) ? $image_src[0] : '';
 	}
 
