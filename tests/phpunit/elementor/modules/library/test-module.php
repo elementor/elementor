@@ -21,16 +21,6 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 'library', self::$module->get_name() );
 	}
 
-	public function test_should_localize_settings() {
-		$localize_settings = self::$module->localize_settings( [] );
-
-		$this->assertEquals(
-			[
-				'i18n' => [],
-			], $localize_settings
-		);
-	}
-
 	/**
 	 * Asserts that a group is registered in documents
 	 *
