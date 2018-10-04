@@ -232,7 +232,7 @@ class Server_Reporter extends Base_Reporter {
 	public function get_mysql_version() {
 		global $wpdb;
 
-		$db_server_version = $wpdb->get_results( "show VARIABLES where Variable_name in ( 'version_comment', 'innodb_version' )", OBJECT_K );
+		$db_server_version = $wpdb->get_results( "SHOW VARIABLES WHERE `Variable_name` IN ( 'version_comment', 'innodb_version' )", OBJECT_K );
 
 		return [
 			'value' => $db_server_version['version_comment']->Value . ' v' . $db_server_version['innodb_version']->Value,
