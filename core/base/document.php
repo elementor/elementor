@@ -69,6 +69,7 @@ abstract class Document extends Controls_Stack {
 
 	public static function get_editor_panel_config() {
 		return [
+			'widgets_settings' => [],
 			'elements_categories' => static::get_editor_panel_categories(),
 			'messages' => [
 				/* translators: %s: the document title. */

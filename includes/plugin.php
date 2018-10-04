@@ -521,6 +521,7 @@ class Plugin {
 		$this->dynamic_tags = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
+		$this->system_info = new System_Info\Main();
 
 		Upgrades::add_actions();
 		Api::init();
@@ -530,7 +531,6 @@ class Plugin {
 			$this->revisions_manager = new Revisions_Manager();
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
-			$this->system_info = new System_Info\Main();
 			$this->admin = new Admin();
 			$this->tools = new Tools();
 			$this->beta_testers = new Beta_Testers();
