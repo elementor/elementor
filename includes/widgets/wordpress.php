@@ -156,7 +156,9 @@ class Widget_WordPress extends Widget_Base {
 		echo '<input type="hidden" class="id_base" value="' . esc_attr( $instance->id_base ) . '" />';
 		echo '<input type="hidden" class="widget-id" value="widget-' . esc_attr( $this->get_id() ) . '" />';
 		echo '<div class="widget-content">';
-		$instance->form( $this->get_settings( 'wp' ) );
+		$widget_data = $this->get_settings( 'wp' );
+		$instance->form( $widget_data );
+		do_action( 'in_widget_form', $instance, null, $widget_data );
 		echo '</div></div></div>';
 		return ob_get_clean();
 	}
@@ -200,7 +202,9 @@ class Widget_WordPress extends Widget_Base {
 		$settings = parent::_get_parsed_settings();
 
 		if ( ! empty( $settings['wp'] ) ) {
-			$settings['wp'] = $this->get_widget_instance()->update( $settings['wp'], [] );
+			$widget = $this->get_widget_instance();
+			$instance = $widget->update( $settings['wp'], [] );
+			$settings['wp'] = apply_filters( 'widget_update_callback', $instance, $settings['wp'], [], $widget );
 		}
 
 		return $settings;
