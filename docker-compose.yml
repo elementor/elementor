@@ -10,19 +10,19 @@ services:
       WORDPRESS_DB_PASSWORD: example
       ABSPATH: /usr/src/wordpress/
     volumes:
-      - ./local-site/site:/var/www/html
+      - ./.docker/local-site/site:/var/www/html
       - .:/var/www/html/wp-content/plugins/elementor
 
   cli:
     image: wordpress:cli
     volumes:
-      - ./local-site/site:/var/www/html
+      - ./.docker/local-site/site:/var/www/html
       - .:/var/www/html/wp-content/plugins/elementor
 
   mysql:
     image: mysql:5.7
     volumes:
-      - ./local-site/db:/var/lib/mysql
+      - ./.docker/local-site/db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: wordpress_test
