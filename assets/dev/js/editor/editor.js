@@ -1,16 +1,9 @@
 /* global ElementorConfig */
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
+import HotkeysScreen from './components/hotkeys/hotkeys';
 
-Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
-	options = {
-		evaluate: /<#([\s\S]+?)#>/g,
-		interpolate: /{{{([\s\S]+?)}}}/g,
-		escape: /{{([^}]+?)}}(?!})/g,
-	};
-
-	return _.template( rawTemplate, options );
-};
+import environment from '../utils/environment';
 
 const App = Marionette.Application.extend( {
 	previewLoadedOnce: false,
@@ -21,10 +14,10 @@ const App = Marionette.Application.extend( {
 	schemes: require( 'elementor-editor-utils/schemes' ),
 	presetsFactory: require( 'elementor-editor-utils/presets-factory' ),
 	templates: require( 'elementor-templates/manager' ),
-	ajax: require( 'elementor-editor-utils/ajax' ),
+	// TODO: BC Since 2.3.0
+	ajax: elementorCommon.ajax,
 	conditions: require( 'elementor-editor-utils/conditions' ),
-	hotKeys: require( 'elementor-utils/hot-keys' ),
-	history: require( 'modules/history/assets/js/module' ),
+	history: require( 'elementor-modules/history/assets/js/module' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -161,11 +154,11 @@ const App = Marionette.Application.extend( {
 	_defaultDeviceMode: 'desktop',
 
 	addControlView: function( controlID, ControlView ) {
-		this.modules.controls[ elementor.helpers.firstLetterUppercase( controlID ) ] = ControlView;
+		this.modules.controls[ elementorCommon.helpers.firstLetterUppercase( controlID ) ] = ControlView;
 	},
 
 	checkEnvCompatibility: function() {
-		return this.envData.gecko || this.envData.webkit;
+		return environment.firefox || environment.webkit;
 	},
 
 	getElementData: function( model ) {
@@ -185,7 +178,7 @@ const App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elementConfig = this.helpers.cloneObject( this.config.elements[ elType ] );
+		var elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
 			elementConfig.title = elementor.translate( 'inner_section' );
@@ -225,7 +218,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	getControlView: function( controlID ) {
-		var capitalizedControlName = elementor.helpers.firstLetterUppercase( controlID ),
+		var capitalizedControlName = elementorCommon.helpers.firstLetterUppercase( controlID ),
 			View = this.modules.controls[ capitalizedControlName ];
 
 		if ( ! View ) {
@@ -244,10 +237,6 @@ const App = Marionette.Application.extend( {
 
 	getPreviewView: function() {
 		return this.sections.currentView;
-	},
-
-	initEnvData: function() {
-		this.envData = _.pick( tinymce.Env, [ 'desktop', 'mac', 'webkit', 'gecko', 'ie', 'opera' ] );
 	},
 
 	initComponents: function() {
@@ -276,15 +265,14 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		this.ajax.init();
-
 		this.initHotKeys();
 
-		this.initEnvData();
+		this.hotkeysScreen = new HotkeysScreen();
 	},
 
+	// TODO: BC method since 2.3.0
 	initDialogsManager: function() {
-		this.dialogsManager = new DialogsManager.Instance();
+		this.dialogsManager = elementorCommon.dialogsManager;
 	},
 
 	initElements: function() {
@@ -349,7 +337,7 @@ const App = Marionette.Application.extend( {
 				return dialog;
 			}
 
-			dialog = this.dialogsManager.createWidget( 'confirm', {
+			dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 				id: 'elementor-clear-page-dialog',
 				headerMessage: elementor.translate( 'clear_page' ),
 				message: elementor.translate( 'dialog_confirm_clear_page' ),
@@ -371,7 +359,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	initHotKeys: function() {
-		var keysDictionary = {
+		const keysDictionary = {
 			c: 67,
 			d: 68,
 			i: 73,
@@ -385,7 +373,7 @@ const App = Marionette.Application.extend( {
 
 		var $ = jQuery,
 			hotKeysHandlers = {},
-			hotKeysManager = this.hotKeys;
+			hotKeysManager = elementorCommon.hotKeys;
 
 		hotKeysHandlers[ keysDictionary.c ] = {
 			copyElement: {
@@ -403,7 +391,7 @@ const App = Marionette.Application.extend( {
 					var frontendWindow = elementorFrontend.getElements( 'window' ),
 						textSelection = getSelection() + frontendWindow.getSelection();
 
-					if ( ! textSelection && elementor.envData.gecko ) {
+					if ( ! textSelection && environment.firefox ) {
 						textSelection = [ window, frontendWindow ].some( function( window ) {
 							var activeElement = window.document.activeElement;
 
@@ -589,8 +577,6 @@ const App = Marionette.Application.extend( {
 				hotKeysManager.addHotKeyHandler( keyCode, handlerName, handler );
 			} );
 		} );
-
-		hotKeysManager.bindListener( this.$window );
 	},
 
 	initPanel: function() {
@@ -672,7 +658,7 @@ const App = Marionette.Application.extend( {
 
 		options = jQuery.extend( true, defaultOptions, options );
 
-		this.dialogsManager.createWidget( 'confirm', options ).show();
+		elementorCommon.dialogsManager.createWidget( 'confirm', options ).show();
 	},
 
 	checkPageStatus: function() {
@@ -731,7 +717,7 @@ const App = Marionette.Application.extend( {
 		var $elements = elementorFrontend.getElements( '$body' );
 
 		if ( hidePanel ) {
-			$elements = $elements.add( this.$body );
+			$elements = $elements.add( elementorCommon.elements.$body );
 		}
 
 		$elements
@@ -744,14 +730,14 @@ const App = Marionette.Application.extend( {
 
 		if ( hidePanel ) {
 			// Handle panel resize
-			this.$previewWrapper.css( this.config.is_rtl ? 'right' : 'left', '' );
+			this.$previewWrapper.css( elementorCommon.config.isRTL ? 'right' : 'left', '' );
 
 			this.panel.$el.css( 'width', '' );
 		}
 	},
 
 	exitPreviewMode: function() {
-		elementorFrontend.getElements( '$body' ).add( this.$body )
+		elementorFrontend.getElements( '$body' ).add( elementorCommon.elements.$body )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
 
@@ -788,7 +774,7 @@ const App = Marionette.Application.extend( {
 			return;
 		}
 
-		this.$body
+		elementorCommon.elements.$body
 			.removeClass( 'elementor-device-' + oldDeviceMode )
 			.addClass( 'elementor-device-' + newDeviceMode );
 
@@ -810,41 +796,19 @@ const App = Marionette.Application.extend( {
 	},
 
 	translate: function( stringKey, templateArgs, i18nStack ) {
+		// TODO: BC since 2.3.0, it always should be `this.config.i18n`
 		if ( ! i18nStack ) {
 			i18nStack = this.config.i18n;
 		}
 
-		var string = i18nStack[ stringKey ];
-
-		if ( undefined === string ) {
-			string = stringKey;
-		}
-
-		if ( templateArgs ) {
-			// TODO: bc since 2.0.4
-			string = string.replace( /{(\d+)}/g, function( match, number ) {
-				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
-			} );
-
-			string = string.replace( /%(?:(\d+)\$)?s/g, function( match, number ) {
-				if ( ! number ) {
-					number = 1;
-				}
-
-				number--;
-
-				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
-			} );
-		}
-
-		return string;
+		return elementorCommon.translate( stringKey, templateArgs, i18nStack );
 	},
 
 	logSite: function() {
 		var text = '',
 			style = '';
 
-		if ( this.envData.gecko ) {
+		if ( environment.firefox ) {
 			var asciiText = [
 				' ;;;;;;;;;;;;;;; ',
 				';;;  ;;       ;;;',
@@ -863,7 +827,7 @@ const App = Marionette.Application.extend( {
 		} else {
 			text += '%c00';
 
-			style = 'font-size: 22px; background-image: url("' + elementor.config.assets_url + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
+			style = 'font-size: 22px; background-image: url("' + elementorCommon.config.urls.assets + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
 		}
 
 		setTimeout( console.log.bind( console, text, style ) ); // eslint-disable-line
@@ -874,10 +838,6 @@ const App = Marionette.Application.extend( {
 	},
 
 	onStart: function() {
-		this.$window = jQuery( window );
-
-		this.$body = jQuery( 'body' );
-
 		NProgress.start();
 		NProgress.inc( 0.2 );
 
@@ -902,7 +862,7 @@ const App = Marionette.Application.extend( {
 
 		this.addBackgroundClickArea( document );
 
-		this.$window.trigger( 'elementor:init' );
+		elementorCommon.elements.$window.trigger( 'elementor:init' );
 
 		this.initPreview();
 
@@ -943,7 +903,7 @@ const App = Marionette.Application.extend( {
 
 		this.preventClicksInsideEditor();
 
-		this.addBackgroundClickArea( elementorFrontend.getElements( '$document' )[ 0 ] );
+		this.addBackgroundClickArea( elementorFrontend.getElements( 'window' ).document );
 
 		if ( this.previewLoadedOnce ) {
 			this.getPanelView().setPage( 'elements', null, { autoFocusSearch: false } );
@@ -963,10 +923,12 @@ const App = Marionette.Application.extend( {
 
 		this.$previewContents.children().addClass( 'elementor-html' );
 
-		elementorFrontend.getElements( '$body' ).addClass( 'elementor-editor-active' );
+		const $frontendBody = elementorFrontend.getElements( '$body' );
+
+		$frontendBody.addClass( 'elementor-editor-active' );
 
 		if ( ! elementor.userCan( 'design' ) ) {
-			elementorFrontend.getElements( '$body' ).addClass( 'elementor-editor-content-only' );
+			$frontendBody.addClass( 'elementor-editor-content-only' );
 		}
 
 		this.changeDeviceMode( this._defaultDeviceMode );
@@ -981,7 +943,7 @@ const App = Marionette.Application.extend( {
 
 		this.onEditModeSwitched();
 
-		this.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
+		elementorCommon.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
 
 		this.trigger( 'preview:loaded' );
 	},

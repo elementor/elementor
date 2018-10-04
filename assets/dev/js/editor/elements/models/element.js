@@ -56,7 +56,7 @@ ElementModel = Backbone.Model.extend( {
 			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
 
 		if ( jQuery.isEmptyObject( settings ) ) {
-			settings = elementor.helpers.cloneObject( settings );
+			settings = elementorCommon.helpers.cloneObject( settings );
 		}
 
 		if ( 'widget' === elType ) {
@@ -151,7 +151,7 @@ ElementModel = Backbone.Model.extend( {
 	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
-		return elementor.ajax.addRequest( 'render_widget', {
+		return elementorCommon.ajax.addRequest( 'render_widget', {
 			unique_id: this.cid,
 			data: {
 				data: data,
@@ -186,7 +186,7 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	clone: function() {
-		var newModel = new this.constructor( elementor.helpers.cloneObject( this.attributes ) );
+		var newModel = new this.constructor( elementorCommon.helpers.cloneObject( this.attributes ) );
 
 		newModel.set( 'id', elementor.helpers.getUniqueID() );
 

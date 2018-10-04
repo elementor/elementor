@@ -28,11 +28,25 @@ ImagesManager = function() {
 		return size;
 	};
 
-	self.onceTriggerChange = _.once( function( model ) {
-		setTimeout( function() {
-			model.get( 'settings' ).trigger( 'change', model.get( 'settings' ) );
-		}, 700 );
-	} );
+	var viewsToUpdate = {};
+
+	self.updateOnReceiveImage = function() {
+		var elementView = elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' );
+
+		elementView.$el.addClass( 'elementor-loading' );
+		// Add per cid for multiple images in a single view.
+		viewsToUpdate[ elementView.cid ] = elementView;
+
+		elementor.channels.editor.once( 'imagesManager:detailsReceived', function() {
+			if ( ! _.isEmpty( viewsToUpdate ) ) {
+				_( viewsToUpdate ).each( function( view ) {
+					view.render();
+					view.$el.removeClass( 'elementor-loading' );
+				} );
+			}
+			viewsToUpdate = {};
+		} );
+	};
 
 	self.getImageUrl = function( image ) {
 		// Register for AJAX checking
@@ -44,8 +58,7 @@ ImagesManager = function() {
 		if ( ! imageUrl ) {
 			if ( 'custom' === image.size ) {
 				if ( elementor.getPanelView() && 'editor' === elementor.getPanelView().getCurrentPageName() && image.model ) {
-					// Trigger change again, so it's will load from the cache
-					self.onceTriggerChange( image.model );
+					self.updateOnReceiveImage();
 				}
 
 				return;
@@ -98,14 +111,7 @@ ImagesManager = function() {
 		// It's one item, so we can render it from remote server
 		if ( 0 === registeredItemsLength ) {
 			return;
-		} else if ( 1 === registeredItemsLength ) {
-			image = registeredItems[ Object.keys( registeredItems )[ 0 ] ];
-
-			if ( image && image.model ) {
-				image.model.renderRemoteServer();
-				return;
 			}
-		}
 
 		for ( index in registeredItems ) {
 			image = registeredItems[ index ];
@@ -121,7 +127,7 @@ ImagesManager = function() {
 			} );
 		}
 
-		elementor.ajax.send(
+		elementorCommon.ajax.send(
 			'get_images_details', {
 				data: {
 					items: requestedItems,
@@ -140,6 +146,8 @@ ImagesManager = function() {
 						}
 					}
 					registeredItems = [];
+
+					elementor.channels.editor.trigger( 'imagesManager:detailsReceived', data );
 				},
 			}
 		);

@@ -15,7 +15,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	},
 
 	onDestroy: function() {
-		var arrowClass = 'eicon-arrow-' + ( elementor.config.is_rtl ? 'right' : 'left' );
+		var arrowClass = 'eicon-arrow-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
 
 		elementor.panel.currentView.getHeaderView().ui.menuIcon.removeClass( arrowClass ).addClass( 'eicon-menu-bar' );
 	},

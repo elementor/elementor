@@ -2,6 +2,7 @@
 namespace Elementor\Core;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\DocumentTypes\Post;
 use Elementor\DB;
 use Elementor\Plugin;
@@ -108,7 +109,7 @@ class Documents_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_manager An instance of the ajax manager.
+	 * @param Ajax $ajax_manager An instance of the ajax manager.
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'save_builder', [ $this, 'ajax_save' ] );
@@ -153,7 +154,7 @@ class Documents_Manager {
 	 * @access public
 	 *
 	 * @param string $type  Document type name.
-	 * @param Document $class The name of the class that registers the document type.
+	 * @param string $class The name of the class that registers the document type.
 	 *                      Full name with the namespace.
 	 *
 	 * @return Documents_Manager The updated document manager instance.

@@ -52,7 +52,7 @@ class Heartbeat {
 	}
 
 	initModal() {
-		const modal = elementor.dialogsManager.createWidget( 'lightbox', {
+		const modal = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			headerMessage: elementor.translate( 'take_over' ),
 		} );
 

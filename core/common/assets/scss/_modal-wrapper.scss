@@ -1,5 +1,3 @@
-$library_screen_breakpoint: $editor-screen-lg-max;
-
 .elementor-templates-modal {
 
 	.dialog-widget-content {
@@ -53,10 +51,8 @@ $library_screen_breakpoint: $editor-screen-lg-max;
 		height: 50px;
 
 		&__logo {
-			font-size: 15px;
 			line-height: 1;
 			text-transform: uppercase;
-			color: $editor-darkest;
 			font-weight: bold;
 			cursor: pointer;
 

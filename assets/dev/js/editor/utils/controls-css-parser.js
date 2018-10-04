@@ -210,7 +210,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 		} );
 
 		if ( ! Object.keys( query ).length && control.responsive ) {
-			query = _.pick( elementor.helpers.cloneObject( control.responsive ), [ 'min', 'max' ] );
+			query = _.pick( elementorCommon.helpers.cloneObject( control.responsive ), [ 'min', 'max' ] );
 
 			if ( 'desktop' === query.max ) {
 				delete query.max;

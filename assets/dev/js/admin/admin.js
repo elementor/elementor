@@ -5,12 +5,10 @@
 
 		maintenanceMode: null,
 
-		config: ElementorAdminConfig,
+		config: elementorAdminConfig,
 
 		getDefaultElements: function() {
 			var elements = {
-				$window: $( window ),
-				$body: $( 'body' ),
 				$switchMode: $( '#elementor-switch-mode' ),
 				$goToEditLink: $( '#elementor-go-to-edit-page-link' ),
 				$switchModeInput: $( '#elementor-switch-mode-input' ),
@@ -37,7 +35,7 @@
 		toggleStatus: function() {
 			var isElementorMode = this.isElementorMode();
 
-			this.elements.$body
+			elementorCommon.elements.$body
 				.toggleClass( 'elementor-editor-active', isElementorMode )
 				.toggleClass( 'elementor-editor-inactive', ! isElementorMode );
 		},
@@ -66,7 +64,7 @@
 					self.animateLoader();
 
 					$( document ).on( 'heartbeat-tick.autosave', function() {
-						self.elements.$window.off( 'beforeunload.edit-post' );
+						elementorCommon.elements.$window.off( 'beforeunload.edit-post' );
 
 						location.href = self.elements.$goToEditLink.attr( 'href' );
 					} );
@@ -147,7 +145,7 @@
 							$this.addClass( 'success' );
 						}
 
-						self.getDialogsManager().createWidget( 'alert', {
+						elementorCommon.dialogsManager.createWidget( 'alert', {
 								message: response.data,
 							} ).show();
 					} );
@@ -173,12 +171,12 @@
 
 				var $this = $( this );
 
-				self.getDialogsManager().createWidget( 'confirm', {
-					headerMessage: self.config.i18n.rollback_to_previous_version,
-					message: self.config.i18n.rollback_confirm,
+				elementorCommon.dialogsManager.createWidget( 'confirm', {
+					headerMessage: self.translate( 'rollback_to_previous_version' ),
+					message: self.translate( 'rollback_confirm' ),
 					strings: {
-						confirm: self.config.i18n.yes,
-						cancel: self.config.i18n.cancel,
+						confirm: self.translate( 'yes' ),
+						cancel: self.translate( 'cancel' ),
 					},
 					onConfirm: function() {
 						$this.addClass( 'loading' );
@@ -196,26 +194,8 @@
 			} ).trigger( 'change' );
 		},
 
-		setMarionetteTemplateCompiler: function() {
-			if ( 'undefined' !== typeof Marionette ) {
-				Marionette.TemplateCache.prototype.compileTemplate = function( rawTemplate, options ) {
-					options = {
-						evaluate: /<#([\s\S]+?)#>/g,
-						interpolate: /{{{([\s\S]+?)}}}/g,
-						escape: /{{([^}]+?)}}(?!})/g,
-					};
-
-					return _.template( rawTemplate, options );
-				};
-			}
-		},
-
 		onInit: function() {
 			ViewModule.prototype.onInit.apply( this, arguments );
-
-			this.setMarionetteTemplateCompiler();
-
-			this.initDialogsManager();
 
 			this.initTemplatesImport();
 
@@ -226,20 +206,8 @@
 			this.roleManager.init();
 		},
 
-		initDialogsManager: function() {
-			var dialogsManager;
-
-			this.getDialogsManager = function() {
-				if ( ! dialogsManager ) {
-					dialogsManager = new DialogsManager.Instance();
-				}
-
-				return dialogsManager;
-			};
-		},
-
 		initTemplatesImport: function() {
-			if ( ! this.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
+			if ( ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
 				return;
 			}
 
@@ -302,6 +270,10 @@
 			this.elements.$activeSettingsPage = $activePage;
 
 			this.elements.$activeSettingsTab = $activeTab;
+		},
+
+		translate: function( stringKey, templateArgs ) {
+			return elementorCommon.translate( stringKey, templateArgs, this.config.i18n );
 		},
 
 		roleManager: {
@@ -375,6 +347,6 @@
 	$( function() {
 		window.elementorAdmin = new ElementorAdmin();
 
-		elementorAdmin.elements.$window.trigger( 'elementor/admin/init' );
+		elementorCommon.elements.$window.trigger( 'elementor/admin/init' );
 	} );
 }( jQuery ) );

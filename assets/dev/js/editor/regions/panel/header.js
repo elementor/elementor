@@ -31,7 +31,7 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 			nextPage = 'menu' === currentPanelPageName ? 'elements' : 'menu';
 
 		if ( 'menu' === nextPage ) {
-			var arrowClass = 'eicon-arrow-' + ( elementor.config.is_rtl ? 'right' : 'left' );
+			var arrowClass = 'eicon-arrow-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
 
 			this.ui.menuIcon.removeClass( 'eicon-menu-bar' ).addClass( arrowClass );
 		}

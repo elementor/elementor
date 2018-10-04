@@ -1,3 +1,5 @@
+import environment from '../../../utils/environment';
+
 var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -121,7 +123,7 @@ BaseElementView = BaseContainer.extend( {
 
 	getContextMenuGroups: function() {
 		var elementType = this.options.model.get( 'elType' ),
-			controlSign = elementor.envData.mac ? '⌘' : '^';
+			controlSign = environment.mac ? '⌘' : '^';
 
 		return [
 			{
@@ -130,7 +132,7 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						icon: 'eicon-edit',
-						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
+						title: elementor.translate( 'edit_element', [ elementorCommon.helpers.firstLetterUppercase( elementType ) ] ),
 						callback: this.options.model.trigger.bind( this.options.model, 'request:edit' ),
 					}, {
 						name: 'duplicate',
@@ -765,7 +767,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		elementorFrontend.getElements( '$document' )[ 0 ].activeElement.blur();
+		elementorFrontend.getElements( 'window' ).document.activeElement.blur();
 	},
 
 	onDestroy: function() {

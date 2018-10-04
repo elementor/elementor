@@ -11,7 +11,7 @@ module.exports = BaseModalLayout.extend( {
 
 	getLogoOptions: function() {
 		return {
-			title: elementorAdmin.config.i18n.new_template,
+			title: elementorAdmin.translate( 'new_template' ),
 		};
 	},
 
@@ -21,10 +21,6 @@ module.exports = BaseModalLayout.extend( {
 		this.showLogo();
 
 		this.showContentView();
-	},
-
-	getDialogsManager: function() {
-		return elementorAdmin.getDialogsManager();
 	},
 
 	showContentView: function() {
