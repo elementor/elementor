@@ -178,10 +178,11 @@ class Feedback {
 			'update_post_meta_cache' => false,
 			'update_post_term_cache' => false,
 			'meta_key' => '_elementor_edit_mode',
+			'posts_per_page' => 11,
 			'meta_value' => 'builder',
 		] );
 
-		if ( 10 > $elementor_pages->post_count ) {
+		if ( 10 >= $elementor_pages->post_count ) {
 			return;
 		}
 
