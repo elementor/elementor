@@ -37,6 +37,7 @@ class User {
 	 */
 	public static function init() {
 		add_action( 'wp_ajax_elementor_set_admin_notice_viewed', [ __CLASS__, 'ajax_set_admin_notice_viewed' ] );
+		add_action( 'admin_post_elementor_set_admin_notice_viewed', [ __CLASS__, 'ajax_set_admin_notice_viewed' ] );
 
 		add_action( 'elementor/ajax/register_actions', [ __CLASS__, 'register_ajax_actions' ] );
 	}
@@ -194,8 +195,8 @@ class User {
 	 * @static
 	 */
 	public static function ajax_set_admin_notice_viewed() {
-		if ( empty( $_POST['notice_id'] ) ) {
-			die;
+		if ( empty( $_REQUEST['notice_id'] ) ) {
+			wp_die();
 		}
 
 		$notices = self::get_user_notices();
@@ -203,10 +204,15 @@ class User {
 			$notices = [];
 		}
 
-		$notices[ $_POST['notice_id'] ] = 'true';
+		$notices[ $_REQUEST['notice_id'] ] = 'true';
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 
-		die;
+		if ( ! Utils::is_ajax() ) {
+			wp_safe_redirect( admin_url() );
+			die;
+		}
+
+		wp_die();
 	}
 
 	public static function set_introduction_viewed() {
