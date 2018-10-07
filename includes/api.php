@@ -215,6 +215,8 @@ class Api {
 	 */
 	public static function get_template_content( $template_id ) {
 		$url = sprintf( self::$api_get_template_content_url, $template_id );
+		// Allow developer filter this url to use custom template.
+		$url = apply_filters( 'elementor/api/get_templates/url', $url, $template_id );
 
 		$body_args = [
 			// Which API version is used.
