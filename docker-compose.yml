@@ -1,0 +1,66 @@
+version: '3.1'
+
+services:
+
+  wordpress:
+    build: .docker/wordpress
+    container_name: elementor-dev-site
+    ports:
+      - 4000:80
+    environment:
+      WORDPRESS_DB_PASSWORD: password
+      ABSPATH: /usr/src/wordpress/
+    volumes:
+      - ./.docker/local-site/site:/var/www/html
+      - .:/var/www/html/wp-content/plugins/elementor
+    depends_on:
+      - mysql
+
+  cli:
+    image: wordpress:cli
+    volumes:
+      - ./.docker/local-site/site:/var/www/html
+      - .:/var/www/html/wp-content/plugins/elementor
+    depends_on:
+      - mysql
+      - wordpress
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - ./.docker/local-site/db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress_test
+
+  wordpress_phpunit:
+    image: chriszarate/wordpress-phpunit
+    environment:
+      PHPUNIT_DB_HOST: mysql
+    volumes:
+      - .:/app
+      - testsuite:/tmp
+    depends_on:
+      - mysql
+
+  wordpress_e2e_tests:
+    image: wordpress
+    ports:
+    - 4001:80
+    environment:
+      WORDPRESS_DB_NAME: wordpress_e2e_tests
+      WORDPRESS_DB_PASSWORD: password
+      ABSPATH: /usr/src/wordpress/
+    volumes:
+    - wordpress_e2e_tests:/var/www/html
+    - .:/var/www/html/wp-content/plugins/elementor
+
+  cli_e2e_tests:
+    image: wordpress:cli
+    volumes:
+    - wordpress_e2e_tests:/var/www/html
+    - .:/var/www/html/wp-content/plugins/elementor
+
+volumes:
+  testsuite:
+  wordpress_e2e_tests:
