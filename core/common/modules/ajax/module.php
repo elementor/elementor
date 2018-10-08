@@ -19,17 +19,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Module extends BaseModule {
 
+	const NONCE_KEY = 'elementor_ajax';
+
 	/**
 	 * Ajax actions.
 	 *
 	 * Holds all the register ajax action.
 	 *
 	 * @since 2.0.0
-	 * @access protected
+	 * @access private
 	 *
 	 * @var array
 	 */
-	protected $ajax_actions = [];
+	private $ajax_actions = [];
 
 	/**
 	 * Ajax requests.
@@ -37,11 +39,11 @@ class Module extends BaseModule {
 	 * Holds all the register ajax requests.
 	 *
 	 * @since 2.0.0
-	 * @access protected
+	 * @access private
 	 *
 	 * @var array
 	 */
-	protected $requests = [];
+	private $requests = [];
 
 	/**
 	 * Ajax response data.
@@ -49,11 +51,11 @@ class Module extends BaseModule {
 	 * Holds all the response data for all the ajax requests.
 	 *
 	 * @since 2.0.0
-	 * @access protected
+	 * @access private
 	 *
 	 * @var array
 	 */
-	protected $response_data = [];
+	private $response_data = [];
 
 	/**
 	 * Current ajax action ID.
@@ -61,11 +63,23 @@ class Module extends BaseModule {
 	 * Holds all the ID for the current ajax action.
 	 *
 	 * @since 2.0.0
-	 * @access protected
+	 * @access private
 	 *
 	 * @var string|null
 	 */
-	protected $current_action_id = null;
+	private $current_action_id = null;
+
+	/**
+	 * Ajax manager constructor.
+	 *
+	 * Initializing Elementor ajax manager.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
+	public function __construct() {
+		add_action( 'wp_ajax_elementor_ajax', [ $this, 'handle_ajax_request' ] );
+	}
 
 	/**
 	 * Get module name.
@@ -112,24 +126,18 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function handle_ajax_request() {
-		if ( ! Plugin::$instance->editor->verify_request_nonce() ) {
+		if ( ! $this->verify_request_nonce() ) {
 			$this->add_response_data( false, __( 'Token Expired.', 'elementor' ) )
 				->send_error( Exceptions::UNAUTHORIZED );
 		}
 
-		if ( empty( $_REQUEST['actions'] ) || empty( $_REQUEST['editor_post_id'] ) ) {
-			$this->add_response_data( false, __( 'Actions and Post ID are required.', 'elementor' ) )
-				->send_error( Exceptions::BAD_REQUEST );
+		$editor_post_id = 0;
+
+		if ( ! empty( $_REQUEST['editor_post_id'] ) ) {
+			$editor_post_id = absint( $_REQUEST['editor_post_id'] );
+
+			Plugin::$instance->db->switch_to_post( $editor_post_id );
 		}
-
-		$editor_post_id = absint( $_REQUEST['editor_post_id'] );
-
-		if ( ! get_post( $editor_post_id ) ) {
-			$this->add_response_data( false, __( 'Post not found.', 'elementor' ) )
-				->send_error( Exceptions::NOT_FOUND );
-		}
-
-		Plugin::$instance->db->switch_to_post( $editor_post_id );
 
 		/**
 		 * Register ajax actions.
@@ -140,7 +148,7 @@ class Module extends BaseModule {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param Ajax $this An instance of ajax manager.
+		 * @param self $this An instance of ajax manager.
 		 */
 		do_action( 'elementor/ajax/register_actions', $this );
 
@@ -155,7 +163,7 @@ class Module extends BaseModule {
 				continue;
 			}
 
-			if ( empty( $action_data['data']['editor_post_id'] ) ) {
+			if ( $editor_post_id ) {
 				$action_data['data']['editor_post_id'] = $editor_post_id;
 			}
 
@@ -196,6 +204,42 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Create nonce.
+	 *
+	 * Creates a cryptographic token to
+	 * give the user an access to Elementor ajax actions.
+	 *
+	 * @since 2.3.0
+	 * @access public
+	 *
+	 * @return string The nonce token.
+	 */
+	public function create_nonce() {
+		return wp_create_nonce( self::NONCE_KEY );
+	}
+
+	/**
+	 * Verify request nonce.
+	 *
+	 * Whether the request nonce verified or not.
+	 *
+	 * @since 2.3.0
+	 * @access public
+	 *
+	 * @return bool True if request nonce verified, False otherwise.
+	 */
+	public function verify_request_nonce() {
+		return ! empty( $_REQUEST['_nonce'] ) && wp_verify_nonce( $_REQUEST['_nonce'], self::NONCE_KEY );
+	}
+
+	protected function get_init_settings() {
+		return [
+			'url' => admin_url( 'admin-ajax.php' ),
+			'nonce' => $this->create_nonce(),
+		];
+	}
+
+	/**
 	 * Ajax success response.
 	 *
 	 * Send a JSON response data back to the ajax request, indicating success.
@@ -203,7 +247,7 @@ class Module extends BaseModule {
 	 * @since 2.0.0
 	 * @access protected
 	 */
-	protected function send_success() {
+	private function send_success() {
 		wp_send_json_success( [
 			'responses' => $this->response_data,
 		] );
@@ -219,7 +263,7 @@ class Module extends BaseModule {
 	 *
 	 * @param null $code
 	 */
-	protected function send_error( $code = null ) {
+	private function send_error( $code = null ) {
 		wp_send_json_error( [
 			'responses' => $this->response_data,
 		], $code );
@@ -241,7 +285,7 @@ class Module extends BaseModule {
 	 *
 	 * @return Module An instance of ajax manager.
 	 */
-	protected function add_response_data( $success, $data = null, $code = 200 ) {
+	private function add_response_data( $success, $data = null, $code = 200 ) {
 		$this->response_data[ $this->current_action_id ] = [
 			'success' => $success,
 			'code' => $code,
@@ -249,17 +293,5 @@ class Module extends BaseModule {
 		];
 
 		return $this;
-	}
-
-	/**
-	 * Ajax manager constructor.
-	 *
-	 * Initializing Elementor ajax manager.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 */
-	public function __construct() {
-		add_action( 'wp_ajax_elementor_ajax', [ $this, 'handle_ajax_request' ] );
 	}
 }

@@ -44,7 +44,7 @@ module.exports = Module.extend( {
 
 		this.cacheCallbacks = [];
 
-		elementorCommon.ajax.send( 'render_tags', {
+		elementorCommon.ajax.addRequest( 'render_tags', {
 			data: {
 				post_id: elementor.config.document.id,
 				tags: Object.keys( cacheRequests ),

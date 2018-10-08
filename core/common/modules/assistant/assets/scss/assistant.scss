@@ -1,0 +1,91 @@
+#elementor-assistant {
+
+	&__modal {
+
+		.dialog-widget-content {
+			width: 700px;
+		}
+
+		.dialog-message {
+			height: initial;
+			min-height: 0;
+			padding: 10px 0;
+			text-align: $start;
+		}
+	}
+
+	&__search {
+		padding: 0 15px;
+
+		i {
+			font-size: 20px;
+			color: $editor-light;
+			font-weight: bold;
+			@include margin-end(15px);
+		}
+
+		&__input {
+			border: none;
+			background: none;
+			outline: none;
+			padding: 0;
+			margin: 0;
+			flex-grow: 1;
+			font-size: 20px;
+			color: $editor-darkest;
+
+			&::placeholder {
+				color: $editor-lighter;
+				font-weight: 300;
+			}
+		}
+	}
+
+	&__results {
+		margin-top: 10px;
+	}
+}
+
+.elementor-assistant__results {
+
+	&__category {
+
+		&__title {
+			padding: 5px 25px;
+			color: $editor-dark;
+			background-color: $editor-background;
+			font-size: 9px;
+			text-transform: uppercase;
+		}
+	}
+
+	&__item {
+		display: flex;
+		align-items: center;
+		height: 35px;
+		text-decoration: none;
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		&__icon {
+			width: 60px;
+			text-align: center;
+			color: $editor-dark;
+			font-size: 17px;
+		}
+
+		&__title {
+			color: $editor-dark;
+			font-size: 13px;
+		}
+
+		&__description {
+			@include margin-start(15px);
+			color: $editor-light;
+			font-size: 13px;
+			font-style: italic;
+		}
+	}
+}
