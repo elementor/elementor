@@ -1,21 +1,28 @@
-.idea/
+# directories
 node_modules/
 .sass-cache/
-build/
 log/
 vendor/
-composer.lock
-package-lock.json
-yarn.lock
-.project
-.vscode
-Thumbs.db
-*.DS_Store
+local-site/
 
+# build outputs
+build/
+assets/css/
+assets/js/
 *.log
 *.map
 
-tests/qunit/*.html
+# build tools lock
+composer.lock
+package-lock.json
+yarn.lock
 
-assets/css/
-assets/js/
+# IDE's
+.project/
+.vscode/
+.idea/
+
+# other
+tests/qunit/*.html
+Thumbs.db
+*.DS_Store
