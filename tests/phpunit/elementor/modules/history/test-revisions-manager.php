@@ -6,6 +6,8 @@ use Elementor\Testing\Elementor_Test_Base;
 
 class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 
+	private $fake_post_id = 1234;
+
 	public function test_should_return_false_from_handle_revision_hook() {
 		Revisions_Manager::handle_revision();
 		$this->assertFalse( apply_filters( 'wp_save_post_revision_check_for_changes', false ),
@@ -192,6 +194,95 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 			'revisions_disabled_2',
 		];
 		$this->assertArrayHaveKeys( $settings_i18n_keys, $settings['i18n'] );
+	}
+
+
+	/**
+	 * @expectedException \Exception
+	 * @expectedExceptionMessage You must set the revision ID.
+	 */
+	public function test_should_not_get_revision_data_on_request_because_of_unset_revision_ID() {
+		Revisions_Manager::ajax_get_revision_data( [] );
+	}
+
+	/**
+	 * @expectedException \Exception
+	 * @expectedExceptionMessage Invalid revision.
+	 */
+	public function test_should_not_get_revision_data_on_request_because_of_invalid_revision() {
+		$args['id'] = $this->fake_post_id;
+
+		Revisions_Manager::ajax_get_revision_data( $args );
+	}
+
+	/**
+	 * @expectedException \Exception
+	 * @expectedExceptionMessage Access denied.
+	 */
+	public function test_should_not_get_revision_data_on_request_because_of_access_denied() {
+		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
+		$args['id'] = $this->factory()->get_default_post();
+
+		Revisions_Manager::ajax_get_revision_data( $args );
+	}
+
+	public function test_should_get_revision_data_on_request() {
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+		$args['id'] = $this->factory()->create_and_get_default_post();
+
+		$revision_data = Revisions_Manager::ajax_get_revision_data( $args );
+
+		$this->assertArrayHaveKeys( [ 'settings', 'elements' ], $revision_data );
+	}
+
+	/**
+	 * @expectedException \Exception
+	 * @expectedExceptionMessage You must set the revision ID.
+	 */
+	public function test_should_not_delete_revision_on_request_because_of_unset_revision_ID() {
+		Revisions_Manager::ajax_delete_revision( [] );
+	}
+
+	/**
+	 * @expectedException \Exception
+	 * @expectedExceptionMessage Invalid revision.
+	 */
+	public function test_should_not_delete_revision_on_request_because_of_invalid_revision() {
+		$args['id'] = $this->fake_post_id;
+
+		Revisions_Manager::ajax_delete_revision( $args );
+	}
+
+	/**
+	 * @expectedException \Exception
+	 * @expectedExceptionMessage Access denied.
+	 */
+	public function test_should_not_delete_revision_on_request_because_of_access_denied() {
+		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
+		$args['id'] = $this->factory()->get_default_post();
+
+		Revisions_Manager::ajax_delete_revision( $args );
+	}
+
+	/**
+	 * @expectedException \Exception
+	 * @expectedExceptionMessage Cannot delete this revision.
+	 */
+	public function test_should_not_delete_revision_on_request_because_the_method_cannot_delete_given_revision() {
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+		$args['id'] = $this->factory()->create_and_get_default_post();
+
+		Revisions_Manager::ajax_delete_revision( $args );
+	}
+
+	public function test_should_delete_revision_on_request() {
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+		$args['id'] = $this->factory()->create_and_get_parent_and_child_posts()['child_id'];
+
+		$response = Revisions_Manager::ajax_delete_revision( $args );
+
+		$this->assertNull( $response,
+			'the function "on_delete_revision_request" should not return data' );
 	}
 
 	private function setup_revision_check() {
