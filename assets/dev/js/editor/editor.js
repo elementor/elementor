@@ -254,11 +254,6 @@ const App = Marionette.Application.extend( {
 
 		this.dynamicTags = new DynamicTags();
 
-		/**
-		 * @deprecated 1.6.0 - use `this.settings.page` instead
-		 */
-		this.pageSettings = this.settings.page;
-
 		this.templates.init();
 
 		this.initDialogsManager();
@@ -592,6 +587,34 @@ const App = Marionette.Application.extend( {
 		} );
 	},
 
+	setAjax: function() {
+		elementorCommon.ajax.addRequestConstant( 'editor_post_id', this.config.document.id );
+
+		elementorCommon.ajax.on( 'request:unhandledError', function( xmlHttpRequest ) {
+			elementor.notifications.showToast( {
+				message: elementor.createAjaxErrorMessage( xmlHttpRequest ),
+			} );
+		} );
+	},
+
+	createAjaxErrorMessage( xmlHttpRequest ) {
+		let message;
+
+		if ( 4 === xmlHttpRequest.readyState ) {
+			message = this.translate( 'server_error' );
+
+			if ( 200 !== xmlHttpRequest.status ) {
+				message += ' (' + xmlHttpRequest.status + ' ' + xmlHttpRequest.statusText + ')';
+			}
+		} else if ( 0 === xmlHttpRequest.readyState ) {
+			message = this.translate( 'server_connection_lost' );
+		} else {
+			message = this.translate( 'unknown_error' );
+		}
+
+		return message + '.';
+	},
+
 	preventClicksInsideEditor: function() {
 		this.$previewContents.on( 'submit', function( event ) {
 			event.preventDefault();
@@ -853,6 +876,8 @@ const App = Marionette.Application.extend( {
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
 		}
+
+		this.setAjax();
 
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
