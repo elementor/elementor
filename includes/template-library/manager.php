@@ -2,6 +2,7 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
@@ -589,8 +590,10 @@ class Manager {
 	 *
 	 * @since 1.0.0
 	 * @access private
+	 *
+	 * @param Ajax $ajax
 	 */
-	public function register_ajax_actions() {
+	public function register_ajax_actions( Ajax $ajax ) {
 		$library_ajax_requests = [
 			'get_library_data',
 			'get_template_data',
@@ -601,9 +604,6 @@ class Manager {
 			'import_template',
 			'mark_template_as_favorite',
 		];
-
-		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
 			$ajax->register_ajax_action( $ajax_request, function( $data ) use ( $ajax_request ) {
