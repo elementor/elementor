@@ -46,7 +46,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 				self.enterReviewMode();
 			},
-			error: function() {
+			error: function( errorMessage ) {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				if ( 'abort' === self.jqueryXhr.statusText ) {
@@ -57,7 +57,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 				self.currentPreviewId = null;
 
-				alert( 'An error occurred' );
+				alert( errorMessage );
 			},
 		} );
 	},
