@@ -3,12 +3,16 @@ const Module = require( 'elementor-utils/module' );
 import AssistantLayout from './modal-layout';
 
 export default class extends Module {
-	onInit() {
-		this.channel = Backbone.Radio.channel( 'ELEMENTOR:assistant' );
+	initLayout() {
+		let layout;
 
-		this.layout = new AssistantLayout();
+		this.getLayout = () => {
+			if ( ! layout ) {
+				layout = new AssistantLayout();
+			}
 
-		this.addShortcut();
+			return layout;
+		};
 	}
 
 	addShortcut() {
@@ -16,7 +20,15 @@ export default class extends Module {
 
 		elementorCommon.hotKeys.addHotKeyHandler( E_KEY, 'assistant', {
 			isWorthHandling: ( event ) => elementorCommon.hotKeys.isControlEvent( event ),
-			handle: () => this.layout.showModal(),
+			handle: () => this.getLayout().showModal(),
 		} );
+	}
+
+	onInit() {
+		this.channel = Backbone.Radio.channel( 'ELEMENTOR:assistant' );
+
+		this.initLayout();
+
+		this.addShortcut();
 	}
 }
