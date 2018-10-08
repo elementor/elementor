@@ -193,12 +193,18 @@ class Feedback extends Module {
 			'update_post_meta_cache' => false,
 			'update_post_term_cache' => false,
 			'meta_key' => '_elementor_edit_mode',
+			'posts_per_page' => 11,
 			'meta_value' => 'builder',
 		] );
 
-		if ( 10 > $elementor_pages->post_count ) {
+		if ( 10 >= $elementor_pages->post_count ) {
 			return;
 		}
+
+		$dismiss_url = add_query_arg( [
+			'action' => 'elementor_set_admin_notice_viewed',
+			'notice_id' => esc_attr( $notice_id ),
+		], admin_url( 'admin-post.php' ) );
 
 		?>
 		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
@@ -212,7 +218,7 @@ class Feedback extends Module {
 					<p><strong><?php echo __( 'Congrats!', 'elementor' ); ?></strong> <?php _e( 'You created over 10 pages with Elementor. Great job! If you can spare a minute, please help us by leaving a five star review on WordPress.org.', 'elementor' ); ?></p>
 					<p class="elementor-message-actions">
 						<a href="https://go.elementor.com/admin-review/" target="_blank" class="button button-primary"><?php _e( 'Happy To Help', 'elementor' ); ?></a>
-						<a href="#" class="button elementor-button-notice-dismiss"><?php _e( 'Hide Notification', 'elementor' ); ?></a>
+						<a href="<?php echo esc_url_raw( $dismiss_url ); ?>" class="button elementor-button-notice-dismiss"><?php _e( 'Hide Notification', 'elementor' ); ?></a>
 					</p>
 				</div>
 			</div>
