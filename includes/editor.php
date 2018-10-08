@@ -914,6 +914,9 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
+
+		$template = apply_filters( 'elementor/editor/editor_template_name', $template );
+
 		if ( 'path' === $type ) {
 			ob_start();
 
