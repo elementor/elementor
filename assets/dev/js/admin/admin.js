@@ -273,7 +273,7 @@
 		},
 
 		translate: function( stringKey, templateArgs ) {
-			return elementorCommon.translate( stringKey, templateArgs, this.config.i18n );
+			return elementorCommon.translate( stringKey, null, templateArgs, this.config.i18n );
 		},
 
 		roleManager: {

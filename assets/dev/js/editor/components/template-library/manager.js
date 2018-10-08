@@ -102,7 +102,7 @@ TemplateLibraryManager = function() {
 				options.onConfirm();
 			}
 
-			elementorCommon.ajax.send( 'delete_template', {
+			elementorCommon.ajax.addRequest( 'delete_template', {
 				data: {
 					source: templateModel.get( 'source' ),
 					template_id: templateModel.get( 'template_id' ),
@@ -171,7 +171,7 @@ TemplateLibraryManager = function() {
 			_.extend( ajaxParams, templateType.ajaxParams );
 		}
 
-		elementorCommon.ajax.send( 'save_template', ajaxParams );
+		elementorCommon.ajax.addRequest( 'save_template', ajaxParams );
 	};
 
 	this.requestTemplateContent = function( source, id, ajaxOptions ) {
@@ -188,7 +188,7 @@ TemplateLibraryManager = function() {
 			jQuery.extend( true, options, ajaxOptions );
 		}
 
-		return elementorCommon.ajax.send( 'get_template_data', options );
+		return elementorCommon.ajax.addRequest( 'get_template_data', options );
 	};
 
 	this.markAsFavorite = function( templateModel, favorite ) {
@@ -200,7 +200,7 @@ TemplateLibraryManager = function() {
 			},
 		};
 
-		return elementorCommon.ajax.send( 'mark_template_as_favorite', options );
+		return elementorCommon.ajax.addRequest( 'mark_template_as_favorite', options );
 	};
 
 	this.getDeleteDialog = function() {
@@ -275,7 +275,7 @@ TemplateLibraryManager = function() {
 			ajaxOptions.data.sync = true;
 		}
 
-		elementorCommon.ajax.send( 'get_library_data', ajaxOptions );
+		elementorCommon.ajax.addRequest( 'get_library_data', ajaxOptions );
 	};
 
 	this.startModal = function( customStartIntent ) {

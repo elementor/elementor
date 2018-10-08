@@ -51,7 +51,7 @@ module.exports = {
 		'key-spacing': 'error',
 		'array-bracket-spacing': [ 'error', 'always' ],
 		'no-else-return': 'error',
-		'no-console': 'error',
+		'no-console': 'warn',
 		//end of custom canceled rules
 		'arrow-parens': [ 'error', 'always' ],
 		'arrow-spacing': 'error',

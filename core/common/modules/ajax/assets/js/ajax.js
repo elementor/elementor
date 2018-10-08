@@ -1,23 +1,37 @@
-export default class Ajax {
-	initConfig() {
-		this.config = {
+const Module = require( 'elementor-utils/module' );
+
+export default class extends Module {
+	getDefaultSettings() {
+		return {
 			ajaxParams: {
 				type: 'POST',
-				url: elementorCommon.config.urls.ajax,
+				url: elementorCommon.config.ajax.url,
 				data: {},
 			},
 			actionPrefix: 'elementor_',
 		};
 	}
 
-	constructor() {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.requests = {};
 
 		this.cache = {};
 
-		this.initConfig();
+		this.initRequestConstants();
 
 		this.debounceSendBatch = _.debounce( this.sendBatch.bind( this ), 500 );
+	}
+
+	initRequestConstants() {
+		this.requestConstants = {
+			_nonce: this.getSettings( 'nonce' ),
+		};
+	}
+
+	addRequestConstant( key, value ) {
+		this.requestConstants[ key ] = value;
 	}
 
 	getCacheKey( request ) {
@@ -149,23 +163,28 @@ export default class Ajax {
 	}
 
 	send( action, options ) {
-		const ajaxParams = elementorCommon.helpers.cloneObject( this.config.ajaxParams );
+		const settings = this.getSettings(),
+			ajaxParams = elementorCommon.helpers.cloneObject( settings.ajaxParams );
 
 		options = options || {};
 
-		action = this.config.actionPrefix + action;
+		action = settings.actionPrefix + action;
 
 		jQuery.extend( ajaxParams, options );
 
-		if ( ajaxParams.data instanceof FormData ) {
-			ajaxParams.data.append( 'action', action );
-			ajaxParams.data.append( '_nonce', elementor.config.nonce );
-			ajaxParams.data.append( 'editor_post_id', elementor.config.document.id );
-		} else {
-			ajaxParams.data.action = action;
-			ajaxParams.data._nonce = elementor.config.nonce;
-			ajaxParams.data.editor_post_id = elementor.config.document.id;
-		}
+		const requestConstants = elementorCommon.helpers.cloneObject( this.requestConstants );
+
+		requestConstants.action = action;
+
+		const isFormData = ajaxParams.data instanceof FormData;
+
+		Object.entries( requestConstants ).forEach( ( [ key, value ] ) => {
+			if ( isFormData ) {
+				ajaxParams.data.append( key, value );
+			} else {
+				ajaxParams.data[ key ] = value;
+			}
+		} );
 
 		const successCallback = ajaxParams.success,
 			errorCallback = ajaxParams.error;
@@ -184,38 +203,14 @@ export default class Ajax {
 			if ( errorCallback ) {
 				ajaxParams.error = ( data ) => errorCallback( data );
 			} else {
-				ajaxParams.error = ( XMLHttpRequest ) => {
-					if ( 0 === XMLHttpRequest.readyState && 'abort' === XMLHttpRequest.statusText ) {
-						return;
+				ajaxParams.error = ( xmlHttpRequest ) => {
+					if ( xmlHttpRequest.readyState || 'abort' !== xmlHttpRequest.statusText ) {
+						this.trigger( 'request:unhandledError', xmlHttpRequest );
 					}
-
-					const message = this.createErrorMessage( XMLHttpRequest );
-
-					elementor.notifications.showToast( {
-						message: message,
-					} );
 				};
 			}
 		}
 
 		return jQuery.ajax( ajaxParams );
-	}
-
-	createErrorMessage( XMLHttpRequest ) {
-		let message;
-
-		if ( 4 === XMLHttpRequest.readyState ) {
-			message = elementor.translate( 'server_error' );
-
-			if ( 200 !== XMLHttpRequest.status ) {
-				message += ' (' + XMLHttpRequest.status + ' ' + XMLHttpRequest.statusText + ')';
-			}
-		} else if ( 0 === XMLHttpRequest.readyState ) {
-			message = elementor.translate( 'server_connection_lost' );
-		} else {
-			message = elementor.translate( 'unknown_error' );
-		}
-
-		return message + '.';
 	}
 }

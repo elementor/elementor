@@ -5,8 +5,7 @@
 const watch = {
 	styles: {
 		files: [
-			'assets/dev/scss/**/*.scss',
-			'modules/**/*.scss',
+			'**/*.scss',
 			'!assets/dev/scss/frontend/breakpoints/proxy.scss'
 		],
 		tasks: [ 'styles:true' ],
