@@ -11,7 +11,7 @@ export default class extends BaseModalLayout {
 
 	getLogoOptions() {
 		return {
-			title: 'Assistant',
+			title: elementorCommon.translate( 'assistant', 'assistant' ),
 		};
 	}
 
