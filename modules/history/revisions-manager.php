@@ -2,6 +2,7 @@
 namespace Elementor\Modules\History;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Manager;
 use Elementor\Plugin;
@@ -388,10 +389,7 @@ class Revisions_Manager {
 		return $settings;
 	}
 
-	public static function register_ajax_actions() {
-		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
-
+	public static function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'get_revision_data', [ __CLASS__, 'ajax_get_revision_data' ] );
 		$ajax->register_ajax_action( 'delete_revision', [ __CLASS__, 'ajax_delete_revision' ] );
 	}

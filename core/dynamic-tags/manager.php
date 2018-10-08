@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\DynamicTags;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Plugin;
@@ -415,10 +416,7 @@ class Manager {
 		$css_file->enqueue();
 	}
 
-	public function register_ajax_actions() {
-		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
-
+	public function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'render_tags', [ $this, 'ajax_render_tags' ] );
 	}
 

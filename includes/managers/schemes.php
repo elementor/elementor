@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+
 /**
  * Elementor scheme manager.
  *
@@ -263,10 +265,7 @@ class Schemes_Manager {
 		}
 	}
 
-	public function register_ajax_actions() {
-		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
-
+	public function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'apply_scheme', [ $this, 'ajax_apply_scheme' ] );
 	}
 	/**
