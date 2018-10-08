@@ -71,7 +71,7 @@ class Source_Remote extends Source_Base {
 	 * @return array Remote templates.
 	 */
 	public function get_items( $args = [] ) {
-		$library_data = Api::get_library_data();
+		$library_data = apply_filters( 'elementor/template-library/library_data', Api::get_library_data() );
 
 		$templates = [];
 
@@ -188,7 +188,7 @@ class Source_Remote extends Source_Base {
 	 * @return array Remote Template data.
 	 */
 	public function get_data( array $args, $context = 'display' ) {
-		$data = Api::get_template_content( $args['template_id'] );
+		$data = apply_filters( 'elementor/template-library/template_data', Api::get_template_content( $args['template_id'] ), $args );
 
 		if ( is_wp_error( $data ) ) {
 			return $data;
