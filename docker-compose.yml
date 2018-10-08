@@ -3,7 +3,7 @@ version: '3.1'
 services:
 
   wordpress:
-    build: bin/wordpress
+    build: bin/wordpress-docker
     container_name: elementor-dev-site
     ports:
       - 4000:80
