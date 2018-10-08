@@ -25,6 +25,7 @@ const checkTextDomain = {
 			src: [
 				'**/*.php',
 				'!docs/**',
+				'!bin/**',
 				'!node_modules/**',
 				'!build/**',
 				'!tests/**',
