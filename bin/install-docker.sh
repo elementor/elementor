@@ -23,12 +23,12 @@ if ! docker info >/dev/null 2>&1; then
 	exit 1
 fi
 
-if  [ ! -d ".docker/local-site" ]; then
-	mkdir .docker/local-site
+if  [ ! -d "local-site" ]; then
+	mkdir local-site
 fi
 
-if [ ! -f ".docker/local-site/docker-images-id" ]; then
-	docker image ls -q > .docker/local-site/docker-images-id
+if [ ! -f "local-site/docker-images-id" ]; then
+	docker image ls -q > local-site/docker-images-id
 fi
 
 # Stop existing containers.
@@ -43,7 +43,7 @@ docker-compose $DOCKER_COMPOSE_FILE_OPTIONS pull
 echo -e $(status_message "Starting Docker containers...")
 docker-compose $DOCKER_COMPOSE_FILE_OPTIONS up -d --build >/dev/null
 
-if [[ -z $(cat .docker/local-site/docker-images-id | grep "uninstallation") ]]; then
+if [[ -z $(cat local-site/docker-images-id | grep "uninstallation") ]]; then
 	grep -vFxf <(cat .docker/local-site/docker-images-id) <(docker image ls -q)  > .docker/local-site/docker-images-id
 	echo "#Do not touch this file. It is important to the uninstallation process" >> .docker/local-site/docker-images-id
 fi
