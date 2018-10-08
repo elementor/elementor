@@ -120,7 +120,7 @@ Schemes = function() {
 
 		NProgress.start();
 
-		elementorCommon.ajax.send( 'apply_scheme', {
+		elementorCommon.ajax.addRequest( 'apply_scheme', {
 			data: {
 				scheme_name: schemeName,
 				data: JSON.stringify( itemsToSave ),

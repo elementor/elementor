@@ -54,7 +54,12 @@ class Manager {
 	public function __construct() {
 		$this->register_default_sources();
 
-		$this->init_ajax_calls();
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+
+		// TODO: bc since 2.3.0
+		add_action( 'wp_ajax_elementor_update_templates', function() {
+			wp_send_json_success( $this->handle_ajax_request( 'update_templates', $_POST ) );
+		} );
 	}
 
 	/**
@@ -521,21 +526,24 @@ class Manager {
 	 * @access private
 	 *
 	 * @param string $ajax_request Ajax request.
+	 *
+	 * @param array $data
+	 *
+	 * @return mixed
+	 * @throws \Exception
 	 */
-	private function handle_ajax_request( $ajax_request ) {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( ! empty( $_REQUEST['editor_post_id'] ) ) {
-			$editor_post_id = absint( $_REQUEST['editor_post_id'] );
+	private function handle_ajax_request( $ajax_request, array $data ) {
+		if ( ! empty( $data['editor_post_id'] ) ) {
+			$editor_post_id = absint( $data['editor_post_id'] );
 
 			if ( ! get_post( $editor_post_id ) ) {
-				wp_send_json_error( __( 'Post not found.', 'elementor' ) );
+				throw new \Exception( __( 'Post not found.', 'elementor' ) );
 			}
 
 			Plugin::$instance->db->switch_to_post( $editor_post_id );
 		}
 
-		$result = call_user_func( [ $this, $ajax_request ], $_REQUEST );
+		$result = call_user_func( [ $this, $ajax_request ], $data );
 
 		$request_type = ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ? 'ajax' : 'direct';
 
@@ -546,10 +554,10 @@ class Manager {
 				$this->$callback( $result );
 			}
 		}
-
 		if ( is_wp_error( $result ) ) {
+			/** @var \WP_Error $result */
 			if ( 'ajax' === $request_type ) {
-				wp_send_json_error( $result );
+				throw new \Exception( $result->get_error_message() );
 			}
 
 			$callback = "on_{$ajax_request}_error";
@@ -562,7 +570,7 @@ class Manager {
 		}
 
 		if ( 'ajax' === $request_type ) {
-			wp_send_json_success( $result );
+			return $result;
 		}
 
 		$callback = "on_{$ajax_request}_success";
@@ -582,8 +590,8 @@ class Manager {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private function init_ajax_calls() {
-		$allowed_ajax_requests = [
+	public function register_ajax_actions() {
+		$library_ajax_requests = [
 			'get_library_data',
 			'get_template_data',
 			'save_template',
@@ -594,9 +602,12 @@ class Manager {
 			'mark_template_as_favorite',
 		];
 
-		foreach ( $allowed_ajax_requests as $ajax_request ) {
-			add_action( 'wp_ajax_elementor_' . $ajax_request, function() use ( $ajax_request ) {
-				$this->handle_ajax_request( $ajax_request );
+		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		foreach ( $library_ajax_requests as $ajax_request ) {
+			$ajax->register_ajax_action( $ajax_request, function( $data ) use ( $ajax_request ) {
+				return $this->handle_ajax_request( $ajax_request, $data );
 			} );
 		}
 	}

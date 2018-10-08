@@ -129,7 +129,6 @@ class App extends BaseApp {
 			'isRTL' => is_rtl(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
-				'ajax' => admin_url( 'admin-ajax.php' ),
 			],
 		];
 	}

@@ -230,21 +230,22 @@ class Schemes_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function ajax_apply_scheme() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( ! isset( $_POST['scheme_name'] ) ) {
-			wp_send_json_error();
+	public function ajax_apply_scheme( $data ) {
+		if ( ! isset( $data['scheme_name'] ) ) {
+			return false;
 		}
 
-		$scheme_obj = $this->get_scheme( $_POST['scheme_name'] );
+		$scheme_obj = $this->get_scheme( $data['scheme_name'] );
+
 		if ( ! $scheme_obj ) {
-			wp_send_json_error();
+			return false;
 		}
-		$posted = json_decode( stripslashes( $_POST['data'] ), true );
+
+		$posted = json_decode( stripslashes( $data['data'] ), true );
+
 		$scheme_obj->save_scheme( $posted );
 
-		wp_send_json_success();
+		return true;
 	}
 
 	/**
@@ -262,6 +263,12 @@ class Schemes_Manager {
 		}
 	}
 
+	public function register_ajax_actions() {
+		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		$ajax->register_ajax_action( 'apply_scheme', [ $this, 'ajax_apply_scheme' ] );
+	}
 	/**
 	 * Get enabled schemes.
 	 *
@@ -328,6 +335,6 @@ class Schemes_Manager {
 	public function __construct() {
 		$this->register_default_schemes();
 
-		add_action( 'wp_ajax_elementor_apply_scheme', [ $this, 'ajax_apply_scheme' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 }
