@@ -69,7 +69,7 @@ RevisionsManager = function() {
 			},
 		} );
 
-		return elementorCommon.ajax.send( 'get_revision_data', options );
+		return elementorCommon.ajax.addRequest( 'get_revision_data', options );
 	};
 
 	this.addRevisions = function( items ) {
@@ -100,6 +100,7 @@ RevisionsManager = function() {
 
 				if ( ! revisions.length ) {
 					var panel = elementor.getPanelView();
+
 					if ( 'historyPage' === panel.getCurrentPageName() ) {
 						panel.getCurrentPageView().activateTab( 'revisions' );
 					}
@@ -111,7 +112,7 @@ RevisionsManager = function() {
 			params.error = options.error;
 		}
 
-		elementorCommon.ajax.send( 'delete_revision', params );
+		elementorCommon.ajax.addRequest( 'delete_revision', params );
 	};
 
 	this.init = function() {

@@ -21,6 +21,7 @@ class Editor {
 
 	/**
 	 * The nonce key for Elementor editor.
+	 * @deprecated 2.3.0
 	 */
 	const EDITING_NONCE_KEY = 'elementor-editing';
 
@@ -479,7 +480,6 @@ class Editor {
 		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
-			'nonce' => $this->create_nonce( get_post_type() ),
 			'data' => $editor_data,
 			// @TODO: `post_id` is bc since 2.0.0
 			'post_id' => $this->_post_id,
@@ -978,6 +978,7 @@ class Editor {
 	 *
 	 * @since 1.8.1
 	 * @since 1.8.7 The `$post_type` parameter was introduces.
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )->create_nonce()` instead
 	 * @access public
 	 *
 	 * @param string $post_type The post type to check capabilities.
@@ -986,14 +987,10 @@ class Editor {
 	 *                     capabilities.
 	 */
 	public function create_nonce( $post_type ) {
-		$post_type_object = get_post_type_object( $post_type );
-		$capability = $post_type_object->cap->{self::EDITING_CAPABILITY};
+		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
-		if ( ! current_user_can( $capability ) ) {
-			return null;
-		}
-
-		return wp_create_nonce( self::EDITING_NONCE_KEY );
+		return $ajax->create_nonce();
 	}
 
 	/**
@@ -1004,9 +1001,10 @@ class Editor {
 	 * the time.
 	 *
 	 * @since 1.8.1
+	 * @deprecated 2.3.0
 	 * @access public
 	 *
-	 * @param string $nonce Nonce that was used in the form to verify.
+	 * @param string $nonce Nonce to verify.
 	 *
 	 * @return false|int If the nonce is invalid it returns `false`. If the
 	 *                   nonce is valid and generated between 0-12 hours ago it
@@ -1014,7 +1012,7 @@ class Editor {
 	 *                   between 12-24 hours ago it returns `2`.
 	 */
 	public function verify_nonce( $nonce ) {
-		return wp_verify_nonce( $nonce, self::EDITING_NONCE_KEY );
+		return wp_verify_nonce( $nonce );
 	}
 
 	/**
@@ -1023,12 +1021,16 @@ class Editor {
 	 * Whether the request nonce verified or not.
 	 *
 	 * @since 1.8.1
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )->verify_request_nonce()` instead
 	 * @access public
 	 *
 	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
-		return ! empty( $_REQUEST['_nonce'] ) && $this->verify_nonce( $_REQUEST['_nonce'] );
+		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		return $ajax->verify_request_nonce();
 	}
 
 	/**
@@ -1038,10 +1040,14 @@ class Editor {
 	 * error.
 	 *
 	 * @since 1.9.0
+	 * @deprecated 2.3.0
 	 * @access public
 	 */
 	public function verify_ajax_nonce() {
-		if ( ! $this->verify_request_nonce() ) {
+		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		if ( ! $ajax->verify_request_nonce() ) {
 			wp_send_json_error( new \WP_Error( 'token_expired', 'Nonce token expired.' ) );
 		}
 	}
