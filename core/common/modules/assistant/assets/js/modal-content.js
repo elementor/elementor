@@ -48,7 +48,9 @@ export default class extends Marionette.LayoutView {
 			.trigger( 'filter:change' );
 
 		if ( value ) {
-			this.showCategoriesView();
+			if ( ! ( this.content.currentView instanceof CategoriesView ) ) {
+				this.showCategoriesView();
+			}
 		} else {
 			this.showStartView();
 		}

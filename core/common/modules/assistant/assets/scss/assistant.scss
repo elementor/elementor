@@ -16,6 +16,7 @@
 
 	&__search {
 		padding: 0 15px;
+		display: flex;
 
 		i {
 			font-size: 20px;
@@ -42,7 +43,16 @@
 	}
 
 	&__results {
-		margin-top: 10px;
+
+		&-container {
+			margin-top: 10px;
+		}
+	}
+
+	&__no-results {
+		display: none;
+		text-align: center;
+		color: $editor-light;
 	}
 }
 
