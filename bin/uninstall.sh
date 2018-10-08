@@ -13,6 +13,6 @@ fi
 
 docker-compose $DOCKER_COMPOSE_FILE_OPTIONS down --volumes --rmi local > /dev/null || true
 
-docker rmi $(cat .docker/local-site/docker-images-id | sed 1d) > /dev/null || true
+docker rmi $(cat local-site/docker-images-id | sed 1d) > /dev/null || true
 
-rm -rf .docker/local-site
+rm -rf local-site
