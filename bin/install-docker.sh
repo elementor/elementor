@@ -23,14 +23,6 @@ if ! docker info >/dev/null 2>&1; then
 	exit 1
 fi
 
-if  [ ! -d "local-site" ]; then
-	mkdir local-site
-fi
-
-if [ ! -f "local-site/docker-images-id" ]; then
-	docker image ls -q > local-site/docker-images-id
-fi
-
 # Stop existing containers.
 echo -e $(status_message "Stopping Docker containers...")
 docker-compose $DOCKER_COMPOSE_FILE_OPTIONS down --remove-orphans >/dev/null 2>&1
@@ -42,15 +34,6 @@ docker-compose $DOCKER_COMPOSE_FILE_OPTIONS pull
 # Launch the containers.
 echo -e $(status_message "Starting Docker containers...")
 docker-compose $DOCKER_COMPOSE_FILE_OPTIONS up -d --build >/dev/null
-
-if [[ -z $(cat local-site/docker-images-id | grep "uninstallation") ]]; then
-	grep -vFxf <(cat .docker/local-site/docker-images-id) <(docker image ls -q)  > .docker/local-site/docker-images-id
-	echo "#Do not touch this file. It is important to the uninstallation process" >> .docker/local-site/docker-images-id
-fi
-# Set up WordPress Development site.
-# Note: we don't bother installing the test site right now, because that's
-# done on every time `npm run test-e2e` is run.
- . "$(dirname "$0")/install-wordpress.sh"
 
 # Install the PHPUnit test scaffolding.
 echo -e $(status_message "Installing PHPUnit test scaffolding...")
