@@ -33,7 +33,7 @@ if [ "$1" == '--e2e_tests' ]; then
 	fi
 fi
 
-if command_exists "systeminfo"; then
+if is_windows; then
 	HOST_IP=$(docker-machine ip default)
 fi
 # Get the host port for the WordPress container.
@@ -59,7 +59,7 @@ fi
 echo -e $(status_message "Installing WordPress...")
 # The `-u 33` flag tells Docker to run the command as a particular user and
 # prevents permissions errors. See: https://github.com/WordPress/gutenberg/pull/8427#issuecomment-410232369
-docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm -u 33 $CLI core install --title="$SITE_TITLE" --admin_user=admin --admin_password=password --admin_email=test@test.com --skip-email --url=http://localhost:$HOST_PORT >/dev/null
+docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm -u 33 $CLI core install --title="$SITE_TITLE" --admin_user=admin --admin_password=password --admin_email=admin@localhost.local --skip-email --url=http://localhost:$HOST_PORT >/dev/null
 
 if [ "$WP_VERSION" == "latest" ]; then
 	# Check for WordPress updates, to make sure we're running the very latest version.
@@ -72,6 +72,8 @@ if [ "$CURRENT_URL" != "http://$HOST_IP:$HOST_PORT" ]; then
 	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update home "http://$HOST_IP:$HOST_PORT" >/dev/null
 	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI option update siteurl "http://$HOST_IP:$HOST_PORT" >/dev/null
 fi
+
+CURRENT_URL="http://$HOST_IP:$HOST_PORT"
 
 # Activate Elementor.
 echo -e $(status_message "Activating Elementor...")
