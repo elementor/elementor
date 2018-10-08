@@ -2,33 +2,8 @@ version: '3.1'
 
 services:
 
-  wordpress:
-    build: bin/wordpress-docker
-    container_name: elementor-dev-site
-    ports:
-      - 4000:80
-    environment:
-      WORDPRESS_DB_PASSWORD: password
-      ABSPATH: /usr/src/wordpress/
-    volumes:
-      - ./local-site/site:/var/www/html
-      - .:/var/www/html/wp-content/plugins/elementor
-    depends_on:
-      - mysql
-
-  cli:
-    image: wordpress:cli
-    volumes:
-      - ./local-site/site:/var/www/html
-      - .:/var/www/html/wp-content/plugins/elementor
-    depends_on:
-      - mysql
-      - wordpress
-
   mysql:
     image: mysql:5.7
-    volumes:
-      - ./local-site/db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: wordpress_test

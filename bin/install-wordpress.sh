@@ -13,24 +13,18 @@ set -e
 . "$(dirname "$0")/bootstrap-env.sh"
 
 # These are the containers and values for the development site.
-CLI='cli'
-CONTAINER='wordpress'
-SITE_TITLE='Elementor Dev'
+CLI='cli_e2e_tests'
+CONTAINER='wordpress_e2e_tests'
+SITE_TITLE='Elementor Dev e2e'
 HOST_IP='localhost'
 
 # If we're installing/re-installing the test site, change the containers used.
-if [ "$1" == '--e2e_tests' ]; then
-	CLI="${CLI}_e2e_tests"
-	CONTAINER="${CONTAINER}_e2e_tests"
-	SITE_TITLE='Elementor Testing'
-
-	if ! docker ps | grep -q $CONTAINER; then
-		echo -e $(error_message "WordPress e2e tests run in their own Docker container, but that container wasn't found.")
-		echo "Please restart your Docker containers by running 'docker-compose $DOCKER_COMPOSE_FILE_OPTIONS down && docker-compose $DOCKER_COMPOSE_FILE_OPTIONS up -d' or"
-		echo "by running './bin/setup-local-env.sh' again."
-		echo ""
-		exit 1
-	fi
+if ! docker ps | grep -q $CONTAINER; then
+	echo -e $(error_message "WordPress e2e tests run in their own Docker container, but that container wasn't found.")
+	echo "Please restart your Docker containers by running 'docker-compose $DOCKER_COMPOSE_FILE_OPTIONS down && docker-compose $DOCKER_COMPOSE_FILE_OPTIONS up -d' or"
+	echo "by running './bin/setup-local-env.sh' again."
+	echo ""
+	exit 1
 fi
 
 if is_windows; then
@@ -50,10 +44,8 @@ echo ''
 
 # If this is the test site, we reset the database so no posts/comments/etc.
 # dirty up the tests.
-if [ "$1" == '--e2e_tests' ]; then
-	echo -e $(status_message "Resetting test database...")
-	docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm $CLI db reset --yes >/dev/null
-fi
+echo -e $(status_message "Resetting test database...")
+docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm -u 33:33 $CLI db reset --yes >/dev/null
 
 # Install WordPress.
 echo -e $(status_message "Installing WordPress...")
