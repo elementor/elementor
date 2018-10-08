@@ -824,7 +824,7 @@ const App = Marionette.Application.extend( {
 			i18nStack = this.config.i18n;
 		}
 
-		return elementorCommon.translate( stringKey, templateArgs, i18nStack );
+		return elementorCommon.translate( stringKey, null, templateArgs, i18nStack );
 	},
 
 	logSite: function() {

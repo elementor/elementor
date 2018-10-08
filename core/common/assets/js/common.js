@@ -47,7 +47,11 @@ class ElementorCommonApp extends ViewModule {
 		Object.entries( modules ).forEach( ( [ name, moduleClass ] ) => this[ name ] = new moduleClass( this.config[ name ] ) );
 	}
 
-	translate( stringKey, templateArgs, i18nStack ) {
+	translate( stringKey, context, templateArgs, i18nStack ) {
+		if ( context ) {
+			i18nStack = this.config[ context ].i18n;
+		}
+
 		if ( ! i18nStack ) {
 			i18nStack = this.config.i18n;
 		}
