@@ -20,7 +20,5 @@ npm i
 # Check Docker is installed and running
 . "$(dirname "$0")/install-docker.sh"
 
-#CURRENT_URL=$(docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run -T --rm cli option get siteurl)
-
-echo -e "\nWelcome to elementor!\n"
+echo -e "\nWelcome To Elementor!\n"
 echo -e "Run $(action_format "npm run dev"), then open $(action_format "$CURRENT_URL") to get started!\nusername: admin\npassword: password"

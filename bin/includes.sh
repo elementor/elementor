@@ -3,6 +3,10 @@
 # credit: "https://github.com/WordPress/gutenberg"
 # under GPL license
 
+is_windows() {
+	command_exists "systeminfo"
+}
+
 ##
 # Add error message formatting to a string, and echo it.
 #
