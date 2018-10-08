@@ -94,7 +94,7 @@
 
 	&__list {
 		background-color: #ffffff;
-		height: 100%;
+		height: calc(100% - 42px);
 		padding: 10px 20px;
 
 		@media (max-width: $editor-screen-xs-max) {
