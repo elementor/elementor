@@ -8,18 +8,12 @@ export default class extends Category {
 	}
 
 	fetchData() {
-		const $spinner = jQuery( '<span>', { class: 'spinner' } );
-
-		this.ui.title.prepend( $spinner );
-
 		elementorCommon.ajax.addRequest( 'assistant_get_category_data', {
 			data: {
 				category: this.model.get( 'name' ),
 				filter: this.getTextFilter(),
 			},
 			success: ( data ) => {
-				$spinner.remove();
-
 				this.collection.set( data );
 
 				this.toggleElement();
