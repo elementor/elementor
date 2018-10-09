@@ -75,6 +75,14 @@
 		height: 35px;
 		text-decoration: none;
 
+		&:hover {
+			background-color: $editor-info;
+
+			* {
+				color: #fff;
+			}
+		}
+
 		&:focus {
 			box-shadow: none;
 		}
