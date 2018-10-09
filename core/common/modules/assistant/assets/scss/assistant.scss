@@ -4,6 +4,10 @@
 
 		.dialog-widget-content {
 			width: 700px;
+			max-width: 98%;
+			top: 18vh;
+			left: 50%;
+			transform: translateX(-50%);
 		}
 
 		.dialog-message {
