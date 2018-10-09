@@ -517,6 +517,43 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
+	 * Get Render Attributes
+	 *
+	 * Used to retrieve render attribute.
+	 *
+	 * The returned array is either all elements and their attributes if no `$element` is specified, an array of all
+	 * attributes of a specific element or a specific attribute properties if `$key` is specified.
+	 *
+	 * Returns null if one of the requested parameters isn't set.
+	 *
+	 * @param string $element
+	 * @param string $key
+	 *
+	 * @return array
+	 */
+	public function get_render_attributes( $element = '', $key = '' ) {
+		$attributes = $this->render_attributes;
+
+		if ( $element ) {
+			if ( ! isset( $attributes[ $element ] ) ) {
+				return null;
+			}
+
+			$attributes = $attributes[ $element ];
+
+			if ( $key ) {
+				if ( ! isset( $attributes[ $key ] ) ) {
+					return null;
+				}
+
+				$attributes = $attributes[ $key ];
+			}
+		}
+
+		return $attributes;
+	}
+
+	/**
 	 * Set render attribute.
 	 *
 	 * Used to set the value of the HTML element render attribute or to update
