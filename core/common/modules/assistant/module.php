@@ -3,9 +3,8 @@
 namespace Elementor\Core\Common\Modules\Assistant;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\RoleManager\Role_Manager;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Plugin;
-use Elementor\Tools;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -13,10 +12,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	/**
+	 * @var Categories_Manager
+	 */
+	private $categories_manager;
+
 	public function __construct() {
+		$this->categories_manager = new Categories_Manager();
+
 		$this->add_template();
 
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_action' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
 	public function get_name() {
@@ -27,33 +33,30 @@ class Module extends BaseModule {
 		Plugin::$instance->common->add_template( __DIR__ . '/template.php' );
 	}
 
-	public function register_ajax_action() {
-//		Plugin::$instance->ajax->register_ajax_action(  );
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'assistant_get_category_data', [ $this, 'ajax_get_category_data' ] );
+	}
+
+	public function ajax_get_category_data( array $data ) {
+		$category = $this->categories_manager->get_categories( $data['category'] );
+
+		return $category->get_category_items( $data );
 	}
 
 	protected function get_init_settings() {
+		$categories = $this->categories_manager->get_categories();
+
+		$categories_data = [];
+
+		foreach ( $categories as $category_name => $category ) {
+			$categories_data[] = array_merge( $category->get_settings(), [ 'name' => $category_name ] );
+		}
+
 		return [
-			'data' => [
-				'recently_created' => [
-					'title' => __( 'Recently Created', 'elementor' ),
-					'items' => [],
-				],
-				'configurations' => [
-					'title' => __( 'Configurations', 'elementor' ),
-					'items' => [
-						[
-							'title' => __( 'Role Manager', 'elementor' ),
-							'icon' => 'person',
-							'link' => Role_Manager::get_url(),
-						],
-						[
-							'title' => __( 'Maintenance Mode', 'elementor' ),
-							'icon' => 'time-line',
-							'link' => Tools::get_url() . '#tab-maintenance_mode',
-						]
-					],
-				]
-			]
+			'data' => $categories_data,
+			'i18n' => [
+				'assistant' => __( 'Assistant', 'elementor' ),
+			],
 		];
 	}
 }

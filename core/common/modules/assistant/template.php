@@ -14,6 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div id="elementor-assistant__content"></div>
 </script>
+
+<script type="text/template" id="tmpl-elementor-assistant-results-container">
+	<div id="elementor-assistant__no-results"><?php echo __( 'No Results Found', 'elementor' ); ?></div>
+	<div id="elementor-assistant__results"></div>
+</script>
+
 <script type="text/template" id="tmpl-elementor-assistant__results__category">
 	<div class="elementor-assistant__results__category__title">{{{ title }}}</div>
 	<div class="elementor-assistant__results__category__items"></div>

@@ -26,20 +26,6 @@ class Base_Object {
 		}
 	}
 
-	public function add_settings( $key, $value, $default = '' ) {
-		$new_value = $this->get_settings( $key, $default );
-
-		if ( is_array( $new_value ) ) {
-			$new_value[] = $value;
-		} elseif ( is_string( $new_value ) ) {
-			$new_value .= $value;
-		} elseif ( is_numeric( $new_value ) ) {
-			$new_value += $value;
-		}
-
-		$this->set_settings( $key, $new_value );
-	}
-
 	public function delete_setting( $key = null ) {
 		if ( $key ) {
 			unset( $this->settings[ $key ] );

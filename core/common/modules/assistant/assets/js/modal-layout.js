@@ -6,12 +6,15 @@ export default class extends BaseModalLayout {
 	getModalOptions() {
 		return {
 			id: 'elementor-assistant__modal',
+			position: {
+				enable: false,
+			},
 		};
 	}
 
 	getLogoOptions() {
 		return {
-			title: 'Assistant',
+			title: elementorCommon.translate( 'assistant', 'assistant' ),
 		};
 	}
 
