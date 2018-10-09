@@ -512,6 +512,7 @@ class Plugin {
 		 */
 		$this->posts_css_manager = $this->files_manager;
 		$this->settings = new Settings();
+		$this->tools = new Tools();
 		$this->editor = new Editor();
 		$this->preview = new Preview();
 		$this->frontend = new Frontend();
@@ -532,7 +533,6 @@ class Plugin {
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
-			$this->tools = new Tools();
 			$this->beta_testers = new Beta_Testers();
 
 			if ( Utils::is_ajax() ) {
