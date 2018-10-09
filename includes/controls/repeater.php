@@ -65,6 +65,12 @@ class Control_Repeater extends Base_Data_Control {
 			'title_field' => '',
 			'prevent_empty' => true,
 			'is_repeater' => true,
+			'item_actions' => [
+				'add' => true,
+				'duplicate' => true,
+				'remove' => true,
+				'sort' => true,
+			],
 		];
 	}
 
@@ -160,11 +166,13 @@ class Control_Repeater extends Base_Data_Control {
 			<span class="elementor-control-title">{{{ data.label }}}</span>
 		</label>
 		<div class="elementor-repeater-fields-wrapper"></div>
-		<div class="elementor-button-wrapper">
-			<button class="elementor-button elementor-button-default elementor-repeater-add" type="button">
-				<i class="eicon-plus" aria-hidden="true"></i><?php echo __( 'Add Item', 'elementor' ); ?>
-			</button>
-		</div>
+		<# if ( itemActions.add ) { #>
+			<div class="elementor-button-wrapper">
+				<button class="elementor-button elementor-button-default elementor-repeater-add" type="button">
+					<i class="eicon-plus" aria-hidden="true"></i><?php echo __( 'Add Item', 'elementor' ); ?>
+				</button>
+			</div>
+		<# } #>
 		<?php
 	}
 }
