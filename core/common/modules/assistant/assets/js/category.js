@@ -17,20 +17,40 @@ export default class extends Marionette.CompositeView {
 	initialize() {
 		this.childViewContainer = '.elementor-assistant__results__category__items';
 
+		this.isVisible = true;
+
 		this.collection = new Backbone.Collection( this.model.get( 'items' ), { model: ItemModel } );
 	}
 
 	filter( childModel ) {
-		const filterValue = elementorCommon.assistant.channel.request( 'filter:text' ).trim().toLowerCase();
+		return childModel.get( 'title' ).toLowerCase().indexOf( this.getTextFilter() ) >= 0;
+	}
 
-		return childModel.get( 'title' ).toLowerCase().indexOf( filterValue ) >= 0;
+	getTextFilter() {
+		return elementorCommon.assistant.channel.request( 'filter:text' ).trim().toLowerCase();
+	}
+
+	toggleElement() {
+		const isCurrentlyVisible = ! ! this.children.length;
+
+		if ( isCurrentlyVisible !== this.isVisible ) {
+			this.isVisible = isCurrentlyVisible;
+
+			this.$el.toggle( isCurrentlyVisible );
+
+			this.triggerMethod( 'toggle:visibility' );
+		}
 	}
 
 	onRender() {
-		this.listenTo( elementorCommon.assistant.channel, 'filter:change', this._renderChildren.bind( this ) );
+		this.listenTo( elementorCommon.assistant.channel, 'filter:change', this.onFilterChange.bind( this ) );
+	}
+
+	onFilterChange() {
+		this._renderChildren();
 	}
 
 	onRenderCollection() {
-		this.$el.toggle( ! ! this.children.length );
+		this.toggleElement();
 	}
 }
