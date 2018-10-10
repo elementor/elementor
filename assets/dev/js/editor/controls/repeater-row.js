@@ -32,6 +32,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {
 			itemIndex: this.getOption( 'itemIndex' ),
+			itemActions: this.getOption( 'itemActions' ),
 		};
 	},
 
