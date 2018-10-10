@@ -668,7 +668,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function import_template( $name, $path ) {
 		if ( empty( $path ) ) {
-			return new \WP_Error( 'file_error', 'Please upload a file to import.' );
+			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
 
 		$items = [];
@@ -677,7 +677,7 @@ class Source_Local extends Source_Base {
 
 		if ( 'zip' === $file_extension ) {
 			if ( ! class_exists( '\ZipArchive' ) ) {
-				return new \WP_Error( 'zip_error', 'PHP Zip extension not loaded.' );
+				return new \WP_Error( 'zip_error', 'PHP Zip extension not loaded' );
 			}
 
 			$zip = new \ZipArchive();
@@ -1136,13 +1136,13 @@ class Source_Local extends Source_Base {
 		$data = json_decode( file_get_contents( $file_name ), true );
 
 		if ( empty( $data ) ) {
-			return new \WP_Error( 'file_error', 'Invalid File.' );
+			return new \WP_Error( 'file_error', 'Invalid File' );
 		}
 
 		$content = $data['content'];
 
 		if ( ! is_array( $content ) ) {
-			return new \WP_Error( 'file_error', 'Invalid File.' );
+			return new \WP_Error( 'file_error', 'Invalid File' );
 		}
 
 		$content = $this->process_export_import_content( $content, 'on_import' );
@@ -1194,7 +1194,7 @@ class Source_Local extends Source_Base {
 		] );
 
 		if ( empty( $template_data['content'] ) ) {
-			return new \WP_Error( '404', 'The template does not exist.' );
+			return new \WP_Error( '404', 'The template does not exist' );
 		}
 
 		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
