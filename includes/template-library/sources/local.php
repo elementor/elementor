@@ -3,7 +3,6 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
 use Elementor\DB;
-use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
 use Elementor\Editor;
