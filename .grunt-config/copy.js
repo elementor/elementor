@@ -7,6 +7,7 @@ const getBuildFiles = [
 	'!node_modules/**',
 	'!docs/**',
 	'!build/**',
+	'!local-site/**',
 	'!bin/**',
 	'!.git/**',
 	'!tests/**',
@@ -28,6 +29,8 @@ const getBuildFiles = [
 	'!.gitignore',
 	'!.gitmodules',
 	'!yarn.lock',
+	'!docker-compose.yml',
+	'!nightwatch.conf.js',
 
 	'!assets/dev/**',
 	'!assets/**/*.map',
