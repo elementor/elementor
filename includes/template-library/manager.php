@@ -56,6 +56,9 @@ class Manager {
 		$this->register_default_sources();
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_action( 'wp_ajax_elementor_direct_export_template', [ $this, 'direct_export_template' ] );
+		add_action( 'wp_ajax_elementor_direct_import_template', [ $this, 'direct_import_template' ] );
+		add_action( 'wp_ajax_elementor_import_template', [ $this, 'ajax_import_template' ] );
 
 		// TODO: bc since 2.3.0
 		add_action( 'wp_ajax_elementor_update_templates', function() {
@@ -405,11 +408,22 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', 'Template source not found' );
 		}
 
 		// If you reach this line, the export was not successful.
 		return $source->export_template( $args['template_id'] );
+	}
+
+	public function direct_export_template() {
+		$export_result = $this->export_template( $_GET );
+
+		if ( is_wp_error( $export_result ) ) {
+			/** @var \WP_Error $export_result */
+			_default_wp_die_handler( $export_result->get_error_message() . '.', 'Elementor Library' );
+		}
+
+		die;
 	}
 
 	/**
@@ -427,6 +441,30 @@ class Manager {
 		$source = $this->get_source( 'local' );
 
 		return $source->import_template( $_FILES['file']['name'], $_FILES['file']['tmp_name'] );
+	}
+
+	public function direct_import_template() {
+		$import_result = $this->import_template();
+
+		if ( is_wp_error( $import_result ) ) {
+			/** @var \WP_Error $import_result */
+			_default_wp_die_handler( $import_result->get_error_message() . '.', 'Elementor Library' );
+		}
+
+		wp_redirect( admin_url( 'edit.php?post_type=' . Source_Local::CPT ) );
+
+		die;
+	}
+
+	public function ajax_import_template() {
+		$import_result = $this->import_template();
+
+		if ( is_wp_error( $import_result ) ) {
+			/** @var \WP_Error $import_result */
+			wp_send_json_error( $import_result->get_error_message() );
+		}
+
+		wp_send_json_success( $import_result );
 	}
 
 	/**
@@ -451,48 +489,6 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		return $source->mark_as_favorite( $args['template_id'], filter_var( $args['favorite'], FILTER_VALIDATE_BOOLEAN ) );
-	}
-
-	/**
-	 * On successful template import.
-	 *
-	 * Redirect the user to the template library after template import was
-	 * successful finished.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function on_import_template_success() {
-		wp_redirect( admin_url( 'edit.php?post_type=' . Source_Local::CPT ) );
-	}
-
-	/**
-	 * On failed template import.
-	 *
-	 * Echo the error messages after template import was failed.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param \WP_Error $error WordPress error instance.
-	 */
-	public function on_import_template_error( \WP_Error $error ) {
-		echo $error->get_error_message();
-	}
-
-	/**
-	 * On failed template export.
-	 *
-	 * Kill WordPress execution and display HTML error messages after template
-	 * export was failed.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param \WP_Error $error WordPress error instance.
-	 */
-	public function on_export_template_error( \WP_Error $error ) {
-		_default_wp_die_handler( $error->get_error_message(), 'Elementor Library' );
 	}
 
 	/**
@@ -546,41 +542,11 @@ class Manager {
 
 		$result = call_user_func( [ $this, $ajax_request ], $data );
 
-		$request_type = ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ? 'ajax' : 'direct';
-
-		if ( 'direct' === $request_type ) {
-			$callback = 'on_' . $ajax_request;
-
-			if ( method_exists( $this, $callback ) ) {
-				$this->$callback( $result );
-			}
-		}
 		if ( is_wp_error( $result ) ) {
-			/** @var \WP_Error $result */
-			if ( 'ajax' === $request_type ) {
-				throw new \Exception( $result->get_error_message() );
-			}
-
-			$callback = "on_{$ajax_request}_error";
-
-			if ( method_exists( $this, $callback ) ) {
-				$this->$callback( $result );
-			}
-
-			die;
+			throw new \Exception( $result->get_error_message() );
 		}
 
-		if ( 'ajax' === $request_type ) {
-			return $result;
-		}
-
-		$callback = "on_{$ajax_request}_success";
-
-		if ( method_exists( $this, $callback ) ) {
-			$this->$callback( $result );
-		}
-
-		die;
+		return $result;
 	}
 
 	/**
@@ -600,8 +566,6 @@ class Manager {
 			'save_template',
 			'update_templates',
 			'delete_template',
-			'export_template',
-			'import_template',
 			'mark_template_as_favorite',
 		];
 

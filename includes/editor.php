@@ -220,7 +220,8 @@ class Editor {
 			'elementor_save_template',
 			'elementor_get_template',
 			'elementor_delete_template',
-			'elementor_export_template',
+			'elementor_direct_export_template',
+			'elementor_direct_import_template',
 			'elementor_import_template',
 		];
 
