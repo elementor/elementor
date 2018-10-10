@@ -697,14 +697,26 @@ class Source_Local extends Source_Base {
 			foreach ( $file_names as $file_name ) {
 				$full_file_name = $temp_path . '/' . $file_name;
 
-				$items[] = $this->import_single_template( $full_file_name );
+				$import_result = $this->import_single_template( $full_file_name );
 
 				unlink( $full_file_name );
+
+				if ( is_wp_error( $import_result ) ) {
+					return $import_result;
+				}
+
+				$items[] = $import_result;
 			}
 
 			rmdir( $temp_path );
 		} else {
-			$items[] = $this->import_single_template( $path );
+			$import_result = $this->import_single_template( $path );
+
+			if ( is_wp_error( $import_result ) ) {
+				return $import_result;
+			}
+
+			$items[] = $import_result;
 		}
 
 		return $items;
