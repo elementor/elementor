@@ -27,7 +27,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var Element_Base[]
 	 */
-	private $_children;
+	private $children;
 
 	/**
 	 * Element render attributes.
@@ -39,7 +39,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var array
 	 */
-	private $_render_attributes = [];
+	private $render_attributes = [];
 
 	/**
 	 * Element default arguments.
@@ -51,19 +51,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var array
 	 */
-	private $_default_args = [];
-
-	/**
-	 * Element edit tools.
-	 *
-	 * Holds all the edit tools of the element. For example: delete, duplicate etc.
-	 *
-	 * @access protected
-	 * @static
-	 *
-	 * @var array
-	 */
-	protected static $_edit_tools;
+	private $default_args = [];
 
 	/**
 	 * Is type instance.
@@ -74,7 +62,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var bool
 	 */
-	private $_is_type_instance = true;
+	private $is_type_instance = true;
 
 	/**
 	 * Depended scripts.
@@ -99,6 +87,18 @@ abstract class Element_Base extends Controls_Stack {
 	 * @var array
 	 */
 	private $depended_styles = [];
+
+	/**
+	 * Element edit tools.
+	 *
+	 * Holds all the edit tools of the element. For example: delete, duplicate etc.
+	 *
+	 * @access protected
+	 * @static
+	 *
+	 * @var array
+	 */
+	protected static $_edit_tools;
 
 	/**
 	 * Add script depends.
@@ -385,11 +385,11 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return Element_Base[] Child elements.
 	 */
 	public function get_children() {
-		if ( null === $this->_children ) {
+		if ( null === $this->children ) {
 			$this->init_children();
 		}
 
-		return $this->_children;
+		return $this->children;
 	}
 
 	/**
@@ -406,7 +406,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return array Default argument(s).
 	 */
 	public function get_default_args( $item = null ) {
-		return self::_get_items( $this->_default_args, $item );
+		return self::_get_items( $this->default_args, $item );
 	}
 
 	/**
@@ -439,7 +439,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return Element_Base|false Child element instance, or false if failed.
 	 */
 	public function add_child( array $child_data, array $child_args = [] ) {
-		if ( null === $this->_children ) {
+		if ( null === $this->children ) {
 			$this->init_children();
 		}
 
@@ -452,7 +452,7 @@ abstract class Element_Base extends Controls_Stack {
 		$child = Plugin::$instance->elements_manager->create_element_instance( $child_data, $child_args, $child_type );
 
 		if ( $child ) {
-			$this->_children[] = $child;
+			$this->children[] = $child;
 		}
 
 		return $child;
@@ -501,19 +501,56 @@ abstract class Element_Base extends Controls_Stack {
 			return $this;
 		}
 
-		if ( empty( $this->_render_attributes[ $element ][ $key ] ) ) {
-			$this->_render_attributes[ $element ][ $key ] = [];
+		if ( empty( $this->render_attributes[ $element ][ $key ] ) ) {
+			$this->render_attributes[ $element ][ $key ] = [];
 		}
 
 		settype( $value, 'array' );
 
 		if ( $overwrite ) {
-			$this->_render_attributes[ $element ][ $key ] = $value;
+			$this->render_attributes[ $element ][ $key ] = $value;
 		} else {
-			$this->_render_attributes[ $element ][ $key ] = array_merge( $this->_render_attributes[ $element ][ $key ], $value );
+			$this->render_attributes[ $element ][ $key ] = array_merge( $this->render_attributes[ $element ][ $key ], $value );
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Get Render Attributes
+	 *
+	 * Used to retrieve render attribute.
+	 *
+	 * The returned array is either all elements and their attributes if no `$element` is specified, an array of all
+	 * attributes of a specific element or a specific attribute properties if `$key` is specified.
+	 *
+	 * Returns null if one of the requested parameters isn't set.
+	 *
+	 * @param string $element
+	 * @param string $key
+	 *
+	 * @return array
+	 */
+	public function get_render_attributes( $element = '', $key = '' ) {
+		$attributes = $this->render_attributes;
+
+		if ( $element ) {
+			if ( ! isset( $attributes[ $element ] ) ) {
+				return null;
+			}
+
+			$attributes = $attributes[ $element ];
+
+			if ( $key ) {
+				if ( ! isset( $attributes[ $key ] ) ) {
+					return null;
+				}
+
+				$attributes = $attributes[ $key ];
+			}
+		}
+
+		return $attributes;
 	}
 
 	/**
@@ -549,11 +586,11 @@ abstract class Element_Base extends Controls_Stack {
 	 *                is empty or not exist.
 	 */
 	public function get_render_attribute_string( $element ) {
-		if ( empty( $this->_render_attributes[ $element ] ) ) {
+		if ( empty( $this->render_attributes[ $element ] ) ) {
 			return '';
 		}
 
-		$render_attributes = $this->_render_attributes[ $element ];
+		$render_attributes = $this->render_attributes[ $element ];
 
 		$attributes = [];
 
@@ -739,7 +776,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return bool Whether the element is an instance of that type.
 	 */
 	public function is_type_instance() {
-		return $this->_is_type_instance;
+		return $this->is_type_instance;
 	}
 
 	/**
@@ -903,7 +940,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access private
 	 */
 	private function init_children() {
-		$this->_children = [];
+		$this->children = [];
 
 		$children_data = $this->get_data( 'elements' );
 
@@ -936,9 +973,9 @@ abstract class Element_Base extends Controls_Stack {
 	 **/
 	public function __construct( array $data = [], array $args = null ) {
 		if ( $data ) {
-			$this->_is_type_instance = false;
+			$this->is_type_instance = false;
 		} elseif ( $args ) {
-			$this->_default_args = $args;
+			$this->default_args = $args;
 		}
 
 		parent::__construct( $data );
