@@ -77,7 +77,6 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - elementor/node_modules
             - .cache/Cypress
       - run:
           name: Build Elementor
@@ -94,7 +93,7 @@ jobs:
             mv package.json build/package.json
             mv build ../build
             cd ..
-            rm -fr ../elementor
+            rm -fr elementor
             mv build elementor
       - persist_to_workspace:
           root: ~/
@@ -106,6 +105,11 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - run:
+          name: Setup Wordpress
+          command: |
+            bash ./bin/setup-local-env.sh
+            bash ./bin/reset-e2e-tests.sh
       - run:
           name: run e2e electron
           command: |
