@@ -91,14 +91,13 @@ job-references:
             command: |
               npm i npm -g
               bash ./bin/setup-local-env.sh
+              npm run ci
 
 jobs:
   e2e:
     <<: *e2e_job
     run:
       name: Runnig e2e
-      command: |
-        npm run ci
     machine:
       mysql:
       wordpress_e2e_tests:
