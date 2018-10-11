@@ -81,16 +81,9 @@ job-references:
     - store_artifacts:
         path: ~/phpunit
 
-  e2e_config: &e2e_config
-    machine:
-      mysql:
-      wordpress_e2e_tests:
-      cli_e2e_tests:
-
 
 jobs:
   e2e_setup:
-    <<: *e2e_config
     steps:
     - checkout
     - restore_cache:
@@ -118,13 +111,20 @@ jobs:
         root: ~/
           paths:
             - .cache/Cypress
+    machine:
+      mysql:
+      wordpress_e2e_tests:
+      cli_e2e_tests:
 
   e2e_electron:
-    <<: *e2e_config
     steps:
       - attach_workspace:
           at: ~/
       - run: npm run ci
+    machine:
+      mysql:
+      wordpress_e2e_tests:
+      cli_e2e_tests:
 
   php54-wp-latest-build:
     <<: *php_job
