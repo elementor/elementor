@@ -1,5 +1,9 @@
 workflows:
   version: 2
+  nightly_e2e:
+    jobs:
+      - e2e
+
   tests:
     jobs:
     - php54-wp-latest-build
@@ -73,7 +77,29 @@ job-references:
     - store_artifacts:
         path: ~/phpunit
 
+    e2e_job: &e2e_job
+      steps:
+        - checkout
+        - run:
+            name: Install Docker Compose
+            command: |
+              curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+              chmod +x ~/docker-compose
+              sudo mv ~/docker-compose /usr/local/bin/docker-compose
+        - run:
+            name: Runnig Setup
+            command: |
+              npm i npm -g
+              bash ./bin/setup-local-env.sh
+
 jobs:
+  e2e:
+    <<: *e2e_job
+    run:
+      name: Runnig e2e
+      command: |
+        npm run ci
+
   php54-wp-latest-build:
     <<: *php_job
     docker:
