@@ -99,6 +99,10 @@ jobs:
       name: Runnig e2e
       command: |
         npm run ci
+    machine:
+      - mysql
+      - wordpress_e2e_tests
+      - cli_e2e_tests
 
   php54-wp-latest-build:
     <<: *php_job
