@@ -1,3 +1,9 @@
+e2e_defalue: &e2e_defalue
+  machine:
+    mysql:
+    wordpress_e2e_tests:
+    cli_e2e_tests:
+
 workflows:
   version: 2
   e2e:
@@ -28,12 +34,6 @@ workflows:
     - php72-wp48-build
     - php72-wp47-build
     - php-js-lints
-
-e2e_defalue: &e2e_defalue
-  machine:
-    mysql:
-    wordpress_e2e_tests:
-    cli_e2e_tests:
 
 version: 2
 
