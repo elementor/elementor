@@ -57,7 +57,6 @@ class Manager {
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_action( 'wp_ajax_elementor_library_direct_actions', [ $this, 'handle_direct_actions' ] );
-		add_action( 'wp_ajax_elementor_import_template', [ $this, 'ajax_import_template' ] );
 
 		// TODO: bc since 2.3.0
 		add_action( 'wp_ajax_elementor_update_templates', function() {
@@ -410,8 +409,14 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found' );
 		}
 
-		// If you reach this line, the export was not successful.
 		return $source->export_template( $args['template_id'] );
+	}
+
+	public function direct_import_template() {
+		/** @var Source_Local $source */
+		$source = $this->get_source( 'local' );
+
+		return $source->import_template( $_FILES['file']['name'], $_FILES['file']['tmp_name'] );
 	}
 
 	/**
@@ -422,24 +427,25 @@ class Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @param array $data
+	 *
 	 * @return mixed Whether the export succeeded or failed.
 	 */
-	public function import_template() {
+	public function import_template( array $data ) {
 		/** @var Source_Local $source */
+		$file_content = base64_decode( $data['fileData'] );
+
+		$tmp_file = tmpfile();
+
+		fwrite( $tmp_file, $file_content );
+
 		$source = $this->get_source( 'local' );
 
-		return $source->import_template( $_FILES['file']['name'], $_FILES['file']['tmp_name'] );
-	}
+		$result = $source->import_template( $data['fileName'], stream_get_meta_data( $tmp_file )['uri'] );
 
-	public function ajax_import_template() {
-		$import_result = $this->import_template();
+		fclose( $tmp_file );
 
-		if ( is_wp_error( $import_result ) ) {
-			/** @var \WP_Error $import_result */
-			wp_send_json_error( $import_result->get_error_message() );
-		}
-
-		wp_send_json_success( $import_result );
+		return $result;
 	}
 
 	/**
@@ -541,6 +547,7 @@ class Manager {
 			'save_template',
 			'update_templates',
 			'delete_template',
+			'import_template',
 			'mark_template_as_favorite',
 		];
 
@@ -583,10 +590,10 @@ class Manager {
 	 * Redirect the user to the template library after template import was
 	 * successful finished.
 	 *
-	 * @since 1.0.0
+	 * @since 2.3.0
 	 * @access private
 	 */
-	private function on_import_template_success() {
+	private function on_direct_import_template_success() {
 		wp_safe_redirect( admin_url( 'edit.php?post_type=' . Source_Local::CPT ) );
 	}
 
