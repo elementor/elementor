@@ -79,12 +79,12 @@ job-references:
 
     e2e_job: &e2e_job
       steps:
+      - checkout
       - restore_cache:
           keys:
-            - npm-{{ .Branch }}-{{ .Revision }}
-            - npm-{{ .Branch }}-
-            - npm-
-      - checkout
+          - npm-{{ .Branch }}-{{ .Revision }}
+          - npm-{{ .Branch }}-
+          - npm-
       - run:
           name: Install Docker Compose
           command: |
