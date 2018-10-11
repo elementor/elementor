@@ -86,7 +86,7 @@ job-references:
       - checkout
 
       - save_cache:
-          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          key: npm
           paths:
           - "node_modules"
 
