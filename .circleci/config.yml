@@ -9,6 +9,13 @@ workflows:
   version: 2
 
   e2e:
+    triggers:
+      - schedule:
+          cron: "@daily"
+          filters:
+            branches:
+              only:
+                - /release\/.*/
     jobs:
       - e2e_setup
       - e2e_electron:
