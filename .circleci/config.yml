@@ -1,3 +1,10 @@
+defaults: &defaults
+  working_directory: ~/elementor
+  machine:
+    mysql:
+    wordpress_e2e_tests:
+    cli_e2e_tests:
+
 workflows:
   version: 2
 
@@ -83,7 +90,7 @@ job-references:
 
 
 jobs:
-  e2e_setup:
+  e2e_setup: *defaults
     steps:
     - checkout
     - restore_cache:
@@ -107,18 +114,17 @@ jobs:
         - ./node_modules
         - ~/.npm
         - ~/.cache
-    machine:
-      mysql:
-      wordpress_e2e_tests:
-      cli_e2e_tests:
+    - persist_to_workspace:
+        root: ~/
+        paths:
+          - elementor
+          - .cache/Cypress
 
-  e2e_electron:
+  e2e_electron: *defaults
     steps:
+      - attach_workspace:
+          at: ~/elementor
       - run: npm run ci
-    machine:
-      mysql:
-      wordpress_e2e_tests:
-      cli_e2e_tests:
 
   php54-wp-latest-build:
     <<: *php_job

@@ -10,6 +10,7 @@
     "ci:setup": "concurrently \"bash ./bin/reset-e2e-tests.sh || exit 0\" \"grunt || exit 0\"",
     "e2e": "cypress open",
     "ci": "cypress run",
+    "cy:verify": "cypress verify",
     "dev": "grunt && grunt watch"
   },
   "devDependencies": {
