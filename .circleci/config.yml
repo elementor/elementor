@@ -82,14 +82,7 @@ job-references:
       - restore_cache:
           keys:
           - npm
-
       - checkout
-
-      - save_cache:
-          key: npm
-          paths:
-          - "node_modules"
-
       - run:
           name: Install Docker Compose
           command: |
@@ -101,6 +94,10 @@ job-references:
           command: |
             npm i npm -g
             bash ./bin/setup-local-env.sh
+      - save_cache:
+          key: npm
+          paths:
+          - "node_modules"
       - run:
           name: Runnig e2e
           command: |
