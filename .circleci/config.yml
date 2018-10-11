@@ -1,4 +1,4 @@
-defaults: &defaults
+defaults: &e2e_default
   working_directory: ~/elementor
   machine:
     mysql:
@@ -90,7 +90,7 @@ job-references:
 
 jobs:
   e2e_setup:
-    <<: *defaults
+    <<: *e2e_default
     steps:
       - checkout
       - restore_cache:
@@ -99,7 +99,6 @@ jobs:
       - run:
           name: setup cypress
           command: |
-            npm i npm -g
             npm i cypress -D
       - save_cache:
           key: cypress-{{ .Branch }}-{{ checksum "package.json" }}
@@ -133,7 +132,7 @@ jobs:
             - elementor
 
   e2e_electron:
-    <<: *defaults
+    <<: *e2e_default
     steps:
       - attach_workspace:
           at: ~/
