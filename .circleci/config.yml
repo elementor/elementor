@@ -5,6 +5,39 @@ defaults: &defaults
     wordpress_e2e_tests:
     cli_e2e_tests:
 
+workflows:
+  version: 2
+
+  e2e:
+    jobs:
+      - e2e_setup
+      - e2e_electron:
+          requires:
+            - e2e_setup
+
+  tests:
+    jobs:
+      - php54-wp-latest-build
+      - php54-wp48-build
+      - php54-wp47-build
+      - php55-wp-latest-build
+      - php55-wp48-build
+      - php55-wp47-build
+      - php56-wp-latest-build
+      - php56-wp48-build
+      - php56-wp47-build
+      - php70-wp-latest-build
+      - php70-wp48-build
+      - php70-wp47-build
+      - php71-wp-latest-build
+      - php71-wp48-build
+      - php71-wp47-build
+      - php72-wp-latest-build
+      - php72-wp48-build
+      - php72-wp47-build
+      - php-js-lints
+
+
 version: 2
 job-references:
   mysql_image: &mysql_image
@@ -254,49 +287,17 @@ jobs:
       - run:
         name: "Run JS lint"
         command: |
-        mkdir -p /root/junit
-        #jscs -c .jscsrc . --reporter=junit > /root/junit/jscs.xml
-        #jshint .
-        eslint . -f junit > /root/junit/eslint.xml
+          mkdir -p /root/junit
+          #jscs -c .jscsrc . --reporter=junit > /root/junit/jscs.xml
+          #jshint .
+          eslint . -f junit > /root/junit/eslint.xml
       - run:
         name: "Run PHP lint"
         command: |
-        export PATH=$HOME/.composer/vendor/bin:$PATH
-        phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-        phpcs -p -s -n . --standard=./ruleset.xml --extensions=php --report=gitblame --report-junit=/root/junit/phpcs.xml
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+          phpcs -p -s -n . --standard=./ruleset.xml --extensions=php --report=gitblame --report-junit=/root/junit/phpcs.xml
       - store_test_results:
         path: ~/junit
       - store_artifacts:
         path: ~/junit
-
-workflows:
-  version: 2
-
-  e2e:
-    jobs:
-      - e2e_setup
-      - e2e_electron:
-          requires:
-            - e2e_setup
-
-  tests:
-    jobs:
-      - php54-wp-latest-build
-      - php54-wp48-build
-      - php54-wp47-build
-      - php55-wp-latest-build
-      - php55-wp48-build
-      - php55-wp47-build
-      - php56-wp-latest-build
-      - php56-wp48-build
-      - php56-wp47-build
-      - php70-wp-latest-build
-      - php70-wp48-build
-      - php70-wp47-build
-      - php71-wp-latest-build
-      - php71-wp48-build
-      - php71-wp47-build
-      - php72-wp-latest-build
-      - php72-wp48-build
-      - php72-wp47-build
-      - php-js-lints
