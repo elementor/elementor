@@ -107,10 +107,6 @@ jobs:
         - ./node_modules
         - ~/.npm
         - ~/.cache
-    - persist_to_workspace:
-        root: ~/
-          paths:
-            - .cache/Cypress
     machine:
       mysql:
       wordpress_e2e_tests:
