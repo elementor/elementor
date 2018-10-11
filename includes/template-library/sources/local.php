@@ -556,7 +556,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @param int $template_id The template ID.
 	 *
-	 * @return array|\WP_Error WordPress error if template export failed.
+	 * @return \WP_Error WordPress error if template export failed.
 	 */
 	public function export_template( $template_id ) {
 		$file_data = $this->prepare_template_export( $template_id );
@@ -620,6 +620,10 @@ class Source_Local extends Source_Base {
 				'path' => $complete_path,
 				'name' => $file_data['name'],
 			];
+		}
+
+		if ( ! $files ) {
+			return new \WP_Error( 'empty_files', 'There is no files to export (probably all the requested templates are empty).' );
 		}
 
 		// Create temporary .zip file
@@ -774,7 +778,7 @@ class Source_Local extends Source_Base {
 				<div id="elementor-import-template-title"><?php echo __( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_library_direct_actions">
-					<input type="hidden" name="elementor_library_action" value="import_template">
+					<input type="hidden" name="elementor_library_action" value="direct_import_template">
 					<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
@@ -1001,15 +1005,14 @@ class Source_Local extends Source_Base {
 	 * @param string $redirect_to The redirect URL.
 	 * @param string $action      The action being taken.
 	 * @param array  $post_ids    The items to take the action on.
-	 *
-	 * @return string The redirect URL.
 	 */
 	public function admin_export_multiple_templates( $redirect_to, $action, $post_ids ) {
 		if ( self::BULK_EXPORT_ACTION === $action ) {
-			$this->export_multiple_templates( $post_ids );
-		}
+			$result = $this->export_multiple_templates( $post_ids );
 
-		return $redirect_to;
+			// If you reach this line, the export failed
+			wp_die( $result->get_error_message() );
+		}
 	}
 
 	/**
@@ -1207,7 +1210,7 @@ class Source_Local extends Source_Base {
 		] );
 
 		if ( empty( $template_data['content'] ) ) {
-			return new \WP_Error( '404', 'The template does not exist' );
+			return new \WP_Error( 'empty_template', 'The template is empty' );
 		}
 
 		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
