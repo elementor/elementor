@@ -1,3 +1,4 @@
+/// <reference types="Cypress" />
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -44,7 +45,7 @@ Cypress.Commands.add( 'login', () => {
 			log: 'admin',
 			pwd: 'password',
 			'wp-submit': 'LogIn',
-			redirect_to: 'http://localhost:4001/wp-admin/',
+			redirect_to: '/wp-admin/',
 			testcookie: 1,
 		},
 	} );

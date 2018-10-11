@@ -13,8 +13,6 @@ var setPanelSelectedElement = function( elementor, category, name ) {
 
 describe( 'My First Test', () => {
 	it( 'add page', () => {
-		cy.login();
-
 		cy.addPage();
 
 		cy.window().then( ( win ) => {
