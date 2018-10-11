@@ -7,7 +7,7 @@
   "homepage": "https://elementor.com/",
   "scripts": {
     "test:phpunit": "docker-compose run --rm wordpress_phpunit phpunit",
-    "preci": "concurrently \"bash ./bin/reset-e2e-tests.sh || exit 0\" \"grunt || exit 0\"",
+    "ci:setup": "concurrently \"bash ./bin/reset-e2e-tests.sh || exit 0\" \"grunt || exit 0\"",
     "e2e": "cypress open",
     "ci": "cypress run",
     "dev": "grunt && grunt watch"
