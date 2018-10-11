@@ -81,7 +81,7 @@ jobs:
         paths:
           - ./node_modules
           - ~/.npm
-         - ~/.cache
+          - ~/.cache
     - persist_to_workspace:
         root: ~/
         paths:
