@@ -1,14 +1,8 @@
 workflows:
   version: 2
   nightly_e2e:
-    triggers:
-    - schedule:
-        cron: "10 12 * * *"
-        filters:
-          branches:
-            only: /.*/
     jobs:
-    - e2e
+      - e2e
 
   tests:
     jobs:
