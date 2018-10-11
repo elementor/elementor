@@ -11,7 +11,7 @@ workflows:
   e2e:
     triggers:
       - schedule:
-          cron: "@daily"
+          cron: "0 0 * * *"
           filters:
             branches:
               only:
@@ -294,9 +294,9 @@ jobs:
         name: "Run JS lint"
         command: |
           mkdir -p /root/junit
+          eslint . -f junit > /root/junit/eslint.xml
           #jscs -c .jscsrc . --reporter=junit > /root/junit/jscs.xml
           #jshint .
-          eslint . -f junit > /root/junit/eslint.xml
       - run:
         name: "Run PHP lint"
         command: |
