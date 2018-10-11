@@ -5,38 +5,6 @@ defaults: &defaults
     wordpress_e2e_tests:
     cli_e2e_tests:
 
-workflows:
-  version: 2
-
-  e2e:
-    jobs:
-      - e2e_setup
-      - e2e_electron:
-          requires:
-            - e2e_setup
-
-  tests:
-    jobs:
-    - php54-wp-latest-build
-    - php54-wp48-build
-    - php54-wp47-build
-    - php55-wp-latest-build
-    - php55-wp48-build
-    - php55-wp47-build
-    - php56-wp-latest-build
-    - php56-wp48-build
-    - php56-wp47-build
-    - php70-wp-latest-build
-    - php70-wp48-build
-    - php70-wp47-build
-    - php71-wp-latest-build
-    - php71-wp48-build
-    - php71-wp47-build
-    - php72-wp-latest-build
-    - php72-wp48-build
-    - php72-wp47-build
-    - php-js-lints
-
 version: 2
 
 job-references:
@@ -48,7 +16,7 @@ job-references:
     command: |
       echo "export PATH=$HOME/.composer/vendor/bin:$PATH" >> $BASH_ENV
       if [ -f /home/circleci/.bashrc ]; then
-        source /home/circleci/.bashrc
+      source /home/circleci/.bashrc
       fi
 
   install_dependencies: &install_dependencies
@@ -71,60 +39,59 @@ job-references:
     - run: *install_dependencies
     - run: *install_wp_core
     - run:
-        name: "Run PHPUnit on Single Site"
-        command: |
-          mkdir -p ~/phpunit
-          phpunit --coverage-clover=build/logs/clover.xml --log-junit ~/phpunit/junit.xml
+      name: "Run PHPUnit on Single Site"
+      command: |
+      mkdir -p ~/phpunit
+      phpunit --coverage-clover=build/logs/clover.xml --log-junit ~/phpunit/junit.xml
     - run:
-        name: "Run PHPUnit on Multi Site"
-        command: |
-          WP_MULTISITE=1 phpunit --coverage-clover=build/logs/clover.xml
+      name: "Run PHPUnit on Multi Site"
+      command: |
+      WP_MULTISITE=1 phpunit --coverage-clover=build/logs/clover.xml
     - run:
-        name: "Run PHP Parallel Lint"
-        command: |
-          parallel-lint --blame --exclude node_modules --exclude vendor .
+      name: "Run PHP Parallel Lint"
+      command: |
+      parallel-lint --blame --exclude node_modules --exclude vendor .
     - store_test_results:
-        path: ~/phpunit
+      path: ~/phpunit
     - store_artifacts:
-        path: ~/phpunit
-
+      path: ~/phpunit
 
 jobs:
   e2e_setup: *defaults
     steps:
     - checkout
     - restore_cache:
-        keys:
-        - cache-{{ .Branch }}-{{ checksum "package.json" }}
+      keys:
+      - cache-{{ .Branch }}-{{ checksum "package.json" }}
     - run:
-        name: Install Docker Compose
-        command: |
-          curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-          chmod +x ~/docker-compose
-          sudo mv ~/docker-compose /usr/local/bin/docker-compose
+      name: Install Docker Compose
+      command: |
+      curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+      chmod +x ~/docker-compose
+      sudo mv ~/docker-compose /usr/local/bin/docker-compose
     - run:
-        name: Runnig Setup
-        command: |
-          npm i npm -g
-          bash ./bin/setup-local-env.sh
-          npm run ci:setup
+      name: Runnig Setup
+      command: |
+      npm i npm -g
+      bash ./bin/setup-local-env.sh
+      npm run ci:setup
     - save_cache:
-        key: cache-{{ .Branch }}-{{ checksum "package.json" }}
-        paths:
-        - ./node_modules
-        - ~/.npm
-        - ~/.cache
+      key: cache-{{ .Branch }}-{{ checksum "package.json" }}
+      paths:
+      - ./node_modules
+      - ~/.npm
+      - ~/.cache
     - persist_to_workspace:
-        root: ~/
-        paths:
-          - elementor
-          - .cache/Cypress
+      root: ~/
+      paths:
+      - elementor
+      - .cache/Cypress
 
   e2e_electron: *defaults
     steps:
-      - attach_workspace:
-          at: ~/elementor
-      - run: npm run ci
+    - attach_workspace:
+    at: ~/elementor
+    - run: npm run ci
 
   php54-wp-latest-build:
     <<: *php_job
@@ -264,19 +231,52 @@ jobs:
     steps:
     - checkout
     - run:
-        name: "Run JS lint"
-        command: |
-          mkdir -p /root/junit
-          #jscs -c .jscsrc . --reporter=junit > /root/junit/jscs.xml
-          #jshint .
-          eslint . -f junit > /root/junit/eslint.xml
+      name: "Run JS lint"
+      command: |
+      mkdir -p /root/junit
+      #jscs -c .jscsrc . --reporter=junit > /root/junit/jscs.xml
+      #jshint .
+      eslint . -f junit > /root/junit/eslint.xml
     - run:
-        name: "Run PHP lint"
-        command: |
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-          phpcs -p -s -n . --standard=./ruleset.xml --extensions=php --report=gitblame --report-junit=/root/junit/phpcs.xml
+      name: "Run PHP lint"
+      command: |
+      export PATH=$HOME/.composer/vendor/bin:$PATH
+      phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+      phpcs -p -s -n . --standard=./ruleset.xml --extensions=php --report=gitblame --report-junit=/root/junit/phpcs.xml
     - store_test_results:
-        path: ~/junit
+      path: ~/junit
     - store_artifacts:
-        path: ~/junit
+      path: ~/junit
+
+
+workflows:
+  version: 2
+
+  e2e:
+    jobs:
+    - e2e_setup
+    - e2e_electron:
+        requires:
+        - e2e_setup
+
+  tests:
+    jobs:
+    - php54-wp-latest-build
+    - php54-wp48-build
+    - php54-wp47-build
+    - php55-wp-latest-build
+    - php55-wp48-build
+    - php55-wp47-build
+    - php56-wp-latest-build
+    - php56-wp48-build
+    - php56-wp47-build
+    - php70-wp-latest-build
+    - php70-wp48-build
+    - php70-wp47-build
+    - php71-wp-latest-build
+    - php71-wp48-build
+    - php71-wp47-build
+    - php72-wp-latest-build
+    - php72-wp48-build
+    - php72-wp47-build
+    - php-js-lints
