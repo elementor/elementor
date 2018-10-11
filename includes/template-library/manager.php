@@ -56,8 +56,7 @@ class Manager {
 		$this->register_default_sources();
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-		add_action( 'wp_ajax_elementor_direct_export_template', [ $this, 'direct_export_template' ] );
-		add_action( 'wp_ajax_elementor_direct_import_template', [ $this, 'direct_import_template' ] );
+		add_action( 'wp_ajax_elementor_library_direct_actions', [ $this, 'handle_direct_actions' ] );
 		add_action( 'wp_ajax_elementor_import_template', [ $this, 'ajax_import_template' ] );
 
 		// TODO: bc since 2.3.0
@@ -415,17 +414,6 @@ class Manager {
 		return $source->export_template( $args['template_id'] );
 	}
 
-	public function direct_export_template() {
-		$export_result = $this->export_template( $_GET );
-
-		if ( is_wp_error( $export_result ) ) {
-			/** @var \WP_Error $export_result */
-			_default_wp_die_handler( $export_result->get_error_message() . '.', 'Elementor Library' );
-		}
-
-		die;
-	}
-
 	/**
 	 * Import template.
 	 *
@@ -441,19 +429,6 @@ class Manager {
 		$source = $this->get_source( 'local' );
 
 		return $source->import_template( $_FILES['file']['name'], $_FILES['file']['tmp_name'] );
-	}
-
-	public function direct_import_template() {
-		$import_result = $this->import_template();
-
-		if ( is_wp_error( $import_result ) ) {
-			/** @var \WP_Error $import_result */
-			_default_wp_die_handler( $import_result->get_error_message() . '.', 'Elementor Library' );
-		}
-
-		wp_redirect( admin_url( 'edit.php?post_type=' . Source_Local::CPT ) );
-
-		die;
 	}
 
 	public function ajax_import_template() {
@@ -574,6 +549,49 @@ class Manager {
 				return $this->handle_ajax_request( $ajax_request, $data );
 			} );
 		}
+	}
+
+	public function handle_direct_actions() {
+		/** @var Ajax $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		if ( ! $ajax->verify_request_nonce() ) {
+			$this->handle_direct_action_error( 'Authentication failed' );
+		}
+
+		$action = $_REQUEST['elementor_library_action'];
+
+		$result = $this->$action( $_REQUEST );
+
+		if ( is_wp_error( $result ) ) {
+			/** @var \WP_Error $result */
+			$this->handle_direct_action_error( $result->get_error_message() . '.' );
+		}
+
+		$callback = "on_{$action}_success";
+
+		if ( method_exists( $this, $callback ) ) {
+			$this->$callback( $result );
+		}
+
+		die;
+	}
+
+	/**
+	 * On successful template import.
+	 *
+	 * Redirect the user to the template library after template import was
+	 * successful finished.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 */
+	private function on_import_template_success() {
+		wp_safe_redirect( admin_url( 'edit.php?post_type=' . Source_Local::CPT ) );
+	}
+
+	private function handle_direct_action_error( $message ) {
+		_default_wp_die_handler( $message, 'Elementor Library' );
 	}
 
 	/**
