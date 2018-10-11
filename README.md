@@ -221,8 +221,8 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 ### 2.2.5 - 2018-10-07 ###
 * Tweak: System Info now recognizes MariaDB versions
 * Tweak: Allow document to override widgets panel settings
-* Fix: Admin Notice not dismissing when JS disabled ([#5832](https://github.com/pojome/elementor/issues/5832))
 * Fix: System Info Uncaught Error on edge cases
+* Fix: Admin Notice not dismissing when JS disabled
 
 ### 2.2.4 - 2018-09-20 ###
 * Tweak: Added Poster option for Self Hosted in Video widget
