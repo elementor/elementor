@@ -1,8 +1,6 @@
 /// <reference types="Cypress" />
 
 var setPanelSelectedElement = function( elementor, category, name ) {
-	elementor.getPanelView().setPage( 'elements' );
-
 	var elementsPanel = elementor.getPanelView().getCurrentPageView().elements.currentView,
 		basicElements = elementsPanel.collection.findWhere( { name: category } ),
 		view = elementsPanel.children.findByModel( basicElements ),
@@ -27,12 +25,12 @@ describe( 'Test Auto Save', () => {
 			firstColumnView.addElementFromPanel( { at: 0 } );
 		} );
 
-		cy.get( '#elementor-control-default-c395' )
+		cy.get( 'textarea[data-setting="title"]' )
 			.clear()
 			.type( 'Publish' )
 			.get( '#elementor-panel-saver-button-publish' )
 			.click()
-			.get( '#elementor-control-default-c395' )
+			.get( 'textarea[data-setting="title"]' )
 			.clear()
 			.type( 'AutoSave' );
 
