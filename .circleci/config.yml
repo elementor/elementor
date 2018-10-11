@@ -108,7 +108,7 @@ jobs:
       - run:
           name: Setup Wordpress
           command: |
-            bash ./bin/setup-local-env.sh
+            docker-compose up -d
             bash ./bin/reset-e2e-tests.sh
       - run:
           name: run e2e electron
