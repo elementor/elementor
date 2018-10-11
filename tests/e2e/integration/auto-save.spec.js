@@ -11,8 +11,10 @@ var setPanelSelectedElement = function( elementor, category, name ) {
 	elementor.channels.panelElements.reply( 'element:selected', widget );
 };
 
-describe( 'My First Test', () => {
+describe( 'Test Auto Save', () => {
 	it( 'add page', () => {
+		cy.visit( '/wp-admin' );
+
 		cy.addPage();
 
 		cy.window().then( ( win ) => {
