@@ -97,7 +97,7 @@ job-references:
             npm i npm -g
             bash ./bin/setup-local-env.sh
       - save_cache:
-          key: key: npm-{{ .Branch }}-{{ .Revision }}
+          key: npm-{{ .Branch }}-{{ .Revision }}
           paths:
           - "node_modules"
       - run:
