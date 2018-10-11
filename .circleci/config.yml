@@ -79,7 +79,17 @@ job-references:
 
     e2e_job: &e2e_job
       steps:
+        - restore_cache:
+            keys:
+              - npm
+
         - checkout
+
+        - save_cache:
+            key: source-v1-{{ .Branch }}-{{ .Revision }}
+            paths:
+            - "node_modules"
+
         - run:
             name: Install Docker Compose
             command: |
@@ -91,13 +101,15 @@ job-references:
             command: |
               npm i npm -g
               bash ./bin/setup-local-env.sh
-              npm run ci
 
 jobs:
   e2e:
     <<: *e2e_job
-    run:
-      name: Runnig e2e
+    steps:
+      - run:
+          name: Runnig e2e
+          command: |
+            npm run ci
     machine:
       mysql:
       wordpress_e2e_tests:
