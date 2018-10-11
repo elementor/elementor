@@ -114,9 +114,9 @@ jobs:
       - ~/.npm
       - ~/.cache
     - persist_to_workspace:
-      root: ~/
-        paths:
-        - .cache/Cypress
+        root: ~/
+          paths:
+            - .cache/Cypress
 
   e2e_electron:
     <<: *e2e_defalue
