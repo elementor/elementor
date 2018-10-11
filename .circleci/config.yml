@@ -6,12 +6,12 @@ e2e_defalue: &e2e_defalue
 
 workflows:
   version: 2
-  e2e:
+  build:
     jobs:
     - e2e_setup
     - e2e_electron:
         requires:
-        - e2e_setup
+        - build
 
   tests:
     jobs:
@@ -88,7 +88,7 @@ job-references:
 
 
 jobs:
-  e2e_setup:
+  build:
     <<: *e2e_defalue
     steps:
     - checkout
