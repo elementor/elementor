@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -54,6 +55,14 @@ class Manager {
 	 */
 	public function __construct() {
 		$this->register_default_sources();
+
+		add_action( 'elementor/init', [ $this, 'add_actions' ] );
+	}
+
+	public function add_actions() {
+		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
+			return;
+		}
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_action( 'wp_ajax_elementor_library_direct_actions', [ $this, 'handle_direct_actions' ] );
