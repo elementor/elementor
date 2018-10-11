@@ -1,8 +1,11 @@
 workflows:
   version: 2
-  nightly_e2e:
+  e2e:
     jobs:
-      - e2e
+    - e2e_setup
+    - e2e_electron:
+        requires:
+        - e2e_setup
 
   tests:
     jobs:
@@ -25,6 +28,12 @@ workflows:
     - php72-wp48-build
     - php72-wp47-build
     - php-js-lints
+
+e2e_defalue: &e2e_defalue
+  machine:
+    mysql:
+    wordpress_e2e_tests:
+    cli_e2e_tests:
 
 version: 2
 
@@ -77,37 +86,44 @@ job-references:
     - store_artifacts:
         path: ~/phpunit
 
-    e2e_job: &e2e_job
-      steps:
-      - checkout
-
-      - run:
-          name: Install Docker Compose
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - run:
-          name: Runnig Setup
-          command: |
-            npm i npm -g
-            bash ./bin/setup-local-env.sh
-      - save_cache:
-          key: npm-{{ .Branch }}-{{ .Revision }}
-          paths:
-          - "node_modules"
-      - run:
-          name: Runnig e2e
-          command: |
-            npm run ci
 
 jobs:
-  e2e:
-    <<: *e2e_job
-    machine:
-      mysql:
-      wordpress_e2e_tests:
-      cli_e2e_tests:
+  e2e_setup:
+    <<: *e2e_defalue
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+        - cache-{{ .Branch }}-{{ checksum "package.json" }}
+    - run:
+      name: Install Docker Compose
+      command: |
+        curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+        chmod +x ~/docker-compose
+        sudo mv ~/docker-compose /usr/local/bin/docker-compose
+    - run:
+      name: Runnig Setup
+      command: |
+        npm i npm -g
+        bash ./bin/setup-local-env.sh
+        npm run ci:setup
+    - save_cache:
+      key: cache-{{ .Branch }}-{{ checksum "package.json" }}
+      paths:
+      - ./node_modules
+      - ~/.npm
+      - ~/.cache
+    - persist_to_workspace:
+      root: ~/
+        paths:
+        - .cache/Cypress
+
+  e2e_electron:
+    <<: *e2e_defalue
+    steps:
+    - attach_workspace:
+        at: ~/
+    - run: npm run ci
 
   php54-wp-latest-build:
     <<: *php_job
