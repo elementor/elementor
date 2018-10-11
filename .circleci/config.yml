@@ -6,7 +6,7 @@ workflows:
         cron: "0 12 * * *"
         filters:
           branches:
-            master
+            - master
     jobs:
     - e2e
 
