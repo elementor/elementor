@@ -1,6 +1,12 @@
 workflows:
   version: 2
   nightly_e2e:
+    triggers:
+    - schedule:
+        cron: "0 12 * * *"
+        filters:
+          branches:
+            master
     jobs:
     - e2e
 
