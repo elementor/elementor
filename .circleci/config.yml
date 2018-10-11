@@ -81,7 +81,9 @@ job-references:
       steps:
       - restore_cache:
           keys:
-          - npm
+            - npm-{{ .Branch }}-{{ .Revision }}
+            - npm-{{ .Branch }}-
+            - npm-
       - checkout
       - run:
           name: Install Docker Compose
@@ -95,7 +97,7 @@ job-references:
             npm i npm -g
             bash ./bin/setup-local-env.sh
       - save_cache:
-          key: npm
+          key: key: npm-{{ .Branch }}-{{ .Revision }}
           paths:
           - "node_modules"
       - run:
