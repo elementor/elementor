@@ -70,6 +70,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	initElementsCollection: function() {
 		var elementsCollection = new PanelElementsElementsCollection(),
 			sectionConfig = elementor.config.elements.section;
+
 		elementsCollection.add( {
 			title: elementor.translate( 'inner_section' ),
 			elType: 'section',
@@ -104,6 +105,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	initCategoriesCollection: function() {
 		var categories = {};
+
 		this.elementsCollection.each( function( element ) {
 			_.each( element.get( 'categories' ), function( category ) {
 				if ( ! categories[ category ] ) {
