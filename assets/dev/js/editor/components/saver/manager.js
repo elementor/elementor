@@ -111,14 +111,13 @@ module.exports = Module.extend( {
 		return ( true === elementor.channels.editor.request( 'status' ) );
 	},
 
-	onBeforeUnload: function() {
-		if ( this.isEditorChanged() ) {
-			return elementor.translate( 'before_unload_alert' );
-		}
-	},
-
 	setWorkSaver: function() {
-		elementor.$window.on( 'beforeunload', this.onBeforeUnload.bind( this ) );
+		var self = this;
+		elementor.$window.on( 'beforeunload', function() {
+			if ( self.isEditorChanged() ) {
+				return elementor.translate( 'before_unload_alert' );
+			}
+		} );
 	},
 
 	saveEditor: function( options ) {
