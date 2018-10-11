@@ -4,6 +4,9 @@ workflows:
     triggers:
     - schedule:
         cron: "10 12 * * *"
+        filters:
+          branches:
+            only: /.*/
     jobs:
     - e2e
 
