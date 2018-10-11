@@ -81,9 +81,16 @@ job-references:
     - store_artifacts:
         path: ~/phpunit
 
+  e2e_config: &e2e_config
+    machine:
+      mysql:
+      wordpress_e2e_tests:
+      cli_e2e_tests:
+
 
 jobs:
   e2e_setup:
+    <<: *e2e_config
     steps:
     - checkout
     - restore_cache:
@@ -100,25 +107,24 @@ jobs:
         command: |
           npm i npm -g
           bash ./bin/setup-local-env.sh
+          npm run ci:setup
     - save_cache:
         key: cache-{{ .Branch }}-{{ checksum "package.json" }}
         paths:
         - ./node_modules
         - ~/.npm
         - ~/.cache
-    - persist_to_workspace
-    machine:
-      mysql:
-      wordpress_e2e_tests:
-      cli_e2e_tests:
+    - persist_to_workspace:
+        root: ~/
+          paths:
+            - .cache/Cypress
 
   e2e_electron:
+    <<: *e2e_config
     steps:
+      - attach_workspace:
+          at: ~/
       - run: npm run ci
-    machine:
-      mysql:
-      wordpress_e2e_tests:
-      cli_e2e_tests:
 
   php54-wp-latest-build:
     <<: *php_job
