@@ -114,8 +114,6 @@ jobs:
 
   e2e_electron:
     steps:
-      - attach_workspace:
-          at: ~/
       - run: npm run ci
     machine:
       mysql:
