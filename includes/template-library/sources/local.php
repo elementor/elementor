@@ -773,7 +773,8 @@ class Source_Local extends Source_Base {
 			<div id="elementor-import-template-area">
 				<div id="elementor-import-template-title"><?php echo __( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
-					<input type="hidden" name="action" value="elementor_direct_import_template">
+					<input type="hidden" name="action" value="elementor_library_direct_actions">
+					<input type="hidden" name="elementor_library_action" value="import_template">
 					<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
@@ -880,7 +881,8 @@ class Source_Local extends Source_Base {
 
 		return add_query_arg(
 			[
-				'action' => 'elementor_direct_export_template',
+				'action' => 'elementor_library_direct_actions',
+				'elementor_library_action' => 'export_template',
 				'source' => $this->get_id(),
 				'_nonce' => $ajax->create_nonce(),
 				'template_id' => $template_id,
