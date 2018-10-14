@@ -151,7 +151,7 @@ jobs:
       - run:
           name: run e2e electron
           command: |
-            npx cypress run --config video=false
+            npx cypress run --config video=false --record --key $RECORD_KEY
 
   php54-wp-latest-build:
     <<: *php_job
