@@ -1,4 +1,4 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' );
+const HandlerModule = require( 'elementor-frontend/handler-module' );
 
 module.exports = HandlerModule.extend( {
 	$activeContent: null,
@@ -21,7 +21,7 @@ module.exports = HandlerModule.extend( {
 	},
 
 	getDefaultElements: function() {
-		var selectors = this.getSettings( 'selectors' );
+		const selectors = this.getSettings( 'selectors' );
 
 		return {
 			$tabTitles: this.findElement( selectors.tabTitle ),
@@ -30,13 +30,13 @@ module.exports = HandlerModule.extend( {
 	},
 
 	activateDefaultTab: function() {
-		var settings = this.getSettings();
+		const settings = this.getSettings();
 
 		if ( ! settings.autoExpand || ( 'editor' === settings.autoExpand && ! this.isEdit ) ) {
 			return;
 		}
 
-		var defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
+		const defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
 			originalToggleMethods = {
 				showTabFn: settings.showTabFn,
 				hideTabFn: settings.hideTabFn,
@@ -55,7 +55,7 @@ module.exports = HandlerModule.extend( {
 	},
 
 	deactivateActiveTab: function( tabIndex ) {
-		var settings = this.getSettings(),
+		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
 			activeFilter = tabIndex ? '[data-tab="' + tabIndex + '"]' : '.' + activeClass,
 			$activeTitle = this.elements.$tabTitles.filter( activeFilter ),
@@ -67,7 +67,7 @@ module.exports = HandlerModule.extend( {
 	},
 
 	activateTab: function( tabIndex ) {
-		var settings = this.getSettings(),
+		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
 			$requestedTitle = this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ),
 			$requestedContent = this.elements.$tabContents.filter( '[data-tab="' + tabIndex + '"]' );
@@ -82,16 +82,12 @@ module.exports = HandlerModule.extend( {
 	},
 
 	bindEvents: function() {
-		var self = this;
+		this.elements.$tabTitles.on( 'focus', ( event ) => this.changeActiveTab( event.currentTarget.dataset.tab ) );
 
-		self.elements.$tabTitles.on( 'focus', function( event ) {
-			self.changeActiveTab( event.currentTarget.dataset.tab );
-		} );
-
-		if ( self.getSettings( 'toggleSelf' ) ) {
-			self.elements.$tabTitles.on( 'mousedown', function( event ) {
+		if ( this.getSettings( 'toggleSelf' ) ) {
+			this.elements.$tabTitles.on( 'mousedown', ( event ) => {
 				if ( jQuery( event.currentTarget ).is( ':focus' ) ) {
-					self.changeActiveTab( event.currentTarget.dataset.tab );
+					this.changeActiveTab( event.currentTarget.dataset.tab );
 				}
 			} );
 		}
@@ -110,7 +106,7 @@ module.exports = HandlerModule.extend( {
 	},
 
 	changeActiveTab: function( tabIndex ) {
-		var isActiveTab = this.isActiveTab( tabIndex ),
+		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();
 
 		if ( ( settings.toggleSelf || ! isActiveTab ) && settings.hidePrevious ) {
