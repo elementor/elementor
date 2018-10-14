@@ -82,15 +82,20 @@ module.exports = HandlerModule.extend( {
 	},
 
 	bindEvents: function() {
-		this.elements.$tabTitles.on( 'focus', ( event ) => this.changeActiveTab( event.currentTarget.dataset.tab ) );
+		this.elements.$tabTitles.on( {
+			keydown: ( event ) => {
+				if ( 'Enter' === event.key ) {
+					event.preventDefault();
 
-		if ( this.getSettings( 'toggleSelf' ) ) {
-			this.elements.$tabTitles.on( 'mousedown', ( event ) => {
-				if ( jQuery( event.currentTarget ).is( ':focus' ) ) {
 					this.changeActiveTab( event.currentTarget.dataset.tab );
 				}
-			} );
-		}
+			},
+			click: ( event ) => {
+				event.preventDefault();
+
+				this.changeActiveTab( event.currentTarget.dataset.tab );
+			},
+		} );
 	},
 
 	onInit: function() {
