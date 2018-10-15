@@ -140,6 +140,7 @@ jobs:
       - run:
           name: Setup WordPress
           command: |
+            ls
             docker-compose -f .circleci/docker-compose.yml up -d
             bash ./bin/reset-e2e-tests.sh
       - run:
