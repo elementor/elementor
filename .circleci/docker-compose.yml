@@ -17,13 +17,13 @@ services:
       ABSPATH: /usr/src/wordpress/
     volumes:
     - wordpress_e2e_tests:/var/www/html
-    - ../:/var/www/html/wp-content/plugins/elementor
+    - .:/var/www/html/wp-content/plugins/elementor
 
   cli_e2e_tests:
     image: wordpress:cli
     volumes:
     - wordpress_e2e_tests:/var/www/html
-    - ../:/var/www/html/wp-content/plugins/elementor
+    - .:/var/www/html/wp-content/plugins/elementor
 
 volumes:
   wordpress_e2e_tests:
