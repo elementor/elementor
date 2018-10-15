@@ -80,7 +80,7 @@ describe( 'Test Auto Save', () => {
                     .get( 'elements' )
                     .first();
 
-            expect( firstWidgetModel.get( 'settings' ).get( 'title' ) ).to.eql( 'Publish' );
+            expect( firstWidgetModel.get( 'settings' ).get( 'title' ) ).to.eql( 'AutoSave' );
         } );
     } );
 } );
