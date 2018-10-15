@@ -95,15 +95,15 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-        - cypress-{{ .Branch }}-{{ checksum "package.json" }}
+        - cypress-{{ checksum "package.json" }}
     - run:
         name: setup cypress
         command: |
-          npm i cypress -D
+          yarn cypress -D
     - save_cache:
-        key: cypress-{{ .Branch }}-{{ checksum "package.json" }}
+        key: cypress-{{ checksum "package.json" }}
         paths:
-        - ~/.npm
+        - ~/.yarn
         - ~/.cache
     - persist_to_workspace:
         root: ~/
@@ -112,7 +112,7 @@ jobs:
     - run:
         name: Build Elementor
         command: |
-          npm i
+          yarn
           grunt build
     - run:
         name: Prepare Elementor
@@ -144,7 +144,7 @@ jobs:
     - run:
         name: run e2e electron
         command: |
-          npx cypress run --config video=false --record --key $RECORD_KEY
+          npx cypress run --config --record --key $RECORD_KEY
 
   php54-wp-latest-build:
     <<: *php_job
