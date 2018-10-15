@@ -36,6 +36,7 @@ class Source_Local extends Source_Base {
 
 	/**
 	 * Elementor template-library meta key.
+	 * @deprecated 2.3.0 Use \Elementor\Core\Base\Document::TYPE_META_KEY instead
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 
@@ -86,7 +87,7 @@ class Source_Local extends Source_Base {
 	 * @return mixed The value of meta data field.
 	 */
 	public static function get_template_type( $template_id ) {
-		return get_post_meta( $template_id, self::TYPE_META_KEY, true );
+		return get_post_meta( $template_id, Document::TYPE_META_KEY, true );
 	}
 
 	/**
@@ -307,7 +308,7 @@ class Source_Local extends Source_Base {
 				'order' => 'ASC',
 				'meta_query' => [
 					[
-						'key' => self::TYPE_META_KEY,
+						'key' => Document::TYPE_META_KEY,
 						'value' => array_values( self::$_template_types ),
 					],
 				],
@@ -938,7 +939,7 @@ class Source_Local extends Source_Base {
 	 * @param string $type    Item type.
 	 */
 	private function save_item_type( $post_id, $type ) {
-		update_post_meta( $post_id, self::TYPE_META_KEY, $type );
+		update_post_meta( $post_id, Document::TYPE_META_KEY, $type );
 
 		wp_set_object_terms( $post_id, $type, self::TAXONOMY_TYPE_SLUG );
 	}
@@ -967,7 +968,7 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
-		$query->query_vars['meta_key'] = self::TYPE_META_KEY;
+		$query->query_vars['meta_key'] = Document::TYPE_META_KEY;
 		$query->query_vars['meta_value'] = array_values( self::$_template_types );
 	}
 
