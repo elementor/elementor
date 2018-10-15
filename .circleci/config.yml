@@ -1,7 +1,5 @@
 defaults: &e2e_default
   working_directory: ~/elementor
-  environment:
-    - DOCKER_ENV: 'ci'
   machine:
     ? mysql
     ? wordpress_e2e_tests
