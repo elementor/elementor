@@ -26,56 +26,55 @@ class Recently_Edited extends Base_Category {
 			'exclude_from_search' => false,
 		] );
 
-		$post_types[] = Source_Local::CPT;
+		global $wpdb;
 
-		$recently_edited_query_args = [
-			'post_type' => $post_types,
-			'post_status' => [ 'publish', 'draft' ],
-			'posts_per_page' => '5',
-			'meta_query' => [
-				[
-					'key' => '_elementor_edit_mode',
-					'value' => 'builder',
-				],
-				[
-					'key' => Document::TYPE_META_KEY,
-					'value' => 'widget',
-					'compare' => '!=',
-				],
-			],
-			'orderby' => 'modified',
-			's' => $options['filter'],
-		];
-
-		$recently_edited_query = new \WP_Query( $recently_edited_query_args );
+		$query = $wpdb->get_results( $wpdb->prepare(
+			"SELECT ID FROM {$wpdb->posts} LEFT JOIN {$wpdb->postmeta} AS mt ON ID = mt.`post_id` LEFT JOIN {$wpdb->postmeta} AS mt1 ON ID = mt1.`post_id` LEFT JOIN {$wpdb->postmeta} AS mt2 ON ID = mt2.`post_id`
+				WHERE ( post_title LIKE %s OR ( mt.`meta_key` = %s AND mt.`meta_value` = %s ) )
+				AND post_status in ('publish', 'draft')
+				AND mt1.`meta_key` = '_elementor_edit_mode'
+				AND mt1.`meta_value` = 'builder'
+				AND ( post_type in (%s) OR ( post_type = %s AND mt2.`meta_key` = %s AND mt2.`meta_value` != 'widget' ) )
+				GROUP BY ID ORDER BY post_modified
+				LIMIT 0,5",
+			[
+				'%' . $options['filter'] . '%',
+				Document::TYPE_META_KEY,
+				$options['filter'],
+				implode( ',', $post_types ),
+				Source_Local::CPT,
+				Document::TYPE_META_KEY,
+			]
+		), ARRAY_A );
 
 		$posts = [];
 
-		/** @var \WP_Post $post */
-		foreach ( $recently_edited_query->posts as $post ) {
-			$document = Plugin::$instance->documents->get( $post->ID );
+		foreach ( $query as $result ) {
+			$document = Plugin::$instance->documents->get( $result['ID'] );
 
 			if ( ! $document ) {
 				continue;
 			}
 
+			$post = $document->get_post();
+
 			$is_template = Source_Local::CPT === $post->post_type;
 
-			$description = $document->get_title();
-
-			$icon = 'document-file';
-
 			if ( $is_template ) {
-				$description = __( 'Template', 'elementor' ) . ' / ' . $description;
+				$description = __( 'Template', 'elementor' ) . ' / ' . $document->get_title();
 
 				$icon = 'post-title';
+			} else {
+				$description = $document->get_post_type_title();
+
+				$icon = 'document-file';
 			}
 
 			$posts[] = [
 				'icon' => $icon,
 				'title' => $post->post_title,
 				'description' => $description,
-				'link' => get_permalink( $post ),
+				'link' => $document->get_permalink(),
 			];
 		}
 
