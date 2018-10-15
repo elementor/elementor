@@ -99,7 +99,7 @@ jobs:
     - run:
         name: setup cypress
         command: |
-          yarn cypress -D
+          npm cypress -D
     - save_cache:
         key: cypress-{{ checksum "package.json" }}
         paths:
@@ -112,7 +112,7 @@ jobs:
     - run:
         name: Build Elementor
         command: |
-          yarn
+          npm i
           grunt build
     - run:
         name: Prepare Elementor
