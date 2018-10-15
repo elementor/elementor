@@ -112,7 +112,7 @@ jobs:
           name: Build Elementor
           command: |
             yarn
-            grunt build
+            npx grunt build
       - run:
           name: Prepare Elementor
           command: |
