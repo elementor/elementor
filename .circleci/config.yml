@@ -90,7 +90,8 @@ job-references:
 
 jobs:
   e2e_setup:
-    <<: *e2e_default
+     docker:
+    - image: circleci/node
     steps:
     - checkout
     - restore_cache:
@@ -99,7 +100,7 @@ jobs:
     - run:
         name: setup cypress
         command: |
-          npm i cypress -D
+          yarn add cypress -D
     - save_cache:
         key: cypress-{{ checksum "package.json" }}
         paths:
@@ -112,7 +113,7 @@ jobs:
     - run:
         name: Build Elementor
         command: |
-          npm i
+          yarn
           grunt build
     - run:
         name: Prepare Elementor
