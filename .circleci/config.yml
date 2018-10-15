@@ -99,7 +99,7 @@ jobs:
     - run:
         name: setup cypress
         command: |
-          npm cypress -D
+          npm i cypress -D
     - save_cache:
         key: cypress-{{ checksum "package.json" }}
         paths:
