@@ -1,5 +1,7 @@
 defaults: &e2e_default
   working_directory: ~/elementor
+  environment:
+    - DOCKER_ENV: 'ci'
   machine:
     ? mysql
     ? wordpress_e2e_tests
@@ -138,12 +140,12 @@ jobs:
       - run:
           name: Setup WordPress
           command: |
-            docker-compose up -d
+            docker-compose -f .circleci/docker-compose.yml up -d
             bash ./bin/reset-e2e-tests.sh
       - run:
           name: run e2e electron
           command: |
-            npx cypress run --config --record --key $RECORD_KEY
+            npx cypress run --record --key $RECORD_KEY
 
   php54-wp-latest-build:
     <<: *php_job
