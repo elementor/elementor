@@ -211,13 +211,17 @@ class Post extends Document {
 	 * @access public
 	 *
 	 * @param array $data
+	 *
+	 * @throws \Exception
 	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
 			$template = get_post_meta( $data['post_id'], '_wp_page_template', true );
+
 			if ( empty( $template ) ) {
 				$template = 'default';
 			}
+
 			$data['settings']['template'] = $template;
 		}
 
