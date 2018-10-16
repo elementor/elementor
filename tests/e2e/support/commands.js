@@ -26,34 +26,34 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 Cypress.Commands.add( 'iframe', { prevSubject: 'element' }, ( $iframe ) => {
-    return new Cypress.Promise( ( resolve ) => {
-        $iframe.on( 'load', () => {
-            resolve( $iframe.contents().find( 'body' ) );
-        } );
-    } );
+	return new Cypress.Promise( ( resolve ) => {
+		$iframe.on( 'load', () => {
+			resolve( $iframe.contents().find( 'body' ) );
+		} );
+	} );
 } );
 
 Cypress.Commands.add( 'login', () => {
-    cy.request( {
-        url: '/wp-login.php', // assuming you've exposed a seeds route
-        method: 'POST',
-        form: true,
-        headers: {
-            wordpress_test_cookie: 'WP+Cookie+check',
-        },
-        body: {
-            log: 'admin',
-            pwd: 'password',
-            'wp-submit': 'LogIn',
-            redirect_to: '/wp-admin/',
-            testcookie: 1,
-        },
-    } );
+	cy.request( {
+		url: '/wp-login.php', // assuming you've exposed a seeds route
+		method: 'POST',
+		form: true,
+		headers: {
+			wordpress_test_cookie: 'WP+Cookie+check',
+		},
+		body: {
+			log: 'admin',
+			pwd: 'password',
+			'wp-submit': 'LogIn',
+			redirect_to: '/wp-admin/',
+			testcookie: 1,
+		},
+	} );
 } );
 
 Cypress.Commands.add( 'addElementorPage', () => {
-    cy.visit( '/wp-admin/post-new.php?post_type=page' );
-    cy.get( '[id=content-html]' ).click();
-    cy.get( '[id=content]' ).type( 'Elementor' );
-    cy.get( '[id=elementor-switch-mode-button]' ).click();
+	cy.visit( '/wp-admin/post-new.php?post_type=page' );
+	cy.get( '[id=content-html]' ).click();
+	cy.get( '[id=content]' ).type( 'Elementor' );
+	cy.get( '[id=elementor-switch-mode-button]' ).click();
 } );
