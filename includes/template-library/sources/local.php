@@ -60,7 +60,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @var array
 	 */
-	private static $_template_types = [];
+	private static $template_types = [];
 
 	/**
 	 * Post type object.
@@ -123,7 +123,7 @@ class Source_Local extends Source_Base {
 	 * @param string $type Template type.
 	 */
 	public static function add_template_type( $type ) {
-		self::$_template_types[ $type ] = $type;
+		self::$template_types[ $type ] = $type;
 	}
 
 	/**
@@ -139,8 +139,8 @@ class Source_Local extends Source_Base {
 	 * @param string $type Template type.
 	 */
 	public static function remove_template_type( $type ) {
-		if ( isset( self::$_template_types[ $type ] ) ) {
-			unset( self::$_template_types[ $type ] );
+		if ( isset( self::$template_types[ $type ] ) ) {
+			unset( self::$template_types[ $type ] );
 		}
 	}
 
@@ -309,7 +309,7 @@ class Source_Local extends Source_Base {
 				'meta_query' => [
 					[
 						'key' => Document::TYPE_META_KEY,
-						'value' => array_values( self::$_template_types ),
+						'value' => array_values( self::$template_types ),
 					],
 				],
 			]
@@ -343,7 +343,7 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|int The ID of the saved/updated template, `WP_Error` otherwise.
 	 */
 	public function save_item( $template_data ) {
-		if ( ! isset( self::$_template_types[ $template_data['type'] ] ) ) {
+		if ( ! isset( self::$template_types[ $template_data['type'] ] ) ) {
 			return new \WP_Error( 'save_error', sprintf( 'Invalid template type "%s".', $template_data['type'] ) );
 		}
 
@@ -969,7 +969,7 @@ class Source_Local extends Source_Base {
 		}
 
 		$query->query_vars['meta_key'] = Document::TYPE_META_KEY;
-		$query->query_vars['meta_value'] = array_values( self::$_template_types );
+		$query->query_vars['meta_value'] = array_values( self::$template_types );
 	}
 
 	/**
@@ -1043,7 +1043,7 @@ class Source_Local extends Source_Base {
 		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
 			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php echo __( 'All', 'elementor' ); ?></a>
 			<?php
-			foreach ( self::$_template_types as $template_type ) :
+			foreach ( self::$template_types as $template_type ) :
 				$active_class = '';
 
 				if ( $current_type === $template_type ) {
