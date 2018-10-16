@@ -28,6 +28,10 @@ class Recently_Edited extends Base_Category {
 
 		$post_types[] = Source_Local::CPT;
 
+		$template_types = Source_Local::get_template_types();
+
+		unset( $template_types['widget'] );
+
 		$recently_edited_query_args = [
 			'post_type' => $post_types,
 			'post_status' => [ 'publish', 'draft' ],
@@ -45,8 +49,7 @@ class Recently_Edited extends Base_Category {
 					],
 					[
 						'key' => Document::TYPE_META_KEY,
-						'value' => 'widget',
-						'compare' => '!=',
+						'value' => $template_types,
 					],
 				],
 			],
