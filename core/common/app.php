@@ -120,8 +120,8 @@ class App extends BaseApp {
 	}
 
 	public function print_templates() {
-		foreach ( $this->templates as $editor_template ) {
-			echo $editor_template;
+		foreach ( $this->templates as $template ) {
+			echo $template;
 		}
 	}
 
