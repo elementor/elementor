@@ -74,6 +74,13 @@ class Source_Local extends Source_Base {
 	private $post_type_object;
 
 	/**
+	 * @return array
+	 */
+	public static function get_template_types() {
+		return self::$template_types;
+	}
+
+	/**
 	 * Get local template type.
 	 *
 	 * Retrieve the template type from the post meta.
