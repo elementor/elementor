@@ -38,9 +38,16 @@ class Recently_Edited extends Base_Category {
 					'value' => 'builder',
 				],
 				[
-					'key' => Document::TYPE_META_KEY,
-					'value' => 'widget',
-					'compare' => '!=',
+					'relation' => 'or',
+					[
+						'key' => Document::TYPE_META_KEY,
+						'compare' => 'NOT EXISTS',
+					],
+					[
+						'key' => Document::TYPE_META_KEY,
+						'value' => 'widget',
+						'compare' => '!=',
+					],
 				],
 			],
 			'orderby' => 'modified',
