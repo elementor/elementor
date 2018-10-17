@@ -579,7 +579,7 @@ class Manager {
 			$this->handle_direct_action_error( 'Authentication failed' );
 		}
 
-		$action = $_REQUEST['elementor_library_action'];
+		$action = $_REQUEST['library_action'];
 
 		$result = $this->$action( $_REQUEST );
 
