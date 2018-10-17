@@ -576,7 +576,7 @@ class Manager {
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		if ( ! $ajax->verify_request_nonce() ) {
-			$this->handle_direct_action_error( 'Authentication failed' );
+			$this->handle_direct_action_error( 'Access Denied' );
 		}
 
 		$action = $_REQUEST['library_action'];
