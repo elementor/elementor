@@ -129,6 +129,7 @@ class App extends BaseApp {
 		return [
 			'version' => ELEMENTOR_VERSION,
 			'isRTL' => is_rtl(),
+			'activeModules' => array_keys( $this->get_components() ),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
