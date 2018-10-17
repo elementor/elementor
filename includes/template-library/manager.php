@@ -56,14 +56,10 @@ class Manager {
 	public function __construct() {
 		$this->register_default_sources();
 
-		add_action( 'elementor/init', [ $this, 'add_actions' ] );
+		$this->add_actions();
 	}
 
 	public function add_actions() {
-		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
-			return;
-		}
-
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_action( 'wp_ajax_elementor_library_direct_actions', [ $this, 'handle_direct_actions' ] );
 
@@ -520,6 +516,10 @@ class Manager {
 	 * @throws \Exception
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
+		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
+			throw new \Exception( 'Access Denied' );
+		}
+
 		if ( ! empty( $data['editor_post_id'] ) ) {
 			$editor_post_id = absint( $data['editor_post_id'] );
 
@@ -568,6 +568,10 @@ class Manager {
 	}
 
 	public function handle_direct_actions() {
+		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
+			return;
+		}
+
 		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
