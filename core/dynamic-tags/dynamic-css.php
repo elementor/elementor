@@ -58,7 +58,7 @@ class Dynamic_CSS extends Post {
 		return $meta;
 	}
 
-	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
 		$dynamic_settings = $controls_stack->get_settings( '__dynamic__' );
 		if ( ! empty( $dynamic_settings ) ) {
 			$controls = array_intersect_key( $controls, $dynamic_settings );
@@ -69,7 +69,7 @@ class Dynamic_CSS extends Post {
 
 			foreach ( $controls as $control ) {
 				if ( ! empty( $control['style_fields'] ) ) {
-					$this->add_repeater_control_style_rules( $controls_stack, $control['style_fields'], $values[ $control['name'] ], $placeholders, $replacements );
+					$this->add_repeater_control_style_rules( $controls_stack, $control, $values[ $control['name'] ], $placeholders, $replacements );
 				}
 
 				if ( empty( $control['selectors'] ) ) {
