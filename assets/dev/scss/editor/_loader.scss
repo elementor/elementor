@@ -29,7 +29,7 @@
 	$animation-time: 1.8s;
 
 	position: absolute;
-	background-color: $editor-background;
+	background-color: $editor-lightest;
 	animation: load $animation-time linear infinite;
 
 	&:nth-of-type(1) {
