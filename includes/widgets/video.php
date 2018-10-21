@@ -285,7 +285,7 @@ class Widget_Video extends Widget_Base {
 				'label_on' => __( 'Show', 'elementor' ),
 				'default' => 'yes',
 				'condition' => [
-					'video_type' => [ 'youtube', 'dailymotion' ],
+					'video_type' => [ 'dailymotion' ],
 				],
 			]
 		);
@@ -873,7 +873,6 @@ class Widget_Video extends Widget_Base {
 				'loop',
 				'controls',
 				'mute',
-				'showinfo',
 				'rel',
 				'modestbranding',
 			];
