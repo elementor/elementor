@@ -512,6 +512,22 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
+							'allow_svg' => [
+								'label' => __( 'Enable SVG Uploads', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '',
+									'options' => [
+										'' => __( 'Disable', 'elementor' ),
+										1 => __( 'Enable', 'elementor' ),
+									],
+									'desc' => __( 'Please note! Allowing uploads of any files (SVG included) is a potential security risk.', 'elementor' ) .
+										'<br>' .
+										__( 'Elementor will try to sanitize the SVG files, removing potential malicious code and scripts.', 'elementor' ) .
+										'<br>' .
+										__( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
+								],
+							],
 							'edit_buttons' => [
 								'label' => __( 'Editing Handles', 'elementor' ),
 								'field_args' => [

@@ -113,7 +113,7 @@ class Widget_Icon extends Widget_Base {
 				'options' => [
 					'default' => [
 						'title' => __( 'Icon Picker', 'elementor' ),
-						'icon' => 'fa fa-fonticons',
+						'icon' => 'fa fa-star',
 					],
 					'svg' => [
 						'title' => __( 'SVG', 'elementor' ),
@@ -137,20 +137,34 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'svg_icon',
-			[
-				'label' => __( 'SVG Icon', 'elementor' ),
-				'type' => Controls_Manager::MEDIA,
-				'media_type' => 'image/svg+xml',
-				'condition' => [
-					'icon_source' => 'svg',
-				],
-				'upload_params' => [
-					'svg_type' => 'icon',
-                ],
-			]
-		);
+		if ( Svg_Handler::is_svg_uploads_enabled() && Svg_Handler::svg_sanitizer_can_run() ) {
+			$this->add_control(
+				'svg_icon',
+				[
+					'label' => __( 'SVG Icon', 'elementor' ),
+					'type' => Controls_Manager::MEDIA,
+					'media_type' => Svg_Handler::MIME_TYPE,
+					'condition' => [
+						'icon_source' => 'svg',
+					],
+					'upload_params' => [
+						'svg_type' => 'icon',
+					],
+				]
+			);
+		} else {
+			$this->add_control(
+				'html_disabled_alert',
+				[
+					'raw' => __( 'SVG uploads are disabled. You can', 'elementor' ) . ' ' . sprintf( '<a href="%s" target="_blank">%s</a>', Settings::get_url() . '#tab-advanced', __( 'Enable them', 'elementor' ) ),
+					'type' => Controls_Manager::RAW_HTML,
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
+					'condition' => [
+						'icon_source' => 'svg',
+					],
+				]
+			);
+		}
 
 		$this->add_control(
 			'view',
@@ -409,8 +423,8 @@ class Widget_Icon extends Widget_Base {
 	}
 
 	public function get_inline_svg( $attachment_id ) {
-	    return Svg_Handler::get_inline_svg( $attachment_id );
-    }
+		return Svg_Handler::get_inline_svg( $attachment_id );
+	}
 
 	/**
 	 * Render icon widget output on the frontend.
@@ -482,9 +496,13 @@ class Widget_Icon extends Widget_Base {
 				svg = ( 'svg' === settings.icon_source ); #>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<# if ( svg ) { #>
-					<div class="elementor-icon-svg-placeholder">{{{ elementor.helpers.getInlineSvg( settings.svg_icon.id, settings.svg_icon.url, view ) }}}</div>
-				<# } else { #>
+				<# if ( svg ) {
+					if ( settings.svg_icon ) { #>
+						<div class="elementor-icon-svg-placeholder">{{{ elementor.helpers.getInlineSvg( settings.svg_icon.id, settings.svg_icon.url, view ) }}}</div>
+					<# } else { #>
+						<div class="elementor-icon-svg-placeholder"></div>
+					<# }
+				} else { #>
 					<i class="{{ settings.icon }}" aria-hidden="true"></i>
 				<# } #>
 			</{{{ iconTag }}}>

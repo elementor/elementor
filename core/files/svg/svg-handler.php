@@ -36,6 +36,14 @@ class Svg_Handler {
 		return 'svg-handler';
 	}
 
+	public static function is_svg_uploads_enabled() {
+		return !! get_option( 'elementor_allow_svg', false );
+	}
+
+	public static function svg_sanitizer_can_run() {
+		return class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
+	}
+
 	public function set_attachment_id( $attachment_id ) {
 		return $this->attachment_id = $attachment_id;
 	}
@@ -481,10 +489,43 @@ class Svg_Handler {
 		return $sanitized;
 	}
 
+	public function wp_prepare_attachment_for_js( $attachment_data, $attachment, $meta ) {
+		if ( 'image' !== $attachment_data['type'] || 'svg+xml' !== $attachment_data['subtype'] || ! class_exists( 'SimpleXMLElement' ) ) {
+			return $attachment_data;
+		}
+
+		$svg = $this->get_inline_svg( $attachment->ID );
+		if ( ! $svg ) {
+			return $attachment_data;
+		}
+
+		$svg = new \SimpleXMLElement( $svg );
+		$src = $attachment_data['url'];
+		$width = (int) $svg['width'];
+		$height = (int) $svg['height'];
+
+		// Media Gallery
+		$attachment_data['image'] = compact( 'src', 'width', 'height' );
+		$attachment_data['thumb'] = compact( 'src', 'width', 'height' );
+
+		// Single Details of Image
+		$attachment_data['sizes']['full'] = [
+			'height' => $height,
+			'width' => $width,
+			'url' => $src,
+			'orientation' => $height > $width ? 'portrait' : 'landscape',
+		];
+		return $attachment_data;
+	}
+
 	public function __construct() {
+		if ( ! self::is_svg_uploads_enabled() || ! self::svg_sanitizer_can_run() ) {
+			return;
+		}
 		add_filter( 'upload_mimes', [ $this, 'upload_mimes' ] );
 		add_filter( 'wp_handle_upload_prefilter', [ $this, 'wp_handle_upload_prefilter' ] );
 		add_filter( 'wp_check_filetype_and_ext', [ $this, 'wp_check_filetype_and_ext' ], 10, 4 );
+		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'wp_prepare_attachment_for_js' ], 10, 3 );
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'delete_meta_cache' ] );
 	}
 }
