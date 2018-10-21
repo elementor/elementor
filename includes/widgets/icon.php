@@ -483,7 +483,7 @@ class Widget_Icon extends Widget_Base {
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
 				<# if ( svg ) { #>
-					<div class="elementor-icon-svg-placeholder">{{{ elementor.helpers.getInlineSvg( settings.svg_icon.id, settings.svg_icon.url ) }}}</div>
+					<div class="elementor-icon-svg-placeholder">{{{ elementor.helpers.getInlineSvg( settings.svg_icon.id, settings.svg_icon.url, view ) }}}</div>
 				<# } else { #>
 					<i class="{{ settings.icon }}" aria-hidden="true"></i>
 				<# } #>

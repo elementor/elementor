@@ -13,7 +13,7 @@ helpers = {
 		},
 	},
 
-	getInlineSvg: function( svgId, svgUrl ) {
+	getInlineSvg: function( svgId, svgUrl, view ) {
 		if ( ! svgId ) {
 			return;
 		}
@@ -27,6 +27,9 @@ helpers = {
 			const svgXML = $( data ).find( 'svg' )[ 0 ];
 			if ( svgXML ) {
 				self._inlineSvg[ svgId ] = $( data ).find( 'svg' )[ 0 ].outerHTML;
+				if ( view ) {
+					view.render();
+				}
 				elementor.channels.editor.trigger( 'svg:insertion', data, svgId );
 			}
 		} );
