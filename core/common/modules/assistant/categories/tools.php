@@ -4,21 +4,20 @@ namespace Elementor\Core\Common\Modules\Assistant\Categories;
 
 use Elementor\Core\Common\Modules\Assistant\Base_Category;
 use Elementor\Core\RoleManager\Role_Manager;
-use Elementor\Plugin;
-use Elementor\Tools;
+use Elementor\Tools as ElementorTools;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Configurations extends Base_Category {
+class Tools extends Base_Category {
 
 	public function get_title() {
-		return __( 'Configurations', 'elementor' );
+		return __( 'Tools', 'elementor' );
 	}
 
 	public function get_category_items( array $options = [] ) {
-		$tools_url = Tools::get_url();
+		$tools_url = ElementorTools::get_url();
 
 		$items = [
 			[
@@ -26,19 +25,22 @@ class Configurations extends Base_Category {
 				'icon' => 'settings',
 				'link' => $tools_url,
 			],
-		];
-
-		foreach ( Plugin::$instance->tools->get_tabs() as $tab_name => $tab ) {
-			if ( 'general' === $tab_name ) {
-				continue;
-			}
-
-			$items[] = [
-				'title' => $tab['label'],
+			[
+				'title' => __( 'Replace URL', 'elementor' ),
 				'icon' => 'settings',
-				'link' => $tools_url . '#tab-' . $tab_name,
-			];
-		}
+				'link' => $tools_url . '#tab-replace_url',
+			],
+			[
+				'title' => __( 'Version Control', 'elementor' ),
+				'icon' => 'settings',
+				'link' => $tools_url . '#tab-versions',
+			],
+			[
+				'title' => __( 'Maintenance Mode', 'elementor' ),
+				'icon' => 'settings',
+				'link' => $tools_url . '#tab-maintenance_mode',
+			],
+		];
 
 		$items[] = [
 			'title' => __( 'Role Manager', 'elementor' ),
