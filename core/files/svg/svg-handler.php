@@ -53,9 +53,12 @@ class Svg_Handler {
 		update_post_meta( $this->attachment_id, self::META_KEY, $meta );
 	}
 
-
 	protected function delete_meta() {
 		delete_post_meta( $this->attachment_id, self::META_KEY );
+	}
+
+	public function delete_meta_cache() {
+		delete_post_meta_by_key( self::META_KEY );
 	}
 
 	public function read_from_file( ) {
@@ -64,7 +67,7 @@ class Svg_Handler {
 
 	public static function get_inline_svg( $attachment_id ) {
 		$svg = get_post_meta( $attachment_id, self::META_KEY, true );
-		if ( empty( $svg ) ) {
+		if ( ! empty( $svg ) ) {
 			return $svg;
 		}
 
@@ -77,19 +80,26 @@ class Svg_Handler {
 	}
 
 	public function upload_mimes( $allowed_types ) {
-		$allowed_types['svg']  = self::MIME_TYPE;
+		if ( $this->is_elementor_media_upload() ) {
+			$allowed_types['svg'] = self::MIME_TYPE;
+		}
 		return $allowed_types;
 	}
 
 	public function wp_handle_upload_prefilter( $file ) {
-		if ( self::MIME_TYPE !== $file['type'] ) {
+		if ( ! $this->is_elementor_media_upload() || self::MIME_TYPE !== $file['type'] ) {
 			return $file;
 		}
+
 		if ( ! $this->sanitize_svg( $file['tmp_name'] ) ) {
 			$file['error'] = __( 'Invalid SVG Format, file not uploaded for security reasons', 'elementor' );
 		}
 
 		return $file;
+	}
+
+	private function is_elementor_media_upload() {
+		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-editor-upload' === $_POST['uploadTypeCaller'];
 	}
 
 	/**
@@ -164,10 +174,10 @@ class Svg_Handler {
 	}
 
 	private function is_allowed_tag( $element ) {
-		$allowed_tags = [
-			'svg',
-			'path'
-		];
+		static $allowed_tags = false;
+		if ( false === $allowed_tags ) {
+			$allowed_tags = $this->get_allowed_elements();
+		}
 
 		if ( ! in_array( strtolower( $element->tagName ), $allowed_tags ) ) {
 			$element->parentNode->removeChild( $element );
@@ -191,12 +201,145 @@ class Svg_Handler {
 		return preg_match( '~^((https?|ftp|file):)?//~xi', $value );
 	}
 
-	private function validate_allowed_attributes( $element ) {
-		$allowed_attributes  = [
-			'd',
-			'xmlns',
+	private function get_allowed_attributes() {
+		$allowed_attributes = [
+			'class',
+			'clip-path',
+			'clip-rule',
+			'fill',
+			'fill-opacity',
+			'fill-rule',
+			'filter',
+			'id',
+			'mask',
+			'opacity',
+			'stroke',
+			'stroke-dasharray',
+			'stroke-dashoffset',
+			'stroke-linecap',
+			'stroke-linejoin',
+			'stroke-miterlimit',
+			'stroke-opacity',
+			'stroke-width',
+			'style',
+			'systemlanguage',
+			'transform',
+			'href',
+			'xlink:href',
+			'xlink:title',
+			'cx',
+			'cy',
+			'r',
+			'requiredfeatures',
+			'clippathunits',
+			'type',
+			'rx',
+			'ry',
+			'color-interpolation-filters',
+			'stddeviation',
+			'filterres',
+			'filterunits',
+			'height',
+			'primitiveunits',
+			'width',
+			'x',
+			'y',
+			'font-size',
+			'display',
+			'font-family',
+			'font-style',
+			'font-weight',
+			'text-anchor',
+			'marker-end',
+			'marker-mid',
+			'marker-start',
+			'x1',
+			'x2',
+			'y1',
+			'y2',
+			'gradienttransform',
+			'gradientunits',
+			'spreadmethod',
+			'markerheight',
+			'markerunits',
+			'markerwidth',
+			'orient',
+			'preserveaspectratio',
+			'refx',
+			'refy',
 			'viewbox',
+			'maskcontentunits',
+			'maskunits',
+			'd',
+			'patterncontentunits',
+			'patterntransform',
+			'patternunits',
+			'points',
+			'fx',
+			'fy',
+			'offset',
+			'stop-color',
+			'stop-opacity',
+			'xmlns',
+			'xmlns:se',
+			'xmlns:xlink',
+			'xml:space',
+			'method',
+			'spacing',
+			'startoffset',
+			'dx',
+			'dy',
+			'rotate',
+			'textlength',
 		];
+
+		return apply_filters( 'elementor/files/svg/allowed_attributes', $allowed_attributes );
+	}
+
+	private function get_allowed_elements() {
+		$allowed_elements = [
+			'a',
+			'circle',
+			'clippath',
+			'defs',
+			'style',
+			'desc',
+			'ellipse',
+			'fegaussianblur',
+			'filter',
+			'foreignobject',
+			'g',
+			'image',
+			'line',
+			'lineargradient',
+			'marker',
+			'mask',
+			'metadata',
+			'path',
+			'pattern',
+			'polygon',
+			'polyline',
+			'radialgradient',
+			'rect',
+			'stop',
+			'svg',
+			'switch',
+			'symbol',
+			'text',
+			'textpath',
+			'title',
+			'tspan',
+			'use',
+		];
+		return apply_filters( 'elementor/files/svg/allowed_elements', $allowed_elements );
+	}
+
+	private function validate_allowed_attributes( $element ) {
+		static $allowed_attributes = false;
+		if ( false === $allowed_attributes ) {
+			$allowed_attributes = $this->get_allowed_attributes();
+		}
+
 		for ( $x = $element->attributes->length - 1; $x >= 0; $x-- ) {
 			// get attribute name
 			$attr_name = $element->attributes->item($x)->name;
@@ -328,7 +471,8 @@ class Svg_Handler {
 		$this->sanitize_elements();
 
 		// Export sanitized svg to string
-		$sanitized = $this->svg_dom->saveXML( $this->svg_dom, LIBXML_NOEMPTYTAG );
+		// Using documentElement to strip out <?xml version="1.0" encoding="UTF-8"...
+		$sanitized = $this->svg_dom->saveXML( $this->svg_dom->documentElement, LIBXML_NOEMPTYTAG );
 
 		// Restore defaults
 		libxml_disable_entity_loader( $libxml_disable_entity_loader );
@@ -339,7 +483,8 @@ class Svg_Handler {
 
 	public function __construct() {
 		add_filter( 'upload_mimes', [ $this, 'upload_mimes' ] );
-		add_filter( 'wp_handle_upload_prefilter', array( $this, 'wp_handle_upload_prefilter' ) );
-		add_filter( 'wp_check_filetype_and_ext', array( $this, 'wp_check_filetype_and_ext' ), 10, 4 );
+		add_filter( 'wp_handle_upload_prefilter', [ $this, 'wp_handle_upload_prefilter' ] );
+		add_filter( 'wp_check_filetype_and_ext', [ $this, 'wp_check_filetype_and_ext' ], 10, 4 );
+		add_action( 'elementor/core/files/clear_cache', [ $this, 'delete_meta_cache' ] );
 	}
 }
