@@ -343,14 +343,20 @@ class Frontend extends App {
 			true
 		);
 
+		$dependencies = [
+			'elementor-dialog',
+			'elementor-waypoints',
+			'jquery-swiper',
+		];
+
+		if ( current_user_can( 'manage_options' ) ) {
+			$dependencies[] = 'elementor-common';
+		}
+
 		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
-			[
-				'elementor-dialog',
-				'elementor-waypoints',
-				'jquery-swiper',
-			],
+			$dependencies,
 			ELEMENTOR_VERSION,
 			true
 		);
