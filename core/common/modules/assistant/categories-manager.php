@@ -15,6 +15,7 @@ class Categories_Manager {
 
 	private $categories_list = [
 		'recently_edited',
+		'settings',
 		'tools',
 	];
 
