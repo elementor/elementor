@@ -106,6 +106,7 @@ class Admin extends App {
 			'elementor-admin',
 			$this->get_css_assets_url( 'admin' . $direction_suffix ),
 			[
+				'elementor-common',
 				'elementor-icons',
 			],
 			ELEMENTOR_VERSION

@@ -12,32 +12,32 @@ class App extends BaseApp {
 	public function __construct() {
 		$this->add_default_templates();
 
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'register_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'register_scripts' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
 
-		add_action( 'elementor/editor/before_enqueue_styles', [ $this, 'enqueue_styles' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		add_action( 'elementor/editor/before_enqueue_styles', [ $this, 'register_styles' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'register_styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ] );
 
 		add_action( 'elementor/editor/footer', [ $this, 'print_templates' ] );
 		add_action( 'admin_footer', [ $this, 'print_templates' ] );
-
-		if ( current_user_can( 'manage_options' ) ) {
-			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
-			add_action( 'wp_footer', [ $this, 'print_templates' ] );
-		}
+		add_action( 'wp_footer', [ $this, 'print_templates' ] );
 	}
 
 	public function init_components() {
 		$this->add_component( 'ajax', new Ajax() );
-		$this->add_component( 'assistant', new Assistant() );
+
+		if ( current_user_can( 'manage_options' ) ) {
+			$this->add_component( 'assistant', new Assistant() );
+		}
 	}
 
 	public function get_name() {
 		return 'common';
 	}
 
-	public function enqueue_scripts() {
+	public function register_scripts() {
 		wp_register_script(
 			'backbone-marionette',
 			$this->get_js_assets_url( 'backbone.marionette', 'assets/lib/backbone/' ),
@@ -81,20 +81,16 @@ class App extends BaseApp {
 			true
 		);
 
-		wp_enqueue_script( 'elementor-common' );
-
 		$this->print_config();
 	}
 
-	public function enqueue_styles() {
+	public function register_styles() {
 		wp_register_style(
 			'elementor-common',
 			$this->get_css_assets_url( 'common', null, 'default', true ),
 			[],
 			ELEMENTOR_VERSION
 		);
-
-		wp_enqueue_style( 'elementor-common' );
 	}
 
 	/**
