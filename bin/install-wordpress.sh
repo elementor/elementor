@@ -53,6 +53,7 @@ echo -e $(status_message "Installing WordPress...")
 # prevents permissions errors. See: https://github.com/WordPress/gutenberg/pull/8427#issuecomment-410232369
 docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm -u 33 $CLI core install --title="$SITE_TITLE" --admin_user=admin --admin_password=password --admin_email=admin@localhost.local --skip-email --url=http://localhost:$HOST_PORT >/dev/null
 docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm -u 33 $CLI config set AUTOSAVE_INTERVAL 2 --add --type=constant >/dev/null
+docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm -u 33 $CLI config set DISABLE_WP_CRON true --add --type=constant >/dev/null
 
 if [ "$WP_VERSION" == "latest" ]; then
 	# Check for WordPress updates, to make sure we're running the very latest version.
