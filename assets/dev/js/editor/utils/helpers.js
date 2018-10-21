@@ -1,6 +1,7 @@
 var helpers;
 
 helpers = {
+	_inlineSvg: [],
 	_enqueuedFonts: [],
 
 	elementsHierarchy: {
@@ -10,6 +11,26 @@ helpers = {
 				section: null,
 			},
 		},
+	},
+
+	getInlineSvg: function( svgId, svgUrl ) {
+		if ( ! svgId ) {
+			return;
+		}
+
+		if ( this._inlineSvg.hasOwnProperty( svgId ) ) {
+			return this._inlineSvg[ svgId ];
+		}
+
+		const self = this;
+		$.get( svgUrl, ( data ) => {
+			const svgXML = $( data ).find( 'svg' )[ 0 ];
+			if ( svgXML ) {
+				self._inlineSvg[ svgId ] = $( data ).find( 'svg' )[ 0 ].outerHTML;
+				elementor.channels.editor.trigger( 'svg:insertion', data, svgId );
+			}
+		} );
+		return self._inlineSvg[ svgId ];
 	},
 
 	enqueueFont: function( font ) {

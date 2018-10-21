@@ -7,6 +7,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		ui.controlMedia = '.elementor-control-media';
 		ui.mediaImage = '.elementor-control-media-image';
+		ui.mediaSvg = '.elementor-control-media-svg';
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.deleteButton = '.elementor-control-media-delete';
@@ -25,6 +26,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return this.model.get( 'media_type' );
 	},
 
+	getUploadParams: function() {
+		return this.model.get( 'upload_params' );
+	},
+
 	applySavedValue: function() {
 		var url = this.getControlValue( 'url' ),
 			mediaType = this.getMediaType();
@@ -33,6 +38,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
+		} else if ( mediaType.indexOf( 'svg' ) > -1 ) {
+			this.ui.mediaSvg.css( 'background-image', url ? 'url(' + url + ')' : '' );
 		}
 
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
@@ -44,6 +51,16 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		this.frame.open();
+
+		const uploadParams = this.getUploadParams();
+		if ( uploadParams ) {
+			this.frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-editor-upload' );
+			for ( let param in uploadParams ) {
+				if ( uploadParams.hasOwnProperty( param ) ) {
+					this.frame.uploader.uploader.param( param, uploadParams[ param ] );
+				}
+			}
+		}
 	},
 
 	deleteImage: function( event ) {
@@ -57,10 +74,19 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.applySavedValue();
 	},
 
+	getLibrary: function() {
+		const type = this.getMediaType();
+		//if ( 'image' === type || 'video' === type ) {
+			return wp.media.query( { type: type } );
+		//}
+		//return { type: type };
+	},
+
 	/**
 	 * Create a media modal select frame, and store it so the instance can be reused when needed.
 	 */
 	initFrame: function() {
+		const self = this;
 		// Set current doc id to attach uploaded images.
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
@@ -70,7 +96,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			states: [
 				new wp.media.controller.Library( {
 					title: elementor.translate( 'insert_media' ),
-					library: wp.media.query( { type: this.getMediaType() } ),
+					library: self.getLibrary(),
 					multiple: false,
 					date: false,
 				} ),

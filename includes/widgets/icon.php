@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Files\Svg\Svg_Handler;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -103,11 +105,50 @@ class Widget_Icon extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon_source',
+			[
+				'label' => __( 'Icon Source', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
+				'options' => [
+					'default' => [
+						'title' => __( 'Icon Picker', 'elementor' ),
+						'icon' => 'fa fa-fonticons',
+					],
+					'svg' => [
+						'title' => __( 'SVG', 'elementor' ),
+						'icon' => 'fa fa-upload',
+					],
+				],
+				'separator' => 'before',
+				'default' => 'default',
+			]
+		);
+
+		$this->add_control(
 			'icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
 				'default' => 'fa fa-star',
+				'condition' => [
+					'icon_source' => [ 'default', '' ],
+				],
+			]
+		);
+
+		$this->add_control(
+			'svg_icon',
+			[
+				'label' => __( 'SVG Icon', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
+				'media_type' => 'image/svg+xml',
+				'condition' => [
+					'icon_source' => 'svg',
+				],
+				'upload_params' => [
+					'svg_type' => 'icon',
+                ],
 			]
 		);
 
@@ -367,6 +408,10 @@ class Widget_Icon extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	public function get_inline_svg( $attachment_id ) {
+	    return Svg_Handler::get_inline_svg( $attachment_id );
+    }
+
 	/**
 	 * Render icon widget output on the frontend.
 	 *
@@ -409,7 +454,14 @@ class Widget_Icon extends Widget_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<<?php echo $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
+			<?php
+			if ( ! empty( $settings['icon_source'] ) && 'svg' !== $settings['icon_source'] ) { ?>
 				<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
+			<?php
+			} else {
+				echo $this->get_inline_svg( $settings['svg_icon']['id'] );
+			}
+			?>
 			</<?php echo $icon_tag; ?>>
 		</div>
 		<?php
@@ -426,10 +478,15 @@ class Widget_Icon extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-				iconTag = link ? 'a' : 'div'; #>
+				iconTag = link ? 'a' : 'div',
+				svg = ( 'svg' === settings.icon_source ); #>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<i class="{{ settings.icon }}" aria-hidden="true"></i>
+				<# if ( svg ) { #>
+					<div class="elementor-icon-svg-placeholder">{{{ elementor.helpers.getInlineSvg( settings.svg_icon.id, settings.svg_icon.url ) }}}</div>
+				<# } else { #>
+					<i class="{{ settings.icon }}" aria-hidden="true"></i>
+				<# } #>
 			</{{{ iconTag }}}>
 		</div>
 		<?php

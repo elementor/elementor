@@ -141,6 +141,8 @@ class Control_Media extends Control_Base_Multiple {
 						<# } else if( 'video' === data.media_type ) { #>
 							<video class="elementor-control-media-video" preload="metadata"></video>
 							<i class="fa fa-video-camera"></i>
+						<# } else if( -1 < data.media_type.indexOf( 'svg' ) ) { #>
+							<div class="elementor-control-media-svg"></div>
 						<# } #>
 						<div class="elementor-control-media-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>
 					</div>
