@@ -40,6 +40,9 @@ class Widget_Star_Rating extends Widget_Base {
 						'step' => 0.1,
 					],
 				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-star-rating:before' => 'width: calc({{SIZE}}% * 20)',
+				],
 			]
 		);
 
@@ -79,10 +82,27 @@ class Widget_Star_Rating extends Widget_Base {
 		);
 
 		$this->add_control(
+			'star_style',
+			[
+				'label' => __( 'Star Style', 'elementor-pro' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'fontawesome' => __( 'Font Awesome', 'elementor' ),
+					'unicode' => __( 'Unicode', 'elementor' ),
+				],
+				'render_type' => 'template',
+				'prefix_class' => 'elementor--star-style-',
+			]
+		);
+
+		$this->add_control(
 			'stars_color',
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-star-rating:before' => 'color: {{VALUE}}',
+				],
 			]
 		);
 
@@ -92,7 +112,7 @@ class Widget_Star_Rating extends Widget_Base {
 				'label' => __( 'Unmarked Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating' => 'background-color: {{VALUE}}',
+					'{{WRAPPER}} .elementor-star-rating' => 'color: {{VALUE}}',
 				],
 			]
 		);
@@ -119,19 +139,16 @@ class Widget_Star_Rating extends Widget_Base {
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-		if ( ! empty( $settings['rating']['size'] ) ) {
-			$rating = ( $settings['rating']['size'] * 20 );
-			$rating = 100 < $rating ? 100 : $rating;
-			$rating_attr = '--rating: ' . $rating . '%;';
-			$stars_color = ! empty( $settings['stars_color'] ) ? '--stars-color: ' . $settings['stars_color'] . ';' : '';
 			$icon = '&#61445;&#61445;&#61445;&#61445;&#61445;';
 
+			if ( 'unicode' == $settings['star_style'] ) {
+				$icon = '&#9733;&#9733;&#9733;&#9733;&#9733;';
+			}
+
 			$this->add_render_attribute( 'icon_wrapper', 'class', 'elementor-star-rating' );
-			$this->add_render_attribute( 'icon_wrapper', 'style', $rating_attr . ' ' . $stars_color );
 			$this->add_render_attribute( 'icon_wrapper', 'title', $settings['rating']['size'] );
 
 			echo '<div ' . $this->get_render_attribute_string( 'icon_wrapper' ) . '>' . $icon . '</div>';
-		}
 	}
 
 	protected function _content_template() {}
