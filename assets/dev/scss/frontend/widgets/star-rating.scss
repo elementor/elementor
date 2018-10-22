@@ -1,10 +1,27 @@
 .elementor-star-rating {
-	background-color: #cccccc;
-	--stars-color: #ffc72f;
-	background-image: linear-gradient( to right, var(--stars-color) var(--rating), transparent var(--rating) );
+	color: #ccc;
 	font-family: FontAwesome;
-	background-clip: text;
-	-webkit-background-clip: text;
-	color: transparent;
 	display: inline-block;
+	position: relative;
+
+	&:before {
+		content: '';
+		display: block;
+		font-size: inherit;
+		font-family: inherit;
+		position: absolute;
+		overflow: hidden;
+		color: #ffc72f;
+		top: 0;
+		left: 0;
+	}
+}
+
+.elementor--star-style-unicode {
+	.elementor-star-rating {
+		font-family: 'Arial', 'Helvetica', sans-serif;
+		&:before {
+			content: '★★★★★' ;
+		}
+	}
 }
