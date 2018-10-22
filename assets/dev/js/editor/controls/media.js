@@ -55,7 +55,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		const uploadParams = this.getUploadParams();
 		if ( uploadParams ) {
 			this.frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-editor-upload' );
-			for ( let param in uploadParams ) {
+			for ( param in uploadParams ) {
 				if ( uploadParams.hasOwnProperty( param ) ) {
 					this.frame.uploader.uploader.param( param, uploadParams[ param ] );
 				}
