@@ -123,7 +123,7 @@ class Widget_Star_Rating extends Widget_Base {
 			$rating = ( $settings['rating']['size'] * 20 );
 			$rating = 100 < $rating ? 100 : $rating;
 			$rating_attr = '--rating: ' . $rating . '%;';
-			$stars_color = '--stars-color: ' . $settings['stars_color'] . ';';
+			$stars_color = ! empty( $settings['stars_color'] ) ? '--stars-color: ' . $settings['stars_color'] . ';' : '';
 			$icon = '&#61445;&#61445;&#61445;&#61445;&#61445;';
 
 			$this->add_render_attribute( 'icon_wrapper', 'class', 'elementor-star-rating' );
