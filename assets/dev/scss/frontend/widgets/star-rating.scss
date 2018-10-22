@@ -1,0 +1,10 @@
+.elementor-star-rating {
+	background-color: #cccccc;
+	--stars-color: #ffc72f;
+	background-image: linear-gradient( to right, var(--stars-color) var(--rating), transparent var(--rating) );
+	font-family: FontAwesome;
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	display: inline-block;
+}
