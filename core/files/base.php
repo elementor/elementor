@@ -55,6 +55,8 @@ abstract class Base {
 	}
 
 	public function __construct( $file_name ) {
+		$file_name = apply_filters( 'elementor/files/file_name', $file_name, $this );
+
 		$this->set_file_name( $file_name );
 
 		$this->set_files_dir( static::DEFAULT_FILES_DIR );
