@@ -122,6 +122,7 @@ class Widget_Icon extends Widget_Base {
 				],
 				'separator' => 'before',
 				'default' => 'default',
+				'prefix_class' => 'elementor-icon-type-',
 			]
 		);
 
@@ -263,7 +264,7 @@ class Widget_Icon extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}}; fill: {{VALUE}};',
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
@@ -283,7 +284,7 @@ class Widget_Icon extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}}; fill: {{VALUE}};',
 				],
 			]
 		);
@@ -306,6 +307,7 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover svg, {{WRAPPER}}.elementor-view-default .elementor-icon:hover svg' => 'border-color: {{VALUE}}; fill: {{VALUE}}',
 				],
 			]
 		);
@@ -321,7 +323,7 @@ class Widget_Icon extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'color: {{VALUE}}; fill: {{VALUE}};',
 				],
 			]
 		);
@@ -349,8 +351,10 @@ class Widget_Icon extends Widget_Base {
 						'max' => 300,
 					],
 				],
+				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}:not(.elementor-icon-type-svg) .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}.elementor-icon-type-svg .elementor-icon svg' => 'width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -385,7 +389,7 @@ class Widget_Icon extends Widget_Base {
 					'unit' => 'deg',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
+					'{{WRAPPER}} .elementor-icon i, {{WRAPPER}} .elementor-icon svg' => 'transform: rotate({{SIZE}}{{UNIT}});',
 				],
 			]
 		);
