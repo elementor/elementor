@@ -42,7 +42,7 @@ until $(curl -L http://$HOST_IP:$HOST_PORT -so - 2>&1 | grep -q "WordPress"); do
 done
 echo ''
 
-# If this is the test site, we reset the database so no posts/comments/etc.
+# If Perform advanced options such as housekeeping, archiving, renaming, transferring, or removing your project.this is the test site, we reset the database so no posts/comments/etc.
 # dirty up the tests.
 echo -e $(status_message "Resetting test database...")
 docker-compose $DOCKER_COMPOSE_FILE_OPTIONS run --rm -u 33:33 $CLI db reset --yes >/dev/null
