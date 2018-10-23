@@ -1,9 +1,7 @@
-var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
-	ControlMediaItemView;
-
-ControlMediaItemView = ControlMultipleBaseItemView.extend( {
+const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
+const ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	ui: function() {
-		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
+		const ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.controlMedia = '.elementor-control-media';
 		ui.mediaImage = '.elementor-control-media-image';
@@ -31,7 +29,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	applySavedValue: function() {
-		var url = this.getControlValue( 'url' ),
+		const url = this.getControlValue( 'url' ),
 			mediaType = this.getMediaType();
 
 		if ( 'image' === mediaType ) {
@@ -55,7 +53,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		const uploadParams = this.getUploadParams();
 		if ( uploadParams ) {
 			this.frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-editor-upload' );
-			for ( param in uploadParams ) {
+			for ( const param in uploadParams ) {
 				if ( uploadParams.hasOwnProperty( param ) ) {
 					this.frame.uploader.uploader.param( param, uploadParams[ param ] );
 				}
@@ -115,7 +113,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.trigger( 'before:select' );
 
 		// Get the attachment from the modal frame.
-		var attachment = this.frame.state().get( 'selection' ).first().toJSON();
+		const attachment = this.frame.state().get( 'selection' ).first().toJSON();
 
 		if ( attachment.url ) {
 			this.setValue( {
