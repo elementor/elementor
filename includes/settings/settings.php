@@ -390,6 +390,7 @@ class Settings extends Settings_Page {
 								'field_args' => [
 									'type' => 'number',
 									'attributes' => [
+										'min' => 300,
 										'placeholder' => '1140',
 										'class' => 'medium-text',
 									],
