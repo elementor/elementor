@@ -76,15 +76,32 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->start_controls_section(
 			'section_stars_style',
 			[
-				'label' => __( 'Stars', 'elementor-pro' ),
+				'label' => __( 'Stars', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_size',
+			[
+				'label' => __( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-star-rating' => 'font-size: {{SIZE}}{{UNIT}}',
+				],
 			]
 		);
 
 		$this->add_control(
 			'star_style',
 			[
-				'label' => __( 'Star Style', 'elementor-pro' ),
+				'label' => __( 'Star Style', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'fontawesome' => __( 'Font Awesome', 'elementor' ),
@@ -92,6 +109,26 @@ class Widget_Star_Rating extends Widget_Base {
 				],
 				'render_type' => 'template',
 				'prefix_class' => 'elementor--star-style-',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'unmarked_star_style',
+			[
+				'label' => __( 'Unmarked Star Style', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
+				'options' => [
+					'default' => [
+						'title' => __( 'Default', 'elementor' ),
+						'icon' => 'fa fa-star',
+					],
+					'outline' => [
+						'title' => __( 'Outline', 'elementor' ),
+						'icon' => 'fa fa-star-o',
+					],
+				],
 			]
 		);
 
@@ -103,6 +140,7 @@ class Widget_Star_Rating extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-star-rating:before' => 'color: {{VALUE}}',
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -117,23 +155,6 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
-			'icon_size',
-			[
-				'label' => __( 'Size', 'elementor-pro' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 100,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating' => 'font-size: {{SIZE}}{{UNIT}}',
-				],
-			]
-		);
-
 		$this->end_controls_section();
 	}
 
@@ -141,8 +162,18 @@ class Widget_Star_Rating extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 			$icon = '&#61445;&#61445;&#61445;&#61445;&#61445;';
 
-			if ( 'unicode' == $settings['star_style'] ) {
+			if ( 'fontawesome' == $settings['star_style'] ) {
+
+				if ( 'outline' == $settings['unmarked_star_style'] ) {
+					$icon = '&#61446;&#61446;&#61446;&#61446;&#61446;';
+				}
+			} elseif ( 'unicode' == $settings['star_style'] ) {
+
 				$icon = '&#9733;&#9733;&#9733;&#9733;&#9733;';
+
+				if ( 'outline' == $settings['unmarked_star_style'] ) {
+					$icon = '&#9734;&#9734;&#9734;&#9734;&#9734;';
+				}
 			}
 
 			$this->add_render_attribute( 'icon_wrapper', 'class', 'elementor-star-rating' );
