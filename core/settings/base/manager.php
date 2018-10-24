@@ -41,7 +41,7 @@ abstract class Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
+		add_action( 'elementor/editor/init', [ $this, 'on_elementor_editor_init' ] );
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
@@ -238,14 +238,14 @@ abstract class Manager {
 	/**
 	 * On Elementor init.
 	 *
-	 * Add editor template for the settings ??
+	 * Add editor template for the settings
 	 *
 	 * Fired by `elementor/init` action.
 	 *
-	 * @since 1.6.0
+	 * @since 2.3.0
 	 * @access public
 	 */
-	public function on_elementor_init() {
+	public function on_elementor_editor_init() {
 		Plugin::$instance->common->add_template( $this->get_editor_template(), 'text' );
 	}
 
