@@ -46,7 +46,15 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
+			'label',
+			[
+				'label' => __( 'Label', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+			]
+		);
+
+		$this->add_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -64,9 +72,64 @@ class Widget_Star_Rating extends Widget_Base {
 						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'fa fa-align-right',
 					],
+					'justify' => [
+						'title' => __( 'Justify', 'elementor' ),
+						'icon' => 'fa fa-align-justify',
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}}',
+				],
+				'prefix_class' => 'elementor-star-rating--align-'
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_label_style',
+			[
+				'label' => __( 'Label', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'label!' => '',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'label_typography',
+				'selector' => '{{WRAPPER}} .elementor-star-rating__label',
+			]
+		);
+
+		$this->add_control(
+			'label_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-star-rating__label' => 'color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'label_gap',
+			[
+				'label' => __( 'Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 50,
+					],
+				],
+				'selectors' => [
+					'body:not(.rtl) {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__label' => 'margin-right: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__label' => 'margin-left: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -179,7 +242,18 @@ class Widget_Star_Rating extends Widget_Base {
 			$this->add_render_attribute( 'icon_wrapper', 'class', 'elementor-star-rating' );
 			$this->add_render_attribute( 'icon_wrapper', 'title', $settings['rating']['size'] );
 
-			echo '<div ' . $this->get_render_attribute_string( 'icon_wrapper' ) . '>' . $icon . '</div>';
+			$stars_element = '<div ' . $this->get_render_attribute_string( 'icon_wrapper' ) . '>' . $icon . '</div>';
+
+			?>
+
+        <div class="elementor-star-rating__wrapper">
+            <?php if ( ! empty( $settings['label'] ) ) { ?>
+                <div class="elementor-star-rating__label"><?php echo $settings['label']; ?></div>
+            <?php } ?>
+            <?php echo $stars_element; ?>
+        </div>
+
+        <?php
 	}
 
 	protected function _content_template() {}
