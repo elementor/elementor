@@ -340,12 +340,12 @@ class Widget_Tabs extends Widget_Base {
 						'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
 						'data-tab' => $tab_count,
-						'tabindex' => $id_int . $tab_count,
 						'role' => 'tab',
+						'href' => '',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					] );
 					?>
-					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
+					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><a href=""><?php echo $item['tab_title']; ?></a></div>
 				<?php endforeach; ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper">
@@ -367,7 +367,6 @@ class Widget_Tabs extends Widget_Base {
 
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [
 						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
-						'tabindex' => $id_int . $tab_count,
 						'data-tab' => $tab_count,
 						'role' => 'tab',
 					] );
@@ -402,7 +401,7 @@ class Widget_Tabs extends Widget_Base {
 					_.each( settings.tabs, function( item, index ) {
 						var tabCount = index + 1;
 						#>
-						<div id="elementor-tab-title-{{ tabindex + tabCount }}" class="elementor-tab-title elementor-tab-desktop-title" tabindex="{{ tabindex + tabCount }}" data-tab="{{ tabCount }}" role="tab" aria-controls="elementor-tab-content-{{ tabindex + tabCount }}">{{{ item.tab_title }}}</div>
+						<div id="elementor-tab-title-{{ tabindex + tabCount }}" class="elementor-tab-title elementor-tab-desktop-title" data-tab="{{ tabCount }}" role="tab" aria-controls="elementor-tab-content-{{ tabindex + tabCount }}"><a href="">{{{ item.tab_title }}}</a></div>
 					<# } ); #>
 				</div>
 				<div class="elementor-tabs-content-wrapper">

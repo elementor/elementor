@@ -106,6 +106,7 @@ class Admin extends App {
 			'elementor-admin',
 			$this->get_css_assets_url( 'admin' . $direction_suffix ),
 			[
+				'elementor-common',
 				'elementor-icons',
 			],
 			ELEMENTOR_VERSION
@@ -709,6 +710,8 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function __construct() {
+		Plugin::$instance->init_common();
+
 		$this->add_component( 'feedback', new Feedback() );
 
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );

@@ -132,6 +132,11 @@ abstract class Document extends Controls_Stack {
 		return $this->get_name() . '-' . $this->post->ID;
 	}
 
+	public function get_post_type_title() {
+		$post_type_object = get_post_type_object( $this->post->post_type );
+
+		return $post_type_object->labels->singular_name;
+	}
 
 	public function get_remote_library_type() {
 		return $this->get_name();

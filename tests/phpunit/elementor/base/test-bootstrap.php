@@ -17,6 +17,8 @@ class Elementor_Test_Bootstrap extends Elementor_Test_Base {
 		// Run fake actions
 		do_action( 'init' );
 		do_action( 'plugins_loaded' );
+
+		\Elementor\Plugin::$instance->init_common();
 	}
 
 	public function test_plugin_activated() {

@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\Common\Modules\Assistant\Categories;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Common\Modules\Assistant\Base_Category;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -27,12 +28,31 @@ class Recently_Edited extends Base_Category {
 
 		$post_types[] = Source_Local::CPT;
 
+		$template_types = Source_Local::get_template_types();
+
+		unset( $template_types['widget'] );
+
 		$recently_edited_query_args = [
 			'post_type' => $post_types,
 			'post_status' => [ 'publish', 'draft' ],
 			'posts_per_page' => '5',
-			'meta_key' => '_elementor_edit_mode',
-			'meta_value' => 'builder',
+			'meta_query' => [
+				[
+					'key' => '_elementor_edit_mode',
+					'value' => 'builder',
+				],
+				[
+					'relation' => 'or',
+					[
+						'key' => Document::TYPE_META_KEY,
+						'compare' => 'NOT EXISTS',
+					],
+					[
+						'key' => Document::TYPE_META_KEY,
+						'value' => $template_types,
+					],
+				],
+			],
 			'orderby' => 'modified',
 			's' => $options['filter'],
 		];
