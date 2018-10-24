@@ -1,17 +1,17 @@
 .elementor-star-rating {
-	color: #ccc;
+	color: $gray-mouse;
 	font-family: FontAwesome;
 	display: inline-block;
 	position: relative;
 
 	&:before {
-		content: '';
+		content: '\f005\f005\f005\f005\f005';
 		display: block;
 		font-size: inherit;
 		font-family: inherit;
 		position: absolute;
 		overflow: hidden;
-		color: #ffc72f;
+		color: $orange;
 		top: 0;
 		left: 0;
 	}
