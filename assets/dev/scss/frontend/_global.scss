@@ -61,6 +61,7 @@
 		overflow: hidden;
 		z-index: $ground-layer;
 		transition: opacity 1s;
+		pointer-events: none; // This prevents the player from showing video info on hover
 
 		&.elementor-loading {
 			opacity: 0;

@@ -1,0 +1,46 @@
+<?php
+
+namespace Elementor\Core\Common\Modules\Assistant\Categories;
+
+use Elementor\Core\Common\Modules\Assistant\Base_Category;
+use Elementor\Settings as ElementorSettings;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
+class Settings extends Base_Category {
+
+	public function get_title() {
+		return __( 'Settings', 'elementor' );
+	}
+
+	public function get_category_items( array $options = [] ) {
+		$settings_url = ElementorSettings::get_url();
+
+		$items = [
+			[
+				'title' => __( 'General Settings', 'elementor' ),
+				'icon' => 'settings',
+				'link' => $settings_url,
+			],
+			[
+				'title' => __( 'Style', 'elementor' ),
+				'icon' => 'settings',
+				'link' => $settings_url . '#tab-style',
+			],
+			[
+				'title' => __( 'Integrations', 'elementor' ),
+				'icon' => 'settings',
+				'link' => $settings_url . '#tab-integrations',
+			],
+			[
+				'title' => __( 'Advanced', 'elementor' ),
+				'icon' => 'settings',
+				'link' => $settings_url . '#tab-advanced',
+			],
+		];
+
+		return $items;
+	}
+}

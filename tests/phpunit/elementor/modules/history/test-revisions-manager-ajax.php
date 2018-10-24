@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Testing\Modules\History;
 
-use Elementor\Editor;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Testing\Elementor_Test_AJAX;
 

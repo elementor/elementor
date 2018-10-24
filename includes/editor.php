@@ -220,8 +220,8 @@ class Editor {
 			'elementor_save_template',
 			'elementor_get_template',
 			'elementor_delete_template',
-			'elementor_export_template',
 			'elementor_import_template',
+			'elementor_library_direct_actions',
 		];
 
 		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $actions ) ) {
@@ -765,6 +765,7 @@ class Editor {
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
+				'elementor-common',
 				'font-awesome',
 				'elementor-select2',
 				'elementor-icons',
@@ -875,7 +876,11 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
-		Plugin::$instance->common->add_template( $template, $type );
+		$common = Plugin::$instance->common;
+
+		if ( $common ) {
+			Plugin::$instance->common->add_template( $template, $type );
+		}
 	}
 
 	/**

@@ -418,15 +418,18 @@ abstract class Base extends Base_File {
 	 * @param array          $values         Values array.
 	 * @param array          $placeholders   Placeholders.
 	 * @param array          $replacements   Replacements.
+	 * @param array          $all_controls   All controls.
 	 */
-	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements ) {
-		$all_controls = $controls_stack->get_controls();
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
+		if ( ! $all_controls ) {
+			$all_controls = $controls_stack->get_controls();
+		}
 
 		$parsed_dynamic_settings = $controls_stack->parse_dynamic_settings( $values, $controls );
 
 		foreach ( $controls as $control ) {
 			if ( ! empty( $control['style_fields'] ) ) {
-				$this->add_repeater_control_style_rules( $controls_stack, $control['style_fields'], $values[ $control['name'] ], $placeholders, $replacements );
+				$this->add_repeater_control_style_rules( $controls_stack, $control, $values[ $control['name'] ], $placeholders, $replacements );
 			}
 
 			if ( ! empty( $control[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] ) ) {
@@ -643,22 +646,23 @@ abstract class Base extends Base_File {
 	 * @since 2.0.0
 	 * @access private
 	 *
-	 * @param Controls_Stack $controls_stack          The control stack.
-	 * @param array          $repeater_controls_items The repeater controls items.
-	 * @param array          $repeater_values         Repeater values array.
-	 * @param array          $placeholders            Placeholders.
-	 * @param array          $replacements            Replacements.
+	 * @param Controls_Stack $controls_stack   The control stack.
+	 * @param array          $repeater_control The repeater control.
+	 * @param array          $repeater_values  Repeater values array.
+	 * @param array          $placeholders     Placeholders.
+	 * @param array          $replacements     Replacements.
 	 */
-	protected function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_controls_items, array $repeater_values, array $placeholders, array $replacements ) {
+	protected function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_control, array $repeater_values, array $placeholders, array $replacements ) {
 		$placeholders = array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] );
 
-		foreach ( $repeater_controls_items as $index => $item ) {
+		foreach ( $repeater_control['style_fields'] as $index => $item ) {
 			$this->add_controls_stack_style_rules(
 				$controls_stack,
 				$item,
 				$repeater_values[ $index ],
 				$placeholders,
-				array_merge( $replacements, [ '.elementor-repeater-item-' . $repeater_values[ $index ]['_id'] ] )
+				array_merge( $replacements, [ '.elementor-repeater-item-' . $repeater_values[ $index ]['_id'] ] ),
+				$repeater_control['fields']
 			);
 		}
 	}

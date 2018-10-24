@@ -80,16 +80,14 @@
 		height: 35px;
 		text-decoration: none;
 
-		&:hover {
+		&:focus {
 			background-color: $editor-info;
+			box-shadow: none;
+			outline: none;
 
 			* {
 				color: #fff;
 			}
-		}
-
-		&:focus {
-			box-shadow: none;
 		}
 
 		&__icon {
