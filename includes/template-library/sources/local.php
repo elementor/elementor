@@ -888,15 +888,16 @@ class Source_Local extends Source_Base {
 	 * @return string Template export URL.
 	 */
 	private function get_export_link( $template_id ) {
+		// TODO: BC since 2.3.0 - Use `$ajax->create_nonce()`
 		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+		// $ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		return add_query_arg(
 			[
 				'action' => 'elementor_library_direct_actions',
 				'library_action' => 'export_template',
 				'source' => $this->get_id(),
-				'_nonce' => $ajax->create_nonce(),
+				'_nonce' => wp_create_nonce( 'elementor_ajax' ),
 				'template_id' => $template_id,
 			],
 			admin_url( 'admin-ajax.php' )
