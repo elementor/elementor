@@ -8,7 +8,7 @@
 
 		> a,
 		figure > a {
-			display: block; // For alignment image with link
+			display: inline-block; //For alignment image with link - Changed to 'inline-block' instead of 'block' to handle with this issue https://github.com/pojome/elementor/issues/5897
 		}
 
 		img {
