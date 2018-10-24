@@ -70,9 +70,7 @@ class Admin extends App {
 		wp_register_script(
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),
-			[
-				'elementor-common',
-			],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -710,6 +708,8 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function __construct() {
+		Plugin::$instance->init_common();
+
 		$this->add_component( 'feedback', new Feedback() );
 
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );

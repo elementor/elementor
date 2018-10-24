@@ -68,7 +68,7 @@ class App extends BaseApp {
 			true
 		);
 
-		wp_register_script(
+		wp_enqueue_script(
 			'elementor-common',
 			$this->get_js_assets_url( 'common' ),
 			[

@@ -424,7 +424,6 @@ class Editor {
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
-				'elementor-common',
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',
@@ -876,7 +875,11 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
-		Plugin::$instance->common->add_template( $template, $type );
+		$common = Plugin::$instance->common;
+
+		if ( $common ) {
+			Plugin::$instance->common->add_template( $template, $type );
+		}
 	}
 
 	/**

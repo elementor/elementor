@@ -176,6 +176,10 @@ class Frontend extends App {
 			return;
 		}
 
+		if ( current_user_can( 'manage_options' ) ) {
+			Plugin::$instance->init_common();
+		}
+
 		$this->post_id = get_the_ID();
 
 		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $this->post_id ) ) {
@@ -343,20 +347,14 @@ class Frontend extends App {
 			true
 		);
 
-		$dependencies = [
-			'elementor-dialog',
-			'elementor-waypoints',
-			'jquery-swiper',
-		];
-
-		if ( current_user_can( 'manage_options' ) ) {
-			$dependencies[] = 'elementor-common';
-		}
-
 		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
-			$dependencies,
+			[
+				'elementor-dialog',
+				'elementor-waypoints',
+				'jquery-swiper',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
