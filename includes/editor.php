@@ -424,6 +424,7 @@ class Editor {
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
+				'elementor-common',
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',
