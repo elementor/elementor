@@ -218,6 +218,11 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.2.7 - 2018-10-24 ###
+* Tweak: Tweak: Update Google Fonts list with more then 20 new fonts ([Topic](https://wordpress.org/support/topic/please-update-google-fonts-library-with-the-latest-font-for-free-version/))
+* Fix: Admin Notice not dismissing in some server configurations ([#5927](https://github.com/pojome/elementor/issues/5927))
+* Fix: Image link not respecting the image size in the Image widget ([#5897](https://github.com/pojome/elementor/issues/5897))
+
 ### 2.2.6 - 2018-10-22 ###
 * Tweak: Added `get_render_attributes` method to `Element_Base` ([#5878](https://github.com/pojome/elementor/issues/5878))
 * Tweak: Sets the minimum width of the content area as `300px`
