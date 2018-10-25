@@ -6,6 +6,7 @@ export default class extends BaseModalLayout {
 	getModalOptions() {
 		return {
 			id: 'elementor-assistant__modal',
+			draggable: true,
 			position: {
 				enable: false,
 			},
