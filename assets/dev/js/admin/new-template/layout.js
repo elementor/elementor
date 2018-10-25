@@ -1,5 +1,6 @@
-var BaseModalLayout = require( 'elementor/core/common/assets/js/views/modal-layout' ),
-	NewTemplateView = require( 'elementor-admin/new-template/view' );
+import BaseModalLayout from '../../../../../core/common/assets/js/views/modal/layout';
+
+var NewTemplateView = require( 'elementor-admin/new-template/view' );
 
 module.exports = BaseModalLayout.extend( {
 

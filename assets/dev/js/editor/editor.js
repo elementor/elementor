@@ -2,6 +2,8 @@
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
+import LogoView from '../../../../core/common/assets/js/views/modal/logo';
+import ModalLayoutView from '../../../../core/common/assets/js/views/modal/layout';
 
 import environment from '../utils/environment';
 
@@ -36,10 +38,10 @@ const App = Marionette.Application.extend( {
 				views: {
 					parts: {
 						headerParts: {
-							logo: require( 'elementor-templates/views/parts/header-parts/logo' ),
+							logo: LogoView,
 						},
 					},
-					BaseModalLayout: require( 'elementor/core/common/assets/js/views/modal-layout' ),
+					BaseModalLayout: ModalLayoutView,
 				},
 			},
 			saver: {
