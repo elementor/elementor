@@ -73,6 +73,7 @@ class App extends BaseApp {
 			$this->get_js_assets_url( 'common' ),
 			[
 				'jquery',
+				'jquery-ui-draggable',
 				'backbone-marionette',
 				'backbone-radio',
 				'elementor-dialog',

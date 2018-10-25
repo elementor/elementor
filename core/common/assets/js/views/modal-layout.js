@@ -31,6 +31,7 @@ module.exports = Marionette.LayoutView.extend( {
 		var modalOptions = {
 			className: 'elementor-templates-modal',
 			closeButton: false,
+			draggable: false,
 			hide: {
 				onOutsideClick: false,
 			},
@@ -41,6 +42,10 @@ module.exports = Marionette.LayoutView.extend( {
 		this.modal = elementorCommon.dialogsManager.createWidget( 'lightbox', modalOptions );
 
 		this.modal.getElements( 'message' ).append( this.modal.addElement( 'content' ), this.modal.addElement( 'loading' ) );
+
+		if ( modalOptions.draggable ) {
+			this.draggableModal();
+		}
 	},
 
 	showModal: function() {
@@ -49,6 +54,19 @@ module.exports = Marionette.LayoutView.extend( {
 
 	hideModal: function() {
 		this.modal.hide();
+	},
+
+	draggableModal: function() {
+		const $modalWidgetContent = this.modal.getElements( 'widgetContent' );
+
+		$modalWidgetContent.draggable( {
+			containment: 'parent',
+			stop: () => {
+				$modalWidgetContent.height( '' );
+			},
+		} );
+
+		$modalWidgetContent.css( 'position', 'absolute' );
 	},
 
 	getModalOptions: function() {

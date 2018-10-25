@@ -1,4 +1,4 @@
-const BaseModalLayout = require( 'elementor-templates/views/base-modal-layout' );
+const BaseModalLayout = require( 'elementor/core/common/assets/js/views/modal-layout' );
 
 import ModalContent from './modal-content';
 
