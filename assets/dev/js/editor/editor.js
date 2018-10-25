@@ -39,7 +39,7 @@ const App = Marionette.Application.extend( {
 							logo: require( 'elementor-templates/views/parts/header-parts/logo' ),
 						},
 					},
-					BaseModalLayout: require( 'elementor-templates/views/base-modal-layout' ),
+					BaseModalLayout: require( 'elementor/core/common/assets/js/views/modal-layout' ),
 				},
 			},
 			saver: {

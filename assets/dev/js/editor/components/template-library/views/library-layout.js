@@ -1,4 +1,4 @@
-var BaseModalLayout = require( 'elementor-templates/views/base-modal-layout' ),
+var BaseModalLayout = require( 'elementor/core/common/assets/js/views/modal-layout' ),
 	TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts/header-parts/actions' ),
 	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
 	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
