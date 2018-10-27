@@ -180,6 +180,11 @@ https://www.youtube.com/watch?v=Ypn6fltn_7s
 
 For documentation and tutorials visit our [Knowledge Base](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
+### Developer Installation ###
+* Clone in /wp-content/plugins/ folder.
+* npm install
+* grunt webpack:development
+
 ## Frequently Asked Questions ##
 
 **With Elementor, do I still need a theme?**
