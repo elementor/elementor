@@ -800,24 +800,11 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
-		/**
-		 * Before element attribute rendered.
-		 *
-		 * Fires before the attributes of the element HTML tag are rendered.
-		 *
-		 * @since 2.3.0
-		 *
-		 * @param Element_Base $this The element.
-		 */
-		do_action( 'elementor/element/before_attribute_render', $this );
+		$id = $this->get_id();
 
 		$settings = $this->get_active_settings();
-
 		$frontend_settings = $this->get_frontend_settings();
-
 		$controls = $this->get_controls();
-
-		$id = $this->get_id();
 
 		$this->add_render_attribute( '_wrapper', 'data-id', $id );
 
@@ -866,7 +853,7 @@ abstract class Element_Base extends Controls_Stack {
 		 *
 		 * @param Element_Base $this The element.
 		 */
-		do_action( 'elementor/element/after_attribute_render', $this );
+		do_action( 'elementor/element/after_add_attributes', $this );
 	}
 
 	/**
