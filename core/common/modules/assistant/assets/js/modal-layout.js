@@ -18,12 +18,6 @@ export default class extends BaseModalLayout {
 		};
 	}
 
-	getHeaderOptions() {
-		return {
-			closeType: false,
-		};
-	}
-
 	initialize( ...args ) {
 		super.initialize( ...args );
 
