@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\TemplateLibrary\Source_Local;
 
 /**
  * Elementor scheme manager.
@@ -233,6 +234,10 @@ class Schemes_Manager {
 	 * @access public
 	 */
 	public function ajax_apply_scheme( $data ) {
+		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
+			return false;
+		}
+
 		if ( ! isset( $data['scheme_name'] ) ) {
 			return false;
 		}

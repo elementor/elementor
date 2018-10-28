@@ -120,16 +120,13 @@ class Command extends \WP_CLI_Command {
 			\WP_CLI::error( 'Please set file path.' );
 		}
 
-		if ( ! is_readable( $args[0] ) ) {
-			\WP_CLI::error( 'Cannot read file.' );
-		}
 		/** @var Source_Local $source */
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
 
 		$imported_items = $source->import_template( basename( $args[0] ), $args[0] );
 
-		if ( empty( $imported_items ) ) {
-			\WP_CLI::error( 'Cannot import.' );
+		if ( is_wp_error( $imported_items ) ) {
+			\WP_CLI::error( $imported_items->get_error_message() );
 		}
 
 		\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );
