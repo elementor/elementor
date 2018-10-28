@@ -494,7 +494,7 @@ class Widget_Accordion extends Widget_Base {
 							<i class="elementor-accordion-icon-opened <?php echo esc_attr( $settings['icon_active'] ); ?>"></i>
 						</span>
 						<?php endif; ?>
-						<?php echo $item['tab_title']; ?>
+						<a href=""><?php echo $item['tab_title']; ?></a>
 					</<?php echo $settings['title_html_tag']; ?>>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
@@ -550,7 +550,7 @@ class Widget_Accordion extends Widget_Base {
 								<i class="elementor-accordion-icon-opened {{ settings.icon_active }}"></i>
 							</span>
 							<# } #>
-							{{{ item.tab_title }}}
+							<a href="">{{{ item.tab_title }}}</a>
 						</{{{ settings.title_html_tag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>

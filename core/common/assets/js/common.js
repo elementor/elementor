@@ -39,12 +39,18 @@ class ElementorCommonApp extends ViewModule {
 	}
 
 	initModules() {
+		const { activeModules } = this.config;
+
 		const modules = {
 			ajax: Ajax,
 			assistant: Assistant,
 		};
 
-		Object.entries( modules ).forEach( ( [ name, moduleClass ] ) => this[ name ] = new moduleClass( this.config[ name ] ) );
+		activeModules.forEach( ( name ) => {
+			if ( modules[ name ] ) {
+				this[ name ] = new modules[ name ]( this.config[ name ] );
+			}
+		} );
 	}
 
 	translate( stringKey, context, templateArgs, i18nStack ) {

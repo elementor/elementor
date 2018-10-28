@@ -3,7 +3,6 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
 use Elementor\DB;
-use Elementor\Core\Settings\Page\Manager as PageSettingsManager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
 use Elementor\Editor;
@@ -37,6 +36,7 @@ class Source_Local extends Source_Base {
 
 	/**
 	 * Elementor template-library meta key.
+	 * @deprecated 2.3.0 Use \Elementor\Core\Base\Document::TYPE_META_KEY instead
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 
@@ -60,7 +60,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @var array
 	 */
-	private static $_template_types = [];
+	private static $template_types = [];
 
 	/**
 	 * Post type object.
@@ -72,6 +72,13 @@ class Source_Local extends Source_Base {
 	 * @var \WP_Post_Type
 	 */
 	private $post_type_object;
+
+	/**
+	 * @return array
+	 */
+	public static function get_template_types() {
+		return self::$template_types;
+	}
 
 	/**
 	 * Get local template type.
@@ -87,7 +94,7 @@ class Source_Local extends Source_Base {
 	 * @return mixed The value of meta data field.
 	 */
 	public static function get_template_type( $template_id ) {
-		return get_post_meta( $template_id, self::TYPE_META_KEY, true );
+		return get_post_meta( $template_id, Document::TYPE_META_KEY, true );
 	}
 
 	/**
@@ -123,7 +130,7 @@ class Source_Local extends Source_Base {
 	 * @param string $type Template type.
 	 */
 	public static function add_template_type( $type ) {
-		self::$_template_types[ $type ] = $type;
+		self::$template_types[ $type ] = $type;
 	}
 
 	/**
@@ -139,8 +146,8 @@ class Source_Local extends Source_Base {
 	 * @param string $type Template type.
 	 */
 	public static function remove_template_type( $type ) {
-		if ( isset( self::$_template_types[ $type ] ) ) {
-			unset( self::$_template_types[ $type ] );
+		if ( isset( self::$template_types[ $type ] ) ) {
+			unset( self::$template_types[ $type ] );
 		}
 	}
 
@@ -308,8 +315,8 @@ class Source_Local extends Source_Base {
 				'order' => 'ASC',
 				'meta_query' => [
 					[
-						'key' => self::TYPE_META_KEY,
-						'value' => array_values( self::$_template_types ),
+						'key' => Document::TYPE_META_KEY,
+						'value' => array_values( self::$template_types ),
 					],
 				],
 			]
@@ -343,7 +350,7 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|int The ID of the saved/updated template, `WP_Error` otherwise.
 	 */
 	public function save_item( $template_data ) {
-		if ( ! isset( self::$_template_types[ $template_data['type'] ] ) ) {
+		if ( ! isset( self::$template_types[ $template_data['type'] ] ) ) {
 			return new \WP_Error( 'save_error', sprintf( 'Invalid template type "%s".', $template_data['type'] ) );
 		}
 
@@ -557,7 +564,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @param int $template_id The template ID.
 	 *
-	 * @return array|\WP_Error WordPress error if template export failed.
+	 * @return \WP_Error WordPress error if template export failed.
 	 */
 	public function export_template( $template_id ) {
 		$file_data = $this->prepare_template_export( $template_id );
@@ -623,6 +630,10 @@ class Source_Local extends Source_Base {
 			];
 		}
 
+		if ( ! $files ) {
+			return new \WP_Error( 'empty_files', 'There is no files to export (probably all the requested templates are empty).' );
+		}
+
 		// Create temporary .zip file
 		$zip_archive_filename = 'elementor-templates-' . date( 'Y-m-d' ) . '.zip';
 
@@ -668,7 +679,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function import_template( $name, $path ) {
 		if ( empty( $path ) ) {
-			return new \WP_Error( 'file_error', 'Please upload a file to import.' );
+			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
 
 		$items = [];
@@ -677,7 +688,7 @@ class Source_Local extends Source_Base {
 
 		if ( 'zip' === $file_extension ) {
 			if ( ! class_exists( '\ZipArchive' ) ) {
-				return new \WP_Error( 'zip_error', 'PHP Zip extension not loaded.' );
+				return new \WP_Error( 'zip_error', 'PHP Zip extension not loaded' );
 			}
 
 			$zip = new \ZipArchive();
@@ -697,14 +708,26 @@ class Source_Local extends Source_Base {
 			foreach ( $file_names as $file_name ) {
 				$full_file_name = $temp_path . '/' . $file_name;
 
-				$items[] = $this->import_single_template( $full_file_name );
+				$import_result = $this->import_single_template( $full_file_name );
 
 				unlink( $full_file_name );
+
+				if ( is_wp_error( $import_result ) ) {
+					return $import_result;
+				}
+
+				$items[] = $import_result;
 			}
 
 			rmdir( $temp_path );
 		} else {
-			$items[] = $this->import_single_template( $path );
+			$import_result = $this->import_single_template( $path );
+
+			if ( is_wp_error( $import_result ) ) {
+				return $import_result;
+			}
+
+			$items[] = $import_result;
 		}
 
 		return $items;
@@ -762,7 +785,8 @@ class Source_Local extends Source_Base {
 			<div id="elementor-import-template-area">
 				<div id="elementor-import-template-title"><?php echo __( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
-					<input type="hidden" name="action" value="elementor_import_template">
+					<input type="hidden" name="action" value="elementor_library_direct_actions">
+					<input type="hidden" name="library_action" value="direct_import_template">
 					<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
@@ -864,14 +888,16 @@ class Source_Local extends Source_Base {
 	 * @return string Template export URL.
 	 */
 	private function get_export_link( $template_id ) {
+		// TODO: BC since 2.3.0 - Use `$ajax->create_nonce()`
 		/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+		// $ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		return add_query_arg(
 			[
-				'action' => 'elementor_export_template',
+				'action' => 'elementor_library_direct_actions',
+				'library_action' => 'export_template',
 				'source' => $this->get_id(),
-				'_nonce' => $ajax->create_nonce(),
+				'_nonce' => wp_create_nonce( 'elementor_ajax' ),
 				'template_id' => $template_id,
 			],
 			admin_url( 'admin-ajax.php' )
@@ -921,7 +947,7 @@ class Source_Local extends Source_Base {
 	 * @param string $type    Item type.
 	 */
 	private function save_item_type( $post_id, $type ) {
-		update_post_meta( $post_id, self::TYPE_META_KEY, $type );
+		update_post_meta( $post_id, Document::TYPE_META_KEY, $type );
 
 		wp_set_object_terms( $post_id, $type, self::TAXONOMY_TYPE_SLUG );
 	}
@@ -950,8 +976,8 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
-		$query->query_vars['meta_key'] = self::TYPE_META_KEY;
-		$query->query_vars['meta_value'] = array_values( self::$_template_types );
+		$query->query_vars['meta_key'] = Document::TYPE_META_KEY;
+		$query->query_vars['meta_value'] = array_values( self::$template_types );
 	}
 
 	/**
@@ -988,15 +1014,14 @@ class Source_Local extends Source_Base {
 	 * @param string $redirect_to The redirect URL.
 	 * @param string $action      The action being taken.
 	 * @param array  $post_ids    The items to take the action on.
-	 *
-	 * @return string The redirect URL.
 	 */
 	public function admin_export_multiple_templates( $redirect_to, $action, $post_ids ) {
 		if ( self::BULK_EXPORT_ACTION === $action ) {
-			$this->export_multiple_templates( $post_ids );
-		}
+			$result = $this->export_multiple_templates( $post_ids );
 
-		return $redirect_to;
+			// If you reach this line, the export failed
+			wp_die( $result->get_error_message() );
+		}
 	}
 
 	/**
@@ -1026,7 +1051,7 @@ class Source_Local extends Source_Base {
 		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
 			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>"><?php echo __( 'All', 'elementor' ); ?></a>
 			<?php
-			foreach ( self::$_template_types as $template_type ) :
+			foreach ( self::$template_types as $template_type ) :
 				$active_class = '';
 
 				if ( $current_type === $template_type ) {
@@ -1136,13 +1161,13 @@ class Source_Local extends Source_Base {
 		$data = json_decode( file_get_contents( $file_name ), true );
 
 		if ( empty( $data ) ) {
-			return new \WP_Error( 'file_error', 'Invalid File.' );
+			return new \WP_Error( 'file_error', 'Invalid File' );
 		}
 
 		$content = $data['content'];
 
 		if ( ! is_array( $content ) ) {
-			return new \WP_Error( 'file_error', 'Invalid File.' );
+			return new \WP_Error( 'file_error', 'Invalid File' );
 		}
 
 		$content = $this->process_export_import_content( $content, 'on_import' );
@@ -1194,7 +1219,7 @@ class Source_Local extends Source_Base {
 		] );
 
 		if ( empty( $template_data['content'] ) ) {
-			return new \WP_Error( '404', 'The template does not exist.' );
+			return new \WP_Error( 'empty_template', 'The template is empty' );
 		}
 
 		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );

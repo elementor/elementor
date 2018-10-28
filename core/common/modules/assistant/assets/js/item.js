@@ -21,7 +21,6 @@ export default class extends Marionette.ItemView {
 
 		if ( link ) {
 			attributes.href = link;
-			attributes.target = '_blank';
 		}
 
 		return attributes;

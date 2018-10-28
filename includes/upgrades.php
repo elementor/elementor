@@ -391,7 +391,6 @@ class Upgrades {
 						'yt_autoplay' => 'autoplay',
 						'yt_controls' => 'controls',
 						'yt_mute' => 'mute',
-						'yt_showinfo' => 'showinfo',
 						'yt_rel' => 'rel',
 						'link' => 'youtube_url',
 					];

@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -55,7 +56,12 @@ class Manager {
 	public function __construct() {
 		$this->register_default_sources();
 
+		$this->add_actions();
+	}
+
+	public function add_actions() {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_action( 'wp_ajax_elementor_library_direct_actions', [ $this, 'handle_direct_actions' ] );
 
 		// TODO: bc since 2.3.0
 		add_action( 'wp_ajax_elementor_update_templates', function() {
@@ -405,11 +411,17 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', 'Template source not found' );
 		}
 
-		// If you reach this line, the export was not successful.
 		return $source->export_template( $args['template_id'] );
+	}
+
+	public function direct_import_template() {
+		/** @var Source_Local $source */
+		$source = $this->get_source( 'local' );
+
+		return $source->import_template( $_FILES['file']['name'], $_FILES['file']['tmp_name'] );
 	}
 
 	/**
@@ -420,13 +432,25 @@ class Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @param array $data
+	 *
 	 * @return mixed Whether the export succeeded or failed.
 	 */
-	public function import_template() {
+	public function import_template( array $data ) {
 		/** @var Source_Local $source */
+		$file_content = base64_decode( $data['fileData'] );
+
+		$tmp_file = tmpfile();
+
+		fwrite( $tmp_file, $file_content );
+
 		$source = $this->get_source( 'local' );
 
-		return $source->import_template( $_FILES['file']['name'], $_FILES['file']['tmp_name'] );
+		$result = $source->import_template( $data['fileName'], stream_get_meta_data( $tmp_file )['uri'] );
+
+		fclose( $tmp_file );
+
+		return $result;
 	}
 
 	/**
@@ -451,48 +475,6 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		return $source->mark_as_favorite( $args['template_id'], filter_var( $args['favorite'], FILTER_VALIDATE_BOOLEAN ) );
-	}
-
-	/**
-	 * On successful template import.
-	 *
-	 * Redirect the user to the template library after template import was
-	 * successful finished.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function on_import_template_success() {
-		wp_redirect( admin_url( 'edit.php?post_type=' . Source_Local::CPT ) );
-	}
-
-	/**
-	 * On failed template import.
-	 *
-	 * Echo the error messages after template import was failed.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param \WP_Error $error WordPress error instance.
-	 */
-	public function on_import_template_error( \WP_Error $error ) {
-		echo $error->get_error_message();
-	}
-
-	/**
-	 * On failed template export.
-	 *
-	 * Kill WordPress execution and display HTML error messages after template
-	 * export was failed.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param \WP_Error $error WordPress error instance.
-	 */
-	public function on_export_template_error( \WP_Error $error ) {
-		_default_wp_die_handler( $error->get_error_message(), 'Elementor Library' );
 	}
 
 	/**
@@ -534,6 +516,10 @@ class Manager {
 	 * @throws \Exception
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
+		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
+			throw new \Exception( 'Access Denied' );
+		}
+
 		if ( ! empty( $data['editor_post_id'] ) ) {
 			$editor_post_id = absint( $data['editor_post_id'] );
 
@@ -546,41 +532,11 @@ class Manager {
 
 		$result = call_user_func( [ $this, $ajax_request ], $data );
 
-		$request_type = ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ? 'ajax' : 'direct';
-
-		if ( 'direct' === $request_type ) {
-			$callback = 'on_' . $ajax_request;
-
-			if ( method_exists( $this, $callback ) ) {
-				$this->$callback( $result );
-			}
-		}
 		if ( is_wp_error( $result ) ) {
-			/** @var \WP_Error $result */
-			if ( 'ajax' === $request_type ) {
-				throw new \Exception( $result->get_error_message() );
-			}
-
-			$callback = "on_{$ajax_request}_error";
-
-			if ( method_exists( $this, $callback ) ) {
-				$this->$callback( $result );
-			}
-
-			die;
+			throw new \Exception( $result->get_error_message() );
 		}
 
-		if ( 'ajax' === $request_type ) {
-			return $result;
-		}
-
-		$callback = "on_{$ajax_request}_success";
-
-		if ( method_exists( $this, $callback ) ) {
-			$this->$callback( $result );
-		}
-
-		die;
+		return $result;
 	}
 
 	/**
@@ -600,7 +556,6 @@ class Manager {
 			'save_template',
 			'update_templates',
 			'delete_template',
-			'export_template',
 			'import_template',
 			'mark_template_as_favorite',
 		];
@@ -610,6 +565,53 @@ class Manager {
 				return $this->handle_ajax_request( $ajax_request, $data );
 			} );
 		}
+	}
+
+	public function handle_direct_actions() {
+		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
+			return;
+		}
+
+		/** @var Ajax $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		if ( ! $ajax->verify_request_nonce() ) {
+			$this->handle_direct_action_error( 'Access Denied' );
+		}
+
+		$action = $_REQUEST['library_action'];
+
+		$result = $this->$action( $_REQUEST );
+
+		if ( is_wp_error( $result ) ) {
+			/** @var \WP_Error $result */
+			$this->handle_direct_action_error( $result->get_error_message() . '.' );
+		}
+
+		$callback = "on_{$action}_success";
+
+		if ( method_exists( $this, $callback ) ) {
+			$this->$callback( $result );
+		}
+
+		die;
+	}
+
+	/**
+	 * On successful template import.
+	 *
+	 * Redirect the user to the template library after template import was
+	 * successful finished.
+	 *
+	 * @since 2.3.0
+	 * @access private
+	 */
+	private function on_direct_import_template_success() {
+		wp_safe_redirect( admin_url( 'edit.php?post_type=' . Source_Local::CPT ) );
+	}
+
+	private function handle_direct_action_error( $message ) {
+		_default_wp_die_handler( $message, 'Elementor Library' );
 	}
 
 	/**
