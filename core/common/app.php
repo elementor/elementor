@@ -87,9 +87,18 @@ class App extends BaseApp {
 
 	public function register_styles() {
 		wp_register_style(
+			'elementor-icons',
+			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
+			[],
+			'3.9.0'
+		);
+
+		wp_register_style(
 			'elementor-common',
 			$this->get_css_assets_url( 'common', null, 'default', true ),
-			[],
+			[
+				'elementor-icons',
+			],
 			ELEMENTOR_VERSION
 		);
 	}
