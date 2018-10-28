@@ -200,7 +200,7 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->add_control(
 			'unmarked_star_style',
 			[
-				'label' => __( 'Unmarked Star Style', 'elementor' ),
+				'label' => __( 'Unmarked Style', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'label_block' => false,
 				'options' => [
