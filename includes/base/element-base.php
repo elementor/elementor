@@ -800,6 +800,23 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
+		/**
+		 * Before element attribute rendered.
+		 *
+		 * Fires before the attributes of the element HTML tag are rendered.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/element/before_attribute_render', $this );
+
+		$settings = $this->get_active_settings();
+
+		$frontend_settings = $this->get_frontend_settings();
+
+		$controls = $this->get_controls();
+
 		$id = $this->get_id();
 
 		$this->add_render_attribute( '_wrapper', 'data-id', $id );
@@ -810,10 +827,6 @@ abstract class Element_Base extends Controls_Stack {
 				'elementor-element-' . $id,
 			]
 		);
-
-		$settings = $this->get_active_settings();
-
-		$controls = $this->get_controls();
 
 		$class_settings = [];
 
@@ -840,11 +853,20 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
 
-		$frontend_settings = $this->get_frontend_settings();
-
 		if ( $frontend_settings ) {
 			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
 		}
+
+		/**
+		 * After element attribute rendered.
+		 *
+		 * Fires after the attributes of the element HTML tag are rendered.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/element/after_attribute_render', $this );
 	}
 
 	/**
