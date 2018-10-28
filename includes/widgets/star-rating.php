@@ -24,9 +24,12 @@ class Widget_Star_Rating extends Widget_Base {
 	}
 
 	protected function _register_controls() {
-		$this->start_controls_section( 'section_rating', [
+		$this->start_controls_section(
+			'section_rating',
+			[
 				'label' => __( 'Rating', 'elementor' ),
-			] );
+			]
+		);
 
 		$this->add_control(
 			'rating',
@@ -170,6 +173,7 @@ class Widget_Star_Rating extends Widget_Base {
 					'fontawesome' => __( 'Font Awesome', 'elementor' ),
 					'unicode' => __( 'Unicode', 'elementor' ),
 				],
+				'default' => 'fontawesome',
 				'render_type' => 'template',
 				'prefix_class' => 'elementor--star-style-',
 				'separator' => 'before',
@@ -223,36 +227,35 @@ class Widget_Star_Rating extends Widget_Base {
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-			$icon = '&#61445;&#61445;&#61445;&#61445;&#61445;';
+		$icon = '&#61445;&#61445;&#61445;&#61445;&#61445;';
 
-			if ( 'fontawesome' == $settings['star_style'] ) {
-
-				if ( 'outline' == $settings['unmarked_star_style'] ) {
-					$icon = '&#61446;&#61446;&#61446;&#61446;&#61446;';
-				}
-			} elseif ( 'unicode' == $settings['star_style'] ) {
-
-				$icon = '&#9733;&#9733;&#9733;&#9733;&#9733;';
-
-				if ( 'outline' == $settings['unmarked_star_style'] ) {
-					$icon = '&#9734;&#9734;&#9734;&#9734;&#9734;';
-				}
+		if ( 'fontawesome' == $settings['star_style'] ) {
+			if ( 'outline' == $settings['unmarked_star_style'] ) {
+				$icon = '&#61446;&#61446;&#61446;&#61446;&#61446;';
 			}
+		} elseif ( 'unicode' == $settings['star_style'] ) {
+			$icon = '&#9733;&#9733;&#9733;&#9733;&#9733;';
 
-			$this->add_render_attribute( 'icon_wrapper', 'class', 'elementor-star-rating' );
-			$this->add_render_attribute( 'icon_wrapper', 'title', $settings['rating']['size'] );
+			if ( 'outline' == $settings['unmarked_star_style'] ) {
+				$icon = '&#9734;&#9734;&#9734;&#9734;&#9734;';
+			}
+		}
 
-			$stars_element = '<div ' . $this->get_render_attribute_string( 'icon_wrapper' ) . '>' . $icon . '</div>';
+		$this->add_render_attribute( 'icon_wrapper', [
+			'class' => 'elementor-star-rating',
+			'title' => $settings['rating']['size'],
+		] );
 
-			?>
+		$stars_element = '<div ' . $this->get_render_attribute_string( 'icon_wrapper' ) . '>' . $icon . '</div>';
 
-        <div class="elementor-star-rating__wrapper">
-            <?php if ( ! empty( $settings['label'] ) ) { ?>
-                <div class="elementor-star-rating__label"><?php echo $settings['label']; ?></div>
-            <?php } ?>
-            <?php echo $stars_element; ?>
-        </div>
+		?>
 
+		<div class="elementor-star-rating__wrapper">
+			<?php if ( ! empty( $settings['label'] ) ) { ?>
+				<div class="elementor-star-rating__label"><?php echo $settings['label']; ?></div>
+			<?php } ?>
+			<?php echo $stars_element; ?>
+		</div>
         <?php
 	}
 
