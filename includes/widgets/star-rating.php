@@ -122,7 +122,7 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->add_responsive_control(
 			'label_gap',
 			[
-				'label' => __( 'Gap', 'elementor' ),
+				'label' => __( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
