@@ -151,12 +151,29 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
+			'caption_source',
+			[
+				'label' => __( 'Caption Source', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'off' => __( 'No Caption', 'elementor' ),
+					'attachment' => __( 'Image Caption', 'elementor' ),
+					'custom' => __( 'Manual Caption', 'elementor' ),
+				],
+				'default' => 'off',
+			]
+		);
+
+		$this->add_control(
 			'caption',
 			[
-				'label' => __( 'Caption', 'elementor' ),
+				'label' => __( 'Manual Caption', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'placeholder' => __( 'Enter your image caption', 'elementor' ),
+				'condition' => [
+					'caption_source' => 'custom',
+				],
 			]
 		);
 
@@ -514,6 +531,43 @@ class Widget_Image extends Widget_Base {
 	}
 
 	/**
+	 * Check if the current widget has caption
+	 *
+	 * @access private
+	 * @since 2.3.0
+	 *
+	 * @param array $settings
+	 *
+	 * @return boolean
+	 */
+	private function has_caption( $settings ) {
+		return ( ! empty( $settings['caption_source'] ) && 'off' === $settings['caption_source'] );
+	}
+
+	/**
+	 * Get the caption for current widget.
+	 *
+	 * @access private
+	 * @since 2.3.0
+	 * @param $settings
+	 *
+	 * @return string
+	 */
+	private function get_caption( $settings ) {
+		$caption = '';
+		if ( ! empty( $settings['caption_source'] ) ) {
+			switch ( $settings['caption_source'] ) {
+				case 'attachment':
+					$caption = wp_get_attachment_caption( $settings['image']['id'] );
+					break;
+				case 'custom':
+					$caption = ! empty( $settings['caption'] ) ? $settings['caption'] : '';
+			}
+		}
+		return $caption;
+	}
+
+	/**
 	 * Render image widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
@@ -528,7 +582,7 @@ class Widget_Image extends Widget_Base {
 			return;
 		}
 
-		$has_caption = ! empty( $settings['caption'] );
+		$has_caption = $this->has_caption( $settings );
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-image' );
 
@@ -570,7 +624,7 @@ class Widget_Image extends Widget_Base {
 					</a>
 			<?php endif; ?>
 			<?php if ( $has_caption ) : ?>
-					<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
+					<figcaption class="widget-image-caption wp-caption-text"><?php echo $this->get_caption( $settings ); ?></figcaption>
 			<?php endif; ?>
 			<?php if ( $has_caption ) : ?>
 				</figure>
