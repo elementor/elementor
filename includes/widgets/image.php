@@ -541,7 +541,7 @@ class Widget_Image extends Widget_Base {
 	 * @return boolean
 	 */
 	private function has_caption( $settings ) {
-		return ( ! empty( $settings['caption_source'] ) && 'off' === $settings['caption_source'] );
+		return ( ! empty( $settings['caption_source'] ) && 'off' !== $settings['caption_source'] );
 	}
 
 	/**
@@ -658,6 +658,33 @@ class Widget_Image extends Widget_Base {
 				return;
 			}
 
+			var hasCaption = function() {
+				if( ! settings.caption_source || 'off' === settings.caption_source ) {
+					return false;
+				}
+				return true;
+			}
+
+			var ensureAttachmentData = function( id ) {
+				if ( 'undefined' === typeof wp.media.attachment( id ).get( 'caption' ) ) {
+					wp.media.attachment( id ).fetch().then( function( data ) {
+						view.render();
+					} );
+				}
+			}
+
+			var getAttachmentCaption = function( id ) {
+				ensureAttachmentData( id );
+				return wp.media.attachment( id ).get( 'caption' );
+			}
+
+			var getCaption = function() {
+				if ( ! hasCaption() ) {
+					return '';
+				}
+				return 'custom' === settings.caption_source ? settings.caption : getAttachmentCaption( settings.image.id );
+			}
+
 			var link_url;
 
 			if ( 'custom' === settings.link_to ) {
@@ -669,14 +696,13 @@ class Widget_Image extends Widget_Base {
 			}
 
 			#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
-			var imgClass = '',
-				hasCaption = '' !== settings.caption;
+			var imgClass = '';
 
 			if ( '' !== settings.hover_animation ) {
 				imgClass = 'elementor-animation-' + settings.hover_animation;
 			}
 
-			if ( hasCaption ) {
+			if ( hasCaption() ) {
 				#><figure class="wp-caption"><#
 			}
 
@@ -689,11 +715,11 @@ class Widget_Image extends Widget_Base {
 					#></a><#
 			}
 
-			if ( hasCaption ) {
-					#><figcaption class="widget-image-caption wp-caption-text">{{{ settings.caption }}}</figcaption><#
+			if ( hasCaption() ) {
+					#><figcaption class="widget-image-caption wp-caption-text">{{{ getCaption() }}}</figcaption><#
 			}
 
-			if ( hasCaption ) {
+			if ( hasCaption() ) {
 				#></figure><#
 			}
 
