@@ -101,7 +101,6 @@ class Widget_Social_Icons extends Widget_Base {
 					'fa fa-behance',
 					'fa fa-bitbucket',
 					'fa fa-codepen',
-					'fa fa-codepie',
 					'fa fa-delicious',
 					'fa fa-deviantart',
 					'fa fa-digg',
