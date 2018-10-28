@@ -164,6 +164,23 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'icon_space',
+			[
+				'label' => __( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 50,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-star-rating' => 'letter-spacing: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
 		$this->add_control(
 			'star_style',
 			[
