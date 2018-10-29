@@ -60,13 +60,16 @@ $behance:		#1769ff;
 $bitbucket: 	#205081;
 $codepen:		#000000;
 $delicious: 	#3399ff;
+$deviantart: 	#05cc47;
 $digg:			#005be2;
 $dribbble:		#ea4c89;
 $envelope:		#ea4335;
 $facebook:		#3b5998;
 $flickr:		#0063dc;
 $foursquare:	#2d5be3;
+$freecodecamp:	#006400;
 $github:		#333333;
+$gitlab:		#e24329;
 $google-plus:	#dd4b39;
 $houzz:			#7ac142;
 $instagram:		#262626;
@@ -158,25 +161,25 @@ $super-layer: 10000;
 
 // Grid Columns
 $column-sizes: (
-	10: 10%,
-	11: 11.111%,
-	12: 12.5%,
-	14: 14.285%,
-	16: 16.666%,
-	20: 20%,
-	25: 25%,
-	30: 30%,
-	33: 33.333%,
-	40: 40%,
-	50: 50%,
-	60: 60%,
-	66: 66.666%,
-	70: 70%,
-	75: 75%,
-	80: 80%,
-	83: 83.333%,
-	90: 90%,
-  	100: 100%
+		10: 10%,
+		11: 11.111%,
+		12: 12.5%,
+		14: 14.285%,
+		16: 16.666%,
+		20: 20%,
+		25: 25%,
+		30: 30%,
+		33: 33.333%,
+		40: 40%,
+		50: 50%,
+		60: 60%,
+		66: 66.666%,
+		70: 70%,
+		75: 75%,
+		80: 80%,
+		83: 83.333%,
+		90: 90%,
+		100: 100%
 );
 
 // Panel
@@ -185,9 +188,9 @@ $panel-xl-width: 300px;
 
 // Grid Breakpoints
 $breakpoints: (
-	sm: 480px, // Mobile landscape
-	md: 768px, // Tablet
-	lg: 1025px, // Desktop
-	xl: 1440px, // Larger devices
-	xxl: 1600px // Largest devices
+		sm: 480px, // Mobile landscape
+		md: 768px, // Tablet
+		lg: 1025px, // Desktop
+		xl: 1440px, // Larger devices
+		xxl: 1600px // Largest devices
 );

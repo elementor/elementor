@@ -13,11 +13,16 @@
 		overflow: hidden;
 		color: $orange;
 		top: 0;
-		left: 0;
+		@include start(0);
 	}
 
 	&__wrapper {
 		display: flex;
+		align-items: center;
+	}
+
+	&__label {
+		@include margin-end(10px);
 	}
 
 	&--align {

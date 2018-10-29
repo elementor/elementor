@@ -4,25 +4,79 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
+/**
+ * Elementor star rating widget.
+ *
+ * Elementor widget that displays star rating.
+ *
+ * @since 2.3.0
+ */
 class Widget_Star_Rating extends Widget_Base {
 
+	/**
+	 * Get widget name.
+	 *
+	 * Retrieve star rating widget name.
+	 *
+	 * @since 2.3.0
+	 * @access public
+	 *
+	 * @return string Widget name.
+	 */
 	public function get_name() {
 		return 'star-rating';
 	}
 
+	/**
+	 * Get widget title.
+	 *
+	 * Retrieve star rating widget title.
+	 *
+	 * @since 2.3.0
+	 * @access public
+	 *
+	 * @return string Widget title.
+	 */
 	public function get_title() {
 		return __( 'Star Rating', 'elementor' );
 	}
 
+	/**
+	 * Get widget icon.
+	 *
+	 * Retrieve star rating widget icon.
+	 *
+	 * @since 2.3.0
+	 * @access public
+	 *
+	 * @return string Widget icon.
+	 */
 	public function get_icon() {
-		return 'eicon-stars';
+		return 'eicon-rating';
 	}
 
+	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.3.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
 	public function get_keywords() {
-		return [ 'icon' ];
+		return [ 'star', 'rating', 'rate', 'review' ];
 	}
 
+	/**
+	 * Register star rating widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_rating',
@@ -50,10 +104,47 @@ class Widget_Star_Rating extends Widget_Base {
 		);
 
 		$this->add_control(
+			'star_style',
+			[
+				'label' => __( 'Star Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'fontawesome' => __( 'Font Awesome', 'elementor' ),
+					'unicode' => __( 'Unicode', 'elementor' ),
+				],
+				'default' => 'fontawesome',
+				'render_type' => 'template',
+				'prefix_class' => 'elementor--star-style-',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'unmarked_star_style',
+			[
+				'label' => __( 'Unmarked Style', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
+				'options' => [
+					'default' => [
+						'title' => __( 'Default', 'elementor' ),
+						'icon' => 'fa fa-star',
+					],
+					'outline' => [
+						'title' => __( 'Outline', 'elementor' ),
+						'icon' => 'fa fa-star-o',
+					],
+				],
+			]
+		);
+
+
+		$this->add_control(
 			'label',
 			[
 				'label' => __( 'Label', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'separator' => 'before',
 			]
 		);
 
@@ -122,7 +213,7 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->add_responsive_control(
 			'label_gap',
 			[
-				'label' => __( 'Gap', 'elementor' ),
+				'label' => __( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -164,37 +255,19 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'star_style',
+		$this->add_responsive_control(
+			'icon_space',
 			[
-				'label' => __( 'Star Style', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'fontawesome' => __( 'Font Awesome', 'elementor' ),
-					'unicode' => __( 'Unicode', 'elementor' ),
+				'label' => __( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 50,
+					],
 				],
-				'default' => 'fontawesome',
-				'render_type' => 'template',
-				'prefix_class' => 'elementor--star-style-',
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'unmarked_star_style',
-			[
-				'label' => __( 'Unmarked Star Style', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'label_block' => false,
-				'options' => [
-					'default' => [
-						'title' => __( 'Default', 'elementor' ),
-						'icon' => 'fa fa-star',
-					],
-					'outline' => [
-						'title' => __( 'Outline', 'elementor' ),
-						'icon' => 'fa fa-star-o',
-					],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-star-rating' => 'letter-spacing: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
