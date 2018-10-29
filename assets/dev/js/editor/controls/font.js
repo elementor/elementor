@@ -10,25 +10,12 @@ module.exports = ControlSelect2View.extend( {
 			return;
 		}
 
-		let	fontUrl;
-		const fontType = elementor.config.controls.font.options[ font ],
-			subsets = {
-				ru_RU: 'cyrillic',
-				uk: 'cyrillic',
-				bg_BG: 'cyrillic',
-				vi: 'vietnamese',
-				el: 'greek',
-				he_IL: 'hebrew',
-			};
+		let fontUrl;
+		const fontType = elementor.config.controls.font.options[ font ];
 
 		switch ( fontType ) {
 			case 'googlefonts' :
 				fontUrl = 'https://fonts.googleapis.com/css?family=' + font + '&text=' + font;
-
-				if ( subsets[ elementor.config.locale ] ) {
-					fontUrl += '&subset=' + subsets[ elementor.config.locale ];
-				}
-
 				break;
 
 			case 'earlyaccess' :
