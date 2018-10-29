@@ -64,7 +64,7 @@ class App extends BaseApp {
 			[
 				'jquery-ui-position',
 			],
-			'4.5.0',
+			'4.5.1',
 			true
 		);
 
@@ -73,6 +73,7 @@ class App extends BaseApp {
 			$this->get_js_assets_url( 'common' ),
 			[
 				'jquery',
+				'jquery-ui-draggable',
 				'backbone-marionette',
 				'backbone-radio',
 				'elementor-dialog',
@@ -86,9 +87,18 @@ class App extends BaseApp {
 
 	public function register_styles() {
 		wp_register_style(
+			'elementor-icons',
+			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
+			[],
+			'3.9.1'
+		);
+
+		wp_register_style(
 			'elementor-common',
 			$this->get_css_assets_url( 'common', null, 'default', true ),
-			[],
+			[
+				'elementor-icons',
+			],
 			ELEMENTOR_VERSION
 		);
 	}

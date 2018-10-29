@@ -532,6 +532,9 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Style', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
+				'actions' => __( 'Actions', 'elementor' ),
+				'view_page' => __( 'View Page', 'elementor' ),
+				'exit_to_dashboard' => __( 'Exit To Dashboard', 'elementor' ),
 
 				// Elements.
 				'inner_section' => __( 'Inner Section', 'elementor' ),
@@ -738,13 +741,6 @@ class Editor {
 			ELEMENTOR_ASSETS_URL . 'lib/e-select2/css/e-select2' . $suffix . '.css',
 			[],
 			'4.0.6-rc.1'
-		);
-
-		wp_register_style(
-			'elementor-icons',
-			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
-			[],
-			'3.8.0'
 		);
 
 		wp_register_style(

@@ -73,6 +73,10 @@
 				@include margin-end(10px);
 			}
 
+			&__title {
+				padding-top: 2px;
+			}
+
 			i {
 				color: #fff;
 				font-size: 10px;

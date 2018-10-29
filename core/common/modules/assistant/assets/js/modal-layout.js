@@ -1,11 +1,11 @@
-const BaseModalLayout = require( 'elementor-templates/views/base-modal-layout' );
-
+import BaseModalLayout from '../../../../assets/js/views/modal/layout';
 import ModalContent from './modal-content';
 
 export default class extends BaseModalLayout {
 	getModalOptions() {
 		return {
 			id: 'elementor-assistant__modal',
+			draggable: true,
 			position: {
 				enable: false,
 			},
@@ -14,13 +14,7 @@ export default class extends BaseModalLayout {
 
 	getLogoOptions() {
 		return {
-			title: elementorCommon.translate( 'assistant', 'assistant' ),
-		};
-	}
-
-	getHeaderOptions() {
-		return {
-			closeType: false,
+			title: elementorCommon.translate( 'go_to', 'assistant' ),
 		};
 	}
 

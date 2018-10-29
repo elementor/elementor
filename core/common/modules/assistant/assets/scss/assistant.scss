@@ -4,27 +4,29 @@
 		background: none;
 
 		.dialog-widget-content {
-			width: 700px;
+			$modal-width: 700px;
+
+			width: $modal-width;
 			max-width: 98%;
 			top: 18vh;
-			left: 50%;
-			transform: translateX(-50%);
+			left: calc( 50% - #{$modal-width} / 2 );
 		}
 
 		.dialog-message {
 			height: initial;
 			min-height: 0;
-			padding: 10px 0;
+			padding: 0;
 			text-align: $start;
 		}
 	}
 
 	&__search {
-		padding: 0 15px;
+		padding: 14px 15px 14px 21px;
 		display: flex;
+		box-shadow: 0 -3px 15px 6px rgba(0, 0, 0, 0.03);
 
 		i {
-			font-size: 20px;
+			font-size: 16px;
 			color: $editor-light;
 			font-weight: bold;
 			@include margin-end(15px);
@@ -37,21 +39,20 @@
 			padding: 0;
 			margin: 0;
 			flex-grow: 1;
-			font-size: 20px;
+			font-size: 14px;
+			font-style: italic;
 			color: $editor-darkest;
 
 			&::placeholder {
-				color: $editor-lighter;
+				color: $editor-light;
 				font-weight: 300;
 			}
 		}
 	}
 
 	&__results {
-
-		&-container {
-			margin-top: 10px;
-		}
+		max-height: 50vh;
+		overflow: auto;
 	}
 
 	&__no-results {
@@ -64,6 +65,7 @@
 .elementor-assistant__results {
 
 	&__category {
+		position: relative;
 
 		&__title {
 			padding: 5px 25px;
@@ -71,6 +73,22 @@
 			background-color: $editor-background;
 			font-size: 9px;
 			text-transform: uppercase;
+		}
+
+		&--remote {
+
+			.elementor-assistant__results__category__items {
+				min-height: 26px;
+			}
+		}
+
+		.eicon-loading {
+			display: none;
+			position: absolute;
+			@include end(10px);
+			top: 30px;
+			color: $editor-info;
+			font-size: 14px;
 		}
 	}
 
