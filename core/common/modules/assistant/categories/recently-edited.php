@@ -85,7 +85,7 @@ class Recently_Edited extends Base_Category {
 				'icon' => $icon,
 				'title' => $post->post_title,
 				'description' => $description,
-				'link' => get_permalink( $post ),
+				'link' => $document->get_edit_url(),
 			];
 		}
 
