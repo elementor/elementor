@@ -20,6 +20,10 @@ export default class extends Category {
 				filter: this.getTextFilter(),
 			},
 			success: ( data ) => {
+				if ( this.isDestroyed ) {
+					return;
+				}
+
 				this.collection.set( data );
 
 				this.toggleElement();
