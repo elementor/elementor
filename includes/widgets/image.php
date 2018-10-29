@@ -674,6 +674,9 @@ class Widget_Image extends Widget_Base {
 			}
 
 			var getAttachmentCaption = function( id ) {
+				if ( ! id ) {
+					return '';
+				}
 				ensureAttachmentData( id );
 				return wp.media.attachment( id ).get( 'caption' );
 			}
