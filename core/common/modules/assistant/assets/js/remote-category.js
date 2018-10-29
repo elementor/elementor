@@ -1,6 +1,10 @@
 import Category from './category';
 
 export default class extends Category {
+	className() {
+		return super.className() + ' elementor-assistant__results__category--remote';
+	}
+
 	ui() {
 		return {
 			title: '.elementor-assistant__results__category__title',
@@ -8,6 +12,8 @@ export default class extends Category {
 	}
 
 	fetchData() {
+		this.ui.loadingIcon.show();
+
 		elementorCommon.ajax.addRequest( 'assistant_get_category_data', {
 			data: {
 				category: this.model.get( 'name' ),
@@ -17,6 +23,8 @@ export default class extends Category {
 				this.collection.set( data );
 
 				this.toggleElement();
+
+				this.ui.loadingIcon.hide();
 			},
 		} );
 	}
@@ -31,6 +39,10 @@ export default class extends Category {
 
 	onRender() {
 		super.onRender();
+
+		this.ui.loadingIcon = jQuery( '<i>', { class: 'eicon-loading eicon-animation-spin' } );
+
+		this.ui.title.after( this.ui.loadingIcon );
 
 		this.fetchData();
 	}
