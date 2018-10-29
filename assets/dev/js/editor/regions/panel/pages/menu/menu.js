@@ -92,7 +92,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 							title: elementor.translate( 'view_page' ),
 							type: 'link',
 							link: elementor.config.document.urls.permalink,
-							newTab: true,
 						},
 						{
 							name: 'exit-to-dashboard',
@@ -100,7 +99,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 							title: elementor.translate( 'exit_to_dashboard' ),
 							type: 'link',
 							link: elementor.config.document.urls.exit_to_dashboard,
-							newTab: true,
 						},
 					],
 				},
