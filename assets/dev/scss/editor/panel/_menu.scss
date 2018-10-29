@@ -6,35 +6,6 @@
 	padding: 25px 15px;
 }
 
-#elementor-panel-exit-to-dashboard {
-	width: 100%;
-	padding: 15px 20px;
-	font-size: 12px;
-	background-color: $wp-primary;
-	color: #fff;
-	text-transform: uppercase;
-	text-align: $start;
-	font-weight: normal;
-	border: none;
-
-	&:hover {
-		background-color: darken($wp-primary, 5%);
-		box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
-	}
-
-	&:active {
-		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
-	}
-
-	&:visited {
-		color: #fff;
-	}
-
-	i {
-		@include margin-end(15px);
-	}
-}
-
 .elementor-panel-menu {
 
 	&-group {
@@ -79,6 +50,21 @@
 
 			> span {
 				color: $editor-success;
+			}
+		}
+
+		&-exit-to-dashboard {
+			background-color: $wp-primary;
+			color: #fff;
+			text-transform: uppercase;
+			font-size: 12px;
+
+			&:hover {
+				background-color: darken($wp-primary, 5%);
+			}
+
+			.elementor-panel-menu-item-icon {
+				color: #fff;
 			}
 		}
 	}
