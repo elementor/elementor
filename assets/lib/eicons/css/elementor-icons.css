@@ -726,6 +726,9 @@
 .eicon-tools:before {
   content: '\e1032'; }
 
+.eicon-loading:before {
+  content: '\e1033'; }
+
 .eicon-editor-link:before {
   content: '\e500'; }
 
