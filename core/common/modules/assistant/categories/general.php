@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Core\Common\Modules\Assistant\Categories;
 
 use Elementor\Core\Common\Modules\Assistant\Base_Category;
