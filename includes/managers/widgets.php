@@ -53,6 +53,7 @@ class Widgets_Manager {
 			'google-maps',
 			'icon',
 			'icon-box',
+			'star-rating',
 			'image-gallery',
 			'image-carousel',
 			'icon-list',
