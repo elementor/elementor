@@ -64,7 +64,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 							title: elementor.translate( 'elementor_settings' ),
 							type: 'link',
 							link: elementor.config.settings_page_link,
-							newTab: true,
 						},
 						{
 							name: 'about-elementor',
@@ -72,7 +71,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 							title: elementor.translate( 'about_elementor' ),
 							type: 'link',
 							link: elementor.config.elementor_site,
-							newTab: true,
 						},
 					],
 				},
