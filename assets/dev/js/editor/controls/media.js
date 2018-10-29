@@ -74,10 +74,7 @@ const ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	getLibrary: function() {
 		const type = this.getMediaType();
-		//if ( 'image' === type || 'video' === type ) {
-			return wp.media.query( { type: type } );
-		//}
-		//return { type: type };
+		return wp.media.query( { type: type } );
 	},
 
 	/**
