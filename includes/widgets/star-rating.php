@@ -138,7 +138,6 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
-
 		$this->add_control(
 			'label',
 			[
@@ -171,10 +170,10 @@ class Widget_Star_Rating extends Widget_Base {
 						'icon' => 'fa fa-align-justify',
 					],
 				],
+				'prefix_class' => 'elementor-star-rating--align-',
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}}',
 				],
-				'prefix_class' => 'elementor-star-rating--align-'
 			]
 		);
 
@@ -324,12 +323,12 @@ class Widget_Star_Rating extends Widget_Base {
 		?>
 
 		<div class="elementor-star-rating__wrapper">
-			<?php if ( ! empty( $settings['label'] ) ) { ?>
+			<?php if ( ! empty( $settings['label'] ) ) : ?>
 				<div class="elementor-star-rating__label"><?php echo $settings['label']; ?></div>
-			<?php } ?>
+			<?php endif; ?>
 			<?php echo $stars_element; ?>
 		</div>
-        <?php
+		<?php
 	}
 
 	protected function _content_template() {}
