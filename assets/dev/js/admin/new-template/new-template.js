@@ -27,6 +27,10 @@ var NewTemplateModule = ViewModule.extend( {
 		ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.layout = new NewTemplateLayout();
+
+		if ( '#add_new' === location.hash ) {
+			this.layout.showModal();
+		}
 	},
 
 	onAddButtonClick: function( event ) {

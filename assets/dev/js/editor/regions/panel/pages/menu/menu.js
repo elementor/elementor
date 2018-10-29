@@ -64,7 +64,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 							title: elementor.translate( 'elementor_settings' ),
 							type: 'link',
 							link: elementor.config.settings_page_link,
-							newTab: true,
 						},
 						{
 							name: 'about-elementor',
@@ -72,7 +71,32 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 							title: elementor.translate( 'about_elementor' ),
 							type: 'link',
 							link: elementor.config.elementor_site,
-							newTab: true,
+						},
+					],
+				},
+				{
+					name: 'actions',
+					title: elementor.translate( 'actions' ),
+					items: [
+						{
+							name: 'go-to',
+							icon: 'fa fa-search',
+							title: elementorCommon.translate( 'go_to', 'assistant' ),
+							callback: () => elementorCommon.assistant.getLayout().showModal(),
+						},
+						{
+							name: 'view-page',
+							icon: 'fa fa-external-link',
+							title: elementor.translate( 'view_page' ),
+							type: 'link',
+							link: elementor.config.document.urls.permalink,
+						},
+						{
+							name: 'exit-to-dashboard',
+							icon: 'fa fa-eye',
+							title: elementor.translate( 'exit_to_dashboard' ),
+							type: 'link',
+							link: elementor.config.document.urls.exit_to_dashboard,
 						},
 					],
 				},

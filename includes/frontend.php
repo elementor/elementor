@@ -393,7 +393,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'3.8.0'
+			'3.9.1'
 		);
 
 		wp_register_style(
