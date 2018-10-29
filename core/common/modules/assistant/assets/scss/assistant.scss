@@ -4,11 +4,12 @@
 		background: none;
 
 		.dialog-widget-content {
-			width: 700px;
+			$modal-width: 700px;
+
+			width: $modal-width;
 			max-width: 98%;
 			top: 18vh;
-			left: 50%;
-			transform: translateX(-50%);
+			left: calc( 50% - #{$modal-width} / 2 );
 		}
 
 		.dialog-message {
@@ -48,6 +49,8 @@
 	}
 
 	&__results {
+		max-height: 50vh;
+		overflow: auto;
 
 		&-container {
 			margin-top: 10px;
