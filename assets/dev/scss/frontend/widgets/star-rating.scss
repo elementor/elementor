@@ -1,0 +1,72 @@
+.elementor-star-rating {
+	color: $gray-mouse;
+	font-family: FontAwesome;
+	display: inline-block;
+	position: relative;
+
+	&:before {
+		content: '\f005\f005\f005\f005\f005';
+		display: block;
+		font-size: inherit;
+		font-family: inherit;
+		position: absolute;
+		overflow: hidden;
+		color: $orange;
+		top: 0;
+		@include start(0);
+	}
+
+	&__wrapper {
+		display: flex;
+		align-items: center;
+	}
+
+	&__label {
+		@include margin-end(10px);
+	}
+
+	&--align {
+
+		&-right {
+
+			.elementor-star-rating__wrapper {
+				text-align: right;
+				justify-content: getValueByDirection( flex-end, flex-start );
+			}
+		}
+
+		&-left {
+
+			.elementor-star-rating__wrapper {
+				text-align: left;
+				justify-content: getValueByDirection( flex-start, flex-end );
+			}
+		}
+
+		&-center {
+
+			.elementor-star-rating__wrapper {
+				text-align: center;
+				justify-content: center;
+			}
+		}
+
+		&-justify {
+
+			.elementor-star-rating__label {
+				@include margin-end( auto );
+			}
+		}
+	}
+}
+
+.elementor--star-style-unicode {
+
+	.elementor-star-rating {
+		font-family: 'Arial', 'Helvetica', sans-serif;
+
+		&:before {
+			content: '★★★★★' ;
+		}
+	}
+}
