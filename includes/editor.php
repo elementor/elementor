@@ -532,6 +532,9 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Style', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
+				'actions' => __( 'Actions', 'elementor' ),
+				'view_page' => __( 'View Page', 'elementor' ),
+				'exit_to_dashboard' => __( 'Exit To Dashboard', 'elementor' ),
 
 				// Elements.
 				'inner_section' => __( 'Inner Section', 'elementor' ),
