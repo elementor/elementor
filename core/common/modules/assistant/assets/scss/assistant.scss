@@ -57,7 +57,7 @@
 
 	&__no-results {
 		display: none;
-		text-align: center;
+		padding: 20px;
 		color: $editor-light;
 	}
 }
@@ -98,6 +98,7 @@
 		height: 35px;
 		text-decoration: none;
 
+		&:hover,
 		&:focus {
 			background-color: $editor-info;
 			box-shadow: none;
