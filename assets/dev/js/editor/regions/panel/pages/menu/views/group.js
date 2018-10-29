@@ -1,4 +1,4 @@
-var PanelMenuItemView = require( 'elementor-panel/pages/menu/views/item' );
+const PanelMenuItemView = require( 'elementor-panel/pages/menu/views/item' );
 
 module.exports = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-panel-menu-group',
@@ -14,11 +14,11 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onChildviewClick: function( childView ) {
-		var menuItemType = childView.model.get( 'type' );
+		const menuItemType = childView.model.get( 'type' );
 
 		switch ( menuItemType ) {
 			case 'page':
-				var pageName = childView.model.get( 'pageName' ),
+				const pageName = childView.model.get( 'pageName' ),
 					pageTitle = childView.model.get( 'title' );
 
 				elementor.getPanelView().setPage( pageName, pageTitle );
@@ -26,11 +26,18 @@ module.exports = Marionette.CompositeView.extend( {
 				break;
 
 			case 'link':
-				open( childView.model.get( 'link' ), '_blank' );
+				const link = childView.model.get( 'link' ),
+					isNewTab = childView.model.get( 'newTab' );
+
+				if ( isNewTab ) {
+					open( link, '_blank' );
+				} else {
+					location.href = childView.model.get( 'link' );
+				}
 
 				break;
 			default:
-				var callback = childView.model.get( 'callback' );
+				const callback = childView.model.get( 'callback' );
 
 				if ( _.isFunction( callback ) ) {
 					callback.call( childView );
