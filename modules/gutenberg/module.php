@@ -19,7 +19,7 @@ class Module extends BaseModule {
 	}
 
 	public static function is_active() {
-		return function_exists( 'the_gutenberg_project' );
+		return function_exists( 'register_block_type' );
 	}
 
 	public function register_elementor_rest_field() {
