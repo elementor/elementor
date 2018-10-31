@@ -22,6 +22,11 @@ class Create extends Base_Category {
 		foreach ( $elementor_supported_post_types as $post_type ) {
 			$post_type_object = get_post_type_object( $post_type );
 
+			// If there is an old post type from inactive plugins
+			if ( ! $post_type_object ) {
+				continue;
+			}
+
 			if ( Source_Local::CPT === $post_type ) {
 				$link = admin_url( 'edit.php?post_type=' . Source_Local::CPT . '#add_new' );
 			} else {
