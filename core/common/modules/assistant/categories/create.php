@@ -2,7 +2,6 @@
 namespace Elementor\Core\Common\Modules\Assistant\Categories;
 
 use Elementor\Core\Common\Modules\Assistant\Base_Category;
-use Elementor\Settings as ElementorSettings;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
