@@ -217,7 +217,8 @@ class DB {
 	 * When editing the with Elementor the first time, the current page content
 	 * is parsed into Text Editor Widget that contains the original data.
 	 *
-	 * @since 2.1.0
+	 * @since 2.3.0
+	 * @deprecated 2.3.0 Use `$document->convert_to_elementor()` instead
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
@@ -225,54 +226,14 @@ class DB {
 	 * @return array Content in Elementor format.
 	 */
 	public function get_new_editor_from_wp_editor( $post_id ) {
-		$post = get_post( $post_id );
+		// TODO: _deprecated_function( __METHOD__, '2.3.0', '$document->convert_to_elementor()' );
+		$document = Plugin::$instance->documents->get( $post_id );
 
-		if ( empty( $post ) || empty( $post->post_content ) ) {
-			return [];
+		if ( $document ) {
+			return $document->convert_to_elementor();
 		}
 
-		// Check if it's only a shortcode.
-		preg_match_all( '/' . get_shortcode_regex() . '/', $post->post_content, $matches, PREG_SET_ORDER );
-		if ( ! empty( $matches ) ) {
-			foreach ( $matches as $shortcode ) {
-				if ( trim( $post->post_content ) === $shortcode[0] ) {
-					$widget_type = Plugin::$instance->widgets_manager->get_widget_types( 'shortcode' );
-					$settings = [
-						'shortcode' => $post->post_content,
-					];
-					break;
-				}
-			}
-		}
-
-		if ( empty( $widget_type ) ) {
-			$widget_type = Plugin::$instance->widgets_manager->get_widget_types( 'text-editor' );
-			$settings = [
-				'editor' => $post->post_content,
-			];
-		}
-
-		// TODO: Better coding to start template for editor
-		return [
-			[
-				'id' => Utils::generate_random_string(),
-				'elType' => 'section',
-				'elements' => [
-					[
-						'id' => Utils::generate_random_string(),
-						'elType' => 'column',
-						'elements' => [
-							[
-								'id' => Utils::generate_random_string(),
-								'elType' => $widget_type::get_type(),
-								'widgetType' => $widget_type->get_name(),
-								'settings' => $settings,
-							],
-						],
-					],
-				],
-			],
-		];
+		return [];
 	}
 
 	/**

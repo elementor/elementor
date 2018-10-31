@@ -604,7 +604,7 @@ abstract class Document extends Controls_Stack {
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			if ( empty( $elements ) && empty( $autosave_elements ) ) {
 				// Convert to Elementor.
-				$elements = Plugin::$instance->db->get_new_editor_from_wp_editor( $this->post->ID );
+				$elements = $this->convert_to_elementor();
 				if ( $this->is_autosave() ) {
 					Plugin::$instance->db->copy_elementor_meta( $this->post->post_parent, $this->post->ID );
 				}
@@ -616,6 +616,57 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $elements;
+	}
+
+	public function convert_to_elementor() {
+		$this->save_type();
+
+		if ( empty( $this->post->post_content ) ) {
+			return [];
+		}
+
+		// Check if it's only a shortcode.
+		preg_match_all( '/' . get_shortcode_regex() . '/', $this->post->post_content, $matches, PREG_SET_ORDER );
+		if ( ! empty( $matches ) ) {
+			foreach ( $matches as $shortcode ) {
+				if ( trim( $this->post->post_content ) === $shortcode[0] ) {
+					$widget_type = Plugin::$instance->widgets_manager->get_widget_types( 'shortcode' );
+					$settings = [
+						'shortcode' => $this->post->post_content,
+					];
+					break;
+				}
+			}
+		}
+
+		if ( empty( $widget_type ) ) {
+			$widget_type = Plugin::$instance->widgets_manager->get_widget_types( 'text-editor' );
+			$settings = [
+				'editor' => $this->post->post_content,
+			];
+		}
+
+		// TODO: Better coding to start template for editor
+		return [
+			[
+				'id' => Utils::generate_random_string(),
+				'elType' => 'section',
+				'elements' => [
+					[
+						'id' => Utils::generate_random_string(),
+						'elType' => 'column',
+						'elements' => [
+							[
+								'id' => Utils::generate_random_string(),
+								'elType' => $widget_type::get_type(),
+								'widgetType' => $widget_type->get_name(),
+								'settings' => $settings,
+							],
+						],
+					],
+				],
+			],
+		];
 	}
 
 	public function print_elements_with_wrapper( $elements_data = null ) {
