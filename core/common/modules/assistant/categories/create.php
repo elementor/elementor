@@ -35,7 +35,7 @@ class Create extends Base_Category {
 			}
 
 			$items[] = [
-				'title' => $post_type_object->labels->new_item,
+				'title' => $post_type_object->labels->add_new_item,
 				'icon' => 'plus-circle',
 				'link' => $link,
 			];
