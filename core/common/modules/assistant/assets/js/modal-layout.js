@@ -14,7 +14,7 @@ export default class extends BaseModalLayout {
 
 	getLogoOptions() {
 		return {
-			title: elementorCommon.translate( 'go_to', 'assistant' ),
+			title: elementorCommon.translate( 'finder', 'assistant' ),
 		};
 	}
 

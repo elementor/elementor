@@ -83,7 +83,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 						{
 							name: 'go-to',
 							icon: 'fa fa-search',
-							title: elementorCommon.translate( 'go_to', 'assistant' ),
+							title: elementorCommon.translate( 'finder', 'assistant' ),
 							callback: () => elementorCommon.assistant.getLayout().showModal(),
 						},
 						{

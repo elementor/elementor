@@ -57,7 +57,7 @@ class Module extends BaseModule {
 		return [
 			'data' => $categories_data,
 			'i18n' => [
-				'go_to' => __( 'Go To', 'elementor' ),
+				'finder' => __( 'Finder', 'elementor' ),
 			],
 		];
 	}
