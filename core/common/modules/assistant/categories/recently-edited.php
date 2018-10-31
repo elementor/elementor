@@ -59,7 +59,7 @@ class Recently_Edited extends Base_Category {
 
 		$recently_edited_query = new \WP_Query( $recently_edited_query_args );
 
-		$posts = [];
+		$items = [];
 
 		/** @var \WP_Post $post */
 		foreach ( $recently_edited_query->posts as $post ) {
@@ -81,14 +81,21 @@ class Recently_Edited extends Base_Category {
 				$icon = 'post-title';
 			}
 
-			$posts[] = [
+			$items[] = [
 				'icon' => $icon,
 				'title' => $post->post_title,
 				'description' => $description,
 				'link' => $document->get_edit_url(),
+				'actions' => [
+					[
+						'name' => 'view',
+						'link' => $document->get_permalink(),
+						'icon' => 'eye',
+					],
+				],
 			];
 		}
 
-		return $posts;
+		return $items;
 	}
 }
