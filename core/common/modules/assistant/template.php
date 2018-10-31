@@ -26,11 +26,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-assistant__results__item">
-	<div class="elementor-assistant__results__item__icon">
-		<i class="eicon-{{{ icon }}}"></i>
-	</div>
-	<div class="elementor-assistant__results__item__title">{{{ title }}}</div>
-	<# if ( description ) { #>
-		<div class="elementor-assistant__results__item__description">- {{{ description }}}</div>
+	<a href="{{ link }}" target="_blank" class="elementor-assistant__results__item__link">
+		<div class="elementor-assistant__results__item__icon">
+			<i class="eicon-{{{ icon }}}"></i>
+		</div>
+		<div class="elementor-assistant__results__item__title">{{{ title }}}</div>
+		<# if ( description ) { #>
+			<div class="elementor-assistant__results__item__description">- {{{ description }}}</div>
+		<# } #>
+	</a>
+	<# if ( actions.length ) { #>
+		<div class="elementor-assistant__results__item__actions">
+		<# jQuery.each( actions, function() { #>
+			<a class="elementor-assistant__results__item__action elementor-assistant__results__item__action--{{ this.name }}" href="{{ this.link }}" target="_blank">
+				<i class="eicon-{{{ this.icon }}}"></i>
+			</a>
+		<# } ); #>
+		</div>
 	<# } #>
 </script>

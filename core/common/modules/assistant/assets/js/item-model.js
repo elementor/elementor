@@ -5,6 +5,7 @@ export default class extends Backbone.Model {
 			icon: 'settings',
 			link: '',
 			keywords: [],
+			actions: [],
 		};
 	}
 }

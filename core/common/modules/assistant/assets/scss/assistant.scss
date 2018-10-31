@@ -93,10 +93,9 @@
 	}
 
 	&__item {
+		$item-height: 35px;
+
 		display: flex;
-		align-items: center;
-		height: 35px;
-		text-decoration: none;
 
 		&:hover,
 		&:focus {
@@ -107,6 +106,14 @@
 			* {
 				color: #fff;
 			}
+		}
+
+		&__link {
+			display: flex;
+			align-items: center;
+			height: $item-height;
+			text-decoration: none;
+			flex-grow: 1;
 		}
 
 		&__icon {
@@ -126,6 +133,19 @@
 			color: $editor-light;
 			font-size: 13px;
 			font-style: italic;
+		}
+
+		&__action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			width: $item-height;
+			color: $editor-light;
+
+			&:hover {
+				background-color: rgba(0, 0, 0, .07);
+			}
 		}
 	}
 }
