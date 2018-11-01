@@ -19,6 +19,7 @@ class General extends Base_Category {
 		return [
 			'my-templates' => [
 				'title' => _x( 'My Templates', 'Template Library', 'elementor' ),
+				'icon' => 'library-save',
 				'link' => admin_url( 'edit.php?post_type=' . Source_Local::CPT ),
 				'keywords' => [ 'Template', 'Header', 'Footer', 'Single', 'Archive', 'Search', '404 Page' ],
 			],

@@ -20,6 +20,7 @@ class Site extends Base_Category {
 			'homepage' => [
 				'title' => __( 'Homepage', 'elementor' ),
 				'link' => home_url(),
+				'icon' => 'home-heart',
 				'keywords' => [ 'Home', 'Page' ],
 			],
 			'wordpress-dashboard' => [
@@ -30,11 +31,13 @@ class Site extends Base_Category {
 			],
 			'wordpress-menus' => [
 				'title' => __( 'Menus', 'elementor' ),
+				'icon' => 'wordpress',
 				'link' => admin_url( 'nav-menus.php' ),
 				'keywords' => [ 'Menu', 'WordPress' ],
 			],
 			'wordpress-customizer' => [
 				'title' => __( 'Customizer', 'elementor' ),
+				'icon' => 'wordpress',
 				'link' => admin_url( 'customize.php' ),
 				'keywords' => [ 'Customizer', 'WordPress' ],
 			],
