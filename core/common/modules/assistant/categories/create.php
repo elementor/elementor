@@ -34,7 +34,7 @@ class Create extends Base_Category {
 				$link = Utils::get_create_new_post_url( $post_type );
 			}
 
-			$items[] = [
+			$items[ $post_type ] = [
 				'title' => $post_type_object->labels->add_new_item,
 				'icon' => 'plus-circle',
 				'link' => $link,

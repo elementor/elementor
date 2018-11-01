@@ -49,7 +49,7 @@ class Module extends BaseModule {
 		$categories_data = [];
 
 		foreach ( $categories as $category_name => $category ) {
-			$categories_data[] = array_merge( $category->get_settings(), [ 'name' => $category_name ] );
+			$categories_data[ $category_name ] = array_merge( $category->get_settings(), [ 'name' => $category_name ] );
 		}
 
 		$categories_data = apply_filters( 'elementor/assistant/categories', $categories_data );

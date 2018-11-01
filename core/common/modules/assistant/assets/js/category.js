@@ -19,7 +19,13 @@ export default class extends Marionette.CompositeView {
 
 		this.isVisible = true;
 
-		this.collection = new Backbone.Collection( this.model.get( 'items' ), { model: ItemModel } );
+		let items = this.model.get( 'items' );
+
+		if ( items ) {
+			items = Object.values( items );
+		}
+
+		this.collection = new Backbone.Collection( items, { model: ItemModel } );
 	}
 
 	filter( childModel ) {
