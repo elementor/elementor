@@ -1,4 +1,4 @@
-import environment from '../../../utils/environment';
+import environment from '../../../../../../core/common/assets/js/utils/environment';
 
 export default class extends Marionette.LayoutView {
 	id() {

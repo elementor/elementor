@@ -3,11 +3,11 @@ import ItemModel from './item-model';
 
 export default class extends Marionette.CompositeView {
 	className() {
-		return 'elementor-assistant__results__category';
+		return 'elementor-finder__results__category';
 	}
 
 	getTemplate() {
-		return '#tmpl-elementor-assistant__results__category';
+		return '#tmpl-elementor-finder__results__category';
 	}
 
 	getChildView() {
@@ -15,7 +15,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	initialize() {
-		this.childViewContainer = '.elementor-assistant__results__category__items';
+		this.childViewContainer = '.elementor-finder__results__category__items';
 
 		this.isVisible = true;
 
@@ -39,7 +39,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	getTextFilter() {
-		return elementorCommon.assistant.channel.request( 'filter:text' ).trim().toLowerCase();
+		return elementorCommon.finder.channel.request( 'filter:text' ).trim().toLowerCase();
 	}
 
 	toggleElement() {
@@ -55,7 +55,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onRender() {
-		this.listenTo( elementorCommon.assistant.channel, 'filter:change', this.onFilterChange.bind( this ) );
+		this.listenTo( elementorCommon.finder.channel, 'filter:change', this.onFilterChange.bind( this ) );
 	}
 
 	onFilterChange() {

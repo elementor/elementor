@@ -1,4 +1,4 @@
-#elementor-assistant {
+#elementor-finder {
 
 	&__modal {
 		background: none;
@@ -62,7 +62,7 @@
 	}
 }
 
-.elementor-assistant__results {
+.elementor-finder__results {
 
 	&__category {
 		position: relative;
@@ -77,7 +77,7 @@
 
 		&--remote {
 
-			.elementor-assistant__results__category__items {
+			.elementor-finder__results__category__items {
 				min-height: 26px;
 			}
 		}

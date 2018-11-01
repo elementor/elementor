@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\Common\Modules\Assistant;
+namespace Elementor\Core\Common\Modules\Finder;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

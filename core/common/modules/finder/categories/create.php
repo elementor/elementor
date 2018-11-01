@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\Core\Common\Modules\Assistant\Categories;
+namespace Elementor\Core\Common\Modules\Finder\Categories;
 
-use Elementor\Core\Common\Modules\Assistant\Base_Category;
+use Elementor\Core\Common\Modules\Finder\Base_Category;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\Common\Modules\Assistant;
+namespace Elementor\Core\Common\Modules\Finder;
 
 use Elementor\Core\Base\Base_Object;
 
