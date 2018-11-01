@@ -14,10 +14,16 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 		this.collection = PanelMenuPageView.getGroups();
 	},
 
-	onDestroy: function() {
-		var arrowClass = 'eicon-arrow-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
+	getArrowClass: function() {
+		return 'eicon-arrow-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
+	},
 
-		elementor.panel.currentView.getHeaderView().ui.menuIcon.removeClass( arrowClass ).addClass( 'eicon-menu-bar' );
+	onRender: function() {
+		elementor.getPanelView().getHeaderView().ui.menuIcon.removeClass( 'eicon-menu-bar' ).addClass( this.getArrowClass() );
+	},
+
+	onDestroy: function() {
+		elementor.getPanelView().getHeaderView().ui.menuIcon.removeClass( this.getArrowClass() ).addClass( 'eicon-menu-bar' );
 	},
 }, {
 	groups: null,
