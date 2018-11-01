@@ -20,22 +20,22 @@ class Tools extends Base_Category {
 		$tools_url = ElementorTools::get_url();
 
 		return [
-			[
+			'tools' => [
 				'title' => __( 'Tools', 'elementor' ),
 				'icon' => 'tools',
 				'link' => $tools_url,
 			],
-			[
+			'replace-url' => [
 				'title' => __( 'Replace URL', 'elementor' ),
 				'icon' => 'tools',
 				'link' => $tools_url . '#tab-replace_url',
 			],
-			[
+			'version-control' => [
 				'title' => __( 'Version Control', 'elementor' ),
 				'icon' => 'time-line',
 				'link' => $tools_url . '#tab-versions',
 			],
-			[
+			'maintenance-mode' => [
 				'title' => __( 'Maintenance Mode', 'elementor' ),
 				'icon' => 'tools',
 				'link' => $tools_url . '#tab-maintenance_mode',
