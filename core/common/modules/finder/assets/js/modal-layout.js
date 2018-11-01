@@ -4,7 +4,7 @@ import ModalContent from './modal-content';
 export default class extends BaseModalLayout {
 	getModalOptions() {
 		return {
-			id: 'elementor-assistant__modal',
+			id: 'elementor-finder__modal',
 			draggable: true,
 			position: {
 				enable: false,
@@ -14,7 +14,7 @@ export default class extends BaseModalLayout {
 
 	getLogoOptions() {
 		return {
-			title: elementorCommon.translate( 'finder', 'assistant' ),
+			title: elementorCommon.translate( 'finder', 'finder' ),
 		};
 	}
 

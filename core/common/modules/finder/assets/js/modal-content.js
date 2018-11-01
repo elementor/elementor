@@ -3,16 +3,16 @@ import StartView from './start';
 
 export default class extends Marionette.LayoutView {
 	id() {
-		return 'elementor-assistant';
+		return 'elementor-finder';
 	}
 
 	getTemplate() {
-		return '#tmpl-elementor-assistant';
+		return '#tmpl-elementor-finder';
 	}
 
 	ui() {
 		return {
-			searchInput: '#elementor-assistant__search__input',
+			searchInput: '#elementor-finder__search__input',
 		};
 	}
 
@@ -24,7 +24,7 @@ export default class extends Marionette.LayoutView {
 
 	regions() {
 		return {
-			content: '#elementor-assistant__content',
+			content: '#elementor-finder__content',
 		};
 	}
 
@@ -44,7 +44,7 @@ export default class extends Marionette.LayoutView {
 		const value = this.ui.searchInput.val();
 
 		if ( value ) {
-			elementorCommon.assistant.channel
+			elementorCommon.finder.channel
 				.reply( 'filter:text', value )
 				.trigger( 'filter:change' );
 

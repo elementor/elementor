@@ -3,17 +3,17 @@ import RemoteCategory from './remote-category';
 
 export default class extends Marionette.CompositeView {
 	id() {
-		return 'elementor-assistant__results-container';
+		return 'elementor-finder__results-container';
 	}
 
 	ui() {
 		return {
-			noResults: '#elementor-assistant__no-results',
+			noResults: '#elementor-finder__no-results',
 		};
 	}
 
 	getTemplate() {
-		return '#tmpl-elementor-assistant-results-container';
+		return '#tmpl-elementor-finder-results-container';
 	}
 
 	getChildView( childModel ) {
@@ -21,9 +21,9 @@ export default class extends Marionette.CompositeView {
 	}
 
 	initialize() {
-		this.childViewContainer = '#elementor-assistant__results';
+		this.childViewContainer = '#elementor-finder__results';
 
-		this.collection = new Backbone.Collection( Object.values( elementorCommon.assistant.getSettings( 'data' ) ) );
+		this.collection = new Backbone.Collection( Object.values( elementorCommon.finder.getSettings( 'data' ) ) );
 	}
 
 	onChildviewToggleVisibility() {

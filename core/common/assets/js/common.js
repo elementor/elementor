@@ -1,7 +1,7 @@
 import HotKeys from './utils/hot-keys';
 import Helpers from './utils/helpers';
 import Ajax from '../../modules/ajax/assets/js/ajax';
-import Assistant from '../../modules/assistant/assets/js/assistant';
+import Finder from '../../modules/finder/assets/js/finder';
 
 const ViewModule = require( 'elementor-utils/view-module' );
 
@@ -43,7 +43,7 @@ class ElementorCommonApp extends ViewModule {
 
 		const modules = {
 			ajax: Ajax,
-			assistant: Assistant,
+			finder: Finder,
 		};
 
 		activeModules.forEach( ( name ) => {

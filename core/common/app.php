@@ -3,7 +3,7 @@ namespace Elementor\Core\Common;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\Core\Common\Modules\Assistant\Module as Assistant;
+use Elementor\Core\Common\Modules\Finder\Module as Finder;
 
 class App extends BaseApp {
 
@@ -29,7 +29,7 @@ class App extends BaseApp {
 		$this->add_component( 'ajax', new Ajax() );
 
 		if ( current_user_can( 'manage_options' ) ) {
-			$this->add_component( 'assistant', new Assistant() );
+			$this->add_component( 'finder', new Finder() );
 		}
 	}
 
