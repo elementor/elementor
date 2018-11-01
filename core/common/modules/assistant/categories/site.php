@@ -17,16 +17,16 @@ class Site extends Base_Category {
 
 	public function get_category_items( array $options = [] ) {
 		return [
-			[
+			'wordpress-dashboard' => [
 				'title' => __( 'WordPress Dashboard', 'elementor' ),
 				'icon' => 'dashboard',
 				'link' => admin_url(),
 			],
-			[
+			'homepage' => [
 				'title' => __( 'Homepage', 'elementor' ),
 				'link' => home_url(),
 			],
-			[
+			'wordpress-menus' => [
 				'title' => __( 'WordPress Menus', 'elementor' ),
 				'link' => admin_url( 'nav-menus.php' ),
 			],

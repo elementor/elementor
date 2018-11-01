@@ -19,20 +19,20 @@ class Settings extends Base_Category {
 		$settings_url = ElementorSettings::get_url();
 
 		return [
-			[
+			'general-settings' => [
 				'title' => __( 'General Settings', 'elementor' ),
 				'link' => $settings_url,
 			],
-			[
+			'style' => [
 				'title' => __( 'Style', 'elementor' ),
 				'link' => $settings_url . '#tab-style',
 			],
-			[
+			'integrations' => [
 				'title' => __( 'Integrations', 'elementor' ),
 				'icon' => 'integration',
 				'link' => $settings_url . '#tab-integrations',
 			],
-			[
+			'advanced' => [
 				'title' => __( 'Advanced', 'elementor' ),
 				'link' => $settings_url . '#tab-advanced',
 			],
