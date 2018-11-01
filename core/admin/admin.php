@@ -689,7 +689,8 @@ class Admin extends App {
 			return;
 		}
 
-		$this->add_new_template_template();
+		// Allow plugins to add their templates on admin_head.
+		add_action( 'admin_head', [ $this, 'add_new_template_template' ] );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
 	}

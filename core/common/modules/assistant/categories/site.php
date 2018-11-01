@@ -17,18 +17,26 @@ class Site extends Base_Category {
 
 	public function get_category_items( array $options = [] ) {
 		return [
-			'wordpress-dashboard' => [
-				'title' => __( 'WordPress Dashboard', 'elementor' ),
-				'icon' => 'dashboard',
-				'link' => admin_url(),
-			],
 			'homepage' => [
 				'title' => __( 'Homepage', 'elementor' ),
 				'link' => home_url(),
+				'keywords' => [ 'Home', 'Page' ],
+			],
+			'wordpress-dashboard' => [
+				'title' => __( 'Dashboard', 'elementor' ),
+				'icon' => 'dashboard',
+				'link' => admin_url(),
+				'keywords' => [ 'Dashboard', 'WordPress' ],
 			],
 			'wordpress-menus' => [
-				'title' => __( 'WordPress Menus', 'elementor' ),
+				'title' => __( 'Menus', 'elementor' ),
 				'link' => admin_url( 'nav-menus.php' ),
+				'keywords' => [ 'Menu', 'WordPress' ],
+			],
+			'wordpress-customizer' => [
+				'title' => __( 'Customizer', 'elementor' ),
+				'link' => admin_url( 'customize.php' ),
+				'keywords' => [ 'Customizer', 'WordPress' ],
 			],
 		];
 	}
