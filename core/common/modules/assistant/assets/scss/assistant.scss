@@ -40,11 +40,11 @@
 			margin: 0;
 			flex-grow: 1;
 			font-size: 14px;
-			font-style: italic;
 			color: $editor-darkest;
 
 			&::placeholder {
 				color: $editor-light;
+				font-style: italic;
 				font-weight: 300;
 			}
 		}
@@ -93,10 +93,9 @@
 	}
 
 	&__item {
+		$item-height: 35px;
+
 		display: flex;
-		align-items: center;
-		height: 35px;
-		text-decoration: none;
 
 		&:hover,
 		&:focus {
@@ -107,6 +106,14 @@
 			* {
 				color: #fff;
 			}
+		}
+
+		&__link {
+			display: flex;
+			align-items: center;
+			height: $item-height;
+			text-decoration: none;
+			flex-grow: 1;
 		}
 
 		&__icon {
@@ -122,10 +129,24 @@
 		}
 
 		&__description {
-			@include margin-start(15px);
+			@include margin-start(5px);
 			color: $editor-light;
 			font-size: 13px;
 			font-style: italic;
+		}
+
+		&__action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			width: $item-height;
+			color: $editor-light;
+			text-decoration: none;
+
+			&:hover {
+				background-color: rgba(0, 0, 0, .07);
+			}
 		}
 	}
 }
