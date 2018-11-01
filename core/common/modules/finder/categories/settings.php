@@ -29,12 +29,6 @@ class Settings extends Base_Category {
 				'link' => $settings_url . '#tab-style',
 				'keywords' => [ 'Style', 'Settings' ],
 			],
-			'integrations' => [
-				'title' => __( 'Integrations', 'elementor' ),
-				'icon' => 'integration',
-				'link' => $settings_url . '#tab-integrations',
-				'keywords' => [ 'Integrations', 'Settings', 'TypeKit', 'Facebook', 'reCAPTCHA', 'MailChimp', 'Drip', 'ActiveCampaign', 'GetResponse', 'ConvertKit' ],
-			],
 			'advanced' => [
 				'title' => __( 'Advanced', 'elementor' ),
 				'link' => $settings_url . '#tab-advanced',
