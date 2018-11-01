@@ -55,6 +55,18 @@ abstract class Base {
 	}
 
 	public function __construct( $file_name ) {
+		/**
+		 * Elementor File Name
+		 *
+		 * Filters the File name
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param string   $file_name
+		 * @param object $this The file instance, which inherits Elementor\Core\Files
+		 */
+		$file_name = apply_filters( 'elementor/files/file_name', $file_name, $this );
+
 		$this->set_file_name( $file_name );
 
 		$this->set_files_dir( static::DEFAULT_FILES_DIR );
