@@ -55,7 +55,7 @@
 
 	i {
 		@include margin-end(3px);
-		font-size: 19px;
+		font-size: 125%;
 	}
 }
 
@@ -130,7 +130,7 @@ body {
 		}
 	}
 
-	.gutenberg {
+	.block-editor {
 
 		#elementor-switch-mode {
 			margin: 0 15px;
@@ -142,7 +142,6 @@ body {
 				line-height: 1;
 
 				i {
-					font-size: 125%;
 					@include padding-end(5px);
 				}
 			}
