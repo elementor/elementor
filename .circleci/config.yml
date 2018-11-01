@@ -1,20 +1,6 @@
-defaults: &e2e_default
-  working_directory: ~/elementor
-  machine:
-    ? mysql
-    ? wordpress_e2e_tests
-    ? cli_e2e_tests
 
 workflows:
   version: 2
-
-  e2e:
-    jobs:
-    - e2e_setup
-    - e2e_electron:
-        requires:
-        - e2e_setup
-
   tests:
     jobs:
     - php54-wp-latest-build
@@ -38,47 +24,46 @@ workflows:
     - php-js-lints
 
 version: 2
+
 job-references:
-  mysql_image: &mysql_image circleci/mysql:5.6
+  mysql_image: &mysql_image
+                 circleci/mysql:5.6
 
   setup_environment: &setup_environment
-    name: 'Setup Environment Variables'
+    name: "Setup Environment Variables"
     command: |
       echo "export PATH=$HOME/.composer/vendor/bin:$PATH" >> $BASH_ENV
       if [ -f /home/circleci/.bashrc ]; then
-      source /home/circleci/.bashrc
+        source /home/circleci/.bashrc
       fi
-
   install_dependencies: &install_dependencies
-    name: 'Install Dependencies'
+    name: "Install Dependencies"
     command: |
       sudo docker-php-ext-install mysqli
-
   install_wp_core: &install_wp_core
-    name: 'Install WordPress Core'
+    name: "Install WordPress Core"
     command: |
       rm -rf /tmp/wordpress-tests-lib /tmp/wordpress
       bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 $WP_VERSION
-
   php_job: &php_job
     environment:
-    - WP_VERSION: 'latest'
+    - WP_VERSION: "latest"
     steps:
     - checkout
     - run: *setup_environment
     - run: *install_dependencies
     - run: *install_wp_core
     - run:
-        name: 'Run PHPUnit on Single Site'
+        name: "Run PHPUnit on Single Site"
         command: |
           mkdir -p ~/phpunit
           phpunit --coverage-clover=build/logs/clover.xml --log-junit ~/phpunit/junit.xml
     - run:
-        name: 'Run PHPUnit on Multi Site'
+        name: "Run PHPUnit on Multi Site"
         command: |
           WP_MULTISITE=1 phpunit --coverage-clover=build/logs/clover.xml
     - run:
-        name: 'Run PHP Parallel Lint'
+        name: "Run PHP Parallel Lint"
         command: |
           parallel-lint --blame --exclude node_modules --exclude vendor .
     - store_test_results:
@@ -87,64 +72,6 @@ job-references:
         path: ~/phpunit
 
 jobs:
-  e2e_setup:
-    docker:
-    - image: circleci/node
-    steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - cypress-{{ checksum "package.json" }}
-    - run:
-        name: setup cypress
-        command: |
-          yarn add cypress -D
-    - save_cache:
-        key: cypress-{{ checksum "package.json" }}
-        paths:
-        - ~/.yarn
-        - ~/.cache
-    - persist_to_workspace:
-        root: ~/
-        paths:
-        - .cache/Cypress
-    - run:
-        name: Build Elementor
-        command: |
-          yarn
-          npx grunt build
-    - run:
-        name: Prepare Elementor
-        command: |
-          mv cypress.json build/cypress.json
-          mv .circleci/docker-compose.yml build/docker-compose.yml
-          mv tests build/tests
-          mv bin build/bin
-          mv package.json build/package.json
-          mv build ../build
-          cd ..
-          rm -rf elementor
-          mv build elementor
-    - persist_to_workspace:
-        root: ~/
-        paths:
-        - elementor
-
-  e2e_electron:
-    <<: *e2e_default
-    steps:
-    - attach_workspace:
-        at: ~/
-    - run:
-        name: Setup WordPress
-        command: |
-          docker-compose up -d
-          bash ./bin/reset-e2e-tests.sh
-    - run:
-        name: run e2e electron
-        command: |
-          npx cypress run --record --key $RECORD_KEY
-
   php54-wp-latest-build:
     <<: *php_job
     docker:
@@ -154,7 +81,7 @@ jobs:
   php54-wp48-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.8'
+    - WP_VERSION: "4.8"
     docker:
     - image: pojome/php-cli:5.4
     - image: *mysql_image
@@ -162,7 +89,7 @@ jobs:
   php54-wp47-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.7'
+    - WP_VERSION: "4.7"
     docker:
     - image: pojome/php-cli:5.4
     - image: *mysql_image
@@ -176,7 +103,7 @@ jobs:
   php55-wp48-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.8'
+    - WP_VERSION: "4.8"
     docker:
     - image: pojome/php-cli:5.5
     - image: *mysql_image
@@ -184,7 +111,7 @@ jobs:
   php55-wp47-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.7'
+    - WP_VERSION: "4.7"
     docker:
     - image: pojome/php-cli:5.5
     - image: *mysql_image
@@ -198,7 +125,7 @@ jobs:
   php56-wp48-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.8'
+    - WP_VERSION: "4.8"
     docker:
     - image: pojome/php-cli:5.6
     - image: *mysql_image
@@ -206,7 +133,7 @@ jobs:
   php56-wp47-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.7'
+    - WP_VERSION: "4.7"
     docker:
     - image: pojome/php-cli:5.6
     - image: *mysql_image
@@ -220,7 +147,7 @@ jobs:
   php70-wp48-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.8'
+    - WP_VERSION: "4.8"
     docker:
     - image: pojome/php-cli:7.0
     - image: *mysql_image
@@ -228,7 +155,7 @@ jobs:
   php70-wp47-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.7'
+    - WP_VERSION: "4.7"
     docker:
     - image: pojome/php-cli:7.0
     - image: *mysql_image
@@ -242,7 +169,7 @@ jobs:
   php71-wp48-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.8'
+    - WP_VERSION: "4.8"
     docker:
     - image: pojome/php-cli:7.1
     - image: *mysql_image
@@ -250,7 +177,7 @@ jobs:
   php71-wp47-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.7'
+    - WP_VERSION: "4.7"
     docker:
     - image: pojome/php-cli:7.1
     - image: *mysql_image
@@ -264,7 +191,7 @@ jobs:
   php72-wp48-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.8'
+    - WP_VERSION: "4.8"
     docker:
     - image: pojome/php-cli:7.2
     - image: *mysql_image
@@ -272,7 +199,7 @@ jobs:
   php72-wp47-build:
     <<: *php_job
     environment:
-    - WP_VERSION: '4.7'
+    - WP_VERSION: "4.7"
     docker:
     - image: pojome/php-cli:7.2
     - image: *mysql_image
@@ -283,12 +210,14 @@ jobs:
     steps:
     - checkout
     - run:
-        name: 'Run JS lint'
+        name: "Run JS lint"
         command: |
           mkdir -p /root/junit
+          #jscs -c .jscsrc . --reporter=junit > /root/junit/jscs.xml
+          #jshint .
           eslint . -f junit > /root/junit/eslint.xml
     - run:
-        name: 'Run PHP lint'
+        name: "Run PHP lint"
         command: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
           phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
