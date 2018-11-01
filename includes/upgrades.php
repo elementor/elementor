@@ -84,6 +84,7 @@ class Upgrades {
 			'2.0.1' => 'upgrade_v201',
 			'2.0.10' => 'upgrade_v2010',
 			'2.1.0' => 'upgrade_v210',
+			'2.3.0' => 'upgrade_v230',
 		];
 
 		foreach ( $upgrades as $version => $function ) {
@@ -409,6 +410,77 @@ class Upgrades {
 				foreach ( $replacements as $old => $new ) {
 					if ( ! empty( $element['settings'][ $old ] ) ) {
 						$element['settings'][ $new ] = $element['settings'][ $old ];
+						$do_update = true;
+					}
+				}
+
+				return $element;
+			} );
+
+			// Only update if needed.
+			if ( ! $do_update ) {
+				continue;
+			}
+
+			// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+			$json_value = wp_slash( wp_json_encode( $data ) );
+
+			update_metadata( 'post', $post_id, '_elementor_data', $json_value );
+
+			// Clear WP cache for next step.
+			wp_cache_flush();
+		} // End foreach().
+	}
+
+	private static function upgrade_v230() {
+		global $wpdb;
+
+		// upgrade `video` widget settings (merge providers).
+		$post_ids = $wpdb->get_col(
+			'SELECT `post_id` FROM `' . $wpdb->postmeta . '` WHERE `meta_key` = "_elementor_data" AND (
+			`meta_value` LIKE \'%"widgetType":"image"%\' 
+			OR `meta_value` LIKE \'%"widgetType":"theme-post-featured-image"%\'
+			OR `meta_value` LIKE \'%"widgetType":"theme-site-logo"%\'
+			OR `meta_value` LIKE \'%"widgetType":"woocommerce-category-image"%\'
+			
+			);'
+		);
+
+		if ( empty( $post_ids ) ) {
+			return;
+		}
+
+		$widgets = [
+			'image',
+			'theme-post-featured-image',
+			'theme-site-logo',
+			'woocommerce-category-image',
+		];
+
+		foreach ( $post_ids as $post_id ) {
+			$do_update = false;
+
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( ! $document ) {
+				continue;
+			}
+
+			$data = $document->get_elements_data();
+
+			if ( empty( $data ) ) {
+				continue;
+			}
+
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update, $widgets ) {
+				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets ) ) {
+					return $element;
+				}
+
+				if ( ! empty( $element['settings']['caption'] ) ) {
+					if ( ! isset( $element['settings']['caption_source'] ) ) {
+						$element['settings']['caption_source'] = 'custom';
+
 						$do_update = true;
 					}
 				}
