@@ -478,8 +478,11 @@ class Upgrades {
 				}
 
 				if ( ! empty( $element['settings']['caption'] ) ) {
-					$element['settings']['caption_source'] = 'custom';
-					$do_update = true;
+					if ( ! isset( $element['settings']['caption_source'] ) ) {
+						$element['settings']['caption_source'] = 'custom';
+
+						$do_update = true;
+					}
 				}
 
 				return $element;
