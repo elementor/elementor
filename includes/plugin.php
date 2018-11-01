@@ -512,6 +512,7 @@ class Plugin {
 		$this->role_manager = new Core\RoleManager\Role_Manager();
 		$this->system_info = new System_Info\Main();
 
+		User::init();
 		Upgrades::add_actions();
 		Api::init();
 		Tracker::init();
