@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Recently_Edited extends Base_Category {
+class Edit extends Base_Category {
 
 	public function get_title() {
-		return __( 'Recently Edited', 'elementor' );
+		return __( 'Edit', 'elementor' );
 	}
 
 	public function is_remote() {
@@ -35,7 +35,7 @@ class Recently_Edited extends Base_Category {
 		$recently_edited_query_args = [
 			'post_type' => $post_types,
 			'post_status' => [ 'publish', 'draft' ],
-			'posts_per_page' => '5',
+			'posts_per_page' => '10',
 			'meta_query' => [
 				[
 					'key' => '_elementor_edit_mode',
