@@ -23,7 +23,7 @@ export default class extends Marionette.CompositeView {
 	initialize() {
 		this.childViewContainer = '#elementor-assistant__results';
 
-		this.collection = new Backbone.Collection( elementorCommon.assistant.getSettings( 'data' ) );
+		this.collection = new Backbone.Collection( Object.values( elementorCommon.assistant.getSettings( 'data' ) ) );
 	}
 
 	onChildviewToggleVisibility() {

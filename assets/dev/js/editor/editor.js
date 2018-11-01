@@ -2,6 +2,8 @@
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
+import LogoView from '../../../../core/common/assets/js/views/modal/logo';
+import ModalLayoutView from '../../../../core/common/assets/js/views/modal/layout';
 
 import environment from '../utils/environment';
 
@@ -36,10 +38,10 @@ const App = Marionette.Application.extend( {
 				views: {
 					parts: {
 						headerParts: {
-							logo: require( 'elementor-templates/views/parts/header-parts/logo' ),
+							logo: LogoView,
 						},
 					},
-					BaseModalLayout: require( 'elementor-templates/views/base-modal-layout' ),
+					BaseModalLayout: ModalLayoutView,
 				},
 			},
 			saver: {
@@ -364,6 +366,7 @@ const App = Marionette.Application.extend( {
 			s: 83,
 			v: 86,
 			del: 46,
+			esc: 27,
 		};
 
 		var $ = jQuery,
@@ -563,6 +566,17 @@ const App = Marionette.Application.extend( {
 				},
 				handle: function() {
 					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
+				},
+			},
+		};
+
+		hotKeysHandlers[ keysDictionary.esc ] = {
+			quitEditor: {
+				isWorthHandling: function() {
+					return ! jQuery( '.dialog-widget:visible' ).length;
+				},
+				handle: function() {
+					elementor.getPanelView().setPage( 'menu' );
 				},
 			},
 		};

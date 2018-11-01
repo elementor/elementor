@@ -19,35 +19,27 @@ class Tools extends Base_Category {
 	public function get_category_items( array $options = [] ) {
 		$tools_url = ElementorTools::get_url();
 
-		$items = [
-			[
+		return [
+			'tools' => [
 				'title' => __( 'Tools', 'elementor' ),
-				'icon' => 'settings',
+				'icon' => 'tools',
 				'link' => $tools_url,
 			],
-			[
+			'replace-url' => [
 				'title' => __( 'Replace URL', 'elementor' ),
-				'icon' => 'settings',
+				'icon' => 'tools',
 				'link' => $tools_url . '#tab-replace_url',
 			],
-			[
+			'version-control' => [
 				'title' => __( 'Version Control', 'elementor' ),
-				'icon' => 'settings',
+				'icon' => 'time-line',
 				'link' => $tools_url . '#tab-versions',
 			],
-			[
+			'maintenance-mode' => [
 				'title' => __( 'Maintenance Mode', 'elementor' ),
-				'icon' => 'settings',
+				'icon' => 'tools',
 				'link' => $tools_url . '#tab-maintenance_mode',
 			],
 		];
-
-		$items[] = [
-			'title' => __( 'Role Manager', 'elementor' ),
-			'icon' => 'person',
-			'link' => Role_Manager::get_url(),
-		];
-
-		return $items;
 	}
 }
