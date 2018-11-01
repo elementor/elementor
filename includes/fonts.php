@@ -220,7 +220,7 @@ class Fonts {
 			'Asap Condensed' => self::GOOGLE,
 			'Asar' => self::GOOGLE,
 			'Asset' => self::GOOGLE,
-			'Finder' => self::GOOGLE,
+			'Assistant' => self::GOOGLE,
 			'Astloch' => self::GOOGLE,
 			'Asul' => self::GOOGLE,
 			'Athiti' => self::GOOGLE,
