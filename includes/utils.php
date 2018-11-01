@@ -535,7 +535,7 @@ class Utils {
 			'post_type' => $post_type,
 		], admin_url( 'edit.php' ) );
 
-		$new_post_url = wp_nonce_url( $new_post_url, 'elementor_action_new_post' );
+		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
 
 		return $new_post_url;
 	}

@@ -43,11 +43,11 @@ export default class extends Marionette.LayoutView {
 	onSearchInputInput() {
 		const value = this.ui.searchInput.val();
 
-		elementorCommon.assistant.channel
-			.reply( 'filter:text', value )
-			.trigger( 'filter:change' );
-
 		if ( value ) {
+			elementorCommon.assistant.channel
+				.reply( 'filter:text', value )
+				.trigger( 'filter:change' );
+
 			if ( ! ( this.content.currentView instanceof CategoriesView ) ) {
 				this.showCategoriesView();
 			}

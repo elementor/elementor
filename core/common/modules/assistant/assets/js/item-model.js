@@ -2,8 +2,10 @@ export default class extends Backbone.Model {
 	defaults() {
 		return {
 			description: '',
-			icon: '',
+			icon: 'settings',
 			link: '',
+			keywords: [],
+			actions: [],
 		};
 	}
 }

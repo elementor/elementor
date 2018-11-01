@@ -96,18 +96,10 @@ class Admin extends App {
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
 		wp_register_style(
-			'elementor-icons',
-			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
-			[],
-			'3.8.0'
-		);
-
-		wp_register_style(
 			'elementor-admin',
 			$this->get_css_assets_url( 'admin' . $direction_suffix ),
 			[
 				'elementor-common',
-				'elementor-icons',
 			],
 			ELEMENTOR_VERSION
 		);
@@ -672,6 +664,7 @@ class Admin extends App {
 		$document = Plugin::$instance->documents->create( $type, $post_data, $meta );
 
 		wp_redirect( $document->get_edit_url() );
+
 		die;
 	}
 
