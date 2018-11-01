@@ -366,6 +366,7 @@ const App = Marionette.Application.extend( {
 			s: 83,
 			v: 86,
 			del: 46,
+			esc: 27,
 		};
 
 		var $ = jQuery,
@@ -565,6 +566,17 @@ const App = Marionette.Application.extend( {
 				},
 				handle: function() {
 					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
+				},
+			},
+		};
+
+		hotKeysHandlers[ keysDictionary.esc ] = {
+			quitEditor: {
+				isWorthHandling: function() {
+					return ! jQuery( '.dialog-widget:visible' ).length;
+				},
+				handle: function() {
+					elementor.getPanelView().setPage( 'menu' );
 				},
 			},
 		};
