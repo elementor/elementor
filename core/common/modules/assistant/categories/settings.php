@@ -33,7 +33,7 @@ class Settings extends Base_Category {
 				'title' => __( 'Integrations', 'elementor' ),
 				'icon' => 'integration',
 				'link' => $settings_url . '#tab-integrations',
-				'keywords' => [ 'Integrations', 'Settings', 'TypeKit', 'Facebook', 'reCAPTCHA', 'MailChimp', 'Drip', 'ActiveCampaign', 'GetResponse', 'ConvertKit', ],
+				'keywords' => [ 'Integrations', 'Settings', 'TypeKit', 'Facebook', 'reCAPTCHA', 'MailChimp', 'Drip', 'ActiveCampaign', 'GetResponse', 'ConvertKit' ],
 			],
 			'advanced' => [
 				'title' => __( 'Advanced', 'elementor' ),
