@@ -4,8 +4,7 @@ import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import LogoView from '../../../../core/common/assets/js/views/modal/logo';
 import ModalLayoutView from '../../../../core/common/assets/js/views/modal/layout';
-
-import environment from '../utils/environment';
+import environment from '../../../../core/common/assets/js/utils/environment.js';
 
 const App = Marionette.Application.extend( {
 	previewLoadedOnce: false,

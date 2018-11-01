@@ -1,6 +1,6 @@
 /* global elementorFrontendConfig */
-import HotKeys from '../utils/hot-keys';
-import environment from '../utils/environment';
+import HotKeys from '../../../../core/common/assets/js/utils/hot-keys';
+import environment from '../../../../core/common/assets/js/utils/environment';
 
 ( function( $ ) {
 	var elements = {},
