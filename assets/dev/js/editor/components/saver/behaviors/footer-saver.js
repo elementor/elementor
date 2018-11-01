@@ -128,6 +128,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		switch ( postStatus ) {
 			case 'publish':
+			case 'future':
 			case 'private':
 				elementor.saver.update();
 				break;
