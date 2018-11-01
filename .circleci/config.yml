@@ -35,18 +35,15 @@ job-references:
       if [ -f /home/circleci/.bashrc ]; then
         source /home/circleci/.bashrc
       fi
-
   install_dependencies: &install_dependencies
     name: "Install Dependencies"
     command: |
       sudo docker-php-ext-install mysqli
-
   install_wp_core: &install_wp_core
     name: "Install WordPress Core"
     command: |
       rm -rf /tmp/wordpress-tests-lib /tmp/wordpress
       bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 $WP_VERSION
-
   php_job: &php_job
     environment:
     - WP_VERSION: "latest"
