@@ -89,6 +89,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 			<div class="elementor-hotkeys__list">
 				<div class="elementor-hotkeys__item">
+					<div class="elementor-hotkeys__item--label"><?php echo __( 'Finder', 'elementor' ); ?></div>
+					<div class="elementor-hotkeys__item--shortcut">
+						<span>{{{ ctrlLabel }}}</span>
+						<span>E</span>
+					</div>
+				</div>
+
+				<div class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo __( 'Show / Hide Panel', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
 						<span>{{{ ctrlLabel }}}</span>
