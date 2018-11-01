@@ -482,7 +482,6 @@ class Upgrades {
 					$do_update = true;
 				}
 
-
 				return $element;
 			} );
 
