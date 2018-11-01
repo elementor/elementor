@@ -1,4 +1,4 @@
-import HotKeys from '../../../../assets/dev/js/utils/hot-keys';
+import HotKeys from './utils/hot-keys';
 import Helpers from './utils/helpers';
 import Ajax from '../../modules/ajax/assets/js/ajax';
 import Assistant from '../../modules/assistant/assets/js/assistant';

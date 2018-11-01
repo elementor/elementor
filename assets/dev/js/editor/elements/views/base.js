@@ -1,4 +1,4 @@
-import environment from '../../../utils/environment';
+import environment from '../../../../../../core/common/assets/js/utils/environment';
 
 var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
