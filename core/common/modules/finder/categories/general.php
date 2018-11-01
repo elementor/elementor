@@ -26,18 +26,18 @@ class General extends Base_Category {
 				'title' => __( 'System Info', 'elementor' ),
 				'icon' => 'info',
 				'link' => admin_url( 'admin.php?page=elementor-system-info' ),
-				'keywords' => [ 'System', 'Info', 'Environment' ],
+				'keywords' => [ 'System', 'Info', 'Environment', 'Elementor' ],
 			],
 			'role-manager' => [
 				'title' => __( 'Role Manager', 'elementor' ),
 				'icon' => 'person',
 				'link' => Role_Manager::get_url(),
-				'keywords' => [ 'Role', 'Manager', 'User' ],
+				'keywords' => [ 'Role', 'Manager', 'User', 'Elementor' ],
 			],
 			'knowledge-base' => [
 				'title' => __( 'Knowledge Base', 'elementor' ),
 				'link' => admin_url( 'admin.php?page=go_knowledge_base_site' ),
-				'keywords' => [ 'Help', 'Knowledge', 'Docs' ],
+				'keywords' => [ 'Help', 'Knowledge', 'Docs', 'Elementor' ],
 			],
 		];
 	}
