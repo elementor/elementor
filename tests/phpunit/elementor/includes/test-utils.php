@@ -126,9 +126,9 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_create_and_get_new_post_url() {
-		$new_post_url = Utils::get_create_new_post_url();
-		$this->assertContains( 'edit.php?action=elementor_new_post&amp;post_type=', $new_post_url );
-		$this->assertContains( '&amp;_wpnonce=', $new_post_url );
+		$new_post_url = esc_url( Utils::get_create_new_post_url() );
+		$this->assertContains( 'edit.php?action=elementor_new_post&#038;post_type=', $new_post_url );
+		$this->assertContains( '&#038;_wpnonce=', $new_post_url );
 	}
 
 	public function test_getYoutubeId() {
