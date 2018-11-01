@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\Common\Modules\Assistant;
+namespace Elementor\Core\Common\Modules\Finder;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
@@ -26,7 +26,7 @@ class Module extends BaseModule {
 	}
 
 	public function get_name() {
-		return 'assistant';
+		return 'finder';
 	}
 
 	public function add_template() {
@@ -34,7 +34,7 @@ class Module extends BaseModule {
 	}
 
 	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'assistant_get_category_data', [ $this, 'ajax_get_category_data' ] );
+		$ajax->register_ajax_action( 'finder_get_category_data', [ $this, 'ajax_get_category_data' ] );
 	}
 
 	public function ajax_get_category_data( array $data ) {
@@ -52,7 +52,7 @@ class Module extends BaseModule {
 			$categories_data[ $category_name ] = array_merge( $category->get_settings(), [ 'name' => $category_name ] );
 		}
 
-		$categories_data = apply_filters( 'elementor/assistant/categories', $categories_data );
+		$categories_data = apply_filters( 'elementor/finder/categories', $categories_data );
 
 		return [
 			'data' => $categories_data,

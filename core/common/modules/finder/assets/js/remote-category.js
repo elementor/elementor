@@ -2,19 +2,19 @@ import Category from './category';
 
 export default class extends Category {
 	className() {
-		return super.className() + ' elementor-assistant__results__category--remote';
+		return super.className() + ' elementor-finder__results__category--remote';
 	}
 
 	ui() {
 		return {
-			title: '.elementor-assistant__results__category__title',
+			title: '.elementor-finder__results__category__title',
 		};
 	}
 
 	fetchData() {
 		this.ui.loadingIcon.show();
 
-		elementorCommon.ajax.addRequest( 'assistant_get_category_data', {
+		elementorCommon.ajax.addRequest( 'finder_get_category_data', {
 			data: {
 				category: this.model.get( 'name' ),
 				filter: this.getTextFilter(),
