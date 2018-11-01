@@ -314,7 +314,7 @@ class Elements_Manager {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'elementor/elements/elements_registered' );
+		do_action( 'elementor/elements/elements_registered', $this );
 	}
 
 	/**
@@ -387,6 +387,7 @@ class Elements_Manager {
 	private function require_files() {
 		require_once ELEMENTOR_PATH . 'includes/base/element-base.php';
 
+		require ELEMENTOR_PATH . 'includes/elements/container.php';
 		require ELEMENTOR_PATH . 'includes/elements/column.php';
 		require ELEMENTOR_PATH . 'includes/elements/section.php';
 		require ELEMENTOR_PATH . 'includes/elements/repeater.php';

@@ -39,7 +39,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var array
 	 */
-	private $render_attributes = [];
+	protected $render_attributes = [];
 
 	/**
 	 * Element default arguments.

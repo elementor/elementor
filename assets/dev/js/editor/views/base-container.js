@@ -53,6 +53,10 @@ module.exports = Marionette.CompositeView.extend( {
 			elType = newItem.elType;
 		}
 
+		if ( newItem.isContainer ) {
+			elType = 'container';
+		}
+
 		if ( -1 === childTypes.indexOf( elType ) ) {
 			return this.children.last().addChildElement( newItem, options );
 		}

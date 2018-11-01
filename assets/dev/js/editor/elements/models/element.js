@@ -65,6 +65,7 @@ ElementModel = Backbone.Model.extend( {
 
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
+		settings.isContainer = this.get( 'isContainer' );
 
 		settings = new SettingsModel( settings, {
 			controls: elementor.getElementControls( this ),

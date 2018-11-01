@@ -8,6 +8,9 @@ helpers = {
 			column: {
 				widget: null,
 				section: null,
+				container: {
+					column: null,
+				},
 			},
 		},
 	},

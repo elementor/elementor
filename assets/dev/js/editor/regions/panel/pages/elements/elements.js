@@ -74,6 +74,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		elementsCollection.add( {
 			title: elementor.translate( 'inner_section' ),
 			elType: 'section',
+			isContainer: true,
 			categories: [ 'basic' ],
 			keywords: [ 'row', 'columns', 'nested' ],
 			icon: sectionConfig.icon,
@@ -101,6 +102,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		this.elementsCollection = elementsCollection;
+
+		elementor.channels.panelElements.trigger( 'init:elements', this );
 	},
 
 	initCategoriesCollection: function() {

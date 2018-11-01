@@ -82,7 +82,7 @@ ColumnView = BaseElementView.extend( {
 
 		var elType = elementView.model.get( 'elType' );
 
-		if ( 'section' === elType ) {
+		if ( elementView.model.get( 'isContainer' ) ) {
 			return ! this.isInner();
 		}
 
@@ -143,6 +143,8 @@ ColumnView = BaseElementView.extend( {
 		BaseElementView.prototype.onCollectionChanged.apply( this, arguments );
 
 		this.changeChildContainerClasses();
+
+		this.trigger( 'collection:change' );
 	},
 
 	onRender: function() {
@@ -184,6 +186,10 @@ ColumnView = BaseElementView.extend( {
 		if ( '_column_size' in changedAttributes || '_inline_size' in changedAttributes ) {
 			this.changeSizeUI();
 		}
+	},
+
+	onChildviewAfterAttachElContent: function( widget ) {
+		this.trigger( 'after:widget:attachElContent', widget );
 	},
 
 	onEditorInlineSizeInputChange: function( newValue, oldValue ) {

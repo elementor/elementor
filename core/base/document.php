@@ -344,6 +344,28 @@ abstract class Document extends Controls_Stack {
 		];
 	}
 
+	public function find_element_recursive( $element_id, $elements = null ) {
+		if ( is_null( $elements ) ) {
+			$elements = $this->get_elements_data();
+		}
+
+		foreach ( $elements as $element ) {
+			if ( $element_id === $element['id'] ) {
+				return $element;
+			}
+
+			if ( ! empty( $element['elements'] ) ) {
+				$element = $this->find_element_recursive( $element_id, $element['elements'] );
+
+				if ( $element ) {
+					return $element;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access protected

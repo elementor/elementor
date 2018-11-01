@@ -358,11 +358,12 @@ BaseElementView = BaseContainer.extend( {
 
 		var itemData = {
 			elType: elementView.model.get( 'elType' ),
+			isContainer: elementView.model.get( 'isContainer' ),
 		};
 
 		if ( 'widget' === itemData.elType ) {
 			itemData.widgetType = elementView.model.get( 'widgetType' );
-		} else if ( 'section' === itemData.elType ) {
+		} else if ( itemData.isContainer ) {
 			itemData.isInner = true;
 		} else {
 			return;
@@ -455,7 +456,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	isInner: function() {
-		return !! this.model.get( 'isInner' );
+		return !! ( this.model.get( 'isInner' ) || this.model.get( 'isContainer' ) );
 	},
 
 	initControlsCSSParser: function() {

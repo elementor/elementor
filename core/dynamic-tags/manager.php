@@ -369,6 +369,8 @@ class Manager {
 
 			$tag = $this->create_tag( null, $tag_name, $tag_settings );
 
+			do_action( 'elementor/dynamic_tags/ajax/before_get_content', $tag );
+
 			$tags_data[ $tag_key ] = $tag->get_content();
 		}
 

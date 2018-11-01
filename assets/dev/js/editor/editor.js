@@ -96,6 +96,7 @@ const App = Marionette.Application.extend( {
 				Element: require( 'elementor-elements/models/element' ),
 			},
 			views: {
+				Section: require( 'elementor-elements/views/section' ),
 				Widget: require( 'elementor-elements/views/widget' ),
 			},
 		},

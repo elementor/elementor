@@ -578,6 +578,7 @@ class Editor {
 
 				// Elements.
 				'inner_section' => __( 'Inner Section', 'elementor' ),
+				'container' => __( 'Container', 'elementor' ),
 
 				// Control Order.
 				'asc' => __( 'Ascending order', 'elementor' ),
