@@ -147,6 +147,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span>?</span>
 					</div>
 				</div>
+
+				<div class="elementor-hotkeys__item">
+					<div class="elementor-hotkeys__item--label"><?php echo __( 'Quit', 'elementor' ); ?></div>
+					<div class="elementor-hotkeys__item--shortcut">
+						<span>Esc</span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
