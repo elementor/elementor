@@ -83,19 +83,19 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 						{
 							name: 'go-to',
 							icon: 'fa fa-search',
-							title: elementorCommon.translate( 'go_to', 'assistant' ),
+							title: elementorCommon.translate( 'finder', 'assistant' ),
 							callback: () => elementorCommon.assistant.getLayout().showModal(),
 						},
 						{
 							name: 'view-page',
-							icon: 'fa fa-external-link',
+							icon: 'fa fa-eye',
 							title: elementor.translate( 'view_page' ),
 							type: 'link',
 							link: elementor.config.document.urls.permalink,
 						},
 						{
 							name: 'exit-to-dashboard',
-							icon: 'fa fa-eye',
+							icon: 'fa fa-wordpress',
 							title: elementor.translate( 'exit_to_dashboard' ),
 							type: 'link',
 							link: elementor.config.document.urls.exit_to_dashboard,

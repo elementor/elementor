@@ -23,7 +23,13 @@ export default class extends Marionette.CompositeView {
 	}
 
 	filter( childModel ) {
-		return childModel.get( 'title' ).toLowerCase().indexOf( this.getTextFilter() ) >= 0;
+		const textFilter = this.getTextFilter();
+
+		if ( childModel.get( 'title' ).toLowerCase().indexOf( textFilter ) >= 0 ) {
+			return true;
+		}
+
+		return childModel.get( 'keywords' ).some( ( keyword ) => keyword.indexOf( textFilter ) >= 0 );
 	}
 
 	getTextFilter() {
