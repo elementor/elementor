@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 2.2.5
+Stable tag: 2.2.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -215,6 +215,17 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.2.7 - 2018-10-24 =
+* Tweak: Update Google Fonts list with more than 20 new fonts ([Topic](https://wordpress.org/support/topic/please-update-google-fonts-library-with-the-latest-font-for-free-version/))
+* Fix: Admin Notice not dismissing in some server configurations ([#5927](https://github.com/pojome/elementor/issues/5927))
+* Fix: Image link not respecting the image size in the Image widget ([#5897](https://github.com/pojome/elementor/issues/5897))
+
+= 2.2.6 - 2018-10-22 =
+* Tweak: Added `get_render_attributes` method to `Element_Base` ([#5878](https://github.com/pojome/elementor/issues/5878))
+* Tweak: Sets the minimum width of the content area as `300px`
+* Tweak: Darken Elementor Loader icon color
+* Fix: Field labels with multiple rows style glitch ([#4295](https://github.com/pojome/elementor/issues/4295))
 
 = 2.2.5 - 2018-10-07 =
 * Tweak: System Info now recognizes MariaDB versions
@@ -486,7 +497,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Fix: Duplicate icons by updated Eicons library
 
 = 2.0.4 - 2018-04-09 =
-* Tweak: Update Google Fonts list with more then 30 new fonts
+* Tweak: Update Google Fonts list with more than 30 new fonts
 * Tweak: Updated Eicons to v3.2.0
 * Fix: Page template doesn't work in draft status ([#3706](https://github.com/pojome/elementor/issues/3706))
 * Fix: Make sure that document settings works only on existing posts ([#3993](https://github.com/pojome/elementor/issues/3993), [Topic](https://wordpress.org/support/topic/php-fatal-error-after-last-update/))
@@ -736,7 +747,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Added option to disable the widget on-change rendering
 * Tweak: Improved error dialogs for better handling cases when the editor fails to load.
 * Tweak: Rename Global Colors & Fonts to Default Colors and Default Fonts for better clarify
-* Tweak: Update Google Fonts list with more then 10 new fonts
+* Tweak: Update Google Fonts list with more than 10 new fonts
 * Tweak: Eicons v2.5.0 updated
 * Tweak: Added an "Elementor" post state for post table
 * Tweak: Added responsive control for Icon Box (Space & Size)
