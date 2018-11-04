@@ -69,7 +69,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 				values[ child.model.get( 'name' ) ] = child.getControlValue();
 			} );
 
-			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( this.model.parseDynamicSettings() );
+			title = Marionette.TemplateCache.prototype.compileTemplate( titleField ).bind( this )( this.model.parseDynamicSettings() );
 		}
 
 		if ( ! title ) {
