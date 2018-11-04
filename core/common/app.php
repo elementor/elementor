@@ -93,7 +93,7 @@ class App extends BaseApp {
 			'3.9.1'
 		);
 
-		wp_register_style(
+		wp_enqueue_style(
 			'elementor-common',
 			$this->get_css_assets_url( 'common', null, 'default', true ),
 			[
