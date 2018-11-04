@@ -21,24 +21,24 @@ class General extends Base_Category {
 				'title' => _x( 'My Templates', 'Template Library', 'elementor' ),
 				'icon' => 'library-save',
 				'link' => admin_url( 'edit.php?post_type=' . Source_Local::CPT ),
-				'keywords' => [ 'Template', 'Header', 'Footer', 'Single', 'Archive', 'Search', '404 Page' ],
+				'keywords' => [ 'template', 'header', 'footer', 'single', 'archive', 'search', '404 page' ],
 			],
 			'system-info' => [
 				'title' => __( 'System Info', 'elementor' ),
 				'icon' => 'info',
 				'link' => admin_url( 'admin.php?page=elementor-system-info' ),
-				'keywords' => [ 'System', 'Info', 'Environment', 'Elementor' ],
+				'keywords' => [ 'system', 'info', 'environment', 'elementor' ],
 			],
 			'role-manager' => [
 				'title' => __( 'Role Manager', 'elementor' ),
 				'icon' => 'person',
 				'link' => Role_Manager::get_url(),
-				'keywords' => [ 'Role', 'Manager', 'User', 'Elementor' ],
+				'keywords' => [ 'role', 'manager', 'user', 'elementor' ],
 			],
 			'knowledge-base' => [
 				'title' => __( 'Knowledge Base', 'elementor' ),
 				'link' => admin_url( 'admin.php?page=go_knowledge_base_site' ),
-				'keywords' => [ 'Help', 'Knowledge', 'Docs', 'Elementor' ],
+				'keywords' => [ 'help', 'knowledge', 'docs', 'elementor' ],
 			],
 		];
 	}
