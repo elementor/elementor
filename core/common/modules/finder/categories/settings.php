@@ -22,17 +22,17 @@ class Settings extends Base_Category {
 			'general-settings' => [
 				'title' => __( 'General Settings', 'elementor' ),
 				'link' => $settings_url,
-				'keywords' => [ 'General', 'Settings' ],
+				'keywords' => [ 'General', 'Settings', 'Elementor' ],
 			],
 			'style' => [
 				'title' => __( 'Style', 'elementor' ),
 				'link' => $settings_url . '#tab-style',
-				'keywords' => [ 'Style', 'Settings' ],
+				'keywords' => [ 'Style', 'Settings', 'Elementor' ],
 			],
 			'advanced' => [
 				'title' => __( 'Advanced', 'elementor' ),
 				'link' => $settings_url . '#tab-advanced',
-				'keywords' => [ 'Advanced', 'Settings' ],
+				'keywords' => [ 'Advanced', 'Settings', 'Elementor' ],
 			],
 		];
 	}
