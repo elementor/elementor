@@ -313,7 +313,7 @@ abstract class Document extends Controls_Stack {
 			Plugin::$instance->db->copy_elementor_meta( $this->post->ID, $autosave_id );
 
 			$document = Plugin::$instance->documents->get( $autosave_id );
-			$document->save_type();
+			$document->save_template_type();
 		} else {
 			$document = false;
 		}
@@ -619,7 +619,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function convert_to_elementor() {
-		$this->save_type();
+		$this->save_template_type();
 
 		if ( empty( $this->post->post_content ) ) {
 			return [];
@@ -809,9 +809,20 @@ abstract class Document extends Controls_Stack {
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 * @deprecated Use `save_template_type`.
 	 */
 	public function save_type() {
-		update_post_meta( $this->post->ID, self::TYPE_META_KEY, $this->get_name() );
+		// TODO: _deprecated_function( __METHOD__, '2.2.0', 'save_template_type' );
+
+		$this->save_template_type();
+	}
+
+	public function save_template_type() {
+		return update_post_meta( $this->post->ID, self::TYPE_META_KEY, $this->get_name() );
+	}
+
+	public function get_template_type() {
+		return get_post_meta( $this->post->ID, self::TYPE_META_KEY, true );
 	}
 
 	/**
