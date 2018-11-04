@@ -348,6 +348,8 @@ class Documents_Manager {
 			'post_id' => $post_id,
 		] );
 
+		$document->save_template_type();
+
 		return $document;
 	}
 
