@@ -814,6 +814,14 @@ abstract class Document extends Controls_Stack {
 		update_post_meta( $this->post->ID, self::TYPE_META_KEY, $this->get_name() );
 	}
 
+	public function save_template_type() {
+		return update_post_meta( $this->post->ID, self::TYPE_META_KEY, $this->get_name() );
+	}
+
+	public function get_template_type() {
+		return get_post_meta( $this->post->ID, self::TYPE_META_KEY, true );
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
