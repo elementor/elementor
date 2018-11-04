@@ -52,8 +52,8 @@ abstract class Library_Document extends Document {
 	 * @since 2.0.0
 	 * @access public
 	 */
-	public function save_type() {
-		parent::save_type();
+	public function save_template_type() {
+		parent::save_template_type();
 
 		wp_set_object_terms( $this->post->ID, $this->get_name(), self::TAXONOMY_TYPE_SLUG );
 	}
