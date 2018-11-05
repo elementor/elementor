@@ -662,7 +662,7 @@ class Widget_Image extends Widget_Base {
 			}
 
 			var hasCaption = function() {
-				if( ! settings.caption_source || 'off' === settings.caption_source ) {
+				if( ! settings.caption_source || 'none' === settings.caption_source ) {
 					return false;
 				}
 				return true;
