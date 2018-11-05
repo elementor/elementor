@@ -93,9 +93,6 @@ class Widget_Star_Rating extends Widget_Base {
 				'min' => 0,
 				'max' => 5,
 				'step' => 0.1,
-				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating:before' => 'width: calc({{SIZE}}% * 20)',
-				],
 			]
 		);
 
@@ -208,7 +205,7 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->add_responsive_control(
 			'label_gap',
 			[
-				'label' => __( 'Spacing', 'elementor' ),
+				'label' => __( 'Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -262,7 +259,8 @@ class Widget_Star_Rating extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating' => 'letter-spacing: {{SIZE}}{{UNIT}}',
+					'body:not(.rtl) {{WRAPPER}} .elementor-star-rating i:not(:last-of-type)' => 'margin-right: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}} .elementor-star-rating i:not(:last-of-type)' => 'margin-left: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -293,29 +291,52 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	protected function render_stars( $icon ) {
+		$settings = $this->get_settings_for_display();
+		$rating = $settings['rating'] > 5 ? 5 : $settings['rating'];
+		$stars_html = '';
+
+		for ( $stars = 0; $stars <= 4; $stars++ ) {
+			if ( $rating >= 1 ) {
+				$stars_html .= '<i class="elementor-star-full">' . $icon . '</i>';
+				$rating--;
+			} elseif ( $rating >= 0.1 ) {
+				$stars_html .= '<i class="elementor-star-' . $rating * 10 . '">' . $icon . '</i>';
+				$rating = $rating - $rating;
+			} elseif ( $rating < 0.1 ) {
+				$stars_html .= '<i class="elementor-star-empty">' . $icon . '</i>';
+			}
+		}
+
+		return $stars_html;
+	}
+
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-		$icon = '&#61445;&#61445;&#61445;&#61445;&#61445;';
+		$icon = '&#61445;';
 
 		if ( 'fontawesome' == $settings['star_style'] ) {
 			if ( 'outline' == $settings['unmarked_star_style'] ) {
-				$icon = '&#61446;&#61446;&#61446;&#61446;&#61446;';
+				$icon = '&#61446;';
 			}
 		} elseif ( 'unicode' == $settings['star_style'] ) {
-			$icon = '&#9733;&#9733;&#9733;&#9733;&#9733;';
+			$icon = '&#9733;';
 
 			if ( 'outline' == $settings['unmarked_star_style'] ) {
-				$icon = '&#9734;&#9734;&#9734;&#9734;&#9734;';
+				$icon = '&#9734;';
 			}
 		}
 
 		$this->add_render_attribute( 'icon_wrapper', [
 			'class' => 'elementor-star-rating',
-			'title' => $settings['rating']['size'],
+			'title' => $settings['rating'],
+			'itemtype' => 'http://schema.org/Rating',
+			'itemscope' => '',
+			'itemprop' => 'reviewRating',
 		] );
 
-		$stars_element = '<div ' . $this->get_render_attribute_string( 'icon_wrapper' ) . '>' . $icon . '</div>';
-
+		$schema_rating = '<span itemprop="ratingValue" class="elementor-screen-only">' . $settings['rating'] . '</span>';
+		$stars_element = '<div ' . $this->get_render_attribute_string( 'icon_wrapper' ) . '>' . $this->render_stars( $icon ) . ' ' . $schema_rating . '</div>';
 		?>
 
 		<div class="elementor-star-rating__wrapper">

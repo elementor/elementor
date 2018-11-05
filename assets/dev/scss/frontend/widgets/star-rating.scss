@@ -2,18 +2,37 @@
 	color: $gray-mouse;
 	font-family: FontAwesome;
 	display: inline-block;
-	position: relative;
 
-	&:before {
-		content: '\f005\f005\f005\f005\f005';
-		display: block;
-		font-size: inherit;
-		font-family: inherit;
-		position: absolute;
-		overflow: hidden;
-		color: $orange;
-		top: 0;
-		@include start(0);
+	i {
+		display: inline-block;
+		position: relative;
+		font-style: normal;
+
+		&:before {
+			content: '\f005';
+			display: block;
+			font-size: inherit;
+			font-family: inherit;
+			position: absolute;
+			overflow: hidden;
+			color: $orange;
+			top: 0;
+			@include start(0);
+		}
+	}
+
+	.elementor-star-empty:before {
+		content: none;
+	}
+
+	@for $i from 1 through 9 {
+
+		.elementor-star-#{$i} {
+
+			&:before {
+				width: $i * 10%
+			}
+		}
 	}
 
 	&__wrapper {
@@ -60,13 +79,17 @@
 	}
 }
 
+.last-star{
+	letter-spacing: 0;
+}
+
 .elementor--star-style-unicode {
 
 	.elementor-star-rating {
 		font-family: 'Arial', 'Helvetica', sans-serif;
 
-		&:before {
-			content: '★★★★★' ;
+		i:before {
+			content: '\002605';
 		}
 	}
 }
