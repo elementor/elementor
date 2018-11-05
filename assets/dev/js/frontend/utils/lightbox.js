@@ -98,8 +98,7 @@ LightboxModule = ViewModule.extend( {
 		modal.onHide = function() {
 			DialogsManager.getWidgetType( 'lightbox' ).prototype.onHide.apply( modal, arguments );
 
-			var animation = this.getSettings( 'modalOptions.entranceAnimation' );
-			modal.getElements( 'message' ).removeClass( 'animated ' + animation );
+			modal.getElements( 'message' ).removeClass( 'animated' );
 		};
 
 		switch ( options.type ) {
