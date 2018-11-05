@@ -624,6 +624,14 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 */
 	public function print_element() {
+		ob_start();
+		$this->_print_content();
+		$content = ob_get_clean();
+
+		if ( empty( $content ) ) {
+			return;
+		}
+
 		$element_type = $this->get_type();
 
 		/**
@@ -653,7 +661,7 @@ abstract class Element_Base extends Controls_Stack {
 		$this->_add_render_attributes();
 
 		$this->before_render();
-		$this->_print_content();
+		echo $content;
 		$this->after_render();
 
 		$this->enqueue_scripts();

@@ -21,25 +21,25 @@ class Site extends Base_Category {
 				'title' => __( 'Homepage', 'elementor' ),
 				'link' => home_url(),
 				'icon' => 'home-heart',
-				'keywords' => [ 'Home', 'Page' ],
+				'keywords' => [ 'home', 'page' ],
 			],
 			'wordpress-dashboard' => [
 				'title' => __( 'Dashboard', 'elementor' ),
 				'icon' => 'dashboard',
 				'link' => admin_url(),
-				'keywords' => [ 'Dashboard', 'WordPress' ],
+				'keywords' => [ 'dashboard', 'wordpress' ],
 			],
 			'wordpress-menus' => [
 				'title' => __( 'Menus', 'elementor' ),
 				'icon' => 'wordpress',
 				'link' => admin_url( 'nav-menus.php' ),
-				'keywords' => [ 'Menu', 'WordPress' ],
+				'keywords' => [ 'menu', 'wordpress' ],
 			],
 			'wordpress-customizer' => [
 				'title' => __( 'Customizer', 'elementor' ),
 				'icon' => 'wordpress',
 				'link' => admin_url( 'customize.php' ),
-				'keywords' => [ 'Customizer', 'WordPress' ],
+				'keywords' => [ 'customizer', 'wordpress' ],
 			],
 		];
 	}

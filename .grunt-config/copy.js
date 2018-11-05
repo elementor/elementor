@@ -25,6 +25,7 @@ const getBuildFiles = [
 	'!package-lock.json',
 	'!npm-debug.log',
 	'!composer.json',
+	'!cypress.json',
 	'!composer.lock',
 	'!.gitignore',
 	'!.gitmodules',
