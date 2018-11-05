@@ -380,13 +380,18 @@ abstract class Document extends Controls_Stack {
 
 		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
 
+			$statuses = get_post_statuses();
+			if ( 'future' === $this->get_main_post()->post_status ) {
+				$statuses['future'] = __( 'Feature', '' );
+			}
+
 			$this->add_control(
 				'post_status',
 				[
 					'label' => __( 'Status', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
 					'default' => $this->get_main_post()->post_status,
-					'options' => get_post_statuses(),
+					'options' => $statuses,
 				]
 			);
 		}
