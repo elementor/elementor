@@ -113,8 +113,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getContextMenuGroups: function() {
-		var elementType = this.options.model.get( 'elType' ),
-			controlSign = environment.mac ? '⌘' : '^';
+		const controlSign = environment.mac ? '⌘' : '^';
 
 		return [
 			{
@@ -123,7 +122,7 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						icon: 'eicon-edit',
-						title: elementor.translate( 'edit_element', [ elementorCommon.helpers.firstLetterUppercase( elementType ) ] ),
+						title: elementor.translate( 'edit_element', [ this.options.model.getTitle() ] ),
 						callback: this.options.model.trigger.bind( this.options.model, 'request:edit' ),
 					}, {
 						name: 'duplicate',
