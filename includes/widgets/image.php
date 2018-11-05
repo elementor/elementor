@@ -160,7 +160,7 @@ class Widget_Image extends Widget_Base {
 					'attachment' => __( 'Attachment Caption', 'elementor' ),
 					'custom' => __( 'Custom Caption', 'elementor' ),
 				],
-				'default' => 'off',
+				'default' => 'none',
 			]
 		);
 
