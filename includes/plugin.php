@@ -594,6 +594,7 @@ class Plugin {
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
+		add_action( 'rest_api_init', [ $this, 'init_common' ] );
 	}
 }
 
