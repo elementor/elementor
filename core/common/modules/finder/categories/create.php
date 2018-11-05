@@ -39,7 +39,7 @@ class Create extends Base_Category {
 				'title' => sprintf( __( 'Add New %s', 'elementor' ), $post_type_object->labels->singular_name ),
 				'icon' => 'plus-circle',
 				'link' => $link,
-				'keywords' => [ 'Post', 'Page', 'Template', 'New', 'Create' ],
+				'keywords' => [ 'post', 'page', 'template', 'new', 'create' ],
 			];
 		}
 
