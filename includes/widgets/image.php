@@ -153,12 +153,12 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'caption_source',
 			[
-				'label' => __( 'Caption Source', 'elementor' ),
+				'label' => __( 'Caption', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'off' => __( 'No Caption', 'elementor' ),
-					'attachment' => __( 'Image Caption', 'elementor' ),
-					'custom' => __( 'Manual Caption', 'elementor' ),
+					'none' => __( 'None', 'elementor' ),
+					'attachment' => __( 'Attachment Caption', 'elementor' ),
+					'custom' => __( 'Custom Caption', 'elementor' ),
 				],
 				'default' => 'off',
 			]
@@ -167,12 +167,15 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'caption',
 			[
-				'label' => __( 'Manual Caption', 'elementor' ),
+				'label' => __( 'Custom Caption', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'placeholder' => __( 'Enter your image caption', 'elementor' ),
 				'condition' => [
 					'caption_source' => 'custom',
+				],
+				'dynamic' => [
+					'active' => true,
 				],
 			]
 		);
