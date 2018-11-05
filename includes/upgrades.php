@@ -433,6 +433,11 @@ class Upgrades {
 	}
 
 	private static function upgrade_v230() {
+		self::upgrade_v230_template_type();
+		self::upgrade_v230_widget_image();
+	}
+
+	private static function upgrade_v230_widget_image() {
 		global $wpdb;
 
 		// upgrade `video` widget settings (merge providers).
@@ -500,6 +505,32 @@ class Upgrades {
 
 			// Clear WP cache for next step.
 			wp_cache_flush();
+		} // End foreach().
+	}
+
+	private static function upgrade_v230_template_type() {
+		global $wpdb;
+
+		$post_ids = $wpdb->get_col(
+			'SELECT p.ID
+					FROM `' . $wpdb->posts . '` AS p
+					LEFT JOIN `' . $wpdb->postmeta . '` AS pm1 ON (p.ID = pm1.post_id)
+					LEFT JOIN `' . $wpdb->postmeta . '` AS pm2 ON (pm1.post_id = pm2.post_id AND pm2.meta_key = "_elementor_template_type")
+					WHERE p.post_status != "inherit" AND pm1.`meta_key` = "_elementor_data" AND pm2.post_id IS NULL'
+		);
+
+		if ( empty( $post_ids ) ) {
+			return;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( ! $document ) {
+				continue;
+			}
+
+			$document->save_template_type();
 		} // End foreach().
 	}
 }

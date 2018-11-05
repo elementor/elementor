@@ -149,6 +149,15 @@ class Compatibility {
 				remove_action( 'woocommerce_before_shop_loop', 'wc_print_notices' );
 				remove_action( 'woocommerce_before_single_product', 'wc_print_notices' );
 			} );
+
+			add_filter( 'elementor/maintenance_mode/is_login_page', function( $value ) {
+
+				// Support Woocommerce Account Page.
+				if ( is_account_page() && ! is_user_logged_in() ) {
+					$value = true;
+				}
+				return $value;
+			} );
 		}
 
 		// Fix Jetpack Contact Form in Editor Mode.
