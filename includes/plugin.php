@@ -517,6 +517,7 @@ class Plugin {
 		$this->modules_manager = new Modules_Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
 		$this->system_info = new System_Info\Main();
+		$this->revisions_manager = new Revisions_Manager();
 
 		User::init();
 		Upgrades::add_actions();
@@ -524,7 +525,6 @@ class Plugin {
 		Tracker::init();
 
 		if ( is_admin() ) {
-			$this->revisions_manager = new Revisions_Manager();
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
