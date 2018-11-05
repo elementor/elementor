@@ -818,11 +818,11 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function save_template_type() {
-		return update_post_meta( $this->post->ID, self::TYPE_META_KEY, $this->get_name() );
+		return $this->update_main_meta( self::TYPE_META_KEY, $this->get_name() );
 	}
 
 	public function get_template_type() {
-		return get_post_meta( $this->post->ID, self::TYPE_META_KEY, true );
+		return $this->get_main_meta( self::TYPE_META_KEY );
 	}
 
 	/**
