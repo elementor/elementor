@@ -6,6 +6,10 @@ export default class extends BaseModalLayout {
 		return {
 			id: 'elementor-finder__modal',
 			draggable: true,
+			effects: {
+				show: 'show',
+				hide: 'hide',
+			},
 			position: {
 				enable: false,
 			},
