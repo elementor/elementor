@@ -1,5 +1,4 @@
 import CategoriesView from './categories';
-import StartView from './start';
 
 export default class extends Marionette.LayoutView {
 	id() {
@@ -32,10 +31,6 @@ export default class extends Marionette.LayoutView {
 
 	initialize() {
 		this.$activeItem = null;
-	}
-
-	showStartView() {
-		this.content.show( new StartView() );
 	}
 
 	showCategoriesView() {
@@ -100,8 +95,6 @@ export default class extends Marionette.LayoutView {
 	}
 
 	onShow() {
-		this.showStartView();
-
 		this.addHotKeys();
 	}
 
@@ -116,9 +109,9 @@ export default class extends Marionette.LayoutView {
 			if ( ! ( this.content.currentView instanceof CategoriesView ) ) {
 				this.showCategoriesView();
 			}
-		} else {
-			this.showStartView();
 		}
+
+		this.content.currentView.$el.toggle( ! ! value );
 	}
 
 	onCategoryItemMouseEnter( event ) {
