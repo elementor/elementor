@@ -10,10 +10,10 @@ class Base_Object {
 
 	private $settings;
 
-	final public function get_settings( $setting = null, $default = null ) {
+	final public function get_settings( $setting = null ) {
 		$this->ensure_settings();
 
-		return self::get_items( $this->settings, $setting, $default );
+		return self::get_items( $this->settings, $setting );
 	}
 
 	final public function set_settings( $key, $value = null ) {
@@ -46,12 +46,10 @@ class Base_Object {
 	 *
 	 * @param array  $haystack An array of items.
 	 * @param string $needle   Optional. Needle. Default is null.
-	 * @param mixed  $default  Optional. Default value to return when the needle was
-	 *                         not found. Default is null.
 	 *
 	 * @return mixed The whole haystack or the needle from the haystack when requested.
 	 */
-	final protected static function get_items( array $haystack, $needle = null, $default = null ) {
+	final protected static function get_items( array $haystack, $needle = null ) {
 		if ( $needle ) {
 			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
 		}
