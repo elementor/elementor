@@ -14,17 +14,17 @@ abstract class Base_Category extends Base_Object {
 
 	abstract public function get_category_items( array $options = [] );
 
-	public function is_remote() {
+	public function is_dynamic() {
 		return false;
 	}
 
 	protected function get_init_settings() {
 		$settings = [
 			'title' => $this->get_title(),
-			'remote' => $this->is_remote(),
+			'dynamic' => $this->is_dynamic(),
 		];
 
-		if ( ! $settings['remote'] ) {
+		if ( ! $settings['dynamic'] ) {
 			$settings['items'] = $this->get_category_items();
 		}
 
