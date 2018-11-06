@@ -1,5 +1,5 @@
 import Category from './category';
-import RemoteCategory from './remote-category';
+import DynamicCategory from './dynamic-category';
 
 export default class extends Marionette.CompositeView {
 	id() {
@@ -17,7 +17,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	getChildView( childModel ) {
-		return childModel.get( 'remote' ) ? RemoteCategory : Category;
+		return childModel.get( 'dynamic' ) ? DynamicCategory : Category;
 	}
 
 	initialize() {

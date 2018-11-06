@@ -2,7 +2,7 @@ import Category from './category';
 
 export default class extends Category {
 	className() {
-		return super.className() + ' elementor-finder__results__category--remote';
+		return super.className() + ' elementor-finder__results__category--dynamic';
 	}
 
 	ui() {

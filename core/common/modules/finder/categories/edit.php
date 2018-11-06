@@ -17,7 +17,7 @@ class Edit extends Base_Category {
 		return __( 'Edit', 'elementor' );
 	}
 
-	public function is_remote() {
+	public function is_dynamic() {
 		return true;
 	}
 
