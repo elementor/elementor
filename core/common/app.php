@@ -18,7 +18,7 @@ class App extends BaseApp {
 
 		add_action( 'elementor/editor/before_enqueue_styles', [ $this, 'register_styles' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'register_styles' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 9 );
 
 		add_action( 'elementor/editor/footer', [ $this, 'print_templates' ] );
 		add_action( 'admin_footer', [ $this, 'print_templates' ] );
