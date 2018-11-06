@@ -9,12 +9,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * General Category
+ *
+ * Provides general items related to Elementor Admin.
+ */
 class General extends Base_Category {
 
+	/**
+	 * Get title.
+	 *
+	 * @access public
+	 *
+	 * @return string
+	 */
 	public function get_title() {
 		return __( 'General', 'elementor' );
 	}
 
+	/**
+	 * Get category items.
+	 *
+	 * @access public
+	 *
+	 * @param array $options
+	 *
+	 * @return array
+	 */
 	public function get_category_items( array $options = [] ) {
 		return [
 			'my-templates' => [

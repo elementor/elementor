@@ -11,16 +11,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Edit Category
+ *
+ * Provides items related to editing of posts/pages/templates etc.
+ */
 class Edit extends Base_Category {
 
+	/**
+	 * Get title.
+	 *
+	 * @access public
+	 *
+	 * @return string
+	 */
 	public function get_title() {
 		return __( 'Edit', 'elementor' );
 	}
 
+	/**
+	 * Is dynamic.
+	 *
+	 * Determine if the category is dynamic.
+	 *
+	 * @access public
+	 *
+	 * @return bool
+	 */
 	public function is_dynamic() {
 		return true;
 	}
 
+	/**
+	 * Get category items.
+	 *
+	 * @access public
+	 *
+	 * @param array $options
+	 *
+	 * @return array
+	 */
 	public function get_category_items( array $options = [] ) {
 		$post_types = get_post_types( [
 			'exclude_from_search' => false,

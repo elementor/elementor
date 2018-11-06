@@ -10,12 +10,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Tools Category
+ *
+ * Provides items related to Elementor's tools.
+ */
 class Tools extends Base_Category {
 
+	/**
+	 * Get title.
+	 *
+	 * @access public
+	 *
+	 * @return string
+	 */
 	public function get_title() {
 		return __( 'Tools', 'elementor' );
 	}
 
+	/**
+	 * Get category items.
+	 *
+	 * @access public
+	 *
+	 * @param array $options
+	 *
+	 * @return array
+	 */
 	public function get_category_items( array $options = [] ) {
 		$tools_url = ElementorTools::get_url();
 

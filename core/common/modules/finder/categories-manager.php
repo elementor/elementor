@@ -9,10 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Categories_Manager {
 
 	/**
+	 * @access private
+	 *
 	 * @var Base_Category[]
 	 */
 	private $categories;
 
+	/**
+	 * @var array
+	 */
 	private $categories_list = [
 		'edit',
 		'general',
@@ -33,6 +38,8 @@ class Categories_Manager {
 	}
 
 	/**
+	 * Get categories.
+	 *
 	 * @param string $category
 	 *
 	 * @return Base_Category|Base_Category[]|null
@@ -53,6 +60,11 @@ class Categories_Manager {
 		return $this->categories;
 	}
 
+	/**
+	 * Init categories.
+	 *
+	 * Used to initialize finder default categories.
+	 */
 	private function init_categories() {
 		foreach ( $this->categories_list as $category_name ) {
 			$class_name = __NAMESPACE__ . '\Categories\\' . $category_name;
