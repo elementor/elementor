@@ -57,7 +57,7 @@ class Categories_Manager {
 		foreach ( $this->categories_list as $category_name ) {
 			$class_name = __NAMESPACE__ . '\Categories\\' . $category_name;
 
-			$this->categories[ $category_name ] = new $class_name();
+			$this->add_category( $category_name, new $class_name() );
 		}
 	}
 }
