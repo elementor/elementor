@@ -196,7 +196,7 @@ module.exports = Module.extend( {
 				if ( _.isString( data ) ) {
 					message = data;
 				} else if ( data.statusText ) {
-					message = elementorCommon.ajax.createErrorMessage( data );
+					message = elementor.createAjaxErrorMessage( data );
 
 					if ( 0 === data.readyState ) {
 						message += ' ' + elementor.translate( 'saving_disabled' );
