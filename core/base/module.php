@@ -192,6 +192,18 @@ abstract class Module extends Base_Object {
 		return false;
 	}
 
+	/**
+	 * Get assets url.
+	 *
+	 * @access protected
+	 *
+	 * @param string $file_name
+	 * @param string $file_extension
+	 * @param string $relative_url Optional. Default is null.
+	 * @param string $add_min_suffix Optional. Default is 'default'.
+	 *
+	 * @return string
+	 */
 	final protected function get_assets_url( $file_name, $file_extension, $relative_url = null, $add_min_suffix = 'default' ) {
 		static $is_test_mode = null;
 
@@ -216,10 +228,33 @@ abstract class Module extends Base_Object {
 		return $url . '.' . $file_extension;
 	}
 
+	/**
+	 * Get js assets url
+	 *
+	 * @access protected
+	 *
+	 * @param string $file_name
+	 * @param string $relative_url Optional. Default is null.
+	 * @param string $add_min_suffix Optional. Default is 'default'.
+	 *
+	 * @return string
+	 */
 	final protected function get_js_assets_url( $file_name, $relative_url = null, $add_min_suffix = 'default' ) {
 		return $this->get_assets_url( $file_name, 'js', $relative_url, $add_min_suffix );
 	}
 
+	/**
+	 * Get css assets url
+	 *
+	 * @access protected
+	 *
+	 * @param string $file_name
+	 * @param string $relative_url         Optional. Default is null.
+	 * @param string $add_min_suffix       Optional. Default is 'default'.
+	 * @param bool   $add_direction_suffix Optional. Default is `false`
+	 *
+	 * @return string
+	 */
 	final protected function get_css_assets_url( $file_name, $relative_url = null, $add_min_suffix = 'default', $add_direction_suffix = false ) {
 		static $direction_suffix = null;
 
@@ -234,6 +269,13 @@ abstract class Module extends Base_Object {
 		return $this->get_assets_url( $file_name, 'css', $relative_url, $add_min_suffix );
 	}
 
+	/**
+	 * Get assets relative url
+	 *
+	 * @access protected
+	 *
+	 * @return string
+	 */
 	protected function get_assets_relative_url() {
 		return 'assets/';
 	}

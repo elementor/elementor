@@ -10,13 +10,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Finder Module
+ *
+ * Responsible for initializing Elementor Finder functionality
+ */
 class Module extends BaseModule {
 
 	/**
+	 * Categories manager.
+	 *
+	 * @access private
+	 *
 	 * @var Categories_Manager
 	 */
 	private $categories_manager;
 
+	/**
+	 * Module constructor.
+	 *
+	 * @access public
+	 */
 	public function __construct() {
 		$this->categories_manager = new Categories_Manager();
 
@@ -25,24 +39,59 @@ class Module extends BaseModule {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
+	/**
+	 * Get name.
+	 *
+	 * @access public
+	 *
+	 * @return string
+	 */
 	public function get_name() {
 		return 'finder';
 	}
 
+	/**
+	 * Add template.
+	 *
+	 * @access public
+	 */
 	public function add_template() {
 		Plugin::$instance->common->add_template( __DIR__ . '/template.php' );
 	}
 
+	/**
+	 * Register ajax actions.
+	 *
+	 * @access public
+	 *
+	 * @param Ajax $ajax
+	 */
 	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'finder_get_category_data', [ $this, 'ajax_get_category_data' ] );
+		$ajax->register_ajax_action( 'finder_get_category_items', [ $this, 'ajax_get_category_items' ] );
 	}
 
-	public function ajax_get_category_data( array $data ) {
+	/**
+	 * Ajax get category items.
+	 *
+	 * @access public
+	 *
+	 * @param array $data
+	 *
+	 * @return array
+	 */
+	public function ajax_get_category_items( array $data ) {
 		$category = $this->categories_manager->get_categories( $data['category'] );
 
 		return $category->get_category_items( $data );
 	}
 
+	/**
+	 * Get init settings.
+	 *
+	 * @access protected
+	 *
+	 * @return array
+	 */
 	protected function get_init_settings() {
 		$categories = $this->categories_manager->get_categories();
 
