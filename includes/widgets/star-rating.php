@@ -93,17 +93,18 @@ class Widget_Star_Rating extends Widget_Base {
 				'min' => 0,
 				'max' => 5,
 				'step' => 0.1,
+				'default' => 5,
 			]
 		);
 
 		$this->add_control(
 			'star_style',
 			[
-				'label' => __( 'Star Type', 'elementor' ),
+				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'fontawesome' => __( 'Font Awesome', 'elementor' ),
-					'unicode' => __( 'Unicode', 'elementor' ),
+					'fontawesome' => 'Font Awesome',
+					'unicode' => 'Unicode',
 				],
 				'default' => 'fontawesome',
 				'render_type' => 'template',
@@ -119,8 +120,8 @@ class Widget_Star_Rating extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'label_block' => false,
 				'options' => [
-					'default' => [
-						'title' => __( 'Default', 'elementor' ),
+					'solid' => [
+						'title' => __( 'Solid', 'elementor' ),
 						'icon' => 'fa fa-star',
 					],
 					'outline' => [
@@ -128,13 +129,14 @@ class Widget_Star_Rating extends Widget_Base {
 						'icon' => 'fa fa-star-o',
 					],
 				],
+				'default' => 'solid',
 			]
 		);
 
 		$this->add_control(
-			'label',
+			'title',
 			[
-				'label' => __( 'Label', 'elementor' ),
+				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'separator' => 'before',
 			]
@@ -173,12 +175,12 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'section_label_style',
+			'section_title_style',
 			[
 				'label' => __( 'Label', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'label!' => '',
+					'title!' => '',
 				],
 			]
 		);
@@ -186,24 +188,24 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name' => 'label_typography',
-				'selector' => '{{WRAPPER}} .elementor-star-rating__label',
+				'name' => 'title_typography',
+				'selector' => '{{WRAPPER}} .elementor-star-rating__title',
 			]
 		);
 
 		$this->add_control(
-			'label_color',
+			'title_color',
 			[
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating__label' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .elementor-star-rating__title' => 'color: {{VALUE}}',
 				],
 			]
 		);
 
 		$this->add_responsive_control(
-			'label_gap',
+			'title_gap',
 			[
 				'label' => __( 'Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -214,8 +216,8 @@ class Widget_Star_Rating extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'body:not(.rtl) {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__label' => 'margin-right: {{SIZE}}{{UNIT}}',
-					'body.rtl {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__label' => 'margin-left: {{SIZE}}{{UNIT}}',
+					'body:not(.rtl) {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__title' => 'margin-right: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__title' => 'margin-left: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -315,14 +317,14 @@ class Widget_Star_Rating extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$icon = '&#61445;';
 
-		if ( 'fontawesome' == $settings['star_style'] ) {
-			if ( 'outline' == $settings['unmarked_star_style'] ) {
+		if ( 'fontawesome' === $settings['star_style'] ) {
+			if ( 'outline' === $settings['unmarked_star_style'] ) {
 				$icon = '&#61446;';
 			}
-		} elseif ( 'unicode' == $settings['star_style'] ) {
+		} elseif ( 'unicode' === $settings['star_style'] ) {
 			$icon = '&#9733;';
 
-			if ( 'outline' == $settings['unmarked_star_style'] ) {
+			if ( 'outline' === $settings['unmarked_star_style'] ) {
 				$icon = '&#9734;';
 			}
 		}
@@ -340,13 +342,69 @@ class Widget_Star_Rating extends Widget_Base {
 		?>
 
 		<div class="elementor-star-rating__wrapper">
-			<?php if ( ! empty( $settings['label'] ) ) : ?>
-				<div class="elementor-star-rating__label"><?php echo $settings['label']; ?></div>
+			<?php if ( ! empty( $settings['title'] ) ) : ?>
+				<div class="elementor-star-rating__title"><?php echo $settings['title']; ?></div>
 			<?php endif; ?>
 			<?php echo $stars_element; ?>
 		</div>
 		<?php
 	}
 
-	protected function _content_template() {}
+	protected function _content_template() {
+		?>
+		<#
+			var renderStars = function( icon ) {
+				var rating = settings.rating > 5 ? 5 : settings.rating,
+					starsHtml = '';
+
+				for ( stars = 0; stars <= 4; stars++ ) {
+					if ( rating >= 1 ) {
+						starsHtml += '<i class="elementor-star-full">' + icon + '</i>';
+						rating--;
+					} else if ( rating >= 0.1 ) {
+						starsHtml += '<i class="elementor-star-' + rating * 10 + '">' + icon + '</i>';
+						rating = rating - rating;
+					} else if ( rating < 0.1 ) {
+						starsHtml += '<i class="elementor-star-empty">' + icon + '</i>';
+					}
+				}
+
+				return starsHtml;
+			};
+
+			var icon = '&#61445;';
+
+			if ( 'fontawesome' === settings.star_style ) {
+				if ( 'outline' === settings.unmarked_star_style ) {
+					icon = '&#61446;';
+				}
+			} else if ( 'unicode' === settings.star_style ) {
+				icon = '&#9733;';
+
+				if ( 'outline' === settings.unmarked_star_style ) {
+					icon = '&#9734;';
+				}
+			}
+
+			view.addRenderAttribute( 'iconWrapper', 'class', 'elementor-star-rating' );
+			view.addRenderAttribute( 'iconWrapper', 'title', settings.rating );
+			view.addRenderAttribute( 'iconWrapper', 'itemtype', 'http://schema.org/Rating' );
+			view.addRenderAttribute( 'iconWrapper', 'itemscope', '' );
+			view.addRenderAttribute( 'iconWrapper', 'itemprop', 'reviewRating' );
+
+			var stars = renderStars( icon );
+		#>
+
+		<div class="elementor-star-rating__wrapper">
+			<# if ( ! _.isEmpty( settings.title ) ) { #>
+				<div class="elementor-star-rating__title">{{ settings.title }}</div>
+			<# } #>
+			<div {{{ view.getRenderAttributeString( 'iconWrapper' ) }}} >
+				{{{ stars }}}
+				<span itemprop="ratingValue" class="elementor-screen-only">{{ settings.rating }}</span>
+			</div>
+		</div>
+
+		<?php
+	}
 }
