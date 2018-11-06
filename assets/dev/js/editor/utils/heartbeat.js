@@ -29,14 +29,14 @@ class Heartbeat {
 					this.getModal().hide();
 				}
 
-				elementor.config.nonce = response.elementorNonce;
+				elementorCommon.ajax.addRequestConstant( '_nonce', response.elementorNonce );
 			},
 			'heartbeat-tick.wp-refresh-nonces': ( event, response ) => {
 				const nonces = response[ 'elementor-refresh-nonces' ];
 
 				if ( nonces ) {
 					if ( nonces.heartbeatNonce ) {
-						elementor.config.nonce = nonces.elementorNonce;
+						elementorCommon.ajax.addRequestConstant( '_nonce', nonces.elementorNonce );
 					}
 
 					if ( nonces.heartbeatNonce ) {
