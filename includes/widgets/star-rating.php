@@ -296,16 +296,15 @@ class Widget_Star_Rating extends Widget_Base {
 	protected function render_stars( $icon ) {
 		$settings = $this->get_settings_for_display();
 		$rating = $settings['rating'] > 5 ? 5 : $settings['rating'];
+		$floored_rating = (int) $rating;
 		$stars_html = '';
 
-		for ( $stars = 0; $stars <= 4; $stars++ ) {
-			if ( $rating >= 1 ) {
+		for ( $stars = 1; $stars <= 5; $stars++ ) {
+			if ( $stars <= $floored_rating ) {
 				$stars_html .= '<i class="elementor-star-full">' . $icon . '</i>';
-				$rating--;
-			} elseif ( $rating >= 0.1 ) {
-				$stars_html .= '<i class="elementor-star-' . $rating * 10 . '">' . $icon . '</i>';
-				$rating = $rating - $rating;
-			} elseif ( $rating < 0.1 ) {
+			} elseif ( $floored_rating + 1 === $stars && $rating !== $floored_rating ) {
+				$stars_html .= '<i class="elementor-star-' . ( $rating - $floored_rating ) * 10 . '">' . $icon . '</i>';
+			} else {
 				$stars_html .= '<i class="elementor-star-empty">' . $icon . '</i>';
 			}
 		}
@@ -355,16 +354,15 @@ class Widget_Star_Rating extends Widget_Base {
 		<#
 			var renderStars = function( icon ) {
 				var rating = settings.rating > 5 ? 5 : settings.rating,
-					starsHtml = '';
+					starsHtml = '',
+					flooredRating = Math.floor( rating );
 
-				for ( stars = 0; stars <= 4; stars++ ) {
-					if ( rating >= 1 ) {
+				for ( var stars = 1; stars <= 5; stars++ ) {
+					if ( stars <= flooredRating  ) {
 						starsHtml += '<i class="elementor-star-full">' + icon + '</i>';
-						rating--;
-					} else if ( rating >= 0.1 ) {
-						starsHtml += '<i class="elementor-star-' + rating * 10 + '">' + icon + '</i>';
-						rating = rating - rating;
-					} else if ( rating < 0.1 ) {
+					} else if ( flooredRating + 1 === stars && rating !== flooredRating ) {
+						starsHtml += '<i class="elementor-star-' + ( rating - flooredRating ).toFixed( 1 ) * 10 + '">' + icon + '</i>';
+					} else {
 						starsHtml += '<i class="elementor-star-empty">' + icon + '</i>';
 					}
 				}
