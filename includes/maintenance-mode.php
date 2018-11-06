@@ -105,6 +105,32 @@ class Maintenance_Mode {
 			return;
 		}
 
+		$user = wp_get_current_user();
+
+		$exclude_mode = self::get( 'exclude_mode', [] );
+
+		$is_login_page = apply_filters( 'elementor/maintenance_mode/is_login_page', false );
+
+		if ( $is_login_page ) {
+			return;
+		}
+
+		if ( 'logged_in' === $exclude_mode && is_user_logged_in() ) {
+			return;
+		}
+
+		if ( 'custom' === $exclude_mode ) {
+			$exclude_roles = self::get( 'exclude_roles', [] );
+
+			$compare_roles = array_intersect( $user->roles, $exclude_roles );
+
+			if ( ! empty( $compare_roles ) ) {
+				return;
+			}
+		}
+
+		add_filter( 'body_class', [ $this, 'body_class' ] );
+
 		if ( 'maintenance' === self::get( 'mode' ) ) {
 			$protocol = wp_get_server_protocol();
 			header( "$protocol 503 Service Unavailable", true, 503 );
@@ -288,26 +314,6 @@ class Maintenance_Mode {
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
 		add_action( 'admin_head', [ $this, 'print_style' ] );
 		add_action( 'wp_head', [ $this, 'print_style' ] );
-
-		$user = wp_get_current_user();
-
-		$exclude_mode = self::get( 'exclude_mode', [] );
-
-		if ( 'logged_in' === $exclude_mode && is_user_logged_in() ) {
-			return;
-		}
-
-		if ( 'custom' === $exclude_mode ) {
-			$exclude_roles = self::get( 'exclude_roles', [] );
-
-			$compare_roles = array_intersect( $user->roles, $exclude_roles );
-
-			if ( ! empty( $compare_roles ) ) {
-				return;
-			}
-		}
-
-		add_filter( 'body_class', [ $this, 'body_class' ] );
 
 		// Priority = 11 that is *after* WP default filter `redirect_canonical` in order to avoid redirection loop.
 		add_action( 'template_redirect', [ $this, 'template_redirect' ], 11 );
