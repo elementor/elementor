@@ -161,7 +161,7 @@ class Widget_Star_Rating extends Widget_Base {
 						'icon' => 'fa fa-align-right',
 					],
 					'justify' => [
-						'title' => __( 'Justify', 'elementor' ),
+						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'fa fa-align-justify',
 					],
 				],
