@@ -23,6 +23,16 @@ class Categories_Manager {
 	];
 
 	/**
+	 * Add category.
+	 *
+	 * @param string        $category_name
+	 * @param Base_Category $category
+	 */
+	public function add_category( $category_name, Base_Category $category ) {
+		$this->categories[ $category_name ] = $category;
+	}
+
+	/**
 	 * @param string $category
 	 *
 	 * @return Base_Category|Base_Category[]|null
