@@ -7,6 +7,7 @@
 		display: inline-block;
 		position: relative;
 		font-style: normal;
+		cursor: default;
 
 		&:before {
 			content: '\f005';
@@ -40,7 +41,7 @@
 		align-items: center;
 	}
 
-	&__label {
+	&__title {
 		@include margin-end(10px);
 	}
 
@@ -72,7 +73,7 @@
 
 		&-justify {
 
-			.elementor-star-rating__label {
+			.elementor-star-rating__title {
 				@include margin-end( auto );
 			}
 		}
