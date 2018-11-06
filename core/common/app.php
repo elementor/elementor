@@ -5,10 +5,22 @@ use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Finder\Module as Finder;
 
+/**
+ * App
+ *
+ * Elementor's common app that groups shared functionality, components and configuration
+ *
+ * @since 2.3.0
+ */
 class App extends BaseApp {
 
 	private $templates = [];
 
+	/**
+	 * App constructor.
+	 *
+	 * @access public
+	 */
 	public function __construct() {
 		$this->add_default_templates();
 
@@ -25,6 +37,13 @@ class App extends BaseApp {
 		add_action( 'wp_footer', [ $this, 'print_templates' ] );
 	}
 
+	/**
+	 * Init components
+	 *
+	 * Initializing common components.
+	 *
+	 * @access public
+	 */
 	public function init_components() {
 		$this->add_component( 'ajax', new Ajax() );
 
@@ -33,10 +52,26 @@ class App extends BaseApp {
 		}
 	}
 
+	/**
+	 * Get name.
+	 *
+	 * Retrieve the app name.
+	 *
+	 * @access public
+	 *
+	 * @return string Common app name.
+	 */
 	public function get_name() {
 		return 'common';
 	}
 
+	/**
+	 * Register scripts.
+	 *
+	 * Register common scripts.
+	 *
+	 * @access public
+	 */
 	public function register_scripts() {
 		wp_register_script(
 			'backbone-marionette',
@@ -85,6 +120,13 @@ class App extends BaseApp {
 		$this->print_config();
 	}
 
+	/**
+	 * Register styles.
+	 *
+	 * Register common styles.
+	 *
+	 * @access public
+	 */
 	public function register_styles() {
 		wp_register_style(
 			'elementor-icons',
@@ -125,12 +167,28 @@ class App extends BaseApp {
 		$this->templates[] = $template;
 	}
 
+	/**
+	 * Print Templates
+	 *
+	 * Prints all registered templates.
+	 *
+	 * @access public
+	 */
 	public function print_templates() {
 		foreach ( $this->templates as $template ) {
 			echo $template;
 		}
 	}
 
+	/**
+	 * Get init settings.
+	 *
+	 * Define the default/initial settings of the common app.
+	 *
+	 * @access protected
+	 *
+	 * @return array
+	 */
 	protected function get_init_settings() {
 		return [
 			'version' => ELEMENTOR_VERSION,
@@ -142,6 +200,11 @@ class App extends BaseApp {
 		];
 	}
 
+	/**
+	 * Add default templates.
+	 *
+	 * Register common app default templates.
+	 */
 	private function add_default_templates() {
 		$default_templates = [
 			'includes/editor-templates/library-layout.php',

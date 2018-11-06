@@ -9,12 +9,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Create Category
+ *
+ * Provides items related to creation of new posts/pages/templates etc.
+ */
 class Create extends Base_Category {
 
+	/**
+	 * Get title.
+	 *
+	 * @access public
+	 *
+	 * @return string
+	 */
 	public function get_title() {
 		return __( 'Create', 'elementor' );
 	}
 
+	/**
+	 * Get category items.
+	 *
+	 * @access public
+	 *
+	 * @param array $options
+	 *
+	 * @return array
+	 */
 	public function get_category_items( array $options = [] ) {
 		$elementor_supported_post_types = get_post_types_by_support( 'elementor' );
 
