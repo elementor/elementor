@@ -382,7 +382,7 @@ abstract class Document extends Controls_Stack {
 
 			$statuses = get_post_statuses();
 			if ( 'future' === $this->get_main_post()->post_status ) {
-				$statuses['future'] = __( 'Feature', '' );
+				$statuses['future'] = __( 'Future', 'elementor' );
 			}
 
 			$this->add_control(
