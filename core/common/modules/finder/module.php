@@ -34,10 +34,10 @@ class Module extends BaseModule {
 	}
 
 	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'finder_get_category_data', [ $this, 'ajax_get_category_data' ] );
+		$ajax->register_ajax_action( 'finder_get_category_items', [ $this, 'ajax_get_category_items' ] );
 	}
 
-	public function ajax_get_category_data( array $data ) {
+	public function ajax_get_category_items( array $data ) {
 		$category = $this->categories_manager->get_categories( $data['category'] );
 
 		return $category->get_category_items( $data );
