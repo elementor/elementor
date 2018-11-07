@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-finder__results__item">
-	<a href="{{ link }}" target="_blank" class="elementor-finder__results__item__link">
+	<a href="{{ link }}" class="elementor-finder__results__item__link">
 		<div class="elementor-finder__results__item__icon">
 			<i class="eicon-{{{ icon }}}"></i>
 		</div>
