@@ -477,6 +477,13 @@ class Plugin {
 		do_action( 'elementor/init' );
 	}
 
+	public function on_rest_api_init() {
+		// On admin/frontend sometimes the rest API is initialized after the common is initialized.
+		if ( ! $this->common ) {
+			$this->init_common();
+		}
+	}
+
 	/**
 	 * Init components.
 	 *
@@ -594,7 +601,7 @@ class Plugin {
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
-		add_action( 'rest_api_init', [ $this, 'init_common' ] );
+		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ] );
 	}
 }
 
