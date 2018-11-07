@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
+use Elementor\Core\Common\Modules\Connect\Manager;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Files\Manager as Files_Manager;
@@ -389,6 +390,11 @@ class Plugin {
 	 * @var Inspector
 	 */
 	public $inspector;
+
+	/**
+	 * @var Manager
+	 */
+	public $connect;
 
 	/**
 	 * @var CommonApp
