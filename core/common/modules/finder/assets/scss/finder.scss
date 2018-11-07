@@ -56,6 +56,7 @@
 
 		&__tips {
 			display: flex;
+			justify-content: flex-end;
 			padding: 7px 10px;
 			background-color: #fff;
 			box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.03);
@@ -171,11 +172,10 @@
 	}
 
 	&__tip {
-		@include margin-start(15px);
+		@include margin-start(20px);
 		font-size: 11px;
 
 		&__key {
-			font-family: monospace;
 			font-weight: bold;
 			color: $editor-dark;
 		}
