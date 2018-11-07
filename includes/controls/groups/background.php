@@ -270,6 +270,8 @@ class Group_Control_Background extends Group_Control_Base {
 				'bottom left' => _x( 'Bottom Left', 'Background Control', 'elementor' ),
 				'bottom center' => _x( 'Bottom Center', 'Background Control', 'elementor' ),
 				'bottom right' => _x( 'Bottom Right', 'Background Control', 'elementor' ),
+				'initial' => _x( 'Custom', 'Background Control', 'elementor' ),
+
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-position: {{VALUE}};',
@@ -278,6 +280,89 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'classic' ],
 				'image[url]!' => '',
 			],
+		];
+
+		$fields['xpos'] = [
+			'label' => _x( 'X Position', 'Background Control', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'em', '%', 'vw', 'vh' ],
+			'default' => [
+				'unit' => 'px',
+				'size' => 0,
+			],
+			'range' => [
+				'px' => [
+					'min' => -800,
+					'max' => 800,
+				],
+				'em' => [
+					'min' => -100,
+					'max' => 100,
+				],
+				'%' => [
+					'min' => -100,
+					'max' => 100,
+				],
+				'vh' => [
+					'min' => -100,
+					'max' => 100,
+				],
+				'vw' => [
+					'min' => -100,
+					'max' => 100,
+				],
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => 'background-position: {{SIZE}}{{UNIT}} {{ypos.SIZE}}{{ypos.UNIT}}',
+			],
+			'condition' => [
+				'background' => [ 'classic' ],
+				'position' => [ 'initial' ],
+				'image[url]!' => '',
+			],
+			'required' => true,
+		];
+
+		$fields['ypos'] = [
+			'label' => _x( 'Y Position', 'Background Control', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'em', '%', 'vw', 'vh' ],
+			'default' => [
+				'unit' => 'px',
+				'size' => 0,
+			],
+			'range' => [
+				'px' => [
+					'min' => -800,
+					'max' => 800,
+				],
+				'em' => [
+					'min' => -100,
+					'max' => 100,
+				],
+				'%' => [
+					'min' => -100,
+					'max' => 100,
+				],
+				'vh' => [
+					'min' => -100,
+					'max' => 100,
+				],
+				'vw' => [
+					'min' => -100,
+					'max' => 100,
+				],
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => 'background-position: {{xpos.SIZE}}{{xpos.UNIT}} {{SIZE}}{{UNIT}}',
+			],
+			'condition' => [
+				'background' => [ 'classic' ],
+				'position' => [ 'initial' ],
+				'image[url]!' => '',
+			],
+			'required' => true,
+			'separator' => 'after',
 		];
 
 		$fields['attachment'] = [
