@@ -18,7 +18,7 @@
 		"babel-preset-env": "^1.7.0",
 		"concurrently": "^4.0.1",
 		"cssnano": "~3.10.0",
-		"cypress": "^3.1.0",
+		"cypress": "^3.1.1",
 		"eslint": "^5.4.0",
 		"eslint-config-wordpress": "^2.0.0",
 		"eslint-loader": "^2.1.0",
