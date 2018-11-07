@@ -244,7 +244,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$args['content'] = json_decode( stripslashes( $args['content'] ), true );
+		$args['content'] = json_decode( $args['content'], true );
 
 		if ( 'page' === $args['type'] ) {
 			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
@@ -287,7 +287,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$template_data['content'] = json_decode( stripslashes( $template_data['content'] ), true );
+		$template_data['content'] = json_decode( $template_data['content'], true );
 
 		$update = $source->update_item( $template_data );
 
