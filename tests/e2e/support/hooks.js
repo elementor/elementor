@@ -1,8 +1,7 @@
 /// <reference types="Cypress" />
-before( function() {
-  cy.login();
+beforeEach( function() {
+    cy.login( 'admin' );
 } );
 
 after( function() {
-
 } );
