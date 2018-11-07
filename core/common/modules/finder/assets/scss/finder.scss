@@ -4,7 +4,7 @@
 		background: none;
 
 		.dialog-widget-content {
-			$modal-width: 600px;
+			$modal-width: 650px;
 
 			width: $modal-width;
 			max-width: 98%;
@@ -120,6 +120,13 @@
 			}
 		}
 
+		&:not(.elementor-active) {
+
+			.elementor-finder__results__item__actions {
+				display: none;
+			}
+		}
+
 		&__link {
 			display: flex;
 			align-items: center;
@@ -146,13 +153,16 @@
 			font-style: italic;
 		}
 
+		&__actions {
+			display: flex;
+		}
+
 		&__action {
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			height: 100%;
 			width: $item-height;
-			color: $editor-light;
 
 			&:hover {
 				background-color: rgba(0, 0, 0, .07);
