@@ -248,7 +248,7 @@ class Schemes_Manager {
 			return false;
 		}
 
-		$posted = json_decode( stripslashes( $data['data'] ), true );
+		$posted = json_decode( $data['data'], true );
 
 		$scheme_obj->save_scheme( $posted );
 

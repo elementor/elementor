@@ -4,7 +4,7 @@
 		background: none;
 
 		.dialog-widget-content {
-			$modal-width: 600px;
+			$modal-width: 650px;
 
 			width: $modal-width;
 			max-width: 98%;
@@ -53,6 +53,13 @@
 	&__results {
 		max-height: 50vh;
 		overflow: auto;
+
+		&__tips {
+			display: flex;
+			padding: 7px 10px;
+			background-color: #fff;
+			box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.03);
+		}
 	}
 
 	&__no-results {
@@ -113,6 +120,13 @@
 			}
 		}
 
+		&:not(.elementor-active) {
+
+			.elementor-finder__results__item__actions {
+				display: none;
+			}
+		}
+
 		&__link {
 			display: flex;
 			align-items: center;
@@ -139,17 +153,31 @@
 			font-style: italic;
 		}
 
+		&__actions {
+			display: flex;
+		}
+
 		&__action {
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			height: 100%;
 			width: $item-height;
-			color: $editor-light;
 
 			&:hover {
 				background-color: rgba(0, 0, 0, .07);
 			}
+		}
+	}
+
+	&__tip {
+		@include margin-start(15px);
+		font-size: 11px;
+
+		&__key {
+			font-family: monospace;
+			font-weight: bold;
+			color: $editor-dark;
 		}
 	}
 }
