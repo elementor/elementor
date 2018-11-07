@@ -65,6 +65,10 @@ class Manager {
 
 		// TODO: bc since 2.3.0
 		add_action( 'wp_ajax_elementor_update_templates', function() {
+			foreach ( $_POST['templates'] as & $template ) {
+				$template['content'] = stripslashes( $template['content'] );
+			}
+
 			wp_send_json_success( $this->handle_ajax_request( 'update_templates', $_POST ) );
 		} );
 	}
