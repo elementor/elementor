@@ -150,7 +150,6 @@
 		&__description {
 			@include margin-start(5px);
 			color: $editor-light;
-			font-size: 13px;
 			font-style: italic;
 		}
 
@@ -176,7 +175,8 @@
 		font-size: 11px;
 
 		&__key {
-			font-weight: bold;
+			@include margin-end(3px);
+			font-weight: 700;
 			color: $editor-dark;
 		}
 	}
