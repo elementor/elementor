@@ -868,11 +868,11 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param Element_Base $element The element.
+	 * @param Controls_Stack $controls_stack.
 	 * @param string $tab The panel tab.
 	 */
-	public function add_custom_css_controls( $element, $tab = self::TAB_ADVANCED ) {
-		$element->start_controls_section(
+	public function add_custom_css_controls( Controls_Stack $controls_stack, $tab = self::TAB_ADVANCED ) {
+		$controls_stack->start_controls_section(
 			'section_custom_css_pro',
 			[
 				'label' => __( 'Custom CSS', 'elementor' ),
@@ -880,7 +880,7 @@ class Controls_Manager {
 			]
 		);
 
-		$element->add_control(
+		$controls_stack->add_control(
 			'custom_css_pro',
 			[
 				'type' => self::RAW_HTML,
@@ -902,6 +902,6 @@ class Controls_Manager {
 			]
 		);
 
-		$element->end_controls_section();
+		$controls_stack->end_controls_section();
 	}
 }

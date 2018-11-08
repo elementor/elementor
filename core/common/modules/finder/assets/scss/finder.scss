@@ -53,14 +53,6 @@
 	&__results {
 		max-height: 50vh;
 		overflow: auto;
-
-		&__tips {
-			display: flex;
-			justify-content: flex-end;
-			padding: 7px 10px;
-			background-color: #fff;
-			box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.03);
-		}
 	}
 
 	&__no-results {
@@ -167,17 +159,6 @@
 			&:hover {
 				background-color: rgba(0, 0, 0, .07);
 			}
-		}
-	}
-
-	&__tip {
-		@include margin-start(20px);
-		font-size: 11px;
-
-		&__key {
-			@include margin-end(3px);
-			font-weight: 700;
-			color: $editor-dark;
 		}
 	}
 }
