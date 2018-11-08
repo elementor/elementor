@@ -35,6 +35,8 @@ const getBuildFiles = [
 
 	'!assets/dev/**',
 	'!assets/**/*.map',
+	'!modules/**/assets/**',
+	'!core/**/assets/**',
 	'!*~'
 ];
 /**
