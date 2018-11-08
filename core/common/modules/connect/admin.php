@@ -12,7 +12,7 @@ class Admin {
 
 	const PAGE_ID = 'elementor-connect';
 
-	static public $url = '';
+	public static $url = '';
 
 	public function register_admin_menu() {
 		add_submenu_page(
