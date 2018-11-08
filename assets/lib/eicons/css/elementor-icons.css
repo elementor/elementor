@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?3.9.0");
-  src: url("../fonts/eicons.eot?3.9.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?3.9.0") format("woff2"), url("../fonts/eicons.woff?3.9.0") format("woff"), url("../fonts/eicons.ttf?3.9.0") format("truetype"), url("../fonts/eicons.svg?3.9.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?4.0.0");
+  src: url("../fonts/eicons.eot?4.0.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?4.0.0") format("woff2"), url("../fonts/eicons.woff?4.0.0") format("woff"), url("../fonts/eicons.ttf?4.0.0") format("truetype"), url("../fonts/eicons.svg?4.0.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -318,7 +318,7 @@
 .eicon-google-maps:before {
   content: '\e896'; }
 
-.eicon-insert-image:before {
+.eicon-image:before {
   content: '\e897'; }
 
 .eicon-photo-library:before {
@@ -728,6 +728,9 @@
 
 .eicon-loading:before {
   content: '\e1033'; }
+
+.eicon-sitemap:before {
+  content: '\e1034'; }
 
 .eicon-editor-link:before {
   content: '\e500'; }
