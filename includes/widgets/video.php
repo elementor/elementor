@@ -330,12 +330,11 @@ class Widget_Video extends Widget_Base {
 
 		// YouTube.
 		$this->add_control(
-			'rel',
+			'yt_privacy',
 			[
-				'label' => __( 'Suggested Videos', 'elementor' ),
+				'label' => __( 'Privacy Mode', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'Hide', 'elementor' ),
-				'label_on' => __( 'Show', 'elementor' ),
+				'description' => __( 'When you turn on privacy mode, YouTube won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
 				'condition' => [
 					'video_type' => 'youtube',
 				],
@@ -343,11 +342,14 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'yt_privacy',
+			'rel',
 			[
-				'label' => __( 'Privacy Mode', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'description' => __( 'When you turn on privacy mode, YouTube won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
+				'label' => __( 'Suggested Videos', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => __( 'Current Video Channel', 'elementor' ),
+					'yes' => __( 'Any Video', 'elementor' ),
+				],
 				'condition' => [
 					'video_type' => 'youtube',
 				],
