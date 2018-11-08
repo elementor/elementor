@@ -425,11 +425,11 @@ class Widget_Star_Rating extends Widget_Base {
 
 			    icon = '&#61445;';
 
-			if ( 'fontawesome' === settings.star_style ) {
+			if ( 'star_fontawesome' === settings.star_style ) {
 				if ( 'outline' === settings.unmarked_star_style ) {
 					icon = '&#61446;';
 				}
-			} else if ( 'unicode' === settings.star_style ) {
+			} else if ( 'star_unicode' === settings.star_style ) {
 				icon = '&#9733;';
 
 				if ( 'outline' === settings.unmarked_star_style ) {
