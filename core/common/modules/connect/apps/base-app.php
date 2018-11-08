@@ -205,7 +205,7 @@ abstract class Base_App {
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
 		if ( ! $response_code ) {
-			return new \WP_Error( 500, __( 'No Response', '' ) );
+			return new \WP_Error( 500, __( 'No Response', 'elementor' ) );
 		}
 
 		// Server sent a success message without content.
@@ -216,7 +216,7 @@ abstract class Base_App {
 		$body = json_decode( $body );
 
 		if ( false === $body ) {
-			return new \WP_Error( 422, __( 'Wrong Server Response', '' ) );
+			return new \WP_Error( 422, __( 'Wrong Server Response', 'elementor' ) );
 		}
 
 		if ( 200 !== $response_code ) {
