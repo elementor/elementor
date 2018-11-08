@@ -18,14 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-finder-results-container">
 	<div id="elementor-finder__no-results"><?php echo __( 'No Results Found', 'elementor' ); ?></div>
 	<div id="elementor-finder__results"></div>
-	<div id="elementor-finder__results__tips">
-		<?php /* translators: %s: Arrow keys */ ?>
-		<div class="elementor-finder__results__tip"><?php echo sprintf( __( '%s to navigate', 'elementor' ), '<span class="elementor-finder__results__tip__key">↑↓</span>' ); ?></div>
-		<?php /* translators: %s: Enter key */ ?>
-		<div class="elementor-finder__results__tip"><?php echo sprintf( __( '%s to select', 'elementor' ), '<span class="elementor-finder__results__tip__key">↵</span>' ); ?></div>
-		<?php /* translators: %s: Esc key */ ?>
-		<div class="elementor-finder__results__tip"><?php echo sprintf( __( '%s to dismiss', 'elementor' ), '<span class="elementor-finder__results__tip__key">esc</span>' ); ?></div>
-	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-finder__results__category">
