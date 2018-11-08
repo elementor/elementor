@@ -53,7 +53,7 @@ class Widget_Image extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-insert-image';
+		return 'eicon-image';
 	}
 
 	/**
