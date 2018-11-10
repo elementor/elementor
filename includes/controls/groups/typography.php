@@ -171,7 +171,13 @@ class Group_Control_Typography extends Group_Control_Base {
 		$fields['line_height'] = [
 			'label' => _x( 'Line-Height', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'default' => [
+			'desktop_default' => [
+				'unit' => 'em',
+			],
+			'tablet_default' => [
+				'unit' => 'em',
+			],
+			'mobile_default' => [
 				'unit' => 'em',
 			],
 			'range' => [

@@ -6,6 +6,7 @@
 	border-radius: 3px;
 	box-shadow: 0 2px 10px 0 rgba(0,0,0,0.09);
 	user-select: none;
+	z-index: $third-layer;
 
 	&-list {
 
@@ -18,7 +19,8 @@
 		}
 
 		&__item {
-			padding: 5px 20px;
+			padding: 5px 10px;
+			@include padding-end(20px);
 			display: flex;
 			cursor: pointer;
 
@@ -32,11 +34,15 @@
 				&:hover {
 					background-color: $editor-info;
 
-					.elementor-context-menu-list__item__title,
-					.elementor-context-menu-list__item__shortcut {
+					> * {
 						color: #fff;
 					}
 				}
+			}
+
+			&__icon {
+				width: 20px;
+				color: $editor-lighter;
 			}
 
 			&__title {
@@ -45,6 +51,16 @@
 
 			&__shortcut {
 				color: $editor-lightest;
+			}
+
+			&.elementor-context-menu-list__item-delete {
+
+				&:not(.elementor-context-menu-list__item--disabled) {
+
+					&:hover {
+						background-color: $editor-alert;
+					}
+				}
 			}
 		}
 	}

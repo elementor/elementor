@@ -10,9 +10,9 @@ Ajax = {
 			ajaxParams: {
 				type: 'POST',
 				url: elementor.config.ajaxurl,
-				data: {}
+				data: {},
 			},
-			actionPrefix: 'elementor_'
+			actionPrefix: 'elementor_',
 		};
 	},
 
@@ -25,7 +25,7 @@ Ajax = {
 	getCacheKey: function( request ) {
 		return JSON.stringify( {
 			unique_id: request.unique_id,
-			data: request.data
+			data: request.data,
 		} );
 	},
 
@@ -42,10 +42,10 @@ Ajax = {
 			deferredArray.push( self.load( {
 				action: options.action,
 				unique_id: options.data.unique_id + objectId,
-				data: jQuery.extend( { id: objectId }, options.data )
+				data: jQuery.extend( { id: objectId }, options.data ),
 			} ).done( function( data ) {
 				dataCollection = jQuery.extend( dataCollection, data );
-			}) );
+			} ) );
 		} );
 
 		jQuery.when.apply( jQuery, deferredArray ).done( function() {
@@ -76,7 +76,7 @@ Ajax = {
 				unique_id: request.unique_id,
 				success: function( data ) {
 					self.cache[ cacheKey ] = data;
-				}
+				},
 			} ).done( request.success );
 		}
 
@@ -94,7 +94,7 @@ Ajax = {
 
 		var request = {
 			action: action,
-			options: options
+			options: options,
 		};
 
 		if ( immediately ) {
@@ -122,13 +122,13 @@ Ajax = {
 		_( requests ).each( function( request, id ) {
 			actions[ id ] = {
 				action: request.action,
-				data: request.options.data
+				data: request.options.data,
 			};
 		} );
 
 		return this.send( 'ajax', {
 			data: {
-				actions: JSON.stringify( actions )
+				actions: JSON.stringify( actions ),
 			},
 			success: function( data ) {
 				_.each( data.responses, function( response, id ) {
@@ -148,7 +148,7 @@ Ajax = {
 						args.options.deferred.reject( data );
 					}
 				} );
-			}
+			},
 		} );
 	},
 
@@ -166,7 +166,6 @@ Ajax = {
 			ajaxParams.data.append( 'action', action );
 			ajaxParams.data.append( '_nonce', elementor.config.nonce );
 			ajaxParams.data.append( 'editor_post_id', elementor.config.document.id );
-
 		} else {
 			ajaxParams.data.action = action;
 			ajaxParams.data._nonce = elementor.config.nonce;
@@ -200,7 +199,7 @@ Ajax = {
 					var message = self.createErrorMessage( XMLHttpRequest );
 
 					elementor.notifications.showToast( {
-						message: message
+						message: message,
 					} );
 				};
 			}
@@ -223,7 +222,7 @@ Ajax = {
 		}
 
 		return message + '.';
-	}
+	},
 };
 
 module.exports = Ajax;

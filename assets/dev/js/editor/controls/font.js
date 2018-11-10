@@ -3,7 +3,7 @@ var ControlSelect2View = require( 'elementor-controls/select2' );
 module.exports = ControlSelect2View.extend( {
 	getSelect2Options: function() {
 		return {
-			dir: elementor.config.is_rtl ? 'rtl' : 'ltr'
+			dir: elementor.config.is_rtl ? 'rtl' : 'ltr',
 		};
 	},
 
@@ -15,7 +15,7 @@ module.exports = ControlSelect2View.extend( {
 			var filteredFonts = {};
 
 			_.each( fonts, function( fontType, fontName ) {
-				if ( _.isArray( groups ) && _.contains( groups, fontType ) || fontType === groups ) {
+				if ( ( _.isArray( groups ) && _.contains( groups, fontType ) ) || fontType === groups ) {
 					filteredFonts[ fontName ] = fontName;
 				}
 			} );
@@ -24,5 +24,5 @@ module.exports = ControlSelect2View.extend( {
 		};
 
 		return helpers;
-	}
+	},
 } );

@@ -1,64 +1,72 @@
-module.exports = Marionette.ItemView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-add-section' ),
+class AddSectionBase extends Marionette.ItemView {
+	template() {
+		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
+	}
 
-	attributes: {
-		'data-view': 'choose-action'
-	},
+	attributes() {
+		return {
+			'data-view': 'choose-action',
+		};
+	}
 
-	ui: {
-		addNewSection: '.elementor-add-new-section',
-		closeButton: '.elementor-add-section-close',
-		addSectionButton: '.elementor-add-section-button',
-		addTemplateButton: '.elementor-add-template-button',
-		selectPreset: '.elementor-select-preset',
-		presets: '.elementor-preset'
-	},
+	ui() {
+		return {
+			addNewSection: '.elementor-add-new-section',
+			closeButton: '.elementor-add-section-close',
+			addSectionButton: '.elementor-add-section-button',
+			addTemplateButton: '.elementor-add-template-button',
+			selectPreset: '.elementor-select-preset',
+			presets: '.elementor-preset',
+		};
+	}
 
-	events: {
-		'click @ui.addSectionButton': 'onAddSectionButtonClick',
-		'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
-		'click @ui.closeButton': 'onCloseButtonClick',
-		'click @ui.presets': 'onPresetSelected'
-	},
+	events() {
+		return {
+			'click @ui.addSectionButton': 'onAddSectionButtonClick',
+			'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
+			'click @ui.closeButton': 'onCloseButtonClick',
+			'click @ui.presets': 'onPresetSelected',
+		};
+	}
 
-	behaviors: function() {
+	behaviors() {
 		return {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
-				groups: this.getContextMenuGroups()
-			}
+				groups: this.getContextMenuGroups(),
+			},
 		};
-	},
+	}
 
-	className: function() {
+	className() {
 		return 'elementor-add-section elementor-visible-desktop';
-	},
+	}
 
-	addSection: function( properties, options ) {
+	addSection( properties, options ) {
 		return elementor.getPreviewView().addChildElement( properties, jQuery.extend( {}, this.options, options ) );
-	},
+	}
 
-	setView: function( view ) {
+	setView( view ) {
 		this.$el.attr( 'data-view', view );
-	},
+	}
 
-	showSelectPresets: function() {
+	showSelectPresets() {
 		this.setView( 'select-preset' );
-	},
+	}
 
-	closeSelectPresets: function() {
+	closeSelectPresets() {
 		this.setView( 'choose-action' );
-	},
+	}
 
-	getTemplatesModalOptions: function() {
+	getTemplatesModalOptions() {
 		return {
 			importOptions: {
-				at: this.getOption( 'at' )
-			}
+				at: this.getOption( 'at' ),
+			},
 		};
-	},
+	}
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		var hasContent = function() {
 			return elementor.elements.length > 0;
 		};
@@ -71,9 +79,9 @@ module.exports = Marionette.ItemView.extend( {
 						name: 'paste',
 						title: elementor.translate( 'paste' ),
 						callback: this.paste.bind( this ),
-						isEnabled: this.isPasteEnabled.bind( this )
-					}
-				]
+						isEnabled: this.isPasteEnabled.bind( this ),
+					},
+				],
 			}, {
 				name: 'content',
 				actions: [
@@ -81,50 +89,50 @@ module.exports = Marionette.ItemView.extend( {
 						name: 'copy_all_content',
 						title: elementor.translate( 'copy_all_content' ),
 						callback: this.copy.bind( this ),
-						isEnabled: hasContent
+						isEnabled: hasContent,
 					}, {
 						name: 'delete_all_content',
 						title: elementor.translate( 'delete_all_content' ),
 						callback: elementor.clearPage.bind( elementor ),
-						isEnabled: hasContent
-					}
-				]
-			}
+						isEnabled: hasContent,
+					},
+				],
+			},
 		];
-	},
+	}
 
-	copy: function() {
+	copy() {
 		elementor.getPreviewView().copy();
-	},
+	}
 
-	paste: function() {
+	paste() {
 		elementor.getPreviewView().paste( this.getOption( 'at' ) );
-	},
+	}
 
-	isPasteEnabled: function() {
+	isPasteEnabled() {
 		return elementor.getStorage( 'transfer' );
-	},
+	}
 
-	onAddSectionButtonClick: function() {
+	onAddSectionButtonClick() {
 		this.showSelectPresets();
-	},
+	}
 
-	onAddTemplateButtonClick: function() {
+	onAddTemplateButtonClick() {
 		elementor.templates.startModal( this.getTemplatesModalOptions() );
-	},
+	}
 
-	onRender: function() {
+	onRender() {
 		this.$el.html5Droppable( {
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: this.onDropping.bind( this )
+			onDropping: this.onDropping.bind( this ),
 		} );
-	},
+	}
 
-	onPresetSelected: function( event ) {
+	onPresetSelected( event ) {
 		this.closeSelectPresets();
 
 		var selectedStructure = event.currentTarget.dataset.structure,
@@ -137,12 +145,12 @@ module.exports = Marionette.ItemView.extend( {
 				id: elementor.helpers.getUniqueID(),
 				elType: 'column',
 				settings: {},
-				elements: []
+				elements: [],
 			} );
 		}
 
 		elementor.channels.data.trigger( 'element:before:add', {
-			elType: 'section'
+			elType: 'section',
 		} );
 
 		var newSection = this.addSection( { elements: elements } );
@@ -150,13 +158,15 @@ module.exports = Marionette.ItemView.extend( {
 		newSection.setStructure( selectedStructure );
 
 		elementor.channels.data.trigger( 'element:after:add' );
-	},
+	}
 
-	onDropping: function() {
+	onDropping() {
 		elementor.channels.data.trigger( 'section:before:drop' );
 
 		this.addSection().addElementFromPanel();
 
 		elementor.channels.data.trigger( 'section:after:drop' );
 	}
-} );
+}
+
+export default AddSectionBase;

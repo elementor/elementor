@@ -70,7 +70,7 @@ class Module extends BaseModule {
 				<button id="elementor-switch-mode-button" type="button" class="button button-primary button-large">
 					<span class="elementor-switch-mode-on"><?php echo __( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 					<span class="elementor-switch-mode-off">
-						<i class="eicon-elementor-square" aria-hidden="true" />
+						<i class="eicon-elementor-square" aria-hidden="true"></i>
 						<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
 					</span>
 				</button>
@@ -80,15 +80,17 @@ class Module extends BaseModule {
 		<script id="elementor-gutenberg-panel" type="text/html">
 			<div id="elementor-editor"><a id="elementor-go-to-edit-page-link" href="#">
 					<div id="elementor-editor-button" class="button button-primary button-hero">
-						<i class="eicon-elementor" aria-hidden="true" />
+						<i class="eicon-elementor-square" aria-hidden="true"></i>
 						<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
 					</div>
 					<div class="elementor-loader-wrapper">
 						<div class="elementor-loader">
-							<div class="elementor-loader-box"></div>
-							<div class="elementor-loader-box"></div>
-							<div class="elementor-loader-box"></div>
-							<div class="elementor-loader-box"></div>
+							<div class="elementor-loader-boxes">
+								<div class="elementor-loader-box"></div>
+								<div class="elementor-loader-box"></div>
+								<div class="elementor-loader-box"></div>
+								<div class="elementor-loader-box"></div>
+							</div>
 						</div>
 						<div class="elementor-loading-title"><?php echo __( 'Loading', 'elementor' ); ?></div>
 					</div>

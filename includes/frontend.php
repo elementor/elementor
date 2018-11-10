@@ -300,7 +300,7 @@ class Frontend {
 			[
 				'jquery-ui-position',
 			],
-			'4.4.1',
+			'4.5.0',
 			true
 		);
 
@@ -354,7 +354,7 @@ class Frontend {
 			'elementor-icons',
 			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
 			[],
-			'3.6.0'
+			'3.8.0'
 		);
 
 		wp_register_style(
@@ -439,6 +439,7 @@ class Frontend {
 			'isEditMode' => $is_preview_mode,
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
+			'version' => ELEMENTOR_VERSION,
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
@@ -661,7 +662,7 @@ class Frontend {
 				$fonts_url .= '&subset=' . $subsets[ $locale ];
 			}
 
-			wp_enqueue_style( 'google-fonts-' . $google_fonts_index, $fonts_url );
+			wp_enqueue_style( 'google-fonts-' . $google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
@@ -672,7 +673,7 @@ class Frontend {
 
 				$font_url = sprintf( 'https://fonts.googleapis.com/earlyaccess/%s.css', strtolower( str_replace( ' ', '', $current_font ) ) );
 
-				wp_enqueue_style( 'google-earlyaccess-' . $google_fonts_index, $font_url );
+				wp_enqueue_style( 'google-earlyaccess-' . $google_fonts_index, $font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
 

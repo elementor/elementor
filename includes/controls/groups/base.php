@@ -122,7 +122,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 				$element->add_responsive_control( $id, $field_args, $options );
 			} else {
-				$element->add_control( $id , $field_args, $options );
+				$element->add_control( $id, $field_args, $options );
 			}
 		}
 

@@ -2,12 +2,16 @@ module.exports = Marionette.CompositeView.extend( {
 
 	templateHelpers: function() {
 		return {
-			view: this
+			view: this,
 		};
 	},
 
 	getBehavior: function( name ) {
 		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
+	},
+
+	initialize: function() {
+		this.collection = this.model.get( 'elements' );
 	},
 
 	addChildModel: function( model, options ) {
@@ -23,7 +27,7 @@ module.exports = Marionette.CompositeView.extend( {
 			trigger: false,
 			edit: true,
 			onBeforeAdd: null,
-			onAfterAdd: null
+			onAfterAdd: null,
 		}, options );
 
 		var childTypes = this.getChildType(),
@@ -37,9 +41,9 @@ module.exports = Marionette.CompositeView.extend( {
 		} else {
 			newItem = {
 				id: elementor.helpers.getUniqueID(),
-				elType: childTypes[0],
+				elType: childTypes[ 0 ],
 				settings: {},
-				elements: []
+				elements: [],
 			};
 
 			if ( data ) {
@@ -77,7 +81,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( options.edit ) {
-			newView.edit();
+			newModel.trigger( 'request:edit' );
 		}
 
 		return newView;
@@ -91,6 +95,8 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		item.id = elementor.helpers.getUniqueID();
+
+		item.settings._element_id = '';
 
 		item.elements.forEach( function( childItem, index ) {
 			item.elements[ index ] = self.cloneItem( childItem );
@@ -108,8 +114,8 @@ module.exports = Marionette.CompositeView.extend( {
 			at: childView.$el.index() + 1,
 			trigger: {
 				beforeAdd: 'element:before:add',
-				afterAdd: 'element:after:add'
-			}
+				afterAdd: 'element:after:add',
+			},
 		} );
 	},
 
@@ -123,7 +129,7 @@ module.exports = Marionette.CompositeView.extend( {
 		var elements = elementor.getStorage( 'transfer' ).elements,
 			index = self.collection.indexOf( childView.model );
 
-		elementor.channels.data.trigger( 'element:before:add', elements[0] );
+		elementor.channels.data.trigger( 'element:before:add', elements[ 0 ] );
 
 		elements.forEach( function( item ) {
 			index++;
@@ -131,6 +137,6 @@ module.exports = Marionette.CompositeView.extend( {
 			self.addChildElement( item, { at: index, clone: true } );
 		} );
 
-		elementor.channels.data.trigger( 'element:after:add', elements[0] );
-	}
+		elementor.channels.data.trigger( 'element:after:add', elements[ 0 ] );
+	},
 } );

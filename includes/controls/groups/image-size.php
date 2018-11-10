@@ -103,7 +103,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$image_src = self::get_attachment_image_src( $image['id'], $image_size_key, $settings );
 
 			if ( ! $image_src && isset( $image['url'] ) ) {
-				$image_src = $image['url'] ;
+				$image_src = $image['url'];
 			}
 
 			if ( ! empty( $image_src ) ) {

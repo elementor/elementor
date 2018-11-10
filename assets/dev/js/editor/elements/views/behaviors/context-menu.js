@@ -4,18 +4,14 @@ module.exports = Marionette.Behavior.extend( {
 
 	defaults: {
 		groups: [],
-		eventTargets: [ 'el' ]
+		eventTargets: [ 'el' ],
 	},
 
 	events: function() {
-		var events = {};
-
-		if ( ! elementor.userCan( 'design' ) ) {
-			return events;
-		}
+		const events = {};
 
 		this.getOption( 'eventTargets' ).forEach( function( eventTarget ) {
-			var eventName = 'contextmenu';
+			let eventName = 'contextmenu';
 
 			if ( 'el' !== eventTarget ) {
 				eventName += ' ' + eventTarget;
@@ -27,11 +23,32 @@ module.exports = Marionette.Behavior.extend( {
 		return events;
 	},
 
+	initialize: function() {
+		this.listenTo( this.view.options.model, 'request:contextmenu', this.onRequestContextMenu );
+	},
+
 	initContextMenu: function() {
-		var contextMenuGroups = this.getOption( 'groups' );
+		var contextMenuGroups = this.getOption( 'groups' ),
+			deleteGroup = _.findWhere( contextMenuGroups, { name: 'delete' } ),
+			afterGroupIndex = contextMenuGroups.indexOf( deleteGroup );
+
+		if ( -1 === afterGroupIndex ) {
+			afterGroupIndex = contextMenuGroups.length;
+		}
+
+		contextMenuGroups.splice( afterGroupIndex, 0, {
+			name: 'tools',
+			actions: [
+				{
+					name: 'navigator',
+					title: elementor.translate( 'navigator' ),
+					callback: elementor.navigator.open.bind( elementor.navigator, this.view.model ),
+				},
+			],
+		} );
 
 		this.contextMenu = new ContextMenu( {
-			groups: contextMenuGroups
+			groups: contextMenuGroups,
 		} );
 
 		this.contextMenu.getModal().on( 'hide', this.onContextMenuHide );
@@ -46,13 +63,11 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onContextMenu: function( event ) {
-		if ( elementor.hotKeys.isControlEvent( event ) ) {
+		if ( elementor.hotKeys.isControlEvent( event ) || ! elementor.userCan( 'design' ) ) {
 			return;
 		}
 
-		var activeMode = elementor.channels.dataEditMode.request( 'activeMode' );
-
-		if ( 'edit' !== activeMode ) {
+		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
 			return;
 		}
 
@@ -65,6 +80,22 @@ module.exports = Marionette.Behavior.extend( {
 		elementor.channels.editor.reply( 'contextMenu:targetView', this.view );
 	},
 
+	onRequestContextMenu: function( event ) {
+		var modal = this.getContextMenu().getModal(),
+			iframe = modal.getSettings( 'iframe' ),
+			toolsGroup = _.findWhere( this.contextMenu.getSettings( 'groups' ), { name: 'tools' } );
+
+		toolsGroup.isVisible = false;
+
+		modal.setSettings( 'iframe', null );
+
+		this.onContextMenu( event );
+
+		toolsGroup.isVisible = true;
+
+		modal.setSettings( 'iframe', iframe );
+	},
+
 	onContextMenuHide: function() {
 		elementor.channels.editor.reply( 'contextMenu:targetView', null );
 	},
@@ -73,5 +104,5 @@ module.exports = Marionette.Behavior.extend( {
 		if ( this.contextMenu ) {
 			this.contextMenu.destroy();
 		}
-	}
+	},
 } );

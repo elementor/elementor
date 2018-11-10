@@ -6,12 +6,12 @@ TemplateLibraryPreviewView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-preview',
 
 	ui: {
-		iframe: '> iframe'
+		iframe: '> iframe',
 	},
 
 	onRender: function() {
 		this.ui.iframe.attr( 'src', this.getOption( 'url' ) );
-	}
+	},
 } );
 
 module.exports = TemplateLibraryPreviewView;

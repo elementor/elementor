@@ -1046,7 +1046,7 @@ abstract class Controls_Stack {
 	 * @return mixed The settings.
 	 */
 	public function get_settings( $setting = null ) {
-		if (  ! $this->settings ) {
+		if ( ! $this->settings ) {
 			$this->settings = $this->_get_parsed_settings();
 		}
 
