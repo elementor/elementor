@@ -1,44 +1,45 @@
-var BaseAddSectionView = require( 'elementor-views/add-section/base' );
+import BaseAddSectionView from './base';
 
-module.exports = BaseAddSectionView.extend( {
+class AddSectionView extends BaseAddSectionView {
+	className() {
+		return super.className() + ' elementor-add-section-inline';
+	}
 
-	className: function() {
-		return BaseAddSectionView.prototype.className.apply( this, arguments ) + ' elementor-add-section-inline';
-	},
-
-	fadeToDeath: function() {
+	fadeToDeath() {
 		var self = this;
 
 		self.$el.slideUp( function() {
 			self.destroy();
 		} );
-	},
+	}
 
-	paste: function() {
-		BaseAddSectionView.prototype.paste.apply( this, arguments );
-
-		this.destroy();
-	},
-
-	onCloseButtonClick: function() {
-		this.fadeToDeath();
-	},
-
-	onPresetSelected: function() {
-		BaseAddSectionView.prototype.onPresetSelected.apply( this, arguments );
-
-		this.destroy();
-	},
-
-	onAddTemplateButtonClick: function() {
-		BaseAddSectionView.prototype.onAddTemplateButtonClick.apply( this, arguments );
-
-		this.destroy();
-	},
-
-	onDropping: function() {
-		BaseAddSectionView.prototype.onDropping.apply( this, arguments );
+	paste() {
+		super.paste();
 
 		this.destroy();
 	}
-} );
+
+	onCloseButtonClick() {
+		this.fadeToDeath();
+	}
+
+	onPresetSelected( event ) {
+		super.onPresetSelected( event );
+
+		this.destroy();
+	}
+
+	onAddTemplateButtonClick() {
+		super.onAddTemplateButtonClick();
+
+		this.destroy();
+	}
+
+	onDropping() {
+		super.onDropping();
+
+		this.destroy();
+	}
+}
+
+export default AddSectionView;

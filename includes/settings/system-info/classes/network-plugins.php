@@ -56,7 +56,7 @@ class Network_Plugins_Reporter extends Base_Reporter {
 	private function get_network_plugins() {
 		if ( ! $this->plugins ) {
 			$active_plugins = get_site_option( 'active_sitewide_plugins' );
-			$this->plugins = array_intersect_key( get_plugins(),  $active_plugins );
+			$this->plugins = array_intersect_key( get_plugins(), $active_plugins );
 		}
 
 		return $this->plugins;

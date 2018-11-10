@@ -149,7 +149,7 @@ abstract class Base {
 		return $meta;
 	}
 
-	protected abstract function parse_content();
+	abstract protected function parse_content();
 
 	/**
 	 * Load meta.

@@ -101,41 +101,6 @@
 	color: $editor-light;
 }
 
-.elementor-panel-nerd-box {
-	padding: 30px 20px;
-	text-align: center;
-
-	.elementor-panel-nerd-box-icon {
-		font-size: 52px;
-		color: $editor-light;
-	}
-
-	.elementor-panel-nerd-box-title {
-		margin-top: 20px;
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	.elementor-panel-nerd-box-message {
-		margin-top: 20px;
-		line-height: 1.4;
-		font-size: 11px;
-	}
-
-	.elementor-button.elementor-panel-nerd-box-link {
-		background-color: $editor-orange;
-		color: #ffffff;
-		padding: 7px 25px;
-		margin-top: 20px;
-		box-shadow: 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1);
-		transition: .5s;
-
-		&:hover {
-			background-color: lighten($editor-orange, 10%);
-		}
-	}
-}
-
 .elementor-controls-popover {
 	display: none;
 	position: absolute;
@@ -171,7 +136,7 @@
 
 #elementor-panel-get-pro-elements {
 
-	.elementor-panel-nerd-box-message {
+	.elementor-nerd-box-message {
 		text-transform: uppercase;
 	}
 }

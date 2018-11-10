@@ -8,16 +8,8 @@ $remote-templates-items-space: 30px;
 		color: $editor-success;
 
 		&:hover {
-			font-weight: 500;
+			color: darken($editor-success, 10%);
 		}
-	}
-
-	.dialog-lightbox-content {
-		height: 100%;
-	}
-
-	.dialog-lightbox-loading {
-		display: none;
 	}
 }
 
@@ -79,17 +71,6 @@ $remote-templates-items-space: 30px;
 		&:before {
 			content: getValueByDirection( '\e908', '\e907' );
 		}
-	}
-}
-
-#elementor-template-library-loading {
-
-	.elementor-loading-title {
-		color: $editor-light;
-	}
-
-	.elementor-loader-box {
-		background-color: $editor-lightest;
 	}
 }
 
@@ -211,9 +192,12 @@ $remote-templates-items-space: 30px;
 
 .elementor-template-library-order-label {
 	text-transform: uppercase;
-	cursor: pointer;
 	@include padding-end(22px);
 	user-select: none;
+}
+
+label.elementor-template-library-order-label {
+	cursor: pointer;
 
 	&:hover {
 		color: $editor-darker;
@@ -751,7 +735,6 @@ $remote-templates-items-space: 30px;
 #elementor-template-library-save-template-submit {
 	width: 150px;
 	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-	font-weight: 500;
 
 	&:hover {
 		box-shadow: none;
@@ -780,7 +763,6 @@ $remote-templates-items-space: 30px;
 		&-label {
 			margin-top: 20px;
 			padding: 15px 35px;
-			font-size: 16px;
 			display: inline-block;
 		}
 
@@ -811,7 +793,6 @@ $remote-templates-items-space: 30px;
 	left: 50%;
 	transform: translateX(-50%);
 	color: $editor-light;
-	font-size: 16px;
 	font-style: italic;
 
 	@media (max-height: 700px) {

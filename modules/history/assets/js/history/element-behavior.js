@@ -29,7 +29,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		changedAttributes[ control.name ] = {
 			old: this.oldValues[ control.name ],
-			'new': newValue
+			new: newValue,
 		};
 
 		var historyItem = {
@@ -40,8 +40,8 @@ module.exports = Marionette.Behavior.extend( {
 			history: {
 				behavior: this,
 				changed: changedAttributes,
-				model: this.view.getEditModel().toJSON()
-			}
+				model: this.view.getEditModel().toJSON(),
+			},
 		};
 
 		elementor.history.history.addItem( historyItem );
@@ -56,7 +56,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		var self = this,
 			changed = Object.keys( model.changed ),
-			control = model.controls[ changed[0] ];
+			control = model.controls[ changed[ 0 ] ];
 
 		if ( ! control && options && options.control ) {
 			control = options.control;
@@ -86,7 +86,7 @@ module.exports = Marionette.Behavior.extend( {
 		_.each( changed, function( controlName ) {
 			changedAttributes[ controlName ] = {
 				old: model.previous( controlName ),
-				'new': model.get( controlName )
+				new: model.get( controlName ),
 			};
 		} );
 
@@ -97,8 +97,8 @@ module.exports = Marionette.Behavior.extend( {
 			history: {
 				behavior: this,
 				changed: changedAttributes,
-				model: this.view.getEditModel().toJSON()
-			}
+				model: this.view.getEditModel().toJSON(),
+			},
 		};
 
 		if ( 1 === changed.length ) {
@@ -127,7 +127,7 @@ module.exports = Marionette.Behavior.extend( {
 		var restoredValues = {};
 		_.each( history.changed, function( values, key ) {
 			if ( isRedo ) {
-				restoredValues[ key ] = values['new'];
+				restoredValues[ key ] = values.new;
 			} else {
 				restoredValues[ key ] = values.old;
 			}
@@ -140,5 +140,5 @@ module.exports = Marionette.Behavior.extend( {
 
 		// Listen again
 		behavior.listenTo( settings, 'change', this.saveHistory );
-	}
+	},
 } );

@@ -19,6 +19,7 @@
 	"requirePaddingNewLinesBeforeLineComments": false,
 	"requireCamelCaseOrUpperCaseIdentifiers": { "ignoreProperties": true },
 	"requireBlocksOnNewline": true,
+	"disallowTrailingComma": false,
 	
 	"disallowMultipleLineBreaks": true,
 	"disallowNewlineBeforeBlockStatements": true,

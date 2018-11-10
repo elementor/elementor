@@ -3,12 +3,17 @@
 	&-modal {
 
 		.dialog-message {
-			display: flex;
-			align-items: center;
-			text-align: $start;
-			padding: 0 120px;
-			color: $editor-dark;
+			max-height: 70vh;
 		}
+	}
+
+	&-dialog-content {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		text-align: $start;
+		padding: 0 120px;
+		color: $editor-dark;
 	}
 
 	&__description {
@@ -37,7 +42,7 @@
 		font-size: 15px;
 
 		i {
-			color: #EF295A;
+			color: $brand-color-light;
 			font-size: 30px;
 		}
 

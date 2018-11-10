@@ -9,17 +9,19 @@ ColumnView = BaseElementView.extend( {
 
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
 
+	toggleEditTools: true,
+
 	behaviors: function() {
 		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'widget'
+				elChildType: 'widget',
 			},
 			Resizable: {
-				behaviorClass: require( 'elementor-behaviors/resizable' )
-			}
+				behaviorClass: require( 'elementor-behaviors/resizable' ),
+			},
 		} );
 
 		return elementor.hooks.applyFilters( 'elements/column/behaviors', behaviors, this );
@@ -61,10 +63,11 @@ ColumnView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'addNew',
+                    icon: 'eicon-plus',
 					title: elementor.translate( 'new_column' ),
-					callback: this.addNewColumn.bind( this )
-				}
-			]
+					callback: this.addNewColumn.bind( this ),
+				},
+			],
 		} );
 
 		return groups;
@@ -116,7 +119,7 @@ ColumnView = BaseElementView.extend( {
 	getSortableOptions: function() {
 		return {
 			connectWith: '.elementor-widget-wrap',
-			items: '> .elementor-element'
+			items: '> .elementor-element',
 		};
 	},
 
@@ -169,7 +172,7 @@ ColumnView = BaseElementView.extend( {
 				}
 
 				self.addElementFromPanel( { at: newIndex } );
-			}
+			},
 		} );
 	},
 
@@ -207,7 +210,13 @@ ColumnView = BaseElementView.extend( {
 		}
 
 		return errors;
-	}
+	},
+
+	onAddButtonClick: function( event ) {
+		event.stopPropagation();
+
+		this.addNewColumn();
+	},
 } );
 
 module.exports = ColumnView;

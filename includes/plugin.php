@@ -495,10 +495,11 @@ class Plugin {
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
+		$this->files_manager = new Files_Manager();
 		/*
 		 * @TODO: Remove deprecated alias
 		 */
-		$this->files_manager = $this->posts_css_manager = new Files_Manager();
+		$this->posts_css_manager = $this->files_manager;
 		$this->settings = new Settings();
 		$this->editor = new Editor();
 		$this->preview = new Preview();
@@ -509,7 +510,9 @@ class Plugin {
 		$this->dynamic_tags = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
+		$this->system_info = new System_Info\Main();
 
+		User::init();
 		Upgrades::add_actions();
 		Api::init();
 		Tracker::init();
@@ -518,8 +521,7 @@ class Plugin {
 			$this->revisions_manager = new Revisions_Manager();
 			$this->heartbeat = new Heartbeat();
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
-			$this->system_info = new System_Info\Main();
-			$this->admin = new Admin();
+			$this->admin = new Core\Admin\Admin();
 			$this->tools = new Tools();
 			$this->beta_testers = new Beta_Testers();
 
@@ -575,6 +577,7 @@ class Plugin {
 	private function __construct() {
 		$this->register_autoloader();
 
+		Maintenance::init();
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );

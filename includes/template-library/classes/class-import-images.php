@@ -118,7 +118,7 @@ class Import_Images {
 
 		$upload = wp_upload_bits(
 			$filename,
-			'',
+			null,
 			$file_content
 		);
 

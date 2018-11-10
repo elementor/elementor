@@ -297,12 +297,31 @@ abstract class Widget_Base extends Element_Base {
 	 * @return array Default edit tools.
 	 */
 	protected static function get_default_edit_tools() {
-		return [
+		$widget_label = __( 'Widget', 'elementor' );
+
+		$edit_tools = [
 			'edit' => [
 				'title' => __( 'Edit', 'elementor' ),
 				'icon' => 'edit',
 			],
 		];
+
+		if ( self::is_edit_buttons_enabled() ) {
+			$edit_tools += [
+				'duplicate' => [
+					/* translators: %s: Widget label */
+					'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
+					'icon' => 'clone',
+				],
+				'remove' => [
+					/* translators: %s: Widget label */
+					'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
+					'icon' => 'close',
+				],
+			];
+		}
+
+		return $edit_tools;
 	}
 
 	/**

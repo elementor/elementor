@@ -16,13 +16,13 @@ var Module = function() {
 			self[ methodName ] = function() {
 				return oldMethod.apply( self, arguments );
 			};
-		});
+		} );
 	};
 
 	var initSettings = function() {
 		settings = self.getDefaultSettings();
 
-		var instanceSettings = instanceParams[0];
+		var instanceSettings = instanceParams[ 0 ];
 
 		if ( instanceSettings ) {
 			$.extend( settings, instanceSettings );
@@ -52,7 +52,7 @@ var Module = function() {
 				return;
 			}
 
-			return this.getItems(  items[ currentKey ], keyStack.join( '.' ) );
+			return this.getItems( items[ currentKey ], keyStack.join( '.' ) );
 		}
 
 		return items;

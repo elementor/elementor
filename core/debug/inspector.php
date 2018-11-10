@@ -15,7 +15,10 @@ class Inspector {
 	protected $log = [];
 
 	public function __construct() {
-		$this->is_enabled = 'enable' === get_option( 'elementor_enable_inspector' );
+		$is_debug = ( defined( 'WP_DEBUG' ) && WP_DEBUG );
+		$option = get_option( 'elementor_enable_inspector', null );
+
+		$this->is_enabled = is_null( $option ) ? $is_debug : 'enable' === $option;
 
 		if ( $this->is_enabled ) {
 			add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 201 );
@@ -31,15 +34,15 @@ class Inspector {
 	public function register_admin_tools_fields( Tools $tools ) {
 		$tools->add_fields( Settings::TAB_GENERAL, 'tools', [
 			'enable_inspector' => [
-				'label' => __( 'Inspector', 'elementor' ),
+				'label' => __( 'Debug Bar', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
+					'std' => $this->is_enabled ? 'enable' : '',
 					'options' => [
 						'' => __( 'Disable', 'elementor' ),
 						'enable' => __( 'Enable', 'elementor' ),
 					],
-					'sub_desc' => __( 'Enable Inspector', 'elementor' ),
-					'desc' => __( 'Inspector adds an admin bar menu that lists all the templates that are used on a page that is being displayed.', 'elementor' ),
+					'desc' => __( 'Debug Bar adds an admin bar menu that lists all the templates that are used on a page that is being displayed.', 'elementor' ),
 				],
 			],
 		] );
@@ -85,7 +88,7 @@ class Inspector {
 
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor_inspector',
-			'title' => __( 'Elementor Inspector', 'elementor' ),
+			'title' => __( 'Elementor Debugger', 'elementor' ),
 		] );
 
 		foreach ( $this->log as $module => $log ) {
