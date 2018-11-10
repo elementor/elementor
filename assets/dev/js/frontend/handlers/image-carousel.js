@@ -41,14 +41,14 @@ ImageCarouselHandler = HandlerModule.extend( {
 					breakpoint: breakpoints.lg,
 					settings: {
 						slidesToShow: +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 ),
-						slidesToScroll: 1,
+						slidesToScroll: +elementSettings.slides_to_scroll_tablet || ( isSingleSlide ? 1 : 2 ),
 					},
 				},
 				{
 					breakpoint: breakpoints.md,
 					settings: {
 						slidesToShow: +elementSettings.slides_to_show_mobile || 1,
-						slidesToScroll: 1,
+						slidesToScroll: +elementSettings.slides_to_scroll_mobile || 1,
 					},
 				},
 			],
