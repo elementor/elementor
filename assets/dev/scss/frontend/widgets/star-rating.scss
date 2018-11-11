@@ -84,12 +84,12 @@
 	letter-spacing: 0;
 }
 
-.elementor--star-style-unicode {
+.elementor--star-style-star_unicode {
 
 	.elementor-star-rating {
 		font-family: 'Arial', 'Helvetica', sans-serif;
 
-		i:before {
+		i:not(.elementor-star-empty):before {
 			content: '\002605';
 		}
 	}

@@ -102,29 +102,10 @@ class Widget_Star_Rating extends Widget_Base {
 			'rating',
 			[
 				'label' => __( 'Rating', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'min' => 0,
-				'max' => 5,
-				'step' => 0.1,
-				'default' => 5,
-				'condition' => [
-					'rating_scale' => '5',
-				],
-			]
-		);
-
-		$this->add_control(
-			'rating_10',
-			[
-				'label' => __( 'Rating', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
 				'max' => 10,
 				'step' => 0.1,
 				'default' => 10,
-				'condition' => [
-					'rating_scale' => '10',
-				],
 			]
 		);
 
@@ -304,7 +285,7 @@ class Widget_Star_Rating extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating:before' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .elementor-star-rating i:before' => 'color: {{VALUE}}',
 				],
 				'separator' => 'before',
 			]
@@ -316,7 +297,7 @@ class Widget_Star_Rating extends Widget_Base {
 				'label' => __( 'Unmarked Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .elementor-star-rating i' => 'color: {{VALUE}}',
 				],
 			]
 		);
@@ -327,8 +308,7 @@ class Widget_Star_Rating extends Widget_Base {
 	protected function get_rating() {
 		$settings = $this->get_settings_for_display();
 		$rating_scale = (int) $settings['rating_scale'];
-		$rating_setting = 5 === (int) $settings['rating_scale'] ? $settings['rating'] : $settings['rating_10'];
-		$rating = $rating_setting > $rating_scale ? $rating_scale : $rating_setting;
+		$rating = (float) $settings['rating'] > $rating_scale ? $rating_scale : $settings['rating'];
 
 		return [ $rating, $rating_scale ];
 	}
@@ -396,16 +376,13 @@ class Widget_Star_Rating extends Widget_Base {
 		<#
 			var getRating = function() {
 				var ratingScale = parseInt( settings.rating_scale, 10 ),
-					ratingSetting = 5 === ratingScale ? settings.rating : settings.rating_10,
-					rating = ratingSetting > ratingScale ? ratingScale : ratingSetting;
+					rating = settings.rating > ratingScale ? ratingScale : settings.rating;
 
 				return [ rating, ratingScale ];
 			},
-
-			ratingData = getRating(),
+		    ratingData = getRating(),
 			rating = ratingData[0],
 			textualRating = ratingData[0] + '/' + ratingData[1],
-
 			renderStars = function( icon ) {
 				var starsHtml = '',
 					flooredRating = Math.floor( rating );
@@ -422,8 +399,7 @@ class Widget_Star_Rating extends Widget_Base {
 
 				return starsHtml;
 			},
-
-			icon = '&#61445;';
+		    icon = '&#61445;';
 
 			if ( 'star_fontawesome' === settings.star_style ) {
 				if ( 'outline' === settings.unmarked_star_style ) {
