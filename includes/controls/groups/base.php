@@ -366,7 +366,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * @param array $args Group control settings value.
 	 */
-	private function init_args( $args ) {
+	protected function init_args( $args ) {
 		$this->args = array_merge( $this->get_default_args(), $this->get_child_default_args(), $args );
 	}
 

@@ -44,8 +44,8 @@ abstract class Base_App {
 		}
 
 		echo '</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">' .
-		__( 'Dismiss this notice.', 'elementor' ) .
-		'</span></button></div>';
+			__( 'Dismiss', 'elementor' ) .
+			'</span></button></div>';
 
 		$this->delete( 'notices' );
 	}
@@ -69,7 +69,7 @@ abstract class Base_App {
 		}
 
 		if ( $_REQUEST['state'] !== $this->get( 'state' ) ) {
-			$this->add_notice( __( 'Get Token: Invalid Request.', 'elementor' ), 'error' );
+			$this->add_notice( 'Get Token: Invalid Request.', 'error' );
 			$this->redirect_to_admin_page();
 		}
 
@@ -81,7 +81,7 @@ abstract class Base_App {
 		] );
 
 		if ( is_wp_error( $response ) ) {
-			$notice = sprintf( '%s: %s', __( 'Cannot get_token.', 'elementor' ), $response->get_error_message() );
+			$notice = 'Cannot Get Token:' . $response->get_error_message();
 			$this->add_notice( $notice, 'error' );
 			$this->redirect_to_admin_page();
 		}
@@ -205,7 +205,8 @@ abstract class Base_App {
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
 		if ( ! $response_code ) {
-			return new \WP_Error( 500, __( 'No Response', 'elementor' ) );
+			return new \WP_Error( 500, 'No Response' );
+
 		}
 
 		// Server sent a success message without content.
@@ -216,7 +217,7 @@ abstract class Base_App {
 		$body = json_decode( $body );
 
 		if ( false === $body ) {
-			return new \WP_Error( 422, __( 'Wrong Server Response', 'elementor' ) );
+			return new \WP_Error( 422, 'Wrong Server Response' );
 		}
 
 		if ( 200 !== $response_code ) {
