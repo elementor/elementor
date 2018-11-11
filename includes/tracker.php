@@ -25,7 +25,7 @@ class Tracker {
 	 *
 	 * @var string API URL.
 	 */
-	private static $_api_url = 'http://my.elementor.com/api/v1/tracker/';
+	private static $_api_url = 'https://my.elementor.com/api/v1/tracker/';
 
 	private static $notice_shown = false;
 

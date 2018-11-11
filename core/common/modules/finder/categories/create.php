@@ -50,16 +50,16 @@ class Create extends Base_Category {
 			}
 
 			if ( Source_Local::CPT === $post_type ) {
-				$link = admin_url( 'edit.php?post_type=' . Source_Local::CPT . '#add_new' );
+				$url = admin_url( 'edit.php?post_type=' . Source_Local::CPT . '#add_new' );
 			} else {
-				$link = Utils::get_create_new_post_url( $post_type );
+				$url = Utils::get_create_new_post_url( $post_type );
 			}
 
 			$items[ $post_type ] = [
 				/* translators: %s the title of the post type */
 				'title' => sprintf( __( 'Add New %s', 'elementor' ), $post_type_object->labels->singular_name ),
 				'icon' => 'plus-circle',
-				'link' => $link,
+				'url' => $url,
 				'keywords' => [ 'post', 'page', 'template', 'new', 'create' ],
 			];
 		}

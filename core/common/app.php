@@ -4,6 +4,7 @@ namespace Elementor\Core\Common;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Finder\Module as Finder;
+use Elementor\Core\Common\Modules\Connect\Module as Connect;
 
 /**
  * App
@@ -49,6 +50,7 @@ class App extends BaseApp {
 
 		if ( current_user_can( 'manage_options' ) ) {
 			$this->add_component( 'finder', new Finder() );
+			$this->add_component( 'connect', new Connect() );
 		}
 	}
 
