@@ -4,7 +4,6 @@ namespace Elementor\Core\Common\Modules\Connect;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Connect;
-use Elementor\Core\Common\Modules\Connect\Apps\Pro_Installer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -50,7 +49,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		$this->registered_apps = [
 			'connect' => Connect::get_class_name(),
-			'pro-installer' => Pro_Installer::get_class_name(),
 		];
 
 		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.

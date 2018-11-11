@@ -4,7 +4,7 @@
 			// These are the defaults.
 			callback: function() {
 				location.reload();
-			}
+			},
 		}, options );
 
 		this.attr( 'target', '_blank' );
@@ -14,5 +14,4 @@
 
 		return this;
 	};
-
 }( jQuery ) );

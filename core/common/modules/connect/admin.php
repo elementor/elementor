@@ -12,7 +12,7 @@ class Admin {
 
 	const PAGE_ID = 'elementor-connect';
 
-	static public $url = '';
+	public static $url = '';
 
 	public function register_admin_menu() {
 		add_submenu_page(
@@ -68,6 +68,7 @@ class Admin {
 		<div class="wrap">
 			<?php
 
+			/** @var \Elementor\Core\Common\Modules\Connect\Apps\Base_App $app */
 			foreach ( $apps as $app ) {
 				echo '<div class="elementor-connect-app-wrapper">';
 				$app->render_admin_widget();
@@ -78,11 +79,7 @@ class Admin {
 		</div><!-- /.wrap -->
 		<script>
 			jQuery( function(){
-				jQuery( '.elementor-connect-button' ).elementorConnect( {
-					callback: function () {
-						location.reload();
-					}
-				} );
+				jQuery( '.elementor-connect-button' ).elementorConnect();
 			} );
 		</script>
 		<?php

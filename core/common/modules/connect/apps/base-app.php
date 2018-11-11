@@ -100,7 +100,7 @@ abstract class Base_App {
 	public function action_disconnect() {
 		if ( $this->is_connected() ) {
 			$this->disconnect();
-			$this->add_notice( __( 'Successfully disconnected.', 'elementor' ) );
+			$this->add_notice( __( 'Disconnected Successfully.', 'elementor' ) );
 		}
 
 		$this->redirect_to_admin_page();
@@ -205,7 +205,8 @@ abstract class Base_App {
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
 		if ( ! $response_code ) {
-			return new \WP_Error( 500, 'No response' );
+			return new \WP_Error( 500, 'No Response' );
+
 		}
 
 		// Server sent a success message without content.
