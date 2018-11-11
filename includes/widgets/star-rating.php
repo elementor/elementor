@@ -102,10 +102,11 @@ class Widget_Star_Rating extends Widget_Base {
 			'rating',
 			[
 				'label' => __( 'Rating', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
 				'max' => 10,
 				'step' => 0.1,
-				'default' => 10,
+				'default' => 5,
 			]
 		);
 
