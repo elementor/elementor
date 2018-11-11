@@ -43,12 +43,12 @@ class Pro_Installer extends Common_App {
 		$license = $this->request( 'get_connected_license' );
 
 		if ( empty( $license ) ) {
-			printf( __( 'License not found' ) );
+			printf( __( 'License not found', 'elementor' ) );
 			return;
 		}
 
 		if ( is_wp_error( $license ) ) {
-			printf( __( 'An Error occur while try to get licences: %s', '' ), $license->get_error_message() );
+			printf( __( 'An Error occur while try to get licences: %s', 'elementor' ), $license->get_error_message() );
 
 			return;
 		}
