@@ -3,7 +3,7 @@ export default class extends Backbone.Model {
 		return {
 			description: '',
 			icon: 'settings',
-			link: '',
+			url: '',
 			keywords: [],
 			actions: [],
 		};

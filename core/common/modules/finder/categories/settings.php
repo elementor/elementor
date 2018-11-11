@@ -42,17 +42,17 @@ class Settings extends Base_Category {
 		return [
 			'general-settings' => [
 				'title' => __( 'General Settings', 'elementor' ),
-				'link' => $settings_url,
+				'url' => $settings_url,
 				'keywords' => [ 'general', 'settings', 'elementor' ],
 			],
 			'style' => [
 				'title' => __( 'Style', 'elementor' ),
-				'link' => $settings_url . '#tab-style',
+				'url' => $settings_url . '#tab-style',
 				'keywords' => [ 'style', 'settings', 'elementor' ],
 			],
 			'advanced' => [
 				'title' => __( 'Advanced', 'elementor' ),
-				'link' => $settings_url . '#tab-advanced',
+				'url' => $settings_url . '#tab-advanced',
 				'keywords' => [ 'advanced', 'settings', 'elementor' ],
 			],
 		];
