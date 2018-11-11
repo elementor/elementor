@@ -115,11 +115,11 @@ class Edit extends Base_Category {
 				'icon' => $icon,
 				'title' => $post->post_title,
 				'description' => $description,
-				'link' => $document->get_edit_url(),
+				'url' => $document->get_edit_url(),
 				'actions' => [
 					[
 						'name' => 'view',
-						'link' => $document->get_permalink(),
+						'url' => $document->get_permalink(),
 						'icon' => 'eye',
 					],
 				],
