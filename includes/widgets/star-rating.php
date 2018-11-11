@@ -308,7 +308,7 @@ class Widget_Star_Rating extends Widget_Base {
 	protected function get_rating() {
 		$settings = $this->get_settings_for_display();
 		$rating_scale = (int) $settings['rating_scale'];
-		$rating = (float) $settings['rating'] > $rating_scale ? $rating_scale : $settings['rating'];;
+		$rating = (float) $settings['rating'] > $rating_scale ? $rating_scale : $settings['rating'];
 
 		return [ $rating, $rating_scale ];
 	}
@@ -380,29 +380,26 @@ class Widget_Star_Rating extends Widget_Base {
 
 				return [ rating, ratingScale ];
 			},
+		    ratingData = getRating(),
+			rating = ratingData[0],
+			textualRating = ratingData[0] + '/' + ratingData[1],
+			renderStars = function( icon ) {
+				var starsHtml = '',
+					flooredRating = Math.floor( rating );
 
-			    ratingData = getRating(),
-				rating = ratingData[0],
-				textualRating = ratingData[0] + '/' + ratingData[1],
-
-				renderStars = function( icon ) {
-					var starsHtml = '',
-						flooredRating = Math.floor( rating );
-
-					for ( var stars = 1; stars <= ratingData[1]; stars++ ) {
-						if ( stars <= flooredRating  ) {
-							starsHtml += '<i class="elementor-star-full">' + icon + '</i>';
-						} else if ( flooredRating + 1 === stars && rating !== flooredRating ) {
-							starsHtml += '<i class="elementor-star-' + ( rating - flooredRating ).toFixed( 1 ) * 10 + '">' + icon + '</i>';
-						} else {
-							starsHtml += '<i class="elementor-star-empty">' + icon + '</i>';
-						}
+				for ( var stars = 1; stars <= ratingData[1]; stars++ ) {
+					if ( stars <= flooredRating  ) {
+						starsHtml += '<i class="elementor-star-full">' + icon + '</i>';
+					} else if ( flooredRating + 1 === stars && rating !== flooredRating ) {
+						starsHtml += '<i class="elementor-star-' + ( rating - flooredRating ).toFixed( 1 ) * 10 + '">' + icon + '</i>';
+					} else {
+						starsHtml += '<i class="elementor-star-empty">' + icon + '</i>';
 					}
+				}
 
-					return starsHtml;
-				},
-
-			    icon = '&#61445;';
+				return starsHtml;
+			},
+		    icon = '&#61445;';
 
 			if ( 'star_fontawesome' === settings.star_style ) {
 				if ( 'outline' === settings.unmarked_star_style ) {
