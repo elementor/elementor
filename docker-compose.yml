@@ -9,7 +9,7 @@ services:
       MYSQL_DATABASE: wordpress_test
 
   wordpress_phpunit:
-    image: chriszarate/wordpress-phpunit
+    image: omribarzik/phpunit-local
     environment:
       PHPUNIT_DB_HOST: mysql
     volumes:
@@ -18,24 +18,5 @@ services:
     depends_on:
       - mysql
 
-  wordpress_e2e_tests:
-    image: wordpress
-    ports:
-    - 4001:80
-    environment:
-      WORDPRESS_DB_NAME: wordpress_e2e_tests
-      WORDPRESS_DB_PASSWORD: password
-      ABSPATH: /usr/src/wordpress/
-    volumes:
-    - wordpress_e2e_tests:/var/www/html
-    - .:/var/www/html/wp-content/plugins/elementor
-
-  cli_e2e_tests:
-    image: wordpress:cli
-    volumes:
-    - wordpress_e2e_tests:/var/www/html
-    - .:/var/www/html/wp-content/plugins/elementor
-
 volumes:
   testsuite:
-  wordpress_e2e_tests:
