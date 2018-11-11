@@ -35,7 +35,7 @@ class Api {
 	 *
 	 * @var string API info URL.
 	 */
-	public static $api_info_url = 'http://my.elementor.com/api/v1/info/';
+	public static $api_info_url = 'https://my.elementor.com/api/v1/info/';
 
 	/**
 	 * API feedback URL.
@@ -47,7 +47,7 @@ class Api {
 	 *
 	 * @var string API feedback URL.
 	 */
-	private static $api_feedback_url = 'http://my.elementor.com/api/v1/feedback/';
+	private static $api_feedback_url = 'https://my.elementor.com/api/v1/feedback/';
 
 	/**
 	 * API get template content URL.
@@ -59,7 +59,7 @@ class Api {
 	 *
 	 * @var string API get template content URL.
 	 */
-	private static $api_get_template_content_url = 'http://my.elementor.com/api/v1/templates/%d';
+	private static $api_get_template_content_url = 'https://my.elementor.com/api/v1/templates/%d';
 
 	/**
 	 * Get info data.
