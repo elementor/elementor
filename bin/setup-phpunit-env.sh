@@ -15,15 +15,8 @@ set -e
 # Change to the expected directory
 cd "$(dirname "$0")/.."
 
-npm i
-
 # Check Docker is installed and running
 . "$(dirname "$0")/install-docker.sh"
 
 echo -e "\nTests environment is up!\n"
-echo -e "Run $(action_format "npm run test:phpunit") to run phpunit tests.
-Run $(action_format "npm run e2e") to run e2e tests.
-
-username: admin
-password: password
-(the login details to the e2e test site)"
+echo -e "Run $(action_format "npm run test:phpunit") to run phpunit tests."
