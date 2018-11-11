@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
+use Elementor\Core\Common\Modules\Connect\Manager;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Files\Manager as Files_Manager;
@@ -391,6 +392,11 @@ class Plugin {
 	public $inspector;
 
 	/**
+	 * @var Manager
+	 */
+	public $connect;
+
+	/**
 	 * @var CommonApp
 	 */
 	public $common;
@@ -475,6 +481,13 @@ class Plugin {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/init' );
+	}
+
+	public function on_rest_api_init() {
+		// On admin/frontend sometimes the rest API is initialized after the common is initialized.
+		if ( ! $this->common ) {
+			$this->init_common();
+		}
 	}
 
 	/**
@@ -594,7 +607,7 @@ class Plugin {
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
-		add_action( 'rest_api_init', [ $this, 'init_common' ] );
+		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ] );
 	}
 }
 

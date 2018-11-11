@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-finder__results__item">
-	<a href="{{ link }}" class="elementor-finder__results__item__link">
+	<a href="{{ url }}" class="elementor-finder__results__item__link">
 		<div class="elementor-finder__results__item__icon">
 			<i class="eicon-{{{ icon }}}"></i>
 		</div>
@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<# if ( actions.length ) { #>
 		<div class="elementor-finder__results__item__actions">
 		<# jQuery.each( actions, function() { #>
-			<a class="elementor-finder__results__item__action elementor-finder__results__item__action--{{ this.name }}" href="{{ this.link }}" target="_blank">
+			<a class="elementor-finder__results__item__action elementor-finder__results__item__action--{{ this.name }}" href="{{ this.url }}" target="_blank">
 				<i class="eicon-{{{ this.icon }}}"></i>
 			</a>
 		<# } ); #>
