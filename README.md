@@ -255,7 +255,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Fix: Added compatibility with a new embed API of YouTube
 * Fix: Don't render wrapper of element if the content is empty
 * Deprecated: `Source_Local::TYPE_META_KEY` is no longer supported
-* Deprecate: `Document::save_type()` is replaced by `Document::save_template_type()`
+* Deprecated: `Document::save_type()` is replaced by `Document::save_template_type()`
 
 ### 2.2.7 - 2018-10-24 ###
 * Tweak: Update Google Fonts list with more than 20 new fonts ([Topic](https://wordpress.org/support/topic/please-update-google-fonts-library-with-the-latest-font-for-free-version/))
