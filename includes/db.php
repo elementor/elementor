@@ -521,8 +521,9 @@ class DB {
 	 * @access public
 	 *
 	 * @param array $query_vars New query variables.
+	 * @param bool  $force_global_post
 	 */
-	public function switch_to_query( $query_vars ) {
+	public function switch_to_query( $query_vars, $force_global_post = false ) {
 		global $wp_query;
 		$current_query_vars = $wp_query->query;
 
@@ -534,21 +535,30 @@ class DB {
 
 		$new_query = new \WP_Query( $query_vars );
 
-		$this->switched_data[] = [
+		$switched_data = [
 			'switched' => $new_query,
 			'original' => $wp_query,
 		];
+
+		if ( ! empty( $GLOBALS['post'] ) ) {
+			$switched_data['post'] = $GLOBALS['post'];
+		}
+
+		$this->switched_data[] = $switched_data;
 
 		$wp_query = $new_query; // WPCS: override ok.
 
 		// Ensure the global post is set only if needed
 		unset( $GLOBALS['post'] );
 
-		if ( $new_query->is_singular() && isset( $new_query->posts[0] ) ) {
-			$GLOBALS['post'] = $new_query->posts[0]; // WPCS: override ok.
+		if ( isset( $new_query->posts[0] ) ) {
+			if ( $force_global_post || $new_query->is_singular() ) {
+				$GLOBALS['post'] = $new_query->posts[0]; // WPCS: override ok.
+				setup_postdata( $GLOBALS['post'] );
+			}
+		}
 
-			setup_postdata( $GLOBALS['post'] );
-		} elseif ( $new_query->is_author() ) {
+		if ( $new_query->is_author() ) {
 			$GLOBALS['authordata'] = get_userdata( $new_query->get( 'author' ) ); // WPCS: override ok.
 		}
 	}
@@ -577,10 +587,12 @@ class DB {
 		unset( $GLOBALS['post'] );
 		unset( $GLOBALS['authordata'] );
 
-		if ( $wp_query->is_singular() && isset( $wp_query->posts[0] ) ) {
-			$GLOBALS['post'] = $wp_query->posts[0]; // WPCS: override ok.
+		if ( ! empty( $data['post'] ) ) {
+			$GLOBALS['post'] = $data['post']; // WPCS: override ok.
 			setup_postdata( $GLOBALS['post'] );
-		} elseif ( $wp_query->is_author() ) {
+		}
+
+		if ( $wp_query->is_author() ) {
 			$GLOBALS['authordata'] = get_userdata( $wp_query->get( 'author' ) ); // WPCS: override ok.
 		}
 	}

@@ -12,12 +12,4 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
-const fs = require( 'fs-extra' );
-const path = require( 'path' );
-
-module.exports = ( on, config ) => {
-    // accept a configFile value or use development by default
-    const filePath = config.env.configFilePath || path.resolve( 'cypress.json' );
-
-    return fs.readJson( filePath );
-};
+module.exports = () => {};
