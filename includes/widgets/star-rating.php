@@ -380,7 +380,7 @@ class Widget_Star_Rating extends Widget_Base {
 
 				return [ rating, ratingScale ];
 			},
-		    ratingData = getRating(),
+			ratingData = getRating(),
 			rating = ratingData[0],
 			textualRating = ratingData[0] + '/' + ratingData[1],
 			renderStars = function( icon ) {
@@ -399,7 +399,7 @@ class Widget_Star_Rating extends Widget_Base {
 
 				return starsHtml;
 			},
-		    icon = '&#61445;';
+			icon = '&#61445;';
 
 			if ( 'star_fontawesome' === settings.star_style ) {
 				if ( 'outline' === settings.unmarked_star_style ) {
