@@ -40,26 +40,26 @@ class Site extends Base_Category {
 		return [
 			'homepage' => [
 				'title' => __( 'Homepage', 'elementor' ),
-				'link' => home_url(),
+				'url' => home_url(),
 				'icon' => 'home-heart',
 				'keywords' => [ 'home', 'page' ],
 			],
 			'wordpress-dashboard' => [
 				'title' => __( 'Dashboard', 'elementor' ),
 				'icon' => 'dashboard',
-				'link' => admin_url(),
+				'url' => admin_url(),
 				'keywords' => [ 'dashboard', 'wordpress' ],
 			],
 			'wordpress-menus' => [
 				'title' => __( 'Menus', 'elementor' ),
 				'icon' => 'wordpress',
-				'link' => admin_url( 'nav-menus.php' ),
+				'url' => admin_url( 'nav-menus.php' ),
 				'keywords' => [ 'menu', 'wordpress' ],
 			],
 			'wordpress-customizer' => [
 				'title' => __( 'Customizer', 'elementor' ),
 				'icon' => 'wordpress',
-				'link' => admin_url( 'customize.php' ),
+				'url' => admin_url( 'customize.php' ),
 				'keywords' => [ 'customizer', 'wordpress' ],
 			],
 		];

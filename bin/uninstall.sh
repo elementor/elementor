@@ -1,6 +1,7 @@
 #!/bin/bash
 
 . "$(dirname "$0")/bootstrap-env.sh"
+. "$(dirname "$0")/includes.sh"
 
 cd "$(dirname "$0")/.."
 

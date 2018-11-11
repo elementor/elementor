@@ -44,25 +44,25 @@ class Tools extends Base_Category {
 			'tools' => [
 				'title' => __( 'Tools', 'elementor' ),
 				'icon' => 'tools',
-				'link' => $tools_url,
+				'url' => $tools_url,
 				'keywords' => [ 'tools', 'elementor' ],
 			],
 			'replace-url' => [
 				'title' => __( 'Replace URL', 'elementor' ),
 				'icon' => 'tools',
-				'link' => $tools_url . '#tab-replace_url',
+				'url' => $tools_url . '#tab-replace_url',
 				'keywords' => [ 'tools', 'replace url', 'domain', 'elementor' ],
 			],
 			'version-control' => [
 				'title' => __( 'Version Control', 'elementor' ),
 				'icon' => 'time-line',
-				'link' => $tools_url . '#tab-versions',
+				'url' => $tools_url . '#tab-versions',
 				'keywords' => [ 'tools', 'version', 'control', 'beta', 'elementor' ],
 			],
 			'maintenance-mode' => [
 				'title' => __( 'Maintenance Mode', 'elementor' ),
 				'icon' => 'tools',
-				'link' => $tools_url . '#tab-maintenance_mode',
+				'url' => $tools_url . '#tab-maintenance_mode',
 				'keywords' => [ 'tools', 'maintenance', 'coming soon', 'elementor' ],
 			],
 		];
