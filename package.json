@@ -6,8 +6,7 @@
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
-		"test:phpunit": "docker-compose run --rm wordpress_phpunit phpunit",
-		"ci:setup": "concurrently \"bash ./bin/reset-e2e-tests.sh || exit 0\" \"grunt || exit 0\""
+		"test:phpunit": "docker-compose run --rm wordpress_phpunit phpunit"
 	},
 	"devDependencies": {
 		"autoprefixer": "~8.5.0",
