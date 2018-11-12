@@ -544,7 +544,7 @@ class Widget_Image extends Widget_Base {
 	 * @return boolean
 	 */
 	private function has_caption( $settings ) {
-		return ( ! empty( $settings['caption_source'] ) && 'off' !== $settings['caption_source'] );
+		return ( ! empty( $settings['caption_source'] ) && 'none' !== $settings['caption_source'] );
 	}
 
 	/**
