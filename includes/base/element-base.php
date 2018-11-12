@@ -357,6 +357,10 @@ abstract class Element_Base extends Controls_Stack {
 		return false;
 	}
 
+	protected function should_print_empty() {
+		return true;
+	}
+
 	/**
 	 * Print element content template.
 	 *
@@ -628,7 +632,7 @@ abstract class Element_Base extends Controls_Stack {
 		$this->_print_content();
 		$content = ob_get_clean();
 
-		if ( empty( $content ) ) {
+		if ( empty( $content ) && ! $this->should_print_empty() ) {
 			return;
 		}
 

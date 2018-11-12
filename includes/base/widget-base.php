@@ -367,6 +367,10 @@ abstract class Widget_Base extends Element_Base {
 		return array_merge( parent::_get_initial_config(), $config );
 	}
 
+	protected function should_print_empty() {
+		return false;
+	}
+
 	/**
 	 * Print widget content template.
 	 *
