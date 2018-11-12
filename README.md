@@ -218,6 +218,10 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.3.1 - 2018-11-12 ###
+* Fix: Print empty elements but not empty widgets ([#6134](https://github.com/pojome/elementor/issues/6134))
+* Fix: Removed `figcaption` tag when no caption is set ([#6134](https://github.com/pojome/elementor/issues/6134))
+
 ### 2.3.0 - 2018-11-12 ###
 * New: Introducing Finder - The Easiest Way to Switch Between Pages ([#292](https://github.com/pojome/elementor/issues/292))
 * New: Added Keyboard Shortcuts modal
