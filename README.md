@@ -7,7 +7,7 @@
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
 **Stable tag:** 2.2.7  
-**Beta tag:** 2.3.0-beta4  
+**Beta tag:** 2.3.0-beta5  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -218,6 +218,44 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.3.0 - 2018-11-12 ###
+* New: Introducing Finder - The Easiest Way to Switch Between Pages ([#292](https://github.com/pojome/elementor/issues/292))
+* New: Added Keyboard Shortcuts modal
+* New: Introducing Star Rating widget
+* Tweak: Added Deviantart, freeCodeCamp and GitLab to Social Icons widget ([#5820](https://github.com/pojome/elementor/issues/5820), [#5816](https://github.com/pojome/elementor/issues/5816))
+* Tweak: Show preview fonts select on scroll ([#5207](https://github.com/pojome/elementor/issues/5207), [#3499](https://github.com/pojome/elementor/issues/3499))
+* Tweak: Added compatibility for WordPress v5.0 Beta ([#6019](https://github.com/pojome/elementor/issues/6019))
+* Tweak: Added filter to rename external CSS files ([#5968](https://github.com/pojome/elementor/issues/5968))
+* Tweak: Added dynamic option for caption in the Image widget ([#5770](https://github.com/pojome/elementor/issues/5770))
+* Tweak: Updated YouTube related videos control due to YouTube's API changes ([#5984](https://github.com/pojome/elementor/issues/5984), [#5939](https://github.com/pojome/elementor/issues/5939))
+* Tweak: Added a general hook elementor/frontend/after_render to element-base
+* Tweak: Added `elementor/element/before_attribute_render` hook before attributes are rendered
+* Tweak: Added `elementor/element/after_attribute_render` hook after attributes are rendered
+* Tweak: New `elementor/editor/init` action
+* Tweak: A new `get_post_type_title` method for document
+* Tweak: Added `Ctrl/Cmd + E` shortcut to open Finder modal
+* Tweak: Added `Ctrl/Cmd + ?` shortcut to open all keyboard shortcuts modal
+* Tweak: Added `Esc` shortcut for opening the settings menu
+* Tweak: Update Eicons v3.9.2
+* Fix: Added default width for SVG image to support edge cases ([#5987](https://github.com/pojome/elementor/issues/5987))
+* Fix: Better WP Widget hooks support ([#5844](https://github.com/pojome/elementor/issues/5844))
+* Fix: Exclude image link from lightbox when the link has 'download' attribute ([#5996](https://github.com/pojome/elementor/issues/5996))
+* Fix: Background Gradient not working inside Repeater control ([#5914](https://github.com/pojome/elementor/issues/5914))
+* Fix: Added support for future post status ([#5681](https://github.com/pojome/elementor/issues/5681), [#6000](https://github.com/pojome/elementor/issues/6000))
+* Fix: Missing string translations ([#5989](https://github.com/pojome/elementor/issues/5989))
+* Fix: Lightbox images links detection ([#6103](https://github.com/pojome/elementor/issues/6103))
+* Fix: Animation class removed from Lightbox closing ([#5911](https://github.com/pojome/elementor/issues/5911))
+* Fix: Allow plugins to set current page as Login Page for Maintenance Mode
+* Fix: Added navigation between tabs via tab keyboard for better accessibility
+* Fix: Use Thumbnail if selected size is missing
+* Fix: A new method to handle with multiple image custom sizes
+* Fix: Import template by WP CLI
+* Fix: Height of bar without content in Progress Bar widget
+* Fix: Added compatibility with a new embed API of YouTube
+* Fix: Don't render wrapper of element if the content is empty
+* Deprecated: `Source_Local::TYPE_META_KEY` is no longer supported
+* Deprecated: `Document::save_type()` is replaced by `Document::save_template_type()`
 
 ### 2.2.7 - 2018-10-24 ###
 * Tweak: Update Google Fonts list with more than 20 new fonts ([Topic](https://wordpress.org/support/topic/please-update-google-fonts-library-with-the-latest-font-for-free-version/))
