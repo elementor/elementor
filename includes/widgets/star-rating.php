@@ -190,7 +190,7 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->start_controls_section(
 			'section_title_style',
 			[
-				'label' => __( 'Label', 'elementor' ),
+				'label' => __( 'Title', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'title!' => '',
