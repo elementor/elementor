@@ -1,7 +1,4 @@
-var Module = require( 'elementor-utils/module' ),
-	Validator;
-
-Validator = Module.extend( {
+module.exports = elementorModules.utils.Module.extend( {
 	errors: [],
 
 	__construct: function( settings ) {
@@ -43,5 +40,3 @@ Validator = Module.extend( {
 		return errors;
 	},
 } );
-
-module.exports = Validator;

@@ -66,6 +66,9 @@ const entry = {
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
 	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
+	'admin-modules': path.resolve( __dirname, '../assets/dev/js/modules/admin.js' ),
+	'editor-modules': path.resolve( __dirname, '../assets/dev/js/modules/editor.js' ),
+	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/modules/frontend.js' ),
 };
 
 const webpackConfig = {

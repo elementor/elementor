@@ -278,6 +278,14 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_scripts' );
 
 		wp_register_script(
+			'elementor-frontend-modules',
+			ELEMENTOR_ASSETS_URL . 'js/frontend-modules.js',
+			[],
+			ELEMENTOR_VERSION,
+			false
+		);
+
+		wp_register_script(
 			'elementor-waypoints',
 			$this->get_js_assets_url( 'waypoints', 'assets/lib/waypoints/' ),
 			[
@@ -351,6 +359,7 @@ class Frontend extends App {
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
 			[
+				'elementor-frontend-modules',
 				'elementor-dialog',
 				'elementor-waypoints',
 				'jquery-swiper',

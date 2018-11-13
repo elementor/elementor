@@ -1,7 +1,4 @@
-var ViewModule = require( '../utils/view-module' ),
-	HandlerModule;
-
-HandlerModule = ViewModule.extend( {
+module.exports = elementorModules.utils.ViewModule.extend( {
 	$element: null,
 
 	editorListeners: null,
@@ -189,5 +186,3 @@ HandlerModule = ViewModule.extend( {
 		}
 	},
 } );
-
-module.exports = HandlerModule;

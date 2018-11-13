@@ -1,7 +1,4 @@
-var ViewModule = require( '../../utils/view-module' ),
-	LightboxModule;
-
-LightboxModule = ViewModule.extend( {
+module.exports = elementorModules.utils.ViewModule.extend( {
 	oldAspectRatio: null,
 
 	oldAnimation: null,
@@ -52,15 +49,15 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	getModal: function() {
-		if ( ! LightboxModule.modal ) {
+		if ( ! module.exports.modal ) {
 			this.initModal();
 		}
 
-		return LightboxModule.modal;
+		return module.exports.modal;
 	},
 
 	initModal: function() {
-		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
+		var modal = module.exports.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox',
 			closeButton: true,
 			closeButtonClass: 'eicon-close',
@@ -466,5 +463,3 @@ LightboxModule = ViewModule.extend( {
 		this.playSlideVideo();
 	},
 } );
-
-module.exports = LightboxModule;

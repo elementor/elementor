@@ -1,6 +1,4 @@
-const Module = require( 'elementor-utils/module' );
-
-export default class extends Module {
+export default class extends elementorModules.utils.Module {
 	getDefaultSettings() {
 		return {
 			ajaxParams: {
