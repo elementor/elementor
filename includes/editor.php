@@ -325,6 +325,13 @@ class Editor {
 
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
+		wp_register_script(
+			'elementor-editor-modules',
+			ELEMENTOR_ASSETS_URL . 'js/editor-modules.js',
+			[],
+			ELEMENTOR_VERSION,
+			false
+		);
 		// Hack for waypoint with editor mode.
 		wp_register_script(
 			'elementor-waypoints',
@@ -424,6 +431,7 @@ class Editor {
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
+				'elementor-editor-modules',
 				'elementor-common',
 				'wp-auth-check',
 				'jquery-ui-sortable',

@@ -32,7 +32,7 @@ const App = Marionette.Application.extend( {
 	// Exporting modules that can be used externally
 	modules: {
 		// TODO: Deprecated alias since 2.3.0
-		Module: require( 'elementor-utils/module' ),
+		Module: elementorModules.utils.Module,
 		components: {
 			templateLibrary: {
 				views: {
@@ -111,10 +111,6 @@ const App = Marionette.Application.extend( {
 		},
 		views: {
 			ControlsStack: require( 'elementor-views/controls-stack' ),
-		},
-		utils: {
-			Module: require( 'elementor-utils/module' ),
-			ViewModule: require( 'elementor-utils/view-module' ),
 		},
 	},
 

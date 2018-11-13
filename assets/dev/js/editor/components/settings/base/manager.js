@@ -1,8 +1,7 @@
-var ViewModule = require( 'elementor-utils/view-module' ),
-	SettingsModel = require( 'elementor-elements/models/base-settings' ),
+var SettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
-module.exports = ViewModule.extend( {
+module.exports = elementorModules.utils.ViewModule.extend( {
 	model: null,
 
 	hasChange: false,
@@ -134,7 +133,7 @@ module.exports = ViewModule.extend( {
 
 		this.debounceSave = _.debounce( this.save, 3000 );
 
-		ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.utils.ViewModule.prototype.onInit.apply( this, arguments );
 	},
 
 	onModelChange: function( model ) {

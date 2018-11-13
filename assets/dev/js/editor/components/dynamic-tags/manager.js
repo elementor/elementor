@@ -1,7 +1,6 @@
-var Module = require( 'elementor-utils/module' ),
-	SettingsModel = require( 'elementor-elements/models/base-settings' );
+var SettingsModel = require( 'elementor-elements/models/base-settings' );
 
-module.exports = Module.extend( {
+module.exports = elementorModules.utils.Module.extend( {
 
 	CACHE_KEY_NOT_FOUND_ERROR: 'Cache key not found',
 

@@ -1,7 +1,4 @@
-var Module = require( 'elementor-utils/module' ),
-	ContextMenu;
-
-ContextMenu = Module.extend( {
+module.exports = elementorModules.utils.Module.extend( {
 
 	getDefaultSettings: function() {
 		return {
@@ -167,5 +164,3 @@ ContextMenu = Module.extend( {
 		this.initModal();
 	},
 } );
-
-module.exports = ContextMenu;

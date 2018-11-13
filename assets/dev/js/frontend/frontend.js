@@ -55,10 +55,6 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 			};
 
 			self.modules = {
-				utils: {
-					Module: require( 'elementor-utils/module' ),
-					ViewModule: require( 'elementor-utils/view-module' ),
-				},
 				StretchElement: require( 'elementor-frontend/modules/stretch-element' ),
 				Masonry: require( 'elementor-utils/masonry' ),
 			};

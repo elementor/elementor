@@ -68,9 +68,18 @@ class Admin extends App {
 	 */
 	public function enqueue_scripts() {
 		wp_register_script(
+			'elementor-admin-modules',
+			ELEMENTOR_ASSETS_URL . 'js/admin-modules.js',
+			[],
+			ELEMENTOR_VERSION,
+			false
+		);
+
+		wp_register_script(
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),
 			[
+				'elementor-admin-modules',
 				'elementor-common',
 			],
 			ELEMENTOR_VERSION,

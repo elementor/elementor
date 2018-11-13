@@ -1,7 +1,5 @@
 ( function( $ ) {
-	var ViewModule = require( 'elementor-utils/view-module' );
-
-	var ElementorAdmin = ViewModule.extend( {
+	var ElementorAdmin = elementorModules.utils.ViewModule.extend( {
 
 		maintenanceMode: null,
 
@@ -195,7 +193,7 @@
 		},
 
 		onInit: function() {
-			ViewModule.prototype.onInit.apply( this, arguments );
+			elementorModules.utils.ViewModule.prototype.onInit.apply( this, arguments );
 
 			this.initTemplatesImport();
 
