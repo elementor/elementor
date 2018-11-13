@@ -65,8 +65,8 @@ There are many other [features](https://elementor.com/features/?utm_source=wp-re
 
 Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
 
-= 28 free widgets and counting =
-We packed 28 of the most useful widgets into our page builder. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
+= 29 free widgets and counting =
+We packed 29 of the most useful widgets into our page builder. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
 
 - **Heading**. Add eye-catching headlines.
 - **Image**. Control the size, opacity and other settings of images.
@@ -86,6 +86,7 @@ We packed 28 of the most useful widgets into our page builder. True, that's way 
 - **Tabs**. Vertical or horizontal tabs that display different pieces of content.
 - **Accordion**. A collapsable display of content.
 - **Toggle**. Like Accordion, for FAQ pages.
+- **Star Rating**. Add some social proof with a styled star rating.
 - **Alert**. A colored alert box to draw the attention of the visitor.
 - **HTML**. Insert code into the page.
 - **Shortcode**. Easily insert shortcodes from any plugin into the page.
@@ -136,6 +137,9 @@ To help you get started and learn just how to integrate with Elementor, we have 
 - [Hungarian](https://translate.wordpress.org/locale/hu/default/wp-plugins/elementor) - (hu_HU)
 - [Croatian](https://translate.wordpress.org/locale/hr/default/wp-plugins/elementor) - (hr)
 - [Finnish](https://translate.wordpress.org/locale/fi/default/wp-plugins/elementor) - (fi)
+- [Arabic](https://translate.wordpress.org/locale/ar/default/wp-plugins/elementor) - (ar)
+- [Afrikaans](https://translate.wordpress.org/locale/af/default/wp-plugins/elementor) - (af)
+- [Ukrainian](https://translate.wordpress.org/locale/uk/default/wp-plugins/elementor) - (uk)
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/pojome/elementor) and see where you can help.
