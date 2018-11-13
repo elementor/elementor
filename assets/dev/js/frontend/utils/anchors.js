@@ -66,7 +66,7 @@ module.exports = elementorModules.utils.ViewModule.extend( {
 	},
 
 	onInit: function() {
-		ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.utils.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.bindEvents();
 	},

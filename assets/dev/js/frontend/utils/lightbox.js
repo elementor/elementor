@@ -437,7 +437,7 @@ module.exports = elementorModules.utils.ViewModule.extend( {
 	},
 
 	onInit: function() {
-		ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.utils.ViewModule.prototype.onInit.apply( this, arguments );
 
 		if ( elementorFrontend.isEditMode() ) {
 			elementor.settings.general.model.on( 'change', this.onGeneralSettingsChange );
