@@ -19,7 +19,10 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	},
 
 	onReady: function() {
-		this.ui.select.select2( this.getSelect2Options() );
+		var self = this;
+		_.defer( function() {
+			self.ui.select.select2( self.getSelect2Options() );
+		} );
 	},
 
 	onBeforeDestroy: function() {
