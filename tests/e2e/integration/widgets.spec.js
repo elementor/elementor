@@ -6,7 +6,6 @@ before( 'Test if Widgets work as exprected', () => {
 		Cypress.env( 'cookies', cookies );
 	} );
 } );
-let length = 1;
 
 describe( 'Test if Widgets work as exprected', () => {
 	[
@@ -28,7 +27,7 @@ describe( 'Test if Widgets work as exprected', () => {
 		{ category: 'general', widget: 'testimonial' },
 		{ category: 'general', widget: 'social-icons' },
 		{ category: 'general', widget: 'alert' },
-		{ category: 'general', widget: 'audio', delay: 1000 },
+		{ category: 'general', widget: 'audio', delay: 2000 },
 		{ category: 'general', widget: 'shortcode', delay: 1000 },
 		{ category: 'general', widget: 'html' },
 		{ category: 'general', widget: 'menu-anchor' },
@@ -43,26 +42,26 @@ describe( 'Test if Widgets work as exprected', () => {
 
 			cy.addWidget( widget.category, widget.widget ).then( ( colomeView ) => {
 				assert.equal( colomeView.model.get( 'elements' ).first().get( 'widgetType' ), widget.widget );
-			} );
 
-			cy.testHistory( {
-				length: ++length,
-				title: 'audio' === widget.widget ? 'soundcloud' : widget.widget,
-				action: 'added',
-				caseSensitive: false,
-			} );
+                cy.testHistory( {
+                    addedLength: 1,
+                    title: 'audio' === widget.widget ? 'soundcloud' : widget.widget,
+                    action: 'added',
+                    caseSensitive: false,
+                } );
 
-			if ( widget.delay ) {
-				cy.wait( widget.delay );
-			}
+                if ( widget.delay ) {
+                    cy.wait( widget.delay );
+                }
 
-			cy.removeWidget( '[data-element_type="' + widget.widget + '.default"]' );
+                cy.removeWidget( '[data-id="' + colomeView.model.get( 'elements' ).first().get( 'id' ) + '"]' );
 
-			cy.testHistory( {
-				length: ++length,
-				title: 'audio' === widget.widget ? 'soundcloud' : widget.widget,
-				action: 'removed',
-				caseSensitive: false,
+                cy.testHistory( {
+                    addedLength: 1,
+                    title: 'audio' === widget.widget ? 'soundcloud' : widget.widget,
+                    action: 'removed',
+                    caseSensitive: false,
+                } );
 			} );
 		} );
 	} );
