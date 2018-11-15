@@ -52,7 +52,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="elementor-hotkeys__item--shortcut">
 						<span>{{{ ctrlLabel }}}</span>
 						<span>Shift</span>
-						<span>C</span>
+						<span>V</span>
 					</div>
 				</div>
 
