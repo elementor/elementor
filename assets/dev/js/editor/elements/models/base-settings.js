@@ -112,6 +112,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 			if ( control.fields ) {
 				var styleFields = [];
+				
+				if (!(self.attributes[control.name] instanceof Backbone.Collection)) {
+					self.handleRepeaterData(self.attributes);
+				}
 
 				self.attributes[ control.name ].each( function( item ) {
 					styleFields.push( self.getStyleControls( control.fields, item.attributes ) );
