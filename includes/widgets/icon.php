@@ -112,6 +112,14 @@ class Widget_Icon extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon2',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
