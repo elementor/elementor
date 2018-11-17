@@ -220,6 +220,15 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.3.2 - 2018-11-17 =
+* Tweak: Added `vw` unit to base control
+* Tweak: Added WP Plugins and Users links to Finder
+* Tweak: Updated Swiper progress style to new version
+* Fix: Missing "View Page" and "Exit to Dashboard" in editor menu
+* Fix: Background video position in edge cases
+* Fix: Incorrect keyboard shortcut in Hotkeys cheatsheet
+* Fix: Fatal error for 3rd party plugins ([#6192](https://github.com/pojome/elementor/issues/6192))
+
 = 2.3.1 - 2018-11-12 =
 * Fix: Print empty elements but not empty widgets ([#6134](https://github.com/pojome/elementor/issues/6134))
 * Fix: Removed `figcaption` tag when no caption is set ([#6134](https://github.com/pojome/elementor/issues/6134))
