@@ -340,7 +340,7 @@ class Module extends BaseModule {
 	 * @return bool Whether to allow updating metadata of a specific type.
 	 */
 	public function filter_update_meta( $check, $object_id, $meta_key ) {
-		if ( '_wp_page_template' === $meta_key ) {
+		if ( '_wp_page_template' === $meta_key && Plugin::$instance->common ) {
 			/** @var \Elementor\Core\Common\Modules\Ajax\Module $ajax */
 			$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
