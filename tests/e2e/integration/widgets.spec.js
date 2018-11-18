@@ -1,13 +1,14 @@
 /// <reference types="Cypress" />
-before( 'Test if Widgets work as exprected', () => {
-	cy.login( 'admin' );
-	cy.addElementorPage();
-	cy.getCookies().then( ( cookies ) => {
-		Cypress.env( 'cookies', cookies );
-	} );
-} );
 
 describe( 'Test if Widgets work as exprected', () => {
+    before( 'Test if Widgets work as exprected', () => {
+        cy.login( 'admin' );
+        cy.addElementorPage();
+        cy.getCookies().then( ( cookies ) => {
+            Cypress.env( 'cookies', cookies );
+        } );
+    } );
+
 	[
 		{ category: 'basic', widget: 'heading' },
 		{ category: 'basic', widget: 'image' },
