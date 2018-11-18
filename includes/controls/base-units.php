@@ -77,6 +77,11 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 					'max' => 100,
 					'step' => 1,
 				],
+				'vw' => [
+					'min' => 0,
+					'max' => 100,
+					'step' => 1,
+				],
 			],
 		];
 	}
