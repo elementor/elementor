@@ -628,14 +628,6 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 */
 	public function print_element() {
-		ob_start();
-		$this->_print_content();
-		$content = ob_get_clean();
-
-		if ( empty( $content ) && ! $this->should_print_empty() ) {
-			return;
-		}
-
 		$element_type = $this->get_type();
 
 		/**
@@ -661,6 +653,14 @@ abstract class Element_Base extends Controls_Stack {
 		 * @param Element_Base $this The element.
 		 */
 		do_action( "elementor/frontend/{$element_type}/before_render", $this );
+
+		ob_start();
+		$this->_print_content();
+		$content = ob_get_clean();
+
+		if ( empty( $content ) && ! $this->should_print_empty() ) {
+			return;
+		}
 
 		$this->_add_render_attributes();
 
