@@ -971,20 +971,20 @@ class Widget_Video extends Widget_Base {
 
 		foreach ( [ 'autoplay', 'loop', 'controls' ] as $option_name ) {
 			if ( $settings[ $option_name ] ) {
-				$video_params[] = $option_name;
+				$video_params[ $option_name ] = '';
 			}
 		}
 
 		if ( $settings['mute'] ) {
-			$video_params[] = 'muted';
+			$video_params['muted'] = 'muted';
 		}
 
 		if ( ! $settings['download_button'] ) {
-			$video_params[] = 'controlsList="nodownload"';
+			$video_params['controlsList'] = 'nodownload';
 		}
 
 		if ( $settings['poster']['url'] ) {
-			$video_params[] = 'poster="' . $settings['poster']['url'] . '"';
+			$video_params['poster'] = $settings['poster']['url'];
 		}
 
 		return $video_params;
