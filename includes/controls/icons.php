@@ -115,4 +115,14 @@ class Control_Icons extends Control_Base_Multiple {
 			],
 		];
 	}
+
+	public function on_elementor_editor_init() {
+		Plugin::elementor()->common->add_template( __DIR__ . '/views/panel-template.php' );
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		add_action( 'elementor/editor/init', [ $this, 'on_elementor_editor_init' ] );
+	}
 }

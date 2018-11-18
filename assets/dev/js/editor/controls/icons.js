@@ -23,8 +23,6 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		if ( ! this.picker ) {
 			this.picker = new require( '../../../../../core/common/assets/js/views/modal/layout' );
 		}
-		//this.picker.showModal();
-		console.log(this.picker);
 	}
 
 	applySavedValue() {
