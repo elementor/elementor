@@ -650,18 +650,16 @@ abstract class Element_Base extends Controls_Stack {
 		$this->_print_content();
 		$content = ob_get_clean();
 
-		if ( empty( $content ) && ! $this->should_print_empty() ) {
-			return;
+		if ( ! empty( $content ) || $this->should_print_empty() ) {
+			$this->_add_render_attributes();
+
+			$this->before_render();
+			echo $content;
+			$this->after_render();
+
+			$this->enqueue_scripts();
+			$this->enqueue_styles();
 		}
-
-		$this->_add_render_attributes();
-
-		$this->before_render();
-		echo $content;
-		$this->after_render();
-
-		$this->enqueue_scripts();
-		$this->enqueue_styles();
 
 		/**
 		 * After frontend element render.
