@@ -1017,7 +1017,7 @@ class Widget_Video extends Widget_Base {
 
 		$video_url = $this->get_hosted_video_url();
 		?>
-		<video class="elementor-video" src="<?php echo esc_url( $video_url ); ?>" <?php echo implode( ' ', $video_params ); ?>></video>
+		<video class="elementor-video" src="<?php echo esc_url( $video_url ); ?>" <?php echo Utils::render_html_attributes( $video_params ); ?>></video>
 		<?php
 	}
 }
