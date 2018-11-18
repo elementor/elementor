@@ -62,17 +62,11 @@ class Settings_Controls {
 	 * @param array $field Field data.
 	 */
 	private static function text( array $field ) {
-		$attributes = [];
-
 		if ( empty( $field['attributes']['class'] ) ) {
 			$field['attributes']['class'] = 'regular-text';
 		}
 
-		foreach ( $field['attributes'] as $attribute_key => $attribute_values ) {
-			$attributes[] = sprintf( '%1$s="%2$s"', $attribute_key, esc_attr( $attribute_values ) );
-		}
-
-		$attributes = implode( ' ', $attributes );
+		$attributes = Utils::render_html_attributes( $field['attributes'] );
 		?>
 		<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="<?php echo esc_attr( get_option( $field['id'], $field['std'] ) ); ?>" <?php echo $attributes; ?>/>
 		<?php
