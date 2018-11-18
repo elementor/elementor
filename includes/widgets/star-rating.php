@@ -213,7 +213,6 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
-
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
