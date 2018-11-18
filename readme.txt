@@ -243,7 +243,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Added filter to rename external CSS files ([#5968](https://github.com/pojome/elementor/issues/5968))
 * Tweak: Added dynamic option for caption in the Image widget ([#5770](https://github.com/pojome/elementor/issues/5770))
 * Tweak: Updated YouTube related videos control due to YouTube's API changes ([#5984](https://github.com/pojome/elementor/issues/5984), [#5939](https://github.com/pojome/elementor/issues/5939))
-* Tweak: Added a general hook elementor/frontend/after_render to element-base
+* Tweak: Added a general `hook elementor/frontend/after_render` to element-base
 * Tweak: Added `elementor/element/before_attribute_render` hook before attributes are rendered
 * Tweak: Added `elementor/element/after_attribute_render` hook after attributes are rendered
 * Tweak: New `elementor/editor/init` action
