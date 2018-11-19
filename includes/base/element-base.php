@@ -621,18 +621,6 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	public function print_element() {
 		$element_type = $this->get_type();
-		
-		/**
-		 * Should be the frontend elemenent rendered?
-		 *
-		 * Filters if the element should be rendered on frontend.		 
-		 *
-		 * @since 2.2.8
-		 *
-		 * @param bool true The element.
-		 * @param Element_Base $this The element.
-		 */
-		if( !apply_filters( "elementor/frontend/{$element_type}/should_render", true, $this ) ) return;
 
 		/**
 		 * Before frontend element render.
@@ -661,8 +649,22 @@ abstract class Element_Base extends Controls_Stack {
 		ob_start();
 		$this->_print_content();
 		$content = ob_get_clean();
+		
+		$should_render = ( ! empty( $content ) || $this->should_print_empty() );
 
-		if ( ! empty( $content ) || $this->should_print_empty() ) {
+		/**
+		 * Should be the frontend elementor rendered
+		 *
+		 * Filters if the element should be rendered on frontend.
+		 *
+		 * @since 2.3.3
+		 *
+		 * @param bool true The element.
+		 * @param Element_Base $this The element.
+		 */
+		$should_render = apply_filters( "elementor/frontend/{$element_type}/should_render", $should_render, $this );
+
+		if ( $should_render ) {
 			$this->_add_render_attributes();
 
 			$this->before_render();
