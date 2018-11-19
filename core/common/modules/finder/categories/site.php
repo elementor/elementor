@@ -62,6 +62,18 @@ class Site extends Base_Category {
 				'url' => admin_url( 'customize.php' ),
 				'keywords' => [ 'customizer', 'wordpress' ],
 			],
+			'wordpress-plugins' => [
+				'title' => __( 'Plugins', 'elementor' ),
+				'icon' => 'wordpress',
+				'url' => admin_url( 'plugins.php' ),
+				'keywords' => [ 'plugins', 'wordpress' ],
+			],
+			'wordpress-users' => [
+				'title' => __( 'Users', 'elementor' ),
+				'icon' => 'wordpress',
+				'url' => admin_url( 'users.php' ),
+				'keywords' => [ 'users', 'profile', 'wordpress' ],
+			],
 		];
 	}
 }
