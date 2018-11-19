@@ -649,7 +649,7 @@ abstract class Element_Base extends Controls_Stack {
 		ob_start();
 		$this->_print_content();
 		$content = ob_get_clean();
-		
+
 		$should_render = ( ! empty( $content ) || $this->should_print_empty() );
 
 		/**
