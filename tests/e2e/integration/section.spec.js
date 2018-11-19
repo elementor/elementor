@@ -12,7 +12,7 @@ describe( 'Test is section work as properly', () => {
 				cy.wrap( $iframe.contents().find( '.elementor-section' ).last().find( '.elementor-column' ) ).should( 'have.length', 2 );
 			} );
 
-			cy.testHistory( { length: 2, title: 'Section', action: 'Added' } );
+			cy.testHistory( { addedLength: 1, title: 'Section', action: 'Added' } );
 
 			cy.get( '#elementor-preview-iframe' ).then( ( $iframe ) => {
 				cy.wrap( $iframe.contents().find( '.elementor-section' ).last().find( '.elementor-editor-element-setting.elementor-editor-element-edit.ui-sortable-handle' ).first() )
@@ -25,7 +25,7 @@ describe( 'Test is section work as properly', () => {
 				cy.wrap( $iframe.contents().find( '.elementor-section' ).last().find( '.elementor-column' ) ).should( 'have.length', 3 );
 			} );
 
-			cy.testHistory( { length: 3, title: 'Column', action: 'Added' } );
+			cy.testHistory( { addedLength: 1, title: 'Column', action: 'Added' } );
 
 			cy.get( '#elementor-preview-iframe' ).then( ( $iframe ) => {
 				cy.wrap( $iframe.contents().find( '.elementor-section' ).last().find( '.elementor-editor-element-setting.elementor-editor-element-edit.ui-sortable-handle' ).first() )
@@ -38,7 +38,7 @@ describe( 'Test is section work as properly', () => {
 				cy.wrap( $iframe.contents().find( '.elementor-section' ).last().find( '.elementor-column' ) ).should( 'have.length', 4 );
 			} );
 
-			cy.testHistory( { length: 4, title: 'Column', action: 'Added' } );
+			cy.testHistory( { addedLength: 1, title: 'Column', action: 'Added' } );
 		} );
 	} );
 } );
