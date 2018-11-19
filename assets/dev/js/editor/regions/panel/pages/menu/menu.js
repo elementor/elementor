@@ -29,9 +29,37 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 	groups: null,
 
 	initGroups: function() {
-		var menus = [];
+		let menus = [];
+
+		const goToSection = {
+			name: 'go_to',
+			title: elementor.translate( 'go_to' ),
+			items: [
+				{
+					name: 'view-page',
+					icon: 'fa fa-eye',
+					title: elementor.translate( 'view_page' ),
+					type: 'link',
+					link: elementor.config.document.urls.permalink,
+				},
+				{
+					name: 'exit-to-dashboard',
+					icon: 'fa fa-wordpress',
+					title: elementor.translate( 'exit_to_dashboard' ),
+					type: 'link',
+					link: elementor.config.document.urls.exit_to_dashboard,
+				},
+			],
+		};
 
 		if ( elementor.config.user.is_administrator ) {
+			goToSection.items.unshift( {
+				name: 'finder',
+				icon: 'fa fa-search',
+				title: elementorCommon.translate( 'finder', 'finder' ),
+				callback: () => elementorCommon.finder.getLayout().showModal(),
+			} );
+
 			menus = [
 				{
 					name: 'style',
@@ -82,34 +110,10 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 						},
 					],
 				},
-				{
-					name: 'go_to',
-					title: elementor.translate( 'go_to' ),
-					items: [
-						{
-							name: 'finder',
-							icon: 'fa fa-search',
-							title: elementorCommon.translate( 'finder', 'finder' ),
-							callback: () => elementorCommon.finder.getLayout().showModal(),
-						},
-						{
-							name: 'view-page',
-							icon: 'fa fa-eye',
-							title: elementor.translate( 'view_page' ),
-							type: 'link',
-							link: elementor.config.document.urls.permalink,
-						},
-						{
-							name: 'exit-to-dashboard',
-							icon: 'fa fa-wordpress',
-							title: elementor.translate( 'exit_to_dashboard' ),
-							type: 'link',
-							link: elementor.config.document.urls.exit_to_dashboard,
-						},
-					],
-				},
 			];
 		}
+
+		menus.push( goToSection );
 
 		this.groups = new Backbone.Collection( menus );
 	},

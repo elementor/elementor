@@ -155,7 +155,7 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
@@ -198,22 +198,27 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'title_color',
+			[
+				'label' => __( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'scheme' => [
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-star-rating__title' => 'color: {{VALUE}}',
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-star-rating__title',
-			]
-		);
-
-		$this->add_control(
-			'title_color',
-			[
-				'label' => __( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .elementor-star-rating__title' => 'color: {{VALUE}}',
-				],
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
