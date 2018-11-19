@@ -5,13 +5,17 @@ PanelElementsElementView = Marionette.ItemView.extend( {
 
 	className: 'elementor-element-wrapper',
 
+	ui: {
+		element: '.elementor-element',
+	},
+
 	onRender: function() {
 		var self = this;
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
 
-		this.$el.html5Draggable( {
+		this.ui.element.html5Draggable( {
 
 			onDragStart: function() {
 				elementor.channels.panelElements
