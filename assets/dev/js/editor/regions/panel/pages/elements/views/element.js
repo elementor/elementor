@@ -1,6 +1,4 @@
-var PanelElementsElementView;
-
-PanelElementsElementView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-element-library-element',
 
 	className: 'elementor-element-wrapper',
@@ -10,20 +8,19 @@ PanelElementsElementView = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var self = this;
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
 
 		this.ui.element.html5Draggable( {
 
-			onDragStart: function() {
+			onDragStart: () => {
 				elementor.channels.panelElements
-					.reply( 'element:selected', self )
-					.trigger( 'element:drag:start' );
+						.reply( 'element:selected', this )
+						.trigger( 'element:drag:start' );
 			},
 
-			onDragEnd: function() {
+			onDragEnd: () => {
 				elementor.channels.panelElements.trigger( 'element:drag:end' );
 			},
 
@@ -31,5 +28,3 @@ PanelElementsElementView = Marionette.ItemView.extend( {
 		} );
 	},
 } );
-
-module.exports = PanelElementsElementView;
