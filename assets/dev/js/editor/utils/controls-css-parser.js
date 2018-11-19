@@ -140,7 +140,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 		var outputCssProperty;
 
 		try {
-			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}]*)}}/g, function( originalPhrase, controlName, placeholder ) {
+			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(.+?) *)?}}/g, function( originalPhrase, controlName, placeholder, fallbackValue ) {
 				var parserControl = control,
 					valueToInsert = value;
 
@@ -156,13 +156,31 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 
 				var parsedValue = elementor.getControlView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
 
-				if ( '' === parsedValue ) {
-					throw '';
+				if ( ! parsedValue && 0 !== parsedValue ) {
+					if ( fallbackValue ) {
+						parsedValue = fallbackValue;
+
+						const stringValueMatches = parsedValue.match( /^(['"])(.*)\1$/ );
+
+						if ( stringValueMatches ) {
+							parsedValue = stringValueMatches[ 2 ];
+						} else if ( ! isFinite( parsedValue ) ) {
+							throw new SyntaxError( `Unrecognized value ${ parsedValue }` );
+						}
+					}
+
+					if ( ! parsedValue && 0 !== parsedValue ) {
+						throw '';
+					}
 				}
 
 				return parsedValue;
 			} );
 		} catch ( e ) {
+			if ( e instanceof Error ) {
+				throw e;
+			}
+
 			return;
 		}
 
