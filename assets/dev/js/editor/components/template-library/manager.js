@@ -176,6 +176,7 @@ TemplateLibraryManager = function() {
 
 	this.requestTemplateContent = function( source, id, ajaxOptions ) {
 		var options = {
+			unique_id: id,
 			data: {
 				source: source,
 				edit_mode: true,
