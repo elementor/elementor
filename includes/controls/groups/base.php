@@ -495,6 +495,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			'return_value' => $popover_options['starter_value'],
 		];
 
+
+		if ( ! empty( $popover_options['settings'] ) ) {
+			$control_params = array_replace_recursive( $control_params, $popover_options['settings'] );
+		}
+
 		if ( ! empty( $settings['condition'] ) ) {
 			$control_params['condition'] = $settings['condition'];
 		}
