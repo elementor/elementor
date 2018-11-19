@@ -277,10 +277,12 @@ class Frontend extends App {
 		 */
 		do_action( 'elementor/frontend/before_register_scripts' );
 
-		wp_register_script(
+		wp_enqueue_script(
 			'elementor-frontend-modules',
 			ELEMENTOR_ASSETS_URL . 'js/frontend-modules.js',
-			[],
+			[
+				'jquery',
+			],
 			ELEMENTOR_VERSION,
 			false
 		);
@@ -359,7 +361,6 @@ class Frontend extends App {
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
 			[
-				'elementor-frontend-modules',
 				'elementor-dialog',
 				'elementor-waypoints',
 				'jquery-swiper',
