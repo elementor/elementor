@@ -1,15 +1,13 @@
 <?php
 namespace Elementor;
 
+use Elementor\Control_Icons;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-?>
-<script type="text/template" id="tmpl-elementor-icon-manager">
-    <div id="elementor-icon-manager__content"></div>
-
-</script>
-<script>
+/*
+ * <script>
 	class Tabs {
         init() {
             this.cacheElements();
@@ -157,4 +155,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	}(jQuery);
 
 	Tabs.init();
+</script>
+ */
+?>
+<script type="text/template" id="tmpl-elementor-icons-manager">
+    <div id="elementor-icon-manager__content">
+        <div class="elementor-icon-manager-tabs">
+            <ul class="elementor-icon-manager-tabs-list">
+                <?php foreach ( Control_Icons::get_icon_manager_tabs() as $tab_key => $tab_label ) : ?>
+                    <li data-tab="<?php echo $tab_key; ?>"><?php echo $tab_label; ?></li>
+                <?php endforeach; ?>
+            </ul>
+            <div class="elementor-icon-manager-tabs-content">
+                <div class="default">123456</div>
+            </div>
+        </div>
+    </div>
 </script>

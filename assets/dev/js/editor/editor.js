@@ -2,6 +2,7 @@
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
+import IconsManager from './components/icons-manager/icons-manager';
 import LogoView from '../../../../core/common/assets/js/views/modal/logo';
 import ModalLayoutView from '../../../../core/common/assets/js/views/modal/layout';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
@@ -270,6 +271,7 @@ const App = Marionette.Application.extend( {
 		this.initHotKeys();
 
 		this.hotkeysScreen = new HotkeysScreen();
+		this.iconManager = new IconsManager();
 	},
 
 	// TODO: BC method since 2.3.0

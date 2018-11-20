@@ -20,9 +20,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	openPicker() {
-		if ( ! this.picker ) {
-			this.picker = new require( '../../../../../core/common/assets/js/views/modal/layout' );
-		}
+		elementor.iconManager.show();
 	}
 
 	applySavedValue() {
