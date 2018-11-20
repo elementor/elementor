@@ -321,12 +321,44 @@ abstract class Document extends Controls_Stack {
 		return $document;
 	}
 
+	public function print_admin_column_type() {
+		$admin_filter_url = admin_url( '/edit.php?post_type=elementor_library&elementor_library_type=' . $this->get_name() );
+		printf( '<a href="%s">%s</a>', $admin_filter_url, $this->get_title() );
+	}
+
+	/**
+	 * Add/Remove edit link in dashboard.
+	 *
+	 * Add or remove an edit link to the post/page action links on the post/pages list table.
+	 *
+	 * Fired by `post_row_actions` and `page_row_actions` filters.
+	 *
+	 * @access public
+	 *
+	 * @param array    $actions An array of row action links.
+	 *
+	 * @return array An updated array of row action links.
+	 */
+	public function filter_admin_row_actions( $actions ) {
+		if ( ! $this->is_editable_by_current_user() ) {
+			unset( $actions['edit'] );
+		} elseif ( $this->is_built_with_elementor() ) {
+			$actions['edit_with_elementor'] = sprintf(
+				'<a href="%1$s">%2$s</a>',
+				$this->get_edit_url(),
+				__( 'Edit with Elementor', 'elementor' )
+			);
+		}
+
+		return $actions;
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
 	 */
 	public function is_editable_by_current_user() {
-		return User::is_current_user_can_edit( $this->get_main_id() );
+		return self::get_property( 'is_editable' ) && User::is_current_user_can_edit( $this->get_main_id() );
 	}
 
 	/**

@@ -976,6 +976,10 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
+		if ( empty( $_GET['elementor_library_type'] ) ) {
+			return;
+		}
+
 		$query->query_vars['meta_key'] = Document::TYPE_META_KEY;
 		$query->query_vars['meta_value'] = array_values( self::$template_types );
 	}
@@ -1349,8 +1353,7 @@ class Source_Local extends Source_Base {
 			$document = Plugin::$instance->documents->get( $post_id );
 
 			if ( $document ) {
-				$admin_filter_url = admin_url( '/edit.php?post_type=elementor_library&elementor_library_type=' . $document->get_name() );
-				printf( '<a href="%s">%s</a>', $admin_filter_url, $document->get_title() );
+				$document->print_admin_column_type();
 			}
 		}
 	}
