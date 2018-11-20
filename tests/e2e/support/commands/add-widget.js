@@ -1,10 +1,10 @@
 /// <reference types="Cypress" />
 
-const setPanelSelectedElement = ( elementor, category, name ) => {
+const setPanelSelectedElement = ( elementor, category, widgetName ) => {
 	const elementsPanel = elementor.getPanelView().getCurrentPageView().elements.currentView,
 		basicElements = elementsPanel.collection.findWhere( { name: category } ),
 		view = elementsPanel.children.findByModel( basicElements ),
-		widget = view.children.findByModel( view.collection.findWhere( { widgetType: name } ) );
+		widget = view.children.findByModel( view.collection.findWhere( { widgetType: widgetName } ) );
 
 	elementor.channels.panelElements.reply( 'element:selected', widget );
 };
