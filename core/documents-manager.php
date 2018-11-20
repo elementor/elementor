@@ -97,6 +97,8 @@ class Documents_Manager {
 		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
 		add_action( 'elementor/init', [ $this, 'register_default_types' ], 11 );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
+		add_filter( 'page_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 	}
 
 	/**
@@ -206,10 +208,16 @@ class Documents_Manager {
 				$post_type = get_post_type( $post_id );
 			}
 
+			$doc_type = 'post';
+
 			if ( isset( $this->cpt[ $post_type ] ) ) {
 				$doc_type = $this->cpt[ $post_type ];
-			} else {
-				$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+			}
+
+			$meta_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+
+			if ( $meta_type && $this->types[ $meta_type ] ) {
+				$doc_type = $meta_type;
 			}
 
 			$doc_type_class = $this->get_document_type( $doc_type );
@@ -351,6 +359,26 @@ class Documents_Manager {
 		$document->save_template_type();
 
 		return $document;
+	}
+
+	/**
+	 *
+	 *
+	 * @param array $actions
+	 * @param \WP_Post $post
+	 *
+	 * @return array
+	 */
+	public function post_row_actions( $actions, $post ) {
+		$document = $this->get( $post->ID );
+
+		if ( ! $document ) {
+			return $actions;
+		}
+
+		$actions = $document->filter_admin_row_actions( $actions, $post );
+
+		return $actions;
 	}
 
 	/**
