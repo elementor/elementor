@@ -10,6 +10,7 @@ const setPanelSelectedElement = ( elementor, category, name ) => {
 };
 
 function addWidget( category, widgetName ) {
+	cy.get( '#elementor-panel-header-add-button' ).click();
 	cy.window().then( ( win ) => {
 		const previewView = win.elementor.getPreviewView(),
 			firstSectionModel = previewView.collection.first(),
