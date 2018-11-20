@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 
-describe( 'test the hide functionality of the navigator', () => {
-	it( 'should hide the elementor in when hide in mobile is activated', () => {
+describe( 'Test the hide functionality of the navigator', () => {
+	it( 'Should hide the elementor in when hide in mobile is activated', () => {
 		cy.addElementorPage();
 		cy.addWidget( 'basic', 'heading' );
 		cy.get( '#elementor-preview-iframe' ).then( ( $iframe ) => {
