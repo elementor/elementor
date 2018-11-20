@@ -18,6 +18,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Icons extends Control_Base_Multiple {
 
 	/**
+	 * Tabs.
+	 *
+	 * Holds the list of all the tabs.
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @var array
+	 */
+	private static $tabs;
+
+	/**
 	 * Get media control type.
 	 *
 	 * Retrieve the control type, in this case `media`.
@@ -95,6 +107,20 @@ class Control_Icons extends Control_Base_Multiple {
 		<?php
 	}
 
+	private static function init_tabs() {
+		self::$tabs = [
+			'fontawesome5' => __( 'FontAwesome', 'elementor' ),
+		];
+	}
+
+	public static function get_icon_manager_tabs() {
+		if ( ! self::$tabs ) {
+			self::init_tabs();
+		}
+		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', [] );
+		return array_merge( self::$tabs, $additional_tabs );
+	}
+
 	/**
 	 * Get media control default settings.
 	 *
@@ -114,15 +140,5 @@ class Control_Icons extends Control_Base_Multiple {
 				'returnType' => 'object',
 			],
 		];
-	}
-
-	public function on_elementor_editor_init() {
-		Plugin::elementor()->common->add_template( __DIR__ . '/views/panel-template.php' );
-	}
-
-	public function __construct() {
-		parent::__construct();
-
-		add_action( 'elementor/editor/init', [ $this, 'on_elementor_editor_init' ] );
 	}
 }

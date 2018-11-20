@@ -1070,6 +1070,7 @@ class Editor {
 			'templates',
 			'navigator',
 			'hotkeys',
+			'icon-manager',
 		];
 
 		foreach ( $template_names as $template_name ) {
