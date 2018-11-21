@@ -140,21 +140,8 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 		var outputCssProperty;
 
 		try {
-			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(.+?) *)?}}/g, function( originalPhrase, controlName, placeholder, fallbackValue ) {
-				var parserControl = control,
-					valueToInsert = value;
-
-				if ( controlName ) {
-					parserControl = _.findWhere( controls, { name: controlName } );
-
-					if ( ! parserControl ) {
-						return '';
-					}
-
-					valueToInsert = valueCallback( parserControl );
-				}
-
-				var parsedValue = elementor.getControlView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
+			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, function( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) {
+				var parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, placeholder, controlName );
 
 				if ( ! parsedValue && 0 !== parsedValue ) {
 					if ( fallbackValue ) {
@@ -165,7 +152,7 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 						if ( stringValueMatches ) {
 							parsedValue = stringValueMatches[ 2 ];
 						} else if ( ! isFinite( parsedValue ) ) {
-							throw new SyntaxError( `Unrecognized value ${ parsedValue }` );
+							parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, fallbackValue, fallbackControlName );
 						}
 					}
 
@@ -177,10 +164,6 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 				return parsedValue;
 			} );
 		} catch ( e ) {
-			if ( e instanceof Error ) {
-				throw e;
-			}
-
 			return;
 		}
 
@@ -237,6 +220,20 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 
 		stylesheet.addRules( selector, outputCssProperty, query );
 	} );
+};
+
+ControlsCSSParser.parsePropertyPlaceholder = function( control, value, controls, valueCallback, placeholder, parserControlName ) {
+	if ( parserControlName ) {
+		control = _.findWhere( controls, { name: parserControlName } );
+
+		if ( ! control ) {
+			return '';
+		}
+
+		value = valueCallback( control );
+	}
+
+	return elementor.getControlView( control.type ).getStyleValue( placeholder, value, control );
 };
 
 module.exports = ControlsCSSParser;
