@@ -63,7 +63,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 			return ''; // invalid
 		}
 
-		return controlValue[ placeholder ];
+		return controlValue[ placeholder.toLowerCase() ];
 	},
 } );
 
