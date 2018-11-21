@@ -755,7 +755,7 @@ class Widget_Video extends Widget_Base {
 		$video_url = $settings[ $settings['video_type'] . '_url' ];
 
 		if ( in_array( $settings['video_type'], $this::hosted_and_external ) ) {
-			$video_url = $this->get_hosted_video_url( $settings['video_type'] );
+			$video_url = $this->get_video_url( $settings['video_type'] );
 		}
 
 		if ( empty( $video_url ) ) {
@@ -765,7 +765,7 @@ class Widget_Video extends Widget_Base {
 		if ( in_array( $settings['video_type'], $this::hosted_and_external ) ) {
 			ob_start();
 
-			$this->render_hosted_video( $settings['video_type'] );
+			$this->render_video( $settings['video_type'] );
 
 			$video_html = ob_get_clean();
 		} else {
@@ -817,8 +817,9 @@ class Widget_Video extends Widget_Base {
 						],
 					];
 
-					if ( 'hosted' === $settings['video_type'] ) {
-						$lightbox_options['videoParams'] = $this->get_hosted_params();
+					if ( in_array( $settings['video_type'], $this::hosted_and_external ) ) {
+						$lightbox_options['videoParams'] = $this->get_player_params();
+						$lightbox_options['videoType'] = 'hosted'; //also for 'external'
 					}
 
 					$this->add_render_attribute( 'image-overlay', [
@@ -982,7 +983,7 @@ class Widget_Video extends Widget_Base {
 		return $embed_options;
 	}
 
-	private function get_hosted_params() {
+	private function get_player_params() {
 		$settings = $this->get_settings_for_display();
 
 		$video_params = [];
@@ -1008,7 +1009,7 @@ class Widget_Video extends Widget_Base {
 		return $video_params;
 	}
 
-	private function get_hosted_video_url( $source_type ) {
+	private function get_video_url( $source_type ) {
 		$settings = $this->get_settings_for_display();
 
 		$video_source = $source_type . '_url';
@@ -1032,10 +1033,10 @@ class Widget_Video extends Widget_Base {
 		return $video_url;
 	}
 
-	private function render_hosted_video( $source_type ) {
-		$video_params = $this->get_hosted_params();
+	private function render_video( $source_type ) {
+		$video_params = $this->get_player_params();
 
-		$video_url = $this->get_hosted_video_url( $source_type );
+		$video_url = $this->get_video_url( $source_type );
 		?>
 		<video class="elementor-video" src="<?php echo esc_url( $video_url ); ?>" <?php echo Utils::render_html_attributes( $video_params ); ?>></video>
 		<?php
