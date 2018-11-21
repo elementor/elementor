@@ -999,7 +999,9 @@ class Widget_Video extends Widget_Base {
 			return '';
 		}
 
-		$video_url .= '#t=';
+		if ( $settings['start'] || $settings['end'] ) {
+			$video_url .= '#t=';
+		}
 
 		if ( $settings['start'] ) {
 			$video_url .= $settings['start'];
