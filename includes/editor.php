@@ -207,7 +207,9 @@ class Editor {
 			$post_id = $this->_post_id;
 		}
 
-		if ( ! User::is_current_user_can_edit( $post_id ) ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document || ! $document->is_editable_by_current_user() ) {
 			return false;
 		}
 
