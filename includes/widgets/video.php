@@ -190,7 +190,6 @@ class Widget_Video extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 					'categories' => [
-						TagsModule::POST_META_CATEGORY,
 						TagsModule::MEDIA_CATEGORY,
 					],
 				],
