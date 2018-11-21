@@ -97,8 +97,9 @@ class Documents_Manager {
 		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
 		add_action( 'elementor/init', [ $this, 'register_default_types' ], 11 );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-		add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
-		add_filter( 'page_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
+		add_filter( 'post_row_actions', [ $this, 'filter_post_row_actions' ], 10, 2 );
+		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 10, 2 );
+		add_filter( 'user_has_cap', [ $this, 'remove_user_edit_cap' ], 10, 3 );
 	}
 
 	/**
@@ -362,21 +363,62 @@ class Documents_Manager {
 	}
 
 	/**
+	 * Remove user edit capabilities if document is not editable.
 	 *
+	 * Filters the user capabilities to disable editing in admin.
+	 *
+	 * @param array $allcaps An array of all the user's capabilities.
+	 * @param array $caps    Actual capabilities for meta capability.
+	 * @param array $args    Optional parameters passed to has_cap(), typically object ID.
+	 *
+	 * @return array
+	 */
+	public function remove_user_edit_cap( $allcaps, $caps, $args ) {
+		global $pagenow;
+
+		if ( ! in_array( $pagenow, [ 'post.php', 'edit.php' ], true ) ) {
+			return $allcaps;
+		}
+
+		$capability = $args[0];
+
+		if ( 'edit_post' !== $capability ) {
+			return $allcaps;
+		}
+
+		if ( empty( $args[2] ) ) {
+			return $allcaps;
+		}
+
+		$post_id = $args[2];
+
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return $allcaps;
+		}
+
+		$allcaps[ $caps[0] ] = $document::get_property( 'is_editable' );
+
+		return $allcaps;
+	}
+
+	/**
+	 * Filter Post Row Actions.
+	 *
+	 * Let the Document to filter the array of row action links on the Posts list table.
 	 *
 	 * @param array $actions
 	 * @param \WP_Post $post
 	 *
 	 * @return array
 	 */
-	public function post_row_actions( $actions, $post ) {
+	public function filter_post_row_actions( $actions, $post ) {
 		$document = $this->get( $post->ID );
 
-		if ( ! $document ) {
-			return $actions;
+		if ( $document ) {
+			$actions = $document->filter_admin_row_actions( $actions );
 		}
-
-		$actions = $document->filter_admin_row_actions( $actions, $post );
 
 		return $actions;
 	}

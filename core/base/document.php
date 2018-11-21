@@ -321,11 +321,6 @@ abstract class Document extends Controls_Stack {
 		return $document;
 	}
 
-	public function print_admin_column_type() {
-		$admin_filter_url = admin_url( '/edit.php?post_type=elementor_library&elementor_library_type=' . $this->get_name() );
-		printf( '<a href="%s">%s</a>', $admin_filter_url, $this->get_title() );
-	}
-
 	/**
 	 * Add/Remove edit link in dashboard.
 	 *
@@ -340,9 +335,7 @@ abstract class Document extends Controls_Stack {
 	 * @return array An updated array of row action links.
 	 */
 	public function filter_admin_row_actions( $actions ) {
-		if ( ! $this->is_editable_by_current_user() ) {
-			unset( $actions['edit'] );
-		} elseif ( $this->is_built_with_elementor() ) {
+		if ( $this->is_built_with_elementor() && $this->is_editable_by_current_user() ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%1$s">%2$s</a>',
 				$this->get_edit_url(),

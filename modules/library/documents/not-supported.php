@@ -70,4 +70,10 @@ class Not_Supported extends Library_Document {
 	public function print_admin_column_type() {
 		echo self::get_title();
 	}
+
+	public function filter_admin_row_actions( $actions ) {
+		unset( $actions['view'] );
+
+		return $actions;
+	}
 }
