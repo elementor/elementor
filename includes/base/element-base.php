@@ -594,15 +594,7 @@ abstract class Element_Base extends Controls_Stack {
 			return '';
 		}
 
-		$render_attributes = $this->render_attributes[ $element ];
-
-		$attributes = [];
-
-		foreach ( $render_attributes as $attribute_key => $attribute_values ) {
-			$attributes[] = sprintf( '%1$s="%2$s"', $attribute_key, esc_attr( implode( ' ', $attribute_values ) ) );
-		}
-
-		return implode( ' ', $attributes );
+		return Utils::render_html_attributes( $this->render_attributes[ $element ] );
 	}
 
 	/**
@@ -628,14 +620,6 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 */
 	public function print_element() {
-		ob_start();
-		$this->_print_content();
-		$content = ob_get_clean();
-
-		if ( empty( $content ) && ! $this->should_print_empty() ) {
-			return;
-		}
-
 		$element_type = $this->get_type();
 
 		/**
@@ -662,14 +646,34 @@ abstract class Element_Base extends Controls_Stack {
 		 */
 		do_action( "elementor/frontend/{$element_type}/before_render", $this );
 
-		$this->_add_render_attributes();
+		ob_start();
+		$this->_print_content();
+		$content = ob_get_clean();
 
-		$this->before_render();
-		echo $content;
-		$this->after_render();
+		$should_render = ( ! empty( $content ) || $this->should_print_empty() );
 
-		$this->enqueue_scripts();
-		$this->enqueue_styles();
+		/**
+		 * Should be the frontend elementor rendered
+		 *
+		 * Filters if the element should be rendered on frontend.
+		 *
+		 * @since 2.3.3
+		 *
+		 * @param bool true The element.
+		 * @param Element_Base $this The element.
+		 */
+		$should_render = apply_filters( "elementor/frontend/{$element_type}/should_render", $should_render, $this );
+
+		if ( $should_render ) {
+			$this->_add_render_attributes();
+
+			$this->before_render();
+			echo $content;
+			$this->after_render();
+
+			$this->enqueue_scripts();
+			$this->enqueue_styles();
+		}
 
 		/**
 		 * After frontend element render.

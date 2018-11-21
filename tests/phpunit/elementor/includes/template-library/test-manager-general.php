@@ -36,29 +36,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$this->assertFalse( self::$manager->get_source( 'invalid source' ) );
 	}
 
-	public function test_should_return_templates() {
-		$templates = self::$manager->get_templates();
-		$this->assertGreaterThan( 0, count( $templates ) );
-		$template_structure = [
-			'template_id',
-			'source',
-			'type',
-			'title',
-			'thumbnail',
-			'hasPageSettings',
-			'tags',
-			'url',
-		];
-
-		$this->assertArrayHaveKeys( $template_structure, $templates[0] );
-	}
-
-	public function test_should_return_library_data() {
-		$ret = self::$manager->get_library_data( [] );
-
-		$this->assertNotEmpty( $ret['templates'] );
-	}
-
 	public function test_should_return_wp_error_arguments_not_specified_from_save_template() {
 		$this->assertWPError(
 			self::$manager->save_template( [ 'post_id' => $this->fake_post_id ] ), 'arguments_not_specified'

@@ -264,7 +264,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 }, {
 	// Static methods
-	getStyleValue: function( placeholder, controlValue ) {
+	getStyleValue: function( placeholder, controlValue, controlData ) {
+		if ( 'DEFAULT' === placeholder ) {
+			return controlData.default;
+		}
+
 		return controlValue;
 	},
 
