@@ -194,10 +194,23 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @since 2.0.6
+	 * @deprecated 2.4.0 Use `Document::get_container_attributes` instead
 	 * @access public
 	 */
 	public function get_container_classes() {
-		return 'elementor elementor-' . $this->get_main_id();
+		return '';
+	}
+
+	public function get_container_attributes() {
+		$attributes = [
+			'data-elementor-type' => $this->get_name(),
+			'class' => 'elementor elementor-' . $this->get_main_id(),
+		];
+
+		// TODO: BC since 2.4.0
+		$attributes['class'] .= ' ' . $this->get_container_classes();
+
+		return $attributes;
 	}
 
 	/**
@@ -679,7 +692,7 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 		?>
-		<div class="<?php echo esc_attr( $this->get_container_classes() ); ?>">
+		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
 			<div class="elementor-inner">
 				<div class="elementor-section-wrap">
 					<?php $this->print_elements( $elements_data ); ?>
