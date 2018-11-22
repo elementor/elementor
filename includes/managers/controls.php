@@ -727,7 +727,7 @@ class Controls_Manager {
 	 * @access public
 	 *
 	 * @param string $stack_id   Stack ID.
-	 * @param string $control_id The ID of the control to remove.
+	 * @param array|string $control_id The ID of the control to remove.
 	 *
 	 * @return bool|\WP_Error True if the stack was removed, False otherwise.
 	 */
