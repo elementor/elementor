@@ -190,7 +190,6 @@ class Widget_Video extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 					'categories' => [
-						TagsModule::POST_META_CATEGORY,
 						TagsModule::MEDIA_CATEGORY,
 					],
 				],
@@ -999,7 +998,9 @@ class Widget_Video extends Widget_Base {
 			return '';
 		}
 
-		$video_url .= '#t=';
+		if ( $settings['start'] || $settings['end'] ) {
+			$video_url .= '#t=';
+		}
 
 		if ( $settings['start'] ) {
 			$video_url .= $settings['start'];
