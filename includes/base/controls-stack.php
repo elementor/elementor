@@ -461,7 +461,7 @@ abstract class Controls_Stack extends Base_Object {
 			$section_controls = $this->get_section_controls( $control_id );
 
 			foreach ( $section_controls as $section_control_id => $section_control ) {
-				$this->update_control( $section_control_id, $section_args );
+				$this->update_control( $section_control_id, $section_args, $options );
 			}
 		}
 
