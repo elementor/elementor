@@ -218,7 +218,7 @@ jobs:
         command: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
           phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-          phpcs -p -s -n . --standard=./ruleset.xml --extensions=php  --parallel=16 --report=gitblame --report-junit=/root/junit/phpcs.xml
+          phpcs -p -s -n . --standard=./ruleset.xml --extensions=php --report=gitblame --report-junit=/root/junit/phpcs.xml
     - store_test_results:
         path: ~/junit
     - store_artifacts:
