@@ -311,6 +311,10 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_rating() {
 		$settings = $this->get_settings_for_display();
 		$rating_scale = (int) $settings['rating_scale'];
@@ -319,6 +323,10 @@ class Widget_Star_Rating extends Widget_Base {
 		return [ $rating, $rating_scale ];
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function render_stars( $icon ) {
 		$rating_data = $this->get_rating();
 		$rating = $rating_data[0];
@@ -338,6 +346,10 @@ class Widget_Star_Rating extends Widget_Base {
 		return $stars_html;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$rating_data = $this->get_rating();
@@ -377,6 +389,10 @@ class Widget_Star_Rating extends Widget_Base {
 		<?php
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function _content_template() {
 		?>
 		<#

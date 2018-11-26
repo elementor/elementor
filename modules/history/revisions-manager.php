@@ -60,7 +60,7 @@ class Revisions_Manager {
 	}
 
 	/**
-	 * @since  2.0.0
+	 * @since 2.0.0
 	 * @access public
 	 * @static
 	 *
@@ -257,7 +257,7 @@ class Revisions_Manager {
 	}
 
 	/**
-	 * @since  2.3.0
+	 * @since 2.3.0
 	 * @access public
 	 * @static
 	 *
@@ -389,6 +389,11 @@ class Revisions_Manager {
 		return $settings;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 * @static
+	 */
 	public static function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'get_revision_data', [ __CLASS__, 'ajax_get_revision_data' ] );
 		$ajax->register_ajax_action( 'delete_revision', [ __CLASS__, 'ajax_delete_revision' ] );

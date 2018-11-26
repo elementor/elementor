@@ -145,7 +145,7 @@ class Frontend extends App {
 	 *
 	 * Retrieve the module name.
 	 *
-	 * @since  2.3.0
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return string Module name.
@@ -195,6 +195,8 @@ class Frontend extends App {
 	}
 
 	/**
+	 * @since 2.0.12
+	 * @access public
 	 * @param string|array $class
 	 */
 	public function add_body_class( $class ) {
@@ -988,10 +990,18 @@ class Frontend extends App {
 		}
 	}
 
+	/**
+	 * @since 2.0.9
+	 * @access public
+	 */
 	public function has_elementor_in_page() {
 		return $this->_has_elementor_in_page;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_init_settings() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
