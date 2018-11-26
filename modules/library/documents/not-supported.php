@@ -67,6 +67,10 @@ class Not_Supported extends Library_Document {
 		return __( 'Not Supported', 'elementor' );
 	}
 
+	public function save_template_type() {
+		// Do nothing.
+	}
+
 	public function print_admin_column_type() {
 		echo self::get_title();
 	}
