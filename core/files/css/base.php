@@ -156,6 +156,10 @@ abstract class Base extends Base_File {
 		$this->update_meta( $meta );
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 */
 	public function write() {
 		if ( $this->use_external_file() ) {
 			parent::write();

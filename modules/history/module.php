@@ -65,6 +65,10 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function add_templates() {
 		Plugin::$instance->common->add_template( __DIR__ . '/views/history-panel-template.php' );
 		Plugin::$instance->common->add_template( __DIR__ . '/views/revisions-panel-template.php' );

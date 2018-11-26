@@ -19,7 +19,7 @@ class Admin extends App {
 	 *
 	 * Retrieve the module name.
 	 *
-	 * @since  2.3.0
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return string Module name.
@@ -28,6 +28,10 @@ class Admin extends App {
 		return 'admin';
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 */
 	public function maybe_redirect_to_getting_started() {
 		if ( ! get_transient( 'elementor_activation_redirect' ) ) {
 			return;
@@ -641,10 +645,17 @@ class Admin extends App {
 		die;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function add_new_template_template() {
 		Plugin::$instance->common->add_template( ELEMENTOR_PATH . 'includes/admin-templates/new-template.php' );
 	}
 
+	/**
+	 * @access public
+	 */
 	public function enqueue_new_template_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
@@ -657,6 +668,9 @@ class Admin extends App {
 		);
 	}
 
+	/**
+	 * @access public
+	 */
 	public function init_new_template() {
 		if ( 'edit-elementor_library' !== get_current_screen()->id ) {
 			return;
@@ -707,6 +721,10 @@ class Admin extends App {
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_init_settings() {
 		$settings = [
 			'home_url' => home_url(),
