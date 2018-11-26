@@ -157,18 +157,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 	Tabs.init();
 </script>
  */
+$tabs_list = [];
+foreach ( Control_Icons::get_icon_manager_tabs() as $tab_key => $tab_label ) {
+	$icon_type_handler = Control_Icons::get_type_handler( $tab_key );
+
+	$tabs_list[ $tab_key ] = [
+		'label' => $tab_label,
+		'key' => $tab_key,
+		'settings' => $icon_type_handler ? $icon_type_handler::get_settings() : [],
+	];
+}
 ?>
 <script type="text/template" id="tmpl-elementor-icons-manager">
-    <div id="elementor-icon-manager__content">
-        <div class="elementor-icon-manager-tabs">
-            <ul class="elementor-icon-manager-tabs-list">
-                <?php foreach ( Control_Icons::get_icon_manager_tabs() as $tab_key => $tab_label ) : ?>
-                    <li data-tab="<?php echo $tab_key; ?>"><?php echo $tab_label; ?></li>
-                <?php endforeach; ?>
-            </ul>
-            <div class="elementor-icon-manager-tabs-content">
-                <div class="default">123456</div>
-            </div>
-        </div>
-    </div>
+	<div id="elementor-icon-manager__content">
+		<div class="elementor-icon-manager-tabs">
+			<ul class="elementor-icon-manager-tabs-list">
+				<?php foreach ( $tabs_list as $tab_key => $tab ) : ?>
+					<li data-tab="<?php echo $tab_key; ?>"><?php echo $tab['label']; ?></li>
+				<?php endforeach; ?>
+			</ul>
+			<div class="elementor-icon-manager-tabs-content">
+				<div class="default" data-settings=""></div>
+			</div>
+		</div>
+	</div>
 </script>

@@ -121,6 +121,10 @@ class Control_Icons extends Control_Base_Multiple {
 		return array_merge( self::$tabs, $additional_tabs );
 	}
 
+	public static function get_type_handler( $handler_name ) {
+		return false;
+	}
+
 	/**
 	 * Get media control default settings.
 	 *
