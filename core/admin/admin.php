@@ -195,33 +195,6 @@ class Admin extends App {
 	}
 
 	/**
-	 * Add edit link in dashboard.
-	 *
-	 * Add an edit link to the post/page action links on the post/pages list table.
-	 *
-	 * Fired by `post_row_actions` and `page_row_actions` filters.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param array    $actions An array of row action links.
-	 * @param \WP_Post $post    The post object.
-	 *
-	 * @return array An updated array of row action links.
-	 */
-	public function add_edit_in_dashboard( $actions, \WP_Post $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
-			$actions['edit_with_elementor'] = sprintf(
-				'<a href="%1$s">%2$s</a>',
-				Utils::get_edit_link( $post->ID ),
-				__( 'Edit with Elementor', 'elementor' )
-			);
-		}
-
-		return $actions;
-	}
-
-	/**
 	 * Add Elementor post state.
 	 *
 	 * Adds a new "Elementor" post state to the post table.
@@ -729,9 +702,6 @@ class Admin extends App {
 
 		add_action( 'edit_form_after_title', [ $this, 'print_switch_mode_button' ] );
 		add_action( 'save_post', [ $this, 'save_post' ] );
-
-		add_filter( 'page_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
-		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
 
 		add_filter( 'display_post_states', [ $this, 'add_elementor_post_state' ], 10, 2 );
 
