@@ -36,7 +36,7 @@ trait Elementor_Test {
 	 */
 	protected static function elementor() {
 		if ( ! self::$elementor ) {
-			self::$elementor = \Elementor\Plugin::$instance;
+			self::$elementor = \Elementor\Plugin::instance();
 		}
 
 		return self::$elementor;
