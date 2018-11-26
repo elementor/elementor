@@ -990,10 +990,27 @@ class Frontend extends App {
 		}
 	}
 
+	/**
+	 * Has Elementor In Page
+	 *
+	 * Determine whether the current page is using Elementor.
+	 * @access public
+	 *
+	 * @return bool
+	 */
 	public function has_elementor_in_page() {
 		return $this->_has_elementor_in_page;
 	}
 
+	/**
+	 * Get Init Settings
+	 *
+	 * Used to define the default/initial settings of the object. Inheriting classes may implement this method to define
+	 * their own default/initial settings.
+	 *
+	 * @access protected
+	 * @return array
+	 */
 	protected function get_init_settings() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
@@ -1060,6 +1077,18 @@ class Frontend extends App {
 		$this->content_removed_filters = [];
 	}
 
+	/**
+	 * Process More Tag
+	 *
+	 * Respect the native WP (<!--more-->) tag
+	 *
+	 * @access private
+	 * @since 2.0.4
+	 *
+	 * @param $content
+	 *
+	 * @return string
+	 */
 	private function process_more_tag( $content ) {
 		$post = get_post();
 		$content = str_replace( '&lt;!--more--&gt;', '<!--more-->', $content );
