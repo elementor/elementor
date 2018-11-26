@@ -947,6 +947,10 @@ class Editor {
 		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 */
 	public function filter_wp_link_query_args( $query ) {
 		$library_cpt_key = array_search( Source_Local::CPT, $query['post_type'], true );
 		if ( false !== $library_cpt_key ) {
@@ -956,6 +960,10 @@ class Editor {
 		return $query;
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 */
 	public function filter_wp_link_query( $results ) {
 		if ( isset( $_POST['editor'] ) && 'elementor' === $_POST['editor'] ) {
 			$post_type_object = get_post_type_object( 'post' );

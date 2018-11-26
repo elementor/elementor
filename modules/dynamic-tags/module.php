@@ -134,7 +134,7 @@ class Module extends BaseModule {
 	 *
 	 * Add all the available dynamic tags.
 	 *
-	 * @since  2.0.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @param Manager $dynamic_tags

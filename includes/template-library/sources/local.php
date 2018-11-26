@@ -74,6 +74,9 @@ class Source_Local extends Source_Base {
 	private $post_type_object;
 
 	/**
+	 * @since 2.3.0
+	 * @access public
+	 * @static
 	 * @return array
 	 */
 	public static function get_template_types() {
@@ -1343,6 +1346,10 @@ class Source_Local extends Source_Base {
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 	}
 
+	/**
+	 * @since 2.0.6
+	 * @access public
+	 */
 	public function admin_columns_content( $column_name, $post_id ) {
 		if ( 'elementor_library_type' === $column_name ) {
 			/** @var Document $document */
@@ -1355,6 +1362,10 @@ class Source_Local extends Source_Base {
 		}
 	}
 
+	/**
+	 * @since 2.0.6
+	 * @access public
+	 */
 	public function admin_columns_headers( $posts_columns ) {
 		// Replace original column that bind to the taxonomy - with another column.
 		unset( $posts_columns['taxonomy-elementor_library_type'] );
