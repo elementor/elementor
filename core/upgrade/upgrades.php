@@ -1,5 +1,7 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Upgrade;
+
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,96 +18,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Upgrades {
 
 	/**
-	 * Add actions.
-	 *
-	 * Hook into WordPress actions and launch Elementor upgrades.
-	 *
-	 * @static
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public static function add_actions() {
-		add_action( 'init', [ __CLASS__, 'init' ], 20 );
-	}
-
-	/**
-	 * Init.
-	 *
-	 * Initialize Elementor upgrades.
-	 *
-	 * Fired by `init` action.
-	 *
-	 * @static
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public static function init() {
-		$elementor_version = get_option( 'elementor_version' );
-
-		// Normal init.
-		if ( ELEMENTOR_VERSION === $elementor_version ) {
-			return;
-		}
-
-		self::check_upgrades( $elementor_version );
-
-		Plugin::$instance->files_manager->clear_cache();
-
-		update_option( 'elementor_version', ELEMENTOR_VERSION );
-	}
-
-	/**
-	 * Check upgrades.
-	 *
-	 * Checks whether a given Elementor version needs to be upgraded.
-	 *
-	 * If an upgrade required for a specific Elementor version, it will update
-	 * the `elementor_upgrades` option in the database.
-	 *
-	 * @static
-	 * @since 1.0.10
-	 * @access private
-	 *
-	 * @param string $elementor_version
-	 */
-	private static function check_upgrades( $elementor_version ) {
-		// It's a new install.
-		if ( ! $elementor_version ) {
-			return;
-		}
-
-		$elementor_upgrades = get_option( 'elementor_upgrades', [] );
-
-		$upgrades = [
-			'0.3.2' => 'upgrade_v032',
-			'0.9.2' => 'upgrade_v092',
-			'0.11.0' => 'upgrade_v0110',
-			'2.0.0' => 'upgrade_v200',
-			'2.0.1' => 'upgrade_v201',
-			'2.0.10' => 'upgrade_v2010',
-			'2.1.0' => 'upgrade_v210',
-			'2.3.0' => 'upgrade_v230',
-		];
-
-		foreach ( $upgrades as $version => $function ) {
-			if ( version_compare( $elementor_version, $version, '<' ) && ! isset( $elementor_upgrades[ $version ] ) ) {
-				self::$function();
-				$elementor_upgrades[ $version ] = true;
-				update_option( 'elementor_upgrades', $elementor_upgrades );
-			}
-		}
-	}
-
-	/**
 	 * Upgrade Elementor 0.3.2
 	 *
 	 * Change the image widget link URL, setting is to `custom` link.
 	 *
 	 * @since 2.0.0
 	 * @static
-	 * @access private
+	 * @access public
 	 */
-	private static function upgrade_v032() {
+	public static function v0_3_2() {
 		global $wpdb;
 
 		$post_ids = $wpdb->get_col(
@@ -150,9 +71,9 @@ class Upgrades {
 	 *
 	 * @since 2.0.0
 	 * @static
-	 * @access private
+	 * @access public
 	 */
-	private static function upgrade_v092() {
+	public static function v0_9_2() {
 		global $wpdb;
 
 		// Fix Icon/Icon Box Widgets padding.
@@ -203,9 +124,9 @@ class Upgrades {
 	 *
 	 * @since 2.0.0
 	 * @static
-	 * @access private
+	 * @access public
 	 */
-	private static function upgrade_v0110() {
+	public static function v0_11_0() {
 		global $wpdb;
 
 		// Fix Button widget to new sizes options.
@@ -262,9 +183,9 @@ class Upgrades {
 	 *
 	 * @static
 	 * @since 2.0.0
-	 * @access private
+	 * @access public
 	 */
-	private static function upgrade_v200() {
+	public static function v2_0_0() {
 		global $wpdb;
 
 		$posts = $wpdb->get_results(
@@ -295,9 +216,9 @@ class Upgrades {
 	 *
 	 * @since 2.0.2
 	 * @static
-	 * @access private
+	 * @access public
 	 */
-	private static function upgrade_v201() {
+	public static function v2_0_1() {
 		global $wpdb;
 
 		$posts = $wpdb->get_results(
@@ -332,9 +253,9 @@ class Upgrades {
 	 *
 	 * @since 2.0.10
 	 * @static
-	 * @access private
+	 * @access public
 	 */
-	private static function upgrade_v2010() {
+	public static function v2_0_10() {
 		global $wpdb;
 
 		$posts = $wpdb->get_results(
@@ -361,7 +282,7 @@ class Upgrades {
 		}
 	}
 
-	private static function upgrade_v210() {
+	public static function v2_1_0() {
 		global $wpdb;
 
 		// upgrade `video` widget settings (merge providers).
@@ -432,12 +353,7 @@ class Upgrades {
 		} // End foreach().
 	}
 
-	private static function upgrade_v230() {
-		self::upgrade_v230_widget_image();
-		self::upgrade_v230_template_type();
-	}
-
-	private static function upgrade_v230_widget_image() {
+	public static function v2_3_0_widget_image() {
 		global $wpdb;
 
 		// upgrade `video` widget settings (merge providers).
@@ -508,7 +424,7 @@ class Upgrades {
 		} // End foreach().
 	}
 
-	private static function upgrade_v230_template_type() {
+	public static function v2_3_0_template_type() {
 		global $wpdb;
 
 		$post_ids = $wpdb->get_col(

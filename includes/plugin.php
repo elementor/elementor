@@ -9,6 +9,7 @@ use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Files\Manager as Files_Manager;
 use Elementor\Core\Modules_Manager;
+use Elementor\Core\Upgrade\Updater;
 use Elementor\Debug\Debug;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
@@ -533,7 +534,7 @@ class Plugin {
 		$this->revisions_manager = new Revisions_Manager();
 
 		User::init();
-		Upgrades::add_actions();
+		Updater::init();
 		Api::init();
 		Tracker::init();
 
