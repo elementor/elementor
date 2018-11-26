@@ -832,6 +832,8 @@ class Frontend extends App {
 
 		$content = ob_get_clean();
 
+		$content = $this->process_more_tag( $content );
+
 		/**
 		 * Frontend content.
 		 *
@@ -1066,5 +1068,34 @@ class Frontend extends App {
 		}
 
 		$this->content_removed_filters = [];
+	}
+
+	private function process_more_tag( $content ) {
+		$post = get_post();
+		$content = str_replace( '&lt;!--more--&gt;', '<!--more-->', $content );
+		$parts = get_extended( $content );
+		if ( empty( $parts['extended'] ) ) {
+			return $content;
+		}
+
+		if ( is_singular() ) {
+			return $parts['main'] . '<div id="more-' . $post->ID . '"></div>' . $parts['extended'];
+		}
+
+		$more_link_text = sprintf(
+			'<span aria-label="%1$s">%2$s</span>',
+			sprintf(
+				/* translators: %s: Name of current post */
+				__( 'Continue reading %s' ),
+				the_title_attribute( [
+					'echo' => false,
+				] )
+			),
+			__( '(more&hellip;)' )
+		);
+
+		$more_link_text = apply_filters( 'the_content_more_link', sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text ), $more_link_text );
+
+		return force_balance_tags( $parts['main'] ) . $more_link_text;
 	}
 }
