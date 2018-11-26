@@ -183,6 +183,17 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'inset_from_url',
+			[
+				'label' => __( 'Insert From URL', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'video_type' => 'hosted',
+				],
+			]
+		);
+
+		$this->add_control(
 			'hosted_url',
 			[
 				'label' => __( 'URL', 'elementor' ),
@@ -190,13 +201,29 @@ class Widget_Video extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 					'categories' => [
-						TagsModule::POST_META_CATEGORY,
 						TagsModule::MEDIA_CATEGORY,
 					],
 				],
 				'media_type' => 'video',
 				'condition' => [
 					'video_type' => 'hosted',
+					'inset_from_url!' => 'yes',
+				],
+			]
+		);
+
+		$this->add_control(
+			'external_url',
+			[
+				'label' => __( 'URL', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'media_type' => 'video',
+				'condition' => [
+					'video_type' => 'hosted',
+					'inset_from_url' => 'yes',
 				],
 			]
 		);
@@ -407,7 +434,7 @@ class Widget_Video extends Widget_Base {
 				'label_off' => __( 'Hide', 'elementor' ),
 				'label_on' => __( 'Show', 'elementor' ),
 				'condition' => [
-					'video_type' => 'hosted',
+					'video_type' => [ 'hosted' ],
 				],
 			]
 		);
@@ -418,7 +445,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Poster', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'condition' => [
-					'video_type' => 'hosted',
+					'video_type' => [ 'hosted' ],
 				],
 			]
 		);
@@ -475,7 +502,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
 					'show_image_overlay' => 'yes',
-					'video_type!' => 'hosted',
+					'video_type!' => [ 'hosted' ],
 				],
 			]
 		);
@@ -737,17 +764,16 @@ class Widget_Video extends Widget_Base {
 		$video_url = $settings[ $settings['video_type'] . '_url' ];
 
 		if ( 'hosted' === $settings['video_type'] ) {
-			$video_url = $this->get_hosted_video_url();
-		}
+			$from_media = empty( $settings['inset_from_url'] ) || 'yes' !== $settings['inset_from_url'] ? true : false;
+			$video_url = $this->get_hosted_video_url( $from_media );
 
-		if ( empty( $video_url ) ) {
-			return;
-		}
+			if ( empty( $video_url ) ) {
+				return;
+			}
 
-		if ( 'hosted' === $settings['video_type'] ) {
 			ob_start();
 
-			$this->render_hosted_video();
+			$this->render_hosted_video( $from_media );
 
 			$video_html = ob_get_clean();
 		} else {
@@ -990,16 +1016,18 @@ class Widget_Video extends Widget_Base {
 		return $video_params;
 	}
 
-	private function get_hosted_video_url() {
+	private function get_hosted_video_url( $from_media ) {
 		$settings = $this->get_settings_for_display();
 
-		$video_url = $settings['hosted_url']['url'];
+		$video_url = $from_media ? $settings['hosted_url']['url'] : $settings['external_url'];
 
 		if ( ! $video_url ) {
 			return '';
 		}
 
-		$video_url .= '#t=';
+		if ( $settings['start'] || $settings['end'] ) {
+			$video_url .= '#t=';
+		}
 
 		if ( $settings['start'] ) {
 			$video_url .= $settings['start'];
@@ -1012,10 +1040,10 @@ class Widget_Video extends Widget_Base {
 		return $video_url;
 	}
 
-	private function render_hosted_video() {
+	private function render_hosted_video( $from_media ) {
 		$video_params = $this->get_hosted_params();
 
-		$video_url = $this->get_hosted_video_url();
+		$video_url = $this->get_hosted_video_url( $from_media );
 		?>
 		<video class="elementor-video" src="<?php echo esc_url( $video_url ); ?>" <?php echo Utils::render_html_attributes( $video_params ); ?>></video>
 		<?php
