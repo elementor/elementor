@@ -661,7 +661,21 @@ abstract class Element_Base extends Controls_Stack {
 		$this->_print_content();
 		$content = ob_get_clean();
 
-		if ( ! empty( $content ) || $this->should_print_empty() ) {
+		$should_render = ( ! empty( $content ) || $this->should_print_empty() );
+
+		/**
+		 * Should be the frontend elementor rendered
+		 *
+		 * Filters if the element should be rendered on frontend.
+		 *
+		 * @since 2.3.3
+		 *
+		 * @param bool true The element.
+		 * @param Element_Base $this The element.
+		 */
+		$should_render = apply_filters( "elementor/frontend/{$element_type}/should_render", $should_render, $this );
+
+		if ( $should_render ) {
 			$this->_add_render_attributes();
 
 			$this->before_render();

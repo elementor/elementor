@@ -203,6 +203,9 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 			'popover' => [
 				'starter_name' => 'css_filter',
 				'starter_title' => _x( 'CSS Filters', 'Filter Control', 'elementor' ),
+				'settings' => [
+					'render_type' => 'ui',
+				],
 			],
 		];
 	}
