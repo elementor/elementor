@@ -24,6 +24,7 @@ ImageCarouselHandler = HandlerModule.extend( {
 		var elementSettings = this.getElementSettings(),
 			slidesToShow = +elementSettings.slides_to_show || 3,
 			isSingleSlide = 1 === slidesToShow,
+			defaultLGDevicesSlidesCount = isSingleSlide ? 1 : 2,
 			breakpoints = elementorFrontend.config.breakpoints;
 
 		var slickOptions = {
@@ -40,8 +41,8 @@ ImageCarouselHandler = HandlerModule.extend( {
 				{
 					breakpoint: breakpoints.lg,
 					settings: {
-						slidesToShow: +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 ),
-						slidesToScroll: +elementSettings.slides_to_scroll_tablet || ( isSingleSlide ? 1 : 2 ),
+						slidesToShow: +elementSettings.slides_to_show_tablet || defaultLGDevicesSlidesCount,
+						slidesToScroll: +elementSettings.slides_to_scroll_tablet || defaultLGDevicesSlidesCount,
 					},
 				},
 				{
@@ -57,7 +58,7 @@ ImageCarouselHandler = HandlerModule.extend( {
 		if ( isSingleSlide ) {
 			slickOptions.fade = 'fade' === elementSettings.effect;
 		} else {
-			slickOptions.slidesToScroll = +elementSettings.slides_to_scroll;
+			slickOptions.slidesToScroll = +elementSettings.slides_to_scroll || defaultLGDevicesSlidesCount;
 		}
 
 		this.elements.$carousel.slick( slickOptions );
