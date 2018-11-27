@@ -480,7 +480,7 @@ class Plugin {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'elementor/init' );
+		do_action( 'elementor/init', $this );
 	}
 
 	public function on_rest_api_init() {
