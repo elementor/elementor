@@ -341,7 +341,6 @@ class Widget_Tabs extends Widget_Base {
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
 						'data-tab' => $tab_count,
 						'role' => 'tab',
-						'href' => '',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					] );
 					?>

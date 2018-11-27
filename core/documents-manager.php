@@ -217,7 +217,7 @@ class Documents_Manager {
 
 			$meta_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 
-			if ( $meta_type && $this->types[ $meta_type ] ) {
+			if ( $meta_type && isset( $this->types[ $meta_type ] ) ) {
 				$doc_type = $meta_type;
 			}
 
