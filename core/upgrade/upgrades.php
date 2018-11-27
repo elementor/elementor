@@ -26,7 +26,7 @@ class Upgrades {
 	 * @static
 	 * @access public
 	 */
-	public static function v0_3_2() {
+	public static function _v_0_3_2() {
 		global $wpdb;
 
 		$post_ids = $wpdb->get_col(
@@ -73,7 +73,7 @@ class Upgrades {
 	 * @static
 	 * @access public
 	 */
-	public static function v0_9_2() {
+	public static function _v_0_9_2() {
 		global $wpdb;
 
 		// Fix Icon/Icon Box Widgets padding.
@@ -126,7 +126,7 @@ class Upgrades {
 	 * @static
 	 * @access public
 	 */
-	public static function v0_11_0() {
+	public static function _v_0_11_0() {
 		global $wpdb;
 
 		// Fix Button widget to new sizes options.
@@ -185,7 +185,7 @@ class Upgrades {
 	 * @since 2.0.0
 	 * @access public
 	 */
-	public static function v2_0_0() {
+	public static function _v_2_0_0() {
 		global $wpdb;
 
 		$posts = $wpdb->get_results(
@@ -218,7 +218,7 @@ class Upgrades {
 	 * @static
 	 * @access public
 	 */
-	public static function v2_0_1() {
+	public static function _v_2_0_1() {
 		global $wpdb;
 
 		$posts = $wpdb->get_results(
@@ -255,7 +255,7 @@ class Upgrades {
 	 * @static
 	 * @access public
 	 */
-	public static function v2_0_10() {
+	public static function _v_2_0_10() {
 		global $wpdb;
 
 		$posts = $wpdb->get_results(
@@ -282,7 +282,7 @@ class Upgrades {
 		}
 	}
 
-	public static function v2_1_0() {
+	public static function _v_2_1_0() {
 		global $wpdb;
 
 		// upgrade `video` widget settings (merge providers).
@@ -353,7 +353,7 @@ class Upgrades {
 		} // End foreach().
 	}
 
-	public static function v2_3_0_widget_image() {
+	public static function _v_2_3_0_widget_image() {
 		global $wpdb;
 
 		// upgrade `video` widget settings (merge providers).
@@ -424,7 +424,7 @@ class Upgrades {
 		} // End foreach().
 	}
 
-	public static function v2_3_0_template_type() {
+	public static function _v_2_3_0_template_type() {
 		global $wpdb;
 
 		$post_ids = $wpdb->get_col(

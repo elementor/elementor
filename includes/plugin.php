@@ -538,9 +538,9 @@ class Plugin {
 		$this->revisions_manager = new Revisions_Manager();
 
 		User::init();
-		Updater::init();
 		Api::init();
 		Tracker::init();
+		Updater::init();
 
 		if ( is_admin() ) {
 			$this->heartbeat = new Heartbeat();

@@ -17,12 +17,13 @@ defined( 'ABSPATH' ) || exit;
  */
 class Updater extends Background_Task {
 	const ACTION = 'elementor_updater';
-
 	const PLUGIN_NAME = 'elementor';
 	const UPDATING_FLAG = 'ELEMENTOR_UPDATING';
 	const VERSION_OPTION_NAME = 'elementor_version';
 	const VERSION = ELEMENTOR_VERSION;
 	const UPGRADES_CLASS = 'Elementor\Core\Upgrade\Upgrades';
+
+	const QUERY_LIMIT = 100;
 
 	protected $current_version;
 
@@ -52,14 +53,15 @@ class Updater extends Background_Task {
 	 **/
 
 	protected function queue_upgrades() {
-		$version_prefix = 'v' . str_replace( '.', '_', $this->current_version );
+		$prefix = '_v_';
+		$version_prefixed = $prefix . str_replace( '.', '_', $this->current_version );
 		$upgrades_reflection = new \ReflectionClass( static::UPGRADES_CLASS );
 
 		$update_queued = false;
 
 		foreach ( $upgrades_reflection->getMethods() as $method ) {
 			$method_name = $method->getName();
-			if ( $method_name >= $version_prefix ) {
+			if ( 0 === strpos( $method_name, $prefix ) && $method_name >= $version_prefixed ) {
 				$this->push_to_queue( [
 					'callback' => [ static::UPGRADES_CLASS, $method_name ],
 				] );
