@@ -140,24 +140,25 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 		var outputCssProperty;
 
 		try {
-			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}]*)}}/g, function( originalPhrase, controlName, placeholder ) {
-				var parserControl = control,
-					valueToInsert = value;
+			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, function( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) {
+				var parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, placeholder, controlName );
 
-				if ( controlName ) {
-					parserControl = _.findWhere( controls, { name: controlName } );
+				if ( ! parsedValue && 0 !== parsedValue ) {
+					if ( fallbackValue ) {
+						parsedValue = fallbackValue;
 
-					if ( ! parserControl ) {
-						return '';
+						const stringValueMatches = parsedValue.match( /^(['"])(.*)\1$/ );
+
+						if ( stringValueMatches ) {
+							parsedValue = stringValueMatches[ 2 ];
+						} else if ( ! isFinite( parsedValue ) ) {
+							parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, fallbackValue, fallbackControlName );
+						}
 					}
 
-					valueToInsert = valueCallback( parserControl );
-				}
-
-				var parsedValue = elementor.getControlView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
-
-				if ( '' === parsedValue ) {
-					throw '';
+					if ( ! parsedValue && 0 !== parsedValue ) {
+						throw '';
+					}
 				}
 
 				return parsedValue;
@@ -219,6 +220,20 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 
 		stylesheet.addRules( selector, outputCssProperty, query );
 	} );
+};
+
+ControlsCSSParser.parsePropertyPlaceholder = function( control, value, controls, valueCallback, placeholder, parserControlName ) {
+	if ( parserControlName ) {
+		control = _.findWhere( controls, { name: parserControlName } );
+
+		if ( ! control ) {
+			return '';
+		}
+
+		value = valueCallback( control );
+	}
+
+	return elementor.getControlView( control.type ).getStyleValue( placeholder, value, control );
 };
 
 module.exports = ControlsCSSParser;
