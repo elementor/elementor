@@ -7,10 +7,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Connect extends Common_App {
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_slug() {
 		return 'connect';
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function render_admin_widget() {
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );

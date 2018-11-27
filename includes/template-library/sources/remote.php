@@ -206,6 +206,10 @@ class Source_Remote extends Source_Base {
 		return $data;
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access private
+	 */
 	private function prepare_template( array $template_data ) {
 		$favorite_templates = $this->get_user_meta( 'favorites' );
 

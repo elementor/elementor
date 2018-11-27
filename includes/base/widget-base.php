@@ -367,6 +367,10 @@ abstract class Widget_Base extends Element_Base {
 		return array_merge( parent::_get_initial_config(), $config );
 	}
 
+	/**
+	 * @since 2.3.1
+	 * @access protected
+	 */
 	protected function should_print_empty() {
 		return false;
 	}

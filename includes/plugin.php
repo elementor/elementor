@@ -483,6 +483,10 @@ class Plugin {
 		do_action( 'elementor/init' );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function on_rest_api_init() {
 		// On admin/frontend sometimes the rest API is initialized after the common is initialized.
 		if ( ! $this->common ) {
@@ -549,6 +553,10 @@ class Plugin {
 		}
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function init_common() {
 		$this->common = new CommonApp();
 
