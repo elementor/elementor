@@ -121,13 +121,16 @@ class Manager {
 		$config = [];
 
 		$user_can = Plugin::instance()->role_manager->user_can( 'design' );
+
 		foreach ( self::$settings_managers as $name => $manager ) {
 			$settings_model = $manager->get_model_for_config();
 
 			$tabs = $settings_model->get_tabs_controls();
+
 			if ( ! $user_can ) {
 				unset( $tabs['style'] );
 			}
+
 			$config[ $name ] = [
 				'name' => $manager->get_name(),
 				'panelPage' => $settings_model->get_panel_page_settings(),

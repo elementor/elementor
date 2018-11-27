@@ -8,6 +8,7 @@
 	background-color: #fff;
 	border: 1px solid $editor-light;
 	border-radius: 3px;
+	z-index: $first-layer;
 
 	&__group-title {
 		color: $editor-darkest;
@@ -74,6 +75,7 @@
 	width: 260px;
 	background-color: $editor-background;
 	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
+	z-index: 1;
 
 	&:before {
 		$triangle-size: 10px;
@@ -126,7 +128,7 @@
 			justify-content: flex-end;
 			flex-grow: 1;
 
-			.elementor-label-inline & {
+			.elementor-label-inline > .elementor-control-content > .elementor-control-field > & {
 				width: 100%;
 				padding-bottom: 10px;
 			}

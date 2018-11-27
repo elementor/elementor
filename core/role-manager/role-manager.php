@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Role_Manager extends Settings_Page {
 
 	const PAGE_ID = 'elementor-role-manager';
+
 	const ROLE_MANAGER_OPTION_NAME = 'exclude_user_roles';
 
 	/**
@@ -240,6 +241,6 @@ class Role_Manager extends Settings_Page {
 		parent::__construct();
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 100 );
-		// TODO: Restore it after the release of Pro v2.0 // add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
+		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
 	}
 }

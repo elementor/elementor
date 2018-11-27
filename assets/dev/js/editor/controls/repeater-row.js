@@ -10,28 +10,29 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		duplicateButton: '.elementor-repeater-tool-duplicate',
 		editButton: '.elementor-repeater-tool-edit',
 		removeButton: '.elementor-repeater-tool-remove',
-		itemTitle: '.elementor-repeater-row-item-title'
+		itemTitle: '.elementor-repeater-row-item-title',
 	},
 
 	behaviors: {
 		HandleInnerTabs: {
-			behaviorClass: require( 'elementor-behaviors/inner-tabs' )
-		}
+			behaviorClass: require( 'elementor-behaviors/inner-tabs' ),
+		},
 	},
 
 	triggers: {
 		'click @ui.removeButton': 'click:remove',
 		'click @ui.duplicateButton': 'click:duplicate',
-		'click @ui.itemTitle': 'click:edit'
+		'click @ui.itemTitle': 'click:edit',
 	},
 
 	modelEvents: {
-		change: 'onModelChange'
+		change: 'onModelChange',
 	},
 
 	templateHelpers: function() {
 		return {
-			itemIndex: this.getOption( 'itemIndex' )
+			itemIndex: this.getOption( 'itemIndex' ),
+			itemActions: this.getOption( 'itemActions' ),
 		};
 	},
 
@@ -45,7 +46,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	childViewOptions: function() {
 		return {
-			elementSettingsModel: this.model
+			elementSettingsModel: this.model,
 		};
 	},
 
@@ -72,7 +73,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! title ) {
-			title = elementor.translate( 'Item #{0}', [ this.getOption( 'itemIndex' ) ] );
+			title = elementor.translate( 'Item #%s', [ this.getOption( 'itemIndex' ) ] );
 		}
 
 		this.ui.itemTitle.html( title );
@@ -99,7 +100,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		if ( 'desktop' === device ) {
 			elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
 		}
-	}
+	},
 } );
 
 module.exports = RepeaterRowView;

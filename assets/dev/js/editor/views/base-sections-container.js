@@ -9,14 +9,8 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		var behaviors = {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'section'
+				elChildType: 'section',
 			},
-			HandleDuplicate: {
-				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-			},
-			HandleAddMode: {
-				behaviorClass: require( 'elementor-behaviors/duplicate' )
-			}
 		};
 
 		return elementor.hooks.applyFilters( 'elements/base-section-container/behaviors', behaviors, this );
@@ -24,8 +18,8 @@ BaseSectionsContainerView = BaseContainer.extend( {
 
 	getSortableOptions: function() {
 		return {
-			handle: '> .elementor-element-overlay .elementor-editor-section-settings .elementor-editor-element-trigger',
-			items: '> .elementor-section'
+			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
+			items: '> .elementor-section',
 		};
 	},
 
@@ -33,32 +27,13 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		return [ 'section' ];
 	},
 
-	isCollectionFilled: function() {
-		return false;
-	},
-
 	initialize: function() {
+		BaseContainer.prototype.initialize.apply( this, arguments );
+
 		this
 			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
 			.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
 			.listenTo( elementor.channels.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
-	},
-
-	addSection: function( properties, options ) {
-		var newSection = {
-			id: elementor.helpers.getUniqueID(),
-			elType: 'section',
-			settings: {},
-			elements: []
-		};
-
-		if ( properties ) {
-			_.extend( newSection, properties );
-		}
-
-		var newModel = this.addChildModel( newSection, options );
-
-		return this.children.findByModelCid( newModel.cid );
 	},
 
 	onCollectionChanged: function() {
@@ -71,7 +46,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 
 	onPanelElementDragEnd: function() {
 		elementor.helpers.enableElementEvents( this.$el.find( 'iframe' ) );
-	}
+	},
 } );
 
 module.exports = BaseSectionsContainerView;

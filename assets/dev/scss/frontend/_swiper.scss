@@ -170,6 +170,8 @@ button.swiper-pagination-bullet {
 	padding: 0;
 	box-shadow: none;
 	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
 }
 
 .swiper-pagination-clickable .swiper-pagination-bullet {
@@ -207,12 +209,12 @@ button.swiper-pagination-bullet {
 	margin: 0 6px;
 }
 
-/* Progress */
-.swiper-pagination-progress {
+/* Progressbar */
+.swiper-pagination-progressbar {
 	background: rgba(0, 0, 0, 0.25);
 	position: absolute;
 
-	.swiper-pagination-progressbar {
+	.swiper-pagination-progressbar-fill {
 		background: #000;
 		position: absolute;
 		left: 0;
@@ -224,34 +226,34 @@ button.swiper-pagination-bullet {
 	}
 }
 
-.swiper-container-rtl .swiper-pagination-progress .swiper-pagination-progressbar {
+.swiper-container-rtl .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
 	transform-origin: right top;
 }
 
-.swiper-container-horizontal > .swiper-pagination-progress {
+.swiper-container-horizontal > .swiper-pagination-progressbar {
 	width: 100%;
 	height: 4px;
 	left: 0;
 	top: 0;
 }
 
-.swiper-container-vertical > .swiper-pagination-progress {
+.swiper-container-vertical > .swiper-pagination-progressbar {
 	width: 4px;
 	height: 100%;
 	left: 0;
 	top: 0;
 }
 
-.swiper-pagination-progress {
+.swiper-pagination-progressbar {
 
 	&.swiper-pagination-white {
 		background: rgba(255, 255, 255, 0.5);
-		.swiper-pagination-progressbar {
+		.swiper-pagination-progressbar-fill {
 			background: #fff;
 		}
 	}
 
-	&.swiper-pagination-black .swiper-pagination-progressbar {
+	&.swiper-pagination-black .swiper-pagination-progressbar-fill {
 		background: #000;
 	}
 }

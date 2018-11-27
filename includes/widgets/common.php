@@ -60,6 +60,15 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'_title',
+			[
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::HIDDEN,
+				'render_type' => 'none',
+			]
+		);
+
 		$this->add_responsive_control(
 			'_margin',
 			[
@@ -90,7 +99,6 @@ class Widget_Common extends Widget_Base {
 				'label' => __( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
-				'placeholder' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
@@ -152,6 +160,7 @@ class Widget_Common extends Widget_Base {
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
+				'style_transfer' => false,
 			]
 		);
 
@@ -216,9 +225,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0.3,
-				],
 				'range' => [
 					'px' => [
 						'max' => 3,
@@ -226,6 +232,7 @@ class Widget_Common extends Widget_Base {
 					],
 				],
 				'render_type' => 'ui',
+				'separator' => 'before',
 			]
 		);
 
@@ -322,9 +329,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0.3,
-				],
+				'separator' => 'before',
 				'range' => [
 					'px' => [
 						'max' => 3,

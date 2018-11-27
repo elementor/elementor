@@ -5,6 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\TemplateLibrary\Source_Local;
+
 /**
  * Elementor scheme manager.
  *
@@ -230,21 +233,26 @@ class Schemes_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function ajax_apply_scheme() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( ! isset( $_POST['scheme_name'] ) ) {
-			wp_send_json_error();
+	public function ajax_apply_scheme( $data ) {
+		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
+			return false;
 		}
 
-		$scheme_obj = $this->get_scheme( $_POST['scheme_name'] );
+		if ( ! isset( $data['scheme_name'] ) ) {
+			return false;
+		}
+
+		$scheme_obj = $this->get_scheme( $data['scheme_name'] );
+
 		if ( ! $scheme_obj ) {
-			wp_send_json_error();
+			return false;
 		}
-		$posted = json_decode( stripslashes( $_POST['data'] ), true );
+
+		$posted = json_decode( $data['data'], true );
+
 		$scheme_obj->save_scheme( $posted );
 
-		wp_send_json_success();
+		return true;
 	}
 
 	/**
@@ -262,6 +270,9 @@ class Schemes_Manager {
 		}
 	}
 
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'apply_scheme', [ $this, 'ajax_apply_scheme' ] );
+	}
 	/**
 	 * Get enabled schemes.
 	 *
@@ -328,6 +339,6 @@ class Schemes_Manager {
 	public function __construct() {
 		$this->register_default_schemes();
 
-		add_action( 'wp_ajax_elementor_apply_scheme', [ $this, 'ajax_apply_scheme' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 }

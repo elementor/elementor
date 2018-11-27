@@ -1,41 +1,16 @@
-# Text
-A Simple text field
+## Documentation has Moved
 
-*Returns* `string`
+This document in now available on [Developer API for Elementor](developers.elementor.com)
 
-## Example
+### Quick Links
 
-```php
-$this->add_control(
-  'widget_title',
-  [
-     'label'       => __( 'Title', 'your-plugin' ),
-     'type'        => Controls_Manager::TEXT,
-     'default'     => __( 'Default title text', 'your-plugin' ),
-     'placeholder' => __( 'Type your title text here', 'your-plugin' ),
-  ]
-);
-```
-
-## Usage
-
-**PHP:** *(Under `render()` method)*
-```php
-echo '<h2>' . $this->get_settings( 'widget_title' ) . '</h2>';
-```
-
-**JS:** *(Under `_content_template()` method)*
-```html
-<h2>{{{ settings.text }}}</h2>
-```
-
-## Arguments
-
-Argument       | Required   | Type         | Default                      | Description
-------------   | :--------: | :------:     | :--------------------------: | ---------------------------------------------
-`label`        | yes        | *`string`*   |                              | The label of the control - displayed next to it
-`type`         | yes        | *`string`*   | `Controls_Manager::TEXT`     | The type of the control
-`default`      | no         | *`string`*   |                              | The default value of the control
-`label_block`  | no         | *`bool`*     | `false`                       | Display the label above the control by setting to true
-`description`  | no         | *`string`*   |                              | A description text to display below the control
-`separator`    | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator
+* [Getting Started](https://developers.elementor.com/getting-started/)
+* [The Editor](https://developers.elementor.com/elementor-editor/)
+* [The Widgets](https://developers.elementor.com/elementor-widgets/)
+* [The Controls](https://developers.elementor.com/elementor-controls/)
+* [Code Reference](https://code.elementor.com)
+* [PHP Hooks](https://code.elementor.com/php-hooks/)
+* [JS Hooks](https://code.elementor.com/js-hooks/)
+* [Classes](https://code.elementor.com/classes/)
+* [Methods](https://code.elementor.com/methods/)
+* [Functions](https://code.elementor.com/functions/)

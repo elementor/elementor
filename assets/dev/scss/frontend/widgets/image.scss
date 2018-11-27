@@ -8,11 +8,16 @@
 
 		> a,
 		figure > a {
-			display: block; // For alignment image with link
+			display: inline-block; //For alignment image with link - Changed to 'inline-block' instead of 'block' to handle with this issue https://github.com/pojome/elementor/issues/5897
+
+			img[src$=".svg"] {
+				width: 48px; //Fix SVG image src, issue: https://github.com/pojome/elementor/issues/5987
+			}
 		}
 
 		img {
 			vertical-align: middle;
+			display: inline-block;
 		}
 
 		&.elementor-image-shape- {

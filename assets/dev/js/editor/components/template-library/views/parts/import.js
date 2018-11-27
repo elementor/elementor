@@ -7,49 +7,59 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 
 	ui: {
 		uploadForm: '#elementor-template-library-import-form',
-		fileInput: '#elementor-template-library-import-form-input'
+		fileInput: '#elementor-template-library-import-form-input',
 	},
 
 	events: {
-		'change @ui.fileInput': 'onFileInputChange'
+		'change @ui.fileInput': 'onFileInputChange',
 	},
 
 	droppedFiles: null,
 
 	submitForm: function() {
-		var layout = elementor.templates.getLayout(),
-			data = new FormData();
+		let file;
 
 		if ( this.droppedFiles ) {
-			data.append( 'file', this.droppedFiles[0] );
+			file = this.droppedFiles[ 0 ];
 
 			this.droppedFiles = null;
 		} else {
-			data.append( 'file', this.ui.fileInput[0].files[0] );
+			file = this.ui.fileInput[ 0 ].files[ 0 ];
 
-			this.ui.uploadForm[0].reset();
+			this.ui.uploadForm[ 0 ].reset();
 		}
 
-		var options = {
-			data: data,
-			processData: false,
-			contentType: false,
-			success: function( data ) {
-				elementor.templates.getTemplatesCollection().add( data );
+		const fileReader = new FileReader();
+
+		fileReader.onload = ( event ) => this.importTemplate( file.name, event.target.result.replace( /^[^,]+,/, '' ) );
+
+		fileReader.readAsDataURL( file );
+	},
+
+	importTemplate: function( fileName, fileData ) {
+		const layout = elementor.templates.getLayout();
+
+		const options = {
+			data: {
+				fileName: fileName,
+				fileData: fileData,
+			},
+			success: ( successData ) => {
+				elementor.templates.getTemplatesCollection().add( successData );
 
 				elementor.templates.setTemplatesPage( 'local' );
 			},
-			error: function( data ) {
-				elementor.templates.showErrorDialog( data );
+			error: ( errorData ) => {
+				elementor.templates.showErrorDialog( errorData );
 
 				layout.showImportView();
 			},
-			complete: function() {
+			complete: () => {
 				layout.hideLoadingView();
-			}
+			},
 		};
 
-		elementor.ajax.send( 'import_template', options );
+		elementorCommon.ajax.addRequest( 'import_template', options );
 
 		layout.showLoadingView();
 	},
@@ -59,7 +69,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			'drag dragstart dragend dragover dragenter dragleave drop': this.onFormActions.bind( this ),
 			dragenter: this.onFormDragEnter.bind( this ),
 			'dragleave drop': this.onFormDragLeave.bind( this ),
-			drop: this.onFormDrop.bind( this )
+			drop: this.onFormDrop.bind( this ),
 		} );
 	},
 
@@ -88,7 +98,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 
 	onFileInputChange: function() {
 		this.submitForm();
-	}
+	},
 } );
 
 module.exports = TemplateLibraryImportView;

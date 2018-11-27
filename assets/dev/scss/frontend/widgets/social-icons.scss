@@ -27,26 +27,31 @@
 	}
 
 	&- {
+		&android		{ background-color: $android; }
 		&apple			{ background-color: $apple; }
 		&behance		{ background-color: $behance; }
 		&bitbucket		{ background-color: $bitbucket; }
 		&codepen		{ background-color: $codepen; }
 		&delicious		{ background-color: $delicious; }
+		&deviantart		{ background-color: $deviantart; }
 		&digg			{ background-color: $digg; }
 		&dribbble		{ background-color: $dribbble; }
 		&envelope		{ background-color: $envelope; }
 		&facebook		{ background-color: $facebook; }
 		&flickr			{ background-color: $flickr; }
 		&foursquare		{ background-color: $foursquare; }
+		&freecodecamp	{ background-color: $freecodecamp; }
 		&github			{ background-color: $github; }
+		&gitlab			{ background-color: $gitlab; }
 		&google-plus	{ background-color: $google-plus; }
 		&houzz			{ background-color: $houzz; }
 		&instagram		{ background-color: $instagram; }
 		&jsfiddle		{ background-color: $jsfiddle; }
 		&linkedin		{ background-color: $linkedin; }
 		&medium			{ background-color: $medium; }
-		&odnoklassniki	{ background-color: $odnoklassniki; }
 		&meetup			{ background-color: $meetup; }
+		&mixcloud		{ background-color: $mixcloud }
+		&odnoklassniki	{ background-color: $odnoklassniki; }
 		&pinterest		{ background-color: $pinterest; }
 		&product-hunt	{ background-color: $product-hunt; }
 		&reddit			{ background-color: $reddit; }
@@ -61,6 +66,7 @@
 		&steam 			{ background-color: $steam; }
 		&stumbleupon 	{ background-color: $stumbleupon; }
 		&telegram		{ background-color: $telegram; }
+		&thumb-tack		{ background-color: $thumbtack; }
 		&tripadvisor	{ background-color: $tripadvisor; }
 		&tumblr			{ background-color: $tumblr; }
 		&twitch			{ background-color: $twitch; }

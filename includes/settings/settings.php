@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\General\Manager as General_Settings_Manager;
 use Elementor\Core\Settings\Manager;
 
@@ -119,6 +120,15 @@ class Settings extends Settings_Page {
 		add_submenu_page(
 			self::PAGE_ID,
 			'',
+			__( 'Getting Started', 'elementor' ),
+			'manage_options',
+			'elementor-getting-started',
+			[ $this, 'elementor_getting_started' ]
+		);
+
+		add_submenu_page(
+			self::PAGE_ID,
+			'',
 			__( 'Knowledge Base', 'elementor' ),
 			'manage_options',
 			'go_knowledge_base_site',
@@ -155,6 +165,62 @@ class Settings extends Settings_Page {
 	/**
 	 * Display settings page.
 	 *
+	 * Output the content for the getting started page.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 */
+	public function elementor_getting_started() {
+		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
+			$create_new_label = __( 'Create Your First Page', 'elementor' );
+			$create_new_cpt = 'page';
+		} elseif ( User::is_current_user_can_edit_post_type( 'post' ) ) {
+			$create_new_label = __( 'Create Your First Post', 'elementor' );
+			$create_new_cpt = 'post';
+		}
+
+		?>
+		<div class="wrap">
+			<div class="e-getting-started">
+				<div class="e-getting-started__box postbox">
+					<div class="e-getting-started__header">
+						<div class="e-getting-started__title">
+							<div class="e-logo-wrapper"><i class="eicon-elementor"></i></div>
+
+							<?php echo __( 'Getting Started', 'elementor' ); ?>
+						</div>
+						<a class="e-getting-started__skip" href="<?php echo esc_url( admin_url() ); ?>">
+							<i class="eicon-close" aria-hidden="true" title="<?php esc_attr_e( 'Skip', 'elementor' ); ?>"></i>
+							<span class="elementor-screen-only"><?php echo __( 'Skip', 'elementor' ); ?></span>
+						</a>
+					</div>
+					<div class="e-getting-started__content">
+						<div class="e-getting-started__content--narrow">
+							<h2><?php echo __( 'Welcome to Elementor', 'elementor' ); ?></h2>
+							<p><?php echo __( 'We recommend you watch this 2 minute getting started video, and then try the editor yourself by dragging and dropping elements to create your first page.', 'elementor' ); ?></p>
+						</div>
+
+						<div class="e-getting-started__video">
+							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/-TPpwuB6dnI?rel=0&amp;controls=1&amp;modestbranding=1" frameborder="0" allowfullscreen></iframe>
+						</div>
+
+						<div class="e-getting-started__actions e-getting-started__content--narrow">
+							<?php if ( ! empty( $create_new_cpt ) ) : ?>
+							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
+							<?php endif; ?>
+
+							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Read the Full Article', 'elementor' ); ?></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	/**
+	 * Display settings page.
+	 *
 	 * Output the content for the custom fonts page.
 	 *
 	 * @since 2.0.0
@@ -167,7 +233,7 @@ class Settings extends Settings_Page {
 				<i class="eicon-nerd-chuckle"></i>
 				<h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
 				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="#"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -188,6 +254,8 @@ class Settings extends Settings_Page {
 
 		// Save general settings in one list for a future usage
 		$this->handle_general_settings_update();
+
+		$this->maybe_remove_all_admin_notices();
 	}
 
 	/**
@@ -226,7 +294,7 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function update_css_print_method() {
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 	}
 
 	/**
@@ -241,6 +309,8 @@ class Settings extends Settings_Page {
 	 */
 	protected function create_tabs() {
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
+
+		$default_breakpoints = Responsive::get_default_breakpoints();
 
 		return [
 			self::TAB_GENERAL => [
@@ -318,20 +388,25 @@ class Settings extends Settings_Page {
 							'container_width' => [
 								'label' => __( 'Content Width', 'elementor' ),
 								'field_args' => [
-									'type' => 'text',
-									'placeholder' => '1140',
+									'type' => 'number',
+									'attributes' => [
+										'min' => 300,
+										'placeholder' => '1140',
+										'class' => 'medium-text',
+									],
 									'sub_desc' => 'px',
-									'class' => 'medium-text',
 									'desc' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 								],
 							],
 							'space_between_widgets' => [
 								'label' => __( 'Space Between Widgets', 'elementor' ),
 								'field_args' => [
-									'type' => 'text',
-									'placeholder' => '20',
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => '20',
+										'class' => 'medium-text',
+									],
 									'sub_desc' => 'px',
-									'class' => 'medium-text',
 									'desc' => __( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
 								],
 							],
@@ -339,8 +414,10 @@ class Settings extends Settings_Page {
 								'label' => __( 'Stretched Section Fit To', 'elementor' ),
 								'field_args' => [
 									'type' => 'text',
-									'placeholder' => 'body',
-									'class' => 'medium-text',
+									'attributes' => [
+										'placeholder' => 'body',
+										'class' => 'medium-text',
+									],
 									'desc' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
 								],
 							],
@@ -348,9 +425,41 @@ class Settings extends Settings_Page {
 								'label' => __( 'Page Title Selector', 'elementor' ),
 								'field_args' => [
 									'type' => 'text',
-									'placeholder' => 'h1.entry-title',
-									'class' => 'medium-text',
+									'attributes' => [
+										'placeholder' => 'h1.entry-title',
+										'class' => 'medium-text',
+									],
 									'desc' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
+								],
+							],
+							'viewport_lg' => [
+								'label' => __( 'Tablet Breakpoint', 'elementor' ),
+								'field_args' => [
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => $default_breakpoints['lg'],
+										'min' => $default_breakpoints['md'] + 1,
+										'max' => $default_breakpoints['xl'] - 1,
+										'class' => 'medium-text',
+									],
+									'sub_desc' => 'px',
+									/* translators: %d: Breakpoint value */
+									'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
+								],
+							],
+							'viewport_md' => [
+								'label' => __( 'Mobile Breakpoint', 'elementor' ),
+								'field_args' => [
+									'type' => 'number',
+									'attributes' => [
+										'placeholder' => $default_breakpoints['md'],
+										'min' => $default_breakpoints['sm'] + 1,
+										'max' => $default_breakpoints['lg'] - 1,
+										'class' => 'medium-text',
+									],
+									'sub_desc' => 'px',
+									/* translators: %d: Breakpoint value */
+									'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
 								],
 							],
 							'global_image_lightbox' => [
@@ -402,6 +511,18 @@ class Settings extends Settings_Page {
 										1 => __( 'Enable', 'elementor' ),
 									],
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
+								],
+							],
+							'edit_buttons' => [
+								'label' => __( 'Editing Handles', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '',
+									'options' => [
+										'' => __( 'Hide', 'elementor' ),
+										'on' => __( 'Show', 'elementor' ),
+									],
+									'desc' => __( 'Show editing handles when hovering over the element edit button', 'elementor' ),
 								],
 							],
 						],
@@ -457,6 +578,21 @@ class Settings extends Settings_Page {
 		}
 	}
 
+	private function maybe_remove_all_admin_notices() {
+		$elementor_pages = [
+			'elementor-getting-started',
+			'elementor-role-manager',
+			'elementor_custom_fonts',
+			'elementor-license',
+		];
+
+		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {
+			return;
+		}
+
+		remove_all_actions( 'admin_notices' );
+	}
+
 	/**
 	 * Settings page constructor.
 	 *
@@ -477,6 +613,11 @@ class Settings extends Settings_Page {
 		// Clear CSS Meta after change print method.
 		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
-	}
 
+		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
+			foreach ( [ 'add', 'update' ] as $action ) {
+				add_action( "{$action}_option_elementor_viewport_{$breakpoint_key}", [ 'Elementor\Responsive', 'compile_stylesheet_templates' ] );
+			}
+		}
+	}
 }

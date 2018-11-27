@@ -53,7 +53,7 @@ class Widget_Image extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-insert-image';
+		return 'eicon-image';
 	}
 
 	/**
@@ -70,6 +70,20 @@ class Widget_Image extends Widget_Base {
 	 */
 	public function get_categories() {
 		return [ 'basic' ];
+	}
+
+	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'image', 'photo', 'visual' ];
 	}
 
 	/**
@@ -137,12 +151,32 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'caption',
+			'caption_source',
 			[
 				'label' => __( 'Caption', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'none' => __( 'None', 'elementor' ),
+					'attachment' => __( 'Attachment Caption', 'elementor' ),
+					'custom' => __( 'Custom Caption', 'elementor' ),
+				],
+				'default' => 'none',
+			]
+		);
+
+		$this->add_control(
+			'caption',
+			[
+				'label' => __( 'Custom Caption', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'placeholder' => __( 'Enter your image caption', 'elementor' ),
+				'condition' => [
+					'caption_source' => 'custom',
+				],
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -275,6 +309,22 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
+			'separator_panel_style',
+			[
+				'type' => Controls_Manager::DIVIDER,
+				'style' => 'thick',
+			]
+		);
+
+		$this->start_controls_tabs( 'image_effects' );
+
+		$this->start_controls_tab( 'normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
 			'opacity',
 			[
 				'label' => __( 'Opacity', 'elementor' ),
@@ -292,6 +342,65 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} .elementor-image img',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'opacity_hover',
+			[
+				'label' => __( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image:hover img' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}} .elementor-image:hover img',
+			]
+		);
+
+		$this->add_control(
+			'background_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image img' => 'transition-duration: {{SIZE}}s',
+				],
+			]
+		);
+
 		$this->add_control(
 			'hover_animation',
 			[
@@ -299,6 +408,10 @@ class Widget_Image extends Widget_Base {
 				'type' => Controls_Manager::HOVER_ANIMATION,
 			]
 		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
@@ -339,6 +452,9 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Caption', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'caption!' => '',
+				],
 			]
 		);
 
@@ -418,6 +534,43 @@ class Widget_Image extends Widget_Base {
 	}
 
 	/**
+	 * Check if the current widget has caption
+	 *
+	 * @access private
+	 * @since 2.3.0
+	 *
+	 * @param array $settings
+	 *
+	 * @return boolean
+	 */
+	private function has_caption( $settings ) {
+		return ( ! empty( $settings['caption_source'] ) && 'none' !== $settings['caption_source'] );
+	}
+
+	/**
+	 * Get the caption for current widget.
+	 *
+	 * @access private
+	 * @since 2.3.0
+	 * @param $settings
+	 *
+	 * @return string
+	 */
+	private function get_caption( $settings ) {
+		$caption = '';
+		if ( ! empty( $settings['caption_source'] ) ) {
+			switch ( $settings['caption_source'] ) {
+				case 'attachment':
+					$caption = wp_get_attachment_caption( $settings['image']['id'] );
+					break;
+				case 'custom':
+					$caption = ! empty( $settings['caption'] ) ? $settings['caption'] : '';
+			}
+		}
+		return $caption;
+	}
+
+	/**
 	 * Render image widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
@@ -432,7 +585,7 @@ class Widget_Image extends Widget_Base {
 			return;
 		}
 
-		$has_caption = ! empty( $settings['caption'] );
+		$has_caption = $this->has_caption( $settings );
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-image' );
 
@@ -474,7 +627,7 @@ class Widget_Image extends Widget_Base {
 					</a>
 			<?php endif; ?>
 			<?php if ( $has_caption ) : ?>
-					<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
+					<figcaption class="widget-image-caption wp-caption-text"><?php echo $this->get_caption( $settings ); ?></figcaption>
 			<?php endif; ?>
 			<?php if ( $has_caption ) : ?>
 				</figure>
@@ -508,6 +661,36 @@ class Widget_Image extends Widget_Base {
 				return;
 			}
 
+			var hasCaption = function() {
+				if( ! settings.caption_source || 'none' === settings.caption_source ) {
+					return false;
+				}
+				return true;
+			}
+
+			var ensureAttachmentData = function( id ) {
+				if ( 'undefined' === typeof wp.media.attachment( id ).get( 'caption' ) ) {
+					wp.media.attachment( id ).fetch().then( function( data ) {
+						view.render();
+					} );
+				}
+			}
+
+			var getAttachmentCaption = function( id ) {
+				if ( ! id ) {
+					return '';
+				}
+				ensureAttachmentData( id );
+				return wp.media.attachment( id ).get( 'caption' );
+			}
+
+			var getCaption = function() {
+				if ( ! hasCaption() ) {
+					return '';
+				}
+				return 'custom' === settings.caption_source ? settings.caption : getAttachmentCaption( settings.image.id );
+			}
+
 			var link_url;
 
 			if ( 'custom' === settings.link_to ) {
@@ -519,14 +702,13 @@ class Widget_Image extends Widget_Base {
 			}
 
 			#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
-			var imgClass = '',
-				hasCaption = '' !== settings.caption;
+			var imgClass = '';
 
 			if ( '' !== settings.hover_animation ) {
 				imgClass = 'elementor-animation-' + settings.hover_animation;
 			}
 
-			if ( hasCaption ) {
+			if ( hasCaption() ) {
 				#><figure class="wp-caption"><#
 			}
 
@@ -539,11 +721,11 @@ class Widget_Image extends Widget_Base {
 					#></a><#
 			}
 
-			if ( hasCaption ) {
-					#><figcaption class="widget-image-caption wp-caption-text">{{{ settings.caption }}}</figcaption><#
+			if ( hasCaption() ) {
+					#><figcaption class="widget-image-caption wp-caption-text">{{{ getCaption() }}}</figcaption><#
 			}
 
-			if ( hasCaption ) {
+			if ( hasCaption() ) {
 				#></figure><#
 			}
 

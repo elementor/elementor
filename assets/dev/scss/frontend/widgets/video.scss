@@ -3,6 +3,10 @@
 //
 .elementor-widget-video {
 
+	.elementor-widget-container {
+		overflow: hidden;
+	}
+
 	.elementor-open-inline {
 
 		.elementor-custom-embed-image-overlay {
@@ -34,5 +38,9 @@
 			display: block;
 			width: 100%;
 		}
+	}
+
+	.elementor-video {
+		object-fit: cover;
 	}
 }

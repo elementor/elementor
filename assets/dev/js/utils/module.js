@@ -1,13 +1,14 @@
-var Module = function() {
-	var $ = jQuery,
+const Module = function() {
+	const $ = jQuery,
 		instanceParams = arguments,
 		self = this,
-		settings,
 		events = {};
 
-	var ensureClosureMethods = function() {
+	let settings;
+
+	const ensureClosureMethods = function() {
 		$.each( self, function( methodName ) {
-			var oldMethod = self[ methodName ];
+			const oldMethod = self[ methodName ];
 
 			if ( 'function' !== typeof oldMethod ) {
 				return;
@@ -16,20 +17,20 @@ var Module = function() {
 			self[ methodName ] = function() {
 				return oldMethod.apply( self, arguments );
 			};
-		});
+		} );
 	};
 
-	var initSettings = function() {
+	const initSettings = function() {
 		settings = self.getDefaultSettings();
 
-		var instanceSettings = instanceParams[0];
+		const instanceSettings = instanceParams[ 0 ];
 
 		if ( instanceSettings ) {
 			$.extend( settings, instanceSettings );
 		}
 	};
 
-	var init = function() {
+	const init = function() {
 		self.__construct.apply( self, instanceParams );
 
 		ensureClosureMethods();
@@ -41,7 +42,7 @@ var Module = function() {
 
 	this.getItems = function( items, itemKey ) {
 		if ( itemKey ) {
-			var keyStack = itemKey.split( '.' ),
+			const keyStack = itemKey.split( '.' ),
 				currentKey = keyStack.splice( 0, 1 );
 
 			if ( ! keyStack.length ) {
@@ -52,7 +53,7 @@ var Module = function() {
 				return;
 			}
 
-			return this.getItems(  items[ currentKey ], keyStack.join( '.' ) );
+			return this.getItems( items[ currentKey ], keyStack.join( '.' ) );
 		}
 
 		return items;
@@ -73,7 +74,7 @@ var Module = function() {
 			return self;
 		}
 
-		var keyStack = settingKey.split( '.' ),
+		const keyStack = settingKey.split( '.' ),
 			currentKey = keyStack.splice( 0, 1 );
 
 		if ( ! keyStack.length ) {
@@ -90,7 +91,7 @@ var Module = function() {
 	};
 
 	this.forceMethodImplementation = function( methodArguments ) {
-		var functionName = methodArguments.callee.name;
+		const functionName = methodArguments.callee.name;
 
 		throw new ReferenceError( 'The method ' + functionName + ' must to be implemented in the inheritor child.' );
 	};
@@ -104,7 +105,7 @@ var Module = function() {
 			return self;
 		}
 
-		var eventNames = eventName.split( ' ' );
+		const eventNames = eventName.split( ' ' );
 
 		eventNames.forEach( function( singleEventName ) {
 			if ( ! events[ singleEventName ] ) {
@@ -128,7 +129,7 @@ var Module = function() {
 			return self;
 		}
 
-		var callbackIndex = events[ eventName ].indexOf( callback );
+		const callbackIndex = events[ eventName ].indexOf( callback );
 
 		if ( -1 !== callbackIndex ) {
 			delete events[ eventName ][ callbackIndex ];
@@ -138,14 +139,14 @@ var Module = function() {
 	};
 
 	this.trigger = function( eventName ) {
-		var methodName = 'on' + eventName[ 0 ].toUpperCase() + eventName.slice( 1 ),
+		const methodName = 'on' + eventName[ 0 ].toUpperCase() + eventName.slice( 1 ),
 			params = Array.prototype.slice.call( arguments, 1 );
 
 		if ( self[ methodName ] ) {
 			self[ methodName ].apply( self, params );
 		}
 
-		var callbacks = events[ eventName ];
+		const callbacks = events[ eventName ];
 
 		if ( ! callbacks ) {
 			return self;
@@ -170,10 +171,10 @@ Module.prototype.getDefaultSettings = function() {
 Module.extendsCount = 0;
 
 Module.extend = function( properties ) {
-	var $ = jQuery,
+	const $ = jQuery,
 		parent = this;
 
-	var child = function() {
+	const child = function() {
 		return parent.apply( this, arguments );
 	};
 
@@ -190,7 +191,7 @@ Module.extend = function( properties ) {
 	 * It's useful in some cases such as unique
 	 * listener for frontend handlers.
 	 */
-	var constructorID = ++Module.extendsCount;
+	const constructorID = ++Module.extendsCount;
 
 	child.prototype.getConstructorID = function() {
 		return constructorID;

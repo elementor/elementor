@@ -6,14 +6,14 @@ module.exports = ViewModule.extend( {
 			element: null,
 			direction: elementorFrontend.config.is_rtl ? 'right' : 'left',
 			selectors: {
-				container: window
-			}
+				container: window,
+			},
 		};
 	},
 
 	getDefaultElements: function() {
 		return {
-			$element: jQuery( this.getSettings( 'element' ) )
+			$element: jQuery( this.getSettings( 'element' ) ),
 		};
 	},
 
@@ -29,35 +29,38 @@ module.exports = ViewModule.extend( {
 			$container = jQuery( this.getDefaultSettings().selectors.container );
 		}
 
-		var $element = this.elements.$element,
-			isSpecialContainer = window !== $container[0];
-
 		this.reset();
 
-		var containerWidth = $container.outerWidth(),
-			elementWidth = $element.outerWidth(),
+		var $element = this.elements.$element,
+			containerWidth = $container.outerWidth(),
 			elementOffset = $element.offset().left,
-			correctOffset = elementOffset;
+			isFixed = 'fixed' === $element.css( 'position' ),
+			correctOffset = isFixed ? 0 : elementOffset;
 
-		if ( isSpecialContainer ) {
+		if ( window !== $container[ 0 ] ) {
 			var containerOffset = $container.offset().left;
 
+			if ( isFixed ) {
+				correctOffset = containerOffset;
+			}
 			if ( elementOffset > containerOffset ) {
 				correctOffset = elementOffset - containerOffset;
-			} else {
-				correctOffset = 0;
 			}
 		}
 
-		if ( elementorFrontend.config.is_rtl ) {
-			correctOffset = containerWidth - ( elementWidth + correctOffset );
+		if ( ! isFixed ) {
+			if ( elementorFrontend.config.is_rtl ) {
+				correctOffset = containerWidth - ( $element.outerWidth() + correctOffset );
+			}
+
+			correctOffset = -correctOffset;
 		}
 
 		var css = {};
 
 		css.width = containerWidth + 'px';
 
-		css[ this.getSettings( 'direction' ) ] = -correctOffset + 'px';
+		css[ this.getSettings( 'direction' ) ] = correctOffset + 'px';
 
 		$element.css( css );
 	},
@@ -70,5 +73,5 @@ module.exports = ViewModule.extend( {
 		css[ this.getSettings( 'direction' ) ] = '';
 
 		this.elements.$element.css( css );
-	}
+	},
 } );

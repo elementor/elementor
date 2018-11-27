@@ -5,8 +5,8 @@ ImageCarouselHandler = HandlerModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
-				carousel: '.elementor-image-carousel'
-			}
+				carousel: '.elementor-image-carousel',
+			},
 		};
 	},
 
@@ -14,7 +14,7 @@ ImageCarouselHandler = HandlerModule.extend( {
 		var selectors = this.getSettings( 'selectors' );
 
 		return {
-			$carousel: this.$element.find( selectors.carousel )
+			$carousel: this.$element.find( selectors.carousel ),
 		};
 	},
 
@@ -23,34 +23,35 @@ ImageCarouselHandler = HandlerModule.extend( {
 
 		var elementSettings = this.getElementSettings(),
 			slidesToShow = +elementSettings.slides_to_show || 3,
-			isSingleSlide = 1 === slidesToShow;
+			isSingleSlide = 1 === slidesToShow,
+			breakpoints = elementorFrontend.config.breakpoints;
 
 		var slickOptions = {
 			slidesToShow: slidesToShow,
 			autoplay: 'yes' === elementSettings.autoplay,
 			autoplaySpeed: elementSettings.autoplay_speed,
 			infinite: 'yes' === elementSettings.infinite,
-			pauseOnHover: 'yes' ===  elementSettings.pause_on_hover,
+			pauseOnHover: 'yes' === elementSettings.pause_on_hover,
 			speed: elementSettings.speed,
 			arrows: -1 !== [ 'arrows', 'both' ].indexOf( elementSettings.navigation ),
 			dots: -1 !== [ 'dots', 'both' ].indexOf( elementSettings.navigation ),
 			rtl: 'rtl' === elementSettings.direction,
 			responsive: [
 				{
-					breakpoint: 1025,
+					breakpoint: breakpoints.lg,
 					settings: {
 						slidesToShow: +elementSettings.slides_to_show_tablet || ( isSingleSlide ? 1 : 2 ),
-						slidesToScroll: 1
-					}
+						slidesToScroll: 1,
+					},
 				},
 				{
-					breakpoint: 768,
+					breakpoint: breakpoints.md,
 					settings: {
 						slidesToShow: +elementSettings.slides_to_show_mobile || 1,
-						slidesToScroll: 1
-					}
-				}
-			]
+						slidesToScroll: 1,
+					},
+				},
+			],
 		};
 
 		if ( isSingleSlide ) {
@@ -60,7 +61,7 @@ ImageCarouselHandler = HandlerModule.extend( {
 		}
 
 		this.elements.$carousel.slick( slickOptions );
-	}
+	},
 } );
 
 module.exports = function( $scope ) {

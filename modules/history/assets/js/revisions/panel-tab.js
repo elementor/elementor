@@ -9,12 +9,12 @@ module.exports = Marionette.CompositeView.extend( {
 
 	ui: {
 		discard: '.elementor-panel-scheme-discard .elementor-button',
-		apply: '.elementor-panel-scheme-save .elementor-button'
+		apply: '.elementor-panel-scheme-save .elementor-button',
 	},
 
 	events: {
 		'click @ui.discard': 'onDiscardClick',
-		'click @ui.apply': 'onApplyClick'
+		'click @ui.apply': 'onApplyClick',
 	},
 
 	isRevisionApplied: false,
@@ -46,7 +46,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 				self.enterReviewMode();
 			},
-			error: function() {
+			error: function( errorMessage ) {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				if ( 'abort' === self.jqueryXhr.statusText ) {
@@ -57,8 +57,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 				self.currentPreviewId = null;
 
-				alert( 'An error occurred' );
-			}
+				alert( errorMessage );
+			},
 		} );
 	},
 
@@ -83,7 +83,7 @@ module.exports = Marionette.CompositeView.extend( {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				alert( 'An error occurred' );
-			}
+			},
 		} );
 	},
 
@@ -126,6 +126,8 @@ module.exports = Marionette.CompositeView.extend( {
 		this.isRevisionApplied = true;
 
 		this.currentPreviewId = null;
+
+		elementor.history.history.getItems().reset();
 	},
 
 	onDiscardClick: function() {
@@ -157,7 +159,7 @@ module.exports = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		var currentPreviewModel = this.collection.findWhere({ id: this.currentPreviewId });
+		var currentPreviewModel = this.collection.findWhere( { id: this.currentPreviewId } );
 
 		// Ensure the model is exist and not deleted during a save.
 		if ( currentPreviewModel ) {
@@ -189,7 +191,7 @@ module.exports = Marionette.CompositeView.extend( {
 				status: 'autosave',
 				onSuccess: function() {
 					self.getRevisionViewData( childView );
-				}
+				},
 			} );
 		} else {
 			self.getRevisionViewData( childView );
@@ -204,19 +206,19 @@ module.exports = Marionette.CompositeView.extend( {
 		var self = this,
 			type = childView.model.get( 'type' );
 
-		var removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
+		var removeDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			message: elementor.translate( 'dialog_confirm_delete', [ type ] ),
 			headerMessage: elementor.translate( 'delete_element', [ type ] ),
 			strings: {
 				confirm: elementor.translate( 'delete' ),
-				cancel: elementor.translate( 'cancel' )
+				cancel: elementor.translate( 'cancel' ),
 			},
 			defaultOption: 'confirm',
 			onConfirm: function() {
 				self.deleteRevision( childView );
-			}
+			},
 		} );
 
 		removeDialog.show();
-	}
+	},
 } );

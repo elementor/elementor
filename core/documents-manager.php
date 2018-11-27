@@ -2,10 +2,12 @@
 namespace Elementor\Core;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\DocumentTypes\Post;
 use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -81,6 +83,8 @@ class Documents_Manager {
 	 */
 	protected $switched_data = [];
 
+	protected $cpt = [];
+
 	/**
 	 * Documents manager constructor.
 	 *
@@ -105,7 +109,7 @@ class Documents_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_manager An instance of the ajax manager.
+	 * @param Ajax $ajax_manager An instance of the ajax manager.
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'save_builder', [ $this, 'ajax_save' ] );
@@ -150,13 +154,20 @@ class Documents_Manager {
 	 * @access public
 	 *
 	 * @param string $type  Document type name.
-	 * @param Document $class The name of the class that registers the document type.
+	 * @param string $class The name of the class that registers the document type.
 	 *                      Full name with the namespace.
 	 *
 	 * @return Documents_Manager The updated document manager instance.
 	 */
 	public function register_document_type( $type, $class ) {
 		$this->types[ $type ] = $class;
+
+		$cpt = $class::get_property( 'cpt' );
+		if ( $cpt ) {
+			foreach ( $cpt as $post_type ) {
+				$this->cpt[ $post_type ] = $type;
+			}
+		}
 
 		if ( $class::get_property( 'register_type' ) ) {
 			Source_Local::add_template_type( $type );
@@ -188,7 +199,18 @@ class Documents_Manager {
 		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
-			$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+
+			if ( wp_is_post_autosave( $post_id ) ) {
+				$post_type = get_post_type( wp_get_post_parent_id( $post_id ) );
+			} else {
+				$post_type = get_post_type( $post_id );
+			}
+
+			if ( isset( $this->cpt[ $post_type ] ) ) {
+				$doc_type = $this->cpt[ $post_type ];
+			} else {
+				$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+			}
 
 			$doc_type_class = $this->get_document_type( $doc_type );
 			$this->documents[ $post_id ] = new $doc_type_class( [
@@ -326,7 +348,7 @@ class Documents_Manager {
 			'post_id' => $post_id,
 		] );
 
-		$document->save_type();
+		$document->save_template_type();
 
 		return $document;
 	}
@@ -359,7 +381,7 @@ class Documents_Manager {
 
 		$status = DB::STATUS_DRAFT;
 
-		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ] , true ) ) {
+		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ], true ) ) {
 			$status = $request['status'];
 		}
 
@@ -369,6 +391,12 @@ class Documents_Manager {
 			if ( in_array( $document->get_post()->post_status, [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE ], true ) ) {
 				$document = $document->get_autosave( 0, true );
 			}
+		}
+
+		// Set default page template because the footer-saver doesn't send default values,
+		// But if the template was changed from canvas to default - it needed to save.
+		if ( Utils::is_cpt_custom_templates_supported() && ! isset( $request['settings']['template'] ) ) {
+			$request['settings']['template'] = 'default';
 		}
 
 		$data = [

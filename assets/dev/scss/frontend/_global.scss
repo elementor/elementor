@@ -61,6 +61,7 @@
 		overflow: hidden;
 		z-index: $ground-layer;
 		transition: opacity 1s;
+		pointer-events: none; // This prevents the player from showing video info on hover
 
 		&.elementor-loading {
 			opacity: 0;
@@ -69,10 +70,13 @@
 
 	.elementor-background-video-embed {
 		max-width: none; //Stretch the background video on all section
+	}
+
+	.elementor-background-video-embed, .elementor-background-video-hosted {
 		position: absolute;
 		top: 50%;
-		left: 0; //reset when the parent has set text-align: center;
-		transform: translateY(-50%);
+		left: 50%; //reset when the parent has set text-align: center;
+		transform: translateX(-50%) translateY(-50%);
 	}
 
 	.elementor-background-video {
@@ -259,10 +263,17 @@
 }
 
 // Admin Bar - Icon (Front-End)
-#wpadminbar #wp-admin-bar-elementor_edit_page > .ab-item::before {
-	content: "\e800";
-	font-family: eicons;
-	font-size: 12px;
-	margin-top: 5px;
-}
+#wpadminbar {
 
+	#wp-admin-bar-elementor_edit_page > .ab-item::before {
+		content: "\e801";
+		font-family: eicons;
+		top: 3px;
+		font-size: 18px;
+	}
+
+	#wp-admin-bar-elementor_inspector > .ab-item::before {
+		content: "\f348";
+		top: 2px;
+	}
+}

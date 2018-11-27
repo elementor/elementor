@@ -1,4 +1,4 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' );
+const HandlerModule = require( 'elementor-frontend/handler-module' );
 
 module.exports = HandlerModule.extend( {
 	$activeContent: null,
@@ -7,45 +7,45 @@ module.exports = HandlerModule.extend( {
 		return {
 			selectors: {
 				tabTitle: '.elementor-tab-title',
-				tabContent: '.elementor-tab-content'
+				tabContent: '.elementor-tab-content',
 			},
 			classes: {
-				active: 'elementor-active'
+				active: 'elementor-active',
 			},
 			showTabFn: 'show',
 			hideTabFn: 'hide',
 			toggleSelf: true,
 			hidePrevious: true,
-			autoExpand: true
+			autoExpand: true,
 		};
 	},
 
 	getDefaultElements: function() {
-		var selectors = this.getSettings( 'selectors' );
+		const selectors = this.getSettings( 'selectors' );
 
 		return {
 			$tabTitles: this.findElement( selectors.tabTitle ),
-			$tabContents: this.findElement( selectors.tabContent )
+			$tabContents: this.findElement( selectors.tabContent ),
 		};
 	},
 
 	activateDefaultTab: function() {
-		var settings = this.getSettings();
+		const settings = this.getSettings();
 
-		if ( ! settings.autoExpand || 'editor' === settings.autoExpand && ! this.isEdit ) {
+		if ( ! settings.autoExpand || ( 'editor' === settings.autoExpand && ! this.isEdit ) ) {
 			return;
 		}
 
-		var defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
+		const defaultActiveTab = this.getEditSettings( 'activeItemIndex' ) || 1,
 			originalToggleMethods = {
 				showTabFn: settings.showTabFn,
-				hideTabFn: settings.hideTabFn
+				hideTabFn: settings.hideTabFn,
 			};
 
 		// Toggle tabs without animation to avoid jumping
 		this.setSettings( {
 			showTabFn: 'show',
-			hideTabFn: 'hide'
+			hideTabFn: 'hide',
 		} );
 
 		this.changeActiveTab( defaultActiveTab );
@@ -55,7 +55,7 @@ module.exports = HandlerModule.extend( {
 	},
 
 	deactivateActiveTab: function( tabIndex ) {
-		var settings = this.getSettings(),
+		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
 			activeFilter = tabIndex ? '[data-tab="' + tabIndex + '"]' : '.' + activeClass,
 			$activeTitle = this.elements.$tabTitles.filter( activeFilter ),
@@ -67,7 +67,7 @@ module.exports = HandlerModule.extend( {
 	},
 
 	activateTab: function( tabIndex ) {
-		var settings = this.getSettings(),
+		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
 			$requestedTitle = this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ),
 			$requestedContent = this.elements.$tabContents.filter( '[data-tab="' + tabIndex + '"]' );
@@ -82,19 +82,20 @@ module.exports = HandlerModule.extend( {
 	},
 
 	bindEvents: function() {
-		var self = this;
+		this.elements.$tabTitles.on( {
+			keydown: ( event ) => {
+				if ( 'Enter' === event.key ) {
+					event.preventDefault();
 
-		self.elements.$tabTitles.on( 'focus', function( event ) {
-			self.changeActiveTab( event.currentTarget.dataset.tab );
-		} );
-
-		if ( self.getSettings( 'toggleSelf' ) ) {
-			self.elements.$tabTitles.on( 'mousedown', function( event ) {
-				if ( jQuery( event.currentTarget ).is( ':focus' ) ) {
-					self.changeActiveTab( event.currentTarget.dataset.tab );
+					this.changeActiveTab( event.currentTarget.dataset.tab );
 				}
-			} );
-		}
+			},
+			click: ( event ) => {
+				event.preventDefault();
+
+				this.changeActiveTab( event.currentTarget.dataset.tab );
+			},
+		} );
 	},
 
 	onInit: function() {
@@ -110,7 +111,7 @@ module.exports = HandlerModule.extend( {
 	},
 
 	changeActiveTab: function( tabIndex ) {
-		var isActiveTab = this.isActiveTab( tabIndex ),
+		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();
 
 		if ( ( settings.toggleSelf || ! isActiveTab ) && settings.hidePrevious ) {
@@ -124,5 +125,5 @@ module.exports = HandlerModule.extend( {
 		if ( ! isActiveTab ) {
 			this.activateTab( tabIndex );
 		}
-	}
+	},
 } );

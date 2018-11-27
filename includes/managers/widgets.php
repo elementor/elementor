@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Exceptions;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,6 +53,7 @@ class Widgets_Manager {
 			'google-maps',
 			'icon',
 			'icon-box',
+			'star-rating',
 			'image-gallery',
 			'image-carousel',
 			'icon-list',
@@ -254,10 +255,6 @@ class Widgets_Manager {
 		$config = [];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
-			if ( ! $widget->show_in_panel() ) {
-				continue;
-			}
-
 			$config[ $widget_key ] = $widget->get_config();
 		}
 
@@ -488,7 +485,7 @@ class Widgets_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_manager
+	 * @param Ajax $ajax_manager
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );

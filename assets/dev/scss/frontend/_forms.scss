@@ -38,6 +38,7 @@
 
 	.elementor-field-textual {
 		width: 100%;
+		max-width: 100%; // Tweak for themes that set this property
 		border: 1px solid $gray;
 		background-color: transparent;
 		color: $gray-darker;
@@ -60,6 +61,8 @@
 
 		select {
 			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
 			color: inherit;
 			font-size: inherit;
 			font-family: inherit;
@@ -83,6 +86,7 @@
 			pointer-events: none;
 		}
 	}
+
 	&.elementor-field-type-select-multiple{
 		.elementor-select-wrapper:before {
 			content: '';
@@ -112,6 +116,22 @@
 
 		.elementor-field-option {
 			flex-basis: 100%;
+		}
+	}
+}
+
+.elementor-field-type-checkbox,
+.elementor-field-type-radio,
+.elementor-field-type-acceptance {
+
+	.elementor-field-subgroup {
+
+		.elementor-field-option {
+
+			input,
+			label {
+				display: inline;
+			}
 		}
 	}
 }
@@ -295,4 +315,3 @@
 		}
 	}
 }
-

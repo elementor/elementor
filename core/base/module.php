@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.7.0
  * @abstract
  */
-abstract class Module {
+abstract class Module extends Base_Object {
 
 	/**
 	 * Module class reflection.
@@ -77,11 +77,13 @@ abstract class Module {
 	 * @return Module An instance of the class.
 	 */
 	public static function instance() {
-		if ( empty( static::$_instances[ static::class_name() ] ) ) {
-			static::$_instances[ static::class_name() ] = new static();
+		$class_name = static::class_name();
+
+		if ( empty( static::$_instances[ $class_name ] ) ) {
+			static::$_instances[ $class_name ] = new static();
 		}
 
-		return static::$_instances[ static::class_name() ];
+		return static::$_instances[ $class_name ];
 	}
 
 	/**
@@ -163,6 +165,13 @@ abstract class Module {
 	}
 
 	/**
+	 * @return Module[]
+	 */
+	public function get_components() {
+		return $this->components;
+	}
+
+	/**
 	 * Get module component.
 	 *
 	 * Retrieve the module component.
@@ -181,5 +190,93 @@ abstract class Module {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get assets url.
+	 *
+	 * @access protected
+	 *
+	 * @param string $file_name
+	 * @param string $file_extension
+	 * @param string $relative_url Optional. Default is null.
+	 * @param string $add_min_suffix Optional. Default is 'default'.
+	 *
+	 * @return string
+	 */
+	final protected function get_assets_url( $file_name, $file_extension, $relative_url = null, $add_min_suffix = 'default' ) {
+		static $is_test_mode = null;
+
+		if ( null === $is_test_mode ) {
+			$is_test_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+		}
+
+		if ( ! $relative_url ) {
+			$relative_url = $this->get_assets_relative_url() . $file_extension . '/';
+		}
+
+		$url = ELEMENTOR_URL . $relative_url . $file_name;
+
+		if ( 'default' === $add_min_suffix ) {
+			$add_min_suffix = ! $is_test_mode;
+		}
+
+		if ( $add_min_suffix ) {
+			$url .= '.min';
+		}
+
+		return $url . '.' . $file_extension;
+	}
+
+	/**
+	 * Get js assets url
+	 *
+	 * @access protected
+	 *
+	 * @param string $file_name
+	 * @param string $relative_url Optional. Default is null.
+	 * @param string $add_min_suffix Optional. Default is 'default'.
+	 *
+	 * @return string
+	 */
+	final protected function get_js_assets_url( $file_name, $relative_url = null, $add_min_suffix = 'default' ) {
+		return $this->get_assets_url( $file_name, 'js', $relative_url, $add_min_suffix );
+	}
+
+	/**
+	 * Get css assets url
+	 *
+	 * @access protected
+	 *
+	 * @param string $file_name
+	 * @param string $relative_url         Optional. Default is null.
+	 * @param string $add_min_suffix       Optional. Default is 'default'.
+	 * @param bool   $add_direction_suffix Optional. Default is `false`
+	 *
+	 * @return string
+	 */
+	final protected function get_css_assets_url( $file_name, $relative_url = null, $add_min_suffix = 'default', $add_direction_suffix = false ) {
+		static $direction_suffix = null;
+
+		if ( ! $direction_suffix ) {
+			$direction_suffix = is_rtl() ? '-rtl' : '';
+		}
+
+		if ( $add_direction_suffix ) {
+			$file_name .= $direction_suffix;
+		}
+
+		return $this->get_assets_url( $file_name, 'css', $relative_url, $add_min_suffix );
+	}
+
+	/**
+	 * Get assets relative url
+	 *
+	 * @access protected
+	 *
+	 * @return string
+	 */
+	protected function get_assets_relative_url() {
+		return 'assets/';
 	}
 }

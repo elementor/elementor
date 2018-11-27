@@ -2,11 +2,11 @@ var InsertTemplateHandler;
 
 InsertTemplateHandler = Marionette.Behavior.extend( {
 	ui: {
-		insertButton: '.elementor-template-library-template-insert'
+		insertButton: '.elementor-template-library-template-insert',
 	},
 
 	events: {
-		'click @ui.insertButton': 'onInsertButtonClick'
+		'click @ui.insertButton': 'onInsertButtonClick',
 	},
 
 	onInsertButtonClick: function() {
@@ -16,7 +16,7 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 		}
 
 		elementor.templates.importTemplate( this.view.model );
-	}
+	},
 }, {
 	dialog: null,
 
@@ -35,14 +35,14 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 	},
 
 	initDialog: function() {
-		InsertTemplateHandler.dialog = elementor.dialogsManager.createWidget( 'confirm', {
+		InsertTemplateHandler.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-insert-template-settings-dialog',
 			headerMessage: elementor.translate( 'import_template_dialog_header' ),
 			message: elementor.translate( 'import_template_dialog_message' ) + '<br>' + elementor.translate( 'import_template_dialog_message_attention' ),
 			strings: {
 				confirm: elementor.translate( 'yes' ),
-				cancel: elementor.translate( 'no' )
-			}
+				cancel: elementor.translate( 'no' ),
+			},
 		} );
 	},
 
@@ -52,7 +52,7 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 		}
 
 		return InsertTemplateHandler.dialog;
-	}
+	},
 } );
 
 module.exports = InsertTemplateHandler;

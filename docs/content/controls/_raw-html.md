@@ -1,31 +1,16 @@
-# Raw-HTML
+## Documentation has Moved
 
-Display HTML content in the panel. You can add custom `content_classes` to the content wrapper.
+This document in now available on [Developer API for Elementor](developers.elementor.com)
 
-*Returns:* `string`
+### Quick Links
 
-## Example
-
-```php
-$this->add_control(
-  'html_msg',
-  [
-     'type'    => Controls_Manager::RAW_HTML,
-     'raw' => __( 'A very important message to show on the panel.', 'your-plugin' ),
-	 'content_classes' => 'your-class',
-  ]
-);
-```
-
-## Usage
-
-The raw HTML gets automatically outputted in the panel.
-
-## Arguments
-
-Argument          | Required   | Type         | Default                      | Description
------------------ | :--------: | :------:     | ---------------------------- | ---------------------------------------------
-`type`            | yes        | *`string`*   | `Controls_Manager::RAW_HTML` | The type of the control
-`raw`             | no         | *`string`*   |                              | The default value of the control
-`content_classes` | no         | *`string`*   |                              | CSS classes to add to the content wrapper
-`separator`       | no         | *`string`*   | `default`                    | Set the position of the control separator. `default` means that the separator will be posited depending on the control type. `before` or `after` will force the separator position before/after the control. `none` will hide the separator
+* [Getting Started](https://developers.elementor.com/getting-started/)
+* [The Editor](https://developers.elementor.com/elementor-editor/)
+* [The Widgets](https://developers.elementor.com/elementor-widgets/)
+* [The Controls](https://developers.elementor.com/elementor-controls/)
+* [Code Reference](https://code.elementor.com)
+* [PHP Hooks](https://code.elementor.com/php-hooks/)
+* [JS Hooks](https://code.elementor.com/js-hooks/)
+* [Classes](https://code.elementor.com/classes/)
+* [Methods](https://code.elementor.com/methods/)
+* [Functions](https://code.elementor.com/functions/)

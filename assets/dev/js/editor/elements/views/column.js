@@ -3,11 +3,13 @@ var BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnView;
 
 ColumnView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-element-column-content' ),
+	template: Marionette.TemplateCache.get( '#tmpl-elementor-column-content' ),
 
 	emptyView: ColumnEmptyView,
 
 	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
+
+	toggleEditTools: true,
 
 	behaviors: function() {
 		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
@@ -15,17 +17,11 @@ ColumnView = BaseElementView.extend( {
 		_.extend( behaviors, {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'widget'
+				elChildType: 'widget',
 			},
 			Resizable: {
-				behaviorClass: require( 'elementor-behaviors/resizable' )
+				behaviorClass: require( 'elementor-behaviors/resizable' ),
 			},
-			HandleDuplicate: {
-				behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-			},
-			HandleAddMode: {
-				behaviorClass: require( 'elementor-behaviors/duplicate' )
-			}
 		} );
 
 		return elementor.hooks.applyFilters( 'elements/column/behaviors', behaviors, this );
@@ -52,14 +48,29 @@ ColumnView = BaseElementView.extend( {
 		return ui;
 	},
 
-	triggers: {
-		'click @ui.addButton': 'click:new'
-	},
-
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
+	},
+
+	getContextMenuGroups: function() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+			generalGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'general' } ) );
+
+		groups.splice( generalGroupIndex + 1, 0, {
+			name: 'addNew',
+			actions: [
+				{
+					name: 'addNew',
+                    icon: 'eicon-plus',
+					title: elementor.translate( 'new_column' ),
+					callback: this.addNewColumn.bind( this ),
+				},
+			],
+		} );
+
+		return groups;
 	},
 
 	isDroppingAllowed: function() {
@@ -108,7 +119,7 @@ ColumnView = BaseElementView.extend( {
 	getSortableOptions: function() {
 		return {
 			connectWith: '.elementor-widget-wrap',
-			items: '> .elementor-element'
+			items: '> .elementor-element',
 		};
 	},
 
@@ -121,6 +132,10 @@ ColumnView = BaseElementView.extend( {
 		} else {
 			this.ui.columnInner.removeClass( emptyClass ).addClass( populatedClass );
 		}
+	},
+
+	addNewColumn: function() {
+		this.trigger( 'request:add:new' );
 	},
 
 	// Events
@@ -157,7 +172,7 @@ ColumnView = BaseElementView.extend( {
 				}
 
 				self.addElementFromPanel( { at: newIndex } );
-			}
+			},
 		} );
 	},
 
@@ -195,7 +210,13 @@ ColumnView = BaseElementView.extend( {
 		}
 
 		return errors;
-	}
+	},
+
+	onAddButtonClick: function( event ) {
+		event.stopPropagation();
+
+		this.addNewColumn();
+	},
 } );
 
 module.exports = ColumnView;

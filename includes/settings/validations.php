@@ -68,7 +68,7 @@ class Settings_Validations {
 	 * @return mixed Input field.
 	 */
 	public static function clear_cache( $input ) {
-		Plugin::$instance->posts_css_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 
 		return $input;
 	}

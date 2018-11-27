@@ -1,4 +1,7 @@
 /* global elementorFrontendConfig */
+import HotKeys from '../../../../core/common/assets/js/utils/hot-keys';
+import environment from '../../../../core/common/assets/js/utils/environment';
+
 ( function( $ ) {
 	var elements = {},
 		EventManager = require( '../utils/hooks' ),
@@ -27,11 +30,17 @@
 
 			elements.$document = $( document );
 
-			elements.$body = $( 'body' );
+			elements.$body = $( document.body );
 
 			elements.$elementor = elements.$document.find( '.elementor' );
 
 			elements.$wpAdminBar = elements.$document.find( '#wpadminbar' );
+		};
+
+		var initHotKeys = function() {
+			self.hotKeys = new HotKeys();
+
+			self.hotKeys.bindListener( elements.$window );
 		};
 
 		var bindEvents = function() {
@@ -42,21 +51,19 @@
 			self.utils = {
 				youtube: new YouTubeModule(),
 				anchors: new AnchorsModule(),
-				lightbox: new LightboxModule()
+				lightbox: new LightboxModule(),
 			};
 
 			self.modules = {
+				utils: {
+					Module: require( 'elementor-utils/module' ),
+					ViewModule: require( 'elementor-utils/view-module' ),
+				},
 				StretchElement: require( 'elementor-frontend/modules/stretch-element' ),
-				Masonry: require( 'elementor-utils/masonry' )
+				Masonry: require( 'elementor-utils/masonry' ),
 			};
 
 			self.elementsHandler = new ElementsHandler( $ );
-		};
-
-		var initHotKeys = function() {
-			self.hotKeys = require( 'elementor-utils/hot-keys' );
-
-			self.hotKeys.bindListener( elements.$window );
 		};
 
 		var getSiteSettings = function( settingType, settingName ) {
@@ -69,10 +76,27 @@
 			return settingsObject;
 		};
 
+		var addIeCompatibility = function() {
+			var el = document.createElement( 'div' ),
+				supportsGrid = 'string' === typeof el.style.grid;
+
+			if ( ! environment.ie && supportsGrid ) {
+				return;
+			}
+
+			elements.$body.addClass( 'elementor-msie' );
+
+			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie" href="' + self.config.urls.assets + 'css/frontend-msie.min.css?' + self.config.version + '" type="text/css" />';
+
+			elements.$body.append( msieCss );
+		};
+
 		this.init = function() {
 			self.hooks = new EventManager();
 
 			initElements();
+
+			addIeCompatibility();
 
 			bindEvents();
 
@@ -95,20 +119,20 @@
 			return elements;
 		};
 
-		this.getDialogsManager = function() {
-			if ( ! dialogsManager ) {
-				dialogsManager = new DialogsManager.Instance();
-			}
-
-			return dialogsManager;
-		};
-
 		this.getPageSettings = function( settingName ) {
 			return getSiteSettings( 'page', settingName );
 		};
 
 		this.getGeneralSettings = function( settingName ) {
 			return getSiteSettings( 'general', settingName );
+		};
+
+		this.getDialogsManager = function() {
+			if ( ! dialogsManager ) {
+				dialogsManager = new DialogsManager.Instance();
+			}
+
+			return dialogsManager;
 		};
 
 		this.isEditMode = function() {
@@ -162,7 +186,7 @@
 
 		this.addListenerOnce = function( listenerID, event, callback, to ) {
 			if ( ! to ) {
-				to = self.getElements( '$window' );
+				to = elements.$window;
 			}
 
 			if ( ! self.isEditMode() ) {
@@ -171,12 +195,28 @@
 				return;
 			}
 
+			this.removeListeners( listenerID, event, to );
+
 			if ( to instanceof jQuery ) {
 				var eventNS = event + '.' + listenerID;
 
-				to.off( eventNS ).on( eventNS, callback );
+				to.on( eventNS, callback );
 			} else {
-				to.off( event, null, listenerID ).on( event, callback, listenerID );
+				to.on( event, callback, listenerID );
+			}
+		};
+
+		this.removeListeners = function( listenerID, event, callback, from ) {
+			if ( ! from ) {
+				from = elements.$window;
+			}
+
+			if ( from instanceof jQuery ) {
+				var eventNS = event + '.' + listenerID;
+
+				from.off( eventNS, callback );
+			} else {
+				from.off( event, callback, listenerID );
 			}
 		};
 
@@ -187,7 +227,7 @@
 		this.waypoint = function( $element, callback, options ) {
 			var defaultOptions = {
 				offset: '100%',
-				triggerOnce: true
+				triggerOnce: true,
 			};
 
 			options = $.extend( defaultOptions, options );

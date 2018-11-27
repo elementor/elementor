@@ -2,34 +2,26 @@ var SortableBehavior;
 
 SortableBehavior = Marionette.Behavior.extend( {
 	defaults: {
-		elChildType: 'widget'
+		elChildType: 'widget',
 	},
 
 	events: {
-		'sortstart': 'onSortStart',
-		'sortreceive': 'onSortReceive',
-		'sortupdate': 'onSortUpdate',
-		'sortover': 'onSortOver',
-		'sortout': 'onSortOut'
+		sortstart: 'onSortStart',
+		sortreceive: 'onSortReceive',
+		sortupdate: 'onSortUpdate',
+		sortover: 'onSortOver',
+		sortout: 'onSortOut',
 	},
 
 	initialize: function() {
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched )
-			.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+			.listenTo( this.view.options.model, 'request:sort:start', this.startSort )
+			.listenTo( this.view.options.model, 'request:sort:update', this.updateSort )
+			.listenTo( this.view.options.model, 'request:sort:receive', this.receiveSort );
 	},
 
 	onEditModeSwitched: function( activeMode ) {
 		if ( 'edit' === activeMode ) {
-			this.activate();
-		} else {
-			this.deactivate();
-		}
-	},
-
-	onDeviceModeChange: function() {
-		var deviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-
-		if ( 'desktop' === deviceMode ) {
 			this.activate();
 		} else {
 			this.deactivate();
@@ -52,6 +44,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
+
 		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
 			return;
 		}
@@ -62,10 +55,10 @@ SortableBehavior = Marionette.Behavior.extend( {
 				placeholder: 'elementor-sortable-placeholder elementor-' + this.getOption( 'elChildType' ) + '-placeholder',
 				cursorAt: {
 					top: 20,
-					left: 25
+					left: 25,
 				},
 				helper: this._getSortableHelper.bind( this ),
-				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title'
+				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title',
 
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
@@ -75,7 +68,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	_getSortableHelper: function( event, $item ) {
 		var model = this.view.collection.get( {
-			cid: $item.data( 'model-cid' )
+			cid: $item.data( 'model-cid' ),
 		} );
 
 		return '<div style="height: 84px; width: 125px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><div class="icon"><i class="' + model.getIcon() + '"></i></div><div class="elementor-element-title-wrapper"><div class="title">' + model.getTitle() + '</div></div></div>';
@@ -86,25 +79,99 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	deactivate: function() {
-		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
-			this.getChildViewContainer().sortable( 'destroy' );
+		var childViewContainer = this.getChildViewContainer();
+
+		if ( childViewContainer.sortable( 'instance' ) ) {
+			childViewContainer.sortable( 'destroy' );
 		}
 	},
 
-	onSortStart: function( event, ui ) {
+	startSort: function( event, ui ) {
 		event.stopPropagation();
 
 		var model = this.view.collection.get( {
-			cid: ui.item.data( 'model-cid' )
+			cid: ui.item.data( 'model-cid' ),
 		} );
 
+		elementor.channels.data
+			.reply( 'dragging:model', model )
+			.reply( 'dragging:parent:view', this.view )
+			.trigger( 'drag:start', model )
+			.trigger( model.get( 'elType' ) + ':drag:start' );
+	},
+
+	updateSort: function( ui ) {
+		var model = elementor.channels.data.request( 'dragging:model' ),
+			$childElement = ui.item,
+			collection = this.view.collection,
+			newIndex = $childElement.parent().children().index( $childElement ),
+			child = this.view.children.findByModelCid( model.cid );
+
+		this.view.addChildElement( model.clone(), {
+			at: newIndex,
+			trigger: {
+				beforeAdd: 'drag:before:update',
+				afterAdd: 'drag:after:update',
+			},
+			onBeforeAdd: function() {
+				child._isRendering = true;
+
+				collection.remove( model );
+			},
+		} );
+
+		elementor.saver.setFlagEditorChange( true );
+	},
+
+	receiveSort: function( event, ui ) {
+		event.stopPropagation();
+
+		if ( this.view.isCollectionFilled() ) {
+			jQuery( ui.sender ).sortable( 'cancel' );
+
+			return;
+		}
+
+		var model = elementor.channels.data.request( 'dragging:model' ),
+			draggedElType = model.get( 'elType' ),
+			draggedIsInnerSection = 'section' === draggedElType && model.get( 'isInner' ),
+			targetIsInnerColumn = 'column' === this.view.getElementType() && this.view.isInner();
+
+		if ( draggedIsInnerSection && targetIsInnerColumn ) {
+			jQuery( ui.sender ).sortable( 'cancel' );
+
+			return;
+		}
+
+		var newIndex = ui.item.index(),
+			modelData = model.toJSON( { copyHtmlCache: true } );
+
+		this.view.addChildElement( modelData, {
+			at: newIndex,
+			trigger: {
+				beforeAdd: 'drag:before:update',
+				afterAdd: 'drag:after:update',
+			},
+			onAfterAdd: function() {
+				var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
+
+				senderSection.isManualRemoving = true;
+
+				model.destroy();
+
+				senderSection.isManualRemoving = false;
+			},
+		} );
+	},
+
+	onSortStart: function( event, ui ) {
 		if ( 'column' === this.options.elChildType ) {
 			var uiData = ui.item.data( 'sortableItem' ),
 				uiItems = uiData.items,
 				itemHeight = 0;
 
 			uiItems.forEach( function( item ) {
-				if ( item.item[0] === ui.item[0] ) {
+				if ( item.item[ 0 ] === ui.item[ 0 ] ) {
 					itemHeight = item.height;
 					return false;
 				}
@@ -113,11 +180,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			ui.placeholder.height( itemHeight );
 		}
 
-		elementor.channels.data
-			.reply( 'dragging:model', model )
-			.reply( 'dragging:parent:view', this.view )
-			.trigger( 'drag:start', model )
-			.trigger( model.get( 'elType' ) + ':drag:start' );
+		this.startSort( event, ui );
 	},
 
 	onSortOver: function( event ) {
@@ -129,7 +192,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			.addClass( 'elementor-draggable-over' )
 			.attr( {
 				'data-dragged-element': model.get( 'elType' ),
-				'data-dragged-is-inner': model.get( 'isInner' )
+				'data-dragged-is-inner': model.get( 'isInner' ),
 			} );
 
 		this.$el.addClass( 'elementor-dragging-on-child' );
@@ -146,70 +209,22 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onSortReceive: function( event, ui ) {
-		event.stopPropagation();
-
-		if ( this.view.isCollectionFilled() ) {
-			jQuery( ui.sender ).sortable( 'cancel' );
-			return;
-		}
-
-		var model = elementor.channels.data.request( 'dragging:model' ),
-			draggedElType = model.get( 'elType' ),
-			draggedIsInnerSection = 'section' === draggedElType && model.get( 'isInner' ),
-			targetIsInnerColumn = 'column' === this.view.getElementType() && this.view.isInner();
-
-		if ( draggedIsInnerSection && targetIsInnerColumn ) {
-			jQuery( ui.sender ).sortable( 'cancel' );
-
-			return;
-		}
-
-		elementor.channels.data.trigger( 'drag:before:update', model );
-
-		var newIndex = ui.item.parent().children().index( ui.item ),
-			modelJSON = model.toJSON( { copyHtmlCache: true } );
-
-		var senderSection = elementor.channels.data.request( 'dragging:parent:view' );
-
-		senderSection.isManualRemoving = true;
-
-		model.destroy();
-
-		senderSection.isManualRemoving = false;
-
-		this.view.addChildElement( modelJSON, { at: newIndex } );
-
-		elementor.channels.data.trigger( 'drag:after:update', model );
+		this.receiveSort( event, ui );
 	},
 
 	onSortUpdate: function( event, ui ) {
 		event.stopPropagation();
 
-		if ( this.getChildViewContainer()[0] === ui.item.parent()[0] ) {
-			var model = elementor.channels.data.request( 'dragging:model' ),
-				$childElement = ui.item,
-				collection = this.view.collection,
-				newIndex = $childElement.parent().children().index( $childElement );
-
-			elementor.channels.data.trigger( 'drag:before:update', model );
-
-			var child = this.view.children.findByModelCid( model.cid );
-
-			child._isRendering = true;
-
-			collection.remove( model );
-
-			this.view.addChildElement( model, { at: newIndex } );
-
-			elementor.saver.setFlagEditorChange( true );
-
-			elementor.channels.data.trigger( 'drag:after:update', model );
+		if ( this.getChildViewContainer()[ 0 ] !== ui.item.parent()[ 0 ] ) {
+			return;
 		}
+
+		this.updateSort( ui );
 	},
 
 	onAddChild: function( view ) {
 		view.$el.attr( 'data-model-cid', view.model.cid );
-	}
+	},
 } );
 
 module.exports = SortableBehavior;

@@ -58,6 +58,20 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'accordion', 'tabs', 'toggle' ];
+	}
+
+	/**
 	 * Register accordion widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -73,38 +87,45 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'tab_title',
+			[
+				'label' => __( 'Title & Content', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => __( 'Accordion Title', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+			]
+		);
+
+		$repeater->add_control(
+			'tab_content',
+			[
+				'label' => __( 'Content', 'elementor' ),
+				'type' => Controls_Manager::WYSIWYG,
+				'default' => __( 'Accordion Content', 'elementor' ),
+				'show_label' => false,
+			]
+		);
+
 		$this->add_control(
 			'tabs',
 			[
 				'label' => __( 'Accordion Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
 						'tab_title' => __( 'Accordion #1', 'elementor' ),
-						'tab_content' => __( 'I am item content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
+						'tab_content' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 					],
 					[
 						'tab_title' => __( 'Accordion #2', 'elementor' ),
-						'tab_content' => __( 'I am item content. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					],
-				],
-				'fields' => [
-					[
-						'name' => 'tab_title',
-						'label' => __( 'Title & Content', 'elementor' ),
-						'type' => Controls_Manager::TEXT,
-						'default' => __( 'Accordion Title' , 'elementor' ),
-						'dynamic' => [
-							'active' => true,
-						],
-						'label_block' => true,
-					],
-					[
-						'name' => 'tab_content',
-						'label' => __( 'Content', 'elementor' ),
-						'type' => Controls_Manager::WYSIWYG,
-						'default' => __( 'Accordion Content', 'elementor' ),
-						'show_label' => false,
+						'tab_content' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 					],
 				],
 				'title_field' => '{{{ tab_title }}}',
@@ -117,6 +138,28 @@ class Widget_Accordion extends Widget_Base {
 				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
+			]
+		);
+
+		$this->add_control(
+			'icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-plus',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'icon_active',
+			[
+				'label' => __( 'Active Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-minus',
+				'condition' => [
+					'icon!' => '',
+				],
 			]
 		);
 
@@ -136,29 +179,6 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'default' => 'div',
 				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'icon',
-			[
-				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-plus',
-				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
-			'icon_active',
-			[
-				'label' => __( 'Active Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-minus',
-				'label_block' => true,
-				'condition' => [
-					'icon!' => '',
-				],
 			]
 		);
 
@@ -474,7 +494,7 @@ class Widget_Accordion extends Widget_Base {
 							<i class="elementor-accordion-icon-opened <?php echo esc_attr( $settings['icon_active'] ); ?>"></i>
 						</span>
 						<?php endif; ?>
-						<?php echo $item['tab_title']; ?>
+						<a href=""><?php echo $item['tab_title']; ?></a>
 					</<?php echo $settings['title_html_tag']; ?>>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
@@ -530,7 +550,7 @@ class Widget_Accordion extends Widget_Base {
 								<i class="elementor-accordion-icon-opened {{ settings.icon_active }}"></i>
 							</span>
 							<# } #>
-							{{{ item.tab_title }}}
+							<a href="">{{{ item.tab_title }}}</a>
 						</{{{ settings.title_html_tag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>

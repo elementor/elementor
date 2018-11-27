@@ -1,16 +1,12 @@
 // Core variables and mixins
 @import "../helpers/variables";
 @import "../helpers/mixins";
-
-// Common
-@import "../common/common";
-
-// Utility classes
-@import "../helpers/utilities";
+@import "breakpoints";
 
 // Reboot CSS
 @import "wrapper";
 @import "global";
+@import "loader";
 @import "buttons";
 @import "forms";
 
@@ -26,7 +22,11 @@
 
 @import "devices";
 @import "tipsy";
-@import "templates-modal-wrapper";
 @import "templates-modal";
 @import "dynamic-tags";
 @import "notifications";
+@import "context-menu";
+@import "introduction";
+@import "hotkeys";
+
+@import "navigator/navigator";

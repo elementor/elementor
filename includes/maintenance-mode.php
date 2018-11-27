@@ -105,33 +105,31 @@ class Maintenance_Mode {
 			return;
 		}
 
-		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`.
-		$GLOBALS['post'] = get_post( self::get( 'template_id' ) ); // WPCS: override ok.
+		$user = wp_get_current_user();
 
-		add_filter( 'template_include', [ $this, 'template_include' ], 1 );
-	}
+		$exclude_mode = self::get( 'exclude_mode', [] );
 
-	/**
-	 * Template include.
-	 *
-	 * Update the path of the current template before including it. Used to
-	 * change the "Maintenance Mode" path and the HTTP header data.
-	 *
-	 * Fired by `template_include` filter.
-	 *
-	 * @since 1.4.0
-	 * @access public
-	 *
-	 * @param string $template The path of the template to include.
-	 *
-	 * @return string Updated path of the template to include.
-	 */
-	public function template_include( $template ) {
-		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
-		query_posts( [
-			'p' => self::get( 'template_id' ),
-			'post_type' => Source_Local::CPT,
-		] );
+		$is_login_page = apply_filters( 'elementor/maintenance_mode/is_login_page', false );
+
+		if ( $is_login_page ) {
+			return;
+		}
+
+		if ( 'logged_in' === $exclude_mode && is_user_logged_in() ) {
+			return;
+		}
+
+		if ( 'custom' === $exclude_mode ) {
+			$exclude_roles = self::get( 'exclude_roles', [] );
+
+			$compare_roles = array_intersect( $user->roles, $exclude_roles );
+
+			if ( ! empty( $compare_roles ) ) {
+				return;
+			}
+		}
+
+		add_filter( 'body_class', [ $this, 'body_class' ] );
 
 		if ( 'maintenance' === self::get( 'mode' ) ) {
 			$protocol = wp_get_server_protocol();
@@ -140,7 +138,14 @@ class Maintenance_Mode {
 			header( 'Retry-After: 600' );
 		}
 
-		return $template;
+		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`.
+		$GLOBALS['post'] = get_post( self::get( 'template_id' ) ); // WPCS: override ok.
+
+		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
+		query_posts( [
+			'p' => self::get( 'template_id' ),
+			'post_type' => Source_Local::CPT,
+		] );
 	}
 
 	/**
@@ -169,22 +174,11 @@ class Maintenance_Mode {
 			$templates_options[ $template['template_id'] ] = $template['title'];
 		}
 
-		$template_id = self::get( 'template_id' );
-		$edit_url = '';
-		if ( $template_id && get_post( $template_id ) ) {
-			$edit_url = Utils::get_edit_link( $template_id );
-		}
+		ob_start();
 
-		$template_description = sprintf( ' <a target="_blank" class="elementor-edit-template" style="display: none" href="%1$s">%2$s</a>', $edit_url, __( 'Edit Template', 'elementor' ) );
+		$this->print_template_description();
 
-		$template_description .= '<span class="elementor-maintenance-mode-error" style="display: none">' .
-								 __( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ) .
-								 '<br>' .
-								 sprintf(
-									 /* translators: %s: Create page URL */
-									 __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT )
-								 ) .
-								 '</span>';
+		$template_description = ob_get_clean();
 
 		$tools->add_tab(
 			'maintenance_mode', [
@@ -321,25 +315,31 @@ class Maintenance_Mode {
 		add_action( 'admin_head', [ $this, 'print_style' ] );
 		add_action( 'wp_head', [ $this, 'print_style' ] );
 
-		$user = wp_get_current_user();
+		// Priority = 11 that is *after* WP default filter `redirect_canonical` in order to avoid redirection loop.
+		add_action( 'template_redirect', [ $this, 'template_redirect' ], 11 );
+	}
 
-		$exclude_mode = self::get( 'exclude_mode', [] );
+	/**
+	 * Print Template Description
+	 *
+	 * Prints the template description
+	 *
+	 * @since 2.2.0
+	 * @access private
+	 */
+	private function print_template_description() {
+		$template_id = self::get( 'template_id' );
 
-		if ( 'logged_in' === $exclude_mode && is_user_logged_in() ) {
-			return;
+		$edit_url = '';
+
+		if ( $template_id && get_post( $template_id ) ) {
+			$edit_url = Plugin::$instance->documents->get( $template_id )->get_edit_url();
 		}
 
-		if ( 'custom' === $exclude_mode ) {
-			$exclude_roles = self::get( 'exclude_roles', [] );
-
-			$compare_roles = array_intersect( $user->roles, $exclude_roles );
-
-			if ( ! empty( $compare_roles ) ) {
-				return;
-			}
-		}
-
-		add_filter( 'body_class', [ $this, 'body_class' ] );
-		add_action( 'template_redirect', [ $this, 'template_redirect' ], 1 );
+		?>
+		<a target="_blank" class="elementor-edit-template" style="display: none" href="<?php echo $edit_url; ?>"><?php echo __( 'Edit Template', 'elementor' ); ?></a>
+		<div class="elementor-maintenance-mode-error"><?php echo __( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ); ?></div>
+		<div class="elementor-maintenance-mode-error"><?php echo sprintf( __( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ); ?></div>
+		<?php
 	}
 }

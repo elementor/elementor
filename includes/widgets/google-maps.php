@@ -75,6 +75,20 @@ class Widget_Google_Maps extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'google', 'map', 'embed' ];
+	}
+
+	/**
 	 * Register google maps widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -111,7 +125,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_control(
 			'zoom',
 			[
-				'label' => __( 'Zoom Level', 'elementor' ),
+				'label' => __( 'Zoom', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 10,
@@ -122,6 +136,7 @@ class Widget_Google_Maps extends Widget_Base {
 						'max' => 20,
 					],
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -164,6 +179,68 @@ class Widget_Google_Maps extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_map_style',
+			[
+				'label' => __( 'Map', 'elementor' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->start_controls_tabs( 'map_filter' );
+
+		$this->start_controls_tab( 'normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} iframe',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}}:hover iframe',
+			]
+		);
+
+		$this->add_control(
+			'hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} iframe' => 'transition-duration: {{SIZE}}s',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 	}
 
 	/**

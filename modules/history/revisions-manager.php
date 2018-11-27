@@ -2,9 +2,10 @@
 namespace Elementor\Modules\History;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Manager;
 use Elementor\Plugin;
-use Elementor\Post_CSS_File;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -59,16 +60,19 @@ class Revisions_Manager {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since  2.0.0
 	 * @access public
 	 * @static
+	 *
+	 * @param $post_content
+	 * @param $post_id
+	 *
+	 * @return string
 	 */
-	public static function avoid_delete_auto_save( $post_content ) {
-		global $post;
-
+	public static function avoid_delete_auto_save( $post_content, $post_id ) {
 		// Add a temporary string in order the $post will not be equal to the $autosave
 		// in edit-form-advanced.php:210
-		if ( Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
+		if ( $post_id && Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
 			$post_content .= '<!-- Created with Elementor -->';
 		}
 
@@ -154,7 +158,7 @@ class Revisions_Manager {
 			if ( ! isset( self::$authors[ $revision->post_author ] ) ) {
 				self::$authors[ $revision->post_author ] = [
 					'avatar' => get_avatar( $revision->post_author, 22 ),
-					'display_name' => get_the_author_meta( 'display_name' , $revision->post_author ),
+					'display_name' => get_the_author_meta( 'display_name', $revision->post_author ),
 				];
 			}
 
@@ -182,9 +186,7 @@ class Revisions_Manager {
 	 * @static
 	 */
 	public static function update_autosave( $autosave_data ) {
-		$revision_id = $autosave_data['ID'];
-
-		Plugin::$instance->db->safe_copy_elementor_meta( $autosave_data['post_parent'], $revision_id );
+		self::save_revision( $autosave_data['ID'] );
 	}
 
 	/**
@@ -216,31 +218,34 @@ class Revisions_Manager {
 
 		Plugin::$instance->db->copy_elementor_meta( $revision_id, $parent_id );
 
-		$post_css = new Post_CSS_File( $parent_id );
+		$post_css = new Post_CSS( $parent_id );
 
 		$post_css->update();
 	}
 
 	/**
-	 * @since 1.7.0
+	 * @since 2.3.0
 	 * @access public
 	 * @static
+	 *
+	 * @param $data
+	 *
+	 * @return array
+	 * @throws \Exception
 	 */
-	public static function on_revision_data_request() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( ! isset( $_POST['id'] ) ) {
-			wp_send_json_error( 'You must set the revision ID.' );
+	public static function ajax_get_revision_data( array $data ) {
+		if ( ! isset( $data['id'] ) ) {
+			throw new \Exception( 'You must set the revision ID.' );
 		}
 
-		$revision = get_post( $_POST['id'] );
+		$revision = get_post( $data['id'] );
 
 		if ( empty( $revision ) ) {
-			wp_send_json_error( 'Invalid revision.' );
+			throw new \Exception( 'Invalid revision.' );
 		}
 
 		if ( ! current_user_can( 'edit_post', $revision->ID ) ) {
-			wp_send_json_error( __( 'Access denied.', 'elementor' ) );
+			throw new \Exception( __( 'Access denied.', 'elementor' ) );
 		}
 
 		$revision_data = [
@@ -248,37 +253,37 @@ class Revisions_Manager {
 			'elements' => Plugin::$instance->db->get_plain_editor( $revision->ID ),
 		];
 
-		wp_send_json_success( $revision_data );
+		return $revision_data;
 	}
 
 	/**
-	 * @since 1.7.0
+	 * @since  2.3.0
 	 * @access public
 	 * @static
+	 *
+	 * @param array $data
+	 *
+	 * @throws \Exception
 	 */
-	public static function on_delete_revision_request() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		if ( empty( $_POST['id'] ) ) {
-			wp_send_json_error( 'You must set the revision ID.' );
+	public static function ajax_delete_revision( array $data ) {
+		if ( empty( $data['id'] ) ) {
+			throw new \Exception( 'You must set the revision ID.' );
 		}
 
-		$revision = get_post( $_POST['id'] );
+		$revision = get_post( $data['id'] );
 
 		if ( empty( $revision ) ) {
-			wp_send_json_error( 'Invalid revision.' );
+			throw new \Exception( 'Invalid revision.' );
 		}
 
 		if ( ! current_user_can( 'delete_post', $revision->ID ) ) {
-			wp_send_json_error( __( 'Access denied.', 'elementor' ) );
+			throw new \Exception( __( 'Access denied.', 'elementor' ) );
 		}
 
 		$deleted = wp_delete_post_revision( $revision->ID );
 
-		if ( $deleted && ! is_wp_error( $deleted ) ) {
-			wp_send_json_success();
-		} else {
-			wp_send_json_error( __( 'Cannot delete this revision.', 'elementor' ) );
+		if ( ! $deleted || is_wp_error( $deleted ) ) {
+			throw new \Exception( __( 'Cannot delete this revision.', 'elementor' ) );
 		}
 	}
 
@@ -375,13 +380,18 @@ class Revisions_Manager {
 				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
 				'revisions_disabled_2' => sprintf(
 					/* translators: %s: Codex URL */
-					__( 'Learn more about <a targe="_blank" href="%s">WordPress revisions</a>', 'elementor' ),
+					__( 'Learn more about <a target="_blank" href="%s">WordPress revisions</a>', 'elementor' ),
 					'https://codex.wordpress.org/Revisions#Revision_Options'
 				),
 			],
 		] );
 
 		return $settings;
+	}
+
+	public static function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'get_revision_data', [ __CLASS__, 'ajax_get_revision_data' ] );
+		$ajax->register_ajax_action( 'delete_revision', [ __CLASS__, 'ajax_delete_revision' ] );
 	}
 
 	/**
@@ -396,15 +406,14 @@ class Revisions_Manager {
 		add_action( 'elementor/db/before_save', [ __CLASS__, 'db_before_save' ], 10, 2 );
 		add_action( '_wp_put_post_revision', [ __CLASS__, 'save_revision' ] );
 		add_action( 'wp_creating_autosave', [ __CLASS__, 'update_autosave' ] );
+		add_action( 'elementor/ajax/register_actions', [ __CLASS__, 'register_ajax_actions' ] );
 
 		// Hack to avoid delete the auto-save revision in WP editor.
-		add_filter( 'edit_post_content', [ __CLASS__, 'avoid_delete_auto_save' ] );
+		add_filter( 'edit_post_content', [ __CLASS__, 'avoid_delete_auto_save' ], 10, 2 );
 		add_action( 'edit_form_after_title', [ __CLASS__, 'remove_temp_post_content' ] );
 
 		if ( Utils::is_ajax() ) {
 			add_filter( 'elementor/documents/ajax_save/return_data', [ __CLASS__, 'on_ajax_save_builder_data' ], 10, 2 );
-			add_action( 'wp_ajax_elementor_get_revision_data', [ __CLASS__, 'on_revision_data_request' ] );
-			add_action( 'wp_ajax_elementor_delete_revision', [ __CLASS__, 'on_delete_revision_request' ] );
 		}
 	}
 

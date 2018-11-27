@@ -12,11 +12,11 @@ MaintenanceModeModule = ViewModule.extend( {
 				excludeRolesArea: '.elementor_maintenance_mode_exclude_roles',
 				templateSelect: '.elementor_maintenance_mode_template_id select',
 				editTemplateButton: '.elementor-edit-template',
-				maintenanceModeError: '.elementor-maintenance-mode-error'
+				maintenanceModeError: '.elementor-maintenance-mode-error',
 			},
 			classes: {
-				isEnabled: 'elementor-maintenance-mode-is-enabled'
-			}
+				isEnabled: 'elementor-maintenance-mode-is-enabled',
+			},
 		};
 	},
 
@@ -59,14 +59,14 @@ MaintenanceModeModule = ViewModule.extend( {
 				return;
 			}
 
-			var editUrl = ElementorAdminConfig.home_url + '?p=' + templateID + '&elementor';
+			var editUrl = elementorAdmin.config.home_url + '?p=' + templateID + '&elementor';
 
 			elements.$editTemplateButton
 				.prop( 'href', editUrl )
 				.show();
 			elements.$maintenanceModeError.hide();
 		} ).trigger( 'change' );
-	}
+	},
 } );
 
 module.exports = MaintenanceModeModule;

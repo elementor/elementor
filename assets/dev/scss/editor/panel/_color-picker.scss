@@ -3,7 +3,7 @@
 	&.wp-picker-active {
 		position: absolute;
 		z-index: 10000;
-		top: 0;
+		top: -9px;
 		@include end(7px);
 		background-color: #fff;
 		border: solid #fff;
@@ -51,7 +51,6 @@
 	}
 
 	&.wp-picker-active {
-		transform: translateY(6px);
 
 		[class*="wp-version-4-9"] #elementor-controls &,
 		[class*="wp-version-5"] #elementor-controls & {

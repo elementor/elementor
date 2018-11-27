@@ -14,7 +14,7 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 	events: function() {
 		return {
 			'keyup @ui.form :input': 'onFormChanged',
-			'change @ui.form :input': 'onFormChanged'
+			'change @ui.form :input': 'onFormChanged',
 		};
 	},
 
@@ -28,12 +28,12 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 	onReady: function() {
 		var self = this;
 
-		elementor.ajax.addRequest( 'editor_get_wp_widget_form', {
+		elementorCommon.ajax.addRequest( 'editor_get_wp_widget_form', {
 			data: {
 				// Fake Widget ID
 				id: self.model.cid,
 				widget_type: self.model.get( 'widget' ),
-				data: self.elementSettingsModel.toJSON()
+				data: self.elementSettingsModel.toJSON(),
 			},
 			success: function( data ) {
 				self.ui.form.html( data );
@@ -51,9 +51,9 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 				}
 
 				elementor.hooks.doAction( 'panel/widgets/' + self.model.get( 'widget' ) + '/controls/wp_widget/loaded', self );
-			}
+			},
 		} );
-	}
+	},
 } );
 
 module.exports = ControlWPWidgetItemView;

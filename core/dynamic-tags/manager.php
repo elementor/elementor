@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Core\DynamicTags;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Plugin;
 use Elementor\User;
 
@@ -332,20 +335,16 @@ class Manager {
 	 * @throws \Exception If post ID is missing.
 	 * @throws \Exception If current user don't have permissions to edit the post.
 	 */
-	public function ajax_render_tags() {
-		Plugin::$instance->editor->verify_ajax_nonce();
-
-		$posted = $_POST; // WPCS: CSRF OK.
-
-		if ( empty( $posted['post_id'] ) ) {
+	public function ajax_render_tags( $data ) {
+		if ( empty( $data['post_id'] ) ) {
 			throw new \Exception( 'Missing post id.' );
 		}
 
-		if ( ! User::is_current_user_can_edit( $posted['post_id'] ) ) {
+		if ( ! User::is_current_user_can_edit( $data['post_id'] ) ) {
 			throw new \Exception( 'Access denied.' );
 		}
 
-		Plugin::$instance->db->switch_to_post( $posted['post_id'] );
+		Plugin::$instance->db->switch_to_post( $data['post_id'] );
 
 		/**
 		 * Before dynamic tags rendered.
@@ -358,7 +357,7 @@ class Manager {
 
 		$tags_data = [];
 
-		foreach ( $posted['tags'] as $tag_key ) {
+		foreach ( $data['tags'] as $tag_key ) {
 			$tag_key_parts = explode( '-', $tag_key );
 
 			$tag_name = base64_decode( $tag_key_parts[0] );
@@ -379,7 +378,7 @@ class Manager {
 		 */
 		do_action( 'elementor/dynamic_tags/after_render' );
 
-		wp_send_json_success( $tags_data );
+		return $tags_data;
 	}
 
 	/**
@@ -401,10 +400,32 @@ class Manager {
 	}
 
 	/**
+	 * @param Post $css_file
+	 */
+	public function after_enqueue_post_css( $css_file ) {
+		$post_id = $css_file->get_post_id();
+
+		if ( $css_file instanceof Post_Preview ) {
+			$post_id_for_data = $css_file->get_preview_id();
+		} else {
+			$post_id_for_data = $post_id;
+		}
+
+		$css_file = new Dynamic_CSS( $post_id, $post_id_for_data );
+
+		$css_file->enqueue();
+	}
+
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'render_tags', [ $this, 'ajax_render_tags' ] );
+	}
+
+	/**
 	 * @since 2.0.0
 	 * @access private
 	 */
 	private function add_actions() {
-		add_action( 'wp_ajax_elementor_render_tags', [ $this, 'ajax_render_tags' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_action( 'elementor/css-file/post/enqueue', [ $this, 'after_enqueue_post_css' ] );
 	}
 }

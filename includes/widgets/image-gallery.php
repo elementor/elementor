@@ -57,6 +57,20 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'image', 'photo', 'visual', 'gallery' ];
+	}
+
+	/**
 	 * Add lightbox data to image link.
 	 *
 	 * Used to add lightbox data attributes to image link HTML.

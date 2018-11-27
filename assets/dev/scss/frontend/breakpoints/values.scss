@@ -1,0 +1,4 @@
+$screen-sm-max: map_get($breakpoints, md) - 1;
+$screen-md-min: map_get($breakpoints, md);
+$screen-md-max: map_get($breakpoints, lg) - 1;
+$screen-lg-min: map_get($breakpoints, lg);

@@ -55,7 +55,7 @@ module.exports = Module.extend( {
 		}
 
 		options = _.extend( {
-			status: 'autosave'
+			status: 'autosave',
 		}, options );
 
 		this.saveEditor( options );
@@ -63,7 +63,7 @@ module.exports = Module.extend( {
 
 	savePending: function( options ) {
 		options = _.extend( {
-			status: 'pending'
+			status: 'pending',
 		}, options );
 
 		this.saveEditor( options );
@@ -71,17 +71,17 @@ module.exports = Module.extend( {
 
 	discard: function() {
 		var self = this;
-		elementor.ajax.addRequest( 'discard_changes', {
+		elementorCommon.ajax.addRequest( 'discard_changes', {
 			success: function() {
 				self.setFlagEditorChange( false );
 				location.href = elementor.config.document.urls.exit_to_dashboard;
-			}
+			},
 		} );
 	},
 
 	update: function( options ) {
 		options = _.extend( {
-			status: elementor.settings.page.model.get( 'post_status' )
+			status: elementor.settings.page.model.get( 'post_status' ),
 		}, options );
 
 		this.saveEditor( options );
@@ -89,7 +89,7 @@ module.exports = Module.extend( {
 
 	publish: function( options ) {
 		options = _.extend( {
-			status: 'publish'
+			status: 'publish',
 		}, options );
 
 		this.saveEditor( options );
@@ -113,7 +113,7 @@ module.exports = Module.extend( {
 
 	setWorkSaver: function() {
 		var self = this;
-		elementor.$window.on( 'beforeunload', function() {
+		elementorCommon.elements.$window.on( 'beforeunload', function() {
 			if ( self.isEditorChanged() ) {
 				return elementor.translate( 'before_unload_alert' );
 			}
@@ -127,7 +127,7 @@ module.exports = Module.extend( {
 
 		options = _.extend( {
 			status: 'draft',
-			onSuccess: null
+			onSuccess: null,
 		}, options );
 
 		var self = this,
@@ -145,11 +145,11 @@ module.exports = Module.extend( {
 
 		settings.post_status = options.status;
 
-		elementor.ajax.addRequest( 'save_builder', {
+		elementorCommon.ajax.addRequest( 'save_builder', {
 			data: {
 				status: options.status,
 				elements: elements,
-				settings: settings
+				settings: settings,
 			},
 
 			success: function( data ) {
@@ -196,23 +196,23 @@ module.exports = Module.extend( {
 				if ( _.isString( data ) ) {
 					message = data;
 				} else if ( data.statusText ) {
-					message = elementor.ajax.createErrorMessage( data );
+					message = elementor.createAjaxErrorMessage( data );
 
 					if ( 0 === data.readyState ) {
 						message += ' ' + elementor.translate( 'saving_disabled' );
 					}
-				} else if ( data[0] && data[0].code ) {
-					message = elementor.translate( 'server_error' ) + ' ' + data[0].code;
+				} else if ( data[ 0 ] && data[ 0 ].code ) {
+					message = elementor.translate( 'server_error' ) + ' ' + data[ 0 ].code;
 				}
 
 				elementor.notifications.showToast( {
-					message: message
+					message: message,
 				} );
-			}
+			},
 		} );
 	},
 
 	afterAjax: function() {
 		this.isSaving = false;
-	}
+	},
 } );

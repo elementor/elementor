@@ -84,7 +84,6 @@ class Model extends BaseModel {
 	 * @return array Controls list.
 	 */
 	public static function get_controls_list() {
-
 		return [
 			Controls_Manager::TAB_STYLE => [
 				'style' => [
@@ -100,7 +99,7 @@ class Model extends BaseModel {
 						'elementor_container_width' => [
 							'label' => __( 'Content Width', 'elementor' ) . ' (px)',
 							'type' => Controls_Manager::NUMBER,
-							'min' => 0,
+							'min' => 300,
 							'description' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 							'selectors' => [
 								'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{VALUE}}px',

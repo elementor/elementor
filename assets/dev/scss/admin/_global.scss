@@ -1,4 +1,64 @@
 
+// Dashboard Icon
+#adminmenu {
+
+	#toplevel_page_elementor,
+	#toplevel_page_edit-post_type-elementor_library {
+
+		div.wp-menu-image:before {
+			content: "\e801";
+			font-family: eicons;
+			font-size: 18px;
+			margin-top: 1px;
+		}
+
+		// Menu Go Pro
+		a[href="admin.php?page=go_elementor_pro"] {
+			color: #d54e21;
+		}
+
+		.dashicons.dashicons-star-filled {
+			height: auto;
+		}
+	}
+}
+
+.elementor-plugins-gopro {
+	color: $editor-success;
+	font-weight: bold;
+}
+
+
+.e-logo-wrapper {
+	display: inline-block;
+	padding: .75em;
+	background-image: linear-gradient(-135deg, #EF295A, #434363);
+	border-radius: 7.5%;
+	line-height: 1;
+
+	i {
+		color: #ffffff;
+		font-size: 1em;
+	}
+}
+
+
+// Switcher Editor
+#elementor-switch-mode {
+	margin: 15px 0;
+}
+
+#elementor-switch-mode-button,
+#elementor-editor-button {
+	outline: none;
+	cursor: pointer;
+
+	i {
+		@include margin-end(3px);
+		font-size: 125%;
+	}
+}
+
 body {
 
 	&.elementor-editor-active {
@@ -24,12 +84,13 @@ body {
 			}
 		}
 
-		#elementor-editor {
-			display: table;
-		}
-
 		#postdivrich {
 			display: none !important;
+		}
+
+		// Gutenberg Support
+		.editor-block-list__layout {
+			display: none;
 		}
 	}
 
@@ -45,47 +106,46 @@ body {
 	}
 }
 
-// Dashboard Icon
-#adminmenu {
+// Gutenberg Support
+body {
 
-	#toplevel_page_elementor,
-	#toplevel_page_edit-post_type-elementor_library {
+	&.elementor-editor-active {
 
-		div.wp-menu-image:before {
-			content: "\e800";
-			font-family: eicons;
-			font-size: 14px;
-			margin-top: 3px;
+		.editor-block-list__layout {
+			display: none;
 		}
 
-		// Menu Go Pro
-		a[href="admin.php?page=go_elementor_pro"] {
-			color: #d54e21;
+		.edit-post-layout__content .edit-post-visual-editor {
+			flex-basis: auto;
 		}
 
-		.dashicons.dashicons-star-filled {
-			height: auto;
+		#elementor-editor {
+			margin-bottom: 50px;
+		}
+
+		.edit-post-text-editor__body {
+			.editor-post-text-editor {
+				display: none;
+			}
 		}
 	}
-}
 
-.elementor-plugins-gopro {
-	color: $editor-success;
-	font-weight: bold;
-}
+	.block-editor {
 
+		#elementor-switch-mode {
+			margin: 0 15px;
 
-// Switcher Editor
-#elementor-switch-mode {
-	margin: 15px 0;
-}
+			.button {
+				margin: 2px;
+				height: 33px;
+				font-size: 13px;
+				line-height: 1;
 
-#elementor-editor-button {
-	outline: none;
-	cursor: pointer;
-
-	.eicon-elementor {
-		@include margin-end(5px);
+				i {
+					@include padding-end(5px);
+				}
+			}
+		}
 	}
 }
 
@@ -97,29 +157,31 @@ body {
 }
 
 #elementor-editor {
-	background-color: #F7F7F7;
-	border: 1px solid #DDD;
 	height: 300px;
 	width: 100%;
 	transition: all 0.5s ease;
+
+	@import "../editor/loader";
+}
+
+#elementor-go-to-edit-page-link {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid #DDD;
+	background-color: #F7F7F7;
+	text-decoration: none;
+	position: relative;
+	font-family: Sans-serif;
 
 	&:hover {
 		background-color: #ffffff;
 	}
 
-	@import "../editor/loader";
-
-	.elementor-loader-box {
-		background-color: $editor-light;
+	&:focus {
+		box-shadow: none;
 	}
-
-}
-
-#elementor-go-to-edit-page-link {
-	display: table-cell;
-	vertical-align: middle;
-	text-align: center;
-	text-decoration: none;
 
 	&.elementor-animate {
 
@@ -134,24 +196,6 @@ body {
 			display: none;
 		}
 	}
-}
-
-.elementor-loader-wrapper {
-	margin: auto;
-	width: 80px;
-}
-
-.elementor-loader {
-	height: 80px;
-	position: relative;
-}
-
-.elementor-loading-title {
-	color: $editor-light;
-	text-transform: uppercase;
-	margin-top: 15px;
-	font-size: 11px;
-	letter-spacing: 5px;
 }
 
 // Tools

@@ -199,6 +199,54 @@ class Utils {
 		return $wp_preview_url;
 	}
 
+	/**
+	 * Replace URLs.
+	 *
+	 * Replace old URLs to new URLs. This method also updates all the Elementor data.
+	 *
+	 * @since  2.1.0
+	 * @access public
+	 *
+	 * @param $from
+	 * @param $to
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public static function replace_urls( $from, $to ) {
+		$from = trim( $from );
+		$to = trim( $to );
+
+		if ( $from === $to ) {
+			throw new \Exception( __( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
+		}
+
+		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
+		if ( ! $is_valid_urls ) {
+			throw new \Exception( __( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
+		}
+
+		global $wpdb;
+
+		// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
+		$rows_affected = $wpdb->query(
+			"UPDATE {$wpdb->postmeta} " .
+			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
+			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
+		// @codingStandardsIgnoreEnd
+
+		if ( false === $rows_affected ) {
+			throw new \Exception( __( 'An error occurred', 'elementor' ) );
+		}
+
+		Plugin::$instance->files_manager->clear_cache();
+
+		return sprintf(
+			/* translators: %d: Number of rows */
+			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
+			$rows_affected
+		);
+	}
 
 	/**
 	 * Get exit to dashboard URL.
@@ -222,9 +270,9 @@ class Utils {
 	}
 
 	/**
-	 * Is post type supports Elementor.
+	 * Is post supports Elementor.
 	 *
-	 * Whether the post type supports editing with Elementor.
+	 * Whether the post supports editing with Elementor.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -232,11 +280,12 @@ class Utils {
 	 *
 	 * @param int $post_id Optional. Post ID. Default is `0`.
 	 *
-	 * @return string True if post type supports editing with Elementor, false otherwise.
+	 * @return string True if post supports editing with Elementor, false otherwise.
 	 */
-	public static function is_post_type_support( $post_id = 0 ) {
+	public static function is_post_support( $post_id = 0 ) {
 		$post_type = get_post_type( $post_id );
-		$is_supported = post_type_supports( $post_type, 'elementor' );
+
+		$is_supported = self::is_post_type_support( $post_type );
 
 		/**
 		 * Is post type support.
@@ -244,14 +293,54 @@ class Utils {
 		 * Filters whether the post type supports editing with Elementor.
 		 *
 		 * @since 1.0.0
+		 * @deprecated 2.2.0 Use `elementor/utils/is_post_support` Instead
 		 *
-		 * @param bool   $is_supported Whether the post type supports editing with Elementor.
-		 * @param int    $post_id      Post ID.
-		 * @param string $post_type    Post type.
+		 * @param bool $is_supported Whether the post type supports editing with Elementor.
+		 * @param int $post_id Post ID.
+		 * @param string $post_type Post type.
 		 */
 		$is_supported = apply_filters( 'elementor/utils/is_post_type_support', $is_supported, $post_id, $post_type );
 
+		/**
+		 * Is post support.
+		 *
+		 * Filters whether the post supports editing with Elementor.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param bool $is_supported Whether the post type supports editing with Elementor.
+		 * @param int $post_id Post ID.
+		 * @param string $post_type Post type.
+		 */
+		$is_supported = apply_filters( 'elementor/utils/is_post_support', $is_supported, $post_id, $post_type );
+
 		return $is_supported;
+	}
+
+
+	/**
+	 * Is post type supports Elementor.
+	 *
+	 * Whether the post type supports editing with Elementor.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 * @static
+	 *
+	 * @param string $post_type Post Type.
+	 *
+	 * @return string True if post type supports editing with Elementor, false otherwise.
+	 */
+	public static function is_post_type_support( $post_type ) {
+		if ( ! post_type_exists( $post_type ) ) {
+			return false;
+		}
+
+		if ( ! post_type_supports( $post_type, 'elementor' ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -348,9 +437,7 @@ class Utils {
 
 		// Create a UTC+- zone if no timezone string exists.
 		if ( empty( $timezone_string ) ) {
-			if ( 0 === $current_offset ) {
-				$timezone_string = 'UTC+0';
-			} elseif ( $current_offset < 0 ) {
+			if ( $current_offset < 0 ) {
 				$timezone_string = 'UTC' . $current_offset;
 			} else {
 				$timezone_string = 'UTC+' . $current_offset;
@@ -368,6 +455,7 @@ class Utils {
 	 * @since 1.0.10
 	 * @access public
 	 * @static
+	 * @deprecated 2.1.0 Use `do_action_deprecated()` instead
 	 *
 	 * @param string $tag         The name of the action hook.
 	 * @param array  $args        Array of additional function arguments to be passed to `do_action()`.
@@ -376,12 +464,9 @@ class Utils {
 	 * @param string $message     Optional. A message regarding the change.
 	 */
 	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
-		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `do_action_deprecated()` function.
-		if ( function_exists( 'do_action_deprecated' ) ) { /* WP >= 4.6 */
-			do_action_deprecated( $tag, $args, $version, $replacement, $message );
-		} else {
-			do_action_ref_array( $tag, $args );
-		}
+		_deprecated_function( __METHOD__, '2.1.0', 'do_action_deprecated()' );
+
+		do_action_deprecated( $tag, $args, $version, $replacement, $message );
 	}
 
 	/**
@@ -392,6 +477,7 @@ class Utils {
 	 * @since 1.0.10
 	 * @access public
 	 * @static
+	 * @deprecated 2.1.0 Use `apply_filters_deprecated()` instead
 	 *
 	 * @param string $tag         The name of the filter hook.
 	 * @param array  $args        Array of additional function arguments to be passed to `apply_filters()`.
@@ -402,12 +488,9 @@ class Utils {
 	 * @return mixed The filtered value after all hooked functions are applied to it.
 	 */
 	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
-		// TODO: When minimum required version of Elementor will be 4.6, this method can be replaced by `apply_filters_deprecated()` function.
-		if ( function_exists( 'apply_filters_deprecated' ) ) { /* WP >= 4.6 */
-			return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
-		} else {
-			return apply_filters_ref_array( $tag, $args );
-		}
+		_deprecated_function( __METHOD__, '2.1.0', 'apply_filters_deprecated()' );
+
+		return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
 	}
 
 	/**
@@ -452,7 +535,7 @@ class Utils {
 			'post_type' => $post_type,
 		], admin_url( 'edit.php' ) );
 
-		$new_post_url = wp_nonce_url( $new_post_url, 'elementor_action_new_post' );
+		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
 
 		return $new_post_url;
 	}
@@ -508,5 +591,13 @@ class Utils {
 		require_once ABSPATH . '/wp-admin/includes/theme.php';
 
 		return method_exists( wp_get_theme(), 'get_post_templates' );
+	}
+
+	public static function array_inject( $array, $key, $insert ) {
+		$length = array_search( $key, array_keys( $array ), true ) + 1;
+
+		return array_slice( $array, 0, $length, true ) +
+			$insert +
+			array_slice( $array, $length, null, true );
 	}
 }

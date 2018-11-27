@@ -3,12 +3,17 @@
 	&-modal {
 
 		.dialog-message {
-			display: flex;
-			align-items: center;
-			text-align: $start;
-			padding: 0 120px;
-			color: $editor-dark;
+			max-height: 70vh;
 		}
+	}
+
+	&-dialog-content {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		text-align: $start;
+		padding: 0 120px;
+		color: $editor-dark;
 	}
 
 	&__description {
@@ -37,7 +42,7 @@
 		font-size: 15px;
 
 		i {
-			color: #EF295A;
+			color: $brand-color-light;
 			font-size: 30px;
 		}
 
@@ -95,6 +100,8 @@
 
 			&__select {
 				appearance: none;
+				-webkit-appearance: none;
+				-moz-appearance: none;
 				cursor: pointer;
 
 				&__wrapper {
@@ -120,7 +127,7 @@
 	}
 }
 
-@media (max-width: $screen-md-max) {
+@media (max-width: $editor-screen-md-max) {
 
 	#elementor-new-template {
 
@@ -131,7 +138,7 @@
 	}
 }
 
-@media (max-width: $screen-sm-max) {
+@media (max-width: $editor-screen-sm-max) {
 
 	#elementor-new-template__description {
 		display: none;

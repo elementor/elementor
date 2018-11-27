@@ -29,25 +29,25 @@ LightboxModule = ViewModule.extend( {
 					nextButton: 'elementor-swiper-button elementor-swiper-button-next',
 					prevButtonIcon: 'eicon-chevron-left',
 					nextButtonIcon: 'eicon-chevron-right',
-					slide: 'swiper-slide'
-				}
+					slide: 'swiper-slide',
+				},
 			},
 			selectors: {
 				links: 'a, [data-elementor-lightbox]',
 				slideshow: {
 					activeSlide: '.swiper-slide-active',
 					prevSlide: '.swiper-slide-prev',
-					nextSlide: '.swiper-slide-next'
-				}
+					nextSlide: '.swiper-slide-next',
+				},
 			},
 			modalOptions: {
 				id: 'elementor-lightbox',
 				entranceAnimation: 'zoomIn',
 				videoAspectRatio: 169,
 				position: {
-					enable: false
-				}
-			}
+					enable: false,
+				},
+			},
 		};
 	},
 
@@ -65,11 +65,11 @@ LightboxModule = ViewModule.extend( {
 			closeButton: true,
 			closeButtonClass: 'eicon-close',
 			selectors: {
-				preventClose: '.' + this.getSettings( 'classes.preventClose' )
+				preventClose: '.' + this.getSettings( 'classes.preventClose' ),
 			},
 			hide: {
-				onClick: true
-			}
+				onClick: true,
+			},
 		} );
 
 		modal.on( 'hide', function() {
@@ -98,7 +98,7 @@ LightboxModule = ViewModule.extend( {
 		modal.onHide = function() {
 			DialogsManager.getWidgetType( 'lightbox' ).prototype.onHide.apply( modal, arguments );
 
-			modal.getElements( 'widgetContent' ).removeClass( 'animated' );
+			modal.getElements( 'message' ).removeClass( 'animated' );
 		};
 
 		switch ( options.type ) {
@@ -107,7 +107,7 @@ LightboxModule = ViewModule.extend( {
 
 				break;
 			case 'video':
-				self.setVideoContent( options.url );
+				self.setVideoContent( options );
 
 				break;
 			case 'slideshow':
@@ -128,26 +128,38 @@ LightboxModule = ViewModule.extend( {
 	setImageContent: function( imageURL ) {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
-			$item = jQuery( '<div>', { 'class': classes.item } ),
-			$image = jQuery( '<img>', { src: imageURL, 'class': classes.image + ' ' + classes.preventClose } );
+			$item = jQuery( '<div>', { class: classes.item } ),
+			$image = jQuery( '<img>', { src: imageURL, class: classes.image + ' ' + classes.preventClose } );
 
 		$item.append( $image );
 
 		self.getModal().setMessage( $item );
 	},
 
-	setVideoContent: function( videoEmbedURL ) {
-		videoEmbedURL = videoEmbedURL.replace( '&autoplay=0', '' ) + '&autoplay=1';
-
+	setVideoContent: function( options ) {
 		var classes = this.getSettings( 'classes' ),
-			$videoContainer = jQuery( '<div>', { 'class': classes.videoContainer } ),
-			$videoWrapper = jQuery( '<div>', { 'class': classes.videoWrapper } ),
-			$videoFrame = jQuery( '<iframe>', { src: videoEmbedURL, allowfullscreen: 1 } ),
+			$videoContainer = jQuery( '<div>', { class: classes.videoContainer } ),
+			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
+			$videoElement,
 			modal = this.getModal();
+
+		if ( 'hosted' === options.videoType ) {
+			var videoParams = { src: options.url, autoplay: '' };
+
+			options.videoParams.forEach( function( param ) {
+				videoParams[ param ] = '';
+			} );
+
+			$videoElement = jQuery( '<video>', videoParams );
+		} else {
+			var videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
+
+			$videoElement = jQuery( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
+		}
 
 		$videoContainer.append( $videoWrapper );
 
-		$videoWrapper.append( $videoFrame );
+		$videoWrapper.append( $videoElement );
 
 		modal.setMessage( $videoContainer );
 
@@ -167,29 +179,29 @@ LightboxModule = ViewModule.extend( {
 			self = this,
 			classes = self.getSettings( 'classes' ),
 			slideshowClasses = classes.slideshow,
-			$container = $( '<div>', { 'class': slideshowClasses.container } ),
-			$slidesWrapper = $( '<div>', { 'class': slideshowClasses.slidesWrapper } ),
-			$prevButton = $( '<div>', { 'class': slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { 'class': slideshowClasses.prevButtonIcon } ) ),
-			$nextButton = $( '<div>', { 'class': slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { 'class': slideshowClasses.nextButtonIcon } ) );
+			$container = $( '<div>', { class: slideshowClasses.container } ),
+			$slidesWrapper = $( '<div>', { class: slideshowClasses.slidesWrapper } ),
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) ),
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
 
 		options.slides.forEach( function( slide ) {
-			var slideClass =  slideshowClasses.slide + ' ' + classes.item;
+			var slideClass = slideshowClasses.slide + ' ' + classes.item;
 
 			if ( slide.video ) {
 				slideClass += ' ' + classes.video;
 			}
 
-			var $slide = $( '<div>', { 'class': slideClass } );
+			var $slide = $( '<div>', { class: slideClass } );
 
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
 
-				var $playIcon = $( '<div>', { 'class': classes.playButton } ).html( $( '<i>', { 'class': classes.playButtonIcon } ) );
+				var $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon } ) );
 
 				$slide.append( $playIcon );
 			} else {
-				var $zoomContainer = $( '<div>', { 'class': 'swiper-zoom-container' } ),
-					$slideImage = $( '<img>', { 'class': classes.image + ' ' + classes.preventClose } ).attr( 'src', slide.image );
+				var $zoomContainer = $( '<div>', { class: 'swiper-zoom-container' } ),
+					$slideImage = $( '<img>', { class: classes.image + ' ' + classes.preventClose, src: slide.image } );
 
 				$zoomContainer.append( $slideImage );
 
@@ -215,14 +227,20 @@ LightboxModule = ViewModule.extend( {
 			onShowMethod();
 
 			var swiperOptions = {
-				prevButton: $prevButton,
-				nextButton: $nextButton,
-				paginationClickable: true,
+				navigation: {
+					prevEl: $prevButton,
+					nextEl: $nextButton,
+				},
+				pagination: {
+					clickable: true,
+				},
+				on: {
+					slideChangeTransitionEnd: self.onSlideChange,
+				},
 				grabCursor: true,
-				onSlideChangeEnd: self.onSlideChange,
 				runCallbacksOnInit: false,
 				loop: true,
-				keyboardControl: true
+				keyboard: true,
 			};
 
 			if ( options.swiper ) {
@@ -256,7 +274,7 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	getSlide: function( slideState ) {
-		return this.swiper.slides.filter( this.getSettings( 'selectors.slideshow.' + slideState + 'Slide' ) );
+		return jQuery( this.swiper.slides ).filter( this.getSettings( 'selectors.slideshow.' + slideState + 'Slide' ) );
 	},
 
 	playSlideVideo: function() {
@@ -267,10 +285,9 @@ LightboxModule = ViewModule.extend( {
 			return;
 		}
 
-		var classes = this.getSettings( 'classes' );
-
-		var $videoContainer = jQuery( '<div>', { 'class': classes.videoContainer + ' ' + classes.invisible } ),
-			$videoWrapper = jQuery( '<div>', { 'class': classes.videoWrapper } ),
+		var classes = this.getSettings( 'classes' ),
+			$videoContainer = jQuery( '<div>', { class: classes.videoContainer + ' ' + classes.invisible } ),
+			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
 			$videoFrame = jQuery( '<iframe>', { src: videoURL } ),
 			$playIcon = $activeSlide.children( '.' + classes.playButton );
 
@@ -306,14 +323,14 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	isLightboxLink: function( element ) {
-		if ( 'A' === element.tagName && ! /\.(png|jpe?g|gif|svg)$/i.test( element.href ) ) {
+		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /\.(png|jpe?g|gif|svg)(\?.*)?$/i.test( element.href ) ) ) {
 			return false;
 		}
 
 		var generalOpenInLightbox = elementorFrontend.getGeneralSettings( 'elementor_global_image_lightbox' ),
 			currentLinkOpenInLightbox = element.dataset.elementorOpenLightbox;
 
-		return 'yes' === currentLinkOpenInLightbox || generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox;
+		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );
 	},
 
 	openLink: function( event ) {
@@ -323,7 +340,6 @@ LightboxModule = ViewModule.extend( {
 			isClickInsideElementor = !! $target.closest( '#elementor' ).length;
 
 		if ( ! this.isLightboxLink( element ) ) {
-
 			if ( editMode && isClickInsideElementor ) {
 				event.preventDefault();
 			}
@@ -333,7 +349,7 @@ LightboxModule = ViewModule.extend( {
 
 		event.preventDefault();
 
-		if ( elementorFrontend.isEditMode() && ! elementorFrontend.getGeneralSettings( 'elementor_enable_lightbox_in_editor' ) ) {
+		if ( editMode && ! elementorFrontend.getGeneralSettings( 'elementor_enable_lightbox_in_editor' ) ) {
 			return;
 		}
 
@@ -352,7 +368,7 @@ LightboxModule = ViewModule.extend( {
 		if ( ! element.dataset.elementorLightboxSlideshow ) {
 			this.showModal( {
 				type: 'image',
-				url: element.href
+				url: element.href,
 			} );
 
 			return;
@@ -368,11 +384,14 @@ LightboxModule = ViewModule.extend( {
 			uniqueLinks = {};
 
 		$allSlideshowLinks.each( function() {
-			if ( uniqueLinks[ this.href ] ) {
+			var slideVideo = this.dataset.elementorLightboxVideo,
+				uniqueID = slideVideo || this.href;
+
+			if ( uniqueLinks[ uniqueID ] ) {
 				return;
 			}
 
-			uniqueLinks[ this.href ] = true;
+			uniqueLinks[ uniqueID ] = true;
 
 			var slideIndex = this.dataset.elementorLightboxIndex;
 
@@ -382,11 +401,11 @@ LightboxModule = ViewModule.extend( {
 
 			var slideData = {
 				image: this.href,
-				index: slideIndex
+				index: slideIndex,
 			};
 
-			if ( this.dataset.elementorLightboxVideo ) {
-				slideData.video = this.dataset.elementorLightboxVideo;
+			if ( slideVideo ) {
+				slideData.video = slideVideo;
 			}
 
 			slides.push( slideData );
@@ -405,14 +424,14 @@ LightboxModule = ViewModule.extend( {
 		this.showModal( {
 			type: 'slideshow',
 			modalOptions: {
-				id: 'elementor-lightbox-slideshow-' + slideshowID
+				id: 'elementor-lightbox-slideshow-' + slideshowID,
 			},
 			slideshow: {
 				slides: slides,
 				swiper: {
-					initialSlide: +initialSlide
-				}
-			}
+					initialSlide: +initialSlide,
+				},
+			},
 		} );
 	},
 
@@ -445,7 +464,7 @@ LightboxModule = ViewModule.extend( {
 			.remove();
 
 		this.playSlideVideo();
-	}
+	},
 } );
 
 module.exports = LightboxModule;

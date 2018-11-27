@@ -1,16 +1,10 @@
-// Core variables and mixins
-@import "../helpers/variables";
+@import "../global/global";
+@import "breakpoints/breakpoints";
 @import "../helpers/mixins";
-
-// Common
-@import "../common/common";
 
 // Core CSS
 @import "global";
 @import "grid";
-
-// Utility classes
-@import "../helpers/utilities";
 
 //Forms (Input, Textarea, Select Etc..)
 @import "forms";
@@ -40,8 +34,4 @@
 @import "compatibility";
 
 // Visibility (for preview mode or front-end)
-.elementor:not(.elementor-edit-area-active) {
-	@include visibility() {
-		display: none;
-	};
-}
+@import "visibility";

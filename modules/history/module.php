@@ -55,12 +55,19 @@ class Module extends BaseModule {
 				'removed' => __( 'Removed', 'elementor' ),
 				'edited' => __( 'Edited', 'elementor' ),
 				'moved' => __( 'Moved', 'elementor' ),
-				'duplicated' => __( 'Duplicated', 'elementor' ),
 				'editing_started' => __( 'Editing Started', 'elementor' ),
+				'style_pasted' => __( 'Style Pasted', 'elementor' ),
+				'style_reset' => __( 'Style Reset', 'elementor' ),
+				'all_content' => __( 'All Content', 'elementor' ),
 			],
 		] );
 
 		return $settings;
+	}
+
+	public function add_templates() {
+		Plugin::$instance->common->add_template( __DIR__ . '/views/history-panel-template.php' );
+		Plugin::$instance->common->add_template( __DIR__ . '/views/revisions-panel-template.php' );
 	}
 
 	/**
@@ -74,7 +81,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 
-		Plugin::$instance->editor->add_editor_template( __DIR__ . '/views/history-panel-template.php' );
-		Plugin::$instance->editor->add_editor_template( __DIR__ . '/views/revisions-panel-template.php' );
+		add_action( 'elementor/editor/init', [ $this, 'add_templates' ] );
 	}
 }

@@ -28,8 +28,9 @@ class Embed {
 	 * @var array Provider URL structure regex.
 	 */
 	private static $provider_match_masks = [
-		'youtube' => '/^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^\?&\"\'>]+)/',
-		'vimeo' => '/(?:https?:\/\/)?(?:www\.)?(?:player\.)?vimeo\.com\/(?:[a-z]*\/)*([‌​0-9]{6,11})[?]?.*/',
+		'youtube' => '/^.*(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^\?&\"\'>]+)/',
+		'vimeo' => '/^.*vimeo\.com\/(?:[a-z]*\/)*([‌​0-9]{6,11})[?]?.*/',
+		'dailymotion' => '/^.*dailymotion.com\/(?:video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/',
 	];
 
 	/**
@@ -45,7 +46,8 @@ class Embed {
 	 */
 	private static $embed_patterns = [
 		'youtube' => 'https://www.youtube{NO_COOKIE}.com/embed/{VIDEO_ID}?feature=oembed',
-		'vimeo' => 'https://player.vimeo.com/video/{VIDEO_ID}',
+		'vimeo' => 'https://player.vimeo.com/video/{VIDEO_ID}#t={TIME}',
+		'dailymotion' => 'https://dailymotion.com/embed/video/{VIDEO_ID}',
 	];
 
 	/**
@@ -108,6 +110,14 @@ class Embed {
 
 		if ( 'youtube' === $video_properties['provider'] ) {
 			$replacements['{NO_COOKIE}'] = ! empty( $options['privacy'] ) ? '-nocookie' : '';
+		} elseif ( 'vimeo' === $video_properties['provider'] ) {
+			$time_text = '';
+
+			if ( ! empty( $options['start'] ) ) {
+				$time_text = date( 'H\hi\ms\s', $options['start'] );
+			}
+
+			$replacements['{TIME}'] = $time_text;
 		}
 
 		$embed_pattern = str_replace( array_keys( $replacements ), $replacements, $embed_pattern );
@@ -135,16 +145,20 @@ class Embed {
 	 * @return string The embed HTML.
 	 */
 	public static function get_embed_html( $video_url, array $embed_url_params = [], array $options = [], array $frame_attributes = [] ) {
-		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
+		$default_frame_attributes = [
+			'class' => 'elementor-video-iframe',
+			'allowfullscreen',
+		];
 
+		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
 		if ( ! $video_embed_url ) {
 			return null;
 		}
-
-		$default_frame_attributes = [
-			'src' => $video_embed_url,
-			'allowfullscreen',
-		];
+		if ( ! $options['lazy_load'] ) {
+			$default_frame_attributes['src'] = $video_embed_url;
+		} else {
+			$default_frame_attributes['data-lazy-load'] = $video_embed_url;
+		}
 
 		$frame_attributes = array_merge( $default_frame_attributes, $frame_attributes );
 

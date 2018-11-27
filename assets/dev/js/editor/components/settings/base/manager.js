@@ -3,8 +3,6 @@ var ViewModule = require( 'elementor-utils/view-module' ),
 	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
 module.exports = ViewModule.extend( {
-	controlsCSS: null,
-
 	model: null,
 
 	hasChange: false,
@@ -30,32 +28,47 @@ module.exports = ViewModule.extend( {
 			options: {
 				model: this.model,
 				controls: this.model.controls,
-				name: name
-			}
+				name: name,
+			},
 		} );
 	},
 
 	updateStylesheet: function( keepOldEntries ) {
+		var controlsCSS = this.getControlsCSS();
+
 		if ( ! keepOldEntries ) {
-			this.controlsCSS.stylesheet.empty();
+			controlsCSS.stylesheet.empty();
 		}
 
-		this.controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
+		controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
-		this.controlsCSS.addStyleToDocument();
+		controlsCSS.addStyleToDocument();
 	},
 
 	initModel: function() {
 		this.model = new SettingsModel( this.getSettings( 'settings' ), {
-			controls: this.getSettings( 'controls' )
+			controls: this.getSettings( 'controls' ),
 		} );
 	},
 
 	initControlsCSSParser: function() {
-		this.controlsCSS = new ControlsCSSParser( {
-			id: this.getSettings( 'name' ),
-			settingsModel: this.model
-		} );
+		var controlsCSS;
+
+		this.getControlsCSS = function() {
+			if ( ! controlsCSS ) {
+				controlsCSS = new ControlsCSSParser( {
+					id: this.getSettings( 'name' ),
+					settingsModel: this.model,
+				} );
+
+				/*
+				 * @deprecated 2.1.0
+				 */
+				this.controlsCSS = controlsCSS;
+			}
+
+			return controlsCSS;
+		};
 	},
 
 	getDataToSave: function( data ) {
@@ -71,12 +84,12 @@ module.exports = ViewModule.extend( {
 
 		var settings = this.model.toJSON( { removeDefault: true } ),
 			data = this.getDataToSave( {
-				data: settings
+				data: settings,
 			} );
 
 		NProgress.start();
 
-		elementor.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
+		elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
 			data: data,
 			success: function() {
 				NProgress.done();
@@ -91,7 +104,7 @@ module.exports = ViewModule.extend( {
 			},
 			error: function() {
 				alert( 'An error occurred' );
-			}
+			},
 		} );
 	},
 
@@ -106,7 +119,7 @@ module.exports = ViewModule.extend( {
 				icon: menuSettings.icon,
 				title: this.getSettings( 'panelPage.title' ),
 				type: 'page',
-				pageName: this.getSettings( 'name' ) + '_settings'
+				pageName: this.getSettings( 'name' ) + '_settings',
 			};
 
 		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
@@ -129,7 +142,7 @@ module.exports = ViewModule.extend( {
 
 		self.hasChange = true;
 
-		this.controlsCSS.stylesheet.empty();
+		this.getControlsCSS().stylesheet.empty();
 
 		_.each( model.changed, function( value, key ) {
 			if ( self.changeCallbacks[ key ] ) {
@@ -150,5 +163,5 @@ module.exports = ViewModule.extend( {
 		if ( ! elementor.userCan( 'design' ) ) {
 			elementor.panel.currentView.setPage( 'page_settings' );
 		}
-	}
+	},
 } );

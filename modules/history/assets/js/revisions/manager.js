@@ -45,34 +45,37 @@ RevisionsManager = function() {
 			},
 			handle: function( event ) {
 				elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( UP_ARROW_KEY === event.which );
-			}
+			},
 		};
 
-		elementor.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
+		elementorCommon.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
 
-		elementor.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
+		elementorCommon.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
 	};
 
 	this.setEditorData = function( data ) {
 		var collection = elementor.getRegion( 'sections' ).currentView.collection;
 
+		// Don't track in history.
+		elementor.history.history.setActive( false );
 		collection.reset( data );
+		elementor.history.history.setActive( true );
 	};
 
 	this.getRevisionDataAsync = function( id, options ) {
 		_.extend( options, {
 			data: {
-				id: id
-			}
+				id: id,
+			},
 		} );
 
-		return elementor.ajax.send( 'get_revision_data', options );
+		return elementorCommon.ajax.addRequest( 'get_revision_data', options );
 	};
 
 	this.addRevisions = function( items ) {
 		items.forEach( function( item ) {
 			var existedModel = revisions.findWhere( {
-				id: item.id
+				id: item.id,
 			} );
 
 			if ( existedModel ) {
@@ -86,7 +89,7 @@ RevisionsManager = function() {
 	this.deleteRevision = function( revisionModel, options ) {
 		var params = {
 			data: {
-				id: revisionModel.get( 'id' )
+				id: revisionModel.get( 'id' ),
 			},
 			success: function() {
 				if ( options.success ) {
@@ -97,18 +100,19 @@ RevisionsManager = function() {
 
 				if ( ! revisions.length ) {
 					var panel = elementor.getPanelView();
+
 					if ( 'historyPage' === panel.getCurrentPageName() ) {
 						panel.getCurrentPageView().activateTab( 'revisions' );
 					}
 				}
-			}
+			},
 		};
 
 		if ( options.error ) {
 			params.error = options.error;
 		}
 
-		elementor.ajax.send( 'delete_revision', params );
+		elementorCommon.ajax.addRequest( 'delete_revision', params );
 	};
 
 	this.init = function() {

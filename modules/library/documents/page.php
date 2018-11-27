@@ -65,6 +65,10 @@ class Page extends Library_Document {
 		return __( 'Page', 'elementor' );
 	}
 
+	public function get_css_wrapper_selector() {
+		return 'body.elementor-page-' . $this->get_main_id();
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access protected

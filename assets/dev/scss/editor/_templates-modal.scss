@@ -8,16 +8,8 @@ $remote-templates-items-space: 30px;
 		color: $editor-success;
 
 		&:hover {
-			font-weight: 500;
+			color: darken($editor-success, 10%);
 		}
-	}
-
-	.dialog-lightbox-content {
-		height: 100%;
-	}
-
-	.dialog-lightbox-loading {
-		display: none;
 	}
 }
 
@@ -82,17 +74,6 @@ $remote-templates-items-space: 30px;
 	}
 }
 
-#elementor-template-library-loading {
-
-	.elementor-loading-title {
-		color: $editor-light;
-	}
-
-	.elementor-loader-box {
-		background-color: $editor-lightest;
-	}
-}
-
 #elementor-template-library-templates {
 	padding: 0 15px;
 
@@ -101,6 +82,7 @@ $remote-templates-items-space: 30px;
 		#elementor-template-library-templates-container {
 			box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, .03);
 			margin-top: 10px;
+			margin-bottom: 45px;
 		}
 
 		.elementor-template-library-order-input {
@@ -210,9 +192,12 @@ $remote-templates-items-space: 30px;
 
 .elementor-template-library-order-label {
 	text-transform: uppercase;
-	cursor: pointer;
 	@include padding-end(22px);
 	user-select: none;
+}
+
+label.elementor-template-library-order-label {
+	cursor: pointer;
 
 	&:hover {
 		color: $editor-darker;
@@ -379,7 +364,7 @@ $remote-templates-items-space: 30px;
 		position: relative;
 	}
 
-	@media (max-width: $screen-lg-min) {
+	@media (max-width: $editor-screen-lg-min) {
 
 		.elementor-template-library-template-body {
 			height: 300px;
@@ -487,7 +472,7 @@ $remote-templates-items-space: 30px;
 		width: calc(20% - #{$remote-templates-items-space});
 	}
 
-	@media (max-width: $screen-lg-min) {
+	@media (max-width: $editor-screen-lg-min) {
 		width: calc(33.333% - #{$remote-templates-items-space});
 	}
 
@@ -575,7 +560,6 @@ $remote-templates-items-space: 30px;
 
 	&:last-child {
 		border-radius: 0 0 3px 3px;
-		margin-bottom: 45px;
 	}
 
 	.elementor-template-library-template-name {
@@ -751,7 +735,6 @@ $remote-templates-items-space: 30px;
 #elementor-template-library-save-template-submit {
 	width: 150px;
 	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-	font-weight: 500;
 
 	&:hover {
 		box-shadow: none;
@@ -780,7 +763,6 @@ $remote-templates-items-space: 30px;
 		&-label {
 			margin-top: 20px;
 			padding: 15px 35px;
-			font-size: 16px;
 			display: inline-block;
 		}
 
@@ -811,7 +793,6 @@ $remote-templates-items-space: 30px;
 	left: 50%;
 	transform: translateX(-50%);
 	color: $editor-light;
-	font-size: 16px;
 	font-style: italic;
 
 	@media (max-height: 700px) {
@@ -897,7 +878,7 @@ $remote-templates-items-space: 30px;
 	}
 }
 
-@media (max-width: $screen-md-max) {
+@media (max-width: $editor-screen-md-max) {
 
 	.elementor-template-library-local-column-3 {
 		display: none;

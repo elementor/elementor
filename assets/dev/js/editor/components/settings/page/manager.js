@@ -19,9 +19,9 @@ module.exports = BaseSettings.extend( {
 					elementor.once( 'preview:loaded', function() {
 						elementor.getPanelView().setPage( 'page_settings' );
 					} );
-				}
+				},
 			} );
-		}
+		},
 	},
 
 	onModelChange: function() {
@@ -30,17 +30,9 @@ module.exports = BaseSettings.extend( {
 		BaseSettings.prototype.onModelChange.apply( this, arguments );
 	},
 
-	bindEvents: function() {
-		elementor.channels.editor.on( 'elementor:clearPage', function() {
-			elementor.clearPage();
-		} );
-
-		BaseSettings.prototype.bindEvents.apply( this, arguments );
-	},
-
 	getDataToSave: function( data ) {
 		data.id = elementor.config.document.id;
 
 		return data;
-	}
+	},
 } );

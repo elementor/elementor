@@ -7,7 +7,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		ui.controlMedia = '.elementor-control-media';
 		ui.mediaImage = '.elementor-control-media-image';
-		ui.frameOpeners = '.elementor-control-media-upload-button, .elementor-control-media-image';
+		ui.mediaVideo = '.elementor-control-media-video';
+		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.deleteButton = '.elementor-control-media-delete';
 
 		return ui;
@@ -16,14 +17,23 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	events: function() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
-			'click @ui.deleteButton': 'deleteImage'
+			'click @ui.deleteButton': 'deleteImage',
 		} );
 	},
 
-	applySavedValue: function() {
-		var url = this.getControlValue( 'url' );
+	getMediaType: function() {
+		return this.model.get( 'media_type' );
+	},
 
-		this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
+	applySavedValue: function() {
+		var url = this.getControlValue( 'url' ),
+			mediaType = this.getMediaType();
+
+		if ( 'image' === mediaType ) {
+			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
+		} else if ( 'video' === mediaType ) {
+			this.ui.mediaVideo.attr( 'src', url );
+		}
 
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
 	},
@@ -36,10 +46,12 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.frame.open();
 	},
 
-	deleteImage: function() {
+	deleteImage: function( event ) {
+		event.stopPropagation();
+
 		this.setValue( {
 			url: '',
-			id: ''
+			id: '',
 		} );
 
 		this.applySavedValue();
@@ -53,16 +65,16 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
-				text: elementor.translate( 'insert_media' )
+				text: elementor.translate( 'insert_media' ),
 			},
 			states: [
 				new wp.media.controller.Library( {
 					title: elementor.translate( 'insert_media' ),
-					library: wp.media.query( { type: 'image' } ),
+					library: wp.media.query( { type: this.getMediaType() } ),
 					multiple: false,
-					date: false
-				} )
-			]
+					date: false,
+				} ),
+			],
 		} );
 
 		// When a file is selected, run a callback.
@@ -82,7 +94,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		if ( attachment.url ) {
 			this.setValue( {
 				url: attachment.url,
-				id: attachment.id
+				id: attachment.id,
 			} );
 
 			this.applySavedValue();
@@ -93,7 +105,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	onBeforeDestroy: function() {
 		this.$el.remove();
-	}
+	},
 } );
 
 module.exports = ControlMediaItemView;

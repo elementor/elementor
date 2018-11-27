@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -19,6 +21,7 @@ class Editor {
 
 	/**
 	 * The nonce key for Elementor editor.
+	 * @deprecated 2.3.0
 	 */
 	const EDITING_NONCE_KEY = 'elementor-editing';
 
@@ -50,18 +53,6 @@ class Editor {
 	 * @var bool Whether the edit mode is active.
 	 */
 	private $_is_edit_mode;
-
-	/**
-	 * Editor templates.
-	 *
-	 * Holds the editor templates used by Marionette.js.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 *
-	 * @var array Editor templates.
-	 */
-	private $_editor_templates = [];
 
 	/**
 	 * Init.
@@ -121,6 +112,9 @@ class Editor {
 		// Handle `wp_enqueue_scripts`
 		remove_all_actions( 'wp_enqueue_scripts' );
 
+		// Also remove all scripts hooked into after_wp_tiny_mce.
+		remove_all_actions( 'after_wp_tiny_mce' );
+
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 999999 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 999999 );
 
@@ -141,8 +135,9 @@ class Editor {
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
 
-		// Print the panel
-		$this->print_panel_html();
+		do_action( 'elementor/editor/init' );
+
+		$this->print_editor_template();
 
 		// From the action it's an empty string, from tests its `false`
 		if ( false !== $die ) {
@@ -225,8 +220,8 @@ class Editor {
 			'elementor_save_template',
 			'elementor_get_template',
 			'elementor_delete_template',
-			'elementor_export_template',
 			'elementor_import_template',
+			'elementor_library_direct_actions',
 		];
 
 		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $actions ) ) {
@@ -285,9 +280,24 @@ class Editor {
 	 * Include the wrapper template of the editor.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.2.0 Use `Editor::print_editor_template` instead
 	 * @access public
 	 */
 	public function print_panel_html() {
+		_deprecated_function( __METHOD__, '2.2.0', 'Editor::print_editor_template' );
+
+		$this->print_editor_template();
+	}
+
+	/**
+	 * Print Editor Template.
+	 *
+	 * Include the wrapper template of the editor.
+	 *
+	 * @since 2.2.0
+	 * @access public
+	 */
+	public function print_editor_template() {
 		include( 'editor-templates/editor-wrapper.php' );
 	}
 
@@ -323,26 +333,6 @@ class Editor {
 				'jquery',
 			],
 			'4.0.2',
-			true
-		);
-
-		wp_register_script(
-			'backbone-marionette',
-			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.marionette' . $suffix . '.js',
-			[
-				'backbone',
-			],
-			'2.4.5',
-			true
-		);
-
-		wp_register_script(
-			'backbone-radio',
-			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.radio' . $suffix . '.js',
-			[
-				'backbone',
-			],
-			'1.0.4',
 			true
 		);
 
@@ -431,24 +421,13 @@ class Editor {
 		);
 
 		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'4.2.1',
-			true
-		);
-
-		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
+				'elementor-common',
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',
-				'backbone-marionette',
-				'backbone-radio',
 				'perfect-scrollbar',
 				'nprogress',
 				'tipsy',
@@ -456,7 +435,6 @@ class Editor {
 				'heartbeat',
 				'jquery-elementor-select2',
 				'flatpickr',
-				'elementor-dialog',
 				'ace',
 				'ace-language-tools',
 				'jquery-hover-intent',
@@ -501,16 +479,13 @@ class Editor {
 
 		$config = [
 			'version' => ELEMENTOR_VERSION,
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'home_url' => home_url(),
-			'nonce' => $this->create_nonce( get_post_type() ),
 			'data' => $editor_data,
 			// @TODO: `post_id` is bc since 2.0.0
 			'post_id' => $this->_post_id,
 			'document' => $document->get_config(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'current_user_can_publish' => $current_user_can_publish,
-			'elements_categories' => $plugin->elements_manager->get_categories(),
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
 			'widgets' => $plugin->widgets_manager->get_widget_types_config(),
@@ -527,15 +502,16 @@ class Editor {
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
-			'assets_url' => ELEMENTOR_ASSETS_URL,
+			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'locked_user' => $locked_user,
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
+				'introduction' => User::is_should_view_introduction(),
 			],
+			// @deprecated since 2.3.0 - Use `elementorCommon.config.isRTL` instead
 			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
-			'viewportBreakpoints' => Responsive::get_breakpoints(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
 			'page_title_selector' => $page_title_selector,
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
@@ -556,9 +532,12 @@ class Editor {
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Style', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
+				'go_to' => __( 'Go To', 'elementor' ),
+				'view_page' => __( 'View Page', 'elementor' ),
+				'exit_to_dashboard' => __( 'Exit To Dashboard', 'elementor' ),
 
 				// Elements.
-				'inner_section' => __( 'Columns', 'elementor' ),
+				'inner_section' => __( 'Inner Section', 'elementor' ),
 
 				// Control Order.
 				'asc' => __( 'Ascending order', 'elementor' ),
@@ -650,6 +629,28 @@ class Editor {
 				'server_error' => __( 'Server Error', 'elementor' ),
 				'server_connection_lost' => __( 'Connection Lost', 'elementor' ),
 				'unknown_error' => __( 'Unknown Error', 'elementor' ),
+
+				// Context Menu
+				'duplicate' => __( 'Duplicate', 'elementor' ),
+				'copy' => __( 'Copy', 'elementor' ),
+				'paste' => __( 'Paste', 'elementor' ),
+				'copy_style' => __( 'Copy Style', 'elementor' ),
+				'paste_style' => __( 'Paste Style', 'elementor' ),
+				'reset_style' => __( 'Reset Style', 'elementor' ),
+				'save_as_global' => __( 'Save as a Global', 'elementor' ),
+				'save_as_block' => __( 'Save as Template', 'elementor' ),
+				'new_column' => __( 'Add New Column', 'elementor' ),
+				'copy_all_content' => __( 'Copy All Content', 'elementor' ),
+				'delete_all_content' => __( 'Delete All Content', 'elementor' ),
+				'navigator' => __( 'Navigator', 'elementor' ),
+
+				// Right Click Introduction
+				'meet_right_click_header' => __( 'Meet Right Click', 'elementor' ),
+				'meet_right_click_message' => __( 'Now you can access all editing actions using right click.', 'elementor' ),
+				'got_it' => __( 'Got It', 'elementor' ),
+
+				// Hotkeys screen
+				'keyboard_shortcuts' => __( 'Keyboard Shortcuts', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
@@ -743,13 +744,6 @@ class Editor {
 		);
 
 		wp_register_style(
-			'elementor-icons',
-			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
-			[],
-			'3.3.0'
-		);
-
-		wp_register_style(
 			'google-font-roboto',
 			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
 			[],
@@ -767,6 +761,7 @@ class Editor {
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
+				'elementor-common',
 				'font-awesome',
 				'elementor-select2',
 				'elementor-icons',
@@ -778,6 +773,12 @@ class Editor {
 		);
 
 		wp_enqueue_style( 'elementor-editor' );
+
+		if ( Responsive::has_custom_breakpoints() ) {
+			$breakpoints = Responsive::get_breakpoints();
+
+			wp_add_inline_style( 'elementor-editor', '.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . $breakpoints['md'] . 'px; }' );
+		}
 
 		/**
 		 * After editor enqueue styles.
@@ -862,6 +863,7 @@ class Editor {
 	 * Registers new editor templates.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->add_template( $template, $type )`
 	 * @access public
 	 *
 	 * @param string $template Can be either a link to template file or template
@@ -870,15 +872,11 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
-		if ( 'path' === $type ) {
-			ob_start();
+		$common = Plugin::$instance->common;
 
-			include $template;
-
-			$template = ob_get_clean();
+		if ( $common ) {
+			Plugin::$instance->common->add_template( $template, $type );
 		}
-
-		$this->_editor_templates[] = $template;
 	}
 
 	/**
@@ -904,10 +902,6 @@ class Editor {
 		$plugin->dynamic_tags->print_templates();
 
 		$this->init_editor_templates();
-
-		foreach ( $this->_editor_templates as $editor_template ) {
-			echo $editor_template;
-		}
 
 		/**
 		 * Elementor editor footer.
@@ -947,6 +941,34 @@ class Editor {
 	public function __construct() {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
+
+		// Handle autocomplete feature for URL control.
+		add_filter( 'wp_link_query_args', [ $this, 'filter_wp_link_query_args' ] );
+		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
+	}
+
+	public function filter_wp_link_query_args( $query ) {
+		$library_cpt_key = array_search( Source_Local::CPT, $query['post_type'], true );
+		if ( false !== $library_cpt_key ) {
+			unset( $query['post_type'][ $library_cpt_key ] );
+		}
+
+		return $query;
+	}
+
+	public function filter_wp_link_query( $results ) {
+		if ( isset( $_POST['editor'] ) && 'elementor' === $_POST['editor'] ) {
+			$post_type_object = get_post_type_object( 'post' );
+			$post_label = $post_type_object->labels->singular_name;
+
+			foreach ( $results as & $result ) {
+				if ( 'post' === get_post_type( $result['ID'] ) ) {
+					$result['info'] = $post_label;
+				}
+			}
+		}
+
+		return $results;
 	}
 
 	/**
@@ -957,6 +979,7 @@ class Editor {
 	 *
 	 * @since 1.8.1
 	 * @since 1.8.7 The `$post_type` parameter was introduces.
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )->create_nonce()` instead
 	 * @access public
 	 *
 	 * @param string $post_type The post type to check capabilities.
@@ -965,14 +988,10 @@ class Editor {
 	 *                     capabilities.
 	 */
 	public function create_nonce( $post_type ) {
-		$post_type_object = get_post_type_object( $post_type );
-		$capability = $post_type_object->cap->{self::EDITING_CAPABILITY};
+		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
-		if ( ! current_user_can( $capability ) ) {
-			return null;
-		}
-
-		return wp_create_nonce( self::EDITING_NONCE_KEY );
+		return $ajax->create_nonce();
 	}
 
 	/**
@@ -983,9 +1002,10 @@ class Editor {
 	 * the time.
 	 *
 	 * @since 1.8.1
+	 * @deprecated 2.3.0
 	 * @access public
 	 *
-	 * @param string $nonce Nonce that was used in the form to verify.
+	 * @param string $nonce Nonce to verify.
 	 *
 	 * @return false|int If the nonce is invalid it returns `false`. If the
 	 *                   nonce is valid and generated between 0-12 hours ago it
@@ -993,7 +1013,7 @@ class Editor {
 	 *                   between 12-24 hours ago it returns `2`.
 	 */
 	public function verify_nonce( $nonce ) {
-		return wp_verify_nonce( $nonce, self::EDITING_NONCE_KEY );
+		return wp_verify_nonce( $nonce );
 	}
 
 	/**
@@ -1002,12 +1022,16 @@ class Editor {
 	 * Whether the request nonce verified or not.
 	 *
 	 * @since 1.8.1
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )->verify_request_nonce()` instead
 	 * @access public
 	 *
 	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
-		return ! empty( $_REQUEST['_nonce'] ) && $this->verify_nonce( $_REQUEST['_nonce'] );
+		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		return $ajax->verify_request_nonce();
 	}
 
 	/**
@@ -1017,10 +1041,14 @@ class Editor {
 	 * error.
 	 *
 	 * @since 1.9.0
+	 * @deprecated 2.3.0
 	 * @access public
 	 */
 	public function verify_ajax_nonce() {
-		if ( ! $this->verify_request_nonce() ) {
+		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		if ( ! $ajax->verify_request_nonce() ) {
 			wp_send_json_error( new \WP_Error( 'token_expired', 'Nonce token expired.' ) );
 		}
 	}
@@ -1040,10 +1068,12 @@ class Editor {
 			'panel-elements',
 			'repeater',
 			'templates',
+			'navigator',
+			'hotkeys',
 		];
 
 		foreach ( $template_names as $template_name ) {
-			$this->add_editor_template( __DIR__ . "/editor-templates/$template_name.php" );
+			Plugin::$instance->common->add_template( __DIR__ . "/editor-templates/$template_name.php" );
 		}
 	}
 }

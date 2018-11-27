@@ -12,13 +12,18 @@ ControlPopoverStarterView = ControlChooseView.extend( {
 
 	events: function() {
 		return _.extend( ControlChooseView.prototype.events.apply( this, arguments ), {
-			'click @ui.popoverToggle': 'onPopoverToggleClick'
+			'click @ui.popoverToggle': 'onPopoverToggleClick',
 		} );
 	},
 
 	onPopoverToggleClick: function() {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
-	}
+	},
+}, {
+
+	onPasteStyle: function( control, clipboardValue ) {
+		return ! clipboardValue || clipboardValue === control.return_value;
+	},
 } );
 
 module.exports = ControlPopoverStarterView;

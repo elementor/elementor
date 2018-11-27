@@ -243,6 +243,9 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['image'] = [
 			'label' => _x( 'Image', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
+			'dynamic' => [
+				'active' => true,
+			],
 			'title' => _x( 'Background Image', 'Background Control', 'elementor' ),
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-image: url("{{URL}}");',
@@ -353,6 +356,28 @@ class Group_Control_Background extends Group_Control_Base {
 			'description' => __( 'YouTube link or video file (mp4 is recommended).', 'elementor' ),
 			'label_block' => true,
 			'default' => '',
+			'condition' => [
+				'background' => [ 'video' ],
+			],
+			'of_type' => 'video',
+		];
+
+		$fields['video_start'] = [
+			'label' => __( 'Start Time', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'description' => __( 'Specify a start time (in seconds)', 'elementor' ),
+			'placeholder' => 10,
+			'condition' => [
+				'background' => [ 'video' ],
+			],
+			'of_type' => 'video',
+		];
+
+		$fields['video_end'] = [
+			'label' => __( 'End Time', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
+			'placeholder' => 70,
 			'condition' => [
 				'background' => [ 'video' ],
 			],

@@ -27,7 +27,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var Element_Base[]
 	 */
-	private $_children;
+	private $children;
 
 	/**
 	 * Element render attributes.
@@ -39,7 +39,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var array
 	 */
-	private $_render_attributes = [];
+	private $render_attributes = [];
 
 	/**
 	 * Element default arguments.
@@ -51,19 +51,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var array
 	 */
-	private $_default_args = [];
-
-	/**
-	 * Element edit tools.
-	 *
-	 * Holds all the edit tools of the element. For example: delete, duplicate etc.
-	 *
-	 * @access protected
-	 * @static
-	 *
-	 * @var array
-	 */
-	protected static $_edit_tools;
+	private $default_args = [];
 
 	/**
 	 * Is type instance.
@@ -74,7 +62,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var bool
 	 */
-	private $_is_type_instance = true;
+	private $is_type_instance = true;
 
 	/**
 	 * Depended scripts.
@@ -99,6 +87,18 @@ abstract class Element_Base extends Controls_Stack {
 	 * @var array
 	 */
 	private $depended_styles = [];
+
+	/**
+	 * Element edit tools.
+	 *
+	 * Holds all the edit tools of the element. For example: delete, duplicate etc.
+	 *
+	 * @access protected
+	 * @static
+	 *
+	 * @var array
+	 */
+	protected static $_edit_tools;
 
 	/**
 	 * Add script depends.
@@ -201,6 +201,7 @@ abstract class Element_Base extends Controls_Stack {
 		if ( ! Plugin::instance()->role_manager->user_can( 'design' ) ) {
 			return [];
 		}
+
 		if ( null === static::$_edit_tools ) {
 			self::init_edit_tools();
 		}
@@ -244,19 +245,8 @@ abstract class Element_Base extends Controls_Stack {
 		}
 	}
 
-	/**
-	 * Get element type.
-	 *
-	 * Retrieve the element type, in this case `element`.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 *
-	 * @return string Control type.
-	 */
-	public static function get_type() {
-		return 'element';
+	final public static function is_edit_buttons_enabled() {
+		return get_option( 'elementor_edit_buttons' );
 	}
 
 	/**
@@ -367,6 +357,10 @@ abstract class Element_Base extends Controls_Stack {
 		return false;
 	}
 
+	protected function should_print_empty() {
+		return true;
+	}
+
 	/**
 	 * Print element content template.
 	 *
@@ -395,11 +389,11 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return Element_Base[] Child elements.
 	 */
 	public function get_children() {
-		if ( null === $this->_children ) {
+		if ( null === $this->children ) {
 			$this->init_children();
 		}
 
-		return $this->_children;
+		return $this->children;
 	}
 
 	/**
@@ -416,7 +410,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return array Default argument(s).
 	 */
 	public function get_default_args( $item = null ) {
-		return self::_get_items( $this->_default_args, $item );
+		return self::_get_items( $this->default_args, $item );
 	}
 
 	/**
@@ -431,7 +425,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return Element_Base Parent element.
 	 */
 	public function get_parent() {
-		// Todo: _deprecated_function( __METHOD__, '1.7.6', '$this->get_data( 'parent' )' );
+		_deprecated_function( __METHOD__, '1.7.6', __CLASS__ . '::get_data( \'parent\' )' );
 
 		return $this->get_data( 'parent' );
 	}
@@ -449,7 +443,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return Element_Base|false Child element instance, or false if failed.
 	 */
 	public function add_child( array $child_data, array $child_args = [] ) {
-		if ( null === $this->_children ) {
+		if ( null === $this->children ) {
 			$this->init_children();
 		}
 
@@ -462,7 +456,7 @@ abstract class Element_Base extends Controls_Stack {
 		$child = Plugin::$instance->elements_manager->create_element_instance( $child_data, $child_args, $child_type );
 
 		if ( $child ) {
-			$this->_children[] = $child;
+			$this->children[] = $child;
 		}
 
 		return $child;
@@ -511,19 +505,56 @@ abstract class Element_Base extends Controls_Stack {
 			return $this;
 		}
 
-		if ( empty( $this->_render_attributes[ $element ][ $key ] ) ) {
-			$this->_render_attributes[ $element ][ $key ] = [];
+		if ( empty( $this->render_attributes[ $element ][ $key ] ) ) {
+			$this->render_attributes[ $element ][ $key ] = [];
 		}
 
 		settype( $value, 'array' );
 
 		if ( $overwrite ) {
-			$this->_render_attributes[ $element ][ $key ] = $value;
+			$this->render_attributes[ $element ][ $key ] = $value;
 		} else {
-			$this->_render_attributes[ $element ][ $key ] = array_merge( $this->_render_attributes[ $element ][ $key ], $value );
+			$this->render_attributes[ $element ][ $key ] = array_merge( $this->render_attributes[ $element ][ $key ], $value );
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Get Render Attributes
+	 *
+	 * Used to retrieve render attribute.
+	 *
+	 * The returned array is either all elements and their attributes if no `$element` is specified, an array of all
+	 * attributes of a specific element or a specific attribute properties if `$key` is specified.
+	 *
+	 * Returns null if one of the requested parameters isn't set.
+	 *
+	 * @param string $element
+	 * @param string $key
+	 *
+	 * @return array
+	 */
+	public function get_render_attributes( $element = '', $key = '' ) {
+		$attributes = $this->render_attributes;
+
+		if ( $element ) {
+			if ( ! isset( $attributes[ $element ] ) ) {
+				return null;
+			}
+
+			$attributes = $attributes[ $element ];
+
+			if ( $key ) {
+				if ( ! isset( $attributes[ $key ] ) ) {
+					return null;
+				}
+
+				$attributes = $attributes[ $key ];
+			}
+		}
+
+		return $attributes;
 	}
 
 	/**
@@ -559,11 +590,11 @@ abstract class Element_Base extends Controls_Stack {
 	 *                is empty or not exist.
 	 */
 	public function get_render_attribute_string( $element ) {
-		if ( empty( $this->_render_attributes[ $element ] ) ) {
+		if ( empty( $this->render_attributes[ $element ] ) ) {
 			return '';
 		}
 
-		$render_attributes = $this->_render_attributes[ $element ];
+		$render_attributes = $this->render_attributes[ $element ];
 
 		$attributes = [];
 
@@ -597,7 +628,26 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 */
 	public function print_element() {
-		$element_type = static::get_type();
+		ob_start();
+		$this->_print_content();
+		$content = ob_get_clean();
+
+		if ( empty( $content ) && ! $this->should_print_empty() ) {
+			return;
+		}
+
+		$element_type = $this->get_type();
+
+		/**
+		 * Before frontend element render.
+		 *
+		 * Fires before Elementor element is rendered in the frontend.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/frontend/before_render', $this );
 
 		/**
 		 * Before frontend element render.
@@ -615,15 +665,16 @@ abstract class Element_Base extends Controls_Stack {
 		$this->_add_render_attributes();
 
 		$this->before_render();
-		$this->_print_content();
+		echo $content;
 		$this->after_render();
 
 		$this->enqueue_scripts();
 		$this->enqueue_styles();
+
 		/**
 		 * After frontend element render.
 		 *
-		 * Fires after Elementor element was rendered in the frontend.
+		 * Fires after Elementor element is rendered in the frontend.
 		 *
 		 * The dynamic portion of the hook name, `$element_type`, refers to the element type.
 		 *
@@ -632,6 +683,17 @@ abstract class Element_Base extends Controls_Stack {
 		 * @param Element_Base $this The element.
 		 */
 		do_action( "elementor/frontend/{$element_type}/after_render", $this );
+
+		/**
+		 * After frontend element render.
+		 *
+		 * Fires after Elementor element is rendered in the frontend.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/frontend/after_render', $this );
 	}
 
 	/**
@@ -710,7 +772,22 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.8.0
 	 * @access protected
 	 */
-	protected function render_edit_tools() {}
+	protected function render_edit_tools() {
+		?>
+		<div class="elementor-element-overlay">
+			<ul class="elementor-editor-element-settings elementor-editor-<?php echo $this->get_type(); ?>-settings">
+				<?php
+				foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) {
+					?>
+					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
+						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
+					</li>
+				<?php } ?>
+			</ul>
+		</div>
+		<?php
+	}
 
 	/**
 	 * Is type instance.
@@ -723,7 +800,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return bool Whether the element is an instance of that type.
 	 */
 	public function is_type_instance() {
-		return $this->_is_type_instance;
+		return $this->is_type_instance;
 	}
 
 	/**
@@ -737,6 +814,10 @@ abstract class Element_Base extends Controls_Stack {
 	protected function _add_render_attributes() {
 		$id = $this->get_id();
 
+		$settings = $this->get_active_settings();
+		$frontend_settings = $this->get_frontend_settings();
+		$controls = $this->get_controls();
+
 		$this->add_render_attribute( '_wrapper', 'data-id', $id );
 
 		$this->add_render_attribute(
@@ -746,14 +827,20 @@ abstract class Element_Base extends Controls_Stack {
 			]
 		);
 
-		$settings = $this->get_active_settings();
+		$class_settings = [];
 
-		foreach ( self::get_class_controls() as $control ) {
-			if ( empty( $settings[ $control['name'] ] ) ) {
+		foreach ( $settings as $setting_key => $setting ) {
+			if ( isset( $controls[ $setting_key ]['prefix_class'] ) ) {
+				$class_settings[ $setting_key ] = $setting;
+			}
+		}
+
+		foreach ( $class_settings as $setting_key => $setting ) {
+			if ( empty( $setting ) && '0' !== $setting ) {
 				continue;
 			}
 
-			$this->add_render_attribute( '_wrapper', 'class', $control['prefix_class'] . $settings[ $control['name'] ] );
+			$this->add_render_attribute( '_wrapper', 'class', $controls[ $setting_key ]['prefix_class'] . $setting );
 		}
 
 		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
@@ -765,11 +852,20 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
 
-		$frontend_settings = $this->get_frontend_settings();
-
 		if ( $frontend_settings ) {
 			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
 		}
+
+		/**
+		 * After element attribute rendered.
+		 *
+		 * Fires after the attributes of the element HTML tag are rendered.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/element/after_add_attributes', $this );
 	}
 
 	/**
@@ -877,7 +973,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access private
 	 */
 	private function init_children() {
-		$this->_children = [];
+		$this->children = [];
 
 		$children_data = $this->get_data( 'elements' );
 
@@ -910,9 +1006,9 @@ abstract class Element_Base extends Controls_Stack {
 	 **/
 	public function __construct( array $data = [], array $args = null ) {
 		if ( $data ) {
-			$this->_is_type_instance = false;
+			$this->is_type_instance = false;
 		} elseif ( $args ) {
-			$this->_default_args = $args;
+			$this->default_args = $args;
 		}
 
 		parent::__construct( $data );
