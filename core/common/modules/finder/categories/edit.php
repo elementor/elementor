@@ -21,6 +21,7 @@ class Edit extends Base_Category {
 	/**
 	 * Get title.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return string
@@ -34,6 +35,7 @@ class Edit extends Base_Category {
 	 *
 	 * Determine if the category is dynamic.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return bool
@@ -45,6 +47,7 @@ class Edit extends Base_Category {
 	/**
 	 * Get category items.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @param array $options
