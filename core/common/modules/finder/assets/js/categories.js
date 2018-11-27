@@ -69,8 +69,19 @@ export default class extends Marionette.CompositeView {
 		$nextItem[ 0 ].scrollIntoView( { block: 'nearest' } );
 	}
 
-	goToActiveItem() {
-		this.$activeItem.children( 'a' )[ 0 ].click();
+	goToActiveItem( event ) {
+		const $a = this.$activeItem.children( 'a' ),
+			isControlClicked = elementorCommon.hotKeys.isControlEvent( event );
+
+		if ( isControlClicked ) {
+			$a.attr( 'target', '_blank' );
+		}
+
+		$a[ 0 ].click();
+
+		if ( isControlClicked ) {
+			$a.removeAttr( 'target' );
+		}
 	}
 
 	addHotKeys() {
@@ -90,7 +101,7 @@ export default class extends Marionette.CompositeView {
 
 		elementorCommon.hotKeys.addHotKeyHandler( ENTER, 'finderSelectItem', {
 			isWorthHandling: () => elementorCommon.finder.getLayout().getModal().isVisible() && this.$activeItem,
-			handle: () => this.goToActiveItem(),
+			handle: ( event ) => this.goToActiveItem( event ),
 		} );
 	}
 
