@@ -35,6 +35,16 @@ class Source_Local extends Source_Base {
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
 	/**
+	 * Elementor template-library category slug.
+	 */
+	const TAXONOMY_CATEGORY_SLUG = 'elementor_library_category';
+
+	/**
+	 * Elementor template-library tag slug.
+	 */
+	const TAXONOMY_TAG_SLUG = 'elementor_library_tag';
+
+	/**
 	 * Elementor template-library meta key.
 	 * @deprecated 2.3.0 Use \Elementor\Core\Base\Document::TYPE_META_KEY instead
 	 */
@@ -258,6 +268,68 @@ class Source_Local extends Source_Base {
 		$args = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args );
 
 		register_taxonomy( self::TAXONOMY_TYPE_SLUG, self::CPT, $args );
+
+		/**
+		 * Categories
+		 */
+		$args = [
+			'hierarchical' => true,
+			'show_ui' => true,
+			'show_in_nav_menus' => false,
+			'show_admin_column' => true,
+			'query_var' => is_admin(),
+			'rewrite' => false,
+			'public' => false,
+			'labels' => [
+				'name' =>_x( 'Categories', 'Template Library', 'elementor' ),
+				'singular_name' =>_x( 'Category', 'Template Library', 'elementor' ),
+				'all_items'	=> __( 'All Categories', '' ),
+			],
+		];
+
+		/**
+		 * Register template library category args.
+		 *
+		 * Filters the category arguments when registering elementor template library category.
+		 *
+		 * @since 2.4.0
+		 *
+		 * @param array $args Arguments for registering a category.
+		 */
+		$args = apply_filters( 'elementor/template_library/sources/local/register_category_args', $args );
+
+		register_taxonomy( self::TAXONOMY_CATEGORY_SLUG, self::CPT, $args );
+
+		/**
+		 * Tags
+		 */
+		$args = [
+			'hierarchical' => false,
+			'show_ui' => true,
+			'show_in_nav_menus' => false,
+			'show_admin_column' => true,
+			'query_var' => is_admin(),
+			'rewrite' => false,
+			'public' => false,
+			'labels' => [
+				'name' =>_x( 'Tags', 'Template Library', 'elementor' ),
+				'singular_name' =>_x( 'Tag', 'Template Library', 'elementor' ),
+				'all_items'	=> __( 'All Tags', '' ),
+			],
+		];
+
+		/**
+		 * Register template library tag args.
+		 *
+		 * Filters the tag arguments when registering elementor template library tag.
+		 *
+		 * @since 2.4.0
+		 *
+		 * @param array $args Arguments for registering a category.
+		 */
+		$args = apply_filters( 'elementor/template_library/sources/local/register_tag_args', $args );
+
+		register_taxonomy( self::TAXONOMY_TAG_SLUG, self::CPT, $args );
 	}
 
 	/**
@@ -1144,6 +1216,27 @@ class Source_Local extends Source_Base {
 		<?php
 	}
 
+	public function add_filter_by_category( $post_type ) {
+		if ( self::CPT !== $post_type ) {
+			return;
+		}
+
+		$dropdown_options = array(
+			'show_option_all' => get_taxonomy( self::TAXONOMY_CATEGORY_SLUG )->labels->all_items,
+			'hide_empty' => 0,
+			'hierarchical' => 1,
+			'show_count' => 0,
+			'orderby' => 'name',
+			'value_field' => 'slug',
+			'taxonomy' => self::TAXONOMY_CATEGORY_SLUG,
+			'name' => self::TAXONOMY_CATEGORY_SLUG,
+			'selected' => empty( $_GET[ self::TAXONOMY_CATEGORY_SLUG ] ) ? '' : $_GET[ self::TAXONOMY_CATEGORY_SLUG ],
+		);
+
+		echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by category', '' ) . '</label>';
+		wp_dropdown_categories( $dropdown_options );
+	}
+
 	/**
 	 * Import single template.
 	 *
@@ -1324,6 +1417,9 @@ class Source_Local extends Source_Base {
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
+
+			// Template filter by category.
+			add_action( 'restrict_manage_posts', [ $this, 'add_filter_by_category' ] );
 
 			// Template type column.
 			add_action( 'manage_' . self::CPT . '_posts_columns', [ $this, 'admin_columns_headers' ] );
