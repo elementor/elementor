@@ -714,7 +714,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
-				'default' => '',
 				'frontend_available' => true,
 				'label_block' => true,
 			]
