@@ -74,11 +74,14 @@
 }
 
 .elementor-loading-title {
+	$spacing: 7px;
+
 	color: $editor-light;
 	text-align: center;
 	text-transform: uppercase;
 	margin-top: 30px;
-	letter-spacing: 7px;
+	letter-spacing: $spacing;
+	text-indent: $spacing;
 	font-size: 10px;
 	width: 100%;
 }
