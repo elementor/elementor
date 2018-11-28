@@ -220,6 +220,22 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.3.3 - 2018-11-28 =
+* New: Added `elementor/frontend/{$element_type}/should_render` filter
+* Tweak: Added a new `render_html_attributes` method
+* Tweak: Added placeholder support for `date-time` control
+* Tweak: Added ability to set a default value in a control `selectors` settings ([#6241](https://github.com/pojome/elementor/issues/6241))
+* Tweak: Open links in new tab on `Ctrl + Enter` ([#6258](https://github.com/pojome/elementor/issues/6258))
+* Tweak: Set the correct Dynamic tag categories for Self Hosted video
+* Fix: Video lightbox won't open in some configurations
+* Fix: Self-hosted video lightbox width
+* Fix: Removed invalid `href` attribute in Tabs widget ([#6261](https://github.com/pojome/elementor/issues/6261))
+* Fix: Restored element / widget hooks priority ([#6189](https://github.com/pojome/elementor/issues/6189))
+* Fix: Drag the direct inner element only
+* Fix: Show unsupported templates on My Templates list
+* Fix: Make sure the document type exists in documents manager
+* Fix: Set default for `slides to scroll` in Image Carousel widget
+
 = 2.3.2 - 2018-11-17 =
 * Tweak: Added `vw` unit to base control
 * Tweak: Added WP Plugins and Users links to Finder
