@@ -115,11 +115,11 @@ module.exports = elementorModules.utils.ViewModule.extend( {
 		}
 
 		var menuItemOptions = {
-				icon: menuSettings.icon,
-				title: this.getSettings( 'panelPage.title' ),
-				type: 'page',
-				pageName: this.getSettings( 'name' ) + '_settings',
-			};
+			icon: menuSettings.icon,
+			title: this.getSettings( 'panelPage.title' ),
+			type: 'page',
+			pageName: this.getSettings( 'name' ) + '_settings',
+		};
 
 		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
 	},
