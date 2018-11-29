@@ -212,8 +212,6 @@ jobs:
         name: "Run JS lint"
         command: |
           mkdir -p /root/junit
-          #jscs -c .jscsrc . --reporter=junit > /root/junit/jscs.xml
-          #jshint .
           eslint . -f junit > /root/junit/eslint.xml
     - run:
         name: "Run PHP lint"

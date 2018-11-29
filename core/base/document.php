@@ -46,6 +46,11 @@ abstract class Document extends Controls_Stack {
 	 */
 	protected $post;
 
+	/**
+	 * @since 2.1.0
+	 * @access protected
+	 * @static
+	 */
 	protected static function get_editor_panel_categories() {
 		return Plugin::$instance->elements_manager->get_categories();
 	}
@@ -67,6 +72,11 @@ abstract class Document extends Controls_Stack {
 		];
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_editor_panel_config() {
 		return [
 			'widgets_settings' => [],
@@ -132,12 +142,20 @@ abstract class Document extends Controls_Stack {
 		return $this->get_name() . '-' . $this->post->ID;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function get_post_type_title() {
 		$post_type_object = get_post_type_object( $this->post->post_type );
 
 		return $post_type_object->labels->singular_name;
 	}
 
+	/**
+	 * @since 2.0.12
+	 * @access public
+	 */
 	public function get_remote_library_type() {
 		return $this->get_name();
 	}
@@ -322,11 +340,36 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Add/Remove edit link in dashboard.
+	 *
+	 * Add or remove an edit link to the post/page action links on the post/pages list table.
+	 *
+	 * Fired by `post_row_actions` and `page_row_actions` filters.
+	 *
+	 * @access public
+	 *
+	 * @param array    $actions An array of row action links.
+	 *
+	 * @return array An updated array of row action links.
+	 */
+	public function filter_admin_row_actions( $actions ) {
+		if ( $this->is_built_with_elementor() && $this->is_editable_by_current_user() ) {
+			$actions['edit_with_elementor'] = sprintf(
+				'<a href="%1$s">%2$s</a>',
+				$this->get_edit_url(),
+				__( 'Edit with Elementor', 'elementor' )
+			);
+		}
+
+		return $actions;
+	}
+
+	/**
 	 * @since 2.0.0
 	 * @access public
 	 */
 	public function is_editable_by_current_user() {
-		return User::is_current_user_can_edit( $this->get_main_id() );
+		return self::get_property( 'is_editable' ) && User::is_current_user_can_edit( $this->get_main_id() );
 	}
 
 	/**
@@ -623,6 +666,10 @@ abstract class Document extends Controls_Stack {
 		return $elements;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function convert_to_elementor() {
 		$this->save_template_type();
 
@@ -674,6 +721,10 @@ abstract class Document extends Controls_Stack {
 		];
 	}
 
+	/**
+	 * @since 2.1.3
+	 * @access public
+	 */
 	public function print_elements_with_wrapper( $elements_data = null ) {
 		if ( ! $elements_data ) {
 			$elements_data = $this->get_elements_data();
@@ -724,6 +775,10 @@ abstract class Document extends Controls_Stack {
 		return get_permalink( $this->get_main_id() );
 	}
 
+	/**
+	 * @since 2.0.8
+	 * @access public
+	 */
 	public function get_content( $with_css = false ) {
 		return Plugin::$instance->frontend->get_builder_content( $this->post->ID, $with_css );
 	}
@@ -822,10 +877,18 @@ abstract class Document extends Controls_Stack {
 		$this->save_template_type();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function save_template_type() {
 		return $this->update_main_meta( self::TYPE_META_KEY, $this->get_name() );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function get_template_type() {
 		return $this->get_main_meta( self::TYPE_META_KEY );
 	}
@@ -982,6 +1045,10 @@ abstract class Document extends Controls_Stack {
 		$page_settings_manager->save_settings( $settings, $this->post->ID );
 	}
 
+	/**
+	 * @since 2.1.3
+	 * @access protected
+	 */
 	protected function print_elements( $elements_data ) {
 		foreach ( $elements_data as $element_data ) {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
