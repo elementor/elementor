@@ -295,13 +295,40 @@ class Documents_Manager {
 	 *
 	 * Retrieve the all the registered document types.
 	 *
-	 * @since 2.0.0
+	 * @since  2.0.0
 	 * @access public
+	 *
+	 * @param array $args      Optional. An array of key => value arguments to match against
+	 *                               the properties. Default is empty array.
+	 * @param string $operator Optional. The logical operation to perform. 'or' means only one
+	 *                               element from the array needs to match; 'and' means all elements
+	 *                               must match; 'not' means no elements may match. Default 'and'.
 	 *
 	 * @return Document[] All the registered document types.
 	 */
-	public function get_document_types() {
+	public function get_document_types( $args = [], $operator = 'and' ) {
+		if ( ! empty( $args ) ) {
+			$types_properties = $this->get_types_properties();
+
+			$filtered = wp_filter_object_list( $types_properties, $args, $operator );
+
+			return array_intersect_key( $this->types, $filtered );
+		}
+
 		return $this->types;
+	}
+
+	/**
+	 * Get document types with their properties.
+	 *
+	 * @return array A list of properties arrays indexed by the type.
+	 */
+	public function get_types_properties() {
+		$types_properties = [];
+		foreach ( $this->types as $type => $class ) {
+			$types_properties[ $type ] = $class::get_properties();
+		}
+		return $types_properties;
 	}
 
 	/**
