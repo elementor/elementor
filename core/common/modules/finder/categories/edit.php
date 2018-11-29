@@ -65,6 +65,9 @@ class Edit extends Base_Category {
 			'is_editable' => true,
 		] );
 
+		// TODO: Remove on 2.4.0.
+		unset( $document_types['widget'] );
+
 		$recently_edited_query_args = [
 			'post_type' => $post_types,
 			'post_status' => [ 'publish', 'draft' ],
