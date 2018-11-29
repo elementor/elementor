@@ -24,6 +24,11 @@
 		flex-direction: column;
 	}
 
+	.elementor-control-title {
+		font-size: 12px;
+		line-height: 1;
+	}
+
 	&.elementor-control-type-divider {
 		padding: 0;
 		background-color: transparent;
