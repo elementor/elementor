@@ -102,13 +102,9 @@ class Compatibility {
 			} );
 		}
 
-		// Exclude our Library from sitemap.xml in Yoast SEO plugin.
-		add_filter( 'wpseo_sitemaps_supported_post_types', function( $post_types ) {
-			unset( $post_types[ Source_Local::CPT ] );
-
-			return $post_types;
-		} );
-
+		// Exclude our Library from Yoast SEO plugin.
+		add_filter( 'wpseo_sitemaps_supported_post_types', [ __CLASS__, 'filter_library_post_type' ] );
+		add_filter( 'wpseo_accessible_post_types', [ __CLASS__, 'filter_library_post_type' ] );
 		add_filter( 'wpseo_sitemap_exclude_post_type', function( $retval, $post_type ) {
 			if ( Source_Local::CPT === $post_type ) {
 				$retval = true;
@@ -204,6 +200,12 @@ class Compatibility {
 		if ( function_exists( 'gutenberg_init' ) ) {
 			add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
 		}
+	}
+
+	public static function filter_library_post_type( $post_types ) {
+		unset( $post_types[ Source_Local::CPT ] );
+
+		return $post_types;
 	}
 
 	/**
