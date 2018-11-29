@@ -97,8 +97,8 @@ class Documents_Manager {
 		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
 		add_action( 'elementor/init', [ $this, 'register_default_types' ], 11 );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-		add_filter( 'post_row_actions', [ $this, 'filter_post_row_actions' ], 10, 2 );
-		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 10, 2 );
+		add_filter( 'post_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
+		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
 		add_filter( 'user_has_cap', [ $this, 'remove_user_edit_cap' ], 10, 3 );
 	}
 
