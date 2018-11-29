@@ -220,6 +220,11 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.3.4 - 2018-11-29 =
+* Tweak: Make sure "Edit with Elementor" action link is the last link in My Templates
+* Fix: CSS parsing for non-existing controls ([#6296](https://github.com/pojome/elementor/issues/6296))
+* Fix: Shows only editable documents in Finder
+
 = 2.3.3 - 2018-11-28 =
 * New: Added `elementor/frontend/{$element_type}/should_render` filter
 * Tweak: Added a new `render_html_attributes` method
