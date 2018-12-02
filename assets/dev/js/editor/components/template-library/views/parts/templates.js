@@ -170,7 +170,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	toggleFilterClass: function() {
-		this.$el.toggleClass( 'elementor-templates-filter-active', !! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
+		this.$el.toggleClass( 'elementor-templates-filter-active', ! ! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
 	},
 
 	onRenderCollection: function() {
