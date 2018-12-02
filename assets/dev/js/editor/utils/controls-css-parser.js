@@ -1,7 +1,7 @@
 var Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	ControlsCSSParser;
 
-ControlsCSSParser = elementorModules.utils.ViewModule.extend( {
+ControlsCSSParser = elementorModules.ViewModule.extend( {
 	stylesheet: null,
 
 	getDefaultSettings: function() {
@@ -123,7 +123,7 @@ ControlsCSSParser = elementorModules.utils.ViewModule.extend( {
 	},
 
 	onInit: function() {
-		elementorModules.utils.ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.initStylesheet();
 	},

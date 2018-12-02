@@ -9,7 +9,7 @@ const EventManager = require( 'elementor-utils/hooks' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
 	LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
-class Frontend extends elementorModules.utils.ViewModule {
+class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
 		super( ...args );
 

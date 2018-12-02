@@ -1,4 +1,4 @@
-module.exports = elementorModules.utils.Module.extend( {
+module.exports = elementorModules.Module.extend( {
 	errors: [],
 
 	__construct: function( settings ) {

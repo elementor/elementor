@@ -1,6 +1,6 @@
 var NewTemplateLayout = require( 'elementor-admin/new-template/layout' );
 
-var NewTemplateModule = elementorModules.utils.ViewModule.extend( {
+var NewTemplateModule = elementorModules.ViewModule.extend( {
 
 	getDefaultSettings: function() {
 		return {
@@ -23,7 +23,7 @@ var NewTemplateModule = elementorModules.utils.ViewModule.extend( {
 	},
 
 	onInit: function() {
-		elementorModules.utils.ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.layout = new NewTemplateLayout();
 

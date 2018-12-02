@@ -1,4 +1,4 @@
-import ViewModule from './view-module';
+import ViewModule from '../view-module';
 
 module.exports = ViewModule.extend( {
 
