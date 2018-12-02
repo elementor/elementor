@@ -33,8 +33,8 @@ module.exports = ViewModule.extend( {
 
 			if ( row ) {
 				var itemPosition = $item.position(),
-                    indexAtRow = index % columnsCount,
-                    pullHeight = itemPosition.top - distanceFromTop - heights[ indexAtRow ];
+					indexAtRow = index % columnsCount,
+					pullHeight = itemPosition.top - distanceFromTop - heights[ indexAtRow ];
 
 				pullHeight -= parseInt( $item.css( 'margin-top' ), 10 );
 
@@ -42,7 +42,7 @@ module.exports = ViewModule.extend( {
 
 				$item.css( 'margin-top', pullHeight + 'px' );
 
-                heights[ indexAtRow ] += itemHeight;
+				heights[ indexAtRow ] += itemHeight;
 			} else {
 				heights.push( itemHeight );
 			}
