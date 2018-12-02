@@ -118,11 +118,12 @@ abstract class Document extends Controls_Stack {
 	 */
 	public static function get_property( $key ) {
 		$id = static::get_class_full_name();
+
 		if ( ! isset( self::$properties[ $id ] ) ) {
 			self::$properties[ $id ] = static::get_properties();
 		}
 
-		return self::_get_items( self::$properties[ $id ], $key );
+		return self::get_items( self::$properties[ $id ], $key );
 	}
 
 	/**
