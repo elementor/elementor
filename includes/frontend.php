@@ -145,7 +145,7 @@ class Frontend extends App {
 	 *
 	 * Retrieve the module name.
 	 *
-	 * @since  2.3.0
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return string Module name.
@@ -195,6 +195,8 @@ class Frontend extends App {
 	}
 
 	/**
+	 * @since 2.0.12
+	 * @access public
 	 * @param string|array $class
 	 */
 	public function add_body_class( $class ) {
@@ -1000,10 +1002,31 @@ class Frontend extends App {
 		}
 	}
 
+	/**
+	 * Has Elementor In Page
+	 *
+	 * Determine whether the current page is using Elementor.
+	 *
+	 * @since 2.0.9
+	 *
+	 * @access public
+	 * @return bool
+	 */
 	public function has_elementor_in_page() {
 		return $this->_has_elementor_in_page;
 	}
 
+	/**
+	 * Get Init Settings
+	 *
+	 * Used to define the default/initial settings of the object. Inheriting classes may implement this method to define
+	 * their own default/initial settings.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @access protected
+	 * @return array
+	 */
 	protected function get_init_settings() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
@@ -1070,6 +1093,18 @@ class Frontend extends App {
 		$this->content_removed_filters = [];
 	}
 
+	/**
+	 * Process More Tag
+	 *
+	 * Respect the native WP (<!--more-->) tag
+	 *
+	 * @access private
+	 * @since 2.0.4
+	 *
+	 * @param $content
+	 *
+	 * @return string
+	 */
 	private function process_more_tag( $content ) {
 		$post = get_post();
 		$content = str_replace( '&lt;!--more--&gt;', '<!--more-->', $content );

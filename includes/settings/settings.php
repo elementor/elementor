@@ -578,6 +578,10 @@ class Settings extends Settings_Page {
 		}
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access private
+	 */
 	private function maybe_remove_all_admin_notices() {
 		$elementor_pages = [
 			'elementor-getting-started',

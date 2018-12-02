@@ -204,7 +204,8 @@ class Utils {
 	 *
 	 * Replace old URLs to new URLs. This method also updates all the Elementor data.
 	 *
-	 * @since  2.1.0
+	 * @since 2.1.0
+	 * @static
 	 * @access public
 	 *
 	 * @param $from
@@ -593,6 +594,11 @@ class Utils {
 		return method_exists( wp_get_theme(), 'get_post_templates' );
 	}
 
+	/**
+	 * @since 2.1.2
+	 * @access public
+	 * @static
+	 */
 	public static function array_inject( $array, $key, $insert ) {
 		$length = array_search( $key, array_keys( $array ), true ) + 1;
 
@@ -604,6 +610,8 @@ class Utils {
 	/**
 	 * Render html attributes
 	 *
+	 * @access public
+	 * @static
 	 * @param array $attributes
 	 *
 	 * @return string

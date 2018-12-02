@@ -29,6 +29,7 @@ class Module extends BaseModule {
 	/**
 	 * Module constructor.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 */
 	public function __construct() {
@@ -42,6 +43,7 @@ class Module extends BaseModule {
 	/**
 	 * Get name.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return string
@@ -53,6 +55,7 @@ class Module extends BaseModule {
 	/**
 	 * Add template.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 */
 	public function add_template() {
@@ -62,6 +65,7 @@ class Module extends BaseModule {
 	/**
 	 * Register ajax actions.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @param Ajax $ajax
@@ -73,6 +77,7 @@ class Module extends BaseModule {
 	/**
 	 * Ajax get category items.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @param array $data
@@ -88,6 +93,7 @@ class Module extends BaseModule {
 	/**
 	 * Get init settings.
 	 *
+	 * @since 2.3.0
 	 * @access protected
 	 *
 	 * @return array

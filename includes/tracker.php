@@ -296,6 +296,11 @@ class Tracker {
 		<?php
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 * @static
+	 */
 	public static function is_notice_shown() {
 		return self::$notice_shown;
 	}

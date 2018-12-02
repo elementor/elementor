@@ -21,6 +21,11 @@ class Module extends BaseModule {
 		return 'wp-cli';
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 * @static
+	 */
 	public static function is_active() {
 		return defined( 'WP_CLI' ) && WP_CLI;
 	}
