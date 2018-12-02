@@ -386,7 +386,7 @@ const App = Marionette.Application.extend( {
 						return false;
 					}
 
-					var frontendWindow = elementorFrontend.getElements( 'window' ),
+					var frontendWindow = elementorFrontend.elements.window,
 						textSelection = getSelection() + frontendWindow.getSelection();
 
 					if ( ! textSelection && environment.firefox ) {
@@ -515,7 +515,7 @@ const App = Marionette.Application.extend( {
 						return false;
 					}
 
-					return -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.getElements( 'window' ).document.activeElement.tagName;
+					return -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName;
 				},
 				handle: function( event ) {
 					var targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
@@ -751,7 +751,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	enterPreviewMode: function( hidePanel ) {
-		var $elements = elementorFrontend.getElements( '$body' );
+		var $elements = elementorFrontend.elements.$body;
 
 		if ( hidePanel ) {
 			$elements = $elements.add( elementorCommon.elements.$body );
@@ -774,7 +774,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	exitPreviewMode: function() {
-		elementorFrontend.getElements( '$body' ).add( elementorCommon.elements.$body )
+		elementorFrontend.elements.$body.add( elementorCommon.elements.$body )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
 
@@ -942,7 +942,7 @@ const App = Marionette.Application.extend( {
 
 		this.preventClicksInsideEditor();
 
-		this.addBackgroundClickArea( elementorFrontend.getElements( 'window' ).document );
+		this.addBackgroundClickArea( elementorFrontend.elements.window.document );
 
 		if ( this.previewLoadedOnce ) {
 			this.getPanelView().setPage( 'elements', null, { autoFocusSearch: false } );
@@ -962,7 +962,7 @@ const App = Marionette.Application.extend( {
 
 		this.$previewContents.children().addClass( 'elementor-html' );
 
-		const $frontendBody = elementorFrontend.getElements( '$body' );
+		const $frontendBody = elementorFrontend.elements.$body;
 
 		$frontendBody.addClass( 'elementor-editor-active' );
 
@@ -975,14 +975,14 @@ const App = Marionette.Application.extend( {
 		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
-			elementorFrontend.getElements( 'window' ).jQuery.holdReady( false );
+			elementorFrontend.elements.window.jQuery.holdReady( false );
 		} );
 
 		this.enqueueTypographyFonts();
 
 		this.onEditModeSwitched();
 
-		elementorCommon.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
+		elementorCommon.hotKeys.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded' );
 	},

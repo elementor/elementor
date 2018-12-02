@@ -429,7 +429,7 @@ module.exports = elementorModules.utils.ViewModule.extend( {
 	},
 
 	bindEvents: function() {
-		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
+		elementorFrontend.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
 	},
 
 	onInit: function() {

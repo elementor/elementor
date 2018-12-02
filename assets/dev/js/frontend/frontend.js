@@ -3,251 +3,267 @@ import DocumentsManager from './documents-manager';
 import HotKeys from '../../../../core/common/assets/js/utils/hot-keys';
 import environment from '../../../../core/common/assets/js/utils/environment';
 
-( function( $ ) {
-	var elements = {},
-		EventManager = require( '../utils/hooks' ),
-		Module = require( './handler-module' ),
-		ElementsHandler = require( 'elementor-frontend/elements-handler' ),
-		YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
-		AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
-		LightboxModule = require( 'elementor-frontend/utils/lightbox' );
+const EventManager = require( 'elementor-utils/hooks' ),
+	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
+	YouTubeModule = require( 'elementor-frontend/utils/youtube' ),
+	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
+	LightboxModule = require( 'elementor-frontend/utils/lightbox' );
 
-	var ElementorFrontend = function() {
-		var self = this,
-			dialogsManager;
+class Frontend extends elementorModules.utils.ViewModule {
+	constructor( ...args ) {
+		super( ...args );
 
 		this.config = elementorFrontendConfig;
 
-		this.Module = Module;
+		this.Module = require( './handler-module' );
+	}
 
-		var setDeviceModeData = function() {
-			elements.$body.attr( 'data-elementor-device-mode', self.getCurrentDeviceMode() );
+	getDefaultSettings() {
+		return {
+			selectors: {
+				elementor: '.elementor',
+				adminBar: '#wpadminbar',
+			},
+			classes: {
+				ie: 'elementor-msie',
+			},
+		};
+	}
+
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' );
+
+		const elements = {
+			window: window,
+			$window: jQuery( window ),
+			$document: jQuery( document ),
+			$body: jQuery( document.body ),
 		};
 
-		var initElements = function() {
-			elements.window = window;
+		elements.$elementor = elements.$document.find( selectors.elementor );
 
-			elements.$window = $( window );
+		elements.$wpAdminBar = elements.$document.find( selectors.adminBar );
 
-			elements.$document = $( document );
+		return elements;
+	}
 
-			elements.$body = $( document.body );
+	bindEvents() {
+		this.elements.$window.on( 'resize', () => this.setDeviceModeData() );
+	}
 
-			elements.$elementor = elements.$document.find( '.elementor' );
+	/**
+	 * @deprecated 2.4.0 Use just `this.elements` instead
+	 */
+	getElements( elementName ) {
+		return this.getItems( this.elements, elementName );
+	}
 
-			elements.$wpAdminBar = elements.$document.find( '#wpadminbar' );
-		};
+	/**
+	 * @deprecated 2.4.0 This method was never in use
+	 */
+	getPageSettings( settingName ) {
+		const settingsObject = this.isEditMode() ? elementor.settings.page.model.attributes : this.config.settings.page;
 
-		var initHotKeys = function() {
-			self.hotKeys = new HotKeys();
+		return this.getItems( settingsObject, settingName );
+	}
 
-			self.hotKeys.bindListener( elements.$window );
-		};
+	getGeneralSettings( settingName ) {
+		const settingsObject = this.isEditMode() ? elementor.settings.general.model.attributes : this.config.settings.general;
 
-		var bindEvents = function() {
-			elements.$window.on( 'resize', setDeviceModeData );
-		};
+		return this.getItems( settingsObject, settingName );
+	}
 
-		var initOnReadyComponents = function() {
-			self.utils = {
-				youtube: new YouTubeModule(),
-				anchors: new AnchorsModule(),
-				lightbox: new LightboxModule(),
-			};
+	getCurrentDeviceMode() {
+		return getComputedStyle( this.elements.$elementor[ 0 ], ':after' ).content.replace( /"/g, '' );
+	}
 
-			self.modules = {
-				StretchElement: require( 'elementor-frontend/modules/stretch-element' ),
-				Masonry: require( 'elementor-utils/masonry' ),
-			};
+	isEditMode() {
+		return this.config.isEditMode;
+	}
 
-			self.elementsHandler = new ElementsHandler( $ );
-		};
+	initDialogsManager() {
+		let dialogsManager;
 
-		var getSiteSettings = function( settingType, settingName ) {
-			var settingsObject = self.isEditMode() ? elementor.settings[ settingType ].model.attributes : self.config.settings[ settingType ];
-
-			if ( settingName ) {
-				return settingsObject[ settingName ];
-			}
-
-			return settingsObject;
-		};
-
-		var addIeCompatibility = function() {
-			var el = document.createElement( 'div' ),
-				supportsGrid = 'string' === typeof el.style.grid;
-
-			if ( ! environment.ie && supportsGrid ) {
-				return;
-			}
-
-			elements.$body.addClass( 'elementor-msie' );
-
-			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie" href="' + self.config.urls.assets + 'css/frontend-msie.min.css?' + self.config.version + '" type="text/css" />';
-
-			elements.$body.append( msieCss );
-		};
-
-		this.init = function() {
-			self.hooks = new EventManager();
-
-			initElements();
-
-			addIeCompatibility();
-
-			bindEvents();
-
-			setDeviceModeData();
-
-			elements.$window.trigger( 'elementor/frontend/init' );
-
-			if ( ! self.isEditMode() ) {
-				initHotKeys();
-			}
-
-			initOnReadyComponents();
-		};
-
-		this.getElements = function( element ) {
-			if ( element ) {
-				return elements[ element ];
-			}
-
-			return elements;
-		};
-
-		this.getPageSettings = function( settingName ) {
-			return getSiteSettings( 'page', settingName );
-		};
-
-		this.getGeneralSettings = function( settingName ) {
-			return getSiteSettings( 'general', settingName );
-		};
-
-		this.getDialogsManager = function() {
+		this.getDialogsManager = () => {
 			if ( ! dialogsManager ) {
 				dialogsManager = new DialogsManager.Instance();
 			}
 
 			return dialogsManager;
 		};
+	}
 
-		this.isEditMode = function() {
-			return self.config.isEditMode;
+	initHotKeys() {
+		this.hotKeys = new HotKeys();
+
+		this.hotKeys.bindListener( this.elements.$window );
+	}
+
+	initOnReadyComponents() {
+		this.utils = {
+			youtube: new YouTubeModule(),
+			anchors: new AnchorsModule(),
+			lightbox: new LightboxModule(),
 		};
 
-		// Based on underscore function
-		this.throttle = function( func, wait ) {
-			var timeout,
-				context,
-				args,
-				result,
-				previous = 0;
+		// TODO: BC since 2.4.0
+		this.modules = {
+			StretchElement: elementorModules.frontend.tools.StretchElement,
+			Masonry: elementorModules.utils.Masonry,
+		};
 
-			var later = function() {
-				previous = Date.now();
-				timeout = null;
+		this.elementsHandler = new ElementsHandler( jQuery );
+
+		this.documentsManager = new DocumentsManager();
+
+		this.trigger( 'components:init' );
+	}
+
+	addIeCompatibility() {
+		const el = document.createElement( 'div' ),
+			supportsGrid = 'string' === typeof el.style.grid;
+
+		if ( ! environment.ie && supportsGrid ) {
+			return;
+		}
+
+		this.elements.$body.addClass( this.getSettings( 'classes.ie' ) );
+
+		const msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie" href="' + this.config.urls.assets + 'css/frontend-msie.min.css?' + this.config.version + '" type="text/css" />';
+
+		this.elements.$body.append( msieCss );
+	}
+
+	setDeviceModeData() {
+		this.elements.$body.attr( 'data-elementor-device-mode', this.getCurrentDeviceMode() );
+	}
+
+	addListenerOnce( listenerID, event, callback, to ) {
+		if ( ! to ) {
+			to = this.elements.$window;
+		}
+
+		if ( ! this.isEditMode() ) {
+			to.on( event, callback );
+
+			return;
+		}
+
+		this.removeListeners( listenerID, event, to );
+
+		if ( to instanceof jQuery ) {
+			const eventNS = event + '.' + listenerID;
+
+			to.on( eventNS, callback );
+		} else {
+			to.on( event, callback, listenerID );
+		}
+	}
+
+	removeListeners( listenerID, event, callback, from ) {
+		if ( ! from ) {
+			from = this.elements.$window;
+		}
+
+		if ( from instanceof jQuery ) {
+			const eventNS = event + '.' + listenerID;
+
+			from.off( eventNS, callback );
+		} else {
+			from.off( event, callback, listenerID );
+		}
+	}
+
+	// Based on underscore function
+	throttle( func, wait ) {
+		let timeout,
+			context,
+			args,
+			result,
+			previous = 0;
+
+		const later = () => {
+			previous = Date.now();
+			timeout = null;
+			result = func.apply( context, args );
+
+			if ( ! timeout ) {
+				context = args = null;
+			}
+		};
+
+		return function() {
+			const now = Date.now(),
+				remaining = wait - ( now - previous );
+
+			context = this;
+			args = arguments;
+
+			if ( remaining <= 0 || remaining > wait ) {
+				if ( timeout ) {
+					clearTimeout( timeout );
+					timeout = null;
+				}
+
+				previous = now;
 				result = func.apply( context, args );
 
 				if ( ! timeout ) {
 					context = args = null;
 				}
-			};
-
-			return function() {
-				var now = Date.now(),
-					remaining = wait - ( now - previous );
-
-				context = this;
-				args = arguments;
-
-				if ( remaining <= 0 || remaining > wait ) {
-					if ( timeout ) {
-						clearTimeout( timeout );
-						timeout = null;
-					}
-
-					previous = now;
-					result = func.apply( context, args );
-
-					if ( ! timeout ) {
-						context = args = null;
-					}
-				} else if ( ! timeout ) {
-					timeout = setTimeout( later, remaining );
-				}
-
-				return result;
-			};
-		};
-
-		this.addListenerOnce = function( listenerID, event, callback, to ) {
-			if ( ! to ) {
-				to = elements.$window;
+			} else if ( ! timeout ) {
+				timeout = setTimeout( later, remaining );
 			}
 
-			if ( ! self.isEditMode() ) {
-				to.on( event, callback );
+			return result;
+		};
+	}
 
-				return;
-			}
-
-			this.removeListeners( listenerID, event, to );
-
-			if ( to instanceof jQuery ) {
-				var eventNS = event + '.' + listenerID;
-
-				to.on( eventNS, callback );
-			} else {
-				to.on( event, callback, listenerID );
-			}
+	waypoint( $element, callback, options ) {
+		const defaultOptions = {
+			offset: '100%',
+			triggerOnce: true,
 		};
 
-		this.removeListeners = function( listenerID, event, callback, from ) {
-			if ( ! from ) {
-				from = elements.$window;
+		options = jQuery.extend( defaultOptions, options );
+
+		const correctCallback = function() {
+			const element = this.element || this,
+				result = callback.apply( element, arguments );
+
+			// If is Waypoint new API and is frontend
+			if ( options.triggerOnce && this.destroy ) {
+				this.destroy();
 			}
 
-			if ( from instanceof jQuery ) {
-				var eventNS = event + '.' + listenerID;
-
-				from.off( eventNS, callback );
-			} else {
-				from.off( event, callback, listenerID );
-			}
+			return result;
 		};
 
-		this.getCurrentDeviceMode = function() {
-			return getComputedStyle( elements.$elementor[ 0 ], ':after' ).content.replace( /"/g, '' );
-		};
+		return $element.elementorWaypoint( correctCallback, options );
+	}
 
-		this.waypoint = function( $element, callback, options ) {
-			var defaultOptions = {
-				offset: '100%',
-				triggerOnce: true,
-			};
+	init() {
+		this.hooks = new EventManager();
 
-			options = $.extend( defaultOptions, options );
+		this.addIeCompatibility();
 
-			var correctCallback = function() {
-				var element = this.element || this,
-					result = callback.apply( element, arguments );
+		this.setDeviceModeData();
 
-				// If is Waypoint new API and is frontend
-				if ( options.triggerOnce && this.destroy ) {
-					this.destroy();
-				}
+		this.initDialogsManager();
 
-				return result;
-			};
+		// Keep this line before `initOnReadyComponents` call
+		this.elements.$window.trigger( 'elementor/frontend/init' );
 
-			return $element.elementorWaypoint( correctCallback, options );
-		};
-	};
+		if ( ! this.isEditMode() ) {
+			this.initHotKeys();
+		}
 
-	window.elementorFrontend = new ElementorFrontend();
-} )( jQuery );
+		this.initOnReadyComponents();
+	}
+}
+
+window.elementorFrontend = new Frontend();
 
 if ( ! elementorFrontend.isEditMode() ) {
-	jQuery( elementorFrontend.init );
+	jQuery( () => elementorFrontend.init() );
 }
