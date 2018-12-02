@@ -1,0 +1,37 @@
+#elementor-icons-manager {
+	.elementor-icon-manager-tabs-list {
+
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		align-content: stretch;
+		margin-bottom: 0;
+		padding-left: 0;
+
+		li {
+			flex-direction: column;
+			justify-content: center;
+			font-size: 18px;
+			min-width: 100px;
+			padding: 12px;
+			cursor: pointer;;
+			border-right: 0;
+
+			&.active {
+				background-image: linear-gradient(to bottom, #f3f3f3, #fff);
+				border-bottom: 3px solid #9b0a46;
+			}
+
+			&last-of-type {
+				border-right: 1px solid;
+			}
+		}
+	}
+
+	input.icons-search {
+		padding: 12px;
+		background: #fff;
+		margin-bottom: 8px;
+		font-size: 1.4em;
+	}
+}

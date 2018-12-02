@@ -109,7 +109,33 @@ class Control_Icons extends Control_Base_Multiple {
 
 	private static function init_tabs() {
 		self::$tabs = [
-			'fontawesome5' => __( 'FontAwesome', 'elementor' ),
+			'regular' => [
+				'label' => __( 'Regular', 'elementor' ),
+				'url' => 'https://use.fontawesome.com/releases/v5.5.0/css/regular.css',
+				'enqueue' => [ 'https://use.fontawesome.com/releases/v5.5.0/css/fontawesome.css' ],
+				'prefix' => 'fa-',
+				'displayPrefix' => 'far',
+				'ver' => '5.5.0',
+				'fetchJson' => ELEMENTOR_ASSETS_URL . 'icons/regular.json',
+			],
+			'solid' => [
+				'label' => __( 'Solid', 'elementor' ),
+				'url' => 'https://use.fontawesome.com/releases/v5.5.0/css/solid.css',
+				'enqueue' => [ 'https://use.fontawesome.com/releases/v5.5.0/css/fontawesome.css' ],
+				'prefix' => 'fa-',
+				'displayPrefix' => 'fas',
+				'ver' => '5.5.0',
+				'fetchJson' => ELEMENTOR_ASSETS_URL . 'icons/solid.json',
+			],
+			'brands' => [
+				'label' => __( 'Brands', 'elementor' ),
+				'url' => 'https://use.fontawesome.com/releases/v5.5.0/css/brands.css',
+				'enqueue' => [ 'https://use.fontawesome.com/releases/v5.5.0/css/fontawesome.css' ],
+				'prefix' => 'fa-',
+				'displayPrefix' => 'fab',
+				'ver' => '5.5.0',
+				'fetchJson' => ELEMENTOR_ASSETS_URL . 'icons/brands.json',
+			],
 		];
 	}
 
@@ -119,10 +145,6 @@ class Control_Icons extends Control_Base_Multiple {
 		}
 		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', [] );
 		return array_merge( self::$tabs, $additional_tabs );
-	}
-
-	public static function get_type_handler( $handler_name ) {
-		return false;
 	}
 
 	/**
