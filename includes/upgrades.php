@@ -361,6 +361,11 @@ class Upgrades {
 		}
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access private
+	 * @static
+	 */
 	private static function upgrade_v210() {
 		global $wpdb;
 
@@ -432,11 +437,21 @@ class Upgrades {
 		} // End foreach().
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access private
+	 * @static
+	 */
 	private static function upgrade_v230() {
 		self::upgrade_v230_widget_image();
 		self::upgrade_v230_template_type();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access private
+	 * @static
+	 */
 	private static function upgrade_v230_widget_image() {
 		global $wpdb;
 
@@ -508,6 +523,11 @@ class Upgrades {
 		} // End foreach().
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access private
+	 * @static
+	 */
 	private static function upgrade_v230_template_type() {
 		global $wpdb;
 

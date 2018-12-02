@@ -362,7 +362,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * Initializing group control base class.
 	 *
 	 * @since 1.2.2
-	 * @access private
+	 * @access protected
 	 *
 	 * @param array $args Group control settings value.
 	 */

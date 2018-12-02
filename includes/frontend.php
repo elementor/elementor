@@ -145,7 +145,7 @@ class Frontend extends App {
 	 *
 	 * Retrieve the module name.
 	 *
-	 * @since  2.3.0
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return string Module name.
@@ -195,6 +195,8 @@ class Frontend extends App {
 	}
 
 	/**
+	 * @since 2.0.12
+	 * @access public
 	 * @param string|array $class
 	 */
 	public function add_body_class( $class ) {
@@ -994,8 +996,10 @@ class Frontend extends App {
 	 * Has Elementor In Page
 	 *
 	 * Determine whether the current page is using Elementor.
-	 * @access public
 	 *
+	 * @since 2.0.9
+	 *
+	 * @access public
 	 * @return bool
 	 */
 	public function has_elementor_in_page() {
@@ -1007,6 +1011,8 @@ class Frontend extends App {
 	 *
 	 * Used to define the default/initial settings of the object. Inheriting classes may implement this method to define
 	 * their own default/initial settings.
+	 *
+	 * @since 2.3.0
 	 *
 	 * @access protected
 	 * @return array
