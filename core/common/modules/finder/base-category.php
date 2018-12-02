@@ -18,6 +18,8 @@ abstract class Base_Category extends Base_Object {
 	/**
 	 * Get title.
 	 *
+	 * @since 2.3.0
+	 * @abstract
 	 * @access public
 	 *
 	 * @return string
@@ -27,6 +29,8 @@ abstract class Base_Category extends Base_Object {
 	/**
 	 * Get category items.
 	 *
+	 * @since 2.3.0
+	 * @abstract
 	 * @access public
 	 *
 	 * @param array $options
@@ -40,6 +44,7 @@ abstract class Base_Category extends Base_Object {
 	 *
 	 * Determine if the category is dynamic.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return bool
@@ -51,6 +56,7 @@ abstract class Base_Category extends Base_Object {
 	/**
 	 * Get init settings.
 	 *
+	 * @since 2.3.0
 	 * @access protected
 	 *
 	 * @return array

@@ -137,14 +137,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'slides_to_scroll',
 			[
 				'label' => __( 'Slides to Scroll', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'description' => __( 'Set how many slides are scrolled per swipe.', 'elementor' ),
-				'default' => '2',
-				'options' => $slides_to_show,
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+				] + $slides_to_show,
 				'condition' => [
 					'slides_to_show!' => '1',
 				],

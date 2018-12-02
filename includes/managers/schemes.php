@@ -270,6 +270,10 @@ class Schemes_Manager {
 		}
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'apply_scheme', [ $this, 'ajax_apply_scheme' ] );
 	}

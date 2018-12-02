@@ -57,7 +57,8 @@ ControlsCSSParser = elementorModules.utils.ViewModule.extend( {
 			controls,
 			( StyleControl ) => this.getStyleControlValue( StyleControl, values ),
 			placeholders,
-			replacements );
+			replacements
+		);
 	},
 
 	getStyleControlValue: function( control, values ) {
@@ -140,7 +141,13 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 
 		try {
 			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, function( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) {
-				var parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, placeholder, controlName );
+				const externalControlMissing = controlName && ! controls[ controlName ];
+
+				let parsedValue = '';
+
+				if ( ! externalControlMissing ) {
+					parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, placeholder, controlName );
+				}
 
 				if ( ! parsedValue && 0 !== parsedValue ) {
 					if ( fallbackValue ) {
@@ -151,11 +158,19 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 						if ( stringValueMatches ) {
 							parsedValue = stringValueMatches[ 2 ];
 						} else if ( ! isFinite( parsedValue ) ) {
+							if ( fallbackControlName && ! controls[ fallbackControlName ] ) {
+								return '';
+							}
+
 							parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, fallbackValue, fallbackControlName );
 						}
 					}
 
 					if ( ! parsedValue && 0 !== parsedValue ) {
+						if ( externalControlMissing ) {
+							return '';
+						}
+
 						throw '';
 					}
 				}
@@ -224,10 +239,6 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 ControlsCSSParser.parsePropertyPlaceholder = function( control, value, controls, valueCallback, placeholder, parserControlName ) {
 	if ( parserControlName ) {
 		control = _.findWhere( controls, { name: parserControlName } );
-
-		if ( ! control ) {
-			return '';
-		}
 
 		value = valueCallback( control );
 	}

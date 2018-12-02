@@ -190,7 +190,6 @@ class Widget_Video extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 					'categories' => [
-						TagsModule::POST_META_CATEGORY,
 						TagsModule::MEDIA_CATEGORY,
 					],
 				],
@@ -947,6 +946,10 @@ class Widget_Video extends Widget_Base {
 		return ! empty( $settings['image_overlay']['url'] ) && 'yes' === $settings['show_image_overlay'];
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access private
+	 */
 	private function get_embed_options() {
 		$settings = $this->get_settings_for_display();
 
@@ -963,6 +966,10 @@ class Widget_Video extends Widget_Base {
 		return $embed_options;
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access private
+	 */
 	private function get_hosted_params() {
 		$settings = $this->get_settings_for_display();
 
@@ -989,6 +996,10 @@ class Widget_Video extends Widget_Base {
 		return $video_params;
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access private
+	 */
 	private function get_hosted_video_url() {
 		$settings = $this->get_settings_for_display();
 
@@ -998,7 +1009,9 @@ class Widget_Video extends Widget_Base {
 			return '';
 		}
 
-		$video_url .= '#t=';
+		if ( $settings['start'] || $settings['end'] ) {
+			$video_url .= '#t=';
+		}
 
 		if ( $settings['start'] ) {
 			$video_url .= $settings['start'];
@@ -1011,6 +1024,10 @@ class Widget_Video extends Widget_Base {
 		return $video_url;
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access private
+	 */
 	private function render_hosted_video() {
 		$video_params = $this->get_hosted_params();
 
