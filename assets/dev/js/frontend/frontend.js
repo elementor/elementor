@@ -1,4 +1,5 @@
 /* global elementorFrontendConfig */
+import DocumentsManager from './documents-manager';
 import HotKeys from '../../../../core/common/assets/js/utils/hot-keys';
 import environment from '../../../../core/common/assets/js/utils/environment';
 
