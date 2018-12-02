@@ -1,4 +1,4 @@
-module.exports = elementorModules.utils.ViewModule.extend( {
+module.exports = elementorModules.ViewModule.extend( {
 	oldAspectRatio: null,
 
 	oldAnimation: null,
@@ -433,7 +433,7 @@ module.exports = elementorModules.utils.ViewModule.extend( {
 	},
 
 	onInit: function() {
-		elementorModules.utils.ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		if ( elementorFrontend.isEditMode() ) {
 			elementor.settings.general.model.on( 'change', this.onGeneralSettingsChange );

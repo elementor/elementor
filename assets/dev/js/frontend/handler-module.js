@@ -1,4 +1,4 @@
-module.exports = elementorModules.utils.ViewModule.extend( {
+module.exports = elementorModules.ViewModule.extend( {
 	$element: null,
 
 	editorListeners: null,

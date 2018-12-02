@@ -1,4 +1,4 @@
-module.exports = elementorModules.utils.Module.extend( {
+module.exports = elementorModules.Module.extend( {
 	autoSaveTimer: null,
 
 	autosaveInterval: elementor.config.autosave_interval * 1000,

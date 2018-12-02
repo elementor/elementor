@@ -1,5 +1,5 @@
 ( function( $ ) {
-	var ElementorAdmin = elementorModules.utils.ViewModule.extend( {
+	var ElementorAdmin = elementorModules.ViewModule.extend( {
 
 		maintenanceMode: null,
 
@@ -193,7 +193,7 @@
 		},
 
 		onInit: function() {
-			elementorModules.utils.ViewModule.prototype.onInit.apply( this, arguments );
+			elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 			this.initTemplatesImport();
 

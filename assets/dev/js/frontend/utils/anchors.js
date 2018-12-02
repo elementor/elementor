@@ -1,4 +1,4 @@
-module.exports = elementorModules.utils.ViewModule.extend( {
+module.exports = elementorModules.ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			scrollDuration: 500,
@@ -71,7 +71,7 @@ module.exports = elementorModules.utils.ViewModule.extend( {
 	},
 
 	onInit: function() {
-		elementorModules.utils.ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.bindEvents();
 	},

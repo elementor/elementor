@@ -1,6 +1,6 @@
 import Document from './document';
 
-export default class extends elementorModules.utils.ViewModule {
+export default class extends elementorModules.ViewModule {
 	constructor( ...args ) {
 		super( ...args );
 

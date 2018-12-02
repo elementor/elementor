@@ -1,4 +1,4 @@
-const EditorModule = elementorModules.utils.Module.extend( {
+const EditorModule = elementorModules.Module.extend( {
 
 	onInit: function() {
 		jQuery( window ).on( 'elementor:init', this.onElementorReady );

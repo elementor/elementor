@@ -2,7 +2,6 @@
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
-import LogoView from '../../../../core/common/assets/js/views/modal/logo';
 import ModalLayoutView from '../../../../core/common/assets/js/views/modal/layout';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 
@@ -32,15 +31,10 @@ const App = Marionette.Application.extend( {
 	// Exporting modules that can be used externally
 	modules: {
 		// TODO: Deprecated alias since 2.3.0
-		Module: elementorModules.utils.Module,
+		Module: elementorModules.Module,
 		components: {
 			templateLibrary: {
 				views: {
-					parts: {
-						headerParts: {
-							logo: LogoView,
-						},
-					},
 					BaseModalLayout: ModalLayoutView,
 				},
 			},

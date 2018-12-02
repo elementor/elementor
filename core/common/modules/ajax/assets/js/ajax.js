@@ -1,4 +1,4 @@
-export default class extends elementorModules.utils.Module {
+export default class extends elementorModules.Module {
 	getDefaultSettings() {
 		return {
 			ajaxParams: {
