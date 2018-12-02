@@ -220,10 +220,17 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function get_container_attributes() {
+		$id = $this->get_main_id();
+
 		$attributes = [
 			'data-elementor-type' => $this->get_name(),
-			'class' => 'elementor elementor-' . $this->get_main_id(),
+			'data-elementor-id' => $id,
+			'class' => 'elementor elementor-' . $id,
 		];
+
+		if ( ! Plugin::$instance->preview->is_preview_mode( $id ) ) {
+			$attributes['data-elementor-settings'] = wp_json_encode( $this->get_frontend_settings() );
+		}
 
 		// TODO: BC since 2.4.0
 		$attributes['class'] .= ' ' . $this->get_container_classes();
@@ -237,6 +244,7 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function get_wp_preview_url() {
 		$main_post_id = $this->get_main_id();
+
 		$url = get_preview_post_link(
 			$main_post_id,
 			[
