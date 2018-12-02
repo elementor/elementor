@@ -26,13 +26,18 @@ module.exports = elementorModules.utils.ViewModule.extend( {
 	handleAnchorLinks: function( event ) {
 		var clickedLink = event.currentTarget,
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
-			isSameHostname = ( location.hostname === clickedLink.hostname );
+			isSameHostname = ( location.hostname === clickedLink.hostname ),
+			$anchor;
 
 		if ( ! isSameHostname || ! isSamePathname || clickedLink.hash.length < 2 ) {
 			return;
 		}
 
-		var $anchor = jQuery( clickedLink.hash ).filter( this.getSettings( 'selectors.targets' ) );
+		try {
+			$anchor = jQuery( clickedLink.hash ).filter( this.getSettings( 'selectors.targets' ) );
+		} catch ( e ) {
+			return;
+		}
 
 		if ( ! $anchor.length ) {
 			return;
