@@ -16,6 +16,8 @@ class Dynamic_CSS extends Post {
 	/**
 	 * Dynamic_CSS constructor.
 	 *
+	 * @since 2.0.13
+	 * @access public
 	 * @param int $post_id Post ID
 	 * @param int $post_id_for_data
 	 */
@@ -25,22 +27,42 @@ class Dynamic_CSS extends Post {
 		parent::__construct( $post_id );
 	}
 
+	/**
+	 * @since 2.0.13
+	 * @access public
+	 */
 	public function get_name() {
 		return 'dynamic';
 	}
 
+	/**
+	 * @since 2.0.13
+	 * @access protected
+	 */
 	protected function use_external_file() {
 		return false;
 	}
 
+	/**
+	 * @since 2.0.13
+	 * @access protected
+	 */
 	protected function get_file_handle_id() {
 		return 'elementor-post-dynamic-' . $this->post_id_for_data;
 	}
 
+	/**
+	 * @since 2.0.13
+	 * @access protected
+	 */
 	protected function get_data() {
 		return Plugin::$instance->db->get_plain_editor( $this->post_id_for_data );
 	}
 
+	/**
+	 * @since 2.0.13
+	 * @access public
+	 */
 	public function get_meta( $property = null ) {
 		// Parse CSS first, to get the fonts list.
 		$css = $this->get_content();
@@ -58,6 +80,10 @@ class Dynamic_CSS extends Post {
 		return $meta;
 	}
 
+	/**
+	 * @since 2.0.13
+	 * @access public
+	 */
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
 		$dynamic_settings = $controls_stack->get_settings( '__dynamic__' );
 		if ( ! empty( $dynamic_settings ) ) {

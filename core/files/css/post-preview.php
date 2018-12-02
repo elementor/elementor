@@ -45,6 +45,10 @@ class Post_Preview extends Post {
 		parent::__construct( $parent_id );
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 */
 	public function get_preview_id() {
 		return $this->preview_id;
 	}
