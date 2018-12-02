@@ -1,6 +1,6 @@
 import elementorModules from './common';
 
-import EditorModule from '../editor/utils/editor-module';
+import EditorModule from '../editor/utils/module';
 
 elementorModules.editor = {
 	utils: {
