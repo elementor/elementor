@@ -20,7 +20,7 @@ module.exports = elementorModules.utils.ViewModule.extend( {
 	},
 
 	bindEvents: function() {
-		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'selectors.links' ), this.handleAnchorLinks );
+		elementorFrontend.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.handleAnchorLinks );
 	},
 
 	handleAnchorLinks: function( event ) {
@@ -39,7 +39,7 @@ module.exports = elementorModules.utils.ViewModule.extend( {
 		}
 
 		var scrollTop = $anchor.offset().top,
-			$wpAdminBar = elementorFrontend.getElements( '$wpAdminBar' ),
+			$wpAdminBar = elementorFrontend.elements.$wpAdminBar,
 			$activeStickies = jQuery( '.elementor-sticky--active' ),
 			maxStickyHeight = 0;
 
