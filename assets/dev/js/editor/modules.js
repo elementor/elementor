@@ -1,4 +1,4 @@
-import elementorModules from './common';
+import elementorModules from '../modules/modules';
 
 import EditorModule from '../editor/utils/module';
 
