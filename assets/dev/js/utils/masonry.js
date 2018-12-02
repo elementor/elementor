@@ -1,4 +1,6 @@
-module.exports = elementorModules.utils.ViewModule.extend( {
+import ViewModule from './view-module';
+
+module.exports = ViewModule.extend( {
 
 	getDefaultSettings: function() {
 		return {

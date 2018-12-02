@@ -5,5 +5,6 @@ export default window.elementorModules = {
 	utils: {
 		Module: Module,
 		ViewModule: ViewModule,
+		Masonry: require( 'elementor-utils/masonry' ),
 	},
 };
