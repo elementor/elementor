@@ -1,4 +1,3 @@
-import elementorModules from '../modules/modules';
 import Document from '../frontend/document';
 
 elementorModules.frontend = {
@@ -7,5 +6,3 @@ elementorModules.frontend = {
 		StretchElement: require( 'elementor-frontend/tools/stretch-element' ),
 	},
 };
-
-export default elementorModules;

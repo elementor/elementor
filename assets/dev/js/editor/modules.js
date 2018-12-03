@@ -1,5 +1,3 @@
-import elementorModules from '../modules/modules';
-
 import EditorModule from '../editor/utils/module';
 
 elementorModules.editor = {
@@ -7,5 +5,3 @@ elementorModules.editor = {
 		Module: EditorModule,
 	},
 };
-
-export default elementorModules;
