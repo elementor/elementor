@@ -3,6 +3,10 @@ export default class extends Marionette.LayoutView {
 		return 'elementor-icons-manager';
 	}
 
+	cache() {
+		return {};
+	}
+
 	getTemplate() {
 		return '#tmpl-elementor-icons-manager';
 	}
@@ -30,14 +34,43 @@ export default class extends Marionette.LayoutView {
 		const ui = {};
 		ui.tabLabel = '.icon-type-tab-label';
 		ui.searchInput = '.icons-search';
-		// ui.iconList = '';
+		ui.tabLi = '.icon-type-tab-label';
+		ui.iconListContainer = '.elementor-icon-manager-tabs-content';
 		// ui.iconListItems = '';
 
 		return ui;
 	}
 
-	showTab() {
-		console.log( arguments, this );
+	isInCache( name ) {
+		return ( this.cache[ name ] );
+	}
+
+	showTab( event ) {
+		const $tab = jQuery( event.target ),
+			tabKey = $tab.attr( 'data-tab' ),
+			tabSettings = JSON.parse( $tab.attr( 'data-settings' ) );
+		if ( ! this.isInCache( tabKey ) ) {
+			this.initIconType( tabSettings );
+		}
+
+		this.ui.tabLi.removeClass( 'active' );
+
+		const icons = this.store().getIcons( tabSettings );
+		if ( ! icons ) {
+			return;
+		}
+		$tab.addClass( 'active' );
+		this.ui.iconListContainer.html( '' );
+		for ( const i in icons ) {
+			const icon = icons[ i ],
+				iconLi = document.createElement( 'li' ),
+				clss = icon.displayPrefix + ' ' + icon.selector + ' ' + 'icon-list-item';
+			iconLi.setAttribute( 'data-name', icon.name );
+
+			iconLi.innerHTML = '<i class="' + clss + '" data-name="' + icon.name + '" data-value="' + icon.displayPrefix + ' ' + icon.selector + '"></i>' + '<span>' + icon.name + '</span>';
+
+			this.ui.iconListContainer.append( iconLi );
+		}
 	}
 
 	// onSearch() {
@@ -90,8 +123,7 @@ export default class extends Marionette.LayoutView {
 		}
 
 		library.icons = icons;
-		this.Icons[ library.name ] = icons;
-		this.store.save( library );
+		this.store().save( library );
 	}
 
 	extractIconsFromCSS( library ) {
@@ -104,7 +136,7 @@ export default class extends Marionette.LayoutView {
 
 	fetchIcons( library ) {
 		jQuery.getJSON( library.fetchJson, ( data ) => {
-			library.icons = data;
+			library.icons = data.icons;
 			return this.normalizeIconList( library );
 		} );
 	}
@@ -124,8 +156,8 @@ export default class extends Marionette.LayoutView {
 			};
 		}
 		library.icons = icons;
-		this.Icons[ library.name ] = icons;
-		return this.store.save( library );
+		this.store().save( library );
+		this.initIconType( library );
 	}
 
 	addIconType( config ) {
@@ -155,12 +187,12 @@ export default class extends Marionette.LayoutView {
 		}
 
 		// already saved an stored
-		if ( this.store.isValid( libraryConfig ) ) {
+		if ( this.store().isValid( libraryConfig ) ) {
 			return;
 		}
 
 		// comes with icons
-		if ( libraryConfig.icons.length ) {
+		if ( libraryConfig.icons && libraryConfig.icons.length ) {
 			return this.normalizeIconList( libraryConfig );
 		}
 
@@ -181,16 +213,22 @@ export default class extends Marionette.LayoutView {
 
 	store() {
 		return {
-			save( iconLibrary ) {
-				const storageKey = iconLibrary.name + '_icons';
-				this.set( storageKey, iconLibrary );
+			getKey( library ) {
+				return '_elementor_' + library.name + '_icons';
+			},
+			save( library ) {
+				this.set( this.getKey( library ), library );
+			},
+			getIcons( library ) {
+				const data = this.get( this.getKey( library ) );
+				if ( data && data.icons ) {
+					return data.icons;
+				}
+				return false;
 			},
 			set( key, value ) {
 				const preparedValue = JSON.stringify( value );
 				window.localStorage.setItem( key, preparedValue );
-			},
-			getIcons( name ) {
-				return this.get( name + '_icons' );
 			},
 			get( key ) {
 				const saved = window.localStorage.getItem( key );
@@ -199,12 +237,12 @@ export default class extends Marionette.LayoutView {
 				}
 				return JSON.parse( saved );
 			},
-			isValid( iconLibrary ) {
-				const saved = this.get( iconLibrary.name + '_icons' );
+			isValid( library ) {
+				const saved = this.get( this.getKey( library ) );
 				if ( ! saved ) {
 					return false;
 				}
-				if ( saved.ver !== iconLibrary.ver ) {
+				if ( saved.ver !== library.ver ) {
 					return false;
 				}
 				return true;
