@@ -19,11 +19,52 @@
 
 			&.active {
 				background-image: linear-gradient(to bottom, #f3f3f3, #fff);
-				border-bottom: 3px solid #9b0a46;
+				border-top: 3px solid #9b0a46;
 			}
 
 			&last-of-type {
 				border-right: 1px solid;
+			}
+		}
+	}
+
+	.elementor-icon-manager-tabs-container {
+		background: #fff;
+	}
+
+	ul.elementor-icon-manager-tabs-content {
+
+		align-items: center;
+		display: flex;
+		flex-wrap: wrap;
+		align-content: stretch;
+		height: 60vh;
+		overflow: scroll;
+
+		li {
+			flex-direction: column;
+			justify-content: center;
+			font-size: 48px;
+			width: 150px;
+			text-align: center;
+			padding: 10px;
+			min-height: 120px;
+			border: 1px solid #fff;
+			margin-left: 5px;
+
+			&:hover {
+				color: #9b0a46;
+				border: 1px solid;
+
+				span {
+					display: block;
+				}
+			}
+
+			span {
+				display: none;
+				font-size: 10px;
+				text-overflow: ellipsis;
 			}
 		}
 	}
