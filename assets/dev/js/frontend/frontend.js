@@ -242,6 +242,12 @@ class Frontend extends elementorModules.ViewModule {
 		return $element.elementorWaypoint( correctCallback, options );
 	}
 
+	muteMigrationTraces() {
+		jQuery.migrateMute = true;
+
+		jQuery.migrateTrace = false;
+	}
+
 	init() {
 		this.hooks = new EventManager();
 
@@ -250,6 +256,10 @@ class Frontend extends elementorModules.ViewModule {
 		this.setDeviceModeData();
 
 		this.initDialogsManager();
+
+		if ( this.isEditMode() ) {
+			this.muteMigrationTraces();
+		}
 
 		// Keep this line before `initOnReadyComponents` call
 		this.elements.$window.trigger( 'elementor/frontend/init' );
