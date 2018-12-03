@@ -36,7 +36,7 @@ export default class extends Marionette.LayoutView {
 		ui.searchInput = '.icons-search';
 		ui.tabLi = '.icon-type-tab-label';
 		ui.iconListContainer = '.elementor-icon-manager-tabs-content';
-		// ui.iconListItems = '';
+		ui.iconListItems = '.icon-list-item';
 
 		return ui;
 	}
@@ -63,26 +63,38 @@ export default class extends Marionette.LayoutView {
 		this.ui.iconListContainer.html( '' );
 		for ( const i in icons ) {
 			const icon = icons[ i ],
-				iconLi = document.createElement( 'li' ),
-				clss = icon.displayPrefix + ' ' + icon.selector + ' ' + 'icon-list-item';
-			iconLi.setAttribute( 'data-name', icon.name );
+				iconLi = jQuery( '<li>' ),
+				iTag = jQuery( '<i>' ),
+				clss = icon.displayPrefix + ' ' + icon.selector;
 
-			iconLi.innerHTML = '<i class="' + clss + '" data-name="' + icon.name + '" data-value="' + icon.displayPrefix + ' ' + icon.selector + '"></i>' + '<span>' + icon.name + '</span>';
+			iconLi.addClass( 'icon-list-item' );
+			iconLi.attr( 'data-name', icon.name );
+
+			iTag.addClass( clss )
+				.data( 'name', icon.name )
+				.data( 'value', icon.displayPrefix + ' ' + icon.selector )
+				.html( '<span>' + icon.name + '</span>' );
+
+			iconLi.append( iTag );
 
 			this.ui.iconListContainer.append( iconLi );
 		}
 	}
 
-	// onSearch() {
-	// 	const input = this.ui.searchInput,
-	// 		value = input.value;
-	//
-	// 	if ( '' === value ) {
-	// 		return this.showAll();
-	// 	}
-	//
-	// 	return this.filterIcons( value );
-	// }
+	showAll() {
+		this.ui.iconListItems.show( 'fast' );
+	}
+
+	onSearch() {
+		const value = this.ui.searchInput.val();
+
+		if ( '' === value ) {
+			return this.showAll();
+		}
+
+		return this.filterIcons( value );
+	}
+
 	enqueueCSS( url ) {
 		return new Promise( function( resolve ) {
 			if ( ! document.querySelector( 'link[href="' + url + '"]' ) ) {
