@@ -140,30 +140,6 @@ const App = Marionette.Application.extend( {
 		},
 	},
 
-	// TODO: Temp modules bc method since 2.0.0
-	initModulesBC: function() {
-		var bcModules = {
-			ControlsStack: this.modules.views.ControlsStack,
-			element: {
-				Model: this.modules.elements.models.Element,
-			},
-			RepeaterRowView: this.modules.controls.RepeaterRow,
-			WidgetView: this.modules.elements.views.Widget,
-			panel: {
-				Menu: this.modules.layouts.panel.pages.menu.Menu,
-			},
-			saver: {
-				footerBehavior: this.modules.components.saver.behaviors.FooterSaver,
-			},
-			SettingsModel: this.modules.elements.models.BaseSettings,
-			templateLibrary: {
-				ElementsCollectionView: this.modules.layouts.panel.pages.elements.views.Elements,
-			},
-		};
-
-		jQuery.extend( this.modules, bcModules );
-	},
-
 	userCan: function( capability ) {
 		return -1 === this.config.user.restrictions.indexOf( capability );
 	},
@@ -897,8 +873,6 @@ const App = Marionette.Application.extend( {
 
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
-
-		this.initModulesBC();
 
 		this.initComponents();
 
