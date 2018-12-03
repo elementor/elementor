@@ -1,5 +1,4 @@
-var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
-	ColumnSettingsModel = require( 'elementor-elements/models/column-settings' ),
+var ColumnSettingsModel = require( 'elementor-elements/models/column-settings' ),
 	ElementModel;
 
 ElementModel = Backbone.Model.extend( {
@@ -53,7 +52,7 @@ ElementModel = Backbone.Model.extend( {
 			settingModels = {
 				column: ColumnSettingsModel,
 			},
-			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
+			SettingsModel = settingModels[ elType ] || elementorModules.editor.elements.models.BaseSettings;
 
 		if ( jQuery.isEmptyObject( settings ) ) {
 			settings = elementorCommon.helpers.cloneObject( settings );

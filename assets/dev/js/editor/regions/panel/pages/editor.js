@@ -1,4 +1,4 @@
-var ControlsStack = require( 'elementor-views/controls-stack' ),
+var ControlsStack = elementorModules.editor.views.ControlsStack,
 	EditorView;
 
 EditorView = ControlsStack.extend( {

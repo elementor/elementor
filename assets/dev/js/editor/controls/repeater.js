@@ -1,6 +1,5 @@
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	RepeaterRowView = require( 'elementor-controls/repeater-row' ),
-	BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlRepeaterItemView;
 
 ControlRepeaterItemView = ControlBaseDataView.extend( {
@@ -46,7 +45,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			attrs._id = elementor.helpers.getUniqueID();
 		}
 
-		return new BaseSettingsModel( attrs, options );
+		return new elementorModules.editor.elements.models.BaseSettings( attrs, options );
 	},
 
 	fillCollection: function() {

@@ -1,7 +1,6 @@
 import environment from '../../../../../../core/common/assets/js/utils/environment';
 
-var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
-	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
+var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
@@ -577,7 +576,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		// Make sure is correct model
-		if ( settings instanceof BaseSettingsModel ) {
+		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
 			var hasChanged = settings.hasChanged(),
 				isContentChanged = ! hasChanged,
 				isRenderRequired = ! hasChanged;

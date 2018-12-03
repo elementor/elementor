@@ -1,5 +1,4 @@
-var SettingsModel = require( 'elementor-elements/models/base-settings' ),
-	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
+var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
 module.exports = elementorModules.ViewModule.extend( {
 	model: null,
@@ -45,7 +44,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	initModel: function() {
-		this.model = new SettingsModel( this.getSettings( 'settings' ), {
+		this.model = new elementorModules.editor.elements.models.BaseSettings( this.getSettings( 'settings' ), {
 			controls: this.getSettings( 'controls' ),
 		} );
 	},

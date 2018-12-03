@@ -27,15 +27,26 @@ const App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
 	},
 
-	// Exporting modules that can be used externally
+	/**
+	 * Exporting modules that can be used externally
+	 * @TODO: All of the following entries should move to `elementorModules.editor`
+	 */
 	modules: {
 		// TODO: Deprecated alias since 2.3.0
-		Module: elementorModules.Module,
+		get Module() {
+			elementorCommon.helpers.deprecatedMethod( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
+
+			return elementorModules.Module;
+		},
 		components: {
 			templateLibrary: {
 				views: {
 					// TODO: Deprecated alias since 2.4.0
-					BaseModalLayout: elementorModules.common.views.modal.Layout,
+					get BaseModalLayout() {
+						elementorCommon.helpers.deprecatedMethod( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
+
+						return elementorModules.common.views.modal.Layout;
+					},
 				},
 			},
 			saver: {
@@ -81,7 +92,12 @@ const App = Marionette.Application.extend( {
 		},
 		elements: {
 			models: {
-				BaseSettings: require( 'elementor-elements/models/base-settings' ),
+				get BaseSettings() {
+					// TODO: Deprecated alias since 2.4.0
+					elementorCommon.helpers.deprecatedMethod( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
+
+					return elementorModules.editor.elements.models.BaseSettings;
+				},
 				Element: require( 'elementor-elements/models/element' ),
 			},
 			views: {
@@ -104,7 +120,12 @@ const App = Marionette.Application.extend( {
 			},
 		},
 		views: {
-			ControlsStack: require( 'elementor-views/controls-stack' ),
+			// TODO: Deprecated alias since 2.4.0
+			get ControlsStack() {
+				elementorCommon.helpers.deprecatedMethod( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
+
+				return elementorModules.editor.views.ControlsStack;
+			},
 		},
 	},
 
