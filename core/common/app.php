@@ -80,6 +80,16 @@ class App extends BaseApp {
 	 */
 	public function register_scripts() {
 		wp_register_script(
+			'elementor-common-modules',
+			ELEMENTOR_ASSETS_URL . 'js/common-modules.js',
+			[
+				'elementor-modules',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'backbone-marionette',
 			$this->get_js_assets_url( 'backbone.marionette', 'assets/lib/backbone/' ),
 			[
@@ -117,7 +127,7 @@ class App extends BaseApp {
 				'jquery-ui-draggable',
 				'backbone-marionette',
 				'backbone-radio',
-				'elementor-modules',
+				'elementor-common-modules',
 				'elementor-dialog',
 			],
 			ELEMENTOR_VERSION,

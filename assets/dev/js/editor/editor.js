@@ -2,7 +2,6 @@
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
-import ModalLayoutView from '../../../../core/common/assets/js/views/modal/layout';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 
 const App = Marionette.Application.extend( {
@@ -35,7 +34,8 @@ const App = Marionette.Application.extend( {
 		components: {
 			templateLibrary: {
 				views: {
-					BaseModalLayout: ModalLayoutView,
+					// TODO: Deprecated alias since 2.4.0
+					BaseModalLayout: elementorModules.common.views.modal.Layout,
 				},
 			},
 			saver: {
