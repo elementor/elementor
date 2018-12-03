@@ -1,8 +1,6 @@
-import BaseModalLayout from '../../../../../core/common/assets/js/views/modal/layout';
-
 var NewTemplateView = require( 'elementor-admin/new-template/view' );
 
-module.exports = BaseModalLayout.extend( {
+module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	getModalOptions: function() {
 		return {
@@ -17,7 +15,7 @@ module.exports = BaseModalLayout.extend( {
 	},
 
 	initialize: function() {
-		BaseModalLayout.prototype.initialize.apply( this, arguments );
+		elementorModules.common.views.modal.Layout.prototype.initialize.apply( this, arguments );
 
 		this.showLogo();
 
