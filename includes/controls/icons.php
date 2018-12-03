@@ -116,7 +116,7 @@ class Control_Icons extends Control_Base_Multiple {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'ver' => '5.5.0',
-				'fetchJson' => ELEMENTOR_ASSETS_URL . 'icons/regular.json',
+				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/regular.json',
 			],
 			'solid' => [
 				'label' => __( 'Solid', 'elementor' ),
@@ -125,7 +125,7 @@ class Control_Icons extends Control_Base_Multiple {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'ver' => '5.5.0',
-				'fetchJson' => ELEMENTOR_ASSETS_URL . 'icons/solid.json',
+				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/solid.json',
 			],
 			'brands' => [
 				'label' => __( 'Brands', 'elementor' ),
@@ -134,7 +134,7 @@ class Control_Icons extends Control_Base_Multiple {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'ver' => '5.5.0',
-				'fetchJson' => ELEMENTOR_ASSETS_URL . 'icons/brands.json',
+				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/brands.json',
 			],
 		];
 	}
