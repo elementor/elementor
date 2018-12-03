@@ -1,7 +1,6 @@
-var ControlsStack = require( 'elementor-views/controls-stack' ),
-	EmptyView = require( 'elementor-dynamic-tags/tag-controls-stack-empty' );
+var EmptyView = require( 'elementor-dynamic-tags/tag-controls-stack-empty' );
 
-module.exports = ControlsStack.extend( {
+module.exports = elementorModules.editor.views.ControlsStack.extend( {
 	activeTab: 'content',
 
 	template: _.noop,
