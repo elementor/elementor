@@ -399,6 +399,20 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'vimeo_background',
+			[
+				'label' => __( 'Show Play Button', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Yes', 'elementor' ),
+				'label_on' => __( 'No', 'elementor' ),
+				'default' => 'no',
+				'condition' => [
+					'video_type' => 'vimeo',
+				],
+			]
+		);
+		
+		$this->add_control(
 			'download_button',
 			[
 				'label' => __( 'Download Button', 'elementor' ),
@@ -896,6 +910,7 @@ class Widget_Video extends Widget_Base {
 				'vimeo_title' => 'title',
 				'vimeo_portrait' => 'portrait',
 				'vimeo_byline' => 'byline',
+				'vimeo_background' => 'background',
 			];
 
 			$params['color'] = str_replace( '#', '', $settings['color'] );
