@@ -113,7 +113,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			}
 		}
 
-		return $html;
+		/**
+		 * Get Attachment Image HTML
+		 *
+		 * Filters the Attachment Image HTML
+		 *
+		 * @since 2.4.0
+		 * @param string $html the attachment image HTML string
+		 */
+		return apply_filters( 'elementor/image_size/get_attachment_image_html', $html );
 	}
 
 	/**
