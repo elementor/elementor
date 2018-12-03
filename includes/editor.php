@@ -325,14 +325,18 @@ class Editor {
 		$wp_styles = new \WP_Styles(); // WPCS: override ok.
 		$wp_scripts = new \WP_Scripts(); // WPCS: override ok.
 
+		Plugin::$instance->register_modules_script();
+
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
 		wp_register_script(
 			'elementor-editor-modules',
 			ELEMENTOR_ASSETS_URL . 'js/editor-modules.js',
-			[],
+			[
+				'elementor-modules',
+			],
 			ELEMENTOR_VERSION,
-			false
+			true
 		);
 		// Hack for waypoint with editor mode.
 		wp_register_script(
@@ -433,8 +437,8 @@ class Editor {
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
-				'elementor-editor-modules',
 				'elementor-common',
+				'elementor-editor-modules',
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',

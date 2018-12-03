@@ -117,6 +117,7 @@ class App extends BaseApp {
 				'jquery-ui-draggable',
 				'backbone-marionette',
 				'backbone-radio',
+				'elementor-modules',
 				'elementor-dialog',
 			],
 			ELEMENTOR_VERSION,
