@@ -1,13 +1,11 @@
 const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
 class ControlIconsView extends ControlMultipleBaseItemView {
 	ui() {
-		const ui = super.ui;
+		const ui = super.ui();
 
-		ui.controlMedia = '.elementor-control-media';
-		ui.mediaImage = '.elementor-control-media-image';
-		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
-		ui.deleteButton = '.elementor-control-media-delete';
+		ui.deleteButton = '.elementor-control-icon-delete';
+		ui.previewContainer = '.elementor-control-icons-preview';
 
 		return ui;
 	}
@@ -20,20 +18,16 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	openPicker() {
-		elementor.iconManager.show();
+		elementor.iconManager.show( { model: this } );
 	}
 
 	applySavedValue() {
-		// var url = this.getControlValue( 'url' ),
-		// 	mediaType = this.getMediaType();
-		//
-		// if ( 'image' === mediaType ) {
-		// 	this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
-		// } else if ( 'video' === mediaType ) {
-		// 	this.ui.mediaVideo.attr( 'src', url );
-		// }
-		//
-		// this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
+		const iconValue = this.getControlValue( 'value' );
+			//iconType = this.getControlValue( 'library' );
+
+		const previewHTML = ( iconValue ) ? '<i class="' + iconValue + '"></i>' : '';
+		this.ui.previewContainer.html( previewHTML );
+		this.ui.frameOpeners.toggleClass( 'elementor-preview-has-icon', !! iconValue );
 	}
 
 	deleteIcon( event ) {
@@ -44,7 +38,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			library: '',
 		} );
 
-		//this.applySavedValue();
+		this.applySavedValue();
 	}
 
 	onBeforeDestroy() {

@@ -90,12 +90,12 @@ class Control_Icons extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-control-icons elementor-control-tag-area elementor-control-preview-area elementor-aspect-ratio-169">
-					<div class="elementor-control-icons-upload-button">
+					<div class="elementor-control-icons-select-button">
 						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 					</div>
 					<div class="elementor-control-icons-area">
 						<div class="elementor-control-icons-preview"></div>
-						<div class="elementor-control-media-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>
+						<div class="elementor-control-icon-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>
 					</div>
 				</div>
 			</div>
