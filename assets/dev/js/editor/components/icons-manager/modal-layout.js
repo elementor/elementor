@@ -21,6 +21,11 @@ export default class extends BaseModalLayout {
 		this.showContentView();
 	}
 
+	showModal( options ) {
+		this.modal.setSettings( 'controlModel', options.model );
+		super.showModal();
+	}
+
 	showContentView() {
 		this.modalContent.show( new ModalContent() );
 	}

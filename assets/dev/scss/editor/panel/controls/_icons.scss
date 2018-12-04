@@ -1,4 +1,5 @@
 #elementor-icons-manager {
+
 	.elementor-icon-manager-tabs-list {
 
 		list-style: none;
@@ -52,7 +53,8 @@
 			border: 1px solid #fff;
 			margin-left: 5px;
 
-			&:hover {
+			&:hover,
+			&.selected {
 				color: #9b0a46;
 				border: 1px solid;
 
@@ -74,5 +76,119 @@
 		background: #fff;
 		margin-bottom: 8px;
 		font-size: 1.4em;
+		border: none;
+		border-bottom: 1px solid #d5dadf;
+		border-radius: 0;
+		transition: border 0.5s;
+
+	}
+}
+
+#elementor-icons-manager__modal {
+
+	.dialog-buttons-wrapper {
+		display: flex;
+		justify-content: flex-end;
+		padding: 5px;
+		background: #fff;
+
+		.dialog-insert_icon {
+			padding: 12px 26px;
+			font-size: 14px;
+			color: #fff;
+			width: 18%;
+			background-color: #39b54a;
+			text-transform: uppercase;
+			border-radius: 3px;
+			transition-property: background, color, box-shadow, opacity;
+			transition-duration: .3s;
+		}
+	}
+}
+
+
+
+.elementor-control-icons.elementor-control-preview-area {
+
+	padding: 7px;
+	border: 1px solid;
+	height: 150px;
+	transition: all .2s ease-in-out;
+	font-size: 48px;
+
+	&:not( .elementor-preview-has-icon ) {
+		.elementor-control-icons-select-button {
+			height: 100%;
+			cursor: pointer;
+			position: relative;
+			background-color: #d5dadf;
+			overflow: hidden;
+
+			&:hover {
+				background-color: #a4afb7;
+			}
+
+			i {
+				font-size: 22px;
+				color: #fff;
+			}
+		}
+
+		.elementor-control-icons-preview {
+			display: none;
+		}
+	}
+
+	i {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+		color: #000;
+		font-size: 72px;
+	}
+
+	&.elementor-preview-has-icon {
+		.elementor-control-icons-select-button {
+			display: none;
+		}
+	}
+
+	.elementor-control-icons-area {
+
+		height: 150px;
+		background-size: cover;
+		background-position: center;
+
+		.elementor-control-icons-preview {
+
+			background-image: linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd);
+			background-size: 16px 16px;
+			background-position: 0 0, 8px 8px;
+			background-color: #f6f6f6;
+			overflow: hidden;
+			height: 100%;
+		}
+
+		&:not(:hover) {
+
+			.elementor-control-icon-delete {
+				bottom: -30px;
+			}
+		}
+
+		.elementor-control-icon-delete {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			text-align: center;
+			padding: 9.5px;
+			font-size: 11px;
+			color: #fff;
+			background-color: #a4afb7;
+			text-transform: uppercase;
+			transition: all .2s ease-in-out;
+		}
 	}
 }

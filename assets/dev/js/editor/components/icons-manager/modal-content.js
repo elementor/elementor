@@ -1,10 +1,13 @@
-export default class extends Marionette.LayoutView {
+export default class extends Marionette.ItemView {
 	id() {
 		return 'elementor-icons-manager';
 	}
 
 	cache() {
-		return {};
+		return {
+			value: '',
+			type: '',
+		};
 	}
 
 	getTemplate() {
@@ -31,14 +34,23 @@ export default class extends Marionette.LayoutView {
 	}
 
 	ui() {
-		const ui = {};
-		ui.tabLabel = '.icon-type-tab-label';
-		ui.searchInput = '.icons-search';
-		ui.tabLi = '.icon-type-tab-label';
-		ui.iconListContainer = '.elementor-icon-manager-tabs-content';
-		ui.iconListItems = '.icon-list-item';
+		return {
+			tabLabel: '.icon-type-tab-label',
+			searchInput: '#icons-search',
+			iconValueInput: '#icon_value',
+			iconTypeInput: '#icon_type',
+			tabLi: '.icon-type-tab-label',
+			iconListContainer: '.elementor-icon-manager-tabs-content',
+			iconListItems: '.icon-list-item',
+		};
+	}
 
-		return ui;
+	events() {
+		return {
+			'click @ui.tabLabel': 'showTab',
+			'click @ui.iconListItems': 'setSelected',
+			'input @ui.searchInput': 'onSearch',
+		};
 	}
 
 	isInCache( name ) {
@@ -49,8 +61,10 @@ export default class extends Marionette.LayoutView {
 		const $tab = jQuery( event.target ),
 			tabKey = $tab.attr( 'data-tab' ),
 			tabSettings = JSON.parse( $tab.attr( 'data-settings' ) );
+
 		if ( ! this.isInCache( tabKey ) ) {
 			this.initIconType( tabSettings );
+			this.cache[ tabKey ] = true;
 		}
 
 		this.ui.tabLi.removeClass( 'active' );
@@ -59,6 +73,7 @@ export default class extends Marionette.LayoutView {
 		if ( ! icons ) {
 			return;
 		}
+		this.cache.type = tabKey;
 		$tab.addClass( 'active' );
 		this.ui.iconListContainer.html( '' );
 		for ( const i in icons ) {
@@ -85,14 +100,14 @@ export default class extends Marionette.LayoutView {
 		this.ui.iconListItems.show( 'fast' );
 	}
 
-	onSearch() {
-		const value = this.ui.searchInput.val();
+	filterIcons( search ) {
+		this.ui.iconListItems.each( ( $iconLi ) => {
+			console.log( $iconLi, search );
 
-		if ( '' === value ) {
-			return this.showAll();
-		}
-
-		return this.filterIcons( value );
+			// if ( icon.getAttribute( 'name' ).indexOf( search ) < 0 ) {
+			// 	icon.style="display:none;";
+			// }
+		} );
 	}
 
 	enqueueCSS( url ) {
@@ -217,10 +232,26 @@ export default class extends Marionette.LayoutView {
 		this.extractIconsFromCSS( libraryConfig );
 	}
 
-	events() {
-		return {
-			'click @ui.tabLabel': 'showTab',
-		};
+	removeSelectedIconClass() {
+		jQuery( '.icon-list-item.selected' ).removeClass( 'selected' );
+	}
+
+	setSelected( event ) {
+		const $iconLi = jQuery( event.target ),
+			$icon = $iconLi.find( 'i' );
+		this.removeSelectedIconClass();
+		$iconLi.addClass( 'selected' );
+		this.cache.value = $icon.data( 'value' );
+		console.log( this.cache.value );
+	}
+
+	onSearch() {
+		const filter = this.ui.searchInput.val();
+
+		if ( '' === filter ) {
+			return self.showAll();
+		}
+		return this.filterIcons( filter );
 	}
 
 	store() {
