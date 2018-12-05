@@ -11,6 +11,7 @@ use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Stylesheet;
+use Elementor\Control_Icons;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -57,6 +58,8 @@ abstract class Base extends Base_File {
 	 * @var array
 	 */
 	private $fonts = [];
+
+	private $icons_fonts = [];
 
 	/**
 	 * Stylesheet object.
@@ -210,6 +213,26 @@ abstract class Base extends Base_File {
 		if ( ! empty( $meta['fonts'] ) ) {
 			foreach ( $meta['fonts'] as $font ) {
 				Plugin::$instance->frontend->enqueue_font( $font );
+			}
+		}
+
+		if ( ! empty( $meta['icons'] ) ) {
+			$icons_types = Control_Icons::get_icon_manager_tabs();
+			foreach ( $meta['icons'] as $icon_font ) {
+				if ( ! isset( $icons_types[ $icon_font ] ) ) {
+					continue;
+				}
+
+				$icon_type = $icons_types[ $icon_font ];
+				if ( isset( $icon_type['url'] ) ) {
+					Plugin::$instance->frontend->enqueue_font( $icon_type['url'] );
+				}
+
+				if ( isset( $icon_type['enqueue'] ) ) {
+					foreach ( (array) $icon_type['enqueue'] as $font ) {
+						Plugin::$instance->frontend->enqueue_font( $font );
+					}
+				}
 			}
 		}
 
@@ -436,6 +459,10 @@ abstract class Base extends Base_File {
 				$this->add_dynamic_control_style_rules( $control, $control[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] );
 			}
 
+			if ( Controls_Manager::ICONS === $control['type'] ) {
+				$this->icons_fonts[] = $values[ $control['name'] ]['library'];
+			}
+
 			if ( ! empty( $parsed_dynamic_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control['name'] ] ) ) {
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
 				continue;
@@ -476,6 +503,7 @@ abstract class Base extends Base_File {
 	protected function get_default_meta() {
 		return array_merge( parent::get_default_meta(), [
 			'fonts' => array_unique( $this->fonts ),
+			'icons' => array_unique( $this->icons_fonts ),
 			'status' => '',
 		] );
 	}
