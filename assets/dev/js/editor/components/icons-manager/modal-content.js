@@ -100,16 +100,6 @@ export default class extends Marionette.ItemView {
 		this.ui.iconListItems.show( 'fast' );
 	}
 
-	filterIcons( search ) {
-		this.ui.iconListItems.each( ( $iconLi ) => {
-			console.log( $iconLi, search );
-
-			// if ( icon.getAttribute( 'name' ).indexOf( search ) < 0 ) {
-			// 	icon.style="display:none;";
-			// }
-		} );
-	}
-
 	enqueueCSS( url ) {
 		return new Promise( function( resolve ) {
 			if ( ! document.querySelector( 'link[href="' + url + '"]' ) ) {
@@ -242,16 +232,24 @@ export default class extends Marionette.ItemView {
 		this.removeSelectedIconClass();
 		$iconLi.addClass( 'selected' );
 		this.cache.value = $icon.data( 'value' );
-		console.log( this.cache.value );
 	}
 
 	onSearch() {
-		const filter = this.ui.searchInput.val();
+		let filter = this.ui.searchInput.val();
 
 		if ( '' === filter ) {
-			return self.showAll();
+			return this.showAll();
 		}
-		return this.filterIcons( filter );
+
+		filter = filter.toLocaleLowerCase();
+		jQuery( this.ui.iconListItems.selector ).each( ( index, iconLi ) => {
+			const $iconLi = jQuery( iconLi );
+			if ( $iconLi.data( 'name' ).toLocaleLowerCase().indexOf( filter ) < 0 ) {
+				$iconLi.hide();
+			} else {
+				$iconLi.show();
+			}
+		} );
 	}
 
 	store() {
