@@ -242,7 +242,11 @@ abstract class Document extends Controls_Stack {
 		}
 
 		// TODO: BC since 2.4.0
-		$attributes['class'] .= ' ' . $this->get_container_classes();
+		$classes = $this->get_container_classes();
+
+		if ( $classes ) {
+			$attributes['class'] .= ' ' . $classes;
+		}
 
 		return $attributes;
 	}
