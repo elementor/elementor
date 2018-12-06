@@ -146,6 +146,8 @@ class Maintenance_Mode {
 			'p' => self::get( 'template_id' ),
 			'post_type' => Source_Local::CPT,
 		] );
+
+		$GLOBALS['wp_the_query'] = $GLOBALS['wp_query'];
 	}
 
 	/**
