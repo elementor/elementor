@@ -165,6 +165,9 @@ ColumnView = BaseElementView.extend( {
 			onDropping: function( side, event ) {
 				event.stopPropagation();
 
+				// Triggering drag end manually, since it won't fired above iframe
+				elementor.getPreviewView().onPanelElementDragEnd();
+
 				var newIndex = jQuery( this ).index();
 
 				if ( 'bottom' === side ) {
