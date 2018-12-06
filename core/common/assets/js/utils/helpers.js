@@ -5,7 +5,7 @@ export default class Helpers {
 		const style = `font-size: 12px; background-image: url("${ elementorCommon.config.urls.assets }images/logo-icon.png"); background-repeat: no-repeat; background-size: contain;`;
 
 		if ( replacement ) {
-			message += ` - Use \`${ replacement }()\` instead`;
+			message += ` - Use \`${ replacement }\` instead`;
 		}
 
 		console.warn( message, style, '' ); // eslint-disable-line no-console

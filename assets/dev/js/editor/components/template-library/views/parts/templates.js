@@ -1,6 +1,5 @@
 var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
-	Masonry = require( 'elementor-utils/masonry' ),
 	TemplateLibraryCollectionView;
 
 TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
@@ -162,7 +161,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	setMasonrySkin: function() {
-		var masonry = new Masonry( {
+		var masonry = new elementorModules.utils.Masonry( {
 			container: this.$childViewContainer,
 			items: this.$childViewContainer.children(),
 		} );
@@ -171,7 +170,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	toggleFilterClass: function() {
-		this.$el.toggleClass( 'elementor-templates-filter-active', !! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
+		this.$el.toggleClass( 'elementor-templates-filter-active', ! ! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
 	},
 
 	onRenderCollection: function() {

@@ -1,8 +1,6 @@
-const Module = require( 'elementor-utils/module' );
-
 import FinderLayout from './modal-layout';
 
-export default class extends Module {
+export default class extends elementorModules.Module {
 	initLayout() {
 		let layout;
 

@@ -3,9 +3,7 @@ import Helpers from './utils/helpers';
 import Ajax from '../../modules/ajax/assets/js/ajax';
 import Finder from '../../modules/finder/assets/js/finder';
 
-const ViewModule = require( 'elementor-utils/view-module' );
-
-class ElementorCommonApp extends ViewModule {
+class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
 		Marionette.TemplateCache.prototype.compileTemplate = ( rawTemplate, options ) => {
 			options = {
