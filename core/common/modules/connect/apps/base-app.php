@@ -308,10 +308,9 @@ abstract class Base_App {
 			$message = $body->message ? $body->message : wp_remote_retrieve_response_message( $response );
 			$code = $body->code ? $body->code : $response_code;
 
-			if ( 'Reconnect' === $message ) {
+			if ( 401 === $code ) {
 				$this->delete();
-				wp_redirect( $this->get_remote_authorize_url() );
-				die;
+				$this->action_authorize();
 			}
 
 			return new \WP_Error( $code, $message );
