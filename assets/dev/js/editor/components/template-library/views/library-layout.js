@@ -1,5 +1,3 @@
-import BaseModalLayout from '../../../../../../../core/common/assets/js/views/modal/layout';
-
 var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts/header-parts/actions' ),
 	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
 	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
@@ -9,7 +7,7 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
 	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
-module.exports = BaseModalLayout.extend( {
+module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	getModalOptions: function() {
 		return {

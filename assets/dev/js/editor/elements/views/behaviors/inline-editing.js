@@ -66,7 +66,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		 */
 		this.$currentEditingArea.html( contentHTML );
 
-		var ElementorInlineEditor = elementorFrontend.getElements( 'window' ).ElementorInlineEditor;
+		var ElementorInlineEditor = elementorFrontend.elements.window.ElementorInlineEditor;
 
 		this.editing = true;
 
@@ -167,7 +167,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		 * toolbar action. This prevent the blur and allows the user to continue the inline editing.
 		 */
 		setTimeout( function() {
-			var selection = elementorFrontend.getElements( 'window' ).getSelection(),
+			var selection = elementorFrontend.elements.window.getSelection(),
 				$focusNode = jQuery( selection.focusNode );
 
 			if ( $focusNode.closest( '.pen-input-wrapper' ).length ) {

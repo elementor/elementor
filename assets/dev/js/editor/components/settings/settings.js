@@ -1,6 +1,4 @@
-var Module = require( 'elementor-utils/module' );
-
-module.exports = Module.extend( {
+module.exports = elementorModules.Module.extend( {
 	modules: {
 		base: require( 'elementor-editor/components/settings/base/manager' ),
 		general: require( 'elementor-editor/components/settings/general/manager' ),

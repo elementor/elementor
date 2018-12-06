@@ -2,8 +2,6 @@
 import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
-import LogoView from '../../../../core/common/assets/js/views/modal/logo';
-import ModalLayoutView from '../../../../core/common/assets/js/views/modal/layout';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 
 const App = Marionette.Application.extend( {
@@ -29,19 +27,26 @@ const App = Marionette.Application.extend( {
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
 	},
 
-	// Exporting modules that can be used externally
+	/**
+	 * Exporting modules that can be used externally
+	 * @TODO: All of the following entries should move to `elementorModules.editor`
+	 */
 	modules: {
 		// TODO: Deprecated alias since 2.3.0
-		Module: require( 'elementor-utils/module' ),
+		get Module() {
+			elementorCommon.helpers.deprecatedMethod( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
+
+			return elementorModules.Module;
+		},
 		components: {
 			templateLibrary: {
 				views: {
-					parts: {
-						headerParts: {
-							logo: LogoView,
-						},
+					// TODO: Deprecated alias since 2.4.0
+					get BaseModalLayout() {
+						elementorCommon.helpers.deprecatedMethod( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
+
+						return elementorModules.common.views.modal.Layout;
 					},
-					BaseModalLayout: ModalLayoutView,
 				},
 			},
 			saver: {
@@ -87,7 +92,12 @@ const App = Marionette.Application.extend( {
 		},
 		elements: {
 			models: {
-				BaseSettings: require( 'elementor-elements/models/base-settings' ),
+				get BaseSettings() {
+					// TODO: Deprecated alias since 2.4.0
+					elementorCommon.helpers.deprecatedMethod( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
+
+					return elementorModules.editor.elements.models.BaseSettings;
+				},
 				Element: require( 'elementor-elements/models/element' ),
 			},
 			views: {
@@ -110,11 +120,12 @@ const App = Marionette.Application.extend( {
 			},
 		},
 		views: {
-			ControlsStack: require( 'elementor-views/controls-stack' ),
-		},
-		utils: {
-			Module: require( 'elementor-utils/module' ),
-			ViewModule: require( 'elementor-utils/view-module' ),
+			// TODO: Deprecated alias since 2.4.0
+			get ControlsStack() {
+				elementorCommon.helpers.deprecatedMethod( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
+
+				return elementorModules.editor.views.ControlsStack;
+			},
 		},
 	},
 
@@ -127,30 +138,6 @@ const App = Marionette.Application.extend( {
 			element: '.elementor-tags-list',
 			ignore: '.elementor-control-dynamic-switcher',
 		},
-	},
-
-	// TODO: Temp modules bc method since 2.0.0
-	initModulesBC: function() {
-		var bcModules = {
-			ControlsStack: this.modules.views.ControlsStack,
-			element: {
-				Model: this.modules.elements.models.Element,
-			},
-			RepeaterRowView: this.modules.controls.RepeaterRow,
-			WidgetView: this.modules.elements.views.Widget,
-			panel: {
-				Menu: this.modules.layouts.panel.pages.menu.Menu,
-			},
-			saver: {
-				footerBehavior: this.modules.components.saver.behaviors.FooterSaver,
-			},
-			SettingsModel: this.modules.elements.models.BaseSettings,
-			templateLibrary: {
-				ElementsCollectionView: this.modules.layouts.panel.pages.elements.views.Elements,
-			},
-		};
-
-		jQuery.extend( this.modules, bcModules );
 	},
 
 	userCan: function( capability ) {
@@ -390,7 +377,7 @@ const App = Marionette.Application.extend( {
 						return false;
 					}
 
-					var frontendWindow = elementorFrontend.getElements( 'window' ),
+					var frontendWindow = elementorFrontend.elements.window,
 						textSelection = getSelection() + frontendWindow.getSelection();
 
 					if ( ! textSelection && environment.firefox ) {
@@ -519,7 +506,7 @@ const App = Marionette.Application.extend( {
 						return false;
 					}
 
-					return -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.getElements( 'window' ).document.activeElement.tagName;
+					return -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName;
 				},
 				handle: function( event ) {
 					var targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
@@ -755,7 +742,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	enterPreviewMode: function( hidePanel ) {
-		var $elements = elementorFrontend.getElements( '$body' );
+		var $elements = elementorFrontend.elements.$body;
 
 		if ( hidePanel ) {
 			$elements = $elements.add( elementorCommon.elements.$body );
@@ -778,7 +765,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	exitPreviewMode: function() {
-		elementorFrontend.getElements( '$body' ).add( elementorCommon.elements.$body )
+		elementorFrontend.elements.$body.add( elementorCommon.elements.$body )
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
 
@@ -887,8 +874,6 @@ const App = Marionette.Application.extend( {
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
-		this.initModulesBC();
-
 		this.initComponents();
 
 		if ( ! this.checkEnvCompatibility() ) {
@@ -946,7 +931,7 @@ const App = Marionette.Application.extend( {
 
 		this.preventClicksInsideEditor();
 
-		this.addBackgroundClickArea( elementorFrontend.getElements( 'window' ).document );
+		this.addBackgroundClickArea( elementorFrontend.elements.window.document );
 
 		if ( this.previewLoadedOnce ) {
 			this.getPanelView().setPage( 'elements', null, { autoFocusSearch: false } );
@@ -966,7 +951,7 @@ const App = Marionette.Application.extend( {
 
 		this.$previewContents.children().addClass( 'elementor-html' );
 
-		const $frontendBody = elementorFrontend.getElements( '$body' );
+		const $frontendBody = elementorFrontend.elements.$body;
 
 		$frontendBody.addClass( 'elementor-editor-active' );
 
@@ -979,14 +964,14 @@ const App = Marionette.Application.extend( {
 		jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 );
 
 		_.defer( function() {
-			elementorFrontend.getElements( 'window' ).jQuery.holdReady( false );
+			elementorFrontend.elements.window.jQuery.holdReady( false );
 		} );
 
 		this.enqueueTypographyFonts();
 
 		this.onEditModeSwitched();
 
-		elementorCommon.hotKeys.bindListener( elementorFrontend.getElements( '$window' ) );
+		elementorCommon.hotKeys.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded' );
 	},
