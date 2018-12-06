@@ -325,15 +325,13 @@ class Editor {
 		$wp_styles = new \WP_Styles(); // WPCS: override ok.
 		$wp_scripts = new \WP_Scripts(); // WPCS: override ok.
 
-		Plugin::$instance->register_modules_script();
-
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
 		wp_register_script(
 			'elementor-editor-modules',
 			ELEMENTOR_ASSETS_URL . 'js/editor-modules.js',
 			[
-				'elementor-modules',
+				'elementor-common-modules',
 			],
 			ELEMENTOR_VERSION,
 			true

@@ -282,9 +282,7 @@ class Frontend extends App {
 		wp_enqueue_script(
 			'elementor-frontend-modules',
 			ELEMENTOR_ASSETS_URL . 'js/frontend-modules.js',
-			[
-				'elementor-modules',
-			],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);

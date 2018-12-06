@@ -472,8 +472,6 @@ class Plugin {
 
 		$this->init_components();
 
-		$this->register_modules_script();
-
 		/**
 		 * Elementor init.
 		 *
@@ -483,16 +481,6 @@ class Plugin {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/init' );
-	}
-
-	public function register_modules_script() {
-		wp_register_script(
-			'elementor-modules',
-			ELEMENTOR_ASSETS_URL . 'js/modules.js',
-			[],
-			ELEMENTOR_VERSION,
-			true
-		);
 	}
 
 	/**
