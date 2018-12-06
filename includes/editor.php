@@ -89,6 +89,10 @@ class Editor {
 
 		Plugin::$instance->db->switch_to_post( $this->_post_id );
 
+		$document = Plugin::$instance->documents->get( $this->_post_id );
+
+		Plugin::$instance->documents->switch_to_document( $document );
+
 		add_filter( 'show_admin_bar', '__return_false' );
 
 		// Remove all WordPress actions
