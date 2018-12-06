@@ -32,6 +32,8 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 
+	private $main_id;
+
 	private static $properties = [];
 
 	/**
@@ -166,13 +168,19 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function get_main_id() {
-		$post_id = $this->post->ID;
-		$parent_post_id = wp_is_post_revision( $post_id );
-		if ( $parent_post_id ) {
-			$post_id = $parent_post_id;
+		if ( ! $this->main_id ) {
+			$post_id = $this->post->ID;
+
+			$parent_post_id = wp_is_post_revision( $post_id );
+
+			if ( $parent_post_id ) {
+				$post_id = $parent_post_id;
+			}
+
+			$this->main_id = $post_id;
 		}
 
-		return $post_id;
+		return $this->main_id;
 	}
 
 	/**
