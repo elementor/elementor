@@ -17,6 +17,12 @@ ControlsStack = Marionette.CompositeView.extend( {
 		};
 	},
 
+	childViewOptions: function() {
+		return {
+			elementSettingsModel: this.model,
+		};
+	},
+
 	ui: function() {
 		return {
 			tabs: '.elementor-panel-navigation-tab',
@@ -63,6 +69,14 @@ ControlsStack = Marionette.CompositeView.extend( {
 		var section = controlModel.get( 'section' );
 
 		return ! section || section === this.activeSection;
+	},
+
+	getControlView: function( name ) {
+		return this.children.findByModelCid( this.getControlModel( name ).cid );
+	},
+
+	getControlModel: function( name ) {
+		return this.collection.findWhere( { name: name } );
 	},
 
 	isVisibleSectionControl: function( sectionControlModel ) {
