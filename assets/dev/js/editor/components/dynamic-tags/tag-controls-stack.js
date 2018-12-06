@@ -12,12 +12,6 @@ module.exports = elementorModules.editor.views.ControlsStack.extend( {
 		return this.collection.length < 2;
 	},
 
-	childViewOptions: function() {
-		return {
-			elementSettingsModel: this.model,
-		};
-	},
-
 	onRenderTemplate: function() {
 		this.activateFirstSection();
 	},

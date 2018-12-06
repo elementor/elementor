@@ -29,14 +29,6 @@ EditorView = ControlsStack.extend( {
 		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ).$el );
 	},
 
-	getControlView: function( name ) {
-		return this.children.findByModelCid( this.getControlModel( name ).cid );
-	},
-
-	getControlModel: function( name ) {
-		return this.collection.findWhere( { name: name } );
-	},
-
 	onDestroy: function() {
 		var editedElementView = this.getOption( 'editedElementView' );
 
