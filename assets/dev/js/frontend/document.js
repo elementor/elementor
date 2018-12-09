@@ -40,10 +40,6 @@ export default class extends elementorModules.ViewModule {
 		this.elements.$elements.each( ( index, element ) => elementorFrontend.elementsHandler.runReadyTrigger( jQuery( element ) ) );
 	}
 
-	addSettingsClasses() {
-
-	}
-
 	onInit() {
 		this.$element = this.getSettings( '$element' );
 
