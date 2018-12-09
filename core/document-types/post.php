@@ -170,7 +170,7 @@ class Post extends Document {
 
 		$document->end_controls_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $document, Controls_Manager::TAB_STYLE );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $document );
 	}
 
 	/**
