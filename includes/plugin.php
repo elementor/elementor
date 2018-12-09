@@ -396,6 +396,11 @@ class Plugin {
 	public $common;
 
 	/**
+	 * @var Core\Base\Module
+	 */
+	public $logger;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -604,6 +609,8 @@ class Plugin {
 	 */
 	private function __construct() {
 		$this->register_autoloader();
+
+		$this->logger = Core\Logger\Manager::instance();
 
 		Maintenance::init();
 		Compatibility::register_actions();
