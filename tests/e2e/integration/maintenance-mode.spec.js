@@ -9,12 +9,13 @@ describe( 'Tests if maintenance mode works properly', () => {
 			name: templateName,
 		} ).then( ( templateId ) => {
 			cy.visit( 'wp-admin/admin.php?page=elementor-tools#tab-maintenance_mode' );
+			cy.get( 'select[name="elementor_maintenance_mode_mode"]' ).select( 'Coming Soon' );
 			cy.get( 'select[name="elementor_maintenance_mode_template_id"]' ).select( templateName );
 			cy.get( '#submit' ).click();
 			cy.clearCookies();
 			cy.setCookie( 'wordpress_test_cookie', 'WP+Cookie+check' );
 			cy.visit( '/' );
-			cy.get( 'elementor-' + templateId );
+			cy.get( '.elementor-' + templateId );
 		} );
 	} );
 } );

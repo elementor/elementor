@@ -35,7 +35,7 @@ function addTemplate( options ) {
 	cy.get( '#elementor-panel-saver-button-publish' ).click();
 	cy.get( '.elementor-saver-disabled' ).should( 'exist' );
 	cy.get( '#elementor-preview-iframe' ).then( ( $iframe ) => {
-		return $iframe.attr( 'src' ).split( /\?(p.*?)\&/ )[ 1 ].split( /.*=/ )[ 1 ];
+		return $iframe.attr( 'src' ).split( /&/ ).find( ( item ) => item.includes( 'p=' ) ).split( /.*=/ )[ 1 ];
 	} );
 }
 
