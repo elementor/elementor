@@ -4,7 +4,6 @@ namespace Elementor;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
-use Elementor\Core\Common\Modules\Connect\Manager;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Files\Manager as Files_Manager;
@@ -393,14 +392,14 @@ class Plugin {
 	public $inspector;
 
 	/**
-	 * @var Manager
-	 */
-	public $connect;
-
-	/**
 	 * @var CommonApp
 	 */
 	public $common;
+
+	/**
+	 * @var Core\Logger\Manager
+	 */
+	public $logger;
 
 	/**
 	 * Clone.
@@ -611,6 +610,8 @@ class Plugin {
 	 */
 	private function __construct() {
 		$this->register_autoloader();
+
+		$this->logger = Core\Logger\Manager::instance();
 
 		Maintenance::init();
 		Compatibility::register_actions();

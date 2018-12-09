@@ -41,10 +41,15 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	onPanelElementDragStart: function() {
+		// A temporary workaround in order to fix Chrome's 70+ dragging above nested iframe bug
+		this.$el.find( '.elementor-background-video-embed' ).hide();
+
 		elementor.helpers.disableElementEvents( this.$el.find( 'iframe' ) );
 	},
 
 	onPanelElementDragEnd: function() {
+		this.$el.find( '.elementor-background-video-embed' ).show();
+
 		elementor.helpers.enableElementEvents( this.$el.find( 'iframe' ) );
 	},
 } );

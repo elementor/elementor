@@ -61,8 +61,11 @@ class Edit extends Base_Category {
 
 		$post_types[] = Source_Local::CPT;
 
-		$document_types = Plugin::$instance->documents->get_document_types();
+		$document_types = Plugin::$instance->documents->get_document_types( [
+			'is_editable' => true,
+		] );
 
+		// TODO: Remove on 2.4.0.
 		unset( $document_types['widget'] );
 
 		$recently_edited_query_args = [
