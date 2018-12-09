@@ -396,7 +396,7 @@ class Plugin {
 	public $common;
 
 	/**
-	 * @var Core\Base\Module
+	 * @var Core\Logger\Manager
 	 */
 	public $logger;
 

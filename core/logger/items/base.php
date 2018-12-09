@@ -13,6 +13,8 @@ class Base {
 	protected $date;
 	protected $type;
 	protected $message;
+	protected $meta = [];
+
 	protected $times = 0;
 	protected $times_dates = [];
 
@@ -20,10 +22,11 @@ class Base {
 		$this->date = current_time( 'mysql' );
 		$this->message = $args['message'];
 		$this->type = $args['type'];
+		$this->meta = $args['meta'];
 	}
 
 	public function __get( $name ) {
-		if( property_exists( $this, $name ) ) {
+		if ( property_exists( $this, $name ) ) {
 			return $this->{$name};
 		}
 
