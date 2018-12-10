@@ -106,15 +106,6 @@ class Widget_Icon extends Widget_Base {
 			'icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-star',
-			]
-		);
-
-		$this->add_control(
-			'icon2',
-			[
-				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 			]
 		);
@@ -434,10 +425,14 @@ class Widget_Icon extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-				iconTag = link ? 'a' : 'div'; #>
+				iconTag = link ? 'a' : 'div';
+			if ( settings.icon.library ) {
+				elementor.helpers.enqueueIconFonts( settings.icon.library );
+			}
+		#>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<i class="{{ settings.icon }}" aria-hidden="true"></i>
+				<i class="{{ settings.icon.value }}" aria-hidden="true"></i>
 			</{{{ iconTag }}}>
 		</div>
 		<?php
