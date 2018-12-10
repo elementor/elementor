@@ -11,7 +11,7 @@ use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Stylesheet;
-use Elementor\Control_Icons;
+use Elementor\Icons_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -217,22 +217,12 @@ abstract class Base extends Base_File {
 		}
 
 		if ( ! empty( $meta['icons'] ) ) {
-			$icons_types = Control_Icons::get_icon_manager_tabs();
+			$icons_types = Icons_Manager::get_icon_manager_tabs();
 			foreach ( $meta['icons'] as $icon_font ) {
 				if ( ! isset( $icons_types[ $icon_font ] ) ) {
 					continue;
 				}
-
-				$icon_type = $icons_types[ $icon_font ];
-				if ( isset( $icon_type['url'] ) ) {
-					Plugin::$instance->frontend->enqueue_font( $icon_type['url'] );
-				}
-
-				if ( isset( $icon_type['enqueue'] ) ) {
-					foreach ( (array) $icon_type['enqueue'] as $font ) {
-						Plugin::$instance->frontend->enqueue_font( $font );
-					}
-				}
+				Plugin::$instance->frontend->enqueue_font( $icon_font );
 			}
 		}
 
