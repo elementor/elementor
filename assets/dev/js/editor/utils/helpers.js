@@ -2,6 +2,7 @@ var helpers;
 
 helpers = {
 	_enqueuedFonts: [],
+	_enqueuedIconFonts: [],
 
 	elementsHierarchy: {
 		section: {
@@ -12,14 +13,43 @@ helpers = {
 		},
 	},
 
-	enqueueFont: function( font ) {
+	enqueueStylesheet( url ) {
+		if ( ! elementor.$previewContents.find( 'link[href="' + url + '"]' ).length ) {
+			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
+		}
+	},
+
+	enqueueIconFonts( iconType ) {
+		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) ) {
+			return;
+		}
+
+		if ( ! ElementorConfig.icons.hasOwnProperty( iconType ) ) {
+			return;
+		}
+
+		const iconSetting = ElementorConfig.icons[ iconType ];
+		if ( iconSetting.enqueue ) {
+			iconSetting.enqueue.forEach( ( assetURL ) => {
+				this.enqueueStylesheet( assetURL );
+			} );
+		}
+
+		if ( iconSetting.url ) {
+			this.enqueueStylesheet( iconSetting.url );
+		}
+
+		this._enqueuedIconFonts.push( iconType );
+
+		elementor.channels.editor.trigger( 'fontIcon:insertion', iconType, iconSetting );
+	},
+
+	enqueueFont( font ) {
 		if ( -1 !== this._enqueuedFonts.indexOf( font ) ) {
 			return;
 		}
 
-		var fontType = elementor.config.controls.font.options[ font ],
-			fontUrl,
-
+		const fontType = elementor.config.controls.font.options[ font ],
 			subsets = {
 				ru_RU: 'cyrillic',
 				uk: 'cyrillic',
@@ -28,6 +58,8 @@ helpers = {
 				el: 'greek',
 				he_IL: 'hebrew',
 			};
+
+		let	fontUrl;
 
 		switch ( fontType ) {
 			case 'googlefonts' :
@@ -40,13 +72,13 @@ helpers = {
 				break;
 
 			case 'earlyaccess' :
-				var fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
+				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
 				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
 				break;
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
-			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + fontUrl + '" rel="stylesheet" type="text/css">' );
+			this.enqueueStylesheet( fontUrl );
 		}
 
 		this._enqueuedFonts.push( font );
@@ -54,11 +86,12 @@ helpers = {
 		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
 	},
 
-	resetEnqueuedFontsCache: function() {
+	resetEnqueuedFontsCache() {
 		this._enqueuedFonts = [];
+		this._enqueuedIconFonts = [];
 	},
 
-	getElementChildType: function( elementType, container ) {
+	getElementChildType( elementType, container ) {
 		if ( ! container ) {
 			container = this.elementsHierarchy;
 		}
@@ -71,7 +104,7 @@ helpers = {
 			return null;
 		}
 
-		for ( var type in container ) {
+		for ( const type in container ) {
 			if ( ! container.hasOwnProperty( type ) ) {
 				continue;
 			}
@@ -80,7 +113,7 @@ helpers = {
 				continue;
 			}
 
-			var result = this.getElementChildType( elementType, container[ type ] );
+			const result = this.getElementChildType( elementType, container[ type ] );
 
 			if ( result ) {
 				return result;
@@ -90,14 +123,14 @@ helpers = {
 		return null;
 	},
 
-	getUniqueID: function() {
+	getUniqueID() {
 		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
 	/*
 	 * @deprecated 2.0.0
 	 */
-	stringReplaceAll: function( string, replaces ) {
+	stringReplaceAll( string, replaces ) {
 		var re = new RegExp( Object.keys( replaces ).join( '|' ), 'gi' );
 
 		return string.replace( re, function( matched ) {
@@ -105,8 +138,8 @@ helpers = {
 		} );
 	},
 
-	isActiveControl: function( controlModel, values ) {
-		var condition,
+	isActiveControl( controlModel, values ) {
+		let condition,
 			conditions;
 
 		// TODO: Better way to get this?
@@ -165,21 +198,21 @@ helpers = {
 		return _.isEmpty( hasFields );
 	},
 
-	cloneObject: function( object ) {
+	cloneObject( object ) {
 		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
 
-	firstLetterUppercase: function( string ) {
+	firstLetterUppercase( string ) {
 		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.firstLetterUppercase', '2.3.0', 'elementorCommon.helpers.firstLetterUppercase' );
 
 		return elementorCommon.helpers.firstLetterUppercase( string );
 	},
 
-	disableElementEvents: function( $element ) {
+	disableElementEvents( $element ) {
 		$element.each( function() {
-			var currentPointerEvents = this.style.pointerEvents;
+			const currentPointerEvents = this.style.pointerEvents;
 
 			if ( 'none' === currentPointerEvents ) {
 				return;
@@ -191,9 +224,9 @@ helpers = {
 		} );
 	},
 
-	enableElementEvents: function( $element ) {
+	enableElementEvents( $element ) {
 		$element.each( function() {
-			var $this = jQuery( this ),
+			const $this = jQuery( this ),
 				backupPointerEvents = $this.data( 'backup-pointer-events' );
 
 			if ( undefined === backupPointerEvents ) {
@@ -206,12 +239,12 @@ helpers = {
 		} );
 	},
 
-	getColorPickerPaletteIndex: function( paletteKey ) {
+	getColorPickerPaletteIndex( paletteKey ) {
 		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( paletteKey );
 	},
 
-	wpColorPicker: function( $element, options ) {
-		var self = this,
+	wpColorPicker( $element, options ) {
+		const self = this,
 			colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
 			items = _.sortBy( colorPickerScheme.items, function( item ) {
 				return self.getColorPickerPaletteIndex( item.key );
@@ -228,8 +261,8 @@ helpers = {
 		return $element.wpColorPicker( defaultOptions );
 	},
 
-	isInViewport: function( element, html ) {
-		var rect = element.getBoundingClientRect();
+	isInViewport( element, html ) {
+		const rect = element.getBoundingClientRect();
 		html = html || document.documentElement;
 		return (
 			rect.top >= 0 &&
@@ -239,13 +272,13 @@ helpers = {
 		);
 	},
 
-	scrollToView: function( $element, timeout, $parent ) {
+	scrollToView( $element, timeout, $parent ) {
 		if ( undefined === timeout ) {
 			timeout = 500;
 		}
 
-		var $scrolled = $parent,
-			$elementorFrontendWindow = elementorFrontend.getElements( '$window' );
+		let $scrolled = $parent;
+		const $elementorFrontendWindow = elementorFrontend.getElements( '$window' );
 
 		if ( ! $parent ) {
 			$parent = $elementorFrontendWindow;
@@ -263,41 +296,41 @@ helpers = {
 				return;
 			}
 
-			var scrolling = elementTop - ( parentHeight / 2 );
+			const scrolling = elementTop - ( parentHeight / 2 );
 
 			$scrolled.stop( true ).animate( { scrollTop: scrolling }, 1000 );
 		}, timeout );
 	},
 
-	getElementInlineStyle: function( $element, properties ) {
-		var style = {},
+	getElementInlineStyle( $element, properties ) {
+		const style = {},
 			elementStyle = $element[ 0 ].style;
 
-		properties.forEach( function( property ) {
+		properties.forEach( ( property ) => {
 			style[ property ] = undefined !== elementStyle[ property ] ? elementStyle[ property ] : '';
 		} );
 
 		return style;
 	},
 
-	cssWithBackup: function( $element, backupState, rules ) {
-		var cssBackup = this.getElementInlineStyle( $element, Object.keys( rules ) );
+	cssWithBackup( $element, backupState, rules ) {
+		const cssBackup = this.getElementInlineStyle( $element, Object.keys( rules ) );
 
 		$element
 			.data( 'css-backup-' + backupState, cssBackup )
 			.css( rules );
 	},
 
-	recoverCSSBackup: function( $element, backupState ) {
-		var backupKey = 'css-backup-' + backupState;
+	recoverCSSBackup( $element, backupState ) {
+		const backupKey = 'css-backup-' + backupState;
 
 		$element.css( $element.data( backupKey ) );
 
 		$element.removeData( backupKey );
 	},
 
-	compareVersions: function( versionA, versionB, operator ) {
-		var prepareVersion = function( version ) {
+	compareVersions( versionA, versionB, operator ) {
+		const prepareVersion = function( version ) {
 			version = version + '';
 
 			return version.replace( /[^\d.]+/, '.-1.' );
@@ -310,12 +343,12 @@ helpers = {
 			return ! operator || /^={2,3}$/.test( operator );
 		}
 
-		var versionAParts = versionA.split( '.' ).map( Number ),
+		const versionAParts = versionA.split( '.' ).map( Number ),
 			versionBParts = versionB.split( '.' ).map( Number ),
 			longestVersionParts = Math.max( versionAParts.length, versionBParts.length );
 
-		for ( var i = 0; i < longestVersionParts; i++ ) {
-			var valueA = versionAParts[ i ] || 0,
+		for ( let i = 0; i < longestVersionParts; i++ ) {
+			const valueA = versionAParts[ i ] || 0,
 				valueB = versionBParts[ i ] || 0;
 
 			if ( valueA !== valueB ) {
