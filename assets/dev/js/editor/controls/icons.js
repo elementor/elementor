@@ -1,5 +1,28 @@
 const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
 class ControlIconsView extends ControlMultipleBaseItemView {
+	enqueueStylesheet( url ) {
+		if ( ! jQuery( document ).find( 'link[href="' + url + '"]' ).length ) {
+			jQuery( document ).find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
+		}
+	}
+
+	enqueueIconFonts( iconType ) {
+		if ( ! ElementorConfig.icons.hasOwnProperty( iconType ) ) {
+			return;
+		}
+
+		const iconSetting = ElementorConfig.icons[ iconType ];
+		if ( iconSetting.enqueue ) {
+			iconSetting.enqueue.forEach( ( assetURL ) => {
+				this.enqueueStylesheet( assetURL );
+			} );
+		}
+
+		if ( iconSetting.url ) {
+			this.enqueueStylesheet( iconSetting.url );
+		}
+	}
+
 	ui() {
 		const ui = super.ui();
 
@@ -18,16 +41,21 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	openPicker() {
-		elementor.iconManager.show( { model: this } );
+		elementor.iconManager.show( { view: this } );
 	}
 
 	applySavedValue() {
-		const iconValue = this.getControlValue( 'value' );
-			//iconType = this.getControlValue( 'library' );
+		const iconValue = this.getControlValue( 'value' ),
+			iconType = this.getControlValue( 'library' );
 
-		const previewHTML = ( iconValue ) ? '<i class="' + iconValue + '"></i>' : '';
+		if ( ! iconValue ) {
+			this.ui.frameOpeners.toggleClass( 'elementor-preview-has-icon', !! iconValue );
+			return;
+		}
+		const previewHTML = '<i class="' + iconValue + '"></i>';
 		this.ui.previewContainer.html( previewHTML );
 		this.ui.frameOpeners.toggleClass( 'elementor-preview-has-icon', !! iconValue );
+		this.enqueueIconFonts( iconType );
 	}
 
 	deleteIcon( event ) {
