@@ -65,6 +65,30 @@ class Frontend extends App {
 	private $registered_fonts = [];
 
 	/**
+	 * Icon Fonts to enqueue
+	 *
+	 * Holds the list of Icon fonts that are being used in the current page.
+	 *
+	 * @since 2.4.0
+	 * @access private
+	 *
+	 * @var array Used icon fonts. Default is an empty array.
+	 */
+	private $icon_fonts_to_enqueue = [];
+
+	/**
+	 * Enqueue Icon Fonts
+	 *
+	 * Holds the list of Icon fonts already enqueued  in the current page.
+	 *
+	 * @since 2.4.0
+	 * @access private
+	 *
+	 * @var array enqueued icon fonts. Default is an empty array.
+	 */
+	private $enqueued_icon_fonts = [];
+
+	/**
 	 * Whether the page is using Elementor.
 	 *
 	 * Used to determine whether the current page is using Elementor.
@@ -579,6 +603,9 @@ class Frontend extends App {
 					$google_fonts['early'][] = $font;
 					break;
 
+				case false:
+					$this->maybe_enqueue_icon_font( $font );
+					break;
 				default:
 					/**
 					 * Print font links.
@@ -597,6 +624,45 @@ class Frontend extends App {
 		$this->fonts_to_enqueue = [];
 
 		$this->enqueue_google_fonts( $google_fonts );
+		$this->enqueue_icon_fonts();
+	}
+
+	private function maybe_enqueue_icon_font( $icon_font_type ) {
+		$icons_types = Icons_Manager::get_icon_manager_tabs();
+
+		if ( ! isset( $icons_types[ $icon_font_type ] ) ) {
+			return;
+		}
+
+		$icon_type = $icons_types[ $icon_font_type ];
+		if ( isset( $icon_type['url'] ) ) {
+			$this->icon_fonts_to_enqueue[ $icon_font_type ] = [ $icon_type['url'] ];
+		}
+
+		if ( isset( $icon_type['enqueue'] ) ) {
+			foreach ( (array) $icon_type['enqueue'] as $font_css_url ) {
+				$this->icon_fonts_to_enqueue[ $icon_font_type ][] = $font_css_url;
+			}
+		}
+	}
+
+	private function enqueue_icon_fonts() {
+		if ( empty( $this->icon_fonts_to_enqueue ) ) {
+			return;
+		}
+
+		foreach ( $this->icon_fonts_to_enqueue as $icon_type => $assets ) {
+			foreach ( $assets as $index => $css_url ) {
+				if ( in_array( $css_url, $this->enqueued_icon_fonts ) ) {
+					continue;
+				}
+
+				$suffix = $index > 0 ? '-' . $index : '';
+				wp_enqueue_style( 'elementor-icons-' . $icon_type . $suffix, $css_url );
+				$this->enqueued_icon_fonts[] = $css_url;
+			}
+		}
+		$this->icon_fonts_to_enqueue = [];
 	}
 
 	/**
