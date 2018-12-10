@@ -4,7 +4,8 @@ namespace Elementor\Core\Logger;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Logger\Items\PHP;
-use Elementor\Core\Logger\Loggers\Base;
+use Elementor\Core\Logger\Loggers\Logger_Interface;
+use Elementor\System_Info\Main;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -16,12 +17,39 @@ class Manager extends BaseModule {
 	protected $instances = [];
 	protected $default_logger = 'options';
 
+	const REPORT_NAME = 'new_log';
+
+	static private $error_map;
+
 	public function __construct() {
+
+		self::$error_map = [
+			E_CORE_ERROR => Logger_Interface::LEVEL_ERROR,
+			E_ERROR => Logger_Interface::LEVEL_ERROR,
+			E_USER_ERROR => Logger_Interface::LEVEL_ERROR,
+			E_COMPILE_ERROR => Logger_Interface::LEVEL_ERROR,
+			E_RECOVERABLE_ERROR => Logger_Interface::LEVEL_ERROR,
+			E_PARSE => Logger_Interface::LEVEL_ERROR,
+			E_STRICT => Logger_Interface::LEVEL_ERROR,
+
+			E_WARNING => Logger_Interface::LEVEL_WARNING,
+			E_USER_WARNING => Logger_Interface::LEVEL_WARNING,
+			E_CORE_WARNING => Logger_Interface::LEVEL_WARNING,
+			E_COMPILE_WARNING => Logger_Interface::LEVEL_WARNING,
+
+			E_NOTICE => Logger_Interface::LEVEL_NOTICE,
+			E_USER_NOTICE => Logger_Interface::LEVEL_NOTICE,
+			E_DEPRECATED => Logger_Interface::LEVEL_NOTICE,
+			E_USER_DEPRECATED => Logger_Interface::LEVEL_NOTICE,
+		];
+
 		$this->register_logger( 'options', 'Elementor\Core\Logger\Loggers\Options' );
 
 		$this->set_default_logger( 'options' );
 
 		register_shutdown_function( [ $this, 'shutdown' ] );
+
+		$this->add_system_info_report();
 
 		do_action( 'elementor/log/init' );
 	}
@@ -59,7 +87,7 @@ class Manager extends BaseModule {
 	/**
 	 * @param string $name
 	 *
-	 * @return Base
+	 * @return Logger_Interface
 	 */
 	public function get_logger( $name = '' ) {
 		if ( empty( $name ) || ! isset( $this->loggers[ $name ] ) ) {
@@ -74,26 +102,15 @@ class Manager extends BaseModule {
 	}
 
 	private function get_log_level_from_php_error( $type ) {
-		$map = [
-			E_CORE_ERROR => Base::LEVEL_ERROR,
-			E_ERROR => Base::LEVEL_ERROR,
-			E_USER_ERROR => Base::LEVEL_ERROR,
-			E_COMPILE_ERROR => Base::LEVEL_ERROR,
-			E_RECOVERABLE_ERROR => Base::LEVEL_ERROR,
-			E_PARSE => Base::LEVEL_ERROR,
-			E_STRICT => Base::LEVEL_ERROR,
+		return isset( self::$error_map[ $type ] ) ? self::$error_map[ $type ] : Logger_Interface::LEVEL_ERROR;
+	}
 
-			E_WARNING => Base::LEVEL_WARNING,
-			E_USER_WARNING => Base::LEVEL_WARNING,
-			E_CORE_WARNING => Base::LEVEL_WARNING,
-			E_COMPILE_WARNING => Base::LEVEL_WARNING,
-
-			E_NOTICE => Base::LEVEL_NOTICE,
-			E_USER_NOTICE => Base::LEVEL_NOTICE,
-			E_DEPRECATED => Base::LEVEL_NOTICE,
-			E_USER_DEPRECATED => Base::LEVEL_NOTICE,
-		];
-
-		return isset( $map[ $type ] ) ? $map[ $type ] : Base::LEVEL_ERROR;
+	private function add_system_info_report() {
+		Main::add_report(
+			self::REPORT_NAME, [
+				'file_name' => __DIR__ . '/log-reporter.php',
+				'class_name' => __NAMESPACE__ . '\Log_Reporter',
+			]
+		);
 	}
 }

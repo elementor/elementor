@@ -7,5 +7,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class PHP extends File {
-	const FORMAT = 'PHP :date [:type] :message :file::line';
+	const FORMAT = 'PHP :date [type] message [file::line] X times';
 }

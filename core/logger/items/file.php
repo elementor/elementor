@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class File extends Base {
 
-	const FORMAT = 'File :date [:type] :message :file::line';
+	const FORMAT = 'File :date [type] message [file::line] X times';
 
 	protected $file;
 	protected $line;

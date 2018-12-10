@@ -3,25 +3,20 @@
 namespace Elementor\Core\Logger\Loggers;
 
 use Elementor\Core\Logger\Items\Base as Log_Item;
+use Elementor\Core\Logger\Items\Log_Item_Interface as Log_Item_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Base {
+abstract class Base implements Logger_Interface {
 
-	const LEVEL_INFO = 'info';
-	const LEVEL_NOTICE = 'notice';
-	const LEVEL_WARNING = 'warning';
-	const LEVEL_ERROR = 'error';
-
-	abstract protected function save_log( Log_Item $item );
+	abstract protected function save_log( Log_Item_Interface $item );
 
 	public function log( $item, $type = self::LEVEL_INFO, $meta = [] ) {
 		if ( ! $item instanceof Log_Item ) {
 			$item = $this->create_item( $item, $type, $meta );
 		}
-
 		$this->save_log( $item );
 	}
 
@@ -41,6 +36,13 @@ abstract class Base {
 		$this->log( $message, self::LEVEL_ERROR, $meta );
 	}
 
+	/**
+	 * @param string $message
+	 * @param string $type
+	 * @param array $meta
+	 *
+	 * @return Log_Item_Interface
+	 */
 	private function create_item( $message, $type, $meta = [] ) {
 		$item = new Log_Item( [
 			'message' => $message,

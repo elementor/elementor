@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Base {
+class Base implements Log_Item_Interface {
 
 	const FORMAT = ':date [:type] :message';
 
@@ -22,7 +22,7 @@ class Base {
 		$this->date = current_time( 'mysql' );
 		$this->message = $args['message'];
 		$this->type = $args['type'];
-		$this->meta = $args['meta'];
+		$this->meta = empty( $args['meta'] ) ? [] : $args['meta'];
 	}
 
 	public function __get( $name ) {
@@ -34,7 +34,7 @@ class Base {
 	}
 
 	public function __toString() {
-		return strtr( self::FORMAT, (array) $this );
+		return strtr( static::FORMAT, get_object_vars( $this ) );
 	}
 
 	public function get_fingerprint() {
@@ -43,11 +43,12 @@ class Base {
 		return md5( $clone );
 	}
 
-	/**
-	 * @param self $item
-	 */
 	public function increase_times( $item ) {
 		$this->times++;
 		$this->times_dates[] = $item->date;
+	}
+
+	public function format() {
+		return $this->__toString();
 	}
 }

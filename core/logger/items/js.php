@@ -7,5 +7,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class JS extends File {
-	const FORMAT = 'JS :date [:type] :message :file::line';
+	const FORMAT = 'JS :date [type] message [file::line] X times';
 }
