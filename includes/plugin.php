@@ -402,6 +402,11 @@ class Plugin {
 	public $logger;
 
 	/**
+	 * @var Core\Upgrade\Manager
+	 */
+	public $upgrade;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -539,7 +544,8 @@ class Plugin {
 		User::init();
 		Api::init();
 		Tracker::init();
-		Updater::init();
+
+		$this->upgrade = new Core\Upgrade\Manager();
 
 		if ( is_admin() ) {
 			$this->heartbeat = new Heartbeat();

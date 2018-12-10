@@ -16,62 +16,16 @@ defined( 'ABSPATH' ) || exit;
  * WC_Background_Updater Class.
  */
 class Updater extends Background_Task {
-	const ACTION = 'elementor_updater';
-	const PLUGIN_NAME = 'elementor';
-	const UPDATING_FLAG = 'ELEMENTOR_UPDATING';
-	const VERSION_OPTION_NAME = 'elementor_version';
-	const VERSION = ELEMENTOR_VERSION;
-	const UPGRADES_CLASS = 'Elementor\Core\Upgrade\Upgrades';
-
-	const QUERY_LIMIT = 100;
-
-	protected $current_version;
-
-	public static function init() {
-		// Create an instance the run the background tasks.
-		$instance = new static();
-
-		if ( ! empty( $_GET[ static::ACTION ] ) && $instance->should_upgrade() ) {
-
-			$instance->queue_upgrades();
-
-			wp_redirect( remove_query_arg( static::ACTION ) );
-			die;
-		}
-	}
 
 	/**
-	 * Check upgrades.
-	 *
-	 * Checks whether a given Elementor version needs to be upgraded.
-	 *
-	 * If an upgrade required for a specific Elementor version, it will update
-	 * the `elementor_upgrades` option in the database.
-	 *
-	 * @static
-	 * @access protected
-	 **/
+	 * @var Manager
+	 */
+	protected $manager;
 
-	protected function queue_upgrades() {
-		$prefix = '_v_';
-		$version_prefixed = $prefix . str_replace( '.', '_', $this->current_version );
-		$upgrades_reflection = new \ReflectionClass( static::UPGRADES_CLASS );
+	public function __construct( $manager ) {
+		$this->manager = $manager;
 
-		$update_queued = false;
-
-		foreach ( $upgrades_reflection->getMethods() as $method ) {
-			$method_name = $method->getName();
-			if ( 0 === strpos( $method_name, $prefix ) && $method_name >= $version_prefixed ) {
-				$this->push_to_queue( [
-					'callback' => [ static::UPGRADES_CLASS, $method_name ],
-				] );
-				$update_queued = true;
-			}
-		}
-
-		if ( $update_queued ) {
-			$this->save()->dispatch();
-		}
+		parent::__construct();
 	}
 
 	/**
@@ -81,23 +35,14 @@ class Updater extends Background_Task {
 	 * performed, or, call parent::complete().
 	 */
 	protected function complete() {
-		Plugin::$instance->files_manager->clear_cache();
-		update_option( static::VERSION_OPTION_NAME, static::VERSION );
+		$this->manager->on_upgrade_complete();
+
 		parent::complete();
 	}
 
-	protected function should_upgrade() {
-		$this->current_version = get_option( static::VERSION_OPTION_NAME );
-
-		// It's a new install.
-		if ( ! $this->current_version ) {
-			return false;
-		}
-
-		if ( static::VERSION === $this->current_version ) {
-			return false;
-		}
-
-		return true;
+	public function continue_upgrades() {
+		// Used to fire an action added in WP_Background_Process::_construct() that calls WP_Background_Process::handle_cron_healthcheck().
+		// This method will make sure the database updates are executed even if cron is disabled. Nothing will happen if the updates are already running.
+		do_action( $this->cron_hook_identifier );
 	}
 }
