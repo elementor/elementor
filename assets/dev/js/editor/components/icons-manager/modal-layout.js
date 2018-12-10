@@ -22,7 +22,7 @@ export default class extends BaseModalLayout {
 	}
 
 	showModal( options ) {
-		this.modal.setSettings( 'controlModel', options.model );
+		this.modal.setSettings( 'controlView', options.view );
 		super.showModal();
 	}
 
