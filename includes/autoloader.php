@@ -90,6 +90,7 @@ class Autoloader {
 		'Utils' => 'includes/utils.php',
 		'Widget_WordPress' => 'includes/widgets/wordpress.php',
 		'Widgets_Manager' => 'includes/managers/widgets.php',
+		'Icons_Manager' => 'includes/managers/icons.php',
 		'WordPress_Widgets_Manager' => 'includes/managers/wordpress-widgets.php',
 	];
 
