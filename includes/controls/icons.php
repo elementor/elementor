@@ -8,26 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor media control.
+ * Elementor Icons control.
  *
- * A base control for creating a media chooser control. Based on the WordPress
- * media library. Used to select an image from the WordPress media library.
+ * A base control for creating a Icons chooser control.
+ * Used to select an Icon.
  *
  * @since 1.0.0
  */
 class Control_Icons extends Control_Base_Multiple {
-
-	/**
-	 * Tabs.
-	 *
-	 * Holds the list of all the tabs.
-	 *
-	 * @access private
-	 * @static
-	 *
-	 * @var array
-	 */
-	private static $tabs;
 
 	/**
 	 * Get media control type.
@@ -35,7 +23,7 @@ class Control_Icons extends Control_Base_Multiple {
 	 * Retrieve the control type, in this case `media`.
 	 *
 	 * @access public
-	 *
+	 * @since 2.4.0
 	 * @return string Control type.
 	 */
 	public function get_type() {
@@ -43,13 +31,13 @@ class Control_Icons extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Get media control default values.
+	 * Get Icons control default values.
 	 *
 	 * Retrieve the default value of the Icons control. Used to return the default
 	 * values while initializing the Icons control.
 	 *
 	 * @access public
-	 *
+	 * @since 2.4.0
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
@@ -60,28 +48,13 @@ class Control_Icons extends Control_Base_Multiple {
 	}
 
 	/**
-	 * Enqueue media control scripts and styles.
-	 *
-	 * Used to register and enqueue custom scripts and styles used by the media
-	 * control.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function enqueue() {
-		global $wp_version;
-
-		wp_enqueue_style( 'FA5', 'https://use.fontawesome.com/releases/v5.0.7/css/all.css' );
-	}
-
-	/**
-	 * Render media control output in the editor.
+	 * Render Icons control output in the editor.
 	 *
 	 * Used to generate the control HTML in the editor using Underscore JS
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * @since 1.0.0
+	 * @since 2.4.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -107,53 +80,13 @@ class Control_Icons extends Control_Base_Multiple {
 		<?php
 	}
 
-	private static function init_tabs() {
-		self::$tabs = [
-			'regular' => [
-				'label' => __( 'Regular', 'elementor' ),
-				'url' => 'https://use.fontawesome.com/releases/v5.5.0/css/regular.css',
-				'enqueue' => [ 'https://use.fontawesome.com/releases/v5.5.0/css/fontawesome.css' ],
-				'prefix' => 'fa-',
-				'displayPrefix' => 'far',
-				'ver' => '5.5.0',
-				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/regular.json',
-			],
-			'solid' => [
-				'label' => __( 'Solid', 'elementor' ),
-				'url' => 'https://use.fontawesome.com/releases/v5.5.0/css/solid.css',
-				'enqueue' => [ 'https://use.fontawesome.com/releases/v5.5.0/css/fontawesome.css' ],
-				'prefix' => 'fa-',
-				'displayPrefix' => 'fas',
-				'ver' => '5.5.0',
-				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/solid.json',
-			],
-			'brands' => [
-				'label' => __( 'Brands', 'elementor' ),
-				'url' => 'https://use.fontawesome.com/releases/v5.5.0/css/brands.css',
-				'enqueue' => [ 'https://use.fontawesome.com/releases/v5.5.0/css/fontawesome.css' ],
-				'prefix' => 'fa-',
-				'displayPrefix' => 'fab',
-				'ver' => '5.5.0',
-				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/brands.json',
-			],
-		];
-	}
-
-	public static function get_icon_manager_tabs() {
-		if ( ! self::$tabs ) {
-			self::init_tabs();
-		}
-		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', [] );
-		return array_merge( self::$tabs, $additional_tabs );
-	}
-
 	/**
-	 * Get media control default settings.
+	 * Get Icons control default settings.
 	 *
-	 * Retrieve the default settings of the media control. Used to return the default
-	 * settings while initializing the media control.
+	 * Retrieve the default settings of the Icons control. Used to return the default
+	 * settings while initializing the Icons control.
 	 *
-	 * @since 1.0.0
+	 * @since 2.4.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -165,6 +98,7 @@ class Control_Icons extends Control_Base_Multiple {
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',
 			],
+			'search_bar' => true,
 		];
 	}
 }
