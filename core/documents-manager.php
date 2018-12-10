@@ -79,7 +79,7 @@ class Documents_Manager {
 	 * @since 2.0.0
 	 * @access protected
 	 *
-	 * @var Document
+	 * @var array
 	 */
 	protected $switched_data = [];
 
@@ -97,6 +97,9 @@ class Documents_Manager {
 		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
 		add_action( 'elementor/init', [ $this, 'register_default_types' ], 11 );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_filter( 'post_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
+		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
+		add_filter( 'user_has_cap', [ $this, 'remove_user_edit_cap' ], 10, 3 );
 	}
 
 	/**
@@ -206,10 +209,16 @@ class Documents_Manager {
 				$post_type = get_post_type( $post_id );
 			}
 
+			$doc_type = 'post';
+
 			if ( isset( $this->cpt[ $post_type ] ) ) {
 				$doc_type = $this->cpt[ $post_type ];
-			} else {
-				$doc_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+			}
+
+			$meta_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+
+			if ( $meta_type && isset( $this->types[ $meta_type ] ) ) {
+				$doc_type = $meta_type;
 			}
 
 			$doc_type_class = $this->get_document_type( $doc_type );
@@ -286,13 +295,40 @@ class Documents_Manager {
 	 *
 	 * Retrieve the all the registered document types.
 	 *
-	 * @since 2.0.0
+	 * @since  2.0.0
 	 * @access public
+	 *
+	 * @param array $args      Optional. An array of key => value arguments to match against
+	 *                               the properties. Default is empty array.
+	 * @param string $operator Optional. The logical operation to perform. 'or' means only one
+	 *                               element from the array needs to match; 'and' means all elements
+	 *                               must match; 'not' means no elements may match. Default 'and'.
 	 *
 	 * @return Document[] All the registered document types.
 	 */
-	public function get_document_types() {
+	public function get_document_types( $args = [], $operator = 'and' ) {
+		if ( ! empty( $args ) ) {
+			$types_properties = $this->get_types_properties();
+
+			$filtered = wp_filter_object_list( $types_properties, $args, $operator );
+
+			return array_intersect_key( $this->types, $filtered );
+		}
+
 		return $this->types;
+	}
+
+	/**
+	 * Get document types with their properties.
+	 *
+	 * @return array A list of properties arrays indexed by the type.
+	 */
+	public function get_types_properties() {
+		$types_properties = [];
+		foreach ( $this->types as $type => $class ) {
+			$types_properties[ $type ] = $class::get_properties();
+		}
+		return $types_properties;
 	}
 
 	/**
@@ -351,6 +387,67 @@ class Documents_Manager {
 		$document->save_template_type();
 
 		return $document;
+	}
+
+	/**
+	 * Remove user edit capabilities if document is not editable.
+	 *
+	 * Filters the user capabilities to disable editing in admin.
+	 *
+	 * @param array $allcaps An array of all the user's capabilities.
+	 * @param array $caps    Actual capabilities for meta capability.
+	 * @param array $args    Optional parameters passed to has_cap(), typically object ID.
+	 *
+	 * @return array
+	 */
+	public function remove_user_edit_cap( $allcaps, $caps, $args ) {
+		global $pagenow;
+
+		if ( ! in_array( $pagenow, [ 'post.php', 'edit.php' ], true ) ) {
+			return $allcaps;
+		}
+
+		$capability = $args[0];
+
+		if ( 'edit_post' !== $capability ) {
+			return $allcaps;
+		}
+
+		if ( empty( $args[2] ) ) {
+			return $allcaps;
+		}
+
+		$post_id = $args[2];
+
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return $allcaps;
+		}
+
+		$allcaps[ $caps[0] ] = $document::get_property( 'is_editable' );
+
+		return $allcaps;
+	}
+
+	/**
+	 * Filter Post Row Actions.
+	 *
+	 * Let the Document to filter the array of row action links on the Posts list table.
+	 *
+	 * @param array $actions
+	 * @param \WP_Post $post
+	 *
+	 * @return array
+	 */
+	public function filter_post_row_actions( $actions, $post ) {
+		$document = $this->get( $post->ID );
+
+		if ( $document ) {
+			$actions = $document->filter_admin_row_actions( $actions );
+		}
+
+		return $actions;
 	}
 
 	/**

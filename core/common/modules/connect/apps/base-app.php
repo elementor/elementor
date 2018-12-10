@@ -17,20 +17,48 @@ abstract class Base_App {
 
 	protected $data = [];
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 * @abstract
+	 */
 	abstract public function render_admin_widget();
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 * @abstract
+	 */
 	abstract protected function get_slug();
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 * @abstract
+	 */
 	abstract protected function update_settings();
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 * @static
+	 */
 	public static function get_class_name() {
 		return get_called_class();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_option_name() {
 		return static::OPTION_NAME_PREFIX . $this->get_slug();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function admin_notice() {
 		$notices = $this->get( 'notices' );
 
@@ -50,6 +78,10 @@ abstract class Base_App {
 		$this->delete( 'notices' );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function action_authorize() {
 		if ( $this->is_connected() ) {
 			$this->redirect_to_admin_page();
@@ -63,6 +95,10 @@ abstract class Base_App {
 		die;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function action_get_token() {
 		if ( $this->is_connected() ) {
 			$this->redirect_to_admin_page();
@@ -97,6 +133,10 @@ abstract class Base_App {
 		$this->redirect_to_admin_page();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function action_disconnect() {
 		if ( $this->is_connected() ) {
 			$this->disconnect();
@@ -106,6 +146,10 @@ abstract class Base_App {
 		$this->redirect_to_admin_page();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function get_admin_url( $action, $params = [] ) {
 		$params = [
 			'app' => $this->get_slug(),
@@ -116,22 +160,46 @@ abstract class Base_App {
 		return add_query_arg( $params, Admin::$url );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function is_connected() {
 		return (bool) $this->get( 'access_token' );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function init() {}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function init_data() {}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function after_connect() {}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function get( $key, $default = null ) {
 		$this->init_data();
 
 		return isset( $this->data[ $key ] ) ? $this->data[ $key ] : $default;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function set( $key, $value = null ) {
 		$this->init_data();
 
@@ -144,6 +212,10 @@ abstract class Base_App {
 		$this->update_settings();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function delete( $key = null ) {
 		$this->init_data();
 
@@ -156,6 +228,10 @@ abstract class Base_App {
 		$this->update_settings();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function add( $key, $value, $default = '' ) {
 		$new_value = $this->get( $key, $default );
 
@@ -170,10 +246,18 @@ abstract class Base_App {
 		$this->set( $key, $new_value );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function add_notice( $content, $type = 'success' ) {
 		$this->add( 'notices', compact( 'content', 'type' ), [] );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function request( $action, $request_body = [] ) {
 		$request_body = [
 			'app' => $this->get_slug(),
@@ -236,14 +320,26 @@ abstract class Base_App {
 		return $body;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_api_url() {
 		return static::API_URL . '/' . $this->get_slug();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_remote_site_url() {
 		return static::SITE_URL . '/' . $this->get_slug();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_remote_authorize_url() {
 		$redirect_uri = $this->get_admin_url( 'get_token' );
 		if ( ! empty( $_REQUEST['mode'] ) && 'popup' === $_REQUEST['mode'] ) {
@@ -262,6 +358,10 @@ abstract class Base_App {
 		return $url;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function redirect_to_admin_page( $url = '' ) {
 		if ( ! $url ) {
 			$url = Admin::$url;
@@ -275,6 +375,10 @@ abstract class Base_App {
 		}
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function set_client_id() {
 		if ( $this->get( 'client_id' ) ) {
 			return;
@@ -290,10 +394,18 @@ abstract class Base_App {
 		$this->set( 'auth_secret', $response->auth_secret );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function set_request_state() {
 		$this->set( 'state', wp_generate_password( 12, false ) );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function print_popup_close_script( $url ) {
 		?>
 		<script>
@@ -309,6 +421,10 @@ abstract class Base_App {
 		die;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function disconnect() {
 		// Try update the server, but not needed to handle errors.
 		$this->request( 'disconnect' );
@@ -316,6 +432,10 @@ abstract class Base_App {
 		$this->delete();
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_site_key() {
 		$site_key = get_option( 'elementor_connect_site_key' );
 
@@ -327,6 +447,10 @@ abstract class Base_App {
 		return $site_key;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function __construct() {
 		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
 

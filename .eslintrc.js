@@ -67,7 +67,7 @@ module.exports = {
 		'lines-around-comment': 'off',
 		'no-bitwise': 'error',
 		'no-caller': 'error',
-		'no-debugger': 'error',
+		'no-debugger': 'warn',
 		'no-dupe-args': 'error',
 		'no-dupe-keys': 'error',
 		'no-duplicate-case': 'error',
