@@ -109,7 +109,7 @@ class Debug {
 			$log = array_splice( $log, -self::MAX_LOGS_TO_SAVE );
 		}
 
-		update_option( self::OPTION_NAME, $log );
+		update_option( self::OPTION_NAME, $log, 'no' );
 	}
 
 	/**
