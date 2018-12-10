@@ -396,16 +396,16 @@ BaseElementView = BaseContainer.extend( {
 		const self = this;
 
 		if ( 'object' === typeof element ) {
-			jQuery.each( element, ( elementKey ) => {
-				self.addRenderAttribute( elementKey, this, null, overwrite );
+			jQuery.each( element, ( elementKey, elementValue ) => {
+				self.addRenderAttribute( elementKey, elementValue, null, overwrite );
 			} );
 
 			return self;
 		}
 
 		if ( 'object' === typeof key ) {
-			jQuery.each( key, ( attributeKey ) => {
-				self.addRenderAttribute( element, attributeKey, this, overwrite );
+			jQuery.each( key, ( attributeKey, attributeValue ) => {
+				self.addRenderAttribute( element, attributeKey, attributeValue, overwrite );
 			} );
 
 			return self;
@@ -438,8 +438,8 @@ BaseElementView = BaseContainer.extend( {
 		var renderAttributes = this.renderAttributes[ element ],
 			attributes = [];
 
-		jQuery.each( renderAttributes, ( attributeKey ) => {
-			attributes.push( attributeKey + '="' + _.escape( this.join( ' ' ) ) + '"' );
+		jQuery.each( renderAttributes, ( attributeKey, attributeValue ) => {
+			attributes.push( attributeKey + '="' + _.escape( attributeValue.join( ' ' ) ) + '"' );
 		} );
 
 		return attributes.join( ' ' );
