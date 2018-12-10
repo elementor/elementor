@@ -669,7 +669,7 @@ class Frontend extends App {
 				}
 
 				$suffix = $index > 0 ? '-' . $index : '';
-				wp_enqueue_style( 'elementor-icons-' . $icon_type . $suffix, $css_url );
+				wp_enqueue_style( 'elementor-icons-' . $icon_type . $suffix, $css_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 				$this->enqueued_icon_fonts[] = $css_url;
 			}
 		}
