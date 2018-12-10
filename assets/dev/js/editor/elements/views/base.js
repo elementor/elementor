@@ -1,7 +1,6 @@
 import environment from '../../../../../../core/common/assets/js/utils/environment';
 
-var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
-	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
+var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
@@ -567,7 +566,7 @@ BaseElementView = BaseContainer.extend( {
 				return;
 			}
 
-			// In edit mode - handle an external elements which loaded by another elements like shortcode etc.
+			// In edit mode - handle an external elements that loaded by another elements like shortcode etc.
 			self.$el.find( '.elementor-element.elementor-' + self.model.get( 'elType' ) + ':not(.elementor-element-edit-mode)' ).each( function() {
 				elementorFrontend.elementsHandler.runReadyTrigger( jQuery( this ) );
 			} );
@@ -765,7 +764,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		elementorFrontend.getElements( 'window' ).document.activeElement.blur();
+		elementorFrontend.elements.window.document.activeElement.blur();
 	},
 
 	onDestroy() {

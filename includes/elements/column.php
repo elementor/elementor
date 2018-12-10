@@ -89,7 +89,7 @@ class Element_Column extends Element_Base {
 	 *
 	 * Retrieve the element default edit tools. Used to set initial tools.
 	 *
-	 * @since 2.1.0
+	 * @since 1.0.0
 	 * @access protected
 	 * @static
 	 *
@@ -740,7 +740,6 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
-				'default' => '',
 				'prefix_class' => 'animated ',
 				'label_block' => false,
 				'frontend_available' => true,

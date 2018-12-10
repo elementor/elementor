@@ -1,7 +1,6 @@
-import BaseModalLayout from '../../../../../../core/common/assets/js/views/modal/layout';
 import ModalContent from './modal-content';
 
-export default class extends BaseModalLayout {
+export default class extends elementorModules.common.views.modal.Layout {
 	getModalOptions() {
 		return {
 			id: 'elementor-hotkeys__modal',

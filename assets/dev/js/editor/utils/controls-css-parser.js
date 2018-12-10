@@ -1,8 +1,7 @@
-var ViewModule = require( 'elementor-utils/view-module' ),
-	Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
+var Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	ControlsCSSParser;
 
-ControlsCSSParser = ViewModule.extend( {
+ControlsCSSParser = elementorModules.ViewModule.extend( {
 	stylesheet: null,
 
 	getDefaultSettings: function() {
@@ -58,7 +57,8 @@ ControlsCSSParser = ViewModule.extend( {
 			controls,
 			( StyleControl ) => this.getStyleControlValue( StyleControl, values ),
 			placeholders,
-			replacements );
+			replacements
+		);
 	},
 
 	getStyleControlValue: function( control, values ) {
@@ -123,7 +123,7 @@ ControlsCSSParser = ViewModule.extend( {
 	},
 
 	onInit: function() {
-		ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.initStylesheet();
 	},
@@ -140,24 +140,39 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 		var outputCssProperty;
 
 		try {
-			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}]*)}}/g, function( originalPhrase, controlName, placeholder ) {
-				var parserControl = control,
-					valueToInsert = value;
+			outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, function( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) {
+				const externalControlMissing = controlName && ! controls[ controlName ];
 
-				if ( controlName ) {
-					parserControl = _.findWhere( controls, { name: controlName } );
+				let parsedValue = '';
 
-					if ( ! parserControl ) {
-						return '';
-					}
-
-					valueToInsert = valueCallback( parserControl );
+				if ( ! externalControlMissing ) {
+					parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, placeholder, controlName );
 				}
 
-				var parsedValue = elementor.getControlView( parserControl.type ).getStyleValue( placeholder.toLowerCase(), valueToInsert );
+				if ( ! parsedValue && 0 !== parsedValue ) {
+					if ( fallbackValue ) {
+						parsedValue = fallbackValue;
 
-				if ( '' === parsedValue ) {
-					throw '';
+						const stringValueMatches = parsedValue.match( /^(['"])(.*)\1$/ );
+
+						if ( stringValueMatches ) {
+							parsedValue = stringValueMatches[ 2 ];
+						} else if ( ! isFinite( parsedValue ) ) {
+							if ( fallbackControlName && ! controls[ fallbackControlName ] ) {
+								return '';
+							}
+
+							parsedValue = ControlsCSSParser.parsePropertyPlaceholder( control, value, controls, valueCallback, fallbackValue, fallbackControlName );
+						}
+					}
+
+					if ( ! parsedValue && 0 !== parsedValue ) {
+						if ( externalControlMissing ) {
+							return '';
+						}
+
+						throw '';
+					}
 				}
 
 				return parsedValue;
@@ -219,6 +234,16 @@ ControlsCSSParser.addControlStyleRules = function( stylesheet, control, controls
 
 		stylesheet.addRules( selector, outputCssProperty, query );
 	} );
+};
+
+ControlsCSSParser.parsePropertyPlaceholder = function( control, value, controls, valueCallback, placeholder, parserControlName ) {
+	if ( parserControlName ) {
+		control = _.findWhere( controls, { name: parserControlName } );
+
+		value = valueCallback( control );
+	}
+
+	return elementor.getControlView( control.type ).getStyleValue( placeholder, value, control );
 };
 
 module.exports = ControlsCSSParser;

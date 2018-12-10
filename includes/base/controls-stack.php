@@ -461,7 +461,7 @@ abstract class Controls_Stack extends Base_Object {
 			$section_controls = $this->get_section_controls( $control_id );
 
 			foreach ( $section_controls as $section_control_id => $section_control ) {
-				$this->update_control( $section_control_id, $section_args );
+				$this->update_control( $section_control_id, $section_args, $options );
 			}
 		}
 
@@ -1023,6 +1023,10 @@ abstract class Controls_Stack extends Base_Object {
 		return self::get_items( $this->data, $item );
 	}
 
+	/**
+	 * @since 2.0.14
+	 * @access public
+	 */
 	public function get_parsed_dynamic_settings( $setting = null ) {
 		if ( null === $this->parsed_dynamic_settings ) {
 			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->get_settings() );
@@ -1319,9 +1323,9 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access public
 	 *
 	 * @param string $section_id Section ID.
-	 * @param array  $args       Section arguments.
+	 * @param array  $args       Section arguments Optional.
 	 */
-	public function start_controls_section( $section_id, array $args ) {
+	public function start_controls_section( $section_id, array $args = [] ) {
 		$section_name = $this->get_name();
 
 		/**
@@ -1755,6 +1759,10 @@ abstract class Controls_Stack extends Base_Object {
 		];
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_init_settings() {
 		$settings = $this->get_data( 'settings' );
 

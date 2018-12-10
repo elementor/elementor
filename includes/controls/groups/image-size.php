@@ -113,7 +113,21 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			}
 		}
 
-		return $html;
+		/**
+		 * Get Attachment Image HTML
+		 *
+		 * Filters the Attachment Image HTML
+		 *
+		 * @since 2.4.0
+		 * @param string $html the attachment image HTML string
+		 * @param array  $settings       Control settings.
+		 * @param string $image_size_key Optional. Settings key for image size.
+		 *                               Default is `image`.
+		 * @param string $image_key      Optional. Settings key for image. Default
+		 *                               is null. If not defined uses image size key
+		 *                               as the image key.
+		 */
+		return apply_filters( 'elementor/image_size/get_attachment_image_html', $html, $settings, $image_size_key, $image_key );
 	}
 
 	/**

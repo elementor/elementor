@@ -67,28 +67,6 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 		$this->assertWPError( self::$manager->update_template( $template_data ), 'cannot update template from remote source' );
 	}
 
-	public function test_should_return_data_from_get_template_data() {
-		$template = self::$manager->get_templates()[0];
-		$_POST['editor_post_id'] = $this->factory()->create_and_get_default_post()->ID;
-
-		$ret = self::$manager->get_template_data(
-			[
-				'source' => 'remote',
-				'template_id' => $template['template_id'],
-			]
-		);
-		$this->assertArrayHaveKeys( [ 'content', 'page_settings' ], $ret );
-		$this->assertArrayHaveKeys(
-			[
-				'id',
-				'elType',
-				'settings',
-				'elements',
-				'isInner',
-			], $ret['content'][0]
-		);
-	}
-
 	public function test_should_return_wp_error_from_delete_template() {
 		$this->assertWPError(
 			self::$manager->delete_template(

@@ -74,14 +74,16 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	 * while extracting CSS from the `selectors` data argument.
 	 *
 	 * @since 1.0.5
+	 * @since 2.3.3 New `$control_data` parameter added.
 	 * @access public
 	 *
 	 * @param string $css_property  CSS property.
 	 * @param array $control_value Control value.
+	 * @param array  $control_data Control Data.
 	 *
 	 * @return array Control style value.
 	 */
-	public function get_style_value( $css_property, $control_value ) {
-		return $control_value[ $css_property ];
+	public function get_style_value( $css_property, $control_value, array $control_data ) {
+		return $control_value[ strtolower( $css_property ) ];
 	}
 }

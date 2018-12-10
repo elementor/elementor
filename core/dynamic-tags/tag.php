@@ -63,6 +63,10 @@ abstract class Tag extends Base_Tag {
 		return 'ui';
 	}
 
+	/**
+	 * @since 2.0.9
+	 * @access public
+	 */
 	public function get_editor_config() {
 		$config = parent::get_editor_config();
 

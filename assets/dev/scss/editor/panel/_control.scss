@@ -24,6 +24,11 @@
 		flex-direction: column;
 	}
 
+	.elementor-control-title {
+		font-size: 12px;
+		line-height: 1;
+	}
+
 	&.elementor-control-type-divider {
 		padding: 0;
 		background-color: transparent;
@@ -202,10 +207,6 @@
 		}
 
 		&.select2-container--default {
-
-			.select2-selection {
-				border-radius: 3px;
-			}
 
 			.select2-selection--multiple {
 
@@ -524,7 +525,7 @@
 	}
 }
 
-.elementor-device-desktop #elementor-panel .elementor-panel-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
+.elementor-device-desktop #elementor-panel .elementor-controls-stack:not(.elementor-responsive-switchers-open) .elementor-responsive-switcher {
 	background: $editor-lighter;
 
 	&:not(.elementor-responsive-switcher-desktop) {

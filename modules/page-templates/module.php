@@ -153,7 +153,7 @@ class Module extends BaseModule {
 	 *
 	 * Set the page template callback.
 	 *
-	 * @since  2.0.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @param callable $callback
@@ -198,7 +198,7 @@ class Module extends BaseModule {
 	 *
 	 * Retrieve the path for any given page template.
 	 *
-	 * @since  2.0.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @param string $page_template The page template name.
@@ -330,7 +330,7 @@ class Module extends BaseModule {
 	 *
 	 * Fired by `update_{$meta_type}_metadata` filter.
 	 *
-	 * @since  2.0.0
+	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @param bool   $check     Whether to allow updating metadata for the given type.

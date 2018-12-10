@@ -89,6 +89,10 @@ class Editor {
 
 		Plugin::$instance->db->switch_to_post( $this->_post_id );
 
+		$document = Plugin::$instance->documents->get( $this->_post_id );
+
+		Plugin::$instance->documents->switch_to_document( $document );
+
 		add_filter( 'show_admin_bar', '__return_false' );
 
 		// Remove all WordPress actions
@@ -207,7 +211,9 @@ class Editor {
 			$post_id = $this->_post_id;
 		}
 
-		if ( ! User::is_current_user_can_edit( $post_id ) ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document || ! $document->is_editable_by_current_user() ) {
 			return false;
 		}
 
@@ -243,7 +249,7 @@ class Editor {
 	 */
 	public function lock_post( $post_id ) {
 		if ( ! function_exists( 'wp_set_post_lock' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/post.php' );
+			require_once ABSPATH . 'wp-admin/includes/post.php';
 		}
 
 		wp_set_post_lock( $post_id );
@@ -263,7 +269,7 @@ class Editor {
 	 */
 	public function get_locked_user( $post_id ) {
 		if ( ! function_exists( 'wp_check_post_lock' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/post.php' );
+			require_once ABSPATH . 'wp-admin/includes/post.php';
 		}
 
 		$locked_user = wp_check_post_lock( $post_id );
@@ -298,7 +304,7 @@ class Editor {
 	 * @access public
 	 */
 	public function print_editor_template() {
-		include( 'editor-templates/editor-wrapper.php' );
+		include 'editor-templates/editor-wrapper.php';
 	}
 
 	/**
@@ -325,6 +331,15 @@ class Editor {
 
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
+		wp_register_script(
+			'elementor-editor-modules',
+			ELEMENTOR_ASSETS_URL . 'js/editor-modules.js',
+			[
+				'elementor-common-modules',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
 		// Hack for waypoint with editor mode.
 		wp_register_script(
 			'elementor-waypoints',
@@ -425,6 +440,7 @@ class Editor {
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
 				'elementor-common',
+				'elementor-editor-modules',
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',
@@ -805,7 +821,7 @@ class Editor {
 		remove_all_filters( 'mce_external_plugins', 10 );
 
 		if ( ! class_exists( '\_WP_Editors', false ) ) {
-			require( ABSPATH . WPINC . '/class-wp-editor.php' );
+			require ABSPATH . WPINC . '/class-wp-editor.php';
 		}
 
 		// WordPress 4.8 and higher
@@ -948,6 +964,10 @@ class Editor {
 		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 */
 	public function filter_wp_link_query_args( $query ) {
 		$library_cpt_key = array_search( Source_Local::CPT, $query['post_type'], true );
 		if ( false !== $library_cpt_key ) {
@@ -957,6 +977,10 @@ class Editor {
 		return $query;
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 */
 	public function filter_wp_link_query( $results ) {
 		if ( isset( $_POST['editor'] ) && 'elementor' === $_POST['editor'] ) {
 			$post_type_object = get_post_type_object( 'post' );
