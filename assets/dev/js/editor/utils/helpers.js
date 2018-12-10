@@ -278,7 +278,7 @@ helpers = {
 		}
 
 		let $scrolled = $parent;
-		const $elementorFrontendWindow = elementorFrontend.getElements( '$window' );
+		const $elementorFrontendWindow = elementorFrontend.elements.$window;
 
 		if ( ! $parent ) {
 			$parent = $elementorFrontendWindow;
