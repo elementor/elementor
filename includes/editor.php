@@ -488,6 +488,7 @@ class Editor {
 			'current_user_can_publish' => $current_user_can_publish,
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
+			'icons' => Icons_Manager::get_icon_manager_tabs(),
 			'widgets' => $plugin->widgets_manager->get_widget_types_config(),
 			'schemes' => [
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
