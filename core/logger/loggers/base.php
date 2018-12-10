@@ -17,34 +17,35 @@ abstract class Base {
 
 	abstract protected function save_log( Log_Item $item );
 
-	public function log( $item, $type = self::LEVEL_INFO ) {
+	public function log( $item, $type = self::LEVEL_INFO, $meta = [] ) {
 		if ( ! $item instanceof Log_Item ) {
-			$item = $this->create_item( $item, $type );
+			$item = $this->create_item( $item, $type, $meta );
 		}
 
 		$this->save_log( $item );
 	}
 
-	public function info( $message ) {
-		$this->log( $message, self::LEVEL_INFO );
+	public function info( $message, $meta = [] ) {
+		$this->log( $message, self::LEVEL_INFO, $meta );
 	}
 
-	public function notice( $message ) {
-		$this->log( $message, self::LEVEL_NOTICE );
+	public function notice( $message, $meta = [] ) {
+		$this->log( $message, self::LEVEL_NOTICE, $meta );
 	}
 
-	public function warning( $message ) {
-		$this->log( $message, self::LEVEL_WARNING );
+	public function warning( $message, $meta = [] ) {
+		$this->log( $message, self::LEVEL_WARNING, $meta );
 	}
 
-	public function error( $message ) {
-		$this->log( $message, self::LEVEL_ERROR );
+	public function error( $message, $meta = [] ) {
+		$this->log( $message, self::LEVEL_ERROR, $meta );
 	}
 
-	private function create_item( $message, $type ) {
+	private function create_item( $message, $type, $meta = [] ) {
 		$item = new Log_Item( [
 			'message' => $message,
 			'type' => $type,
+			'meta' => $meta,
 		] );
 
 		return $item;
