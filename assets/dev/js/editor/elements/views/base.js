@@ -587,7 +587,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		// Make sure is correct model
-		if ( settings instanceof BaseSettingsModel ) {
+		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
 			const hasChanged = settings.hasChanged();
 			let isContentChanged = ! hasChanged,
 				isRenderRequired = ! hasChanged;
