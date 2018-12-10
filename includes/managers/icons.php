@@ -88,13 +88,24 @@ class Icons_Manager extends Element_Base {
 		return array_merge( self::$tabs, $additional_tabs );
 	}
 
-	public static function render_icon( $type, $value, $attributes = [], $tag = 'i' ) {
-//		$icon_types = self::get_icon_manager_tabs();
-//		if ( isset( $icon_types[ $type ] ) && isset( $icon_types[ $type ]['render_callback'] ) ) {
-//
-//		}
-
+	/**
+	 * Render Icon
+	 *
+	 * Used to render Icon for \Elementor\Controls_Manager::ICONS
+	 * @param string $type      Icon Type
+	 * @param string $value     Icon value
+	 * @param array $attributes Icon HTML Attributes
+	 * @param string $tag       Icon HTML tag, defaults to <i>
+	 *
+	 * @return mixed|string
+	 */
+	public function render_icon( $type = '', $value = '', $attributes = [], $tag = 'i' ) {
+		$icon_types = self::get_icon_manager_tabs();
+		if ( isset( $icon_types[ $type ] ) && isset( $icon_types[ $type ]['render_callback'] ) && is_callable( $icon_types[ $type ]['render_callback'] ) ) {
+			return call_user_func_array( $icon_types[ $type ]['render_callback'], [ $type, $value, $attributes, $tag ] );
+		}
+		$this->add_render_attribute( $tag, $attributes );
+		$this->add_render_attribute( $tag, 'class', $value );
+		return '<' . $tag . ' ' . $this->get_render_attribute_string( $tag ) . '></i>';
 	}
-
-	public function __construct() { }
 }
