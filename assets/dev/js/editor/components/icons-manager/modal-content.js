@@ -7,6 +7,7 @@ export default class extends Marionette.ItemView {
 		return {
 			value: '',
 			type: '',
+			icons: false,
 		};
 	}
 
@@ -42,13 +43,15 @@ export default class extends Marionette.ItemView {
 			tabLi: '.icon-type-tab-label',
 			iconListContainer: '.elementor-icon-manager-tabs-content',
 			iconListItems: '.icon-list-item',
+			iconListItem: '.icon-list-item i',
 		};
 	}
 
 	events() {
 		return {
-			'click @ui.tabLabel': 'showTab',
-			'click @ui.iconListItems': 'setSelected',
+			'click @ui.tabLabel': 'onTabClick',
+			'click @ui.iconListItems': 'onIconClick',
+			'click @ui.iconListItem': 'onIconClick',
 			'input @ui.searchInput': 'onSearch',
 		};
 	}
@@ -57,10 +60,18 @@ export default class extends Marionette.ItemView {
 		return ( this.cache[ name ] );
 	}
 
-	showTab( event ) {
-		const $tab = jQuery( event.target ),
-			tabKey = $tab.attr( 'data-tab' ),
-			tabSettings = JSON.parse( $tab.attr( 'data-settings' ) );
+	toggleSearchBarVisibility( state ) {
+		return state ? this.ui.searchInput.show() : this.ui.searchInput.hide();
+	}
+
+	onTabClick( event ) {
+		this.showTab( jQuery( event.target ).attr( 'data-tab' ) );
+	}
+
+	showTab( tabKey ) {
+		const tabSettings = ElementorConfig.icons[ tabKey ];
+
+		tabSettings.name = tabKey;
 
 		if ( ! this.isInCache( tabKey ) ) {
 			this.initIconType( tabSettings );
@@ -74,11 +85,22 @@ export default class extends Marionette.ItemView {
 			return;
 		}
 		this.cache.type = tabKey;
-		$tab.addClass( 'active' );
+		jQuery( 'li[data-tab="' + tabKey + '"]' ).addClass( 'active' );
 		this.ui.iconListContainer.html( '' );
 		for ( const i in icons ) {
-			const icon = icons[ i ],
-				iconLi = jQuery( '<li>' ),
+			const icon = icons[ i ];
+
+			if ( this.cache.icons ) {
+				if ( this.cache.icons.include && this.cache.icons.include[ tabKey ] && -1 === this.cache.icons.include[ tabKey ].indexOf( icon.filter ) ) {
+					continue;
+				}
+
+				if ( this.cache.icons.exclude && -1 !== this.cache.icons.exclude.indexOf( icon.filter ) ) {
+					continue;
+				}
+			}
+
+			const iconLi = jQuery( '<li>' ),
 				iTag = jQuery( '<i>' ),
 				clss = icon.displayPrefix + ' ' + icon.selector;
 
@@ -97,7 +119,7 @@ export default class extends Marionette.ItemView {
 	}
 
 	showAll() {
-		this.ui.iconListItems.show( 'fast' );
+		this.ui.iconListItems.show();
 	}
 
 	enqueueCSS( url ) {
@@ -226,11 +248,39 @@ export default class extends Marionette.ItemView {
 		jQuery( '.icon-list-item.selected' ).removeClass( 'selected' );
 	}
 
-	setSelected( event ) {
-		const $iconLi = jQuery( event.target ),
-			$icon = $iconLi.find( 'i' );
+	showAllTabs() {
+		this.ui.tabLi.show();
+	}
+
+	hideAllTabs() {
+		this.ui.tabLi.hide();
+	}
+
+	hideTabByName( name ) {
+		_.each( this.ui.tabLi, ( tab ) => {
+			if ( name === jQuery( tab ).data( 'tab' ) ) {
+				jQuery( tab ).hide();
+			}
+		} );
+	}
+
+	showTabByName( name ) {
+		_.each( this.ui.tabLi, ( tab ) => {
+			if ( name === jQuery( tab ).data( 'tab' ) ) {
+				jQuery( tab ).show();
+			}
+		} );
+	}
+
+	onIconClick( event ) {
+		const $iconLi = 'LI' === event.target.tagName ? jQuery( event.target ) : jQuery( event.target ).parent();
+		this.setSelected( $iconLi );
+	}
+
+	setSelected( $iconLi ) {
 		this.removeSelectedIconClass();
 		$iconLi.addClass( 'selected' );
+		const $icon = $iconLi.find( 'i' );
 		this.cache.value = $icon.data( 'value' );
 	}
 
@@ -250,6 +300,13 @@ export default class extends Marionette.ItemView {
 				$iconLi.show();
 			}
 		} );
+	}
+
+	reset() {
+		this.showAllTabs();
+		this.cache.value = '';
+		this.cache.type = '';
+		this.cache.icons = false;
 	}
 
 	store() {
