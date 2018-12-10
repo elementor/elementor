@@ -27,7 +27,8 @@ module.exports = {
 					browsers: 'last 10 versions'
 				} ),
 				require( 'cssnano' )( {
-					reduceIdents: false
+					reduceIdents: false,
+					zindex: false,
 				} )
 			]
 		},
