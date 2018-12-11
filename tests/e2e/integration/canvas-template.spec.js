@@ -10,7 +10,7 @@ describe( 'Tests if Canvas Template works', () => {
 		cy.get( '#post-title-0' ).click().type( canvasTemplate );
 		cy.get( ':nth-child(7) > .components-panel__body-title > .components-button' )
 			.should( 'be.visible' ).click();
-		cy.get( '#inspector-select-control-0' ).select( 'Elementor Canvas' );
+		cy.get( 'select' ).contains( 'Elementor Canvas' ).parent( 'select' ).select( 'Elementor Canvas' );
 		cy.get( '.editor-default-block-appender__content' ).click();
 		cy.get( '[aria-label="Empty block; start writing or type forward slash to choose a block"]' ).click()
 			.type( 'Text' );
