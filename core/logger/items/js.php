@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class JS extends File {
 
-	const FORMAT = "JS: date [type X times][meta][file::line::column]<br>message";
+	const FORMAT = "JS: date [type X times][meta][file::line::column] message";
 
 	protected $column;
 
