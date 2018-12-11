@@ -93,11 +93,6 @@ class Admin {
 
 			?>
 		</div><!-- /.wrap -->
-		<script>
-			jQuery( function(){
-				jQuery( '.elementor-connect-button' ).elementorConnect();
-			} );
-		</script>
 		<?php
 	}
 
