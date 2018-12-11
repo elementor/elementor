@@ -23,7 +23,6 @@ class Manager extends BaseModule {
 	protected $current_version;
 	protected $updater;
 
-
 	public function get_name() {
 		return 'upgrade';
 	}
@@ -32,7 +31,25 @@ class Manager extends BaseModule {
 		return __( 'Elementor', 'elementor' );
 	}
 
+	public function get_query_limit() {
+		return self::QUERY_LIMIT;
+	}
+
+	public function on_upgrade_handle() {
+		if ( ! did_action( 'elementor/documents/register' ) ) {
+			Plugin::$instance->documents->register_default_types();
+		}
+	}
+
 	public function on_upgrade_complete() {
+		$logger = Plugin::$instance->logger->get_logger();
+
+		$logger->info( 'Update DB completed', [
+			'plugin' => $this->get_plugin_label(),
+			'from' => $this->current_version,
+			'to' => static::VERSION,
+		] );
+
 		Plugin::$instance->files_manager->clear_cache();
 
 		update_option( static::VERSION_OPTION_NAME, static::VERSION );
@@ -174,9 +191,5 @@ class Manager extends BaseModule {
 			wp_safe_redirect( remove_query_arg( [ static::ACTION, '_wpnonce' ] ) );
 			die;
 		}
-	}
-
-	public function get_query_limit() {
-		return self::QUERY_LIMIT;
 	}
 }

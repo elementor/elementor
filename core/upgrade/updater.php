@@ -3,7 +3,6 @@
 namespace Elementor\Core\Upgrade;
 
 use Elementor\Core\Base\Background_Task;
-use Elementor\Plugin;
 
 /**
  * Background Updater
@@ -33,6 +32,12 @@ class Updater extends Background_Task {
 
 	public function get_limit() {
 		return $this->manager->get_query_limit();
+	}
+
+	protected function handle() {
+		$this->manager->on_upgrade_handle();
+
+		parent::handle();
 	}
 
 	/**

@@ -164,11 +164,12 @@ abstract class Background_Task extends \WP_Background_Process {
 		}
 
 		$logger = Plugin::$instance->logger->get_logger();
+		$callback = implode( '::', (array) $item['callback'] );
 
 		if ( is_callable( $item['callback'] ) ) {
 			$this->current_item = $item;
 
-			$logger->info( sprintf( 'Running %s callback', $item['callback'] ), [
+			$logger->info( sprintf( 'Running %s callback', $callback ), [
 				'iterate_num' => $item['iterate_num'],
 			] );
 
@@ -177,16 +178,16 @@ abstract class Background_Task extends \WP_Background_Process {
 			$this->current_item = null;
 
 			if ( $result ) {
-				$logger->info( sprintf( '%s callback needs to run again', $item['callback'] ), [
+				$logger->info( sprintf( '%s callback needs to run again', $callback ), [
 					'iterate_num' => $item['iterate_num'],
 				] );
 
 				$item['iterate_num']++;
 			} else {
-				$logger->info( sprintf( 'Finished running %s callback', $item['callback'] ) );
+				$logger->info( sprintf( 'Finished running %s callback', $callback ) );
 			}
 		} else {
-			$logger->notice( sprintf( 'Could not find %s callback', $item['callback'] ) );
+			$logger->notice( sprintf( 'Could not find %s callback', $callback ) );
 		}
 
 		return $result ? $item : false;

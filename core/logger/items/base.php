@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Base implements Log_Item_Interface {
+class Base implements Log_Item_Interface {
 
 	const FORMAT = 'date [type] message [meta]';
 
@@ -17,6 +17,10 @@ abstract class Base implements Log_Item_Interface {
 
 	protected $times = 0;
 	protected $times_dates = [];
+
+	public function get_name() {
+		return 'log';
+	}
 
 	public function __construct( $args ) {
 		$this->date = current_time( 'mysql' );
