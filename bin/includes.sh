@@ -17,15 +17,6 @@ error_message() {
 }
 
 ##
-# Add warning message formatting to a string, and echo it.
-#
-# @param {string} message The string to add formatting to.
-##
-warning_message() {
-	echo -en "\033[33mWARNING\033[0m: $1"
-}
-
-##
 # Add status message formatting to a string, and echo it.
 #
 # @param {string} message The string to add formatting to.
