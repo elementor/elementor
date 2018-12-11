@@ -6,7 +6,7 @@
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
-		"test:phpunit": "docker-compose run --rm wordpress_phpunit phpunit"
+		"test:php": "docker-compose run --rm wordpress_phpunit phpunit"
 	},
 	"devDependencies": {
 		"autoprefixer": "~8.5.0",
