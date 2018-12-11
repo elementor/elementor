@@ -25,19 +25,16 @@ class Log_Reporter extends Base_Reporter {
 	}
 
 	public function get_log_entries() {
+
+		$log_string = 'No entries to display';
+
 		/** @var \Elementor\Core\Logger\Manager $manager */
 		$manager = Manager::instance();
 		$logger = $manager->get_logger();
-		$log = $logger->get_log();
+		$log_entries = $logger->get_formatted_log_entries();
 
-		if ( empty( $log ) ) {
-			$log_string = 'No entries to display';
-		} else {
-			$log_string = '<br>';
-
-			foreach ( $log as $index => $item ) {
-				$log_string .= $item->format() . '<br>';
-			}
+		if ( ! empty( $log_entries ) ) {
+			$log_string = '<br>' . implode( '<br>', $log_entries );
 		}
 
 		return [

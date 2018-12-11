@@ -37,4 +37,9 @@ interface Log_Item_Interface {
 	 * @param Log_Item_Interface $item
 	 */
 	public function increase_times( $item );
+
+	/**
+	 * @return string
+	 */
+	public function get_name();
 }

@@ -6,14 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Base implements Log_Item_Interface {
+abstract class Base implements Log_Item_Interface {
 
-	const FORMAT = ':date [:type] :message';
+	const FORMAT = 'date [type] message [meta]';
 
 	protected $date;
 	protected $type;
 	protected $message;
-	protected $meta = [];
+	protected $meta = '';
 
 	protected $times = 0;
 	protected $times_dates = [];
@@ -22,7 +22,7 @@ class Base implements Log_Item_Interface {
 		$this->date = current_time( 'mysql' );
 		$this->message = $args['message'];
 		$this->type = $args['type'];
-		$this->meta = empty( $args['meta'] ) ? [] : $args['meta'];
+		$this->meta = empty( $args['meta'] ) ? '' : print_r( $args['meta'], true );
 	}
 
 	public function __get( $name ) {

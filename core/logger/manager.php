@@ -19,33 +19,12 @@ class Manager extends BaseModule {
 
 	const REPORT_NAME = 'new_log';
 
-	static private $error_map;
-
 	public function __construct() {
 
-		self::$error_map = [
-			E_CORE_ERROR => Logger_Interface::LEVEL_ERROR,
-			E_ERROR => Logger_Interface::LEVEL_ERROR,
-			E_USER_ERROR => Logger_Interface::LEVEL_ERROR,
-			E_COMPILE_ERROR => Logger_Interface::LEVEL_ERROR,
-			E_RECOVERABLE_ERROR => Logger_Interface::LEVEL_ERROR,
-			E_PARSE => Logger_Interface::LEVEL_ERROR,
-			E_STRICT => Logger_Interface::LEVEL_ERROR,
-
-			E_WARNING => Logger_Interface::LEVEL_WARNING,
-			E_USER_WARNING => Logger_Interface::LEVEL_WARNING,
-			E_CORE_WARNING => Logger_Interface::LEVEL_WARNING,
-			E_COMPILE_WARNING => Logger_Interface::LEVEL_WARNING,
-
-			E_NOTICE => Logger_Interface::LEVEL_NOTICE,
-			E_USER_NOTICE => Logger_Interface::LEVEL_NOTICE,
-			E_DEPRECATED => Logger_Interface::LEVEL_NOTICE,
-			E_USER_DEPRECATED => Logger_Interface::LEVEL_NOTICE,
-		];
-
 		$this->register_logger( 'options', 'Elementor\Core\Logger\Loggers\Options' );
+		$this->register_logger( 'uploads', 'Elementor\Core\Logger\Loggers\Uploads' );
 
-		$this->set_default_logger( 'options' );
+		$this->set_default_logger( 'uploads' );
 
 		register_shutdown_function( [ $this, 'shutdown' ] );
 
@@ -102,7 +81,27 @@ class Manager extends BaseModule {
 	}
 
 	private function get_log_level_from_php_error( $type ) {
-		return isset( self::$error_map[ $type ] ) ? self::$error_map[ $type ] : Logger_Interface::LEVEL_ERROR;
+		$error_map = [
+			E_CORE_ERROR => Logger_Interface::LEVEL_ERROR,
+			E_ERROR => Logger_Interface::LEVEL_ERROR,
+			E_USER_ERROR => Logger_Interface::LEVEL_ERROR,
+			E_COMPILE_ERROR => Logger_Interface::LEVEL_ERROR,
+			E_RECOVERABLE_ERROR => Logger_Interface::LEVEL_ERROR,
+			E_PARSE => Logger_Interface::LEVEL_ERROR,
+			E_STRICT => Logger_Interface::LEVEL_ERROR,
+
+			E_WARNING => Logger_Interface::LEVEL_WARNING,
+			E_USER_WARNING => Logger_Interface::LEVEL_WARNING,
+			E_CORE_WARNING => Logger_Interface::LEVEL_WARNING,
+			E_COMPILE_WARNING => Logger_Interface::LEVEL_WARNING,
+
+			E_NOTICE => Logger_Interface::LEVEL_NOTICE,
+			E_USER_NOTICE => Logger_Interface::LEVEL_NOTICE,
+			E_DEPRECATED => Logger_Interface::LEVEL_NOTICE,
+			E_USER_DEPRECATED => Logger_Interface::LEVEL_NOTICE,
+		];
+
+		return isset( $error_map[ $type ] ) ? $error_map[ $type ] : Logger_Interface::LEVEL_ERROR;
 	}
 
 	private function add_system_info_report() {

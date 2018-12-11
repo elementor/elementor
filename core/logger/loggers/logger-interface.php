@@ -54,6 +54,6 @@ interface Logger_Interface {
 	/**
 	 * @return Log_Item[]
 	 */
-	public function get_log();
+	public function get_formatted_log_entries();
 
 }
