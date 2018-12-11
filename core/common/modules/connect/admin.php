@@ -71,8 +71,6 @@ class Admin {
 	 * @access public
 	 */
 	public function render_page() {
-		wp_enqueue_script( 'elementor-connect' );
-
 		$apps = Plugin::$instance->common->get_component( 'connect' )->get_apps();
 		?>
 		<style>

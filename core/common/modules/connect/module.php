@@ -61,18 +61,6 @@ class Module extends BaseModule {
 
 		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
 		add_action( 'elementor/init', [ $this, 'init' ], 11 );
-
-		wp_register_script(
-			'elementor-connect',
-			$this->get_js_assets_url( 'connect', '/core/common/modules/connect/assets/js/' ),
-			[
-				'jquery',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_add_inline_script( 'elementor-connect', 'jQuery( \'.elementor-connect-popup\' ).elementorConnect();' );
 	}
 
 	/**
