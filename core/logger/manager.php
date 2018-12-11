@@ -24,7 +24,7 @@ class Manager extends BaseModule {
 		$this->register_logger( 'options', 'Elementor\Core\Logger\Loggers\Options' );
 		$this->register_logger( 'uploads', 'Elementor\Core\Logger\Loggers\Uploads' );
 
-		$this->set_default_logger( 'uploads' );
+		$this->set_default_logger( 'options' );
 
 		register_shutdown_function( [ $this, 'shutdown' ] );
 
