@@ -3,6 +3,11 @@
 # credit: "https://github.com/WordPress/gutenberg"
 # under GPL license
 
+##
+# Tests if running on windows
+#
+# @return {bool} If running on windows
+##
 is_windows() {
 	command_exists "systeminfo"
 }
