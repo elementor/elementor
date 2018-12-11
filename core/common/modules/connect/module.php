@@ -71,6 +71,8 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_add_inline_script( 'elementor-connect', 'jQuery( \'.elementor-connect-popup\' ).elementorConnect();' );
 	}
 
 	/**
