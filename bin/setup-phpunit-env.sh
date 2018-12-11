@@ -47,4 +47,4 @@ docker-compose ${DOCKER_COMPOSE_FILE_OPTIONS} run --rm wordpress_phpunit dockeri
 
 # Finished Installing!
 echo -e "\nTests environment is up!\n"
-echo -e "Run $(action_format "npm run test:phpunit") to run phpunit tests."
+echo -e "Run $(action_format "npm run test:php") to run phpunit tests."
