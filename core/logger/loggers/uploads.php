@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Uploads extends Base {
 	const LOGFILE_TYPE = '.log';
 	const ELEMENTOR_LOG_DIR = '/elementor/logs/';
-	const LOGFILE_MAX_SIZE = 1024 * 32; //32k
+	const LOGFILE_MAX_SIZE = 32768; //32k
 
 	private $file_handle;
 	private $file_name;

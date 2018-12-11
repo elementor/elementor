@@ -53,6 +53,7 @@ interface Logger_Interface {
 	public function error( $message, $meta = [] );
 
 	/**
+	 * @param int $max_entries
 	 * @param bool $table use <td> in format
 	 *
 	 * @return Log_Item[]
