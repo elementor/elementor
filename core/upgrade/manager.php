@@ -28,6 +28,10 @@ class Manager extends BaseModule {
 		return 'upgrade';
 	}
 
+	public function get_plugin_label() {
+		return __( 'Elementor', 'elementor' );
+	}
+
 	public function on_upgrade_complete() {
 		Plugin::$instance->files_manager->clear_cache();
 
@@ -38,15 +42,15 @@ class Manager extends BaseModule {
 
 	public function admin_notice_start_upgrade() {
 		$upgrade_link = wp_nonce_url( add_query_arg( static::ACTION, 'run', self_admin_url() ), static::ACTION . 'run' );
-		$message = '<p>' . __( 'Elementor needs upgrade the Database.', 'elementor' ) . '</p>';
-		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Update Elementor Database Now', 'elementor' ) ) . '</p>';
+		$message = '<p>' . sprintf( __( '%s needs upgrade the Database.', 'elementor' ), $this->get_plugin_label() ) . '</p>';
+		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Update Now', 'elementor' ) ) . '</p>';
 
 		echo '<div class="notice notice-error">' . $message . '</div>';
 	}
 
 	public function admin_notice_upgrade_is_running() {
 		$upgrade_link = wp_nonce_url( add_query_arg( static::ACTION, 'continue', self_admin_url() ), static::ACTION . 'continue' );
-		$message = '<p>' . __( 'Elementor is updating the database in background.', 'elementor' ) . '</p>';
+		$message = '<p>' . sprintf( __( '%s is updating the database in background..', 'elementor' ), $this->get_plugin_label() ) . '</p>';
 		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Run immediately', 'elementor' ) ) . '</p>';
 
 		echo '<div class="notice notice-warning">' . $message . '</div>';
@@ -55,7 +59,7 @@ class Manager extends BaseModule {
 	public function admin_notice_upgrade_is_completed() {
 		$this->delete_flag( 'completed' );
 
-		$message = '<p>' . __( 'Elementor has been update the database. Enjoy!', 'elementor' ) . '</p>';
+		$message = '<p>' . sprintf( __( '%s has been update the database. Enjoy!', 'elementor' ), $this->get_plugin_label() ) . '</p>';
 
 		echo '<div class="notice notice-success">' . $message . '</div>';
 	}
@@ -170,5 +174,9 @@ class Manager extends BaseModule {
 			wp_safe_redirect( remove_query_arg( [ static::ACTION, '_wpnonce' ] ) );
 			die;
 		}
+	}
+
+	public function get_query_limit() {
+		return self::QUERY_LIMIT;
 	}
 }

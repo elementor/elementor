@@ -12,9 +12,6 @@ use Elementor\Plugin;
 
 defined( 'ABSPATH' ) || exit;
 
-/**
- * WC_Background_Updater Class.
- */
 class Updater extends Background_Task {
 
 	/**
@@ -24,8 +21,18 @@ class Updater extends Background_Task {
 
 	public function __construct( $manager ) {
 		$this->manager = $manager;
+		$this->action = $manager::ACTION;
 
 		parent::__construct();
+	}
+
+	public function get_current_offset() {
+		$limit = $this->get_limit();
+		return $this->current_item['iterate_num'] * $limit;
+	}
+
+	public function get_limit() {
+		return $this->manager->get_query_limit();
 	}
 
 	/**

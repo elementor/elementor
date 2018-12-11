@@ -2,6 +2,8 @@
 
 namespace Elementor\Core\Base;
 
+use Elementor\Plugin;
+
 /**
  * Based on https://github.com/woocommerce/woocommerce/blob/master/includes/abstracts/class-wc-background-process.php to handle DB
  * updates in the background.
@@ -30,6 +32,13 @@ abstract class Background_Task extends \WP_Background_Process {
 		if ( is_wp_error( $dispatched ) ) {
 			wp_die( $dispatched );
 		}
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function get_current_item() {
+		return $this->current_item;
 	}
 
 	/**
@@ -145,7 +154,6 @@ abstract class Background_Task extends \WP_Background_Process {
 	 * in the next pass through. Or, return false to remove the
 	 * item from the queue.
 	 *
-	 * @param string $callback Update callback function.
 	 * @return string|bool
 	 */
 	protected function task( $item ) {
@@ -155,14 +163,30 @@ abstract class Background_Task extends \WP_Background_Process {
 			$item['iterate_num'] = 0;
 		}
 
+		$logger = Plugin::$instance->logger->get_logger();
+
 		if ( is_callable( $item['callback'] ) ) {
 			$this->current_item = $item;
+
+			$logger->info( sprintf( 'Running %s callback', $item['callback'] ), [
+				'iterate_num' => $item['iterate_num'],
+			] );
+
 			$result = (bool) call_user_func( $item['callback'], $this );
+
 			$this->current_item = null;
 
 			if ( $result ) {
+				$logger->info( sprintf( '%s callback needs to run again', $item['callback'] ), [
+					'iterate_num' => $item['iterate_num'],
+				] );
+
 				$item['iterate_num']++;
+			} else {
+				$logger->info( sprintf( 'Finished running %s callback', $item['callback'] ) );
 			}
+		} else {
+			$logger->notice( sprintf( 'Could not find %s callback', $item['callback'] ) );
 		}
 
 		return $result ? $item : false;
@@ -176,10 +200,6 @@ abstract class Background_Task extends \WP_Background_Process {
 	 */
 	public function schedule_cron_healthcheck( $schedules ) {
 		$interval = apply_filters( $this->identifier . '_cron_interval', 5 );
-
-		if ( property_exists( $this, 'cron_interval' ) ) {
-			$interval = apply_filters( $this->identifier . '_cron_interval', $this->cron_interval );
-		}
 
 		// Adds every 5 minutes to the existing schedules.
 		$schedules[ $this->identifier . '_cron_interval' ] = array(
@@ -238,7 +258,6 @@ abstract class Background_Task extends \WP_Background_Process {
 	public function __construct() {
 		// Uses unique prefix per blog so each blog has separate queue.
 		$this->prefix = 'wp_' . get_current_blog_id();
-		$this->action = static::ACTION;
 
 		if ( empty( $this->action ) ) {
 			_doing_it_wrong( __METHOD__, 'static::ACTION must be set.', ELEMENTOR_VERSION );
