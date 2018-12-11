@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class File extends Base {
 
-	const FORMAT = 'File :date [:type] :message :file::line';
+	const FORMAT = 'File: date [type] message [meta][file::line] X times';
 
 	protected $file;
 	protected $line;
@@ -18,5 +18,9 @@ class File extends Base {
 
 		$this->file = $args['file'];
 		$this->line = $args['line'];
+	}
+
+	public function get_name() {
+		return 'File';
 	}
 }
