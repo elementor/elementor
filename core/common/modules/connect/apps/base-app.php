@@ -426,8 +426,8 @@ abstract class Base_App {
 	 */
 	protected function disconnect() {
 		if ( $this->is_connected() ) {
-		// Try update the server, but not needed to handle errors.
-		$this->request( 'disconnect' );
+			// Try update the server, but not needed to handle errors.
+			$this->request( 'disconnect' );
 		}
 
 		$this->delete();
