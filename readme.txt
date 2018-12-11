@@ -220,6 +220,14 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.3.5 - 2018-12-11 =
+* Tweak: Load `elementor_debug_log` option only on System Info page
+* Fix: Maintenance Mode admin console issue
+* Fix: Elementor stuck on loader instead of `The Content Area Was Not Found`
+* Fix: Temporary compatibility workaround for Chrome v70+ dragging above nested iframe issue
+* Fix: `border-radius` for Video not displayed in Safari browser
+* Fix: Avoid `z-index` changes by `nanocss` in build process
+
 = 2.3.4 - 2018-11-29 =
 * Tweak: Make sure "Edit with Elementor" action link is the last link in My Templates
 * Fix: CSS parsing for non-existing controls ([#6296](https://github.com/pojome/elementor/issues/6296))

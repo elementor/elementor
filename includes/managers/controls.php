@@ -869,14 +869,13 @@ class Controls_Manager {
 	 * @access public
 	 *
 	 * @param Controls_Stack $controls_stack.
-	 * @param string $tab The panel tab.
 	 */
-	public function add_custom_css_controls( Controls_Stack $controls_stack, $tab = self::TAB_ADVANCED ) {
+	public function add_custom_css_controls( Controls_Stack $controls_stack ) {
 		$controls_stack->start_controls_section(
 			'section_custom_css_pro',
 			[
 				'label' => __( 'Custom CSS', 'elementor' ),
-				'tab' => $tab,
+				'tab' => self::TAB_ADVANCED,
 			]
 		);
 
