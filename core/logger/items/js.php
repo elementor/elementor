@@ -7,7 +7,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class JS extends File {
-	const FORMAT = 'JS: date [type] message [meta][file::line] X times';
+
+	const FORMAT = "JS: date [type X times][meta][file::line::column]<br>message";
+
+	protected $column;
+
+	public function __construct( $args ) {
+		parent::__construct( $args );
+		$this->column = $args['column'];
+		$this->file = $args['url'];
+		$this->date = date( 'Y-m-d H:i:s', $args['timestamp'] );
+	}
 
 	public function get_name() {
 		return 'JS';

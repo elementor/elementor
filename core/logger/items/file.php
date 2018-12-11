@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class File extends Base {
 
-	const FORMAT = 'File: date [type] message [meta][file::line] X times';
+	const FORMAT = "date [type X times][meta][file::line] message";
 
 	protected $file;
 	protected $line;
@@ -16,7 +16,7 @@ class File extends Base {
 	public function __construct( $args ) {
 		parent::__construct( $args );
 
-		$this->file = $args['file'];
+		$this->file = empty( $args['file'] ) ? '' : $args['file'];
 		$this->line = $args['line'];
 	}
 

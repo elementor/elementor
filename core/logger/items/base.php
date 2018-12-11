@@ -6,14 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Base implements Log_Item_Interface {
+class Base implements Log_Item_Interface {
 
-	const FORMAT = 'date [type] message [meta]';
+	const FORMAT = 'date [type X times][meta] message';
 
 	protected $date;
 	protected $type;
 	protected $message;
-	protected $meta = '';
+	protected $meta = [];
 
 	protected $times = 0;
 	protected $times_dates = [];
@@ -22,7 +22,7 @@ abstract class Base implements Log_Item_Interface {
 		$this->date = current_time( 'mysql' );
 		$this->message = $args['message'];
 		$this->type = $args['type'];
-		$this->meta = empty( $args['meta'] ) ? '' : print_r( $args['meta'], true );
+		$this->meta = empty( $args['meta'] ) ? [] : $args['meta'];
 	}
 
 	public function __get( $name ) {
@@ -34,7 +34,9 @@ abstract class Base implements Log_Item_Interface {
 	}
 
 	public function __toString() {
-		return strtr( static::FORMAT, get_object_vars( $this ) );
+		$vars = get_object_vars( $this );
+		$vars['meta'] = empty( $vars['meta'] ) ? 'No meta' : print_r( $vars['meta'], true );
+		return strtr( static::FORMAT, $vars );
 	}
 
 	public function get_fingerprint() {
@@ -50,5 +52,9 @@ abstract class Base implements Log_Item_Interface {
 
 	public function format() {
 		return $this->__toString();
+	}
+
+	public function get_name() {
+		return 'Base';
 	}
 }
