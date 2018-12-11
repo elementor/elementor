@@ -4,12 +4,14 @@ services:
 
   mysql:
     image: mysql:5.7
+    ports:
+      - 3308:3306
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: wordpress_test
 
   wordpress_phpunit:
-    image: omribarzik/phpunit-local
+    image: pojome/phpunit-local
     environment:
       PHPUNIT_DB_HOST: mysql
     volumes:
