@@ -1,6 +1,4 @@
-var ViewModule = require( '../../utils/view-module' );
-
-module.exports = ViewModule.extend( {
+module.exports = elementorModules.ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			isInserted: false,

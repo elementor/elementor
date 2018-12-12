@@ -30,21 +30,6 @@ ElementsHandler = function( $ ) {
 		} );
 	};
 
-	var runElementsHandlers = function() {
-		var $elements;
-
-		if ( elementorFrontend.isEditMode() ) {
-			// Elements outside from the Preview
-			$elements = jQuery( '.elementor-element', '.elementor:not(.elementor-edit-mode)' );
-		} else {
-			$elements = $( '.elementor-element' );
-		}
-
-		$elements.each( function() {
-			self.runReadyTrigger( $( this ) );
-		} );
-	};
-
 	var init = function() {
 		if ( ! elementorFrontend.isEditMode() ) {
 			self.initHandlers();
@@ -55,8 +40,6 @@ ElementsHandler = function( $ ) {
 		addGlobalHandlers();
 
 		addElementsHandlers();
-
-		runElementsHandlers();
 	};
 
 	this.getHandlers = function( handlerName ) {

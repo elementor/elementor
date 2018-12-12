@@ -186,8 +186,8 @@ Module.extend = function( properties ) {
 
 	/*
 	 * Constructor ID is used to set an unique ID
-     * to every extend of the Module.
-     *
+	 * to every extend of the Module.
+	 *
 	 * It's useful in some cases such as unique
 	 * listener for frontend handlers.
 	 */

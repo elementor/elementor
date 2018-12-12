@@ -125,7 +125,7 @@ WidgetView = BaseElementView.extend( {
 			htmlContent = self.getHTMLContent( html );
 
 		_.defer( function() {
-			elementorFrontend.getElements( 'window' ).jQuery( self.el ).html( htmlContent );
+			elementorFrontend.elements.window.jQuery( self.el ).html( htmlContent );
 
 			self.bindUIElements(); // Build again the UI elements since the content attached just now
 		} );
