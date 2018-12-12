@@ -9,10 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Uploads extends Base {
-	const LOGFILE_NAME = 'elementor_log';
 	const LOGFILE_TYPE = '.log';
 	const ELEMENTOR_LOG_DIR = '/elementor/logs/';
-	const LOGFILE_MAX_SIZE = 1024 * 32; //32k
+	const LOGFILE_MAX_SIZE = 32768; //32k
 
 	private $file_handle;
 	private $file_name;
@@ -22,7 +21,7 @@ class Uploads extends Base {
 	public function __construct( $filename = '', $log_file_limit = 0 ) {
 		$this->file_size_limit = 0 === $log_file_limit ? self::LOGFILE_MAX_SIZE : $log_file_limit;
 		$this->dir_name = wp_upload_dir()['basedir'] . self::ELEMENTOR_LOG_DIR;
-		$this->file_name = empty( $filename ) ? self::LOGFILE_NAME : $filename;
+		$this->file_name = empty( $filename ) ? self::LOG_NAME : $filename;
 		$this->file_handle = null;
 	}
 
@@ -81,9 +80,16 @@ class Uploads extends Base {
 		fflush( $this->file_handle );
 	}
 
-	public function get_formatted_log_entries() {
+	public function get_formatted_log_entries( $max_entries, $table = true ) {
 		$logname = $this->format_full_path_name();
 		$lines = file( $logname, FILE_IGNORE_NEW_LINES );
-		return $lines;
+		$formatted_lines = [];
+		$open_tag = $table ? '<tr><td>' : '';
+		$close_tab = $table ? '</td></tr>' : '';
+		foreach ( $lines as $line ) {
+			$formatted_lines[] = $open_tag . $line . $close_tab;
+		}
+		$formatted_lines =  array_slice( $formatted_lines, -$max_entries );
+		return [ __( 'All', 'elementor' ) => implode( $formatted_lines ) ];
 	}
 }

@@ -9,6 +9,7 @@ interface Logger_Interface {
 	const LEVEL_NOTICE = 'notice';
 	const LEVEL_WARNING = 'warning';
 	const LEVEL_ERROR = 'error';
+	const LOG_NAME = 'elementor_log';
 
 	/**
 	 * @param string $message
@@ -52,8 +53,11 @@ interface Logger_Interface {
 	public function error( $message, $meta = [] );
 
 	/**
+	 * @param int $max_entries
+	 * @param bool $table use <td> in format
+	 *
 	 * @return Log_Item[]
 	 */
-	public function get_formatted_log_entries();
+	public function get_formatted_log_entries( $max_entries, $table = true );
 
 }

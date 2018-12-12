@@ -4,6 +4,7 @@ namespace Elementor\Core\Logger;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Logger\Items\PHP;
+use Elementor\Core\Logger\Items\JS;
 use Elementor\Core\Logger\Loggers\Logger_Interface;
 use Elementor\System_Info\Main;
 
@@ -26,6 +27,7 @@ class Manager extends BaseModule {
 
 		$this->set_default_logger( 'options' );
 
+		add_action( 'wp_ajax_elementor_debug_log', [ $this, 'debug_log' ] );
 		register_shutdown_function( [ $this, 'shutdown' ] );
 
 		$this->add_system_info_report();
@@ -64,6 +66,28 @@ class Manager extends BaseModule {
 	}
 
 	/**
+	 * Debug log.
+	 *
+	 * Log Elementor errors and save them in the database.
+	 *
+	 * Fired by `wp_ajax_elementor_debug_log` action.
+	 *
+	 */
+	public function debug_log() {
+		if ( empty( $_POST['data'] ) ) {
+			return;
+		}
+
+		foreach ( $_POST['data'] as $error ) {
+			if ( false !== strpos( $error['url'], 'elementor' ) ) {
+				$error['type'] = $this->get_log_level_from_php_error( $error['type'] );
+				$item = new JS( $error );
+				$this->get_logger()->log( $item );
+			}
+		}
+	}
+
+	/**
 	 * @param string $name
 	 *
 	 * @return Logger_Interface
@@ -78,6 +102,13 @@ class Manager extends BaseModule {
 		}
 
 		return $this->instances[ $name ];
+	}
+
+	// TODO: implement as internal functions.
+	public function __call( $name, $arguments ) {
+		if ( in_array( $name, [ 'log', 'info', 'notice', 'warning', 'error' ] ) ) {
+			call_user_func_array( [ $this->get_logger(), $name ], $arguments );
+		}
 	}
 
 	private function get_log_level_from_php_error( $type ) {

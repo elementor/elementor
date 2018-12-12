@@ -10,11 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Options extends Base {
 
-	const OPTION_NAME = 'elementor_log';
-
 	public function save_log( Log_Item $item ) {
 		/** @var Log_Item[] $log */
-		$log = get_option( self::OPTION_NAME, [] );
+		$log = get_option( self::LOG_NAME, [] );
 
 		$id = $item->get_fingerprint();
 
@@ -25,16 +23,25 @@ class Options extends Base {
 		$log[ $id ]->increase_times( $item );
 
 
-		update_option( self::OPTION_NAME, $log, 'no' );
+		update_option( self::LOG_NAME, $log, 'no' );
 	}
 
-	public function get_formatted_log_entries() {
-		$entries = get_option( self::OPTION_NAME, [] );
-		$formatted_entries = [];
+	public function get_formatted_log_entries( $max_entries, $table = true ) {
+		$entries = get_option( self::LOG_NAME, [] );
+
+		$sorted_entries = [];
+		$open_tag = $table ? '<tr><td>' : '';
+		$close_tab = $table ? '</td></tr>' : '';
+
 		foreach ( $entries as $entry ) {
 			/** @var Log_Item $entry */
-//			$formatted_entries[ $entry->get_name() ][] = $entry->format();
-			$formatted_entries[] = $entry->format();
+			$sorted_entries[ $entry->get_name() ][] = $open_tag . $entry->format() . $close_tab;
+		}
+
+		$formatted_entries = [];
+		foreach ( $sorted_entries as $key => $sorted_entry ) {
+			$sorted_entry =  array_slice( $sorted_entry, -$max_entries );
+			$formatted_entries[ $key ] = implode( $sorted_entry );
 		}
 		return $formatted_entries;
 	}

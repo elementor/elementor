@@ -830,6 +830,7 @@ class Widget_Video extends Widget_Base {
 			<?php } ?>
 		</div>
 		<?php
+
 	}
 
 	/**
