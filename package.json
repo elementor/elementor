@@ -7,7 +7,7 @@
 	"homepage": "https://elementor.com/",
 	"scripts": {
 		"lint:js": "eslint .",
-		"lint:php": "if type \"phpcs\" >/dev/null 2>&1; then phpcs -p -s -n . --parallel=32 --standard=./ruleset.xml --extensions=php; fi",
+		"lint:php": "node ./bin/phpcs.js",
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit"
 	},
 	"husky": {
