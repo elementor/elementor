@@ -90,6 +90,10 @@ class Uploads extends Base {
 			$formatted_lines[] = $open_tag . $line . $close_tab;
 		}
 		$formatted_lines =  array_slice( $formatted_lines, -$max_entries );
-		return [ __( 'All', 'elementor' ) => implode( $formatted_lines ) ];
+		return [ __( 'All', 'elementor' ) => [
+			'count' => count( $formatted_lines ),
+			'entries' => implode( $formatted_lines ),
+			],
+		];
 	}
 }

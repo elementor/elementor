@@ -38,7 +38,7 @@ class Log_Reporter extends Base_Reporter {
 		if ( ! empty( $log_entries ) ) {
 			$log_string = '';
 			foreach ( $log_entries as $key => $log_entry ) {
-				$log_string .= '<table><thead><th>' . $key . '</th></thead><tbody>' . $log_entry . '</tbody></table>';
+				$log_string .= '<table><thead><th>' . sprintf( '%s: showing %s of %s', $key, count( $log_entry['entries'] ), $log_entry['count'] ) . '</th></thead><tbody>' . $log_entry['entries'] . '</tbody></table>';
 			}
 		}
 

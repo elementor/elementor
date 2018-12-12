@@ -56,7 +56,7 @@ interface Logger_Interface {
 	 * @param int $max_entries
 	 * @param bool $table use <td> in format
 	 *
-	 * @return Log_Item[]
+	 * @return array [ 'key' => [ 'count' => int, 'entries' => Log_Item[] ] ]
 	 */
 	public function get_formatted_log_entries( $max_entries, $table = true );
 
