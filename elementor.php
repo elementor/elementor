@@ -51,7 +51,7 @@ if ( ! version_compare( PHP_VERSION, '5.4', '>=' ) ) {
 } elseif ( ! version_compare( get_bloginfo( 'version' ), '4.7', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
-	require( ELEMENTOR_PATH . 'includes/plugin.php' );
+	require ELEMENTOR_PATH . 'includes/plugin.php';
 }
 
 /**
