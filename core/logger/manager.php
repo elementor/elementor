@@ -117,14 +117,14 @@ class Manager extends BaseModule {
 	}
 
 	public function trace_log( $message, $level = E_ERROR, $meta = [] ) {
-		$stack = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
+		$stack = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
 		array_shift( $stack ); //remove current function call
 		if ( empty( $stack ) ) {
 			return;
 		}
 		$line = $stack[0]['line'];
 		$file = $stack[0]['file'];
-		$meta['debug_backtrace'] = $stack;
+		$meta['elementor_debug_backtrace'] = $stack;
 		$error = new File( [
 			'message' => $message,
 			'type' => $level,
