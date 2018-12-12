@@ -1,6 +1,4 @@
-var ViewModule = require( '../../utils/view-module' );
-
-module.exports = ViewModule.extend( {
+module.exports = elementorModules.ViewModule.extend( {
 	getDefaultSettings: function() {
 		return {
 			scrollDuration: 500,
@@ -22,26 +20,31 @@ module.exports = ViewModule.extend( {
 	},
 
 	bindEvents: function() {
-		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'selectors.links' ), this.handleAnchorLinks );
+		elementorFrontend.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.handleAnchorLinks );
 	},
 
 	handleAnchorLinks: function( event ) {
 		var clickedLink = event.currentTarget,
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
-			isSameHostname = ( location.hostname === clickedLink.hostname );
+			isSameHostname = ( location.hostname === clickedLink.hostname ),
+			$anchor;
 
 		if ( ! isSameHostname || ! isSamePathname || clickedLink.hash.length < 2 ) {
 			return;
 		}
 
-		var $anchor = jQuery( clickedLink.hash ).filter( this.getSettings( 'selectors.targets' ) );
+		try {
+			$anchor = jQuery( clickedLink.hash ).filter( this.getSettings( 'selectors.targets' ) );
+		} catch ( e ) {
+			return;
+		}
 
 		if ( ! $anchor.length ) {
 			return;
 		}
 
 		var scrollTop = $anchor.offset().top,
-			$wpAdminBar = elementorFrontend.getElements( '$wpAdminBar' ),
+			$wpAdminBar = elementorFrontend.elements.$wpAdminBar,
 			$activeStickies = jQuery( '.elementor-sticky--active' ),
 			maxStickyHeight = 0;
 
@@ -68,7 +71,7 @@ module.exports = ViewModule.extend( {
 	},
 
 	onInit: function() {
-		ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.bindEvents();
 	},

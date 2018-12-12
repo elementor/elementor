@@ -138,15 +138,15 @@ class Preview {
 	 */
 	public function builder_wrapper( $content ) {
 		if ( get_the_ID() === $this->post_id ) {
-			$classes = 'elementor-edit-mode';
-
 			$document = Plugin::$instance->documents->get( $this->post_id );
 
-			if ( $document ) {
-				$classes .= ' ' . $document->get_container_classes();
-			}
+			$attributes = $document->get_container_attributes();
 
-			$content = '<div id="elementor" class="' . $classes . '"></div>';
+			$attributes['id'] = 'elementor';
+
+			$attributes['class'] .= ' elementor-edit-mode';
+
+			$content = '<div ' . Utils::render_html_attributes( $attributes ) . '></div>';
 		}
 
 		return $content;

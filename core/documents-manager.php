@@ -79,7 +79,7 @@ class Documents_Manager {
 	 * @since 2.0.0
 	 * @access protected
 	 *
-	 * @var Document
+	 * @var array
 	 */
 	protected $switched_data = [];
 
