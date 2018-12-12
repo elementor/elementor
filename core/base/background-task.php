@@ -164,13 +164,15 @@ abstract class Background_Task extends \WP_Background_Process {
 		}
 
 		$logger = Plugin::$instance->logger->get_logger();
-		$callback = implode( '::', (array) $item['callback'] );
+		$callback = $this->format_callback_log( $item );
 
 		if ( is_callable( $item['callback'] ) ) {
 			$this->current_item = $item;
 
-			$logger->info( sprintf( 'Running %s callback', $callback ), [
-				'iterate_num' => $item['iterate_num'],
+			$logger->info( sprintf( '%s Start', $callback ), [
+				'meta' => [
+					'iterate_num' => $item['iterate_num'],
+				],
 			] );
 
 			$result = (bool) call_user_func( $item['callback'], $this );
@@ -179,12 +181,14 @@ abstract class Background_Task extends \WP_Background_Process {
 
 			if ( $result ) {
 				$logger->info( sprintf( '%s callback needs to run again', $callback ), [
-					'iterate_num' => $item['iterate_num'],
+					'meta' => [
+						'iterate_num' => $item['iterate_num'],
+					],
 				] );
 
 				$item['iterate_num']++;
 			} else {
-				$logger->info( sprintf( 'Finished running %s callback', $callback ) );
+				$logger->info( sprintf( '%s Finished', $callback ) );
 			}
 		} else {
 			$logger->notice( sprintf( 'Could not find %s callback', $callback ) );
@@ -254,6 +258,10 @@ abstract class Background_Task extends \WP_Background_Process {
 			$this->delete_all_batches();
 			wp_clear_scheduled_hook( $this->cron_hook_identifier );
 		}
+	}
+
+	protected function format_callback_log( $item ) {
+		return implode( '::', (array) $item['callback'] );
 	}
 
 	public function __construct() {

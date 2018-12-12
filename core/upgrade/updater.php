@@ -34,6 +34,10 @@ class Updater extends Background_Task {
 		return $this->manager->get_query_limit();
 	}
 
+	protected function format_callback_log( $item ) {
+		return $this->manager->get_plugin_label() . '/Upgrades - ' . $item['callback'][1];
+	}
+
 	protected function handle() {
 		$this->manager->on_upgrade_handle();
 

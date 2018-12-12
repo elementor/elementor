@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Base implements Log_Item_Interface {
 
-	const FORMAT = 'date [type X times] message [meta]';
+	const FORMAT = 'date [type] message [meta]';
 	const TRACE_LIMIT = 5;
 
 	protected $date;
@@ -21,17 +21,7 @@ class Base implements Log_Item_Interface {
 	protected $args = [];
 
 	public function get_name() {
-		return 'log';
-	}
-
-	public function __construct( $args ) {
-		$this->date = current_time( 'mysql' );
-		$this->message = $args['message'];
-		$this->type = $args['type'];
-		$this->meta = empty( $args['meta'] ) ? [] : $args['meta'];
-		$this->args = $args;
-
-		$this->set_trace();
+		return 'Log';
 	}
 
 	public function __get( $name ) {
@@ -61,10 +51,6 @@ class Base implements Log_Item_Interface {
 		return $this->__toString();
 	}
 
-	public function get_name() {
-		return 'Base';
-	}
-
 	private function set_trace() {
 		if ( ! empty( $this->args['trace'] ) ) {
 			$limit = empty( $this->args['trace_limit'] ) ? self::TRACE_LIMIT : $this->args['trace_limit'];
@@ -77,5 +63,15 @@ class Base implements Log_Item_Interface {
 
 			$this->meta['trace'] = array_slice( $stack, 0, $limit );
 		}
+	}
+
+	public function __construct( $args ) {
+		$this->date = current_time( 'mysql' );
+		$this->message = $args['message'];
+		$this->type = $args['type'];
+		$this->meta = empty( $args['meta'] ) ? [] : $args['meta'];
+		$this->args = $args;
+
+		$this->set_trace();
 	}
 }
