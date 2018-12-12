@@ -5,8 +5,6 @@ namespace Elementor\Core\Logger;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Logger\Items\PHP;
 use Elementor\Core\Logger\Items\JS;
-use Elementor\Core\Logger\Items\File;
-use Elementor\Core\Logger\Items\Base as Log_Item;
 use Elementor\Core\Logger\Loggers\Logger_Interface;
 use Elementor\System_Info\Main;
 
@@ -106,34 +104,11 @@ class Manager extends BaseModule {
 		return $this->instances[ $name ];
 	}
 
-	public function log( $message, $level = E_NOTICE, $meta = [] ) {
-
-		$log_item = new Log_Item( [
-			'message' => $message,
-			'type' => $level,
-			'meta' => $meta,
-		] );
-		$this->get_logger()->log( $log_item );
-	}
-
-	public function trace_log( $message, $level = E_ERROR, $meta = [] ) {
-		$stack = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
-		array_shift( $stack ); //remove current function call
-		if ( empty( $stack ) ) {
-			return;
+	// TODO: implement as internal functions.
+	public function __call( $name, $arguments ) {
+		if ( in_array( $name, [ 'log', 'info', 'notice', 'warning', 'error' ] ) ) {
+			call_user_func_array( [ $this->get_logger(), $name ], $arguments );
 		}
-		$line = $stack[0]['line'];
-		$file = $stack[0]['file'];
-		$meta['elementor_debug_backtrace'] = $stack;
-		$error = new File( [
-			'message' => $message,
-			'type' => $level,
-			'meta' => $meta,
-			'file' => $file,
-			'line' => $line,
-		] );
-
-		$this->get_logger()->log( $error );
 	}
 
 	private function get_log_level_from_php_error( $type ) {
