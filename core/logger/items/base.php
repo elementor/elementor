@@ -7,8 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Base implements Log_Item_Interface {
-
 	const FORMAT = 'date [type X times] message [meta]';
+	const TRACE_FORMAT = 'file(line): class type function()';
 	const TRACE_LIMIT = 5;
 
 	protected $date;
@@ -22,8 +22,8 @@ class Base implements Log_Item_Interface {
 
 	public function __construct( $args ) {
 		$this->date = current_time( 'mysql' );
-		$this->message = $args['message'];
-		$this->type = $args['type'];
+		$this->message = empty( $args['message'] ) ? '' : $args['message'];
+		$this->type = empty( $args['type'] ) ? 'info' : $args['type'];
 		$this->meta = empty( $args['meta'] ) ? [] : $args['meta'];
 		$this->args = $args;
 
@@ -54,11 +54,26 @@ class Base implements Log_Item_Interface {
 	}
 
 	public function format() {
-		return $this->__toString();
+		$trace = $this->format_trace();
+		$copy = clone $this;
+		$copy->meta['trace'] = $trace;
+		return $copy->__toString();
 	}
 
 	public function get_name() {
-		return 'Base';
+		return 'Log';
+	}
+
+	private function format_trace() {
+		$trace = empty( $this->meta['trace'] ) ? '' : $this->meta['trace'];
+
+		$trace_str = '';
+		foreach ( $trace as $key => $trace_line ) {
+			$trace_str .=  PHP_EOL .'#' . $key . ': ' . strtr( self::TRACE_FORMAT, $trace_line );
+			$trace_str .= empty( $trace_line['args'] ) ? '' : var_export( $trace_line['args'] );
+		}
+
+		return $trace_str;
 	}
 
 	private function set_trace() {
