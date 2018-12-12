@@ -1,30 +1,45 @@
-export default class extends elementorModules.Module {
+export default class extends elementorModules.ViewModule {
 	addPopupPlugin() {
-		( function( $ ) {
-			$.fn.elementorConnect = function( options ) {
-				var settings = $.extend( {
-					// These are the defaults.
-					callback: function() {
-						location.reload();
-					},
-				}, options );
+		jQuery.fn.elementorConnect = function( options ) {
+			const settings = jQuery.extend( {
+				// These are the defaults.
+				callback: () => location.reload(),
+			}, options );
 
-				this.attr( 'target', '_blank' );
-				this.attr( 'href', this.attr( 'href' ) + '&mode=popup' );
+			this.attr( {
+				target: '_blank',
+				href: this.attr( 'href' ) + '&mode=popup',
+			} );
 
-				jQuery( window ).on( 'elementorConnected', settings.callback );
+			elementorCommon.elements.$window.on( 'elementorConnected', settings.callback );
 
-				return this;
-			};
-		}( jQuery ) );
+			return this;
+		};
+	}
+
+	getDefaultSettings() {
+		return {
+			selectors: {
+				connectPopup: '.elementor-connect-popup',
+			},
+		};
+	}
+
+	getDefaultElements() {
+		return {
+			$connectPopup: jQuery( this.getSettings( 'selectors.connectPopup' ) ),
+		};
 	}
 
 	applyPopup() {
-		jQuery( '.elementor-connect-popup' ).elementorConnect();
+		this.elements.$connectPopup.elementorConnect();
 	}
 
 	onInit() {
+		super.onInit();
+
 		this.addPopupPlugin();
+
 		this.applyPopup();
 	}
 }
