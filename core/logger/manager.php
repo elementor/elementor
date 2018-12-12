@@ -5,6 +5,8 @@ namespace Elementor\Core\Logger;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Logger\Items\PHP;
 use Elementor\Core\Logger\Items\JS;
+use Elementor\Core\Logger\Items\File;
+use Elementor\Core\Logger\Items\Base as Log_Item;
 use Elementor\Core\Logger\Loggers\Logger_Interface;
 use Elementor\System_Info\Main;
 
@@ -72,8 +74,6 @@ class Manager extends BaseModule {
 	 *
 	 * Fired by `wp_ajax_elementor_debug_log` action.
 	 *
-	 * @since 1.4.0
-	 * @access public
 	 */
 	public function debug_log() {
 		if ( empty( $_POST['data'] ) ) {
@@ -104,6 +104,36 @@ class Manager extends BaseModule {
 		}
 
 		return $this->instances[ $name ];
+	}
+
+	public function log( $message, $level = E_NOTICE, $meta = [] ) {
+
+		$log_item = new Log_Item( [
+			'message' => $message,
+			'type' => $level,
+			'meta' => $meta,
+		] );
+		$this->get_logger()->log( $log_item );
+	}
+
+	public function trace_log( $message, $level = E_ERROR, $meta = [] ) {
+		$stack = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
+		array_shift( $stack ); //remove current function call
+		if ( empty( $stack ) ) {
+			return;
+		}
+		$line = $stack[0]['line'];
+		$file = $stack[0]['file'];
+		$meta['debug_backtrace'] = $stack;
+		$error = new File( [
+			'message' => $message,
+			'type' => $level,
+			'meta' => $meta,
+			'file' => $file,
+			'line' => $line,
+		] );
+
+		$this->get_logger()->log( $error );
 	}
 
 	private function get_log_level_from_php_error( $type ) {

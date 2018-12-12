@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Base implements Log_Item_Interface {
 
-	const FORMAT = 'date [type X times][meta] message';
+	const FORMAT = 'date [type X times] message [meta]';
 
 	protected $date;
 	protected $type;
