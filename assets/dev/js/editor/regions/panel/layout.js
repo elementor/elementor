@@ -28,7 +28,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	currentPageView: null,
 
-	_isScrollbarInitialized: false,
+	perfectScrollbar: null,
 
 	initialize: function() {
 		this.initPages();
@@ -196,16 +196,15 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	updateScrollbar: function() {
-		var $panel = this.content.$el;
-
-		if ( ! this._isScrollbarInitialized ) {
-			$panel.perfectScrollbar();
-			this._isScrollbarInitialized = true;
+		if ( ! this.perfectScrollbar ) {
+			this.perfectScrollbar = new PerfectScrollbar( this.content.el, {
+				suppressScrollX: true,
+			} );
 
 			return;
 		}
 
-		$panel.perfectScrollbar( 'update' );
+		this.perfectScrollbar.update();
 	},
 } );
 
