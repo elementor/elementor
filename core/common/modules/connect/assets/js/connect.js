@@ -1,17 +1,32 @@
-( function( $ ) {
-	$.fn.elementorConnect = function( options ) {
-		var settings = $.extend( {
-			// These are the defaults.
-			callback: function() {
-				location.reload();
-			},
-		}, options );
+const Module = require( 'elementor-utils/module' );
 
-		this.attr( 'target', '_blank' );
-		this.attr( 'href', this.attr( 'href' ) + '&mode=popup' );
+export default class extends Module {
+	addPopupPlugin() {
+		( function( $ ) {
+			$.fn.elementorConnect = function( options ) {
+				var settings = $.extend( {
+					// These are the defaults.
+					callback: function() {
+						location.reload();
+					},
+				}, options );
 
-		jQuery( window ).on( 'elementorConnected', settings.callback );
+				this.attr( 'target', '_blank' );
+				this.attr( 'href', this.attr( 'href' ) + '&mode=popup' );
 
-		return this;
-	};
-}( jQuery ) );
+				jQuery( window ).on( 'elementorConnected', settings.callback );
+
+				return this;
+			};
+		}( jQuery ) );
+	}
+
+	applyPopup() {
+		jQuery( '.elementor-connect-popup' ).elementorConnect();
+	}
+
+	onInit() {
+		this.addPopupPlugin();
+		this.applyPopup();
+	}
+}
