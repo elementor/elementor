@@ -2,6 +2,7 @@ workflows:
   version: 2
   tests:
     jobs:
+    - buildCheck
     - php54-wp-latest-build
     - php54-wp48-build
     - php54-wp47-build
@@ -223,3 +224,28 @@ jobs:
         path: ~/junit
     - store_artifacts:
         path: ~/junit
+
+  buildCheck:
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+        - dependents
+    - run:
+        name: "install dependents"
+        command: yarn
+
+    - run:
+        name: "build project"
+        command: ./node_modules/.bin/grunt
+
+    - save_cache:
+        key: dependents
+        paths:
+        - "node_modules/"
+        - "yarn.lock"
+
+    docker:
+    - image: circleci/node:current-browsers
+
+
