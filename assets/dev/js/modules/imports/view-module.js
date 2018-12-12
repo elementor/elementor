@@ -1,7 +1,6 @@
-var Module = require( './module' ),
-	ViewModule;
+import Module from './module';
 
-ViewModule = Module.extend( {
+module.exports = Module.extend( {
 	elements: null,
 
 	getDefaultElements: function() {
@@ -20,5 +19,3 @@ ViewModule = Module.extend( {
 		this.elements = this.getDefaultElements();
 	},
 } );
-
-module.exports = ViewModule;

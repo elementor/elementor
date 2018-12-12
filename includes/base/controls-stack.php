@@ -461,7 +461,7 @@ abstract class Controls_Stack extends Base_Object {
 			$section_controls = $this->get_section_controls( $control_id );
 
 			foreach ( $section_controls as $section_control_id => $section_control ) {
-				$this->update_control( $section_control_id, $section_args );
+				$this->update_control( $section_control_id, $section_args, $options );
 			}
 		}
 
@@ -1108,7 +1108,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param string $setting_key Optional. The key of the requested setting.
 	 *                            Default is null.
 	 *
-	 * @return array The settings.
+	 * @return mixed The settings.
 	 */
 	public function get_settings_for_display( $setting_key = null ) {
 		if ( ! $this->parsed_active_settings ) {
@@ -1323,9 +1323,9 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access public
 	 *
 	 * @param string $section_id Section ID.
-	 * @param array  $args       Section arguments.
+	 * @param array  $args       Section arguments Optional.
 	 */
-	public function start_controls_section( $section_id, array $args ) {
+	public function start_controls_section( $section_id, array $args = [] ) {
 		$section_name = $this->get_name();
 
 		/**

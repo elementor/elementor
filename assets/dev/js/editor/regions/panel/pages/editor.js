@@ -1,4 +1,4 @@
-var ControlsStack = require( 'elementor-views/controls-stack' ),
+var ControlsStack = elementorModules.editor.views.ControlsStack,
 	EditorView;
 
 EditorView = ControlsStack.extend( {
@@ -27,14 +27,6 @@ EditorView = ControlsStack.extend( {
 
 	scrollToEditedElement: function() {
 		elementor.helpers.scrollToView( this.getOption( 'editedElementView' ).$el );
-	},
-
-	getControlView: function( name ) {
-		return this.children.findByModelCid( this.getControlModel( name ).cid );
-	},
-
-	getControlModel: function( name ) {
-		return this.collection.findWhere( { name: name } );
 	},
 
 	onDestroy: function() {

@@ -1,6 +1,4 @@
-var ControlsStack = require( 'elementor-views/controls-stack' );
-
-module.exports = ControlsStack.extend( {
+module.exports = elementorModules.editor.views.ControlsStack.extend( {
 	id: function() {
 		return 'elementor-panel-' + this.getOption( 'name' ) + '-settings';
 	},

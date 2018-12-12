@@ -1,8 +1,6 @@
-var ViewModule = require( 'elementor-utils/view-module' ),
-	SettingsModel = require( 'elementor-elements/models/base-settings' ),
-	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
+var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
 
-module.exports = ViewModule.extend( {
+module.exports = elementorModules.ViewModule.extend( {
 	model: null,
 
 	hasChange: false,
@@ -46,7 +44,7 @@ module.exports = ViewModule.extend( {
 	},
 
 	initModel: function() {
-		this.model = new SettingsModel( this.getSettings( 'settings' ), {
+		this.model = new elementorModules.editor.elements.models.BaseSettings( this.getSettings( 'settings' ), {
 			controls: this.getSettings( 'controls' ),
 		} );
 	},
@@ -116,11 +114,11 @@ module.exports = ViewModule.extend( {
 		}
 
 		var menuItemOptions = {
-				icon: menuSettings.icon,
-				title: this.getSettings( 'panelPage.title' ),
-				type: 'page',
-				pageName: this.getSettings( 'name' ) + '_settings',
-			};
+			icon: menuSettings.icon,
+			title: this.getSettings( 'panelPage.title' ),
+			type: 'page',
+			pageName: this.getSettings( 'name' ) + '_settings',
+		};
 
 		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
 	},
@@ -134,7 +132,7 @@ module.exports = ViewModule.extend( {
 
 		this.debounceSave = _.debounce( this.save, 3000 );
 
-		ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 	},
 
 	onModelChange: function( model ) {
