@@ -1120,12 +1120,12 @@ class Frontend extends App {
 			'<span aria-label="%1$s">%2$s</span>',
 			sprintf(
 				/* translators: %s: Name of current post */
-				__( 'Continue reading %s' ),
+				__( 'Continue reading %s', 'elementor' ),
 				the_title_attribute( [
 					'echo' => false,
 				] )
 			),
-			__( '(more&hellip;)' )
+			__( '(more&hellip;)', 'elementor' )
 		);
 
 		$more_link_text = apply_filters( 'the_content_more_link', sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text ), $more_link_text );
