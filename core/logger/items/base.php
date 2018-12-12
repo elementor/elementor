@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Base implements Log_Item_Interface {
 	const FORMAT = 'date [type X times] message [meta]';
-	const TRACE_FORMAT = 'file(line): class type function()';
+	const TRACE_FORMAT = '#key: file(line): class type function()';
 	const TRACE_LIMIT = 5;
 
 	protected $date;
@@ -55,6 +55,9 @@ class Base implements Log_Item_Interface {
 
 	public function format() {
 		$trace = $this->format_trace();
+		if( empty( $trace ) ) {
+			return $this->__toString();
+		}
 		$copy = clone $this;
 		$copy->meta['trace'] = $trace;
 		return $copy->__toString();
@@ -68,8 +71,13 @@ class Base implements Log_Item_Interface {
 		$trace = empty( $this->meta['trace'] ) ? '' : $this->meta['trace'];
 
 		$trace_str = '';
+		if ( ! is_array( $trace ) ) {
+			return $trace;
+		}
+
 		foreach ( $trace as $key => $trace_line ) {
-			$trace_str .=  PHP_EOL .'#' . $key . ': ' . strtr( self::TRACE_FORMAT, $trace_line );
+			$trace_line['key'] = $key;
+			$trace_str .=  PHP_EOL . strtr( self::TRACE_FORMAT, $trace_line );
 			$trace_str .= empty( $trace_line['args'] ) ? '' : var_export( $trace_line['args'] );
 		}
 
@@ -77,16 +85,18 @@ class Base implements Log_Item_Interface {
 	}
 
 	private function set_trace() {
-		if ( ! empty( $this->args['trace'] ) ) {
+		if ( ! empty( $this->args['trace'] ) && true === $this->args['trace'] ) {
 			$limit = empty( $this->args['trace_limit'] ) ? self::TRACE_LIMIT : $this->args['trace_limit'];
 
 			$stack = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
 
-			while ( ! empty( $stack ) && false !== strpos( $stack[0]['file'], 'core' . DIRECTORY_SEPARATOR . 'logger' ) ) {
+			while ( ! empty( $stack ) && ! empty( $stack[0]['file'] ) && ( false !== strpos( $stack[0]['file'], 'core' . DIRECTORY_SEPARATOR . 'logger' ) ) ) {
 				array_shift( $stack );
 			}
 
 			$this->meta['trace'] = array_slice( $stack, 0, $limit );
+		} else {
+			unset( $this->args['trace'] );
 		}
 	}
 }
