@@ -121,7 +121,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 		$anchor = $this->get_settings_for_display( 'anchor' );
 
 		if ( ! empty( $anchor ) ) {
-			$this->add_render_attribute( 'inner', 'id', $anchor );
+			$this->add_render_attribute( 'inner', 'id', sanitize_key( $anchor ) );
 		}
 
 		$this->add_render_attribute( 'inner', 'class', 'elementor-menu-anchor' );
