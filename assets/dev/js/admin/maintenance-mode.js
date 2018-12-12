@@ -84,7 +84,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	onInit: function() {
-		ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
+
 		elementorCommon.elements.$window.on( 'elementor/admin/init', this.onAdminInit );
 	},
 } );
