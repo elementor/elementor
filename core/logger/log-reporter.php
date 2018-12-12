@@ -14,7 +14,7 @@ use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
  */
 class Log_Reporter extends Base_Reporter {
 
-	const MAX_ENTRIES = 10;
+	const MAX_ENTRIES = 20;
 
 	public function get_title() {
 		return 'Log';
@@ -33,7 +33,7 @@ class Log_Reporter extends Base_Reporter {
 		/** @var \Elementor\Core\Logger\Manager $manager */
 		$manager = Manager::instance();
 		$logger = $manager->get_logger();
-		$log_entries = $logger->get_formatted_log_entries(  self::MAX_ENTRIES, true );
+		$log_entries = $logger->get_formatted_log_entries( self::MAX_ENTRIES, true );
 
 		if ( ! empty( $log_entries ) ) {
 			$log_string = '';

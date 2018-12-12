@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Base implements Log_Item_Interface {
 
 	const FORMAT = 'date [type X times] message [meta]';
+	const TRACE_LIMIT = 5;
 
 	protected $date;
 	protected $type;
@@ -17,12 +18,16 @@ class Base implements Log_Item_Interface {
 
 	protected $times = 0;
 	protected $times_dates = [];
+	protected $args = [];
 
 	public function __construct( $args ) {
 		$this->date = current_time( 'mysql' );
 		$this->message = $args['message'];
 		$this->type = $args['type'];
 		$this->meta = empty( $args['meta'] ) ? [] : $args['meta'];
+		$this->args = $args;
+
+		$this->set_trace();
 	}
 
 	public function __get( $name ) {
@@ -35,14 +40,12 @@ class Base implements Log_Item_Interface {
 
 	public function __toString() {
 		$vars = get_object_vars( $this );
-		$vars['meta'] = empty( $vars['meta'] ) ? 'No meta' : print_r( $vars['meta'], true );
+		$vars['meta'] = empty( $vars['meta'] ) ? '' : var_export( $vars['meta'], true );
 		return strtr( static::FORMAT, $vars );
 	}
 
 	public function get_fingerprint() {
-		$clone = clone $this;
-		$clone->date = '';
-		return md5( $clone );
+		return md5( $this->type . $this->message . var_export( $this->meta, 1 ) );
 	}
 
 	public function increase_times( $item ) {
@@ -56,5 +59,19 @@ class Base implements Log_Item_Interface {
 
 	public function get_name() {
 		return 'Base';
+	}
+
+	private function set_trace() {
+		if ( ! empty( $this->args['trace'] ) ) {
+			$limit = empty( $this->args['trace_limit'] ) ? self::TRACE_LIMIT : $this->args['trace_limit'];
+
+			$stack = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
+
+			while ( ! empty( $stack ) && false !== strpos( $stack[0]['file'], 'core' . DIRECTORY_SEPARATOR . 'logger' ) ) {
+				array_shift( $stack );
+			}
+
+			$this->meta['trace'] = array_slice( $stack, 0, $limit );
+		}
 	}
 }

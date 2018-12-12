@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class PHP extends File {
 
-	const FORMAT = "PHP: date [type X times][file::line] message [meta]";
+	const FORMAT = 'PHP: date [type X times][file::line] message [meta]';
 
 	public function get_name() {
 		return 'PHP';
