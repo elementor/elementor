@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Uploads extends Base {
+class File extends Base {
 	const LOGFILE_TYPE = '.log';
 	const ELEMENTOR_LOG_DIR = '/elementor/logs/';
 	const LOGFILE_MAX_SIZE = 32768; //32k
@@ -82,14 +82,31 @@ class Uploads extends Base {
 
 	public function get_formatted_log_entries( $max_entries, $table = true ) {
 		$logname = $this->format_full_path_name();
+
+		if ( ! file_exists( $logname ) ) {
+			return [
+				__( 'All', 'elementor' ) => [
+					'total_count' => 0,
+					'count' => 0,
+					'entries' => '',
+				],
+			];
+		}
 		$lines = file( $logname, FILE_IGNORE_NEW_LINES );
+
 		$formatted_lines = [];
 		$open_tag = $table ? '<tr><td>' : '';
 		$close_tab = $table ? '</td></tr>' : '';
 		foreach ( $lines as $line ) {
 			$formatted_lines[] = $open_tag . $line . $close_tab;
 		}
+		$total_count = count( $formatted_lines );
 		$formatted_lines =  array_slice( $formatted_lines, -$max_entries );
-		return [ __( 'All', 'elementor' ) => implode( $formatted_lines ) ];
+		return [ __( 'All', 'elementor' ) => [
+			'total_count' => $total_count,
+			'count' => count( $formatted_lines ),
+			'entries' => implode( $formatted_lines ),
+			],
+		];
 	}
 }

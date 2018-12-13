@@ -23,7 +23,7 @@ class Manager extends BaseModule {
 	public function __construct() {
 
 		$this->register_logger( 'options', 'Elementor\Core\Logger\Loggers\Options' );
-		$this->register_logger( 'uploads', 'Elementor\Core\Logger\Loggers\Uploads' );
+		$this->register_logger( 'file', 'Elementor\Core\Logger\Loggers\File' );
 
 		$this->set_default_logger( 'options' );
 
@@ -48,6 +48,7 @@ class Manager extends BaseModule {
 
 		if ( false !== strpos( $last_error['file'], 'elementor' ) ) {
 			$last_error['type'] = $this->get_log_level_from_php_error( $last_error['type'] );
+			$last_error['trace'] = true;
 
 			$item = new PHP( $last_error );
 
@@ -104,11 +105,54 @@ class Manager extends BaseModule {
 		return $this->instances[ $name ];
 	}
 
-	// TODO: implement as internal functions.
-	public function __call( $name, $arguments ) {
-		if ( in_array( $name, [ 'log', 'info', 'notice', 'warning', 'error' ] ) ) {
-			call_user_func_array( [ $this->get_logger(), $name ], $arguments );
-		}
+	/**
+	 * @param string $message
+	 * @param array  $args
+	 *
+	 * @return void
+	 */
+	public function log( $message, $args = [] ) {
+		$this->get_logger()->log( $message, $args );
+	}
+
+	/**
+	 * @param string $message
+	 * @param array $args
+	 *
+	 * @return void
+	 */
+	public function info( $message, $args = [] ) {
+		$this->get_logger()->info( $message, $args );
+	}
+
+	/**
+	 * @param string $message
+	 * @param array $args
+	 *
+	 * @return void
+	 */
+	public function notice( $message, $args = [] ) {
+		$this->get_logger()->notice( $message, $args );
+	}
+
+	/**
+	 * @param string $message
+	 * @param array $args
+	 *
+	 * @return void
+	 */
+	public function warning( $message, $args = [] ) {
+		$this->get_logger()->warning( $message, $args );
+	}
+
+	/**
+	 * @param string $message
+	 * @param array $args
+	 *
+	 * @return void
+	 */
+	public function error( $message, $args = [] ) {
+		$this->get_logger()->error( $message, $args );
 	}
 
 	private function get_log_level_from_php_error( $type ) {

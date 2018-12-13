@@ -17,7 +17,7 @@ class File extends Base {
 		parent::__construct( $args );
 
 		$this->file = empty( $args['file'] ) ? '' : $args['file'];
-		$this->line = $args['line'];
+		$this->line = empty( $args['line'] ) ? '' : $args['line'];
 	}
 
 	public function get_name() {
