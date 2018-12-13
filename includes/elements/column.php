@@ -884,25 +884,30 @@ class Element_Column extends Element_Base {
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
 								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-		if ( $has_background_overlay ) {
-			$this->add_render_attribute( '_background_overlay', 'class', [ 'elementor-background-overlay' ] );
-		}
-
 		$column_wrap_classes = [ 'elementor-column-wrap' ];
+
 		if ( $this->get_children() ) {
 			$column_wrap_classes[] = ' elementor-element-populated';
 		}
-		$this->add_render_attribute( '_inner_wrapper', 'class', $column_wrap_classes );
 
-		$this->add_render_attribute( '_widget_wrapper', 'class', [ 'elementor-widget-wrap' ] );
-
+		$this->add_render_attribute( [
+			'_inner_wrapper' => [
+				'class' => $column_wrap_classes,
+			],
+			'_widget_wrapper' => [
+				'class' => [ 'elementor-widget-wrap' ],
+			],
+			'_background_overlay' => [
+				'class' => [ 'elementor-background-overlay' ],
+			],
+		] );
 		?>
 		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
-			<div <?php echo( $this->get_render_attribute_string( '_inner_wrapper' ) ); ?>>
+			<div <?php echo $this->get_render_attribute_string( '_inner_wrapper' ); ?>>
 			<?php if ( $has_background_overlay ) : ?>
-				<div <?php echo( $this->get_render_attribute_string( '_background_overlay' ) ); ?>></div>
+				<div <?php echo $this->get_render_attribute_string( '_background_overlay' ); ?>></div>
 			<?php endif; ?>
-		<div <?php echo( $this->get_render_attribute_string( '_widget_wrapper' ) ); ?>>
+		<div <?php echo $this->get_render_attribute_string( '_widget_wrapper' ); ?>>
 		<?php
 	}
 
