@@ -77,8 +77,8 @@ class File extends Base {
 			$this->archive_log();
 		}
 
-		$serilized = serialize( $item ) . self::FILE_DELIMITER;
-		file_put_contents( $this->format_full_path_name(), $serilized );
+		$serialized = serialize( $item ) . self::FILE_DELIMITER;
+		file_put_contents( $this->format_full_path_name(), $serialized );
 		fflush( $this->file_handle );
 	}
 
@@ -95,8 +95,8 @@ class File extends Base {
 			];
 		}
 
-		$file_date = file_get_contents( $logname );
-		$lines = explode( self::FILE_DELIMITER, $file_date );
+		$file_data = file_get_contents( $logname );
+		$lines = explode( self::FILE_DELIMITER, $file_data );
 		$items = [];
 		foreach ( $lines as $line ) {
 			if ( ! empty( $line ) ) {
