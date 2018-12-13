@@ -89,8 +89,10 @@ class Uploads extends Base {
 		foreach ( $lines as $line ) {
 			$formatted_lines[] = $open_tag . $line . $close_tab;
 		}
+		$total_count = count( $formatted_lines );
 		$formatted_lines =  array_slice( $formatted_lines, -$max_entries );
 		return [ __( 'All', 'elementor' ) => [
+			'total_count' => $total_count,
 			'count' => count( $formatted_lines ),
 			'entries' => implode( $formatted_lines ),
 			],
