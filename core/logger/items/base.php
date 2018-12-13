@@ -55,7 +55,7 @@ class Base implements Log_Item_Interface {
 	}
 
 	public function get_fingerprint() {
-		return md5( $this->type . $this->message . var_export( $this->meta, 1 ) ); // @codingStandardsIgnoreLine
+		return md5( $this->type . $this->message . var_export( $this->meta, true ) ); // @codingStandardsIgnoreLine
 	}
 
 	public function increase_times( $item ) {
@@ -86,24 +86,22 @@ class Base implements Log_Item_Interface {
 
 		$trace_str = '';
 		foreach ( $trace as $key => $trace_line ) {
-			$format = self::TRACE_FORMAT;
+			$format = static::TRACE_FORMAT;
 			$trace_line['key'] = $key;
 			if ( empty( $trace_line['file'] ) ) {
 				$format = str_replace( 'file(line): ', '', $format );
 			}
 
-			$trace_line_str = PHP_EOL . strtr( $format, $trace_line );
-			$trace_line_str .= empty( $trace_line['args'] ) ? '' : var_export( $trace_line['args'] ); // @codingStandardsIgnoreLine
-
-			$trace_str .= $trace_line_str;
+			$trace_str .= PHP_EOL . strtr( $format, $trace_line );
+			$trace_str .= empty( $trace_line['args'] ) ? '' : var_export( $trace_line['args'], true ); // @codingStandardsIgnoreLine
 		}
 
-		return $trace_str;
+		return $trace_str . PHP_EOL;
 	}
 
 	private function set_trace() {
 		if ( ! empty( $this->args['trace'] ) && true === $this->args['trace'] ) {
-			$limit = empty( $this->args['trace_limit'] ) ? self::TRACE_LIMIT : $this->args['trace_limit'];
+			$limit = empty( $this->args['trace_limit'] ) ? static::TRACE_LIMIT : $this->args['trace_limit'];
 
 			$stack = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );// @codingStandardsIgnoreLine
 
