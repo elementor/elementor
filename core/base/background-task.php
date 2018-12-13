@@ -154,13 +154,15 @@ abstract class Background_Task extends \WP_Background_Process {
 	 * in the next pass through. Or, return false to remove the
 	 * item from the queue.
 	 *
-	 * @return string|bool
+	 * @param array $item
+	 *
+	 * @return array|bool
 	 */
 	protected function task( $item ) {
 		$result = false;
 
 		if ( ! isset( $item['iterate_num'] ) ) {
-			$item['iterate_num'] = 0;
+			$item['iterate_num'] = 1;
 		}
 
 		$logger = Plugin::$instance->logger->get_logger();
@@ -169,22 +171,22 @@ abstract class Background_Task extends \WP_Background_Process {
 		if ( is_callable( $item['callback'] ) ) {
 			$this->current_item = $item;
 
-			$logger->info( sprintf( '%s Start', $callback ), [
-				'meta' => [
+			$log_args = [];
+
+			if ( 1 < $item['iterate_num'] ) {
+				$log_args['meta'] = [
 					'iterate_num' => $item['iterate_num'],
-				],
-			] );
+				];
+			}
+
+			$logger->info( sprintf( '%s Start', $callback ), $log_args );
 
 			$result = (bool) call_user_func( $item['callback'], $this );
 
 			$this->current_item = null;
 
 			if ( $result ) {
-				$logger->info( sprintf( '%s callback needs to run again', $callback ), [
-					'meta' => [
-						'iterate_num' => $item['iterate_num'],
-					],
-				] );
+				$logger->info( sprintf( '%s callback needs to run again', $callback ) );
 
 				$item['iterate_num']++;
 			} else {

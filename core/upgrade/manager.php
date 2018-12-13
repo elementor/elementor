@@ -45,9 +45,11 @@ class Manager extends BaseModule {
 		$logger = Plugin::$instance->logger->get_logger();
 
 		$logger->info( 'Update DB completed', [
-			'plugin' => $this->get_plugin_label(),
-			'from' => $this->current_version,
-			'to' => static::VERSION,
+			'meta' => [
+				'plugin' => $this->get_plugin_label(),
+				'from' => $this->current_version,
+				'to' => static::VERSION,
+			],
 		] );
 
 		Plugin::$instance->files_manager->clear_cache();
@@ -58,7 +60,7 @@ class Manager extends BaseModule {
 	}
 
 	public function admin_notice_start_upgrade() {
-		$upgrade_link = wp_nonce_url( add_query_arg( static::ACTION, 'run', self_admin_url() ), static::ACTION . 'run' );
+		$upgrade_link = wp_nonce_url( add_query_arg( static::ACTION, 'run' ), static::ACTION . 'run' );
 		$message = '<p>' . sprintf( __( '%s needs upgrade the Database.', 'elementor' ), $this->get_plugin_label() ) . '</p>';
 		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Update Now', 'elementor' ) ) . '</p>';
 
@@ -66,7 +68,7 @@ class Manager extends BaseModule {
 	}
 
 	public function admin_notice_upgrade_is_running() {
-		$upgrade_link = wp_nonce_url( add_query_arg( static::ACTION, 'continue', self_admin_url() ), static::ACTION . 'continue' );
+		$upgrade_link = wp_nonce_url( add_query_arg( static::ACTION, 'continue' ), static::ACTION . 'continue' );
 		$message = '<p>' . sprintf( __( '%s is updating the database in background..', 'elementor' ), $this->get_plugin_label() ) . '</p>';
 		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Run immediately', 'elementor' ) ) . '</p>';
 
@@ -128,6 +130,14 @@ class Manager extends BaseModule {
 
 		if ( $update_queued ) {
 			$updater->save()->dispatch();
+
+			Plugin::$instance->logger->get_logger()->info( 'Update DB has been queued', [
+				'meta' => [
+					'plugin' => $this->get_plugin_label(),
+					'from' => $this->current_version,
+					'to' => static::VERSION,
+				],
+			] );
 		}
 	}
 
