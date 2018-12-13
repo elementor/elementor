@@ -1023,6 +1023,13 @@ class Widget_Video extends Widget_Base {
 		return $video_params;
 	}
 
+	/**
+	 * @param bool $from_media
+	 *
+	 * @return string
+	 * @since 2.1.0
+	 * @access private
+	 */
 	private function get_hosted_video_url( $from_media ) {
 		$settings = $this->get_settings_for_display();
 
@@ -1047,6 +1054,12 @@ class Widget_Video extends Widget_Base {
 		return $video_url;
 	}
 
+	/**
+	 * @param bool $from_media
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
 	private function render_hosted_video( $from_media ) {
 		$video_params = $this->get_hosted_params();
 
