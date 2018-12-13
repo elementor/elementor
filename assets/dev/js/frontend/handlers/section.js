@@ -116,7 +116,7 @@ var BackgroundVideo = HandlerModule.extend( {
 			},
 		} );
 
-		elementorFrontend.getElements( '$window' ).on( 'resize', self.changeVideoSize );
+		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
@@ -187,7 +187,7 @@ var StretchedSection = HandlerModule.extend( {
 	},
 
 	initStretch: function() {
-		this.stretchElement = new elementorFrontend.modules.StretchElement( {
+		this.stretchElement = new elementorModules.frontend.tools.StretchElement( {
 			element: this.$element,
 			selectors: {
 				container: this.getStretchContainer(),

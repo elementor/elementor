@@ -14,6 +14,10 @@ class Admin {
 
 	public static $url = '';
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function register_admin_menu() {
 		add_submenu_page(
 			Settings::PAGE_ID,
@@ -25,10 +29,18 @@ class Admin {
 		);
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function hide_menu_item() {
 		remove_submenu_page( Settings::PAGE_ID, self::PAGE_ID );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function on_load_page() {
 		if ( isset( $_GET['action'], $_GET['app'] ) ) {
 			$manager = Plugin::$instance->common->get_component( 'connect' );
@@ -54,9 +66,11 @@ class Admin {
 		}
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function render_page() {
-		wp_enqueue_script( 'elementor-connect' );
-
 		$apps = Plugin::$instance->common->get_component( 'connect' )->get_apps();
 		?>
 		<style>
@@ -77,14 +91,13 @@ class Admin {
 
 			?>
 		</div><!-- /.wrap -->
-		<script>
-			jQuery( function(){
-				jQuery( '.elementor-connect-button' ).elementorConnect();
-			} );
-		</script>
 		<?php
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function __construct() {
 		self::$url = admin_url( 'admin.php?page=' . self::PAGE_ID );
 

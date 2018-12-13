@@ -15,6 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Post extends Document {
 
+	/**
+	 * @since 2.0.8
+	 * @access public
+	 * @static
+	 */
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
@@ -23,6 +28,11 @@ class Post extends Document {
 		return $properties;
 	}
 
+	/**
+	 * @since 2.1.2
+	 * @access protected
+	 * @static
+	 */
 	protected static function get_editor_panel_categories() {
 		return Utils::array_inject(
 			parent::get_editor_panel_categories(),
@@ -160,7 +170,7 @@ class Post extends Document {
 
 		$document->end_controls_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $document, Controls_Manager::TAB_STYLE );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $document );
 	}
 
 	/**

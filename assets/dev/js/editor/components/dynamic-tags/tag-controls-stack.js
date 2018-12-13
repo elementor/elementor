@@ -1,7 +1,6 @@
-var ControlsStack = require( 'elementor-views/controls-stack' ),
-	EmptyView = require( 'elementor-dynamic-tags/tag-controls-stack-empty' );
+var EmptyView = require( 'elementor-dynamic-tags/tag-controls-stack-empty' );
 
-module.exports = ControlsStack.extend( {
+module.exports = elementorModules.editor.views.ControlsStack.extend( {
 	activeTab: 'content',
 
 	template: _.noop,
@@ -11,12 +10,6 @@ module.exports = ControlsStack.extend( {
 	isEmpty: function() {
 		// Ignore the section control
 		return this.collection.length < 2;
-	},
-
-	childViewOptions: function() {
-		return {
-			elementSettingsModel: this.model,
-		};
 	},
 
 	onRenderTemplate: function() {

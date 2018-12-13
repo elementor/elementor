@@ -197,7 +197,7 @@ class Source_Remote extends Source_Base {
 		$data['content'] = $this->replace_elements_ids( $data['content'] );
 		$data['content'] = $this->process_export_import_content( $data['content'], 'on_import' );
 
-		$post_id = $_POST['editor_post_id'];
+		$post_id = $args['editor_post_id'];
 		$document = Plugin::$instance->documents->get( $post_id );
 		if ( $document ) {
 			$data['content'] = $document->get_elements_raw_data( $data['content'], true );
@@ -206,6 +206,10 @@ class Source_Remote extends Source_Base {
 		return $data;
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access private
+	 */
 	private function prepare_template( array $template_data ) {
 		$favorite_templates = $this->get_user_meta( 'favorites' );
 

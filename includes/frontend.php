@@ -145,7 +145,7 @@ class Frontend extends App {
 	 *
 	 * Retrieve the module name.
 	 *
-	 * @since  2.3.0
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return string Module name.
@@ -195,6 +195,8 @@ class Frontend extends App {
 	}
 
 	/**
+	 * @since 2.0.12
+	 * @access public
 	 * @param string|array $class
 	 */
 	public function add_body_class( $class ) {
@@ -278,6 +280,14 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_scripts' );
 
 		wp_register_script(
+			'elementor-frontend-modules',
+			ELEMENTOR_ASSETS_URL . 'js/frontend-modules.js',
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-waypoints',
 			$this->get_js_assets_url( 'waypoints', 'assets/lib/waypoints/' ),
 			[
@@ -351,6 +361,7 @@ class Frontend extends App {
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
 			[
+				'elementor-frontend-modules',
 				'elementor-dialog',
 				'elementor-waypoints',
 				'jquery-swiper',
@@ -990,10 +1001,31 @@ class Frontend extends App {
 		}
 	}
 
+	/**
+	 * Has Elementor In Page
+	 *
+	 * Determine whether the current page is using Elementor.
+	 *
+	 * @since 2.0.9
+	 *
+	 * @access public
+	 * @return bool
+	 */
 	public function has_elementor_in_page() {
 		return $this->_has_elementor_in_page;
 	}
 
+	/**
+	 * Get Init Settings
+	 *
+	 * Used to define the default/initial settings of the object. Inheriting classes may implement this method to define
+	 * their own default/initial settings.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @access protected
+	 * @return array
+	 */
 	protected function get_init_settings() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
@@ -1060,6 +1092,18 @@ class Frontend extends App {
 		$this->content_removed_filters = [];
 	}
 
+	/**
+	 * Process More Tag
+	 *
+	 * Respect the native WP (<!--more-->) tag
+	 *
+	 * @access private
+	 * @since 2.0.4
+	 *
+	 * @param $content
+	 *
+	 * @return string
+	 */
 	private function process_more_tag( $content ) {
 		$post = get_post();
 		$content = str_replace( '&lt;!--more--&gt;', '<!--more-->', $content );
@@ -1076,12 +1120,12 @@ class Frontend extends App {
 			'<span aria-label="%1$s">%2$s</span>',
 			sprintf(
 				/* translators: %s: Name of current post */
-				__( 'Continue reading %s' ),
+				__( 'Continue reading %s', 'elementor' ),
 				the_title_attribute( [
 					'echo' => false,
 				] )
 			),
-			__( '(more&hellip;)' )
+			__( '(more&hellip;)', 'elementor' )
 		);
 
 		$more_link_text = apply_filters( 'the_content_more_link', sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text ), $more_link_text );

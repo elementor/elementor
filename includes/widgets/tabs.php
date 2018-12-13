@@ -92,7 +92,7 @@ class Widget_Tabs extends Widget_Base {
 		$repeater->add_control(
 			'tab_title',
 			[
-				'label' => __( 'Title & Content', 'elementor' ),
+				'label' => __( 'Title & Description', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Tab Title', 'elementor' ),
 				'placeholder' => __( 'Tab Title', 'elementor' ),
@@ -341,7 +341,6 @@ class Widget_Tabs extends Widget_Base {
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
 						'data-tab' => $tab_count,
 						'role' => 'tab',
-						'href' => '',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					] );
 					?>
