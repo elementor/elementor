@@ -36,9 +36,15 @@ class Log_Reporter extends Base_Reporter {
 		$log_entries = $logger->get_formatted_log_entries( self::MAX_ENTRIES, true );
 
 		if ( ! empty( $log_entries ) ) {
-			$log_string = '';
+			$entries_string = '';
 			foreach ( $log_entries as $key => $log_entry ) {
-				$log_string .= '<table><thead><th>' . sprintf( '%s: showing %s of %s', $key, $log_entry['count'], $log_entry['total_count'] ) . '</th></thead><tbody>' . $log_entry['entries'] . '</tbody></table>';
+				if ( $log_entry['count'] ) {
+					$entries_string .= '<table><thead><th>' . sprintf( '%s: showing %s of %s', $key, $log_entry['count'], $log_entry['total_count'] ) . '</th></thead><tbody>' . $log_entry['entries'] . '</tbody></table>';
+				}
+			}
+
+			if ( ! empty( $entries_string ) ) {
+				$log_string = $entries_string;
 			}
 		}
 
