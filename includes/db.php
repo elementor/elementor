@@ -217,7 +217,7 @@ class DB {
 	 * When editing the with Elementor the first time, the current page content
 	 * is parsed into Text Editor Widget that contains the original data.
 	 *
-	 * @since 2.3.0
+	 * @since 2.1.0
 	 * @deprecated 2.3.0 Use `$document->convert_to_elementor()` instead
 	 * @access public
 	 *

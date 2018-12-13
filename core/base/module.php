@@ -165,6 +165,8 @@ abstract class Module extends Base_Object {
 	}
 
 	/**
+	 * @since 2.3.0
+	 * @access public
 	 * @return Module[]
 	 */
 	public function get_components() {
@@ -195,6 +197,7 @@ abstract class Module extends Base_Object {
 	/**
 	 * Get assets url.
 	 *
+	 * @since 2.3.0
 	 * @access protected
 	 *
 	 * @param string $file_name
@@ -231,6 +234,7 @@ abstract class Module extends Base_Object {
 	/**
 	 * Get js assets url
 	 *
+	 * @since 2.3.0
 	 * @access protected
 	 *
 	 * @param string $file_name
@@ -246,6 +250,7 @@ abstract class Module extends Base_Object {
 	/**
 	 * Get css assets url
 	 *
+	 * @since 2.3.0
 	 * @access protected
 	 *
 	 * @param string $file_name
@@ -272,6 +277,7 @@ abstract class Module extends Base_Object {
 	/**
 	 * Get assets relative url
 	 *
+	 * @since 2.3.0
 	 * @access protected
 	 *
 	 * @return string

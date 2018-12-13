@@ -21,6 +21,7 @@ class Edit extends Base_Category {
 	/**
 	 * Get title.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return string
@@ -34,6 +35,7 @@ class Edit extends Base_Category {
 	 *
 	 * Determine if the category is dynamic.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return bool
@@ -45,6 +47,7 @@ class Edit extends Base_Category {
 	/**
 	 * Get category items.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @param array $options
@@ -58,8 +61,11 @@ class Edit extends Base_Category {
 
 		$post_types[] = Source_Local::CPT;
 
-		$document_types = Plugin::$instance->documents->get_document_types();
+		$document_types = Plugin::$instance->documents->get_document_types( [
+			'is_editable' => true,
+		] );
 
+		// TODO: Remove on 2.4.0.
 		unset( $document_types['widget'] );
 
 		$recently_edited_query_args = [

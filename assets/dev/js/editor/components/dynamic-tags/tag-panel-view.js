@@ -1,5 +1,4 @@
-var TagControlsStack = require( 'elementor-dynamic-tags/tag-controls-stack' ),
-	SettingsModel = require( 'elementor-elements/models/base-settings' );
+var TagControlsStack = require( 'elementor-dynamic-tags/tag-controls-stack' );
 
 module.exports = Marionette.ItemView.extend( {
 
@@ -96,7 +95,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	initModel: function() {
-		this.model = new SettingsModel( this.getOption( 'settings' ), {
+		this.model = new elementorModules.editor.elements.models.BaseSettings( this.getOption( 'settings' ), {
 			controls: this.getTagConfig().controls,
 		} );
 	},
