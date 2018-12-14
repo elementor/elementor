@@ -679,7 +679,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->_add_render_attributes();
 
 			$this->before_render();
-			echo $content;
+			echo ( apply_filters( "elementor/{$element_type}/render_content", $content, $this ) );
 			$this->after_render();
 
 			$this->enqueue_scripts();
