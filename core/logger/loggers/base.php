@@ -74,7 +74,7 @@ abstract class Base implements Logger_Interface {
 		foreach ( $sorted_entries as $key => $sorted_entry ) {
 			$formatted_entries[ $key ]['total_count'] = count( $sorted_entry );
 			$formatted_entries[ $key ]['count'] = count( $sorted_entry );
-			$sorted_entry =  array_slice( $sorted_entry, -$max_entries );
+			$sorted_entry = array_slice( $sorted_entry, -$max_entries );
 			$formatted_entries[ $key ]['count'] = count( $sorted_entry );
 			$formatted_entries[ $key ]['entries'] = implode( $sorted_entry );
 		}

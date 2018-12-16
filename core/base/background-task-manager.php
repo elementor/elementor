@@ -21,7 +21,7 @@ abstract class Background_Task_Manager extends BaseModule {
 	abstract public function get_task_runner_class();
 	abstract public function get_query_limit();
 
-	abstract protected function run();
+	abstract protected function start_run();
 
 	public function on_runner_start() {
 		$logger = Plugin::$instance->logger->get_logger();
@@ -72,17 +72,19 @@ abstract class Background_Task_Manager extends BaseModule {
 	}
 
 	public function __construct() {
-		if ( ! empty( $_GET[ $this->get_action() ] ) ) {
-			if ( 'run' === $_GET[ $this->get_action() ] && check_admin_referer( $this->get_action() . 'run' ) ) {
-				$this->run();
-			}
-
-			if ( 'continue' === $_GET[ $this->get_action() ] && check_admin_referer( $this->get_action() . 'continue' ) ) {
-				$this->continue_run();
-			}
-
-			wp_safe_redirect( remove_query_arg( [ $this->get_action(), '_wpnonce' ] ) );
-			die;
+		if ( empty( $_GET[ $this->get_action() ] ) ) {
+			return;
 		}
+
+		if ( 'run' === $_GET[ $this->get_action() ] && check_admin_referer( $this->get_action() . 'run' ) ) {
+			$this->start_run();
+		}
+
+		if ( 'continue' === $_GET[ $this->get_action() ] && check_admin_referer( $this->get_action() . 'continue' ) ) {
+			$this->continue_run();
+		}
+
+		wp_safe_redirect( remove_query_arg( [ $this->get_action(), '_wpnonce' ] ) );
+		die;
 	}
 }

@@ -389,7 +389,7 @@ class Plugin {
 	public $logger;
 
 	/**
-	 * @var Core\Upgrade\ManagerDB
+	 * @var Core\Upgrade\Manager
 	 */
 	public $upgrade;
 

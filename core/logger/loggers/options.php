@@ -25,7 +25,6 @@ class Options extends Base {
 
 		$log[ $id ]->increase_times( $item );
 
-
 		update_option( self::LOG_NAME, $log, 'no' );
 	}
 

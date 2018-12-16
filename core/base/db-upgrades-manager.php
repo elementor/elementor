@@ -23,15 +23,6 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		return 100;
 	}
 
-	public function on_runner_start() {
-		// TODO: Register document earlier.
-		if ( ! did_action( 'elementor/documents/register' ) ) {
-			Plugin::$instance->documents->register_default_types();
-		}
-
-		parent::on_runner_start();
-	}
-
 	public function on_runner_complete() {
 		$logger = Plugin::$instance->logger->get_logger();
 
@@ -45,7 +36,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		Plugin::$instance->files_manager->clear_cache();
 
-		update_option( $this->get_version_option_name(), $this->get_new_version() );
+		$this->update_db_version();
 
 		$this->add_flag( 'completed' );
 	}
@@ -75,19 +66,11 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	}
 
 	/**
-	 * Check upgrades.
-	 *
-	 * Checks whether a given Elementor version needs to be upgraded.
-	 *
-	 * If an upgrade required for a specific Elementor version, it will update
-	 * the `elementor_upgrades` option in the database.
-	 *
 	 * @access protected
 	 *
 	 * @throws \ReflectionException
 	 */
-
-	protected function run() {
+	protected function start_run() {
 		$updater = $this->get_task_runner();
 
 		if ( $updater->is_running() ) {
@@ -138,19 +121,8 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		}
 	}
 
-	protected function should_upgrade() {
-		$this->current_version = get_option( $this->get_version_option_name() );
-
-		// It's a new install.
-		if ( ! $this->current_version ) {
-			return false;
-		}
-
-		if ( $this->get_new_version() === $this->current_version ) {
-			return false;
-		}
-
-		return true;
+	protected function update_db_version() {
+		update_option( $this->get_version_option_name(), $this->get_new_version() );
 	}
 
 	public function __construct() {
@@ -162,7 +134,15 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_completed' ] );
 		}
 
-		if ( ! $this->should_upgrade() ) {
+		$this->current_version = get_option( $this->get_version_option_name() );
+
+		// It's a new install.
+		if ( ! $this->current_version ) {
+			$this->update_db_version();
+		}
+
+		// Already upgraded.
+		if ( $this->get_new_version() === $this->current_version ) {
 			return;
 		}
 
