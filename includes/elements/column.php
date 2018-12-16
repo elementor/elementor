@@ -229,8 +229,8 @@ class Element_Column extends Element_Base {
 		];
 
 		$options = [
-			           '' => __( 'Default', 'elementor' ),
-		           ] + array_combine( $possible_tags, $possible_tags );
+			'' => __( 'Default', 'elementor' ),
+		] + array_combine( $possible_tags, $possible_tags );
 
 		$this->add_control(
 			'html_tag',
@@ -882,19 +882,32 @@ class Element_Column extends Element_Base {
 		$settings = $this->get_settings_for_display();
 
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
-		                          in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
+								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-		$column_wrap_class = 'elementor-column-wrap';
+		$column_wrap_classes = [ 'elementor-column-wrap' ];
+
 		if ( $this->get_children() ) {
-			$column_wrap_class .= ' elementor-element-populated';
+			$column_wrap_classes[] = ' elementor-element-populated';
 		}
+
+		$this->add_render_attribute( [
+			'_inner_wrapper' => [
+				'class' => $column_wrap_classes,
+			],
+			'_widget_wrapper' => [
+				'class' => [ 'elementor-widget-wrap' ],
+			],
+			'_background_overlay' => [
+				'class' => [ 'elementor-background-overlay' ],
+			],
+		] );
 		?>
 		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
-		<div class="<?php echo $column_wrap_class; ?>">
-		<?php if ( $has_background_overlay ) : ?>
-			<div class="elementor-background-overlay"></div>
-		<?php endif; ?>
-		<div class="elementor-widget-wrap">
+			<div <?php echo $this->get_render_attribute_string( '_inner_wrapper' ); ?>>
+			<?php if ( $has_background_overlay ) : ?>
+				<div <?php echo $this->get_render_attribute_string( '_background_overlay' ); ?>></div>
+			<?php endif; ?>
+		<div <?php echo $this->get_render_attribute_string( '_widget_wrapper' ); ?>>
 		<?php
 	}
 
@@ -908,8 +921,8 @@ class Element_Column extends Element_Base {
 	 */
 	public function after_render() {
 		?>
-		</div>
-		</div>
+				</div>
+			</div>
 		</<?php echo $this->get_html_tag(); ?>>
 		<?php
 	}
