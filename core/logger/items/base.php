@@ -55,7 +55,12 @@ class Base implements Log_Item_Interface {
 	}
 
 	public function get_fingerprint() {
-		return md5( $this->type . $this->message . var_export( $this->meta, true ) ); // @codingStandardsIgnoreLine
+		$md5_str = $this->type . $this->message . var_export( $this->meta, true ); // @codingStandardsIgnoreLine
+		//info messages should not be aggregated:
+		if ( 'info' === $this->type ) {
+			$md5_str .= $this->date;
+		}
+		return md5( $md5_str );
 	}
 
 	public function increase_times( $item ) {
@@ -67,7 +72,8 @@ class Base implements Log_Item_Interface {
 		$trace = $this->format_trace();
 		if ( empty( $trace ) ) {
 			return $this->to_formatted_string();
-	}
+		}
+
 		$copy = clone $this;
 		$copy->meta['trace'] = $trace;
 		return $copy->to_formatted_string();

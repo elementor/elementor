@@ -12,6 +12,7 @@ class File extends Base {
 	const LOGFILE_TYPE = '.log';
 	const ELEMENTOR_LOG_DIR = '/elementor/logs/';
 	const LOGFILE_MAX_SIZE = 32768; //32k
+	const FILE_DELIMITER = '<!----LOG_ENTRY---->';
 
 	private $file_handle;
 	private $file_name;
@@ -52,7 +53,7 @@ class File extends Base {
 
 	private function should_archive_log() {
 		$fstats = fstat( $this->file_handle );
-		if( $fstats['size'] >= $this->file_size_limit ) {
+		if ( $fstats['size'] >= $this->file_size_limit ) {
 			return true;
 		}
 		return false;
@@ -72,15 +73,16 @@ class File extends Base {
 			return;
 		}
 
-		if( $this->should_archive_log() ){
+		if ( $this->should_archive_log() ) {
 			$this->archive_log();
 		}
 
-		fputs( $this->file_handle, $item . PHP_EOL, strlen( $item . PHP_EOL ) );
+		$serialized = serialize( $item ) . self::FILE_DELIMITER;
+		file_put_contents( $this->format_full_path_name(), $serialized );
 		fflush( $this->file_handle );
 	}
 
-	public function get_formatted_log_entries( $max_entries, $table = true ) {
+	protected function get_log() {
 		$logname = $this->format_full_path_name();
 
 		if ( ! file_exists( $logname ) ) {
@@ -92,21 +94,15 @@ class File extends Base {
 				],
 			];
 		}
-		$lines = file( $logname, FILE_IGNORE_NEW_LINES );
 
-		$formatted_lines = [];
-		$open_tag = $table ? '<tr><td>' : '';
-		$close_tab = $table ? '</td></tr>' : '';
+		$file_data = file_get_contents( $logname );
+		$lines = explode( self::FILE_DELIMITER, $file_data );
+		$items = [];
 		foreach ( $lines as $line ) {
-			$formatted_lines[] = $open_tag . $line . $close_tab;
+			if ( ! empty( $line ) ) {
+				$items[] = unserialize( $line );
+			}
 		}
-		$total_count = count( $formatted_lines );
-		$formatted_lines =  array_slice( $formatted_lines, -$max_entries );
-		return [ __( 'All', 'elementor' ) => [
-			'total_count' => $total_count,
-			'count' => count( $formatted_lines ),
-			'entries' => implode( $formatted_lines ),
-			],
-		];
+		return $items;
 	}
 }
