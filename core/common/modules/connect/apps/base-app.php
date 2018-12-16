@@ -277,6 +277,7 @@ abstract class Base_App {
 		$response = wp_remote_post( $this->get_api_url() . '/' . $action, [
 			'body' => $request_body,
 			'headers' => $headers,
+			'timeout' => 25,
 		] );
 
 		if ( is_wp_error( $response ) ) {
@@ -425,8 +426,10 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	protected function disconnect() {
-		// Try update the server, but not needed to handle errors.
-		$this->request( 'disconnect' );
+		if ( $this->is_connected() ) {
+			// Try update the server, but not needed to handle errors.
+			$this->request( 'disconnect' );
+		}
 
 		$this->delete();
 	}

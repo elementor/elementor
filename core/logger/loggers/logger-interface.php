@@ -1,8 +1,9 @@
 <?php
-
 namespace Elementor\Core\Logger\Loggers;
 
-use \Elementor\Core\Logger\Items\Log_Item_Interface as Log_Item;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 interface Logger_Interface {
 	const LEVEL_INFO = 'info';

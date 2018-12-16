@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Core\Logger\Loggers;
 
 use Elementor\Core\Logger\Items\Base as Log_Item;
@@ -58,7 +57,6 @@ abstract class Base implements Logger_Interface {
 	}
 
 	public function get_formatted_log_entries( $max_entries, $table = true ) {
-
 		$entries = $this->get_log();
 
 		if ( empty( $entries ) ) {

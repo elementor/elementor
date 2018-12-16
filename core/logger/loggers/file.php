@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Core\Logger\Loggers;
 
-use Elementor\Core\Logger\Items\Log_Item_Interface as Log_Item_Interface;
 use Elementor\Core\Logger\Items\Base as Log_Item;
+use Elementor\Core\Logger\Items\Log_Item_Interface as Log_Item_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
