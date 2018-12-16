@@ -106,7 +106,10 @@ class File extends Base {
 		$items = [];
 		foreach ( $lines as $line ) {
 			if ( ! empty( $line ) ) {
-				$items[] = Log_Item::from_json( $line );
+				$item = Log_Item::from_json( $line );
+				if ( null !== $item ) {
+					$items[] = $item;
+				}
 			}
 		}
 		return $items;
