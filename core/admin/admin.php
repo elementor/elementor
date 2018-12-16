@@ -129,6 +129,11 @@ class Admin extends App {
 	 * @param \WP_Post $post The current post object.
 	 */
 	public function print_switch_mode_button( $post ) {
+		// Exit if Gutenberg are active.
+		if ( did_action( 'enqueue_block_editor_assets' ) ) {
+			return;
+		}
+
 		if ( ! User::is_current_user_can_edit( $post->ID ) ) {
 			return;
 		}
