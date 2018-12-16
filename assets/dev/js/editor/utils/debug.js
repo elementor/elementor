@@ -117,7 +117,8 @@ var Debug = function() {
 			url: elementorCommon.config.ajax.url,
 			method: 'POST',
 			data: {
-				action: 'elementor_debug_log',
+				action: 'elementor_js_log',
+				_nonce: elementorCommon.ajax.getSettings( 'nonce' ),
 				data: errorStack,
 			},
 			success: function() {

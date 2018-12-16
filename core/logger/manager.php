@@ -1,12 +1,13 @@
 <?php
-
 namespace Elementor\Core\Logger;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Common\Modules\Ajax\Module;
+use Elementor\Core\Logger\Loggers\Logger_Interface;
 use Elementor\Core\Logger\Items\PHP;
 use Elementor\Core\Logger\Items\JS;
-use Elementor\Core\Logger\Loggers\Logger_Interface;
-use Elementor\System_Info\Main;
+use Elementor\Plugin;
+use Elementor\System_Info\Main as System_Info;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -15,25 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Manager extends BaseModule {
 
 	protected $loggers = [];
-	protected $instances = [];
-	protected $default_logger = 'options';
 
-	const REPORT_NAME = 'new_log';
-
-	public function __construct() {
-
-		$this->register_logger( 'options', 'Elementor\Core\Logger\Loggers\Options' );
-		$this->register_logger( 'file', 'Elementor\Core\Logger\Loggers\File' );
-
-		$this->set_default_logger( 'options' );
-
-		add_action( 'wp_ajax_elementor_debug_log', [ $this, 'debug_log' ] );
-		register_shutdown_function( [ $this, 'shutdown' ] );
-
-		$this->add_system_info_report();
-
-		do_action( 'elementor/log/init' );
-	}
+	protected $default_logger = '';
 
 	public function get_name() {
 		return 'log';
@@ -47,12 +31,55 @@ class Manager extends BaseModule {
 		}
 
 		if ( false !== strpos( $last_error['file'], 'elementor' ) ) {
-			$last_error['type'] = $this->get_log_level_from_php_error( $last_error['type'] );
+			$last_error['type'] = $this->get_log_type_from_php_error( $last_error['type'] );
 			$last_error['trace'] = true;
 
 			$item = new PHP( $last_error );
 
 			$this->get_logger()->log( $item );
+		}
+	}
+
+	public function add_system_info_report() {
+		System_Info::add_report(
+			'log', [
+				'file_name' => __DIR__ . '/log-reporter.php',
+				'class_name' => __NAMESPACE__ . '\Log_Reporter',
+			]
+		);
+	}
+
+	/**
+	 * Javascript log.
+	 *
+	 * Log Elementor errors and save them in the database.
+	 *
+	 * Fired by `wp_ajax_elementor_js_log` action.
+	 *
+	 */
+	public function js_log() {
+		/** @var Module $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		if ( ! $ajax->verify_request_nonce() ) {
+			return;
+		}
+
+		if ( empty( $_POST['data'] ) ) {
+			return;
+		}
+
+		foreach ( $_POST['data'] as $error ) {
+			if ( false !== strpos( $error['url'], 'elementor' ) ) {
+				$error['type'] = $this->get_log_type_from_php_error( $error['type'] );
+
+				if ( ! empty( $error['customFields'] ) ) {
+					$error['meta'] = $error['customFields'];
+				}
+
+				$item = new JS( $error );
+				$this->get_logger()->log( $item );
+			}
 		}
 	}
 
@@ -66,26 +93,10 @@ class Manager extends BaseModule {
 		}
 	}
 
-	/**
-	 * Debug log.
-	 *
-	 * Log Elementor errors and save them in the database.
-	 *
-	 * Fired by `wp_ajax_elementor_debug_log` action.
-	 *
-	 */
-	public function debug_log() {
-		if ( empty( $_POST['data'] ) ) {
-			return;
-		}
-
-		foreach ( $_POST['data'] as $error ) {
-			if ( false !== strpos( $error['url'], 'elementor' ) ) {
-				$error['type'] = $this->get_log_level_from_php_error( $error['type'] );
-				$item = new JS( $error );
-				$this->get_logger()->log( $item );
-			}
-		}
+	public function register_default_loggers() {
+		$this->register_logger( 'options', 'Elementor\Core\Logger\Loggers\Options' );
+		$this->register_logger( 'file', 'Elementor\Core\Logger\Loggers\File' );
+		$this->set_default_logger( 'options' );
 	}
 
 	/**
@@ -94,15 +105,17 @@ class Manager extends BaseModule {
 	 * @return Logger_Interface
 	 */
 	public function get_logger( $name = '' ) {
+		$this->register_loggers();
+
 		if ( empty( $name ) || ! isset( $this->loggers[ $name ] ) ) {
 			$name = $this->default_logger;
 		}
 
-		if ( empty( $this->instances[ $name ] ) ) {
-			$this->instances[ $name ] = new $this->loggers[ $name ]();
+		if ( ! $this->get_component( $name ) ) {
+			$this->add_component( $name, new $this->loggers[ $name ]() );
 		}
 
-		return $this->instances[ $name ];
+		return $this->get_component( $name );
 	}
 
 	/**
@@ -155,7 +168,7 @@ class Manager extends BaseModule {
 		$this->get_logger()->error( $message, $args );
 	}
 
-	private function get_log_level_from_php_error( $type ) {
+	private function get_log_type_from_php_error( $type ) {
 		$error_map = [
 			E_CORE_ERROR => Logger_Interface::LEVEL_ERROR,
 			E_ERROR => Logger_Interface::LEVEL_ERROR,
@@ -179,12 +192,19 @@ class Manager extends BaseModule {
 		return isset( $error_map[ $type ] ) ? $error_map[ $type ] : Logger_Interface::LEVEL_ERROR;
 	}
 
-	private function add_system_info_report() {
-		Main::add_report(
-			self::REPORT_NAME, [
-				'file_name' => __DIR__ . '/log-reporter.php',
-				'class_name' => __NAMESPACE__ . '\Log_Reporter',
-			]
-		);
+	private function register_loggers() {
+		if ( ! did_action( 'elementor/loggers/register' ) ) {
+			do_action( 'elementor/loggers/register', $this );
+		}
+	}
+
+	public function __construct() {
+		register_shutdown_function( [ $this, 'shutdown' ] );
+
+		add_action( 'admin_init', [ $this, 'add_system_info_report' ] );
+
+		add_action( 'wp_ajax_elementor_js_log', [ $this, 'js_log' ] );
+
+		add_action( 'elementor/loggers/register', [ $this, 'register_default_loggers' ] );
 	}
 }

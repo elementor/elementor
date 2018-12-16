@@ -1,8 +1,11 @@
 <?php
-
 namespace Elementor\Core\Logger;
 
 use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 /**
  * Elementor Log reporter.
@@ -51,6 +54,5 @@ class Log_Reporter extends Base_Reporter {
 		return [
 			'value' => $log_string,
 		];
-
 	}
 }

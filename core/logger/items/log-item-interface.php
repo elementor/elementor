@@ -1,6 +1,9 @@
 <?php
-
 namespace Elementor\Core\Logger\Items;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 interface Log_Item_Interface extends \JsonSerializable {
 
