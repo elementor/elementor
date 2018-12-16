@@ -498,8 +498,8 @@ class Element_Section extends Element_Base {
 		];
 
 		$options = [
-			'' => __( 'Default', 'elementor' ),
-		] + array_combine( $possible_tags, $possible_tags );
+			           '' => __( 'Default', 'elementor' ),
+		           ] + array_combine( $possible_tags, $possible_tags );
 
 		$this->add_control(
 			'html_tag',
@@ -665,6 +665,14 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} .elementor-background-overlay',
+			]
+		);
+
 		$this->add_control(
 			'overlay_blend_mode',
 			[
@@ -786,7 +794,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -1391,10 +1399,10 @@ class Element_Section extends Element_Base {
 	protected function _content_template() {
 		?>
 		<# if ( settings.background_video_link ) { #>
-			<div class="elementor-background-video-container elementor-hidden-phone">
-				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted" autoplay loop muted></video>
-			</div>
+		<div class="elementor-background-video-container elementor-hidden-phone">
+			<div class="elementor-background-video-embed"></div>
+			<video class="elementor-background-video-hosted" autoplay loop muted></video>
+		</div>
 		<# } #>
 		<div class="elementor-background-overlay"></div>
 		<div class="elementor-shape elementor-shape-top"></div>
@@ -1418,41 +1426,41 @@ class Element_Section extends Element_Base {
 
 		?>
 		<<?php echo esc_html( $this->get_html_tag() ); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
-			<?php
-			if ( 'video' === $settings['background_background'] ) :
-				if ( $settings['background_video_link'] ) :
-					$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
-					?>
-					<div class="elementor-background-video-container elementor-hidden-phone">
-						<?php if ( $video_properties ) : ?>
-							<div class="elementor-background-video-embed"></div>
-						<?php else : ?>
-							<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
-						<?php endif; ?>
-					</div>
-					<?php
-				endif;
-			endif;
-
-			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
-									  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
-
-			if ( $has_background_overlay ) :
+		<?php
+		if ( 'video' === $settings['background_background'] ) :
+			if ( $settings['background_video_link'] ) :
+				$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
 				?>
-				<div class="elementor-background-overlay"></div>
-				<?php
+				<div class="elementor-background-video-container elementor-hidden-phone">
+					<?php if ( $video_properties ) : ?>
+						<div class="elementor-background-video-embed"></div>
+					<?php else : ?>
+						<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
+					<?php endif; ?>
+				</div>
+			<?php
 			endif;
+		endif;
 
-			if ( $settings['shape_divider_top'] ) {
-				$this->print_shape_divider( 'top' );
-			}
+		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
+		                          in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-			if ( $settings['shape_divider_bottom'] ) {
-				$this->print_shape_divider( 'bottom' );
-			}
+		if ( $has_background_overlay ) :
 			?>
-			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
-				<div class="elementor-row">
+			<div class="elementor-background-overlay"></div>
+		<?php
+		endif;
+
+		if ( $settings['shape_divider_top'] ) {
+			$this->print_shape_divider( 'top' );
+		}
+
+		if ( $settings['shape_divider_bottom'] ) {
+			$this->print_shape_divider( 'bottom' );
+		}
+		?>
+		<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
+		<div class="elementor-row">
 		<?php
 	}
 
@@ -1466,8 +1474,8 @@ class Element_Section extends Element_Base {
 	 */
 	public function after_render() {
 		?>
-				</div>
-			</div>
+		</div>
+		</div>
 		</<?php echo esc_html( $this->get_html_tag() ); ?>>
 		<?php
 	}
