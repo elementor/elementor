@@ -43,6 +43,50 @@ class Base implements Log_Item_Interface {
 		return strtr( static::FORMAT, $vars );
 	}
 
+	public function jsonSerialize() {
+		return [
+			'class' => get_class( $this ),
+			'item' => [
+				'date' => $this->date,
+				'message' => $this->message,
+				'type' => $this->type,
+				'meta' => $this->meta,
+				'times' => $this->times,
+				'times_dates' => $this->times_dates,
+				'args' => $this->args,
+			],
+		];
+	}
+
+	public function deserialize( $properties ) {
+		$this->date = ! empty( $properties['date'] ) && is_string( $properties['date'] ) ? $properties['date'] : '';
+		$this->message = ! empty( $properties['message'] ) && is_string( $properties['message'] ) ? $properties['message'] : '';
+		$this->type = ! empty( $properties['type'] ) && is_string( $properties['type'] ) ? $properties['type'] : '';
+		$this->meta = ! empty( $properties['meta'] ) && is_array( $properties['meta'] ) ? $properties['meta'] : [];
+		$this->times = ! empty( $properties['times'] ) && is_string( $properties['times'] ) ? $properties['times'] : '';
+		$this->times_dates = ! empty( $properties['times_dates'] ) && is_array( $properties['times_dates'] ) ? $properties['times_dates'] : [];
+		$this->args = ! empty( $properties['args'] ) && is_array( $properties['args'] ) ? $properties['args'] : [];
+	}
+
+	/**
+	 * @return Log_Item_Interface | null
+	 */
+	public static function from_json( $str ) {
+		$obj = json_decode( $str, true );
+		if ( ! array_key_exists( 'class', $obj ) ) {
+			return null;
+		}
+		$class = $obj['class'];
+		if ( class_exists( $class ) ) {
+			/** @var Base $item */
+			$item = new $class( $obj['item']['message'] );
+			$item->deserialize( $obj['item'] );
+			return $item;
+		}
+
+		return null;
+	}
+
 	public function to_formatted_string() {
 		$vars = get_object_vars( $this );
 		$format = str_replace( 'message', '<strong>message</strong>', static::FORMAT );
@@ -56,7 +100,7 @@ class Base implements Log_Item_Interface {
 
 	public function get_fingerprint() {
 		$md5_str = $this->type . $this->message . var_export( $this->meta, true ); // @codingStandardsIgnoreLine
-		//info messages should not be aggregated:
+		//info messages are not be aggregated:
 		if ( 'info' === $this->type ) {
 			$md5_str .= $this->date;
 		}
@@ -117,7 +161,9 @@ class Base implements Log_Item_Interface {
 
 			$this->meta['trace'] = array_slice( $stack, 0, $limit );
 		} else {
-			unset( $this->args['trace'] );
+			if ( is_array( $this->args ) ) {
+				unset( $this->args['trace'] );
+			}
 		}
 	}
 

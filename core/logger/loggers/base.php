@@ -61,6 +61,16 @@ abstract class Base implements Logger_Interface {
 
 		$entries = $this->get_log();
 
+		if ( empty( $entries ) ) {
+			return [
+				'All' => [
+					'total_count' => 0,
+					'count' => 0,
+					'entries' => '',
+				],
+			];
+		}
+
 		$sorted_entries = [];
 		$open_tag = $table ? '<tr><td>' : '';
 		$close_tab = $table ? '</td></tr>' : '';
