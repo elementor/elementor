@@ -94,8 +94,7 @@ class Documents_Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
-		add_action( 'elementor/init', [ $this, 'register_default_types' ], 11 );
+		add_action( 'elementor/documents/register', [ $this, 'register_default_types' ], 0 );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_filter( 'post_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
 		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
@@ -135,17 +134,6 @@ class Documents_Manager {
 		foreach ( $default_types as $type => $class ) {
 			$this->register_document_type( $type, $class );
 		}
-
-		/**
-		 * Register Elementor documents.
-		 *
-		 * Fires after Elementor registers the default document types.
-		 *
-		 * @since 2.0.0
-		 *
-		 * @param Documents_Manager $this The document manager instance.
-		 */
-		do_action( 'elementor/documents/register', $this );
 	}
 
 	/**
@@ -157,7 +145,7 @@ class Documents_Manager {
 	 * @access public
 	 *
 	 * @param string $type  Document type name.
-	 * @param string $class The name of the class that registers the document type.
+	 * @param Document $class The name of the class that registers the document type.
 	 *                      Full name with the namespace.
 	 *
 	 * @return Documents_Manager The updated document manager instance.
@@ -193,6 +181,8 @@ class Documents_Manager {
 	 * @return false|Document Document data or false if post ID was not entered.
 	 */
 	public function get( $post_id, $from_cache = true ) {
+		$this->register_types();
+
 		$post_id = absint( $post_id );
 
 		if ( ! $post_id || ! get_post( $post_id ) ) {
@@ -279,15 +269,27 @@ class Documents_Manager {
 	 *
 	 * Retrieve the type of any given document.
 	 *
-	 * @since 2.0.0
+	 * @since  2.0.0
 	 * @access public
 	 *
 	 * @param string $type
 	 *
-	 * @return Document The type of the document.
+	 * @param string $fallback
+	 *
+	 * @return Document|bool The type of the document.
 	 */
-	public function get_document_type( $type ) {
-		return isset( $this->types[ $type ] ) ? $this->types[ $type ] : $this->types['post'];
+	public function get_document_type( $type, $fallback = 'post' ) {
+		$types = $this->get_document_types();
+
+		if ( isset( $types[ $type ] ) ) {
+			return $types[ $type ];
+		}
+
+		if ( isset( $types[ $fallback ] ) ) {
+			return $types[ $fallback ];
+		}
+
+		return false;
 	}
 
 	/**
@@ -307,6 +309,8 @@ class Documents_Manager {
 	 * @return Document[] All the registered document types.
 	 */
 	public function get_document_types( $args = [], $operator = 'and' ) {
+		$this->register_types();
+
 		if ( ! empty( $args ) ) {
 			$types_properties = $this->get_types_properties();
 
@@ -325,7 +329,8 @@ class Documents_Manager {
 	 */
 	public function get_types_properties() {
 		$types_properties = [];
-		foreach ( $this->types as $type => $class ) {
+
+		foreach ( $this->get_document_types() as $type => $class ) {
 			$types_properties[ $type ] = $class::get_properties();
 		}
 		return $types_properties;
@@ -346,7 +351,9 @@ class Documents_Manager {
 	 * @return Document The type of the document.
 	 */
 	public function create( $type, $post_data = [], $meta_data = [] ) {
-		if ( ! isset( $this->types[ $type ] ) ) {
+		$class = $this->get_document_type( $type, false );
+
+		if ( ! $class ) {
 			wp_die( sprintf( 'Type %s does not exist.', $type ) );
 		}
 
@@ -356,7 +363,7 @@ class Documents_Manager {
 				$post_data['post_title'] = sprintf(
 					/* translators: %s: Document title */
 					__( 'Elementor %s', 'elementor' ),
-					call_user_func( [ $this->types[ $type ], 'get_title' ] )
+					call_user_func( [ $class, 'get_title' ] )
 				);
 			}
 			$update_title = true;
@@ -377,10 +384,7 @@ class Documents_Manager {
 		}
 
 		/** @var Document $document */
-
-		$class_name = $this->types[ $type ];
-
-		$document = new $class_name( [
+		$document = new $class( [
 			'post_id' => $post_id,
 		] );
 
@@ -644,5 +648,18 @@ class Documents_Manager {
 	 */
 	public function get_groups() {
 		return $this->groups;
+	}
+
+	private function register_types() {
+		if ( ! did_action( 'elementor/documents/register' ) ) {
+			/**
+			 * Register Elementor documents.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param Documents_Manager $this The document manager instance.
+			 */
+			do_action( 'elementor/documents/register', $this );
+		}
 	}
 }
