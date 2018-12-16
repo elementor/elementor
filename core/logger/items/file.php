@@ -20,6 +20,19 @@ class File extends Base {
 		$this->line = empty( $args['line'] ) ? '' : $args['line'];
 	}
 
+	public function jsonSerialize() {
+		$json_arr = parent::jsonSerialize();
+		$json_arr['file'] = $this->file;
+		$json_arr['line'] = $this->line;
+		return $json_arr;
+	}
+
+	public function deserialize( $properties ) {
+		parent::deserialize( $properties );
+		$this->file = ! empty( $properties['file'] ) && is_string( $properties['file'] ) ? $properties['file'] : '';
+		$this->line = ! empty( $properties['line'] ) && is_string( $properties['line'] ) ? $properties['line'] : '';
+	}
+
 	public function get_name() {
 		return 'File';
 	}

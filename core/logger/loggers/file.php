@@ -1,13 +1,19 @@
 <?php
-
 namespace Elementor\Core\Logger\Loggers;
 
-use Elementor\Core\Logger\Items\Log_Item_Interface as Log_Item;
+use Elementor\Core\Logger\Items\Log_Item_Interface as Log_Item_Interface;
+use Elementor\Core\Logger\Items\Base as Log_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Class File
+ * writes log entries to a log file located at uploads/elementor/logs directory.
+ * ** based on code by Woocommerce.
+ * @package Elementor\Core\Logger\Loggers
+ */
 class File extends Base {
 	const LOGFILE_TYPE = '.log';
 	const ELEMENTOR_LOG_DIR = '/elementor/logs/';
@@ -28,7 +34,7 @@ class File extends Base {
 
 	public function __destruct() {
 		if ( $this->file_handle ) {
-			@fclose( $this->file_handle );
+			@fclose( $this->file_handle ); // @codingStandardsIgnoreLine
 		}
 	}
 
@@ -40,20 +46,20 @@ class File extends Base {
 	private function open() {
 		if ( ! file_exists( $this->dir_name ) ) {
 			if ( wp_mkdir_p( $this->dir_name ) ) {
-				file_put_contents( $this->dir_name . '/index.html', '' );
-				file_put_contents( $this->dir_name . '/.htaccess', 'Deny from all' );
+				file_put_contents( $this->dir_name . '/index.html', '' ); // @codingStandardsIgnoreLine
+				file_put_contents( $this->dir_name . '/.htaccess', 'Deny from all' ); // @codingStandardsIgnoreLine
 			}
 		}
 
 		$file_name = $this->format_full_path_name();
-		$this->file_handle = @fopen( $file_name, 'a' );
+		$this->file_handle = @fopen( $file_name, 'a+' ); // @codingStandardsIgnoreLine
 
 		return $this->file_handle ? true : false;
 	}
 
 	private function should_archive_log() {
 		$fstats = fstat( $this->file_handle );
-		if( $fstats['size'] >= $this->file_size_limit ) {
+		if ( $fstats['size'] >= $this->file_size_limit ) {
 			return true;
 		}
 		return false;
@@ -63,22 +69,22 @@ class File extends Base {
 		$timestamp = time();
 		$fullname = $this->format_full_path_name();
 		$new_name = substr( $fullname, strlen( self::LOGFILE_TYPE ) );
-		@fclose( $this->file_handle );
+		@fclose( $this->file_handle ); // @codingStandardsIgnoreLine
 		rename( $fullname, $new_name . '.' . $timestamp . self::LOGFILE_TYPE );
-		$this->file_handle = @fopen( $fullname, 'a' );
+		$this->file_handle = @fopen( $fullname, 'a+' ); // @codingStandardsIgnoreLine
 	}
 
-	public function save_log( Log_Item $item ) {
+	public function save_log( Log_Item_Interface $item ) {
 		if ( ! $this->open() ) {
 			return;
 		}
 
-		if( $this->should_archive_log() ){
+		if ( $this->should_archive_log() ) {
 			$this->archive_log();
 		}
 
-		$serialized = serialize( $item ) . self::FILE_DELIMITER;
-		file_put_contents( $this->format_full_path_name(), $serialized );
+		$serialized = wp_json_encode( $item ) . self::FILE_DELIMITER;
+		fwrite( $this->file_handle, $serialized ); // @codingStandardsIgnoreLine
 		fflush( $this->file_handle );
 	}
 
@@ -87,7 +93,7 @@ class File extends Base {
 
 		if ( ! file_exists( $logname ) ) {
 			return [
-				__( 'All', 'elementor' ) => [
+				'All' => [
 					'total_count' => 0,
 					'count' => 0,
 					'entries' => '',
@@ -95,12 +101,12 @@ class File extends Base {
 			];
 		}
 
-		$file_data = file_get_contents( $logname );
+		$file_data = file_get_contents( $logname ); // @codingStandardsIgnoreLine
 		$lines = explode( self::FILE_DELIMITER, $file_data );
 		$items = [];
 		foreach ( $lines as $line ) {
 			if ( ! empty( $line ) ) {
-				$items[] = unserialize( $line );
+				$items[] = Log_Item::from_json( $line );
 			}
 		}
 		return $items;

@@ -61,6 +61,16 @@ abstract class Base implements Logger_Interface {
 
 		$entries = $this->get_log();
 
+		if ( empty( $entries ) ) {
+			return [
+				'All' => [
+					'total_count' => 0,
+					'count' => 0,
+					'entries' => '',
+				],
+			];
+		}
+
 		$sorted_entries = [];
 		$open_tag = $table ? '<tr><td>' : '';
 		$close_tab = $table ? '</td></tr>' : '';
@@ -74,7 +84,7 @@ abstract class Base implements Logger_Interface {
 		foreach ( $sorted_entries as $key => $sorted_entry ) {
 			$formatted_entries[ $key ]['total_count'] = count( $sorted_entry );
 			$formatted_entries[ $key ]['count'] = count( $sorted_entry );
-			$sorted_entry =  array_slice( $sorted_entry, -$max_entries );
+			$sorted_entry = array_slice( $sorted_entry, -$max_entries );
 			$formatted_entries[ $key ]['count'] = count( $sorted_entry );
 			$formatted_entries[ $key ]['entries'] = implode( $sorted_entry );
 		}
