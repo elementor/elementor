@@ -11,6 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Options extends Base {
 
 	public function save_log( Log_Item $item ) {
+		// Clear cache.
+		wp_cache_delete( self::LOG_NAME, 'options' );
+
 		/** @var Log_Item[] $log */
 		$log = get_option( self::LOG_NAME, [] );
 

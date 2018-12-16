@@ -5,8 +5,8 @@ namespace Elementor\Core\Base;
 use Elementor\Plugin;
 
 /**
- * Based on https://github.com/woocommerce/woocommerce/blob/master/includes/abstracts/class-wc-background-process.php to handle DB
- * updates in the background.
+ * Based on https://github.com/woocommerce/woocommerce/blob/master/includes/abstracts/class-wc-background-process.php
+ * & https://github.com/woocommerce/woocommerce/blob/master/includes/class-wc-background-updater.php
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -18,7 +18,6 @@ include_once ELEMENTOR_PATH . '/includes/libraries/wp-background-process/wp-back
  * WC_Background_Process class.
  */
 abstract class Background_Task extends \WP_Background_Process {
-	const ACTION = '';
 	protected $current_item;
 
 	/**
@@ -32,6 +31,33 @@ abstract class Background_Task extends \WP_Background_Process {
 		if ( is_wp_error( $dispatched ) ) {
 			wp_die( $dispatched );
 		}
+	}
+
+	public function get_current_offset() {
+		$limit = $this->get_limit();
+		return $this->current_item['iterate_num'] * $limit;
+	}
+
+	public function get_limit() {
+		return $this->manager->get_query_limit();
+	}
+
+	/**
+	 * Complete
+	 *
+	 * Override if applicable, but ensure that the below actions are
+	 * performed, or, call parent::complete().
+	 */
+	protected function complete() {
+		$this->manager->on_runner_complete();
+
+		parent::complete();
+	}
+
+	public function continue_run() {
+		// Used to fire an action added in WP_Background_Process::_construct() that calls WP_Background_Process::handle_cron_healthcheck().
+		// This method will make sure the database updates are executed even if cron is disabled. Nothing will happen if the updates are already running.
+		do_action( $this->cron_hook_identifier );
 	}
 
 	/**
@@ -88,7 +114,7 @@ abstract class Background_Task extends \WP_Background_Process {
 	 *
 	 * @return boolean
 	 */
-	public function is_updating() {
+	public function is_running() {
 		return false === $this->is_queue_empty();
 	}
 
@@ -108,6 +134,8 @@ abstract class Background_Task extends \WP_Background_Process {
 	 * within server memory and time limit constraints.
 	 */
 	protected function handle() {
+		$this->manager->on_runner_start();
+
 		$this->lock_process();
 
 		do {
@@ -266,13 +294,16 @@ abstract class Background_Task extends \WP_Background_Process {
 		return implode( '::', (array) $item['callback'] );
 	}
 
-	public function __construct() {
-		// Uses unique prefix per blog so each blog has separate queue.
-		$this->prefix = 'wp_' . get_current_blog_id();
+	/**
+	 * @var \Elementor\Core\Base\Background_Task_Manager
+	 */
+	protected $manager;
 
-		if ( empty( $this->action ) ) {
-			_doing_it_wrong( __METHOD__, 'static::ACTION must be set.', ELEMENTOR_VERSION );
-		}
+	public function __construct( $manager ) {
+		$this->manager = $manager;
+		// Uses unique prefix per blog so each blog has separate queue.
+		$this->prefix = 'elementor_' . get_current_blog_id();
+		$this->action = $this->manager->get_action();
 
 		parent::__construct();
 	}

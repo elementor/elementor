@@ -115,13 +115,4 @@ class Base implements Log_Item_Interface {
 		}
 	}
 
-	public function __construct( $args ) {
-		$this->date = current_time( 'mysql' );
-		$this->message = $args['message'];
-		$this->type = $args['type'];
-		$this->meta = empty( $args['meta'] ) ? [] : $args['meta'];
-		$this->args = $args;
-
-		$this->set_trace();
-	}
 }
