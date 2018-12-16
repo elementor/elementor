@@ -13,6 +13,11 @@ abstract class Base implements Logger_Interface {
 
 	abstract protected function save_log( Log_Item_Interface $item );
 
+	/**
+	 * @return Log_Item_Interface[]
+	 */
+	abstract protected function get_log();
+
 	public function log( $item, $type = self::LEVEL_INFO, $args = [] ) {
 		if ( ! $item instanceof Log_Item ) {
 			$item = $this->create_item( $item, $type, $args );
@@ -50,5 +55,39 @@ abstract class Base implements Logger_Interface {
 		$item = new Log_Item( $args );
 
 		return $item;
+	}
+
+	public function get_formatted_log_entries( $max_entries, $table = true ) {
+
+		$entries = $this->get_log();
+
+		if ( empty( $entries ) ) {
+			return [
+				'All' => [
+					'total_count' => 0,
+					'count' => 0,
+					'entries' => '',
+				],
+			];
+		}
+
+		$sorted_entries = [];
+		$open_tag = $table ? '<tr><td>' : '';
+		$close_tab = $table ? '</td></tr>' : '';
+
+		foreach ( $entries as $entry ) {
+			/** @var Log_Item $entry */
+			$sorted_entries[ $entry->get_name() ][] = $open_tag . $entry->format() . $close_tab;
+		}
+
+		$formatted_entries = [];
+		foreach ( $sorted_entries as $key => $sorted_entry ) {
+			$formatted_entries[ $key ]['total_count'] = count( $sorted_entry );
+			$formatted_entries[ $key ]['count'] = count( $sorted_entry );
+			$sorted_entry = array_slice( $sorted_entry, -$max_entries );
+			$formatted_entries[ $key ]['count'] = count( $sorted_entry );
+			$formatted_entries[ $key ]['entries'] = implode( $sorted_entry );
+		}
+		return $formatted_entries;
 	}
 }

@@ -23,7 +23,7 @@ class Manager extends BaseModule {
 	public function __construct() {
 
 		$this->register_logger( 'options', 'Elementor\Core\Logger\Loggers\Options' );
-		$this->register_logger( 'uploads', 'Elementor\Core\Logger\Loggers\Uploads' );
+		$this->register_logger( 'file', 'Elementor\Core\Logger\Loggers\File' );
 
 		$this->set_default_logger( 'options' );
 

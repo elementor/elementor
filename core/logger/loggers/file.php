@@ -1,17 +1,24 @@
 <?php
-
 namespace Elementor\Core\Logger\Loggers;
 
-use Elementor\Core\Logger\Items\Log_Item_Interface as Log_Item;
+use Elementor\Core\Logger\Items\Log_Item_Interface as Log_Item_Interface;
+use Elementor\Core\Logger\Items\Base as Log_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Uploads extends Base {
+/**
+ * Class File
+ * writes log entries to a log file located at uploads/elementor/logs directory.
+ * ** based on code by Woocommerce.
+ * @package Elementor\Core\Logger\Loggers
+ */
+class File extends Base {
 	const LOGFILE_TYPE = '.log';
 	const ELEMENTOR_LOG_DIR = '/elementor/logs/';
 	const LOGFILE_MAX_SIZE = 32768; //32k
+	const FILE_DELIMITER = '<!----LOG_ENTRY---->';
 
 	private $file_handle;
 	private $file_name;
@@ -27,7 +34,7 @@ class Uploads extends Base {
 
 	public function __destruct() {
 		if ( $this->file_handle ) {
-			@fclose( $this->file_handle );
+			@fclose( $this->file_handle ); // @codingStandardsIgnoreLine
 		}
 	}
 
@@ -39,20 +46,20 @@ class Uploads extends Base {
 	private function open() {
 		if ( ! file_exists( $this->dir_name ) ) {
 			if ( wp_mkdir_p( $this->dir_name ) ) {
-				file_put_contents( $this->dir_name . '/index.html', '' );
-				file_put_contents( $this->dir_name . '/.htaccess', 'Deny from all' );
+				file_put_contents( $this->dir_name . '/index.html', '' ); // @codingStandardsIgnoreLine
+				file_put_contents( $this->dir_name . '/.htaccess', 'Deny from all' ); // @codingStandardsIgnoreLine
 			}
 		}
 
 		$file_name = $this->format_full_path_name();
-		$this->file_handle = @fopen( $file_name, 'a' );
+		$this->file_handle = @fopen( $file_name, 'a+' ); // @codingStandardsIgnoreLine
 
 		return $this->file_handle ? true : false;
 	}
 
 	private function should_archive_log() {
 		$fstats = fstat( $this->file_handle );
-		if( $fstats['size'] >= $this->file_size_limit ) {
+		if ( $fstats['size'] >= $this->file_size_limit ) {
 			return true;
 		}
 		return false;
@@ -62,38 +69,49 @@ class Uploads extends Base {
 		$timestamp = time();
 		$fullname = $this->format_full_path_name();
 		$new_name = substr( $fullname, strlen( self::LOGFILE_TYPE ) );
-		@fclose( $this->file_handle );
+		@fclose( $this->file_handle ); // @codingStandardsIgnoreLine
 		rename( $fullname, $new_name . '.' . $timestamp . self::LOGFILE_TYPE );
-		$this->file_handle = @fopen( $fullname, 'a' );
+		$this->file_handle = @fopen( $fullname, 'a+' ); // @codingStandardsIgnoreLine
 	}
 
-	public function save_log( Log_Item $item ) {
+	public function save_log( Log_Item_Interface $item ) {
 		if ( ! $this->open() ) {
 			return;
 		}
 
-		if( $this->should_archive_log() ){
+		if ( $this->should_archive_log() ) {
 			$this->archive_log();
 		}
 
-		fputs( $this->file_handle, $item . PHP_EOL, strlen( $item . PHP_EOL ) );
+		$serialized = wp_json_encode( $item ) . self::FILE_DELIMITER;
+		fwrite( $this->file_handle, $serialized ); // @codingStandardsIgnoreLine
 		fflush( $this->file_handle );
 	}
 
-	public function get_formatted_log_entries( $max_entries, $table = true ) {
+	protected function get_log() {
 		$logname = $this->format_full_path_name();
-		$lines = file( $logname, FILE_IGNORE_NEW_LINES );
-		$formatted_lines = [];
-		$open_tag = $table ? '<tr><td>' : '';
-		$close_tab = $table ? '</td></tr>' : '';
-		foreach ( $lines as $line ) {
-			$formatted_lines[] = $open_tag . $line . $close_tab;
+
+		if ( ! file_exists( $logname ) ) {
+			return [
+				'All' => [
+					'total_count' => 0,
+					'count' => 0,
+					'entries' => '',
+				],
+			];
 		}
-		$formatted_lines =  array_slice( $formatted_lines, -$max_entries );
-		return [ __( 'All', 'elementor' ) => [
-			'count' => count( $formatted_lines ),
-			'entries' => implode( $formatted_lines ),
-			],
-		];
+
+		$file_data = file_get_contents( $logname ); // @codingStandardsIgnoreLine
+		$lines = explode( self::FILE_DELIMITER, $file_data );
+		$items = [];
+		foreach ( $lines as $line ) {
+			if ( ! empty( $line ) ) {
+				$item = Log_Item::from_json( $line );
+				if ( null !== $item ) {
+					$items[] = $item;
+				}
+			}
+		}
+		return $items;
 	}
 }

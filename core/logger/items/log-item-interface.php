@@ -2,7 +2,7 @@
 
 namespace Elementor\Core\Logger\Items;
 
-interface Log_Item_Interface {
+interface Log_Item_Interface extends \JsonSerializable {
 
 	/**
 	 * Log_Item_Interface constructor.
@@ -22,6 +22,12 @@ interface Log_Item_Interface {
 	 * @return string
 	 */
 	public function __toString();
+
+	/**
+	 * @param $str
+	 * @return Log_Item_Interface | null
+	 */
+	public static function from_json( $str );
 
 	/**
 	 * @return string

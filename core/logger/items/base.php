@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Base implements Log_Item_Interface {
-	const FORMAT = 'date [type X times] message [meta]';
+	const FORMAT = 'date [type] message [meta]';
 	const TRACE_FORMAT = '#key: file(line): class type function()';
 	const TRACE_LIMIT = 5;
 
@@ -40,12 +40,71 @@ class Base implements Log_Item_Interface {
 
 	public function __toString() {
 		$vars = get_object_vars( $this );
-		$vars['meta'] = empty( $vars['meta'] ) ? '' : var_export( $vars['meta'], true );
 		return strtr( static::FORMAT, $vars );
 	}
 
+	public function jsonSerialize() {
+		return [
+			'class' => get_class( $this ),
+			'item' => [
+				'date' => $this->date,
+				'message' => $this->message,
+				'type' => $this->type,
+				'meta' => $this->meta,
+				'times' => $this->times,
+				'times_dates' => $this->times_dates,
+				'args' => $this->args,
+			],
+		];
+	}
+
+	public function deserialize( $properties ) {
+		$this->date = ! empty( $properties['date'] ) && is_string( $properties['date'] ) ? $properties['date'] : '';
+		$this->message = ! empty( $properties['message'] ) && is_string( $properties['message'] ) ? $properties['message'] : '';
+		$this->type = ! empty( $properties['type'] ) && is_string( $properties['type'] ) ? $properties['type'] : '';
+		$this->meta = ! empty( $properties['meta'] ) && is_array( $properties['meta'] ) ? $properties['meta'] : [];
+		$this->times = ! empty( $properties['times'] ) && is_string( $properties['times'] ) ? $properties['times'] : '';
+		$this->times_dates = ! empty( $properties['times_dates'] ) && is_array( $properties['times_dates'] ) ? $properties['times_dates'] : [];
+		$this->args = ! empty( $properties['args'] ) && is_array( $properties['args'] ) ? $properties['args'] : [];
+	}
+
+	/**
+	 * @return Log_Item_Interface | null
+	 */
+	public static function from_json( $str ) {
+		$obj = json_decode( $str, true );
+		if ( ! array_key_exists( 'class', $obj ) ) {
+			return null;
+		}
+		$class = $obj['class'];
+		if ( class_exists( $class ) ) {
+			/** @var Base $item */
+			$item = new $class( $obj['item']['message'] );
+			$item->deserialize( $obj['item'] );
+			return $item;
+		}
+
+		return null;
+	}
+
+	public function to_formatted_string() {
+		$vars = get_object_vars( $this );
+		$format = str_replace( 'message', '<strong>message</strong>', static::FORMAT );
+		if ( empty( $vars['meta'] ) ) {
+			$format = str_replace( '[meta]', '', $format );
+		} else {
+			$vars['meta'] = stripslashes( var_export( $vars['meta'], true ) ); // @codingStandardsIgnoreLine
+		}
+		return strtr( $format, $vars );
+	}
+
 	public function get_fingerprint() {
-		return md5( $this->type . $this->message . var_export( $this->meta, 1 ) );
+		$md5_str = $this->type . $this->message . var_export( $this->meta, true ); // @codingStandardsIgnoreLine
+		//info messages are not be aggregated:
+		if ( 'info' === $this->type ) {
+			$md5_str .= $this->date;
+		}
+		return md5( $md5_str );
 	}
 
 	public function increase_times( $item ) {
@@ -55,12 +114,12 @@ class Base implements Log_Item_Interface {
 
 	public function format() {
 		$trace = $this->format_trace();
-		if( empty( $trace ) ) {
-			return $this->__toString();
+		if ( empty( $trace ) ) {
+			return $this->to_formatted_string();
 		}
 		$copy = clone $this;
 		$copy->meta['trace'] = $trace;
-		return $copy->__toString();
+		return $copy->to_formatted_string();
 	}
 
 	public function get_name() {
@@ -70,25 +129,30 @@ class Base implements Log_Item_Interface {
 	private function format_trace() {
 		$trace = empty( $this->meta['trace'] ) ? '' : $this->meta['trace'];
 
-		$trace_str = '';
-		if ( ! is_array( $trace ) ) {
+		if ( is_string( $trace ) ) {
 			return $trace;
 		}
 
+		$trace_str = '';
 		foreach ( $trace as $key => $trace_line ) {
+			$format = static::TRACE_FORMAT;
 			$trace_line['key'] = $key;
-			$trace_str .=  PHP_EOL . strtr( self::TRACE_FORMAT, $trace_line );
-			$trace_str .= empty( $trace_line['args'] ) ? '' : var_export( $trace_line['args'] );
+			if ( empty( $trace_line['file'] ) ) {
+				$format = str_replace( 'file(line): ', '', $format );
+			}
+
+			$trace_str .= PHP_EOL . strtr( $format, $trace_line );
+			$trace_str .= empty( $trace_line['args'] ) ? '' : var_export( $trace_line['args'], true ); // @codingStandardsIgnoreLine
 		}
 
-		return $trace_str;
+		return $trace_str . PHP_EOL;
 	}
 
 	private function set_trace() {
 		if ( ! empty( $this->args['trace'] ) && true === $this->args['trace'] ) {
-			$limit = empty( $this->args['trace_limit'] ) ? self::TRACE_LIMIT : $this->args['trace_limit'];
+			$limit = empty( $this->args['trace_limit'] ) ? static::TRACE_LIMIT : $this->args['trace_limit'];
 
-			$stack = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
+			$stack = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );// @codingStandardsIgnoreLine
 
 			while ( ! empty( $stack ) && ! empty( $stack[0]['file'] ) && ( false !== strpos( $stack[0]['file'], 'core' . DIRECTORY_SEPARATOR . 'logger' ) ) ) {
 				array_shift( $stack );
@@ -96,7 +160,9 @@ class Base implements Log_Item_Interface {
 
 			$this->meta['trace'] = array_slice( $stack, 0, $limit );
 		} else {
-			unset( $this->args['trace'] );
+			if ( is_array( $this->args ) ) {
+				unset( $this->args['trace'] );
+			}
 		}
 	}
 }
