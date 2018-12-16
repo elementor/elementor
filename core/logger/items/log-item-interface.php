@@ -33,9 +33,10 @@ interface Log_Item_Interface extends \JsonSerializable {
 	public static function from_json( $str );
 
 	/**
+	 * @param string $format
 	 * @return string
 	 */
-	public function format();
+	public function format( $format = 'html' );
 
 	/**
 	 * @return string

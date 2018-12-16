@@ -55,4 +55,31 @@ class Log_Reporter extends Base_Reporter {
 			'value' => $log_string,
 		];
 	}
+
+	public function get_raw_log_entries() {
+
+		$log_string = 'No entries to display';
+
+		/** @var \Elementor\Core\Logger\Manager $manager */
+		$manager = Manager::instance();
+		$logger = $manager->get_logger();
+		$log_entries = $logger->get_formatted_log_entries( self::MAX_ENTRIES, false );
+
+		if ( ! empty( $log_entries ) ) {
+			$entries_string = PHP_EOL;
+			foreach ( $log_entries as $key => $log_entry ) {
+				if ( $log_entry['count'] ) {
+					$entries_string .= sprintf( '%s: showing %s of %s', $key, $log_entry['count'], $log_entry['total_count'] ) . $log_entry['entries'] . PHP_EOL;
+				}
+			}
+
+			if ( ! empty( $entries_string ) ) {
+				$log_string = $entries_string;
+			}
+		}
+
+		return [
+			'value' => $log_string,
+		];
+	}
 }

@@ -86,9 +86,12 @@ class Base implements Log_Item_Interface {
 		return null;
 	}
 
-	public function to_formatted_string() {
+	public function to_formatted_string( $output_format = 'html' ) {
 		$vars = get_object_vars( $this );
-		$format = str_replace( 'message', '<strong>message</strong>', static::FORMAT );
+		$format = static::FORMAT;
+		if ( 'html' === $output_format ) {
+			$format = str_replace( 'message', '<strong>message</strong>', static::FORMAT );
+		}
 		if ( empty( $vars['meta'] ) ) {
 			$format = str_replace( '[meta]', '', $format );
 		} else {
@@ -111,14 +114,14 @@ class Base implements Log_Item_Interface {
 		$this->times_dates[] = $item->date;
 	}
 
-	public function format() {
+	public function format( $format = 'html' ) {
 		$trace = $this->format_trace();
 		if ( empty( $trace ) ) {
-			return $this->to_formatted_string();
+			return $this->to_formatted_string( $format );
 		}
 		$copy = clone $this;
 		$copy->meta['trace'] = $trace;
-		return $copy->to_formatted_string();
+		return $copy->to_formatted_string( $format );
 	}
 
 	public function get_name() {
