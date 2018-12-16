@@ -12,7 +12,7 @@ class File extends Base {
 	const LOGFILE_TYPE = '.log';
 	const ELEMENTOR_LOG_DIR = '/elementor/logs/';
 	const LOGFILE_MAX_SIZE = 32768; //32k
-	const FILE_DELIMITER = '<!----ENTRY---->';
+	const FILE_DELIMITER = '<!----LOG_ENTRY---->';
 
 	private $file_handle;
 	private $file_name;
