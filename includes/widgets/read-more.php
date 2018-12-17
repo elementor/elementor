@@ -83,8 +83,8 @@ class Widget_Read_More extends Widget_Base {
 		$this->add_control(
 			'link_text',
 			[
-				'label' => __( 'Link Text', '' ),
-				'placeholder' => __( '(more&hellip;)', '' ),
+				'label' => __( 'Link Text', 'elementor' ),
+				'placeholder' => __( '(more&hellip;)', 'elementor' ),
 			]
 		);
 
