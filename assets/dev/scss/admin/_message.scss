@@ -31,7 +31,9 @@
 		}
 
 		.elementor-message-action {
-			text-align: $end;
+			text-align: center;
+			display: flex;
+			flex-direction: column;
 
 			.elementor-button {
 				background-color: $editor-accent;
@@ -55,6 +57,10 @@
 					box-shadow: inset 0 1px 0 #7c1337;
 					transform: translateY(1px);
 				}
+			}
+
+			.elementor-link {
+				padding-top: 5px;
 			}
 		}
 
