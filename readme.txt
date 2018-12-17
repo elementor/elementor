@@ -221,7 +221,6 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 == Changelog ==
 
 = 2.3.6 - 2018-12-17 =
-* Tweak: Check if WooCommerce is active as per WooCommerce best practices
 * Fix: `Back to Gutenberg Editor` not working when meta-boxes are present
 * Fix: Register documents only if needed
 * Fix: Style glitch in the responsive control
