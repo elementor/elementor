@@ -41,11 +41,6 @@ class Source_Local extends Source_Base {
 	const TAXONOMY_CATEGORY_SLUG = 'elementor_library_category';
 
 	/**
-	 * Elementor template-library tag slug.
-	 */
-	const TAXONOMY_TAG_SLUG = 'elementor_library_tag';
-
-	/**
 	 * Elementor template-library meta key.
 	 * @deprecated 2.3.0 Use \Elementor\Core\Base\Document::TYPE_META_KEY instead
 	 */
@@ -285,8 +280,8 @@ class Source_Local extends Source_Base {
 			'rewrite' => false,
 			'public' => false,
 			'labels' => [
-				'name' =>_x( 'Categories', 'Template Library', 'elementor' ),
-				'singular_name' =>_x( 'Category', 'Template Library', 'elementor' ),
+				'name' => _x( 'Categories', 'Template Library', 'elementor' ),
+				'singular_name' => _x( 'Category', 'Template Library', 'elementor' ),
 				'all_items'	=> __( 'All Categories', '' ),
 			],
 		];
@@ -303,37 +298,6 @@ class Source_Local extends Source_Base {
 		$args = apply_filters( 'elementor/template_library/sources/local/register_category_args', $args );
 
 		register_taxonomy( self::TAXONOMY_CATEGORY_SLUG, self::CPT, $args );
-
-		/**
-		 * Tags
-		 */
-		$args = [
-			'hierarchical' => false,
-			'show_ui' => true,
-			'show_in_nav_menus' => false,
-			'show_admin_column' => true,
-			'query_var' => is_admin(),
-			'rewrite' => false,
-			'public' => false,
-			'labels' => [
-				'name' =>_x( 'Tags', 'Template Library', 'elementor' ),
-				'singular_name' =>_x( 'Tag', 'Template Library', 'elementor' ),
-				'all_items'	=> __( 'All Tags', '' ),
-			],
-		];
-
-		/**
-		 * Register template library tag args.
-		 *
-		 * Filters the tag arguments when registering elementor template library tag.
-		 *
-		 * @since 2.4.0
-		 *
-		 * @param array $args Arguments for registering a category.
-		 */
-		$args = apply_filters( 'elementor/template_library/sources/local/register_tag_args', $args );
-
-		register_taxonomy( self::TAXONOMY_TAG_SLUG, self::CPT, $args );
 	}
 
 	/**
