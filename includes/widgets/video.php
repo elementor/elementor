@@ -220,7 +220,6 @@ class Widget_Video extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'media_type' => 'video',
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_from_url' => 'yes',
@@ -434,7 +433,7 @@ class Widget_Video extends Widget_Base {
 				'label_off' => __( 'Hide', 'elementor' ),
 				'label_on' => __( 'Show', 'elementor' ),
 				'condition' => [
-					'video_type' => [ 'hosted' ],
+					'video_type' => 'hosted',
 				],
 			]
 		);
@@ -445,7 +444,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Poster', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'condition' => [
-					'video_type' => [ 'hosted' ],
+					'video_type' => 'hosted',
 				],
 			]
 		);
@@ -502,7 +501,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
 					'show_image_overlay' => 'yes',
-					'video_type!' => [ 'hosted' ],
+					'video_type!' => 'hosted',
 				],
 			]
 		);
