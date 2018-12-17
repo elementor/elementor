@@ -139,11 +139,11 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 	stopEditing: function() {
 		this.editing = false;
 
+		this.$currentEditingArea.off( 'blur', this.onInlineEditingBlur );
+
 		this.editor.destroy();
 
 		this.view.allowRender = true;
-
-		this.$currentEditingArea.off( 'blur', this.onInlineEditingBlur );
 
 		/**
 		 * Inline editing has several toolbar types (advanced, basic and none). When editing is stopped,
