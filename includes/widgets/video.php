@@ -183,7 +183,7 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'inset_from_url',
+			'insert_from_url',
 			[
 				'label' => __( 'Insert From URL', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
@@ -207,7 +207,7 @@ class Widget_Video extends Widget_Base {
 				'media_type' => 'video',
 				'condition' => [
 					'video_type' => 'hosted',
-					'inset_from_url!' => 'yes',
+					'insert_from_url!' => 'yes',
 				],
 			]
 		);
@@ -223,7 +223,7 @@ class Widget_Video extends Widget_Base {
 				'media_type' => 'video',
 				'condition' => [
 					'video_type' => 'hosted',
-					'inset_from_url' => 'yes',
+					'insert_from_url' => 'yes',
 				],
 			]
 		);
@@ -763,16 +763,10 @@ class Widget_Video extends Widget_Base {
 		$video_url = $settings[ $settings['video_type'] . '_url' ];
 
 		if ( 'hosted' === $settings['video_type'] ) {
-			$from_media = empty( $settings['inset_from_url'] ) || 'yes' !== $settings['inset_from_url'] ? true : false;
-			$video_url = $this->get_hosted_video_url( $from_media );
-
-			if ( empty( $video_url ) ) {
-				return;
-			}
 
 			ob_start();
 
-			$this->render_hosted_video( $from_media );
+			$this->render_hosted_video( $settings );
 
 			$video_html = ob_get_clean();
 		} else {
@@ -1055,15 +1049,20 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
-	 * @param bool $from_media
 	 *
 	 * @since 2.1.0
 	 * @access private
 	 */
-	private function render_hosted_video( $from_media ) {
+	private function render_hosted_video( $settings ) {
+		$from_media = empty( $settings['insert_from_url'] ) || 'yes' !== $settings['insert_from_url'] ? true : false;
+
 		$video_params = $this->get_hosted_params();
 
 		$video_url = $this->get_hosted_video_url( $from_media );
+		if ( empty( $video_url ) ) {
+			return;
+		}
+
 		?>
 		<video class="elementor-video" src="<?php echo esc_url( $video_url ); ?>" <?php echo Utils::render_html_attributes( $video_params ); ?>></video>
 		<?php
