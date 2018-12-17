@@ -282,7 +282,7 @@ class Source_Local extends Source_Base {
 			'labels' => [
 				'name' => _x( 'Categories', 'Template Library', 'elementor' ),
 				'singular_name' => _x( 'Category', 'Template Library', 'elementor' ),
-				'all_items'	=> __( 'All Categories', '' ),
+				'all_items' => __( 'All Categories', '' ),
 			],
 		];
 
