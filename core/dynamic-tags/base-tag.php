@@ -80,6 +80,10 @@ abstract class Base_Tag extends Controls_Stack {
 		return false;
 	}
 
+	/**
+	 * @since 2.0.9
+	 * @access public
+	 */
 	public function get_editor_config() {
 		 ob_start();
 

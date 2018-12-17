@@ -6,6 +6,7 @@ use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
 use Elementor\Editor;
+use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Utils;
@@ -84,6 +85,9 @@ class Source_Local extends Source_Base {
 	private $post_type_object;
 
 	/**
+	 * @since 2.3.0
+	 * @access public
+	 * @static
 	 * @return array
 	 */
 	public static function get_template_types() {
@@ -1025,34 +1029,6 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
-	 * Filter template types in admin query.
-	 *
-	 * Update the template types in the main admin query.
-	 *
-	 * Fired by `parse_query` action.
-	 *
-	 * @since 1.0.6
-	 * @access public
-	 *
-	 * @param \WP_Query $query The `WP_Query` instance.
-	 */
-	public function admin_query_filter_types( \WP_Query $query ) {
-		if ( ! function_exists( 'get_current_screen' ) ) {
-			return;
-		}
-
-		$library_screen_id = 'edit-' . self::CPT;
-		$current_screen = get_current_screen();
-
-		if ( ! isset( $current_screen->id ) || $library_screen_id !== $current_screen->id || ! empty( $query->query_vars['meta_key'] ) ) {
-			return;
-		}
-
-		$query->query_vars['meta_key'] = Document::TYPE_META_KEY;
-		$query->query_vars['meta_value'] = array_values( self::$template_types );
-	}
-
-	/**
 	 * Bulk export action.
 	 *
 	 * Adds an 'Export' action to the Bulk Actions drop-down in the template
@@ -1415,7 +1391,6 @@ class Source_Local extends Source_Base {
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
-			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
 			// Template filter by category.
@@ -1439,18 +1414,25 @@ class Source_Local extends Source_Base {
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 	}
 
+	/**
+	 * @since 2.0.6
+	 * @access public
+	 */
 	public function admin_columns_content( $column_name, $post_id ) {
 		if ( 'elementor_library_type' === $column_name ) {
 			/** @var Document $document */
 			$document = Plugin::$instance->documents->get( $post_id );
 
-			if ( $document ) {
-				$admin_filter_url = admin_url( '/edit.php?post_type=elementor_library&elementor_library_type=' . $document->get_name() );
-				printf( '<a href="%s">%s</a>', $admin_filter_url, $document->get_title() );
+			if ( $document && $document instanceof Library_Document ) {
+				$document->print_admin_column_type();
 			}
 		}
 	}
 
+	/**
+	 * @since 2.0.6
+	 * @access public
+	 */
 	public function admin_columns_headers( $posts_columns ) {
 		// Replace original column that bind to the taxonomy - with another column.
 		unset( $posts_columns['taxonomy-elementor_library_type'] );

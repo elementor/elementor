@@ -2,10 +2,9 @@ import HotKeys from './utils/hot-keys';
 import Helpers from './utils/helpers';
 import Ajax from '../../modules/ajax/assets/js/ajax';
 import Finder from '../../modules/finder/assets/js/finder';
+import Connect from '../../modules/connect/assets/js/connect';
 
-const ViewModule = require( 'elementor-utils/view-module' );
-
-class ElementorCommonApp extends ViewModule {
+class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
 		Marionette.TemplateCache.prototype.compileTemplate = ( rawTemplate, options ) => {
 			options = {
@@ -44,6 +43,7 @@ class ElementorCommonApp extends ViewModule {
 		const modules = {
 			ajax: Ajax,
 			finder: Finder,
+			connect: Connect,
 		};
 
 		activeModules.forEach( ( name ) => {

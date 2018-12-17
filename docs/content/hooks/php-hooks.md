@@ -1,6 +1,6 @@
 ## Documentation has Moved
 
-This document in now available on [Developer API for Elementor](developers.elementor.com)
+This document in now available on [Developer API for Elementor](https://developers.elementor.com/)
 
 ### Quick Links
 

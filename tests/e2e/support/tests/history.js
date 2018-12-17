@@ -16,7 +16,7 @@ function assertTest( given, expected, caseSensitive ) {
  * @param {number} options.addedLength the added length to history.
  * @param {string} options.title current item title.
  * @param {string} options.action current item action.
- * @param {string} [options.caseSensitive=true] if the steast sould consider case checks or "-" and "_"
+ * @param {string} [options.caseSensitive=true] if the test should consider case checks or "-" and "_"
  */
 function testHistory( options ) {
 	if ( ! options.hasOwnProperty( 'caseSensitive' ) ) {

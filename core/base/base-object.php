@@ -29,6 +29,7 @@ class Base_Object {
 	/**
 	 * Get Settings.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @param string $setting Optional. The key of the requested setting. Default is null.
@@ -44,6 +45,7 @@ class Base_Object {
 	/**
 	 * Set settings.
 	 *
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @param array|string $key   If key is an array, the settings are overwritten by that array. Otherwise, the
@@ -65,6 +67,7 @@ class Base_Object {
 	 * Delete setting.
 	 *
 	 * Deletes the settings array or a specific key of the settings array if `$key` is specified.
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @param string $key Optional. Default is null.
@@ -84,6 +87,7 @@ class Base_Object {
 	 * items that match the needle. If needle is not defined the entire haystack
 	 * will be returned.
 	 *
+	 * @since 2.3.0
 	 * @access protected
 	 * @static
 	 *
@@ -106,6 +110,7 @@ class Base_Object {
 	 * Used to define the default/initial settings of the object. Inheriting classes may implement this method to define
 	 * their own default/initial settings.
 	 *
+	 * @since 2.3.0
 	 * @access protected
 	 *
 	 * @return array
@@ -119,6 +124,7 @@ class Base_Object {
 	 *
 	 * Ensures that the `$settings` member is initialized
 	 *
+	 * @since 2.3.0
 	 * @access private
 	 */
 	private function ensure_settings() {

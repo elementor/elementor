@@ -3,6 +3,11 @@
 # credit: "https://github.com/WordPress/gutenberg"
 # under GPL license
 
+##
+# Tests if running on windows
+#
+# @return {bool} If running on windows
+##
 is_windows() {
 	command_exists "systeminfo"
 }
@@ -14,15 +19,6 @@ is_windows() {
 ##
 error_message() {
 	echo -en "\033[31mERROR\033[0m: $1"
-}
-
-##
-# Add warning message formatting to a string, and echo it.
-#
-# @param {string} message The string to add formatting to.
-##
-warning_message() {
-	echo -en "\033[33mWARNING\033[0m: $1"
 }
 
 ##

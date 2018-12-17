@@ -10,6 +10,10 @@ module.exports = BaseMultiple.extend( {
 		// Based on /wp-includes/js/tinymce/plugins/wplink/plugin.js.
 		this.ui.input.autocomplete( {
 			source: function( request, response ) {
+				if ( ! self.options.model.attributes.autocomplete ) {
+					return;
+				}
+
 				if ( last === request.term ) {
 					response( cache );
 					return;

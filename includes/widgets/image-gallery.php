@@ -139,7 +139,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'gallery_link',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'file',
 				'options' => [
@@ -170,7 +170,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'gallery_rand',
 			[
-				'label' => __( 'Ordering', 'elementor' ),
+				'label' => __( 'Order By', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
