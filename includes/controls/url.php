@@ -66,8 +66,8 @@ class Control_URL extends Control_Base_Multiple {
 			'label_block' => true,
 			'show_external' => true,
 			'placeholder' => __( 'Paste URL or type', 'elementor' ),
-            'autocomplete' => true,
-            'dynamic' => [
+			'autocomplete' => true,
+			'dynamic' => [
 				'categories' => [ TagsModule::URL_CATEGORY ],
 				'property' => 'url',
 			],
