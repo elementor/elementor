@@ -14,6 +14,10 @@ class Inspector {
 
 	protected $log = [];
 
+	/**
+	 * @since 2.1.2
+	 * @access public
+	 */
 	public function __construct() {
 		$is_debug = ( defined( 'WP_DEBUG' ) && WP_DEBUG );
 		$option = get_option( 'elementor_enable_inspector', null );
@@ -27,10 +31,18 @@ class Inspector {
 		add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_fields' ], 50 );
 	}
 
+	/**
+	 * @since 2.1.3
+	 * @access public
+	 */
 	public function is_enabled() {
 		return $this->is_enabled;
 	}
 
+	/**
+	 * @since 2.1.3
+	 * @access public
+	 */
 	public function register_admin_tools_fields( Tools $tools ) {
 		$tools->add_fields( Settings::TAB_GENERAL, 'tools', [
 			'enable_inspector' => [
@@ -48,6 +60,10 @@ class Inspector {
 		] );
 	}
 
+	/**
+	 * @since 2.1.2
+	 * @access public
+	 */
 	public function parse_template_path( $template ) {
 		// `untrailingslashit` for windows path style.
 		if ( 0 === strpos( $template, untrailingslashit( ELEMENTOR_PATH ) ) ) {
@@ -66,6 +82,10 @@ class Inspector {
 		return str_replace( WP_CONTENT_DIR, '', $template );
 	}
 
+	/**
+	 * @since 2.1.2
+	 * @access public
+	 */
 	public function add_log( $module, $title, $url = '' ) {
 		if ( ! $this->is_enabled ) {
 			return;
@@ -81,6 +101,10 @@ class Inspector {
 		];
 	}
 
+	/**
+	 * @since 2.1.2
+	 * @access public
+	 */
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
 		if ( empty( $this->log ) ) {
 			return;

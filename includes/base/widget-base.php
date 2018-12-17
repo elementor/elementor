@@ -221,9 +221,9 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 *
 	 * @param string $section_id Section ID.
-	 * @param array  $args       Section arguments.
+	 * @param array  $args       Section arguments Optional.
 	 */
-	public function start_controls_section( $section_id, array $args ) {
+	public function start_controls_section( $section_id, array $args = [] ) {
 		parent::start_controls_section( $section_id, $args );
 
 		static $is_first_section = true;
@@ -367,6 +367,10 @@ abstract class Widget_Base extends Element_Base {
 		return array_merge( parent::_get_initial_config(), $config );
 	}
 
+	/**
+	 * @since 2.3.1
+	 * @access protected
+	 */
 	protected function should_print_empty() {
 		return false;
 	}

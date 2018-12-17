@@ -1,7 +1,7 @@
 var ControlsStack;
 
 ControlsStack = Marionette.CompositeView.extend( {
-	className: 'elementor-panel-controls-stack',
+	className: 'elementor-controls-stack',
 
 	classes: {
 		popover: 'elementor-controls-popover',
@@ -14,6 +14,12 @@ ControlsStack = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {
 			elementData: elementor.getElementData( this.model ),
+		};
+	},
+
+	childViewOptions: function() {
+		return {
+			elementSettingsModel: this.model,
 		};
 	},
 
@@ -63,6 +69,14 @@ ControlsStack = Marionette.CompositeView.extend( {
 		var section = controlModel.get( 'section' );
 
 		return ! section || section === this.activeSection;
+	},
+
+	getControlView: function( name ) {
+		return this.children.findByModelCid( this.getControlModel( name ).cid );
+	},
+
+	getControlModel: function( name ) {
+		return this.collection.findWhere( { name: name } );
 	},
 
 	isVisibleSectionControl: function( sectionControlModel ) {

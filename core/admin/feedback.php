@@ -12,6 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Feedback extends Module {
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 */
 	public function __construct() {
 		add_action( 'current_screen', function () {
 			if ( ! $this->is_plugins_screen() ) {
@@ -70,6 +74,10 @@ class Feedback extends Module {
 		wp_enqueue_script( 'elementor-admin-feedback' );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function localize_feedback_dialog_settings( $localized_settings ) {
 		$localized_settings['i18n']['submit_n_deactivate'] = __( 'Submit & Deactivate', 'elementor' );
 		$localized_settings['i18n']['skip_n_deactivate'] = __( 'Skip & Deactivate', 'elementor' );
@@ -179,6 +187,10 @@ class Feedback extends Module {
 		wp_send_json_success();
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 */
 	public function admin_notices() {
 		$notice_id = 'rate_us_feedback';
 
@@ -226,6 +238,10 @@ class Feedback extends Module {
 		<?php
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_init_settings() {
 		if ( ! $this->is_plugins_screen() ) {
 			return [];
@@ -234,6 +250,10 @@ class Feedback extends Module {
 		return [ 'is_tracker_opted_in' => Tracker::is_allow_track() ];
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access private
+	 */
 	private function is_plugins_screen() {
 		return in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ] );
 	}

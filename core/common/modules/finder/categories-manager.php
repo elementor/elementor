@@ -30,6 +30,8 @@ class Categories_Manager {
 	/**
 	 * Add category.
 	 *
+	 * @since 2.3.0
+	 * @access public
 	 * @param string        $category_name
 	 * @param Base_Category $category
 	 */
@@ -40,6 +42,8 @@ class Categories_Manager {
 	/**
 	 * Get categories.
 	 *
+	 * @since 2.3.0
+	 * @access public
 	 * @param string $category
 	 *
 	 * @return Base_Category|Base_Category[]|null
@@ -64,6 +68,8 @@ class Categories_Manager {
 	 * Init categories.
 	 *
 	 * Used to initialize finder default categories.
+	 * @since 2.3.0
+	 * @access private
 	 */
 	private function init_categories() {
 		foreach ( $this->categories_list as $category_name ) {

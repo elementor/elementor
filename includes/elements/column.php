@@ -89,7 +89,7 @@ class Element_Column extends Element_Base {
 	 *
 	 * Retrieve the element default edit tools. Used to set initial tools.
 	 *
-	 * @since 2.1.0
+	 * @since 1.0.0
 	 * @access protected
 	 * @static
 	 *
@@ -491,7 +491,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -740,7 +740,6 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
-				'default' => '',
 				'prefix_class' => 'animated ',
 				'label_block' => false,
 				'frontend_available' => true,
@@ -885,17 +884,30 @@ class Element_Column extends Element_Base {
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
 								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-		$column_wrap_class = 'elementor-column-wrap';
+		$column_wrap_classes = [ 'elementor-column-wrap' ];
+
 		if ( $this->get_children() ) {
-			$column_wrap_class .= ' elementor-element-populated';
+			$column_wrap_classes[] = ' elementor-element-populated';
 		}
+
+		$this->add_render_attribute( [
+			'_inner_wrapper' => [
+				'class' => $column_wrap_classes,
+			],
+			'_widget_wrapper' => [
+				'class' => [ 'elementor-widget-wrap' ],
+			],
+			'_background_overlay' => [
+				'class' => [ 'elementor-background-overlay' ],
+			],
+		] );
 		?>
 		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
-			<div class="<?php echo $column_wrap_class; ?>">
+			<div <?php echo $this->get_render_attribute_string( '_inner_wrapper' ); ?>>
 			<?php if ( $has_background_overlay ) : ?>
-				<div class="elementor-background-overlay"></div>
+				<div <?php echo $this->get_render_attribute_string( '_background_overlay' ); ?>></div>
 			<?php endif; ?>
-		<div class="elementor-widget-wrap">
+		<div <?php echo $this->get_render_attribute_string( '_widget_wrapper' ); ?>>
 		<?php
 	}
 

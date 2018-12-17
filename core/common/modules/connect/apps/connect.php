@@ -7,10 +7,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Connect extends Common_App {
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_slug() {
 		return 'connect';
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function render_admin_widget() {
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
@@ -22,7 +30,7 @@ class Connect extends Common_App {
 			$title = __( 'Connect to Elementor', 'elementor' );
 			$label = __( 'Connect', 'elementor' );
 			$url = $this->get_admin_url( 'authorize' );
-			$attr = 'class="elementor-connect-button"';
+			$attr = 'class="elementor-connect-popup"';
 		}
 
 		echo '<h1>' . __( 'Connect', 'elementor' ) . '</h1>';

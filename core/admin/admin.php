@@ -19,7 +19,7 @@ class Admin extends App {
 	 *
 	 * Retrieve the module name.
 	 *
-	 * @since  2.3.0
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @return string Module name.
@@ -28,6 +28,10 @@ class Admin extends App {
 		return 'admin';
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 */
 	public function maybe_redirect_to_getting_started() {
 		if ( ! get_transient( 'elementor_activation_redirect' ) ) {
 			return;
@@ -125,6 +129,11 @@ class Admin extends App {
 	 * @param \WP_Post $post The current post object.
 	 */
 	public function print_switch_mode_button( $post ) {
+		// Exit if Gutenberg are active.
+		if ( did_action( 'enqueue_block_editor_assets' ) ) {
+			return;
+		}
+
 		if ( ! User::is_current_user_can_edit( $post->ID ) ) {
 			return;
 		}
@@ -188,33 +197,6 @@ class Admin extends App {
 		}
 
 		Plugin::$instance->db->set_is_elementor_page( $post_id, ! empty( $_POST['_elementor_post_mode'] ) );
-	}
-
-	/**
-	 * Add edit link in dashboard.
-	 *
-	 * Add an edit link to the post/page action links on the post/pages list table.
-	 *
-	 * Fired by `post_row_actions` and `page_row_actions` filters.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param array    $actions An array of row action links.
-	 * @param \WP_Post $post    The post object.
-	 *
-	 * @return array An updated array of row action links.
-	 */
-	public function add_edit_in_dashboard( $actions, \WP_Post $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
-			$actions['edit_with_elementor'] = sprintf(
-				'<a href="%1$s">%2$s</a>',
-				Utils::get_edit_link( $post->ID ),
-				__( 'Edit with Elementor', 'elementor' )
-			);
-		}
-
-		return $actions;
 	}
 
 	/**
@@ -668,10 +650,17 @@ class Admin extends App {
 		die;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function add_new_template_template() {
 		Plugin::$instance->common->add_template( ELEMENTOR_PATH . 'includes/admin-templates/new-template.php' );
 	}
 
+	/**
+	 * @access public
+	 */
 	public function enqueue_new_template_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
@@ -684,6 +673,9 @@ class Admin extends App {
 		);
 	}
 
+	/**
+	 * @access public
+	 */
 	public function init_new_template() {
 		if ( 'edit-elementor_library' !== get_current_screen()->id ) {
 			return;
@@ -716,9 +708,6 @@ class Admin extends App {
 		add_action( 'edit_form_after_title', [ $this, 'print_switch_mode_button' ] );
 		add_action( 'save_post', [ $this, 'save_post' ] );
 
-		add_filter( 'page_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
-		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
-
 		add_filter( 'display_post_states', [ $this, 'add_elementor_post_state' ], 10, 2 );
 
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
@@ -737,6 +726,10 @@ class Admin extends App {
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_init_settings() {
 		$settings = [
 			'home_url' => home_url(),
