@@ -172,7 +172,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		}, 30 );
 	},
 
-		var self = this;
 	onInlineEditingBlur: function( event ) {
 		if ( 'mousedown' === event.type ) {
 			this.stopEditing();
@@ -184,15 +183,15 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		 * When exiting inline editing we need to set timeout, to make sure there is no focus on internal
 		 * toolbar action. This prevent the blur and allows the user to continue the inline editing.
 		 */
-		setTimeout( function() {
-			var selection = elementorFrontend.elements.window.getSelection(),
+		setTimeout( () => {
+			const selection = elementorFrontend.elements.window.getSelection(),
 				$focusNode = jQuery( selection.focusNode );
 
 			if ( $focusNode.closest( '.pen-input-wrapper' ).length ) {
 				return;
 			}
 
-			self.stopEditing();
+			this.stopEditing();
 		}, 20 );
 	},
 
