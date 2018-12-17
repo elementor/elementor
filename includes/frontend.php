@@ -1117,7 +1117,7 @@ class Frontend extends App {
 		}
 
 		if ( empty( $parts['more_text'] ) ) {
-			$parts['more_text'] = __( '(more&hellip;)', '' );
+			$parts['more_text'] = __( '(more&hellip;)', 'elementor' );
 		}
 
 		$more_link_text = sprintf(
