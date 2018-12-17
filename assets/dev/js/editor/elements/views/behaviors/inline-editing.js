@@ -134,12 +134,16 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		} );
 
 		this.$currentEditingArea.on( 'blur', this.onInlineEditingBlur );
+
+		elementorCommon.elements.$body.on( 'mousedown', this.onInlineEditingBlur );
 	},
 
 	stopEditing: function() {
 		this.editing = false;
 
 		this.$currentEditingArea.off( 'blur', this.onInlineEditingBlur );
+
+		elementorCommon.elements.$body.off( 'mousedown', this.onInlineEditingBlur );
 
 		this.editor.destroy();
 
@@ -168,8 +172,13 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		}, 30 );
 	},
 
-	onInlineEditingBlur: function() {
 		var self = this;
+	onInlineEditingBlur: function( event ) {
+		if ( 'mousedown' === event.type ) {
+			this.stopEditing();
+
+			return;
+		}
 
 		/**
 		 * When exiting inline editing we need to set timeout, to make sure there is no focus on internal
