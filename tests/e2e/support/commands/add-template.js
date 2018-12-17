@@ -6,7 +6,7 @@
  * @param {Object} options
  * @param {string} options.templateType the post type ( Page | Section )
  * @param {string} [options.presetSearch] what to search in Elementor template library
- * @param {number} [options.presetNumber] the place of the template in the library
+ * @param {number} [options.PreDesignNumber] the place of the template in the library
  * @param {string} [options.name] the place of the template in the library
  */
 function addTemplate( options ) {
@@ -17,17 +17,17 @@ function addTemplate( options ) {
 		cy.get( '#elementor-new-template__form__post-title' ).type( options.name );
 	}
 	cy.get( '#elementor-new-template__form__submit' ).click();
-	if ( options.presetNumber || options.presetSearch ) {
+	if ( options.PreDesignNumber || options.presetSearch ) {
 		cy.get( '#elementor-preview-iframe' ).then( ( $iframe ) => {
 			cy.wrap( $iframe.contents().find( '.elementor-add-template-button' ) ).click();
 		} );
 		if ( options.presetSearch ) {
 			cy.get( '#elementor-template-library-filter-text' ).type( options.presetSearch );
 		}
-		if ( ! options.presetNumber ) {
-			options.presetNumber = 1;
+		if ( ! options.PreDesignNumber ) {
+			options.PreDesignNumber = 1;
 		}
-		cy.get( `:nth-child(${ options.presetNumber }) > .elementor-template-library-template-body > .elementor-template-library-template-preview`, { timeout: 30000 } )
+		cy.get( `:nth-child(${ options.PreDesignNumber }) > .elementor-template-library-template-body > .elementor-template-library-template-preview`, { timeout: 30000 } )
 			.click();
 		cy.get( '.elementor-template-library-template-action' ).click();
 	}
