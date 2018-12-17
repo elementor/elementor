@@ -1116,6 +1116,10 @@ class Frontend extends App {
 			return $parts['main'] . '<div id="more-' . $post->ID . '"></div>' . $parts['extended'];
 		}
 
+		if ( empty( $parts['more_text'] ) ) {
+			$parts['more_text'] = __( '(more&hellip;)', '' );
+		}
+
 		$more_link_text = sprintf(
 			'<span aria-label="%1$s">%2$s</span>',
 			sprintf(
@@ -1125,11 +1129,11 @@ class Frontend extends App {
 					'echo' => false,
 				] )
 			),
-			__( '(more&hellip;)', 'elementor' )
+			$parts['more_text']
 		);
 
-		$more_link_text = apply_filters( 'the_content_more_link', sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text ), $more_link_text );
+		$more_link = apply_filters( 'the_content_more_link', sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text ), $more_link_text );
 
-		return force_balance_tags( $parts['main'] ) . $more_link_text;
+		return force_balance_tags( $parts['main'] ) . $more_link;
 	}
 }
