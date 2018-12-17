@@ -223,9 +223,9 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 ## Changelog ##
 
 ### 2.3.6 - 2018-12-17 ###
-* Fix: `Back to Gutenberg Editor` not working when meta-boxes are present
+* Fix: `Back to WordPress Editor` not working when meta-boxes are present ([#6437](https://github.com/pojome/elementor/issues/6437))
 * Fix: Register documents only if needed
-* Fix: Style glitch in the responsive control
+* Fix: Style glitch in the responsive control (#6227)
 
 ### 2.3.5 - 2018-12-11 ###
 * Tweak: Load `elementor_debug_log` option only on System Info page
