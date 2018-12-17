@@ -18,6 +18,10 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		};
 	},
 
+	initialize: function() {
+		this.onInlineEditingBlur = this.onInlineEditingBlur.bind( this );
+	},
+
 	getEditingSettingKey: function() {
 		return this.$currentEditingArea.data().elementorSettingKey;
 	},
@@ -129,7 +133,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			event.preventDefault();
 		} );
 
-		this.$currentEditingArea.on( 'blur', this.onInlineEditingBlur.bind( this ) );
+		this.$currentEditingArea.on( 'blur', this.onInlineEditingBlur );
 	},
 
 	stopEditing: function() {
@@ -138,6 +142,8 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		this.editor.destroy();
 
 		this.view.allowRender = true;
+
+		this.$currentEditingArea.off( 'blur', this.onInlineEditingBlur );
 
 		/**
 		 * Inline editing has several toolbar types (advanced, basic and none). When editing is stopped,
