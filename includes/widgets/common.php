@@ -266,7 +266,7 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
