@@ -1056,7 +1056,7 @@ class Widget_Video extends Widget_Base {
 	 * @access private
 	 */
 	private function render_hosted_video() {
-		$video_url = $this->get_hosted_video_url( );
+		$video_url = $this->get_hosted_video_url();
 		if ( empty( $video_url ) ) {
 			return;
 		}
