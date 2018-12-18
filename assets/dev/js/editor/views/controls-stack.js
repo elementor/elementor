@@ -213,7 +213,9 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onDeviceModeChange: function() {
-		this.$el.removeClass( 'elementor-responsive-switchers-open' );
+		if ( 'desktop' === elementor.channels.deviceMode.request( 'currentMode' ) ) {
+			this.$el.removeClass( 'elementor-responsive-switchers-open' );
+		}
 	},
 
 	onChildviewControlSectionClicked: function( childView ) {
