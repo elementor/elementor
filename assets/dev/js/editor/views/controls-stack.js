@@ -71,8 +71,12 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return ! section || section === this.activeSection;
 	},
 
-	getControlView: function( name ) {
-		return this.children.findByModelCid( this.getControlModel( name ).cid );
+	getControlViewByModel: function( model ) {
+		return this.children.findByModelCid( model.cid );
+	},
+
+	getControlViewByName: function( name ) {
+		return this.getControlViewByModel( this.getControlModel( name ) );
 	},
 
 	getControlModel: function( name ) {
