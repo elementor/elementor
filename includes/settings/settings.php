@@ -656,6 +656,7 @@ class Settings extends Settings_Page {
 		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 
 		add_filter( 'custom_menu_order', '__return_true' );
+		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 
 		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
 			foreach ( [ 'add', 'update' ] as $action ) {
