@@ -12,7 +12,7 @@ module.exports = Marionette.ItemView.extend( {
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
-		saveTemplate: '#elementor-panel-saver-menu-save-template',
+		saveTemplate: '#elementor-panel-footer-sub-menu-item-save-template',
 		history: '#elementor-panel-footer-history',
 		navigator: '#elementor-panel-footer-navigator',
 	},
@@ -42,6 +42,48 @@ module.exports = Marionette.ItemView.extend( {
 
 	getDeviceModeButton: function( deviceMode ) {
 		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
+	},
+
+	addSubMenuItem: function( menuName, itemData ) {
+		const $newItem = jQuery( '<div>', {
+				id: 'elementor-panel-footer-sub-menu-item-' + itemData.name,
+				class: 'elementor-panel-footer-sub-menu-item',
+			} ),
+			$itemIcon = jQuery( '<i>', {
+				class: 'elementor-icon ' + itemData.icon,
+				'aria-hidden': true,
+			} ),
+			$itemTitle = jQuery( '<div>', {
+				class: 'elementor-title',
+			} ).text( itemData.title );
+
+		$newItem.append( $itemIcon, $itemTitle );
+
+		if ( itemData.description ) {
+			const $itemDescription = jQuery( '<div>', {
+				class: 'elementor-description',
+			} ).text( itemData.description );
+
+			$newItem.append( $itemDescription );
+		}
+
+		if ( itemData.callback ) {
+			$newItem.on( 'click', itemData.callback );
+		}
+
+		const $menuTool = this.ui.menuButtons.filter( '#elementor-panel-footer-' + menuName );
+
+		if ( itemData.before ) {
+			const $beforeItem = $menuTool.find( '#elementor-panel-footer-sub-menu-item-' + itemData.before );
+
+			if ( $beforeItem.length ) {
+				return $newItem.insertBefore( $beforeItem );
+			}
+		}
+
+		const $subMenu = $menuTool.find( '.elementor-panel-footer-sub-menu' );
+
+		return $newItem.appendTo( $subMenu );
 	},
 
 	onMenuButtonsClick: function( event ) {
