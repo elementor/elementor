@@ -92,8 +92,8 @@ const App = Marionette.Application.extend( {
 		},
 		elements: {
 			models: {
+				// TODO: Deprecated alias since 2.4.0
 				get BaseSettings() {
-					// TODO: Deprecated alias since 2.4.0
 					elementorCommon.helpers.deprecatedMethod( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
 
 					return elementorModules.editor.elements.models.BaseSettings;
