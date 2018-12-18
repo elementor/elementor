@@ -65,6 +65,10 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function register_admin_menu() {
+		global $menu;
+
+		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // WPCS: override ok.
+
 		add_menu_page(
 			__( 'Elementor', 'elementor' ),
 			__( 'Elementor', 'elementor' ),
@@ -72,8 +76,45 @@ class Settings extends Settings_Page {
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ],
 			'',
-			99
+			58.5
 		);
+	}
+
+	/**
+	 * Reorder the Elementor menu items in admin.
+	 * Based on WC.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param array $menu_order Menu order.
+	 * @return array
+	 */
+	public function menu_order( $menu_order ) {
+		// Initialize our custom order array.
+		$elementor_menu_order = [];
+
+		// Get the index of our custom separator.
+		$elementor_separator = array_search( 'separator-elementor', $menu_order, true );
+
+		// Get index of library menu.
+		$elementor_library = array_search( 'edit.php?post_type=elementor_library', $menu_order, true );
+
+		// Loop through menu order and do some rearranging.
+		foreach ( $menu_order as $index => $item ) {
+			if ( 'elementor' === $item ) {
+				$elementor_menu_order[] = 'separator-elementor';
+				$elementor_menu_order[] = $item;
+				$elementor_menu_order[] = 'edit.php?post_type=elementor_library';
+
+				unset( $menu_order[ $elementor_separator ] );
+				unset( $menu_order[ $elementor_library ] );
+			} elseif ( ! in_array( $item, [ 'separator-elementor' ], true ) ) {
+				$elementor_menu_order[] = $item;
+			}
+		}
+
+		// Return order.
+		return $elementor_menu_order;
 	}
 
 	/**
@@ -274,10 +315,6 @@ class Settings extends Settings_Page {
 		if ( isset( $submenu['elementor'] ) ) {
 			// @codingStandardsIgnoreStart
 			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
-
-			$hold_menu_data = $submenu['elementor'][0];
-			$submenu['elementor'][0] = $submenu['elementor'][1];
-			$submenu['elementor'][1] = $hold_menu_data;
 			// @codingStandardsIgnoreEnd
 		}
 	}
@@ -617,6 +654,9 @@ class Settings extends Settings_Page {
 		// Clear CSS Meta after change print method.
 		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+
+		add_filter( 'custom_menu_order', '__return_true' );
+		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 
 		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
 			foreach ( [ 'add', 'update' ] as $action ) {
