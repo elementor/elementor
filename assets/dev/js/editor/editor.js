@@ -56,6 +56,7 @@ const App = Marionette.Application.extend( {
 			},
 		},
 		controls: {
+			Animation: require( 'elementor-controls/select2' ),
 			Base: require( 'elementor-controls/base' ),
 			BaseData: require( 'elementor-controls/base-data' ),
 			BaseMultiple: require( 'elementor-controls/base-multiple' ),
@@ -68,6 +69,7 @@ const App = Marionette.Application.extend( {
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Font: require( 'elementor-controls/font' ),
 			Gallery: require( 'elementor-controls/gallery' ),
+			Hover_animation: require( 'elementor-controls/select2' ),
 			Icon: require( 'elementor-controls/icon' ),
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
 			Media: require( 'elementor-controls/media' ),
@@ -83,6 +85,7 @@ const App = Marionette.Application.extend( {
 			Structure: require( 'elementor-controls/structure' ),
 			Switcher: require( 'elementor-controls/switcher' ),
 			Tab: require( 'elementor-controls/tab' ),
+			Text_shadow: require( 'elementor-controls/box-shadow' ),
 			Url: require( 'elementor-controls/url' ),
 			Wp_widget: require( 'elementor-controls/wp_widget' ),
 			Wysiwyg: require( 'elementor-controls/wysiwyg' ),
