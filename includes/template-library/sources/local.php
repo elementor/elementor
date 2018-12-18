@@ -222,6 +222,7 @@ class Source_Local extends Source_Base {
 			'labels' => $labels,
 			'public' => true,
 			'rewrite' => false,
+			'menu_icon' => 'dashicons-admin-page',
 			'show_ui' => true,
 			'show_in_menu' => true,
 			'show_in_nav_menus' => false,
