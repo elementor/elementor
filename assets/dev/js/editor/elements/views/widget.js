@@ -37,6 +37,9 @@ WidgetView = BaseElementView.extend( {
 				behaviorClass: require( 'elementor-behaviors/inline-editing' ),
 				inlineEditingClass: 'elementor-inline-editing',
 			},
+			Draggable: {
+				behaviorClass: require( 'elementor-behaviors/draggable' ),
+			},
 		} );
 
 		return elementor.hooks.applyFilters( 'elements/widget/behaviors', behaviors, this );
