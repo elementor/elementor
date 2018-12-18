@@ -72,7 +72,7 @@ class Settings extends Settings_Page {
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ],
 			'',
-			99
+			25
 		);
 	}
 
@@ -274,10 +274,6 @@ class Settings extends Settings_Page {
 		if ( isset( $submenu['elementor'] ) ) {
 			// @codingStandardsIgnoreStart
 			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
-
-			$hold_menu_data = $submenu['elementor'][0];
-			$submenu['elementor'][0] = $submenu['elementor'][1];
-			$submenu['elementor'][1] = $hold_menu_data;
 			// @codingStandardsIgnoreEnd
 		}
 	}

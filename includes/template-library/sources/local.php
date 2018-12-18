@@ -215,7 +215,7 @@ class Source_Local extends Source_Base {
 			'not_found' => _x( 'No Templates found', 'Template Library', 'elementor' ),
 			'not_found_in_trash' => _x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => _x( 'My Templates', 'Template Library', 'elementor' ),
+			'menu_name' => _x( 'Library', 'Template Library', 'elementor' ),
 		];
 
 		$args = [
@@ -223,7 +223,7 @@ class Source_Local extends Source_Base {
 			'public' => true,
 			'rewrite' => false,
 			'show_ui' => true,
-			'show_in_menu' => false,
+			'show_in_menu' => true,
 			'show_in_nav_menus' => false,
 			'exclude_from_search' => true,
 			'capability_type' => 'post',
@@ -282,7 +282,7 @@ class Source_Local extends Source_Base {
 			'labels' => [
 				'name' => _x( 'Categories', 'Template Library', 'elementor' ),
 				'singular_name' => _x( 'Category', 'Template Library', 'elementor' ),
-				'all_items' => __( 'All Categories', '' ),
+				'all_items' => __( 'All Categories', 'elementor' ),
 			],
 		];
 
@@ -301,35 +301,19 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
-	 * Register admin menu.
-	 *
-	 * Add a top-level menu page for Elementor Template Library.
+	 * Remove Add New item from admin menu.
 	 *
 	 * Fired by `admin_menu` action.
 	 *
-	 * @since 1.0.0
+	 * @since 2.4.0
 	 * @access public
 	 */
-	public function register_admin_menu() {
-		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page(
-				Settings::PAGE_ID,
-				_x( 'My Templates', 'Template Library', 'elementor' ),
-				_x( 'My Templates', 'Template Library', 'elementor' ),
-				Editor::EDITING_CAPABILITY,
-				'edit.php?post_type=' . self::CPT
-			);
-		} else {
-			add_menu_page(
-				__( 'Elementor', 'elementor' ),
-				__( 'Elementor', 'elementor' ),
-				Editor::EDITING_CAPABILITY,
-				'edit.php?post_type=' . self::CPT,
-				'',
-				'',
-				99
-			);
-		}
+	public function admin_menu_remove_add_new_item() {
+		global $submenu;
+
+		// @codingStandardsIgnoreStart
+		unset( $submenu['edit.php?post_type=elementor_library'][10] );
+		// @codingStandardsIgnoreEnd
 	}
 
 	/**
@@ -1161,8 +1145,11 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
+		$all_items = get_taxonomy( self::TAXONOMY_CATEGORY_SLUG )->labels->all_items;
+
 		$dropdown_options = array(
-			'show_option_all' => get_taxonomy( self::TAXONOMY_CATEGORY_SLUG )->labels->all_items,
+			'show_option_all' => $all_items,
+			'show_option_none' => $all_items,
 			'hide_empty' => 0,
 			'hierarchical' => 1,
 			'show_count' => 0,
@@ -1173,7 +1160,7 @@ class Source_Local extends Source_Base {
 			'selected' => empty( $_GET[ self::TAXONOMY_CATEGORY_SLUG ] ) ? '' : $_GET[ self::TAXONOMY_CATEGORY_SLUG ],
 		);
 
-		echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by category', '' ) . '</label>';
+		echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by category', 'elementor' ) . '</label>';
 		wp_dropdown_categories( $dropdown_options );
 	}
 
@@ -1351,7 +1338,7 @@ class Source_Local extends Source_Base {
 	 */
 	private function add_actions() {
 		if ( is_admin() ) {
-			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
+			add_action( 'admin_menu', [ $this, 'admin_menu_remove_add_new_item' ], 50 );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
