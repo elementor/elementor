@@ -18,7 +18,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Retrieve Read More widget name.
 	 *
-     * @since 2.4.0
+	 * @since 2.4.0
 	 * @access public
 	 *
 	 * @return string Widget name.
@@ -32,7 +32,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Retrieve Read More widget title.
 	 *
-     * @since 2.4.0
+	 * @since 2.4.0
 	 * @access public
 	 *
 	 * @return string Widget title.
@@ -46,7 +46,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Retrieve Read More widget icon.
 	 *
-     * @since 2.4.0
+	 * @since 2.4.0
 	 * @access public
 	 *
 	 * @return string Widget icon.
@@ -60,7 +60,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Retrieve the list of keywords the widget belongs to.
 	 *
-     * @since 2.4.0
+	 * @since 2.4.0
 	 * @access public
 	 *
 	 * @return array Widget keywords.
