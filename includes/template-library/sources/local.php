@@ -312,9 +312,9 @@ class Source_Local extends Source_Base {
 	public function admin_menu_remove_add_new_item() {
 		global $submenu;
 
-		add_submenu_page( 'edit.php?post_type=' . self::CPT, __( 'Saved Templates', '' ), __( 'Saved Templates', '' ), 'manage_options', 'saved_templates', '__return_empty' );
-		add_submenu_page( 'edit.php?post_type=' . self::CPT, __( 'Theme Templates', '' ), __( 'Theme Templates', '' ), 'manage_options', 'theme_templates', '__return_empty' );
-		add_submenu_page( 'edit.php?post_type=' . self::CPT, __( 'Popups', '' ), __( 'Popups', '' ), 'manage_options', 'popups_templates', '__return_empty' );
+		add_submenu_page( 'edit.php?post_type=' . self::CPT, __( 'Saved Templates', 'elementor' ), __( 'Saved Templates', 'elementor' ), 'manage_options', 'saved_templates', '__return_empty' );
+		add_submenu_page( 'edit.php?post_type=' . self::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Templates', 'elementor' ), 'manage_options', 'theme_templates', '__return_empty' );
+		add_submenu_page( 'edit.php?post_type=' . self::CPT, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popups_templates', '__return_empty' );
 
 		// @codingStandardsIgnoreStart
 		//unset( $submenu['edit.php?post_type=elementor_library'][10] );
