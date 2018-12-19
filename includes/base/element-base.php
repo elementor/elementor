@@ -660,7 +660,7 @@ abstract class Element_Base extends Controls_Stack {
 		ob_start();
 		$this->_print_content();
 		$content = ob_get_clean();
-		
+
 		/**
 		 * Render element content.
 		 *
