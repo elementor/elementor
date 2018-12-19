@@ -11,7 +11,7 @@ describe( 'Tests the funcnaliti of the widget image', () => {
 				cy.get( '#elementor-panel-saver-button-publish' ).click();
 				cy.wait( 100 );
 				cy.get( '#elementor-panel-saver-button-publish' ).click();
-				cy.get( '.elementor-button.elementor-button-success.elementor-saver-disabled' ).should( 'exist' );
+				cy.get( '.elementor-button.elementor-button-success.elementor-disabled' ).should( 'exist' );
 
 				cy.visit( '/?p=' + pageId );
 				cy.get( '[data-id=' + widgetId + ']' ).should( 'not.exist' );
