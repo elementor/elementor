@@ -93,6 +93,8 @@ module.exports = Marionette.ItemView.extend( {
 			return;
 		}
 
+		this.ui.settings.addClass( 'elementor-open' );
+
 		panel.setPage( 'page_settings' );
 
 		panel.getCurrentPageView().on( 'destroy', () => {
