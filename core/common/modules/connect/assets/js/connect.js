@@ -11,7 +11,6 @@ export default class extends Module {
 					},
 				}, options );
 
-				this.attr( 'target', '_blank' );
 				this.attr( 'href', this.attr( 'href' ) + '&mode=popup' );
 
 				jQuery( window ).on( 'elementorConnected', settings.callback );
