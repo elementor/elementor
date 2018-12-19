@@ -214,9 +214,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	onResponsiveSwitchersClick: function( event ) {
 		var device = jQuery( event.currentTarget ).data( 'device' );
 
-		elementor.changeDeviceMode( device );
-
 		this.triggerMethod( 'responsive:switcher:click', device );
+
+		elementor.changeDeviceMode( device );
 	},
 
 	renderResponsiveSwitchers: function() {

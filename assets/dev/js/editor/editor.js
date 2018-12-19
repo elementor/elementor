@@ -581,6 +581,8 @@ const App = Marionette.Application.extend( {
 
 	initPanel: function() {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
+
+		this.trigger( 'panel:init' );
 	},
 
 	initNavigator: function() {

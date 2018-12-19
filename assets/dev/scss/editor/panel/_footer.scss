@@ -84,6 +84,14 @@
 	width: 100%;
 	cursor: pointer;
 
+	&.elementor-disabled {
+
+		.elementor-icon,
+		.elementor-title {
+			color: $editor-dark;
+		}
+	}
+
 	&:not(:last-child) {
 		margin-bottom: 1px;
 	}
@@ -142,7 +150,7 @@
 	}
 }
 
-#elementor-panel-saver-publish {
+#elementor-panel-footer-saver-publish {
 	width: 80px;
 
 	.elementor-button-state {
@@ -157,7 +165,7 @@
 	}
 }
 
-#elementor-panel-saver-save-options {
+#elementor-panel-footer-saver-options {
 	width: 35px;
 	@include border-start(1px solid $editor-darkest);
 
@@ -186,11 +194,12 @@
 	}
 }
 
-.elementor-saver-disabled {
+.elementor-disabled {
 	cursor: default;
 }
 
 #elementor-panel-saver- {
+
 	&button-{
 		&preview {
 			a {
@@ -204,7 +213,7 @@
 			text-transform: uppercase;
 			height: 26px;
 
-			&.elementor-saver-disabled {
+			&.elementor-disabled {
 				background-color: $editor-darker;
 				color: $editor-light;
 			}
@@ -217,17 +226,6 @@
 
 		&save-options {
 			width: 25px;
-		}
-	}
-
-	&menu-save-draft {
-
-		&.elementor-saver-disabled {
-
-			.elementor-icon,
-			.elementor-title {
-				color: $editor-dark;
-			}
 		}
 	}
 }
