@@ -660,6 +660,20 @@ abstract class Element_Base extends Controls_Stack {
 		ob_start();
 		$this->_print_content();
 		$content = ob_get_clean();
+		
+		/**
+		 * Render element content.
+		 *
+		 * Fires when Elementor renders the element content.
+		 *
+		 * The dynamic portion of the hook name, `$element_type`, refers to the element type.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $content The content of the element.
+		 * @param Element_Base $this The element.
+		 */
+		$content = apply_filters( "elementor/{$element_type}/render_content", $content, $this );
 
 		$should_render = ( ! empty( $content ) || $this->should_print_empty() );
 
@@ -679,7 +693,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->_add_render_attributes();
 
 			$this->before_render();
-			echo ( apply_filters( "elementor/{$element_type}/render_content", $content, $this ) );
+			echo $content;
 			$this->after_render();
 
 			$this->enqueue_scripts();
