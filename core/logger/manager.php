@@ -15,7 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends BaseModule {
 
-	protected $logger_class = 'Elementor\Core\Logger\Loggers\Db';
+	protected $loggers = [];
+
+	protected $default_logger = '';
 
 	public function get_name() {
 		return 'log';
@@ -75,11 +77,39 @@ class Manager extends BaseModule {
 		wp_send_json_success();
 	}
 
+	public function register_logger( $name, $class ) {
+		$this->loggers[ $name ] = $class;
+	}
+
+	public function set_default_logger( $name ) {
+		if ( ! empty( $this->loggers[ $name ] ) ) {
+			$this->default_logger = $name;
+		}
+	}
+
+	public function register_default_loggers() {
+		$this->register_logger( 'db', 'Elementor\Core\Logger\Loggers\Db' );
+		$this->register_logger( 'file', 'Elementor\Core\Logger\Loggers\File' );
+		$this->set_default_logger( 'db' );
+	}
+
 	/**
+	 * @param string $name
+	 *
 	 * @return Logger_Interface
 	 */
-	public function get_logger() {
-		return $this->get_component( 'log' );
+	public function get_logger( $name = '' ) {
+		$this->register_loggers();
+
+		if ( empty( $name ) || ! isset( $this->loggers[ $name ] ) ) {
+			$name = $this->default_logger;
+		}
+
+		if ( ! $this->get_component( $name ) ) {
+			$this->add_component( $name, new $this->loggers[ $name ]() );
+		}
+
+		return $this->get_component( $name );
 	}
 
 	/**
@@ -156,14 +186,19 @@ class Manager extends BaseModule {
 		return isset( $error_map[ $type ] ) ? $error_map[ $type ] : Logger_Interface::LEVEL_ERROR;
 	}
 
-	public function __construct() {
-		$this->add_component( 'log', new $this->logger_class() );
+	private function register_loggers() {
+		if ( ! did_action( 'elementor/loggers/register' ) ) {
+			do_action( 'elementor/loggers/register', $this );
+		}
+	}
 
+	public function __construct() {
 		register_shutdown_function( [ $this, 'shutdown' ] );
 
 		add_action( 'admin_init', [ $this, 'add_system_info_report' ] );
 
 		add_action( 'wp_ajax_elementor_js_log', [ $this, 'js_log' ] );
 
+		add_action( 'elementor/loggers/register', [ $this, 'register_default_loggers' ] );
 	}
 }

@@ -2,6 +2,7 @@
 namespace Elementor\Modules\WpCli;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -36,6 +37,9 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
+		Plugin::$instance->logger->register_logger( 'cli', 'Elementor\Modules\WpCli\Cli_Logger' );
+		Plugin::$instance->logger->set_default_logger( 'cli' );
 		\WP_CLI::add_command( 'elementor', '\Elementor\Modules\WpCli\Command' );
 	}
+
 }
