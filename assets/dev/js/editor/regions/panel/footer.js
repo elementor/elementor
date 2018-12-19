@@ -86,6 +86,20 @@ module.exports = Marionette.ItemView.extend( {
 		return $newItem.appendTo( $subMenu );
 	},
 
+	showSettingsPage: function() {
+		const panel = elementor.getPanelView();
+
+		if ( 'page_settings' === panel.getCurrentPageName() ) {
+			return;
+		}
+
+		panel.setPage( 'page_settings' );
+
+		panel.getCurrentPageView().on( 'destroy', () => {
+			this.ui.settings.removeClass( 'elementor-open' );
+		} );
+	},
+
 	onMenuButtonsClick: function( event ) {
 		var $tool = jQuery( event.currentTarget );
 
@@ -104,15 +118,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSettingsClick: function() {
-		var self = this;
-
-		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
-			elementor.getPanelView().setPage( 'page_settings' );
-
-			elementor.getPanelView().getCurrentPageView().once( 'destroy', function() {
-				self.ui.settings.removeClass( 'elementor-open' );
-			} );
-		}
+		this.showSettingsPage();
 	},
 
 	onDeviceModeChange: function() {
