@@ -1344,7 +1344,7 @@ class Source_Local extends Source_Base {
 	 */
 	private function add_actions() {
 		if ( is_admin() ) {
-			add_action( 'admin_menu', [ $this, 'admin_menu_remove_add_new_item' ], 50 );
+			add_action( 'admin_menu', [ $this, 'admin_menu_remove_add_new_item' ], 800 );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
