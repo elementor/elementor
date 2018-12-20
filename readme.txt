@@ -220,6 +220,12 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.3.7 - 2018-12-20 =
+* Fix: Invalid type in Import templates ([#6483](https://github.com/pojome/elementor/issues/6483))
+* Fix: Save global templates
+* Fix: WP widgets compatibility
+* Fix: Responsive device buttons always shown
+
 = 2.3.6 - 2018-12-17 =
 * Fix: `Back to WordPress Editor` not working when meta-boxes are present ([#6437](https://github.com/pojome/elementor/issues/6437))
 * Fix: Register documents only if needed
