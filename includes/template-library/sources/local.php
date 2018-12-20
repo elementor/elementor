@@ -783,8 +783,6 @@ class Source_Local extends Source_Base {
 			if ( $this->is_template_supports_export( $post->ID ) ) {
 				$actions['export-template'] = sprintf( '<a href="%1$s">%2$s</a>', $this->get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
 			}
-
-			unset( $actions['inline hide-if-no-js'] );
 		}
 
 		return $actions;
