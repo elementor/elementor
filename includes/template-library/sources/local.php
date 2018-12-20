@@ -312,12 +312,13 @@ class Source_Local extends Source_Base {
 	public function admin_menu_remove_add_new_item() {
 		global $submenu;
 
-		add_submenu_page( 'edit.php?post_type=' . self::CPT, __( 'Saved Templates', '' ), __( 'Saved Templates', '' ), 'manage_options', 'saved_templates', '__return_empty' );
-		add_submenu_page( 'edit.php?post_type=' . self::CPT, __( 'Theme Templates', '' ), __( 'Theme Templates', '' ), 'manage_options', 'theme_templates', '__return_empty' );
-		add_submenu_page( 'edit.php?post_type=' . self::CPT, __( 'Popups', '' ), __( 'Popups', '' ), 'manage_options', 'popups_templates', '__return_empty' );
+		$submenu['edit.php?post_type=elementor_library'][800] = $submenu['edit.php?post_type=elementor_library'][15];
 
+		unset( $submenu['edit.php?post_type=elementor_library'][15] );
 		// @codingStandardsIgnoreStart
-		//unset( $submenu['edit.php?post_type=elementor_library'][10] );
+		if ( isset( $submenu['edit.php?post_type=elementor_library'][10][2] ) ) {
+			$submenu['edit.php?post_type=elementor_library'][10][2] = admin_url( 'edit.php?post_type=' . Source_Local::CPT . '#add_new' );
+		}
 		// @codingStandardsIgnoreEnd
 	}
 
@@ -1343,7 +1344,7 @@ class Source_Local extends Source_Base {
 	 */
 	private function add_actions() {
 		if ( is_admin() ) {
-			add_action( 'admin_menu', [ $this, 'admin_menu_remove_add_new_item' ], 50 );
+			add_action( 'admin_menu', [ $this, 'admin_menu_remove_add_new_item' ], 800 );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
