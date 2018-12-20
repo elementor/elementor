@@ -174,6 +174,28 @@ abstract class Background_Task extends \WP_Background_Process {
 		}
 	}
 
+	public function is_process_locked() {
+		return $this->is_process_running();
+	}
+
+	public function handle_immediately( $callbacks ) {
+		$this->manager->on_runner_start();
+
+		$this->lock_process();
+
+		foreach ( $callbacks as $callback ) {
+			$item = [
+				'callback' => $callback,
+			];
+
+			do {
+				$item = $this->task( $item );
+			} while ( $item );
+		}
+
+		$this->unlock_process();
+	}
+
 	/**
 	 * Task
 	 *

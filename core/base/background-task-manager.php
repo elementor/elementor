@@ -33,6 +33,15 @@ abstract class Background_Task_Manager extends BaseModule {
 		$logger->info( $this->get_plugin_name() . '::' . $this->get_action() . ' Completed' );
 	}
 
+	public function get_task_runner() {
+		if ( empty( $this->task_runner ) ) {
+			$class_name = $this->get_task_runner_class();
+			$this->task_runner = new $class_name( $this );
+		}
+
+		return $this->task_runner;
+	}
+
 	// TODO: Replace with a db settings system.
 	protected function add_flag( $flag ) {
 		add_option( $this->get_plugin_name() . '_' . $this->get_action() . '_' . $flag, 1 );
@@ -44,18 +53,6 @@ abstract class Background_Task_Manager extends BaseModule {
 
 	protected function delete_flag( $flag ) {
 		delete_option( $this->get_plugin_name() . '_' . $this->get_action() . '_' . $flag );
-	}
-
-	/**
-	 * @return Background_Task
-	 */
-	protected function get_task_runner() {
-		if ( empty( $this->task_runner ) ) {
-			$class_name = $this->get_task_runner_class();
-			$this->task_runner = new $class_name( $this );
-		}
-
-		return $this->task_runner;
 	}
 
 	protected function get_start_action_url() {

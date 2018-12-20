@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class DB_Upgrades_Manager extends Background_Task_Manager {
-	protected $current_version;
+	protected $current_version = null;
 
 	abstract public function get_new_version();
 	abstract public function get_version_option_name();
@@ -21,6 +21,26 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 	public function get_query_limit() {
 		return 100;
+	}
+
+	public function get_current_version() {
+		if ( null === $this->current_version ) {
+			$this->current_version = get_option( $this->get_version_option_name() );
+		}
+
+		return $this->current_version;
+	}
+
+	public function should_upgrade() {
+		$current_version = $this->get_current_version();
+
+		// It's a new install.
+		if ( ! $current_version ) {
+			$this->update_db_version();
+			return false;
+		}
+
+		return version_compare( $this->get_new_version(), $current_version, '>' );
 	}
 
 	public function on_runner_complete() {
@@ -67,8 +87,6 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 	/**
 	 * @access protected
-	 *
-	 * @throws \ReflectionException
 	 */
 	protected function start_run() {
 		$updater = $this->get_task_runner();
@@ -77,11 +95,40 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			return;
 		}
 
+		$upgrade_callbacks = $this->get_upgrade_callbacks();
+
+		if ( empty( $upgrade_callbacks ) ) {
+			$this->on_runner_complete();
+			return;
+		}
+
+		foreach ( $upgrade_callbacks as $callback ) {
+			$updater->push_to_queue( [
+				'callback' => $callback,
+			] );
+		}
+
+		$updater->save()->dispatch();
+
+		Plugin::$instance->logger->get_logger()->info( 'Update DB has been queued', [
+			'meta' => [
+				'plugin' => $this->get_plugin_label(),
+				'from' => $this->current_version,
+				'to' => $this->get_new_version(),
+			],
+		] );
+	}
+
+	protected function update_db_version() {
+		update_option( $this->get_version_option_name(), $this->get_new_version() );
+	}
+
+	public function get_upgrade_callbacks() {
 		$prefix = '_v_';
 		$upgrades_class = $this->get_upgrades_class();
 		$upgrades_reflection = new \ReflectionClass( $upgrades_class );
 
-		$update_queued = false;
+		$callbacks = [];
 
 		foreach ( $upgrades_reflection->getMethods() as $method ) {
 			$method_name = $method->getName();
@@ -99,30 +146,10 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 				continue;
 			}
 
-			$updater->push_to_queue( [
-				'callback' => [ $upgrades_class, $method_name ],
-			] );
-
-			$update_queued = true;
+			$callbacks[] = [ $upgrades_class, $method_name ];
 		}
 
-		if ( $update_queued ) {
-			$updater->save()->dispatch();
-
-			Plugin::$instance->logger->get_logger()->info( 'Update DB has been queued', [
-				'meta' => [
-					'plugin' => $this->get_plugin_label(),
-					'from' => $this->current_version,
-					'to' => $this->get_new_version(),
-				],
-			] );
-		} else {
-			$this->on_runner_complete();
-		}
-	}
-
-	protected function update_db_version() {
-		update_option( $this->get_version_option_name(), $this->get_new_version() );
+		return $callbacks;
 	}
 
 	public function __construct() {
@@ -134,15 +161,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_completed' ] );
 		}
 
-		$this->current_version = get_option( $this->get_version_option_name() );
-
-		// It's a new install.
-		if ( ! $this->current_version ) {
-			$this->update_db_version();
-		}
-
-		// Already upgraded.
-		if ( $this->get_new_version() === $this->current_version ) {
+		if ( ! $this->should_upgrade() ) {
 			return;
 		}
 

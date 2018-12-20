@@ -37,5 +37,6 @@ class Module extends BaseModule {
 	 */
 	public function __construct() {
 		\WP_CLI::add_command( 'elementor', '\Elementor\Modules\WpCli\Command' );
+		\WP_CLI::add_command( 'elementor update', '\Elementor\Modules\WpCli\Update' );
 	}
 }
