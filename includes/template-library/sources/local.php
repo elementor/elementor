@@ -312,10 +312,10 @@ class Source_Local extends Source_Base {
 	public function admin_menu_remove_add_new_item() {
 		global $submenu;
 
-		$submenu['edit.php?post_type=elementor_library'][800] = $submenu['edit.php?post_type=elementor_library'][15];
-
-		unset( $submenu['edit.php?post_type=elementor_library'][15] );
 		// @codingStandardsIgnoreStart
+		$submenu['edit.php?post_type=elementor_library'][800] = $submenu['edit.php?post_type=elementor_library'][15];
+		unset( $submenu['edit.php?post_type=elementor_library'][15] );
+
 		if ( isset( $submenu['edit.php?post_type=elementor_library'][10][2] ) ) {
 			$submenu['edit.php?post_type=elementor_library'][10][2] = admin_url( 'edit.php?post_type=' . Source_Local::CPT . '#add_new' );
 		}
