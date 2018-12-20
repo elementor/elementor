@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\General\Manager as General_Settings_Manager;
 use Elementor\Core\Settings\Manager;
+use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -145,6 +146,10 @@ class Settings extends Settings_Page {
 			'go_elementor_pro',
 			[ $this, 'handle_external_redirects' ]
 		);
+
+		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Saved Templates', '' ), __( 'Saved Templates', '' ), 'manage_options', 'elementor_custom_fonts', [ $this, 'elementor_custom_fonts' ] );
+		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', '' ), __( 'Theme Templates', '' ), 'manage_options', 'elementor_custom_fonts', [ $this, 'elementor_custom_fonts' ] );
+		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Popups', '' ), __( 'Popups', '' ), 'manage_options', 'popups_templates', [ $this, 'elementor_custom_fonts' ] );
 	}
 
 	/**
