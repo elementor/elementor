@@ -70,7 +70,7 @@ abstract class Base implements Logger_Interface {
 		}
 
 		$sorted_entries = [];
-		$open_tag = $table ? '<tr><td>' : '';
+		$open_tag = $table ? '<tr><td class="elementor-log-entry">' : '';
 		$close_tab = $table ? '</td></tr>' : PHP_EOL;
 
 		$format = $table ? 'html' : 'raw';
