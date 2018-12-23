@@ -89,7 +89,6 @@ class Manager extends BaseModule {
 
 	public function register_default_loggers() {
 		$this->register_logger( 'db', 'Elementor\Core\Logger\Loggers\Db' );
-		$this->register_logger( 'file', 'Elementor\Core\Logger\Loggers\File' );
 		$this->set_default_logger( 'db' );
 	}
 
