@@ -154,6 +154,7 @@ class Documents_Manager {
 		$this->types[ $type ] = $class;
 
 		$cpt = $class::get_property( 'cpt' );
+
 		if ( $cpt ) {
 			foreach ( $cpt as $post_type ) {
 				$this->cpt[ $post_type ] = $type;

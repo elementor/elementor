@@ -33,7 +33,7 @@ function addTemplate( options ) {
 	}
 	cy.get( '.dialog-lightbox-widget-content', { timeout: 30000 } ).should( 'not.be.visible' );
 	cy.get( '#elementor-panel-saver-button-publish' ).click();
-	cy.get( '.elementor-saver-disabled' ).should( 'exist' );
+	cy.get( '.elementor-disabled' ).should( 'exist' );
 	cy.get( '#elementor-preview-iframe' ).then( ( $iframe ) => {
 		return $iframe.attr( 'src' ).split( /&/ ).find( ( item ) => item.includes( 'p=' ) ).split( /.*=/ )[ 1 ];
 	} );
