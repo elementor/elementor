@@ -452,7 +452,7 @@ class DB {
 	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function is_built_with_elementor( $post_id ) {
-		return ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
+		return is_paged() ? false : ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
 	}
 
 	/**
