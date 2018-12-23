@@ -156,6 +156,10 @@ abstract class Base extends Base_File {
 		$this->update_meta( $meta );
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 */
 	public function write() {
 		if ( $this->use_external_file() ) {
 			parent::write();
@@ -283,35 +287,43 @@ abstract class Base extends Base_File {
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			try {
-				$output_css_property = preg_replace_callback(
-					'/\{\{(?:([^.}]+)\.)?([^}]*)}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
-						$parser_control = $control;
-						$value_to_insert = $value;
+				$output_css_property = preg_replace_callback( '/\{\{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+					$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
-						if ( ! empty( $matches[1] ) ) {
-							if ( ! isset( $controls_stack[ $matches[1] ] ) ) {
+					$parsed_value = '';
+
+					if ( ! $external_control_missing ) {
+						$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
+					}
+
+					if ( '' === $parsed_value ) {
+						if ( isset( $matches[4] ) ) {
+							$parsed_value = $matches[4];
+
+							$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
+
+							if ( $is_string_value ) {
+								$parsed_value = $string_matches[2];
+							} elseif ( ! is_numeric( $parsed_value ) ) {
+								if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
+									return '';
+								}
+
+								$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
+							}
+						}
+
+						if ( '' === $parsed_value ) {
+							if ( $external_control_missing ) {
 								return '';
 							}
 
-							$parser_control = $controls_stack[ $matches[1] ];
-							$value_to_insert = call_user_func( $value_callback, $parser_control );
-						}
-
-						if ( Controls_Manager::FONT === $control['type'] ) {
-							$this->fonts[] = $value_to_insert;
-						}
-
-						/** @var Base_Data_Control $control_obj */
-						$control_obj = Plugin::$instance->controls_manager->get_control( $parser_control['type'] );
-						$parsed_value = $control_obj->get_style_value( strtolower( $matches[2] ), $value_to_insert );
-
-						if ( '' === $parsed_value ) {
 							throw new \Exception();
 						}
+					}
 
-						return $parsed_value;
-					}, $css_property
-				);
+					return $parsed_value;
+				}, $css_property );
 			} catch ( \Exception $e ) {
 				return;
 			}
@@ -358,6 +370,33 @@ abstract class Base extends Base_File {
 
 			$this->stylesheet_obj->add_rules( $parsed_selector, $output_css_property, $query );
 		}
+	}
+
+	/**
+	 * @param array    $control
+	 * @param mixed    $value
+	 * @param array    $controls_stack
+	 * @param callable $value_callback
+	 * @param string   $placeholder
+	 * @param string   $parser_control_name
+	 *
+	 * @return string
+	 */
+	public function parse_property_placeholder( array $control, $value, array $controls_stack, $value_callback, $placeholder, $parser_control_name = null ) {
+		if ( $parser_control_name ) {
+			$control = $controls_stack[ $parser_control_name ];
+
+			$value = call_user_func( $value_callback, $control );
+		}
+
+		if ( Controls_Manager::FONT === $control['type'] ) {
+			$this->fonts[] = $value;
+		}
+
+		/** @var Base_Data_Control $control_obj */
+		$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+		return (string) $control_obj->get_style_value( $placeholder, $value, $control );
 	}
 
 	/**

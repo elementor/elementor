@@ -11,6 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function get_name() {
 		return 'connect';
 	}
@@ -46,6 +50,10 @@ class Module extends BaseModule {
 
 	protected $admin_page;
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function __construct() {
 		$this->registered_apps = [
 			'connect' => Connect::get_class_name(),
@@ -53,16 +61,6 @@ class Module extends BaseModule {
 
 		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
 		add_action( 'elementor/init', [ $this, 'init' ], 11 );
-
-		wp_register_script(
-			'elementor-connect',
-			$this->get_js_assets_url( 'connect', '/core/common/modules/connect/assets/js/' ),
-			[
-				'jquery',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
 	}
 
 	/**
@@ -99,7 +97,7 @@ class Module extends BaseModule {
 	 *
 	 * Registers an app.
 	 *
-	 * @since  2.3.0
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @param string $slug App slug.
@@ -118,7 +116,7 @@ class Module extends BaseModule {
 	 *
 	 * Retrieve the app instance.
 	 *
-	 * @since  2.3.0
+	 * @since 2.3.0
 	 * @access public
 	 *
 	 * @param $slug
@@ -134,17 +132,27 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * @since 2.3.0
+	 * @access public
 	 * @return Base_App[]
 	 */
 	public function get_apps() {
 		return $this->apps;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function register_category( $slug, $args ) {
 		$this->categories[ $slug ] = $args;
 		return $this;
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
 	public function get_categories() {
 		return $this->categories;
 	}

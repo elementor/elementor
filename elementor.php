@@ -4,7 +4,7 @@
  * Description: The most advanced frontend drag & drop page builder. Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design.
  * Plugin URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Author: Elementor.com
- * Version: 2.3.2
+ * Version: 2.3.8
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  *
  * Text Domain: elementor
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_VERSION', '2.3.2' );
+define( 'ELEMENTOR_VERSION', '2.3.8' );
 define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '2.2.7' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
@@ -51,7 +51,7 @@ if ( ! version_compare( PHP_VERSION, '5.4', '>=' ) ) {
 } elseif ( ! version_compare( get_bloginfo( 'version' ), '4.7', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
-	require( ELEMENTOR_PATH . 'includes/plugin.php' );
+	require ELEMENTOR_PATH . 'includes/plugin.php';
 }
 
 /**

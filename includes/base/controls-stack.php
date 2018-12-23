@@ -1023,6 +1023,10 @@ abstract class Controls_Stack extends Base_Object {
 		return self::get_items( $this->data, $item );
 	}
 
+	/**
+	 * @since 2.0.14
+	 * @access public
+	 */
 	public function get_parsed_dynamic_settings( $setting = null ) {
 		if ( null === $this->parsed_dynamic_settings ) {
 			$this->parsed_dynamic_settings = $this->parse_dynamic_settings( $this->get_settings() );
@@ -1104,7 +1108,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param string $setting_key Optional. The key of the requested setting.
 	 *                            Default is null.
 	 *
-	 * @return array The settings.
+	 * @return mixed The settings.
 	 */
 	public function get_settings_for_display( $setting_key = null ) {
 		if ( ! $this->parsed_active_settings ) {
@@ -1755,6 +1759,10 @@ abstract class Controls_Stack extends Base_Object {
 		];
 	}
 
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
 	protected function get_init_settings() {
 		$settings = $this->get_data( 'settings' );
 

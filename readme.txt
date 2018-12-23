@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 5.0
 Requires PHP: 5.4
-Stable tag: 2.3.2
+Stable tag: 2.3.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,49 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.3.8 - 2018-12-20 =
+* Fix: Editor not working caused by last version
+
+= 2.3.7 - 2018-12-20 =
+* Fix: Invalid type in Import templates ([#6483](https://github.com/pojome/elementor/issues/6483))
+* Fix: Save global templates
+* Fix: WP widgets compatibility
+* Fix: Responsive device buttons always shown
+
+= 2.3.6 - 2018-12-17 =
+* Fix: `Back to WordPress Editor` not working when meta-boxes are present ([#6437](https://github.com/pojome/elementor/issues/6437))
+* Fix: Register documents only if needed
+* Fix: Style glitch in the responsive control ([#6227](https://github.com/pojome/elementor/issues/6227))
+
+= 2.3.5 - 2018-12-11 =
+* Tweak: Load `elementor_debug_log` option only on System Info page
+* Fix: Maintenance Mode admin console issue
+* Fix: Elementor stuck on loader instead of `The Content Area Was Not Found`
+* Fix: Temporary compatibility workaround for Chrome v70+ dragging above nested iframe issue
+* Fix: `border-radius` for Video not displayed in Safari browser
+* Fix: Avoid `z-index` changes by `nanocss` in build process
+
+= 2.3.4 - 2018-11-29 =
+* Tweak: Make sure "Edit with Elementor" action link is the last link in My Templates
+* Fix: CSS parsing for non-existing controls ([#6296](https://github.com/pojome/elementor/issues/6296))
+* Fix: Shows only editable documents in Finder
+
+= 2.3.3 - 2018-11-28 =
+* New: Added `elementor/frontend/{$element_type}/should_render` filter
+* Tweak: Added a new `render_html_attributes` method
+* Tweak: Added placeholder support for `date-time` control
+* Tweak: Added ability to set a default value in a control `selectors` settings ([#6241](https://github.com/pojome/elementor/issues/6241))
+* Tweak: Open links in new tab on `Ctrl + Enter` ([#6258](https://github.com/pojome/elementor/issues/6258))
+* Tweak: Set the correct Dynamic tag categories for Self Hosted video
+* Fix: Video lightbox won't open in some configurations
+* Fix: Self-hosted video lightbox width
+* Fix: Removed invalid `href` attribute in Tabs widget ([#6261](https://github.com/pojome/elementor/issues/6261))
+* Fix: Restored element / widget hooks priority ([#6189](https://github.com/pojome/elementor/issues/6189))
+* Fix: Drag the direct inner element only
+* Fix: Show unsupported templates on My Templates list
+* Fix: Make sure the document type exists in documents manager
+* Fix: Set default for `slides to scroll` in Image Carousel widget
+
 = 2.3.2 - 2018-11-17 =
 * Tweak: Added `vw` unit to base control
 * Tweak: Added WP Plugins and Users links to Finder
@@ -243,7 +286,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Added filter to rename external CSS files ([#5968](https://github.com/pojome/elementor/issues/5968))
 * Tweak: Added dynamic option for caption in the Image widget ([#5770](https://github.com/pojome/elementor/issues/5770))
 * Tweak: Updated YouTube related videos control due to YouTube's API changes ([#5984](https://github.com/pojome/elementor/issues/5984), [#5939](https://github.com/pojome/elementor/issues/5939))
-* Tweak: Added a general hook elementor/frontend/after_render to element-base
+* Tweak: Added a general `hook elementor/frontend/after_render` to element-base
 * Tweak: Added `elementor/element/before_attribute_render` hook before attributes are rendered
 * Tweak: Added `elementor/element/after_attribute_render` hook after attributes are rendered
 * Tweak: New `elementor/editor/init` action

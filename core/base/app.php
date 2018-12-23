@@ -20,6 +20,7 @@ abstract class App extends Module {
 	 *
 	 * Used to print the app and its components settings as a JavaScript object.
 	 *
+	 * @since 2.3.0
 	 * @access protected
 	 */
 	final protected function print_config() {
@@ -33,6 +34,7 @@ abstract class App extends Module {
 	 *
 	 * Retrieves the app components settings.
 	 *
+	 * @since 2.3.0
 	 * @access private
 	 *
 	 * @return array
