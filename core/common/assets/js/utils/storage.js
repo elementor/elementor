@@ -8,6 +8,38 @@ export default class extends elementorModules.Module {
 			elementorStorage = {};
 		}
 
+		if ( ! elementorStorage.__expiration ) {
+			elementorStorage.__expiration = {};
+		}
+
+		const expiration = elementorStorage.__expiration;
+
+		let expirationToCheck = [];
+
+		if ( key ) {
+			if ( expiration[ key ] ) {
+				expirationToCheck = [ key ];
+			}
+		} else {
+			expirationToCheck = Object.keys( expiration );
+		}
+
+		let entryExpired = false;
+
+		expirationToCheck.forEach( ( expirationKey ) => {
+			if ( new Date( expiration[ expirationKey ] ) < new Date() ) {
+				delete elementorStorage[ expirationKey ];
+
+				delete expiration[ expirationKey ];
+
+				entryExpired = true;
+			}
+		} );
+
+		if ( entryExpired ) {
+			this.save( elementorStorage );
+		}
+
 		if ( key ) {
 			return elementorStorage[ key ];
 		}
@@ -15,23 +47,23 @@ export default class extends elementorModules.Module {
 		return elementorStorage;
 	}
 
-	set( key, value ) {
-		const elementorStorage = this.getStorage();
+	set( key, value, lifeTimeInSeconds ) {
+		const elementorStorage = this.get();
 
 		elementorStorage[ key ] = value;
 
-		localStorage.setItem( 'elementor', JSON.stringify( elementorStorage ) );
-	}
+		if ( lifeTimeInSeconds ) {
+			const date = new Date();
 
-	setCookie( key, value, secondsFromNow ) {
-		document.cookie = `elementor_${ key }=${ value };max-age=${ secondsFromNow }`;
-	}
+			date.setTime( date.getTime() + ( lifeTimeInSeconds * 1000 ) );
 
-	getCookie( key ) {
-		const parts = `; ${ document.cookie }`.split( `; elementor_${ key }=` );
-
-		if ( 2 === parts.length ) {
-			return parts.pop().split( ';' ).shift();
+			elementorStorage.__expiration[ key ] = date.getTime();
 		}
+
+		this.save( elementorStorage );
+	}
+
+	save( object ) {
+		localStorage.setItem( 'elementor', JSON.stringify( object ) );
 	}
 }
