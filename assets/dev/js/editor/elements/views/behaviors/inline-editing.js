@@ -18,11 +18,23 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		};
 	},
 
+	initialize: function() {
+		this.onInlineEditingBlur = this.onInlineEditingBlur.bind( this );
+	},
+
 	getEditingSettingKey: function() {
 		return this.$currentEditingArea.data().elementorSettingKey;
 	},
 
 	startEditing: function( $element ) {
+		if (
+			this.editing ||
+			'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ||
+			this.view.model.isRemoteRequestActive()
+		) {
+			return;
+		}
+
 		var elementorSettingKey = $element.data().elementorSettingKey,
 			settingKey = elementorSettingKey,
 			keyParts = elementorSettingKey.split( '.' ),
@@ -38,12 +50,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		var dynamicSettings = settingsModel.get( '__dynamic__' ),
 			isDynamic = dynamicSettings && dynamicSettings[ settingKey ];
 
-		if (
-			this.editing ||
-			isDynamic ||
-			'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ||
-			this.view.model.isRemoteRequestActive()
-		) {
+		if ( isDynamic ) {
 			return;
 		}
 
@@ -126,11 +133,17 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			event.preventDefault();
 		} );
 
-		this.$currentEditingArea.on( 'blur', this.onInlineEditingBlur.bind( this ) );
+		this.$currentEditingArea.on( 'blur', this.onInlineEditingBlur );
+
+		elementorCommon.elements.$body.on( 'mousedown', this.onInlineEditingBlur );
 	},
 
 	stopEditing: function() {
 		this.editing = false;
+
+		this.$currentEditingArea.off( 'blur', this.onInlineEditingBlur );
+
+		elementorCommon.elements.$body.off( 'mousedown', this.onInlineEditingBlur );
 
 		this.editor.destroy();
 
@@ -159,22 +172,26 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		}, 30 );
 	},
 
-	onInlineEditingBlur: function() {
-		var self = this;
+	onInlineEditingBlur: function( event ) {
+		if ( 'mousedown' === event.type ) {
+			this.stopEditing();
+
+			return;
+		}
 
 		/**
 		 * When exiting inline editing we need to set timeout, to make sure there is no focus on internal
 		 * toolbar action. This prevent the blur and allows the user to continue the inline editing.
 		 */
-		setTimeout( function() {
-			var selection = elementorFrontend.elements.window.getSelection(),
+		setTimeout( () => {
+			const selection = elementorFrontend.elements.window.getSelection(),
 				$focusNode = jQuery( selection.focusNode );
 
 			if ( $focusNode.closest( '.pen-input-wrapper' ).length ) {
 				return;
 			}
 
-			self.stopEditing();
+			this.stopEditing();
 		}, 20 );
 	},
 

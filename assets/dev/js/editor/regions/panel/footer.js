@@ -8,12 +8,11 @@ module.exports = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
-		buttonSave: '#elementor-panel-saver-button-publish, #elementor-panel-saver-menu-save-draft', // TODO: remove. Compatibility for Pro <= 1.9.5
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
 		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
-		saveTemplate: '#elementor-panel-saver-menu-save-template',
+		saveTemplate: '#elementor-panel-footer-sub-menu-item-save-template',
 		history: '#elementor-panel-footer-history',
 		navigator: '#elementor-panel-footer-navigator',
 	},
@@ -45,6 +44,64 @@ module.exports = Marionette.ItemView.extend( {
 		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
+	addSubMenuItem: function( menuName, itemData ) {
+		const $newItem = jQuery( '<div>', {
+				id: 'elementor-panel-footer-sub-menu-item-' + itemData.name,
+				class: 'elementor-panel-footer-sub-menu-item',
+			} ),
+			$itemIcon = jQuery( '<i>', {
+				class: 'elementor-icon ' + itemData.icon,
+				'aria-hidden': true,
+			} ),
+			$itemTitle = jQuery( '<div>', {
+				class: 'elementor-title',
+			} ).text( itemData.title );
+
+		$newItem.append( $itemIcon, $itemTitle );
+
+		if ( itemData.description ) {
+			const $itemDescription = jQuery( '<div>', {
+				class: 'elementor-description',
+			} ).text( itemData.description );
+
+			$newItem.append( $itemDescription );
+		}
+
+		if ( itemData.callback ) {
+			$newItem.on( 'click', itemData.callback );
+		}
+
+		const $menuTool = this.ui.menuButtons.filter( '#elementor-panel-footer-' + menuName );
+
+		if ( itemData.before ) {
+			const $beforeItem = $menuTool.find( '#elementor-panel-footer-sub-menu-item-' + itemData.before );
+
+			if ( $beforeItem.length ) {
+				return $newItem.insertBefore( $beforeItem );
+			}
+		}
+
+		const $subMenu = $menuTool.find( '.elementor-panel-footer-sub-menu' );
+
+		return $newItem.appendTo( $subMenu );
+	},
+
+	showSettingsPage: function() {
+		const panel = elementor.getPanelView();
+
+		if ( 'page_settings' === panel.getCurrentPageName() ) {
+			return;
+		}
+
+		this.ui.settings.addClass( 'elementor-open' );
+
+		panel.setPage( 'page_settings' );
+
+		panel.getCurrentPageView().on( 'destroy', () => {
+			this.ui.settings.removeClass( 'elementor-open' );
+		} );
+	},
+
 	onMenuButtonsClick: function( event ) {
 		var $tool = jQuery( event.currentTarget );
 
@@ -63,15 +120,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSettingsClick: function() {
-		var self = this;
-
-		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
-			elementor.getPanelView().setPage( 'page_settings' );
-
-			elementor.getPanelView().getCurrentPageView().once( 'destroy', function() {
-				self.ui.settings.removeClass( 'elementor-open' );
-			} );
-		}
+		this.showSettingsPage();
 	},
 
 	onDeviceModeChange: function() {

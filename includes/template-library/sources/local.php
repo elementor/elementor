@@ -36,6 +36,11 @@ class Source_Local extends Source_Base {
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
 	/**
+	 * Elementor template-library category slug.
+	 */
+	const TAXONOMY_CATEGORY_SLUG = 'elementor_library_category';
+
+	/**
 	 * Elementor template-library meta key.
 	 * @deprecated 2.3.0 Use \Elementor\Core\Base\Document::TYPE_META_KEY instead
 	 */
@@ -210,15 +215,16 @@ class Source_Local extends Source_Base {
 			'not_found' => _x( 'No Templates found', 'Template Library', 'elementor' ),
 			'not_found_in_trash' => _x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => _x( 'My Templates', 'Template Library', 'elementor' ),
+			'menu_name' => _x( 'Templates', 'Template Library', 'elementor' ),
 		];
 
 		$args = [
 			'labels' => $labels,
 			'public' => true,
 			'rewrite' => false,
+			'menu_icon' => 'dashicons-admin-page',
 			'show_ui' => true,
-			'show_in_menu' => false,
+			'show_in_menu' => true,
 			'show_in_nav_menus' => false,
 			'exclude_from_search' => true,
 			'capability_type' => 'post',
@@ -262,38 +268,58 @@ class Source_Local extends Source_Base {
 		$args = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args );
 
 		register_taxonomy( self::TAXONOMY_TYPE_SLUG, self::CPT, $args );
+
+		/**
+		 * Categories
+		 */
+		$args = [
+			'hierarchical' => true,
+			'show_ui' => true,
+			'show_in_nav_menus' => false,
+			'show_admin_column' => true,
+			'query_var' => is_admin(),
+			'rewrite' => false,
+			'public' => false,
+			'labels' => [
+				'name' => _x( 'Categories', 'Template Library', 'elementor' ),
+				'singular_name' => _x( 'Category', 'Template Library', 'elementor' ),
+				'all_items' => __( 'All Categories', 'elementor' ),
+			],
+		];
+
+		/**
+		 * Register template library category args.
+		 *
+		 * Filters the category arguments when registering elementor template library category.
+		 *
+		 * @since 2.4.0
+		 *
+		 * @param array $args Arguments for registering a category.
+		 */
+		$args = apply_filters( 'elementor/template_library/sources/local/register_category_args', $args );
+
+		register_taxonomy( self::TAXONOMY_CATEGORY_SLUG, self::CPT, $args );
 	}
 
 	/**
-	 * Register admin menu.
-	 *
-	 * Add a top-level menu page for Elementor Template Library.
+	 * Remove Add New item from admin menu.
 	 *
 	 * Fired by `admin_menu` action.
 	 *
-	 * @since 1.0.0
+	 * @since 2.4.0
 	 * @access public
 	 */
-	public function register_admin_menu() {
-		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page(
-				Settings::PAGE_ID,
-				_x( 'My Templates', 'Template Library', 'elementor' ),
-				_x( 'My Templates', 'Template Library', 'elementor' ),
-				Editor::EDITING_CAPABILITY,
-				'edit.php?post_type=' . self::CPT
-			);
-		} else {
-			add_menu_page(
-				__( 'Elementor', 'elementor' ),
-				__( 'Elementor', 'elementor' ),
-				Editor::EDITING_CAPABILITY,
-				'edit.php?post_type=' . self::CPT,
-				'',
-				'',
-				99
-			);
+	public function admin_menu_remove_add_new_item() {
+		global $submenu;
+
+		// @codingStandardsIgnoreStart
+		$submenu['edit.php?post_type=elementor_library'][800] = $submenu['edit.php?post_type=elementor_library'][15];
+		unset( $submenu['edit.php?post_type=elementor_library'][15] );
+
+		if ( isset( $submenu['edit.php?post_type=elementor_library'][10][2] ) ) {
+			$submenu['edit.php?post_type=elementor_library'][10][2] = admin_url( 'edit.php?post_type=' . Source_Local::CPT . '#add_new' );
 		}
+		// @codingStandardsIgnoreEnd
 	}
 
 	/**
@@ -757,8 +783,6 @@ class Source_Local extends Source_Base {
 			if ( $this->is_template_supports_export( $post->ID ) ) {
 				$actions['export-template'] = sprintf( '<a href="%1$s">%2$s</a>', $this->get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
 			}
-
-			unset( $actions['inline hide-if-no-js'] );
 		}
 
 		return $actions;
@@ -1120,6 +1144,30 @@ class Source_Local extends Source_Base {
 		<?php
 	}
 
+	public function add_filter_by_category( $post_type ) {
+		if ( self::CPT !== $post_type ) {
+			return;
+		}
+
+		$all_items = get_taxonomy( self::TAXONOMY_CATEGORY_SLUG )->labels->all_items;
+
+		$dropdown_options = array(
+			'show_option_all' => $all_items,
+			'show_option_none' => $all_items,
+			'hide_empty' => 0,
+			'hierarchical' => 1,
+			'show_count' => 0,
+			'orderby' => 'name',
+			'value_field' => 'slug',
+			'taxonomy' => self::TAXONOMY_CATEGORY_SLUG,
+			'name' => self::TAXONOMY_CATEGORY_SLUG,
+			'selected' => empty( $_GET[ self::TAXONOMY_CATEGORY_SLUG ] ) ? '' : $_GET[ self::TAXONOMY_CATEGORY_SLUG ],
+		);
+
+		echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by category', 'elementor' ) . '</label>';
+		wp_dropdown_categories( $dropdown_options );
+	}
+
 	/**
 	 * Import single template.
 	 *
@@ -1294,11 +1342,14 @@ class Source_Local extends Source_Base {
 	 */
 	private function add_actions() {
 		if ( is_admin() ) {
-			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 50 );
+			add_action( 'admin_menu', [ $this, 'admin_menu_remove_add_new_item' ], 800 );
 			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 			add_action( 'admin_footer', [ $this, 'admin_import_template_form' ] );
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
+
+			// Template filter by category.
+			add_action( 'restrict_manage_posts', [ $this, 'add_filter_by_category' ] );
 
 			// Template type column.
 			add_action( 'manage_' . self::CPT . '_posts_columns', [ $this, 'admin_columns_headers' ] );
