@@ -34,7 +34,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	paste: function() {
 		var self = this,
-			elements = elementor.getStorage( 'transfer' ).elements,
+			elements = elementorCommon.storage.get( 'transfer' ).elements,
 			index = 0;
 
 		elements.forEach( function( item ) {
@@ -45,7 +45,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	isPasteEnabled: function() {
-		var transferData = elementor.getStorage( 'transfer' );
+		var transferData = elementorCommon.storage.get( 'transfer' );
 
 		if ( ! transferData ) {
 			return false;
