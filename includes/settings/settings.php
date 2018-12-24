@@ -198,12 +198,12 @@ class Settings extends Settings_Page {
 		}
 
 		if ( 'go_elementor_pro' === $_GET['page'] ) {
-			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
+			wp_safe_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
 			die;
 		}
 
 		if ( 'go_knowledge_base_site' === $_GET['page'] ) {
-			wp_redirect( 'https://go.elementor.com/docs-admin-menu/' );
+			wp_safe_redirect( 'https://go.elementor.com/docs-admin-menu/' );
 			die;
 		}
 	}
@@ -316,14 +316,14 @@ class Settings extends Settings_Page {
 	 */
 	public function elementor_theme_templates() {
 		?>
-        <div class="wrap">
-            <div class="elementor-blank_state">
-                <i class="eicon-nerd-chuckle"></i>
-                <h2><?php echo __( 'Add Your Theme Template', 'elementor' ); ?></h2>
-                <p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
-                <a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
-            </div>
-        </div><!-- /.wrap -->
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<i class="eicon-nerd-chuckle"></i>
+				<h2><?php echo __( 'Add Your Theme Template', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
 		<?php
 	}
 
@@ -578,12 +578,7 @@ class Settings extends Settings_Page {
 										'external' => __( 'External File', 'elementor' ),
 										'internal' => __( 'Internal Embedding', 'elementor' ),
 									],
-									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
-											  __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
-											  '</div>' .
-											  '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
-											  __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
-											  '</div>',
+									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' . __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) . '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">' . __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) . '</div>',
 								],
 							],
 							'editor_break_lines' => [
