@@ -147,7 +147,6 @@ class Settings extends Settings_Page {
 			[ $this, 'handle_external_redirects' ]
 		);
 
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Saved Templates', 'elementor' ), __( 'Saved Templates', 'elementor' ), 'manage_options', 'saved_templates', [ $this, 'elementor_custom_fonts' ] );
 		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Templates', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
 		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
 	}
