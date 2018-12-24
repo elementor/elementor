@@ -1030,7 +1030,10 @@ class Frontend extends App {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
 		$settings = [
-			'isEditMode' => $is_preview_mode,
+			'environmentMode' => [
+				'edit' => $is_preview_mode,
+				'wpPreview' => is_preview(),
+			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
