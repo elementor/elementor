@@ -1,5 +1,6 @@
-import HotKeys from './utils/hot-keys';
 import Helpers from './utils/helpers';
+import Storage from './utils/storage';
+import HotKeys from './utils/hot-keys';
 import Ajax from '../../modules/ajax/assets/js/ajax';
 import Finder from '../../modules/finder/assets/js/finder';
 import Connect from '../../modules/connect/assets/js/connect';
@@ -27,6 +28,8 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 	initComponents() {
 		this.helpers = new Helpers();
+
+		this.storage = new Storage();
 
 		this.hotKeys = new HotKeys();
 

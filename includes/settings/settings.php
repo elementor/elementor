@@ -147,9 +147,9 @@ class Settings extends Settings_Page {
 			[ $this, 'handle_external_redirects' ]
 		);
 
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Saved Templates', 'elementor' ), __( 'Saved Templates', 'elementor' ), 'manage_options', 'elementor_custom_fonts', [ $this, 'elementor_custom_fonts' ] );
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Templates', 'elementor' ), 'manage_options', 'elementor_custom_fonts', [ $this, 'elementor_custom_fonts' ] );
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popups_templates', [ $this, 'elementor_custom_fonts' ] );
+		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Saved Templates', 'elementor' ), __( 'Saved Templates', 'elementor' ), 'manage_options', 'saved_templates', [ $this, 'elementor_custom_fonts' ] );
+		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Templates', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
+		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
 	}
 
 	/**
@@ -282,6 +282,48 @@ class Settings extends Settings_Page {
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
+		<?php
+	}
+
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the Popups page.
+	 *
+	 * @since 2.4.0
+	 * @access public
+	 */
+	public function elementor_popups() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<i class="eicon-nerd-chuckle"></i>
+				<h2><?php echo __( 'Add Your Popup', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the Theme Templates page.
+	 *
+	 * @since 2.4.0
+	 * @access public
+	 */
+	public function elementor_theme_templates() {
+		?>
+        <div class="wrap">
+            <div class="elementor-blank_state">
+                <i class="eicon-nerd-chuckle"></i>
+                <h2><?php echo __( 'Add Your Theme Template', 'elementor' ); ?></h2>
+                <p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
+                <a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+            </div>
+        </div><!-- /.wrap -->
 		<?php
 	}
 
