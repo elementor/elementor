@@ -1,8 +1,6 @@
 var ControlsStack;
 
 ControlsStack = Marionette.CompositeView.extend( {
-	className: 'elementor-controls-stack',
-
 	classes: {
 		popover: 'elementor-controls-popover',
 	},
@@ -10,6 +8,10 @@ ControlsStack = Marionette.CompositeView.extend( {
 	activeTab: null,
 
 	activeSection: null,
+
+	className: function() {
+		return 'elementor-controls-stack';
+	},
 
 	templateHelpers: function() {
 		return {
