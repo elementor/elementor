@@ -29,6 +29,7 @@ class Not_Supported extends Library_Document {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
+		$properties['admin_tab_group'] = '';
 		$properties['register_type'] = false;
 		$properties['is_editable'] = false;
 		$properties['show_in_library'] = false;
