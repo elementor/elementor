@@ -64,7 +64,7 @@ Preview = BaseSectionsContainerView.extend( {
 	},
 
 	copy: function() {
-		elementor.setStorage( 'transfer', {
+		elementorCommon.storage.set( 'transfer', {
 			type: 'copy',
 			elementsType: 'section',
 			elements: elementor.elements.toJSON( { copyHtmlCache: true } ),
@@ -73,7 +73,7 @@ Preview = BaseSectionsContainerView.extend( {
 
 	paste: function( atIndex ) {
 		var self = this,
-			transferData = elementor.getStorage( 'transfer' ),
+			transferData = elementorCommon.storage.get( 'transfer' ),
 			section,
 			index = undefined !== atIndex ? atIndex : this.collection.length;
 
@@ -125,7 +125,7 @@ Preview = BaseSectionsContainerView.extend( {
 	},
 
 	isPasteEnabled: function() {
-		return elementor.getStorage( 'transfer' );
+		return elementorCommon.storage.get( 'transfer' );
 	},
 
 	onRender: function() {
