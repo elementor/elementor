@@ -25,7 +25,7 @@ class Log_Reporter extends Base_Reporter {
 
 	public function get_fields() {
 		return [
-			'log_entries' => 'Log Entries',
+			'log_entries' => '',
 		];
 	}
 
