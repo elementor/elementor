@@ -143,8 +143,8 @@ class Module extends \Elementor\Core\Base\Module {
 
 				elementorCommon.ajax.addRequest(
 					'disable_safe_mode', {
-						success: () => {
-							location = location.href.replace( '&elementor-mode=safe', '' );
+						success: function() {
+							location.href = location.href.replace( '&elementor-mode=safe', '' );
 						},
 						error: function() {
 							alert( 'An error occurred' );
