@@ -11,16 +11,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Cli_Logger extends Db {
 
 	public function save_log( Log_Item_Interface $item ) {
-
+		$message = $item->format( 'raw' );
 		switch ( $item->type ) {
 			case self::LEVEL_WARNING:
-				\WP_CLI::warning( $item->format() );
+				\WP_CLI::warning( $message );
 				break;
 			case self::LEVEL_ERROR:
-				\WP_CLI::error( $item->format(), false );
+				\WP_CLI::error( $message, false );
 				break;
 			default:
-				\WP_CLI::log( $item->format() );
+				\WP_CLI::log( $message );
 				break;
 		}
 
