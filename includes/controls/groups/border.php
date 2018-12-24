@@ -81,6 +81,7 @@ class Group_Control_Border extends Group_Control_Base {
 			'condition' => [
 				'border!' => '',
 			],
+			'responsive' => true,
 		];
 
 		$fields['color'] = [
