@@ -174,6 +174,10 @@ abstract class Background_Task extends \WP_Background_Process {
 		}
 	}
 
+	/**
+	 * Use the protected `is_process_running` method as a public method.
+	 * @return bool
+	 */
 	public function is_process_locked() {
 		return $this->is_process_running();
 	}

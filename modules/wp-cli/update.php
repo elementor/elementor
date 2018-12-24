@@ -52,7 +52,7 @@ class Update extends \WP_CLI_Command {
 
 				switch_to_blog( $blog_id );
 
-				\WP_CLI::line( 'Site #' . $blog_id );
+				\WP_CLI::line( 'Site #' . $blog_id . ' - ' . get_option( 'blogname' ) );
 
 				$this->do_db_upgrade();
 
