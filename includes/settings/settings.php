@@ -147,7 +147,7 @@ class Settings extends Settings_Page {
 			[ $this, 'handle_external_redirects' ]
 		);
 
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Templates', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
+		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Builder', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
 		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
 	}
 
@@ -297,8 +297,8 @@ class Settings extends Settings_Page {
         <div class="wrap">
             <div class="elementor-blank_state">
                 <i class="eicon-nerd-chuckle"></i>
-                <h2><?php echo __( 'Add Your Popup', 'elementor' ); ?></h2>
-                <p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
+                <h2><?php echo __( 'Get Popup Builder', 'elementor' ); ?></h2>
+                <p><?php echo __( 'Create advanced popups that drive more leads and conversions to your business.', 'elementor' ); ?></p>
                 <a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
             </div>
         </div><!-- /.wrap -->
@@ -318,8 +318,8 @@ class Settings extends Settings_Page {
         <div class="wrap">
             <div class="elementor-blank_state">
                 <i class="eicon-nerd-chuckle"></i>
-                <h2><?php echo __( 'Add Your Theme Template', 'elementor' ); ?></h2>
-                <p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
+                <h2><?php echo __( 'Get Theme Builder', 'elementor' ); ?></h2>
+                <p><?php echo __( 'Elementor Pro comes built-in with an industry leading theme builder, which lets you customize every part of your WordPress theme visually.', 'elementor' ); ?></p>
                 <a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
             </div>
         </div><!-- /.wrap -->
