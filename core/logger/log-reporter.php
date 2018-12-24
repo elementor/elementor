@@ -25,7 +25,7 @@ class Log_Reporter extends Base_Reporter {
 
 	public function get_fields() {
 		return [
-			'log_entries' => 'Log Entries',
+			'log_entries' => '',
 		];
 	}
 
@@ -42,7 +42,7 @@ class Log_Reporter extends Base_Reporter {
 			$entries_string = '';
 			foreach ( $log_entries as $key => $log_entry ) {
 				if ( $log_entry['count'] ) {
-					$entries_string .= '<table><thead><th>' . sprintf( '%s: showing %s of %s', $key, $log_entry['count'], $log_entry['total_count'] ) . '</th></thead><tbody>' . $log_entry['entries'] . '</tbody></table>';
+					$entries_string .= '<table><thead><th>' . sprintf( '%s: showing %s of %s', $key, $log_entry['count'], $log_entry['total_count'] ) . '</th></thead><tbody class="elementor-log-entries">' . $log_entry['entries'] . '</tbody></table>';
 				}
 			}
 
