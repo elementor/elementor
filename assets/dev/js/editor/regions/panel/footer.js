@@ -44,7 +44,7 @@ module.exports = Marionette.ItemView.extend( {
 		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
-	addSubMenuItem: function( menuName, itemData ) {
+	addSubMenuItem: function( subMenuName, itemData ) {
 		const $newItem = jQuery( '<div>', {
 				id: 'elementor-panel-footer-sub-menu-item-' + itemData.name,
 				class: 'elementor-panel-footer-sub-menu-item',
@@ -71,7 +71,7 @@ module.exports = Marionette.ItemView.extend( {
 			$newItem.on( 'click', itemData.callback );
 		}
 
-		const $menuTool = this.ui.menuButtons.filter( '#elementor-panel-footer-' + menuName );
+		const $menuTool = this.ui.menuButtons.filter( '#elementor-panel-footer-' + subMenuName );
 
 		if ( itemData.before ) {
 			const $beforeItem = $menuTool.find( '#elementor-panel-footer-sub-menu-item-' + itemData.before );
