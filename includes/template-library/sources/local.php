@@ -1559,17 +1559,9 @@ class Source_Local extends Source_Base {
 	}
 
 	private function is_current_screen() {
-		if ( ! function_exists( 'set_current_screen' ) ) {
-			return false;
-		}
+		global $pagenow, $typenow;
 
-		global $current_screen;
-
-		if ( ! isset( $current_screen ) ) {
-			set_current_screen();
-		}
-
-		return self::ADMIN_SCREEN_ID === $current_screen->id || self::CPT === $current_screen->post_type;
+		return 'edit.php' === $pagenow && self::CPT === $typenow;
 	}
 
 	/**
