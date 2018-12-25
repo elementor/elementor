@@ -1,6 +1,10 @@
 export default class extends elementorModules.Module {
-	get( key ) {
-		let elementorStorage = localStorage.getItem( 'elementor' );
+	get( key, options ) {
+		options = options || {};
+
+		const storage = options.session ? sessionStorage : localStorage;
+
+		let elementorStorage = storage.getItem( 'elementor' );
 
 		if ( elementorStorage ) {
 			elementorStorage = JSON.parse( elementorStorage );
@@ -37,7 +41,7 @@ export default class extends elementorModules.Module {
 		} );
 
 		if ( entryExpired ) {
-			this.save( elementorStorage );
+			this.save( elementorStorage, options.session );
 		}
 
 		if ( key ) {
@@ -47,23 +51,27 @@ export default class extends elementorModules.Module {
 		return elementorStorage;
 	}
 
-	set( key, value, lifeTimeInSeconds ) {
-		const elementorStorage = this.get();
+	set( key, value, options ) {
+		options = options || {};
+
+		const elementorStorage = this.get( null, options );
 
 		elementorStorage[ key ] = value;
 
-		if ( lifeTimeInSeconds ) {
+		if ( options.lifetimeInSeconds ) {
 			const date = new Date();
 
-			date.setTime( date.getTime() + ( lifeTimeInSeconds * 1000 ) );
+			date.setTime( date.getTime() + ( options.lifetimeInSeconds * 1000 ) );
 
 			elementorStorage.__expiration[ key ] = date.getTime();
 		}
 
-		this.save( elementorStorage );
+		this.save( elementorStorage, options.session );
 	}
 
-	save( object ) {
-		localStorage.setItem( 'elementor', JSON.stringify( object ) );
+	save( object, session ) {
+		const storage = session ? sessionStorage : localStorage;
+
+		storage.setItem( 'elementor', JSON.stringify( object ) );
 	}
 }

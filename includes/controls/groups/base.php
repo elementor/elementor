@@ -505,7 +505,13 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$control_params['condition'] = $settings['condition'];
 		}
 
-		$element->add_control( $this->get_controls_prefix() . $popover_options['starter_name'], $control_params );
+		$starter_name = $popover_options['starter_name'];
+
+		if ( isset( $this->args['fields_options'][ $starter_name ] ) ) {
+			$control_params = array_merge( $control_params, $this->args['fields_options'][ $starter_name ] );
+		}
+
+		$element->add_control( $this->get_controls_prefix() . $starter_name, $control_params );
 
 		$element->start_popover();
 	}

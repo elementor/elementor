@@ -79,7 +79,11 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	isEditMode() {
-		return this.config.isEditMode;
+		return this.config.environmentMode.edit;
+	}
+
+	isWPPreviewMode() {
+		return this.config.environmentMode.wpPreview;
 	}
 
 	initDialogsManager() {
