@@ -349,7 +349,7 @@ class Source_Local extends Source_Base {
 	public function admin_menu() {
 		$url = add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
 
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', '' ), 'publish_posts', $url );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', '' ), Editor::EDITING_CAPABILITY, $url );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -891,8 +891,8 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 */
 	public function block_template_frontend() {
-		if ( is_singular( self::CPT ) && ! current_user_can( 'edit_posts' ) ) {
-			wp_redirect( site_url(), 301 );
+		if ( is_singular( self::CPT ) && ! current_user_can( Editor::EDITING_CAPABILITY ) ) {
+			wp_safe_redirect( site_url(), 301 );
 			die;
 		}
 	}
