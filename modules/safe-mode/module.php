@@ -74,7 +74,7 @@ class Module extends \Elementor\Core\Base\Module {
 		}
 
 		if ( ! is_dir( WPMU_PLUGIN_DIR ) ) {
-			wp_die( __( 'Cannot enable Safe Mode', '' ) );
+			wp_die( __( 'Cannot enable Safe Mode', 'elementor' ) );
 		}
 
 		copy_dir( __DIR__ . '/mu-plugin/', WPMU_PLUGIN_DIR );
@@ -133,7 +133,7 @@ class Module extends \Elementor\Core\Base\Module {
 		</style>
 		<div id="elementor-safe-mode-message">
 			<a target="_blank" href="<?php echo $tools_url; ?>">
-				<?php echo __( 'Exit Safe mode', '' ); ?>
+				<?php echo __( 'Exit Safe mode', 'elementor' ); ?>
 			</a>
 		</div>
 

@@ -2,8 +2,11 @@
 namespace Elementor\Modules\WpCli;
 
 use Elementor\Core\Logger\Loggers\Base as Loggers_Base;
-
 use Elementor\Core\Logger\Items\Log_Item_Interface as Log_Item_Interface;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 class Cli_Logger extends Loggers_Base {
 	public function save_log( Log_Item_Interface $item ) {
