@@ -85,7 +85,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 			];
 		}
 
-		return apply_filters( 'elementor/controls/hover_animations/', self::$_animations );
+		return apply_filters( 'elementor/controls/hover_animations', self::$_animations );
 	}
 
 	/**
