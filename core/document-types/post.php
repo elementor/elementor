@@ -23,6 +23,7 @@ class Post extends Document {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
+		$properties['admin_tab_group'] = '';
 		$properties['support_wp_page_templates'] = true;
 
 		return $properties;
