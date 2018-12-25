@@ -367,7 +367,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'image[url]!' => '',
 			],
 			'required' => true,
-			'separator' => 'after',
 		];
 
 		$fields['attachment'] = [

@@ -147,8 +147,7 @@ class Settings extends Settings_Page {
 			[ $this, 'handle_external_redirects' ]
 		);
 
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Saved Templates', 'elementor' ), __( 'Saved Templates', 'elementor' ), 'manage_options', 'saved_templates', [ $this, 'elementor_custom_fonts' ] );
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Templates', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
+		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Builder', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
 		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
 	}
 
@@ -198,12 +197,12 @@ class Settings extends Settings_Page {
 		}
 
 		if ( 'go_elementor_pro' === $_GET['page'] ) {
-			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
+			wp_safe_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
 			die;
 		}
 
 		if ( 'go_knowledge_base_site' === $_GET['page'] ) {
-			wp_redirect( 'https://go.elementor.com/docs-admin-menu/' );
+			wp_safe_redirect( 'https://go.elementor.com/docs-admin-menu/' );
 			die;
 		}
 	}
@@ -298,8 +297,8 @@ class Settings extends Settings_Page {
 		<div class="wrap">
 			<div class="elementor-blank_state">
 				<i class="eicon-nerd-chuckle"></i>
-				<h2><?php echo __( 'Add Your Popup', 'elementor' ); ?></h2>
-				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
+				<h2><?php echo __( 'Get Popup Builder', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Create advanced popups that drive more leads and conversions to your business.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
@@ -316,14 +315,14 @@ class Settings extends Settings_Page {
 	 */
 	public function elementor_theme_templates() {
 		?>
-        <div class="wrap">
-            <div class="elementor-blank_state">
-                <i class="eicon-nerd-chuckle"></i>
-                <h2><?php echo __( 'Add Your Theme Template', 'elementor' ); ?></h2>
-                <p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
-                <a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
-            </div>
-        </div><!-- /.wrap -->
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<i class="eicon-nerd-chuckle"></i>
+				<h2><?php echo __( 'Get Theme Builder', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Elementor Pro comes built-in with an industry leading theme builder, which lets you customize every part of your WordPress theme visually.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
 		<?php
 	}
 
@@ -578,12 +577,7 @@ class Settings extends Settings_Page {
 										'external' => __( 'External File', 'elementor' ),
 										'internal' => __( 'Internal Embedding', 'elementor' ),
 									],
-									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
-											  __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
-											  '</div>' .
-											  '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
-											  __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
-											  '</div>',
+									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' . __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) . '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">' . __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) . '</div>',
 								],
 							],
 							'editor_break_lines' => [
