@@ -349,7 +349,7 @@ class Source_Local extends Source_Base {
 	public function admin_menu() {
 		$url = add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
 
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', '' ), 10, $url );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', '' ), 'publish_posts', $url );
 	}
 
 	public function admin_title( $admin_title, $title ) {
