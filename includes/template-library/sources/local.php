@@ -349,7 +349,7 @@ class Source_Local extends Source_Base {
 	public function admin_menu() {
 		$url = add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
 
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', '' ), Editor::EDITING_CAPABILITY, $url );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, $url );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -1544,9 +1544,9 @@ class Source_Local extends Source_Base {
 
 			if ( $current_tab_group ) {
 				$titles = [
-					'library' => __( 'Saved Templates', '' ),
-					'theme' => __( 'Theme Builder', '' ),
-					'popup' => __( 'Popups', '' ),
+					'library' => __( 'Saved Templates', 'elementor' ),
+					'theme' => __( 'Theme Builder', 'elementor' ),
+					'popup' => __( 'Popups', 'elementor' ),
 				];
 
 				if ( ! empty( $titles[ $current_tab_group ] ) ) {
