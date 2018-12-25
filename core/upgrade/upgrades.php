@@ -50,7 +50,7 @@ class Upgrades {
 					return $element;
 				}
 
-				if ( ! empty( $element['settings']['link']['url'] ) ) {
+				if ( ! empty( $element['settings']['link']['url'] ) && ! isset( $element['settings']['link_to'] ) ) {
 					$element['settings']['link_to'] = 'custom';
 				}
 
