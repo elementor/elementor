@@ -33,6 +33,32 @@ abstract class Background_Task extends \WP_Background_Process {
 		}
 	}
 
+	public function query_col( $sql ) {
+		global $wpdb;
+
+		// Add Calc.
+		$item = $this->get_current_item();
+		if ( empty( $item['total'] ) ) {
+			$sql = preg_replace( '/^SELECT/', 'SELECT SQL_CALC_FOUND_ROWS', $sql );
+		}
+
+		// Add offset & limit.
+		$sql = preg_replace( '/;$/', '', $sql );
+		$sql .= ' LIMIT %d, %d;';
+
+		$results = $wpdb->get_col( $wpdb->prepare( $sql, $this->get_current_offset(), $this->get_limit() ) );
+
+		if ( ! empty( $results ) ) {
+			$this->set_total();
+		}
+
+		return $results;
+	}
+
+	public function should_run_again( $post_ids ) {
+		return count( $post_ids ) === $this->get_limit();
+	}
+
 	public function get_current_offset() {
 		$limit = $this->get_limit();
 		return $this->current_item['iterate_num'] * $limit;
@@ -40,6 +66,16 @@ abstract class Background_Task extends \WP_Background_Process {
 
 	public function get_limit() {
 		return $this->manager->get_query_limit();
+	}
+
+	public function set_total() {
+		global $wpdb;
+
+		if ( empty( $this->current_item['total'] ) ) {
+			$total_rows = $wpdb->get_var( 'SELECT FOUND_ROWS();' );
+			$total_iterates = floor( $total_rows / $this->get_limit() );
+			$this->current_item['total'] = $total_iterates;
+		}
 	}
 
 	/**
@@ -223,24 +259,33 @@ abstract class Background_Task extends \WP_Background_Process {
 		$callback = $this->format_callback_log( $item );
 
 		if ( is_callable( $item['callback'] ) ) {
-			$this->current_item = $item;
-
-			$log_args = [];
+			$progress = '';
 
 			if ( 1 < $item['iterate_num'] ) {
-				$log_args['meta'] = [
-					'iterate_num' => $item['iterate_num'],
-				];
+				if ( empty( $item['total'] ) ) {
+					$progress = sprintf( '(x%s)', $item['iterate_num'] );
+				} else {
+					$percent = floor( $item['iterate_num'] / ( $item['total'] / 100 ) );
+					$progress = sprintf( '(%s of %s, %s%%)', $item['iterate_num'], $item['total'], $percent );
+				}
 			}
 
-			$logger->info( sprintf( '%s Start', $callback ), $log_args );
+			$logger->info( sprintf( '%s Start %s', $callback, $progress ) );
+
+			$this->current_item = $item;
 
 			$result = (bool) call_user_func( $item['callback'], $this );
 
+			// get back the updated item.
+			$item = $this->current_item;
 			$this->current_item = null;
 
 			if ( $result ) {
-				$logger->info( sprintf( '%s callback needs to run again', $callback ) );
+				if ( empty( $item['total'] ) ) {
+					$logger->info( sprintf( '%s callback needs to run again', $callback ) );
+				} elseif ( 1 === $item['iterate_num'] ) {
+					$logger->info( sprintf( '%s callback needs to run more %d times', $callback, $item['total'] - $item['iterate_num'] ) );
+				}
 
 				$item['iterate_num']++;
 			} else {

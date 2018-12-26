@@ -353,22 +353,26 @@ class Upgrades {
 		} // End foreach().
 	}
 
-	public static function _v_2_3_0_widget_image() {
+	/**
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_2_3_0_widget_image( $updater ) {
 		global $wpdb;
 
 		// upgrade `video` widget settings (merge providers).
-		$post_ids = $wpdb->get_col(
+		$post_ids = $updater->query_col(
 			'SELECT `post_id` FROM `' . $wpdb->postmeta . '` WHERE `meta_key` = "_elementor_data" AND (
 			`meta_value` LIKE \'%"widgetType":"image"%\' 
 			OR `meta_value` LIKE \'%"widgetType":"theme-post-featured-image"%\'
 			OR `meta_value` LIKE \'%"widgetType":"theme-site-logo"%\'
 			OR `meta_value` LIKE \'%"widgetType":"woocommerce-category-image"%\'
-			
 			);'
 		);
 
 		if ( empty( $post_ids ) ) {
-			return;
+			return false;
 		}
 
 		$widgets = [
@@ -422,21 +426,28 @@ class Upgrades {
 
 			update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 		} // End foreach().
+
+		return $updater->should_run_again( $post_ids );
 	}
 
-	public static function _v_2_3_0_template_type() {
+	/**
+	 * @param Updater $updater
+	 *
+	 * @return bool
+	 */
+	public static function _v_2_3_0_template_type( $updater ) {
 		global $wpdb;
 
-		$post_ids = $wpdb->get_col(
+		$post_ids = $updater->query_col(
 			'SELECT p.ID
 					FROM `' . $wpdb->posts . '` AS p
 					LEFT JOIN `' . $wpdb->postmeta . '` AS pm1 ON (p.ID = pm1.post_id)
 					LEFT JOIN `' . $wpdb->postmeta . '` AS pm2 ON (pm1.post_id = pm2.post_id AND pm2.meta_key = "_elementor_template_type")
-					WHERE p.post_status != "inherit" AND pm1.`meta_key` = "_elementor_data" AND pm2.post_id IS NULL'
+					WHERE p.post_status != "inherit" AND pm1.`meta_key` = "_elementor_data" AND pm2.post_id IS NULL;'
 		);
 
 		if ( empty( $post_ids ) ) {
-			return;
+			return false;
 		}
 
 		foreach ( $post_ids as $post_id ) {
@@ -451,5 +462,7 @@ class Upgrades {
 
 			$document->save_template_type();
 		} // End foreach().
+
+		return $updater->should_run_again( $post_ids );
 	}
 }
