@@ -55,8 +55,8 @@ abstract class Background_Task extends \WP_Background_Process {
 		return $results;
 	}
 
-	public function should_run_again( $post_ids ) {
-		return count( $post_ids ) === $this->get_limit();
+	public function should_run_again( $updated_rows ) {
+		return count( $updated_rows ) === $this->get_limit();
 	}
 
 	public function get_current_offset() {
