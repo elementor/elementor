@@ -36,6 +36,7 @@ abstract class Library_Document extends Document {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
+		$properties['admin_tab_group'] = 'library';
 		$properties['show_in_library'] = true;
 		$properties['register_type'] = true;
 		$properties['library_view'] = 'grid';
