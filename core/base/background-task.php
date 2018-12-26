@@ -46,7 +46,7 @@ abstract class Background_Task extends \WP_Background_Process {
 		$sql = preg_replace( '/;$/', '', $sql );
 		$sql .= ' LIMIT %d, %d;';
 
-		$results = $wpdb->get_col( $wpdb->prepare( $sql, $this->get_current_offset(), $this->get_limit() ) );
+		$results = $wpdb->get_col( $wpdb->prepare( $sql, $this->get_current_offset(), $this->get_limit() ) ); // WPCS: unprepared SQL OK.
 
 		if ( ! empty( $results ) ) {
 			$this->set_total();
