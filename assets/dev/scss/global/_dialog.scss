@@ -110,6 +110,10 @@
 	}
 }
 
+.dialog-prevent-scroll {
+	overflow: hidden;
+}
+
 @media (max-width: $editor-screen-sm-max) {
 
 	.dialog-close-button {
