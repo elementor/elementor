@@ -70,6 +70,61 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
+			'_element_width',
+			[
+				'label' => __( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'inherit' => __( 'Maximum', 'elementor' ),
+					'auto' => __( 'Minimum', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_element_custom_width',
+			[
+				'label' => __( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'max' => 100,
+						'step' => 1,
+					],
+				],
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}'
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_element_vertical_align',
+			[
+				'label' => __( 'Vertical Align', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'flex-start' => __( 'Start', 'elementor' ),
+					'flex-end' => __( 'End', 'elementor' ),
+					'center' => __( 'Center', 'elementor' ),
+					'stretch' => __( 'Stretch', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
 			'_margin',
 			[
 				'label' => __( 'Margin', 'elementor' ),
