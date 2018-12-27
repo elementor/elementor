@@ -13,7 +13,7 @@ module.exports = Marionette.LayoutView.extend( {
 		return {
 			modalHeader: '.dialog-header',
 			modalContent: '.dialog-lightbox-content',
-			modalLoading: '.dialog-lightbox-loading'
+			modalLoading: '.dialog-lightbox-loading',
 		};
 	},
 
@@ -24,7 +24,7 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	initialize: function() {
-		this.modalHeader.show( new TemplateLibraryHeaderView() );
+		this.modalHeader.show( new TemplateLibraryHeaderView( this.getHeaderOptions() ) );
 	},
 
 	initModal: function() {
@@ -32,15 +32,19 @@ module.exports = Marionette.LayoutView.extend( {
 			className: 'elementor-templates-modal',
 			closeButton: false,
 			hide: {
-				onOutsideClick: false
-			}
+				onOutsideClick: false,
+			},
 		};
 
 		jQuery.extend( true, modalOptions, this.getModalOptions() );
 
-		this.modal = elementor.dialogsManager.createWidget( 'lightbox', modalOptions );
+		this.modal = this.getDialogsManager().createWidget( 'lightbox', modalOptions );
 
 		this.modal.getElements( 'message' ).append( this.modal.addElement( 'content' ), this.modal.addElement( 'loading' ) );
+	},
+
+	getDialogsManager: function() {
+		return elementor.dialogsManager;
 	},
 
 	showModal: function() {
@@ -56,6 +60,10 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	getLogoOptions: function() {
+		return {};
+	},
+
+	getHeaderOptions: function() {
 		return {};
 	},
 
@@ -79,5 +87,5 @@ module.exports = Marionette.LayoutView.extend( {
 
 	showLogo: function() {
 		this.getHeaderView().logoArea.show( new TemplateLibraryHeaderLogoView( this.getLogoOptions() ) );
-	}
+	},
 } );

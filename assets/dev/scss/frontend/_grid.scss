@@ -217,7 +217,6 @@
 }
 
 // Responsive Grid
-
 @media (min-width: $screen-md-min) {
 
 	.elementor-column {
@@ -240,17 +239,28 @@
 	}
 }
 
-@media (max-width: $screen-sm-max) {
+@mixin reverse-columns($device) {
 
-	.elementor-column {
-		width: 100%;
-	}
-
-	.elementor-reverse-mobile > .elementor-container > .elementor-row {
-		flex-direction: column-reverse;
+	.elementor-reverse#{$device} > .elementor-container > .elementor-row {
+		@for $i from 1 through 10 {
+			> :nth-child(#{$i}) {
+				order: -$i + 11;
+			}
+		}
 	}
 }
 
+@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+	@include reverse-columns(-tablet);
+}
+
+@media (max-width: $screen-sm-max) {
+	@include reverse-columns(-mobile);
+
+	.elementor-column {
+		width: 100%; //Default width for mobile
+	}
+}
 
 // Minimal simple Grid
 
@@ -265,18 +275,27 @@ ul.elementor-icon-list-items.elementor-inline-items {
 
 // Simple 12 Columns responsive grid
 .elementor-grid {
-	display: grid;
 
 	.elementor-grid-item {
 		word-break: break-word;
+		min-width: 0; // Prevent columns from overflowing the grid area in Firefox browser
 	}
 
 	@mixin grid_loop($device) {
 		@for $i from 1 through 12 {
 
+			&#{$device}-0 {
+				.elementor-grid {
+					display: flex;
+					overflow: hidden;
+					flex-wrap: wrap;
+				}
+			}
+
 			&#{$device}-#{$i} {
 				.elementor-grid {
 					grid-template-columns: repeat(#{$i} , 1fr);
+					display: grid;
 				}
 			}
 		}
@@ -290,12 +309,5 @@ ul.elementor-icon-list-items.elementor-inline-items {
 
 	@media (max-width: $screen-sm-max) {
 		@include grid_loop(-mobile);
-	}
-}
-
-.elementor-grid-0 {
-	.elementor-grid {
-		display: flex;
-		overflow: hidden;
 	}
 }

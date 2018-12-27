@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.4.1
+ * Dialogs Manager v4.5.0
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -513,6 +513,27 @@
 			return self;
 		};
 
+		this.off = function(eventName, callback) {
+
+			if (! events[ eventName ]) {
+				return self;
+			}
+
+			if (! callback) {
+				delete events[ eventName ];
+
+				return self;
+			}
+
+			var callbackIndex = events[ eventName ].indexOf(callback);
+
+			if (-1 !== callbackIndex) {
+				delete events[ eventName ][ callbackIndex ];
+			}
+
+			return self;
+		};
+
 		this.refreshPosition = function () {
 
 			if (! settings.position.enable) {
@@ -525,7 +546,7 @@
 				position.of = elements[position.of];
 			}
 
-			if (elements.iframe) {
+			if (settings.iframe) {
 				fixIframePosition(position);
 			}
 
@@ -555,7 +576,7 @@
 
 		this.setSettings = function(key, value) {
 
-			if ('object' === typeof value) {
+			if (jQuery.isPlainObject(value)) {
 				$.extend(true, settings[key], value);
 			} else {
 				settings[key] = value;

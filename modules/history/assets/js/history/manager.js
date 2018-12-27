@@ -16,16 +16,16 @@ var	Manager = function() {
 		change: elementor.translate( 'edited' ),
 		move: elementor.translate( 'moved' ),
 		paste_style: elementor.translate( 'style_pasted' ),
-		reset_style: elementor.translate( 'style_reset' )
+		reset_style: elementor.translate( 'style_reset' ),
 	};
 
 	var addBehaviors = function( behaviors ) {
 		behaviors.ElementHistory = {
-			behaviorClass: ElementHistoryBehavior
+			behaviorClass: ElementHistoryBehavior,
 		};
 
 		behaviors.CollectionHistory = {
-			behaviorClass: CollectionHistoryBehavior
+			behaviorClass: CollectionHistoryBehavior,
 		};
 
 		return behaviors;
@@ -33,7 +33,7 @@ var	Manager = function() {
 
 	var addCollectionBehavior = function( behaviors ) {
 		behaviors.CollectionHistory = {
-			behaviorClass: CollectionHistoryBehavior
+			behaviorClass: CollectionHistoryBehavior,
 		};
 
 		return behaviors;
@@ -49,12 +49,12 @@ var	Manager = function() {
 
 	var navigate = function( isRedo ) {
 		var currentItem = items.find( function( model ) {
-				return 'not_applied' ===  model.get( 'status' );
+				return 'not_applied' === model.get( 'status' );
 			} ),
 			currentItemIndex = items.indexOf( currentItem ),
 			requiredIndex = isRedo ? currentItemIndex - 1 : currentItemIndex + 1;
 
-		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0  || requiredIndex >= items.length ) {
+		if ( ( ! isRedo && ! currentItem ) || requiredIndex < 0 || requiredIndex >= items.length ) {
 			return;
 		}
 
@@ -72,7 +72,7 @@ var	Manager = function() {
 			},
 			handle: function() {
 				elementor.getPanelView().setPage( 'historyPage' );
-			}
+			},
 		} );
 
 		var navigationWorthHandling = function( event ) {
@@ -81,16 +81,16 @@ var	Manager = function() {
 
 		elementor.hotKeys.addHotKeyHandler( Y_KEY, 'historyNavigationRedo', {
 			isWorthHandling: navigationWorthHandling,
-			handle: function( event ) {
+			handle: () => {
 				navigate( true );
-			}
+			},
 		} );
 
 		elementor.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
 			isWorthHandling: navigationWorthHandling,
 			handle: function( event ) {
 				navigate( event.shiftKey );
-			}
+			},
 		} );
 	};
 
@@ -168,7 +168,7 @@ var	Manager = function() {
 				title: elementor.translate( 'editing_started' ),
 				subTitle: '',
 				action: '',
-				editing_started: true
+				editing_started: true,
 			} );
 		}
 
@@ -180,7 +180,7 @@ var	Manager = function() {
 		var id = currentItemID ? currentItemID : new Date().getTime();
 
 		var	currentItem = items.findWhere( {
-			id: id
+			id: id,
 		} );
 
 		if ( ! currentItem ) {
@@ -190,7 +190,7 @@ var	Manager = function() {
 				subTitle: itemData.subTitle,
 				action: getActionLabel( itemData ),
 				type: itemData.type,
-				elementType: itemData.elementType
+				elementType: itemData.elementType,
 			} );
 
 			self.startItemTitle = '';
@@ -253,16 +253,17 @@ var	Manager = function() {
 			}
 
 			// Try scroll to affected element.
-			if ( item instanceof Backbone.Model && item.get( 'items' ).length  ) {
-				var oldView = item.get( 'items' ).first().get( 'history' ).behavior.view;
-				if ( oldView.model ) {
-					viewToScroll = self.findView( oldView.model.get( 'id' ) ) ;
+			if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
+				var history = item.get( 'items' ).first().get( 'history' );
+
+				if ( history && history.behavior.view.model ) {
+					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
 				}
 			}
 		}
 
-		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[0], elementor.$previewContents.find( 'html' )[0] ) ) {
-			elementor.helpers.scrollToView( viewToScroll );
+		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
+			elementor.helpers.scrollToView( viewToScroll.$el );
 		}
 
 		if ( item.get( 'editing_started' ) ) {
@@ -321,14 +322,13 @@ var	Manager = function() {
 	};
 
 	this.findView = function( modelID, views ) {
-		var self = this,
-			founded = false;
+		var founded = false;
 
 		if ( ! views ) {
 			views = elementor.getPreviewView().children;
 		}
 
-		_.each( views._views, function( view ) {
+		_.each( views._views, ( view ) => {
 			if ( founded ) {
 				return;
 			}
@@ -338,7 +338,7 @@ var	Manager = function() {
 			if ( modelID === model.get( 'id' ) ) {
 				founded = view;
 			} else if ( view.children && view.children.length ) {
-				founded = self.findView( modelID, view.children );
+				founded = this.findView( modelID, view.children );
 			}
 		} );
 
@@ -349,7 +349,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'move',
 			title: self.getModelLabel( model ),
-			elementType: model.elType || model.get( 'elType' )
+			elementType: model.elType || model.get( 'elType' ),
 		} );
 	};
 
@@ -358,7 +358,7 @@ var	Manager = function() {
 			type: 'add',
 			title: elementor.translate( 'template' ),
 			subTitle: model.get( 'title' ),
-			elementType: 'template'
+			elementType: 'template',
 		} );
 	};
 
@@ -367,7 +367,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'add',
 			title: self.getModelLabel( elementView.model ),
-			elementType: elementView.model.get( 'widgetType' ) || elementView.model.get( 'elType' )
+			elementType: elementView.model.get( 'widgetType' ) || elementView.model.get( 'elType' ),
 		} );
 	};
 
@@ -375,7 +375,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'add',
 			title: self.getModelLabel( model ),
-			elementType: model.elType
+			elementType: model.elType,
 		} );
 	};
 
@@ -383,7 +383,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'paste_style',
 			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' )
+			elementType: model.get( 'elType' ),
 		} );
 	};
 
@@ -391,7 +391,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'reset_style',
 			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' )
+			elementType: model.get( 'elType' ),
 		} );
 	};
 
@@ -399,7 +399,7 @@ var	Manager = function() {
 		elementor.history.history.startItem( {
 			type: 'remove',
 			title: self.getModelLabel( model ),
-			elementType: model.get( 'elType' )
+			elementType: model.get( 'elType' ),
 		} );
 	};
 

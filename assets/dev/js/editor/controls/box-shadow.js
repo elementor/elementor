@@ -13,7 +13,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 	events: function() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
-			'slide @ui.sliders': 'onSlideChange'
+			'slide @ui.sliders': 'onSlideChange',
 		} );
 	},
 
@@ -27,7 +27,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 			$slider.slider( {
 				value: value[ this.dataset.input ],
 				min: +$input.attr( 'min' ),
-				max: +$input.attr( 'max' )
+				max: +$input.attr( 'max' ),
 			} );
 		} );
 	},
@@ -45,7 +45,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 
 			clear: function() {
 				self.setValue( this.dataset.setting, '' );
-			}
+			},
 		} );
 	},
 
@@ -79,7 +79,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		this.$el.remove();
-	}
+	},
 } );
 
 module.exports = ControlBoxShadowItemView;

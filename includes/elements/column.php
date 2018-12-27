@@ -96,12 +96,36 @@ class Element_Column extends Element_Base {
 	 * @return array Default edit tools.
 	 */
 	protected static function get_default_edit_tools() {
-		return [
+		$column_label = __( 'Column', 'elementor' );
+
+		$edit_tools = [
 			'edit' => [
 				'title' => __( 'Edit', 'elementor' ),
 				'icon' => 'column',
 			],
 		];
+
+		if ( self::is_edit_buttons_enabled() ) {
+			$edit_tools += [
+				'duplicate' => [
+					/* translators: %s: Column label */
+					'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $column_label ),
+					'icon' => 'clone',
+				],
+				'add' => [
+					/* translators: %s: Column label */
+					'title' => sprintf( __( 'Add %s', 'elementor' ), $column_label ),
+					'icon' => 'plus',
+				],
+				'remove' => [
+					/* translators: %s: Column label */
+					'title' => sprintf( __( 'Remove %s', 'elementor' ), $column_label ),
+					'icon' => 'close',
+				],
+			];
+		}
+
+		return $edit_tools;
 	}
 
 	/**
@@ -119,6 +143,15 @@ class Element_Column extends Element_Base {
 			[
 				'label' => __( 'Layout', 'elementor' ),
 				'tab' => Controls_Manager::TAB_LAYOUT,
+			]
+		);
+
+		$this->add_control(
+			'_title',
+			[
+				'label' => __( 'Title', 'elementor' ),
+				'type' => Controls_Manager::HIDDEN,
+				'render_type' => 'none',
 			]
 		);
 
@@ -537,7 +570,8 @@ class Element_Column extends Element_Base {
 							'name' => 'background_background',
 							'operator' => '!==',
 							'value' => '',
-						], [
+						],
+						[
 							'name' => 'border_border',
 							'operator' => '!==',
 							'value' => '',
@@ -755,6 +789,7 @@ class Element_Column extends Element_Base {
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
+				'style_transfer' => false,
 			]
 		);
 

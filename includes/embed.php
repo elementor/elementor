@@ -111,13 +111,13 @@ class Embed {
 		if ( 'youtube' === $video_properties['provider'] ) {
 			$replacements['{NO_COOKIE}'] = ! empty( $options['privacy'] ) ? '-nocookie' : '';
 		} elseif ( 'vimeo' === $video_properties['provider'] ) {
-			$timeText = '';
+			$time_text = '';
 
 			if ( ! empty( $options['start'] ) ) {
-				$timeText = date( 'H\hi\ms\s', $options['start'] );
+				$time_text = date( 'H\hi\ms\s', $options['start'] );
 			}
 
-			$replacements['{TIME}'] = $timeText;
+			$replacements['{TIME}'] = $time_text;
 		}
 
 		$embed_pattern = str_replace( array_keys( $replacements ), $replacements, $embed_pattern );
@@ -145,17 +145,20 @@ class Embed {
 	 * @return string The embed HTML.
 	 */
 	public static function get_embed_html( $video_url, array $embed_url_params = [], array $options = [], array $frame_attributes = [] ) {
-		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
+		$default_frame_attributes = [
+			'class' => 'elementor-video-iframe',
+			'allowfullscreen',
+		];
 
+		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
 		if ( ! $video_embed_url ) {
 			return null;
 		}
-
-		$default_frame_attributes = [
-			'class' => 'elementor-video-iframe',
-			'src' => $video_embed_url,
-			'allowfullscreen',
-		];
+		if ( ! $options['lazy_load'] ) {
+			$default_frame_attributes['src'] = $video_embed_url;
+		} else {
+			$default_frame_attributes['data-lazy-load'] = $video_embed_url;
+		}
 
 		$frame_attributes = array_merge( $default_frame_attributes, $frame_attributes );
 

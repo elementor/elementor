@@ -15,7 +15,7 @@ module.exports = ControlsStack.extend( {
 
 	childViewOptions: function() {
 		return {
-			elementSettingsModel: this.model
+			elementSettingsModel: this.model,
 		};
-	}
+	},
 } );

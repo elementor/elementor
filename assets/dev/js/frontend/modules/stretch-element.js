@@ -6,14 +6,14 @@ module.exports = ViewModule.extend( {
 			element: null,
 			direction: elementorFrontend.config.is_rtl ? 'right' : 'left',
 			selectors: {
-				container: window
-			}
+				container: window,
+			},
 		};
 	},
 
 	getDefaultElements: function() {
 		return {
-			$element: jQuery( this.getSettings( 'element' ) )
+			$element: jQuery( this.getSettings( 'element' ) ),
 		};
 	},
 
@@ -37,15 +37,14 @@ module.exports = ViewModule.extend( {
 			isFixed = 'fixed' === $element.css( 'position' ),
 			correctOffset = isFixed ? 0 : elementOffset;
 
-		if ( window !== $container[0] ) {
+		if ( window !== $container[ 0 ] ) {
 			var containerOffset = $container.offset().left;
 
 			if ( isFixed ) {
 				correctOffset = containerOffset;
-			} else {
-				if ( elementOffset > containerOffset ) {
-					correctOffset = elementOffset - containerOffset;
-				}
+			}
+			if ( elementOffset > containerOffset ) {
+				correctOffset = elementOffset - containerOffset;
 			}
 		}
 
@@ -74,5 +73,5 @@ module.exports = ViewModule.extend( {
 		css[ this.getSettings( 'direction' ) ] = '';
 
 		this.elements.$element.css( css );
-	}
+	},
 } );

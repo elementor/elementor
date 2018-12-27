@@ -89,12 +89,16 @@ class Control_Media extends Control_Base_Multiple {
 	 * @access public
 	 */
 	public function enqueue() {
+		global $wp_version;
+
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_media();
 
 		wp_enqueue_style(
 			'media',
-			admin_url( '/css/media' . $suffix . '.css' )
+			admin_url( '/css/media' . $suffix . '.css' ),
+			[],
+			$wp_version
 		);
 
 		wp_register_script(
@@ -105,7 +109,7 @@ class Control_Media extends Control_Base_Multiple {
 				'json2',
 				'imgareaselect',
 			],
-			false,
+			$wp_version,
 			true
 		);
 

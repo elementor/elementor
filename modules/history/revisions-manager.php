@@ -157,7 +157,7 @@ class Revisions_Manager {
 			if ( ! isset( self::$authors[ $revision->post_author ] ) ) {
 				self::$authors[ $revision->post_author ] = [
 					'avatar' => get_avatar( $revision->post_author, 22 ),
-					'display_name' => get_the_author_meta( 'display_name' , $revision->post_author ),
+					'display_name' => get_the_author_meta( 'display_name', $revision->post_author ),
 				];
 			}
 
@@ -185,9 +185,7 @@ class Revisions_Manager {
 	 * @static
 	 */
 	public static function update_autosave( $autosave_data ) {
-		$revision_id = $autosave_data['ID'];
-
-		Plugin::$instance->db->safe_copy_elementor_meta( $autosave_data['post_parent'], $revision_id );
+		self::save_revision( $autosave_data['ID'] );
 	}
 
 	/**

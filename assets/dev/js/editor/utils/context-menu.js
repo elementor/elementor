@@ -14,22 +14,29 @@ ContextMenu = Module.extend( {
 				itemTypePrefix: 'elementor-context-menu-list__item-',
 				itemTitle: 'elementor-context-menu-list__item__title',
 				itemShortcut: 'elementor-context-menu-list__item__shortcut',
+				iconShortcut: 'elementor-context-menu-list__item__icon',
 				itemDisabled: 'elementor-context-menu-list__item--disabled',
-				divider: 'elementor-context-menu-list__divider'
-			}
+				divider: 'elementor-context-menu-list__divider',
+				hidden: 'elementor-hidden',
+			},
 		};
 	},
 
 	buildActionItem: function( action ) {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
-			$item = jQuery( '<div>', { 'class': classes.item + ' ' + classes.itemTypePrefix + action.name } ),
-			$itemTitle = jQuery( '<div>', { 'class': classes.itemTitle } ).text( action.title );
+			$item = jQuery( '<div>', { class: classes.item + ' ' + classes.itemTypePrefix + action.name } ),
+			$itemTitle = jQuery( '<div>', { class: classes.itemTitle } ).text( action.title ),
+			$itemIcon = jQuery( '<div>', { class: classes.iconShortcut } );
 
-		$item.html( $itemTitle );
+		if ( action.icon ) {
+			$itemIcon.html( jQuery( '<i>', { class: action.icon } ) );
+		}
+
+		$item.append( $itemIcon, $itemTitle );
 
 		if ( action.shortcut ) {
-			var $itemShortcut = jQuery( '<div>', { 'class': classes.itemShortcut } ).html( action.shortcut );
+			var $itemShortcut = jQuery( '<div>', { class: classes.itemShortcut } ).html( action.shortcut );
 
 			$item.append( $itemShortcut );
 		}
@@ -49,23 +56,33 @@ ContextMenu = Module.extend( {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
 			groups = self.getSettings( 'groups' ),
-			$list = jQuery( '<div>', { 'class': classes.list } );
+			$list = jQuery( '<div>', { class: classes.list } );
 
 		groups.forEach( function( group ) {
-			var $group = jQuery( '<div>', { 'class': classes.group + ' ' + classes.groupPrefix + group.name } );
+			var $group = jQuery( '<div>', { class: classes.group + ' ' + classes.groupPrefix + group.name } );
 
 			group.actions.forEach( function( action ) {
 				$group.append( self.buildActionItem( action ) );
 			} );
 
 			$list.append( $group );
+
+			group.$item = $group;
 		} );
 
 		return $list;
 	},
 
-	toggleActionItem: function( action ) {
-		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! this.isActionEnabled( action ) );
+	toggleGroupVisibility: function( group, state ) {
+		group.$item.toggleClass( this.getSettings( 'classes.hidden' ), ! state );
+	},
+
+	toggleActionVisibility: function( action, state ) {
+		action.$item.toggleClass( this.getSettings( 'classes.hidden' ), ! state );
+	},
+
+	toggleActionUsability: function( action, state ) {
+		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! state );
 	},
 
 	isActionEnabled: function( action ) {
@@ -97,15 +114,15 @@ ContextMenu = Module.extend( {
 					iframe: elementor.$preview,
 					effects: {
 						hide: 'hide',
-						show: 'show'
+						show: 'show',
 					},
 					hide: {
-						onOutsideContextMenu: true
+						onOutsideContextMenu: true,
 					},
 					position: {
 						my: ( elementor.config.is_rtl ? 'right' : 'left' ) + ' top',
-						collision: 'fit'
-					}
+						collision: 'fit',
+					},
 				} );
 			}
 
@@ -118,13 +135,25 @@ ContextMenu = Module.extend( {
 			modal = self.getModal();
 
 		modal.setSettings( 'position', {
-			of: event
+			of: event,
 		} );
 
 		self.getSettings( 'groups' ).forEach( function( group ) {
-			group.actions.forEach( function( action ) {
-				self.toggleActionItem( action );
-			} );
+			var isGroupVisible = false !== group.isVisible;
+
+			self.toggleGroupVisibility( group, isGroupVisible );
+
+			if ( isGroupVisible ) {
+				group.actions.forEach( function( action ) {
+					var isActionVisible = false !== action.isVisible;
+
+					self.toggleActionVisibility( action, isActionVisible );
+
+					if ( isActionVisible ) {
+						self.toggleActionUsability( action, self.isActionEnabled( action ) );
+					}
+				} );
+			}
 		} );
 
 		modal.show();
@@ -136,7 +165,7 @@ ContextMenu = Module.extend( {
 
 	onInit: function() {
 		this.initModal();
-	}
+	},
 } );
 
 module.exports = ContextMenu;
