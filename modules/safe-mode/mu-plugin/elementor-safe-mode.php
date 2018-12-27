@@ -33,11 +33,13 @@ class Safe_Mode {
 	const OPTION_ENABLED = 'elementor_safe_mode';
 
 	public function __construct() {
-		if ( ! $this->is_enabled() ) {
+		$enabled_type = $this->is_enabled();
+
+		if ( ! $enabled_type ) {
 			return;
 		}
 
-		if ( ! $this->is_requested() ) {
+		if ( ! $this->is_requested() && 'global' !== $enabled_type ) {
 			return;
 		}
 
