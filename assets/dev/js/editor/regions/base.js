@@ -7,7 +7,7 @@ module.exports = Marionette.Region.extend( {
 	constructor: function() {
 		Marionette.Region.prototype.constructor.apply( this, arguments );
 
-		var savedStorage = elementor.getStorage( this.getStorageKey() );
+		var savedStorage = elementorCommon.storage.get( this.getStorageKey() );
 
 		this.storage = savedStorage ? savedStorage : this.getDefaultStorage();
 
@@ -17,7 +17,7 @@ module.exports = Marionette.Region.extend( {
 	saveStorage: function( key, value ) {
 		this.storage[ key ] = value;
 
-		elementor.setStorage( this.getStorageKey(), this.storage );
+		elementorCommon.storage.set( this.getStorageKey(), this.storage );
 	},
 
 	saveSize: function() {

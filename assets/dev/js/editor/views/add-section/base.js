@@ -110,7 +110,7 @@ class AddSectionBase extends Marionette.ItemView {
 	}
 
 	isPasteEnabled() {
-		return elementor.getStorage( 'transfer' );
+		return elementorCommon.storage.get( 'transfer' );
 	}
 
 	onAddSectionButtonClick() {

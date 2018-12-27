@@ -151,7 +151,7 @@ BaseElementView = BaseContainer.extend( {
 						shortcut: controlSign + '+⇧+V',
 						callback: this.pasteStyle.bind( this ),
 						isEnabled: () => {
-							return !! elementor.getStorage( 'transfer' );
+							return !! elementorCommon.storage.get( 'transfer' );
 						},
 					}, {
 						name: 'resetStyle',
@@ -192,7 +192,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	startTransport( type ) {
-		elementor.setStorage( 'transfer', {
+		elementorCommon.storage.set( 'transfer', {
 			type: type,
 			elementsType: this.getElementType(),
 			elements: [ this.model.toJSON( { copyHtmlCache: true } ) ],
@@ -212,7 +212,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	isPasteEnabled() {
-		const transferData = elementor.getStorage( 'transfer' );
+		var transferData = elementorCommon.storage.get( 'transfer' );
 
 		if ( ! transferData || this.isCollectionFilled() ) {
 			return false;
@@ -230,18 +230,18 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	duplicate() {
-		const oldTransport = elementor.getStorage( 'transfer' );
+		var oldTransport = elementorCommon.storage.get( 'transfer' );
 
 		this.copy();
 
 		this.paste();
 
-		elementor.setStorage( 'transfer', oldTransport );
+		elementorCommon.storage.set( 'transfer', oldTransport );
 	},
 
 	pasteStyle() {
-		const self = this,
-			transferData = elementor.getStorage( 'transfer' ),
+		var self = this,
+			transferData = elementorCommon.storage.get( 'transfer' ),
 			sourceElement = transferData.elements[ 0 ],
 			sourceSettings = sourceElement.settings,
 			editModel = self.getEditModel(),

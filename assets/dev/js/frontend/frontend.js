@@ -1,6 +1,7 @@
 /* global elementorFrontendConfig */
 import DocumentsManager from './documents-manager';
 import HotKeys from '../../../../core/common/assets/js/utils/hot-keys';
+import Storage from '../../../../core/common/assets/js/utils/storage';
 import environment from '../../../../core/common/assets/js/utils/environment';
 
 const EventManager = require( 'elementor-utils/hooks' ),
@@ -78,7 +79,11 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	isEditMode() {
-		return this.config.isEditMode;
+		return this.config.environmentMode.edit;
+	}
+
+	isWPPreviewMode() {
+		return this.config.environmentMode.wpPreview;
 	}
 
 	initDialogsManager() {
@@ -250,6 +255,8 @@ class Frontend extends elementorModules.ViewModule {
 
 	init() {
 		this.hooks = new EventManager();
+
+		this.storage = new Storage();
 
 		this.addIeCompatibility();
 

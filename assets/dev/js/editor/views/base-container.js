@@ -126,7 +126,7 @@ module.exports = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		var elements = elementor.getStorage( 'transfer' ).elements,
+		var elements = elementorCommon.storage.get( 'transfer' ).elements,
 			index = self.collection.indexOf( childView.model );
 
 		elementor.channels.data.trigger( 'element:before:add', elements[ 0 ] );

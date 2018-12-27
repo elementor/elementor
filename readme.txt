@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 5.0
 Requires PHP: 5.4
-Stable tag: 2.3.4
+Stable tag: 2.3.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -219,6 +219,28 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.3.8 - 2018-12-20 =
+* Fix: Editor not working caused by last version
+
+= 2.3.7 - 2018-12-20 =
+* Fix: Invalid type in Import templates ([#6483](https://github.com/pojome/elementor/issues/6483))
+* Fix: Save global templates
+* Fix: WP widgets compatibility
+* Fix: Responsive device buttons always shown
+
+= 2.3.6 - 2018-12-17 =
+* Fix: `Back to WordPress Editor` not working when meta-boxes are present ([#6437](https://github.com/pojome/elementor/issues/6437))
+* Fix: Register documents only if needed
+* Fix: Style glitch in the responsive control ([#6227](https://github.com/pojome/elementor/issues/6227))
+
+= 2.3.5 - 2018-12-11 =
+* Tweak: Load `elementor_debug_log` option only on System Info page
+* Fix: Maintenance Mode admin console issue
+* Fix: Elementor stuck on loader instead of `The Content Area Was Not Found`
+* Fix: Temporary compatibility workaround for Chrome v70+ dragging above nested iframe issue
+* Fix: `border-radius` for Video not displayed in Safari browser
+* Fix: Avoid `z-index` changes by `nanocss` in build process
 
 = 2.3.4 - 2018-11-29 =
 * Tweak: Make sure "Edit with Elementor" action link is the last link in My Templates
