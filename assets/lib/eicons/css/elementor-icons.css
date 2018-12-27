@@ -738,6 +738,12 @@
 .eicon-clock:before {
   content: '\e1036'; }
 
+.eicon-library-open:before {
+  content: '\e1037'; }
+
+.eicon-warning:before {
+  content: '\e1038'; }
+
 .eicon-editor-link:before {
   content: '\e500'; }
 
