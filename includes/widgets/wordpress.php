@@ -194,12 +194,12 @@ class Widget_WordPress extends Widget_Base {
 	 * Returns the WordPress widget settings, to be used in Elementor.
 	 *
 	 * @access protected
-	 * @since 1.0.0
+	 * @since 2.3.0
 	 *
 	 * @return array Parsed settings.
 	 */
-	protected function _get_parsed_settings() {
-		$settings = parent::_get_parsed_settings();
+	protected function get_init_settings() {
+		$settings = parent::get_init_settings();
 
 		if ( ! empty( $settings['wp'] ) ) {
 			$widget = $this->get_widget_instance();

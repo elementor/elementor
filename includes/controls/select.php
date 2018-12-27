@@ -61,7 +61,9 @@ class Control_Select extends Base_Data_Control {
 		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
+			<# if ( data.label ) {#>
+				<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
+			<# } #>
 			<div class="elementor-control-input-wrapper">
 				<select id="<?php echo $control_uid; ?>" data-setting="{{ data.name }}">
 				<#

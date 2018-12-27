@@ -27,6 +27,12 @@
 	.elementor-control-title {
 		font-size: 12px;
 		line-height: 1;
+		@include margin-end(5px);
+	}
+
+	.elementor-control-spinner {
+		display: flex;
+		align-items: center;
 	}
 
 	&.elementor-control-type-divider {
@@ -350,12 +356,13 @@
 		> .elementor-control-field {
 
 			> .elementor-control-title {
-				width: 45%;
 				flex-shrink: 0;
 			}
 
 			> .elementor-control-input-wrapper {
 				width: 55%;
+				flex-shrink: 1;
+				@include margin-start(auto);
 			}
 		}
 	}
@@ -487,7 +494,7 @@
 
 .elementor-control-responsive-switchers {
 	display: flex;
-	margin: 0 5px;
+	@include margin-end(5px);
 
 	.elementor-responsive-switcher {
 		$icon-size: 18px;
@@ -499,11 +506,14 @@
 		background-color: $editor-light;
 		cursor: pointer;
 		position: relative;
-		@include margin-start(5px);
 		color: #fff;
 		font-size: 8px;
 		text-align: center;
 		transition: background-color .5s;
+
+		&:not(:first-child) {
+			@include margin-start(5px);
+		}
 
 		&:hover {
 			background-color: $editor-lighter;

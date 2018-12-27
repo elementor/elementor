@@ -183,7 +183,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'link_to',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'none',
 				'options' => [
@@ -197,7 +197,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,

@@ -353,11 +353,9 @@ class Editor {
 
 		wp_register_script(
 			'perfect-scrollbar',
-			ELEMENTOR_ASSETS_URL . 'lib/perfect-scrollbar/perfect-scrollbar.jquery' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			'0.6.12',
+			ELEMENTOR_ASSETS_URL . 'lib/perfect-scrollbar/js/perfect-scrollbar' . $suffix . '.js',
+			[],
+			'1.4.0',
 			true
 		);
 

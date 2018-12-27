@@ -66,7 +66,7 @@ export default class extends BaseRegion {
 				if ( this.isDocked ) {
 					this.storage.size.width = elementor.helpers.getElementInlineStyle( this.$el, [ 'width' ] ).width;
 
-					elementor.setStorage( 'navigator', this.storage );
+					elementorCommon.storage.set( 'navigator', this.storage );
 				} else {
 					this.saveSize();
 				}

@@ -94,8 +94,8 @@ const App = Marionette.Application.extend( {
 		},
 		elements: {
 			models: {
+				// TODO: Deprecated alias since 2.4.0
 				get BaseSettings() {
-					// TODO: Deprecated alias since 2.4.0
 					elementorCommon.helpers.deprecatedMethod( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
 
 					return elementorModules.editor.elements.models.BaseSettings;
@@ -523,7 +523,7 @@ const App = Marionette.Application.extend( {
 					}
 
 					if ( event.shiftKey ) {
-						if ( targetElement && targetElement.pasteStyle && elementor.getStorage( 'transfer' ) ) {
+						if ( targetElement && targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
 							targetElement.pasteStyle();
 						}
 
@@ -584,6 +584,8 @@ const App = Marionette.Application.extend( {
 
 	initPanel: function() {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
+
+		this.trigger( 'panel:init' );
 	},
 
 	initNavigator: function() {
@@ -710,30 +712,6 @@ const App = Marionette.Application.extend( {
 				],
 			} );
 		}
-	},
-
-	getStorage: function( key ) {
-		var elementorStorage = localStorage.getItem( 'elementor' );
-
-		if ( elementorStorage ) {
-			elementorStorage = JSON.parse( elementorStorage );
-		} else {
-			elementorStorage = {};
-		}
-
-		if ( key ) {
-			return elementorStorage[ key ];
-		}
-
-		return elementorStorage;
-	},
-
-	setStorage: function( key, value ) {
-		var elementorStorage = this.getStorage();
-
-		elementorStorage[ key ] = value;
-
-		localStorage.setItem( 'elementor', JSON.stringify( elementorStorage ) );
 	},
 
 	openLibraryOnStart: function() {

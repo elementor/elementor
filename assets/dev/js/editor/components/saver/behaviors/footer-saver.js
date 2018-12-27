@@ -3,11 +3,11 @@ module.exports = Marionette.Behavior.extend( {
 
 	ui: function() {
 		return {
-			buttonPreview: '#elementor-panel-saver-button-preview',
+			buttonPreview: '#elementor-panel-footer-saver-preview',
 			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonSaveOptions: '#elementor-panel-saver-button-save-options',
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
-			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
+			menuSaveDraft: '#elementor-panel-footer-sub-menu-item-save-draft',
 			lastEditedWrapper: '.elementor-last-edited-wrapper',
 		};
 	},
@@ -35,8 +35,8 @@ module.exports = Marionette.Behavior.extend( {
 	activateSaveButtons: function( hasChanges ) {
 		hasChanges = hasChanges || 'draft' === elementor.settings.page.model.get( 'post_status' );
 
-		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-saver-disabled', ! hasChanges );
-		this.ui.buttonSaveOptions.toggleClass( 'elementor-saver-disabled', ! hasChanges );
+		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-disabled', ! hasChanges );
+		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', ! hasChanges );
 	},
 
 	onRender: function() {
@@ -122,7 +122,7 @@ module.exports = Marionette.Behavior.extend( {
 	onClickButtonPublish: function() {
 		var postStatus = elementor.settings.page.model.get( 'post_status' );
 
-		if ( this.ui.buttonPublish.hasClass( 'elementor-saver-disabled' ) ) {
+		if ( this.ui.buttonPublish.hasClass( 'elementor-disabled' ) ) {
 			return;
 		}
 
