@@ -76,6 +76,7 @@ class Modules_Manager {
 			'page-templates',
 			'gutenberg',
 			'wp-cli',
+			'safe-mode',
 			'screenshots',
 		];
 	}

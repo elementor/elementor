@@ -66,6 +66,15 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
+	public function add_templates() {
+		Plugin::$instance->common->add_template( __DIR__ . '/views/history-panel-template.php' );
+		Plugin::$instance->common->add_template( __DIR__ . '/views/revisions-panel-template.php' );
+	}
+
+	/**
 	 * History module constructor.
 	 *
 	 * Initializing Elementor history module.
@@ -76,7 +85,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 
-		Plugin::$instance->editor->add_editor_template( __DIR__ . '/views/history-panel-template.php' );
-		Plugin::$instance->editor->add_editor_template( __DIR__ . '/views/revisions-panel-template.php' );
+		add_action( 'elementor/editor/init', [ $this, 'add_templates' ] );
 	}
 }

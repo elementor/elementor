@@ -10,7 +10,7 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 		return {
 			allowClear: true,
 			placeholder: this.getSelect2Placeholder(),
-			dir: elementor.config.is_rtl ? 'rtl' : 'ltr',
+			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
 		};
 	},
 

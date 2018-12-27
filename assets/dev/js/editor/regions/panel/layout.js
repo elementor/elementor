@@ -28,7 +28,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	currentPageView: null,
 
-	_isScrollbarInitialized: false,
+	perfectScrollbar: null,
 
 	initialize: function() {
 		this.initPages();
@@ -38,14 +38,14 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		var pages = {
 			elements: {
 				view: require( 'elementor-panel/pages/elements/elements' ),
-				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">',
+				title: '<img src="' + elementorCommon.config.urls.assets + 'images/logo-panel.svg">',
 			},
 			editor: {
 				view: require( 'elementor-panel/pages/editor' ),
 			},
 			menu: {
 				view: elementor.modules.layouts.panel.pages.menu.Menu,
-				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">',
+				title: '<img src="' + elementorCommon.config.urls.assets + 'images/logo-panel.svg">',
 			},
 			colorScheme: {
 				view: require( 'elementor-panel/pages/schemes/colors' ),
@@ -196,16 +196,15 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	updateScrollbar: function() {
-		var $panel = this.content.$el;
-
-		if ( ! this._isScrollbarInitialized ) {
-			$panel.perfectScrollbar();
-			this._isScrollbarInitialized = true;
+		if ( ! this.perfectScrollbar ) {
+			this.perfectScrollbar = new PerfectScrollbar( this.content.el, {
+				suppressScrollX: true,
+			} );
 
 			return;
 		}
 
-		$panel.perfectScrollbar( 'update' );
+		this.perfectScrollbar.update();
 	},
 } );
 

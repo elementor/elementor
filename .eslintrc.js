@@ -22,6 +22,7 @@ module.exports = {
 		module: true,
 	},
 	'parserOptions': {
+		'ecmaVersion': 2017,
 		'sourceType': 'module',
 	},
 	rules: {
@@ -51,7 +52,7 @@ module.exports = {
 		'key-spacing': 'error',
 		'array-bracket-spacing': [ 'error', 'always' ],
 		'no-else-return': 'error',
-		'no-console': 'error',
+		'no-console': 'warn',
 		//end of custom canceled rules
 		'arrow-parens': [ 'error', 'always' ],
 		'arrow-spacing': 'error',
@@ -67,7 +68,7 @@ module.exports = {
 		'lines-around-comment': 'off',
 		'no-bitwise': 'error',
 		'no-caller': 'error',
-		'no-debugger': 'error',
+		'no-debugger': 'warn',
 		'no-dupe-args': 'error',
 		'no-dupe-keys': 'error',
 		'no-duplicate-case': 'error',

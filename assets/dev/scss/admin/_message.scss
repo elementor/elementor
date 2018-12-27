@@ -9,20 +9,12 @@
 		padding: 20px;
 
 		.elementor-message-inner {
-			display: table;
-			width: 100%;
-
-			.elementor-message-icon,
-			.elementor-message-content,
-			.elementor-message-action {
-				display: table-cell;
-				vertical-align: middle;
-			}
+			display: flex;
+			align-items: center;
 		}
 
 		.elementor-message-icon {
 			font-size: 20px;
-			width: 40px;
 		}
 
 		.elementor-message-content {
@@ -39,7 +31,9 @@
 		}
 
 		.elementor-message-action {
-			text-align: $end;
+			text-align: center;
+			display: flex;
+			flex-direction: column;
 
 			.elementor-button {
 				background-color: $editor-accent;
@@ -52,7 +46,7 @@
 				text-transform: capitalize;
 
 				i {
-					@include padding-end(5px);
+					@include margin-end(5px);
 				}
 
 				&:hover {
@@ -63,6 +57,10 @@
 					box-shadow: inset 0 1px 0 #7c1337;
 					transform: translateY(1px);
 				}
+			}
+
+			.elementor-link {
+				padding-top: 5px;
 			}
 		}
 

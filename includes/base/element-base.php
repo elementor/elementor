@@ -245,6 +245,11 @@ abstract class Element_Base extends Controls_Stack {
 		}
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 * @static
+	 */
 	final public static function is_edit_buttons_enabled() {
 		return get_option( 'elementor_edit_buttons' );
 	}
@@ -355,6 +360,14 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	public function is_reload_preview_required() {
 		return false;
+	}
+
+	/**
+	 * @since 2.3.1
+	 * @access protected
+	 */
+	protected function should_print_empty() {
+		return true;
 	}
 
 	/**
@@ -526,6 +539,8 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Returns null if one of the requested parameters isn't set.
 	 *
+	 * @since 2.2.6
+	 * @access public
 	 * @param string $element
 	 * @param string $key
 	 *
@@ -590,15 +605,7 @@ abstract class Element_Base extends Controls_Stack {
 			return '';
 		}
 
-		$render_attributes = $this->render_attributes[ $element ];
-
-		$attributes = [];
-
-		foreach ( $render_attributes as $attribute_key => $attribute_values ) {
-			$attributes[] = sprintf( '%1$s="%2$s"', $attribute_key, esc_attr( implode( ' ', $attribute_values ) ) );
-		}
-
-		return implode( ' ', $attributes );
+		return Utils::render_html_attributes( $this->render_attributes[ $element ] );
 	}
 
 	/**
@@ -650,18 +657,39 @@ abstract class Element_Base extends Controls_Stack {
 		 */
 		do_action( "elementor/frontend/{$element_type}/before_render", $this );
 
-		$this->_add_render_attributes();
-
-		$this->before_render();
+		ob_start();
 		$this->_print_content();
-		$this->after_render();
+		$content = ob_get_clean();
 
-		$this->enqueue_scripts();
-		$this->enqueue_styles();
+		$should_render = ( ! empty( $content ) || $this->should_print_empty() );
+
+		/**
+		 * Should the element be rendered for frontend
+		 *
+		 * Filters if the element should be rendered on frontend.
+		 *
+		 * @since 2.3.3
+		 *
+		 * @param bool true The element.
+		 * @param Element_Base $this The element.
+		 */
+		$should_render = apply_filters( "elementor/frontend/{$element_type}/should_render", $should_render, $this );
+
+		if ( $should_render ) {
+			$this->_add_render_attributes();
+
+			$this->before_render();
+			echo $content;
+			$this->after_render();
+
+			$this->enqueue_scripts();
+			$this->enqueue_styles();
+		}
+
 		/**
 		 * After frontend element render.
 		 *
-		 * Fires after Elementor element was rendered in the frontend.
+		 * Fires after Elementor element is rendered in the frontend.
 		 *
 		 * The dynamic portion of the hook name, `$element_type`, refers to the element type.
 		 *
@@ -670,6 +698,17 @@ abstract class Element_Base extends Controls_Stack {
 		 * @param Element_Base $this The element.
 		 */
 		do_action( "elementor/frontend/{$element_type}/after_render", $this );
+
+		/**
+		 * After frontend element render.
+		 *
+		 * Fires after Elementor element is rendered in the frontend.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/frontend/after_render', $this );
 	}
 
 	/**
@@ -790,6 +829,10 @@ abstract class Element_Base extends Controls_Stack {
 	protected function _add_render_attributes() {
 		$id = $this->get_id();
 
+		$settings = $this->get_active_settings();
+		$frontend_settings = $this->get_frontend_settings();
+		$controls = $this->get_controls();
+
 		$this->add_render_attribute( '_wrapper', 'data-id', $id );
 
 		$this->add_render_attribute(
@@ -798,10 +841,6 @@ abstract class Element_Base extends Controls_Stack {
 				'elementor-element-' . $id,
 			]
 		);
-
-		$settings = $this->get_active_settings();
-
-		$controls = $this->get_controls();
 
 		$class_settings = [];
 
@@ -828,11 +867,20 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'id', trim( $settings['_element_id'] ) );
 		}
 
-		$frontend_settings = $this->get_frontend_settings();
-
 		if ( $frontend_settings ) {
 			$this->add_render_attribute( '_wrapper', 'data-settings', wp_json_encode( $frontend_settings ) );
 		}
+
+		/**
+		 * After element attribute rendered.
+		 *
+		 * Fires after the attributes of the element HTML tag are rendered.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param Element_Base $this The element.
+		 */
+		do_action( 'elementor/element/after_add_attributes', $this );
 	}
 
 	/**

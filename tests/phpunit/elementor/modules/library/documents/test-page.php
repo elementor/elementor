@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Testing\Modules\Library\Documents;
 
-use Elementor\Core\Base\Document;
 use Elementor\Modules\Library\Documents\Page;
 use Elementor\Testing\Elementor_Test_Base;
 

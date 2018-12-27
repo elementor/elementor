@@ -29,6 +29,8 @@ class Command extends \WP_CLI_Command {
 	 *  2. wp elementor flush-css --network
 	 *      - This will flush the CSS files for elementor page builder for all the sites in the network.
 	 *
+	 * @since 2.1.0
+	 * @access public
 	 * @alias flush-css
 	 */
 	public function flush_css( $args, $assoc_args ) {
@@ -62,9 +64,10 @@ class Command extends \WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *  1. wp elementor search-replace <old> <new>
+	 *  1. wp elementor replace-urls <old> <new>
 	 *      - This will replace all <old> URLs with the <new> URL.
 	 *
+	 * @access public
 	 * @alias replace-urls
 	 */
 
@@ -93,6 +96,8 @@ class Command extends \WP_CLI_Command {
 	 *  1. wp elementor sync-library
 	 *      - This will sync the library with Elementor cloud library.
 	 *
+	 * @since 2.1.0
+	 * @access public
 	 * @alias sync-library
 	 */
 	public function sync_library( $args, $assoc_args ) {
@@ -113,6 +118,8 @@ class Command extends \WP_CLI_Command {
 	 *  1. wp elementor import-library <file-path>
 	 *      - This will import a file or a zip of multiple files to the library.
 	 *
+	 * @since 2.1.0
+	 * @access public
 	 * @alias import-library
 	 */
 	public function import_library( $args, $assoc_args ) {
@@ -120,16 +127,13 @@ class Command extends \WP_CLI_Command {
 			\WP_CLI::error( 'Please set file path.' );
 		}
 
-		if ( ! is_readable( $args[0] ) ) {
-			\WP_CLI::error( 'Cannot read file.' );
-		}
 		/** @var Source_Local $source */
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
 
 		$imported_items = $source->import_template( basename( $args[0] ), $args[0] );
 
-		if ( empty( $imported_items ) ) {
-			\WP_CLI::error( 'Cannot import.' );
+		if ( is_wp_error( $imported_items ) ) {
+			\WP_CLI::error( $imported_items->get_error_message() );
 		}
 
 		\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );

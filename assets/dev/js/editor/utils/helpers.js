@@ -166,11 +166,15 @@ helpers = {
 	},
 
 	cloneObject: function( object ) {
-		return JSON.parse( JSON.stringify( object ) );
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+
+		return elementorCommon.helpers.cloneObject( object );
 	},
 
 	firstLetterUppercase: function( string ) {
-		return string[ 0 ].toUpperCase() + string.slice( 1 );
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.firstLetterUppercase', '2.3.0', 'elementorCommon.helpers.firstLetterUppercase' );
+
+		return elementorCommon.helpers.firstLetterUppercase( string );
 	},
 
 	disableElementEvents: function( $element ) {
@@ -241,7 +245,7 @@ helpers = {
 		}
 
 		var $scrolled = $parent,
-			$elementorFrontendWindow = elementorFrontend.getElements( '$window' );
+			$elementorFrontendWindow = elementorFrontend.elements.$window;
 
 		if ( ! $parent ) {
 			$parent = $elementorFrontendWindow;

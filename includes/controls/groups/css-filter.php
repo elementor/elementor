@@ -34,7 +34,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	 *
 	 * Retrieve the control type, in this case `css-filter`.
 	 *
-	 * @since 1.0.0
+	 * @since 2.1.0
 	 * @access public
 	 * @static
 	 *
@@ -169,6 +169,10 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	}
 
 
+	/**
+	 * @since 2.1.0
+	 * @access protected
+	 */
 	protected function prepare_fields( $fields ) {
 		array_walk( $fields, function ( &$field, $field_name ) {
 			if ( in_array( $field_name, [ 'css_filter', 'popover_toggle' ] ) ) {
@@ -199,6 +203,9 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 			'popover' => [
 				'starter_name' => 'css_filter',
 				'starter_title' => _x( 'CSS Filters', 'Filter Control', 'elementor' ),
+				'settings' => [
+					'render_type' => 'ui',
+				],
 			],
 		];
 	}

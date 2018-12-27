@@ -5,6 +5,7 @@
 
 	.elementor-widget-container {
 		overflow: hidden;
+		transform: translate3d(0, 0, 0); // Allow border-radius in Safari
 	}
 
 	.elementor-open-inline {

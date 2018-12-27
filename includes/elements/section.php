@@ -786,7 +786,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -1192,7 +1192,6 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
-				'default' => '',
 				'prefix_class' => 'animated ',
 				'label_block' => false,
 				'frontend_available' => true,

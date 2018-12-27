@@ -4,12 +4,16 @@ module.exports = BaseMultiple.extend( {
 
 	onReady: function() {
 		var self = this,
-			positionBase = elementor.config.is_rtl ? 'right' : 'left',
+			positionBase = elementorCommon.config.isRTL ? 'right' : 'left',
 			last, cache;
 
 		// Based on /wp-includes/js/tinymce/plugins/wplink/plugin.js.
 		this.ui.input.autocomplete( {
 			source: function( request, response ) {
+				if ( ! self.options.model.attributes.autocomplete ) {
+					return;
+				}
+
 				if ( last === request.term ) {
 					response( cache );
 					return;

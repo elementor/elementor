@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.5.0
+ * Dialogs Manager v4.5.1
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -528,7 +528,7 @@
 			var callbackIndex = events[ eventName ].indexOf(callback);
 
 			if (-1 !== callbackIndex) {
-				delete events[ eventName ][ callbackIndex ];
+				events[ eventName ].splice( callbackIndex, 1 );
 			}
 
 			return self;

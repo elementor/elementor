@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Settings\Base;
 
-use Elementor\Core\Ajax_Manager;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Base;
 use Elementor\Plugin;
 
@@ -41,11 +41,12 @@ abstract class Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
+		add_action( 'elementor/editor/init', [ $this, 'on_elementor_editor_init' ] );
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		$name = $this->get_css_file_name();
+
 		add_action( "elementor/css-file/{$name}/parse", [ $this, 'add_settings_css_rules' ] );
 	}
 
@@ -59,7 +60,7 @@ abstract class Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param Ajax_Manager $ajax_manager
+	 * @param Ajax $ajax_manager
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
 		$name = $this->get_name();
@@ -237,15 +238,15 @@ abstract class Manager {
 	/**
 	 * On Elementor init.
 	 *
-	 * Add editor template for the settings ??
+	 * Add editor template for the settings
 	 *
 	 * Fired by `elementor/init` action.
 	 *
-	 * @since 1.6.0
+	 * @since 2.3.0
 	 * @access public
 	 */
-	public function on_elementor_init() {
-		Plugin::$instance->editor->add_editor_template( $this->get_editor_template(), 'text' );
+	public function on_elementor_editor_init() {
+		Plugin::$instance->common->add_template( $this->get_editor_template(), 'text' );
 	}
 
 	/**

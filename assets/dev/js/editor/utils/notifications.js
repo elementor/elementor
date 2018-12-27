@@ -1,8 +1,6 @@
-var Module = require( 'elementor-utils/module' );
-
-module.exports = Module.extend( {
+module.exports = elementorModules.Module.extend( {
 	initToast: function() {
-		var toast = elementor.dialogsManager.createWidget( 'buttons', {
+		var toast = elementorCommon.dialogsManager.createWidget( 'buttons', {
 			id: 'elementor-toast',
 			position: {
 				my: 'center bottom',

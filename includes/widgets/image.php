@@ -53,7 +53,7 @@ class Widget_Image extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-insert-image';
+		return 'eicon-image';
 	}
 
 	/**
@@ -151,19 +151,39 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'caption',
+			'caption_source',
 			[
 				'label' => __( 'Caption', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'none' => __( 'None', 'elementor' ),
+					'attachment' => __( 'Attachment Caption', 'elementor' ),
+					'custom' => __( 'Custom Caption', 'elementor' ),
+				],
+				'default' => 'none',
+			]
+		);
+
+		$this->add_control(
+			'caption',
+			[
+				'label' => __( 'Custom Caption', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'placeholder' => __( 'Enter your image caption', 'elementor' ),
+				'condition' => [
+					'caption_source' => 'custom',
+				],
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
 		$this->add_control(
 			'link_to',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'none',
 				'options' => [
@@ -177,7 +197,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
@@ -514,6 +534,43 @@ class Widget_Image extends Widget_Base {
 	}
 
 	/**
+	 * Check if the current widget has caption
+	 *
+	 * @access private
+	 * @since 2.3.0
+	 *
+	 * @param array $settings
+	 *
+	 * @return boolean
+	 */
+	private function has_caption( $settings ) {
+		return ( ! empty( $settings['caption_source'] ) && 'none' !== $settings['caption_source'] );
+	}
+
+	/**
+	 * Get the caption for current widget.
+	 *
+	 * @access private
+	 * @since 2.3.0
+	 * @param $settings
+	 *
+	 * @return string
+	 */
+	private function get_caption( $settings ) {
+		$caption = '';
+		if ( ! empty( $settings['caption_source'] ) ) {
+			switch ( $settings['caption_source'] ) {
+				case 'attachment':
+					$caption = wp_get_attachment_caption( $settings['image']['id'] );
+					break;
+				case 'custom':
+					$caption = ! empty( $settings['caption'] ) ? $settings['caption'] : '';
+			}
+		}
+		return $caption;
+	}
+
+	/**
 	 * Render image widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
@@ -528,7 +585,7 @@ class Widget_Image extends Widget_Base {
 			return;
 		}
 
-		$has_caption = ! empty( $settings['caption'] );
+		$has_caption = $this->has_caption( $settings );
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-image' );
 
@@ -570,7 +627,7 @@ class Widget_Image extends Widget_Base {
 					</a>
 			<?php endif; ?>
 			<?php if ( $has_caption ) : ?>
-					<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
+					<figcaption class="widget-image-caption wp-caption-text"><?php echo $this->get_caption( $settings ); ?></figcaption>
 			<?php endif; ?>
 			<?php if ( $has_caption ) : ?>
 				</figure>
@@ -604,6 +661,36 @@ class Widget_Image extends Widget_Base {
 				return;
 			}
 
+			var hasCaption = function() {
+				if( ! settings.caption_source || 'none' === settings.caption_source ) {
+					return false;
+				}
+				return true;
+			}
+
+			var ensureAttachmentData = function( id ) {
+				if ( 'undefined' === typeof wp.media.attachment( id ).get( 'caption' ) ) {
+					wp.media.attachment( id ).fetch().then( function( data ) {
+						view.render();
+					} );
+				}
+			}
+
+			var getAttachmentCaption = function( id ) {
+				if ( ! id ) {
+					return '';
+				}
+				ensureAttachmentData( id );
+				return wp.media.attachment( id ).get( 'caption' );
+			}
+
+			var getCaption = function() {
+				if ( ! hasCaption() ) {
+					return '';
+				}
+				return 'custom' === settings.caption_source ? settings.caption : getAttachmentCaption( settings.image.id );
+			}
+
 			var link_url;
 
 			if ( 'custom' === settings.link_to ) {
@@ -615,14 +702,13 @@ class Widget_Image extends Widget_Base {
 			}
 
 			#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
-			var imgClass = '',
-				hasCaption = '' !== settings.caption;
+			var imgClass = '';
 
 			if ( '' !== settings.hover_animation ) {
 				imgClass = 'elementor-animation-' + settings.hover_animation;
 			}
 
-			if ( hasCaption ) {
+			if ( hasCaption() ) {
 				#><figure class="wp-caption"><#
 			}
 
@@ -635,11 +721,11 @@ class Widget_Image extends Widget_Base {
 					#></a><#
 			}
 
-			if ( hasCaption ) {
-					#><figcaption class="widget-image-caption wp-caption-text">{{{ settings.caption }}}</figcaption><#
+			if ( hasCaption() ) {
+					#><figcaption class="widget-image-caption wp-caption-text">{{{ getCaption() }}}</figcaption><#
 			}
 
-			if ( hasCaption ) {
+			if ( hasCaption() ) {
 				#></figure><#
 			}
 

@@ -145,6 +145,10 @@ class Autoloader {
 			'replacement' => 'Core\Admin\Admin',
 			'version' => '2.2.0',
 		],
+		'Core\Ajax' => [
+			'replacement' => 'Core\Common\Modules\Ajax\Module',
+			'version' => '2.3.0',
+		],
 	];
 
 	/**

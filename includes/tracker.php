@@ -25,7 +25,7 @@ class Tracker {
 	 *
 	 * @var string API URL.
 	 */
-	private static $_api_url = 'http://my.elementor.com/api/v1/tracker/';
+	private static $_api_url = 'https://my.elementor.com/api/v1/tracker/';
 
 	private static $notice_shown = false;
 
@@ -296,6 +296,11 @@ class Tracker {
 		<?php
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 * @static
+	 */
 	public static function is_notice_shown() {
 		return self::$notice_shown;
 	}

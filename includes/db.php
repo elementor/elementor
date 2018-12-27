@@ -218,6 +218,7 @@ class DB {
 	 * is parsed into Text Editor Widget that contains the original data.
 	 *
 	 * @since 2.1.0
+	 * @deprecated 2.3.0 Use `$document->convert_to_elementor()` instead
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
@@ -225,54 +226,14 @@ class DB {
 	 * @return array Content in Elementor format.
 	 */
 	public function get_new_editor_from_wp_editor( $post_id ) {
-		$post = get_post( $post_id );
+		// TODO: _deprecated_function( __METHOD__, '2.3.0', '$document->convert_to_elementor()' );
+		$document = Plugin::$instance->documents->get( $post_id );
 
-		if ( empty( $post ) || empty( $post->post_content ) ) {
-			return [];
+		if ( $document ) {
+			return $document->convert_to_elementor();
 		}
 
-		// Check if it's only a shortcode.
-		preg_match_all( '/' . get_shortcode_regex() . '/', $post->post_content, $matches, PREG_SET_ORDER );
-		if ( ! empty( $matches ) ) {
-			foreach ( $matches as $shortcode ) {
-				if ( trim( $post->post_content ) === $shortcode[0] ) {
-					$widget_type = Plugin::$instance->widgets_manager->get_widget_types( 'shortcode' );
-					$settings = [
-						'shortcode' => $post->post_content,
-					];
-					break;
-				}
-			}
-		}
-
-		if ( empty( $widget_type ) ) {
-			$widget_type = Plugin::$instance->widgets_manager->get_widget_types( 'text-editor' );
-			$settings = [
-				'editor' => $post->post_content,
-			];
-		}
-
-		// TODO: Better coding to start template for editor
-		return [
-			[
-				'id' => Utils::generate_random_string(),
-				'elType' => 'section',
-				'elements' => [
-					[
-						'id' => Utils::generate_random_string(),
-						'elType' => 'column',
-						'elements' => [
-							[
-								'id' => Utils::generate_random_string(),
-								'elType' => $widget_type::get_type(),
-								'widgetType' => $widget_type->get_name(),
-								'settings' => $settings,
-							],
-						],
-					],
-				],
-			],
-		];
+		return [];
 	}
 
 	/**
@@ -560,8 +521,9 @@ class DB {
 	 * @access public
 	 *
 	 * @param array $query_vars New query variables.
+	 * @param bool  $force_global_post
 	 */
-	public function switch_to_query( $query_vars ) {
+	public function switch_to_query( $query_vars, $force_global_post = false ) {
 		global $wp_query;
 		$current_query_vars = $wp_query->query;
 
@@ -573,21 +535,30 @@ class DB {
 
 		$new_query = new \WP_Query( $query_vars );
 
-		$this->switched_data[] = [
+		$switched_data = [
 			'switched' => $new_query,
 			'original' => $wp_query,
 		];
+
+		if ( ! empty( $GLOBALS['post'] ) ) {
+			$switched_data['post'] = $GLOBALS['post'];
+		}
+
+		$this->switched_data[] = $switched_data;
 
 		$wp_query = $new_query; // WPCS: override ok.
 
 		// Ensure the global post is set only if needed
 		unset( $GLOBALS['post'] );
 
-		if ( $new_query->is_singular() && isset( $new_query->posts[0] ) ) {
-			$GLOBALS['post'] = $new_query->posts[0]; // WPCS: override ok.
+		if ( isset( $new_query->posts[0] ) ) {
+			if ( $force_global_post || $new_query->is_singular() ) {
+				$GLOBALS['post'] = $new_query->posts[0]; // WPCS: override ok.
+				setup_postdata( $GLOBALS['post'] );
+			}
+		}
 
-			setup_postdata( $GLOBALS['post'] );
-		} elseif ( $new_query->is_author() ) {
+		if ( $new_query->is_author() ) {
 			$GLOBALS['authordata'] = get_userdata( $new_query->get( 'author' ) ); // WPCS: override ok.
 		}
 	}
@@ -616,10 +587,12 @@ class DB {
 		unset( $GLOBALS['post'] );
 		unset( $GLOBALS['authordata'] );
 
-		if ( $wp_query->is_singular() && isset( $wp_query->posts[0] ) ) {
-			$GLOBALS['post'] = $wp_query->posts[0]; // WPCS: override ok.
+		if ( ! empty( $data['post'] ) ) {
+			$GLOBALS['post'] = $data['post']; // WPCS: override ok.
 			setup_postdata( $GLOBALS['post'] );
-		} elseif ( $wp_query->is_author() ) {
+		}
+
+		if ( $wp_query->is_author() ) {
 			$GLOBALS['authordata'] = get_userdata( $wp_query->get( 'author' ) ); // WPCS: override ok.
 		}
 	}

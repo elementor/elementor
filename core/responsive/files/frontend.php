@@ -15,12 +15,20 @@ class Frontend extends Base {
 
 	private $template_file;
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 */
 	public function __construct( $file_name, $template_file = null ) {
 		$this->template_file = $template_file;
 
 		parent::__construct( $file_name );
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 */
 	public function parse_content() {
 		$breakpoints = Responsive::get_breakpoints();
 
@@ -54,7 +62,7 @@ class Frontend extends Base {
 	 *
 	 * Retrieve the file meta data.
 	 *
-	 * @since  2.1.0
+	 * @since 2.1.0
 	 * @access protected
 	 */
 	protected function load_meta() {
@@ -74,7 +82,7 @@ class Frontend extends Base {
 	 *
 	 * Update the file meta data.
 	 *
-	 * @since  2.1.0
+	 * @since 2.1.0
 	 * @access protected
 	 *
 	 * @param array $meta New meta data.
@@ -92,7 +100,7 @@ class Frontend extends Base {
 	 *
 	 * Delete the file meta data.
 	 *
-	 * @since  2.1.0
+	 * @since 2.1.0
 	 * @access protected
 	 */
 	protected function delete_meta() {
@@ -111,10 +119,18 @@ class Frontend extends Base {
 		}
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access private
+	 */
 	private function get_file_meta_key() {
 		return pathinfo( $this->get_file_name(), PATHINFO_FILENAME );
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access private
+	 */
 	private function load_meta_option() {
 		$option = get_option( static::META_KEY );
 

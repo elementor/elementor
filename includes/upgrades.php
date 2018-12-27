@@ -84,6 +84,7 @@ class Upgrades {
 			'2.0.1' => 'upgrade_v201',
 			'2.0.10' => 'upgrade_v2010',
 			'2.1.0' => 'upgrade_v210',
+			'2.3.0' => 'upgrade_v230',
 		];
 
 		foreach ( $upgrades as $version => $function ) {
@@ -360,6 +361,11 @@ class Upgrades {
 		}
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access private
+	 * @static
+	 */
 	private static function upgrade_v210() {
 		global $wpdb;
 
@@ -391,7 +397,6 @@ class Upgrades {
 						'yt_autoplay' => 'autoplay',
 						'yt_controls' => 'controls',
 						'yt_mute' => 'mute',
-						'yt_showinfo' => 'showinfo',
 						'yt_rel' => 'rel',
 						'link' => 'youtube_url',
 					];
@@ -429,6 +434,126 @@ class Upgrades {
 
 			// Clear WP cache for next step.
 			wp_cache_flush();
+		} // End foreach().
+	}
+
+	/**
+	 * @since 2.3.0
+	 * @access private
+	 * @static
+	 */
+	private static function upgrade_v230() {
+		self::upgrade_v230_widget_image();
+		self::upgrade_v230_template_type();
+	}
+
+	/**
+	 * @since 2.3.0
+	 * @access private
+	 * @static
+	 */
+	private static function upgrade_v230_widget_image() {
+		global $wpdb;
+
+		// upgrade `video` widget settings (merge providers).
+		$post_ids = $wpdb->get_col(
+			'SELECT `post_id` FROM `' . $wpdb->postmeta . '` WHERE `meta_key` = "_elementor_data" AND (
+			`meta_value` LIKE \'%"widgetType":"image"%\' 
+			OR `meta_value` LIKE \'%"widgetType":"theme-post-featured-image"%\'
+			OR `meta_value` LIKE \'%"widgetType":"theme-site-logo"%\'
+			OR `meta_value` LIKE \'%"widgetType":"woocommerce-category-image"%\'
+			
+			);'
+		);
+
+		if ( empty( $post_ids ) ) {
+			return;
+		}
+
+		$widgets = [
+			'image',
+			'theme-post-featured-image',
+			'theme-site-logo',
+			'woocommerce-category-image',
+		];
+
+		foreach ( $post_ids as $post_id ) {
+			// Clear WP cache for next step.
+			wp_cache_flush();
+
+			$do_update = false;
+
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( ! $document ) {
+				continue;
+			}
+
+			$data = $document->get_elements_data();
+
+			if ( empty( $data ) ) {
+				continue;
+			}
+
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( & $do_update, $widgets ) {
+				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets ) ) {
+					return $element;
+				}
+
+				if ( ! empty( $element['settings']['caption'] ) ) {
+					if ( ! isset( $element['settings']['caption_source'] ) ) {
+						$element['settings']['caption_source'] = 'custom';
+
+						$do_update = true;
+					}
+				}
+
+				return $element;
+			} );
+
+			// Only update if needed.
+			if ( ! $do_update ) {
+				continue;
+			}
+
+			// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+			$json_value = wp_slash( wp_json_encode( $data ) );
+
+			update_metadata( 'post', $post_id, '_elementor_data', $json_value );
+		} // End foreach().
+	}
+
+	/**
+	 * @since 2.3.0
+	 * @access private
+	 * @static
+	 */
+	private static function upgrade_v230_template_type() {
+		global $wpdb;
+
+		$post_ids = $wpdb->get_col(
+			'SELECT p.ID
+					FROM `' . $wpdb->posts . '` AS p
+					LEFT JOIN `' . $wpdb->postmeta . '` AS pm1 ON (p.ID = pm1.post_id)
+					LEFT JOIN `' . $wpdb->postmeta . '` AS pm2 ON (pm1.post_id = pm2.post_id AND pm2.meta_key = "_elementor_template_type")
+					WHERE p.post_status != "inherit" AND pm1.`meta_key` = "_elementor_data" AND pm2.post_id IS NULL'
+		);
+
+		if ( empty( $post_ids ) ) {
+			return;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			// Clear WP cache for next step.
+			wp_cache_flush();
+
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( ! $document ) {
+				continue;
+			}
+
+			$document->save_template_type();
 		} // End foreach().
 	}
 }

@@ -1,8 +1,6 @@
 var ControlsStack;
 
 ControlsStack = Marionette.CompositeView.extend( {
-	className: 'elementor-panel-controls-stack',
-
 	classes: {
 		popover: 'elementor-controls-popover',
 	},
@@ -11,9 +9,19 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	activeSection: null,
 
+	className: function() {
+		return 'elementor-controls-stack';
+	},
+
 	templateHelpers: function() {
 		return {
 			elementData: elementor.getElementData( this.model ),
+		};
+	},
+
+	childViewOptions: function() {
+		return {
+			elementSettingsModel: this.model,
 		};
 	},
 
@@ -63,6 +71,18 @@ ControlsStack = Marionette.CompositeView.extend( {
 		var section = controlModel.get( 'section' );
 
 		return ! section || section === this.activeSection;
+	},
+
+	getControlViewByModel: function( model ) {
+		return this.children.findByModelCid( model.cid );
+	},
+
+	getControlViewByName: function( name ) {
+		return this.getControlViewByModel( this.getControlModel( name ) );
+	},
+
+	getControlModel: function( name ) {
+		return this.collection.findWhere( { name: name } );
 	},
 
 	isVisibleSectionControl: function( sectionControlModel ) {
@@ -195,7 +215,9 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onDeviceModeChange: function() {
-		this.$el.removeClass( 'elementor-responsive-switchers-open' );
+		if ( 'desktop' === elementor.channels.deviceMode.request( 'currentMode' ) ) {
+			this.$el.removeClass( 'elementor-responsive-switchers-open' );
+		}
 	},
 
 	onChildviewControlSectionClicked: function( childView ) {

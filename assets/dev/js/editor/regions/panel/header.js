@@ -26,17 +26,9 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickMenu: function() {
-		var panel = elementor.getPanelView(),
-			currentPanelPageName = panel.getCurrentPageName(),
-			nextPage = 'menu' === currentPanelPageName ? 'elements' : 'menu';
+		const nextPage = 'menu' === elementor.getPanelView().getCurrentPageName() ? 'elements' : 'menu';
 
-		if ( 'menu' === nextPage ) {
-			var arrowClass = 'eicon-arrow-' + ( elementor.config.is_rtl ? 'right' : 'left' );
-
-			this.ui.menuIcon.removeClass( 'eicon-menu-bar' ).addClass( arrowClass );
-		}
-
-		panel.setPage( nextPage );
+		elementor.getPanelView().setPage( nextPage );
 	},
 } );
 

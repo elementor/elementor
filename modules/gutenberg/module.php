@@ -14,14 +14,27 @@ class Module extends BaseModule {
 
 	protected $is_gutenberg_editor_active = false;
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 */
 	public function get_name() {
 		return 'gutenberg';
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 * @static
+	 */
 	public static function is_active() {
 		return function_exists( 'register_block_type' );
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 */
 	public function register_elementor_rest_field() {
 		register_rest_field( get_post_types( '', 'names' ),
 			'gutenberg_elementor_mode', [
@@ -38,6 +51,10 @@ class Module extends BaseModule {
 		);
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 */
 	public function enqueue_assets() {
 		$post_id = get_the_ID();
 
@@ -59,6 +76,10 @@ class Module extends BaseModule {
 		wp_localize_script( 'elementor-gutenberg', 'ElementorGutenbergSettings', $elementor_settings );
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 */
 	public function print_admin_js_template() {
 		if ( ! $this->is_gutenberg_editor_active ) {
 			return;
@@ -99,6 +120,10 @@ class Module extends BaseModule {
 		<?php
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 */
 	public function __construct() {
 		add_action( 'rest_api_init', [ $this, 'register_elementor_rest_field' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );

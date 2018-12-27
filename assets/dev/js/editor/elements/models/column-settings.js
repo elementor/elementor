@@ -1,10 +1,5 @@
-var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
-	ColumnSettingsModel;
-
-ColumnSettingsModel = BaseSettingsModel.extend( {
+module.exports = elementorModules.editor.elements.models.BaseSettings.extend( {
 	defaults: {
 		_column_size: 100,
 	},
 } );
-
-module.exports = ColumnSettingsModel;

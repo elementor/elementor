@@ -29,14 +29,14 @@ class Heartbeat {
 					this.getModal().hide();
 				}
 
-				elementor.config.nonce = response.elementorNonce;
+				elementorCommon.ajax.addRequestConstant( '_nonce', response.elementorNonce );
 			},
 			'heartbeat-tick.wp-refresh-nonces': ( event, response ) => {
 				const nonces = response[ 'elementor-refresh-nonces' ];
 
 				if ( nonces ) {
 					if ( nonces.heartbeatNonce ) {
-						elementor.config.nonce = nonces.elementorNonce;
+						elementorCommon.ajax.addRequestConstant( '_nonce', nonces.elementorNonce );
 					}
 
 					if ( nonces.heartbeatNonce ) {
@@ -52,7 +52,7 @@ class Heartbeat {
 	}
 
 	initModal() {
-		const modal = elementor.dialogsManager.createWidget( 'lightbox', {
+		const modal = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			headerMessage: elementor.translate( 'take_over' ),
 		} );
 

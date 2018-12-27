@@ -1,7 +1,4 @@
-var Module = require( 'elementor-utils/module' ),
-	SettingsModel = require( 'elementor-elements/models/base-settings' );
-
-module.exports = Module.extend( {
+module.exports = elementorModules.Module.extend( {
 
 	CACHE_KEY_NOT_FOUND_ERROR: 'Cache key not found',
 
@@ -44,7 +41,7 @@ module.exports = Module.extend( {
 
 		this.cacheCallbacks = [];
 
-		elementor.ajax.send( 'render_tags', {
+		elementorCommon.ajax.addRequest( 'render_tags', {
 			data: {
 				post_id: elementor.config.document.id,
 				tags: Object.keys( cacheRequests ),
@@ -119,7 +116,7 @@ module.exports = Module.extend( {
 		}
 
 		var TagClass = this.tags[ tagName ] || this.tags.Base,
-			model = new SettingsModel( tagSettings, {
+			model = new elementorModules.editor.elements.models.BaseSettings( tagSettings, {
 				controls: tagConfig.controls,
 			} );
 

@@ -1,5 +1,4 @@
 var Module = function() {
-
 	var init = function() {
 		elementor.saver.on( 'before:save', onBeforeSave.bind( this ) );
 	};

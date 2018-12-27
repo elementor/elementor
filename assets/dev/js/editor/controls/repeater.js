@@ -1,6 +1,5 @@
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	RepeaterRowView = require( 'elementor-controls/repeater-row' ),
-	BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
 	ControlRepeaterItemView;
 
 ControlRepeaterItemView = ControlBaseDataView.extend( {
@@ -24,6 +23,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 	templateHelpers: function() {
 		return {
+			itemActions: this.model.get( 'item_actions' ),
 			data: _.extend( {}, this.model.toJSON(), { controlValue: [] } ),
 		};
 	},
@@ -32,6 +32,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		return {
 			controlFields: this.model.get( 'fields' ),
 			titleField: this.model.get( 'title_field' ),
+			itemActions: this.model.get( 'item_actions' ),
 		};
 	},
 
@@ -44,7 +45,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			attrs._id = elementor.helpers.getUniqueID();
 		}
 
-		return new BaseSettingsModel( attrs, options );
+		return new elementorModules.editor.elements.models.BaseSettings( attrs, options );
 	},
 
 	fillCollection: function() {
@@ -141,7 +142,9 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	onRender: function() {
 		ControlBaseDataView.prototype.onRender.apply( this, arguments );
 
-		this.ui.fieldContainer.sortable( { axis: 'y', handle: '.elementor-repeater-row-tools' } );
+		if ( this.model.get( 'item_actions' ).sort ) {
+			this.ui.fieldContainer.sortable( { axis: 'y', handle: '.elementor-repeater-row-tools' } );
+		}
 
 		this.toggleMinRowsClass();
 	},

@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\General\Manager as General_Settings_Manager;
 use Elementor\Core\Settings\Manager;
+use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -65,6 +66,10 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function register_admin_menu() {
+		global $menu;
+
+		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // WPCS: override ok.
+
 		add_menu_page(
 			__( 'Elementor', 'elementor' ),
 			__( 'Elementor', 'elementor' ),
@@ -72,8 +77,45 @@ class Settings extends Settings_Page {
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ],
 			'',
-			99
+			58.5
 		);
+	}
+
+	/**
+	 * Reorder the Elementor menu items in admin.
+	 * Based on WC.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param array $menu_order Menu order.
+	 * @return array
+	 */
+	public function menu_order( $menu_order ) {
+		// Initialize our custom order array.
+		$elementor_menu_order = [];
+
+		// Get the index of our custom separator.
+		$elementor_separator = array_search( 'separator-elementor', $menu_order, true );
+
+		// Get index of library menu.
+		$elementor_library = array_search( 'edit.php?post_type=elementor_library', $menu_order, true );
+
+		// Loop through menu order and do some rearranging.
+		foreach ( $menu_order as $index => $item ) {
+			if ( 'elementor' === $item ) {
+				$elementor_menu_order[] = 'separator-elementor';
+				$elementor_menu_order[] = $item;
+				$elementor_menu_order[] = 'edit.php?post_type=elementor_library';
+
+				unset( $menu_order[ $elementor_separator ] );
+				unset( $menu_order[ $elementor_library ] );
+			} elseif ( ! in_array( $item, [ 'separator-elementor' ], true ) ) {
+				$elementor_menu_order[] = $item;
+			}
+		}
+
+		// Return order.
+		return $elementor_menu_order;
 	}
 
 	/**
@@ -104,6 +146,9 @@ class Settings extends Settings_Page {
 			'go_elementor_pro',
 			[ $this, 'handle_external_redirects' ]
 		);
+
+		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Builder', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
+		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
 	}
 
 	/**
@@ -152,12 +197,12 @@ class Settings extends Settings_Page {
 		}
 
 		if ( 'go_elementor_pro' === $_GET['page'] ) {
-			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
+			wp_safe_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
 			die;
 		}
 
 		if ( 'go_knowledge_base_site' === $_GET['page'] ) {
-			wp_redirect( 'https://go.elementor.com/docs-admin-menu/' );
+			wp_safe_redirect( 'https://go.elementor.com/docs-admin-menu/' );
 			die;
 		}
 	}
@@ -201,7 +246,7 @@ class Settings extends Settings_Page {
 						</div>
 
 						<div class="e-getting-started__video">
-							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/-TPpwuB6dnI?rel=0&amp;controls=1&amp;showinfo=0&amp;modestbranding=1" frameborder="0" allowfullscreen></iframe>
+							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/-TPpwuB6dnI?rel=0&amp;controls=1&amp;modestbranding=1" frameborder="0" allowfullscreen></iframe>
 						</div>
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
@@ -234,6 +279,48 @@ class Settings extends Settings_Page {
 				<h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
 				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the Popups page.
+	 *
+	 * @since 2.4.0
+	 * @access public
+	 */
+	public function elementor_popups() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<i class="eicon-nerd-chuckle"></i>
+				<h2><?php echo __( 'Get Popup Builder', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Create advanced popups that drive more leads and conversions to your business.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the Theme Templates page.
+	 *
+	 * @since 2.4.0
+	 * @access public
+	 */
+	public function elementor_theme_templates() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<i class="eicon-nerd-chuckle"></i>
+				<h2><?php echo __( 'Get Theme Builder', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Elementor Pro comes built-in with an industry leading theme builder, which lets you customize every part of your WordPress theme visually.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -274,10 +361,6 @@ class Settings extends Settings_Page {
 		if ( isset( $submenu['elementor'] ) ) {
 			// @codingStandardsIgnoreStart
 			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
-
-			$hold_menu_data = $submenu['elementor'][0];
-			$submenu['elementor'][0] = $submenu['elementor'][1];
-			$submenu['elementor'][1] = $hold_menu_data;
 			// @codingStandardsIgnoreEnd
 		}
 	}
@@ -494,12 +577,7 @@ class Settings extends Settings_Page {
 										'external' => __( 'External File', 'elementor' ),
 										'internal' => __( 'Internal Embedding', 'elementor' ),
 									],
-									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
-											  __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
-											  '</div>' .
-											  '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
-											  __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
-											  '</div>',
+									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' . __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) . '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">' . __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) . '</div>',
 								],
 							],
 							'editor_break_lines' => [
@@ -578,6 +656,10 @@ class Settings extends Settings_Page {
 		}
 	}
 
+	/**
+	 * @since 2.2.0
+	 * @access private
+	 */
 	private function maybe_remove_all_admin_notices() {
 		$elementor_pages = [
 			'elementor-getting-started',
@@ -613,6 +695,9 @@ class Settings extends Settings_Page {
 		// Clear CSS Meta after change print method.
 		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
 		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+
+		add_filter( 'custom_menu_order', '__return_true' );
+		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 
 		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
 			foreach ( [ 'add', 'update' ] as $action ) {

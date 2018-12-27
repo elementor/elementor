@@ -15,14 +15,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Post extends Document {
 
+	/**
+	 * @since 2.0.8
+	 * @access public
+	 * @static
+	 */
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
+		$properties['admin_tab_group'] = '';
 		$properties['support_wp_page_templates'] = true;
 
 		return $properties;
 	}
 
+	/**
+	 * @since 2.1.2
+	 * @access protected
+	 * @static
+	 */
 	protected static function get_editor_panel_categories() {
 		return Utils::array_inject(
 			parent::get_editor_panel_categories(),
@@ -160,7 +171,7 @@ class Post extends Document {
 
 		$document->end_controls_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $document, Controls_Manager::TAB_STYLE );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $document );
 	}
 
 	/**
@@ -211,13 +222,17 @@ class Post extends Document {
 	 * @access public
 	 *
 	 * @param array $data
+	 *
+	 * @throws \Exception
 	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
 			$template = get_post_meta( $data['post_id'], '_wp_page_template', true );
+
 			if ( empty( $template ) ) {
 				$template = 'default';
 			}
+
 			$data['settings']['template'] = $template;
 		}
 

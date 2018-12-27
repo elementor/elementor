@@ -214,9 +214,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	onResponsiveSwitchersClick: function( event ) {
 		var device = jQuery( event.currentTarget ).data( 'device' );
 
-		elementor.changeDeviceMode( device );
-
 		this.triggerMethod( 'responsive:switcher:click', device );
+
+		elementor.changeDeviceMode( device );
 	},
 
 	renderResponsiveSwitchers: function() {
@@ -264,7 +264,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 }, {
 	// Static methods
-	getStyleValue: function( placeholder, controlValue ) {
+	getStyleValue: function( placeholder, controlValue, controlData ) {
+		if ( 'DEFAULT' === placeholder ) {
+			return controlData.default;
+		}
+
 		return controlValue;
 	},
 

@@ -362,11 +362,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * Initializing group control base class.
 	 *
 	 * @since 1.2.2
-	 * @access private
+	 * @access protected
 	 *
 	 * @param array $args Group control settings value.
 	 */
-	private function init_args( $args ) {
+	protected function init_args( $args ) {
 		$this->args = array_merge( $this->get_default_args(), $this->get_child_default_args(), $args );
 	}
 
@@ -460,8 +460,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		foreach ( $selectors as &$selector ) {
 			$selector = preg_replace_callback(
-				'/(?:\{\{)\K[^.}]+(?=\.[^}]*}})/', function( $matches ) use ( $controls_prefix ) {
-					return $controls_prefix . $matches[0];
+				'/\{\{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
+					return preg_replace_callback( '/[^ ]+(?=\.)/', function( $sub_matches ) use ( $controls_prefix ) {
+						return $controls_prefix . $sub_matches[0];
+					}, $matches[1] );
 				}, $selector
 			);
 		}
@@ -495,11 +497,21 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			'return_value' => $popover_options['starter_value'],
 		];
 
+		if ( ! empty( $popover_options['settings'] ) ) {
+			$control_params = array_replace_recursive( $control_params, $popover_options['settings'] );
+		}
+
 		if ( ! empty( $settings['condition'] ) ) {
 			$control_params['condition'] = $settings['condition'];
 		}
 
-		$element->add_control( $this->get_controls_prefix() . $popover_options['starter_name'], $control_params );
+		$starter_name = $popover_options['starter_name'];
+
+		if ( isset( $this->args['fields_options'][ $starter_name ] ) ) {
+			$control_params = array_merge( $control_params, $this->args['fields_options'][ $starter_name ] );
+		}
+
+		$element->add_control( $this->get_controls_prefix() . $starter_name, $control_params );
 
 		$element->start_popover();
 	}

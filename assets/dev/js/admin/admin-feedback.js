@@ -1,4 +1,4 @@
-/* global jQuery, ElementorAdminFeedbackArgs */
+/* global jQuery */
 ( function( $ ) {
 	'use strict';
 
@@ -32,7 +32,7 @@
 
 			self.getModal = function() {
 				if ( ! modal ) {
-					modal = elementorAdmin.getDialogsManager().createWidget( 'lightbox', {
+					modal = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 						id: 'elementor-deactivate-feedback-modal',
 						headerMessage: self.cache.$dialogHeader,
 						message: self.cache.$dialogForm,
@@ -48,14 +48,14 @@
 
 							this.addButton( {
 								name: 'submit',
-								text: ElementorAdminFeedbackArgs.i18n.submit_n_deactivate,
+								text: elementorAdmin.translate( 'submit_n_deactivate' ),
 								callback: self.sendFeedback.bind( self ),
 							} );
 
-							if ( ! ElementorAdminFeedbackArgs.is_tracker_opted_in ) {
+							if ( ! elementorAdmin.config.feedback.is_tracker_opted_in ) {
 								this.addButton( {
 									name: 'skip',
-									text: ElementorAdminFeedbackArgs.i18n.skip_n_deactivate,
+									text: elementorAdmin.translate( 'skip_n_deactivate' ),
 									callback: function() {
 										self.deactivate();
 									},

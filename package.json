@@ -1,12 +1,12 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "2.2.7",
-	"prev_stable_version": "2.1.8",
+	"version": "2.3.8",
+	"prev_stable_version": "2.2.7",
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
-		"test:phpunit": "docker-compose run --rm wordpress_phpunit phpunit"
+		"test:php": "docker-compose run --rm wordpress_phpunit phpunit"
 	},
 	"devDependencies": {
 		"autoprefixer": "~8.5.0",

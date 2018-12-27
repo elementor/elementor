@@ -137,14 +137,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'slides_to_scroll',
 			[
 				'label' => __( 'Slides to Scroll', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'description' => __( 'Set how many slides are scrolled per swipe.', 'elementor' ),
-				'default' => '2',
-				'options' => $slides_to_show,
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+				] + $slides_to_show,
 				'condition' => [
 					'slides_to_show!' => '1',
 				],
@@ -184,7 +185,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'link_to',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'none',
 				'options' => [
@@ -198,7 +199,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'condition' => [

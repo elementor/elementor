@@ -1,7 +1,6 @@
-var BaseModalLayout = require( 'elementor-templates/views/base-modal-layout' ),
-	NewTemplateView = require( 'elementor-admin/new-template/view' );
+var NewTemplateView = require( 'elementor-admin/new-template/view' );
 
-module.exports = BaseModalLayout.extend( {
+module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	getModalOptions: function() {
 		return {
@@ -11,20 +10,16 @@ module.exports = BaseModalLayout.extend( {
 
 	getLogoOptions: function() {
 		return {
-			title: elementorAdmin.config.i18n.new_template,
+			title: elementorAdmin.translate( 'new_template' ),
 		};
 	},
 
 	initialize: function() {
-		BaseModalLayout.prototype.initialize.apply( this, arguments );
+		elementorModules.common.views.modal.Layout.prototype.initialize.apply( this, arguments );
 
 		this.showLogo();
 
 		this.showContentView();
-	},
-
-	getDialogsManager: function() {
-		return elementorAdmin.getDialogsManager();
 	},
 
 	showContentView: function() {

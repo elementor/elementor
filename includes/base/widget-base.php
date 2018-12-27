@@ -221,9 +221,9 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 *
 	 * @param string $section_id Section ID.
-	 * @param array  $args       Section arguments.
+	 * @param array  $args       Section arguments Optional.
 	 */
-	public function start_controls_section( $section_id, array $args ) {
+	public function start_controls_section( $section_id, array $args = [] ) {
 		parent::start_controls_section( $section_id, $args );
 
 		static $is_first_section = true;
@@ -368,6 +368,14 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * @since 2.3.1
+	 * @access protected
+	 */
+	protected function should_print_empty() {
+		return false;
+	}
+
+	/**
 	 * Print widget content template.
 	 *
 	 * Used to generate the widget content template on the editor, using a
@@ -476,6 +484,22 @@ abstract class Widget_Base extends Element_Base {
 		 */
 		do_action( 'elementor/widget/before_render_content', $this );
 
+		ob_start();
+
+		$skin = $this->get_current_skin();
+		if ( $skin ) {
+			$skin->set_parent( $this );
+			$skin->render();
+		} else {
+			$this->render();
+		}
+
+		$widget_content = ob_get_clean();
+
+		if ( empty( $widget_content ) ) {
+			return;
+		}
+
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			$this->render_edit_tools();
 		}
@@ -483,17 +507,6 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-widget-container">
 			<?php
-			ob_start();
-
-			$skin = $this->get_current_skin();
-			if ( $skin ) {
-				$skin->set_parent( $this );
-				$skin->render();
-			} else {
-				$this->render();
-			}
-
-			$widget_content = ob_get_clean();
 
 			/**
 			 * Render widget content.

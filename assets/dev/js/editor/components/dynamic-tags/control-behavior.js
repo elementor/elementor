@@ -29,7 +29,17 @@ module.exports = Marionette.Behavior.extend( {
 
 		var $dynamicSwitcher = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-dynamic-switcher' ) );
 
-		this.ui.controlTitle[ this.view.model.get( 'label_block' ) ? 'after' : 'before' ]( $dynamicSwitcher );
+		if ( this.view.model.get( 'label_block' ) ) {
+			this.ui.controlTitle.after( $dynamicSwitcher );
+
+			const $responsiveSwitchers = $dynamicSwitcher.next( '.elementor-control-responsive-switchers' );
+
+			if ( $responsiveSwitchers.length ) {
+				$responsiveSwitchers.after( $dynamicSwitcher );
+			}
+		} else {
+			this.ui.controlTitle.before( $dynamicSwitcher );
+		}
 
 		this.ui.dynamicSwitcher = this.$el.find( this.ui.dynamicSwitcher.selector );
 	},
@@ -75,7 +85,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		$tagsListInner.on( 'click', '.elementor-tags-list__item', this.onTagsListItemClick.bind( this ) );
 
-		elementor.$body.append( $tagsList );
+		elementorCommon.elements.$body.append( $tagsList );
 	},
 
 	getTagsList: function() {
@@ -151,7 +161,7 @@ module.exports = Marionette.Behavior.extend( {
 		var settingKey = this.view.model.get( 'name' ),
 			dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' ) || {};
 
-		dynamicSettings = elementor.helpers.cloneObject( dynamicSettings );
+		dynamicSettings = elementorCommon.helpers.cloneObject( dynamicSettings );
 
 		dynamicSettings[ settingKey ] = value;
 
@@ -206,7 +216,7 @@ module.exports = Marionette.Behavior.extend( {
 		var settingKey = this.view.model.get( 'name' ),
 			dynamicSettings = this.view.elementSettingsModel.get( '__dynamic__' );
 
-		dynamicSettings = elementor.helpers.cloneObject( dynamicSettings );
+		dynamicSettings = elementorCommon.helpers.cloneObject( dynamicSettings );
 
 		delete dynamicSettings[ settingKey ];
 

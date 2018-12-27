@@ -2,6 +2,7 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
+use Elementor\Core\Base\App;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -11,13 +12,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Admin {
+class Admin extends App {
 
 	/**
-	 * @var \Elementor\Core\Admin\Feedback
+	 * Get module name.
+	 *
+	 * Retrieve the module name.
+	 *
+	 * @since 2.3.0
+	 * @access public
+	 *
+	 * @return string Module name.
 	 */
-	private $feedback;
+	public function get_name() {
+		return 'admin';
+	}
 
+	/**
+	 * @since 2.2.0
+	 * @access public
+	 */
 	public function maybe_redirect_to_getting_started() {
 		if ( ! get_transient( 'elementor_activation_redirect' ) ) {
 			return;
@@ -42,6 +56,7 @@ class Admin {
 		}
 
 		wp_safe_redirect( admin_url( 'admin.php?page=elementor-getting-started' ) );
+
 		exit;
 	}
 
@@ -56,54 +71,19 @@ class Admin {
 	 * @access public
 	 */
 	public function enqueue_scripts() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		wp_register_script(
-			'backbone-marionette',
-			ELEMENTOR_ASSETS_URL . 'lib/backbone/backbone.marionette' . $suffix . '.js',
+			'elementor-admin',
+			$this->get_js_assets_url( 'admin' ),
 			[
-				'backbone',
-			],
-			'2.4.5',
-			true
-		);
-
-		wp_register_script(
-			'elementor-dialog',
-			ELEMENTOR_ASSETS_URL . 'lib/dialog/dialog' . $suffix . '.js',
-			[
-				'jquery-ui-position',
-			],
-			'4.5.0',
-			true
-		);
-
-		wp_register_script(
-			'elementor-admin-app',
-			ELEMENTOR_ASSETS_URL . 'js/admin' . $suffix . '.js',
-			[
-				'jquery',
+				'elementor-common',
 			],
 			ELEMENTOR_VERSION,
 			true
 		);
 
-		wp_localize_script(
-			'elementor-admin-app',
-			'ElementorAdminConfig',
-			[
-				'home_url' => home_url(),
-				'i18n' => [
-					'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
-					'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
-					'yes' => __( 'Yes', 'elementor' ),
-					'cancel' => __( 'Cancel', 'elementor' ),
-					'new_template' => __( 'New Template', 'elementor' ),
-				],
-			]
-		);
+		wp_enqueue_script( 'elementor-admin' );
 
-		wp_enqueue_script( 'elementor-admin-app' );
+		$this->print_config();
 	}
 
 	/**
@@ -117,27 +97,18 @@ class Admin {
 	 * @access public
 	 */
 	public function enqueue_styles() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
 		wp_register_style(
-			'elementor-icons',
-			ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons' . $suffix . '.css',
-			[],
-			'3.8.0'
-		);
-
-		wp_register_style(
-			'elementor-admin-app',
-			ELEMENTOR_ASSETS_URL . 'css/admin' . $direction_suffix . $suffix . '.css',
+			'elementor-admin',
+			$this->get_css_assets_url( 'admin' . $direction_suffix ),
 			[
-				'elementor-icons',
+				'elementor-common',
 			],
 			ELEMENTOR_VERSION
 		);
 
-		wp_enqueue_style( 'elementor-admin-app' );
+		wp_enqueue_style( 'elementor-admin' );
 
 		// It's for upgrade notice.
 		// TODO: enqueue this just if needed.
@@ -158,6 +129,11 @@ class Admin {
 	 * @param \WP_Post $post The current post object.
 	 */
 	public function print_switch_mode_button( $post ) {
+		// Exit if Gutenberg are active.
+		if ( did_action( 'enqueue_block_editor_assets' ) ) {
+			return;
+		}
+
 		if ( ! User::is_current_user_can_edit( $post->ID ) ) {
 			return;
 		}
@@ -221,33 +197,6 @@ class Admin {
 		}
 
 		Plugin::$instance->db->set_is_elementor_page( $post_id, ! empty( $_POST['_elementor_post_mode'] ) );
-	}
-
-	/**
-	 * Add edit link in dashboard.
-	 *
-	 * Add an edit link to the post/page action links on the post/pages list table.
-	 *
-	 * Fired by `post_row_actions` and `page_row_actions` filters.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param array    $actions An array of row action links.
-	 * @param \WP_Post $post    The post object.
-	 *
-	 * @return array An updated array of row action links.
-	 */
-	public function add_edit_in_dashboard( $actions, \WP_Post $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
-			$actions['edit_with_elementor'] = sprintf(
-				'<a href="%1$s">%2$s</a>',
-				Utils::get_edit_link( $post->ID ),
-				__( 'Edit with Elementor', 'elementor' )
-			);
-		}
-
-		return $actions;
 	}
 
 	/**
@@ -697,36 +646,43 @@ class Admin {
 		$document = Plugin::$instance->documents->create( $type, $post_data, $meta );
 
 		wp_redirect( $document->get_edit_url() );
+
 		die;
 	}
 
-	public function print_new_template_template() {
-		$this->print_library_layout_template();
-
-		include ELEMENTOR_PATH . 'includes/admin-templates/new-template.php';
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
+	public function add_new_template_template() {
+		Plugin::$instance->common->add_template( ELEMENTOR_PATH . 'includes/admin-templates/new-template.php' );
 	}
 
+	/**
+	 * @access public
+	 */
 	public function enqueue_new_template_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script(
 			'elementor-new-template',
 			ELEMENTOR_ASSETS_URL . 'js/new-template' . $suffix . '.js',
-			[
-				'backbone-marionette',
-				'elementor-dialog',
-			],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
 	}
 
+	/**
+	 * @access public
+	 */
 	public function init_new_template() {
 		if ( 'edit-elementor_library' !== get_current_screen()->id ) {
 			return;
 		}
 
-		add_action( 'admin_footer', [ $this, 'print_new_template_template' ] );
+		// Allow plugins to add their templates on admin_head.
+		add_action( 'admin_head', [ $this, 'add_new_template_template' ] );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
 	}
@@ -740,7 +696,9 @@ class Admin {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->feedback = new Feedback();
+		Plugin::$instance->init_common();
+
+		$this->add_component( 'feedback', new Feedback() );
 
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
@@ -749,9 +707,6 @@ class Admin {
 
 		add_action( 'edit_form_after_title', [ $this, 'print_switch_mode_button' ] );
 		add_action( 'save_post', [ $this, 'save_post' ] );
-
-		add_filter( 'page_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
-		add_filter( 'post_row_actions', [ $this, 'add_edit_in_dashboard' ], 10, 2 );
 
 		add_filter( 'display_post_states', [ $this, 'add_elementor_post_state' ], 10, 2 );
 
@@ -771,7 +726,22 @@ class Admin {
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
 	}
 
-	private function print_library_layout_template() {
-		include ELEMENTOR_PATH . 'includes/editor-templates/library-layout.php';
+	/**
+	 * @since 2.3.0
+	 * @access protected
+	 */
+	protected function get_init_settings() {
+		$settings = [
+			'home_url' => home_url(),
+			'i18n' => [
+				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
+				'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
+				'yes' => __( 'Yes', 'elementor' ),
+				'cancel' => __( 'Cancel', 'elementor' ),
+				'new_template' => __( 'New Template', 'elementor' ),
+			],
+		];
+
+		return apply_filters( 'elementor/admin/localize_settings', $settings );
 	}
 }

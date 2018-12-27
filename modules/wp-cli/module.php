@@ -2,6 +2,7 @@
 namespace Elementor\Modules\WpCli;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Logger\Manager as Logger;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -21,8 +22,22 @@ class Module extends BaseModule {
 		return 'wp-cli';
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @access public
+	 * @static
+	 */
 	public static function is_active() {
 		return defined( 'WP_CLI' ) && WP_CLI;
+	}
+
+	/**
+	 * @param Logger $logger
+	 * @access public
+	 */
+	public function register_cli_logger( $logger ) {
+		$logger->register_logger( 'cli', 'Elementor\Modules\WpCli\Cli_Logger' );
+		$logger->set_default_logger( 'cli' );
 	}
 
 	/**
@@ -31,6 +46,8 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
+		add_action( 'elementor/loggers/register', [ $this, 'register_cli_logger' ] );
 		\WP_CLI::add_command( 'elementor', '\Elementor\Modules\WpCli\Command' );
 	}
+
 }

@@ -1,7 +1,4 @@
-var ViewModule = require( '../../utils/view-module' ),
-	LightboxModule;
-
-LightboxModule = ViewModule.extend( {
+module.exports = elementorModules.ViewModule.extend( {
 	oldAspectRatio: null,
 
 	oldAnimation: null,
@@ -52,15 +49,15 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	getModal: function() {
-		if ( ! LightboxModule.modal ) {
+		if ( ! module.exports.modal ) {
 			this.initModal();
 		}
 
-		return LightboxModule.modal;
+		return module.exports.modal;
 	},
 
 	initModal: function() {
-		var modal = LightboxModule.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
+		var modal = module.exports.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox',
 			closeButton: true,
 			closeButtonClass: 'eicon-close',
@@ -98,7 +95,7 @@ LightboxModule = ViewModule.extend( {
 		modal.onHide = function() {
 			DialogsManager.getWidgetType( 'lightbox' ).prototype.onHide.apply( modal, arguments );
 
-			modal.getElements( 'widgetContent' ).removeClass( 'animated' );
+			modal.getElements( 'message' ).removeClass( 'animated' );
 		};
 
 		switch ( options.type ) {
@@ -144,11 +141,7 @@ LightboxModule = ViewModule.extend( {
 			modal = this.getModal();
 
 		if ( 'hosted' === options.videoType ) {
-			var videoParams = { src: options.url, autoplay: '' };
-
-			options.videoParams.forEach( function( param ) {
-				videoParams[ param ] = '';
-			} );
+			var videoParams = jQuery.extend( { src: options.url, autoplay: '' }, options.videoParams );
 
 			$videoElement = jQuery( '<video>', videoParams );
 		} else {
@@ -323,7 +316,7 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	isLightboxLink: function( element ) {
-		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /\.(png|jpe?g|gif|svg)$/i.test( element.href ) ) ) {
+		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /\.(png|jpe?g|gif|svg)(\?.*)?$/i.test( element.href ) ) ) {
 			return false;
 		}
 
@@ -436,11 +429,11 @@ LightboxModule = ViewModule.extend( {
 	},
 
 	bindEvents: function() {
-		elementorFrontend.getElements( '$document' ).on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
+		elementorFrontend.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
 	},
 
 	onInit: function() {
-		ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		if ( elementorFrontend.isEditMode() ) {
 			elementor.settings.general.model.on( 'change', this.onGeneralSettingsChange );
@@ -466,5 +459,3 @@ LightboxModule = ViewModule.extend( {
 		this.playSlideVideo();
 	},
 } );
-
-module.exports = LightboxModule;

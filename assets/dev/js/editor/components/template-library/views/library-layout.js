@@ -1,5 +1,4 @@
-var BaseModalLayout = require( 'elementor-templates/views/base-modal-layout' ),
-	TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts/header-parts/actions' ),
+var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts/header-parts/actions' ),
 	TemplateLibraryHeaderMenuView = require( 'elementor-templates/views/parts/header-parts/menu' ),
 	TemplateLibraryHeaderPreviewView = require( 'elementor-templates/views/parts/header-parts/preview' ),
 	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
@@ -8,7 +7,7 @@ var BaseModalLayout = require( 'elementor-templates/views/base-modal-layout' ),
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
 	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
-module.exports = BaseModalLayout.extend( {
+module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	getModalOptions: function() {
 		return {

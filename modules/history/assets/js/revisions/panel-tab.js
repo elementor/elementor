@@ -46,7 +46,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 				self.enterReviewMode();
 			},
-			error: function() {
+			error: function( errorMessage ) {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				if ( 'abort' === self.jqueryXhr.statusText ) {
@@ -57,7 +57,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 				self.currentPreviewId = null;
 
-				alert( 'An error occurred' );
+				alert( errorMessage );
 			},
 		} );
 	},
@@ -206,7 +206,7 @@ module.exports = Marionette.CompositeView.extend( {
 		var self = this,
 			type = childView.model.get( 'type' );
 
-		var removeDialog = elementor.dialogsManager.createWidget( 'confirm', {
+		var removeDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			message: elementor.translate( 'dialog_confirm_delete', [ type ] ),
 			headerMessage: elementor.translate( 'delete_element', [ type ] ),
 			strings: {

@@ -1,5 +1,6 @@
-var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
-	ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
+import environment from '../../../../../../core/common/assets/js/utils/environment';
+
+var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
@@ -102,15 +103,6 @@ BaseElementView = BaseContainer.extend( {
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
 	},
 
-	// TODO: backward compatibility method since 1.8.0
-	templateHelpers: function() {
-		var templateHelpers = BaseContainer.prototype.templateHelpers.apply( this, arguments );
-
-		return jQuery.extend( templateHelpers, {
-			editModel: this.getEditModel(), // @deprecated. Use view.getEditModel() instead.
-		} );
-	},
-
 	getTemplateType: function() {
 		return 'js';
 	},
@@ -120,8 +112,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getContextMenuGroups: function() {
-		var elementType = this.options.model.get( 'elType' ),
-			controlSign = elementor.envData.mac ? '⌘' : '^';
+		const controlSign = environment.mac ? '⌘' : '^';
 
 		return [
 			{
@@ -130,7 +121,7 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						icon: 'eicon-edit',
-						title: elementor.translate( 'edit_element', [ elementor.helpers.firstLetterUppercase( elementType ) ] ),
+						title: elementor.translate( 'edit_element', [ this.options.model.getTitle() ] ),
 						callback: this.options.model.trigger.bind( this.options.model, 'request:edit' ),
 					}, {
 						name: 'duplicate',
@@ -160,7 +151,7 @@ BaseElementView = BaseContainer.extend( {
 						shortcut: controlSign + '+⇧+V',
 						callback: this.pasteStyle.bind( this ),
 						isEnabled: function() {
-							return !! elementor.getStorage( 'transfer' );
+							return !! elementorCommon.storage.get( 'transfer' );
 						},
 					}, {
 						name: 'resetStyle',
@@ -201,7 +192,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	startTransport: function( type ) {
-		elementor.setStorage( 'transfer', {
+		elementorCommon.storage.set( 'transfer', {
 			type: type,
 			elementsType: this.getElementType(),
 			elements: [ this.model.toJSON( { copyHtmlCache: true } ) ],
@@ -221,7 +212,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	isPasteEnabled: function() {
-		var transferData = elementor.getStorage( 'transfer' );
+		var transferData = elementorCommon.storage.get( 'transfer' );
 
 		if ( ! transferData || this.isCollectionFilled() ) {
 			return false;
@@ -239,18 +230,18 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	duplicate: function() {
-		var oldTransport = elementor.getStorage( 'transfer' );
+		var oldTransport = elementorCommon.storage.get( 'transfer' );
 
 		this.copy();
 
 		this.paste();
 
-		elementor.setStorage( 'transfer', oldTransport );
+		elementorCommon.storage.set( 'transfer', oldTransport );
 	},
 
 	pasteStyle: function() {
 		var self = this,
-			transferData = elementor.getStorage( 'transfer' ),
+			transferData = elementorCommon.storage.get( 'transfer' ),
 			sourceElement = transferData.elements[ 0 ],
 			sourceSettings = sourceElement.settings,
 			editModel = self.getEditModel(),
@@ -564,7 +555,7 @@ BaseElementView = BaseContainer.extend( {
 				return;
 			}
 
-			// In edit mode - handle an external elements which loaded by another elements like shortcode etc.
+			// In edit mode - handle an external elements that loaded by another elements like shortcode etc.
 			self.$el.find( '.elementor-element.elementor-' + self.model.get( 'elType' ) + ':not(.elementor-element-edit-mode)' ).each( function() {
 				elementorFrontend.elementsHandler.runReadyTrigger( jQuery( this ) );
 			} );
@@ -585,7 +576,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		// Make sure is correct model
-		if ( settings instanceof BaseSettingsModel ) {
+		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
 			var hasChanged = settings.hasChanged(),
 				isContentChanged = ! hasChanged,
 				isRenderRequired = ! hasChanged;
@@ -765,7 +756,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		elementorFrontend.getElements( '$document' )[ 0 ].activeElement.blur();
+		elementorFrontend.elements.window.document.activeElement.blur();
 	},
 
 	onDestroy: function() {

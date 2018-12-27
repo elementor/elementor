@@ -7,16 +7,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $wp_version;
 
-$document = Plugin::$instance->documents->get( $this->_post_id );
+$document = Plugin::$instance->documents->get_current();
 
 $body_classes = [
 	'elementor-editor-active',
+	'elementor-editor-' . $document->get_template_type(),
 	'wp-version-' . str_replace( '.', '-', $wp_version ),
 ];
 
 if ( is_rtl() ) {
 	$body_classes[] = 'rtl';
 }
+
 if ( ! Plugin::$instance->role_manager->user_can( 'design' ) ) {
 	$body_classes[] = 'elementor-editor-content-only';
 }

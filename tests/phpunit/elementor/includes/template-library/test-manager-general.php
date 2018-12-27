@@ -25,7 +25,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 
 
 	public function test_should_return_wp_error_wrong_instance_source_from_register_source() {
-		$this->assertWPError( self::$manager->register_source( 'Elementor\Core\Ajax_Manager' ), 'wrong_instance_source' );
+		$this->assertWPError( self::$manager->register_source( 'Elementor\Core\Ajax' ), 'wrong_instance_source' );
 	}
 
 	public function test_should_return_false_from_unregister_source() {
@@ -34,29 +34,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 
 	public function test_should_fail_to_return_source() {
 		$this->assertFalse( self::$manager->get_source( 'invalid source' ) );
-	}
-
-	public function test_should_return_templates() {
-		$templates = self::$manager->get_templates();
-		$this->assertGreaterThan( 0, count( $templates ) );
-		$template_structure = [
-			'template_id',
-			'source',
-			'type',
-			'title',
-			'thumbnail',
-			'hasPageSettings',
-			'tags',
-			'url',
-		];
-
-		$this->assertArrayHaveKeys( $template_structure, $templates[0] );
-	}
-
-	public function test_should_return_library_data() {
-		$ret = self::$manager->get_library_data( [] );
-
-		$this->assertNotEmpty( $ret['templates'] );
 	}
 
 	public function test_should_return_wp_error_arguments_not_specified_from_save_template() {

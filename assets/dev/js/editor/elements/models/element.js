@@ -1,5 +1,4 @@
-var BaseSettingsModel = require( 'elementor-elements/models/base-settings' ),
-	ColumnSettingsModel = require( 'elementor-elements/models/column-settings' ),
+var ColumnSettingsModel = require( 'elementor-elements/models/column-settings' ),
 	ElementModel;
 
 ElementModel = Backbone.Model.extend( {
@@ -53,10 +52,10 @@ ElementModel = Backbone.Model.extend( {
 			settingModels = {
 				column: ColumnSettingsModel,
 			},
-			SettingsModel = settingModels[ elType ] || BaseSettingsModel;
+			SettingsModel = settingModels[ elType ] || elementorModules.editor.elements.models.BaseSettings;
 
 		if ( jQuery.isEmptyObject( settings ) ) {
-			settings = elementor.helpers.cloneObject( settings );
+			settings = elementorCommon.helpers.cloneObject( settings );
 		}
 
 		if ( 'widget' === elType ) {
@@ -151,7 +150,7 @@ ElementModel = Backbone.Model.extend( {
 	createRemoteRenderRequest: function() {
 		var data = this.toJSON();
 
-		return elementor.ajax.addRequest( 'render_widget', {
+		return elementorCommon.ajax.addRequest( 'render_widget', {
 			unique_id: this.cid,
 			data: {
 				data: data,
@@ -186,7 +185,7 @@ ElementModel = Backbone.Model.extend( {
 	},
 
 	clone: function() {
-		var newModel = new this.constructor( elementor.helpers.cloneObject( this.attributes ) );
+		var newModel = new this.constructor( elementorCommon.helpers.cloneObject( this.attributes ) );
 
 		newModel.set( 'id', elementor.helpers.getUniqueID() );
 

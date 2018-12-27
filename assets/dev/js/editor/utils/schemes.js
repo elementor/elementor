@@ -24,7 +24,7 @@ Schemes = function() {
 	};
 
 	var initSchemes = function() {
-		schemes = elementor.helpers.cloneObject( elementor.config.schemes.items );
+		schemes = elementorCommon.helpers.cloneObject( elementor.config.schemes.items );
 	};
 
 	var fetchControlStyles = function( control, controlsStack, widgetType ) {
@@ -87,7 +87,7 @@ Schemes = function() {
 			schemeValue = scheme.items[ value ];
 
 		if ( key && _.isObject( schemeValue ) ) {
-			var clonedSchemeValue = elementor.helpers.cloneObject( schemeValue );
+			var clonedSchemeValue = elementorCommon.helpers.cloneObject( schemeValue );
 
 			clonedSchemeValue.value = schemeValue.value[ key ];
 
@@ -106,11 +106,11 @@ Schemes = function() {
 	};
 
 	this.resetSchemes = function( schemeName ) {
-		schemes[ schemeName ] = elementor.helpers.cloneObject( elementor.config.schemes.items[ schemeName ] );
+		schemes[ schemeName ] = elementorCommon.helpers.cloneObject( elementor.config.schemes.items[ schemeName ] );
 	};
 
 	this.saveScheme = function( schemeName ) {
-		elementor.config.schemes.items[ schemeName ].items = elementor.helpers.cloneObject( schemes[ schemeName ].items );
+		elementor.config.schemes.items[ schemeName ].items = elementorCommon.helpers.cloneObject( schemes[ schemeName ].items );
 
 		var itemsToSave = {};
 
@@ -120,7 +120,7 @@ Schemes = function() {
 
 		NProgress.start();
 
-		elementor.ajax.send( 'apply_scheme', {
+		elementorCommon.ajax.addRequest( 'apply_scheme', {
 			data: {
 				scheme_name: schemeName,
 				data: JSON.stringify( itemsToSave ),
