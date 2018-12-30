@@ -203,8 +203,8 @@ class Module extends \Elementor\Core\Base\Module {
 			admin_url( 'admin.php' )
 		);
 
-		$helped_url = 'https://docs.elementor.com/category/413-troubleshooting';
-		$didnt_help_url = 'https://docs.elementor.com/category/413-troubleshooting';
+		$helped_url = 'https://go.elementor.com/safe-mode-helped/';
+		$didnt_help_url = 'https://go.elementor.com/safe-mode-didnt-helped/';
 		echo $this->print_safe_mode_css();
 		?>
 		<div class="elementor-safe-mode-toast" id="elementor-safe-mode-message">
@@ -217,9 +217,9 @@ class Module extends \Elementor\Core\Base\Module {
 			</header>
 
 			<div class="elementor-toast-content">
-				<p><?php printf( __( 'if \'Safe Mode\' helped, the problem was caused by one of your plugins or theme. To resolve this issue please <a href="%s" target="_blank">click here</a>', 'elementor' ), $helped_url ); ?></p>
+				<p><?php printf( __( 'If \'Safe Mode\' helped, the problem was caused by one of your plugins or theme. To resolve this issue please <a href="%s" target="_blank">click here</a>', 'elementor' ), $helped_url ); ?></p>
 				<hr>
-				<p><?php printf( __( 'if Safe Mode didn\'t help, click here to <a href="%s" target="_blank">Troubleshoot</a>', 'elementor' ), $didnt_help_url ); ?></p>
+				<p><?php printf( __( 'If Safe Mode didn\'t help, click here to <a href="%s" target="_blank">Troubleshoot</a>', 'elementor' ), $didnt_help_url ); ?></p>
 			</div>
 		</div>
 
