@@ -127,6 +127,13 @@ const App = Marionette.Application.extend( {
 			element: '.elementor-tags-list',
 			ignore: '.elementor-control-dynamic-switcher',
 		},
+		panelFooterSubMenus: {
+			element: '.elementor-panel-footer-tool',
+			ignore: '.elementor-panel-footer-tool.elementor-toggle-state',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-open' );
+			},
+		},
 	},
 
 	// TODO: Temp modules bc method since 2.0.0
@@ -1059,7 +1066,7 @@ const App = Marionette.Application.extend( {
 
 	onBackgroundClick: function( event ) {
 		jQuery.each( this.backgroundClickListeners, function() {
-			var $clickedTarget = jQuery( event.target );
+			let $clickedTarget = jQuery( event.target );
 
 			// If it's a label that associated with an input
 			if ( $clickedTarget[ 0 ].control ) {
@@ -1070,15 +1077,16 @@ const App = Marionette.Application.extend( {
 				return;
 			}
 
+			const $clickedTargetClosestElement = $clickedTarget.closest( this.element ),
+				$elementsToHide = jQuery( this.element ).not( $clickedTargetClosestElement );
+
 			if ( this.callback ) {
-				this.callback();
+				this.callback( $elementsToHide );
 
 				return;
 			}
 
-			var $clickedTargetClosestElement = $clickedTarget.closest( this.element );
-
-			jQuery( this.element ).not( $clickedTargetClosestElement ).hide();
+			$elementsToHide.hide();
 		} );
 	},
 } );
