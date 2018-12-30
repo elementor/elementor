@@ -110,7 +110,14 @@ class Control_Animation extends Base_Data_Control {
 			];
 		}
 
-		return self::$_animations;
+		/**
+		 * Element appearance animations list.
+		 *
+		 * @since 2.3.9
+		 *
+		 * @param array $_animations Animations array.
+		 */
+		return apply_filters( 'elementor/controls/animations', self::$_animations );
 	}
 
 	/**
