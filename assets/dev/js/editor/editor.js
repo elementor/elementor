@@ -127,6 +127,13 @@ const App = Marionette.Application.extend( {
 			element: '.elementor-tags-list',
 			ignore: '.elementor-control-dynamic-switcher',
 		},
+		panelFooterSubMenus: {
+			element: '.elementor-panel-footer-tool',
+			ignore: '.elementor-panel-footer-tool.elementor-toggle-state',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-open' );
+			},
+		},
 	},
 
 	// TODO: Temp modules bc method since 2.0.0
