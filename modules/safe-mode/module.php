@@ -114,7 +114,7 @@ class Module extends \Elementor\Core\Base\Module {
 				position: absolute;
 				z-index: 3;
 				bottom: 50px;
-				right: 100px;
+				right: 50px;
 				width: 400px;
 				line-height: 30px;
 				background: white;
