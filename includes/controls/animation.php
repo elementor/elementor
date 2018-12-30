@@ -112,7 +112,7 @@ class Control_Animation extends Base_Data_Control {
 			/**
 			 * Element appearance animations list.
 			 *
-			 * @since 2.3.9
+			 * @since 2.4.0
 			 *
 			 * @param array $_animations Animations array.
 			 */
