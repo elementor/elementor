@@ -33,11 +33,13 @@ class Safe_Mode {
 	const OPTION_ENABLED = 'elementor_safe_mode';
 
 	public function __construct() {
-		if ( ! $this->is_enabled() ) {
+		$enabled_type = $this->is_enabled();
+
+		if ( ! $enabled_type ) {
 			return;
 		}
 
-		if ( ! $this->is_requested() ) {
+		if ( ! $this->is_requested() && 'global' !== $enabled_type ) {
 			return;
 		}
 
@@ -78,7 +80,11 @@ class Safe_Mode {
 		} );
 
 		add_action( 'elementor/init', function () {
-			\Elementor\Plugin::$instance->modules_manager->get_modules( 'safe-mode' )->run_safe_mode();
+			/** @var Elementor\Modules\SafeMode\Module $module */
+			$module = \Elementor\Plugin::$instance->modules_manager->get_modules( 'safe-mode' );
+			if ( $module ) {
+				$module->run_safe_mode();
+			}
 		} );
 	}
 }
