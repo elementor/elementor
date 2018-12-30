@@ -278,7 +278,7 @@ class Module extends \Elementor\Core\Base\Module {
 				</a>
 			</header>
 			<div class="elementor-toast-content">
-				<?php echo __( 'Try loading Elementor in \'Safe Mode\' (don\'t worry, it won\'t affect the websites)', '' ); ?>
+				<?php echo __( 'Try loading Elementor in \'Safe Mode\' (don\'t worry, it won\'t affect the websites)', 'elementor' ); ?>
 			</div>
 		</div>
 
