@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
+	const OPTION_ENABLED = 'elementor_safe_mode';
+
 	public function get_name() {
 		return 'safe-mode';
 	}
@@ -323,11 +325,18 @@ class Module extends \Elementor\Core\Base\Module {
 		add_action( 'elementor/editor/footer', [ $this, 'print_safe_mode_notice' ] );
 	}
 
+	private function is_enabled() {
+		return get_option( self::OPTION_ENABLED );
+	}
+
 	public function __construct() {
 		add_action( 'elementor/admin/after_create_settings/elementor-tools', [ $this, 'add_admin_button' ] );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_action( 'add_option_elementor_safe_mode', [ $this, 'update_safe_mode' ], 10, 2 );
 		add_action( 'update_option_elementor_safe_mode', [ $this, 'update_safe_mode' ], 10, 2 );
-		add_action( 'elementor/editor/footer', [ $this, 'print_try_safe_mode' ] );
+
+		if ( ! $this->is_enabled() ) {
+			add_action( 'elementor/editor/footer', [ $this, 'print_try_safe_mode' ] );
+		}
 	}
 }
