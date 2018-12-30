@@ -231,15 +231,25 @@ class Module extends \Elementor\Core\Base\Module {
 				text-align: left;
 			}
 
-			#elementor-try-safe-mode a{
+			#elementor-try-safe-mode .elementor-safe-mode-button{
 				color: white;
+				text-transform: uppercase;
 				background: #0f9d58;
+			}
+
+			#elementor-try-safe-mode header {
+				display: flex;
 			}
 		</style>
 		<div id="elementor-try-safe-mode">
-			<a class="elementor-enable-safe-mode" target="_blank" href="<?php echo $tools_url; ?>">
-				<?php echo __( 'Enable Safe Mode', 'elementor' ); ?>
-			</a>
+			<header>
+				<i class="eicon-warning"></i>
+				<h2><?php echo __( 'Can\'t Edit?', 'elementor' ); ?></h2>
+				<a class="elementor-safe-mode-button" target="_blank" href="<?php echo $tools_url; ?>">
+					<?php echo __( 'Enable Safe Mode', 'elementor' ); ?>
+				</a>
+			</header>
+
 
 			<?php echo __( 'Try loading Elementor in \'Safe Mode\' (don\'t worry, it won\'t affect the websites)', '' ); ?>
 		</div>
@@ -269,6 +279,7 @@ class Module extends \Elementor\Core\Base\Module {
 				};
 
 				var isElementorLoaded = function() {
+					return false;
 					if ( ! elementor ) {
 						return false;
 					}
