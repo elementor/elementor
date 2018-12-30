@@ -107,6 +107,93 @@ class Module extends \Elementor\Core\Base\Module {
 		return ELEMENTOR_PATH . 'modules/page-templates/templates/header-footer.php';
 	}
 
+	public function print_safe_mode_css() {
+		?>
+		<style>
+			.elementor-safe-mode-toast {
+				position: absolute;
+				z-index: 3;
+				bottom: 50px;
+				right: 50px;
+				width: 400px;
+				line-height: 30px;
+				background: white;
+				padding: 25px;
+				box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+				border-radius: 5px;
+				font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+			}
+
+			#elementor-try-safe-mode {
+				display: none;
+			}
+
+			.elementor-safe-mode-toast .elementor-toast-content {
+				font-size: 15px;
+				line-height: 22px;
+				color: #6D7882;
+			}
+
+			.elementor-safe-mode-toast .elementor-toast-content a {
+				color: #138FFF;
+			}
+
+			.elementor-safe-mode-toast .elementor-toast-content hr {
+				margin: 15px auto;
+				border: 0 none;
+				border-top: 1px solid #F1F3F5;
+			}
+
+			.elementor-safe-mode-toast header {
+				display: flex;
+				align-items: center;
+				margin-bottom: 15px;
+			}
+
+			.elementor-safe-mode-toast .elementor-safe-mode-button {
+				display: inline-block;
+				font-weight: 500;
+				font-size: 12.5px;
+				text-transform: uppercase;
+				color: white;
+				line-height: 33px;
+				background: #A4AFB7;
+				border-radius: 3px;
+				padding: 0 15px;
+			}
+
+			#elementor-try-safe-mode .elementor-safe-mode-button {
+				background: #39B54A;
+			}
+
+			body:not(.rtl) .elementor-safe-mode-toast .elementor-safe-mode-button {
+				margin-left: auto;
+			}
+
+			body.rtl .elementor-safe-mode-toast .elementor-safe-mode-button {
+				margin-right: auto;
+			}
+
+			.elementor-safe-mode-toast header i {
+				font-size: 25px;
+				color: #A4AFB7;
+			}
+
+			body:not(.rtl) .elementor-safe-mode-toast header i {
+				margin-right: 5px;
+			}
+
+			body.rtl .elementor-safe-mode-toast header i {
+				margin-left: 5px;
+			}
+
+			.elementor-safe-mode-toast header h2 {
+				font-size: 18px;
+				color: #495157;
+			}
+		</style>
+<?php	}
+
 	public function print_safe_mode_notice() {
 		// A fallback URL if the Js doesn't work.
 		$tools_url = add_query_arg(
@@ -117,60 +204,22 @@ class Module extends \Elementor\Core\Base\Module {
 		);
 
 		$helped_url = 'https://docs.elementor.com/category/413-troubleshooting';
-		$didnt_helped_url = 'https://docs.elementor.com/category/413-troubleshooting';
+		$didnt_help_url = 'https://docs.elementor.com/category/413-troubleshooting';
+		echo $this->print_safe_mode_css();
 		?>
-		<style>
-			#elementor-safe-mode-message {
-				right: 10px;
-				bottom: 10px;
-				position: absolute;
-				z-index: 3;
-
-				width: 430px;
-				height: 150px;
-
-				padding: 15px;
-
-				line-height: 1.5em;
-
-				background: #fff;
-				border-radius: 10px;
-			}
-
-			#elementor-safe-mode-message h2 {
-				width: 50%;
-				display: inline-block;
-			}
-
-			.elementor-disable-safe-mode {
-				width: 50%;
-				background-color: #39b54a;
-				color: #fff;
-				height: 26px;
-				font-size: 13px;
-				padding: 10px 20px;
-				border-radius: 10px;
-			}
-
-			#elementor-safe-mode-message .content {
-				width: 100%;
-			}
-		</style>
-		<div id="elementor-safe-mode-message">
-			<div class="header">
-				<h2>
-					<?php echo __( 'Safe Mode ON', '' ); ?>
-				</h2>
-				<a class="elementor-disable-safe-mode" target="_blank" href="<?php echo $tools_url; ?>">
+		<div class="elementor-safe-mode-toast" id="elementor-safe-mode-message">
+			<header>
+				<i class="eicon-warning"></i>
+				<h2><?php echo __( 'Safe Mode ON', 'elementor' ); ?></h2>
+				<a class="elementor-safe-mode-button elementor-disable-safe-mode" target="_blank" href="<?php echo $tools_url; ?>">
 					<?php echo __( 'Disable Safe Mode', 'elementor' ); ?>
 				</a>
-			</div>
+			</header>
 
-			<div class="content">
-				<?php printf( __( 'if \'Safe Mode\' helped, the problem was caused by one of your plugins or theme. To resolve this issue please <a href="%s" target="_blank">click here</a>', 'elementor' ), $helped_url ); ?>
-
+			<div class="elementor-toast-content">
+				<p><?php printf( __( 'if \'Safe Mode\' helped, the problem was caused by one of your plugins or theme. To resolve this issue please <a href="%s" target="_blank">click here</a>', 'elementor' ), $helped_url ); ?></p>
 				<hr>
-				<?php printf( __( 'if Safe Mode didn\'t help, click here to <a href="%s" target="_blank">Troubleshoot</a>', 'elementor' ), $didnt_helped_url ); ?>
+				<p><?php printf( __( 'if Safe Mode didn\'t help, click here to <a href="%s" target="_blank">Troubleshoot</a>', 'elementor' ), $didnt_help_url ); ?></p>
 			</div>
 		</div>
 
@@ -218,32 +267,19 @@ class Module extends \Elementor\Core\Base\Module {
 			],
 			admin_url( 'admin.php' )
 		);
+		echo $this->print_safe_mode_css();
 		?>
-		<style>
-			#elementor-try-safe-mode {
-				display: none;
-				position: absolute;
-				z-index: 3;
-				bottom: 0;
-				min-width: 200px;
-				height: 100px;
-				line-height: 30px;
-				background: white;
-				right: 150px;
-				text-align: left;
-			}
-
-			#elementor-try-safe-mode a{
-				color: white;
-				background: #0f9d58;
-			}
-		</style>
-		<div id="elementor-try-safe-mode">
-			<a class="elementor-enable-safe-mode" target="_blank" href="<?php echo $tools_url; ?>">
-				<?php echo __( 'Enable Safe Mode', 'elementor' ); ?>
-			</a>
-
-			<?php echo __( 'Try loading Elementor in \'Safe Mode\' (don\'t worry, it won\'t affect the websites)', '' ); ?>
+		<div class="elementor-safe-mode-toast" id="elementor-try-safe-mode">
+			<header>
+				<i class="eicon-warning"></i>
+				<h2><?php echo __( 'Can\'t Edit?', 'elementor' ); ?></h2>
+				<a class="elementor-safe-mode-button" target="_blank" href="<?php echo $tools_url; ?>">
+					<?php echo __( 'Enable Safe Mode', 'elementor' ); ?>
+				</a>
+			</header>
+			<div class="elementor-toast-content">
+				<?php echo __( 'Try loading Elementor in \'Safe Mode\' (don\'t worry, it won\'t affect the websites)', '' ); ?>
+			</div>
 		</div>
 
 		<script>
@@ -271,6 +307,7 @@ class Module extends \Elementor\Core\Base\Module {
 				};
 
 				var isElementorLoaded = function() {
+
 					if ( ! elementor ) {
 						return false;
 					}
