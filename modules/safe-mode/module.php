@@ -306,7 +306,7 @@ class Module extends \Elementor\Core\Base\Module {
 				};
 
 				var isElementorLoaded = function() {
-					return false;
+
 					if ( ! elementor ) {
 						return false;
 					}
