@@ -107,7 +107,8 @@ class Module extends \Elementor\Core\Base\Module {
 		return ELEMENTOR_PATH . 'modules/page-templates/templates/header-footer.php';
 	}
 
-	public function print_safe_mode_css() { ?>
+	public function print_safe_mode_css() {
+		?>
 		<style>
 			.elementor-safe-mode-toast {
 				position: absolute;
