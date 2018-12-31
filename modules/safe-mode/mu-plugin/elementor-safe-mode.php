@@ -80,11 +80,7 @@ class Safe_Mode {
 		} );
 
 		add_action( 'elementor/init', function () {
-			/** @var Elementor\Modules\SafeMode\Module $module */
-			$module = \Elementor\Plugin::$instance->modules_manager->get_modules( 'safe-mode' );
-			if ( $module ) {
-				$module->run_safe_mode();
-			}
+			do_action( 'elementor/safe_mode/init' );
 		} );
 	}
 }
