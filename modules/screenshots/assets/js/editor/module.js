@@ -11,7 +11,7 @@ var Module = function() {
 		var url = elementor.config.document.urls.preview.replace( 'elementor-preview', 'elementor-screenshot' );
 		var iframe = document.createElement( 'iframe' );
 		iframe.src = url;
-		iframe.width = '1000';
+		iframe.width = '1300';
 		iframe.style = 'visibable: hidden;';
 		jQuery( 'body' ).append( iframe );
 	};

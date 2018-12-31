@@ -1,26 +1,17 @@
+/* global ElementorScreenshotConfig, elementorCommon */
 var ScreenshotModule = function() {
 	var createScreenshot = function() {
-		var $elementor = jQuery( ElementorScreenshotConfig.selector ),
-			canvas = document.createElement( 'canvas' );
+		var $elementor = jQuery( ElementorScreenshotConfig.selector );
+
 		if ( ! $elementor.length ) {
 			console.log( 'Screenshots: Elementor content was not found.' );
 			return;
 		}
 
-		canvas.width = $elementor.width();
-		canvas.height = $elementor.height();
-
-		// This tags causes browser crash
-		jQuery( 'head' ).find( 'link[rel=prev], link[rel=next]' ).remove();
-
-		var $html = jQuery( 'html' ).clone();
-
-		$html.find( 'script' ).remove();
-
-		rasterizeHTML.drawHTML( $html.html(), canvas, {
-			width: $elementor.width(),
-			height: $elementor.height()
-		} ).then( function( renderResult ) {
+		html2canvas( document.querySelector( ElementorScreenshotConfig.selector ), {
+			useCORS: true,
+			foreignObjectRendering: true,
+		} ).then( function( canvas ) {
 			var cropCanvas = document.createElement( 'canvas' ),
 				cropContext = cropCanvas.getContext( '2d' ),
 				ratio = 500 / canvas.width;
@@ -28,22 +19,20 @@ var ScreenshotModule = function() {
 			cropCanvas.width = 500;
 			cropCanvas.height = 700;
 
-			jQuery( 'body' ) .append( renderResult.image );
+			// jQuery( 'body' ) .append( renderResult.image );
 
 			cropContext.drawImage( canvas, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width * ratio, canvas.height * ratio );
 
-			jQuery.ajax( ElementorScreenshotConfig.ajax_url, {
-				method: 'POST',
+			elementorCommon.ajax.addRequest( 'screenshot_save', {
 				data: {
-					action: 'elementor_save_screenshot',
-					post_id: ElementorScreenshotConfig.post_id,
-			screenshot: cropCanvas.toDataURL( 'image/png' )
-		}
+					post_id: elementorFrontendConfig.post.id,
+					screenshot: cropCanvas.toDataURL( 'image/png' ),
+				},
+			} );
 		} );
-		});
 	};
 
-	var screenshotProxy = function( url ){
+	var screenshotProxy = function( url ) {
 		url = ElementorScreenshotConfig.home_url + '?screenshot_proxy&nonce=' + ElementorScreenshotConfig.nonce + '&href=' + url;
 
 		return url;
@@ -58,10 +47,10 @@ var ScreenshotModule = function() {
 				var $iframe = jQuery( this ),
 					$iframeMask = jQuery( '<div />', {
 						css: {
-							'background': 'gray',
-							'width': $iframe.width(),
-							'height': $iframe.height()
-						}
+							background: 'gray',
+							width: $iframe.width(),
+							height: $iframe.height(),
+						},
 					} );
 
 				if ( $iframe.next().is( '.elementor-custom-embed-image-overlay' ) ) {
@@ -74,11 +63,11 @@ var ScreenshotModule = function() {
 					} );
 
 					$iframeMask.append( jQuery( '<img />', {
-						src: matches[1],
+						src: matches[ 1 ],
 						css: {
-							'width': $iframe.width(),
-							'height': $iframe.height()
-						}
+							width: $iframe.width(),
+							height: $iframe.height(),
+						},
 					} ) );
 
 					$iframe.next().remove();
@@ -90,25 +79,23 @@ var ScreenshotModule = function() {
 						src: screenshotProxy( 'https://img.youtube.com/vi/' + matches[1] + '/0.jpg' ),
 						crossOrigin: 'Anonymous',
 						css: {
-							'width': $iframe.width(),
-							'height': $iframe.height()
-						}
+							width: $iframe.width(),
+							height: $iframe.height(),
+						},
 					} ) );
 				}
 
 				$iframe.before( $iframeMask );
 				$iframe.remove();
-			});
+			} );
 
 			$elementor.find( '.elementor-slides' ).each( function() {
 				var $this = jQuery( this );
-				$this.attr( 'data-slider_options', $this.attr( 'data-slider_options' ).replace( '"autoplay":true', '"autoplay":false'));
-			});
+				$this.attr( 'data-slider_options', $this.attr( 'data-slider_options' ).replace( '"autoplay":true', '"autoplay":false' ) );
+			} );
 
-			setTimeout( function() {
-				createScreenshot();
-			}, 5000	);
-		});
+			setTimeout( createScreenshot, 5000 );
+		} );
 	};
 
 	init();

@@ -1,12 +1,8 @@
 <?php
 namespace Elementor\Modules\Screenshots;
 
-use Elementor\Core\Ajax_Manager;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Plugin;
-use Elementor\TemplateLibrary\Source_Local;
 use Elementor\User;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -19,28 +15,28 @@ class Module extends BaseModule {
 	}
 
 	public function screenshot_proxy() {
-		if ( ! wp_verify_nonce( $_REQUEST['nonce'], 'screenshot_proxy' ) ) {
+		if ( ! wp_verify_nonce( $_GET['nonce'], 'screenshot_proxy' ) ) {
 			echo '';
 		}
 
-		if ( ! empty( $_REQUEST['href'] ) ) {
-			$response = wp_remote_get( utf8_decode( $_REQUEST['href'] ) );
-			$body =  wp_remote_retrieve_body( $response );
+		if ( ! empty( $_GET['href'] ) ) {
+			$response = wp_remote_get( utf8_decode( $_GET['href'] ) );
+			$body = wp_remote_retrieve_body( $response );
 			if ( $body ) {
 				echo $body;
 			}
 		}
 	}
 
-	public function save_screenshot() {
-		if ( empty( $_REQUEST['screenshot'] ) ) {
-			return;
+	public function ajax_save( $data ) {
+		if ( empty( $data['screenshot'] ) ) {
+			return false;
 		}
 
-		$post_id = $_REQUEST['post_id'];
-		$file_content = substr( $_REQUEST['screenshot'], strlen( 'data:image/png;base64,' ) );
+		$post_id = $data['post_id'];
+
+		$file_content = substr( $data['screenshot'], strlen( 'data:image/png;base64,' ) );
 		$file_name = 'Elementor Post Screenshot ' . $post_id . '.png';
-		$attachment_data = get_post_meta( $post_id, '_elementor_screenshot', true );
 		$over_write_file_name_callback = function () use ( $file_name ) {
 			return $file_name;
 		};
@@ -49,14 +45,16 @@ class Module extends BaseModule {
 
 		$upload = wp_upload_bits(
 			$file_name,
-			'',
+			null,
 			base64_decode( $file_content )
 		);
 
 		remove_filter( 'wp_unique_filename', $over_write_file_name_callback );
 
+		$attachment_data = get_post_meta( $post_id, '_elementor_screenshot', true );
+
 		if ( $attachment_data ) {
-			return;
+			return $attachment_data['url'];
 		}
 
 		$post = [
@@ -65,6 +63,7 @@ class Module extends BaseModule {
 		];
 
 		$info = wp_check_filetype( $upload['file'] );
+
 		if ( $info ) {
 			$post['post_mime_type'] = $info['type'];
 		}
@@ -82,14 +81,20 @@ class Module extends BaseModule {
 			$attachment_id,
 			wp_generate_attachment_metadata( $attachment_id, $upload['file'] )
 		);
+
+		return $upload['url'];
 	}
 
 	public function enqueue_scripts() {
+		if ( ! isset( $_REQUEST['elementor-screenshot'] ) || ! User::is_current_user_can_edit() ) { // WPCS: CSRF ok.
+			return;
+		}
+
 		wp_enqueue_script(
-			'rasterize-html',
-			ELEMENTOR_URL . 'modules/screenshots/assets/js/rasterizeHTML.js-master/dist/rasterizeHTML.allinone.js',
+			'html2canvas',
+			ELEMENTOR_URL . 'modules/screenshots/assets/js/html2canvas.min.js',
 			[],
-			'10-06-2017',
+			'1.0.0-alpha.12',
 			true
 		);
 
@@ -97,7 +102,7 @@ class Module extends BaseModule {
 			'elementor-screenshot',
 			ELEMENTOR_URL . 'modules/screenshots/assets/js/frontend/screenshot.js',
 			[
-				'rasterize-html'
+				'html2canvas',
 			],
 			ELEMENTOR_VERSION . time(),
 			true
@@ -107,34 +112,31 @@ class Module extends BaseModule {
 
 		$config = [
 			'selector' => '.elementor-' . $post_id,
-			'post_id' => $post_id,
 			'nonce' => wp_create_nonce( 'screenshot_proxy' ),
 			'home_url' => home_url(),
-			'ajax_url' => admin_url( '/admin-ajax.php' ),
 		];
 
 		wp_add_inline_script( 'elementor-screenshot', 'var ElementorScreenshotConfig = ' . json_encode( $config ) . ';' );
+
+		$css = new \Elementor\Core\Files\CSS\Post_Preview( $post_id );
+		$css->enqueue();
 	}
 
-	public function template_redirect() {
-		if ( isset( $_REQUEST['elementor-screenshot'] ) && User::is_current_user_can_edit() ) { // WPCS: CSRF ok.
-			remove_action( 'template_redirect', 'redirect_canonical' );
-			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-			add_filter('show_admin_bar', '__return_false');
-			add_filter( 'template_include', [ $this, 'template_include' ], 12 /* After WooCommerce & Elementor Pro - Locations Manager */ );
-		}
-	}
-
-	public function template_include() {
-		return  __DIR__ . '/templates/screenshot.php';
+	/**
+	 * @param \Elementor\Core\Common\Modules\Ajax\Module $ajax_manager
+	 */
+	public function register_ajax_actions( $ajax_manager ) {
+		$ajax_manager->register_ajax_action( 'screenshot_save', [ $this, 'ajax_save' ] );
 	}
 
 	public function __construct() {
-		add_filter( 'template_redirect', [ $this, 'template_redirect' ], 0 );
-		add_action( 'wp_ajax_elementor_save_screenshot', [ $this, 'save_screenshot' ] );
 		if ( isset( $_REQUEST['screenshot_proxy'] ) ) {
 			$this->screenshot_proxy();
 			die;
 		}
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 1000 );
+
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 }
