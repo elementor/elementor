@@ -328,6 +328,10 @@ var HandlesPosition = HandlerModule.extend( {
         return this.$element.offset().top;
     },
 
+	isPopup: function() {
+		return 'popup' === elementor.config.document.type;
+	},
+
     setHandlesPosition: function() {
         var self = this;
 
@@ -336,7 +340,7 @@ var HandlesPosition = HandlerModule.extend( {
                 $handlesElement = self.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
                 insideHandleClass = 'elementor-section--handles-inside';
 
-            if ( offset < 25 ) {
+            if ( offset < 25 || self.isPopup() ) {
                 self.$element.addClass( insideHandleClass );
 
                 if ( offset < -5 ) {
