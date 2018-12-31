@@ -185,7 +185,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'insert_url',
 			[
-				'label' => __( 'Insert URL', 'elementor' ),
+				'label' => __( 'External URL', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
 					'video_type' => 'hosted',
@@ -229,6 +229,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'media_type' => 'video',
+				'placeholder' => __( 'Enter your URL', 'elementor' ),
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_url' => 'yes',
@@ -489,7 +490,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'image_overlay',
 			[
-				'label' => __( 'Image', 'elementor' ),
+				'label' => __( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
