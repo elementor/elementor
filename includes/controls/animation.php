@@ -119,7 +119,6 @@ class Control_Animation extends Base_Data_Control {
 			self::$_animations = apply_filters( 'elementor/controls/animations', self::$_animations );
 		}
 
-
 		return self::$_animations;
 	}
 

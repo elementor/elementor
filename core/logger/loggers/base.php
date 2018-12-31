@@ -77,7 +77,7 @@ abstract class Base implements Logger_Interface {
 
 		foreach ( $entries as $entry ) {
 			/** @var Log_Item $entry */
-			$sorted_entries[ $entry->get_name() ][] = $open_tag . $entry->format( $format ) . $close_tab;
+			$sorted_entries[ $entry->get_name() ][] = $open_tag . esc_html( $entry->format( $format ) ) . $close_tab;
 		}
 
 		$formatted_entries = [];
