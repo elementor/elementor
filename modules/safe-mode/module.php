@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\SafeMode;
 
+use Elementor\Settings;
 use Elementor\Tools;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 
@@ -11,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends \Elementor\Core\Base\Module {
 
 	const OPTION_ENABLED = 'elementor_safe_mode';
+	const DOCS_HELPED_URL = 'https://go.elementor.com/safe-mode-helped/';
+	const DOCS_DIDNT_HELP_URL = 'https://go.elementor.com/safe-mode-didnt-helped/';
 
 	public function get_name() {
 		return 'safe-mode';
@@ -25,20 +28,18 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @param Tools $tools_page
 	 */
 	public function add_admin_button( $tools_page ) {
-		$tools_page->add_tab( 'safe_mode', [
-			'label' => __( 'Safe mode', 'elementor' ),
-			'sections' => [
-				'safe_mode' => [
-					'fields' => [
-						'safe_mode' => [
-							'label' => __( 'Enable Safe Mode', 'elementor' ),
-							'field_args' => [
-								'type' => 'checkbox',
-								'value' => 'global',
-								'sub_desc' => __( 'Enable Safe mode. <a href="#">Learn More</a>.', 'elementor' ),
-							],
-						],
+		$tools_page->add_fields( Settings::TAB_GENERAL, 'tools', [
+			'safe_mode' => [
+				'label' => __( 'Safe Mode', 'elementor' ),
+				'field_args' => [
+					'type' => 'select',
+					'std' => $this->is_enabled(),
+					'options' => [
+						'' => __( 'Disable', 'elementor' ),
+						'global' => __( 'Enable', 'elementor' ),
+
 					],
+					'sub_desc' => sprintf( __( 'Enable Safe mode. <a href="#">Learn More</a>.', 'elementor' ), '' ),
 				],
 			],
 		] );
@@ -104,7 +105,7 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function filter_template() {
-		return ELEMENTOR_PATH . 'modules/page-templates/templates/header-footer.php';
+		return ELEMENTOR_PATH . 'modules/page-templates/templates/canvas.php';
 	}
 
 	public function print_safe_mode_css() {
@@ -112,7 +113,7 @@ class Module extends \Elementor\Core\Base\Module {
 		<style>
 			.elementor-safe-mode-toast {
 				position: absolute;
-				z-index: 3;
+				z-index: 10000; /* Over the loading layer */
 				bottom: 50px;
 				right: 50px;
 				width: 400px;
@@ -195,31 +196,21 @@ class Module extends \Elementor\Core\Base\Module {
 <?php	}
 
 	public function print_safe_mode_notice() {
-		// A fallback URL if the Js doesn't work.
-		$tools_url = add_query_arg(
-			[
-				'page' => 'elementor-tools#tab-safe_mode',
-			],
-			admin_url( 'admin.php' )
-		);
-
-		$helped_url = 'https://go.elementor.com/safe-mode-helped/';
-		$didnt_help_url = 'https://go.elementor.com/safe-mode-didnt-helped/';
 		echo $this->print_safe_mode_css();
 		?>
 		<div class="elementor-safe-mode-toast" id="elementor-safe-mode-message">
 			<header>
 				<i class="eicon-warning"></i>
 				<h2><?php echo __( 'Safe Mode ON', 'elementor' ); ?></h2>
-				<a class="elementor-safe-mode-button elementor-disable-safe-mode" target="_blank" href="<?php echo $tools_url; ?>">
+				<a class="elementor-safe-mode-button elementor-disable-safe-mode" target="_blank" href="<?php echo $this->get_admin_page_url(); ?>">
 					<?php echo __( 'Disable Safe Mode', 'elementor' ); ?>
 				</a>
 			</header>
 
 			<div class="elementor-toast-content">
-				<p><?php printf( __( 'If \'Safe Mode\' helped, the problem was caused by one of your plugins or theme. To resolve this issue please <a href="%s" target="_blank">click here</a>', 'elementor' ), $helped_url ); ?></p>
+				<p><?php printf( __( 'If \'Safe Mode\' helped, the problem was caused by one of your plugins or theme. To resolve this issue please <a href="%s" target="_blank">click here</a>', 'elementor' ), self::DOCS_HELPED_URL ); ?></p>
 				<hr>
-				<p><?php printf( __( 'If Safe Mode didn\'t help, <a href="%s" target="_blank">click here to Troubleshoot</a>', 'elementor' ), $didnt_help_url ); ?></p>
+				<p><?php printf( __( 'If Safe Mode didn\'t help, <a href="%s" target="_blank">click here to Troubleshoot</a>', 'elementor' ), self::DOCS_DIDNT_HELP_URL ); ?></p>
 			</div>
 		</div>
 
@@ -260,20 +251,13 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function print_try_safe_mode() {
-		// A fallback URL if the Js doesn't work.
-		$tools_url = add_query_arg(
-			[
-				'page' => 'elementor-tools#tab-safe_mode',
-			],
-			admin_url( 'admin.php' )
-		);
 		echo $this->print_safe_mode_css();
 		?>
 		<div class="elementor-safe-mode-toast" id="elementor-try-safe-mode">
 			<header>
 				<i class="eicon-warning"></i>
 				<h2><?php echo __( 'Can\'t Edit?', 'elementor' ); ?></h2>
-				<a class="elementor-safe-mode-button" target="_blank" href="<?php echo $tools_url; ?>">
+				<a class="elementor-safe-mode-button" target="_blank" href="<?php echo $this->get_admin_page_url(); ?>">
 					<?php echo __( 'Enable Safe Mode', 'elementor' ); ?>
 				</a>
 			</header>
@@ -308,11 +292,11 @@ class Module extends \Elementor\Core\Base\Module {
 
 				var isElementorLoaded = function() {
 
-					if ( ! elementor ) {
+					if ( ! elementor || ! elementor.$preview || ! elementor.$preview[ 0 ] ) {
 						return false;
 					}
 
-					var previewWindow = elementor.$preview[ 0 ].contentWindow;
+					var previewWindow = elementor.$preview[0].contentWindow;
 
 					if ( ! previewWindow.elementorFrontend ) {
 						return false;
@@ -352,7 +336,12 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	private function is_enabled() {
-		return get_option( self::OPTION_ENABLED );
+		return get_option( self::OPTION_ENABLED, '' );
+	}
+
+	private function get_admin_page_url() {
+		// A fallback URL if the Js doesn't work.
+		return Tools::get_url();
 	}
 
 	public function __construct() {
