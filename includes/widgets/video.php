@@ -216,8 +216,9 @@ class Widget_Video extends Widget_Base {
 			'external_url',
 			[
 				'label' => __( 'URL', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'Enter your URL', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'autocomplete' => false,
+				'show_external' => false,
 				'label_block' => true,
 				'show_label' => false,
 				'dynamic' => [
@@ -227,6 +228,7 @@ class Widget_Video extends Widget_Base {
 						TagsModule::URL_CATEGORY,
 					],
 				],
+				'media_type' => 'video',
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_url' => 'yes',
@@ -1041,7 +1043,7 @@ class Widget_Video extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 
 		if ( ! empty( $settings['insert_url'] ) ) {
-			$video_url = $settings['external_url'];
+			$video_url = $settings['external_url']['url'];
 		} else {
 			$video_url = $settings['hosted_url']['url'];
 		}
