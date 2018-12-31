@@ -46,7 +46,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	public function on_runner_complete() {
 		$logger = Plugin::$instance->logger->get_logger();
 
-		$logger->info( 'Update DB completed', [
+		$logger->info( 'Update database completed', [
 			'meta' => [
 				'plugin' => $this->get_plugin_label(),
 				'from' => $this->current_version,
@@ -72,7 +72,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	public function admin_notice_upgrade_is_running() {
 		$upgrade_link = $this->get_continue_action_url();
 		$message = '<p>' . sprintf( __( '%s is updating the database in background..', 'elementor' ), $this->get_plugin_label() ) . '</p>';
-		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Run immediately', 'elementor' ) ) . '</p>';
+		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Run Immediately', 'elementor' ) ) . '</p>';
 
 		echo '<div class="notice notice-warning">' . $message . '</div>';
 	}
@@ -110,7 +110,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$updater->save()->dispatch();
 
-		Plugin::$instance->logger->get_logger()->info( 'Update DB has been queued', [
+		Plugin::$instance->logger->get_logger()->info( 'Update database has been queued', [
 			'meta' => [
 				'plugin' => $this->get_plugin_label(),
 				'from' => $this->current_version,

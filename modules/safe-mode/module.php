@@ -309,7 +309,7 @@ class Module extends \Elementor\Core\Base\Module {
 				</a>
 			</header>
 			<div class="elementor-toast-content">
-				<?php printf( __( 'There’s a problem loading Elementor. Please activate Safe Mode to troubleshoot the problem Enable Safe Mode | <a href="%s" target="_blank">Learn More</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL ); ?>
+				<?php printf( __( 'There’s a problem loading Elementor? Please enable Safe Mode to troubleshoot the problem. <a href="%s" target="_blank">Learn More.</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL ); ?>
 			</div>
 		</div>
 
