@@ -356,6 +356,9 @@ class DB {
 				$data_container['elements'] = $this->iterate_data( $data_container['elements'], $callback, $args );
 			}
 
+			if ( empty( $args ) ) {
+				return call_user_func( $callback, $data_container );
+			}
 			return call_user_func( $callback, $data_container, $args );
 		}
 
