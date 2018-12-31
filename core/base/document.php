@@ -417,6 +417,7 @@ abstract class Document extends Controls_Stack {
 			'remote_type' => $this->get_remote_library_type(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),
+			'container' => 'body',
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
 				'preview' => $this->get_preview_url(),
