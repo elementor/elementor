@@ -14,6 +14,8 @@ class Module extends \Elementor\Core\Base\Module {
 	const OPTION_ENABLED = 'elementor_safe_mode';
 	const DOCS_HELPED_URL = 'https://go.elementor.com/safe-mode-helped/';
 	const DOCS_DIDNT_HELP_URL = 'https://go.elementor.com/safe-mode-didnt-helped/';
+	const DOCS_MU_PLUGINS_URL = '';
+	const DOCS_TRY_SAFE_MODE_URL = '';
 
 	public function get_name() {
 		return 'safe-mode';
@@ -39,7 +41,7 @@ class Module extends \Elementor\Core\Base\Module {
 						'global' => __( 'Enable', 'elementor' ),
 
 					],
-					'sub_desc' => sprintf( __( 'Enable Safe mode. <a href="#">Learn More</a>.', 'elementor' ), '' ),
+					'desc' => __( 'Safe Mode allows you to troubleshoot issues by only loading the editor, without loading the theme or any other plugin.', 'elementor' ),
 				],
 			],
 		] );
@@ -193,7 +195,8 @@ class Module extends \Elementor\Core\Base\Module {
 				color: #495157;
 			}
 		</style>
-<?php	}
+		<?php
+	}
 
 	public function print_safe_mode_notice() {
 		echo $this->print_safe_mode_css();
@@ -208,9 +211,25 @@ class Module extends \Elementor\Core\Base\Module {
 			</header>
 
 			<div class="elementor-toast-content">
-				<p><?php printf( __( 'If \'Safe Mode\' helped, the problem was caused by one of your plugins or theme. To resolve this issue please <a href="%s" target="_blank">click here</a>', 'elementor' ), self::DOCS_HELPED_URL ); ?></p>
+				<p>
+					<?php echo __( 'Safe Mode has been activated.', 'elementor' ); ?>
+				</p>
 				<hr>
-				<p><?php printf( __( 'If Safe Mode didn\'t help, <a href="%s" target="_blank">click here to Troubleshoot</a>', 'elementor' ), self::DOCS_DIDNT_HELP_URL ); ?></p>
+				<p>
+					<?php printf( __( 'Editor loaded successfully? The issue was probably caused by one of your plugins or theme. <a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_HELPED_URL ); ?>
+				</p>
+				<hr>
+				<p>
+					<?php printf( __( 'Still having loading issues? <a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_DIDNT_HELP_URL ); ?>
+				</p>
+				<?php
+				$mu_plugins = wp_get_mu_plugins();
+				if ( 1 < count( $mu_plugins ) ) : ?>
+					<hr>
+					<p>
+						<?php printf( __( 'Please note! We couldn\'t deactivate all of your plugins on Safe Mode. Please <a href="%s" target="_blank">read more</a> about this issue.', 'elementor' ), self::DOCS_MU_PLUGINS_URL ); ?>
+					</p>
+					<?php endif; ?>
 			</div>
 		</div>
 
@@ -262,7 +281,7 @@ class Module extends \Elementor\Core\Base\Module {
 				</a>
 			</header>
 			<div class="elementor-toast-content">
-				<?php echo __( 'Try loading Elementor in \'Safe Mode\' (don\'t worry, it won\'t affect the websites)', 'elementor' ); ?>
+				<?php printf( __( 'There’s a problem loading Elementor. Please activate Safe Mode to troubleshoot the problem Enable Safe Mode | <a href="%s" target="_blank">Learn More</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL ); ?>
 			</div>
 		</div>
 
