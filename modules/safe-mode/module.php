@@ -309,7 +309,7 @@ class Module extends \Elementor\Core\Base\Module {
 				</a>
 			</header>
 			<div class="elementor-toast-content">
-				<?php printf( __( 'There’s a problem loading Elementor. Please activate Safe Mode to troubleshoot the problem Enable Safe Mode | <a href="%s" target="_blank">Learn More</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL ); ?>
+				<?php printf( __( 'There’s a problem loading Elementor. Please activate Safe Mode to troubleshoot the problem Enable Safe Mode | <a href="%1$s" target="_blank">%2$s</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL, __( 'Learn More', 'elementor' ) ); ?>
 			</div>
 		</div>
 
@@ -378,6 +378,9 @@ class Module extends \Elementor\Core\Base\Module {
 
 	public function run_safe_mode() {
 		remove_action( 'elementor/editor/footer', [ $this, 'print_try_safe_mode' ] );
+
+		// Avoid notices like for comment.php.
+		add_filter( 'deprecated_file_trigger_error', '__return_false' );
 
 		add_filter( 'template_include', [ $this, 'filter_template' ], 999 );
 		add_filter( 'elementor/document/urls/preview', [ $this, 'filter_preview_url' ] );
