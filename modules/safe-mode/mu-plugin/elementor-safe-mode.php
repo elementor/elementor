@@ -2,11 +2,11 @@
 
 /**
  * Plugin Name: Elementor Safe Mode
- * Description: Enter to Elementor Editor in safe mode.
- * Plugin URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
+ * Description: Safe Mode allows you to troubleshoot issues by only loading the editor, without loading the theme or any other plugin.
+ * Plugin URI: https://elementor.com/?utm_source=wp-mu-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Author: Elementor.com
- * Version: 0.0.1
- * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
+ * Version: 1.0.0
+ * Author URI: https://elementor.com/?utm_source=wp-mu-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  *
  * Text Domain: elementor
  *
