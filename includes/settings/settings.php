@@ -98,14 +98,14 @@ class Settings extends Settings_Page {
 		$elementor_separator = array_search( 'separator-elementor', $menu_order, true );
 
 		// Get index of library menu.
-		$elementor_library = array_search( 'edit.php?post_type=elementor_library', $menu_order, true );
+		$elementor_library = array_search( Source_Local::ADMIN_MENU_SLUG, $menu_order, true );
 
 		// Loop through menu order and do some rearranging.
 		foreach ( $menu_order as $index => $item ) {
 			if ( 'elementor' === $item ) {
 				$elementor_menu_order[] = 'separator-elementor';
 				$elementor_menu_order[] = $item;
-				$elementor_menu_order[] = 'edit.php?post_type=elementor_library';
+				$elementor_menu_order[] = Source_Local::ADMIN_MENU_SLUG;
 
 				unset( $menu_order[ $elementor_separator ] );
 				unset( $menu_order[ $elementor_library ] );
@@ -147,8 +147,8 @@ class Settings extends Settings_Page {
 			[ $this, 'handle_external_redirects' ]
 		);
 
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Builder', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
+		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, __( 'Theme Templates', 'elementor' ), __( 'Theme Builder', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
+		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
 	}
 
 	/**

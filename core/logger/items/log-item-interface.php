@@ -5,6 +5,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Interface Log_Item_Interface
+ *
+ * @package Elementor\Core\Logger
+ *
+ * @property string $date
+ * @property string $type
+ * @property string $message
+ * @property int $times
+ * @property array $meta
+ * @property array $times_dates
+ * @property array $args
+ *
+ */
+
 interface Log_Item_Interface extends \JsonSerializable {
 
 	/**

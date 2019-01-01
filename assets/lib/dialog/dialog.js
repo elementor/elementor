@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.5.1
+ * Dialogs Manager v4.6.0
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -271,6 +271,8 @@
 
 			self.addElement('window', window);
 
+			self.addElement('body', document.body);
+
 			self.addElement('container', settings.container);
 
 			if (settings.iframe) {
@@ -304,12 +306,14 @@
 				effects: parentSettings.effects,
 				classes: {
 					globalPrefix: parentSettings.classPrefix,
-					prefix: parentSettings.classPrefix + '-' + widgetName
+					prefix: parentSettings.classPrefix + '-' + widgetName,
+					preventScroll: parentSettings.classPrefix + '-prevent-scroll'
 				},
 				selectors: {
 					preventClose: '.' + parentSettings.classPrefix + '-prevent-close'
 				},
 				container: 'body',
+				preventScroll: false,
 				iframe: null,
 				position: {
 					element: 'widget',
@@ -454,6 +458,10 @@
 			callEffect('hide', arguments);
 
 			unbindEvents();
+
+			if (settings.preventScroll) {
+				self.getElements('body').removeClass(settings.classes.preventScroll);
+			}
 
 			self.trigger('hide');
 
@@ -600,6 +608,10 @@
 			}
 
 			bindEvents();
+
+			if (settings.preventScroll) {
+				self.getElements('body').addClass(settings.classes.preventScroll);
+			}
 
 			self.trigger('show');
 
