@@ -43,7 +43,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		return version_compare( $this->get_new_version(), $current_version, '>' );
 	}
 
-	public function on_runner_complete() {
+	public function on_runner_complete( $did_tasks = false ) {
 		$logger = Plugin::$instance->logger->get_logger();
 
 		$logger->info( 'Update database completed', [
@@ -58,7 +58,9 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$this->update_db_version();
 
-		$this->add_flag( 'completed' );
+		if ( $did_tasks ) {
+			$this->add_flag( 'completed' );
+		}
 	}
 
 	public function admin_notice_start_upgrade() {
