@@ -169,10 +169,10 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$updater = $this->get_task_runner();
 
+		$this->start_run();
+
 		if ( $updater->is_running() ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_running' ] );
-		} else {
-			add_action( 'admin_notices', [ $this, 'admin_notice_start_upgrade' ] );
 		}
 
 		parent::__construct();
