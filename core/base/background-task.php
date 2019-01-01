@@ -85,7 +85,7 @@ abstract class Background_Task extends \WP_Background_Process {
 	 * performed, or, call parent::complete().
 	 */
 	protected function complete() {
-		$this->manager->on_runner_complete();
+		$this->manager->on_runner_complete( true );
 
 		parent::complete();
 	}
