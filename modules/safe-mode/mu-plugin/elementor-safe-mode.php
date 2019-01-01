@@ -32,24 +32,6 @@ class Safe_Mode {
 
 	const OPTION_ENABLED = 'elementor_safe_mode';
 
-	public function __construct() {
-		$enabled_type = $this->is_enabled();
-
-		if ( ! $enabled_type ) {
-			return;
-		}
-
-		if ( ! $this->is_requested() && 'global' !== $enabled_type ) {
-			return;
-		}
-
-		if ( ! $this->is_editor() && ! $this->is_editor_preview() ) {
-			return;
-		}
-
-		$this->add_hooks();
-	}
-
 	public function is_enabled() {
 		return get_option( self::OPTION_ENABLED );
 	}
@@ -82,6 +64,54 @@ class Safe_Mode {
 		add_action( 'elementor/init', function () {
 			do_action( 'elementor/safe_mode/init' );
 		} );
+	}
+
+	/**
+	 * Plugin row meta.
+	 *
+	 * Adds row meta links to the plugin list table
+	 *
+	 * Fired by `plugin_row_meta` filter.
+	 *
+	 * @access public
+	 *
+	 * @param array  $plugin_meta An array of the plugin's metadata, including
+	 *                            the version, author, author URI, and plugin URI.
+	 * @param string $plugin_file Path to the plugin file, relative to the plugins
+	 *                            directory.
+	 *
+	 * @return array An array of plugin row meta links.
+	 */
+	public function plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ) {
+		if ( basename( __FILE__ ) === $plugin_file ) {
+			$row_meta = [
+				'docs' => '<a href="https://go.elementor.com/safe-mode/" aria-label="' . esc_attr( __( 'View Documentation', 'elementor' ) ) . '" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+			];
+
+			$plugin_meta = array_merge( $plugin_meta, $row_meta );
+		}
+
+		return $plugin_meta;
+	}
+
+	public function __construct() {
+		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 4 );
+
+		$enabled_type = $this->is_enabled();
+
+		if ( ! $enabled_type ) {
+			return;
+		}
+
+		if ( ! $this->is_requested() && 'global' !== $enabled_type ) {
+			return;
+		}
+
+		if ( ! $this->is_editor() && ! $this->is_editor_preview() ) {
+			return;
+		}
+
+		$this->add_hooks();
 	}
 }
 
