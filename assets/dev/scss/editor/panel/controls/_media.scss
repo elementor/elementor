@@ -1,9 +1,8 @@
 .elementor-control-type-media {
 
-	.elementor-control-media {
+	.elementor-control-input-wrapper {
 		padding: 7px;
 		border: 1px solid;
-		height: 150px;
 		transition: all .2s ease-in-out;
 
 		&:not(:hover) {
@@ -21,6 +20,10 @@
 				background-color: $editor-light;
 			}
 		}
+	}
+
+	.elementor-control-media {
+		cursor: pointer;
 
 		&.elementor-media-empty {
 
@@ -35,12 +38,6 @@
 				display: none;
 			}
 		}
-
-		> * {
-			height: 100%;
-			cursor: pointer;
-			position: relative;
-		}
 	}
 
 	.fa-plus-circle {
@@ -53,7 +50,6 @@
 	}
 
 	.elementor-control-media-area {
-
 		background-image: linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd);
 		background-size: 16px 16px;
 		background-position: 0 0, 8px 8px;

@@ -13,6 +13,7 @@
 .dialog-message {
 	font-size: 12px;
 	line-height: 1.5;
+	box-sizing: border-box;
 }
 
 .dialog-type-lightbox{
@@ -108,6 +109,10 @@
 			width: 100%;
 		}
 	}
+}
+
+.dialog-prevent-scroll {
+	overflow: hidden;
 }
 
 @media (max-width: $editor-screen-sm-max) {

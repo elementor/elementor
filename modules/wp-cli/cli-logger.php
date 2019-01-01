@@ -1,19 +1,29 @@
 <?php
 namespace Elementor\Modules\WpCli;
 
-use Elementor\Core\Logger\Loggers\Base as Loggers_Base;
+use Elementor\Core\Logger\Loggers\Db;
 use Elementor\Core\Logger\Items\Log_Item_Interface as Log_Item_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Cli_Logger extends Loggers_Base {
-	public function save_log( Log_Item_Interface $item ) {
-		\WP_CLI::log( $item );
-	}
+class Cli_Logger extends Db {
 
-	protected function get_log() {
-		return [];
+	public function save_log( Log_Item_Interface $item ) {
+		$message = $item->format( 'raw' );
+		switch ( $item->type ) {
+			case self::LEVEL_WARNING:
+				\WP_CLI::warning( $message );
+				break;
+			case self::LEVEL_ERROR:
+				\WP_CLI::error( $message, false );
+				break;
+			default:
+				\WP_CLI::log( $message );
+				break;
+		}
+
+		parent::save_log( $item );
 	}
 }

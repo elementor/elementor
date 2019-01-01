@@ -108,6 +108,15 @@ class Control_Animation extends Base_Data_Control {
 					'rollIn' => 'Roll In',
 				],
 			];
+
+			/**
+			 * Element appearance animations list.
+			 *
+			 * @since 2.4.0
+			 *
+			 * @param array $_animations Animations array.
+			 */
+			self::$_animations = apply_filters( 'elementor/controls/animations', self::$_animations );
 		}
 
 		return self::$_animations;
