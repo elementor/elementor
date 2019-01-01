@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends \Elementor\Core\Base\Module {
 
 	const OPTION_ENABLED = 'elementor_safe_mode';
+	const MU_PLUGIN_FILE_NAME = 'elementor-safe-mode.php';
 	const DOCS_HELPED_URL = 'https://go.elementor.com/safe-mode-helped/';
 	const DOCS_DIDNT_HELP_URL = 'https://go.elementor.com/safe-mode-didnt-helped/';
 	const DOCS_MU_PLUGINS_URL = '';
@@ -48,7 +49,7 @@ class Module extends \Elementor\Core\Base\Module {
 		] );
 	}
 
-	public function update_safe_mode( $value ) {
+	public function on_update_safe_mode( $value ) {
 		if ( 'yes' === $value || 'global' === $value ) {
 			$this->enable_safe_mode();
 		} else {
@@ -58,12 +59,8 @@ class Module extends \Elementor\Core\Base\Module {
 		return $value;
 	}
 
-	public function add_safe_mode( $option, $value ) {
-		if ( 'yes' === $value || 'global' === $value ) {
-			$this->enable_safe_mode();
-		} else {
-			$this->disable_safe_mode();
-		}
+	public function on_add_safe_mode( $option, $value ) {
+		$this->on_update_safe_mode( $value );
 	}
 
 	public function ajax_enable_safe_mode( $data ) {
@@ -309,7 +306,7 @@ class Module extends \Elementor\Core\Base\Module {
 				</a>
 			</header>
 			<div class="elementor-toast-content">
-				<?php printf( __( 'There’s a problem loading Elementor? Please enable Safe Mode to troubleshoot the problem. <a href="%s" target="_blank">Learn More.</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL ); ?>
+				<?php printf( __( 'There’s a problem loading Elementor? Please enable Safe Mode to troubleshoot the problem. <a href="%1$s" target="_blank">%2$s.</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL, __( 'Learn More', 'elementor' ) ); ?>
 			</div>
 		</div>
 
@@ -373,11 +370,15 @@ class Module extends \Elementor\Core\Base\Module {
 
 			new ElementorTrySafeMode();
 		</script>
+
 		<?php
 	}
 
 	public function run_safe_mode() {
 		remove_action( 'elementor/editor/footer', [ $this, 'print_try_safe_mode' ] );
+
+		// Avoid notices like for comment.php.
+		add_filter( 'deprecated_file_trigger_error', '__return_false' );
 
 		add_filter( 'template_include', [ $this, 'filter_template' ], 999 );
 		add_filter( 'elementor/document/urls/preview', [ $this, 'filter_preview_url' ] );
@@ -393,13 +394,22 @@ class Module extends \Elementor\Core\Base\Module {
 		return Tools::get_url();
 	}
 
+	public function plugin_action_links( $actions ) {
+		$actions['disable'] = '<a href="' . self::get_admin_page_url() . '">' . __( 'Disable Safe Mode', 'elementor' ) . '</a>';
+
+		return $actions;
+	}
+
 	public function __construct() {
 		add_action( 'elementor/admin/after_create_settings/elementor-tools', [ $this, 'add_admin_button' ] );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-		add_action( 'add_option_elementor_safe_mode', [ $this, 'add_safe_mode' ], 10, 2 );
+
+		$plugin_file = self::MU_PLUGIN_FILE_NAME;
+		add_filter( "plugin_action_links_{$plugin_file}", [ $this, 'plugin_action_links' ] );
 
 		// Use pre_update, in order to catch cases that $value === $old_value and it not updated.
-		add_filter( 'pre_update_option_elementor_safe_mode', [ $this, 'update_safe_mode' ], 10, 2 );
+		add_filter( 'pre_update_option_elementor_safe_mode', [ $this, 'on_update_safe_mode' ], 10, 2 );
+		add_action( 'add_option_elementor_safe_mode', [ $this, 'on_add_safe_mode' ], 10, 2 );
 
 		add_action( 'elementor/safe_mode/init', [ $this, 'run_safe_mode' ] );
 		add_action( 'elementor/editor/footer', [ $this, 'print_try_safe_mode' ] );

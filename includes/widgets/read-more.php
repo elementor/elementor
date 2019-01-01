@@ -84,7 +84,7 @@ class Widget_Read_More extends Widget_Base {
 			]
 		);
 
-		$default_link_text = apply_filters( 'elementor/widgets/read_more/default_link_text', __( 'Read More', 'elementor' ) );
+		$default_link_text = apply_filters( 'elementor/widgets/read_more/default_link_text', __( 'Continue reading', 'elementor' ) );
 
 		$this->add_control(
 			'theme_support',
