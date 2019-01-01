@@ -739,7 +739,7 @@ class Admin extends App {
 				'yes' => __( 'Yes', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
 				'new_template' => __( 'New Template', 'elementor' ),
-				'back_to_wordpress_editor_message' => __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might be deleted', 'elementor' ),
+				'back_to_wordpress_editor_message' => __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break. Continue?', 'elementor' ),
 				'back_to_wordpress_editor_header' => __( 'Back to WordPress Editor', 'elementor' ),
 			],
 		];
