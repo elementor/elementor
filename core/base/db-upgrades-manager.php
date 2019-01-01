@@ -46,7 +46,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	public function on_runner_complete( $did_tasks = false ) {
 		$logger = Plugin::$instance->logger->get_logger();
 
-		$logger->info( 'Update database completed', [
+		$logger->info( 'Elementor data updater process has been completed.', [
 			'meta' => [
 				'plugin' => $this->get_plugin_label(),
 				'from' => $this->current_version,
@@ -82,7 +82,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	public function admin_notice_upgrade_is_completed() {
 		$this->delete_flag( 'completed' );
 
-		$message = '<p>' . sprintf( __( '%s has been update the database. Enjoy!', 'elementor' ), $this->get_plugin_label() ) . '</p>';
+		$message = '<p>' . sprintf( __( 'Elementor data update complete. Thank you for updating to the latest version!', 'elementor' ), $this->get_plugin_label() ) . '</p>';
 
 		echo '<div class="notice notice-success">' . $message . '</div>';
 	}
@@ -112,7 +112,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$updater->save()->dispatch();
 
-		Plugin::$instance->logger->get_logger()->info( 'Update database has been queued', [
+		Plugin::$instance->logger->get_logger()->info( 'Elementor data updater process has been queued.', [
 			'meta' => [
 				'plugin' => $this->get_plugin_label(),
 				'from' => $this->current_version,
