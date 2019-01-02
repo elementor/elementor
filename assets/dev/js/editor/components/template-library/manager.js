@@ -3,21 +3,22 @@ var TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layo
 	TemplateLibraryManager;
 
 TemplateLibraryManager = function() {
-	var self = this,
-		deleteDialog,
+	const self = this,
+		templateTypes = {};
+
+	let deleteDialog,
 		errorDialog,
 		layout,
+		templatesCollection,
 		config = {},
 		startIntent = {},
-		templateTypes = {},
-		filterTerms = {},
-		templatesCollection;
+		filterTerms = {};
 
-	var initLayout = function() {
 		layout = new TemplateLibraryLayoutView();
+	const initLayout = function() {
 	};
 
-	var registerDefaultTemplateTypes = function() {
+	const registerDefaultTemplateTypes = function() {
 		var data = {
 			saveDialog: {
 				description: elementor.translate( 'save_your_template_description' ),
@@ -45,7 +46,7 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
-	var registerDefaultFilterTerms = function() {
+	const registerDefaultFilterTerms = function() {
 		filterTerms = {
 			text: {
 				callback: function( value ) {
