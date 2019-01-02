@@ -13,28 +13,10 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		$this->assertDocumentTypeRegistered( 'page' );
 		$this->assertDocumentTypeRegistered( 'section' );
-		$this->assertDocumentGroupRegistered( 'blocks' );
-		$this->assertDocumentGroupRegistered( 'pages' );
 	}
 
 	public function test_should_return_library() {
 		$this->assertEquals( 'library', self::$module->get_name() );
-	}
-
-	/**
-	 * Asserts that a group is registered in documents
-	 *
-	 * @param string $group_name
-	 */
-	private function assertDocumentGroupRegistered( $group_name ) {
-		if ( ! is_string( $group_name ) ) {
-			throw \PHPUnit_Util_InvalidArgumentHelper::factory(
-				1,
-				'only string'
-			);
-		}
-
-		self::assertArrayHasKey( $group_name, self::elementor()->documents->get_groups() );
 	}
 
 	/**
