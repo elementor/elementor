@@ -28,7 +28,7 @@ TemplateLibraryManager = function() {
 				success: function( successData ) {
 					self.getTemplatesCollection().add( successData );
 
-					self.setTemplatesPage( 'local' );
+					self.setScreen( 'local' );
 				},
 				error: function( errorData ) {
 					self.showErrorDialog( errorData );
@@ -367,7 +367,7 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setTemplatesPage = function( source, type, silent ) {
+	this.setScreen = function( source, type, silent ) {
 		elementor.channels.templates.stopReplying();
 
 		self.setFilter( 'source', source, true );
