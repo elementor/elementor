@@ -20,6 +20,16 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 
 	bindEvents: function() {
 		this.elements.$addButton.on( 'click', this.onAddButtonClick );
+
+		elementorCommon.elements.$window.on( 'hashchange', this.showModalByHash.bind( this ) );
+	},
+
+	showModalByHash: function() {
+		if ( '#add_new' === location.hash ) {
+			this.layout.showModal();
+
+			location.hash = '';
+		}
 	},
 
 	onInit: function() {
@@ -27,9 +37,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 
 		this.layout = new NewTemplateLayout();
 
-		if ( '#add_new' === location.hash ) {
-			this.layout.showModal();
-		}
+		this.showModalByHash();
 	},
 
 	onAddButtonClick: function( event ) {
