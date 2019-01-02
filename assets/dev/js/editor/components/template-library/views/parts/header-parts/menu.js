@@ -15,6 +15,12 @@ module.exports = Marionette.ItemView.extend( {
 		'click @ui.menuItems': 'onMenuItemClick',
 	},
 
+	templateHelpers: function() {
+		return {
+			screens: elementor.templates.getScreens(),
+		};
+	},
+
 	$activeItem: null,
 
 	activateMenuItem: function( $item ) {
@@ -50,6 +56,6 @@ module.exports = Marionette.ItemView.extend( {
 
 		this.activateMenuItem( jQuery( item ) );
 
-		elementor.templates.setTemplatesPage( item.dataset.templateSource, itemData.templateType );
+		elementor.templates.setScreen( item.dataset.templateSource, itemData.templateType );
 	},
 } );

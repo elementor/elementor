@@ -24,18 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Documents_Manager {
 
 	/**
-	 * Registered document groups.
-	 *
-	 * Holds the list of all the registered document groups.
-	 *
-	 * @since 2.0.0
-	 * @access protected
-	 *
-	 * @var array
-	 */
-	protected $groups = [];
-
-	/**
 	 * Registered types.
 	 *
 	 * Holds the list of all the registered types.
@@ -617,38 +605,6 @@ class Documents_Manager {
 	 */
 	public function get_current() {
 		return $this->current_doc;
-	}
-
-	/**
-	 * Register group.
-	 *
-	 * Registers a single document group.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @param string $id   Group ID.
-	 * @param array  $args Group data.
-	 *
-	 * @return Documents_Manager The updated document manager instance.
-	 */
-	public function register_group( $id, $args ) {
-		$this->groups[ $id ] = $args;
-		return $this;
-	}
-
-	/**
-	 * Get groups.
-	 *
-	 * Retrieve the list of all the registered document groups.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @return array list of all the registered document groups.
-	 */
-	public function get_groups() {
-		return $this->groups;
 	}
 
 	private function register_types() {

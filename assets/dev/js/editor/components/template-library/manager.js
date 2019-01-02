@@ -3,21 +3,24 @@ var TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layo
 	TemplateLibraryManager;
 
 TemplateLibraryManager = function() {
-	var self = this,
-		deleteDialog,
+	const self = this,
+		templateTypes = {};
+
+	let deleteDialog,
 		errorDialog,
 		layout,
+		templatesCollection,
+		defaultScreen,
 		config = {},
+		screens = {},
 		startIntent = {},
-		templateTypes = {},
-		filterTerms = {},
-		templatesCollection;
+		filterTerms = {};
 
-	var initLayout = function() {
-		layout = new TemplateLibraryLayoutView();
+	const initLayout = function() {
+		layout = new TemplateLibraryLayoutView( { pages: screens } );
 	};
 
-	var registerDefaultTemplateTypes = function() {
+	const registerDefaultTemplateTypes = function() {
 		var data = {
 			saveDialog: {
 				description: elementor.translate( 'save_your_template_description' ),
@@ -26,7 +29,7 @@ TemplateLibraryManager = function() {
 				success: function( successData ) {
 					self.getTemplatesCollection().add( successData );
 
-					self.setTemplatesPage( 'local' );
+					self.setScreen( 'local' );
 				},
 				error: function( errorData ) {
 					self.showErrorDialog( errorData );
@@ -45,7 +48,29 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
-	var registerDefaultFilterTerms = function() {
+	const registerDefaultScreens = function() {
+		screens = [
+			{
+				name: 'blocks',
+				source: 'remote',
+				title: elementor.translate( 'blocks' ),
+				type: 'block',
+			},
+			{
+				name: 'pages',
+				source: 'remote',
+				title: elementor.translate( 'pages' ),
+				type: 'page',
+			},
+			{
+				name: 'my-templates',
+				source: 'local',
+				title: elementor.translate( 'my_templates' ),
+			},
+		];
+	};
+
+	const registerDefaultFilterTerms = function() {
 		filterTerms = {
 			text: {
 				callback: function( value ) {
@@ -66,7 +91,7 @@ TemplateLibraryManager = function() {
 		};
 	};
 
-	var setIntentFilters = function() {
+	const setIntentFilters = function() {
 		jQuery.each( startIntent.filters, function( filterKey, filterValue ) {
 			self.setFilter( filterKey, filterValue, true );
 		} );
@@ -75,7 +100,11 @@ TemplateLibraryManager = function() {
 	this.init = function() {
 		registerDefaultTemplateTypes();
 
+		registerDefaultScreens();
+
 		registerDefaultFilterTerms();
+
+		self.setDefaultScreen( 'pages' );
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
@@ -88,6 +117,10 @@ TemplateLibraryManager = function() {
 		}
 
 		return templateTypes;
+	};
+
+	this.getScreens = function() {
+		return screens;
 	};
 
 	this.registerTemplateType = function( type, data ) {
@@ -289,15 +322,14 @@ TemplateLibraryManager = function() {
 		self.requestLibraryData( {
 			onBeforeUpdate: layout.showLoadingView.bind( layout ),
 			onUpdate: function() {
-				var documentType = elementor.config.document.remote_type,
-					isBlockType = -1 !== config.categories.indexOf( documentType ),
+				const remoteLibraryConfig = elementor.config.document.remote_library,
 					oldStartIntent = Object.create( startIntent );
 
 				startIntent = jQuery.extend( {
 					filters: {
 						source: 'remote',
-						type: isBlockType ? 'block' : 'page',
-						subtype: isBlockType ? documentType : null,
+						type: remoteLibraryConfig.type,
+						subtype: 'page' === remoteLibraryConfig.type ? null : remoteLibraryConfig.category,
 					},
 					onReady: self.showTemplates,
 				}, customStartIntent );
@@ -341,7 +373,11 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setTemplatesPage = function( source, type, silent ) {
+	this.setDefaultScreen = function( screenName ) {
+		defaultScreen = _.findWhere( screens, { name: screenName } );
+	};
+
+	this.setScreen = function( source, type, silent ) {
 		elementor.channels.templates.stopReplying();
 
 		self.setFilter( 'source', source, true );
@@ -353,6 +389,10 @@ TemplateLibraryManager = function() {
 		if ( ! silent ) {
 			self.showTemplates();
 		}
+	};
+
+	this.showDefaultScreen = function() {
+		this.setScreen( defaultScreen.source, defaultScreen.type );
 	};
 
 	this.showTemplates = function() {

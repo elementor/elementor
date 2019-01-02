@@ -238,4 +238,12 @@ class Post extends Document {
 
 		parent::__construct( $data );
 	}
+
+	protected function get_remote_library_config() {
+		$config = parent::get_remote_library_config();
+
+		$config['type'] = 'page';
+
+		return $config;
+	}
 }

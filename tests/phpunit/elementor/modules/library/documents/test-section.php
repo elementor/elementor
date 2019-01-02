@@ -15,13 +15,6 @@ class Elementor_Test_Section extends Elementor_Test_Base {
 		parent::setUpBeforeClass();
 	}
 
-	public function test_should_return_properties() {
-		$properties = Section::get_properties();
-
-		$this->assertEquals( $properties['library_view'], 'list' );
-		$this->assertEquals( $properties['group'], 'blocks' );
-	}
-
 	public function test_should_return_name() {
 		$name = self::$section->get_name();
 
