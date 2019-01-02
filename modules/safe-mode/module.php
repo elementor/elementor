@@ -322,6 +322,9 @@ class Module extends \Elementor\Core\Base\Module {
 
 						elementorCommon.ajax.addRequest(
 							'enable_safe_mode', {
+								data: {
+									editor_post_id: '<?php echo Plugin::$instance->editor->get_post_id(); ?>',
+								},
 								success: function( url ) {
 									location.assign( url );
 								},
@@ -336,7 +339,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 				var isElementorLoaded = function() {
 
-					if ( ! elementor || ! elementor.$preview || ! elementor.$preview[ 0 ] ) {
+					if ( 'undefined' === typeof elementor || ! elementor.$preview || ! elementor.$preview[ 0 ] ) {
 						return false;
 					}
 
