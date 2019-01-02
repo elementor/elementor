@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
-	<# jQuery.each( screens, ( type, data ) => { #>
-		<div class="elementor-template-library-menu-item" data-template-source="{{{ data.source }}}"{{{ data.type ? ' data-template-type="' + data.type + '"' : '' }}}>{{{ data.title }}}</div>
+	<# screens.forEach( ( screen ) => { #>
+		<div class="elementor-template-library-menu-item" data-template-source="{{{ screen.source }}}"{{{ screen.type ? ' data-template-type="' + screen.type + '"' : '' }}}>{{{ screen.title }}}</div>
 	<# } ); #>
 </script>
 
@@ -73,7 +73,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div id="elementor-template-library-filter">
 						<select id="elementor-template-library-filter-subtype" class="elementor-template-library-filter-select" data-elementor-filter="subtype">
 							<option></option>
-							<# elementor.templates.getConfig( 'categories' ).forEach( function( category ) {
+							<# elementor.templates.getConfig( activeType ).categories.forEach( function( category ) {
 								var selected = category === elementor.templates.getFilter( 'subtype' ) ? ' selected' : '';
 								#>
 								<option value="{{ category }}"{{{ selected }}}>{{{ category }}}</option>
