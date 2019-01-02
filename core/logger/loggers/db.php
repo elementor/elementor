@@ -29,7 +29,7 @@ class Db extends Base {
 		/** @var Log_Item[] $log */
 		$log = $this->get_log();
 
-		if ( self::MAX_LOG_ENTRIES > count( $log ) ) {
+		if ( self::MAX_LOG_ENTRIES < count( $log ) ) {
 			$log = array_slice( $log, -self::MAX_LOG_ENTRIES );
 		}
 
