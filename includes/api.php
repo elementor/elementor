@@ -108,7 +108,9 @@ class Api {
 			}
 
 			if ( isset( $info_data['library'] ) ) {
+				// TODO: BC since 2.4.0
 				$info_data['library']['categories'] = json_decode( $info_data['library']['categories'] );
+				// End bc
 
 				update_option( self::LIBRARY_OPTION_KEY, $info_data['library'], 'no' );
 

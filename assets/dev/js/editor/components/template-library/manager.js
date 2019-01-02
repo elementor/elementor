@@ -48,22 +48,22 @@ TemplateLibraryManager = function() {
 	};
 
 	const registerDefaultScreens = function() {
-		screens = {
-			blocks: {
+		screens = [
+			{
 				source: 'remote',
 				title: elementor.translate( 'blocks' ),
 				type: 'block',
 			},
-			pages: {
+			{
 				source: 'remote',
 				title: elementor.translate( 'pages' ),
 				type: 'page',
 			},
-			local: {
+			{
 				source: 'local',
 				title: elementor.translate( 'my_templates' ),
 			},
-		};
+		];
 	};
 
 	const registerDefaultFilterTerms = function() {
