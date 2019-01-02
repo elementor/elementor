@@ -11,11 +11,12 @@ TemplateLibraryManager = function() {
 		layout,
 		templatesCollection,
 		config = {},
+		screens = {},
 		startIntent = {},
 		filterTerms = {};
 
-		layout = new TemplateLibraryLayoutView();
 	const initLayout = function() {
+		layout = new TemplateLibraryLayoutView( { pages: screens } );
 	};
 
 	const registerDefaultTemplateTypes = function() {
@@ -46,6 +47,25 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
+	const registerDefaultScreens = function() {
+		screens = {
+			blocks: {
+				source: 'remote',
+				title: elementor.translate( 'blocks' ),
+				type: 'block',
+			},
+			pages: {
+				source: 'remote',
+				title: elementor.translate( 'pages' ),
+				type: 'page',
+			},
+			local: {
+				source: 'local',
+				title: elementor.translate( 'my_templates' ),
+			},
+		};
+	};
+
 	const registerDefaultFilterTerms = function() {
 		filterTerms = {
 			text: {
@@ -67,7 +87,7 @@ TemplateLibraryManager = function() {
 		};
 	};
 
-	var setIntentFilters = function() {
+	const setIntentFilters = function() {
 		jQuery.each( startIntent.filters, function( filterKey, filterValue ) {
 			self.setFilter( filterKey, filterValue, true );
 		} );
@@ -75,6 +95,8 @@ TemplateLibraryManager = function() {
 
 	this.init = function() {
 		registerDefaultTemplateTypes();
+
+		registerDefaultScreens();
 
 		registerDefaultFilterTerms();
 
@@ -89,6 +111,10 @@ TemplateLibraryManager = function() {
 		}
 
 		return templateTypes;
+	};
+
+	this.getScreens = function() {
+		return screens;
 	};
 
 	this.registerTemplateType = function( type, data ) {
@@ -290,15 +316,14 @@ TemplateLibraryManager = function() {
 		self.requestLibraryData( {
 			onBeforeUpdate: layout.showLoadingView.bind( layout ),
 			onUpdate: function() {
-				var documentType = elementor.config.document.remote_type,
-					isBlockType = -1 !== config.categories.indexOf( documentType ),
+				const remoteLibraryConfig = elementor.config.document.remote_library,
 					oldStartIntent = Object.create( startIntent );
 
 				startIntent = jQuery.extend( {
 					filters: {
 						source: 'remote',
-						type: isBlockType ? 'block' : 'page',
-						subtype: isBlockType ? documentType : null,
+						type: remoteLibraryConfig.type,
+						subtype: 'page' === remoteLibraryConfig.type ? null : remoteLibraryConfig.category,
 					},
 					onReady: self.showTemplates,
 				}, customStartIntent );

@@ -15,6 +15,12 @@ module.exports = Marionette.ItemView.extend( {
 		'click @ui.menuItems': 'onMenuItemClick',
 	},
 
+	templateHelpers: function() {
+		return {
+			screens: elementor.templates.getScreens(),
+		};
+	},
+
 	$activeItem: null,
 
 	activateMenuItem: function( $item ) {
