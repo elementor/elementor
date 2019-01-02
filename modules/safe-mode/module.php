@@ -4,6 +4,7 @@ namespace Elementor\Modules\SafeMode;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tools;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,6 +19,8 @@ class Module extends \Elementor\Core\Base\Module {
 	const DOCS_DIDNT_HELP_URL = 'https://go.elementor.com/safe-mode-didnt-helped/';
 	const DOCS_MU_PLUGINS_URL = 'https://go.elementor.com/safe-mode-mu-plugins/';
 	const DOCS_TRY_SAFE_MODE_URL = 'https://go.elementor.com/safe-mode/';
+
+	const EDITOR_NOTICE_TIMEOUT = 10000; /* ms */
 
 	public function get_name() {
 		return 'safe-mode';
@@ -85,6 +88,10 @@ class Module extends \Elementor\Core\Base\Module {
 
 		if ( defined( 'ELEMENTOR_PRO_PLUGIN_BASE' ) ) {
 			$allowed_plugins['elementor_pro'] = ELEMENTOR_PRO_PLUGIN_BASE;
+		}
+
+		if ( defined( 'WC_PLUGIN_BASENAME' ) ) {
+			$allowed_plugins['woocommerce'] = WC_PLUGIN_BASENAME;
 		}
 
 		add_option( 'elementor_safe_mode_allowed_plugins', $allowed_plugins );
@@ -295,6 +302,10 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function print_try_safe_mode() {
+		if ( ! $this->is_allowed_post_type() ) {
+			return;
+		}
+
 		echo $this->print_safe_mode_css();
 		?>
 		<div class="elementor-safe-mode-toast" id="elementor-try-safe-mode">
@@ -338,7 +349,6 @@ class Module extends \Elementor\Core\Base\Module {
 				};
 
 				var isElementorLoaded = function() {
-
 					if ( 'undefined' === typeof elementor || ! elementor.$preview || ! elementor.$preview[ 0 ] ) {
 						return false;
 					}
@@ -359,11 +369,17 @@ class Module extends \Elementor\Core\Base\Module {
 				var showTrySafeModeNotice = function() {
 					if ( ! isElementorLoaded() ) {
 						jQuery( '#elementor-try-safe-mode' ).show();
+
+						if ( 'undefined' !== typeof elementor ) {
+							elementor.on( 'preview:loaded', function() {
+								jQuery( '#elementor-try-safe-mode' ).hide();
+							} );
+						}
 					}
 				};
 
 				var init = function() {
-					setTimeout( showTrySafeModeNotice, 7000 );
+					setTimeout( showTrySafeModeNotice, <?php echo self::EDITOR_NOTICE_TIMEOUT; ?> );
 
 					attachEvents();
 				};
@@ -416,5 +432,18 @@ class Module extends \Elementor\Core\Base\Module {
 
 		add_action( 'elementor/safe_mode/init', [ $this, 'run_safe_mode' ] );
 		add_action( 'elementor/editor/footer', [ $this, 'print_try_safe_mode' ] );
+	}
+
+	private function is_allowed_post_type() {
+		$allowed_post_types = [
+			'post',
+			'page',
+			'product',
+			Source_Local::CPT,
+		];
+
+		$current_post_type = get_post_type( Plugin::$instance->editor->get_post_id() );
+
+		return in_array( $current_post_type, $allowed_post_types );
 	}
 }
