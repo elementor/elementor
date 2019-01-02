@@ -88,6 +88,7 @@ class Update extends \WP_CLI_Command {
 		}
 
 		$callbacks = $manager->get_upgrade_callbacks();
+		$did_tasks = false;
 
 		if ( ! empty( $callbacks ) ) {
 			Plugin::$instance->logger->get_logger()->info( 'Update DB has been started', [
@@ -99,9 +100,10 @@ class Update extends \WP_CLI_Command {
 			] );
 
 			$updater->handle_immediately( $callbacks );
+			$did_tasks = true;
 		}
 
-		$manager->on_runner_complete();
+		$manager->on_runner_complete( $did_tasks );
 
 		\WP_CLI::success( count( $callbacks ) . ' updates(s) has been applied.' );
 	}
