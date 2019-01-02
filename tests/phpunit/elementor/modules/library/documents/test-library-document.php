@@ -11,7 +11,6 @@ class Elementor_Test_Library_Document extends Elementor_Test_Base {
 
 		$this->assertTrue( $properties['show_in_library'] );
 		$this->assertTrue( $properties['register_type'] );
-		$this->assertSame( $properties['group'], 'blocks' );
 		$this->assertSame( $properties['library_view'], 'grid' );
 	}
 
