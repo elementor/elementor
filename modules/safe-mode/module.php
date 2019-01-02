@@ -16,8 +16,8 @@ class Module extends \Elementor\Core\Base\Module {
 	const MU_PLUGIN_FILE_NAME = 'elementor-safe-mode.php';
 	const DOCS_HELPED_URL = 'https://go.elementor.com/safe-mode-helped/';
 	const DOCS_DIDNT_HELP_URL = 'https://go.elementor.com/safe-mode-didnt-helped/';
-	const DOCS_MU_PLUGINS_URL = '';
-	const DOCS_TRY_SAFE_MODE_URL = '';
+	const DOCS_MU_PLUGINS_URL = 'https://go.elementor.com/safe-mode-mu-plugins/';
+	const DOCS_TRY_SAFE_MODE_URL = 'https://go.elementor.com/safe-mode/';
 
 	public function get_name() {
 		return 'safe-mode';
