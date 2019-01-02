@@ -21,7 +21,7 @@ class Base implements Log_Item_Interface {
 
 	public function __construct( $args ) {
 		$this->date = current_time( 'mysql' );
-		$this->message = empty( $args['message'] ) ? '' : $args['message'];
+		$this->message = empty( $args['message'] ) ? '' : esc_html( $args['message'] );
 		$this->type = empty( $args['type'] ) ? 'info' : $args['type'];
 		$this->meta = empty( $args['meta'] ) ? [] : $args['meta'];
 		$this->args = $args;
