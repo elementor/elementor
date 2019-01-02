@@ -14,6 +14,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	abstract public function get_new_version();
 	abstract public function get_version_option_name();
 	abstract public function get_upgrades_class();
+	abstract public function get_updater_label();
 
 	public function get_task_runner_class() {
 		return 'Elementor\Core\Upgrade\Updater';
@@ -65,7 +66,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 	public function admin_notice_start_upgrade() {
 		$upgrade_link = $this->get_start_action_url();
-		$message = '<p>' . sprintf( __( '%s needs upgrade the Database.', 'elementor' ), $this->get_plugin_label() ) . '</p>';
+		$message = '<p>' . sprintf( __( '%s Your site database needs to be updated to the latest version.', 'elementor' ), $this->get_updater_label() ) . '</p>';
 		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Update Now', 'elementor' ) ) . '</p>';
 
 		echo '<div class="notice notice-error">' . $message . '</div>';
@@ -73,8 +74,8 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 	public function admin_notice_upgrade_is_running() {
 		$upgrade_link = $this->get_continue_action_url();
-		$message = '<p>' . sprintf( __( '%s is updating the database in background..', 'elementor' ), $this->get_plugin_label() ) . '</p>';
-		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Run Immediately', 'elementor' ) ) . '</p>';
+		$message = '<p>' . sprintf( __( '%s Database update process is running in the background.', 'elementor' ), $this->get_updater_label() ) . '</p>';
+		$message .= '<p>' . sprintf( 'Taking a while? <a href="%s" class="button-primary">Click here to run it now</a>', $upgrade_link ) . '</p>';
 
 		echo '<div class="notice notice-warning">' . $message . '</div>';
 	}
@@ -82,7 +83,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	public function admin_notice_upgrade_is_completed() {
 		$this->delete_flag( 'completed' );
 
-		$message = '<p>' . sprintf( __( 'Elementor data update complete. Thank you for updating to the latest version!', 'elementor' ), $this->get_plugin_label() ) . '</p>';
+		$message = '<p>' . sprintf( __( '%s The database update process is now complete. Thank you for updating to the latest version!', 'elementor' ), $this->get_updater_label() ) . '</p>';
 
 		echo '<div class="notice notice-success">' . $message . '</div>';
 	}
