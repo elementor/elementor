@@ -16,8 +16,8 @@ class Module extends \Elementor\Core\Base\Module {
 	const MU_PLUGIN_FILE_NAME = 'elementor-safe-mode.php';
 	const DOCS_HELPED_URL = 'https://go.elementor.com/safe-mode-helped/';
 	const DOCS_DIDNT_HELP_URL = 'https://go.elementor.com/safe-mode-didnt-helped/';
-	const DOCS_MU_PLUGINS_URL = '';
-	const DOCS_TRY_SAFE_MODE_URL = '';
+	const DOCS_MU_PLUGINS_URL = 'https://go.elementor.com/safe-mode-mu-plugins/';
+	const DOCS_TRY_SAFE_MODE_URL = 'https://go.elementor.com/safe-mode/';
 
 	public function get_name() {
 		return 'safe-mode';
@@ -322,6 +322,9 @@ class Module extends \Elementor\Core\Base\Module {
 
 						elementorCommon.ajax.addRequest(
 							'enable_safe_mode', {
+								data: {
+									editor_post_id: '<?php echo Plugin::$instance->editor->get_post_id(); ?>',
+								},
 								success: function( url ) {
 									location.assign( url );
 								},
@@ -336,7 +339,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 				var isElementorLoaded = function() {
 
-					if ( ! elementor || ! elementor.$preview || ! elementor.$preview[ 0 ] ) {
+					if ( 'undefined' === typeof elementor || ! elementor.$preview || ! elementor.$preview[ 0 ] ) {
 						return false;
 					}
 
