@@ -10,6 +10,7 @@ TemplateLibraryManager = function() {
 		errorDialog,
 		layout,
 		templatesCollection,
+		defaultScreen,
 		config = {},
 		screens = {},
 		startIntent = {},
@@ -50,16 +51,19 @@ TemplateLibraryManager = function() {
 	const registerDefaultScreens = function() {
 		screens = [
 			{
+				name: 'blocks',
 				source: 'remote',
 				title: elementor.translate( 'blocks' ),
 				type: 'block',
 			},
 			{
+				name: 'pages',
 				source: 'remote',
 				title: elementor.translate( 'pages' ),
 				type: 'page',
 			},
 			{
+				name: 'my-templates',
 				source: 'local',
 				title: elementor.translate( 'my_templates' ),
 			},
@@ -99,6 +103,8 @@ TemplateLibraryManager = function() {
 		registerDefaultScreens();
 
 		registerDefaultFilterTerms();
+
+		self.setDefaultScreen( 'pages' );
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
@@ -367,6 +373,10 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
+	this.setDefaultScreen = function( screenName ) {
+		defaultScreen = _.findWhere( screens, { name: screenName } );
+	};
+
 	this.setScreen = function( source, type, silent ) {
 		elementor.channels.templates.stopReplying();
 
@@ -379,6 +389,10 @@ TemplateLibraryManager = function() {
 		if ( ! silent ) {
 			self.showTemplates();
 		}
+	};
+
+	this.showDefaultScreen = function() {
+		this.setScreen( defaultScreen.source, defaultScreen.type );
 	};
 
 	this.showTemplates = function() {
