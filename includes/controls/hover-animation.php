@@ -28,18 +28,6 @@ class Control_Hover_Animation extends Base_Data_Control {
 	private static $_animations;
 
 	/**
-	 * Additional Animations.
-	 *
-	 * Holds all the available custom hover animation effects of the control.
-	 *
-	 * @access private
-	 * @static
-	 *
-	 * @var array
-	 */
-	private static $_additional_animations;
-
-	/**
 	 * Get hover animation control type.
 	 *
 	 * Retrieve the control type, in this case `hover_animation`.
@@ -104,10 +92,11 @@ class Control_Hover_Animation extends Base_Data_Control {
 			 *
 			 * @param array $additional_animations Additional Animations array.
 			 */
-			self::$_additional_animations = apply_filters( 'elementor/controls/hover_animations/additional_animations', $additional_animations );
+			$additional_animations = apply_filters( 'elementor/controls/hover_animations/additional_animations', $additional_animations );
+			self::$_animations = array_merge( self::$_animations, $additional_animations );
 		}
 
-		return array_merge( self::$_animations, self::$_additional_animations );
+		return self::$_animations;
 	}
 
 	/**
