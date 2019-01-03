@@ -1071,6 +1071,7 @@ abstract class Document extends Controls_Stack {
 		$config = [
 			'type' => 'block',
 			'category' => $this->get_name(),
+			'autoImportSettings' => false,
 		];
 
 		// TODO: BC since 2.4.0

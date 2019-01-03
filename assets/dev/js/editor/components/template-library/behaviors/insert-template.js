@@ -10,12 +10,15 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 	},
 
 	onInsertButtonClick: function() {
-		if ( this.view.model.get( 'hasPageSettings' ) ) {
+		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings;
+
+		if ( ! autoImportSettings && this.view.model.get( 'hasPageSettings' ) ) {
 			InsertTemplateHandler.showImportDialog( this.view.model );
+
 			return;
 		}
 
-		elementor.templates.importTemplate( this.view.model );
+		elementor.templates.importTemplate( this.view.model, { withPageSettings: autoImportSettings } );
 	},
 }, {
 	dialog: null,
