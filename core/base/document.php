@@ -413,7 +413,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
-			'remote_library' => $this->get_remote_library_config(),
+			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),
 			'container' => 'body',
@@ -1071,6 +1071,7 @@ abstract class Document extends Controls_Stack {
 		$config = [
 			'type' => 'block',
 			'category' => $this->get_name(),
+			'autoImportSettings' => false,
 		];
 
 		// TODO: BC since 2.4.0
