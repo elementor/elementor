@@ -58,6 +58,12 @@ class Site extends Base_Category {
 				'url' => admin_url( 'nav-menus.php' ),
 				'keywords' => [ 'menu', 'wordpress' ],
 			],
+			'wordpress-themes' => [
+				'title' => __( 'Themes', 'elementor' ),
+				'icon' => 'wordpress',
+				'url' => admin_url( 'themes.php' ),
+				'keywords' => [ 'themes', 'wordpress' ],
+			],
 			'wordpress-customizer' => [
 				'title' => __( 'Customizer', 'elementor' ),
 				'icon' => 'wordpress',
