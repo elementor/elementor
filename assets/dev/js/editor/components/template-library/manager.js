@@ -322,7 +322,7 @@ TemplateLibraryManager = function() {
 		self.requestLibraryData( {
 			onBeforeUpdate: layout.showLoadingView.bind( layout ),
 			onUpdate: function() {
-				const remoteLibraryConfig = elementor.config.document.remote_library,
+				const remoteLibraryConfig = elementor.config.document.remoteLibrary,
 					oldStartIntent = Object.create( startIntent );
 
 				startIntent = jQuery.extend( {
