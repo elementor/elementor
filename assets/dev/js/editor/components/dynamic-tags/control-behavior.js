@@ -121,6 +121,7 @@ module.exports = Marionette.Behavior.extend( {
 			id: id,
 			name: name,
 			settings: settings,
+			parentName: this.view.model.get( 'name' ),
 			dynamicSettings: this.getOption( 'dynamicSettings' ),
 		} );
 

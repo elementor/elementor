@@ -12,6 +12,19 @@ module.exports = elementorModules.editor.views.ControlsStack.extend( {
 		return this.collection.length < 2;
 	},
 
+	getNamespaceArray: function() {
+		var currentPageView = elementor.getPanelView().getCurrentPageView(),
+			eventNamespace = currentPageView.getNamespaceArray();
+
+		eventNamespace.push( currentPageView.activeSection );
+
+		eventNamespace.push( this.getOption( 'parentName' ) );
+
+		eventNamespace.push( this.getOption( 'name' ) );
+
+		return eventNamespace;
+	},
+
 	onRenderTemplate: function() {
 		this.activateFirstSection();
 	},

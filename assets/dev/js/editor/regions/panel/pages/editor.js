@@ -15,6 +15,23 @@ EditorView = ControlsStack.extend( {
 		};
 	},
 
+	getNamespaceArray: function() {
+		var eventNamespace = elementorModules.editor.views.ControlsStack.prototype.getNamespaceArray();
+
+		const model = this.getOption( 'editedElementView' ).getEditModel(),
+			currentElementType = model.get( 'elType' );
+
+		// Element Type: section / column / widget.
+		eventNamespace.push( currentElementType );
+
+		if ( 'widget' === currentElementType ) {
+			// Widget Type: heading / button and etc.
+			eventNamespace.push( model.get( 'widgetType' ) );
+		}
+
+		return eventNamespace;
+	},
+
 	openActiveSection: function() {
 		ControlsStack.prototype.openActiveSection.apply( this, arguments );
 
