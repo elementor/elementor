@@ -28,18 +28,6 @@ class Control_Animation extends Base_Data_Control {
 	private static $_animations;
 
 	/**
-	 * Additional Animations.
-	 *
-	 * Holds all the available custom entrance animation effects of the control.
-	 *
-	 * @access private
-	 * @static
-	 *
-	 * @var array
-	 */
-	private static $_additional_animations;
-
-	/**
 	 * Get control type.
 	 *
 	 * Retrieve the animation control type.
@@ -129,8 +117,8 @@ class Control_Animation extends Base_Data_Control {
 			 *
 			 * @param array $additional_animations Additional Animations array.
 			 */
-			self::$_additional_animations = apply_filters( 'elementor/controls/animations/additional_animations', $additional_animations );
-			self::$_animations = array_merge( self::$_animations, self::$_additional_animations );
+			$additional_animations = apply_filters( 'elementor/controls/animations/additional_animations', $additional_animations );
+			self::$_animations = array_merge( self::$_animations, $additional_animations );
 		}
 
 		return self::$_animations;
