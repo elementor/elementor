@@ -346,7 +346,7 @@ class DB {
 	 *
 	 * @param array    $data_container Any type of elementor data.
 	 * @param callable $callback       A function to iterate data by.
-	 * @param array    &$args          Array of args pointers for passing parameters in & out of the callback
+	 * @param array    $args           Array of args pointers for passing parameters in & out of the callback
 	 *
 	 * @return mixed Iterated data.
 	 */
@@ -356,9 +356,6 @@ class DB {
 				$data_container['elements'] = $this->iterate_data( $data_container['elements'], $callback, $args );
 			}
 
-			if ( empty( $args ) ) {
-				return call_user_func( $callback, $data_container );
-			}
 			return call_user_func( $callback, $data_container, $args );
 		}
 
