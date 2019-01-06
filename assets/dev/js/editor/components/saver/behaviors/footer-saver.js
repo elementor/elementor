@@ -97,7 +97,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.ui.lastEditedWrapper
 			.removeClass( 'elementor-button-state' )
 			.find( '.elementor-last-edited' )
-			.html( data.config.last_edited );
+			.html( data.config.document.last_edited );
 	},
 
 	onAfterSaveError: function() {
