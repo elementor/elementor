@@ -18,7 +18,7 @@ module.exports = elementorModules.editor.views.ControlsStack.extend( {
 
 		eventNamespace.push( currentPageView.activeSection );
 
-		eventNamespace.push( this.getOption( 'parentName' ) );
+		eventNamespace.push( this.getOption( 'controlName' ) );
 
 		eventNamespace.push( this.getOption( 'name' ) );
 
