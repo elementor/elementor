@@ -609,6 +609,19 @@ class Documents_Manager {
 		return $this->current_doc;
 	}
 
+	/**
+	 * Get groups.
+	 *
+	 * @since 2.0.0
+	 * @deprecated 2.4.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function get_groups() {
+		return [];
+	}
+
 	private function register_types() {
 		if ( ! did_action( 'elementor/documents/register' ) ) {
 			/**
