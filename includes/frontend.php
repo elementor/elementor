@@ -1081,9 +1081,11 @@ class Frontend extends App {
 		if ( is_user_logged_in() ) {
 			$user = wp_get_current_user();
 
-			$settings['user'] = [
-				'roles' => $user->roles,
-			];
+			if ( ! empty( $user->roles ) ) {
+				$settings['user'] = [
+					'roles' => $user->roles,
+				];
+			}
 		}
 
 		return $settings;
