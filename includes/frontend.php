@@ -282,7 +282,9 @@ class Frontend extends App {
 		wp_register_script(
 			'elementor-frontend-modules',
 			ELEMENTOR_ASSETS_URL . 'js/frontend-modules.js',
-			[],
+			[
+				'jquery',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
