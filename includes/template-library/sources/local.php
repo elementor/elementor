@@ -164,6 +164,10 @@ class Source_Local extends Source_Base {
 		}
 	}
 
+	public static function get_admin_url() {
+		return add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
+	}
+
 	/**
 	 * Get local template ID.
 	 *
@@ -347,9 +351,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function admin_menu() {
-		$url = add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
-
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, $url );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url() );
 	}
 
 	public function admin_title( $admin_title, $title ) {
