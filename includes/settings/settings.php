@@ -298,7 +298,7 @@ class Settings extends Settings_Page {
 			<div class="elementor-blank_state">
 				<i class="eicon-nerd-chuckle"></i>
 				<h2><?php echo __( 'Get Popup Builder', 'elementor' ); ?></h2>
-				<p><?php echo __( 'Popup Builder lets you take advantage of all the amazing features in Elementor so you can build popups easily to get more leads and conversions. Go pro now and start designing your popup today.', 'elementor' ); ?></p>
+				<p><?php echo __( 'Popup Builder lets you take advantage of all the amazing features in Elementor, so you can build beautiful & highly converting popups. Go pro and start designing your popups today.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
