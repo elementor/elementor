@@ -98,14 +98,14 @@ class Settings extends Settings_Page {
 		$elementor_separator = array_search( 'separator-elementor', $menu_order, true );
 
 		// Get index of library menu.
-		$elementor_library = array_search( 'edit.php?post_type=elementor_library', $menu_order, true );
+		$elementor_library = array_search( Source_Local::ADMIN_MENU_SLUG, $menu_order, true );
 
 		// Loop through menu order and do some rearranging.
 		foreach ( $menu_order as $index => $item ) {
 			if ( 'elementor' === $item ) {
 				$elementor_menu_order[] = 'separator-elementor';
 				$elementor_menu_order[] = $item;
-				$elementor_menu_order[] = 'edit.php?post_type=elementor_library';
+				$elementor_menu_order[] = Source_Local::ADMIN_MENU_SLUG;
 
 				unset( $menu_order[ $elementor_separator ] );
 				unset( $menu_order[ $elementor_library ] );
@@ -147,8 +147,8 @@ class Settings extends Settings_Page {
 			[ $this, 'handle_external_redirects' ]
 		);
 
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Theme Templates', 'elementor' ), __( 'Theme Builder', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
-		add_submenu_page( 'edit.php?post_type=' . Source_Local::CPT, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
+		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, __( 'Theme Templates', 'elementor' ), __( 'Theme Builder', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
+		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
 	}
 
 	/**
@@ -197,12 +197,12 @@ class Settings extends Settings_Page {
 		}
 
 		if ( 'go_elementor_pro' === $_GET['page'] ) {
-			wp_safe_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
+			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
 			die;
 		}
 
 		if ( 'go_knowledge_base_site' === $_GET['page'] ) {
-			wp_safe_redirect( 'https://go.elementor.com/docs-admin-menu/' );
+			wp_redirect( 'https://go.elementor.com/docs-admin-menu/' );
 			die;
 		}
 	}
@@ -298,7 +298,7 @@ class Settings extends Settings_Page {
 			<div class="elementor-blank_state">
 				<i class="eicon-nerd-chuckle"></i>
 				<h2><?php echo __( 'Get Popup Builder', 'elementor' ); ?></h2>
-				<p><?php echo __( 'Create advanced popups that drive more leads and conversions to your business.', 'elementor' ); ?></p>
+				<p><?php echo __( 'Popup Builder lets you take advantage of all the amazing features in Elementor so you can build popups easily to get more leads and conversions. Go pro now and start designing your popup today.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
@@ -319,7 +319,7 @@ class Settings extends Settings_Page {
 			<div class="elementor-blank_state">
 				<i class="eicon-nerd-chuckle"></i>
 				<h2><?php echo __( 'Get Theme Builder', 'elementor' ); ?></h2>
-				<p><?php echo __( 'Elementor Pro comes built-in with an industry leading theme builder, which lets you customize every part of your WordPress theme visually.', 'elementor' ); ?></p>
+				<p><?php echo __( 'Theme Builder is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->

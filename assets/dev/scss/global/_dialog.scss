@@ -13,9 +13,10 @@
 .dialog-message {
 	font-size: 12px;
 	line-height: 1.5;
+	box-sizing: border-box;
 }
 
-.dialog-type-lightbox{
+.dialog-type-lightbox {
 	position: fixed;
 	height: 100%;
 	width: 100%;
@@ -42,8 +43,12 @@
 		min-height: 50px;
 	}
 
-	.dialog-header, .dialog-message {
-		text-align: center;
+	&:not(.elementor-popup-modal) {
+
+		.dialog-header,
+		.dialog-message {
+			text-align: center;
+		}
 	}
 
 	.dialog-buttons-wrapper {

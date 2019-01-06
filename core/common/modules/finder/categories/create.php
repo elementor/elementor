@@ -52,7 +52,7 @@ class Create extends Base_Category {
 			}
 
 			if ( Source_Local::CPT === $post_type ) {
-				$url = admin_url( 'edit.php?post_type=' . Source_Local::CPT . '#add_new' );
+				$url = admin_url( Source_Local::ADMIN_MENU_SLUG . '#add_new' );
 			} else {
 				$url = Utils::get_create_new_post_url( $post_type );
 			}

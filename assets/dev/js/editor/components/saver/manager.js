@@ -118,6 +118,34 @@ module.exports = elementorModules.Module.extend( {
 		} );
 	},
 
+	defaultSave: function() {
+		const postStatus = elementor.settings.page.model.get( 'post_status' );
+
+		switch ( postStatus ) {
+			case 'publish':
+			case 'future':
+			case 'private':
+				this.update();
+
+				break;
+			case 'draft':
+				if ( elementor.config.current_user_can_publish ) {
+					this.publish();
+				} else {
+					this.savePending();
+				}
+
+				break;
+			case 'pending': // User cannot change post status
+			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
+				if ( elementor.config.current_user_can_publish ) {
+					this.publish();
+				} else {
+					this.update();
+				}
+		}
+	},
+
 	saveEditor: function( options ) {
 		if ( this.isSaving ) {
 			return;
@@ -208,6 +236,8 @@ module.exports = elementorModules.Module.extend( {
 				} );
 			},
 		} );
+
+		this.trigger( 'save', options );
 	},
 
 	afterAjax: function() {
