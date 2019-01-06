@@ -1,26 +1,49 @@
+#elementor-icons-manager__modal {
+
+	.dialog-message {
+		padding: 0;
+	}
+}
 #elementor-icons-manager {
+
+	.elementor-icon-manager-tabs {
+
+		display: flex;
+		height: 100%;
+
+		.elementor-icon-manager__sidebar {
+			width: 25%;
+			min-width: 25%;
+			background-color: #fbfcfd;
+			padding-top: 50px;
+		}
+		.elementor-icon-manager-tabs__container {
+			padding: 50px;
+		}
+	}
 
 	.elementor-icon-manager-tabs-list {
 
 		list-style: none;
-		display: flex;
-		flex-wrap: wrap;
-		align-content: stretch;
 		margin-bottom: 0;
 		padding-left: 0;
 
 		li {
 			flex-direction: column;
 			justify-content: center;
-			font-size: 18px;
+			font-size: 12px;
 			min-width: 100px;
 			padding: 12px;
 			cursor: pointer;;
 			border-right: 0;
+			text-align: $start;
 
 			&.active {
-				background-image: linear-gradient(to bottom, #f3f3f3, #fff);
-				border-top: 3px solid #9b0a46;
+				background-color: #fff;
+				border-left: 5px solid #71d7f7;
+				color: #000;
+				font-weight: bold;
+				box-shadow: 0 6px 20px rgba( 0, 0, 0, 0.07 );
 			}
 
 			&last-of-type {
@@ -29,58 +52,48 @@
 		}
 	}
 
-	.elementor-icon-manager-tabs-container {
-		background: #fff;
-	}
-
 	ul.elementor-icon-manager-tabs-content {
 
 		align-items: center;
 		display: flex;
 		flex-wrap: wrap;
-		align-content: stretch;
-		height: 60vh;
+		align-content: flex-start;
+		height: 70vh;
 		overflow: scroll;
 
 		li {
 			flex-direction: column;
 			justify-content: center;
-			font-size: 48px;
-			width: 150px;
+			font-size: 30px;
+			width: 100px;
 			text-align: center;
-			padding: 10px;
-			min-height: 120px;
-			border: 1px solid #fff;
-			margin-left: 5px;
+			padding: 12px;
+			height: 90px;
+			margin: 7px;
+			color: #000;
+			background: #fff;
 
 			&:hover,
 			&.selected {
-				color: #9b0a46;
+				color: #71d7f7;
 				border: 1px solid;
-
-				span {
-					display: block;
-				}
 			}
 
 			span {
-				display: none;
+				display: block;
 				font-size: 10px;
 				text-overflow: ellipsis;
+				margin-top: 12px;
+				color: #8b8b8b;
 			}
 		}
 	}
 
 	input.icons-search {
-		padding: 12px;
 		background: #fff;
 		margin-bottom: 8px;
-		font-size: 1.4em;
 		border: none;
-		border-bottom: 1px solid #d5dadf;
 		border-radius: 0;
-		transition: border 0.5s;
-
 	}
 }
 

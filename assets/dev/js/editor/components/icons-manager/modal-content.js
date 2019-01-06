@@ -9,6 +9,7 @@ export default class extends Marionette.ItemView {
 			type: '',
 			icons: false,
 			allIcons: false,
+			iconsInView: null,
 		};
 	}
 
@@ -87,7 +88,7 @@ export default class extends Marionette.ItemView {
 		this.ui.tabLi.removeClass( 'active' );
 		jQuery( 'li[data-tab="all"]' ).addClass( 'active' );
 		this.ui.iconListContainer.html( '' );
-
+		let $iconsInView = jQuery();
 		this.cache.type = 'all';
 		_.each( icons, ( typeIcons, tabKey ) => {
 			if ( ! typeIcons ) {
@@ -114,18 +115,21 @@ export default class extends Marionette.ItemView {
 					clss = icon.displayPrefix + ' ' + icon.selector;
 
 				iconLi.addClass( 'icon-list-item' );
-				iconLi.attr( 'data-name', icon.name );
+				iconLi.data( 'name', icon.name );
+				iconLi.data( 'library', tabKey );
 
 				iTag.addClass( clss )
 					.data( 'name', icon.name )
 					.data( 'value', icon.displayPrefix + ' ' + icon.selector )
+					.data( 'library', tabKey )
 					.html( '<span>' + icon.name + '</span>' );
 
 				iconLi.append( iTag );
-
+				$iconsInView = $iconsInView.add( iconLi );
 				this.ui.iconListContainer.append( iconLi );
 			}
 		} );
+		this.ui.iconListItems = $iconsInView;
 	}
 
 	showTab( tabKey ) {
@@ -348,27 +352,36 @@ export default class extends Marionette.ItemView {
 		this.cache.value = $icon.data( 'value' );
 	}
 
+	getIconsToShow( icons, filter ) {
+		return Object.values( icons ).filter( ( icon ) => {
+			return icon.name.toLowerCase().indexOf( filter ) > -1;
+		} );
+	}
+
 	onSearch() {
 		let filter = this.ui.searchInput.val();
 
-		if ( '' === filter ) {
+		if ( ! filter || '' === filter ) {
 			return this.showAll();
 		}
 
 		filter = filter.toLocaleLowerCase();
-		let iconsToShow;
+		jQuery( this.ui.iconListItems.selector ).hide();
+
+		let iconsToShow = [];
 		if ( 'all' === this.cache.type ) {
-			iconsToShow = Object.values( this.cache.allIcons ).filter( ( icont ) => {
-				return icon.name.toLowerCase().indexOf( filter ) > -1;
+			Object.keys( this.cache.allIcons ).map( ( key ) => {
+				iconsToShow[ key ] = this.getIconsToShow( this.cache.allIcons[ key ], filter );
+				this.showFilteredIcons( iconsToShow[ key ] );
 			} );
 		} else {
-			iconsToShow = Object.values( this.cache.icons ).filter( ( icon ) => {
-				return icon.name.toLowerCase().indexOf( filter ) > -1;
-			} );
+			iconsToShow = this.getIconsToShow( this.cache.icons, filter );
+			this.showFilteredIcons( iconsToShow );
 		}
+	}
 
-		jQuery( this.ui.iconListItems.selector ).hide();
-		for ( const icon of iconsToShow ) {
+	showFilteredIcons( icons ) {
+		for ( const icon of icons ) {
 			jQuery( 'li[data-name="' + icon.name + '"]' ).show();
 		}
 	}
