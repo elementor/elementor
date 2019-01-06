@@ -89,7 +89,7 @@ module.exports = Marionette.ItemView.extend( {
 			model: this.model,
 			controls: this.model.controls,
 			name: this.options.name,
-			parentName: this.options.parentName,
+			controlName: this.options.controlName,
 			el: this.getSettingsPopup().getElements( 'message' )[ 0 ],
 		} );
 
