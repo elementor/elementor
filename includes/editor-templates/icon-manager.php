@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-icon-manager-tabs">
             <input type="hidden" name="icon_value" id="icon_value" value="">
             <input type="hidden" name="icon_type" id="icon_type" value="">
-            <div class="elementor-icon-manager-sidebar">
+            <div class="elementor-icon-manager__sidebar">
                 <ul class="elementor-icon-manager-tabs-list">
                     <li class="icon-type-tab-label" data-tab="all"><?php esc_html_e( 'All Icons', 'elementor' ); ?></li>
                     <?php foreach ( Icons_Manager::get_icon_manager_tabs() as $tab_key => $icons_tab ) : ?>
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <?php endforeach; ?>
                 </ul>
             </div>
-			<div class="elementor-icon-manager-tabs-container">
+			<div class="elementor-icon-manager-tabs__container">
                 <input type="search" class="icons-search" id="icons-search" placeholder="<?php esc_attr_e( 'Search...', 'elementor' ); ?>">
 				<ul class="elementor-icon-manager-tabs-content"></ul>
 			</div>
