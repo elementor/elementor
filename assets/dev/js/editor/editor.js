@@ -140,7 +140,7 @@ const App = Marionette.Application.extend( {
 		},
 		panelFooterSubMenus: {
 			element: '.elementor-panel-footer-tool',
-			ignore: '.elementor-panel-footer-tool.elementor-toggle-state',
+			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
 			callback: ( $elementsToHide ) => {
 				$elementsToHide.removeClass( 'elementor-open' );
 			},
