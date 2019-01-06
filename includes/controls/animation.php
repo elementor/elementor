@@ -118,6 +118,7 @@ class Control_Animation extends Base_Data_Control {
 			 * @param array $additional_animations Additional Animations array.
 			 */
 			$additional_animations = apply_filters( 'elementor/controls/animations/additional_animations', $additional_animations );
+
 			self::$_animations = array_merge( self::$_animations, $additional_animations );
 		}
 
