@@ -291,7 +291,7 @@ class Source_Local extends Source_Base {
 			'labels' => [
 				'name' => _x( 'Categories', 'Template Library', 'elementor' ),
 				'singular_name' => _x( 'Category', 'Template Library', 'elementor' ),
-				'all_items' => __( 'All Categories', 'elementor' ),
+				'all_items' => __( 'All Categories', 'Template Library', 'elementor' ),
 			],
 		];
 
@@ -1250,7 +1250,7 @@ class Source_Local extends Source_Base {
 			'selected' => empty( $_GET[ self::TAXONOMY_CATEGORY_SLUG ] ) ? '' : $_GET[ self::TAXONOMY_CATEGORY_SLUG ],
 		);
 
-		echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by category', 'elementor' ) . '</label>';
+		echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
 		wp_dropdown_categories( $dropdown_options );
 	}
 
