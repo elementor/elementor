@@ -178,7 +178,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.toggleFilterClass();
 
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'block' === elementor.templates.getFilter( 'type' ) ) {
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
 			this.setFiltersUI();
 
 			this.setMasonrySkin();

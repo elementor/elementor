@@ -1397,10 +1397,6 @@ class Source_Local extends Source_Base {
 			$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
 		}
 
-		if ( 'page' === $template_type ) {
-			$template_label = __( 'Content', 'elementor' );
-		}
-
 		/**
 		 * Template label by template type.
 		 *

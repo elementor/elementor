@@ -43,7 +43,7 @@ class General extends Base_Category {
 			'my-templates' => [
 				'title' => _x( 'My Templates', 'Template Library', 'elementor' ),
 				'icon' => 'library-save',
-				'url' => admin_url( 'edit.php?post_type=' . Source_Local::CPT ),
+				'url' => admin_url( Source_Local::ADMIN_MENU_SLUG ),
 				'keywords' => [ 'template', 'header', 'footer', 'single', 'archive', 'search', '404 page', 'library' ],
 			],
 			'system-info' => [

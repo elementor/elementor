@@ -16,26 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Section extends Library_Document {
 
 	/**
-	 * Get document properties.
-	 *
-	 * Retrieve the document properties.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 * @static
-	 *
-	 * @return array Document properties.
-	 */
-	public static function get_properties() {
-		$properties = parent::get_properties();
-
-		$properties['library_view'] = 'list';
-		$properties['group'] = 'blocks';
-
-		return $properties;
-	}
-
-	/**
 	 * Get document name.
 	 *
 	 * Retrieve the document name.

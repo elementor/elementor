@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.6.0
+ * Dialogs Manager v4.6.1
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -570,7 +570,7 @@
 
 		this.setHeaderMessage = function (message) {
 
-			this.getElements('header').html(message);
+			self.getElements('header').html(message);
 
 			return this;
 		};
@@ -863,8 +863,13 @@
 			$widgetContent.prepend($closeButton);
 		},
 		attachEvents: function() {
-			if (this.getSettings('closeButton')) {
-				this.getElements('closeButton').on('click', this.hide);
+
+			var self = this;
+
+			if (self.getSettings('closeButton')) {
+				self.getElements('closeButton').on('click', function() {
+					self.hide();
+				});
 			}
 		},
 		onReady: function(){

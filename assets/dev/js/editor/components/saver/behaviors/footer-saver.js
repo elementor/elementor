@@ -97,7 +97,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.ui.lastEditedWrapper
 			.removeClass( 'elementor-button-state' )
 			.find( '.elementor-last-edited' )
-			.html( data.config.last_edited );
+			.html( data.config.document.last_edited );
 	},
 
 	onAfterSaveError: function() {
@@ -120,34 +120,11 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickButtonPublish: function() {
-		var postStatus = elementor.settings.page.model.get( 'post_status' );
-
 		if ( this.ui.buttonPublish.hasClass( 'elementor-disabled' ) ) {
 			return;
 		}
 
-		switch ( postStatus ) {
-			case 'publish':
-			case 'future':
-			case 'private':
-				elementor.saver.update();
-				break;
-			case 'draft':
-				if ( elementor.config.current_user_can_publish ) {
-					elementor.saver.publish();
-				} else {
-					elementor.saver.savePending();
-				}
-				break;
-			case 'pending': // User cannot change post status
-			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
-				if ( elementor.config.current_user_can_publish ) {
-					elementor.saver.publish();
-				} else {
-					elementor.saver.update();
-				}
-				break;
-		}
+		elementor.saver.defaultSave();
 	},
 
 	onClickMenuSaveDraft: function() {

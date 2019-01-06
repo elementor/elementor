@@ -83,6 +83,17 @@ class Control_Hover_Animation extends Base_Data_Control {
 				'buzz' => 'Buzz',
 				'buzz-out' => 'Buzz Out',
 			];
+
+			$additional_animations = [];
+			/**
+			 * Element hover animations list.
+			 *
+			 * @since 2.4.0
+			 *
+			 * @param array $additional_animations Additional Animations array.
+			 */
+			$additional_animations = apply_filters( 'elementor/controls/hover_animations/additional_animations', $additional_animations );
+			self::$_animations = array_merge( self::$_animations, $additional_animations );
 		}
 
 		return self::$_animations;
