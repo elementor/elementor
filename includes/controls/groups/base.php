@@ -324,6 +324,16 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 				$field['selectors'] = $this->handle_selectors( $field['selectors'] );
 			}
 
+			if ( ! empty( $field['device_args'] ) ) {
+				foreach ( $field['device_args'] as $device => $device_arg ) {
+
+					if ( ! empty( $device_arg['selectors'] ) ) {
+						$field['device_args'][ $device ]['selectors'] = $this->handle_selectors( $device_arg['selectors'] );
+					}
+				}
+			}
+
+
 			if ( isset( $this->args['fields_options']['__all'] ) ) {
 				$field = array_merge( $field, $this->args['fields_options']['__all'] );
 			}
@@ -446,7 +456,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$selectors = array_combine(
 			array_map(
 				function( $key ) use ( $args ) {
-						return str_replace( '{{SELECTOR}}', $args['selector'], $key );
+					return str_replace( '{{SELECTOR}}', $args['selector'], $key );
 				}, array_keys( $selectors )
 			),
 			$selectors
@@ -461,10 +471,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		foreach ( $selectors as &$selector ) {
 			$selector = preg_replace_callback(
 				'/\{\{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
-					return preg_replace_callback( '/[^ ]+(?=\.)/', function( $sub_matches ) use ( $controls_prefix ) {
-						return $controls_prefix . $sub_matches[0];
-					}, $matches[1] );
-				}, $selector
+				return preg_replace_callback( '/[^ ]+(?=\.)/', function( $sub_matches ) use ( $controls_prefix ) {
+					return $controls_prefix . $sub_matches[0];
+				}, $matches[1] );
+			}, $selector
 			);
 		}
 
