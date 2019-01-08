@@ -49,7 +49,7 @@ export default class extends elementorModules.Module {
 			if ( $icon.length ) {
 				const $iconLi = $icon.parent();
 				modalView.setSelected( $iconLi );
-				setTimeout( () => $iconLi[ 0 ].scrollIntoView(), 10 );
+				setTimeout( () => $iconLi[ 0 ].scrollIntoView( false ), 100 );
 			}
 			return;
 		}
