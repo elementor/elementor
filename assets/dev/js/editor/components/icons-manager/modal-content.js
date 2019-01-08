@@ -13,6 +13,10 @@ export default class extends Marionette.ItemView {
 		};
 	}
 
+	getIconLiTemplate() {
+		return '<li class="icon-list-item" data-library="{{ library }}" data-name="{{ name }}"><i data-value="{{ className }}" class="{{ className }}"><span>{{ name }}</span></i></li>';
+	}
+
 	getTemplate() {
 		return '#tmpl-elementor-icons-manager';
 	}
@@ -88,7 +92,6 @@ export default class extends Marionette.ItemView {
 		this.ui.tabLi.removeClass( 'active' );
 		jQuery( 'li[data-tab="all"]' ).addClass( 'active' );
 		this.ui.iconListContainer.html( '' );
-		let $iconsInView = jQuery();
 		this.cache.type = 'all';
 		_.each( icons, ( typeIcons, tabKey ) => {
 			if ( ! typeIcons ) {
@@ -110,29 +113,14 @@ export default class extends Marionette.ItemView {
 					}
 				}
 
-				const iconLi = jQuery( '<li>' ),
-					iTag = jQuery( '<i>' ),
-					clss = icon.displayPrefix + ' ' + icon.selector;
-
-				iconLi.addClass( 'icon-list-item' );
-				iconLi.data( 'name', icon.name );
-				iconLi.data( 'library', tabKey );
-
-				iTag.addClass( clss )
-					.data( 'name', icon.name )
-					.data( 'value', icon.displayPrefix + ' ' + icon.selector )
-					.data( 'library', tabKey )
-					.html( '<span>' + icon.name + '</span>' );
-
-				iconLi.append( iTag );
-				$iconsInView = $iconsInView.add( iconLi );
-				this.ui.iconListContainer.append( iconLi );
+				this.loadIconsToList( icon, tabKey );
 			}
 		} );
-		this.ui.iconListItems = $iconsInView;
+		this.ui.iconListItems = jQuery( '.icon-list-item' );
 	}
 
 	showTab( tabKey ) {
+		this.ui.searchInput.val( '' );
 		if ( 'all' === tabKey ) {
 			return this.handleAllTab();
 		}
@@ -168,22 +156,21 @@ export default class extends Marionette.ItemView {
 				}
 			}
 
-			const iconLi = jQuery( '<li>' ),
-				iTag = jQuery( '<i>' ),
-				clss = icon.displayPrefix + ' ' + icon.selector;
-
-			iconLi.addClass( 'icon-list-item' );
-			iconLi.attr( 'data-name', icon.name );
-
-			iTag.addClass( clss )
-				.data( 'name', icon.name )
-				.data( 'value', icon.displayPrefix + ' ' + icon.selector )
-				.html( '<span>' + icon.name + '</span>' );
-
-			iconLi.append( iTag );
-
-			this.ui.iconListContainer.append( iconLi );
+			this.loadIconsToList( icon, tabKey );
 		}
+
+		this.ui.iconListItems = jQuery( '.icon-list-item' );
+	}
+
+	loadIconsToList( icon, library ) {
+		const tmpl = this.getIconLiTemplate();
+		const rendered = _.template( tmpl, { interpolate: /{{([\s\S]+?)}}/g } )( {
+			name: icon.name,
+			className: icon.displayPrefix + ' ' + icon.selector,
+			library: library,
+		} );
+
+		this.ui.iconListContainer.append( rendered );
 	}
 
 	showAll() {
@@ -350,6 +337,7 @@ export default class extends Marionette.ItemView {
 		$iconLi.addClass( 'selected' );
 		const $icon = $iconLi.find( 'i' );
 		this.cache.value = $icon.data( 'value' );
+		this.cache.type = $iconLi.data( 'library' );
 	}
 
 	getIconsToShow( icons, filter ) {
@@ -392,6 +380,7 @@ export default class extends Marionette.ItemView {
 		this.cache.type = '';
 		this.cache.icons = false;
 		this.cache.allIcons = false;
+		this.ui.searchInput.val( '' );
 	}
 
 	store() {
