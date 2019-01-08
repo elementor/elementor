@@ -337,7 +337,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 				}
 			}
 
-
 			if ( isset( $this->args['fields_options']['__all'] ) ) {
 				$field = array_merge( $field, $this->args['fields_options']['__all'] );
 			}
