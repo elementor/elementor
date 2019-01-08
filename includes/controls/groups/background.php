@@ -294,6 +294,14 @@ class Group_Control_Background extends Group_Control_Base {
 				'unit' => 'px',
 				'size' => 0,
 			],
+			'tablet_default' => [
+				'unit' => 'px',
+				'size' => 0,
+			],
+			'mobile_default' => [
+				'unit' => 'px',
+				'size' => 0,
+			],
 			'range' => [
 				'px' => [
 					'min' => -800,
@@ -325,6 +333,26 @@ class Group_Control_Background extends Group_Control_Base {
 				'image[url]!' => '',
 			],
 			'required' => true,
+			'device_args' => [
+				Controls_Stack::RESPONSIVE_TABLET => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-position: {{SIZE}}{{UNIT}} {{ypos_tablet.SIZE}}{{ypos_tablet.UNIT}}',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'position_tablet' => [ 'initial' ],
+					],
+				],
+				Controls_Stack::RESPONSIVE_MOBILE => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-position: {{SIZE}}{{UNIT}} {{ypos_mobile.SIZE}}{{ypos_mobile.UNIT}}',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'position_mobile' => [ 'initial' ],
+					],
+				],
+			],
 		];
 
 		$fields['ypos'] = [
@@ -333,6 +361,14 @@ class Group_Control_Background extends Group_Control_Base {
 			'responsive' => true,
 			'size_units' => [ 'px', 'em', '%', 'vw', 'vh' ],
 			'default' => [
+				'unit' => 'px',
+				'size' => 0,
+			],
+			'tablet_default' => [
+				'unit' => 'px',
+				'size' => 0,
+			],
+			'mobile_default' => [
 				'unit' => 'px',
 				'size' => 0,
 			],
@@ -367,6 +403,26 @@ class Group_Control_Background extends Group_Control_Base {
 				'image[url]!' => '',
 			],
 			'required' => true,
+			'device_args' => [
+				Controls_Stack::RESPONSIVE_TABLET => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-position: {{xpos_tablet.SIZE}}{{xpos_tablet.UNIT}} {{SIZE}}{{UNIT}}',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'position_tablet' => [ 'initial' ],
+					],
+				],
+				Controls_Stack::RESPONSIVE_MOBILE => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-position: {{xpos_mobile.SIZE}}{{xpos_mobile.UNIT}} {{SIZE}}{{UNIT}}',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'position_mobile' => [ 'initial' ],
+					],
+				],
+			],
 		];
 
 		$fields['attachment'] = [
