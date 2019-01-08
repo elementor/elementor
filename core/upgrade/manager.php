@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Core\Upgrade;
 
 use Elementor\Core\Base\DB_Upgrades_Manager;
