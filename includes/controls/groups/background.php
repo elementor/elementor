@@ -334,7 +334,7 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 			'required' => true,
 			'device_args' => [
-				'tablet' => [
+				Controls_Stack::RESPONSIVE_TABLET => [
 					'selectors' => [
 						'{{SELECTOR}}' => 'background-position: {{SIZE}}{{UNIT}} {{ypos_tablet.SIZE}}{{ypos_tablet.UNIT}}',
 					],
@@ -343,7 +343,7 @@ class Group_Control_Background extends Group_Control_Base {
 						'position_tablet' => [ 'initial' ],
 					],
 				],
-				'mobile' => [
+				Controls_Stack::RESPONSIVE_MOBILE => [
 					'selectors' => [
 						'{{SELECTOR}}' => 'background-position: {{SIZE}}{{UNIT}} {{ypos_mobile.SIZE}}{{ypos_mobile.UNIT}}',
 					],
@@ -404,7 +404,7 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 			'required' => true,
 			'device_args' => [
-				'tablet' => [
+				Controls_Stack::RESPONSIVE_TABLET => [
 					'selectors' => [
 						'{{SELECTOR}}' => 'background-position: {{xpos_tablet.SIZE}}{{xpos_tablet.UNIT}} {{SIZE}}{{UNIT}}',
 					],
@@ -413,7 +413,7 @@ class Group_Control_Background extends Group_Control_Base {
 						'position_tablet' => [ 'initial' ],
 					],
 				],
-				'mobile' => [
+				Controls_Stack::RESPONSIVE_MOBILE => [
 					'selectors' => [
 						'{{SELECTOR}}' => 'background-position: {{xpos_mobile.SIZE}}{{xpos_mobile.UNIT}} {{SIZE}}{{UNIT}}',
 					],
@@ -653,23 +653,6 @@ class Group_Control_Background extends Group_Control_Base {
 		foreach ( $args['types'] as $type ) {
 			if ( isset( $background_types[ $type ] ) ) {
 				$choose_types[ $type ] = $background_types[ $type ];
-			}
-		}
-
-		foreach ( $fields as $field ) {
-			if ( ! isset( $field['device_args'] ) ) {
-				continue;
-			}
-			foreach ( [ 'tablet', 'mobile' ] as $device ) {
-				if ( ! isset( $field['device_args'][ $device ]['condition'] ) ) {
-					continue;
-				}
-				$condition = & $field['device_args'][ $device ]['condition'];
-
-				foreach ( $condition as $control_name => $value ) {
-					$condition[ $args['name'] . '_' . $control_name ] = $value;
-					unset( $condition[ $control_name] );
-				}
 			}
 		}
 
