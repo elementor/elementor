@@ -327,6 +327,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			if ( ! empty( $field['device_args'] ) ) {
 				foreach ( $field['device_args'] as $device => $device_arg ) {
 
+					if ( ! empty( $field['device_args'][ $device ]['condition'] ) ) {
+						$field['device_args'][ $device ] = $this->add_conditions_prefix( $field['device_args'][ $device ] );
+					}
+
 					if ( ! empty( $device_arg['selectors'] ) ) {
 						$field['device_args'][ $device ]['selectors'] = $this->handle_selectors( $device_arg['selectors'] );
 					}
