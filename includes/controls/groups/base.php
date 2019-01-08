@@ -473,13 +473,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$controls_prefix = $this->get_controls_prefix();
 
 		foreach ( $selectors as &$selector ) {
-			$selector = preg_replace_callback(
-				'/\{\{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
+			$selector = preg_replace_callback( '/\{\{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
 				return preg_replace_callback( '/[^ ]+(?=\.)/', function( $sub_matches ) use ( $controls_prefix ) {
 					return $controls_prefix . $sub_matches[0];
 				}, $matches[1] );
-			}, $selector
-			);
+			}, $selector );
 		}
 
 		return $selectors;
