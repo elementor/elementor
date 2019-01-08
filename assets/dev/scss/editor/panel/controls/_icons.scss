@@ -2,6 +2,10 @@
 
 	.dialog-message {
 		padding: 0;
+
+		.dialog-content {
+			overflow: hidden;
+		}
 	}
 }
 #elementor-icons-manager {
@@ -19,6 +23,7 @@
 		}
 		.elementor-icon-manager-tabs__container {
 			padding: 50px;
+			width: 100%;
 		}
 	}
 
@@ -54,11 +59,11 @@
 
 	ul.elementor-icon-manager-tabs-content {
 
-		align-items: center;
+		align-items: flex-start;
 		display: flex;
 		flex-wrap: wrap;
-		align-content: flex-start;
 		height: 70vh;
+		align-content: flex-start;
 		overflow: scroll;
 
 		li {
