@@ -289,7 +289,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'X Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'responsive' => true,
-			'size_units' => [ 'px', 'em', '%', 'vw', 'vh' ],
+			'size_units' => [ 'px', 'em', '%', 'vw' ],
 			'default' => [
 				'unit' => 'px',
 				'size' => 0,
@@ -312,10 +312,6 @@ class Group_Control_Background extends Group_Control_Base {
 					'max' => 100,
 				],
 				'%' => [
-					'min' => -100,
-					'max' => 100,
-				],
-				'vh' => [
 					'min' => -100,
 					'max' => 100,
 				],
@@ -359,7 +355,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Y Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'responsive' => true,
-			'size_units' => [ 'px', 'em', '%', 'vw', 'vh' ],
+			'size_units' => [ 'px', 'em', '%', 'vh' ],
 			'default' => [
 				'unit' => 'px',
 				'size' => 0,
@@ -386,10 +382,6 @@ class Group_Control_Background extends Group_Control_Base {
 					'max' => 100,
 				],
 				'vh' => [
-					'min' => -100,
-					'max' => 100,
-				],
-				'vw' => [
 					'min' => -100,
 					'max' => 100,
 				],
@@ -508,10 +500,6 @@ class Group_Control_Background extends Group_Control_Base {
 					'min' => 0,
 					'max' => 1000,
 				],
-				'em' => [
-					'min' => 0,
-					'max' => 100,
-				],
 				'%' => [
 					'min' => 0,
 					'max' => 100,
@@ -534,6 +522,26 @@ class Group_Control_Background extends Group_Control_Base {
 				'background' => [ 'classic' ],
 				'size' => [ 'initial' ],
 				'image[url]!' => '',
+			],
+			'device_args' => [
+				Controls_Stack::RESPONSIVE_TABLET => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-size: {{SIZE}}{{UNIT}} auto',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'size_tablet' => [ 'initial' ],
+					],
+				],
+				Controls_Stack::RESPONSIVE_MOBILE => [
+					'selectors' => [
+						'{{SELECTOR}}' => 'background-size: {{SIZE}}{{UNIT}} auto',
+					],
+					'condition' => [
+						'background' => [ 'classic' ],
+						'size_mobile' => [ 'initial' ],
+					],
+				],
 			],
 		];
 
