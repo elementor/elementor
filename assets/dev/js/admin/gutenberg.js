@@ -57,17 +57,28 @@
 			var self = this;
 
 			self.cache.$switchModeButton.on( 'click', function() {
-				self.isElementorMode = ! self.isElementorMode;
-
-				self.toggleStatus();
-
 				if ( self.isElementorMode ) {
-					self.cache.$editorPanelButton.trigger( 'click' );
-				} else {
-					var wpEditor = wp.data.dispatch( 'core/editor' );
+					elementorCommon.dialogsManager.createWidget( 'confirm', {
+						message: elementorAdmin.translate( 'back_to_wordpress_editor_message' ),
+						headerMessage: elementorAdmin.translate( 'back_to_wordpress_editor_header' ),
+						strings: {
+							confirm: elementorAdmin.translate( 'yes' ),
+							cancel: elementorAdmin.translate( 'cancel' ),
+						},
+						defaultOption: 'confirm',
+						onConfirm: function() {
+							const wpEditor = wp.data.dispatch( 'core/editor' );
 
-					wpEditor.editPost( { gutenberg_elementor_mode: false } );
-					wpEditor.savePost();
+							wpEditor.editPost( { gutenberg_elementor_mode: false } );
+							wpEditor.savePost();
+							self.isElementorMode = ! self.isElementorMode;
+							self.toggleStatus();
+						},
+					} ).show();
+				} else {
+					self.isElementorMode = ! self.isElementorMode;
+					self.toggleStatus();
+					self.cache.$editorPanelButton.trigger( 'click' );
 				}
 			} );
 		},

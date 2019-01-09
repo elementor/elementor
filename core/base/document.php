@@ -157,11 +157,10 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @since 2.0.12
+	 * @deprecated 2.4.0
 	 * @access public
 	 */
-	public function get_remote_library_type() {
-		return $this->get_name();
-	}
+	public function get_remote_library_type() {}
 
 	/**
 	 * @since 2.0.0
@@ -414,7 +413,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
-			'remote_type' => $this->get_remote_library_type(),
+			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),
 			'container' => 'body',
@@ -1066,6 +1065,24 @@ abstract class Document extends Controls_Stack {
 		}
 
 		parent::__construct( $data );
+	}
+
+	protected function get_remote_library_config() {
+		$config = [
+			'type' => 'block',
+			'category' => $this->get_name(),
+			'autoImportSettings' => false,
+		];
+
+		// TODO: BC since 2.4.0
+		$bc_type = $this->get_remote_library_type();
+
+		if ( $bc_type ) {
+			$config['category'] = $bc_type;
+		}
+		// END BC
+
+		return $config;
 	}
 
 	/**

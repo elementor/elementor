@@ -19,7 +19,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		return {
 			title: elementor.translate( 'library' ),
 			click: function() {
-				elementor.templates.setTemplatesPage( 'remote', 'page' );
+				elementor.templates.showDefaultScreen();
 			},
 		};
 	},

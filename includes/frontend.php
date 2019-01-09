@@ -282,7 +282,9 @@ class Frontend extends App {
 		wp_register_script(
 			'elementor-frontend-modules',
 			ELEMENTOR_ASSETS_URL . 'js/frontend-modules.js',
-			[],
+			[
+				'jquery',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -353,7 +355,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.6.0',
+			'4.6.1',
 			true
 		);
 
@@ -1074,6 +1076,16 @@ class Frontend extends App {
 				'editSettings' => (object) [],
 				'keys' => $elements_frontend_keys,
 			];
+		}
+
+		if ( is_user_logged_in() ) {
+			$user = wp_get_current_user();
+
+			if ( ! empty( $user->roles ) ) {
+				$settings['user'] = [
+					'roles' => $user->roles,
+				];
+			}
 		}
 
 		return $settings;
