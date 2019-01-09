@@ -360,6 +360,38 @@ label.elementor-template-library-order-label {
 		}
 	}
 
+	&:not(.elementor-template-library-template-page) {
+		position: relative;
+		width: calc(33.333% - #{$remote-templates-items-space});
+		overflow: hidden;
+
+		img {
+			display: block;
+			width: 100%;
+		}
+
+		.elementor-template-library-template-footer {
+			position: absolute;
+			width: 100%;
+			bottom: 0;
+			@include start(0);
+			padding: 10px;
+			background-color: #fff;
+			transition: transform .5s;
+		}
+
+		.elementor-template-library-template-name {
+			display: none;
+		}
+
+		&:not(:hover) {
+
+			.elementor-template-library-template-footer {
+				transform: translateY(100%)
+			}
+		}
+	}
+
 	.elementor-template-library-template-body {
 		position: relative;
 	}
@@ -478,38 +510,6 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-body {
 		height: 200px;
-	}
-}
-
-.elementor-template-library-template-block {
-	position: relative;
-	width: calc(33.333% - #{$remote-templates-items-space});
-	overflow: hidden;
-
-	img {
-		display: block;
-		width: 100%;
-	}
-
-	.elementor-template-library-template-footer {
-		position: absolute;
-		width: 100%;
-		bottom: 0;
-		@include start(0);
-		padding: 10px;
-		background-color: #fff;
-		transition: transform .5s;
-	}
-
-	.elementor-template-library-template-name {
-		display: none;
-	}
-
-	&:not(:hover) {
-
-		.elementor-template-library-template-footer {
-			transform: translateY(100%)
-		}
 	}
 }
 
