@@ -822,7 +822,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'border_radius_hover',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),

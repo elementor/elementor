@@ -24,18 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Documents_Manager {
 
 	/**
-	 * Registered document groups.
-	 *
-	 * Holds the list of all the registered document groups.
-	 *
-	 * @since 2.0.0
-	 * @access protected
-	 *
-	 * @var array
-	 */
-	protected $groups = [];
-
-	/**
 	 * Registered types.
 	 *
 	 * Holds the list of all the registered types.
@@ -513,9 +501,11 @@ class Documents_Manager {
 
 		$return_data = [
 			'config' => [
-				'last_edited' => $document->get_last_edited(),
-				'wp_preview' => [
-					'url' => $document->get_wp_preview_url(),
+				'document' => [
+					'last_edited' => $document->get_last_edited(),
+					'urls' => [
+						'wp_preview' => $document->get_wp_preview_url(),
+					],
 				],
 			],
 		];
@@ -620,35 +610,16 @@ class Documents_Manager {
 	}
 
 	/**
-	 * Register group.
-	 *
-	 * Registers a single document group.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @param string $id   Group ID.
-	 * @param array  $args Group data.
-	 *
-	 * @return Documents_Manager The updated document manager instance.
-	 */
-	public function register_group( $id, $args ) {
-		$this->groups[ $id ] = $args;
-		return $this;
-	}
-
-	/**
 	 * Get groups.
 	 *
-	 * Retrieve the list of all the registered document groups.
-	 *
 	 * @since 2.0.0
+	 * @deprecated 2.4.0
 	 * @access public
 	 *
-	 * @return array list of all the registered document groups.
+	 * @return array
 	 */
 	public function get_groups() {
-		return $this->groups;
+		return [];
 	}
 
 	private function register_types() {

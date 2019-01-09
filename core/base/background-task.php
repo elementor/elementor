@@ -61,7 +61,7 @@ abstract class Background_Task extends \WP_Background_Process {
 
 	public function get_current_offset() {
 		$limit = $this->get_limit();
-		return $this->current_item['iterate_num'] * $limit;
+		return ( $this->current_item['iterate_num'] - 1 ) * $limit;
 	}
 
 	public function get_limit() {
@@ -265,7 +265,7 @@ abstract class Background_Task extends \WP_Background_Process {
 				if ( empty( $item['total'] ) ) {
 					$progress = sprintf( '(x%s)', $item['iterate_num'] );
 				} else {
-					$percent = floor( $item['iterate_num'] / ( $item['total'] / 100 ) );
+					$percent = ceil( $item['iterate_num'] / ( $item['total'] / 100 ) );
 					$progress = sprintf( '(%s of %s, %s%%)', $item['iterate_num'], $item['total'], $percent );
 				}
 			}

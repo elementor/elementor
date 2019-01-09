@@ -45,7 +45,19 @@
 				event.preventDefault();
 
 				if ( self.isElementorMode() ) {
-					self.elements.$switchModeInput.val( '' );
+					elementorCommon.dialogsManager.createWidget( 'confirm', {
+						message: self.translate( 'back_to_wordpress_editor_message' ),
+						headerMessage: self.translate( 'back_to_wordpress_editor_header' ),
+						strings: {
+							confirm: self.translate( 'yes' ),
+							cancel: self.translate( 'cancel' ),
+						},
+						defaultOption: 'confirm',
+						onConfirm: function() {
+							self.elements.$switchModeInput.val( '' );
+							self.toggleStatus();
+						},
+					} ).show();
 				} else {
 					self.elements.$switchModeInput.val( true );
 
@@ -66,9 +78,8 @@
 
 						location.href = self.elements.$goToEditLink.attr( 'href' );
 					} );
+					self.toggleStatus();
 				}
-
-				self.toggleStatus();
 			} );
 
 			self.elements.$goToEditLink.on( 'click', function() {

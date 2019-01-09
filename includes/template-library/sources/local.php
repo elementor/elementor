@@ -164,6 +164,10 @@ class Source_Local extends Source_Base {
 		}
 	}
 
+	public static function get_admin_url() {
+		return add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
+	}
+
 	/**
 	 * Get local template ID.
 	 *
@@ -287,7 +291,7 @@ class Source_Local extends Source_Base {
 			'labels' => [
 				'name' => _x( 'Categories', 'Template Library', 'elementor' ),
 				'singular_name' => _x( 'Category', 'Template Library', 'elementor' ),
-				'all_items' => __( 'All Categories', 'elementor' ),
+				'all_items' => _x( 'All Categories', 'Template Library', 'elementor' ),
 			],
 		];
 
@@ -347,9 +351,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function admin_menu() {
-		$url = add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
-
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, $url );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url() );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -1248,7 +1250,7 @@ class Source_Local extends Source_Base {
 			'selected' => empty( $_GET[ self::TAXONOMY_CATEGORY_SLUG ] ) ? '' : $_GET[ self::TAXONOMY_CATEGORY_SLUG ],
 		);
 
-		echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by category', 'elementor' ) . '</label>';
+		echo '<label class="screen-reader-text" for="cat">' . _x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
 		wp_dropdown_categories( $dropdown_options );
 	}
 
@@ -1395,10 +1397,6 @@ class Source_Local extends Source_Base {
 			$template_label = call_user_func( [ $document_types[ $template_type ], 'get_title' ] );
 		} else {
 			$template_label = ucwords( str_replace( [ '_', '-' ], ' ', $template_type ) );
-		}
-
-		if ( 'page' === $template_type ) {
-			$template_label = __( 'Content', 'elementor' );
 		}
 
 		/**

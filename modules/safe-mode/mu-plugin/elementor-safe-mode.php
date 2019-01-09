@@ -3,10 +3,10 @@
 /**
  * Plugin Name: Elementor Safe Mode
  * Description: Safe Mode allows you to troubleshoot issues by only loading the editor, without loading the theme or any other plugin.
- * Plugin URI: https://elementor.com/?utm_source=wp-mu-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
+ * Plugin URI: https://elementor.com/?utm_source=safe-mode&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Author: Elementor.com
  * Version: 1.0.0
- * Author URI: https://elementor.com/?utm_source=wp-mu-plugins&utm_campaign=author-uri&utm_medium=wp-dash
+ * Author URI: https://elementor.com/?utm_source=safe-mode&utm_campaign=author-uri&utm_medium=wp-dash
  *
  * Text Domain: elementor
  *
@@ -85,7 +85,7 @@ class Safe_Mode {
 	public function plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ) {
 		if ( basename( __FILE__ ) === $plugin_file ) {
 			$row_meta = [
-				'docs' => '<a href="https://go.elementor.com/safe-mode/" aria-label="' . esc_attr( __( 'View Documentation', 'elementor' ) ) . '" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+				'docs' => '<a href="https://go.elementor.com/safe-mode/" aria-label="' . esc_attr( __( 'Learn More', 'elementor' ) ) . '" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 			];
 
 			$plugin_meta = array_merge( $plugin_meta, $row_meta );

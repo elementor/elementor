@@ -120,10 +120,6 @@ class Utils {
 
 		$link = add_query_arg( 'utm_term', $theme_name, $link );
 
-		if ( defined( 'ELEMENTOR_PARTNER_ID' ) ) {
-			$link = add_query_arg( 'partner_id', sanitize_key( ELEMENTOR_PARTNER_ID ), $link );
-		}
-
 		return $link;
 	}
 

@@ -197,12 +197,12 @@ class Settings extends Settings_Page {
 		}
 
 		if ( 'go_elementor_pro' === $_GET['page'] ) {
-			wp_safe_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
+			wp_redirect( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-menu&utm_campaign=gopro&utm_medium=wp-dash' ) );
 			die;
 		}
 
 		if ( 'go_knowledge_base_site' === $_GET['page'] ) {
-			wp_safe_redirect( 'https://go.elementor.com/docs-admin-menu/' );
+			wp_redirect( 'https://go.elementor.com/docs-admin-menu/' );
 			die;
 		}
 	}
@@ -298,7 +298,7 @@ class Settings extends Settings_Page {
 			<div class="elementor-blank_state">
 				<i class="eicon-nerd-chuckle"></i>
 				<h2><?php echo __( 'Get Popup Builder', 'elementor' ); ?></h2>
-				<p><?php echo __( 'Create advanced popups that drive more leads and conversions to your business.', 'elementor' ); ?></p>
+				<p><?php echo __( 'Popup Builder lets you take advantage of all the amazing features in Elementor, so you can build beautiful & highly converting popups. Go pro and start designing your popups today.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
@@ -319,7 +319,7 @@ class Settings extends Settings_Page {
 			<div class="elementor-blank_state">
 				<i class="eicon-nerd-chuckle"></i>
 				<h2><?php echo __( 'Get Theme Builder', 'elementor' ); ?></h2>
-				<p><?php echo __( 'Elementor Pro comes built-in with an industry leading theme builder, which lets you customize every part of your WordPress theme visually.', 'elementor' ); ?></p>
+				<p><?php echo __( 'Theme Builder is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
