@@ -333,8 +333,10 @@ class Source_Local extends Source_Base {
 		}
 
 		// Move the 'Categories' menu to end.
-		$library_submenu[800] = $library_submenu[15];
-		unset( $library_submenu[15] );
+		if ( isset( $library_submenu[15] ) ) {
+			$library_submenu[800] = $library_submenu[15];
+			unset( $library_submenu[15] );
+		}
 
 		if ( $this->is_current_screen() ) {
 			$library_title = $this->get_library_title();
