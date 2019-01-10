@@ -143,15 +143,22 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-toast {
 				position: absolute;
 				z-index: 10000; /* Over the loading layer */
-				bottom: 50px;
-				right: 50px;
+				bottom: 10px;
 				width: 400px;
 				line-height: 30px;
 				background: white;
-				padding: 25px;
+				padding: 20px 25px 25px;
 				box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 				border-radius: 5px;
 				font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+			}
+
+			body.rtl .elementor-safe-mode-toast {
+				left: 10px;
+			}
+
+			body:not(.rtl) .elementor-safe-mode-toast {
+				right: 10px;
 			}
 
 			#elementor-try-safe-mode {
@@ -159,7 +166,7 @@ class Module extends \Elementor\Core\Base\Module {
 			}
 
 			.elementor-safe-mode-toast .elementor-toast-content {
-				font-size: 15px;
+				font-size: 13px;
 				line-height: 22px;
 				color: #6D7882;
 			}
@@ -177,49 +184,80 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-toast header {
 				display: flex;
 				align-items: center;
-				margin-bottom: 15px;
+				justify-content: space-between;
+				flex-wrap: wrap;
+				margin-bottom: 20px;
+			}
+
+			.elementor-safe-mode-toast header > * {
+				margin-top: 10px;
 			}
 
 			.elementor-safe-mode-toast .elementor-safe-mode-button {
 				display: inline-block;
 				font-weight: 500;
-				font-size: 12.5px;
+				font-size: 11px;
 				text-transform: uppercase;
 				color: white;
-				line-height: 33px;
+				padding: 10px 15px;
+				line-height: 1;
 				background: #A4AFB7;
 				border-radius: 3px;
-				padding: 0 15px;
 			}
 
 			#elementor-try-safe-mode .elementor-safe-mode-button {
 				background: #39B54A;
 			}
 
-			body:not(.rtl) .elementor-safe-mode-toast .elementor-safe-mode-button {
-				margin-left: auto;
-			}
-
-			body.rtl .elementor-safe-mode-toast .elementor-safe-mode-button {
-				margin-right: auto;
-			}
-
 			.elementor-safe-mode-toast header i {
 				font-size: 25px;
-				color: #A4AFB7;
+				color: #fcb92c;
 			}
 
 			body:not(.rtl) .elementor-safe-mode-toast header i {
-				margin-right: 5px;
+				margin-right: 10px;
 			}
 
 			body.rtl .elementor-safe-mode-toast header i {
-				margin-left: 5px;
+				margin-left: 10px;
 			}
 
 			.elementor-safe-mode-toast header h2 {
+				flex-grow: 1;
 				font-size: 18px;
-				color: #495157;
+				color: #6D7882;
+			}
+
+			.elementor-safe-mode-list-item {
+				margin-top: 10px;
+				list-style: outside;
+			}
+
+			body:not(.rtl) .elementor-safe-mode-list-item {
+				margin-left: 15px;
+			}
+
+			body.rtl .elementor-safe-mode-list-item {
+				margin-right: 15px;
+			}
+
+			.elementor-safe-mode-list-item b {
+				font-size: 14px;
+			}
+
+			.elementor-safe-mode-list-item-content {
+				font-style: italic;
+				color: #a4afb7;
+			}
+
+			.elementor-safe-mode-list-item-title {
+				font-weight: 500;
+			}
+
+			.elementor-safe-mode-mu-plugins {
+				background-color: #f1f3f5;
+				margin-top: 20px;
+				padding: 10px 15px;
 			}
 		</style>
 		<?php
@@ -238,25 +276,22 @@ class Module extends \Elementor\Core\Base\Module {
 			</header>
 
 			<div class="elementor-toast-content">
-				<p>
-					<?php echo __( 'Safe Mode has been activated.', 'elementor' ); ?>
-				</p>
-				<hr>
-				<p>
-					<?php printf( __( 'Editor loaded successfully? The issue was probably caused by one of your plugins or theme. <a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_HELPED_URL ); ?>
-				</p>
-				<hr>
-				<p>
-					<?php printf( __( 'Still having loading issues? <a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_DIDNT_HELP_URL ); ?>
-				</p>
+				<ul class="elementor-safe-mode-list">
+					<li class="elementor-safe-mode-list-item">
+						<div class="elementor-safe-mode-list-item-title"><?php echo __( 'Editor successfully loaded?', 'elementor' ); ?></div>
+						<div class="elementor-safe-mode-list-item-content"><?php printf( __( 'The issue was probably caused by one of your plugins or theme. <a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_HELPED_URL ); ?></div>
+					</li>
+					<li class="elementor-safe-mode-list-item">
+						<div class="elementor-safe-mode-list-item-title"><?php echo __( 'Still experiencing issues?', 'elementor' ); ?></div>
+						<div class="elementor-safe-mode-list-item-content"><?php printf( __( '<a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_DIDNT_HELP_URL ); ?></div>
+					</li>
+				</ul>
 				<?php
 				$mu_plugins = wp_get_mu_plugins();
+
 				if ( 1 < count( $mu_plugins ) ) : ?>
-					<hr>
-					<p>
-						<?php printf( __( 'Please note! We couldn\'t deactivate all of your plugins on Safe Mode. Please <a href="%s" target="_blank">read more</a> about this issue.', 'elementor' ), self::DOCS_MU_PLUGINS_URL ); ?>
-					</p>
-					<?php endif; ?>
+					<div class="elementor-safe-mode-mu-plugins"><?php printf( __( 'Please note! We couldn\'t deactivate all of your plugins on Safe Mode. Please <a href="%s" target="_blank">read more</a> about this issue.', 'elementor' ), self::DOCS_MU_PLUGINS_URL ); ?></div>
+				<?php endif; ?>
 			</div>
 		</div>
 
@@ -317,7 +352,7 @@ class Module extends \Elementor\Core\Base\Module {
 				</a>
 			</header>
 			<div class="elementor-toast-content">
-				<?php printf( __( 'There’s a problem loading Elementor? Please enable Safe Mode to troubleshoot the problem. <a href="%1$s" target="_blank">%2$s.</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL, __( 'Learn More', 'elementor' ) ); ?>
+				<?php printf( __( 'Having problems loading Elementor? Please enable Safe Mode to troubleshoot. <a href="%1$s" target="_blank">%2$s.</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL, __( 'Learn More', 'elementor' ) ); ?>
 			</div>
 		</div>
 
@@ -360,6 +395,10 @@ class Module extends \Elementor\Core\Base\Module {
 					}
 
 					if ( ! elementor.$previewElementorEl.length ) {
+						return false;
+					}
+
+					if ( jQuery( '#elementor-loading' ).is( ':visible' ) ) {
 						return false;
 					}
 
