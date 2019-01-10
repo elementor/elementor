@@ -358,18 +358,23 @@ class Documents_Manager {
 			$update_title = true;
 		}
 
+		$meta_data['_elementor_edit_mode'] = 'builder';
+
+		// Save the type as-is for plugins that hooked at `wp_insert_post`.
+		$meta_data[ Document::TYPE_META_KEY ] = $type;
+
+		$post_data['meta_input'] = $meta_data;
+
 		$post_id = wp_insert_post( $post_data );
 
 		if ( ! empty( $update_title ) ) {
 			$post_data['ID'] = $post_id;
 			$post_data['post_title'] .= ' #' . $post_id;
+
+			// The meta doesn't need update.
+			unset( $post_data['meta_input'] );
+
 			wp_update_post( $post_data );
-		}
-
-		add_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
-
-		foreach ( $meta_data as $key => $value ) {
-			add_post_meta( $post_id, $key, $value );
 		}
 
 		/** @var Document $document */
@@ -377,6 +382,7 @@ class Documents_Manager {
 			'post_id' => $post_id,
 		] );
 
+		// Let the $document to re-save the template type by his way.
 		$document->save_template_type();
 
 		return $document;
