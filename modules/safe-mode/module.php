@@ -363,6 +363,10 @@ class Module extends \Elementor\Core\Base\Module {
 						return false;
 					}
 
+					if ( jQuery( '#elementor-loading' ).is( ':visible' ) ) {
+						return false;
+					}
+
 					return true;
 				};
 
