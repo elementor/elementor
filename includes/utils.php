@@ -608,25 +608,58 @@ class Utils {
 	}
 
 	/**
-	 * Render html attributes
+	 * Render html attributes.
 	 *
 	 * @access public
-	 * @static
-	 * @param array $attributes
 	 *
-	 * @return string
+	 * @static
+	 *
+	 * @param    array    $attributes
+	 *
+	 * @return   string
 	 */
 	public static function render_html_attributes( array $attributes ) {
 		$rendered_attributes = [];
 
 		foreach ( $attributes as $attribute_key => $attribute_values ) {
+
 			if ( is_array( $attribute_values ) ) {
+
+				$attribute_values = array_filter( $attribute_values, array( 'Utils', 'is_printable' ) );
+
+				if ( ! $attribute_values ) continue; // if empty
+
 				$attribute_values = implode( ' ', $attribute_values );
 			}
+
+			if ( false === self::is_printable( $attribute_values ) ) continue; // if not printable
 
 			$rendered_attributes[] = sprintf( '%1$s="%2$s"', $attribute_key, esc_attr( $attribute_values ) );
 		}
 
 		return implode( ' ', $rendered_attributes );
 	}
+
+	/**
+	 * Check whether the value is printable.
+	 *
+	 * This function checks the argument passed to it if it can be displayed.
+	 *
+	 * @access public
+	 *
+	 * @static
+	 *
+	 * @param     mixed    $value
+	 *
+	 * @return    bool     True if not an empty string, or a number. False if fail.
+	 */
+	public static function is_printable( $value ) {
+
+		if ( '' === $value ) return false;
+
+		if ( is_string( $value ) || is_int( $value ) ) return true;
+
+		return false;
+	}
+
 }
