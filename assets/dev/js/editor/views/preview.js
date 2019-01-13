@@ -2,6 +2,7 @@ var BaseSectionsContainerView = require( 'elementor-views/base-sections-containe
 	Preview;
 
 import AddSectionView from './add-section/independent';
+import RightClickIntroductionBehavior from '../elements/views/behaviors/right-click-introduction';
 
 Preview = BaseSectionsContainerView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-preview' ),
@@ -19,9 +20,10 @@ Preview = BaseSectionsContainerView.extend( {
 				},
 			};
 
-		if ( elementor.config.user.introduction ) {
+		// TODO: the `2` check is for BC reasons
+		if ( ! elementor.config.user.introduction.rightClick && ! elementor.config.user.introduction[ 2 ] ) {
 			behaviors.introduction = {
-				behaviorClass: require( 'elementor-behaviors/introduction' ),
+				behaviorClass: RightClickIntroductionBehavior,
 			};
 		}
 
