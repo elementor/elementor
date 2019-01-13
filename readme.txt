@@ -222,6 +222,33 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.4.0 - 2019-01-13 =
+* New: Added Safe Mode for scenarios that the editor didn't load properly
+* New: Added `<!--more-->` tag support ([#462](https://github.com/pojome/elementor/issues/462))
+* New: Added Read More widget aka `<!--more-->` tag
+* New: Added Categories taxonomy for Template Library ([#886](https://github.com/pojome/elementor/issues/886))
+* New: Added responsive capabilities for Background control ([#2355](https://github.com/pojome/elementor/issues/2355))
+* New: Added custom option for `background-size` & `background-position` ([#2571](https://github.com/pojome/elementor/issues/2571))
+* New: Added responsive capabilities for Border control ([#3243](https://github.com/pojome/elementor/issues/3243), [#5284](https://github.com/pojome/elementor/issues/5284))
+* New: Added External URL source for Video widget
+* Tweak: Added a notice when clicking on Back to WordPress editor button ([#5597](https://github.com/pojome/elementor/issues/5597))
+* Tweak: Added Link & Globe for Social Icons widget ([#6405](https://github.com/pojome/elementor/issues/6405))
+* Tweak: Added `elementor/controls/animations/additional_animations` hook for adding custom Entrance Animations ([#6545](https://github.com/pojome/elementor/issues/6545))
+* Tweak: Added `elementor/controls/hover_animations/additional_animations` hook for adding custom Hover Animations ([#6545](https://github.com/pojome/elementor/issues/6545))
+* Tweak: Reorganized admin menu for Elementor settings & Template Library
+* Tweak: Exclude library CPT from Yoast SEO sitemap
+* Tweak: Added attributes for column wrappers (thanks @thenovacreator)
+* Tweak: Added `autocomplete` parameter for URL control (default: true)
+* Tweak: Added sanitize data on Menu Anchor ID
+* Tweak: Added dynamic options for Testimonial widget
+* Tweak: Added PHP error log to System Info
+* Tweak: Added Quick Edit option for Template Library
+* Tweak: Renamed "Content" tab in Templates Library to "Page"
+* Fix: Inline editing issue for Repeater control ([#6445](https://github.com/pojome/elementor/issues/6445))
+* Fix: Panel footer menu not closing on background click ([#6547](https://github.com/pojome/elementor/issues/6547))
+* Fix: Typography control doesn't generate default CSS ([#6500](https://github.com/pojome/elementor/issues/6500))
+* Fix: Alignment issue in Icon List widget ([#6507](https://github.com/pojome/elementor/issues/6507))
+
 = 2.3.8 - 2018-12-20 =
 * Fix: Editor not working caused by last version
 
