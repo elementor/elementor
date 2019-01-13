@@ -82,19 +82,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function enable_safe_mode() {
 		WP_Filesystem();
 
-		$allowed_plugins = [
-			'elementor' => ELEMENTOR_PLUGIN_BASE,
-		];
-
-		if ( defined( 'ELEMENTOR_PRO_PLUGIN_BASE' ) ) {
-			$allowed_plugins['elementor_pro'] = ELEMENTOR_PRO_PLUGIN_BASE;
-		}
-
-		if ( defined( 'WC_PLUGIN_BASENAME' ) ) {
-			$allowed_plugins['woocommerce'] = WC_PLUGIN_BASENAME;
-		}
-
-		add_option( 'elementor_safe_mode_allowed_plugins', $allowed_plugins );
+		$this->update_allowed_plugins();
 
 		if ( ! is_dir( WPMU_PLUGIN_DIR ) ) {
 			wp_mkdir_p( WPMU_PLUGIN_DIR );
@@ -458,6 +446,37 @@ class Module extends \Elementor\Core\Base\Module {
 		return $actions;
 	}
 
+	public function on_deactivated_plugin( $plugin ) {
+		if ( ELEMENTOR_PLUGIN_BASE === $plugin ) {
+			$this->disable_safe_mode();
+			return;
+		}
+
+		$allowed_plugins = get_option( 'elementor_safe_mode_allowed_plugins', [] );
+		$plugin_key = array_search( $plugin, $allowed_plugins, true );
+
+		if ( $plugin_key ) {
+			unset( $allowed_plugins[ $plugin_key ] );
+			update_option( 'elementor_safe_mode_allowed_plugins', $allowed_plugins );
+		}
+	}
+
+	public function update_allowed_plugins() {
+		$allowed_plugins = [
+			'elementor' => ELEMENTOR_PLUGIN_BASE,
+		];
+
+		if ( defined( 'ELEMENTOR_PRO_PLUGIN_BASE' ) ) {
+			$allowed_plugins['elementor_pro'] = ELEMENTOR_PRO_PLUGIN_BASE;
+		}
+
+		if ( defined( 'WC_PLUGIN_BASENAME' ) ) {
+			$allowed_plugins['woocommerce'] = WC_PLUGIN_BASENAME;
+		}
+
+		update_option( 'elementor_safe_mode_allowed_plugins', $allowed_plugins );
+	}
+
 	public function __construct() {
 		add_action( 'elementor/admin/after_create_settings/elementor-tools', [ $this, 'add_admin_button' ] );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
@@ -471,6 +490,11 @@ class Module extends \Elementor\Core\Base\Module {
 
 		add_action( 'elementor/safe_mode/init', [ $this, 'run_safe_mode' ] );
 		add_action( 'elementor/editor/footer', [ $this, 'print_try_safe_mode' ] );
+
+		if ( $this->is_enabled() ) {
+			add_action( 'activated_plugin', [ $this, 'update_allowed_plugins' ] );
+			add_action( 'deactivated_plugin', [ $this, 'on_deactivated_plugin' ] );
+		}
 	}
 
 	private function is_allowed_post_type() {
