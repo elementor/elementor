@@ -368,17 +368,11 @@ class Module extends \Elementor\Core\Base\Module {
 				};
 
 				var isElementorLoaded = function() {
-					if ( 'undefined' === typeof elementor || ! elementor.$preview || ! elementor.$preview[ 0 ] ) {
+					if ( 'undefined' === typeof elementor ) {
 						return false;
 					}
 
-					var previewWindow = elementor.$preview[0].contentWindow;
-
-					if ( ! previewWindow.elementorFrontend ) {
-						return false;
-					}
-
-					if ( ! elementor.$previewElementorEl.length ) {
+					if ( ! elementor.isLoaded ) {
 						return false;
 					}
 
@@ -389,20 +383,24 @@ class Module extends \Elementor\Core\Base\Module {
 					return true;
 				};
 
-				var showTrySafeModeNotice = function() {
-					if ( ! isElementorLoaded() ) {
-						jQuery( '#elementor-try-safe-mode' ).show();
+				var handleTrySafeModeNotice = function() {
+					var $notice = jQuery( '#elementor-try-safe-mode' );
 
-						if ( 'undefined' !== typeof elementor ) {
-							elementor.on( 'preview:loaded', function() {
-								jQuery( '#elementor-try-safe-mode' ).hide();
-							} );
-						}
+					if ( isElementorLoaded() ) {
+						$notice.remove();
+						return;
 					}
+
+					if ( ! $notice.data( 'visible' ) ) {
+						$notice.show().data( 'visible', true );
+					}
+
+					// Re-check after 500ms.
+					setTimeout( handleTrySafeModeNotice, 500 );
 				};
 
 				var init = function() {
-					setTimeout( showTrySafeModeNotice, <?php echo self::EDITOR_NOTICE_TIMEOUT; ?> );
+					setTimeout( handleTrySafeModeNotice, <?php echo self::EDITOR_NOTICE_TIMEOUT; ?> );
 
 					attachEvents();
 				};
