@@ -62,10 +62,6 @@ class Module extends \Elementor\Core\Base\Module {
 		return $value;
 	}
 
-	public function on_add_safe_mode( $option, $value ) {
-		$this->on_update_safe_mode( $value );
-	}
-
 	public function ajax_enable_safe_mode( $data ) {
 		// It will run `$this->>update_safe_mode`.
 		update_option( 'elementor_safe_mode', 'yes' );
@@ -486,7 +482,6 @@ class Module extends \Elementor\Core\Base\Module {
 
 		// Use pre_update, in order to catch cases that $value === $old_value and it not updated.
 		add_filter( 'pre_update_option_elementor_safe_mode', [ $this, 'on_update_safe_mode' ], 10, 2 );
-		add_action( 'add_option_elementor_safe_mode', [ $this, 'on_add_safe_mode' ], 10, 2 );
 
 		add_action( 'elementor/safe_mode/init', [ $this, 'run_safe_mode' ] );
 		add_action( 'elementor/editor/footer', [ $this, 'print_try_safe_mode' ] );
