@@ -330,12 +330,10 @@ class Frontend extends App {
 		);
 
 		wp_register_script(
-			'jquery-swiper',
-			$this->get_js_assets_url( 'swiper.jquery', 'assets/lib/swiper/' ),
-			[
-				'jquery',
-			],
-			'4.4.3',
+			'swiper',
+			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
+			[],
+			'4.4.6',
 			true
 		);
 
@@ -366,7 +364,7 @@ class Frontend extends App {
 				'elementor-frontend-modules',
 				'elementor-dialog',
 				'elementor-waypoints',
-				'jquery-swiper',
+				'swiper',
 			],
 			ELEMENTOR_VERSION,
 			true
