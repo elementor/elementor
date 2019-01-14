@@ -66,7 +66,7 @@ There are many other [features](https://elementor.com/features/?utm_source=wp-re
 
 Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
 
-= 29 free widgets and counting =
+= 30 free widgets and counting =
 We packed 29 of the most useful widgets into our page builder. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
 
 - **Heading**. Add eye-catching headlines.
@@ -92,6 +92,7 @@ We packed 29 of the most useful widgets into our page builder. True, that's way 
 - **HTML**. Insert code into the page.
 - **Shortcode**. Easily insert shortcodes from any plugin into the page.
 - **Menu Anchor**. Link any menu to this anchor.
+- **Read More**. Set the `Read More` cut-off for the excerpt in archive pages.
 - **Sidebar**. Add any sidebar into the page.
 - **Google Maps**. Embed maps into the page.
 - **SoundCloud**. Add audio bits from SoundCloud.
@@ -220,6 +221,33 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.4.0 - 2019-01-13 =
+* New: Added Safe Mode for scenarios that the editor didn't load properly
+* New: Added `<!--more-->` tag support ([#462](https://github.com/pojome/elementor/issues/462))
+* New: Added Read More widget aka `<!--more-->` tag
+* New: Added Categories taxonomy for Template Library ([#886](https://github.com/pojome/elementor/issues/886))
+* New: Added responsive capabilities for Background control ([#2355](https://github.com/pojome/elementor/issues/2355))
+* New: Added custom option for `background-size` & `background-position` ([#2571](https://github.com/pojome/elementor/issues/2571))
+* New: Added responsive capabilities for Border control ([#3243](https://github.com/pojome/elementor/issues/3243), [#5284](https://github.com/pojome/elementor/issues/5284))
+* New: Added External URL source for Video widget
+* Tweak: Added a notice when clicking on Back to WordPress editor button ([#5597](https://github.com/pojome/elementor/issues/5597))
+* Tweak: Added Link & Globe for Social Icons widget ([#6405](https://github.com/pojome/elementor/issues/6405))
+* Tweak: Added `elementor/controls/animations/additional_animations` hook for adding custom Entrance Animations ([#6545](https://github.com/pojome/elementor/issues/6545))
+* Tweak: Added `elementor/controls/hover_animations/additional_animations` hook for adding custom Hover Animations ([#6545](https://github.com/pojome/elementor/issues/6545))
+* Tweak: Reorganized admin menu for Elementor settings & Template Library
+* Tweak: Exclude library CPT from Yoast SEO sitemap
+* Tweak: Added attributes for column wrappers (thanks @thenovacreator)
+* Tweak: Added `autocomplete` parameter for URL control (default: true)
+* Tweak: Added sanitize data on Menu Anchor ID
+* Tweak: Added dynamic options for Testimonial widget
+* Tweak: Added PHP error log to System Info
+* Tweak: Added Quick Edit option for Template Library
+* Tweak: Renamed "Content" tab in Templates Library to "Page"
+* Fix: Inline editing issue for Repeater control ([#6445](https://github.com/pojome/elementor/issues/6445))
+* Fix: Panel footer menu not closing on background click ([#6547](https://github.com/pojome/elementor/issues/6547))
+* Fix: Typography control doesn't generate default CSS ([#6500](https://github.com/pojome/elementor/issues/6500))
+* Fix: Alignment issue in Icon List widget ([#6507](https://github.com/pojome/elementor/issues/6507))
 
 = 2.3.8 - 2018-12-20 =
 * Fix: Editor not working caused by last version
