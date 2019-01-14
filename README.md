@@ -238,7 +238,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Added `elementor/controls/hover_animations/additional_animations` hook for adding custom Hover Animations ([#6545](https://github.com/pojome/elementor/issues/6545))
 * Tweak: Reorganized admin menu for Elementor settings & Template Library
 * Tweak: Exclude library CPT from Yoast SEO sitemap
-* Tweak: Added attributes for column wrappers (thanks @thenovacreator)
+* Tweak: Added attributes for column wrappers (thanks [@thenovacreator](https://github.com/thenovacreator))
 * Tweak: Added `autocomplete` parameter for URL control (default: true)
 * Tweak: Added sanitize data on Menu Anchor ID
 * Tweak: Added dynamic options for Testimonial widget
