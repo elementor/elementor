@@ -23,6 +23,5 @@ yarn.lock
 .idea/
 
 # other
-tests/qunit/*.html
 Thumbs.db
 *.DS_Store
