@@ -5,6 +5,8 @@ import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 
 const App = Marionette.Application.extend( {
+	isLoaded: false,
+
 	previewLoadedOnce: false,
 
 	helpers: require( 'elementor-editor-utils/helpers' ),
@@ -959,6 +961,8 @@ const App = Marionette.Application.extend( {
 		elementorCommon.hotKeys.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded' );
+
+		this.isLoaded = true;
 	},
 
 	onFirstPreviewLoaded: function() {

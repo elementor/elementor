@@ -7,8 +7,4 @@ module.exports = {
 	main: [
 		'build'
 	],
-	qunit: [
-		'tests/qunit/index.html',
-		'tests/qunit/preview.html'
-	]
 };
