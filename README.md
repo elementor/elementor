@@ -6,8 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 5.0  
 **Requires PHP:** 5.4  
-**Beta tag:** 2.4.0-beta4  
-**Stable tag:** 2.3.8  
+**Stable tag:** 2.4.0  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -224,7 +223,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 2.4.0 - 2019-01-13 ###
+### 2.4.0 - 2019-01-14 ###
 * New: Added Safe Mode for scenarios that the editor didn't load properly
 * New: Added `<!--more-->` tag support ([#462](https://github.com/pojome/elementor/issues/462))
 * New: Added Read More widget aka `<!--more-->` tag
