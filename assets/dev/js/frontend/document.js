@@ -3,6 +3,7 @@ export default class extends elementorModules.ViewModule {
 		return {
 			selectors: {
 				elements: '.elementor-element',
+				nestedDocumentElements: '.elementor .elementor-element',
 			},
 			classes: {
 				editMode: 'elementor-edit-mode',
@@ -14,7 +15,7 @@ export default class extends elementorModules.ViewModule {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
-			$elements: this.$element.find( selectors.elements ),
+			$elements: this.$element.find( selectors.elements ).not( this.$element.find( selectors.nestedDocumentElements ) ),
 		};
 	}
 
