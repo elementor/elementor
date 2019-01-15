@@ -223,6 +223,12 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.4.1 - 2019-01-15 ###
+* Tweak: Avoid widget rendering on `box-shadow` and `text-shadow` changes ([#6737](https://github.com/pojome/elementor/issues/6737))
+* Fix: Capital letters not working in anchors
+* Fix: Admin menu position incorrect format
+* Fix: Avoid duplicate run of element handlers on nested documents
+
 ### 2.4.0 - 2019-01-14 ###
 * New: Added Safe Mode for scenarios that the editor didn't load properly
 * New: Added `<!--more-->` tag support ([#462](https://github.com/pojome/elementor/issues/462))
