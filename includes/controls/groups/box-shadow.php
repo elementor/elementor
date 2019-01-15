@@ -102,6 +102,9 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 				'starter_title' => _x( 'Box Shadow', 'Box Shadow Control', 'elementor' ),
 				'starter_name' => 'box_shadow_type',
 				'starter_value' => 'yes',
+				'settings' => [
+					'render_type' => 'ui',
+				],
 			],
 		];
 	}
