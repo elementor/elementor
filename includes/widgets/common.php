@@ -75,12 +75,13 @@ class Widget_Common extends Widget_Base {
 				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
+					'' => __( 'Default', 'elementor' ),
 					'inherit' => __( 'Maximum', 'elementor' ),
 					'auto' => __( 'Minimum', 'elementor' ),
-					'custom' => __( 'Custom', 'elementor' ),
+					'initial' => __( 'Custom', 'elementor' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
+					'{{WRAPPER}}' => 'width: {{VALUE}}',
 				],
 			]
 		);
@@ -100,7 +101,10 @@ class Widget_Common extends Widget_Base {
 						'step' => 1,
 					],
 				],
-				'size_units' => [ 'px', '%' ],
+				'condition' => [
+					'_element_width' => 'initial',
+				],
+				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}'
 				],
