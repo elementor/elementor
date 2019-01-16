@@ -244,35 +244,6 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
-			'widget_width_custom',
-			[
-				'label' => __( 'Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'min' => -1000,
-						'max' => 1000,
-					],
-					'%' => [
-						'min' => -200,
-						'max' => 200,
-					],
-					'vw' => [
-						'min' => -200,
-						'max' => 200,
-					],
-				],
-				'size_units' => [ 'px', '%', 'vw' ],
-				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}',
-				],
-				'condition' => [
-					'_is_absolute!' => '',
-				],
-			]
-		);
-
 		$this->end_popover();
 
 		$this->add_control(
