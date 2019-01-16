@@ -1,32 +1,30 @@
-var DraggableBehavior;
+export default class extends Marionette.Behavior {
+	events() {
+		return {
+			resizestart: 'onResizeStart',
+			resizestop: 'onResizeStop',
+			resize: 'onResize',
+			dragstart: 'onDragStart',
+			dragstop: 'onDragStop',
+		};
+	}
 
-DraggableBehavior = Marionette.Behavior.extend( {
-
-	events: {
-		resizestart: 'onResizeStart',
-		resizestop: 'onResizeStop',
-		resize: 'onResize',
-		dragstart: 'onDragStart',
-		dragstop: 'onDragStop',
-	},
-
-	initialize: function() {
-		Marionette.Behavior.prototype.initialize.apply( this, arguments );
+	initialize() {
+		super.initialize();
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.toggle );
 
-		const self = this,
-			view = this.view,
+		const view = this.view,
 			viewSettingsChangedMethod = view.onSettingsChanged;
 
-		view.onSettingsChanged = function() {
+		view.onSettingsChanged = () => {
 			viewSettingsChangedMethod.apply( view, arguments );
 
-			self.onSettingsChanged.apply( self, arguments );
+			this.onSettingsChanged.apply( this, arguments );
 		};
-	},
+	}
 
-	activate: function() {
+	activate() {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
@@ -43,9 +41,9 @@ DraggableBehavior = Marionette.Behavior.extend( {
 		this.$el.resizable( {
 			handles: 'e, w',
 		} );
-	},
+	}
 
-	deactivate: function() {
+	deactivate() {
 		if ( ! this.$el.draggable( 'instance' ) ) {
 			return;
 		}
@@ -54,9 +52,9 @@ DraggableBehavior = Marionette.Behavior.extend( {
 		this.$el.resizable( 'destroy' );
 
 		this.$el.find( '> .elementor-handle' ).remove();
-	},
+	}
 
-	toggle: function() {
+	toggle() {
 		const activeMode = elementor.channels.dataEditMode.request( 'activeMode' ),
 			isAbsolute = this.view.getEditModel().getSetting( '_is_absolute' );
 
@@ -65,23 +63,23 @@ DraggableBehavior = Marionette.Behavior.extend( {
 		} else {
 			this.deactivate();
 		}
-	},
+	}
 
-	onRender: function() {
+	onRender() {
 		_.defer( () => this.toggle() );
-	},
+	}
 
-	onDestroy: function() {
+	onDestroy() {
 		this.deactivate();
-	},
+	}
 
-	onDragStart: function( event ) {
+	onDragStart( event ) {
 		event.stopPropagation();
 
 		this.view.model.trigger( 'request:edit' );
-	},
+	}
 
-	onDragStop: function( event, ui ) {
+	onDragStop( event, ui ) {
 		event.stopPropagation();
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
@@ -100,15 +98,15 @@ DraggableBehavior = Marionette.Behavior.extend( {
 			width: '',
 			height: '',
 		} );
-	},
+	}
 
-	onResizeStart: function( event ) {
+	onResizeStart( event ) {
 		event.stopPropagation();
 
 		this.view.model.trigger( 'request:edit' );
-	},
+	}
 
-	onResizeStop: function( event, ui ) {
+	onResizeStop( event, ui ) {
 		event.stopPropagation();
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
@@ -122,13 +120,13 @@ DraggableBehavior = Marionette.Behavior.extend( {
 			width: '',
 			height: '',
 		} );
-	},
+	}
 
-	onResize: function( event ) {
+	onResize( event ) {
 		event.stopPropagation();
-	},
+	}
 
-	onSettingsChanged: function( changed ) {
+	onSettingsChanged( changed ) {
 		if ( changed.changed ) {
 			changed = changed.changed;
 		}
@@ -136,7 +134,5 @@ DraggableBehavior = Marionette.Behavior.extend( {
 		if ( undefined !== changed._is_absolute ) {
 			this.toggle();
 		}
-	},
-} );
-
-module.exports = DraggableBehavior;
+	}
+}
