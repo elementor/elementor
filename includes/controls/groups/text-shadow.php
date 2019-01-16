@@ -88,6 +88,9 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 				'starter_title' => _x( 'Text Shadow', 'Text Shadow Control', 'elementor' ),
 				'starter_name' => 'text_shadow_type',
 				'starter_value' => 'yes',
+				'settings' => [
+					'render_type' => 'ui',
+				],
 			],
 		];
 	}
