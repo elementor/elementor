@@ -77,7 +77,7 @@ class Settings extends Settings_Page {
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ],
 			'',
-			58.5
+			'58.5'
 		);
 	}
 

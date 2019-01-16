@@ -6,8 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 5.0  
 **Requires PHP:** 5.4  
-**Beta tag:** 2.4.0-beta3  
-**Stable tag:** 2.3.8  
+**Stable tag:** 2.4.0  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -224,7 +223,13 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
-### 2.4.0 - 2019-01-13 ###
+### 2.4.1 - 2019-01-15 ###
+* Tweak: Avoid widget rendering on `box-shadow` and `text-shadow` changes ([#6737](https://github.com/pojome/elementor/issues/6737))
+* Fix: Capital letters not working in anchors
+* Fix: Admin menu position incorrect format
+* Fix: Avoid duplicate run of element handlers on nested documents
+
+### 2.4.0 - 2019-01-14 ###
 * New: Added Safe Mode for scenarios that the editor didn't load properly
 * New: Added `<!--more-->` tag support ([#462](https://github.com/pojome/elementor/issues/462))
 * New: Added Read More widget aka `<!--more-->` tag
@@ -239,7 +244,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Added `elementor/controls/hover_animations/additional_animations` hook for adding custom Hover Animations ([#6545](https://github.com/pojome/elementor/issues/6545))
 * Tweak: Reorganized admin menu for Elementor settings & Template Library
 * Tweak: Exclude library CPT from Yoast SEO sitemap
-* Tweak: Added attributes for column wrappers (thanks @thenovacreator)
+* Tweak: Added attributes for column wrappers (thanks [@thenovacreator](https://github.com/thenovacreator))
 * Tweak: Added `autocomplete` parameter for URL control (default: true)
 * Tweak: Added sanitize data on Menu Anchor ID
 * Tweak: Added dynamic options for Testimonial widget
