@@ -12,12 +12,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertSame( self::BASE_LINK . '&utm_term=twentysixteen', Utils::get_pro_link( self::BASE_LINK ) );
 	}
 
-	public function test_should_return_elementor_pro_link_with_partner_id() {
-		$id = 'invalid_partner_id';
-		define( 'ELEMENTOR_PARTNER_ID', $id );
-		$this->assertSame( self::BASE_LINK . "&utm_term=twentysixteen&partner_id=$id", Utils::get_pro_link( self::BASE_LINK ) );
-	}
-
 	public function test_should_return_source_of_placeholder_image() {
 		$this->assertSame( ELEMENTOR_ASSETS_URL . 'images/placeholder.png', Utils::get_placeholder_image_src() );
 	}

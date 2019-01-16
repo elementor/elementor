@@ -55,9 +55,10 @@ foreach ( $reports as $report_name => $report ) : ?>
 					endforeach;
 				else :
 					$warning_class = ! empty( $field['warning'] ) ? ' class="elementor-warning"' : '';
+					$log_label = ! empty( $field['label'] ) ? $field['label'] . ':' : '';
 					?>
 					<tr<?php echo $warning_class; ?>>
-						<td><?php echo $field['label']; ?>:</td>
+						<td><?php echo $log_label; ?></td>
 						<td><?php echo $field['value']; ?></td>
 						<td><?php
 						if ( ! empty( $field['recommendation'] ) ) {

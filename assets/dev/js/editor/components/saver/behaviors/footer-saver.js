@@ -3,11 +3,11 @@ module.exports = Marionette.Behavior.extend( {
 
 	ui: function() {
 		return {
-			buttonPreview: '#elementor-panel-saver-button-preview',
+			buttonPreview: '#elementor-panel-footer-saver-preview',
 			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonSaveOptions: '#elementor-panel-saver-button-save-options',
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
-			menuSaveDraft: '#elementor-panel-saver-menu-save-draft',
+			menuSaveDraft: '#elementor-panel-footer-sub-menu-item-save-draft',
 			lastEditedWrapper: '.elementor-last-edited-wrapper',
 		};
 	},
@@ -35,8 +35,8 @@ module.exports = Marionette.Behavior.extend( {
 	activateSaveButtons: function( hasChanges ) {
 		hasChanges = hasChanges || 'draft' === elementor.settings.page.model.get( 'post_status' );
 
-		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-saver-disabled', ! hasChanges );
-		this.ui.buttonSaveOptions.toggleClass( 'elementor-saver-disabled', ! hasChanges );
+		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-disabled', ! hasChanges );
+		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', ! hasChanges );
 	},
 
 	onRender: function() {
@@ -97,7 +97,7 @@ module.exports = Marionette.Behavior.extend( {
 		this.ui.lastEditedWrapper
 			.removeClass( 'elementor-button-state' )
 			.find( '.elementor-last-edited' )
-			.html( data.config.last_edited );
+			.html( data.config.document.last_edited );
 	},
 
 	onAfterSaveError: function() {
@@ -120,34 +120,11 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onClickButtonPublish: function() {
-		var postStatus = elementor.settings.page.model.get( 'post_status' );
-
-		if ( this.ui.buttonPublish.hasClass( 'elementor-saver-disabled' ) ) {
+		if ( this.ui.buttonPublish.hasClass( 'elementor-disabled' ) ) {
 			return;
 		}
 
-		switch ( postStatus ) {
-			case 'publish':
-			case 'future':
-			case 'private':
-				elementor.saver.update();
-				break;
-			case 'draft':
-				if ( elementor.config.current_user_can_publish ) {
-					elementor.saver.publish();
-				} else {
-					elementor.saver.savePending();
-				}
-				break;
-			case 'pending': // User cannot change post status
-			case undefined: // TODO: as a contributor it's undefined instead of 'pending'.
-				if ( elementor.config.current_user_can_publish ) {
-					elementor.saver.publish();
-				} else {
-					elementor.saver.update();
-				}
-				break;
-		}
+		elementor.saver.defaultSave();
 	},
 
 	onClickMenuSaveDraft: function() {

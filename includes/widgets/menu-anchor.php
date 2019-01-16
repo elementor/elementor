@@ -88,21 +88,22 @@ class Widget_Menu_Anchor extends Widget_Base {
 		);
 
 		$this->add_control(
-			'anchor_description',
-			[
-				'raw' => __( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-descriptor',
-			]
-		);
-
-		$this->add_control(
 			'anchor',
 			[
 				'label' => __( 'The ID of Menu Anchor.', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => __( 'For Example: About', 'elementor' ),
+				'description' => __( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
 				'label_block' => true,
+			]
+		);
+
+		$this->add_control(
+			'anchor_note',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'Note: The ID link ONLY accepts these chars: `A-Z, a-z, 0-9, _ , -`', 'elementor' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			]
 		);
 
@@ -121,7 +122,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 		$anchor = $this->get_settings_for_display( 'anchor' );
 
 		if ( ! empty( $anchor ) ) {
-			$this->add_render_attribute( 'inner', 'id', sanitize_key( $anchor ) );
+			$this->add_render_attribute( 'inner', 'id', sanitize_html_class( $anchor ) );
 		}
 
 		$this->add_render_attribute( 'inner', 'class', 'elementor-menu-anchor' );

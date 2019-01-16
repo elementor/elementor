@@ -27,6 +27,7 @@
 	.elementor-control-title {
 		font-size: 12px;
 		line-height: 1;
+		@include margin-end(5px);
 	}
 
 	.elementor-control-spinner {
@@ -348,32 +349,14 @@
 	}
 }
 
-.elementor-label-inline:not([class*='elementor-control-responsive']) {
+.elementor-label-inline {
 
 	> .elementor-control-content {
 
 		> .elementor-control-field {
 
 			> .elementor-control-title {
-				width: 45%;
 				flex-shrink: 0;
-			}
-
-			> .elementor-control-input-wrapper {
-				width: 55%;
-			}
-		}
-	}
-}
-
-.elementor-label-inline[class*='elementor-control-responsive'] {
-
-	> .elementor-control-content {
-
-		> .elementor-control-field {
-
-			> .elementor-control-title {
-				width: auto;
 			}
 
 			> .elementor-control-input-wrapper {
@@ -511,7 +494,7 @@
 
 .elementor-control-responsive-switchers {
 	display: flex;
-	margin: 0 5px;
+	@include margin-end(5px);
 
 	.elementor-responsive-switcher {
 		$icon-size: 18px;
@@ -523,11 +506,14 @@
 		background-color: $editor-light;
 		cursor: pointer;
 		position: relative;
-		@include margin-start(5px);
 		color: #fff;
 		font-size: 8px;
 		text-align: center;
 		transition: background-color .5s;
+
+		&:not(:first-child) {
+			@include margin-start(5px);
+		}
 
 		&:hover {
 			background-color: $editor-lighter;
@@ -653,5 +639,7 @@
 @import "controls/popover-toggle";
 
 @import "controls/button";
+
+@import "controls/number";
 
 @import "controls/control-group-css-filters";

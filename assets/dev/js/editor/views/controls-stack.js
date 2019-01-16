@@ -1,8 +1,6 @@
 var ControlsStack;
 
 ControlsStack = Marionette.CompositeView.extend( {
-	className: 'elementor-controls-stack',
-
 	classes: {
 		popover: 'elementor-controls-popover',
 	},
@@ -10,6 +8,10 @@ ControlsStack = Marionette.CompositeView.extend( {
 	activeTab: null,
 
 	activeSection: null,
+
+	className: function() {
+		return 'elementor-controls-stack';
+	},
 
 	templateHelpers: function() {
 		return {
@@ -168,6 +170,14 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this.$el.find( '.' + this.classes.popover ).remove();
 	},
 
+	getNamespaceArray: function() {
+		var eventNamespace = [];
+
+		eventNamespace.push( elementor.getPanelView().getCurrentPageName() );
+
+		return eventNamespace;
+	},
+
 	openActiveSection: function() {
 		var activeSection = this.activeSection,
 			activeSectionView = this.children.filter( function( view ) {
@@ -176,6 +186,13 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 		if ( activeSectionView[ 0 ] ) {
 			activeSectionView[ 0 ].$el.addClass( 'elementor-open' );
+
+			var eventNamespace = this.getNamespaceArray();
+
+			eventNamespace.push( activeSection );
+			eventNamespace.push( 'activated' );
+
+			elementor.channels.editor.trigger( eventNamespace.join( ':' ), this );
 		}
 	},
 
@@ -213,7 +230,9 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onDeviceModeChange: function() {
-		this.$el.removeClass( 'elementor-responsive-switchers-open' );
+		if ( 'desktop' === elementor.channels.deviceMode.request( 'currentMode' ) ) {
+			this.$el.removeClass( 'elementor-responsive-switchers-open' );
+		}
 	},
 
 	onChildviewControlSectionClicked: function( childView ) {

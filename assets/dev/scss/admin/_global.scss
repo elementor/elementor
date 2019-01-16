@@ -20,6 +20,18 @@
 			height: auto;
 		}
 	}
+
+	#menu-posts-elementor_library {
+
+		.wp-menu-image {
+
+			&:before {
+				content: '\e1037';
+				font-family: eicons;
+				font-size: 18px;
+			}
+		}
+	}
 }
 
 .elementor-plugins-gopro {
@@ -55,6 +67,7 @@
 	i {
 		@include margin-end(3px);
 		font-size: 125%;
+		font-style: normal;
 	}
 }
 

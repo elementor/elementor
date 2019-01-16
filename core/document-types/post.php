@@ -23,6 +23,7 @@ class Post extends Document {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
+		$properties['admin_tab_group'] = '';
 		$properties['support_wp_page_templates'] = true;
 
 		return $properties;
@@ -236,5 +237,13 @@ class Post extends Document {
 		}
 
 		parent::__construct( $data );
+	}
+
+	protected function get_remote_library_config() {
+		$config = parent::get_remote_library_config();
+
+		$config['type'] = 'page';
+
+		return $config;
 	}
 }

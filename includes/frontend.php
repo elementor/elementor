@@ -282,7 +282,9 @@ class Frontend extends App {
 		wp_register_script(
 			'elementor-frontend-modules',
 			ELEMENTOR_ASSETS_URL . 'js/frontend-modules.js',
-			[],
+			[
+				'jquery',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -353,7 +355,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.4.1',
+			'4.7.1',
 			true
 		);
 
@@ -404,7 +406,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'4.0.0'
+			'4.1.0'
 		);
 
 		wp_register_style(
@@ -1030,7 +1032,10 @@ class Frontend extends App {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
 		$settings = [
-			'isEditMode' => $is_preview_mode,
+			'environmentMode' => [
+				'edit' => $is_preview_mode,
+				'wpPreview' => is_preview(),
+			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
@@ -1071,6 +1076,16 @@ class Frontend extends App {
 				'editSettings' => (object) [],
 				'keys' => $elements_frontend_keys,
 			];
+		}
+
+		if ( is_user_logged_in() ) {
+			$user = wp_get_current_user();
+
+			if ( ! empty( $user->roles ) ) {
+				$settings['user'] = [
+					'roles' => $user->roles,
+				];
+			}
 		}
 
 		return $settings;

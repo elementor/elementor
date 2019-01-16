@@ -521,7 +521,7 @@ class Editor {
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
-				'introduction' => User::is_should_view_introduction(),
+				'introduction' => User::get_introduction_meta(),
 			],
 			// @deprecated since 2.3.0 - Use `elementorCommon.config.isRTL` instead
 			'is_rtl' => is_rtl(),
@@ -591,6 +591,9 @@ class Editor {
 				'templates_no_results_title' => __( 'No Results Found', 'elementor' ),
 				'templates_request_error' => __( 'The following error(s) occurred while processing the request:', 'elementor' ),
 				'yes' => __( 'Yes', 'elementor' ),
+				'blocks' => __( 'Blocks', 'elementor' ),
+				'pages' => __( 'Pages', 'elementor' ),
+				'my_templates' => __( 'My Templates', 'elementor' ),
 
 				// Incompatible Device.
 				'device_incompatible_header' => __( 'Your browser isn\'t compatible', 'elementor' ),
