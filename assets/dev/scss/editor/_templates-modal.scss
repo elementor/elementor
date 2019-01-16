@@ -293,7 +293,6 @@ label.elementor-template-library-order-label {
 	border-bottom: 1px solid $editor-lightest;
 	border-radius: 0;
 	font-size: 11px;
-	text-transform: uppercase;
 	padding: 8px 15px 8px 0;
 	transition: border 0.5s;
 
@@ -304,6 +303,7 @@ label.elementor-template-library-order-label {
 	&::placeholder {
 		font-weight: 300;
 		color: $editor-lighter;
+		text-transform: uppercase;
 	}
 
 	&:focus {
@@ -356,6 +356,38 @@ label.elementor-template-library-order-label {
 				padding: 2px 4px 0;
 				font-size: 9px;
 				border-radius: 2px;
+			}
+		}
+	}
+
+	&:not(.elementor-template-library-template-page) {
+		position: relative;
+		width: calc(33.333% - #{$remote-templates-items-space});
+		overflow: hidden;
+
+		img {
+			display: block;
+			width: 100%;
+		}
+
+		.elementor-template-library-template-footer {
+			position: absolute;
+			width: 100%;
+			bottom: 0;
+			@include start(0);
+			padding: 10px;
+			background-color: #fff;
+			transition: transform .5s;
+		}
+
+		.elementor-template-library-template-name {
+			display: none;
+		}
+
+		&:not(:hover) {
+
+			.elementor-template-library-template-footer {
+				transform: translateY(100%)
 			}
 		}
 	}
@@ -478,38 +510,6 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-body {
 		height: 200px;
-	}
-}
-
-.elementor-template-library-template-block {
-	position: relative;
-	width: calc(33.333% - #{$remote-templates-items-space});
-	overflow: hidden;
-
-	img {
-		display: block;
-		width: 100%;
-	}
-
-	.elementor-template-library-template-footer {
-		position: absolute;
-		width: 100%;
-		bottom: 0;
-		@include start(0);
-		padding: 10px;
-		background-color: #fff;
-		transition: transform .5s;
-	}
-
-	.elementor-template-library-template-name {
-		display: none;
-	}
-
-	&:not(:hover) {
-
-		.elementor-template-library-template-footer {
-			transform: translateY(100%)
-		}
 	}
 }
 

@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\General\Manager as General_Settings_Manager;
 use Elementor\Core\Settings\Manager;
+use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -76,7 +77,7 @@ class Settings extends Settings_Page {
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ],
 			'',
-			58.5
+			'58.5'
 		);
 	}
 
@@ -97,14 +98,14 @@ class Settings extends Settings_Page {
 		$elementor_separator = array_search( 'separator-elementor', $menu_order, true );
 
 		// Get index of library menu.
-		$elementor_library = array_search( 'edit.php?post_type=elementor_library', $menu_order, true );
+		$elementor_library = array_search( Source_Local::ADMIN_MENU_SLUG, $menu_order, true );
 
 		// Loop through menu order and do some rearranging.
 		foreach ( $menu_order as $index => $item ) {
 			if ( 'elementor' === $item ) {
 				$elementor_menu_order[] = 'separator-elementor';
 				$elementor_menu_order[] = $item;
-				$elementor_menu_order[] = 'edit.php?post_type=elementor_library';
+				$elementor_menu_order[] = Source_Local::ADMIN_MENU_SLUG;
 
 				unset( $menu_order[ $elementor_separator ] );
 				unset( $menu_order[ $elementor_library ] );
@@ -145,6 +146,9 @@ class Settings extends Settings_Page {
 			'go_elementor_pro',
 			[ $this, 'handle_external_redirects' ]
 		);
+
+		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, __( 'Theme Templates', 'elementor' ), __( 'Theme Builder', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
+		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
 	}
 
 	/**
@@ -275,6 +279,48 @@ class Settings extends Settings_Page {
 				<h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
 				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the Popups page.
+	 *
+	 * @since 2.4.0
+	 * @access public
+	 */
+	public function elementor_popups() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<i class="eicon-nerd-chuckle"></i>
+				<h2><?php echo __( 'Get Popup Builder', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Popup Builder lets you take advantage of all the amazing features in Elementor, so you can build beautiful & highly converting popups. Go pro and start designing your popups today.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the Theme Templates page.
+	 *
+	 * @since 2.4.0
+	 * @access public
+	 */
+	public function elementor_theme_templates() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<i class="eicon-nerd-chuckle"></i>
+				<h2><?php echo __( 'Get Theme Builder', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Theme Builder is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -531,12 +577,7 @@ class Settings extends Settings_Page {
 										'external' => __( 'External File', 'elementor' ),
 										'internal' => __( 'Internal Embedding', 'elementor' ),
 									],
-									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' .
-											  __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) .
-											  '</div>' .
-											  '<div class="elementor-css-print-method-description" data-value="internal" style="display: none">' .
-											  __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) .
-											  '</div>',
+									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' . __( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) . '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">' . __( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) . '</div>',
 								],
 							],
 							'editor_break_lines' => [

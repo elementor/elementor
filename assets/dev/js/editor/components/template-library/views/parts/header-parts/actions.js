@@ -28,7 +28,7 @@ module.exports = Marionette.ItemView.extend( {
 			onUpdate: function() {
 				self.ui.sync.removeClass( 'eicon-animation-spin' );
 
-				elementor.templates.setTemplatesPage( elementor.templates.getFilter( 'source' ), elementor.templates.getFilter( 'type' ) );
+				elementor.templates.setScreen( elementor.templates.getFilter( 'source' ), elementor.templates.getFilter( 'type' ) );
 			},
 			forceUpdate: true,
 			forceSync: true,

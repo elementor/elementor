@@ -599,9 +599,10 @@ html.elementor-html {
 
 	&:not(.elementor-column-placeholder) {
 		background-color: $editor-info;
-		animation-timing-function: ease-out;
-		animation-duration: 500ms;
+		animation-duration: 250ms;
 		opacity: .9;
+		width: 100%;
+		align-self: stretch;
 	}
 }
 

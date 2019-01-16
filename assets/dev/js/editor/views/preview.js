@@ -2,6 +2,7 @@ var BaseSectionsContainerView = require( 'elementor-views/base-sections-containe
 	Preview;
 
 import AddSectionView from './add-section/independent';
+import RightClickIntroductionBehavior from '../elements/views/behaviors/right-click-introduction';
 
 Preview = BaseSectionsContainerView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-preview' ),
@@ -19,9 +20,10 @@ Preview = BaseSectionsContainerView.extend( {
 				},
 			};
 
-		if ( elementor.config.user.introduction ) {
+		// TODO: the `2` check is for BC reasons
+		if ( ! elementor.config.user.introduction.rightClick && ! elementor.config.user.introduction[ 2 ] ) {
 			behaviors.introduction = {
-				behaviorClass: require( 'elementor-behaviors/introduction' ),
+				behaviorClass: RightClickIntroductionBehavior,
 			};
 		}
 
@@ -64,7 +66,7 @@ Preview = BaseSectionsContainerView.extend( {
 	},
 
 	copy: function() {
-		elementor.setStorage( 'transfer', {
+		elementorCommon.storage.set( 'transfer', {
 			type: 'copy',
 			elementsType: 'section',
 			elements: elementor.elements.toJSON( { copyHtmlCache: true } ),
@@ -73,7 +75,7 @@ Preview = BaseSectionsContainerView.extend( {
 
 	paste: function( atIndex ) {
 		var self = this,
-			transferData = elementor.getStorage( 'transfer' ),
+			transferData = elementorCommon.storage.get( 'transfer' ),
 			section,
 			index = undefined !== atIndex ? atIndex : this.collection.length;
 
@@ -125,7 +127,7 @@ Preview = BaseSectionsContainerView.extend( {
 	},
 
 	isPasteEnabled: function() {
-		return elementor.getStorage( 'transfer' );
+		return elementorCommon.storage.get( 'transfer' );
 	},
 
 	onRender: function() {

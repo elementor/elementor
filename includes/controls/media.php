@@ -130,14 +130,14 @@ class Control_Media extends Control_Base_Multiple {
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
-			<div class="elementor-control-input-wrapper">
-				<div class="elementor-control-media elementor-control-tag-area elementor-control-preview-area elementor-aspect-ratio-169">
-					<div class="elementor-control-media-upload-button">
+			<div class="elementor-control-input-wrapper elementor-aspect-ratio-169">
+				<div class="elementor-control-media elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
+					<div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
 						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 					</div>
-					<div class="elementor-control-media-area{{{ 'video' === data.media_type ? ' elementor-fit-aspect-ratio' : '' }}}">
+					<div class="elementor-control-media-area elementor-fit-aspect-ratio">
 						<# if( 'image' === data.media_type ) { #>
-							<div class="elementor-control-media-image"></div>
+							<div class="elementor-control-media-image elementor-fit-aspect-ratio"></div>
 						<# } else if( 'video' === data.media_type ) { #>
 							<video class="elementor-control-media-video" preload="metadata"></video>
 							<i class="fa fa-video-camera"></i>

@@ -5,6 +5,8 @@ import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 
 const App = Marionette.Application.extend( {
+	isLoaded: false,
+
 	previewLoadedOnce: false,
 
 	helpers: require( 'elementor-editor-utils/helpers' ),
@@ -137,6 +139,13 @@ const App = Marionette.Application.extend( {
 		tagsList: {
 			element: '.elementor-tags-list',
 			ignore: '.elementor-control-dynamic-switcher',
+		},
+		panelFooterSubMenus: {
+			element: '.elementor-panel-footer-tool',
+			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-open' );
+			},
 		},
 	},
 
@@ -520,7 +529,7 @@ const App = Marionette.Application.extend( {
 					}
 
 					if ( event.shiftKey ) {
-						if ( targetElement && targetElement.pasteStyle && elementor.getStorage( 'transfer' ) ) {
+						if ( targetElement && targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
 							targetElement.pasteStyle();
 						}
 
@@ -581,6 +590,8 @@ const App = Marionette.Application.extend( {
 
 	initPanel: function() {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
+
+		this.trigger( 'panel:init' );
 	},
 
 	initNavigator: function() {
@@ -707,30 +718,6 @@ const App = Marionette.Application.extend( {
 				],
 			} );
 		}
-	},
-
-	getStorage: function( key ) {
-		var elementorStorage = localStorage.getItem( 'elementor' );
-
-		if ( elementorStorage ) {
-			elementorStorage = JSON.parse( elementorStorage );
-		} else {
-			elementorStorage = {};
-		}
-
-		if ( key ) {
-			return elementorStorage[ key ];
-		}
-
-		return elementorStorage;
-	},
-
-	setStorage: function( key, value ) {
-		var elementorStorage = this.getStorage();
-
-		elementorStorage[ key ] = value;
-
-		localStorage.setItem( 'elementor', JSON.stringify( elementorStorage ) );
 	},
 
 	openLibraryOnStart: function() {
@@ -974,6 +961,8 @@ const App = Marionette.Application.extend( {
 		elementorCommon.hotKeys.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded' );
+
+		this.isLoaded = true;
 	},
 
 	onFirstPreviewLoaded: function() {
@@ -1044,7 +1033,7 @@ const App = Marionette.Application.extend( {
 
 	onBackgroundClick: function( event ) {
 		jQuery.each( this.backgroundClickListeners, function() {
-			var $clickedTarget = jQuery( event.target );
+			let $clickedTarget = jQuery( event.target );
 
 			// If it's a label that associated with an input
 			if ( $clickedTarget[ 0 ].control ) {
@@ -1055,17 +1044,22 @@ const App = Marionette.Application.extend( {
 				return;
 			}
 
+			const $clickedTargetClosestElement = $clickedTarget.closest( this.element ),
+				$elementsToHide = jQuery( this.element ).not( $clickedTargetClosestElement );
+
 			if ( this.callback ) {
-				this.callback();
+				this.callback( $elementsToHide );
 
 				return;
 			}
 
-			var $clickedTargetClosestElement = $clickedTarget.closest( this.element );
-
-			jQuery( this.element ).not( $clickedTargetClosestElement ).hide();
+			$elementsToHide.hide();
 		} );
 	},
 } );
 
-module.exports = ( window.elementor = new App() ).start();
+window.elementor = new App();
+if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
+	window.elementor.start();
+}
+module.exports = window.elementor;

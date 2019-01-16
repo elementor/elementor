@@ -8,11 +8,11 @@ use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Files\Manager as Files_Manager;
 use Elementor\Core\Modules_Manager;
-use Elementor\Debug\Debug;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
+use Elementor\Core\Logger\Manager as Log_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -77,18 +77,6 @@ class Plugin {
 	 * @var Controls_Manager
 	 */
 	public $controls_manager;
-
-	/**
-	 * Debug.
-	 *
-	 * Holds the plugin debug.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @var Debug
-	 */
-	public $debug;
 
 	/**
 	 * Documents manager.
@@ -396,6 +384,16 @@ class Plugin {
 	public $common;
 
 	/**
+	 * @var Log_Manager
+	 */
+	public $logger;
+
+	/**
+	 * @var Core\Upgrade\Manager
+	 */
+	public $upgrade;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -521,7 +519,6 @@ class Plugin {
 		$this->editor = new Editor();
 		$this->preview = new Preview();
 		$this->frontend = new Frontend();
-		$this->debug = new Debug();
 		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->maintenance_mode = new Maintenance_Mode();
 		$this->dynamic_tags = new Dynamic_Tags_Manager();
@@ -531,9 +528,10 @@ class Plugin {
 		$this->revisions_manager = new Revisions_Manager();
 
 		User::init();
-		Upgrades::add_actions();
 		Api::init();
 		Tracker::init();
+
+		$this->upgrade = new Core\Upgrade\Manager();
 
 		if ( is_admin() ) {
 			$this->heartbeat = new Heartbeat();
@@ -604,6 +602,8 @@ class Plugin {
 	 */
 	private function __construct() {
 		$this->register_autoloader();
+
+		$this->logger = Log_Manager::instance();
 
 		Maintenance::init();
 		Compatibility::register_actions();

@@ -48,9 +48,9 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-toggle-state elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
 		<i class="fa fa-cog" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), $document::get_title() ); ?></span>
+		<span class="elementor-screen-only"><?php printf( __( '%s Settings', 'elementor' ), $document::get_title() ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
@@ -86,14 +86,14 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			</div>
 		</div>
 	</div>
-	<div id="elementor-panel-saver-button-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
-		<span id="elementor-panel-saver-button-preview-label">
+	<div id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
+		<span id="elementor-panel-footer-saver-preview-label">
 			<i class="fa fa-eye" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo __( 'Preview Changes', 'elementor' ); ?></span>
 		</span>
 	</div>
-	<div id="elementor-panel-saver-publish" class="elementor-panel-footer-tool">
-		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success elementor-saver-disabled">
+	<div id="elementor-panel-footer-saver-publish" class="elementor-panel-footer-tool">
+		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success elementor-disabled">
 			<span class="elementor-state-icon">
 				<i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>
 			</span>
@@ -102,8 +102,8 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			</span>
 		</button>
 	</div>
-	<div id="elementor-panel-saver-save-options" class="elementor-panel-footer-tool elementor-toggle-state">
-		<button id="elementor-panel-saver-button-save-options" class="elementor-button elementor-button-success tooltip-target elementor-saver-disabled" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-saver-options" class="elementor-panel-footer-tool elementor-toggle-state">
+		<button id="elementor-panel-saver-button-save-options" class="elementor-button elementor-button-success tooltip-target elementor-disabled" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>">
 			<i class="fa fa-caret-up" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo __( 'Save Options', 'elementor' ); ?></span>
 		</button>
@@ -117,11 +117,11 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 				</span>
 			</p>
 			<div class="elementor-panel-footer-sub-menu">
-				<div id="elementor-panel-saver-menu-save-draft" class="elementor-panel-footer-sub-menu-item elementor-saver-disabled">
+				<div id="elementor-panel-footer-sub-menu-item-save-draft" class="elementor-panel-footer-sub-menu-item elementor-disabled">
 					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
 					<span class="elementor-title"><?php echo __( 'Save Draft', 'elementor' ); ?></span>
 				</div>
-				<div id="elementor-panel-saver-menu-save-template" class="elementor-panel-footer-sub-menu-item">
+				<div id="elementor-panel-footer-sub-menu-item-save-template" class="elementor-panel-footer-sub-menu-item">
 					<i class="elementor-icon fa fa-folder" aria-hidden="true"></i>
 					<span class="elementor-title"><?php echo __( 'Save as Template', 'elementor' ); ?></span>
 				</div>

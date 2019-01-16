@@ -18,6 +18,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Retrieve Read More widget name.
 	 *
+	 * @since 2.4.0
 	 * @access public
 	 *
 	 * @return string Widget name.
@@ -31,6 +32,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Retrieve Read More widget title.
 	 *
+	 * @since 2.4.0
 	 * @access public
 	 *
 	 * @return string Widget title.
@@ -44,12 +46,13 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Retrieve Read More widget icon.
 	 *
+	 * @since 2.4.0
 	 * @access public
 	 *
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-coding';
+		return 'eicon-post-excerpt';
 	}
 
 	/**
@@ -57,12 +60,13 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * Retrieve the list of keywords the widget belongs to.
 	 *
+	 * @since 2.4.0
 	 * @access public
 	 *
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'read-more' ];
+		return [ 'read', 'more', 'tag', 'excerpt' ];
 	}
 
 	/**
@@ -80,11 +84,23 @@ class Widget_Read_More extends Widget_Base {
 			]
 		);
 
+		$default_link_text = apply_filters( 'elementor/widgets/read_more/default_link_text', __( 'Continue reading', 'elementor' ) );
+
+		$this->add_control(
+			'theme_support',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'Note: This widget only affects themes that use `the_content` in archive pages.', 'elementor' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+			]
+		);
+
 		$this->add_control(
 			'link_text',
 			[
-				'label' => __( 'Link Text', 'elementor' ),
-				'placeholder' => __( '(more&hellip;)', 'elementor' ),
+				'label' => __( 'Read More Text', 'elementor' ),
+				'placeholder' => $default_link_text,
+				'default' => $default_link_text,
 			]
 		);
 
