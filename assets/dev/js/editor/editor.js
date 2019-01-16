@@ -1058,4 +1058,8 @@ const App = Marionette.Application.extend( {
 	},
 } );
 
-module.exports = ( window.elementor = new App() ).start();
+window.elementor = new App();
+if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
+	window.elementor.start();
+}
+module.exports = window.elementor;
