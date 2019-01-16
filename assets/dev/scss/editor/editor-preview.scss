@@ -3,6 +3,8 @@
 //
 @import "../helpers/variables";
 @import "../helpers/mixins";
+@import "resizable";
+
 @import "breakpoints";
 @import "panel/global";
 @import "panel/control";

@@ -1,3 +1,5 @@
+import AbsoluteBehavior from './behaviors/absolute';
+
 var BaseElementView = require( 'elementor-elements/views/base' ),
 	WidgetView;
 
@@ -38,7 +40,7 @@ WidgetView = BaseElementView.extend( {
 				inlineEditingClass: 'elementor-inline-editing',
 			},
 			Draggable: {
-				behaviorClass: require( 'elementor-behaviors/draggable' ),
+				behaviorClass: AbsoluteBehavior,
 			},
 		} );
 
