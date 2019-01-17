@@ -62,8 +62,9 @@ interface Log_Item_Interface extends \JsonSerializable {
 
 	/**
 	 * @param Log_Item_Interface $item
+	 * @param bool               $truncate
 	 */
-	public function increase_times( $item );
+	public function increase_times( $item, $truncate = true );
 
 	/**
 	 * @return string
