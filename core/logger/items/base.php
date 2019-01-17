@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Base implements Log_Item_Interface {
+
 	const FORMAT = 'date [type] message [meta]';
 	const TRACE_FORMAT = '#key: file(line): class type function()';
 	const TRACE_LIMIT = 5;
@@ -112,6 +113,10 @@ class Base implements Log_Item_Interface {
 	public function increase_times( $item ) {
 		$this->times++;
 		$this->times_dates[] = $item->date;
+
+		if ( self::MAX_LOG_ENTRIES < count( $this->times_dates ) ) {
+			$this->times_dates = array_slice( $this->times_dates, -self::MAX_LOG_ENTRIES );
+		}
 	}
 
 	public function format( $format = 'html' ) {
