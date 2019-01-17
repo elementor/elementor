@@ -22,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 interface Log_Item_Interface extends \JsonSerializable {
 
+	const MAX_LOG_ENTRIES = 42;
+
 	/**
 	 * Log_Item_Interface constructor.
 	 *
