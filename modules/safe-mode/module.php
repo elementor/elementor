@@ -336,7 +336,8 @@ class Module extends \Elementor\Core\Base\Module {
 				</a>
 			</header>
 			<div class="elementor-toast-content">
-				<?php printf( __( 'Having problems loading Elementor? Please enable Safe Mode to troubleshoot. <a href="%1$s" target="_blank">%2$s.</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL, __( 'Learn More', 'elementor' ) ); ?>
+				<?php echo __( 'Having problems loading Elementor? Please enable Safe Mode to troubleshoot.', 'elementor' ); ?>
+				<a href="<?php echo self::DOCS_TRY_SAFE_MODE_URL; ?>" target="_blank"><?php echo __( 'Learn More', 'elementor' ); ?></a>
 			</div>
 		</div>
 
