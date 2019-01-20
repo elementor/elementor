@@ -320,8 +320,6 @@ const App = Marionette.Application.extend( {
 
 		elementorFrontend.init();
 
-		elementorFrontend.elementsHandler.initHandlers();
-
 		this.trigger( 'frontend:init' );
 	},
 
