@@ -99,6 +99,8 @@ class Fonts {
 	 */
 	public static function get_fonts() {
 		if ( null === self::$fonts ) {
+			$additional_fonts = [];
+
 			/**
 			 * Additional fonts.
 			 *
@@ -108,7 +110,7 @@ class Fonts {
 			 *
 			 * @param array $additional_fonts Additional Elementor fonts.
 			 */
-			$additional_fonts = apply_filters( 'elementor/fonts/additional_fonts', [] );
+			$additional_fonts = apply_filters( 'elementor/fonts/additional_fonts', $additional_fonts );
 
 			self::$fonts = array_merge( self::get_native_fonts(), $additional_fonts );
 		}
