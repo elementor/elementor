@@ -224,6 +224,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 = 2.4.2 - 2019-01-20 =
 * Tweak: Better duplicate Error log entries handling
 * Tweak: Split and merge similar translation strings
+* Fix: Missing manual caption style in Image widget ([#6791](https://github.com/pojome/elementor/issues/6791))
 * Fix: Log only Elementor related errors
 * Fix: Background updates total iterations
 
