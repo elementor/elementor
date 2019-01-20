@@ -9,8 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Db extends Base {
 
-	const MAX_LOG_ENTRIES = 42;
-
 	public function save_log( Log_Item $item ) {
 		$log = $this->maybe_truncate_log();
 
@@ -29,8 +27,8 @@ class Db extends Base {
 		/** @var Log_Item[] $log */
 		$log = $this->get_log();
 
-		if ( self::MAX_LOG_ENTRIES < count( $log ) ) {
-			$log = array_slice( $log, -self::MAX_LOG_ENTRIES );
+		if ( Log_Item::MAX_LOG_ENTRIES < count( $log ) ) {
+			$log = array_slice( $log, -Log_Item::MAX_LOG_ENTRIES );
 		}
 
 		return $log;

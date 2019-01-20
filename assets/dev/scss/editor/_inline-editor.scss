@@ -12,7 +12,7 @@
 		position: fixed;
 		overflow: hidden;
 		border-radius: 3px;
-		z-index: 9998;
+		z-index: $editor-layer;
 
 		&:after {
 			top: 100%;

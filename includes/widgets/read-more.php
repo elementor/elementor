@@ -90,7 +90,7 @@ class Widget_Read_More extends Widget_Base {
 			'theme_support',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Note: This widget only affects themes that use `the_content` in archive pages.', 'elementor' ),
+				'raw' => sprintf( __( 'Note: This widget only affects themes that use `%s` in archive pages.', 'elementor' ), 'the_content' ),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			]
 		);
