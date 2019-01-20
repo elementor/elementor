@@ -363,7 +363,6 @@ class Revisions_Manager {
 	 */
 	public static function editor_settings( $settings, $post_id ) {
 		$settings = array_replace_recursive( $settings, [
-			'revisions' => self::get_revisions(),
 			'revisions_enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
 			'current_revision_id' => self::current_revision_id( $post_id ),
 			'i18n' => [
@@ -389,12 +388,17 @@ class Revisions_Manager {
 		return $settings;
 	}
 
+	public static function ajax_get_revisions() {
+		return self::get_revisions();
+	}
+
 	/**
 	 * @since 2.3.0
 	 * @access public
 	 * @static
 	 */
 	public static function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'get_revisions', [ __CLASS__, 'ajax_get_revisions' ] );
 		$ajax->register_ajax_action( 'get_revision_data', [ __CLASS__, 'ajax_get_revision_data' ] );
 		$ajax->register_ajax_action( 'delete_revision', [ __CLASS__, 'ajax_delete_revision' ] );
 	}
