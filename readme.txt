@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 5.0
 Requires PHP: 5.4
-Stable tag: 2.4.1
+Stable tag: 2.4.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,14 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.4.2 - 2019-01-20 =
+* Tweak: Better duplicate Error log entries handling
+* Tweak: Split and merge similar translation strings
+* Fix: Missing manual caption style in Image widget ([#6791](https://github.com/pojome/elementor/issues/6791))
+* Fix: JS handlers not working in editor for other templates
+* Fix: Log only Elementor related errors
+* Fix: Background updates total iterations
 
 = 2.4.1 - 2019-01-15 =
 * Tweak: Avoid widget rendering on `box-shadow` and `text-shadow` changes ([#6737](https://github.com/pojome/elementor/issues/6737))
