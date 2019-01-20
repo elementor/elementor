@@ -102,7 +102,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 			'anchor_note',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Note: The ID link ONLY accepts these chars: `A-Z, a-z, 0-9, _ , -`', 'elementor' ),
+				'raw' => sprintf( __( 'Note: The ID link ONLY accepts these chars: %s', 'elementor' ), '`A-Z, a-z, 0-9, _ , -`' ),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			]
 		);
