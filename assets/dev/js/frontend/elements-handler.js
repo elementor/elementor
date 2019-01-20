@@ -31,9 +31,7 @@ ElementsHandler = function( $ ) {
 	};
 
 	var init = function() {
-		if ( ! elementorFrontend.isEditMode() ) {
-			self.initHandlers();
-		}
+		self.initHandlers();
 	};
 
 	this.initHandlers = function() {
