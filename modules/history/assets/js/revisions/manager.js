@@ -116,20 +116,12 @@ RevisionsManager = function() {
 			data: {
 				id: revisionModel.get( 'id' ),
 			},
-			success: function() {
+			success: () => {
 				if ( options.success ) {
 					options.success();
 				}
 
 				revisionModel.destroy();
-
-				if ( ! revisions.length ) {
-					var panel = elementor.getPanelView();
-
-					if ( 'historyPage' === panel.getCurrentPageName() ) {
-						panel.getCurrentPageView().activateTab( 'revisions' );
-					}
-				}
 			},
 		};
 
@@ -144,6 +136,14 @@ RevisionsManager = function() {
 		attachEvents();
 
 		addHotKeys();
+	};
+
+	this.onRevisionsUpdate = function() {
+		const panel = elementor.getPanelView();
+
+		if ( 'historyPage' === panel.getCurrentPageName() ) {
+			panel.getCurrentPageView().activateTab( 'revisions' );
+		}
 	};
 };
 
