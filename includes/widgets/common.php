@@ -74,6 +74,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'default' => '',
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 					'inherit' => __( 'Maximum', 'elementor' ),
@@ -86,7 +87,7 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_element_custom_width',
 			[
 				'label' => __( 'Width', 'elementor' ),
@@ -104,6 +105,18 @@ class Widget_Common extends Widget_Base {
 				'condition' => [
 					'_element_width' => 'initial',
 				],
+				'device_args' => [
+					Controls_Stack::RESPONSIVE_TABLET => [
+						'condition' => [
+							'_element_width_tablet' => [ 'initial' ],
+						],
+					],
+					Controls_Stack::RESPONSIVE_MOBILE => [
+						'condition' => [
+							'_element_width_mobile' => [ 'initial' ],
+						],
+					],
+				],
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}'
@@ -115,12 +128,25 @@ class Widget_Common extends Widget_Base {
 			'_element_vertical_align',
 			[
 				'label' => __( 'Vertical Align', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
-					'flex-start' => __( 'Start', 'elementor' ),
-					'flex-end' => __( 'End', 'elementor' ),
-					'center' => __( 'Center', 'elementor' ),
-					'stretch' => __( 'Stretch', 'elementor' ),
+					'flex-start' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'flex-end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'stretch' => [
+						'title' => __( 'Stretch', 'elementor' ),
+						'icon' => 'eicon-v-align-stretch',
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'align-self: {{VALUE}}',

@@ -112,7 +112,8 @@ export default class extends Marionette.Behavior {
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
 			settingToChange = {};
 
-		settingToChange[ 'widget_width_custom' + deviceSuffix ] = { unit: 'px', size: ui.size.width };
+		settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
+		settingToChange[ '_element_custom_width' + deviceSuffix ] = { unit: 'px', size: ui.size.width };
 
 		this.view.getEditModel().get( 'settings' ).setExternalChange( settingToChange );
 
