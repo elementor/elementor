@@ -12,7 +12,7 @@ foreach ( $reports as $report_name => $report ) : ?>
 		<table class="widefat">
 			<thead>
 			<tr>
-				<th style="width: 15%;"><?php echo $report['label']; ?></th>
+				<th><?php echo $report['label']; ?></th>
 				<th></th>
 				<th></th>
 			</tr>
