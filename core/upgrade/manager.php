@@ -9,6 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends DB_Upgrades_Manager {
 
+	// todo: remove in future releases
+	public function should_upgrade() {
+		if ( version_compare( get_option( $this->get_version_option_name() ), '2.4.2', '<' ) ) {
+			delete_option( $this->get_version_option_name() );
+		}
+
+		return parent::should_upgrade();
+	}
+
 	public function get_name() {
 		return 'upgrade';
 	}
