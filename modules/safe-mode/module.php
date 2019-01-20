@@ -263,7 +263,7 @@ class Module extends \Elementor\Core\Base\Module {
 				<ul class="elementor-safe-mode-list">
 					<li class="elementor-safe-mode-list-item">
 						<div class="elementor-safe-mode-list-item-title"><?php echo __( 'Editor successfully loaded?', 'elementor' ); ?></div>
-						<div class="elementor-safe-mode-list-item-content"><?php printf( __( 'The issue was probably caused by one of your plugins or theme. <a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_HELPED_URL ); ?></div>
+						<div class="elementor-safe-mode-list-item-content"><?php echo __( 'The issue was probably caused by one of your plugins or theme.', 'elementor' ); ?> <?php printf( __( '<a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_HELPED_URL ); ?></div>
 					</li>
 					<li class="elementor-safe-mode-list-item">
 						<div class="elementor-safe-mode-list-item-title"><?php echo __( 'Still experiencing issues?', 'elementor' ); ?></div>
@@ -336,7 +336,8 @@ class Module extends \Elementor\Core\Base\Module {
 				</a>
 			</header>
 			<div class="elementor-toast-content">
-				<?php printf( __( 'Having problems loading Elementor? Please enable Safe Mode to troubleshoot. <a href="%1$s" target="_blank">%2$s.</a>', 'elementor' ), self::DOCS_TRY_SAFE_MODE_URL, __( 'Learn More', 'elementor' ) ); ?>
+				<?php echo __( 'Having problems loading Elementor? Please enable Safe Mode to troubleshoot.', 'elementor' ); ?>
+				<a href="<?php echo self::DOCS_TRY_SAFE_MODE_URL; ?>" target="_blank"><?php echo __( 'Learn More', 'elementor' ); ?></a>
 			</div>
 		</div>
 
