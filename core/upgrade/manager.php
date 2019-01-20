@@ -11,7 +11,7 @@ class Manager extends DB_Upgrades_Manager {
 
 	// todo: remove in future releases
 	public function should_upgrade() {
-		if ( version_compare( get_option( $this->get_version_option_name() ), '2.4.2', '<' ) ) {
+		if ( ( 'elementor' === $this->get_plugin_name() ) && version_compare( get_option( $this->get_version_option_name() ), '2.4.2', '<' ) ) {
 			delete_option( $this->get_version_option_name() );
 		}
 
