@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 foreach ( $reports as $report_name => $report ) : ?>
-	<div class="elementor-system-info-section">
+	<div class="elementor-system-info-section elementor-system-info-<?php echo $report_name; ?>">
 		<table class="widefat">
 			<thead>
 			<tr>
