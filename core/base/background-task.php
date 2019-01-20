@@ -73,7 +73,7 @@ abstract class Background_Task extends \WP_Background_Process {
 
 		if ( empty( $this->current_item['total'] ) ) {
 			$total_rows = $wpdb->get_var( 'SELECT FOUND_ROWS();' );
-			$total_iterates = floor( $total_rows / $this->get_limit() );
+			$total_iterates = ceil( $total_rows / $this->get_limit() );
 			$this->current_item['total'] = $total_iterates;
 		}
 	}

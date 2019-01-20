@@ -26,7 +26,10 @@ module.exports = Marionette.CompositeView.extend( {
 	currentPreviewItem: null,
 
 	initialize: function() {
+		this.collection = elementor.history.revisions.getItems();
+
 		this.listenTo( elementor.channels.editor, 'saved', this.onEditorSaved );
+
 		this.currentPreviewId = elementor.config.current_revision_id;
 	},
 

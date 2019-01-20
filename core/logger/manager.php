@@ -30,6 +30,18 @@ class Manager extends BaseModule {
 			return;
 		}
 
+		if ( empty( $last_error['file'] ) ) {
+			return;
+		}
+
+		$error_path = ( wp_normalize_path( $last_error['file'] ) );
+		// `untrailingslashit` in order to include other plugins prefixed with elementor.
+		$elementor_path = untrailingslashit( wp_normalize_path( ELEMENTOR_PATH ) );
+
+		if ( false === strpos( $error_path, $elementor_path ) ) {
+			return;
+		}
+
 		$last_error['type'] = $this->get_log_type_from_php_error( $last_error['type'] );
 		$last_error['trace'] = true;
 
