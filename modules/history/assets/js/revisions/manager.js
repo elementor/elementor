@@ -2,25 +2,24 @@ var RevisionsCollection = require( './collection' ),
 	RevisionsManager;
 
 RevisionsManager = function() {
-	var self = this,
-		revisions;
+	const self = this;
 
-	this.getItems = function() {
-		return revisions;
-	};
+	let revisions;
 
 	var onEditorSaved = function( data ) {
 		if ( data.latest_revisions ) {
 			self.addRevisions( data.latest_revisions );
 		}
 
-		if ( data.revisions_ids ) {
-			var revisionsToKeep = revisions.filter( function( revision ) {
-				return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
-			} );
+		self.requestRevisions( () => {
+			if ( data.revisions_ids ) {
+				var revisionsToKeep = revisions.filter( function( revision ) {
+					return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
+				} );
 
-			revisions.reset( revisionsToKeep );
-		}
+				revisions.reset( revisionsToKeep );
+			}
+		} );
 	};
 
 	var attachEvents = function() {
@@ -53,6 +52,28 @@ RevisionsManager = function() {
 		elementorCommon.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
 	};
 
+	this.getItems = function() {
+		return revisions;
+	};
+
+	this.requestRevisions = function( callback ) {
+		if ( revisions ) {
+			callback( revisions );
+
+			return;
+		}
+
+		elementorCommon.ajax.addRequest( 'get_revisions', {
+			success: ( data ) => {
+				revisions = new RevisionsCollection( data );
+
+				revisions.on( 'update', this.onRevisionsUpdate.bind( this ) );
+
+				callback( revisions );
+			},
+		} );
+	};
+
 	this.setEditorData = function( data ) {
 		var collection = elementor.getRegion( 'sections' ).currentView.collection;
 
@@ -73,16 +94,20 @@ RevisionsManager = function() {
 	};
 
 	this.addRevisions = function( items ) {
-		items.forEach( function( item ) {
-			var existedModel = revisions.findWhere( {
-				id: item.id,
+		this.requestRevisions( () => {
+			items.forEach( function( item ) {
+				var existedModel = revisions.findWhere( {
+					id: item.id,
+				} );
+
+				if ( existedModel ) {
+					revisions.remove( existedModel, { silent: true } );
+				}
+
+				revisions.add( item, { silent: true } );
 			} );
 
-			if ( existedModel ) {
-				revisions.remove( existedModel );
-			}
-
-			revisions.add( item );
+			revisions.trigger( 'update' );
 		} );
 	};
 
@@ -91,20 +116,12 @@ RevisionsManager = function() {
 			data: {
 				id: revisionModel.get( 'id' ),
 			},
-			success: function() {
+			success: () => {
 				if ( options.success ) {
 					options.success();
 				}
 
 				revisionModel.destroy();
-
-				if ( ! revisions.length ) {
-					var panel = elementor.getPanelView();
-
-					if ( 'historyPage' === panel.getCurrentPageName() ) {
-						panel.getCurrentPageView().activateTab( 'revisions' );
-					}
-				}
 			},
 		};
 
@@ -116,11 +133,17 @@ RevisionsManager = function() {
 	};
 
 	this.init = function() {
-		revisions = new RevisionsCollection( elementor.config.revisions );
-
 		attachEvents();
 
 		addHotKeys();
+	};
+
+	this.onRevisionsUpdate = function() {
+		const panel = elementor.getPanelView();
+
+		if ( 'historyPage' === panel.getCurrentPageName() ) {
+			panel.getCurrentPageView().activateTab( 'revisions' );
+		}
 	};
 };
 
