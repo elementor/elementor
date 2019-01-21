@@ -223,6 +223,11 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.4.3 - 2019-01-21 ###
+* Tweak: Update `width` control label in Image Box widget ([#6808](https://github.com/pojome/elementor/issues/6808))
+* Fix: PHP warning in self hosted video `render_pain_content()`
+* Fix: Responsive `background-attachment` issue
+
 ### 2.4.2 - 2019-01-20 ###
 * Tweak: Better duplicate Error log entries handling
 * Tweak: Split and merge similar translation strings
