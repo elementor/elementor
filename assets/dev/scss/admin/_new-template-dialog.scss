@@ -12,8 +12,15 @@
 		align-items: center;
 		height: 100%;
 		text-align: $start;
-		padding: 0 120px;
 		color: $editor-dark;
+		
+		@media (max-width: $library_screen_breakpoint) {
+			padding: 0 50px;
+		}
+
+		@media (min-width: $library_screen_breakpoint + 1) {
+			padding: 0 120px;
+		}
 	}
 
 	&__description {
@@ -31,7 +38,7 @@
 		}
 
 		&__content {
-			font-size: 14px;
+			font-size: 16px;
 			padding: 30px 0;
 		}
 	}
