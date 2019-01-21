@@ -119,7 +119,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}'
+					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
