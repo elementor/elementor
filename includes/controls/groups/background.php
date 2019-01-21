@@ -426,9 +426,8 @@ class Group_Control_Background extends Group_Control_Base {
 				'scroll' => _x( 'Scroll', 'Background Control', 'elementor' ),
 				'fixed' => _x( 'Fixed', 'Background Control', 'elementor' ),
 			],
-			'responsive' => true,
 			'selectors' => [
-				'{{SELECTOR}}' => 'background-attachment: {{VALUE}};',
+				'(desktop+){{SELECTOR}}' => 'background-attachment: {{VALUE}};',
 			],
 			'condition' => [
 				'background' => [ 'classic' ],
