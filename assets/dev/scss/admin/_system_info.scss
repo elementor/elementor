@@ -20,6 +20,13 @@
 		.elementor-log-entries {
 			white-space: pre-wrap;
 		}
+
+		&:not(.elementor-system-info-log) {
+
+			tbody td:first-child {
+				width: 300px;
+			}
+		}
 	}
 
 	.elementor-system-info-report-name {
