@@ -242,7 +242,7 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_responsive_control(
 			'image_size',
 			[
-				'label' => __( 'Width', 'elementor' ),
+				'label' => __( 'Width', 'elementor' ) . ' (%)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 30,
