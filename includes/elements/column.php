@@ -826,6 +826,64 @@ class Element_Column extends Element_Base {
 
 		$this->end_controls_section();
 
+		$this->start_controls_section(
+			'_section_responsive',
+			[
+				'label' => __( 'Responsive', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'responsive_description',
+			[
+				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-descriptor',
+			]
+		);
+
+		$this->add_control(
+			'hide_desktop',
+			[
+				'label' => __( 'Hide On Desktop', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
+				'return_value' => 'hidden-desktop',
+			]
+		);
+
+		$this->add_control(
+			'hide_tablet',
+			[
+				'label' => __( 'Hide On Tablet', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
+				'return_value' => 'hidden-tablet',
+			]
+		);
+
+		$this->add_control(
+			'hide_mobile',
+			[
+				'label' => __( 'Hide On Mobile', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
+				'return_value' => 'hidden-phone',
+			]
+		);
+
+		$this->end_controls_section();
+
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 
