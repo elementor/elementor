@@ -33,6 +33,23 @@
 // Select2
 .select2-container {
 	z-index: $editor-layer;
+
+	&:not(.select2-container--open):not(.select2-container--focus) {
+
+		.select2-selection--single,
+		.select2-selection--multiple {
+			border-color: $editor-lightest;
+		}
+	}
+
+	&.select2-container--open,
+	&.select2-container--focus {
+
+		.select2-selection--single,
+		.select2-selection--multiple {
+			border-color: $editor-light;
+		}
+	}
 }
 
 .select2-dropdown {
