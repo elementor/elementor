@@ -132,7 +132,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'placeholder' => __( 'Enter your URL', 'elementor' ) . ' (YouTube)',
-				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
+				'default' => 'https://www.youtube.com/watch?v=XHOmBV4js_E',
 				'label_block' => true,
 				'condition' => [
 					'video_type' => 'youtube',
