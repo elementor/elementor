@@ -15,7 +15,29 @@
 #elementor-panel-elements {
 	overflow: hidden;
 	padding: 0 5px;
+}
 
+#elementor-panel-elements-loading {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
+	z-index: 1;
+	opacity: 0.5;
+
+	body.elementor-controls-ready & {
+		display: none;
+	}
+
+	.eicon-loading {
+		font-size: 30px;
+		color: $editor-light;
+	}
 }
 
 .elementor-element-wrapper {
