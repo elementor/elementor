@@ -132,7 +132,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'placeholder' => __( 'Enter your URL', 'elementor' ) . ' (YouTube)',
-				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
+				'default' => 'https://www.youtube.com/watch?v=XHOmBV4js_E',
 				'label_block' => true,
 				'condition' => [
 					'video_type' => 'youtube',
@@ -879,7 +879,11 @@ class Widget_Video extends Widget_Base {
 	public function render_plain_content() {
 		$settings = $this->get_settings_for_display();
 
-		$url = $settings[ $settings['video_type'] . '_url' ];
+		if ( 'hosted' !== $settings['video_type'] ) {
+			$url = $settings[ $settings['video_type'] . '_url' ];
+		} else {
+			$url = $this->get_hosted_video_url();
+		}
 
 		echo esc_url( $url );
 	}

@@ -36,6 +36,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-nerd-box-message">{{{ elementor.translate( elementor.config.revisions_enabled ? 'no_revisions_2' : 'revisions_disabled_2' ) }}}</div>
 </script>
 
+<script type="text/template" id="tmpl-elementor-panel-revisions-loading">
+	<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
 	<div class="elementor-revision-item__wrapper {{ type }}">
 		<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>

@@ -78,8 +78,9 @@ html.elementor-html {
 			transition: all .1s;
 		}
 
-		&.elementor-element-editable, &.elementor-element-edit-mode:hover {
-			outline: 1px solid $editor-info;
+		&.elementor-element-editable,
+		&.elementor-element-edit-mode:hover {
+			box-shadow: 0 0 0 1px $editor-info;
 		}
 
 		&:not(:hover) {

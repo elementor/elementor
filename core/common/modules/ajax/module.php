@@ -109,7 +109,7 @@ class Module extends BaseModule {
 	 */
 	public function register_ajax_action( $tag, $callback ) {
 		if ( ! did_action( 'elementor/ajax/register_actions' ) ) {
-			_doing_it_wrong( __METHOD__, esc_html( __( 'Use `elementor/ajax/register_actions` hook to register ajax action.', 'elementor' ) ), '2.0.0' );
+			_doing_it_wrong( __METHOD__, esc_html( sprintf( 'Use `%s` hook to register ajax action.', 'elementor/ajax/register_actions' ) ), '2.0.0' );
 		}
 
 		$this->ajax_actions[ $tag ] = compact( 'tag', 'callback' );
