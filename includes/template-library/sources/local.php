@@ -1435,6 +1435,10 @@ class Source_Local extends Source_Base {
 
 		$current_tabs_group = $this->get_current_tab_group();
 
+		if ( isset( $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] ) && '-1' === $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] ) {
+			unset( $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] );
+		}
+
 		if ( empty( $current_tabs_group ) ) {
 			return;
 		}
