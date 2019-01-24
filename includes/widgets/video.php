@@ -577,6 +577,7 @@ class Widget_Video extends Widget_Base {
 					'219' => '21:9',
 					'43' => '4:3',
 					'32' => '3:2',
+					'11' => '1:1',
 				],
 				'default' => '169',
 				'prefix_class' => 'elementor-aspect-ratio-',
