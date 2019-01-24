@@ -85,6 +85,29 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * Get initial config.
+	 *
+	 * Retrieve the current section initial configuration.
+	 *
+	 * Adds more configuration on top of the controls list, the tabs assigned to
+	 * the control, element name, type, icon and more. This method also adds
+	 * section presets.
+	 *
+	 * @since 2.5.0
+	 * @access protected
+	 *
+	 * @return array The initial config.
+	 */
+	protected function _get_initial_config() {
+		$config = parent::_get_initial_config();
+
+		$config['controls'] = $this->get_controls();
+		$config['tabs_controls'] = $this->get_tabs_controls();
+
+		return $config;
+	}
+
+	/**
 	 * Get default edit tools.
 	 *
 	 * Retrieve the element default edit tools. Used to set initial tools.

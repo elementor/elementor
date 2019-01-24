@@ -850,6 +850,34 @@ const App = Marionette.Application.extend( {
 		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) ); // eslint-disable-line
 	},
 
+	requestWidgetsConfig: function() {
+		const excludeWidgets = {};
+
+		jQuery.each( this.config.widgets, ( widgetName, widgetConfig ) => {
+			if ( widgetConfig.controls ) {
+				excludeWidgets[ widgetName ] = true;
+			}
+		} );
+
+		elementorCommon.ajax.addRequest( 'get_widgets_config', {
+			data: {
+				exclude: excludeWidgets,
+			},
+			success: ( data ) => {
+				jQuery.each( data, ( widgetName, controlsConfig ) => {
+					const widgetConfig = this.config.widgets[ widgetName ];
+
+					widgetConfig.controls = controlsConfig.controls;
+					widgetConfig.tabs_controls = controlsConfig.tabs_controls;
+				} );
+
+				this.schemes.printSchemesStyle();
+
+				elementorCommon.elements.$body.addClass( 'elementor-controls-ready' );
+			},
+		} );
+	},
+
 	onStart: function() {
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -866,6 +894,8 @@ const App = Marionette.Application.extend( {
 		}
 
 		this.setAjax();
+
+		this.requestWidgetsConfig();
 
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
