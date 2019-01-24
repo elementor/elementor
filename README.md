@@ -223,6 +223,14 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.4.4 - 2019-01-24 ###
+* Tweak: Added 1:1 aspect ratio to Video widget
+* Tweak: Added ability to add condition/s for tabs control wrapper ([#6830](https://github.com/pojome/elementor/issues/6830))
+* Fix: Template search with no categories ([#6810](https://github.com/pojome/elementor/issues/6810))
+* Fix: Make sure browser has access to `localStorage`
+* Fix: Removed Finder from the Customizer
+* Fix: Editor UI glitch in Firefox browser
+
 ### 2.4.3 - 2019-01-21 ###
 * Tweak: Update `width` control label in Image Box widget ([#6808](https://github.com/pojome/elementor/issues/6808))
 * Fix: PHP warning in self hosted video `render_pain_content()`
