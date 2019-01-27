@@ -871,7 +871,9 @@ const App = Marionette.Application.extend( {
 					widgetConfig.tabs_controls = controlsConfig.tabs_controls;
 				} );
 
-				this.schemes.printSchemesStyle();
+				if ( this.loaded ) {
+					this.schemes.printSchemesStyle();
+				}
 
 				elementorCommon.elements.$body.addClass( 'elementor-controls-ready' );
 			},
