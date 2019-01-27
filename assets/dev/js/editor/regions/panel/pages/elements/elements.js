@@ -9,6 +9,8 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-elements',
 
+	id: 'elementor-panel-page-elements',
+
 	options: {
 		autoFocusSearch: true,
 	},
