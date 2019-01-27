@@ -373,7 +373,7 @@ class Module extends \Elementor\Core\Base\Module {
 						return false;
 					}
 
-					if ( ! elementor.isLoaded ) {
+					if ( ! elementor.loaded ) {
 						return false;
 					}
 
