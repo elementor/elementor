@@ -5,7 +5,7 @@ import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 
 const App = Marionette.Application.extend( {
-	isLoaded: false,
+	loaded: false,
 
 	previewLoadedOnce: false,
 
@@ -990,7 +990,7 @@ const App = Marionette.Application.extend( {
 
 		this.trigger( 'preview:loaded' );
 
-		this.isLoaded = true;
+		this.loaded = true;
 	},
 
 	onFirstPreviewLoaded: function() {
