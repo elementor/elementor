@@ -5,7 +5,7 @@ import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 
 const App = Marionette.Application.extend( {
-	isLoaded: false,
+	loaded: false,
 
 	previewLoadedOnce: false,
 
@@ -871,7 +871,9 @@ const App = Marionette.Application.extend( {
 					widgetConfig.tabs_controls = controlsConfig.tabs_controls;
 				} );
 
-				this.schemes.printSchemesStyle();
+				if ( this.loaded ) {
+					this.schemes.printSchemesStyle();
+				}
 
 				elementorCommon.elements.$body.addClass( 'elementor-controls-ready' );
 			},
@@ -990,7 +992,7 @@ const App = Marionette.Application.extend( {
 
 		this.trigger( 'preview:loaded' );
 
-		this.isLoaded = true;
+		this.loaded = true;
 	},
 
 	onFirstPreviewLoaded: function() {

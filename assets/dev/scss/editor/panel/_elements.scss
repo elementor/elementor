@@ -1,6 +1,14 @@
 //
 // Panel Elements
 //
+#elementor-panel-page-elements {
+
+	body:not(.elementor-controls-ready) & {
+		height: 100%;
+		overflow: hidden;
+	}
+}
+
 #elementor-panel-elements-navigation {
 
 	.elementor-panel-navigation-tab {
