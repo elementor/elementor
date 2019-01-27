@@ -149,12 +149,25 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getElementSettings: function( setting ) {
-		var elementSettings = {},
-			modelCID = this.getModelCID();
+		let elementSettings = {};
+
+		const modelCID = this.getModelCID();
 
 		if ( this.isEdit && modelCID ) {
-			var settings = elementorFrontend.config.elements.data[ modelCID ],
-				settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
+			const settings = elementorFrontend.config.elements.data[ modelCID ],
+				type = settings.attributes.widgetType || settings.attributes.elType;
+
+			let settingsKeys = elementorFrontend.config.elements.keys[ type ];
+
+			if ( ! settingsKeys ) {
+				settingsKeys = elementorFrontend.config.elements.keys[ type ] = [];
+
+				jQuery.each( settings.controls, ( name, control ) => {
+					if ( control.frontend_available ) {
+						settingsKeys.push( name );
+					}
+				} );
+			}
 
 			jQuery.each( settings.getActiveControls(), function( controlKey ) {
 				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
