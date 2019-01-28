@@ -1,6 +1,14 @@
 //
 // Panel Elements
 //
+#elementor-panel-page-elements {
+
+	body:not(.elementor-controls-ready) & {
+		height: 100%;
+		overflow: hidden;
+	}
+}
+
 #elementor-panel-elements-navigation {
 
 	.elementor-panel-navigation-tab {
@@ -15,7 +23,29 @@
 #elementor-panel-elements {
 	overflow: hidden;
 	padding: 0 5px;
+}
 
+#elementor-panel-elements-loading {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
+	z-index: 1;
+	opacity: 0.5;
+
+	body.elementor-controls-ready & {
+		display: none;
+	}
+
+	.eicon-loading {
+		font-size: 30px;
+		color: $editor-light;
+	}
 }
 
 .elementor-element-wrapper {
@@ -97,9 +127,5 @@
 		+ i {
 			@include end(15px);
 		}
-	}
-
-	&::placeholder {
-		color: $editor-light;
 	}
 }

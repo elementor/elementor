@@ -334,10 +334,8 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => '',
 				'prefix_class' => '',
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
-				'label_block' => false,
 			]
 		);
 
