@@ -10,7 +10,7 @@ module.exports = Marionette.ItemView.extend( {
 	onDestroy: function() {
 		var panel = elementor.getPanelView();
 
-		if ( 'elements' === panel.getCurrentPageName() ) {
+		if ( elementor.route.is( 'panel/elements' ) ) {
 			setTimeout( function() {
 				var elementsPageView = panel.getCurrentPageView();
 

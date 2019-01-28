@@ -725,7 +725,7 @@ BaseElementView = BaseContainer.extend( {
 		const model = this.getEditModel(),
 			panel = elementor.getPanelView();
 
-		if ( 'editor' === panel.getCurrentPageName() && panel.getCurrentPageView().model === model ) {
+		if ( elementor.route.is( 'panel/editor' ) && panel.getCurrentPageView().model === model ) {
 			return;
 		}
 
@@ -733,7 +733,10 @@ BaseElementView = BaseContainer.extend( {
 			elementor.helpers.scrollToView( this.$el, 200 );
 		}
 
-		panel.openEditor( model, this );
+		elementor.route.to( 'panel/editor', {
+			model: model,
+			view: this,
+		} );
 	},
 
 	onDuplicateButtonClick: function( event ) {

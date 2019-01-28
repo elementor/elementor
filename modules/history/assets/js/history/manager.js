@@ -71,7 +71,7 @@ var	Manager = function() {
 				return elementorCommon.hotKeys.isControlEvent( event ) && event.shiftKey;
 			},
 			handle: function() {
-				elementor.getPanelView().setPage( 'historyPage' );
+				elementor.route.to( 'panel/history' );
 			},
 		} );
 
@@ -103,6 +103,15 @@ var	Manager = function() {
 	};
 
 	var init = function() {
+		elementor.route.register( 'panel/history', function() {
+			elementor.getPanelView().setPage( 'historyPage' );
+		} );
+
+		elementor.route.register( 'panel/history/revisions', function() {
+			elementor.route.to( 'panel/history' );
+			elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
+		} );
+
 		addHotKeys();
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
@@ -212,10 +221,8 @@ var	Manager = function() {
 
 		items.add( currentItem, { at: 0 } );
 
-		var panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
-			panel.getCurrentPageView().render();
+		if ( elementor.route.is( 'panel/history' ) ) {
+			elementor.route.to( 'panel/history', { refresh: true } );
 		}
 
 		return id;
@@ -239,17 +246,17 @@ var	Manager = function() {
 			panelPage = panel.getCurrentPageView(),
 			viewToScroll;
 
-		if ( 'editor' === panel.getCurrentPageName() ) {
+		if ( elementor.route.is( 'panel/editor' ) ) {
 			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
 				// If the the element isn't exist - show the history panel
-				panel.setPage( 'historyPage' );
+				elementor.route.to( 'panel/history' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
 				viewToScroll = panelPage.getOption( 'editedElementView' );
 			}
 		} else {
-			if ( 'historyPage' === panel.getCurrentPageName() ) {
-				panelPage.render();
+			if ( elementor.route.is( 'panel/history' ) ) {
+				elementor.route.to( 'panel/history', { refresh: true } );
 			}
 
 			// Try scroll to affected element.
