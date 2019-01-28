@@ -258,19 +258,19 @@
 		},
 
 		goToSettingsTab: function( tabName ) {
-			var $activePages = this.elements.$settingsFormPages;
+			const $pages = this.elements.$settingsFormPages;
 
-			if ( ! $activePages.length ) {
+			if ( ! $pages.length ) {
 				return;
 			}
 
-			var $activePage = $activePages.filter( '#' + tabName );
+			const $activePage = $pages.filter( '#' + tabName );
 
 			this.elements.$activeSettingsPage.removeClass( 'elementor-active' );
 
 			this.elements.$activeSettingsTab.removeClass( 'nav-tab-active' );
 
-			var $activeTab = this.elements.$settingsTabs.filter( '#elementor-settings-' + tabName );
+			const $activeTab = this.elements.$settingsTabs.filter( '#elementor-settings-' + tabName );
 
 			$activePage.addClass( 'elementor-active' );
 
