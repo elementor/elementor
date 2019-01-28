@@ -258,11 +258,13 @@
 		},
 
 		goToSettingsTab: function( tabName ) {
-			var $activePage = this.elements.$settingsFormPages.filter( '#' + tabName );
+			var $activePages = this.elements.$settingsFormPages;
 
-			if ( ! $activePage.length ) {
+			if ( ! $activePages.length ) {
 				return;
 			}
+
+			var $activePage = $activePages.filter( '#' + tabName );
 
 			this.elements.$activeSettingsPage.removeClass( 'elementor-active' );
 
