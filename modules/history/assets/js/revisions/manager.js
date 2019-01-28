@@ -35,7 +35,7 @@ RevisionsManager = function() {
 			isWorthHandling: function() {
 				var panel = elementor.getPanelView();
 
-				if ( 'historyPage' !== panel.getCurrentPageName() ) {
+				if ( ! elementor.route.is( 'panel/history' ) ) {
 					return false;
 				}
 
@@ -99,10 +99,8 @@ RevisionsManager = function() {
 				revisionModel.destroy();
 
 				if ( ! revisions.length ) {
-					var panel = elementor.getPanelView();
-
-					if ( 'historyPage' === panel.getCurrentPageName() ) {
-						panel.getCurrentPageView().activateTab( 'revisions' );
+					if ( elementor.route.is( 'panel/history' ) ) {
+						elementor.route.to( 'panel/history/revisions' );
 					}
 				}
 			},

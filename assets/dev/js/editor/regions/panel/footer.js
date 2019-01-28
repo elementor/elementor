@@ -38,6 +38,11 @@ module.exports = Marionette.ItemView.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+
+		const self = this;
+		elementor.route.register( 'panel/page-settings', function() {
+			self.showSettingsPage();
+		} );
 	},
 
 	getDeviceModeButton: function( deviceMode ) {
@@ -87,17 +92,11 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showSettingsPage: function() {
-		const panel = elementor.getPanelView();
-
-		if ( 'page_settings' === panel.getCurrentPageName() ) {
-			return;
-		}
-
 		this.ui.settings.addClass( 'elementor-open' );
 
-		panel.setPage( 'page_settings' );
+		elementor.route.to( 'panel/page-settings' );
 
-		panel.getCurrentPageView().on( 'destroy', () => {
+		elementor.getPanelView().getCurrentPageView().on( 'destroy', () => {
 			this.ui.settings.removeClass( 'elementor-open' );
 		} );
 	},
@@ -120,7 +119,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSettingsClick: function() {
-		this.showSettingsPage();
+		elementor.route.to( 'panel/page-settings' );
 	},
 
 	onDeviceModeChange: function() {
@@ -151,9 +150,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onHistoryClick: function() {
-		if ( 'historyPage' !== elementor.getPanelView().getCurrentPageName() ) {
-			elementor.getPanelView().setPage( 'historyPage' );
-		}
+		elementor.route.to( 'panel/history' );
 	},
 
 	onNavigatorClick: function() {

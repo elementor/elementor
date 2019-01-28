@@ -1,5 +1,6 @@
 /* global ElementorConfig */
 import Heartbeat from './utils/heartbeat';
+import Route from './utils/route';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
@@ -19,6 +20,7 @@ const App = Marionette.Application.extend( {
 	ajax: elementorCommon.ajax,
 	conditions: require( 'elementor-editor-utils/conditions' ),
 	history: require( 'elementor-modules/history/assets/js/module' ),
+	commands: require( './commands' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -248,6 +250,8 @@ const App = Marionette.Application.extend( {
 			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
+		this.route = new Route();
+
 		this.hooks = new EventManager();
 
 		this.saver = new Saver();
@@ -380,9 +384,7 @@ const App = Marionette.Application.extend( {
 						return false;
 					}
 
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
-
-					if ( ! isEditorOpen ) {
+					if ( ! elementor.route.is( 'panel/editor' ) ) {
 						return false;
 					}
 
@@ -430,7 +432,7 @@ const App = Marionette.Application.extend( {
 				handle: function() {
 					var panel = elementor.getPanelView();
 
-					if ( 'editor' !== panel.getCurrentPageName() ) {
+					if ( ! elementor.route.is( 'panel/editor' ) ) {
 						return;
 					}
 
@@ -492,7 +494,7 @@ const App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
+					elementor.commands.run( 'panel', 'toggle' );
 				},
 			},
 		};
@@ -523,7 +525,7 @@ const App = Marionette.Application.extend( {
 					if ( ! targetElement ) {
 						var panel = elementor.getPanelView();
 
-						if ( 'editor' === panel.getCurrentPageName() ) {
+						if ( elementor.route.is( 'panel/editor' ) ) {
 							targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
 						}
 					}
@@ -550,9 +552,7 @@ const App = Marionette.Application.extend( {
 		hotKeysHandlers[ keysDictionary.del ] = {
 			deleteElement: {
 				isWorthHandling: function( event ) {
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
-
-					if ( ! isEditorOpen ) {
+					if ( ! elementor.route.is( 'panel/editor' ) ) {
 						return false;
 					}
 
@@ -576,7 +576,7 @@ const App = Marionette.Application.extend( {
 					return ! jQuery( '.dialog-widget:visible' ).length;
 				},
 				handle: function() {
-					elementor.getPanelView().setPage( 'menu' );
+					elementor.route.to( 'panel/menu' );
 				},
 			},
 		};
@@ -651,11 +651,7 @@ const App = Marionette.Application.extend( {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				var panelView = elementor.getPanelView();
-
-				if ( 'elements' !== panelView.getCurrentPageName() ) {
-					panelView.setPage( 'elements' );
-				}
+				elementor.route.to( 'panel/elements' );
 			}
 		} );
 	},
@@ -709,10 +705,7 @@ const App = Marionette.Application.extend( {
 						name: 'view_revisions',
 						text: elementor.translate( 'view_all_revisions' ),
 						callback: function() {
-							var panel = elementor.getPanelView();
-
-							panel.setPage( 'historyPage' );
-							panel.getCurrentPageView().activateTab( 'revisions' );
+							elementor.route.to( 'panel/history/revisions' );
 						},
 					},
 				],
@@ -921,7 +914,7 @@ const App = Marionette.Application.extend( {
 		this.addBackgroundClickArea( elementorFrontend.elements.window.document );
 
 		if ( this.previewLoadedOnce ) {
-			this.getPanelView().setPage( 'elements', null, { autoFocusSearch: false } );
+			elementor.route.to( 'panel/elements' );
 		} else {
 			this.onFirstPreviewLoaded();
 		}
