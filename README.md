@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 5.0  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.4.1  
+**Stable tag:** 2.4.4  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -222,6 +222,27 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.4.4 - 2019-01-24 ###
+* Tweak: Added 1:1 aspect ratio to Video widget
+* Tweak: Added ability to add condition/s for tabs control wrapper ([#6830](https://github.com/pojome/elementor/issues/6830))
+* Fix: Template search with no categories ([#6810](https://github.com/pojome/elementor/issues/6810))
+* Fix: Make sure browser has access to `localStorage`
+* Fix: Removed Finder from the Customizer
+* Fix: Editor UI glitch in Firefox browser
+
+### 2.4.3 - 2019-01-21 ###
+* Tweak: Update `width` control label in Image Box widget ([#6808](https://github.com/pojome/elementor/issues/6808))
+* Fix: PHP warning in self hosted video `render_pain_content()`
+* Fix: Responsive `background-attachment` issue
+
+### 2.4.2 - 2019-01-20 ###
+* Tweak: Better duplicate Error log entries handling
+* Tweak: Split and merge similar translation strings
+* Fix: Missing manual caption style in Image widget ([#6791](https://github.com/pojome/elementor/issues/6791))
+* Fix: JS handlers not working in editor for other templates
+* Fix: Log only Elementor related errors
+* Fix: Background updates total iterations
 
 ### 2.4.1 - 2019-01-15 ###
 * Tweak: Avoid widget rendering on `box-shadow` and `text-shadow` changes ([#6737](https://github.com/pojome/elementor/issues/6737))

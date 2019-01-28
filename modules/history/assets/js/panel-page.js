@@ -80,6 +80,10 @@ module.exports = Marionette.LayoutView.extend( {
 			options = viewDetails.options || {},
 			View = viewDetails.view();
 
+		if ( this.currentTab && this.currentTab.constructor === View ) {
+			return;
+		}
+
 		this.currentTab = new View( options );
 
 		this.content.show( this.currentTab );
