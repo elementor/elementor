@@ -81,7 +81,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile">
 					<i class="elementor-icon eicon-device-mobile" aria-hidden="true"></i>
 					<span class="elementor-title"><?php echo __( 'Mobile', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php echo __( 'Preview for 360px', 'elementor' ); ?></span>
+					<span class="elementor-description"><?php echo sprintf( __( 'Preview for %s', 'elementor' ), '360px' ); ?></span>
 				</div>
 			</div>
 		</div>
@@ -118,7 +118,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			</p>
 			<div class="elementor-panel-footer-sub-menu">
 				<div id="elementor-panel-footer-sub-menu-item-save-draft" class="elementor-panel-footer-sub-menu-item elementor-disabled">
-					<i class="elementor-icon fa fa-save" aria-hidden="true"></i>
+					<i class="elementor-icon eicon-save" aria-hidden="true"></i>
 					<span class="elementor-title"><?php echo __( 'Save Draft', 'elementor' ); ?></span>
 				</div>
 				<div id="elementor-panel-footer-sub-menu-item-save-template" class="elementor-panel-footer-sub-menu-item">

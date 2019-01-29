@@ -44,7 +44,7 @@ abstract class Tag extends Base_Tag {
 				$value .= wp_kses_post( $settings['after'] );
 			}
 
-			if ( self::WRAPPED_TAG ) :
+			if ( static::WRAPPED_TAG ) :
 				$value = '<span id="elementor-tag-' . esc_attr( $this->get_id() ) . '" class="elementor-tag">' . $value . '</span>';
 			endif;
 

@@ -1,7 +1,9 @@
 var TabHistoryView = require( './history/panel-tab' ),
-	TabHistoryEmpty = require( './history/empty' ),
-	TabRevisionsView = require( './revisions/panel-tab' ),
-	TabRevisionsEmpty = require( './revisions/empty' );
+	TabHistoryEmptyView = require( './history/empty' );
+
+import TabRevisionsLoadingView from './revisions/loading';
+import TabRevisionsView from './revisions/panel-tab';
+import TabRevisionsEmptyView from './revisions/empty';
 
 module.exports = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-history-page',
@@ -27,35 +29,34 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	initRegionViews: function() {
-		var historyItems = elementor.history.history.getItems(),
-			revisionsItems = elementor.history.revisions.getItems();
+		const historyItems = elementor.history.history.getItems();
 
 		this.regionViews = {
 			history: {
-				region: this.content,
 				view: function() {
 					if ( historyItems.length ) {
 						return TabHistoryView;
 					}
 
-					return TabHistoryEmpty;
+					return TabHistoryEmptyView;
 				},
 				options: {
 					collection: historyItems,
 				},
 			},
 			revisions: {
-				region: this.content,
-				view: function() {
-					if ( revisionsItems.length ) {
-						return TabRevisionsView;
+				view: () => {
+					const revisionsItems = elementor.history.revisions.getItems();
+
+					if ( ! revisionsItems ) {
+						return TabRevisionsLoadingView;
 					}
 
-					return TabRevisionsEmpty;
-				},
+					if ( 1 === revisionsItems.length && 'current' === revisionsItems.models[ 0 ].get( 'type' ) ) {
+						return TabRevisionsEmptyView;
+					}
 
-				options: {
-					collection: revisionsItems,
+					return TabRevisionsView;
 				},
 			},
 		};
@@ -75,18 +76,17 @@ module.exports = Marionette.LayoutView.extend( {
 	},
 
 	showView: function( viewName ) {
-		var viewDetails = this.regionViews[ viewName ],
+		const viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {},
-			View = viewDetails.view;
-
-		if ( 'function' === typeof View ) {
 			View = viewDetails.view();
+
+		if ( this.currentTab && this.currentTab.constructor === View ) {
+			return;
 		}
 
-		options.viewName = viewName;
 		this.currentTab = new View( options );
 
-		viewDetails.region.show( this.currentTab );
+		this.content.show( this.currentTab );
 	},
 
 	onRender: function() {
