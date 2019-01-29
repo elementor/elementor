@@ -195,23 +195,6 @@
 		width: 100% !important;
 		outline: none;
 
-		&:not(.select2-container--open):not(.select2-container--focus) {
-
-			.select2-selection--single,
-			.select2-selection--multiple {
-				border-color: $editor-lightest;
-			}
-		}
-
-		&.select2-container--open,
-		&.select2-container--focus {
-
-			.select2-selection--single,
-			.select2-selection--multiple {
-				border-color: $editor-light;
-			}
-		}
-
 		&.select2-container--default {
 
 			.select2-selection--multiple {
@@ -641,5 +624,7 @@
 @import "controls/popover-toggle";
 
 @import "controls/button";
+
+@import "controls/number";
 
 @import "controls/control-group-css-filters";

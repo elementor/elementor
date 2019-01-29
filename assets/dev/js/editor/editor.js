@@ -6,6 +6,8 @@ import IconsManager from './components/icons-manager/icons-manager';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 
 const App = Marionette.Application.extend( {
+	loaded: false,
+
 	previewLoadedOnce: false,
 
 	helpers: require( 'elementor-editor-utils/helpers' ),
@@ -320,8 +322,6 @@ const App = Marionette.Application.extend( {
 		frontendWindow.elementor = this;
 
 		elementorFrontend.init();
-
-		elementorFrontend.elementsHandler.initHandlers();
 
 		this.trigger( 'frontend:init' );
 	},
@@ -853,6 +853,36 @@ const App = Marionette.Application.extend( {
 		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) ); // eslint-disable-line
 	},
 
+	requestWidgetsConfig: function() {
+		const excludeWidgets = {};
+
+		jQuery.each( this.config.widgets, ( widgetName, widgetConfig ) => {
+			if ( widgetConfig.controls ) {
+				excludeWidgets[ widgetName ] = true;
+			}
+		} );
+
+		elementorCommon.ajax.addRequest( 'get_widgets_config', {
+			data: {
+				exclude: excludeWidgets,
+			},
+			success: ( data ) => {
+				jQuery.each( data, ( widgetName, controlsConfig ) => {
+					const widgetConfig = this.config.widgets[ widgetName ];
+
+					widgetConfig.controls = controlsConfig.controls;
+					widgetConfig.tabs_controls = controlsConfig.tabs_controls;
+				} );
+
+				if ( this.loaded ) {
+					this.schemes.printSchemesStyle();
+				}
+
+				elementorCommon.elements.$body.addClass( 'elementor-controls-ready' );
+			},
+		} );
+	},
+
 	onStart: function() {
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -869,6 +899,8 @@ const App = Marionette.Application.extend( {
 		}
 
 		this.setAjax();
+
+		this.requestWidgetsConfig();
 
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
@@ -962,6 +994,8 @@ const App = Marionette.Application.extend( {
 		elementorCommon.hotKeys.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded' );
+
+		this.loaded = true;
 	},
 
 	onFirstPreviewLoaded: function() {
@@ -1057,4 +1091,8 @@ const App = Marionette.Application.extend( {
 	},
 } );
 
-module.exports = ( window.elementor = new App() ).start();
+window.elementor = new App();
+if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
+	window.elementor.start();
+}
+module.exports = window.elementor;

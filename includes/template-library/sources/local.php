@@ -164,6 +164,10 @@ class Source_Local extends Source_Base {
 		}
 	}
 
+	public static function get_admin_url() {
+		return add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
+	}
+
 	/**
 	 * Get local template ID.
 	 *
@@ -287,7 +291,7 @@ class Source_Local extends Source_Base {
 			'labels' => [
 				'name' => _x( 'Categories', 'Template Library', 'elementor' ),
 				'singular_name' => _x( 'Category', 'Template Library', 'elementor' ),
-				'all_items' => __( 'All Categories', 'elementor' ),
+				'all_items' => _x( 'All Categories', 'Template Library', 'elementor' ),
 			],
 		];
 
@@ -329,8 +333,10 @@ class Source_Local extends Source_Base {
 		}
 
 		// Move the 'Categories' menu to end.
-		$library_submenu[800] = $library_submenu[15];
-		unset( $library_submenu[15] );
+		if ( isset( $library_submenu[15] ) ) {
+			$library_submenu[800] = $library_submenu[15];
+			unset( $library_submenu[15] );
+		}
 
 		if ( $this->is_current_screen() ) {
 			$library_title = $this->get_library_title();
@@ -347,9 +353,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function admin_menu() {
-		$url = add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
-
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, $url );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url() );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -1248,7 +1252,7 @@ class Source_Local extends Source_Base {
 			'selected' => empty( $_GET[ self::TAXONOMY_CATEGORY_SLUG ] ) ? '' : $_GET[ self::TAXONOMY_CATEGORY_SLUG ],
 		);
 
-		echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by category', 'elementor' ) . '</label>';
+		echo '<label class="screen-reader-text" for="cat">' . _x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
 		wp_dropdown_categories( $dropdown_options );
 	}
 
@@ -1430,6 +1434,10 @@ class Source_Local extends Source_Base {
 		}
 
 		$current_tabs_group = $this->get_current_tab_group();
+
+		if ( isset( $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] ) && '-1' === $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] ) {
+			unset( $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] );
+		}
 
 		if ( empty( $current_tabs_group ) ) {
 			return;

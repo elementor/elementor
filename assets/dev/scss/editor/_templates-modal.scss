@@ -302,16 +302,11 @@ label.elementor-template-library-order-label {
 
 	&::placeholder {
 		font-weight: 300;
-		color: $editor-lighter;
 		text-transform: uppercase;
 	}
 
 	&:focus {
 		border-color: $editor-lighter;
-
-		&::placeholder {
-			color: $editor-light;
-		}
 	}
 }
 
@@ -356,6 +351,38 @@ label.elementor-template-library-order-label {
 				padding: 2px 4px 0;
 				font-size: 9px;
 				border-radius: 2px;
+			}
+		}
+	}
+
+	&:not(.elementor-template-library-template-page) {
+		position: relative;
+		width: calc(33.333% - #{$remote-templates-items-space});
+		overflow: hidden;
+
+		img {
+			display: block;
+			width: 100%;
+		}
+
+		.elementor-template-library-template-footer {
+			position: absolute;
+			width: 100%;
+			bottom: 0;
+			@include start(0);
+			padding: 10px;
+			background-color: #fff;
+			transition: transform .5s;
+		}
+
+		.elementor-template-library-template-name {
+			display: none;
+		}
+
+		&:not(:hover) {
+
+			.elementor-template-library-template-footer {
+				transform: translateY(100%)
 			}
 		}
 	}
@@ -478,38 +505,6 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-body {
 		height: 200px;
-	}
-}
-
-.elementor-template-library-template-block {
-	position: relative;
-	width: calc(33.333% - #{$remote-templates-items-space});
-	overflow: hidden;
-
-	img {
-		display: block;
-		width: 100%;
-	}
-
-	.elementor-template-library-template-footer {
-		position: absolute;
-		width: 100%;
-		bottom: 0;
-		@include start(0);
-		padding: 10px;
-		background-color: #fff;
-		transition: transform .5s;
-	}
-
-	.elementor-template-library-template-name {
-		display: none;
-	}
-
-	&:not(:hover) {
-
-		.elementor-template-library-template-footer {
-			transform: translateY(100%)
-		}
 	}
 }
 
@@ -692,6 +687,10 @@ label.elementor-template-library-order-label {
 	margin-top: 45px;
 	color: $editor-lighter;
 	line-height: 1;
+
+	img {
+		width: 70px;
+	}
 }
 
 .elementor-template-library-blank-title {
@@ -726,10 +725,6 @@ label.elementor-template-library-order-label {
 	@include padding-start(25px);
 	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 	border: none;
-
-	&::placeholder {
-		color: $editor-light;
-	}
 }
 
 #elementor-template-library-save-template-submit {

@@ -560,7 +560,7 @@ BaseElementView = BaseContainer.extend( {
 		const self = this;
 
 		_.defer( function() {
-			elementorFrontend.elementsHandler.runReadyTrigger( self.$el );
+			elementorFrontend.elementsHandler.runReadyTrigger( self.el );
 
 			if ( ! elementorFrontend.isEditMode() ) {
 				return;
@@ -568,7 +568,7 @@ BaseElementView = BaseContainer.extend( {
 
 			// In edit mode - handle an external elements that loaded by another elements like shortcode etc.
 			self.$el.find( '.elementor-element.elementor-' + self.model.get( 'elType' ) + ':not(.elementor-element-edit-mode)' ).each( function() {
-				elementorFrontend.elementsHandler.runReadyTrigger( jQuery( this ) );
+				elementorFrontend.elementsHandler.runReadyTrigger( this );
 			} );
 		} );
 	},
