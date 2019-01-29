@@ -30,6 +30,25 @@ class Control_Animation extends Base_Data_Control {
 	}
 
 	/**
+	 * Retrieve default control settings.
+	 *
+	 * Get the default settings of the control. Used to return the default
+	 * settings while initializing the control.
+	 *
+	 * @since 2.5.0
+	 * @access protected
+	 *
+	 * @return array Control default settings.
+	 */
+	protected function get_default_settings() {
+		$default_settings = parent::get_default_settings();
+
+		$default_settings['label_block'] = true;
+
+		return $default_settings;
+	}
+
+	/**
 	 * Get animations list.
 	 *
 	 * Retrieve the list of all the available animations.

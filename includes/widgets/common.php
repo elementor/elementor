@@ -106,12 +106,11 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
-				'label_block' => false,
 				'frontend_available' => true,
 			]
 		);
