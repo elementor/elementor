@@ -38,10 +38,9 @@ class Frontend extends elementorModules.ViewModule {
 			window: window,
 			$window: jQuery( window ),
 			$document: jQuery( document ),
+			$head: jQuery( document.head ),
 			$body: jQuery( document.body ),
 		};
-
-		elements.$elementor = elements.$document.find( selectors.elementor );
 
 		elements.$wpAdminBar = elements.$document.find( selectors.adminBar );
 
@@ -75,7 +74,7 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getCurrentDeviceMode() {
-		return getComputedStyle( this.elements.$elementor[ 0 ], ':after' ).content.replace( /"/g, '' );
+		return getComputedStyle( this.elements.$head[ 0 ], ':after' ).content.replace( /"/g, '' );
 	}
 
 	isEditMode() {
