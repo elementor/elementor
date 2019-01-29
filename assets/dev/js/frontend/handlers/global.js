@@ -13,14 +13,18 @@ GlobalHandler = HandlerModule.extend( {
 
 		$element.removeClass( animation );
 
+		if ( this.currentAnimation ) {
+			$element.removeClass( this.currentAnimation );
+		}
+
+		this.currentAnimation = animation;
+
 		setTimeout( function() {
 			$element.removeClass( 'elementor-invisible' ).addClass( animation );
 		}, animationDelay );
 	},
 	getAnimation: function() {
-		var elementSettings = this.getElementSettings();
-
-		return elementSettings.animation || elementSettings._animation;
+		return this.getCurrentDeviceSetting( 'animation' ) || this.getCurrentDeviceSetting( '_animation' );
 	},
 	onInit: function() {
 		HandlerModule.prototype.onInit.apply( this, arguments );
@@ -31,7 +35,9 @@ GlobalHandler = HandlerModule.extend( {
 			return;
 		}
 
-		this.$element.removeClass( animation );
+		this.$element
+			.addClass( 'animated' )
+			.removeClass( animation );
 
 		elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
 	},

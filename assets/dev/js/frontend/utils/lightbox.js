@@ -87,9 +87,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		modal.onShow = function() {
 			DialogsManager.getWidgetType( 'lightbox' ).prototype.onShow.apply( modal, arguments );
 
-			setTimeout( function() {
-				self.setEntranceAnimation();
-			}, 10 );
+			self.setEntranceAnimation();
 		};
 
 		modal.onHide = function() {
