@@ -13,6 +13,12 @@ GlobalHandler = HandlerModule.extend( {
 
 		$element.removeClass( animation );
 
+		if ( this.currentAnimation ) {
+			$element.removeClass( this.currentAnimation );
+		}
+
+		this.currentAnimation = animation;
+
 		setTimeout( function() {
 			$element.removeClass( 'elementor-invisible' ).addClass( animation );
 		}, animationDelay );
@@ -31,7 +37,9 @@ GlobalHandler = HandlerModule.extend( {
 			return;
 		}
 
-		this.$element.removeClass( animation );
+		this.$element
+			.addClass( 'animated' )
+			.removeClass( animation );
 
 		elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
 	},
