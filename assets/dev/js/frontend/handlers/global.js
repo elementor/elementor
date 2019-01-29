@@ -24,9 +24,7 @@ GlobalHandler = HandlerModule.extend( {
 		}, animationDelay );
 	},
 	getAnimation: function() {
-		var elementSettings = this.getElementSettings();
-
-		return elementSettings.animation || elementSettings._animation;
+		return this.getCurrentDeviceSetting( 'animation' ) || this.getCurrentDeviceSetting( '_animation' );
 	},
 	onInit: function() {
 		HandlerModule.prototype.onInit.apply( this, arguments );

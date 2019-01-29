@@ -1189,13 +1189,11 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
-				'prefix_class' => 'animated ',
-				'label_block' => false,
 				'frontend_available' => true,
 			]
 		);
