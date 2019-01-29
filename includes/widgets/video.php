@@ -746,13 +746,12 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'lightbox_content_animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
-				'label_block' => true,
 			]
 		);
 
