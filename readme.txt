@@ -221,6 +221,13 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.4.5 - 2019-01-30 =
+* Tweak: Updated Eicons v4.2.0
+* Tweak: Updated Right click introduction
+* Fix: Conditions not working for toggle popovers ([#6780](https://github.com/pojome/elementor/issues/6780))
+* Fix: URLs with hash in admin cause JS error ([#6902](https://github.com/pojome/elementor/issues/6902))
+* Fix: Wrong section structure in panel
+
 = 2.4.4 - 2019-01-24 =
 * Tweak: Added 1:1 aspect ratio to Video widget
 * Tweak: Added ability to add condition/s for tabs control wrapper ([#6830](https://github.com/pojome/elementor/issues/6830))
