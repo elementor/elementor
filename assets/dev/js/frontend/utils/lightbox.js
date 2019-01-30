@@ -298,7 +298,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	setEntranceAnimation: function( animation ) {
-		animation = animation || this.getSettings( 'modalOptions.entranceAnimation' );
+		animation = animation || elementorFrontend.getCurrentDeviceSetting( this.getSettings( 'modalOptions' ), 'entranceAnimation' );
 
 		var $widgetMessage = this.getModal().getElements( 'message' );
 
