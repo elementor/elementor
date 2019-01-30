@@ -192,25 +192,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getCurrentDeviceSetting: function( settingKey ) {
-		const devices = [ 'desktop', 'tablet', 'mobile' ],
-			currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
-			settings = this.getElementSettings();
-
-		let currentDeviceIndex = devices.indexOf( currentDeviceMode );
-
-		while ( currentDeviceIndex > 0 ) {
-			const currentDevice = devices[ currentDeviceIndex ],
-				fullSettingKey = settingKey + '_' + currentDevice,
-				deviceValue = settings[ fullSettingKey ];
-
-			if ( deviceValue ) {
-				return deviceValue;
-			}
-
-			currentDeviceIndex--;
-		}
-
-		return settings[ settingKey ];
+		return elementorFrontend.getCurrentDeviceSetting( this.getElementSettings(), settingKey );
 	},
 
 	onDestroy: function() {
