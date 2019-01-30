@@ -298,7 +298,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	setEntranceAnimation: function( animation ) {
-		animation = animation || this.getSettings( 'modalOptions.entranceAnimation' );
+		animation = animation || elementorFrontend.getCurrentDeviceSetting( this.getSettings( 'modalOptions' ), 'entranceAnimation' );
 
 		var $widgetMessage = this.getModal().getElements( 'message' );
 
@@ -428,22 +428,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	bindEvents: function() {
 		elementorFrontend.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
-	},
-
-	onInit: function() {
-		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
-
-		if ( elementorFrontend.isEditMode() ) {
-			elementor.settings.general.model.on( 'change', this.onGeneralSettingsChange );
-		}
-	},
-
-	onGeneralSettingsChange: function( model ) {
-		if ( 'elementor_lightbox_content_animation' in model.changed ) {
-			this.setSettings( 'modalOptions.entranceAnimation', model.changed.elementor_lightbox_content_animation );
-
-			this.setEntranceAnimation();
-		}
 	},
 
 	onSlideChange: function() {
