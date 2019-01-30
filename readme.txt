@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 5.0
 Requires PHP: 5.4
-Stable tag: 2.4.4
+Stable tag: 2.4.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,12 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.4.5 - 2019-01-30 =
+* Tweak: Updated Eicons v4.2.0
+* Fix: Control conditions not working for toggle popover ([#6780](https://github.com/pojome/elementor/issues/6780))
+* Fix: URLs with hash in admin cause JS error ([#6902](https://github.com/pojome/elementor/issues/6902))
+* Fix: Wrong section structure in the panel
 
 = 2.4.4 - 2019-01-24 =
 * Tweak: Added 1:1 aspect ratio to Video widget
