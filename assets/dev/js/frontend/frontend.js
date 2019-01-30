@@ -77,6 +77,27 @@ class Frontend extends elementorModules.ViewModule {
 		return getComputedStyle( this.elements.$head[ 0 ], ':after' ).content.replace( /"/g, '' );
 	}
 
+	getCurrentDeviceSetting( settings, settingKey ) {
+		const devices = [ 'desktop', 'tablet', 'mobile' ],
+			currentDeviceMode = elementorFrontend.getCurrentDeviceMode();
+
+		let currentDeviceIndex = devices.indexOf( currentDeviceMode );
+
+		while ( currentDeviceIndex > 0 ) {
+			const currentDevice = devices[ currentDeviceIndex ],
+				fullSettingKey = settingKey + '_' + currentDevice,
+				deviceValue = settings[ fullSettingKey ];
+
+			if ( deviceValue ) {
+				return deviceValue;
+			}
+
+			currentDeviceIndex--;
+		}
+
+		return settings[ settingKey ];
+	}
+
 	isEditMode() {
 		return this.config.environmentMode.edit;
 	}
