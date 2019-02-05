@@ -58,11 +58,6 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	protected function init_fields() {
 		$controls = [];
 
-		$controls['filter_type'] = [
-			'type' => Controls_Manager::HIDDEN,
-			'default' => 'custom',
-		];
-
 		$controls['blur'] = [
 			'label' => _x( 'Blur', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
@@ -79,9 +74,6 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'filter: brightness( {{brightness.SIZE}}% ) contrast( {{contrast.SIZE}}% ) saturate( {{saturate.SIZE}}% ) blur( {{blur.SIZE}}px ) hue-rotate( {{hue.SIZE}}deg )',
-			],
-			'condition' => [
-				'filter_type' => 'custom',
 			],
 		];
 
@@ -100,9 +92,6 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 				],
 			],
 			'separator' => 'none',
-			'condition' => [
-				'filter_type' => 'custom',
-			],
 		];
 
 		$controls['contrast'] = [
@@ -120,9 +109,6 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 				],
 			],
 			'separator' => 'none',
-			'condition' => [
-				'filter_type' => 'custom',
-			],
 		];
 
 		$controls['saturate'] = [
@@ -140,9 +126,6 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 				],
 			],
 			'separator' => 'none',
-			'condition' => [
-				'filter_type' => 'custom',
-			],
 		];
 
 		$controls['hue'] = [
@@ -160,31 +143,9 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 				],
 			],
 			'separator' => 'none',
-			'condition' => [
-				'filter_type' => 'custom',
-			],
 		];
 
 		return $controls;
-	}
-
-
-	/**
-	 * @since 2.1.0
-	 * @access protected
-	 */
-	protected function prepare_fields( $fields ) {
-		array_walk( $fields, function ( &$field, $field_name ) {
-			if ( in_array( $field_name, [ 'css_filter', 'popover_toggle' ] ) ) {
-				return;
-			}
-
-			$field['condition'] = [
-				'css_filter' => 'custom',
-			];
-		} );
-
-		return parent::prepare_fields( $fields );
 	}
 
 	/**

@@ -60,9 +60,6 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 		$controls['text_shadow'] = [
 			'label' => _x( 'Text Shadow', 'Text Shadow Control', 'elementor' ),
 			'type' => Controls_Manager::TEXT_SHADOW,
-			'condition' => [
-				'text_shadow_type!' => '',
-			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'text-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};',
 			],
