@@ -32,7 +32,11 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<div class="elementor-panel-menu-item-icon">
 		<i class="{{ icon }}"></i>
 	</div>
-	<div class="elementor-panel-menu-item-title">{{{ title }}}</div>
+	<# if ( 'undefined' === typeof type || 'link' !== type ) { #>
+		<div class="elementor-panel-menu-item-title">{{{ title }}}</div>
+	<# } else { #>
+		<div class="elementor-panel-menu-item-title"><a href="{{ link }}">{{{ title }}}</a></div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-header">
