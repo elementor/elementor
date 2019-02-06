@@ -35,7 +35,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<# if ( 'undefined' === typeof type || 'link' !== type ) { #>
 		<div class="elementor-panel-menu-item-title">{{{ title }}}</div>
 	<# } else { #>
-		<div class="elementor-panel-menu-item-title"><a href="{{ link }}">{{{ title }}}</a></div>
+		<a href="{{ link }}" ><div class="elementor-panel-menu-item-title">{{{ title }}}</div></a>
 	<# } #>
 </script>
 

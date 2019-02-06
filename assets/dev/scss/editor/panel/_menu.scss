@@ -48,13 +48,13 @@
 		&-title {
 			font-weight: 500;
 
-			a {
-				color: $editor-dark;
-			}
-
 			> span {
 				color: $editor-success;
 			}
+		}
+
+		a {
+			color: $editor-dark;
 		}
 
 		&-exit-to-dashboard {
@@ -67,10 +67,7 @@
 				background-color: darken($wp-primary, 5%);
 			}
 
-			a {
-				color: #fff;
-			}
-
+			.elementor-panel-menu-item-title,
 			.elementor-panel-menu-item-icon {
 				color: #fff;
 			}
