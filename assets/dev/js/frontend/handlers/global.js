@@ -1,7 +1,4 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	GlobalHandler;
-
-GlobalHandler = HandlerModule.extend( {
+const GlobalHandler = elementorModules.frontend.handlers.Base.extend( {
 	getElementName: function() {
 		return 'global';
 	},
@@ -27,7 +24,7 @@ GlobalHandler = HandlerModule.extend( {
 		return this.getCurrentDeviceSetting( 'animation' ) || this.getCurrentDeviceSetting( '_animation' );
 	},
 	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		if ( this.getAnimation() ) {
 			elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );

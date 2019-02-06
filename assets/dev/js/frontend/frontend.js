@@ -16,7 +16,8 @@ class Frontend extends elementorModules.ViewModule {
 
 		this.config = elementorFrontendConfig;
 
-		this.Module = require( './handler-module' );
+		// TODO: BC since 2.5.0
+		this.Module = elementorModules.frontend.handlers.Base;
 	}
 
 	getDefaultSettings() {
