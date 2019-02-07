@@ -34,8 +34,10 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	</div>
 	<# if ( 'undefined' === typeof type || 'link' !== type ) { #>
 		<div class="elementor-panel-menu-item-title">{{{ title }}}</div>
-	<# } else { #>
-		<a href="{{ link }}" ><div class="elementor-panel-menu-item-title">{{{ title }}}</div></a>
+	<# } else {
+		let target = ( 'undefined' !== typeof newTab && newTab ) ? '_blank' : '_self';
+	#>
+		<a href="{{ link }}" target="{{ target }}"><div class="elementor-panel-menu-item-title">{{{ title }}}</div></a>
 	<# } #>
 </script>
 
