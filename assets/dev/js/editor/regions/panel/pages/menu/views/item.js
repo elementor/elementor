@@ -6,6 +6,9 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	triggers: {
-		click: 'click',
+		click: {
+			event: 'click',
+			preventDefault: false,
+		},
 	},
 } );

@@ -25,18 +25,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 				break;
 
-			case 'link':
-				const link = childView.model.get( 'link' ),
-					isNewTab = childView.model.get( 'newTab' );
-
-				if ( isNewTab ) {
-					open( link, '_blank' );
-				} else {
-					location.href = childView.model.get( 'link' );
-				}
-
-				break;
-
 			default:
 				const callback = childView.model.get( 'callback' );
 
