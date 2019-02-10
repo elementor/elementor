@@ -392,7 +392,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @return array Local templates.
 	 */
-	public function get_items( $args = [] ) {
+	public function get_items( array $args = [] ) {
 		$templates_query = new \WP_Query(
 			[
 				'post_type' => self::CPT,

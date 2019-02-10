@@ -70,7 +70,7 @@ class Source_Remote extends Source_Base {
 	 *
 	 * @return array Remote templates.
 	 */
-	public function get_items( $args = [] ) {
+	public function get_items( array $args = [] ) {
 		$library_data = Api::get_library_data();
 
 		$templates = [];

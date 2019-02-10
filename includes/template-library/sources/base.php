@@ -77,7 +77,7 @@ abstract class Source_Base {
 	 * @param array $args Optional. Filter templates list based on a set of
 	 *                    arguments. Default is an empty array.
 	 */
-	abstract public function get_items( $args = [] );
+	abstract public function get_items( array $args = [] );
 
 	/**
 	 * Get template.
