@@ -32,6 +32,27 @@ EditorView = ControlsStack.extend( {
 		return eventNamespace;
 	},
 
+	initialize: function() {
+		ControlsStack.prototype.initialize.apply( this, arguments );
+
+		var panelSettings = this.model.get( 'editSettings' ).get( 'panel' );
+
+		if ( panelSettings ) {
+			this.activeTab = panelSettings.activeTab;
+
+			this.activeSection = panelSettings.activeSection;
+		}
+	},
+
+	activateSection: function() {
+		ControlsStack.prototype.activateSection.apply( this, arguments );
+
+		this.model.get( 'editSettings' ).set( 'panel', {
+			activeTab: this.activeTab,
+			activeSection: this.activeSection,
+		} );
+	},
+
 	openActiveSection: function() {
 		ControlsStack.prototype.openActiveSection.apply( this, arguments );
 

@@ -616,8 +616,6 @@ abstract class Widget_Base extends Element_Base {
 		if ( $with_html_content ) {
 			ob_start();
 
-			$this->init_controls();
-
 			$this->render_content();
 
 			$data['htmlCache'] = ob_get_clean();
