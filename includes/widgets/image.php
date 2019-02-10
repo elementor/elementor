@@ -513,6 +513,14 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'caption_text_shadow',
+				'selector' => '{{WRAPPER}} .widget-image-caption',
+			]
+		);
+
 		$this->add_responsive_control(
 			'caption_space',
 			[
