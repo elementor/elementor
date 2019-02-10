@@ -320,6 +320,9 @@ class Source_Local extends Source_Base {
 	public function admin_menu_reorder() {
 		global $submenu;
 
+		if ( ! isset( $submenu[ self::ADMIN_MENU_SLUG ] ) ) {
+			return;
+		}
 		$library_submenu = &$submenu[ self::ADMIN_MENU_SLUG ];
 
 		// Remove 'All Templates' menu.

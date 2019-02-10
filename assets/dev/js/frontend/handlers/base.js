@@ -191,6 +191,10 @@ module.exports = elementorModules.ViewModule.extend( {
 		return this.getItems( attributes, setting );
 	},
 
+	getCurrentDeviceSetting: function( settingKey ) {
+		return elementorFrontend.getCurrentDeviceSetting( this.getElementSettings(), settingKey );
+	},
+
 	onDestroy: function() {
 		this.removeEditorListeners();
 

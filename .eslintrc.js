@@ -33,7 +33,7 @@ module.exports = {
 		'computed-property-spacing': [ 'error', 'always' ],
 		'comma-dangle': [ 'error', 'always-multiline' ],
 		'no-undef': 'off',
-		'no-unused-vars': 'error',
+		'no-unused-vars': 'warn',
 		'dot-notation': 'error',
 		'no-shadow': 'error',
 		'no-lonely-if': 'error',

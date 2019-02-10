@@ -6,14 +6,9 @@
 
 	&,
 	.elementor-control:not(.elementor-control-type-tab) {
-		padding: 0 10px 15px;
-	}
-
-	.elementor-control {
-
-		&:before {
-			display: none;
-		}
+		padding-right: 10px;
+		padding-left: 10px;
+		padding-bottom: 15px;
 	}
 
 	&.elementor-repeater-has-minimum-rows {

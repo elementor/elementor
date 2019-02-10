@@ -1,7 +1,4 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	VideoModule;
-
-VideoModule = HandlerModule.extend( {
+const VideoModule = elementorModules.frontend.handlers.Base.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
@@ -54,7 +51,7 @@ VideoModule = HandlerModule.extend( {
 	},
 
 	animateVideo: function() {
-		this.getLightBox().setEntranceAnimation( this.getElementSettings( 'lightbox_content_animation' ) );
+		this.getLightBox().setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
 	},
 
 	handleAspectRatio: function() {
@@ -66,7 +63,7 @@ VideoModule = HandlerModule.extend( {
 	},
 
 	onElementChange: function( propertyName ) {
-		if ( 'lightbox_content_animation' === propertyName ) {
+		if ( 0 === propertyName.indexOf( 'lightbox_content_animation' ) ) {
 			this.animateVideo();
 
 			return;
