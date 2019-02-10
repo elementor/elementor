@@ -93,6 +93,96 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'_z_index',
+			[
+				'label' => __( 'Z-Index', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
+				'selectors' => [
+					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
+				],
+				'label_block' => false,
+			]
+		);
+
+		$this->add_control(
+			'_animation',
+			[
+				'label' => __( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'animation_duration',
+			[
+				'label' => __( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'slow' => __( 'Slow', 'elementor' ),
+					'' => __( 'Normal', 'elementor' ),
+					'fast' => __( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+				'condition' => [
+					'_animation!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_animation_delay',
+			[
+				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'default' => '',
+				'min' => 0,
+				'step' => 100,
+				'condition' => [
+					'_animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'_element_id',
+			[
+				'label' => __( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
+				'style_transfer' => false,
+			]
+		);
+
+		$this->add_control(
+			'_css_classes',
+			[
+				'label' => __( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'prefix_class' => '',
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'_is_absolute',
+			[
+				'label' => __( 'Absolute', 'elementor' ),
+				'type' => Controls_Manager::POPOVER_TOGGLE,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'return_value' => 'absolute',
+				'separator' => 'before',
+			]
+		);
+
 		$this->add_responsive_control(
 			'_element_width',
 			[
@@ -101,8 +191,7 @@ class Widget_Common extends Widget_Base {
 				'default' => '',
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
-					'inherit' => __( 'Maximum', 'elementor' ),
-					'auto' => __( 'Minimum', 'elementor' ),
+					'auto' => __( 'Inline', 'elementor' ),
 					'initial' => __( 'Custom', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-widget__width-',
@@ -160,52 +249,24 @@ class Widget_Common extends Widget_Base {
 						'title' => __( 'Start', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
-					'flex-end' => [
-						'title' => __( 'End', 'elementor' ),
-						'icon' => 'eicon-v-align-bottom',
-					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
 						'icon' => 'eicon-v-align-middle',
 					],
-					'stretch' => [
-						'title' => __( 'Stretch', 'elementor' ),
-						'icon' => 'eicon-v-align-stretch',
+					'flex-end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
 					],
 				],
 				'condition' => [
-					'_element_width' => 'initial',
+					'_element_width!' => '',
+					'_is_absolute' => '',
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
 				],
 			]
 		);
-
-		$this->add_control(
-			'_z_index',
-			[
-				'label' => __( 'Z-Index', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'min' => 0,
-				'selectors' => [
-					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
-				],
-				'label_block' => false,
-			]
-		);
-
-		$this->add_control(
-			'_is_absolute',
-			[
-				'label' => __( 'Absolute', 'elementor' ),
-				'type' => Controls_Manager::POPOVER_TOGGLE,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'return_value' => 'absolute',
-			]
-		);
-
 		$this->start_popover();
 
 		$this->add_responsive_control(
@@ -276,70 +337,6 @@ class Widget_Common extends Widget_Base {
 
 		$this->end_popover();
 
-		$this->add_control(
-			'_animation',
-			[
-				'label' => __( 'Entrance Animation', 'elementor' ),
-				'type' => Controls_Manager::ANIMATION,
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'animation_duration',
-			[
-				'label' => __( 'Animation Duration', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'slow' => __( 'Slow', 'elementor' ),
-					'' => __( 'Normal', 'elementor' ),
-					'fast' => __( 'Fast', 'elementor' ),
-				],
-				'prefix_class' => 'animated-',
-				'condition' => [
-					'_animation!' => '',
-				],
-			]
-		);
-
-		$this->add_control(
-			'_animation_delay',
-			[
-				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
-				'type' => Controls_Manager::NUMBER,
-				'default' => '',
-				'min' => 0,
-				'step' => 100,
-				'condition' => [
-					'_animation!' => '',
-				],
-				'render_type' => 'none',
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'_element_id',
-			[
-				'label' => __( 'CSS ID', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'label_block' => false,
-				'style_transfer' => false,
-			]
-		);
-
-		$this->add_control(
-			'_css_classes',
-			[
-				'label' => __( 'CSS Classes', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'prefix_class' => '',
-				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
-			]
-		);
 
 		$this->end_controls_section();
 
