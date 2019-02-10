@@ -151,7 +151,7 @@
 .elementor-widget {
 	position: relative;
 
-	&:not(:last-child) {
+	&:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child) {
 		margin-bottom: 20px;
 	}
 }
