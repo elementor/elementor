@@ -105,6 +105,7 @@ class Widget_Common extends Widget_Base {
 					'auto' => __( 'Minimum', 'elementor' ),
 					'initial' => __( 'Custom', 'elementor' ),
 				],
+				'prefix_class' => 'elementor-widget__width-',
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}',
 				],
