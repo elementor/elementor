@@ -2,33 +2,6 @@
 // Grid
 //
 
-.elementor {
-
-	&:after {
-		position: absolute;
-		opacity: 0;
-		width: 0;
-		height: 0;
-		padding: 0;
-		overflow: hidden;
-		clip: rect(0,0,0,0);
-		border: 0;
-
-		@media (min-width: $screen-lg-min) {
-			content: 'desktop';
-		}
-
-		@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-			content: 'tablet';
-		}
-
-		@media (max-width: $screen-sm-max) {
-			content: 'mobile';
-		}
-
-	}
-}
-
 // Section
 .elementor-section {
 	position: relative;

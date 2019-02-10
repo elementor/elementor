@@ -281,8 +281,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
-				'prefix_class' => 'animated ',
-				'label_block' => false,
 				'frontend_available' => true,
 			]
 		);

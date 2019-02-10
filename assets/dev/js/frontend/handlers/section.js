@@ -1,6 +1,4 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' );
-
-var BackgroundVideo = HandlerModule.extend( {
+const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 	player: null,
 
 	isYTVideo: null,
@@ -156,7 +154,7 @@ var BackgroundVideo = HandlerModule.extend( {
 	},
 
 	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		this.run();
 	},
@@ -168,7 +166,7 @@ var BackgroundVideo = HandlerModule.extend( {
 	},
 } );
 
-var StretchedSection = HandlerModule.extend( {
+var StretchedSection = elementorModules.frontend.handlers.Base.extend( {
 
 	stretchElement: null,
 
@@ -208,7 +206,7 @@ var StretchedSection = HandlerModule.extend( {
 	},
 
 	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		this.initStretch();
 
@@ -234,7 +232,7 @@ var StretchedSection = HandlerModule.extend( {
 	},
 } );
 
-var Shapes = HandlerModule.extend( {
+var Shapes = elementorModules.frontend.handlers.Base.extend( {
 
 	getDefaultSettings: function() {
 		return {
@@ -290,7 +288,7 @@ var Shapes = HandlerModule.extend( {
 	onInit: function() {
 		var self = this;
 
-		HandlerModule.prototype.onInit.apply( self, arguments );
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( self, arguments );
 
 		[ 'top', 'bottom' ].forEach( function( side ) {
 			if ( self.getElementSettings( 'shape_divider_' + side ) ) {
@@ -318,7 +316,7 @@ var Shapes = HandlerModule.extend( {
 	},
 } );
 
-var HandlesPosition = HandlerModule.extend( {
+var HandlesPosition = elementorModules.frontend.handlers.Base.extend( {
 
     isFirst: function() {
         return this.$element.is( '.elementor-edit-mode .elementor-top-section:first' );

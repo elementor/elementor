@@ -1,6 +1,4 @@
-const HandlerModule = require( 'elementor-frontend/handler-module' );
-
-module.exports = HandlerModule.extend( {
+module.exports = elementorModules.frontend.handlers.Base.extend( {
 	$activeContent: null,
 
 	getDefaultSettings: function() {
@@ -99,7 +97,7 @@ module.exports = HandlerModule.extend( {
 	},
 
 	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		this.activateDefaultTab();
 	},

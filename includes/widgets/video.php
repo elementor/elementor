@@ -746,13 +746,12 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'lightbox_content_animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
-				'label_block' => true,
 			]
 		);
 
@@ -831,6 +830,8 @@ class Widget_Video extends Widget_Base {
 						'modalOptions' => [
 							'id' => 'elementor-lightbox-' . $this->get_id(),
 							'entranceAnimation' => $settings['lightbox_content_animation'],
+							'entranceAnimation_tablet' => $settings['lightbox_content_animation_tablet'],
+							'entranceAnimation_mobile' => $settings['lightbox_content_animation_mobile'],
 							'videoAspectRatio' => $settings['aspect_ratio'],
 						],
 					];
