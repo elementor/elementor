@@ -583,11 +583,11 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string               $id       Group control ID.
-	 * @param Group_Control_Base[] $instance Group control instance, usually the
-	 *                                       current instance.
+	 * @param string             $id       Group control ID.
+	 * @param Group_Control_Base $instance Group control instance, usually the
+	 *                                     current instance.
 	 *
-	 * @return Group_Control_Base[] Group control instance.
+	 * @return Group_Control_Base Group control instance.
 	 */
 	public function add_group_control( $id, $instance ) {
 		$this->control_groups[ $id ] = $instance;
