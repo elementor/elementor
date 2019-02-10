@@ -1,7 +1,4 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	GlobalHandler;
-
-GlobalHandler = HandlerModule.extend( {
+const GlobalHandler = elementorModules.frontend.handlers.Base.extend( {
 	getElementName: function() {
 		return 'global';
 	},
@@ -20,26 +17,18 @@ GlobalHandler = HandlerModule.extend( {
 		this.currentAnimation = animation;
 
 		setTimeout( function() {
-			$element.removeClass( 'elementor-invisible' ).addClass( animation );
+			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
 		}, animationDelay );
 	},
 	getAnimation: function() {
 		return this.getCurrentDeviceSetting( 'animation' ) || this.getCurrentDeviceSetting( '_animation' );
 	},
 	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
-		var animation = this.getAnimation();
-
-		if ( ! animation ) {
-			return;
+		if ( this.getAnimation() ) {
+			elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
 		}
-
-		this.$element
-			.addClass( 'animated' )
-			.removeClass( animation );
-
-		elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
 	},
 	onElementChange: function( propertyName ) {
 		if ( /^_?animation/.test( propertyName ) ) {

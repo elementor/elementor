@@ -1,7 +1,4 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	VideoModule;
-
-VideoModule = HandlerModule.extend( {
+const VideoModule = elementorModules.frontend.handlers.Base.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
