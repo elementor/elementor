@@ -4,6 +4,13 @@
 
 .elementor-widget {
 
+	&.elementor-icon-list--layout-inline {
+
+		.elementor-widget-container {
+			overflow: hidden;
+		}
+	}
+
 	.elementor-icon-list-items.elementor-inline-items {
 
 		margin-right: -8px;
