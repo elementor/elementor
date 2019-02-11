@@ -221,6 +221,13 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.4.6 - 2019-02-11 =
+* Tweak: Use `<a>` for editor panel links ([#6767](https://github.com/pojome/elementor/issues/6767), [#7025](https://github.com/pojome/elementor/issues/7025))
+* Fix: FireFox glitch in the color picker ([#6968](https://github.com/pojome/elementor/issues/6968))
+* Fix: Horizontal scroll in Icon List widget ([#6558](https://github.com/pojome/elementor/issues/6558))
+* Fix: PHP notice when user has no capabilities ([#6936](https://github.com/pojome/elementor/issues/6936))
+* Fix: "Prevent Scroll" in popup options didn't work in edge cases
+
 = 2.4.5 - 2019-01-30 =
 * Tweak: Updated Eicons v4.2.0
 * Fix: Control conditions not working for toggle popover ([#6780](https://github.com/pojome/elementor/issues/6780))
