@@ -92,11 +92,13 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showSettingsPage: function() {
+		const panel = elementor.getPanelView();
+
 		this.ui.settings.addClass( 'elementor-open' );
 
-		elementor.route.to( 'panel/page-settings' );
+		panel.setPage( 'page_settings' );
 
-		elementor.getPanelView().getCurrentPageView().on( 'destroy', () => {
+		panel.getCurrentPageView().on( 'destroy', () => {
 			this.ui.settings.removeClass( 'elementor-open' );
 		} );
 	},
