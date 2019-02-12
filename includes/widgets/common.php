@@ -171,18 +171,6 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'_is_absolute',
-			[
-				'label' => __( 'Absolute', 'elementor' ),
-				'type' => Controls_Manager::POPOVER_TOGGLE,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'return_value' => 'absolute',
-				'separator' => 'before',
-			]
-		);
-
 		$this->add_responsive_control(
 			'_element_width',
 			[
@@ -267,6 +255,19 @@ class Widget_Common extends Widget_Base {
 				],
 			]
 		);
+
+		$this->add_control(
+			'_is_absolute',
+			[
+				'label' => __( 'Absolute', 'elementor' ),
+				'type' => Controls_Manager::POPOVER_TOGGLE,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'return_value' => 'absolute',
+				'separator' => 'before',
+			]
+		);
+
 		$this->start_popover();
 
 		$this->add_responsive_control(
@@ -294,7 +295,8 @@ class Widget_Common extends Widget_Base {
 				'required' => true,
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
-					'{{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
 					'_is_absolute!' => '',
