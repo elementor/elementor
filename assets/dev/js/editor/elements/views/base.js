@@ -655,12 +655,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	save: function() {
-		var model = this.model;
-
-		elementor.templates.startModal( {
-			onReady: function() {
-				elementor.templates.getLayout().showSaveTemplateView( model );
-			},
+		elementor.route.to( 'library/save-template', {
+			model: this.model,
 		} );
 	},
 

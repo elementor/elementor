@@ -142,11 +142,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSaveTemplateClick: function() {
-		elementor.templates.startModal( {
-			onReady: function() {
-				elementor.templates.getLayout().showSaveTemplateView();
-			},
-		} );
+		elementor.route.to( 'library/save-template' );
 	},
 
 	onHistoryClick: function() {

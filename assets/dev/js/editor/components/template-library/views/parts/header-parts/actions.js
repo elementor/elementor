@@ -28,7 +28,7 @@ module.exports = Marionette.ItemView.extend( {
 			onUpdate: function() {
 				self.ui.sync.removeClass( 'eicon-animation-spin' );
 
-				elementor.templates.setScreen( elementor.templates.getFilter( 'source' ), elementor.templates.getFilter( 'type' ) );
+				elementor.route.refresh( 'library' );
 			},
 			forceUpdate: true,
 			forceSync: true,
@@ -36,6 +36,6 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSaveClick: function() {
-		elementor.templates.getLayout().showSaveTemplateView();
+		elementor.route.to( 'library/save-template' );
 	},
 } );
