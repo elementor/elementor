@@ -120,7 +120,7 @@
 	.elementor-handle {
 		position: absolute;
 		top: 0;
-		right: 0;
+		#{$end}: 0;
 		width: 25px;
 		height: 25px;
 		line-height: 27px;
