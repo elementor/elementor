@@ -2,33 +2,6 @@
 // Grid
 //
 
-.elementor {
-
-	&:after {
-		position: absolute;
-		opacity: 0;
-		width: 0;
-		height: 0;
-		padding: 0;
-		overflow: hidden;
-		clip: rect(0,0,0,0);
-		border: 0;
-
-		@media (min-width: $screen-lg-min) {
-			content: 'desktop';
-		}
-
-		@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-			content: 'tablet';
-		}
-
-		@media (max-width: $screen-sm-max) {
-			content: 'mobile';
-		}
-
-	}
-}
-
 // Section
 .elementor-section {
 	position: relative;
@@ -139,12 +112,19 @@
 .elementor-widget-wrap {
 	position: relative;
 	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+
+	> .elementor-element {
+		width: 100%;
+	}
 }
 
 .elementor-widget {
 	position: relative;
 
-	&:not(:last-child) {
+	&:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child) {
 		margin-bottom: 20px;
 	}
 }

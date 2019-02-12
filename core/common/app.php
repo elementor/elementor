@@ -55,7 +55,10 @@ class App extends BaseApp {
 		$this->add_component( 'ajax', new Ajax() );
 
 		if ( current_user_can( 'manage_options' ) ) {
-			$this->add_component( 'finder', new Finder() );
+			if ( ! is_customize_preview() ) {
+				$this->add_component( 'finder', new Finder() );
+			}
+
 			$this->add_component( 'connect', new Connect() );
 		}
 	}
@@ -152,7 +155,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'4.1.0'
+			'4.2.0'
 		);
 
 		wp_enqueue_style(

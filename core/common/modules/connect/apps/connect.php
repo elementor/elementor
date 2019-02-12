@@ -22,7 +22,7 @@ class Connect extends Common_App {
 	public function render_admin_widget() {
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
-			$title = sprintf( __( 'Connected to Elementor as <strong>%s</strong>', 'elementor' ), $remote_user->email ) . get_avatar( $remote_user->email, 20, '' );
+			$title = sprintf( __( 'Connected to Elementor as %s', 'elementor' ), '<strong>' . $remote_user->email . '</strong>' ) . get_avatar( $remote_user->email, 20, '' );
 			$label = __( 'Disconnect', 'elementor' );
 			$url = $this->get_admin_url( 'disconnect' );
 			$attr = '';

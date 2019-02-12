@@ -54,14 +54,14 @@ class Update extends \WP_CLI_Command {
 
 				\WP_CLI::line( 'Site #' . $blog_id . ' - ' . get_option( 'blogname' ) );
 
-				$this->do_db_upgrade();
+				$this->do_db_upgrade( $assoc_args );
 
 				\WP_CLI::success( 'Done! - ' . get_option( 'home' ) );
 
 				restore_current_blog();
 			}
 		} else {
-			$this->do_db_upgrade();
+			$this->do_db_upgrade( $assoc_args );
 		}
 	}
 
@@ -69,7 +69,7 @@ class Update extends \WP_CLI_Command {
 		return '\Elementor\Core\Upgrade\Manager';
 	}
 
-	protected function do_db_upgrade() {
+	protected function do_db_upgrade( $assoc_args ) {
 		$manager_class = $this->get_update_db_manager_class();
 
 		/** @var \Elementor\Core\Upgrade\Manager $manager */

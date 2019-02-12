@@ -262,11 +262,11 @@ BaseElementView = BaseContainer.extend( {
 				return;
 			}
 
-			if ( 'object' === typeof sourceValue ) {
-				if ( 'object' !== typeof targetValue ) {
-					return;
-				}
+			if ( 'object' === typeof sourceValue ^ 'object' === typeof targetValue ) {
+				return;
+			}
 
+			if ( 'object' === typeof sourceValue ) {
 				var isEqual = true;
 
 				jQuery.each( sourceValue, function( propertyKey ) {
@@ -549,7 +549,7 @@ BaseElementView = BaseContainer.extend( {
 		var self = this;
 
 		_.defer( function() {
-			elementorFrontend.elementsHandler.runReadyTrigger( self.$el );
+			elementorFrontend.elementsHandler.runReadyTrigger( self.el );
 
 			if ( ! elementorFrontend.isEditMode() ) {
 				return;
@@ -557,7 +557,7 @@ BaseElementView = BaseContainer.extend( {
 
 			// In edit mode - handle an external elements that loaded by another elements like shortcode etc.
 			self.$el.find( '.elementor-element.elementor-' + self.model.get( 'elType' ) + ':not(.elementor-element-edit-mode)' ).each( function() {
-				elementorFrontend.elementsHandler.runReadyTrigger( jQuery( this ) );
+				elementorFrontend.elementsHandler.runReadyTrigger( this );
 			} );
 		} );
 	},

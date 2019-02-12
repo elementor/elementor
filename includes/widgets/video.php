@@ -132,7 +132,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'placeholder' => __( 'Enter your URL', 'elementor' ) . ' (YouTube)',
-				'default' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
+				'default' => 'https://www.youtube.com/watch?v=XHOmBV4js_E',
 				'label_block' => true,
 				'condition' => [
 					'video_type' => 'youtube',
@@ -577,6 +577,7 @@ class Widget_Video extends Widget_Base {
 					'219' => '21:9',
 					'43' => '4:3',
 					'32' => '3:2',
+					'11' => '1:1',
 				],
 				'default' => '169',
 				'prefix_class' => 'elementor-aspect-ratio-',
@@ -745,13 +746,12 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'lightbox_content_animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
-				'label_block' => true,
 			]
 		);
 
@@ -830,6 +830,8 @@ class Widget_Video extends Widget_Base {
 						'modalOptions' => [
 							'id' => 'elementor-lightbox-' . $this->get_id(),
 							'entranceAnimation' => $settings['lightbox_content_animation'],
+							'entranceAnimation_tablet' => $settings['lightbox_content_animation_tablet'],
+							'entranceAnimation_mobile' => $settings['lightbox_content_animation_mobile'],
 							'videoAspectRatio' => $settings['aspect_ratio'],
 						],
 					];
@@ -879,7 +881,11 @@ class Widget_Video extends Widget_Base {
 	public function render_plain_content() {
 		$settings = $this->get_settings_for_display();
 
-		$url = $settings[ $settings['video_type'] . '_url' ];
+		if ( 'hosted' !== $settings['video_type'] ) {
+			$url = $settings[ $settings['video_type'] . '_url' ];
+		} else {
+			$url = $this->get_hosted_video_url();
+		}
 
 		echo esc_url( $url );
 	}

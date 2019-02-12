@@ -85,6 +85,29 @@ class Element_Column extends Element_Base {
 	}
 
 	/**
+	 * Get initial config.
+	 *
+	 * Retrieve the current section initial configuration.
+	 *
+	 * Adds more configuration on top of the controls list, the tabs assigned to
+	 * the control, element name, type, icon and more. This method also adds
+	 * section presets.
+	 *
+	 * @since 2.5.0
+	 * @access protected
+	 *
+	 * @return array The initial config.
+	 */
+	protected function _get_initial_config() {
+		$config = parent::_get_initial_config();
+
+		$config['controls'] = $this->get_controls();
+		$config['tabs_controls'] = $this->get_tabs_controls();
+
+		return $config;
+	}
+
+	/**
 	 * Get default edit tools.
 	 *
 	 * Retrieve the element default edit tools. Used to set initial tools.
@@ -194,6 +217,8 @@ class Element_Column extends Element_Base {
 					'top' => __( 'Top', 'elementor' ),
 					'center' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
+					'space-between' => __( 'Space Between', 'elementor' ),
+					'space-around' => __( 'Space Around', 'elementor' ),
 				],
 				'selectors_dictionary' => [
 					'top' => 'flex-start',
@@ -201,6 +226,7 @@ class Element_Column extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
+					'{{WRAPPER}}.elementor-column > .elementor-column-wrap > .elementor-widget-wrap' => 'align-content: {{VALUE}}',
 				],
 			]
 		);
@@ -735,13 +761,11 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'animation',
 			[
 				'label' => __( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
-				'prefix_class' => 'animated ',
-				'label_block' => false,
 				'frontend_available' => true,
 			]
 		);
@@ -823,6 +847,64 @@ class Element_Column extends Element_Base {
 			]
 		);
 		// END Backward comparability
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'_section_responsive',
+			[
+				'label' => __( 'Responsive', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'responsive_description',
+			[
+				'raw' => __( 'Attention: The display settings (show/hide for mobile, tablet or desktop) will only take effect once you are on the preview or live page, and not while you\'re in editing mode in Elementor.', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-descriptor',
+			]
+		);
+
+		$this->add_control(
+			'hide_desktop',
+			[
+				'label' => __( 'Hide On Desktop', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
+				'return_value' => 'hidden-desktop',
+			]
+		);
+
+		$this->add_control(
+			'hide_tablet',
+			[
+				'label' => __( 'Hide On Tablet', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
+				'return_value' => 'hidden-tablet',
+			]
+		);
+
+		$this->add_control(
+			'hide_mobile',
+			[
+				'label' => __( 'Hide On Mobile', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'prefix_class' => 'elementor-',
+				'label_on' => 'Hide',
+				'label_off' => 'Show',
+				'return_value' => 'hidden-phone',
+			]
+		);
 
 		$this->end_controls_section();
 

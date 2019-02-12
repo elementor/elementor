@@ -194,7 +194,7 @@ TemplateLibraryManager = function() {
 				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 
 				if ( options.withPageSettings ) {
-					elementor.settings.page.model.set( data.page_settings );
+					elementor.settings.page.model.setExternalChange( data.page_settings );
 				}
 			},
 			error: function( data ) {
@@ -295,7 +295,7 @@ TemplateLibraryManager = function() {
 
 	this.getConfig = function( item ) {
 		if ( item ) {
-			return config[ item ];
+			return config[ item ] ? config[ item ] : {};
 		}
 
 		return config;
@@ -319,7 +319,9 @@ TemplateLibraryManager = function() {
 			success: function( data ) {
 				templatesCollection = new TemplateLibraryCollection( data.templates );
 
-				config = data.config;
+				if ( data.config ) {
+					config = data.config;
+				}
 
 				if ( options.onUpdate ) {
 					options.onUpdate();

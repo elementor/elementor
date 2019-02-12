@@ -65,12 +65,11 @@ class Source_Remote extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $args Optional. Filter templates list based on a set of
-	 *                    arguments. Default is an empty array.
+	 * @param array $args Optional. Nou used in remote source.
 	 *
 	 * @return array Remote templates.
 	 */
-	public function get_items( $args = [] ) {
+	public function get_items( array $args = [] ) {
 		$library_data = Api::get_library_data();
 
 		$templates = [];
@@ -79,10 +78,6 @@ class Source_Remote extends Source_Base {
 			foreach ( $library_data['templates'] as $template_data ) {
 				$templates[] = $this->prepare_template( $template_data );
 			}
-		}
-
-		if ( ! empty( $args ) ) {
-			$templates = wp_list_filter( $templates, $args );
 		}
 
 		return $templates;
