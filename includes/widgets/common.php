@@ -337,7 +337,6 @@ class Widget_Common extends Widget_Base {
 
 		$this->end_popover();
 
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
