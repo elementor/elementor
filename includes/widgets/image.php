@@ -453,7 +453,7 @@ class Widget_Image extends Widget_Base {
 				'label' => __( 'Caption', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'caption!' => '',
+					'caption_source!' => 'none',
 				],
 			]
 		);
@@ -510,6 +510,14 @@ class Widget_Image extends Widget_Base {
 				'name' => 'caption_typography',
 				'selector' => '{{WRAPPER}} .widget-image-caption',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'caption_text_shadow',
+				'selector' => '{{WRAPPER}} .widget-image-caption',
 			]
 		);
 

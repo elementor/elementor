@@ -176,7 +176,7 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 
 		$settings = Revisions_Manager::editor_settings( [], $parent_and_child_posts['parent_id'] );
 
-		$settings_keys = [ 'revisions', 'revisions_enabled', 'current_revision_id', 'i18n' ];
+		$settings_keys = [ 'revisions_enabled', 'current_revision_id', 'i18n' ];
 		$this->assertArrayHaveKeys( $settings_keys, $settings );
 
 		$settings_i18n_keys = [

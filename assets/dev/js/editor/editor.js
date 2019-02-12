@@ -6,7 +6,7 @@ import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 
 const App = Marionette.Application.extend( {
-	isLoaded: false,
+	loaded: false,
 
 	previewLoadedOnce: false,
 
@@ -323,8 +323,6 @@ const App = Marionette.Application.extend( {
 		frontendWindow.elementor = this;
 
 		elementorFrontend.init();
-
-		elementorFrontend.elementsHandler.initHandlers();
 
 		this.trigger( 'frontend:init' );
 	},
@@ -845,6 +843,36 @@ const App = Marionette.Application.extend( {
 		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) ); // eslint-disable-line
 	},
 
+	requestWidgetsConfig: function() {
+		const excludeWidgets = {};
+
+		jQuery.each( this.config.widgets, ( widgetName, widgetConfig ) => {
+			if ( widgetConfig.controls ) {
+				excludeWidgets[ widgetName ] = true;
+			}
+		} );
+
+		elementorCommon.ajax.addRequest( 'get_widgets_config', {
+			data: {
+				exclude: excludeWidgets,
+			},
+			success: ( data ) => {
+				jQuery.each( data, ( widgetName, controlsConfig ) => {
+					const widgetConfig = this.config.widgets[ widgetName ];
+
+					widgetConfig.controls = controlsConfig.controls;
+					widgetConfig.tabs_controls = controlsConfig.tabs_controls;
+				} );
+
+				if ( this.loaded ) {
+					this.schemes.printSchemesStyle();
+				}
+
+				elementorCommon.elements.$body.addClass( 'elementor-controls-ready' );
+			},
+		} );
+	},
+
 	onStart: function() {
 		NProgress.start();
 		NProgress.inc( 0.2 );
@@ -861,6 +889,8 @@ const App = Marionette.Application.extend( {
 		}
 
 		this.setAjax();
+
+		this.requestWidgetsConfig();
 
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
@@ -955,7 +985,7 @@ const App = Marionette.Application.extend( {
 
 		this.trigger( 'preview:loaded' );
 
-		this.isLoaded = true;
+		this.loaded = true;
 	},
 
 	onFirstPreviewLoaded: function() {

@@ -3,6 +3,8 @@
 //
 @import "../helpers/variables";
 @import "../helpers/mixins";
+@import "resizable";
+
 @import "breakpoints";
 @import "panel/global";
 @import "panel/control";
@@ -78,8 +80,9 @@ html.elementor-html {
 			transition: all .1s;
 		}
 
-		&.elementor-element-editable, &.elementor-element-edit-mode:hover {
-			outline: 1px solid $editor-info;
+		&.elementor-element-editable,
+		&.elementor-element-edit-mode:hover {
+			box-shadow: 0 0 0 1px $editor-info;
 		}
 
 		&:not(:hover) {
@@ -597,9 +600,10 @@ html.elementor-html {
 
 	&:not(.elementor-column-placeholder) {
 		background-color: $editor-info;
-		animation-timing-function: ease-out;
-		animation-duration: 500ms;
+		animation-duration: 250ms;
 		opacity: .9;
+		width: 100%;
+		align-self: stretch;
 	}
 }
 

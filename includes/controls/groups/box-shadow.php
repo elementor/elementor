@@ -60,9 +60,6 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 		$controls['box_shadow'] = [
 			'label' => _x( 'Box Shadow', 'Box Shadow Control', 'elementor' ),
 			'type' => Controls_Manager::BOX_SHADOW,
-			'condition' => [
-				'box_shadow_type!' => '',
-			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}} {{box_shadow_position.VALUE}};',
 			],
@@ -74,9 +71,6 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 			'options' => [
 				' ' => _x( 'Outline', 'Box Shadow Control', 'elementor' ),
 				'inset' => _x( 'Inset', 'Box Shadow Control', 'elementor' ),
-			],
-			'condition' => [
-				'box_shadow_type!' => '',
 			],
 			'default' => ' ',
 			'render_type' => 'ui',

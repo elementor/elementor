@@ -320,6 +320,9 @@ class Source_Local extends Source_Base {
 	public function admin_menu_reorder() {
 		global $submenu;
 
+		if ( ! isset( $submenu[ self::ADMIN_MENU_SLUG ] ) ) {
+			return;
+		}
 		$library_submenu = &$submenu[ self::ADMIN_MENU_SLUG ];
 
 		// Remove 'All Templates' menu.
@@ -384,12 +387,18 @@ class Source_Local extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $args Optional. Filter templates list based on a set of
+	 * @param array $args Optional. Filter templates based on a set of
 	 *                    arguments. Default is an empty array.
 	 *
 	 * @return array Local templates.
 	 */
-	public function get_items( $args = [] ) {
+	public function get_items( array $args = [] ) {
+		$template_types = array_values( self::$template_types );
+
+		if ( ! empty( $args['type'] ) ) {
+			$template_types = $args['type'];
+		}
+
 		$templates_query = new \WP_Query(
 			[
 				'post_type' => self::CPT,
@@ -400,7 +409,7 @@ class Source_Local extends Source_Base {
 				'meta_query' => [
 					[
 						'key' => Document::TYPE_META_KEY,
-						'value' => array_values( self::$template_types ),
+						'value' => $template_types,
 					],
 				],
 			]
@@ -412,10 +421,6 @@ class Source_Local extends Source_Base {
 			foreach ( $templates_query->get_posts() as $post ) {
 				$templates[] = $this->get_item( $post->ID );
 			}
-		}
-
-		if ( ! empty( $args ) ) {
-			$templates = wp_list_filter( $templates, $args );
 		}
 
 		return $templates;
@@ -1434,6 +1439,10 @@ class Source_Local extends Source_Base {
 		}
 
 		$current_tabs_group = $this->get_current_tab_group();
+
+		if ( isset( $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] ) && '-1' === $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] ) {
+			unset( $query->query_vars[ self::TAXONOMY_CATEGORY_SLUG ] );
+		}
 
 		if ( empty( $current_tabs_group ) ) {
 			return;

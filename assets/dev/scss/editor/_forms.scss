@@ -19,6 +19,10 @@ input, select, textarea, .elementor-input-style {
 	&:focus {
 		border-color: $editor-light;
 	}
+
+	&::placeholder {
+		color: $editor-light;
+	}
 }
 
 .elementor-error {

@@ -15,8 +15,15 @@ class Frontend extends elementorModules.ViewModule {
 		super( ...args );
 
 		this.config = elementorFrontendConfig;
+	}
 
-		this.Module = require( './handler-module' );
+	// TODO: BC since 2.5.0
+	get Module() {
+		/*if ( this.isEditMode() ) {
+			parent.elementorCommon.helpers.deprecatedMethod( 'elementorFrontend.Module', '2.5.0', 'elementorModules.frontend.handlers.Base' );
+		}*/
+
+		return elementorModules.frontend.handlers.Base;
 	}
 
 	getDefaultSettings() {
@@ -38,10 +45,9 @@ class Frontend extends elementorModules.ViewModule {
 			window: window,
 			$window: jQuery( window ),
 			$document: jQuery( document ),
+			$head: jQuery( document.head ),
 			$body: jQuery( document.body ),
 		};
-
-		elements.$elementor = elements.$document.find( selectors.elementor );
 
 		elements.$wpAdminBar = elements.$document.find( selectors.adminBar );
 
@@ -75,7 +81,28 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getCurrentDeviceMode() {
-		return getComputedStyle( this.elements.$elementor[ 0 ], ':after' ).content.replace( /"/g, '' );
+		return getComputedStyle( this.elements.$head[ 0 ] ).content.replace( /"/g, '' );
+	}
+
+	getCurrentDeviceSetting( settings, settingKey ) {
+		const devices = [ 'desktop', 'tablet', 'mobile' ],
+			currentDeviceMode = elementorFrontend.getCurrentDeviceMode();
+
+		let currentDeviceIndex = devices.indexOf( currentDeviceMode );
+
+		while ( currentDeviceIndex > 0 ) {
+			const currentDevice = devices[ currentDeviceIndex ],
+				fullSettingKey = settingKey + '_' + currentDevice,
+				deviceValue = settings[ fullSettingKey ];
+
+			if ( deviceValue ) {
+				return deviceValue;
+			}
+
+			currentDeviceIndex--;
+		}
+
+		return settings[ settingKey ];
 	}
 
 	isEditMode() {
