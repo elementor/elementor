@@ -106,6 +106,7 @@ class Widget_Icon_List extends Widget_Base {
 				'classes' => 'elementor-control-start-end',
 				'label_block' => false,
 				'style_transfer' => true,
+				'prefix_class' => 'elementor-icon-list--layout-',
 			]
 		);
 

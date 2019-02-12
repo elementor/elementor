@@ -31,6 +31,7 @@ abstract class Document extends Controls_Stack {
 	 * Document type meta key.
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
+	const PAGE_META_KEY = '_elementor_page_settings';
 
 	private $main_id;
 

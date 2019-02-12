@@ -3,6 +3,8 @@
 //
 @import "../helpers/variables";
 @import "../helpers/mixins";
+@import "resizable";
+
 @import "breakpoints";
 @import "panel/global";
 @import "panel/control";
@@ -598,9 +600,10 @@ html.elementor-html {
 
 	&:not(.elementor-column-placeholder) {
 		background-color: $editor-info;
-		animation-timing-function: ease-out;
-		animation-duration: 500ms;
+		animation-duration: 250ms;
 		opacity: .9;
+		width: 100%;
+		align-self: stretch;
 	}
 }
 
