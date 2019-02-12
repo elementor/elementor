@@ -1,51 +1,56 @@
+import ItemView from './item-view';
+import EmptyView from './empty';
+
 module.exports = Marionette.CompositeView.extend( {
 	id: 'elementor-panel-history',
 
 	template: '#tmpl-elementor-panel-history-tab',
 
-	childView: Marionette.ItemView.extend( {
-		template: '#tmpl-elementor-panel-history-item',
-		ui: {
-			item: '.elementor-history-item',
-		},
-		triggers: {
-			'click @ui.item': 'item:click',
-		},
-	} ),
+	childView: ItemView,
 
 	childViewContainer: '#elementor-history-list',
 
+	emptyView: EmptyView,
+
 	currentItem: null,
 
-	onRender: function() {
-		var self = this;
+	updateCurrentItem: function() {
+		if ( this.children.length <= 1 ) {
+			return;
+		}
 
-		_.defer( function() {
+		_.defer( () => {
 			// Set current item - the first not applied item
-			if ( self.children.length ) {
-				var currentItem = self.collection.find( function( model ) {
-						return 'not_applied' === model.get( 'status' );
-					} ),
-					currentView = self.children.findByModel( currentItem );
+			const currentItem = this.collection.find( function( model ) {
+					return 'not_applied' === model.get( 'status' );
+				} ),
+				currentView = this.children.findByModel( currentItem );
 
-				self.updateCurrentItem( currentView.$el );
+			if ( ! currentView ) {
+				return;
 			}
+
+			const currentItemClass = 'elementor-history-item-current';
+
+			if ( this.currentItem ) {
+				this.currentItem.removeClass( currentItemClass );
+			}
+
+			this.currentItem = currentView.$el;
+
+			this.currentItem.addClass( currentItemClass );
 		} );
 	},
 
-	updateCurrentItem: function( element ) {
-		var currentItemClass = 'elementor-history-item-current';
-
-		if ( this.currentItem ) {
-			this.currentItem.removeClass( currentItemClass );
-		}
-
-		this.currentItem = element;
-
-		this.currentItem.addClass( currentItemClass );
+	onRender: function() {
+		this.updateCurrentItem();
 	},
 
-	onChildviewItemClick: function( childView, event ) {
+	onRenderEmpty: function() {
+		this.$el.addClass( 'elementor-empty' );
+	},
+
+	onChildviewClick: function( childView, event ) {
 		if ( childView.$el === this.currentItem ) {
 			return;
 		}
@@ -54,11 +59,5 @@ module.exports = Marionette.CompositeView.extend( {
 			itemIndex = collection.findIndex( event.model );
 
 		elementor.history.history.doItem( itemIndex );
-
-		this.updateCurrentItem( childView.$el );
-
-		if ( ! this.isDestroyed ) {
-			this.render();
-		}
 	},
 } );
