@@ -295,7 +295,8 @@ class Widget_Common extends Widget_Base {
 				'required' => true,
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
-					'{{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
 					'_is_absolute!' => '',
