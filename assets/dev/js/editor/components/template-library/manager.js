@@ -417,7 +417,6 @@ TemplateLibraryManager = function() {
 
 	this.showDefaultScreen = function() {
 		elementor.route.to( defaultScreen );
-		layout.getHeaderView().menuArea.render();
 	};
 
 	this.showTemplates = function() {
