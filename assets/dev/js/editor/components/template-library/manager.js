@@ -10,7 +10,7 @@ TemplateLibraryManager = function() {
 		errorDialog,
 		layout,
 		templatesCollection,
-		defaultScreen,
+		defaultScreen = 'library/templates/pages',
 		config = {},
 		screens = {},
 		startIntent = {},
@@ -28,8 +28,7 @@ TemplateLibraryManager = function() {
 			ajaxParams: {
 				success: function( successData ) {
 					self.getTemplatesCollection().add( successData );
-
-					self.setScreen( 'local' );
+					elementor.route.to( 'library/templates/my-templates' );
 				},
 				error: function( errorData ) {
 					self.showErrorDialog( errorData );
@@ -55,17 +54,20 @@ TemplateLibraryManager = function() {
 				source: 'remote',
 				title: elementor.translate( 'blocks' ),
 				type: 'block',
+				route: 'library/templates/blocks',
 			},
 			{
 				name: 'pages',
 				source: 'remote',
 				title: elementor.translate( 'pages' ),
 				type: 'page',
+				route: 'library/templates/pages',
 			},
 			{
 				name: 'my-templates',
 				source: 'local',
 				title: elementor.translate( 'my_templates' ),
+				route: 'library/templates/my-templates',
 			},
 		];
 	};
@@ -104,7 +106,27 @@ TemplateLibraryManager = function() {
 
 		registerDefaultFilterTerms();
 
-		self.setDefaultScreen( 'pages' );
+		screens.forEach( ( screen ) => {
+			elementor.route.register( screen.route, function() {
+				elementor.templates.setScreen( screen.source, screen.type );
+			} );
+		} );
+
+		elementor.route.register( 'library/templates', function() {
+			elementor.templates.startModal( {
+				onReady: function() {
+					self.showDefaultScreen();
+				},
+			} );
+		} );
+
+		elementor.route.register( 'library/save-template', function( args ) {
+			elementor.templates.startModal( {
+				onReady: function() {
+					elementor.templates.getLayout().showSaveTemplateView( args.model );
+				},
+			} );
+		} );
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
@@ -338,7 +360,7 @@ TemplateLibraryManager = function() {
 
 				if ( isSameIntent && 'elementor-template-library-templates' === layout.modalContent.currentView.id ) {
 					return;
-				}
+		}
 
 				layout.hideLoadingView();
 
@@ -373,8 +395,8 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setDefaultScreen = function( screenName ) {
-		defaultScreen = _.findWhere( screens, { name: screenName } );
+	this.setDefaultScreen = function( route ) {
+		defaultScreen = route;
 	};
 
 	this.setScreen = function( source, type, silent ) {
@@ -392,7 +414,8 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showDefaultScreen = function() {
-		this.setScreen( defaultScreen.source, defaultScreen.type );
+		elementor.route.to( defaultScreen );
+		layout.getHeaderView().menuArea.render();
 	};
 
 	this.showTemplates = function() {

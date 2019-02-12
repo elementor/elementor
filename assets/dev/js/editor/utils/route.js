@@ -59,6 +59,20 @@ export default class extends elementorModules.editor.utils.Module {
 		return match;
 	}
 
+	refresh( cat ) {
+		this.to( this.getCurrent( cat ), {
+			refresh: true,
+		} );
+	}
+
+	getCurrent( cat ) {
+		if ( ! this.current[ cat ] ) {
+			return false;
+		}
+
+		return this.current[ cat ];
+	}
+
 	to( route, args ) {
 		const parts = route.split( '/' ),
 			cat = parts[ 0 ];
@@ -73,7 +87,7 @@ export default class extends elementorModules.editor.utils.Module {
 			throw Error( 'Route `' + route + '` not found.' );
 		}
 
-		if ( this.dependencies[ cat ] && ! this.dependencies[ cat ].apply() ) {
+		if ( this.dependencies[ cat ] && ! this.dependencies[ cat ].apply( null, [ args ] ) ) {
 			return;
 		}
 

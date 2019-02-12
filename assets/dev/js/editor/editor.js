@@ -462,7 +462,7 @@ const App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
 				},
 				handle: function() {
-					elementor.templates.startModal();
+					elementor.route.to( 'library/templates' );
 				},
 			},
 		};
@@ -715,7 +715,7 @@ const App = Marionette.Application.extend( {
 
 	openLibraryOnStart: function() {
 		if ( '#library' === location.hash ) {
-			elementor.templates.startModal();
+			elementor.route.to( 'library/templates' );
 
 			location.hash = '';
 		}
