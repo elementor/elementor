@@ -32,19 +32,13 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getDefaultElements() {
-		const selectors = this.getSettings( 'selectors' );
-
-		const elements = {
+		return {
 			window: window,
 			$window: jQuery( window ),
 			$document: jQuery( document ),
 			$head: jQuery( document.head ),
 			$body: jQuery( document.body ),
 		};
-
-		elements.$wpAdminBar = elements.$document.find( selectors.adminBar );
-
-		return elements;
 	}
 
 	bindEvents() {
@@ -121,6 +115,10 @@ class Frontend extends elementorModules.ViewModule {
 		this.documentsManager = new DocumentsManager();
 
 		this.trigger( 'components:init' );
+	}
+
+	initOnReadyElements() {
+		this.elements.$wpAdminBar = this.elements.$document.find( this.getSettings( 'selectors.adminBar' ) );
 	}
 
 	addIeCompatibility() {
@@ -273,6 +271,8 @@ class Frontend extends elementorModules.ViewModule {
 		if ( ! this.isEditMode() ) {
 			this.initHotKeys();
 		}
+
+		this.initOnReadyElements();
 
 		this.initOnReadyComponents();
 	}
