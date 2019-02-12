@@ -81,7 +81,7 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getCurrentDeviceMode() {
-		return getComputedStyle( this.elements.$head[ 0 ], ':after' ).content.replace( /"/g, '' );
+		return getComputedStyle( this.elements.$head[ 0 ] ).content.replace( /"/g, '' );
 	}
 
 	getCurrentDeviceSetting( settings, settingKey ) {
