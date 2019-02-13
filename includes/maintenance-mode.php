@@ -115,7 +115,7 @@ class Maintenance_Mode {
 			return;
 		}
 
-		if (self::get( 'super_admin_access', 'no' ) === 'yes' && is_super_admin()) {
+		if ( self::get( 'super_admin_access', 'no' ) === 'yes' && is_super_admin() ) {
 			return;
 		}
 
@@ -234,8 +234,8 @@ class Maintenance_Mode {
 								'setting_args' => [ __NAMESPACE__ . '\Settings_Validations', 'checkbox_list' ],
 							],
 							'maintenance_mode_super_admin_access' => [
-									'label' => __( 'Access for super admins', 'elementor' ),
-									'field_args' => [
+								'label' => __( 'Access for super admins', 'elementor' ),
+								'field_args' => [
 									'type' => 'checkbox',
 									'value' => 'yes',
 									'sub_desc' => __( 'Super admins will have access to the blog. Also if it is in maintenance mode.', 'elementor' ),
