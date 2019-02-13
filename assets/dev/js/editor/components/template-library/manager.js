@@ -112,12 +112,14 @@ TemplateLibraryManager = function() {
 			} );
 		} );
 
-		elementor.route.register( 'library/templates', function() {
-			elementor.templates.startModal( {
+		elementor.route.register( 'library/templates', function( args ) {
+			args = _.extend( args, {
 				onReady: function() {
 					self.showDefaultScreen();
 				},
 			} );
+
+			elementor.templates.startModal( args );
 		} );
 
 		elementor.route.register( 'library/save-template', function( args ) {
