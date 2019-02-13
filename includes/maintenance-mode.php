@@ -239,7 +239,7 @@ class Maintenance_Mode {
 									'type' => 'checkbox',
 									'value' => 'yes',
 									'sub_desc' => __( 'Super admins will have access to the blog. Also if it is in maintenance mode.', 'elementor' ),
-							 	],
+								],
 							],
 							'maintenance_mode_template_id' => [
 								'label' => __( 'Choose Template', 'elementor' ),
