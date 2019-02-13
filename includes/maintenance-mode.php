@@ -115,6 +115,10 @@ class Maintenance_Mode {
 			return;
 		}
 
+		if (self::get( 'super_admin_access', 'no' ) === 'yes' && is_super_admin()) {
+			return;
+		}
+
 		if ( 'logged_in' === $exclude_mode && is_user_logged_in() ) {
 			return;
 		}
@@ -228,6 +232,14 @@ class Maintenance_Mode {
 									'type' => 'checkbox_list_roles',
 								],
 								'setting_args' => [ __NAMESPACE__ . '\Settings_Validations', 'checkbox_list' ],
+							],
+							'maintenance_mode_super_admin_access' => [
+									'label' => __( 'Access for super admins', 'elementor' ),
+									'field_args' => [
+									'type' => 'checkbox',
+									'value' => 'yes',
+									'sub_desc' => __( 'Super admins will have access to the blog. Also if it is in maintenance mode.', 'elementor' ),
+							 	],
 							],
 							'maintenance_mode_template_id' => [
 								'label' => __( 'Choose Template', 'elementor' ),
