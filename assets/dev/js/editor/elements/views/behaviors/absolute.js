@@ -83,21 +83,46 @@ export default class extends Marionette.Behavior {
 		event.stopPropagation();
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
+			hOrientation = this.view.getEditModel().getSetting( '_offset_orientation_h' ),
+			vOrientation = this.view.getEditModel().getSetting( '_offset_orientation_v' ),
 			settingToChange = {};
 
-		settingToChange[ '_offset_x' + deviceSuffix ] = { unit: 'px', size: ui.position.left };
-		settingToChange[ '_offset_y' + deviceSuffix ] = { unit: 'px', size: ui.position.top };
+		let xPos = ui.position.left,
+			yPos = ui.position.top,
+			offsetX = '_offset_x',
+			offsetY = '_offset_y';
+
+		if ( 'end' === hOrientation ) {
+			const parentWidth = this.$el.offsetParent().width(),
+				elementWidth = this.$el.outerWidth( true );
+
+				xPos = parentWidth - xPos - elementWidth;
+				offsetX = '_offset_x_end';
+		}
+
+		if ( 'end' === vOrientation ) {
+			const parentHeight = this.$el.offsetParent().height(),
+				elementHeight = this.$el.outerHeight( true );
+
+				yPos = parentHeight - yPos - elementHeight;
+				offsetY = '_offset_y_end';
+		}
+
+		settingToChange[ offsetX + deviceSuffix ] = { unit: 'px', size: xPos };
+		settingToChange[ offsetY + deviceSuffix ] = { unit: 'px', size: yPos };
 
 		this.view.getEditModel().get( 'settings' ).setExternalChange( settingToChange );
 
-		this.$el.css( {
-			top: '',
-			left: '',
-			right: '',
-			bottom: '',
-			width: '',
-			height: '',
-		} );
+		setTimeout( () => {
+			this.$el.css( {
+				top: '',
+				left: '',
+				right: '',
+				bottom: '',
+				width: '',
+				height: '',
+			} );
+		}, 250 );
 	}
 
 	onResizeStart( event ) {
