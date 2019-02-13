@@ -106,12 +106,14 @@
 	}
 }
 
+.elementor-widget-wrap > .elementor-element.elementor-absolute {
+	width: auto;
+}
+
 .elementor-element.elementor-absolute {
 	position: absolute;
 	z-index: 1;
-	top: 0;
-	left: 0;
-	width: inherit;
+	width: auto;
 
 	.elementor-image img {
 		width: auto;

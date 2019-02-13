@@ -182,6 +182,7 @@ class Widget_Common extends Widget_Base {
 					'auto' => __( 'Inline', 'elementor' ),
 					'initial' => __( 'Custom', 'elementor' ),
 				],
+				'separator' => 'before',
 				'prefix_class' => 'elementor-widget__width-',
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}',
@@ -264,11 +265,32 @@ class Widget_Common extends Widget_Base {
 				'default' => '',
 				'prefix_class' => 'elementor-',
 				'return_value' => 'absolute',
-				'separator' => 'before',
 			]
 		);
 
 		$this->start_popover();
+
+		$this->add_responsive_control(
+			'_offset_orientation_h',
+			[
+				'label' => __( 'Refer to', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
+				'toggle' => false,
+				'default' => 'start',
+				'options' => [
+					'start' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'render_type' => 'ui',
+			]
+		);
 
 		$this->add_responsive_control(
 			'_offset_x',
@@ -299,8 +321,67 @@ class Widget_Common extends Widget_Base {
 					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
+					'_offset_orientation_h!' => 'end',
 					'_is_absolute!' => '',
 				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_x_end',
+			[
+				'label' => __( 'Horizontal Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'size' => '0',
+				],
+				'required' => true,
+				'size_units' => [ 'px', '%', 'vw' ],
+				'selectors' => [
+					'body:not(.rtl) {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_h' => 'end',
+					'_is_absolute!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_orientation_v',
+			[
+				'label' => __( 'Refer to', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
+				'toggle' => false,
+				'default' => 'start',
+				'options' => [
+					'start' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'render_type' => 'ui',
+				'separator' => 'before',
 			]
 		);
 
@@ -332,6 +413,41 @@ class Widget_Common extends Widget_Base {
 					'{{WRAPPER}}' => 'top: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
+					'_offset_orientation_v!' => 'end',
+					'_is_absolute!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_y_end',
+			[
+				'label' => __( 'Vertical Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'size_units' => [ 'px', '%', 'vh' ],
+				'default' => [
+					'size' => '0',
+				],
+				'required' => true,
+				'selectors' => [
+					'{{WRAPPER}}' => 'bottom: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_v' => 'end',
 					'_is_absolute!' => '',
 				],
 			]
