@@ -238,7 +238,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => 20,
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-column-wrap > .elementor-widget-wrap > .elementor-widget:not(:last-child)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
+					'{{WRAPPER}} > .elementor-column-wrap > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
 				],
 			]
 		);
