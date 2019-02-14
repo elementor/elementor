@@ -97,6 +97,14 @@ export default class extends elementorModules.editor.utils.Module {
 			args = {};
 		}
 
+		if ( args.onBefore ) {
+			args.onBefore.apply( this, [ args ] );
+		}
+
 		this.routes[ route ].apply( this, [ args ] );
+
+		if ( args.onAfter ) {
+			args.onAfter.apply( this, [ args ] );
+		}
 	}
 }
