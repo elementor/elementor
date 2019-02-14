@@ -23,6 +23,7 @@ TemplateLibraryManager = function() {
 		layout.getModal().on( 'hide', function() {
 			self.isOpen = false;
 			self.setConfig( 'modalConfig', {} );
+			elementor.route.close( 'library' );
 		} );
 	};
 
