@@ -108,12 +108,16 @@
 
 .elementor-widget-wrap > .elementor-element.elementor-absolute {
 	width: auto;
+	position: absolute;
 }
 
-.elementor-element.elementor-absolute {
-	position: absolute;
-	z-index: 1;
+.elementor-widget-wrap > .elementor-element.elementor-fixed {
 	width: auto;
+	position: fixed;
+}
+
+.elementor-element.elementor-absolute, .elementor-element.elementor-fixed {
+	z-index: 1;
 
 	.elementor-image img {
 		width: auto;
@@ -136,6 +140,7 @@
 			cursor: grabbing;
 		}
 	}
+
 	&:hover {
 		.elementor-handle {
 			opacity: 1;

@@ -56,7 +56,7 @@ export default class extends Marionette.Behavior {
 
 	toggle() {
 		const activeMode = elementor.channels.dataEditMode.request( 'activeMode' ),
-			isAbsolute = this.view.getEditModel().getSetting( '_is_absolute' );
+			isAbsolute = '' < this.view.getEditModel().getSetting( '_position' );
 
 		if ( 'edit' === activeMode && isAbsolute ) {
 			this.activate();
@@ -157,7 +157,7 @@ export default class extends Marionette.Behavior {
 			changed = changed.changed;
 		}
 
-		if ( undefined !== changed._is_absolute ) {
+		if ( undefined !== changed._position ) {
 			this.toggle();
 		}
 	}
