@@ -730,6 +730,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		elementor.route.to( 'panel/editor', {
+			refresh: true,
 			model: model,
 			view: this,
 		} );
