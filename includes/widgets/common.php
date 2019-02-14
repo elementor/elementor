@@ -171,6 +171,16 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'_section_position',
+			[
+				'label' => __( 'Layout and Position', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
 		$this->add_responsive_control(
 			'_element_width',
 			[
@@ -258,17 +268,19 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_control(
-			'_is_absolute',
+			'_position',
 			[
-				'label' => __( 'Absolute', 'elementor' ),
-				'type' => Controls_Manager::POPOVER_TOGGLE,
+				'label' => __( 'Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
 				'default' => '',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'absolute' => __( 'Absolute', 'elementor' ),
+					'fixed' => __( 'Fixed', 'elementor' ),
+				],
 				'prefix_class' => 'elementor-',
-				'return_value' => 'absolute',
 			]
 		);
-
-		$this->start_popover();
 
 		$this->add_responsive_control(
 			'_offset_orientation_h',
@@ -322,7 +334,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'condition' => [
 					'_offset_orientation_h!' => 'end',
-					'_is_absolute!' => '',
+					'_position!' => '',
 				],
 			]
 		);
@@ -357,7 +369,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'condition' => [
 					'_offset_orientation_h' => 'end',
-					'_is_absolute!' => '',
+					'_position!' => '',
 				],
 			]
 		);
@@ -414,7 +426,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'condition' => [
 					'_offset_orientation_v!' => 'end',
-					'_is_absolute!' => '',
+					'_position!' => '',
 				],
 			]
 		);
@@ -448,12 +460,10 @@ class Widget_Common extends Widget_Base {
 				],
 				'condition' => [
 					'_offset_orientation_v' => 'end',
-					'_is_absolute!' => '',
+					'_position!' => '',
 				],
 			]
 		);
-
-		$this->end_popover();
 
 		$this->end_controls_section();
 
