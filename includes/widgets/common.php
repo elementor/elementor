@@ -322,12 +322,16 @@ class Widget_Common extends Widget_Base {
 						'min' => -200,
 						'max' => 200,
 					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
 				],
 				'default' => [
 					'size' => '0',
 				],
 				'required' => true,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'vw', 'vh' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
@@ -357,12 +361,16 @@ class Widget_Common extends Widget_Base {
 						'min' => -200,
 						'max' => 200,
 					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
 				],
 				'default' => [
 					'size' => '0',
 				],
 				'required' => true,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'vw', 'vh' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
@@ -415,8 +423,12 @@ class Widget_Common extends Widget_Base {
 						'min' => -200,
 						'max' => 200,
 					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
 				],
-				'size_units' => [ 'px', '%', 'vh' ],
+				'size_units' => [ 'px', '%', 'vh', 'vw' ],
 				'default' => [
 					'size' => '0',
 				],
@@ -449,8 +461,12 @@ class Widget_Common extends Widget_Base {
 						'min' => -200,
 						'max' => 200,
 					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
 				],
-				'size_units' => [ 'px', '%', 'vh' ],
+				'size_units' => [ 'px', '%', 'vh', 'vw' ],
 				'default' => [
 					'size' => '0',
 				],
