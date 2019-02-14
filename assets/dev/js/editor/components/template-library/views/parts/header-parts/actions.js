@@ -16,7 +16,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onImportClick: function() {
-		elementor.templates.getLayout().showImportView();
+		elementor.route.to( 'library/import' );
 	},
 
 	onSyncClick: function() {

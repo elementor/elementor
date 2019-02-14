@@ -10,14 +10,47 @@ TemplateLibraryManager = function() {
 		errorDialog,
 		layout,
 		templatesCollection,
-		defaultScreen = 'library/templates/pages',
-		config = {},
+		defaultRoute = 'library/templates/pages',
+		config = {
+			modalConfig: {},
+		},
 		screens = {},
-		startIntent = {},
 		filterTerms = {};
 
 	const initLayout = function() {
 		layout = new TemplateLibraryLayoutView( { pages: screens } );
+
+		layout.getModal().on( 'hide', function() {
+			self.isOpen = false;
+			self.setConfig( 'modalConfig', {} );
+		} );
+	};
+
+	const registerRouts = function() {
+		elementor.route.registerDependency( 'library', function() {
+			elementor.templates.startModal();
+			return true;
+		} );
+
+		screens.forEach( ( screen ) => {
+			elementor.route.register( screen.route, function() {
+				elementor.templates.setScreen( screen.source, screen.type );
+			} );
+		} );
+
+		elementor.route.register( 'library/templates', function( args ) {
+			self.setConfig( 'modalConfig', args );
+
+			self.showDefaultScreen();
+		} );
+
+		elementor.route.register( 'library/save-template', function( args ) {
+			elementor.templates.getLayout().showSaveTemplateView( args.model );
+		} );
+
+		elementor.route.register( 'library/import', function() {
+			elementor.templates.getLayout().showImportView();
+		} );
 	};
 
 	const registerDefaultTemplateTypes = function() {
@@ -27,8 +60,13 @@ TemplateLibraryManager = function() {
 			},
 			ajaxParams: {
 				success: function( successData ) {
-					self.getTemplatesCollection().add( successData );
-					elementor.route.to( 'library/templates/my-templates' );
+					elementor.route.to( 'library/templates/my-templates', {
+						onBefore: function() {
+							if ( templatesCollection ) {
+								templatesCollection.add( successData );
+							}
+						},
+					} );
 				},
 				error: function( errorData ) {
 					self.showErrorDialog( errorData );
@@ -93,12 +131,6 @@ TemplateLibraryManager = function() {
 		};
 	};
 
-	const setIntentFilters = function() {
-		jQuery.each( startIntent.filters, function( filterKey, filterValue ) {
-			self.setFilter( filterKey, filterValue, true );
-		} );
-	};
-
 	this.init = function() {
 		registerDefaultTemplateTypes();
 
@@ -106,29 +138,7 @@ TemplateLibraryManager = function() {
 
 		registerDefaultFilterTerms();
 
-		screens.forEach( ( screen ) => {
-			elementor.route.register( screen.route, function() {
-				elementor.templates.setScreen( screen.source, screen.type );
-			} );
-		} );
-
-		elementor.route.register( 'library/templates', function( args ) {
-			args = _.extend( args, {
-				onReady: function() {
-					self.showDefaultScreen();
-				},
-			} );
-
-			elementor.templates.startModal( args );
-		} );
-
-		elementor.route.register( 'library/save-template', function( args ) {
-			elementor.templates.startModal( {
-				onReady: function() {
-					elementor.templates.getLayout().showSaveTemplateView( args.model );
-				},
-			} );
-		} );
+		registerRouts();
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
@@ -187,11 +197,14 @@ TemplateLibraryManager = function() {
 				page_settings: options.withPageSettings,
 			},
 			success: function( data ) {
+				// Clone model config it deleted during the closing.
+				const importOptions = _.extend( {}, self.getConfig( 'modalConfig' ).importOptions );
+
 				self.closeModal();
 
 				elementor.channels.data.trigger( 'template:before:insert', templateModel );
 
-				elementor.getPreviewView().addChildModel( data.content, startIntent.importOptions || {} );
+				elementor.getPreviewView().addChildModel( data.content, importOptions );
 
 				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 
@@ -303,6 +316,10 @@ TemplateLibraryManager = function() {
 		return config;
 	};
 
+	this.setConfig = function( key, value ) {
+		config[ key ] = value;
+	};
+
 	this.requestLibraryData = function( options ) {
 		if ( templatesCollection && ! options.forceUpdate ) {
 			if ( options.onUpdate ) {
@@ -338,41 +355,18 @@ TemplateLibraryManager = function() {
 		elementorCommon.ajax.addRequest( 'get_library_data', ajaxOptions );
 	};
 
-	this.startModal = function( customStartIntent ) {
+	this.startModal = function() {
+		if ( self.isOpen ) {
+			return;
+		}
+
+		self.isOpen = true;
+
 		if ( ! layout ) {
 			initLayout();
 		}
 
 		layout.showModal();
-
-		self.requestLibraryData( {
-			onBeforeUpdate: layout.showLoadingView.bind( layout ),
-			onUpdate: function() {
-				const remoteLibraryConfig = elementor.config.document.remoteLibrary,
-					oldStartIntent = Object.create( startIntent );
-
-				startIntent = jQuery.extend( {
-					filters: {
-						source: 'remote',
-						type: remoteLibraryConfig.type,
-						subtype: 'page' === remoteLibraryConfig.type ? null : remoteLibraryConfig.category,
-					},
-					onReady: self.showTemplates,
-				}, customStartIntent );
-
-				var isSameIntent = _.isEqual( Object.getPrototypeOf( oldStartIntent ), startIntent );
-
-				if ( isSameIntent && 'elementor-template-library-templates' === layout.modalContent.currentView.id ) {
-					return;
-		}
-
-				layout.hideLoadingView();
-
-				setIntentFilters();
-
-				startIntent.onReady();
-			},
-		} );
 	};
 
 	this.closeModal = function() {
@@ -399,8 +393,8 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setDefaultScreen = function( route ) {
-		defaultScreen = route;
+	this.setDefaultRoute = function( route ) {
+		defaultRoute = route;
 	};
 
 	this.setScreen = function( source, type, silent ) {
@@ -418,13 +412,43 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showDefaultScreen = function() {
-		elementor.route.to( defaultScreen );
+		const remoteLibraryConfig = elementor.config.document.remoteLibrary;
+
+		if ( 'block' === remoteLibraryConfig.type ) {
+			defaultRoute = 'library/templates/blocks';
+		}
+
+		if ( remoteLibraryConfig.category ) {
+			self.setFilter( 'subtype', remoteLibraryConfig.category, true );
+		}
+
+		elementor.route.to( defaultRoute );
+	};
+
+	this.loadTemplates = function( onUpdate ) {
+		self.requestLibraryData( {
+			onBeforeUpdate: layout.showLoadingView.bind( layout ),
+			onUpdate: function() {
+				layout.hideLoadingView();
+
+				if ( onUpdate ) {
+					onUpdate();
+				}
+			},
+		} );
 	};
 
 	this.showTemplates = function() {
-		var activeSource = self.getFilter( 'source' );
+		self.loadTemplates( function() {
+			var templatesToShow = self.filterTemplates();
 
-		var templatesToShow = templatesCollection.filter( function( model ) {
+			layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
+		} );
+	};
+
+	this.filterTemplates = function() {
+		var activeSource = self.getFilter( 'source' );
+		return templatesCollection.filter( function( model ) {
 			if ( activeSource !== model.get( 'source' ) ) {
 				return false;
 			}
@@ -433,8 +457,6 @@ TemplateLibraryManager = function() {
 
 			return ! typeInfo || false !== typeInfo.showInLibrary;
 		} );
-
-		layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
 	};
 
 	this.showErrorDialog = function( errorMessage ) {
