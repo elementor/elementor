@@ -11,9 +11,8 @@ TemplateLibraryManager = function() {
 		layout,
 		templatesCollection,
 		defaultRoute = 'library/templates/pages',
-		config = {
-			modalConfig: {},
-		},
+		config = {},
+		modalConfig = {},
 		screens = {},
 		filterTerms = {};
 
@@ -22,7 +21,7 @@ TemplateLibraryManager = function() {
 
 		layout.getModal().on( 'hide', function() {
 			self.isOpen = false;
-			self.setConfig( 'modalConfig', {} );
+			modalConfig = {};
 			elementor.route.close( 'library' );
 		} );
 	};
@@ -40,7 +39,7 @@ TemplateLibraryManager = function() {
 		} );
 
 		elementor.route.register( 'library/templates', function( args ) {
-			self.setConfig( 'modalConfig', args );
+			modalConfig = args;
 
 			self.showDefaultScreen();
 		} );
@@ -198,8 +197,11 @@ TemplateLibraryManager = function() {
 				page_settings: options.withPageSettings,
 			},
 			success: function( data ) {
-				// Clone model config it deleted during the closing.
-				const importOptions = _.extend( {}, self.getConfig( 'modalConfig' ).importOptions );
+				// Clone `modalConfig` because it deleted during the closing.
+				const importOptions = _.extend( {}, modalConfig.importOptions );
+
+				// Hide for next open.
+				layout.hideLoadingView();
 
 				self.closeModal();
 
