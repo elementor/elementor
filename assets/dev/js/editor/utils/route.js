@@ -65,6 +65,10 @@ export default class extends elementorModules.editor.utils.Module {
 		} );
 	}
 
+	close( cat ) {
+		delete this.current[ cat ];
+	}
+
 	getCurrent( cat ) {
 		if ( ! this.current[ cat ] ) {
 			return false;
