@@ -81,10 +81,14 @@ export default class extends Marionette.Behavior {
 
 	onDragStop( event, ui ) {
 		event.stopPropagation();
-		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
+
+		const viewportWidth = elementorFrontend.getDefaultElements().$window.outerWidth( true ),
+			viewportHeight = elementorFrontend.getDefaultElements().$window.outerHeight( true ),
+			currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
-			hOrientation = this.view.getEditModel().getSetting( '_offset_orientation_h' ),
-			vOrientation = this.view.getEditModel().getSetting( '_offset_orientation_v' ),
+			editModel = this.view.getEditModel(),
+			hOrientation = editModel.getSetting( '_offset_orientation_h' ),
+			vOrientation = editModel.getSetting( '_offset_orientation_v' ),
 			settingToChange = {};
 
 		let xPos = ui.position.left,
@@ -92,24 +96,52 @@ export default class extends Marionette.Behavior {
 			offsetX = '_offset_x',
 			offsetY = '_offset_y';
 
-		if ( 'end' === hOrientation ) {
-			const parentWidth = this.$el.offsetParent().width(),
-				elementWidth = this.$el.outerWidth( true );
+		const parentWidth = this.$el.offsetParent().width(),
+			elementWidth = this.$el.outerWidth( true );
 
-				xPos = parentWidth - xPos - elementWidth;
-				offsetX = '_offset_x_end';
+		if ( 'end' === hOrientation ) {
+			xPos = parentWidth - xPos - elementWidth;
+			offsetX = '_offset_x_end';
 		}
+
+		const offsetXSettings = editModel.getSetting( offsetX + deviceSuffix );
+
+		switch ( offsetXSettings.unit ) {
+			case '%':
+				xPos = ( xPos / ( parentWidth / 100 ) ).toFixed( 3 );
+				break;
+			case 'vw':
+				xPos = ( xPos / ( viewportWidth / 100 ) ).toFixed( 3 );
+				break;
+			case 'vh':
+				xPos = ( xPos / ( viewportHeight / 100 ) ).toFixed( 3 );
+				break;
+		}
+
+		const parentHeight = this.$el.offsetParent().height(),
+			elementHeight = this.$el.outerHeight( true );
 
 		if ( 'end' === vOrientation ) {
-			const parentHeight = this.$el.offsetParent().height(),
-				elementHeight = this.$el.outerHeight( true );
-
-				yPos = parentHeight - yPos - elementHeight;
-				offsetY = '_offset_y_end';
+			yPos = parentHeight - yPos - elementHeight;
+			offsetY = '_offset_y_end';
 		}
 
-		settingToChange[ offsetX + deviceSuffix ] = { unit: 'px', size: xPos };
-		settingToChange[ offsetY + deviceSuffix ] = { unit: 'px', size: yPos };
+		const offsetYSettings = editModel.getSetting( offsetY + deviceSuffix );
+
+		switch ( offsetYSettings.unit ) {
+			case '%':
+				yPos = ( yPos / ( parentHeight / 100 ) ).toFixed( 3 );
+				break;
+			case 'vh':
+				yPos = ( yPos / ( viewportHeight / 100 ) ).toFixed( 3 );
+				break;
+			case 'vw':
+				yPos = ( yPos / ( viewportWidth / 100 ) ).toFixed( 3 );
+				break;
+		}
+
+		settingToChange[ offsetX + deviceSuffix ] = { size: xPos, unit: offsetXSettings.unit };
+		settingToChange[ offsetY + deviceSuffix ] = { size: yPos, unit: offsetYSettings.unit };
 
 		this.view.getEditModel().get( 'settings' ).setExternalChange( settingToChange );
 
