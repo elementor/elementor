@@ -505,7 +505,7 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'text_background_color',
+			'caption_background_color',
 			[
 				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
