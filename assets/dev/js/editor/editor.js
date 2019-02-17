@@ -1,5 +1,6 @@
 /* global ElementorConfig */
 import Heartbeat from './utils/heartbeat';
+import Commands from './utils/commands';
 import Route from './utils/route';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
@@ -249,6 +250,8 @@ const App = Marionette.Application.extend( {
 			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
+		this.commands = new Commands();
+
 		this.route = new Route();
 
 		this.hooks = new EventManager();
@@ -266,6 +269,8 @@ const App = Marionette.Application.extend( {
 		this.notifications = new Notifications();
 
 		this.initHotKeys();
+
+		this.registerCommands();
 
 		this.hotkeysScreen = new HotkeysScreen();
 	},
@@ -354,6 +359,114 @@ const App = Marionette.Application.extend( {
 
 			return dialog;
 		};
+	},
+
+	getCurrentElement: function() {
+		const isPreview = ( -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName );
+
+		if ( ! isPreview ) {
+			return false;
+		}
+
+		let targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
+
+		if ( ! targetElement ) {
+			const panel = elementor.getPanelView();
+
+			if ( elementor.route.is( 'panel/editor' ) ) {
+				targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
+			}
+		}
+
+		if ( ! targetElement ) {
+			targetElement = elementor.getPreviewView();
+		}
+
+		return targetElement;
+	},
+
+	registerCommands: function() {
+		this.commands.registerDependency( 'elements', function() {
+			return elementor.getCurrentElement();
+		} );
+
+		this.commands.register( 'elements/copy', function() {
+			elementor.getCurrentElement().copy();
+		}, 'c+c' );
+
+		this.commands.register( 'elements/duplicate', function() {
+			elementor.getCurrentElement().duplicate();
+		}, 'c+d' );
+
+		this.commands.register( 'elements/delete', function() {
+			var $target = $( event.target );
+
+			if ( $target.is( ':input, .elementor-input' ) ) {
+				return;
+			}
+
+			if ( $target.closest( '[contenteditable="true"]' ).length ) {
+				return;
+			}
+
+			elementor.getCurrentElement().removeElement();
+		}, 'c+del' );
+
+		this.commands.register( 'elements/paste', function() {
+			const targetElement = elementor.getCurrentElement();
+
+			if ( targetElement.isPasteEnabled() ) {
+				targetElement.paste();
+			}
+		}, 'c+v' );
+
+		this.commands.register( 'elements/pasteStyle', function() {
+			const targetElement = elementor.getCurrentElement();
+
+			if ( targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
+				targetElement.pasteStyle();
+			}
+		}, 'c+s+v' );
+
+		this.commands.registerDependency( 'navigator', function() {
+			return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
+		} );
+
+		this.commands.register( 'navigator/toggle', function() {
+			if ( elementor.navigator.storage.visible ) {
+				elementor.navigator.close();
+			} else {
+				elementor.navigator.open();
+			}
+		}, 'c+i' );
+
+		this.commands.register( 'library/show', function() {
+			elementor.route.to( 'library/templates' );
+		}, 'c+s+i' );
+
+		this.commands.register( 'preview/toggleResponsive', function() {
+			var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+				modeIndex = this.devices.indexOf( currentDeviceMode );
+
+			modeIndex++;
+
+			if ( modeIndex >= this.devices.length ) {
+				modeIndex = 0;
+			}
+			//
+			elementor.changeDeviceMode( this.devices[ modeIndex ] );
+		}, 'c+s+m' );
+
+		this.commands.register( 'document/save', function() {
+			elementor.saver.saveDraft();
+		}, 'c+s' );
+
+		this.commands.register( 'panel/exit', function() {
+			if ( ! jQuery( '.dialog-widget:visible' ).length ) {
+				return;
+			}
+			elementor.route.to( 'panel/menu' );
+		}, 'esc' );
 	},
 
 	initHotKeys: function() {
@@ -491,7 +604,7 @@ const App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
+					elementor.route.to( 'panel/toggle' );
 				},
 			},
 		};
