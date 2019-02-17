@@ -93,98 +93,10 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'_z_index',
-			[
-				'label' => __( 'Z-Index', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'min' => 0,
-				'selectors' => [
-					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
-				],
-				'label_block' => false,
-			]
-		);
-
-		$this->add_control(
-			'_animation',
-			[
-				'label' => __( 'Entrance Animation', 'elementor' ),
-				'type' => Controls_Manager::ANIMATION,
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'animation_duration',
-			[
-				'label' => __( 'Animation Duration', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'slow' => __( 'Slow', 'elementor' ),
-					'' => __( 'Normal', 'elementor' ),
-					'fast' => __( 'Fast', 'elementor' ),
-				],
-				'prefix_class' => 'animated-',
-				'condition' => [
-					'_animation!' => '',
-				],
-			]
-		);
-
-		$this->add_control(
-			'_animation_delay',
-			[
-				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
-				'type' => Controls_Manager::NUMBER,
-				'default' => '',
-				'min' => 0,
-				'step' => 100,
-				'condition' => [
-					'_animation!' => '',
-				],
-				'render_type' => 'none',
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'_element_id',
-			[
-				'label' => __( 'CSS ID', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'label_block' => false,
-				'style_transfer' => false,
-			]
-		);
-
-		$this->add_control(
-			'_css_classes',
-			[
-				'label' => __( 'CSS Classes', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'prefix_class' => '',
-				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'_section_position',
-			[
-				'label' => __( 'Layout and Position', 'elementor' ),
-				'tab' => Controls_Manager::TAB_ADVANCED,
-			]
-		);
-
 		$this->add_responsive_control(
 			'_element_width',
 			[
-				'label' => __( 'Width', 'elementor' ),
+				'label' => __( 'Layout', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
@@ -192,8 +104,8 @@ class Widget_Common extends Widget_Base {
 					'auto' => __( 'Inline', 'elementor' ),
 					'initial' => __( 'Custom', 'elementor' ),
 				],
-				'separator' => 'before',
 				'prefix_class' => 'elementor-widget__width-',
+				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}',
 				],
@@ -259,7 +171,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'condition' => [
 					'_element_width!' => '',
-					'_is_absolute' => '',
+					'_position' => '',
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
@@ -285,7 +197,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_offset_orientation_h',
 			[
-				'label' => __( 'Refer to', 'elementor' ),
+				'label' => __( 'Horizontal Orientation', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'label_block' => false,
 				'toggle' => false,
@@ -301,18 +213,22 @@ class Widget_Common extends Widget_Base {
 					],
 				],
 				'render_type' => 'ui',
+				'condition' => [
+					'_position!' => '',
+				],
 			]
 		);
 
 		$this->add_responsive_control(
 			'_offset_x',
 			[
-				'label' => __( 'Horizontal Offset', 'elementor' ),
+				'label' => __( 'Offset', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
+						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -346,12 +262,13 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_offset_x_end',
 			[
-				'label' => __( 'Horizontal Offset', 'elementor' ),
+				'label' => __( 'Offset', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
+						'step' => 0.1,
 					],
 					'%' => [
 						'min' => -200,
@@ -385,7 +302,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_offset_orientation_v',
 			[
-				'label' => __( 'Refer to', 'elementor' ),
+				'label' => __( 'Vertical Orientation', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'label_block' => false,
 				'toggle' => false,
@@ -401,19 +318,22 @@ class Widget_Common extends Widget_Base {
 					],
 				],
 				'render_type' => 'ui',
-				'separator' => 'before',
+				'condition' => [
+					'_position!' => '',
+				],
 			]
 		);
 
 		$this->add_responsive_control(
 			'_offset_y',
 			[
-				'label' => __( 'Vertical Offset', 'elementor' ),
+				'label' => __( 'Offset', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
+						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -446,12 +366,13 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_offset_y_end',
 			[
-				'label' => __( 'Vertical Offset', 'elementor' ),
+				'label' => __( 'Offset', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
+						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -478,6 +399,96 @@ class Widget_Common extends Widget_Base {
 					'_offset_orientation_v' => 'end',
 					'_position!' => '',
 				],
+			]
+		);
+
+
+		$this->add_control(
+			'_z_index',
+			[
+				'label' => __( 'Z-Index', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
+				'selectors' => [
+					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
+				],
+				'label_block' => false,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'_element_id',
+			[
+				'label' => __( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
+				'style_transfer' => false,
+			]
+		);
+
+		$this->add_control(
+			'_css_classes',
+			[
+				'label' => __( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'prefix_class' => '',
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'_section_motion_effects',
+			[
+				'label' => __( 'Motion Effects', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'_animation',
+			[
+				'label' => __( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'animation_duration',
+			[
+				'label' => __( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'slow' => __( 'Slow', 'elementor' ),
+					'' => __( 'Normal', 'elementor' ),
+					'fast' => __( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+				'condition' => [
+					'_animation!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_animation_delay',
+			[
+				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'default' => '',
+				'min' => 0,
+				'step' => 100,
+				'condition' => [
+					'_animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
 			]
 		);
 
