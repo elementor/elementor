@@ -106,37 +106,56 @@
 	}
 }
 
-.elementor-element.elementor-absolute {
+.elementor-widget-wrap > .elementor-element.elementor-absolute {
+	width: auto;
 	position: absolute;
-	z-index: 1;
-	top: 0;
-	left: 0;
-	width: inherit;
+}
 
-	.elementor-image img {
-		width: auto;
-	}
+.elementor-widget-wrap > .elementor-element.elementor-fixed {
+	width: auto;
+	position: fixed;
+}
 
-	.elementor-handle {
-		position: absolute;
-		top: 0;
-		#{$end}: 0;
-		width: 25px;
-		height: 25px;
-		line-height: 27px;
-		text-align: center;
-		background-color: #41c9f4;
-		color: #fff;
-		cursor: grab;
-		z-index: 9999;
-		opacity: 0;
-		&:active {
-			cursor: grabbing;
+.elementor-element {
+
+	&.elementor-absolute,
+	&.elementor-fixed {
+		z-index: 1;
+
+		.elementor-image img {
+			width: auto;
 		}
-	}
-	&:hover {
+
 		.elementor-handle {
-			opacity: 1;
+			position: absolute;
+			top: 0;
+			#{$end}: 0;
+			width: 26px;
+			height: 26px;
+			background-color: darken($editor-info, 20%);
+			color: #fff;
+			border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
+			font-size: 13px;
+			line-height: 26px;
+			text-align: center;
+			cursor: grab;
+			z-index: 9998;
+			opacity: 0;
+
+			&:not(:hover) {
+				background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
+			}
+
+			&:active {
+				cursor: grabbing;
+			}
+		}
+
+		&:hover {
+
+			.elementor-handle {
+				opacity: 1;
+			}
 		}
 	}
 }

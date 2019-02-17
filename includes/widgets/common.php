@@ -93,88 +93,10 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'_z_index',
-			[
-				'label' => __( 'Z-Index', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
-				'min' => 0,
-				'selectors' => [
-					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
-				],
-				'label_block' => false,
-			]
-		);
-
-		$this->add_control(
-			'_animation',
-			[
-				'label' => __( 'Entrance Animation', 'elementor' ),
-				'type' => Controls_Manager::ANIMATION,
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'animation_duration',
-			[
-				'label' => __( 'Animation Duration', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'slow' => __( 'Slow', 'elementor' ),
-					'' => __( 'Normal', 'elementor' ),
-					'fast' => __( 'Fast', 'elementor' ),
-				],
-				'prefix_class' => 'animated-',
-				'condition' => [
-					'_animation!' => '',
-				],
-			]
-		);
-
-		$this->add_control(
-			'_animation_delay',
-			[
-				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
-				'type' => Controls_Manager::NUMBER,
-				'default' => '',
-				'min' => 0,
-				'step' => 100,
-				'condition' => [
-					'_animation!' => '',
-				],
-				'render_type' => 'none',
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'_element_id',
-			[
-				'label' => __( 'CSS ID', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'label_block' => false,
-				'style_transfer' => false,
-			]
-		);
-
-		$this->add_control(
-			'_css_classes',
-			[
-				'label' => __( 'CSS Classes', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'prefix_class' => '',
-				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
-			]
-		);
-
 		$this->add_responsive_control(
 			'_element_width',
 			[
-				'label' => __( 'Width', 'elementor' ),
+				'label' => __( 'Layout', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
@@ -183,6 +105,7 @@ class Widget_Common extends Widget_Base {
 					'initial' => __( 'Custom', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-widget__width-',
+				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}',
 				],
@@ -248,7 +171,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'condition' => [
 					'_element_width!' => '',
-					'_is_absolute' => '',
+					'_position' => '',
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
@@ -257,28 +180,55 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_control(
-			'_is_absolute',
+			'_position',
 			[
-				'label' => __( 'Absolute', 'elementor' ),
-				'type' => Controls_Manager::POPOVER_TOGGLE,
+				'label' => __( 'Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
 				'default' => '',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'absolute' => __( 'Absolute', 'elementor' ),
+					'fixed' => __( 'Fixed', 'elementor' ),
+				],
 				'prefix_class' => 'elementor-',
-				'return_value' => 'absolute',
-				'separator' => 'before',
 			]
 		);
 
-		$this->start_popover();
+		$this->add_responsive_control(
+			'_offset_orientation_h',
+			[
+				'label' => __( 'Horizontal Orientation', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
+				'toggle' => false,
+				'default' => 'start',
+				'options' => [
+					'start' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'render_type' => 'ui',
+				'condition' => [
+					'_position!' => '',
+				],
+			]
+		);
 
 		$this->add_responsive_control(
 			'_offset_x',
 			[
-				'label' => __( 'Horizontal Offset', 'elementor' ),
+				'label' => __( 'Offset', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
+						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -288,18 +238,88 @@ class Widget_Common extends Widget_Base {
 						'min' => -200,
 						'max' => 200,
 					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
 				],
 				'default' => [
 					'size' => '0',
 				],
 				'required' => true,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'vw', 'vh' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
-					'_is_absolute!' => '',
+					'_offset_orientation_h!' => 'end',
+					'_position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_x_end',
+			[
+				'label' => __( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 0.1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'size' => '0',
+				],
+				'required' => true,
+				'size_units' => [ 'px', '%', 'vw', 'vh' ],
+				'selectors' => [
+					'body:not(.rtl) {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_h' => 'end',
+					'_position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_orientation_v',
+			[
+				'label' => __( 'Vertical Orientation', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
+				'toggle' => false,
+				'default' => 'start',
+				'options' => [
+					'start' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'render_type' => 'ui',
+				'condition' => [
+					'_position!' => '',
 				],
 			]
 		);
@@ -307,12 +327,13 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_offset_y',
 			[
-				'label' => __( 'Vertical Offset', 'elementor' ),
+				'label' => __( 'Offset', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
+						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -322,8 +343,12 @@ class Widget_Common extends Widget_Base {
 						'min' => -200,
 						'max' => 200,
 					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
 				],
-				'size_units' => [ 'px', '%', 'vh' ],
+				'size_units' => [ 'px', '%', 'vh', 'vw' ],
 				'default' => [
 					'size' => '0',
 				],
@@ -332,12 +357,140 @@ class Widget_Common extends Widget_Base {
 					'{{WRAPPER}}' => 'top: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
-					'_is_absolute!' => '',
+					'_offset_orientation_v!' => 'end',
+					'_position!' => '',
 				],
 			]
 		);
 
-		$this->end_popover();
+		$this->add_responsive_control(
+			'_offset_y_end',
+			[
+				'label' => __( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'size_units' => [ 'px', '%', 'vh', 'vw' ],
+				'default' => [
+					'size' => '0',
+				],
+				'required' => true,
+				'selectors' => [
+					'{{WRAPPER}}' => 'bottom: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_v' => 'end',
+					'_position!' => '',
+				],
+			]
+		);
+
+
+		$this->add_control(
+			'_z_index',
+			[
+				'label' => __( 'Z-Index', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
+				'selectors' => [
+					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
+				],
+				'label_block' => false,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'_element_id',
+			[
+				'label' => __( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
+				'style_transfer' => false,
+			]
+		);
+
+		$this->add_control(
+			'_css_classes',
+			[
+				'label' => __( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'prefix_class' => '',
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'_section_motion_effects',
+			[
+				'label' => __( 'Motion Effects', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'_animation',
+			[
+				'label' => __( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'animation_duration',
+			[
+				'label' => __( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'slow' => __( 'Slow', 'elementor' ),
+					'' => __( 'Normal', 'elementor' ),
+					'fast' => __( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+				'condition' => [
+					'_animation!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_animation_delay',
+			[
+				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'default' => '',
+				'min' => 0,
+				'step' => 100,
+				'condition' => [
+					'_animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
+			]
+		);
 
 		$this->end_controls_section();
 
