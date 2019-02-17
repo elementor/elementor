@@ -219,6 +219,7 @@ class Element_Column extends Element_Base {
 					'bottom' => __( 'Bottom', 'elementor' ),
 					'space-between' => __( 'Space Between', 'elementor' ),
 					'space-around' => __( 'Space Around', 'elementor' ),
+					'space-evenly' => __( 'Space Evenly', 'elementor' ),
 				],
 				'selectors_dictionary' => [
 					'top' => 'flex-start',
@@ -227,6 +228,27 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-column .elementor-column-wrap' => 'align-items: {{VALUE}}',
 					'{{WRAPPER}}.elementor-column > .elementor-column-wrap > .elementor-widget-wrap' => 'align-content: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'align',
+			[
+				'label' => __( 'Align', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'flex-start' => __( 'Start', 'elementor' ),
+					'center' => __( 'Center', 'elementor' ),
+					'flex-end' => __( 'End', 'elementor' ),
+					'space-between' => __( 'Space Between', 'elementor' ),
+					'space-around' => __( 'Space Around', 'elementor' ),
+					'space-evenly' => __( 'Space Evenly', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-column > .elementor-column-wrap > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
 				],
 			]
 		);
