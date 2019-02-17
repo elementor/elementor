@@ -20,7 +20,6 @@ const App = Marionette.Application.extend( {
 	ajax: elementorCommon.ajax,
 	conditions: require( 'elementor-editor-utils/conditions' ),
 	history: require( 'elementor-modules/history/assets/js/module' ),
-	commands: require( './commands' ),
 
 	channels: {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -492,7 +491,7 @@ const App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.commands.run( 'panel', 'toggle' );
+					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
 				},
 			},
 		};
