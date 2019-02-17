@@ -96,7 +96,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_element_width',
 			[
-				'label' => __( 'Layout', 'elementor' ),
+				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
@@ -115,7 +115,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_element_custom_width',
 			[
-				'label' => __( 'Width', 'elementor' ),
+				'label' => __( 'Custom Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
