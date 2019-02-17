@@ -95,17 +95,17 @@ RevisionsManager = function() {
 
 	this.addRevisions = function( items ) {
 		this.requestRevisions( () => {
-		items.forEach( function( item ) {
-			var existedModel = revisions.findWhere( {
-				id: item.id,
-			} );
+			items.forEach( function( item ) {
+				var existedModel = revisions.findWhere( {
+					id: item.id,
+				} );
 
-			if ( existedModel ) {
+				if ( existedModel ) {
 					revisions.remove( existedModel, { silent: true } );
-			}
+				}
 
 				revisions.add( item, { silent: true } );
-		} );
+			} );
 
 			revisions.trigger( 'update' );
 		} );
