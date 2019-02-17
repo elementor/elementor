@@ -118,6 +118,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			title: this.getSettings( 'panelPage.title' ),
 			type: 'page',
 			pageName: this.getSettings( 'name' ) + '_settings',
+			route: 'panel/' + this.getSettings( 'name' ) + '-settings',
 		};
 
 		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );

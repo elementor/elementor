@@ -18,10 +18,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		switch ( menuItemType ) {
 			case 'page':
-				const pageName = childView.model.get( 'pageName' ),
-					pageTitle = childView.model.get( 'title' );
-
-				elementor.getPanelView().setPage( pageName, pageTitle );
+				elementor.route.to( childView.model.get( 'route' ) );
 
 				break;
 
