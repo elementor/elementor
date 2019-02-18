@@ -35,6 +35,8 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			sizes = Object.values( sizes );
 		} else {
 			sizes = [ sizes ];
+
+			this.ui.input.attr( unitRange );
 		}
 
 		delete unitRange.step;
