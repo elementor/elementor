@@ -164,8 +164,13 @@ class Source_Local extends Source_Base {
 		}
 	}
 
-	public static function get_admin_url() {
-		return add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
+	public static function get_admin_url( $relative = false ) {
+		$base_url = self::ADMIN_MENU_SLUG;
+		if ( ! $relative ) {
+			$base_url = admin_url( $base_url );
+		}
+
+		return add_query_arg( 'tabs_group', 'library', $base_url );
 	}
 
 	/**
@@ -356,7 +361,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function admin_menu() {
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url() );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
 	}
 
 	public function admin_title( $admin_title, $title ) {
