@@ -10,42 +10,92 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		return ui;
 	},
 
-	events: function() {
-		return _.extend( ControlBaseUnitsItemView.prototype.events.apply( this, arguments ), {
-			'slide @ui.slider': 'onSlideChange',
-		} );
+	templateHelpers: function() {
+		const templateHelpers = ControlBaseUnitsItemView.prototype.templateHelpers.apply( this, arguments );
+
+		templateHelpers.isMultiple = this.isMultiple();
+
+		return templateHelpers;
+	},
+
+	isMultiple: function() {
+		const sizes = this.getControlValue( 'sizes' );
+
+		return ! jQuery.isEmptyObject( sizes );
 	},
 
 	initSlider: function() {
-		var size = this.getControlValue( 'size' ),
-			unitRange = this.getCurrentRange();
+		const isMultiple = this.isMultiple(),
+			unitRange = elementorCommon.helpers.cloneObject( this.getCurrentRange() ),
+			step = unitRange.step;
 
-		this.ui.input.attr( unitRange ).val( size );
+		let	sizes = this.getSize();
 
-		this.ui.slider.slider( _.extend( {}, unitRange, { value: size } ) );
+		if ( isMultiple ) {
+			sizes = Object.values( sizes );
+		} else {
+			sizes = [ sizes ];
+		}
+
+		delete unitRange.step;
+
+		const sliderInstance = noUiSlider.create( this.ui.slider[ 0 ], {
+			start: sizes,
+			range: unitRange,
+			step: step,
+			tooltips: isMultiple,
+			connect: isMultiple,
+			format: {
+				to: ( value ) => +value.toFixed( 1 ),
+				from: ( value ) => +value,
+			},
+		} );
+
+		sliderInstance.on( 'slide', this.onSlideChange.bind( this ) );
+	},
+
+	getSize: function() {
+		return this.getControlValue( this.isMultiple() ? 'sizes' : 'size' );
 	},
 
 	resetSize: function() {
-		this.setValue( 'size', '' );
+		if ( this.isMultiple() ) {
+			this.setValue( 'sizes', {} );
+		} else {
+			this.setValue( 'size', '' );
+		}
 
 		this.initSlider();
 	},
 
 	onReady: function() {
+		if ( this.isMultiple() ) {
+			this.$el.addClass( 'elementor-control-type-slider--multiple' );
+		}
+
 		this.initSlider();
 	},
 
-	onSlideChange: function( event, ui ) {
-		this.setValue( 'size', ui.value );
+	onSlideChange: function( values, index ) {
+		if ( this.isMultiple() ) {
+			const sizes = elementorCommon.helpers.cloneObject( this.getSize() ),
+				key = Object.keys( sizes )[ index ];
 
-		this.ui.input.val( ui.value );
+			sizes[ key ] = values[ index ];
+
+			this.setValue( 'sizes', sizes );
+		} else {
+			this.setValue( 'size', values[ 0 ] );
+
+			this.ui.input.val( values[ 0 ] );
+		}
 	},
 
 	onInputChange: function( event ) {
 		var dataChanged = event.currentTarget.dataset.setting;
 
 		if ( 'size' === dataChanged ) {
-			this.ui.slider.slider( 'value', this.getControlValue( 'size' ) );
+			this.ui.slider.slider( 'value', this.getSize() );
 		} else if ( 'unit' === dataChanged ) {
 			this.resetSize();
 		}
