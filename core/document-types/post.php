@@ -61,7 +61,7 @@ class Post extends Document {
 	 * @static
 	 */
 	public static function get_title() {
-		return __( 'Page', 'elementor' );
+		return __( 'Post', 'elementor' );
 	}
 
 	/**
