@@ -113,7 +113,7 @@ class Widget_Counter extends Widget_Base {
 			'ending_number',
 			[
 				'label' => __( 'Ending Number', 'elementor' ),
-				'type' => Controls_Manager::NUMBER,
+				'type' => Controls_Manager::TEXT,
 				'default' => 100,
 			]
 		);
@@ -304,7 +304,7 @@ class Widget_Counter extends Widget_Base {
 		$this->add_render_attribute( 'counter', [
 			'class' => 'elementor-counter-number',
 			'data-duration' => $settings['duration'],
-			'data-to-value' => $settings['ending_number'],
+			'data-to-value' => do_shortcode($settings['ending_number']),
 		] );
 
 		if ( ! empty( $settings['thousand_separator'] ) ) {
