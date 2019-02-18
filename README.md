@@ -224,7 +224,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 ## Changelog ##
 
 ### 2.4.7 - 2019-02-18 ###
-* Fix: Incorrect device mode detection in Safari (#7036)
+* Fix: Incorrect device mode detection in Safari ([#7036](https://github.com/elementor/elementor/issues/7036))
 * Fix: Elementor dashboard templates URL corrupted links in edge cases
 * Fix: Sticky offset handling for menu anchor
 * Fix: Avoid WP admin bar handling errors
