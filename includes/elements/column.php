@@ -209,7 +209,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'content_position',
 			[
-				'label' => __( 'Content Position', 'elementor' ),
+				'label' => __( 'Vertical Align', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
@@ -235,7 +235,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'align',
 			[
-				'label' => __( 'Align', 'elementor' ),
+				'label' => __( 'Horizontal Align', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
