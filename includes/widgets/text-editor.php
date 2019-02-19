@@ -211,7 +211,7 @@ class Widget_Text_Editor extends Widget_Base {
 				'label' => __( 'Columns Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'vw' ],
-				'range' => [ 
+				'range' => [
 					'px' => [
 						'max' => 100,
 					],
