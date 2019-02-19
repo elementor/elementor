@@ -381,7 +381,7 @@ const App = Marionette.Application.extend( {
 						return false;
 					}
 
-					if ( ! elementor.route.is( 'panel/editor' ) ) {
+					if ( ! elementor.route.isPartOf( 'panel/editor' ) ) {
 						return false;
 					}
 
@@ -429,7 +429,7 @@ const App = Marionette.Application.extend( {
 				handle: function() {
 					var panel = elementor.getPanelView();
 
-					if ( ! elementor.route.is( 'panel/editor' ) ) {
+					if ( ! elementor.route.isPartOf( 'panel/editor' ) ) {
 						return;
 					}
 
@@ -522,7 +522,7 @@ const App = Marionette.Application.extend( {
 					if ( ! targetElement ) {
 						var panel = elementor.getPanelView();
 
-						if ( elementor.route.is( 'panel/editor' ) ) {
+						if ( elementor.route.isPartOf( 'panel/editor' ) ) {
 							targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
 						}
 					}
@@ -549,7 +549,7 @@ const App = Marionette.Application.extend( {
 		hotKeysHandlers[ keysDictionary.del ] = {
 			deleteElement: {
 				isWorthHandling: function( event ) {
-					if ( ! elementor.route.is( 'panel/editor' ) ) {
+					if ( ! elementor.route.isPartOf( 'panel/editor' ) ) {
 						return false;
 					}
 
