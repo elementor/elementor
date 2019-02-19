@@ -100,8 +100,8 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'auto' => __( 'Inline', 'elementor' ),
+					'' => __( 'Full Width', 'elementor' ) . ' (100%)',
+					'auto' => __( 'Inline', 'elementor' ) . ' (auto)',
 					'initial' => __( 'Custom', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-widget__width-',
@@ -194,7 +194,7 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'_offset_orientation_h',
 			[
 				'label' => __( 'Horizontal Orientation', 'elementor' ),
@@ -246,7 +246,6 @@ class Widget_Common extends Widget_Base {
 				'default' => [
 					'size' => '0',
 				],
-				'required' => true,
 				'size_units' => [ 'px', '%', 'vw', 'vh' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
@@ -286,7 +285,6 @@ class Widget_Common extends Widget_Base {
 				'default' => [
 					'size' => '0',
 				],
-				'required' => true,
 				'size_units' => [ 'px', '%', 'vw', 'vh' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
@@ -299,7 +297,7 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'_offset_orientation_v',
 			[
 				'label' => __( 'Vertical Orientation', 'elementor' ),
@@ -352,7 +350,6 @@ class Widget_Common extends Widget_Base {
 				'default' => [
 					'size' => '0',
 				],
-				'required' => true,
 				'selectors' => [
 					'{{WRAPPER}}' => 'top: {{SIZE}}{{UNIT}}',
 				],
@@ -391,7 +388,6 @@ class Widget_Common extends Widget_Base {
 				'default' => [
 					'size' => '0',
 				],
-				'required' => true,
 				'selectors' => [
 					'{{WRAPPER}}' => 'bottom: {{SIZE}}{{UNIT}}',
 				],
@@ -441,7 +437,7 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'_section_motion_effects',
+			'section_motion_effects',
 			[
 				'label' => __( 'Motion Effects', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,

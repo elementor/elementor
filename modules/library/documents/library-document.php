@@ -23,6 +23,10 @@ abstract class Library_Document extends Document {
 	 */
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
+	public function get_post_type_title() {
+		return static::get_title();
+	}
+
 	/**
 	 * Get document properties.
 	 *
