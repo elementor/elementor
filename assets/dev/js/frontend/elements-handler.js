@@ -41,20 +41,30 @@ module.exports = function( $ ) {
 	};
 
 	this.addHandler = function( HandlerClass, options ) {
-		const elementID = options.$element.data( 'model-cid' ),
+		const elementID = options.$element.data( 'model-cid' );
+
+		let handlerID;
+
+		// If element is in edit mode
+		if ( elementID ) {
 			handlerID = HandlerClass.prototype.getConstructorID();
 
-		if ( ! handlersInstances[ elementID ] ) {
-			handlersInstances[ elementID ] = {};
+			if ( ! handlersInstances[ elementID ] ) {
+				handlersInstances[ elementID ] = {};
+			}
+
+			const oldHandler = handlersInstances[ elementID ][ handlerID ];
+
+			if ( oldHandler ) {
+				oldHandler.onDestroy();
+			}
 		}
 
-		const oldHandler = handlersInstances[ elementID ][ handlerID ];
+		const newHandler = new HandlerClass( options );
 
-		if ( oldHandler ) {
-			oldHandler.onDestroy();
+		if ( elementID ) {
+			handlersInstances[ elementID ][ handlerID ] = newHandler;
 		}
-
-		handlersInstances[ elementID ][ handlerID ] = new HandlerClass( options );
 	};
 
 	this.getHandlers = function( handlerName ) {
