@@ -58,15 +58,6 @@ class Post extends Document {
 	/**
 	 * @since 2.0.0
 	 * @access public
-	 * @static
-	 */
-	public static function get_title() {
-		return __( 'Page', 'elementor' );
-	}
-
-	/**
-	 * @since 2.0.0
-	 * @access public
 	 */
 	public function get_css_wrapper_selector() {
 		return 'body.elementor-page-' . $this->get_main_id();
