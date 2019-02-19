@@ -189,6 +189,66 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
+		$text_columns = range( 2, 10 );
+		$text_columns = array_combine( $text_columns, $text_columns );
+		$text_columns[''] = __( 'Default', 'elementor' );
+
+		$this->add_responsive_control(
+			'text_columns',
+			[
+				'label' => __( 'Columns', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => $text_columns,
+				'selectors' => [
+					'{{WRAPPER}}' => 'columns: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'columns_gap',
+			[
+				'label' => __( 'Columns Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'vw' ],
+				'range' => [ 
+					'px' => [
+						'max' => 100,
+					],
+					'%' => [
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'vw' => [
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'em' => [
+						'max' => 10,
+						'step' => 0.1,
+					],
+				],
+				'condition' => [
+					'text_columns!' => '',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'column-gap: {{SIZE}}{{UNIT}};',
+				],
+				'device_args' => [
+					Controls_Stack::RESPONSIVE_TABLET => [
+						'condition' => [
+							'text_columns_tablet!' => '',
+						],
+					],
+					Controls_Stack::RESPONSIVE_MOBILE => [
+						'condition' => [
+							'text_columns_mobile!' => '',
+						],
+					],
+				],
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
