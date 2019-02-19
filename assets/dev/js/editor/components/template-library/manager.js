@@ -417,11 +417,15 @@ TemplateLibraryManager = function() {
 			defaultRoute = 'library/templates/blocks';
 		}
 
-		if ( remoteLibraryConfig.category ) {
-			self.setFilter( 'subtype', remoteLibraryConfig.category, true );
-		}
 
-		elementor.route.to( defaultRoute );
+
+		elementor.route.to( defaultRoute, {
+			onAfter: () => {
+				if ( remoteLibraryConfig.category ) {
+					this.setFilter( 'subtype', remoteLibraryConfig.category );
+				}
+			},
+		} );
 	};
 
 	this.loadTemplates = function( onUpdate ) {
