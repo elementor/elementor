@@ -3,13 +3,14 @@ export default class extends elementorModules.editor.utils.Module {
 		super( ...args );
 
 		this.current = {};
+		this.currentArgs = {};
 		this.commands = {};
 		this.dependencies = {};
 		this.shortcuts = {};
 	}
 
-	registerDependency( cat, callback ) {
-		this.dependencies[ cat ] = callback;
+	registerDependency( component, callback ) {
+		this.dependencies[ component ] = callback;
 	}
 
 	register( command, callback, shortcut ) {
@@ -32,66 +33,48 @@ export default class extends elementorModules.editor.utils.Module {
 		delete this.commands[ command ];
 	}
 
-	is( command, strict = false ) {
+	is( command ) {
 		const parts = command.split( '/' ),
-			cat = parts[ 0 ];
+			component = parts[ 0 ];
 
-		if ( ! this.current[ cat ] ) {
+		return command === this.current[ component ];
+	}
+
+	getCurrent( component ) {
+		if ( ! this.current[ component ] ) {
 			return false;
 		}
 
-		if ( strict ) {
-			return command === this.current[ cat ];
-		}
-
-		/**
-		 * Check against current command hierarchically.
-		 * For example `is( 'panel' )` will be true for `panel/elements`
-		 * `is( 'panel/editor' )` will be true for `panel/editor/style`
-		 */
-		const toCheck = [],
-			currentParts = this.current[ cat ].split( '/' );
-
-		let match = false;
-
-		currentParts.forEach( ( part ) => {
-			toCheck.push( part );
-			if ( toCheck.join( '/' ) === command ) {
-				match = true;
-			}
-		} );
-
-		return match;
+		return this.current[ component ];
 	}
 
-	getCurrent( cat ) {
-		if ( ! this.current[ cat ] ) {
+	getCurrentArgs( component ) {
+		if ( ! this.currentArgs[ component ] ) {
 			return false;
 		}
 
-		return this.current[ cat ];
+		return this.currentArgs[ component ];
 	}
 
-	beforeRun( command, args ) {
+	beforeRun( command, args = {} ) {
 		if ( ! this.commands[ command ] ) {
 			this.error( '`' + command + '` not found.' );
 		}
 
 		const parts = command.split( '/' ),
-			cat = parts[ 0 ];
+			component = parts[ 0 ];
 
-		if ( this.dependencies[ cat ] && ! this.dependencies[ cat ].apply( null, [ args ] ) ) {
+		if ( this.dependencies[ component ] && ! this.dependencies[ component ].apply( null, [ args ] ) ) {
 			return false;
 		}
 
-		this.current[ cat ] = command;
+		this.current[ component ] = command;
+		this.currentArgs[ component ] = args;
 
 		return true;
 	}
 
-	run( command, args ) {
-		args = args || {};
-
+	run( command, args = {} ) {
 		if ( ! this.beforeRun( command, args ) ) {
 			return;
 		}
@@ -111,9 +94,10 @@ export default class extends elementorModules.editor.utils.Module {
 
 	afterRun( command, args ) {
 		const parts = command.split( '/' ),
-			cat = parts[ 0 ];
+			component = parts[ 0 ];
 
-		delete this.current[ cat ];
+		delete this.current[ component ];
+		delete this.currentArgs[ component ];
 	}
 
 	error( message ) {
