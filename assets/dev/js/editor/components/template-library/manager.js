@@ -198,7 +198,7 @@ TemplateLibraryManager = function() {
 			},
 			success: function( data ) {
 				// Clone `modalConfig` because it deleted during the closing.
-				const importOptions = _.extend( {}, modalConfig.importOptions );
+				const importOptions = jQuery.extend( {}, modalConfig.importOptions );
 
 				// Hide for next open.
 				layout.hideLoadingView();
@@ -317,10 +317,6 @@ TemplateLibraryManager = function() {
 		}
 
 		return config;
-	};
-
-	this.setConfig = function( key, value ) {
-		config[ key ] = value;
 	};
 
 	this.requestLibraryData = function( options ) {
