@@ -1,6 +1,13 @@
 import Commands from './commands';
 
 export default class extends Commands {
+
+	constructor( ...args ) {
+		super( ...args );
+
+		this.savedStates = {};
+	}
+
 	reload( route, args ) {
 		const parts = route.split( '/' ),
 			component = parts[ 0 ];
@@ -22,6 +29,25 @@ export default class extends Commands {
 	close( component ) {
 		delete this.current[ component ];
 		delete this.currentArgs[ component ];
+	}
+
+	saveState( component ) {
+		this.savedStates[ component ] = {
+			route: this.current[ component ],
+			args: this.currentArgs[ component ],
+		};
+
+		return this;
+	}
+
+	restoreState( component ) {
+		if ( ! this.savedStates[ component ] ) {
+			return false;
+		}
+
+		this.to( this.savedStates[ component ].route, this.savedStates[ component ].args );
+
+		return true;
 	}
 
 	beforeRun( route, args ) {

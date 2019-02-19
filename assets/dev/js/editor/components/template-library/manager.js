@@ -22,7 +22,10 @@ TemplateLibraryManager = function() {
 		layout.getModal().on( 'hide', function() {
 			self.isOpen = false;
 			modalConfig = {};
-			elementor.route.close( 'library' );
+
+			elementor.route
+				.saveState( 'library' )
+				.close( 'library' );
 		} );
 	};
 
@@ -41,7 +44,9 @@ TemplateLibraryManager = function() {
 		elementor.route.register( 'library/templates', function( args ) {
 			modalConfig = args;
 
-			self.showDefaultScreen();
+			if ( ! elementor.route.restoreState( 'library' ) ) {
+				self.showDefaultScreen();
+			}
 		} );
 
 		elementor.route.register( 'library/save-template', function( args ) {
@@ -416,8 +421,6 @@ TemplateLibraryManager = function() {
 		if ( 'block' === remoteLibraryConfig.type ) {
 			defaultRoute = 'library/templates/blocks';
 		}
-
-
 
 		elementor.route.to( defaultRoute, {
 			onAfter: () => {
