@@ -29,7 +29,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			unitRange = elementorCommon.helpers.cloneObject( this.getCurrentRange() ),
 			step = unitRange.step;
 
-		let	sizes = this.getSize();
+		let sizes = this.getSize();
 
 		if ( isMultiple ) {
 			sizes = Object.values( sizes );
