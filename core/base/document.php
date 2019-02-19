@@ -80,13 +80,13 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 * @static
 	 */
-	public static function get_editor_panel_config() {
+	public function get_editor_panel_config() {
 		return [
 			'widgets_settings' => [],
 			'elements_categories' => static::get_editor_panel_categories(),
 			'messages' => [
 				/* translators: %s: the document title. */
-				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), self::get_title() ),
+				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), $this->get_post_type_title() ),
 			],
 		];
 	}
@@ -416,7 +416,7 @@ abstract class Document extends Controls_Stack {
 			'type' => $this->get_name(),
 			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
-			'panel' => static::get_editor_panel_config(),
+			'panel' => $this->get_editor_panel_config(),
 			'container' => 'body',
 			'urls' => [
 				'exit_to_dashboard' => $this->get_exit_to_dashboard_url(),
@@ -790,7 +790,7 @@ abstract class Document extends Controls_Stack {
 	public function get_panel_page_settings() {
 		return [
 			/* translators: %s: Document title */
-			'title' => sprintf( __( '%s Settings', 'elementor' ), self::get_title() ),
+			'title' => sprintf( __( '%s Settings', 'elementor' ), $this->get_post_type_title() ),
 		];
 	}
 
