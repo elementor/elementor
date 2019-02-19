@@ -209,7 +209,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'content_position',
 			[
-				'label' => __( 'Content Position', 'elementor' ),
+				'label' => __( 'Vertical Align', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
@@ -235,7 +235,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'align',
 			[
-				'label' => __( 'Align', 'elementor' ),
+				'label' => __( 'Horizontal Align', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
@@ -312,7 +312,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'selector' => '{{WRAPPER}} > .elementor-element-populated',
+				'selector' => '{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-column-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 			]
 		);
 
@@ -783,49 +783,6 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_responsive_control(
-			'animation',
-			[
-				'label' => __( 'Entrance Animation', 'elementor' ),
-				'type' => Controls_Manager::ANIMATION,
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'animation_duration',
-			[
-				'label' => __( 'Animation Duration', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'slow' => __( 'Slow', 'elementor' ),
-					'' => __( 'Normal', 'elementor' ),
-					'fast' => __( 'Fast', 'elementor' ),
-				],
-				'prefix_class' => 'animated-',
-				'condition' => [
-					'animation!' => '',
-				],
-			]
-		);
-
-		$this->add_control(
-			'animation_delay',
-			[
-				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
-				'type' => Controls_Manager::NUMBER,
-				'default' => '',
-				'min' => 0,
-				'step' => 100,
-				'condition' => [
-					'animation!' => '',
-				],
-				'render_type' => 'none',
-				'frontend_available' => true,
-			]
-		);
-
 		$this->add_control(
 			'_element_id',
 			[
@@ -869,6 +826,59 @@ class Element_Column extends Element_Base {
 			]
 		);
 		// END Backward comparability
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_motion_effects',
+			[
+				'label' => __( 'Motion Effects', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_responsive_control(
+			'animation',
+			[
+				'label' => __( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'animation_duration',
+			[
+				'label' => __( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'slow' => __( 'Slow', 'elementor' ),
+					'' => __( 'Normal', 'elementor' ),
+					'fast' => __( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+				'condition' => [
+					'animation!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'animation_delay',
+			[
+				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'default' => '',
+				'min' => 0,
+				'step' => 100,
+				'condition' => [
+					'animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
+			]
+		);
 
 		$this->end_controls_section();
 
