@@ -97,15 +97,15 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		var dataChanged = event.currentTarget.dataset.setting;
 
 		if ( 'size' === dataChanged ) {
-			this.ui.slider.slider( 'value', this.getSize() );
+			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
 		} else if ( 'unit' === dataChanged ) {
 			this.resetSize();
 		}
 	},
 
 	onBeforeDestroy: function() {
-		if ( this.ui.slider.data( 'uiSlider' ) ) {
-			this.ui.slider.slider( 'destroy' );
+		if ( this.ui.slider[ 0 ].noUiSlider ) {
+			this.ui.slider[ 0 ].noUiSlider.destroy();
 		}
 
 		this.$el.remove();
