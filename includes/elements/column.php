@@ -312,7 +312,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'selector' => '{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-column-wrap > .parallax-container > .parallax-layer',
+				'selector' => '{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-column-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 			]
 		);
 
