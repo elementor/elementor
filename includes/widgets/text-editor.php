@@ -228,77 +228,8 @@ class Widget_Text_Editor extends Widget_Base {
 						'step' => 0.1,
 					],
 				],
-				'condition' => [
-					'text_columns!' => [ '', '1' ],
-				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-text-editor' => 'column-gap: {{SIZE}}{{UNIT}};',
-				],
-				'device_args' => [
-					Controls_Stack::RESPONSIVE_TABLET => [
-						'conditions' => [
-							'relation' => 'or',
-							'terms' => [
-								[	// selected something specific for current device
-									'name' => 'text_columns_tablet',
-									'value' => [ '', '1' ],
-									'operator' => '!in',
-								],
-								[
-									'relation' => 'and',
-									'terms' =>[
-										[
-											'name' => 'text_columns',
-											'value' => [ '', '1' ],
-											'operator' => '!in',
-										],
-										[
-											'name' => 'text_columns_tablet',
-											'value' =>  '',
-											'operator' => '==',
-										],
-									],
-								],
-							],
-						],
-					],
-					Controls_Stack::RESPONSIVE_MOBILE => [
-						'conditions' => [
-							'relation' => 'or',
-							'terms' => [
-								[	// selected something specific for current device
-									'name' => 'text_columns_mobile',
-									'value' => [ '', '1' ],
-									'operator' => '!in',
-								],
-								[
-									'relation' => 'and',
-									'terms' => [
-										[
-											'name' => 'text_columns_mobile',
-											'value' =>  '',
-											'operator' => '==',
-										],
-										[
-											'relation' => 'or',
-											'terms' => [
-												[
-													'name' => 'text_columns',
-													'value' => [ '', '1' ],
-													'operator' => '!in',
-												],
-												[
-													'name' => 'text_columns_tablet',
-													'value' => [ '', '1' ],
-													'operator' => '!in',
-												],
-											],
-										],
-									],
-								],
-							],
-						],
-					],
 				],
 			]
 		);
