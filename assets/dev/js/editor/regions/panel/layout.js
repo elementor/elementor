@@ -20,7 +20,9 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			elementor.route.to( 'panel/elements' );
 		},
 		'editor:destroy': function() {
-			elementor.route.to( 'panel/elements' );
+			elementor.route.to( 'panel/elements', {
+				autoFocusSearch: false,
+			} );
 		},
 	},
 
@@ -31,8 +33,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	perfectScrollbar: null,
 
 	initialize: function() {
-		elementor.route.register( 'panel/elements', () => {
-			this.setPage( 'elements' );
+		elementor.route.register( 'panel/elements', ( args ) => {
+			this.setPage( 'elements', null, args );
 		} );
 
 		elementor.route.register( 'panel/editor', ( args ) => {
