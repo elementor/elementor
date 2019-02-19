@@ -31,18 +31,16 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	perfectScrollbar: null,
 
 	initialize: function() {
-		var self = this;
-
-		elementor.route.register( 'panel/elements', function() {
-			self.setPage( 'elements' );
+		elementor.route.register( 'panel/elements', () => {
+			this.setPage( 'elements' );
 		} );
 
-		elementor.route.register( 'panel/editor', function( args ) {
-			self.openEditor( args.model, args.view );
+		elementor.route.register( 'panel/editor', ( args ) => {
+			this.openEditor( args.model, args.view );
 		} );
 
-		elementor.route.register( 'panel/menu', function() {
-			self.setPage( 'menu' );
+		elementor.route.register( 'panel/menu', () => {
+			this.setPage( 'menu' );
 		} );
 
 		this.initPages();

@@ -117,11 +117,11 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		elementor.route.register( 'panel/history', function() {
+		elementor.route.register( 'panel/history', () => {
 			elementor.getPanelView().setPage( 'historyPage' );
 		} );
 
-		elementor.route.register( 'panel/history/revisions', function() {
+		elementor.route.register( 'panel/history/revisions', () => {
 			elementor.route.to( 'panel/history' );
 			elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
 		} );

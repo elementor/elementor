@@ -27,6 +27,8 @@ export default class extends elementorModules.editor.utils.Module {
 
 			this.shortcuts[ shortcut ] = command;
 		}
+
+		return this;
 	}
 
 	unregister( command ) {
