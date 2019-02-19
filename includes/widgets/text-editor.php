@@ -189,9 +189,9 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-		$text_columns = range( 2, 10 );
+		$text_columns = range( 1, 10 );
 		$text_columns = array_combine( $text_columns, $text_columns );
-		$text_columns[''] = __( 'Default', 'elementor' );
+		$text_columns[''] = __( 'Inherit', 'elementor' );
 
 		$this->add_responsive_control(
 			'text_columns',
@@ -200,13 +200,13 @@ class Widget_Text_Editor extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => $text_columns,
 				'selectors' => [
-					'{{WRAPPER}}' => 'columns: {{VALUE}};',
+					'{{WRAPPER}} .elementor-text-editor' => 'columns: {{VALUE}};',
 				],
 			]
 		);
 
 		$this->add_responsive_control(
-			'columns_gap',
+			'column_gap',
 			[
 				'label' => __( 'Columns Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -229,20 +229,74 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 				],
 				'condition' => [
-					'text_columns!' => '',
+					'text_columns!' => [ '', '1' ],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => 'column-gap: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-text-editor' => 'column-gap: {{SIZE}}{{UNIT}};',
 				],
 				'device_args' => [
 					Controls_Stack::RESPONSIVE_TABLET => [
-						'condition' => [
-							'text_columns_tablet!' => '',
+						'conditions' => [
+							'relation' => 'or',
+							'terms' => [
+								[	// selected something specific for current device
+									'name' => 'text_columns_tablet',
+									'value' => [ '', '1' ],
+									'operator' => '!in',
+								],
+								[
+									'relation' => 'and',
+									'terms' =>[
+										[
+											'name' => 'text_columns',
+											'value' => [ '', '1' ],
+											'operator' => '!in',
+										],
+										[
+											'name' => 'text_columns_tablet',
+											'value' =>  '',
+											'operator' => '==',
+										],
+									],
+								],
+							],
 						],
 					],
 					Controls_Stack::RESPONSIVE_MOBILE => [
-						'condition' => [
-							'text_columns_mobile!' => '',
+						'conditions' => [
+							'relation' => 'or',
+							'terms' => [
+								[	// selected something specific for current device
+									'name' => 'text_columns_mobile',
+									'value' => [ '', '1' ],
+									'operator' => '!in',
+								],
+								[
+									'relation' => 'and',
+									'terms' => [
+										[
+											'name' => 'text_columns_mobile',
+											'value' =>  '',
+											'operator' => '==',
+										],
+										[
+											'relation' => 'or',
+											'terms' => [
+												[
+													'name' => 'text_columns',
+													'value' => [ '', '1' ],
+													'operator' => '!in',
+												],
+												[
+													'name' => 'text_columns_tablet',
+													'value' => [ '', '1' ],
+													'operator' => '!in',
+												],
+											],
+										],
+									],
+								],
+							],
 						],
 					],
 				],
