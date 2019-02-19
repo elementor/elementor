@@ -62,7 +62,7 @@ class Role_Manager extends Settings_Page {
 								'label' => __( 'Exclude Roles', 'elementor' ),
 								'field_args' => [
 									'type' => 'checkbox_list_roles',
-									'exclude' => [ 'administrator' ],
+									'exclude' => [ 'super_admin', 'administrator' ],
 								],
 								'setting_args' => [
 									'sanitize_callback' => [ $validation_class, 'checkbox_list' ],
