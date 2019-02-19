@@ -1,7 +1,6 @@
 import Commands from './commands';
 
 export default class extends Commands {
-
 	constructor( ...args ) {
 		super( ...args );
 

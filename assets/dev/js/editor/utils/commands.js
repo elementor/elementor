@@ -94,7 +94,7 @@ export default class extends elementorModules.editor.utils.Module {
 		this.afterRun( command, args );
 	}
 
-	afterRun( command, args ) {
+	afterRun( command ) {
 		const parts = command.split( '/' ),
 			component = parts[ 0 ];
 
