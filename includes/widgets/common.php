@@ -100,8 +100,8 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'auto' => __( 'Inline', 'elementor' ),
+					'' => __( 'Full Width', 'elementor' ) . ' (100%)',
+					'auto' => __( 'Inline', 'elementor' ) . ' (auto)',
 					'initial' => __( 'Custom', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-widget__width-',
