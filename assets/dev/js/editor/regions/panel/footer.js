@@ -39,9 +39,8 @@ module.exports = Marionette.ItemView.extend( {
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 
-		const self = this;
-		elementor.route.register( 'panel/page-settings', function() {
-			self.showSettingsPage();
+		elementor.route.register( 'panel/page-settings', () => {
+			this.showSettingsPage();
 		} );
 	},
 
