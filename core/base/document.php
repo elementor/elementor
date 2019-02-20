@@ -790,7 +790,7 @@ abstract class Document extends Controls_Stack {
 	public function get_panel_page_settings() {
 		return [
 			/* translators: %s: Document title */
-			'title' => sprintf( __( '%s Settings', 'elementor' ), $this->get_post_type_title() ),
+			'title' => sprintf( __( '%s Settings', 'elementor' ), static::get_title() ),
 		];
 	}
 
