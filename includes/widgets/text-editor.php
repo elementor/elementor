@@ -191,7 +191,7 @@ class Widget_Text_Editor extends Widget_Base {
 
 		$text_columns = range( 1, 10 );
 		$text_columns = array_combine( $text_columns, $text_columns );
-		$text_columns[''] = __( 'Inherit', 'elementor' );
+		$text_columns[''] = __( 'Default', 'elementor' );
 
 		$this->add_responsive_control(
 			'text_columns',
