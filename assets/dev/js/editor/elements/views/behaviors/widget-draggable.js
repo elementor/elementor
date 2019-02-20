@@ -32,7 +32,6 @@ export default class extends Marionette.Behavior {
 
 		this.$el.draggable( {
 			addClasses: false,
-			handle: '.elementor-handle',
 		} );
 	}
 
