@@ -1,9 +1,6 @@
 export default class extends Marionette.Behavior {
 	events() {
 		return {
-			resizestart: 'onResizeStart',
-			resizestop: 'onResizeStop',
-			resize: 'onResize',
 			dragstart: 'onDragStart',
 			dragstop: 'onDragStop',
 		};
@@ -17,10 +14,10 @@ export default class extends Marionette.Behavior {
 		const view = this.view,
 			viewSettingsChangedMethod = view.onSettingsChanged;
 
-		view.onSettingsChanged = () => {
-			viewSettingsChangedMethod.apply( view, arguments );
+		view.onSettingsChanged = ( ...args ) => {
+			viewSettingsChangedMethod.call( view, ...args );
 
-			this.onSettingsChanged.apply( this, arguments );
+			this.onSettingsChanged.call( this, ...args );
 		};
 	}
 
@@ -37,10 +34,6 @@ export default class extends Marionette.Behavior {
 			addClasses: false,
 			handle: '.elementor-handle',
 		} );
-
-		this.$el.resizable( {
-			handles: 'e, w',
-		} );
 	}
 
 	deactivate() {
@@ -49,16 +42,14 @@ export default class extends Marionette.Behavior {
 		}
 
 		this.$el.draggable( 'destroy' );
-		this.$el.resizable( 'destroy' );
-
 		this.$el.find( '> .elementor-handle' ).remove();
 	}
 
 	toggle() {
-		const activeMode = elementor.channels.dataEditMode.request( 'activeMode' ),
+		const isEditMode = 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
 			isAbsolute = '' < this.view.getEditModel().getSetting( '_position' );
 
-		if ( 'edit' === activeMode && isAbsolute ) {
+		if ( isEditMode && isAbsolute ) {
 			this.activate();
 		} else {
 			this.deactivate();
@@ -82,8 +73,9 @@ export default class extends Marionette.Behavior {
 	onDragStop( event, ui ) {
 		event.stopPropagation();
 
-		const viewportWidth = elementorFrontend.getDefaultElements().$window.outerWidth( true ),
-			viewportHeight = elementorFrontend.getDefaultElements().$window.outerHeight( true ),
+		const $window = elementorFrontend.elements.$window,
+			viewportWidth = $window.outerWidth( true ),
+			viewportHeight = $window.outerHeight( true ),
 			currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
 			editModel = this.view.getEditModel(),
@@ -108,13 +100,13 @@ export default class extends Marionette.Behavior {
 
 		switch ( offsetXSettings.unit ) {
 			case '%':
-				xPos = ( xPos / ( parentWidth / 100 ) ).toFixed( 3 );
+				xPos = ( xPos / ( parentWidth / 100 ) );
 				break;
 			case 'vw':
-				xPos = ( xPos / ( viewportWidth / 100 ) ).toFixed( 3 );
+				xPos = ( xPos / ( viewportWidth / 100 ) );
 				break;
 			case 'vh':
-				xPos = ( xPos / ( viewportHeight / 100 ) ).toFixed( 3 );
+				xPos = ( xPos / ( viewportHeight / 100 ) );
 				break;
 		}
 
@@ -130,18 +122,18 @@ export default class extends Marionette.Behavior {
 
 		switch ( offsetYSettings.unit ) {
 			case '%':
-				yPos = ( yPos / ( parentHeight / 100 ) ).toFixed( 3 );
+				yPos = ( yPos / ( parentHeight / 100 ) );
 				break;
 			case 'vh':
-				yPos = ( yPos / ( viewportHeight / 100 ) ).toFixed( 3 );
+				yPos = ( yPos / ( viewportHeight / 100 ) );
 				break;
 			case 'vw':
-				yPos = ( yPos / ( viewportWidth / 100 ) ).toFixed( 3 );
+				yPos = ( yPos / ( viewportWidth / 100 ) );
 				break;
 		}
 
-		settingToChange[ offsetX + deviceSuffix ] = { size: xPos, unit: offsetXSettings.unit };
-		settingToChange[ offsetY + deviceSuffix ] = { size: yPos, unit: offsetYSettings.unit };
+		settingToChange[ offsetX + deviceSuffix ] = { size: xPos.toFixed( 3 ), unit: offsetXSettings.unit };
+		settingToChange[ offsetY + deviceSuffix ] = { size: yPos.toFixed( 3 ), unit: offsetYSettings.unit };
 
 		this.view.getEditModel().get( 'settings' ).setExternalChange( settingToChange );
 
@@ -155,33 +147,6 @@ export default class extends Marionette.Behavior {
 				height: '',
 			} );
 		}, 250 );
-	}
-
-	onResizeStart( event ) {
-		event.stopPropagation();
-
-		this.view.model.trigger( 'request:edit' );
-	}
-
-	onResizeStop( event, ui ) {
-		event.stopPropagation();
-		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
-			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
-			settingToChange = {};
-
-		settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
-		settingToChange[ '_element_custom_width' + deviceSuffix ] = { unit: 'px', size: ui.size.width };
-
-		this.view.getEditModel().get( 'settings' ).setExternalChange( settingToChange );
-
-		this.$el.css( {
-			width: '',
-			height: '',
-		} );
-	}
-
-	onResize( event ) {
-		event.stopPropagation();
 	}
 
 	onSettingsChanged( changed ) {
