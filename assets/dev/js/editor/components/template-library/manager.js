@@ -22,34 +22,39 @@ TemplateLibraryManager = function() {
 		layout.getModal().on( 'hide', function() {
 			self.isOpen = false;
 			modalConfig = {};
-			elementor.route.close( 'library' );
+
+			elementor.route
+				.saveState( 'library' )
+				.close( 'library' );
 		} );
 	};
 
 	const registerRouts = function() {
-		elementor.route.registerDependency( 'library', function() {
-			elementor.templates.startModal();
+		elementor.route.registerDependency( 'library', () => {
+			self.startModal();
 			return true;
 		} );
 
 		screens.forEach( ( screen ) => {
-			elementor.route.register( screen.route, function() {
-				elementor.templates.setScreen( screen.source, screen.type );
+			elementor.route.register( screen.route, () => {
+				self.setScreen( screen.source, screen.type );
 			} );
 		} );
 
-		elementor.route.register( 'library/templates', function( args ) {
+		elementor.route.register( 'library/templates', ( args ) => {
 			modalConfig = args;
 
-			self.showDefaultScreen();
+			if ( ! elementor.route.restoreState( 'library' ) ) {
+				self.showDefaultScreen();
+			}
 		} );
 
-		elementor.route.register( 'library/save-template', function( args ) {
-			elementor.templates.getLayout().showSaveTemplateView( args.model );
+		elementor.route.register( 'library/save-template', ( args ) => {
+			self.getLayout().showSaveTemplateView( args.model );
 		} );
 
-		elementor.route.register( 'library/import', function() {
-			elementor.templates.getLayout().showImportView();
+		elementor.route.register( 'library/import', () => {
+			self.getLayout().showImportView();
 		} );
 	};
 
@@ -61,7 +66,7 @@ TemplateLibraryManager = function() {
 			ajaxParams: {
 				success: function( successData ) {
 					elementor.route.to( 'library/templates/my-templates', {
-						onBefore: function() {
+						onBefore: () => {
 							if ( templatesCollection ) {
 								templatesCollection.add( successData );
 							}
@@ -198,7 +203,7 @@ TemplateLibraryManager = function() {
 			},
 			success: function( data ) {
 				// Clone `modalConfig` because it deleted during the closing.
-				const importOptions = _.extend( {}, modalConfig.importOptions );
+				const importOptions = jQuery.extend( {}, modalConfig.importOptions );
 
 				// Hide for next open.
 				layout.hideLoadingView();
@@ -319,10 +324,6 @@ TemplateLibraryManager = function() {
 		return config;
 	};
 
-	this.setConfig = function( key, value ) {
-		config[ key ] = value;
-	};
-
 	this.requestLibraryData = function( options ) {
 		if ( templatesCollection && ! options.forceUpdate ) {
 			if ( options.onUpdate ) {
@@ -421,11 +422,13 @@ TemplateLibraryManager = function() {
 			defaultRoute = 'library/templates/blocks';
 		}
 
-		if ( remoteLibraryConfig.category ) {
-			self.setFilter( 'subtype', remoteLibraryConfig.category, true );
-		}
-
-		elementor.route.to( defaultRoute );
+		elementor.route.to( defaultRoute, {
+			onAfter: () => {
+				if ( remoteLibraryConfig.category ) {
+					this.setFilter( 'subtype', remoteLibraryConfig.category );
+				}
+			},
+		} );
 	};
 
 	this.loadTemplates = function( onUpdate ) {

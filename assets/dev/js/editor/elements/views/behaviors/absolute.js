@@ -17,10 +17,10 @@ export default class extends Marionette.Behavior {
 		const view = this.view,
 			viewSettingsChangedMethod = view.onSettingsChanged;
 
-		view.onSettingsChanged = () => {
-			viewSettingsChangedMethod.apply( view, arguments );
+		view.onSettingsChanged = ( ...args ) => {
+			viewSettingsChangedMethod.call( view, ...args );
 
-			this.onSettingsChanged.apply( this, arguments );
+			this.onSettingsChanged.call( this, ...args );
 		};
 	}
 

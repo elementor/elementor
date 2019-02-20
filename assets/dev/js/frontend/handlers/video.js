@@ -84,5 +84,5 @@ const VideoModule = elementorModules.frontend.handlers.Base.extend( {
 } );
 
 module.exports = function( $scope ) {
-	new VideoModule( { $element: $scope } );
+	elementorFrontend.elementsHandler.addHandler( VideoModule, { $element: $scope } );
 };

@@ -63,5 +63,5 @@ const ImageCarouselHandler = elementorModules.frontend.handlers.Base.extend( {
 } );
 
 module.exports = function( $scope ) {
-	new ImageCarouselHandler( { $element: $scope } );
+	elementorFrontend.elementsHandler.addHandler( ImageCarouselHandler, { $element: $scope } );
 };

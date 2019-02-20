@@ -721,7 +721,7 @@ BaseElementView = BaseContainer.extend( {
 		const model = this.getEditModel(),
 			panel = elementor.getPanelView();
 
-		if ( elementor.route.is( 'panel/editor' ) && panel.getCurrentPageView().model === model ) {
+		if ( elementor.route.isPartOf( 'panel/editor' ) && panel.getCurrentPageView().model === model ) {
 			return;
 		}
 
