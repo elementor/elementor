@@ -363,13 +363,13 @@ var HandlesPosition = elementorModules.frontend.handlers.Base.extend( {
 
 module.exports = function( $scope ) {
 	if ( elementorFrontend.isEditMode() || $scope.hasClass( 'elementor-section-stretched' ) ) {
-		new StretchedSection( { $element: $scope } );
+		elementorFrontend.elementsHandler.addHandler( StretchedSection, { $element: $scope } );
 	}
 
 	if ( elementorFrontend.isEditMode() ) {
-		new Shapes( { $element: $scope } );
-		new HandlesPosition( { $element: $scope } );
+		elementorFrontend.elementsHandler.addHandler( Shapes, { $element: $scope } );
+		elementorFrontend.elementsHandler.addHandler( HandlesPosition, { $element: $scope } );
 	}
 
-	new BackgroundVideo( { $element: $scope } );
+	elementorFrontend.elementsHandler.addHandler( BackgroundVideo, { $element: $scope } );
 };

@@ -34,7 +34,7 @@ RevisionsManager = function() {
 			isWorthHandling: function() {
 				var panel = elementor.getPanelView();
 
-				if ( ! elementor.route.is( 'panel/history' ) ) {
+				if ( ! elementor.route.is( 'panel/history/revisions' ) ) {
 					return false;
 				}
 
@@ -139,8 +139,8 @@ RevisionsManager = function() {
 	};
 
 	this.onRevisionsUpdate = function() {
-		if ( elementor.route.is( 'panel/history' ) ) {
-			elementor.route.to( 'panel/history/revisions' );
+		if ( elementor.route.is( 'panel/history/revisions' ) ) {
+			elementor.route.reload( 'panel/history/revisions' );
 		}
 	};
 };

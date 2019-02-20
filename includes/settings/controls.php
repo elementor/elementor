@@ -219,7 +219,17 @@ class Settings_Controls {
 		$field = array_merge( $defaults, $field );
 
 		$field['options'] = [];
-		foreach ( get_editable_roles() as $role_slug => $role_data ) {
+		$roles = get_editable_roles();
+
+		if ( is_multisite() ) {
+			$roles = [
+				'super_admin' => [
+					'name' => __( 'Super Admin', 'elementor' ),
+				],
+			] + $roles;
+		}
+
+		foreach ( $roles as $role_slug => $role_data ) {
 			if ( in_array( $role_slug, $field['exclude'] ) ) {
 				continue;
 			}

@@ -46,6 +46,7 @@ class Control_Slider extends Control_Base_Units {
 		return array_merge(
 			parent::get_default_value(), [
 				'size' => '',
+				'sizes' => [],
 			]
 		);
 	}
@@ -87,9 +88,11 @@ class Control_Slider extends Control_Base_Units {
 			<?php $this->print_units_template(); ?>
 			<div class="elementor-control-input-wrapper elementor-clearfix">
 				<div class="elementor-slider"></div>
-				<div class="elementor-slider-input">
-					<input id="<?php echo $control_uid; ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" data-setting="size" />
-				</div>
+				<# if ( ! isMultiple ) { #>
+					<div class="elementor-slider-input">
+						<input id="<?php echo $control_uid; ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" data-setting="size" />
+					</div>
+				<# } #>
 			</div>
 		</div>
 		<# if ( data.description ) { #>

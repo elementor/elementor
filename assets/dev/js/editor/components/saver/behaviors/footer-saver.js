@@ -53,8 +53,8 @@ module.exports = Marionette.Behavior.extend( {
 			this.refreshWpPreview();
 
 			// Refresh page-settings post-status value.
-			if ( elementor.route.is( 'panel/page-settings' ) ) {
-				elementor.route.refresh( 'panel' );
+			if ( elementor.route.isPartOf( 'panel/page-settings' ) ) {
+				elementor.route.refreshComponent( 'panel' );
 			}
 		}
 	},

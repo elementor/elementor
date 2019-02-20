@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 5.0  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.4.6  
+**Stable tag:** 2.4.7  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -68,7 +68,7 @@ There are many other [features](https://elementor.com/features/?utm_source=wp-re
 Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
 
 ### 30 free widgets and counting ###
-We packed 29 of the most useful widgets into our page builder. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
+We packed 30 of the most useful widgets into our page builder. True, that's way more than we had to offer, but we wanted to spare no widget from you, so you can reach the top of your design capabilities.
 
 - **Heading**. Add eye-catching headlines.
 - **Image**. Control the size, opacity and other settings of images.
@@ -222,6 +222,12 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.4.7 - 2019-02-18 ###
+* Fix: Incorrect device mode detection in Safari ([#7036](https://github.com/elementor/elementor/issues/7036))
+* Fix: Elementor dashboard templates URL corrupted links in edge cases
+* Fix: Sticky offset handling for menu anchor
+* Fix: Avoid WP admin bar handling errors
 
 ### 2.4.6 - 2019-02-11 ###
 * Tweak: Use `<a>` for editor panel links ([#6767](https://github.com/elementor/elementor/issues/6767), [#7025](https://github.com/elementor/elementor/issues/7025))

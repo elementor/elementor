@@ -117,11 +117,11 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		elementor.route.register( 'panel/history', function() {
+		elementor.route.register( 'panel/history', () => {
 			elementor.getPanelView().setPage( 'historyPage' );
 		} );
 
-		elementor.route.register( 'panel/history/revisions', function() {
+		elementor.route.register( 'panel/history/revisions', () => {
 			elementor.route.to( 'panel/history' );
 			elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
 		} );
@@ -258,7 +258,7 @@ var	Manager = function() {
 			panelPage = panel.getCurrentPageView(),
 			viewToScroll;
 
-		if ( elementor.route.is( 'panel/editor' ) ) {
+		if ( elementor.route.isPartOf( 'panel/editor' ) ) {
 			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
 				// If the the element isn't exist - show the history panel
 				elementor.route.to( 'panel/history' );
