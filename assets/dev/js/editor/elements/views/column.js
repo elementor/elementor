@@ -20,7 +20,7 @@ ColumnView = BaseElementView.extend( {
 				elChildType: 'widget',
 			},
 			Resizable: {
-				behaviorClass: require( 'elementor-behaviors/resizable' ),
+				behaviorClass: require( 'elementor-behaviors/column-resizable' ),
 			},
 		} );
 
