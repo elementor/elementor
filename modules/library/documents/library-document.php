@@ -51,7 +51,7 @@ abstract class Library_Document extends Document {
 	public function print_admin_column_type() {
 		$admin_filter_url = admin_url( Source_Local::ADMIN_MENU_SLUG . '&elementor_library_type=' . $this->get_name() );
 
-		printf( '<a href="%s">%s</a>', $admin_filter_url, $this->get_title() );
+		printf( '<a href="%s">%s</a>', $admin_filter_url, $this->get_post_type_title() );
 	}
 
 	/**
