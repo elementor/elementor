@@ -891,7 +891,7 @@ class Frontend extends App {
 			$wp_admin_bar->add_menu( [
 				'id' => 'elementor_edit_doc_' . $document->get_main_id(),
 				'parent' => 'elementor_edit_page',
-				'title' => sprintf( '<span class="elementor-edit-link-title">%s</span><span class="elementor-edit-link-type">%s</span>', $document->get_post()->post_title, $document->get_post_type_title() ),
+				'title' => sprintf( '<span class="elementor-edit-link-title">%s</span><span class="elementor-edit-link-type">%s</span>', $document->get_post()->post_title, $document::get_title() ),
 				'href' => $document->get_edit_url(),
 			] );
 		}
