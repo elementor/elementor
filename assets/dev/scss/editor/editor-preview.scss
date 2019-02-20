@@ -206,6 +206,14 @@ html.elementor-html {
 			display: block;
 		}
 	}
+
+	&.elementor-absolute, &.elementor-fixed {
+		cursor: grab;
+
+		&:active {
+			cursor: grabbing;
+		}
+	}
 }
 
 // Section
