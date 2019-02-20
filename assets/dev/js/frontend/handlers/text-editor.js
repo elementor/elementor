@@ -94,5 +94,5 @@ const TextEditor = elementorModules.frontend.handlers.Base.extend( {
 } );
 
 module.exports = function( $scope ) {
-	new TextEditor( { $element: $scope } );
+	elementorFrontend.elementsHandler.addHandler( TextEditor, { $element: $scope } );
 };

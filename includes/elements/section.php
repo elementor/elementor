@@ -1189,6 +1189,40 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'_element_id',
+			[
+				'label' => __( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'label_block' => false,
+				'style_transfer' => false,
+			]
+		);
+
+		$this->add_control(
+			'css_classes',
+			[
+				'label' => __( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'prefix_class' => '',
+				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'label_block' => false,
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_motion_effects',
+			[
+				'label' => __( 'Motion Effects', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
 		$this->add_responsive_control(
 			'animation',
 			[
@@ -1229,30 +1263,6 @@ class Element_Section extends Element_Base {
 				],
 				'render_type' => 'none',
 				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'_element_id',
-			[
-				'label' => __( 'CSS ID', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'label_block' => false,
-				'style_transfer' => false,
-			]
-		);
-
-		$this->add_control(
-			'css_classes',
-			[
-				'label' => __( 'CSS Classes', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'prefix_class' => '',
-				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
-				'label_block' => false,
 			]
 		);
 
