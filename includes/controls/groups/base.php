@@ -324,6 +324,14 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 				$field['condition'][ $popover_name . '!' ] = '';
 			}
 
+			if ( isset( $this->args['fields_options']['__all'] ) ) {
+				$field = array_merge( $field, $this->args['fields_options']['__all'] );
+			}
+
+			if ( isset( $this->args['fields_options'][ $field_key ] ) ) {
+				$field = array_merge( $field, $this->args['fields_options'][ $field_key ] );
+			}
+
 			if ( ! empty( $field['condition'] ) ) {
 				$field = $this->add_conditions_prefix( $field );
 			}
@@ -343,14 +351,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 						$field['device_args'][ $device ]['selectors'] = $this->handle_selectors( $device_arg['selectors'] );
 					}
 				}
-			}
-
-			if ( isset( $this->args['fields_options']['__all'] ) ) {
-				$field = array_merge( $field, $this->args['fields_options']['__all'] );
-			}
-
-			if ( isset( $this->args['fields_options'][ $field_key ] ) ) {
-				$field = array_merge( $field, $this->args['fields_options'][ $field_key ] );
 			}
 		}
 

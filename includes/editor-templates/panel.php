@@ -56,7 +56,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
 	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
 		<i class="fa fa-cog" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php printf( __( '%s Settings', 'elementor' ), $document::get_title() ); ?></span>
+		<span class="elementor-screen-only"><?php printf( __( '%s Settings', 'elementor' ), $document->get_post_type_title() ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>

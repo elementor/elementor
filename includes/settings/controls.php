@@ -224,7 +224,7 @@ class Settings_Controls {
 		if ( is_multisite() ) {
 			$roles = [
 				'super_admin' => [
-					'name' => __( 'Super Admin', '' ),
+					'name' => __( 'Super Admin', 'elementor' ),
 				],
 			] + $roles;
 		}

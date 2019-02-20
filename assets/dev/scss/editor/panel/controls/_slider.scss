@@ -1,0 +1,77 @@
+.elementor-control-type-slider {
+
+	&--multiple {
+
+		.elementor-control-title {
+			margin-bottom: 10px;
+		}
+	}
+
+	&:not(.elementor-control-type-slider--multiple) {
+
+		.elementor-slider {
+			display: inline-block;
+			width: 70%;
+		}
+	}
+}
+
+.elementor-slider {
+	margin-top: 10px;
+	height: 4px;
+	background-color: $editor-lightest;
+	border-radius: 5px;
+	position: relative;
+	cursor: pointer;
+
+	&-input {
+		width: 30%;
+		float: $end;
+
+		input {
+			max-width: 80%;
+			float: $end;
+			padding: 5px 5px;
+		}
+	}
+
+	.noUi {
+
+		&-handle {
+			height: 16px;
+			width: 16px;
+			background-color: #fff;
+			@include end(0);
+			transform: translateY(calc(50% - 14px)) translateX(8px);
+			position: absolute;
+			box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
+			border-radius: 50%;
+		}
+
+		&-connects {
+			position: absolute;
+			width: 100%;
+			height: 5px;
+		}
+
+		&-connect {
+			position: absolute;
+			z-index: 0;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			will-change: transform;
+			transform-origin: 0 0;
+			background-color: $editor-light;
+		}
+
+		&-tooltip {
+			position: absolute;
+			bottom: calc(100% + 3px);
+			left: 50%;
+			transform: translateX(-50%);
+			font-size: 10px;
+		}
+	}
+}

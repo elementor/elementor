@@ -20,7 +20,7 @@ foreach ( $document_types as $document_type ) {
 		 */
 		$instance = new $document_type();
 
-		$types[ $instance->get_name() ] = $document_type::get_title();
+		$types[ $instance->get_name() ] = $instance->get_post_type_title();
 	}
 }
 
