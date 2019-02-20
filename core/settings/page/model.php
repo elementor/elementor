@@ -123,7 +123,7 @@ class Model extends BaseModel {
 
 		return [
 			/* translators: %s: Document title */
-			'title' => sprintf( __( '%s Settings', 'elementor' ), $document::get_title() ),
+			'title' => sprintf( __( '%s Settings', 'elementor' ), $document->get_post_type_title() ),
 		];
 	}
 

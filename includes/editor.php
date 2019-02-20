@@ -435,6 +435,14 @@ class Editor {
 		);
 
 		wp_register_script(
+			'nouislider',
+			ELEMENTOR_ASSETS_URL . 'lib/nouislider/nouislider' . $suffix . '.js',
+			[],
+			'13.0.0',
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
@@ -453,6 +461,7 @@ class Editor {
 				'ace',
 				'ace-language-tools',
 				'jquery-hover-intent',
+				'nouislider',
 			],
 			ELEMENTOR_VERSION,
 			true

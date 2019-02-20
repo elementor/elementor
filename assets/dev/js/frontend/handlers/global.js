@@ -38,5 +38,5 @@ const GlobalHandler = elementorModules.frontend.handlers.Base.extend( {
 } );
 
 module.exports = function( $scope ) {
-	new GlobalHandler( { $element: $scope } );
+	elementorFrontend.elementsHandler.addHandler( GlobalHandler, { $element: $scope } );
 };
