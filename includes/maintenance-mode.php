@@ -121,8 +121,13 @@ class Maintenance_Mode {
 
 		if ( 'custom' === $exclude_mode ) {
 			$exclude_roles = self::get( 'exclude_roles', [] );
+			$user_roles = $user->roles;
 
-			$compare_roles = array_intersect( $user->roles, $exclude_roles );
+			if ( is_multisite() && is_super_admin() ) {
+				$user_roles[] = 'super_admin';
+			}
+
+			$compare_roles = array_intersect( $user_roles, $exclude_roles );
 
 			if ( ! empty( $compare_roles ) ) {
 				return;
