@@ -84,6 +84,30 @@ class Model extends BaseModel {
 	 * @return array Controls list.
 	 */
 	public static function get_controls_list() {
+		$additional_controls = [];
+		/**
+		 * Additional Controls.
+		 *
+		 * Filters the Controls used by Elementor to add additional controls to global settings.
+		 *
+		 * @since 2.5.0
+		 *
+		 * @param array $additional_controls Additional Elementor Controls.
+		 */
+		$additional_controls = apply_filters( 'elementor/global/settings/additional_controls', $additional_controls );
+		return array_replace_recursive( $additional_controls, self::get_default_control_list() );
+	}
+
+	/**
+	 * Get Default Control List
+	 *
+	 * Returns Elementor Default Global Settings controls.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @return array
+	 */
+	public static function get_default_control_list() {
 		return [
 			Controls_Manager::TAB_STYLE => [
 				'style' => [
