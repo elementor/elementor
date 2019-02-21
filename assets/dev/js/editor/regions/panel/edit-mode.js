@@ -18,7 +18,7 @@ EditModeItemView = Marionette.ItemView.extend( {
 	initialize: function() {
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeChanged );
 
-		elementorCommon.commands.register( 'panel/toggle', this.toggleMode.bind( this ), 'c+p' );
+		elementorCommon.commands.register( 'panel/toggle', this.toggleMode.bind( this ), 'ctrl+p' );
 	},
 
 	getCurrentMode: function() {

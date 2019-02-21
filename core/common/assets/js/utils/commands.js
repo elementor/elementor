@@ -21,7 +21,7 @@ export default class extends elementorModules.Module {
 		this.commands[ command ] = callback;
 
 		if ( shortcut ) {
-			// Can be an object with args or simple 'c+v'.
+			// Can be an object with args or simple 'ctrl+v'.
 			if ( ! shortcut.keys ) {
 				shortcut = {
 					keys: shortcut,
@@ -29,6 +29,7 @@ export default class extends elementorModules.Module {
 			}
 
 			shortcut.callback = ( event ) => this.run( command, event );
+			elementorCommon.shortcuts.register( shortcut.keys, shortcut );
 		}
 
 		return this;

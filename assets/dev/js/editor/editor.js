@@ -262,8 +262,6 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		this.initHotKeys();
-
 		this.registerCommands();
 
 		this.hotkeysScreen = new HotkeysScreen();
@@ -386,11 +384,11 @@ const App = Marionette.Application.extend( {
 
 		elementorCommon.commands.register( 'elements/copy', function() {
 			elementor.getCurrentElement().copy();
-		}, 'c+c' );
+		}, 'ctrl+c' );
 
 		elementorCommon.commands.register( 'elements/duplicate', function() {
 			elementor.getCurrentElement().duplicate();
-		}, 'c+d' );
+		}, 'ctrl+d' );
 
 		elementorCommon.commands.register( 'elements/delete', function( event ) {
 			var $target = $( event.target );
@@ -412,7 +410,7 @@ const App = Marionette.Application.extend( {
 			if ( targetElement.isPasteEnabled() ) {
 				targetElement.paste();
 			}
-		}, 'c+v' );
+		}, 'ctrl+v' );
 
 		elementorCommon.commands.register( 'elements/pasteStyle', function() {
 			const targetElement = elementor.getCurrentElement();
@@ -420,7 +418,7 @@ const App = Marionette.Application.extend( {
 			if ( targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
 				targetElement.pasteStyle();
 			}
-		}, 'c+s+v' );
+		}, 'ctrl+shift+v' );
 
 		elementorCommon.commands.registerDependency( 'navigator', function() {
 			return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
@@ -432,11 +430,11 @@ const App = Marionette.Application.extend( {
 			} else {
 				elementor.navigator.open();
 			}
-		}, 'c+i' );
+		}, 'ctrl+i' );
 
 		elementorCommon.commands.register( 'library/show', function() {
 			elementorCommon.route.to( 'library/templates' );
-		}, 'c+s+i' );
+		}, 'ctrl+shift+i' );
 
 		elementorCommon.commands.register( 'preview/toggleResponsive', function() {
 			var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
@@ -449,11 +447,11 @@ const App = Marionette.Application.extend( {
 			}
 			//
 			elementor.changeDeviceMode( this.devices[ modeIndex ] );
-		}, 'c+s+m' );
+		}, 'ctrl+shift+m' );
 
 		elementorCommon.commands.register( 'document/save', function() {
 			elementor.saver.saveDraft();
-		}, 'c+s' );
+		}, 'ctrl+s' );
 
 		elementorCommon.commands.register( 'panel/exit', function() {
 			if ( ! jQuery( '.dialog-widget:visible' ).length ) {
@@ -461,235 +459,6 @@ const App = Marionette.Application.extend( {
 			}
 			elementorCommon.route.to( 'panel/menu' );
 		}, 'esc' );
-	},
-
-	initHotKeys: function() {
-		const keysDictionary = {
-			c: 67,
-			d: 68,
-			i: 73,
-			l: 76,
-			m: 77,
-			p: 80,
-			s: 83,
-			v: 86,
-			del: 46,
-			esc: 27,
-		};
-
-		var $ = jQuery,
-			hotKeysHandlers = {},
-			hotKeysManager = elementorCommon.hotKeys;
-
-		hotKeysHandlers[ keysDictionary.c ] = {
-			copyElement: {
-				isWorthHandling: function( event ) {
-					if ( ! hotKeysManager.isControlEvent( event ) ) {
-						return false;
-					}
-
-					if ( ! elementorCommon.route.isPartOf( 'panel/editor' ) ) {
-						return false;
-					}
-
-					var frontendWindow = elementorFrontend.elements.window,
-						textSelection = getSelection() + frontendWindow.getSelection();
-
-					if ( ! textSelection && environment.firefox ) {
-						textSelection = [ window, frontendWindow ].some( function( window ) {
-							var activeElement = window.document.activeElement;
-
-							if ( ! activeElement || -1 === [ 'INPUT', 'TEXTAREA' ].indexOf( activeElement.tagName ) ) {
-								return;
-							}
-
-							var originalInputType;
-
-							// Some of input types can't retrieve a selection
-							if ( 'INPUT' === activeElement.tagName ) {
-								originalInputType = activeElement.type;
-
-								activeElement.type = 'text';
-							}
-
-							var selection = activeElement.value.substring( activeElement.selectionStart, activeElement.selectionEnd );
-
-							activeElement.type = originalInputType;
-
-							return ! ! selection;
-						} );
-					}
-
-					return ! textSelection;
-				},
-				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).copy();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.d ] = {
-			duplicateElement: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event );
-				},
-				handle: function() {
-					var panel = elementor.getPanelView();
-
-					if ( ! elementorCommon.route.isPartOf( 'panel/editor' ) ) {
-						return;
-					}
-
-					panel.getCurrentPageView().getOption( 'editedElementView' ).duplicate();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.i ] = {
-			navigator: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event ) && 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
-				},
-				handle: function() {
-					if ( elementor.navigator.storage.visible ) {
-						elementor.navigator.close();
-					} else {
-						elementor.navigator.open();
-					}
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.l ] = {
-			showTemplateLibrary: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
-				},
-				handle: function() {
-					elementorCommon.route.to( 'library/templates' );
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.m ] = {
-			changeDeviceMode: {
-				devices: [ 'desktop', 'tablet', 'mobile' ],
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
-				},
-				handle: function() {
-					var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
-						modeIndex = this.devices.indexOf( currentDeviceMode );
-
-					modeIndex++;
-
-					if ( modeIndex >= this.devices.length ) {
-						modeIndex = 0;
-					}
-
-					elementor.changeDeviceMode( this.devices[ modeIndex ] );
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.p ] = {
-			changeEditMode: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event );
-				},
-				handle: function() {
-					elementorCommon.route.to( 'panel/toggle' );
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.s ] = {
-			saveEditor: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event );
-				},
-				handle: function() {
-					elementor.saver.saveDraft();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.v ] = {
-			pasteElement: {
-				isWorthHandling: function( event ) {
-					if ( ! hotKeysManager.isControlEvent( event ) ) {
-						return false;
-					}
-
-					return -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName;
-				},
-				handle: function( event ) {
-					var targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
-
-					if ( ! targetElement ) {
-						var panel = elementor.getPanelView();
-
-						if ( elementorCommon.route.isPartOf( 'panel/editor' ) ) {
-							targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
-						}
-					}
-
-					if ( event.shiftKey ) {
-						if ( targetElement && targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
-							targetElement.pasteStyle();
-						}
-
-						return;
-					}
-
-					if ( ! targetElement ) {
-						targetElement = elementor.getPreviewView();
-					}
-
-					if ( targetElement.isPasteEnabled() ) {
-						targetElement.paste();
-					}
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.del ] = {
-			deleteElement: {
-				isWorthHandling: function( event ) {
-					if ( ! elementorCommon.route.isPartOf( 'panel/editor' ) ) {
-						return false;
-					}
-
-					var $target = $( event.target );
-
-					if ( $target.is( ':input, .elementor-input' ) ) {
-						return false;
-					}
-
-					return ! $target.closest( '[contenteditable="true"]' ).length;
-				},
-				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.esc ] = {
-			quitEditor: {
-				isWorthHandling: function() {
-					return ! jQuery( '.dialog-widget:visible' ).length;
-				},
-				handle: function() {
-					elementorCommon.route.to( 'panel/menu' );
-				},
-			},
-		};
-
-		_.each( hotKeysHandlers, function( handlers, keyCode ) {
-			_.each( handlers, function( handler, handlerName ) {
-				hotKeysManager.addHotKeyHandler( keyCode, handlerName, handler );
-			} );
-		} );
 	},
 
 	initPanel: function() {
@@ -1087,7 +856,7 @@ const App = Marionette.Application.extend( {
 
 		this.onEditModeSwitched();
 
-		elementorCommon.hotKeys.bindListener( elementorFrontend.elements.$window );
+		elementorCommon.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded' );
 
