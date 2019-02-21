@@ -655,7 +655,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	save: function() {
-		elementor.route.to( 'library/save-template', {
+		elementorCommon.route.to( 'library/save-template', {
 			model: this.model,
 		} );
 	},
@@ -721,7 +721,7 @@ BaseElementView = BaseContainer.extend( {
 		const model = this.getEditModel(),
 			panel = elementor.getPanelView();
 
-		if ( elementor.route.isPartOf( 'panel/editor' ) && panel.getCurrentPageView().model === model ) {
+		if ( elementorCommon.route.isPartOf( 'panel/editor' ) && panel.getCurrentPageView().model === model ) {
 			return;
 		}
 
@@ -729,7 +729,7 @@ BaseElementView = BaseContainer.extend( {
 			elementor.helpers.scrollToView( this.$el, 200 );
 		}
 
-		elementor.route.to( 'panel/editor', {
+		elementorCommon.route.to( 'panel/editor', {
 			refresh: true,
 			model: model,
 			view: this,

@@ -4,6 +4,8 @@ import HotKeys from './utils/hot-keys';
 import Ajax from '../../modules/ajax/assets/js/ajax';
 import Finder from '../../modules/finder/assets/js/finder';
 import Connect from '../../modules/connect/assets/js/connect';
+import Commands from './utils/commands';
+import Route from './utils/route';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
@@ -34,6 +36,10 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		this.hotKeys = new HotKeys();
 
 		this.hotKeys.bindListener( this.elements.$window );
+
+		this.commands = new Commands();
+
+		this.route = new Route();
 
 		this.dialogsManager = new DialogsManager.Instance();
 

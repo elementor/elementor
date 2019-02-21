@@ -84,23 +84,23 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		elementor.route.register( 'panel/history', () => {
+		elementorCommon.route.register( 'panel/history', () => {
 			elementor.getPanelView().setPage( 'historyPage' );
 		}, 'c+s+h' );
 
-		elementor.route.register( 'panel/history/revisions', () => {
-			elementor.route.to( 'panel/history' );
+		elementorCommon.route.register( 'panel/history/revisions', () => {
+			elementorCommon.route.to( 'panel/history' );
 			elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
 		}, 'c+a+r' );
 
 		const dependency = ( event ) => ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
 
-		elementor.commands.register( 'history/undo', () => navigate(), {
+		elementorCommon.commands.register( 'history/undo', () => navigate(), {
 			keys: 'c+z',
 			dependency: dependency,
 		} );
 
-		elementor.commands.register( 'history/redo', () => navigate( true ), {
+		elementorCommon.commands.register( 'history/redo', () => navigate( true ), {
 			keys: 'c+s+z, c+y',
 			dependency: dependency,
 		} );
@@ -235,10 +235,10 @@ var	Manager = function() {
 			panelPage = panel.getCurrentPageView(),
 			viewToScroll;
 
-		if ( elementor.route.isPartOf( 'panel/editor' ) ) {
+		if ( elementorCommon.route.isPartOf( 'panel/editor' ) ) {
 			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
 				// If the the element isn't exist - show the history panel
-				elementor.route.to( 'panel/history' );
+				elementorCommon.route.to( 'panel/history' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
 				viewToScroll = panelPage.getOption( 'editedElementView' );

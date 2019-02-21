@@ -1,7 +1,5 @@
 /* global ElementorConfig */
 import Heartbeat from './utils/heartbeat';
-import Commands from './utils/commands';
-import Route from './utils/route';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
@@ -250,10 +248,6 @@ const App = Marionette.Application.extend( {
 			Saver = require( 'elementor-editor/components/saver/manager' ),
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
-		this.commands = new Commands();
-
-		this.route = new Route();
-
 		this.hooks = new EventManager();
 
 		this.saver = new Saver();
@@ -373,7 +367,7 @@ const App = Marionette.Application.extend( {
 		if ( ! targetElement ) {
 			const panel = elementor.getPanelView();
 
-			if ( elementor.route.isPartOf( 'panel/editor' ) ) {
+			if ( elementorCommon.route.isPartOf( 'panel/editor' ) ) {
 				targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
 			}
 		}
@@ -386,19 +380,19 @@ const App = Marionette.Application.extend( {
 	},
 
 	registerCommands: function() {
-		elementor.commands.registerDependency( 'elements', function() {
+		elementorCommon.commands.registerDependency( 'elements', function() {
 			return elementor.getCurrentElement();
 		} );
 
-		elementor.commands.register( 'elements/copy', function() {
+		elementorCommon.commands.register( 'elements/copy', function() {
 			elementor.getCurrentElement().copy();
 		}, 'c+c' );
 
-		elementor.commands.register( 'elements/duplicate', function() {
+		elementorCommon.commands.register( 'elements/duplicate', function() {
 			elementor.getCurrentElement().duplicate();
 		}, 'c+d' );
 
-		elementor.commands.register( 'elements/delete', function( event ) {
+		elementorCommon.commands.register( 'elements/delete', function( event ) {
 			var $target = $( event.target );
 
 			if ( $target.is( ':input, .elementor-input' ) ) {
@@ -412,7 +406,7 @@ const App = Marionette.Application.extend( {
 			elementor.getCurrentElement().removeElement();
 		}, 'del' );
 
-		elementor.commands.register( 'elements/paste', function() {
+		elementorCommon.commands.register( 'elements/paste', function() {
 			const targetElement = elementor.getCurrentElement();
 
 			if ( targetElement.isPasteEnabled() ) {
@@ -420,7 +414,7 @@ const App = Marionette.Application.extend( {
 			}
 		}, 'c+v' );
 
-		elementor.commands.register( 'elements/pasteStyle', function() {
+		elementorCommon.commands.register( 'elements/pasteStyle', function() {
 			const targetElement = elementor.getCurrentElement();
 
 			if ( targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
@@ -428,11 +422,11 @@ const App = Marionette.Application.extend( {
 			}
 		}, 'c+s+v' );
 
-		elementor.commands.registerDependency( 'navigator', function() {
+		elementorCommon.commands.registerDependency( 'navigator', function() {
 			return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
 		} );
 
-		elementor.commands.register( 'navigator/toggle', function() {
+		elementorCommon.commands.register( 'navigator/toggle', function() {
 			if ( elementor.navigator.storage.visible ) {
 				elementor.navigator.close();
 			} else {
@@ -440,11 +434,11 @@ const App = Marionette.Application.extend( {
 			}
 		}, 'c+i' );
 
-		elementor.commands.register( 'library/show', function() {
-			elementor.route.to( 'library/templates' );
+		elementorCommon.commands.register( 'library/show', function() {
+			elementorCommon.route.to( 'library/templates' );
 		}, 'c+s+i' );
 
-		elementor.commands.register( 'preview/toggleResponsive', function() {
+		elementorCommon.commands.register( 'preview/toggleResponsive', function() {
 			var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
 				modeIndex = this.devices.indexOf( currentDeviceMode );
 
@@ -457,15 +451,15 @@ const App = Marionette.Application.extend( {
 			elementor.changeDeviceMode( this.devices[ modeIndex ] );
 		}, 'c+s+m' );
 
-		elementor.commands.register( 'document/save', function() {
+		elementorCommon.commands.register( 'document/save', function() {
 			elementor.saver.saveDraft();
 		}, 'c+s' );
 
-		elementor.commands.register( 'panel/exit', function() {
+		elementorCommon.commands.register( 'panel/exit', function() {
 			if ( ! jQuery( '.dialog-widget:visible' ).length ) {
 				return;
 			}
-			elementor.route.to( 'panel/menu' );
+			elementorCommon.route.to( 'panel/menu' );
 		}, 'esc' );
 	},
 
@@ -494,7 +488,7 @@ const App = Marionette.Application.extend( {
 						return false;
 					}
 
-					if ( ! elementor.route.isPartOf( 'panel/editor' ) ) {
+					if ( ! elementorCommon.route.isPartOf( 'panel/editor' ) ) {
 						return false;
 					}
 
@@ -542,7 +536,7 @@ const App = Marionette.Application.extend( {
 				handle: function() {
 					var panel = elementor.getPanelView();
 
-					if ( ! elementor.route.isPartOf( 'panel/editor' ) ) {
+					if ( ! elementorCommon.route.isPartOf( 'panel/editor' ) ) {
 						return;
 					}
 
@@ -572,7 +566,7 @@ const App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
 				},
 				handle: function() {
-					elementor.route.to( 'library/templates' );
+					elementorCommon.route.to( 'library/templates' );
 				},
 			},
 		};
@@ -604,7 +598,7 @@ const App = Marionette.Application.extend( {
 					return hotKeysManager.isControlEvent( event );
 				},
 				handle: function() {
-					elementor.route.to( 'panel/toggle' );
+					elementorCommon.route.to( 'panel/toggle' );
 				},
 			},
 		};
@@ -635,7 +629,7 @@ const App = Marionette.Application.extend( {
 					if ( ! targetElement ) {
 						var panel = elementor.getPanelView();
 
-						if ( elementor.route.isPartOf( 'panel/editor' ) ) {
+						if ( elementorCommon.route.isPartOf( 'panel/editor' ) ) {
 							targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
 						}
 					}
@@ -662,7 +656,7 @@ const App = Marionette.Application.extend( {
 		hotKeysHandlers[ keysDictionary.del ] = {
 			deleteElement: {
 				isWorthHandling: function( event ) {
-					if ( ! elementor.route.isPartOf( 'panel/editor' ) ) {
+					if ( ! elementorCommon.route.isPartOf( 'panel/editor' ) ) {
 						return false;
 					}
 
@@ -686,7 +680,7 @@ const App = Marionette.Application.extend( {
 					return ! jQuery( '.dialog-widget:visible' ).length;
 				},
 				handle: function() {
-					elementor.route.to( 'panel/menu' );
+					elementorCommon.route.to( 'panel/menu' );
 				},
 			},
 		};
@@ -761,7 +755,7 @@ const App = Marionette.Application.extend( {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				elementor.route.to( 'panel/elements' );
+				elementorCommon.route.to( 'panel/elements' );
 			}
 		} );
 	},
@@ -815,7 +809,7 @@ const App = Marionette.Application.extend( {
 						name: 'view_revisions',
 						text: elementor.translate( 'view_all_revisions' ),
 						callback: function() {
-							elementor.route.to( 'panel/history/revisions' );
+							elementorCommon.route.to( 'panel/history/revisions' );
 						},
 					},
 				],
@@ -825,7 +819,7 @@ const App = Marionette.Application.extend( {
 
 	openLibraryOnStart: function() {
 		if ( '#library' === location.hash ) {
-			elementor.route.to( 'library/templates' );
+			elementorCommon.route.to( 'library/templates' );
 
 			location.hash = '';
 		}
@@ -1056,7 +1050,7 @@ const App = Marionette.Application.extend( {
 		this.addBackgroundClickArea( elementorFrontend.elements.window.document );
 
 		if ( this.previewLoadedOnce ) {
-			elementor.route.to( 'panel/elements' );
+			elementorCommon.route.to( 'panel/elements' );
 		} else {
 			this.onFirstPreviewLoaded();
 		}

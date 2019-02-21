@@ -40,7 +40,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var currentRoute = elementor.route.getCurrent( 'library' ),
+		var currentRoute = elementorCommon.route.getCurrent( 'library' ),
 			$sourceItem = this.ui.menuItems.filter( '[data-route="' + currentRoute + '"]' );
 
 		this.activateMenuItem( $sourceItem );
@@ -51,6 +51,6 @@ module.exports = Marionette.ItemView.extend( {
 
 		this.activateMenuItem( jQuery( item ) );
 
-		elementor.route.to( item.dataset.route );
+		elementorCommon.route.to( item.dataset.route );
 	},
 } );
