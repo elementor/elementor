@@ -386,19 +386,19 @@ const App = Marionette.Application.extend( {
 	},
 
 	registerCommands: function() {
-		this.commands.registerDependency( 'elements', function() {
+		elementor.commands.registerDependency( 'elements', function() {
 			return elementor.getCurrentElement();
 		} );
 
-		this.commands.register( 'elements/copy', function() {
+		elementor.commands.register( 'elements/copy', function() {
 			elementor.getCurrentElement().copy();
 		}, 'c+c' );
 
-		this.commands.register( 'elements/duplicate', function() {
+		elementor.commands.register( 'elements/duplicate', function() {
 			elementor.getCurrentElement().duplicate();
 		}, 'c+d' );
 
-		this.commands.register( 'elements/delete', function() {
+		elementor.commands.register( 'elements/delete', function( event ) {
 			var $target = $( event.target );
 
 			if ( $target.is( ':input, .elementor-input' ) ) {
@@ -410,9 +410,9 @@ const App = Marionette.Application.extend( {
 			}
 
 			elementor.getCurrentElement().removeElement();
-		}, 'c+del' );
+		}, 'del' );
 
-		this.commands.register( 'elements/paste', function() {
+		elementor.commands.register( 'elements/paste', function() {
 			const targetElement = elementor.getCurrentElement();
 
 			if ( targetElement.isPasteEnabled() ) {
@@ -420,7 +420,7 @@ const App = Marionette.Application.extend( {
 			}
 		}, 'c+v' );
 
-		this.commands.register( 'elements/pasteStyle', function() {
+		elementor.commands.register( 'elements/pasteStyle', function() {
 			const targetElement = elementor.getCurrentElement();
 
 			if ( targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
@@ -428,11 +428,11 @@ const App = Marionette.Application.extend( {
 			}
 		}, 'c+s+v' );
 
-		this.commands.registerDependency( 'navigator', function() {
+		elementor.commands.registerDependency( 'navigator', function() {
 			return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
 		} );
 
-		this.commands.register( 'navigator/toggle', function() {
+		elementor.commands.register( 'navigator/toggle', function() {
 			if ( elementor.navigator.storage.visible ) {
 				elementor.navigator.close();
 			} else {
@@ -440,11 +440,11 @@ const App = Marionette.Application.extend( {
 			}
 		}, 'c+i' );
 
-		this.commands.register( 'library/show', function() {
+		elementor.commands.register( 'library/show', function() {
 			elementor.route.to( 'library/templates' );
 		}, 'c+s+i' );
 
-		this.commands.register( 'preview/toggleResponsive', function() {
+		elementor.commands.register( 'preview/toggleResponsive', function() {
 			var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
 				modeIndex = this.devices.indexOf( currentDeviceMode );
 
@@ -457,11 +457,11 @@ const App = Marionette.Application.extend( {
 			elementor.changeDeviceMode( this.devices[ modeIndex ] );
 		}, 'c+s+m' );
 
-		this.commands.register( 'document/save', function() {
+		elementor.commands.register( 'document/save', function() {
 			elementor.saver.saveDraft();
 		}, 'c+s' );
 
-		this.commands.register( 'panel/exit', function() {
+		elementor.commands.register( 'panel/exit', function() {
 			if ( ! jQuery( '.dialog-widget:visible' ).length ) {
 				return;
 			}
