@@ -22,13 +22,9 @@ export default class extends Marionette.Behavior {
 	}
 
 	activate() {
-		if ( ! elementor.userCan( 'design' ) ) {
-			return;
-		}
+		this.$handle = jQuery( '<div class="elementor-handle"><i class="fa fa-arrows"></i></div>' );
 
-		this.deactivate();
-
-		this.$el.append( '<div class="elementor-handle"><i class="fa fa-arrows"></i></div>' );
+		this.$el.append( this.$handle );
 
 		this.$el.draggable( {
 			addClasses: false,
@@ -41,17 +37,18 @@ export default class extends Marionette.Behavior {
 		}
 
 		this.$el.draggable( 'destroy' );
-		this.$el.find( '> .elementor-handle' ).remove();
+
+		this.$handle.remove();
 	}
 
 	toggle() {
 		const isEditMode = 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
-			isAbsolute = '' < this.view.getEditModel().getSetting( '_position' );
+			isAbsolute = this.view.getEditModel().getSetting( '_position' );
 
-		if ( isEditMode && isAbsolute ) {
+		this.deactivate();
+
+		if ( isEditMode && isAbsolute && elementor.userCan( 'design' ) ) {
 			this.activate();
-		} else {
-			this.deactivate();
 		}
 	}
 
@@ -72,10 +69,7 @@ export default class extends Marionette.Behavior {
 	onDragStop( event, ui ) {
 		event.stopPropagation();
 
-		const $window = elementorFrontend.elements.$window,
-			viewportWidth = $window.outerWidth( true ),
-			viewportHeight = $window.outerHeight( true ),
-			currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
+		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
 			editModel = this.view.getEditModel(),
 			hOrientation = editModel.getSetting( '_offset_orientation_h' ),
@@ -95,19 +89,9 @@ export default class extends Marionette.Behavior {
 			offsetX = '_offset_x_end';
 		}
 
-		const offsetXSettings = editModel.getSetting( offsetX + deviceSuffix );
+		const offsetXUnit = editModel.getSetting( offsetX + deviceSuffix ).unit;
 
-		switch ( offsetXSettings.unit ) {
-			case '%':
-				xPos = ( xPos / ( parentWidth / 100 ) );
-				break;
-			case 'vw':
-				xPos = ( xPos / ( viewportWidth / 100 ) );
-				break;
-			case 'vh':
-				xPos = ( xPos / ( viewportHeight / 100 ) );
-				break;
-		}
+		xPos = elementor.helpers.elementSizeToUnit( this.$el, xPos, offsetXUnit );
 
 		const parentHeight = this.$el.offsetParent().height(),
 			elementHeight = this.$el.outerHeight( true );
@@ -117,24 +101,14 @@ export default class extends Marionette.Behavior {
 			offsetY = '_offset_y_end';
 		}
 
-		const offsetYSettings = editModel.getSetting( offsetY + deviceSuffix );
+		const offsetYUnit = editModel.getSetting( offsetY + deviceSuffix ).unit;
 
-		switch ( offsetYSettings.unit ) {
-			case '%':
-				yPos = ( yPos / ( parentHeight / 100 ) );
-				break;
-			case 'vh':
-				yPos = ( yPos / ( viewportHeight / 100 ) );
-				break;
-			case 'vw':
-				yPos = ( yPos / ( viewportWidth / 100 ) );
-				break;
-		}
+		yPos = elementor.helpers.elementSizeToUnit( this.$el, yPos, offsetYUnit );
 
-		settingToChange[ offsetX + deviceSuffix ] = { size: xPos.toFixed( 3 ), unit: offsetXSettings.unit };
-		settingToChange[ offsetY + deviceSuffix ] = { size: yPos.toFixed( 3 ), unit: offsetYSettings.unit };
+		settingToChange[ offsetX + deviceSuffix ] = { size: xPos.toFixed( 3 ), unit: offsetXUnit };
+		settingToChange[ offsetY + deviceSuffix ] = { size: yPos.toFixed( 3 ), unit: offsetYUnit };
 
-		this.view.getEditModel().get( 'settings' ).setExternalChange( settingToChange );
+		editModel.get( 'settings' ).setExternalChange( settingToChange );
 
 		setTimeout( () => {
 			this.$el.css( {
