@@ -132,9 +132,9 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'section_motion_effects',
+			'section_effects',
 			[
-				'label' => __( 'Motion Effects', 'elementor' ),
+				'label' => __( 'Effects', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
