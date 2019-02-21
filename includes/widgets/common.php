@@ -369,12 +369,12 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Full Width', 'elementor' ) . ' (100%)',
+					'' => __( 'Default', 'elementor' ),
+					'inherit' => __( 'Full Width', 'elementor' ) . ' (100%)',
 					'auto' => __( 'Inline', 'elementor' ) . ' (auto)',
 					'initial' => __( 'Custom', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-widget__width-',
-				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}',
 				],
@@ -444,6 +444,19 @@ class Widget_Common extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_position_description',
+			[
+				'raw' => '<strong>' . __( 'Please note!') . '</strong> ' . __( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'render_type' => 'ui',
+				'condition' => [
+					'_position!' => '',
 				],
 			]
 		);
