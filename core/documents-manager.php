@@ -87,6 +87,7 @@ class Documents_Manager {
 		add_filter( 'post_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
 		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
 		add_filter( 'user_has_cap', [ $this, 'remove_user_edit_cap' ], 10, 3 );
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 	}
 
 	/**
@@ -626,6 +627,18 @@ class Documents_Manager {
 	 */
 	public function get_groups() {
 		return [];
+	}
+
+	public function localize_settings( $settings ) {
+		$translations = [];
+
+		foreach ( $this->get_document_types() as $type => $class ) {
+			$translations[ $type ] = $class::get_title();
+		}
+
+		return array_replace_recursive( $settings, [
+			'i18n' => $translations,
+		] );
 	}
 
 	private function register_types() {
