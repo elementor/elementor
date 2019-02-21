@@ -312,7 +312,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'selector' => '{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-column-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
+				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-element-populated, {{WRAPPER}} > .elementor-column-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 			]
 		);
 
@@ -830,9 +830,9 @@ class Element_Column extends Element_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'section_motion_effects',
+			'section_effects',
 			[
-				'label' => __( 'Motion Effects', 'elementor' ),
+				'label' => __( 'Effects', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
