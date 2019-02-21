@@ -23,37 +23,37 @@ TemplateLibraryManager = function() {
 			self.isOpen = false;
 			modalConfig = {};
 
-			elementor.route
+			elementorCommon.route
 				.saveState( 'library' )
 				.close( 'library' );
 		} );
 	};
 
 	const registerRouts = function() {
-		elementor.route.registerDependency( 'library', () => {
+		elementorCommon.route.registerDependency( 'library', () => {
 			self.startModal();
 			return true;
 		} );
 
 		screens.forEach( ( screen ) => {
-			elementor.route.register( screen.route, () => {
+			elementorCommon.route.register( screen.route, () => {
 				self.setScreen( screen.source, screen.type );
 			} );
 		} );
 
-		elementor.route.register( 'library/templates', ( args ) => {
+		elementorCommon.route.register( 'library/templates', ( args ) => {
 			modalConfig = args;
 
-			if ( ! elementor.route.restoreState( 'library' ) ) {
+			if ( ! elementorCommon.route.restoreState( 'library' ) ) {
 				self.showDefaultScreen();
 			}
 		}, 'c+s+l' );
 
-		elementor.route.register( 'library/save-template', ( args ) => {
+		elementorCommon.route.register( 'library/save-template', ( args ) => {
 			self.getLayout().showSaveTemplateView( args.model );
 		} );
 
-		elementor.route.register( 'library/import', () => {
+		elementorCommon.route.register( 'library/import', () => {
 			self.getLayout().showImportView();
 		} );
 	};
@@ -65,7 +65,7 @@ TemplateLibraryManager = function() {
 			},
 			ajaxParams: {
 				success: function( successData ) {
-					elementor.route.to( 'library/templates/my-templates', {
+					elementorCommon.route.to( 'library/templates/my-templates', {
 						onBefore: () => {
 							if ( templatesCollection ) {
 								templatesCollection.add( successData );
@@ -422,7 +422,7 @@ TemplateLibraryManager = function() {
 			defaultRoute = 'library/templates/blocks';
 		}
 
-		elementor.route.to( defaultRoute, {
+		elementorCommon.route.to( defaultRoute, {
 			onAfter: () => {
 				if ( remoteLibraryConfig.category ) {
 					this.setFilter( 'subtype', remoteLibraryConfig.category );

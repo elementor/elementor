@@ -1,4 +1,4 @@
-export default class extends elementorModules.editor.utils.Module {
+export default class extends elementorModules.Module {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -20,12 +20,15 @@ export default class extends elementorModules.editor.utils.Module {
 
 		this.commands[ command ] = callback;
 
-		if ( this.shortcut ) {
-			if ( this.shortcuts[ shortcut ] ) {
-				this.error( 'Shortcut `' + shortcut + '` is already taken by `' + command + '`' );
+		if ( shortcut ) {
+			// Can be an object with args or simple 'c+v'.
+			if ( ! shortcut.keys ) {
+				shortcut = {
+					keys: shortcut,
+				};
 			}
 
-			this.shortcuts[ shortcut ] = command;
+			shortcut.callback = ( event ) => this.run( command, event );
 		}
 
 		return this;

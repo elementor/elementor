@@ -18,7 +18,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		switch ( menuItemType ) {
 			case 'page':
-				elementor.route.to( childView.model.get( 'route' ) );
+				elementorCommon.route.to( childView.model.get( 'route' ) );
 
 				break;
 

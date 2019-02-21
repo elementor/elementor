@@ -22,14 +22,14 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 	},
 
 	onClickAdd: function() {
-		elementor.route.to( 'panel/elements' );
+		elementorCommon.route.to( 'panel/elements' );
 	},
 
 	onClickMenu: function() {
-		if ( elementor.route.is( 'panel/menu' ) ) {
-			elementor.route.to( 'panel/elements' );
+		if ( elementorCommon.route.is( 'panel/menu' ) ) {
+			elementorCommon.route.to( 'panel/elements' );
 		} else {
-			elementor.route.to( 'panel/menu' );
+			elementorCommon.route.to( 'panel/menu' );
 		}
 	},
 } );

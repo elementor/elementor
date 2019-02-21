@@ -57,7 +57,7 @@ ImagesManager = function() {
 		// If it's not in cache, like a new dropped widget or a custom size - get from settings
 		if ( ! imageUrl ) {
 			if ( 'custom' === image.size ) {
-				if ( elementor.route.isPartOf( 'panel/editor' ) && image.model ) {
+				if ( elementorCommon.route.isPartOf( 'panel/editor' ) && image.model ) {
 					self.updateOnReceiveImage();
 				}
 

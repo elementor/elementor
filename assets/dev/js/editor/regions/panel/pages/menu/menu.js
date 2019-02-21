@@ -153,7 +153,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 		}
 
 		if ( itemData.route ) {
-			elementor.route.register( itemData.route, () => {
+			elementorCommon.route.register( itemData.route, () => {
 				elementor.getPanelView().setPage( itemData.pageName );
 			} );
 		}

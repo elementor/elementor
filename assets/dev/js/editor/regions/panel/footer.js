@@ -39,7 +39,7 @@ module.exports = Marionette.ItemView.extend( {
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 
-		elementor.route.register( 'panel/page-settings', () => {
+		elementorCommon.route.register( 'panel/page-settings', () => {
 			this.showSettingsPage();
 		} );
 	},
@@ -120,7 +120,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSettingsClick: function() {
-		elementor.route.to( 'panel/page-settings' );
+		elementorCommon.route.to( 'panel/page-settings' );
 	},
 
 	onDeviceModeChange: function() {
@@ -143,11 +143,11 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSaveTemplateClick: function() {
-		elementor.route.to( 'library/save-template' );
+		elementorCommon.route.to( 'library/save-template' );
 	},
 
 	onHistoryClick: function() {
-		elementor.route.to( 'panel/history' );
+		elementorCommon.route.to( 'panel/history' );
 	},
 
 	onNavigatorClick: function() {
