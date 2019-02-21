@@ -62,39 +62,6 @@ var	Manager = function() {
 		self.doItem( requiredIndex );
 	};
 
-	var addHotKeys = function() {
-		var H_KEY = 72,
-			Y_KEY = 89,
-			Z_KEY = 90;
-
-		elementorCommon.hotKeys.addHotKeyHandler( H_KEY, 'showHistoryPage', {
-			isWorthHandling: function( event ) {
-				return elementorCommon.hotKeys.isControlEvent( event ) && event.shiftKey;
-			},
-			handle: function() {
-				elementor.route.to( 'panel/history' );
-			},
-		} );
-
-		var navigationWorthHandling = function( event ) {
-			return items.length && elementorCommon.hotKeys.isControlEvent( event ) && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
-		};
-
-		elementorCommon.hotKeys.addHotKeyHandler( Y_KEY, 'historyNavigationRedo', {
-			isWorthHandling: navigationWorthHandling,
-			handle: () => {
-				navigate( true );
-			},
-		} );
-
-		elementorCommon.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
-			isWorthHandling: navigationWorthHandling,
-			handle: function( event ) {
-				navigate( event.shiftKey );
-			},
-		} );
-	};
-
 	var updatePanelPageCurrentItem = function() {
 		const panel = elementor.getPanelView();
 
@@ -119,14 +86,24 @@ var	Manager = function() {
 	var init = function() {
 		elementor.route.register( 'panel/history', () => {
 			elementor.getPanelView().setPage( 'historyPage' );
-		} );
+		}, 'c+s+h' );
 
 		elementor.route.register( 'panel/history/revisions', () => {
 			elementor.route.to( 'panel/history' );
 			elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
+		}, 'c+a+r' );
+
+		const dependency = ( event ) => ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
+
+		elementor.commands.register( 'history/undo', () => navigate(), {
+			keys: 'c+z',
+			dependency: dependency,
 		} );
 
-		addHotKeys();
+		elementor.commands.register( 'history/redo', () => navigate( true ), {
+			keys: 'c+s+z, c+y',
+			dependency: dependency,
+		} );
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );

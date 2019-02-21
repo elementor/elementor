@@ -373,7 +373,7 @@ const App = Marionette.Application.extend( {
 		if ( ! targetElement ) {
 			const panel = elementor.getPanelView();
 
-			if ( elementor.route.is( 'panel/editor' ) ) {
+			if ( elementor.route.isPartOf( 'panel/editor' ) ) {
 				targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
 			}
 		}

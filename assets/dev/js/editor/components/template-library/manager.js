@@ -47,7 +47,7 @@ TemplateLibraryManager = function() {
 			if ( ! elementor.route.restoreState( 'library' ) ) {
 				self.showDefaultScreen();
 			}
-		} );
+		}, 'c+s+l' );
 
 		elementor.route.register( 'library/save-template', ( args ) => {
 			self.getLayout().showSaveTemplateView( args.model );
