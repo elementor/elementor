@@ -451,7 +451,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_position_description',
 			[
-				'raw' => '<strong>' . __( 'Please note!') . '</strong> ' . __( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
+				'raw' => '<strong>' . __( 'Please note!' ) . '</strong> ' . __( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 				'render_type' => 'ui',
