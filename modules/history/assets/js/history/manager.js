@@ -86,22 +86,22 @@ var	Manager = function() {
 	var init = function() {
 		elementorCommon.route.register( 'panel/history', () => {
 			elementor.getPanelView().setPage( 'historyPage' );
-		}, 'c+s+h' );
+		}, 'ctrl+shift+h' );
 
 		elementorCommon.route.register( 'panel/history/revisions', () => {
 			elementorCommon.route.to( 'panel/history' );
 			elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
-		}, 'c+a+r' );
+		}, 'ctrl+alt+r' );
 
 		const dependency = ( event ) => ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
 
 		elementorCommon.commands.register( 'history/undo', () => navigate(), {
-			keys: 'c+z',
+			keys: 'ctrl+z',
 			dependency: dependency,
 		} );
 
 		elementorCommon.commands.register( 'history/redo', () => navigate( true ), {
-			keys: 'c+s+z, c+y',
+			keys: 'ctrl+shift+z, c+y',
 			dependency: dependency,
 		} );
 
