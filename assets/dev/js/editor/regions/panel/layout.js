@@ -37,6 +37,11 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			this.setPage( 'elements', null, args );
 		} );
 
+		elementorCommon.route.register( 'panel/elements/global', () => {
+			this.setPage( 'elements' );
+			elementor.getPanelView().getCurrentPageView().activateTab( 'global' );
+		} );
+
 		elementorCommon.route.register( 'panel/editor', ( args ) => {
 			this.openEditor( args.model, args.view );
 		} );
