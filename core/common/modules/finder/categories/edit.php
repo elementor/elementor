@@ -107,7 +107,7 @@ class Edit extends Base_Category {
 
 			$is_template = Source_Local::CPT === $post->post_type;
 
-			$description = $document->get_post_type_title();
+			$description = $document->get_title();
 
 			$icon = 'document-file';
 
