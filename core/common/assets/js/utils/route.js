@@ -80,10 +80,6 @@ export default class extends Commands {
 	}
 
 	isPartOf( route ) {
-		if ( ! super.is( route ) ) {
-			return false;
-		}
-
 		/**
 		 * Check against current command hierarchically.
 		 * For example `is( 'panel' )` will be true for `panel/elements`
