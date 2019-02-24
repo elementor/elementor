@@ -149,7 +149,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	activateTab: function( tabName ) {
 		this.ui.tabs
 			.removeClass( 'elementor-active' )
-			.filter( '[data-view="' + tabName + '"]' )
+			.filter( '[data-route="panel/elements/' + tabName + '"]' )
 			.addClass( 'elementor-active' );
 
 		this.showView( tabName );
@@ -208,7 +208,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onTabClick: function( event ) {
-		this.activateTab( event.currentTarget.dataset.view );
+		elementorCommon.route.to( event.currentTarget.dataset.route );
 	},
 } );
 

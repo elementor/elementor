@@ -37,9 +37,12 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			this.setPage( 'elements', null, args );
 		} );
 
+		elementorCommon.route.register( 'panel/elements/categories', ( args ) => {
+			this.setPage( 'elements', null, args ).activateTab( 'categories' );
+		} );
+
 		elementorCommon.route.register( 'panel/elements/global', () => {
-			this.setPage( 'elements' );
-			elementor.getPanelView().getCurrentPageView().activateTab( 'global' );
+			this.setPage( 'elements' ).activateTab( 'global' );
 		} );
 
 		elementorCommon.route.register( 'panel/editor', ( args ) => {
@@ -190,6 +193,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this
 			.trigger( 'set:page', this.currentPageView )
 			.trigger( 'set:page:' + page, this.currentPageView );
+
+		return this.currentPageView;
 	},
 
 	openEditor: function( model, view ) {
