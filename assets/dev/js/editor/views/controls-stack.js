@@ -208,14 +208,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	onClickTabControl: function( event ) {
 		event.preventDefault();
 
-		var $tab = this.$( event.currentTarget ),
-			tabName = $tab.data( 'tab' );
-
-		if ( this.activeTab === tabName ) {
-			return;
-		}
-
-		this.activateTab( tabName );
+		elementorCommon.route.to( 'panel/editor/' + event.currentTarget.dataset.tab );
 
 		this._renderChildren();
 	},
