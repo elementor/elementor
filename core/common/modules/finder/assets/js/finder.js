@@ -6,6 +6,6 @@ export default class extends elementorModules.Module {
 
 		this.layout = new FinderLayout();
 
-		elementor.route.register( 'finder', () => this.layout.showModal(), 'ctrl+e' );
+		elementorCommon.route.register( 'finder', () => this.layout.showModal(), 'ctrl+e' );
 	}
 }
