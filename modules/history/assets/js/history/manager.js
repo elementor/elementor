@@ -85,12 +85,15 @@ var	Manager = function() {
 
 	var init = function() {
 		elementorCommon.route.register( 'panel/history', () => {
-			elementor.getPanelView().setPage( 'historyPage' );
+			elementorCommon.route.to( 'panel/history/actions' );
+		} );
+
+		elementorCommon.route.register( 'panel/history/actions', () => {
+			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'actions' );
 		}, 'ctrl+shift+h' );
 
 		elementorCommon.route.register( 'panel/history/revisions', () => {
-			elementorCommon.route.to( 'panel/history' );
-			elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' );
+			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'revisions' );
 		}, 'ctrl+alt+r' );
 
 		const dependency = ( event ) => ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );

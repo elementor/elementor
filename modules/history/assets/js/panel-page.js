@@ -31,7 +31,7 @@ module.exports = Marionette.LayoutView.extend( {
 		const historyItems = elementor.history.history.getItems();
 
 		this.regionViews = {
-			history: {
+			actions: {
 				view: function() {
 					return TabHistoryView;
 				},
@@ -60,7 +60,7 @@ module.exports = Marionette.LayoutView.extend( {
 	activateTab: function( tabName ) {
 		this.ui.tabs
 			.removeClass( 'elementor-active' )
-			.filter( '[data-view="' + tabName + '"]' )
+			.filter( '[data-route="panel/history/' + tabName + '"]' )
 			.addClass( 'elementor-active' );
 
 		this.showView( tabName );
@@ -84,12 +84,8 @@ module.exports = Marionette.LayoutView.extend( {
 		this.content.show( this.currentTab );
 	},
 
-	onRender: function() {
-		this.showView( 'history' );
-	},
-
 	onTabClick: function( event ) {
-		this.activateTab( event.currentTarget.dataset.view );
+		elementorCommon.route.to( event.currentTarget.dataset.route );
 	},
 
 	onDestroy: function() {
