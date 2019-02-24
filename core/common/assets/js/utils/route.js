@@ -61,6 +61,11 @@ export default class extends Commands {
 		this.run( route, args );
 	}
 
+	// Don't use the event object.
+	runShortcut( command ) {
+		this.to( command );
+	}
+
 	// Don't clear current route.
 	afterRun() {}
 

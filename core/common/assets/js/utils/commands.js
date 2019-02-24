@@ -28,11 +28,15 @@ export default class extends elementorModules.Module {
 				};
 			}
 
-			shortcut.callback = ( event ) => this.run( command, event );
+			shortcut.callback = ( event ) => this.runShortcut( command, event );
 			elementorCommon.shortcuts.register( shortcut.keys, shortcut );
 		}
 
 		return this;
+	}
+
+	runShortcut( command, event ) {
+		this.run( command, event );
 	}
 
 	unregister( command ) {
