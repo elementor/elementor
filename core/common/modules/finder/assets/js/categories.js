@@ -34,7 +34,7 @@ export default class extends Marionette.CompositeView {
 
 		this.collection = new Backbone.Collection( Object.values( elementorCommon.finder.getSettings( 'data' ) ) );
 
-		this.addHotKeys();
+		this. addCommands();
 	}
 
 	activateItem( $item ) {
@@ -84,24 +84,20 @@ export default class extends Marionette.CompositeView {
 		}
 	}
 
-	addHotKeys() {
-		const DOWN_ARROW = 40,
-			UP_ARROW = 38,
-			ENTER = 13;
-
-		elementorCommon.hotKeys.addHotKeyHandler( DOWN_ARROW, 'finderNextItem', {
-			isWorthHandling: () => elementorCommon.finder.getLayout().getModal().isVisible(),
-			handle: () => this.activateNextItem(),
+	addCommands() {
+		elementorCommon.commands.registerDependency( 'finder', () => {
+			return elementorCommon.finder.layout.getModal().isVisible();
 		} );
 
-		elementorCommon.hotKeys.addHotKeyHandler( UP_ARROW, 'finderPreviousItem', {
-			isWorthHandling: () => elementorCommon.finder.getLayout().getModal().isVisible(),
-			handle: () => this.activateNextItem( true ),
-		} );
+		elementorCommon.commands.register( 'finder/navigate/down', () => this.activateNextItem(), 'down' );
 
-		elementorCommon.hotKeys.addHotKeyHandler( ENTER, 'finderSelectItem', {
-			isWorthHandling: () => elementorCommon.finder.getLayout().getModal().isVisible() && this.$activeItem,
-			handle: ( event ) => this.goToActiveItem( event ),
+		elementorCommon.commands.register( 'finder/navigate/up', () => this.activateNextItem( true ), 'up' );
+
+		elementorCommon.commands.register( 'finder/navigate/select', ( event ) => this.goToActiveItem( event ), {
+			keys: 'enter',
+			dependency: () => {
+				return this.$activeItem;
+			},
 		} );
 	}
 

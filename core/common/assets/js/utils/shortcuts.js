@@ -3,10 +3,11 @@ import environment from './environment';
 export default class Shortcuts {
 	constructor( $window ) {
 		this.specialKeys = {
-			46: 'del',
+			13: 'enter',
 			27: 'esc',
 			38: 'up',
 			40: 'down',
+			46: 'del',
 			191: '?',
 		};
 
