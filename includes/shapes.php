@@ -224,4 +224,41 @@ class Shapes {
 
 		self::$shapes = array_merge( $native_shapes, $additional_shapes );
 	}
+
+	/**
+	 * Get Additional Shapes For Config
+	 *
+	 * Used to set additional shape paths in editor
+	 * @return array|bool
+	 */
+	public static function get_additional_shapes_for_config() {
+		$additional_shapes = [];
+		/**
+		 * Additional shapes.
+		 *
+		 * Filters the shapes used by Elementor to add additional shapes.
+		 *
+		 * @since 2.0.1
+		 *
+		 * @param array $additional_shapes Additional Elementor fonts.
+		 */
+		$additional_shapes = apply_filters( 'elementor/shapes/additional_shapes', $additional_shapes );
+		if ( empty( $additional_shapes ) ) {
+			return false;
+		}
+
+		$additional_shapes_config = [];
+		foreach ( $additional_shapes as $shape_name => $shape_settings ) {
+			if ( ! isset( $shape_settings['path'] ) ) {
+				continue;
+			}
+			$additional_shapes_config[ $shape_name ] = $shape_settings['path'];
+		}
+
+		if ( empty( $additional_shapes_config ) ) {
+			return false;
+		}
+
+		return $additional_shapes_config;
+	}
 }
