@@ -1842,7 +1842,9 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array The initial config.
 	 */
 	protected function _get_initial_config() {
-		return [];
+		return [
+			'controls' => $this->get_controls(),
+		];
 	}
 
 	/**
