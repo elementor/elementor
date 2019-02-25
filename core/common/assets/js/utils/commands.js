@@ -35,10 +35,6 @@ export default class extends elementorModules.Module {
 		return this;
 	}
 
-	runShortcut( command, event ) {
-		this.run( command, event );
-	}
-
 	unregister( command ) {
 		delete this.commands[ command ];
 	}
@@ -100,6 +96,10 @@ export default class extends elementorModules.Module {
 		}
 
 		this.afterRun( command, args );
+	}
+
+	runShortcut( command, event ) {
+		this.run( command, event );
 	}
 
 	afterRun( command ) {
