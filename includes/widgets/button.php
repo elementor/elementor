@@ -254,6 +254,9 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Button ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
