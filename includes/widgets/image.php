@@ -1,6 +1,13 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\UI\Controls\Groups\Border;
+use Elementor\Core\UI\Controls\Groups\Box_Shadow;
+use Elementor\Core\UI\Controls\Groups\Css_Filter;
+use Elementor\Core\UI\Controls\Groups\Image_Size;
+use Elementor\Core\UI\Controls\Groups\Text_Shadow;
+use Elementor\Core\UI\Controls\Groups\Typography;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -117,7 +124,7 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Image_Size::get_type(),
+			Image_Size::get_type(),
 			[
 				'name' => 'image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_size` and `image_custom_dimension`.
 				'default' => 'large',
@@ -343,7 +350,7 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
+			Css_Filter::get_type(),
 			[
 				'name' => 'css_filters',
 				'selector' => '{{WRAPPER}} .elementor-image img',
@@ -377,7 +384,7 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
+			Css_Filter::get_type(),
 			[
 				'name' => 'css_filters_hover',
 				'selector' => '{{WRAPPER}} .elementor-image:hover img',
@@ -414,7 +421,7 @@ class Widget_Image extends Widget_Base {
 		$this->end_controls_tabs();
 
 		$this->add_group_control(
-			Group_Control_Border::get_type(),
+			Border::get_type(),
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} .elementor-image img',
@@ -435,7 +442,7 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
+			Box_Shadow::get_type(),
 			[
 				'name' => 'image_box_shadow',
 				'exclude' => [
@@ -516,7 +523,7 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'caption_typography',
 				'selector' => '{{WRAPPER}} .widget-image-caption',
@@ -525,7 +532,7 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Text_Shadow::get_type(),
+			Text_Shadow::get_type(),
 			[
 				'name' => 'caption_text_shadow',
 				'selector' => '{{WRAPPER}} .widget-image-caption',
@@ -641,7 +648,7 @@ class Widget_Image extends Widget_Base {
 			<?php if ( $link ) : ?>
 					<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
 			<?php endif; ?>
-				<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings ); ?>
+				<?php echo Image_Size::get_attachment_image_html( $settings ); ?>
 			<?php if ( $link ) : ?>
 					</a>
 			<?php endif; ?>

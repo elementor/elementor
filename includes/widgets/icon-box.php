@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\UI\Controls\Groups\Typography;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -528,7 +530,7 @@ class Widget_Icon_Box extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-title',
@@ -562,7 +564,7 @@ class Widget_Icon_Box extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'description_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-content .elementor-icon-box-description',

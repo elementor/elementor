@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
+use Elementor\Core\UI\Controls\Base_Data;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -739,7 +740,7 @@ abstract class Controls_Stack extends Base_Object {
 		foreach ( $controls as $control_name => $control ) {
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
-			if ( ! $control_obj instanceof Base_Data_Control ) {
+			if ( ! $control_obj instanceof Base_Data ) {
 				continue;
 			}
 
@@ -1145,7 +1146,7 @@ abstract class Controls_Stack extends Base_Object {
 			$control_name = $control['name'];
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
-			if ( ! $control_obj instanceof Base_Data_Control ) {
+			if ( ! $control_obj instanceof Base_Data ) {
 				continue;
 			}
 
@@ -1773,7 +1774,7 @@ abstract class Controls_Stack extends Base_Object {
 		foreach ( $this->get_controls() as $control ) {
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
-			if ( ! $control_obj instanceof Base_Data_Control ) {
+			if ( ! $control_obj instanceof Base_Data ) {
 				continue;
 			}
 

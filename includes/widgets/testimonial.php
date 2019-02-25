@@ -1,6 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\UI\Controls\Groups\Border;
+use Elementor\Core\UI\Controls\Groups\Image_Size;
+use Elementor\Core\UI\Controls\Groups\Typography;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -114,7 +118,7 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Image_Size::get_type(),
+			Image_Size::get_type(),
 			[
 				'name' => 'testimonial_image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `testimonial_image_size` and `testimonial_image_custom_dimension`.
 				'default' => 'full',
@@ -238,7 +242,7 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'content_typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
@@ -279,7 +283,7 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Border::get_type(),
+			Border::get_type(),
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img',
@@ -327,7 +331,7 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'name_typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
@@ -363,7 +367,7 @@ class Widget_Testimonial extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'job_typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_2,
@@ -438,7 +442,7 @@ class Widget_Testimonial extends Widget_Base {
 					<?php if ( $has_image ) : ?>
 						<div class="elementor-testimonial-image">
 							<?php
-							$image_html = Group_Control_Image_Size::get_attachment_image_html( $settings, 'testimonial_image' );
+							$image_html = Image_Size::get_attachment_image_html( $settings, 'testimonial_image' );
 							if ( ! empty( $settings['link']['url'] ) ) :
 								$image_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $image_html . '</a>';
 							endif;

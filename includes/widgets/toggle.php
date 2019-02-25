@@ -1,6 +1,9 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\UI\Controls\Groups\Box_Shadow;
+use Elementor\Core\UI\Controls\Groups\Typography;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -237,7 +240,7 @@ class Widget_Toggle extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
+			Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-item',
@@ -296,7 +299,7 @@ class Widget_Toggle extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-title',
@@ -439,7 +442,7 @@ class Widget_Toggle extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-content',
