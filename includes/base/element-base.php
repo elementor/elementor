@@ -940,7 +940,7 @@ abstract class Element_Base extends Controls_Stack {
 			'reload_preview' => $this->is_reload_preview_required(),
 		];
 
-		return array_merge( parent::_get_initial_config(), $config );
+		return $config;
 	}
 
 	/**
