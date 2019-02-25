@@ -75,7 +75,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			name: 'finder',
 			icon: 'fa fa-search',
 			title: elementorCommon.translate( 'finder', 'finder' ),
-			callback: () => elementorCommon.finder.getLayout().showModal(),
+			callback: () => elementorCommon.route.to( 'finder' ),
 		}, 'go_to', 'view-page' );
 
 		this.addItem( {
