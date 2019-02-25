@@ -13,7 +13,6 @@ export default class Shortcuts {
 
 		this.component = '';
 		this.handlers = {};
-		this.modifierKeys = 'Alt,Control,Meta,Shift';
 
 		this.bindListener( $window );
 	}
@@ -33,10 +32,6 @@ export default class Shortcuts {
 	}
 
 	handle( event ) {
-		if ( -1 !== this.modifierKeys.indexOf( event.key ) ) {
-			return;
-		}
-
 		const handlers = this.handlers[ this.getEventShortcut( event ) ];
 
 		if ( ! handlers ) {
