@@ -223,6 +223,11 @@ class Shapes {
 	 * @return array
 	 */
 	private static function get_additional_shapes() {
+		static $additional_shapes = null;
+
+		if ( null !== $additional_shapes ) {
+			return $additional_shapes;
+		}
 		$additional_shapes = [];
 		/**
 		 * Additional shapes.
@@ -233,7 +238,8 @@ class Shapes {
 		 *
 		 * @param array $additional_shapes Additional Elementor shapes.
 		 */
-		return apply_filters( 'elementor/shapes/additional_shapes', $additional_shapes );
+		$additional_shapes = apply_filters( 'elementor/shapes/additional_shapes', $additional_shapes );
+		return $additional_shapes;
 	}
 
 	/**
