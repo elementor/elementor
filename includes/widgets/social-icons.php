@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\UI\Controls\Groups\Border;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -356,7 +354,7 @@ class Widget_Social_Icons extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Border::get_type(),
+			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border', // We know this mistake - TODO: 'icon_border' (for hover control condition also)
 				'selector' => '{{WRAPPER}} .elementor-social-icon',

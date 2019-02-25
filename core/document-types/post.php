@@ -3,7 +3,7 @@ namespace Elementor\Core\DocumentTypes;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
-use Elementor\Core\UI\Controls\Groups\Background;
+use Elementor\Group_Control_Background;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -143,7 +143,7 @@ class Post extends Document {
 		);
 
 		$document->add_group_control(
-			Background::get_type(),
+			Group_Control_Background::get_type(),
 			[
 				'name'  => 'background',
 				'fields_options' => [

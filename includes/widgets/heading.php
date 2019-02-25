@@ -1,9 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\UI\Controls\Groups\Text_Shadow;
-use Elementor\Core\UI\Controls\Groups\Typography;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -236,7 +233,7 @@ class Widget_Heading extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Typography::get_type(),
+			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
@@ -245,7 +242,7 @@ class Widget_Heading extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Text_Shadow::get_type(),
+			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'text_shadow',
 				'selector' => '{{WRAPPER}} .elementor-heading-title',

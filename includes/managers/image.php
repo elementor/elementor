@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\UI\Controls\Groups\Image_Size;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -58,6 +56,10 @@ class Images_Manager {
 	 * @return array URLs with different image sizes.
 	 */
 	public function get_details( $id, $size, $is_first_time ) {
+		if ( ! class_exists( 'Group_Control_Image_Size' ) ) {
+			require_once ELEMENTOR_PATH . '/includes/controls/groups/image-size.php';
+		}
+
 		if ( 'true' === $is_first_time ) {
 			$sizes = get_intermediate_image_sizes();
 			$sizes[] = 'full';
@@ -79,7 +81,7 @@ class Images_Manager {
 					],
 				];
 
-				$urls[ $size ] = Image_Size::get_attachment_image_src( $id, 'image', $instance );
+				$urls[ $size ] = Group_Control_Image_Size::get_attachment_image_src( $id, 'image', $instance );
 			} else {
 				$urls[ $size ] = wp_get_attachment_image_src( $id, $size )[0];
 			}

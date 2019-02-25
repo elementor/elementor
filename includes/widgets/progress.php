@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\UI\Controls\Groups\Typography;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -237,7 +235,7 @@ class Widget_Progress extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Typography::get_type(),
+			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
 				'selector' => '{{WRAPPER}} .elementor-title',

@@ -1,10 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\UI\Controls\Groups\Border;
-use Elementor\Core\UI\Controls\Groups\Image_Size;
-use Elementor\Core\UI\Controls\Groups\Typography;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -119,7 +115,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Image_Size::get_type(),
+			Group_Control_Image_Size::get_type(),
 			[
 				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
 				'exclude' => [ 'custom' ],
@@ -245,7 +241,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Border::get_type(),
+			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} .gallery-item img',
@@ -340,7 +336,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Typography::get_type(),
+			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
