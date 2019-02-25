@@ -296,6 +296,23 @@ helpers = {
 		$element.removeData( backupKey );
 	},
 
+	elementSizeToUnit: function( $element, size, unit ) {
+		const window = elementorFrontend.elements.window;
+
+		switch ( unit ) {
+			case '%':
+				size = ( size / ( $element.offsetParent().width() / 100 ) );
+				break;
+			case 'vw':
+				size = ( size / ( window.innerWidth / 100 ) );
+				break;
+			case 'vh':
+				size = ( size / ( window.innerHeight / 100 ) );
+		}
+
+		return size.toFixed( 3 );
+	},
+
 	compareVersions: function( versionA, versionB, operator ) {
 		var prepareVersion = function( version ) {
 			version = version + '';
