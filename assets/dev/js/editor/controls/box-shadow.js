@@ -11,23 +11,31 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		return ui;
 	},
 
-	events: function() {
-		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
-			'slide @ui.sliders': 'onSlideChange',
-		} );
-	},
-
 	initSliders: function() {
-		var value = this.getControlValue();
+		const value = this.getControlValue();
 
-		this.ui.sliders.each( function() {
-			var $slider = jQuery( this ),
-				$input = $slider.next( '.elementor-slider-input' ).find( 'input' );
+		this.ui.sliders.each( ( index, slider ) => {
+			const $input = jQuery( slider ).next( '.elementor-slider-input' ).find( 'input' );
 
-			$slider.slider( {
-				value: value[ this.dataset.input ],
-				min: +$input.attr( 'min' ),
-				max: +$input.attr( 'max' ),
+			const sliderInstance = noUiSlider.create( slider, {
+				start: [ value[ slider.dataset.input ] ],
+				step: 1,
+				range: {
+					min: +$input.attr( 'min' ),
+					max: +$input.attr( 'max' ),
+				},
+				format: {
+					to: ( sliderValue ) => +sliderValue.toFixed( 1 ),
+					from: ( sliderValue ) => +sliderValue,
+				},
+			} );
+
+			sliderInstance.on( 'slide', ( values ) => {
+				const type = sliderInstance.target.dataset.input;
+
+				$input.val( values[ 0 ] );
+
+				this.setValue( type, values[ 0 ] );
 			} );
 		} );
 	},
@@ -53,20 +61,12 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		var type = event.currentTarget.dataset.setting,
 			$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' );
 
-		$slider.slider( 'value', this.getControlValue( type ) );
+		$slider[ 0 ].noUiSlider.set( this.getControlValue( type ) );
 	},
 
 	onReady: function() {
 		this.initSliders();
 		this.initColors();
-	},
-
-	onSlideChange: function( event, ui ) {
-		var type = event.currentTarget.dataset.input,
-			$input = this.ui.input.filter( '[data-setting="' + type + '"]' );
-
-		$input.val( ui.value );
-		this.setValue( type, ui.value );
 	},
 
 	onBeforeDestroy: function() {

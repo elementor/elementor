@@ -25,6 +25,8 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	initSlider: function() {
+		this.destroySlider();
+
 		const isMultiple = this.isMultiple(),
 			unitRange = elementorCommon.helpers.cloneObject( this.getCurrentRange() ),
 			step = unitRange.step;
@@ -70,6 +72,12 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		this.initSlider();
 	},
 
+	destroySlider: function() {
+		if ( this.ui.slider[ 0 ].noUiSlider ) {
+			this.ui.slider[ 0 ].noUiSlider.destroy();
+		}
+	},
+
 	onReady: function() {
 		if ( this.isMultiple() ) {
 			this.$el.addClass( 'elementor-control-type-slider--multiple' );
@@ -104,9 +112,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	onBeforeDestroy: function() {
-		if ( this.ui.slider[ 0 ].noUiSlider ) {
-			this.ui.slider[ 0 ].noUiSlider.destroy();
-		}
+		this.destroySlider();
 
 		this.$el.remove();
 	},

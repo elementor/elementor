@@ -23,12 +23,6 @@ export default class extends Marionette.Behavior {
 	}
 
 	activate() {
-		if ( ! elementor.userCan( 'design' ) ) {
-			return;
-		}
-
-		this.deactivate();
-
 		this.$el.resizable( {
 			handles: 'e, w',
 		} );
@@ -45,13 +39,13 @@ export default class extends Marionette.Behavior {
 	toggle() {
 		const editModel = this.view.getEditModel(),
 			isEditMode = 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
-			isAbsolute = '' < editModel.getSetting( '_position' ),
+			isAbsolute = editModel.getSetting( '_position' ),
 			isInline = 'initial' === editModel.getSetting( '_element_width' );
 
-		if ( isEditMode && ( isAbsolute || isInline ) ) {
+		this.deactivate();
+
+		if ( isEditMode && ( isAbsolute || isInline ) && elementor.userCan( 'design' ) ) {
 			this.activate();
-		} else {
-			this.deactivate();
 		}
 	}
 
@@ -71,14 +65,18 @@ export default class extends Marionette.Behavior {
 
 	onResizeStop( event, ui ) {
 		event.stopPropagation();
+
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
+			editModel = this.view.getEditModel(),
+			unit = editModel.getSetting( '_element_custom_width' + deviceSuffix ).unit,
+			width = elementor.helpers.elementSizeToUnit( this.$el, ui.size.width, unit ),
 			settingToChange = {};
 
 		settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
-		settingToChange[ '_element_custom_width' + deviceSuffix ] = { unit: 'px', size: ui.size.width };
+		settingToChange[ '_element_custom_width' + deviceSuffix ] = { unit: unit, size: width };
 
-		this.view.getEditModel().get( 'settings' ).setExternalChange( settingToChange );
+		editModel.get( 'settings' ).setExternalChange( settingToChange );
 
 		this.$el.css( {
 			width: '',
