@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Responsive\Responsive;
-use Elementor\Core\UI\Controls\Groups\Typography;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -190,7 +189,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	</div>
 	<div class="elementor-panel-scheme-typography-items elementor-panel-box-content">
 		<?php
-		$scheme_fields_keys = Typography::get_scheme_fields_keys();
+		$scheme_fields_keys = Group_Control_Typography::get_scheme_fields_keys();
 
 		$typography_group = Plugin::$instance->controls_manager->get_control_groups( 'typography' );
 		$typography_fields = $typography_group->get_fields();

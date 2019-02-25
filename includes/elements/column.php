@@ -1,11 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\UI\Controls\Groups\Background;
-use Elementor\Core\UI\Controls\Groups\Border;
-use Elementor\Core\UI\Controls\Groups\Box_Shadow;
-use Elementor\Core\UI\Controls\Groups\Css_Filter;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -314,7 +309,7 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
-			Background::get_type(),
+			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
 				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-element-populated, {{WRAPPER}} > .elementor-column-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
@@ -331,7 +326,7 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
-			Background::get_type(),
+			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_hover',
 				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
@@ -385,7 +380,7 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
-			Background::get_type(),
+			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
@@ -416,7 +411,7 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
-			Css_Filter::get_type(),
+			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
@@ -456,7 +451,7 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
-			Background::get_type(),
+			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay_hover',
 				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
@@ -487,7 +482,7 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
-			Css_Filter::get_type(),
+			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters_hover',
 				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
@@ -537,7 +532,7 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
-			Border::get_type(),
+			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
@@ -557,7 +552,7 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
-			Box_Shadow::get_type(),
+			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated',
@@ -574,7 +569,7 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
-			Border::get_type(),
+			Group_Control_Border::get_type(),
 			[
 				'name' => 'border_hover',
 				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
@@ -594,7 +589,7 @@ class Element_Column extends Element_Base {
 		);
 
 		$this->add_group_control(
-			Box_Shadow::get_type(),
+			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow_hover',
 				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',

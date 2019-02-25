@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\UI\Controls\Groups\Css_Filter;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -198,7 +197,7 @@ class Widget_Google_Maps extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Css_Filter::get_type(),
+			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters',
 				'selector' => '{{WRAPPER}} iframe',
@@ -214,7 +213,7 @@ class Widget_Google_Maps extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Css_Filter::get_type(),
+			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters_hover',
 				'selector' => '{{WRAPPER}}:hover iframe',

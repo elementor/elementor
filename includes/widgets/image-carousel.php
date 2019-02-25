@@ -1,11 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\UI\Controls\Groups\Border;
-use Elementor\Core\UI\Controls\Groups\Image_Size;
-use Elementor\Core\UI\Controls\Groups\Typography;
-use Elementor\Core\UI\Controls\Media as Media_Control;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -120,7 +115,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Image_Size::get_type(),
+			Group_Control_Image_Size::get_type(),
 			[
 				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
 				'separator' => 'none',
@@ -546,7 +541,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Border::get_type(),
+			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-wrapper .elementor-image-carousel .slick-slide-image',
@@ -622,7 +617,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Typography::get_type(),
+			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
@@ -652,9 +647,9 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides = [];
 
 		foreach ( $settings['carousel'] as $index => $attachment ) {
-			$image_url = Image_Size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
+			$image_url = Group_Control_Image_Size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
 
-			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Media_Control::get_image_alt( $attachment ) ) . '" />';
+			$image_html = '<img class="slick-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
 
 			$link = $this->get_link_url( $attachment, $settings );
 

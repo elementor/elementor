@@ -1,11 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\UI\Controls\Groups\Css_Filter;
-use Elementor\Core\UI\Controls\Groups\Image_Size;
-use Elementor\Core\UI\Controls\Groups\Typography;
-use Elementor\Core\UI\Controls\Media as Media_Control;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -106,7 +101,7 @@ class Widget_Image_Box extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Image_Size::get_type(),
+			Group_Control_Image_Size::get_type(),
 			[
 				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
 				'default' => 'full',
@@ -289,7 +284,7 @@ class Widget_Image_Box extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Css_Filter::get_type(),
+			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters',
 				'selector' => '{{WRAPPER}} .elementor-image-box-img img',
@@ -343,7 +338,7 @@ class Widget_Image_Box extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Css_Filter::get_type(),
+			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters_hover',
 				'selector' => '{{WRAPPER}}:hover .elementor-image-box-img img',
@@ -469,7 +464,7 @@ class Widget_Image_Box extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Typography::get_type(),
+			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title',
@@ -503,7 +498,7 @@ class Widget_Image_Box extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Typography::get_type(),
+			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
 				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description',
@@ -543,14 +538,14 @@ class Widget_Image_Box extends Widget_Base {
 
 		if ( ! empty( $settings['image']['url'] ) ) {
 			$this->add_render_attribute( 'image', 'src', $settings['image']['url'] );
-			$this->add_render_attribute( 'image', 'alt', Media_Control::get_image_alt( $settings['image'] ) );
-			$this->add_render_attribute( 'image', 'title', Media_Control::get_image_title( $settings['image'] ) );
+			$this->add_render_attribute( 'image', 'alt', Control_Media::get_image_alt( $settings['image'] ) );
+			$this->add_render_attribute( 'image', 'title', Control_Media::get_image_title( $settings['image'] ) );
 
 			if ( $settings['hover_animation'] ) {
 				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 			}
 
-			$image_html = Image_Size::get_attachment_image_html( $settings, 'thumbnail', 'image' );
+			$image_html = Group_Control_Image_Size::get_attachment_image_html( $settings, 'thumbnail', 'image' );
 
 			if ( ! empty( $settings['link']['url'] ) ) {
 				$image_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $image_html . '</a>';
