@@ -1,12 +1,12 @@
 <?php
 namespace Elementor\Core\Files\CSS;
 
-use Elementor\Base_Data_Control;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\UI\Controls\Base_Data;
 use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Responsive\Responsive;
@@ -393,7 +393,7 @@ abstract class Base extends Base_File {
 			$this->fonts[] = $value;
 		}
 
-		/** @var Base_Data_Control $control_obj */
+		/** @var Base_Data $control_obj */
 		$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 		return (string) $control_obj->get_style_value( $placeholder, $value, $control );

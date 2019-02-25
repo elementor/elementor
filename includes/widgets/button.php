@@ -1,6 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\UI\Controls\Groups\Border;
+use Elementor\Core\UI\Controls\Groups\Box_Shadow;
+use Elementor\Core\UI\Controls\Groups\Typography;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -274,7 +278,7 @@ class Widget_Button extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
@@ -376,7 +380,7 @@ class Widget_Button extends Widget_Base {
 		$this->end_controls_tabs();
 
 		$this->add_group_control(
-			Group_Control_Border::get_type(),
+			Border::get_type(),
 			[
 				'name' => 'border',
 				'selector' => '{{WRAPPER}} .elementor-button',
@@ -397,7 +401,7 @@ class Widget_Button extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
+			Box_Shadow::get_type(),
 			[
 				'name' => 'button_box_shadow',
 				'selector' => '{{WRAPPER}} .elementor-button',

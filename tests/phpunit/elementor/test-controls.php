@@ -32,7 +32,7 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 	}
 
 	public function test_registerNUnregisterControl() {
-		$control_class = '\Elementor\Control_Text';
+		$control_class = '\Elementor\Core\UI\Controls\Text';
 
 		$control_id = 'text';
 

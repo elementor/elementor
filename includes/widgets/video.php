@@ -1,6 +1,9 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\UI\Controls\Groups\Css_Filter;
+use Elementor\Core\UI\Controls\Groups\Image_Size;
+use Elementor\Core\UI\Controls\Groups\Text_Shadow;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -517,7 +520,7 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Image_Size::get_type(),
+			Image_Size::get_type(),
 			[
 				'name' => 'image_overlay', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_overlay_size` and `image_overlay_custom_dimension`.
 				'default' => 'full',
@@ -586,7 +589,7 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
+			Css_Filter::get_type(),
 			[
 				'name' => 'css_filters',
 				'selector' => '{{WRAPPER}} .elementor-wrapper',
@@ -643,7 +646,7 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Text_Shadow::get_type(),
+			Text_Shadow::get_type(),
 			[
 				'name' => 'play_icon_text_shadow',
 				'selector' => '{{WRAPPER}} .elementor-custom-embed-play i',
@@ -851,12 +854,12 @@ class Widget_Video extends Widget_Base {
 						] );
 					}
 				} else {
-					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . Group_Control_Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings ) . ');' );
+					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings ) . ');' );
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
 					<?php if ( $settings['lightbox'] ) : ?>
-						<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings, 'image_overlay' ); ?>
+						<?php echo Image_Size::get_attachment_image_html( $settings, 'image_overlay' ); ?>
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play" role="button">

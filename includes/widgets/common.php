@@ -1,6 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\UI\Controls\Groups\Background;
+use Elementor\Core\UI\Controls\Groups\Border;
+use Elementor\Core\UI\Controls\Groups\Box_Shadow;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -202,7 +206,7 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Background::get_type(),
+			Background::get_type(),
 			[
 				'name' => '_background',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
@@ -219,7 +223,7 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Background::get_type(),
+			Background::get_type(),
 			[
 				'name' => '_background_hover',
 				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
@@ -266,7 +270,7 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Border::get_type(),
+			Border::get_type(),
 			[
 				'name' => '_border',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
@@ -286,7 +290,7 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
+			Box_Shadow::get_type(),
 			[
 				'name' => '_box_shadow',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
@@ -303,7 +307,7 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Border::get_type(),
+			Border::get_type(),
 			[
 				'name' => '_border_hover',
 				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
@@ -323,7 +327,7 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
+			Box_Shadow::get_type(),
 			[
 				'name' => '_box_shadow_hover',
 				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',

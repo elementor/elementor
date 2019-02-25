@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\UI\Controls\Groups\Typography;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -182,7 +184,7 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'typography',
 				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
@@ -375,7 +377,7 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Typography::get_type(),
 			[
 				'name' => 'drop_cap_typography',
 				'selector' => '{{WRAPPER}} .elementor-drop-cap-letter',
