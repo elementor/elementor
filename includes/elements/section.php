@@ -488,6 +488,22 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'overflow',
+			[
+				'label' => __( 'Overflow', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'hidden' => __( 'Hidden', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'overflow: {{VALUE}}',
+				],
+			]
+		);
+
 		$possible_tags = [
 			'div',
 			'header',
