@@ -34,7 +34,7 @@ export default class extends Marionette.CompositeView {
 
 		this.collection = new Backbone.Collection( Object.values( elementorCommon.finder.getSettings( 'data' ) ) );
 
-		this. addCommands();
+		this.addCommands();
 	}
 
 	activateItem( $item ) {
