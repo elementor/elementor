@@ -104,7 +104,7 @@ var	Manager = function() {
 		} );
 
 		elementorCommon.commands.register( 'history/redo', () => navigate( true ), {
-			keys: 'ctrl+shift+z, c+y',
+			keys: 'ctrl+shift+z, ctrl+y',
 			dependency: dependency,
 		} );
 
