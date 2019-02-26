@@ -310,7 +310,7 @@ helpers = {
 				size = ( size / ( window.innerHeight / 100 ) );
 		}
 
-		return size.toFixed( 3 );
+		return Math.round( size * 1000 ) / 1000;
 	},
 
 	compareVersions: function( versionA, versionB, operator ) {
