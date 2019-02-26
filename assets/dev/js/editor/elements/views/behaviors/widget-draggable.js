@@ -105,8 +105,8 @@ export default class extends Marionette.Behavior {
 
 		yPos = elementor.helpers.elementSizeToUnit( this.$el, yPos, offsetYUnit );
 
-		settingToChange[ offsetX + deviceSuffix ] = { size: xPos.toFixed( 3 ), unit: offsetXUnit };
-		settingToChange[ offsetY + deviceSuffix ] = { size: yPos.toFixed( 3 ), unit: offsetYUnit };
+		settingToChange[ offsetX + deviceSuffix ] = { size: xPos, unit: offsetXUnit };
+		settingToChange[ offsetY + deviceSuffix ] = { size: yPos, unit: offsetYUnit };
 
 		editModel.get( 'settings' ).setExternalChange( settingToChange );
 
