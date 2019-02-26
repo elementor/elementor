@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 
 	// Keep the following line after `wp_head()` call, to ensure it's not overridden by another templates.
-	echo \Elementor\Utils::get_meta_viewport();
+	echo \Elementor\Utils::get_meta_viewport( 'canvas' );
 	?>
 </head>
 <body <?php body_class(); ?>>
