@@ -38,8 +38,8 @@
 	&.elementor-control-type-divider {
 		padding: 0;
 		background-color: transparent;
-
-		hr {
+		
+		.elementor-control-content {
 			border-width: 0;
 			border-color: $editor-background;
 			border-style: solid;
