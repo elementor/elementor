@@ -503,6 +503,7 @@ class Widget_Common extends Widget_Base {
 						'icon' => 'eicon-h-align-right',
 					],
 				],
+				'classes' => 'elementor-control-start-end',
 				'render_type' => 'ui',
 				'condition' => [
 					'_position!' => '',
