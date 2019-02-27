@@ -476,6 +476,9 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$start = is_rtl() ? __( 'Right', 'elementor' ) : __( 'Left', 'elementor' );
+		$end = ! is_rtl() ? __( 'Right', 'elementor' ) : __( 'Left', 'elementor' );
+
 		$this->add_control(
 			'_offset_orientation_h',
 			[
@@ -486,11 +489,11 @@ class Widget_Common extends Widget_Base {
 				'default' => 'start',
 				'options' => [
 					'start' => [
-						'title' => __( 'Start', 'elementor' ),
+						'title' => $start,
 						'icon' => 'eicon-h-align-left',
 					],
 					'end' => [
-						'title' => __( 'End', 'elementor' ),
+						'title' => $end,
 						'icon' => 'eicon-h-align-right',
 					],
 				],
@@ -589,11 +592,11 @@ class Widget_Common extends Widget_Base {
 				'default' => 'start',
 				'options' => [
 					'start' => [
-						'title' => __( 'Start', 'elementor' ),
+						'title' => __( 'Top', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
 					'end' => [
-						'title' => __( 'End', 'elementor' ),
+						'title' => __( 'Bottom', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
