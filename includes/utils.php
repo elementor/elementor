@@ -626,19 +626,17 @@ class Utils {
 		return implode( ' ', $rendered_attributes );
 	}
 
-	public static function get_meta_viewport( $template_type = 'canvas' ) {
+	public static function get_meta_viewport( $context = '' ) {
 		$meta_tag = '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />';
 		/**
 		 * Viewport meta tag.
 		 *
 		 * Filters the Elementor preview URL.
 		 *
-		 * The dynamic portion of the hook name, `$template_type`, refers to the template type.
-		 *
 		 * @since 2.5.0
 		 *
 		 * @param string $meta_tag Viewport meta tag.
 		 */
-		return apply_filters( "elementor/template/{$template_type}/viewport_tag", $meta_tag );
+		return apply_filters( 'elementor/template/viewport_tag', $meta_tag, $context );
 	}
 }
