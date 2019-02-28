@@ -1240,7 +1240,7 @@ class Element_Section extends Element_Base {
 		$this->start_controls_section(
 			'section_effects',
 			[
-				'label' => __( 'Effects', 'elementor' ),
+				'label' => __( 'Motion Effects', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
