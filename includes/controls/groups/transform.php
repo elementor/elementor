@@ -93,7 +93,7 @@ class Group_Control_Transform extends Group_Control_Base {
 			'type' => Controls_Manager::SLIDER,
 			'render_type' => 'ui',
 			'required' => 'true',
-      'size_units' => [ 'px', '%' ],
+			'size_units' => [ 'px', '%' ],
 			'separator' => 'none',
 		];
 
@@ -102,7 +102,7 @@ class Group_Control_Transform extends Group_Control_Base {
 			'type' => Controls_Manager::SLIDER,
 			'render_type' => 'ui',
 			'required' => 'true',
-      'size_units' => [ 'px', '%' ],
+			'size_units' => [ 'px', '%' ],
 			'separator' => 'none',
 		];
 
