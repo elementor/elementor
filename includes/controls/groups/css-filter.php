@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * A base control for applying css filters. Displays sliders to define the
  * values of different CSS filters including blur, brightens, contrast,
- * saturation and hue .
+ * saturation and hue.
  *
  * @since 2.1.0
  */
