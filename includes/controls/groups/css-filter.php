@@ -8,8 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor CSS Filter control.
  *
- * A base control for applying css filters. Displays sliders to define
- * the values of different css filters including blur, brightens, contrast, saturation, .
+ * A base control for applying css filters. Displays sliders to define the
+ * values of different CSS filters including blur, brightens, contrast,
+ * saturation and hue .
  *
  * @since 2.1.0
  */
@@ -23,7 +24,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	 * @since 2.1.0
 	 * @access protected
 	 *
-	 * @param array $fields CSS Filter control fields.
+	 * @param array $fields CSS filter control fields.
 	 *
 	 * @return array Processed fields.
 	 */
@@ -54,7 +55,6 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	 *
 	 * @return array Control fields.
 	 */
-
 	protected function init_fields() {
 		$controls = [];
 
@@ -157,7 +157,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	 * @since 2.1.0
 	 * @access protected
 	 *
-	 * @return array Default box shadow control options.
+	 * @return array Default CSS filter control options.
 	 */
 	protected function get_default_options() {
 		return [
