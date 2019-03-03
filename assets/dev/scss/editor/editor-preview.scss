@@ -213,6 +213,13 @@ html.elementor-html {
 		&:active {
 			cursor: grabbing;
 		}
+
+		.eicon-edit {
+
+			&:before {
+				content: '\e1040';
+			}
+		}
 	}
 }
 
