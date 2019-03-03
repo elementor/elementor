@@ -2,7 +2,7 @@
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet, ramiy, yehudah
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 4.7
-Tested up to: 5.0
+Tested up to: 5.1
 Requires PHP: 5.4
 Stable tag: 2.4.7
 Beta tag: 2.5.0-beta3
@@ -162,7 +162,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 = Minimum Requirements =
 
-* WordPress 4.6 or greater
+* WordPress 4.7 or greater
 * PHP version 5.4 or greater
 * MySQL version 5.0 or greater
 
@@ -188,7 +188,7 @@ For documentation and tutorials visit our [Knowledge Base](https://docs.elemento
 
 **With Elementor, do I still need a theme?**
 
-Yes. Think of it like this: a theme is like the frame of the picture, and Elementor is the tool to paint the picture inside the frame. You still need a theme to design a nice header and footer.
+Yes. Think of it like this: a theme is like the frame of the picture, and Elementor is the tool to paint the picture inside the frame.
 
 **Is Elementor compatible with Posts and Custom Post Types?**
 
@@ -208,7 +208,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
+No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
 
 == Screenshots ==
 
