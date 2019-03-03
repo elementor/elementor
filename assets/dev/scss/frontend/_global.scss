@@ -116,6 +116,42 @@
 	position: fixed;
 }
 
+.elementor-widget {
+
+	@mixin inline-width($device) {
+
+		&#{$device}__width {
+
+			&-auto {
+				width: auto;
+			}
+
+			&-inherit {
+				width: inherit;
+			}
+
+			&-initial {
+				width: initial;
+			}
+
+			&-auto,
+			&-initial {
+				max-width: 100%;
+			}
+		}
+	}
+
+	@include inline-width('');
+
+	@media (max-width: $screen-md-max) {
+		@include inline-width(-tablet);
+	}
+
+	@media (max-width: $screen-sm-max) {
+		@include inline-width(-mobile);
+	}
+}
+
 .elementor-element {
 
 	&.elementor-absolute,

@@ -380,10 +380,7 @@ class Widget_Common extends Widget_Base {
 					'auto' => __( 'Inline', 'elementor' ) . ' (auto)',
 					'initial' => __( 'Custom', 'elementor' ),
 				],
-				'prefix_class' => 'elementor-widget__width-',
-				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{VALUE}}',
-				],
+				'prefix_class' => 'elementor-widget%s__width-',
 			]
 		);
 
@@ -419,7 +416,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
