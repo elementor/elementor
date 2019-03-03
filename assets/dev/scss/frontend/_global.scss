@@ -161,38 +161,6 @@
 		.elementor-image img {
 			width: auto;
 		}
-
-		.elementor-handle {
-			position: absolute;
-			top: 0;
-			#{$end}: 0;
-			width: 26px;
-			height: 26px;
-			background-color: darken($editor-info, 20%);
-			color: #fff;
-			border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
-			font-size: 13px;
-			line-height: 26px;
-			text-align: center;
-			cursor: grab;
-			z-index: 9998;
-			opacity: 0;
-
-			&:not(:hover) {
-				background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
-			}
-
-			&:active {
-				cursor: grabbing;
-			}
-		}
-
-		&:hover {
-
-			.elementor-handle {
-				opacity: 1;
-			}
-		}
 	}
 }
 
