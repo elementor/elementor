@@ -404,7 +404,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'4.2.0'
+			'4.3.0'
 		);
 
 		wp_register_style(
