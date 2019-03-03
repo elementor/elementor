@@ -524,12 +524,29 @@
 }
 
 // = Choices control for alignment
-.elementor-control-text_align,
-.elementor-control-align,
-.elementor-control-position {
+.rtl {
 
-	.elementor-choices {
-		direction: ltr; // Force ltr also in RTL languages
+	.elementor-control-text_align,
+	.elementor-control-align,
+	.elementor-control-position {
+
+		.elementor-choices {
+			direction: ltr; // Force ltr also in RTL languages
+
+			input {
+
+				&:not(:checked) + .elementor-choices-label {
+
+					&:nth-child(2) {
+						border-radius: 3px 0 0 3px;
+					}
+
+					&:last-child {
+						border-radius: 0 3px 3px 0;
+					}
+				}
+			}
+		}
 	}
 }
 

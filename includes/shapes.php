@@ -259,10 +259,10 @@ class Shapes {
 
 		$additional_shapes_config = [];
 		foreach ( $additional_shapes as $shape_name => $shape_settings ) {
-			if ( ! isset( $shape_settings['path'] ) ) {
+			if ( ! isset( $shape_settings['url'] ) ) {
 				continue;
 			}
-			$additional_shapes_config[ $shape_name ] = $shape_settings['path'];
+			$additional_shapes_config[ $shape_name ] = $shape_settings['url'];
 		}
 
 		if ( empty( $additional_shapes_config ) ) {
