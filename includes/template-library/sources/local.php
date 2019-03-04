@@ -431,7 +431,6 @@ class Source_Local extends Source_Base {
 				[
 					'key' => Document::TYPE_META_KEY,
 					'value' => $template_types,
-					'compare' => 'IN',
 				],
 			],
 		];
