@@ -413,13 +413,11 @@ class Source_Local extends Source_Base {
 	}
 
 	public function get_items_query( $args = [] ) {
-		$document_types = Plugin::instance()->documents->get_document_types( [
-			'show_in_library' => true,
-		] );
-
 		if ( ! empty( $args['type'] ) ) {
 			$template_types = $args['type'];
 		} else {
+			$filter = ! empty( $args['filter'] ) ? $args['filter'] : [];
+			$document_types = Plugin::instance()->documents->get_document_types( $filter );
 			$template_types = array_keys( $document_types );
 		}
 
