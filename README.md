@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 5.1  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.4.7  
+**Stable tag:** 2.5.0  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -251,7 +251,7 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 * Fix: Library "Blocks" tab empty
 * Fix: Custom shape dividers not loading in editor ([#6550](https://github.com/elementor/elementor/issues/6550))
 * Fix: WP-CLI Flush CSS command glitch in multisite ([#7190](https://github.com/elementor/elementor/issues/7190))
-* Fix: Horizontal Orientation control visibility for RTL
+* Fix: PHP 7.3 Compatibility when saving settings ([#6890](https://github.com/elementor/elementor/issues/6890))
 
 ### 2.4.7 - 2019-02-18 ###
 * Fix: Incorrect device mode detection in Safari ([#7036](https://github.com/elementor/elementor/issues/7036))
