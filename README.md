@@ -223,6 +223,9 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.5.1 - 2019-03-04 ###
+* Fix: Inline Width (auto) not working ([#7293](https://github.com/elementor/elementor/issues/7293))
+
 ### 2.5.0 - 2019-03-04 ###
 * New: Added Position Absolute & Position Fixed for widgets ([#5568](https://github.com/elementor/elementor/issues/5568))
 * New: Added inline & custom width options to place widgets side by side without columns ([#4960](https://github.com/elementor/elementor/issues/4960))
