@@ -3,6 +3,8 @@
 //
 @import "../helpers/variables";
 @import "../helpers/mixins";
+@import "resizable";
+
 @import "breakpoints";
 @import "panel/global";
 @import "panel/control";
@@ -75,7 +77,7 @@ html.elementor-html {
 		}
 
 		&:not(.elementor-loading):not(.elementor-widget-menu-anchor) { // Don't apply transition on anchor widget - Safari hack
-			transition: all .1s;
+			//transition: all .1s;
 		}
 
 		&.elementor-element-editable,
@@ -202,6 +204,21 @@ html.elementor-html {
 			height: $widget-placeholder-size;
 			animation: placeholder-widget 500ms;
 			display: block;
+		}
+	}
+
+	&.elementor-absolute, &.elementor-fixed {
+		cursor: grab;
+
+		&:active {
+			cursor: grabbing;
+		}
+
+		.eicon-edit {
+
+			&:before {
+				content: '\e1040';
+			}
 		}
 	}
 }
@@ -598,9 +615,10 @@ html.elementor-html {
 
 	&:not(.elementor-column-placeholder) {
 		background-color: $editor-info;
-		animation-timing-function: ease-out;
-		animation-duration: 500ms;
+		animation-duration: 250ms;
 		opacity: .9;
+		width: 100%;
+		align-self: stretch;
 	}
 }
 

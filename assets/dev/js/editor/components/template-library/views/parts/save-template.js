@@ -15,7 +15,16 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	getSaveType: function() {
-		return this.model ? this.model.get( 'elType' ) : 'page';
+		let type;
+		if ( this.model ) {
+			type = this.model.get( 'elType' );
+		} else if ( elementor.config.document.library && elementor.config.document.library.save_as_same_type ) {
+			type = elementor.config.document.type;
+		} else {
+			type = 'page';
+		}
+
+		return type;
 	},
 
 	templateHelpers: function() {
@@ -29,7 +38,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
-			saveType = this.model ? this.model.get( 'elType' ) : 'page',
+			saveType = this.getSaveType(),
 			JSONParams = { removeDefault: true };
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );

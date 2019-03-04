@@ -1,10 +1,8 @@
-var ElementsHandler;
-
-ElementsHandler = function( $ ) {
-	var self = this;
+module.exports = function( $ ) {
+	const self = this;
 
 	// element-type.skin-type
-	var handlers = {
+	const handlers = {
 		// Elements
 		section: require( 'elementor-frontend/handlers/section' ),
 
@@ -20,17 +18,19 @@ ElementsHandler = function( $ ) {
 		'text-editor.default': require( 'elementor-frontend/handlers/text-editor' ),
 	};
 
-	var addGlobalHandlers = function() {
+	const handlersInstances = {};
+
+	const addGlobalHandlers = function() {
 		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', require( 'elementor-frontend/handlers/global' ) );
 	};
 
-	var addElementsHandlers = function() {
+	const addElementsHandlers = function() {
 		$.each( handlers, function( elementName, funcCallback ) {
 			elementorFrontend.hooks.addAction( 'frontend/element_ready/' + elementName, funcCallback );
 		} );
 	};
 
-	var init = function() {
+	const init = function() {
 		self.initHandlers();
 	};
 
@@ -38,6 +38,33 @@ ElementsHandler = function( $ ) {
 		addGlobalHandlers();
 
 		addElementsHandlers();
+	};
+
+	this.addHandler = function( HandlerClass, options ) {
+		const elementID = options.$element.data( 'model-cid' );
+
+		let handlerID;
+
+		// If element is in edit mode
+		if ( elementID ) {
+			handlerID = HandlerClass.prototype.getConstructorID();
+
+			if ( ! handlersInstances[ elementID ] ) {
+				handlersInstances[ elementID ] = {};
+			}
+
+			const oldHandler = handlersInstances[ elementID ][ handlerID ];
+
+			if ( oldHandler ) {
+				oldHandler.onDestroy();
+			}
+		}
+
+		const newHandler = new HandlerClass( options );
+
+		if ( elementID ) {
+			handlersInstances[ elementID ][ handlerID ] = newHandler;
+		}
 	};
 
 	this.getHandlers = function( handlerName ) {
@@ -70,5 +97,3 @@ ElementsHandler = function( $ ) {
 
 	init();
 };
-
-module.exports = ElementsHandler;

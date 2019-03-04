@@ -1,12 +1,13 @@
-var HistoryCollection = require( './collection' ),
-	HistoryItem = require( './item' ),
-	ElementHistoryBehavior = require( './element-behavior' ),
+var ElementHistoryBehavior = require( './element-behavior' ),
 	CollectionHistoryBehavior = require( './collection-behavior' );
+
+import ItemModel from './item-model';
+import PanelTab from './panel-tab';
 
 var	Manager = function() {
 	var self = this,
 		currentItemID = null,
-		items = new HistoryCollection(),
+		items = new Backbone.Collection( [], { model: ItemModel } ),
 		editorSaved = false,
 		active = true;
 
@@ -92,6 +93,19 @@ var	Manager = function() {
 				navigate( event.shiftKey );
 			},
 		} );
+	};
+
+	var updatePanelPageCurrentItem = function() {
+		const panel = elementor.getPanelView();
+
+		if ( 'historyPage' === panel.getCurrentPageName() ) {
+			const historyPage = panel.getCurrentPageView(),
+				currentTab = historyPage.getCurrentTab();
+
+			if ( currentTab instanceof PanelTab ) {
+				currentTab.updateCurrentItem();
+			}
+		}
 	};
 
 	var onPanelSave = function() {
@@ -184,7 +198,7 @@ var	Manager = function() {
 		} );
 
 		if ( ! currentItem ) {
-			currentItem = new HistoryItem( {
+			currentItem = new ItemModel( {
 				id: id,
 				title: itemData.title,
 				subTitle: itemData.subTitle,
@@ -212,11 +226,7 @@ var	Manager = function() {
 
 		items.add( currentItem, { at: 0 } );
 
-		var panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
-			panel.getCurrentPageView().render();
-		}
+		updatePanelPageCurrentItem();
 
 		return id;
 	};
@@ -247,20 +257,15 @@ var	Manager = function() {
 				// If element exist - render again, maybe the settings has been changed
 				viewToScroll = panelPage.getOption( 'editedElementView' );
 			}
-		} else {
-			if ( 'historyPage' === panel.getCurrentPageName() ) {
-				panelPage.render();
-			}
+		} else if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
+			var history = item.get( 'items' ).first().get( 'history' );
 
-			// Try scroll to affected element.
-			if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
-				var history = item.get( 'items' ).first().get( 'history' );
-
-				if ( history && history.behavior.view.model ) {
-					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
-				}
+			if ( history && history.behavior.view.model ) {
+				viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
 			}
 		}
+
+		updatePanelPageCurrentItem();
 
 		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
 			elementor.helpers.scrollToView( viewToScroll.$el );

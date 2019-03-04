@@ -1,7 +1,4 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' ),
-	ImageCarouselHandler;
-
-ImageCarouselHandler = HandlerModule.extend( {
+const ImageCarouselHandler = elementorModules.frontend.handlers.Base.extend( {
 	getDefaultSettings: function() {
 		return {
 			selectors: {
@@ -19,7 +16,7 @@ ImageCarouselHandler = HandlerModule.extend( {
 	},
 
 	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		var elementSettings = this.getElementSettings(),
 			slidesToShow = +elementSettings.slides_to_show || 3,
@@ -66,5 +63,5 @@ ImageCarouselHandler = HandlerModule.extend( {
 } );
 
 module.exports = function( $scope ) {
-	new ImageCarouselHandler( { $element: $scope } );
+	elementorFrontend.elementsHandler.addHandler( ImageCarouselHandler, { $element: $scope } );
 };

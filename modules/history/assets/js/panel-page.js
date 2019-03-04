@@ -1,5 +1,4 @@
-var TabHistoryView = require( './history/panel-tab' ),
-	TabHistoryEmptyView = require( './history/empty' );
+var TabHistoryView = require( './history/panel-tab' );
 
 import TabRevisionsLoadingView from './revisions/loading';
 import TabRevisionsView from './revisions/panel-tab';
@@ -34,11 +33,7 @@ module.exports = Marionette.LayoutView.extend( {
 		this.regionViews = {
 			history: {
 				view: function() {
-					if ( historyItems.length ) {
-						return TabHistoryView;
-					}
-
-					return TabHistoryEmptyView;
+					return TabHistoryView;
 				},
 				options: {
 					collection: historyItems,

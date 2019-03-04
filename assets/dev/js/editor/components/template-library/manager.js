@@ -37,7 +37,7 @@ TemplateLibraryManager = function() {
 			},
 		};
 
-		_.each( [ 'page', 'section' ], function( type ) {
+		_.each( [ 'page', 'section', elementor.config.document.type ], function( type ) {
 			var safeData = jQuery.extend( true, {}, data, {
 				saveDialog: {
 					title: elementor.translate( 'save_your_template', [ elementor.translate( type ) ] ),

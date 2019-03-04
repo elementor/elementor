@@ -227,13 +227,6 @@ class Controls_Manager {
 	const HOVER_ANIMATION = 'hover_animation';
 
 	/**
-	 * Order control.
-	 *
-	 * @deprecated 2.0.0
-	 */
-	const ORDER = 'order';
-
-	/**
 	 * Controls.
 	 *
 	 * Holds the list of all the controls. Default is `null`.
@@ -345,25 +338,20 @@ class Controls_Manager {
 		self::$tabs[ $tab_name ] = $tab_label;
 	}
 
-	/**
-	 * Register controls.
-	 *
-	 * This method creates a list of all the supported controls by requiring the
-	 * control files and initializing each one of them.
-	 *
-	 * The list of supported controls includes the regular controls and the group
-	 * controls.
-	 *
-	 * External developers can register new controls by hooking to the
-	 * `elementor/controls/controls_registered` action.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
-	private function register_controls() {
-		$this->controls = [];
+	public static function get_groups_names() {
+		return [
+			'background',
+			'border',
+			'typography',
+			'image-size',
+			'box-shadow',
+			'css-filter',
+			'text-shadow',
+		];
+	}
 
-		$available_controls = [
+	public static function get_controls_names() {
+		return [
 			self::TEXT,
 			self::NUMBER,
 			self::TEXTAREA,
@@ -404,30 +392,39 @@ class Controls_Manager {
 			self::TEXT_SHADOW,
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
-
-			self::ORDER,
 		];
+	}
 
-		foreach ( $available_controls as $control_id ) {
-			$control_filename = str_replace( '_', '-', $control_id );
+	/**
+	 * Register controls.
+	 *
+	 * This method creates a list of all the supported controls by requiring the
+	 * control files and initializing each one of them.
+	 *
+	 * The list of supported controls includes the regular controls and the group
+	 * controls.
+	 *
+	 * External developers can register new controls by hooking to the
+	 * `elementor/controls/controls_registered` action.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 */
+	private function register_controls() {
+		$this->controls = [];
 
-			$control_filename = ELEMENTOR_PATH . "includes/controls/{$control_filename}.php";
-
-			require( $control_filename );
-
-			$class_name = __NAMESPACE__ . '\Control_' . ucwords( $control_id );
+		foreach ( self::get_controls_names() as $control_id ) {
+			$class_name = __NAMESPACE__ . '\Control_' . ucwords( $control_id, '_' );
 
 			$this->register_control( $control_id, new $class_name() );
 		}
 
 		// Group Controls
-		$this->control_groups['background'] = new Group_Control_Background();
-		$this->control_groups['border']     = new Group_Control_Border();
-		$this->control_groups['typography'] = new Group_Control_Typography();
-		$this->control_groups['image-size'] = new Group_Control_Image_Size();
-		$this->control_groups['box-shadow'] = new Group_Control_Box_Shadow();
-		$this->control_groups['css-filter'] = new Group_Control_Css_Filter();
-		$this->control_groups['text-shadow'] = new Group_Control_Text_Shadow();
+		foreach ( self::get_groups_names() as $group_name ) {
+			$class_name = __NAMESPACE__ . '\Group_Control_' . ucwords( str_replace( '-', '_', $group_name ), '_' );
+
+			$this->control_groups[ $group_name ] = new $class_name();
+		}
 
 		/**
 		 * After controls registered.
@@ -589,11 +586,11 @@ class Controls_Manager {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string               $id       Group control ID.
-	 * @param Group_Control_Base[] $instance Group control instance, usually the
-	 *                                       current instance.
+	 * @param string             $id       Group control ID.
+	 * @param Group_Control_Base $instance Group control instance, usually the
+	 *                                     current instance.
 	 *
-	 * @return Group_Control_Base[] Group control instance.
+	 * @return Group_Control_Base Group control instance.
 	 */
 	public function add_group_control( $id, $instance ) {
 		$this->control_groups[ $id ] = $instance;

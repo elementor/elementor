@@ -40,6 +40,10 @@
 
 	.iris-picker {
 		border: none;
+
+		.iris-picker-inner {
+			width: 100%;
+		}
 	}
 
 	&:not(.wp-picker-active) {
@@ -64,7 +68,7 @@
 
 	input[type="text"].wp-color-picker {
 		float: left;
-		width: 100px;
+		width: 120px;
 		max-width: 136px;
 		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		font-size: 11px;

@@ -106,6 +106,7 @@ class Widget_Icon_List extends Widget_Base {
 				'classes' => 'elementor-control-start-end',
 				'label_block' => false,
 				'style_transfer' => true,
+				'prefix_class' => 'elementor-icon-list--layout-',
 			]
 		);
 
@@ -119,6 +120,9 @@ class Widget_Icon_List extends Widget_Base {
 				'label_block' => true,
 				'placeholder' => __( 'List Item', 'elementor' ),
 				'default' => __( 'List Item', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -137,6 +141,9 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'label_block' => true,
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 			]

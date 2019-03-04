@@ -43,7 +43,6 @@ class Control_Divider extends Base_UI_Control {
 	 */
 	protected function get_default_settings() {
 		return [
-			'style' => 'default',
 			'separator' => 'none',
 		];
 	}
@@ -58,9 +57,5 @@ class Control_Divider extends Base_UI_Control {
 	 * @since 2.0.0
 	 * @access public
 	 */
-	public function content_template() {
-		?>
-		<hr class="elementor-divider-style--{{ data.style }}">
-		<?php
-	}
+	public function content_template() {}
 }

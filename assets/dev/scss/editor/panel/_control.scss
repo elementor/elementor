@@ -38,8 +38,8 @@
 	&.elementor-control-type-divider {
 		padding: 0;
 		background-color: transparent;
-
-		hr {
+		
+		.elementor-control-content {
 			border-width: 0;
 			border-color: $editor-background;
 			border-style: solid;
@@ -79,7 +79,7 @@
 				width: 100%;
 				top: 0;
 				left: 0;
-				background-color: $editor-lightest;
+				background-color: $editor-background;
 			}
 		}
 
@@ -92,7 +92,7 @@
 				width: 100%;
 				bottom: 0;
 				left: 0;
-				background-color: $editor-lightest;
+				background-color: $editor-background;
 			}
 
 			+ .elementor-control-type-tabs,
@@ -407,40 +407,6 @@
 	}
 }
 
-.elementor-slider {
-	display: inline-block;
-	margin-top: 10px;
-	height: 4px;
-	background-color: $editor-light;
-	border-radius: 5px;
-	position: relative;
-	width: 70%;
-
-	.ui-slider-handle {
-		height: 16px;
-		width: 16px;
-		background-color: #fff;
-		display: inline-block;
-		top: 50%;
-		transform: translateY(-50%) translateX(-8px);
-		position: absolute;
-		box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
-		border-radius: 50%;
-		cursor: pointer;
-	}
-}
-
-.elementor-slider-input {
-	width: 30%;
-	float: $end;
-
-	input {
-		max-width: 80%;
-		float: $end;
-		padding: 5px 5px;
-	}
-}
-
 .elementor-units-choices {
 	flex-grow: 1;
 	text-align: $end;
@@ -558,12 +524,29 @@
 }
 
 // = Choices control for alignment
-.elementor-control-text_align,
-.elementor-control-align,
-.elementor-control-position {
+.rtl {
 
-	.elementor-choices {
-		direction: ltr; // Force ltr also in RTL languages
+	.elementor-control-text_align,
+	.elementor-control-align,
+	.elementor-control-position {
+
+		.elementor-choices {
+			direction: ltr; // Force ltr also in RTL languages
+
+			input {
+
+				&:not(:checked) + .elementor-choices-label {
+
+					&:nth-child(2) {
+						border-radius: 3px 0 0 3px;
+					}
+
+					&:last-child {
+						border-radius: 0 3px 3px 0;
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -579,52 +562,54 @@
 	}
 }
 
-@import "controls/media";
+@import "controls/box-shadow";
 
-@import "controls/dimensions";
+@import "controls/button";
 
-@import "controls/url";
-
-@import "controls/section";
+@import "controls/code";
 
 @import "controls/color";
 
-@import "controls/wysiwyg";
+@import "controls/control-group-css-filters";
 
-@import "controls/icon";
+@import "controls/dimensions";
 
 @import "controls/icons";
 
 @import "controls/gallery";
 
-@import "controls/structure";
+@import "controls/hidden";
+
+@import "controls/icon";
 
 @import "controls/image-dimensions";
 
-@import "controls/code";
-
-@import "controls/wp-widget";
-
-@import "controls/tabs";
-
-@import "controls/repeater";
-
-@import "controls/textarea";
-
-@import "controls/box-shadow";
-
-@import "controls/text-shadow";
-
-@import "controls/switcher";
-
-@import "controls/order";
-
-@import "controls/hidden";
-
-@import "controls/popover-toggle";
-
-@import "controls/button";
+@import "controls/media";
 
 @import "controls/number";
 
-@import "controls/control-group-css-filters";
+@import "controls/order";
+
+@import "controls/popover-toggle";
+
+@import "controls/repeater";
+
+@import "controls/section";
+
+@import "controls/slider";
+
+@import "controls/structure";
+
+@import "controls/switcher";
+
+@import "controls/tabs";
+
+@import "controls/text-shadow";
+
+@import "controls/textarea";
+
+@import "controls/url";
+
+@import "controls/wp-widget";
+
+@import "controls/wysiwyg";

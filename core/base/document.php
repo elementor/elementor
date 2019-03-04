@@ -31,6 +31,7 @@ abstract class Document extends Controls_Stack {
 	 * Document type meta key.
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
+	const PAGE_META_KEY = '_elementor_page_settings';
 
 	private $main_id;
 
@@ -85,7 +86,7 @@ abstract class Document extends Controls_Stack {
 			'elements_categories' => static::get_editor_panel_categories(),
 			'messages' => [
 				/* translators: %s: the document title. */
-				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), self::get_title() ),
+				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
 			],
 		];
 	}
@@ -789,7 +790,7 @@ abstract class Document extends Controls_Stack {
 	public function get_panel_page_settings() {
 		return [
 			/* translators: %s: Document title */
-			'title' => sprintf( __( '%s Settings', 'elementor' ), self::get_title() ),
+			'title' => sprintf( __( '%s Settings', 'elementor' ), static::get_title() ),
 		];
 	}
 

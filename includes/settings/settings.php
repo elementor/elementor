@@ -174,7 +174,7 @@ class Settings extends Settings_Page {
 		add_submenu_page(
 			self::PAGE_ID,
 			'',
-			__( 'Knowledge Base', 'elementor' ),
+			__( 'Get Help', 'elementor' ),
 			'manage_options',
 			'go_knowledge_base_site',
 			[ $this, 'handle_external_redirects' ]
@@ -254,7 +254,7 @@ class Settings extends Settings_Page {
 							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
 							<?php endif; ?>
 
-							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Read the Full Article', 'elementor' ); ?></a>
+							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Get the Full Guide', 'elementor' ); ?></a>
 						</div>
 					</div>
 				</div>
@@ -406,9 +406,7 @@ class Settings extends Settings_Page {
 								'field_args' => [
 									'type' => 'hidden',
 								],
-								'setting_args' => [
-									'sanitize_callback' => 'time',
-								],
+								'setting_args' => [ $validations_class_name, 'current_time' ],
 							],
 							'cpt_support' => [
 								'label' => __( 'Post Types', 'elementor' ),
@@ -701,7 +699,7 @@ class Settings extends Settings_Page {
 
 		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
 			foreach ( [ 'add', 'update' ] as $action ) {
-				add_action( "{$action}_option_elementor_viewport_{$breakpoint_key}", [ 'Elementor\Responsive', 'compile_stylesheet_templates' ] );
+				add_action( "{$action}_option_elementor_viewport_{$breakpoint_key}", [ 'Elementor\Core\Responsive\Responsive', 'compile_stylesheet_templates' ] );
 			}
 		}
 	}

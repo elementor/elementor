@@ -164,8 +164,13 @@ class Source_Local extends Source_Base {
 		}
 	}
 
-	public static function get_admin_url() {
-		return add_query_arg( 'tabs_group', 'library', admin_url( self::ADMIN_MENU_SLUG ) );
+	public static function get_admin_url( $relative = false ) {
+		$base_url = self::ADMIN_MENU_SLUG;
+		if ( ! $relative ) {
+			$base_url = admin_url( $base_url );
+		}
+
+		return add_query_arg( 'tabs_group', 'library', $base_url );
 	}
 
 	/**
@@ -320,6 +325,9 @@ class Source_Local extends Source_Base {
 	public function admin_menu_reorder() {
 		global $submenu;
 
+		if ( ! isset( $submenu[ self::ADMIN_MENU_SLUG ] ) ) {
+			return;
+		}
 		$library_submenu = &$submenu[ self::ADMIN_MENU_SLUG ];
 
 		// Remove 'All Templates' menu.
@@ -353,7 +361,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function admin_menu() {
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url() );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -384,12 +392,18 @@ class Source_Local extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $args Optional. Filter templates list based on a set of
+	 * @param array $args Optional. Filter templates based on a set of
 	 *                    arguments. Default is an empty array.
 	 *
 	 * @return array Local templates.
 	 */
 	public function get_items( $args = [] ) {
+		$template_types = array_values( self::$template_types );
+
+		if ( ! empty( $args['type'] ) ) {
+			$template_types = $args['type'];
+		}
+
 		$templates_query = new \WP_Query(
 			[
 				'post_type' => self::CPT,
@@ -400,7 +414,7 @@ class Source_Local extends Source_Base {
 				'meta_query' => [
 					[
 						'key' => Document::TYPE_META_KEY,
-						'value' => array_values( self::$template_types ),
+						'value' => $template_types,
 					],
 				],
 			]
@@ -412,10 +426,6 @@ class Source_Local extends Source_Base {
 			foreach ( $templates_query->get_posts() as $post ) {
 				$templates[] = $this->get_item( $post->ID );
 			}
-		}
-
-		if ( ! empty( $args ) ) {
-			$templates = wp_list_filter( $templates, $args );
 		}
 
 		return $templates;

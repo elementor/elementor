@@ -171,11 +171,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	getNamespaceArray: function() {
-		var eventNamespace = [];
-
-		eventNamespace.push( elementor.getPanelView().getCurrentPageName() );
-
-		return eventNamespace;
+		return [ elementor.getPanelView().getCurrentPageName() ];
 	},
 
 	openActiveSection: function() {
@@ -187,10 +183,9 @@ ControlsStack = Marionette.CompositeView.extend( {
 		if ( activeSectionView[ 0 ] ) {
 			activeSectionView[ 0 ].$el.addClass( 'elementor-open' );
 
-			var eventNamespace = this.getNamespaceArray();
+			const eventNamespace = this.getNamespaceArray();
 
-			eventNamespace.push( activeSection );
-			eventNamespace.push( 'activated' );
+			eventNamespace.push( activeSection, 'activated' );
 
 			elementor.channels.editor.trigger( eventNamespace.join( ':' ), this );
 		}

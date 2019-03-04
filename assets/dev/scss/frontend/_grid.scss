@@ -112,12 +112,19 @@
 .elementor-widget-wrap {
 	position: relative;
 	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+
+	> .elementor-element {
+		width: 100%;
+	}
 }
 
 .elementor-widget {
 	position: relative;
 
-	&:not(:last-child) {
+	&:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute) {
 		margin-bottom: 20px;
 	}
 }

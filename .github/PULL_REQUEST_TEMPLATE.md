@@ -3,7 +3,7 @@
 Please check if your PR fulfills the following requirements:
 **Filling out the template is required.** Any pull request that does not include enough information to be reviewed in a timely manner may be closed at the maintainers' discretion.
  -->
-- [ ] The commit message follows our guidelines:  https://github.com/pojome/elementor/blob/master/.github/CONTRIBUTING.md
+- [ ] The commit message follows our guidelines:  https://github.com/elementor/elementor/blob/master/.github/CONTRIBUTING.md
 
 
 ## PR Type
