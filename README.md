@@ -7,7 +7,6 @@
 **Tested up to:** 5.1  
 **Requires PHP:** 5.4  
 **Stable tag:** 2.4.7  
-**Beta tag:** 2.5.0-beta4  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -224,6 +223,36 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.5.0 - 2019-03-04 ###
+* New: Added Position Absolute & Position Fixed for widgets ([#5568](https://github.com/elementor/elementor/issues/5568))
+* New: Added inline & custom width options to place widgets side by side without columns ([#4960](https://github.com/elementor/elementor/issues/4960))
+* New: Added responsive options for Column ([#2965](https://github.com/elementor/elementor/issues/2965), [#6898](https://github.com/elementor/elementor/issues/7104), Props [@wayheming](https://github.com/wayheming))
+* New: Added Columns for Text Editor widget ([#7104](https://github.com/elementor/elementor/issues/7104))
+* New: Added `space-between`, `space-around` & `space-evenly` for Vertical Alignment in Column ([#5083](https://github.com/elementor/elementor/issues/5083))
+* New: Added Horizontal Alignment in Column for inline widget
+* New: Added responsive capabilities for Entrance Animation ([#1639](https://github.com/elementor/elementor/issues/1639))
+* New: Added `elementor/template/viewport_tag` filter hook to Meta Viewport tag ([#7043](https://github.com/elementor/elementor/issues/7043))
+* Tweak: Improved editor loading time and performance by ~50%
+* Tweak: Remember last editing tab per element in the editor panel for better workflow ([#7087](https://github.com/elementor/elementor/issues/7087))
+* Tweak: Added text shadow & background color controls for caption in Image widget (Props [@ramiy](https://github.com/ramiy))
+* Tweak: Added access to super admin role in Maintenance Mode (Props [@GermanKrutov](https://github.com/GermanKrutov))
+* Tweak: Added vw unit support for Typography size control
+* Tweak: Added vw unit support for Custom Min. Height control in section
+* Tweak: Added overflow option for section
+* Tweak: Renamed `Content Position` control to `Vertical Align` in column layout
+* Tweak: Renamed `Scrolling Effects` section to `Motion Effects`
+* Tweak: Added Dynamic capabilities to Inner Section CSS class and CSS ID ([#6779](https://github.com/elementor/elementor/issues/6779))
+* Tweak: Added Dynamic capabilities to Section CSS class and CSS ID ([#6779](https://github.com/elementor/elementor/issues/6779))
+* Tweak: Added Dynamic capabilities all widgets CSS class and CSS ID ([#6779](https://github.com/elementor/elementor/issues/6779))
+* Tweak: Added Dynamic capabilities to Button CSS ID ([#6779](https://github.com/elementor/elementor/issues/6779))
+* Fix: Separator inside Repeater control ([#6851](https://github.com/elementor/elementor/issues/6851))
+* Fix: Selectors not working in dynamic tags in edge cases (Props [@crazypsycho](https://github.com/crazypsycho))
+* Fix: Entrance animations glitches ([#6945](https://github.com/elementor/elementor/issues/6945))
+* Fix: Library "Blocks" tab empty
+* Fix: Custom shape dividers not loading in editor ([#6550](https://github.com/elementor/elementor/issues/6550))
+* Fix: WP-CLI Flush CSS command glitch in multisite ([#7190](https://github.com/elementor/elementor/issues/7190))
+* Fix: Horizontal Orientation control visibility for RTL
+
 ### 2.4.7 - 2019-02-18 ###
 * Fix: Incorrect device mode detection in Safari ([#7036](https://github.com/elementor/elementor/issues/7036))
 * Fix: Elementor dashboard templates URL corrupted links in edge cases
@@ -285,7 +314,7 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 * Tweak: Added `elementor/controls/hover_animations/additional_animations` hook for adding custom Hover Animations ([#6545](https://github.com/elementor/elementor/issues/6545))
 * Tweak: Reorganized admin menu for Elementor settings & Template Library
 * Tweak: Exclude library CPT from Yoast SEO sitemap
-* Tweak: Added attributes for column wrappers (thanks [@thenovacreator](https://github.com/thenovacreator))
+* Tweak: Added attributes for column wrappers (Props [@thenovacreator](https://github.com/thenovacreator))
 * Tweak: Added `autocomplete` parameter for URL control (default: true)
 * Tweak: Added sanitize data on Menu Anchor ID
 * Tweak: Added dynamic options for Testimonial widget
