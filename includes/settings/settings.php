@@ -407,7 +407,6 @@ class Settings extends Settings_Page {
 									'type' => 'hidden',
 								],
 								'setting_args' => [ $validations_class_name, 'current_time' ],
-								],
 							],
 							'cpt_support' => [
 								'label' => __( 'Post Types', 'elementor' ),
