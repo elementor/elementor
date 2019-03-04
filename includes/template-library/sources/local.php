@@ -398,27 +398,8 @@ class Source_Local extends Source_Base {
 	 * @return array Local templates.
 	 */
 	public function get_items( $args = [] ) {
-		$template_types = array_values( self::$template_types );
 
-		if ( ! empty( $args['type'] ) ) {
-			$template_types = $args['type'];
-		}
-
-		$templates_query = new \WP_Query(
-			[
-				'post_type' => self::CPT,
-				'post_status' => 'publish',
-				'posts_per_page' => -1,
-				'orderby' => 'title',
-				'order' => 'ASC',
-				'meta_query' => [
-					[
-						'key' => Document::TYPE_META_KEY,
-						'value' => $template_types,
-					],
-				],
-			]
-		);
+		$templates_query = $this->get_items_query( $args );
 
 		$templates = [];
 
@@ -429,6 +410,41 @@ class Source_Local extends Source_Base {
 		}
 
 		return $templates;
+	}
+
+	public function get_items_query( $args = [] ) {
+		$document_types = Plugin::instance()->documents->get_document_types( [
+			'show_in_library' => true,
+		] );
+
+		if ( ! empty( $args['type'] ) ) {
+			$template_types = $args['type'];
+		} else {
+			$template_types = array_keys( $document_types );
+		}
+
+		$query_args = [
+			'post_type' => self::CPT,
+			'post_status' => 'publish',
+			'posts_per_page' => -1,
+			'orderby' => 'meta_value',
+			'order' => 'ASC',
+			'meta_query' => [
+				[
+					'key' => Document::TYPE_META_KEY,
+					'value' => $template_types,
+					'compare' => 'IN',
+				],
+			],
+		];
+
+		if ( ! empty( $args['query_args'] ) ) {
+			$query_args = array_merge( $query_args, $args['query_args'] );
+		}
+
+		$templates_query = new \WP_Query( $query_args );
+
+		return $templates_query;
 	}
 
 	/**
