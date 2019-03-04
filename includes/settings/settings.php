@@ -406,9 +406,7 @@ class Settings extends Settings_Page {
 								'field_args' => [
 									'type' => 'hidden',
 								],
-								'setting_args' => [
-									'sanitize_callback' => 'time',
-								],
+								'setting_args' => [ $validations_class_name, 'current_time' ],
 							],
 							'cpt_support' => [
 								'label' => __( 'Post Types', 'elementor' ),
