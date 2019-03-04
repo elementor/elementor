@@ -44,6 +44,16 @@ abstract class Library_Document extends Document {
 		return $properties;
 	}
 
+	public function _get_initial_config() {
+		$config = parent::_get_initial_config();
+
+		$config['library'] = [
+			'save_as_same_type' => true,
+		];
+
+		return $config;
+	}
+
 	public function print_admin_column_type() {
 		$admin_filter_url = admin_url( Source_Local::ADMIN_MENU_SLUG . '&elementor_library_type=' . $this->get_name() );
 

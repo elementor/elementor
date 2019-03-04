@@ -262,11 +262,11 @@ BaseElementView = BaseContainer.extend( {
 				return;
 			}
 
-			if ( 'object' === typeof sourceValue ) {
-				if ( 'object' !== typeof targetValue ) {
-					return;
-				}
+			if ( 'object' === typeof sourceValue ^ 'object' === typeof targetValue ) {
+				return;
+			}
 
+			if ( 'object' === typeof sourceValue ) {
 				let isEqual = true;
 
 				jQuery.each( sourceValue, function( propertyKey ) {

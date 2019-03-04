@@ -32,7 +32,7 @@
 	}
 
 	.elementor-widget:not(.elementor-widget-text-editor) figure {
-			margin: 0;
+		margin: 0;
 	}
 
 	// Responsive Embed
@@ -52,7 +52,9 @@
 	}
 
 	// Background Video
-	.elementor-background-video-container {
+	.elementor-background-video-container,
+	.elementor-background-holder,
+	.elementor-background {
 		height: 100%;
 		width: 100%;
 		top: 0;
@@ -60,6 +62,9 @@
 		position: absolute;
 		overflow: hidden;
 		z-index: $ground-layer;
+	}
+
+	.elementor-background-video-container {
 		transition: opacity 1s;
 		pointer-events: none; // This prevents the player from showing video info on hover
 
@@ -98,6 +103,58 @@
 		top: 0;
 		left: 0;
 		position: absolute;
+	}
+}
+
+.elementor-widget-wrap {
+
+	> .elementor-element.elementor-absolute {
+		width: auto;
+		position: absolute;
+	}
+
+	> .elementor-element.elementor-fixed {
+		width: auto;
+		position: fixed;
+	}
+}
+
+.elementor-widget-wrap {
+
+	.elementor-element.elementor-widget {
+
+		@mixin inline-width($device) {
+
+			&#{$device}__width {
+
+				&-auto,
+				&-initial {
+					max-width: 100%;
+				}
+			}
+		}
+
+		@include inline-width('');
+
+		@media (max-width: $screen-md-max) {
+			@include inline-width(-tablet);
+		}
+
+		@media (max-width: $screen-sm-max) {
+			@include inline-width(-mobile);
+		}
+	}
+}
+
+.elementor-element {
+
+	&.elementor-absolute,
+	&.elementor-fixed {
+		z-index: 1;
+
+		.elementor-image img {
+			width: auto;
+		}
 	}
 }
 

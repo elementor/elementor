@@ -1,6 +1,4 @@
-var HandlerModule = require( 'elementor-frontend/handler-module' );
-
-var BackgroundVideo = HandlerModule.extend( {
+const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 	player: null,
 
 	isYTVideo: null,
@@ -156,7 +154,7 @@ var BackgroundVideo = HandlerModule.extend( {
 	},
 
 	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		this.run();
 	},
@@ -168,7 +166,7 @@ var BackgroundVideo = HandlerModule.extend( {
 	},
 } );
 
-var StretchedSection = HandlerModule.extend( {
+var StretchedSection = elementorModules.frontend.handlers.Base.extend( {
 
 	stretchElement: null,
 
@@ -208,7 +206,7 @@ var StretchedSection = HandlerModule.extend( {
 	},
 
 	onInit: function() {
-		HandlerModule.prototype.onInit.apply( this, arguments );
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		this.initStretch();
 
@@ -234,7 +232,7 @@ var StretchedSection = HandlerModule.extend( {
 	},
 } );
 
-var Shapes = HandlerModule.extend( {
+var Shapes = elementorModules.frontend.handlers.Base.extend( {
 
 	getDefaultSettings: function() {
 		return {
@@ -256,8 +254,16 @@ var Shapes = HandlerModule.extend( {
 		return elements;
 	},
 
+	getSvgURL( shapeType, fileName ) {
+		let svgURL = this.getSettings( 'svgURL' ) + fileName + '.svg';
+		if ( elementor.config.additional_shapes && shapeType in elementor.config.additional_shapes ) {
+			svgURL = elementor.config.additional_shapes[ shapeType ];
+		}
+		return svgURL;
+	},
+
 	buildSVG: function( side ) {
-		var self = this,
+		const self = this,
 			baseSettingKey = 'shape_divider_' + side,
 			shapeType = self.getElementSettings( baseSettingKey ),
 			$svgContainer = this.elements[ '$' + side + 'Container' ];
@@ -268,13 +274,13 @@ var Shapes = HandlerModule.extend( {
 			return;
 		}
 
-		var fileName = shapeType;
+		let fileName = shapeType;
 
 		if ( self.getElementSettings( baseSettingKey + '_negative' ) ) {
 			fileName += '-negative';
 		}
 
-		var svgURL = self.getSettings( 'svgURL' ) + fileName + '.svg';
+		const svgURL = self.getSvgURL( shapeType, fileName );
 
 		jQuery.get( svgURL, function( data ) {
 			$svgContainer.append( data.childNodes[ 0 ] );
@@ -290,7 +296,7 @@ var Shapes = HandlerModule.extend( {
 	onInit: function() {
 		var self = this;
 
-		HandlerModule.prototype.onInit.apply( self, arguments );
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( self, arguments );
 
 		[ 'top', 'bottom' ].forEach( function( side ) {
 			if ( self.getElementSettings( 'shape_divider_' + side ) ) {
@@ -318,7 +324,7 @@ var Shapes = HandlerModule.extend( {
 	},
 } );
 
-var HandlesPosition = HandlerModule.extend( {
+var HandlesPosition = elementorModules.frontend.handlers.Base.extend( {
 
     isFirst: function() {
         return this.$element.is( '.elementor-edit-mode .elementor-top-section:first' );
@@ -365,13 +371,13 @@ var HandlesPosition = HandlerModule.extend( {
 
 module.exports = function( $scope ) {
 	if ( elementorFrontend.isEditMode() || $scope.hasClass( 'elementor-section-stretched' ) ) {
-		new StretchedSection( { $element: $scope } );
+		elementorFrontend.elementsHandler.addHandler( StretchedSection, { $element: $scope } );
 	}
 
 	if ( elementorFrontend.isEditMode() ) {
-		new Shapes( { $element: $scope } );
-		new HandlesPosition( { $element: $scope } );
+		elementorFrontend.elementsHandler.addHandler( Shapes, { $element: $scope } );
+		elementorFrontend.elementsHandler.addHandler( HandlesPosition, { $element: $scope } );
 	}
 
-	new BackgroundVideo( { $element: $scope } );
+	elementorFrontend.elementsHandler.addHandler( BackgroundVideo, { $element: $scope } );
 };

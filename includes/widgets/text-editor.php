@@ -189,6 +189,51 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
+		$text_columns = range( 1, 10 );
+		$text_columns = array_combine( $text_columns, $text_columns );
+		$text_columns[''] = __( 'Default', 'elementor' );
+
+		$this->add_responsive_control(
+			'text_columns',
+			[
+				'label' => __( 'Columns', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => $text_columns,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-text-editor' => 'columns: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'column_gap',
+			[
+				'label' => __( 'Columns Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'vw' ],
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+					'%' => [
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'vw' => [
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'em' => [
+						'max' => 10,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-text-editor' => 'column-gap: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(

@@ -9,7 +9,7 @@ export default class extends Marionette.ItemView {
 
 	onRender() {
 		elementor.history.revisions.requestRevisions( () => {
-			setTimeout( () => elementor.getPanelView().getCurrentPageView().showView( 'revisions' ) );
+			setTimeout( () => elementor.getPanelView().getCurrentPageView().activateTab( 'revisions' ) );
 		} );
 	}
 }

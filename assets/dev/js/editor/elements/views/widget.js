@@ -1,3 +1,6 @@
+import WidgetDraggable from './behaviors/widget-draggable';
+import WidgetResizable from './behaviors/widget-resizeable';
+
 var BaseElementView = require( 'elementor-elements/views/base' ),
 	WidgetView;
 
@@ -36,6 +39,12 @@ WidgetView = BaseElementView.extend( {
 			InlineEditing: {
 				behaviorClass: require( 'elementor-behaviors/inline-editing' ),
 				inlineEditingClass: 'elementor-inline-editing',
+			},
+			Draggable: {
+				behaviorClass: WidgetDraggable,
+			},
+			Resizable: {
+				behaviorClass: WidgetResizable,
 			},
 		} );
 

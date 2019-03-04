@@ -315,7 +315,23 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Processed fields.
 	 */
 	protected function prepare_fields( $fields ) {
+		$popover_options = $this->get_options( 'popover' );
+
+		$popover_name = ! $popover_options ? null : $popover_options['starter_name'];
+
 		foreach ( $fields as $field_key => &$field ) {
+			if ( $popover_name ) {
+				$field['condition'][ $popover_name . '!' ] = '';
+			}
+
+			if ( isset( $this->args['fields_options']['__all'] ) ) {
+				$field = array_merge( $field, $this->args['fields_options']['__all'] );
+			}
+
+			if ( isset( $this->args['fields_options'][ $field_key ] ) ) {
+				$field = array_merge( $field, $this->args['fields_options'][ $field_key ] );
+			}
+
 			if ( ! empty( $field['condition'] ) ) {
 				$field = $this->add_conditions_prefix( $field );
 			}
@@ -335,14 +351,6 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 						$field['device_args'][ $device ]['selectors'] = $this->handle_selectors( $device_arg['selectors'] );
 					}
 				}
-			}
-
-			if ( isset( $this->args['fields_options']['__all'] ) ) {
-				$field = array_merge( $field, $this->args['fields_options']['__all'] );
-			}
-
-			if ( isset( $this->args['fields_options'][ $field_key ] ) ) {
-				$field = array_merge( $field, $this->args['fields_options'][ $field_key ] );
 			}
 		}
 
@@ -512,8 +520,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$control_params = array_replace_recursive( $control_params, $popover_options['settings'] );
 		}
 
-		if ( ! empty( $settings['condition'] ) ) {
-			$control_params['condition'] = $settings['condition'];
+		foreach ( [ 'condition', 'conditions' ] as $key ) {
+			if ( ! empty( $settings[ $key ] ) ) {
+				$control_params[ $key ] = $settings[ $key ];
+			}
 		}
 
 		$starter_name = $popover_options['starter_name'];

@@ -829,7 +829,7 @@ abstract class Element_Base extends Controls_Stack {
 	protected function _add_render_attributes() {
 		$id = $this->get_id();
 
-		$settings = $this->get_active_settings();
+		$settings = $this->get_settings_for_display();
 		$frontend_settings = $this->get_frontend_settings();
 		$controls = $this->get_controls();
 
@@ -940,7 +940,7 @@ abstract class Element_Base extends Controls_Stack {
 			'reload_preview' => $this->is_reload_preview_required(),
 		];
 
-		return array_merge( parent::_get_initial_config(), $config );
+		return $config;
 	}
 
 	/**

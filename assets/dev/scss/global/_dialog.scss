@@ -117,6 +117,7 @@
 
 .dialog-prevent-scroll {
 	overflow: hidden;
+	max-height: 100vh;
 }
 
 @media (max-width: $editor-screen-sm-max) {

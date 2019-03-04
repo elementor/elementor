@@ -1,0 +1,75 @@
+
+// Resizable
+.ui-resizable {
+
+	&-n {
+		top: -5px;
+	}
+
+	&-e {
+		right: -5px;
+	}
+
+	&-s {
+		bottom: -5px;
+	}
+
+	&-w {
+		left: -5px;
+	}
+
+	&-ne {
+		top: -5px;
+		right: -5px;
+	}
+
+	&-nw {
+		top: -5px;
+		left: -5px;
+	}
+
+	&-se {
+		bottom: -5px;
+		right: -5px;
+	}
+
+	&-sw {
+		bottom: -5px;
+		left: -5px;
+	}
+
+	&-n, &-s {
+		left: 0;
+		height: 10px;
+		width: 100%;
+		cursor: ns-resize;
+	}
+
+	&-e, &-w {
+		top: 0;
+		height: 100%;
+		width: 10px;
+		cursor: ew-resize;
+	}
+
+	&-ne, &-nw, &-se, &-sw {
+		height: 15px;
+		width: 15px;
+	}
+
+	&-nw, &-se {
+		cursor: nwse-resize;
+	}
+
+	&-ne, &-sw {
+		cursor: nesw-resize;
+	}
+
+	&-handle {
+		position: absolute;
+	}
+
+	&-resizing {
+		pointer-events: none;
+	}
+}

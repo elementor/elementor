@@ -610,6 +610,7 @@ class Group_Control_Background extends Group_Control_Base {
 	protected function get_child_default_args() {
 		return [
 			'types' => [ 'classic', 'gradient' ],
+			'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background), {{WRAPPER}} > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 		];
 	}
 

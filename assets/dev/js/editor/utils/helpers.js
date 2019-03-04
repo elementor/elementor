@@ -329,7 +329,24 @@ helpers = {
 		$element.removeData( backupKey );
 	},
 
-	compareVersions( versionA, versionB, operator ) {
+	elementSizeToUnit: function( $element, size, unit ) {
+		const window = elementorFrontend.elements.window;
+
+		switch ( unit ) {
+			case '%':
+				size = ( size / ( $element.offsetParent().width() / 100 ) );
+				break;
+			case 'vw':
+				size = ( size / ( window.innerWidth / 100 ) );
+				break;
+			case 'vh':
+				size = ( size / ( window.innerHeight / 100 ) );
+		}
+
+		return Math.round( size * 1000 ) / 1000;
+	},
+
+	compareVersions: function( versionA, versionB, operator ) {
 		const prepareVersion = function( version ) {
 			version = version + '';
 
