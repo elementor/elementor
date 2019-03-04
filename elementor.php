@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_VERSION', '2.5.0-beta4' );
+define( 'ELEMENTOR_VERSION', '2.5.0' );
 define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '2.4.7' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
