@@ -198,6 +198,7 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => __( 'Columns', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'separator' => 'before',
 				'options' => $text_columns,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-text-editor' => 'columns: {{VALUE}};',
