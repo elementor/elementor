@@ -12,15 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 2.4.0
  */
-class Icons_Manager extends Element_Base {
-
-	protected function _get_default_child_type( array $element_data ) {
-		// TODO: Implement _get_default_child_type() method.
-	}
-
-	public function get_name() {
-		// TODO: Implement get_name() method.
-	}
+class Icons_Manager { // extends Element_Base {
+//
+//	protected function _get_default_child_type( array $element_data ) {
+//		// TODO: Implement _get_default_child_type() method.
+//	}
+//
+//	public function get_name() {
+//		// TODO: Implement get_name() method.
+//	}
 
 
 	/**
@@ -102,13 +102,13 @@ class Icons_Manager extends Element_Base {
 	 *
 	 * @return mixed|string
 	 */
-	public function render_icon( $type = '', $value = '', $attributes = [], $tag = 'i' ) {
-		$icon_types = self::get_icon_manager_tabs();
-		if ( isset( $icon_types[ $type ] ) && isset( $icon_types[ $type ]['render_callback'] ) && is_callable( $icon_types[ $type ]['render_callback'] ) ) {
-			return call_user_func_array( $icon_types[ $type ]['render_callback'], [ $type, $value, $attributes, $tag ] );
-		}
-		$this->add_render_attribute( $tag, $attributes );
-		$this->add_render_attribute( $tag, 'class', $value );
-		return '<' . $tag . ' ' . $this->get_render_attribute_string( $tag ) . '></i>';
-	}
+//	public function render_icon( $type = '', $value = '', $attributes = [], $tag = 'i' ) {
+//		$icon_types = self::get_icon_manager_tabs();
+//		if ( isset( $icon_types[ $type ] ) && isset( $icon_types[ $type ]['render_callback'] ) && is_callable( $icon_types[ $type ]['render_callback'] ) ) {
+//			return call_user_func_array( $icon_types[ $type ]['render_callback'], [ $type, $value, $attributes, $tag ] );
+//		}
+//		$this->add_render_attribute( $tag, $attributes );
+//		$this->add_render_attribute( $tag, 'class', $value );
+//		return '<' . $tag . ' ' . $this->get_render_attribute_string( $tag ) . '></i>';
+//	}
 }
