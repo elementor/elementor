@@ -43,10 +43,15 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 	},
 
 	changeVideoSize: function() {
-		var $video = this.isYTVideo ? jQuery( this.player.getIframe() ) : this.elements.$backgroundVideoHosted,
-			size = this.calcVideosSize();
+		const size = this.calcVideosSize();
 
-		$video.width( size.width ).height( size.height );
+		if ( this.isYTVideo ) {
+			const $video = jQuery( this.player.getIframe() );
+			$video.width( size.width ).height( size.height );
+		} else {
+			const video = this.elements.$backgroundVideoHosted;
+			video.width( size.width );
+		}
 	},
 
 	startVideoLoop: function() {
