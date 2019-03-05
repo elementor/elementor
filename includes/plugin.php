@@ -510,6 +510,7 @@ class Plugin {
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
 		$this->files_manager = new Files_Manager();
+		$this->icons_manager = new Icons_Manager();
 		/*
 		 * @TODO: Remove deprecated alias
 		 */
