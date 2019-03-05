@@ -221,6 +221,11 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.5.2 - 2019-03-05 =
+* Fix: Custom space between widgets override ([#7309](https://github.com/elementor/elementor/issues/7309))
+* Fix: Changed the default width of Absolute & Fixed position widget ([#7311](https://github.com/elementor/elementor/issues/7311))
+* **Note: This fix might affect previous custom positioning settings, if you have previously used position absolute or position fixed, please review your site.**
+
 = 2.5.1 - 2019-03-04 =
 * Fix: Inline Width (auto) not working ([#7293](https://github.com/elementor/elementor/issues/7293))
 
