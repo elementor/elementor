@@ -124,8 +124,14 @@
 .elementor-widget {
 	position: relative;
 
-	&:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute) {
+	&:not(:last-child) {
 		margin-bottom: 20px;
+
+		&.elementor-widget__width-auto,
+		&.elementor-widget__width-initial,
+		&.elementor-absolute {
+			margin-bottom: 0;
+		}
 	}
 }
 
