@@ -484,7 +484,7 @@ abstract class Controls_Stack extends Base_Object {
 		if ( null === $stack ) {
 			$this->init_controls();
 
-			return $this->get_stack();
+			return Plugin::$instance->controls_manager->get_element_stack( $this );
 		}
 
 		return $stack;
