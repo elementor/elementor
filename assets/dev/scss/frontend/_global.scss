@@ -109,12 +109,10 @@
 .elementor-widget-wrap {
 
 	> .elementor-element.elementor-absolute {
-		width: auto;
 		position: absolute;
 	}
 
 	> .elementor-element.elementor-fixed {
-		width: auto;
 		position: fixed;
 	}
 }
@@ -151,10 +149,6 @@
 	&.elementor-absolute,
 	&.elementor-fixed {
 		z-index: 1;
-
-		.elementor-image img {
-			width: auto;
-		}
 	}
 }
 
