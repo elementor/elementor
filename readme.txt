@@ -221,6 +221,13 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.5.3 - 2019-03-06 =
+* Tweak: Reduced Editor memory usage by moving common controls injection to the frontend ([#7308](https://github.com/elementor/elementor/issues/7308))
+* Tweak: Moved sync library from POST to GET method
+* Fix: `ucwords` support for older php versions ([#7327](https://github.com/elementor/elementor/issues/7327), [#7310](https://github.com/elementor/elementor/issues/7310))
+* Fix: Background self hosted videos responsive
+* Fix: Group controls `conditions` support
+
 = 2.5.2 - 2019-03-05 =
 * Fix: Custom space between widgets override ([#7309](https://github.com/elementor/elementor/issues/7309))
 * Fix: Changed the default width of Absolute & Fixed position widget ([#7311](https://github.com/elementor/elementor/issues/7311))
