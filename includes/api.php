@@ -83,14 +83,15 @@ class Api {
 		if ( $force_update || false === $info_data ) {
 			$timeout = ( $force_update ) ? 25 : 8;
 
-			$response = wp_remote_post( self::$api_info_url, [
+			$api_info_url = add_query_arg( [
+				// Which API version is used.
+				'api_version' => ELEMENTOR_VERSION,
+				// Which language to return.
+				'site_lang' => get_bloginfo( 'language' ),
+			], self::$api_info_url );
+
+			$response = wp_remote_get( $api_info_url, [
 				'timeout' => $timeout,
-				'body' => [
-					// Which API version is used.
-					'api_version' => ELEMENTOR_VERSION,
-					// Which language to return.
-					'site_lang' => get_bloginfo( 'language' ),
-				],
 			] );
 
 			if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {

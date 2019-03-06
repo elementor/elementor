@@ -317,17 +317,16 @@ class Server_Reporter extends Base_Reporter {
 	 * }
 	 */
 	public function get_elementor_library() {
-		$response = wp_remote_post(
-			Api::$api_info_url, [
-				'timeout' => 5,
-				'body' => [
-					// Which API version is used
-					'api_version' => ELEMENTOR_VERSION,
-					// Which language to return
-					'site_lang' => get_bloginfo( 'language' ),
-				],
-			]
-		);
+		$api_info_url = add_query_arg( [
+			// Which API version is used.
+			'api_version' => ELEMENTOR_VERSION,
+			// Which language to return.
+			'site_lang' => get_bloginfo( 'language' ),
+		], Api::$api_info_url );
+
+		$response = wp_remote_get( $api_info_url, [
+			'timeout' => 5,
+		] );
 
 		if ( is_wp_error( $response ) ) {
 			return [
