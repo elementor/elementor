@@ -148,7 +148,7 @@ class Autoloader {
 		] );
 
 		foreach ( $controls_names as $control_name ) {
-			$class_name = 'Control_' . ucwords( $control_name, '_' );
+			$class_name = 'Control_' . self::safe_ucwords( $control_name, '_' );
 
 			self::$classes_map[ $class_name ] = 'includes/controls/' . str_replace( '_', '-', $control_name ) . '.php';
 		}
@@ -156,10 +156,26 @@ class Autoloader {
 		$controls_groups_names = Controls_Manager::get_groups_names();
 
 		foreach ( $controls_groups_names as $group_name ) {
-			$class_name = 'Group_Control_' . ucwords( str_replace( '-', '_', $group_name ), '_' );
+			$class_name = 'Group_Control_' . self::safe_ucwords( str_replace( '-', '_', $group_name ), '_' );
 
 			self::$classes_map[ $class_name ] = 'includes/controls/groups/' . $group_name . '.php';
 		}
+	}
+
+	/**
+	 * Safe Ucwords
+	 *
+	 * ucwords polyfill for php versions not supporting delimiter parameter
+	 * reference : https://github.com/elementor/elementor/issues/7310#issuecomment-469593385
+	 *
+	 * @param $string
+	 * @param string $delimiter
+	 *
+	 * @todo Remove once we bump minimum php version to 5.6
+	 * @return mixed
+	 */
+	private static function safe_ucwords( $string, $delimiter = ' ' ) {
+		return str_replace(' ', $delimiter, ucwords( str_replace( $delimiter, ' ', $string ) ) );
 	}
 
 	private static function init_classes_aliases() {
