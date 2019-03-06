@@ -26,7 +26,9 @@ abstract class App extends Module {
 	final protected function print_config() {
 		$name = $this->get_name();
 
-		wp_localize_script( 'elementor-' . $name, 'elementor' . ucfirst( $name ) . 'Config', $this->get_settings() + $this->get_components_config() );
+		echo '<script data-cfasync="false">' . PHP_EOL;
+		echo 'var elementor' . ucfirst( $name ) . 'Config = ' . wp_json_encode( $this->get_settings() + $this->get_components_config() ) . ';' . PHP_EOL;
+		echo '</script>' . PHP_EOL;
 	}
 
 	/**
