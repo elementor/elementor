@@ -50,7 +50,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			tooltips: isMultiple,
 			connect: isMultiple,
 			format: {
-				to: ( value ) => +value.toFixed( 1 ),
+				to: ( value ) => +value.toFixed( 1 ) + this.getControlValue( 'unit' ),
 				from: ( value ) => +value,
 			},
 		} );
