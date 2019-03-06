@@ -164,10 +164,10 @@ const App = Marionette.Application.extend( {
 	},
 
 	getElementData: function( model ) {
-		var elType = model.get( 'elType' );
+		const elType = model.get( 'elType' );
 
 		if ( 'widget' === elType ) {
-			var widgetType = model.get( 'widgetType' );
+			const widgetType = model.get( 'widgetType' );
 
 			if ( ! this.config.widgets[ widgetType ] ) {
 				return false;
@@ -180,7 +180,7 @@ const App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
+		const elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
 			elementConfig.title = elementor.translate( 'inner_section' );
