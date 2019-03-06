@@ -867,7 +867,7 @@ const App = Marionette.Application.extend( {
 				jQuery.each( data, ( widgetName, controlsConfig ) => {
 					const widgetConfig = this.config.widgets[ widgetName ];
 
-					widgetConfig.controls = controlsConfig.controls;
+					widgetConfig.controls = jQuery.extend( controlsConfig.controls, this.config.widgets.common.controls );
 					widgetConfig.tabs_controls = controlsConfig.tabs_controls;
 				} );
 
