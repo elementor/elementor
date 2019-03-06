@@ -367,7 +367,7 @@ abstract class Widget_Base extends Element_Base {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		if ( $stack ) {
-			$config['controls'] = $this->get_controls();
+			$config['controls'] = $this->get_stack( false )['controls'];
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
 

@@ -164,13 +164,19 @@ const App = Marionette.Application.extend( {
 	},
 
 	getElementData: function( model ) {
-		var elType = model.get( 'elType' );
+		const elType = model.get( 'elType' );
 
 		if ( 'widget' === elType ) {
-			var widgetType = model.get( 'widgetType' );
+			const widgetType = model.get( 'widgetType' );
 
 			if ( ! this.config.widgets[ widgetType ] ) {
 				return false;
+			}
+
+			if ( ! this.config.widgets[ widgetType ].commonMerged ) {
+				jQuery.extend( this.config.widgets[ widgetType ].controls, this.config.widgets.common.controls );
+
+				this.config.widgets[ widgetType ].commonMerged = true;
 			}
 
 			return this.config.widgets[ widgetType ];
@@ -180,7 +186,7 @@ const App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
+		const elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
 			elementConfig.title = elementor.translate( 'inner_section' );
@@ -867,7 +873,7 @@ const App = Marionette.Application.extend( {
 				jQuery.each( data, ( widgetName, controlsConfig ) => {
 					const widgetConfig = this.config.widgets[ widgetName ];
 
-					widgetConfig.controls = jQuery.extend( controlsConfig.controls, this.config.widgets.common.controls );
+					widgetConfig.controls = controlsConfig.controls;
 					widgetConfig.tabs_controls = controlsConfig.tabs_controls;
 				} );
 
