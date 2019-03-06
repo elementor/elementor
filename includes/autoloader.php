@@ -175,7 +175,7 @@ class Autoloader {
 	 * @return mixed
 	 */
 	private static function safe_ucwords( $string, $delimiter = ' ' ) {
-		return str_replace(' ', $delimiter, ucwords( str_replace( $delimiter, ' ', $string ) ) );
+		return str_replace( ' ', $delimiter, ucwords( str_replace( $delimiter, ' ', $string ) ) );
 	}
 
 	private static function init_classes_aliases() {
