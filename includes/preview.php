@@ -235,6 +235,15 @@ class Preview {
 		do_action( 'elementor/preview/enqueue_scripts' );
 	}
 
+	public function elementor_frontend_rocket_loader_filter( $tag, $handler, $src ) {
+
+		if ( Plugin::instance()->preview->is_preview_mode() ) {
+			return str_replace( '<script', '<script data-cfasync="false"', $tag );
+		}
+
+		return $tag;
+	}
+
 	/**
 	 * Elementor Preview footer scripts and styles.
 	 *
@@ -266,5 +275,9 @@ class Preview {
 	 */
 	public function __construct() {
 		add_action( 'template_redirect', [ $this, 'init' ], 0 );
+
+		// Avoid Cloudflare's Rocket Loader lazy load the editor iframe
+		add_filter( 'script_loader_tag', [ $this, 'elementor_frontend_rocket_loader_filter' ], 10, 3 );
+
 	}
 }

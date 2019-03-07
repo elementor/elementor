@@ -138,10 +138,6 @@ class Frontend extends App {
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
 		add_filter( 'get_the_excerpt', [ $this, 'end_excerpt_flag' ], 20 );
-
-		// Avoid Cloudflare's Rocket Loader lazy load the editor iframe
-		add_filter( 'script_loader_tag', [ $this, 'elementor_frontend_rocket_loader_filter' ], 10, 3 );
-
 	}
 
 	/**
@@ -501,15 +497,6 @@ class Frontend extends App {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/frontend/after_enqueue_scripts' );
-	}
-
-	public function elementor_frontend_rocket_loader_filter( $tag, $handler, $src ) {
-
-		if ( isset( $_REQUEST['elementor-preview'] ) || ( isset( $_REQUEST['action'] ) && 'elementor' === $_REQUEST['action'] ) ) {
-			return str_replace( '<script', '<script data-cfasync="false"', $tag );
-		}
-
-		return $tag;
 	}
 
 	/**
