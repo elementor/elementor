@@ -237,7 +237,7 @@ class Preview {
 
 	public function elementor_frontend_rocket_loader_filter( $tag, $handler, $src ) {
 
-		if ( Plugin::instance()->preview->is_preview_mode() ) {
+		if ( $this->is_preview_mode() ) {
 			return str_replace( '<script', '<script data-cfasync="false"', $tag );
 		}
 
