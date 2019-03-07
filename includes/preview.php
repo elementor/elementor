@@ -65,6 +65,9 @@ class Preview {
 
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
+		// Avoid Cloudflare's Rocket Loader lazy load the editor iframe
+		add_filter( 'script_loader_tag', [ $this, 'elementor_frontend_rocket_loader_filter' ], 10, 3 );
+
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
 
@@ -236,12 +239,7 @@ class Preview {
 	}
 
 	public function elementor_frontend_rocket_loader_filter( $tag, $handler, $src ) {
-
-		if ( $this->is_preview_mode() ) {
-			return str_replace( '<script', '<script data-cfasync="false"', $tag );
-		}
-
-		return $tag;
+		return str_replace( '<script', '<script data-cfasync="false"', $tag );
 	}
 
 	/**
@@ -275,9 +273,5 @@ class Preview {
 	 */
 	public function __construct() {
 		add_action( 'template_redirect', [ $this, 'init' ], 0 );
-
-		// Avoid Cloudflare's Rocket Loader lazy load the editor iframe
-		add_filter( 'script_loader_tag', [ $this, 'elementor_frontend_rocket_loader_filter' ], 10, 3 );
-
 	}
 }
