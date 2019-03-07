@@ -505,8 +505,8 @@ class Frontend extends App {
 
 	public function elementor_frontend_rocket_loader_filter( $tag, $handler, $src ) {
 
-		if ( 'elementor-frontend' === $handler ) {
-			return str_replace( "<script type='text/javascript'", "<script type='text/javascript' data-cfasync='false'", $tag );
+		if ( isset( $_REQUEST['elementor-preview'] ) || ( isset( $_REQUEST['action'] ) && 'elementor' === $_REQUEST['action'] ) ) {
+			return str_replace( "<script", "<script data-cfasync='false'", $tag );
 		}
 
 		return $tag;

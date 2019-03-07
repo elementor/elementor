@@ -639,4 +639,11 @@ class Utils {
 		 */
 		return apply_filters( 'elementor/template/viewport_tag', $meta_tag, $context );
 	}
+
+	public static function elementor_print_js_config( $js_var, $config, $already_jason = false ) {
+		$config = $already_jason ? $config : wp_json_encode( $config );
+		echo '<script data-cfasync="false">' . PHP_EOL;
+		echo 'var ' . $js_var . ' = ' . $config . ';' . PHP_EOL;
+		echo '</script>' . PHP_EOL;
+	}
 }

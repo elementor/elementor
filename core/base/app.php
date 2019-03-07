@@ -2,6 +2,8 @@
 
 namespace Elementor\Core\Base;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -26,9 +28,9 @@ abstract class App extends Module {
 	final protected function print_config() {
 		$name = $this->get_name();
 
-		echo '<script data-cfasync="false">' . PHP_EOL;
-		echo 'var elementor' . ucfirst( $name ) . 'Config = ' . wp_json_encode( $this->get_settings() + $this->get_components_config() ) . ';' . PHP_EOL;
-		echo '</script>' . PHP_EOL;
+		$js_var = 'elementor' . ucfirst( $name ) . 'Config';
+		$config = $this->get_settings() + $this->get_components_config();
+		Utils::elementor_print_js_config( $js_var, $config );
 	}
 
 	/**
