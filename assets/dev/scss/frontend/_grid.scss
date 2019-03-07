@@ -112,9 +112,12 @@
 .elementor-widget-wrap {
 	position: relative;
 	width: 100%;
-	display: flex;
 	flex-wrap: wrap;
 	align-content: flex-start;
+
+	.elementor:not(.elementor-bc-flex-widget) & {
+		display: flex;
+	}
 
 	> .elementor-element {
 		width: 100%;
