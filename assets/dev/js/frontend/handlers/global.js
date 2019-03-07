@@ -1,5 +1,5 @@
 const GlobalHandler = elementorModules.frontend.handlers.Base.extend( {
-	getWidgetName: function() {
+	getWidgetType: function() {
 		return 'global';
 	},
 	animate: function() {
