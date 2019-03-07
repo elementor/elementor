@@ -63,7 +63,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( self.onElementChange ) {
 			const elementType = self.getWidgetType() || self.getElementType();
 
-			let	eventName = 'change';
+			let eventName = 'change';
 
 			if ( 'global' !== elementType ) {
 				eventName += ':' + elementType;
