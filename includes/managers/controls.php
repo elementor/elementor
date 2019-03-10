@@ -334,6 +334,7 @@ class Controls_Manager {
 	}
 
 	public static function get_groups_names() {
+		// Group name must use "-" instead of "_"
 		return [
 			'background',
 			'border',
@@ -408,14 +409,16 @@ class Controls_Manager {
 		$this->controls = [];
 
 		foreach ( self::get_controls_names() as $control_id ) {
-			$class_name = __NAMESPACE__ . '\Control_' . ucwords( $control_id, '_' );
+			$control_class_id = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $control_id ) ) );
+			$class_name = __NAMESPACE__ . '\Control_' . $control_class_id;
 
 			$this->register_control( $control_id, new $class_name() );
 		}
 
 		// Group Controls
 		foreach ( self::get_groups_names() as $group_name ) {
-			$class_name = __NAMESPACE__ . '\Group_Control_' . ucwords( str_replace( '-', '_', $group_name ), '_' );
+			$group_class_id = str_replace( ' ', '_', ucwords( str_replace( '-', ' ', $group_name ) ) );
+			$class_name = __NAMESPACE__ . '\Group_Control_' . $group_class_id;
 
 			$this->control_groups[ $group_name ] = new $class_name();
 		}

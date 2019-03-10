@@ -3,9 +3,15 @@ const GlobalHandler = elementorModules.frontend.handlers.Base.extend( {
 		return 'global';
 	},
 	animate: function() {
-		var $element = this.$element,
-			animation = this.getAnimation(),
-			elementSettings = this.getElementSettings(),
+		const $element = this.$element,
+			animation = this.getAnimation();
+
+		if ( 'none' === animation ) {
+			$element.removeClass( 'elementor-invisible' );
+			return;
+		}
+
+		const elementSettings = this.getElementSettings(),
 			animationDelay = elementSettings._animation_delay || elementSettings.animation_delay || 0;
 
 		$element.removeClass( animation );
