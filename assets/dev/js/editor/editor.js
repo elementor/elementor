@@ -189,7 +189,7 @@ const App = Marionette.Application.extend( {
 		const elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
-			elementConfig.title = elementor.translate( 'inner_section' );
+			elementConfig.title = this.translate( 'inner_section' );
 		}
 
 		return elementConfig;
@@ -686,8 +686,8 @@ const App = Marionette.Application.extend( {
 				at: 'center center',
 			},
 			strings: {
-				confirm: elementor.translate( 'learn_more' ),
-				cancel: elementor.translate( 'go_back' ),
+				confirm: this.translate( 'learn_more' ),
+				cancel: this.translate( 'go_back' ),
 			},
 			onConfirm: null,
 			onCancel: function() {
