@@ -239,7 +239,7 @@ abstract class Document extends Controls_Stack {
 
 		$version_meta = $this->get_main_meta( '_elementor_version' );
 
-		if ( version_compare( $version_meta, ELEMENTOR_VERSION, '<' ) ) {
+		if ( version_compare( $version_meta, '2.5.0', '<' ) ) {
 			$attributes['class'] .= ' elementor-bc-flex-widget';
 		}
 
@@ -420,6 +420,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
+			'version' => $this->get_main_meta( '_elementor_version' ),
 			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),
@@ -871,7 +872,9 @@ abstract class Document extends Controls_Stack {
 
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
-		update_metadata( 'post', $this->post->ID, '_elementor_version', ELEMENTOR_VERSION );
+		if ( ! defined( 'IS_ELEMENTOR_UPGRADE' ) ) {
+			update_metadata( 'post', $this->post->ID, '_elementor_version', ELEMENTOR_VERSION );
+		}
 
 		/**
 		 * After saving data.
