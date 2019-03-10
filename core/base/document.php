@@ -420,6 +420,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'id' => $this->get_main_id(),
 			'type' => $this->get_name(),
+			'version' => $this->get_main_meta( '_elementor_version' ),
 			'remoteLibrary' => $this->get_remote_library_config(),
 			'last_edited' => $this->get_last_edited(),
 			'panel' => static::get_editor_panel_config(),

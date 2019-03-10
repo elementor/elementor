@@ -77,6 +77,17 @@
 	}
 }
 
+#elementor-flexbox-attention-dialog {
+
+	.dialog-cancel {
+		color: $editor-success;
+	}
+
+	.dialog-ok {
+		color: $editor-dark;
+	}
+}
+
 .elementor-nerd-box {
 	padding: 30px;
 	text-align: center;
