@@ -221,15 +221,15 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 2.5.3 - 2019-03-06 =
-* Tweak: Added separator before columns control in Text Editor Widget
+= 2.5.4 - 2019-03-10 =
 * Tweak: Added flexbox notice dialog
-* Fix: Allow "None" value for entrance animation ([#7355](https://github.com/elementor/elementor/issues/7355))
-* Fix: Device mode detection in IE and Edge ([#7356](https://github.com/elementor/elementor/issues/7356))
 * Fix: Backward compatibility for flexbox property ([#7366](https://github.com/elementor/elementor/issues/7366))
-* Fix: remove Delimiter parameter form `ucwords` for older PHP compatability
-* Fix: Section video background rollback ([#7374](https://github.com/elementor/elementor/issues/7374))
-* Fix: Slider control returned value
+* Fix: Allow `None` value for Entrance Animation control ([#7355](https://github.com/elementor/elementor/issues/7355))
+* Fix: Device mode detection in IE and Edge browser ([#7356](https://github.com/elementor/elementor/issues/7356))
+* Fix: Revert self hosted video background fix ([#7374](https://github.com/elementor/elementor/issues/7374))
+* Fix: Removed Delimiter parameter form `ucwords` for older PHP compatibility
+* Fix: Slider control returns wrong value
+* Fix: Slider control for RTL
 
 = 2.5.3 - 2019-03-06 =
 * Tweak: Reduced Editor memory usage by moving common controls injection to the frontend ([#7308](https://github.com/elementor/elementor/issues/7308))
