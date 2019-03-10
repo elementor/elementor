@@ -720,7 +720,14 @@ const App = Marionette.Application.extend( {
 					confirm: this.translate( 'learn_more' ),
 					cancel: this.translate( 'got_it' ),
 				},
-				onCancel: () => introduction.setViewed(),
+				hide: {
+					onButtonClick: false,
+				},
+				onCancel: () => {
+					introduction.setViewed();
+
+					introduction.getDialog().hide();
+				},
 				onConfirm: () => open( this.config.help_flexbox_bc_url, '_blank' ),
 			},
 		} );
