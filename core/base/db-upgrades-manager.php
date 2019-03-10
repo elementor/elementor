@@ -44,6 +44,12 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		return version_compare( $this->get_new_version(), $current_version, '>' );
 	}
 
+	public function on_runner_start() {
+		parent::on_runner_start();
+
+		define( 'IS_ELEMENTOR_UPGRADE', true );
+	}
+
 	public function on_runner_complete( $did_tasks = false ) {
 		$logger = Plugin::$instance->logger->get_logger();
 
