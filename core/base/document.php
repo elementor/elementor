@@ -239,7 +239,7 @@ abstract class Document extends Controls_Stack {
 
 		$version_meta = $this->get_main_meta( '_elementor_version' );
 
-		if ( version_compare( $version_meta, ELEMENTOR_VERSION, '<' ) ) {
+		if ( version_compare( $version_meta, '2.5.0', '<' ) ) {
 			$attributes['class'] .= ' elementor-bc-flex-widget';
 		}
 
