@@ -1,14 +1,17 @@
 #elementor-device-mode {
 
-	@media (min-width: $screen-lg-min) {
-		content: 'desktop';
-	}
+	&:after {
 
-	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-		content: 'tablet';
-	}
+		@media (min-width: $screen-lg-min) {
+			content: 'desktop';
+		}
 
-	@media (max-width: $screen-sm-max) {
-		content: 'mobile';
+		@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+			content: 'tablet';
+		}
+
+		@media (max-width: $screen-sm-max) {
+			content: 'mobile';
+		}
 	}
 }
