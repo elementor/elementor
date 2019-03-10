@@ -76,12 +76,12 @@ class WordPress_Reporter extends Base_Reporter {
 	 */
 	public function get_memory_limit() {
 		$result = [
-			'value' => WP_MEMORY_LIMIT,
+			'value' => ini_get( 'memory_limit' ),
 		];
 
 		$min_recommended_memory = '64M';
 
-		$memory_limit_bytes = wp_convert_hr_to_bytes( WP_MEMORY_LIMIT );
+		$memory_limit_bytes = wp_convert_hr_to_bytes( $result['value'] );
 
 		$min_recommended_bytes = wp_convert_hr_to_bytes( $min_recommended_memory );
 

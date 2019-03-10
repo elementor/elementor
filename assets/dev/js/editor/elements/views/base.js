@@ -27,15 +27,9 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	attributes() {
-		let type = this.model.get( 'elType' );
-
-		if ( 'widget' === type ) {
-			type = this.model.get( 'widgetType' );
-		}
-
 		return {
 			'data-id': this.getID(),
-			'data-element_type': type,
+			'data-element_type': this.model.get( 'elType' ),
 		};
 	},
 

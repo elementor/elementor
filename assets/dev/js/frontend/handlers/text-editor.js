@@ -28,10 +28,6 @@ const TextEditor = elementorModules.frontend.handlers.Base.extend( {
 		};
 	},
 
-	getElementName: function() {
-		return 'text-editor';
-	},
-
 	wrapDropCap: function() {
 		var isDropCapEnabled = this.getElementSettings( 'drop_cap' );
 

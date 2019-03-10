@@ -347,7 +347,7 @@ helpers = {
 	},
 
 	compareVersions: function( versionA, versionB, operator ) {
-		const prepareVersion = function( version ) {
+		const prepareVersion = ( version ) => {
 			version = version + '';
 
 			return version.replace( /[^\d.]+/, '.-1.' );
@@ -369,7 +369,7 @@ helpers = {
 				valueB = versionBParts[ i ] || 0;
 
 			if ( valueA !== valueB ) {
-				return this.conditions.compare( valueA, valueB, operator );
+				return elementor.conditions.compare( valueA, valueB, operator );
 			}
 		}
 	},
