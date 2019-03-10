@@ -551,7 +551,7 @@ class Editor {
 
 				/* translators: %s: Element name. */
 				'edit_element' => __( 'Edit %s', 'elementor' ),
-				'flexbox_attention_header' => __( 'Note - V2.5 Changes', 'elementor' ),
+				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
 
 				// Menu.
