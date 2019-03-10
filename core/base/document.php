@@ -872,7 +872,9 @@ abstract class Document extends Controls_Stack {
 
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
-		update_metadata( 'post', $this->post->ID, '_elementor_version', ELEMENTOR_VERSION );
+		if ( ! defined( 'IS_ELEMENTOR_UPGRADE' ) ) {
+			update_metadata( 'post', $this->post->ID, '_elementor_version', ELEMENTOR_VERSION );
+		}
 
 		/**
 		 * After saving data.
