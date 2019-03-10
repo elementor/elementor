@@ -45,6 +45,7 @@ class Frontend extends elementorModules.ViewModule {
 			$document: jQuery( document ),
 			$head: jQuery( document.head ),
 			$body: jQuery( document.body ),
+			$deviceMode: jQuery( '#elementor-device-mode' ),
 		};
 	}
 
@@ -75,7 +76,7 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getCurrentDeviceMode() {
-		return getComputedStyle( this.elements.$head[ 0 ] ).content.replace( /"/g, '' );
+		return getComputedStyle( this.elements.$deviceMode[ 0 ], ':after' ).content.replace( /"/g, '' );
 	}
 
 	getCurrentDeviceSetting( settings, settingKey ) {
