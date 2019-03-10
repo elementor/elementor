@@ -417,7 +417,7 @@ class Controls_Manager {
 
 		// Group Controls
 		foreach ( self::get_groups_names() as $group_name ) {
-			$group_class_id =  str_replace( ' ', '_', ucwords( str_replace( '-', ' ', $group_name ) ) );
+			$group_class_id = str_replace( ' ', '_', ucwords( str_replace( '-', ' ', $group_name ) ) );
 			$class_name = __NAMESPACE__ . '\Group_Control_' . $group_class_id;
 
 			$this->control_groups[ $group_name ] = new $class_name();
