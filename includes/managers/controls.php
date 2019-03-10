@@ -408,14 +408,14 @@ class Controls_Manager {
 		$this->controls = [];
 
 		foreach ( self::get_controls_names() as $control_id ) {
-			$class_name = __NAMESPACE__ . '\Control_' . ucwords( $control_id, '_' );
+			$class_name = __NAMESPACE__ . '\Control_' . ucwords( $control_id );
 
 			$this->register_control( $control_id, new $class_name() );
 		}
 
 		// Group Controls
 		foreach ( self::get_groups_names() as $group_name ) {
-			$class_name = __NAMESPACE__ . '\Group_Control_' . ucwords( str_replace( '-', '_', $group_name ), '_' );
+			$class_name = __NAMESPACE__ . '\Group_Control_' . ucwords( str_replace( '-', '_', $group_name ) );
 
 			$this->control_groups[ $group_name ] = new $class_name();
 		}
