@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 5.1
 Requires PHP: 5.4
-Stable tag: 2.5.1
+Stable tag: 2.5.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -220,6 +220,28 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.5.4 - 2019-03-10 =
+* Tweak: Added flexbox notice dialog
+* Fix: Backward compatibility for flexbox property ([#7366](https://github.com/elementor/elementor/issues/7366))
+* Fix: Allow `None` value for Entrance Animation control ([#7355](https://github.com/elementor/elementor/issues/7355))
+* Fix: Device mode detection in IE and Edge browser ([#7356](https://github.com/elementor/elementor/issues/7356))
+* Fix: Revert self hosted video background fix ([#7374](https://github.com/elementor/elementor/issues/7374))
+* Fix: Removed Delimiter parameter form `ucwords` for older PHP compatibility
+* Fix: Slider control returns wrong value
+* Fix: Slider control for RTL
+
+= 2.5.3 - 2019-03-06 =
+* Tweak: Reduced Editor memory usage by moving common controls injection to the frontend ([#7308](https://github.com/elementor/elementor/issues/7308))
+* Tweak: Moved sync library from POST to GET method
+* Fix: `ucwords` support for older php versions ([#7327](https://github.com/elementor/elementor/issues/7327), [#7310](https://github.com/elementor/elementor/issues/7310))
+* Fix: Background self hosted videos responsive
+* Fix: Group controls `conditions` support
+
+= 2.5.2 - 2019-03-05 =
+* Fix: Custom space between widgets override ([#7309](https://github.com/elementor/elementor/issues/7309))
+* Fix: Changed the default width of Absolute & Fixed position widget ([#7311](https://github.com/elementor/elementor/issues/7311))
+* **Note: This fix might affect previous custom positioning settings, if you have previously used position absolute or position fixed, please review your site.**
 
 = 2.5.1 - 2019-03-04 =
 * Fix: Inline Width (auto) not working ([#7293](https://github.com/elementor/elementor/issues/7293))

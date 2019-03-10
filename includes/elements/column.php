@@ -1071,8 +1071,6 @@ class Element_Column extends Element_Base {
 				'elementor-' . $column_type . '-column',
 			]
 		);
-
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
 	}
 
 	/**

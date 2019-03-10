@@ -186,7 +186,7 @@ WidgetView = BaseElementView.extend( {
 			skinType = editModel.getSetting( '_skin' ) || 'default';
 
 		self.$el
-			.attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
+			.attr( 'data-widget_type', editModel.get( 'widgetType' ) + '.' + skinType )
 			.removeClass( 'elementor-widget-empty' )
 			.children( '.elementor-widget-empty-icon' )
 			.remove();
