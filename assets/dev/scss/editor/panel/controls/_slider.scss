@@ -2,6 +2,10 @@
 
 	&--multiple {
 
+		.elementor-slider {
+			margin-top: 15px;
+		}
+
 		.elementor-control-title {
 			margin-bottom: 10px;
 		}
@@ -33,6 +37,36 @@
 			float: $end;
 			padding: 5px 5px;
 		}
+	}
+
+	&__extra {
+		position: relative;
+	}
+
+	&__labels {
+		display: flex;
+		justify-content: space-between;
+		width: calc(100% + 16px);
+		@include margin-start(-8px);
+	}
+
+	&__label {
+		font-size: 10px;
+		color: $editor-light;
+	}
+
+	&__scales {
+		position: absolute;
+		display: flex;
+		justify-content: space-evenly;
+		width: 100%;
+		margin-top: 7px;
+	}
+
+	&__scale {
+		width: 1px;
+		height: 20px;
+		background-color: $editor-dark;
 	}
 
 	.noUi {
@@ -68,10 +102,10 @@
 
 		&-tooltip {
 			position: absolute;
-			bottom: calc(100% + 3px);
+			top: calc(100% + 3px);
 			left: 50%;
 			transform: translateX(-50%);
-			font-size: 10px;
+			font-size: 11px;
 		}
 	}
 }
