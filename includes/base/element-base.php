@@ -833,14 +833,14 @@ abstract class Element_Base extends Controls_Stack {
 		$frontend_settings = $this->get_frontend_settings();
 		$controls = $this->get_controls();
 
-		$this->add_render_attribute( '_wrapper', 'data-id', $id );
-
-		$this->add_render_attribute(
-			'_wrapper', 'class', [
+		$this->add_render_attribute( '_wrapper', [
+			'class' => [
 				'elementor-element',
 				'elementor-element-' . $id,
-			]
-		);
+			],
+			'data-id' => $id,
+			'data-element_type' => $this->get_type(),
+		] );
 
 		$class_settings = [];
 

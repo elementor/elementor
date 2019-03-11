@@ -61,11 +61,12 @@ module.exports = elementorModules.ViewModule.extend( {
 		];
 
 		if ( self.onElementChange ) {
-			var elementName = self.getElementName(),
-				eventName = 'change';
+			const elementType = self.getWidgetType() || self.getElementType();
 
-			if ( 'global' !== elementName ) {
-				eventName += ':' + elementName;
+			let eventName = 'change';
+
+			if ( 'global' !== elementType ) {
+				eventName += ':' + elementType;
 			}
 
 			self.editorListeners.push( {
@@ -136,8 +137,18 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	getElementName: function() {
-		return this.$element.data( 'element_type' ).split( '.' )[ 0 ];
+	getElementType: function() {
+		return this.$element.data( 'element_type' );
+	},
+
+	getWidgetType: function() {
+		const widgetType = this.$element.data( 'widget_type' );
+
+		if ( ! widgetType ) {
+			return;
+		}
+
+		return widgetType.split( '.' )[ 0 ];
 	},
 
 	getID: function() {

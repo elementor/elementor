@@ -73,7 +73,17 @@
 	}
 
 	.dialog-header {
-		font-size: 13px;
+		color: $editor-dark;
+	}
+}
+
+#elementor-flexbox-attention-dialog {
+
+	.dialog-cancel {
+		color: $editor-success;
+	}
+
+	.dialog-ok {
 		color: $editor-dark;
 	}
 }
