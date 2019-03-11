@@ -86,13 +86,11 @@ module.exports = function( $ ) {
 
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
-		const isWidgetType = ( -1 === [ 'section', 'column' ].indexOf( elementType ) );
-
-		if ( isWidgetType ) {
-			elementorFrontend.hooks.doAction( 'frontend/element_ready/widget', $scope, $ );
-		}
-
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $scope, $ );
+
+		if ( 'widget' === elementType ) {
+			elementorFrontend.hooks.doAction( 'frontend/element_ready/' + $scope.attr( 'data-widget_type' ), $scope, $ );
+		}
 	};
 
 	init();
