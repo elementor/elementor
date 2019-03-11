@@ -223,6 +223,13 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.5.5 - 2019-03-11 ###
+* Tweak: Support gzipped Elementor Ajax data when GZIP is enabled
+* Tweak: Added labels and scales to Slider control
+* Fix: Device mode detection in IE and Edge browser ([#7356](https://github.com/elementor/elementor/issues/7356))
+* Fix: Positioning issue while dragging inline text widgets
+* Fix: Empty widget calculation according to the new column flexbox model
+
 ### 2.5.4 - 2019-03-10 ###
 * Tweak: Added flexbox notice dialog
 * Fix: Backward compatibility for flexbox property ([#7366](https://github.com/elementor/elementor/issues/7366))
