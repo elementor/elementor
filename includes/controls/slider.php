@@ -68,6 +68,7 @@ class Control_Slider extends Control_Base_Units {
 				'label_block' => true,
 				'labels' => [],
 				'scales' => 0,
+				'handles' => 'default',
 			]
 		);
 	}
