@@ -720,7 +720,14 @@ const App = Marionette.Application.extend( {
 					confirm: this.translate( 'learn_more' ),
 					cancel: this.translate( 'got_it' ),
 				},
-				onCancel: () => introduction.setViewed(),
+				hide: {
+					onButtonClick: false,
+				},
+				onCancel: () => {
+					introduction.setViewed();
+
+					introduction.getDialog().hide();
+				},
 				onConfirm: () => open( this.config.help_flexbox_bc_url, '_blank' ),
 			},
 		} );
@@ -1125,7 +1132,9 @@ const App = Marionette.Application.extend( {
 } );
 
 window.elementor = new App();
+
 if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
-	window.elementor.start();
+	elementor.start();
 }
-module.exports = window.elementor;
+
+module.exports = elementor;

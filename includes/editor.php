@@ -713,8 +713,6 @@ class Editor {
 			$config = array_replace_recursive( $config, $localized_settings );
 		}
 
-		echo '<script>' . PHP_EOL;
-		echo '/* <![CDATA[ */' . PHP_EOL;
 		$config_json = wp_json_encode( $config );
 		unset( $config );
 
@@ -723,9 +721,7 @@ class Editor {
 			$config_json = str_replace( '}},"', '}},' . PHP_EOL . '"', $config_json );
 		}
 
-		echo 'var ElementorConfig = ' . $config_json . ';' . PHP_EOL;
-		echo '/* ]]> */' . PHP_EOL;
-		echo '</script>';
+		Utils::elementor_print_js_config( 'ElementorConfig', $config_json, true );
 
 		$plugin->controls_manager->enqueue_control_scripts();
 
