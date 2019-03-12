@@ -92,7 +92,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 
 	onReady: function() {
 		if ( this.isMultiple() ) {
-			this.$el.addClass( 'elementor-control-type-slider--multiple' );
+			this.$el.addClass( 'elementor-control-type-slider--multiple elementor-control-type-slider--handles-' + this.model.get( 'handles' ) );
 		}
 
 		this.initSlider();
