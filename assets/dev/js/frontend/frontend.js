@@ -206,47 +206,28 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	// Based on underscore function
-	throttle( func, wait ) {
-		let timeout,
-			context,
-			args,
-			result,
-			previous = 0;
-
-		const later = () => {
-			previous = Date.now();
-			timeout = null;
-			result = func.apply( context, args );
-
-			if ( ! timeout ) {
-				context = args = null;
-			}
-		};
+	debounce( func, wait ) {
+		let timeout;
 
 		return function() {
-			const now = Date.now(),
-				remaining = wait - ( now - previous );
+			const context = this,
+				args = arguments;
 
-			context = this;
-			args = arguments;
+			const later = () => {
+				timeout = null;
 
-			if ( remaining <= 0 || remaining > wait ) {
-				if ( timeout ) {
-					clearTimeout( timeout );
-					timeout = null;
-				}
+				func.apply( context, args );
+			};
 
-				previous = now;
-				result = func.apply( context, args );
+			const callNow = ! timeout;
 
-				if ( ! timeout ) {
-					context = args = null;
-				}
-			} else if ( ! timeout ) {
-				timeout = setTimeout( later, remaining );
+			clearTimeout( timeout );
+
+			timeout = setTimeout( later, wait );
+
+			if ( callNow ) {
+				func.apply( context, args );
 			}
-
-			return result;
 		};
 	}
 
