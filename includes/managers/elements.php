@@ -109,6 +109,17 @@ class Elements_Manager {
 		return $this->categories;
 	}
 
+        /**
+	 * Set element categories.
+	 *
+	 * Set the list of categories the element belongs to.
+	 *
+	 * @access public
+	 */
+        public function set_categories( $categories ) {
+            $this->categories = $categories;
+        }
+
 	/**
 	 * Add element category.
 	 *
