@@ -238,7 +238,7 @@ class Preview {
 		do_action( 'elementor/preview/enqueue_scripts' );
 	}
 
-	public function elementor_frontend_rocket_loader_filter( $tag, $handler, $src ) {
+	public function elementor_frontend_rocket_loader_filter( $tag, $handle, $src ) {
 		return str_replace( '<script', '<script data-cfasync="false"', $tag );
 	}
 
