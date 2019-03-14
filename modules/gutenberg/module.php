@@ -69,7 +69,7 @@ class Module extends BaseModule {
 			'editLink' => Utils::get_edit_link( $post_id ),
 		];
 
-		Utils::elementor_print_js_config( 'elementor-gutenberg', 'ElementorGutenbergSettings', $elementor_settings );
+		Utils::print_js_config( 'elementor-gutenberg', 'ElementorGutenbergSettings', $elementor_settings );
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 

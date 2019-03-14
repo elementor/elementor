@@ -39,15 +39,17 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getDefaultElements() {
-		jQuery( document.body ).append( '<span id="elementor-device-mode" class="elementor-screen-only"></span>' );
-		return {
+		const defaultElements = {
 			window: window,
 			$window: jQuery( window ),
 			$document: jQuery( document ),
 			$head: jQuery( document.head ),
 			$body: jQuery( document.body ),
-			$deviceMode: jQuery( '#elementor-device-mode' ),
 		};
+
+		defaultElements.$deviceMode = defaultElements.$body.append( '<span id="elementor-device-mode" class="elementor-screen-only"></span>' );
+
+		return defaultElements;
 	}
 
 	bindEvents() {

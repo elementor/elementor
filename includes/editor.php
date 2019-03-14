@@ -711,7 +711,7 @@ class Editor {
 			$config = array_replace_recursive( $config, $localized_settings );
 		}
 
-		Utils::elementor_print_js_config( 'elementor-editor', 'ElementorConfig', $config );
+		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
 		wp_enqueue_script( 'elementor-editor' );
 
