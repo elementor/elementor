@@ -223,6 +223,9 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.5.7 - 2019-03-14 ###
+* Fix: changed `ElementorGutenbergSettings` print order ([#7457](https://github.com/elementor/elementor/issues/7457))
+
 ### 2.5.6 - 2019-03-14 ###
 * Tweak: Minor UI improvement in Slider Control
 * Tweak: Added support for range handles in Slider Control
