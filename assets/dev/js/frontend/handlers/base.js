@@ -166,7 +166,13 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		if ( this.isEdit && modelCID ) {
 			const settings = elementorFrontend.config.elements.data[ modelCID ],
-				type = settings.attributes.widgetType || settings.attributes.elType;
+				attributes = settings.attributes;
+
+			let type = attributes.widgetType || attributes.elType;
+
+			if ( attributes.isInner ) {
+				type = 'inner-' + type;
+			}
 
 			let settingsKeys = elementorFrontend.config.elements.keys[ type ];
 
@@ -182,7 +188,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			jQuery.each( settings.getActiveControls(), function( controlKey ) {
 				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
-					elementSettings[ controlKey ] = settings.attributes[ controlKey ];
+					elementSettings[ controlKey ] = attributes[ controlKey ];
 				}
 			} );
 		} else {
