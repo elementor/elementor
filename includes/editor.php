@@ -481,7 +481,6 @@ class Editor {
 		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
 		$editor_data = $document->get_elements_raw_data( null, true );
 
-
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
@@ -715,7 +714,6 @@ class Editor {
 		Utils::elementor_print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
 		wp_enqueue_script( 'elementor-editor' );
-
 
 		$plugin->controls_manager->enqueue_control_scripts();
 
