@@ -1,7 +1,7 @@
 const sass = {
 	dist: {
 		options: {
-			sourceMap: true
+			sourcemap: true
 		},
 		files: [ {
 			expand: true,
