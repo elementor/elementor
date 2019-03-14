@@ -646,9 +646,9 @@ class Utils {
 	 * To make sure this script runs thru the `script_loader_tag` hook, use a known handle value.
 	 * @param string $handle
 	 * @param string $js_var
-	 * @param string $config
+	 * @param mixed $config
 	 */
-	public static function elementor_print_js_config( $handle, $js_var, $config ) {
+	public static function print_js_config( $handle, $js_var, $config ) {
 		$config = wp_json_encode( $config );
 
 		if ( get_option( 'elementor_editor_break_lines' ) ) {
