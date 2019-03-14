@@ -221,6 +221,14 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.5.6 - 2019-03-14 =
+* Tweak: Minor UI improvement in Slider Control
+* Tweak: Added support for range handles in Slider Control
+* Fix: Stretch Inner Section in the editor ([#7430](https://github.com/elementor/elementor/issues/7430))
+* Fix: Ensure print order of Elementor config JS variables ([#7443](https://github.com/elementor/elementor/issues/7443))
+* Fix: Inline elements not working on new pages ([#7433](https://github.com/elementor/elementor/issues/7433))
+* Fix: Removed media `id` when attachment is missing
+
 = 2.5.5 - 2019-03-11 =
 * Tweak: Support gzipped Elementor Ajax data when GZIP is enabled
 * Tweak: Added labels and scales to Slider control
