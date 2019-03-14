@@ -64,17 +64,16 @@ class Module extends BaseModule {
 
 		$this->is_gutenberg_editor_active = true;
 
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js', [ 'jquery' ], ELEMENTOR_VERSION, true );
+
 		$elementor_settings = [
 			'isElementorMode' => Plugin::$instance->db->is_built_with_elementor( $post_id ),
 			'editLink' => Utils::get_edit_link( $post_id ),
 		];
 
 		Utils::print_js_config( 'elementor-gutenberg', 'ElementorGutenbergSettings', $elementor_settings );
-
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js', [ 'jquery' ], ELEMENTOR_VERSION, true );
-
 	}
 
 	/**
