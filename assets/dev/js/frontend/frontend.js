@@ -45,9 +45,9 @@ class Frontend extends elementorModules.ViewModule {
 			$document: jQuery( document ),
 			$head: jQuery( document.head ),
 			$body: jQuery( document.body ),
+			$deviceMode: jQuery( '<span>', { id: 'elementor-device-mode', class: 'elementor-screen-only' } ),
 		};
-
-		defaultElements.$deviceMode = defaultElements.$body.append( '<span id="elementor-device-mode" class="elementor-screen-only"></span>' );
+		defaultElements.$body.append( defaultElements.$deviceMode );
 
 		return defaultElements;
 	}
