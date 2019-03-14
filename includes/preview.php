@@ -66,7 +66,7 @@ class Preview {
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Avoid Cloudflare's Rocket Loader lazy load the editor iframe
-		add_filter( 'script_loader_tag', [ $this, 'elementor_frontend_rocket_loader_filter' ], 10, 3 );
+		add_filter( 'script_loader_tag', [ $this, 'rocket_loader_filter' ], 10, 3 );
 
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
@@ -238,7 +238,7 @@ class Preview {
 		do_action( 'elementor/preview/enqueue_scripts' );
 	}
 
-	public function elementor_frontend_rocket_loader_filter( $tag, $handler, $src ) {
+	public function rocket_loader_filter( $tag, $handle, $src ) {
 		return str_replace( '<script', '<script data-cfasync="false"', $tag );
 	}
 
