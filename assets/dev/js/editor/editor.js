@@ -1135,7 +1135,9 @@ const App = Marionette.Application.extend( {
 } );
 
 window.elementor = new App();
+
 if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
-	window.elementor.start();
+	elementor.start();
 }
-module.exports = window.elementor;
+
+module.exports = elementor;

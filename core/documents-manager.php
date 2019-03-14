@@ -383,8 +383,8 @@ class Documents_Manager {
 			'post_id' => $post_id,
 		] );
 
-		// Let the $document to re-save the template type by his way.
-		$document->save_template_type();
+		// Let the $document to re-save the template type by his way + version.
+		$document->save();
 
 		return $document;
 	}

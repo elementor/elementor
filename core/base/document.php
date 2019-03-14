@@ -503,26 +503,32 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return bool
 	 */
-	public function save( $data ) {
+	public function save( $data = [] ) {
 		if ( ! $this->is_editable_by_current_user() ) {
 			return false;
 		}
 
-		if ( DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
-			if ( ! defined( 'DOING_AUTOSAVE' ) ) {
-				define( 'DOING_AUTOSAVE', true );
-			}
-		}
-
 		if ( ! empty( $data['settings'] ) ) {
+			if ( DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
+				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
+					define( 'DOING_AUTOSAVE', true );
+				}
+			}
+
 			$this->save_settings( $data['settings'] );
+
+			// Refresh post after save settings.
+			$this->post = get_post( $this->post->ID );
 		}
 
-		// Refresh post after save settings.
-		$this->post = get_post( $this->post->ID );
+		if ( ! empty( $data['elements'] ) ) {
+			// TODO: refresh settings.
+			$this->save_elements( $data['elements'] );
+		}
 
-		// TODO: refresh settings.
-		$this->save_elements( $data['elements'] );
+		$this->save_template_type();
+
+		$this->save_version();
 
 		// Remove Post CSS
 		$post_css = new Post_CSS( $this->post->ID );
@@ -713,7 +719,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function convert_to_elementor() {
-		$this->save_template_type();
+		$this->save();
 
 		if ( empty( $this->post->post_content ) ) {
 			return [];
@@ -872,10 +878,6 @@ abstract class Document extends Controls_Stack {
 
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
-		if ( ! defined( 'IS_ELEMENTOR_UPGRADE' ) ) {
-			update_metadata( 'post', $this->post->ID, '_elementor_version', ELEMENTOR_VERSION );
-		}
-
 		/**
 		 * After saving data.
 		 *
@@ -908,6 +910,13 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return false;
+	}
+
+	public function save_version() {
+		if ( ! defined( 'IS_ELEMENTOR_UPGRADE' ) ) {
+			// Save per revision.
+			$this->update_meta( '_elementor_version', ELEMENTOR_VERSION );
+		}
 	}
 
 	/**
