@@ -39,14 +39,17 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getDefaultElements() {
-		return {
+		const defaultElements = {
 			window: window,
 			$window: jQuery( window ),
 			$document: jQuery( document ),
 			$head: jQuery( document.head ),
 			$body: jQuery( document.body ),
-			$deviceMode: jQuery( '#elementor-device-mode' ),
+			$deviceMode: jQuery( '<span>', { id: 'elementor-device-mode', class: 'elementor-screen-only' } ),
 		};
+		defaultElements.$body.append( defaultElements.$deviceMode );
+
+		return defaultElements;
 	}
 
 	bindEvents() {

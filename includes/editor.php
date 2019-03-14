@@ -481,8 +481,6 @@ class Editor {
 		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
 		$editor_data = $document->get_elements_raw_data( null, true );
 
-		wp_enqueue_script( 'elementor-editor' );
-
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
@@ -713,15 +711,9 @@ class Editor {
 			$config = array_replace_recursive( $config, $localized_settings );
 		}
 
-		$config_json = wp_json_encode( $config );
-		unset( $config );
+		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
-		if ( get_option( 'elementor_editor_break_lines' ) ) {
-			// Add new lines to avoid memory limits in some hosting servers that handles the buffer output according to new line characters
-			$config_json = str_replace( '}},"', '}},' . PHP_EOL . '"', $config_json );
-		}
-
-		Utils::elementor_print_js_config( 'ElementorConfig', $config_json, true );
+		wp_enqueue_script( 'elementor-editor' );
 
 		$plugin->controls_manager->enqueue_control_scripts();
 
