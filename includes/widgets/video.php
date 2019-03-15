@@ -284,6 +284,9 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Enable YouTube JS API Access', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'video_type' => 'youtube',
+				],
 			]
 		);
 
@@ -295,6 +298,7 @@ class Widget_Video extends Widget_Base {
 				'default' => 'player',
 				'condition' => [
 					'enablejsapi'=>'yes',
+					'video_type' => 'youtube',
 				],
 			]
 		);
