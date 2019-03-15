@@ -46,10 +46,18 @@ Conditions = function() {
 				comparisonResult = self.check( term, comparisonObject );
 			} else {
 				var parsedName = term.name.match( /(\w+)(?:\[(\w+)])?/ ),
+					value = null;
+
+				if ( typeof( comparisonObject[ parsedName[ 1 ] ] ) !== 'undefined' ) {
 					value = comparisonObject[ parsedName[ 1 ] ];
+				}
 
 				if ( parsedName[ 2 ] ) {
-					value = value[ parsedName[ 2 ] ];
+					if ( typeof( value[ parsedName[ 2 ] ] ) !== 'undefined' ) {
+            value = value[parsedName[2]];
+          } else {
+						value = null;
+					}
 				}
 
 				comparisonResult = self.compare( value, term.value, term.operator );
