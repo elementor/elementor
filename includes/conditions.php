@@ -81,7 +81,7 @@ class Conditions {
 				preg_match( '/(\w+)(?:\[(\w+)])?/', $term['name'], $parsed_name );
 
 				$value = null;
-				if ( !empty( $parsed_name[1] ) && isset( $comparison[ $parsed_name[1] ] ) ) {
+				if ( ! empty( $parsed_name[1] ) && isset( $comparison[ $parsed_name[1] ] ) ) {
 					$value = $comparison[ $parsed_name[1] ];
 				}
 
