@@ -221,6 +221,9 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.5.8 - 2019-03-15 =
+* Fix: Restore `wp_localize_script` for Gutenberg editor
+
 = 2.5.7 - 2019-03-14 =
 * Fix: changed `ElementorGutenbergSettings` print order ([#7457](https://github.com/elementor/elementor/issues/7457))
 
