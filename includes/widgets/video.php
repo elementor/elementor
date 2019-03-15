@@ -945,6 +945,7 @@ class Widget_Video extends Widget_Base {
 				'mute',
 				'rel',
 				'modestbranding',
+				'enablejsapi',
 			];
 
 			if ( $settings['loop'] ) {
