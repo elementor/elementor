@@ -280,6 +280,27 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'enablejsapi',
+			[
+				'label' => __( 'Enable YouTube JS API Access', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+			]
+		);
+
+		$this->add_control(
+			'yt_iframe_id',
+			[
+				'label' => __( 'YouTube IFrame ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => 'player',
+				'condition' => [
+					'enablejsapi'=>'yes',
+				],
+			]
+		);
+
+
+		$this->add_control(
 			'mute',
 			[
 				'label' => __( 'Mute', 'elementor' ),
@@ -790,7 +811,9 @@ class Widget_Video extends Widget_Base {
 
 			$embed_options = $this->get_embed_options();
 
-			$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
+			$frame_options = $this->get_frame_options();
+
+			$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options, $frame_options );
 		}
 
 		if ( empty( $video_html ) ) {
@@ -918,6 +941,7 @@ class Widget_Video extends Widget_Base {
 				'mute',
 				'rel',
 				'modestbranding',
+				'enablejsapi',
 			];
 
 			if ( $settings['loop'] ) {
@@ -1007,6 +1031,22 @@ class Widget_Video extends Widget_Base {
 		$embed_options['lazy_load'] = ! empty( $settings['lazy_load'] );
 
 		return $embed_options;
+	}
+
+	/**
+	 * @since 2.1.0
+	 * @access private
+	 */
+	private function get_frame_options() {
+		$settings = $this->get_settings_for_display();
+
+		$frame_options = [];
+
+		if ( 'youtube' === $settings['video_type'] ) {
+			$frame_options['id'] = $settings['yt_iframe_id'];
+		}
+
+		return $frame_options;
 	}
 
 	/**
