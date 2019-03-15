@@ -54,7 +54,7 @@ Conditions = function() {
 
 				if ( parsedName[ 2 ] ) {
 					if ( typeof( value[ parsedName[ 2 ] ] ) !== 'undefined' ) {
-            value = value[parsedName[2]];
+            value = value[ parsedName[ 2 ] ];
           } else {
 						value = null;
 					}
