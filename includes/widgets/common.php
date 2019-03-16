@@ -482,6 +482,7 @@ class Widget_Common extends Widget_Base {
 					'fixed' => __( 'Fixed', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-',
+				'frontend_available' => true,
 			]
 		);
 

@@ -30,7 +30,7 @@ abstract class App extends Module {
 
 		$js_var = 'elementor' . ucfirst( $name ) . 'Config';
 		$config = $this->get_settings() + $this->get_components_config();
-		Utils::elementor_print_js_config( $js_var, $config );
+		Utils::print_js_config( 'elementor-' . $name, $js_var, $config );
 	}
 
 	/**
