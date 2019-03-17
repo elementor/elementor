@@ -380,7 +380,13 @@ class Widget_Common extends Widget_Base {
 					'auto' => __( 'Inline', 'elementor' ) . ' (auto)',
 					'initial' => __( 'Custom', 'elementor' ),
 				],
+				'selectors_dictionary' => [
+					'inherit' => '100%',
+				],
 				'prefix_class' => 'elementor-widget%s__width-',
+				'selectors' => [
+					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}}',
+				],
 			]
 		);
 
@@ -476,6 +482,7 @@ class Widget_Common extends Widget_Base {
 					'fixed' => __( 'Fixed', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-',
+				'frontend_available' => true,
 			]
 		);
 

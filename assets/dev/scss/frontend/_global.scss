@@ -106,49 +106,41 @@
 	}
 }
 
-.elementor-widget-wrap > .elementor-element.elementor-absolute {
-	width: auto;
-	position: absolute;
+.elementor-widget-wrap {
+
+	> .elementor-element.elementor-absolute {
+		position: absolute;
+	}
+
+	> .elementor-element.elementor-fixed {
+		position: fixed;
+	}
 }
 
-.elementor-widget-wrap > .elementor-element.elementor-fixed {
-	width: auto;
-	position: fixed;
-}
+.elementor-widget-wrap {
 
-.elementor-widget {
+	.elementor-element.elementor-widget {
 
-	@mixin inline-width($device) {
+		@mixin inline-width($device) {
 
-		&#{$device}__width {
+			&#{$device}__width {
 
-			&-auto {
-				width: auto;
-			}
-
-			&-inherit {
-				width: inherit;
-			}
-
-			&-initial {
-				width: initial;
-			}
-
-			&-auto,
-			&-initial {
-				max-width: 100%;
+				&-auto,
+				&-initial {
+					max-width: 100%;
+				}
 			}
 		}
-	}
 
-	@include inline-width('');
+		@include inline-width('');
 
-	@media (max-width: $screen-md-max) {
-		@include inline-width(-tablet);
-	}
+		@media (max-width: $screen-md-max) {
+			@include inline-width(-tablet);
+		}
 
-	@media (max-width: $screen-sm-max) {
-		@include inline-width(-mobile);
+		@media (max-width: $screen-sm-max) {
+			@include inline-width(-mobile);
+		}
 	}
 }
 
@@ -157,10 +149,6 @@
 	&.elementor-absolute,
 	&.elementor-fixed {
 		z-index: 1;
-
-		.elementor-image img {
-			width: auto;
-		}
 	}
 }
 
