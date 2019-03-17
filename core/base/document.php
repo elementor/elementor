@@ -508,7 +508,7 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
-		if ( ! empty( $data['settings'] ) ) {
+		if ( isset( $data['settings'] ) ) {
 			if ( DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
 					define( 'DOING_AUTOSAVE', true );
@@ -521,8 +521,7 @@ abstract class Document extends Controls_Stack {
 			$this->post = get_post( $this->post->ID );
 		}
 
-		if ( ! empty( $data['elements'] ) ) {
-			// TODO: refresh settings.
+		if ( isset( $data['elements'] ) ) {
 			$this->save_elements( $data['elements'] );
 		}
 
