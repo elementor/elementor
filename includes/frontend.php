@@ -497,11 +497,6 @@ class Frontend extends App {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/frontend/after_enqueue_scripts' );
-
-		/**
-		 * used for device mode optimization
-		 */
-		echo '<span id="elementor-device-mode" class="elementor-screen-only"></span>';
 	}
 
 	/**
