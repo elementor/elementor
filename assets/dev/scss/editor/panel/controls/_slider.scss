@@ -1,13 +1,53 @@
 .elementor-control-type-slider {
 
 	&--multiple {
+		margin-bottom: 14px;
 
 		.elementor-slider {
-			margin-top: 15px;
+			margin-top: 12px;
+			width: 98%;
 		}
+	}
 
-		.elementor-control-title {
-			margin-bottom: 10px;
+	&--handles {
+
+		&-range {
+
+			.elementor-slider {
+
+				.noUi-handle {
+					border-radius: 0;
+					width: 10px;
+					transform: translateY(calc(50% - 14px)) translateX(getValueByDirection(4px, -4px));
+
+					&:after {
+						content: '';
+						position: absolute;
+						top: 2px;
+						height: 12px;
+						width: 11px;
+						transform: rotate(45deg);
+						background-color: #fff;
+						border-radius: 3px;
+					}
+
+					&-lower {
+
+						&:after {
+							left: 5px;
+							box-shadow: 2px -2px 3px 0px rgba(0,0,0,.1);
+						}
+					}
+
+					&-upper {
+
+						&:after {
+							right: 5px;
+							box-shadow: -2px 2px 3px 0px rgba(0,0,0,.1);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -21,7 +61,7 @@
 }
 
 .elementor-slider {
-	margin: 10px 0;
+	margin: 10px auto;
 	height: 4px;
 	background-color: $editor-lightest;
 	border-radius: 5px;
@@ -46,13 +86,11 @@
 	&__labels {
 		display: flex;
 		justify-content: space-between;
-		width: calc(100% + 16px);
-		@include margin-start(-8px);
 	}
 
 	&__label {
-		font-size: 10px;
-		color: $editor-light;
+		font-size: 9px;
+		color: $editor-lighter;
 	}
 
 	&__scales {
@@ -60,13 +98,13 @@
 		display: flex;
 		justify-content: space-evenly;
 		width: 100%;
-		margin-top: 7px;
+		margin-top: 4px;
 	}
 
 	&__scale {
 		width: 1px;
-		height: 20px;
-		background-color: $editor-dark;
+		height: 21px;
+		background-color: $editor-light;
 	}
 
 	.noUi {
@@ -78,7 +116,7 @@
 			@include end(0);
 			transform: translateY(calc(50% - 14px)) translateX(getValueByDirection(8px, -8px));
 			position: absolute;
-			box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
+			box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
 			border-radius: 50%;
 		}
 
@@ -102,10 +140,10 @@
 
 		&-tooltip {
 			position: absolute;
-			top: calc(100% + 3px);
+			top: calc(100% + 5px);
 			left: 50%;
 			transform: translateX(-50%);
-			font-size: 11px;
+			font-size: 10px;
 		}
 	}
 }

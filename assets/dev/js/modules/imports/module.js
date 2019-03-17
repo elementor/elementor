@@ -26,7 +26,7 @@ const Module = function() {
 		const instanceSettings = instanceParams[ 0 ];
 
 		if ( instanceSettings ) {
-			$.extend( settings, instanceSettings );
+			$.extend( true, settings, instanceSettings );
 		}
 	};
 
