@@ -141,7 +141,7 @@
 		&-tooltip {
 			position: absolute;
 			top: calc(100% + 5px);
-			left: 50%;
+			left: calc(50% - 4px);
 			transform: translateX(-50%);
 			font-size: 10px;
 		}
