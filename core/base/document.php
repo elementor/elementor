@@ -503,7 +503,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return bool
 	 */
-	public function save( $data = [] ) {
+	public function save( $data ) {
 		if ( ! $this->is_editable_by_current_user() ) {
 			return false;
 		}
@@ -718,7 +718,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function convert_to_elementor() {
-		$this->save();
+		$this->save( [] );
 
 		if ( empty( $this->post->post_content ) ) {
 			return [];
