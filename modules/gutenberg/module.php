@@ -72,8 +72,7 @@ class Module extends BaseModule {
 			'isElementorMode' => Plugin::$instance->db->is_built_with_elementor( $post_id ),
 			'editLink' => Utils::get_edit_link( $post_id ),
 		];
-
-		wp_localize_script( 'elementor-gutenberg', 'ElementorGutenbergSettings', $elementor_settings );
+		Utils::print_js_config( 'elementor-gutenberg', 'ElementorGutenbergSettings', $elementor_settings );
 	}
 
 	/**
