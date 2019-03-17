@@ -649,6 +649,15 @@ class Utils {
 	 * @param mixed $config
 	 */
 	public static function print_js_config( $handle, $js_var, $config ) {
+
+		// decode the data the same way wp_localize_script would have done
+		foreach ( (array) $config as $key => $value ) {
+			if ( ! is_scalar( $value ) ) {
+				continue;
+			}
+			$config[ $key ] = html_entity_decode( (string) $value, ENT_QUOTES, 'UTF-8' );
+		}
+
 		$config = wp_json_encode( $config );
 
 		if ( get_option( 'elementor_editor_break_lines' ) ) {
