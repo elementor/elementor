@@ -1,6 +1,9 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Debug\Loading_Tests_Manager;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -40,6 +43,17 @@ class Preview {
 	public function init() {
 		if ( is_admin() || ! $this->is_preview_mode() ) {
 			return;
+		}
+
+		if ( isset( $_GET['preview-debug'] ) ) {
+			register_shutdown_function( function () {
+				$e = error_get_last();
+				if ( $e ) {
+					echo '<div id="elementor-preview-debug-error"><pre>';
+					echo $e['message'];
+					echo '</pre></div>';
+				}
+			} );
 		}
 
 		$this->post_id = get_the_ID();
@@ -273,5 +287,6 @@ class Preview {
 	 */
 	public function __construct() {
 		add_action( 'template_redirect', [ $this, 'init' ], 0 );
+		Loading_Tests_Manager::instance()->register_tests();
 	}
 }

@@ -956,7 +956,7 @@ const App = Marionette.Application.extend( {
 
 		var previewWindow = this.$preview[ 0 ].contentWindow;
 
-		if ( ! previewWindow.elementorFrontend ) {
+		if ( ! previewWindow.elementorFrontend || elementor.config.debugData.error ) {
 			this.onPreviewLoadingError();
 
 			return;
@@ -1077,12 +1077,33 @@ const App = Marionette.Application.extend( {
 	},
 
 	onPreviewLoadingError: function() {
-		this.showFatalErrorDialog( {
-			headerMessage: this.translate( 'preview_not_loading_header' ),
-			message: this.translate( 'preview_not_loading_message' ),
+		var self = this;
+
+		const iframeLink = '<br><a href="' + this.config.document.urls.preview + '&preview-debug" target="_blank">Preview Debug</a>';
+		const debugData = elementor.config.debugData;
+		const dialogOptions = {
+			headerMessage: debugData.header,
+			message: debugData.message + iframeLink,
 			onConfirm: function() {
-				open( elementor.config.help_preview_error_url, '_blank' );
+				open( debugData.doc_url, '_blank' );
 			},
+		};
+
+		if ( debugData.error ) {
+			self.showFatalErrorDialog( dialogOptions );
+			return;
+		}
+
+		jQuery.get( self.config.document.urls.preview, function() {
+			self.showFatalErrorDialog( dialogOptions );
+		} ).fail( function( response ) { //Iframe can't be loaded
+			self.showFatalErrorDialog( {
+				headerMessage: debugData.header,
+				message: response.status + ' : ' + response.statusText + iframeLink,
+				onConfirm: function() {
+					open( 'https://go.elementor.com/preview-not-loaded/', '_blank' );
+				},
+			} );
 		} );
 	},
 
