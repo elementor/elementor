@@ -223,6 +223,12 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.5.9 - 2019-03-18 ###
+* Tweak: Modal style improvements
+* Tweak: Added preview debug link to "Preview could not be loaded" message
+* Fix: First section delete action not saving ([#7477](https://github.com/elementor/elementor/issues/7477))
+* Fix: Compatibility issue with 3rd party plugins ([#7467](https://github.com/elementor/elementor/issues/7467))
+
 ### 2.5.8 - 2019-03-15 ###
 * Fix: Restore `wp_localize_script` for Gutenberg editor
 
