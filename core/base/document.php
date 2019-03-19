@@ -267,6 +267,7 @@ abstract class Document extends Controls_Stack {
 		$url = get_preview_post_link(
 			$main_post_id,
 			[
+				'preview_id' => $main_post_id,
 				'preview_nonce' => wp_create_nonce( 'post_preview_' . $main_post_id ),
 			]
 		);
