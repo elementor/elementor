@@ -447,6 +447,8 @@ class Editor {
 			'elementor-editor',
 			ELEMENTOR_ASSETS_URL . 'js/editor' . $suffix . '.js',
 			[
+				'wp-element',
+				'wp-data',
 				'elementor-common',
 				'elementor-editor-modules',
 				'wp-auth-check',
@@ -511,7 +513,7 @@ class Editor {
 			'current_user_can_publish' => $current_user_can_publish,
 			'controls' => $plugin->controls_manager->get_controls_data(),
 			'elements' => $plugin->elements_manager->get_element_types_config(),
-			'icons' => Icons_Manager::get_icon_manager_tabs(),
+			'icons' => Icons_Manager::get_icon_manager_tabs_config(),
 			'widgets' => $plugin->widgets_manager->get_widget_types_config(),
 			'schemes' => [
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),

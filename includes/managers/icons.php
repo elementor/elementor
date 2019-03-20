@@ -47,33 +47,36 @@ class Icons_Manager { // extends Element_Base {
 	private static function init_tabs() {
 		self::$tabs = [
 			'regular' => [
+				'name' => 'regular',
 				'label' => __( 'Regular', 'elementor' ),
 				'url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/regular.css',
 				'enqueue' => [ ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/fontawesome.css' ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fa-flag',
-				'ver' => '5.5.0',
+				'ver' => '5.7.2',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/regular.json',
 			],
 			'solid' => [
+				'name' => 'solid',
 				'label' => __( 'Solid', 'elementor' ),
 				'url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/solid.css',
 				'enqueue' => [ ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/fontawesome.css' ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fa-flag',
-				'ver' => '5.5.0',
+				'ver' => '5.7.2',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/solid.json',
 			],
 			'brands' => [
+				'name' => 'brands',
 				'label' => __( 'Brands', 'elementor' ),
 				'url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/brands.css',
 				'enqueue' => [ ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/fontawesome.css' ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fa-font-awesome',
-				'ver' => '5.5.0',
+				'ver' => '5.7.2',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/brands.json',
 			],
 		];
@@ -89,6 +92,16 @@ class Icons_Manager { // extends Element_Base {
 		}
 		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', [] );
 		return array_merge( self::$tabs, $additional_tabs );
+	}
+
+	public static function get_icon_manager_tabs_config() {
+		$tabs = [
+			'all' => [
+				'name' => 'all',
+				'label' => __( 'All Icons', 'elementor' ),
+			],
+		];
+		return array_values( array_merge( $tabs, self::get_icon_manager_tabs() ) );
 	}
 
 	/**

@@ -1,24 +1,32 @@
-import React, { Component } from "react";
+import PropTypes from 'prop-types'
+import { Component, Fragment } from 'react'
 
-const Icon = class extends Component {
-	render = () =>{
-		const itemStyle = {
-			width: '80px',
-			height: '80px',
-			border: '1px solid gray',
-			display: 'flex',
-			justifyContent: 'center',
-			flexDirection: 'column',
-		};
-		return <div style={itemStyle}>
-			<span
+export default class Icon extends Component {
+	render = () => {
+		return <Fragment>
+			<div
+				className={ 'icon--manager--list--item' + this.props.containerClass }
 				key={ this.props.keyID }
-				className={ this.props.className }
-				data={ this.props.data }
-			/>
-		</div>;
+				onClick={ () => this.props.setSelectedHandler( this.props.data.selector, this.props.library ) }
+				filter={ this.props.data.filter }>
+				<i
+					className={ this.props.className }
+					data={ this.props.data }
+				>
+					<span>{ this.props.data.name }</span>
+				</i>
+			</div>
+		</Fragment>;
 
 	}
 };
 
-export default Icon;
+Icon.propTypes = {
+  className: PropTypes.string,
+  containerClass: PropTypes.string,
+  data: PropTypes.object,
+  keyID: PropTypes.string,
+  library: PropTypes.string,
+  selector: PropTypes.string,
+  setSelectedHandler: PropTypes.func,
+};

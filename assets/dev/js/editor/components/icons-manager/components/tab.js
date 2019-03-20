@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
-import Store from './../classes/store';
+import PropTypes from 'prop-types'
+import {
+	Component,
+	Fragment,
+	createRef
+} from 'react';
+//import Store from './../classes/store';
 import Icon from './Icon';
 
 class Tab extends Component {
-	state = {
-		selected: null,
-	};
-
 	getDefaultSettings = () => {
 		return {
 			name: '',
@@ -22,17 +23,37 @@ class Tab extends Component {
 		};
 	};
 
+	selectedRef = null;
+
+	componentDidMount = () => {
+		if ( this.props.selected && this.props.selected.value ) {
+			//setTimeout( () => window.scrollTo(0, this.selectedRef.offsetTop ) );
+		}
+	};
+
 	getIconsOfType( type, icons ) {
+		const { selected } = this.props;
+		this.selectedRef = createRef();
 		return Object.entries( icons ).map( icon => {
 			const iconData = icon[ 1 ],
-				iconName = icon[ 0 ];
+				iconName = icon[ 0 ],
+				className = iconData.displayPrefix + ' ' + iconData.selector,
+				setter = { value: className, type: type };
+			let containerClass;
+			if ( selected.value === className ) {
+				containerClass = ' selected';
+			}
+
 			return (
 				<Icon
 					key={ type + '-' + iconName }
 					library={ type }
+					//ref={ ( selected.value === className ) ? this.selectedRef : null }
 					keyID={ iconName }
-					className={ iconData.displayPrefix + ' ' + iconData.selector }
-					data={ { ... icon[ 1 ] } }
+					containerClass={ containerClass }
+					className={ className }
+					setSelectedHandler={ () => this.props.setSelected( setter ) }
+					data={ iconData }
 				/>
 			);
 		} );
@@ -41,33 +62,39 @@ class Tab extends Component {
 	handleFullIconList = () => {
 		let fullIconList = [];
 		Object.entries( this.props.icons ).forEach( library => {
-			fullIconList.push( this.getIconsOfType( library[ 0 ], library[ 1 ] ) );
+			fullIconList= [ ... fullIconList, ... this.getIconsOfType( library[ 0 ], library[ 1 ] ) ];
 		} );
-		return fullIconList;
+		return fullIconList.sort( ( a, b ) => a.filter === b.filter ? 0 : +( a.filter > b.filter ) || -1 );
 	};
 
 	getIconsComponentList = () => {
-		const { name, icons } = this.props;
+		let iconsToShow = [];
+		const { name, icons, filter } = this.props;
 		if ( 'all' === name ) {
-			return this.handleFullIconList();
+			iconsToShow = this.handleFullIconList();
+		} else {
+			iconsToShow = this.getIconsOfType( name, icons );
 		}
-		return this.getIconsOfType( name, icons );
+		if ( filter ) {
+			iconsToShow = Object.values( iconsToShow ).filter( ( icon ) => {
+				return icon.props.data.name.toLowerCase().indexOf( filter ) > -1;
+			} );
+		}
+		return iconsToShow;
 	};
 
 	render = () => {
-		const wrapperStyle = {
-			display: 'flex',
-			width: '800px',
-			margin: '0 auto',
-			flexWrap: 'wrap',
-			height: '500px',
-		};
 		return (
-			<div id={ 'tab-content-container' } style={ wrapperStyle }>
+			<Fragment>
 				{ this.getIconsComponentList() }
-			</div>
+			</Fragment>
 		);
 	};
 }
+
+Tab.propTypes = {
+  icons: PropTypes.object,
+  name: PropTypes.string,
+};
 
 export default Tab;

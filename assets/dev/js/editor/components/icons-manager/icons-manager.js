@@ -1,4 +1,5 @@
 import ModalLayout from './modal-layout';
+import { renderIconManager } from './components/icon-manager';
 
 export default class extends elementorModules.Module {
 	onInit() {
@@ -17,13 +18,15 @@ export default class extends elementorModules.Module {
 
 	onPickerShow() {
 		const controlView = this.getSettings( 'controlView' ),
-			data = controlView.getControlValue(),
-			modalView = elementor.iconManager.layout.modalContent.currentView,
-			include = controlView.model.get( 'include' ),
-			exclude = controlView.model.get( 'exclude' ),
-			searchBar = controlView.model.get( 'search_bar' ),
-			controlIcons = {};
-
+			iconManagerConfig = {
+				selected: controlView.getControlValue(),
+				modalView: elementor.iconManager.layout.modalContent.currentView,
+				include: controlView.model.get( 'include' ),
+				exclude: controlView.model.get( 'exclude' ),
+				searchBar: controlView.model.get( 'search_bar' ),
+			};
+		renderIconManager( iconManagerConfig );
+		return;
 		let tabToShow = Object.keys( ElementorConfig.icons )[ 0 ];
 
 		modalView.reset();
@@ -59,8 +62,8 @@ export default class extends elementorModules.Module {
 
 	updateControlValue( view, modal ) {
 		view.setValue( {
-			value: modal.cache.value,
-			library: modal.cache.type,
+			value: modal.$el.find( '#icon_value' ).val(),
+			library: modal.$el.find( '#icon_type' ).val(),
 		} );
 		view.applySavedValue();
 	}

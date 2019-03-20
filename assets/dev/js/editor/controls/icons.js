@@ -4,14 +4,17 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		if ( ! jQuery( document ).find( 'link[href="' + url + '"]' ).length ) {
 			jQuery( document ).find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
 		}
+		if ( ! elementor.$previewContents.find( 'link[href="' + url + '"]' ).length ) {
+			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
+		}
 	}
 
 	enqueueIconFonts( iconType ) {
-		if ( ! ElementorConfig.icons.hasOwnProperty( iconType ) ) {
+		const iconSetting = elementor.helpers.getIconLibrarySettings( iconType );
+		if ( false === iconSetting ) {
 			return;
 		}
 
-		const iconSetting = ElementorConfig.icons[ iconType ];
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
 				this.enqueueStylesheet( assetURL );
