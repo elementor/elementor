@@ -70,6 +70,13 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		sliderInstance.on( 'slide', this.onSlideChange.bind( this ) );
 	},
 
+	applySavedValue: function() {
+		ControlBaseUnitsItemView.prototype.applySavedValue.apply( this, arguments );
+		if ( this.ui.slider[ 0 ].noUiSlider ) {
+			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
+		}
+	},
+
 	getSize: function() {
 		return this.getControlValue( this.isMultiple() ? 'sizes' : 'size' );
 	},
