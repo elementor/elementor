@@ -6,12 +6,12 @@ class Htaccess extends Test_Base {
 	private $message = '';
 
 	public function __construct() {
-		$this->message = __( 'Your site\'s .htaccess file appears to be missing', 'elementor' );
+		$this->message = __( 'Your site\'s .htaccess file appears to be missing.', 'elementor' );
 	}
 
 	public function run() {
 		if ( empty( $_SERVER['SERVER_SOFTWARE'] ) ) {
-			$this->message = __( 'Server software unknown, please contact the hosting provider', 'elementor' );
+			$this->message = __( 'Server software unknown, please contact the hosting provider.', 'elementor' );
 			return false;
 		}
 		$server = strtoupper( $_SERVER['SERVER_SOFTWARE'] );

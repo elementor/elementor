@@ -1,8 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\Core\Debug\Loading_Tests_Manager;
+use Elementor\Core\Debug\Loading_Inspector_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Source_Local;
@@ -619,8 +618,6 @@ class Editor {
 				'learn_more' => __( 'Learn More', 'elementor' ),
 				'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
 				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
-//				'preview_not_loading_header' => __( 'The preview could not be loaded', 'elementor' ),
-//				'preview_not_loading_message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
 
 				// Gallery.
 				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
@@ -692,7 +689,7 @@ class Editor {
 				'soon' => __( 'Soon', 'elementor' ),
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
-			'debugData' => Loading_Tests_Manager::instance()->run_tests(),
+			'debug_data' => Loading_Inspector_Manager::instance()->run_tests(),
 		];
 
 		$localized_settings = [];

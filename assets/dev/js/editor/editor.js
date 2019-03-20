@@ -956,7 +956,7 @@ const App = Marionette.Application.extend( {
 
 		var previewWindow = this.$preview[ 0 ].contentWindow;
 
-		if ( ! previewWindow.elementorFrontend || elementor.config.debugData.error ) {
+		if ( ! previewWindow.elementorFrontend || elementor.config.debug_data.error ) {
 			this.onPreviewLoadingError();
 
 			return;
@@ -1077,13 +1077,14 @@ const App = Marionette.Application.extend( {
 	},
 
 	onPreviewLoadingError: function() {
-		var self = this;
+		const self = this;
 
-		const iframeLink = '<br><a href="' + this.config.document.urls.preview + '&preview-debug" target="_blank">Preview Debug</a>';
-		const debugData = elementor.config.debugData;
+		const debugUrl = self.config.document.urls.preview + '&preview-debug';
+		const previewDebugLink = '<br><a href="' + debugUrl + '" target="_blank">Preview Debug</a>';
+		const debugData = elementor.config.debug_data;
 		const dialogOptions = {
 			headerMessage: debugData.header,
-			message: debugData.message + iframeLink,
+			message: debugData.message + previewDebugLink,
 			onConfirm: function() {
 				open( debugData.doc_url, '_blank' );
 			},
@@ -1094,14 +1095,14 @@ const App = Marionette.Application.extend( {
 			return;
 		}
 
-		jQuery.get( self.config.document.urls.preview, function() {
+		jQuery.get( debugUrl, function() {
 			self.showFatalErrorDialog( dialogOptions );
 		} ).fail( function( response ) { //Iframe can't be loaded
 			self.showFatalErrorDialog( {
 				headerMessage: debugData.header,
-				message: response.status + ' : ' + response.statusText + iframeLink,
+				message: response.status + ' : ' + response.statusText + previewDebugLink,
 				onConfirm: function() {
-					open( 'https://go.elementor.com/preview-not-loaded/', '_blank' );
+					open( elementor.config.help_preview_error_url, '_blank' );
 				},
 			} );
 		} );
