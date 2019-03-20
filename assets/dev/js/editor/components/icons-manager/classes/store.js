@@ -4,11 +4,11 @@ const Store = class {
 	}
 
 	save( library ) {
-		this.set( this.getKey( library ), library );
+		this.set( Store.getKey( library ), library );
 	}
 
 	getIcons( library ) {
-		const data = this.get( this.getKey( library ) );
+		const data = this.get( Store.getKey( library ) );
 		if ( data && data.icons ) {
 			return data.icons;
 		}
@@ -29,7 +29,7 @@ const Store = class {
 	}
 
 	isValid( library ) {
-		const saved = this.get( this.getKey( library ) );
+		const saved = this.get( Store.getKey( library ) );
 		if ( ! saved ) {
 			return false;
 		}

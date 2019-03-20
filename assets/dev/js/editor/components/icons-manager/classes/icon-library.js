@@ -92,7 +92,7 @@ const IconLibrary = class {
 		if ( Object.keys( icons ).length ) {
 			library.icons = icons;
 			Store.save( library );
-			this.notifyCallback();
+			this.notifyCallback( library );
 		}
 	}
 
@@ -126,7 +126,9 @@ const IconLibrary = class {
 		}
 
 		// try parsing CSS
-		this.extractIconsFromCSS( libraryConfig );
+		if ( libraryConfig.url ) {
+			this.extractIconsFromCSS( libraryConfig );
+		}
 	};
 
 	ucwords( str ) {

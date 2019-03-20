@@ -24,11 +24,11 @@ helpers = {
 			return;
 		}
 
-		if ( ! ElementorConfig.icons.hasOwnProperty( iconType ) ) {
+		const iconSetting = this.getIconLibrarySettings( iconType );
+		if ( false === iconType ) {
 			return;
 		}
 
-		const iconSetting = ElementorConfig.icons[ iconType ];
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
 				this.enqueueStylesheet( assetURL );
@@ -42,6 +42,14 @@ helpers = {
 		this._enqueuedIconFonts.push( iconType );
 
 		elementor.channels.editor.trigger( 'fontIcon:insertion', iconType, iconSetting );
+	},
+
+	getIconLibrarySettings( iconType ) {
+		const iconSetting = ElementorConfig.icons.filter( ( library ) => iconType === library.name );
+		if ( iconSetting[ 0 ] && iconSetting[ 0 ].name ) {
+			return iconSetting[ 0 ];
+		}
+		return false;
 	},
 
 	enqueueFont( font ) {

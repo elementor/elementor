@@ -7,8 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <script type="text/template" id="tmpl-elementor-icons-manager">
-	<div id="elementor-icon-manager__content">
 
+    <div id="elementor--icon--manager--placeholder"></div>
+    <!--<div id="elementor-icon-manager__content">
 		<div class="elementor-icon-manager-tabs">
             <input type="hidden" name="icon_value" id="icon_value" value="">
             <input type="hidden" name="icon_type" id="icon_type" value="">
@@ -25,5 +26,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<ul class="elementor-icon-manager-tabs-content"></ul>
 			</div>
 		</div>
-	</div>
+	</div>-->
 </script>

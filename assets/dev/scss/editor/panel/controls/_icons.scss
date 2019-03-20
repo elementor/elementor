@@ -8,6 +8,7 @@
 		}
 	}
 }
+
 #elementor-icons-manager {
 
 	.elementor-icon-manager-tabs {
@@ -207,6 +208,98 @@
 			background-color: #a4afb7;
 			text-transform: uppercase;
 			transition: all .2s ease-in-out;
+		}
+	}
+}
+
+.icons-manager--wrapper {
+
+	display: flex;
+	height: 100%;
+
+	.icons-manager--sidebar {
+		width: 25%;
+		min-width: 25%;
+		background-color: #fbfcfd;
+		padding-top: 50px;
+
+		.icons-manager--tab-links {
+			display: flex;
+			flex-direction: column;
+
+			span {
+				flex-direction: column;
+				justify-content: center;
+				font-size: 12px;
+				min-width: 100px;
+				padding: 12px;
+				cursor: pointer;;
+				border-right: 0;
+				text-align: $start;
+
+				&.active {
+					background-color: #fff;
+					border-left: 5px solid #71d7f7;
+					color: #000;
+					font-weight: bold;
+					box-shadow: 0 6px 20px rgba( 0, 0, 0, 0.07 );
+				}
+
+				&last-of-type {
+					border-right: 1px solid;
+				}
+			}
+		}
+	}
+
+	.icons-manager--main {
+		padding: 50px;
+		width: 100%;
+
+		.icons-manager--search {
+			input {
+				background: #fff;
+				margin-bottom: 8px;
+				border: none;
+				border-radius: 0;
+			}
+		}
+
+		.icons-manager--tab__container {
+			align-items: flex-start;
+			display: flex;
+			flex-wrap: wrap;
+			height: 70vh;
+			align-content: flex-start;
+			overflow: scroll;
+
+			.icon--manager--list--item {
+				flex-direction: column;
+				justify-content: center;
+				font-size: 30px;
+				width: 100px;
+				display: flex;
+				text-align: center;
+				padding: 12px;
+				height: 90px;
+				margin: 7px;
+				color: #000;
+				background: #fff;
+
+				&:hover,
+				&.selected {
+					color: #71d7f7;
+					border: 1px solid;
+				}
+
+				span {
+					display: block;
+					font-size: 10px;
+					text-overflow: ellipsis;
+					margin-top: 12px;
+					color: #8b8b8b;
+				}
+			}
 		}
 	}
 }
