@@ -51,9 +51,20 @@ class Compatibility {
 	 */
 	public static function add_new_button_to_gutenberg() {
 		global $typenow;
-		if ( ! gutenberg_can_edit_post_type( $typenow ) || ! User::is_current_user_can_edit_post_type( $typenow ) ) {
+		if ( ! User::is_current_user_can_edit_post_type( $typenow ) ) {
 			return;
 		}
+
+		// Introduced in WP 5.0
+		if ( function_exists( 'use_block_editor_for_post' ) && ! use_block_editor_for_post( $typenow ) ) {
+			return;
+		}
+
+		// Deprecated/removed in Gutenberg plugin v5.3.0
+		if ( function_exists( 'gutenberg_can_edit_post_type' ) && ! gutenberg_can_edit_post_type( $typenow ) ) {
+			return;
+		}
+
 		?>
 		<script type="text/javascript">
 			document.addEventListener( 'DOMContentLoaded', function() {
