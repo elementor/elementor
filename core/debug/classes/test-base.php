@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Debug\Classes;
 
-abstract class Test_Base {
+abstract class Inspection_Base {
 
 	/**
 	 * @return bool

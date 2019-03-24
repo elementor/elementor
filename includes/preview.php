@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Debug\Loading_Inspector_Manager;
+use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -287,6 +287,6 @@ class Preview {
 	 */
 	public function __construct() {
 		add_action( 'template_redirect', [ $this, 'init' ], 0 );
-		Loading_Inspector_Manager::instance()->register_tests();
+		Loading_Inspection_Manager::instance()->register_tests();
 	}
 }
