@@ -1,22 +1,22 @@
 <?php
 namespace Elementor\Core\Debug;
 
-use Elementor\Core\Debug\Classes\Test_Base;
+use Elementor\Core\Debug\Classes\Inspection_Base;
 use Elementor\Core\Debug\Classes\Theme_Missing;
 use Elementor\Core\Debug\Classes\Htaccess;
 
-class Loading_Inspector_Manager {
+class Loading_Inspection_Manager {
 
 	public static $_instance = null;
 
 	public static function instance() {
 		if ( null === self::$_instance ) {
-			self::$_instance = new Loading_Inspector_Manager();
+			self::$_instance = new Loading_Inspection_Manager();
 		}
 		return self::$_instance;
 	}
 
-	/** @var Test_Base[] */
+	/** @var Inspection_Base[] */
 	private $tests = [];
 
 	public function register_tests() {
@@ -25,7 +25,7 @@ class Loading_Inspector_Manager {
 	}
 
 	/**
-	 * @param Test_Base $test
+	 * @param Inspection_Base $test
 	 */
 	public function register_test( $test ) {
 		$this->tests[ $test->get_name() ] = $test;

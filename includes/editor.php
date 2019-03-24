@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Debug\Loading_Inspector_Manager;
+use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Source_Local;
@@ -689,7 +689,7 @@ class Editor {
 				'soon' => __( 'Soon', 'elementor' ),
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
-			'debug_data' => Loading_Inspector_Manager::instance()->run_tests(),
+			'debug_data' => Loading_Inspection_Manager::instance()->run_tests(),
 		];
 
 		$localized_settings = [];

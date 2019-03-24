@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Debug\Classes;
 
-class Theme_Missing extends Test_Base {
+class Theme_Missing extends Inspection_Base {
 
 	public function run() {
 		$theme = wp_get_theme();

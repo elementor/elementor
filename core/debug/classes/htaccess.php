@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Debug\Classes;
 
-class Htaccess extends Test_Base {
+class Htaccess extends Inspection_Base {
 
 	private $message = '';
 
