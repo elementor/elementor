@@ -17,6 +17,6 @@ class Theme_Missing extends Inspection_Base {
 	}
 
 	public function get_help_doc_url() {
-		return 'https://stackoverflow.com';
+		return 'https://go.elementor.com/preview-not-loaded/#theme-files';
 	}
 }
