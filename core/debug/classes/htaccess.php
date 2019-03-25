@@ -32,6 +32,6 @@ class Htaccess extends Inspection_Base {
 	}
 
 	public function get_help_doc_url() {
-		return 'https://codex.wordpress.org/Settings_Permalinks_Screen';
+		return 'https://go.elementor.com/preview-not-loaded/#htaccess';
 	}
 }
