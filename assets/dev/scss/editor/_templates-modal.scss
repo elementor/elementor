@@ -696,13 +696,22 @@ label.elementor-template-library-order-label {
 .elementor-template-library-blank-title {
 	font-size: 30px;
 	margin-top: 40px;
+
+	@media (max-width: $editor-screen-lg-max) {
+		font-size: 25px;
+	}
 }
 
 .elementor-template-library-blank-message {
 	font-size: 18px;
 	color: $editor-light;
-	margin-top: 25px;
+	margin-top: 15px;
 	font-weight: 300;
+
+	@media (max-width: $editor-screen-lg-max) {
+		font-size: 16px;
+		margin-top: 10px;
+	}
 }
 
 #elementor-template-library-save-template-form {
