@@ -1079,16 +1079,15 @@ const App = Marionette.Application.extend( {
 	onPreviewLoadingError: function() {
 		const self = this;
 
-		const debugUrl = self.config.document.urls.preview + '&preview-debug';
-		const previewDebugLink = '<br><a href="' + debugUrl + '" target="_blank">Preview Debug</a>';
-		const debugData = elementor.config.debug_data;
-		const dialogOptions = {
-			headerMessage: debugData.header,
-			message: debugData.message + previewDebugLink,
-			onConfirm: function() {
-				open( debugData.doc_url, '_blank' );
-			},
-		};
+		const debugUrl = self.config.document.urls.preview + '&preview-debug',
+			previewDebugLink = '<br><a href="' + debugUrl + '" target="_blank">Preview Debug</a>',
+			debugData = elementor.config.debug_data,
+			dialogOptions = {
+				headerMessage: debugData.header,
+				message: debugData.message + previewDebugLink,
+				onConfirm: function() {
+					open( debugData.doc_url, '_blank' );
+				}, };
 
 		if ( debugData.error ) {
 			self.showFatalErrorDialog( dialogOptions );
@@ -1102,7 +1101,8 @@ const App = Marionette.Application.extend( {
 				headerMessage: debugData.header,
 				message: response.status + ' : ' + response.statusText + previewDebugLink,
 				onConfirm: function() {
-					open( elementor.config.help_preview_error_url, '_blank' );
+					const url = 500 <= response.status ? elementor.config.help_preview_http_error_500_url : elementor.config.help_preview_http_error_url;
+					open( url, '_blank' );
 				},
 			} );
 		} );
