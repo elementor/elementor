@@ -268,7 +268,7 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 			shapeType = self.getElementSettings( baseSettingKey ),
 			$svgContainer = this.elements[ '$' + side + 'Container' ];
 
-		$svgContainer.empty().attr( 'data-shape', shapeType );
+		$svgContainer.attr( 'data-shape', shapeType );
 
 		if ( ! shapeType ) {
 			return;
@@ -283,7 +283,7 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 		const svgURL = self.getSvgURL( shapeType, fileName );
 
 		jQuery.get( svgURL, function( data ) {
-			$svgContainer.append( data.childNodes[ 0 ] );
+			$svgContainer.empty().append( data.childNodes[ 0 ] );
 		} );
 
 		this.setNegative( side );
