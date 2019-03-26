@@ -308,6 +308,52 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'height',
+			[
+				'label' => __( 'Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'unit' => 'px',
+				],
+				'tablet_default' => [
+					'unit' => 'px',
+				],
+				'mobile_default' => [
+					'unit' => 'px',
+				],
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 1,
+						'max' => 500,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image img' => 'height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'object-fit',
+			[
+				'label' => __( 'Object Fit', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'fill' => __( 'Fill', 'elementor' ),
+					'cover' => __( 'Cover', 'elementor' ),
+					'contain' => __( 'Contain', 'elementor' ),
+					'scale-down' => __( 'Scale Down', 'elementor' ),
+				],
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image img' => 'object-fit: {{VALUE}};',
+				],
+			]
+		);
+
 		$this->add_control(
 			'separator_panel_style',
 			[
