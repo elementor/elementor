@@ -524,6 +524,8 @@ class Editor {
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
+			'help_preview_http_error_url' => 'https://go.elementor.com/preview-not-loaded/#permissions',
+			'help_preview_http_error_500_url' => 'https://go.elementor.com/500-error/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
