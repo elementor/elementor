@@ -221,6 +221,12 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.5.10 - 2019-03-26 =
+* Fix: Preview for static homepage ([#7440](https://github.com/elementor/elementor/issues/7440))
+* Fix: Added compatibility for Gutenberg plugin v5.3.0+ ([#7557](https://github.com/elementor/elementor/issues/7557))
+* Fix: Slider control not setting correct position on Undo/Redo shortcuts
+* Fix: Duplicated shape divider issue in editor view
+
 = 2.5.9 - 2019-03-18 =
 * Tweak: Modal style improvements
 * Tweak: Added preview debug link to "Preview could not be loaded" message
