@@ -1087,7 +1087,7 @@ const App = Marionette.Application.extend( {
 				message: debugData.message + previewDebugLink,
 				onConfirm: function() {
 					open( debugData.doc_url, '_blank' );
-				}, };
+				} };
 
 		if ( debugData.error ) {
 			self.showFatalErrorDialog( dialogOptions );
