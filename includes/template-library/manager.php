@@ -260,11 +260,9 @@ class Manager {
 
 		$args['content'] = json_decode( $args['content'], true );
 
-		if ( 'page' === $args['type'] ) {
-			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
+		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
 
-			$args['page_settings'] = $page->get_data( 'settings' );
-		}
+		$args['page_settings'] = $page->get_data( 'settings' );
 
 		$template_id = $source->save_item( $args );
 
