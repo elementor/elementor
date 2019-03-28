@@ -6,16 +6,17 @@ export default class extends elementorModules.Module {
 		this.currentArgs = {};
 		this.commands = {};
 		this.dependencies = {};
-		this.shortcuts = {};
 	}
 
 	registerDependency( component, callback ) {
 		this.dependencies[ component ] = callback;
+
+		return this;
 	}
 
 	register( command, callback, shortcut ) {
 		if ( this.commands[ command ] ) {
-			this.error( '`' + command + '` is already registered.' );
+			this.error( `\`${ command }\` is already registered.` );
 		}
 
 		this.commands[ command ] = callback;
@@ -37,6 +38,8 @@ export default class extends elementorModules.Module {
 
 	unregister( command ) {
 		delete this.commands[ command ];
+
+		return this;
 	}
 
 	is( command ) {
@@ -64,7 +67,7 @@ export default class extends elementorModules.Module {
 
 	beforeRun( command, args = {} ) {
 		if ( ! this.commands[ command ] ) {
-			this.error( '`' + command + '` not found.' );
+			this.error( `\`${ command }\` not found.` );
 		}
 
 		const parts = command.split( '/' ),
@@ -111,6 +114,6 @@ export default class extends elementorModules.Module {
 	}
 
 	error( message ) {
-		throw Error( 'Commands: ' + message );
+		throw Error( `Commands: ${ message }` );
 	}
 }
