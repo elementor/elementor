@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 5.1  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.5.9  
+**Stable tag:** 2.5.10  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -222,6 +222,12 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.5.10 - 2019-03-26 ###
+* Fix: Preview for static homepage ([#7440](https://github.com/elementor/elementor/issues/7440))
+* Fix: Added compatibility for Gutenberg plugin v5.3.0+ ([#7557](https://github.com/elementor/elementor/issues/7557))
+* Fix: Slider control not setting correct position on Undo/Redo shortcuts
+* Fix: Duplicated shape divider issue in editor view
 
 ### 2.5.9 - 2019-03-18 ###
 * Tweak: Modal style improvements
