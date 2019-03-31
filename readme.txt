@@ -221,6 +221,11 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.5.11 - 2019-03-31 =
+* Tweak: Removed duplicated grid style from frontend.css
+* Fix: Document settings not saving ([#7629](https://github.com/elementor/elementor/issues/7629))
+* Fix: Date-Time control triggering unnecessary `edit` event
+
 = 2.5.10 - 2019-03-26 =
 * Fix: Preview for static homepage ([#7440](https://github.com/elementor/elementor/issues/7440))
 * Fix: Added compatibility for Gutenberg plugin v5.3.0+ ([#7557](https://github.com/elementor/elementor/issues/7557))
