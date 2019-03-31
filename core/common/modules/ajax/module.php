@@ -248,9 +248,16 @@ class Module extends BaseModule {
 	 * @access protected
 	 */
 	private function send_success() {
-		wp_send_json_success( [
-			'responses' => $this->response_data,
-		] );
+		$response = [
+			'success' => true,
+			'data' => [
+				'responses' => $this->response_data,
+			],
+		];
+
+		echo wp_json_encode( $response );
+
+		wp_die( '', '', [ 'response' => null ] );
 	}
 
 	/**

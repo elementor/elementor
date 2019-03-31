@@ -4,10 +4,9 @@
 **Contributors:** [elemntor](https://profiles.wordpress.org/elemntor), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [bainternet](https://profiles.wordpress.org/bainternet), [ramiy](https://profiles.wordpress.org/ramiy), [yehudah](https://profiles.wordpress.org/yehudah)  
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 4.7  
-**Tested up to:** 5.0  
+**Tested up to:** 5.1  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.4.7  
-**Beta tag:** 2.5.0-beta2  
+**Stable tag:** 2.5.8  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -164,7 +163,7 @@ You can also add a new language via [translate.wordpress.org](https://translate.
 
 ### Minimum Requirements ###
 
-* WordPress 4.6 or greater
+* WordPress 4.7 or greater
 * PHP version 5.4 or greater
 * MySQL version 5.0 or greater
 
@@ -190,7 +189,7 @@ For documentation and tutorials visit our [Knowledge Base](https://docs.elemento
 
 **With Elementor, do I still need a theme?**
 
-Yes. Think of it like this: a theme is like the frame of the picture, and Elementor is the tool to paint the picture inside the frame. You still need a theme to design a nice header and footer.
+Yes. Think of it like this: a theme is like the frame of the picture, and Elementor is the tool to paint the picture inside the frame.
 
 **Is Elementor compatible with Posts and Custom Post Types?**
 
@@ -210,7 +209,7 @@ Yeah! Elementor enables to seamlessly build RTL pages as well as other translate
 
 **My site is working with WordPress 2.6, will Elementor work for me?**
 
-No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
+No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 or greater. We recommend your host supports PHP version 7.0 or greater and MySQL version 5.6 or greater.
 
 ## Screenshots ##
 
@@ -223,6 +222,82 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.5.8 - 2019-03-15 ###
+* Fix: Restore `wp_localize_script` for Gutenberg editor
+
+### 2.5.7 - 2019-03-14 ###
+* Fix: changed `ElementorGutenbergSettings` print order ([#7457](https://github.com/elementor/elementor/issues/7457))
+
+### 2.5.6 - 2019-03-14 ###
+* Tweak: Minor UI improvement in Slider Control
+* Tweak: Added support for range handles in Slider Control
+* Fix: Stretch Inner Section in the editor ([#7430](https://github.com/elementor/elementor/issues/7430))
+* Fix: Ensure print order of Elementor config JS variables ([#7443](https://github.com/elementor/elementor/issues/7443))
+* Fix: Inline elements not working on new pages ([#7433](https://github.com/elementor/elementor/issues/7433))
+* Fix: Removed media `id` when attachment is missing
+
+### 2.5.5 - 2019-03-11 ###
+* Tweak: Support gzipped Elementor Ajax data when GZIP is enabled
+* Tweak: Added labels and scales to Slider control
+* Fix: Device mode detection in IE and Edge browser ([#7356](https://github.com/elementor/elementor/issues/7356))
+* Fix: Positioning issue while dragging inline text widgets
+* Fix: Empty widget calculation according to the new column flexbox model
+
+### 2.5.4 - 2019-03-10 ###
+* Tweak: Added flexbox notice dialog
+* Fix: Backward compatibility for flexbox property ([#7366](https://github.com/elementor/elementor/issues/7366))
+* Fix: Allow `None` value for Entrance Animation control ([#7355](https://github.com/elementor/elementor/issues/7355))
+* Fix: Device mode detection in IE and Edge browser ([#7356](https://github.com/elementor/elementor/issues/7356))
+* Fix: Revert self hosted video background fix ([#7374](https://github.com/elementor/elementor/issues/7374))
+* Fix: Removed Delimiter parameter form `ucwords` for older PHP compatibility
+* Fix: Slider control returns wrong value
+* Fix: Slider control for RTL
+
+### 2.5.3 - 2019-03-06 ###
+* Tweak: Reduced Editor memory usage by moving common controls injection to the frontend ([#7308](https://github.com/elementor/elementor/issues/7308))
+* Tweak: Moved sync library from POST to GET method
+* Fix: `ucwords` support for older php versions ([#7327](https://github.com/elementor/elementor/issues/7327), [#7310](https://github.com/elementor/elementor/issues/7310))
+* Fix: Background self hosted videos responsive
+* Fix: Group controls `conditions` support
+
+### 2.5.2 - 2019-03-05 ###
+* Fix: Custom space between widgets override ([#7309](https://github.com/elementor/elementor/issues/7309))
+* Fix: Changed the default width of Absolute & Fixed position widget ([#7311](https://github.com/elementor/elementor/issues/7311))
+* **Note: This fix might affect previous custom positioning settings, if you have previously used position absolute or position fixed, please review your site.**
+
+### 2.5.1 - 2019-03-04 ###
+* Fix: Inline Width (auto) not working ([#7293](https://github.com/elementor/elementor/issues/7293))
+
+### 2.5.0 - 2019-03-04 ###
+* New: Added Position Absolute & Position Fixed for widgets ([#5568](https://github.com/elementor/elementor/issues/5568))
+* New: Added inline & custom width options to place widgets side by side without columns ([#4960](https://github.com/elementor/elementor/issues/4960))
+* New: Added responsive options for Column ([#2965](https://github.com/elementor/elementor/issues/2965), [#6898](https://github.com/elementor/elementor/issues/7104), Props [@wayheming](https://github.com/wayheming))
+* New: Added Columns for Text Editor widget ([#7104](https://github.com/elementor/elementor/issues/7104))
+* New: Added `space-between`, `space-around` & `space-evenly` for Vertical Alignment in Column ([#5083](https://github.com/elementor/elementor/issues/5083))
+* New: Added Horizontal Alignment in Column for inline widget
+* New: Added responsive capabilities for Entrance Animation ([#1639](https://github.com/elementor/elementor/issues/1639))
+* New: Added `elementor/template/viewport_tag` filter hook to Meta Viewport tag ([#7043](https://github.com/elementor/elementor/issues/7043))
+* Tweak: Improved editor loading time and performance by ~50%
+* Tweak: Remember last editing tab per element in the editor panel for better workflow ([#7087](https://github.com/elementor/elementor/issues/7087))
+* Tweak: Added text shadow & background color controls for caption in Image widget (Props [@ramiy](https://github.com/ramiy))
+* Tweak: Added access to super admin role in Maintenance Mode (Props [@GermanKrutov](https://github.com/GermanKrutov))
+* Tweak: Added vw unit support for Typography size control
+* Tweak: Added vw unit support for Custom Min. Height control in section
+* Tweak: Added overflow option for section
+* Tweak: Renamed `Content Position` control to `Vertical Align` in column layout
+* Tweak: Renamed `Scrolling Effects` section to `Motion Effects`
+* Tweak: Added Dynamic capabilities to Inner Section CSS class and CSS ID ([#6779](https://github.com/elementor/elementor/issues/6779))
+* Tweak: Added Dynamic capabilities to Section CSS class and CSS ID ([#6779](https://github.com/elementor/elementor/issues/6779))
+* Tweak: Added Dynamic capabilities all widgets CSS class and CSS ID ([#6779](https://github.com/elementor/elementor/issues/6779))
+* Tweak: Added Dynamic capabilities to Button CSS ID ([#6779](https://github.com/elementor/elementor/issues/6779))
+* Fix: Separator inside Repeater control ([#6851](https://github.com/elementor/elementor/issues/6851))
+* Fix: Selectors not working in dynamic tags in edge cases (Props [@crazypsycho](https://github.com/crazypsycho))
+* Fix: Entrance animations glitches ([#6945](https://github.com/elementor/elementor/issues/6945))
+* Fix: Library "Blocks" tab empty
+* Fix: Custom shape dividers not loading in editor ([#6550](https://github.com/elementor/elementor/issues/6550))
+* Fix: WP-CLI Flush CSS command glitch in multisite ([#7190](https://github.com/elementor/elementor/issues/7190))
+* Fix: PHP 7.3 Compatibility when saving settings ([#6890](https://github.com/elementor/elementor/issues/6890))
 
 ### 2.4.7 - 2019-02-18 ###
 * Fix: Incorrect device mode detection in Safari ([#7036](https://github.com/elementor/elementor/issues/7036))
@@ -285,7 +360,7 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 * Tweak: Added `elementor/controls/hover_animations/additional_animations` hook for adding custom Hover Animations ([#6545](https://github.com/elementor/elementor/issues/6545))
 * Tweak: Reorganized admin menu for Elementor settings & Template Library
 * Tweak: Exclude library CPT from Yoast SEO sitemap
-* Tweak: Added attributes for column wrappers (thanks [@thenovacreator](https://github.com/thenovacreator))
+* Tweak: Added attributes for column wrappers (Props [@thenovacreator](https://github.com/thenovacreator))
 * Tweak: Added `autocomplete` parameter for URL control (default: true)
 * Tweak: Added sanitize data on Menu Anchor ID
 * Tweak: Added dynamic options for Testimonial widget
