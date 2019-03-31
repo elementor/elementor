@@ -310,11 +310,11 @@ helpers = {
 				size = ( size / ( window.innerHeight / 100 ) );
 		}
 
-		return size.toFixed( 3 );
+		return Math.round( size * 1000 ) / 1000;
 	},
 
 	compareVersions: function( versionA, versionB, operator ) {
-		var prepareVersion = function( version ) {
+		const prepareVersion = ( version ) => {
 			version = version + '';
 
 			return version.replace( /[^\d.]+/, '.-1.' );
@@ -327,16 +327,16 @@ helpers = {
 			return ! operator || /^={2,3}$/.test( operator );
 		}
 
-		var versionAParts = versionA.split( '.' ).map( Number ),
+		const versionAParts = versionA.split( '.' ).map( Number ),
 			versionBParts = versionB.split( '.' ).map( Number ),
 			longestVersionParts = Math.max( versionAParts.length, versionBParts.length );
 
-		for ( var i = 0; i < longestVersionParts; i++ ) {
-			var valueA = versionAParts[ i ] || 0,
+		for ( let i = 0; i < longestVersionParts; i++ ) {
+			const valueA = versionAParts[ i ] || 0,
 				valueB = versionBParts[ i ] || 0;
 
 			if ( valueA !== valueB ) {
-				return this.conditions.compare( valueA, valueB, operator );
+				return elementor.conditions.compare( valueA, valueB, operator );
 			}
 		}
 	},

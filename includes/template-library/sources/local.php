@@ -397,7 +397,7 @@ class Source_Local extends Source_Base {
 	 *
 	 * @return array Local templates.
 	 */
-	public function get_items( array $args = [] ) {
+	public function get_items( $args = [] ) {
 		$template_types = array_values( self::$template_types );
 
 		if ( ! empty( $args['type'] ) ) {

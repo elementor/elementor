@@ -34,6 +34,7 @@
 			text-align: center;
 			display: flex;
 			flex-direction: column;
+			@include margin-start(auto);
 
 			.elementor-button {
 				background-color: $editor-accent;

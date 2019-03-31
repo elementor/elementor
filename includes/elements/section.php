@@ -401,8 +401,12 @@ class Element_Section extends Element_Base {
 						'min' => 0,
 						'max' => 100,
 					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
 				],
-				'size_units' => [ 'px', 'vh' ],
+				'size_units' => [ 'px', 'vh', 'vw' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} > .elementor-container:after' => 'content: ""; min-height: inherit;', // Hack for IE11
@@ -485,6 +489,22 @@ class Element_Section extends Element_Base {
 					'bottom' => __( 'Bottom', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-section-content-',
+			]
+		);
+
+		$this->add_control(
+			'overflow',
+			[
+				'label' => __( 'Overflow', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'hidden' => __( 'Hidden', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'overflow: {{VALUE}}',
+				],
 			]
 		);
 
@@ -1195,6 +1215,9 @@ class Element_Section extends Element_Base {
 				'label' => __( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'dynamic' => [
+					'active' => true,
+				],
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
 				'style_transfer' => false,
@@ -1207,6 +1230,9 @@ class Element_Section extends Element_Base {
 				'label' => __( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'dynamic' => [
+					'active' => true,
+				],
 				'prefix_class' => '',
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 				'label_block' => false,
@@ -1218,7 +1244,7 @@ class Element_Section extends Element_Base {
 		$this->start_controls_section(
 			'section_effects',
 			[
-				'label' => __( 'Effects', 'elementor' ),
+				'label' => __( 'Motion Effects', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -1501,8 +1527,6 @@ class Element_Section extends Element_Base {
 				'elementor-' . $section_type . '-section',
 			]
 		);
-
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
 	}
 
 	/**

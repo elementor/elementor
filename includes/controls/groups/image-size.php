@@ -92,6 +92,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		$image_sizes[] = 'full';
 
+		if ( ! empty( $image['id'] ) && ! wp_attachment_is_image( $image['id'] ) ) {
+			$image['id'] = '';
+		}
+
 		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) ) {
 			$image_class .= " attachment-$size size-$size";
 			$image_attr = [

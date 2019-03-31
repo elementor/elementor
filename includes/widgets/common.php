@@ -112,6 +112,9 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
@@ -124,6 +127,9 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'prefix_class' => '',
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
@@ -134,7 +140,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'section_effects',
 			[
-				'label' => __( 'Effects', 'elementor' ),
+				'label' => __( 'Motion Effects', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -374,9 +380,12 @@ class Widget_Common extends Widget_Base {
 					'auto' => __( 'Inline', 'elementor' ) . ' (auto)',
 					'initial' => __( 'Custom', 'elementor' ),
 				],
-				'prefix_class' => 'elementor-widget__width-',
+				'selectors_dictionary' => [
+					'inherit' => '100%',
+				],
+				'prefix_class' => 'elementor-widget%s__width-',
 				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{VALUE}}',
+					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}}',
 				],
 			]
 		);
@@ -413,7 +422,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -473,8 +482,12 @@ class Widget_Common extends Widget_Base {
 					'fixed' => __( 'Fixed', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-',
+				'frontend_available' => true,
 			]
 		);
+
+		$start = is_rtl() ? __( 'Right', 'elementor' ) : __( 'Left', 'elementor' );
+		$end = ! is_rtl() ? __( 'Right', 'elementor' ) : __( 'Left', 'elementor' );
 
 		$this->add_control(
 			'_offset_orientation_h',
@@ -486,14 +499,15 @@ class Widget_Common extends Widget_Base {
 				'default' => 'start',
 				'options' => [
 					'start' => [
-						'title' => __( 'Start', 'elementor' ),
+						'title' => $start,
 						'icon' => 'eicon-h-align-left',
 					],
 					'end' => [
-						'title' => __( 'End', 'elementor' ),
+						'title' => $end,
 						'icon' => 'eicon-h-align-right',
 					],
 				],
+				'classes' => 'elementor-control-start-end',
 				'render_type' => 'ui',
 				'condition' => [
 					'_position!' => '',
@@ -589,11 +603,11 @@ class Widget_Common extends Widget_Base {
 				'default' => 'start',
 				'options' => [
 					'start' => [
-						'title' => __( 'Start', 'elementor' ),
+						'title' => __( 'Top', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
 					'end' => [
-						'title' => __( 'End', 'elementor' ),
+						'title' => __( 'Bottom', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],

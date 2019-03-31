@@ -186,7 +186,7 @@ WidgetView = BaseElementView.extend( {
 			skinType = editModel.getSetting( '_skin' ) || 'default';
 
 		self.$el
-			.attr( 'data-element_type', editModel.get( 'widgetType' ) + '.' + skinType )
+			.attr( 'data-widget_type', editModel.get( 'widgetType' ) + '.' + skinType )
 			.removeClass( 'elementor-widget-empty' )
 			.children( '.elementor-widget-empty-icon' )
 			.remove();
@@ -194,7 +194,7 @@ WidgetView = BaseElementView.extend( {
 		// TODO: Find better way to detect if all images are loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
-				if ( 1 > self.$el.height() ) {
+				if ( 1 > self.$el.children( '.elementor-widget-container' ).outerHeight() ) {
 					self.handleEmptyWidget();
 				}
 			}, 200 );

@@ -91,6 +91,10 @@ html.elementor-html {
 				display: none;
 			}
 		}
+
+		&.ui-draggable-dragging {
+			pointer-events: none;
+		}
 	}
 
 	// It's here in order to override some themes default css
@@ -212,6 +216,13 @@ html.elementor-html {
 
 		&:active {
 			cursor: grabbing;
+		}
+
+		.eicon-edit {
+
+			&:before {
+				content: '\e1040';
+			}
 		}
 	}
 }

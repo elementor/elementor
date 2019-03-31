@@ -210,6 +210,24 @@ class Shapes {
 			],
 		];
 
+		self::$shapes = array_merge( $native_shapes, self::get_additional_shapes() );
+	}
+
+	/**
+	 * Get Additional Shapes
+	 *
+	 * Used to add custom shapes to elementor.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @return array
+	 */
+	private static function get_additional_shapes() {
+		static $additional_shapes = null;
+
+		if ( null !== $additional_shapes ) {
+			return $additional_shapes;
+		}
 		$additional_shapes = [];
 		/**
 		 * Additional shapes.
@@ -218,10 +236,39 @@ class Shapes {
 		 *
 		 * @since 2.0.1
 		 *
-		 * @param array $additional_shapes Additional Elementor fonts.
+		 * @param array $additional_shapes Additional Elementor shapes.
 		 */
 		$additional_shapes = apply_filters( 'elementor/shapes/additional_shapes', $additional_shapes );
+		return $additional_shapes;
+	}
 
-		self::$shapes = array_merge( $native_shapes, $additional_shapes );
+	/**
+	 * Get Additional Shapes For Config
+	 *
+	 * Used to set additional shape paths for editor
+	 *
+	 * @since 2.5.0
+	 *
+	 * @return array|bool
+	 */
+	public static function get_additional_shapes_for_config() {
+		$additional_shapes = self::get_additional_shapes();
+		if ( empty( $additional_shapes ) ) {
+			return false;
+		}
+
+		$additional_shapes_config = [];
+		foreach ( $additional_shapes as $shape_name => $shape_settings ) {
+			if ( ! isset( $shape_settings['url'] ) ) {
+				continue;
+			}
+			$additional_shapes_config[ $shape_name ] = $shape_settings['url'];
+		}
+
+		if ( empty( $additional_shapes_config ) ) {
+			return false;
+		}
+
+		return $additional_shapes_config;
 	}
 }

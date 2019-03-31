@@ -22,10 +22,6 @@ export default class extends Marionette.Behavior {
 	}
 
 	activate() {
-		this.$handle = jQuery( '<div class="elementor-handle"><i class="fa fa-arrows"></i></div>' );
-
-		this.$el.append( this.$handle );
-
 		this.$el.draggable( {
 			addClasses: false,
 		} );
@@ -37,8 +33,6 @@ export default class extends Marionette.Behavior {
 		}
 
 		this.$el.draggable( 'destroy' );
-
-		this.$handle.remove();
 	}
 
 	toggle() {
@@ -105,8 +99,8 @@ export default class extends Marionette.Behavior {
 
 		yPos = elementor.helpers.elementSizeToUnit( this.$el, yPos, offsetYUnit );
 
-		settingToChange[ offsetX + deviceSuffix ] = { size: xPos.toFixed( 3 ), unit: offsetXUnit };
-		settingToChange[ offsetY + deviceSuffix ] = { size: yPos.toFixed( 3 ), unit: offsetYUnit };
+		settingToChange[ offsetX + deviceSuffix ] = { size: xPos, unit: offsetXUnit };
+		settingToChange[ offsetY + deviceSuffix ] = { size: yPos, unit: offsetYUnit };
 
 		editModel.get( 'settings' ).setExternalChange( settingToChange );
 
