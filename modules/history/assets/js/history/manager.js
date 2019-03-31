@@ -84,10 +84,6 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		elementorCommon.route.register( 'panel/history', () => {
-			elementorCommon.route.to( 'panel/history/actions' );
-		} );
-
 		elementorCommon.route.register( 'panel/history/actions', () => {
 			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'actions' );
 		}, 'ctrl+shift+h' );
@@ -241,7 +237,7 @@ var	Manager = function() {
 		if ( elementorCommon.route.isPartOf( 'panel/editor' ) ) {
 			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
 				// If the the element isn't exist - show the history panel
-				elementorCommon.route.to( 'panel/history' );
+				elementorCommon.route.to( 'panel/history/actions' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
 				viewToScroll = panelPage.getOption( 'editedElementView' );
