@@ -68,6 +68,7 @@ class Model extends BaseModel {
 			'menu' => [
 				'icon' => 'fa fa-cogs',
 				'beforeItem' => 'elementor-settings',
+				'route' => 'panel/general/style',
 			],
 		];
 	}

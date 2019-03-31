@@ -49,32 +49,19 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			this.openEditor( args.model, args.view );
 		} );
 
-		elementorCommon.route.register( 'panel/editor/content', () => {
-			elementor.getPanelView().getCurrentPageView().activateTab( 'content' );
-		} );
+		const activateTab = ( tab ) => elementor.getPanelView().getCurrentPageView().activateTab( tab )._renderChildren();
 
-		elementorCommon.route.register( 'panel/editor/style', () => {
-			elementor.getPanelView().getCurrentPageView().activateTab( 'style' );
-		} );
+		elementorCommon.route.register( 'panel/editor/content', () => activateTab( 'content' ) );
 
-		elementorCommon.route.register( 'panel/editor/advanced', () => {
-			elementor.getPanelView().getCurrentPageView().activateTab( 'advanced' );
-		} );
+		elementorCommon.route.register( 'panel/editor/style', () => activateTab( 'style' ) );
+
+		elementorCommon.route.register( 'panel/editor/advanced', () => activateTab( 'advanced' ) );
 
 		// Section.
-		elementorCommon.route.register( 'panel/editor/layout', () => {
-			elementor.getPanelView().getCurrentPageView().activateTab( 'layout' );
-		} );
-
-		// Page.
-		elementorCommon.route.register( 'panel/editor/settings', () => {
-			elementor.getPanelView().getCurrentPageView().activateTab( 'settings' );
-		} );
+		elementorCommon.route.register( 'panel/editor/layout', () => activateTab( 'layout' ) );
 
 		// Global Settings - Lightbox.
-		elementorCommon.route.register( 'panel/editor/lightbox', () => {
-			elementor.getPanelView().getCurrentPageView().activateTab( 'lightbox' );
-		} );
+		elementorCommon.route.register( 'panel/general/lightbox', () => activateTab( 'lightbox' ) );
 
 		elementorCommon.route.register( 'panel/menu', () => {
 			this.setPage( 'menu' );

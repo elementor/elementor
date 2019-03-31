@@ -39,9 +39,25 @@ module.exports = Marionette.ItemView.extend( {
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 
-		elementorCommon.route.register( 'panel/page-settings', () => {
-			this.showSettingsPage();
+		elementorCommon.route.register( 'panel/page/settings', () => {
+			this.openSettingsTab( 'settings' );
 		} );
+
+		elementorCommon.route.register( 'panel/page/style', () => {
+			this.openSettingsTab( 'style' );
+		} );
+
+		elementorCommon.route.register( 'panel/page/advanced', () => {
+			this.openSettingsTab( 'advanced' );
+		} );
+	},
+
+	openSettingsTab: function( tab ) {
+		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
+			this.showSettingsPage();
+		}
+
+		elementor.getPanelView().getCurrentPageView().activateTab( tab )._renderChildren();
 	},
 
 	getDeviceModeButton: function( deviceMode ) {
@@ -120,7 +136,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSettingsClick: function() {
-		elementorCommon.route.to( 'panel/page-settings' );
+		elementorCommon.route.to( 'panel/page/settings' );
 	},
 
 	onDeviceModeChange: function() {
