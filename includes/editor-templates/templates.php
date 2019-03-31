@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
 	<# screens.forEach( ( screen ) => { #>
-		<div class="elementor-template-library-menu-item" data-template-source="{{{ screen.source }}}"{{{ screen.type ? ' data-template-type="' + screen.type + '"' : '' }}}>{{{ screen.title }}}</div>
+		<div class="elementor-template-library-menu-item" data-route="{{{ screen.route }}}">{{{ screen.title }}}</div>
 	<# } ); #>
 </script>
 

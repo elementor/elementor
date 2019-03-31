@@ -40,22 +40,17 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onRender: function() {
-		var currentSource = elementor.templates.getFilter( 'source' ),
-			$sourceItem = this.ui.menuItems.filter( '[data-template-source="' + currentSource + '"]' );
-
-		if ( 'remote' === currentSource ) {
-			$sourceItem = $sourceItem.filter( '[data-template-type="' + elementor.templates.getFilter( 'type' ) + '"]' );
-		}
+		var currentRoute = elementorCommon.route.getCurrent( 'library' ),
+			$sourceItem = this.ui.menuItems.filter( '[data-route="' + currentRoute + '"]' );
 
 		this.activateMenuItem( $sourceItem );
 	},
 
 	onMenuItemClick: function( event ) {
-		var item = event.currentTarget,
-			itemData = item.dataset;
+		const item = event.currentTarget;
 
 		this.activateMenuItem( jQuery( item ) );
 
-		elementor.templates.setScreen( item.dataset.templateSource, itemData.templateType );
+		elementorCommon.route.to( item.dataset.route );
 	},
 } );

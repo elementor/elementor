@@ -38,7 +38,7 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 	},
 
 	onFilterEmpty: function() {
-		elementor.getPanelView().getCurrentPageView().showView( 'categories' );
+		elementorCommon.route.reload( 'panel/elements' );
 	},
 } );
 

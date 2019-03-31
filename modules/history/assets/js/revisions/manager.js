@@ -12,13 +12,13 @@ RevisionsManager = function() {
 		}
 
 		self.requestRevisions( () => {
-			if ( data.revisions_ids ) {
-				var revisionsToKeep = revisions.filter( function( revision ) {
-					return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
-				} );
+		if ( data.revisions_ids ) {
+			var revisionsToKeep = revisions.filter( function( revision ) {
+				return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
+			} );
 
-				revisions.reset( revisionsToKeep );
-			}
+			revisions.reset( revisionsToKeep );
+		}
 		} );
 	};
 
@@ -26,30 +26,23 @@ RevisionsManager = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
 	};
 
-	var addHotKeys = function() {
-		var UP_ARROW_KEY = 38,
-			DOWN_ARROW_KEY = 40;
-
-		var navigationHandler = {
-			isWorthHandling: function() {
-				var panel = elementor.getPanelView();
-
-				if ( 'historyPage' !== panel.getCurrentPageName() ) {
-					return false;
-				}
-
-				var revisionsTab = panel.getCurrentPageView().getCurrentTab();
-
-				return revisionsTab.currentPreviewId && revisionsTab.currentPreviewItem && revisionsTab.children.length > 1;
+	var addCommands = function() {
+		const navigate = ( up ) => {
+				elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( up );
 			},
-			handle: function( event ) {
-				elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( UP_ARROW_KEY === event.which );
-			},
-		};
+			dependency = () => {
+				return elementorCommon.route.is( 'panel/history/revisions' );
+			};
 
-		elementorCommon.hotKeys.addHotKeyHandler( UP_ARROW_KEY, 'revisionNavigation', navigationHandler );
+		elementorCommon.commands.register( 'panel/revisions/navigate/down', () => navigate(), {
+			keys: 'down',
+			dependency: dependency,
+		} );
 
-		elementorCommon.hotKeys.addHotKeyHandler( DOWN_ARROW_KEY, 'revisionNavigation', navigationHandler );
+		elementorCommon.commands.register( 'panel/revisions/navigate/up', () => navigate( true ), {
+			keys: 'up',
+			dependency: dependency,
+		} );
 	};
 
 	this.getItems = function() {
@@ -135,14 +128,12 @@ RevisionsManager = function() {
 	this.init = function() {
 		attachEvents();
 
-		addHotKeys();
+		addCommands();
 	};
 
 	this.onRevisionsUpdate = function() {
-		const panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
-			panel.getCurrentPageView().activateTab( 'revisions' );
+		if ( elementorCommon.route.is( 'panel/history/revisions' ) ) {
+			elementorCommon.route.reload( 'panel/history/revisions' );
 		}
 	};
 };

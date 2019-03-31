@@ -27,15 +27,9 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	attributes: function() {
-		var type = this.model.get( 'elType' );
-
-		if ( 'widget' === type ) {
-			type = this.model.get( 'widgetType' );
-		}
-
 		return {
 			'data-id': this.getID(),
-			'data-element_type': type,
+			'data-element_type': this.model.get( 'elType' ),
 		};
 	},
 
@@ -655,12 +649,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	save: function() {
-		var model = this.model;
-
-		elementor.templates.startModal( {
-			onReady: function() {
-				elementor.templates.getLayout().showSaveTemplateView( model );
-			},
+		elementorCommon.route.to( 'library/save-template', {
+			model: this.model,
 		} );
 	},
 
@@ -725,7 +715,7 @@ BaseElementView = BaseContainer.extend( {
 		const model = this.getEditModel(),
 			panel = elementor.getPanelView();
 
-		if ( 'editor' === panel.getCurrentPageName() && panel.getCurrentPageView().model === model ) {
+		if ( elementorCommon.route.isPartOf( 'panel/editor' ) && panel.getCurrentPageView().model === model ) {
 			return;
 		}
 
@@ -733,7 +723,11 @@ BaseElementView = BaseContainer.extend( {
 			elementor.helpers.scrollToView( this.$el, 200 );
 		}
 
-		panel.openEditor( model, this );
+		elementorCommon.route.to( 'panel/editor', {
+			refresh: true,
+			model: model,
+			view: this,
+		} );
 	},
 
 	onDuplicateButtonClick: function( event ) {

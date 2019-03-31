@@ -10,14 +10,52 @@ TemplateLibraryManager = function() {
 		errorDialog,
 		layout,
 		templatesCollection,
-		defaultScreen,
+		defaultRoute = 'library/templates/pages',
 		config = {},
+		modalConfig = {},
 		screens = {},
-		startIntent = {},
 		filterTerms = {};
 
 	const initLayout = function() {
 		layout = new TemplateLibraryLayoutView( { pages: screens } );
+
+		layout.getModal().on( 'hide', function() {
+			self.isOpen = false;
+			modalConfig = {};
+
+			elementorCommon.route
+				.saveState( 'library' )
+				.close( 'library' );
+		} );
+	};
+
+	const registerRouts = function() {
+		elementorCommon.route.registerDependency( 'library', () => {
+			self.startModal();
+			return true;
+		} );
+
+		screens.forEach( ( screen ) => {
+			elementorCommon.route.register( screen.route, () => {
+				self.setScreen( screen.source, screen.type );
+			} );
+		} );
+
+		elementorCommon.route.register( 'library/templates', ( args ) => {
+			modalConfig = args;
+
+			if ( ! elementorCommon.route.restoreState( 'library' ) ) {
+				self.showDefaultScreen();
+			}
+		}, 'ctrl+shift+l' );
+
+		elementorCommon.route.register( 'library/save-template', ( args ) => {
+			self.getLayout().showSaveTemplateView( args.model );
+		} );
+
+		elementorCommon.route.register( 'library/import', () => {
+			self.getLayout().showImportView();
+		} );
 	};
 
 	const registerDefaultTemplateTypes = function() {
@@ -27,9 +65,13 @@ TemplateLibraryManager = function() {
 			},
 			ajaxParams: {
 				success: function( successData ) {
-					self.getTemplatesCollection().add( successData );
-
-					self.setScreen( 'local' );
+					elementorCommon.route.to( 'library/templates/my-templates', {
+						onBefore: () => {
+							if ( templatesCollection ) {
+								templatesCollection.add( successData );
+							}
+						},
+					} );
 				},
 				error: function( errorData ) {
 					self.showErrorDialog( errorData );
@@ -55,17 +97,20 @@ TemplateLibraryManager = function() {
 				source: 'remote',
 				title: elementor.translate( 'blocks' ),
 				type: 'block',
+				route: 'library/templates/blocks',
 			},
 			{
 				name: 'pages',
 				source: 'remote',
 				title: elementor.translate( 'pages' ),
 				type: 'page',
+				route: 'library/templates/pages',
 			},
 			{
 				name: 'my-templates',
 				source: 'local',
 				title: elementor.translate( 'my_templates' ),
+				route: 'library/templates/my-templates',
 			},
 		];
 	};
@@ -91,12 +136,6 @@ TemplateLibraryManager = function() {
 		};
 	};
 
-	const setIntentFilters = function() {
-		jQuery.each( startIntent.filters, function( filterKey, filterValue ) {
-			self.setFilter( filterKey, filterValue, true );
-		} );
-	};
-
 	this.init = function() {
 		registerDefaultTemplateTypes();
 
@@ -104,7 +143,7 @@ TemplateLibraryManager = function() {
 
 		registerDefaultFilterTerms();
 
-		self.setDefaultScreen( 'pages' );
+		registerRouts();
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
@@ -163,11 +202,17 @@ TemplateLibraryManager = function() {
 				page_settings: options.withPageSettings,
 			},
 			success: function( data ) {
+				// Clone `modalConfig` because it deleted during the closing.
+				const importOptions = jQuery.extend( {}, modalConfig.importOptions );
+
+				// Hide for next open.
+				layout.hideLoadingView();
+
 				self.closeModal();
 
 				elementor.channels.data.trigger( 'template:before:insert', templateModel );
 
-				elementor.getPreviewView().addChildModel( data.content, startIntent.importOptions || {} );
+				elementor.getPreviewView().addChildModel( data.content, importOptions );
 
 				elementor.channels.data.trigger( 'template:after:insert', templateModel );
 
@@ -314,41 +359,18 @@ TemplateLibraryManager = function() {
 		elementorCommon.ajax.addRequest( 'get_library_data', ajaxOptions );
 	};
 
-	this.startModal = function( customStartIntent ) {
+	this.startModal = function() {
+		if ( self.isOpen ) {
+			return;
+		}
+
+		self.isOpen = true;
+
 		if ( ! layout ) {
 			initLayout();
 		}
 
 		layout.showModal();
-
-		self.requestLibraryData( {
-			onBeforeUpdate: layout.showLoadingView.bind( layout ),
-			onUpdate: function() {
-				const remoteLibraryConfig = elementor.config.document.remoteLibrary,
-					oldStartIntent = Object.create( startIntent );
-
-				startIntent = jQuery.extend( {
-					filters: {
-						source: 'remote',
-						type: remoteLibraryConfig.type,
-						subtype: 'page' === remoteLibraryConfig.type ? null : remoteLibraryConfig.category,
-					},
-					onReady: self.showTemplates,
-				}, customStartIntent );
-
-				var isSameIntent = _.isEqual( Object.getPrototypeOf( oldStartIntent ), startIntent );
-
-				if ( isSameIntent && 'elementor-template-library-templates' === layout.modalContent.currentView.id ) {
-					return;
-				}
-
-				layout.hideLoadingView();
-
-				setIntentFilters();
-
-				startIntent.onReady();
-			},
-		} );
 	};
 
 	this.closeModal = function() {
@@ -375,8 +397,8 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setDefaultScreen = function( screenName ) {
-		defaultScreen = _.findWhere( screens, { name: screenName } );
+	this.setDefaultRoute = function( route ) {
+		defaultRoute = route;
 	};
 
 	this.setScreen = function( source, type, silent ) {
@@ -394,13 +416,45 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showDefaultScreen = function() {
-		this.setScreen( defaultScreen.source, defaultScreen.type );
+		const remoteLibraryConfig = elementor.config.document.remoteLibrary;
+
+		if ( 'block' === remoteLibraryConfig.type ) {
+			defaultRoute = 'library/templates/blocks';
+		}
+
+		elementorCommon.route.to( defaultRoute, {
+			onAfter: () => {
+				if ( remoteLibraryConfig.category ) {
+					this.setFilter( 'subtype', remoteLibraryConfig.category );
+				}
+			},
+		} );
+	};
+
+	this.loadTemplates = function( onUpdate ) {
+		self.requestLibraryData( {
+			onBeforeUpdate: layout.showLoadingView.bind( layout ),
+			onUpdate: function() {
+				layout.hideLoadingView();
+
+				if ( onUpdate ) {
+					onUpdate();
+				}
+			},
+		} );
 	};
 
 	this.showTemplates = function() {
-		var activeSource = self.getFilter( 'source' );
+		self.loadTemplates( function() {
+			var templatesToShow = self.filterTemplates();
 
-		var templatesToShow = templatesCollection.filter( function( model ) {
+			layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
+		} );
+	};
+
+	this.filterTemplates = function() {
+		var activeSource = self.getFilter( 'source' );
+		return templatesCollection.filter( function( model ) {
 			if ( activeSource !== model.get( 'source' ) ) {
 				return false;
 			}
@@ -409,8 +463,6 @@ TemplateLibraryManager = function() {
 
 			return ! typeInfo || false !== typeInfo.showInLibrary;
 		} );
-
-		layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
 	};
 
 	this.showErrorDialog = function( errorMessage ) {

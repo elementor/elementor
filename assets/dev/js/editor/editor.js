@@ -164,13 +164,19 @@ const App = Marionette.Application.extend( {
 	},
 
 	getElementData: function( model ) {
-		var elType = model.get( 'elType' );
+		const elType = model.get( 'elType' );
 
 		if ( 'widget' === elType ) {
-			var widgetType = model.get( 'widgetType' );
+			const widgetType = model.get( 'widgetType' );
 
 			if ( ! this.config.widgets[ widgetType ] ) {
 				return false;
+			}
+
+			if ( ! this.config.widgets[ widgetType ].commonMerged ) {
+				jQuery.extend( this.config.widgets[ widgetType ].controls, this.config.widgets.common.controls );
+
+				this.config.widgets[ widgetType ].commonMerged = true;
 			}
 
 			return this.config.widgets[ widgetType ];
@@ -180,10 +186,10 @@ const App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
+		const elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
-			elementConfig.title = elementor.translate( 'inner_section' );
+			elementConfig.title = this.translate( 'inner_section' );
 		}
 
 		return elementConfig;
@@ -262,7 +268,7 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		this.initHotKeys();
+		this.registerCommands();
 
 		this.hotkeysScreen = new HotkeysScreen();
 	},
@@ -353,237 +359,112 @@ const App = Marionette.Application.extend( {
 		};
 	},
 
-	initHotKeys: function() {
-		const keysDictionary = {
-			c: 67,
-			d: 68,
-			i: 73,
-			l: 76,
-			m: 77,
-			p: 80,
-			s: 83,
-			v: 86,
-			del: 46,
-			esc: 27,
-		};
+	getCurrentElement: function() {
+		const isPreview = ( -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName );
 
-		var $ = jQuery,
-			hotKeysHandlers = {},
-			hotKeysManager = elementorCommon.hotKeys;
+		if ( ! isPreview ) {
+			return false;
+		}
 
-		hotKeysHandlers[ keysDictionary.c ] = {
-			copyElement: {
-				isWorthHandling: function( event ) {
-					if ( ! hotKeysManager.isControlEvent( event ) ) {
-						return false;
-					}
+		let targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
 
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
+		if ( ! targetElement ) {
+			const panel = elementor.getPanelView();
 
-					if ( ! isEditorOpen ) {
-						return false;
-					}
+			if ( elementorCommon.route.isPartOf( 'panel/editor' ) ) {
+				targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
+			}
+		}
 
-					var frontendWindow = elementorFrontend.elements.window,
-						textSelection = getSelection() + frontendWindow.getSelection();
+		if ( ! targetElement ) {
+			targetElement = elementor.getPreviewView();
+		}
 
-					if ( ! textSelection && environment.firefox ) {
-						textSelection = [ window, frontendWindow ].some( function( window ) {
-							var activeElement = window.document.activeElement;
+		return targetElement;
+	},
 
-							if ( ! activeElement || -1 === [ 'INPUT', 'TEXTAREA' ].indexOf( activeElement.tagName ) ) {
-								return;
-							}
-
-							var originalInputType;
-
-							// Some of input types can't retrieve a selection
-							if ( 'INPUT' === activeElement.tagName ) {
-								originalInputType = activeElement.type;
-
-								activeElement.type = 'text';
-							}
-
-							var selection = activeElement.value.substring( activeElement.selectionStart, activeElement.selectionEnd );
-
-							activeElement.type = originalInputType;
-
-							return ! ! selection;
-						} );
-					}
-
-					return ! textSelection;
-				},
-				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).copy();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.d ] = {
-			duplicateElement: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event );
-				},
-				handle: function() {
-					var panel = elementor.getPanelView();
-
-					if ( 'editor' !== panel.getCurrentPageName() ) {
-						return;
-					}
-
-					panel.getCurrentPageView().getOption( 'editedElementView' ).duplicate();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.i ] = {
-			navigator: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event ) && 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
-				},
-				handle: function() {
-					if ( elementor.navigator.storage.visible ) {
-						elementor.navigator.close();
-					} else {
-						elementor.navigator.open();
-					}
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.l ] = {
-			showTemplateLibrary: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
-				},
-				handle: function() {
-					elementor.templates.startModal();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.m ] = {
-			changeDeviceMode: {
-				devices: [ 'desktop', 'tablet', 'mobile' ],
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event ) && event.shiftKey;
-				},
-				handle: function() {
-					var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
-						modeIndex = this.devices.indexOf( currentDeviceMode );
-
-					modeIndex++;
-
-					if ( modeIndex >= this.devices.length ) {
-						modeIndex = 0;
-					}
-
-					elementor.changeDeviceMode( this.devices[ modeIndex ] );
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.p ] = {
-			changeEditMode: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event );
-				},
-				handle: function() {
-					elementor.getPanelView().modeSwitcher.currentView.toggleMode();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.s ] = {
-			saveEditor: {
-				isWorthHandling: function( event ) {
-					return hotKeysManager.isControlEvent( event );
-				},
-				handle: function() {
-					elementor.saver.saveDraft();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.v ] = {
-			pasteElement: {
-				isWorthHandling: function( event ) {
-					if ( ! hotKeysManager.isControlEvent( event ) ) {
-						return false;
-					}
-
-					return -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName;
-				},
-				handle: function( event ) {
-					var targetElement = elementor.channels.editor.request( 'contextMenu:targetView' );
-
-					if ( ! targetElement ) {
-						var panel = elementor.getPanelView();
-
-						if ( 'editor' === panel.getCurrentPageName() ) {
-							targetElement = panel.getCurrentPageView().getOption( 'editedElementView' );
-						}
-					}
-
-					if ( event.shiftKey ) {
-						if ( targetElement && targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
-							targetElement.pasteStyle();
-						}
-
-						return;
-					}
-
-					if ( ! targetElement ) {
-						targetElement = elementor.getPreviewView();
-					}
-
-					if ( targetElement.isPasteEnabled() ) {
-						targetElement.paste();
-					}
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.del ] = {
-			deleteElement: {
-				isWorthHandling: function( event ) {
-					var isEditorOpen = 'editor' === elementor.getPanelView().getCurrentPageName();
-
-					if ( ! isEditorOpen ) {
-						return false;
-					}
-
-					var $target = $( event.target );
-
-					if ( $target.is( ':input, .elementor-input' ) ) {
-						return false;
-					}
-
-					return ! $target.closest( '[contenteditable="true"]' ).length;
-				},
-				handle: function() {
-					elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ).removeElement();
-				},
-			},
-		};
-
-		hotKeysHandlers[ keysDictionary.esc ] = {
-			quitEditor: {
-				isWorthHandling: function() {
-					return ! jQuery( '.dialog-widget:visible' ).length;
-				},
-				handle: function() {
-					elementor.getPanelView().setPage( 'menu' );
-				},
-			},
-		};
-
-		_.each( hotKeysHandlers, function( handlers, keyCode ) {
-			_.each( handlers, function( handler, handlerName ) {
-				hotKeysManager.addHotKeyHandler( keyCode, handlerName, handler );
-			} );
+	registerCommands: function() {
+		elementorCommon.commands.registerDependency( 'elements', function() {
+			return elementor.getCurrentElement();
 		} );
+
+		elementorCommon.commands.register( 'elements/copy', function() {
+			elementor.getCurrentElement().copy();
+		}, 'ctrl+c' );
+
+		elementorCommon.commands.register( 'elements/duplicate', function() {
+			elementor.getCurrentElement().duplicate();
+		}, 'ctrl+d' );
+
+		elementorCommon.commands.register( 'elements/delete', function( event ) {
+			var $target = $( event.target );
+
+			if ( $target.is( ':input, .elementor-input' ) ) {
+				return;
+			}
+
+			if ( $target.closest( '[contenteditable="true"]' ).length ) {
+				return;
+			}
+
+			elementor.getCurrentElement().removeElement();
+		}, 'del' );
+
+		elementorCommon.commands.register( 'elements/paste', function() {
+			const targetElement = elementor.getCurrentElement();
+
+			if ( targetElement.isPasteEnabled() ) {
+				targetElement.paste();
+			}
+		}, 'ctrl+v' );
+
+		elementorCommon.commands.register( 'elements/pasteStyle', function() {
+			const targetElement = elementor.getCurrentElement();
+
+			if ( targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
+				targetElement.pasteStyle();
+			}
+		}, 'ctrl+shift+v' );
+
+		elementorCommon.commands.registerDependency( 'navigator', function() {
+			return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
+		} );
+
+		elementorCommon.commands.register( 'navigator/toggle', function() {
+			if ( elementor.navigator.storage.visible ) {
+				elementor.navigator.close();
+			} else {
+				elementor.navigator.open();
+			}
+		}, 'ctrl+i' );
+
+		elementorCommon.commands.register( 'library/show', function() {
+			elementorCommon.route.to( 'library/templates' );
+		}, 'ctrl+shift+i' );
+
+		elementorCommon.commands.register( 'preview/toggleResponsive', function() {
+			var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+				modeIndex = this.devices.indexOf( currentDeviceMode );
+
+			modeIndex++;
+
+			if ( modeIndex >= this.devices.length ) {
+				modeIndex = 0;
+			}
+			//
+			elementor.changeDeviceMode( this.devices[ modeIndex ] );
+		}, 'ctrl+shift+m' );
+
+		elementorCommon.commands.register( 'document/save', function() {
+			elementor.saver.saveDraft();
+		}, 'ctrl+s' );
+
+		elementorCommon.commands.register( 'panel/exit', function() {
+			if ( ! jQuery( '.dialog-widget:visible' ).length ) {
+				return;
+			}
+			elementorCommon.route.to( 'panel/menu' );
+		}, 'esc' );
 	},
 
 	initPanel: function() {
@@ -649,11 +530,7 @@ const App = Marionette.Application.extend( {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				var panelView = elementor.getPanelView();
-
-				if ( 'elements' !== panelView.getCurrentPageName() ) {
-					panelView.setPage( 'elements' );
-				}
+				elementorCommon.route.to( 'panel/elements' );
 			}
 		} );
 	},
@@ -680,8 +557,8 @@ const App = Marionette.Application.extend( {
 				at: 'center center',
 			},
 			strings: {
-				confirm: elementor.translate( 'learn_more' ),
-				cancel: elementor.translate( 'go_back' ),
+				confirm: this.translate( 'learn_more' ),
+				cancel: this.translate( 'go_back' ),
 			},
 			onConfirm: null,
 			onCancel: function() {
@@ -698,6 +575,37 @@ const App = Marionette.Application.extend( {
 		elementorCommon.dialogsManager.createWidget( 'confirm', options ).show();
 	},
 
+	showFlexBoxAttentionDialog: function() {
+		const introduction = new elementorModules.editor.utils.Introduction( {
+			introductionKey: 'flexbox',
+			dialogType: 'confirm',
+			dialogOptions: {
+				id: 'elementor-flexbox-attention-dialog',
+				headerMessage: this.translate( 'flexbox_attention_header' ),
+				message: this.translate( 'flexbox_attention_message' ),
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: this.translate( 'learn_more' ),
+					cancel: this.translate( 'got_it' ),
+				},
+				hide: {
+					onButtonClick: false,
+				},
+				onCancel: () => {
+					introduction.setViewed();
+
+					introduction.getDialog().hide();
+				},
+				onConfirm: () => open( this.config.help_flexbox_bc_url, '_blank' ),
+			},
+		} );
+
+		introduction.show();
+	},
+
 	checkPageStatus: function() {
 		if ( elementor.config.current_revision_id !== elementor.config.document.id ) {
 			this.notifications.showToast( {
@@ -707,10 +615,7 @@ const App = Marionette.Application.extend( {
 						name: 'view_revisions',
 						text: elementor.translate( 'view_all_revisions' ),
 						callback: function() {
-							var panel = elementor.getPanelView();
-
-							panel.setPage( 'historyPage' );
-							panel.getCurrentPageView().activateTab( 'revisions' );
+							elementorCommon.route.to( 'panel/history/revisions' );
 						},
 					},
 				],
@@ -720,7 +625,7 @@ const App = Marionette.Application.extend( {
 
 	openLibraryOnStart: function() {
 		if ( '#library' === location.hash ) {
-			elementor.templates.startModal();
+			elementorCommon.route.to( 'library/templates' );
 
 			location.hash = '';
 		}
@@ -951,7 +856,7 @@ const App = Marionette.Application.extend( {
 		this.addBackgroundClickArea( elementorFrontend.elements.window.document );
 
 		if ( this.previewLoadedOnce ) {
-			this.getPanelView().setPage( 'elements', null, { autoFocusSearch: false } );
+			elementorCommon.route.to( 'panel/elements' );
 		} else {
 			this.onFirstPreviewLoaded();
 		}
@@ -988,7 +893,7 @@ const App = Marionette.Application.extend( {
 
 		this.onEditModeSwitched();
 
-		elementorCommon.hotKeys.bindListener( elementorFrontend.elements.$window );
+		elementorCommon.shortcuts.bindListener( elementorFrontend.elements.$window );
 
 		this.trigger( 'preview:loaded' );
 
@@ -1003,6 +908,12 @@ const App = Marionette.Application.extend( {
 		this.checkPageStatus();
 
 		this.openLibraryOnStart();
+
+		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
+
+		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
+			this.showFlexBoxAttentionDialog();
+		}
 
 		this.previewLoadedOnce = true;
 	},
@@ -1089,7 +1000,9 @@ const App = Marionette.Application.extend( {
 } );
 
 window.elementor = new App();
+
 if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
-	window.elementor.start();
+	elementor.start();
 }
-module.exports = window.elementor;
+
+module.exports = elementor;

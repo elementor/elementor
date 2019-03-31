@@ -17,7 +17,7 @@ module.exports = BaseSettings.extend( {
 					elementor.reloadPreview();
 
 					elementor.once( 'preview:loaded', function() {
-						elementor.getPanelView().setPage( 'page_settings' );
+						elementorCommon.route.to( 'panel/page-settings' );
 					} );
 				},
 			} );

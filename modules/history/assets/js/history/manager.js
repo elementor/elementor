@@ -62,39 +62,6 @@ var	Manager = function() {
 		self.doItem( requiredIndex );
 	};
 
-	var addHotKeys = function() {
-		var H_KEY = 72,
-			Y_KEY = 89,
-			Z_KEY = 90;
-
-		elementorCommon.hotKeys.addHotKeyHandler( H_KEY, 'showHistoryPage', {
-			isWorthHandling: function( event ) {
-				return elementorCommon.hotKeys.isControlEvent( event ) && event.shiftKey;
-			},
-			handle: function() {
-				elementor.getPanelView().setPage( 'historyPage' );
-			},
-		} );
-
-		var navigationWorthHandling = function( event ) {
-			return items.length && elementorCommon.hotKeys.isControlEvent( event ) && ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
-		};
-
-		elementorCommon.hotKeys.addHotKeyHandler( Y_KEY, 'historyNavigationRedo', {
-			isWorthHandling: navigationWorthHandling,
-			handle: () => {
-				navigate( true );
-			},
-		} );
-
-		elementorCommon.hotKeys.addHotKeyHandler( Z_KEY, 'historyNavigation', {
-			isWorthHandling: navigationWorthHandling,
-			handle: function( event ) {
-				navigate( event.shiftKey );
-			},
-		} );
-	};
-
 	var updatePanelPageCurrentItem = function() {
 		const panel = elementor.getPanelView();
 
@@ -117,7 +84,29 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		addHotKeys();
+		elementorCommon.route.register( 'panel/history', () => {
+			elementorCommon.route.to( 'panel/history/actions' );
+		} );
+
+		elementorCommon.route.register( 'panel/history/actions', () => {
+			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'actions' );
+		}, 'ctrl+shift+h' );
+
+		elementorCommon.route.register( 'panel/history/revisions', () => {
+			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'revisions' );
+		}, 'ctrl+alt+r' );
+
+		const dependency = ( event ) => ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
+
+		elementorCommon.commands.register( 'history/undo', () => navigate(), {
+			keys: 'ctrl+z',
+			dependency: dependency,
+		} );
+
+		elementorCommon.commands.register( 'history/redo', () => navigate( true ), {
+			keys: 'ctrl+shift+z, ctrl+y',
+			dependency: dependency,
+		} );
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );
@@ -249,21 +238,21 @@ var	Manager = function() {
 			panelPage = panel.getCurrentPageView(),
 			viewToScroll;
 
-		if ( 'editor' === panel.getCurrentPageName() ) {
+		if ( elementorCommon.route.isPartOf( 'panel/editor' ) ) {
 			if ( panelPage.getOption( 'editedElementView' ).isDestroyed ) {
 				// If the the element isn't exist - show the history panel
-				panel.setPage( 'historyPage' );
+				elementorCommon.route.to( 'panel/history' );
 			} else {
 				// If element exist - render again, maybe the settings has been changed
 				viewToScroll = panelPage.getOption( 'editedElementView' );
 			}
 		} else if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
-			var history = item.get( 'items' ).first().get( 'history' );
+				var history = item.get( 'items' ).first().get( 'history' );
 
-			if ( history && history.behavior.view.model ) {
-				viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
+				if ( history && history.behavior.view.model ) {
+					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
+				}
 			}
-		}
 
 		updatePanelPageCurrentItem();
 

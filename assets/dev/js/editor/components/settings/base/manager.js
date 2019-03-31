@@ -118,6 +118,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			title: this.getSettings( 'panelPage.title' ),
 			type: 'page',
 			pageName: this.getSettings( 'name' ) + '_settings',
+			route: 'panel/' + this.getSettings( 'name' ) + '-settings',
 		};
 
 		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
@@ -159,7 +160,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.addPanelPage();
 
 		if ( ! elementor.userCan( 'design' ) ) {
-			elementor.panel.currentView.setPage( 'page_settings' );
+			elementorCommon.route.to( 'panel/page-settings' );
 		}
 	},
 } );
