@@ -650,7 +650,7 @@ class Utils {
 	 */
 	public static function print_js_config( $handle, $js_var, $config ) {
 
-		// decode the data the same way wp_localize_script would have done
+		// Decode the data the same way wp_localize_script would have done
 		foreach ( (array) $config as $key => $value ) {
 			if ( ! is_scalar( $value ) ) {
 				continue;
