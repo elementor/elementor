@@ -147,7 +147,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onHistoryClick: function() {
-		elementorCommon.route.to( 'panel/history' );
+		elementorCommon.route.to( 'panel/history/actions' );
 	},
 
 	onNavigatorClick: function() {
