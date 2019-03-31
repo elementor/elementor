@@ -98,6 +98,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 			.addClass( 'elementor-active' );
 
 		this.activateFirstSection();
+
+		return this;
 	},
 
 	activateSection: function( sectionName ) {
@@ -208,9 +210,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	onClickTabControl: function( event ) {
 		event.preventDefault();
 
-		elementorCommon.route.to( 'panel/editor/' + event.currentTarget.dataset.tab );
-
-		this._renderChildren();
+		elementorCommon.route.to( event.currentTarget.dataset.route );
 	},
 
 	onReloadButtonClick: function() {
