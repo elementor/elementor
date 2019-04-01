@@ -92,16 +92,14 @@ var	Manager = function() {
 			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'revisions' );
 		}, 'ctrl+alt+r' );
 
-		const dependency = ( event ) => ! jQuery( event.target ).is( 'input, textarea, [contenteditable=true]' );
-
 		elementorCommon.commands.register( 'history/undo', () => navigate(), {
 			keys: 'ctrl+z',
-			dependency: dependency,
+			exclude: 'input',
 		} );
 
 		elementorCommon.commands.register( 'history/redo', () => navigate( true ), {
 			keys: 'ctrl+shift+z, ctrl+y',
-			dependency: dependency,
+			exclude: 'input',
 		} );
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
