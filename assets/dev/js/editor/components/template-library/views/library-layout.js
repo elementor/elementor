@@ -78,4 +78,8 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
 	},
+
+	hideModal() {
+		elementorCommon.route.close( 'library' );
+	},
 } );

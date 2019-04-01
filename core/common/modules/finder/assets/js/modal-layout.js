@@ -38,4 +38,8 @@ export default class extends elementorModules.common.views.modal.Layout {
 
 		this.modalContent.currentView.ui.searchInput.focus();
 	}
+
+	hideModal() {
+		elementorCommon.route.close( 'finder' );
+	}
 }

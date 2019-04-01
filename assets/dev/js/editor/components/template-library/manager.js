@@ -20,16 +20,24 @@ TemplateLibraryManager = function() {
 		layout = new TemplateLibraryLayoutView( { pages: screens } );
 
 		layout.getModal().on( 'hide', function() {
-			self.isOpen = false;
-			modalConfig = {};
 			elementorCommon.route.close( 'library' );
 		} );
 	};
 
 	const registerRouts = function() {
-		elementorCommon.route.registerDependency( 'library', () => {
-			self.startModal();
-			return true;
+		elementorCommon.route.registerComponent( 'library', {
+			open: () => {
+				if ( ! self.isOpen ) {
+					self.startModal();
+					self.isOpen = true;
+				}
+
+				return true;
+			},
+			close: () => {
+				modalConfig = {};
+				self.isOpen = false;
+			},
 		} );
 
 		screens.forEach( ( screen ) => {
@@ -359,12 +367,6 @@ TemplateLibraryManager = function() {
 	};
 
 	this.startModal = function() {
-		if ( self.isOpen ) {
-			return;
-		}
-
-		self.isOpen = true;
-
 		if ( ! layout ) {
 			initLayout();
 		}
