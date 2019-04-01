@@ -38,8 +38,6 @@ export default class Shortcuts {
 			return;
 		}
 
-		event.preventDefault();
-
 		jQuery.each( handlers, ( key, handler ) => {
 			if ( handler.component && handler.component !== this.component ) {
 				return;
@@ -53,6 +51,8 @@ export default class Shortcuts {
 			if ( ! handler.allowAltKey && event.altKey ) {
 				return;
 			}
+
+			event.preventDefault();
 
 			handler.callback( event );
 		} );
