@@ -22,10 +22,7 @@ TemplateLibraryManager = function() {
 		layout.getModal().on( 'hide', function() {
 			self.isOpen = false;
 			modalConfig = {};
-
-			elementorCommon.route
-				.saveState( 'library' )
-				.close( 'library' );
+			elementorCommon.route.close( 'library' );
 		} );
 	};
 
@@ -38,6 +35,8 @@ TemplateLibraryManager = function() {
 		screens.forEach( ( screen ) => {
 			elementorCommon.route.register( screen.route, () => {
 				self.setScreen( screen.source, screen.type );
+
+				elementorCommon.route.saveState( 'library' );
 			} );
 		} );
 
