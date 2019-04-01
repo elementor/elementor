@@ -4,7 +4,34 @@ export default class extends Commands {
 	constructor( ...args ) {
 		super( ...args );
 
+		this.components = {};
 		this.savedStates = {};
+	}
+
+	registerComponent( component, args ) {
+		this.components[ component ] = args;
+
+		if ( args.open ) {
+			this.registerDependency( component, args.open );
+		}
+
+		return this;
+	}
+
+	close( component ) {
+		const args = this.components[ component ];
+
+		if ( ! args ) {
+			return;
+		}
+
+		if ( args.close ) {
+			args.close.apply( this );
+		}
+
+		this.clearCurrent( component );
+
+		return this;
 	}
 
 	reload( route, args ) {
