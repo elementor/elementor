@@ -384,47 +384,39 @@ const App = Marionette.Application.extend( {
 	},
 
 	registerCommands: function() {
-		elementorCommon.commands.registerDependency( 'elements', function() {
+		elementorCommon.commands.registerDependency( 'elements', () => {
 			return elementor.getCurrentElement();
 		} );
 
-		elementorCommon.commands.register( 'elements/copy', function() {
-			elementor.getCurrentElement().copy();
-		}, 'ctrl+c' );
+		elementorCommon.commands.register( 'elements/copy', () => elementor.getCurrentElement().copy(), {
+			keys: 'ctrl+c',
+			exclude: 'input',
+		} );
 
-		elementorCommon.commands.register( 'elements/duplicate', function() {
+		elementorCommon.commands.register( 'elements/duplicate', () => {
 			elementor.getCurrentElement().duplicate();
 		}, 'ctrl+d' );
 
-		elementorCommon.commands.register( 'elements/delete', function( event ) {
-			var $target = $( event.target );
+		elementorCommon.commands.register( 'elements/delete', () => elementor.getCurrentElement().removeElement(), {
+			keys: 'del',
+			exclude: 'input',
+		} );
 
-			if ( $target.is( ':input, .elementor-input' ) ) {
-				return;
-			}
+		elementorCommon.commands.register( 'elements/paste', () => elementor.getCurrentElement().paste(), {
+			keys: 'ctrl+v',
+			exclude: 'input',
+			dependency: () => {
+				return elementor.getCurrentElement().isPasteEnabled();
+			},
+		} );
 
-			if ( $target.closest( '[contenteditable="true"]' ).length ) {
-				return;
-			}
-
-			elementor.getCurrentElement().removeElement();
-		}, 'del' );
-
-		elementorCommon.commands.register( 'elements/paste', function() {
-			const targetElement = elementor.getCurrentElement();
-
-			if ( targetElement.isPasteEnabled() ) {
-				targetElement.paste();
-			}
-		}, 'ctrl+v' );
-
-		elementorCommon.commands.register( 'elements/pasteStyle', function() {
-			const targetElement = elementor.getCurrentElement();
-
-			if ( targetElement.pasteStyle && elementorCommon.storage.get( 'transfer' ) ) {
-				targetElement.pasteStyle();
-			}
-		}, 'ctrl+shift+v' );
+		elementorCommon.commands.register( 'elements/pasteStyle', () => elementor.getCurrentElement().paste(), {
+			keys: 'ctrl+shift+v',
+			exclude: 'input',
+			dependency: () => {
+				return elementor.getCurrentElement().pasteStyle && elementorCommon.storage.get( 'transfer' );
+			},
+		} );
 
 		elementorCommon.commands.registerDependency( 'navigator', function() {
 			return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
