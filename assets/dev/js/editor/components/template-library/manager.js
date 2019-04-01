@@ -19,9 +19,7 @@ TemplateLibraryManager = function() {
 	const initLayout = function() {
 		layout = new TemplateLibraryLayoutView( { pages: screens } );
 
-		layout.getModal().on( 'hide', function() {
-			elementorCommon.route.close( 'library' );
-		} );
+		layout.getModal().on( 'hide', () => elementorCommon.route.close( 'library' ) );
 	};
 
 	const registerRouts = function() {

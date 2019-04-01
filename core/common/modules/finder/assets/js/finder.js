@@ -6,6 +6,8 @@ export default class extends elementorModules.Module {
 
 		this.layout = new FinderLayout();
 
+		this.layout.getModal().on( 'hide', () => elementorCommon.route.close( 'finder' ) );
+
 		elementorCommon.route.registerComponent( 'finder', {
 			open: () => {
 				this.layout.showModal();

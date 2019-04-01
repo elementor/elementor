@@ -8,7 +8,6 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
-
 	getModalOptions: function() {
 		return {
 			id: 'elementor-template-library-modal',
@@ -77,9 +76,5 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		} ) );
 
 		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
-	},
-
-	hideModal() {
-		elementorCommon.route.close( 'library' );
 	},
 } );
