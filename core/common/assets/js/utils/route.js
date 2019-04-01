@@ -11,7 +11,7 @@ export default class extends Commands {
 		const parts = route.split( '/' ),
 			component = parts[ 0 ];
 
-		this.close( component );
+		this.clearCurrent( component );
 
 		this.to( route, args );
 	}
@@ -20,12 +20,12 @@ export default class extends Commands {
 		const currentRoute = this.getCurrent( component ),
 			currentArgs = this.getCurrentArgs( component );
 
-		this.close( component );
+		this.clearCurrent( component );
 
 		this.to( currentRoute, currentArgs );
 	}
 
-	close( component ) {
+	clearCurrent( component ) {
 		delete this.current[ component ];
 		delete this.currentArgs[ component ];
 	}
