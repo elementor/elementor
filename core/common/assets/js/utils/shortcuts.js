@@ -47,6 +47,14 @@ export default class Shortcuts {
 				return;
 			}
 
+			if ( 'input' === handler.exclude ) {
+				const $target = jQuery( event.target );
+
+				if ( $target.is( ':input, .elementor-input' ) || $target.closest( '[contenteditable="true"]' ).length ) {
+					return;
+				}
+			}
+
 			// Fix for some keyboard sources that consider alt key as ctrl key
 			if ( ! handler.allowAltKey && event.altKey ) {
 				return;
