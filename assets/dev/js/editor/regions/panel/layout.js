@@ -38,7 +38,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			if ( tab ) {
 				this.currentPageView.activateTab( tab );
 			}
-		}
+		};
 
 		elementorCommon.route.register( 'panel/elements', () => activateElementsTab() );
 

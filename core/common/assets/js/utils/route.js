@@ -21,11 +21,7 @@ export default class extends Commands {
 	close( component ) {
 		const args = this.components[ component ];
 
-		if ( ! args ) {
-			return;
-		}
-
-		if ( args.close ) {
+		if ( args && args.close ) {
 			args.close.apply( this );
 		}
 
