@@ -613,7 +613,7 @@ const App = Marionette.Application.extend( {
 
 	openLibraryOnStart: function() {
 		if ( '#library' === location.hash ) {
-			elementorCommon.route.to( 'library/templates' );
+			elementorCommon.commands.run( 'library/show' );
 
 			location.hash = '';
 		}

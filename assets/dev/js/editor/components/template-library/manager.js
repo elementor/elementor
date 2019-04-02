@@ -23,18 +23,22 @@ TemplateLibraryManager = function() {
 	};
 
 	const registerRouts = function() {
+		elementorCommon.commands.register( 'library/show', ( args ) => {
+			modalConfig = args;
+
+			if ( ! elementorCommon.route.restoreState( 'library' ) ) {
+				self.showDefaultScreen();
+			}
+		}, { keys: 'ctrl+shift+l' } );
+
 		elementorCommon.route.registerComponent( 'library', {
 			open: () => {
-				if ( ! self.isOpen ) {
-					self.startModal();
-					self.isOpen = true;
-				}
+				self.startModal();
 
 				return true;
 			},
 			close: () => {
 				modalConfig = {};
-				self.isOpen = false;
 			},
 		} );
 
@@ -45,14 +49,6 @@ TemplateLibraryManager = function() {
 				elementorCommon.route.saveState( 'library' );
 			} );
 		} );
-
-		elementorCommon.route.register( 'library/templates', ( args ) => {
-			modalConfig = args;
-
-			if ( ! elementorCommon.route.restoreState( 'library' ) ) {
-				self.showDefaultScreen();
-			}
-		}, { keys: 'ctrl+shift+l' } );
 
 		elementorCommon.route.register( 'library/save-template', ( args ) => {
 			self.getLayout().showSaveTemplateView( args.model );
