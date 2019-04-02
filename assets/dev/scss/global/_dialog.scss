@@ -97,7 +97,7 @@
 	cursor: pointer;
 	position: absolute;
 	top: 30px;
-	right: 30px;
+	@include end(30px);
 	font-size: 15px;
 	line-height: 1;
 
