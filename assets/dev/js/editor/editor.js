@@ -3,6 +3,7 @@ import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
+import DateTimeControl from 'elementor-controls/date-time';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -67,7 +68,7 @@ const App = Marionette.Application.extend( {
 			Choose: require( 'elementor-controls/choose' ),
 			Code: require( 'elementor-controls/code' ),
 			Color: require( 'elementor-controls/color' ),
-			Date_time: require( 'elementor-controls/date-time' ),
+			Date_time: DateTimeControl,
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Exit_animation: require( 'elementor-controls/select2' ),
 			Font: require( 'elementor-controls/font' ),
@@ -1080,7 +1081,7 @@ const App = Marionette.Application.extend( {
 	onPreviewLoadingError: function() {
 		this.showFatalErrorDialog( {
 			headerMessage: this.translate( 'preview_not_loading_header' ),
-			message: this.translate( 'preview_not_loading_message' ),
+			message: this.translate( 'preview_not_loading_message' ) + '<br><a href="' + this.config.document.urls.preview + '" target="_blank">Preview Debug</a>',
 			onConfirm: function() {
 				open( elementor.config.help_preview_error_url, '_blank' );
 			},
