@@ -12,18 +12,41 @@ export default class extends Commands {
 		this.components[ component ] = args;
 
 		if ( args.open ) {
-			this.registerDependency( component, args.open );
+			this.registerDependency( component, () => {
+				return this.open( component );
+			} );
 		}
 
 		return this;
 	}
 
+	open( component ) {
+		const args = this.components[ component ];
+
+		if ( ! args ) {
+			return;
+		}
+
+		if ( ! args.isOpen ) {
+			args.isOpen = args.open.apply();
+			this.components[ component ].isOpen = args.isOpen;
+		}
+
+		return args.isOpen;
+	}
+
 	close( component ) {
 		const args = this.components[ component ];
 
-		if ( args && args.close ) {
+		if ( ! args ) {
+			return;
+		}
+
+		if ( args.close ) {
 			args.close.apply( this );
 		}
+
+		this.components[ component ].isOpen = false;
 
 		this.clearCurrent( component );
 
