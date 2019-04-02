@@ -8,6 +8,10 @@ export default class extends elementorModules.Module {
 		this.dependencies = {};
 	}
 
+	printAll() {
+		console.log( Object.keys( this.commands ) ); // eslint-disable-line no-console
+	}
+
 	registerDependency( component, callback ) {
 		this.dependencies[ component ] = callback;
 
@@ -29,6 +33,7 @@ export default class extends elementorModules.Module {
 				};
 			}
 
+			shortcut.command = command;
 			shortcut.callback = ( event ) => this.runShortcut( command, event );
 			elementorCommon.shortcuts.register( shortcut.keys, shortcut );
 		}
