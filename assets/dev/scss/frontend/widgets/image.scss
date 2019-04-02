@@ -13,6 +13,7 @@
 			img[src$=".svg"] {
 				width: 48px; //Fix SVG image src, issue: https://github.com/elementor/elementor/issues/5987
 			}
+			width: 100%;
 		}
 
 		img {
