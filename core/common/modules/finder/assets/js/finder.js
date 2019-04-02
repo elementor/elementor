@@ -16,6 +16,6 @@ export default class extends elementorModules.Module {
 			close: () => this.layout.getModal().hide(),
 		} );
 
-		elementorCommon.route.register( 'finder', () => {}, 'ctrl+e' );
+		elementorCommon.route.register( 'finder', () => {}, { keys: 'ctrl+e' } );
 	}
 }

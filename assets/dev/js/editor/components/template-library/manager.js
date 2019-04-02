@@ -52,7 +52,7 @@ TemplateLibraryManager = function() {
 			if ( ! elementorCommon.route.restoreState( 'library' ) ) {
 				self.showDefaultScreen();
 			}
-		}, 'ctrl+shift+l' );
+		}, { keys: 'ctrl+shift+l' } );
 
 		elementorCommon.route.register( 'library/save-template', ( args ) => {
 			self.getLayout().showSaveTemplateView( args.model );

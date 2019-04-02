@@ -89,9 +89,13 @@ export default class extends Marionette.CompositeView {
 			return elementorCommon.finder.layout.getModal().isVisible();
 		} );
 
-		elementorCommon.commands.register( 'finder/navigate/down', () => this.activateNextItem(), 'down' );
+		elementorCommon.commands.register( 'finder/navigate/down', () => this.activateNextItem(), {
+			keys: 'down',
+		} );
 
-		elementorCommon.commands.register( 'finder/navigate/up', () => this.activateNextItem( true ), 'up' );
+		elementorCommon.commands.register( 'finder/navigate/up', () => this.activateNextItem( true ), {
+			keys: 'up',
+		} );
 
 		elementorCommon.commands.register( 'finder/navigate/select', ( event ) => this.goToActiveItem( event ), {
 			keys: 'enter',

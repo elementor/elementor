@@ -26,22 +26,23 @@ RevisionsManager = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
 	};
 
-	var addCommands = function() {
-		const navigate = ( up ) => {
-				elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( up );
-			},
-			dependency = () => {
-				return elementorCommon.route.is( 'panel/history/revisions' );
-			};
+	const navigate = ( up ) => {
+		elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( up );
+	};
 
+	const isRevision = () => {
+		return elementorCommon.route.is( 'panel/history/revisions' );
+	};
+
+	const addCommands = function() {
 		elementorCommon.commands.register( 'panel/revisions/navigate/down', () => navigate(), {
 			keys: 'down',
-			dependency: dependency,
+			dependency: isRevision,
 		} );
 
 		elementorCommon.commands.register( 'panel/revisions/navigate/up', () => navigate( true ), {
 			keys: 'up',
-			dependency: dependency,
+			dependency: isRevision,
 		} );
 	};
 
