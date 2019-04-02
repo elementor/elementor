@@ -113,8 +113,6 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 				rel: 0,
 			},
 		} );
-
-		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
@@ -133,6 +131,8 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		} else {
 			self.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', self.changeVideoSize );
 		}
+
+		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
 	},
 
 	deactivate: function() {
@@ -141,6 +141,8 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		} else {
 			this.elements.$backgroundVideoHosted.removeAttr( 'src' );
 		}
+
+		elementorFrontend.elements.$window.off( 'resize', self.changeVideoSize );
 	},
 
 	run: function() {
@@ -268,7 +270,7 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 			shapeType = self.getElementSettings( baseSettingKey ),
 			$svgContainer = this.elements[ '$' + side + 'Container' ];
 
-		$svgContainer.empty().attr( 'data-shape', shapeType );
+		$svgContainer.attr( 'data-shape', shapeType );
 
 		if ( ! shapeType ) {
 			return;
@@ -283,7 +285,7 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 		const svgURL = self.getSvgURL( shapeType, fileName );
 
 		jQuery.get( svgURL, function( data ) {
-			$svgContainer.append( data.childNodes[ 0 ] );
+			$svgContainer.empty().append( data.childNodes[ 0 ] );
 		} );
 
 		this.setNegative( side );
