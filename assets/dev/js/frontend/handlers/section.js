@@ -113,8 +113,6 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 				rel: 0,
 			},
 		} );
-
-		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
@@ -133,6 +131,8 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		} else {
 			self.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', self.changeVideoSize );
 		}
+
+		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
 	},
 
 	deactivate: function() {
@@ -141,6 +141,8 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		} else {
 			this.elements.$backgroundVideoHosted.removeAttr( 'src' );
 		}
+
+		elementorFrontend.elements.$window.off( 'resize', self.changeVideoSize );
 	},
 
 	run: function() {
