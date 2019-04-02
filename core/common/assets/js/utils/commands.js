@@ -9,7 +9,7 @@ export default class extends elementorModules.Module {
 	}
 
 	printAll() {
-		console.log( Object.keys( this.commands ) ); // eslint-disable-line no-console
+		console.log( Object.keys( this.commands ).sort() ); // eslint-disable-line no-console
 	}
 
 	registerDependency( component, callback ) {
