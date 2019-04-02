@@ -384,7 +384,7 @@ class Documents_Manager {
 		] );
 
 		// Let the $document to re-save the template type by his way + version.
-		$document->save();
+		$document->save( [] );
 
 		return $document;
 	}

@@ -267,6 +267,7 @@ abstract class Document extends Controls_Stack {
 		$url = get_preview_post_link(
 			$main_post_id,
 			[
+				'preview_id' => $main_post_id,
 				'preview_nonce' => wp_create_nonce( 'post_preview_' . $main_post_id ),
 			]
 		);
@@ -503,12 +504,12 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return bool
 	 */
-	public function save( $data = [] ) {
+	public function save( $data ) {
 		if ( ! $this->is_editable_by_current_user() ) {
 			return false;
 		}
 
-		if ( ! empty( $data['settings'] ) ) {
+		if ( isset( $data['settings'] ) ) {
 			if ( DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
 					define( 'DOING_AUTOSAVE', true );
@@ -521,8 +522,7 @@ abstract class Document extends Controls_Stack {
 			$this->post = get_post( $this->post->ID );
 		}
 
-		if ( ! empty( $data['elements'] ) ) {
-			// TODO: refresh settings.
+		if ( isset( $data['elements'] ) ) {
 			$this->save_elements( $data['elements'] );
 		}
 
@@ -719,7 +719,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 */
 	public function convert_to_elementor() {
-		$this->save();
+		$this->save( [] );
 
 		if ( empty( $this->post->post_content ) ) {
 			return [];
