@@ -21,6 +21,17 @@ export default class Shortcuts {
 		$window.on( 'keydown', ( event ) => this.handle( event ) );
 	}
 
+	printAll() {
+		const shortcuts = {};
+		jQuery.each( this.handlers, ( key, handler ) => {
+			jQuery.each( handler, ( index, config ) => {
+				shortcuts[ config.command ] = key;
+			} );
+		} );
+
+		console.log( shortcuts ); // eslint-disable-line no-console
+	}
+
 	register( shortcuts, args ) {
 		shortcuts.replace( ' ', '' ).split( ',' ).forEach( ( shortcut ) => {
 			if ( ! this.handlers[ shortcut ] ) {
