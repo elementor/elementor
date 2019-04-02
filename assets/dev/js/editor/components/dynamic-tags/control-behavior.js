@@ -105,9 +105,11 @@ module.exports = Marionette.Behavior.extend( {
 			return;
 		}
 
+		const direction = elementorCommon.config.isRTL ? 'left' : 'right';
+
 		$tagsList.show().position( {
-			my: 'right top',
-			at: 'right bottom+5',
+			my: `${ direction } top`,
+			at: `${ direction } bottom+5`,
 			of: this.ui.dynamicSwitcher,
 		} );
 	},
