@@ -393,9 +393,9 @@ const App = Marionette.Application.extend( {
 			exclude: 'input',
 		} );
 
-		elementorCommon.commands.register( 'elements/duplicate', () => {
-			elementor.getCurrentElement().duplicate();
-		}, 'ctrl+d' );
+		elementorCommon.commands.register( 'elements/duplicate', () => elementor.getCurrentElement().duplicate(), {
+			keys: 'ctrl+d',
+		} );
 
 		elementorCommon.commands.register( 'elements/delete', () => elementor.getCurrentElement().removeElement(), {
 			keys: 'del',
@@ -418,25 +418,21 @@ const App = Marionette.Application.extend( {
 			},
 		} );
 
-		elementorCommon.commands.registerDependency( 'navigator', function() {
+		elementorCommon.commands.registerDependency( 'navigator', () => {
 			return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
 		} );
 
-		elementorCommon.commands.register( 'navigator/toggle', function() {
+		elementorCommon.commands.register( 'navigator/toggle', () => {
 			if ( elementor.navigator.storage.visible ) {
 				elementor.navigator.close();
 			} else {
 				elementor.navigator.open();
 			}
-		}, 'ctrl+i' );
+		}, { keys: 'ctrl+i' } );
 
-		elementorCommon.commands.register( 'library/show', function() {
-			elementorCommon.route.to( 'library/templates' );
-		}, 'ctrl+shift+i' );
-
-		elementorCommon.commands.register( 'preview/toggleResponsive', function() {
-			var currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
-				modeIndex = this.devices.indexOf( currentDeviceMode );
+		elementorCommon.commands.register( 'preview/change-device-mode', () => {
+			const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
+			let modeIndex = this.devices.indexOf( currentDeviceMode );
 
 			modeIndex++;
 
@@ -445,18 +441,18 @@ const App = Marionette.Application.extend( {
 			}
 			//
 			elementor.changeDeviceMode( this.devices[ modeIndex ] );
-		}, 'ctrl+shift+m' );
+		}, { keys: 'ctrl+shift+m' } );
 
-		elementorCommon.commands.register( 'document/save', function() {
-			elementor.saver.saveDraft();
-		}, 'ctrl+s' );
+		elementorCommon.commands.register( 'document/save', () => elementor.saver.saveDraft(), {
+			keys: 'ctrl+s',
+		} );
 
-		elementorCommon.commands.register( 'panel/exit', function() {
-			if ( ! jQuery( '.dialog-widget:visible' ).length ) {
-				return;
-			}
-			elementorCommon.route.to( 'panel/menu' );
-		}, 'esc' );
+		elementorCommon.commands.register( 'panel/exit', () => elementorCommon.route.to( 'panel/menu' ), {
+			keys: 'esc',
+			dependency: () => {
+				return ! jQuery( '.dialog-widget:visible' ).length;
+			},
+		} );
 	},
 
 	initPanel: function() {

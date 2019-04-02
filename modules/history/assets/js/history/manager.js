@@ -86,11 +86,11 @@ var	Manager = function() {
 	var init = function() {
 		elementorCommon.route.register( 'panel/history/actions', () => {
 			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'actions' );
-		}, 'ctrl+shift+h' );
+		}, { keys: 'ctrl+shift+h' } );
 
 		elementorCommon.route.register( 'panel/history/revisions', () => {
 			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'revisions' );
-		}, 'ctrl+alt+r' );
+		}, { keys: 'ctrl+alt+r' } );
 
 		elementorCommon.commands.register( 'history/undo', () => navigate(), {
 			keys: 'ctrl+z',
