@@ -32,6 +32,15 @@ export default class Shortcuts {
 		console.log( shortcuts ); // eslint-disable-line no-console
 	}
 
+	/**
+	 * @param shortcuts
+	 * @param {Object} args
+	 * @param {callback} args.callback Required
+	 * @param {string} args.component Optional
+	 * @param {callback} args.dependency Optional
+	 * @param {array} args.exclude Optional
+	 * @param {bool} args.allowAltKey Optional
+	 */
 	register( shortcuts, args ) {
 		shortcuts.replace( ' ', '' ).split( ',' ).forEach( ( shortcut ) => {
 			if ( ! this.handlers[ shortcut ] ) {
@@ -58,7 +67,7 @@ export default class Shortcuts {
 				return;
 			}
 
-			if ( 'input' === handler.exclude ) {
+			if ( handler.exclude && -1 !== handler.exclude.indexOf( 'input' ) ) {
 				const $target = jQuery( event.target );
 
 				if ( $target.is( ':input, .elementor-input' ) || $target.closest( '[contenteditable="true"]' ).length ) {

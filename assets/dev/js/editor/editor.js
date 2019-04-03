@@ -391,7 +391,7 @@ const App = Marionette.Application.extend( {
 
 		elementorCommon.commands.register( 'elements/copy', () => elementor.getCurrentElement().copy(), {
 			keys: 'ctrl+c',
-			exclude: 'input',
+			exclude: [ 'input' ],
 		} );
 
 		elementorCommon.commands.register( 'elements/duplicate', () => elementor.getCurrentElement().duplicate(), {
@@ -400,12 +400,12 @@ const App = Marionette.Application.extend( {
 
 		elementorCommon.commands.register( 'elements/delete', () => elementor.getCurrentElement().removeElement(), {
 			keys: 'del',
-			exclude: 'input',
+			exclude: [ 'input' ],
 		} );
 
 		elementorCommon.commands.register( 'elements/paste', () => elementor.getCurrentElement().paste(), {
 			keys: 'ctrl+v',
-			exclude: 'input',
+			exclude: [ 'input' ],
 			dependency: () => {
 				return elementor.getCurrentElement().isPasteEnabled();
 			},
@@ -413,7 +413,7 @@ const App = Marionette.Application.extend( {
 
 		elementorCommon.commands.register( 'elements/pasteStyle', () => elementor.getCurrentElement().paste(), {
 			keys: 'ctrl+shift+v',
-			exclude: 'input',
+			exclude: [ 'input' ],
 			dependency: () => {
 				return elementor.getCurrentElement().pasteStyle && elementorCommon.storage.get( 'transfer' );
 			},

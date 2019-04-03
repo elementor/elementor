@@ -94,12 +94,12 @@ var	Manager = function() {
 
 		elementorCommon.commands.register( 'history/undo', () => navigate(), {
 			keys: 'ctrl+z',
-			exclude: 'input',
+			exclude: [ 'input' ],
 		} );
 
 		elementorCommon.commands.register( 'history/redo', () => navigate( true ), {
 			keys: 'ctrl+shift+z, ctrl+y',
-			exclude: 'input',
+			exclude: [ 'input' ],
 		} );
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
