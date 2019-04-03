@@ -509,6 +509,8 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
+		do_action( 'elementor/document/before_save', $this, $data );
+
 		if ( isset( $data['settings'] ) ) {
 			if ( DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
@@ -534,6 +536,8 @@ abstract class Document extends Controls_Stack {
 		$post_css = new Post_CSS( $this->post->ID );
 
 		$post_css->delete();
+
+		do_action( 'elementor/document/after_save', $this, $data );
 
 		return true;
 	}
@@ -916,6 +920,7 @@ abstract class Document extends Controls_Stack {
 		if ( ! defined( 'IS_ELEMENTOR_UPGRADE' ) ) {
 			// Save per revision.
 			$this->update_meta( '_elementor_version', ELEMENTOR_VERSION );
+			do_action( 'elementor/document/save_version', $this );
 		}
 	}
 
