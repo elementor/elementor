@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class DB_Upgrades_Manager extends Background_Task_Manager {
+	const HELP_UPGRADE_DB_ERROR_URL = 'https://go.elementor.com/upgrade-db-error/';
+
 	protected $current_version = null;
 
 	abstract public function get_new_version();
@@ -94,6 +96,20 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		echo '<div class="notice notice-success">' . $message . '</div>';
 	}
 
+	public function admin_notice_cannot_upgrade() {
+		$message = '<p>' . sprintf( __( '%s Your site database needs to be updated to the latest version.', 'elementor' ), $this->get_updater_label() );
+		$message .= ' ' . __( 'However, the process cannot run.', 'elementor' );
+
+		if ( ! wp_is_file_mod_allowed( 'capability_update_core' ) ) {
+			$message .= '</p><p>' . __( 'Either a Plugin or configuration might be the cause.', 'elementor' );
+		}
+
+		$message .= ' ' . sprintf( __( '<a href="%s" target="_blank">Learn more</a>', 'elementor' ), self::HELP_UPGRADE_DB_ERROR_URL );
+		$message .= '</p>';
+
+		echo '<div class="notice notice-error">' . $message . '</div>';
+	}
+
 	/**
 	 * @access protected
 	 */
@@ -162,15 +178,23 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	}
 
 	public function __construct() {
-		if ( ! is_admin() || ! current_user_can( 'update_plugins' ) ) {
+		if ( ! is_admin() ) {
 			return;
 		}
 
-		if ( $this->get_flag( 'completed' ) ) {
+		// If upgrade is completed - show the notice only for admins.
+		// Note: in this case `should_upgrade` returns false, because it's already upgraded.
+		if ( current_user_can( 'update_plugins' ) && $this->get_flag( 'completed' ) ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_completed' ] );
 		}
 
 		if ( ! $this->should_upgrade() ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			add_action( 'admin_notices', [ $this, 'admin_notice_cannot_upgrade' ] );
+
 			return;
 		}
 
