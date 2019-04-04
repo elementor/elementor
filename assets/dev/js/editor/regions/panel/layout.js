@@ -33,34 +33,25 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	perfectScrollbar: null,
 
 	initialize: function() {
-		const activateElementsTab = ( tab ) => {
-			this.setPage( 'elements' );
-			if ( tab ) {
-				this.currentPageView.activateTab( tab );
-			}
-		};
+		elementorCommon.route.register( 'panel/elements', () => this.activateElementsTab() );
 
-		elementorCommon.route.register( 'panel/elements', () => activateElementsTab() );
+		elementorCommon.route.register( 'panel/elements/categories', () => this.activateElementsTab( 'categories' ) );
 
-		elementorCommon.route.register( 'panel/elements/categories', () => activateElementsTab( 'categories' ) );
-
-		elementorCommon.route.register( 'panel/elements/global', () => activateElementsTab( 'global' ) );
+		elementorCommon.route.register( 'panel/elements/global', () => this.activateElementsTab( 'global' ) );
 
 		elementorCommon.route.register( 'panel/editor', ( args ) => this.openEditor( args.model, args.view ) );
 
-		const activateEditorTab = ( tab ) => elementor.getPanelView().getCurrentPageView().activateTab( tab )._renderChildren();
+		elementorCommon.route.register( 'panel/editor/content', () => this.activateEditorTab( 'content' ) );
 
-		elementorCommon.route.register( 'panel/editor/content', () => activateEditorTab( 'content' ) );
+		elementorCommon.route.register( 'panel/editor/style', () => this.activateEditorTab( 'style' ) );
 
-		elementorCommon.route.register( 'panel/editor/style', () => activateEditorTab( 'style' ) );
-
-		elementorCommon.route.register( 'panel/editor/advanced', () => activateEditorTab( 'advanced' ) );
+		elementorCommon.route.register( 'panel/editor/advanced', () => this.activateEditorTab( 'advanced' ) );
 
 		// Section.
-		elementorCommon.route.register( 'panel/editor/layout', () => activateEditorTab( 'layout' ) );
+		elementorCommon.route.register( 'panel/editor/layout', () => this.activateEditorTab( 'layout' ) );
 
 		// Global Settings - Lightbox.
-		elementorCommon.route.register( 'panel/general/lightbox', () => activateEditorTab( 'lightbox' ) );
+		elementorCommon.route.register( 'panel/general/lightbox', () => this.activateEditorTab( 'lightbox' ) );
 
 		elementorCommon.route.register( 'panel/menu', () => this.setPage( 'menu' ) );
 
@@ -139,6 +130,18 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	getCurrentPageView: function() {
 		return this.currentPageView;
+	},
+
+	activateElementsTab: function( tab ) {
+		this.setPage( 'elements' );
+
+		if ( tab ) {
+			this.currentPageView.activateTab( tab );
+		}
+	},
+
+	activateEditorTab: function( tab ) {
+		elementor.getPanelView().getCurrentPageView().activateTab( tab )._renderChildren();
 	},
 
 	setPage: function( page, title, viewOptions ) {
