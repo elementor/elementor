@@ -56,7 +56,7 @@
 						onConfirm: function() {
 							self.elements.$switchModeInput.val( '' );
 							self.toggleStatus();
-						},
+						}, 
 					} ).show();
 				} else {
 					self.elements.$switchModeInput.val( true );
