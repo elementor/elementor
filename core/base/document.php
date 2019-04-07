@@ -509,6 +509,16 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
+		/**
+		 * Before document save.
+		 *
+		 * Fires when document save starts on Elementor.
+		 *
+		 * @since 2.5.12
+		 *
+		 * @param \Elementor\Core\Base\Document $this The current document.
+		 * @param $data.
+		 */
 		do_action( 'elementor/document/before_save', $this, $data );
 
 		if ( isset( $data['settings'] ) ) {
@@ -537,6 +547,16 @@ abstract class Document extends Controls_Stack {
 
 		$post_css->delete();
 
+		/**
+		 * After document save.
+		 *
+		 * Fires when document save is complete.
+		 *
+		 * @since 2.5.12
+		 *
+		 * @param \Elementor\Core\Base\Document $this The current document.
+		 * @param $data.
+		 */
 		do_action( 'elementor/document/after_save', $this, $data );
 
 		return true;
@@ -920,6 +940,18 @@ abstract class Document extends Controls_Stack {
 		if ( ! defined( 'IS_ELEMENTOR_UPGRADE' ) ) {
 			// Save per revision.
 			$this->update_meta( '_elementor_version', ELEMENTOR_VERSION );
+
+			/**
+			 * Document version save.
+			 *
+			 * Fires when document version is saved on Elementor.
+			 * Will not fire during Elementor Upgrade.
+			 *
+			 * @since 2.5.12
+			 *
+			 * @param \Elementor\Core\Base\Document $this The current document.
+			 *
+			 */
 			do_action( 'elementor/document/save_version', $this );
 		}
 	}
