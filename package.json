@@ -1,14 +1,14 @@
 {
- "name": "elementor",
- "slug": "elementor",
- "version": "2.5.8",
- "prev_stable_version": "2.4.7",
- "author": "Elementor Team",
- "homepage": "https://elementor.com/",
- "scripts": {
-  "test:php": "docker-compose run --rm wordpress_phpunit phpunit"
- },
- "devDependencies": {
+	"name": "elementor",
+	"slug": "elementor",
+	"version": "2.5.11",
+	"prev_stable_version": "2.4.7",
+	"author": "Elementor Team",
+	"homepage": "https://elementor.com/",
+	"scripts": {
+		"test:php": "docker-compose run --rm wordpress_phpunit phpunit"
+	},
+	"devDependencies": {
   "@babel/core": "7.0.0",
   "@babel/plugin-proposal-class-properties": "^7.2.1",
   "@babel/runtime-corejs2": "7.0.0",
