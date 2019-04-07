@@ -1,6 +1,7 @@
 const Store = class {
 	static getKey( library ) {
-		return `elementor_${ library.name }_icons`;
+		const name = ( library.name ) ? library.name : library;
+		return `elementor_${ name }_icons`;
 	}
 
 	save( library ) {
