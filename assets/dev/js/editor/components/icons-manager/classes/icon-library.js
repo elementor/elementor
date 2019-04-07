@@ -1,6 +1,8 @@
 import Store from './store';
 
 const IconLibrary = class {
+	loaded = {};
+
 	notifyCallback = null;
 
 	enqueueCSS = url => {
@@ -91,6 +93,7 @@ const IconLibrary = class {
 		}
 		if ( Object.keys( icons ).length ) {
 			library.icons = icons;
+			this.loaded[ library.name ] = true;
 			Store.save( library );
 			this.notifyCallback( library );
 		}
@@ -98,6 +101,12 @@ const IconLibrary = class {
 
 	initIconType = ( libraryConfig, callback ) => {
 		this.notifyCallback = callback;
+
+		if ( this.loaded[ libraryConfig.name ] ) {
+			libraryConfig.icons =  Store.getIcons( libraryConfig );
+			return this.notifyCallback( libraryConfig );
+		}
+
 		// Enqueue CSS
 		if ( libraryConfig.enqueue ) {
 			libraryConfig.enqueue.forEach( assetURL => {

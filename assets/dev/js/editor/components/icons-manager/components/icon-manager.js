@@ -10,70 +10,75 @@ import Store from './../classes/store';
 
 class IconsManager extends Component {
 	state = {
-		activeTab: '',
+		activeTab: this.props.activeTab,
 		selected: {
-			type: '',
+			library: '',
 			value: '',
 		},
 		iconTabs: elementor.config.icons,
-		loaded: {},
+		loaded: this.props.loaded,
 		filter: '',
 	};
 
 	cache = {};
 
 	componentDidMount = () => {
-		const loaded = {};
-		this.state.iconTabs.forEach( ( tab, index ) => {
-			loaded[ tab.name ] = false;
-		} );
-		this.setState( { loaded: loaded } );
-	};
-
-	componentWillUnmount = () => {
-		unmountComponentAtNode( this.props.containerElement );
-		document.body.removeChild( this.props.containerElement );
+		setTimeout( () => { this.loadAllTabs(); }, 0 );
 	};
 
 	loadAllTabs = () => {
-		const { loaded, iconTabs } = this.state;
-		iconTabs.forEach( ( tabSettings, index ) => {
+		const { loaded } = this.state;
+		const { icons } = this.props;
+		icons.forEach( ( tabSettings, index ) => {
 			if ( loaded[ tabSettings.name ] ) {
 				return;
 			}
-			IconLibrary.initIconType( tabSettings, ( library ) => {
-				loaded[ tabSettings.name ] = true;
+			if ( 'all' === tabSettings.name ) {
+				return;
+			}
+			debugger;
+			IconLibrary.initIconType( { ... tabSettings }, ( library ) => {
 				this.cache[ library.name ] = library;
+				loaded[ tabSettings.name ] = true;
 			} );
 		} );
-		this.updateLoaded( 'all' );
+		loaded['all'] = true;
+		this.setState( {
+			loaded: loaded,
+		} );
 	};
 
 	getActiveTab = () => {
-		let { activeTab, loaded, iconTabs } = this.state;
+		let {
+			activeTab,
+			loaded
+		} = this.state;
+		const { icons } = this.props;
+
 		if ( ! activeTab ) {
 			if ( this.props.activeTab ) {
 				activeTab = this.props.activeTab;
-			} else {
-				activeTab = iconTabs[ 0 ].name;
 			}
-			return this.setState( { activeTab: activeTab });
+			//return this.setState( { activeTab: activeTab });
+		}
+		if ( ! loaded[ activeTab ] ) {
+			return false;
 		}
 
 		const tabSettings = {
-			... iconTabs.filter( tab => tab.name === activeTab )[ 0 ],
+			... icons.filter( tab => tab.name === activeTab )[ 0 ],
 		};
 		if ( loaded[ activeTab ] ) {
 			return { ... tabSettings };
 		}
 
-		if ( 'all' === tabSettings.name && ! loaded[ 'all' ] ) {
+		if ( 'all' === tabSettings.name && ! loaded.all ) {
 			return this.loadAllTabs();
 		}
 
-		IconLibrary.initIconType( tabSettings, ( library ) => {
-			this.updateLoaded( activeTab );
+		IconLibrary.initIconType( { ... tabSettings }, ( library ) => {
 			this.cache[ library.name ] = library;
+			this.updateLoaded( library.name );
 		} );
 		return false;
 	};
@@ -81,11 +86,12 @@ class IconsManager extends Component {
 	updateLoaded( libraryName ) {
 		const { loaded } = this.state;
 		loaded[ libraryName ] = true;
+		console.log( new Error().stack );
 		this.setState( { loaded: loaded } );
 	}
 
 	getIconTabsLinks = () => {
-		return this.state.iconTabs.map( ( tab, index ) => {
+		return this.props.icons.map( ( tab, index ) => {
 			const isCurrentTab = tab.name === this.state.activeTab,
 				className = [ 'icon--manager--tab--link' ];
 
@@ -110,21 +116,66 @@ class IconsManager extends Component {
 	};
 
 	getActiveTabIcons = activeTab => {
-		if ( this.cache.hasOwnProperty( activeTab ) ) {
+		if ( activeTab.name ) {
+			return this.getActiveTabIcons( activeTab.name );
+		}
+		if ( this.cache[ activeTab ] ) {
 			return this.cache[ activeTab ].icons;
 		}
 
-		if ( 'all' === activeTab.name ) {
-			const icons = {};
-			this.state.iconTabs.forEach( ( tabSettings, index ) => {
-				if ( 'all' === tabSettings.name ) {
+		if ( 'all' === activeTab ) {
+			return this.getAllIcons();
+		}
+
+		if ( ! this.state.loaded[ activeTab ] ) {
+			const librarySettings = this.props.icons.filter( ( library ) => activeTab === library.name );
+			return IconLibrary.initIconType( { ... librarySettings[0],  }, ( library ) => {
+				this.cache[ library.name ] = library;
+				this.updateLoaded( library.name );
+			} );
+		}
+
+		let activeTabIcons = Store.getIcons( activeTab );
+		const { include, exclude } = this.props;
+
+		if ( include && include[ activeTab ] && include[ activeTab ].length ) {
+			const included = {};
+			Object.entries( activeTabIcons ).forEach( icon => {
+				if ( -1 === include[ activeTab ].indexOf( icon[0] ) ) {
 					return;
 				}
-				icons[ tabSettings.name ] = Store.getIcons( tabSettings );
+				included[ icon[0] ] = icon[1];
 			} );
-			return icons;
+			activeTabIcons = included;
 		}
-		return Store.getIcons( activeTab );
+
+		if ( exclude && exclude[ activeTab ] && exclude[ activeTab ].length ) {
+			const included = {};
+			Object.entries( activeTabIcons ).forEach( icon => {
+				if ( -1 !== exclude[ activeTab ].indexOf( icon[0] ) ) {
+					return;
+				}
+				included[ icon[0] ] = icon[1];
+			} );
+			activeTabIcons = included;
+		}
+		return activeTabIcons;
+	};
+
+	getAllIcons = () => {
+		if ( this.cache.all ) {
+			return this.cache.all.icons;
+		}
+
+		const icons = {};
+		this.props.icons.forEach( ( tabSettings, index ) => {
+			if ( 'all' === tabSettings.name ) {
+				return;
+			}
+			icons[ tabSettings.name ] = this.getActiveTabIcons( tabSettings.name );
+		} );
+		this.cache['all'] = { icons: icons };
+		return icons;
 	};
 
 	handleSearch = ( event ) => {
@@ -142,24 +193,33 @@ class IconsManager extends Component {
 	};
 
 	setSelected = ( selected ) => {
+		this.props.modalView.options.selectedIcon = selected;
 		this.setState( { selected: selected } );
 	};
 
-	render = () => {
-		const {
-			showSearch = true,
-			include = [],
-			exclude = [],
-		} = this.props;
-		const { filter } = this.state;
-		const activeTab = this.getActiveTab();
+	getSelected = () => {
 		let selected = this.state.selected;
 		if ( '' === selected.value && this.props.selected && this.props.selected.value) {
-			selected = { value: this.props.selected.value, type: this.props.selected.library };
+			selected = { value: this.props.selected.value, library: this.props.selected.library };
 		}
+		return selected;
+	};
+
+	render = () => {
+		const { showSearch = true } = this.props,
+			{ filter } = this.state,
+			selected = this.getSelected(),
+			activeTab = this.getActiveTab(),
+			activeTabName = ( activeTab.name ) ? activeTab.name : activeTab;
+
+		if ( ! activeTabName || ! this.state.loaded[ activeTabName ] ) {
+			return 'Loading';
+		}
+
 		if ( activeTab ) {
 			activeTab.icons = this.getActiveTabIcons( activeTab );
 		}
+
 		return (
 			<div className={ 'icons-manager--wrapper' }>
 				<div className={ 'icons-manager--sidebar' }>
@@ -177,10 +237,13 @@ class IconsManager extends Component {
 							/>
 						</div> ) : ''
 					}
+					<div className={ 'icons-manager--library--title' }>
+						<h3>{ activeTab.label }</h3>
+					</div>
 					<div className={ 'icons-manager--tab__container' }>
 						<input type="hidden" name="icon_value" id="icon_value" value={ selected.value } />
-						<input type="hidden" name="icon_type" id="icon_type" value={ selected.type } />
-						{ activeTab ? (
+						<input type="hidden" name="icon_type" id="icon_type" value={ selected.library } />
+						{ this.state.loaded[ activeTab.name ] ? (
 							<Tab
 								setSelected={ this.setSelected }
 								selected={ selected }

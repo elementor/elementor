@@ -1,5 +1,7 @@
 import ModalLayout from './modal-layout';
 import { renderIconManager } from './components/icon-manager';
+import IconLibrary from './classes/icon-library';
+import { unmountComponentAtNode } from 'react-dom';
 
 export default class extends elementorModules.Module {
 	onInit() {
@@ -10,61 +12,77 @@ export default class extends elementorModules.Module {
 			text: elementor.translate( 'Insert' ),
 			callback: ( modal ) => {
 				this.updateControlValue( modal.getSettings( 'controlView' ), this.layout.modalContent.currentView );
+				this.unMountIconManager();
 			},
 		} );
 
 		this.layout.getModal().on( 'show', this.onPickerShow );
+		this.layout.getModal().on( 'hide', this.unMountIconManager );
+	}
+
+	unMountIconManager() {
+		const containerElement = document.querySelector( '#elementor--icon--manager--placeholder' );
+		unmountComponentAtNode( containerElement );
 	}
 
 	onPickerShow() {
 		const controlView = this.getSettings( 'controlView' ),
+			loaded = {},
 			iconManagerConfig = {
-				selected: controlView.getControlValue(),
 				modalView: elementor.iconManager.layout.modalContent.currentView,
-				include: controlView.model.get( 'include' ),
-				exclude: controlView.model.get( 'exclude' ),
+				controlView: controlView,
 				searchBar: controlView.model.get( 'search_bar' ),
+				include: controlView.model.get( 'include' ) || [],
+				exclude: controlView.model.get( 'exclude' ) || [],
 			};
-		renderIconManager( iconManagerConfig );
-		return;
-		let tabToShow = Object.keys( ElementorConfig.icons )[ 0 ];
+		let selected = controlView.getControlValue(),
+			icons = elementor.config.icons;
 
-		modalView.reset();
-		if ( include ) {
-			modalView.hideAllTabs();
-			_.each( include, ( icons, tab ) => {
-				modalView.showTabByName( tab );
+		if ( ! selected.library || ! selected.value ) {
+			selected = {
+				value: '',
+				library: '',
+			};
+		}
+		iconManagerConfig.selected = selected;
+		iconManagerConfig.modalView.options.selectedIcon = selected;
+
+		// Include/Exclude Libraries
+		if ( iconManagerConfig.include || iconManagerConfig.exclude ) {
+			icons = icons.filter( ( library ) => {
+				const type = library.name;
+				if ( iconManagerConfig.include.length ) {
+					return -1 !== iconManagerConfig.include.indexOf( type );
+				} else if ( iconManagerConfig.include[ type ] ) {
+					return true;
+				}
+
+				if ( iconManagerConfig.exclude.length ) {
+					return -1 === iconManagerConfig.exclude.indexOf( type );
+				} else if ( iconManagerConfig.exclude[ type ] ) {
+					return true;
+				}
+				return false;
 			} );
-			controlIcons.include = include;
-			tabToShow = Object.keys( include )[ 0 ];
 		}
 
-		if ( exclude ) {
-			controlIcons.exclude = exclude;
-		}
-
-		modalView.cache.icons = controlIcons;
-		modalView.toggleSearchBarVisibility( searchBar );
-
-		if ( data.library && data.value ) {
-			modalView.showTab( data.library );
-			const $icon = jQuery( '.icon-list-item i[class="' + data.value + '"]' );
-			if ( $icon.length ) {
-				const $iconLi = $icon.parent();
-				modalView.setSelected( $iconLi );
-				setTimeout( () => $iconLi[ 0 ].scrollIntoView( false ), 100 );
+		icons.forEach( ( tab, index ) => {
+			if ( 'all' !== tab.name ) {
+				IconLibrary.initIconType( tab, ( lib ) => {
+					icons[ index ] = lib;
+				} );
 			}
-			return;
-		}
+			loaded[ tab.name ] = true;
+		} );
+		iconManagerConfig.loaded = loaded;
+		iconManagerConfig.icons = icons;
+		iconManagerConfig.activeTab = '' !== selected.library ? selected.library : icons[ 0 ].name;
 
-		modalView.showTab( tabToShow );
+		return renderIconManager( iconManagerConfig );
 	}
 
 	updateControlValue( view, modal ) {
-		view.setValue( {
-			value: modal.$el.find( '#icon_value' ).val(),
-			library: modal.$el.find( '#icon_type' ).val(),
-		} );
+		view.setValue( modal.options.selectedIcon );
 		view.applySavedValue();
 	}
 

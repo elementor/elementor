@@ -107,6 +107,67 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
+                'include' => [],
+                'exclude' => [
+                    'solid'
+                ],
+			]
+		);
+
+		$this->add_control(
+			'icon2',
+			[
+				'label' => __( 'Icon include solid', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'include' => [
+                    'solid',
+                ],
+			]
+		);
+
+		$this->add_control(
+			'icon3',
+			[
+				'label' => __( 'Icon include solid specific', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'include' => [
+					'solid' => [
+						"align-center",
+						"align-justify",
+						"align-left",
+						"align-right",
+						"allergies",
+                    ],
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon4',
+			[
+				'label' => __( 'Icon exclude solid', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'include' => [],
+				'exclude' => [
+					'solid'
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon5',
+			[
+				'label' => __( 'Icon exclude solid specific', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'exclude' => [
+					'solid' => [
+						"align-center",
+						"align-justify",
+						"align-left",
+						"align-right",
+						"allergies",
+					],
+				],
 			]
 		);
 

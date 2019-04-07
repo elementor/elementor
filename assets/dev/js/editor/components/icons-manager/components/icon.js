@@ -2,12 +2,15 @@ import PropTypes from 'prop-types'
 import { Component, Fragment } from 'react'
 
 export default class Icon extends Component {
+	setSelected = () => {
+		this.props.setSelectedHandler( this.props.data.selector, this.props.library )
+	};
 	render = () => {
 		return <Fragment>
 			<div
-				className={ 'icon--manager--list--item' + this.props.containerClass }
+				className={ this.props.containerClass }
 				key={ this.props.keyID }
-				onClick={ () => this.props.setSelectedHandler( this.props.data.selector, this.props.library ) }
+				onClick={ this.setSelected }
 				filter={ this.props.data.filter }>
 				<i
 					className={ this.props.className }

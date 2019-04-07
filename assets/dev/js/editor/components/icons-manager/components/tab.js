@@ -8,47 +8,36 @@ import {
 import Icon from './Icon';
 
 class Tab extends Component {
-	getDefaultSettings = () => {
-		return {
-			name: '',
-			url: '',
-			prefix: '',
-			displayPrefix: '',
-			ver: '',
-			enqueue: [],
-			exclude: [],
-			include: [],
-			icons: [],
-			fetchJson: false,
-		};
-	};
-
-	selectedRef = null;
-
 	componentDidMount = () => {
 		if ( this.props.selected && this.props.selected.value ) {
-			//setTimeout( () => window.scrollTo(0, this.selectedRef.offsetTop ) );
+			setTimeout( () => {
+				const element = document.querySelector( '.selected' );
+				if ( element ) {
+					element.scrollIntoView( false );
+				}
+			}, 0 );
 		}
 	};
 
 	getIconsOfType( type, icons ) {
 		const { selected } = this.props;
-		this.selectedRef = createRef();
 		return Object.entries( icons ).map( icon => {
 			const iconData = icon[ 1 ],
 				iconName = icon[ 0 ],
 				className = iconData.displayPrefix + ' ' + iconData.selector,
-				setter = { value: className, type: type };
-			let containerClass;
+				setter = {
+					value: className,
+					library: type,
+				};
+			let containerClass = 'icon--manager--list--item';
 			if ( selected.value === className ) {
-				containerClass = ' selected';
+				containerClass += ' selected';
 			}
 
 			return (
 				<Icon
 					key={ type + '-' + iconName }
 					library={ type }
-					//ref={ ( selected.value === className ) ? this.selectedRef : null }
 					keyID={ iconName }
 					containerClass={ containerClass }
 					className={ className }

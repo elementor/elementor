@@ -1,4 +1,5 @@
 const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
+
 class ControlIconsView extends ControlMultipleBaseItemView {
 	enqueueStylesheet( url ) {
 		if ( ! jQuery( document ).find( 'link[href="' + url + '"]' ).length ) {
@@ -36,6 +37,12 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		return ui;
 	}
 
+	cache() {
+		return {
+			loaded: false,
+		};
+	}
+
 	events() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openPicker',
@@ -44,6 +51,16 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	openPicker() {
+		// if ( ! this.cache.loaded ) {
+		// 	elementor.config.icons.forEach( ( library ) => {
+		// 		if ( 'all' === library.name ) {
+		// 			return;
+		// 		}
+		// 		IconLibrary.initIconType( library );
+		// 	} );
+		// 	this.cache.loaded = true;
+		// }
+
 		elementor.iconManager.show( { view: this } );
 	}
 
