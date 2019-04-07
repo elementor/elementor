@@ -56,13 +56,6 @@ class Control_Exit_Animation extends Control_Animation {
 				'zoomInRight' => 'Zoom Out Right',
 				'zoomInUp' => 'Zoom Out Up',
 			],
-			'Bouncing' => [
-				'bounceIn' => 'Bounce Out',
-				'bounceInDown' => 'Bounce Out Down',
-				'bounceInLeft' => 'Bounce Out Left',
-				'bounceInRight' => 'Bounce Out Right',
-				'bounceInUp' => 'Bounce Out Up',
-			],
 			'Sliding' => [
 				'slideInDown' => 'Slide Out Down',
 				'slideInLeft' => 'Slide Out Left',
