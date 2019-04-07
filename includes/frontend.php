@@ -46,11 +46,11 @@ class Frontend extends App {
 	 * Holds the list of fonts that are being used in the current page.
 	 *
 	 * @since 1.9.4
-	 * @access private
+	 * @access public
 	 *
 	 * @var array Used fonts. Default is an empty array.
 	 */
-	private $fonts_to_enqueue = [];
+	public $fonts_to_enqueue = [];
 
 	/**
 	 * Registered fonts.
