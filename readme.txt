@@ -221,6 +221,18 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.5.12 - 2019-04-08 =
+* Fix: DB updates process not running in edge cases ([#7725](https://github.com/elementor/elementor/issues/7725))
+* Fix: Column width issue after Column Gap value changed ([#7718](https://github.com/elementor/elementor/issues/7718))
+* Fix: Load minified `frontend-modules.js` instead of full version ([#7082](https://github.com/elementor/elementor/issues/7082))
+* Fix: Removed source map reference from minified versions of JS files ([#7082](https://github.com/elementor/elementor/issues/7082))
+* Fix: Missing section handles while using `overflow: hidden` option
+* Fix: Removed condition from content style in Accordion widget
+* Fix: Dialogs close button in RTL layout
+* Fix: Self-hosted background video resize issue
+* Fix: Dynamic Tag dropdown in RTL
+* Fix: Color picker UI glitch
+
 = 2.5.11 - 2019-03-31 =
 * Tweak: Removed duplicated grid style from frontend.css
 * Fix: Document settings not saving ([#7629](https://github.com/elementor/elementor/issues/7629))
