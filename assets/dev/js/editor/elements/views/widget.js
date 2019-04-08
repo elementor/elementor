@@ -191,7 +191,7 @@ WidgetView = BaseElementView.extend( {
 			.children( '.elementor-widget-empty-icon' )
 			.remove();
 
-		// TODO: Find better way to detect if all images are loaded
+		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
 				if ( 1 > self.$el.children( '.elementor-widget-container' ).outerHeight() ) {
