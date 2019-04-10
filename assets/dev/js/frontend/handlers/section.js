@@ -142,7 +142,7 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 			this.elements.$backgroundVideoHosted.removeAttr( 'src' );
 		}
 
-		elementorFrontend.elements.$window.off( 'resize', self.changeVideoSize );
+		elementorFrontend.elements.$window.off( 'resize', this.changeVideoSize );
 	},
 
 	run: function() {
