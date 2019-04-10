@@ -273,6 +273,7 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 		$svgContainer.attr( 'data-shape', shapeType );
 
 		if ( ! shapeType ) {
+			$svgContainer.empty(); // Shape-divider set to 'none'
 			return;
 		}
 
