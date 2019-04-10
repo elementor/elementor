@@ -223,6 +223,10 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 ## Changelog ##
 
+### 2.5.13 - 2019-04-10 ###
+* Fix: Resize viewport not working properly ([#7795](https://github.com/elementor/elementor/issues/7795), [Topic](https://wordpress.org/support/topic/width-is-not-responding-automatically/), [Topic](https://wordpress.org/support/topic/stretch-section-problem/))
+* Fix: Remove Shape Divider in the editor if set to 'None'
+
 ### 2.5.12 - 2019-04-08 ###
 * Fix: DB updates process not running in edge cases ([#7725](https://github.com/elementor/elementor/issues/7725))
 * Fix: Column width issue after Column Gap value changed ([#7718](https://github.com/elementor/elementor/issues/7718))
