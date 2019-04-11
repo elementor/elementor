@@ -541,14 +541,20 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
+			'editButtons' => get_option( 'elementor_edit_buttons' ),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
 				'got_it' => __( 'Got It', 'elementor' ),
-
+				/* translators: %s: Element type. */
+				'add_element' => __( 'Add %s', 'elementor' ),
 				/* translators: %s: Element name. */
 				'edit_element' => __( 'Edit %s', 'elementor' ),
+				/* translators: %s: Element type. */
+				'duplicate_element' => __( 'Duplicate %s', 'elementor' ),
+				/* translators: %s: Element type. */
+				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
 
@@ -636,8 +642,6 @@ class Editor {
 				'take_over' => __( 'Take Over', 'elementor' ),
 
 				// Revisions.
-				/* translators: %s: Element type. */
-				'delete_element' => __( 'Delete %s', 'elementor' ),
 				/* translators: %s: Template type. */
 				'dialog_confirm_delete' => __( 'Are you sure you want to remove this %s?', 'elementor' ),
 
