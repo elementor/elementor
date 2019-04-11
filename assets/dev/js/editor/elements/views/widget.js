@@ -51,6 +51,30 @@ WidgetView = BaseElementView.extend( {
 		return elementor.hooks.applyFilters( 'elements/widget/behaviors', behaviors, this );
 	},
 
+	getEditButtons: function() {
+		const elementData = elementor.getElementData( this.model ),
+			editTools = {};
+
+		editTools.edit = {
+			title: elementor.translate( 'edit_element', [ elementData.title ] ),
+			icon: 'edit',
+		};
+
+		if ( elementor.config.editButtons ) {
+			editTools.duplicate = {
+				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
+				icon: 'clone',
+			};
+
+			editTools.remove = {
+				title: elementor.translate( 'delete_element', [ elementData.title ] ),
+				icon: 'close',
+			};
+		}
+
+		return editTools;
+	},
+
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
@@ -130,13 +154,10 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	attachElContent: function( html ) {
-		var self = this,
-			htmlContent = self.getHTMLContent( html );
+		_.defer( () => {
+			elementorFrontend.elements.window.jQuery( this.el ).append( this.getHandlesOverlay(), this.getHTMLContent( html ) );
 
-		_.defer( function() {
-			elementorFrontend.elements.window.jQuery( self.el ).html( htmlContent );
-
-			self.bindUIElements(); // Build again the UI elements since the content attached just now
+			this.bindUIElements(); // Build again the UI elements since the content attached just now
 		} );
 
 		return this;
