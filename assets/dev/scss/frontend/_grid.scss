@@ -271,16 +271,17 @@ ul.elementor-icon-list-items.elementor-inline-items {
 	}
 
 	@mixin grid_loop($device) {
-		@for $i from 1 through 12 {
 
-			&#{$device}-0 {
-				.elementor-grid {
-					display: flex;
-					overflow: hidden;
-					flex-wrap: wrap;
-				}
+		&#{$device}-0 {
+			.elementor-grid {
+				display: flex;
+				overflow: hidden;
+				flex-wrap: wrap;
 			}
+		}
 
+		@for $i from 1 through 12 {
+			
 			&#{$device}-#{$i} {
 				.elementor-grid {
 					grid-template-columns: repeat(#{$i} , 1fr);
