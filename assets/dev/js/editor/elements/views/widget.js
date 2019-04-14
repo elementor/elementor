@@ -155,7 +155,7 @@ WidgetView = BaseElementView.extend( {
 
 	attachElContent: function( html ) {
 		_.defer( () => {
-			elementorFrontend.elements.window.jQuery( this.el ).append( this.getHandlesOverlay(), this.getHTMLContent( html ) );
+			elementorFrontend.elements.window.jQuery( this.el ).empty().append( this.getHandlesOverlay(), this.getHTMLContent( html ) );
 
 			this.bindUIElements(); // Build again the UI elements since the content attached just now
 		} );

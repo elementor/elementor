@@ -211,7 +211,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	attachElContent: function( html ) {
-		this.$el.append( this.getHandlesOverlay(), html );
+		this.$el.empty().append( this.getHandlesOverlay(), html );
 	},
 
 	startTransport: function( type ) {
