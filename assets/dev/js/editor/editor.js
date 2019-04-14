@@ -3,6 +3,7 @@ import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
+import DateTimeControl from 'elementor-controls/date-time';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -67,7 +68,7 @@ const App = Marionette.Application.extend( {
 			Choose: require( 'elementor-controls/choose' ),
 			Code: require( 'elementor-controls/code' ),
 			Color: require( 'elementor-controls/color' ),
-			Date_time: require( 'elementor-controls/date-time' ),
+			Date_time: DateTimeControl,
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Font: require( 'elementor-controls/font' ),
 			Gallery: require( 'elementor-controls/gallery' ),

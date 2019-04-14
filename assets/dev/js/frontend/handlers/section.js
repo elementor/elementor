@@ -113,8 +113,6 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 				rel: 0,
 			},
 		} );
-
-		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
 	},
 
 	activate: function() {
@@ -133,6 +131,8 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		} else {
 			self.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', self.changeVideoSize );
 		}
+
+		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
 	},
 
 	deactivate: function() {
@@ -141,6 +141,8 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		} else {
 			this.elements.$backgroundVideoHosted.removeAttr( 'src' );
 		}
+
+		elementorFrontend.elements.$window.off( 'resize', this.changeVideoSize );
 	},
 
 	run: function() {
@@ -271,6 +273,7 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 		$svgContainer.attr( 'data-shape', shapeType );
 
 		if ( ! shapeType ) {
+			$svgContainer.empty(); // Shape-divider set to 'none'
 			return;
 		}
 
@@ -326,9 +329,13 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 
 var HandlesPosition = elementorModules.frontend.handlers.Base.extend( {
 
-    isFirst: function() {
+    isFirstSection: function() {
         return this.$element.is( '.elementor-edit-mode .elementor-top-section:first' );
     },
+
+	isOverflowHidden: function() {
+		return 'hidden' === this.$element.css( 'overflow' );
+	},
 
     getOffset: function() {
 		if ( 'body' === elementor.config.document.container ) {
@@ -340,18 +347,18 @@ var HandlesPosition = elementorModules.frontend.handlers.Base.extend( {
 	},
 
     setHandlesPosition: function() {
-        var self = this;
+        const isOverflowHidden = this.isOverflowHidden();
 
-        if ( ! self.isFirst() ) {
+        if ( ! isOverflowHidden && ! this.isFirstSection() ) {
 			return;
         }
 
-        var offset = self.getOffset(),
-            $handlesElement = self.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
+        const offset = isOverflowHidden ? 0 : this.getOffset(),
+            $handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
             insideHandleClass = 'elementor-section--handles-inside';
 
 		if ( offset < 25 ) {
-            self.$element.addClass( insideHandleClass );
+            this.$element.addClass( insideHandleClass );
 
             if ( offset < -5 ) {
                 $handlesElement.css( 'top', -offset );
@@ -359,12 +366,13 @@ var HandlesPosition = elementorModules.frontend.handlers.Base.extend( {
                 $handlesElement.css( 'top', '' );
             }
         } else {
-            self.$element.removeClass( insideHandleClass );
+            this.$element.removeClass( insideHandleClass );
         }
     },
 
     onInit: function() {
         this.setHandlesPosition();
+
         this.$element.on( 'mouseenter', this.setHandlesPosition );
     },
 } );
