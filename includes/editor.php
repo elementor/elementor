@@ -79,6 +79,8 @@ class Editor {
 			return;
 		}
 
+		Loading_Inspection_Manager::instance()->register_inspections();
+
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
@@ -523,9 +525,6 @@ class Editor {
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
-			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
-			'help_preview_http_error_url' => 'https://go.elementor.com/preview-not-loaded/#permissions',
-			'help_preview_http_error_500_url' => 'https://go.elementor.com/500-error/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
@@ -534,6 +533,12 @@ class Editor {
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::get_introduction_meta(),
+			],
+			'preview' => [
+				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
+				'help_preview_http_error_url' => 'https://go.elementor.com/preview-not-loaded/#permissions',
+				'help_preview_http_error_500_url' => 'https://go.elementor.com/500-error/',
+				'debug_data' => Loading_Inspection_Manager::instance()->run_inspections(),
 			],
 			// @deprecated since 2.3.0 - Use `elementorCommon.config.isRTL` instead
 			'is_rtl' => is_rtl(),
@@ -691,7 +696,6 @@ class Editor {
 				'soon' => __( 'Soon', 'elementor' ),
 				'unknown_value' => __( 'Unknown Value', 'elementor' ),
 			],
-			'debug_data' => Loading_Inspection_Manager::instance()->run_tests(),
 		];
 
 		$localized_settings = [];

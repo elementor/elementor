@@ -17,32 +17,32 @@ class Loading_Inspection_Manager {
 	}
 
 	/** @var Inspection_Base[] */
-	private $tests = [];
+	private $inspections = [];
 
-	public function register_tests() {
-		$this->tests['theme-missing'] = new Theme_Missing();
-		$this->tests['htaccess'] = new Htaccess();
+	public function register_inspections() {
+		$this->inspections['theme-missing'] = new Theme_Missing();
+		$this->inspections['htaccess'] = new Htaccess();
 	}
 
 	/**
-	 * @param Inspection_Base $test
+	 * @param Inspection_Base $inspection
 	 */
-	public function register_test( $test ) {
-		$this->tests[ $test->get_name() ] = $test;
+	public function register_inspection( $inspection ) {
+		$this->inspections[ $inspection->get_name() ] = $inspection;
 	}
 
-	public function run_tests() {
+	public function run_inspections() {
 		$debug_data = [
 			'message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
 			'header' => __( 'The preview could not be loaded', 'elementor' ),
 			'doc_url' => 'https://go.elementor.com/preview-not-loaded/',
 		];
-		foreach ( $this->tests as $test ) {
-			if ( ! $test->run() ) {
+		foreach ( $this->inspections as $inspection ) {
+			if ( ! $inspection->run() ) {
 				$debug_data = [
-					'message' => $test->get_message(),
-					'header' => $test->get_header_message(),
-					'doc_url' => $test->get_help_doc_url(),
+					'message' => $inspection->get_message(),
+					'header' => $inspection->get_header_message(),
+					'doc_url' => $inspection->get_help_doc_url(),
 					'error' => true,
 				];
 				break;

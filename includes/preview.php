@@ -1,9 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Plugin;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -287,6 +284,5 @@ class Preview {
 	 */
 	public function __construct() {
 		add_action( 'template_redirect', [ $this, 'init' ], 0 );
-		Loading_Inspection_Manager::instance()->register_tests();
 	}
 }
