@@ -292,7 +292,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 		} );
 
-		if ( options.removeDefault ) {
+		if ( options.remove && -1 !== options.remove.indexOf( 'default' ) ) {
 			var controls = this.controls;
 
 			_.each( data, function( value, key ) {
