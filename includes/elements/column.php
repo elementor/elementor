@@ -286,6 +286,7 @@ class Element_Column extends Element_Base {
 				'label' => __( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
+				'render_type' => 'none',
 			]
 		);
 
