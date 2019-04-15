@@ -28,7 +28,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 			var controlName = control.name;
 
-			defaults[ controlName ] = control.default;
+			if ( 'object' === typeof control.default ) {
+				defaults[ controlName ] = elementorCommon.helpers.cloneObject( control.default );
+			} else {
+				defaults[ controlName ] = control.default;
+			}
 
 			var isDynamicControl = control.dynamic && control.dynamic.active,
 				hasDynamicSettings = isDynamicControl && attrs.__dynamic__ && attrs.__dynamic__[ controlName ];
