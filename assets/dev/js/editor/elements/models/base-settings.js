@@ -292,7 +292,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 		} );
 
-		if ( options.remove && -1 !== options.remove.indexOf( 'default' ) ) {
+		// TODO: `options.removeDefault` is a bc since 2.5.14
+		if ( ( options.remove && -1 !== options.remove.indexOf( 'default' ) ) || options.removeDefault ) {
 			var controls = this.controls;
 
 			_.each( data, function( value, key ) {
