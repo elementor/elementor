@@ -39,6 +39,37 @@ SectionView = BaseElementView.extend( {
 		columnWidthTooSmall: 'New column width is too small',
 	},
 
+	getEditButtons: function() {
+		const elementData = elementor.getElementData( this.model ),
+			editTools = {};
+
+		if ( ! this.isInner() ) {
+			editTools.add = {
+				title: elementor.translate( 'add_element', [ elementData.title ] ),
+				icon: 'plus',
+			};
+		}
+
+		editTools.edit = {
+			title: elementor.translate( 'edit_element', [ elementData.title ] ),
+			icon: 'handle',
+		};
+
+		if ( elementor.config.editButtons ) {
+			editTools.duplicate = {
+				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
+				icon: 'clone',
+			};
+		}
+
+		editTools.remove = {
+			title: elementor.translate( 'delete_element', [ elementData.title ] ),
+			icon: 'close',
+		};
+
+		return editTools;
+	},
+
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
