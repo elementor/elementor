@@ -334,7 +334,7 @@ class Editor {
 
 		wp_register_script(
 			'elementor-editor-modules',
-			ELEMENTOR_ASSETS_URL . 'js/editor-modules.js',
+			ELEMENTOR_ASSETS_URL . 'js/editor-modules' . $suffix . '.js',
 			[
 				'elementor-common-modules',
 			],
