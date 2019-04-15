@@ -157,7 +157,7 @@ module.exports = elementorModules.Module.extend( {
 		}, options );
 
 		var self = this,
-			elements = elementor.elements.toJSON( { removeDefault: true } ),
+			elements = elementor.elements.toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } ),
 			settings = elementor.settings.page.model.toJSON( { remove: [ 'default' ] } ),
 			oldStatus = elementor.settings.page.model.get( 'post_status' ),
 			statusChanged = oldStatus !== options.status;
