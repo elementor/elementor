@@ -39,7 +39,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		var formData = this.ui.form.elementorSerializeObject(),
 			saveType = this.getSaveType(),
-			JSONParams = { removeDefault: true };
+			JSONParams = { remove: [ 'default' ] };
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
