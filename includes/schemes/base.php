@@ -85,7 +85,7 @@ abstract class Scheme_Base implements Scheme_Interface {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return string Scheme value.
+	 * @return array Scheme value.
 	 */
 	public function get_scheme_value() {
 		$scheme_value = get_option( 'elementor_scheme_' . static::get_type() );
