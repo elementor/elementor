@@ -11,7 +11,7 @@ class Htaccess extends Inspection_Base {
 
 	public function run() {
 		if ( empty( $_SERVER['SERVER_SOFTWARE'] ) ) {
-			$this->message = __( 'Server software unknown, please contact the hosting provider.', 'elementor' );
+			$this->message = __( 'We failed to recognize your Server software. Please contact your hosting provider.', 'elementor' );
 			return false;
 		}
 		$server = strtoupper( $_SERVER['SERVER_SOFTWARE'] );
