@@ -84,13 +84,8 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		elementorCommon.route.register( 'panel/history/actions', () => {
-			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'actions' );
-		}, { keys: 'ctrl+shift+h' } );
-
-		elementorCommon.route.register( 'panel/history/revisions', () => {
-			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'revisions' );
-		}, { keys: 'ctrl+alt+r' } );
+		// Commands.
+		elementorCommon.commands.registerComponent( 'history' );
 
 		elementorCommon.commands.register( 'history/undo', () => navigate(), {
 			keys: 'ctrl+z',
@@ -101,6 +96,15 @@ var	Manager = function() {
 			keys: 'ctrl+shift+z, ctrl+y',
 			exclude: [ 'input' ],
 		} );
+
+		// Routes.
+		elementorCommon.route.register( 'panel/history/actions', () => {
+			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'actions' );
+		}, { keys: 'ctrl+shift+h' } );
+
+		elementorCommon.route.register( 'panel/history/revisions', () => {
+			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'revisions' );
+		}, { keys: 'ctrl+alt+r' } );
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );

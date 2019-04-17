@@ -53,7 +53,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	openSettingsTab: function( tab ) {
-		if ( 'page_settings' !== elementor.getPanelView().getCurrentPageName() ) {
+		if ( ! elementorCommon.route.isPartOf( 'panel/page' ) ) {
 			this.showSettingsPage();
 		}
 
