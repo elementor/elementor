@@ -88,7 +88,7 @@ class App extends BaseApp {
 	public function register_scripts() {
 		wp_register_script(
 			'elementor-common-modules',
-			ELEMENTOR_ASSETS_URL . 'js/common-modules.js',
+			$this->get_js_assets_url( 'common-modules' ),
 			[],
 			ELEMENTOR_VERSION,
 			true
