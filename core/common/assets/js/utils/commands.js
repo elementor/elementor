@@ -6,10 +6,21 @@ export default class extends elementorModules.Module {
 		this.currentArgs = {};
 		this.commands = {};
 		this.dependencies = {};
+		this.components = {};
 	}
 
 	printAll() {
 		console.log( Object.keys( this.commands ).sort() ); // eslint-disable-line no-console
+	}
+
+	registerComponent( component, args ) {
+		this.components[ component ] = args;
+
+		if ( args.before ) {
+			this.registerDependency( component, args.before );
+		}
+
+		return this;
 	}
 
 	registerDependency( component, callback ) {
@@ -19,6 +30,13 @@ export default class extends elementorModules.Module {
 	}
 
 	register( command, callback, shortcut ) {
+		const parts = command.split( '/' ),
+			component = parts[ 0 ];
+
+		if ( ! this.components[ component ] ) {
+			this.error( `'${ component }' component is not exist.` );
+		}
+
 		if ( this.commands[ command ] ) {
 			this.error( `\`${ command }\` is already registered.` );
 		}

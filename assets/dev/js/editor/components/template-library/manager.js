@@ -22,15 +22,19 @@ TemplateLibraryManager = function() {
 		layout.getModal().on( 'hide', () => elementorCommon.route.close( 'library' ) );
 	};
 
-	const registerRouts = function() {
+	const registerCommands = function() {
+		elementorCommon.commands.registerComponent( 'library' );
+
 		elementorCommon.commands.register( 'library/show', ( args ) => {
 			modalConfig = args;
 
 			if ( ! elementorCommon.route.restoreState( 'library' ) ) {
-				self.showDefaultScreen();
+				self.routeToDefault();
 			}
 		}, { keys: 'ctrl+shift+l' } );
+	};
 
+	const registerRouts = function() {
 		elementorCommon.route.registerComponent( 'library', {
 			open: () => {
 				self.startModal();
@@ -143,6 +147,8 @@ TemplateLibraryManager = function() {
 		registerDefaultScreens();
 
 		registerDefaultFilterTerms();
+
+		registerCommands();
 
 		registerRouts();
 
@@ -410,7 +416,7 @@ TemplateLibraryManager = function() {
 		}
 	};
 
-	this.showDefaultScreen = function() {
+	this.routeToDefault = function() {
 		const remoteLibraryConfig = elementor.config.document.remoteLibrary;
 
 		if ( 'block' === remoteLibraryConfig.type ) {

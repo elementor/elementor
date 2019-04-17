@@ -385,8 +385,10 @@ const App = Marionette.Application.extend( {
 	},
 
 	registerCommands: function() {
-		elementorCommon.commands.registerDependency( 'elements', () => {
-			return elementor.getCurrentElement();
+		elementorCommon.commands.registerComponent( 'elements', {
+			before: () => {
+				return elementor.getCurrentElement();
+			},
 		} );
 
 		elementorCommon.commands.register( 'elements/copy', () => elementor.getCurrentElement().copy(), {
@@ -419,8 +421,8 @@ const App = Marionette.Application.extend( {
 			},
 		} );
 
-		elementorCommon.commands.registerDependency( 'navigator', () => {
-			return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
+		elementorCommon.commands.registerComponent( 'navigator', {
+			before: () => 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
 		} );
 
 		elementorCommon.commands.register( 'navigator/toggle', () => {
@@ -430,6 +432,8 @@ const App = Marionette.Application.extend( {
 				elementor.navigator.open();
 			}
 		}, { keys: 'ctrl+i' } );
+
+		elementorCommon.commands.registerComponent( 'preview' );
 
 		elementorCommon.commands.register( 'preview/change-device-mode', () => {
 			const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
@@ -444,7 +448,9 @@ const App = Marionette.Application.extend( {
 			elementor.changeDeviceMode( this.devices[ modeIndex ] );
 		}, { keys: 'ctrl+shift+m' } );
 
-		elementorCommon.commands.register( 'document/save', () => elementor.saver.saveDraft(), {
+		const document = elementorCommon.commands.registerComponent( 'document' );
+
+		document.registerCommand( 'save', () => elementor.saver.saveDraft(), {
 			keys: 'ctrl+s',
 		} );
 
