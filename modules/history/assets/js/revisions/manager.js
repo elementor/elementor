@@ -26,26 +26,6 @@ RevisionsManager = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
 	};
 
-	const navigate = ( up ) => {
-		elementor.getPanelView().getCurrentPageView().getCurrentTab().navigate( up );
-	};
-
-	const isRevision = () => {
-		return elementorCommon.route.is( 'panel/history/revisions' );
-	};
-
-	const addCommands = function() {
-		elementorCommon.commands.register( 'panel/revisions/navigate/down', () => navigate(), {
-			keys: 'down',
-			dependency: isRevision,
-		} );
-
-		elementorCommon.commands.register( 'panel/revisions/navigate/up', () => navigate( true ), {
-			keys: 'up',
-			dependency: isRevision,
-		} );
-	};
-
 	this.getItems = function() {
 		return revisions;
 	};
