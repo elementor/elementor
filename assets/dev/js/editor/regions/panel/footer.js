@@ -38,26 +38,6 @@ module.exports = Marionette.ItemView.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
-
-		elementorCommon.route.register( 'panel/page/settings', () => {
-			this.openSettingsTab( 'settings' );
-		} );
-
-		elementorCommon.route.register( 'panel/page/style', () => {
-			this.openSettingsTab( 'style' );
-		} );
-
-		elementorCommon.route.register( 'panel/page/advanced', () => {
-			this.openSettingsTab( 'advanced' );
-		} );
-	},
-
-	openSettingsTab: function( tab ) {
-		if ( ! elementorCommon.route.isPartOf( 'panel/page' ) ) {
-			this.showSettingsPage();
-		}
-
-		elementor.getPanelView().getCurrentPageView().activateTab( tab )._renderChildren();
 	},
 
 	getDeviceModeButton: function( deviceMode ) {

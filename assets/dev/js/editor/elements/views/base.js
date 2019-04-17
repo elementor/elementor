@@ -649,7 +649,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	save: function() {
-		elementorCommon.route.to( 'library/save-template', {
+		eComponents( 'library' ).route.to( 'save-template', {
 			model: this.model,
 		} );
 	},

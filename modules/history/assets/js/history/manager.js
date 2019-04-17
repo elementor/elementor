@@ -3,6 +3,7 @@ var ElementHistoryBehavior = require( './element-behavior' ),
 
 import ItemModel from './item-model';
 import PanelTab from './panel-tab';
+import Component from './component';
 
 var	Manager = function() {
 	var self = this,
@@ -84,27 +85,7 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		// Commands.
-		elementorCommon.commands.registerComponent( 'history' );
-
-		elementorCommon.commands.register( 'history/undo', () => navigate(), {
-			keys: 'ctrl+z',
-			exclude: [ 'input' ],
-		} );
-
-		elementorCommon.commands.register( 'history/redo', () => navigate( true ), {
-			keys: 'ctrl+shift+z, ctrl+y',
-			exclude: [ 'input' ],
-		} );
-
-		// Routes.
-		elementorCommon.route.register( 'panel/history/actions', () => {
-			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'actions' );
-		}, { keys: 'ctrl+shift+h' } );
-
-		elementorCommon.route.register( 'panel/history/revisions', () => {
-			elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'revisions' );
-		}, { keys: 'ctrl+alt+r' } );
+		elementorCommon.components.register( 'history', new Component() );
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );

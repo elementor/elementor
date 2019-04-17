@@ -1,3 +1,5 @@
+import Component from './component';
+
 var TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' ),
 	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
 	TemplateLibraryManager;
@@ -10,57 +12,13 @@ TemplateLibraryManager = function() {
 		errorDialog,
 		layout,
 		templatesCollection,
-		defaultRoute = 'library/templates/pages',
 		config = {},
-		modalConfig = {},
-		screens = {},
 		filterTerms = {};
 
 	const initLayout = function() {
-		layout = new TemplateLibraryLayoutView( { pages: screens } );
+		layout = new TemplateLibraryLayoutView();
 
 		layout.getModal().on( 'hide', () => elementorCommon.route.close( 'library' ) );
-	};
-
-	const registerCommands = function() {
-		elementorCommon.commands.registerComponent( 'library' );
-
-		elementorCommon.commands.register( 'library/show', ( args ) => {
-			modalConfig = args;
-
-			if ( ! elementorCommon.route.restoreState( 'library' ) ) {
-				self.routeToDefault();
-			}
-		}, { keys: 'ctrl+shift+l' } );
-	};
-
-	const registerRouts = function() {
-		elementorCommon.route.registerComponent( 'library', {
-			open: () => {
-				self.startModal();
-
-				return true;
-			},
-			close: () => {
-				modalConfig = {};
-			},
-		} );
-
-		screens.forEach( ( screen ) => {
-			elementorCommon.route.register( screen.route, () => {
-				self.setScreen( screen.source, screen.type );
-
-				elementorCommon.route.saveState( 'library' );
-			} );
-		} );
-
-		elementorCommon.route.register( 'library/save-template', ( args ) => {
-			self.getLayout().showSaveTemplateView( args.model );
-		} );
-
-		elementorCommon.route.register( 'library/import', () => {
-			self.getLayout().showImportView();
-		} );
 	};
 
 	const registerDefaultTemplateTypes = function() {
@@ -95,31 +53,6 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
-	const registerDefaultScreens = function() {
-		screens = [
-			{
-				name: 'blocks',
-				source: 'remote',
-				title: elementor.translate( 'blocks' ),
-				type: 'block',
-				route: 'library/templates/blocks',
-			},
-			{
-				name: 'pages',
-				source: 'remote',
-				title: elementor.translate( 'pages' ),
-				type: 'page',
-				route: 'library/templates/pages',
-			},
-			{
-				name: 'my-templates',
-				source: 'local',
-				title: elementor.translate( 'my_templates' ),
-				route: 'library/templates/my-templates',
-			},
-		];
-	};
-
 	const registerDefaultFilterTerms = function() {
 		filterTerms = {
 			text: {
@@ -141,16 +74,14 @@ TemplateLibraryManager = function() {
 		};
 	};
 
+	this.modalConfig = {};
+
 	this.init = function() {
 		registerDefaultTemplateTypes();
 
-		registerDefaultScreens();
-
 		registerDefaultFilterTerms();
 
-		registerCommands();
-
-		registerRouts();
+		this.component = elementorCommon.components.register( 'library', new Component() );
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
@@ -163,10 +94,6 @@ TemplateLibraryManager = function() {
 		}
 
 		return templateTypes;
-	};
-
-	this.getScreens = function() {
-		return screens;
 	};
 
 	this.registerTemplateType = function( type, data ) {
@@ -209,8 +136,8 @@ TemplateLibraryManager = function() {
 				page_settings: options.withPageSettings,
 			},
 			success: function( data ) {
-				// Clone `modalConfig` because it deleted during the closing.
-				const importOptions = jQuery.extend( {}, modalConfig.importOptions );
+				// Clone `this.modalConfig` because it deleted during the closing.
+				const importOptions = jQuery.extend( {}, this.modalConfig.importOptions );
 
 				// Hide for next open.
 				layout.hideLoadingView();
@@ -398,10 +325,6 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setDefaultRoute = function( route ) {
-		defaultRoute = route;
-	};
-
 	this.setScreen = function( source, type, silent ) {
 		elementor.channels.templates.stopReplying();
 
@@ -420,10 +343,10 @@ TemplateLibraryManager = function() {
 		const remoteLibraryConfig = elementor.config.document.remoteLibrary;
 
 		if ( 'block' === remoteLibraryConfig.type ) {
-			defaultRoute = 'library/templates/blocks';
+			this.component.route.setDefault( 'blocks' );
 		}
 
-		elementorCommon.route.to( defaultRoute, {
+		this.component.route.to( 'default', {
 			onAfter: () => {
 				if ( remoteLibraryConfig.category ) {
 					this.setFilter( 'subtype', remoteLibraryConfig.category );
