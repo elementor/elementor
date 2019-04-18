@@ -16,19 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Element_Section extends Element_Base {
 
 	/**
-	 * Section edit tools.
-	 *
-	 * Holds the section edit tools.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 * @static
-	 *
-	 * @var array Section edit tools.
-	 */
-	protected static $_edit_tools;
-
-	/**
 	 * Section predefined columns presets.
 	 *
 	 * Holds the predefined columns width for each columns count available by
@@ -199,54 +186,6 @@ class Element_Section extends Element_Base {
 				$preset['key'] = $columns_count . $preset_index;
 			}
 		}
-	}
-
-	/**
-	 * Get default edit tools.
-	 *
-	 * Retrieve the section default edit tools. Used to set initial tools.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 * @static
-	 *
-	 * @return array Default section edit tools.
-	 */
-	protected static function get_default_edit_tools() {
-		$section_label = __( 'Section', 'elementor' );
-
-		$edit_tools = [
-			'add' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Add %s', 'elementor' ), $section_label ),
-				'icon' => 'plus',
-			],
-			'edit' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Edit %s', 'elementor' ), $section_label ),
-				'icon' => 'handle',
-			],
-		];
-
-		if ( self::is_edit_buttons_enabled() ) {
-			$edit_tools += [
-				'duplicate' => [
-					/* translators: %s: Section label */
-					'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $section_label ),
-					'icon' => 'clone',
-				],
-			];
-		}
-
-		$edit_tools += [
-			'remove' => [
-				/* translators: %s: Section label */
-				'title' => sprintf( __( 'Delete %s', 'elementor' ), $section_label ),
-				'icon' => 'close',
-			],
-		];
-
-		return $edit_tools;
 	}
 
 	/**
@@ -1388,35 +1327,6 @@ class Element_Section extends Element_Base {
 	}
 
 	/**
-	 * Render section edit tools.
-	 *
-	 * Used to generate the edit tools HTML.
-	 *
-	 * @since 1.8.0
-	 * @access protected
-	 */
-	protected function render_edit_tools() {
-		?>
-		<div class="elementor-element-overlay">
-			<ul class="elementor-editor-element-settings elementor-editor-section-settings">
-				<?php foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) : ?>
-					<?php if ( 'add' === $edit_tool_name ) : ?>
-						<# if ( ! isInner ) { #>
-					<?php endif; ?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
-						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
-					</li>
-					<?php if ( 'add' === $edit_tool_name ) : ?>
-						<# } #>
-					<?php endif; ?>
-				<?php endforeach; ?>
-			</ul>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Render section output in the editor.
 	 *
 	 * Used to generate the live preview, using a Backbone JavaScript template.
@@ -1429,7 +1339,7 @@ class Element_Section extends Element_Base {
 		<# if ( settings.background_video_link ) { #>
 			<div class="elementor-background-video-container elementor-hidden-phone">
 				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted" autoplay loop muted></video>
+				<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
 			</div>
 		<# } #>
 		<div class="elementor-background-overlay"></div>
@@ -1527,8 +1437,6 @@ class Element_Section extends Element_Base {
 				'elementor-' . $section_type . '-section',
 			]
 		);
-
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() );
 	}
 
 	/**

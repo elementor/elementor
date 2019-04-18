@@ -66,6 +66,7 @@ module.exports = {
 		'jsx-quotes': 'error',
 		'keyword-spacing': 'error',
 		'lines-around-comment': 'off',
+		'no-bitwise': [ 'error', { 'allow': [ '^' ] } ],
 		'no-caller': 'error',
 		'no-debugger': 'warn',
 		'no-dupe-args': 'error',

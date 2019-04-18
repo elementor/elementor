@@ -80,7 +80,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		var settings = this.model.toJSON( { removeDefault: true } ),
+		var settings = this.model.toJSON( { remove: [ 'default' ] } ),
 			data = this.getDataToSave( {
 				data: settings,
 			} );

@@ -334,7 +334,7 @@ class Editor {
 
 		wp_register_script(
 			'elementor-editor-modules',
-			ELEMENTOR_ASSETS_URL . 'js/editor-modules.js',
+			ELEMENTOR_ASSETS_URL . 'js/editor-modules' . $suffix . '.js',
 			[
 				'elementor-common-modules',
 			],
@@ -481,8 +481,6 @@ class Editor {
 		// Get document data *after* the scripts hook - so plugins can run compatibility before get data, but *before* enqueue the editor script - so elements can enqueue their own scripts that depended in editor script.
 		$editor_data = $document->get_elements_raw_data( null, true );
 
-		wp_enqueue_script( 'elementor-editor' );
-
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
@@ -527,6 +525,7 @@ class Editor {
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
 			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
+			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
 			'locked_user' => $locked_user,
 			'user' => [
@@ -542,12 +541,22 @@ class Editor {
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
+			'editButtons' => get_option( 'elementor_edit_buttons' ),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
+				'got_it' => __( 'Got It', 'elementor' ),
+				/* translators: %s: Element type. */
+				'add_element' => __( 'Add %s', 'elementor' ),
 				/* translators: %s: Element name. */
 				'edit_element' => __( 'Edit %s', 'elementor' ),
+				/* translators: %s: Element type. */
+				'duplicate_element' => __( 'Duplicate %s', 'elementor' ),
+				/* translators: %s: Element type. */
+				'delete_element' => __( 'Delete %s', 'elementor' ),
+				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
+				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
 
 				// Menu.
 				'about_elementor' => __( 'About Elementor', 'elementor' ),
@@ -633,8 +642,6 @@ class Editor {
 				'take_over' => __( 'Take Over', 'elementor' ),
 
 				// Revisions.
-				/* translators: %s: Element type. */
-				'delete_element' => __( 'Delete %s', 'elementor' ),
 				/* translators: %s: Template type. */
 				'dialog_confirm_delete' => __( 'Are you sure you want to remove this %s?', 'elementor' ),
 
@@ -675,7 +682,6 @@ class Editor {
 				// Right Click Introduction
 				'meet_right_click_header' => __( 'Meet Right Click', 'elementor' ),
 				'meet_right_click_message' => __( 'Now you can access all editing actions using right click.', 'elementor' ),
-				'got_it' => __( 'Got It', 'elementor' ),
 
 				// Hotkeys screen
 				'keyboard_shortcuts' => __( 'Keyboard Shortcuts', 'elementor' ),
@@ -709,19 +715,9 @@ class Editor {
 			$config = array_replace_recursive( $config, $localized_settings );
 		}
 
-		echo '<script>' . PHP_EOL;
-		echo '/* <![CDATA[ */' . PHP_EOL;
-		$config_json = wp_json_encode( $config );
-		unset( $config );
+		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
 
-		if ( get_option( 'elementor_editor_break_lines' ) ) {
-			// Add new lines to avoid memory limits in some hosting servers that handles the buffer output according to new line characters
-			$config_json = str_replace( '}},"', '}},' . PHP_EOL . '"', $config_json );
-		}
-
-		echo 'var ElementorConfig = ' . $config_json . ';' . PHP_EOL;
-		echo '/* ]]> */' . PHP_EOL;
-		echo '</script>';
+		wp_enqueue_script( 'elementor-editor' );
 
 		$plugin->controls_manager->enqueue_control_scripts();
 

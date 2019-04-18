@@ -317,7 +317,7 @@ class Server_Reporter extends Base_Reporter {
 	 * }
 	 */
 	public function get_elementor_library() {
-		$response = wp_remote_post(
+		$response = wp_remote_get(
 			Api::$api_info_url, [
 				'timeout' => 5,
 				'body' => [

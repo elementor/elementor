@@ -43,19 +43,38 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 
 		delete unitRange.step;
 
+		let tooltips;
+
+		const self = this;
+
+		if ( isMultiple ) {
+			tooltips = [];
+
+			sizes.forEach( () => tooltips.push( {
+				to: ( value ) => value + self.getControlValue( 'unit' ),
+			} ) );
+		}
+
 		const sliderInstance = noUiSlider.create( this.ui.slider[ 0 ], {
 			start: sizes,
 			range: unitRange,
 			step: step,
-			tooltips: isMultiple,
+			tooltips: tooltips,
 			connect: isMultiple,
 			format: {
-				to: ( value ) => +value.toFixed( 1 ),
+				to: ( value ) => Math.round( value * 1000 ) / 1000,
 				from: ( value ) => +value,
 			},
 		} );
 
 		sliderInstance.on( 'slide', this.onSlideChange.bind( this ) );
+	},
+
+	applySavedValue: function() {
+		ControlBaseUnitsItemView.prototype.applySavedValue.apply( this, arguments );
+		if ( this.ui.slider[ 0 ].noUiSlider ) {
+			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
+		}
 	},
 
 	getSize: function() {
@@ -80,7 +99,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 
 	onReady: function() {
 		if ( this.isMultiple() ) {
-			this.$el.addClass( 'elementor-control-type-slider--multiple' );
+			this.$el.addClass( 'elementor-control-type-slider--multiple elementor-control-type-slider--handles-' + this.model.get( 'handles' ) );
 		}
 
 		this.initSlider();

@@ -27,15 +27,9 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	attributes: function() {
-		var type = this.model.get( 'elType' );
-
-		if ( 'widget' === type ) {
-			type = this.model.get( 'widgetType' );
-		}
-
 		return {
 			'data-id': this.getID(),
-			'data-element_type': type,
+			'data-element_type': this.model.get( 'elType' ),
 		};
 	},
 
@@ -174,6 +168,10 @@ BaseElementView = BaseContainer.extend( {
 		];
 	},
 
+	getEditButtons: function() {
+		return {};
+	},
+
 	initialize: function() {
 		BaseContainer.prototype.initialize.apply( this, arguments );
 
@@ -189,6 +187,31 @@ BaseElementView = BaseContainer.extend( {
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
+	},
+
+	getHandlesOverlay: function() {
+		const $handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ this.getElementType() }-settings` } );
+
+		jQuery.each( this.getEditButtons(), ( toolName, tool ) => {
+			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title } ),
+				$icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } ),
+				$a11y = jQuery( '<span>', { class: 'elementor-screen-only' } );
+
+			$a11y.text( tool.title );
+
+			$item.append( $icon, $a11y );
+
+			$overlayList.append( $item );
+		} );
+
+		$handlesOverlay.append( $overlayList );
+
+		return $handlesOverlay;
+	},
+
+	attachElContent: function( html ) {
+		this.$el.empty().append( this.getHandlesOverlay(), html );
 	},
 
 	startTransport: function( type ) {
@@ -761,6 +784,8 @@ BaseElementView = BaseContainer.extend( {
 
 	onDestroy: function() {
 		this.controlsCSSParser.removeStyleFromDocument();
+
+		this.getEditModel().get( 'settings' ).validators = {};
 
 		elementor.channels.data.trigger( 'element:destroy', this.model );
 	},

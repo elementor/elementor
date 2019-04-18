@@ -83,7 +83,7 @@ class Api {
 		if ( $force_update || false === $info_data ) {
 			$timeout = ( $force_update ) ? 25 : 8;
 
-			$response = wp_remote_post( self::$api_info_url, [
+			$response = wp_remote_get( self::$api_info_url, [
 				'timeout' => $timeout,
 				'body' => [
 					// Which API version is used.

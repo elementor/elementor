@@ -33,18 +33,6 @@ abstract class Widget_Base extends Element_Base {
 	protected $_has_template_content = true;
 
 	/**
-	 * Element edit tools.
-	 *
-	 * Holds all the edit tools of the element. For example: delete, duplicate etc.
-	 *
-	 * @access protected
-	 * @static
-	 *
-	 * @var array
-	 */
-	protected static $_edit_tools;
-
-	/**
 	 * Get element type.
 	 *
 	 * Retrieve the element type, in this case `widget`.
@@ -285,46 +273,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Get default edit tools.
-	 *
-	 * Retrieve the element default edit tools. Used to set initial tools.
-	 * By default the element has no edit tools.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 * @static
-	 *
-	 * @return array Default edit tools.
-	 */
-	protected static function get_default_edit_tools() {
-		$widget_label = __( 'Widget', 'elementor' );
-
-		$edit_tools = [
-			'edit' => [
-				'title' => __( 'Edit', 'elementor' ),
-				'icon' => 'edit',
-			],
-		];
-
-		if ( self::is_edit_buttons_enabled() ) {
-			$edit_tools += [
-				'duplicate' => [
-					/* translators: %s: Widget label */
-					'title' => sprintf( __( 'Duplicate %s', 'elementor' ), $widget_label ),
-					'icon' => 'clone',
-				],
-				'remove' => [
-					/* translators: %s: Widget label */
-					'title' => sprintf( __( 'Remove %s', 'elementor' ), $widget_label ),
-					'icon' => 'close',
-				],
-			];
-		}
-
-		return $edit_tools;
-	}
-
-	/**
 	 * Register widget skins.
 	 *
 	 * This method is activated while initializing the widget base class. It is
@@ -367,7 +315,7 @@ abstract class Widget_Base extends Element_Base {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		if ( $stack ) {
-			$config['controls'] = $this->get_controls();
+			$config['controls'] = $this->get_stack( false )['controls'];
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
 
@@ -394,7 +342,6 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $template_content Template content.
 	 */
 	protected function print_template_content( $template_content ) {
-		$this->render_edit_tools();
 		?>
 		<div class="elementor-widget-container">
 			<?php
@@ -465,7 +412,7 @@ abstract class Widget_Base extends Element_Base {
 
 		$settings = $this->get_settings();
 
-		$this->add_render_attribute( '_wrapper', 'data-element_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
+		$this->add_render_attribute( '_wrapper', 'data-widget_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
 	}
 
 	/**
@@ -506,11 +453,6 @@ abstract class Widget_Base extends Element_Base {
 		if ( empty( $widget_content ) ) {
 			return;
 		}
-
-		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			$this->render_edit_tools();
-		}
-
 		?>
 		<div class="elementor-widget-container">
 			<?php
