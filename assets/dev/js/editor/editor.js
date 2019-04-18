@@ -3,6 +3,7 @@ import Heartbeat from './utils/heartbeat';
 import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
+import DateTimeControl from 'elementor-controls/date-time';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -67,8 +68,9 @@ const App = Marionette.Application.extend( {
 			Choose: require( 'elementor-controls/choose' ),
 			Code: require( 'elementor-controls/code' ),
 			Color: require( 'elementor-controls/color' ),
-			Date_time: require( 'elementor-controls/date-time' ),
+			Date_time: DateTimeControl,
 			Dimensions: require( 'elementor-controls/dimensions' ),
+			Exit_animation: require( 'elementor-controls/select2' ),
 			Font: require( 'elementor-controls/font' ),
 			Gallery: require( 'elementor-controls/gallery' ),
 			Hover_animation: require( 'elementor-controls/select2' ),
@@ -164,13 +166,19 @@ const App = Marionette.Application.extend( {
 	},
 
 	getElementData: function( model ) {
-		var elType = model.get( 'elType' );
+		const elType = model.get( 'elType' );
 
 		if ( 'widget' === elType ) {
-			var widgetType = model.get( 'widgetType' );
+			const widgetType = model.get( 'widgetType' );
 
 			if ( ! this.config.widgets[ widgetType ] ) {
 				return false;
+			}
+
+			if ( ! this.config.widgets[ widgetType ].commonMerged ) {
+				jQuery.extend( this.config.widgets[ widgetType ].controls, this.config.widgets.common.controls );
+
+				this.config.widgets[ widgetType ].commonMerged = true;
 			}
 
 			return this.config.widgets[ widgetType ];
@@ -180,10 +188,10 @@ const App = Marionette.Application.extend( {
 			return false;
 		}
 
-		var elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
+		const elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
-			elementConfig.title = elementor.translate( 'inner_section' );
+			elementConfig.title = this.translate( 'inner_section' );
 		}
 
 		return elementConfig;
@@ -680,8 +688,8 @@ const App = Marionette.Application.extend( {
 				at: 'center center',
 			},
 			strings: {
-				confirm: elementor.translate( 'learn_more' ),
-				cancel: elementor.translate( 'go_back' ),
+				confirm: this.translate( 'learn_more' ),
+				cancel: this.translate( 'go_back' ),
 			},
 			onConfirm: null,
 			onCancel: function() {
@@ -696,6 +704,37 @@ const App = Marionette.Application.extend( {
 		options = jQuery.extend( true, defaultOptions, options );
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', options ).show();
+	},
+
+	showFlexBoxAttentionDialog: function() {
+		const introduction = new elementorModules.editor.utils.Introduction( {
+			introductionKey: 'flexbox',
+			dialogType: 'confirm',
+			dialogOptions: {
+				id: 'elementor-flexbox-attention-dialog',
+				headerMessage: this.translate( 'flexbox_attention_header' ),
+				message: this.translate( 'flexbox_attention_message' ),
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: this.translate( 'learn_more' ),
+					cancel: this.translate( 'got_it' ),
+				},
+				hide: {
+					onButtonClick: false,
+				},
+				onCancel: () => {
+					introduction.setViewed();
+
+					introduction.getDialog().hide();
+				},
+				onConfirm: () => open( this.config.help_flexbox_bc_url, '_blank' ),
+			},
+		} );
+
+		introduction.show();
 	},
 
 	checkPageStatus: function() {
@@ -1004,6 +1043,12 @@ const App = Marionette.Application.extend( {
 
 		this.openLibraryOnStart();
 
+		const isOldPageVersion = this.config.document.version && this.helpers.compareVersions( this.config.document.version, '2.5.0', '<' );
+
+		if ( ! this.config.user.introduction.flexbox && isOldPageVersion ) {
+			this.showFlexBoxAttentionDialog();
+		}
+
 		this.previewLoadedOnce = true;
 	},
 
@@ -1036,7 +1081,7 @@ const App = Marionette.Application.extend( {
 	onPreviewLoadingError: function() {
 		this.showFatalErrorDialog( {
 			headerMessage: this.translate( 'preview_not_loading_header' ),
-			message: this.translate( 'preview_not_loading_message' ),
+			message: this.translate( 'preview_not_loading_message' ) + '<br><a href="' + this.config.document.urls.preview + '" target="_blank">Preview Debug</a>',
 			onConfirm: function() {
 				open( elementor.config.help_preview_error_url, '_blank' );
 			},
@@ -1089,7 +1134,9 @@ const App = Marionette.Application.extend( {
 } );
 
 window.elementor = new App();
+
 if ( -1 === location.href.search( 'ELEMENTOR_TESTS=1' ) ) {
-	window.elementor.start();
+	elementor.start();
 }
-module.exports = window.elementor;
+
+module.exports = elementor;

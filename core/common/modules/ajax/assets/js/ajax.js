@@ -5,6 +5,7 @@ export default class extends elementorModules.Module {
 				type: 'POST',
 				url: elementorCommon.config.ajax.url,
 				data: {},
+				dataType: 'json',
 			},
 			actionPrefix: 'elementor_',
 		};

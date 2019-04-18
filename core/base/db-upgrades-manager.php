@@ -44,6 +44,12 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		return version_compare( $this->get_new_version(), $current_version, '>' );
 	}
 
+	public function on_runner_start() {
+		parent::on_runner_start();
+
+		define( 'IS_ELEMENTOR_UPGRADE', true );
+	}
+
 	public function on_runner_complete( $did_tasks = false ) {
 		$logger = Plugin::$instance->logger->get_logger();
 
@@ -156,11 +162,9 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	}
 
 	public function __construct() {
-		if ( ! is_admin() || ! current_user_can( 'update_plugins' ) ) {
-			return;
-		}
-
-		if ( $this->get_flag( 'completed' ) ) {
+		// If upgrade is completed - show the notice only for admins.
+		// Note: in this case `should_upgrade` returns false, because it's already upgraded.
+		if ( is_admin() && current_user_can( 'manage_options' ) && $this->get_flag( 'completed' ) ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_completed' ] );
 		}
 

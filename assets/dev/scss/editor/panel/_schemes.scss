@@ -59,20 +59,9 @@
 
 	.elementor-panel-scheme-items {
 		position: relative;
-	}
-
-	.elementor-panel-scheme-item {
-		display: inline-block;
-
-		&:not(:nth-child(4n)) {
-			@media(max-width: $editor-screen-lg-max) {
-				@include margin-end(13px);
-			}
-
-			@media(min-width: $editor-screen-xl-min) {
-				@include margin-end(19px);
-			}
-		}
+		display: grid;
+		grid-template-columns: repeat(4, 50px);
+		justify-content: space-between;
 	}
 
 	.wp-picker-container {

@@ -61,11 +61,12 @@ module.exports = elementorModules.ViewModule.extend( {
 		];
 
 		if ( self.onElementChange ) {
-			var elementName = self.getElementName(),
-				eventName = 'change';
+			const elementType = self.getWidgetType() || self.getElementType();
 
-			if ( 'global' !== elementName ) {
-				eventName += ':' + elementName;
+			let eventName = 'change';
+
+			if ( 'global' !== elementType ) {
+				eventName += ':' + elementType;
 			}
 
 			self.editorListeners.push( {
@@ -136,8 +137,18 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	getElementName: function() {
-		return this.$element.data( 'element_type' ).split( '.' )[ 0 ];
+	getElementType: function() {
+		return this.$element.data( 'element_type' );
+	},
+
+	getWidgetType: function() {
+		const widgetType = this.$element.data( 'widget_type' );
+
+		if ( ! widgetType ) {
+			return;
+		}
+
+		return widgetType.split( '.' )[ 0 ];
 	},
 
 	getID: function() {
@@ -155,7 +166,13 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		if ( this.isEdit && modelCID ) {
 			const settings = elementorFrontend.config.elements.data[ modelCID ],
-				type = settings.attributes.widgetType || settings.attributes.elType;
+				attributes = settings.attributes;
+
+			let type = attributes.widgetType || attributes.elType;
+
+			if ( attributes.isInner ) {
+				type = 'inner-' + type;
+			}
 
 			let settingsKeys = elementorFrontend.config.elements.keys[ type ];
 
@@ -171,7 +188,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			jQuery.each( settings.getActiveControls(), function( controlKey ) {
 				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
-					elementSettings[ controlKey ] = settings.attributes[ controlKey ];
+					elementSettings[ controlKey ] = attributes[ controlKey ];
 				}
 			} );
 		} else {

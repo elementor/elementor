@@ -48,10 +48,47 @@ ColumnView = BaseElementView.extend( {
 		return ui;
 	},
 
+	getEditButtons: function() {
+		const elementData = elementor.getElementData( this.model ),
+			editTools = {};
+
+		editTools.edit = {
+			title: elementor.translate( 'edit_element', [ elementData.title ] ),
+			icon: 'column',
+		};
+
+		if ( elementor.config.editButtons ) {
+			editTools.duplicate = {
+				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
+				icon: 'clone',
+			};
+
+			editTools.add = {
+				title: elementor.translate( 'add_element', [ elementData.title ] ),
+				icon: 'plus',
+			};
+
+			editTools.remove = {
+				title: elementor.translate( 'delete_element', [ elementData.title ] ),
+				icon: 'close',
+			};
+		}
+
+		return editTools;
+	},
+
 	initialize: function() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.addControlValidator( '_inline_size', this.onEditorInlineSizeInputChange );
+	},
+
+	attachElContent: function() {
+		BaseElementView.prototype.attachElContent.apply( this, arguments );
+
+		const $tooltip = jQuery( '<div>', { class: 'elementor-column-percents-tooltip' } );
+
+		this.$el.children( '.elementor-element-overlay' ).append( $tooltip );
 	},
 
 	getContextMenuGroups: function() {
