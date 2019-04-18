@@ -88,7 +88,7 @@ class Utils {
 		 * @param string $edit_link New URL query string (unescaped).
 		 * @param int    $post_id   Post ID.
 		 */
-		$edit_link = apply_filters( 'elementor/utils/get_edit_link', $edit_link, $post_id );
+		$edit_link = apply_filters_deprecated( 'elementor/utils/get_edit_link', [ $edit_link, $post_id ], '2.0.0', 'elementor/document/urls/edit' );
 
 		return $edit_link;
 	}
@@ -156,7 +156,7 @@ class Utils {
 		 * @param string $preview_url URL with chosen scheme.
 		 * @param int    $post_id     Post ID.
 		 */
-		$url = apply_filters( 'elementor/utils/preview_url', $url, $post_id );
+		$url = apply_filters_deprecated( 'elementor/utils/preview_url', [ $url, $post_id ], '2.0.0', 'elementor/document/urls/preview' );
 
 		return $url;
 	}
@@ -192,7 +192,7 @@ class Utils {
 		 * @param string $wp_preview_url WordPress preview URL.
 		 * @param int    $post_id        Post ID.
 		 */
-		$wp_preview_url = apply_filters( 'elementor/utils/wp_preview_url', $wp_preview_url, $post_id );
+		$wp_preview_url = apply_filters_deprecated( 'elementor/utils/wp_preview_url', [ $wp_preview_url, $post_id ], '2.0.0', 'elementor/document/urls/wp_preview' );
 
 		return $wp_preview_url;
 	}
