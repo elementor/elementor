@@ -201,6 +201,32 @@
 				$descriptions.hide();
 				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
 			} ).trigger( 'change' );
+
+			$( '.elementor_beta select' ).on( 'change', function() {
+				if ( 'yes' !== this.value ) {
+					return;
+				}
+				const betaMessage = self.translate( 'register_to_beta_newsletter_message' ) + '<br>' + self.translate( 'register_to_beta_your_email_message' ) + '<br><input type="email" id="elementor_beta_tester_email" value="' + self.config.beta_tester_default_email + '">';
+
+				elementorCommon.dialogsManager.createWidget( 'confirm', {
+					headerMessage: self.translate( 'register_to_beta_newsletter_header' ),
+					message: betaMessage,
+					strings: {
+						confirm: self.translate( 'register' ),
+						cancel: self.translate( 'cancel' ),
+					},
+					onConfirm: function() {
+						const $email = $( '#elementor_beta_tester_email' ).val();
+						if ( 'undefined' !== $email ) {
+							elementorCommon.ajax.addRequest( 'beta_tester_confirmed', {
+								data: {
+									betaTesterEmail: $email,
+								},
+							} );
+						}
+					},
+				} ).show();
+			} );
 		},
 
 		onInit: function() {
