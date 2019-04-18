@@ -282,21 +282,6 @@ class Editor {
 	}
 
 	/**
-	 * Print panel HTML.
-	 *
-	 * Include the wrapper template of the editor.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.2.0 Use `Editor::print_editor_template` instead
-	 * @access public
-	 */
-	public function print_panel_html() {
-		_deprecated_function( __METHOD__, '2.2.0', 'Editor::print_editor_template' );
-
-		$this->print_editor_template();
-	}
-
-	/**
 	 * Print Editor Template.
 	 *
 	 * Include the wrapper template of the editor.
@@ -887,7 +872,7 @@ class Editor {
 	 * Registers new editor templates.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.3.0 Use `Plugin::$instance->common->add_template( $template, $type )`
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->add_template()`
 	 * @access public
 	 *
 	 * @param string $template Can be either a link to template file or template
@@ -896,6 +881,8 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
+		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->add_template()' );
+
 		$common = Plugin::$instance->common;
 
 		if ( $common ) {
@@ -1020,6 +1007,8 @@ class Editor {
 	 *                     capabilities.
 	 */
 	public function create_nonce( $post_type ) {
+		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
+
 		/** @var Core\Common\Modules\Ajax\Module $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
@@ -1045,6 +1034,8 @@ class Editor {
 	 *                   between 12-24 hours ago it returns `2`.
 	 */
 	public function verify_nonce( $nonce ) {
+		// _deprecated_function( __METHOD__, '2.3.0', 'wp_verify_nonce()' );
+
 		return wp_verify_nonce( $nonce );
 	}
 
@@ -1060,6 +1051,8 @@ class Editor {
 	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
+		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
+
 		/** @var Core\Common\Modules\Ajax\Module $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
@@ -1077,6 +1070,8 @@ class Editor {
 	 * @access public
 	 */
 	public function verify_ajax_nonce() {
+		// _deprecated_function( __METHOD__, '2.3.0' );
+
 		/** @var Core\Common\Modules\Ajax\Module $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 

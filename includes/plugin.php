@@ -539,7 +539,7 @@ class Plugin {
 			$this->admin = new Admin();
 			$this->beta_testers = new Beta_Testers();
 
-			if ( Utils::is_ajax() ) {
+			if ( wp_doing_ajax() ) {
 				new Images_Manager();
 			}
 		}
