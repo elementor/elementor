@@ -488,8 +488,6 @@ class Editor {
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
 			'data' => $editor_data,
-			// @TODO: `post_id` is bc since 2.0.0
-			'post_id' => $this->_post_id,
 			'document' => $document->get_config(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'current_user_can_publish' => $current_user_can_publish,
@@ -518,8 +516,6 @@ class Editor {
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::get_introduction_meta(),
 			],
-			// @deprecated since 2.3.0 - Use `elementorCommon.config.isRTL` instead
-			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
 			'page_title_selector' => $page_title_selector,
