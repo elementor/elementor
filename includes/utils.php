@@ -21,14 +21,16 @@ class Utils {
 	 * Whether the current request is a WordPress ajax request.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.6.0 Use `wp_doing_ajax()` instead.
 	 * @access public
 	 * @static
 	 *
 	 * @return bool True if it's a WordPress ajax request, false otherwise.
 	 */
 	public static function is_ajax() {
-		// TODO: When minimum required version of WordPress will be 4.7, use `wp_doing_ajax()` instead.
-		return defined( 'DOING_AJAX' ) && DOING_AJAX;
+		// _deprecated_function( __METHOD__, '2.6.0', `wp_doing_ajax()` );
+
+		return wp_doing_ajax();
 	}
 
 	/**
@@ -139,7 +141,7 @@ class Utils {
 	 * @return string Post preview URL.
 	 */
 	public static function get_preview_url( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_preview_url()' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_preview_url()' );
 
 		$url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 
@@ -175,7 +177,7 @@ class Utils {
 	 * @return string WordPress preview URL.
 	 */
 	public static function get_wp_preview_url( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_wp_preview_url()' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_wp_preview_url()' );
 
 		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
 
@@ -261,7 +263,7 @@ class Utils {
 	 * @return string Exit to dashboard URL.
 	 */
 	public static function get_exit_to_dashboard_url( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url()' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url()' );
 
 		return Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url();
 	}
@@ -496,7 +498,7 @@ class Utils {
 	 * Retrieve a string saying when the post was saved or the last time it was edited.
 	 *
 	 * @since 1.9.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get()` method instead.
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get( $post_id )->get_last_edited()` method instead.
 	 *
 	 * @access public
 	 * @static
@@ -506,7 +508,7 @@ class Utils {
 	 * @return string Last edited string.
 	 */
 	public static function get_last_edited( $post_id ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get()' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_last_edited()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 

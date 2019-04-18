@@ -228,11 +228,10 @@ abstract class Base extends Base_File {
 		 *
 		 * @since 1.9.0
 		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/enqueue` action instead.
-		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
 		 * @param Base $this The current CSS file.
 		 */
-		do_action( "elementor/{$name}-css-file/enqueue", $this );
+		do_action_deprecated( "elementor/{$name}-css-file/enqueue", [ $this ], '2.0.0', "elementor/css-file/{$name}/enqueue" );
 
 		/**
 		 * Enqueue CSS file.
@@ -425,6 +424,8 @@ abstract class Base extends Base_File {
 	 * @return string The CSS.
 	 */
 	public function get_css() {
+		_deprecated_function( __METHOD__, '2.1.0', __CLASS__ . '::get_content()' );
+
 		return $this->get_content();
 	}
 
@@ -584,11 +585,10 @@ abstract class Base extends Base_File {
 		 *
 		 * @since 1.2.0
 		 * @deprecated 2.0.0 Use `elementor/css-file/{$name}/parse` action instead.
-		 * @todo Need to be hard deprecated using `do_action_deprecated()`.
 		 *
 		 * @param Base $this The current CSS file.
 		 */
-		do_action( "elementor/{$name}-css-file/parse", $this );
+		do_action_deprecated( "elementor/{$name}-css-file/parse", [ $this ], '2.0.0', "elementor/css-file/{$name}/parse" );
 
 		/**
 		 * Parse CSS file.
