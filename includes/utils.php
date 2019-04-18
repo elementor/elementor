@@ -447,52 +447,6 @@ class Utils {
 	}
 
 	/**
-	 * Do action deprecated.
-	 *
-	 * Fires functions attached to a deprecated action hook.
-	 *
-	 * @since 1.0.10
-	 * @access public
-	 * @static
-	 * @deprecated 2.1.0 Use `do_action_deprecated()` instead
-	 *
-	 * @param string $tag         The name of the action hook.
-	 * @param array  $args        Array of additional function arguments to be passed to `do_action()`.
-	 * @param string $version     The version of WordPress that deprecated the hook.
-	 * @param bool   $replacement Optional. The hook that should have been used.
-	 * @param string $message     Optional. A message regarding the change.
-	 */
-	public static function do_action_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
-		_deprecated_function( __METHOD__, '2.1.0', 'do_action_deprecated()' );
-
-		do_action_deprecated( $tag, $args, $version, $replacement, $message );
-	}
-
-	/**
-	 * Do filter deprecated.
-	 *
-	 * Fires functions attached to a deprecated filter hook.
-	 *
-	 * @since 1.0.10
-	 * @access public
-	 * @static
-	 * @deprecated 2.1.0 Use `apply_filters_deprecated()` instead
-	 *
-	 * @param string $tag         The name of the filter hook.
-	 * @param array  $args        Array of additional function arguments to be passed to `apply_filters()`.
-	 * @param string $version     The version of WordPress that deprecated the hook.
-	 * @param bool   $replacement Optional. The hook that should have been used.
-	 * @param string $message     Optional. A message regarding the change.
-	 *
-	 * @return mixed The filtered value after all hooked functions are applied to it.
-	 */
-	public static function apply_filters_deprecated( $tag, $args, $version, $replacement = false, $message = null ) {
-		_deprecated_function( __METHOD__, '2.1.0', 'apply_filters_deprecated()' );
-
-		return apply_filters_deprecated( $tag, $args, $version, $replacement, $message );
-	}
-
-	/**
 	 * Get last edited string.
 	 *
 	 * Retrieve a string saying when the post was saved or the last time it was edited.
