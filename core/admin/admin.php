@@ -731,6 +731,8 @@ class Admin extends App {
 	 * @access protected
 	 */
 	protected function get_init_settings() {
+		/** @var \WP_User $current_user */
+		$current_user = wp_get_current_user();
 		$settings = [
 			'home_url' => home_url(),
 			'i18n' => [
@@ -738,10 +740,15 @@ class Admin extends App {
 				'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
 				'yes' => __( 'Continue', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
+				'register' => __( 'Register', 'elementor' ),
 				'new_template' => __( 'New Template', 'elementor' ),
 				'back_to_wordpress_editor_message' => __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
 				'back_to_wordpress_editor_header' => __( 'Back to WordPress Editor', 'elementor' ),
+				'register_to_beta_newsletter_header' => __( 'Elementor Beta Newsletter', 'elementor' ),
+				'register_to_beta_newsletter_message' => __( 'Want to be the first to get Beta info & updates?', 'elementor' ),
+				'register_to_beta_your_email_message' => __( 'Leave your email below:', 'elementor' ),
 			],
+			'beta_tester_default_email' => $current_user->user_email,
 		];
 
 		return apply_filters( 'elementor/admin/localize_settings', $settings );
