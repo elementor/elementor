@@ -169,6 +169,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				'underline' => _x( 'Underline', 'Typography Control', 'elementor' ),
 				'overline' => _x( 'Overline', 'Typography Control', 'elementor' ),
 				'line-through' => _x( 'Line Through', 'Typography Control', 'elementor' ),
+				'underline overline' => _x( 'Underline & Overline', 'Typography Control', 'elementor' ),
 				'none' => _x( 'None', 'Typography Control', 'elementor' ),
 			],
 		];
