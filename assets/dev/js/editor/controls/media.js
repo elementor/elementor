@@ -77,8 +77,20 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			],
 		} );
 
+		this.frame.on( 'open', this.onFrameOpen.bind( this ) );
+
 		// When a file is selected, run a callback.
 		this.frame.on( 'insert select', this.select.bind( this ) );
+	},
+
+	onFrameOpen: function() {
+		const selectedId = this.getControlValue( 'id' );
+		if ( ! selectedId ) {
+			return;
+		}
+
+		const selection = this.frame.state().get( 'selection' );
+		selection.add( wp.media.attachment( selectedId ) );
 	},
 
 	/**
