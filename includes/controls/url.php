@@ -47,6 +47,7 @@ class Control_URL extends Control_Base_Multiple {
 			'url' => '',
 			'is_external' => '',
 			'nofollow' => '',
+			'force_download' => '',
 		];
 	}
 
@@ -65,6 +66,7 @@ class Control_URL extends Control_Base_Multiple {
 		return [
 			'label_block' => true,
 			'show_external' => true,
+			'force_download' => false,
 			'placeholder' => __( 'Paste URL or type', 'elementor' ),
 			'autocomplete' => true,
 			'dynamic' => [
@@ -92,6 +94,8 @@ class Control_URL extends Control_Base_Multiple {
 		$is_external_control_uid = $this->get_control_uid( 'is_external' );
 
 		$nofollow_control_uid = $this->get_control_uid( 'nofollow' );
+
+		$force_download_control_uid = $this->get_control_uid( 'force_download' );
 		?>
 		<div class="elementor-control-field elementor-control-url-external-{{{ data.show_external ? 'show' : 'hide' }}}">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
@@ -112,6 +116,10 @@ class Control_URL extends Control_Base_Multiple {
 					<div class="elementor-control-url-option">
 						<input id="<?php echo $nofollow_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="nofollow">
 						<label for="<?php echo $nofollow_control_uid; ?>"><?php echo __( 'Add nofollow', 'elementor' ); ?></label>
+					</div>
+					<div class="elementor-control-url-option">
+						<input id="<?php echo $force_download_control_uid; ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="force_download">
+						<label for="<?php echo $force_download_control_uid; ?>"><?php echo __( 'Force download', 'elementor' ); ?></label>
 					</div>
 				</div>
 			</div>
