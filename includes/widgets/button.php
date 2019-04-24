@@ -451,7 +451,6 @@ class Widget_Button extends Widget_Base {
 			if ( $settings['link']['force_download'] ) {
 				$this->add_render_attribute( 'button', 'download' );
 			}
-
 		}
 
 		$this->add_render_attribute( 'button', 'class', 'elementor-button' );
