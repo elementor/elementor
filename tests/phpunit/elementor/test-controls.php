@@ -176,6 +176,7 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 				'url' => 'THE_LINK',
 				'is_external' => '',
 				'nofollow' => '',
+				'force_download' => '',
 			], $url_control->get_value( $control_option, [ 'key' => [ 'is_external' => '' ] ] )
 		);
 
