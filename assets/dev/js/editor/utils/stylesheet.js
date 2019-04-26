@@ -1,8 +1,8 @@
 ( function( $ ) {
-
 	var Stylesheet = function() {
 		var self = this,
 			rules = {},
+			rawCSS = {},
 			devices = {};
 
 		var getDeviceMaxValue = function( deviceName ) {
@@ -34,8 +34,8 @@
 
 			hash.forEach( function( singleQuery ) {
 				var queryParts = singleQuery.split( '_' ),
-					endPoint = queryParts[0],
-					deviceName = queryParts[1];
+					endPoint = queryParts[ 0 ],
+					deviceName = queryParts[ 1 ];
 
 				query[ endPoint ] = 'max' === endPoint ? getDeviceMaxValue( deviceName ) : devices[ deviceName ];
 			} );
@@ -88,8 +88,8 @@
 			return '@media' + styleFormat.join( ' and ' );
 		};
 
-		this.addDevice = function( deviceName, deviceValue ) {
-			devices[ deviceName ] = deviceValue;
+		this.addDevice = function( newDeviceName, deviceValue ) {
+			devices[ newDeviceName ] = deviceValue;
 
 			var deviceNames = Object.keys( devices );
 
@@ -113,10 +113,14 @@
 			return self;
 		};
 
+		this.addRawCSS = function( key, css ) {
+			rawCSS[ key ] = css;
+		};
+
 		this.addRules = function( selector, styleRules, query ) {
 			var queryHash = 'all';
 
-			if ( query ) {
+			if ( ! _.isEmpty( query ) ) {
 				queryHash = queryToHash( query );
 			}
 
@@ -125,12 +129,14 @@
 			}
 
 			if ( ! styleRules ) {
-				var parsedRules = selector.match( /[^\s\\].+?(?=\{)\{.+?(?=})}/g );
+				var parsedRules = selector.match( /[^{]+\{[^}]+}/g );
 
 				$.each( parsedRules, function() {
-					var parsedRule = this.match( /(.+?(?=\{))\{(.+?(?=}))}/ );
+					var parsedRule = this.match( /([^{]+)\{([^}]+)}/ );
 
-					self.addRules( parsedRule[1], parsedRule[2], query );
+					if ( parsedRule ) {
+						self.addRules( parsedRule[ 1 ].trim(), parsedRule[ 2 ].trim(), query );
+					}
 				} );
 
 				return;
@@ -145,11 +151,15 @@
 
 				var orderedRules = {};
 
-				$.each( styleRules, function() {
-					var property = this.split( /:(.*)?/ );
+				try {
+					$.each( styleRules, function() {
+						var property = this.split( /:(.*)?/ );
 
-					orderedRules[ property[0].trim() ] = property[1].trim().replace( ';', '' );
-				} );
+						orderedRules[ property[ 0 ].trim() ] = property[ 1 ].trim().replace( ';', '' );
+					} );
+				} catch ( error ) { // At least one of the properties is incorrect
+					return;
+				}
 
 				styleRules = orderedRules;
 			}
@@ -165,6 +175,7 @@
 
 		this.empty = function() {
 			rules = {};
+			rawCSS = {};
 		};
 
 		this.toString = function() {
@@ -178,6 +189,10 @@
 				}
 
 				styleText += deviceText;
+			} );
+
+			$.each( rawCSS, function() {
+				styleText += this;
 			} );
 
 			return styleText;

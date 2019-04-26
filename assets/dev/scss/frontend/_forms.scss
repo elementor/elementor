@@ -12,6 +12,7 @@
 
 			> input, > textarea, > .elementor-select-wrapper, .elementor-field-subgroup {
 				flex-basis: 100%;
+				max-width: 100%; // Fix for Firefox browser
 			}
 		}
 	}
@@ -37,6 +38,7 @@
 
 	.elementor-field-textual {
 		width: 100%;
+		max-width: 100%; // Tweak for themes that set this property
 		border: 1px solid $gray;
 		background-color: transparent;
 		color: $gray-darker;
@@ -48,21 +50,8 @@
 			outline: 0;
 		}
 
-		// Keep the following rules each alone!
-		&::-webkit-input-placeholder {
-			color: inherit;
-			opacity: 0.5;
-		}
-
-		&::-moz-placeholder {
-			color: inherit;
-			opacity: 0.5;
-		}
-
-		&:-ms-input-placeholder {
-			color: inherit;
-			opacity: 0.5;
-		}
+		// Input Placeholder
+		@include input-placeholder();
 	}
 
 	.elementor-select-wrapper {
@@ -72,7 +61,16 @@
 
 		select {
 			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
 			color: inherit;
+			font-size: inherit;
+			font-family: inherit;
+			font-weight: inherit;
+			font-style: inherit;
+			text-transform: inherit;
+			letter-spacing: inherit;
+			line-height: inherit;
 			flex-basis: 100%;
 			@include padding-end(20px);
 		}
@@ -85,6 +83,13 @@
 			top: 50%;
 			transform: translateY(-50%);
 			@include end(10px);
+			pointer-events: none;
+		}
+	}
+
+	&.elementor-field-type-select-multiple{
+		.elementor-select-wrapper:before {
+			content: '';
 		}
 	}
 }
@@ -111,6 +116,22 @@
 
 		.elementor-field-option {
 			flex-basis: 100%;
+		}
+	}
+}
+
+.elementor-field-type-checkbox,
+.elementor-field-type-radio,
+.elementor-field-type-acceptance {
+
+	.elementor-field-subgroup {
+
+		.elementor-field-option {
+
+			input,
+			label {
+				display: inline;
+			}
 		}
 	}
 }
@@ -294,4 +315,3 @@
 		}
 	}
 }
-

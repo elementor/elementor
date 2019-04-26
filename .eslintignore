@@ -1,0 +1,6 @@
+assets/lib/**/*.js
+assets/js/*.js
+**/*.min.js
+**/node_modules/**
+**/vendor/**
+build/**

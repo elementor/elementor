@@ -1,0 +1,16 @@
+//
+// Document Settings Panel (formerly Page Settings)
+//
+
+.elementor-control {
+
+	&.elementor-control-clear_page {
+		background-color: transparent;
+
+		.elementor-control-raw-html{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+	}
+}

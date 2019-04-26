@@ -1,26 +1,25 @@
-var SectionView = require( 'elementor-views/section' ),
+var SectionView = require( 'elementor-elements/views/section' ),
+	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseSectionsContainerView;
 
-BaseSectionsContainerView = Marionette.CompositeView.extend( {
+BaseSectionsContainerView = BaseContainer.extend( {
 	childView: SectionView,
 
-	behaviors: {
-		Sortable: {
-			behaviorClass: require( 'elementor-behaviors/sortable' ),
-			elChildType: 'section'
-		},
-		HandleDuplicate: {
-			behaviorClass: require( 'elementor-behaviors/handle-duplicate' )
-		},
-		HandleAdd: {
-			behaviorClass: require( 'elementor-behaviors/duplicate' )
-		}
+	behaviors: function() {
+		var behaviors = {
+			Sortable: {
+				behaviorClass: require( 'elementor-behaviors/sortable' ),
+				elChildType: 'section',
+			},
+		};
+
+		return elementor.hooks.applyFilters( 'elements/base-section-container/behaviors', behaviors, this );
 	},
 
 	getSortableOptions: function() {
 		return {
-			handle: '> .elementor-container > .elementor-row > .elementor-column > .elementor-element-overlay .elementor-editor-section-settings-list .elementor-editor-element-trigger',
-			items: '> .elementor-section'
+			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
+			items: '> .elementor-section',
 		};
 	},
 
@@ -28,49 +27,31 @@ BaseSectionsContainerView = Marionette.CompositeView.extend( {
 		return [ 'section' ];
 	},
 
-	isCollectionFilled: function() {
-		return false;
-	},
-
 	initialize: function() {
+		BaseContainer.prototype.initialize.apply( this, arguments );
+
 		this
 			.listenTo( this.collection, 'add remove reset', this.onCollectionChanged )
 			.listenTo( elementor.channels.panelElements, 'element:drag:start', this.onPanelElementDragStart )
 			.listenTo( elementor.channels.panelElements, 'element:drag:end', this.onPanelElementDragEnd );
 	},
 
-	addChildModel: function( model, options ) {
-		return this.collection.add( model, options, true );
-	},
-
-	addSection: function( properties ) {
-		var newSection = {
-			id: elementor.helpers.getUniqueID(),
-			elType: 'section',
-			settings: {},
-			elements: []
-		};
-
-		if ( properties ) {
-			_.extend( newSection, properties );
-		}
-
-		var newModel = this.addChildModel( newSection );
-
-		return this.children.findByModelCid( newModel.cid );
-	},
-
 	onCollectionChanged: function() {
-		elementor.setFlagEditorChange( true );
+		elementor.saver.setFlagEditorChange( true );
 	},
 
 	onPanelElementDragStart: function() {
+		// A temporary workaround in order to fix Chrome's 70+ dragging above nested iframe bug
+		this.$el.find( '.elementor-background-video-embed' ).hide();
+
 		elementor.helpers.disableElementEvents( this.$el.find( 'iframe' ) );
 	},
 
 	onPanelElementDragEnd: function() {
+		this.$el.find( '.elementor-background-video-embed' ).show();
+
 		elementor.helpers.enableElementEvents( this.$el.find( 'iframe' ) );
-	}
+	},
 } );
 
 module.exports = BaseSectionsContainerView;

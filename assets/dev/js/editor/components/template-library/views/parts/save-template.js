@@ -7,15 +7,24 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	ui: {
 		form: '#elementor-template-library-save-template-form',
-		submitButton: '#elementor-template-library-save-template-submit'
+		submitButton: '#elementor-template-library-save-template-submit',
 	},
 
 	events: {
-		'submit @ui.form': 'onFormSubmit'
+		'submit @ui.form': 'onFormSubmit',
 	},
 
 	getSaveType: function() {
-		return this.model ? this.model.get( 'elType' ) : 'page';
+		let type;
+		if ( this.model ) {
+			type = this.model.get( 'elType' );
+		} else if ( elementor.config.document.library && elementor.config.document.library.save_as_same_type ) {
+			type = elementor.config.document.type;
+		} else {
+			type = 'page';
+		}
+
+		return type;
 	},
 
 	templateHelpers: function() {
@@ -29,14 +38,15 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
-			saveType = this.model ? this.model.get( 'elType' ) : 'page';
+			saveType = this.getSaveType(),
+			JSONParams = { remove: [ 'default' ] };
 
-		formData.data = this.model ? [ this.model.toJSON() ] : elementor.elements.toJSON();
+		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
 		elementor.templates.saveTemplate( saveType, formData );
-	}
+	},
 } );
 
 module.exports = TemplateLibrarySaveTemplateView;

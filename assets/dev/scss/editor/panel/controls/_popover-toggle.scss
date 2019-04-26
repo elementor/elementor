@@ -1,0 +1,46 @@
+.elementor-control-type-popover_toggle {
+
+	input {
+		display: none;
+	}
+
+	label {
+		cursor: pointer;
+	}
+
+	.elementor-control-input-wrapper {
+		direction: getInverseDirection();
+	}
+
+	.elementor-control-popover-toggle-toggle {
+
+		&:checked {
+
+			+ .elementor-control-popover-toggle-toggle-label {
+				color: $editor-info;
+			}
+		}
+
+		&:not(:checked) {
+
+			~ .elementor-control-popover-toggle-reset-label {
+				display: none;
+			}
+		}
+	}
+
+	.elementor-control-popover-toggle-reset-label {
+		color: $editor-lighter;
+		@include padding-end(5px);
+	}
+
+	.elementor-control-popover-toggle-toggle-label {
+		width: 50px;
+		height: 27px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 3px;
+		border: 1px solid $editor-lightest;
+	}
+}

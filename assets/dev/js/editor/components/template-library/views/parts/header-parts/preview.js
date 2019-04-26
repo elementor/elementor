@@ -1,16 +1,13 @@
-var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' ),
-	TemplateLibraryHeaderPreviewView;
+var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' );
 
-TemplateLibraryHeaderPreviewView = Marionette.ItemView.extend( {
+module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-preview',
 
 	id: 'elementor-template-library-header-preview',
 
 	behaviors: {
 		insertTemplate: {
-			behaviorClass: TemplateLibraryInsertTemplateBehavior
-		}
-	}
+			behaviorClass: TemplateLibraryInsertTemplateBehavior,
+		},
+	},
 } );
-
-module.exports = TemplateLibraryHeaderPreviewView;

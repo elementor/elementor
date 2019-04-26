@@ -14,7 +14,7 @@ var EventManager = function() {
 	 */
 	var STORAGE = {
 		actions: {},
-		filters: {}
+		filters: {},
 	};
 
 	/**
@@ -88,12 +88,26 @@ var EventManager = function() {
 		var hookObject = {
 			callback: callback,
 			priority: priority,
-			context: context
+			context: context,
 		};
 
 		// Utilize 'prop itself' : http://jsperf.com/hasownproperty-vs-in-vs-undefined/19
 		var hooks = STORAGE[ type ][ hook ];
 		if ( hooks ) {
+			// TEMP FIX BUG
+			var hasSameCallback = false;
+			jQuery.each( hooks, function() {
+				if ( this.callback === callback ) {
+					hasSameCallback = true;
+					return false;
+				}
+			} );
+
+			if ( hasSameCallback ) {
+				return;
+			}
+			// END TEMP FIX BUG
+
 			hooks.push( hookObject );
 			hooks = _hookInsertSort( hooks );
 		} else {
@@ -112,7 +126,9 @@ var EventManager = function() {
 	 * @private
 	 */
 	function _runHook( type, hook, args ) {
-		var handlers = STORAGE[ type ][ hook ], i, len;
+		var handlers = STORAGE[ type ][ hook ],
+			i,
+			len;
 
 		if ( ! handlers ) {
 			return ( 'filters' === type ) ? args[ 0 ] : false;
@@ -233,7 +249,7 @@ var EventManager = function() {
 		addFilter: addFilter,
 		removeAction: removeAction,
 		doAction: doAction,
-		addAction: addAction
+		addAction: addAction,
 	};
 
 	// return all of the publicly available methods

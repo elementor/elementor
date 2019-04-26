@@ -1,6 +1,5 @@
 
-/*= Elementor Feedback
----------------------------------------*/
+//Elementor Feedback
 
 @keyframes elementor-rotation {
 	0% {
@@ -21,18 +20,7 @@
 		width: 550px;
 	}
 
-	.dialog-close-button {
-
-		i {
-
-			&:before {
-				content: '\f335';
-				font: 20px dashicons;
-			}
-		}
-	}
-
-	.dialog-widget-header {
+	.dialog-header {
 		padding: 18px 15px;
 		box-shadow: $panel-bottom-shadow;
 		text-align: $start;
@@ -75,6 +63,7 @@
 		border-top: none;
 		text-align: $start;
 		padding: 20px 30px 30px;
+		overflow: hidden;
 	}
 
 	.dialog-submit {
@@ -83,7 +72,7 @@
 		color: #fff;
 		line-height: 1;
 		padding: 12px 20px;
-		font-size: 14px;
+		font-size: 13px;
 		width: 180px;
 		height: 38px;
 
@@ -103,6 +92,19 @@
 		color: $editor-light;
 		background: none;
 		float: $end;
+		width: auto;
+	}
+
+	&[data-feedback-selected="elementor_pro"] {
+
+		.elementor-feedback-text {
+			color: $editor-warning;
+			padding: 0;
+		}
+
+		.dialog-submit {
+			display: none;
+		}
 	}
 }
 

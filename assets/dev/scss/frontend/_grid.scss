@@ -92,14 +92,12 @@
 	}
 }
 
-
 // Row
 .elementor-row {
 	width: 100%;
 	display: flex;
 
-	/* In dragging mode it's causing a columns fall */
-	@media (max-width: $screen-sm-max) {
+	@media (max-width: $screen-md-max) {
 		flex-wrap: wrap;
 	}
 }
@@ -107,13 +105,23 @@
 // Widget
 .elementor-column-wrap {
 	width: 100%;
+	position: relative;
 	display: flex;
 }
 
 .elementor-widget-wrap {
 	position: relative;
 	width: 100%;
-	z-index: 1;
+	flex-wrap: wrap;
+	align-content: flex-start;
+
+	.elementor:not(.elementor-bc-flex-widget) & {
+		display: flex;
+	}
+
+	> .elementor-element {
+		width: 100%;
+	}
 }
 
 .elementor-widget {
@@ -121,6 +129,12 @@
 
 	&:not(:last-child) {
 		margin-bottom: 20px;
+
+		&.elementor-widget__width-auto,
+		&.elementor-widget__width-initial,
+		&.elementor-absolute {
+			margin-bottom: 0;
+		}
 	}
 }
 
@@ -192,7 +206,6 @@
 }
 
 // Responsive Grid
-
 @media (min-width: $screen-md-min) {
 
 	.elementor-column {
@@ -215,13 +228,76 @@
 	}
 }
 
+@mixin reverse-columns($device) {
+
+	.elementor-reverse#{$device} > .elementor-container > .elementor-row {
+		@for $i from 1 through 10 {
+			> :nth-child(#{$i}) {
+				order: -$i + 11;
+			}
+		}
+	}
+}
+
+@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+	@include reverse-columns(-tablet);
+}
+
 @media (max-width: $screen-sm-max) {
+	@include reverse-columns(-mobile);
 
 	.elementor-column {
-		width: 100%;
+		width: 100%; //Default width for mobile
+	}
+}
+
+// Minimal simple Grid
+
+ul.elementor-icon-list-items.elementor-inline-items {
+	display: flex;
+	flex-wrap: wrap;
+
+	.elementor-inline-item {
+		word-break: break-word;
+	}
+}
+
+// Simple 12 Columns responsive grid
+.elementor-grid {
+
+	.elementor-grid-item {
+		word-break: break-word;
+		min-width: 0; // Prevent columns from overflowing the grid area in Firefox browser
 	}
 
-	.elementor-reverse-mobile > .elementor-container > .elementor-row {
-		flex-direction: column-reverse;
+	@mixin grid_loop($device) {
+
+		&#{$device}-0 {
+			.elementor-grid {
+				display: flex;
+				overflow: hidden;
+				flex-wrap: wrap;
+			}
+		}
+
+		@for $i from 1 through 12 {
+			
+			&#{$device}-#{$i} {
+				.elementor-grid {
+					grid-template-columns: repeat(#{$i} , 1fr);
+					display: grid;
+				}
+			}
+		}
+	}
+
+	@include grid_loop('');
+
+	@media (max-width: $screen-md-max) {
+		@include grid_loop(-tablet);
+	}
+
+	@media (max-width: $screen-sm-max) {
+		@include grid_loop(-mobile);
 	}
 }

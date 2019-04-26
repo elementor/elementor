@@ -1,17 +1,48 @@
-module.exports = function( $scope, $ ) {
-	if ( elementorFrontend.isEditMode() ) {
-		return;
-	}
+const GlobalHandler = elementorModules.frontend.handlers.Base.extend( {
+	getWidgetType: function() {
+		return 'global';
+	},
+	animate: function() {
+		const $element = this.$element,
+			animation = this.getAnimation();
 
-	var animation = $scope.data( 'animation' );
+		if ( 'none' === animation ) {
+			$element.removeClass( 'elementor-invisible' );
+			return;
+		}
 
-	if ( ! animation ) {
-		return;
-	}
+		const elementSettings = this.getElementSettings(),
+			animationDelay = elementSettings._animation_delay || elementSettings.animation_delay || 0;
 
-	$scope.addClass( 'elementor-invisible' ).removeClass( animation );
+		$element.removeClass( animation );
 
-	elementorFrontend.utils.waypoint( $scope, function() {
-		$scope.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
-	}, { offset: '90%' } );
+		if ( this.currentAnimation ) {
+			$element.removeClass( this.currentAnimation );
+		}
+
+		this.currentAnimation = animation;
+
+		setTimeout( function() {
+			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
+		}, animationDelay );
+	},
+	getAnimation: function() {
+		return this.getCurrentDeviceSetting( 'animation' ) || this.getCurrentDeviceSetting( '_animation' );
+	},
+	onInit: function() {
+		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
+
+		if ( this.getAnimation() ) {
+			elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
+		}
+	},
+	onElementChange: function( propertyName ) {
+		if ( /^_?animation/.test( propertyName ) ) {
+			this.animate();
+		}
+	},
+} );
+
+module.exports = function( $scope ) {
+	elementorFrontend.elementsHandler.addHandler( GlobalHandler, { $element: $scope } );
 };

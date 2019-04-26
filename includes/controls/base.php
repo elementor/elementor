@@ -1,92 +1,114 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+use Elementor\Core\Base\Base_Object;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
- * A base control for creation of all controls in the panel. All controls accept all the params listed below.
+ * Elementor base control.
  *
- * @param string $label               The title of the control
- * @param mixed  $default             The default value
- * @param string $separator           Set the position of the control separator.
- *                                    'default' means that the separator will be posited depending on the control type.
- *                                    'before' || 'after' will force the separator position before/after the control.
- *                                    'none' will hide the separator
- *                                    Default: 'default'
- * @param bool   $show_label          Sets whether to show the title
- *                                    Default: true
- * @param bool   $label_block         Sets whether to display the title in a separate line
- *                                    Default: false
- * @param string $title               The title that will appear on mouse hover
- * @param string $placeholder         Available for fields that support placeholder
- * @param string $description         The field description that appears below the field
+ * An abstract class for creating new controls in the panel.
  *
  * @since 1.0.0
+ * @abstract
  */
-abstract class Control_Base {
+abstract class Base_Control extends Base_Object {
 
+	/**
+	 * Base settings.
+	 *
+	 * Holds all the base settings of the control.
+	 *
+	 * @access private
+	 *
+	 * @var array
+	 */
 	private $_base_settings = [
 		'label' => '',
-		'separator' => 'default',
+		'description' => '',
 		'show_label' => true,
 		'label_block' => false,
-		'title' => '',
-		'placeholder' => '',
-		'description' => '',
+		'separator' => 'default',
 	];
 
-	private $_settings = [];
+	/**
+	 * Get features.
+	 *
+	 * Retrieve the list of all the available features. Currently Elementor uses only
+	 * the `UI` feature.
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 * @static
+	 *
+	 * @return array Features array.
+	 */
+	public static function get_features() {
+		return [];
+	}
 
-	abstract public function content_template();
-
+	/**
+	 * Get control type.
+	 *
+	 * Retrieve the control type.
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 * @abstract
+	 */
 	abstract public function get_type();
 
+	/**
+	 * Control base constructor.
+	 *
+	 * Initializing the control base class.
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 */
 	public function __construct() {
-		$this->_settings = wp_parse_args( $this->get_default_settings(), $this->_base_settings );
+		$this->set_settings( array_merge( $this->_base_settings, $this->get_default_settings() ) );
+
+		$this->set_settings( 'features', static::get_features() );
 	}
 
+	/**
+	 * Enqueue control scripts and styles.
+	 *
+	 * Used to register and enqueue custom scripts and styles used by the control.
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 */
 	public function enqueue() {}
 
-	public function get_default_value() {
-		return '';
-	}
-
-	public function get_value( $control, $widget ) {
-		if ( ! isset( $control['default'] ) )
-			$control['default'] = $this->get_default_value();
-
-		if ( ! isset( $widget[ $control['name'] ] ) )
-			return $control['default'];
-
-		return $widget[ $control['name'] ];
-	}
-
-	public function get_style_value( $css_property, $control_value ) {
-		return $control_value;
-	}
-
 	/**
-	 * @param string $setting_key
+	 * Control content template.
 	 *
-	 * @return array
-	 * @since 1.0.0
+	 * Used to generate the control HTML in the editor using Underscore JS
+	 * template. The variables for the class are available using `data` JS
+	 * object.
+	 *
+	 * Note that the content template is wrapped by Base_Control::print_template().
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 * @abstract
 	 */
-	final public function get_settings( $setting_key = null ) {
-		if ( $setting_key ) {
-			if ( isset( $this->_settings[ $setting_key ] ) ) {
-				return $this->_settings[ $setting_key ];
-			}
-
-			return null;
-		}
-
-		return $this->_settings;
-	}
+	abstract public function content_template();
 
 	/**
-	 * @return void
+	 * Print control template.
 	 *
-	 * @since 1.0.0
+	 * Used to generate the control HTML in the editor using Underscore JS
+	 * template. The variables for the class are available using `data` JS
+	 * object.
+	 *
+	 * @since 1.5.0
+	 * @access public
 	 */
 	final public function print_template() {
 		?>
@@ -98,6 +120,17 @@ abstract class Control_Base {
 		<?php
 	}
 
+	/**
+	 * Get default control settings.
+	 *
+	 * Retrieve the default settings of the control. Used to return the default
+	 * settings while initializing the control.
+	 *
+	 * @since 1.5.0
+	 * @access protected
+	 *
+	 * @return array Control default settings.
+	 */
 	protected function get_default_settings() {
 		return [];
 	}

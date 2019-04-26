@@ -30,11 +30,13 @@
 // Forms > Input Placeholder
 @mixin placeholder-style() {
 	color: inherit;
+	font-family: inherit;
 	opacity: 0.6;
 }
 
 @mixin input-placeholder() {
 
+	// Keep the following rules each alone (Auto Prefix Bug)!
 	&::-webkit-input-placeholder {
 		@include placeholder-style();
 	}
@@ -48,6 +50,10 @@
 	}
 
 	&:-moz-placeholder {
+		@include placeholder-style();
+	}
+
+	&::placeholder {
 		@include placeholder-style();
 	}
 }
@@ -65,4 +71,5 @@
 		}
 	}
 }
+
 //End

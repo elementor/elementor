@@ -1,22 +1,99 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
+/**
+ * Elementor image widget.
+ *
+ * Elementor widget that displays an image into the page.
+ *
+ * @since 1.0.0
+ */
 class Widget_Image extends Widget_Base {
 
+	/**
+	 * Get widget name.
+	 *
+	 * Retrieve image widget name.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Widget name.
+	 */
 	public function get_name() {
 		return 'image';
 	}
 
+	/**
+	 * Get widget title.
+	 *
+	 * Retrieve image widget title.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Widget title.
+	 */
 	public function get_title() {
 		return __( 'Image', 'elementor' );
 	}
 
+	/**
+	 * Get widget icon.
+	 *
+	 * Retrieve image widget icon.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Widget icon.
+	 */
 	public function get_icon() {
-		return 'eicon-insert-image';
+		return 'eicon-image';
 	}
 
+	/**
+	 * Get widget categories.
+	 *
+	 * Retrieve the list of categories the image widget belongs to.
+	 *
+	 * Used to determine where to display the widget in the editor.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return array Widget categories.
+	 */
+	public function get_categories() {
+		return [ 'basic' ];
+	}
+
+	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'image', 'photo', 'visual' ];
+	}
+
+	/**
+	 * Register image widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_image',
@@ -30,6 +107,9 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
@@ -39,9 +119,9 @@ class Widget_Image extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
 			[
-				'name' => 'image', // Actually its `image_size`
-				'label' => __( 'Image Size', 'elementor' ),
+				'name' => 'image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_size` and `image_custom_dimension`.
 				'default' => 'large',
+				'separator' => 'none',
 			]
 		);
 
@@ -64,7 +144,6 @@ class Widget_Image extends Widget_Base {
 						'icon' => 'fa fa-align-right',
 					],
 				],
-				'default' => 'center',
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
 				],
@@ -72,20 +151,39 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
-			'caption',
+			'caption_source',
 			[
 				'label' => __( 'Caption', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'none' => __( 'None', 'elementor' ),
+					'attachment' => __( 'Attachment Caption', 'elementor' ),
+					'custom' => __( 'Custom Caption', 'elementor' ),
+				],
+				'default' => 'none',
+			]
+		);
+
+		$this->add_control(
+			'caption',
+			[
+				'label' => __( 'Custom Caption', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
-				'placeholder' => __( 'Enter your caption about the image', 'elementor' ),
-				'title' => __( 'Input image caption here', 'elementor' ),
+				'placeholder' => __( 'Enter your image caption', 'elementor' ),
+				'condition' => [
+					'caption_source' => 'custom',
+				],
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
 		$this->add_control(
 			'link_to',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'none',
 				'options' => [
@@ -99,13 +197,33 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => __( 'Link to', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'placeholder' => __( 'http://your-link.com', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
+				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'condition' => [
 					'link_to' => 'custom',
 				],
 				'show_label' => false,
+			]
+		);
+
+		$this->add_control(
+			'open_lightbox',
+			[
+				'label' => __( 'Lightbox', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'link_to' => 'file',
+				],
 			]
 		);
 
@@ -128,13 +246,53 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'space',
+		$this->add_responsive_control(
+			'width',
 			[
-				'label' => __( 'Size (%)', 'elementor' ),
+				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
-					'size' => 100,
+					'unit' => '%',
+				],
+				'tablet_default' => [
+					'unit' => '%',
+				],
+				'mobile_default' => [
+					'unit' => '%',
+				],
+				'size_units' => [ '%', 'px', 'vw' ],
+				'range' => [
+					'%' => [
+						'min' => 1,
+						'max' => 100,
+					],
+					'px' => [
+						'min' => 1,
+						'max' => 1000,
+					],
+					'vw' => [
+						'min' => 1,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image img' => 'width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'space',
+			[
+				'label' => __( 'Max Width', 'elementor' ) . ' (%)',
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'unit' => '%',
+				],
+				'tablet_default' => [
+					'unit' => '%',
+				],
+				'mobile_default' => [
 					'unit' => '%',
 				],
 				'size_units' => [ '%' ],
@@ -151,13 +309,26 @@ class Widget_Image extends Widget_Base {
 		);
 
 		$this->add_control(
+			'separator_panel_style',
+			[
+				'type' => Controls_Manager::DIVIDER,
+				'style' => 'thick',
+			]
+		);
+
+		$this->start_controls_tabs( 'image_effects' );
+
+		$this->start_controls_tab( 'normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
 			'opacity',
 			[
-				'label' => __( 'Opacity (%)', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 1,
-				],
 				'range' => [
 					'px' => [
 						'max' => 1,
@@ -171,6 +342,65 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters',
+				'selector' => '{{WRAPPER}} .elementor-image img',
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'opacity_hover',
+			[
+				'label' => __( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image:hover img' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}} .elementor-image:hover img',
+			]
+		);
+
+		$this->add_control(
+			'background_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image img' => 'transition-duration: {{SIZE}}s',
+				],
+			]
+		);
+
 		$this->add_control(
 			'hover_animation',
 			[
@@ -179,16 +409,20 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'label' => __( 'Image Border', 'elementor' ),
 				'selector' => '{{WRAPPER}} .elementor-image img',
+				'separator' => 'before',
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_border_radius',
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
@@ -204,6 +438,9 @@ class Widget_Image extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'image_box_shadow',
+				'exclude' => [
+					'box_shadow_position',
+				],
 				'selector' => '{{WRAPPER}} .elementor-image img',
 			]
 		);
@@ -215,6 +452,9 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => __( 'Caption', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'caption_source!' => 'none',
+				],
 			]
 		);
 
@@ -264,6 +504,17 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'caption_background_color',
+			[
+				'label' => __( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .widget-image-caption' => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
@@ -273,17 +524,87 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'caption_text_shadow',
+				'selector' => '{{WRAPPER}} .widget-image-caption',
+			]
+		);
+
+		$this->add_responsive_control(
+			'caption_space',
+			[
+				'label' => __( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .widget-image-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Check if the current widget has caption
+	 *
+	 * @access private
+	 * @since 2.3.0
+	 *
+	 * @param array $settings
+	 *
+	 * @return boolean
+	 */
+	private function has_caption( $settings ) {
+		return ( ! empty( $settings['caption_source'] ) && 'none' !== $settings['caption_source'] );
+	}
+
+	/**
+	 * Get the caption for current widget.
+	 *
+	 * @access private
+	 * @since 2.3.0
+	 * @param $settings
+	 *
+	 * @return string
+	 */
+	private function get_caption( $settings ) {
+		$caption = '';
+		if ( ! empty( $settings['caption_source'] ) ) {
+			switch ( $settings['caption_source'] ) {
+				case 'attachment':
+					$caption = wp_get_attachment_caption( $settings['image']['id'] );
+					break;
+				case 'custom':
+					$caption = ! empty( $settings['caption'] ) ? $settings['caption'] : '';
+			}
+		}
+		return $caption;
+	}
+
+	/**
+	 * Render image widget output on the frontend.
+	 *
+	 * Written in PHP and used to generate the final HTML.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['image']['url'] ) ) {
 			return;
 		}
 
-		$has_caption = ! empty( $settings['caption'] );
+		$has_caption = $this->has_caption( $settings );
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-image' );
 
@@ -294,54 +615,99 @@ class Widget_Image extends Widget_Base {
 		$link = $this->get_link_url( $settings );
 
 		if ( $link ) {
-			$this->add_render_attribute( 'link', 'href', $link['url'] );
+			$this->add_render_attribute( 'link', [
+				'href' => $link['url'],
+				'data-elementor-open-lightbox' => $settings['open_lightbox'],
+			] );
+
+			if ( Plugin::$instance->editor->is_edit_mode() ) {
+				$this->add_render_attribute( 'link', [
+					'class' => 'elementor-clickable',
+				] );
+			}
 
 			if ( ! empty( $link['is_external'] ) ) {
 				$this->add_render_attribute( 'link', 'target', '_blank' );
 			}
+
+			if ( ! empty( $link['nofollow'] ) ) {
+				$this->add_render_attribute( 'link', 'rel', 'nofollow' );
+			}
 		} ?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-		<?php
-		if ( $has_caption ) : ?>
-			<figure class="wp-caption">
-		<?php endif;
-
-		if ( $link ) : ?>
-				<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
-		<?php endif;
-
-		echo Group_Control_Image_Size::get_attachment_image_html( $settings );
-
-		if ( $link ) : ?>
-				</a>
-		<?php endif;
-
-		if ( $has_caption ) : ?>
-				<figcaption class="widget-image-caption wp-caption-text"><?php echo $settings['caption']; ?></figcaption>
-		<?php endif;
-
-		if ( $has_caption ) : ?>
-			</figure>
-		<?php endif; ?>
+			<?php if ( $has_caption ) : ?>
+				<figure class="wp-caption">
+			<?php endif; ?>
+			<?php if ( $link ) : ?>
+					<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
+			<?php endif; ?>
+				<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings ); ?>
+			<?php if ( $link ) : ?>
+					</a>
+			<?php endif; ?>
+			<?php if ( $has_caption ) : ?>
+					<figcaption class="widget-image-caption wp-caption-text"><?php echo $this->get_caption( $settings ); ?></figcaption>
+			<?php endif; ?>
+			<?php if ( $has_caption ) : ?>
+				</figure>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
 
+	/**
+	 * Render image widget output in the editor.
+	 *
+	 * Written as a Backbone JavaScript template and used to generate the live preview.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
 	protected function _content_template() {
 		?>
-		<# if ( '' !== settings.image.url ) {
+		<# if ( settings.image.url ) {
 			var image = {
 				id: settings.image.id,
 				url: settings.image.url,
 				size: settings.image_size,
 				dimension: settings.image_custom_dimension,
-				model: editModel
+				model: view.getEditModel()
 			};
 
 			var image_url = elementor.imagesManager.getImageUrl( image );
 
 			if ( ! image_url ) {
 				return;
+			}
+
+			var hasCaption = function() {
+				if( ! settings.caption_source || 'none' === settings.caption_source ) {
+					return false;
+				}
+				return true;
+			}
+
+			var ensureAttachmentData = function( id ) {
+				if ( 'undefined' === typeof wp.media.attachment( id ).get( 'caption' ) ) {
+					wp.media.attachment( id ).fetch().then( function( data ) {
+						view.render();
+					} );
+				}
+			}
+
+			var getAttachmentCaption = function( id ) {
+				if ( ! id ) {
+					return '';
+				}
+				ensureAttachmentData( id );
+				return wp.media.attachment( id ).get( 'caption' );
+			}
+
+			var getCaption = function() {
+				if ( ! hasCaption() ) {
+					return '';
+				}
+				return 'custom' === settings.caption_source ? settings.caption : getAttachmentCaption( settings.image.id );
 			}
 
 			var link_url;
@@ -355,19 +721,18 @@ class Widget_Image extends Widget_Base {
 			}
 
 			#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
-			var imgClass = '',
-				hasCaption = '' !== settings.caption;
+			var imgClass = '';
 
 			if ( '' !== settings.hover_animation ) {
 				imgClass = 'elementor-animation-' + settings.hover_animation;
 			}
 
-			if ( hasCaption ) {
+			if ( hasCaption() ) {
 				#><figure class="wp-caption"><#
 			}
 
 			if ( link_url ) {
-					#><a href="{{ link_url }}"><#
+					#><a class="elementor-clickable" data-elementor-open-lightbox="{{ settings.open_lightbox }}" href="{{ link_url }}"><#
 			}
 						#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
 
@@ -375,11 +740,11 @@ class Widget_Image extends Widget_Base {
 					#></a><#
 			}
 
-			if ( hasCaption ) {
-					#><figcaption class="widget-image-caption wp-caption-text">{{{ settings.caption }}}</figcaption><#
+			if ( hasCaption() ) {
+					#><figcaption class="widget-image-caption wp-caption-text">{{{ getCaption() }}}</figcaption><#
 			}
 
-			if ( hasCaption ) {
+			if ( hasCaption() ) {
 				#></figure><#
 			}
 
@@ -388,20 +753,30 @@ class Widget_Image extends Widget_Base {
 		<?php
 	}
 
-	private function get_link_url( $instance ) {
-		if ( 'none' === $instance['link_to'] ) {
+	/**
+	 * Retrieve image widget link URL.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @param array $settings
+	 *
+	 * @return array|string|false An array/string containing the link URL, or false if no link.
+	 */
+	private function get_link_url( $settings ) {
+		if ( 'none' === $settings['link_to'] ) {
 			return false;
 		}
 
-		if ( 'custom' === $instance['link_to'] ) {
-			if ( empty( $instance['link']['url'] ) ) {
+		if ( 'custom' === $settings['link_to'] ) {
+			if ( empty( $settings['link']['url'] ) ) {
 				return false;
 			}
-			return $instance['link'];
+			return $settings['link'];
 		}
 
 		return [
-			'url' => $instance['image']['url'],
+			'url' => $settings['image']['url'],
 		];
 	}
 }

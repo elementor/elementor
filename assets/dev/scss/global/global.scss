@@ -1,0 +1,34 @@
+@import "../../../../assets/dev/scss/helpers/variables";
+@import "../../../../assets/dev/scss/editor/breakpoints";
+@import "dialog";
+@import "aspect_ratio";
+@import "flatpicker";
+@import "modal-wrapper";
+
+.elementor-hidden {
+	display: none;
+}
+
+.elementor-screen-only,
+.screen-reader-text, // wp - common.css
+.screen-reader-text span, // wp - common.css
+.ui-helper-hidden-accessible // wp - common.css
+{
+	position: absolute;
+	top: -10000em; //for safari browser compatibility
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0,0,0,0);
+	border: 0;
+}
+
+.elementor-clearfix:after{
+	content: '';
+	display: block;
+	clear: both;
+	width: 0;
+	height: 0;
+}

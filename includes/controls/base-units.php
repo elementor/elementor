@@ -1,47 +1,48 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
- * A group of Dimensions settings (Top, Right, Bottom, Left) With the option to link them together
+ * Elementor control base units.
  *
- * @param array  $default {
- * 		@type integer       $top                     Default empty
- * 		@type integer       $right                   Default empty
- * 		@type integer       $bottom                  Default empty
- * 		@type integer       $left                    Default empty
- * 		@type string        $unit                    The selected CSS Unit. 'px', '%', 'em'
- * 		                               				 Default 'px'
- * 		@type bool          $isLinked                Whether to link them together ( prevent set different values )
- * 		                               				 Default true
- * }
+ * An abstract class for creating new unit controls in the panel.
  *
- * @param array        $size_units              Array of available CSS Units like 'px', '%', 'em'
- *                                              Default [ 'px' ]
- * @param array|string $allowed_dimensions      Which fields to show, 'all' | 'horizontal' | 'vertical' | [ 'top', 'left' ... ]
- *                                              Default 'all'
- * @param array  $range {
- *     {
- * 		@type integer $min        The minimum value of range
- * 		@type integer $max        The maximum value of range
- * 		@type integer $step       The interval that the slider moves on
- *    },
- *    ...
- * }
- *
- * The range param is default populated with ranges for px|em|rem|%|deg @see Control_Base_Units::get_default_settings()
- *
- * @since                         1.0.0
+ * @since 1.0.0
+ * @abstract
  */
 abstract class Control_Base_Units extends Control_Base_Multiple {
 
+	/**
+	 * Get units control default value.
+	 *
+	 * Retrieve the default value of the units control. Used to return the default
+	 * values while initializing the units control.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Control default value.
+	 */
 	public function get_default_value() {
 		return [
 			'unit' => 'px',
 		];
 	}
 
+	/**
+	 * Get units control default settings.
+	 *
+	 * Retrieve the default settings of the units control. Used to return the default
+	 * settings while initializing the units control.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Control default settings.
+	 */
 	protected function get_default_settings() {
 		return [
 			'size_units' => [ 'px' ],
@@ -71,13 +72,31 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 					'max' => 360,
 					'step' => 1,
 				],
+				'vh' => [
+					'min' => 0,
+					'max' => 100,
+					'step' => 1,
+				],
+				'vw' => [
+					'min' => 0,
+					'max' => 100,
+					'step' => 1,
+				],
 			],
 		];
 	}
 
+	/**
+	 * Print units control settings.
+	 *
+	 * Used to generate the units control template in the editor.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
 	protected function print_units_template() {
 		?>
-		<# if ( data.size_units.length > 1 ) { #>
+		<# if ( data.size_units && data.size_units.length > 1 ) { #>
 		<div class="elementor-units-choices">
 			<# _.each( data.size_units, function( unit ) { #>
 			<input id="elementor-choose-{{ data._cid + data.name + unit }}" type="radio" name="elementor-choose-{{ data.name }}" data-setting="unit" value="{{ unit }}">

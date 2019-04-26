@@ -1,36 +1,116 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
+/**
+ * Elementor color picker scheme.
+ *
+ * Elementor color picker scheme class is responsible for initializing a scheme
+ * for color pickers.
+ *
+ * @since 1.0.0
+ */
 class Scheme_Color_Picker extends Scheme_Color {
 
+	/**
+	 * 5th color scheme.
+	 */
 	const COLOR_5 = '5';
+
+	/**
+	 * 6th color scheme.
+	 */
 	const COLOR_6 = '6';
+
+	/**
+	 * 7th color scheme.
+	 */
 	const COLOR_7 = '7';
+
+	/**
+	 * 9th color scheme.
+	 */
 	const COLOR_8 = '8';
 
+	/**
+	 * Get color picker scheme type.
+	 *
+	 * Retrieve the color picker scheme type.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @static
+	 *
+	 * @return string Color picker scheme type.
+	 */
 	public static function get_type() {
 		return 'color-picker';
 	}
+
+	/**
+	 * Get color picker scheme description.
+	 *
+	 * Retrieve the color picker scheme description.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @static
+	 *
+	 * @return string Color picker scheme description.
+	 */
 
 	public static function get_description() {
 		return __( 'Choose which colors appear in the editor\'s color picker. This makes accessing the colors you chose for the site much easier.', 'elementor' );
 	}
 
+	/**
+	 * Get default color picker scheme.
+	 *
+	 * Retrieve the default color picker scheme.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Default color picker scheme.
+	 */
 	public function get_default_scheme() {
-		return array_replace( parent::get_default_scheme(), [
-			self::COLOR_5 => '#4054b2',
-			self::COLOR_6 => '#23a455',
-			self::COLOR_7 => '#000',
-			self::COLOR_8 => '#fff',
-		] );
+		return array_replace(
+			parent::get_default_scheme(), [
+				self::COLOR_5 => '#4054b2',
+				self::COLOR_6 => '#23a455',
+				self::COLOR_7 => '#000',
+				self::COLOR_8 => '#fff',
+			]
+		);
 	}
 
+	/**
+	 * Get color picker scheme titles.
+	 *
+	 * Retrieve the color picker scheme titles.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return array Color picker scheme titles.
+	 */
 	public function get_scheme_titles() {
 		return [];
 	}
 
+	/**
+	 * Init system color picker schemes.
+	 *
+	 * Initialize the system color picker schemes.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array System color picker schemes.
+	 */
 	protected function _init_system_schemes() {
 		$schemes = parent::_init_system_schemes();
 
@@ -103,6 +183,16 @@ class Scheme_Color_Picker extends Scheme_Color {
 		return $schemes;
 	}
 
+	/**
+	 * Get system color picker schemes to print.
+	 *
+	 * Retrieve the system color picker schemes
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return string The system color picker schemes.
+	 */
 	protected function _get_system_schemes_to_print() {
 		$schemes = $this->get_system_schemes();
 
@@ -124,6 +214,16 @@ class Scheme_Color_Picker extends Scheme_Color {
 		return $schemes;
 	}
 
+	/**
+	 * Get current color picker scheme title.
+	 *
+	 * Retrieve the current color picker scheme title.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return string The current color picker scheme title.
+	 */
 	protected function _get_current_scheme_title() {
 		return __( 'Color Picker', 'elementor' );
 	}
