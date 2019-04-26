@@ -59,17 +59,19 @@
 	float: left;
 	height: 100%;
 	min-height: 1px;
-	[dir="rtl"] & {
+	display: none;
+
+	.elementor-slick-slider[dir="rtl"] & {
 		float: right;
 	}
+
 	img {
 		display: block;
 	}
+
 	&.slick-loading img {
 		display: none;
 	}
-
-	display: none;
 
 	&.dragging img {
 		pointer-events: none;
@@ -101,7 +103,19 @@
 .elementor-slick-slider {
 
 	.slick-loading .slick-list {
-		background: #fff url('../images/ajax-loader.gif') center center no-repeat;
+		background: #fff;
+
+		&:after {
+			content: '\f1ce';
+			font-family: FontAwesome;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			animation: fa-spin 2s infinite linear;
+			font-size: 25px;
+			color: $editor-light;
+		}
 	}
 
 	// Arrows

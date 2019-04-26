@@ -1,10 +1,30 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
+/**
+ * Elementor images manager.
+ *
+ * Elementor images manager handler class is responsible for retrieving image
+ * details.
+ *
+ * @since 1.0.0
+ */
 class Images_Manager {
 
+	/**
+	 * Get images details.
+	 *
+	 * Retrieve details for all the images.
+	 *
+	 * Fired by `wp_ajax_elementor_get_images_details` action.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	public function get_images_details() {
 		$items = $_POST['items'];
 		$urls  = [];
@@ -16,7 +36,30 @@ class Images_Manager {
 		wp_send_json_success( $urls );
 	}
 
+	/**
+	 * Get image details.
+	 *
+	 * Retrieve single image details.
+	 *
+	 * Fired by `wp_ajax_elementor_get_image_details` action.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param string       $id            Image attachment ID.
+	 * @param string|array $size          Image size. Accepts any valid image
+	 *                                    size, or an array of width and height
+	 *                                    values in pixels (in that order).
+	 * @param string       $is_first_time Set 'true' string to force reloading
+	 *                                    all image sizes.
+	 *
+	 * @return array URLs with different image sizes.
+	 */
 	public function get_details( $id, $size, $is_first_time ) {
+		if ( ! class_exists( 'Group_Control_Image_Size' ) ) {
+			require_once ELEMENTOR_PATH . '/includes/controls/groups/image-size.php';
+		}
+
 		if ( 'true' === $is_first_time ) {
 			$sizes = get_intermediate_image_sizes();
 			$sizes[] = 'full';
@@ -47,10 +90,15 @@ class Images_Manager {
 		return $urls;
 	}
 
+	/**
+	 * Images manager constructor.
+	 *
+	 * Initializing Elementor images manager.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	public function __construct() {
-		add_action( 'wp_ajax_elementor_get_image_details', [ $this, 'get_image_details' ] );
 		add_action( 'wp_ajax_elementor_get_images_details', [ $this, 'get_images_details' ] );
 	}
 }
-
-new Images_Manager();

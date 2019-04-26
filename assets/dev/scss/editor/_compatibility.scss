@@ -1,26 +1,36 @@
-// Compatibility elementor editor for themes and plugins
-
+// Compatibility elementor editor for themes and plugins (Preview)
 
 body.elementor-editor-active {
 
-	// Hack for pojo.me themes
-	&.layout-section {
+	.elementor {
 
-		.entry-content {
-			overflow: visible;
-		}
-	}
+		&.elementor-edit-mode {
 
-	// Hack for bluchic.com themes
-	.article {
-		overflow: visible;
-	}
+			// Hack for pojo.me themes
+			&.layout-section {
 
-	// Hack for Zerif Pro theme
-	.elementor-element-overlay {
+				.entry-content {
+					overflow: visible;
+				}
+			}
 
-		.elementor-editor-element-settings-list {
-			clear: unset;
+			// Hack for bluchic.com themes
+			.article {
+				overflow: visible;
+			}
+
+			// Hack for Zerif Pro theme
+			.elementor-element-overlay {
+
+				.elementor-editor-element-settings {
+					clear: unset;
+				}
+			}
+
+			// Hack for some stupid themes
+			.elementor-element.elementor-section {
+				overflow: visible;
+			}
 		}
 	}
 }
@@ -32,9 +42,12 @@ body.elementor-editor-active {
 		animation-fill-mode: none !important;
 	}
 
-	// Fixes Make theme issue
-	.elementor-editor-element-settings-list {
+	// Hack for Make theme issue
+	ul.elementor-editor-element-settings {
 		word-break: normal;
+
+		// Hack for Divi theme
+		padding: 0;
 	}
 
 	// Hack for jQuery Masonry Image Gallery plugin

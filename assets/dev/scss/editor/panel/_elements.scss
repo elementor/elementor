@@ -1,6 +1,14 @@
 //
 // Panel Elements
 //
+#elementor-panel-page-elements {
+
+	body:not(.elementor-controls-ready) & {
+		height: 100%;
+		overflow: hidden;
+	}
+}
+
 #elementor-panel-elements-navigation {
 
 	.elementor-panel-navigation-tab {
@@ -15,7 +23,28 @@
 #elementor-panel-elements {
 	overflow: hidden;
 	padding: 0 5px;
+}
 
+#elementor-panel-elements-loading {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(255, 255, 255, 0.5);
+	z-index: 1;
+
+	body.elementor-controls-ready & {
+		display: none;
+	}
+
+	.eicon-loading {
+		font-size: 25px;
+		color: $editor-info;
+	}
 }
 
 .elementor-element-wrapper {
@@ -74,17 +103,25 @@
 }
 
 #elementor-panel-elements-search-input {
+	background-color: rgba(255,255,255,.7);
 	font-size: 11px;
-	border-radius: 0;
-	@include padding(10px, 27px, 10px, 0);
+	@include padding(10px, 27px, 10px, 10px);
 	font-style: italic;
 	color: $editor-light;
 	border: none;
 	transition: all 1s;
+	border-radius: 3px;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+
+	+ i {
+		@include end(10px);
+	}
 
 	&:focus {
-		background-color: rgba(255,255,255,.7);
-		padding-left: 15px;
+		background-color: rgba(255,255,255,1);
+		@include padding-start(15px);
 
 		+ i {
 			@include end(15px);

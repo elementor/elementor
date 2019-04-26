@@ -1,59 +1,66 @@
-var Introduction;
+export default class extends elementorModules.Module {
+	constructor( ...args ) {
+		super( ...args );
 
-Introduction = function() {
-	var self = this,
-		modal;
+		this.initDialog();
+	}
 
-	var initModal = function() {
-		modal = elementor.dialogsManager.createWidget( 'elementor-modal', {
-			id: 'elementor-introduction'
-		} );
+	getDefaultSettings() {
+		return {
+			dialogType: 'buttons',
+			dialogOptions: {
+				effects: {
+					hide: 'hide',
+					show: 'show',
+				},
+				hide: {
+					onBackgroundClick: false,
+				},
+			},
+		};
+	}
 
-		modal.getElements( 'closeButton' ).on( 'click', function() {
-			self.setIntroductionViewed();
-		} );
+	initDialog() {
+		let dialog;
 
-		modal.on( 'hide', function() {
-			modal.getElements( 'message' ).empty(); // In order to stop the video
-		} );
-	};
+		this.getDialog = () => {
+			if ( ! dialog ) {
+				const settings = this.getSettings();
 
-	this.getSettings = function() {
-		return elementor.config.introduction;
-	};
+				dialog = elementorCommon.dialogsManager.createWidget( settings.dialogType, settings.dialogOptions );
 
-	this.getModal = function() {
-		if ( ! modal ) {
-			initModal();
-		}
+				if ( settings.onDialogInitCallback ) {
+					settings.onDialogInitCallback.call( this, dialog );
+				}
+			}
 
-		return modal;
-	};
+			return dialog;
+		};
+	}
 
-	this.startIntroduction = function() {
-		var settings = this.getSettings();
-
-		this.getModal()
-		    .setHeaderMessage( settings.title )
-		    .setMessage( settings.content )
-		    .show();
-	};
-
-	this.startOnLoadIntroduction = function() {
-		var settings = this.getSettings();
-
-		if ( ! settings.is_user_should_view ) {
+	show( target ) {
+		if ( this.introductionViewed ) {
 			return;
 		}
 
-		setTimeout( _.bind( function() {
-			this.startIntroduction();
-		}, this ), settings.delay );
-	};
+		const dialog = this.getDialog();
 
-	this.setIntroductionViewed = function() {
-		elementor.ajax.send( 'introduction_viewed' );
-	};
-};
+		if ( target ) {
+			dialog.setSettings( 'position', {
+				of: target,
+			} );
+		}
 
-module.exports = new Introduction();
+		dialog.show();
+	}
+
+	setViewed() {
+		this.introductionViewed = true;
+
+		elementorCommon.ajax.addRequest( 'introduction_viewed', {
+			data: {
+				introductionKey: this.getSettings( 'introductionKey' ),
+			},
+		} );
+	}
+}

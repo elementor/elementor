@@ -1,0 +1,85 @@
+.elementor-history- {
+
+	&item {
+		display: flex;
+		align-items: center;
+		border: 1px solid $editor-lightest;
+		padding: 10px 15px;
+		margin-bottom: 10px;
+		font-size: 11px;
+		line-height: 1.4;
+		cursor: pointer;
+
+		&:hover {
+			background-color: fade_out($editor-background, 0.7) ;
+
+			.elementor-history-item__icon{
+				.fa:before {
+					content:'\f1da';
+				}
+			}
+		}
+
+		&-applied {
+			color: $editor-light;
+		}
+
+		&-current {
+			background: $editor-background;
+			cursor: default;
+
+			.elementor-history-item__icon, &:hover .elementor-history-item__icon{
+				.fa:before {
+					content:'\f00c';
+				}
+			}
+		}
+
+		&__details{
+			width: 95%;
+		}
+
+		&__title {
+			font-weight: bold;
+		}
+
+		&__subtitle, &__action {
+			font-weight: lighter;
+		}
+
+		&__action {
+			font-style: italic;
+			text-decoration: underline;
+		}
+
+		.__icon {
+			 float: $end;
+		 }
+	}
+
+	&revisions-message{
+		font-size: 11px;
+		text-align: center;
+		padding-top: 5px;
+	}
+}
+
+#elementor-panel-history {
+	padding: 20px 20px 15px;
+
+	&.elementor-empty {
+
+		.elementor-history-revisions-message {
+			padding-top: 20px;
+		}
+	}
+
+	&:not(.elementor-empty) {
+		background-color: #fff;
+		margin-top: 10px;
+	}
+}
+
+#elementor-panel-history-no-items {
+	text-align: center;
+}

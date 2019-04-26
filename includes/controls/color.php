@@ -1,39 +1,47 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
- * A Color Picker control.
+ * Elementor color control.
  *
- * @param string $default    A color, in rgb|rgba|hex format.
- *                           Default empty
- * @param bool   $alpha      Whether to allow set the alpha channel
- *                           Default true
+ * A base control for creating color control. Displays a color picker field with
+ * an alpha slider. Includes a customizable color palette that can be preset by
+ * the user. Accepts a `scheme` argument that allows you to set a value from the
+ * active color scheme as the default value returned by the control.
+ *
  * @since 1.0.0
  */
-class Control_Color extends Control_Base {
+class Control_Color extends Base_Data_Control {
 
+	/**
+	 * Get color control type.
+	 *
+	 * Retrieve the control type, in this case `color`.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Control type.
+	 */
 	public function get_type() {
 		return 'color';
 	}
 
+	/**
+	 * Enqueue color control scripts and styles.
+	 *
+	 * Used to register and enqueue custom scripts and styles used by the color
+	 * control.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	public function enqueue() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		wp_register_script( 'iris', admin_url( '/js/iris.min.js' ), [ 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ], '1.0.7', 1 );
-		wp_register_script( 'wp-color-picker', admin_url( '/js/color-picker.min.js' ), [ 'iris' ], false, true );
-
-		wp_localize_script(
-			'wp-color-picker',
-			'wpColorPickerL10n',
-			[
-				'clear' => __( 'Clear', 'elementor' ),
-				'defaultString' => __( 'Default', 'elementor' ),
-				'pick' => __( 'Select Color', 'elementor' ),
-				'current' => __( 'Current Color', 'elementor' ),
-			]
-		);
 
 		wp_register_script(
 			'wp-color-picker-alpha',
@@ -41,7 +49,7 @@ class Control_Color extends Control_Base {
 			[
 				'wp-color-picker',
 			],
-			'1.1',
+			'2.0.1',
 			true
 		);
 
@@ -49,17 +57,23 @@ class Control_Color extends Control_Base {
 		wp_enqueue_script( 'wp-color-picker-alpha' );
 	}
 
+	/**
+	 * Render color control output in the editor.
+	 *
+	 * Used to generate the control HTML in the editor using Underscore JS
+	 * template. The variables for the class are available using `data` JS
+	 * object.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	public function content_template() {
 		?>
 		<# var defaultValue = '', dataAlpha = '';
 			if ( data.default ) {
-				if ( '#' !== data.default.substring( 0, 1 ) ) {
-					defaultValue = '#' + data.default;
-				} else {
-					defaultValue = data.default;
-				}
-				defaultValue = ' data-default-color=' + defaultValue; // Quotes added automatically.
+				defaultValue = ' data-default-color=' + data.default; // Quotes added automatically.
 			}
+
 			if ( data.alpha ) {
 				dataAlpha = ' data-alpha=true';
 			} #>
@@ -69,19 +83,31 @@ class Control_Color extends Control_Base {
 					{{{ data.label }}}
 				<# } #>
 				<# if ( data.description ) { #>
-					<span class="elementor-control-description">{{{ data.description }}}</span>
+					<span class="elementor-control-field-description">{{{ data.description }}}</span>
 				<# } #>
 			</label>
 			<div class="elementor-control-input-wrapper">
-				<input data-setting="{{ name }}" class="color-picker-hex" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
+				<input data-setting="{{ name }}" type="text" placeholder="<?php echo esc_attr( 'Hex/rgba', 'elementor' ); ?>" {{ defaultValue }}{{ dataAlpha }} />
 			</div>
 		</div>
 		<?php
 	}
 
+	/**
+	 * Get color control default settings.
+	 *
+	 * Retrieve the default settings of the color control. Used to return the default
+	 * settings while initializing the color control.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Control default settings.
+	 */
 	protected function get_default_settings() {
 		return [
 			'alpha' => true,
+			'scheme' => '',
 		];
 	}
 }

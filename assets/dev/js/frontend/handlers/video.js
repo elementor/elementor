@@ -1,17 +1,88 @@
-module.exports = function( $scope, $ ) {
-	var $imageOverlay = $scope.find( '.elementor-custom-embed-image-overlay' ),
-		$videoFrame = $scope.find( 'iframe' );
+const VideoModule = elementorModules.frontend.handlers.Base.extend( {
+	getDefaultSettings: function() {
+		return {
+			selectors: {
+				imageOverlay: '.elementor-custom-embed-image-overlay',
+				video: '.elementor-video',
+				videoIframe: '.elementor-video-iframe',
+			},
+		};
+	},
 
-	if ( ! $imageOverlay.length ) {
-		return;
-	}
+	getDefaultElements: function() {
+		var selectors = this.getSettings( 'selectors' );
 
-	$imageOverlay.on( 'click', function() {
-		$imageOverlay.remove();
-		var newSourceUrl = $videoFrame[0].src;
-		// Remove old autoplay if exists
-		newSourceUrl = newSourceUrl.replace( '&autoplay=0', '' );
+		return {
+			$imageOverlay: this.$element.find( selectors.imageOverlay ),
+			$video: this.$element.find( selectors.video ),
+			$videoIframe: this.$element.find( selectors.videoIframe ),
+		};
+	},
 
-		$videoFrame[0].src = newSourceUrl + '&autoplay=1';
-	} );
+	getLightBox: function() {
+		return elementorFrontend.utils.lightbox;
+	},
+
+	handleVideo: function() {
+		if ( ! this.getElementSettings( 'lightbox' ) ) {
+			this.elements.$imageOverlay.remove();
+
+			this.playVideo();
+		}
+	},
+
+	playVideo: function() {
+		if ( this.elements.$video.length ) {
+			this.elements.$video[ 0 ].play();
+
+			return;
+		}
+
+		const $videoIframe = this.elements.$videoIframe,
+			lazyLoad = $videoIframe.data( 'lazy-load' );
+
+		if ( lazyLoad ) {
+			$videoIframe.attr( 'src', lazyLoad );
+		}
+
+		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
+
+		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
+	},
+
+	animateVideo: function() {
+		this.getLightBox().setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
+	},
+
+	handleAspectRatio: function() {
+		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
+	},
+
+	bindEvents: function() {
+		this.elements.$imageOverlay.on( 'click', this.handleVideo );
+	},
+
+	onElementChange: function( propertyName ) {
+		if ( 0 === propertyName.indexOf( 'lightbox_content_animation' ) ) {
+			this.animateVideo();
+
+			return;
+		}
+
+		var isLightBoxEnabled = this.getElementSettings( 'lightbox' );
+
+		if ( 'lightbox' === propertyName && ! isLightBoxEnabled ) {
+			this.getLightBox().getModal().hide();
+
+			return;
+		}
+
+		if ( 'aspect_ratio' === propertyName && isLightBoxEnabled ) {
+			this.handleAspectRatio();
+		}
+	},
+} );
+
+module.exports = function( $scope ) {
+	elementorFrontend.elementsHandler.addHandler( VideoModule, { $element: $scope } );
 };

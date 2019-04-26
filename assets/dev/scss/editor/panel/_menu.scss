@@ -3,35 +3,74 @@
 //
 
 #elementor-panel-page-menu {
-	box-shadow: $panel-bottom-shadow;
+	padding: 25px 15px;
 }
 
-.elementor-panel-menu-item {
-	display: table;
-	width: 100%;
-	height: 50px;
-	cursor: pointer;
-	margin-bottom: 1px;
+.elementor-panel-menu {
 
-	&:not(:hover) {
+	&-group {
+
+		&-title {
+			text-transform: uppercase;
+			font-size: 11px;
+		}
+	}
+
+	&-items {
+		margin: 15px 0 25px;
+		border-radius: 5px;
+		overflow: hidden;
+	}
+
+	&-item {
+		display: table;
+		width: 100%;
+		height: 40px;
+		cursor: pointer;
+		margin-bottom: 1px;
 		background-color: #fff;
-	}
 
-	> * {
-		display: table-cell;
-		vertical-align: middle;
-	}
-}
+		&:hover {
+			background-color: rgba( 255, 255, 255, .8 );
+		}
 
-.elementor-panel-menu-item-icon {
-	text-align: center;
-	width: 55px;
-}
+		> * {
+			display: table-cell;
+			vertical-align: middle;
+		}
 
-.elementor-panel-menu-item-title {
-	font-weight: 500;
+		&-icon {
+			text-align: center;
+			width: 50px;
+			color: $editor-light;
+		}
 
-	> span {
-		color: $editor-success;
+		&-title {
+			font-weight: 500;
+
+			> span {
+				color: $editor-success;
+			}
+		}
+
+		a {
+			color: $editor-dark;
+		}
+
+		&-exit-to-dashboard {
+			background-color: $wp-primary;
+			color: #fff;
+			text-transform: uppercase;
+			font-size: 12px;
+
+			&:hover {
+				background-color: darken($wp-primary, 5%);
+			}
+
+			.elementor-panel-menu-item-title,
+			.elementor-panel-menu-item-icon {
+				color: #fff;
+			}
+		}
 	}
 }

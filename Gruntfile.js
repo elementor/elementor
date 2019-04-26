@@ -1,380 +1,31 @@
 module.exports = function( grunt ) {
 	'use strict';
 
-	var remapify = require( 'remapify' ),
+	const fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' );
 
-	require( 'matchdep' ).filterDev( 'grunt-*' ).forEach( grunt.loadNpmTasks );
+	require( 'load-grunt-tasks' )( grunt );
 
 	// Project configuration
 	grunt.initConfig( {
-		pkg: grunt.file.readJSON( 'package.json' ),
+		pkg: pkgInfo,
 
 		banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
 				'<%= grunt.template.today("dd-mm-yyyy") %> */',
 
-		checktextdomain: {
-			standard: {
-				options:{
-					text_domain: 'elementor',
-					correct_domain: true,
-					keywords: [
-						// WordPress keywords
-						'__:1,2d',
-						'_e:1,2d',
-						'_x:1,2c,3d',
-						'esc_html__:1,2d',
-						'esc_html_e:1,2d',
-						'esc_html_x:1,2c,3d',
-						'esc_attr__:1,2d',
-						'esc_attr_e:1,2d',
-						'esc_attr_x:1,2c,3d',
-						'_ex:1,2c,3d',
-						'_n:1,2,4d',
-						'_nx:1,2,4c,5d',
-						'_n_noop:1,2,3d',
-						'_nx_noop:1,2,3c,4d'
-					]
-				},
-				files: [ {
-					src: [
-						'**/*.php',
-						'!docs/**',
-						'!node_modules/**',
-						'!build/**',
-						'!tests/**',
-						'!.github/**',
-						'!vendor/**',
-						'!*~'
-					],
-					expand: true
-				} ]
-			}
-		},
-
-		browserify: {
-			options: {
-				browserifyOptions: {
-					debug: true
-				},
-				preBundleCB: function( bundle ) {
-					bundle.plugin( remapify, [
-						{
-							cwd: 'assets/dev/js/editor/behaviors',
-							src: '**/*.js',
-							expose: 'elementor-behaviors'
-						},
-						{
-							cwd: 'assets/dev/js/editor/layouts',
-							src: '**/*.js',
-							expose: 'elementor-layouts'
-						},
-						{
-							cwd: 'assets/dev/js/editor/models',
-							src: '**/*.js',
-							expose: 'elementor-models'
-						},
-						{
-							cwd: 'assets/dev/js/editor/collections',
-							src: '**/*.js',
-							expose: 'elementor-collections'
-						},
-						{
-							cwd: 'assets/dev/js/editor/views',
-							src: '**/*.js',
-							expose: 'elementor-views'
-						},
-						{
-							cwd: 'assets/dev/js/editor/components',
-							src: '**/*.js',
-							expose: 'elementor-components'
-						},
-						{
-							cwd: 'assets/dev/js/editor/utils',
-							src: '**/*.js',
-							expose: 'elementor-utils'
-						},
-						{
-							cwd: 'assets/dev/js/editor/layouts/panel',
-							src: '**/*.js',
-							expose: 'elementor-panel'
-						},
-						{
-							cwd: 'assets/dev/js/editor/components/template-library',
-							src: '**/*.js',
-							expose: 'elementor-templates'
-						},
-						{
-							cwd: 'assets/dev/js/frontend',
-							src: '**/*.js',
-							expose: 'elementor-frontend'
-						},
-						{
-							cwd: 'assets/dev/js/editor/components/revisions',
-							src: '**/*.js',
-							expose: 'elementor-revisions'
-						}
-					] );
-				}
-			},
-
-			dist: {
-				files: {
-					'assets/js/editor.js': [
-						'assets/dev/js/editor/utils/jquery-html5-dnd.js',
-						'assets/dev/js/editor/utils/jquery-serialize-object.js',
-
-						'assets/dev/js/editor/editor.js'
-					],
-					'assets/js/admin.js': [ 'assets/dev/js/admin/admin.js' ],
-					'assets/js/admin-feedback.js': [ 'assets/dev/js/admin/admin-feedback.js' ],
-					'assets/js/frontend.js': [ 'assets/dev/js/frontend/frontend.js' ]
-				},
-				options: pkgInfo.browserify
-			}
-
-		},
-
-		// Extract sourcemap to separate file
-		exorcise: {
-			bundle: {
-				options: {},
-				files: {
-					'assets/js/editor.js.map': [ 'assets/js/editor.js' ],
-					'assets/js/admin.js.map': [ 'assets/js/admin.js' ],
-					'assets/js/admin-feedback.js.map': [ 'assets/js/admin-feedback.js' ],
-					'assets/js/frontend.js.map': [ 'assets/js/frontend.js' ]
-				}
-			}
-		},
-
-		uglify: {
-			//pkg: grunt.file.readJSON( 'package.json' ),
-			options: {},
-			dist: {
-				files: {
-					'assets/js/editor.min.js': [
-						'assets/js/editor.js'
-					],
-					'assets/js/admin.min.js': [
-						'assets/js/admin.js'
-					],
-					'assets/js/admin-feedback.min.js': [
-						'assets/js/admin-feedback.js'
-					],
-					'assets/js/frontend.min.js': [
-						'assets/js/frontend.js'
-					]
-				}
-			}
-		},
-
-		usebanner: {
-			dist: {
-				options: {
-					banner: '<%= banner %>'
-				},
-				files: {
-					src: [
-						'assets/js/*.js',
-						'assets/css/*.css',
-
-						'!assets/css/animations.min.css'
-					]
-				}
-			}
-		},
-
-		jshint: {
-			options: {
-				jshintrc: '.jshintrc'
-			},
-			all: [
-				'Gruntfile.js',
-				'assets/js/dev/**/*.js'
-			]
-		},
-
-		sass: {
-			options: {
-				sourceMap: true
-			},
-			dist: {
-				files: [ {
-					expand: true,
-					cwd: 'assets/dev/scss/direction',
-					src: '*.scss',
-					dest: 'assets/css',
-					ext: '.css'
-				} ]
-			}
-		},
-
-		postcss: {
-			dev: {
-				options: {
-					map: true,
-
-					processors: [
-						require( 'autoprefixer' )( {
-							browsers: 'last 2 versions, Safari > 5'
-						} )
-					]
-				},
-				files: [ {
-					src: [
-						'assets/css/*.css',
-						'!assets/css/*.min.css'
-					]
-				} ]
-			},
-			minify: {
-				options: {
-					processors: [
-						require( 'cssnano' )()
-					]
-				},
-				files: [ {
-					expand: true,
-					src: [
-						'assets/css/*.css',
-						'!assets/css/*.min.css'
-					],
-					ext: '.min.css'
-				} ]
-			}
-		},
-
-		watch:  {
-			styles: {
-				files: [
-					'assets/dev/scss/**/*.scss'
-				],
-				tasks: [ 'styles' ]
-			},
-
-			scripts: {
-				files: [
-					'assets/dev/js/**/*.js'
-				],
-				tasks: [ 'scripts' ]
-			}
-		},
-
-		wp_readme_to_markdown: {
-			github: {
-				options: {
-					wordpressPluginSlug: 'elementor',
-					travisUrlRepo: 'https://travis-ci.org/pojome/elementor',
-					gruntDependencyStatusUrl: 'https://david-dm.org/pojome/elementor',
-					coverallsRepo: 'pojome/elementor',
-					screenshot_url: 'assets/{screenshot}.png'
-				},
-				files: {
-					'README.md': 'readme.txt'
-				}
-			}
-		},
-
-		bumpup: {
-			options: {
-				updateProps: {
-					pkg: 'package.json'
-				}
-			},
-			file: 'package.json'
-		},
-
-		replace: {
-			plugin_main: {
-				src: [ 'elementor.php' ],
-				overwrite: true,
-				replacements: [
-					{
-						from: /Version: \d{1,1}\.\d{1,2}\.\d{1,2}/g,
-						to: 'Version: <%= pkg.version %>'
-					},
-					{
-						from: /ELEMENTOR_VERSION', '.*?'/g,
-						to: 'ELEMENTOR_VERSION\', \'<%= pkg.version %>\''
-					}
-				]
-			},
-
-			readme: {
-				src: [ 'readme.txt' ],
-				overwrite: true,
-				replacements: [
-					{
-						from: /Stable tag: \d{1,1}\.\d{1,2}\.\d{1,2}/g,
-						to: 'Stable tag: <%= pkg.version %>'
-					}
-				]
-			}
-		},
-
-		shell: {
-			git_add_all: {
-				command: [
-					'git add --all',
-					'git commit -m "Bump to <%= pkg.version %>"'
-				].join( '&&' )
-			}
-		},
-
-		release: {
-			options: {
-				bump: false,
-				npm: false,
-				commit: false,
-				tagName: 'v<%= version %>',
-				commitMessage: 'released v<%= version %>',
-				tagMessage: 'Tagged as v<%= version %>'
-			}
-		},
-
-		copy: {
-			main: {
-				src: [
-					'**',
-					'!node_modules/**',
-					'!docs/**',
-					'!build/**',
-					'!bin/**',
-					'!.git/**',
-					'!tests/**',
-					'!.github/**',
-					'!.travis.yml',
-					'!.jscsrc',
-					'!.jshintignore',
-					'!.jshintrc',
-					'!ruleset.xml',
-					'!README.md',
-					'!phpunit.xml',
-					'!vendor/**',
-					'!Gruntfile.js',
-					'!package.json',
-					'!npm-debug.log',
-					'!composer.json',
-					'!composer.lock',
-					'!.gitignore',
-					'!.gitmodules',
-
-					'!assets/dev/**',
-					'!assets/**/*.map',
-					'!*~'
-				],
-				expand: true,
-				dest: 'build/'
-			}
-		},
-
-		clean: {
-			//Clean up build folder
-			main: [
-				'build'
-			]
-		}
+		checktextdomain: require( './.grunt-config/checktextdomain' ),
+		usebanner: require( './.grunt-config/usebanner' ),
+		sass: require( './.grunt-config/sass' ),
+		postcss: require( './.grunt-config/postcss' ),
+		watch: require( './.grunt-config/watch' ),
+		wp_readme_to_markdown: require( './.grunt-config/wp_readme_to_markdown' ),
+		bumpup: require( './.grunt-config/bumpup' ),
+		replace: require( './.grunt-config/replace' ),
+		shell: require( './.grunt-config/shell' ),
+		release: require( './.grunt-config/release' ),
+		copy: require( './.grunt-config/copy' ),
+		clean: require( './.grunt-config/clean' ),
+		webpack: require( './.grunt-config/webpack' ),
 	} );
 
 	// Default task(s).
@@ -382,38 +33,89 @@ module.exports = function( grunt ) {
 		'i18n',
 		'wp_readme_to_markdown',
 		'scripts',
-		'styles'
+		'styles',
 	] );
 
 	grunt.registerTask( 'i18n', [
-		'checktextdomain'
+		'checktextdomain',
 	] );
 
-	grunt.registerTask( 'scripts', [
-		'jshint',
-		'browserify',
-		'exorcise',
-		'uglify'
-	] );
+	grunt.registerTask( 'scripts', ( isDevMode = false ) => {
+		let taskName = 'webpack:production';
 
-	grunt.registerTask( 'styles', [
-		'sass',
-		'postcss'
-	] );
+		if ( isDevMode ) {
+			taskName = 'webpack:development';
+		}
+
+		grunt.task.run( taskName );
+	} );
+
+	grunt.registerTask( 'watch_scripts', () => {
+		grunt.task.run( 'webpack:development' );
+	} );
+
+	grunt.registerTask( 'styles', ( isDevMode = false ) => {
+		grunt.task.run( 'sass' );
+
+		if ( ! isDevMode ) {
+			grunt.task.run( 'postcss' );
+			grunt.task.run( 'css_templates' );
+		}
+	} );
+
+	grunt.registerTask( 'watch_styles', () => {
+		grunt.task.run( 'watch:styles' );
+	} );
+
+	grunt.registerTask( 'css_templates', () => {
+		grunt.task.run( 'css_templates_proxy:templates' );
+
+		grunt.config( 'sass.dist', {
+			files: [ {
+				expand: true,
+				cwd: 'assets/dev/scss/direction',
+				src: [ 'frontend.scss', 'frontend-rtl.scss' ],
+				dest: 'assets/css/templates',
+				ext: '.css',
+			} ],
+		} );
+
+		grunt.task.run( 'sass' );
+
+		grunt.config( 'postcss.minify.files.0.src', [
+			'assets/css/templates/*.css',
+			'!assets/css/templates/*.min.css',
+		] );
+
+		grunt.task.run( 'postcss:minify' );
+
+		grunt.task.run( 'css_templates_proxy:values' );
+	} );
+
+	// Writing the proxy file as a grunt task, in order to fit in with the tasks queue
+	grunt.registerTask( 'css_templates_proxy', ( mode ) => {
+		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "' + mode + '";' );
+	} );
 
 	grunt.registerTask( 'build', [
 		'default',
 		'usebanner',
 		'clean',
 		'copy',
-		'default' // Remove banners for GitHub
+		'default', // Remove banners for GitHub
 	] );
 
-	grunt.registerTask( 'publish', [
-		'default',
-		'bumpup',
-		'replace',
-		'shell:git_add_all',
-		'release'
-	] );
+	grunt.registerTask( 'publish', ( releaseType ) => {
+		releaseType = releaseType ? releaseType : 'patch';
+
+		var prevStableVersion = 'patch' === releaseType ? pkgInfo.prev_stable_version : pkgInfo.version;
+
+		grunt.config.set( 'prev_stable_version', prevStableVersion );
+
+		grunt.task.run( 'default' );
+		grunt.task.run( 'bumpup:' + releaseType );
+		grunt.task.run( 'replace' );
+		grunt.task.run( 'shell:git_add_all' );
+		grunt.task.run( 'release' );
+	} );
 };

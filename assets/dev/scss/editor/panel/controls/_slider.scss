@@ -1,0 +1,149 @@
+.elementor-control-type-slider {
+
+	&--multiple {
+		margin-bottom: 14px;
+
+		.elementor-slider {
+			margin-top: 12px;
+			width: 98%;
+		}
+	}
+
+	&--handles {
+
+		&-range {
+
+			.elementor-slider {
+
+				.noUi-handle {
+					border-radius: 0;
+					width: 10px;
+					transform: translateY(calc(50% - 14px)) translateX(getValueByDirection(4px, -4px));
+
+					&:after {
+						content: '';
+						position: absolute;
+						top: 2px;
+						height: 12px;
+						width: 11px;
+						transform: rotate(45deg);
+						background-color: #fff;
+						border-radius: 3px;
+					}
+
+					&-lower {
+
+						&:after {
+							left: 5px;
+							box-shadow: 2px -2px 3px 0px rgba(0,0,0,.1);
+						}
+					}
+
+					&-upper {
+
+						&:after {
+							right: 5px;
+							box-shadow: -2px 2px 3px 0px rgba(0,0,0,.1);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	&:not(.elementor-control-type-slider--multiple) {
+
+		.elementor-slider {
+			display: inline-block;
+			width: 70%;
+		}
+	}
+}
+
+.elementor-slider {
+	margin: 10px auto;
+	height: 4px;
+	background-color: $editor-lightest;
+	border-radius: 5px;
+	position: relative;
+	cursor: pointer;
+
+	&-input {
+		width: 30%;
+		float: $end;
+
+		input {
+			max-width: 80%;
+			float: $end;
+			padding: 5px 5px;
+		}
+	}
+
+	&__extra {
+		position: relative;
+	}
+
+	&__labels {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	&__label {
+		font-size: 9px;
+		color: $editor-lighter;
+	}
+
+	&__scales {
+		position: absolute;
+		display: flex;
+		justify-content: space-evenly;
+		width: 100%;
+		margin-top: 4px;
+	}
+
+	&__scale {
+		width: 1px;
+		height: 21px;
+		background-color: $editor-light;
+	}
+
+	.noUi {
+
+		&-handle {
+			height: 16px;
+			width: 16px;
+			background-color: #fff;
+			@include end(0);
+			transform: translateY(calc(50% - 14px)) translateX(getValueByDirection(8px, -8px));
+			position: absolute;
+			box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+			border-radius: 50%;
+		}
+
+		&-connects {
+			position: absolute;
+			width: 100%;
+			height: 5px;
+		}
+
+		&-connect {
+			position: absolute;
+			z-index: 0;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			will-change: transform;
+			transform-origin: 0 0;
+			background-color: $editor-light;
+		}
+
+		&-tooltip {
+			position: absolute;
+			top: calc(100% + 5px);
+			left: calc(50% - 4px);
+			transform: translateX(-50%);
+			font-size: 10px;
+		}
+	}
+}

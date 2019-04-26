@@ -9,6 +9,11 @@
 		margin: 0;
 		line-height: 1;
 
+		> a {
+			color: inherit;
+			font-size: inherit;
+		}
+
 		&.elementor-size- {
 			&small {
 				font-size: 15px;

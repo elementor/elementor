@@ -1,34 +1,284 @@
 //
 // Icon List
 //
-.elementor-widget-icon-list {
+
+.elementor-widget {
+
+	&.elementor-icon-list--layout-inline {
+
+		.elementor-widget-container {
+			overflow: hidden;
+		}
+	}
+
+	.elementor-icon-list-items.elementor-inline-items {
+
+		margin-right: -8px;
+		margin-left: -8px;
+
+		.elementor-icon-list-item {
+			margin-right: 8px;
+			margin-left: 8px;
+
+			&:after {
+				width: auto;
+				left: auto;
+				right: auto;
+				position: relative;
+				height: 100%;
+				top: 50%;
+				transform: translateY(-50%);
+				border-top: 0;
+				border-bottom: 0;
+				border-right: 0;
+				border-left-width: 1px;
+				border-style: solid;
+				@include end(-8px);
+			}
+		}
+	}
 
 	.elementor-icon-list-items {
 		list-style-type: none;
 		margin: 0;
 		padding: 0;
-
 	}
 
 	.elementor-icon-list-item {
 		margin: 0;
 		padding: 0;
+		position: relative;
+
+		&:after {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+		}
+
+		&, a {
+			display: flex;
+			align-items: flex-start;
+		}
 
 		a {
-			display: inline;
+			width: 100%;
 		}
 	}
 
-	.elementor-icon-list-text {
-		display: inline;
-		vertical-align: middle;
+	.elementor-icon-list-icon + .elementor-icon-list-text {
+		align-self: center;
+		@include padding-start(5px);
 	}
 
 	.elementor-icon-list-icon {
-		width: 1em;
-		line-height: 1;
-		vertical-align: middle;
-		display: inline-block; // fix issue #620
-		text-align: center; // fix issue #620
+		flex-shrink: 0;
+	}
+
+	&.elementor-align-center {
+
+		.elementor-icon-list-item {
+
+			&, a {
+				justify-content: center;
+			}
+
+			&:after {
+				margin: auto;
+			}
+		}
+
+		.elementor-inline-items {
+			justify-content: center;
+		}
+	}
+
+	&.elementor-align-left {
+
+		.elementor-icon-list-item {
+
+			&, a {
+				justify-content: getValueByDirection(flex-start, flex-end);
+				text-align: left;
+			}
+		}
+
+		.elementor-inline-items {
+			justify-content: getValueByDirection(flex-start, flex-end);
+		}
+	}
+
+	&.elementor-align-right {
+
+		.elementor-icon-list-item {
+
+			&, a {
+				justify-content: getValueByDirection(flex-end, flex-start);
+				text-align: right;
+			}
+		}
+
+		.elementor-icon-list-items {
+			justify-content: getValueByDirection(flex-end, flex-start);
+		}
+	}
+
+	&:not(.elementor-align-right) {
+
+		.elementor-icon-list-item {
+
+			&:after {
+				@include start(0);
+			}
+		}
+	}
+
+	&:not(.elementor-align-left) {
+
+		.elementor-icon-list-item {
+
+			&:after {
+				@include end(0);
+			}
+		}
+	}
+
+	@media (max-width: $screen-md-max) {
+		&.elementor-tablet-align-center {
+
+			.elementor-icon-list-items {
+				justify-content: center;
+			}
+
+			.elementor-icon-list-item {
+
+				&, a {
+					justify-content: center;
+				}
+
+				&:after {
+					margin: auto;
+				}
+			}
+		}
+
+		&.elementor-tablet-align-left {
+
+			.elementor-icon-list-items {
+				justify-content: getValueByDirection( flex-start, flex-end );
+			}
+
+			.elementor-icon-list-item {
+
+				&, a {
+					justify-content: getValueByDirection( flex-start, flex-end );
+					text-align: left;
+				}
+			}
+		}
+
+		&.elementor-tablet-align-right {
+
+			.elementor-icon-list-items {
+				justify-content: getValueByDirection( flex-end, flex-start );
+			}
+
+			.elementor-icon-list-item {
+
+				&, a {
+					justify-content: getValueByDirection( flex-end, flex-start );
+					text-align: right;
+				}
+			}
+		}
+
+		&:not(.elementor-tablet-align-right) {
+
+			.elementor-icon-list-item {
+
+				&:after {
+					@include start(0);
+				}
+			}
+		}
+
+		&:not(.elementor-tablet-align-left) {
+
+			.elementor-icon-list-item {
+
+				&:after {
+					@include end(0);
+				}
+			}
+		}
+	}
+
+	@media (max-width: $screen-sm-max) {
+		&.elementor-mobile-align-center {
+
+			.elementor-icon-list-items {
+				justify-content: center;
+			}
+
+			.elementor-icon-list-item {
+
+				&, a {
+					justify-content: center;
+				}
+
+				&:after {
+					margin: auto;
+				}
+			}
+		}
+
+		&.elementor-mobile-align-left {
+
+			.elementor-icon-list-items {
+				justify-content: getValueByDirection( flex-start, flex-end );
+			}
+
+			.elementor-icon-list-item {
+
+				&, a {
+					justify-content: getValueByDirection( flex-start, flex-end );
+					text-align: left;
+				}
+			}
+		}
+
+		&.elementor-mobile-align-right {
+
+			.elementor-icon-list-items {
+				justify-content: getValueByDirection( flex-end, flex-start );
+			}
+
+			.elementor-icon-list-item {
+
+				&, a {
+					justify-content: getValueByDirection( flex-end, flex-start );
+					text-align: right;
+				}
+			}
+		}
+
+		&:not(.elementor-mobile-align-right) {
+
+			.elementor-icon-list-item {
+
+				&:after {
+					@include start(0);
+				}
+			}
+		}
+
+		&:not(.elementor-mobile-align-left) {
+
+			.elementor-icon-list-item {
+
+				&:after {
+					@include end(0);
+				}
+			}
+		}
 	}
 }

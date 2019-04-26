@@ -1,8 +1,20 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+use Elementor\Core\DynamicTags\Manager;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Elementor database.
+ *
+ * Elementor database handler class is responsible for communicating with the
+ * DB, save and retrieve Elementor data and meta data.
+ *
+ * @since 1.0.0
+ */
 class DB {
 
 	/**
@@ -10,92 +22,131 @@ class DB {
 	 */
 	const DB_VERSION = '0.4';
 
+	/**
+	 * Post publish status.
+	 */
 	const STATUS_PUBLISH = 'publish';
+
+	/**
+	 * Post draft status.
+	 */
 	const STATUS_DRAFT = 'draft';
+
+	/**
+	 * Post private status.
+	 */
+	const STATUS_PRIVATE = 'private';
+
+	/**
+	 * Post autosave status.
+	 */
 	const STATUS_AUTOSAVE = 'autosave';
 
 	/**
-	 * Save builder method.
+	 * Post pending status.
+	 */
+	const STATUS_PENDING = 'pending';
+
+	/**
+	 * Switched post data.
+	 *
+	 * Holds the switched post data.
+	 *
+	 * @since 1.5.0
+	 * @access protected
+	 *
+	 * @var array Switched post data. Default is an empty array.
+	 */
+	protected $switched_post_data = [];
+
+	/**
+	 * Switched data.
+	 *
+	 * Holds the switched data.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 *
+	 * @var array Switched data. Default is an empty array.
+	 */
+	protected $switched_data = [];
+
+	/**
+	 * Save editor.
+	 *
+	 * Save data from the editor to the database.
 	 *
 	 * @since 1.0.0
-	 * @param int    $post_id
-	 * @param array  $posted
-	 * @param string $status
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->save()` method instead.
 	 *
-	 * @return void
+	 * @access public
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param array  $data    Post data.
+	 * @param string $status  Optional. Post status. Default is `publish`.
+	 *
+	 * @return bool
 	 */
-	public function save_editor( $post_id, $posted, $status = self::STATUS_PUBLISH ) {
-		// Change the global post to current library post, so widgets can use `get_the_ID` and other post data
-		if ( isset( $GLOBALS['post'] ) ) {
-			$global_post = $GLOBALS['post'];
-		}
-		$GLOBALS['post'] = get_post( $post_id );
+	public function save_editor( $post_id, $data, $status = self::STATUS_PUBLISH ) {
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->save()' );
 
-		$editor_data = $this->_get_editor_data( $posted );
+		$document = Plugin::$instance->documents->get( $post_id );
 
-		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
-		$json_value = wp_slash( wp_json_encode( $editor_data ) );
-
-		if ( self::STATUS_PUBLISH === $status ) {
-			$this->remove_draft( $post_id );
-
-			$is_meta_updated = update_post_meta( $post_id, '_elementor_data', $json_value );
-
-			if ( $is_meta_updated ) {
-				Revisions_Manager::handle_revision();
-			}
-
-			$this->_save_plain_text( $post_id );
-		} elseif ( self::STATUS_AUTOSAVE === $status ) {
-			Revisions_Manager::handle_revision();
-
-			$old_autosave = wp_get_post_autosave( $post_id, get_current_user_id() );
-
-			if ( $old_autosave ) {
-				wp_delete_post_revision( $old_autosave->ID );
-			}
-
-			$autosave_id = wp_create_post_autosave( [
-				'post_ID' => $post_id,
-				'post_title' => __( 'Auto Save', 'elementor' ) . ' ' . date( 'Y-m-d H:i' ),
-				'post_modified' => current_time( 'mysql' ),
-			] );
-
-			if ( $autosave_id ) {
-				update_metadata( 'post',  $autosave_id, '_elementor_data', $json_value );
-			}
+		if ( self::STATUS_AUTOSAVE === $status ) {
+			$document = $document->get_autosave( 0, true );
 		}
 
-		update_post_meta( $post_id, '_elementor_version', self::DB_VERSION );
-
-		// Restore global post
-		if ( isset( $global_post ) ) {
-			$GLOBALS['post'] = $global_post;
-		} else {
-			unset( $GLOBALS['post'] );
-		}
-
-		$css_file = new Post_CSS_File( $post_id );
-		$css_file->update();
-
-		do_action( 'elementor/editor/after_save', $post_id, $editor_data );
+		return $document->save( [
+			'elements' => $data,
+			'settings' => [
+				'post_status' => $status,
+			],
+		] );
 	}
 
 	/**
-	 * Get & Parse the builder from DB.
+	 * Get builder.
+	 *
+	 * Retrieve editor data from the database.
 	 *
 	 * @since 1.0.0
-	 * @param int $post_id
-	 * @param string $status
 	 *
-	 * @return array
+	 * @access public
+	 *
+	 * @param int     $post_id           Post ID.
+	 * @param string  $status            Optional. Post status. Default is `publish`.
+	 *
+	 * @return array Editor data.
 	 */
 	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
-		$data = $this->get_plain_editor( $post_id, $status );
+		if ( self::STATUS_DRAFT === $status ) {
+			$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
+		} else {
+			$document = Plugin::$instance->documents->get( $post_id );
+		}
 
-		return $this->_get_editor_data( $data, true );
+		if ( $document ) {
+			$editor_data = $document->get_elements_raw_data( null, true );
+		} else {
+			$editor_data = [];
+		}
+
+		return $editor_data;
 	}
 
+	/**
+	 * Get JSON meta.
+	 *
+	 * Retrieve post meta data, and return the JSON decoded data.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $key     The meta key to retrieve.
+	 *
+	 * @return array Decoded JSON data from post meta.
+	 */
 	protected function _get_json_meta( $post_id, $key ) {
 		$meta = get_post_meta( $post_id, $key, true );
 
@@ -103,125 +154,485 @@ class DB {
 			$meta = json_decode( $meta, true );
 		}
 
+		if ( empty( $meta ) ) {
+			$meta = [];
+		}
+
 		return $meta;
 	}
 
+	/**
+	 * Get plain editor.
+	 *
+	 * Retrieve post data that was saved in the database. Raw data before it
+	 * was parsed by elementor.
+	 *
+	 * @since 1.0.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get_elements_data()` method instead.
+	 *
+	 * @access public
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $status  Optional. Post status. Default is `publish`.
+	 *
+	 * @return array Post data.
+	 */
 	public function get_plain_editor( $post_id, $status = self::STATUS_PUBLISH ) {
-		$data = $this->_get_json_meta( $post_id, '_elementor_data' );
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get_elements_data()' );
 
-		if ( self::STATUS_DRAFT === $status ) {
-			$draft_data = $this->_get_json_meta( $post_id, '_elementor_draft_data' );
+		$document = Plugin::$instance->documents->get( $post_id );
 
-			if ( ! empty( $draft_data ) ) {
-				$data = $draft_data;
-			}
-
-			if ( empty( $data ) ) {
-				$data = $this->_get_new_editor_from_wp_editor( $post_id );
-			}
+		if ( $document ) {
+			return $document->get_elements_data( $status );
 		}
 
-		return $data;
+		return [];
 	}
 
-	protected function _get_new_editor_from_wp_editor( $post_id ) {
-		$post = get_post( $post_id );
+	/**
+	 * Get auto-saved post revision.
+	 *
+	 * Retrieve the auto-saved post revision that is newer than current post.
+	 *
+	 * @since 1.9.0
+	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->get_newer_autosave()` method instead.
+	 *
+	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return \WP_Post|false The auto-saved post, or false.
+	 */
+	public function get_newer_autosave( $post_id ) {
+		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get_newer_autosave()' );
 
-		if ( empty( $post ) || empty( $post->post_content ) ) {
-			return [];
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		return $document->get_newer_autosave();
+	}
+
+	/**
+	 * Get new editor from WordPress editor.
+	 *
+	 * When editing the with Elementor the first time, the current page content
+	 * is parsed into Text Editor Widget that contains the original data.
+	 *
+	 * @since 2.1.0
+	 * @deprecated 2.3.0 Use `$document->convert_to_elementor()` instead
+	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return array Content in Elementor format.
+	 */
+	public function get_new_editor_from_wp_editor( $post_id ) {
+		// TODO: _deprecated_function( __METHOD__, '2.3.0', '$document->convert_to_elementor()' );
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( $document ) {
+			return $document->convert_to_elementor();
 		}
 
-		$text_editor_widget_type = Plugin::instance()->widgets_manager->get_widget_types( 'text-editor' );
-
-		// TODO: Better coding to start template for editor
-		return [
-			[
-				'id' => Utils::generate_random_string(),
-				'elType' => 'section',
-				'elements' => [
-					[
-						'id' => Utils::generate_random_string(),
-						'elType' => 'column',
-						'elements' => [
-							[
-								'id' => Utils::generate_random_string(),
-								'elType' => $text_editor_widget_type::get_type(),
-								'widgetType' => $text_editor_widget_type->get_name(),
-								'settings' => [
-									'editor' => $post->post_content,
-								],
-							],
-						],
-					],
-				],
-			],
-		];
+		return [];
 	}
 
 	/**
-	 * Remove draft data from DB.
+	 * Get new editor from WordPress editor.
+	 *
+	 * When editing the with Elementor the first time, the current page content
+	 * is parsed into Text Editor Widget that contains the original data.
 	 *
 	 * @since 1.0.0
-	 * @param $post_id
+	 * @deprecated 2.1.0 Use `DB::get_new_editor_from_wp_editor()` instead
+	 * @access public
 	 *
-	 * @return void
+	 * @param int $post_id Post ID.
+	 *
+	 * @return array Content in Elementor format.
 	 */
-	public function remove_draft( $post_id ) {
-		delete_post_meta( $post_id, '_elementor_draft_data' );
+	public function _get_new_editor_from_wp_editor( $post_id ) {
+		// TODO: _deprecated_function( __METHOD__, '2.1.0', __CLASS__ . '::get_new_editor_from_wp_editor()' );
+
+		return $this->get_new_editor_from_wp_editor( $post_id );
 	}
 
 	/**
-	 * Get edit mode by Page ID
+	 * Is using Elementor.
 	 *
-	 * @since 1.0.0
-	 * @param $post_id
+	 * Set whether the page is using Elementor or not.
 	 *
-	 * @return mixed
+	 * @since 1.5.0
+	 * @access public
+	 *
+	 * @param int  $post_id      Post ID.
+	 * @param bool $is_elementor Optional. Whether the page is elementor page.
+	 *                           Default is true.
 	 */
-	public function get_edit_mode( $post_id ) {
-		return get_post_meta( $post_id, '_elementor_edit_mode', true );
-	}
-
-	/**
-	 * Setup the edit mode per Page ID
-	 *
-	 * @since 1.0.0
-	 * @param int $post_id
-	 * @param string $mode
-	 *
-	 * @return void
-	 */
-	public function set_edit_mode( $post_id, $mode = 'builder' ) {
-		if ( 'builder' === $mode ) {
-			update_post_meta( $post_id, '_elementor_edit_mode', $mode );
+	public function set_is_elementor_page( $post_id, $is_elementor = true ) {
+		if ( $is_elementor ) {
+			// Use the string `builder` and not a boolean for rollback compatibility
+			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 		} else {
 			delete_post_meta( $post_id, '_elementor_edit_mode' );
 		}
 	}
 
-	private function _render_element_plain_content( $element_data ) {
+	/**
+	 * Render element plain content.
+	 *
+	 * When saving data in the editor, this method renders recursively the plain
+	 * content containing only the content and the HTML. No CSS data.
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 *
+	 * @param array $element_data Element data.
+	 */
+	private function render_element_plain_content( $element_data ) {
 		if ( 'widget' === $element_data['elType'] ) {
 			/** @var Widget_Base $widget */
-			$widget = Plugin::instance()->elements_manager->create_element_instance( $element_data );
+			$widget = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			$widget->render_plain_content();
+			if ( $widget ) {
+				$widget->render_plain_content();
+			}
 		}
 
 		if ( ! empty( $element_data['elements'] ) ) {
 			foreach ( $element_data['elements'] as $element ) {
-				$this->_render_element_plain_content( $element );
+				$this->render_element_plain_content( $element );
 			}
 		}
 	}
 
-	private function _save_plain_text( $post_id ) {
-		ob_start();
+	/**
+	 * Save plain text.
+	 *
+	 * Retrieves the raw content, removes all kind of unwanted HTML tags and saves
+	 * the content as the `post_content` field in the database.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public function save_plain_text( $post_id ) {
+		// Switch $dynamic_tags to parsing mode = remove.
+		$dynamic_tags = Plugin::$instance->dynamic_tags;
+		$parsing_mode = $dynamic_tags->get_parsing_mode();
+		$dynamic_tags->set_parsing_mode( Manager::MODE_REMOVE );
 
+		$plain_text = $this->get_plain_text( $post_id );
+
+		wp_update_post(
+			[
+				'ID' => $post_id,
+				'post_content' => $plain_text,
+			]
+		);
+
+		// Restore parsing mode.
+		$dynamic_tags->set_parsing_mode( $parsing_mode );
+	}
+
+	/**
+	 * Iterate data.
+	 *
+	 * Accept any type of Elementor data and a callback function. The callback
+	 * function runs recursively for each element and his child elements.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param array    $data_container Any type of elementor data.
+	 * @param callable $callback       A function to iterate data by.
+	 * @param array    $args           Array of args pointers for passing parameters in & out of the callback
+	 *
+	 * @return mixed Iterated data.
+	 */
+	public function iterate_data( $data_container, $callback, $args = [] ) {
+		if ( isset( $data_container['elType'] ) ) {
+			if ( ! empty( $data_container['elements'] ) ) {
+				$data_container['elements'] = $this->iterate_data( $data_container['elements'], $callback, $args );
+			}
+
+			return call_user_func( $callback, $data_container, $args );
+		}
+
+		foreach ( $data_container as $element_key => $element_value ) {
+			$element_data = $this->iterate_data( $data_container[ $element_key ], $callback, $args );
+
+			if ( null === $element_data ) {
+				continue;
+			}
+
+			$data_container[ $element_key ] = $element_data;
+		}
+
+		return $data_container;
+	}
+
+	/**
+	 * Safely copy Elementor meta.
+	 *
+	 * Make sure the original page was built with Elementor and the post is not
+	 * auto-save. Only then copy elementor meta from one post to another using
+	 * `copy_elementor_meta()`.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @param int $from_post_id Original post ID.
+	 * @param int $to_post_id   Target post ID.
+	 */
+	public function safe_copy_elementor_meta( $from_post_id, $to_post_id ) {
+		// It's from  WP-Admin & not from Elementor.
+		if ( ! did_action( 'elementor/db/before_save' ) ) {
+
+			if ( ! Plugin::$instance->db->is_built_with_elementor( $from_post_id ) ) {
+				return;
+			}
+
+			// It's an exited Elementor auto-save
+			if ( get_post_meta( $to_post_id, '_elementor_data', true ) ) {
+				return;
+			}
+		}
+
+		$this->copy_elementor_meta( $from_post_id, $to_post_id );
+	}
+
+	/**
+	 * Copy Elementor meta.
+	 *
+	 * Duplicate the data from one post to another.
+	 *
+	 * Consider using `safe_copy_elementor_meta()` method instead.
+	 *
+	 * @since 1.1.0
+	 * @access public
+	 *
+	 * @param int $from_post_id Original post ID.
+	 * @param int $to_post_id   Target post ID.
+	 */
+	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
+		$from_post_meta = get_post_meta( $from_post_id );
+		$core_meta = [
+			'_wp_page_template',
+			'_thumbnail_id',
+		];
+
+		foreach ( $from_post_meta as $meta_key => $values ) {
+			// Copy only meta with the `_elementor` prefix
+			if ( 0 === strpos( $meta_key, '_elementor' ) || in_array( $meta_key, $core_meta, true ) ) {
+				$value = $values[0];
+
+				// The elementor JSON needs slashes before saving
+				if ( '_elementor_data' === $meta_key ) {
+					$value = wp_slash( $value );
+				} else {
+					$value = maybe_unserialize( $value );
+				}
+
+				// Don't use `update_post_meta` that can't handle `revision` post type
+				update_metadata( 'post', $to_post_id, $meta_key, $value );
+			}
+		}
+	}
+
+	/**
+	 * Is built with Elementor.
+	 *
+	 * Check whether the post was built with Elementor.
+	 *
+	 * @since 1.0.10
+	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return bool Whether the post was built with Elementor.
+	 */
+	public function is_built_with_elementor( $post_id ) {
+		return ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
+	}
+
+	/**
+	 * Switch to post.
+	 *
+	 * Change the global WordPress post to the requested post.
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 *
+	 * @param int $post_id Post ID to switch to.
+	 */
+	public function switch_to_post( $post_id ) {
+		$post_id = absint( $post_id );
+		// If is already switched, or is the same post, return.
+		if ( get_the_ID() === $post_id ) {
+			$this->switched_post_data[] = false;
+			return;
+		}
+
+		$this->switched_post_data[] = [
+			'switched_id' => $post_id,
+			'original_id' => get_the_ID(), // Note, it can be false if the global isn't set
+		];
+
+		$GLOBALS['post'] = get_post( $post_id ); // WPCS: override ok.
+
+		setup_postdata( $GLOBALS['post'] );
+	}
+
+	/**
+	 * Restore current post.
+	 *
+	 * Rollback to the previous global post, rolling back from `DB::switch_to_post()`.
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 */
+	public function restore_current_post() {
+		$data = array_pop( $this->switched_post_data );
+
+		// If not switched, return.
+		if ( ! $data ) {
+			return;
+		}
+
+		// It was switched from an empty global post, restore this state and unset the global post
+		if ( false === $data['original_id'] ) {
+			unset( $GLOBALS['post'] );
+			return;
+		}
+
+		$GLOBALS['post'] = get_post( $data['original_id'] ); // WPCS: override ok.
+
+		setup_postdata( $GLOBALS['post'] );
+	}
+
+
+	/**
+	 * Switch to query.
+	 *
+	 * Change the WordPress query to a new query with the requested
+	 * query variables.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param array $query_vars New query variables.
+	 * @param bool  $force_global_post
+	 */
+	public function switch_to_query( $query_vars, $force_global_post = false ) {
+		global $wp_query;
+		$current_query_vars = $wp_query->query;
+
+		// If is already switched, or is the same query, return.
+		if ( $current_query_vars === $query_vars ) {
+			$this->switched_data[] = false;
+			return;
+		}
+
+		$new_query = new \WP_Query( $query_vars );
+
+		$switched_data = [
+			'switched' => $new_query,
+			'original' => $wp_query,
+		];
+
+		if ( ! empty( $GLOBALS['post'] ) ) {
+			$switched_data['post'] = $GLOBALS['post'];
+		}
+
+		$this->switched_data[] = $switched_data;
+
+		$wp_query = $new_query; // WPCS: override ok.
+
+		// Ensure the global post is set only if needed
+		unset( $GLOBALS['post'] );
+
+		if ( isset( $new_query->posts[0] ) ) {
+			if ( $force_global_post || $new_query->is_singular() ) {
+				$GLOBALS['post'] = $new_query->posts[0]; // WPCS: override ok.
+				setup_postdata( $GLOBALS['post'] );
+			}
+		}
+
+		if ( $new_query->is_author() ) {
+			$GLOBALS['authordata'] = get_userdata( $new_query->get( 'author' ) ); // WPCS: override ok.
+		}
+	}
+
+	/**
+	 * Restore current query.
+	 *
+	 * Rollback to the previous query, rolling back from `DB::switch_to_query()`.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 */
+	public function restore_current_query() {
+		$data = array_pop( $this->switched_data );
+
+		// If not switched, return.
+		if ( ! $data ) {
+			return;
+		}
+
+		global $wp_query;
+
+		$wp_query = $data['original']; // WPCS: override ok.
+
+		// Ensure the global post/authordata is set only if needed.
+		unset( $GLOBALS['post'] );
+		unset( $GLOBALS['authordata'] );
+
+		if ( ! empty( $data['post'] ) ) {
+			$GLOBALS['post'] = $data['post']; // WPCS: override ok.
+			setup_postdata( $GLOBALS['post'] );
+		}
+
+		if ( $wp_query->is_author() ) {
+			$GLOBALS['authordata'] = get_userdata( $wp_query->get( 'author' ) ); // WPCS: override ok.
+		}
+	}
+
+	/**
+	 * Get plain text.
+	 *
+	 * Retrieve the post plain text.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return string Post plain text.
+	 */
+	public function get_plain_text( $post_id ) {
 		$data = $this->get_plain_editor( $post_id );
 
+		return $this->get_plain_text_from_data( $data );
+	}
+
+	/**
+	 * Get plain text from data.
+	 *
+	 * Retrieve the post plain text from any given Elementor data.
+	 *
+	 * @since 1.9.2
+	 * @access public
+	 *
+	 * @param array $data Post ID.
+	 *
+	 * @return string Post plain text.
+	 */
+	public function get_plain_text_from_data( $data ) {
+		ob_start();
 		if ( $data ) {
 			foreach ( $data as $element_data ) {
-				$this->_render_element_plain_content( $element_data );
+				$this->render_element_plain_content( $element_data );
 			}
 		}
 
@@ -237,86 +648,8 @@ class DB {
 		// Remove empty lines.
 		$plain_text = preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n", $plain_text );
 
-		wp_update_post(
-			[
-				'ID' => $post_id,
-				'post_content' => $plain_text,
-			]
-		);
-	}
+		$plain_text = trim( $plain_text );
 
-	/**
-	 * Sanitize posted data.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $data
-	 *
-	 * @param bool $with_html_content
-	 *
-	 * @return array
-	 */
-	private function _get_editor_data( $data, $with_html_content = false ) {
-		$editor_data = [];
-
-		foreach ( $data as $element_data ) {
-			$element = Plugin::instance()->elements_manager->create_element_instance( $element_data );
-
-			$editor_data[] = $element->get_raw_data( $with_html_content );
-		} // End Section
-
-		return $editor_data;
-	}
-
-	public function iterate_data( $data_container, $callback ) {
-		if ( isset( $data_container['elType'] ) ) {
-			if ( ! empty( $data_container['elements'] ) ) {
-				$data_container['elements'] = $this->iterate_data( $data_container['elements'], $callback );
-			}
-
-			return $callback( $data_container );
-		}
-
-		foreach ( $data_container as $element_key => $element_value ) {
-			$data_container[ $element_key ] = $this->iterate_data( $data_container[ $element_key ], $callback );
-		}
-
-		return $data_container;
-	}
-
-	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
-		if ( ! $this->is_built_with_elementor( $from_post_id ) ) {
-			return;
-		}
-
-		$from_post_meta = get_post_meta( $from_post_id );
-
-		foreach ( $from_post_meta as $meta_key => $values ) {
-			// Copy only meta with the `_elementor` prefix
-			if ( 0 === strpos( $meta_key, '_elementor' ) ) {
-				$value = $values[0];
-
-				// The elementor JSON needs slashes before saving
-				if ( '_elementor_data' === $meta_key ) {
-					$value = wp_slash( $value );
-				}
-
-				update_metadata( 'post', $to_post_id, $meta_key, $value );
-			}
-		}
-	}
-
-	public function is_built_with_elementor( $post_id ) {
-		$data = $this->get_plain_editor( $post_id );
-		$edit_mode = $this->get_edit_mode( $post_id );
-
-		return ( ! empty( $data ) && 'builder' === $edit_mode );
-	}
-
-	public function has_elementor_in_post( $post_id ) {
-		$data = $this->get_plain_editor( $post_id );
-		$edit_mode = $this->get_edit_mode( $post_id );
-
-		return ( ! empty( $data ) && 'builder' === $edit_mode );
+		return $plain_text;
 	}
 }

@@ -1,27 +1,113 @@
 <?php
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
+/**
+ * Elementor icon widget.
+ *
+ * Elementor widget that displays an icon from over 600+ icons.
+ *
+ * @since 1.0.0
+ */
 class Widget_Icon extends Widget_Base {
 
+	/**
+	 * Get widget name.
+	 *
+	 * Retrieve icon widget name.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Widget name.
+	 */
 	public function get_name() {
 		return 'icon';
 	}
 
+	/**
+	 * Get widget title.
+	 *
+	 * Retrieve icon widget title.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Widget title.
+	 */
 	public function get_title() {
 		return __( 'Icon', 'elementor' );
 	}
 
+	/**
+	 * Get widget icon.
+	 *
+	 * Retrieve icon widget icon.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string Widget icon.
+	 */
 	public function get_icon() {
 		return 'eicon-favorite';
 	}
 
+	/**
+	 * Get widget categories.
+	 *
+	 * Retrieve the list of categories the icon widget belongs to.
+	 *
+	 * Used to determine where to display the widget in the editor.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return array Widget categories.
+	 */
+	public function get_categories() {
+		return [ 'basic' ];
+	}
+
+	/**
+	 * Get widget keywords.
+	 *
+	 * Retrieve the list of keywords the widget belongs to.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array Widget keywords.
+	 */
+	public function get_keywords() {
+		return [ 'icon' ];
+	}
+
+	/**
+	 * Register icon widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'icon',
+			[
+				'label' => __( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICON,
+				'default' => 'fa fa-star',
 			]
 		);
 
@@ -37,16 +123,6 @@ class Widget_Icon extends Widget_Base {
 				],
 				'default' => 'default',
 				'prefix_class' => 'elementor-view-',
-			]
-		);
-
-		$this->add_control(
-			'icon',
-			[
-				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'label_block' => true,
-				'default' => 'fa fa-star',
 			]
 		);
 
@@ -72,7 +148,10 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'placeholder' => 'http://your-link.com',
+				'dynamic' => [
+					'active' => true,
+				],
+				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 			]
 		);
 
@@ -112,6 +191,15 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
+		$this->start_controls_tabs( 'icon_colors' );
+
+		$this->start_controls_tab(
+			'icon_colors_normal',
+			[
+				'label' => __( 'Normal', 'elementor' ),
+			]
+		);
+
 		$this->add_control(
 			'primary_color',
 			[
@@ -145,10 +233,60 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'icon_colors_hover',
+			[
+				'label' => __( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'hover_primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'condition' => [
+					'view!' => 'default',
+				],
+				'selectors' => [
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => __( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 		$this->add_control(
 			'size',
 			[
-				'label' => __( 'Icon Size', 'elementor' ),
+				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -165,7 +303,7 @@ class Widget_Icon extends Widget_Base {
 		$this->add_control(
 			'icon_padding',
 			[
-				'label' => __( 'Icon Padding', 'elementor' ),
+				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
@@ -185,7 +323,7 @@ class Widget_Icon extends Widget_Base {
 		$this->add_control(
 			'rotate',
 			[
-				'label' => __( 'Icon Rotate', 'elementor' ),
+				'label' => __( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0,
@@ -227,57 +365,18 @@ class Widget_Icon extends Widget_Base {
 		);
 
 		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_hover',
-			[
-				'label' => __( 'Icon Hover', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'hover_primary_color',
-			[
-				'label' => __( 'Primary Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'hover_secondary_color',
-			[
-				'label' => __( 'Secondary Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'condition' => [
-					'view!' => 'default',
-				],
-				'selectors' => [
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'hover_animation',
-			[
-				'label' => __( 'Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
-			]
-		);
-
-		$this->end_controls_section();
 	}
 
+	/**
+	 * Render icon widget output on the frontend.
+	 *
+	 * Written in PHP and used to generate the final HTML.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
 	protected function render() {
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-icon-wrapper' );
 
@@ -296,10 +395,15 @@ class Widget_Icon extends Widget_Base {
 			if ( ! empty( $settings['link']['is_external'] ) ) {
 				$this->add_render_attribute( 'icon-wrapper', 'target', '_blank' );
 			}
+
+			if ( $settings['link']['nofollow'] ) {
+				$this->add_render_attribute( 'icon-wrapper', 'rel', 'nofollow' );
+			}
 		}
 
 		if ( ! empty( $settings['icon'] ) ) {
 			$this->add_render_attribute( 'icon', 'class', $settings['icon'] );
+			$this->add_render_attribute( 'icon', 'aria-hidden', 'true' );
 		}
 
 		?>
@@ -311,13 +415,21 @@ class Widget_Icon extends Widget_Base {
 		<?php
 	}
 
+	/**
+	 * Render icon widget output in the editor.
+	 *
+	 * Written as a Backbone JavaScript template and used to generate the live preview.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
 	protected function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 				iconTag = link ? 'a' : 'div'; #>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<i class="{{ settings.icon }}"></i>
+				<i class="{{ settings.icon }}" aria-hidden="true"></i>
 			</{{{ iconTag }}}>
 		</div>
 		<?php

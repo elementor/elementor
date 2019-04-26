@@ -12,6 +12,21 @@
 			padding-left: 10px;
 			border-bottom: 1px solid #e1e1e1;
 		}
+
+		.widefat {
+			white-space: pre;
+		}
+
+		.elementor-log-entries {
+			white-space: pre-wrap;
+		}
+
+		&:not(.elementor-system-info-log) {
+
+			tbody td:first-child {
+				width: 300px;
+			}
+		}
 	}
 
 	.elementor-system-info-report-name {
@@ -55,5 +70,12 @@
 	#elementor-system-info-raw-code-label {
 		padding: 5px;
 		display: block;
+	}
+
+	.elementor-warning {
+
+		td:first-child {
+			@include border-start(3px solid $editor-orange);
+		}
 	}
 }

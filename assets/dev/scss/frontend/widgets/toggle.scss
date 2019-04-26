@@ -5,42 +5,54 @@
 .elementor-toggle {
 	text-align: $start;
 
-	.elementor-toggle-title {
+	.elementor-tab-title {
 		font-weight: bold;
 		line-height: 1;
+		margin: 0;
 		padding: 15px;
 		border-bottom: 1px solid $gray-light;
 		cursor: pointer;
+		outline: none;
 
 		.elementor-toggle-icon {
 			display: inline-block;
 			width: 1em;
 
-			.fa {
+			&.elementor-toggle-icon- {
 
-				&:before {
-					content: getValueByDirection('\f0da', '\f0d9');
+				&right {
+					float: right;
+					text-align: right;
 				}
+
+				&left {
+					float: left;
+					text-align: left;
+				}
+			}
+
+			.elementor-toggle-icon-closed {
+				display: block;
+			}
+			.elementor-toggle-icon-opened {
+				display: none;
 			}
 		}
 
-		&.active {
+		&.elementor-active {
 			border-bottom: none;
 
-			.elementor-toggle-icon {
-
-				.fa {
-
-					&:before {
-						content: '\f0d7';
-					}
-				}
+			.elementor-toggle-icon-closed {
+				display: none;
+			}
+			.elementor-toggle-icon-opened {
+				display: block;
 			}
 		}
 	}
 
-	.elementor-toggle-content {
-	    padding: 0 15px 15px;
+	.elementor-tab-content {
+	    padding: 15px;
 		border-bottom: 1px solid $gray-light;
 	    display: none;
 	}
@@ -51,12 +63,12 @@
 
 	.elementor-toggle {
 
-		.elementor-toggle-title {
+		.elementor-tab-title {
 			padding: 12px;
 		}
 
-		.elementor-toggle-content {
-			padding: 0 12px 10px;
+		.elementor-tab-content {
+			padding: 12px 10px;
 		}
 	}
 }

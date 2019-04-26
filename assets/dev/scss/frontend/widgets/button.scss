@@ -14,7 +14,6 @@
 	&:focus,
 	&:visited {
 		color: #fff;
-		opacity: .9;
 	}
 
 	&.elementor-size- {
@@ -66,11 +65,15 @@
 	.elementor-button-text {
 		display: inline-block;
 	}
+
+	span {
+		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
+	}
 }
 
 .elementor-element.elementor-button- {
 
-	@include button-types( 'a' );
+	@include button-types( '.elementor-button' );
 
 }
 

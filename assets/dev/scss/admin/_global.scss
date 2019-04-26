@@ -1,0 +1,291 @@
+
+// Dashboard Icon
+#adminmenu {
+
+	#toplevel_page_elementor {
+
+		div.wp-menu-image:before {
+			content: "\e801";
+			font-family: eicons;
+			font-size: 18px;
+			margin-top: 1px;
+		}
+
+		// Menu Go Pro
+		a[href="admin.php?page=go_elementor_pro"] {
+			color: #d54e21;
+		}
+
+		.dashicons.dashicons-star-filled {
+			height: auto;
+		}
+	}
+
+	#menu-posts-elementor_library {
+
+		.wp-menu-image {
+
+			&:before {
+				content: '\e1037';
+				font-family: eicons;
+				font-size: 18px;
+			}
+		}
+	}
+}
+
+.elementor-plugins-gopro {
+	color: $editor-success;
+	font-weight: bold;
+}
+
+
+.e-logo-wrapper {
+	display: inline-block;
+	padding: .75em;
+	background-image: linear-gradient(-135deg, #EF295A, #434363);
+	border-radius: 7.5%;
+	line-height: 1;
+
+	i {
+		color: #ffffff;
+		font-size: 1em;
+	}
+}
+
+
+// Switcher Editor
+#elementor-switch-mode {
+	margin: 15px 0;
+}
+
+#elementor-switch-mode-button,
+#elementor-editor-button {
+	outline: none;
+	cursor: pointer;
+
+	i {
+		@include margin-end(3px);
+		font-size: 125%;
+		font-style: normal;
+	}
+}
+
+body {
+
+	&.elementor-editor-active {
+
+		.elementor-switch-mode-off {
+			display: none;
+		}
+
+		#elementor-switch-mode-button {
+			background-color: #f7f7f7;
+			color: #555;
+			border-color: #ccc;
+			box-shadow: 0 1px 0 #ccc !important;
+			text-shadow: unset;
+
+			&:hover {
+				background-color: #e9e9e9;
+			}
+
+			&:active {
+				box-shadow: inset 0 1px 0 #ccc;
+				transform: translateY(1px);
+			}
+		}
+
+		#postdivrich {
+			display: none !important;
+		}
+
+		// Gutenberg Support
+		.editor-block-list__layout {
+			display: none;
+		}
+	}
+
+	&.elementor-editor-inactive {
+
+		.elementor-switch-mode-on {
+			display: none;
+		}
+
+		#elementor-editor {
+			display: none;
+		}
+	}
+}
+
+// Gutenberg Support
+body {
+
+	&.elementor-editor-active {
+
+		.editor-block-list__layout {
+			display: none;
+		}
+
+		.edit-post-layout__content .edit-post-visual-editor {
+			flex-basis: auto;
+		}
+
+		#elementor-editor {
+			margin-bottom: 50px;
+		}
+
+		.edit-post-text-editor__body {
+			.editor-post-text-editor {
+				display: none;
+			}
+		}
+	}
+
+	.block-editor {
+
+		#elementor-switch-mode {
+			margin: 0 15px;
+
+			.button {
+				margin: 2px;
+				height: 33px;
+				font-size: 13px;
+				line-height: 1;
+
+				i {
+					@include padding-end(5px);
+				}
+			}
+		}
+	}
+}
+
+// General Elementor Buttons
+.elementor-button {
+	font-size: 13px;
+	text-decoration: none;
+	padding: 15px 40px;
+}
+
+#elementor-editor {
+	height: 300px;
+	width: 100%;
+	transition: all 0.5s ease;
+
+	@import "../editor/loader";
+}
+
+#elementor-go-to-edit-page-link {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid #DDD;
+	background-color: #F7F7F7;
+	text-decoration: none;
+	position: relative;
+	font-family: Sans-serif;
+
+	&:hover {
+		background-color: #ffffff;
+	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	&.elementor-animate {
+
+		#elementor-editor-button {
+			display: none;
+		}
+	}
+
+	&:not(.elementor-animate) {
+
+		.elementor-loader-wrapper {
+			display: none;
+		}
+	}
+}
+
+// Tools
+.elementor-button-spinner {
+	&:before {
+		font: normal 20px/.5 dashicons;
+		speak: none;
+		display: inline-block;
+		padding: 0;
+		top: 8px;
+		@include start(-4px);
+		position: relative;
+		vertical-align: top;
+		content: "\f463";
+	}
+
+	&.loading:before {
+		-webkit-animation: rotation 1s infinite linear;
+		animation: rotation 1s infinite linear;
+	}
+
+	&.success:before {
+		content: "\f147";
+		color: #46b450;
+	}
+}
+
+
+// Blank State (Admin Settings)
+.elementor-blank_state {
+	padding: 5em 0;
+	margin: auto;
+	max-width: 520px;
+	text-align: center;
+	color: $editor-dark;
+
+	i {
+		font-size: 50px;
+		color: $editor-light;
+	}
+
+	h2 {
+		font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+		font-size: 32px;
+		font-weight: 300;
+		color: inherit;
+		margin: 50px 0 35px;
+		line-height: 1.2;
+	}
+
+	p {
+		font-size: 16px;
+		font-weight: normal;
+		color: $editor-light;
+		margin-bottom: 40px;
+	}
+
+	.elementor-button {
+		display: inline-block;
+	}
+}
+
+// Customizer widget icon
+#available-widgets [class*="elementor-template"] .widget-title:before {
+	content: "\e801";
+	font-family: eicons;
+	font-size: 17px;
+}
+
+// Settings
+.elementor-settings-form-page {
+	padding-top: 30px;
+
+	&:not(.elementor-active) {
+		display: none;
+	}
+}
+
+._elementor_settings_update_time {
+	display: none;
+}

@@ -1,0 +1,153 @@
+.pen {
+    position: relative;
+    outline: none;
+
+	&:not([data-elementor-inline-editing-toolbar="advanced"]) {
+		white-space: pre-wrap;
+	}
+
+	&-menu {
+		box-shadow: 1px 2px 3px -2px #222;
+		background-color: $editor-dark;
+		position: fixed;
+		overflow: hidden;
+		border-radius: 3px;
+		z-index: $editor-layer;
+
+		&:after {
+			top: 100%;
+			content: '';
+			position: absolute;
+			border: 6px solid transparent;
+			border-top-color: $editor-dark;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+		&-below {
+
+			&:after {
+				top: 0;
+				transform: translateX(-50%) translateY(-100%) rotate(180deg);
+			}
+		}
+	}
+
+	&-icon {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 35px;
+		padding: 0 10px;
+		font-size: 21px;
+		color: $editor-lightest;
+		cursor: pointer;
+		user-select: none;
+
+		&:hover {
+			background: $editor-darker;
+		}
+
+		&[data-group],
+		&[data-action="closeGroup"] {
+			display: none;
+		}
+
+		&[data-action="close"] {
+
+			&:before {
+				content: '';
+				position: absolute;
+				@include start(0);
+				height: 60%;
+				width: 1px;
+				background-color: $editor-darker;
+			}
+		}
+
+		&.active {
+			background-color: $editor-darker;
+			box-shadow: inset 2px 2px 4px $editor-darker;
+		}
+	}
+
+	&-group-icon {
+
+		&:after {
+			font-family: FontAwesome;
+			font-size: 12px;
+			content: '\f0d7';
+			padding-left: 4px;
+			color: $editor-info;
+		}
+	}
+
+	&-input {
+
+		&-wrapper {
+			align-items: center;
+
+			.pen-url-input {
+				font-size: 12px;
+				line-height: 1.5;
+				padding: 0;
+				@include padding-start(10px);
+				@include padding-end(10px);
+				width: 250px;
+				direction: ltr; // Force LTR also in RTL languages
+
+				&, &:focus {
+					background-color: transparent;
+					border: none;
+					outline: none;
+					box-shadow: none;
+					color: #fff;
+				}
+
+				&::placeholder {
+					color: $editor-lightest;
+				}
+			}
+		}
+
+		&-label {
+			margin: 0;
+			@include margin-end(-1px);
+		}
+	}
+
+	&-placeholder {
+
+		&:before {
+			content: attr(data-pen-placeholder);
+			position: absolute;
+			font-weight: normal;
+			color: #757575;
+			opacity: 0.6;
+		}
+	}
+
+	&-external-url-checkbox {
+		display: none;
+
+		&:checked + i {
+			color: #fff;
+		}
+	}
+}
+
+.elementor-inline-editing {
+
+	i:not( [class] ) {
+		font-style: italic;
+	}
+
+	b {
+		font-weight: bold;
+	}
+
+	u {
+		text-decoration: underline;
+	}
+}

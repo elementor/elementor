@@ -3,11 +3,18 @@
 //
 
 .elementor-button {
+	font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+	font-weight: 500;
+	text-transform: uppercase;
 	outline: none;
 	border: none;
 	border-radius: 3px;
 	transition-property: background, color, box-shadow, opacity;
-	transition-duration: .5s;
+	transition-duration: .3s;
+
+	&:hover {
+		border: none;
+	}
 
 	&:not([disabled]) {
 		cursor: pointer;
@@ -41,10 +48,26 @@
 		}
 	}
 
-	&.elementor-button-go-pro {
+	&.elementor-button-warning {
+		background-color: $editor-light;
 		color: #fff;
-		background-color: $editor-orange;
 
+		&[disabled] {
+			background-color: $editor-lighter;
+		}
+
+		&:not([disabled]) {
+
+			&:hover {
+				background-color: $editor-warning;
+				opacity: 0.85;
+				box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+			}
+
+			&:active {
+				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
+			}
+		}
 	}
 
 	&.elementor-edit-template {
@@ -57,7 +80,6 @@
 		background-color: $editor-light;
 		color: #fff;
 		font-size: 11px;
-		text-transform: uppercase;
 		padding: 6.5px 15px;
 
 		&:hover {
@@ -72,6 +94,11 @@
 		&:visited {
 			color: #fff;
 		}
+	}
+
+	&.elementor-button-go-pro {
+		color: #fff;
+		background-color: $editor-orange;
 	}
 
 	i {

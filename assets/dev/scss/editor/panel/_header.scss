@@ -29,6 +29,10 @@
 		line-height: 40px;
 		transition: $transition-hover;
 
+		&.eicon-menu-bar {
+			font-size: 18px;
+		}
+
 		&:hover {
 			color: $editor-lightest;
 		}

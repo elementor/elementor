@@ -1,0 +1,112 @@
+.elementor-lightbox {
+
+	.dialog- {
+
+		&header {
+			display: none;
+		}
+
+		&widget-content {
+			background: none;
+			box-shadow: none;
+			width: 100%;
+			height: 100%;
+		}
+
+		&message {
+			animation-duration: .4s; // Open lightbox transition
+
+			&:not(.elementor-fit-aspect-ratio) {
+				height: 100%;
+			}
+		}
+
+		&lightbox-close-button {
+			cursor: pointer;
+			position: absolute;
+			font-size: 25px;
+			padding: 5px;
+			z-index: 2;
+			line-height: 1;
+
+			@media (max-width: $screen-sm-max) {
+				padding: 0;
+			}
+		}
+	}
+
+	//UI Colors
+	.dialog-lightbox-close-button,
+	.elementor-swiper-button {
+		color: $slides_gui;
+		transition: $transition-hover;
+		opacity: 1;
+
+		&:hover {
+			color: #ffffff;
+		}
+	}
+
+	.swiper- {
+
+		&container {
+			height: 100%;
+		}
+	}
+
+	.elementor-lightbox-item {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+		padding: 70px 80px;
+		box-sizing: border-box;
+		height: 100%;
+		margin: auto;
+
+		@media (max-width: $screen-sm-max) {
+			padding: 40px;
+		}
+	}
+
+	.elementor-lightbox-image {
+		max-height: 100%;
+	}
+
+	.elementor-video-container {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+
+		@media (min-width: $screen-lg-min) {
+			width: 75%;
+		}
+
+		@media (max-width: $screen-md-max) {
+			width: 100%;
+		}
+	}
+
+	.elementor-swiper-button {
+
+		&-prev {
+			left: 35px;
+		}
+
+		&-next {
+			right: 35px;
+		}
+
+		@media (max-width: $screen-sm-max) {
+
+			&-prev {
+				left: 10px;
+			}
+
+			&-next {
+				right: 10px;
+			}
+		}
+	}
+}

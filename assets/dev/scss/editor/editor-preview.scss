@@ -1,484 +1,54 @@
 //
 // Editor
 //
-@import '../helpers/variables';
-@import '../helpers/mixins';
+@import "../helpers/variables";
+@import "../helpers/mixins";
+@import "resizable";
 
-@import '_compatibility';
+@import "breakpoints";
+@import "panel/global";
+@import "panel/control";
+@import "panel/color-picker";
+@import "inline-editor";
+@import "dynamic-tags";
+@import "animations";
+@import "compatibility";
 
 // Hidden WP Admin Bar
 html.elementor-html {
 	margin-top: 0 !important;
 }
 
-#elementor{
+#elementor {
 	position: relative;
 }
 
 .elementor-editor-active {
-	.elementor.elementor-edit-mode {
 
-		.elementor-element-empty {
+	.elementor.elementor-edit-area-active {
 
-			.elementor-sortable-placeholder {
-				display: none;
-			}
-		}
+		.elementor-top-section {
 
-		.elementor-empty-view {
-			display: table;
-			width: 100%;
-			height: 100%;
-			position: relative;
-			z-index: $first-layer;
-		}
+			> .elementor-container {
 
-		.elementor-first-add {
-			display: table-cell;
-			vertical-align: middle;
-			text-align: center;
-			border: 1px dashed #d5dadf;
-
-			.elementor-icon {
-				font-size: 19px;
-				color: $editor-light;
-				cursor: pointer;
-			}
-		}
-
-		.elementor-element {
-
-			> .elementor-element-overlay {
-				position: absolute;
-				top: 0;
-				right: 0;
-				left: 0;
-				bottom: 0;
-				letter-spacing: 0; // Hack for front-end style themes
-				z-index: $element-overlay;
-				pointer-events: none;
-			}
-
-			&.elementor-widget-empty {
-				height: 50px;
-				background: $white;
-
-				&:after {
-					position: absolute;
-					content: '';
-					left: 0;
-					right: 0;
-					top: 0;
-					bottom: 0;
-					background-color: fade-out($editor-background, .2);
-				}
-
-				.elementor-widget-empty-icon {
-					position: absolute;
-					height: 25px;
-					width: 25px;
-					top: 0;
-					bottom: 0;
-					right: 0;
-					left: 0;
-					margin: auto;
-					color: $gray;
-					font-size: 22px;
-				}
-			}
-
-			&:not(:hover) {
-
-				&:not(.elementor-element-editable) {
-
-					> .elementor-element-overlay {
-
-						.elementor-editor-element-settings-list {
-							display: none;
-						}
-					}
-				}
-
-				&:not(.ui-resizable-resizing) {
-
-					> .elementor-element-overlay {
-
-						.column-title {
-							display: none;
-						}
-					}
-				}
-			}
-
-			@media (max-width: $screen-md-max) {
-
-				> .elementor-element-overlay {
-
-					.column-title {
-						display: none;
-					}
-				}
-			}
-
-			&[data-side] {
-				animation: increase-border .6s;
-				animation-timing-function: ease-out;
-			}
-
-			&[data-side="top"], &[data-side="bottom"] + .elementor-element {
-				border-top: 4px solid $editor-info;
-			}
-
-			&[data-side="bottom"]:last-child {
-				border-bottom: 4px solid $editor-info;
-			}
-		}
-
-		// Section
-		.elementor-section {
-
-			&:not(.elementor-section-height-full) {
-
-				.elementor-column-wrap {
-
-					&.elementor-element-empty {
-
-						@media (min-width: $screen-md-min) {
-
-							&, .elementor-widget-wrap {
-								position: absolute;
-								width: 100%;
-								height: 100%;
-								top: 0;
-							}
-						}
-					}
+				> .elementor-row {
+					min-height: 40px;
 				}
 			}
 		}
 
-		// Inner Section
-		.elementor-top-column {
+		.elementor-inner-section {
 
-			.elementor-widget-wrap {
-
-				.elementor-inner-section {
-					margin-top: 20px;
-				}
-			}
-		}
-
-		// General - Overlay Settings
-		.elementor-editor-element-settings {
-			position: absolute;
-			overflow: hidden;
-
-			.elementor-editor-element-settings-list {
-				display: table;
-				table-layout: fixed;
-				height: 20px;
-				list-style: none;
-				margin: 0;
-				padding: 0;
-				font-family: Arial, Helvetica, sans-serif;
-				font-size: 13px;
-				font-weight: normal;
-				font-style: normal;
-				line-height: 1;
-
-				&.elementor-editor-section-settings-list {
-					background-color: $editor-light;
-
-					.elementor-editor-element-setting {
-
-						@media (min-width: $screen-lg-min) {
-							&:not(:last-child) {
-								@include border-end(1px solid $editor-lighter);
-							}
-						}
-
-						&.elementor-editor-element-trigger {
-
-							&:not(.elementor-active) {
-								border: none;
-							}
-						}
-
-						> a {
-
-							&:hover {
-								background-color: $editor-lighter;
-							}
-						}
-					}
-				}
-
-				.fa {
-					color: $white;
-				}
+			&:first-child {
+				margin-top: 15px;
 			}
 
-			.elementor-editor-element-setting {
-				display: table-cell;
-				vertical-align: middle;
-				width: 35px;
-				text-align: center;
-				padding: 0;
-				margin: 0;
+			> .elementor-container {
 
-				> a {
-					padding: 8.5px 0;
-					display: inline-block;
-					width: 100%;
-					font-size: 11px;
-					line-height: 1;
-					color: #fff;
+				> .elementor-row {
+					min-height: 40px;
 				}
 			}
-
-			.elementor-editor-element-remove {
-
-				.fa {
-					color: $editor-danger;
-				}
-			}
-		}
-
-		// Column - Overlay Settings
-		.elementor-editor-column-settings {
-			@include start(-1px);
-			z-index: $first-layer;
-			bottom: 100%;
-			margin-bottom: 1px;
-			transform: translateY(1px);
-			border-radius: 3px 3px 0 0;
-			pointer-events: all;
-
-			.elementor-editor-element-settings-list {
-				float: $start;
-				background-color: $editor-darkest;
-
-				.elementor-editor-element-setting {
-
-					@media (min-width: $screen-lg-min) {
-						&:not(:last-child) {
-							@include border-end(1px solid $editor-darker);
-						}
-					}
-
-					> a {
-
-						&:hover {
-							background-color: $editor-darker;
-						}
-					}
-				}
-			}
-
-			.elementor-editor-element-trigger {
-
-				&:not(.elementor-active) {
-
-					~ .elementor-editor-element-setting {
-						display: none;
-					}
-				}
-
-				> a {
-					padding: 8.5px;
-				}
-
-				@media(min-width: $screen-lg-min) {
-
-					> a {
-						cursor: move;
-
-						&:hover {
-
-							&:after {
-								content: getValueByDirection('\f105', '\f104');
-								font-family: 'FontAwesome';
-								@include margin-start(5px);
-							}
-						}
-					}
-
-					&.elementor-active {
-						> a {
-							&:after {
-								content: getValueByDirection('\f105', '\f104');
-								font-family: 'FontAwesome';
-								@include margin-start(5px);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		// Widget - Overlay Settings
-		.elementor-editor-widget-settings {
-			z-index: $second-layer;
-			top: 2px;
-			@include end(2px);
-
-			.elementor-editor-element-setting {
-				width: 24px;
-
-				&:not(:last-child) {
-					@include padding-end(2px);
-				}
-
-				> a {
-					background-color: $editor-info;
-					font-size: 10px;
-					padding: 6px 8px;
-
-					&:hover {
-						background-color: darken( $editor-info, 10% );
-					}
-				}
-			}
-
-			.elementor-editor-element-remove {
-
-				.fa {
-					color: #ffffff;
-				}
-
-				&:hover {
-
-					.fa {
-						color: $editor-danger;
-					}
-				}
-			}
-
-			.elementor-editor-element-edit {
-
-				a {
-					cursor: move;
-				}
-			}
-		}
-
-		.elementor-editor-element-setting {
-
-			&:not(.elementor-editor-element-edit):not(.elementor-editor-element-trigger) {
-
-				@media (max-width: $screen-md-max) {
-					display: none;
-				}
-			}
-		}
-
-		// Section Full (No more columns) - Overlay
-		.elementor-section-filled {
-
-			.elementor-editor-column-settings {
-
-				.elementor-editor-element-add, .elementor-editor-element-duplicate {
-					display: none;
-				}
-			}
-
-			.elementor-sortable-placeholder {
-
-				&.elementor-column {
-					display: none;
-				}
-			}
-
-			.elementor-row {
-
-				&.elementor-draggable-over {
-					border: 1px solid $editor-danger;
-				}
-			}
-		}
-
-		// Row
-		.elementor-row {
-			min-height: 100px; // Min Height for Section
-		}
-
-		// Column
-		.elementor-column {
-
-			&:hover,
-			&.elementor-element-editable {
-
-				> .elementor-element-overlay {
-					border: 1px solid $white;
-
-					&:after {
-						position: absolute;
-						content: '';
-						left: 0;
-						right: 0;
-						top: 0;
-						bottom: 0;
-						width: 100%;
-						height: 100%;
-						outline: 1px dashed $gray-darker;
-					}
-				}
-			}
-
-			&.elementor-dragging-on-child {
-
-				> .elementor-element-overlay {
-					border: 1px solid $editor-info;
-
-					&:after {
-						display: none;
-					}
-				}
-			}
-
-			.column-title {
-				position: absolute;
-				bottom: 100%;
-				@include end(0);
-				margin-bottom: 5px;
-				color: #999;
-				font-family: Arial, Helvetica, sans-serif;
-				font-weight: normal;
-				line-height: 1;
-				font-size: 12px;
-				font-style: italic;
-			}
-
-			> .ui-resizable-e, > .ui-resizable-w {
-				cursor: ew-resize;
-				width: 7px;
-				position: absolute;
-				@include end(-5px);
-				top: 0;
-				height: 100%;
-			}
-
-			&:last-of-type {
-				> .ui-resizable-e, > .ui-resizable-w {
-					display: none !important;
-				}
-			}
-
-			@media (max-width: $screen-md-max) {
-				> .ui-resizable-e, > .ui-resizable-w {
-					display: none !important;
-				}
-			}
-		}
-	}
-
-	.elementor-inner {
-
-		// Force keeping in top for blank page detection
-		&:before {
-			content: '';
-			display: table;
-			clear: both;
 		}
 	}
 
@@ -487,12 +57,17 @@ html.elementor-html {
 		&.elementor-element-empty {
 
 			.elementor-widget-wrap {
+				min-height: 30px; // In case of section with non-default content position
 
-				@media (min-width: $screen-md-min) {
-					padding: 10px;
+				@media (min-width: $editor-screen-md-min) {
+					margin: 10px;
 				}
 			}
 		}
+	}
+
+	.elementor-column {
+		min-width: 25px;
 	}
 
 	.elementor-widget {
@@ -502,224 +77,819 @@ html.elementor-html {
 		}
 
 		&:not(.elementor-loading):not(.elementor-widget-menu-anchor) { // Don't apply transition on anchor widget - Safari hack
-			transition: all .1s;
+			//transition: all .1s;
 		}
 
-		&.elementor-element-editable, &.elementor-widget-can-edit:hover {
-			outline: 1px solid $editor-info;
+		&.elementor-element-editable,
+		&.elementor-element-edit-mode:hover {
+			box-shadow: 0 0 0 1px $editor-info;
 		}
 
-		&:not(.elementor-element-editable):not(:hover) {
+		&:not(:hover) {
 
 			.elementor-editor-element-settings {
 				display: none;
 			}
 		}
+
+		&.ui-draggable-dragging {
+			pointer-events: none;
+		}
 	}
 
-	.elementor-column.elementor-dragging {
-
-		div.elementor-column-wrap {
-			min-height: 50px; //FOR EMPTY COLUMN - DON'T REMOVE!
-		}
+	// It's here in order to override some themes default css
+	.elementor-editor-element-setting {
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		margin: 0;
+		font-size: 11px;
+		color: #fff;
+		width: 25px;
+		transition: margin .3s, width .3s, font .3s;
 	}
 
 	.handle {
 		display: none; //TEMP
 	}
 
-	.elementor-sortable-placeholder {
-		background: $editor-info;
-		transition-timing-function: ease-out;
-
-		&:not(.elementor-column) {
-			height: 5px;
-		}
-
-		&.elementor-column {
-			width: 5px;
-		}
+	.elementor-inline-editing {
+		min-height: 15px;
 	}
 
-	.elementor-sortable-helper {
+	.elementor-edit-hidden {
+		display: none;
+	}
+}
+
+// Element
+.elementor-element {
+
+	> .elementor-element-overlay {
 		position: absolute;
-		border-radius: 3px;
-		background-color: #fff;
-		text-align: center;
-		color: $editor-darker;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-
-		.icon {
-			font-size: 28px;
-			padding-top: 15px;
-			line-height: 1;
-		}
-
-		.elementor-element-title-wrapper {
-			display: table;
-			width: 100%;
-		}
-
-		.title {
-			font-size: 11px;
-			font-family: Arial, Helvetica, sans-serif;
-			font-weight: normal;
-			font-style: normal;
-			display: table-cell;
-			vertical-align: middle;
-			height: 40px;
-		}
+		top: 0;
+		@include end(0);
+		letter-spacing: 0; // Hack for front-end style themes
+		z-index: $element-overlay;
+		pointer-events: none;
 	}
 
-	.elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,
-	.elementor-first-add[data-side] {
+	&-empty {
 
-		&:after {
-			content: '';
-			height: 4px;
-			display: block;
-			background-color: $editor-info;
-		}
-
-		.elementor-icon {
+		.elementor-sortable-placeholder {
 			display: none;
 		}
 	}
 
-	.elementor-draggable-over[data-dragged-element="section"][data-dragged-is-inner="true"] {
+	&.elementor-widget-empty {
+		background-color: fade_out($editor-lightest, .2);
 
-		.elementor-inner-column {
+		.elementor-widget-empty-icon {
+			color: $editor-lighter;
+			font-size: 22px;
+			display: block;
+			text-align: center;
+			padding: 10px 0;
+		}
+	}
 
-			.elementor-sortable-placeholder {
+	&:not(:hover) {
+
+		&:not(.elementor-element-editable) {
+
+			> .elementor-element-overlay {
+
+				.elementor-editor-element-settings {
+					display: none;
+				}
+			}
+		}
+	}
+
+	&--toggle-edit-tools {
+
+		> .elementor-element-overlay {
+
+			.elementor-editor-element-edit {
+
+				&:not(.elementor-active) {
+
+					~ * {
+						width: 0;
+						font-size: 0;
+					}
+				}
+			}
+		}
+	}
+
+	&[data-side="top"], &[data-side="bottom"] + .elementor-element {
+
+		&:before {
+			content: '';
+			background-color: $editor-info;
+			transition-timing-function: ease-out;
+			opacity: .9;
+			height: $widget-placeholder-size;
+			animation: placeholder-widget 500ms;
+			display: block;
+		}
+	}
+
+	&[data-side="bottom"]:last-child {
+
+		&:after {
+			content: '';
+			background-color: $editor-info;
+			transition-timing-function: ease-out;
+			opacity: .9;
+			height: $widget-placeholder-size;
+			animation: placeholder-widget 500ms;
+			display: block;
+		}
+	}
+
+	&.elementor-absolute, &.elementor-fixed {
+		cursor: grab;
+
+		&:active {
+			cursor: grabbing;
+		}
+
+		.eicon-edit {
+
+			&:before {
+				content: '\e1040';
+			}
+		}
+	}
+}
+
+// Section
+.elementor-section {
+
+	> .elementor-element-overlay {
+		@include start(0);
+		bottom: 0;
+
+		&:after {
+			position: absolute;
+			left: 2px;
+			right: 2px;
+			top: 2px;
+			bottom: 2px;
+			outline: 2px solid $editor-info;
+			animation: section-outline .75s;
+		}
+	}
+
+	&:hover,
+	&.elementor-element-editable {
+
+		> .elementor-element-overlay {
+
+			&:after {
+				content: '';
+			}
+		}
+	}
+
+	// Section Full (No more columns) - Overlay
+	&-filled {
+
+		.elementor-sortable-placeholder {
+
+			&.elementor-column {
+				display: none;
+			}
+		}
+
+		.elementor-row {
+
+			&.elementor-draggable-over {
+				border: 1px solid $editor-danger;
+			}
+		}
+	}
+}
+
+// Column
+.elementor-column {
+
+	> .elementor-element-overlay {
+		@include start(0);
+		bottom: 0;
+
+		&:after {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			outline: 1px dashed $editor-dark;
+		}
+	}
+
+	&:hover,
+	&.elementor-element-editable {
+
+		> .elementor-element-overlay {
+			border: 1px solid $white;
+
+			&:after {
+				content: '';
+			}
+		}
+	}
+
+	&.elementor-dragging-on-child {
+
+		> .elementor-element-overlay {
+			border: 1px solid $editor-info;
+
+			&:after {
 				display: none;
 			}
 		}
 	}
 
-	// Add new Section
-	#elementor-add-section {
-		background-color: rgba(255, 255, 255, .5);
-		margin: 60px auto;
-		max-width: 1140px;
-		position: relative;
+	> .ui-resizable-e, > .ui-resizable-w {
+		cursor: col-resize;
+		width: 7px;
+		position: absolute;
+		@include end(-5px);
+		top: 0;
+		height: 100%;
+	}
 
-		&:not([data-side]) {
-			border: 2px dashed $editor-lightest;
+	&:last-of-type {
+		> .ui-resizable-e, > .ui-resizable-w {
+			display: none !important;
+		}
+	}
+
+	@media (max-width: $editor-screen-md-max) {
+		> .ui-resizable-e, > .ui-resizable-w {
+			display: none !important;
+		}
+	}
+}
+
+// General - Overlay Settings
+.elementor-editor-element-settings {
+	position: absolute;
+	display: flex;
+	height: 26px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: normal;
+	font-style: normal;
+	line-height: 1;
+	z-index: $first-layer;
+	pointer-events: all;
+}
+
+.elementor-editor-element-setting {
+
+	// Avoid conflict between v2.1+ & Pro 2.1-
+	// TODO: Remove this in v2.4
+	&.elementor-editor-element-save {
+		display: none;
+	}
+}
+
+.elementor-editor-element-edit {
+
+	@media(min-width: $editor-screen-lg-min) {
+		cursor: move;
+	}
+}
+
+// Section - Overlay Settings
+.elementor-editor-section-settings {
+	height: 24px;
+	top: 1px;
+	@include start(50%);
+	transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
+	background-color: $editor-info;
+	border-radius: 5px 5px 0 0;
+	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
+
+	i.eicon-handle {
+		font-size: 16px;
+	}
+
+	.elementor-editor-element-setting {
+
+		&:hover {
+			background-color: darken($editor-info, 20%);
 		}
 
-		&[data-side] {
+		&:first-child {
+			border-radius: getValueByDirection(5px 0 0 0, 0 5px 0 0);
+
+			&:before {
+				content: '';
+				position: absolute;
+				border: solid transparent;
+				top: 2px;
+				@include border-end-property(color, $editor-info);
+				border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
+				@include end(calc(100% - 1px));
+			}
+
+			&:hover {
+
+				&:before {
+					@include border-end-property(color, darken($editor-info, 20%));
+				}
+			}
+		}
+
+		&:last-child {
+			border-radius: getValueByDirection(0 5px 0 0, 5px 0 0 0);
+
+			&:after {
+				content: '';
+				position: absolute;
+				border: solid transparent;
+				top: 2px;
+				@include border-start-property(color, $editor-info);
+				border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
+				@include start(calc(100% - 1px));
+			}
+
+			&:hover {
+
+				&:after {
+					@include border-start-property(color, darken($editor-info, 20%));
+				}
+			}
+		}
+	}
+}
+
+// Top Section (Handles inside)
+.elementor-section--handles-inside {
+
+	.elementor-editor-section-settings {
+		transform: translateX(-50%);
+		border-radius: 0 0 5px 5px;
+
+		.elementor-editor-element-setting {
+
+			&:first-child {
+				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
+
+				&:before {
+					top: 0;
+					border-width: getValueByDirection(0 12px 22px 0, 0 0 22px 12px);
+				}
+			}
+
+			&:last-child {
+				border-radius: getValueByDirection(0 0 5px 0, 0 0 0 5px);
+
+				&:after {
+					top: 0;
+					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
+				}
+			}
+		}
+	}
+}
+
+// Column - Overlay Settings
+.elementor-editor-column-settings {
+	top: -1px;
+	@include start(-1px);
+	border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
+	overflow: hidden;
+
+	.elementor-editor-element-setting {
+		background-color: $editor-darkest;
+
+		&:not(:hover) {
+			background-image: linear-gradient(to bottom, $editor-dark, $editor-darker);
+		}
+	}
+}
+
+// Widget - Overlay Settings
+.elementor-editor-widget-settings {
+	z-index: $second-layer;
+	top: -1px;
+	@include end(-1px);
+	flex-direction: row-reverse;
+	border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
+	overflow: hidden;
+
+	.elementor-editor-element-setting {
+		background-color: darken($editor-info, 20%);
+
+		&:not(:hover) {
+			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
+		}
+	}
+}
+
+.elementor-empty-view {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: $first-layer;
+}
+
+.elementor-first-add {
+	text-align: center;
+	border: 1px dashed $editor-lightest;
+	display: flex;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+
+	.elementor-icon {
+		font-size: 19px;
+		color: $editor-light;
+		cursor: pointer;
+	}
+}
+
+.elementor-sortable-helper {
+	position: absolute;
+	border-radius: 3px;
+	background-color: #fff;
+	text-align: center;
+	color: $editor-darker;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+	cursor: move;
+
+	.icon {
+		font-size: 28px;
+		padding-top: 15px;
+		line-height: 1;
+	}
+
+	.elementor-element-title-wrapper {
+		display: table;
+		width: 100%;
+	}
+
+	.title {
+		font-size: 11px;
+		font-family: Arial, Helvetica, sans-serif;
+		font-weight: normal;
+		font-style: normal;
+		display: table-cell;
+		vertical-align: middle;
+		height: 40px;
+	}
+}
+
+//Content Only (writing mode)
+.elementor-editor-content-only {
+	//Empty Section
+	.elementor-first-add {
+		display: none;
+	}
+
+	// Section
+	.elementor-section {
+
+		> .elementor-element-overlay {
+			display: none;
+
+			&:after {
+				display: none;
+			}
+		}
+
+		&:hover,
+		&.elementor-element-editable {
+
+			> .elementor-element-overlay {
+
+				&:after {
+					display: none;
+				}
+			}
+		}
+	}
+
+	// Column
+	.elementor-column {
+
+		> .elementor-element-overlay {
+			display: none;
+
+			&:after {
+				display: none;
+			}
+		}
+
+		&:hover,
+		&.elementor-element-editable {
+
+			> .elementor-element-overlay {
+
+				&:after {
+					display: none;
+				}
+			}
+		}
+	}
+
+	.elementor-editor-element-edit {
+
+		@media(min-width: $editor-screen-lg-min) {
+			cursor: pointer;
+		}
+	}
+}
+
+// Drag/sort placeholder
+.elementor-sortable-placeholder {
+
+	&:not(.elementor-column-placeholder) {
+		background-color: $editor-info;
+		animation-duration: 250ms;
+		opacity: .9;
+		width: 100%;
+		align-self: stretch;
+	}
+}
+
+.elementor-section-placeholder {
+	height: $section-placeholder-size;
+	animation-name: placeholder-section;
+}
+
+.elementor-column-placeholder {
+	position: relative;
+
+	&:before, &:after {
+		content: '';
+		position: absolute;
+		top: 10px;
+		bottom: 10px;
+		right: 10px;
+		left: 10px;
+	}
+
+	&:before {
+		border: 1px solid $editor-dark;
+	}
+
+	&:after {
+		border: 1px dashed #fff;
+	}
+}
+
+.elementor-widget-placeholder {
+	height: $widget-placeholder-size;
+	animation-name: placeholder-widget;
+}
+
+.elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,
+.elementor-first-add.elementor-html5dnd-current-element {
+
+	&:after {
+		content: '';
+		background-color: $editor-info;
+		transition-timing-function: ease-out;
+		opacity: .9;
+		height: $widget-placeholder-size;
+		animation: placeholder-widget 500ms;
+		width: 100%;
+	}
+
+	.elementor-icon {
+		display: none;
+	}
+}
+
+.elementor-draggable-over[data-dragged-element="section"][data-dragged-is-inner="true"] {
+
+	.elementor-inner-column {
+
+		.elementor-sortable-placeholder {
+			display: none;
+		}
+	}
+}
+
+// Add new Section
+.elementor-add-section {
+	max-width: 1160px;
+	position: relative;
+
+	&:not(.elementor-dragging-on-child) {
+
+		.elementor-add-section-inner {
+			border: 2px dashed $editor-lightest;
+			background-color: rgba(255, 255, 255, .5);
+		}
+	}
+
+	&.elementor-dragging-on-child {
+
+		.elementor-add-section-inner {
 			border: 3px dashed $editor-info;
 		}
+	}
 
-		@media (max-width: $screen-xs-max) {
+	&[data-view="choose-action"] {
+
+		.elementor-select-preset {
 			display: none;
 		}
 	}
 
-	#elementor-add-section-inner {
-		text-align: center;
-		margin-top: 10px;
-		padding: 40px 0;
+	&[data-view="select-preset"] {
+
+		.elementor-add-new-section {
+			display: none;
+		}
 	}
+}
 
-	#elementor-add-new-section {
-		display: inline-block; // For smooth dragging above
+.elementor-add-section-inner {
+	text-align: center;
+	margin: 20px;
+	padding: 40px 0;
+}
 
-		.elementor-button {
-			color: #fff;
-			background-image: none; // Reset for some themes
-			font-size: 13px;
-			font-family: Arial, Helvetica, sans-serif;
-			font-weight: normal;
-			font-style: normal;
-			line-height: 1;
-			text-transform: uppercase;
-			height: 40px;
-			width: 170px;
-			padding: 0;
-			border: none;
-			border-radius: 3px;
-			cursor: pointer;
+.elementor-add-new-section {
+	display: inline-block; // For smooth dragging above
 
-			&:hover {
-				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 2px rgba(0, 0, 0, .2);
-			}
+	.elementor-add-section-area-button  {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		height: 40px;
+		width: 40px;
+		color: #fff;
+		font-size: 16px;
+		border-radius: 50%;
+		transition: all .3s;
+		cursor: pointer;
 
-			&:active {
-				box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .1);
-			}
+		&:hover {
+			opacity: 0.85;
+			box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 2px rgba(0, 0, 0, .2);
+		}
+
+		&:active {
+			box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .1);
 		}
 	}
 
-	#elementor-add-section-button {
+	.elementor-add-section-button {
 		background-color: $editor-accent;
 	}
 
-	#elementor-add-template-button {
+	.elementor-add-template-button {
 		background-color: $editor-dark;
-		@include margin-start(25px);
+		@include margin-start(5px);
 	}
+}
 
-	#elementor-add-section-drag-title {
-		font-family: Arial, Helvetica, sans-serif;
-		font-size: 13px;
-		font-weight: normal;
-		font-style: italic;
-		line-height: 1;
-		color: $editor-darker;
-		margin-top: 15px;
+.elementor-add-section-drag-title {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: normal;
+	font-style: italic;
+	line-height: 1;
+	color: $editor-darker;
+	margin-top: 15px;
+}
+
+.elementor-add-section-close {
+	position: absolute;
+	right: 40px;
+	top: 20px;
+	font-size: 20px;
+	cursor: pointer;
+	line-height: 1;
+	color: $editor-lightest;
+
+	&:hover {
+		color: $editor-dark;
 	}
+}
 
-	#elementor-select-preset-close {
-		position: absolute;
-		right: 20px;
-		top: 20px;
-		font-size: 20px;
+.elementor-select-preset-title {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: 500;
+	font-style: normal;
+	text-transform: uppercase;
+	color: $editor-darker;
+}
+
+.elementor-select-preset-list {
+	list-style: none;
+	padding: 0 25px;
+	margin: 20px auto 0;
+	overflow: hidden;
+	max-width: 700px;
+
+	.elementor-preset {
 		cursor: pointer;
-		line-height: 1;
-		color: $editor-lightest;
+		margin: 0;
+		padding: 10px;
+		float: $start;
+		max-width: 33.333%;
+
+		&:hover {
+
+			path {
+				fill: $editor-dark;
+			}
+		}
+
+		&:not(:hover) {
+
+			path {
+				fill: $editor-lightest;
+			}
+		}
+
+		svg {
+			height: 50px;
+			width: 100%;
+
+			@if 'rtl' == $direction {
+				transform: rotate(180deg);
+			}
+		}
+	}
+}
+
+#elementor-add-new-section {
+	margin: 60px auto;
+
+	&[data-view="choose-action"] {
+
+		.elementor-add-section-close {
+			display: none;
+		}
+	}
+}
+
+.elementor-add-section-inline {
+	margin: 10px auto;
+}
+
+.elementor-column-percents-tooltip {
+	position: absolute;
+	display: none;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #fff;
+	font-size: 10px;
+	background-color: $editor-darker;
+	width: 40px;
+	padding: 3.5px 0;
+	text-align: center;
+	z-index: 1;
+	line-height: 1;
+
+	&:after {
+		content: '';
+		position: absolute;
+		width:0;
+		height:0;
+		border: 8.5px solid transparent;
+		top: 0;
 	}
 
-	#elementor-select-preset-title {
-		font-family: Arial, Helvetica, sans-serif;
-		font-size: 13px;
-		font-weight: 500;
-		font-style: normal;
-		text-transform: uppercase;
-		color: $editor-darker;
+	&[data-side="left"] {
+		border-radius: 3px 0 0 3px;
+		right: 15px;
+
+		&:after {
+			left: 100%;
+			border-left-color: $editor-darker;
+			border-right-width: 0;
+		}
 	}
 
-	#elementor-select-preset-list {
-		list-style: none;
-		padding: 0 25px;
-		margin: 20px auto 0;
-		overflow: hidden;
-		max-width: 700px;
+	&[data-side="right"] {
+		border-radius: 0 3px 3px 0;
+		left: 15px;
 
-		.elementor-preset {
-			cursor: pointer;
-			margin: 0;
-			padding: 10px;
-			float: $start;
-
-			&:hover {
-
-				path {
-					fill: $editor-dark;
-				}
-			}
-
-			&:not(:hover) {
-
-				path {
-					fill: $editor-lightest;
-				}
-			}
-
-			svg {
-				height: 50px;
-			}
+		&:after {
+			right: 100%;
+			border-right-color: $editor-darker;
+			border-left-width: 0;
 		}
 	}
 }
@@ -728,10 +898,8 @@ html.elementor-html {
 .elementor-editor-preview {
 
 	.elementor-element-overlay,
-	.elementor-editor-widget-settings,
-	.column-title,
 	.elementor-empty,
-	#elementor-add-section,
+	.elementor-add-section,
 	.elementor-element-empty,
 	.elementor-widget-empty {
 		display: none;

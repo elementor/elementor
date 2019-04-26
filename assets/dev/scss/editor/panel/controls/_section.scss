@@ -1,0 +1,18 @@
+.elementor-control-type-section {
+	margin-top: 10px;
+	padding: 0;
+
+	&.elementor-open {
+		padding-bottom: 15px;
+	}
+
+	+ .elementor-control {
+
+		&:not(.elementor-control-type-section) {
+
+			&:before {
+				display: none;
+			}
+		}
+	}
+}

@@ -1,0 +1,48 @@
+.elementor-widget-text-editor {
+
+	&.elementor-drop-cap {
+
+		&-view- {
+
+			&stacked {
+
+				.elementor-drop-cap {
+					background-color: $gray;
+					color: #fff;
+				}
+			}
+
+			&framed {
+
+				.elementor-drop-cap {
+					color: $gray;
+					border: 3px solid;
+					background-color: transparent;
+				}
+			}
+		}
+	}
+
+	&:not(.elementor-drop-cap-view-default) {
+
+		.elementor-drop-cap {
+			margin-top: 8px;
+
+			&-letter {
+				width: 1em;
+				height: 1em;
+			}
+		}
+	}
+
+	.elementor-drop-cap {
+		float: $start;
+		text-align: center;
+		line-height: 1;
+		font-size: 50px;
+
+		&-letter {
+			display: inline-block;
+		}
+	}
+}
