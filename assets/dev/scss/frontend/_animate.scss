@@ -1,5 +1,6 @@
 // Global style for animate.css
 
+
 .animated {
 	animation-duration: 1.25s;
 
@@ -14,4 +15,11 @@
 
 .animated.infinite {
 	animation-iteration-count: infinite;
+}
+
+// Disable animations for users who experience motion sickness / vertigo
+@media (prefers-reduced-motion: reduce) {
+	.animated {
+		animation: none;
+	}
 }
