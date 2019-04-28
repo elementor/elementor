@@ -36,7 +36,7 @@ class User {
 	 *
 	 * @var string API URL.
 	 */
-	private static $_api_url = 'https://my.elementor.com/api/v1/ac_beta/';
+	private static $_api_url = 'https://my.elementor.com/api/v1/beta_tester/';
 
 	/**
 	 * Init.
@@ -248,10 +248,13 @@ class User {
 	}
 
 	public static function register_as_beta_tester( array $data ) {
-		update_user_meta( get_current_user_id(), self::BETA_TESTER_KEY, $data['betaTesterEmail'] );
 
-		//TODO: is required?
 		add_filter( 'https_ssl_verify', '__return_false' );
+
+		$params = [
+			'site_lang' => get_bloginfo( 'language' ),
+			'beta_tester_email' => $data['betaTesterEmail'],
+		];
 
 		wp_safe_remote_post(
 			self::$_api_url,
@@ -259,7 +262,7 @@ class User {
 				'timeout' => 25,
 				'blocking' => false,
 				'body' => [
-					'data' => wp_json_encode( $data['betaTesterEmail'] ),
+					'data' => wp_json_encode( $params ),
 				],
 			]
 		);

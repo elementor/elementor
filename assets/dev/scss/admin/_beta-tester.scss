@@ -1,0 +1,92 @@
+#elementor-beta-tester-dialog-wrapper{
+	display: none;
+}
+
+#elementor-beta-tester-modal {
+
+	.dialog-widget-content {
+		width: 550px;
+	}
+
+	.dialog-header {
+		padding: 30px 15px;
+		box-shadow: $panel-bottom-shadow;
+		text-align: $start;
+	}
+
+	.dialog-message {
+		padding: 30px 30px 0;
+		text-align: $start;
+	}
+
+}
+
+#elementor-beta-tester-dialog-header {
+
+	i {
+		color: $editor-accent;
+		font-size: 19px;
+	}
+}
+
+#elementor-beta-tester-dialog-header-title {
+	font-size: 15px;
+	text-transform: uppercase;
+	font-weight: bold;
+	@include padding-start(5px);
+}
+
+#elementor-beta-tester-dialog-form-caption {
+	font-weight: bold;
+	font-size: 15px;
+	color: $editor-darkest;
+	line-height: 1.4;
+	text-align: center;
+}
+
+#elementor-beta-tester-dialog-form-body {
+	padding: 2rem;
+	text-align: center;
+
+	.beta-tester-terms{
+		margin-top: 2rem;
+		font-size: 0.6rem;
+		font-style: italic;
+		a {
+			color: $editor-accent;
+		}
+	}
+}
+
+.elementor-beta-tester-dialog-input-wrapper {
+	line-height: 1.3;
+	overflow: hidden;
+	margin: 1rem;
+	display: flex;
+	max-width: 100%;
+	align-items: stretch;
+	height: 50px;
+	border: 1px solid $editor-lighter;
+
+	input {
+		height: 100%;
+		padding: 10px;
+		box-shadow: none;
+		background: none;
+		color: $editor-darkest;
+		border: none;
+		outline: none;
+		flex: 4;
+	}
+
+	.button {
+		background-color: $editor-success;
+		color: $editor-lightest;
+		text-transform: uppercase;
+		flex: 1;
+		border: none;
+		border-radius: 0;
+		height: 100%;
+	}
+
+}

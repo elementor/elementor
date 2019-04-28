@@ -17,6 +17,8 @@
 				$importArea: $( '#elementor-import-template-area' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
+				$betaTesterDialogHeader: $( '#elementor-beta-tester-dialog-header' ),
+				$betaTesterDialogForm: $( '#elementor-beta-tester-dialog-form' ),
 			};
 
 			elements.$settingsFormPages = elements.$settingsForm.find( '.elementor-settings-form-page' );
@@ -155,8 +157,8 @@
 						}
 
 						elementorCommon.dialogsManager.createWidget( 'alert', {
-								message: response.data,
-							} ).show();
+							message: response.data,
+						} ).show();
 					} );
 			} );
 
@@ -206,26 +208,27 @@
 				if ( 'yes' !== this.value ) {
 					return;
 				}
-				const betaMessage = self.translate( 'register_to_beta_newsletter_message' ) + '<br>' + self.translate( 'register_to_beta_your_email_message' ) + '<br><input type="email" id="elementor_beta_tester_email" value="' + self.config.beta_tester_default_email + '">';
 
-				elementorCommon.dialogsManager.createWidget( 'confirm', {
-					headerMessage: self.translate( 'register_to_beta_newsletter_header' ),
-					message: betaMessage,
-					strings: {
-						confirm: self.translate( 'register' ),
-						cancel: self.translate( 'cancel' ),
-					},
-					onConfirm: function() {
-						const $email = $( '#elementor_beta_tester_email' ).val();
-						if ( 'undefined' !== $email ) {
-							elementorCommon.ajax.addRequest( 'beta_tester_confirmed', {
-								data: {
-									betaTesterEmail: $email,
-								},
-							} );
-						}
+				elementorCommon.dialogsManager.createWidget( 'lightbox', {
+					id: 'elementor-beta-tester-modal',
+					headerMessage: self.elements.$betaTesterDialogHeader,
+					message: self.elements.$betaTesterDialogForm,
+					closeButton: true,
+					closeButtonClass: 'eicon-close',
+
+					onReady: function() {
+						DialogsManager.getWidgetType( 'lightbox' ).prototype.onReady.apply( this, arguments );
 					},
 				} ).show();
+			} );
+
+			self.elements.$betaTesterDialogForm.on( 'submit', function() {
+				const $email = $( '#elementor-beta-tester-email' ).val();
+				elementorCommon.ajax.addRequest( 'beta_tester_confirmed', {
+					data: {
+						betaTesterEmail: $email,
+					},
+				} );
 			} );
 		},
 
@@ -268,7 +271,7 @@
 		},
 
 		isElementorMode: function() {
-			return !! this.elements.$switchModeInput.val();
+			return ! ! this.elements.$switchModeInput.val();
 		},
 
 		animateLoader: function() {
