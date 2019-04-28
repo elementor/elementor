@@ -552,6 +552,53 @@ class Admin extends App {
 	}
 
 	/**
+	 * Print beta tester dialog.
+	 *
+	 * Display a dialog box to suggest the user to opt-in to the beta testers newsletter.
+	 *
+	 * Fired by `admin_footer` filter.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 */
+	public function print_beta_tester_dialog() {
+
+		$current_user = wp_get_current_user();
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		?>
+		<div id="elementor-beta-tester-dialog-wrapper">
+			<div id="elementor-beta-tester-dialog-header">
+				<i class="eicon-elementor-square" aria-hidden="true"></i>
+				<span id="elementor-beta-tester-dialog-header-title"><?php echo __( 'Sign Up', 'elementor' ); ?></span>
+			</div>
+			<form id="elementor-beta-tester-dialog-form" method="post">
+				<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
+				<input type="hidden" name="action" value="elementor_beta_tester_newsletter" />
+
+				<div id="elementor-beta-tester-dialog-form-caption"><?php echo __( 'Beta Testers Newsletter', 'elementor' ); ?></div>
+				<div id="elementor-beta-tester-dialog-form-body">
+					<div>
+						<?php
+						echo __( 'Be the first to learn about new features and software improvements and help us keep being industry leaders', 'elementor' );
+						?>
+					</div>
+					<div class="elementor-beta-tester-dialog-input-wrapper">
+						<input id="elementor-beta-tester-email" class="elementor-beta-tester-dialog-input" name="beta_tester_email" type="email" required value="<?php echo $current_user->user_email; ?>" />
+						<input type="submit" class="button" value="<?php echo esc_attr__( 'Sign Up', 'elementor' ); ?>">
+					</div>
+					<div class="beta-tester-terms">
+						<?php
+						echo sprintf( '%s<a href="https://elementor.com/terms/">%s</a> %s <a href="https://elementor.com/privacy-policy/">%s</a>', __( 'By entering your email, you agree to Elementor\'s ', 'elementor' ), __( 'Terms of Service', 'elementor' ), __( 'and', 'elementor' ), __( 'Privacy Policy', 'elementor' ) );
+						?>
+					</div>
+				</div>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Get elementor dashboard overview widget footer actions.
 	 *
 	 * Retrieves the footer action links displayed in elementor dashboard widget.
@@ -724,6 +771,9 @@ class Admin extends App {
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
+
+		add_action( 'admin_footer', [ $this, 'print_beta_tester_dialog' ] );
+
 	}
 
 	/**
@@ -731,8 +781,6 @@ class Admin extends App {
 	 * @access protected
 	 */
 	protected function get_init_settings() {
-		/** @var \WP_User $current_user */
-		$current_user = wp_get_current_user();
 		$settings = [
 			'home_url' => home_url(),
 			'i18n' => [
@@ -740,15 +788,10 @@ class Admin extends App {
 				'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
 				'yes' => __( 'Continue', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
-				'register' => __( 'Register', 'elementor' ),
 				'new_template' => __( 'New Template', 'elementor' ),
 				'back_to_wordpress_editor_message' => __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
 				'back_to_wordpress_editor_header' => __( 'Back to WordPress Editor', 'elementor' ),
-				'register_to_beta_newsletter_header' => __( 'Elementor Beta Newsletter', 'elementor' ),
-				'register_to_beta_newsletter_message' => __( 'Want to be the first to get Beta info & updates?', 'elementor' ),
-				'register_to_beta_your_email_message' => __( 'Leave your email below:', 'elementor' ),
 			],
-			'beta_tester_default_email' => $current_user->user_email,
 		];
 
 		return apply_filters( 'elementor/admin/localize_settings', $settings );
