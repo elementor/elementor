@@ -562,7 +562,6 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function print_beta_tester_dialog() {
-
 		$current_user = wp_get_current_user();
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
