@@ -569,8 +569,12 @@ class Admin extends App {
 		?>
 		<div id="elementor-beta-tester-dialog-wrapper">
 			<div id="elementor-beta-tester-dialog-header">
-				<i class="eicon-elementor-square" aria-hidden="true"></i>
-				<span id="elementor-beta-tester-dialog-header-title"><?php echo __( 'Sign Up', 'elementor' ); ?></span>
+				<div class="elementor-templates-modal__header__logo">
+					<span class="elementor-templates-modal__header__logo__icon-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</span>
+					<span id="elementor-beta-tester-dialog-header-title"><?php echo __( 'Sign Up', 'elementor' ); ?></span>
+				</div>
 			</div>
 			<form id="elementor-beta-tester-dialog-form" method="post">
 				<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
@@ -580,12 +584,12 @@ class Admin extends App {
 				<div id="elementor-beta-tester-dialog-form-body">
 					<div>
 						<?php
-						echo __( 'Be the first to learn about new features and software improvements and help us keep being industry leaders', 'elementor' );
+						echo __( 'Want to be the first to hear about new features & software improvements? leave your email below', 'elementor' );
 						?>
 					</div>
 					<div class="elementor-beta-tester-dialog-input-wrapper">
 						<input id="elementor-beta-tester-email" class="elementor-beta-tester-dialog-input" name="beta_tester_email" type="email" required value="<?php echo $current_user->user_email; ?>" />
-						<input type="submit" class="button" value="<?php echo esc_attr__( 'Sign Up', 'elementor' ); ?>">
+						<input type="submit" class="elementor-button elementor-button-success" value="<?php echo esc_attr__( 'Sign Up', 'elementor' ); ?>">
 					</div>
 					<div class="beta-tester-terms">
 						<?php
