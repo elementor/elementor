@@ -3,12 +3,10 @@ export default class extends elementorModules.Component {
 		elementor.getPanelView().setPage( 'historyPage' ).activateTab( tab );
 	}
 
-	getTabsGroups() {
+	getTabs() {
 		return {
-			history: {
-				actions: elementor.translate( 'actions' ),
-				revisions: elementor.translate( 'revisions' ),
-			},
+			actions: elementor.translate( 'actions' ),
+			revisions: elementor.translate( 'revisions' ),
 		};
 	}
 

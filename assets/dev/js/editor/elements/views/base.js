@@ -723,7 +723,7 @@ BaseElementView = BaseContainer.extend( {
 			elementor.helpers.scrollToView( this.$el, 200 );
 		}
 
-		elementorCommon.route.to( 'panel/editor', {
+		elementorCommon.route.to( 'panel/editor/content', {
 			refresh: true,
 			model: model,
 			view: this,

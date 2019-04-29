@@ -33,7 +33,13 @@ export default class extends elementorModules.Module {
 
 		const shortcuts = this.getShortcuts();
 
-		_( this.getRoutes() ).each( ( route, callback ) => {
+		const routes = this.getRoutes();
+
+		_( this.getTabs() ).each( ( tab ) => {
+			routes[ tab ] = () => this.activateTab( tab );
+		} );
+
+		_( routes ).each( ( route, callback ) => {
 			const fullRoute = this.namespace ? this.namespace + '/' + route : route,
 				shortcut = shortcuts[ route ] ? shortcuts[ route ] : false;
 
@@ -60,12 +66,15 @@ export default class extends elementorModules.Module {
 		return {};
 	}
 
+	getTabs() {
+		return {};
+	}
+
 	setDefault( route ) {
 		this.defaultRoute = route;
 	}
 
 	activateTab( tab ) {
-
 	}
 
 	setDependency( callback ) {
