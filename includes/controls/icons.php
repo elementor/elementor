@@ -42,8 +42,8 @@ class Control_Icons extends Control_Base_Multiple {
 	 */
 	public function get_default_value() {
 		return [
-			'value'   => '',
-			'library' => '',
+			'value'   => 'fas fa-star',
+			'library' => 'solid',
 		];
 	}
 
@@ -66,6 +66,12 @@ class Control_Icons extends Control_Base_Multiple {
 					<div class="elementor-control-icons-select-button">
 						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 					</div>
+                    <!--<div class="icon-picker-types">
+                        <ul>
+                            <li><i class="eicon-elementor"></i></li>
+                            <li><i class="eicon-image"></i></li>
+                        </ul>
+                    </div>-->
 					<div class="elementor-control-icons-area">
 						<div class="elementor-control-icons-preview"></div>
 						<div class="elementor-control-icon-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>

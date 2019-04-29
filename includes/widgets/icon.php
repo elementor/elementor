@@ -107,9 +107,13 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
-                'include' => [],
+				'include' => [
+					'solid',
+					'regular',
+					'bold',
+                ],
                 'exclude' => [
-                    'solid'
+                        ''
                 ],
 			]
 		);

@@ -135,6 +135,27 @@
 	transition: all .2s ease-in-out;
 	font-size: 48px;
 
+	.icon-picker-types{
+		position: absolute;
+		ul {
+			li{
+				width: 25px;
+				background: #fff;
+				border: 1px solid;
+				height: 25px;
+				border-radius: 3px;
+
+				i {
+					font-size: 12px;
+					position: relative;
+					top: initial;
+					left: initial;
+					transform: none;
+				}
+			}
+		}
+	}
+
 	&:not( .elementor-preview-has-icon ) {
 		.elementor-control-icons-select-button {
 			height: 100%;

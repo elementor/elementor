@@ -32,8 +32,8 @@ export default class extends elementorModules.Module {
 				modalView: elementor.iconManager.layout.modalContent.currentView,
 				controlView: controlView,
 				searchBar: controlView.model.get( 'search_bar' ),
-				include: controlView.model.get( 'include' ) || [],
-				exclude: controlView.model.get( 'exclude' ) || [],
+				include: controlView.model.get( 'include' ) || false,
+				exclude: controlView.model.get( 'exclude' ) || false,
 			};
 		let selected = controlView.getControlValue(),
 			icons = elementor.config.icons;
