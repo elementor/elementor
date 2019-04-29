@@ -1,4 +1,7 @@
 export default class extends elementorModules.Component {
+	getDefault() {
+		return 'templates/pages';
+	}
 
 	open() {
 		this.view.startModal();
@@ -13,12 +16,9 @@ export default class extends elementorModules.Component {
 	getTabsGroups() {
 		return {
 			templates: {
-				default: 'pages',
-				tabs: {
-					blocks: elementor.translate( 'blocks' ),
-					pages: elementor.translate( 'pages' ),
-					'my-templates': elementor.translate( 'my_templates' ),
-				},
+				blocks: elementor.translate( 'blocks' ),
+				pages: elementor.translate( 'pages' ),
+				'my-templates': elementor.translate( 'my_templates' ),
 			},
 		};
 	}

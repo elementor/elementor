@@ -8,7 +8,7 @@
  * open/close
  * active/inactive
  * component:
- * 	routs
+ * 	routes
  * 	commands
  */
 
@@ -58,6 +58,14 @@ export default class extends elementorModules.Module {
 
 	getRoutes() {
 		return {};
+	}
+
+	setDefault( route ) {
+		this.defaultRoute = route;
+	}
+
+	activateTab( tab ) {
+
 	}
 
 	setDependency( callback ) {
