@@ -216,17 +216,14 @@
 					closeButton: true,
 					closeButtonClass: 'eicon-close',
 
-					onReady: function() {
-						DialogsManager.getWidgetType( 'lightbox' ).prototype.onReady.apply( this, arguments );
-					},
 				} ).show();
 			} );
 
 			self.elements.$betaTesterDialogForm.on( 'submit', function() {
-				const $email = $( '#elementor-beta-tester-email' ).val();
-				elementorCommon.ajax.addRequest( 'beta_tester_confirmed', {
+				const email = $( '#elementor-beta-tester-email' ).val();
+				elementorCommon.ajax.addRequest( 'beta_tester_newsletter', {
 					data: {
-						betaTesterEmail: $email,
+						betaTesterEmail: email,
 					},
 				} );
 			} );

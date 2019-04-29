@@ -36,7 +36,7 @@ class User {
 	 *
 	 * @var string API URL.
 	 */
-	private static $_api_url = 'https://my.elementor.com/api/v1/beta_tester/';
+	const BETA_TESTER_API_URL = 'https://my.elementor.com/api/v1/beta_tester/';
 
 	/**
 	 * Init.
@@ -61,7 +61,7 @@ class User {
 	 */
 	public static function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
-		$ajax->register_ajax_action( 'beta_tester_confirmed', [ __CLASS__, 'register_as_beta_tester' ] );
+		$ajax->register_ajax_action( 'beta_tester_newsletter', [ __CLASS__, 'register_as_beta_tester' ] );
 	}
 
 	/**
@@ -249,15 +249,13 @@ class User {
 
 	public static function register_as_beta_tester( array $data ) {
 
-		add_filter( 'https_ssl_verify', '__return_false' );
-
 		$params = [
 			'site_lang' => get_bloginfo( 'language' ),
 			'beta_tester_email' => $data['betaTesterEmail'],
 		];
 
 		wp_safe_remote_post(
-			self::$_api_url,
+			self::BETA_TESTER_API_URL,
 			[
 				'timeout' => 25,
 				'blocking' => false,
