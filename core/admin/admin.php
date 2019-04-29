@@ -592,7 +592,7 @@ class Admin extends App {
 					</div>
 					<div class="beta-tester-terms">
 						<?php
-						echo sprintf( '%s<a href="https://elementor.com/terms/">%s</a> %s <a href="https://elementor.com/privacy-policy/">%s</a>', __( 'By entering your email, you agree to Elementor\'s ', 'elementor' ), __( 'Terms of Service', 'elementor' ), __( 'and', 'elementor' ), __( 'Privacy Policy', 'elementor' ) );
+						echo sprintf( '%s<a href="https://go.elementor.com/beta-testers-newsletter-terms">%s</a> %s <a href="https://go.elementor.com/beta-testers-newsletter-privacy">%s</a>', __( 'By entering your email, you agree to Elementor\'s ', 'elementor' ), __( 'Terms of Service', 'elementor' ), __( 'and', 'elementor' ), __( 'Privacy Policy', 'elementor' ) );
 						?>
 					</div>
 				</div>
