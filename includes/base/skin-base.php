@@ -88,7 +88,9 @@ abstract class Skin_Base {
 	 * @deprecated 1.7.6
 	 * @access public
 	 */
-	public function _content_template() {}
+	public function _content_template() {
+		_deprecated_function( __METHOD__, '1.7.6' );
+	}
 
 	/**
 	 * Register skin controls actions.

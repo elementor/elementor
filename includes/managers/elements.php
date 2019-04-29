@@ -115,7 +115,6 @@ class Elements_Manager {
 	 * Register new category for the element.
 	 *
 	 * @since 1.7.12
-	 * @since 2.0.0 The third parameter was deprecated.
 	 * @access public
 	 *
 	 * @param string $category_name       Category name.
@@ -229,64 +228,6 @@ class Elements_Manager {
 		foreach ( $this->get_element_types() as $element_type ) {
 			$element_type->print_template();
 		}
-	}
-
-	/**
-	 * Ajax discard changes.
-	 *
-	 * Ajax handler for Elementor discard_changes. Handles the discarded changes
-	 * in the builder by deleting auto-saved revisions.
-	 *
-	 * Fired by `wp_ajax_elementor_discard_changes` action.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->ajax_discard_changes()` method instead.
-	 * @access public
-	 *
-	 * @param $request
-	 *
-	 * @return bool
-	 */
-	public function ajax_discard_changes( $request ) {
-		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->ajax_discard_changes()' );
-
-		return Plugin::$instance->documents->ajax_discard_changes( $request );
-	}
-
-	/**
-	 * Ajax save builder.
-	 *
-	 * Ajax handler for Elementor save_builder. Handles the saved data returned
-	 * by the builder.
-	 *
-	 * Fired by `wp_ajax_elementor_save_builder` action.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.0.0 Use `Plugin::$instance->documents->ajax_save()` method instead.
-	 * @access public
-	 *
-	 * @param array $request
-	 *
-	 * @return mixed
-	 */
-	public function ajax_save_builder( $request ) {
-		_deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->ajax_save()' );
-
-		$return_data = Plugin::$instance->documents->ajax_save( $request );
-
-		/**
-		 * Returned ajax data.
-		 *
-		 * Filters the ajax data returned when saving the post on the builder.
-		 *
-		 * @since 1.0.0
-		 * @deprecated 2.0.0 Use `elementor/documents/ajax_save/return_data` filter instead.
-		 *
-		 * @param array $return_data The returned data. Default is an empty array.
-		 */
-		$return_data = apply_filters_deprecated( 'elementor/ajax_save_builder/return_data', [ $return_data, $request['editor_post_id'] ], '2.0.0', 'elementor/documents/ajax_save/return_data' );
-
-		return $return_data;
 	}
 
 	/**
