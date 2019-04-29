@@ -282,21 +282,6 @@ class Editor {
 	}
 
 	/**
-	 * Print panel HTML.
-	 *
-	 * Include the wrapper template of the editor.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.2.0 Use `Editor::print_editor_template` instead
-	 * @access public
-	 */
-	public function print_panel_html() {
-		_deprecated_function( __METHOD__, '2.2.0', 'Editor::print_editor_template' );
-
-		$this->print_editor_template();
-	}
-
-	/**
 	 * Print Editor Template.
 	 *
 	 * Include the wrapper template of the editor.
@@ -503,8 +488,6 @@ class Editor {
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
 			'data' => $editor_data,
-			// @TODO: `post_id` is bc since 2.0.0
-			'post_id' => $this->_post_id,
 			'document' => $document->get_config(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'current_user_can_publish' => $current_user_can_publish,
@@ -533,8 +516,6 @@ class Editor {
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::get_introduction_meta(),
 			],
-			// @deprecated since 2.3.0 - Use `elementorCommon.config.isRTL` instead
-			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
 			'page_title_selector' => $page_title_selector,
@@ -887,7 +868,7 @@ class Editor {
 	 * Registers new editor templates.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.3.0 Use `Plugin::$instance->common->add_template( $template, $type )`
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->add_template()`
 	 * @access public
 	 *
 	 * @param string $template Can be either a link to template file or template
@@ -896,6 +877,8 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
+		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->add_template()' );
+
 		$common = Plugin::$instance->common;
 
 		if ( $common ) {
@@ -1020,6 +1003,8 @@ class Editor {
 	 *                     capabilities.
 	 */
 	public function create_nonce( $post_type ) {
+		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
+
 		/** @var Core\Common\Modules\Ajax\Module $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
@@ -1045,6 +1030,8 @@ class Editor {
 	 *                   between 12-24 hours ago it returns `2`.
 	 */
 	public function verify_nonce( $nonce ) {
+		// _deprecated_function( __METHOD__, '2.3.0', 'wp_verify_nonce()' );
+
 		return wp_verify_nonce( $nonce );
 	}
 
@@ -1060,6 +1047,8 @@ class Editor {
 	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
+		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
+
 		/** @var Core\Common\Modules\Ajax\Module $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
@@ -1077,6 +1066,8 @@ class Editor {
 	 * @access public
 	 */
 	public function verify_ajax_nonce() {
+		// _deprecated_function( __METHOD__, '2.3.0' );
+
 		/** @var Core\Common\Modules\Ajax\Module $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 

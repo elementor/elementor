@@ -311,24 +311,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return array Default argument(s).
 	 */
 	public function get_default_args( $item = null ) {
-		return self::_get_items( $this->default_args, $item );
-	}
-
-	/**
-	 * Get parent element.
-	 *
-	 * Retrieve the element parent. Used to check which element it belongs to.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 1.7.6 Use `Element_Base::get_data( 'parent' )` instead.
-	 * @access public
-	 *
-	 * @return Element_Base Parent element.
-	 */
-	public function get_parent() {
-		_deprecated_function( __METHOD__, '1.7.6', __CLASS__ . '::get_data( \'parent\' )' );
-
-		return $this->get_data( 'parent' );
+		return self::get_items( $this->default_args, $item );
 	}
 
 	/**

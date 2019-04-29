@@ -211,7 +211,7 @@ class User {
 		$notices[ $_REQUEST['notice_id'] ] = 'true';
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 
-		if ( ! Utils::is_ajax() ) {
+		if ( ! wp_doing_ajax() ) {
 			wp_safe_redirect( admin_url() );
 			die;
 		}
