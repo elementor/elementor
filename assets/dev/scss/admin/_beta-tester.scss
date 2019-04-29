@@ -9,24 +9,26 @@
 	}
 
 	.dialog-header {
-		padding: 30px 15px;
+		padding: 15px;
 		box-shadow: $panel-bottom-shadow;
 		text-align: $start;
 	}
 
 	.dialog-message {
-		padding: 30px 30px 0;
+		padding-top: 30px;
 		text-align: $start;
 	}
 
-}
+	.dialog-close-button {
+		top: 15px;
+		padding-left: 15px;
+		border-left: 1px solid $editor-background;
 
-#elementor-beta-tester-dialog-header {
-
-	i {
-		color: $editor-accent;
-		font-size: 19px;
+		i {
+			font-size: 18px;
+		}
 	}
+
 }
 
 #elementor-beta-tester-dialog-header-title {
@@ -66,26 +68,30 @@
 	max-width: 100%;
 	align-items: stretch;
 	height: 50px;
-	border: 1px solid $editor-lighter;
+	padding: 1px;
 
 	input {
 		height: 100%;
 		padding: 10px;
-		box-shadow: none;
 		background: none;
 		color: $editor-darkest;
-		border: none;
-		outline: none;
 		flex: 4;
+		border-right: none;
+		margin-right: -2px;
 	}
 
-	.button {
-		background-color: $editor-success;
-		color: $editor-lightest;
+	&:not(:focus) {
+		border-color: $editor-lightest;
+	}
+
+	&:focus {
+		border-color: $editor-light;
+	}
+
+	.elementor-button {
 		text-transform: uppercase;
 		flex: 1;
 		border: none;
-		border-radius: 0;
 		height: 100%;
 	}
 
