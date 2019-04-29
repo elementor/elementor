@@ -1,10 +1,4 @@
 export default class extends elementorModules.Component {
-	getRoutes() {
-		return {
-			actions: () => elementor.getPanelView().setPage( 'historyPage' ).activateTab( 'actions' ),
-		};
-	}
-
 	getCommands() {
 		return {
 			undo: () => this.view.navigate(),
@@ -14,10 +8,6 @@ export default class extends elementorModules.Component {
 
 	getShortcuts() {
 		return {
-			actions: {
-				keys: 'ctrl+shift+h',
-				scope: [ 'global' ],
-			},
 			undo: {
 				keys: 'ctrl+z',
 				exclude: [ 'input' ],

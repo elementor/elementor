@@ -1,3 +1,5 @@
+import Component from './component';
+
 var RevisionsCollection = require( './collection' ),
 	RevisionsManager;
 
@@ -109,7 +111,7 @@ RevisionsManager = function() {
 	this.init = function() {
 		attachEvents();
 
-		addCommands();
+		elementorCommon.components.register( 'history/revisions', new Component() );
 	};
 
 	this.onRevisionsUpdate = function() {

@@ -343,10 +343,10 @@ TemplateLibraryManager = function() {
 		const remoteLibraryConfig = elementor.config.document.remoteLibrary;
 
 		if ( 'block' === remoteLibraryConfig.type ) {
-			this.component.route.setDefault( 'blocks' );
+			this.component.route.setDefault( 'templates/blocks' );
 		}
 
-		this.component.route.to( 'default', {
+		this.component.route.to( '_default', {
 			onAfter: () => {
 				if ( remoteLibraryConfig.category ) {
 					this.setFilter( 'subtype', remoteLibraryConfig.category );
