@@ -13,33 +13,26 @@ export default class extends elementorModules.Component {
 		this.view.modalConfig = {};
 	}
 
-	getTabsGroups() {
+	getTabs() {
 		return {
-			templates: {
-				blocks: elementor.translate( 'blocks' ),
-				pages: elementor.translate( 'pages' ),
-				'my-templates': elementor.translate( 'my_templates' ),
-			},
+			block: elementor.translate( 'blocks' ),
+			page: elementor.translate( 'pages' ),
+			'my-templates': elementor.translate( 'my_templates' ),
 		};
+	}
+
+	activateTab( tab ) {
+		if ( 'my-templates' === tab ) {
+			this.view.setScreen( 'local' );
+		} else {
+			this.view.setScreen( 'remote', tab );
+		}
+
+		this.route.saveState();
 	}
 
 	getRoutes() {
 		return {
-			blocks: () => {
-				this.view.setScreen( 'remote', 'block' );
-				this.route.saveState();
-			},
-
-			pages: () => {
-				this.view.setScreen( 'remote', 'page' );
-				this.route.saveState();
-			},
-
-			'my-templates': () => {
-				this.view.setScreen( 'local' );
-				this.route.saveState();
-			},
-
 			import: () => {
 				this.view.getLayout().showImportView();
 			},

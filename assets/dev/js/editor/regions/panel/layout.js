@@ -1,6 +1,9 @@
 var EditModeItemView = require( 'elementor-regions/panel/edit-mode' ),
 	PanelLayoutView;
 
+import ElementsComponent from './pages/elements/component';
+import EditorComponent from './pages/editor/component';
+
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
 
@@ -33,22 +36,9 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	perfectScrollbar: null,
 
 	initialize: function() {
-		elementorCommon.route.register( 'panel/elements', () => this.activateElementsTab() );
+		elementorCommon.components.register( 'elements', new ElementsComponent() );
 
-		elementorCommon.route.register( 'panel/elements/categories', () => this.activateElementsTab( 'categories' ) );
-
-		elementorCommon.route.register( 'panel/elements/global', () => this.activateElementsTab( 'global' ) );
-
-		elementorCommon.route.register( 'panel/editor', ( args ) => this.openEditor( args.model, args.view ) );
-
-		elementorCommon.route.register( 'panel/editor/content', () => this.activateEditorTab( 'content' ) );
-
-		elementorCommon.route.register( 'panel/editor/style', () => this.activateEditorTab( 'style' ) );
-
-		elementorCommon.route.register( 'panel/editor/advanced', () => this.activateEditorTab( 'advanced' ) );
-
-		// Section.
-		elementorCommon.route.register( 'panel/editor/layout', () => this.activateEditorTab( 'layout' ) );
+		elementorCommon.components.register( 'editor', new EditorComponent() );
 
 		// Global Settings - Lightbox.
 		elementorCommon.route.register( 'panel/general/lightbox', () => this.activateEditorTab( 'lightbox' ) );
@@ -132,18 +122,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return this.currentPageView;
 	},
 
-	activateElementsTab: function( tab ) {
-		this.setPage( 'elements' );
-
-		if ( tab ) {
-			this.currentPageView.activateTab( tab );
-		}
-	},
-
-	activateEditorTab: function( tab ) {
-		elementor.getPanelView().getCurrentPageView().activateTab( tab )._renderChildren();
-	},
-
 	setPage: function( page, title, viewOptions ) {
 		const pages = this.getPages();
 
@@ -182,22 +160,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			.trigger( 'set:page:' + page, this.currentPageView );
 
 		return this.currentPageView;
-	},
-
-	openEditor: function( model, view ) {
-		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ), {
-			model: model,
-			controls: elementor.getElementControls( model ),
-			editedElementView: view,
-		} );
-
-		const action = 'panel/open_editor/' + model.get( 'elType' );
-
-		// Example: panel/open_editor/widget
-		elementor.hooks.doAction( action, this, model, view );
-
-		// Example: panel/open_editor/widget/heading
-		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this, model, view );
 	},
 
 	onBeforeShow: function() {
