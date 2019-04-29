@@ -499,6 +499,35 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'gallery_vertical_align',
+			[
+				'label' => __( 'Vertical Align', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
+				'options' => [
+					'flex-start' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'flex-end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'condition' => [
+					'slides_to_show!' => '1',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .slick-track' => 'display: flex; align-items: {{VALUE}};',
+				],
+			]
+		);
+
 		$this->add_control(
 			'image_spacing',
 			[
