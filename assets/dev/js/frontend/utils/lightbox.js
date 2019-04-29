@@ -368,23 +368,17 @@ module.exports = elementorModules.ViewModule.extend( {
 		var slideshowID = element.dataset.elementorLightboxSlideshow;
 
 		var $allSlideshowLinks = jQuery( this.getSettings( 'selectors.links' ) ).filter( function() {
-			return slideshowID === this.dataset.elementorLightboxSlideshow;
+			const $this = jQuery( this );
+
+			return slideshowID === this.dataset.elementorLightboxSlideshow && ! $this.parent( '.swiper-slide-duplicate' ).length && ! $this.parents( '.slick-cloned' ).length;
 		} );
 
-		var slides = [],
-			uniqueLinks = {};
+		const slides = [];
 
 		$allSlideshowLinks.each( function() {
-			var slideVideo = this.dataset.elementorLightboxVideo,
-				uniqueID = slideVideo || this.href;
+			const slideVideo = this.dataset.elementorLightboxVideo;
 
-			if ( uniqueLinks[ uniqueID ] ) {
-				return;
-			}
-
-			uniqueLinks[ uniqueID ] = true;
-
-			var slideIndex = this.dataset.elementorLightboxIndex;
+			let slideIndex = this.dataset.elementorLightboxIndex;
 
 			if ( undefined === slideIndex ) {
 				slideIndex = $allSlideshowLinks.index( this );
