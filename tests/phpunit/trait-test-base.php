@@ -87,7 +87,7 @@ trait Elementor_Test {
 	}
 
 	public function define_doing_ajax() {
-		if ( ! \Elementor\Utils::is_ajax() ) {
+		if ( ! wp_doing_ajax() ) {
 			define( 'DOING_AJAX', true );
 		}
 	}

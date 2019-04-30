@@ -19,9 +19,9 @@ class Frontend extends elementorModules.ViewModule {
 
 	// TODO: BC since 2.5.0
 	get Module() {
-		/*if ( this.isEditMode() ) {
+		if ( this.isEditMode() ) {
 			parent.elementorCommon.helpers.deprecatedMethod( 'elementorFrontend.Module', '2.5.0', 'elementorModules.frontend.handlers.Base' );
-		}*/
+		}
 
 		return elementorModules.frontend.handlers.Base;
 	}
