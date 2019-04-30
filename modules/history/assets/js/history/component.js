@@ -1,4 +1,11 @@
 export default class extends elementorModules.Component {
+	init( args ) {
+		this.title = 'Actions';
+		this.namespace = 'panel/history/actions';
+
+		super.init( args );
+	}
+
 	getCommands() {
 		return {
 			undo: () => this.view.navigate(),

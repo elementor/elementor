@@ -13,7 +13,7 @@ export default class extends elementorModules.Module {
 		console.log( Object.keys( this.commands ).sort() ); // eslint-disable-line no-console
 	}
 
-	registerComponent( component, args ) {
+	registerComponent( component, args = {} ) {
 		this.components[ component ] = args;
 
 		if ( args.before ) {

@@ -49,7 +49,7 @@ var	Manager = function() {
 		return itemData.type;
 	};
 
-	var navigate = function( isRedo ) {
+	this.navigate = function( isRedo ) {
 		var currentItem = items.find( function( model ) {
 				return 'not_applied' === model.get( 'status' );
 			} ),
@@ -85,7 +85,7 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		elementorCommon.components.register( 'history/actions', new Component() );
+		elementorCommon.components.register( 'history/actions', new Component(), { view: self } );
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );

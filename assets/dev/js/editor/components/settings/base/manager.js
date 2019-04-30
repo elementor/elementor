@@ -160,7 +160,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.addPanelPage();
 
 		if ( ! elementor.userCan( 'design' ) ) {
-			elementorCommon.route.to( 'panel/page/settings' );
+			elementorCommon.route.to( 'panel/page-settings/settings' );
 		}
 	},
 } );

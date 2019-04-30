@@ -1,6 +1,7 @@
 var EditModeItemView = require( 'elementor-regions/panel/edit-mode' ),
 	PanelLayoutView;
 
+import PanelComponent from './component';
 import ElementsComponent from './pages/elements/component';
 import EditorComponent from './pages/editor/component';
 
@@ -20,10 +21,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	childEvents: {
 		'click:add': function() {
-			elementorCommon.route.to( 'panel/elements' );
+			elementorCommon.route.to( 'panel/elements/categories' );
 		},
 		'editor:destroy': function() {
-			elementorCommon.route.to( 'panel/elements', {
+			elementorCommon.route.to( 'panel/elements/categories', {
 				autoFocusSearch: false,
 			} );
 		},
@@ -36,14 +37,11 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	perfectScrollbar: null,
 
 	initialize: function() {
-		elementorCommon.components.register( 'elements', new ElementsComponent() );
+		elementorCommon.components.register( 'panel', new PanelComponent(), { view: this } );
 
-		elementorCommon.components.register( 'editor', new EditorComponent() );
+		elementorCommon.components.register( 'elements', new ElementsComponent(), { view: this } );
 
-		// Global Settings - Lightbox.
-		elementorCommon.route.register( 'panel/general/lightbox', () => this.activateEditorTab( 'lightbox' ) );
-
-		elementorCommon.route.register( 'panel/menu', () => this.setPage( 'menu' ) );
+		elementorCommon.components.register( 'editor', new EditorComponent(), { view: this } );
 
 		this.initPages();
 	},
@@ -184,7 +182,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			.on( 'show', this.updateScrollbar.bind( this ) );
 
 		// Set default page to elements
-		elementorCommon.route.to( 'panel/elements' );
+		elementorCommon.route.to( 'panel/elements/categories' );
 	},
 
 	onEditorBeforeShow: function() {

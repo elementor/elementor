@@ -111,7 +111,7 @@ RevisionsManager = function() {
 	this.init = function() {
 		attachEvents();
 
-		elementorCommon.components.register( 'history/revisions', new Component() );
+		elementorCommon.components.register( 'history/revisions', new Component(), { view: self } );
 	};
 
 	this.onRevisionsUpdate = function() {
