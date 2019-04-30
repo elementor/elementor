@@ -51,7 +51,7 @@ export default class extends Module {
 		const routes = this.getRoutes();
 
 		_( this.getTabs() ).each( ( title, tab ) => {
-			routes[ tab ] = () => this.activateTab( tab );
+			routes[ tab ] = ( routeArgs ) => this.activateTab( tab, routeArgs );
 		} );
 
 		_( routes ).each( ( callback, route ) => {

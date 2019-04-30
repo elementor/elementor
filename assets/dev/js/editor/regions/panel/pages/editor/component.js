@@ -9,11 +9,11 @@ export default class extends elementorModules.Component {
 	activateTab( tab, args ) {
 		const pageName = elementor.getPanelView().getCurrentPageName();
 
-		if ( 'elements' !== pageName ) {
+		if ( 'editor' !== pageName ) {
 			this.openEditor( args.model, args.view );
 		}
 
-		super.activateTab( this, tab );
+		super.activateTab( tab );
 	}
 
 	getTabs() {
