@@ -17,7 +17,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	templateHelpers: function() {
 		return {
-			tabs: elementorCommon.components.get( 'library' ).tabs.getGroup( 'templates' ),
+			tabs: elementorCommon.components.get( 'library' ).getTabs(),
 		};
 	},
 

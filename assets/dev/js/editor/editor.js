@@ -447,19 +447,6 @@ const App = Marionette.Application.extend( {
 			//
 			elementor.changeDeviceMode( this.devices[ modeIndex ] );
 		}, { keys: 'ctrl+shift+m' } );
-
-		const document = elementorCommon.commands.registerComponent( 'document' );
-
-		document.registerCommand( 'save', () => elementor.saver.saveDraft(), {
-			keys: 'ctrl+s',
-		} );
-
-		elementorCommon.commands.register( 'panel/exit', () => elementorCommon.route.to( 'panel/menu' ), {
-			keys: 'esc',
-			dependency: () => {
-				return ! jQuery( '.dialog-widget:visible' ).length;
-			},
-		} );
 	},
 
 	initPanel: function() {
@@ -525,7 +512,7 @@ const App = Marionette.Application.extend( {
 			}
 
 			if ( ! isClickInsideElementor ) {
-				elementorCommon.route.to( 'panel/elements' );
+				elementorCommon.route.to( 'panel/elements/categories' );
 			}
 		} );
 	},
@@ -851,7 +838,7 @@ const App = Marionette.Application.extend( {
 		this.addBackgroundClickArea( elementorFrontend.elements.window.document );
 
 		if ( this.previewLoadedOnce ) {
-			elementorCommon.route.to( 'panel/elements' );
+			elementorCommon.route.to( 'panel/elements/categories' );
 		} else {
 			this.onFirstPreviewLoaded();
 		}

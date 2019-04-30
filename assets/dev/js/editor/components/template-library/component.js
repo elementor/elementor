@@ -1,6 +1,19 @@
 export default class extends elementorModules.Component {
+	init( args ) {
+		this.title = 'Library';
+		this.namespace = 'library';
+
+		this.tabs = {
+			'templates/block': elementor.translate( 'blocks' ),
+			'templates/page': elementor.translate( 'pages' ),
+			'templates/my-templates': elementor.translate( 'my_templates' ),
+		};
+
+		super.init( args );
+	}
+
 	getDefault() {
-		return 'templates/pages';
+		return 'library/templates/page';
 	}
 
 	open() {
@@ -13,22 +26,16 @@ export default class extends elementorModules.Component {
 		this.view.modalConfig = {};
 	}
 
-	getTabs() {
-		return {
-			block: elementor.translate( 'blocks' ),
-			page: elementor.translate( 'pages' ),
-			'my-templates': elementor.translate( 'my_templates' ),
-		};
-	}
-
 	activateTab( tab ) {
-		if ( 'my-templates' === tab ) {
+		if ( 'templates/my-templates' === tab ) {
 			this.view.setScreen( 'local' );
 		} else {
-			this.view.setScreen( 'remote', tab );
+			this.view.setScreen( 'remote', tab.replace( 'templates/', '' ) );
 		}
 
-		this.route.saveState();
+		elementorCommon.route.saveState( 'library' );
+
+		super.activateTab( tab );
 	}
 
 	getRoutes() {
@@ -48,8 +55,8 @@ export default class extends elementorModules.Component {
 			show: ( args ) => {
 				this.view.modalConfig = args;
 
-				if ( ! this.route.restoreState() ) {
-					this.route.to( '_default' );
+				if ( ! elementorCommon.route.restoreState( 'library' ) ) {
+					elementorCommon.route.to( this.getDefault() );
 				}
 			},
 		};

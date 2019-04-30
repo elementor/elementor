@@ -116,7 +116,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSettingsClick: function() {
-		elementorCommon.route.to( 'panel/page/settings' );
+		elementorCommon.route.to( 'panel/page-settings/settings' );
 	},
 
 	onDeviceModeChange: function() {

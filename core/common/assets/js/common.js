@@ -3,6 +3,7 @@ import Storage from './utils/storage';
 import Ajax from '../../modules/ajax/assets/js/ajax';
 import Finder from '../../modules/finder/assets/js/finder';
 import Connect from '../../modules/connect/assets/js/connect';
+import Components from './utils/components';
 import Commands from './utils/commands';
 import Route from './utils/route';
 import Shortcuts from './utils/shortcuts';
@@ -32,6 +33,8 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		this.helpers = new Helpers();
 
 		this.storage = new Storage();
+
+		this.components = new Components();
 
 		this.shortcuts = new Shortcuts( this.elements.$window );
 

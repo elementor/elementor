@@ -8,7 +8,7 @@ export default class extends Commands {
 		this.savedStates = {};
 	}
 
-	registerComponent( component, args ) {
+	registerComponent( component, args = {} ) {
 		this.components[ component ] = args;
 
 		if ( args.open ) {

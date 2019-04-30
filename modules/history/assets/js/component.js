@@ -1,4 +1,11 @@
 export default class extends elementorModules.Component {
+	init( args ) {
+		this.title = 'History';
+		this.namespace = 'panel/history';
+
+		super.init( args );
+	}
+
 	activateTab( tab ) {
 		elementor.getPanelView().setPage( 'historyPage' ).activateTab( tab );
 	}

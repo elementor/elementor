@@ -4,6 +4,8 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.layout = new ModalLayout();
 
+		elementorCommon.route.registerComponent( 'shortcuts' );
+
 		elementorCommon.route.register( 'shortcuts', () => this.layout.showModal(), { keys: 'ctrl+?' } );
 
 		this.layout.getModal().on( 'hide', () => elementorCommon.route.close( 'shortcuts' ) );

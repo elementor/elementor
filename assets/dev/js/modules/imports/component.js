@@ -1,3 +1,5 @@
+import Module from './module';
+
 /**
  * start/stop
  * before/after
@@ -12,18 +14,13 @@
  * 	commands
  */
 
-export default class extends elementorModules.Module {
+export default class extends Module {
 	constructor( ...args ) {
 		super( ...args );
 
-		this.title = '';
+		// this.router = new Router( this.getRoutes() );
+		// this.commander = new Commander( this.getCommands() );
 
-		this.router = new Router( this.getRoutes() );
-		this.commander = new Commander( this.getCommands() );
-
-		this.routes = {};
-		this.commands = {};
-		this.shortcuts = {};
 		this.tabs = {};
 		this.dependency = {};
 		this.isActive = {};
@@ -31,24 +28,62 @@ export default class extends elementorModules.Module {
 		this.current = false;
 		this.currentArgs = false;
 
+		this.defaultRoute = '';
+	}
+
+	init( args ) {
+		if ( ! this.title ) {
+			throw Error( 'title is required' );
+		}
+
+		if ( ! this.namespace ) {
+			throw Error( 'namespace is required' );
+		}
+
+		if ( ! args.view ) {
+			throw Error( 'view is required' );
+		}
+
+		this.view = args.view;
+
 		const shortcuts = this.getShortcuts();
 
 		const routes = this.getRoutes();
 
-		_( this.getTabs() ).each( ( tab ) => {
+		_( this.getTabs() ).each( ( title, tab ) => {
 			routes[ tab ] = () => this.activateTab( tab );
 		} );
 
-		_( routes ).each( ( route, callback ) => {
-			const fullRoute = this.namespace ? this.namespace + '/' + route : route,
+		_( routes ).each( ( callback, route ) => {
+			const fullRoute = this.namespace + '/' + route,
 				shortcut = shortcuts[ route ] ? shortcuts[ route ] : false;
+
+			const parts = fullRoute.split( '/' ),
+				component = parts[ 0 ],
+				componentArgs = {};
+
+			if ( this.open ) {
+				componentArgs.open = this.open.bind( this );
+			}
+
+			elementorCommon.route.registerComponent( component, componentArgs );
 
 			elementorCommon.route.register( fullRoute, callback, shortcut );
 		} );
 
-		_( this.getCommands() ).each( ( command, callback ) => {
+		_( this.getCommands() ).each( ( callback, command ) => {
 			const fullCommand = this.namespace ? this.namespace + '/' + command : command,
 				shortcut = shortcuts[ command ] ? shortcuts[ command ] : false;
+
+			const parts = fullCommand.split( '/' ),
+				component = parts[ 0 ],
+				componentArgs = {};
+
+			if ( this.open ) {
+				componentArgs.open = this.open;
+			}
+
+			elementorCommon.commands.registerComponent( component );
 
 			elementorCommon.commands.register( fullCommand, callback, shortcut );
 		} );
@@ -67,14 +102,39 @@ export default class extends elementorModules.Module {
 	}
 
 	getTabs() {
-		return {};
+		return this.tabs;
 	}
 
 	setDefault( route ) {
 		this.defaultRoute = route;
 	}
 
+	getDefault() {
+		return this.defaultRoute;
+	}
+
+	removeTab( tab ) {
+		delete this.tabs[ tab ];
+	}
+
+	addTab( tab, title, position ) {
+		this.tabs[ tab ] = title;
+
+		if ( undefined !== typeof position ) {
+			const newTabs = {};
+			let ids = Object.keys( this.tabs );
+			ids = ids.slice( 0, position ).concat( ids.slice( position + 1 ) );
+
+			ids.forEach( () => {
+				newTabs[ tab ] = this.tabs[ tab ];
+			} );
+
+			this.tabs = newTabs;
+		}
+	}
+
 	activateTab( tab ) {
+		this.view.currentPageView.activateTab( tab )._renderChildren();
 	}
 
 	setDependency( callback ) {

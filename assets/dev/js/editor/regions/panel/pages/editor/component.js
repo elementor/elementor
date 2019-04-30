@@ -1,4 +1,11 @@
 export default class extends elementorModules.Component {
+	init( args ) {
+		this.title = 'Editor';
+		this.namespace = 'panel/editor';
+
+		super.init( args );
+	}
+
 	activateTab( tab, args ) {
 		const pageName = elementor.getPanelView().getCurrentPageName();
 
@@ -6,7 +13,7 @@ export default class extends elementorModules.Component {
 			this.openEditor( args.model, args.view );
 		}
 
-		elementor.getPanelView().getCurrentPageView().activateTab( tab )._renderChildren();
+		super.activateTab( this, tab );
 	}
 
 	getTabs() {
