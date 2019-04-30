@@ -72,6 +72,7 @@ const App = Marionette.Application.extend( {
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Font: require( 'elementor-controls/font' ),
 			Gallery: require( 'elementor-controls/gallery' ),
+			Hidden: require( 'elementor-controls/hidden' ),
 			Hover_animation: require( 'elementor-controls/select2' ),
 			Icon: require( 'elementor-controls/icon' ),
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
