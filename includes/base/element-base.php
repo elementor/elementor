@@ -595,7 +595,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array|string $element The element.
+	 * @param string $element The element.
 	 *
 	 * @return string Render attribute string, or an empty string if the attribute
 	 *                is empty or not exist.
