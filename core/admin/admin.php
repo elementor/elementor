@@ -14,6 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin extends App {
 
+	const BETA_TESTER_NEWSLETTER_TERMS_URL = 'https://go.elementor.com/beta-testers-newsletter-terms';
+	const BETA_TESTER_NEWSLETTER_PRIVACY_URL = 'https://go.elementor.com/beta-testers-newsletter-privacy';
+
 	/**
 	 * Get module name.
 	 *
@@ -592,7 +595,7 @@ class Admin extends App {
 					</div>
 					<div class="beta-tester-terms">
 						<?php
-						echo sprintf( '%s<a href="https://go.elementor.com/beta-testers-newsletter-terms">%s</a> %s <a href="https://go.elementor.com/beta-testers-newsletter-privacy">%s</a>', __( 'By entering your email, you agree to Elementor\'s ', 'elementor' ), __( 'Terms of Service', 'elementor' ), __( 'and', 'elementor' ), __( 'Privacy Policy', 'elementor' ) );
+						echo sprintf( '%s<a href="%s">%s</a> %s <a href="%s">%s</a>', __( 'By entering your email, you agree to Elementor\'s ', 'elementor' ), self::BETA_TESTER_NEWSLETTER_TERMS_URL, __( 'Terms of Service', 'elementor' ), __( 'and', 'elementor' ), self::BETA_TESTER_NEWSLETTER_PRIVACY_URL, __( 'Privacy Policy', 'elementor' ) );
 						?>
 					</div>
 				</div>
