@@ -7,9 +7,9 @@ export default class extends elementorModules.Component {
 	}
 
 	activateTab( tab ) {
-		this.view.setPage( 'elements' );
+		this.parent.setPage( 'elements' );
 
-		this.view.currentPageView.activateTab( tab );
+		this.parent.currentPageView.activateTab( tab );
 	}
 
 	getTabs() {

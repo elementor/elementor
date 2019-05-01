@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
-	<# tabs.forEach( ( tab ) => { #>
-		<div class="elementor-template-library-menu-item" data-route="{{{ tab.route }}}">{{{ tab.title }}}</div>
+	<# jQuery.each( tabs, ( tab, title ) => { #>
+		<div class="elementor-component-tab elementor-template-library-menu-item" data-tab="{{{ tab }}}">{{{ title }}}</div>
 	<# } ); #>
 </script>
 

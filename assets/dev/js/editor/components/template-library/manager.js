@@ -81,7 +81,7 @@ TemplateLibraryManager = function() {
 
 		registerDefaultFilterTerms();
 
-		this.component = elementorCommon.components.register( 'library', new Component(), { view: this } );
+		this.component = elementorCommon.components.register( 'library', new Component(), { parent: this } );
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
@@ -369,6 +369,9 @@ TemplateLibraryManager = function() {
 	};
 
 	this.showTemplates = function() {
+		// The tabs should exist in DOM on loading.
+		layout.setHeaderDefaultParts();
+
 		self.loadTemplates( function() {
 			var templatesToShow = self.filterTemplates();
 

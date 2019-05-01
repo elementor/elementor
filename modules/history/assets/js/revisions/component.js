@@ -8,8 +8,8 @@ export default class extends elementorModules.Component {
 
 	getCommands() {
 		return {
-			up: () => this.view.navigate( up ),
-			down: () => this.view.navigate(),
+			up: () => this.parent.navigate( up ),
+			down: () => this.parent.navigate(),
 		};
 	}
 
