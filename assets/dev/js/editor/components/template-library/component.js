@@ -17,20 +17,24 @@ export default class extends elementorModules.Component {
 	}
 
 	open() {
-		this.view.startModal();
+		this.parent.startModal();
 
 		return true;
 	}
 
 	close() {
-		this.view.modalConfig = {};
+		this.parent.modalConfig = {};
+	}
+
+	getTabsWrapperSelector() {
+		return '#elementor-template-library-header-menu';
 	}
 
 	activateTab( tab ) {
 		if ( 'templates/my-templates' === tab ) {
-			this.view.setScreen( 'local' );
+			this.parent.setScreen( 'local' );
 		} else {
-			this.view.setScreen( 'remote', tab.replace( 'templates/', '' ) );
+			this.parent.setScreen( 'remote', tab.replace( 'templates/', '' ) );
 		}
 
 		elementorCommon.route.saveState( 'library' );
@@ -41,11 +45,11 @@ export default class extends elementorModules.Component {
 	getRoutes() {
 		return {
 			import: () => {
-				this.view.getLayout().showImportView();
+				this.parent.getLayout().showImportView();
 			},
 
 			'save-template': ( args ) => {
-				this.view.getLayout().showSaveTemplateView( args.model );
+				this.parent.getLayout().showSaveTemplateView( args.model );
 			},
 		};
 	}
@@ -53,7 +57,7 @@ export default class extends elementorModules.Component {
 	getCommands() {
 		return {
 			show: ( args ) => {
-				this.view.modalConfig = args;
+				this.parent.modalConfig = args;
 
 				if ( ! elementorCommon.route.restoreState( 'library' ) ) {
 					elementorCommon.route.to( this.getDefault() );

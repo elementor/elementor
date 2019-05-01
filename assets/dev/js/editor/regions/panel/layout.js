@@ -37,11 +37,11 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	perfectScrollbar: null,
 
 	initialize: function() {
-		elementorCommon.components.register( 'panel', new PanelComponent(), { view: this } );
+		elementorCommon.components.register( 'panel', new PanelComponent(), { parent: this } );
 
-		elementorCommon.components.register( 'elements', new ElementsComponent(), { view: this } );
+		elementorCommon.components.register( 'elements', new ElementsComponent(), { parent: this } );
 
-		elementorCommon.components.register( 'editor', new EditorComponent(), { view: this } );
+		elementorCommon.components.register( 'editor', new EditorComponent(), { parent: this } );
 
 		this.initPages();
 	},

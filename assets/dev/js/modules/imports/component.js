@@ -40,11 +40,13 @@ export default class extends Module {
 			throw Error( 'namespace is required' );
 		}
 
-		if ( ! args.view ) {
-			throw Error( 'view is required' );
+		if ( ! args.parent ) {
+			throw Error( 'parent is required' );
 		}
 
-		this.view = args.view;
+		this.parent = args.parent;
+
+		this.tabRenderer = args.tabRenderer;
 
 		const shortcuts = this.getShortcuts();
 
@@ -133,8 +135,27 @@ export default class extends Module {
 		}
 	}
 
-	activateTab( tab ) {
-		this.view.currentPageView.activateTab( tab )._renderChildren();
+	getTabsWrapperSelector() {
+		return '';
+	}
+
+	getTabRoute( tab ) {
+		return this.namespace + '/' + tab;
+	}
+
+	activateTab( tab, routeArgs ) {
+		if ( this.tabRenderer ) {
+			this.tabRenderer.apply( this, [ tab, routeArgs ] );
+		}
+
+		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
+			.off( 'click' )
+			.on( 'click', ( event ) => {
+				elementorCommon.route.to( this.getTabRoute( event.currentTarget.dataset.tab ) );
+			} )
+			.removeClass( 'elementor-active' )
+			.filter( '[data-tab="' + tab + '"]' )
+			.addClass( 'elementor-active' );
 	}
 
 	setDependency( callback ) {

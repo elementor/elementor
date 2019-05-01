@@ -8,7 +8,7 @@ export default class extends elementorModules.Component {
 
 	getRoutes() {
 		return {
-			menu: () => this.view.setPage( 'menu' ),
+			menu: () => this.parent.setPage( 'menu' ),
 		};
 	}
 

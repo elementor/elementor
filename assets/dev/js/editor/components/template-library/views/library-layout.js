@@ -46,8 +46,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.modalContent.show( new TemplateLibraryCollectionView( {
 			collection: templatesCollection,
 		} ) );
-
-		this.setHeaderDefaultParts();
 	},
 
 	showImportView: function() {

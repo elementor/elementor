@@ -6,8 +6,8 @@ export default class extends elementorModules.Component {
 		super.init( args );
 	}
 
-	activateTab( tab ) {
-		elementor.getPanelView().setPage( 'historyPage' ).activateTab( tab );
+	getTabsWrapperSelector() {
+		return '#elementor-panel-elements-navigation';
 	}
 
 	getTabs() {
