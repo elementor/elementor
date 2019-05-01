@@ -18,7 +18,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		return {
 			title: elementor.translate( 'library' ),
 			click: function() {
-				elementorCommon.route.to( 'library' );
+				elementorCommon.commands.run( 'library/show' );
 			},
 		};
 	},
