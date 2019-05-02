@@ -258,7 +258,7 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/widget-' . $this->get_name() . '?utm_medium=wp-dash&utm_campaign=learn';
+		return 'https://go.elementor.com/widget-' . $this->get_name();
 	}
 
 	public function get_custom_help_url() {
