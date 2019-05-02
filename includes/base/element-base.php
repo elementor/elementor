@@ -257,6 +257,14 @@ abstract class Element_Base extends Controls_Stack {
 		return 'eicon-columns';
 	}
 
+	public function get_help_url() {
+		return 'https://go.elementor.com/widget-' . $this->get_name() . '?utm_medium=wp-dash&utm_campaign=learn';
+	}
+
+	public function get_custom_help_url() {
+		return '';
+	}
+
 	/**
 	 * Whether the reload preview is required.
 	 *
@@ -774,6 +782,12 @@ abstract class Element_Base extends Controls_Stack {
 			'icon' => $this->get_icon(),
 			'reload_preview' => $this->is_reload_preview_required(),
 		];
+
+		if ( preg_match( '/^' . __NAMESPACE__ . '(Pro)?\\\\/', get_called_class() ) ) {
+			$config['help_url'] = $this->get_help_url();
+		} else {
+			$config['help_url'] = $this->get_custom_help_url();
+		}
 
 		return $config;
 	}
