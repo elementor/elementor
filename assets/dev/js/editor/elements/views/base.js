@@ -278,7 +278,7 @@ BaseElementView = BaseContainer.extend( {
 				return;
 			}
 
-			var sourceValue = sourceSettings[ controlName ],
+			const sourceValue = sourceSettings[ controlName ],
 				targetValue = settingsAttributes[ controlName ];
 
 			if ( undefined === sourceValue || undefined === targetValue ) {
