@@ -52,26 +52,9 @@ export default class extends Module {
 
 		const routes = this.getRoutes();
 
-		_( this.getTabs() ).each( ( title, tab ) => {
-			routes[ tab ] = ( routeArgs ) => this.activateTab( tab, routeArgs );
-		} );
+		_( this.getTabs() ).each( ( title, tab ) => this.registerTabRoute( tab ) );
 
-		_( routes ).each( ( callback, route ) => {
-			const fullRoute = this.namespace + '/' + route,
-				shortcut = shortcuts[ route ] ? shortcuts[ route ] : false;
-
-			const parts = fullRoute.split( '/' ),
-				component = parts[ 0 ],
-				componentArgs = {};
-
-			if ( this.open ) {
-				componentArgs.open = this.open.bind( this );
-			}
-
-			elementorCommon.route.registerComponent( component, componentArgs );
-
-			elementorCommon.route.register( fullRoute, callback, shortcut );
-		} );
+		_( routes ).each( ( callback, route ) => this.registerRoute( route, callback ) );
 
 		_( this.getCommands() ).each( ( callback, command ) => {
 			const fullCommand = this.namespace ? this.namespace + '/' + command : command,
@@ -89,6 +72,29 @@ export default class extends Module {
 
 			elementorCommon.commands.register( fullCommand, callback, shortcut );
 		} );
+	}
+
+	registerRoute( route, callback ) {
+		const shortcuts = this.getShortcuts();
+
+		const fullRoute = this.namespace + '/' + route,
+			shortcut = shortcuts[ route ] ? shortcuts[ route ] : false;
+
+		const parts = fullRoute.split( '/' ),
+			component = parts[ 0 ],
+			componentArgs = {};
+
+		if ( this.open ) {
+			componentArgs.open = this.open.bind( this );
+		}
+
+		elementorCommon.route.registerComponent( component, componentArgs );
+
+		elementorCommon.route.register( fullRoute, callback, shortcut );
+	}
+
+	registerTabRoute( tab ) {
+		this.registerRoute( tab, ( routeArgs ) => this.activateTab( tab, routeArgs ) );
 	}
 
 	getCommands() {
@@ -133,6 +139,8 @@ export default class extends Module {
 
 			this.tabs = newTabs;
 		}
+
+		this.registerTabRoute( tab );
 	}
 
 	getTabsWrapperSelector() {
