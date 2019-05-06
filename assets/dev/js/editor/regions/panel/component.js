@@ -9,6 +9,9 @@ export default class extends elementorModules.Component {
 	getRoutes() {
 		return {
 			menu: () => this.parent.setPage( 'menu' ),
+			'global-colors': () => this.parent.setPage( 'colorScheme' ),
+			'global-fonts': () => this.parent.setPage( 'typographyScheme' ),
+			'color-picker': () => this.parent.setPage( 'colorPickerScheme' ),
 		};
 	}
 
