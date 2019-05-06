@@ -83,8 +83,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			icon: 'fa fa-paint-brush',
 			title: elementor.translate( 'global_colors' ),
 			type: 'page',
-			pageName: 'colorScheme',
-			route: 'panel/global-colors',
+			callback: () => elementorCommon.route.to( 'panel/global-colors' ),
 		}, 'style' );
 
 		this.addItem( {
@@ -92,8 +91,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			icon: 'fa fa-font',
 			title: elementor.translate( 'global_fonts' ),
 			type: 'page',
-			pageName: 'typographyScheme',
-			route: 'panel/global-fonts',
+			callback: () => elementorCommon.route.to( 'panel/global-fonts' ),
 		}, 'style' );
 
 		this.addItem( {
@@ -101,9 +99,16 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			icon: 'fa fa-eyedropper',
 			title: elementor.translate( 'color_picker' ),
 			type: 'page',
-			pageName: 'colorPickerScheme',
-			route: 'panel/color-picker',
+			callback: () => elementorCommon.route.to( 'panel/color-picker' ),
 		}, 'style' );
+
+		this.addItem( {
+			name: 'global-settings',
+			icon: 'fa fa-cogs',
+			title: elementor.translate( 'global_settings' ),
+			type: 'page',
+			callback: () => elementorCommon.route.to( 'panel/general-settings/style' ),
+		}, 'settings', 'elementor-settings' );
 
 		this.addItem( {
 			name: 'elementor-settings',
@@ -150,12 +155,6 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 			items.splice( items.indexOf( beforeItem ), 0, itemData );
 		} else {
 			items.push( itemData );
-		}
-
-		if ( itemData.route ) {
-			elementorCommon.route.register( itemData.route, () => {
-				elementor.getPanelView().setPage( itemData.pageName );
-			} );
 		}
 	},
 } );

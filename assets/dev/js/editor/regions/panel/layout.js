@@ -180,9 +180,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			.on( 'before:show', this.onEditorBeforeShow.bind( this ) )
 			.on( 'empty', this.onEditorEmpty.bind( this ) )
 			.on( 'show', this.updateScrollbar.bind( this ) );
-
-		// Set default page to elements
-		elementorCommon.route.to( 'panel/elements/categories' );
 	},
 
 	onEditorBeforeShow: function() {

@@ -6,10 +6,16 @@ export default class extends elementorModules.Component {
 		super.init( args );
 	}
 
+	getTabsWrapperSelector() {
+		return '#elementor-panel-elements-navigation';
+	}
+
 	activateTab( tab ) {
 		this.parent.setPage( 'elements' );
 
-		this.parent.currentPageView.activateTab( tab );
+		this.parent.getCurrentPageView().showView( tab );
+
+		super.activateTab( tab );
 	}
 
 	getTabs() {

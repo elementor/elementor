@@ -63,14 +63,7 @@ class Model extends BaseModel {
 	 * }
 	 */
 	public function get_panel_page_settings() {
-		return [
-			'title' => __( 'Global Settings', 'elementor' ),
-			'menu' => [
-				'icon' => 'fa fa-cogs',
-				'beforeItem' => 'elementor-settings',
-				'route' => 'panel/general-settings/style',
-			],
-		];
+		return [];
 	}
 
 	/**

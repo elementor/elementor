@@ -106,30 +106,10 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	addPanelMenuItem: function() {
-		var menuSettings = this.getSettings( 'panelPage.menu' );
-
-		if ( ! menuSettings ) {
-			return;
-		}
-
-		var menuItemOptions = {
-			icon: menuSettings.icon,
-			title: this.getSettings( 'panelPage.title' ),
-			type: 'page',
-			pageName: this.getSettings( 'name' ) + '_settings',
-			route: menuSettings.route,
-		};
-
-		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
-	},
-
 	onInit: function() {
 		this.initModel();
 
 		this.initControlsCSSParser();
-
-		this.addPanelMenuItem();
 
 		this.debounceSave = _.debounce( this.save, 3000 );
 

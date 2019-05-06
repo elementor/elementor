@@ -59,7 +59,7 @@ export default class extends elementorModules.Component {
 			show: ( args ) => {
 				this.parent.modalConfig = args;
 
-				if ( ! elementorCommon.route.restoreState( 'library' ) ) {
+				if ( args.toDefault || ! elementorCommon.route.restoreState( 'library' ) ) {
 					elementorCommon.route.to( this.getDefault() );
 				}
 			},

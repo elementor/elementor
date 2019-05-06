@@ -559,6 +559,7 @@ class Editor {
 				'global_colors' => __( 'Default Colors', 'elementor' ),
 				'global_fonts' => __( 'Default Fonts', 'elementor' ),
 				'global_style' => __( 'Style', 'elementor' ),
+				'global_settings' => __( 'Global Settings', 'elementor' ),
 				'settings' => __( 'Settings', 'elementor' ),
 				'go_to' => __( 'Go To', 'elementor' ),
 				'view_page' => __( 'View Page', 'elementor' ),

@@ -452,6 +452,9 @@ const App = Marionette.Application.extend( {
 	initPanel: function() {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
+		// Set default page to elements.
+		elementorCommon.route.to( 'panel/elements/categories' );
+
 		this.trigger( 'panel:init' );
 	},
 

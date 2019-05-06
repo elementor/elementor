@@ -14,20 +14,10 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onChildviewClick: function( childView ) {
-		const menuItemType = childView.model.get( 'type' );
+		const callback = childView.model.get( 'callback' );
 
-		switch ( menuItemType ) {
-			case 'page':
-				elementorCommon.route.to( childView.model.get( 'route' ) );
-
-				break;
-
-			default:
-				const callback = childView.model.get( 'callback' );
-
-				if ( _.isFunction( callback ) ) {
-					callback.call( childView );
-				}
+		if ( _.isFunction( callback ) ) {
+			callback.call( childView );
 		}
 	},
 } );
