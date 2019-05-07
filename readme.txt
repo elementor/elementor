@@ -221,6 +221,10 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.5.15 - 2019-05-07 =
+* Fix: Param type in doc block is partial ([#7988](https://github.com/elementor/elementor/issues/7988))
+* Fix: Paste Style changes widget title in Navigator ([#7931](https://github.com/elementor/elementor/issues/7931))
+
 = 2.5.14 - 2019-04-16 =
 * Tweak: Remove default values on update to avoid 413 error ([#7842](https://github.com/elementor/elementor/issues/7842))
 * Fix: Load minified `common-modules.js` & `editor-modules.js` instead of full version
