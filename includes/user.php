@@ -24,6 +24,20 @@ class User {
 
 	const INTRODUCTION_KEY = 'elementor_introduction';
 
+	const BETA_TESTER_KEY = 'elementor_beta_tester';
+
+	/**
+	 * API URL.
+	 *
+	 * Holds the URL of the Beta Tester Opt-in API.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var string API URL.
+	 */
+	const BETA_TESTER_API_URL = 'https://my.elementor.com/api/v1/beta_tester/';
+
 	/**
 	 * Init.
 	 *
@@ -47,6 +61,7 @@ class User {
 	 */
 	public static function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
+		$ajax->register_ajax_action( 'beta_tester_newsletter', [ __CLASS__, 'register_as_beta_tester' ] );
 	}
 
 	/**
@@ -230,6 +245,25 @@ class User {
 		$user_introduction_meta[ $data['introductionKey'] ] = true;
 
 		update_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, $user_introduction_meta );
+	}
+
+	public static function register_as_beta_tester( array $data ) {
+
+		$params = [
+			'site_lang' => get_bloginfo( 'language' ),
+			'beta_tester_email' => $data['betaTesterEmail'],
+		];
+
+		wp_safe_remote_post(
+			self::BETA_TESTER_API_URL,
+			[
+				'timeout' => 25,
+				'blocking' => false,
+				'body' => [
+					'data' => wp_json_encode( $params ),
+				],
+			]
+		);
 	}
 
 	/**
