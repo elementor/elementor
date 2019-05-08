@@ -40,7 +40,7 @@ class Admin extends App {
 			return;
 		}
 
-		if ( Utils::is_ajax() ) {
+		if ( wp_doing_ajax() ) {
 			return;
 		}
 

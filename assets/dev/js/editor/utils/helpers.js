@@ -94,17 +94,6 @@ helpers = {
 		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
-	/*
-	 * @deprecated 2.0.0
-	 */
-	stringReplaceAll: function( string, replaces ) {
-		var re = new RegExp( Object.keys( replaces ).join( '|' ), 'gi' );
-
-		return string.replace( re, function( matched ) {
-			return replaces[ matched ];
-		} );
-	},
-
 	isActiveControl: function( controlModel, values ) {
 		var condition,
 			conditions;

@@ -226,7 +226,7 @@ class User {
 		$notices[ $_REQUEST['notice_id'] ] = 'true';
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 
-		if ( ! Utils::is_ajax() ) {
+		if ( ! wp_doing_ajax() ) {
 			wp_safe_redirect( admin_url() );
 			die;
 		}
@@ -248,19 +248,14 @@ class User {
 	}
 
 	public static function register_as_beta_tester( array $data ) {
-
-		$params = [
-			'site_lang' => get_bloginfo( 'language' ),
-			'beta_tester_email' => $data['betaTesterEmail'],
-		];
-
-		wp_safe_remote_post(
+		$response = wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,
 			[
 				'timeout' => 25,
-				'blocking' => false,
 				'body' => [
-					'data' => wp_json_encode( $params ),
+					'api_version' => ELEMENTOR_VERSION,
+					'site_lang' => get_bloginfo( 'language' ),
+					'beta_tester_email' => $data['betaTesterEmail'],
 				],
 			]
 		);
