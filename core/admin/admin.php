@@ -14,6 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin extends App {
 
+	const BETA_TESTER_NEWSLETTER_TERMS_URL = 'https://go.elementor.com/beta-testers-newsletter-terms';
+	const BETA_TESTER_NEWSLETTER_PRIVACY_URL = 'https://go.elementor.com/beta-testers-newsletter-privacy';
+
 	/**
 	 * Get module name.
 	 *
@@ -552,6 +555,56 @@ class Admin extends App {
 	}
 
 	/**
+	 * Print beta tester dialog.
+	 *
+	 * Display a dialog box to suggest the user to opt-in to the beta testers newsletter.
+	 *
+	 * Fired by `admin_footer` filter.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 */
+	public function print_beta_tester_dialog() {
+		$current_user = wp_get_current_user();
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		?>
+		<div id="elementor-beta-tester-dialog-wrapper">
+			<div id="elementor-beta-tester-dialog-header">
+				<div class="elementor-templates-modal__header__logo">
+					<span class="elementor-templates-modal__header__logo__icon-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</span>
+					<span id="elementor-beta-tester-dialog-header-title"><?php echo __( 'Sign Up', 'elementor' ); ?></span>
+				</div>
+			</div>
+			<form id="elementor-beta-tester-dialog-form" method="post">
+				<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
+				<input type="hidden" name="action" value="elementor_beta_tester_newsletter" />
+
+				<div id="elementor-beta-tester-dialog-form-caption"><?php echo __( 'Beta Testers Newsletter', 'elementor' ); ?></div>
+				<div id="elementor-beta-tester-dialog-form-body">
+					<div>
+						<?php
+						echo __( 'Want to be the first to hear about new features & software improvements? leave your email below', 'elementor' );
+						?>
+					</div>
+					<div class="elementor-beta-tester-dialog-input-wrapper">
+						<input id="elementor-beta-tester-email" class="elementor-beta-tester-dialog-input" name="beta_tester_email" type="email" required value="<?php echo $current_user->user_email; ?>" />
+						<input type="submit" class="elementor-button elementor-button-success" value="<?php echo esc_attr__( 'Sign Up', 'elementor' ); ?>">
+					</div>
+					<div class="beta-tester-terms">
+						<?php
+						echo sprintf( '%s<a href="%s">%s</a> %s <a href="%s">%s</a>', __( 'By entering your email, you agree to Elementor\'s ', 'elementor' ), self::BETA_TESTER_NEWSLETTER_TERMS_URL, __( 'Terms of Service', 'elementor' ), __( 'and', 'elementor' ), self::BETA_TESTER_NEWSLETTER_PRIVACY_URL, __( 'Privacy Policy', 'elementor' ) );
+						?>
+					</div>
+				</div>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Get elementor dashboard overview widget footer actions.
 	 *
 	 * Retrieves the footer action links displayed in elementor dashboard widget.
@@ -724,6 +777,9 @@ class Admin extends App {
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
+
+		add_action( 'admin_footer', [ $this, 'print_beta_tester_dialog' ] );
+
 	}
 
 	/**
