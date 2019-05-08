@@ -215,7 +215,6 @@
 					message: self.elements.$betaTesterDialogForm,
 					closeButton: true,
 					closeButtonClass: 'eicon-close',
-
 				} ).show();
 			} );
 

@@ -158,10 +158,12 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @since 2.0.12
-	 * @deprecated 2.4.0
+	 * @deprecated 2.4.0 Use `Document::get_remote_library_config()` instead
 	 * @access public
 	 */
-	public function get_remote_library_type() {}
+	public function get_remote_library_type() {
+		// _deprecated_function( __METHOD__, '2.4.0', __CLASS__ . '::get_remote_library_config()' );
+	}
 
 	/**
 	 * @since 2.0.0
@@ -221,10 +223,12 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @since 2.0.6
-	 * @deprecated 2.4.0 Use `Document::get_container_attributes` instead
+	 * @deprecated 2.4.0 Use `Document::get_container_attributes()` instead
 	 * @access public
 	 */
 	public function get_container_classes() {
+		// _deprecated_function( __METHOD__, '2.4.0', __CLASS__ . '::get_container_attributes()' );
+
 		return '';
 	}
 
@@ -245,13 +249,6 @@ abstract class Document extends Controls_Stack {
 
 		if ( ! Plugin::$instance->preview->is_preview_mode( $id ) ) {
 			$attributes['data-elementor-settings'] = wp_json_encode( $this->get_frontend_settings() );
-		}
-
-		// TODO: BC since 2.4.0
-		$classes = $this->get_container_classes();
-
-		if ( $classes ) {
-			$attributes['class'] .= ' ' . $classes;
 		}
 
 		return $attributes;
@@ -509,6 +506,18 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
+		/**
+		 * Before document save.
+		 *
+		 * Fires when document save starts on Elementor.
+		 *
+		 * @since 2.5.12
+		 *
+		 * @param \Elementor\Core\Base\Document $this The current document.
+		 * @param $data.
+		 */
+		do_action( 'elementor/document/before_save', $this, $data );
+
 		if ( isset( $data['settings'] ) ) {
 			if ( DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
@@ -534,6 +543,18 @@ abstract class Document extends Controls_Stack {
 		$post_css = new Post_CSS( $this->post->ID );
 
 		$post_css->delete();
+
+		/**
+		 * After document save.
+		 *
+		 * Fires when document save is complete.
+		 *
+		 * @since 2.5.12
+		 *
+		 * @param \Elementor\Core\Base\Document $this The current document.
+		 * @param $data.
+		 */
+		do_action( 'elementor/document/after_save', $this, $data );
 
 		return true;
 	}
@@ -916,16 +937,29 @@ abstract class Document extends Controls_Stack {
 		if ( ! defined( 'IS_ELEMENTOR_UPGRADE' ) ) {
 			// Save per revision.
 			$this->update_meta( '_elementor_version', ELEMENTOR_VERSION );
+
+			/**
+			 * Document version save.
+			 *
+			 * Fires when document version is saved on Elementor.
+			 * Will not fire during Elementor Upgrade.
+			 *
+			 * @since 2.5.12
+			 *
+			 * @param \Elementor\Core\Base\Document $this The current document.
+			 *
+			 */
+			do_action( 'elementor/document/save_version', $this );
 		}
 	}
 
 	/**
 	 * @since 2.0.0
 	 * @access public
-	 * @deprecated Use `save_template_type`.
+	 * @deprecated 2.2.0 Use `Document::save_template_type()`.
 	 */
 	public function save_type() {
-		// TODO: _deprecated_function( __METHOD__, '2.2.0', 'save_template_type' );
+		_deprecated_function( __METHOD__, '2.2.0', __CLASS__ . '::save_template_type()' );
 
 		$this->save_template_type();
 	}
@@ -1092,14 +1126,6 @@ abstract class Document extends Controls_Stack {
 			'category' => $this->get_name(),
 			'autoImportSettings' => false,
 		];
-
-		// TODO: BC since 2.4.0
-		$bc_type = $this->get_remote_library_type();
-
-		if ( $bc_type ) {
-			$config['category'] = $bc_type;
-		}
-		// END BC
 
 		return $config;
 	}
