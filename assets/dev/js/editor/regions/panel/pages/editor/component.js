@@ -3,17 +3,21 @@ export default class extends elementorModules.Component {
 		this.title = 'Editor';
 		this.namespace = 'panel/editor';
 
+		this.activeTabs = {};
+
 		super.init( args );
 	}
 
-	activateTab( tab, args ) {
-		const pageName = elementor.getPanelView().getCurrentPageName();
+	activateTab( tab ) {
+		const editor = this.parent.getCurrentPageView().activateTab( tab );
 
-		if ( 'editor' !== pageName ) {
-			this.openEditor( args.model, args.view );
-		}
+		this.activeTabs[ editor.model.id ] = tab;
 
 		super.activateTab( tab );
+	}
+
+	getTabsWrapperSelector() {
+		return '.elementor-panel-navigation';
 	}
 
 	getTabs() {
@@ -25,9 +29,34 @@ export default class extends elementorModules.Component {
 		};
 	}
 
+	getCommands() {
+		return {
+			open: ( args ) => {
+				this.openEditor( args.model, args.view );
+
+				this.setDefaultTab();
+
+				elementorCommon.route.to( this.getDefault(), args );
+			},
+		};
+	}
+
+	setDefaultTab() {
+		let defaultTab;
+		if ( this.activeTabs[ args.model.id ] ) {
+			defaultTab = this.activeTabs[ args.model.id ];
+		} else if ( args.model.get( 'elType' ).match( /section|column/ ) ) {
+			defaultTab = 'layout';
+		} else {
+			defaultTab = 'content';
+		}
+
+		this.setDefault( defaultTab );
+	}
+
 	openEditor( model, view ) {
-		const title = elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] );
-		elementor.getPanelView().setPage( 'editor', title, {
+		const title = elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ),
+		editor = elementor.getPanelView().setPage( 'editor', title, {
 			model: model,
 			controls: elementor.getElementControls( model ),
 			editedElementView: view,
@@ -40,5 +69,7 @@ export default class extends elementorModules.Component {
 
 		// Example: panel/open_editor/widget/heading
 		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this, model, view );
+
+		return editor;
 	}
 }

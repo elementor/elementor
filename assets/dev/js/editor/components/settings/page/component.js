@@ -8,6 +8,12 @@ export default class extends elementorModules.Component {
 
 	activateTab( tab ) {
 		elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab )._renderChildren();
+
+		super.activateTab( tab );
+	}
+
+	getTabsWrapperSelector() {
+		return '.elementor-panel-navigation';
 	}
 
 	getTabs() {
