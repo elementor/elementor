@@ -3,6 +3,8 @@ export default class extends elementorModules.Component {
 		this.title = 'Library';
 		this.namespace = 'library';
 
+		this.setDefault( 'templates/page' );
+
 		this.tabs = {
 			'templates/block': elementor.translate( 'blocks' ),
 			'templates/page': elementor.translate( 'pages' ),
@@ -10,10 +12,6 @@ export default class extends elementorModules.Component {
 		};
 
 		super.init( args );
-	}
-
-	getDefault() {
-		return 'library/templates/page';
 	}
 
 	open() {

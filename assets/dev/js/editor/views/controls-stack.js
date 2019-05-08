@@ -34,7 +34,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	events: function() {
 		return {
-			'click @ui.tabs': 'onClickTabControl',
 			'click @ui.reloadButton': 'onReloadButtonClick',
 		};
 	},
@@ -89,22 +88,20 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return this.activeTab === sectionControlModel.get( 'tab' );
 	},
 
-	activateTab: function( tabName ) {
-		this.activeTab = tabName;
+	setActivateTab: function( tab ) {
+		this.activeTab = tab;
 
-		this.ui.tabs
-			.removeClass( 'elementor-active' )
-			.filter( '[data-tab="' + tabName + '"]' )
-			.addClass( 'elementor-active' );
-
-		this.activateFirstSection();
+		this.activateFirstSection()._renderChildren();
 
 		return this;
 	},
 
 	activateSection: function( sectionName ) {
 		this.activeSection = sectionName;
+
+		return this;
 	},
+
 
 	activateFirstSection: function() {
 		var self = this;
@@ -126,6 +123,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 		}
 
 		self.activateSection( sectionControls[ 0 ].get( 'name' ) );
+
+		return this;
 	},
 
 	getChildView: function( item ) {
@@ -199,18 +198,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this.handlePopovers();
 	},
 
-	onRenderTemplate: function() {
-		this.activateTab( this.activeTab || this.ui.tabs.eq( 0 ).data( 'tab' ) );
-	},
-
 	onModelDestroy: function() {
 		this.destroy();
-	},
-
-	onClickTabControl: function( event ) {
-		event.preventDefault();
-
-		elementorCommon.route.to( event.currentTarget.dataset.route );
 	},
 
 	onReloadButtonClick: function() {

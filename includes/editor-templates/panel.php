@@ -151,7 +151,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			return;
 		}
 			#>
-			<div class="elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}" data-route="panel/editor/{{ tabSlug }}">
+			<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 				<a href="#">{{{ tabTitle }}}</a>
 			</div>
 		<# } ); #>

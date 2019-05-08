@@ -68,7 +68,7 @@ export default class extends Module {
 				componentArgs.open = this.open;
 			}
 
-			elementorCommon.commands.registerComponent( component );
+			elementorCommon.commands.registerComponent( component, componentArgs );
 
 			elementorCommon.commands.register( fullCommand, callback, shortcut );
 		} );
@@ -114,7 +114,7 @@ export default class extends Module {
 	}
 
 	setDefault( route ) {
-		this.defaultRoute = route;
+		this.defaultRoute = this.namespace + '/' + route;
 	}
 
 	getDefault() {
@@ -127,14 +127,13 @@ export default class extends Module {
 
 	addTab( tab, title, position ) {
 		this.tabs[ tab ] = title;
-
 		if ( undefined !== typeof position ) {
 			const newTabs = {};
 			let ids = Object.keys( this.tabs );
-			ids = ids.slice( 0, position ).concat( ids.slice( position + 1 ) );
+			ids = ids.slice( 0, position ).concat( [ tab ] ).concat( ids.slice( position, -1 /* remove new tab */ ) );
 
-			ids.forEach( () => {
-				newTabs[ tab ] = this.tabs[ tab ];
+			ids.forEach( ( id ) => {
+				newTabs[ id ] = this.tabs[ id ];
 			} );
 
 			this.tabs = newTabs;
