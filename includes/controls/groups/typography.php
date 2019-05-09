@@ -121,14 +121,6 @@ class Group_Control_Typography extends Group_Control_Base {
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
 		];
 
-		$typo_weight_options = [
-			'' => __( 'Default', 'elementor' ),
-		];
-
-		foreach ( array_merge( [ 'normal', 'bold' ], range( 100, 900, 100 ) ) as $weight ) {
-			$typo_weight_options[ $weight ] = ucfirst( $weight );
-		}
-
 		$fields['line_height'] = [
 			'label' => _x( 'Line-Height', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
@@ -164,6 +156,14 @@ class Group_Control_Typography extends Group_Control_Base {
 			'responsive' => true,
 			'selector_value' => 'letter-spacing: {{SIZE}}{{UNIT}}',
 		];
+
+		$typo_weight_options = [
+			'' => __( 'Default', 'elementor' ),
+		];
+
+		foreach ( array_merge( [ 'normal', 'bold' ], range( 100, 900, 100 ) ) as $weight ) {
+			$typo_weight_options[ $weight ] = ucfirst( $weight );
+		}
 
 		$fields['font_weight'] = [
 			'label' => _x( 'Weight', 'Typography Control', 'elementor' ),
