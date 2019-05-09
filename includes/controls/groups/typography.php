@@ -128,6 +128,42 @@ class Group_Control_Typography extends Group_Control_Base {
 			$typo_weight_options[ $weight ] = ucfirst( $weight );
 		}
 
+		$fields['line_height'] = [
+			'label' => _x( 'Line-Height', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'desktop_default' => [
+				'unit' => 'em',
+			],
+			'tablet_default' => [
+				'unit' => 'em',
+			],
+			'mobile_default' => [
+				'unit' => 'em',
+			],
+			'range' => [
+				'px' => [
+					'min' => 1,
+				],
+			],
+			'responsive' => true,
+			'size_units' => [ 'px', 'em' ],
+			'selector_value' => 'line-height: {{SIZE}}{{UNIT}}',
+		];
+
+		$fields['letter_spacing'] = [
+			'label' => _x( 'Letter Spacing', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'range' => [
+				'px' => [
+					'min' => -5,
+					'max' => 10,
+					'step' => 0.1,
+				],
+			],
+			'responsive' => true,
+			'selector_value' => 'letter-spacing: {{SIZE}}{{UNIT}}',
+		];
+
 		$fields['font_weight'] = [
 			'label' => _x( 'Weight', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
@@ -171,42 +207,6 @@ class Group_Control_Typography extends Group_Control_Base {
 				'line-through' => _x( 'Line Through', 'Typography Control', 'elementor' ),
 				'none' => _x( 'None', 'Typography Control', 'elementor' ),
 			],
-		];
-
-		$fields['line_height'] = [
-			'label' => _x( 'Line-Height', 'Typography Control', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'desktop_default' => [
-				'unit' => 'em',
-			],
-			'tablet_default' => [
-				'unit' => 'em',
-			],
-			'mobile_default' => [
-				'unit' => 'em',
-			],
-			'range' => [
-				'px' => [
-					'min' => 1,
-				],
-			],
-			'responsive' => true,
-			'size_units' => [ 'px', 'em' ],
-			'selector_value' => 'line-height: {{SIZE}}{{UNIT}}',
-		];
-
-		$fields['letter_spacing'] = [
-			'label' => _x( 'Letter Spacing', 'Typography Control', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'range' => [
-				'px' => [
-					'min' => -5,
-					'max' => 10,
-					'step' => 0.1,
-				],
-			],
-			'responsive' => true,
-			'selector_value' => 'letter-spacing: {{SIZE}}{{UNIT}}',
 		];
 
 		return $fields;
