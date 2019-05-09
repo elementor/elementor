@@ -104,6 +104,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		$fields['font_size'] = [
 			'label' => _x( 'Size', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
+			'separator' => 'before',
 			'size_units' => [ 'px', 'em', 'rem', 'vw' ],
 			'range' => [
 				'px' => [
@@ -169,6 +170,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => $typo_weight_options,
+			'separator' => 'before',
 		];
 
 		$fields['text_transform'] = [
