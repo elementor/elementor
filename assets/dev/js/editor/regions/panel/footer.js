@@ -147,10 +147,6 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onNavigatorClick: function() {
-		if ( elementor.navigator.isOpen() ) {
-			elementor.navigator.close();
-		} else {
-			elementor.navigator.open();
-		}
+		elementorCommon.commands.run( 'navigator/toggle' );
 	},
 } );

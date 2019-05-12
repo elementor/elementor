@@ -4,6 +4,7 @@ import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 import DateTimeControl from 'elementor-controls/date-time';
+import Component from './elements/component';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -270,7 +271,7 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		this.registerCommands();
+		elementorCommon.components.register( 'elements', new Component(), { parent: this } );
 
 		this.hotkeysScreen = new HotkeysScreen();
 	},
@@ -383,71 +384,6 @@ const App = Marionette.Application.extend( {
 		}
 
 		return targetElement;
-	},
-
-	registerCommands: function() {
-		elementorCommon.commands.registerComponent( 'elements', {
-			before: () => {
-				return elementor.getCurrentElement();
-			},
-		} );
-
-		elementorCommon.commands.register( 'elements/copy', () => elementor.getCurrentElement().copy(), {
-			keys: 'ctrl+c',
-			exclude: [ 'input' ],
-		} );
-
-		elementorCommon.commands.register( 'elements/duplicate', () => elementor.getCurrentElement().duplicate(), {
-			keys: 'ctrl+d',
-		} );
-
-		elementorCommon.commands.register( 'elements/delete', () => elementor.getCurrentElement().removeElement(), {
-			keys: 'del',
-			exclude: [ 'input' ],
-		} );
-
-		elementorCommon.commands.register( 'elements/paste', () => elementor.getCurrentElement().paste(), {
-			keys: 'ctrl+v',
-			exclude: [ 'input' ],
-			dependency: () => {
-				return elementor.getCurrentElement().isPasteEnabled();
-			},
-		} );
-
-		elementorCommon.commands.register( 'elements/pasteStyle', () => elementor.getCurrentElement().paste(), {
-			keys: 'ctrl+shift+v',
-			exclude: [ 'input' ],
-			dependency: () => {
-				return elementor.getCurrentElement().pasteStyle && elementorCommon.storage.get( 'transfer' );
-			},
-		} );
-
-		elementorCommon.commands.registerComponent( 'navigator', {
-			before: () => 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
-		} );
-
-		elementorCommon.commands.register( 'navigator/toggle', () => {
-			if ( elementor.navigator.storage.visible ) {
-				elementor.navigator.close();
-			} else {
-				elementor.navigator.open();
-			}
-		}, { keys: 'ctrl+i' } );
-
-		elementorCommon.commands.registerComponent( 'preview' );
-
-		elementorCommon.commands.register( 'preview/change-device-mode', () => {
-			const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-			let modeIndex = this.devices.indexOf( currentDeviceMode );
-
-			modeIndex++;
-
-			if ( modeIndex >= this.devices.length ) {
-				modeIndex = 0;
-			}
-			//
-			elementor.changeDeviceMode( this.devices[ modeIndex ] );
-		}, { keys: 'ctrl+shift+m' } );
 	},
 
 	initPanel: function() {

@@ -68,6 +68,10 @@ export default class extends Module {
 				componentArgs.open = this.open;
 			}
 
+			if ( this.close ) {
+				componentArgs.close = this.close;
+			}
+
 			elementorCommon.commands.registerComponent( component, componentArgs );
 
 			elementorCommon.commands.register( fullCommand, callback, shortcut );
@@ -86,6 +90,10 @@ export default class extends Module {
 
 		if ( this.open ) {
 			componentArgs.open = this.open.bind( this );
+		}
+
+		if ( this.close ) {
+			componentArgs.close = this.close.bind( this );
 		}
 
 		elementorCommon.route.registerComponent( component, componentArgs );

@@ -1,3 +1,5 @@
+import Component from './component';
+
 const BaseRegion = require( 'elementor-regions/base' );
 
 import NavigatorLayout from './layout';
@@ -5,6 +7,8 @@ import NavigatorLayout from './layout';
 export default class extends BaseRegion {
 	constructor( options ) {
 		super( options );
+
+		elementorCommon.components.register( 'navigator', new Component(), { parent: this } );
 
 		this.isDocked = false;
 
@@ -15,7 +19,7 @@ export default class extends BaseRegion {
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		if ( this.storage.visible ) {
-			this.open();
+			elementorCommon.route.to( 'navigator/' );
 		}
 	}
 
