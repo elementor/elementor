@@ -33,8 +33,6 @@ export default class extends Marionette.CompositeView {
 		this.childViewContainer = '#elementor-finder__results';
 
 		this.collection = new Backbone.Collection( Object.values( elementorCommon.finder.getSettings( 'data' ) ) );
-
-		this.addCommands();
 	}
 
 	activateItem( $item ) {
@@ -82,27 +80,6 @@ export default class extends Marionette.CompositeView {
 		if ( isControlClicked ) {
 			$a.removeAttr( 'target' );
 		}
-	}
-
-	addCommands() {
-		elementorCommon.commands.registerDependency( 'finder', () => {
-			return elementorCommon.finder.layout.getModal().isVisible();
-		} );
-
-		elementorCommon.commands.register( 'finder/navigate/down', () => this.activateNextItem(), {
-			keys: 'down',
-		} );
-
-		elementorCommon.commands.register( 'finder/navigate/up', () => this.activateNextItem( true ), {
-			keys: 'up',
-		} );
-
-		elementorCommon.commands.register( 'finder/navigate/select', ( event ) => this.goToActiveItem( event ), {
-			keys: 'enter',
-			dependency: () => {
-				return this.$activeItem;
-			},
-		} );
 	}
 
 	onCategoryItemMouseEnter( event ) {

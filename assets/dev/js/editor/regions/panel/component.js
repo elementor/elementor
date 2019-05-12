@@ -26,7 +26,6 @@ export default class extends elementorModules.Component {
 		return {
 			save: {
 				keys: 'ctrl+s',
-				scope: [ 'global' ],
 			},
 			exit: {
 				keys: 'esc',

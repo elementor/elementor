@@ -68,7 +68,6 @@ export default class extends elementorModules.Component {
 		return {
 			show: {
 				keys: 'ctrl+shift+l',
-				scope: [ 'global' ],
 			},
 		};
 	}

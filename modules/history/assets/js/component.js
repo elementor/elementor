@@ -21,11 +21,9 @@ export default class extends elementorModules.Component {
 		return {
 			actions: {
 				keys: 'ctrl+shift+h',
-				scope: [ 'global' ],
 			},
 			revisions: {
 				keys: 'ctrl+shift+r',
-				scope: [ 'global' ],
 			},
 		};
 	}
