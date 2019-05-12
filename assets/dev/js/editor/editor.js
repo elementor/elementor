@@ -881,7 +881,7 @@ const App = Marionette.Application.extend( {
 
 		elementorCommon.shortcuts.bindListener( elementorFrontend.elements.$window );
 
-		this.trigger( 'preview:loaded' );
+		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
 		this.loaded = true;
 	},
