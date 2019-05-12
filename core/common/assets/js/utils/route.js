@@ -139,7 +139,7 @@ export default class extends Commands {
 		const parts = route.split( '/' ),
 			component = parts[ 0 ],
 			toCheck = [],
-			currentParts = this.current[ component ].split( '/' );
+			currentParts = this.current[ component ] ? this.current[ component ].split( '/' ) : [];
 
 		let match = false;
 
