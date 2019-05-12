@@ -8,8 +8,8 @@ export default class extends elementorModules.Component {
 
 	getCommands() {
 		return {
-			up: () => this.parent.navigate( up ),
-			down: () => this.parent.navigate(),
+			up: () => elementor.getPanelView().getCurrentPageView().currentTab.navigate( true ),
+			down: () => elementor.getPanelView().getCurrentPageView().currentTab.navigate(),
 		};
 	}
 
@@ -17,11 +17,11 @@ export default class extends elementorModules.Component {
 		return {
 			up: {
 				keys: 'up',
-				scope: 'component',
+				scope: [ this.namespace ],
 			},
 			down: {
 				keys: 'down',
-				scope: 'component',
+				scope: [ this.namespace ],
 			},
 		};
 	}

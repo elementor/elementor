@@ -1,4 +1,5 @@
 import FinderLayout from './modal-layout';
+import Component from './component';
 
 export default class extends elementorModules.Module {
 	onInit() {
@@ -6,16 +7,6 @@ export default class extends elementorModules.Module {
 
 		this.layout = new FinderLayout();
 
-		this.layout.getModal().on( 'hide', () => elementorCommon.route.close( 'finder' ) );
-
-		elementorCommon.route.registerComponent( 'finder', {
-			open: () => {
-				this.layout.showModal();
-				return true;
-			},
-			close: () => this.layout.getModal().hide(),
-		} );
-
-		elementorCommon.route.register( 'finder', () => {}, { keys: 'ctrl+e' } );
+		elementorCommon.components.register( 'finder', new Component(), { parent: this } );
 	}
 }

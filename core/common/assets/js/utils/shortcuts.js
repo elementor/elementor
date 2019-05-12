@@ -59,8 +59,16 @@ export default class Shortcuts {
 		}
 
 		jQuery.each( handlers, ( key, handler ) => {
-			if ( handler.component && handler.component !== this.component ) {
-				return;
+			if ( handler.scope ) {
+				const InScope = handler.scope.some( ( scope ) => {
+					if ( elementorCommon.route.isPartOf( scope ) ) {
+						return true;
+					}
+				} );
+
+				if ( ! InScope ) {
+					return;
+				}
 			}
 
 			if ( handler.dependency && ! handler.dependency( event ) ) {

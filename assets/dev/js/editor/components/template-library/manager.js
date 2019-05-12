@@ -5,6 +5,8 @@ var TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layo
 	TemplateLibraryManager;
 
 TemplateLibraryManager = function() {
+	this.modalConfig = {};
+
 	const self = this,
 		templateTypes = {};
 
@@ -74,8 +76,6 @@ TemplateLibraryManager = function() {
 		};
 	};
 
-	this.modalConfig = {};
-
 	this.init = function() {
 		registerDefaultTemplateTypes();
 
@@ -136,8 +136,8 @@ TemplateLibraryManager = function() {
 				page_settings: options.withPageSettings,
 			},
 			success: function( data ) {
-				// Clone `this.modalConfig` because it deleted during the closing.
-				const importOptions = jQuery.extend( {}, this.modalConfig.importOptions );
+				// Clone `self.modalConfig` because it deleted during the closing.
+				const importOptions = jQuery.extend( {}, self.modalConfig.importOptions );
 
 				// Hide for next open.
 				layout.hideLoadingView();
