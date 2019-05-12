@@ -88,10 +88,12 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return this.activeTab === sectionControlModel.get( 'tab' );
 	},
 
-	setActivateTab: function( tab ) {
+	activateTab: function( tab ) {
 		this.activeTab = tab;
 
-		this.activateFirstSection()._renderChildren();
+		this.activateFirstSection();
+
+		this._renderChildren();
 
 		return this;
 	},
@@ -101,8 +103,6 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 		return this;
 	},
-
-
 	activateFirstSection: function() {
 		var self = this;
 

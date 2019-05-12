@@ -34,14 +34,14 @@ export default class extends elementorModules.Component {
 			open: ( args ) => {
 				this.openEditor( args.model, args.view );
 
-				this.setDefaultTab();
+				this.setDefaultTab( args );
 
 				elementorCommon.route.to( this.getDefault(), args );
 			},
 		};
 	}
 
-	setDefaultTab() {
+	setDefaultTab( args ) {
 		let defaultTab;
 		if ( this.activeTabs[ args.model.id ] ) {
 			defaultTab = this.activeTabs[ args.model.id ];
