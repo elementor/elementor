@@ -7,7 +7,8 @@ export default class extends elementorModules.Component {
 	}
 
 	activateTab( tab ) {
-		elementor.getPanelView().setPage( 'general_settings' ).activateTab( tab )._renderChildren();
+		elementor.getPanelView().setPage( 'general_settings' ).activateTab( tab );
+		super.activateTab( tab );
 	}
 
 	getTabs() {

@@ -6,6 +6,10 @@ export default class extends elementorModules.Component {
 		super.init( args );
 	}
 
+	getUIIndicator() {
+		return '#elementor-panel-footer-settings';
+	}
+
 	activateTab( tab ) {
 		elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
 
