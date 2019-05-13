@@ -89,18 +89,6 @@ abstract class Element_Base extends Controls_Stack {
 	private $depended_styles = [];
 
 	/**
-	 * Element edit tools.
-	 *
-	 * Holds all the edit tools of the element. For example: delete, duplicate etc.
-	 *
-	 * @access protected
-	 * @static
-	 *
-	 * @var array
-	 */
-	protected static $_edit_tools;
-
-	/**
 	 * Add script depends.
 	 *
 	 * Register new script to enqueue by the handler.
@@ -187,100 +175,21 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Get element edit tools.
-	 *
-	 * Used to retrieve the element edit tools.
-	 *
 	 * @since 1.0.0
+	 * @deprecated 2.6.0
 	 * @access public
 	 * @static
-	 *
-	 * @return array Element edit tools.
 	 */
-	final public static function get_edit_tools() {
-		if ( ! Plugin::instance()->role_manager->user_can( 'design' ) ) {
-			return [];
-		}
-
-		if ( null === static::$_edit_tools ) {
-			self::init_edit_tools();
-		}
-
-		return static::$_edit_tools;
-	}
-
-	/**
-	 * Add new edit tool.
-	 *
-	 * Register new edit tool for the element.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 *
-	 * @param string   $tool_name Edit tool name.
-	 * @param string[] $tool_data Edit tool data.
-	 * @param string   $after     Optional. If tool ID defined, the new edit tool
-	 *                            will be added after it. If null, the new edit
-	 *                            tool will be added at the end. Default is null.
-	 *
-	 */
-	final public static function add_edit_tool( $tool_name, $tool_data, $after = null ) {
-		if ( null === static::$_edit_tools ) {
-			self::init_edit_tools();
-		}
-
-		// Adding the tool at specific position
-		// in the tools array if requested
-		if ( $after ) {
-			$after_index = array_search( $after, array_keys( static::$_edit_tools ), true ) + 1;
-
-			static::$_edit_tools = array_slice( static::$_edit_tools, 0, $after_index, true ) +
-								   [
-									   $tool_name => $tool_data,
-								   ] +
-								   array_slice( static::$_edit_tools, $after_index, null, true );
-		} else {
-			static::$_edit_tools[ $tool_name ] = $tool_data;
-		}
-	}
+	final public static function add_edit_tool() {}
 
 	/**
 	 * @since 2.2.0
+	 * @deprecated 2.6.0
 	 * @access public
 	 * @static
 	 */
 	final public static function is_edit_buttons_enabled() {
 		return get_option( 'elementor_edit_buttons' );
-	}
-
-	/**
-	 * Get default edit tools.
-	 *
-	 * Retrieve the element default edit tools. Used to set initial tools.
-	 * By default the element has no edit tools.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 * @static
-	 *
-	 * @return array Default edit tools.
-	 */
-	protected static function get_default_edit_tools() {
-		return [];
-	}
-
-	/**
-	 * Initialize edit tools.
-	 *
-	 * Register default edit tools.
-	 *
-	 * @since 2.0.0
-	 * @access private
-	 * @static
-	 */
-	private static function init_edit_tools() {
-		static::$_edit_tools = static::get_default_edit_tools();
 	}
 
 	/**
@@ -348,6 +257,14 @@ abstract class Element_Base extends Controls_Stack {
 		return 'eicon-columns';
 	}
 
+	public function get_help_url() {
+		return 'https://go.elementor.com/widget-' . $this->get_name();
+	}
+
+	public function get_custom_help_url() {
+		return '';
+	}
+
 	/**
 	 * Whether the reload preview is required.
 	 *
@@ -368,23 +285,6 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	protected function should_print_empty() {
 		return true;
-	}
-
-	/**
-	 * Print element content template.
-	 *
-	 * Used to generate the element content template on the editor, using a
-	 * Backbone JavaScript template.
-	 *
-	 * @access protected
-	 * @since 2.0.0
-	 *
-	 * @param string $template_content Template content.
-	 */
-	protected function print_template_content( $template_content ) {
-		$this->render_edit_tools();
-
-		echo $template_content; // XSS ok.
 	}
 
 	/**
@@ -419,24 +319,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return array Default argument(s).
 	 */
 	public function get_default_args( $item = null ) {
-		return self::_get_items( $this->default_args, $item );
-	}
-
-	/**
-	 * Get parent element.
-	 *
-	 * Retrieve the element parent. Used to check which element it belongs to.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 1.7.6 Use `Element_Base::get_data( 'parent' )` instead.
-	 * @access public
-	 *
-	 * @return Element_Base Parent element.
-	 */
-	public function get_parent() {
-		_deprecated_function( __METHOD__, '1.7.6', __CLASS__ . '::get_data( \'parent\' )' );
-
-		return $this->get_data( 'parent' );
+		return self::get_items( $this->default_args, $item );
 	}
 
 	/**
@@ -765,46 +648,6 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Render element edit tools.
-	 *
-	 * Used to generate the edit tools HTML.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 1.8.0 Use `Element_Base::render_edit_tools()` instead.
-	 * @access protected
-	 */
-	protected function _render_settings() {
-		_deprecated_function( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), '1.8.0', '$this->render_edit_tools()' );
-
-		$this->render_edit_tools();
-	}
-
-	/**
-	 * Render element edit tools.
-	 *
-	 * Used to generate the edit tools HTML.
-	 *
-	 * @since 1.8.0
-	 * @access protected
-	 */
-	protected function render_edit_tools() {
-		?>
-		<div class="elementor-element-overlay">
-			<ul class="elementor-editor-element-settings elementor-editor-<?php echo $this->get_type(); ?>-settings">
-				<?php
-				foreach ( self::get_edit_tools() as $edit_tool_name => $edit_tool ) {
-					?>
-					<li class="elementor-editor-element-setting elementor-editor-element-<?php echo esc_attr( $edit_tool_name ); ?>" title="<?php echo esc_attr( $edit_tool['title'] ); ?>">
-						<i class="eicon-<?php echo esc_attr( $edit_tool['icon'] ); ?>" aria-hidden="true"></i>
-						<span class="elementor-screen-only"><?php echo esc_html( $edit_tool['title'] ); ?></span>
-					</li>
-				<?php } ?>
-			</ul>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Is type instance.
 	 *
 	 * Used to determine whether the element is an instance of that type or not.
@@ -939,6 +782,12 @@ abstract class Element_Base extends Controls_Stack {
 			'icon' => $this->get_icon(),
 			'reload_preview' => $this->is_reload_preview_required(),
 		];
+
+		if ( preg_match( '/^' . __NAMESPACE__ . '(Pro)?\\\\/', get_called_class() ) ) {
+			$config['help_url'] = $this->get_help_url();
+		} else {
+			$config['help_url'] = $this->get_custom_help_url();
+		}
 
 		return $config;
 	}

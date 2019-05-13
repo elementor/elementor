@@ -71,6 +71,7 @@ const App = Marionette.Application.extend( {
 			Color: require( 'elementor-controls/color' ),
 			Date_time: DateTimeControl,
 			Dimensions: require( 'elementor-controls/dimensions' ),
+			Exit_animation: require( 'elementor-controls/select2' ),
 			Font: require( 'elementor-controls/font' ),
 			Gallery: require( 'elementor-controls/gallery' ),
 			Hidden: require( 'elementor-controls/hidden' ),

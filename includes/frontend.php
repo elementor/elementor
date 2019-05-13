@@ -125,7 +125,7 @@ class Frontend extends App {
 	 */
 	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests.
-		if ( is_admin() && ! Utils::is_ajax() ) {
+		if ( is_admin() && ! wp_doing_ajax() ) {
 			return;
 		}
 
@@ -821,7 +821,7 @@ class Frontend extends App {
 		ob_start();
 
 		// Handle JS and Customizer requests, with CSS inline.
-		if ( is_customize_preview() || Utils::is_ajax() ) {
+		if ( is_customize_preview() || wp_doing_ajax() ) {
 			$with_css = true;
 		}
 

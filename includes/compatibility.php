@@ -96,7 +96,7 @@ class Compatibility {
 	public static function init() {
 		// Hotfix for NextGEN Gallery plugin.
 		if ( defined( 'NGG_PLUGIN_VERSION' ) ) {
-			add_filter( 'elementor/utils/get_edit_link', function( $edit_link ) {
+			add_filter( 'elementor/document/urls/edit', function( $edit_link ) {
 				return add_query_arg( 'display_gallery_iframe', '', $edit_link );
 			} );
 		}
