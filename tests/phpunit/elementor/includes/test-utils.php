@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Testing\Elementor_Test_Base;
 
@@ -30,9 +31,9 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	 */
 	public function test_should_confirm_ajax() {
 		if ( defined( 'DOING_AJAX' ) ) {
-			$this->assertTrue( Utils::is_ajax() );
+			$this->assertTrue( wp_doing_ajax() );
 		} else {
-			$this->assertFalse( Utils::is_ajax() );
+			$this->assertFalse( wp_doing_ajax() );
 		}
 	}
 
@@ -42,7 +43,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_get_preview_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$preview_url = Utils::get_preview_url( $post_id );
+		$preview_url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 		$this->assertContains( '/?p=', $preview_url );
 		$this->assertContains( '&elementor-preview=', $preview_url );
 		$this->assertContains( '&ver=', $preview_url );
@@ -50,7 +51,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_get_wordpress_preview_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$wp_preview_url = Utils::get_wp_preview_url( $post_id );
+		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
 		$this->assertContains( '/?p=', $wp_preview_url );
 		$this->assertContains( '&preview_nonce=', $wp_preview_url );
 		$this->assertContains( '&preview=', $wp_preview_url );
@@ -85,7 +86,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_not_get_exit_to_dashboard_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$this->assertNull( Utils::get_exit_to_dashboard_url( $post_id ) );
+		$this->assertNull( Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url() );
 	}
 
 
@@ -111,7 +112,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_get_when_and_how_edited_the_post_last() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$this->assertRegExp( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Utils::get_last_edited( $post_id ) );
+		$this->assertRegExp( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Plugin::$instance->documents->get( $post_id )->get_last_edited() );
 	}
 
 	public function test_should_get_post_auto_save() {

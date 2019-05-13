@@ -10,8 +10,12 @@
 	&.animated-fast {
 		animation-duration: .75s;
 	}
-}
 
-.animated.infinite {
-	animation-iteration-count: infinite;
+	&.infinite {
+		animation-iteration-count: infinite;
+	}
+
+	&.reverse {
+		animation-direction: reverse;
+	}
 }

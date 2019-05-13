@@ -58,11 +58,6 @@ module.exports = elementorModules.ViewModule.extend( {
 					id: this.getSettings( 'name' ),
 					settingsModel: this.model,
 				} );
-
-				/*
-				 * @deprecated 2.1.0
-				 */
-				this.controlsCSS = controlsCSS;
 			}
 
 			return controlsCSS;
