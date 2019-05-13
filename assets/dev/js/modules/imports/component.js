@@ -81,7 +81,7 @@ export default class extends Module {
 	registerRoute( route, callback ) {
 		const shortcuts = this.getShortcuts();
 
-		const fullRoute = this.namespace + '/' + route,
+		const fullRoute = this.namespace + ( route ? '/' + route : '' ),
 			shortcut = shortcuts[ route ] ? shortcuts[ route ] : false;
 
 		const parts = fullRoute.split( '/' ),
@@ -99,6 +99,22 @@ export default class extends Module {
 		elementorCommon.route.registerComponent( component, componentArgs );
 
 		elementorCommon.route.register( fullRoute, callback, shortcut );
+	}
+
+	onOpen() {
+		this.isActive = true;
+		this.toggleUIIndicator( true );
+	}
+
+	onClose() {
+		this.isActive = false;
+		this.toggleUIIndicator( false );
+	}
+
+	toggleUIIndicator( value ) {
+		if ( this.getUIIndicator ) {
+			jQuery( this.getUIIndicator() ).toggleClass( 'elementor-open', value );
+		}
 	}
 
 	registerTabRoute( tab ) {
