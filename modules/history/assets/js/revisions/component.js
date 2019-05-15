@@ -1,9 +1,9 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Revisions';
 		this.namespace = 'panel/history/revisions';
-
-		super.init( args );
 	}
 
 	getCommands() {

@@ -61,20 +61,11 @@ export default class extends Module {
 				shortcut = shortcuts[ command ] ? shortcuts[ command ] : false;
 
 			const parts = fullCommand.split( '/' ),
-				component = parts[ 0 ],
-				componentArgs = {};
+				container = parts[ 0 ];
 
-			if ( this.open ) {
-				componentArgs.open = this.open;
-			}
+			elementorCommon.commands.registerContainer( container );
 
-			if ( this.close ) {
-				componentArgs.close = this.close;
-			}
-
-			elementorCommon.commands.registerComponent( component, componentArgs );
-
-			elementorCommon.commands.register( fullCommand, callback, shortcut );
+			elementorCommon.commands.register( this.namespace, fullCommand, callback, shortcut );
 		} );
 	}
 
@@ -85,28 +76,28 @@ export default class extends Module {
 			shortcut = shortcuts[ route ] ? shortcuts[ route ] : false;
 
 		const parts = fullRoute.split( '/' ),
-			component = parts[ 0 ],
-			componentArgs = {};
+			container = parts[ 0 ],
+			containerArgs = {};
 
 		if ( this.open ) {
-			componentArgs.open = this.open.bind( this );
+			containerArgs.open = this.open.bind( this );
 		}
 
 		if ( this.close ) {
-			componentArgs.close = this.close.bind( this );
+			containerArgs.close = this.close.bind( this );
 		}
 
-		elementorCommon.route.registerComponent( component, componentArgs );
+		elementorCommon.route.registerContainer( container, containerArgs );
 
-		elementorCommon.route.register( fullRoute, callback, shortcut );
+		elementorCommon.route.register( this.namespace, fullRoute, callback, shortcut );
 	}
 
-	onOpen() {
+	onRoute() {
 		this.isActive = true;
 		this.toggleUIIndicator( true );
 	}
 
-	onClose() {
+	onCloseRoute() {
 		this.isActive = false;
 		this.toggleUIIndicator( false );
 	}

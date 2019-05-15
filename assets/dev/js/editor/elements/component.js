@@ -1,9 +1,10 @@
+// TODO: Maybe it should merge with panel/elements?
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Elements';
 		this.namespace = 'elements';
-
-		super.init( args );
 	}
 
 	open( args ) {

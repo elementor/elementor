@@ -6,6 +6,7 @@ export default class extends elementorModules.Module {
 		this.currentArgs = {};
 		this.commands = {};
 		this.dependencies = {};
+		this.containers = {};
 		this.components = {};
 	}
 
@@ -13,28 +14,31 @@ export default class extends elementorModules.Module {
 		console.log( Object.keys( this.commands ).sort() ); // eslint-disable-line no-console
 	}
 
-	registerComponent( component, args = {} ) {
-		this.components[ component ] = args;
+	registerContainer( container, args = {} ) {
+		this.containers[ container ] = args;
 
 		if ( args.before ) {
-			this.registerDependency( component, args.before );
+			this.registerDependency( container, args.before );
 		}
 
 		return this;
 	}
 
-	registerDependency( component, callback ) {
-		this.dependencies[ component ] = callback;
+	registerDependency( container, callback ) {
+		this.dependencies[ container ] = callback;
 
 		return this;
 	}
 
-	register( command, callback, shortcut ) {
+	register( component, command, callback, shortcut ) {
 		const parts = command.split( '/' ),
-			component = parts[ 0 ];
+			container = parts[ 0 ];
 
-		if ( ! this.components[ component ] ) {
+		if ( ! elementorCommon.components.get( component ) ) {
 			this.error( `'${ component }' component is not exist.` );
+		}
+		if ( ! this.containers[ container ] ) {
+			this.error( `'${ container }' container is not exist.` );
 		}
 
 		if ( this.commands[ command ] ) {
@@ -42,6 +46,7 @@ export default class extends elementorModules.Module {
 		}
 
 		this.commands[ command ] = callback;
+		this.components[ command ] = component;
 
 		if ( shortcut ) {
 			shortcut.command = command;
@@ -58,27 +63,33 @@ export default class extends elementorModules.Module {
 		return this;
 	}
 
+	getComponent( command ) {
+		const componentName = this.components[ command ];
+
+		return elementorCommon.components.get( componentName );
+	}
+
 	is( command ) {
 		const parts = command.split( '/' ),
-			component = parts[ 0 ];
+			container = parts[ 0 ];
 
-		return command === this.current[ component ];
+		return command === this.current[ container ];
 	}
 
-	getCurrent( component ) {
-		if ( ! this.current[ component ] ) {
+	getCurrent( container ) {
+		if ( ! this.current[ container ] ) {
 			return false;
 		}
 
-		return this.current[ component ];
+		return this.current[ container ];
 	}
 
-	getCurrentArgs( component ) {
-		if ( ! this.currentArgs[ component ] ) {
+	getCurrentArgs( container ) {
+		if ( ! this.currentArgs[ container ] ) {
 			return false;
 		}
 
-		return this.currentArgs[ component ];
+		return this.currentArgs[ container ];
 	}
 
 	beforeRun( command, args = {} ) {
@@ -87,14 +98,14 @@ export default class extends elementorModules.Module {
 		}
 
 		const parts = command.split( '/' ),
-			component = parts[ 0 ];
+			container = parts[ 0 ];
 
-		if ( this.dependencies[ component ] && ! this.dependencies[ component ].apply( null, [ args ] ) ) {
+		if ( this.dependencies[ container ] && ! this.dependencies[ container ].apply( null, [ args ] ) ) {
 			return false;
 		}
 
-		this.current[ component ] = command;
-		this.currentArgs[ component ] = args;
+		this.current[ container ] = command;
+		this.currentArgs[ container ] = args;
 
 		return true;
 	}
@@ -123,10 +134,10 @@ export default class extends elementorModules.Module {
 
 	afterRun( command ) {
 		const parts = command.split( '/' ),
-			component = parts[ 0 ];
+			container = parts[ 0 ];
 
-		delete this.current[ component ];
-		delete this.currentArgs[ component ];
+		delete this.current[ container ];
+		delete this.currentArgs[ container ];
 	}
 
 	error( message ) {

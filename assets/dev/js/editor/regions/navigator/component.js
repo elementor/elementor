@@ -1,9 +1,9 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Navigator';
 		this.namespace = 'navigator';
-
-		super.init( args );
 	}
 
 	open() {
@@ -27,7 +27,7 @@ export default class extends elementorModules.Component {
 				if ( elementorCommon.route.isPartOf( 'navigator' ) ) {
 					elementorCommon.route.close( 'navigator' );
 				} else {
-					elementorCommon.route.to( 'navigator/' );
+					elementorCommon.route.to( 'navigator' );
 				}
 			},
 		};

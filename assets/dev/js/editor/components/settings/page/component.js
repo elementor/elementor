@@ -1,9 +1,9 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Page Settings';
 		this.namespace = 'panel/page-settings';
-
-		super.init( args );
 	}
 
 	getUIIndicator() {

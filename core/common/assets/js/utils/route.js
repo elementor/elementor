@@ -4,24 +4,24 @@ export default class extends Commands {
 	constructor( ...args ) {
 		super( ...args );
 
-		this.components = {};
+		this.containers = {};
 		this.savedStates = {};
 	}
 
-	registerComponent( component, args = {} ) {
-		this.components[ component ] = args;
+	registerContainer( container, args = {} ) {
+		this.containers[ container ] = args;
 
 		if ( args.open ) {
-			this.registerDependency( component, () => {
-				return this.open( component );
+			this.registerDependency( container, () => {
+				return this.open( container );
 			} );
 		}
 
 		return this;
 	}
 
-	open( component ) {
-		const args = this.components[ component ];
+	open( container ) {
+		const args = this.containers[ container ];
 
 		if ( ! args ) {
 			return;
@@ -29,14 +29,14 @@ export default class extends Commands {
 
 		if ( ! args.isOpen ) {
 			args.isOpen = args.open.apply();
-			this.components[ component ].isOpen = args.isOpen;
+			this.containers[ container ].isOpen = args.isOpen;
 		}
 
 		return args.isOpen;
 	}
 
-	close( component ) {
-		const args = this.components[ component ];
+	close( container ) {
+		const args = this.containers[ container ];
 
 		if ( ! args ) {
 			return;
@@ -46,51 +46,53 @@ export default class extends Commands {
 			args.close.apply( this );
 		}
 
-		this.components[ component ].isOpen = false;
+		this.containers[ container ].isOpen = false;
 
-		this.clearCurrent( component );
+		this.clearCurrent( container );
 
 		return this;
 	}
 
 	reload( route, args ) {
 		const parts = route.split( '/' ),
-			component = parts[ 0 ];
+			container = parts[ 0 ];
 
-		this.clearCurrent( component );
+		this.clearCurrent( container );
 
 		this.to( route, args );
 	}
 
-	refreshComponent( component ) {
-		const currentRoute = this.getCurrent( component ),
-			currentArgs = this.getCurrentArgs( component );
+	refreshContainer( container ) {
+		const currentRoute = this.getCurrent( container ),
+			currentArgs = this.getCurrentArgs( container );
 
-		this.clearCurrent( component );
+		this.clearCurrent( container );
 
 		this.to( currentRoute, currentArgs );
 	}
 
-	clearCurrent( component ) {
-		delete this.current[ component ];
-		delete this.currentArgs[ component ];
+	clearCurrent( container ) {
+		const route = this.current[ container ];
+		delete this.current[ container ];
+		delete this.currentArgs[ container ];
+		this.getComponent( route ).onCloseRoute();
 	}
 
-	saveState( component ) {
-		this.savedStates[ component ] = {
-			route: this.current[ component ],
-			args: this.currentArgs[ component ],
+	saveState( container ) {
+		this.savedStates[ container ] = {
+			route: this.current[ container ],
+			args: this.currentArgs[ container ],
 		};
 
 		return this;
 	}
 
-	restoreState( component ) {
-		if ( ! this.savedStates[ component ] ) {
+	restoreState( container ) {
+		if ( ! this.savedStates[ container ] ) {
 			return false;
 		}
 
-		this.to( this.savedStates[ component ].route, this.savedStates[ component ].args );
+		this.to( this.savedStates[ container ].route, this.savedStates[ container ].args );
 
 		return true;
 	}
@@ -98,6 +100,13 @@ export default class extends Commands {
 	beforeRun( route, args ) {
 		if ( this.is( route, args ) ) {
 			return false;
+		}
+
+		const parts = route.split( '/' ),
+			container = parts[ 0 ];
+
+		if ( this.current[ container ] ) {
+			this.getComponent( this.current[ container ] ).onCloseRoute();
 		}
 
 		return super.beforeRun( route, args );
@@ -113,7 +122,9 @@ export default class extends Commands {
 	}
 
 	// Don't clear current route.
-	afterRun() {}
+	afterRun( route, args ) {
+		this.getComponent( route ).onRoute( args );
+	}
 
 	error( message ) {
 		throw Error( 'Route: ' + message );
@@ -125,9 +136,9 @@ export default class extends Commands {
 		}
 
 		const parts = route.split( '/' ),
-			component = parts[ 0 ];
+			container = parts[ 0 ];
 
-		return _.isEqual( args, this.currentArgs[ component ] );
+		return _.isEqual( args, this.currentArgs[ container ] );
 	}
 
 	isPartOf( route ) {
@@ -137,9 +148,9 @@ export default class extends Commands {
 		 * `is( 'panel/editor' )` will be true for `panel/editor/style`
 		 */
 		const parts = route.split( '/' ),
-			component = parts[ 0 ],
+			container = parts[ 0 ],
 			toCheck = [],
-			currentParts = this.current[ component ] ? this.current[ component ].split( '/' ) : [];
+			currentParts = this.current[ container ] ? this.current[ container ].split( '/' ) : [];
 
 		let match = false;
 

@@ -1,11 +1,13 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Editor';
 		this.namespace = 'panel/editor';
 
+		// Remember last used tab.
 		this.activeTabs = {};
 
-		super.init( args );
 	}
 
 	activateTab( tab ) {

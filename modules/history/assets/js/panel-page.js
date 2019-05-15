@@ -70,8 +70,4 @@ module.exports = Marionette.LayoutView.extend( {
 
 		this.content.show( this.currentTab );
 	},
-
-	onDestroy: function() {
-		elementor.getPanelView().getFooterView().ui.history.removeClass( 'elementor-open' );
-	},
 } );

@@ -1,9 +1,9 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Global Settings';
 		this.namespace = 'panel/general-settings';
-
-		super.init( args );
 	}
 
 	activateTab( tab ) {

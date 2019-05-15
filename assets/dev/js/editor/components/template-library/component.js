@@ -1,5 +1,7 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Library';
 		this.namespace = 'library';
 
@@ -10,8 +12,6 @@ export default class extends elementorModules.Component {
 			'templates/page': elementor.translate( 'pages' ),
 			'templates/my-templates': elementor.translate( 'my_templates' ),
 		};
-
-		super.init( args );
 	}
 
 	open() {

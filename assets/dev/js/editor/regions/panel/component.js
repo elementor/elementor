@@ -1,9 +1,9 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Panel';
 		this.namespace = 'panel';
-
-		super.init( args );
 	}
 
 	getRoutes() {
@@ -17,6 +17,7 @@ export default class extends elementorModules.Component {
 
 	getCommands() {
 		return {
+			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
 			save: () => elementor.saver.saveDraft(),
 			exit: () => elementorCommon.route.to( 'panel/menu' ),
 			'change-device-mode': () => {
@@ -37,6 +38,9 @@ export default class extends elementorModules.Component {
 
 	getShortcuts() {
 		return {
+			toggle: {
+				keys: 'ctrl+p',
+			},
 			save: {
 				keys: 'ctrl+s',
 			},
