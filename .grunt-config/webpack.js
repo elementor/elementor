@@ -46,7 +46,13 @@ const moduleRules = {
 				{
 					loader: 'babel-loader',
 					query: {
-						presets: ['env'],
+						presets: [ '@wordpress/default' ],
+						plugins: [
+							[ 'transform-react-jsx' ],
+							[ '@babel/plugin-proposal-class-properties' ],
+							[ '@babel/plugin-transform-runtime' ],
+							[ '@babel/plugin-transform-modules-commonjs' ],
+						],
 					},
 				},
 			],
