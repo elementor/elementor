@@ -9,10 +9,10 @@ export default class extends elementorModules.Module {
 		console.log( Object.keys( this.components ).sort() ); // eslint-disable-line no-console
 	}
 
-	register( id, component, args ) {
-		this.components[ id ] = component;
+	register( component, args ) {
+		this.components[ component.namespace ] = component;
 
-		this.components[ id ].init( args );
+		this.components[ component.namespace ].init( args );
 
 		return this;
 	}

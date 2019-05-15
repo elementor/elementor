@@ -1,9 +1,9 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Elements';
 		this.namespace = 'panel/elements';
-
-		super.init( args );
 	}
 
 	getTabsWrapperSelector() {

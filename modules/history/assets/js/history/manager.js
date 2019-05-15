@@ -85,7 +85,7 @@ var	Manager = function() {
 	};
 
 	var init = function() {
-		elementorCommon.components.register( 'history/actions', new Component(), { parent: self } );
+		elementorCommon.components.register( new Component(), { parent: self } );
 
 		elementor.hooks.addFilter( 'elements/base/behaviors', addBehaviors );
 		elementor.hooks.addFilter( 'elements/base-section-container/behaviors', addCollectionBehavior );

@@ -15,7 +15,7 @@ Manager = function() {
 	var init = function() {
 		elementor.on( 'preview:loaded', addPanelPage );
 
-		elementorCommon.components.register( 'history', new Component(), {
+		elementorCommon.components.register( new Component(), {
 			parent: self,
 			tabRenderer: ( tab ) => elementor.getPanelView().setPage( 'historyPage' ).showView( tab ),
 		} );

@@ -145,7 +145,7 @@ const App = Marionette.Application.extend( {
 			ignore: '.elementor-control-dynamic-switcher',
 		},
 		panelFooterSubMenus: {
-			element: '.elementor-panel-footer-tool',
+			element: '.elementor-panel-footer-tool.elementor-toggle-state',
 			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
 			callback: ( $elementsToHide ) => {
 				$elementsToHide.removeClass( 'elementor-open' );
@@ -272,7 +272,7 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		elementorCommon.components.register( 'elements', new Component(), { parent: this } );
+		elementorCommon.components.register( new Component(), { parent: this } );
 
 		this.hotkeysScreen = new HotkeysScreen();
 	},

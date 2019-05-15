@@ -1,8 +1,12 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Finder';
 		this.namespace = 'finder';
+	}
 
+	init( args ) {
 		super.init( args );
 
 		this.parent.layout.getModal().on( 'hide', () => elementorCommon.route.close( this.namespace ) );

@@ -8,7 +8,7 @@ export default class extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
-		elementorCommon.components.register( 'navigator', new Component(), { parent: this } );
+		elementorCommon.components.register( new Component(), { parent: this } );
 
 		this.isDocked = false;
 
@@ -19,7 +19,7 @@ export default class extends BaseRegion {
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		if ( this.storage.visible ) {
-			elementorCommon.route.to( 'navigator/' );
+			elementorCommon.route.to( 'navigator' );
 		}
 	}
 

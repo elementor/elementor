@@ -1,9 +1,13 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'History';
 		this.namespace = 'panel/history';
+	}
 
-		super.init( args );
+	getUIIndicator() {
+		return '#elementor-panel-footer-history';
 	}
 
 	getTabsWrapperSelector() {

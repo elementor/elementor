@@ -1,8 +1,12 @@
 export default class extends elementorModules.Component {
-	init( args ) {
+	constructor( ...args ) {
+		super( ...args );
+
 		this.title = 'Shortcuts';
 		this.namespace = 'shortcuts';
+	}
 
+	init( args ) {
 		super.init( args );
 
 		this.parent.layout.getModal().on( 'hide', () => elementorCommon.route.close( 'shortcuts' ) );

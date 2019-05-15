@@ -6,7 +6,7 @@ module.exports = BaseSettings.extend( {
 	onInit: function() {
 		BaseSettings.prototype.onInit.apply( this );
 
-		this.component = elementorCommon.components.register( 'page-settings', new Component(), { parent: this } );
+		elementorCommon.components.register( new Component(), { parent: this } );
 	},
 
 	save: function() {},

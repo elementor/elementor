@@ -5,6 +5,6 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.layout = new ModalLayout();
 
-		elementorCommon.components.register( 'shortcuts', new Component(), { parent: this } );
+		elementorCommon.components.register( new Component(), { parent: this } );
 	}
 }

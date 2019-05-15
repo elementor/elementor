@@ -7,6 +7,6 @@ export default class extends elementorModules.Module {
 
 		this.layout = new FinderLayout();
 
-		elementorCommon.components.register( 'finder', new Component(), { parent: this } );
+		elementorCommon.components.register( new Component(), { parent: this } );
 	}
 }
