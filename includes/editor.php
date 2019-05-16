@@ -667,6 +667,12 @@ class Editor {
 				// Hotkeys screen
 				'keyboard_shortcuts' => __( 'Keyboard Shortcuts', 'elementor' ),
 
+				// Deprecated Control
+				'deprecated_notice' => __( 'The <strong>{{{ tag }}}</strong> widget has been deprecated since {{{ plugin }}} {{{ since }}}.
+											<br>It has been replaced by <strong>{{{ replacement }}}</strong>.
+											<br>Note that {{{ tag }}} will be completely removed once 
+											{{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
+
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'elementor_docs' => __( 'Documentation', 'elementor' ),
