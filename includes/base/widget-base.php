@@ -776,7 +776,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * @param string $plugin_title  Elementor-Pro | Elementor-Core
+	 * @param string $plugin_title  use Plugin::get_title()
 	 * @param string $since         Plugin version widget was deprecated
 	 * @param string $last          Plugin version in which the widget will be removed
 	 * @param string $replacement   Widget replacement
