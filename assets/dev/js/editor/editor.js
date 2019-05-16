@@ -1132,6 +1132,10 @@ const App = Marionette.Application.extend( {
 			$elementsToHide.hide();
 		} );
 	},
+
+	compileTemplate: function( template, data ) {
+		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
+	},
 } );
 
 window.elementor = new App();
