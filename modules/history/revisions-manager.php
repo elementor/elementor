@@ -421,7 +421,7 @@ class Revisions_Manager {
 		add_filter( 'edit_post_content', [ __CLASS__, 'avoid_delete_auto_save' ], 10, 2 );
 		add_action( 'edit_form_after_title', [ __CLASS__, 'remove_temp_post_content' ] );
 
-		if ( Utils::is_ajax() ) {
+		if ( wp_doing_ajax() ) {
 			add_filter( 'elementor/documents/ajax_save/return_data', [ __CLASS__, 'on_ajax_save_builder_data' ], 10, 2 );
 		}
 	}

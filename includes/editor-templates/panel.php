@@ -165,6 +165,14 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		</div>
 	<# } #>
 	<div id="elementor-controls"></div>
+	<# if ( elementData.help_url ) { #>
+		<div id="elementor-panel__editor__help">
+			<a id="elementor-panel__editor__help__link" href="{{ elementData.help_url }}" target="_blank">
+				<?php echo __( 'Need Help?', 'elementor' ); ?>
+				<i class="eicon-info"></i>
+			</a>
+		</div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">

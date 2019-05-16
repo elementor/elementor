@@ -222,6 +222,11 @@ class Controls_Manager {
 	const HOVER_ANIMATION = 'hover_animation';
 
 	/**
+	 * Exit animation control.
+	 */
+	const EXIT_ANIMATION = 'exit_animation';
+
+	/**
 	 * Controls.
 	 *
 	 * Holds the list of all the controls. Default is `null`.
@@ -387,6 +392,7 @@ class Controls_Manager {
 			self::TEXT_SHADOW,
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
+			self::EXIT_ANIMATION,
 		];
 	}
 

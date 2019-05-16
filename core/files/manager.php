@@ -105,16 +105,6 @@ class Manager {
 		 *
 		 * Fires after Elementor clears files
 		 *
-		 * @since 2.0.8
-		 * @deprecated 2.1.0 Use `elementor/core/files/clear_cache` instead
-		 */
-		do_action_deprecated( 'elementor/css-file/clear_cache', [], '2.1.0', 'elementor/core/files/clear_cache' );
-
-		/**
-		 * Elementor clear files.
-		 *
-		 * Fires after Elementor clears files
-		 *
 		 * @since 2.1.0
 		 */
 		do_action( 'elementor/core/files/clear_cache' );
