@@ -774,4 +774,34 @@ abstract class Widget_Base extends Element_Base {
 	public function get_skins() {
 		return Plugin::$instance->skins_manager->get_skins( $this );
 	}
+
+	/**
+	 * @param string $plugin_title  Elementor-Pro | Elementor-Core
+	 * @param string $since         Plugin version widget was deprecated
+	 * @param string $last          Plugin version in which the widget will be removed
+	 * @param string $replacement   Widget replacement
+	 */
+	protected function deprecated_notice( $plugin_title, $since, $last, $replacement ) {
+		$this->start_controls_section( 'Deprecated',
+			[
+				'tab' => Controls_Manager::TAB_CONTENT,
+				'label' => __( 'Deprecated', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'deprecated_notice',
+			[
+				'type' => Controls_Manager::DEPRECATED_NOTICE,
+				'tag' => $this->get_title(),
+				'since' => $since,
+				'last' => $last,
+				'plugin' => $plugin_title,
+				'replacement' => $replacement,
+			]
+		);
+
+		$this->end_controls_section();
+
+	}
 }
