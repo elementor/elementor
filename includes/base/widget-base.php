@@ -781,10 +781,9 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $last          Plugin version in which the widget will be removed
 	 * @param string $replacement   Widget replacement
 	 */
-	protected function deprecated_notice( $plugin_title, $since, $last, $replacement ) {
+	protected function deprecated_notice( $plugin_title, $since, $last = '', $replacement = '' ) {
 		$this->start_controls_section( 'Deprecated',
 			[
-				'tab' => Controls_Manager::TAB_CONTENT,
 				'label' => __( 'Deprecated', 'elementor' ),
 			]
 		);
@@ -793,7 +792,7 @@ abstract class Widget_Base extends Element_Base {
 			'deprecated_notice',
 			[
 				'type' => Controls_Manager::DEPRECATED_NOTICE,
-				'tag' => $this->get_title(),
+				'widget' => $this->get_title(),
 				'since' => $since,
 				'last' => $last,
 				'plugin' => $plugin_title,

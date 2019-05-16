@@ -613,7 +613,7 @@ class Plugin {
 	}
 
 	final public static function get_title() {
-		return 'Elementor';
+		return __( 'Elementor', 'elementor' );
 	}
 }
 
