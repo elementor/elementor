@@ -69,3 +69,30 @@
 		content: '\f2d2';
 	}
 }
+
+#elementor-panel__editor__help {
+	padding: 25px;
+	text-align: center;
+
+	&__link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: $editor-darkest;
+		font-size: 12px;
+		font-weight: 500;
+
+		&:hover {
+			
+			&, & i {
+				color: $editor-info;
+			}
+		}
+
+		i {
+			padding: 0 5px;
+			color: $editor-light;
+			font-size: 18px;
+		}
+	}
+}
