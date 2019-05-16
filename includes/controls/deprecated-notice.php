@@ -16,9 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Control_Deprecated_Notice extends Base_UI_Control {
 
 	/**
-	 * Get edprecated-notice control type.
+	 * Get deprecated-notice control type.
 	 *
-	 * Retrieve the control type, in this case `raw_html`.
+	 * Retrieve the control type, in this case `deprecated_notice`.
 	 *
 	 * @since 2.6.0
 	 * @access public
