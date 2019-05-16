@@ -35,10 +35,6 @@ export default class extends elementorModules.Component {
 		return true;
 	}
 
-	close() {
-		this.parent.layout.getModal().hide();
-	}
-
 	getShortcuts() {
 		return {
 			'': {
