@@ -28,7 +28,7 @@ module.exports = Marionette.ItemView.extend( {
 			onUpdate: function() {
 				self.ui.sync.removeClass( 'eicon-animation-spin' );
 
-				elementorCommon.route.refreshComponent( 'library' );
+				elementorCommon.route.refreshContainer( 'library' );
 			},
 			forceUpdate: true,
 			forceSync: true,
