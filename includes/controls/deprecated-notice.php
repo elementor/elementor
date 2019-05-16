@@ -45,7 +45,13 @@ class Control_Deprecated_Notice extends Base_UI_Control {
 		<span class="elementor-control-title">{{{ data.label }}}</span>
 		<#
 		}
-		const notice = Marionette.TemplateCache.prototype.compileTemplate( elementor.translate('deprecated_notice') )( data );
+		let notice = Marionette.TemplateCache.prototype.compileTemplate( elementor.translate('deprecated_notice') )( data );
+		if ( data.replacement )
+			notice += '<br>' + Marionette.TemplateCache.prototype.compileTemplate( elementor.translate('deprecated_notice_replacement') )( data );
+		}
+		if ( data.last ) {
+			notice += '<br>' + Marionette.TemplateCache.prototype.compileTemplate( elementor.translate('deprecated_notice_last') )( data );
+		}
 		#>
 		<div class="elementor-control-deprecated-notice elementor-panel-alert elementor-panel-alert-warning">{{{ notice }}}</div>
 		<?php
@@ -64,11 +70,11 @@ class Control_Deprecated_Notice extends Base_UI_Control {
 	 */
 	protected function get_default_settings() {
 		return [
-			'tag' => '', // Widget name
+			'widget' => '', // Widget name
 			'since' => '', // Plugin version widget was deprecated
 			'last' => '', // Plugin version in which the widget will be removed
 			'replacement' => '', // Widget replacement
-			'plugin' => '', // Elementor-Pro | Elementor-Core
+			'plugin' => '', // Plugin::get_title()
 		];
 	}
 }
