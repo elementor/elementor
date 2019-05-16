@@ -70,7 +70,7 @@ class Control_Deprecated_Notice extends Base_UI_Control {
 			'since' => '', // Plugin version widget was deprecated
 			'last' => '', // Plugin version in which the widget will be removed
 			'replacement' => '', // Widget replacement
-			'plugin' => '', // use Plugin's get_title()
+			'plugin' => '', // Plugin's title
 		];
 	}
 }
