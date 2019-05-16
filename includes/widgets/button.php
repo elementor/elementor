@@ -285,6 +285,14 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'text_shadow',
+				'selector' => '{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button',
+			]
+		);
+
 		$this->start_controls_tabs( 'tabs_button_style' );
 
 		$this->start_controls_tab(
