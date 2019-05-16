@@ -7,7 +7,6 @@ export default class extends elementorModules.Component {
 
 		// Remember last used tab.
 		this.activeTabs = {};
-
 	}
 
 	activateTab( tab ) {
