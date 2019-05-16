@@ -698,6 +698,10 @@ class Admin extends App {
 
 		$document = Plugin::$instance->documents->create( $type, $post_data, $meta );
 
+		if ( is_wp_error( $document ) ) {
+			wp_die( $document );
+		}
+
 		wp_redirect( $document->get_edit_url() );
 
 		die;
