@@ -6,10 +6,6 @@ export default class extends elementorModules.Component {
 		this.namespace = 'panel/page-settings';
 	}
 
-	getUIIndicator() {
-		return '#elementor-panel-footer-settings';
-	}
-
 	activateTab( tab ) {
 		elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
 

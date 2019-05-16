@@ -6,10 +6,6 @@ export default class extends elementorModules.Component {
 		this.namespace = 'panel/history';
 	}
 
-	getUIIndicator() {
-		return '#elementor-panel-footer-history';
-	}
-
 	getTabsWrapperSelector() {
 		return '#elementor-panel-elements-navigation';
 	}
