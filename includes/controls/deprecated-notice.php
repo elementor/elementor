@@ -45,11 +45,15 @@ class Control_Deprecated_Notice extends Base_UI_Control {
 		<span class="elementor-control-title">{{{ data.label }}}</span>
 		<#
 		}
-		const notice = Marionette.TemplateCache.prototype.compileTemplate( elementor.translate('deprecated_notice') )( data );
-		const noticeReplacement = data.replacement ? '<br>' + Marionette.TemplateCache.prototype.compileTemplate( elementor.translate('deprecated_notice_replacement') )( data ) : '';
-		const noticeLast = data.last ? '<br>' + Marionette.TemplateCache.prototype.compileTemplate( elementor.translate('deprecated_notice_last') )( data ) : '';
+		let notice = elementor.compileTemplate( elementor.translate('deprecated_notice'), data );
+		if ( data.replacement ) {
+			notice += '<br>' + elementor.compileTemplate( elementor.translate('deprecated_notice_replacement'), data );
+		}
+		if ( data.last ) {
+			notice += '<br>' + elementor.compileTemplate( elementor.translate('deprecated_notice_last'), data );
+		}
 		#>
-		<div class="elementor-control-deprecated-notice elementor-panel-alert elementor-panel-alert-warning">{{{ notice }}}{{{ noticeReplacement }}}{{{ noticeLast }}}</div>
+		<div class="elementor-control-deprecated-notice elementor-panel-alert elementor-panel-alert-warning">{{{ notice }}}</div>
 		<?php
 	}
 
