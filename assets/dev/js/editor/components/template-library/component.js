@@ -5,13 +5,19 @@ export default class extends elementorModules.Component {
 		this.title = 'Library';
 		this.namespace = 'library';
 
-		this.setDefault( 'templates/page' );
-
 		this.tabs = {
 			'templates/block': elementor.translate( 'blocks' ),
 			'templates/page': elementor.translate( 'pages' ),
 			'templates/my-templates': elementor.translate( 'my_templates' ),
 		};
+
+		this.docLibraryConfig = elementor.config.document.remoteLibrary;
+
+		if ( 'block' === this.docLibraryConfig.type ) {
+			this.setDefault( 'templates/block' );
+		} else {
+			this.setDefault( 'templates/page' );
+		}
 	}
 
 	open() {
@@ -54,13 +60,7 @@ export default class extends elementorModules.Component {
 
 	getCommands() {
 		return {
-			show: ( args ) => {
-				this.parent.modalConfig = args;
-
-				if ( args.toDefault || ! elementorCommon.route.restoreState( 'library' ) ) {
-					elementorCommon.route.to( this.getDefault() );
-				}
-			},
+			show: this.show,
 		};
 	}
 
@@ -70,5 +70,19 @@ export default class extends elementorModules.Component {
 				keys: 'ctrl+shift+l',
 			},
 		};
+	}
+
+	show( args ) {
+		this.parent.modalConfig = args;
+
+		if ( args.toDefault || ! elementorCommon.route.restoreState( 'library' ) ) {
+			elementorCommon.route.to( this.getDefault(), {
+				onAfter: () => {
+					if ( this.docLibraryConfig.category ) {
+						this.parent.setFilter( 'subtype', this.docLibraryConfig.category );
+					}
+				},
+			} );
+		}
 	}
 }

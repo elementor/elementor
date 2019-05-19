@@ -18,21 +18,21 @@ export default class extends elementorModules.Module {
 			this.error( `'${ namespace }' component is not exist.` );
 		}
 
-		command = component.namespace + ( command ? '/' + command : '' );
+		const fullCommand = component.namespace + ( command ? '/' + command : '' );
 
-		if ( this.commands[ command ] ) {
-			this.error( `\`${ command }\` is already registered.` );
+		if ( this.commands[ fullCommand ] ) {
+			this.error( `\`${ fullCommand }\` is already registered.` );
 		}
 
-		this.commands[ command ] = callback;
-		this.components[ command ] = namespace;
+		this.commands[ fullCommand ] = callback;
+		this.components[ fullCommand ] = namespace;
 
 		const shortcuts = component.getShortcuts(),
 			shortcut = shortcuts[ command ];
 
 		if ( shortcut ) {
-			shortcut.command = command;
-			shortcut.callback = ( event ) => this.runShortcut( command, event );
+			shortcut.command = fullCommand;
+			shortcut.callback = ( event ) => this.runShortcut( fullCommand, event );
 			elementorCommon.shortcuts.register( shortcut.keys, shortcut );
 		}
 
@@ -98,13 +98,13 @@ export default class extends elementorModules.Module {
 		}
 
 		if ( args.onBefore ) {
-			args.onBefore.apply( this, [ args ] );
+			args.onBefore.apply( undefined, [ args ] );
 		}
 
 		this.commands[ command ].apply( this, [ args ] );
 
 		if ( args.onAfter ) {
-			args.onAfter.apply( this, [ args ] );
+			args.onAfter.apply( undefined, [ args ] );
 		}
 
 		this.afterRun( command, args );
