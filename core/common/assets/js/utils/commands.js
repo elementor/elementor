@@ -5,8 +5,6 @@ export default class extends elementorModules.Module {
 		this.current = {};
 		this.currentArgs = {};
 		this.commands = {};
-		this.dependencies = {};
-		this.containers = {};
 		this.components = {};
 	}
 
@@ -14,39 +12,23 @@ export default class extends elementorModules.Module {
 		console.log( Object.keys( this.commands ).sort() ); // eslint-disable-line no-console
 	}
 
-	registerContainer( container, args = {} ) {
-		this.containers[ container ] = args;
-
-		if ( args.before ) {
-			this.registerDependency( container, args.before );
+	register( namespace, command, callback ) {
+		const component = elementorCommon.components.get( namespace );
+		if ( ! component ) {
+			this.error( `'${ namespace }' component is not exist.` );
 		}
 
-		return this;
-	}
-
-	registerDependency( container, callback ) {
-		this.dependencies[ container ] = callback;
-
-		return this;
-	}
-
-	register( component, command, callback, shortcut ) {
-		const parts = command.split( '/' ),
-			container = parts[ 0 ];
-
-		if ( ! elementorCommon.components.get( component ) ) {
-			this.error( `'${ component }' component is not exist.` );
-		}
-		if ( ! this.containers[ container ] ) {
-			this.error( `'${ container }' container is not exist.` );
-		}
+		command = component.namespace + ( command ? '/' + command : '' );
 
 		if ( this.commands[ command ] ) {
 			this.error( `\`${ command }\` is already registered.` );
 		}
 
 		this.commands[ command ] = callback;
-		this.components[ command ] = component;
+		this.components[ command ] = namespace;
+
+		const shortcuts = component.getShortcuts(),
+			shortcut = shortcuts[ command ];
 
 		if ( shortcut ) {
 			shortcut.command = command;
@@ -97,12 +79,12 @@ export default class extends elementorModules.Module {
 			this.error( `\`${ command }\` not found.` );
 		}
 
-		const parts = command.split( '/' ),
-			container = parts[ 0 ];
-
-		if ( this.dependencies[ container ] && ! this.dependencies[ container ].apply( null, [ args ] ) ) {
+		if ( ! this.getComponent( command ).dependency( args ) ) {
 			return false;
 		}
+
+		const parts = command.split( '/' ),
+			container = parts[ 0 ];
 
 		this.current[ container ] = command;
 		this.currentArgs[ container ] = args;

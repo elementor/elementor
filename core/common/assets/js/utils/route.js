@@ -4,49 +4,15 @@ export default class extends Commands {
 	constructor( ...args ) {
 		super( ...args );
 
-		this.containers = {};
 		this.savedStates = {};
 	}
 
-	registerContainer( container, args = {} ) {
-		this.containers[ container ] = args;
-
-		if ( args.open ) {
-			this.registerDependency( container, () => {
-				return this.open( container );
-			} );
-		}
-
-		return this;
-	}
-
-	open( container ) {
-		const args = this.containers[ container ];
-
-		if ( ! args ) {
-			return;
-		}
-
-		if ( ! args.isOpen ) {
-			args.isOpen = args.open.apply();
-			this.containers[ container ].isOpen = args.isOpen;
-		}
-
-		return args.isOpen;
-	}
-
 	close( container ) {
-		const args = this.containers[ container ];
+		const component = elementorCommon.components.get( container );
 
-		if ( ! args ) {
-			return;
-		}
+		component.close();
 
-		if ( args.close ) {
-			args.close.apply( this );
-		}
-
-		this.containers[ container ].isOpen = false;
+		component.isOpen = false;
 
 		this.clearCurrent( container );
 
@@ -109,7 +75,13 @@ export default class extends Commands {
 			this.getComponent( this.current[ container ] ).onCloseRoute();
 		}
 
-		return super.beforeRun( route, args );
+		const component = this.getComponent( route );
+
+		if ( ! component.isOpen ) {
+			component.isOpen = component.open();
+		}
+
+		return component.isOpen && super.beforeRun( route, args );
 	}
 
 	to( route, args ) {

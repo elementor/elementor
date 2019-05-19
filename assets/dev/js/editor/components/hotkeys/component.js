@@ -12,15 +12,15 @@ export default class extends elementorModules.Component {
 		this.parent.layout.getModal().on( 'hide', () => elementorCommon.route.close( 'shortcuts' ) );
 	}
 
+	open() {
+		this.parent.layout.showModal();
+		return true;
+	}
+
 	getRoutes() {
 		return {
 			'': () => {},
 		};
-	}
-
-	open() {
-		this.parent.layout.showModal();
-		return true;
 	}
 
 	getShortcuts() {

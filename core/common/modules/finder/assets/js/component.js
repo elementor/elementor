@@ -12,6 +12,11 @@ export default class extends elementorModules.Component {
 		this.parent.layout.getModal().on( 'hide', () => elementorCommon.route.close( this.namespace ) );
 	}
 
+	open() {
+		this.parent.layout.showModal();
+		return true;
+	}
+
 	getRoutes() {
 		return {
 			'': () => {},
@@ -28,11 +33,6 @@ export default class extends elementorModules.Component {
 			'navigate/up': () => this.getItemsView().activateNextItem( true ),
 			'navigate/select': () => ( event ) => this.getItemsView().goToActiveItem( event ),
 		};
-	}
-
-	open() {
-		this.parent.layout.showModal();
-		return true;
 	}
 
 	getShortcuts() {
