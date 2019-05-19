@@ -8,8 +8,8 @@ export default class extends elementorModules.Component {
 
 	getCommands() {
 		return {
-			up: () => elementor.getPanelView().getCurrentPageView().currentTab.navigate( true ),
-			down: () => elementor.getPanelView().getCurrentPageView().currentTab.navigate(),
+			up: () => this.navigate( true ),
+			down: () => this.navigate(),
 		};
 	}
 
@@ -24,5 +24,11 @@ export default class extends elementorModules.Component {
 				scope: [ this.namespace ],
 			},
 		};
+	}
+
+	navigate( up ) {
+		if ( this.parent.getItems().length > 1 ) {
+			elementor.getPanelView().getCurrentPageView().currentTab.navigate( up );
+		}
 	}
 }
