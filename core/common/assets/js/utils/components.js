@@ -12,9 +12,9 @@ export default class extends elementorModules.Module {
 	register( component, args ) {
 		this.components[ component.namespace ] = component;
 
-		this.components[ component.namespace ].init( args );
+		component.init( args );
 
-		return this;
+		return component;
 	}
 
 	get( id ) {

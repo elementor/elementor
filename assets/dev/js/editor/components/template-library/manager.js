@@ -81,7 +81,7 @@ TemplateLibraryManager = function() {
 
 		registerDefaultFilterTerms();
 
-		elementorCommon.components.register( new Component(), { parent: this } );
+		this.component = elementorCommon.components.register( new Component(), { parent: this } );
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
@@ -337,22 +337,6 @@ TemplateLibraryManager = function() {
 		if ( ! silent ) {
 			self.showTemplates();
 		}
-	};
-
-	this.routeToDefault = function() {
-		const remoteLibraryConfig = elementor.config.document.remoteLibrary;
-
-		if ( 'block' === remoteLibraryConfig.type ) {
-			this.component.route.setDefault( 'templates/blocks' );
-		}
-
-		this.component.route.to( '_default', {
-			onAfter: () => {
-				if ( remoteLibraryConfig.category ) {
-					this.setFilter( 'subtype', remoteLibraryConfig.category );
-				}
-			},
-		} );
 	};
 
 	this.loadTemplates = function( onUpdate ) {
