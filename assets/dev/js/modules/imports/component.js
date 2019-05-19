@@ -4,16 +4,8 @@ export default class extends Module {
 	constructor( ...args ) {
 		super( ...args );
 
-		// this.router = new Router( this.getRoutes() );
-		// this.commander = new Commander( this.getCommands() );
-
 		this.tabs = {};
-		this.dependency = {};
 		this.isActive = {};
-
-		this.current = false;
-		this.currentArgs = false;
-
 		this.defaultRoute = '';
 	}
 
@@ -34,49 +26,30 @@ export default class extends Module {
 
 		this.tabRenderer = args.tabRenderer;
 
-		const shortcuts = this.getShortcuts();
+		jQuery.each( this.getTabs(), ( tab ) => this.registerTabRoute( tab ) );
 
-		const routes = this.getRoutes();
+		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
 
-		_( this.getTabs() ).each( ( title, tab ) => this.registerTabRoute( tab ) );
+		jQuery.each( this.getCommands(), ( command, callback ) => this.registerCommand( command, callback ) );
+	}
 
-		_( routes ).each( ( callback, route ) => this.registerRoute( route, callback ) );
-
-		_( this.getCommands() ).each( ( callback, command ) => {
-			const fullCommand = this.namespace ? this.namespace + '/' + command : command,
-				shortcut = shortcuts[ command ] ? shortcuts[ command ] : false;
-
-			const parts = fullCommand.split( '/' ),
-				container = parts[ 0 ];
-
-			elementorCommon.commands.registerContainer( container );
-
-			elementorCommon.commands.register( this.namespace, fullCommand, callback, shortcut );
-		} );
+	registerCommand( command, callback ) {
+		elementorCommon.commands.register( this.namespace, command, callback );
 	}
 
 	registerRoute( route, callback ) {
-		const shortcuts = this.getShortcuts();
-
-		const fullRoute = this.namespace + ( route ? '/' + route : '' ),
-			shortcut = shortcuts[ route ] ? shortcuts[ route ] : false;
-
-		const parts = fullRoute.split( '/' ),
-			container = parts[ 0 ],
-			containerArgs = {};
-
-		if ( this.open ) {
-			containerArgs.open = this.open.bind( this );
-		}
-
-		if ( this.close ) {
-			containerArgs.close = this.close.bind( this );
-		}
-
-		elementorCommon.route.registerContainer( container, containerArgs );
-
-		elementorCommon.route.register( this.namespace, fullRoute, callback, shortcut );
+		elementorCommon.route.register( this.namespace, route, callback );
 	}
+
+	dependency() {
+		return true;
+	}
+
+	open() {
+		return true;
+	}
+
+	close() {}
 
 	onRoute() {
 		this.isActive = true;

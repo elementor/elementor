@@ -7,7 +7,7 @@ export default class extends elementorModules.Component {
 		this.namespace = 'elements';
 	}
 
-	open( args ) {
+	dependency( args ) {
 		return ! ! args.element;
 	}
 
