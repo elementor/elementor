@@ -611,6 +611,10 @@ class Plugin {
 		add_action( 'init', [ $this, 'init' ], 0 );
 		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ] );
 	}
+
+	final public static function get_title() {
+		return __( 'Elementor', 'elementor' );
+	}
 }
 
 if ( ! defined( 'ELEMENTOR_TESTS' ) ) {
