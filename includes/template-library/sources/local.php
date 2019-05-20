@@ -621,7 +621,8 @@ class Source_Local extends Source_Base {
 		if ( ! empty( $args['display'] ) ) {
 			$content = $db->get_builder( $template_id );
 		} else {
-			$content = $db->get_plain_editor( $template_id );
+			$document = Plugin::$instance->documents->get( $template_id );
+			$content = $document ? $document->get_elements_data() : [];
 		}
 
 		if ( ! empty( $content ) ) {

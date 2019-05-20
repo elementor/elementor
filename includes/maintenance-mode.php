@@ -270,11 +270,13 @@ class Maintenance_Mode {
 			'href' => Tools::get_url() . '#tab-maintenance_mode',
 		] );
 
+		$document = Plugin::$instance->documents->get( self::get( 'template_id' ) );
+
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-edit',
 			'parent' => 'elementor-maintenance-on',
 			'title' => __( 'Edit Template', 'elementor' ),
-			'href' => Utils::get_edit_link( self::get( 'template_id' ) ),
+			'href' => $document ? $document->get_edit_url() : '',
 		] );
 	}
 
