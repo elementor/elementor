@@ -522,7 +522,15 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
 		}
 
-		Plugin::$instance->db->save_editor( $new_data['id'], $new_data['content'] );
+		$document = Plugin::$instance->documents->get( $new_data['id'] );
+
+		if ( ! $document ) {
+			return new \WP_Error( 'save_error', __( 'Template not exist.', 'elementor' ) );
+		}
+
+		$document->save( [
+			'elements' => $new_data['content'],
+		] );
 
 		/**
 		 * After template library update.
