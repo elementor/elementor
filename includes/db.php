@@ -88,7 +88,7 @@ class DB {
 	 * @return bool
 	 */
 	public function save_editor( $post_id, $data, $status = self::STATUS_PUBLISH ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->save()' );
+		_deprecated_function( __METHOD__, '2.6.0', 'Plugin::$instance->documents->save()' );
 
 		$document = Plugin::$instance->documents->get( $post_id );
 

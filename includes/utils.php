@@ -64,7 +64,7 @@ class Utils {
 	 * @return string Post edit link.
 	 */
 	public static function get_edit_link( $post_id = 0 ) {
-		// TODO: _deprecated_function( __METHOD__, '2.0.0', 'Plugin::$instance->documents->get( $post_id )->get_edit_url()' );
+		_deprecated_function( __METHOD__, '2.6.0', 'Plugin::$instance->documents->get( $post_id )->get_edit_url()' );
 
 		if ( ! $post_id ) {
 			$post_id = get_the_ID();
