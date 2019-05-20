@@ -70,7 +70,8 @@ class Control_Deprecated_Notice extends Base_UI_Control {
 	 */
 	protected function get_default_settings() {
 		return [
-			'widget' => '', // Widget name
+			'element' => '', // Element name
+			'type' => __( 'Widget', 'elementor' ), // widget | control
 			'since' => '', // Plugin version widget was deprecated
 			'last' => '', // Plugin version in which the widget will be removed
 			'replacement' => '', // Widget replacement
