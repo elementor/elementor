@@ -10,8 +10,19 @@
 	&.animated-fast {
 		animation-duration: .75s;
 	}
+
+	&.infinite {
+		animation-iteration-count: infinite;
+	}
+
+	&.reverse {
+		animation-direction: reverse;
+	}
 }
 
-.animated.infinite {
-	animation-iteration-count: infinite;
+// Disable animations for users who experience motion sickness / vertigo
+@media (prefers-reduced-motion: reduce) {
+	.animated {
+		animation: none;
+	}
 }

@@ -182,13 +182,17 @@ class Editor {
 			return;
 		}
 
-		$post_id = get_the_ID();
+		$document = Plugin::$instance->documents->get( get_the_ID() );
 
-		if ( ! User::is_current_user_can_edit( $post_id ) || ! Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+		if ( ! $document ) {
+			wp_die( __( 'Document not found.', '' ) );
+		}
+
+		if ( ! $document->is_editable_by_current_user() || ! $document->is_built_with_elementor() ) {
 			return;
 		}
 
-		wp_redirect( Utils::get_edit_link( $post_id ) );
+		wp_safe_redirect( $document->get_edit_url() );
 		die;
 	}
 
@@ -284,21 +288,6 @@ class Editor {
 	}
 
 	/**
-	 * Print panel HTML.
-	 *
-	 * Include the wrapper template of the editor.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.2.0 Use `Editor::print_editor_template` instead
-	 * @access public
-	 */
-	public function print_panel_html() {
-		_deprecated_function( __METHOD__, '2.2.0', 'Editor::print_editor_template' );
-
-		$this->print_editor_template();
-	}
-
-	/**
 	 * Print Editor Template.
 	 *
 	 * Include the wrapper template of the editor.
@@ -336,7 +325,7 @@ class Editor {
 
 		wp_register_script(
 			'elementor-editor-modules',
-			ELEMENTOR_ASSETS_URL . 'js/editor-modules.js',
+			ELEMENTOR_ASSETS_URL . 'js/editor-modules' . $suffix . '.js',
 			[
 				'elementor-common-modules',
 			],
@@ -505,8 +494,6 @@ class Editor {
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
 			'data' => $editor_data,
-			// @TODO: `post_id` is bc since 2.0.0
-			'post_id' => $this->_post_id,
 			'document' => $document->get_config(),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'current_user_can_publish' => $current_user_can_publish,
@@ -540,22 +527,26 @@ class Editor {
 				'help_preview_http_error_500_url' => 'https://go.elementor.com/500-error/',
 				'debug_data' => Loading_Inspection_Manager::instance()->run_inspections(),
 			],
-			// @deprecated since 2.3.0 - Use `elementorCommon.config.isRTL` instead
-			'is_rtl' => is_rtl(),
 			'locale' => get_locale(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
 			'page_title_selector' => $page_title_selector,
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
+			'editButtons' => get_option( 'elementor_edit_buttons' ),
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'delete' => __( 'Delete', 'elementor' ),
 				'cancel' => __( 'Cancel', 'elementor' ),
 				'got_it' => __( 'Got It', 'elementor' ),
-
+				/* translators: %s: Element type. */
+				'add_element' => __( 'Add %s', 'elementor' ),
 				/* translators: %s: Element name. */
 				'edit_element' => __( 'Edit %s', 'elementor' ),
+				/* translators: %s: Element type. */
+				'duplicate_element' => __( 'Duplicate %s', 'elementor' ),
+				/* translators: %s: Element type. */
+				'delete_element' => __( 'Delete %s', 'elementor' ),
 				'flexbox_attention_header' => __( 'Note: Flexbox Changes', 'elementor' ),
 				'flexbox_attention_message' => __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
 
@@ -641,8 +632,6 @@ class Editor {
 				'take_over' => __( 'Take Over', 'elementor' ),
 
 				// Revisions.
-				/* translators: %s: Element type. */
-				'delete_element' => __( 'Delete %s', 'elementor' ),
 				/* translators: %s: Template type. */
 				'dialog_confirm_delete' => __( 'Are you sure you want to remove this %s?', 'elementor' ),
 
@@ -686,6 +675,11 @@ class Editor {
 
 				// Hotkeys screen
 				'keyboard_shortcuts' => __( 'Keyboard Shortcuts', 'elementor' ),
+
+				// Deprecated Control
+				'deprecated_notice' => __( 'The <strong>{{{ element_name }}}</strong> {{{ element_type }}} has been deprecated since {{{ plugin }}} {{{ since }}}.', 'elementor' ),
+				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>{{{ replacement }}}</strong>.', 'elementor' ),
+				'deprecated_notice_last' => __( 'Note that {{{ element_name }}} will be completely removed once {{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
@@ -888,7 +882,7 @@ class Editor {
 	 * Registers new editor templates.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.3.0 Use `Plugin::$instance->common->add_template( $template, $type )`
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->add_template()`
 	 * @access public
 	 *
 	 * @param string $template Can be either a link to template file or template
@@ -897,6 +891,8 @@ class Editor {
 	 *                         or text. Default is `path`.
 	 */
 	public function add_editor_template( $template, $type = 'path' ) {
+		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->add_template()' );
+
 		$common = Plugin::$instance->common;
 
 		if ( $common ) {
@@ -1021,6 +1017,8 @@ class Editor {
 	 *                     capabilities.
 	 */
 	public function create_nonce( $post_type ) {
+		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
+
 		/** @var Core\Common\Modules\Ajax\Module $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
@@ -1046,6 +1044,8 @@ class Editor {
 	 *                   between 12-24 hours ago it returns `2`.
 	 */
 	public function verify_nonce( $nonce ) {
+		// _deprecated_function( __METHOD__, '2.3.0', 'wp_verify_nonce()' );
+
 		return wp_verify_nonce( $nonce );
 	}
 
@@ -1061,6 +1061,8 @@ class Editor {
 	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
+		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
+
 		/** @var Core\Common\Modules\Ajax\Module $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
@@ -1078,6 +1080,8 @@ class Editor {
 	 * @access public
 	 */
 	public function verify_ajax_nonce() {
+		// _deprecated_function( __METHOD__, '2.3.0' );
+
 		/** @var Core\Common\Modules\Ajax\Module $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 

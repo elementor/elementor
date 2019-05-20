@@ -92,6 +92,11 @@ class Controls_Manager {
 	const RAW_HTML = 'raw_html';
 
 	/**
+	 * Deprecated Notice control.
+	 */
+	const DEPRECATED_NOTICE = 'deprecated_notice';
+
+	/**
 	 * Popover Toggle control.
 	 */
 	const POPOVER_TOGGLE = 'popover_toggle';
@@ -220,6 +225,11 @@ class Controls_Manager {
 	 * Hover animation control.
 	 */
 	const HOVER_ANIMATION = 'hover_animation';
+
+	/**
+	 * Exit animation control.
+	 */
+	const EXIT_ANIMATION = 'exit_animation';
 
 	/**
 	 * Controls.
@@ -363,6 +373,7 @@ class Controls_Manager {
 			self::TAB,
 			self::TABS,
 			self::DIVIDER,
+			self::DEPRECATED_NOTICE,
 
 			self::COLOR,
 			self::MEDIA,
@@ -387,6 +398,7 @@ class Controls_Manager {
 			self::TEXT_SHADOW,
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
+			self::EXIT_ANIMATION,
 		];
 	}
 
