@@ -4,9 +4,9 @@
 **Contributors:** [elemntor](https://profiles.wordpress.org/elemntor), [KingYes](https://profiles.wordpress.org/KingYes), [ariel.k](https://profiles.wordpress.org/ariel.k), [jzaltzberg](https://profiles.wordpress.org/jzaltzberg), [mati1000](https://profiles.wordpress.org/mati1000), [pojosh](https://profiles.wordpress.org/pojosh), [bainternet](https://profiles.wordpress.org/bainternet), [ramiy](https://profiles.wordpress.org/ramiy), [yehudah](https://profiles.wordpress.org/yehudah)  
 **Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder  
 **Requires at least:** 4.7  
-**Tested up to:** 5.1  
+**Tested up to:** 5.2  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.5.13  
+**Stable tag:** 2.5.15  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -222,6 +222,14 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.5.15 - 2019-05-07 ###
+* Fix: Param type in doc block is partial ([#7988](https://github.com/elementor/elementor/issues/7988))
+* Fix: Paste Style changes widget title in Navigator ([#7931](https://github.com/elementor/elementor/issues/7931))
+
+### 2.5.14 - 2019-04-16 ###
+* Tweak: Remove default values on update to avoid 413 error ([#7842](https://github.com/elementor/elementor/issues/7842))
+* Fix: Load minified `common-modules.js` & `editor-modules.js` instead of full version
 
 ### 2.5.13 - 2019-04-10 ###
 * Fix: Resize viewport not working properly ([#7795](https://github.com/elementor/elementor/issues/7795), [Topic](https://wordpress.org/support/topic/width-is-not-responding-automatically/), [Topic](https://wordpress.org/support/topic/stretch-section-problem/))

@@ -165,6 +165,9 @@ class Widget_Social_Icons extends Widget_Base {
 				'default' => [
 					'is_external' => 'true',
 				],
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 			]
 		);

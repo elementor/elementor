@@ -70,8 +70,10 @@ const App = Marionette.Application.extend( {
 			Color: require( 'elementor-controls/color' ),
 			Date_time: DateTimeControl,
 			Dimensions: require( 'elementor-controls/dimensions' ),
+			Exit_animation: require( 'elementor-controls/select2' ),
 			Font: require( 'elementor-controls/font' ),
 			Gallery: require( 'elementor-controls/gallery' ),
+			Hidden: require( 'elementor-controls/hidden' ),
 			Hover_animation: require( 'elementor-controls/select2' ),
 			Icon: require( 'elementor-controls/icon' ),
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
@@ -1151,6 +1153,10 @@ const App = Marionette.Application.extend( {
 
 			$elementsToHide.hide();
 		} );
+	},
+
+	compileTemplate: function( template, data ) {
+		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	},
 } );
 
