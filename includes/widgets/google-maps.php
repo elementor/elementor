@@ -158,18 +158,6 @@ class Widget_Google_Maps extends Widget_Base {
 		);
 
 		$this->add_control(
-			'prevent_scroll',
-			[
-				'label' => __( 'Prevent Scroll', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => 'yes',
-				'selectors' => [
-					'{{WRAPPER}} iframe' => 'pointer-events: none;',
-				],
-			]
-		);
-
-		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
