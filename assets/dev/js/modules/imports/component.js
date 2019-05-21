@@ -101,6 +101,7 @@ export default class extends Module {
 
 	addTab( tab, title, position ) {
 		this.tabs[ tab ] = title;
+		// It can be 0.
 		if ( undefined !== typeof position ) {
 			const newTabs = {};
 			let ids = Object.keys( this.tabs );
