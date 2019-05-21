@@ -66,10 +66,10 @@ export default class extends elementorModules.Component {
 		const action = 'panel/open_editor/' + model.get( 'elType' );
 
 		// Example: panel/open_editor/widget
-		elementor.hooks.doAction( action, this, model, view );
+		elementor.hooks.doAction( action, this.parent, model, view );
 
 		// Example: panel/open_editor/widget/heading
-		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this, model, view );
+		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this.parent, model, view );
 
 		return editor;
 	}
