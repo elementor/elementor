@@ -18,10 +18,9 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_edit_link() {
-		$this->assertSame( '', Utils::get_edit_link() );
-
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$edit_link = Utils::get_edit_link( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id );
+		$edit_link = $document->get_edit_url();
 		$this->assertContains( '/post.php?post=', $edit_link );
 		$this->assertContains( '&action=elementor', $edit_link );
 	}
