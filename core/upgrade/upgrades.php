@@ -57,7 +57,11 @@ class Upgrades {
 				return $element;
 			} );
 
-			Plugin::$instance->db->save_editor( $post_id, $data );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			$document->save( [
+				'elements' => $data,
+			] );
 		}
 	}
 
@@ -113,7 +117,11 @@ class Upgrades {
 				return $element;
 			} );
 
-			Plugin::$instance->db->save_editor( $post_id, $data );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			$document->save( [
+				'elements' => $data,
+			] );
 		}
 	}
 
@@ -172,7 +180,11 @@ class Upgrades {
 				return $element;
 			} );
 
-			Plugin::$instance->db->save_editor( $post_id, $data );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			$document->save( [
+				'elements' => $data,
+			] );
 		}
 	}
 

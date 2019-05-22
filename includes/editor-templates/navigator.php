@@ -33,11 +33,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-navigator__element__title">
 				<span class="elementor-navigator__element__title__text">{{{ title }}}</span>
 			</div>
-			<# if ( 'column' !== elType ) { #>
-				<div class="elementor-navigator__element__toggle">
-					<i class="eicon-eye"></i>
-				</div>
-			<# } #>
+			<div class="elementor-navigator__element__toggle">
+				<i class="eicon-eye"></i>
+			</div>
 		</div>
 	<# } #>
 	<div class="elementor-navigator__elements"></div>
