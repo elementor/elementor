@@ -92,6 +92,11 @@ class Controls_Manager {
 	const RAW_HTML = 'raw_html';
 
 	/**
+	 * Deprecated Notice control.
+	 */
+	const DEPRECATED_NOTICE = 'deprecated_notice';
+
+	/**
 	 * Popover Toggle control.
 	 */
 	const POPOVER_TOGGLE = 'popover_toggle';
@@ -368,6 +373,7 @@ class Controls_Manager {
 			self::TAB,
 			self::TABS,
 			self::DIVIDER,
+			self::DEPRECATED_NOTICE,
 
 			self::COLOR,
 			self::MEDIA,

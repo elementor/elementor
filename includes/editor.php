@@ -180,13 +180,17 @@ class Editor {
 			return;
 		}
 
-		$post_id = get_the_ID();
+		$document = Plugin::$instance->documents->get( get_the_ID() );
 
-		if ( ! User::is_current_user_can_edit( $post_id ) || ! Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+		if ( ! $document ) {
+			wp_die( __( 'Document not found.', '' ) );
+		}
+
+		if ( ! $document->is_editable_by_current_user() || ! $document->is_built_with_elementor() ) {
 			return;
 		}
 
-		wp_redirect( Utils::get_edit_link( $post_id ) );
+		wp_safe_redirect( $document->get_edit_url() );
 		die;
 	}
 
@@ -666,6 +670,11 @@ class Editor {
 
 				// Hotkeys screen
 				'keyboard_shortcuts' => __( 'Keyboard Shortcuts', 'elementor' ),
+
+				// Deprecated Control
+				'deprecated_notice' => __( 'The <strong>{{{ element_name }}}</strong> {{{ element_type }}} has been deprecated since {{{ plugin }}} {{{ since }}}.', 'elementor' ),
+				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>{{{ replacement }}}</strong>.', 'elementor' ),
+				'deprecated_notice_last' => __( 'Note that {{{ element_name }}} will be completely removed once {{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),

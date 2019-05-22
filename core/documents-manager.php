@@ -344,7 +344,7 @@ class Documents_Manager {
 		$class = $this->get_document_type( $type, false );
 
 		if ( ! $class ) {
-			wp_die( sprintf( 'Type %s does not exist.', $type ) );
+			return new \WP_Error( 500, sprintf( 'Type %s does not exist.', $type ) );
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {
