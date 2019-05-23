@@ -518,8 +518,8 @@ abstract class Document extends Controls_Stack {
 		 */
 		do_action( 'elementor/document/before_save', $this, $data );
 
-		if ( isset( $data['settings'] ) ) {
-			if ( DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
+		if ( ! empty( $data['settings'] ) ) {
+			if ( isset( $data['settings']['post_status'] ) && DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
 					define( 'DOING_AUTOSAVE', true );
 				}
