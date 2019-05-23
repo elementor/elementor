@@ -272,7 +272,7 @@ const App = Marionette.Application.extend( {
 
 		this.notifications = new Notifications();
 
-		elementorCommon.components.register( new Component(), { parent: this } );
+		elementorCommon.components.register( new Component( { context: this } ) );
 
 		this.hotkeysScreen = new HotkeysScreen();
 	},

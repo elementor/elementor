@@ -1,17 +1,14 @@
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'Panel';
-		this.namespace = 'panel';
+	getNamespace() {
+		return 'panel';
 	}
 
 	getRoutes() {
 		return {
-			menu: () => this.parent.setPage( 'menu' ),
-			'global-colors': () => this.parent.setPage( 'colorScheme' ),
-			'global-fonts': () => this.parent.setPage( 'typographyScheme' ),
-			'color-picker': () => this.parent.setPage( 'colorPickerScheme' ),
+			menu: () => this.context.setPage( 'menu' ),
+			'global-colors': () => this.context.setPage( 'colorScheme' ),
+			'global-fonts': () => this.context.setPage( 'typographyScheme' ),
+			'color-picker': () => this.context.setPage( 'colorPickerScheme' ),
 		};
 	}
 

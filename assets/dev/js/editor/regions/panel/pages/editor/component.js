@@ -1,32 +1,21 @@
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'Editor';
-		this.namespace = 'panel/editor';
+	__construct( args ) {
+		super.__construct( args );
 
 		// Remember last used tab.
 		this.activeTabs = {};
 	}
 
-	activateTab( tab ) {
-		const editor = this.parent.getCurrentPageView().activateTab( tab );
-
-		this.activeTabs[ editor.model.id ] = tab;
-
-		super.activateTab( tab );
-	}
-
-	getTabsWrapperSelector() {
-		return '.elementor-panel-navigation';
+	getNamespace() {
+		return 'panel/editor';
 	}
 
 	getTabs() {
 		return {
-			content: elementor.translate( 'content' ),
-			style: elementor.translate( 'style' ),
-			advanced: elementor.translate( 'advanced' ),
-			layout: elementor.translate( 'layout' ),
+			content: { title: elementor.translate( 'content' ) },
+			style: { title: elementor.translate( 'style' ) },
+			advanced: { title: elementor.translate( 'advanced' ) },
+			layout: { title: elementor.translate( 'layout' ) },
 		};
 	}
 
@@ -40,6 +29,20 @@ export default class extends elementorModules.Component {
 				elementorCommon.route.to( this.getDefault(), args );
 			},
 		};
+	}
+
+	getTabsWrapperSelector() {
+		return '.elementor-panel-navigation';
+	}
+
+	renderTab( tab ) {
+		this.context.getCurrentPageView().activateTab( tab );
+	}
+
+	activateTab( tab ) {
+		this.activeTabs[ this.context.getCurrentPageView().model.id ] = tab;
+
+		super.activateTab( tab );
 	}
 
 	setDefaultTab( args ) {
@@ -66,10 +69,10 @@ export default class extends elementorModules.Component {
 		const action = 'panel/open_editor/' + model.get( 'elType' );
 
 		// Example: panel/open_editor/widget
-		elementor.hooks.doAction( action, this.parent, model, view );
+		elementor.hooks.doAction( action, this.context, model, view );
 
 		// Example: panel/open_editor/widget/heading
-		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this.parent, model, view );
+		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this.context, model, view );
 
 		return editor;
 	}

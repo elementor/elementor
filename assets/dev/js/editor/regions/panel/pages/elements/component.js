@@ -1,27 +1,20 @@
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
+	getNamespace() {
+		return 'panel/elements';
+	}
 
-		this.title = 'Elements';
-		this.namespace = 'panel/elements';
+	getTabs() {
+		return {
+			categories: { title: elementor.translate( 'elements' ) },
+			global: { title: elementor.translate( 'global' ) },
+		};
 	}
 
 	getTabsWrapperSelector() {
 		return '#elementor-panel-elements-navigation';
 	}
 
-	activateTab( tab ) {
-		this.parent.setPage( 'elements' );
-
-		this.parent.getCurrentPageView().showView( tab );
-
-		super.activateTab( tab );
-	}
-
-	getTabs() {
-		return {
-			categories: elementor.translate( 'elements' ),
-			global: elementor.translate( 'global' ),
-		};
+	renderTab( tab ) {
+		this.context.setPage( 'elements' ).showView( tab );
 	}
 }

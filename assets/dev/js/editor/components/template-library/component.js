@@ -1,15 +1,8 @@
+const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
+
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'Library';
-		this.namespace = 'library';
-
-		this.tabs = {
-			'templates/block': elementor.translate( 'blocks' ),
-			'templates/page': elementor.translate( 'pages' ),
-			'templates/my-templates': elementor.translate( 'my_templates' ),
-		};
+	__construct( args ) {
+		super.__construct( args );
 
 		this.docLibraryConfig = elementor.config.document.remoteLibrary;
 
@@ -20,40 +13,49 @@ export default class extends elementorModules.Component {
 		}
 	}
 
-	open() {
-		this.parent.startModal();
-
-		return true;
+	getNamespace() {
+		return 'library';
 	}
 
-	close() {
-		this.parent.modalConfig = {};
-	}
-
-	getTabsWrapperSelector() {
-		return '#elementor-template-library-header-menu';
-	}
-
-	activateTab( tab ) {
-		if ( 'templates/my-templates' === tab ) {
-			this.parent.setScreen( 'local' );
-		} else {
-			this.parent.setScreen( 'remote', tab.replace( 'templates/', '' ) );
+	getTabs() {
+		// Allow add tabs via `addTab`.
+		if ( _.isEmpty( this.tabs ) ) {
+			this.tabs = {
+				'templates/block': {
+					title: elementor.translate( 'blocks' ),
+					filter: {
+						source: 'remote',
+						type: 'block',
+						subtype: this.docLibraryConfig.category,
+					},
+				},
+				'templates/page': {
+					title: elementor.translate( 'pages' ),
+					filter: {
+						source: 'remote',
+						type: 'page',
+					},
+				},
+				'templates/my-templates': {
+					title: elementor.translate( 'my_templates' ),
+					filter: {
+						source: 'local',
+					},
+				},
+			};
 		}
 
-		elementorCommon.route.saveState( 'library' );
-
-		super.activateTab( tab );
+		return this.tabs;
 	}
 
 	getRoutes() {
 		return {
 			import: () => {
-				this.parent.getLayout().showImportView();
+				this.context.layout.showImportView();
 			},
 
 			'save-template': ( args ) => {
-				this.parent.getLayout().showSaveTemplateView( args.model );
+				this.context.layout.showSaveTemplateView( args.model );
 			},
 		};
 	}
@@ -72,17 +74,41 @@ export default class extends elementorModules.Component {
 		};
 	}
 
+	getTabsWrapperSelector() {
+		return '#elementor-template-library-header-menu';
+	}
+
+	renderTab( tab ) {
+		this.context.setScreen( this.tabs[ tab ].filter );
+	}
+
+	activateTab( tab ) {
+		elementorCommon.route.saveState( 'library' );
+
+		super.activateTab( tab );
+	}
+
+	open() {
+		if ( ! this.context.layout ) {
+			this.context.layout = new TemplateLibraryLayoutView();
+
+			this.context.layout.getModal().on( 'hide', () => elementorCommon.route.close( this.getNamespace() ) );
+		}
+
+		this.context.layout.showModal();
+
+		return true;
+	}
+
+	close() {
+		this.context.modalConfig = {};
+	}
+
 	show( args ) {
-		this.parent.modalConfig = args;
+		this.context.modalConfig = args;
 
 		if ( args.toDefault || ! elementorCommon.route.restoreState( 'library' ) ) {
-			elementorCommon.route.to( this.getDefault(), {
-				onAfter: () => {
-					if ( this.docLibraryConfig.category ) {
-						this.parent.setFilter( 'subtype', this.docLibraryConfig.category );
-					}
-				},
-			} );
+			elementorCommon.route.to( this.getDefault() );
 		}
 	}
 }

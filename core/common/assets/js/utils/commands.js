@@ -12,13 +12,20 @@ export default class extends elementorModules.Module {
 		console.log( Object.keys( this.commands ).sort() ); // eslint-disable-line no-console
 	}
 
-	register( namespace, command, callback ) {
-		const component = elementorCommon.components.get( namespace );
-		if ( ! component ) {
-			this.error( `'${ namespace }' component is not exist.` );
+	register( component, command, callback ) {
+		let namespace;
+		if ( 'string' === typeof component ) {
+			namespace = component;
+			component = elementorCommon.components.get( namespace );
+
+			if ( ! component ) {
+				this.error( `'${ namespace }' component is not exist.` );
+			}
+		} else {
+			namespace = component.getNamespace();
 		}
 
-		const fullCommand = component.namespace + ( command ? '/' + command : '' );
+		const fullCommand = namespace + ( command ? '/' + command : '' );
 
 		if ( this.commands[ fullCommand ] ) {
 			this.error( `\`${ fullCommand }\` is already registered.` );

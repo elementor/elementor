@@ -1,15 +1,12 @@
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'Actions';
-		this.namespace = 'panel/history/actions';
+	getNamespace() {
+		return 'panel/history/actions';
 	}
 
 	getCommands() {
 		return {
-			undo: () => this.parent.navigate(),
-			redo: () => this.parent.navigate( true ),
+			undo: () => this.context.navigate(),
+			redo: () => this.context.navigate( true ),
 		};
 	}
 

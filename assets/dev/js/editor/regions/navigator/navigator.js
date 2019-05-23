@@ -8,7 +8,7 @@ export default class extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
-		elementorCommon.components.register( new Component(), { parent: this } );
+		elementorCommon.components.register( new Component( { context: this } ) );
 
 		this.isDocked = false;
 

@@ -1,18 +1,6 @@
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'Navigator';
-		this.namespace = 'navigator';
-	}
-
-	open() {
-		this.parent.open();
-		return true;
-	}
-
-	close() {
-		this.parent.close();
+	getNamespace() {
+		return 'navigator';
 	}
 
 	getRoutes() {
@@ -40,5 +28,14 @@ export default class extends elementorModules.Component {
 				dependency: () => 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
 			},
 		};
+	}
+
+	open() {
+		this.context.open();
+		return true;
+	}
+
+	close() {
+		this.context.close();
 	}
 }
