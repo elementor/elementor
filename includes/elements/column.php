@@ -150,7 +150,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'content_position',
 			[
 				'label' => __( 'Vertical Align', 'elementor' ),
@@ -176,7 +176,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'align',
 			[
 				'label' => __( 'Horizontal Align', 'elementor' ),
@@ -197,7 +197,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'space_between_widgets',
 			[
 				'label' => __( 'Widgets Space', 'elementor' ) . ' (px)',
