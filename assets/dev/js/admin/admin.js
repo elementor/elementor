@@ -17,8 +17,6 @@
 				$importArea: $( '#elementor-import-template-area' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
-				$betaTesterDialogHeader: $( '#elementor-beta-tester-dialog-header' ),
-				$betaTesterDialogForm: $( '#elementor-beta-tester-dialog-form' ),
 			};
 
 			elements.$settingsFormPages = elements.$settingsForm.find( '.elementor-settings-form-page' );
@@ -203,29 +201,6 @@
 				$descriptions.hide();
 				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
 			} ).trigger( 'change' );
-
-			$( '.elementor_beta select' ).on( 'change', function() {
-				if ( 'yes' !== this.value ) {
-					return;
-				}
-
-				elementorCommon.dialogsManager.createWidget( 'lightbox', {
-					id: 'elementor-beta-tester-modal',
-					headerMessage: self.elements.$betaTesterDialogHeader,
-					message: self.elements.$betaTesterDialogForm,
-					closeButton: true,
-					closeButtonClass: 'eicon-close',
-				} ).show();
-			} );
-
-			self.elements.$betaTesterDialogForm.on( 'submit', function() {
-				const email = $( '#elementor-beta-tester-email' ).val();
-				elementorCommon.ajax.addRequest( 'beta_tester_newsletter', {
-					data: {
-						betaTesterEmail: email,
-					},
-				} );
-			} );
 		},
 
 		onInit: function() {
