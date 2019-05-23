@@ -1,19 +1,12 @@
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'History';
-		this.namespace = 'panel/history';
-	}
-
-	getTabsWrapperSelector() {
-		return '#elementor-panel-elements-navigation';
+	getNamespace() {
+		return 'panel/history';
 	}
 
 	getTabs() {
 		return {
-			actions: elementor.translate( 'actions' ),
-			revisions: elementor.translate( 'revisions' ),
+			actions: { title: elementor.translate( 'actions' ) },
+			revisions: { title: elementor.translate( 'revisions' ) },
 		};
 	}
 
@@ -26,5 +19,13 @@ export default class extends elementorModules.Component {
 				keys: 'ctrl+shift+r',
 			},
 		};
+	}
+
+	getTabsWrapperSelector() {
+		return '#elementor-panel-elements-navigation';
+	}
+
+	renderTab( tab ) {
+		elementor.getPanelView().setPage( 'historyPage' ).showView( tab );
 	}
 }

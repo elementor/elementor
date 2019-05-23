@@ -1,20 +1,8 @@
+import ModalLayout from './modal-layout';
+
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'Shortcuts';
-		this.namespace = 'shortcuts';
-	}
-
-	init( args ) {
-		super.init( args );
-
-		this.parent.layout.getModal().on( 'hide', () => elementorCommon.route.close( 'shortcuts' ) );
-	}
-
-	open() {
-		this.parent.layout.showModal();
-		return true;
+	getNamespace() {
+		return 'shortcuts';
 	}
 
 	getRoutes() {
@@ -29,5 +17,15 @@ export default class extends elementorModules.Component {
 				keys: 'ctrl+?',
 			},
 		};
+	}
+
+	open() {
+		if ( ! this.layout ) {
+			this.layout = new ModalLayout();
+			this.layout.getModal().on( 'hide', () => elementorCommon.route.close( this.getNamespace() ) );
+		}
+
+		this.context.layout.showModal();
+		return true;
 	}
 }

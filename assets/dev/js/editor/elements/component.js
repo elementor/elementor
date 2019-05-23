@@ -1,10 +1,7 @@
 // TODO: Maybe it should merge with panel/elements?
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'Elements';
-		this.namespace = 'elements';
+	getNamespace() {
+		return 'elements';
 	}
 
 	dependency( args ) {

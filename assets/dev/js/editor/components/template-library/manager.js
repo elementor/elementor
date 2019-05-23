@@ -1,7 +1,6 @@
 import Component from './component';
 
-var TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' ),
-	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
+	var	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
 	TemplateLibraryManager;
 
 TemplateLibraryManager = function() {
@@ -12,16 +11,9 @@ TemplateLibraryManager = function() {
 
 	let deleteDialog,
 		errorDialog,
-		layout,
 		templatesCollection,
 		config = {},
 		filterTerms = {};
-
-	const initLayout = function() {
-		layout = new TemplateLibraryLayoutView();
-
-		layout.getModal().on( 'hide', () => elementorCommon.route.close( 'library' ) );
-	};
 
 	const registerDefaultTemplateTypes = function() {
 		var data = {
@@ -81,7 +73,7 @@ TemplateLibraryManager = function() {
 
 		registerDefaultFilterTerms();
 
-		this.component = elementorCommon.components.register( new Component(), { parent: this } );
+		this.component = elementorCommon.components.register( new Component( { context: this } ) );
 
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
@@ -129,7 +121,7 @@ TemplateLibraryManager = function() {
 	this.importTemplate = function( templateModel, options ) {
 		options = options || {};
 
-		layout.showLoadingView();
+		self.layout.showLoadingView();
 
 		self.requestTemplateContent( templateModel.get( 'source' ), templateModel.get( 'template_id' ), {
 			data: {
@@ -140,9 +132,9 @@ TemplateLibraryManager = function() {
 				const importOptions = jQuery.extend( {}, self.modalConfig.importOptions );
 
 				// Hide for next open.
-				layout.hideLoadingView();
+				self.layout.hideLoadingView();
 
-				self.closeModal();
+				self.layout.hideModal();
 
 				elementor.channels.data.trigger( 'template:before:insert', templateModel );
 
@@ -158,7 +150,7 @@ TemplateLibraryManager = function() {
 				self.showErrorDialog( data );
 			},
 			complete: function() {
-				layout.hideLoadingView();
+				self.layout.hideLoadingView();
 			},
 		} );
 	};
@@ -242,10 +234,6 @@ TemplateLibraryManager = function() {
 		return errorDialog;
 	};
 
-	this.getLayout = function() {
-		return layout;
-	};
-
 	this.getTemplatesCollection = function() {
 		return templatesCollection;
 	};
@@ -293,18 +281,6 @@ TemplateLibraryManager = function() {
 		elementorCommon.ajax.addRequest( 'get_library_data', ajaxOptions );
 	};
 
-	this.startModal = function() {
-		if ( ! layout ) {
-			initLayout();
-		}
-
-		layout.showModal();
-	};
-
-	this.closeModal = function() {
-		layout.hideModal();
-	};
-
 	this.getFilter = function( name ) {
 		return elementor.channels.templates.request( 'filter:' + name );
 	};
@@ -325,25 +301,21 @@ TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setScreen = function( source, type, silent ) {
+	this.setScreen = function( args ) {
 		elementor.channels.templates.stopReplying();
 
-		self.setFilter( 'source', source, true );
+		self.setFilter( 'source', args.source, true );
+		self.setFilter( 'type', args.type, true );
+		self.setFilter( 'subtype', args.subtype, true );
 
-		if ( type ) {
-			self.setFilter( 'type', type, true );
-		}
-
-		if ( ! silent ) {
-			self.showTemplates();
-		}
+		self.showTemplates();
 	};
 
 	this.loadTemplates = function( onUpdate ) {
 		self.requestLibraryData( {
-			onBeforeUpdate: layout.showLoadingView.bind( layout ),
+			onBeforeUpdate: self.layout.showLoadingView.bind( self.layout ),
 			onUpdate: function() {
-				layout.hideLoadingView();
+				self.layout.hideLoadingView();
 
 				if ( onUpdate ) {
 					onUpdate();
@@ -354,12 +326,12 @@ TemplateLibraryManager = function() {
 
 	this.showTemplates = function() {
 		// The tabs should exist in DOM on loading.
-		layout.setHeaderDefaultParts();
+		self.layout.setHeaderDefaultParts();
 
 		self.loadTemplates( function() {
 			var templatesToShow = self.filterTemplates();
 
-			layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
+			self.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
 		} );
 	};
 

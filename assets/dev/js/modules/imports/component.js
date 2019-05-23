@@ -1,31 +1,18 @@
 import Module from './module';
 
 export default class extends Module {
-	constructor( ...args ) {
-		super( ...args );
+	__construct( args ) {
+		if ( ! args.context ) {
+			throw Error( 'context is required' );
+		}
 
+		this.context = args.context;
 		this.tabs = {};
 		this.isActive = {};
 		this.defaultRoute = '';
 	}
 
-	init( args ) {
-		if ( ! this.title ) {
-			throw Error( 'title is required' );
-		}
-
-		if ( ! this.namespace ) {
-			throw Error( 'namespace is required' );
-		}
-
-		if ( ! args.parent ) {
-			throw Error( 'parent is required' );
-		}
-
-		this.parent = args.parent;
-
-		this.tabRenderer = args.tabRenderer;
-
+	onInit() {
 		jQuery.each( this.getTabs(), ( tab ) => this.registerTabRoute( tab ) );
 
 		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
@@ -33,12 +20,16 @@ export default class extends Module {
 		jQuery.each( this.getCommands(), ( command, callback ) => this.registerCommand( command, callback ) );
 	}
 
+	getNamespace() {
+		throw Error( 'getNamespace must be override is required' );
+	}
+
 	registerCommand( command, callback ) {
-		elementorCommon.commands.register( this.namespace, command, callback );
+		elementorCommon.commands.register( this, command, callback );
 	}
 
 	registerRoute( route, callback ) {
-		elementorCommon.route.register( this.namespace, route, callback );
+		elementorCommon.route.register( this, route, callback );
 	}
 
 	dependency() {
@@ -68,7 +59,7 @@ export default class extends Module {
 	}
 
 	registerTabRoute( tab ) {
-		this.registerRoute( tab, ( routeArgs ) => this.activateTab( tab, routeArgs ) );
+		this.registerRoute( tab, () => this.activateTab( tab ) );
 	}
 
 	getCommands() {
@@ -88,7 +79,7 @@ export default class extends Module {
 	}
 
 	setDefault( route ) {
-		this.defaultRoute = this.namespace + '/' + route;
+		this.defaultRoute = this.getNamespace() + '/' + route;
 	}
 
 	getDefault() {
@@ -99,8 +90,8 @@ export default class extends Module {
 		delete this.tabs[ tab ];
 	}
 
-	addTab( tab, title, position ) {
-		this.tabs[ tab ] = title;
+	addTab( tab, args, position ) {
+		this.tabs[ tab ] = args;
 		// It can be 0.
 		if ( undefined !== typeof position ) {
 			const newTabs = {};
@@ -122,13 +113,13 @@ export default class extends Module {
 	}
 
 	getTabRoute( tab ) {
-		return this.namespace + '/' + tab;
+		return this.getNamespace() + '/' + tab;
 	}
 
-	activateTab( tab, routeArgs ) {
-		if ( this.tabRenderer ) {
-			this.tabRenderer.apply( this, [ tab, routeArgs ] );
-		}
+	renderTab( tab ) {} // eslint-disable-line
+
+	activateTab( tab ) {
+		this.renderTab( tab );
 
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
 			.off( 'click' )

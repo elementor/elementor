@@ -1,30 +1,14 @@
+import FinderLayout from './modal-layout';
+
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'Finder';
-		this.namespace = 'finder';
-	}
-
-	init( args ) {
-		super.init( args );
-
-		this.parent.layout.getModal().on( 'hide', () => elementorCommon.route.close( this.namespace ) );
-	}
-
-	open() {
-		this.parent.layout.showModal();
-		return true;
+	getNamespace() {
+		return 'finder';
 	}
 
 	getRoutes() {
 		return {
 			'': () => {},
 		};
-	}
-
-	getItemsView() {
-		return this.parent.layout.modalContent.currentView.content.currentView;
 	}
 
 	getCommands() {
@@ -42,20 +26,35 @@ export default class extends elementorModules.Component {
 			},
 			'navigate/down': {
 				keys: 'down',
-				scope: [ this.namespace ],
+				scope: [ this.getNamespace() ],
 			},
 			'navigate/up': {
 				keys: 'up',
-				scope: [ this.namespace ],
+				scope: [ this.getNamespace() ],
 			},
 			'navigate/select': {
 				keys: 'enter',
-				scope: [ this.namespace ],
+				scope: [ this.getNamespace() ],
 				dependency: () => {
 					return this.getItemsView().$activeItem;
 				},
 
 			},
 		};
+	}
+
+	open() {
+		if ( ! this.layout ) {
+			this.layout = new FinderLayout();
+			this.layout.getModal().on( 'hide', () => elementorCommon.route.close( this.getNamespace() ) );
+		}
+
+		this.layout.showModal();
+
+		return true;
+	}
+
+	getItemsView() {
+		return this.layout.modalContent.currentView.content.currentView;
 	}
 }

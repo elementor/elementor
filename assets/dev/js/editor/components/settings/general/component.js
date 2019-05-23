@@ -1,20 +1,16 @@
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'Global Settings';
-		this.namespace = 'panel/general-settings';
-	}
-
-	activateTab( tab ) {
-		elementor.getPanelView().setPage( 'general_settings' ).activateTab( tab );
-		super.activateTab( tab );
+	getNamespace() {
+		return 'panel/general-settings';
 	}
 
 	getTabs() {
 		return {
-			style: elementor.translate( 'style' ),
-			lightbox: elementor.translate( 'lightbox' ),
+			style: { title: elementor.translate( 'style' ) },
+			lightbox: { title: elementor.translate( 'lightbox' ) },
 		};
+	}
+
+	renderTab( tab ) {
+		elementor.getPanelView().setPage( 'general_settings' ).activateTab( tab );
 	}
 }

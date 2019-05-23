@@ -1,9 +1,6 @@
 export default class extends elementorModules.Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.title = 'Revisions';
-		this.namespace = 'panel/history/revisions';
+	getNamespace() {
+		return 'panel/history/revisions';
 	}
 
 	getCommands() {
@@ -17,17 +14,17 @@ export default class extends elementorModules.Component {
 		return {
 			up: {
 				keys: 'up',
-				scope: [ this.namespace ],
+				scope: [ this.getNamespace() ],
 			},
 			down: {
 				keys: 'down',
-				scope: [ this.namespace ],
+				scope: [ this.getNamespace() ],
 			},
 		};
 	}
 
 	navigate( up ) {
-		if ( this.parent.getItems().length > 1 ) {
+		if ( this.context.getItems().length > 1 ) {
 			elementor.getPanelView().getCurrentPageView().currentTab.navigate( up );
 		}
 	}
