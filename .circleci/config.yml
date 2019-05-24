@@ -2,10 +2,8 @@ workflows:
   version: 2
   tests:
     jobs:
-    - php54-wp-latest-build
     - php54-wp48-build
     - php54-wp47-build
-    - php55-wp-latest-build
     - php55-wp48-build
     - php55-wp47-build
     - php56-wp-latest-build
