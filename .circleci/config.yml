@@ -69,12 +69,6 @@ job-references:
         path: ~/phpunit
 
 jobs:
-  php54-wp-latest-build:
-    <<: *php_job
-    docker:
-    - image: pojome/php-cli:5.4
-    - image: *mysql_image
-
   php54-wp48-build:
     <<: *php_job
     environment:
@@ -89,12 +83,6 @@ jobs:
     - WP_VERSION: "4.7"
     docker:
     - image: pojome/php-cli:5.4
-    - image: *mysql_image
-
-  php55-wp-latest-build:
-    <<: *php_job
-    docker:
-    - image: pojome/php-cli:5.5
     - image: *mysql_image
 
   php55-wp48-build:
