@@ -92,7 +92,7 @@ class Module extends BaseModule {
 					<span class="elementor-switch-mode-on"><?php echo __( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 					<span class="elementor-switch-mode-off">
 						<i class="eicon-elementor-square" aria-hidden="true"></i>
-						<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
+						<?php echo __( 'Elementor', 'elementor' ); ?>
 					</span>
 				</button>
 			</div>
