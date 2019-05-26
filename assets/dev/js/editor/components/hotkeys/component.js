@@ -25,7 +25,7 @@ export default class extends elementorModules.Component {
 			this.layout.getModal().on( 'hide', () => elementorCommon.route.close( this.getNamespace() ) );
 		}
 
-		this.context.layout.showModal();
+		this.layout.showModal();
 		return true;
 	}
 }
