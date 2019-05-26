@@ -1429,7 +1429,7 @@ class Element_Section extends Element_Base {
 		<# if ( settings.background_video_link ) { #>
 			<div class="elementor-background-video-container elementor-hidden-phone">
 				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
+				<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted playsinline></video>
 			</div>
 		<# } #>
 		<div class="elementor-background-overlay"></div>
@@ -1463,7 +1463,7 @@ class Element_Section extends Element_Base {
 						<?php if ( $video_properties ) : ?>
 							<div class="elementor-background-video-embed"></div>
 						<?php else : ?>
-							<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted></video>
+							<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted playsinline></video>
 						<?php endif; ?>
 					</div>
 					<?php
