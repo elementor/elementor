@@ -97,7 +97,6 @@ class Autoloader {
 			'Controls_Stack' => 'includes/base/controls-stack.php',
 			'DB' => 'includes/db.php',
 			'Debug\Debug' => 'includes/debug/debug.php',
-			'Editor' => 'includes/editor.php',
 			'Elements_Manager' => 'includes/managers/elements.php',
 			'Embed' => 'includes/embed.php',
 			'Fonts' => 'includes/fonts.php',
@@ -212,6 +211,10 @@ class Autoloader {
 			'Core\Ajax' => [
 				'replacement' => 'Core\Common\Modules\Ajax\Module',
 				'version' => '2.3.0',
+			],
+			'Editor' => [
+				'replacement' => 'Core\Editor\Editor',
+				'version' => '2.6.0',
 			],
 		];
 	}
