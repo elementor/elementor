@@ -37,7 +37,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 	},
 
 	importTemplate: function( fileName, fileData ) {
-		const layout = elementor.templates.getLayout();
+		const layout = elementor.templates.layout;
 
 		const options = {
 			data: {

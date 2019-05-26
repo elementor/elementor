@@ -1,6 +1,6 @@
 import Component from './component';
 
-	var	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
+	var TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
 	TemplateLibraryManager;
 
 TemplateLibraryManager = function() {
