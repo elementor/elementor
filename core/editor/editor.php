@@ -62,7 +62,7 @@ class Editor {
 	private $_is_edit_mode;
 
 	/**
-	 * @var NoticeBar
+	 * @var Notice_Bar
 	 */
 	public $notice_bar;
 
@@ -966,7 +966,7 @@ class Editor {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->notice_bar = new NoticeBar();
+		$this->notice_bar = new Notice_Bar();
 
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
