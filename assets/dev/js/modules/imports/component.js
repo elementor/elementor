@@ -96,7 +96,11 @@ export default class extends Module {
 		if ( undefined !== typeof position ) {
 			const newTabs = {};
 			let ids = Object.keys( this.tabs );
-			ids = ids.slice( 0, position ).concat( [ tab ] ).concat( ids.slice( position, -1 /* remove new tab */ ) );
+			// Remove new tab
+			ids.pop();
+
+			// Add it to position.
+			ids.splice( position, 0, tab );
 
 			ids.forEach( ( id ) => {
 				newTabs[ id ] = this.tabs[ id ];
