@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class NoticeBar extends Base_Object {
+class Notice_Bar extends Base_Object {
 
 	protected function get_init_settings() {
 		if ( Plugin::$instance->get_install_time() > strtotime( '-30 days' ) ) {
