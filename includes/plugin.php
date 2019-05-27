@@ -477,6 +477,29 @@ class Plugin {
 	}
 
 	/**
+	 * Get install time.
+	 *
+	 * Retrieve the time when Elementor was installed.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 * @static
+	 *
+	 * @return int Unix timestamp when Elementor was installed.
+	 */
+	public function get_install_time() {
+		$installed_time = get_option( '_elementor_installed_time' );
+
+		if ( ! $installed_time ) {
+			$installed_time = time();
+
+			update_option( '_elementor_installed_time', $installed_time );
+		}
+
+		return $installed_time;
+	}
+
+	/**
 	 * @since 2.3.0
 	 * @access public
 	 */
