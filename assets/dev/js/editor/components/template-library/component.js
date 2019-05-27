@@ -7,9 +7,9 @@ export default class extends elementorModules.Component {
 		this.docLibraryConfig = elementor.config.document.remoteLibrary;
 
 		if ( 'block' === this.docLibraryConfig.type ) {
-			this.setDefault( 'templates/block' );
+			this.setDefault( 'templates/blocks' );
 		} else {
-			this.setDefault( 'templates/page' );
+			this.setDefault( 'templates/pages' );
 		}
 	}
 
@@ -21,7 +21,7 @@ export default class extends elementorModules.Component {
 		// Allow add tabs via `addTab`.
 		if ( _.isEmpty( this.tabs ) ) {
 			this.tabs = {
-				'templates/block': {
+				'templates/blocks': {
 					title: elementor.translate( 'blocks' ),
 					filter: {
 						source: 'remote',
@@ -29,7 +29,7 @@ export default class extends elementorModules.Component {
 						subtype: this.docLibraryConfig.category,
 					},
 				},
-				'templates/page': {
+				'templates/pages': {
 					title: elementor.translate( 'pages' ),
 					filter: {
 						source: 'remote',
