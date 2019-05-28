@@ -129,10 +129,10 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 				}, 1 );
 			} );
 		} else {
-			if ( self.getElementSettings( 'background_video_start' ) || self.getElementSettings( 'background_video_end' ) ) {
-				const startTime = self.getElementSettings( 'background_video_start' ) || 0,
-					endTime = self.getElementSettings( 'background_video_end' );
-				videoLink += '#t=' + startTime + ( endTime ? ',' + endTime : '' );
+			const startTime = self.getElementSettings( 'background_video_start' ),
+				endTime = self.getElementSettings( 'background_video_end' );
+			if ( startTime || endTime ) {
+				videoLink += '#t=' + ( startTime || 0 ) + ( endTime ? ',' + endTime : '' );
 			}
 			self.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', self.changeVideoSize );
 		}
