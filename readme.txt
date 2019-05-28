@@ -221,6 +221,11 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
+= 2.5.16 - 2019-05-28 =
+* Tweak: Added `reduce-motion` accessibility support for CSS animation library ([#7968](https://github.com/elementor/elementor/issues/7968), Props [@drawcard](https://github.com/drawcard))
+* Fix: Tabs Widget compatibility for IE ([#8123](https://github.com/elementor/elementor/issues/8123))
+* Fix: Admin dashboard dialog button UI glitch
+
 = 2.5.15 - 2019-05-07 =
 * Fix: Param type in doc block is partial ([#7988](https://github.com/elementor/elementor/issues/7988))
 * Fix: Paste Style changes widget title in Navigator ([#7931](https://github.com/elementor/elementor/issues/7931))
