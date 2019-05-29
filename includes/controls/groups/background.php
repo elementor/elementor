@@ -571,7 +571,7 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['video_end'] = [
 			'label' => __( 'End Time', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
-			'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
+			'description' => __( 'Specify an end time (in seconds)<br>Note that setting video start & end time cancels the video loop.', 'elementor' ),
 			'placeholder' => 70,
 			'condition' => [
 				'background' => [ 'video' ],

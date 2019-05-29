@@ -4,6 +4,7 @@ import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 import DateTimeControl from 'elementor-controls/date-time';
+import NoticeBar from './utils/notice-bar';
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -274,6 +275,8 @@ const App = Marionette.Application.extend( {
 		this.initHotKeys();
 
 		this.hotkeysScreen = new HotkeysScreen();
+
+		this.noticeBar = new NoticeBar();
 	},
 
 	// TODO: BC method since 2.3.0
