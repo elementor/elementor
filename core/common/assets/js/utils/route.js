@@ -10,9 +10,14 @@ export default class extends Commands {
 	close( container ) {
 		const component = elementorCommon.components.get( container );
 
-		component.close();
+		if ( ! component.isOpen ) {
+			return this;
+		}
 
+		// Mark as closed before the `component.close` in order to avoid recursive calls if the component `close` calls to route.close.
 		component.isOpen = false;
+
+		component.close();
 
 		this.clearCurrent( container );
 

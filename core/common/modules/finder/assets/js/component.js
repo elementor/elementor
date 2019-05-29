@@ -54,6 +54,10 @@ export default class extends elementorModules.Component {
 		return true;
 	}
 
+	close() {
+		this.layout.getModal().hide();
+	}
+
 	getItemsView() {
 		return this.layout.modalContent.currentView.content.currentView;
 	}

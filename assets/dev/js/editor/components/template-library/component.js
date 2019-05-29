@@ -102,6 +102,8 @@ export default class extends elementorModules.Component {
 
 	close() {
 		this.context.modalConfig = {};
+
+		this.context.layout.getModal().hide();
 	}
 
 	show( args ) {
