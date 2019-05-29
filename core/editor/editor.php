@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Editor;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
@@ -89,6 +89,8 @@ class Editor {
 		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
 		}
+
+		Loading_Inspection_Manager::instance()->register_inspections();
 
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
@@ -521,7 +523,6 @@ class Editor {
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
-			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
@@ -530,6 +531,12 @@ class Editor {
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::get_introduction_meta(),
+			],
+			'preview' => [
+				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
+				'help_preview_http_error_url' => 'https://go.elementor.com/preview-not-loaded/#permissions',
+				'help_preview_http_error_500_url' => 'https://go.elementor.com/500-error/',
+				'debug_data' => Loading_Inspection_Manager::instance()->run_inspections(),
 			],
 			'locale' => get_locale(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
@@ -620,8 +627,6 @@ class Editor {
 				'learn_more' => __( 'Learn More', 'elementor' ),
 				'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
 				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
-				'preview_not_loading_header' => __( 'The preview could not be loaded', 'elementor' ),
-				'preview_not_loading_message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
 
 				// Gallery.
 				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
