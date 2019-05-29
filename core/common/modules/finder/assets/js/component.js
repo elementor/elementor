@@ -7,7 +7,7 @@ export default class extends elementorModules.Component {
 
 	getRoutes() {
 		return {
-			'': () => {},
+			'': () => { /* Nothing to do, it's already rendered. */ },
 		};
 	}
 
@@ -26,15 +26,21 @@ export default class extends elementorModules.Component {
 			},
 			'navigate/down': {
 				keys: 'down',
-				scope: [ this.getNamespace() ],
+				scopes: [ this.getNamespace() ],
+				dependency: () => {
+					return this.getItemsView();
+				},
 			},
 			'navigate/up': {
 				keys: 'up',
-				scope: [ this.getNamespace() ],
+				scopes: [ this.getNamespace() ],
+				dependency: () => {
+					return this.getItemsView();
+				},
 			},
 			'navigate/select': {
 				keys: 'enter',
-				scope: [ this.getNamespace() ],
+				scopes: [ this.getNamespace() ],
 				dependency: () => {
 					return this.getItemsView().$activeItem;
 				},

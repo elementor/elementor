@@ -95,7 +95,7 @@ export default class extends Module {
 		// It can be 0.
 		if ( undefined !== typeof position ) {
 			const newTabs = {};
-			let ids = Object.keys( this.tabs );
+			const ids = Object.keys( this.tabs );
 			// Remove new tab
 			ids.pop();
 
