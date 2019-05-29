@@ -120,7 +120,7 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 			videoLink = self.getElementSettings( 'background_video_link' ),
 			videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink );
 
-		self.isYTVideo = !! videoID;
+		self.isYTVideo = ! ! videoID;
 
 		if ( videoID ) {
 			elementorFrontend.utils.youtube.onYoutubeApiReady( function( YT ) {
@@ -129,6 +129,11 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 				}, 1 );
 			} );
 		} else {
+			const startTime = self.getElementSettings( 'background_video_start' ),
+				endTime = self.getElementSettings( 'background_video_end' );
+			if ( startTime || endTime ) {
+				videoLink += '#t=' + ( startTime || 0 ) + ( endTime ? ',' + endTime : '' );
+			}
 			self.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', self.changeVideoSize );
 		}
 
