@@ -1,10 +1,16 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Editor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Plugin;
+use Elementor\Schemes_Manager;
+use Elementor\Settings;
+use Elementor\Shapes;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -54,6 +60,11 @@ class Editor {
 	 * @var bool Whether the edit mode is active.
 	 */
 	private $_is_edit_mode;
+
+	/**
+	 * @var Notice_Bar
+	 */
+	public $notice_bar;
 
 	/**
 	 * Init.
@@ -294,7 +305,7 @@ class Editor {
 	 * @access public
 	 */
 	public function print_editor_template() {
-		include 'editor-templates/editor-wrapper.php';
+		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
 
 	/**
@@ -955,6 +966,8 @@ class Editor {
 	 * @access public
 	 */
 	public function __construct() {
+		$this->notice_bar = new Notice_Bar();
+
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 
@@ -1014,7 +1027,7 @@ class Editor {
 	public function create_nonce( $post_type ) {
 		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
 
-		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		return $ajax->create_nonce();
@@ -1058,7 +1071,7 @@ class Editor {
 	public function verify_request_nonce() {
 		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
 
-		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		return $ajax->verify_request_nonce();
@@ -1077,7 +1090,7 @@ class Editor {
 	public function verify_ajax_nonce() {
 		// _deprecated_function( __METHOD__, '2.3.0' );
 
-		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		if ( ! $ajax->verify_request_nonce() ) {
@@ -1105,7 +1118,7 @@ class Editor {
 		];
 
 		foreach ( $template_names as $template_name ) {
-			Plugin::$instance->common->add_template( __DIR__ . "/editor-templates/$template_name.php" );
+			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/$template_name.php" );
 		}
 	}
 }
