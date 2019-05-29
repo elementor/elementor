@@ -59,16 +59,8 @@ export default class Shortcuts {
 		}
 
 		jQuery.each( handlers, ( key, handler ) => {
-			if ( handler.scope ) {
-				const inScope = handler.scope.some( ( scope ) => {
-					if ( elementorCommon.route.isPartOf( scope ) ) {
-						return true;
-					}
-				} );
-
-				if ( ! inScope ) {
-					return;
-				}
+			if ( handler.scopes && ! this.inScope( handler.scopes ) ) {
+				return;
 			}
 
 			if ( handler.dependency && ! handler.dependency( event ) ) {
@@ -124,5 +116,13 @@ export default class Shortcuts {
 		}
 
 		return shortcut.join( '+' );
+	}
+
+	inScope( scopes ) {
+		return scopes.some( ( scope ) => {
+			if ( elementorCommon.route.isPartOf( scope ) ) {
+				return true;
+			}
+		} );
 	}
 }

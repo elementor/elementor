@@ -44,6 +44,11 @@ export default class extends Commands {
 
 	clearCurrent( container ) {
 		const route = this.current[ container ];
+
+		if ( ! route ) {
+			return;
+		}
+
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
 		this.getComponent( route ).onCloseRoute();

@@ -14,11 +14,11 @@ export default class extends elementorModules.Component {
 		return {
 			up: {
 				keys: 'up',
-				scope: [ this.getNamespace() ],
+				scopes: [ this.getNamespace() ],
 			},
 			down: {
 				keys: 'down',
-				scope: [ this.getNamespace() ],
+				scopes: [ this.getNamespace() ],
 			},
 		};
 	}

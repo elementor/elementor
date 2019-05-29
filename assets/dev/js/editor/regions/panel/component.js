@@ -17,18 +17,22 @@ export default class extends elementorModules.Component {
 			toggle: () => elementor.getPanelView().modeSwitcher.currentView.toggleMode(),
 			save: () => elementor.saver.saveDraft(),
 			exit: () => elementorCommon.route.to( 'panel/menu' ),
-			'change-device-mode': () => {
-				const devices = [ 'desktop', 'tablet', 'mobile' ],
-					currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-				let modeIndex = devices.indexOf( currentDeviceMode );
+			'change-device-mode': ( args ) => {
+				const devices = [ 'desktop', 'tablet', 'mobile' ];
+				if ( ! args.device ) {
+					const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
+					let modeIndex = devices.indexOf( currentDeviceMode );
 
-				modeIndex++;
+					modeIndex++;
 
-				if ( modeIndex >= devices.length ) {
-					modeIndex = 0;
+					if ( modeIndex >= devices.length ) {
+						modeIndex = 0;
+					}
+
+					args.device = devices[ modeIndex ];
 				}
 
-				elementor.changeDeviceMode( devices[ modeIndex ] );
+				elementor.changeDeviceMode( args.device );
 			},
 		};
 	}
@@ -43,11 +47,11 @@ export default class extends elementorModules.Component {
 			},
 			exit: {
 				keys: 'esc',
-				// TODO: replace dependency with scope.
+				// TODO: replace dependency with scopes.
 				dependency: () => {
 					return ! jQuery( '.dialog-widget:visible' ).length;
 				},
-				scope: [ 'panel', 'preview' ],
+				scopes: [ 'panel', 'preview' ],
 			},
 			'change-device-mode': {
 				keys: 'ctrl+shift+m',
