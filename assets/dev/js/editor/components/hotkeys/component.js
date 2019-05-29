@@ -28,4 +28,8 @@ export default class extends elementorModules.Component {
 		this.layout.showModal();
 		return true;
 	}
+
+	close() {
+		this.layout.getModal().hide();
+	}
 }
