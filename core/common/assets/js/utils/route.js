@@ -19,6 +19,8 @@ export default class extends Commands {
 
 		component.close();
 
+		component.inactivate();
+
 		this.clearCurrent( container );
 
 		return this;

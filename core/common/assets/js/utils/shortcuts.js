@@ -52,7 +52,7 @@ export default class Shortcuts {
 	}
 
 	handle( event ) {
-		const handlers = this.handlers[ this.getEventShortcut( event ) ];
+		const handlers = this.getHandlersByPriority( event );
 
 		if ( ! handlers ) {
 			return;
@@ -124,5 +124,32 @@ export default class Shortcuts {
 				return true;
 			}
 		} );
+	}
+
+	getHandlersByPriority( event ) {
+		const handlers = this.handlers[ this.getEventShortcut( event ) ];
+
+		if ( ! handlers ) {
+			return false;
+		}
+
+		const activeComponents = Object.keys( elementorCommon.components.activeComponents ),
+			byPriority = [],
+			scopes = {};
+
+		jQuery.each( handlers, ( key, handler ) => {
+			if ( handler.scopes ) {
+				handler.scopes.forEach( ( scope ) => scopes[ scope ] = handler );
+			}
+		} );
+
+		for ( let i = activeComponents.length - 1; 0 <= i; i-- ) {
+			if ( scopes[ activeComponents[ i ] ] ) {
+				byPriority.push( scopes[ activeComponents[ i ] ] );
+				return byPriority;
+			}
+		}
+
+		return handlers;
 	}
 }

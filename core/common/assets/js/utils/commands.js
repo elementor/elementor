@@ -112,6 +112,8 @@ export default class extends elementorModules.Module {
 
 		this.commands[ command ].apply( component, [ args ] );
 
+		component.activate();
+
 		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args ] );
 		}

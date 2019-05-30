@@ -21,6 +21,11 @@ export default class extends elementorModules.Component {
 		};
 	}
 
+	activate() {
+		// Activate the tab component itself.
+		elementorCommon.components.activate( this.getTabRoute( this.currentTab ) );
+	}
+
 	getTabsWrapperSelector() {
 		return '#elementor-panel-elements-navigation';
 	}
