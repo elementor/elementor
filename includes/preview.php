@@ -119,7 +119,7 @@ class Preview {
 			return false;
 		}
 
-		if ( ! isset( $_GET['elementor-preview'] ) || $post_id !== (int) $_GET['elementor-preview'] ) {
+		if ( ! isset( $_GET['preview_id'] ) || $post_id !== (int) $_GET['preview_id'] ) {
 			return false;
 		}
 
