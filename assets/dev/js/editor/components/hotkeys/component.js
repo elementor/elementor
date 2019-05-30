@@ -1,6 +1,12 @@
 import ModalLayout from './modal-layout';
 
 export default class extends elementorModules.Component {
+	__construct( args ) {
+		super.__construct( args );
+
+		this.isModal = true;
+	}
+
 	getNamespace() {
 		return 'shortcuts';
 	}

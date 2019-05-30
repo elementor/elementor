@@ -3,6 +3,7 @@ export default class extends elementorModules.Module {
 		super( ...args );
 
 		this.components = {};
+		this.activeComponents = {};
 	}
 
 	printAll() {
@@ -17,5 +18,15 @@ export default class extends elementorModules.Module {
 
 	get( id ) {
 		return this.components[ id ];
+	}
+
+	activate( namespace ) {
+		// Add as last.
+		this.inactivate( namespace );
+		this.activeComponents[ namespace ] = true;
+	}
+
+	inactivate( namespace ) {
+		delete this.activeComponents[ namespace ];
 	}
 }

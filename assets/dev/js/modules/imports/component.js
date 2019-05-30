@@ -9,7 +9,9 @@ export default class extends Module {
 		this.context = args.context;
 		this.tabs = {};
 		this.isActive = {};
+		this.isModal = false;
 		this.defaultRoute = '';
+		this.currentTab = '';
 	}
 
 	onInit() {
@@ -18,6 +20,13 @@ export default class extends Module {
 		jQuery.each( this.getRoutes(), ( route, callback ) => this.registerRoute( route, callback ) );
 
 		jQuery.each( this.getCommands(), ( command, callback ) => this.registerCommand( command, callback ) );
+
+		if ( this.isModal ) {
+			elementorCommon.shortcuts.register( 'esc', {
+				scopes: [ this.getNamespace() ],
+				callback: () => this.close(),
+			} );
+		}
 	}
 
 	getNamespace() {
@@ -41,6 +50,14 @@ export default class extends Module {
 	}
 
 	close() {}
+
+	activate() {
+		elementorCommon.components.activate( this.getNamespace() );
+	}
+
+	inactivate() {
+		elementorCommon.components.inactivate( this.getNamespace() );
+	}
 
 	onRoute() {
 		this.isActive = true;
@@ -123,6 +140,7 @@ export default class extends Module {
 	renderTab( tab ) {} // eslint-disable-line
 
 	activateTab( tab ) {
+		this.currentTab = tab;
 		this.renderTab( tab );
 
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
