@@ -107,6 +107,9 @@ class Widget_Star_Rating extends Widget_Base {
 				'max' => 10,
 				'step' => 0.1,
 				'default' => 5,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
