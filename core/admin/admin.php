@@ -14,9 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin extends App {
 
-	const BETA_TESTER_NEWSLETTER_TERMS_URL = 'https://go.elementor.com/beta-testers-newsletter-terms';
-	const BETA_TESTER_NEWSLETTER_PRIVACY_URL = 'https://go.elementor.com/beta-testers-newsletter-privacy';
-
 	/**
 	 * Get module name.
 	 *
