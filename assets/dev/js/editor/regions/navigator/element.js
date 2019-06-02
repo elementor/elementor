@@ -12,6 +12,7 @@ export default class extends Marionette.CompositeView {
 			title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
 			toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
 			toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
+			indicators: '> .elementor-navigator__item > .elementor-navigator__element__indicators',
 			elements: '> .elementor-navigator__elements',
 		};
 	}
@@ -251,12 +252,38 @@ export default class extends Marionette.CompositeView {
 		} );
 	}
 
+	renderIndicators() {
+		const settings = this.model.get( 'settings' ).attributes;
+
+		this.ui.indicators.empty();
+
+		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
+			const isShouldBeIndicated = indicatorSettings.settingKeys.some( ( key ) => settings[ key ] );
+
+			if ( ! isShouldBeIndicated ) {
+				return;
+			}
+
+			const $indicator = jQuery( '<div>', { class: 'elementor-navigator__element__indicator' } );
+
+			$indicator.html( `<i class="eicon-${ indicatorSettings.icon }"></i>` );
+
+			this.ui.indicators.append( $indicator );
+		} );
+	}
+
 	onRender() {
 		this.activateSortable();
+
+		if ( this.isRoot() ) {
+			return;
+		}
 
 		this.ui.item.css( 'padding-' + ( elementorCommon.config.isRTL ? 'right' : 'left' ), this.getIndent() );
 
 		this.toggleHiddenClass();
+
+		this.renderIndicators();
 	}
 
 	onModelChange() {
@@ -269,6 +296,14 @@ export default class extends Marionette.CompositeView {
 		if ( undefined !== settingsModel.changed._title ) {
 			this.ui.title.text( this.model.getTitle() );
 		}
+
+		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
+			if ( Object.keys( settingsModel.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
+				this.renderIndicators();
+
+				return false;
+			}
+		} );
 	}
 
 	onItemClick() {
