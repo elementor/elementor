@@ -12,18 +12,32 @@
 	&__message {
 		@include padding-start(15px);
 		flex-grow: 1;
+
+		a {
+			font-style: italic;
+			text-decoration: underline;
+		}
 	}
 
 	&__action {
 		text-transform: uppercase;
-
-		a {
-			color: #fff;
-		}
 	}
 
 	&__close {
 		margin: 0 20px;
 		cursor: pointer;
+	}
+
+	i {
+		font-size: 16px;
+		opacity: .9;
+	}
+
+	a {
+		color: #fff;
+
+		&:hover {
+			opacity: .8;
+		}
 	}
 }
