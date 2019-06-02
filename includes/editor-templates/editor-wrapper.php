@@ -60,7 +60,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 			<?php if ( $notice ) { ?>
 				<div id="elementor-notice-bar">
 					<i class="eicon-elementor-square"></i>
-					<div id="elementor-notice-bar__message"><?php echo $notice['message']; ?></div>
+					<div id="elementor-notice-bar__message"><?php echo sprintf( $notice['message'], $notice['action_url'] ); ?></div>
 					<div id="elementor-notice-bar__action"><a href="<?php echo $notice['action_url']; ?>" target="_blank"><?php echo $notice['action_title']; ?></a></div>
 					<i id="elementor-notice-bar__close" class="eicon-close"></i>
 				</div>

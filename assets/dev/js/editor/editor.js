@@ -611,6 +611,12 @@ const App = Marionette.Application.extend( {
 				regionClass: Navigator,
 			},
 		} );
+
+		this.trigger( 'navigator:init' );
+
+		if ( this.navigator.storage.visible ) {
+			this.navigator.open();
+		}
 	},
 
 	setAjax: function() {

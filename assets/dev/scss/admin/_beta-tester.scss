@@ -1,35 +1,53 @@
 #elementor-beta-tester-modal {
+
 	.dialog-lightbox-widget-content {
-		top: 20%;
-		left: 30%;
-		max-width: 550px;
-		max-height: 30em;
+		max-width: 500px;
+		height: initial;
 	}
 
-	.dialog-message.dialog-lightbox-message{
-		height: auto;
-		padding: 4em;
+	.dialog-lightbox-message{
+		padding: 40px;
+		height: 265px;
 	}
+}
 
-	#elementor-beta-tester-dialog-form-caption {
+#elementor-beta-tester-form {
+
+	&__caption {
 		font-weight: bold;
-		font-size: 1.4em;
+		font-size: 20px;
+		color: $editor-darkest;
 	}
 
-	.elementor-beta-tester-dialog-input-wrapper{
-		margin: 1em auto 1em auto;
-		display:flex;
-		border: $editor-lightest 1px solid;
+	&__description {
+		font-size: 15px;
+		color: $editor-dark;
+		margin-top: 10px;
+	}
 
-		input {
-			margin: 0;
-		}
+	&__input-wrapper{
+		display:flex;
+		margin-top: 30px;
 
 		.elementor-button {
-			border-radius: 0;
+			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+			width: 135px;
+			padding: 15px;
 		}
 	}
-	#elementor-beta-tester-email{
-		flex: 4;
+
+	&__email {
+		flex-grow: 1;
+		border: $editor-light 1px solid;
+		@include border-end(0);
+		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		margin: 0;
+		padding: 10px;
+	}
+
+	&__terms {
+		margin-top: 10px;
+		font-size: 11px;
+		color: $editor-light;
 	}
 }
