@@ -20,10 +20,6 @@ export default class extends BaseRegion {
 		this.ensurePosition = this.ensurePosition.bind( this );
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
-
-		if ( this.storage.visible ) {
-			this.open();
-		}
 	}
 
 	getStorageKey() {
