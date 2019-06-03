@@ -51,19 +51,51 @@ class Tab extends Component {
 	handleFullIconList = () => {
 		let fullIconList = [];
 		Object.entries( this.props.icons ).forEach( library => {
-			fullIconList= [ ... fullIconList, ... this.getIconsOfType( library[ 0 ], library[ 1 ] ) ];
+			if ( 'recommended' !== library[0] ) {
+				fullIconList = [ ... fullIconList, ... this.getIconsOfType( library[ 0 ], library[ 1 ] ) ];
+			}
 		} );
 		return fullIconList.sort( ( a, b ) => a.filter === b.filter ? 0 : +( a.filter > b.filter ) || -1 );
+	};
+
+	getLibrary = ( libraryName ) => {
+		const icons = elementor.config.icons.filter( ( library ) => {
+			return libraryName === library.name;
+		} );
+		return icons;
+	};
+
+	handleRecommendedList = () => {
+		let recommendedIconList = [];
+		Object.entries( this.props.icons ).forEach( library => {
+			const iconLibrary = this.getLibrary( library[0] ),
+				iconsOfType = iconLibrary[0].icons,
+				recommendedIconsOfType = {};
+			library[1].forEach( ( iconName ) => {
+				if ( iconsOfType[ iconName ] ) {
+					recommendedIconsOfType[ iconName ] = iconsOfType[ iconName ];
+				}
+			} );
+			recommendedIconList = [ ... recommendedIconList, ...this.getIconsOfType( library[ 0 ], recommendedIconsOfType ) ];
+		} );
+		return recommendedIconList;
 	};
 
 	getIconsComponentList = () => {
 		let iconsToShow = [];
 		const { name, icons, filter } = this.props;
-		if ( 'all' === name ) {
-			iconsToShow = this.handleFullIconList();
-		} else {
-			iconsToShow = this.getIconsOfType( name, icons );
+		switch ( name ) {
+			case 'all':
+				iconsToShow = this.handleFullIconList();
+				break;
+			case 'recommended':
+				iconsToShow = this.handleRecommendedList();
+				break;
+			default:
+				iconsToShow = this.getIconsOfType( name, icons );
+				break;
 		}
+
 		if ( filter ) {
 			iconsToShow = Object.values( iconsToShow ).filter( ( icon ) => {
 				return icon.props.data.name.toLowerCase().indexOf( filter ) > -1;
