@@ -35,9 +35,9 @@ const moduleRules = {
 		// 	test: /\.js$/,
 		// 	exclude: /node_modules/,
 		// 	loader: 'eslint-loader',
-		// 	//options: {
-		// 	//	failOnError: true,
-		// 	//}
+		// 	options: {
+		// 		failOnError: true,
+		// 	}
 		// },
 		{
 			test: /\.js$/,
@@ -48,6 +48,7 @@ const moduleRules = {
 					query: {
 						presets: [ '@wordpress/default' ],
 						plugins: [
+							[ '@wordpress/babel-plugin-import-jsx-pragma' ],
 							[ 'transform-react-jsx' ],
 							[ '@babel/plugin-proposal-class-properties' ],
 							[ '@babel/plugin-transform-runtime' ],

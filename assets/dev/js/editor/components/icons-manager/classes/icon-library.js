@@ -5,14 +5,14 @@ const IconLibrary = class {
 
 	notifyCallback = null;
 
-	enqueueCSS = url => {
-		return new Promise( function ( resolve ) {
+	enqueueCSS = ( url ) => {
+		return new Promise( function( resolve ) {
 			if ( ! document.querySelector( 'link[href="' + url + '"]' ) ) {
 				const link = document.createElement( 'link' );
 				link.type = 'text/css';
 				link.rel = 'stylesheet';
 				link.href = url;
-				link.onload = function () {
+				link.onload = function() {
 					resolve();
 				};
 				const headScript = document.querySelector( 'head' );
@@ -22,7 +22,7 @@ const IconLibrary = class {
 	};
 
 	parseCSS = ( css, prefix = 'fa-', displayPrefix = '', library = false ) => {
-		const iconPattern = new RegExp( "\\." +	prefix + "([^\\.!:]*)::?before\\s*{\\s*content:\\s*[\"|']\\\\[^'|\"]*[\"|'];?\\s*}", "g" ),
+		const iconPattern = new RegExp( '\\.' +	prefix + "([^\\.!:]*)::?before\\s*{\\s*content:\\s*[\"|']\\\\[^'|\"]*[\"|'];?\\s*}", 'g' ),
 			index = 1,
 			icons = [];
 		let icon,
@@ -37,7 +37,7 @@ const IconLibrary = class {
 					.split( '-' )
 					.join( ' ' ),
 				filter: match[ index ].trim( ':' ),
-				displayPrefix: displayPrefix || prefix.replace( '-', '' )
+				displayPrefix: displayPrefix || prefix.replace( '-', '' ),
 			};
 			icons.push( { [ match[ index ] ]: icon } );
 			match = iconPattern.exec( css );
@@ -49,21 +49,23 @@ const IconLibrary = class {
 		return this.normalizeIconList( { ... library, icons: icons } );
 	};
 
-	extractIconsFromCSS = library => {
+	extractIconsFromCSS = ( library ) => {
 		fetch( library.url, { mode: 'cors' } )
-			.then( res => { return res.text(); } )
-			.then( css => {
+			.then( ( res ) => {
+				return res.text();
+			} )
+			.then( ( css ) => {
 				this.parseCSS( css, library.prefix, library.displayPrefix || '', library );
 			} );
 	};
 
-	fetchIcons = library => {
+	fetchIcons = ( library ) => {
 		// @todo: use ElementorAJAX MUST!!!!
 		fetch( library.fetchJson, { mode: 'cors' } )
-			.then( res => {
+			.then( ( res ) => {
 				return res.json();
 			} )
-			.then( json => {
+			.then( ( json ) => {
 				library.icons = json.icons;
 				return this.normalizeIconList( library );
 			} );
@@ -88,28 +90,35 @@ const IconLibrary = class {
 					.split( '-' )
 					.join( ' ' ),
 				filter: name.trim( ':' ),
-				displayPrefix: library.displayPrefix || library.prefix.replace( '-', '' )
+				displayPrefix: library.displayPrefix || library.prefix.replace( '-', '' ),
 			};
 		}
 		if ( Object.keys( icons ).length ) {
 			library.icons = icons;
 			this.loaded[ library.name ] = true;
 			Store.save( library );
-			this.notifyCallback( library );
+			this.runCallback( library );
 		}
 	}
+
+	runCallback = ( library ) => {
+		if ( 'function' !== typeof this.notifyCallback ) {
+			return library;
+		}
+		return this.notifyCallback( library );
+	};
 
 	initIconType = ( libraryConfig, callback ) => {
 		this.notifyCallback = callback;
 
 		if ( this.loaded[ libraryConfig.name ] ) {
-			libraryConfig.icons =  Store.getIcons( libraryConfig );
-			return this.notifyCallback( libraryConfig );
+			libraryConfig.icons = Store.getIcons( libraryConfig );
+			return this.runCallback( libraryConfig );
 		}
 
 		// Enqueue CSS
 		if ( libraryConfig.enqueue ) {
-			libraryConfig.enqueue.forEach( assetURL => {
+			libraryConfig.enqueue.forEach( ( assetURL ) => {
 				this.enqueueCSS( assetURL );
 			} );
 		}
@@ -142,7 +151,7 @@ const IconLibrary = class {
 
 	// @todo: move to helpers
 	ucwords( str ) {
-		return ( str + '' ).replace( /^(.)|\s+(.)/g, function ( $1 ) {
+		return ( str + '' ).replace( /^(.)|\s+(.)/g, function( $1 ) {
 			return $1.toUpperCase();
 		} );
 	}

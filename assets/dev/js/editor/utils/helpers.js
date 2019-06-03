@@ -13,9 +13,15 @@ helpers = {
 		},
 	},
 
-	enqueueStylesheet( url ) {
+	enqueueStylesheet( url, previewOnly = true ) {
 		if ( ! elementor.$previewContents.find( 'link[href="' + url + '"]' ).length ) {
 			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
+		}
+		if ( previewOnly ) {
+			return;
+		}
+		if ( ! jQuery( document ).find( 'link[href="' + url + '"]' ).length ) {
+			jQuery( document ).find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
 		}
 	},
 
@@ -135,6 +141,18 @@ helpers = {
 		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
+	/*
+	* @deprecated 2.0.0
+	*/
+	stringReplaceAll( string, replaces ) {
+		var re = new RegExp( Object.keys( replaces ).join( '|' ), 'gi' );
+
+		return string.replace( re, function( matched ) {
+			return replaces[ matched ];
+		} );
+	},
+
+	isActiveControl: function( controlModel, values ) {
 		let condition,
 			conditions;
 

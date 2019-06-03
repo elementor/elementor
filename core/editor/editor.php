@@ -4,6 +4,7 @@ namespace Elementor\Core\Editor;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Icons_Manager;
 use Elementor\Plugin;
 use Elementor\Schemes_Manager;
 use Elementor\Settings;
@@ -515,6 +516,7 @@ class Editor {
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 			],
+			'icons' => Icons_Manager::get_icon_manager_tabs_config(),
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
@@ -1120,6 +1122,7 @@ class Editor {
 			'templates',
 			'navigator',
 			'hotkeys',
+			'icon-manager',
 		];
 
 		foreach ( $template_names as $template_name ) {
