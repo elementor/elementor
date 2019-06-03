@@ -2,16 +2,6 @@ const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' 
 import IconLibrary from './../components/icons-manager/classes/icon-library';
 
 class ControlIconsView extends ControlMultipleBaseItemView {
-	//todo: move to helpers
-	enqueueStylesheet( url ) {
-		if ( ! jQuery( document ).find( 'link[href="' + url + '"]' ).length ) {
-			jQuery( document ).find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
-		}
-		if ( ! elementor.$previewContents.find( 'link[href="' + url + '"]' ).length ) {
-			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
-		}
-	}
-
 	enqueueIconFonts( iconType ) {
 		const iconSetting = elementor.helpers.getIconLibrarySettings( iconType );
 		if ( false === iconSetting ) {
@@ -20,12 +10,12 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
-				this.enqueueStylesheet( assetURL );
+				elementor.helpers.enqueueStylesheet( assetURL, false );
 			} );
 		}
 
 		if ( iconSetting.url ) {
-			this.enqueueStylesheet( iconSetting.url );
+			elementor.helpers.enqueueStylesheet( iconSetting.url, false );
 		}
 	}
 

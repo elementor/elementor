@@ -1,10 +1,8 @@
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import {
 	Component,
 	Fragment,
-	createRef
 } from 'react';
-//import Store from './../classes/store';
 import Icon from './Icon';
 
 class Tab extends Component {
@@ -50,8 +48,8 @@ class Tab extends Component {
 
 	handleFullIconList = () => {
 		let fullIconList = [];
-		Object.entries( this.props.icons ).forEach( library => {
-			if ( 'recommended' !== library[0] ) {
+		Object.entries( this.props.icons ).forEach( ( library ) => {
+			if ( 'recommended' !== library[ 0 ] ) {
 				fullIconList = [ ... fullIconList, ... this.getIconsOfType( library[ 0 ], library[ 1 ] ) ];
 			}
 		} );
@@ -67,11 +65,11 @@ class Tab extends Component {
 
 	handleRecommendedList = () => {
 		let recommendedIconList = [];
-		Object.entries( this.props.icons ).forEach( library => {
-			const iconLibrary = this.getLibrary( library[0] ),
-				iconsOfType = iconLibrary[0].icons,
+		Object.entries( this.props.icons ).forEach( ( library ) => {
+			const iconLibrary = this.getLibrary( library[ 0 ] ),
+				iconsOfType = iconLibrary[ 0 ].icons,
 				recommendedIconsOfType = {};
-			library[1].forEach( ( iconName ) => {
+			library[ 1 ].forEach( ( iconName ) => {
 				if ( iconsOfType[ iconName ] ) {
 					recommendedIconsOfType[ iconName ] = iconsOfType[ iconName ];
 				}
@@ -114,8 +112,12 @@ class Tab extends Component {
 }
 
 Tab.propTypes = {
-  icons: PropTypes.object,
-  name: PropTypes.string,
+	data: PropTypes.any,
+	filter: PropTypes.any,
+	icons: PropTypes.object,
+	name: PropTypes.string,
+	selected: PropTypes.object,
+	setSelected: PropTypes.func,
 };
 
 export default Tab;

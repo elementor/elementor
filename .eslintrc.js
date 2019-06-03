@@ -6,8 +6,10 @@ module.exports = {
 	],
 	plugins: [
 		'wordpress',
-		//'react',
+		'babel',
+		'react',
 	],
+	parser: 'babel-eslint',
 	globals: {
 		wp: true,
 		window: true,
@@ -24,6 +26,9 @@ module.exports = {
 	'parserOptions': {
 		'ecmaVersion': 2017,
 		'sourceType': 'module',
+		'ecmaFeatures': {
+			'jsx': true,
+		},
 	},
 	rules: {
 		// custom canceled rules
@@ -121,6 +126,8 @@ module.exports = {
 		yoda: [ 'error', 'always', {
 			'onlyEquality': true,
 		} ],
+		'react/react-in-jsx-scope': 'off',
+		'babel/semi': 1,
 		// 'react/display-name': 'off',
 		// 'react/jsx-curly-spacing': [ 'error', {
 		// 	when: 'always',
@@ -133,6 +140,5 @@ module.exports = {
 		// 'react/jsx-tag-spacing': 'error',
 		// 'react/no-children-prop': 'off',
 		// 'react/prop-types': 'off',
-		// 'react/react-in-jsx-scope': 'off',
 	},
 };

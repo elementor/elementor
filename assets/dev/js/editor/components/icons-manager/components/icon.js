@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types'
-import { Component, Fragment } from 'react'
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
 
 export default class Icon extends Component {
 	setSelected = () => {
-		this.props.setSelectedHandler( this.props.data.selector, this.props.library )
+		this.props.setSelectedHandler( this.props.data.selector, this.props.library );
 	};
 	render = () => {
 		return <Fragment>
@@ -20,9 +20,8 @@ export default class Icon extends Component {
 				</i>
 			</div>
 		</Fragment>;
-
-	}
-};
+	};
+}
 
 Icon.propTypes = {
   className: PropTypes.string,
