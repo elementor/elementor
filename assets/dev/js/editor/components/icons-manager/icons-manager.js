@@ -11,6 +11,7 @@ export default class extends elementorModules.Module {
 			className: 'elementor-button',
 			text: elementor.translate( 'Insert' ),
 			callback: ( modal ) => {
+				// @todo: remove params fron updateControlValue
 				this.updateControlValue( modal.getSettings( 'controlView' ), this.layout.modalContent.currentView );
 				this.unMountIconManager();
 			},
@@ -32,8 +33,7 @@ export default class extends elementorModules.Module {
 				modalView: elementor.iconManager.layout.modalContent.currentView,
 				controlView: controlView,
 				searchBar: controlView.model.get( 'search_bar' ),
-				include: controlView.model.get( 'include' ) || false,
-				exclude: controlView.model.get( 'exclude' ) || false,
+				recommended: controlView.model.get( 'recommended' ) || false,
 			};
 		let selected = controlView.getControlValue(),
 			icons = elementor.config.icons;
@@ -46,28 +46,28 @@ export default class extends elementorModules.Module {
 		}
 		iconManagerConfig.selected = selected;
 		iconManagerConfig.modalView.options.selectedIcon = selected;
-
-		// Include/Exclude Libraries
-		if ( iconManagerConfig.include || iconManagerConfig.exclude ) {
+		if ( iconManagerConfig.recommended ) {
+			let hasRecommended = false;
+			icons.forEach( ( library ) => {
+				if ( 'recommended' === library.name ) {
+					hasRecommended = true;
+				}
+			} );
+			if ( ! hasRecommended ) {
+				icons.unshift( {
+					name: 'recommended',
+					label: 'Recommended',
+					icons: iconManagerConfig.recommended,
+				} );
+			}
+		} else {
 			icons = icons.filter( ( library ) => {
-				const type = library.name;
-				if ( iconManagerConfig.include.length ) {
-					return -1 !== iconManagerConfig.include.indexOf( type );
-				} else if ( iconManagerConfig.include[ type ] ) {
-					return true;
-				}
-
-				if ( iconManagerConfig.exclude.length ) {
-					return -1 === iconManagerConfig.exclude.indexOf( type );
-				} else if ( iconManagerConfig.exclude[ type ] ) {
-					return true;
-				}
-				return false;
+				return 'recommended' !== library.name;
 			} );
 		}
 
 		icons.forEach( ( tab, index ) => {
-			if ( 'all' !== tab.name ) {
+			if ( -1 === [ 'all', 'recommended' ].indexOf( tab.name ) ) {
 				IconLibrary.initIconType( tab, ( lib ) => {
 					icons[ index ] = lib;
 				} );
@@ -76,8 +76,19 @@ export default class extends elementorModules.Module {
 		} );
 		iconManagerConfig.loaded = loaded;
 		iconManagerConfig.icons = icons;
-		iconManagerConfig.activeTab = '' !== selected.library ? selected.library : icons[ 0 ].name;
 
+		// Set active tab
+		let activeTab = selected.library || icons[ 0 ].name;
+
+		// Show recommended tab if selected from it
+		if ( iconManagerConfig.recommended && '' !== selected.library && '' !== selected.value && iconManagerConfig.recommended.hasOwnProperty( selected.library ) ) {
+			const iconLibrary = icons.filter( ( library ) => selected.library === library.name );
+			const selectedIconName = selected.value.replace( iconLibrary[ 0 ].displayPrefix + ' ' + iconLibrary[ 0 ].prefix, '' );
+			if ( iconManagerConfig.recommended[ selected.library ].some( ( icon ) => -1 < icon.indexOf( selectedIconName ) ) ) {
+				activeTab = icons[ 0 ].name;
+			}
+		}
+		iconManagerConfig.activeTab = activeTab;
 		return renderIconManager( iconManagerConfig );
 	}
 

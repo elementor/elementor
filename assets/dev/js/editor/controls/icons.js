@@ -1,6 +1,8 @@
 const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
+import IconLibrary from './../components/icons-manager/classes/icon-library';
 
 class ControlIconsView extends ControlMultipleBaseItemView {
+	//todo: move to helpers
 	enqueueStylesheet( url ) {
 		if ( ! jQuery( document ).find( 'link[href="' + url + '"]' ).length ) {
 			jQuery( document ).find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
@@ -29,7 +31,6 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	ui() {
 		const ui = super.ui();
-
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.deleteButton = '.elementor-control-icon-delete';
 		ui.previewContainer = '.elementor-control-icons-preview';
@@ -43,6 +44,19 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		};
 	}
 
+	onRender() {
+		super.onRender();
+		if ( ! this.cache.loaded ) {
+			elementor.config.icons.forEach( ( library ) => {
+				if ( 'all' === library.name ) {
+					return;
+				}
+				IconLibrary.initIconType( library );
+			} );
+			this.cache.loaded = true;
+		}
+	}
+
 	events() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openPicker',
@@ -51,16 +65,6 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	openPicker() {
-		// if ( ! this.cache.loaded ) {
-		// 	elementor.config.icons.forEach( ( library ) => {
-		// 		if ( 'all' === library.name ) {
-		// 			return;
-		// 		}
-		// 		IconLibrary.initIconType( library );
-		// 	} );
-		// 	this.cache.loaded = true;
-		// }
-
 		elementor.iconManager.show( { view: this } );
 	}
 

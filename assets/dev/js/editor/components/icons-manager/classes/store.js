@@ -1,3 +1,4 @@
+//@todo: use elementorCommon.storage
 const Store = class {
 	static getKey( library ) {
 		const name = ( library.name ) ? library.name : library;

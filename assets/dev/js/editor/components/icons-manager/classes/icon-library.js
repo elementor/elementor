@@ -58,6 +58,7 @@ const IconLibrary = class {
 	};
 
 	fetchIcons = library => {
+		// @todo: use ElementorAJAX MUST!!!!
 		fetch( library.fetchJson, { mode: 'cors' } )
 			.then( res => {
 				return res.json();
@@ -87,8 +88,7 @@ const IconLibrary = class {
 					.split( '-' )
 					.join( ' ' ),
 				filter: name.trim( ':' ),
-				displayPrefix:
-					library.displayPrefix || library.prefix.replace( '-', '' )
+				displayPrefix: library.displayPrefix || library.prefix.replace( '-', '' )
 			};
 		}
 		if ( Object.keys( icons ).length ) {
@@ -140,6 +140,7 @@ const IconLibrary = class {
 		}
 	};
 
+	// @todo: move to helpers
 	ucwords( str ) {
 		return ( str + '' ).replace( /^(.)|\s+(.)/g, function ( $1 ) {
 			return $1.toUpperCase();
