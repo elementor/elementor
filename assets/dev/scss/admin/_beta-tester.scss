@@ -1,0 +1,53 @@
+#elementor-beta-tester-modal {
+
+	.dialog-lightbox-widget-content {
+		max-width: 500px;
+		height: initial;
+	}
+
+	.dialog-lightbox-message{
+		padding: 40px;
+		height: 265px;
+	}
+}
+
+#elementor-beta-tester-form {
+
+	&__caption {
+		font-weight: bold;
+		font-size: 20px;
+		color: $editor-darkest;
+	}
+
+	&__description {
+		font-size: 15px;
+		color: $editor-dark;
+		margin-top: 10px;
+	}
+
+	&__input-wrapper{
+		display:flex;
+		margin-top: 30px;
+
+		.elementor-button {
+			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+			width: 135px;
+			padding: 15px;
+		}
+	}
+
+	&__email {
+		flex-grow: 1;
+		border: $editor-light 1px solid;
+		@include border-end(0);
+		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		margin: 0;
+		padding: 10px;
+	}
+
+	&__terms {
+		margin-top: 10px;
+		font-size: 11px;
+		color: $editor-light;
+	}
+}
