@@ -54,7 +54,7 @@ class Icons_Manager { // extends Element_Base {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fa-flag',
-				'ver' => '5.7.2',
+				'ver' => '5.8.2',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/regular.json',
 			],
 			'solid' => [
@@ -65,7 +65,7 @@ class Icons_Manager { // extends Element_Base {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fa-flag',
-				'ver' => '5.7.2',
+				'ver' => '5.8.2',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/solid.json',
 			],
 			'brands' => [
@@ -76,7 +76,7 @@ class Icons_Manager { // extends Element_Base {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fa-font-awesome',
-				'ver' => '5.7.2',
+				'ver' => '5.8.2',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/brands.json',
 			],
 		];
@@ -115,13 +115,21 @@ class Icons_Manager { // extends Element_Base {
 	 *
 	 * @return mixed|string
 	 */
-//	public function render_icon( $type = '', $value = '', $attributes = [], $tag = 'i' ) {
-//		$icon_types = self::get_icon_manager_tabs();
-//		if ( isset( $icon_types[ $type ] ) && isset( $icon_types[ $type ]['render_callback'] ) && is_callable( $icon_types[ $type ]['render_callback'] ) ) {
-//			return call_user_func_array( $icon_types[ $type ]['render_callback'], [ $type, $value, $attributes, $tag ] );
-//		}
-//		$this->add_render_attribute( $tag, $attributes );
-//		$this->add_render_attribute( $tag, 'class', $value );
-//		return '<' . $tag . ' ' . $this->get_render_attribute_string( $tag ) . '></i>';
-//	}
+	public static function render_icon( $type = '', $value = '', $attributes = [], $tag = 'i' ) {
+		$icon_types = self::get_icon_manager_tabs();
+		if ( isset( $icon_types[ $type ] ) && isset( $icon_types[ $type ]['render_callback'] ) && is_callable( $icon_types[ $type ]['render_callback'] ) ) {
+			return call_user_func_array( $icon_types[ $type ]['render_callback'], [ $type, $value, $attributes, $tag ] );
+		}
+		if ( empty( $attributes['class'] ) ) {
+			$attributes['class'] = $value;
+		} else {
+			if ( is_array( $attributes['class'] ) ) {
+				$attributes['class'][] = $value;
+			} else {
+				$attributes['class'] .= ' ' . $value;
+			}
+		}
+
+		return '<' . $tag . ' ' . Utils::render_html_attributes( $attributes ) . '></' . $tag . '>';
+	}
 }

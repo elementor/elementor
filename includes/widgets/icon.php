@@ -107,25 +107,6 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
-				'include' => [
-					'solid',
-					'regular',
-					'bold',
-                ],
-                'exclude' => [
-                        ''
-                ],
-			]
-		);
-
-		$this->add_control(
-			'icon2',
-			[
-				'label' => __( 'Icon include solid', 'elementor' ),
-				'type' => Controls_Manager::ICONS,
-				'include' => [
-                    'solid',
-                ],
 			]
 		);
 
@@ -134,46 +115,29 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => __( 'Icon include solid specific', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
-				'include' => [
+				'recommended' => [
 					'solid' => [
-						"align-center",
-						"align-justify",
-						"align-left",
-						"align-right",
-						"allergies",
-                    ],
-				],
-			]
-		);
-
-		$this->add_control(
-			'icon4',
-			[
-				'label' => __( 'Icon exclude solid', 'elementor' ),
-				'type' => Controls_Manager::ICONS,
-				'include' => [],
-				'exclude' => [
-					'solid'
-				],
-			]
-		);
-
-		$this->add_control(
-			'icon5',
-			[
-				'label' => __( 'Icon exclude solid specific', 'elementor' ),
-				'type' => Controls_Manager::ICONS,
-				'exclude' => [
-					'solid' => [
-						"align-center",
-						"align-justify",
-						"align-left",
-						"align-right",
-						"allergies",
+						'align-center',
+						'align-justify',
+						'align-left',
+						'align-right',
+						'allergies',
 					],
 				],
 			]
 		);
+
+		$this->add_control('koby_text', [ 'label'=>'Koby Text']);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'content_box_shadow_normal',
+				'label' => __( 'Box Shadow', 'theplus' ),
+				'selector' => '{{WRAPPER}}',
+
+			]
+        );
 
 		$this->add_control(
 			'view',
@@ -473,7 +437,11 @@ class Widget_Icon extends Widget_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<<?php echo $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
-				<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
+				<?php if ( empty( $settings['icon'] ) ) : ?>
+					<i></i>
+				<?php else :
+					echo Icons_Manager::render_icon( $settings['icon']['library'], $settings['icon']['value'], [ 'aria-hidden' => 'true' ] );
+				endif; ?>
 			</<?php echo $icon_tag; ?>>
 		</div>
 		<?php

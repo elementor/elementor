@@ -105,6 +105,8 @@ class Control_Icons extends Control_Base_Multiple {
 				'returnType' => 'object',
 			],
 			'search_bar' => true,
+			'recommended' => false,
+			'is_svg_enabled' => true,
 		];
 	}
 }
