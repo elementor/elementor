@@ -161,15 +161,15 @@ class Widget_Image_Box extends Widget_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-h-align-left',
 					],
 					'top' => [
 						'title' => __( 'Top', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-v-align-top',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-h-align-right',
 					],
 				],
 				'prefix_class' => 'elementor-position-',

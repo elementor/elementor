@@ -135,18 +135,6 @@ helpers = {
 		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
-	/*
-	 * @deprecated 2.0.0
-	 */
-	stringReplaceAll( string, replaces ) {
-		var re = new RegExp( Object.keys( replaces ).join( '|' ), 'gi' );
-
-		return string.replace( re, function( matched ) {
-			return replaces[ matched ];
-		} );
-	},
-
-	isActiveControl( controlModel, values ) {
 		let condition,
 			conditions;
 
@@ -169,7 +157,7 @@ helpers = {
 		}
 
 		var hasFields = _.filter( condition, function( conditionValue, conditionName ) {
-			var conditionNameParts = conditionName.match( /([a-z_0-9]+)(?:\[([a-z_]+)])?(!?)$/i ),
+			var conditionNameParts = conditionName.match( /([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i ),
 				conditionRealName = conditionNameParts[ 1 ],
 				conditionSubKey = conditionNameParts[ 2 ],
 				isNegativeCondition = !! conditionNameParts[ 3 ],

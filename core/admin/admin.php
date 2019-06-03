@@ -37,7 +37,7 @@ class Admin extends App {
 			return;
 		}
 
-		if ( Utils::is_ajax() ) {
+		if ( wp_doing_ajax() ) {
 			return;
 		}
 
@@ -134,14 +134,16 @@ class Admin extends App {
 			return;
 		}
 
-		if ( ! User::is_current_user_can_edit( $post->ID ) ) {
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		if ( ! $document || ! $document->is_editable_by_current_user() ) {
 			return;
 		}
 
 		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
 		?>
 		<div id="elementor-switch-mode">
-			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo Plugin::$instance->db->is_built_with_elementor( $post->ID ); ?>" />
+			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo $document->is_built_with_elementor(); ?>" />
 			<button id="elementor-switch-mode-button" type="button" class="button button-primary button-hero">
 				<span class="elementor-switch-mode-on">
 					<i class="eicon-arrow-<?php echo ( is_rtl() ) ? 'right' : 'left'; ?>" aria-hidden="true"></i>
@@ -154,7 +156,7 @@ class Admin extends App {
 			</button>
 		</div>
 		<div id="elementor-editor">
-			<a id="elementor-go-to-edit-page-link" href="<?php echo Utils::get_edit_link( $post->ID ); ?>">
+			<a id="elementor-go-to-edit-page-link" href="<?php echo $document->get_edit_url(); ?>">
 				<div id="elementor-editor-button" class="button button-primary button-hero">
 					<i class="eicon-elementor-square" aria-hidden="true"></i>
 					<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
@@ -512,11 +514,12 @@ class Admin extends App {
 						<?php
 						while ( $recently_edited_query->have_posts() ) :
 							$recently_edited_query->the_post();
+							$document = Plugin::$instance->documents->get( get_the_ID() );
 
 							$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
 							?>
 							<li class="e-overview__post">
-								<a href="<?php echo esc_attr( Utils::get_edit_link( get_the_ID() ) ); ?>" class="e-overview__post-link"><?php the_title(); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; ?>, <?php the_time(); ?></span>
+								<a href="<?php echo esc_attr( $document->get_edit_url() ); ?>" class="e-overview__post-link"><?php the_title(); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; ?>, <?php the_time(); ?></span>
 							</li>
 						<?php endwhile; ?>
 					</ul>
@@ -645,6 +648,10 @@ class Admin extends App {
 
 		$document = Plugin::$instance->documents->create( $type, $post_data, $meta );
 
+		if ( is_wp_error( $document ) ) {
+			wp_die( $document );
+		}
+
 		wp_redirect( $document->get_edit_url() );
 
 		die;
@@ -674,6 +681,29 @@ class Admin extends App {
 	}
 
 	/**
+	 * @since 2.6.0
+	 * @access public
+	 */
+	public function add_beta_tester_template() {
+		Plugin::$instance->common->add_template( ELEMENTOR_PATH . 'includes/admin-templates/beta-tester.php' );
+	}
+
+	/**
+	 * @access public
+	 */
+	public function enqueue_beta_tester_scripts() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script(
+			'elementor-beta-tester',
+			ELEMENTOR_ASSETS_URL . 'js/beta-tester' . $suffix . '.js',
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	/**
 	 * @access public
 	 */
 	public function init_new_template() {
@@ -683,8 +713,17 @@ class Admin extends App {
 
 		// Allow plugins to add their templates on admin_head.
 		add_action( 'admin_head', [ $this, 'add_new_template_template' ] );
-
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
+	}
+
+	/**
+	 * @access public
+	 */
+	public function init_beta_tester( $current_screen ) {
+		if ( 'elementor_page_elementor-tools' === $current_screen->id ) {
+			add_action( 'admin_head', [ $this, 'add_beta_tester_template' ] );
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_beta_tester_scripts' ] );
+		}
 	}
 
 	/**
@@ -724,6 +763,8 @@ class Admin extends App {
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
+		add_action( 'current_screen', [ $this, 'init_beta_tester' ] );
+
 	}
 
 	/**
@@ -741,6 +782,7 @@ class Admin extends App {
 				'new_template' => __( 'New Template', 'elementor' ),
 				'back_to_wordpress_editor_message' => __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
 				'back_to_wordpress_editor_header' => __( 'Back to WordPress Editor', 'elementor' ),
+				'beta_tester_sign_up' => __( 'Sign Up', 'elementor' ),
 			],
 		];
 

@@ -155,8 +155,8 @@
 						}
 
 						elementorCommon.dialogsManager.createWidget( 'alert', {
-								message: response.data,
-							} ).show();
+							message: response.data,
+						} ).show();
 					} );
 			} );
 
@@ -242,7 +242,7 @@
 		},
 
 		isElementorMode: function() {
-			return !! this.elements.$switchModeInput.val();
+			return ! ! this.elements.$switchModeInput.val();
 		},
 
 		animateLoader: function() {

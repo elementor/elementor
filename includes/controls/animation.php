@@ -147,7 +147,7 @@ class Control_Animation extends Base_Data_Control {
 				<select id="<?php echo $control_uid; ?>" data-setting="{{ data.name }}">
 					<option value=""><?php echo __( 'Default', 'elementor' ); ?></option>
 					<option value="none"><?php echo __( 'None', 'elementor' ); ?></option>
-					<?php foreach ( self::get_animations() as $animations_group_name => $animations_group ) : ?>
+					<?php foreach ( static::get_animations() as $animations_group_name => $animations_group ) : ?>
 						<optgroup label="<?php echo $animations_group_name; ?>">
 							<?php foreach ( $animations_group as $animation_name => $animation_title ) : ?>
 								<option value="<?php echo $animation_name; ?>"><?php echo $animation_title; ?></option>
