@@ -32,7 +32,7 @@ const IconLibrary = class {
 			icon = {
 				prefix: prefix,
 				selector: prefix + match[ index ].trim( ':' ),
-				name: this.ucwords( match[ index ] )
+				name: elementorCommon.helpers.firstLetterUppercase( match[ index ] )
 					.trim( ':' )
 					.split( '-' )
 					.join( ' ' ),
@@ -60,7 +60,6 @@ const IconLibrary = class {
 	};
 
 	fetchIcons = ( library ) => {
-		// @todo: use ElementorAJAX MUST!!!!
 		fetch( library.fetchJson, { mode: 'cors' } )
 			.then( ( res ) => {
 				return res.json();
@@ -85,7 +84,7 @@ const IconLibrary = class {
 			icons[ name ] = {
 				prefix: library.prefix,
 				selector: library.prefix + name.trim( ':' ),
-				name: this.ucwords( name )
+				name: elementorCommon.helpers.firstLetterUppercase( name )
 					.trim( ':' )
 					.split( '-' )
 					.join( ' ' ),
@@ -148,13 +147,6 @@ const IconLibrary = class {
 			this.extractIconsFromCSS( libraryConfig );
 		}
 	};
-
-	// @todo: move to helpers
-	ucwords( str ) {
-		return ( str + '' ).replace( /^(.)|\s+(.)/g, function( $1 ) {
-			return $1.toUpperCase();
-		} );
-	}
 };
 
 export default new IconLibrary();
