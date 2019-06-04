@@ -10,9 +10,8 @@ export default class extends elementorModules.Module {
 			name: 'insert_icon',
 			className: 'elementor-button',
 			text: elementor.translate( 'Insert' ),
-			callback: ( modal ) => {
-				// @todo: remove params fron updateControlValue
-				this.updateControlValue( modal.getSettings( 'controlView' ), this.layout.modalContent.currentView );
+			callback: () => {
+				this.updateControlValue();
 				this.unMountIconManager();
 			},
 		} );
@@ -92,8 +91,9 @@ export default class extends elementorModules.Module {
 		return renderIconManager( iconManagerConfig );
 	}
 
-	updateControlValue( view, modal ) {
-		view.setValue( modal.options.selectedIcon );
+	updateControlValue() {
+		const view = this.layout.modal.getSettings( 'controlView' );
+		view.setValue( this.layout.modalContent.currentView.options.selectedIcon );
 		view.applySavedValue();
 	}
 
