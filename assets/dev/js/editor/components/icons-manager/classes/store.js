@@ -1,4 +1,3 @@
-//@todo: use elementorCommon.storage
 const Store = class {
 	static getKey( library ) {
 		const name = ( library.name ) ? library.name : library;
@@ -6,7 +5,7 @@ const Store = class {
 	}
 
 	save( library ) {
-		this.set( Store.getKey( library ), library );
+		elementorCommon.storage.set( Store.getKey( library ), library );
 	}
 
 	getIcons( library ) {
@@ -17,17 +16,8 @@ const Store = class {
 		return false;
 	}
 
-	set( key, value ) {
-		const preparedValue = JSON.stringify( value );
-		window.localStorage.setItem( key, preparedValue );
-	}
-
 	get( key ) {
-		const saved = window.localStorage.getItem( key );
-		if ( ! saved ) {
-			return false;
-		}
-		return JSON.parse( saved );
+		return elementorCommon.storage.get( key );
 	}
 
 	isValid( library ) {
@@ -39,10 +29,6 @@ const Store = class {
 			return false;
 		}
 		return ( saved.icons && saved.icons.length );
-	}
-
-	del( key ) {
-		window.localStorage.removeItem( key );
 	}
 };
 
