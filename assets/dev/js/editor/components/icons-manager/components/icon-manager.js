@@ -246,11 +246,11 @@ const renderIconManager = function( props ) {
 export { renderIconManager };
 
 IconsManager.propTypes = {
-  activeTab: PropTypes.any,
-  icons: PropTypes.any,
-  loaded: PropTypes.any,
-  modalView: PropTypes.any,
-  recommended: PropTypes.bool,
-  selected: PropTypes.any,
-  showSearch: PropTypes.bool,
+	activeTab: PropTypes.any,
+	icons: PropTypes.any,
+	loaded: PropTypes.any,
+	modalView: PropTypes.any,
+	recommended: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+	selected: PropTypes.any,
+	showSearch: PropTypes.bool,
 };
