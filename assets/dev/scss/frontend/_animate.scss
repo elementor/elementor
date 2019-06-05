@@ -19,3 +19,10 @@
 		animation-direction: reverse;
 	}
 }
+
+// Disable animations for users who experience motion sickness / vertigo
+@media (prefers-reduced-motion: reduce) {
+	.animated {
+		animation: none;
+	}
+}

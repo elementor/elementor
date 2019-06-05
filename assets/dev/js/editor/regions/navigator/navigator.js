@@ -14,6 +14,13 @@ export default class extends BaseRegion {
 
 		this.opened = false;
 
+		this.indicators = {
+			customPosition: {
+				icon: 'cursor-move',
+				settingKeys: [ '_position' ],
+			},
+		};
+
 		this.ensurePosition = this.ensurePosition.bind( this );
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
@@ -21,7 +28,6 @@ export default class extends BaseRegion {
 		if ( this.storage.visible ) {
 			elementorCommon.route.to( 'navigator' );
 		}
-	}
 
 	getStorageKey() {
 		return 'navigator';
