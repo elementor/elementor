@@ -6,18 +6,4 @@ module.exports = Marionette.ItemView.extend( {
 	initialize: function() {
 		elementor.getPanelView().getCurrentPageView().search.reset();
 	},
-
-	onDestroy: function() {
-		var panel = elementor.getPanelView();
-
-		if ( elementorCommon.route.isPartOf( 'panel/elements' ) ) {
-			setTimeout( function() {
-				var elementsPageView = panel.getCurrentPageView();
-
-				if ( ! elementsPageView.search.currentView ) {
-					elementsPageView.showView( 'search' );
-				}
-			} );
-		}
-	},
 } );

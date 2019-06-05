@@ -13,7 +13,7 @@ export default class extends elementorModules.Module {
 	}
 
 	register( component, command, callback ) {
-		let namespace;
+		let namespace, fullCommand;
 		if ( 'string' === typeof component ) {
 			namespace = component;
 			component = elementorCommon.components.get( namespace );
@@ -21,11 +21,11 @@ export default class extends elementorModules.Module {
 			if ( ! component ) {
 				this.error( `'${ namespace }' component is not exist.` );
 			}
+			fullCommand = command;
 		} else {
 			namespace = component.getNamespace();
+			fullCommand = namespace + ( command ? '/' + command : '' );
 		}
-
-		const fullCommand = namespace + ( command ? '/' + command : '' );
 
 		if ( this.commands[ fullCommand ] ) {
 			this.error( `\`${ fullCommand }\` is already registered.` );

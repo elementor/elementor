@@ -336,7 +336,7 @@ TemplateLibraryManager = function() {
 	};
 
 	this.filterTemplates = function() {
-		var activeSource = self.getFilter( 'source' );
+		const activeSource = self.getFilter( 'source' );
 		return templatesCollection.filter( function( model ) {
 			if ( activeSource !== model.get( 'source' ) ) {
 				return false;
