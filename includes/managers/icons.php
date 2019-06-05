@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Files\Svg\Svg_Handler;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -12,17 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 2.4.0
  */
-class Icons_Manager { // extends Element_Base {
-//
-//	protected function _get_default_child_type( array $element_data ) {
-//		// TODO: Implement _get_default_child_type() method.
-//	}
-//
-//	public function get_name() {
-//		// TODO: Implement get_name() method.
-//	}
-
-
+class Icons_Manager {
 	/**
 	 * Tabs.
 	 *
@@ -104,20 +96,31 @@ class Icons_Manager { // extends Element_Base {
 		return array_values( array_merge( $tabs, self::get_icon_manager_tabs() ) );
 	}
 
+	private static function render_svg_icon( $value ) {
+		if ( ! isset( $value['id'] ) ) {
+			return '';
+		}
+		return Svg_Handler::get_inline_svg( $value['id'] );
+	}
+
 	/**
 	 * Render Icon
 	 *
 	 * Used to render Icon for \Elementor\Controls_Manager::ICONS
-	 * @param string $type      Icon Type
-	 * @param string $value     Icon value
-	 * @param array $attributes Icon HTML Attributes
-	 * @param string $tag       Icon HTML tag, defaults to <i>
+	 * @param string $type            Icon Type
+	 * @param string|array $value     Icon value
+	 * @param array $attributes       Icon HTML Attributes
+	 * @param string $tag             Icon HTML tag, defaults to <i>
 	 *
 	 * @return mixed|string
 	 */
-	public static function render_icon( $type = '', $value = '', $attributes = [], $tag = 'i' ) {
+	public static function render_icon( $type, $value, $attributes = [], $tag = 'i' ) {
+		// handler SVG Icon
+		if ( 'svg' === $type ) {
+			return self::render_svg_icon( $value );
+		}
 		$icon_types = self::get_icon_manager_tabs();
-		if ( isset( $icon_types[ $type ] ) && isset( $icon_types[ $type ]['render_callback'] ) && is_callable( $icon_types[ $type ]['render_callback'] ) ) {
+		if ( isset( $icon_types[ $type ]['render_callback'] ) && is_callable( $icon_types[ $type ]['render_callback'] ) ) {
 			return call_user_func_array( $icon_types[ $type ]['render_callback'], [ $type, $value, $attributes, $tag ] );
 		}
 		if ( empty( $attributes['class'] ) ) {

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Files\Svg\Svg_Handler;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -66,15 +67,14 @@ class Control_Icons extends Control_Base_Multiple {
 					<div class="elementor-control-icons-select-button">
 						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 					</div>
-                    <!--<div class="icon-picker-types">
-                        <ul>
-                            <li><i class="eicon-elementor"></i></li>
-                            <li><i class="eicon-image"></i></li>
-                        </ul>
-                    </div>-->
+					<div class="elementor-control-svg-uploader">
+						<i class="eicon-image" aria-hidden="true"></i>
+					</div>
 					<div class="elementor-control-icons-area">
-						<div class="elementor-control-icons-preview"></div>
-						<div class="elementor-control-icon-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>
+						<div class="elementor-control-icons-preview elementor-fit-aspect-ratio">
+							<div class="elementor-control-icons-preview-placeholder"></div>
+							<div class="elementor-control-icon-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -106,7 +106,7 @@ class Control_Icons extends Control_Base_Multiple {
 			],
 			'search_bar' => true,
 			'recommended' => false,
-			'is_svg_enabled' => true,
+			'is_svg_enabled' => Svg_Handler::is_enabled(),
 		];
 	}
 }
