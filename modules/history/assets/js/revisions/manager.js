@@ -8,23 +8,23 @@ RevisionsManager = function() {
 
 	let revisions;
 
-	var onEditorSaved = function( data ) {
+	const onEditorSaved = function( data ) {
 		if ( data.latest_revisions ) {
 			self.addRevisions( data.latest_revisions );
 		}
 
 		self.requestRevisions( () => {
-		if ( data.revisions_ids ) {
-			var revisionsToKeep = revisions.filter( function( revision ) {
-				return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
-			} );
+			if ( data.revisions_ids ) {
+				var revisionsToKeep = revisions.filter( function( revision ) {
+					return -1 !== data.revisions_ids.indexOf( revision.get( 'id' ) );
+				} );
 
-			revisions.reset( revisionsToKeep );
-		}
+				revisions.reset( revisionsToKeep );
+			}
 		} );
 	};
 
-	var attachEvents = function() {
+	const attachEvents = function() {
 		elementor.channels.editor.on( 'saved', onEditorSaved );
 	};
 
