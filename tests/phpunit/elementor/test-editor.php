@@ -12,7 +12,7 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 	}
 
 	public function test_getInstance() {
-		$this->assertInstanceOf( '\Elementor\Editor', $this->elementor()->editor );
+		$this->assertInstanceOf( '\Elementor\Core\Editor\Editor', $this->elementor()->editor );
 	}
 
 	/*

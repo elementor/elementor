@@ -4,7 +4,9 @@ import Navigator from './regions/navigator/navigator';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import environment from '../../../../core/common/assets/js/utils/environment.js';
 import DateTimeControl from 'elementor-controls/date-time';
+import NoticeBar from './utils/notice-bar';
 import Component from './elements/component';
+
 
 const App = Marionette.Application.extend( {
 	loaded: false,
@@ -275,6 +277,8 @@ const App = Marionette.Application.extend( {
 		elementorCommon.components.register( new Component( { context: this } ) );
 
 		this.hotkeysScreen = new HotkeysScreen();
+
+		this.noticeBar = new NoticeBar();
 	},
 
 	// TODO: BC method since 2.3.0
@@ -403,6 +407,12 @@ const App = Marionette.Application.extend( {
 				regionClass: Navigator,
 			},
 		} );
+
+		this.trigger( 'navigator:init' );
+
+		if ( this.navigator.storage.visible ) {
+			this.navigator.open();
+		}
 	},
 
 	setAjax: function() {
@@ -747,7 +757,7 @@ const App = Marionette.Application.extend( {
 
 		var previewWindow = this.$preview[ 0 ].contentWindow;
 
-		if ( ! previewWindow.elementorFrontend ) {
+		if ( ! previewWindow.elementorFrontend || elementor.config.preview.debug_data.error ) {
 			this.onPreviewLoadingError();
 
 			return;
@@ -868,12 +878,34 @@ const App = Marionette.Application.extend( {
 	},
 
 	onPreviewLoadingError: function() {
-		this.showFatalErrorDialog( {
-			headerMessage: this.translate( 'preview_not_loading_header' ),
-			message: this.translate( 'preview_not_loading_message' ) + '<br><a href="' + this.config.document.urls.preview + '" target="_blank">Preview Debug</a>',
+		const self = this;
+
+		const debugUrl = self.config.document.urls.preview + '&preview-debug',
+			previewDebugLink = '<br><a href="' + debugUrl + '" target="_blank">Preview Debug</a>',
+			debugData = elementor.config.preview.debug_data,
+			dialogOptions = {
+				headerMessage: debugData.header,
+				message: debugData.message + previewDebugLink,
 			onConfirm: function() {
-				open( elementor.config.help_preview_error_url, '_blank' );
+					open( debugData.doc_url, '_blank' );
+				} };
+
+		if ( debugData.error ) {
+			self.showFatalErrorDialog( dialogOptions );
+			return;
+		}
+
+		jQuery.get( debugUrl, function() {
+			self.showFatalErrorDialog( dialogOptions );
+		} ).fail( function( response ) { //Iframe can't be loaded
+			self.showFatalErrorDialog( {
+				headerMessage: debugData.header,
+				message: response.status + ' : ' + response.statusText + previewDebugLink,
+				onConfirm: function() {
+					const url = 500 <= response.status ? elementor.config.preview.help_preview_http_error_500_url : elementor.config.preview.help_preview_http_error_url;
+					open( url, '_blank' );
 			},
+		} );
 		} );
 	},
 
@@ -919,6 +951,10 @@ const App = Marionette.Application.extend( {
 
 			$elementsToHide.hide();
 		} );
+	},
+
+	compileTemplate: function( template, data ) {
+		return Marionette.TemplateCache.prototype.compileTemplate( template )( data );
 	},
 } );
 
