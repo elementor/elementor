@@ -31,10 +31,6 @@ export default class extends elementorModules.Component {
 		};
 	}
 
-	open() {
-		return this.context.getCurrentPageView().model;
-	}
-
 	getTabsWrapperSelector() {
 		return '.elementor-panel-navigation';
 	}
