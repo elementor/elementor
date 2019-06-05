@@ -218,7 +218,7 @@ var	Manager = function() {
 				viewToScroll = panelPage.getOption( 'editedElementView' );
 			}
 		} else if ( item instanceof Backbone.Model && item.get( 'items' ).length ) {
-				var history = item.get( 'items' ).first().get( 'history' );
+			const history = item.get( 'items' ).first().get( 'history' );
 
 				if ( history && history.behavior.view.model ) {
 					viewToScroll = self.findView( history.behavior.view.model.get( 'id' ) );
