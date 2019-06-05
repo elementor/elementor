@@ -15,12 +15,12 @@ export default class extends elementorModules.Component {
 			undo: {
 				keys: 'ctrl+z',
 				exclude: [ 'input' ],
-				scopes: [ 'preview', 'panel/editor' ],
+				scopes: [ 'preview', 'panel' ],
 			},
 			redo: {
 				keys: 'ctrl+shift+z, ctrl+y',
 				exclude: [ 'input' ],
-				scopes: [ 'preview', 'panel/editor' ],
+				scopes: [ 'preview', 'panel' ],
 			},
 		};
 	}

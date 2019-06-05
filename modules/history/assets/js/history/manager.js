@@ -2,7 +2,6 @@ var ElementHistoryBehavior = require( './element-behavior' ),
 	CollectionHistoryBehavior = require( './collection-behavior' );
 
 import ItemModel from './item-model';
-import PanelTab from './panel-tab';
 import Component from './component';
 
 var	Manager = function() {
@@ -64,15 +63,8 @@ var	Manager = function() {
 	};
 
 	var updatePanelPageCurrentItem = function() {
-		const panel = elementor.getPanelView();
-
-		if ( 'historyPage' === panel.getCurrentPageName() ) {
-			const historyPage = panel.getCurrentPageView(),
-				currentTab = historyPage.getCurrentTab();
-
-			if ( currentTab instanceof PanelTab ) {
-				currentTab.updateCurrentItem();
-			}
+		if ( elementorCommon.route.is( 'panel/history/actions' ) ) {
+			elementorCommon.route.reload( 'panel/history/actions' );
 		}
 	};
 
