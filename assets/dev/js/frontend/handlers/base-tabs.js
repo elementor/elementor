@@ -85,13 +85,13 @@ module.exports = elementorModules.frontend.handlers.Base.extend( {
 				if ( 'Enter' === event.key ) {
 					event.preventDefault();
 
-					this.changeActiveTab( event.currentTarget.dataset.tab );
+					this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
 				}
 			},
 			click: ( event ) => {
 				event.preventDefault();
 
-				this.changeActiveTab( event.currentTarget.dataset.tab );
+				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
 			},
 		} );
 	},
