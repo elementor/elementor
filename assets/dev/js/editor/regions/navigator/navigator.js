@@ -25,9 +25,12 @@ export default class extends BaseRegion {
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
-		if ( this.storage.visible ) {
-			elementorCommon.route.to( 'navigator' );
-		}
+		elementor.on( 'navigator:init', () => {
+			if ( this.storage.visible ) {
+				elementorCommon.route.to( 'navigator' );
+			}
+		} );
+	}
 
 	getStorageKey() {
 		return 'navigator';

@@ -7,7 +7,6 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import Component from './elements/component';
 
-
 const App = Marionette.Application.extend( {
 	loaded: false,
 
@@ -409,10 +408,6 @@ const App = Marionette.Application.extend( {
 		} );
 
 		this.trigger( 'navigator:init' );
-
-		if ( this.navigator.storage.visible ) {
-			this.navigator.open();
-		}
 	},
 
 	setAjax: function() {
