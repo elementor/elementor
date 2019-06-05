@@ -115,7 +115,7 @@
 			padding: 12px 26px;
 			font-size: 14px;
 			color: #fff;
-			width: 18%;
+			width: 10%;
 			background-color: #39b54a;
 			text-transform: uppercase;
 			border-radius: 3px;
@@ -174,6 +174,13 @@
 			}
 		}
 
+		.elementor-control-svg-uploader {
+			i {
+				font-size: 22px;
+				color: #fff;
+			}
+		}
+
 		.elementor-control-icons-preview {
 			display: none;
 		}
@@ -189,7 +196,8 @@
 	}
 
 	&.elementor-preview-has-icon {
-		.elementor-control-icons-select-button {
+		.elementor-control-icons-select-button,
+		.elementor-control-svg-uploader {
 			display: none;
 		}
 	}
@@ -199,6 +207,7 @@
 		height: 150px;
 		background-size: cover;
 		background-position: center;
+		display: inline;
 
 		.elementor-control-icons-preview {
 
@@ -213,6 +222,7 @@
 		&:not(:hover) {
 
 			.elementor-control-icon-delete {
+				box-shadow: none;
 				bottom: -30px;
 			}
 		}
@@ -226,9 +236,10 @@
 			padding: 9.5px;
 			font-size: 11px;
 			color: #fff;
-			background-color: #a4afb7;
+			background-color: $editor-light;
 			text-transform: uppercase;
 			transition: all .2s ease-in-out;
+			box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
 		}
 	}
 }

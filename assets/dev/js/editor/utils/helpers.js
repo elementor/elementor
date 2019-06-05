@@ -3,6 +3,7 @@ var helpers;
 helpers = {
 	_enqueuedFonts: [],
 	_enqueuedIconFonts: [],
+	_inlineSvg: [],
 
 	elementsHierarchy: {
 		section: {
@@ -25,13 +26,37 @@ helpers = {
 		}
 	},
 
+	getInlineSvg( svgId, svgUrl, view ) {
+		if ( ! svgId ) {
+			return;
+		}
+
+		if ( this._inlineSvg.hasOwnProperty( svgId ) ) {
+			return this._inlineSvg[ svgId ];
+		}
+
+		const self = this;
+		fetch( svgUrl )
+			.then( ( response ) => response.text() )
+			.then( ( data ) => {
+				const svgXML = $( data ).find( 'svg' )[ 0 ];
+				if ( svgXML ) {
+					self._inlineSvg[ svgId ] = $( data ).find( 'svg' )[ 0 ].outerHTML;
+					if ( view ) {
+						view.render();
+					}
+					elementor.channels.editor.trigger( 'svg:insertion', data, svgId );
+				}
+			} );
+	},
+
 	enqueueIconFonts( iconType ) {
 		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) ) {
 			return;
 		}
 
 		const iconSetting = this.getIconLibrarySettings( iconType );
-		if ( false === iconType ) {
+		if ( ! iconSetting ) {
 			return;
 		}
 
@@ -56,6 +81,20 @@ helpers = {
 			return iconSetting[ 0 ];
 		}
 		return false;
+	},
+
+	renderIcon( view, iconType = '', iconValue = '', attributes = {}, tag = 'i' ) {
+		if ( 'svg' === iconType ) {
+			return this.getInlineSvg( iconValue.id, iconValue.url, view );
+		}
+		const iconSettings = this.getIconLibrarySettings( iconType );
+		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {
+			this.enqueueIconFonts( iconType );
+			view.addRenderAttribute( tag, attributes );
+			view.addRenderAttribute( tag, 'class', iconValue );
+			return '<' + tag + ' ' + view.getRenderAttributeString( tag ) + '></' + tag + '>';
+		}
+		elementor.channels.editor.trigger( 'Icon:insertion', iconType, iconValue, attributes, tag, view );
 	},
 
 	enqueueFont( font ) {

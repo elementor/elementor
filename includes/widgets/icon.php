@@ -458,14 +458,12 @@ class Widget_Icon extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+				iconHTML = elementor.helpers.renderIcon( view, settings.icon.library, settings.icon.value, { 'aria-hidden': true } ),
 				iconTag = link ? 'a' : 'div';
-			if ( settings.icon.library ) {
-				elementor.helpers.enqueueIconFonts( settings.icon.library );
-			}
 		#>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<i class="{{ settings.icon.value }}" aria-hidden="true"></i>
+				{{{ iconHTML }}}
 			</{{{ iconTag }}}>
 		</div>
 		<?php
