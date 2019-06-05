@@ -1,10 +1,16 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Editor;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Plugin;
+use Elementor\Schemes_Manager;
+use Elementor\Settings;
+use Elementor\Shapes;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -56,6 +62,11 @@ class Editor {
 	private $_is_edit_mode;
 
 	/**
+	 * @var Notice_Bar
+	 */
+	public $notice_bar;
+
+	/**
 	 * Init.
 	 *
 	 * Initialize Elementor editor. Registers all needed actions to run Elementor,
@@ -78,6 +89,8 @@ class Editor {
 		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
 		}
+
+		Loading_Inspection_Manager::instance()->register_inspections();
 
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
@@ -294,7 +307,7 @@ class Editor {
 	 * @access public
 	 */
 	public function print_editor_template() {
-		include 'editor-templates/editor-wrapper.php';
+		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
 
 	/**
@@ -510,7 +523,6 @@ class Editor {
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
-			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
@@ -519,6 +531,12 @@ class Editor {
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::get_introduction_meta(),
+			],
+			'preview' => [
+				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
+				'help_preview_http_error_url' => 'https://go.elementor.com/preview-not-loaded/#permissions',
+				'help_preview_http_error_500_url' => 'https://go.elementor.com/500-error/',
+				'debug_data' => Loading_Inspection_Manager::instance()->run_inspections(),
 			],
 			'locale' => get_locale(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
@@ -609,8 +627,6 @@ class Editor {
 				'learn_more' => __( 'Learn More', 'elementor' ),
 				'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
 				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
-				'preview_not_loading_header' => __( 'The preview could not be loaded', 'elementor' ),
-				'preview_not_loading_message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
 
 				// Gallery.
 				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
@@ -672,9 +688,9 @@ class Editor {
 				'keyboard_shortcuts' => __( 'Keyboard Shortcuts', 'elementor' ),
 
 				// Deprecated Control
-				'deprecated_notice' => __( 'The <strong>{{{ element_name }}}</strong> {{{ element_type }}} has been deprecated since {{{ plugin }}} {{{ since }}}.', 'elementor' ),
+				'deprecated_notice' => __( 'The <strong>{{{ widget }}}</strong> widget has been deprecated since {{{ plugin }}} {{{ since }}}.', 'elementor' ),
 				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>{{{ replacement }}}</strong>.', 'elementor' ),
-				'deprecated_notice_last' => __( 'Note that {{{ element_name }}} will be completely removed once {{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
+				'deprecated_notice_last' => __( 'Note that {{{ widget }}} will be completely removed once {{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
@@ -955,6 +971,8 @@ class Editor {
 	 * @access public
 	 */
 	public function __construct() {
+		$this->notice_bar = new Notice_Bar();
+
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 
@@ -1014,7 +1032,7 @@ class Editor {
 	public function create_nonce( $post_type ) {
 		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
 
-		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		return $ajax->create_nonce();
@@ -1058,7 +1076,7 @@ class Editor {
 	public function verify_request_nonce() {
 		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
 
-		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		return $ajax->verify_request_nonce();
@@ -1077,7 +1095,7 @@ class Editor {
 	public function verify_ajax_nonce() {
 		// _deprecated_function( __METHOD__, '2.3.0' );
 
-		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		if ( ! $ajax->verify_request_nonce() ) {
@@ -1105,7 +1123,7 @@ class Editor {
 		];
 
 		foreach ( $template_names as $template_name ) {
-			Plugin::$instance->common->add_template( __DIR__ . "/editor-templates/$template_name.php" );
+			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/$template_name.php" );
 		}
 	}
 }

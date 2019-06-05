@@ -85,7 +85,6 @@
 	&__item {
 		display: flex;
 		height: 32px;
-		@include padding-end(4px);
 		font-size: 12px;
 		border-bottom: 1px solid $editor-background;
 		cursor: pointer;
@@ -174,7 +173,7 @@
 
 				&:not(:hover) {
 
-					.elementor-navigator__element__toggle {
+					.elementor-navigator__element__toggle, .elementor-navigator__element__indicators {
 						display: none;
 					}
 				}
@@ -228,7 +227,29 @@
 		&__toggle {
 			text-align: $end;
 			font-size: 13px;
-			padding: 0 5px;
+			padding: 0 10px;
+		}
+
+		&__indicator {
+			height: 100%;
+			width: 31px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			color: $editor-dark;
+			@include border-start(1px solid $editor-background);
+
+			&:first-child {
+				@include border-start(3px solid $editor-info);
+
+				.elementor-editing & {
+					border-color: darken($editor-info, 10%);
+				}
+			}
+		}
+
+		&__indicators {
+			background-color: #fff;
 		}
 
 		&--hidden {

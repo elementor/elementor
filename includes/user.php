@@ -248,7 +248,7 @@ class User {
 	}
 
 	public static function register_as_beta_tester( array $data ) {
-		$response = wp_safe_remote_post(
+		wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,
 			[
 				'timeout' => 25,
