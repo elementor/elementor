@@ -69,7 +69,7 @@ $remote-templates-items-space: 30px;
 		font-size: 18px;
 
 		&:before {
-			content: getValueByDirection( '\e908', '\e907' );
+			content: getValueByDirection( '\e87e', '\e87d' );
 		}
 	}
 }
@@ -137,7 +137,7 @@ $remote-templates-items-space: 30px;
 
 				&:after {
 					font-family: eicons;
-					content: '\e956';
+					content: '\e8ae';
 					@include margin-start(3px);
 				}
 			}
@@ -147,7 +147,7 @@ $remote-templates-items-space: 30px;
 				+ .elementor-template-library-order-label {
 
 					&:after {
-						content: '\e955';
+						content: '\e8ad';
 					}
 				}
 			}
@@ -278,13 +278,11 @@ label.elementor-template-library-order-label {
 	width: 200px;
 	position: relative;
 
-	&:after {
-		content: '\e863';
+	i {
 		position: absolute;
 		top: 50%;
 		@include end(0);
 		transform: translateY(-50%);
-		font-family: eicons;
 	}
 }
 
