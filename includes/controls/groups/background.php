@@ -90,15 +90,15 @@ class Group_Control_Background extends Group_Control_Base {
 		return [
 			'classic' => [
 				'title' => _x( 'Classic', 'Background Control', 'elementor' ),
-				'icon' => 'fa fa-paint-brush',
+				'icon' => 'eicon-paint-brush',
 			],
 			'gradient' => [
 				'title' => _x( 'Gradient', 'Background Control', 'elementor' ),
-				'icon' => 'fa fa-barcode',
+				'icon' => 'eicon-barcode',
 			],
 			'video' => [
 				'title' => _x( 'Background Video', 'Background Control', 'elementor' ),
-				'icon' => 'fa fa-video-camera',
+				'icon' => 'eicon-video-camera',
 			],
 		];
 	}

@@ -146,7 +146,7 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-plus',
+				'default' => 'eicon-plus',
 				'separator' => 'before',
 			]
 		);
@@ -156,7 +156,7 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => __( 'Active Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-minus',
+				'default' => 'eicon-minus-square',
 				'condition' => [
 					'icon!' => '',
 				],
