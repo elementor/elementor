@@ -238,7 +238,6 @@
 		&__indicators {
 			position: relative;
 			transition: transform .5s;
-			background-color: #fff;
 			@include padding-start(5px);
 			z-index: 91;
 
@@ -254,6 +253,7 @@
 			align-items: center;
 			justify-content: center;
 			color: $editor-dark;
+			background-color: #fff;
 			@include border-start(1px solid $editor-background);
 
 			&:first-child {
