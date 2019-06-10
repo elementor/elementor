@@ -79,7 +79,9 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getCurrentDeviceMode() {
-		return getComputedStyle( this.elements.$deviceMode[ 0 ], ':after' ).content.replace( /"/g, '' );
+		let deviceMode = getComputedStyle( this.elements.$deviceMode[ 0 ], ':after' ).content.replace( /"/g, '' );
+		deviceMode = elementorFrontend.hooks.applyFilters( 'frontend/handlers/page/device_mode', deviceMode );
+		return deviceMode;
 	}
 
 	getCurrentDeviceSetting( settings, settingKey ) {
