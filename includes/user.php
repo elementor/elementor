@@ -248,6 +248,7 @@ class User {
 	}
 
 	public static function register_as_beta_tester( array $data ) {
+		update_user_meta( get_current_user_id(), self::BETA_TESTER_KEY, $data['betaTesterEmail'] );
 		wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,
 			[
