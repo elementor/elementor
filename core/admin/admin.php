@@ -720,7 +720,12 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function init_beta_tester( $current_screen ) {
-		if ( 'elementor_page_elementor-tools' === $current_screen->id ) {
+		if ( 'yes' !== get_option( 'elementor_beta', 'no' ) ) {
+			return;
+		}
+
+		$beta_tester_user_meta = get_user_meta( get_current_user_id(), User::BETA_TESTER_KEY, true );
+		if ( empty( $beta_tester_user_meta ) && ( 'elementor_page_elementor-tools' === $current_screen->id ) ) {
 			add_action( 'admin_head', [ $this, 'add_beta_tester_template' ] );
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_beta_tester_scripts' ] );
 		}

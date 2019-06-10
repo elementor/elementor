@@ -1,35 +1,16 @@
 import BetaTesterLayout from './layout';
 
 class BetaTesterModule extends elementorModules.ViewModule {
-	getDefaultSettings() {
-		return {
-			selectors: {
-				betaSelect: '.elementor_beta select',
-			},
-		};
-	}
+	getDefaultSettings() {}
 
-	getDefaultElements() {
-		const selectors = this.getSettings( 'selectors' );
+	getDefaultElements() {}
 
-		return {
-			$betaSelect: jQuery( selectors.betaSelect ),
-		};
-	}
-
-	bindEvents() {
-		this.elements.$betaSelect.on( 'change', this.onBetaTesterSelected.bind( this ) );
-	}
+	bindEvents() {}
 
 	onInit() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.layout = new BetaTesterLayout();
-	}
-	onBetaTesterSelected() {
-		if ( 'yes' !== this.elements.$betaSelect.val() ) {
-			return;
-		}
 		this.layout.showModal();
 	}
 }
