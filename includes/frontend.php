@@ -1048,7 +1048,7 @@ class Frontend extends App {
 			$post = get_post();
 			$settings['post'] = [
 				'id' => $post->ID,
-				'title' => $post->post_title,
+				'title' => esc_attr($post->post_title),
 				'excerpt' => $post->post_excerpt,
 			];
 		} else {
