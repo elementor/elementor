@@ -255,7 +255,17 @@ class Module extends BaseModule {
 			],
 		];
 
-		echo wp_json_encode( $response );
+		$json = wp_json_encode( $response );
+
+		if ( function_exists( 'gzencode' ) ) {
+			header( 'Content-Type: application/json; charset=utf-8' );
+
+			header( 'Content-Encoding: gzip' );
+
+			echo gzencode( $json );
+		} else {
+			echo $json;
+		}
 
 		wp_die( '', '', [ 'response' => null ] );
 	}

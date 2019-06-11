@@ -1,0 +1,43 @@
+#elementor-notice-bar {
+	position: sticky;
+	width: 100%;
+	top: 100%;
+	display: flex;
+	align-items: center;
+	height: 40px;
+	color: #fff;
+	background-color: $editor-dark;
+	padding: 0 50px;
+
+	&__message {
+		@include padding-start(15px);
+		flex-grow: 1;
+
+		a {
+			font-style: italic;
+			text-decoration: underline;
+		}
+	}
+
+	&__action {
+		text-transform: uppercase;
+	}
+
+	&__close {
+		margin: 0 20px;
+		cursor: pointer;
+	}
+
+	i {
+		font-size: 16px;
+		opacity: .9;
+	}
+
+	a {
+		color: #fff;
+
+		&:hover {
+			opacity: .8;
+		}
+	}
+}
