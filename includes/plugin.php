@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;
 use Elementor\Core\Modules_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
@@ -473,6 +474,29 @@ class Plugin {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/init' );
+	}
+
+	/**
+	 * Get install time.
+	 *
+	 * Retrieve the time when Elementor was installed.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 * @static
+	 *
+	 * @return int Unix timestamp when Elementor was installed.
+	 */
+	public function get_install_time() {
+		$installed_time = get_option( '_elementor_installed_time' );
+
+		if ( ! $installed_time ) {
+			$installed_time = time();
+
+			update_option( '_elementor_installed_time', $installed_time );
+		}
+
+		return $installed_time;
 	}
 
 	/**

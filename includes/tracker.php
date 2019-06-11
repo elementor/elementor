@@ -229,7 +229,7 @@ class Tracker {
 	 */
 	public static function admin_notices() {
 		// Show tracker notice after 24 hours from installed time.
-		if ( self::get_installed_time() > strtotime( '-24 hours' ) ) {
+		if ( Plugin::$instance->get_install_time() > strtotime( '-24 hours' ) ) {
 			return;
 		}
 
@@ -303,26 +303,6 @@ class Tracker {
 	 */
 	public static function is_notice_shown() {
 		return self::$notice_shown;
-	}
-
-	/**
-	 * Get installed time.
-	 *
-	 * Retrieve the time when Elementor was installed.
-	 *
-	 * @since 2.0.0
-	 * @access private
-	 * @static
-	 *
-	 * @return int Unix timestamp when Elementor was installed.
-	 */
-	private static function get_installed_time() {
-		$installed_time = get_option( '_elementor_installed_time' );
-		if ( ! $installed_time ) {
-			$installed_time = time();
-			update_option( '_elementor_installed_time', $installed_time );
-		}
-		return $installed_time;
 	}
 
 	/**
