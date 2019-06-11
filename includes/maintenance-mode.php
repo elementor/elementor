@@ -297,7 +297,7 @@ class Maintenance_Mode {
 	}
 
 	public function on_update_mode( $old_value, $value ) {
-		if ( ! $old_value || ! $value ) {
+		if ( $old_value !== $value ) {
 			do_action( 'elementor/maintenance_mode/mode_changed', $old_value, $value );
 		}
 	}
