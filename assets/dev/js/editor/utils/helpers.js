@@ -26,28 +26,36 @@ helpers = {
 		}
 	},
 
-	getInlineSvg( svgId, svgUrl, view ) {
-		if ( ! svgId ) {
-			return;
-		}
-
-		if ( this._inlineSvg.hasOwnProperty( svgId ) ) {
-			return this._inlineSvg[ svgId ];
-		}
-
-		const self = this;
+	fetchInlineSvg( svgUrl, callback = false ) {
 		fetch( svgUrl )
 			.then( ( response ) => response.text() )
 			.then( ( data ) => {
-				const svgXML = $( data ).find( 'svg' )[ 0 ];
-				if ( svgXML ) {
-					self._inlineSvg[ svgId ] = $( data ).find( 'svg' )[ 0 ].outerHTML;
-					if ( view ) {
-						view.render();
-					}
-					elementor.channels.editor.trigger( 'svg:insertion', data, svgId );
+				if ( callback ) {
+					callback( data );
 				}
 			} );
+	},
+
+	getInlineSvg( value, view ) {
+		if ( ! value.id ) {
+			return;
+		}
+
+		if ( this._inlineSvg.hasOwnProperty( value.id ) ) {
+			return this._inlineSvg[ value.id ];
+		}
+
+		const self = this;
+		this.fetchInlineSvg( value.url, ( data ) => {
+			const svgXML = $( data ).find( 'svg' )[ 0 ];
+			if ( data ) {
+				self._inlineSvg[ value.id ] = data; //$( data ).find( 'svg' )[ 0 ].outerHTML;
+				if ( view ) {
+					view.render();
+				}
+				elementor.channels.editor.trigger( 'svg:insertion', data, value.id );
+			}
+		} );
 	},
 
 	enqueueIconFonts( iconType ) {
@@ -83,9 +91,11 @@ helpers = {
 		return false;
 	},
 
-	renderIcon( view, iconType = '', iconValue = '', attributes = {}, tag = 'i' ) {
+	renderIcon( view, icon, attributes = {}, tag = 'i' ) {
+		const iconType = icon.library,
+			iconValue = icon.value;
 		if ( 'svg' === iconType ) {
-			return this.getInlineSvg( iconValue.id, iconValue.url, view );
+			return this.getInlineSvg( iconValue, view );
 		}
 		const iconSettings = this.getIconLibrarySettings( iconType );
 		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {

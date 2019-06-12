@@ -107,29 +107,28 @@ class Icons_Manager {
 	 * Render Icon
 	 *
 	 * Used to render Icon for \Elementor\Controls_Manager::ICONS
-	 * @param string $type            Icon Type
-	 * @param string|array $value     Icon value
+	 * @param array $icon             Icon Type, Icon value
 	 * @param array $attributes       Icon HTML Attributes
 	 * @param string $tag             Icon HTML tag, defaults to <i>
 	 *
 	 * @return mixed|string
 	 */
-	public static function render_icon( $type, $value, $attributes = [], $tag = 'i' ) {
+	public static function render_icon( $icon, $attributes = [], $tag = 'i' ) {
 		// handler SVG Icon
-		if ( 'svg' === $type ) {
-			return self::render_svg_icon( $value );
+		if ( 'svg' === $icon['library'] ) {
+			return self::render_svg_icon( $icon['value'] );
 		}
 		$icon_types = self::get_icon_manager_tabs();
-		if ( isset( $icon_types[ $type ]['render_callback'] ) && is_callable( $icon_types[ $type ]['render_callback'] ) ) {
-			return call_user_func_array( $icon_types[ $type ]['render_callback'], [ $type, $value, $attributes, $tag ] );
+		if ( isset( $icon_types[ $icon['library'] ]['render_callback'] ) && is_callable( $icon_types[ $icon['library'] ]['render_callback'] ) ) {
+			return call_user_func_array( $icon_types[ $icon['library'] ]['render_callback'], [ $icon, $attributes, $tag ] );
 		}
 		if ( empty( $attributes['class'] ) ) {
-			$attributes['class'] = $value;
+			$attributes['class'] = $icon['value'];
 		} else {
 			if ( is_array( $attributes['class'] ) ) {
-				$attributes['class'][] = $value;
+				$attributes['class'][] = $icon['value'];
 			} else {
-				$attributes['class'] .= ' ' . $value;
+				$attributes['class'] .= ' ' . $icon['value'];
 			}
 		}
 

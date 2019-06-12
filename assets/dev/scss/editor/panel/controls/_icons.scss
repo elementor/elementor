@@ -129,11 +129,13 @@
 
 .elementor-control-icons.elementor-control-preview-area {
 
-	padding: 7px;
-	border: 1px solid;
+	border: 1px solid #D4DAE0;
 	height: 150px;
 	transition: all .2s ease-in-out;
 	font-size: 48px;
+	margin-top: -10px;
+	background-color: #d5dadf;
+	display: flex;
 
 	.icon-picker-types{
 		position: absolute;
@@ -157,46 +159,58 @@
 	}
 
 	&:not( .elementor-preview-has-icon ) {
-		.elementor-control-icons-select-button {
-			height: 100%;
+		.elementor-control-icons-actions {
+			height: 30px;
 			cursor: pointer;
-			position: relative;
-			background-color: #d5dadf;
-			overflow: hidden;
+			display: flex;
+			align-items: flex-start;
+			bottom: 0;
+			flex-grow: 1;
+			align-self: flex-end;
 
 			&:hover {
 				background-color: #a4afb7;
 			}
 
-			i {
-				font-size: 22px;
+			.elementor-icons-control-action {
+				flex-grow: 1;
+				border: 1px solid;
+				padding: 6.5px;
+				align-self: flex-end;
+				font-size: 10px;
+				font-weight: 500;
+				line-height: 12px;
 				color: #fff;
-			}
-		}
+				background-color: rgba(109,120,130,0.7);
+				text-align: center;
+				width: 50%;
 
-		.elementor-control-svg-uploader {
-			i {
-				font-size: 22px;
-				color: #fff;
+				i {
+					font-size: 12px;
+					color: #fff;
+					margin-inline-end: 7px;
+				}
 			}
-		}
 
-		.elementor-control-icons-preview {
-			display: none;
+			.elementor-control-icons-preview {
+				display: none;
+			}
 		}
 	}
 
-	i {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
-		color: #000;
-		font-size: 72px;
-	}
+	//:not( .elementor-button ) {
+	//	i {
+	//		position: absolute;
+	//		top: 50%;
+	//		left: 50%;
+	//		transform: translateX(-50%) translateY(-50%);
+	//		color: #000;
+	//		font-size: 72px;
+	//	}
+	//}
 
 	&.elementor-preview-has-icon {
-		.elementor-control-icons-select-button,
+		.elementor-control-icon-picker,
 		.elementor-control-svg-uploader {
 			display: none;
 		}
@@ -210,7 +224,6 @@
 		display: inline;
 
 		.elementor-control-icons-preview {
-
 			background-image: linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd);
 			background-size: 16px 16px;
 			background-position: 0 0, 8px 8px;

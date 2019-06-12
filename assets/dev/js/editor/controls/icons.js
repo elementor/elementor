@@ -2,6 +2,15 @@ const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' 
 import IconLibrary from './../components/icons-manager/classes/icon-library';
 
 class ControlIconsView extends ControlMultipleBaseItemView {
+	constructor( ...args ) {
+		super( ...args );
+		this.cache = {
+			loaded: false,
+			dialog: false,
+			enableClicked: false,
+		};
+	}
+
 	enqueueIconFonts( iconType ) {
 		const iconSetting = elementor.helpers.getIconLibrarySettings( iconType );
 		if ( false === iconSetting ) {
@@ -23,17 +32,12 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		const ui = super.ui();
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.svgUploader = '.elementor-control-svg-uploader';
+		ui.iconPicker = '.elementor-control-icon-picker';
 		ui.deleteButton = '.elementor-control-icon-delete';
 		ui.previewContainer = '.elementor-control-icons-preview';
 		ui.previewPlaceholder = '.elementor-control-icons-preview-placeholder';
 
 		return ui;
-	}
-
-	cache() {
-		return {
-			loaded: false,
-		};
 	}
 
 	onRender() {
@@ -51,7 +55,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	events() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
-			'click @ui.frameOpeners': 'openPicker',
+			'click @ui.iconPicker': 'openPicker',
 			'click @ui.svgUploader': 'openFrame',
 			'click @ui.deleteButton': 'deleteIcon',
 		} );
@@ -74,8 +78,10 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			],
 		} );
 
+		const handleSelect = () => this.selectSvg();
+
 		// When a file is selected, run a callback.
-		this.frame.on( 'insert select', () => this.selectSvg() );
+		this.frame.on( 'insert select', handleSelect );
 	}
 
 	/**
@@ -102,8 +108,45 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		this.trigger( 'after:select' );
 	}
 
+	getSvgNotEnabledDialog() {
+		if ( ! this.cache.dialog ) {
+			const onConfirm = () => {
+				this.cache.enableClicked = true;
+				window.open( ElementorConfig.settings_page_link + '#tab-advanced', '_blank' );
+			};
+			this.cache.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
+				id: 'elementor-enable-svg-dialog',
+				headerMessage: elementor.translate( 'enable_svg' ),
+				message: elementor.translate( 'dialog_confirm_enable_svg' ),
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: elementor.translate( 'enable' ),
+					cancel: elementor.translate( 'cancel' ),
+				},
+				onConfirm: onConfirm,
+			} );
+		}
+		return this.cache.dialog;
+	}
+
+	isSvgEnabled() {
+		if ( ! this.cache.enableClicked ) {
+			return this.model.get( 'is_svg_enabled' );
+		}
+		return true;
+	}
+
 	openFrame() {
 		event.stopPropagation();
+
+		if ( ! this.isSvgEnabled() ) {
+			const dialog = this.getSvgNotEnabledDialog();
+			this.cache.dialogShown = true;
+			return dialog.show();
+		}
 
 		if ( ! this.frame ) {
 			this.initFrame();
@@ -113,7 +156,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 		// Set params to trigger sanitizer
 		this.frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-editor-upload' );
-		this.frame.uploader.uploader.param( 'svg_type', 'icon' );
+		this.frame.uploader.uploader.param( 'upload_type', 'svg-icon' );
 
 		const selectedId = this.getControlValue( 'id' );
 		if ( ! selectedId ) {
@@ -133,9 +176,18 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			iconType = this.getControlValue( 'library' );
 
 		if ( ! iconValue ) {
+			this.ui.previewPlaceholder.html( '' );
 			this.ui.frameOpeners.toggleClass( 'elementor-preview-has-icon', !! iconValue );
 			return;
 		}
+
+		if ( 'svg' === iconType ) {
+			return elementor.helpers.fetchInlineSvg( iconValue.url, ( data ) => {
+				this.ui.previewPlaceholder.html( data );
+				this.ui.frameOpeners.toggleClass( 'elementor-preview-has-icon', !! iconValue );
+			} );
+		}
+
 		const previewHTML = '<i class="' + iconValue + '"></i>';
 		this.ui.previewPlaceholder.html( previewHTML );
 		this.ui.frameOpeners.toggleClass( 'elementor-preview-has-icon', !! iconValue );

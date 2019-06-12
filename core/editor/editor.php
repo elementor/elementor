@@ -586,6 +586,10 @@ class Editor {
 				'clear_page' => __( 'Delete All Content', 'elementor' ),
 				'dialog_confirm_clear_page' => __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 
+				// Enable SVG uploads.
+				'enable_svg' => __( 'Enable SVG Uploads', 'elementor' ),
+				'dialog_confirm_enable_svg' => __( 'Please note! Allowing uploads of any files (SVG included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the SVG files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
+
 				// Panel Preview Mode.
 				'back_to_editor' => __( 'Show Panel', 'elementor' ),
 				'preview' => __( 'Hide Panel', 'elementor' ),
