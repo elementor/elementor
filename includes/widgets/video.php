@@ -719,7 +719,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'range' => [
 					'%' => [
-						'min' => 50,
+						'min' => 30,
 					],
 				],
 				'selectors' => [
