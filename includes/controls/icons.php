@@ -64,11 +64,13 @@ class Control_Icons extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-control-icons elementor-control-tag-area elementor-control-preview-area elementor-aspect-ratio-169">
-					<div class="elementor-control-icons-select-button">
-						<i class="fa fa-plus-circle" aria-hidden="true"></i>
-					</div>
-					<div class="elementor-control-svg-uploader">
-						<i class="eicon-image" aria-hidden="true"></i>
+					<div class="elementor-control-icons-actions">
+						<div class="elementor-control-icon-picker elementor-icons-control-action">
+							<span><i class="eicon-folder" aria-hidden="true"></i><?php esc_html_e( 'Font Icons', 'elementor' ); ?></span>
+						</div>
+						<div class="elementor-control-svg-uploader elementor-icons-control-action">
+							<span><i class="eicon-image" aria-hidden="true"></i><?php esc_html_e( 'SVG', 'elementor' ); ?></span>
+						</div>
 					</div>
 					<div class="elementor-control-icons-area">
 						<div class="elementor-control-icons-preview elementor-fit-aspect-ratio">

@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Svg_Handler {
-
 	/**
 	 * Inline svg attachment meta key
 	 */
@@ -144,7 +143,12 @@ class Svg_Handler {
 			return $file;
 		}
 
-		if ( ! $this->sanitize_svg( $file['tmp_name'] ) ) {
+		if ( ! self::is_enabled() ) {
+			$file['error'] = __( 'SVG file is not allowed for security reasons', 'elementor' );
+			return $file;
+		}
+
+		if ( self::svg_sanitizer_can_run() && ! $this->sanitize_svg( $file['tmp_name'] ) ) {
 			$file['error'] = __( 'Invalid SVG Format, file not uploaded for security reasons', 'elementor' );
 		}
 
@@ -268,11 +272,23 @@ class Svg_Handler {
 			$allowed_tags = $this->get_allowed_elements();
 		}
 
-		if ( ! in_array( strtolower( $element->tagName ), $allowed_tags ) ) {
-			$element->parentNode->removeChild( $element );
+		$tag_name = $element->tagName;
+		$node_value = $element->nodeValue;
+
+		if ( ! in_array( strtolower( $tag_name ), $allowed_tags ) ) {
+			$this->remove_element( $element );
 			return false;
 		}
+
+//		if ( ! empty( $node_value ) && $this->has_js_value( $node_value ) ) {
+//			$this->remove_element( $element );
+//			return false;
+//		}
 		return true;
+	}
+
+	private function remove_element( $element ) {
+		$element->parentNode->removeChild( $element );
 	}
 
 	/**
@@ -301,6 +317,16 @@ class Svg_Handler {
 
 		$value = trim( $match[1], '\'"' );
 		return preg_match( '~^((https?|ftp|file):)?//~xi', $value );
+	}
+
+	/**
+	 * has_js_value
+	 * @param $value
+	 *
+	 * @return false|int
+	 */
+	private function has_js_value( $value ) {
+		return preg_match( '/(script|javascript|alert\(|window\.|document)/i', $value );
 	}
 
 	/**
@@ -461,11 +487,15 @@ class Svg_Handler {
 			// Remove attribute if not in whitelist
 			if ( ! in_array( $attr_name_lowercase, $allowed_attributes ) && ! $this->is_a_attribute( $attr_name_lowercase, 'aria' ) && ! $this->is_a_attribute( $attr_name_lowercase, 'data' ) ) {
 				$element->removeAttribute( $attr_name );
+				continue;
 			}
 
-			// Remove attribute if it has a remote reference
-			if ( isset( $element->attributes->item( $index )->value ) && $this->is_remote_value( $element->attributes->item( $index )->value ) ) {
+			$attr_value = $element->attributes->item( $index )->value;
+
+			// Remove attribute if it has a remote reference or js
+			if ( ! empty( $attr_value ) && ( $this->is_remote_value( $attr_value ) || $this->has_js_value( $attr_value ) ) ) {
 				$element->removeAttribute( $attr_name );
+				continue;
 			}
 		}
 	}
@@ -673,9 +703,6 @@ class Svg_Handler {
 	 * Svg_Handler constructor.
 	 */
 	public function __construct() {
-		if ( ! self::is_enabled() ) {
-			return;
-		}
 		add_filter( 'upload_mimes', [ $this, 'upload_mimes' ] );
 		add_filter( 'wp_handle_upload_prefilter', [ $this, 'wp_handle_upload_prefilter' ] );
 		add_filter( 'wp_check_filetype_and_ext', [ $this, 'wp_check_filetype_and_ext' ], 10, 4 );

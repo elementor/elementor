@@ -113,7 +113,7 @@ class Widget_Icon extends Widget_Base {
 		$this->add_control(
 			'icon3',
 			[
-				'label' => __( 'Icon include solid specific', 'elementor' ),
+				'label' => __( 'Icon with recommended', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'recommended' => [
 					'solid' => [
@@ -127,17 +127,14 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		$this->add_control('koby_text', [ 'label'=>'Koby Text']);
-
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'content_box_shadow_normal',
 				'label' => __( 'Box Shadow', 'theplus' ),
 				'selector' => '{{WRAPPER}}',
-
 			]
-        );
+		);
 
 		$this->add_control(
 			'view',
@@ -237,6 +234,7 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon svg' => 'fill: {{VALUE}};',
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
@@ -257,6 +255,7 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -279,6 +278,7 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -295,6 +295,7 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -358,7 +359,7 @@ class Widget_Icon extends Widget_Base {
 					'unit' => 'deg',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
+					'{{WRAPPER}} .elementor-icon i, {{WRAPPER}} .elementor-icon svg' => 'transform: rotate({{SIZE}}{{UNIT}});',
 				],
 			]
 		);
@@ -440,7 +441,7 @@ class Widget_Icon extends Widget_Base {
 				<?php if ( empty( $settings['icon'] ) ) : ?>
 					<i></i>
 				<?php else :
-					echo Icons_Manager::render_icon( $settings['icon']['library'], $settings['icon']['value'], [ 'aria-hidden' => 'true' ] );
+					echo Icons_Manager::render_icon( $settings['icon'], [ 'aria-hidden' => 'true' ] );
 				endif; ?>
 			</<?php echo $icon_tag; ?>>
 		</div>
@@ -458,7 +459,7 @@ class Widget_Icon extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-				iconHTML = elementor.helpers.renderIcon( view, settings.icon.library, settings.icon.value, { 'aria-hidden': true } ),
+				iconHTML = elementor.helpers.renderIcon( view, settings.icon, { 'aria-hidden': true } ),
 				iconTag = link ? 'a' : 'div';
 		#>
 		<div class="elementor-icon-wrapper">

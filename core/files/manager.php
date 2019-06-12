@@ -118,9 +118,6 @@ class Manager {
 	}
 
 	public function register_asset_types() {
-		if ( ! Svg_Handler::is_enabled() ) {
-			return;
-		}
 		$this->add_asset( new Svg_Handler() );
 	}
 
