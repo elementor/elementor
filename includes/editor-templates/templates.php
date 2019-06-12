@@ -99,6 +99,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div id="elementor-template-library-filter-text-wrapper">
 			<label for="elementor-template-library-filter-text" class="elementor-screen-only"><?php echo __( 'Search Templates:', 'elementor' ); ?></label>
 			<input id="elementor-template-library-filter-text" placeholder="<?php echo esc_attr__( 'Search', 'elementor' ); ?>">
+			<i class="eicon-search"></i>
 		</div>
 	</div>
 	<# if ( 'local' === activeSource ) { #>
