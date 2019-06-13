@@ -83,12 +83,14 @@
 .elementor-navigator {
 
 	&__item {
+		position: relative;
 		display: flex;
-		height: 32px;
-		@include padding-end(4px);
-		font-size: 12px;
+		height: 30px;
+		font-size: 11px;
 		border-bottom: 1px solid $editor-background;
 		cursor: pointer;
+		transition: padding .5s linear;
+		overflow: hidden;
 
 		&:not(.elementor-active) {
 
@@ -226,9 +228,41 @@
 		}
 
 		&__toggle {
-			text-align: $end;
+			position: absolute;
+			@include end(15px);
+			height: 100%;
+			z-index: 0;
 			font-size: 13px;
-			padding: 0 5px;
+		}
+
+		&__indicators {
+			position: relative;
+			transition: transform .5s;
+			@include padding-start(5px);
+			z-index: 91;
+
+			&:not(:hover) {
+				transform: translateX(calc(100% - 8px));
+			}
+		}
+
+		&__indicator {
+			height: 100%;
+			width: 31px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			color: $editor-dark;
+			background-color: #fff;
+			@include border-start(1px solid $editor-background);
+
+			&:first-child {
+				@include border-start(3px solid $editor-info);
+
+				.elementor-editing & {
+					border-color: darken($editor-info, 10%);
+				}
+			}
 		}
 
 		&--hidden {
