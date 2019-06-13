@@ -186,7 +186,8 @@ class Manager extends BaseManager {
 	protected function save_settings_to_db( array $settings, $id ) {
 		// Use update/delete_metadata in order to handle also revisions.
 		if ( ! empty( $settings ) ) {
-			update_metadata( 'post', $id, self::META_KEY, $settings );
+			// Use `wp_slash` in order to avoid the unslashing during the `update_post_meta`.
+			update_metadata( 'post', $id, self::META_KEY, wp_slash( $settings ) );
 		} else {
 			delete_metadata( 'post', $id, self::META_KEY );
 		}
