@@ -579,6 +579,15 @@ class Group_Control_Background extends Group_Control_Base {
 			'of_type' => 'video',
 		];
 
+		$fields['play_once'] = [
+			'label' => __( 'Play Once', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'condition' => [
+				'background' => [ 'video' ],
+			],
+			'of_type' => 'video',
+		];
+
 		$fields['video_fallback'] = [
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
 			'description' => __( 'This cover image will replace the background video on mobile and tablet devices.', 'elementor' ),
