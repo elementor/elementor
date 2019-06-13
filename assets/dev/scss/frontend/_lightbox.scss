@@ -88,6 +88,14 @@
 		}
 	}
 
+	@media (min-width: $editor-screen-md-min) and (max-width: $editor-screen-md-max) {
+		.elementor-aspect-ratio-916 {
+			.elementor-video-container {
+				width: 70%;
+			}
+		}
+	}
+
 	.elementor-swiper-button {
 
 		&-prev {
