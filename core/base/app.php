@@ -22,15 +22,24 @@ abstract class App extends Module {
 	 *
 	 * Used to print the app and its components settings as a JavaScript object.
 	 *
+	 * @param string $handle Optional
+	 *
 	 * @since 2.3.0
+	 * @since 2.6.0 added the `$handle` parameter
 	 * @access protected
 	 */
-	final protected function print_config() {
+	final protected function print_config( $handle = null ) {
 		$name = $this->get_name();
 
-		$js_var = 'elementor' . ucfirst( $name ) . 'Config';
+		$js_var = 'elementor' . str_replace( ' ', '', ucwords( str_replace( '-', ' ', $name ) ) ) . 'Config';
+
 		$config = $this->get_settings() + $this->get_components_config();
-		Utils::print_js_config( 'elementor-' . $name, $js_var, $config );
+
+		if ( ! $handle ) {
+			$handle = 'elementor-' . $name;
+		}
+
+		Utils::print_js_config( $handle, $js_var, $config );
 	}
 
 	/**
