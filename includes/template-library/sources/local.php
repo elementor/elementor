@@ -2,10 +2,10 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Editor\Editor;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
-use Elementor\Editor;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
 use Elementor\Utils;
