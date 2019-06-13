@@ -254,7 +254,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'End Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'description' => __( 'Specify an end time (in seconds)<br>Note that setting video start & end time cancels the video loop.', 'elementor' ),
+				'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
 				'condition' => [
 					'loop' => '',
 					'video_type' => [ 'youtube', 'hosted' ],
