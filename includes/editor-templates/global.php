@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<i class="eicon-plus"></i>
 			</div>
 			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo __( 'Add Template', 'elementor' ); ?>">
-				<i class="fa fa-folder"></i>
+				<i class="eicon-folder"></i>
 			</div>
 			<div class="elementor-add-section-drag-title"><?php echo __( 'Drag widget here', 'elementor' ); ?></div>
 		</div>

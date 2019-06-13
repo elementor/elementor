@@ -60,7 +60,7 @@ class Create extends Base_Category {
 			$items[ $post_type ] = [
 				/* translators: %s the title of the post type */
 				'title' => sprintf( __( 'Add New %s', 'elementor' ), $post_type_object->labels->singular_name ),
-				'icon' => 'plus-circle',
+				'icon' => 'plus-circle-o',
 				'url' => $url,
 				'keywords' => [ 'post', 'page', 'template', 'new', 'create' ],
 			];

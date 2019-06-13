@@ -67,7 +67,6 @@
 
 			&:first-child {
 				color: $editor-dark;
-				@include border-end(1px solid $editor-background);
 			}
 
 			&:hover {
@@ -112,6 +111,16 @@
 
 		> button {
 			width: 100%;
+		}
+	}
+}
+
+.dialog-confirm-widget {
+
+	.dialog-button {
+
+		&:first-child {
+			@include border-end(1px solid $editor-background);
 		}
 	}
 }
