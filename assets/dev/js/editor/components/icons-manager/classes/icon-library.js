@@ -1,63 +1,7 @@
-import Store from './store';
-
-const IconLibrary = class {
+export default class {
 	loaded = {};
 
 	notifyCallback = null;
-
-	enqueueCSS = ( url ) => {
-		return new Promise( function( resolve ) {
-			if ( ! document.querySelector( 'link[href="' + url + '"]' ) ) {
-				const link = document.createElement( 'link' );
-				link.type = 'text/css';
-				link.rel = 'stylesheet';
-				link.href = url;
-				link.onload = function() {
-					resolve();
-				};
-				const headScript = document.querySelector( 'head' );
-				headScript.append( link );
-			}
-		} );
-	};
-
-	parseCSS = ( css, prefix = 'fa-', displayPrefix = '', library = false ) => {
-		const iconPattern = new RegExp( '\\.' +	prefix + "([^\\.!:]*)::?before\\s*{\\s*content:\\s*[\"|']\\\\[^'|\"]*[\"|'];?\\s*}", 'g' ),
-			index = 1,
-			icons = [];
-		let icon,
-			match = iconPattern.exec( css );
-
-		while ( match ) {
-			icon = {
-				prefix: prefix,
-				selector: prefix + match[ index ].trim( ':' ),
-				name: elementorCommon.helpers.firstLetterUppercase( match[ index ] )
-					.trim( ':' )
-					.split( '-' )
-					.join( ' ' ),
-				filter: match[ index ].trim( ':' ),
-				displayPrefix: displayPrefix || prefix.replace( '-', '' ),
-			};
-			icons.push( { [ match[ index ] ]: icon } );
-			match = iconPattern.exec( css );
-		}
-
-		if ( ! library ) {
-			return icons;
-		}
-		return this.normalizeIconList( { ... library, icons: icons } );
-	};
-
-	extractIconsFromCSS = ( library ) => {
-		fetch( library.url, { mode: 'cors' } )
-			.then( ( res ) => {
-				return res.text();
-			} )
-			.then( ( css ) => {
-				this.parseCSS( css, library.prefix, library.displayPrefix || '', library );
-			} );
-	};
 
 	fetchIcons = ( library ) => {
 		fetch( library.fetchJson, { mode: 'cors' } )
@@ -72,30 +16,32 @@ const IconLibrary = class {
 
 	normalizeIconList( library ) {
 		const icons = {};
-		let icon, name;
-		for ( icon in library.icons ) {
-			if ( ! library.icons.hasOwnProperty( icon ) ) {
-				continue;
-			}
-			name = library.icons[ icon ];
+		let name;
+
+		jQuery.each( library.icons, ( index, icon ) => {
+			name = icon;
 			if ( 'object' === typeof name ) {
 				name = Object.entries( name )[ 0 ][ 0 ];
+			}
+			if ( ! name ) {
+				return;
 			}
 			icons[ name ] = {
 				prefix: library.prefix,
 				selector: library.prefix + name.trim( ':' ),
-				name: elementorCommon.helpers.firstLetterUppercase( name )
+				name: elementorCommon.helpers.upperCaseWords( name )
 					.trim( ':' )
 					.split( '-' )
 					.join( ' ' ),
 				filter: name.trim( ':' ),
 				displayPrefix: library.displayPrefix || library.prefix.replace( '-', '' ),
 			};
-		}
+		} );
+
 		if ( Object.keys( icons ).length ) {
 			library.icons = icons;
 			this.loaded[ library.name ] = true;
-			Store.save( library );
+			elementor.iconManager.store.save( library );
 			this.runCallback( library );
 		}
 	}
@@ -109,26 +55,27 @@ const IconLibrary = class {
 
 	initIconType = ( libraryConfig, callback ) => {
 		this.notifyCallback = callback;
+		const store = elementor.iconManager.store;
 
 		if ( this.loaded[ libraryConfig.name ] ) {
-			libraryConfig.icons = Store.getIcons( libraryConfig );
+			libraryConfig.icons = store.getIcons( libraryConfig );
 			return this.runCallback( libraryConfig );
 		}
 
 		// Enqueue CSS
 		if ( libraryConfig.enqueue ) {
 			libraryConfig.enqueue.forEach( ( assetURL ) => {
-				this.enqueueCSS( assetURL );
+				elementor.helpers.enqueueEditorStylesheet( assetURL );
 			} );
 		}
 
 		if ( libraryConfig.url ) {
-			this.enqueueCSS( libraryConfig.url );
+			elementor.helpers.enqueueEditorStylesheet( libraryConfig.url );
 		}
 
 		//already saved an stored
-		if ( Store.isValid( libraryConfig ) ) {
-			const data = Store.get( Store.getKey( libraryConfig ) );
+		if ( store.isValid( libraryConfig ) ) {
+			const data = store.get( store.getKey( libraryConfig ) );
 			return this.normalizeIconList( data );
 		}
 
@@ -141,12 +88,7 @@ const IconLibrary = class {
 		if ( libraryConfig.fetchJson ) {
 			return this.fetchIcons( libraryConfig );
 		}
-
-		// try parsing CSS
-		if ( libraryConfig.url ) {
-			this.extractIconsFromCSS( libraryConfig );
-		}
+		// @todo: error handling
 	};
-};
+}
 
-export default new IconLibrary();

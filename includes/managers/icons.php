@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Files\Svg\Svg_Handler;
+use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -37,7 +37,7 @@ class Icons_Manager {
 	 * @since 2.4.0
 	 */
 	private static function init_tabs() {
-		self::$tabs = [
+		self::$tabs = apply_filters( 'elementor/icons_manager/native', [
 			'regular' => [
 				'name' => 'regular',
 				'label' => __( 'Regular', 'elementor' ),
@@ -46,7 +46,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fa-flag',
-				'ver' => '5.8.2',
+				'ver' => '5.9.0',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/regular.json',
 			],
 			'solid' => [
@@ -57,7 +57,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fa-flag',
-				'ver' => '5.8.2',
+				'ver' => '5.9.0',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/solid.json',
 			],
 			'brands' => [
@@ -68,10 +68,10 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fa-font-awesome',
-				'ver' => '5.8.2',
+				'ver' => '5.9.0',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/brands.json',
 			],
-		];
+		] );
 	}
 
 	/**

@@ -26,10 +26,11 @@ const Store = class {
 			return false;
 		}
 		if ( saved.ver !== library.ver ) {
+			// @todo: delete from localStorage if version is invalid
 			return false;
 		}
 		return ( saved.icons && saved.icons.length );
 	}
 };
 
-export default new Store();
+export default Store;

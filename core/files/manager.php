@@ -20,8 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Manager {
 
-	protected $asset_types = [];
-
 	/**
 	 * Files manager constructor.
 	 *
@@ -113,14 +111,6 @@ class Manager {
 		do_action( 'elementor/core/files/clear_cache' );
 	}
 
-	public function add_asset( $instance ) {
-		$this->asset_types[ $instance::get_name() ] = $instance;
-	}
-
-	public function register_asset_types() {
-		$this->add_asset( new Svg_Handler() );
-	}
-
 	/**
 	 * Register actions.
 	 *
@@ -132,6 +122,5 @@ class Manager {
 	private function register_actions() {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
-		$this->register_asset_types();
 	}
 }

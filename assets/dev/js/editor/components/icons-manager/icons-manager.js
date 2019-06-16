@@ -1,12 +1,14 @@
 import ModalLayout from './modal-layout';
 import { renderIconManager } from './components/icon-manager';
 import IconLibrary from './classes/icon-library';
+import Store from './classes/store';
 import { unmountComponentAtNode } from 'react-dom';
 
 export default class extends elementorModules.Module {
 	onInit() {
 		this.layout = new ModalLayout();
-		this.layout.getModal().addButton( {
+		const layoutModal = this.layout.getModal();
+		layoutModal.addButton( {
 			name: 'insert_icon',
 			className: 'elementor-button',
 			text: elementor.translate( 'Insert' ),
@@ -16,8 +18,11 @@ export default class extends elementorModules.Module {
 			},
 		} );
 
-		this.layout.getModal().on( 'show', this.onPickerShow );
-		this.layout.getModal().on( 'hide', this.unMountIconManager );
+		layoutModal.on( 'show', this.onPickerShow )
+			.on( 'hide', this.unMountIconManager );
+
+		this.library = new IconLibrary();
+		this.store = new Store();
 	}
 
 	unMountIconManager() {
@@ -67,7 +72,7 @@ export default class extends elementorModules.Module {
 
 		icons.forEach( ( tab, index ) => {
 			if ( -1 === [ 'all', 'recommended' ].indexOf( tab.name ) ) {
-				IconLibrary.initIconType( tab, ( lib ) => {
+				elementor.iconManager.library.initIconType( tab, ( lib ) => {
 					icons[ index ] = lib;
 				} );
 			}

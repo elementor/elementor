@@ -2,8 +2,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { render } from 'react-dom';
 import Tab from './tab';
-import IconLibrary from './../classes/icon-library';
-import Store from './../classes/store';
 
 class IconsManager extends Component {
 	state = {
@@ -30,7 +28,7 @@ class IconsManager extends Component {
 				return;
 			}
 
-			IconLibrary.initIconType( { ... tabSettings }, ( library ) => {
+			elementor.iconManager.library.initIconType( { ... tabSettings }, ( library ) => {
 				this.cache[ library.name ] = library;
 				loaded[ tabSettings.name ] = true;
 			} );
@@ -68,7 +66,7 @@ class IconsManager extends Component {
 			return this.loadAllTabs();
 		}
 
-		IconLibrary.initIconType( { ... tabSettings }, ( library ) => {
+		elementor.iconManager.library.initIconType( { ... tabSettings }, ( library ) => {
 			this.cache[ library.name ] = library;
 			this.updateLoaded( library.name );
 		} );
@@ -125,13 +123,13 @@ class IconsManager extends Component {
 
 		if ( ! this.state.loaded[ activeTab ] ) {
 			const librarySettings = this.props.icons.filter( ( library ) => activeTab === library.name );
-			return IconLibrary.initIconType( { ... librarySettings[ 0 ] }, ( library ) => {
+			return elementor.iconManager.library.initIconType( { ... librarySettings[ 0 ] }, ( library ) => {
 				this.cache[ library.name ] = library;
 				this.updateLoaded( library.name );
 			} );
 		}
 
-		return Store.getIcons( activeTab );
+		return elementor.iconManager.store.getIcons( activeTab );
 	};
 
 	getAllIcons = () => {

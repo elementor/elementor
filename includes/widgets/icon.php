@@ -110,23 +110,6 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'icon3',
-			[
-				'label' => __( 'Icon with recommended', 'elementor' ),
-				'type' => Controls_Manager::ICONS,
-				'recommended' => [
-					'solid' => [
-						'align-center',
-						'align-justify',
-						'align-left',
-						'align-right',
-						'allergies',
-					],
-				],
-			]
-		);
-
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
