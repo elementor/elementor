@@ -66,7 +66,7 @@ class Model extends BaseModel {
 		return [
 			'title' => __( 'Global Settings', 'elementor' ),
 			'menu' => [
-				'icon' => 'fa fa-cogs',
+				'icon' => 'eicon-cogs',
 				'beforeItem' => 'elementor-settings',
 			],
 		];

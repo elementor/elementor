@@ -49,25 +49,30 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		$video.width( size.width ).height( size.height );
 	},
 
-	startVideoLoop: function() {
-		var self = this;
+	startVideoLoop: function( firstTime ) {
+		const self = this;
 
 		// If the section has been removed
 		if ( ! self.player.getIframe().contentWindow ) {
 			return;
 		}
 
-		var elementSettings = self.getElementSettings(),
+		const elementSettings = self.getElementSettings(),
 			startPoint = elementSettings.background_video_start || 0,
 			endPoint = elementSettings.background_video_end;
+
+		if ( elementSettings.background_play_once && ! firstTime ) {
+			self.player.stopVideo();
+			return;
+		}
 
 		self.player.seekTo( startPoint );
 
 		if ( endPoint ) {
-			var durationToEnd = endPoint - startPoint + 1;
+			const durationToEnd = endPoint - startPoint + 1;
 
 			setTimeout( function() {
-				self.startVideoLoop();
+				self.startVideoLoop( false );
 			}, durationToEnd * 1000 );
 		}
 	},
@@ -93,7 +98,7 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 
 					self.changeVideoSize();
 
-					self.startVideoLoop();
+					self.startVideoLoop( true );
 
 					self.player.playVideo();
 				},
@@ -105,6 +110,9 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 							break;
 						case YT.PlayerState.ENDED:
 							self.player.seekTo( elementSettings.background_video_start || 0 );
+							if ( elementSettings.background_play_once ) {
+								self.player.stopVideo();
+							}
 					}
 				},
 			},
