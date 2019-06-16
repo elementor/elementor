@@ -14,16 +14,33 @@ helpers = {
 		},
 	},
 
-	enqueueStylesheet( url, previewOnly = true ) {
-		if ( ! elementor.$previewContents.find( 'link[href="' + url + '"]' ).length ) {
-			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
-		}
-		if ( previewOnly ) {
+	enqueueCSS( url, $document ) {
+		const selector = 'link[href="' + url + '"]',
+			link = '<link href="' + url + '" rel="stylesheet" type="text/css">';
+
+		if ( ! $document ) {
 			return;
 		}
-		if ( ! jQuery( document ).find( 'link[href="' + url + '"]' ).length ) {
-			jQuery( document ).find( 'link:last' ).after( '<link href="' + url + '" rel="stylesheet" type="text/css">' );
+
+		if ( ! $document.find( selector ).length ) {
+			$document.find( 'link:last' ).after( link );
 		}
+	},
+
+	enqueuePreviewStylesheet( url ) {
+		this.enqueueCSS( url, elementor.$previewContents );
+	},
+
+	enqueueEditorStylesheet( url ) {
+		this.enqueueCSS( url, elementorCommon.elements.$document );
+	},
+
+	/**
+	 * @deprecated 2.6.0
+	 */
+	enqueueStylesheet( url ) {
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		this.enqueuePreviewStylesheet( url );
 	},
 
 	fetchInlineSvg( svgUrl, callback = false ) {
@@ -70,12 +87,12 @@ helpers = {
 
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
-				this.enqueueStylesheet( assetURL );
+				this.enqueuePreviewStylesheet( assetURL );
 			} );
 		}
 
 		if ( iconSetting.url ) {
-			this.enqueueStylesheet( iconSetting.url );
+			this.enqueuePreviewStylesheet( iconSetting.url );
 		}
 
 		this._enqueuedIconFonts.push( iconType );
@@ -141,7 +158,7 @@ helpers = {
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
-			this.enqueueStylesheet( fontUrl );
+			this.enqueuePreviewStylesheet( fontUrl );
 		}
 
 		this._enqueuedFonts.push( font );
@@ -167,23 +184,22 @@ helpers = {
 			return null;
 		}
 
-		for ( const type in container ) {
-			if ( ! container.hasOwnProperty( type ) ) {
-				continue;
+		let result = null;
+
+		jQuery.each( container, ( index, type ) => {
+			if ( ! jQuery.isPlainObject( type ) ) {
+				return;
 			}
 
-			if ( ! jQuery.isPlainObject( container[ type ] ) ) {
-				continue;
+			const childType = this.getElementChildType( elementType, type );
+
+			if ( childType ) {
+				result = childType;
+				return false;
 			}
+		} );
 
-			const result = this.getElementChildType( elementType, container[ type ] );
-
-			if ( result ) {
-				return result;
-			}
-		}
-
-		return null;
+		return result;
 	},
 
 	getUniqueID() {
@@ -268,9 +284,9 @@ helpers = {
 	},
 
 	firstLetterUppercase( string ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.firstLetterUppercase', '2.3.0', 'elementorCommon.helpers.firstLetterUppercase' );
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.upperCaseWords', '2.3.0', 'elementorCommon.helpers.upperCaseWords' );
 
-		return elementorCommon.helpers.firstLetterUppercase( string );
+		return elementorCommon.helpers.upperCaseWords( string );
 	},
 
 	disableElementEvents( $element ) {

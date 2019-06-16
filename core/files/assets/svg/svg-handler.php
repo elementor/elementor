@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Files\Svg;
+namespace Elementor\Core\Files\Assets\Svg;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -670,12 +670,18 @@ class Svg_Handler {
 			return $attachment_data;
 		}
 
-		$svg = $this->get_inline_svg( $attachment->ID );
+		$svg = self::get_inline_svg( $attachment->ID );
 		if ( ! $svg ) {
 			return $attachment_data;
 		}
 
-		$svg = new \SimpleXMLElement( $svg );
+		try {
+			$svg = new \SimpleXMLElement( $svg );
+		} catch ( \Exception $e ) {
+			return $attachment_data;
+		}
+
+
 		$src = $attachment_data['url'];
 		$width = (int) $svg['width'];
 		$height = (int) $svg['height'];
@@ -695,8 +701,12 @@ class Svg_Handler {
 	}
 
 	public static function is_enabled() {
-		$enabled = self::is_svg_uploads_enabled() && self::svg_sanitizer_can_run();
-		return apply_filters( 'elementor/files/svg/enabled', $enabled );
+		static $enabled = null;
+		if ( null === $enabled ) {
+			$enabled = self::is_svg_uploads_enabled() && self::svg_sanitizer_can_run();
+			$enabled = apply_filters( 'elementor/files/svg/enabled', $enabled );
+		}
+		return $enabled;
 	}
 
 	/**

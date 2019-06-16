@@ -1,5 +1,4 @@
 const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
-import IconLibrary from './../components/icons-manager/classes/icon-library';
 
 class ControlIconsView extends ControlMultipleBaseItemView {
 	constructor( ...args ) {
@@ -19,12 +18,14 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
-				elementor.helpers.enqueueStylesheet( assetURL, false );
+				elementor.helpers.enqueueEditorStylesheet( assetURL );
+				elementor.helpers.enqueuePreviewStylesheet( assetURL );
 			} );
 		}
 
 		if ( iconSetting.url ) {
-			elementor.helpers.enqueueStylesheet( iconSetting.url, false );
+			elementor.helpers.enqueueEditorStylesheet( iconSetting.url );
+			elementor.helpers.enqueuePreviewStylesheet( iconSetting.url );
 		}
 	}
 
@@ -47,14 +48,14 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 				if ( 'all' === library.name ) {
 					return;
 				}
-				IconLibrary.initIconType( library );
+				elementor.iconManager.library.initIconType( library );
 			} );
 			this.cache.loaded = true;
 		}
 	}
 
 	events() {
-		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
+		return jQuery.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.iconPicker': 'openPicker',
 			'click @ui.svgUploader': 'openFrame',
 			'click @ui.deleteButton': 'deleteIcon',

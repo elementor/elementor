@@ -17,7 +17,7 @@ BaseElementView = BaseContainer.extend( {
 	renderAttributes: {},
 
 	className() {
-		var classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
+		let classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 
 		if ( this.toggleEditTools ) {
 			classes += ' elementor-element--toggle-edit-tools';
@@ -235,7 +235,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	isPasteEnabled() {
-		var transferData = elementorCommon.storage.get( 'transfer' );
+		const transferData = elementorCommon.storage.get( 'transfer' );
 
 		if ( ! transferData || this.isCollectionFilled() ) {
 			return false;
@@ -253,7 +253,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	duplicate() {
-		var oldTransport = elementorCommon.storage.get( 'transfer' );
+		const oldTransport = elementorCommon.storage.get( 'transfer' );
 
 		this.copy();
 
@@ -458,7 +458,7 @@ BaseElementView = BaseContainer.extend( {
 			return '';
 		}
 
-		var renderAttributes = this.renderAttributes[ element ],
+		const renderAttributes = this.renderAttributes[ element ],
 			attributes = [];
 
 		jQuery.each( renderAttributes, ( attributeKey, attributeValue ) => {
@@ -484,10 +484,10 @@ BaseElementView = BaseContainer.extend( {
 		const editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
 
-		_.each( settings.getFontControls(), ( control ) => {
+		jQuery.each( settings.getFontControls(), ( index, control ) => {
 			const fontFamilyName = editModel.getSetting( control.name );
 
-			if ( _.isEmpty( fontFamilyName ) ) {
+			if ( ! fontFamilyName ) {
 				return;
 			}
 
@@ -495,10 +495,10 @@ BaseElementView = BaseContainer.extend( {
 		} );
 
 		// Enqueue Icon Fonts
-		_.each( settings.getIconsControls(), ( control ) => {
+		jQuery.each( settings.getIconsControls(), ( index, control ) => {
 			const iconType = editModel.getSetting( control.name );
 
-			if ( _.isEmpty( iconType ) && _.isEmpty( iconType.library ) ) {
+			if ( ! iconType || ! iconType.library ) {
 				return;
 			}
 

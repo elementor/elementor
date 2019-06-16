@@ -655,6 +655,12 @@ class Frontend extends App {
 				$this->icon_fonts_to_enqueue[ $icon_font_type ][] = $font_css_url;
 			}
 		}
+
+		if ( isset( $icon_type['enqueue_scripts'] ) ) {
+			foreach ( (array) $icon_type['enqueue_scripts'] as $script_src ) {
+				$this->icon_fonts_to_enqueue[ $icon_font_type ][] = $font_css_url;
+			}
+		}
 	}
 
 	private function enqueue_icon_fonts() {

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Files\Svg\Svg_Handler;
+use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * A base control for creating a Icons chooser control.
  * Used to select an Icon.
+ *
+ * Usage:
  *
  * @since 1.0.0
  */
