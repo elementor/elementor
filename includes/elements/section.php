@@ -1381,12 +1381,13 @@ class Element_Section extends Element_Base {
 					<div class="elementor-background-video-container elementor-hidden-phone">
 						<?php if ( $video_properties ) : ?>
 							<div class="elementor-background-video-embed"></div>
-						<?php else :
+							<?php
+						else :
 							$video_tag_attributes = 'autoplay muted playsinline';
 							if ( 'yes' !== $settings['background_play_once'] ) :
 								$video_tag_attributes .= ' loop';
 							endif;
-						?>
+							?>
 							<video class="elementor-background-video-hosted elementor-html5-video" <?php echo $video_tag_attributes; ?>></video>
 						<?php endif; ?>
 					</div>
@@ -1395,7 +1396,7 @@ class Element_Section extends Element_Base {
 			endif;
 
 			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
-									  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
+									in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
 			if ( $has_background_overlay ) :
 				?>
