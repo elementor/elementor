@@ -259,7 +259,7 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 	 */
 	public function test_should_not_delete_revision_on_request_because_of_access_denied() {
 		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
-		$args['id'] = $this->factory()->get_default_post()->ID;
+		$args['id'] = $this->factory()->get_default_post();
 
 		Revisions_Manager::ajax_delete_revision( $args );
 	}
@@ -270,7 +270,7 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 	 */
 	public function test_should_not_delete_revision_on_request_because_the_method_cannot_delete_given_revision() {
 		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
-		$args['id'] = $this->factory()->create_and_get_default_post()->ID;
+		$args['id'] = $this->factory()->create_and_get_default_post();
 
 		Revisions_Manager::ajax_delete_revision( $args );
 	}
