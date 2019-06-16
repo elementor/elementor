@@ -194,9 +194,9 @@ class Feedback extends Module {
 	public function admin_notices() {
 		$notice_id = 'rate_us_feedback';
 
-        if ( ! current_user_can( 'manage_options' ) ) {
-            return;
-        }
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
 		if ( 'dashboard' !== get_current_screen()->id || User::is_user_notice_viewed( $notice_id ) || Tracker::is_notice_shown() ) {
 			return;
