@@ -535,7 +535,8 @@ abstract class Document extends Controls_Stack {
 			$this->post = get_post( $this->post->ID );
 		}
 
-		if ( isset( $data['elements'] ) ) {
+		// Don't check is_empty, because an empty array should be saved.
+		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
 			$this->save_elements( $data['elements'] );
 		}
 

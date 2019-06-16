@@ -520,6 +520,9 @@ class Element_Section extends Element_Base {
 					'video_end' => [
 						'frontend_available' => true,
 					],
+					'play_once' => [
+						'frontend_available' => true,
+					],
 				],
 			]
 		);
@@ -1336,10 +1339,16 @@ class Element_Section extends Element_Base {
 	 */
 	protected function _content_template() {
 		?>
-		<# if ( settings.background_video_link ) { #>
+		<#
+			if ( settings.background_video_link ) {
+				let videoAttributes = 'autoplay muted playsinline';
+				if ( ! settings.background_play_once ) {
+					videoAttributes += ' loop';
+				}
+		#>
 			<div class="elementor-background-video-container elementor-hidden-phone">
 				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted playsinline></video>
+				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
 		<div class="elementor-background-overlay"></div>
@@ -1372,8 +1381,14 @@ class Element_Section extends Element_Base {
 					<div class="elementor-background-video-container elementor-hidden-phone">
 						<?php if ( $video_properties ) : ?>
 							<div class="elementor-background-video-embed"></div>
-						<?php else : ?>
-							<video class="elementor-background-video-hosted elementor-html5-video" autoplay loop muted playsinline></video>
+							<?php
+						else :
+							$video_tag_attributes = 'autoplay muted playsinline';
+							if ( 'yes' !== $settings['background_play_once'] ) :
+								$video_tag_attributes .= ' loop';
+							endif;
+							?>
+							<video class="elementor-background-video-hosted elementor-html5-video" <?php echo $video_tag_attributes; ?>></video>
 						<?php endif; ?>
 					</div>
 					<?php
@@ -1381,7 +1396,7 @@ class Element_Section extends Element_Base {
 			endif;
 
 			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
-									  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
+									in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
 			if ( $has_background_overlay ) :
 				?>
