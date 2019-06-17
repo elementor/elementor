@@ -9,7 +9,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.mediaImage = '.elementor-control-media-image';
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
-		ui.deleteButton = '.elementor-control-media-delete';
+		ui.removeButton = '.elementor-control-media__remove';
 
 		return ui;
 	},
@@ -17,7 +17,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	events: function() {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
-			'click @ui.deleteButton': 'deleteImage',
+			'click @ui.removeButton': 'deleteImage',
 		} );
 	},
 
