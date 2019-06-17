@@ -6,6 +6,8 @@ import environment from '../../../../core/common/assets/js/utils/environment.js'
 import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 
+import IconsManager from './components/icons-manager/icons-manager';
+//_.noConflict();
 const App = Marionette.Application.extend( {
 	loaded: false,
 
@@ -77,6 +79,7 @@ const App = Marionette.Application.extend( {
 			Hidden: require( 'elementor-controls/hidden' ),
 			Hover_animation: require( 'elementor-controls/select2' ),
 			Icon: require( 'elementor-controls/icon' ),
+			Icons: require( 'elementor-controls/icons' ),
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
 			Media: require( 'elementor-controls/media' ),
 			Number: require( 'elementor-controls/number' ),
@@ -160,7 +163,7 @@ const App = Marionette.Application.extend( {
 	_defaultDeviceMode: 'desktop',
 
 	addControlView: function( controlID, ControlView ) {
-		this.modules.controls[ elementorCommon.helpers.firstLetterUppercase( controlID ) ] = ControlView;
+		this.modules.controls[ elementorCommon.helpers.upperCaseWords( controlID ) ] = ControlView;
 	},
 
 	checkEnvCompatibility: function() {
@@ -230,7 +233,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	getControlView: function( controlID ) {
-		var capitalizedControlName = elementorCommon.helpers.firstLetterUppercase( controlID ),
+		var capitalizedControlName = elementorCommon.helpers.upperCaseWords( controlID ),
 			View = this.modules.controls[ capitalizedControlName ];
 
 		if ( ! View ) {
@@ -275,6 +278,8 @@ const App = Marionette.Application.extend( {
 		this.initHotKeys();
 
 		this.hotkeysScreen = new HotkeysScreen();
+
+		this.iconManager = new IconsManager();
 
 		this.noticeBar = new NoticeBar();
 	},

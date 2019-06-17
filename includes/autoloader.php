@@ -122,6 +122,7 @@ class Autoloader {
 			'Settings_Page' => 'includes/settings/settings-page.php',
 			'Shapes' => 'includes/shapes.php',
 			'Skins_Manager' => 'includes/managers/skins.php',
+			'Icons_Manager' => 'includes/managers/icons.php',
 			'Stylesheet' => 'includes/stylesheet.php',
 			'System_Info\Main' => 'includes/settings/system-info/main.php',
 			'TemplateLibrary\Classes\Import_Images' => 'includes/template-library/classes/class-import-images.php',
