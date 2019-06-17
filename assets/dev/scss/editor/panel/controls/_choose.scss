@@ -1,0 +1,79 @@
+.elementor-control-type-choose {
+
+	&.elementor-label-block {
+
+	}
+
+	> .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
+		width: auto;
+	}
+}
+
+.elementor-choices {
+	display: grid;
+	grid-auto-flow: column;
+	grid-gap: 1px;
+	background-color: $editor-background;
+	border: 1px solid $editor-background;
+	border-radius: 3px;
+	overflow: hidden;
+
+	input {
+		display: none;
+
+		&:checked + .elementor-choices-label {
+			background-color: $editor-light;
+			color: #fff;
+		}
+
+		&:not(:checked) + .elementor-choices-label {
+			background-color: #fff;
+			color: $editor-lightest;
+
+			&:nth-child(2) {
+				border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			}
+
+			&:last-child {
+				border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+			}
+		}
+	}
+
+	.elementor-choices-label {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 27px;
+		font-size: 12px;
+		transition: all .5s;
+		cursor: pointer;
+	}
+}
+
+.rtl {
+
+	.elementor-control-text_align,
+	.elementor-control-align,
+	.elementor-control-position {
+
+		.elementor-choices {
+			direction: ltr; // Force ltr also in RTL languages
+
+			input {
+
+				&:not(:checked) + .elementor-choices-label {
+
+					&:nth-child(2) {
+						border-radius: 3px 0 0 3px;
+					}
+
+					&:last-child {
+						border-radius: 0 3px 3px 0;
+					}
+				}
+			}
+		}
+	}
+}
