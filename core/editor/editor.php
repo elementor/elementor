@@ -692,6 +692,9 @@ class Editor {
 				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>{{{ replacement }}}</strong>.', 'elementor' ),
 				'deprecated_notice_last' => __( 'Note that {{{ widget }}} will be completely removed once {{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
 
+				//Preview Debug
+				'preview_debug_link_text' => __( 'Click here for preview debug', 'elementor' ),
+
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'elementor_docs' => __( 'Documentation', 'elementor' ),
