@@ -45,8 +45,8 @@ class Control_Icons extends Control_Base_Multiple {
 	 */
 	public function get_default_value() {
 		return [
-			'value'   => 'fas fa-star',
-			'library' => 'solid',
+			'value'   => '',
+			'library' => '',
 		];
 	}
 
