@@ -72,10 +72,10 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	migrateFa4toFa5( fa4Value ) {
 		const fa5Value = elementor.helpers.mapFa4ToFa5( fa4Value );
+		this.setControlAsMigrated( this.model.get( 'name' ) );
 		if ( fa5Value ) {
 			this.setValue( fa5Value );
 		}
-		this.setControlAsMigrated( this.model.get( 'name' ) );
 		return fa5Value;
 	}
 

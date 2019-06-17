@@ -146,7 +146,7 @@ helpers = {
 		}
 		// every thing else is converted to solid
 		return {
-			value: 'fas' + fa4Value.str_replace( 'fa ', '' ),
+			value: 'fas' + fa4Value.replace( 'fa ', ' ' ),
 			library: 'solid',
 		};
 	},

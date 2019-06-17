@@ -127,12 +127,16 @@ class Widget_Icon_List extends Widget_Base {
 		);
 
 		$repeater->add_control(
-			'icon',
+			'selected_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICON,
 				'label_block' => true,
-				'default' => 'fa fa-check',
+				'default' => [
+					'value' => 'fas fa-check',
+					'library' => 'solid',
+				],
+				'fa4compatibility' => 'icon',
 			]
 		);
 
@@ -549,10 +553,12 @@ class Widget_Icon_List extends Widget_Base {
 						echo '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 					}
 
-					if ( ! empty( $item['icon'] ) ) :
+					if ( ! empty( $item['icon'] ) || ! empty( $item['selected_icon'] ) ) :
 						?>
 						<span class="elementor-icon-list-icon">
-							<i class="<?php echo esc_attr( $item['icon'] ); ?>" aria-hidden="true"></i>
+							<?php if ( ! Icons_Manager::render_icon( $item['selected_icon'], [ 'aria-hidden' => 'true' ] ) ) { ?>
+								<i class="<?php echo esc_attr( $item['icon'] ); ?>" aria-hidden="true"></i>
+							<?php } ?>
 						</span>
 					<?php endif; ?>
 					<span <?php echo $this->get_render_attribute_string( $repeater_setting_key ); ?>><?php echo $item['text']; ?></span>
