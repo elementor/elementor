@@ -103,6 +103,24 @@ class Icons_Manager {
 		return Svg_Handler::get_inline_svg( $value['id'] );
 	}
 
+	private static function render_icon_html( $icon, $attributes = [], $tag = 'i' ) {
+		$icon_types = self::get_icon_manager_tabs();
+		if ( isset( $icon_types[ $icon['library'] ]['render_callback'] ) && is_callable( $icon_types[ $icon['library'] ]['render_callback'] ) ) {
+			return call_user_func_array( $icon_types[ $icon['library'] ]['render_callback'], [ $icon, $attributes, $tag ] );
+		}
+
+		if ( empty( $attributes['class'] ) ) {
+			$attributes['class'] = $icon['value'];
+		} else {
+			if ( is_array( $attributes['class'] ) ) {
+				$attributes['class'][] = $icon['value'];
+			} else {
+				$attributes['class'] .= ' ' . $icon['value'];
+			}
+		}
+		return '<' . $tag . ' ' . Utils::render_html_attributes( $attributes ) . '></' . $tag . '>';
+	}
+
 	/**
 	 * Render Icon
 	 *
@@ -114,24 +132,17 @@ class Icons_Manager {
 	 * @return mixed|string
 	 */
 	public static function render_icon( $icon, $attributes = [], $tag = 'i' ) {
+		if ( ! is_array( $icon ) ) {
+			return false;
+		}
+		$output = '';
 		// handler SVG Icon
 		if ( 'svg' === $icon['library'] ) {
-			return self::render_svg_icon( $icon['value'] );
-		}
-		$icon_types = self::get_icon_manager_tabs();
-		if ( isset( $icon_types[ $icon['library'] ]['render_callback'] ) && is_callable( $icon_types[ $icon['library'] ]['render_callback'] ) ) {
-			return call_user_func_array( $icon_types[ $icon['library'] ]['render_callback'], [ $icon, $attributes, $tag ] );
-		}
-		if ( empty( $attributes['class'] ) ) {
-			$attributes['class'] = $icon['value'];
+			$output = self::render_svg_icon( $icon['value'] );
 		} else {
-			if ( is_array( $attributes['class'] ) ) {
-				$attributes['class'][] = $icon['value'];
-			} else {
-				$attributes['class'] .= ' ' . $icon['value'];
-			}
+			$output = self::render_icon_html( $icon, $attributes, $tag );
 		}
-
-		return '<' . $tag . ' ' . Utils::render_html_attributes( $attributes ) . '></' . $tag . '>';
+		echo $output;
+		return true;
 	}
 }
