@@ -132,7 +132,7 @@ class Icons_Manager {
 	 * @return mixed|string
 	 */
 	public static function render_icon( $icon, $attributes = [], $tag = 'i' ) {
-		if ( ! is_array( $icon ) ) {
+		if ( empty( $icon['library'] ) ) {
 			return false;
 		}
 		$output = '';

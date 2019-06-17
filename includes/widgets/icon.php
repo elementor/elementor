@@ -422,13 +422,9 @@ class Widget_Icon extends Widget_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<<?php echo $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
-				<?php if ( empty( $settings['icon'] ) ) : ?>
-					<i></i>
-				<?php else :
-					if ( ! Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] ) ) { ?>
-						<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
-					<?php }
-				endif; ?>
+			<?php if ( ! Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] ) ) : ?>
+				<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
+			<?php endif; ?>
 			</<?php echo $icon_tag; ?>>
 		</div>
 		<?php
