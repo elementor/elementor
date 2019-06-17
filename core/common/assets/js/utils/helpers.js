@@ -15,7 +15,9 @@ export default class Helpers {
 		return JSON.parse( JSON.stringify( object ) );
 	}
 
-	firstLetterUppercase( string ) {
-		return string[ 0 ].toUpperCase() + string.slice( 1 );
+	upperCaseWords( string ) {
+		return ( string + '' ).replace( /^(.)|\s+(.)/g, function( $1 ) {
+			return $1.toUpperCase();
+		} );
 	}
 }
