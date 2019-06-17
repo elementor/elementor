@@ -1,6 +1,10 @@
 {
   "fa fa-star": {
-    "value": "fa-star",
+    "value": "fas fa-star",
+    "library": "solid"
+  },
+  "fa fa-wifi": {
+    "value": "fas fa-wifi",
     "library": "solid"
   }
 }
