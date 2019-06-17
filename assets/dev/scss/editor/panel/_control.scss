@@ -368,45 +368,6 @@
 	color: $editor-warning;
 }
 
-.elementor-choices {
-	display: table;
-	width: 100%;
-	height: 27px;
-	background-color: $editor-light;
-	text-align: center;
-	border-spacing: 1px;
-	border-radius: 3px;
-
-	input {
-		display: none;
-
-		&:checked + .elementor-choices-label {
-			color: #fff;
-		}
-
-		&:not(:checked) + .elementor-choices-label {
-			background-color: #fff;
-			color: $editor-light;
-
-			&:nth-child(2) {
-				border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-			}
-
-			&:last-child {
-				border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-			}
-		}
-	}
-
-	.elementor-choices-label {
-		display: table-cell;
-		vertical-align: middle;
-		font-size: 12px;
-		transition: all .5s;
-		cursor: pointer;
-	}
-}
-
 .elementor-units-choices {
 	flex-grow: 1;
 	text-align: $end;
@@ -523,33 +484,6 @@
 	text-transform: uppercase;
 }
 
-// = Choices control for alignment
-.rtl {
-
-	.elementor-control-text_align,
-	.elementor-control-align,
-	.elementor-control-position {
-
-		.elementor-choices {
-			direction: ltr; // Force ltr also in RTL languages
-
-			input {
-
-				&:not(:checked) + .elementor-choices-label {
-
-					&:nth-child(2) {
-						border-radius: 3px 0 0 3px;
-					}
-
-					&:last-child {
-						border-radius: 0 3px 3px 0;
-					}
-				}
-			}
-		}
-	}
-}
-
 // = Set direction control by class
 .elementor-control-direction- {
 
@@ -565,6 +499,8 @@
 @import "controls/box-shadow";
 
 @import "controls/button";
+
+@import "controls/choose";
 
 @import "controls/code";
 
