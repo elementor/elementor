@@ -425,7 +425,7 @@ class Widget_Icon extends Widget_Base {
 				<?php if ( empty( $settings['icon'] ) ) : ?>
 					<i></i>
 				<?php else :
-					if ( ! Icons_Manager::render_icon( $settings['icon'], [ 'aria-hidden' => 'true' ] ) ) { ?>
+					if ( ! Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] ) ) { ?>
 						<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
 					<?php }
 				endif; ?>

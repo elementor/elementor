@@ -127,7 +127,7 @@ helpers = {
 		elementor.channels.editor.trigger( 'Icon:insertion', iconType, iconValue, attributes, tag, view );
 	},
 
-	mapFa4ToFa5( fa4Value ) {
+	fetchFa4ToFa5Mapping() {
 		const storageKey = 'fa4Tofa5Mapping';
 		let mapping = elementorCommon.storage.get( storageKey );
 		if ( ! mapping ) {
@@ -136,7 +136,19 @@ helpers = {
 				elementorCommon.storage.set( storageKey, data );
 			} );
 		}
-		return mapping[ fa4Value ];
+		return mapping;
+	},
+
+	mapFa4ToFa5( fa4Value ) {
+		const mapping = this.fetchFa4ToFa5Mapping();
+		if ( mapping[ fa4Value ] ) {
+			return mapping[ fa4Value ];
+		}
+		// every thing else is converted to solid
+		return {
+			value: 'fas' + fa4Value.str_replace( 'fa ', '' ),
+			library: 'solid',
+		};
 	},
 
 	enqueueFont( font ) {

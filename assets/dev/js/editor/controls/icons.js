@@ -52,7 +52,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 
 		// Check if already migrated
-		const didMigration = this.elementSettingsModel.get( 'fa4_migrated' ),
+		const didMigration = this.elementSettingsModel.get( '__fa4_migrated' ),
 			controlName = model.get( 'name' );
 
 		if ( didMigration && didMigration[ controlName ] ) {
@@ -71,20 +71,24 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	migrateFa4toFa5( fa4Value ) {
+		const fa5Value = elementor.helpers.mapFa4ToFa5( fa4Value );
+		if ( fa5Value ) {
+			this.setValue( fa5Value );
+		}
 		this.setControlAsMigrated( this.model.get( 'name' ) );
-		debugger;
-		return elementor.helpers.mapFa4ToFa5( fa4Value );
+		return fa5Value;
 	}
 
 	setControlAsMigrated( controlName ) {
-		const didMigration = this.elementSettingsModel.get( 'fa4_migrated' ) || {};
+		const didMigration = this.elementSettingsModel.get( '__fa4_migrated' ) || {};
 		didMigration[ controlName ] = true;
-		this.elementSettingsModel.setExternalChange( 'fa4_migrated', didMigration );
+		this.elementSettingsModel.setExternalChange( '__fa4_migrated', didMigration );
 	}
 
 	onRender() {
 		super.onRender();
 		if ( ! this.cache.loaded ) {
+			elementor.helpers.fetchFa4ToFa5Mapping();
 			elementor.config.icons.forEach( ( library ) => {
 				if ( 'all' === library.name ) {
 					return;
@@ -134,7 +138,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		this.trigger( 'before:select' );
 
 		// Get the attachment from the modal frame.
-		var attachment = this.frame.state().get( 'selection' ).first().toJSON();
+		const attachment = this.frame.state().get( 'selection' ).first().toJSON();
 
 		if ( attachment.url ) {
 			this.setValue( {
