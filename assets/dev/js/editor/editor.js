@@ -278,7 +278,9 @@ const App = Marionette.Application.extend( {
 		this.initHotKeys();
 
 		this.hotkeysScreen = new HotkeysScreen();
+
 		this.iconManager = new IconsManager();
+
 		this.noticeBar = new NoticeBar();
 	},
 

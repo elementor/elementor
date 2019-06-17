@@ -41,9 +41,54 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		return ui;
 	}
 
+	getControlValue() {
+		const value = super.getControlValue(),
+			model = this.model,
+			controlToMigrate = model.get( 'fa4compatibility' );
+
+		// Bail if no migration flag
+		if ( ! controlToMigrate ) {
+			return value;
+		}
+
+		// Check if already migrated
+		const didMigration = this.elementSettingsModel.get( '__fa4_migrated' ),
+			controlName = model.get( 'name' );
+
+		if ( didMigration && didMigration[ controlName ] ) {
+			return value;
+		}
+
+		// Check if there is a value to migrate
+		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
+		if ( ! valueToMigrate ) {
+			// Set flag as migrated
+			this.setControlAsMigrated( controlName );
+			return value;
+		}
+
+		return this.migrateFa4toFa5( valueToMigrate );
+	}
+
+	migrateFa4toFa5( fa4Value ) {
+		const fa5Value = elementor.helpers.mapFa4ToFa5( fa4Value );
+		this.setControlAsMigrated( this.model.get( 'name' ) );
+		if ( fa5Value ) {
+			this.setValue( fa5Value );
+		}
+		return fa5Value;
+	}
+
+	setControlAsMigrated( controlName ) {
+		const didMigration = this.elementSettingsModel.get( '__fa4_migrated' ) || {};
+		didMigration[ controlName ] = true;
+		this.elementSettingsModel.setExternalChange( '__fa4_migrated', didMigration );
+	}
+
 	onRender() {
 		super.onRender();
 		if ( ! this.cache.loaded ) {
+			elementor.helpers.fetchFa4ToFa5Mapping();
 			elementor.config.icons.forEach( ( library ) => {
 				if ( 'all' === library.name ) {
 					return;
@@ -93,7 +138,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		this.trigger( 'before:select' );
 
 		// Get the attachment from the modal frame.
-		var attachment = this.frame.state().get( 'selection' ).first().toJSON();
+		const attachment = this.frame.state().get( 'selection' ).first().toJSON();
 
 		if ( attachment.url ) {
 			this.setValue( {
@@ -173,8 +218,9 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	applySavedValue() {
-		const iconValue = this.getControlValue( 'value' ),
-			iconType = this.getControlValue( 'library' );
+		const controlValue = this.getControlValue(),
+			iconValue = controlValue.value,
+			iconType = controlValue.library;
 
 		if ( ! iconValue ) {
 			this.ui.previewPlaceholder.html( '' );
