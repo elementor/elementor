@@ -739,6 +739,8 @@ class Admin extends App {
 
 		$this->add_component( 'feedback', new Feedback() );
 
+		$this->add_component( 'canary-deployment', new Canary_Deployment() );
+
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
