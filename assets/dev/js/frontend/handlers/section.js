@@ -17,7 +17,7 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		var selectors = this.getSettings( 'selectors' ),
 			elements = {
 				$backgroundVideoContainer: this.$element.find( selectors.backgroundVideoContainer ),
-			};
+		};
 
 		elements.$backgroundVideoEmbed = elements.$backgroundVideoContainer.children( selectors.backgroundVideoEmbed );
 
@@ -111,7 +111,7 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 						case YT.PlayerState.ENDED:
 							self.player.seekTo( elementSettings.background_video_start || 0 );
 							if ( elementSettings.background_play_once ) {
-								self.player.stopVideo();
+								self.player.destroy();
 							}
 					}
 				},
@@ -126,7 +126,8 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 	activate: function() {
 		var self = this,
 			videoLink = self.getElementSettings( 'background_video_link' ),
-			videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink );
+			videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink ),
+			playOnce = self.getElementSettings( 'background_play_once' );
 
 		self.isYTVideo = ! ! videoID;
 
@@ -143,6 +144,11 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 				videoLink += '#t=' + ( startTime || 0 ) + ( endTime ? ',' + endTime : '' );
 			}
 			self.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', self.changeVideoSize );
+			if ( playOnce ) {
+				self.elements.$backgroundVideoHosted.on( 'ended', function() {
+					self.elements.$backgroundVideoHosted.hide();
+				} );
+			}
 		}
 
 		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
@@ -153,6 +159,7 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 			this.player.destroy();
 		} else {
 			this.elements.$backgroundVideoHosted.removeAttr( 'src' );
+			this.elements.$backgroundVideoHosted.off( 'ended' );
 		}
 
 		elementorFrontend.elements.$window.off( 'resize', this.changeVideoSize );
