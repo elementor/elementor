@@ -41,6 +41,47 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		return ui;
 	}
 
+	getControlValue() {
+		const value = super.getControlValue(),
+			model = this.model,
+			controlToMigrate = model.get( 'fa4compatibility' );
+
+		// Bail if no migration flag
+		if ( ! controlToMigrate ) {
+			return value;
+		}
+
+		// Check if already migrated
+		const didMigration = this.elementSettingsModel.get( 'fa4_migrated' ),
+			controlName = model.get( 'name' );
+
+		if ( didMigration && didMigration[ controlName ] ) {
+			return value;
+		}
+
+		// Check if there is a value to migrate
+		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
+		if ( ! valueToMigrate ) {
+			// Set flag as migrated
+			this.setControlAsMigrated( controlName );
+			return value;
+		}
+
+		return this.migrateFa4toFa5( valueToMigrate );
+	}
+
+	migrateFa4toFa5( fa4Value ) {
+		this.setControlAsMigrated( this.model.get( 'name' ) );
+		debugger;
+		return elementor.helpers.mapFa4ToFa5( fa4Value );
+	}
+
+	setControlAsMigrated( controlName ) {
+		const didMigration = this.elementSettingsModel.get( 'fa4_migrated' ) || {};
+		didMigration[ controlName ] = true;
+		this.elementSettingsModel.setExternalChange( 'fa4_migrated', didMigration );
+	}
+
 	onRender() {
 		super.onRender();
 		if ( ! this.cache.loaded ) {
@@ -173,8 +214,9 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	applySavedValue() {
-		const iconValue = this.getControlValue( 'value' ),
-			iconType = this.getControlValue( 'library' );
+		const controlValue = this.getControlValue(),
+			iconValue = controlValue.value,
+			iconType = controlValue.library;
 
 		if ( ! iconValue ) {
 			this.ui.previewPlaceholder.html( '' );

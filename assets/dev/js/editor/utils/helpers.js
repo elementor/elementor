@@ -109,6 +109,9 @@ helpers = {
 	},
 
 	renderIcon( view, icon, attributes = {}, tag = 'i' ) {
+		if ( ! icon || ! icon.library ) {
+			return;
+		}
 		const iconType = icon.library,
 			iconValue = icon.value;
 		if ( 'svg' === iconType ) {
@@ -122,6 +125,18 @@ helpers = {
 			return '<' + tag + ' ' + view.getRenderAttributeString( tag ) + '></' + tag + '>';
 		}
 		elementor.channels.editor.trigger( 'Icon:insertion', iconType, iconValue, attributes, tag, view );
+	},
+
+	mapFa4ToFa5( fa4Value ) {
+		const storageKey = 'fa4Tofa5Mapping';
+		let mapping = elementorCommon.storage.get( storageKey );
+		if ( ! mapping ) {
+			jQuery.getJSON( ElementorConfig.fa4_to_fa5_mapping_url, ( data ) => {
+				mapping = data;
+				elementorCommon.storage.set( storageKey, data );
+			} );
+		}
+		return mapping[ fa4Value ];
 	},
 
 	enqueueFont( font ) {
