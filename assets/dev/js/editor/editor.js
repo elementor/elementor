@@ -1092,9 +1092,11 @@ const App = Marionette.Application.extend( {
 		const self = this;
 
 		const debugUrl = self.config.document.urls.preview + '&preview-debug',
-			previewDebugLink = '<br><a href="' + debugUrl + '" target="_blank">Preview Debug</a>',
+			previewDebugLinkText = self.config.i18n.preview_debug_link_text,
+			previewDebugLink = '<div id="preview-debug-link-text"><a href="' + debugUrl + '" target="_blank">' + previewDebugLinkText + '</a></div>',
 			debugData = elementor.config.preview.debug_data,
 			dialogOptions = {
+				className: 'preview-loading-error',
 				headerMessage: debugData.header,
 				message: debugData.message + previewDebugLink,
 				onConfirm: function() {
@@ -1110,8 +1112,9 @@ const App = Marionette.Application.extend( {
 			self.showFatalErrorDialog( dialogOptions );
 		} ).fail( function( response ) { //Iframe can't be loaded
 			self.showFatalErrorDialog( {
+				className: 'preview-loading-error',
 				headerMessage: debugData.header,
-				message: response.status + ' : ' + response.statusText + previewDebugLink,
+				message: response.statusText + ' ' + response.status + ' ' + previewDebugLink,
 				onConfirm: function() {
 					const url = 500 <= response.status ? elementor.config.preview.help_preview_http_error_500_url : elementor.config.preview.help_preview_http_error_url;
 					open( url, '_blank' );
