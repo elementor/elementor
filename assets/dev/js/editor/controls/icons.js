@@ -16,6 +16,18 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		};
 	}
 
+	ui() {
+		const ui = super.ui();
+		ui.frameOpeners = '.elementor-control-preview-area';
+		ui.svgUploader = '.elementor-control-svg-uploader';
+		ui.iconPicker = '.elementor-control-icon-picker';
+		ui.deleteButton = '.elementor-control-icon-delete';
+		ui.previewContainer = '.elementor-control-icons-preview';
+		ui.previewPlaceholder = '.elementor-control-icons-preview-placeholder';
+
+		return ui;
+	}
+
 	enqueueIconFonts( iconType ) {
 		const iconSetting = elementor.helpers.getIconLibrarySettings( iconType );
 		if ( false === iconSetting ) {
@@ -35,46 +47,31 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 	}
 
-	ui() {
-		const ui = super.ui();
-		ui.frameOpeners = '.elementor-control-preview-area';
-		ui.svgUploader = '.elementor-control-svg-uploader';
-		ui.iconPicker = '.elementor-control-icon-picker';
-		ui.deleteButton = '.elementor-control-icon-delete';
-		ui.previewContainer = '.elementor-control-icons-preview';
-		ui.previewPlaceholder = '.elementor-control-icons-preview-placeholder';
-
-		return ui;
-	}
-
 	getControlValue() {
 		const value = super.getControlValue(),
 			model = this.model,
-			controlToMigrate = model.get( this.dataKeys.fa4compatibility );
+			controlToMigrate = model.get( this.dataKeys.fa4MigrationFlag );
 
 		// Bail if no migration flag
 		if ( ! controlToMigrate ) {
 			return value;
 		}
 
-		// Check if already migrated
-		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey ),
-			controlName = model.get( 'name' );
-
-		if ( didMigration && didMigration[ controlName ] ) {
+		// Check if there is a value to migrate
+		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
+		if ( ! valueToMigrate ) {
 			return value;
 		}
+
+		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey ),
+			controlName = model.get( 'name' );
 
 		// Check if migration had been done and is stored locally
 		if ( this.cache.migratedFlag[ controlName ] ) {
 			return this.cache.migratedFlag[ controlName ];
 		}
-
-		// Check if there is a value to migrate
-		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
-		if ( ! valueToMigrate ) {
-			// Set flag as migrated
-			this.cache.migratedFlag[ controlName ] = value;
+		// Check if already migrated
+		if ( didMigration && didMigration[ controlName ] ) {
 			return value;
 		}
 
