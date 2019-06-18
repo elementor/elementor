@@ -158,8 +158,7 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		if ( this.isYTVideo && this.player.getIframe() ) {
 			this.player.destroy();
 		} else {
-			this.elements.$backgroundVideoHosted.removeAttr( 'src' );
-			this.elements.$backgroundVideoHosted.off( 'ended' );
+			this.elements.$backgroundVideoHosted.removeAttr( 'src' ).off( 'ended' );
 		}
 
 		elementorFrontend.elements.$window.off( 'resize', this.changeVideoSize );
