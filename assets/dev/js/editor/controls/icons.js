@@ -7,6 +7,12 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			loaded: false,
 			dialog: false,
 			enableClicked: false,
+			fa4Mapping: false,
+			migratedFlag: {},
+		};
+		this.dataKeys = {
+			migratedKey: '__fa4_migrated',
+			fa4MigrationFlag: 'fa4compatibility',
 		};
 	}
 
@@ -51,51 +57,62 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	getControlValue() {
 		const value = super.getControlValue(),
 			model = this.model,
-			controlToMigrate = model.get( 'fa4compatibility' );
+			controlToMigrate = model.get( this.dataKeys.fa4MigrationFlag );
 
 		// Bail if no migration flag
 		if ( ! controlToMigrate ) {
 			return value;
 		}
 
-		// Check if already migrated
-		const didMigration = this.elementSettingsModel.get( '__fa4_migrated' ),
+		// Check if there is a value to migrate
+		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
+		if ( ! valueToMigrate ) {
+			return value;
+		}
+
+		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey ),
 			controlName = model.get( 'name' );
 
+		// Check if migration had been done and is stored locally
+		if ( this.cache.migratedFlag[ controlName ] ) {
+			return this.cache.migratedFlag[ controlName ];
+		}
+		// Check if already migrated
 		if ( didMigration && didMigration[ controlName ] ) {
 			return value;
 		}
 
-		// Check if there is a value to migrate
-		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
-		if ( ! valueToMigrate ) {
-			// Set flag as migrated
-			this.setControlAsMigrated( controlName );
-			return value;
-		}
-
+		// Do migration
 		return this.migrateFa4toFa5( valueToMigrate );
 	}
 
 	migrateFa4toFa5( fa4Value ) {
 		const fa5Value = elementor.helpers.mapFa4ToFa5( fa4Value );
-		this.setControlAsMigrated( this.model.get( 'name' ) );
-		if ( fa5Value ) {
-			this.setValue( fa5Value );
-		}
+		this.cache.migratedFlag[ this.model.get( 'name' ) ] = fa5Value;
+		this.enqueueIconFonts( fa5Value.library );
 		return fa5Value;
 	}
 
 	setControlAsMigrated( controlName ) {
-		const didMigration = this.elementSettingsModel.get( '__fa4_migrated' ) || {};
+		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey ) || {};
 		didMigration[ controlName ] = true;
-		this.elementSettingsModel.setExternalChange( '__fa4_migrated', didMigration );
+		this.elementSettingsModel.set( this.dataKeys.migratedKey, didMigration, { silent: true } );
+	}
+
+	onReady() {
+		const controlName = this.model.get( 'name' );
+		if ( this.cache.migratedFlag[ controlName ] ) {
+			this.setControlAsMigrated( controlName );
+			setTimeout( () => {
+				this.setValue( this.cache.migratedFlag[ controlName ] );
+			}, 10 );
+		}
 	}
 
 	onRender() {
 		super.onRender();
+		// @todo: move to manager
 		if ( ! this.cache.loaded ) {
-			elementor.helpers.fetchFa4ToFa5Mapping();
 			elementor.config.icons.forEach( ( library ) => {
 				if ( 'all' === library.name ) {
 					return;

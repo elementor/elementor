@@ -21,8 +21,12 @@ export default class extends elementorModules.Module {
 		layoutModal.on( 'show', this.onPickerShow )
 			.on( 'hide', this.unMountIconManager );
 
+		// Init icon library helper
 		this.library = new IconLibrary();
+		// Init Icon library Storage helper
 		this.store = new Store();
+		// Fetch fa4 to fa5 migration data
+		elementor.helpers.fetchFa4ToFa5Mapping();
 	}
 
 	unMountIconManager() {
