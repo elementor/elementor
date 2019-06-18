@@ -31,14 +31,21 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	ui() {
 		const ui = super.ui();
-		ui.frameOpeners = '.elementor-control-preview-area';
+
 		ui.svgUploader = '.elementor-control-svg-uploader';
 		ui.iconPicker = '.elementor-control-icon-picker';
-		ui.deleteButton = '.elementor-control-icon-delete';
-		ui.previewContainer = '.elementor-control-icons-preview';
-		ui.previewPlaceholder = '.elementor-control-icons-preview-placeholder';
+		ui.deleteButton = '.elementor-control-media__remove';
+		ui.previewPlaceholder = '.elementor-control-media-image';
 
 		return ui;
+	}
+
+	events() {
+		return jQuery.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
+			'click @ui.iconPicker': 'openPicker',
+			'click @ui.svgUploader': 'openFrame',
+			'click @ui.deleteButton': 'deleteIcon',
+		} );
 	}
 
 	getControlValue() {
@@ -97,14 +104,6 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			} );
 			this.cache.loaded = true;
 		}
-	}
-
-	events() {
-		return jQuery.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
-			'click @ui.iconPicker': 'openPicker',
-			'click @ui.svgUploader': 'openFrame',
-			'click @ui.deleteButton': 'deleteIcon',
-		} );
 	}
 
 	initFrame() {
@@ -186,8 +185,6 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	openFrame() {
-		event.stopPropagation();
-
 		if ( ! this.isSvgEnabled() ) {
 			const dialog = this.getSvgNotEnabledDialog();
 			this.cache.dialogShown = true;
@@ -222,22 +219,21 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			iconValue = controlValue.value,
 			iconType = controlValue.library;
 
+		this.$el.toggleClass( 'elementor-media-empty', ! iconValue );
+
 		if ( ! iconValue ) {
 			this.ui.previewPlaceholder.html( '' );
-			this.ui.frameOpeners.toggleClass( 'elementor-preview-has-icon', !! iconValue );
 			return;
 		}
 
 		if ( 'svg' === iconType ) {
 			return elementor.helpers.fetchInlineSvg( iconValue.url, ( data ) => {
 				this.ui.previewPlaceholder.html( data );
-				this.ui.frameOpeners.toggleClass( 'elementor-preview-has-icon', !! iconValue );
 			} );
 		}
 
 		const previewHTML = '<i class="' + iconValue + '"></i>';
 		this.ui.previewPlaceholder.html( previewHTML );
-		this.ui.frameOpeners.toggleClass( 'elementor-preview-has-icon', !! iconValue );
 		this.enqueueIconFonts( iconType );
 	}
 

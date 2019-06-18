@@ -1,4 +1,18 @@
-.elementor-control-type-media {
+.elementor-control-media {
+
+	&.elementor-media-empty {
+
+		.elementor-control-media-area {
+			display: none;
+		}
+	}
+
+	&:not(.elementor-media-empty) {
+
+		.elementor-control-media-upload-button {
+			display: none;
+		}
+	}
 
 	.elementor-control-input-wrapper {
 		border: 1px solid;
@@ -29,24 +43,6 @@
 		color: #fff;
 		font-size: 20px;
 	}
-}
-
-.elementor-control-media {
-	cursor: pointer;
-
-	&.elementor-media-empty {
-
-		.elementor-control-media-area {
-			display: none;
-		}
-	}
-
-	&:not(.elementor-media-empty) {
-
-		.elementor-control-media-upload-button {
-			display: none;
-		}
-	}
 
 	&-image {
 		height: 100%;
@@ -63,7 +59,7 @@
 
 		&:not(:hover) {
 
-			.elementor-control-media__replace {
+			.elementor-control-media__tools {
 				box-shadow: none;
 				bottom: -30px;
 			}
@@ -90,18 +86,28 @@
 		}
 	}
 
-	&__replace {
+	&__content {
+		cursor: pointer;
+	}
+
+	&__tools {
 		position: absolute;
 		bottom: 0;
 		left: 0;
 		right: 0;
+		display: grid;
+		grid-auto-flow: column;
+		grid-gap: 1px;
 		text-align: center;
-		padding: 9.5px;
-		font-size: 11px;
+		transition: all .2s ease-in-out;
+	}
+
+	&__tool {
+		flex-grow: 1;
 		color: #fff;
 		background-color: rgba($editor-dark, .6);
-		transition: all .2s ease-in-out;
-		box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
+		padding: 9.5px;
+		font-size: 11px;
 	}
 
 	&__remove {

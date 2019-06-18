@@ -5,7 +5,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
-		ui.controlMedia = '.elementor-control-media';
 		ui.mediaImage = '.elementor-control-media-image';
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
@@ -35,7 +34,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.ui.mediaVideo.attr( 'src', url );
 		}
 
-		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
+		this.$el.toggleClass( 'elementor-media-empty', ! url );
 	},
 
 	openFrame: function() {
