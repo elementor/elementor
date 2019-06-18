@@ -77,7 +77,7 @@ class Control_Gallery extends Base_Data_Control {
 				<# if ( data.description ) { #>
 				<div class="elementor-control-field-description">{{{ data.description }}}</div>
 				<# } #>
-				<div class="elementor-control-media elementor-control-tag-area">
+				<div class="elementor-control-media__content elementor-control-tag-area">
 					<div class="elementor-control-gallery-status">
 						<span class="elementor-control-gallery-status-title"></span>
 						<span class="elementor-control-gallery-clear">(<?php echo __( 'Clear', 'elementor' ); ?>)</span>
