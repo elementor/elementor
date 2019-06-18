@@ -131,9 +131,10 @@ helpers = {
 			if ( inline ) {
 				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
 			}
-			view.addRenderAttribute( tag, attributes );
-			view.addRenderAttribute( tag, 'class', iconValue );
-			return '<' + tag + ' ' + view.getRenderAttributeString( tag ) + '></' + tag + '>';
+			const tagUniqueID = tag + this.getUniqueID();
+			view.addRenderAttribute( tagUniqueID, attributes );
+			view.addRenderAttribute( tagUniqueID, 'class', iconValue );
+			return '<' + tag + ' ' + view.getRenderAttributeString( tagUniqueID ) + '></' + tag + '>';
 		}
 		elementor.channels.editor.trigger( 'Icon:insertion', iconType, iconValue, attributes, tag, view );
 	},
