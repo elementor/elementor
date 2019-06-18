@@ -108,6 +108,10 @@ class Widget_Icon extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
+                'default' => [
+                    'value' => 'fas fa-star',
+                    'library' => 'solid',
+                ],
 			]
 		);
 
