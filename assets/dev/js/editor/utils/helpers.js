@@ -132,10 +132,13 @@ helpers = {
 		const iconType = icon.library,
 			iconValue = icon.value;
 		if ( 'svg' === iconType ) {
-			if ( inline ) {
-				return this.getInlineSvg( iconValue );
+			if ( 'inline' === returnType ) {
+				return '<img src="' + iconValue.url + '">';
 			}
-			return this.getInlineSvg( iconValue, view );
+			return {
+				rendered: true,
+				value: this.getInlineSvg( iconValue, view ),
+			};
 		}
 		const iconSettings = this.getIconLibrarySettings( iconType );
 		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {
