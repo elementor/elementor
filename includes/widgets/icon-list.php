@@ -130,7 +130,7 @@ class Widget_Icon_List extends Widget_Base {
 			'selected_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
+				'type' => Controls_Manager::ICONS,
 				'label_block' => true,
 				'default' => [
 					'value' => 'fas fa-check',
@@ -162,18 +162,27 @@ class Widget_Icon_List extends Widget_Base {
 				'default' => [
 					[
 						'text' => __( 'List Item #1', 'elementor' ),
-						'icon' => 'fa fa-check',
+						'selected_icon' => [
+							'value' => 'fas fa-check',
+							'library' => 'solid',
+						],
 					],
 					[
 						'text' => __( 'List Item #2', 'elementor' ),
-						'icon' => 'fa fa-times',
+						'selected_icon' => [
+							'value' => 'fas fa-times',
+							'library' => 'solid',
+						],
 					],
 					[
 						'text' => __( 'List Item #3', 'elementor' ),
-						'icon' => 'fa fa-dot-circle-o',
+						'selected_icon' => [
+							'value' => 'fas fa-dot-circle',
+							'library' => 'solid',
+						],
 					],
 				],
-				'title_field' => '<i class="{{ icon }}" aria-hidden="true"></i> {{{ text }}}',
+				'title_field' => '{{{ elementor.helpers.renderIcon( this, selected_icon, {}, "i", true ) || \'<i class="{{ icon }}" aria-hidden="true"></i>\' }}} {{{ text }}}',
 			]
 		);
 
@@ -556,7 +565,7 @@ class Widget_Icon_List extends Widget_Base {
 					if ( ! empty( $item['icon'] ) || ! empty( $item['selected_icon'] ) ) :
 						?>
 						<span class="elementor-icon-list-icon">
-							<?php if ( ! Icons_Manager::render_icon( $item['selected_icon'], [ 'aria-hidden' => 'true' ] ) ) { ?>
+							<?php if ( ! Icons_Manager::render_icon( $item['selected_icon'], [ 'aria-hidden' => 'true' ] ) && ! isset( $item['__fa4_migrated']['selected_icon'] ) ) { ?>
 								<i class="<?php echo esc_attr( $item['icon'] ); ?>" aria-hidden="true"></i>
 							<?php } ?>
 						</span>
@@ -591,6 +600,7 @@ class Widget_Icon_List extends Widget_Base {
 				view.addRenderAttribute( 'icon_list', 'class', 'elementor-inline-items' );
 				view.addRenderAttribute( 'list_item', 'class', 'elementor-inline-item' );
 			}
+			var iconsHTML = {};
 		#>
 		<# if ( settings.icon_list ) { #>
 			<ul {{{ view.getRenderAttributeString( 'icon_list' ) }}}>
@@ -606,9 +616,10 @@ class Widget_Icon_List extends Widget_Base {
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
 						<# } #>
-						<# if ( item.icon ) { #>
+						<# if ( item.icon || item.selected_icon ) { #>
 						<span class="elementor-icon-list-icon">
-							<i class="{{ item.icon }}" aria-hidden="true"></i>
+							<# iconsHTML[index] = elementor.helpers.renderIcon( view, item.selected_icon, { 'aria-hidden': true } ); #>
+							{{{ iconsHTML[index] }}}
 						</span>
 						<# } #>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
