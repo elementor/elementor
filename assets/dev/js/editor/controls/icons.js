@@ -16,18 +16,6 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		};
 	}
 
-	ui() {
-		const ui = super.ui();
-		ui.frameOpeners = '.elementor-control-preview-area';
-		ui.svgUploader = '.elementor-control-svg-uploader';
-		ui.iconPicker = '.elementor-control-icon-picker';
-		ui.deleteButton = '.elementor-control-icon-delete';
-		ui.previewContainer = '.elementor-control-icons-preview';
-		ui.previewPlaceholder = '.elementor-control-icons-preview-placeholder';
-
-		return ui;
-	}
-
 	enqueueIconFonts( iconType ) {
 		const iconSetting = elementor.helpers.getIconLibrarySettings( iconType );
 		if ( false === iconSetting ) {
