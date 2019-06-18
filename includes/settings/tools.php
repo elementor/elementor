@@ -242,8 +242,10 @@ class Tools extends Settings_Page {
 						'callback' => function() {
 							$intro_text = __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or E-Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' );
 							$intro_text = '<p>' . $intro_text . '</p>';
+							$newsletter_opt_in_text = sprintf( __( 'Click <a id="beta-tester-first-to-know" href="%s">here</a> to join our First-To-Know email updates', 'elementor' ), '#' );
 
 							echo $intro_text;
+							echo $newsletter_opt_in_text;
 						},
 						'fields' => [
 							'beta' => [
