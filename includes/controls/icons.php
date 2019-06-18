@@ -64,23 +64,22 @@ class Control_Icons extends Control_Base_Multiple {
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
-			<div class="elementor-control-input-wrapper">
-				<div class="elementor-control-icons elementor-control-tag-area elementor-control-preview-area elementor-aspect-ratio-169">
-					<div class="elementor-control-icons-actions">
-						<div class="elementor-control-icon-picker elementor-icons-control-action">
-							<span><i class="eicon-folder" aria-hidden="true"></i><?php esc_html_e( 'Font Icons', 'elementor' ); ?></span>
-						</div>
-						<div class="elementor-control-svg-uploader elementor-icons-control-action">
-							<span><i class="eicon-image" aria-hidden="true"></i><?php esc_html_e( 'SVG', 'elementor' ); ?></span>
-						</div>
-					</div>
-					<div class="elementor-control-icons-area">
-						<div class="elementor-control-icons-preview elementor-fit-aspect-ratio">
-							<div class="elementor-control-icons-preview-placeholder"></div>
-							<div class="elementor-control-icon-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>
-						</div>
-					</div>
-				</div>
+			<div class="elementor-control-input-wrapper elementor-aspect-ratio-169">
+                <div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
+                    <div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
+                        <i class="eicon-plus-circle" aria-hidden="true"></i>
+                    </div>
+                    <div class="elementor-control-media-area elementor-fit-aspect-ratio">
+                        <div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+                            <i class="eicon-trash"></i>
+                        </div>
+                        <div class="elementor-control-media-image elementor-fit-aspect-ratio"></div>
+                        <div class="elementor-control-media__tools">
+                            <div class="elementor-control-icon-picker elementor-control-media__tool"><?php echo __( 'Font Icons', 'elementor-pro' ); ?></div>
+                            <div class="elementor-control-svg-uploader elementor-control-media__tool"><?php echo __( 'SVG Icons', 'elementor-pro' ); ?></div>
+                        </div>
+                    </div>
+                </div>
 			</div>
 			<# if ( data.description ) { #>
 			<div class="elementor-control-field-description">{{{ data.description }}}</div>
@@ -104,6 +103,7 @@ class Control_Icons extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
+            'classes' => 'elementor-control-media',
 			'dynamic'     => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',

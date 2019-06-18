@@ -131,18 +131,26 @@ class Control_Media extends Control_Base_Multiple {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper elementor-aspect-ratio-169">
-				<div class="elementor-control-media elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
+				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
 					<div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
 						<i class="eicon-plus-circle" aria-hidden="true"></i>
 					</div>
 					<div class="elementor-control-media-area elementor-fit-aspect-ratio">
+                        <div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+                            <i class="eicon-trash"></i>
+                        </div>
 						<# if( 'image' === data.media_type ) { #>
 							<div class="elementor-control-media-image elementor-fit-aspect-ratio"></div>
+                            <div class="elementor-control-media__tools">
+                                <div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Replace Image', 'elementor' ); ?></div>
+                            </div>
 						<# } else if( 'video' === data.media_type ) { #>
 							<video class="elementor-control-media-video" preload="metadata"></video>
 							<i class="eicon-video-camera"></i>
+                            <div class="elementor-control-media__tools">
+                                <div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Replace Video', 'elementor' ); ?></div>
+                            </div>
 						<# } #>
-						<div class="elementor-control-media-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>
 					</div>
 				</div>
 			</div>
@@ -169,6 +177,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'label_block' => true,
 			'media_type' => 'image',
+            'classes' => 'elementor-control-media',
 			'dynamic' => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',

@@ -24,7 +24,7 @@ class User {
 
 	const INTRODUCTION_KEY = 'elementor_introduction';
 
-	const BETA_TESTER_KEY = 'elementor_beta_tester';
+	const BETA_TESTER_META_KEY = 'elementor_beta_tester';
 
 	/**
 	 * API URL.
@@ -248,6 +248,7 @@ class User {
 	}
 
 	public static function register_as_beta_tester( array $data ) {
+		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, $data['betaTesterEmail'] );
 		wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,
 			[
