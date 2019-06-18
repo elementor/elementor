@@ -17,16 +17,16 @@ class BetaTesterModule extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				beta_tester_first_to_know: '#beta-tester-first-to-know',
+				betaTesterFirstToKnow: '#beta-tester-first-to-know',
 			},
 		};
 	}
 
 	getDefaultElements() {
-		let elements = {};
+		const elements = {};
 		const selectors = this.getSettings( 'selectors' );
 
-		elements.$beta_tester_first_to_know = jQuery( selectors.beta_tester_first_to_know );
+		elements.$betaTesterFirstToKnow = jQuery( selectors.betaTesterFirstToKnow );
 
 		return elements;
 	}
@@ -34,7 +34,7 @@ class BetaTesterModule extends elementorModules.ViewModule {
 	bindEvents() {
 		const elements = this.elements;
 
-		elements.$beta_tester_first_to_know.on( 'click', this.showLayout.bind( this ) );
+		elements.$betaTesterFirstToKnow.on( 'click', this.showLayout.bind( this ) );
 	}
 }
 
