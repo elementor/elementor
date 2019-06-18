@@ -88,11 +88,13 @@ helpers = {
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
 				this.enqueuePreviewStylesheet( assetURL );
+				this.enqueueEditorStylesheet( assetURL );
 			} );
 		}
 
 		if ( iconSetting.url ) {
 			this.enqueuePreviewStylesheet( iconSetting.url );
+			this.enqueueEditorStylesheet( iconSetting.url );
 		}
 
 		this._enqueuedIconFonts.push( iconType );
@@ -108,18 +110,27 @@ helpers = {
 		return false;
 	},
 
-	renderIcon( view, icon, attributes = {}, tag = 'i' ) {
+	renderIcon( view, icon, attributes = {}, tag = 'i', inline = false ) {
 		if ( ! icon || ! icon.library ) {
+			if ( inline ) {
+				return false;
+			}
 			return;
 		}
 		const iconType = icon.library,
 			iconValue = icon.value;
 		if ( 'svg' === iconType ) {
+			if ( inline ) {
+				return this.getInlineSvg( iconValue );
+			}
 			return this.getInlineSvg( iconValue, view );
 		}
 		const iconSettings = this.getIconLibrarySettings( iconType );
 		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {
 			this.enqueueIconFonts( iconType );
+			if ( inline ) {
+				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
+			}
 			view.addRenderAttribute( tag, attributes );
 			view.addRenderAttribute( tag, 'class', iconValue );
 			return '<' + tag + ' ' + view.getRenderAttributeString( tag ) + '></' + tag + '>';
