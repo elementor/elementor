@@ -163,7 +163,6 @@
 				appearance: none;
 				-webkit-appearance: none;
 				-moz-appearance: none;
-				color: $editor-darkest;
 				font-size: 12px;
 				font-family: inherit;
 				font-weight: inherit;
@@ -196,6 +195,13 @@
 		outline: none;
 
 		&.select2-container--default {
+
+			.select2-selection--single {
+
+				.select2-selection__rendered {
+					color: $editor-dark;
+				}
+			}
 
 			.select2-selection--multiple {
 
@@ -376,7 +382,7 @@
 		display: none;
 
 		&:not(:checked) + label {
-			color: $editor-lighter;
+			color: $editor-light;
 		}
 
 		&:checked + label {
