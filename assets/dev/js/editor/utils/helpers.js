@@ -110,13 +110,25 @@ helpers = {
 		return false;
 	},
 
-	renderIcon( view, icon, attributes = {}, tag = 'i', inline = false ) {
+	/**
+	 *
+	 * @param view - view to refresh if needed
+	 * @param icon - icon control data
+	 * @param attributes - default {} - attributes to attach to rendered html tag
+	 * @param tag - default i - html tag to render
+	 * @param returnType - default value - retrun type
+	 * @returns {string|boolean|*}
+	 */
+	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {
 		if ( ! icon || ! icon.library ) {
-			if ( inline ) {
-				return false;
+			if ( 'object' === returnType ) {
+				return {
+					rendered: false,
+				};
 			}
 			return;
 		}
+
 		const iconType = icon.library,
 			iconValue = icon.value;
 		if ( 'svg' === iconType ) {
@@ -128,13 +140,20 @@ helpers = {
 		const iconSettings = this.getIconLibrarySettings( iconType );
 		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {
 			this.enqueueIconFonts( iconType );
-			if ( inline ) {
+			if ( 'panel' === returnType ) {
 				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
 			}
 			const tagUniqueID = tag + this.getUniqueID();
 			view.addRenderAttribute( tagUniqueID, attributes );
 			view.addRenderAttribute( tagUniqueID, 'class', iconValue );
-			return '<' + tag + ' ' + view.getRenderAttributeString( tagUniqueID ) + '></' + tag + '>';
+			const htmlTag = '<' + tag + ' ' + view.getRenderAttributeString( tagUniqueID ) + '></' + tag + '>';
+			if ( 'object' === returnType ) {
+				return {
+					rendered: true,
+					value: htmlTag,
+				};
+			}
+			return htmlTag;
 		}
 		elementor.channels.editor.trigger( 'Icon:insertion', iconType, iconValue, attributes, tag, view );
 	},
