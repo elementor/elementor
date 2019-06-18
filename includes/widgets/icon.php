@@ -108,6 +108,10 @@ class Widget_Icon extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
+				'default' => [
+					'value' => 'fas fa-star',
+					'library' => 'solid',
+				],
 			]
 		);
 
@@ -419,10 +423,15 @@ class Widget_Icon extends Widget_Base {
 			$this->add_render_attribute( 'icon', 'aria-hidden', 'true' );
 		}
 
+		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
+		$is_new = empty( $settings['icon'] );
+
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<<?php echo $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
-			<?php if ( ! Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] ) && ! isset( $settings['__fa4_migrated']['selected_icon'] ) ) : ?>
+			<?php if ( $is_new || $migrated ) :
+				Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
+			else : ?>
 				<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
 			<?php endif; ?>
 			</<?php echo $icon_tag; ?>>
@@ -441,12 +450,16 @@ class Widget_Icon extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 				iconTag = link ? 'a' : 'div';
 		#>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<# var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true } ); #>
-				{{{ iconHTML }}}
+				<# if ( iconHTML.rendered && ! settings.icon ) { #>
+					{{{ iconHTML.value }}}
+				<# } else { #>
+					<i class="{{ settings.icon }}" aria-hidden="true"></i>
+				<# } #>
 			</{{{ iconTag }}}>
 		</div>
 		<?php

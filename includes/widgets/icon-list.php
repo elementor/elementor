@@ -182,7 +182,7 @@ class Widget_Icon_List extends Widget_Base {
 						],
 					],
 				],
-				'title_field' => '{{{ elementor.helpers.renderIcon( this, selected_icon, {}, "i", true ) || \'<i class="{{ icon }}" aria-hidden="true"></i>\' }}} {{{ text }}}',
+				'title_field' => '{{{ elementor.helpers.renderIcon( this, selected_icon, {}, "i", "panel" ) || \'<i class="{{ icon }}" aria-hidden="true"></i>\' }}} {{{ text }}}',
 			]
 		);
 
@@ -563,10 +563,15 @@ class Widget_Icon_List extends Widget_Base {
 					}
 
 					if ( ! empty( $item['icon'] ) || ! empty( $item['selected_icon'] ) ) :
+						$migrated = isset( $item['__fa4_migrated']['selected_icon'] );
+						$is_new = empty( $item['icon'] );
 						?>
 						<span class="elementor-icon-list-icon">
-							<?php if ( ! Icons_Manager::render_icon( $item['selected_icon'], [ 'aria-hidden' => 'true' ] ) && ! isset( $item['__fa4_migrated']['selected_icon'] ) ) { ?>
-								<i class="<?php echo esc_attr( $item['icon'] ); ?>" aria-hidden="true"></i>
+							<?php
+							if ( $is_new || $migrated ) {
+								Icons_Manager::render_icon( $item['selected_icon'], [ 'aria-hidden' => 'true' ] );
+							} else { ?>
+									<i class="<?php echo esc_attr( $item['icon'] ); ?>" aria-hidden="true"></i>
 							<?php } ?>
 						</span>
 					<?php endif; ?>
