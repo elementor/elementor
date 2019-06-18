@@ -1,54 +1,62 @@
+
 .elementor-control-type-choose {
 
 	&.elementor-label-block {
 
+		.elementor-choices {
+			width: 100%;
+		}
 	}
 
-	> .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper {
-		width: auto;
+	&.elementor-label-inline {
+
+		.elementor-control-input-wrapper {
+			display: inline-flex;
+			justify-content: flex-end;
+		}
 	}
 }
 
 .elementor-choices {
-	display: grid;
-	grid-auto-flow: column;
-	grid-gap: 1px;
-	background-color: $editor-background;
-	border: 1px solid $editor-background;
+	display: flex;
+	height: 27px;
+	line-height: 27px;
+	text-align: center;
+	border-spacing: 1px;
 	border-radius: 3px;
 	overflow: hidden;
+
+	.elementor-choices-label {
+		border-top: 1px solid $editor-lightest;
+		border-bottom: 1px solid $editor-lightest;
+		@include border-start(1px solid $editor-lightest);
+		@include border-end(none);
+		width: 50px;
+		font-size: 12px;
+		transition: all .5s;
+		cursor: pointer;
+		overflow: hidden;
+
+		&:nth-child(2) {
+			@include _dimension_side_property(border-top, start, radius, 3px);
+			@include _dimension_side_property(border-bottom, start, radius, 3px);
+		}
+
+		&:last-child {
+			@include border-end(1px solid $editor-lightest);
+			@include _dimension_side_property(border-top, end, radius, 3px);
+			@include _dimension_side_property(border-bottom, end, radius, 3px);
+		}
+	}
 
 	input {
 		display: none;
 
 		&:checked + .elementor-choices-label {
-			background-color: $editor-light;
 			color: #fff;
+			background-color: $editor-light;
+			border-color: $editor-light;
 		}
-
-		&:not(:checked) + .elementor-choices-label {
-			background-color: #fff;
-			color: $editor-lightest;
-
-			&:nth-child(2) {
-				border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-			}
-
-			&:last-child {
-				border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-			}
-		}
-	}
-
-	.elementor-choices-label {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 32px;
-		height: 27px;
-		font-size: 12px;
-		transition: all .5s;
-		cursor: pointer;
 	}
 }
 
@@ -59,19 +67,18 @@
 	.elementor-control-position {
 
 		.elementor-choices {
-			direction: ltr; // Force ltr also in RTL languages
+			flex-direction: row-reverse; // Force ltr also in RTL languages
 
-			input {
+			.elementor-choices-label {
 
-				&:not(:checked) + .elementor-choices-label {
+				&:nth-child(2) {
+					@include border-end(1px solid $editor-lightest);
+					border-radius: 3px 0 0 3px;
+				}
 
-					&:nth-child(2) {
-						border-radius: 3px 0 0 3px;
-					}
-
-					&:last-child {
-						border-radius: 0 3px 3px 0;
-					}
+				&:last-child {
+					@include border-end(none);
+					border-radius: 0 3px 3px 0;
 				}
 			}
 		}

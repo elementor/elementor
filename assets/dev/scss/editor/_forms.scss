@@ -8,7 +8,7 @@ input, select, textarea, .elementor-input-style {
 	width: 100%;
 	background: none;
 	box-shadow: none;
-	color: $editor-darkest;
+	color: $editor-dark;
 	border: 1px solid;
 	outline: none;
 
@@ -57,6 +57,7 @@ input[type="radio"] {
 	width: 16px;
 	min-width: 16px;
 	transition: .05s border-color ease-in-out;
+
 	&:focus {
 		border-color: $editor-light;
 	}
