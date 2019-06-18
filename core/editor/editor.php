@@ -197,7 +197,7 @@ class Editor {
 		$document = Plugin::$instance->documents->get( get_the_ID() );
 
 		if ( ! $document ) {
-			wp_die( __( 'Document not found.', '' ) );
+			wp_die( __( 'Document not found.', 'elementor' ) );
 		}
 
 		if ( ! $document->is_editable_by_current_user() || ! $document->is_built_with_elementor() ) {
@@ -698,6 +698,9 @@ class Editor {
 				'deprecated_notice' => __( 'The <strong>{{{ widget }}}</strong> widget has been deprecated since {{{ plugin }}} {{{ since }}}.', 'elementor' ),
 				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>{{{ replacement }}}</strong>.', 'elementor' ),
 				'deprecated_notice_last' => __( 'Note that {{{ widget }}} will be completely removed once {{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
+
+				//Preview Debug
+				'preview_debug_link_text' => __( 'Click here for preview debug', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
