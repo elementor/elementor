@@ -422,7 +422,7 @@ class Widget_Icon extends Widget_Base {
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<<?php echo $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
-			<?php if ( ! Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] ) ) : ?>
+			<?php if ( ! Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] ) && ! isset( $settings['__fa4_migrated']['selected_icon'] ) ) : ?>
 				<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
 			<?php endif; ?>
 			</<?php echo $icon_tag; ?>>
@@ -441,11 +441,11 @@ class Widget_Icon extends Widget_Base {
 	protected function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true } ),
 				iconTag = link ? 'a' : 'div';
 		#>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
+				<# var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true } ); #>
 				{{{ iconHTML }}}
 			</{{{ iconTag }}}>
 		</div>
