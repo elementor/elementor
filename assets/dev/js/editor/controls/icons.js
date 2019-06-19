@@ -39,16 +39,16 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		const ui = super.ui();
 
 		ui.svgUploader = '.elementor-control-svg-uploader';
-		ui.iconPicker = '.elementor-control-icon-picker';
+		ui.iconPickers = '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button';
 		ui.deleteButton = '.elementor-control-media__remove';
-		ui.previewPlaceholder = '.elementor-control-media-image';
+		ui.previewPlaceholder = '.elementor-control-media__preview';
 
 		return ui;
 	}
 
 	events() {
 		return jQuery.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
-			'click @ui.iconPicker': 'openPicker',
+			'click @ui.iconPickers': 'openPicker',
 			'click @ui.svgUploader': 'openFrame',
 			'click @ui.deleteButton': 'deleteIcon',
 		} );
