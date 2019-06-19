@@ -44,7 +44,7 @@
 		font-size: 20px;
 	}
 
-	&-image {
+	&__preview {
 		height: 100%;
 		background-size: cover;
 		background-position: center;
@@ -55,14 +55,8 @@
 		background-size: 16px 16px;
 		background-position: 0 0, 8px 8px;
 		background-color: #f6f6f6;
-		overflow: hidden;
 
 		&:not(:hover) {
-
-			.elementor-control-media__tools {
-				box-shadow: none;
-				bottom: -30px;
-			}
 
 			.elementor-control-media__remove {
 				display: none;
@@ -71,7 +65,7 @@
 
 		&:hover {
 
-			.elementor-control-media-image {
+			.elementor-control-media__preview {
 				opacity: .9;
 			}
 		}
@@ -88,6 +82,14 @@
 
 	&__content {
 		cursor: pointer;
+		overflow: hidden;
+
+		&:not(:hover) {
+
+			.elementor-control-media__tools {
+				bottom: -30px;
+			}
+		}
 	}
 
 	&__tools {
