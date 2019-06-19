@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Canary_Deployment extends Module {
 
+	private $canary_deployment_info = null;
 	/**
 	 * Get module name.
 	 *
@@ -36,35 +37,59 @@ class Canary_Deployment extends Module {
 	 */
 	public function check_version( $transient ) {
 		// Placeholder
-		$new_version = '0.0.0';
+		$stable_version = '0.0.0';
 
 		if ( ! empty( $transient->response[ ELEMENTOR_PLUGIN_BASE ]->new_version ) ) {
-			$new_version = $transient->response[ ELEMENTOR_PLUGIN_BASE ]->new_version;
+			$stable_version = $transient->response[ ELEMENTOR_PLUGIN_BASE ]->new_version;
 		}
 
-		$canary_deployment = Api::get_canary_deployment_info();
+		if ( null === $this->canary_deployment_info ) {
+			$this->canary_deployment_info = $this->get_canary_deployment_info();
+		}
 
-		if ( empty( $canary_deployment['new_version'] ) ) {
+		// Can be false - if canary version is not available.
+		if ( empty( $this->canary_deployment_info ) ) {
 			return $transient;
 		}
 
-		if ( version_compare( $new_version, $canary_deployment['new_version'], '>' ) ) {
+		if ( ! version_compare( $this->canary_deployment_info['new_version'], $stable_version, '>' ) ) {
 			return $transient;
 		}
 
-		if ( version_compare( $canary_deployment['new_version'], ELEMENTOR_VERSION, '>' ) ) {
-			if ( ! empty( $canary_deployment['conditions'] ) && ! $this->check_conditions( $canary_deployment['conditions'] ) ) {
-				return $transient;
-			}
+		$canary_deployment_info = $this->canary_deployment_info;
 
-			unset( $canary_deployment['conditions'] );
-
-			$transient->response[ ELEMENTOR_PLUGIN_BASE ] = (object) $canary_deployment;
-			$transient->checked[ ELEMENTOR_PLUGIN_BASE ] = $canary_deployment['new_version'];
+		// Most of plugin info comes from the $transient but on first check - the response is empty.
+		if ( ! empty( $transient->response[ ELEMENTOR_PLUGIN_BASE ] ) ) {
+			$canary_deployment_info = array_merge( (array) $transient->response[ ELEMENTOR_PLUGIN_BASE ], $canary_deployment_info );
 		}
+
+		$transient->response[ ELEMENTOR_PLUGIN_BASE ] = (object) $canary_deployment_info;
 
 		return $transient;
 	}
+
+	private function get_canary_deployment_info() {
+		global $pagenow;
+
+		$force = 'update-core.php' === $pagenow && isset( $_GET['force-check'] ); // WPCS: XSS ok.
+
+		$canary_deployment = Api::get_canary_deployment_info( $force );
+
+		if ( empty( $canary_deployment['plugin_info']['new_version'] ) ) {
+			return false;
+		}
+
+		$canary_version = $canary_deployment['plugin_info']['new_version'];
+
+		if ( version_compare( $canary_version, ELEMENTOR_VERSION, '>' ) ) {
+			if ( ! empty( $canary_deployment['conditions'] ) && ! $this->check_conditions( $canary_deployment['conditions'] ) ) {
+				return false;
+			}
+		}
+
+		return $canary_deployment['plugin_info'];
+	}
+
 
 	private function check_conditions( $groups ) {
 		foreach ( $groups as $group ) {
@@ -92,12 +117,12 @@ class Canary_Deployment extends Module {
 					break;
 				case 'language':
 					$in_array = in_array( get_locale(), $condition['languages'], true );
-					$result = 'IN' === $condition['operator'] ? $in_array : ! $in_array;
+					$result = 'in' === $condition['operator'] ? $in_array : ! $in_array;
 					break;
 				case 'plugin':
 					if ( is_plugin_active( $condition['plugin'] ) ) {
-						$plugin_data = get_plugin_data( $condition['plugin'] );
-						$version = $plugin_data['version'];
+						$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $condition['plugin'] );
+						$version = $plugin_data['Version'];
 					} else {
 						$version = '';
 					}
