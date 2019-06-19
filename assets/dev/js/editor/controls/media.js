@@ -5,7 +5,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	ui: function() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
-		ui.mediaImage = '.elementor-control-media-image';
+		ui.mediaImage = '.elementor-control-media__preview';
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
