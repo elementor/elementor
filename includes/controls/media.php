@@ -139,19 +139,20 @@ class Control_Media extends Control_Base_Multiple {
                         <div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
                             <i class="eicon-trash"></i>
                         </div>
-						<# if( 'image' === data.media_type ) { #>
-							<div class="elementor-control-media-image elementor-fit-aspect-ratio"></div>
-                            <div class="elementor-control-media__tools">
-                                <div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Replace Image', 'elementor' ); ?></div>
-                            </div>
-						<# } else if( 'video' === data.media_type ) { #>
-							<video class="elementor-control-media-video" preload="metadata"></video>
-							<i class="eicon-video-camera"></i>
-                            <div class="elementor-control-media__tools">
-                                <div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Replace Video', 'elementor' ); ?></div>
-                            </div>
-						<# } #>
+                        <# if( 'image' === data.media_type ) { #>
+                            <div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
+                        <# } else if( 'video' === data.media_type ) { #>
+                            <video class="elementor-control-media-video" preload="metadata"></video>
+                            <i class="eicon-video-camera"></i>
+                        <# } #>
 					</div>
+                    <div class="elementor-control-media__tools">
+                        <# if( 'image' === data.media_type ) { #>
+                            <div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Image', 'elementor' ); ?></div>
+                        <# } else if( 'video' === data.media_type ) { #>
+                            <div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Video', 'elementor' ); ?></div>
+                        <# } #>
+                    </div>
 				</div>
 			</div>
 			<# if ( data.description ) { #>
