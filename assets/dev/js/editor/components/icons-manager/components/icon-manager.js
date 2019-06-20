@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import {Component, Fragment} from 'react';
 import { render } from 'react-dom';
 import Tab from './tab';
 
@@ -81,16 +81,17 @@ class IconsManager extends Component {
 
 	getIconTabsLinks = () => {
 		return this.props.icons.map( ( tab ) => {
-			const isCurrentTab = tab.name === this.state.activeTab,
-				className = [ 'icon--manager--tab--link' ];
+			const isCurrentTab = tab.name === this.state.activeTab;
+
+			let className = 'elementor-icons-manager__tab-link';
 
 			if ( isCurrentTab ) {
-				className.push( 'active' );
+				className += ' elementor-active';
 			}
 
 			return (
-				<span
-					className={ className.join( ' ' ) }
+				<div
+					className={ className }
 					key={ tab.name }
 					onClick={ () => {
 						if ( isCurrentTab ) {
@@ -99,7 +100,7 @@ class IconsManager extends Component {
 						this.setState( { activeTab: tab.name } );
 					} }>
 					{ tab.label }
-				</span>
+				</div>
 			);
 		} );
 	};
@@ -163,7 +164,8 @@ class IconsManager extends Component {
 	};
 
 	setSelected = ( selected ) => {
-		this.props.modalView.options.selectedIcon = selected;
+		elementor.iconManager.setSettings( 'selectedIcon', selected );
+
 		this.setState( { selected: selected } );
 	};
 
@@ -191,26 +193,21 @@ class IconsManager extends Component {
 		}
 
 		return (
-			<div className={ 'icons-manager--wrapper' }>
-				<div className={ 'icons-manager--sidebar' }>
-					<div className={ 'icons-manager--tab-links' }>
+			<Fragment>
+				<div id="elementor-icons-manager__sidebar">
+					<div id="elementor-icons-manager__tab-links">
 						{ this.getIconTabsLinks() }
 					</div>
 				</div>
-				<div className={ 'icons-manager--main' }>
+				<div id="elementor-icons-manager__main">
 					{ showSearch ? (
-						<div className={ 'icons-manager--search' }>
-							<input
-								type={ 'search' }
-								placeholder={ 'Search...' }
-								onInput={ this.handleSearch }
-							/>
+						<div id="elementor-icons-manager__search">
+							<input placeholder={ 'Filter by name...' } onInput={ this.handleSearch }/>
+							<i className={ 'eicon-search' }></i>
 						</div> ) : ''
 					}
-					<div className={ 'icons-manager--library--title' }>
-						<h3>{ activeTab.label }</h3>
-					</div>
-					<div className={ 'icons-manager--tab__container' }>
+					<div id="elementor-icons-manager__tab__title">{ activeTab.label }</div>
+					<div id="elementor-icons-manager__tab__content">
 						<input type="hidden" name="icon_value" id="icon_value" value={ selected.value } />
 						<input type="hidden" name="icon_type" id="icon_type" value={ selected.library } />
 						{ this.state.loaded[ activeTab.name ] ? (
@@ -225,7 +222,7 @@ class IconsManager extends Component {
 						) }
 					</div>
 				</div>
-			</div>
+			</Fragment>
 		);
 	};
 }
@@ -233,7 +230,7 @@ class IconsManager extends Component {
 export default IconsManager;
 
 const renderIconManager = function( props ) {
-	const containerElement = document.querySelector( '#elementor--icon--manager--placeholder' );
+	const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
 
 	return render( <IconsManager
 			{ ... props }
