@@ -19,7 +19,7 @@ class Tab extends Component {
 
 	getIconsOfType( type, icons ) {
 		const { selected } = this.props;
-		return Object.entries( icons ).map( icon => {
+		return Object.entries( icons ).map( ( icon ) => {
 			const iconData = icon[ 1 ],
 				iconName = icon[ 0 ],
 				className = iconData.displayPrefix + ' ' + iconData.selector,
@@ -27,9 +27,9 @@ class Tab extends Component {
 					value: className,
 					library: type,
 				};
-			let containerClass = 'icon--manager--list--item';
+			let containerClass = 'elementor-icons-manager__tab__item';
 			if ( selected.value === className ) {
-				containerClass += ' selected';
+				containerClass += ' elementor-selected';
 			}
 
 			return (
