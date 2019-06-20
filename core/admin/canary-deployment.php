@@ -147,11 +147,11 @@ class Canary_Deployment extends Module {
 					break;
 				case 'theme':
 					$theme = wp_get_theme();
-					$parent = wp_get_theme()->parent();
+					if ( wp_get_theme()->parent() ) {
+						$theme = wp_get_theme()->parent();
+					}
 
-					if ( $parent && $parent->get_template() === $condition['theme'] ) {
-						$version = $parent->version;
-					} elseif ( $theme->get_template() === $condition['theme'] ) {
+					if ( $theme->get_template() === $condition['theme'] ) {
 						$version = $theme->version;
 					} else {
 						$version = '';
