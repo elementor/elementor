@@ -31,9 +31,9 @@ class Canary_Deployment extends Module {
 	 * @since 2.6.0
 	 * @access public
 	 *
-	 * @param object $transient Plugin version data.
+	 * @param object $transient Plugin updates data.
 	 *
-	 * @return object Plugin version data.
+	 * @return object Plugin updates data.
 	 */
 	public function check_version( $transient ) {
 		// First transient before the real check.
