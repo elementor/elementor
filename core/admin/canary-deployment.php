@@ -31,11 +31,16 @@ class Canary_Deployment extends Module {
 	 * @since 2.6.0
 	 * @access public
 	 *
-	 * @param array $transient Plugin version data.
+	 * @param object $transient Plugin version data.
 	 *
-	 * @return array Plugin version data.
+	 * @return object Plugin version data.
 	 */
 	public function check_version( $transient ) {
+		// First transient before the real check.
+		if ( ! isset( $transient->response ) ) {
+			return $transient;
+		}
+
 		// Placeholder
 		$stable_version = '0.0.0';
 
@@ -104,8 +109,10 @@ class Canary_Deployment extends Module {
 	private function check_group( $group ) {
 		$is_or_relation = ! empty( $group['relation'] ) && 'OR' === $group['relation'];
 		unset( $group['relation'] );
+		$result = false;
 
 		foreach ( $group as $condition ) {
+			// Reset results for each condition.
 			$result = false;
 			switch ( $condition['type'] ) {
 				case 'wordpress': // phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled
@@ -121,11 +128,19 @@ class Canary_Deployment extends Module {
 					$result = 'in' === $condition['operator'] ? $in_array : ! $in_array;
 					break;
 				case 'plugin':
-					if ( is_plugin_active( $condition['plugin'] ) ) {
-						$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $condition['plugin'] );
-						$version = $plugin_data['Version'];
+					if ( ! empty( $condition['plugin_file'] ) ) {
+						$plugin_file = $condition['plugin_file']; // For PHP Unit tests.
 					} else {
-						$version = '';
+						$plugin_file = WP_PLUGIN_DIR . '/' . $condition['plugin']; // Default.
+					}
+
+					$version = '';
+
+					if ( is_plugin_active( $condition['plugin'] ) && file_exists( $plugin_file ) ) {
+						$plugin_data = get_plugin_data( $plugin_file );
+						if ( isset( $plugin_data['Version'] ) ) {
+							$version = $plugin_data['Version'];
+						}
 					}
 
 					$result = version_compare( $version, $condition['version'], $condition['operator'] );
@@ -152,7 +167,7 @@ class Canary_Deployment extends Module {
 			}
 		}
 
-		return false;
+		return $result;
 	}
 
 	/**
