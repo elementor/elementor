@@ -109,7 +109,8 @@ class Canary_Deployment extends Module {
 			$result = false;
 			switch ( $condition['type'] ) {
 				case 'wordpress': // phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled
-					global $wp_version;
+					// include an unmodified $wp_version
+					include ABSPATH . WPINC . '/version.php';
 					$result = version_compare( $wp_version, $condition['version'], $condition['operator'] );
 					break;
 				case 'multisite':
@@ -131,7 +132,11 @@ class Canary_Deployment extends Module {
 					break;
 				case 'theme':
 					$theme = wp_get_theme();
-					if ( $theme->get_template() === $condition['theme'] || $theme->get_stylesheet() === $condition['theme'] ) {
+					$parent = wp_get_theme()->parent();
+
+					if ( $parent && $parent->get_template() === $condition['theme'] ) {
+						$version = $parent->version;
+					} elseif ( $theme->get_template() === $condition['theme'] ) {
 						$version = $theme->version;
 					} else {
 						$version = '';
