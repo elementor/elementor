@@ -143,6 +143,13 @@ class Svg_Handler {
 			return $file;
 		}
 
+		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
+
+		if ( 'svg' !== $ext ) {
+			$file['error'] = sprintf( __( 'The uploaded %s file is not supported. Please upload a valid svg file', 'elementor' ), $ext );
+			return $file;
+		}
+
 		if ( ! self::is_enabled() ) {
 			$file['error'] = __( 'SVG file is not allowed for security reasons', 'elementor' );
 			return $file;
