@@ -87,6 +87,9 @@ export default class extends elementorModules.Module {
 
 		// Set active tab
 		let activeTab = selected.library || icons[ 0 ].name;
+		if ( 'svg' === selected.library ) {
+			activeTab = icons[ 0 ].name;
+		}
 
 		// Show recommended tab if selected from it
 		if ( iconManagerConfig.recommended && '' !== selected.library && '' !== selected.value && iconManagerConfig.recommended.hasOwnProperty( selected.library ) ) {
