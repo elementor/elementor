@@ -103,7 +103,7 @@ class Control_Icons extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-            'classes' => 'elementor-control-media',
+			'classes' => 'elementor-control-media',
 			'dynamic'     => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',
