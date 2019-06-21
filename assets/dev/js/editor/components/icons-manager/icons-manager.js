@@ -7,10 +7,11 @@ import { unmountComponentAtNode } from 'react-dom';
 export default class extends elementorModules.Module {
 	onInit() {
 		this.layout = new ModalLayout();
+
 		const layoutModal = this.layout.getModal();
+
 		layoutModal.addButton( {
 			name: 'insert_icon',
-			className: 'elementor-button',
 			text: elementor.translate( 'Insert' ),
 			callback: () => {
 				this.updateControlValue();
@@ -18,7 +19,8 @@ export default class extends elementorModules.Module {
 			},
 		} );
 
-		layoutModal.on( 'show', this.onPickerShow )
+		layoutModal
+			.on( 'show', this.onPickerShow.bind( this ) )
 			.on( 'hide', this.unMountIconManager );
 
 		// Init icon library helper
@@ -29,8 +31,15 @@ export default class extends elementorModules.Module {
 		elementor.helpers.fetchFa4ToFa5Mapping();
 	}
 
+	getDefaultSettings() {
+		return {
+			selectedIcon: {},
+		};
+	}
+
 	unMountIconManager() {
-		const containerElement = document.querySelector( '#elementor--icon--manager--placeholder' );
+		const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
+
 		unmountComponentAtNode( containerElement );
 	}
 
@@ -38,11 +47,9 @@ export default class extends elementorModules.Module {
 		const controlView = this.getSettings( 'controlView' ),
 			loaded = {},
 			iconManagerConfig = {
-				modalView: elementor.iconManager.layout.modalContent.currentView,
-				controlView: controlView,
-				searchBar: controlView.model.get( 'search_bar' ),
 				recommended: controlView.model.get( 'recommended' ) || false,
 			};
+
 		let selected = controlView.getControlValue(),
 			icons = elementor.config.icons;
 
@@ -52,8 +59,11 @@ export default class extends elementorModules.Module {
 				library: '',
 			};
 		}
+
 		iconManagerConfig.selected = selected;
-		iconManagerConfig.modalView.options.selectedIcon = selected;
+
+		this.setSettings( 'selectedIcon', selected );
+
 		if ( iconManagerConfig.recommended ) {
 			let hasRecommended = false;
 			icons.forEach( ( library ) => {
@@ -104,12 +114,15 @@ export default class extends elementorModules.Module {
 	}
 
 	updateControlValue() {
-		const view = this.layout.modal.getSettings( 'controlView' );
-		view.setValue( this.layout.modalContent.currentView.options.selectedIcon );
-		view.applySavedValue();
+		const settings = this.getSettings();
+
+		settings.controlView.setValue( settings.selectedIcon );
+		settings.controlView.applySavedValue();
 	}
 
 	show( options ) {
+		this.setSettings( 'controlView', options.view );
+
 		this.layout.showModal( options );
 	}
 }
