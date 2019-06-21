@@ -41,35 +41,35 @@ class Icons_Manager {
 			'regular' => [
 				'name' => 'regular',
 				'label' => __( 'Regular', 'elementor' ),
-				'url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/regular.css',
-				'enqueue' => [ ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/fontawesome.css' ],
+				'url' => self::get_asset_url( 'regular' ),
+				'enqueue' => [ self::get_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fa-flag',
 				'ver' => '5.9.0',
-				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/regular.json',
+				'fetchJson' => self::get_asset_url( 'regular', 'json', false ),
 			],
 			'solid' => [
 				'name' => 'solid',
 				'label' => __( 'Solid', 'elementor' ),
-				'url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/solid.css',
-				'enqueue' => [ ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/fontawesome.css' ],
+				'url' => self::get_asset_url( 'solid' ),
+				'enqueue' => [ self::get_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fa-flag',
 				'ver' => '5.9.0',
-				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/solid.json',
+				'fetchJson' => self::get_asset_url( 'solid', 'json', false ),
 			],
 			'brands' => [
 				'name' => 'brands',
 				'label' => __( 'Brands', 'elementor' ),
-				'url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/brands.css',
-				'enqueue' => [ ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/fontawesome.css' ],
+				'url' => self::get_asset_url( 'brands' ),
+				'enqueue' => [ self::get_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fa-font-awesome',
 				'ver' => '5.9.0',
-				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/brands.json',
+				'fetchJson' => self::get_asset_url( 'brands', 'json', false ),
 			],
 		] );
 	}
@@ -84,6 +84,43 @@ class Icons_Manager {
 		}
 		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', [] );
 		return array_merge( self::$tabs, $additional_tabs );
+	}
+
+	public static function enqueue_shim() {
+		if ( did_action( 'elementor_pro/icons_manager/shim_enqueued' ) ) {
+			return;
+		}
+		do_action( 'elementor_pro/icons_manager/shim_enqueued' );
+		wp_enqueue_script(
+			'font-awesome-4-shim',
+			self::get_asset_url( 'v4-shim', 'js' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+		wp_enqueue_style(
+			'font-awesome-5-all',
+			self::get_asset_url( 'all' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+		wp_enqueue_style(
+			'font-awesome-4-shim',
+			self::get_asset_url( 'v4-shim' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
+
+	private static function get_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
+		static $is_test_mode = null;
+		if ( null === $is_test_mode ) {
+			$is_test_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+		}
+		$url = ELEMENTOR_ASSETS_URL . 'lib/font-awesome/' . $ext_type . '/' . $filename;
+		if ( ! $is_test_mode && $add_suffix ) {
+			$url .= '.min';
+		}
+		return $url . '.' . $ext_type;
 	}
 
 	public static function get_icon_manager_tabs_config() {
