@@ -591,6 +591,10 @@ class Editor {
 				'enable_svg' => __( 'Enable SVG Uploads', 'elementor' ),
 				'dialog_confirm_enable_svg' => __( 'Please note! Allowing uploads of any files (SVG included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the SVG files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 
+				// Enable fontawesome 5 if needed.
+				'enable_fa5' => __( 'Elementor\'s New Icon Library', 'elementor' ),
+				'dialog_confirm_enable_fa5' => __( 'Elementor v2.6 moved from FontAwesome 4 to FontAwesome 5 which includes 1,500+ amazing icons.', 'elementor' ) . '<br><strong>' . __( 'Please note:', 'elementor' ) . '</strong> ' . __( 'that due to minor design changes made to some FontAwesome 5 icons, some of your previously selected FontAwesome 4 icons may look a bit different.', 'elementor' ) . '<br><a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+
 				// Panel Preview Mode.
 				'back_to_editor' => __( 'Show Panel', 'elementor' ),
 				'preview' => __( 'Hide Panel', 'elementor' ),
@@ -804,7 +808,6 @@ class Editor {
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
 				'elementor-common',
-				'font-awesome',
 				'elementor-select2',
 				'elementor-icons',
 				'wp-auth-check',
