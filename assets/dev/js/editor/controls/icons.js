@@ -103,7 +103,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	isMigrationAllowed() {
-		return true;
+		return ! ElementorConfig[ 'icons_update_needed' ];
 	}
 
 	getValueToMigrate() {
@@ -187,10 +187,14 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		// When a file is selected, run a callback.
 		this.frame.on( 'insert select', handleSelect );
 
+		this.setUploadMimeType( this.frame, 'svg' );
+	}
+
+	setUploadMimeType( frame, ext ) {
 		// Set svg as only allowed upload extensions
 		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
-		this.frame.on( 'ready', () => {
-			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = 'svg';
+		frame.on( 'ready', () => {
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = ext;
 		} );
 
 		this.frame.on( 'close', () => {

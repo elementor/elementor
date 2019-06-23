@@ -806,7 +806,6 @@ class Editor {
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
 				'elementor-common',
-				'font-awesome',
 				'elementor-select2',
 				'elementor-icons',
 				'wp-auth-check',

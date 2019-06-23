@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.4.0
  */
 class Icons_Manager {
+
+	const NEEDS_UPDATE_OPTION = 'icon_manager_needs_update';
 	/**
 	 * Tabs.
 	 *
@@ -26,6 +28,10 @@ class Icons_Manager {
 	 * @var array
 	 */
 	private static $tabs;
+
+	private static function get_needs_upgrade_option() {
+		return get_option( 'elementor_' . self::NEEDS_UPDATE_OPTION, null );
+	}
 
 	/**
 	 * Init Tabs
@@ -181,5 +187,138 @@ class Icons_Manager {
 		}
 		echo $output;
 		return true;
+	}
+
+	/**
+	 * is_migration_allowed
+	 * @return bool
+	 */
+	public static function is_migration_allowed() {
+		$migration_allowed = null === self::get_needs_upgrade_option();
+		/**
+		 * allowed to filter migration allowed
+		 */
+		return apply_filters( 'elementor/icons_manager/migration_allowed', $migration_allowed );
+	}
+
+	/**
+	 * Register_Admin Settings
+	 *
+	 * adds Font Awesome migration / update admin settings
+	 * @param Settings $settings
+	 */
+	public function register_admin_settings( Settings $settings ) {
+		$settings->add_field(
+			Settings::TAB_ADVANCED,
+			Settings::TAB_ADVANCED,
+			'load_fa4_shim',
+			[
+				'label' => __( 'Load Font Awesome 4 Shim', 'elementor' ),
+				'field_args' => [
+					'type' => 'select',
+					'std' => 1,
+					'options' => [
+						'' => __( 'No', 'elementor' ),
+						1 => __( 'Yes', 'elementor' ),
+					],
+					'desc' => __( 'Font Awesome 4 shim is used to convert your ....', 'elementor' ),
+				],
+			]
+		);
+	}
+
+	public function register_admin_tools_settings( Tools $settings ) {
+		$settings->add_tab( 'fontawesome4_migration', [ 'label' => __( 'Font Awesome Migration', 'elementor' ) ] );
+
+		$settings->add_section( 'fontawesome4_migration', 'fontawesome4_migration', [
+			'callback' => function() {
+				echo '<hr><h2>' . esc_html__( 'Font Awesome Migration', 'elementor' ) . '</h2>';
+				echo '<p>' .
+				esc_html__( 'Access 1,500+ amazing Font Awesome 5 icons and benefit faster performance and design flexibility.', 'elementor' ) . '<br>' .
+				esc_html__( 'By upgrading, whenever you edit a page contains an icon in it Elementor will migrate all of your existing FontAwesome 4 icons to the new Font Awesome 5 icons.', 'elementor' ) .
+				'</p><p>' .
+				esc_html__( 'Please note that due to minor design changes made to some FontAwesome 5 icons, some of your old FontAwesome 4 icons may look a bit different.', 'elementor' ) .
+				'</p><p><strong>' .
+				esc_html__( 'This action is not reversible and cannot be undone by rolling back to previous versions.', 'elementor' ) .
+				'</strong></p>';
+			},
+			'fields' => [
+				[
+					'label'      => __( 'Font Awesome Migration', 'elementor' ),
+					'field_args' => [
+						'type' => 'raw_html',
+						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button elementor-button-spinner" id="elementor_upgrade_fa_button">%s</span>',
+							self::NEEDS_UPDATE_OPTION . '_upgrade',
+							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
+							__( 'Migrate To Font Awesome 5', 'elementor' )
+						),
+					],
+				],
+			],
+		] );
+	}
+
+	/**
+	 * Ajax Upgrade to FontAwesome 5
+	 */
+	public function ajax_upgrade_to_fa5() {
+		check_ajax_referer( self::NEEDS_UPDATE_OPTION, '_nonce' );
+
+		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
+
+		wp_send_json_success( [ 'message' => __( 'Hurray! The migration process to FontAwesome 5 was completed successfully.', 'elementor' ) ] );
+	}
+
+	/**
+	 * Add Update Needed Flag
+	 * @param array $settings
+	 *
+	 * @return array;
+	 */
+	public function add_update_needed_flag( $settings ) {
+		$settings['icons_update_needed'] = true;
+		return $settings;
+	}
+
+	public function enqueue_fontawesome_css() {
+		if ( ! self::is_migration_allowed() ) {
+			wp_enqueue_style(
+				'font-awesome',
+				self::get_asset_url( 'font-awesome' ),
+				[],
+				'4.7.0'
+			);
+		} else {
+			self::enqueue_shim();
+		}
+	}
+
+	public function add_admin_strings( $settings ) {
+		$settings['i18n']['confirm_fa_migration_admin_modal_body']  = __( 'I understand that by upgrading to Font Awesome 5 I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' );
+		$settings['i18n']['confirm_fa_migration_admin_modal_head']  = __( 'Font Awesome 5 Migration', 'elementor' );
+		return $settings;
+	}
+
+	/**
+	 * Icons Manager constructor
+	 */
+	public function __construct() {
+		if ( is_admin() ) {
+			// @todo: remove once we deprecate fa4
+			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
+			add_action( 'elementor/admin/localize_settings', [ $this, 'add_admin_strings' ] );
+		}
+
+		do_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+		do_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+
+		if ( ! self::is_migration_allowed() ) {
+			add_action( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
+			add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_settings' ], 100 );
+
+			if ( ! empty( $_POST ) ) { // phpcs:ignore -- nonce validation done in callback
+				add_action( 'wp_ajax_' . self::NEEDS_UPDATE_OPTION . '_upgrade', [ $this, 'ajax_upgrade_to_fa5' ] );
+			}
+		}
 	}
 }
