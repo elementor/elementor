@@ -3,7 +3,7 @@ import BetaTesterLayout from './layout';
 class BetaTesterModule extends elementorModules.ViewModule {
 	onInit() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
-		if ( elementorAdmin.config.user.introduction.beta_tester_newsletter ) {
+		if ( elementorAdmin.config.user.introduction.beta_tester_signup ) {
 			return;
 		}
 		this.showLayout();
