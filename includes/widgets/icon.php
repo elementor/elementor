@@ -119,7 +119,7 @@ class Widget_Icon extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'content_box_shadow_normal',
-				'label' => __( 'Box Shadow', 'theplus' ),
+				'label' => __( 'Box Shadow', 'elementor' ),
 				'selector' => '{{WRAPPER}}',
 			]
 		);

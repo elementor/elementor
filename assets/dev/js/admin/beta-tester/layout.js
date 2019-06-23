@@ -40,7 +40,7 @@ export default class BetaTesterLayout extends elementorModules.common.views.moda
 	onCloseModalClick() {
 		elementorCommon.ajax.addRequest( 'introduction_viewed', {
 			data: {
-				introductionKey: elementorAdmin.config.beta_tester_newsletter,
+				introductionKey: elementorAdmin.config.beta_tester_signup,
 			},
 		} );
 	}
