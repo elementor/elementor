@@ -18,14 +18,11 @@ unset( $required_plugins_properties['Name'] );
 foreach ( $reports as $report_name => $report ) :
 	$indent = str_repeat( "\t", $tabs_count - 1 );
 
-	$is_plugins = in_array(
-		$report_name,
-		[
-			'plugins',
-			'network_plugins',
-			'mu_plugins',
-		]
-	);
+	$is_plugins = in_array( $report_name, [
+		'plugins',
+		'network_plugins',
+		'mu_plugins',
+	] );
 
 	if ( ! $is_plugins ) :
 		echo PHP_EOL . $indent . '== ' . $report['label'] . ' ==';

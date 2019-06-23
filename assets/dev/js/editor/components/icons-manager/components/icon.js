@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 
 export default class Icon extends Component {
 	setSelected = () => {

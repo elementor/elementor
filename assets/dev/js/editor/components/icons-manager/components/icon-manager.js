@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import {Component, Fragment} from 'react';
+import { Component, Fragment } from 'react';
 import { render } from 'react-dom';
 import Tab from './tab';
 
@@ -99,6 +99,7 @@ class IconsManager extends Component {
 						}
 						this.setState( { activeTab: tab.name } );
 					} }>
+					<i className={ tab.labelIcon }></i>
 					{ tab.label }
 				</div>
 			);

@@ -61,7 +61,7 @@ class User {
 	 */
 	public static function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
-		$ajax->register_ajax_action( 'beta_tester_newsletter', [ __CLASS__, 'register_as_beta_tester' ] );
+		$ajax->register_ajax_action( 'beta_tester_signup', [ __CLASS__, 'register_as_beta_tester' ] );
 	}
 
 	/**
