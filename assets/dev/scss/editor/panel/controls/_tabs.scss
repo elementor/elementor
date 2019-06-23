@@ -2,7 +2,6 @@
 // Inner Tabs
 .elementor-control-type-tabs {
 	font-size: 0.8em;
-	color: $editor-light;
 	text-transform: uppercase;
 	display: flex;
 }
@@ -12,13 +11,13 @@
 	width: 100%;
 	padding: 0;
 	line-height: 27px;
-	border-top: 1px solid $editor-light;
-	border-bottom: 1px solid $editor-light;
-	@include border-end(1px solid $editor-light);
+	border-top: 1px solid $editor-lightest;
+	border-bottom: 1px solid $editor-lightest;
+	@include border-end(1px solid $editor-lightest);
 	cursor: pointer;
 
 	&:first-child {
-		@include border-start(1px solid $editor-light);
+		@include border-start(1px solid $editor-lightest);
 		@include _dimension_side_property(border-top, start, radius, 3px);
 		@include _dimension_side_property(border-bottom, start, radius, 3px);
 	}
@@ -30,6 +29,7 @@
 
 	&.elementor-tab-active {
 		background-color: $editor-light;
+		border-color: $editor-light;
 		color: #ffffff;
 	}
 }

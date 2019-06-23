@@ -6,7 +6,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 5.2  
 **Requires PHP:** 5.4  
-**Stable tag:** 2.5.15  
+**Stable tag:** 2.5.16  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -222,6 +222,11 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 ## Changelog ##
+
+### 2.5.16 - 2019-05-28 ###
+* Tweak: Added `reduce-motion` accessibility support for CSS animation library ([#7968](https://github.com/elementor/elementor/issues/7968), Props [@drawcard](https://github.com/drawcard))
+* Fix: Tabs Widget compatibility for IE ([#8123](https://github.com/elementor/elementor/issues/8123))
+* Fix: Admin dashboard dialog button UI glitch
 
 ### 2.5.15 - 2019-05-07 ###
 * Fix: Param type in doc block is partial ([#7988](https://github.com/elementor/elementor/issues/7988))

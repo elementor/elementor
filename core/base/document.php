@@ -518,6 +518,10 @@ abstract class Document extends Controls_Stack {
 		 */
 		do_action( 'elementor/document/before_save', $this, $data );
 
+		if ( ! current_user_can( 'unfiltered_html' ) ) {
+			$data = wp_kses_post_deep( $data );
+		}
+
 		if ( ! empty( $data['settings'] ) ) {
 			if ( isset( $data['settings']['post_status'] ) && DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
@@ -531,7 +535,8 @@ abstract class Document extends Controls_Stack {
 			$this->post = get_post( $this->post->ID );
 		}
 
-		if ( isset( $data['elements'] ) ) {
+		// Don't check is_empty, because an empty array should be saved.
+		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
 			$this->save_elements( $data['elements'] );
 		}
 

@@ -4,6 +4,7 @@ namespace Elementor\Core\Editor;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Icons_Manager;
 use Elementor\Plugin;
 use Elementor\Schemes_Manager;
 use Elementor\Settings;
@@ -196,7 +197,7 @@ class Editor {
 		$document = Plugin::$instance->documents->get( get_the_ID() );
 
 		if ( ! $document ) {
-			wp_die( __( 'Document not found.', '' ) );
+			wp_die( __( 'Document not found.', 'elementor' ) );
 		}
 
 		if ( ! $document->is_editable_by_current_user() || ! $document->is_built_with_elementor() ) {
@@ -515,6 +516,8 @@ class Editor {
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 			],
+			'icons' => Icons_Manager::get_icon_manager_tabs_config(),
+			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.json',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
@@ -584,6 +587,10 @@ class Editor {
 				// Clear Page.
 				'clear_page' => __( 'Delete All Content', 'elementor' ),
 				'dialog_confirm_clear_page' => __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
+
+				// Enable SVG uploads.
+				'enable_svg' => __( 'Enable SVG Uploads', 'elementor' ),
+				'dialog_confirm_enable_svg' => __( 'Please note! Allowing uploads of any files (SVG included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the SVG files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 
 				// Panel Preview Mode.
 				'back_to_editor' => __( 'Show Panel', 'elementor' ),
@@ -692,6 +699,9 @@ class Editor {
 				'deprecated_notice' => __( 'The <strong>{{{ widget }}}</strong> widget has been deprecated since {{{ plugin }}} {{{ since }}}.', 'elementor' ),
 				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>{{{ replacement }}}</strong>.', 'elementor' ),
 				'deprecated_notice_last' => __( 'Note that {{{ widget }}} will be completely removed once {{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
+
+				//Preview Debug
+				'preview_debug_link_text' => __( 'Click here for preview debug', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),

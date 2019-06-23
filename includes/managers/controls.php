@@ -187,6 +187,11 @@ class Controls_Manager {
 	const ICON = 'icon';
 
 	/**
+	 * Icons control.
+	 */
+	const ICONS = 'icons';
+
+	/**
 	 * Gallery control.
 	 */
 	const GALLERY = 'gallery';
@@ -390,6 +395,7 @@ class Controls_Manager {
 			self::URL,
 			self::REPEATER,
 			self::ICON,
+			self::ICONS,
 			self::GALLERY,
 			self::STRUCTURE,
 			self::SELECT2,

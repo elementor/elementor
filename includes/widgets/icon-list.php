@@ -127,12 +127,16 @@ class Widget_Icon_List extends Widget_Base {
 		);
 
 		$repeater->add_control(
-			'icon',
+			'selected_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
+				'type' => Controls_Manager::ICONS,
 				'label_block' => true,
-				'default' => 'fa fa-check',
+				'default' => [
+					'value' => 'fas fa-check',
+					'library' => 'solid',
+				],
+				'fa4compatibility' => 'icon',
 			]
 		);
 
@@ -158,18 +162,27 @@ class Widget_Icon_List extends Widget_Base {
 				'default' => [
 					[
 						'text' => __( 'List Item #1', 'elementor' ),
-						'icon' => 'fa fa-check',
+						'selected_icon' => [
+							'value' => 'fas fa-check',
+							'library' => 'solid',
+						],
 					],
 					[
 						'text' => __( 'List Item #2', 'elementor' ),
-						'icon' => 'fa fa-times',
+						'selected_icon' => [
+							'value' => 'fas fa-times',
+							'library' => 'solid',
+						],
 					],
 					[
 						'text' => __( 'List Item #3', 'elementor' ),
-						'icon' => 'fa fa-dot-circle-o',
+						'selected_icon' => [
+							'value' => 'fas fa-dot-circle',
+							'library' => 'solid',
+						],
 					],
 				],
-				'title_field' => '<i class="{{ icon }}" aria-hidden="true"></i> {{{ text }}}',
+				'title_field' => '{{{ elementor.helpers.renderIcon( this, selected_icon, {}, "i", "panel" ) || \'<i class="{{ icon }}" aria-hidden="true"></i>\' }}} {{{ text }}}',
 			]
 		);
 
@@ -411,6 +424,32 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'icon_self_align',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-h-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-icon' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -523,10 +562,17 @@ class Widget_Icon_List extends Widget_Base {
 						echo '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
 					}
 
-					if ( ! empty( $item['icon'] ) ) :
+					if ( ! empty( $item['icon'] ) || ! empty( $item['selected_icon'] ) ) :
+						$migrated = isset( $item['__fa4_migrated']['selected_icon'] );
+						$is_new = empty( $item['icon'] );
 						?>
 						<span class="elementor-icon-list-icon">
-							<i class="<?php echo esc_attr( $item['icon'] ); ?>" aria-hidden="true"></i>
+							<?php
+							if ( $is_new || $migrated ) {
+								Icons_Manager::render_icon( $item['selected_icon'], [ 'aria-hidden' => 'true' ] );
+							} else { ?>
+									<i class="<?php echo esc_attr( $item['icon'] ); ?>" aria-hidden="true"></i>
+							<?php } ?>
 						</span>
 					<?php endif; ?>
 					<span <?php echo $this->get_render_attribute_string( $repeater_setting_key ); ?>><?php echo $item['text']; ?></span>
@@ -559,6 +605,7 @@ class Widget_Icon_List extends Widget_Base {
 				view.addRenderAttribute( 'icon_list', 'class', 'elementor-inline-items' );
 				view.addRenderAttribute( 'list_item', 'class', 'elementor-inline-item' );
 			}
+			var iconsHTML = {};
 		#>
 		<# if ( settings.icon_list ) { #>
 			<ul {{{ view.getRenderAttributeString( 'icon_list' ) }}}>
@@ -574,9 +621,10 @@ class Widget_Icon_List extends Widget_Base {
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
 						<# } #>
-						<# if ( item.icon ) { #>
+						<# if ( item.icon || item.selected_icon ) { #>
 						<span class="elementor-icon-list-icon">
-							<i class="{{ item.icon }}" aria-hidden="true"></i>
+							<# iconsHTML[index] = elementor.helpers.renderIcon( view, item.selected_icon, { 'aria-hidden': true } ); #>
+							{{{ iconsHTML[index] }}}
 						</span>
 						<# } #>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>

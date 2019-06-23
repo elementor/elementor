@@ -3,6 +3,7 @@ namespace Elementor\Core\Files;
 
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Files\Svg\Svg_Handler;
 use Elementor\Core\Responsive\Files\Frontend;
 use Elementor\Utils;
 
