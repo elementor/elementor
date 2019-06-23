@@ -148,11 +148,9 @@ class Control_Media extends Control_Base_Multiple {
 					</div>
 					<div class="elementor-control-media__tools">
 						<# if( 'image' === data.media_type ) { #>
-						<div
-							class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Image', 'elementor' ); ?></div>
+						<div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Image', 'elementor' ); ?></div>
 						<# } else if( 'video' === data.media_type ) { #>
-						<div
-							class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Video', 'elementor' ); ?></div>
+						<div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Video', 'elementor' ); ?></div>
 						<# } #>
 					</div>
 				</div>
