@@ -124,11 +124,18 @@
 		align-items: center;
 		justify-content: center;
 		top: 10px;
-		right: 10px;
-		width: 22px;
-		height: 22px;
-		background-color: rgba(#fff, .8);
+		@include end(10px);
+		width: 24px;
+		height: 24px;
+		background-color: rgba(#fff, .9);
 		color: $editor-light;
 		border-radius: 3px;
+		box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3);
+		transition: all .3s ease-in-out;
+
+		&:hover {
+			background-color: rgba(#fff, 1);
+			box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+		}
 	}
 }
