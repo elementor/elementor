@@ -17,7 +17,7 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		var selectors = this.getSettings( 'selectors' ),
 			elements = {
 				$backgroundVideoContainer: this.$element.find( selectors.backgroundVideoContainer ),
-			};
+		};
 
 		elements.$backgroundVideoEmbed = elements.$backgroundVideoContainer.children( selectors.backgroundVideoEmbed );
 
@@ -49,25 +49,30 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		$video.width( size.width ).height( size.height );
 	},
 
-	startVideoLoop: function() {
-		var self = this;
+	startVideoLoop: function( firstTime ) {
+		const self = this;
 
 		// If the section has been removed
 		if ( ! self.player.getIframe().contentWindow ) {
 			return;
 		}
 
-		var elementSettings = self.getElementSettings(),
+		const elementSettings = self.getElementSettings(),
 			startPoint = elementSettings.background_video_start || 0,
 			endPoint = elementSettings.background_video_end;
+
+		if ( elementSettings.background_play_once && ! firstTime ) {
+			self.player.stopVideo();
+			return;
+		}
 
 		self.player.seekTo( startPoint );
 
 		if ( endPoint ) {
-			var durationToEnd = endPoint - startPoint + 1;
+			const durationToEnd = endPoint - startPoint + 1;
 
 			setTimeout( function() {
-				self.startVideoLoop();
+				self.startVideoLoop( false );
 			}, durationToEnd * 1000 );
 		}
 	},
@@ -93,7 +98,7 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 
 					self.changeVideoSize();
 
-					self.startVideoLoop();
+					self.startVideoLoop( true );
 
 					self.player.playVideo();
 				},
@@ -105,6 +110,9 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 							break;
 						case YT.PlayerState.ENDED:
 							self.player.seekTo( elementSettings.background_video_start || 0 );
+							if ( elementSettings.background_play_once ) {
+								self.player.destroy();
+							}
 					}
 				},
 			},
@@ -118,7 +126,8 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 	activate: function() {
 		var self = this,
 			videoLink = self.getElementSettings( 'background_video_link' ),
-			videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink );
+			videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink ),
+			playOnce = self.getElementSettings( 'background_play_once' );
 
 		self.isYTVideo = ! ! videoID;
 
@@ -135,6 +144,11 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 				videoLink += '#t=' + ( startTime || 0 ) + ( endTime ? ',' + endTime : '' );
 			}
 			self.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', self.changeVideoSize );
+			if ( playOnce ) {
+				self.elements.$backgroundVideoHosted.on( 'ended', function() {
+					self.elements.$backgroundVideoHosted.hide();
+				} );
+			}
 		}
 
 		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
@@ -144,7 +158,7 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		if ( this.isYTVideo && this.player.getIframe() ) {
 			this.player.destroy();
 		} else {
-			this.elements.$backgroundVideoHosted.removeAttr( 'src' );
+			this.elements.$backgroundVideoHosted.removeAttr( 'src' ).off( 'ended' );
 		}
 
 		elementorFrontend.elements.$window.off( 'resize', this.changeVideoSize );

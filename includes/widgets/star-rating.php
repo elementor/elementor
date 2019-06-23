@@ -135,11 +135,11 @@ class Widget_Star_Rating extends Widget_Base {
 				'options' => [
 					'solid' => [
 						'title' => __( 'Solid', 'elementor' ),
-						'icon' => 'fa fa-star',
+						'icon' => 'eicon-star',
 					],
 					'outline' => [
 						'title' => __( 'Outline', 'elementor' ),
-						'icon' => 'fa fa-star-o',
+						'icon' => 'eicon-star-o',
 					],
 				],
 				'default' => 'solid',
@@ -163,19 +163,19 @@ class Widget_Star_Rating extends Widget_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'fa fa-align-justify',
+						'icon' => 'eicon-text-align-justify',
 					],
 				],
 				'prefix_class' => 'elementor-star-rating--align-',

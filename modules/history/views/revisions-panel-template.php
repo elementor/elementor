@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-panel-scheme-buttons">
 			<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
 				<button class="elementor-button" disabled>
-					<i class="fa fa-times" aria-hidden="true"></i>
+					<i class="eicon-close" aria-hidden="true"></i>
 					<?php echo __( 'Discard', 'elementor' ); ?>
 				</button>
 			</div>
@@ -49,14 +49,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<div class="elementor-revision-item__tools">
 			<# if ( 'current' === type ) { #>
-				<i class="elementor-revision-item__tools-current fa fa-star" aria-hidden="true"></i>
+				<i class="elementor-revision-item__tools-current eicon-star" aria-hidden="true"></i>
 				<span class="elementor-screen-only"><?php echo __( 'Current', 'elementor' ); ?></span>
 			<# } else { #>
-				<i class="elementor-revision-item__tools-delete fa fa-times" aria-hidden="true"></i>
+				<i class="elementor-revision-item__tools-delete eicon-close" aria-hidden="true"></i>
 				<span class="elementor-screen-only"><?php echo __( 'Delete', 'elementor' ); ?></span>
 			<# } #>
 
-			<i class="elementor-revision-item__tools-spinner fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>
+			<i class="elementor-revision-item__tools-spinner eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 		</div>
 	</div>
 </script>

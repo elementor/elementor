@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.0.0");
-  src: url("../fonts/eicons.eot?5.0.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.0.0") format("woff2"), url("../fonts/eicons.woff?5.0.0") format("woff"), url("../fonts/eicons.ttf?5.0.0") format("truetype"), url("../fonts/eicons.svg?5.0.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.1.0");
+  src: url("../fonts/eicons.eot?5.1.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.1.0") format("woff2"), url("../fonts/eicons.woff?5.1.0") format("woff"), url("../fonts/eicons.ttf?5.1.0") format("truetype"), url("../fonts/eicons.svg?5.1.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -810,6 +810,9 @@
 .eicon-flash:before {
   content: '\e904'; }
 
+.eicon-redo:before {
+  content: '\e905'; }
+
 .eicon-ban:before {
   content: '\e906'; }
 
@@ -842,6 +845,12 @@
 
 .eicon-chevron-double-right:before {
   content: '\e910'; }
+
+.eicon-undo:before {
+  content: '\e911'; }
+
+.eicon-filter:before {
+  content: '\e912'; }
 
 .eicon-circle-o:before {
   content: '\e913'; }
@@ -956,6 +965,9 @@
 
 .eicon-trash-o:before {
   content: '\e93b'; }
+
+.eicon-font-awesome:before {
+  content: '\e93c'; }
 
 .eicon-user-circle-o:before {
   content: '\e93d'; }

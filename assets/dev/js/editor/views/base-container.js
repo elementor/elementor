@@ -30,8 +30,8 @@ module.exports = Marionette.CompositeView.extend( {
 			onAfterAdd: null,
 		}, options );
 
-		var childTypes = this.getChildType(),
-			newItem,
+		const childTypes = this.getChildType();
+		let newItem,
 			elType;
 
 		if ( data instanceof Backbone.Model ) {

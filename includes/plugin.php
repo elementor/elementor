@@ -8,6 +8,7 @@ use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;
+use Elementor\Core\Files\Assets\Manager as Assets_Manager;
 use Elementor\Core\Modules_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
@@ -320,6 +321,18 @@ class Plugin {
 	public $files_manager;
 
 	/**
+	 * Assets Manager.
+	 *
+	 * Holds the Assets manager.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 *
+	 * @var Files_Manager
+	 */
+	public $assets_manager;
+
+	/**
 	 * Files Manager.
 	 *
 	 * Holds the files manager.
@@ -534,6 +547,8 @@ class Plugin {
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
 		$this->files_manager = new Files_Manager();
+		$this->assets_manager = new Assets_Manager();
+		$this->icons_manager = new Icons_Manager();
 		/*
 		 * @TODO: Remove deprecated alias
 		 */
