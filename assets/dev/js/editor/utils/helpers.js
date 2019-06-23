@@ -132,7 +132,7 @@ helpers = {
 		const iconType = icon.library,
 			iconValue = icon.value;
 		if ( 'svg' === iconType ) {
-			if ( 'inline' === returnType ) {
+			if ( 'panel' === returnType ) {
 				return '<img src="' + iconValue.url + '">';
 			}
 			return {

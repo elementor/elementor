@@ -432,13 +432,6 @@ class Frontend extends App {
 		);
 
 		wp_register_style(
-			'font-awesome',
-			$this->get_css_assets_url( 'font-awesome', 'assets/lib/font-awesome/css/' ),
-			[],
-			'4.7.0'
-		);
-
-		wp_register_style(
 			'elementor-animations',
 			$this->get_css_assets_url( 'animations', 'assets/lib/animations/', true ),
 			[],
@@ -544,7 +537,6 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_styles' );
 
 		wp_enqueue_style( 'elementor-icons' );
-		wp_enqueue_style( 'font-awesome' );
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 

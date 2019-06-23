@@ -499,7 +499,7 @@ class Upgrades {
 	}
 
 	/**
-	 * Set Font Awesome Migration needed flag
+	 * Set FontAwesome Migration needed flag
 	 */
 	public static function _v_2_6_0_fa4_migration_flag() {
 		add_option( 'elementor_icon_manager_needs_update', 'yes' );
