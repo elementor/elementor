@@ -157,18 +157,9 @@ class Elementor_Test_Canary_Deployment extends Elementor_Test_Base {
 		] );
 		$this->assertNotEmpty( $filtered_transient->response );
 
-		$plugin = ELEMENTOR_PLUGIN_BASE;
-
-		// On Windows - the ELEMENTOR_PLUGIN_BASE is wrong.
-		if ( strtoupper( substr( PHP_OS, 0, 3 ) ) === 'WIN' ) {
-			$plugin = 'elementor/elementor.php';
-		}
-
-		var_dump( $plugin, ELEMENTOR__FILE__, get_option( 'active_plugins' ) );
-
 		$condition = [
 			'type' => 'plugin',
-			'plugin' => $plugin,
+			'plugin' => PLUGIN_PATH, // @see tests/bootstrap.php:14.
 			'plugin_file' => ELEMENTOR__FILE__,
 			'operator' => '>',
 		];
