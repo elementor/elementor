@@ -702,6 +702,8 @@ class Editor {
 				//Preview Debug
 				'preview_debug_link_text' => __( 'Click here for preview debug', 'elementor' ),
 
+                'icon_library' => __( 'Icon Library', 'elementor' ),
+
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
 				'elementor_docs' => __( 'Documentation', 'elementor' ),

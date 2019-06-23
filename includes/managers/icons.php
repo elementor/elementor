@@ -40,34 +40,34 @@ class Icons_Manager {
 		self::$tabs = apply_filters( 'elementor/icons_manager/native', [
 			'regular' => [
 				'name' => 'regular',
-				'label' => __( 'Regular', 'elementor' ),
+				'label' => __( 'Font Awesome - Regular', 'elementor' ),
 				'url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/regular.css',
 				'enqueue' => [ ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/fontawesome.css' ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
-				'labelIcon' => 'fa-flag',
+				'labelIcon' => 'fab fa-font-awesome-flag',
 				'ver' => '5.9.0',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/regular.json',
 			],
 			'solid' => [
 				'name' => 'solid',
-				'label' => __( 'Solid', 'elementor' ),
+				'label' => __( 'Font Awesome - Solid', 'elementor' ),
 				'url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/solid.css',
 				'enqueue' => [ ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/fontawesome.css' ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
-				'labelIcon' => 'fa-flag',
+				'labelIcon' => 'fab fa-font-awesome-alt',
 				'ver' => '5.9.0',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/solid.json',
 			],
 			'brands' => [
 				'name' => 'brands',
-				'label' => __( 'Brands', 'elementor' ),
+				'label' => __( 'Font Awesome - Brands', 'elementor' ),
 				'url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/brands.css',
 				'enqueue' => [ ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/fontawesome.css' ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
-				'labelIcon' => 'fa-font-awesome',
+				'labelIcon' => 'fab fa-font-awesome',
 				'ver' => '5.9.0',
 				'fetchJson' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/brands.json',
 			],
@@ -91,6 +91,7 @@ class Icons_Manager {
 			'all' => [
 				'name' => 'all',
 				'label' => __( 'All Icons', 'elementor' ),
+                'labelIcon' => 'eicon-filter',
 			],
 		];
 		return array_values( array_merge( $tabs, self::get_icon_manager_tabs() ) );

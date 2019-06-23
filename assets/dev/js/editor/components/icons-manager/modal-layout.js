@@ -9,7 +9,7 @@ export default class extends BaseModalLayout {
 
 	getLogoOptions() {
 		return {
-			title: elementor.translate( 'icon manager' ),
+			title: elementor.translate( 'icon_library' ),
 		};
 	}
 
