@@ -7,6 +7,8 @@ import DateTimeControl from 'elementor-controls/date-time';
 import NoticeBar from './utils/notice-bar';
 import Component from './elements/component';
 
+import IconsManager from './components/icons-manager/icons-manager';
+//_.noConflict();
 const App = Marionette.Application.extend( {
 	loaded: false,
 
@@ -78,6 +80,7 @@ const App = Marionette.Application.extend( {
 			Hidden: require( 'elementor-controls/hidden' ),
 			Hover_animation: require( 'elementor-controls/select2' ),
 			Icon: require( 'elementor-controls/icon' ),
+			Icons: require( 'elementor-controls/icons' ),
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
 			Media: require( 'elementor-controls/media' ),
 			Number: require( 'elementor-controls/number' ),
@@ -161,7 +164,7 @@ const App = Marionette.Application.extend( {
 	_defaultDeviceMode: 'desktop',
 
 	addControlView: function( controlID, ControlView ) {
-		this.modules.controls[ elementorCommon.helpers.firstLetterUppercase( controlID ) ] = ControlView;
+		this.modules.controls[ elementorCommon.helpers.upperCaseWords( controlID ) ] = ControlView;
 	},
 
 	checkEnvCompatibility: function() {
@@ -231,7 +234,7 @@ const App = Marionette.Application.extend( {
 	},
 
 	getControlView: function( controlID ) {
-		var capitalizedControlName = elementorCommon.helpers.firstLetterUppercase( controlID ),
+		var capitalizedControlName = elementorCommon.helpers.upperCaseWords( controlID ),
 			View = this.modules.controls[ capitalizedControlName ];
 
 		if ( ! View ) {
@@ -276,6 +279,8 @@ const App = Marionette.Application.extend( {
 		elementorCommon.components.register( new Component( { context: this } ) );
 
 		this.hotkeysScreen = new HotkeysScreen();
+
+		this.iconManager = new IconsManager();
 
 		this.noticeBar = new NoticeBar();
 	},
@@ -876,9 +881,11 @@ const App = Marionette.Application.extend( {
 		const self = this;
 
 		const debugUrl = self.config.document.urls.preview + '&preview-debug',
-			previewDebugLink = '<br><a href="' + debugUrl + '" target="_blank">Preview Debug</a>',
+			previewDebugLinkText = self.config.i18n.preview_debug_link_text,
+			previewDebugLink = '<div id="preview-debug-link-text"><a href="' + debugUrl + '" target="_blank">' + previewDebugLinkText + '</a></div>',
 			debugData = elementor.config.preview.debug_data,
 			dialogOptions = {
+				className: 'preview-loading-error',
 				headerMessage: debugData.header,
 				message: debugData.message + previewDebugLink,
 			onConfirm: function() {
@@ -894,8 +901,9 @@ const App = Marionette.Application.extend( {
 			self.showFatalErrorDialog( dialogOptions );
 		} ).fail( function( response ) { //Iframe can't be loaded
 			self.showFatalErrorDialog( {
+				className: 'preview-loading-error',
 				headerMessage: debugData.header,
-				message: response.status + ' : ' + response.statusText + previewDebugLink,
+				message: response.statusText + ' ' + response.status + ' ' + previewDebugLink,
 				onConfirm: function() {
 					const url = 500 <= response.status ? elementor.config.preview.help_preview_http_error_500_url : elementor.config.preview.help_preview_http_error_url;
 					open( url, '_blank' );

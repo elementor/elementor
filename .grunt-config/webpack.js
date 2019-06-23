@@ -30,15 +30,15 @@ const aliasList = {
 
 const moduleRules = {
 	rules: [
-		{
-			enforce: 'pre',
-			test: /\.js$/,
-			exclude: /node_modules/,
-			loader: 'eslint-loader',
-			//options: {
-			//	failOnError: true,
-			//}
-		},
+		// {
+		// 	enforce: 'pre',
+		// 	test: /\.js$/,
+		// 	exclude: /node_modules/,
+		// 	loader: 'eslint-loader',
+		// 	options: {
+		// 		failOnError: true,
+		// 	}
+		// },
 		{
 			test: /\.js$/,
 			exclude: /node_modules/,
@@ -48,6 +48,7 @@ const moduleRules = {
 					query: {
 						presets: [ '@wordpress/default' ],
 						plugins: [
+							[ '@wordpress/babel-plugin-import-jsx-pragma' ],
 							[ 'transform-react-jsx' ],
 							[ '@babel/plugin-proposal-class-properties' ],
 							[ '@babel/plugin-transform-runtime' ],

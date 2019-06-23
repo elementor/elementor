@@ -1,6 +1,18 @@
 import BetaTesterView from './view';
 
 export default class BetaTesterLayout extends elementorModules.common.views.modal.Layout {
+	ui() {
+		return {
+			closeModal: '.elementor-templates-modal__header__close',
+		};
+	}
+
+	events() {
+		return {
+			'click @ui.closeModal': this.onCloseModalClick,
+		};
+	}
+
 	getModalOptions() {
 		return {
 			id: 'elementor-beta-tester-modal',
@@ -23,5 +35,13 @@ export default class BetaTesterLayout extends elementorModules.common.views.moda
 
 	showContentView() {
 		this.modalContent.show( new BetaTesterView() );
+	}
+
+	onCloseModalClick() {
+		elementorCommon.ajax.addRequest( 'introduction_viewed', {
+			data: {
+				introductionKey: elementorAdmin.config.beta_tester_newsletter,
+			},
+		} );
 	}
 }

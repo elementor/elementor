@@ -19,6 +19,8 @@ class Beta_Testers {
 
 	const NEWSLETTER_PRIVACY_URL = 'https://go.elementor.com/beta-testers-newsletter-privacy';
 
+	const BETA_TESTER_NEWSLETTER = 'beta_tester_newsletter';
+
 	/**
 	 * Transient key.
 	 *

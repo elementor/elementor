@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="260px" height="140px" viewBox="0 0 260 140" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>1</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="258" height="138"></rect>
+    </defs>
+    <g id="1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle-7-Copy-39" stroke="#D4DAE0" x="0.5" y="0.5" width="259" height="139"></rect>
+        <g id="Group-2-Copy-8" transform="translate(1.000000, 1.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Mask" fill="#E6E9EC" fill-rule="nonzero" xlink:href="#path-1"></use>
+            <g id="Group-4" mask="url(#mask-2)" fill="#FFFFFF" fill-rule="nonzero">
+                <g transform="translate(-41.578512, 12.414831)">
+                    <path d="M-7.27595761e-12,141.85018 C45.0907523,54.860224 84.6976129,7.8331115 118.820582,0.768842467 C170.005035,-9.82756108 190.05248,92.8416175 220.681786,79.2247284 C226.370872,76.6955277 257.734627,40.5793839 283.05703,50.7119639 C295.19945,55.5706673 314.210743,86.1091314 340.090909,142.327356 L-7.27595761e-12,142.327356 L-7.27595761e-12,141.85018 Z" id="Shape" transform="translate(170.045455, 71.163678) scale(-1, 1) translate(-170.045455, -71.163678) "></path>
+                    <ellipse id="Oval" cx="117.272727" cy="40.6533505" rx="10.661157" ry="10.6818182"></ellipse>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

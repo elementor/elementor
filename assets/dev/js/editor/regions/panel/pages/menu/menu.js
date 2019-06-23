@@ -39,7 +39,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'view-page',
-			icon: 'fa fa-eye',
+			icon: 'eicon-preview',
 			title: elementor.translate( 'view_page' ),
 			type: 'link',
 			link: elementor.config.document.urls.permalink,
@@ -47,7 +47,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'exit-to-dashboard',
-			icon: 'fa fa-wordpress',
+			icon: 'eicon-wordpress',
 			title: elementor.translate( 'exit_to_dashboard' ),
 			type: 'link',
 			link: elementor.config.document.urls.exit_to_dashboard,
@@ -73,14 +73,14 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'finder',
-			icon: 'fa fa-search',
+			icon: 'eicon-search',
 			title: elementorCommon.translate( 'finder', 'finder' ),
 			callback: () => elementorCommon.route.to( 'finder' ),
 		}, 'go_to', 'view-page' );
 
 		this.addItem( {
 			name: 'global-colors',
-			icon: 'fa fa-paint-brush',
+			icon: 'eicon-paint-brush',
 			title: elementor.translate( 'global_colors' ),
 			type: 'page',
 			callback: () => elementorCommon.route.to( 'panel/global-colors' ),
@@ -88,7 +88,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'global-fonts',
-			icon: 'fa fa-font',
+			icon: 'eicon-font',
 			title: elementor.translate( 'global_fonts' ),
 			type: 'page',
 			callback: () => elementorCommon.route.to( 'panel/global-fonts' ),
@@ -96,7 +96,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'color-picker',
-			icon: 'fa fa-eyedropper',
+			icon: 'eicon-eyedropper',
 			title: elementor.translate( 'color_picker' ),
 			type: 'page',
 			callback: () => elementorCommon.route.to( 'panel/color-picker' ),
@@ -104,7 +104,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'global-settings',
-			icon: 'fa fa-cogs',
+			icon: 'eicon-cogs',
 			title: elementor.translate( 'global_settings' ),
 			type: 'page',
 			callback: () => elementorCommon.route.to( 'panel/general-settings/style' ),
@@ -112,7 +112,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'elementor-settings',
-			icon: 'fa fa-external-link',
+			icon: 'eicon-editor-external-link',
 			title: elementor.translate( 'elementor_settings' ),
 			type: 'link',
 			link: elementor.config.settings_page_link,
@@ -121,7 +121,7 @@ PanelMenuPageView = Marionette.CompositeView.extend( {
 
 		this.addItem( {
 			name: 'about-elementor',
-			icon: 'fa fa-info-circle',
+			icon: 'eicon-info-circle',
 			title: elementor.translate( 'about_elementor' ),
 			type: 'link',
 			link: elementor.config.elementor_site,
