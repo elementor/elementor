@@ -130,7 +130,7 @@ class Control_Media extends Control_Base_Multiple {
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
-			<div class="elementor-control-input-wrapper elementor-aspect-ratio-169">
+			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
 				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
 					<div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
 						<i class="eicon-plus-circle" aria-hidden="true"></i>
