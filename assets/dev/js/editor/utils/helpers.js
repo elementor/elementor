@@ -64,7 +64,6 @@ helpers = {
 
 		const self = this;
 		this.fetchInlineSvg( value.url, ( data ) => {
-			const svgXML = $( data ).find( 'svg' )[ 0 ];
 			if ( data ) {
 				self._inlineSvg[ value.id ] = data; //$( data ).find( 'svg' )[ 0 ].outerHTML;
 				if ( view ) {

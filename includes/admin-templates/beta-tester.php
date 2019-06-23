@@ -28,7 +28,7 @@ if ( ! $beta_tester_email ) {
 <script type="text/template" id="tmpl-elementor-beta-tester">
 	<form id="elementor-beta-tester-form" method="post">
 		<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
-		<input type="hidden" name="action" value="elementor_beta_tester_newsletter" />
+		<input type="hidden" name="action" value="elementor_beta_tester_signup" />
 		<div id="elementor-beta-tester-form__caption"><?php echo __( 'Get Beta Updates', 'elementor' ); ?></div>
 		<div id="elementor-beta-tester-form__description"><?php echo __( 'As a beta tester, you’ll receive an update that includes a testing version of Elementor and it’s content directly to your Email', 'elementor' ); ?></div>
 		<div id="elementor-beta-tester-form__input-wrapper">
