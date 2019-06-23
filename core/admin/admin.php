@@ -737,8 +737,8 @@ class Admin extends App {
 		}
 
 		$all_introductions = User::get_introduction_meta();
-		$beta_tester_newsletter_dismissed = array_key_exists( Beta_Testers::BETA_TESTER_NEWSLETTER, $all_introductions );
-		if ( ( ( 'toplevel_page_elementor' === $current_screen->base ) && ! $beta_tester_newsletter_dismissed ) || 'elementor_page_elementor-tools' === $current_screen->id ) {
+		$beta_tester_signup_dismissed = array_key_exists( Beta_Testers::BETA_TESTER_SIGNUP, $all_introductions );
+		if ( ( ( 'toplevel_page_elementor' === $current_screen->base ) && ! $beta_tester_signup_dismissed ) || 'elementor_page_elementor-tools' === $current_screen->id ) {
 			add_action( 'admin_head', [ $this, 'add_beta_tester_template' ] );
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_beta_tester_scripts' ] );
 			add_filter( 'elementor/admin/localize_settings', [ $this, 'localize_beta_tester_scripts' ] );
@@ -795,7 +795,7 @@ class Admin extends App {
 	protected function get_init_settings() {
 		$settings = [
 			'home_url' => home_url(),
-			'beta_tester_newsletter' => Beta_Testers::BETA_TESTER_NEWSLETTER,
+			'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,
 			'i18n' => [
 				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
 				'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
