@@ -1,0 +1,86 @@
+
+.elementor-control-type-choose {
+
+	&.elementor-label-block {
+
+		.elementor-choices {
+			width: 100%;
+		}
+	}
+
+	&.elementor-label-inline {
+
+		.elementor-control-input-wrapper {
+			display: inline-flex;
+			justify-content: flex-end;
+		}
+	}
+}
+
+.elementor-choices {
+	display: flex;
+	height: 27px;
+	line-height: 27px;
+	text-align: center;
+	border-spacing: 1px;
+	border-radius: 3px;
+	overflow: hidden;
+
+	.elementor-choices-label {
+		border-top: 1px solid $editor-lightest;
+		border-bottom: 1px solid $editor-lightest;
+		@include border-start(1px solid $editor-lightest);
+		@include border-end(none);
+		width: 50px;
+		font-size: 12px;
+		transition: all .5s;
+		cursor: pointer;
+		overflow: hidden;
+
+		&:nth-child(2) {
+			@include _dimension_side_property(border-top, start, radius, 3px);
+			@include _dimension_side_property(border-bottom, start, radius, 3px);
+		}
+
+		&:last-child {
+			@include border-end(1px solid $editor-lightest);
+			@include _dimension_side_property(border-top, end, radius, 3px);
+			@include _dimension_side_property(border-bottom, end, radius, 3px);
+		}
+	}
+
+	input {
+		display: none;
+
+		&:checked + .elementor-choices-label {
+			color: #fff;
+			background-color: $editor-light;
+			border-color: $editor-light;
+		}
+	}
+}
+
+.rtl {
+
+	.elementor-control-text_align,
+	.elementor-control-align,
+	.elementor-control-position {
+
+		.elementor-choices {
+			flex-direction: row-reverse; // Force ltr also in RTL languages
+
+			.elementor-choices-label {
+
+				&:nth-child(2) {
+					@include border-end(1px solid $editor-lightest);
+					border-radius: 3px 0 0 3px;
+				}
+
+				&:last-child {
+					@include border-end(none);
+					border-radius: 0 3px 3px 0;
+				}
+			}
+		}
+	}
+}

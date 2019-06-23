@@ -1,15 +1,18 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Admin\Admin;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-
 $user = wp_get_current_user();
 
 $ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+$beta_tester_email = get_user_meta( $user->ID, User::BETA_TESTER_META_KEY, true );
+
+if ( ! $beta_tester_email ) {
+	$beta_tester_email = $user->user_email;
+}
 
 /**
  * Print beta tester dialog.
@@ -18,18 +21,18 @@ $ajax = Plugin::$instance->common->get_component( 'ajax' );
  *
  * Fired by `admin_footer` filter.
  *
- * @since 2.6.0
+ * @since  2.6.0
  * @access public
  */
 ?>
 <script type="text/template" id="tmpl-elementor-beta-tester">
 	<form id="elementor-beta-tester-form" method="post">
 		<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
-		<input type="hidden" name="action" value="elementor_beta_tester_newsletter"/>
-		<div id="elementor-beta-tester-form__caption"><?php echo __( 'Beta Testers Newsletter', 'elementor' ); ?></div>
-		<div id="elementor-beta-tester-form__description"><?php echo __( 'Want to be the first to hear about new features & software improvements? leave your email below', 'elementor' ); ?></div>
+		<input type="hidden" name="action" value="elementor_beta_tester_newsletter" />
+		<div id="elementor-beta-tester-form__caption"><?php echo __( 'Get Beta Updates', 'elementor' ); ?></div>
+		<div id="elementor-beta-tester-form__description"><?php echo __( 'As a beta tester, you’ll receive an update that includes a testing version of Elementor and it’s content directly to your Email', 'elementor' ); ?></div>
 		<div id="elementor-beta-tester-form__input-wrapper">
-			<input id="elementor-beta-tester-form__email" name="beta_tester_email" type="email" placeholder="<?php echo __( 'Your Email', 'elementor' ); ?>" required value="<?php echo $user->user_email; ?>"/>
+			<input id="elementor-beta-tester-form__email" name="beta_tester_email" type="email" placeholder="<?php echo __( 'Your Email', 'elementor' ); ?>" required value="<?php echo $beta_tester_email; ?>" />
 			<button id="elementor-beta-tester-form__submit" class="elementor-button elementor-button-success">
 				<span class="elementor-state-icon">
 					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
@@ -38,7 +41,7 @@ $ajax = Plugin::$instance->common->get_component( 'ajax' );
 			</button>
 		</div>
 		<div id="elementor-beta-tester-form__terms">
-			<?php echo sprintf( __( 'By entering your email, you agree to Elementor\'s <a href="%1$s">Terms of Service</a> and <a href="%2$s">Privacy Policy</a>', 'elementor' ), Beta_Testers::NEWSLETTER_TERMS_URL, Beta_Testers::NEWSLETTER_PRIVACY_URL ); ?>
+			<?php echo sprintf( __( 'By opting-in, you agree to Elementor\'s <a href="%1$s">Terms of Service</a> and <a href="%2$s">Privacy Policy</a>', 'elementor' ), Beta_Testers::NEWSLETTER_TERMS_URL, Beta_Testers::NEWSLETTER_PRIVACY_URL ); ?>
 		</div>
 	</form>
 </script>

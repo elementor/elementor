@@ -1,0 +1,272 @@
+const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
+
+class ControlIconsView extends ControlMultipleBaseItemView {
+	constructor( ...args ) {
+		super( ...args );
+		this.cache = {
+			loaded: false,
+			dialog: false,
+			enableClicked: false,
+			fa4Mapping: false,
+			migratedFlag: {},
+		};
+		this.dataKeys = {
+			migratedKey: '__fa4_migrated',
+			fa4MigrationFlag: 'fa4compatibility',
+		};
+	}
+
+	enqueueIconFonts( iconType ) {
+		const iconSetting = elementor.helpers.getIconLibrarySettings( iconType );
+		if ( false === iconSetting ) {
+			return;
+		}
+
+		if ( iconSetting.enqueue ) {
+			iconSetting.enqueue.forEach( ( assetURL ) => {
+				elementor.helpers.enqueueEditorStylesheet( assetURL );
+				elementor.helpers.enqueuePreviewStylesheet( assetURL );
+			} );
+		}
+
+		if ( iconSetting.url ) {
+			elementor.helpers.enqueueEditorStylesheet( iconSetting.url );
+			elementor.helpers.enqueuePreviewStylesheet( iconSetting.url );
+		}
+	}
+
+	ui() {
+		const ui = super.ui();
+
+		ui.svgUploader = '.elementor-control-svg-uploader';
+		ui.iconPickers = '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button';
+		ui.deleteButton = '.elementor-control-media__remove';
+		ui.previewPlaceholder = '.elementor-control-media__preview';
+
+		return ui;
+	}
+
+	events() {
+		return jQuery.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
+			'click @ui.iconPickers': 'openPicker',
+			'click @ui.svgUploader': 'openFrame',
+			'click @ui.deleteButton': 'deleteIcon',
+		} );
+	}
+
+	getControlValue() {
+		const value = super.getControlValue(),
+			model = this.model,
+			controlToMigrate = model.get( this.dataKeys.fa4MigrationFlag );
+
+		// Bail if no migration flag
+		if ( ! controlToMigrate ) {
+			return value;
+		}
+
+		// Check if there is a value to migrate
+		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
+		if ( ! valueToMigrate ) {
+			return value;
+		}
+
+		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey ),
+			controlName = model.get( 'name' );
+
+		// Check if migration had been done and is stored locally
+		if ( this.cache.migratedFlag[ controlName ] ) {
+			return this.cache.migratedFlag[ controlName ];
+		}
+		// Check if already migrated
+		if ( didMigration && didMigration[ controlName ] ) {
+			return value;
+		}
+
+		// Do migration
+		return this.migrateFa4toFa5( valueToMigrate );
+	}
+
+	migrateFa4toFa5( fa4Value ) {
+		const fa5Value = elementor.helpers.mapFa4ToFa5( fa4Value );
+		this.cache.migratedFlag[ this.model.get( 'name' ) ] = fa5Value;
+		this.enqueueIconFonts( fa5Value.library );
+		return fa5Value;
+	}
+
+	setControlAsMigrated( controlName ) {
+		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey ) || {};
+		didMigration[ controlName ] = true;
+		this.elementSettingsModel.set( this.dataKeys.migratedKey, didMigration, { silent: true } );
+	}
+
+	onReady() {
+		const controlName = this.model.get( 'name' );
+		if ( this.cache.migratedFlag[ controlName ] ) {
+			this.setControlAsMigrated( controlName );
+			setTimeout( () => {
+				this.setValue( this.cache.migratedFlag[ controlName ] );
+			}, 10 );
+		}
+	}
+
+	onRender() {
+		super.onRender();
+		// @todo: move to manager
+		if ( ! this.cache.loaded ) {
+			elementor.config.icons.forEach( ( library ) => {
+				if ( 'all' === library.name ) {
+					return;
+				}
+				elementor.iconManager.library.initIconType( library );
+			} );
+			this.cache.loaded = true;
+		}
+	}
+
+	initFrame() {
+		// Set current doc id to attach uploaded images.
+		wp.media.view.settings.post.id = elementor.config.document.id;
+		this.frame = wp.media( {
+			button: {
+				text: elementor.translate( 'insert_media' ),
+			},
+			states: [
+				new wp.media.controller.Library( {
+					title: elementor.translate( 'insert_media' ),
+					library: wp.media.query( { type: 'image/svg+xml' } ),
+					multiple: false,
+					date: false,
+				} ),
+			],
+		} );
+
+		const handleSelect = () => this.selectSvg();
+
+		// When a file is selected, run a callback.
+		this.frame.on( 'insert select', handleSelect );
+	}
+
+	/**
+	 * Callback handler for when an attachment is selected in the media modal.
+	 * Gets the selected image information, and sets it within the control.
+	 */
+	selectSvg() {
+		this.trigger( 'before:select' );
+
+		// Get the attachment from the modal frame.
+		const attachment = this.frame.state().get( 'selection' ).first().toJSON();
+
+		if ( attachment.url ) {
+			this.setValue( {
+				value: {
+					url: attachment.url,
+					id: attachment.id,
+				},
+				library: 'svg',
+			} );
+
+			this.applySavedValue();
+		}
+		this.trigger( 'after:select' );
+	}
+
+	getSvgNotEnabledDialog() {
+		if ( ! this.cache.dialog ) {
+			const onConfirm = () => {
+				this.cache.enableClicked = true;
+				window.open( ElementorConfig.settings_page_link + '#tab-advanced', '_blank' );
+			};
+			this.cache.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
+				id: 'elementor-enable-svg-dialog',
+				headerMessage: elementor.translate( 'enable_svg' ),
+				message: elementor.translate( 'dialog_confirm_enable_svg' ),
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: elementor.translate( 'enable' ),
+					cancel: elementor.translate( 'cancel' ),
+				},
+				onConfirm: onConfirm,
+			} );
+		}
+		return this.cache.dialog;
+	}
+
+	isSvgEnabled() {
+		if ( ! this.cache.enableClicked ) {
+			return this.model.get( 'is_svg_enabled' );
+		}
+		return true;
+	}
+
+	openFrame() {
+		if ( ! this.isSvgEnabled() ) {
+			const dialog = this.getSvgNotEnabledDialog();
+			this.cache.dialogShown = true;
+			return dialog.show();
+		}
+
+		if ( ! this.frame ) {
+			this.initFrame();
+		}
+
+		this.frame.open();
+
+		// Set params to trigger sanitizer
+		this.frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-editor-upload' );
+		this.frame.uploader.uploader.param( 'upload_type', 'svg-icon' );
+
+		const selectedId = this.getControlValue( 'id' );
+		if ( ! selectedId ) {
+			return;
+		}
+
+		const selection = this.frame.state().get( 'selection' );
+		selection.add( wp.media.attachment( selectedId ) );
+	}
+
+	openPicker() {
+		elementor.iconManager.show( { view: this } );
+	}
+
+	applySavedValue() {
+		const controlValue = this.getControlValue(),
+			iconValue = controlValue.value,
+			iconType = controlValue.library;
+
+		this.$el.toggleClass( 'elementor-media-empty', ! iconValue );
+
+		if ( ! iconValue ) {
+			this.ui.previewPlaceholder.html( '' );
+			return;
+		}
+
+		if ( 'svg' === iconType ) {
+			return elementor.helpers.fetchInlineSvg( iconValue.url, ( data ) => {
+				this.ui.previewPlaceholder.html( data );
+			} );
+		}
+
+		const previewHTML = '<i class="' + iconValue + '"></i>';
+		this.ui.previewPlaceholder.html( previewHTML );
+		this.enqueueIconFonts( iconType );
+	}
+
+	deleteIcon( event ) {
+		event.stopPropagation();
+
+		this.setValue( {
+			value: '',
+			library: '',
+		} );
+
+		this.applySavedValue();
+	}
+
+	onBeforeDestroy() {
+		this.$el.remove();
+	}
+}
+module.exports = ControlIconsView;

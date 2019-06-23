@@ -238,19 +238,19 @@ class Revisions_Manager {
 			throw new \Exception( 'You must set the revision ID.' );
 		}
 
-		$revision = get_post( $data['id'] );
+		$revision = Plugin::$instance->documents->get( $data['id'] );
 
-		if ( empty( $revision ) ) {
+		if ( ! $revision ) {
 			throw new \Exception( 'Invalid revision.' );
 		}
 
-		if ( ! current_user_can( 'edit_post', $revision->ID ) ) {
+		if ( ! current_user_can( 'edit_post', $revision->get_id() ) ) {
 			throw new \Exception( __( 'Access denied.', 'elementor' ) );
 		}
 
 		$revision_data = [
-			'settings' => Manager::get_settings_managers( 'page' )->get_model( $revision->ID )->get_settings(),
-			'elements' => Plugin::$instance->db->get_plain_editor( $revision->ID ),
+			'settings' => $revision->get_settings(),
+			'elements' => $revision->get_elements_data(),
 		];
 
 		return $revision_data;
