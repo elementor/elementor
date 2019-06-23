@@ -136,29 +136,31 @@ class Control_Media extends Control_Base_Multiple {
 						<i class="eicon-plus-circle" aria-hidden="true"></i>
 					</div>
 					<div class="elementor-control-media-area elementor-fit-aspect-ratio">
-                        <div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
-                            <i class="eicon-trash"></i>
-                        </div>
-                        <# if( 'image' === data.media_type ) { #>
-                            <div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
-                        <# } else if( 'video' === data.media_type ) { #>
-                            <video class="elementor-control-media-video" preload="metadata"></video>
-                            <i class="eicon-video-camera"></i>
-                        <# } #>
+						<div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+							<i class="eicon-trash"></i>
+						</div>
+						<# if( 'image' === data.media_type ) { #>
+						<div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
+						<# } else if( 'video' === data.media_type ) { #>
+						<video class="elementor-control-media-video" preload="metadata"></video>
+						<i class="eicon-video-camera"></i>
+						<# } #>
 					</div>
-                    <div class="elementor-control-media__tools">
-                        <# if( 'image' === data.media_type ) { #>
-                            <div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Image', 'elementor' ); ?></div>
-                        <# } else if( 'video' === data.media_type ) { #>
-                            <div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Video', 'elementor' ); ?></div>
-                        <# } #>
-                    </div>
+					<div class="elementor-control-media__tools">
+						<# if( 'image' === data.media_type ) { #>
+						<div
+							class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Image', 'elementor' ); ?></div>
+						<# } else if( 'video' === data.media_type ) { #>
+						<div
+							class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Video', 'elementor' ); ?></div>
+						<# } #>
+					</div>
 				</div>
 			</div>
 			<# if ( data.description ) { #>
-				<div class="elementor-control-field-description">{{{ data.description }}}</div>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 			<# } #>
-			<input type="hidden" data-setting="{{ data.name }}" />
+			<input type="hidden" data-setting="{{ data.name }}"/>
 		</div>
 		<?php
 	}
@@ -178,7 +180,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'label_block' => true,
 			'media_type' => 'image',
-            'classes' => 'elementor-control-media',
+			'classes' => 'elementor-control-media',
 			'dynamic' => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',
