@@ -115,15 +115,6 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'content_box_shadow_normal',
-				'label' => __( 'Box Shadow', 'theplus' ),
-				'selector' => '{{WRAPPER}}',
-			]
-		);
-
 		$this->add_control(
 			'view',
 			[
