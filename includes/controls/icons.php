@@ -64,7 +64,7 @@ class Control_Icons extends Control_Base_Multiple {
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
-			<div class="elementor-control-input-wrapper elementor-aspect-ratio-169">
+			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
                 <div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
                     <div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
                         <i class="eicon-plus-circle" aria-hidden="true"></i>
@@ -76,8 +76,8 @@ class Control_Icons extends Control_Base_Multiple {
                         <div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
                     </div>
                     <div class="elementor-control-media__tools">
-                        <div class="elementor-control-icon-picker elementor-control-media__tool"><?php echo __( 'Font Icons', 'elementor-pro' ); ?></div>
-                        <div class="elementor-control-svg-uploader elementor-control-media__tool"><?php echo __( 'SVG Icons', 'elementor-pro' ); ?></div>
+                        <div class="elementor-control-icon-picker elementor-control-media__tool"><?php echo __( 'Icon Library', 'elementor-pro' ); ?></div>
+                        <div class="elementor-control-svg-uploader elementor-control-media__tool"><?php echo __( 'Upload SVG', 'elementor-pro' ); ?></div>
                     </div>
                 </div>
 			</div>

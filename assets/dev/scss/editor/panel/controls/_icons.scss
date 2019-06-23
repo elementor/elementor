@@ -1,14 +1,22 @@
 .elementor-control-type-icons {
 
 	.elementor-control-media__preview {
+		
 
-		i {
+		> * {
 			position: absolute;
 			top: 50%;
 			left: 50%;
 			transform: translateX(-50%) translateY(-50%);
+		}
+
+		i {
 			font-size: 70px;
 			color: $editor-lighter;
+		}
+
+		svg {
+			height: 75%;
 		}
 	}
 }
@@ -115,10 +123,10 @@
 			background: #fff;
 
 			.dialog-insert_icon {
-				padding: 12px 26px;
+				padding: 12px 36px;
 				font-size: 14px;
 				color: #fff;
-				width: 10%;
+				width: initial;
 				background-color: #39b54a;
 				text-transform: uppercase;
 				border-radius: 3px;
@@ -135,6 +143,10 @@
 	&__sidebar {
 		 width: 25%;
 		 background-color: #fbfcfd; // @TODO: Needs to change
+
+		@media (max-width: $editor-screen-xs-max) {
+			display: none;
+		}
 	}
 
 	&__tab-links {
@@ -142,8 +154,18 @@
 	}
 
 	&__main {
-		padding: 50px 80px;
+		display: flex;
+		flex-direction: column;
+		padding: 50px 80px 0;
 		width: 75%;
+
+		@media (max-width: $editor-screen-lg-max) {
+			padding: 50px 50px 0;
+		}
+
+		@media (max-width: $editor-screen-xs-max) {
+			width: 100%;
+		}
 	}
 
 	&__search {
@@ -175,16 +197,32 @@
 			font-weight: 500;
 			text-align: $start;
 			margin-top: 30px;
+
+			@media (max-width: $editor-screen-xs-max) {
+				display: none;
+			}
 		}
 
 		&__content {
 			display: grid;
-			grid-template-columns: repeat(7, 1fr);
+			grid-template-columns: repeat(6, 1fr);
 			grid-gap: 15px;
-			height: 70vh;
 			overflow: scroll;
-			margin: 0px -15px;
+			margin: 10px -15px 0;
 			padding: 15px;
+
+			@media (max-width: $editor-screen-lg-max) {
+				grid-template-columns: repeat(5, 1fr);
+			}
+
+			@media (max-width: $editor-screen-md-max) {
+				grid-template-columns: repeat(4, 1fr);
+
+			}
+
+			@media (max-width: $editor-screen-sm-max) {
+				grid-template-columns: repeat(3, 1fr);
+			}
 		}
 	}
 }
@@ -199,6 +237,22 @@
 		cursor: pointer;
 		position: relative;
 
+		@media (max-width: $editor-screen-lg-max) {
+			@include padding(15px, 0, 15px, 25px);
+			font-size: 12px;
+
+			i {
+				font-size: 15px;
+			}
+		}
+
+		@media (max-width: $editor-screen-sm-max) {
+
+			i {
+				display: none;
+			}
+		}
+
 		&.elementor-active {
 			background-color: #fff;
 			box-shadow: 0 6px 20px 0 rgba(0,0,0,0.1);
@@ -212,6 +266,16 @@
 				@include start(0);
 				background-color: $editor-info;
 			}
+
+			i {
+				color: $editor-info;
+			}
+		}
+
+		i {
+			font-size: 20px;
+			@include padding-end(15px);
+			color: $editor-light;
 		}
 	}
 
@@ -228,6 +292,10 @@
 		}
 
 		&__content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 100%;
 			position: absolute;
 			top: 50%;
 			left: 50%;
@@ -243,8 +311,11 @@
 		&__name {
 			color: $editor-lighter;
 			font-size: 9px;
-			padding-top: 5px;
+			padding: 5px 5px 0;
 			white-space: nowrap;
+			max-width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 
