@@ -76,8 +76,8 @@ class Control_Icons extends Control_Base_Multiple {
 						<div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
 					</div>
 					<div class="elementor-control-media__tools">
-						<div class="elementor-control-icon-picker elementor-control-media__tool"><?php echo __( 'Font Icons', 'elementor-pro' ); ?></div>
-						<div class="elementor-control-svg-uploader elementor-control-media__tool"><?php echo __( 'SVG Icons', 'elementor-pro' ); ?></div>
+						<div class="elementor-control-icon-picker elementor-control-media__tool"><?php echo __( 'Font Icons', 'elementor' ); ?></div>
+						<div class="elementor-control-svg-uploader elementor-control-media__tool"><?php echo __( 'SVG Icons', 'elementor' ); ?></div>
 					</div>
 				</div>
 			</div>
