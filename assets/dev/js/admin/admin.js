@@ -160,6 +160,34 @@
 					} );
 			} );
 
+			$( '#elementor_upgrade_fa_button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				const $updateButton = $( this );
+				$updateButton.addClass( 'loading' );
+				elementorCommon.dialogsManager.createWidget( 'confirm', {
+					message: self.translate( 'confirm_fa_migration_admin_modal_body' ),
+					headerMessage: self.translate( 'confirm_fa_migration_admin_modal_head' ),
+					strings: {
+						confirm: self.translate( 'yes' ),
+						cancel: self.translate( 'cancel' ),
+					},
+					defaultOption: 'confirm',
+					onConfirm: () => {
+						$.post( ajaxurl, $updateButton.data() )
+							.done( function( response ) {
+								$updateButton.removeClass( 'loading' ).addClass( 'success' );
+								$( '#elementor_icon_manager_needs_update' ).html( response.data.message );
+							} )
+							.fail( function() {
+								$updateButton.removeClass( 'loading' ).addClass( 'error' );
+							} );
+					},
+					onCancel: () => {
+						$updateButton.removeClass( 'loading' ).addClass( 'error' );
+					},
+				} ).show();
+			} );
+
 			self.elements.$settingsTabs.on( {
 				click: function( event ) {
 					event.preventDefault();

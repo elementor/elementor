@@ -384,6 +384,7 @@ class Widget_Icon_List extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-icon i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-list-icon svg' => 'fill: {{VALUE}};',
 				],
 				'scheme' => [
 					'type' => Scheme_Color::get_type(),
@@ -400,6 +401,7 @@ class Widget_Icon_List extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-item:hover .elementor-icon-list-icon i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-list-item:hover .elementor-icon-list-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -623,8 +625,14 @@ class Widget_Icon_List extends Widget_Base {
 						<# } #>
 						<# if ( item.icon || item.selected_icon ) { #>
 						<span class="elementor-icon-list-icon">
-							<# iconsHTML[index] = elementor.helpers.renderIcon( view, item.selected_icon, { 'aria-hidden': true } ); #>
-							{{{ iconsHTML[index] }}}
+							<#
+								iconsHTML[index] = elementor.helpers.renderIcon( view, item.selected_icon, { 'aria-hidden': true }, 'i', 'object' );
+								if ( iconsHTML[index].rendered ) { #>
+									{{{ iconsHTML[index].value }}}
+								<# } else { #>
+									<i class="{{ item.icon }}" aria-hidden="true"></i>
+								<# }
+							#>
 						</span>
 						<# } #>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
