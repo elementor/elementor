@@ -99,6 +99,7 @@ class IconsManager extends Component {
 						}
 						this.setState( { activeTab: tab.name } );
 					} }>
+					<i className={ tab.labelIcon }></i>
 					{ tab.label }
 				</div>
 			);
