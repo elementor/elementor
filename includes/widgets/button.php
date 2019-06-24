@@ -195,12 +195,12 @@ class Widget_Button extends Widget_Base {
 		);
 
 		$this->add_control(
-			'icon',
+			'selected_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
+				'type' => Controls_Manager::ICONS,
 				'label_block' => true,
-				'default' => '',
+				'fa4compatibility' => 'icon',
 			]
 		);
 
@@ -309,7 +309,7 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'color: {{VALUE}};',
+					'{{WRAPPER}} a.elementor-button, {{WRAPPER}} .elementor-button' => 'fill: {{VALUE}}; color: {{VALUE}};',
 				],
 			]
 		);
@@ -493,15 +493,19 @@ class Widget_Button extends Widget_Base {
 		?>
 		<#
 		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
-
 		view.addInlineEditingAttributes( 'text', 'none' );
+		var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' );
 		#>
 		<div class="elementor-button-wrapper">
 			<a id="{{ settings.button_css_id }}" class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
 				<span class="elementor-button-content-wrapper">
-					<# if ( settings.icon ) { #>
+					<# if ( settings.icon || settings.selected_icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
-						<i class="{{ settings.icon }}" aria-hidden="true"></i>
+						<# if ( iconHTML.rendered || ! settings.icon ) { #>
+							{{{ iconHTML.value }}}
+						<# } else { #>
+							<i class="{{ settings.icon }}" aria-hidden="true"></i>
+						<# } #>
 					</span>
 					<# } #>
 					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
@@ -537,12 +541,19 @@ class Widget_Button extends Widget_Base {
 			],
 		] );
 
+		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
+		$is_new = empty( $settings['icon'] );
+
 		$this->add_inline_editing_attributes( 'text', 'none' );
 		?>
 		<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
-			<?php if ( ! empty( $settings['icon'] ) ) : ?>
+			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon'] ) ) : ?>
 			<span <?php echo $this->get_render_attribute_string( 'icon-align' ); ?>>
-				<i class="<?php echo esc_attr( $settings['icon'] ); ?>" aria-hidden="true"></i>
+				<?php if ( $is_new || $migrated ) :
+					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
+				else : ?>
+					<i class="<?php echo esc_attr( $settings['icon'] ); ?>" aria-hidden="true"></i>
+				<?php endif; ?>
 			</span>
 			<?php endif; ?>
 			<span <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>
