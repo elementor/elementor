@@ -921,6 +921,9 @@
 .eicon-long-arrow-right:before {
   content: '\e929'; }
 
+.eicon-caret-down:before {
+  content: '\e92a'; }
+
 .eicon-paint-brush:before {
   content: '\e92b'; }
 
@@ -980,6 +983,9 @@
 
 .eicon-video-camera:before {
   content: '\e93e'; }
+
+.eicon-heart:before {
+  content: '\e93f'; }
 
 .eicon-wrench:before {
   content: '\e940'; }
