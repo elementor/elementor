@@ -780,7 +780,7 @@ class Editor {
 
 		wp_register_style(
 			'font-awesome',
-			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/font-awesome/css/font-awesome' . $suffix . '.css',
+			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/font-awesome' . $suffix . '.css',
 			[],
 			'4.7.0'
 		);

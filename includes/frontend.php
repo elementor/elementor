@@ -426,7 +426,7 @@ class Frontend extends App {
 
 		wp_register_style(
 			'font-awesome',
-			$this->get_css_assets_url( 'font-awesome', 'assets/lib/font-awesome/font-awesome/css/font-awesome/' ),
+			$this->get_css_assets_url( 'font-awesome', 'assets/lib/font-awesome/css/' ),
 			[],
 			'4.7.0'
 		);
