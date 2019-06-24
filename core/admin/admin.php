@@ -795,6 +795,7 @@ class Admin extends App {
 				'back_to_wordpress_editor_message' => __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
 				'back_to_wordpress_editor_header' => __( 'Back to WordPress Editor', 'elementor' ),
 				'beta_tester_sign_up' => __( 'Sign Up', 'elementor' ),
+				'do_not_show_again' => __( 'Don\'t Show Again', 'elementor' ),
 			],
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
