@@ -93,13 +93,9 @@ class Icons_Manager {
 	}
 
 	public static function enqueue_shim() {
-		if ( did_action( 'elementor_pro/icons_manager/shim_enqueued' ) ) {
-			return;
-		}
-		do_action( 'elementor_pro/icons_manager/shim_enqueued' );
 		wp_enqueue_script(
 			'font-awesome-4-shim',
-			self::get_asset_url( 'v4-shim', 'js' ),
+			self::get_asset_url( 'v4-shims', 'js' ),
 			[],
 			ELEMENTOR_VERSION
 		);
@@ -111,7 +107,7 @@ class Icons_Manager {
 		);
 		wp_enqueue_style(
 			'font-awesome-4-shim',
-			self::get_asset_url( 'v4-shim' ),
+			self::get_asset_url( 'v4-shims' ),
 			[],
 			ELEMENTOR_VERSION
 		);
@@ -220,7 +216,7 @@ class Icons_Manager {
 					'std' => 1,
 					'options' => [
 						'' => __( 'No', 'elementor' ),
-						1 => __( 'Yes', 'elementor' ),
+						'yes' => __( 'Yes', 'elementor' ),
 					],
 					'desc' => __( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5 library.', 'elementor' ),
 				],
@@ -283,14 +279,17 @@ class Icons_Manager {
 
 	public function enqueue_fontawesome_css() {
 		if ( ! self::is_migration_allowed() ) {
-			wp_enqueue_style(
-				'font-awesome',
-				self::get_asset_url( 'font-awesome' ),
-				[],
-				'4.7.0'
-			);
+			wp_enqueue_style( 'font-awesome' );
 		} else {
-			self::enqueue_shim();
+			$current_filter = current_filter();
+			$load_shim = get_option( 'elementor_load_fa4_shim', false );
+			if ( 'elementor/editor/after_enqueue_styles' === $current_filter ) {
+				self::enqueue_shim();
+			} else {
+				if ( 'yes' === $load_shim ) {
+					self::enqueue_shim();
+				}
+			}
 		}
 	}
 
@@ -310,8 +309,8 @@ class Icons_Manager {
 			add_action( 'elementor/admin/localize_settings', [ $this, 'add_admin_strings' ] );
 		}
 
-		do_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
-		do_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 
 		if ( ! self::is_migration_allowed() ) {
 			add_action( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );

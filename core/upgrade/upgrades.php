@@ -503,5 +503,6 @@ class Upgrades {
 	 */
 	public static function _v_2_6_0_fa4_migration_flag() {
 		add_option( 'elementor_icon_manager_needs_update', 'yes' );
+		add_option( 'elementor_load_fa4_shim', 'yes' );
 	}
 }

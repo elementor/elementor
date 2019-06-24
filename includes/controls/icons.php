@@ -14,9 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base control for creating a Icons chooser control.
  * Used to select an Icon.
  *
- * Usage:
+ * Usage: @see https://developers.elementor.com/elementor-controls/icons-control
  *
- * @since 1.0.0
+ * @since 2.6.0
  */
 class Control_Icons extends Control_Base_Multiple {
 
@@ -26,7 +26,7 @@ class Control_Icons extends Control_Base_Multiple {
 	 * Retrieve the control type, in this case `media`.
 	 *
 	 * @access public
-	 * @since 2.4.0
+	 * @since 2.6.0
 	 * @return string Control type.
 	 */
 	public function get_type() {
@@ -40,7 +40,7 @@ class Control_Icons extends Control_Base_Multiple {
 	 * values while initializing the Icons control.
 	 *
 	 * @access public
-	 * @since 2.4.0
+	 * @since 2.6.0
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
@@ -57,7 +57,7 @@ class Control_Icons extends Control_Base_Multiple {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * @since 2.4.0
+	 * @since 2.6.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -95,7 +95,7 @@ class Control_Icons extends Control_Base_Multiple {
 	 * Retrieve the default settings of the Icons control. Used to return the default
 	 * settings while initializing the Icons control.
 	 *
-	 * @since 2.4.0
+	 * @since 2.6.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
