@@ -425,6 +425,13 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_styles' );
 
 		wp_register_style(
+			'font-awesome',
+			$this->get_css_assets_url( 'font-awesome', 'assets/lib/font-awesome/font-awesome/css/font-awesome/' ),
+			[],
+			'4.7.0'
+		);
+
+		wp_register_style(
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
