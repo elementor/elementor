@@ -214,7 +214,7 @@ class Icons_Manager {
 			Settings::TAB_ADVANCED,
 			'load_fa4_shim',
 			[
-				'label' => __( 'Load Font Awesome 4 Shim', 'elementor' ),
+				'label' => __( 'Load Font Awesome 4 Support', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
 					'std' => 1,
@@ -222,7 +222,7 @@ class Icons_Manager {
 						'' => __( 'No', 'elementor' ),
 						1 => __( 'Yes', 'elementor' ),
 					],
-					'desc' => __( 'Font Awesome 4 Shim is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5.', 'elementor' ),
+					'desc' => __( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5 library.', 'elementor' ),
 				],
 			]
 		);
@@ -295,7 +295,7 @@ class Icons_Manager {
 	}
 
 	public function add_admin_strings( $settings ) {
-		$settings['i18n']['confirm_fa_migration_admin_modal_body']  = __( 'I understand that by upgrading to Font Awesome 5 I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' );
+		$settings['i18n']['confirm_fa_migration_admin_modal_body']  = __( 'I understand that by upgrading to Font Awesome 5, I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' );
 		$settings['i18n']['confirm_fa_migration_admin_modal_head']  = __( 'Font Awesome 5 Migration', 'elementor' );
 		return $settings;
 	}
