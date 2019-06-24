@@ -779,6 +779,13 @@ class Editor {
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
 		wp_register_style(
+			'font-awesome',
+			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/font-awesome/css/font-awesome' . $suffix . '.css',
+			[],
+			'4.7.0'
+		);
+
+		wp_register_style(
 			'elementor-select2',
 			ELEMENTOR_ASSETS_URL . 'lib/e-select2/css/e-select2' . $suffix . '.css',
 			[],

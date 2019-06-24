@@ -279,12 +279,7 @@ class Icons_Manager {
 
 	public function enqueue_fontawesome_css() {
 		if ( ! self::is_migration_allowed() ) {
-			wp_enqueue_style(
-				'font-awesome',
-				self::get_asset_url( 'font-awesome' ),
-				[],
-				'4.7.0'
-			);
+			wp_enqueue_style( 'font-awesome' );
 		} else {
 			$current_filter = current_filter();
 			$load_shim = get_option( 'elementor_load_fa4_shim', false );
