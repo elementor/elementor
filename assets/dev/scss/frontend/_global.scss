@@ -208,11 +208,11 @@
 	&.elementor-playing {
 
 		i {
-			font-family: 'FontAwesome';
+			font-family: eicons;
 			animation: fa-spin 2s infinite linear;
 
 			&:before {
-				content: "\f1ce";
+				content: '\e8fb';
 			}
 		}
 	}
