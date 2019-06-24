@@ -216,7 +216,7 @@ class Icons_Manager {
 					'std' => 1,
 					'options' => [
 						'' => __( 'No', 'elementor' ),
-						1 => __( 'Yes', 'elementor' ),
+						'yes' => __( 'Yes', 'elementor' ),
 					],
 					'desc' => __( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5 library.', 'elementor' ),
 				],
@@ -286,7 +286,15 @@ class Icons_Manager {
 				'4.7.0'
 			);
 		} else {
-			self::enqueue_shim();
+			$current_filter = current_filter();
+			$load_shim = get_option( 'elementor_load_fa4_shim', false );
+			if ( 'elementor/editor/after_enqueue_styles' === $current_filter ) {
+				self::enqueue_shim();
+			} else {
+				if ( 'yes' === $load_shim ) {
+					self::enqueue_shim();
+				}
+			}
 		}
 	}
 
