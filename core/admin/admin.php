@@ -732,7 +732,9 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function init_beta_tester( $current_screen ) {
-		if ( 'yes' !== get_option( 'elementor_beta', 'no' ) ) {
+		$beta_tester_email = get_user_meta( get_current_user_id(), User::BETA_TESTER_META_KEY, true );
+
+		if ( 'yes' !== get_option( 'elementor_beta', 'no' ) || $beta_tester_email ) {
 			return;
 		}
 
