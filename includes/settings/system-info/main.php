@@ -199,8 +199,10 @@ class Main {
 		$reports_info = self::get_allowed_reports();
 		$reports = $this->load_reports( $reports_info );
 
+		$domain = parse_url( site_url(), PHP_URL_HOST );
+
 		header( 'Content-Type: text/plain' );
-		header( 'Content-Disposition:attachment; filename=system-info-' . $_SERVER['HTTP_HOST'] . '-' . date( 'd-m-Y' ) . '.txt' );
+		header( 'Content-Disposition:attachment; filename=system-info-' . $domain . '-' . date( 'd-m-Y' ) . '.txt' );
 
 		$this->print_report( $reports );
 

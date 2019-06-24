@@ -51,7 +51,6 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 		$this->elementor()->editor->enqueue_styles();
 
 		$styles = [
-			'font-awesome',
 			'elementor-select2',
 			'elementor-icons',
 			'wp-auth-check',
