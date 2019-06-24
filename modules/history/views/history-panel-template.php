@@ -30,6 +30,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<span class="elementor-history-item__action">{{{ action }}}</span>
 	</div>
 	<div class="elementor-history-item__icon">
-		<span class="fa" aria-hidden="true"></span>
+		<span class="eicon" aria-hidden="true"></span>
 	</div>
 </script>
