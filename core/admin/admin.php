@@ -705,17 +705,6 @@ class Admin extends App {
 	}
 
 	/**
-	 * @since 2.6.0
-	 * @access public
-	 */
-	public function localize_beta_tester_scripts( $localized_settings ) {
-		$beta_tester_user_meta = get_user_meta( get_current_user_id(), User::BETA_TESTER_META_KEY, true );
-		$localized_settings['user']['beta_tester_email'] = $beta_tester_user_meta;
-
-		return $localized_settings;
-	}
-
-	/**
 	 * @access public
 	 */
 	public function init_new_template() {
@@ -743,7 +732,6 @@ class Admin extends App {
 		if ( ( ( 'toplevel_page_elementor' === $current_screen->base ) && ! $beta_tester_signup_dismissed ) || 'elementor_page_elementor-tools' === $current_screen->id ) {
 			add_action( 'admin_head', [ $this, 'add_beta_tester_template' ] );
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_beta_tester_scripts' ] );
-			add_filter( 'elementor/admin/localize_settings', [ $this, 'localize_beta_tester_scripts' ] );
 		}
 	}
 

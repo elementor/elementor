@@ -8,11 +8,7 @@ $user = wp_get_current_user();
 
 $ajax = Plugin::$instance->common->get_component( 'ajax' );
 
-$beta_tester_email = get_user_meta( $user->ID, User::BETA_TESTER_META_KEY, true );
-
-if ( ! $beta_tester_email ) {
-	$beta_tester_email = $user->user_email;
-}
+$beta_tester_email = $user->user_email;
 
 /**
  * Print beta tester dialog.
