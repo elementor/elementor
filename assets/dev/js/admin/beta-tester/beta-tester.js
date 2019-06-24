@@ -12,6 +12,10 @@ class BetaTesterModule extends elementorModules.ViewModule {
 	showLayout() {
 		this.layout = new BetaTesterLayout();
 		this.layout.showModal();
+		const doNotShowAgain = elementorAdmin.translate( 'do_not_show_again' );
+
+		const $doNotShowAgain = jQuery( '<div>', { class: 'do-not-show-again' } ).text( doNotShowAgain );
+		$doNotShowAgain.appendTo( document.getElementById( 'elementor-template-library-header-tools' ) );
 	}
 
 	getDefaultSettings() {
