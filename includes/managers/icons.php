@@ -93,13 +93,9 @@ class Icons_Manager {
 	}
 
 	public static function enqueue_shim() {
-		if ( did_action( 'elementor_pro/icons_manager/shim_enqueued' ) ) {
-			return;
-		}
-		do_action( 'elementor_pro/icons_manager/shim_enqueued' );
 		wp_enqueue_script(
 			'font-awesome-4-shim',
-			self::get_asset_url( 'v4-shim', 'js' ),
+			self::get_asset_url( 'v4-shims', 'js' ),
 			[],
 			ELEMENTOR_VERSION
 		);
@@ -111,7 +107,7 @@ class Icons_Manager {
 		);
 		wp_enqueue_style(
 			'font-awesome-4-shim',
-			self::get_asset_url( 'v4-shim' ),
+			self::get_asset_url( 'v4-shims' ),
 			[],
 			ELEMENTOR_VERSION
 		);
@@ -134,7 +130,7 @@ class Icons_Manager {
 			'all' => [
 				'name' => 'all',
 				'label' => __( 'All Icons', 'elementor' ),
-                'labelIcon' => 'eicon-filter',
+				'labelIcon' => 'eicon-filter',
 			],
 		];
 		return array_values( array_merge( $tabs, self::get_icon_manager_tabs() ) );
@@ -310,8 +306,8 @@ class Icons_Manager {
 			add_action( 'elementor/admin/localize_settings', [ $this, 'add_admin_strings' ] );
 		}
 
-		do_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
-		do_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 
 		if ( ! self::is_migration_allowed() ) {
 			add_action( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
