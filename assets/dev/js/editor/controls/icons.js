@@ -115,7 +115,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		// Check if there is a value to migrate
 		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
 		if ( valueToMigrate ) {
-			return value;
+			return valueToMigrate;
 		}
 		return false;
 	}
