@@ -266,6 +266,26 @@ helpers = {
 		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
+	getSocialNetworkNameFromIcon( iconsControl, fallbackControl, toUpperCase = false ) {
+		let social = '';
+		if ( fallbackControl ) {
+			social = fallbackControl.replace( 'fa fa-', '' );
+		} else if ( iconsControl.value && 'svg' !== iconsControl.library ) {
+			social = iconsControl.value.split( ' ' )[ 1 ];
+			if ( ! social ) {
+				social = '';
+			} else {
+				social = social.replace( 'fa-', '' );
+			}
+		}
+		if ( '' !== social && toUpperCase ) {
+			social = social.split( '-' ).join( ' ' );
+			social = social.replace( /\b\w/g, ( letter ) => letter.toUpperCase() );
+		}
+		social = elementor.hooks.applyFilters( 'elementor/social_icons/network_name', social, iconsControl, fallbackControl, toUpperCase );
+		return social;
+	},
+
 	/*
 	* @deprecated 2.0.0
 	*/
