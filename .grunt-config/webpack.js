@@ -124,6 +124,9 @@ for ( const entryPoint in entry ) {
 	webpackProductionConfig.entry[ entryPoint + '.min' ] = entry[ entryPoint ];
 }
 
+// Qunit test is for dev mode only.
+webpackConfig.entry['qunit-tests'] = path.resolve( __dirname, '../tests/qunit/tests.js' );
+
 const gruntWebpackConfig = {
 	development: webpackConfig,
 	production: webpackProductionConfig
