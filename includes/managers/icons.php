@@ -134,7 +134,7 @@ class Icons_Manager {
 			'all' => [
 				'name' => 'all',
 				'label' => __( 'All Icons', 'elementor' ),
-                'labelIcon' => 'eicon-filter',
+				'labelIcon' => 'eicon-filter',
 			],
 		];
 		return array_values( array_merge( $tabs, self::get_icon_manager_tabs() ) );
