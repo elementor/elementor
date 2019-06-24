@@ -222,7 +222,7 @@ class Icons_Manager {
 						'' => __( 'No', 'elementor' ),
 						1 => __( 'Yes', 'elementor' ),
 					],
-					'desc' => __( 'Font Awesome 4 shim is used to convert your ....', 'elementor' ),
+					'desc' => __( 'Font Awesome 4 Shim is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5.', 'elementor' ),
 				],
 			]
 		);
@@ -235,13 +235,13 @@ class Icons_Manager {
 			'callback' => function() {
 				echo '<hr><h2>' . esc_html__( 'Font Awesome Migration', 'elementor' ) . '</h2>';
 				echo '<p>' .
-				esc_html__( 'Access 1,500+ amazing Font Awesome 5 icons and benefit faster performance and design flexibility.', 'elementor' ) . '<br>' .
-				esc_html__( 'By upgrading, whenever you edit a page contains an icon in it Elementor will migrate all of your existing FontAwesome 4 icons to the new Font Awesome 5 icons.', 'elementor' ) .
-				'</p><p>' .
-				esc_html__( 'Please note that due to minor design changes made to some FontAwesome 5 icons, some of your old FontAwesome 4 icons may look a bit different.', 'elementor' ) .
+				esc_html__( 'Access 1,500+ amazing Font Awesome 5 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' .
+				esc_html__( 'By upgrading, whenever you edit a page containing a Font Awesome 4 icon, Elementor will convert it to the new Font Awesome 5 icon.', 'elementor' ) .
 				'</p><p><strong>' .
+				esc_html__( 'Please note that due to minor design changes made to some Font Awesome 5 icons, some of your updated Font Awesome 4 icons may look a bit different.', 'elementor' ) .
+				'</strong></p><p>' .
 				esc_html__( 'This action is not reversible and cannot be undone by rolling back to previous versions.', 'elementor' ) .
-				'</strong></p>';
+				'</p>';
 			},
 			'fields' => [
 				[

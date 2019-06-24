@@ -127,7 +127,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 				event.stopPropagation();
 				const onConfirm = () => {
 					this.cache.enableClicked = true;
-					window.open( ElementorConfig.settings_page_link + '#tab-advanced', '_blank' );
+					window.open( ElementorConfig.tools_page_link + '#tab-fontawesome4_migration', '_blank' );
 				};
 				const enableMigrationDialog = this.getDialog(
 					'elementor-enable-fa5-dialog',
