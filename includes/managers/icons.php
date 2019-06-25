@@ -225,11 +225,11 @@ class Icons_Manager {
 	}
 
 	public function register_admin_tools_settings( Tools $settings ) {
-		$settings->add_tab( 'fontawesome4_migration', [ 'label' => __( 'Font Awesome Migration', 'elementor' ) ] );
+		$settings->add_tab( 'fontawesome4_migration', [ 'label' => __( 'Font Awesome Upgrade', 'elementor' ) ] );
 
 		$settings->add_section( 'fontawesome4_migration', 'fontawesome4_migration', [
 			'callback' => function() {
-				echo '<hr><h2>' . esc_html__( 'Font Awesome Migration', 'elementor' ) . '</h2>';
+				echo '<h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
 				echo '<p>' .
 				esc_html__( 'Access 1,500+ amazing Font Awesome 5 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' .
 				esc_html__( 'By upgrading, whenever you edit a page containing a Font Awesome 4 icon, Elementor will convert it to the new Font Awesome 5 icon.', 'elementor' ) .
@@ -241,13 +241,13 @@ class Icons_Manager {
 			},
 			'fields' => [
 				[
-					'label'      => __( 'Font Awesome Migration', 'elementor' ),
+					'label'      => __( 'Font Awesome Upgrade', 'elementor' ),
 					'field_args' => [
 						'type' => 'raw_html',
 						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button elementor-button-spinner" id="elementor_upgrade_fa_button">%s</span>',
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
-							__( 'Migrate To Font Awesome 5', 'elementor' )
+							__( 'Upgrade To Font Awesome 5', 'elementor' )
 						),
 					],
 				],
@@ -263,7 +263,7 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => __( 'Hurray! The migration process to FontAwesome 5 was completed successfully.', 'elementor' ) ] );
+		wp_send_json_success( [ 'message' => '<p>' . __( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</p>' ] );
 	}
 
 	/**
@@ -285,16 +285,14 @@ class Icons_Manager {
 			$load_shim = get_option( 'elementor_load_fa4_shim', false );
 			if ( 'elementor/editor/after_enqueue_styles' === $current_filter ) {
 				self::enqueue_shim();
-			} else {
-				if ( 'yes' === $load_shim ) {
-					self::enqueue_shim();
-				}
+			} else if ( 'yes' === $load_shim ) {
+				self::enqueue_shim();
 			}
 		}
 	}
 
 	public function add_admin_strings( $settings ) {
-		$settings['i18n']['confirm_fa_migration_admin_modal_body']  = __( 'I understand that by upgrading to Font Awesome 5, I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' );
+		$settings['i18n']['confirm_fa_migration_admin_modal_body']  = __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) . '<br>' . __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' );
 		$settings['i18n']['confirm_fa_migration_admin_modal_head']  = __( 'Font Awesome 5 Migration', 'elementor' );
 		return $settings;
 	}

@@ -591,11 +591,11 @@ class Editor {
 
 				// Enable SVG uploads.
 				'enable_svg' => __( 'Enable SVG Uploads', 'elementor' ),
-				'dialog_confirm_enable_svg' => __( 'Please note! Allowing uploads of any files (SVG included) is a potential security risk. Elementor will try to sanitize the SVG files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
+				'dialog_confirm_enable_svg' => __( 'SVG files may contain malicious code. Elementor will try to remove it. However, enabling this feature still poses potential security risks.', 'elementor' ),
 
 				// Enable fontawesome 5 if needed.
 				'enable_fa5' => __( 'Elementor\'s New Icon Library', 'elementor' ),
-				'dialog_confirm_enable_fa5' => __( 'Elementor v2.6 moved from FontAwesome 4 to FontAwesome 5 which includes 1,500+ amazing icons.', 'elementor' ) . '<br><br><strong>' . __( 'Please note:', 'elementor' ) . '</strong> ' . __( 'that due to minor design changes made to some FontAwesome 5 icons, some of your previously selected FontAwesome 4 icons may look a bit different.', 'elementor' ) . '<br><a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+				'dialog_confirm_enable_fa5' => __( 'Elementor v2.6 includes an update from FontAwesome 4 to 5. In order to continue using icons, including over 1,500 FA5 icons, be sure to click "Update".', 'elementor' ) . ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 
 				// Panel Preview Mode.
 				'back_to_editor' => __( 'Show Panel', 'elementor' ),
