@@ -318,5 +318,20 @@
 			text-overflow: ellipsis;
 		}
 	}
+}
 
+#elementor-enable-fa5-dialog {
+	a {
+		font-style: italic;
+		text-decoration: underline;
+	}
+	.dialog-confirm-ok {
+		color:  $editor-dark;
+	}
+}
+
+#elementor-enable-svg-dialog {
+	.dialog-confirm-ok {
+		color:  $editor-dark;
+	}
 }
