@@ -354,7 +354,7 @@ class Utils {
 	 * @return string The source of the default placeholder image used by Elementor.
 	 */
 	public static function get_placeholder_image_src() {
-		$placeholder_image = ELEMENTOR_ASSETS_URL . 'images/placeholder.svg';
+		$placeholder_image = ELEMENTOR_ASSETS_URL . 'images/placeholder.png';
 
 		/**
 		 * Get placeholder image source.
