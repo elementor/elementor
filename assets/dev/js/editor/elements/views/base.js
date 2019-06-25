@@ -374,6 +374,10 @@ BaseElementView = BaseContainer.extend( {
 			elType: elementView.model.get( 'elType' ),
 		};
 
+		if ( elementor.helpers.maybeDisableWidget() ) {
+			return;
+		}
+
 		if ( 'widget' === itemData.elType ) {
 			itemData.widgetType = elementView.model.get( 'widgetType' );
 		} else if ( 'section' === itemData.elType ) {

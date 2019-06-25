@@ -137,7 +137,7 @@
 	}
 
 	&__sidebar {
-		 width: 25%;
+		 width: 20%;
 		 background-color: #fbfcfd; // @TODO: Needs to change
 
 		@media (max-width: $editor-screen-xs-max) {
@@ -153,7 +153,7 @@
 		display: flex;
 		flex-direction: column;
 		padding: 50px 80px 0;
-		width: 75%;
+		width: 80%;
 
 		@media (max-width: $editor-screen-lg-max) {
 			padding: 50px 50px 0;
@@ -285,7 +285,7 @@
 
 		&:hover,
 		&.elementor-selected {
-			outline: 1px solid $editor-info;
+			outline: 3px solid $editor-info;
 		}
 
 		&__content {
@@ -301,7 +301,7 @@
 		}
 
 		&__icon {
-			font-size: 23px;
+			font-size: 32px;
 			color: $editor-darkest;
 		}
 
@@ -315,5 +315,20 @@
 			text-overflow: ellipsis;
 		}
 	}
+}
 
+#elementor-enable-fa5-dialog {
+	a {
+		font-style: italic;
+		text-decoration: underline;
+	}
+	.dialog-confirm-ok {
+		color:  $editor-dark;
+	}
+}
+
+#elementor-enable-svg-dialog {
+	.dialog-confirm-ok {
+		color:  $editor-dark;
+	}
 }

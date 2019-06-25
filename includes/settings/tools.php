@@ -188,6 +188,7 @@ class Tools extends Settings_Page {
 							);
 							$intro_text = '<div>' . $intro_text . '</div>';
 
+							echo '<h2>' . esc_html__( 'Replace URL', 'elementor' ) . '</h2>';
 							echo $intro_text;
 						},
 						'fields' => [
