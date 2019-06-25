@@ -191,6 +191,7 @@ class Maintenance_Mode {
 				'sections' => [
 					'maintenance_mode' => [
 						'callback' => function() {
+							echo '<h2>' . esc_html__( 'Maintenance Mode', 'elementor' ) . '</h2>';
 							echo '<div>' . __( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' ) . '</div>';
 						},
 						'fields' => [
