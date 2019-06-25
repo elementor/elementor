@@ -165,6 +165,7 @@
 				const $updateButton = $( this );
 				$updateButton.addClass( 'loading' );
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
+					id: 'confirm_fa_migration_admin_modal',
 					message: self.translate( 'confirm_fa_migration_admin_modal_body' ),
 					headerMessage: self.translate( 'confirm_fa_migration_admin_modal_head' ),
 					strings: {
@@ -176,7 +177,7 @@
 						$.post( ajaxurl, $updateButton.data() )
 							.done( function( response ) {
 								$updateButton.removeClass( 'loading' ).addClass( 'success' );
-								$( '#elementor_icon_manager_needs_update' ).html( response.data.message );
+								$( '#elementor_upgrade_fa_button' ).parent().append( response.data.message );
 							} )
 							.fail( function() {
 								$updateButton.removeClass( 'loading' ).addClass( 'error' );
