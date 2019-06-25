@@ -6,8 +6,8 @@ export default class extends elementorModules.Module {
 		this.activeComponents = {};
 	}
 
-	printAll() {
-		console.log( Object.keys( this.components ).sort() ); // eslint-disable-line no-console
+	getAll() {
+		return Object.keys( this.components ).sort();
 	}
 
 	register( component ) {
