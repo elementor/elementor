@@ -76,8 +76,8 @@
 		}
 
 		&:before {
-			content: '\f0d7';
-			font-family: 'FontAwesome';
+			content: '\e92a';
+			font-family: 'eicons';
 			font-size: 15px;
 			position: absolute;
 			top: 50%;
@@ -248,9 +248,9 @@
 	line-height: 1;
 
 	&:before {
-		content: "\f00c";
+		content: "\e90e";
 		display: inline-block;
-		font-family: fontawesome;
+		font-family: eicons;
 		font-weight: normal;
 		font-style: normal;
 		vertical-align: middle;
@@ -261,7 +261,7 @@
 		color: $danger;
 
 		&:before {
-			content: "\f00d";
+			content: "\e87f";
 		}
 	}
 

@@ -25,7 +25,7 @@
 			color: $editor-dark;
 
 			&:before {
-				font-family: FontAwesome;
+				font-family: eicons;
 				font-size: 16px;
 				display: block;
 				margin-bottom: 6px;
@@ -36,37 +36,37 @@
 
 .elementor-tab-control-content {
 	a:before {
-		content: '\f040';
+		content: '\e92c';
 	}
 }
 
 .elementor-tab-control-style {
 	a:before {
-		content: '\f042';
+		content: '\e921';
 	}
 }
 
 .elementor-tab-control-advanced, .elementor-tab-control-settings, .elementor-tab-control-general_style {
 	a:before {
-		content: '\f013';
+		content: '\e916';
 	}
 }
 
 .elementor-tab-control-responsive {
 	a:before {
-		content: '\f10a';
+		content: '\e885';
 	}
 }
 
 .elementor-tab-control-layout, .elementor-tab-control-column {
 	a:before {
-		content: '\f0db';
+		content: '\e899';
 	}
 }
 
 .elementor-tab-control-lightbox {
 	a:before {
-		content: '\f2d2';
+		content: '\e922';
 	}
 }
 

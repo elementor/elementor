@@ -201,7 +201,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'bar_height',
 			[
-				'label' => __( 'Height', 'elementor-pro' ),
+				'label' => __( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-bar' => 'height: {{SIZE}}{{UNIT}}; line-height: {{SIZE}}{{UNIT}};',
@@ -212,7 +212,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'bar_border_radius',
 			[
-				'label' => __( 'Border Radius', 'elementor-pro' ),
+				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [

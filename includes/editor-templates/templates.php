@@ -88,7 +88,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<# var checked = elementor.templates.getFilter( 'favorite' ) ? ' checked' : ''; #>
 					<input id="elementor-template-library-filter-my-favorites" type="checkbox"{{{ checked }}}>
 					<label id="elementor-template-library-filter-my-favorites-label" for="elementor-template-library-filter-my-favorites">
-						<i class="fa" aria-hidden="true"></i>
+						<i class="eicon" aria-hidden="true"></i>
 						<?php echo __( 'My Favorites', 'elementor' ); ?>
 					</label>
 				</div>
@@ -151,7 +151,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-template-library-favorite">
 			<input id="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-input" type="checkbox"{{ favorite ? " checked" : "" }}>
 			<label for="elementor-template-library-template-{{ template_id }}-favorite-input" class="elementor-template-library-template-favorite-label">
-				<i class="eicon-heart-o" aria-hidden="true"></i>
+				<i class="eicon" aria-hidden="true"></i>
 				<span class="elementor-screen-only"><?php echo __( 'Favorite', 'elementor' ); ?></span>
 			</label>
 		</div>
