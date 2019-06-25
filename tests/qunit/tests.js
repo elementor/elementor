@@ -523,4 +523,128 @@ jQuery( () => {
 
 		assert.equal( elementorCommon.route.is( namespace + '/routeA' ), false );
 	} );
+
+	QUnit.test( 'Re-route is avoided', ( assert ) => {
+		const namespace = 're-route-is-avoided';
+
+		let routeCount = 0;
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			getRoutes() {
+				return {
+					routeA: () => {
+						routeCount++;
+					},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		elementorCommon.route.to( namespace + '/routeA' );
+		assert.equal( routeCount, 1 );
+		elementorCommon.route.to( namespace + '/routeA' );
+		assert.equal( routeCount, 1 );
+	} );
+
+	QUnit.test( 'Open component dependency', ( assert ) => {
+		const namespace = 'open-component-dependency';
+
+		let openCount = 0;
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			open() {
+				openCount++;
+				return false;
+			}
+
+			getRoutes() {
+				return {
+					routeA: () => {},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		elementorCommon.route.to( namespace + '/routeA' );
+
+		assert.equal( openCount, 1 );
+
+		assert.equal( elementorCommon.route.is( namespace + '/routeA' ), false );
+	} );
+
+	QUnit.test( 'Re-open component is avoided', ( assert ) => {
+		const namespace = 're-open-is-avoided';
+
+		let openCount = 0;
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			open() {
+				openCount++;
+				return true;
+			}
+
+			getRoutes() {
+				return {
+					routeA: () => {},
+					routeB: () => {},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		elementorCommon.route.to( namespace + '/routeA' );
+		assert.equal( openCount, 1 );
+		elementorCommon.route.to( namespace + '/routeB' );
+		assert.equal( openCount, 1 );
+
+		elementorCommon.route.close( namespace );
+
+		elementorCommon.route.to( namespace + '/routeA' );
+		assert.equal( openCount, 2 );
+	} );
+
+	QUnit.test( 'On close route', ( assert ) => {
+		const namespace = 'on-close-route';
+
+		let routeStatus = 'not_changed';
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			onCloseRoute() {
+				routeStatus = 'closed';
+			}
+
+			getRoutes() {
+				return {
+					routeA: () => {},
+					routeB: () => {},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		elementorCommon.route.to( namespace + '/routeA' );
+		assert.equal( routeStatus, 'not_changed' );
+		elementorCommon.route.to( namespace + '/routeB' );
+		assert.equal( routeStatus, 'closed' );
+	} );
 } );
