@@ -119,17 +119,15 @@
 			justify-content: flex-end;
 			padding: 5px;
 			background: #fff;
+		}
 
-			.dialog-insert_icon {
-				padding: 12px 36px;
-				font-size: 14px;
-				color: #fff;
-				width: initial;
-				background-color: #39b54a;
-				text-transform: uppercase;
-				border-radius: 3px;
-				transition-property: background, color, box-shadow, opacity;
-				transition-duration: .3s;
+		.dialog-insert_icon {
+			padding: 12px 36px;
+			color: #fff;
+			width: initial;
+
+			&:hover {
+				background-color: $editor-success;
 			}
 		}
 	}
