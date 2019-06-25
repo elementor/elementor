@@ -69,10 +69,6 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			return value;
 		}
 
-		if ( ! this.isMigrationAllowed() ) {
-			return value;
-		}
-
 		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey ),
 			controlName = model.get( 'name' );
 
@@ -126,10 +122,9 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			this.ui.previewContainer[ 0 ].addEventListener( 'click', ( event ) => {
 				event.stopPropagation();
 				const onConfirm = () => {
-					this.cache.enableClicked = true;
 					window.open( ElementorConfig.tools_page_link + '#tab-fontawesome4_migration', '_blank' );
 				};
-				const enableMigrationDialog = this.getDialog(
+				const enableMigrationDialog = elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
 					elementor.translate( 'enable_fa5' ),
 					elementor.translate( 'dialog_confirm_enable_fa5' ),
@@ -153,7 +148,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	onRender() {
 		super.onRender();
 		// @todo: move to manager
-		if ( ! this.cache.loaded ) {
+		if ( ! this.cache.loaded && this.isMigrationAllowed() ) {
 			elementor.config.icons.forEach( ( library ) => {
 				if ( 'all' === library.name ) {
 					return;
@@ -232,33 +227,13 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			this.cache.enableClicked = true;
 			window.open( ElementorConfig.settings_page_link + '#tab-advanced', '_blank' );
 		};
-		return this.getDialog(
+		return elementor.helpers.getSimpleDialog(
 			'elementor-enable-svg-dialog',
 			elementor.translate( 'enable_svg' ),
 			elementor.translate( 'dialog_confirm_enable_svg' ),
 			elementor.translate( 'enable' ),
 			onConfirm
 		);
-	}
-
-	getDialog( id, title, message, confirmString, onConfirm ) {
-		if ( ! this.cache[ id ] ) {
-			this.cache[ id ] = elementorCommon.dialogsManager.createWidget( 'confirm', {
-				id: id,
-				headerMessage: title,
-				message: message,
-				position: {
-					my: 'center center',
-					at: 'center center',
-				},
-				strings: {
-					confirm: confirmString,
-					cancel: elementor.translate( 'cancel' ),
-				},
-				onConfirm: onConfirm,
-			} );
-		}
-		return this.cache[ id ];
 	}
 
 	isSvgEnabled() {
