@@ -21,7 +21,7 @@ export default class Shortcuts {
 		$window.on( 'keydown', ( event ) => this.handle( event ) );
 	}
 
-	printAll() {
+	getAll() {
 		const shortcuts = {};
 		jQuery.each( this.handlers, ( key, handler ) => {
 			jQuery.each( handler, ( index, config ) => {
@@ -29,7 +29,7 @@ export default class Shortcuts {
 			} );
 		} );
 
-		console.log( shortcuts ); // eslint-disable-line no-console
+		return shortcuts;
 	}
 
 	/**

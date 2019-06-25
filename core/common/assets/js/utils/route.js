@@ -76,6 +76,10 @@ export default class extends Commands {
 	}
 
 	beforeRun( route, args ) {
+		if ( ! super.beforeRun( route, args ) ) {
+			return false;
+		}
+
 		if ( this.is( route, args ) ) {
 			return false;
 		}
@@ -93,7 +97,7 @@ export default class extends Commands {
 			component.isOpen = component.open();
 		}
 
-		return component.isOpen && super.beforeRun( route, args );
+		return component.isOpen;
 	}
 
 	to( route, args ) {
@@ -108,10 +112,6 @@ export default class extends Commands {
 	// Don't clear current route.
 	afterRun( route, args ) {
 		this.getComponent( route ).onRoute( args );
-	}
-
-	error( message ) {
-		throw Error( 'Route: ' + message );
 	}
 
 	is( route, args = {} ) {
@@ -146,5 +146,9 @@ export default class extends Commands {
 		} );
 
 		return match;
+	}
+
+	error( message ) {
+		throw Error( 'Route: ' + message );
 	}
 }

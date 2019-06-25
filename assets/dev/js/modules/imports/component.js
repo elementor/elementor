@@ -2,7 +2,7 @@ import Module from './module';
 
 export default class extends Module {
 	__construct( args ) {
-		if ( ! args.context ) {
+		if ( ! args || ! args.context ) {
 			throw Error( 'context is required' );
 		}
 
@@ -30,7 +30,23 @@ export default class extends Module {
 	}
 
 	getNamespace() {
-		throw Error( 'getNamespace must be override is required' );
+		throw Error( 'getNamespace must be override.' );
+	}
+
+	getCommands() {
+		return {};
+	}
+
+	getShortcuts() {
+		return {};
+	}
+
+	getRoutes() {
+		return {};
+	}
+
+	getTabs() {
+		return this.tabs;
 	}
 
 	registerCommand( command, callback ) {
@@ -39,6 +55,10 @@ export default class extends Module {
 
 	registerRoute( route, callback ) {
 		elementorCommon.route.register( this, route, callback );
+	}
+
+	registerTabRoute( tab ) {
+		this.registerRoute( tab, () => this.activateTab( tab ) );
 	}
 
 	dependency() {
@@ -73,26 +93,6 @@ export default class extends Module {
 		if ( this.getUIIndicator ) {
 			jQuery( this.getUIIndicator() ).toggleClass( 'elementor-open', value );
 		}
-	}
-
-	registerTabRoute( tab ) {
-		this.registerRoute( tab, () => this.activateTab( tab ) );
-	}
-
-	getCommands() {
-		return {};
-	}
-
-	getShortcuts() {
-		return {};
-	}
-
-	getRoutes() {
-		return {};
-	}
-
-	getTabs() {
-		return this.tabs;
 	}
 
 	setDefault( route ) {

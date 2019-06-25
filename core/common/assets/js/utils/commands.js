@@ -8,8 +8,8 @@ export default class extends elementorModules.Module {
 		this.components = {};
 	}
 
-	printAll() {
-		console.log( Object.keys( this.commands ).sort() ); // eslint-disable-line no-console
+	getAll() {
+		return Object.keys( this.commands ).sort();
 	}
 
 	register( component, command, callback ) {
@@ -90,12 +90,6 @@ export default class extends elementorModules.Module {
 			return false;
 		}
 
-		const parts = command.split( '/' ),
-			container = parts[ 0 ];
-
-		this.current[ container ] = command;
-		this.currentArgs[ container ] = args;
-
 		return true;
 	}
 
@@ -103,6 +97,12 @@ export default class extends elementorModules.Module {
 		if ( ! this.beforeRun( command, args ) ) {
 			return;
 		}
+
+		const parts = command.split( '/' ),
+			container = parts[ 0 ];
+
+		this.current[ container ] = command;
+		this.currentArgs[ container ] = args;
 
 		const component = this.getComponent( command );
 
