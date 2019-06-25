@@ -1,14 +1,12 @@
 #elementor-beta-tester-modal {
 
 	.elementor-templates-modal__header__items-area {
-		.elementor-templates-modal__header__item > i {
-			transition: none;
-		}
 
 		color: $editor-lighter;
 		cursor: pointer;
+
 		&:hover {
-			transition: color .5s;
+
 			.elementor-beta-tester-do-not-show-again,
 			.elementor-templates-modal__header__item > i {
 				color: $editor-dark;
@@ -23,6 +21,7 @@
 			text-transform: uppercase;
 			font-weight: bold;
 			font-size: 12px;
+			transition: $transition-hover;
 		}
 
 	}

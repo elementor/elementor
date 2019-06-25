@@ -37,7 +37,7 @@ $beta_tester_email = $user->user_email;
 			</button>
 		</div>
 		<div id="elementor-beta-tester-form__terms">
-			<?php echo sprintf( __( 'By clicking SIGN UP, you agree to Elementor\'s <a href="%1$s">Terms of Service</a> and <a href="%2$s">Privacy Policy</a>', 'elementor' ), Beta_Testers::NEWSLETTER_TERMS_URL, Beta_Testers::NEWSLETTER_PRIVACY_URL ); ?>
+			<?php echo sprintf( __( 'By clicking Sign Up, you agree to Elementor\'s <a href="%1$s">Terms of Service</a> and <a href="%2$s">Privacy Policy</a>', 'elementor' ), Beta_Testers::NEWSLETTER_TERMS_URL, Beta_Testers::NEWSLETTER_PRIVACY_URL ); ?>
 		</div>
 	</form>
 </script>
