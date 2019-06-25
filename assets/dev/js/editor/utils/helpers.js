@@ -286,6 +286,58 @@ helpers = {
 		return social;
 	},
 
+	getSimpleDialog( id, title, message, confirmString, onConfirm ) {
+		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: id,
+			headerMessage: title,
+			message: message,
+			position: {
+				my: 'center center',
+				at: 'center center',
+			},
+			strings: {
+				confirm: confirmString,
+				cancel: elementor.translate( 'cancel' ),
+			},
+			onConfirm: onConfirm,
+		} );
+	},
+
+	maybeDisableWidget() {
+		if ( ! ElementorConfig[ 'icons_update_needed' ] ) {
+			return false;
+		}
+
+		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
+			widgetType = elementView.model.get( 'widgetType' ),
+			widgetData = elementor.config.widgets[ widgetType ];
+
+		if ( widgetData ) {
+			let hasIconsControl = false;
+			jQuery.each( widgetData.controls, ( controlName, controlData ) => {
+				if ( 'icons' === controlData.type ) {
+					hasIconsControl = true;
+					return false;
+				}
+			} );
+
+			if ( hasIconsControl ) {
+				const onConfirm = () => {
+					window.open( ElementorConfig.tools_page_link + '#tab-fontawesome4_migration', '_blank' );
+				};
+				elementor.helpers.getSimpleDialog(
+					'elementor-enable-fa5-dialog',
+					elementor.translate( 'enable_fa5' ),
+					elementor.translate( 'dialog_confirm_enable_fa5' ),
+					elementor.translate( 'update' ),
+					onConfirm
+				).show();
+				return true;
+			}
+		}
+		return false;
+	},
+
 	/*
 	* @deprecated 2.0.0
 	*/
