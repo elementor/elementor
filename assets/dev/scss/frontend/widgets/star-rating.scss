@@ -1,6 +1,6 @@
 .elementor-star-rating {
 	color: $gray-mouse;
-	font-family: FontAwesome;
+	font-family: eicons;
 	display: inline-block;
 
 	i {
@@ -10,7 +10,7 @@
 		cursor: default;
 
 		&:before {
-			content: '\f005';
+			content: '\e934';
 			display: block;
 			font-size: inherit;
 			font-family: inherit;

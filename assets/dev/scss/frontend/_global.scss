@@ -208,11 +208,11 @@
 	&.elementor-playing {
 
 		i {
-			font-family: 'FontAwesome';
+			font-family: eicons;
 			animation: fa-spin 2s infinite linear;
 
 			&:before {
-				content: "\f1ce";
+				content: '\e8fb';
 			}
 		}
 	}
@@ -317,7 +317,7 @@
 #wpadminbar {
 
 	#wp-admin-bar-elementor_edit_page > .ab-item::before {
-		content: "\e801";
+		content: "\e813";
 		font-family: eicons;
 		top: 3px;
 		font-size: 18px;

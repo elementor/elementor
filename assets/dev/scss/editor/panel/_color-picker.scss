@@ -12,12 +12,12 @@
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
 
 		.wp-color-result {
-			float: right;
+			float: $end;
 		}
 
 		.wp-picker-input-wrap {
 			padding-left: 10px;
-			float: left;
+			float: $start;
 		}
 	}
 
@@ -137,5 +137,6 @@
 	~ .wp-picker-holder {
 		clear: both;
 		margin-bottom: 15px;
+		direction: ltr;
 	}
 }
