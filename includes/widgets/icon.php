@@ -420,7 +420,7 @@ class Widget_Icon extends Widget_Base {
 		}
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+		$is_new = Icons_Manager::is_migration_allowed();
 
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
