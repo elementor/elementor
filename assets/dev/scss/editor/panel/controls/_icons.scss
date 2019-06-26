@@ -333,14 +333,15 @@
 	a {
 		font-style: italic;
 		text-decoration: underline;
+		color: $editor-dark;
 	}
 	.dialog-confirm-ok {
-		color:  $editor-dark;
+		color:  $editor-success;
 	}
 }
 
 #elementor-enable-svg-dialog {
 	.dialog-confirm-ok {
-		color:  $editor-dark;
+		color:  $editor-success;
 	}
 }
