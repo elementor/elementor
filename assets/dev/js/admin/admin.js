@@ -178,6 +178,7 @@
 							.done( function( response ) {
 								$updateButton.removeClass( 'loading' ).addClass( 'success' );
 								$( '#elementor_upgrade_fa_button' ).parent().append( response.data.message );
+								window.history.go( -1 );
 							} )
 							.fail( function() {
 								$updateButton.removeClass( 'loading' ).addClass( 'error' );
