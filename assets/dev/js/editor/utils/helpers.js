@@ -75,7 +75,7 @@ helpers = {
 	},
 
 	enqueueIconFonts( iconType ) {
-		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) ) {
+		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! ElementorConfig[ 'icons_update_needed' ] ) {
 			return;
 		}
 
