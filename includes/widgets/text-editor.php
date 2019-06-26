@@ -54,7 +54,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-align-left';
+		return 'eicon-text';
 	}
 
 	/**
@@ -144,19 +144,19 @@ class Widget_Text_Editor extends Widget_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'fa fa-align-justify',
+						'icon' => 'eicon-text-align-justify',
 					],
 				],
 				'selectors' => [

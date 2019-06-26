@@ -77,8 +77,14 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 
-			.fa {
+			.eicon,
+			i,
+			svg {
 				@include margin-end(5px);
+			}
+
+			img[src$="svg"] {
+				width: 1em;
 			}
 		}
 

@@ -14,8 +14,8 @@
 			background-color: fade_out($editor-background, 0.7) ;
 
 			.elementor-history-item__icon{
-				.fa:before {
-					content:'\f1da';
+				.eicon:before {
+					content:'\e924';
 				}
 			}
 		}
@@ -29,8 +29,8 @@
 			cursor: default;
 
 			.elementor-history-item__icon, &:hover .elementor-history-item__icon{
-				.fa:before {
-					content:'\f00c';
+				.eicon:before {
+					content:'\e90e';
 				}
 			}
 		}

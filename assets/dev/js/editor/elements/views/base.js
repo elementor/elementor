@@ -16,8 +16,8 @@ BaseElementView = BaseContainer.extend( {
 
 	renderAttributes: {},
 
-	className: function() {
-		var classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
+	className() {
+		let classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 
 		if ( this.toggleEditTools ) {
 			classes += ' elementor-element--toggle-edit-tools';
@@ -26,14 +26,14 @@ BaseElementView = BaseContainer.extend( {
 		return classes;
 	},
 
-	attributes: function() {
+	attributes() {
 		return {
 			'data-id': this.getID(),
 			'data-element_type': this.model.get( 'elType' ),
 		};
 	},
 
-	ui: function() {
+	ui() {
 		return {
 			tools: '> .elementor-element-overlay > .elementor-editor-element-settings',
 			editButton: '> .elementor-element-overlay .elementor-editor-element-edit',
@@ -43,10 +43,10 @@ BaseElementView = BaseContainer.extend( {
 		};
 	},
 
-	behaviors: function() {
-		var groups = elementor.hooks.applyFilters( 'elements/' + this.options.model.get( 'elType' ) + '/contextMenuGroups', this.getContextMenuGroups(), this );
+	behaviors() {
+		const groups = elementor.hooks.applyFilters( 'elements/' + this.options.model.get( 'elType' ) + '/contextMenuGroups', this.getContextMenuGroups(), this );
 
-		var behaviors = {
+		const behaviors = {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
 				groups: groups,
@@ -56,11 +56,11 @@ BaseElementView = BaseContainer.extend( {
 		return elementor.hooks.applyFilters( 'elements/base/behaviors', behaviors, this );
 	},
 
-	getBehavior: function( name ) {
+	getBehavior( name ) {
 		return this._behaviors[ Object.keys( this.behaviors() ).indexOf( name ) ];
 	},
 
-	events: function() {
+	events() {
 		return {
 			mousedown: 'onMouseDown',
 			'click @ui.editButton': 'onEditButtonClick',
@@ -70,21 +70,21 @@ BaseElementView = BaseContainer.extend( {
 		};
 	},
 
-	getElementType: function() {
+	getElementType() {
 		return this.model.get( 'elType' );
 	},
 
-	getIDInt: function() {
+	getIDInt() {
 		return parseInt( this.getID(), 16 );
 	},
 
-	getChildType: function() {
+	getChildType() {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
 
-	getChildView: function( model ) {
-		var ChildView,
-			elType = model.get( 'elType' );
+	getChildView( model ) {
+		let ChildView;
+		const elType = model.get( 'elType' );
 
 		if ( 'section' === elType ) {
 			ChildView = require( 'elementor-elements/views/section' );
@@ -97,15 +97,15 @@ BaseElementView = BaseContainer.extend( {
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
 	},
 
-	getTemplateType: function() {
+	getTemplateType() {
 		return 'js';
 	},
 
-	getEditModel: function() {
+	getEditModel() {
 		return this.model;
 	},
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		const controlSign = environment.mac ? '⌘' : '^';
 
 		return [
@@ -144,7 +144,7 @@ BaseElementView = BaseContainer.extend( {
 						title: elementor.translate( 'paste_style' ),
 						shortcut: controlSign + '+⇧+V',
 						callback: this.pasteStyle.bind( this ),
-						isEnabled: function() {
+						isEnabled: () => {
 							return !! elementorCommon.storage.get( 'transfer' );
 						},
 					}, {
@@ -172,14 +172,14 @@ BaseElementView = BaseContainer.extend( {
 		return {};
 	},
 
-	initialize: function() {
+	initialize() {
 		BaseContainer.prototype.initialize.apply( this, arguments );
 
 		if ( this.collection ) {
 			this.listenTo( this.collection, 'add remove reset', this.onCollectionChanged, this );
 		}
 
-		var editModel = this.getEditModel();
+		const editModel = this.getEditModel();
 
 		this.listenTo( editModel.get( 'settings' ), 'change', this.onSettingsChanged )
 			.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
@@ -214,7 +214,7 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.empty().append( this.getHandlesOverlay(), html );
 	},
 
-	startTransport: function( type ) {
+	startTransport( type ) {
 		elementorCommon.storage.set( 'transfer', {
 			type: type,
 			elementsType: this.getElementType(),
@@ -222,20 +222,20 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
-	copy: function() {
+	copy() {
 		this.startTransport( 'copy' );
 	},
 
-	cut: function() {
+	cut() {
 		this.startTransport( 'cut' );
 	},
 
-	paste: function() {
+	paste() {
 		this.trigger( 'request:paste' );
 	},
 
-	isPasteEnabled: function() {
-		var transferData = elementorCommon.storage.get( 'transfer' );
+	isPasteEnabled() {
+		const transferData = elementorCommon.storage.get( 'transfer' );
 
 		if ( ! transferData || this.isCollectionFilled() ) {
 			return false;
@@ -244,7 +244,7 @@ BaseElementView = BaseContainer.extend( {
 		return this.getElementType() === transferData.elementsType;
 	},
 
-	isStyleTransferControl: function( control ) {
+	isStyleTransferControl( control ) {
 		if ( undefined !== control.style_transfer ) {
 			return control.style_transfer;
 		}
@@ -252,8 +252,8 @@ BaseElementView = BaseContainer.extend( {
 		return 'content' !== control.tab || control.selectors || control.prefix_class;
 	},
 
-	duplicate: function() {
-		var oldTransport = elementorCommon.storage.get( 'transfer' );
+	duplicate() {
+		const oldTransport = elementorCommon.storage.get( 'transfer' );
 
 		this.copy();
 
@@ -262,7 +262,7 @@ BaseElementView = BaseContainer.extend( {
 		elementorCommon.storage.set( 'transfer', oldTransport );
 	},
 
-	pasteStyle: function() {
+	pasteStyle() {
 		var self = this,
 			transferData = elementorCommon.storage.get( 'transfer' ),
 			sourceElement = transferData.elements[ 0 ],
@@ -273,7 +273,7 @@ BaseElementView = BaseContainer.extend( {
 			controls = settings.controls,
 			diffSettings = {};
 
-		jQuery.each( controls, function( controlName, control ) {
+		jQuery.each( controls, ( controlName, control ) => {
 			if ( ! self.isStyleTransferControl( control ) ) {
 				return;
 			}
@@ -290,7 +290,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			if ( 'object' === typeof sourceValue ) {
-				var isEqual = true;
+				let isEqual = true;
 
 				jQuery.each( sourceValue, function( propertyKey ) {
 					if ( sourceValue[ propertyKey ] !== targetValue[ propertyKey ] ) {
@@ -306,7 +306,7 @@ BaseElementView = BaseContainer.extend( {
 				return;
 			}
 
-			var ControlView = elementor.getControlView( control.type );
+			const ControlView = elementor.getControlView( control.type );
 
 			if ( ! ControlView.onPasteStyle( control, sourceValue ) ) {
 				return;
@@ -328,8 +328,8 @@ BaseElementView = BaseContainer.extend( {
 		self.renderOnChange();
 	},
 
-	resetStyle: function() {
-		var self = this,
+	resetStyle() {
+		const self = this,
 			editModel = self.getEditModel(),
 			controls = editModel.get( 'settings' ).controls,
 			defaultValues = {};
@@ -338,7 +338,7 @@ BaseElementView = BaseContainer.extend( {
 
 		elementor.channels.data.trigger( 'element:before:reset:style', editModel );
 
-		jQuery.each( controls, function( controlName, control ) {
+		jQuery.each( controls, ( controlName, control ) => {
 			if ( ! self.isStyleTransferControl( control ) ) {
 				return;
 			}
@@ -355,24 +355,28 @@ BaseElementView = BaseContainer.extend( {
 		self.renderOnChange();
 	},
 
-	toggleVisibility: function() {
+	toggleVisibility() {
 		this.model.set( 'hidden', ! this.model.get( 'hidden' ) );
 
 		this.toggleVisibilityClass();
 	},
 
-	toggleVisibilityClass: function() {
+	toggleVisibilityClass() {
 		this.$el.toggleClass( 'elementor-edit-hidden', ! ! this.model.get( 'hidden' ) );
 	},
 
-	addElementFromPanel: function( options ) {
+	addElementFromPanel( options ) {
 		options = options || {};
 
-		var elementView = elementor.channels.panelElements.request( 'element:selected' );
+		const elementView = elementor.channels.panelElements.request( 'element:selected' );
 
-		var itemData = {
+		const itemData = {
 			elType: elementView.model.get( 'elType' ),
 		};
+
+		if ( elementor.helpers.maybeDisableWidget() ) {
+			return;
+		}
 
 		if ( 'widget' === itemData.elType ) {
 			itemData.widgetType = elementView.model.get( 'widgetType' );
@@ -382,7 +386,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		var customData = elementView.model.get( 'custom' );
+		const customData = elementView.model.get( 'custom' );
 
 		if ( customData ) {
 			jQuery.extend( itemData, customData );
@@ -402,10 +406,10 @@ BaseElementView = BaseContainer.extend( {
 		this.addChildElement( itemData, options );
 	},
 
-	addControlValidator: function( controlName, validationCallback ) {
+	addControlValidator( controlName, validationCallback ) {
 		validationCallback = validationCallback.bind( this );
 
-		var validator = new Validator( { customValidationMethod: validationCallback } ),
+		const validator = new Validator( { customValidationMethod: validationCallback } ),
 			validators = this.getEditModel().get( 'settings' ).validators;
 
 		if ( ! validators[ controlName ] ) {
@@ -415,20 +419,20 @@ BaseElementView = BaseContainer.extend( {
 		validators[ controlName ].push( validator );
 	},
 
-	addRenderAttribute: function( element, key, value, overwrite ) {
-		var self = this;
+	addRenderAttribute( element, key, value, overwrite ) {
+		const self = this;
 
 		if ( 'object' === typeof element ) {
-			jQuery.each( element, function( elementKey ) {
-				self.addRenderAttribute( elementKey, this, null, overwrite );
+			jQuery.each( element, ( elementKey, elementValue ) => {
+				self.addRenderAttribute( elementKey, elementValue, null, overwrite );
 			} );
 
 			return self;
 		}
 
 		if ( 'object' === typeof key ) {
-			jQuery.each( key, function( attributeKey ) {
-				self.addRenderAttribute( element, attributeKey, this, overwrite );
+			jQuery.each( key, ( attributeKey, attributeValue ) => {
+				self.addRenderAttribute( element, attributeKey, attributeValue, overwrite );
 			} );
 
 			return self;
@@ -453,16 +457,16 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	getRenderAttributeString: function( element ) {
+	getRenderAttributeString( element ) {
 		if ( ! this.renderAttributes[ element ] ) {
 			return '';
 		}
 
-		var renderAttributes = this.renderAttributes[ element ],
+		const renderAttributes = this.renderAttributes[ element ],
 			attributes = [];
 
-		jQuery.each( renderAttributes, function( attributeKey ) {
-			attributes.push( attributeKey + '="' + _.escape( this.join( ' ' ) ) + '"' );
+		jQuery.each( renderAttributes, ( attributeKey, attributeValue ) => {
+			attributes.push( attributeKey + '="' + _.escape( attributeValue.join( ' ' ) ) + '"' );
 		} );
 
 		return attributes.join( ' ' );
@@ -472,7 +476,7 @@ BaseElementView = BaseContainer.extend( {
 		return !! this.model.get( 'isInner' );
 	},
 
-	initControlsCSSParser: function() {
+	initControlsCSSParser() {
 		this.controlsCSSParser = new ControlsCSSParser( {
 			id: this.model.cid,
 			settingsModel: this.getEditModel().get( 'settings' ),
@@ -480,22 +484,33 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
-	enqueueFonts: function() {
-		var editModel = this.getEditModel(),
+	enqueueFonts() {
+		const editModel = this.getEditModel(),
 			settings = editModel.get( 'settings' );
 
-		_.each( settings.getFontControls(), function( control ) {
-			var fontFamilyName = editModel.getSetting( control.name );
+		jQuery.each( settings.getFontControls(), ( index, control ) => {
+			const fontFamilyName = editModel.getSetting( control.name );
 
-			if ( _.isEmpty( fontFamilyName ) ) {
+			if ( ! fontFamilyName ) {
 				return;
 			}
 
 			elementor.helpers.enqueueFont( fontFamilyName );
 		} );
+
+		// Enqueue Icon Fonts
+		jQuery.each( settings.getIconsControls(), ( index, control ) => {
+			const iconType = editModel.getSetting( control.name );
+
+			if ( ! iconType || ! iconType.library ) {
+				return;
+			}
+
+			elementor.helpers.enqueueIconFonts( iconType.library );
+		} );
 	},
 
-	renderStyles: function( settings ) {
+	renderStyles( settings ) {
 		if ( ! settings ) {
 			settings = this.getEditModel().get( 'settings' );
 		}
@@ -506,22 +521,22 @@ BaseElementView = BaseContainer.extend( {
 
 		this.controlsCSSParser.addStyleToDocument();
 
-		var extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this );
+		const extraCSS = elementor.hooks.applyFilters( 'editor/style/styleText', '', this );
 
 		if ( extraCSS ) {
 			this.controlsCSSParser.elements.$stylesheetElement.append( extraCSS );
 		}
 	},
 
-	renderCustomClasses: function() {
-		var self = this;
+	renderCustomClasses() {
+		const self = this;
 
-		var settings = self.getEditModel().get( 'settings' ),
+		const settings = self.getEditModel().get( 'settings' ),
 			classControls = settings.getClassControls();
 
 		// Remove all previous classes
-		_.each( classControls, function( control ) {
-			var previousClassValue = settings.previous( control.name );
+		_.each( classControls, ( control ) => {
+			let previousClassValue = settings.previous( control.name );
 
 			if ( control.classes_dictionary ) {
 				if ( undefined !== control.classes_dictionary[ previousClassValue ] ) {
@@ -533,9 +548,9 @@ BaseElementView = BaseContainer.extend( {
 		} );
 
 		// Add new classes
-		_.each( classControls, function( control ) {
-			var value = settings.attributes[ control.name ],
-				classValue = value;
+		_.each( classControls, ( control ) => {
+			const value = settings.attributes[ control.name ];
+			let classValue = value;
 
 			if ( control.classes_dictionary ) {
 				if ( undefined !== control.classes_dictionary[ value ] ) {
@@ -543,7 +558,7 @@ BaseElementView = BaseContainer.extend( {
 				}
 			}
 
-			var isVisible = elementor.helpers.isActiveControl( control, settings.attributes );
+			const isVisible = elementor.helpers.isActiveControl( control, settings.attributes );
 
 			if ( isVisible && ( classValue || 0 === classValue ) ) {
 				self.$el.addClass( control.prefix_class + classValue );
@@ -555,8 +570,8 @@ BaseElementView = BaseContainer.extend( {
 		self.toggleVisibilityClass();
 	},
 
-	renderCustomElementID: function() {
-		var customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
+	renderCustomElementID() {
+		const customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
 
 		this.$el.attr( 'id', customElementID );
 	},
@@ -569,7 +584,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	runReadyTrigger: function() {
-		var self = this;
+		const self = this;
 
 		_.defer( function() {
 			elementorFrontend.elementsHandler.runReadyTrigger( self.el );
@@ -585,27 +600,27 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
-	getID: function() {
+	getID() {
 		return this.model.get( 'id' );
 	},
 
-	getElementUniqueID: function() {
+	getElementUniqueID() {
 		return 'elementor-element-' + this.getID();
 	},
 
-	renderOnChange: function( settings ) {
+	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
 			return;
 		}
 
 		// Make sure is correct model
 		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
-			var hasChanged = settings.hasChanged(),
-				isContentChanged = ! hasChanged,
+			const hasChanged = settings.hasChanged();
+			let isContentChanged = ! hasChanged,
 				isRenderRequired = ! hasChanged;
 
-			_.each( settings.changedAttributes(), function( settingValue, settingKey ) {
-				var control = settings.getControl( settingKey );
+			_.each( settings.changedAttributes(), ( settingValue, settingKey ) => {
+				const control = settings.getControl( settingKey );
 
 				if ( '_column_size' === settingKey ) {
 					isRenderRequired = true;
@@ -642,7 +657,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		// Re-render the template
-		var templateType = this.getTemplateType(),
+		const templateType = this.getTemplateType(),
 			editModel = this.getEditModel();
 
 		if ( 'js' === templateType ) {
@@ -654,14 +669,14 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	getDynamicParsingSettings: function() {
-		var self = this;
+	getDynamicParsingSettings() {
+		const self = this;
 
 		return {
-			onServerRequestStart: function() {
+			onServerRequestStart() {
 				self.$el.addClass( 'elementor-loading' );
 			},
-			onServerRequestEnd: function() {
+			onServerRequestEnd() {
 				self.render();
 
 				self.$el.removeClass( 'elementor-loading' );
@@ -669,28 +684,26 @@ BaseElementView = BaseContainer.extend( {
 		};
 	},
 
-	serializeData: function() {
-		var data = BaseContainer.prototype.serializeData.apply( this, arguments );
+	serializeData() {
+		const data = BaseContainer.prototype.serializeData.apply( this, arguments );
 
 		data.settings = this.getEditModel().get( 'settings' ).parseDynamicSettings( data.settings, this.getDynamicParsingSettings() );
 
 		return data;
 	},
 
-	save: function() {
-		var model = this.model;
+	save() {
+		const model = this.model;
 
 		elementor.templates.startModal( {
-			onReady: function() {
-				elementor.templates.getLayout().showSaveTemplateView( model );
-			},
+			onReady: () => elementor.templates.getLayout().showSaveTemplateView( model ),
 		} );
 	},
 
-	removeElement: function() {
+	removeElement() {
 		elementor.channels.data.trigger( 'element:before:remove', this.model );
 
-		var parent = this._parent;
+		const parent = this._parent;
 
 		parent.isManualRemoving = true;
 
@@ -701,17 +714,17 @@ BaseElementView = BaseContainer.extend( {
 		elementor.channels.data.trigger( 'element:after:remove', this.model );
 	},
 
-	onBeforeRender: function() {
+	onBeforeRender() {
 		this.renderAttributes = {};
 	},
 
-	onRender: function() {
+	onRender() {
 		this.renderUI();
 
 		this.runReadyTrigger();
 
 		if ( this.toggleEditTools ) {
-			var editButton = this.ui.editButton;
+			const editButton = this.ui.editButton;
 
 			this.ui.tools.hoverIntent( function() {
 				editButton.addClass( 'elementor-active' );
@@ -721,26 +734,25 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	onCollectionChanged: function() {
+	onCollectionChanged() {
 		elementor.saver.setFlagEditorChange( true );
 	},
 
-	onEditSettingsChanged: function( changedModel ) {
-		elementor.channels.editor
-			.trigger( 'change:editSettings', changedModel, this );
+	onEditSettingsChanged( changedModel ) {
+		elementor.channels.editor.trigger( 'change:editSettings', changedModel, this );
 	},
 
-	onSettingsChanged: function( changedModel ) {
+	onSettingsChanged( changedModel ) {
 		elementor.saver.setFlagEditorChange( true );
 
 		this.renderOnChange( changedModel );
 	},
 
-	onEditButtonClick: function() {
+	onEditButtonClick() {
 		this.model.trigger( 'request:edit' );
 	},
 
-	onEditRequest: function( options = {} ) {
+	onEditRequest( options = {} ) {
 		if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
 			return;
 		}
@@ -759,13 +771,13 @@ BaseElementView = BaseContainer.extend( {
 		panel.openEditor( model, this );
 	},
 
-	onDuplicateButtonClick: function( event ) {
+	onDuplicateButtonClick( event ) {
 		event.stopPropagation();
 
 		this.duplicate();
 	},
 
-	onRemoveButtonClick: function( event ) {
+	onRemoveButtonClick( event ) {
 		event.stopPropagation();
 
 		this.removeElement();
@@ -774,7 +786,7 @@ BaseElementView = BaseContainer.extend( {
 	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`
 	 * event on the currently active element. Therefor, we need to blur the active element manually.
 	 */
-	onMouseDown: function( event ) {
+	onMouseDown( event ) {
 		if ( jQuery( event.target ).closest( '.elementor-inline-editing' ).length ) {
 			return;
 		}
@@ -782,7 +794,7 @@ BaseElementView = BaseContainer.extend( {
 		elementorFrontend.elements.window.document.activeElement.blur();
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		this.controlsCSSParser.removeStyleFromDocument();
 
 		this.getEditModel().get( 'settings' ).validators = {};

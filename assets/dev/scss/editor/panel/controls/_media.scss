@@ -1,46 +1,26 @@
-.elementor-control-type-media {
+.elementor-control-media {
+
+	&.elementor-media-empty {
+
+		.elementor-control-media-area {
+			display: none;
+		}
+	}
+
+	&:not(.elementor-media-empty) {
+
+		.elementor-control-media-upload-button {
+			display: none;
+		}
+	}
 
 	.elementor-control-input-wrapper {
-		padding: 7px;
 		border: 1px solid;
 		transition: all .2s ease-in-out;
-
-		&:not(:hover) {
-			border-color: $editor-lightest;
-
-			.elementor-control-media-upload-button {
-				background-color: $editor-lightest;
-			}
-		}
-
-		&:hover {
-			border-color: $editor-light;
-
-			.elementor-control-media-upload-button {
-				background-color: $editor-light;
-			}
-		}
+		border-color: $editor-lightest;
 	}
 
-	.elementor-control-media {
-		cursor: pointer;
-
-		&.elementor-media-empty {
-
-			.elementor-control-media-area {
-				display: none;
-			}
-		}
-
-		&:not(.elementor-media-empty) {
-
-			.elementor-control-media-upload-button {
-				display: none;
-			}
-		}
-	}
-
-	.fa-plus-circle {
+	.eicon-plus-circle {
 		position: absolute;
 		top: 50%;
 		left: 50%;
@@ -49,29 +29,30 @@
 		font-size: 20px;
 	}
 
-	.elementor-control-media-area {
+	&-upload-button {
+		background-color: $editor-lightest;
+	}
+
+	&__preview {
+		height: 100%;
+		background-size: cover;
+		background-position: center;
+	}
+
+	&-area {
 		background-image: linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd);
 		background-size: 16px 16px;
 		background-position: 0 0, 8px 8px;
 		background-color: #f6f6f6;
-		overflow: hidden;
 
 		&:not(:hover) {
 
-			.elementor-control-media-delete {
-				box-shadow: none;
-				bottom: -30px;
+			.elementor-control-media__remove {
+				display: none;
 			}
 		}
 
-		&:hover {
-
-			.elementor-control-media-image {
-				opacity: .9;
-			}
-		}
-
-		i {
+		.eicon-video-camera {
 			position: absolute;
 			top: 50%;
 			left: 50%;
@@ -81,24 +62,81 @@
 		}
 	}
 
-	.elementor-control-media-delete {
+	&__content {
+		cursor: pointer;
+		overflow: hidden;
+
+		&:hover {
+
+			&:after {
+				content: '';
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				background-color: rgba(0, 0, 0, .2);
+				pointer-events: none;
+			}
+		}
+
+		&:not(:hover) {
+
+			.elementor-control-media__tools {
+				bottom: -30px;
+			}
+		}
+	}
+
+	&__tools {
 		position: absolute;
 		bottom: 0;
 		left: 0;
 		right: 0;
+		display: grid;
+		grid-auto-flow: column;
+		grid-gap: 1px;
 		text-align: center;
-		padding: 9.5px;
-		font-size: 11px;
-		color: #fff;
-		background-color: $editor-light;
-		text-transform: uppercase;
 		transition: all .2s ease-in-out;
-		box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
 	}
 
-	.elementor-control-media-image {
-		height: 100%;
-		background-size: cover;
-		background-position: center;
+	&__tool {
+		flex-grow: 1;
+		color: #fff;
+		background-color: rgba($editor-dark, .6);
+		padding: 9.5px;
+		font-size: 11px;
+		transition: background .3s;
+
+		&:hover {
+			background-color: rgba($editor-dark, .85);
+		}
+	}
+
+	&__remove {
+		position: absolute;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		top: 10px;
+		@include end(10px);
+		width: 20px;
+		height: 20px;
+		font-size: 11px;
+		background-color: rgba(#fff, .9);
+		color: $editor-light;
+		border-radius: 3px;
+		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.1);
+		transition: all .3s ease-in-out;
+
+		&:not(:hover) {
+			opacity: .8;
+		}
+
+		&:hover {
+			background-color: rgba(#fff, 1);
+			box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+		}
 	}
 }
