@@ -108,6 +108,7 @@
 
 		.dialog-message {
 			padding: 0;
+			height: 700px;
 		}
 
 		.dialog-content {
@@ -146,17 +147,17 @@
 	}
 
 	&__tab-links {
-		margin-top: 50px;
+		margin-top: 30px;
 	}
 
 	&__main {
 		display: flex;
 		flex-direction: column;
-		padding: 50px 80px 0;
+		padding: 30px 80px 0;
 		width: 80%;
 
 		@media (max-width: $editor-screen-lg-max) {
-			padding: 50px 50px 0;
+			padding: 30px 50px 0;
 		}
 
 		@media (max-width: $editor-screen-xs-max) {
@@ -187,12 +188,17 @@
 
 	&__tab {
 
+		&__wrapper {
+			overflow: scroll;
+			margin: 25px -15px 0;
+			padding: 0 15px 15px;
+		}
+
 		&__title {
 			color: $editor-darker;
 			font-size: 16px;
 			font-weight: 500;
 			text-align: $start;
-			margin-top: 30px;
 
 			@media (max-width: $editor-screen-xs-max) {
 				display: none;
@@ -201,22 +207,24 @@
 
 		&__content {
 			display: grid;
-			grid-template-columns: repeat(6, 1fr);
+			grid-template-columns: repeat(7, 1fr);
 			grid-gap: 15px;
-			overflow: scroll;
-			margin: 10px -15px 0;
-			padding: 15px;
+			margin-top: 20px;
 
 			@media (max-width: $editor-screen-lg-max) {
-				grid-template-columns: repeat(5, 1fr);
+				grid-template-columns: repeat(6, 1fr);
 			}
 
 			@media (max-width: $editor-screen-md-max) {
-				grid-template-columns: repeat(4, 1fr);
+				grid-template-columns: repeat(5, 1fr);
 
 			}
 
 			@media (max-width: $editor-screen-sm-max) {
+				grid-template-columns: repeat(4, 1fr);
+			}
+
+			@media (max-width: $editor-screen-xs-max) {
 				grid-template-columns: repeat(3, 1fr);
 			}
 		}
@@ -280,12 +288,16 @@
 		height: 0;
 		padding-bottom: 100%;
 		background-color: #fff;
-		box-shadow: 0 2px 20px 0 rgba(0,0,0,.1);
+		box-shadow: 0 1px 12px rgba(0,0,0,.05);
+		border-radius: 3px;
 		cursor: pointer;
 
-		&:hover,
+		&:hover {
+			box-shadow: 0 1px 14px rgba(0, 0, 0, 0.16)
+		}
+
 		&.elementor-selected {
-			outline: 3px solid $editor-info;
+			box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05), 0 0 0 3px #71d7f7;
 		}
 
 		&__content {
@@ -302,13 +314,13 @@
 
 		&__icon {
 			font-size: 32px;
-			color: $editor-darkest;
+			color: $editor-darker;
 		}
 
 		&__name {
 			color: $editor-lighter;
-			font-size: 9px;
-			padding: 5px 5px 0;
+			font-size: 11px;
+			padding: 18px 20px 0;
 			white-space: nowrap;
 			max-width: 100%;
 			overflow: hidden;
