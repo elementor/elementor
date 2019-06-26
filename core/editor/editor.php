@@ -710,6 +710,7 @@ class Editor {
 				'preview_debug_link_text' => __( 'Click here for preview debug', 'elementor' ),
 
 				'icon_library' => __( 'Icon Library', 'elementor' ),
+				'custom_positioning' => __( 'Custom Positioning', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
