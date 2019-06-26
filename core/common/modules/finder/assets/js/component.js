@@ -58,7 +58,7 @@ export default class extends elementorModules.Component {
 	open() {
 		if ( ! this.layout ) {
 			this.layout = new FinderLayout();
-			this.layout.getModal().on( 'hide', () => elementorCommon.route.close( this.getNamespace() ) );
+			this.layout.getModal().on( 'hide', () => this.close() );
 		}
 
 		this.layout.showModal();
@@ -67,7 +67,13 @@ export default class extends elementorModules.Component {
 	}
 
 	close() {
+		if ( ! super.close() ) {
+			return false;
+		}
+
 		this.layout.getModal().hide();
+
+		return true;
 	}
 
 	getItemsView() {

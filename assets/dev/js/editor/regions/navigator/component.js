@@ -13,7 +13,7 @@ export default class extends elementorModules.Component {
 		return {
 			toggle: () => {
 				if ( elementorCommon.route.isPartOf( 'navigator' ) ) {
-					elementorCommon.route.close( 'navigator' );
+					this.close();
 				} else {
 					elementorCommon.route.to( 'navigator' );
 				}
@@ -36,6 +36,12 @@ export default class extends elementorModules.Component {
 	}
 
 	close() {
+		if ( ! super.close() ) {
+			return false;
+		}
+
 		this.context.close();
+
+		return true;
 	}
 }
