@@ -354,11 +354,11 @@ class Widget_Star_Rating extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$rating_data = $this->get_rating();
 		$textual_rating = $rating_data[0] . '/' . $rating_data[1];
-		$icon = '&#61445;';
+		$icon = '&#xE934;';
 
 		if ( 'star_fontawesome' === $settings['star_style'] ) {
 			if ( 'outline' === $settings['unmarked_star_style'] ) {
-				$icon = '&#61446;';
+				$icon = '&#xE933;';
 			}
 		} elseif ( 'star_unicode' === $settings['star_style'] ) {
 			$icon = '&#9733;';
@@ -421,11 +421,11 @@ class Widget_Star_Rating extends Widget_Base {
 
 				return starsHtml;
 			},
-			icon = '&#61445;';
+			icon = '&#xE934;';
 
 			if ( 'star_fontawesome' === settings.star_style ) {
 				if ( 'outline' === settings.unmarked_star_style ) {
-					icon = '&#61446;';
+					icon = '&#xE933;';
 				}
 			} else if ( 'star_unicode' === settings.star_style ) {
 				icon = '&#9733;';
