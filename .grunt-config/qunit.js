@@ -1,5 +1,5 @@
 /**
- * Grunt release task config
+ * Grunt qunit task config
  * @package Elementor
  */
 module.exports = {
