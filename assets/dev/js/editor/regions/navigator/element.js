@@ -264,7 +264,7 @@ export default class extends Marionette.CompositeView {
 				return;
 			}
 
-			const $indicator = jQuery( '<div>', { class: 'elementor-navigator__element__indicator' } );
+			const $indicator = jQuery( '<div>', { class: 'elementor-navigator__element__indicator', title: indicatorSettings.title } );
 
 			$indicator.html( `<i class="eicon-${ indicatorSettings.icon }"></i>` );
 
