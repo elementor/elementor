@@ -26,15 +26,6 @@ export default class extends Commands {
 		return this;
 	}
 
-	reload( route, args ) {
-		const parts = route.split( '/' ),
-			container = parts[ 0 ];
-
-		this.clearCurrent( container );
-
-		this.to( route, args );
-	}
-
 	refreshContainer( container ) {
 		const currentRoute = this.getCurrent( container ),
 			currentArgs = this.getCurrentArgs( container );

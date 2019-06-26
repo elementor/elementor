@@ -116,7 +116,7 @@ RevisionsManager = function() {
 
 	this.onRevisionsUpdate = function() {
 		if ( elementorCommon.route.is( 'panel/history/revisions' ) ) {
-			elementorCommon.route.reload( 'panel/history/revisions' );
+			elementorCommon.route.refreshContainer( 'panel' );
 		}
 	};
 };
