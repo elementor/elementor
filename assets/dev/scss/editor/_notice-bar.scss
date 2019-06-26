@@ -12,6 +12,10 @@
 	&__message {
 		@include padding-start(15px);
 		flex-grow: 1;
+
+		a {
+			text-decoration: underline;
+		}
 	}
 
 	&__action {
