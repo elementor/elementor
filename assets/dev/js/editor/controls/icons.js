@@ -18,7 +18,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	enqueueIconFonts( iconType ) {
 		const iconSetting = elementor.helpers.getIconLibrarySettings( iconType );
-		if ( false === iconSetting ) {
+		if ( false === iconSetting || ! this.isMigrationAllowed() ) {
 			return;
 		}
 
@@ -61,7 +61,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			valueToMigrate = this.getValueToMigrate();
 
 		if ( ! this.isMigrationAllowed() ) {
-			return value;
+			return valueToMigrate;
 		}
 
 		// Bail if no migration flag or no value to migrate
