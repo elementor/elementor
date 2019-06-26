@@ -366,7 +366,7 @@ jQuery( () => {
 		);
 	} );
 
-	QUnit.test( 'Route to', ( assert ) => {
+	QUnit.test( 'Route to, is, isPartOf', ( assert ) => {
 		const namespace = 'route-to',
 			routeA = namespace + '/routeA',
 			routeB = namespace + '/routeB';
@@ -406,6 +406,7 @@ jQuery( () => {
 		assert.equal( routeBStatus, 'afterRoute' );
 
 		assert.equal( elementorCommon.route.isPartOf( namespace ), true );
+		assert.equal( elementorCommon.route.isPartOf( 'notPartOf' ), false );
 	} );
 
 	QUnit.test( 'Route with args', ( assert ) => {
@@ -621,7 +622,7 @@ jQuery( () => {
 	QUnit.test( 'On close route', ( assert ) => {
 		const namespace = 'on-close-route';
 
-		let routeStatus = 'not_changed';
+		let routeStatus = 'notChanged';
 
 		const Component = class extends elementorModules.Component {
 			getNamespace() {
@@ -643,8 +644,104 @@ jQuery( () => {
 		elementorCommon.components.register( new Component( { context: self } ) );
 
 		elementorCommon.route.to( namespace + '/routeA' );
-		assert.equal( routeStatus, 'not_changed' );
+		assert.equal( routeStatus, 'notChanged' );
+
 		elementorCommon.route.to( namespace + '/routeB' );
 		assert.equal( routeStatus, 'closed' );
+	} );
+
+	QUnit.test( 'On route', ( assert ) => {
+		const namespace = 'on-route';
+
+		let routeStatus = 'beforeRoute';
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			onRoute() {
+				routeStatus = 'afterRoute';
+			}
+
+			getRoutes() {
+				return {
+					routeA: () => {},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		elementorCommon.route.to( namespace + '/routeA' );
+		assert.equal( routeStatus, 'afterRoute' );
+	} );
+
+	QUnit.test( 'State: save & restore', ( assert ) => {
+		assert.expect( 6 ); // `restoreState` is expected to run `routeA` again.
+
+		const namespace = 'state-save-restore';
+
+		const routeArgs = {
+			argsA: 1,
+		};
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			getRoutes() {
+				return {
+					routeA: ( args ) => {
+						assert.equal( args, routeArgs );
+					},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		elementorCommon.route.to( namespace + '/routeA', routeArgs );
+		elementorCommon.route.saveState( namespace );
+		elementorCommon.route.close( namespace );
+
+		assert.equal( elementorCommon.route.getCurrent( namespace ), false );
+		assert.equal( elementorCommon.route.getCurrentArgs( namespace ), false );
+
+		elementorCommon.route.restoreState( namespace );
+
+		assert.equal( elementorCommon.route.getCurrent( namespace ), namespace + '/routeA' );
+		assert.equal( elementorCommon.route.getCurrentArgs( namespace ), routeArgs );
+	} );
+
+	QUnit.test( 'Refresh container', ( assert ) => {
+		assert.expect( 2 ); // `refreshContainer` is expected to run `routeA` again.
+
+		const namespace = 'refresh-container';
+
+		const routeArgs = {
+			argsA: 1,
+		};
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			getRoutes() {
+				return {
+					routeA: ( args ) => {
+						assert.equal( args, routeArgs );
+					},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		elementorCommon.route.to( namespace + '/routeA', routeArgs );
+
+		elementorCommon.route.refreshContainer( namespace );
 	} );
 } );
