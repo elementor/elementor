@@ -207,20 +207,22 @@ class IconsManager extends Component {
 							<i className={ 'eicon-search' }></i>
 						</div> ) : ''
 					}
-					<div id="elementor-icons-manager__tab__title">{ activeTab.label }</div>
-					<div id="elementor-icons-manager__tab__content">
-						<input type="hidden" name="icon_value" id="icon_value" value={ selected.value } />
-						<input type="hidden" name="icon_type" id="icon_type" value={ selected.library } />
-						{ this.state.loaded[ activeTab.name ] ? (
-							<Tab
-								setSelected={ this.setSelected }
-								selected={ selected }
-								filter={ filter }
-								key={ activeTab.name }
-								{ ... activeTab } />
-						) : (
-							'Loading'
-						) }
+					<div id="elementor-icons-manager__tab__wrapper">
+						<div id="elementor-icons-manager__tab__title">{ activeTab.label }</div>
+						<div id="elementor-icons-manager__tab__content">
+							<input type="hidden" name="icon_value" id="icon_value" value={ selected.value } />
+							<input type="hidden" name="icon_type" id="icon_type" value={ selected.library } />
+							{ this.state.loaded[ activeTab.name ] ? (
+								<Tab
+									setSelected={ this.setSelected }
+									selected={ selected }
+									filter={ filter }
+									key={ activeTab.name }
+									{ ... activeTab } />
+							) : (
+								'Loading'
+							) }
+						</div>
 					</div>
 				</div>
 			</Fragment>
