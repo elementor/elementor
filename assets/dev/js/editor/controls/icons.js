@@ -61,7 +61,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			valueToMigrate = this.getValueToMigrate();
 
 		if ( ! this.isMigrationAllowed() ) {
-			return value;
+			return valueToMigrate;
 		}
 
 		// Bail if no migration flag or no value to migrate
