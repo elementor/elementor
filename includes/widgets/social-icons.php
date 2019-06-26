@@ -204,7 +204,7 @@ class Widget_Social_Icons extends Widget_Base {
 						],
 					],
 				],
-				'title_field' => '<# var fallback = "undefined" !== typeof social ? social : false; #>{{{ elementor.helpers.renderIcon( this, social_icon, {}, "i", "panel" ) || \'<i class="{{ social }}"></i>\' }}} {{{ elementor.helpers.getSocialNetworkNameFromIcon( social_icon, fallback, true ) }}}',
+				'title_field' => '<# var migrated = "undefined" !== typeof __fa4_migrated, social = ( "undefined" === typeof social ) ? false : social; #>{{{ elementor.helpers.getSocialNetworkNameFromIcon( social_icon, social, true, migrated, true ) }}}',
 			]
 		);
 
@@ -486,14 +486,18 @@ class Widget_Social_Icons extends Widget_Base {
 				if ( ! empty( $item['social'] ) ) {
 					$social = str_replace( 'fa fa-', '', $item['social'] );
 				}
+				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
+				$is_new = empty( $item['social'] );
 
-				if ( ! empty( $item['social_icon']['library'] ) && 'svg' !== $item['social_icon']['library'] ) {
+				if ( $is_new || $migrated && ( ! empty( $item['social_icon']['library'] ) && 'svg' !== $item['social_icon']['library'] ) ) {
 					$social = explode( ' ', $item['social_icon']['value'], 2 );
 					if ( empty( $social[1] ) ) {
 						$social = '';
 					} else {
 						$social = str_replace( 'fa-', '', $social[1] );
 					}
+				} else {
+					$social = '';
 				}
 
 				$link_key = 'link_' . $index;
@@ -507,8 +511,7 @@ class Widget_Social_Icons extends Widget_Base {
 				if ( $item['link']['nofollow'] ) {
 					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
 				}
-				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
-				$is_new = empty( $item['social'] );
+
 				?>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo $social . $class_animation; ?>" <?php echo $this->get_render_attribute_string( $link_key ); ?>>
 					<span class="elementor-screen-only"><?php echo ucwords( $social ); ?></span>
@@ -538,8 +541,8 @@ class Widget_Social_Icons extends Widget_Base {
 		<div class="elementor-social-icons-wrapper">
 			<# _.each( settings.social_icon_list, function( item, index ) {
 				var link = item.link ? item.link.url : '',
-					migrated = elementor.helpers.isIconMigrated( item, item.social_icon );
-					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social );
+					migrated = elementor.helpers.isIconMigrated( item, 'social_icon' );
+					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
 				#>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }}" href="{{ link }}">
 					<span class="elementor-screen-only">{{{ social }}}</span>

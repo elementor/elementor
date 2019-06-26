@@ -273,10 +273,12 @@ helpers = {
 		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
-	getSocialNetworkNameFromIcon( iconsControl, fallbackControl, toUpperCase = false ) {
-		let social = '';
-		if ( fallbackControl ) {
+	getSocialNetworkNameFromIcon( iconsControl, fallbackControl, toUpperCase = false, migrated = null, withIcon = false ) {
+		let social = '',
+			icon = '';
+		if ( fallbackControl && ! migrated ) {
 			social = fallbackControl.replace( 'fa fa-', '' );
+			icon = '<i class="' + fallbackControl + '"></i>';
 		} else if ( iconsControl.value && 'svg' !== iconsControl.library ) {
 			social = iconsControl.value.split( ' ' )[ 1 ];
 			if ( ! social ) {
@@ -284,12 +286,18 @@ helpers = {
 			} else {
 				social = social.replace( 'fa-', '' );
 			}
+			icon = this.renderIcon( null, iconsControl, {}, 'i', 'panel' );
+		} else {
+			icon = this.renderIcon( null, iconsControl, {}, 'i', 'panel' );
 		}
 		if ( '' !== social && toUpperCase ) {
 			social = social.split( '-' ).join( ' ' );
 			social = social.replace( /\b\w/g, ( letter ) => letter.toUpperCase() );
 		}
-		social = elementor.hooks.applyFilters( 'elementor/social_icons/network_name', social, iconsControl, fallbackControl, toUpperCase );
+		social = elementor.hooks.applyFilters( 'elementor/social_icons/network_name', social, iconsControl, fallbackControl, toUpperCase, withIcon );
+		if ( withIcon ) {
+			social = icon + ' ' + social;
+		}
 		return social;
 	},
 
