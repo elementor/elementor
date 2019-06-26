@@ -1,10 +1,18 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core\Editor;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Icons_Manager;
+use Elementor\Plugin;
+use Elementor\Schemes_Manager;
+use Elementor\Settings;
+use Elementor\Shapes;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Tools;
+use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -56,6 +64,11 @@ class Editor {
 	private $_is_edit_mode;
 
 	/**
+	 * @var Notice_Bar
+	 */
+	public $notice_bar;
+
+	/**
 	 * Init.
 	 *
 	 * Initialize Elementor editor. Registers all needed actions to run Elementor,
@@ -78,6 +91,8 @@ class Editor {
 		if ( ! $this->is_edit_mode( $this->_post_id ) ) {
 			return;
 		}
+
+		Loading_Inspection_Manager::instance()->register_inspections();
 
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
@@ -183,7 +198,7 @@ class Editor {
 		$document = Plugin::$instance->documents->get( get_the_ID() );
 
 		if ( ! $document ) {
-			wp_die( __( 'Document not found.', '' ) );
+			wp_die( __( 'Document not found.', 'elementor' ) );
 		}
 
 		if ( ! $document->is_editable_by_current_user() || ! $document->is_built_with_elementor() ) {
@@ -294,7 +309,7 @@ class Editor {
 	 * @access public
 	 */
 	public function print_editor_template() {
-		include 'editor-templates/editor-wrapper.php';
+		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
 
 	/**
@@ -502,15 +517,17 @@ class Editor {
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 			],
+			'icons' => Icons_Manager::get_icon_manager_tabs_config(),
+			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.json',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->get_wp_editor_config(),
 			'settings_page_link' => Settings::get_url(),
+			'tools_page_link' => Tools::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
-			'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
 			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
@@ -519,6 +536,12 @@ class Editor {
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::get_introduction_meta(),
+			],
+			'preview' => [
+				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
+				'help_preview_http_error_url' => 'https://go.elementor.com/preview-not-loaded/#permissions',
+				'help_preview_http_error_500_url' => 'https://go.elementor.com/500-error/',
+				'debug_data' => Loading_Inspection_Manager::instance()->run_inspections(),
 			],
 			'locale' => get_locale(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
@@ -566,6 +589,14 @@ class Editor {
 				'clear_page' => __( 'Delete All Content', 'elementor' ),
 				'dialog_confirm_clear_page' => __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 
+				// Enable SVG uploads.
+				'enable_svg' => __( 'Enable SVG Uploads', 'elementor' ),
+				'dialog_confirm_enable_svg' => __( 'SVG files may contain malicious code. Elementor will try to remove it. However, enabling this feature still poses potential security risks.', 'elementor' ),
+
+				// Enable fontawesome 5 if needed.
+				'enable_fa5' => __( 'Elementor\'s New Icon Library', 'elementor' ),
+				'dialog_confirm_enable_fa5' => __( 'Elementor v2.6 includes an update from FontAwesome 4 to 5. In order to continue using icons, including over 1,500 FA5 icons, be sure to click "Update".', 'elementor' ) . ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
+
 				// Panel Preview Mode.
 				'back_to_editor' => __( 'Show Panel', 'elementor' ),
 				'preview' => __( 'Hide Panel', 'elementor' ),
@@ -609,8 +640,6 @@ class Editor {
 				'learn_more' => __( 'Learn More', 'elementor' ),
 				'preview_el_not_found_header' => __( 'Sorry, the content area was not found in your page.', 'elementor' ),
 				'preview_el_not_found_message' => __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
-				'preview_not_loading_header' => __( 'The preview could not be loaded', 'elementor' ),
-				'preview_not_loading_message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
 
 				// Gallery.
 				'delete_gallery' => __( 'Reset Gallery', 'elementor' ),
@@ -637,6 +666,7 @@ class Editor {
 				'save' => __( 'Save', 'elementor' ),
 				'saved' => __( 'Saved', 'elementor' ),
 				'update' => __( 'Update', 'elementor' ),
+				'enable' => __( 'Enable', 'elementor' ),
 				'submit' => __( 'Submit', 'elementor' ),
 				'working_on_draft_notification' => __( 'This is just a draft. Play around and when you\'re done - click update.', 'elementor' ),
 				'keep_editing' => __( 'Keep Editing', 'elementor' ),
@@ -675,6 +705,11 @@ class Editor {
 				'deprecated_notice' => __( 'The <strong>{{{ widget }}}</strong> widget has been deprecated since {{{ plugin }}} {{{ since }}}.', 'elementor' ),
 				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>{{{ replacement }}}</strong>.', 'elementor' ),
 				'deprecated_notice_last' => __( 'Note that {{{ widget }}} will be completely removed once {{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
+
+				//Preview Debug
+				'preview_debug_link_text' => __( 'Click here for preview debug', 'elementor' ),
+
+				'icon_library' => __( 'Icon Library', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
@@ -776,7 +811,6 @@ class Editor {
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
 				'elementor-common',
-				'font-awesome',
 				'elementor-select2',
 				'elementor-icons',
 				'wp-auth-check',
@@ -955,6 +989,8 @@ class Editor {
 	 * @access public
 	 */
 	public function __construct() {
+		$this->notice_bar = new Notice_Bar();
+
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 
@@ -1014,7 +1050,7 @@ class Editor {
 	public function create_nonce( $post_type ) {
 		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
 
-		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		return $ajax->create_nonce();
@@ -1058,7 +1094,7 @@ class Editor {
 	public function verify_request_nonce() {
 		// _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
 
-		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		return $ajax->verify_request_nonce();
@@ -1077,7 +1113,7 @@ class Editor {
 	public function verify_ajax_nonce() {
 		// _deprecated_function( __METHOD__, '2.3.0' );
 
-		/** @var Core\Common\Modules\Ajax\Module $ajax */
+		/** @var Ajax $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
 		if ( ! $ajax->verify_request_nonce() ) {
@@ -1105,7 +1141,7 @@ class Editor {
 		];
 
 		foreach ( $template_names as $template_name ) {
-			Plugin::$instance->common->add_template( __DIR__ . "/editor-templates/$template_name.php" );
+			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/$template_name.php" );
 		}
 	}
 }

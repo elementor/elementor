@@ -95,9 +95,17 @@ BaseSettingsModel = Backbone.Model.extend( {
 		} );
 	},
 
-	getFontControls: function() {
-		return _.filter( this.getActiveControls(), function( control ) {
-			return 'font' === control.type;
+	getFontControls() {
+		return this.getControlsByType( 'font' );
+	},
+
+	getIconsControls() {
+		return this.getControlsByType( 'icons' );
+	},
+
+	getControlsByType( type ) {
+		return _.filter( this.getActiveControls(), ( control ) => {
+			return type === control.type;
 		} );
 	},
 

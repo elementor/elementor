@@ -2,22 +2,38 @@ workflows:
   version: 2
   tests:
     jobs:
-    - php54-wp-latest-build
+    - php54-wp51-build
+    - php54-wp50-build
+    - php54-wp49-build
     - php54-wp48-build
     - php54-wp47-build
-    - php55-wp-latest-build
+    - php55-wp51-build
+    - php55-wp50-build
+    - php55-wp49-build
     - php55-wp48-build
     - php55-wp47-build
     - php56-wp-latest-build
+    - php56-wp51-build
+    - php56-wp50-build
+    - php56-wp49-build
     - php56-wp48-build
     - php56-wp47-build
     - php70-wp-latest-build
+    - php70-wp51-build
+    - php70-wp50-build
+    - php70-wp49-build
     - php70-wp48-build
     - php70-wp47-build
     - php71-wp-latest-build
+    - php71-wp51-build
+    - php71-wp50-build
+    - php71-wp49-build
     - php71-wp48-build
     - php71-wp47-build
     - php72-wp-latest-build
+    - php72-wp51-build
+    - php72-wp50-build
+    - php72-wp49-build
     - php72-wp48-build
     - php72-wp47-build
     - php-js-lints
@@ -71,8 +87,26 @@ job-references:
         path: ~/phpunit
 
 jobs:
-  php54-wp-latest-build:
+  php54-wp51-build:
     <<: *php_job
+    environment:
+    - WP_VERSION: "5.1"
+    docker:
+    - image: pojome/php-cli:5.4
+    - image: *mysql_image
+
+  php54-wp50-build:
+    <<: *php_job
+    environment:
+    - WP_VERSION: "5.0"
+    docker:
+    - image: pojome/php-cli:5.4
+    - image: *mysql_image
+
+  php54-wp49-build:
+    <<: *php_job
+    environment:
+    - WP_VERSION: "4.9"
     docker:
     - image: pojome/php-cli:5.4
     - image: *mysql_image
@@ -93,11 +127,29 @@ jobs:
     - image: pojome/php-cli:5.4
     - image: *mysql_image
 
-  php55-wp-latest-build:
+  php55-wp51-build:
     <<: *php_job
+    environment:
+      - WP_VERSION: "5.1"
     docker:
-    - image: pojome/php-cli:5.5
-    - image: *mysql_image
+      - image: pojome/php-cli:5.5
+      - image: *mysql_image
+
+  php55-wp50-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.0"
+    docker:
+      - image: pojome/php-cli:5.5
+      - image: *mysql_image
+
+  php55-wp49-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "4.9"
+    docker:
+      - image: pojome/php-cli:5.5
+      - image: *mysql_image
 
   php55-wp48-build:
     <<: *php_job
@@ -117,6 +169,30 @@ jobs:
 
   php56-wp-latest-build:
     <<: *php_job
+    docker:
+    - image: pojome/php-cli:5.6
+    - image: *mysql_image
+
+  php56-wp51-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.1"
+    docker:
+    - image: pojome/php-cli:5.6
+    - image: *mysql_image
+
+  php56-wp50-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.0"
+    docker:
+    - image: pojome/php-cli:5.6
+    - image: *mysql_image
+
+  php56-wp49-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "4.9"
     docker:
     - image: pojome/php-cli:5.6
     - image: *mysql_image
@@ -143,6 +219,30 @@ jobs:
     - image: pojome/php-cli:7.0
     - image: *mysql_image
 
+  php70-wp51-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.1"
+    docker:
+      - image: pojome/php-cli:7.0
+      - image: *mysql_image
+
+  php70-wp50-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.0"
+    docker:
+      - image: pojome/php-cli:7.0
+      - image: *mysql_image
+
+  php70-wp49-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "4.9"
+    docker:
+      - image: pojome/php-cli:7.0
+      - image: *mysql_image
+
   php70-wp48-build:
     <<: *php_job
     environment:
@@ -165,6 +265,30 @@ jobs:
     - image: pojome/php-cli:7.1
     - image: *mysql_image
 
+  php71-wp51-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.1"
+    docker:
+      - image: pojome/php-cli:7.1
+      - image: *mysql_image
+
+  php71-wp50-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.0"
+    docker:
+      - image: pojome/php-cli:7.1
+      - image: *mysql_image
+
+  php71-wp49-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "4.9"
+    docker:
+      - image: pojome/php-cli:7.1
+      - image: *mysql_image
+
   php71-wp48-build:
     <<: *php_job
     environment:
@@ -186,6 +310,30 @@ jobs:
     docker:
     - image: pojome/php-cli:7.2
     - image: *mysql_image
+
+  php72-wp51-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.1"
+    docker:
+      - image: pojome/php-cli:7.2
+      - image: *mysql_image
+
+  php72-wp50-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "5.0"
+    docker:
+      - image: pojome/php-cli:7.2
+      - image: *mysql_image
+
+  php72-wp49-build:
+    <<: *php_job
+    environment:
+      - WP_VERSION: "4.9"
+    docker:
+      - image: pojome/php-cli:7.2
+      - image: *mysql_image
 
   php72-wp48-build:
     <<: *php_job

@@ -97,7 +97,6 @@ class Autoloader {
 			'Controls_Stack' => 'includes/base/controls-stack.php',
 			'DB' => 'includes/db.php',
 			'Debug\Debug' => 'includes/debug/debug.php',
-			'Editor' => 'includes/editor.php',
 			'Elements_Manager' => 'includes/managers/elements.php',
 			'Embed' => 'includes/embed.php',
 			'Fonts' => 'includes/fonts.php',
@@ -123,6 +122,7 @@ class Autoloader {
 			'Settings_Page' => 'includes/settings/settings-page.php',
 			'Shapes' => 'includes/shapes.php',
 			'Skins_Manager' => 'includes/managers/skins.php',
+			'Icons_Manager' => 'includes/managers/icons.php',
 			'Stylesheet' => 'includes/stylesheet.php',
 			'System_Info\Main' => 'includes/settings/system-info/main.php',
 			'TemplateLibrary\Classes\Import_Images' => 'includes/template-library/classes/class-import-images.php',
@@ -212,6 +212,10 @@ class Autoloader {
 			'Core\Ajax' => [
 				'replacement' => 'Core\Common\Modules\Ajax\Module',
 				'version' => '2.3.0',
+			],
+			'Editor' => [
+				'replacement' => 'Core\Editor\Editor',
+				'version' => '2.6.0',
 			],
 		];
 	}

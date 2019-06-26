@@ -17,8 +17,6 @@
 				$importArea: $( '#elementor-import-template-area' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
-				$betaTesterDialogHeader: $( '#elementor-beta-tester-dialog-header' ),
-				$betaTesterDialogForm: $( '#elementor-beta-tester-dialog-form' ),
 			};
 
 			elements.$settingsFormPages = elements.$settingsForm.find( '.elementor-settings-form-page' );
@@ -162,6 +160,36 @@
 					} );
 			} );
 
+			$( '#elementor_upgrade_fa_button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				const $updateButton = $( this );
+				$updateButton.addClass( 'loading' );
+				elementorCommon.dialogsManager.createWidget( 'confirm', {
+					id: 'confirm_fa_migration_admin_modal',
+					message: self.translate( 'confirm_fa_migration_admin_modal_body' ),
+					headerMessage: self.translate( 'confirm_fa_migration_admin_modal_head' ),
+					strings: {
+						confirm: self.translate( 'yes' ),
+						cancel: self.translate( 'cancel' ),
+					},
+					defaultOption: 'confirm',
+					onConfirm: () => {
+						$.post( ajaxurl, $updateButton.data() )
+							.done( function( response ) {
+								$updateButton.removeClass( 'loading' ).addClass( 'success' );
+								$( '#elementor_upgrade_fa_button' ).parent().append( response.data.message );
+								window.history.go( -1 );
+							} )
+							.fail( function() {
+								$updateButton.removeClass( 'loading' ).addClass( 'error' );
+							} );
+					},
+					onCancel: () => {
+						$updateButton.removeClass( 'loading' ).addClass( 'error' );
+					},
+				} ).show();
+			} );
+
 			self.elements.$settingsTabs.on( {
 				click: function( event ) {
 					event.preventDefault();
@@ -203,29 +231,6 @@
 				$descriptions.hide();
 				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
 			} ).trigger( 'change' );
-
-			$( '.elementor_beta select' ).on( 'change', function() {
-				if ( 'yes' !== this.value ) {
-					return;
-				}
-
-				elementorCommon.dialogsManager.createWidget( 'lightbox', {
-					id: 'elementor-beta-tester-modal',
-					headerMessage: self.elements.$betaTesterDialogHeader,
-					message: self.elements.$betaTesterDialogForm,
-					closeButton: true,
-					closeButtonClass: 'eicon-close',
-				} ).show();
-			} );
-
-			self.elements.$betaTesterDialogForm.on( 'submit', function() {
-				const email = $( '#elementor-beta-tester-email' ).val();
-				elementorCommon.ajax.addRequest( 'beta_tester_newsletter', {
-					data: {
-						betaTesterEmail: email,
-					},
-				} );
-			} );
 		},
 
 		onInit: function() {
