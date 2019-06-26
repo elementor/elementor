@@ -225,11 +225,11 @@ class Icons_Manager {
 	}
 
 	public function register_admin_tools_settings( Tools $settings ) {
-		$settings->add_tab( 'fontawesome4_migration', [ 'label' => __( 'Font Awesome Migration', 'elementor' ) ] );
+		$settings->add_tab( 'fontawesome4_migration', [ 'label' => __( 'Font Awesome Upgrade', 'elementor' ) ] );
 
 		$settings->add_section( 'fontawesome4_migration', 'fontawesome4_migration', [
 			'callback' => function() {
-				echo '<hr><h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
+				echo '<h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
 				echo '<p>' .
 				esc_html__( 'Access 1,500+ amazing Font Awesome 5 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' .
 				esc_html__( 'By upgrading, whenever you edit a page containing a Font Awesome 4 icon, Elementor will convert it to the new Font Awesome 5 icon.', 'elementor' ) .
@@ -263,7 +263,7 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => '<div> ' . __( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</div>' ] );
+		wp_send_json_success( [ 'message' => '<p>' . __( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</p>' ] );
 	}
 
 	/**

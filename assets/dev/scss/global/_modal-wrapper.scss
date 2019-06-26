@@ -10,7 +10,7 @@
 		}
 
 		@media (min-width: $library_screen_breakpoint + 1) {
-			max-width: 1200px;
+			max-width: 1400px;
 		}
 	}
 
@@ -97,7 +97,7 @@
 
 			> i {
 				font-size: 20px;
-				transition: color .5s;
+				transition: $transition-hover;
 				cursor: pointer;
 
 				&:not(:hover) {

@@ -23,6 +23,10 @@
 			padding: 4px 0;
 
 			&:focus {
+				border-left: solid 1px;
+				border-color: $editor-light;
+				margin-left: -1px;
+				width: calc(100% + 1px);
 
 				+ .elementor-control-dimension-label {
 					color: $editor-light;
@@ -45,6 +49,12 @@
 			input {
 				border-left: 1px solid $editor-lightest;
 				border-radius: 3px 0 0 3px;
+
+				&:focus {
+					border-color: $editor-light;
+					margin-left: 0;
+					width: 100%;
+				}
 			}
 		}
 	}
