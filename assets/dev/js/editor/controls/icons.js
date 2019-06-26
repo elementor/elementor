@@ -42,6 +42,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		ui.iconPickers = '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button';
 		ui.deleteButton = '.elementor-control-media__remove';
 		ui.previewPlaceholder = '.elementor-control-media__preview';
+		ui.previewContainer = '.elementor-control-preview-area';
 
 		return ui;
 	}
@@ -57,15 +58,13 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	getControlValue() {
 		const value = super.getControlValue(),
 			model = this.model,
-			controlToMigrate = model.get( this.dataKeys.fa4MigrationFlag );
+			valueToMigrate = this.getValueToMigrate();
 
-		// Bail if no migration flag
-		if ( ! controlToMigrate ) {
+		if ( ! this.isMigrationAllowed() ) {
 			return value;
 		}
 
-		// Check if there is a value to migrate
-		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
+		// Bail if no migration flag or no value to migrate
 		if ( ! valueToMigrate ) {
 			return value;
 		}
@@ -99,7 +98,44 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		this.elementSettingsModel.set( this.dataKeys.migratedKey, didMigration, { silent: true } );
 	}
 
+	isMigrationAllowed() {
+		return ! ElementorConfig[ 'icons_update_needed' ];
+	}
+
+	getValueToMigrate() {
+		const controlToMigrate = this.model.get( this.dataKeys.fa4MigrationFlag );
+		if ( ! controlToMigrate ) {
+			return false;
+		}
+
+		// Check if there is a value to migrate
+		const valueToMigrate = this.elementSettingsModel.get( controlToMigrate );
+		if ( valueToMigrate ) {
+			return valueToMigrate;
+		}
+		return false;
+	}
+
 	onReady() {
+		// is migration allowed from fa4
+		if ( ! this.isMigrationAllowed() ) {
+			this.ui.previewContainer[ 0 ].addEventListener( 'click', ( event ) => {
+				event.stopPropagation();
+				const onConfirm = () => {
+					window.location.href = ElementorConfig.tools_page_link + '#tab-fontawesome4_migration';
+				};
+				const enableMigrationDialog = elementor.helpers.getSimpleDialog(
+					'elementor-enable-fa5-dialog',
+					elementor.translate( 'enable_fa5' ),
+					elementor.translate( 'dialog_confirm_enable_fa5' ),
+					elementor.translate( 'update' ),
+					onConfirm
+				);
+				enableMigrationDialog.show();
+				return false;
+			}, true );
+		}
+
 		const controlName = this.model.get( 'name' );
 		if ( this.cache.migratedFlag[ controlName ] ) {
 			this.setControlAsMigrated( controlName );
@@ -112,7 +148,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	onRender() {
 		super.onRender();
 		// @todo: move to manager
-		if ( ! this.cache.loaded ) {
+		if ( ! this.cache.loaded && this.isMigrationAllowed() ) {
 			elementor.config.icons.forEach( ( library ) => {
 				if ( 'all' === library.name ) {
 					return;
@@ -130,10 +166,11 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			button: {
 				text: elementor.translate( 'insert_media' ),
 			},
+			library: { type: [ 'image/svg+xml' ] },
 			states: [
 				new wp.media.controller.Library( {
 					title: elementor.translate( 'insert_media' ),
-					library: wp.media.query( { type: 'image/svg+xml' } ),
+					library: wp.media.query( { type: [ 'image/svg+xml' ] } ),
 					multiple: false,
 					date: false,
 				} ),
@@ -144,6 +181,21 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 		// When a file is selected, run a callback.
 		this.frame.on( 'insert select', handleSelect );
+
+		this.setUploadMimeType( this.frame, 'svg' );
+	}
+
+	setUploadMimeType( frame, ext ) {
+		// Set svg as only allowed upload extensions
+		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
+		frame.on( 'ready', () => {
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = ext;
+		} );
+
+		this.frame.on( 'close', () => {
+			// restore allowed upload extensions
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
+		} );
 	}
 
 	/**
@@ -171,27 +223,16 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	getSvgNotEnabledDialog() {
-		if ( ! this.cache.dialog ) {
-			const onConfirm = () => {
-				this.cache.enableClicked = true;
-				window.open( ElementorConfig.settings_page_link + '#tab-advanced', '_blank' );
-			};
-			this.cache.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
-				id: 'elementor-enable-svg-dialog',
-				headerMessage: elementor.translate( 'enable_svg' ),
-				message: elementor.translate( 'dialog_confirm_enable_svg' ),
-				position: {
-					my: 'center center',
-					at: 'center center',
-				},
-				strings: {
-					confirm: elementor.translate( 'enable' ),
-					cancel: elementor.translate( 'cancel' ),
-				},
-				onConfirm: onConfirm,
-			} );
-		}
-		return this.cache.dialog;
+		const onConfirm = () => {
+			elementorCommon.ajax.addRequest( 'enable_svg_uploads', {}, true );
+		};
+		return elementor.helpers.getSimpleDialog(
+			'elementor-enable-svg-dialog',
+			elementor.translate( 'enable_svg' ),
+			elementor.translate( 'dialog_confirm_enable_svg' ),
+			elementor.translate( 'enable' ),
+			onConfirm
+		);
 	}
 
 	isSvgEnabled() {
@@ -202,9 +243,9 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	openFrame() {
-		if ( ! this.isSvgEnabled() ) {
+		if ( ! this.isSvgEnabled() && ! elementor.iconManager.cache.svgDialogShown ) {
 			const dialog = this.getSvgNotEnabledDialog();
-			this.cache.dialogShown = true;
+			elementor.iconManager.cache.svgDialogShown = true;
 			return dialog.show();
 		}
 
@@ -232,9 +273,14 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	applySavedValue() {
-		const controlValue = this.getControlValue(),
-			iconValue = controlValue.value,
+		const controlValue = this.getControlValue();
+		let iconValue = controlValue.value,
 			iconType = controlValue.library;
+
+		if ( ! this.isMigrationAllowed() && ! iconValue && this.getValueToMigrate() ) {
+			iconValue = this.getControlValue();
+			iconType = '';
+		}
 
 		this.$el.toggleClass( 'elementor-media-empty', ! iconValue );
 

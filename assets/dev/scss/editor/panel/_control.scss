@@ -248,10 +248,10 @@
 
 		.elementor-panel-heading-toggle {
 
-			.fa {
+			.eicon {
 
 				&:before {
-					content: '\f0d7';
+					content: '\e92a';
 				}
 			}
 		}
@@ -261,10 +261,10 @@
 
 		.elementor-panel-heading-toggle {
 
-			.fa {
+			.eicon {
 
 				&:before {
-					content: getValueByDirection('\f0da', '\f0d9');
+					content: getValueByDirection('\e90a', '\e909');
 				}
 			}
 		}
@@ -494,11 +494,19 @@
 .elementor-control-direction- {
 
 	&ltr {
-		direction: ltr;
+
+ 		input,
+		textarea {
+			direction: ltr;
+		}
 	}
 
 	&rtl {
-		direction: rtl;
+
+		input,
+		textarea {
+			direction: rtl;
+		}
 	}
 }
 

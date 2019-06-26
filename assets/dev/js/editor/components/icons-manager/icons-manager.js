@@ -13,6 +13,7 @@ export default class extends elementorModules.Module {
 		layoutModal.addButton( {
 			name: 'insert_icon',
 			text: elementor.translate( 'Insert' ),
+			classes: 'elementor-button elementor-button-success',
 			callback: () => {
 				this.updateControlValue();
 				this.unMountIconManager();
@@ -29,6 +30,8 @@ export default class extends elementorModules.Module {
 		this.store = new Store();
 		// Fetch fa4 to fa5 migration data
 		elementor.helpers.fetchFa4ToFa5Mapping();
+
+		this.cache = {};
 	}
 
 	getDefaultSettings() {
@@ -76,6 +79,7 @@ export default class extends elementorModules.Module {
 					name: 'recommended',
 					label: 'Recommended',
 					icons: iconManagerConfig.recommended,
+					labelIcon: 'eicon-star-o',
 				} );
 			}
 		} else {
@@ -97,6 +101,9 @@ export default class extends elementorModules.Module {
 
 		// Set active tab
 		let activeTab = selected.library || icons[ 0 ].name;
+		if ( 'svg' === selected.library ) {
+			activeTab = icons[ 0 ].name;
+		}
 
 		// Show recommended tab if selected from it
 		if ( iconManagerConfig.recommended && '' !== selected.library && '' !== selected.value && iconManagerConfig.recommended.hasOwnProperty( selected.library ) ) {

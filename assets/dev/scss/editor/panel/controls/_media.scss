@@ -17,22 +17,7 @@
 	.elementor-control-input-wrapper {
 		border: 1px solid;
 		transition: all .2s ease-in-out;
-
-		&:not(:hover) {
-			border-color: $editor-lightest;
-
-			.elementor-control-media-upload-button {
-				background-color: $editor-lightest;
-			}
-		}
-
-		&:hover {
-			border-color: $editor-light;
-
-			.elementor-control-media-upload-button {
-				background-color: $editor-light;
-			}
-		}
+		border-color: $editor-lightest;
 	}
 
 	.eicon-plus-circle {
@@ -42,6 +27,10 @@
 		transform: translateX(-50%) translateY(-50%);
 		color: #fff;
 		font-size: 20px;
+	}
+
+	&-upload-button {
+		background-color: $editor-lightest;
 	}
 
 	&__preview {
@@ -63,13 +52,6 @@
 			}
 		}
 
-		&:hover {
-
-			.elementor-control-media__preview {
-				opacity: .9;
-			}
-		}
-
 		.eicon-video-camera {
 			position: absolute;
 			top: 50%;
@@ -83,6 +65,20 @@
 	&__content {
 		cursor: pointer;
 		overflow: hidden;
+
+		&:hover {
+
+			&:after {
+				content: '';
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				background-color: rgba(0, 0, 0, .2);
+				pointer-events: none;
+			}
+		}
 
 		&:not(:hover) {
 
@@ -110,6 +106,11 @@
 		background-color: rgba($editor-dark, .6);
 		padding: 9.5px;
 		font-size: 11px;
+		transition: background .3s;
+
+		&:hover {
+			background-color: rgba($editor-dark, .85);
+		}
 	}
 
 	&__remove {
@@ -119,11 +120,23 @@
 		align-items: center;
 		justify-content: center;
 		top: 10px;
-		right: 10px;
-		width: 22px;
-		height: 22px;
-		background-color: rgba(#fff, .8);
+		@include end(10px);
+		width: 20px;
+		height: 20px;
+		font-size: 11px;
+		background-color: rgba(#fff, .9);
 		color: $editor-light;
 		border-radius: 3px;
+		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.1);
+		transition: all .3s ease-in-out;
+
+		&:not(:hover) {
+			opacity: .8;
+		}
+
+		&:hover {
+			background-color: rgba(#fff, 1);
+			box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+		}
 	}
 }
