@@ -103,6 +103,21 @@ class Compatibility {
 	}
 
 	/**
+	 * Support Hello-Elementor theme filter: hello_elementor_page_title.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 * @static
+	 */
+	public static function support_hello_elementor_page_title_filter( $val ) {
+		$current_doc = Plugin::instance()->documents->get( get_the_ID() );
+		if ( $current_doc && 'yes' === $current_doc->get_settings( 'hide_title' ) ) {
+			$val = false;
+		}
+		return $val;
+	}
+
+	/**
 	 * Init.
 	 *
 	 * Initialize Elementor compatibility with external plugins.
@@ -231,6 +246,9 @@ class Compatibility {
 		if ( function_exists( 'gutenberg_init' ) ) {
 			add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
 		}
+
+		// Hello theme
+		add_filter( 'hello_elementor_page_title', [ __CLASS__, 'support_hello_elementor_page_title_filter' ] );
 	}
 
 	public static function filter_library_post_type( $post_types ) {
