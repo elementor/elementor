@@ -534,18 +534,19 @@ class Widget_Social_Icons extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
+		<# var iconsHTML = {}; #>
 		<div class="elementor-social-icons-wrapper">
 			<# _.each( settings.social_icon_list, function( item, index ) {
-				var iconsHTML = {},
-					link = item.link ? item.link.url : '',
+				var link = item.link ? item.link.url : '',
+					migrated = elementor.helpers.isIconMigrated( item, item.social_icon );
 					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social );
 				#>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }}" href="{{ link }}">
 					<span class="elementor-screen-only">{{{ social }}}</span>
 					<#
-						iconsHTML[index] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );
-						if ( iconsHTML[index].rendered ) { #>
-							{{{ iconsHTML[index].value }}}
+						iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );
+						if ( ( ! item.social || migrated ) && iconsHTML[ index ].rendered ) { #>
+							{{{ iconsHTML[ index ].value }}}
 						<# } else { #>
 							<i class="{{ item.social }}"></i>
 						<# }
