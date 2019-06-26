@@ -1,5 +1,5 @@
 #elementor-fatal-error-dialog {
-	&.preview-loading-error {
+	&.elementor-preview-loading-error {
 		.dialog {
 			&-header {
 				color: $editor-darkest;
@@ -14,6 +14,6 @@
 }
 
 
-#preview-debug-link-text {
+#elementor-preview-debug-link-text {
 	display: inline-block;
 }
