@@ -224,8 +224,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	getSvgNotEnabledDialog() {
 		const onConfirm = () => {
-			this.cache.enableClicked = true;
-			window.open( ElementorConfig.settings_page_link + '#tab-advanced', '_blank' );
+			elementorCommon.ajax.addRequest( 'enable_svg_uploads', {}, true );
 		};
 		return elementor.helpers.getSimpleDialog(
 			'elementor-enable-svg-dialog',
@@ -244,9 +243,9 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	openFrame() {
-		if ( ! this.isSvgEnabled() ) {
+		if ( ! this.isSvgEnabled() && ! elementor.iconManager.cache.svgDialogShown ) {
 			const dialog = this.getSvgNotEnabledDialog();
-			this.cache.dialogShown = true;
+			elementor.iconManager.cache.svgDialogShown = true;
 			return dialog.show();
 		}
 

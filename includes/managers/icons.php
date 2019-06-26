@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -297,6 +298,14 @@ class Icons_Manager {
 		return $settings;
 	}
 
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'enable_svg_uploads', [ $this, 'ajax_enable_svg_uploads' ] );
+	}
+
+	public function ajax_enable_svg_uploads() {
+		update_option( 'elementor_allow_svg', 1 );
+	}
+
 	/**
 	 * Icons Manager constructor
 	 */
@@ -309,6 +318,9 @@ class Icons_Manager {
 
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+
+		// Ajax.
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		if ( ! self::is_migration_allowed() ) {
 			add_action( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );

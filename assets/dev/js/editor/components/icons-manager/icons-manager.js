@@ -30,6 +30,8 @@ export default class extends elementorModules.Module {
 		this.store = new Store();
 		// Fetch fa4 to fa5 migration data
 		elementor.helpers.fetchFa4ToFa5Mapping();
+
+		this.cache = {};
 	}
 
 	getDefaultSettings() {
