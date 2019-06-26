@@ -77,6 +77,7 @@ export default class extends elementorModules.Module {
 					name: 'recommended',
 					label: 'Recommended',
 					icons: iconManagerConfig.recommended,
+					labelIcon: 'eicon-star-o',
 				} );
 			}
 		} else {
