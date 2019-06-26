@@ -473,7 +473,7 @@ class Widget_Toggle extends Widget_Base {
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+		$is_new = Icons_Manager::is_migration_allowed();
 		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
 
 		?>
