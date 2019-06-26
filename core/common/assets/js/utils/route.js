@@ -7,25 +7,6 @@ export default class extends Commands {
 		this.savedStates = {};
 	}
 
-	close( container ) {
-		const component = elementorCommon.components.get( container );
-
-		if ( ! component.isOpen ) {
-			return this;
-		}
-
-		// Mark as closed before the `component.close` in order to avoid recursive calls if the component `close` calls to route.close.
-		component.isOpen = false;
-
-		component.close();
-
-		component.inactivate();
-
-		this.clearCurrent( container );
-
-		return this;
-	}
-
 	refreshContainer( container ) {
 		const currentRoute = this.getCurrent( container ),
 			currentArgs = this.getCurrentArgs( container );

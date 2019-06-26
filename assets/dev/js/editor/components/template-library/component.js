@@ -93,7 +93,7 @@ export default class extends elementorModules.Component {
 		if ( ! this.context.layout ) {
 			this.context.layout = new TemplateLibraryLayoutView();
 
-			this.context.layout.getModal().on( 'hide', () => elementorCommon.route.close( this.getNamespace() ) );
+			this.context.layout.getModal().on( 'hide', () => this.close() );
 		}
 
 		this.context.layout.showModal();
@@ -102,9 +102,14 @@ export default class extends elementorModules.Component {
 	}
 
 	close() {
-		this.context.modalConfig = {};
+		if ( ! super.close() ) {
+			return false;
+		}
 
+		this.context.modalConfig = {};
 		this.context.layout.getModal().hide();
+
+		return true;
 	}
 
 	show( args ) {

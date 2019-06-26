@@ -69,7 +69,19 @@ export default class extends Module {
 		return true;
 	}
 
-	close() {}
+	close() {
+		if ( ! this.isOpen ) {
+			return false;
+		}
+
+		this.isOpen = false;
+
+		this.inactivate();
+
+		elementorCommon.route.clearCurrent( this.getNamespace() );
+
+		return true;
+	}
 
 	activate() {
 		elementorCommon.components.activate( this.getNamespace() );
