@@ -108,9 +108,11 @@ jQuery( () => {
 	} );
 
 	QUnit.test( 'Register shortcuts', ( assert ) => {
+		const namespace = 'register-shortcuts';
+
 		const Component = class extends elementorModules.Component {
 			getNamespace() {
-				return 'test-shortcuts';
+				return namespace;
 			}
 
 			getCommands() {
@@ -130,9 +132,10 @@ jQuery( () => {
 
 		elementorCommon.components.register( new Component( { context: self } ) );
 
-		const component = elementorCommon.components.get( 'test-shortcuts' );
+		const handlers = elementorCommon.shortcuts.handlers[ 'ctrl+a' ],
+			keys = Object.keys( handlers );
 
-		assert.equal( elementorCommon.shortcuts.handlers[ 'ctrl+a' ][ 0 ].command, component.getNamespace() + '/commandA' );
+		assert.equal( handlers[ keys[ 0 ] ].command, namespace + '/commandA' );
 	} );
 
 	QUnit.test( 'Register shortcuts missing command', ( assert ) => {
@@ -613,7 +616,7 @@ jQuery( () => {
 		elementorCommon.route.to( namespace + '/routeB' );
 		assert.equal( openCount, 1 );
 
-		elementorCommon.route.close( namespace );
+		elementorCommon.components.get( namespace ).close();
 
 		elementorCommon.route.to( namespace + '/routeA' );
 		assert.equal( openCount, 2 );
@@ -704,7 +707,7 @@ jQuery( () => {
 
 		elementorCommon.route.to( namespace + '/routeA', routeArgs );
 		elementorCommon.route.saveState( namespace );
-		elementorCommon.route.close( namespace );
+		elementorCommon.components.get( namespace ).close();
 
 		assert.equal( elementorCommon.route.getCurrent( namespace ), false );
 		assert.equal( elementorCommon.route.getCurrentArgs( namespace ), false );
@@ -743,5 +746,220 @@ jQuery( () => {
 		elementorCommon.route.to( namespace + '/routeA', routeArgs );
 
 		elementorCommon.route.refreshContainer( namespace );
+	} );
+
+	QUnit.module( 'Shortcuts' );
+
+	const runShortcut = ( args ) => {
+		jQuery( document ).trigger( jQuery.Event( 'keydown', args ) );
+	};
+
+	QUnit.test( 'Run shortcut', ( assert ) => {
+		const namespace = 'run-shortcut';
+
+		let commandStatus = 'beforeRun';
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			getCommands() {
+				return {
+					commandA: () => {
+						commandStatus = 'afterRun';
+					},
+				};
+			}
+
+			getShortcuts() {
+				return {
+					commandA: {
+						keys: 'ctrl+z',
+					},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+
+		assert.equal( commandStatus, 'afterRun' );
+	} );
+
+	QUnit.test( 'Run shortcut with scope', ( assert ) => {
+		const namespace = 'run-shortcut-with-scope';
+
+		let commandStatus = 'beforeRunInScope';
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			getCommands() {
+				return {
+					commandA: () => {
+						commandStatus = 'afterRunInScope';
+					},
+				};
+			}
+
+			getRoutes() {
+				return {
+					routeA: () => {},
+				};
+			}
+
+			getShortcuts() {
+				return {
+					commandA: {
+						keys: 'ctrl+z',
+						scopes: [ namespace ],
+					},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		// Outside scope.
+		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+
+		assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran outside scope' );
+
+		// Inside scope.
+		elementorCommon.route.to( namespace + '/routeA' );
+
+		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+
+		assert.equal( commandStatus, 'afterRunInScope', 'Shortcut ran inside scope' );
+
+		// Closed scope.
+		elementorCommon.components.get( namespace ).close();
+
+		commandStatus = 'beforeRunInScope';
+
+		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+
+		assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran after close scope' );
+
+		// Second component with same shortcut.
+		let secondCommandStatus = 'beforeRun';
+
+		const SecondComponent = class extends elementorModules.Component {
+			getNamespace() {
+				return 'second-' + namespace;
+			}
+
+			getCommands() {
+				return {
+					commandA: () => {
+						secondCommandStatus = 'afterRun';
+					},
+				};
+			}
+
+			getShortcuts() {
+				return {
+					commandA: {
+						keys: 'ctrl+z',
+					},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new SecondComponent( { context: self } ) );
+
+		// Activate the first component.
+		elementorCommon.route.to( namespace + '/routeA' );
+
+		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+
+		assert.equal( secondCommandStatus, 'beforeRun', 'Shortcut with global scope not ran because of low priority' );
+
+		// Close the first component.
+		elementorCommon.components.get( namespace ).close();
+
+		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+
+		assert.equal( secondCommandStatus, 'afterRun', 'Shortcut with global scope ran because the scoped shortcut is closed' );
+	} );
+
+	QUnit.test( 'Modal component with esc shortcut', ( assert ) => {
+		const namespace = 'modal-component-with-esc-shortcut';
+
+		const Component = class extends elementorModules.Component {
+			__construct( args ) {
+				super.__construct( args );
+
+				this.isModal = true;
+			}
+
+			getNamespace() {
+				return namespace;
+			}
+
+			getRoutes() {
+				return {
+					routeA: () => {},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		elementorCommon.route.to( namespace + '/routeA' );
+
+		runShortcut( { which: 27 /* esc */ } );
+
+		assert.equal( elementorCommon.route.is( namespace + '/routeA' ), false, 'Component is closed by `esc` key.' );
+
+		// Second component.
+		const secondNamespace = 'second-' + namespace;
+
+		const SecondComponent = class extends elementorModules.Component {
+			__construct( args ) {
+				super.__construct( args );
+
+				this.isModal = true;
+			}
+
+			getNamespace() {
+				return secondNamespace;
+			}
+
+			getRoutes() {
+				return {
+					routeA: () => {},
+				};
+			}
+		};
+
+		elementorCommon.components.register( new SecondComponent( { context: self } ) );
+
+		const component = elementorCommon.components.get( namespace ),
+			secondComponent = elementorCommon.components.get( secondNamespace );
+
+		// Activate the second component.
+		elementorCommon.route.to( secondNamespace + '/routeA' );
+
+		// Activate the first component.
+		elementorCommon.route.to( namespace + '/routeA' );
+
+		// Ensure tow components are open.
+		assert.equal( component.isOpen, true );
+		assert.equal( secondComponent.isOpen, true );
+
+		runShortcut( { which: 27 /* esc */ } );
+
+		// Modals should be closed in LIFO order.
+		assert.equal( component.isOpen, false, 'First Component is closed first' );
+		assert.equal( secondComponent.isOpen, true );
+
+		runShortcut( { which: 27 /* esc */ } );
+
+		assert.equal( secondComponent.isOpen, false, 'Second Component is closed too' );
 	} );
 } );
