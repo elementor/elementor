@@ -359,7 +359,7 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title .elementor-toggle-icon .fa:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-toggle .elementor-tab-title .elementor-toggle-icon i:before' => 'color: {{VALUE}};',
 				],
 				'condition' => [
 					'icon!' => '',
@@ -373,7 +373,7 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon .fa:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon i:before' => 'color: {{VALUE}};',
 				],
 				'condition' => [
 					'icon!' => '',
