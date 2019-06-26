@@ -122,7 +122,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			this.ui.previewContainer[ 0 ].addEventListener( 'click', ( event ) => {
 				event.stopPropagation();
 				const onConfirm = () => {
-					window.open( ElementorConfig.tools_page_link + '#tab-fontawesome4_migration', '_blank' );
+					window.location.href = ElementorConfig.tools_page_link + '#tab-fontawesome4_migration';
 				};
 				const enableMigrationDialog = elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
