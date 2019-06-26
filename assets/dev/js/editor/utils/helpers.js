@@ -160,6 +160,13 @@ helpers = {
 		elementor.channels.editor.trigger( 'Icon:insertion', iconType, iconValue, attributes, tag, view );
 	},
 
+	isIconMigrated( settings, controlName ) {
+		if ( settings.__fa4_migrated && settings.__fa4_migrated[ controlName ] ) {
+			return true;
+		}
+		return false;
+	},
+
 	fetchFa4ToFa5Mapping() {
 		const storageKey = 'fa4Tofa5Mapping';
 		let mapping = elementorCommon.storage.get( storageKey );
