@@ -494,13 +494,19 @@
 .elementor-control-direction- {
 
 	&ltr {
- 		input, textarea { 
+
+ 		input,
+		textarea {
 			direction: ltr;
 		}
 	}
 
 	&rtl {
-		direction: rtl;
+
+		input,
+		textarea {
+			direction: rtl;
+		}
 	}
 }
 
