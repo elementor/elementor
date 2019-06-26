@@ -489,14 +489,15 @@ class Widget_Social_Icons extends Widget_Base {
 				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
 				$is_new = empty( $item['social'] );
 
-				if ( $is_new || $migrated && ( ! empty( $item['social_icon']['library'] ) && 'svg' !== $item['social_icon']['library'] ) ) {
+				if ( ( $is_new || $migrated ) && 'svg' !== $item['social_icon']['library'] ) {
 					$social = explode( ' ', $item['social_icon']['value'], 2 );
 					if ( empty( $social[1] ) ) {
 						$social = '';
 					} else {
 						$social = str_replace( 'fa-', '', $social[1] );
 					}
-				} else {
+				}
+				if ( 'svg' === $item['social_icon']['library'] ) {
 					$social = '';
 				}
 

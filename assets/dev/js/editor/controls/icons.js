@@ -18,7 +18,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	enqueueIconFonts( iconType ) {
 		const iconSetting = elementor.helpers.getIconLibrarySettings( iconType );
-		if ( false === iconSetting ) {
+		if ( false === iconSetting || ! this.isMigrationAllowed() ) {
 			return;
 		}
 
