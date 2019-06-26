@@ -61,7 +61,7 @@ class User {
 	 */
 	public static function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
-		$ajax->register_ajax_action( 'beta_tester_newsletter', [ __CLASS__, 'register_as_beta_tester' ] );
+		$ajax->register_ajax_action( 'beta_tester_signup', [ __CLASS__, 'register_as_beta_tester' ] );
 	}
 
 	/**
@@ -248,7 +248,7 @@ class User {
 	}
 
 	public static function register_as_beta_tester( array $data ) {
-		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, $data['betaTesterEmail'] );
+		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, true );
 		wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,
 			[

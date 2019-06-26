@@ -5,7 +5,7 @@
 	#toplevel_page_elementor {
 
 		div.wp-menu-image:before {
-			content: "\e801";
+			content: "\e813";
 			font-family: eicons;
 			font-size: 18px;
 			margin-top: 1px;
@@ -272,7 +272,7 @@ body {
 
 // Customizer widget icon
 #available-widgets [class*="elementor-template"] .widget-title:before {
-	content: "\e801";
+	content: "\e813";
 	font-family: eicons;
 	font-size: 17px;
 }
@@ -288,4 +288,11 @@ body {
 
 ._elementor_settings_update_time {
 	display: none;
+}
+
+
+#confirm_fa_migration_admin_modal {
+	.dialog-confirm-ok {
+		color:  $editor-dark;
+	}
 }

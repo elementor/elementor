@@ -26,7 +26,7 @@ export default class BetaTesterView extends Marionette.ItemView {
 
 		this.ui.betaButton.addClass( 'elementor-button-state' );
 
-		elementorCommon.ajax.addRequest( 'beta_tester_newsletter', {
+		elementorCommon.ajax.addRequest( 'beta_tester_signup', {
 			data: {
 				betaTesterEmail: email,
 			},

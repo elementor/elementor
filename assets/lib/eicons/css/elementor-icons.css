@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.1.0");
-  src: url("../fonts/eicons.eot?5.1.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.1.0") format("woff2"), url("../fonts/eicons.woff?5.1.0") format("woff"), url("../fonts/eicons.ttf?5.1.0") format("truetype"), url("../fonts/eicons.svg?5.1.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.2.1");
+  src: url("../fonts/eicons.eot?5.2.1#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.2.1") format("woff2"), url("../fonts/eicons.woff?5.2.1") format("woff"), url("../fonts/eicons.ttf?5.2.1") format("truetype"), url("../fonts/eicons.svg?5.2.1#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -894,6 +894,12 @@
 .eicon-font:before {
   content: '\e920'; }
 
+.eicon-adjust:before {
+  content: '\e921'; }
+
+.eicon-lightbox:before {
+  content: '\e922'; }
+
 .eicon-heart-o:before {
   content: '\e923'; }
 
@@ -914,6 +920,9 @@
 
 .eicon-long-arrow-right:before {
   content: '\e929'; }
+
+.eicon-caret-down:before {
+  content: '\e92a'; }
 
 .eicon-paint-brush:before {
   content: '\e92b'; }
@@ -974,6 +983,9 @@
 
 .eicon-video-camera:before {
   content: '\e93e'; }
+
+.eicon-heart:before {
+  content: '\e93f'; }
 
 .eicon-wrench:before {
   content: '\e940'; }

@@ -166,6 +166,10 @@ class AddSectionBase extends Marionette.ItemView {
 	onDropping() {
 		elementor.channels.data.trigger( 'section:before:drop' );
 
+		if ( elementor.helpers.maybeDisableWidget() ) {
+			return;
+		}
+
 		this.addSection().addElementFromPanel();
 
 		elementor.channels.data.trigger( 'section:after:drop' );

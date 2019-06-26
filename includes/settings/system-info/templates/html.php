@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * @var array $reports
  */
-
 foreach ( $reports as $report_name => $report ) : ?>
 	<div class="elementor-system-info-section elementor-system-info-<?php echo esc_attr( $report_name ); ?>">
 		<table class="widefat">
@@ -20,14 +19,14 @@ foreach ( $reports as $report_name => $report ) : ?>
 			<tbody>
 			<?php
 			foreach ( $report['report'] as $field_name => $field ) :
-
-				if ( in_array( $report_name, [ 'plugins', 'network_plugins', 'mu_plugins' ], true ) ) :
+				if ( in_array( $report_name, [ 'plugins', 'network_plugins', 'mu_plugins' ], true ) ) {
 					foreach ( $field['value'] as $plugin ) :
 						?>
 						<tr>
-							<td><?php
-							if ( $plugin['PluginURI'] ) :
-								$plugin_name = "<a href='{$plugin['PluginURI']}'>{$plugin['Name']}</a>";
+							<td>
+								<?php
+								if ( $plugin['PluginURI'] ) :
+									$plugin_name = "<a href='{$plugin['PluginURI']}'>{$plugin['Name']}</a>";
 								else :
 									$plugin_name = $plugin['Name'];
 								endif;
@@ -37,23 +36,26 @@ foreach ( $reports as $report_name => $report ) : ?>
 								endif;
 
 								echo $plugin_name;
-								?></td>
-							<td><?php
-							if ( $plugin['Author'] ) :
-								if ( $plugin['AuthorURI'] ) :
-									$author = "<a href='{$plugin['AuthorURI']}'>{$plugin['Author']}</a>";
+								?>
+							</td>
+							<td>
+								<?php
+								if ( $plugin['Author'] ) :
+									if ( $plugin['AuthorURI'] ) :
+										$author = "<a href='{$plugin['AuthorURI']}'>{$plugin['Author']}</a>";
 									else :
 										$author = $plugin['Author'];
 									endif;
 
 									echo "By $author";
 								endif;
-							?></td>
+								?>
+							</td>
 							<td></td>
 						</tr>
 						<?php
 					endforeach;
-				else :
+				} else {
 					$warning_class = ! empty( $field['warning'] ) ? ' class="elementor-warning"' : '';
 					$log_label = ! empty( $field['label'] ) ? $field['label'] . ':' : '';
 					?>
@@ -61,13 +63,14 @@ foreach ( $reports as $report_name => $report ) : ?>
 						<td><?php echo $log_label; ?></td>
 						<td><?php echo $field['value']; ?></td>
 						<td><?php
-						if ( ! empty( $field['recommendation'] ) ) {
+						if ( ! empty( $field['recommendation'] ) ) :
 							echo $field['recommendation'];
-						}
-						?></td>
+						endif;
+						?>
+						</td>
 					</tr>
 					<?php
-				endif;
+				}
 			endforeach;
 			?>
 			</tbody>

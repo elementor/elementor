@@ -14,9 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A base control for creating a Icons chooser control.
  * Used to select an Icon.
  *
- * Usage:
+ * Usage: @see https://developers.elementor.com/elementor-controls/icons-control
  *
- * @since 1.0.0
+ * @since 2.6.0
  */
 class Control_Icons extends Control_Base_Multiple {
 
@@ -26,7 +26,7 @@ class Control_Icons extends Control_Base_Multiple {
 	 * Retrieve the control type, in this case `media`.
 	 *
 	 * @access public
-	 * @since 2.4.0
+	 * @since 2.6.0
 	 * @return string Control type.
 	 */
 	public function get_type() {
@@ -40,7 +40,7 @@ class Control_Icons extends Control_Base_Multiple {
 	 * values while initializing the Icons control.
 	 *
 	 * @access public
-	 * @since 2.4.0
+	 * @since 2.6.0
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
@@ -57,29 +57,29 @@ class Control_Icons extends Control_Base_Multiple {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * @since 2.4.0
+	 * @since 2.6.0
 	 * @access public
 	 */
 	public function content_template() {
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
-			<div class="elementor-control-input-wrapper elementor-aspect-ratio-169">
-                <div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
-                    <div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
-                        <i class="eicon-plus-circle" aria-hidden="true"></i>
-                    </div>
-                    <div class="elementor-control-media-area elementor-fit-aspect-ratio">
-                        <div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
-                            <i class="eicon-trash"></i>
-                        </div>
-                        <div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
-                    </div>
-                    <div class="elementor-control-media__tools">
-                        <div class="elementor-control-icon-picker elementor-control-media__tool"><?php echo __( 'Font Icons', 'elementor-pro' ); ?></div>
-                        <div class="elementor-control-svg-uploader elementor-control-media__tool"><?php echo __( 'SVG Icons', 'elementor-pro' ); ?></div>
-                    </div>
-                </div>
+			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
+				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
+					<div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
+						<i class="eicon-plus-circle" aria-hidden="true"></i>
+					</div>
+					<div class="elementor-control-media-area elementor-fit-aspect-ratio">
+						<div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+							<i class="eicon-trash"></i>
+						</div>
+						<div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
+					</div>
+					<div class="elementor-control-media__tools">
+						<div class="elementor-control-icon-picker elementor-control-media__tool"><?php echo __( 'Icon Library', 'elementor' ); ?></div>
+						<div class="elementor-control-svg-uploader elementor-control-media__tool"><?php echo __( 'Upload SVG', 'elementor' ); ?></div>
+					</div>
+				</div>
 			</div>
 			<# if ( data.description ) { #>
 			<div class="elementor-control-field-description">{{{ data.description }}}</div>
@@ -95,7 +95,7 @@ class Control_Icons extends Control_Base_Multiple {
 	 * Retrieve the default settings of the Icons control. Used to return the default
 	 * settings while initializing the Icons control.
 	 *
-	 * @since 2.4.0
+	 * @since 2.6.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -103,8 +103,8 @@ class Control_Icons extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-            'classes' => 'elementor-control-media',
-			'dynamic'     => [
+			'classes' => 'elementor-control-media',
+			'dynamic' => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',
 			],

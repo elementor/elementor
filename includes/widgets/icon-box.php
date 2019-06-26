@@ -87,11 +87,15 @@ class Widget_Icon_Box extends Widget_Base {
 		);
 
 		$this->add_control(
-			'icon',
+			'selected_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
-				'default' => 'fa fa-star',
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'default' => [
+					'value' => 'fas fa-star',
+					'library' => 'solid',
+				],
 			]
 		);
 
@@ -107,8 +111,15 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'default' => 'default',
 				'prefix_class' => 'elementor-view-',
-				'condition' => [
-					'icon!' => '',
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'selected_icon[value]',
+							'operator' => '!=',
+							'value' => '',
+						],
+					],
 				],
 			]
 		);
@@ -196,8 +207,15 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-position-',
 				'toggle' => false,
-				'condition' => [
-					'icon!' => '',
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'selected_icon[value]',
+							'operator' => '!=',
+							'value' => '',
+						],
+					],
 				],
 			]
 		);
@@ -229,8 +247,15 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
-				'condition' => [
-					'icon!' => '',
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'selected_icon[value]',
+							'operator' => '!=',
+							'value' => '',
+						],
+					],
 				],
 			]
 		);
@@ -256,7 +281,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'fill: {{VALUE}}; color: {{VALUE}}; border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -272,7 +297,7 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'fill: {{VALUE}}; color: {{VALUE}};',
 				],
 			]
 		);
@@ -294,7 +319,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover' => 'fill: {{VALUE}}; color: {{VALUE}}; border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -310,7 +335,7 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'fill: {{VALUE}}; color: {{VALUE}};',
 				],
 			]
 		);
@@ -614,12 +639,23 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$this->add_inline_editing_attributes( 'title_text', 'none' );
 		$this->add_inline_editing_attributes( 'description_text' );
+		if ( ! $has_icon && ! empty( $settings['selected_icon']['value'] ) ) {
+			$has_icon = true;
+		}
+		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
+		$is_new = empty( $settings['icon'] );
 		?>
 		<div class="elementor-icon-box-wrapper">
-		<?php if ( $has_icon ) : ?>
+			<?php if ( $has_icon ) : ?>
 			<div class="elementor-icon-box-icon">
 				<<?php echo implode( ' ', [ $icon_tag, $icon_attributes, $link_attributes ] ); ?>>
-				<i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i>
+				<?php
+				if ( $is_new || $migrated ) {
+					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
+				} else {
+					?><i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i><?php
+				}
+				?>
 				</<?php echo $icon_tag; ?>>
 			</div>
 			<?php endif; ?>
@@ -647,7 +683,8 @@ class Widget_Icon_Box extends Widget_Base {
 		?>
 		<#
 		var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-			iconTag = link ? 'a' : 'span';
+			iconTag = link ? 'a' : 'span',
+			iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' );
 
 		view.addRenderAttribute( 'description_text', 'class', 'elementor-icon-box-description' );
 
@@ -655,12 +692,16 @@ class Widget_Icon_Box extends Widget_Base {
 		view.addInlineEditingAttributes( 'description_text' );
 		#>
 		<div class="elementor-icon-box-wrapper">
-			<# if ( settings.icon ) { #>
+			<# if ( settings.icon || settings.selected_icon ) { #>
 			<div class="elementor-icon-box-icon">
 				<{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
-				<i class="{{ settings.icon }}" aria-hidden="true"></i>
-			</{{{ iconTag }}}>
-		</div>
+					<# if ( iconHTML.rendered ) { #>
+						{{{ iconHTML.value }}}
+						<# } else { #>
+							<i class="{{ settings.icon }}" aria-hidden="true"></i>
+						<# } #>
+				</{{{ iconTag }}}>
+			</div>
 			<# } #>
 			<div class="elementor-icon-box-content">
 				<{{{ settings.title_size }}} class="elementor-icon-box-title">
