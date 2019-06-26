@@ -64,7 +64,7 @@ var	Manager = function() {
 
 	var updatePanelPageCurrentItem = function() {
 		if ( elementorCommon.route.is( 'panel/history/actions' ) ) {
-			elementorCommon.route.reload( 'panel/history/actions' );
+			elementorCommon.route.refreshContainer( 'panel' );
 		}
 	};
 
