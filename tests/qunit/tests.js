@@ -873,7 +873,7 @@ jQuery( () => {
 
 		elementorCommon.components.register( new Component( { context: self } ) );
 
-		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( commandStatus, 'afterRun' );
 	} );
@@ -915,14 +915,14 @@ jQuery( () => {
 		elementorCommon.components.register( new Component( { context: self } ) );
 
 		// Outside scope.
-		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran outside scope' );
 
 		// Inside scope.
 		elementorCommon.route.to( namespace + '/routeA' );
 
-		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( commandStatus, 'afterRunInScope', 'Shortcut ran inside scope' );
 
@@ -931,7 +931,7 @@ jQuery( () => {
 
 		commandStatus = 'beforeRunInScope';
 
-		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( commandStatus, 'beforeRunInScope', 'Shortcut not ran after close scope' );
 
@@ -965,14 +965,14 @@ jQuery( () => {
 		// Activate the first component.
 		elementorCommon.route.to( namespace + '/routeA' );
 
-		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( secondCommandStatus, 'beforeRun', 'Shortcut with global scope not ran because of low priority' );
 
 		// Close the first component.
 		elementorCommon.components.get( namespace ).close();
 
-		runShortcut( { which: 90 /* z */, ctrlKey: true } );
+		runShortcut( { which: 90 /* z */, ctrlKey: true, metaKey: true } );
 
 		assert.equal( secondCommandStatus, 'afterRun', 'Shortcut with global scope ran because the scoped shortcut is closed' );
 	} );
