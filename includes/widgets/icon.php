@@ -110,7 +110,7 @@ class Widget_Icon extends Widget_Base {
 				'fa4compatibility' => 'icon',
 				'default' => [
 					'value' => 'fas fa-star',
-					'library' => 'solid',
+					'library' => 'fa-solid',
 				],
 			]
 		);
@@ -420,7 +420,7 @@ class Widget_Icon extends Widget_Base {
 		}
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = Icons_Manager::is_migration_allowed();
+		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
@@ -452,7 +452,7 @@ class Widget_Icon extends Widget_Base {
 		#>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<# if ( iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 					{{{ iconHTML.value }}}
 				<# } else { #>
 					<i class="{{ settings.icon }}" aria-hidden="true"></i>

@@ -543,7 +543,7 @@ class Widget_Button extends Widget_Base {
 		] );
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = Icons_Manager::is_migration_allowed();
+		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 
 		$this->add_inline_editing_attributes( 'text', 'none' );
 		?>
