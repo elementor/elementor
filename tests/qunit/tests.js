@@ -478,6 +478,96 @@ jQuery( () => {
 		assert.equal( onAfterStatus, 'afterRoute' );
 	} );
 
+	QUnit.test( 'Route to tab & activate tab', ( assert ) => {
+		const namespace = 'route-to-tab';
+
+		const Component = class extends elementorModules.Component {
+			getNamespace() {
+				return namespace;
+			}
+
+			getTabs() {
+				return {
+					tabA: { title: 'tabA' },
+					tabB: { title: 'tabB' },
+				};
+			}
+
+			getTabsWrapperSelector() {
+				return '#' + namespace;
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		const $fixture = jQuery(
+			'<div id="' + namespace + '">' +
+			'<div class="elementor-component-tab" data-tab="tabA"></div>' +
+			'<div class="elementor-component-tab" data-tab="tabB"></div>' +
+			'</div>'
+		);
+
+		jQuery( 'body' ).append( $fixture );
+
+		elementorCommon.route.to( namespace + '/tabA' );
+
+		assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabA' );
+
+		elementorCommon.route.to( namespace + '/tabB' );
+
+		assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabB' );
+
+		$fixture.remove();
+	} );
+
+	QUnit.test( 'Add tab', ( assert ) => {
+		const namespace = 'add-tab';
+
+		const Component = class extends elementorModules.Component {
+			__construct( args ) {
+				super.__construct( args );
+
+				this.tabs = {
+					tabA: { title: 'tabA' },
+					tabC: { title: 'tabC' },
+				};
+			}
+
+			getNamespace() {
+				return namespace;
+			}
+
+			getTabsWrapperSelector() {
+				return '#' + namespace;
+			}
+		};
+
+		elementorCommon.components.register( new Component( { context: self } ) );
+
+		const component = elementorCommon.components.get( namespace ),
+			newTabIndex = 1;
+
+		component.addTab( 'tabB', {}, newTabIndex );
+
+		const $fixture = jQuery(
+			'<div id="' + namespace + '"></div>'
+		);
+
+		jQuery.each( component.getTabs(), ( tab, args ) => {
+			$fixture.append( '<div class="elementor-component-tab" data-tab="' + tab + '"></div>' );
+		} );
+
+		jQuery( 'body' ).append( $fixture );
+
+		elementorCommon.route.to( namespace + '/tabB' );
+
+		assert.equal( $fixture.find( '.elementor-active' ).data( 'tab' ), 'tabB' );
+
+		assert.equal( $fixture.find( '[data-tab=tabB]' ).index(), newTabIndex );
+
+		$fixture.remove();
+	} );
+
 	QUnit.test( 'Check if route.to is activate the component', ( assert ) => {
 		const namespace = 'route-activate-component';
 
