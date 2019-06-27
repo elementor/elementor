@@ -134,7 +134,7 @@ class Widget_Icon_List extends Widget_Base {
 				'label_block' => true,
 				'default' => [
 					'value' => 'fas fa-check',
-					'library' => 'fa5-solid',
+					'library' => 'fa-solid',
 				],
 				'fa4compatibility' => 'icon',
 			]
@@ -164,21 +164,21 @@ class Widget_Icon_List extends Widget_Base {
 						'text' => __( 'List Item #1', 'elementor' ),
 						'selected_icon' => [
 							'value' => 'fas fa-check',
-							'library' => 'fa5-solid',
+							'library' => 'fa-solid',
 						],
 					],
 					[
 						'text' => __( 'List Item #2', 'elementor' ),
 						'selected_icon' => [
 							'value' => 'fas fa-times',
-							'library' => 'fa5-solid',
+							'library' => 'fa-solid',
 						],
 					],
 					[
 						'text' => __( 'List Item #3', 'elementor' ),
 						'selected_icon' => [
 							'value' => 'fas fa-dot-circle',
-							'library' => 'fa5-solid',
+							'library' => 'fa-solid',
 						],
 					],
 				],
