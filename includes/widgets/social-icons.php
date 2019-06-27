@@ -487,7 +487,7 @@ class Widget_Social_Icons extends Widget_Base {
 					$social = str_replace( 'fa fa-', '', $item['social'] );
 				}
 				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
-				$is_new = empty( $item['social'] );
+				$is_new = Icons_Manager::is_migration_allowed();
 
 				if ( ( $is_new || $migrated ) && 'svg' !== $item['social_icon']['library'] ) {
 					$social = explode( ' ', $item['social_icon']['value'], 2 );
