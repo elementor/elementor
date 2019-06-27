@@ -128,7 +128,7 @@ class Control_Media extends Control_Base_Multiple {
 	 */
 	public function content_template() {
 		?>
-		<div class="elementor-control-field">
+		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
 				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
@@ -178,7 +178,6 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'label_block' => true,
 			'media_type' => 'image',
-			'classes' => 'elementor-control-media',
 			'dynamic' => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',
