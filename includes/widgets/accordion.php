@@ -451,6 +451,13 @@ class Widget_Accordion extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
+
+		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+			// add old default
+			$settings['icon'] = 'fa fa-plus';
+			$settings['icon_active'] = 'fa fa-minus';
+		}
+
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
 		$id_int = substr( $this->get_id_int(), 0, 3 );
