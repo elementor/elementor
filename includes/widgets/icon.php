@@ -452,7 +452,7 @@ class Widget_Icon extends Widget_Base {
 		#>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<# if ( iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 					{{{ iconHTML.value }}}
 				<# } else { #>
 					<i class="{{ settings.icon }}" aria-hidden="true"></i>
