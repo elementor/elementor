@@ -110,7 +110,7 @@ class Widget_Icon extends Widget_Base {
 				'fa4compatibility' => 'icon',
 				'default' => [
 					'value' => 'fas fa-star',
-					'library' => 'fa5-solid',
+					'library' => 'fa-solid',
 				],
 			]
 		);

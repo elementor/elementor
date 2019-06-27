@@ -97,7 +97,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'label_block' => true,
 				'default' => [
 					'value' => 'fab fa-wordpress',
-					'library' => 'fa5-brands',
+					'library' => 'fa-brands',
 				],
 				'recommended' => [
 					'brands' => [
@@ -188,19 +188,19 @@ class Widget_Social_Icons extends Widget_Base {
 					[
 						'social_icon' => [
 							'value' => 'fab fa-facebook',
-							'library' => 'fa5-brands',
+							'library' => 'fa-brands',
 						],
 					],
 					[
 						'social_icon' => [
 							'value' => 'fab fa-twitter',
-							'library' => 'fa5-brands',
+							'library' => 'fa-brands',
 						],
 					],
 					[
 						'social_icon' => [
 							'value' => 'fab fa-google-plus',
-							'library' => 'fa5-brands',
+							'library' => 'fa-brands',
 						],
 					],
 				],

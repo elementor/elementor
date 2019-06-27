@@ -147,7 +147,7 @@ class Widget_Toggle extends Widget_Base {
 				'fa4compatibility' => 'icon',
 				'default' => [
 					'value' => 'fas fa-caret' . ( is_rtl() ? '-left' : '-right' ),
-					'library' => 'fa5-solid',
+					'library' => 'fa-solid',
 				],
 			]
 		);
@@ -160,7 +160,7 @@ class Widget_Toggle extends Widget_Base {
 				'fa4compatibility' => 'icon_active',
 				'default' => [
 					'value' => 'fas fa-caret-up',
-					'library' => 'fa5-solid',
+					'library' => 'fa-solid',
 				],
 				'condition' => [
 					'selected_icon[value]!' => '',
