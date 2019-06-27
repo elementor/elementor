@@ -187,7 +187,7 @@ helpers = {
 		// every thing else is converted to solid
 		return {
 			value: 'fas' + fa4Value.replace( 'fa ', ' ' ),
-			library: 'solid',
+			library: 'fa-solid',
 		};
 	},
 
@@ -338,7 +338,7 @@ helpers = {
 
 			if ( hasIconsControl ) {
 				const onConfirm = () => {
-					window.location.href = ElementorConfig.tools_page_link + '#tab-fontawesome4_migration';
+					window.location.href = ElementorConfig.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
 				};
 				elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
