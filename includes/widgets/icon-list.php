@@ -630,7 +630,7 @@ class Widget_Icon_List extends Widget_Base {
 							<#
 								iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.selected_icon, { 'aria-hidden': true }, 'i', 'object' );
 								migrated[ index ] = elementor.helpers.isIconMigrated( item, 'selected_icon' );
-								if ( iconsHTML[ index ].rendered && ( ! item.icon || migrated[ index ] ) ) { #>
+								if ( iconsHTML[ index ] && iconsHTML[ index ].rendered && ( ! item.icon || migrated[ index ] ) ) { #>
 									{{{ iconsHTML[ index ].value }}}
 								<# } else { #>
 									<i class="{{ item.icon }}" aria-hidden="true"></i>

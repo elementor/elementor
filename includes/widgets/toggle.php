@@ -579,7 +579,7 @@ class Widget_Toggle extends Widget_Base {
 						<{{{ settings.title_html_tag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 							<# if ( settings.icon || settings.selected_icon ) { #>
 							<span class="elementor-toggle-icon elementor-toggle-icon-{{ settings.icon_align }}" aria-hidden="true">
-								<# if ( iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+								<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 									<span class="elementor-toggle-icon-closed">{{{ iconHTML.value }}}</span>
 									<span class="elementor-toggle-icon-opened">{{{ iconActiveHTML.value }}}</span>
 								<# } else { #>

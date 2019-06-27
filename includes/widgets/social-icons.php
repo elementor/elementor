@@ -100,7 +100,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'library' => 'fa-brands',
 				],
 				'recommended' => [
-					'brands' => [
+					'fa-brands' => [
 						'android',
 						'apple',
 						'behance',
@@ -549,7 +549,7 @@ class Widget_Social_Icons extends Widget_Base {
 					<span class="elementor-screen-only">{{{ social }}}</span>
 					<#
 						iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );
-						if ( ( ! item.social || migrated ) && iconsHTML[ index ].rendered ) { #>
+						if ( ( ! item.social || migrated ) && iconsHTML[ index ] && iconsHTML[ index ].rendered ) { #>
 							{{{ iconsHTML[ index ].value }}}
 						<# } else { #>
 							<i class="{{ item.social }}"></i>
