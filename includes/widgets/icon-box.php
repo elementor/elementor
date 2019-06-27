@@ -649,7 +649,7 @@ class Widget_Icon_Box extends Widget_Base {
 			$has_icon = true;
 		}
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed();
+		$is_new = Icons_Manager::is_migration_allowed();
 		?>
 		<div class="elementor-icon-box-wrapper">
 			<?php if ( $has_icon ) : ?>
@@ -702,7 +702,7 @@ class Widget_Icon_Box extends Widget_Base {
 			<# if ( settings.icon || settings.selected_icon ) { #>
 			<div class="elementor-icon-box-icon">
 				<{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
-					<# if ( iconHTML.rendered && ( ! settings.icon || migrated ) { #>
+					<# if ( iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 						{{{ iconHTML.value }}}
 						<# } else { #>
 							<i class="{{ settings.icon }}" aria-hidden="true"></i>
