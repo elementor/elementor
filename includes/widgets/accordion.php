@@ -150,7 +150,7 @@ class Widget_Accordion extends Widget_Base {
 				'fa4compatibility' => 'icon',
 				'default' => [
 					'value' => 'fas fa-plus',
-					'library' => 'solid',
+					'library' => 'fa5-solid',
 				],
 			]
 		);
@@ -163,7 +163,7 @@ class Widget_Accordion extends Widget_Base {
 				'fa4compatibility' => 'icon_active',
 				'default' => [
 					'value' => 'fas fa-minus',
-					'library' => 'solid',
+					'library' => 'fa5-solid',
 				],
 				'condition' => [
 					'selected_icon[value]!' => '',
