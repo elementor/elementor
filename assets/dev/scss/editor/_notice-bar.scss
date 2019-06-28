@@ -45,3 +45,10 @@
 		}
 	}
 }
+
+body:not(.elementor-device-desktop) {
+
+	#elementor-notice-bar {
+		display: none;
+	}
+}
