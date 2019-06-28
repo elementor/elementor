@@ -245,7 +245,7 @@ class Icons_Manager {
 					'label'      => __( 'Font Awesome Upgrade', 'elementor' ),
 					'field_args' => [
 						'type' => 'raw_html',
-						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button elementor-button-spinner" id="elementor_upgrade_fa_button">%s</span>',
+						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
 							__( 'Upgrade To Font Awesome 5', 'elementor' )
