@@ -147,6 +147,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'tumblr',
 						'twitch',
 						'twitter',
+						'viber',
 						'vimeo',
 						'vk',
 						'weibo',
