@@ -154,11 +154,9 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 	},
 
 	onReady: function() {
-		var self = this;
+		const $editor = jQuery( elementor.config.wp_editor.replace( /elementorwpeditor/g, this.editorID ).replace( '%%EDITORCONTENT%%', this.getControlValue() ) );
 
-		var $editor = jQuery( elementor.config.wp_editor.replace( /elementorwpeditor/g, self.editorID ).replace( '%%EDITORCONTENT%%', self.getControlValue() ) );
-
-		self.ui.inputWrapper.html( $editor );
+		this.ui.inputWrapper.html( $editor );
 
 		setTimeout( () => {
 			if ( ! this.isDestroyed ) {
