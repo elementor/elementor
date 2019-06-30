@@ -265,7 +265,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<div class="elementor-dynamic-cover__title" title="{{{ title + ' ' + content }}}">{{{ title + ' ' + content }}}</div>
 	<# if ( isRemovable ) { #>
 		<div class="elementor-dynamic-cover__remove">
-			<i class="eion-close-circle"></i>
+			<i class="eicon-close-circle"></i>
 		</div>
 	<# } #>
 </script>

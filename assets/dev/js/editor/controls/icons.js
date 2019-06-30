@@ -18,7 +18,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	enqueueIconFonts( iconType ) {
 		const iconSetting = elementor.helpers.getIconLibrarySettings( iconType );
-		if ( false === iconSetting ) {
+		if ( false === iconSetting || ! this.isMigrationAllowed() ) {
 			return;
 		}
 
@@ -38,6 +38,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	ui() {
 		const ui = super.ui();
 
+		ui.controlMedia = '.elementor-control-media';
 		ui.svgUploader = '.elementor-control-svg-uploader';
 		ui.iconPickers = '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button';
 		ui.deleteButton = '.elementor-control-media__remove';
@@ -61,7 +62,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			valueToMigrate = this.getValueToMigrate();
 
 		if ( ! this.isMigrationAllowed() ) {
-			return value;
+			return valueToMigrate;
 		}
 
 		// Bail if no migration flag or no value to migrate
@@ -122,7 +123,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			this.ui.previewContainer[ 0 ].addEventListener( 'click', ( event ) => {
 				event.stopPropagation();
 				const onConfirm = () => {
-					window.location.href = ElementorConfig.tools_page_link + '#tab-fontawesome4_migration';
+					window.location.href = ElementorConfig.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
 				};
 				const enableMigrationDialog = elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
@@ -282,7 +283,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			iconType = '';
 		}
 
-		this.$el.toggleClass( 'elementor-media-empty', ! iconValue );
+		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! iconValue );
 
 		if ( ! iconValue ) {
 			this.ui.previewPlaceholder.html( '' );
