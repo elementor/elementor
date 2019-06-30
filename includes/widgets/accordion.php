@@ -150,7 +150,7 @@ class Widget_Accordion extends Widget_Base {
 				'fa4compatibility' => 'icon',
 				'default' => [
 					'value' => 'fas fa-plus',
-					'library' => 'solid',
+					'library' => 'fa-solid',
 				],
 			]
 		);
@@ -163,7 +163,7 @@ class Widget_Accordion extends Widget_Base {
 				'fa4compatibility' => 'icon_active',
 				'default' => [
 					'value' => 'fas fa-minus',
-					'library' => 'solid',
+					'library' => 'fa-solid',
 				],
 				'condition' => [
 					'selected_icon[value]!' => '',
@@ -451,7 +451,14 @@ class Widget_Accordion extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = Icons_Manager::is_migration_allowed();
+
+		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+			// add old default
+			$settings['icon'] = 'fa fa-plus';
+			$settings['icon_active'] = 'fa fa-minus';
+		}
+
+		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
@@ -551,7 +558,7 @@ class Widget_Accordion extends Widget_Base {
 						<{{{ settings.title_html_tag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 							<# if ( settings.icon || settings.selected_icon ) { #>
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}" aria-hidden="true">
-								<# if ( iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+								<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 									<span class="elementor-accordion-icon-closed">{{{ iconHTML.value }}}</span>
 									<span class="elementor-accordion-icon-opened">{{{ iconActiveHTML.value }}}</span>
 								<# } else { #>

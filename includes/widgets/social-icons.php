@@ -97,10 +97,10 @@ class Widget_Social_Icons extends Widget_Base {
 				'label_block' => true,
 				'default' => [
 					'value' => 'fab fa-wordpress',
-					'library' => 'brands',
+					'library' => 'fa-brands',
 				],
 				'recommended' => [
-					'brands' => [
+					'fa-brands' => [
 						'android',
 						'apple',
 						'behance',
@@ -147,6 +147,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'tumblr',
 						'twitch',
 						'twitter',
+						'viber',
 						'vimeo',
 						'vk',
 						'weibo',
@@ -188,19 +189,19 @@ class Widget_Social_Icons extends Widget_Base {
 					[
 						'social_icon' => [
 							'value' => 'fab fa-facebook',
-							'library' => 'brands',
+							'library' => 'fa-brands',
 						],
 					],
 					[
 						'social_icon' => [
 							'value' => 'fab fa-twitter',
-							'library' => 'brands',
+							'library' => 'fa-brands',
 						],
 					],
 					[
 						'social_icon' => [
 							'value' => 'fab fa-google-plus',
-							'library' => 'brands',
+							'library' => 'fa-brands',
 						],
 					],
 				],
@@ -487,7 +488,7 @@ class Widget_Social_Icons extends Widget_Base {
 					$social = str_replace( 'fa fa-', '', $item['social'] );
 				}
 				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
-				$is_new = Icons_Manager::is_migration_allowed();
+				$is_new = empty( $item['social'] ) && Icons_Manager::is_migration_allowed();
 
 				if ( ( $is_new || $migrated ) && 'svg' !== $item['social_icon']['library'] ) {
 					$social = explode( ' ', $item['social_icon']['value'], 2 );
@@ -549,7 +550,7 @@ class Widget_Social_Icons extends Widget_Base {
 					<span class="elementor-screen-only">{{{ social }}}</span>
 					<#
 						iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );
-						if ( ( ! item.social || migrated ) && iconsHTML[ index ].rendered ) { #>
+						if ( ( ! item.social || migrated ) && iconsHTML[ index ] && iconsHTML[ index ].rendered ) { #>
 							{{{ iconsHTML[ index ].value }}}
 						<# } else { #>
 							<i class="{{ item.social }}"></i>
