@@ -101,29 +101,10 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	addPanelMenuItem: function() {
-		var menuSettings = this.getSettings( 'panelPage.menu' );
-
-		if ( ! menuSettings ) {
-			return;
-		}
-
-		var menuItemOptions = {
-			icon: menuSettings.icon,
-			title: this.getSettings( 'panelPage.title' ),
-			type: 'page',
-			pageName: this.getSettings( 'name' ) + '_settings',
-		};
-
-		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
-	},
-
 	onInit: function() {
 		this.initModel();
 
 		this.initControlsCSSParser();
-
-		this.addPanelMenuItem();
 
 		this.debounceSave = _.debounce( this.save, 3000 );
 
@@ -154,7 +135,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.addPanelPage();
 
 		if ( ! elementor.userCan( 'design' ) ) {
-			elementor.panel.currentView.setPage( 'page_settings' );
+			elementorCommon.route.to( 'panel/page-settings/settings' );
 		}
 	},
 } );
