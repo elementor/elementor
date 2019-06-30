@@ -242,6 +242,7 @@ class Post extends Document {
 	protected function get_remote_library_config() {
 		$config = parent::get_remote_library_config();
 
+		$config['category'] = '';
 		$config['type'] = 'page';
 
 		return $config;

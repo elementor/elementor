@@ -1,3 +1,4 @@
+import Component from './component';
 var HistoryPageView = require( './panel-page' ),
 	Manager;
 
@@ -13,6 +14,8 @@ Manager = function() {
 
 	var init = function() {
 		elementor.on( 'preview:loaded', addPanelPage );
+
+		elementorCommon.components.register( new Component( { context: self } ) );
 
 		self.history = require( './history/manager' );
 

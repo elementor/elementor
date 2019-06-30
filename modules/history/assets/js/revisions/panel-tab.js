@@ -99,6 +99,10 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	navigate: function( reverse ) {
+		if ( ! this.currentPreviewId || ! this.currentPreviewItem || this.children.length <= 1 ) {
+			return;
+		}
+
 		var currentPreviewItemIndex = this.collection.indexOf( this.currentPreviewItem.model ),
 			requiredIndex = reverse ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
 

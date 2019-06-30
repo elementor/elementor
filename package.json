@@ -7,7 +7,8 @@
 	"homepage": "https://elementor.com/",
 	"scripts": {
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
-		"test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit"
+		"test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
+		"test:qunit": "grunt qunit"
 	},
 	"devDependencies": {
 		"@babel/core": "7.0.0",
@@ -35,6 +36,7 @@
 		"grunt-contrib-clean": "~1.1.0",
 		"grunt-contrib-copy": "~1.0.0",
 		"grunt-contrib-sass": "~1.0.0",
+		"grunt-contrib-qunit": "^2.0.0",
 		"grunt-contrib-watch": "^1.1.0",
 		"grunt-postcss": "~0.9.0",
 		"grunt-release": "~0.14.0",

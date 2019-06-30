@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<i class="eicon-loading eicon-animation-spin"></i>
 	</div>
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
-		<div id="elementor-panel-elements-navigation-all" class="elementor-panel-navigation-tab elementor-active" data-view="categories"><?php echo __( 'Elements', 'elementor' ); ?></div>
-		<div id="elementor-panel-elements-navigation-global" class="elementor-panel-navigation-tab" data-view="global"><?php echo __( 'Global', 'elementor' ); ?></div>
+		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="categories"><?php echo __( 'Elements', 'elementor' ); ?></div>
+		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo __( 'Global', 'elementor' ); ?></div>
 	</div>
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>

@@ -1,6 +1,10 @@
 var EditModeItemView = require( 'elementor-regions/panel/edit-mode' ),
 	PanelLayoutView;
 
+import PanelComponent from './component';
+import ElementsComponent from './pages/elements/component';
+import EditorComponent from './pages/editor/component';
+
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
 
@@ -17,10 +21,12 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	childEvents: {
 		'click:add': function() {
-			this.setPage( 'elements' );
+			elementorCommon.route.to( 'panel/elements/categories' );
 		},
 		'editor:destroy': function() {
-			this.setPage( 'elements', null, { autoFocusSearch: false } );
+			elementorCommon.route.to( 'panel/elements/categories', {
+				autoFocusSearch: false,
+			} );
 		},
 	},
 
@@ -31,6 +37,12 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	perfectScrollbar: null,
 
 	initialize: function() {
+		elementorCommon.components.register( new PanelComponent( { context: this } ) );
+
+		elementorCommon.components.register( new ElementsComponent( { context: this } ) );
+
+		elementorCommon.components.register( new EditorComponent( { context: this } ) );
+
 		this.initPages();
 	},
 
@@ -144,22 +156,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		this
 			.trigger( 'set:page', this.currentPageView )
 			.trigger( 'set:page:' + page, this.currentPageView );
-	},
 
-	openEditor: function( model, view ) {
-		this.setPage( 'editor', elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ), {
-			model: model,
-			controls: elementor.getElementControls( model ),
-			editedElementView: view,
-		} );
-
-		const action = 'panel/open_editor/' + model.get( 'elType' );
-
-		// Example: panel/open_editor/widget
-		elementor.hooks.doAction( action, this, model, view );
-
-		// Example: panel/open_editor/widget/heading
-		elementor.hooks.doAction( action + '/' + model.get( 'widgetType' ), this, model, view );
+		return this.currentPageView;
 	},
 
 	onBeforeShow: function() {
@@ -182,9 +180,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 			.on( 'before:show', this.onEditorBeforeShow.bind( this ) )
 			.on( 'empty', this.onEditorEmpty.bind( this ) )
 			.on( 'show', this.updateScrollbar.bind( this ) );
-
-		// Set default page to elements
-		this.setPage( 'elements' );
 	},
 
 	onEditorBeforeShow: function() {
