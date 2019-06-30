@@ -38,6 +38,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	ui() {
 		const ui = super.ui();
 
+		ui.controlMedia = '.elementor-control-media';
 		ui.svgUploader = '.elementor-control-svg-uploader';
 		ui.iconPickers = '.elementor-control-icon-picker, .elementor-control-media__preview, .elementor-control-media-upload-button';
 		ui.deleteButton = '.elementor-control-media__remove';
@@ -282,7 +283,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			iconType = '';
 		}
 
-		this.$el.toggleClass( 'elementor-media-empty', ! iconValue );
+		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! iconValue );
 
 		if ( ! iconValue ) {
 			this.ui.previewPlaceholder.html( '' );
