@@ -179,7 +179,7 @@
 							.done( function( response ) {
 								$updateButton.removeClass( 'loading' ).addClass( 'success' );
 								$( '#elementor_upgrade_fa_button' ).parent().append( response.data.message );
-								const redirectTo = ( location.search.split( 'redirect_to=' ) [ 1 ] || '' ).split( '&' )[ 0 ];
+								const redirectTo = ( location.search.split( 'redirect_to=' )[ 1 ] || '' ).split( '&' )[ 0 ];
 								if ( redirectTo ) {
 									location.href = decodeURIComponent( redirectTo );
 									return;
