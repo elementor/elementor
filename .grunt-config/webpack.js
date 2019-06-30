@@ -77,6 +77,7 @@ const entry = {
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
+	'qunit-tests': path.resolve( __dirname, '../tests/qunit/tests.js' ),
 };
 
 const webpackConfig = {
@@ -123,9 +124,6 @@ for ( const entryPoint in entry ) {
 	webpackProductionConfig.entry[ entryPoint ] = entry[ entryPoint ];
 	webpackProductionConfig.entry[ entryPoint + '.min' ] = entry[ entryPoint ];
 }
-
-// Qunit test is for dev mode only.
-webpackConfig.entry['qunit-tests'] = path.resolve( __dirname, '../tests/qunit/tests.js' );
 
 const gruntWebpackConfig = {
 	development: webpackConfig,
