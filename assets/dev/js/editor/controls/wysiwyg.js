@@ -47,6 +47,10 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 
 		// Wait a cycle before initializing the editors.
 		_.defer( function() {
+			if ( self.isDestroyed ) {
+				return;
+			}
+
 			// Initialize QuickTags, and set as the default mode.
 			quicktags( {
 				buttons: 'strong,em,del,link,img,close',
@@ -156,8 +160,10 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 
 		self.ui.inputWrapper.html( $editor );
 
-		setTimeout( function() {
-			self.editor.on( 'keyup change undo redo SetContent', self.saveEditor.bind( self ) );
+		setTimeout( () => {
+			if ( ! this.isDestroyed ) {
+				this.editor.on( 'keyup change undo redo SetContent', this.saveEditor.bind( this ) );
+			}
 		}, 100 );
 	},
 
