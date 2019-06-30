@@ -147,7 +147,7 @@ class Widget_Toggle extends Widget_Base {
 				'fa4compatibility' => 'icon',
 				'default' => [
 					'value' => 'fas fa-caret' . ( is_rtl() ? '-left' : '-right' ),
-					'library' => 'solid',
+					'library' => 'fa-solid',
 				],
 			]
 		);
@@ -160,7 +160,7 @@ class Widget_Toggle extends Widget_Base {
 				'fa4compatibility' => 'icon_active',
 				'default' => [
 					'value' => 'fas fa-caret-up',
-					'library' => 'solid',
+					'library' => 'fa-solid',
 				],
 				'condition' => [
 					'selected_icon[value]!' => '',
@@ -473,7 +473,14 @@ class Widget_Toggle extends Widget_Base {
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] );
+
+		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+			// add old default
+			$settings['icon'] = 'fa fa-caret' . ( is_rtl() ? '-left' : '-right' );
+			$settings['icon_active'] = 'fa fa-caret-up';
+		}
+
+		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
 
 		?>
@@ -542,7 +549,8 @@ class Widget_Toggle extends Widget_Base {
 			if ( settings.tabs ) {
 				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
 					iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, {}, 'i' , 'object' ),
-					iconActiveHTML = elementor.helpers.renderIcon( view, settings.selected_active_icon, {}, 'i' , 'object' );
+					iconActiveHTML = elementor.helpers.renderIcon( view, settings.selected_active_icon, {}, 'i' , 'object' ),
+					migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 
 				_.each( settings.tabs, function( item, index ) {
 					var tabCount = index + 1,
@@ -571,7 +579,7 @@ class Widget_Toggle extends Widget_Base {
 						<{{{ settings.title_html_tag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 							<# if ( settings.icon || settings.selected_icon ) { #>
 							<span class="elementor-toggle-icon elementor-toggle-icon-{{ settings.icon_align }}" aria-hidden="true">
-								<# if ( iconHTML.rendered && ! settings.icon ) { #>
+								<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 									<span class="elementor-toggle-icon-closed">{{{ iconHTML.value }}}</span>
 									<span class="elementor-toggle-icon-opened">{{{ iconActiveHTML.value }}}</span>
 								<# } else { #>

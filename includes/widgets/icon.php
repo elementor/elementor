@@ -110,7 +110,7 @@ class Widget_Icon extends Widget_Base {
 				'fa4compatibility' => 'icon',
 				'default' => [
 					'value' => 'fas fa-star',
-					'library' => 'solid',
+					'library' => 'fa-solid',
 				],
 			]
 		);
@@ -409,13 +409,18 @@ class Widget_Icon extends Widget_Base {
 			}
 		}
 
+		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+			// add old default
+			$settings['icon'] = 'fa fa-star';
+		}
+
 		if ( ! empty( $settings['icon'] ) ) {
 			$this->add_render_attribute( 'icon', 'class', $settings['icon'] );
 			$this->add_render_attribute( 'icon', 'aria-hidden', 'true' );
 		}
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] );
+		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
@@ -442,11 +447,12 @@ class Widget_Icon extends Widget_Base {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
 				iconTag = link ? 'a' : 'div';
 		#>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<# if ( iconHTML.rendered && ! settings.icon ) { #>
+				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 					{{{ iconHTML.value }}}
 				<# } else { #>
 					<i class="{{ settings.icon }}" aria-hidden="true"></i>
