@@ -1,42 +1,54 @@
 workflows:
   version: 2
-  tests:
+  PHP-JS-Lints:
+    jobs:
+      - php-js-lints
+  PHPUnit-PHP5.4:
     jobs:
     - php54-wp51-build
     - php54-wp50-build
     - php54-wp49-build
     - php54-wp48-build
     - php54-wp47-build
+  PHPUnit-PHP5.5:
+    jobs:
     - php55-wp51-build
     - php55-wp50-build
     - php55-wp49-build
     - php55-wp48-build
     - php55-wp47-build
+  PHPUnit-PHP5.6:
+    jobs:
     - php56-wp-latest-build
     - php56-wp51-build
     - php56-wp50-build
     - php56-wp49-build
     - php56-wp48-build
     - php56-wp47-build
+  PHPUnit-PHP7.0:
+    jobs:
     - php70-wp-latest-build
     - php70-wp51-build
     - php70-wp50-build
     - php70-wp49-build
     - php70-wp48-build
     - php70-wp47-build
+  PHPUnit-PHP7.1:
+    jobs:
     - php71-wp-latest-build
     - php71-wp51-build
     - php71-wp50-build
     - php71-wp49-build
     - php71-wp48-build
     - php71-wp47-build
+  PHPUnit-PHP7.2:
+    jobs:
     - php72-wp-latest-build
     - php72-wp51-build
     - php72-wp50-build
     - php72-wp49-build
     - php72-wp48-build
     - php72-wp47-build
-    - php-js-lints
 
 version: 2
 
