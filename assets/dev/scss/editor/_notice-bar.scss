@@ -12,6 +12,10 @@
 	&__message {
 		@include padding-start(15px);
 		flex-grow: 1;
+
+		a {
+			text-decoration: underline;
+		}
 	}
 
 	&__action {
@@ -39,5 +43,12 @@
 		&:hover {
 			color: $gray-light;
 		}
+	}
+}
+
+body:not(.elementor-device-desktop) {
+
+	#elementor-notice-bar {
+		display: none;
 	}
 }

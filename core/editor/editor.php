@@ -703,14 +703,15 @@ class Editor {
 				'keyboard_shortcuts' => __( 'Keyboard Shortcuts', 'elementor' ),
 
 				// Deprecated Control
-				'deprecated_notice' => __( 'The <strong>{{{ widget }}}</strong> widget has been deprecated since {{{ plugin }}} {{{ since }}}.', 'elementor' ),
-				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>{{{ replacement }}}</strong>.', 'elementor' ),
-				'deprecated_notice_last' => __( 'Note that {{{ widget }}} will be completely removed once {{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
+				'deprecated_notice' => __( 'The <strong>%1$s</strong> widget has been deprecated since %2$s %3$s.', 'elementor' ),
+				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>%1$s</strong>.', 'elementor' ),
+				'deprecated_notice_last' => __( 'Note that %1$s will be completely removed once %2$s %3$s is released.', 'elementor' ),
 
 				//Preview Debug
 				'preview_debug_link_text' => __( 'Click here for preview debug', 'elementor' ),
 
 				'icon_library' => __( 'Icon Library', 'elementor' ),
+				'custom_positioning' => __( 'Custom Positioning', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),

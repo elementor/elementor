@@ -94,7 +94,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'fa4compatibility' => 'icon',
 				'default' => [
 					'value' => 'fas fa-star',
-					'library' => 'solid',
+					'library' => 'fa-solid',
 				],
 			]
 		);
@@ -136,7 +136,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'default' => 'circle',
 				'condition' => [
 					'view!' => 'default',
-					'icon!' => '',
+					'selected_icon[value]!' => '',
 				],
 				'prefix_class' => 'elementor-shape-',
 			]
@@ -612,6 +612,12 @@ class Widget_Icon_Box extends Widget_Base {
 		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $settings['hover_animation'] ] );
 
 		$icon_tag = 'span';
+
+		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+			// add old default
+			$settings['icon'] = 'fa fa-star';
+		}
+
 		$has_icon = ! empty( $settings['icon'] );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
@@ -643,7 +649,7 @@ class Widget_Icon_Box extends Widget_Base {
 			$has_icon = true;
 		}
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] );
+		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 		?>
 		<div class="elementor-icon-box-wrapper">
 			<?php if ( $has_icon ) : ?>
@@ -684,7 +690,8 @@ class Widget_Icon_Box extends Widget_Base {
 		<#
 		var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 			iconTag = link ? 'a' : 'span',
-			iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' );
+			iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 
 		view.addRenderAttribute( 'description_text', 'class', 'elementor-icon-box-description' );
 
@@ -695,7 +702,7 @@ class Widget_Icon_Box extends Widget_Base {
 			<# if ( settings.icon || settings.selected_icon ) { #>
 			<div class="elementor-icon-box-icon">
 				<{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
-					<# if ( iconHTML.rendered ) { #>
+					<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 						{{{ iconHTML.value }}}
 						<# } else { #>
 							<i class="{{ settings.icon }}" aria-hidden="true"></i>

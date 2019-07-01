@@ -45,12 +45,12 @@ class Control_Deprecated_Notice extends Base_UI_Control {
 		<span class="elementor-control-title">{{{ data.label }}}</span>
 		<#
 		}
-		let notice = elementor.compileTemplate( elementor.translate('deprecated_notice'), data );
+		let notice = elementor.translate( 'deprecated_notice', [ data.widget, data.plugin, data.since ] );
 		if ( data.replacement ) {
-			notice += '<br>' + elementor.compileTemplate( elementor.translate('deprecated_notice_replacement'), data );
+			notice += '<br>' + elementor.translate( 'deprecated_notice_replacement', [ data.replacement ] );
 		}
 		if ( data.last ) {
-			notice += '<br>' + elementor.compileTemplate( elementor.translate('deprecated_notice_last'), data );
+			notice += '<br>' + elementor.translate( 'deprecated_notice_last', [ data.widget, data.plugin, data.last ] );
 		}
 		#>
 		<div class="elementor-control-deprecated-notice elementor-panel-alert elementor-panel-alert-warning">{{{ notice }}}</div>

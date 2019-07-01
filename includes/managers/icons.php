@@ -45,38 +45,38 @@ class Icons_Manager {
 	 */
 	private static function init_tabs() {
 		self::$tabs = apply_filters( 'elementor/icons_manager/native', [
-			'regular' => [
-				'name' => 'regular',
+			'fa-regular' => [
+				'name' => 'fa-regular',
 				'label' => __( 'Font Awesome - Regular', 'elementor' ),
-				'url' => self::get_asset_url( 'regular' ),
-				'enqueue' => [ self::get_asset_url( 'fontawesome' ) ],
+				'url' => self::get_fa_asset_url( 'regular' ),
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fab fa-font-awesome-alt',
 				'ver' => '5.9.0',
-				'fetchJson' => self::get_asset_url( 'regular', 'json', false ),
+				'fetchJson' => self::get_fa_asset_url( 'regular', 'json', false ),
 			],
-			'solid' => [
-				'name' => 'solid',
+			'fa-solid' => [
+				'name' => 'fa-solid',
 				'label' => __( 'Font Awesome - Solid', 'elementor' ),
-				'url' => self::get_asset_url( 'solid' ),
-				'enqueue' => [ self::get_asset_url( 'fontawesome' ) ],
+				'url' => self::get_fa_asset_url( 'solid' ),
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fab fa-font-awesome',
 				'ver' => '5.9.0',
-				'fetchJson' => self::get_asset_url( 'solid', 'json', false ),
+				'fetchJson' => self::get_fa_asset_url( 'solid', 'json', false ),
 			],
-			'brands' => [
-				'name' => 'brands',
+			'fa-brands' => [
+				'name' => 'fa-brands',
 				'label' => __( 'Font Awesome - Brands', 'elementor' ),
-				'url' => self::get_asset_url( 'brands' ),
-				'enqueue' => [ self::get_asset_url( 'fontawesome' ) ],
+				'url' => self::get_fa_asset_url( 'brands' ),
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fab fa-font-awesome-flag',
 				'ver' => '5.9.0',
-				'fetchJson' => self::get_asset_url( 'brands', 'json', false ),
+				'fetchJson' => self::get_fa_asset_url( 'brands', 'json', false ),
 			],
 		] );
 	}
@@ -96,25 +96,25 @@ class Icons_Manager {
 	public static function enqueue_shim() {
 		wp_enqueue_script(
 			'font-awesome-4-shim',
-			self::get_asset_url( 'v4-shims', 'js' ),
+			self::get_fa_asset_url( 'v4-shims', 'js' ),
 			[],
 			ELEMENTOR_VERSION
 		);
 		wp_enqueue_style(
 			'font-awesome-5-all',
-			self::get_asset_url( 'all' ),
+			self::get_fa_asset_url( 'all' ),
 			[],
 			ELEMENTOR_VERSION
 		);
 		wp_enqueue_style(
 			'font-awesome-4-shim',
-			self::get_asset_url( 'v4-shims' ),
+			self::get_fa_asset_url( 'v4-shims' ),
 			[],
 			ELEMENTOR_VERSION
 		);
 	}
 
-	private static function get_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
+	private static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
 		static $is_test_mode = null;
 		if ( null === $is_test_mode ) {
 			$is_test_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
@@ -245,7 +245,7 @@ class Icons_Manager {
 					'label'      => __( 'Font Awesome Upgrade', 'elementor' ),
 					'field_args' => [
 						'type' => 'raw_html',
-						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button elementor-button-spinner" id="elementor_upgrade_fa_button">%s</span>',
+						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
 							__( 'Upgrade To Font Awesome 5', 'elementor' )

@@ -97,10 +97,10 @@ class Widget_Social_Icons extends Widget_Base {
 				'label_block' => true,
 				'default' => [
 					'value' => 'fab fa-wordpress',
-					'library' => 'brands',
+					'library' => 'fa-brands',
 				],
 				'recommended' => [
-					'brands' => [
+					'fa-brands' => [
 						'android',
 						'apple',
 						'behance',
@@ -147,6 +147,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'tumblr',
 						'twitch',
 						'twitter',
+						'viber',
 						'vimeo',
 						'vk',
 						'weibo',
@@ -188,23 +189,23 @@ class Widget_Social_Icons extends Widget_Base {
 					[
 						'social_icon' => [
 							'value' => 'fab fa-facebook',
-							'library' => 'brands',
+							'library' => 'fa-brands',
 						],
 					],
 					[
 						'social_icon' => [
 							'value' => 'fab fa-twitter',
-							'library' => 'brands',
+							'library' => 'fa-brands',
 						],
 					],
 					[
 						'social_icon' => [
 							'value' => 'fab fa-google-plus',
-							'library' => 'brands',
+							'library' => 'fa-brands',
 						],
 					],
 				],
-				'title_field' => '<# var fallback = "undefined" !== typeof social ? social : false; #>{{{ elementor.helpers.renderIcon( this, social_icon, {}, "i", "panel" ) || \'<i class="{{ social }}"></i>\' }}} {{{ elementor.helpers.getSocialNetworkNameFromIcon( social_icon, fallback, true ) }}}',
+				'title_field' => '<# var migrated = "undefined" !== typeof __fa4_migrated, social = ( "undefined" === typeof social ) ? false : social; #>{{{ elementor.helpers.getSocialNetworkNameFromIcon( social_icon, social, true, migrated, true ) }}}',
 			]
 		);
 
@@ -486,14 +487,19 @@ class Widget_Social_Icons extends Widget_Base {
 				if ( ! empty( $item['social'] ) ) {
 					$social = str_replace( 'fa fa-', '', $item['social'] );
 				}
+				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
+				$is_new = empty( $item['social'] ) && Icons_Manager::is_migration_allowed();
 
-				if ( ! empty( $item['social_icon']['library'] ) && 'svg' !== $item['social_icon']['library'] ) {
+				if ( ( $is_new || $migrated ) && 'svg' !== $item['social_icon']['library'] ) {
 					$social = explode( ' ', $item['social_icon']['value'], 2 );
 					if ( empty( $social[1] ) ) {
 						$social = '';
 					} else {
 						$social = str_replace( 'fa-', '', $social[1] );
 					}
+				}
+				if ( 'svg' === $item['social_icon']['library'] ) {
+					$social = '';
 				}
 
 				$link_key = 'link_' . $index;
@@ -507,8 +513,7 @@ class Widget_Social_Icons extends Widget_Base {
 				if ( $item['link']['nofollow'] ) {
 					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
 				}
-				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
-				$is_new = empty( $item['social'] );
+
 				?>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo $social . $class_animation; ?>" <?php echo $this->get_render_attribute_string( $link_key ); ?>>
 					<span class="elementor-screen-only"><?php echo ucwords( $social ); ?></span>
@@ -534,18 +539,19 @@ class Widget_Social_Icons extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
+		<# var iconsHTML = {}; #>
 		<div class="elementor-social-icons-wrapper">
 			<# _.each( settings.social_icon_list, function( item, index ) {
-				var iconsHTML = {},
-					link = item.link ? item.link.url : '',
-					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social );
+				var link = item.link ? item.link.url : '',
+					migrated = elementor.helpers.isIconMigrated( item, 'social_icon' );
+					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
 				#>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }}" href="{{ link }}">
 					<span class="elementor-screen-only">{{{ social }}}</span>
 					<#
-						iconsHTML[index] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );
-						if ( iconsHTML[index].rendered ) { #>
-							{{{ iconsHTML[index].value }}}
+						iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );
+						if ( ( ! item.social || migrated ) && iconsHTML[ index ] && iconsHTML[ index ].rendered ) { #>
+							{{{ iconsHTML[ index ].value }}}
 						<# } else { #>
 							<i class="{{ item.social }}"></i>
 						<# }

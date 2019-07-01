@@ -640,6 +640,10 @@ class Frontend extends App {
 	private function maybe_enqueue_icon_font( $icon_font_type ) {
 		$icons_types = Icons_Manager::get_icon_manager_tabs();
 
+		if ( ! Icons_Manager::is_migration_allowed() ) {
+			return;
+		}
+
 		if ( ! isset( $icons_types[ $icon_font_type ] ) ) {
 			return;
 		}
@@ -663,7 +667,7 @@ class Frontend extends App {
 	}
 
 	private function enqueue_icon_fonts() {
-		if ( empty( $this->icon_fonts_to_enqueue ) ) {
+		if ( empty( $this->icon_fonts_to_enqueue ) || ! Icons_Manager::is_migration_allowed() ) {
 			return;
 		}
 
