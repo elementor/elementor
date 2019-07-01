@@ -45,7 +45,7 @@ class Icons_Manager {
 	 */
 	private static function init_tabs() {
 		self::$tabs = apply_filters( 'elementor/icons_manager/native', [
-			'regular' => [
+			'fa-regular' => [
 				'name' => 'fa-regular',
 				'label' => __( 'Font Awesome - Regular', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'regular' ),
@@ -56,7 +56,7 @@ class Icons_Manager {
 				'ver' => '5.9.0',
 				'fetchJson' => self::get_fa_asset_url( 'regular', 'json', false ),
 			],
-			'solid' => [
+			'fa-solid' => [
 				'name' => 'fa-solid',
 				'label' => __( 'Font Awesome - Solid', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'solid' ),
@@ -67,7 +67,7 @@ class Icons_Manager {
 				'ver' => '5.9.0',
 				'fetchJson' => self::get_fa_asset_url( 'solid', 'json', false ),
 			],
-			'brands' => [
+			'fa-brands' => [
 				'name' => 'fa-brands',
 				'label' => __( 'Font Awesome - Brands', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'brands' ),
