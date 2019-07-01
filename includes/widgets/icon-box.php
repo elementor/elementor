@@ -136,7 +136,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'default' => 'circle',
 				'condition' => [
 					'view!' => 'default',
-					'icon!' => '',
+					'selected_icon[value]!' => '',
 				],
 				'prefix_class' => 'elementor-shape-',
 			]
