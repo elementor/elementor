@@ -550,10 +550,10 @@ class Widget_Social_Icons extends Widget_Base {
 
 				$this->add_render_attribute( $link_key, 'class', [
 					'elementor-icon',
-                    'elementor-social-icon',
-                    'elementor-social-icon-' . $social . $class_animation,
+					'elementor-social-icon',
+					'elementor-social-icon-' . $social . $class_animation,
 					'elementor-repeater-item-' . $item['_id'],
-                ] );
+				] );
 
 				if ( $item['link']['is_external'] ) {
 					$this->add_render_attribute( $link_key, 'target', '_blank' );
