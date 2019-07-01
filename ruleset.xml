@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress.Elementor">
-	<description>
-		Elementor Coding Standard
-	</description>
+	<description>Elementor Coding Standard</description>
 
 	<arg name="parallel" value="8" />
 
@@ -30,6 +28,7 @@
 		<exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped"/>
 		<exclude name="WordPress.Security.EscapeOutput.UnsafePrintingFunction" />
 		<exclude name="WordPress.Security.NonceVerification.NoNonceVerification"/>
+		<exclude name="WordPress.Security.NonceVerification.Missing"/>
 		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
 		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralSingle" />
 		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralPlural" />

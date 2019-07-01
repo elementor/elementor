@@ -106,8 +106,8 @@
 		background: #fff;
 
 		&:after {
-			content: '\f1ce';
-			font-family: FontAwesome;
+			content: '\e8fb';
+			font-family: eicons;
 			position: absolute;
 			top: 50%;
 			left: 50%;
@@ -149,7 +149,7 @@
 			opacity: .25;
 		}
 		&:before {
-			font-family: 'FontAwesome';
+			font-family: eicons;
 			font-size: 35px;
 			line-height: 1;
 			opacity: .75;
@@ -166,9 +166,9 @@
 			right: -25px;
 		}
 		&:before {
-			content: '\f104';
+			content: '\e89f';
 			[dir="rtl"] & {
-				content: '\f105';
+				content: '\e89e';
 			}
 		}
 	}
@@ -180,9 +180,9 @@
 			right: auto;
 		}
 		&:before {
-			content: '\f105';
+			content: '\e89e';
 			[dir="rtl"] & {
-				content: '\f104';
+				content: '\e89f';
 			}
 		}
 	}
@@ -235,7 +235,7 @@
 				}
 
 				&:before {
-					font-family: 'FontAwesome';
+					font-family: eicons;
 					font-size: 6px;
 					line-height: 20px;
 					position: absolute;
@@ -243,7 +243,7 @@
 					left: 0;
 					width: 20px;
 					height: 20px;
-					content: '\f111';
+					content: '\e914';
 					text-align: center;
 					opacity: .25;
 					color: black;

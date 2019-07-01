@@ -89,69 +89,76 @@ class Widget_Social_Icons extends Widget_Base {
 		$repeater = new Repeater();
 
 		$repeater->add_control(
-			'social',
+			'social_icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICON,
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'social',
 				'label_block' => true,
-				'default' => 'fa fa-wordpress',
-				'include' => [
-					'fa fa-android',
-					'fa fa-apple',
-					'fa fa-behance',
-					'fa fa-bitbucket',
-					'fa fa-codepen',
-					'fa fa-delicious',
-					'fa fa-deviantart',
-					'fa fa-digg',
-					'fa fa-dribbble',
-					'fa fa-envelope',
-					'fa fa-facebook',
-					'fa fa-flickr',
-					'fa fa-foursquare',
-					'fa fa-free-code-camp',
-					'fa fa-github',
-					'fa fa-gitlab',
-					'fa fa-globe',
-					'fa fa-google-plus',
-					'fa fa-houzz',
-					'fa fa-instagram',
-					'fa fa-jsfiddle',
-					'fa fa-link',
-					'fa fa-linkedin',
-					'fa fa-medium',
-					'fa fa-meetup',
-					'fa fa-mixcloud',
-					'fa fa-odnoklassniki',
-					'fa fa-pinterest',
-					'fa fa-product-hunt',
-					'fa fa-reddit',
-					'fa fa-rss',
-					'fa fa-shopping-cart',
-					'fa fa-skype',
-					'fa fa-slideshare',
-					'fa fa-snapchat',
-					'fa fa-soundcloud',
-					'fa fa-spotify',
-					'fa fa-stack-overflow',
-					'fa fa-steam',
-					'fa fa-stumbleupon',
-					'fa fa-telegram',
-					'fa fa-thumb-tack',
-					'fa fa-tripadvisor',
-					'fa fa-tumblr',
-					'fa fa-twitch',
-					'fa fa-twitter',
-					'fa fa-vimeo',
-					'fa fa-vk',
-					'fa fa-weibo',
-					'fa fa-weixin',
-					'fa fa-whatsapp',
-					'fa fa-wordpress',
-					'fa fa-xing',
-					'fa fa-yelp',
-					'fa fa-youtube',
-					'fa fa-500px',
+				'default' => [
+					'value' => 'fab fa-wordpress',
+					'library' => 'fa-brands',
+				],
+				'recommended' => [
+					'fa-brands' => [
+						'android',
+						'apple',
+						'behance',
+						'bitbucket',
+						'codepen',
+						'delicious',
+						'deviantart',
+						'digg',
+						'dribbble',
+						'envelope',
+						'facebook',
+						'flickr',
+						'foursquare',
+						'free-code-camp',
+						'github',
+						'gitlab',
+						'globe',
+						'google-plus',
+						'houzz',
+						'instagram',
+						'jsfiddle',
+						'link',
+						'linkedin',
+						'medium',
+						'meetup',
+						'mixcloud',
+						'odnoklassniki',
+						'pinterest',
+						'product-hunt',
+						'reddit',
+						'rss',
+						'shopping-cart',
+						'skype',
+						'slideshare',
+						'snapchat',
+						'soundcloud',
+						'spotify',
+						'stack-overflow',
+						'steam',
+						'stumbleupon',
+						'telegram',
+						'thumb-tack',
+						'tripadvisor',
+						'tumblr',
+						'twitch',
+						'twitter',
+						'viber',
+						'vimeo',
+						'vk',
+						'weibo',
+						'weixin',
+						'whatsapp',
+						'wordpress',
+						'xing',
+						'yelp',
+						'youtube',
+						'500px',
+					],
 				],
 			]
 		);
@@ -180,16 +187,25 @@ class Widget_Social_Icons extends Widget_Base {
 				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
-						'social' => 'fa fa-facebook',
+						'social_icon' => [
+							'value' => 'fab fa-facebook',
+							'library' => 'fa-brands',
+						],
 					],
 					[
-						'social' => 'fa fa-twitter',
+						'social_icon' => [
+							'value' => 'fab fa-twitter',
+							'library' => 'fa-brands',
+						],
 					],
 					[
-						'social' => 'fa fa-google-plus',
+						'social_icon' => [
+							'value' => 'fab fa-google-plus',
+							'library' => 'fa-brands',
+						],
 					],
 				],
-				'title_field' => '<i class="{{ social }}"></i> {{{ social.replace( \'fa fa-\', \'\' ).replace( \'-\', \' \' ).replace( /\b\w/g, function( letter ){ return letter.toUpperCase() } ) }}}',
+				'title_field' => '<# var migrated = "undefined" !== typeof __fa4_migrated, social = ( "undefined" === typeof social ) ? false : social; #>{{{ elementor.helpers.getSocialNetworkNameFromIcon( social_icon, social, true, migrated, true ) }}}',
 			]
 		);
 
@@ -216,15 +232,15 @@ class Widget_Social_Icons extends Widget_Base {
 				'options' => [
 					'left'    => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 				],
 				'default' => 'center',
@@ -290,6 +306,7 @@ class Widget_Social_Icons extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-social-icon:not(:hover) i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon:not(:hover) svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -413,6 +430,7 @@ class Widget_Social_Icons extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-social-icon:hover i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon:hover svg' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -465,7 +483,24 @@ class Widget_Social_Icons extends Widget_Base {
 		<div class="elementor-social-icons-wrapper">
 			<?php
 			foreach ( $settings['social_icon_list'] as $index => $item ) {
-				$social = str_replace( 'fa fa-', '', $item['social'] );
+				$social = '';
+				if ( ! empty( $item['social'] ) ) {
+					$social = str_replace( 'fa fa-', '', $item['social'] );
+				}
+				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
+				$is_new = empty( $item['social'] ) && Icons_Manager::is_migration_allowed();
+
+				if ( ( $is_new || $migrated ) && 'svg' !== $item['social_icon']['library'] ) {
+					$social = explode( ' ', $item['social_icon']['value'], 2 );
+					if ( empty( $social[1] ) ) {
+						$social = '';
+					} else {
+						$social = str_replace( 'fa-', '', $social[1] );
+					}
+				}
+				if ( 'svg' === $item['social_icon']['library'] ) {
+					$social = '';
+				}
 
 				$link_key = 'link_' . $index;
 
@@ -478,10 +513,16 @@ class Widget_Social_Icons extends Widget_Base {
 				if ( $item['link']['nofollow'] ) {
 					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
 				}
+
 				?>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo $social . $class_animation; ?>" <?php echo $this->get_render_attribute_string( $link_key ); ?>>
 					<span class="elementor-screen-only"><?php echo ucwords( $social ); ?></span>
-					<i class="<?php echo $item['social']; ?>"></i>
+					<?php
+					if ( $is_new || $migrated ) {
+						Icons_Manager::render_icon( $item['social_icon'] );
+					} else { ?>
+						<i class="<?php echo esc_attr( $item['social'] ); ?>"></i>
+					<?php } ?>
 				</a>
 			<?php } ?>
 		</div>
@@ -498,13 +539,23 @@ class Widget_Social_Icons extends Widget_Base {
 	 */
 	protected function _content_template() {
 		?>
+		<# var iconsHTML = {}; #>
 		<div class="elementor-social-icons-wrapper">
-			<# _.each( settings.social_icon_list, function( item ) {
+			<# _.each( settings.social_icon_list, function( item, index ) {
 				var link = item.link ? item.link.url : '',
-					social = item.social.replace( 'fa fa-', '' ); #>
+					migrated = elementor.helpers.isIconMigrated( item, 'social_icon' );
+					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
+				#>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }}" href="{{ link }}">
 					<span class="elementor-screen-only">{{{ social }}}</span>
-					<i class="{{ item.social }}"></i>
+					<#
+						iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );
+						if ( ( ! item.social || migrated ) && iconsHTML[ index ] && iconsHTML[ index ].rendered ) { #>
+							{{{ iconsHTML[ index ].value }}}
+						<# } else { #>
+							<i class="{{ item.social }}"></i>
+						<# }
+					#>
 				</a>
 			<# } ); #>
 		</div>

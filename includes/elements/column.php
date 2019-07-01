@@ -662,15 +662,15 @@ class Element_Column extends Element_Base {
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 				],
 				'selectors' => [
@@ -740,6 +740,7 @@ class Element_Column extends Element_Base {
 				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'label_block' => false,
 				'style_transfer' => false,
+				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
 
@@ -755,6 +756,7 @@ class Element_Column extends Element_Base {
 				'prefix_class' => '',
 				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 				'label_block' => false,
+				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
 

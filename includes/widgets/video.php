@@ -254,7 +254,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'End Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'description' => __( 'Specify an end time (in seconds)<br>Note that setting video start & end time cancels the video loop.', 'elementor' ),
+				'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
 				'condition' => [
 					'loop' => '',
 					'video_type' => [ 'youtube', 'hosted' ],
@@ -578,6 +578,7 @@ class Widget_Video extends Widget_Base {
 					'43' => '4:3',
 					'32' => '3:2',
 					'11' => '1:1',
+					'916' => '9:16',
 				],
 				'default' => '169',
 				'prefix_class' => 'elementor-aspect-ratio-',
@@ -718,7 +719,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'range' => [
 					'%' => [
-						'min' => 50,
+						'min' => 30,
 					],
 				],
 				'selectors' => [

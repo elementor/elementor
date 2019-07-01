@@ -128,28 +128,37 @@ class Control_Media extends Control_Base_Multiple {
 	 */
 	public function content_template() {
 		?>
-		<div class="elementor-control-field">
+		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
-			<div class="elementor-control-input-wrapper elementor-aspect-ratio-169">
-				<div class="elementor-control-media elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
+			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
+				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
 					<div class="elementor-control-media-upload-button elementor-fit-aspect-ratio">
-						<i class="fa fa-plus-circle" aria-hidden="true"></i>
+						<i class="eicon-plus-circle" aria-hidden="true"></i>
 					</div>
 					<div class="elementor-control-media-area elementor-fit-aspect-ratio">
+						<div class="elementor-control-media__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+							<i class="eicon-trash"></i>
+						</div>
 						<# if( 'image' === data.media_type ) { #>
-							<div class="elementor-control-media-image elementor-fit-aspect-ratio"></div>
+						<div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
 						<# } else if( 'video' === data.media_type ) { #>
-							<video class="elementor-control-media-video" preload="metadata"></video>
-							<i class="fa fa-video-camera"></i>
+						<video class="elementor-control-media-video" preload="metadata"></video>
+						<i class="eicon-video-camera"></i>
 						<# } #>
-						<div class="elementor-control-media-delete"><?php echo __( 'Delete', 'elementor' ); ?></div>
+					</div>
+					<div class="elementor-control-media__tools">
+						<# if( 'image' === data.media_type ) { #>
+						<div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Image', 'elementor' ); ?></div>
+						<# } else if( 'video' === data.media_type ) { #>
+						<div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Video', 'elementor' ); ?></div>
+						<# } #>
 					</div>
 				</div>
 			</div>
 			<# if ( data.description ) { #>
-				<div class="elementor-control-field-description">{{{ data.description }}}</div>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
 			<# } #>
-			<input type="hidden" data-setting="{{ data.name }}" />
+			<input type="hidden" data-setting="{{ data.name }}"/>
 		</div>
 		<?php
 	}
