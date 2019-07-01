@@ -11,7 +11,7 @@ export default class Icon extends Component {
 				<div className="elementor-icons-manager__tab__item__content">
 					<i className={ 'elementor-icons-manager__tab__item__icon ' + this.props.className }>
 					</i>
-					<div className={ 'elementor-icons-manager__tab__item__name' }>{ this.props.data.name }</div>
+					<div className={ 'elementor-icons-manager__tab__item__name' } title={ this.props.data.name }>{ this.props.data.name }</div>
 				</div>
 			</div>
 		);
