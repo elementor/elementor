@@ -394,11 +394,16 @@ jobs:
       - run:
           name: "Install Grunt"
           command: |
-            npm install -g grunt-cli
+            sudo npm install -g grunt-cli
       - run:
-         name: "NPM Install"
-         command: |
-           npm install
+          name: "NPM Install"
+          command: |
+            cd ~/project
+            npm install
+      - run:
+          name: "Grunt Scripts"
+          command: |
+            grunt scripts
       - run:
           name: "Run Qunit"
           command: |
