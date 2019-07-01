@@ -1,2 +1,1 @@
-require ( './core/common/components' );
-
+require( './core/common/components' );
