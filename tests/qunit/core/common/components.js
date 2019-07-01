@@ -11,7 +11,7 @@ jQuery( () => {
 
 		elementorCommon.components.register( instance );
 
-		assert.equal( elementorCommon.components.get( 'test' ), 'instance' );
+		assert.equal( elementorCommon.components.get( 'test' ), instance );
 	} );
 
 	QUnit.test( 'Register routes', ( assert ) => {
