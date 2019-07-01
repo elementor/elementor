@@ -553,7 +553,7 @@ jQuery( () => {
 			'<div id="' + namespace + '"></div>'
 		);
 
-		jQuery.each( component.getTabs(), ( tab, args ) => {
+		jQuery.each( component.getTabs(), ( tab ) => {
 			$fixture.append( '<div class="elementor-component-tab" data-tab="' + tab + '"></div>' );
 		} );
 
