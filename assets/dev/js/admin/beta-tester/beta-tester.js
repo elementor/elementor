@@ -3,7 +3,7 @@ import BetaTesterLayout from './layout';
 class BetaTesterModule extends elementorModules.ViewModule {
 	onInit() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
-		if ( elementorAdmin.config.user.introduction.beta_tester_signup || location.hash === '#tab-fontawesome4_migration' ) {
+		if ( elementorAdmin.config.user.introduction.beta_tester_signup || '#tab-fontawesome4_migration' === location.hash ) {
 			return;
 		}
 		this.showLayout();

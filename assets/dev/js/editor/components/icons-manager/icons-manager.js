@@ -6,24 +6,6 @@ import { unmountComponentAtNode } from 'react-dom';
 
 export default class extends elementorModules.Module {
 	onInit() {
-		this.layout = new ModalLayout();
-
-		const layoutModal = this.layout.getModal();
-
-		layoutModal.addButton( {
-			name: 'insert_icon',
-			text: elementor.translate( 'Insert' ),
-			classes: 'elementor-button elementor-button-success',
-			callback: () => {
-				this.updateControlValue();
-				this.unMountIconManager();
-			},
-		} );
-
-		layoutModal
-			.on( 'show', this.onPickerShow.bind( this ) )
-			.on( 'hide', this.unMountIconManager );
-
 		// Init icon library helper
 		this.library = new IconLibrary();
 		// Init Icon library Storage helper
@@ -32,6 +14,29 @@ export default class extends elementorModules.Module {
 		elementor.helpers.fetchFa4ToFa5Mapping();
 
 		this.cache = {};
+	}
+
+	getLayout() {
+		if ( ! this.layout ) {
+			this.layout = new ModalLayout();
+
+			const layoutModal = this.layout.getModal();
+
+			layoutModal.addButton( {
+				name: 'insert_icon',
+				text: elementor.translate( 'Insert' ),
+				classes: 'elementor-button elementor-button-success',
+				callback: () => {
+					this.updateControlValue();
+					this.unMountIconManager();
+				},
+			} );
+
+			layoutModal
+				.on( 'show', this.onPickerShow.bind( this ) )
+				.on( 'hide', this.unMountIconManager );
+		}
+		return this.layout;
 	}
 
 	getDefaultSettings() {
@@ -127,6 +132,6 @@ export default class extends elementorModules.Module {
 	show( options ) {
 		this.setSettings( 'controlView', options.view );
 
-		this.layout.showModal( options );
+		this.getLayout().showModal( options );
 	}
 }
