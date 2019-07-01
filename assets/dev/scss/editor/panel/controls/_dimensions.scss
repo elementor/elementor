@@ -13,7 +13,7 @@
 			display: block;
 			text-align: center;
 			width: 100%;
-			border-color: $editor-light;
+			border-color: $editor-lightest;
 			height: 27px;
 		}
 
@@ -22,10 +22,11 @@
 			border-radius: 0;
 			padding: 4px 0;
 
-			+ span {
-			}
-
 			&:focus {
+				border-left: solid 1px;
+				border-color: $editor-light;
+				margin-left: -1px;
+				width: calc(100% + 1px);
 
 				+ .elementor-control-dimension-label {
 					color: $editor-light;
@@ -34,7 +35,7 @@
 		}
 
 		.elementor-link-dimensions {
-			border: 1px solid $editor-light;
+			border: 1px solid $editor-lightest;
 			border-left: none;
 			background-color: #fff;
 			padding: 0;
@@ -46,8 +47,14 @@
 		&:first-child {
 
 			input {
-				border-left: 1px solid $editor-light;
+				border-left: 1px solid $editor-lightest;
 				border-radius: 3px 0 0 3px;
+
+				&:focus {
+					border-color: $editor-light;
+					margin-left: 0;
+					width: 100%;
+				}
 			}
 		}
 	}
@@ -73,6 +80,7 @@
 
 		&:not(.unlinked) {
 			background-color: $editor-light;
+			border-color: $editor-light;
 
 			.elementor-unlinked {
 				display: none;

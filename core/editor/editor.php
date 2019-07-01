@@ -4,11 +4,13 @@ namespace Elementor\Core\Editor;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Icons_Manager;
 use Elementor\Plugin;
 use Elementor\Schemes_Manager;
 use Elementor\Settings;
 use Elementor\Shapes;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Tools;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -196,7 +198,7 @@ class Editor {
 		$document = Plugin::$instance->documents->get( get_the_ID() );
 
 		if ( ! $document ) {
-			wp_die( __( 'Document not found.', '' ) );
+			wp_die( __( 'Document not found.', 'elementor' ) );
 		}
 
 		if ( ! $document->is_editable_by_current_user() || ! $document->is_built_with_elementor() ) {
@@ -515,11 +517,14 @@ class Editor {
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 			],
+			'icons' => Icons_Manager::get_icon_manager_tabs_config(),
+			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.json',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => SettingsManager::get_settings_managers_config(),
 			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
 			'wp_editor' => $this->get_wp_editor_config(),
 			'settings_page_link' => Settings::get_url(),
+			'tools_page_link' => Tools::get_url(),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
@@ -583,6 +588,14 @@ class Editor {
 				// Clear Page.
 				'clear_page' => __( 'Delete All Content', 'elementor' ),
 				'dialog_confirm_clear_page' => __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
+
+				// Enable SVG uploads.
+				'enable_svg' => __( 'Enable SVG Uploads', 'elementor' ),
+				'dialog_confirm_enable_svg' => __( 'SVG files may contain malicious code. Elementor will try to remove it. However, enabling this feature still poses potential security risks.', 'elementor' ),
+
+				// Enable fontawesome 5 if needed.
+				'enable_fa5' => __( 'Elementor\'s New Icon Library', 'elementor' ),
+				'dialog_confirm_enable_fa5' => __( 'Elementor v2.6 includes an update from FontAwesome 4 to 5. In order to continue using icons, including over 1,500 FA5 icons, be sure to click "Update".', 'elementor' ) . ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
 
 				// Panel Preview Mode.
 				'back_to_editor' => __( 'Show Panel', 'elementor' ),
@@ -653,6 +666,7 @@ class Editor {
 				'save' => __( 'Save', 'elementor' ),
 				'saved' => __( 'Saved', 'elementor' ),
 				'update' => __( 'Update', 'elementor' ),
+				'enable' => __( 'Enable', 'elementor' ),
 				'submit' => __( 'Submit', 'elementor' ),
 				'working_on_draft_notification' => __( 'This is just a draft. Play around and when you\'re done - click update.', 'elementor' ),
 				'keep_editing' => __( 'Keep Editing', 'elementor' ),
@@ -688,9 +702,15 @@ class Editor {
 				'keyboard_shortcuts' => __( 'Keyboard Shortcuts', 'elementor' ),
 
 				// Deprecated Control
-				'deprecated_notice' => __( 'The <strong>{{{ widget }}}</strong> widget has been deprecated since {{{ plugin }}} {{{ since }}}.', 'elementor' ),
-				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>{{{ replacement }}}</strong>.', 'elementor' ),
-				'deprecated_notice_last' => __( 'Note that {{{ widget }}} will be completely removed once {{{ plugin }}} {{{ last }}} is released.', 'elementor' ),
+				'deprecated_notice' => __( 'The <strong>%1$s</strong> widget has been deprecated since %2$s %3$s.', 'elementor' ),
+				'deprecated_notice_replacement' => __( 'It has been replaced by <strong>%1$s</strong>.', 'elementor' ),
+				'deprecated_notice_last' => __( 'Note that %1$s will be completely removed once %2$s %3$s is released.', 'elementor' ),
+
+				//Preview Debug
+				'preview_debug_link_text' => __( 'Click here for preview debug', 'elementor' ),
+
+				'icon_library' => __( 'Icon Library', 'elementor' ),
+				'custom_positioning' => __( 'Custom Positioning', 'elementor' ),
 
 				// TODO: Remove.
 				'autosave' => __( 'Autosave', 'elementor' ),
@@ -792,7 +812,6 @@ class Editor {
 			ELEMENTOR_ASSETS_URL . 'css/editor' . $direction_suffix . $suffix . '.css',
 			[
 				'elementor-common',
-				'font-awesome',
 				'elementor-select2',
 				'elementor-icons',
 				'wp-auth-check',

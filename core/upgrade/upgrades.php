@@ -40,7 +40,12 @@ class Upgrades {
 		}
 
 		foreach ( $post_ids as $post_id ) {
-			$data = Plugin::$instance->db->get_plain_editor( $post_id );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
 			if ( empty( $data ) ) {
 				continue;
 			}
@@ -92,7 +97,12 @@ class Upgrades {
 		}
 
 		foreach ( $post_ids as $post_id ) {
-			$data = Plugin::$instance->db->get_plain_editor( $post_id );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
 			if ( empty( $data ) ) {
 				continue;
 			}
@@ -149,7 +159,12 @@ class Upgrades {
 		}
 
 		foreach ( $post_ids as $post_id ) {
-			$data = Plugin::$instance->db->get_plain_editor( $post_id );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
 			if ( empty( $data ) ) {
 				continue;
 			}
@@ -308,7 +323,12 @@ class Upgrades {
 
 		foreach ( $post_ids as $post_id ) {
 			$do_update = false;
-			$data = Plugin::$instance->db->get_plain_editor( $post_id );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
 			if ( empty( $data ) ) {
 				continue;
 			}
@@ -476,5 +496,13 @@ class Upgrades {
 		} // End foreach().
 
 		return $updater->should_run_again( $post_ids );
+	}
+
+	/**
+	 * Set FontAwesome Migration needed flag
+	 */
+	public static function _v_2_6_0_fa4_migration_flag() {
+		add_option( 'elementor_icon_manager_needs_update', 'yes' );
+		add_option( 'elementor_load_fa4_shim', 'yes' );
 	}
 }

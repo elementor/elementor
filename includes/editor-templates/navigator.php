@@ -36,6 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-navigator__element__toggle">
 				<i class="eicon-eye"></i>
 			</div>
+			<div class="elementor-navigator__element__indicators"></div>
 		</div>
 	<# } #>
 	<div class="elementor-navigator__elements"></div>

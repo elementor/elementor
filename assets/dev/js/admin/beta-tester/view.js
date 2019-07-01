@@ -7,8 +7,9 @@ export default class BetaTesterView extends Marionette.ItemView {
 
 	ui() {
 		return {
-			betaForm: '#elementor-beta-tester-dialog-form',
-			betaEmail: '#elementor-beta-tester-email',
+			betaForm: '#elementor-beta-tester-form',
+			betaEmail: '#elementor-beta-tester-form__email',
+			betaButton: '#elementor-beta-tester-form__submit',
 		};
 	}
 
@@ -20,12 +21,20 @@ export default class BetaTesterView extends Marionette.ItemView {
 
 	onBetaFormSubmit( event ) {
 		event.preventDefault();
+
 		const email = this.ui.betaEmail.val();
-		elementorCommon.ajax.addRequest( 'beta_tester_newsletter', {
+
+		this.ui.betaButton.addClass( 'elementor-button-state' );
+
+		elementorCommon.ajax.addRequest( 'beta_tester_signup', {
 			data: {
 				betaTesterEmail: email,
 			},
-			success: () => elementorBetaTester.layout.hideModal(),
+			success: () => {
+				this.ui.betaButton.addClass( 'elementor-button-state' );
+
+				elementorBetaTester.layout.hideModal();
+			},
 		} );
 	}
 
