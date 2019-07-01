@@ -13,6 +13,7 @@ export default class extends Marionette.CompositeView {
 			toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
 			toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
 			indicators: '> .elementor-navigator__item > .elementor-navigator__element__indicators',
+			indicator: '> .elementor-navigator__item > .elementor-navigator__element__indicators > .elementor-navigator__element__indicator',
 			elements: '> .elementor-navigator__elements',
 		};
 	}
@@ -23,6 +24,7 @@ export default class extends Marionette.CompositeView {
 			'click @ui.item': 'onItemClick',
 			'click @ui.toggle': 'onToggleClick',
 			'click @ui.toggleList': 'onToggleListClick',
+			'click @ui.indicator': 'onIndicatorClick',
 			'dblclick @ui.title': 'onTitleDoubleClick',
 			'keydown @ui.title': 'onTitleKeyDown',
 			'paste @ui.title': 'onTitlePaste',
@@ -264,11 +266,13 @@ export default class extends Marionette.CompositeView {
 				return;
 			}
 
-			const $indicator = jQuery( '<div>', { class: 'elementor-navigator__element__indicator', title: indicatorSettings.title } );
-
-			$indicator.html( `<i class="eicon-${ indicatorSettings.icon }"></i>` );
+			const $indicator = jQuery( '<div>', { class: 'elementor-navigator__element__indicator', title: indicatorSettings.title } )
+				.attr( 'data-section', indicatorSettings.section )
+				.html( `<i class="eicon-${ indicatorSettings.icon }"></i>` );
 
 			this.ui.indicators.append( $indicator );
+
+			$indicator.tipsy();
 		} );
 	}
 
@@ -414,5 +418,20 @@ export default class extends Marionette.CompositeView {
 		this.addEditingClass();
 
 		elementor.helpers.scrollToView( this.$el, 400, elementor.navigator.getLayout().elements.$el );
+	}
+
+	onIndicatorClick( event ) {
+		const section = event.currentTarget.dataset.section;
+
+		setTimeout( () => {
+			const editor = elementor.getPanelView().currentPageView,
+				tab = editor.getControlModel( section ).get( 'tab' );
+
+			editor.activateSection( section );
+
+			editor.activateTab( tab );
+
+			editor.render();
+		} );
 	}
 }
