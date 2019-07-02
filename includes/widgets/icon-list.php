@@ -528,6 +528,11 @@ class Widget_Icon_List extends Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+		$fallback_defaults = [
+			'fa fa-check',
+			'fa fa-times',
+			'fa fa-dot-circle-o',
+		];
 
 		$this->add_render_attribute( 'icon_list', 'class', 'elementor-icon-list-items' );
 		$this->add_render_attribute( 'list_item', 'class', 'elementor-icon-list-item' );
@@ -563,6 +568,11 @@ class Widget_Icon_List extends Widget_Base {
 						}
 
 						echo '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
+					}
+
+					// add old default
+					if ( empty( $item['icon'] ) && ! $migration_allowed ) {
+						$item['icon'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-check';
 					}
 
 					if ( ! empty( $item['icon'] ) || ! empty( $item['selected_icon'] ) ) :
