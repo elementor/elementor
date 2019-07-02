@@ -215,7 +215,7 @@ class Widget_Button extends Widget_Base {
 					'right' => __( 'After', 'elementor' ),
 				],
 				'condition' => [
-					'icon!' => '',
+					'selected_icon[value]!' => '',
 				],
 			]
 		);
@@ -231,7 +231,7 @@ class Widget_Button extends Widget_Base {
 					],
 				],
 				'condition' => [
-					'icon!' => '',
+					'selected_icon[value]!' => '',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',

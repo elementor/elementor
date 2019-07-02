@@ -179,6 +179,48 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
+		$repeater->add_control(
+			'item_icon_color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Official Color', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'item_icon_primary_color',
+			[
+				'label' => __( 'Primary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'condition' => [
+					'item_icon_color' => 'custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}} {{CURRENT_ITEM}}:not(:hover)' => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'item_icon_secondary_color',
+			[
+				'label' => __( 'Secondary Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'condition' => [
+					'item_icon_color' => 'custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}} {{CURRENT_ITEM}}:not(:hover) i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}}:not(:hover) svg' => 'fill: {{VALUE}};',
+				],
+			]
+		);
+
 		$this->add_control(
 			'social_icon_list',
 			[
@@ -506,6 +548,13 @@ class Widget_Social_Icons extends Widget_Base {
 
 				$this->add_render_attribute( $link_key, 'href', $item['link']['url'] );
 
+				$this->add_render_attribute( $link_key, 'class', [
+					'elementor-icon',
+					'elementor-social-icon',
+					'elementor-social-icon-' . $social . $class_animation,
+					'elementor-repeater-item-' . $item['_id'],
+				] );
+
 				if ( $item['link']['is_external'] ) {
 					$this->add_render_attribute( $link_key, 'target', '_blank' );
 				}
@@ -515,7 +564,7 @@ class Widget_Social_Icons extends Widget_Base {
 				}
 
 				?>
-				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo $social . $class_animation; ?>" <?php echo $this->get_render_attribute_string( $link_key ); ?>>
+				<a <?php echo $this->get_render_attribute_string( $link_key ); ?>>
 					<span class="elementor-screen-only"><?php echo ucwords( $social ); ?></span>
 					<?php
 					if ( $is_new || $migrated ) {
@@ -546,7 +595,7 @@ class Widget_Social_Icons extends Widget_Base {
 					migrated = elementor.helpers.isIconMigrated( item, 'social_icon' );
 					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
 				#>
-				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }}" href="{{ link }}">
+				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ link }}">
 					<span class="elementor-screen-only">{{{ social }}}</span>
 					<#
 						iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );
