@@ -37,5 +37,3 @@ module.exports = ( $scope ) => {
 		$element: $scope,
 	} );
 };
-
-// TODO: change the call to this widget in elements-handler.js?
