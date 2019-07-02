@@ -1,5 +1,32 @@
-module.exports = function( $scope, $ ) {
-	$scope.find( '.elementor-alert-dismiss' ).on( 'click', function() {
-		$( this ).parent().fadeOut();
+class Alert extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
+		return {
+			selectors: {
+				dismissButton: '.elementor-alert-dismiss',
+			},
+		};
+	}
+
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' );
+		return {
+			$dismissButton: this.$element.find( selectors.dismissButton ),
+		};
+	}
+
+	bindEvents() {
+		this.elements.$dismissButton.on( 'click', this.onDismissButtonClick.bind( this ) );
+	}
+
+	onDismissButtonClick() {
+		this.$element.fadeOut();
+	}
+}
+
+module.exports = ( $scope ) => {
+	new Alert( {
+		$element: $scope,
 	} );
 };
+
+// TODO: change the call to this widget in elements-handler.js?

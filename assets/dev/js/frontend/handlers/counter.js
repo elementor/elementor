@@ -1,14 +1,41 @@
-module.exports = function( $scope, $ ) {
-	elementorFrontend.waypoint( $scope.find( '.elementor-counter-number' ), function() {
-		var $number = $( this ),
-			data = $number.data();
+class Counter extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
+		return {
+			selectors: {
+				counterNumber: '.elementor-counter-number',
+			},
+		};
+	}
 
-		var decimalDigits = data.toValue.toString().match( /\.(.*)/ );
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' );
+		return {
+			$counterNumber: this.$element.find( selectors.counterNumber ),
+		};
+	}
 
-		if ( decimalDigits ) {
-			data.rounding = decimalDigits[ 1 ].length;
-		}
+	onInit() {
+		super.onInit();
 
-		$number.numerator( data );
+		elementorFrontend.waypoint( this.elements.$counterNumber, function() {
+			var $number = jQuery( this ),
+				data = $number.data();
+
+			var decimalDigits = data.toValue.toString().match( /\.(.*)/ );
+
+			if ( decimalDigits ) {
+				data.rounding = decimalDigits[ 1 ].length;
+			}
+
+			$number.numerator( data );
+		} );
+	}
+}
+
+module.exports = ( $scope ) => {
+	new Counter( {
+		$element: $scope,
 	} );
 };
+
+// TODO: change the call to this widget in elements-handler.js?

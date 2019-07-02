@@ -1,3 +1,7 @@
+import alertHandler from './handlers/alert';
+import counterHandler from './handlers/counter';
+import progressHandler from './handlers/progress';
+
 module.exports = function( $ ) {
 	const self = this;
 
@@ -8,9 +12,9 @@ module.exports = function( $ ) {
 
 		// Widgets
 		'accordion.default': require( 'elementor-frontend/handlers/accordion' ),
-		'alert.default': require( 'elementor-frontend/handlers/alert' ),
-		'counter.default': require( 'elementor-frontend/handlers/counter' ),
-		'progress.default': require( 'elementor-frontend/handlers/progress' ),
+		'alert.default': alertHandler,
+		'counter.default': counterHandler,
+		'progress.default': progressHandler,
 		'tabs.default': require( 'elementor-frontend/handlers/tabs' ),
 		'toggle.default': require( 'elementor-frontend/handlers/toggle' ),
 		'video.default': require( 'elementor-frontend/handlers/video' ),
