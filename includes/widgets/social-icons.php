@@ -514,6 +514,11 @@ class Widget_Social_Icons extends Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+		$fallback_defaults = [
+			'fa fa-facebook',
+			'fa fa-twitter',
+			'fa fa-google-plus',
+		];
 
 		$class_animation = '';
 
@@ -521,16 +526,24 @@ class Widget_Social_Icons extends Widget_Base {
 			$class_animation = ' elementor-animation-' . $settings['hover_animation'];
 		}
 
+		$migration_allowed = Icons_Manager::is_migration_allowed();
+
 		?>
 		<div class="elementor-social-icons-wrapper">
 			<?php
 			foreach ( $settings['social_icon_list'] as $index => $item ) {
+				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
+				$is_new = empty( $item['social'] ) && $migration_allowed;
 				$social = '';
+
+				// add old default
+				if ( empty( $item['social'] ) && ! $migration_allowed ) {
+					$item['social'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-wordpress';
+				}
+
 				if ( ! empty( $item['social'] ) ) {
 					$social = str_replace( 'fa fa-', '', $item['social'] );
 				}
-				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
-				$is_new = empty( $item['social'] ) && Icons_Manager::is_migration_allowed();
 
 				if ( ( $is_new || $migrated ) && 'svg' !== $item['social_icon']['library'] ) {
 					$social = explode( ' ', $item['social_icon']['value'], 2 );
