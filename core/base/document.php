@@ -884,6 +884,8 @@ abstract class Document extends Controls_Stack {
 	protected function save_elements( $elements ) {
 		$editor_data = $this->get_elements_raw_data( $elements );
 
+		$this->save_usage( $editor_data );
+
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
@@ -1161,5 +1163,57 @@ abstract class Document extends Controls_Stack {
 
 			$element->print_element();
 		}
+	}
+
+	private function save_usage( $elements ) {
+		if ( DB::STATUS_PUBLISH !== $this->post->post_status ) {
+			return;
+		}
+
+		if ( ! self::get_property( 'is_editable' ) ) {
+			return;
+		}
+
+		$global_usage = get_option( 'elementor_elements_usage', [] );
+
+		// Remove prev usage
+		$prev_usage = $this->get_meta( '_elementor_elements_usage' );
+
+		if ( $prev_usage ) {
+			foreach ( $prev_usage as $type => $count ) {
+				if ( isset( $global_usage[ $type ] ) ) {
+					$global_usage[ $type ] -= $prev_usage[ $type ];
+				}
+			}
+		}
+
+		$usage = [];
+		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( & $usage ) {
+			if ( empty( $element['widgetType'] ) ) {
+				$type = $element['elType'];
+			} else {
+				$type = $element['widgetType'];
+			}
+
+			if ( ! isset( $usage[ $type ] ) ) {
+				$usage[ $type ] = 0;
+			}
+
+			$usage[ $type ]++;
+
+			return $element;
+		} );
+
+		$this->update_meta( '_elementor_elements_usage', $usage );
+
+		foreach ( $usage as $type => $count ) {
+			if ( ! isset( $global_usage[ $type ] ) ) {
+				$global_usage[ $type ] = 0;
+			}
+
+			$global_usage[ $type ] += $usage[ $type ];
+		}
+
+		update_option( 'elementor_elements_usage', $global_usage );
 	}
 }
