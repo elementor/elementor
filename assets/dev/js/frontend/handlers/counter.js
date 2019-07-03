@@ -32,8 +32,8 @@ class Counter extends elementorModules.frontend.handlers.Base {
 	}
 }
 
-module.exports = ( $scope ) => {
-	new Counter( {
+export default ( $scope ) => {
+	elementorFrontend.elementsHandler.addHandler( Counter, {
 		$element: $scope,
 	} );
 };

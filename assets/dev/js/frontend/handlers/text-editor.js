@@ -1,7 +1,11 @@
-const TextEditor = elementorModules.frontend.handlers.Base.extend( {
-	dropCapLetter: '',
+class TextEditor extends elementorModules.frontend.handlers.Base {
+	constructor( ...args ) {
+		super( ...args );
 
-	getDefaultSettings: function() {
+		this.dropCapLetter = '';
+	}
+
+	getDefaultSettings() {
 		return {
 			selectors: {
 				paragraph: 'p:first',
@@ -11,9 +15,9 @@ const TextEditor = elementorModules.frontend.handlers.Base.extend( {
 				dropCapLetter: 'elementor-drop-cap-letter',
 			},
 		};
-	},
+	}
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		var selectors = this.getSettings( 'selectors' ),
 			classes = this.getSettings( 'classes' ),
 			$dropCap = jQuery( '<span>', { class: classes.dropCap } ),
@@ -26,9 +30,9 @@ const TextEditor = elementorModules.frontend.handlers.Base.extend( {
 			$dropCap: $dropCap,
 			$dropCapLetter: $dropCapLetter,
 		};
-	},
+	}
 
-	wrapDropCap: function() {
+	wrapDropCap() {
 		var isDropCapEnabled = this.getElementSettings( 'drop_cap' );
 
 		if ( ! isDropCapEnabled ) {
@@ -74,21 +78,21 @@ const TextEditor = elementorModules.frontend.handlers.Base.extend( {
 		} );
 
 		$paragraph.html( restoredParagraphContent ).prepend( this.elements.$dropCap );
-	},
+	}
 
-	onInit: function() {
+	onInit() {
 		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		this.wrapDropCap();
-	},
+	}
 
-	onElementChange: function( propertyName ) {
+	onElementChange( propertyName ) {
 		if ( 'drop_cap' === propertyName ) {
 			this.wrapDropCap();
 		}
-	},
-} );
+	}
+}
 
-module.exports = function( $scope ) {
+export default ( $scope ) => {
 	elementorFrontend.elementsHandler.addHandler( TextEditor, { $element: $scope } );
 };

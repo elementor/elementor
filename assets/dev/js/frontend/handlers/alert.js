@@ -23,8 +23,8 @@ class Alert extends elementorModules.frontend.handlers.Base {
 	}
 }
 
-module.exports = ( $scope ) => {
-	new Alert( {
+export default ( $scope ) => {
+	elementorFrontend.elementsHandler.addHandler( Alert, {
 		$element: $scope,
 	} );
 };

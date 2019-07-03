@@ -1,5 +1,5 @@
-const VideoModule = elementorModules.frontend.handlers.Base.extend( {
-	getDefaultSettings: function() {
+class VideoModule extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				imageOverlay: '.elementor-custom-embed-image-overlay',
@@ -7,9 +7,9 @@ const VideoModule = elementorModules.frontend.handlers.Base.extend( {
 				videoIframe: '.elementor-video-iframe',
 			},
 		};
-	},
+	}
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		var selectors = this.getSettings( 'selectors' );
 
 		return {
@@ -17,21 +17,21 @@ const VideoModule = elementorModules.frontend.handlers.Base.extend( {
 			$video: this.$element.find( selectors.video ),
 			$videoIframe: this.$element.find( selectors.videoIframe ),
 		};
-	},
+	}
 
-	getLightBox: function() {
+	getLightBox() {
 		return elementorFrontend.utils.lightbox;
-	},
+	}
 
-	handleVideo: function() {
+	handleVideo() {
 		if ( ! this.getElementSettings( 'lightbox' ) ) {
 			this.elements.$imageOverlay.remove();
 
 			this.playVideo();
 		}
-	},
+	}
 
-	playVideo: function() {
+	playVideo() {
 		if ( this.elements.$video.length ) {
 			this.elements.$video[ 0 ].play();
 
@@ -48,21 +48,21 @@ const VideoModule = elementorModules.frontend.handlers.Base.extend( {
 		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
 
 		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
-	},
+	}
 
-	animateVideo: function() {
+	animateVideo() {
 		this.getLightBox().setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
-	},
+	}
 
-	handleAspectRatio: function() {
+	handleAspectRatio() {
 		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
-	},
+	}
 
-	bindEvents: function() {
+	bindEvents() {
 		this.elements.$imageOverlay.on( 'click', this.handleVideo );
-	},
+	}
 
-	onElementChange: function( propertyName ) {
+	onElementChange( propertyName ) {
 		if ( 0 === propertyName.indexOf( 'lightbox_content_animation' ) ) {
 			this.animateVideo();
 
@@ -80,9 +80,9 @@ const VideoModule = elementorModules.frontend.handlers.Base.extend( {
 		if ( 'aspect_ratio' === propertyName && isLightBoxEnabled ) {
 			this.handleAspectRatio();
 		}
-	},
-} );
+	}
+}
 
-module.exports = function( $scope ) {
+export default ( $scope ) => {
 	elementorFrontend.elementsHandler.addHandler( VideoModule, { $element: $scope } );
 };

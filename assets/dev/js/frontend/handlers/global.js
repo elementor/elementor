@@ -1,8 +1,9 @@
-const GlobalHandler = elementorModules.frontend.handlers.Base.extend( {
-	getWidgetType: function() {
+class GlobalHandler extends elementorModules.frontend.handlers.Base {
+	getWidgetType() {
 		return 'global';
-	},
-	animate: function() {
+	}
+
+	animate() {
 		const $element = this.$element,
 			animation = this.getAnimation();
 
@@ -25,24 +26,27 @@ const GlobalHandler = elementorModules.frontend.handlers.Base.extend( {
 		setTimeout( function() {
 			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
 		}, animationDelay );
-	},
-	getAnimation: function() {
+	}
+
+	getAnimation() {
 		return this.getCurrentDeviceSetting( 'animation' ) || this.getCurrentDeviceSetting( '_animation' );
-	},
-	onInit: function() {
+	}
+
+	onInit() {
 		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		if ( this.getAnimation() ) {
 			elementorFrontend.waypoint( this.$element, this.animate.bind( this ) );
 		}
-	},
-	onElementChange: function( propertyName ) {
+	}
+
+	onElementChange( propertyName ) {
 		if ( /^_?animation/.test( propertyName ) ) {
 			this.animate();
 		}
-	},
-} );
+	}
+}
 
-module.exports = function( $scope ) {
+export default ( $scope ) => {
 	elementorFrontend.elementsHandler.addHandler( GlobalHandler, { $element: $scope } );
 };

@@ -1,9 +1,12 @@
-const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
-	player: null,
+class BackgroundVideo extends elementorModules.frontend.handlers.Base {
+	constructor( ...args ) {
+		super( ...args );
 
-	isYTVideo: null,
+		this.player = null;
+		this.isYTVideo = null;
+	}
 
-	getDefaultSettings: function() {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				backgroundVideoContainer: '.elementor-background-video-container',
@@ -11,9 +14,9 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 				backgroundVideoHosted: '.elementor-background-video-hosted',
 			},
 		};
-	},
+	}
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		var selectors = this.getSettings( 'selectors' ),
 			elements = {
 				$backgroundVideoContainer: this.$element.find( selectors.backgroundVideoContainer ),
@@ -24,9 +27,9 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		elements.$backgroundVideoHosted = elements.$backgroundVideoContainer.children( selectors.backgroundVideoHosted );
 
 		return elements;
-	},
+	}
 
-	calcVideosSize: function() {
+	calcVideosSize() {
 		var containerWidth = this.elements.$backgroundVideoContainer.outerWidth(),
 			containerHeight = this.elements.$backgroundVideoContainer.outerHeight(),
 			aspectRatioSetting = '16:9', //TEMP
@@ -40,16 +43,16 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 			width: isWidthFixed ? containerWidth : ratioHeight,
 			height: isWidthFixed ? ratioWidth : containerHeight,
 		};
-	},
+	}
 
-	changeVideoSize: function() {
+	changeVideoSize() {
 		var $video = this.isYTVideo ? jQuery( this.player.getIframe() ) : this.elements.$backgroundVideoHosted,
 			size = this.calcVideosSize();
 
 		$video.width( size.width ).height( size.height );
-	},
+	}
 
-	startVideoLoop: function( firstTime ) {
+	startVideoLoop( firstTime ) {
 		const self = this;
 
 		// If the section has been removed
@@ -75,9 +78,9 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 				self.startVideoLoop( false );
 			}, durationToEnd * 1000 );
 		}
-	},
+	}
 
-	prepareYTVideo: function( YT, videoID ) {
+	prepareYTVideo( YT, videoID ) {
 		var self = this,
 			$backgroundVideoContainer = self.elements.$backgroundVideoContainer,
 			elementSettings = self.getElementSettings(),
@@ -121,9 +124,9 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 				rel: 0,
 			},
 		} );
-	},
+	}
 
-	activate: function() {
+	activate() {
 		var self = this,
 			videoLink = self.getElementSettings( 'background_video_link' ),
 			videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink ),
@@ -152,9 +155,9 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		}
 
 		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
-	},
+	}
 
-	deactivate: function() {
+	deactivate() {
 		if ( this.isYTVideo && this.player.getIframe() ) {
 			this.player.destroy();
 		} else {
@@ -162,9 +165,9 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		}
 
 		elementorFrontend.elements.$window.off( 'resize', this.changeVideoSize );
-	},
+	}
 
-	run: function() {
+	run() {
 		var elementSettings = this.getElementSettings();
 
 		if ( 'video' === elementSettings.background_background && elementSettings.background_video_link ) {
@@ -172,26 +175,28 @@ const BackgroundVideo = elementorModules.frontend.handlers.Base.extend( {
 		} else {
 			this.deactivate();
 		}
-	},
+	}
 
-	onInit: function() {
+	onInit() {
 		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		this.run();
-	},
+	}
 
-	onElementChange: function( propertyName ) {
+	onElementChange( propertyName ) {
 		if ( 'background_background' === propertyName ) {
 			this.run();
 		}
-	},
-} );
+	}
+}
 
-var StretchedSection = elementorModules.frontend.handlers.Base.extend( {
+class StretchedSection extends elementorModules.frontend.handlers.Base {
+	constructor() {
+		super( ...args );
+		this.stretchElement = null;
+	}
 
-	stretchElement: null,
-
-	bindEvents: function() {
+	bindEvents() {
 		var handlerID = this.getUniqueHandlerID();
 
 		elementorFrontend.addListenerOnce( handlerID, 'resize', this.stretch );
@@ -199,42 +204,42 @@ var StretchedSection = elementorModules.frontend.handlers.Base.extend( {
 		elementorFrontend.addListenerOnce( handlerID, 'sticky:stick', this.stretch, this.$element );
 
 		elementorFrontend.addListenerOnce( handlerID, 'sticky:unstick', this.stretch, this.$element );
-	},
+	}
 
-	unbindEvents: function() {
+	unbindEvents() {
 		elementorFrontend.removeListeners( this.getUniqueHandlerID(), 'resize', this.stretch );
-	},
+	}
 
-	initStretch: function() {
+	initStretch() {
 		this.stretchElement = new elementorModules.frontend.tools.StretchElement( {
 			element: this.$element,
 			selectors: {
 				container: this.getStretchContainer(),
 			},
 		} );
-	},
+	}
 
-	getStretchContainer: function() {
+	getStretchContainer() {
 		return elementorFrontend.getGeneralSettings( 'elementor_stretched_section_container' ) || window;
-	},
+	}
 
-	stretch: function() {
+	stretch() {
 		if ( ! this.getElementSettings( 'stretch_section' ) ) {
 			return;
 		}
 
 		this.stretchElement.stretch();
-	},
+	}
 
-	onInit: function() {
+	onInit() {
 		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		this.initStretch();
 
 		this.stretch();
-	},
+	}
 
-	onElementChange: function( propertyName ) {
+	onElementChange( propertyName ) {
 		if ( 'stretch_section' === propertyName ) {
 			if ( this.getElementSettings( 'stretch_section' ) ) {
 				this.stretch();
@@ -242,29 +247,28 @@ var StretchedSection = elementorModules.frontend.handlers.Base.extend( {
 				this.stretchElement.reset();
 			}
 		}
-	},
+	}
 
-	onGeneralSettingsChange: function( changed ) {
+	onGeneralSettingsChange( changed ) {
 		if ( 'elementor_stretched_section_container' in changed ) {
 			this.stretchElement.setSettings( 'selectors.container', this.getStretchContainer() );
 
 			this.stretch();
 		}
-	},
-} );
+	}
+}
 
-var Shapes = elementorModules.frontend.handlers.Base.extend( {
-
-	getDefaultSettings: function() {
+class Shapes extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				container: '> .elementor-shape-%s',
 			},
 			svgURL: elementorFrontend.config.urls.assets + 'shapes/',
 		};
-	},
+	}
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		var elements = {},
 			selectors = this.getSettings( 'selectors' );
 
@@ -273,7 +277,7 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 		elements.$bottomContainer = this.$element.find( selectors.container.replace( '%s', 'bottom' ) );
 
 		return elements;
-	},
+	}
 
 	getSvgURL( shapeType, fileName ) {
 		let svgURL = this.getSettings( 'svgURL' ) + fileName + '.svg';
@@ -281,9 +285,9 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 			svgURL = elementor.config.additional_shapes[ shapeType ];
 		}
 		return svgURL;
-	},
+	}
 
-	buildSVG: function( side ) {
+	buildSVG( side ) {
 		const self = this,
 			baseSettingKey = 'shape_divider_' + side,
 			shapeType = self.getElementSettings( baseSettingKey ),
@@ -309,13 +313,13 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 		} );
 
 		this.setNegative( side );
-	},
+	}
 
-	setNegative: function( side ) {
+	setNegative( side ) {
 		this.elements[ '$' + side + 'Container' ].attr( 'data-negative', !! this.getElementSettings( 'shape_divider_' + side + '_negative' ) );
-	},
+	}
 
-	onInit: function() {
+	onInit() {
 		var self = this;
 
 		elementorModules.frontend.handlers.Base.prototype.onInit.apply( self, arguments );
@@ -325,9 +329,9 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 				self.buildSVG( side );
 			}
 		} );
-	},
+	}
 
-	onElementChange: function( propertyName ) {
+	onElementChange( propertyName ) {
 		var shapeChange = propertyName.match( /^shape_divider_(top|bottom)$/ );
 
 		if ( shapeChange ) {
@@ -343,29 +347,28 @@ var Shapes = elementorModules.frontend.handlers.Base.extend( {
 
 			this.setNegative( negativeChange[ 1 ] );
 		}
-	},
-} );
+	}
+}
 
-var HandlesPosition = elementorModules.frontend.handlers.Base.extend( {
+class HandlesPosition extends elementorModules.frontend.handlers.Base {
+    isFirstSection() {
+		return this.$element.is( '.elementor-edit-mode .elementor-top-section:first' );
+	}
 
-    isFirstSection: function() {
-        return this.$element.is( '.elementor-edit-mode .elementor-top-section:first' );
-    },
-
-	isOverflowHidden: function() {
+	isOverflowHidden() {
 		return 'hidden' === this.$element.css( 'overflow' );
-	},
+	}
 
-    getOffset: function() {
+    getOffset() {
 		if ( 'body' === elementor.config.document.container ) {
 			return this.$element.offset().top;
 		}
 
 		var $container = jQuery( elementor.config.document.container );
 		return this.$element.offset().top - $container.offset().top;
-	},
+	}
 
-    setHandlesPosition: function() {
+    setHandlesPosition() {
         const isOverflowHidden = this.isOverflowHidden();
 
         if ( ! isOverflowHidden && ! this.isFirstSection() ) {
@@ -387,16 +390,16 @@ var HandlesPosition = elementorModules.frontend.handlers.Base.extend( {
         } else {
             this.$element.removeClass( insideHandleClass );
         }
-    },
+    }
 
-    onInit: function() {
+    onInit() {
         this.setHandlesPosition();
 
         this.$element.on( 'mouseenter', this.setHandlesPosition );
-    },
-} );
+    }
+}
 
-module.exports = function( $scope ) {
+export default ( $scope ) => {
 	if ( elementorFrontend.isEditMode() || $scope.hasClass( 'elementor-section-stretched' ) ) {
 		elementorFrontend.elementsHandler.addHandler( StretchedSection, { $element: $scope } );
 	}
