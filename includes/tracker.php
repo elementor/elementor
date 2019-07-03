@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -138,6 +140,7 @@ class Tracker {
 			'email' => get_option( 'admin_email' ),
 			'usages' => [
 				'posts' => self::get_posts_usage(),
+				'elements' => self::get_elements_usage(),
 				'library' => self::get_library_usage(),
 			],
 			'is_first_time' => empty( $last_send ),
@@ -392,6 +395,22 @@ class Tracker {
 		}
 
 		return $usage;
+
+	}
+
+	/**
+	 * Get elements usage.
+	 *
+	 * Retrieve the usage of elements in Elementor.
+	 *
+	 * @since 2.6.0
+	 * @access private
+	 * @static
+	 *
+	 * @return array The usage of elements in Elementor grouped by document types.
+	 */
+	private static function get_elements_usage() {
+		return get_option( Document::ELEMENTS_USAGE_OPTION_NAME );
 
 	}
 

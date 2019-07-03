@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.2.1");
-  src: url("../fonts/eicons.eot?5.2.1#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.2.1") format("woff2"), url("../fonts/eicons.woff?5.2.1") format("woff"), url("../fonts/eicons.ttf?5.2.1") format("truetype"), url("../fonts/eicons.svg?5.2.1#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.3.0");
+  src: url("../fonts/eicons.eot?5.3.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.3.0") format("woff2"), url("../fonts/eicons.woff?5.3.0") format("woff"), url("../fonts/eicons.ttf?5.3.0") format("truetype"), url("../fonts/eicons.svg?5.3.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -363,7 +363,7 @@
 .eicon-bullet-list:before {
   content: '\e86f'; }
 
-.eicon-coding:before {
+.eicon-code:before {
   content: '\e870'; }
 
 .eicon-favorite:before {
@@ -989,3 +989,27 @@
 
 .eicon-wrench:before {
   content: '\e940'; }
+
+.eicon-help:before {
+  content: '\e941'; }
+
+.eicon-help-o:before {
+  content: '\e942'; }
+
+.eicon-zoom-out-bold:before {
+  content: '\e943'; }
+
+.eicon-plus-square-o:before {
+  content: '\e944'; }
+
+.eicon-minus-square-o:before {
+  content: '\e945'; }
+
+.eicon-minus-circle:before {
+  content: '\e946'; }
+
+.eicon-minus-circle-o:before {
+  content: '\e947'; }
+
+.eicon-code-bold:before {
+  content: '\e948'; }
