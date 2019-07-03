@@ -4,14 +4,23 @@ import { Component } from 'react';
 export default class Icon extends Component {
 	setSelected = () => {
 		this.props.setSelectedHandler( this.props.data.selector, this.props.library );
+
+		elementor.iconManager.updateControlValue();
+
+		elementor.iconManager.getLayout().hideModal();
 	};
 	render = () => {
 		return (
-			<div className={ this.props.containerClass } key={ this.props.keyID } onClick={ this.setSelected } filter={ this.props.data.filter }>
+			<div className={ this.props.containerClass } key={ this.props.keyID } filter={ this.props.data.filter }>
 				<div className="elementor-icons-manager__tab__item__content">
 					<i className={ 'elementor-icons-manager__tab__item__icon ' + this.props.className }>
 					</i>
 					<div className={ 'elementor-icons-manager__tab__item__name' } title={ this.props.data.name }>{ this.props.data.name }</div>
+				</div>
+				<div className={ 'elementor-icons-manager__tab__item__overlay' }>
+					<div className={ 'elementor-icons-manager__tab__item__insert' } onClick={ this.setSelected }>
+						<i className={ 'eicon-file-download' }></i>
+					</div>
 				</div>
 			</div>
 		);
