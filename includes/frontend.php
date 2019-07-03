@@ -559,8 +559,12 @@ class Frontend extends App {
 		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
 			$this->parse_global_css_code();
 
-			$css_file = new Post_CSS( get_the_ID() );
-			$css_file->enqueue();
+			$post_id = get_the_ID();
+			// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
+			if ( $post_id && is_singular() ) {
+				$css_file = new Post_CSS( get_the_ID() );
+				$css_file->enqueue();
+			}
 		}
 	}
 
