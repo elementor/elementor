@@ -1174,6 +1174,7 @@ abstract class Document extends Controls_Stack {
 			return;
 		}
 
+		$doc_type = $this->get_name();
 		$global_usage = get_option( 'elementor_elements_usage', [] );
 
 		// Remove prev usage
@@ -1181,8 +1182,8 @@ abstract class Document extends Controls_Stack {
 
 		if ( $prev_usage ) {
 			foreach ( $prev_usage as $type => $count ) {
-				if ( isset( $global_usage[ $type ] ) ) {
-					$global_usage[ $type ] -= $prev_usage[ $type ];
+				if ( isset( $global_usage[ $doc_type ][ $type ] ) ) {
+					$global_usage[ $doc_type ][ $type ] -= $prev_usage[ $type ];
 				}
 			}
 		}
@@ -1207,11 +1208,15 @@ abstract class Document extends Controls_Stack {
 		$this->update_meta( '_elementor_elements_usage', $usage );
 
 		foreach ( $usage as $type => $count ) {
-			if ( ! isset( $global_usage[ $type ] ) ) {
-				$global_usage[ $type ] = 0;
+			if ( ! isset( $global_usage[ $doc_type ] ) ) {
+				$global_usage[ $doc_type ] = [];
 			}
 
-			$global_usage[ $type ] += $usage[ $type ];
+			if ( ! isset( $global_usage[ $doc_type ][ $type ] ) ) {
+				$global_usage[ $doc_type ][ $type ] = 0;
+			}
+
+			$global_usage[ $doc_type ][ $type ] += $usage[ $type ];
 		}
 
 		update_option( 'elementor_elements_usage', $global_usage );
