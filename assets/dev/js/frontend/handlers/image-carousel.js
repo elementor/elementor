@@ -1,21 +1,21 @@
-const ImageCarouselHandler = elementorModules.frontend.handlers.Base.extend( {
-	getDefaultSettings: function() {
+class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
+	getDefaultSettings() {
 		return {
 			selectors: {
 				carousel: '.elementor-image-carousel',
 			},
 		};
-	},
+	}
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		var selectors = this.getSettings( 'selectors' );
 
 		return {
 			$carousel: this.$element.find( selectors.carousel ),
 		};
-	},
+	}
 
-	onInit: function() {
+	onInit() {
 		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
 		var elementSettings = this.getElementSettings(),
@@ -59,9 +59,9 @@ const ImageCarouselHandler = elementorModules.frontend.handlers.Base.extend( {
 		}
 
 		this.elements.$carousel.slick( slickOptions );
-	},
-} );
+	}
+}
 
-module.exports = function( $scope ) {
+export default ( $scope ) => {
 	elementorFrontend.elementsHandler.addHandler( ImageCarouselHandler, { $element: $scope } );
 };

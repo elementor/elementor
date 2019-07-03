@@ -25,8 +25,8 @@ class Progress extends elementorModules.frontend.handlers.Base {
 	}
 }
 
-module.exports = ( $scope ) => {
-	new Progress( {
+export default ( $scope ) => {
+	elementorFrontend.elementsHandler.addHandler( Progress, {
 		$element: $scope,
 	} );
 };
