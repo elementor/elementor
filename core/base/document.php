@@ -32,6 +32,8 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
+	const ELEMENTS_USAGE_META_KEY = '_elementor_elements_usage';
+	const ELEMENTS_USAGE_OPTION_NAME = 'elementor_elements_usage';
 
 	private $main_id;
 
@@ -1174,20 +1176,6 @@ abstract class Document extends Controls_Stack {
 			return;
 		}
 
-		$doc_type = $this->get_name();
-		$global_usage = get_option( 'elementor_elements_usage', [] );
-
-		// Remove prev usage
-		$prev_usage = $this->get_meta( '_elementor_elements_usage' );
-
-		if ( $prev_usage ) {
-			foreach ( $prev_usage as $type => $count ) {
-				if ( isset( $global_usage[ $doc_type ][ $type ] ) ) {
-					$global_usage[ $doc_type ][ $type ] -= $prev_usage[ $type ];
-				}
-			}
-		}
-
 		$usage = [];
 		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( & $usage ) {
 			if ( empty( $element['widgetType'] ) ) {
@@ -1205,7 +1193,26 @@ abstract class Document extends Controls_Stack {
 			return $element;
 		} );
 
-		$this->update_meta( '_elementor_elements_usage', $usage );
+		// Keep prev usage, before updating the new usage meta.
+		$prev_usage = $this->get_meta( self::ELEMENTS_USAGE_META_KEY );
+
+		$this->update_meta( self::ELEMENTS_USAGE_META_KEY, $usage );
+
+		// Handle global usage.
+		$doc_type = $this->get_name();
+
+		$global_usage = get_option( self::ELEMENTS_USAGE_OPTION_NAME, [] );
+
+		if ( $prev_usage ) {
+			foreach ( $prev_usage as $type => $count ) {
+				if ( isset( $global_usage[ $doc_type ][ $type ] ) ) {
+					$global_usage[ $doc_type ][ $type ] -= $prev_usage[ $type ];
+					if ( 0 === $global_usage[ $doc_type ][ $type ] ) {
+						unset( $global_usage[ $doc_type ][ $type ] );
+					}
+				}
+			}
+		}
 
 		foreach ( $usage as $type => $count ) {
 			if ( ! isset( $global_usage[ $doc_type ] ) ) {
@@ -1219,6 +1226,6 @@ abstract class Document extends Controls_Stack {
 			$global_usage[ $doc_type ][ $type ] += $usage[ $type ];
 		}
 
-		update_option( 'elementor_elements_usage', $global_usage );
+		update_option( self::ELEMENTS_USAGE_OPTION_NAME, $global_usage );
 	}
 }
