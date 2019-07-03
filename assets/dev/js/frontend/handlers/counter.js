@@ -17,17 +17,15 @@ class Counter extends elementorModules.frontend.handlers.Base {
 	onInit() {
 		super.onInit();
 
-		elementorFrontend.waypoint( this.elements.$counterNumber, function() {
-			var $number = jQuery( this ),
-				data = $number.data();
-
-			var decimalDigits = data.toValue.toString().match( /\.(.*)/ );
+		elementorFrontend.waypoint( this.elements.$counterNumber, () => {
+			const data = this.elements.$counterNumber.data(),
+				decimalDigits = data.toValue.toString().match( /\.(.*)/ );
 
 			if ( decimalDigits ) {
 				data.rounding = decimalDigits[ 1 ].length;
 			}
 
-			$number.numerator( data );
+			this.elements.$counterNumber.numerator( data );
 		} );
 	}
 }

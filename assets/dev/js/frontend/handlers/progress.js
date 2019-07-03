@@ -17,8 +17,8 @@ class Progress extends elementorModules.frontend.handlers.Base {
 	onInit() {
 		super.onInit();
 
-		elementorFrontend.waypoint( this.elements.$progressNumber, function() {
-			var $progressbar = jQuery( this );
+		elementorFrontend.waypoint( this.elements.$progressNumber, () => {
+			const $progressbar = this.elements.$progressNumber;
 
 			$progressbar.css( 'width', $progressbar.data( 'max' ) + '%' );
 		} );
