@@ -191,7 +191,7 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 }
 
 class StretchedSection extends elementorModules.frontend.handlers.Base {
-	constructor() {
+	constructor( ...args ) {
 		super( ...args );
 		this.stretchElement = null;
 	}
