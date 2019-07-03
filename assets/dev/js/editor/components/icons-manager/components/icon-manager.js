@@ -195,12 +195,12 @@ class IconsManager extends Component {
 
 		return (
 			<Fragment>
-				<div id="elementor-icons-manager__sidebar">
+				<div id="elementor-icons-manager__sidebar" className={ 'elementor-templates-modal__sidebar' }>
 					<div id="elementor-icons-manager__tab-links">
 						{ this.getIconTabsLinks() }
 					</div>
 				</div>
-				<div id="elementor-icons-manager__main">
+				<div id="elementor-icons-manager__main" className={ 'elementor-templates-modal__content' }>
 					{ showSearch ? (
 						<div id="elementor-icons-manager__search">
 							<input placeholder={ 'Filter by name...' } onInput={ this.handleSearch }/>

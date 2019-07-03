@@ -11,6 +11,10 @@ $remote-templates-items-space: 30px;
 			color: darken($editor-success, 10%);
 		}
 	}
+
+	.dialog-buttons-wrapper {
+		display: none;
+	}
 }
 
 #elementor-template-library-header-menu {
