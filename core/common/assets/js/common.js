@@ -56,6 +56,27 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		} );
 	}
 
+	compileArrayTemplateArgs( template, templateArgs ) {
+		return template.replace( /%(?:(\d+)\$)?s/g, ( match, number ) => {
+			if ( ! number ) {
+				number = 1;
+			}
+
+			number--;
+			return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
+		} );
+	}
+
+	compileObjectTemplateArgs( template, templateArgs ) {
+		return template.replace( /{{(?:([ \w]+))}}/g, ( match, name ) => {
+			return templateArgs[ name ] ? templateArgs[ name ] : match;
+		} );
+	}
+
+	compileTemplate( template, templateArgs ) {
+		return jQuery.isPlainObject( templateArgs ) ? this.compileObjectTemplateArgs( template, templateArgs ) : this.compileArrayTemplateArgs( template, templateArgs );
+	}
+
 	translate( stringKey, context, templateArgs, i18nStack ) {
 		if ( context ) {
 			i18nStack = this.config[ context ].i18n;
@@ -72,15 +93,7 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		}
 
 		if ( templateArgs ) {
-			string = string.replace( /%(?:(\d+)\$)?s/g, function( match, number ) {
-				if ( ! number ) {
-					number = 1;
-				}
-
-				number--;
-
-				return undefined !== templateArgs[ number ] ? templateArgs[ number ] : match;
-			} );
+			string = this.compileTemplate( string, templateArgs );
 		}
 
 		return string;
