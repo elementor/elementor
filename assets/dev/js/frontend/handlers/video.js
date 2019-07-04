@@ -59,7 +59,7 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 	}
 
 	bindEvents() {
-		this.elements.$imageOverlay.on( 'click', this.handleVideo );
+		this.elements.$imageOverlay.on( 'click', this.handleVideo.bind( this ) );
 	}
 
 	onElementChange( propertyName ) {
