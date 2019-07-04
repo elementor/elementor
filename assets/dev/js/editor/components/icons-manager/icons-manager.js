@@ -20,22 +20,11 @@ export default class extends elementorModules.Module {
 		if ( ! this.layout ) {
 			this.layout = new ModalLayout();
 
-			const layoutModal = this.layout.getModal();
-
-			layoutModal.addButton( {
-				name: 'insert_icon',
-				text: elementor.translate( 'Insert' ),
-				classes: 'elementor-button elementor-button-success',
-				callback: () => {
-					this.updateControlValue();
-					this.unMountIconManager();
-				},
-			} );
-
-			layoutModal
+			this.layout.getModal()
 				.on( 'show', this.onPickerShow.bind( this ) )
 				.on( 'hide', this.unMountIconManager );
 		}
+
 		return this.layout;
 	}
 
