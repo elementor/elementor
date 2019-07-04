@@ -113,11 +113,25 @@ class Embed {
 		} elseif ( 'vimeo' === $video_properties['provider'] ) {
 			$time_text = '';
 
-			if ( ! empty( $options['start'] ) ) {
-				$time_text = date( 'H\hi\ms\s', $options['start'] );
+			if ( ! empty( $embed_url_params['start'] ) ) {
+				$time_text = date( 'H\hi\ms\s', $embed_url_params['start'] );
 			}
+			// Vimeo's API currently only supports start times, does not support end times.
 
 			$replacements['{TIME}'] = $time_text;
+
+            // If URL is Vimeo, remove start/end parameters from the url params list,
+            // so they don't end up as key=value pairs in the embed URL.
+            // Custom start time in Vimeo is determined by the last parameter, '#t='.
+            // End time is not currently supported by Vimeo.
+            // the '#t=' parameter must be last in the URL string in order for autoplay to work properly
+            if ( $embed_url_params['start'] ) {
+                unset( $embed_url_params['start'] );
+            }
+
+            if ( $embed_url_params['end'] ) {
+                unset( $embed_url_params['end'] );
+            }
 		}
 
 		$embed_pattern = str_replace( array_keys( $replacements ), $replacements, $embed_pattern );
@@ -151,6 +165,7 @@ class Embed {
 		];
 
 		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
+
 		if ( ! $video_embed_url ) {
 			return null;
 		}
