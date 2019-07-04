@@ -47,7 +47,15 @@ const VideoModule = elementorModules.frontend.handlers.Base.extend( {
 
 		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
 
-		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
+		if ( $videoIframe[ 0 ].src.includes( 'vimeo.com' ) ) {
+			const videoSrc = $videoIframe[ 0 ].src;
+			const indexOfStartTimeKey = videoSrc.indexOf( '#t=' );
+
+			// insert the autoplay flag before the '#t=' param. Param '#t=' must be last in the URL
+			$videoIframe[ 0 ].src = [ videoSrc.slice( 0, indexOfStartTimeKey ), '&autoplay=1', videoSrc.slice( indexOfStartTimeKey ) ].join( '' );
+		} else {
+			$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
+		}
 	},
 
 	animateVideo: function() {
