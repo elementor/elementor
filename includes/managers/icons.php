@@ -94,6 +94,7 @@ class Icons_Manager {
 				'labelIcon' => 'fab fa-font-awesome-alt',
 				'ver' => '5.9.0',
 				'fetchJson' => self::get_fa_asset_url( 'regular', 'json', false ),
+				'native' => true,
 			],
 			'fa-solid' => [
 				'name' => 'fa-solid',
@@ -105,6 +106,7 @@ class Icons_Manager {
 				'labelIcon' => 'fab fa-font-awesome',
 				'ver' => '5.9.0',
 				'fetchJson' => self::get_fa_asset_url( 'solid', 'json', false ),
+				'native' => true,
 			],
 			'fa-brands' => [
 				'name' => 'fa-brands',
@@ -116,6 +118,7 @@ class Icons_Manager {
 				'labelIcon' => 'fab fa-font-awesome-flag',
 				'ver' => '5.9.0',
 				'fetchJson' => self::get_fa_asset_url( 'brands', 'json', false ),
+				'native' => true,
 			],
 		] );
 	}
@@ -171,6 +174,7 @@ class Icons_Manager {
 				'name' => 'all',
 				'label' => __( 'All Icons', 'elementor' ),
 				'labelIcon' => 'eicon-filter',
+				'native' => true,
 			],
 		];
 		return array_values( array_merge( $tabs, self::get_icon_manager_tabs() ) );
@@ -369,7 +373,7 @@ class Icons_Manager {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		if ( ! self::is_migration_allowed() ) {
-			add_action( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
+			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
 			add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_settings' ], 100 );
 
 			if ( ! empty( $_POST ) ) { // phpcs:ignore -- nonce validation done in callback
