@@ -35,6 +35,45 @@ class Icons_Manager {
 	}
 
 	/**
+	 * register styles
+	 *
+	 * Used to register all icon types stylesheets so they could be enqueued later by widgets
+	 */
+	public function register_styles() {
+		$config = self::get_icon_manager_tabs_config();
+
+		$shared_styles = [];
+
+		foreach ( $config as $type => $icon_type ) {
+			if ( ! isset( $icon_type['url'] ) ) {
+				continue;
+			}
+			$dependencies = [];
+			if ( isset( $icon_type['enqueue'] ) ) {
+				foreach ( (array) $icon_type['enqueue'] as $font_css_url ) {
+					if ( ! in_array( $font_css_url, array_keys( $shared_styles ) ) ) {
+						$style_handle = 'elementor-icons-shared-' . count( $shared_styles );
+						wp_register_style(
+							$style_handle,
+							$font_css_url,
+							[],
+							$icon_type['ver']
+						);
+						$shared_styles[ $font_css_url ] = $style_handle;
+					}
+					$dependencies[] = $shared_styles[ $font_css_url ];
+				}
+			}
+			wp_register_style(
+				'elementor-icons-' . $icon_type['name'],
+				$icon_type['url'],
+				$dependencies,
+				$icon_type['ver']
+			);
+		}
+	}
+
+	/**
 	 * Init Tabs
 	 *
 	 * Initiate Icon Manager Tabs.
@@ -192,11 +231,16 @@ class Icons_Manager {
 	 * @return bool
 	 */
 	public static function is_migration_allowed() {
-		$migration_allowed = null === self::get_needs_upgrade_option();
-		/**
-		 * allowed to filter migration allowed
-		 */
-		return apply_filters( 'elementor/icons_manager/migration_allowed', $migration_allowed );
+		static $migration_allowed = false;
+		if ( false === $migration_allowed ) {
+			$migration_allowed = null === self::get_needs_upgrade_option();
+
+			/**
+			 * allowed to filter migration allowed
+			 */
+			$migration_allowed = apply_filters( 'elementor/icons_manager/migration_allowed', $migration_allowed );
+		}
+		return $migration_allowed;
 	}
 
 	/**
@@ -318,6 +362,8 @@ class Icons_Manager {
 
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 
 		// Ajax.
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
