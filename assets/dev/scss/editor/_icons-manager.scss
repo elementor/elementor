@@ -10,10 +10,6 @@
 		.dialog-content {
 			display: flex;
 		}
-
-		.dialog-buttons-wrapper {
-			display: none;
-		}
 	}
 
 	&__wrapper {
@@ -170,18 +166,11 @@
 		background-color: #fff;
 		box-shadow: 0 1px 12px rgba(0,0,0,.05);
 		border-radius: 3px;
+		cursor: pointer;
 		transition: $transition-hover;
-		overflow: hidden;
 
 		&:hover {
 			box-shadow: 0 1px 14px rgba(0, 0, 0, 0.16)
-		}
-
-		&:not(:hover) {
-
-			.elementor-icons-manager__tab__item__overlay {
-				display: none;
-			}
 		}
 
 		&.elementor-selected {
@@ -201,7 +190,7 @@
 		}
 
 		&__icon {
-			font-size: 25px;
+			font-size: 32px;
 			color: $editor-darker;
 		}
 
@@ -213,31 +202,6 @@
 			max-width: 100%;
 			overflow: hidden;
 			text-overflow: ellipsis;
-		}
-
-		&__overlay {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background-color: rgba(0,0,0,0.4);
-		}
-
-		&__insert {
-			border-radius: 50%;
-			background-color: #fff;
-			padding: 7px;
-			line-height: 1;
-			cursor: pointer;
-
-			i {
-				font-size: 20px;
-				color: $editor-darkest;
-			}
 		}
 	}
 }
