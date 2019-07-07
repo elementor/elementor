@@ -24,17 +24,7 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 			this.clearInput();
 		}
 
-		this.toggleMagnifierIcon();
-
 		this.triggerMethod( 'search:change:input' );
-	},
-
-	toggleMagnifierIcon: function() {
-		if ( '' !== this.ui.input[0].value ) {
-			$( '#elementor-panel-elements-search-wrapper i.eicon-search' ).hide();
-		} else {
-			$( '#elementor-panel-elements-search-wrapper i.eicon-search' ).show();
-		}
 	},
 } );
 
