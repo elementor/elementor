@@ -127,4 +127,20 @@
 			@include end(15px);
 		}
 	}
+
+	/* clears the 'X' from Internet Explorer */
+	&::-ms-clear {
+		margin-#{$end}: 6px;
+	}
+	&::-ms-reveal {
+		margin-#{$end}: 6px;
+	}
+
+	/* clears the 'X' from Chrome */
+	&::-webkit-search-decoration,
+	&::-webkit-search-cancel-button,
+	&::-webkit-search-results-button,
+	&::-webkit-search-results-decoration {
+		margin-#{$end}: 6px;
+	}
 }
