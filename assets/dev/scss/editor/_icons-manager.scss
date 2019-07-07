@@ -27,6 +27,20 @@
 		margin-top: 30px;
 	}
 
+	&__upload {
+		margin: 0 45px;
+		padding-top: 35px;
+		border-top: 1px solid $editor-background;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		&__title {
+			color: $editor-lighter;
+			font-size: 11px;
+		}
+	}
+
 	&__main {
 		display: flex;
 		flex-direction: column;
@@ -103,6 +117,31 @@
 			@media (max-width: $editor-screen-xs-max) {
 				grid-template-columns: repeat(3, 1fr);
 			}
+		}
+	}
+
+	&__promotion {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		padding-top: 70px;
+
+		&__icon {
+			font-size: 70px;
+			color: $editor-lighter;
+		}
+
+		&__text {
+			width: 300px;
+			color: $editor-darker;
+			font-size: 16px;
+			padding-top: 20px;
+		}
+
+		&__link {
+			color: $editor-accent;
+			padding-top: 20px;
+			font-size: 15px;
 		}
 	}
 }
@@ -190,7 +229,7 @@
 		}
 
 		&__icon {
-			font-size: 32px;
+			font-size: 25px;
 			color: $editor-darker;
 		}
 
