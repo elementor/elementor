@@ -1,36 +1,40 @@
 import BetaTesterLayout from './layout';
 
 class BetaTesterModule extends elementorModules.ViewModule {
+	onInit() {
+		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
+		if ( elementorAdmin.config.user.introduction.beta_tester_signup || '#tab-fontawesome4_migration' === location.hash ) {
+			return;
+		}
+		this.showLayout();
+	}
+
+	showLayout() {
+		this.layout = new BetaTesterLayout();
+		this.layout.showModal();
+	}
+
 	getDefaultSettings() {
 		return {
 			selectors: {
-				betaSelect: '.elementor_beta select',
+				betaTesterFirstToKnow: '#beta-tester-first-to-know',
 			},
 		};
 	}
 
 	getDefaultElements() {
+		const elements = {};
 		const selectors = this.getSettings( 'selectors' );
 
-		return {
-			$betaSelect: jQuery( selectors.betaSelect ),
-		};
+		elements.$betaTesterFirstToKnow = jQuery( selectors.betaTesterFirstToKnow );
+
+		return elements;
 	}
 
 	bindEvents() {
-		this.elements.$betaSelect.on( 'change', this.onBetaTesterSelected.bind( this ) );
-	}
+		const elements = this.elements;
 
-	onInit() {
-		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
-
-		this.layout = new BetaTesterLayout();
-	}
-	onBetaTesterSelected() {
-		if ( 'yes' !== this.elements.$betaSelect.val() ) {
-			return;
-		}
-		this.layout.showModal();
+		elements.$betaTesterFirstToKnow.on( 'click', this.showLayout.bind( this ) );
 	}
 }
 

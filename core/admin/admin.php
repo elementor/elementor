@@ -2,6 +2,7 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
+use Elementor\Beta_Testers;
 use Elementor\Core\Base\App;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -720,7 +721,15 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function init_beta_tester( $current_screen ) {
-		if ( 'elementor_page_elementor-tools' === $current_screen->id ) {
+		$beta_tester_email = get_user_meta( get_current_user_id(), User::BETA_TESTER_META_KEY, true );
+
+		if ( 'yes' !== get_option( 'elementor_beta', 'no' ) || $beta_tester_email ) {
+			return;
+		}
+
+		$all_introductions = User::get_introduction_meta();
+		$beta_tester_signup_dismissed = array_key_exists( Beta_Testers::BETA_TESTER_SIGNUP, $all_introductions );
+		if ( ( ( 'toplevel_page_elementor' === $current_screen->base ) && ! $beta_tester_signup_dismissed ) || 'elementor_page_elementor-tools' === $current_screen->id ) {
 			add_action( 'admin_head', [ $this, 'add_beta_tester_template' ] );
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_beta_tester_scripts' ] );
 		}
@@ -738,6 +747,8 @@ class Admin extends App {
 		Plugin::$instance->init_common();
 
 		$this->add_component( 'feedback', new Feedback() );
+
+		$this->add_component( 'canary-deployment', new Canary_Deployment() );
 
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
@@ -774,6 +785,7 @@ class Admin extends App {
 	protected function get_init_settings() {
 		$settings = [
 			'home_url' => home_url(),
+			'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,
 			'i18n' => [
 				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
 				'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
@@ -783,7 +795,12 @@ class Admin extends App {
 				'back_to_wordpress_editor_message' => __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
 				'back_to_wordpress_editor_header' => __( 'Back to WordPress Editor', 'elementor' ),
 				'beta_tester_sign_up' => __( 'Sign Up', 'elementor' ),
+				'do_not_show_again' => __( 'Don\'t Show Again', 'elementor' ),
 			],
+			'user' => [
+				'introduction' => User::get_introduction_meta(),
+			],
+
 		];
 
 		return apply_filters( 'elementor/admin/localize_settings', $settings );

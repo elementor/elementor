@@ -55,7 +55,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 		</div>
 		<div id="elementor-preview-responsive-wrapper" class="elementor-device-desktop elementor-device-rotate-portrait">
 			<div id="elementor-preview-loading">
-				<i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i>
+				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 			</div>
 			<?php if ( $notice ) { ?>
 				<div id="elementor-notice-bar">

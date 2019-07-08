@@ -621,7 +621,8 @@ class Source_Local extends Source_Base {
 		if ( ! empty( $args['display'] ) ) {
 			$content = $db->get_builder( $template_id );
 		} else {
-			$content = $db->get_plain_editor( $template_id );
+			$document = Plugin::$instance->documents->get( $template_id );
+			$content = $document ? $document->get_elements_data() : [];
 		}
 
 		if ( ! empty( $content ) ) {
@@ -1209,6 +1210,12 @@ class Source_Local extends Source_Base {
 		$inline_style = '#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub { display:none;}';
 
 		$current_type = get_query_var( 'elementor_library_type' );
+
+		$document_types = Plugin::instance()->documents->get_document_types();
+
+		if ( empty( $document_types[ $current_type ] ) ) {
+			return;
+		}
 
 		// TODO: Better way to exclude widget type.
 		if ( 'widget' === $current_type ) {

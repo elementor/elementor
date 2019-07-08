@@ -2,6 +2,8 @@ var helpers;
 
 helpers = {
 	_enqueuedFonts: [],
+	_enqueuedIconFonts: [],
+	_inlineSvg: [],
 
 	elementsHierarchy: {
 		section: {
@@ -12,14 +14,189 @@ helpers = {
 		},
 	},
 
-	enqueueFont: function( font ) {
+	enqueueCSS( url, $document ) {
+		const selector = 'link[href="' + url + '"]',
+			link = '<link href="' + url + '" rel="stylesheet" type="text/css">';
+
+		if ( ! $document ) {
+			return;
+		}
+
+		if ( ! $document.find( selector ).length ) {
+			$document.find( 'link:last' ).after( link );
+		}
+	},
+
+	enqueuePreviewStylesheet( url ) {
+		this.enqueueCSS( url, elementor.$previewContents );
+	},
+
+	enqueueEditorStylesheet( url ) {
+		this.enqueueCSS( url, elementorCommon.elements.$document );
+	},
+
+	/**
+	 * @deprecated 2.6.0
+	 */
+	enqueueStylesheet( url ) {
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		this.enqueuePreviewStylesheet( url );
+	},
+
+	fetchInlineSvg( svgUrl, callback = false ) {
+		fetch( svgUrl )
+			.then( ( response ) => response.text() )
+			.then( ( data ) => {
+				if ( callback ) {
+					callback( data );
+				}
+			} );
+	},
+
+	getInlineSvg( value, view ) {
+		if ( ! value.id ) {
+			return;
+		}
+
+		if ( this._inlineSvg.hasOwnProperty( value.id ) ) {
+			return this._inlineSvg[ value.id ];
+		}
+
+		const self = this;
+		this.fetchInlineSvg( value.url, ( data ) => {
+			if ( data ) {
+				self._inlineSvg[ value.id ] = data; //$( data ).find( 'svg' )[ 0 ].outerHTML;
+				if ( view ) {
+					view.render();
+				}
+				elementor.channels.editor.trigger( 'svg:insertion', data, value.id );
+			}
+		} );
+	},
+
+	enqueueIconFonts( iconType ) {
+		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! ElementorConfig[ 'icons_update_needed' ] ) {
+			return;
+		}
+
+		const iconSetting = this.getIconLibrarySettings( iconType );
+		if ( ! iconSetting ) {
+			return;
+		}
+
+		if ( iconSetting.enqueue ) {
+			iconSetting.enqueue.forEach( ( assetURL ) => {
+				this.enqueuePreviewStylesheet( assetURL );
+				this.enqueueEditorStylesheet( assetURL );
+			} );
+		}
+
+		if ( iconSetting.url ) {
+			this.enqueuePreviewStylesheet( iconSetting.url );
+			this.enqueueEditorStylesheet( iconSetting.url );
+		}
+
+		this._enqueuedIconFonts.push( iconType );
+
+		elementor.channels.editor.trigger( 'fontIcon:insertion', iconType, iconSetting );
+	},
+
+	getIconLibrarySettings( iconType ) {
+		const iconSetting = elementor.config.icons.filter( ( library ) => iconType === library.name );
+		if ( iconSetting[ 0 ] && iconSetting[ 0 ].name ) {
+			return iconSetting[ 0 ];
+		}
+		return false;
+	},
+
+	/**
+	 *
+	 * @param view - view to refresh if needed
+	 * @param icon - icon control data
+	 * @param attributes - default {} - attributes to attach to rendered html tag
+	 * @param tag - default i - html tag to render
+	 * @param returnType - default value - retrun type
+	 * @returns {string|boolean|*}
+	 */
+	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {
+		if ( ! icon || ! icon.library ) {
+			if ( 'object' === returnType ) {
+				return {
+					rendered: false,
+				};
+			}
+			return;
+		}
+
+		const iconType = icon.library,
+			iconValue = icon.value;
+		if ( 'svg' === iconType ) {
+			if ( 'panel' === returnType ) {
+				return '<img src="' + iconValue.url + '">';
+			}
+			return {
+				rendered: true,
+				value: this.getInlineSvg( iconValue, view ),
+			};
+		}
+		const iconSettings = this.getIconLibrarySettings( iconType );
+		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {
+			this.enqueueIconFonts( iconType );
+			if ( 'panel' === returnType ) {
+				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
+			}
+			const tagUniqueID = tag + this.getUniqueID();
+			view.addRenderAttribute( tagUniqueID, attributes );
+			view.addRenderAttribute( tagUniqueID, 'class', iconValue );
+			const htmlTag = '<' + tag + ' ' + view.getRenderAttributeString( tagUniqueID ) + '></' + tag + '>';
+			if ( 'object' === returnType ) {
+				return {
+					rendered: true,
+					value: htmlTag,
+				};
+			}
+			return htmlTag;
+		}
+		elementor.channels.editor.trigger( 'Icon:insertion', iconType, iconValue, attributes, tag, view );
+	},
+
+	isIconMigrated( settings, controlName ) {
+		if ( settings.__fa4_migrated && settings.__fa4_migrated[ controlName ] ) {
+			return true;
+		}
+		return false;
+	},
+
+	fetchFa4ToFa5Mapping() {
+		const storageKey = 'fa4Tofa5Mapping';
+		let mapping = elementorCommon.storage.get( storageKey );
+		if ( ! mapping ) {
+			jQuery.getJSON( ElementorConfig.fa4_to_fa5_mapping_url, ( data ) => {
+				mapping = data;
+				elementorCommon.storage.set( storageKey, data );
+			} );
+		}
+		return mapping;
+	},
+
+	mapFa4ToFa5( fa4Value ) {
+		const mapping = this.fetchFa4ToFa5Mapping();
+		if ( mapping[ fa4Value ] ) {
+			return mapping[ fa4Value ];
+		}
+		// every thing else is converted to solid
+		return {
+			value: 'fas' + fa4Value.replace( 'fa ', ' ' ),
+			library: 'fa-solid',
+		};
+	},
+
+	enqueueFont( font ) {
 		if ( -1 !== this._enqueuedFonts.indexOf( font ) ) {
 			return;
 		}
 
-		var fontType = elementor.config.controls.font.options[ font ],
-			fontUrl,
-
+		const fontType = elementor.config.controls.font.options[ font ],
 			subsets = {
 				ru_RU: 'cyrillic',
 				uk: 'cyrillic',
@@ -28,6 +205,8 @@ helpers = {
 				el: 'greek',
 				he_IL: 'hebrew',
 			};
+
+		let	fontUrl;
 
 		switch ( fontType ) {
 			case 'googlefonts' :
@@ -40,13 +219,13 @@ helpers = {
 				break;
 
 			case 'earlyaccess' :
-				var fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
+				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
 				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
 				break;
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
-			elementor.$previewContents.find( 'link:last' ).after( '<link href="' + fontUrl + '" rel="stylesheet" type="text/css">' );
+			this.enqueuePreviewStylesheet( fontUrl );
 		}
 
 		this._enqueuedFonts.push( font );
@@ -54,11 +233,12 @@ helpers = {
 		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
 	},
 
-	resetEnqueuedFontsCache: function() {
+	resetEnqueuedFontsCache() {
 		this._enqueuedFonts = [];
+		this._enqueuedIconFonts = [];
 	},
 
-	getElementChildType: function( elementType, container ) {
+	getElementChildType( elementType, container ) {
 		if ( ! container ) {
 			container = this.elementsHierarchy;
 		}
@@ -71,31 +251,130 @@ helpers = {
 			return null;
 		}
 
-		for ( var type in container ) {
-			if ( ! container.hasOwnProperty( type ) ) {
-				continue;
+		let result = null;
+
+		jQuery.each( container, ( index, type ) => {
+			if ( ! jQuery.isPlainObject( type ) ) {
+				return;
 			}
 
-			if ( ! jQuery.isPlainObject( container[ type ] ) ) {
-				continue;
+			const childType = this.getElementChildType( elementType, type );
+
+			if ( childType ) {
+				result = childType;
+				return false;
 			}
+		} );
 
-			var result = this.getElementChildType( elementType, container[ type ] );
-
-			if ( result ) {
-				return result;
-			}
-		}
-
-		return null;
+		return result;
 	},
 
-	getUniqueID: function() {
+	getUniqueID() {
 		return Math.random().toString( 16 ).substr( 2, 7 );
 	},
 
+	getSocialNetworkNameFromIcon( iconsControl, fallbackControl, toUpperCase = false, migrated = null, withIcon = false ) {
+		let social = '',
+			icon = '';
+		if ( fallbackControl && ! migrated ) {
+			social = fallbackControl.replace( 'fa fa-', '' );
+			icon = '<i class="' + fallbackControl + '"></i>';
+		} else if ( iconsControl.value && 'svg' !== iconsControl.library ) {
+			social = iconsControl.value.split( ' ' )[ 1 ];
+			if ( ! social ) {
+				social = '';
+			} else {
+				social = social.replace( 'fa-', '' );
+			}
+			icon = this.renderIcon( null, iconsControl, {}, 'i', 'panel' );
+		} else {
+			icon = this.renderIcon( null, iconsControl, {}, 'i', 'panel' );
+		}
+		if ( '' !== social && toUpperCase ) {
+			social = social.split( '-' ).join( ' ' );
+			social = social.replace( /\b\w/g, ( letter ) => letter.toUpperCase() );
+		}
+		social = elementor.hooks.applyFilters( 'elementor/social_icons/network_name', social, iconsControl, fallbackControl, toUpperCase, withIcon );
+		if ( withIcon ) {
+			social = icon + ' ' + social;
+		}
+		return social;
+	},
+
+	getSimpleDialog( id, title, message, confirmString, onConfirm ) {
+		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: id,
+			headerMessage: title,
+			message: message,
+			position: {
+				my: 'center center',
+				at: 'center center',
+			},
+			strings: {
+				confirm: confirmString,
+				cancel: elementor.translate( 'cancel' ),
+			},
+			onConfirm: onConfirm,
+		} );
+	},
+
+	maybeDisableWidget() {
+		if ( ! ElementorConfig[ 'icons_update_needed' ] ) {
+			return false;
+		}
+
+		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
+			widgetType = elementView.model.get( 'widgetType' ),
+			widgetData = elementor.config.widgets[ widgetType ],
+			hasControlOfType = ( controls, type ) => {
+				let has = false;
+				jQuery.each( controls, ( controlName, controlData ) => {
+					if ( type === controlData.type ) {
+						has = true;
+						return false;
+					}
+					if ( 'repeater' === controlData.type ) {
+						has = hasControlOfType( controlData.fields, type );
+						if ( has ) {
+							return false;
+						}
+					}
+				} );
+				return has;
+			};
+
+		if ( widgetData ) {
+			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
+			if ( hasIconsControl ) {
+				const onConfirm = () => {
+					window.location.href = ElementorConfig.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
+				};
+				elementor.helpers.getSimpleDialog(
+					'elementor-enable-fa5-dialog',
+					elementor.translate( 'enable_fa5' ),
+					elementor.translate( 'dialog_confirm_enable_fa5' ),
+					elementor.translate( 'update' ),
+					onConfirm
+				).show();
+				return true;
+			}
+		}
+		return false;
+	},
+
+	/*
+	* @deprecated 2.0.0
+	*/
+	stringReplaceAll( string, replaces ) {
+		var re = new RegExp( Object.keys( replaces ).join( '|' ), 'gi' );
+
+		return string.replace( re, function( matched ) {
+			return replaces[ matched ];
+		} );
+	},
+
 	isActiveControl: function( controlModel, values ) {
-		var condition,
+		let condition,
 			conditions;
 
 		// TODO: Better way to get this?
@@ -154,21 +433,21 @@ helpers = {
 		return _.isEmpty( hasFields );
 	},
 
-	cloneObject: function( object ) {
+	cloneObject( object ) {
 		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
 
-	firstLetterUppercase: function( string ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.firstLetterUppercase', '2.3.0', 'elementorCommon.helpers.firstLetterUppercase' );
+	firstLetterUppercase( string ) {
+		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.upperCaseWords', '2.3.0', 'elementorCommon.helpers.upperCaseWords' );
 
-		return elementorCommon.helpers.firstLetterUppercase( string );
+		return elementorCommon.helpers.upperCaseWords( string );
 	},
 
-	disableElementEvents: function( $element ) {
+	disableElementEvents( $element ) {
 		$element.each( function() {
-			var currentPointerEvents = this.style.pointerEvents;
+			const currentPointerEvents = this.style.pointerEvents;
 
 			if ( 'none' === currentPointerEvents ) {
 				return;
@@ -180,9 +459,9 @@ helpers = {
 		} );
 	},
 
-	enableElementEvents: function( $element ) {
+	enableElementEvents( $element ) {
 		$element.each( function() {
-			var $this = jQuery( this ),
+			const $this = jQuery( this ),
 				backupPointerEvents = $this.data( 'backup-pointer-events' );
 
 			if ( undefined === backupPointerEvents ) {
@@ -195,12 +474,12 @@ helpers = {
 		} );
 	},
 
-	getColorPickerPaletteIndex: function( paletteKey ) {
+	getColorPickerPaletteIndex( paletteKey ) {
 		return [ '7', '8', '1', '5', '2', '3', '6', '4' ].indexOf( paletteKey );
 	},
 
-	wpColorPicker: function( $element, options ) {
-		var self = this,
+	wpColorPicker( $element, options ) {
+		const self = this,
 			colorPickerScheme = elementor.schemes.getScheme( 'color-picker' ),
 			items = _.sortBy( colorPickerScheme.items, function( item ) {
 				return self.getColorPickerPaletteIndex( item.key );
@@ -217,8 +496,8 @@ helpers = {
 		return $element.wpColorPicker( defaultOptions );
 	},
 
-	isInViewport: function( element, html ) {
-		var rect = element.getBoundingClientRect();
+	isInViewport( element, html ) {
+		const rect = element.getBoundingClientRect();
 		html = html || document.documentElement;
 		return (
 			rect.top >= 0 &&
@@ -228,13 +507,13 @@ helpers = {
 		);
 	},
 
-	scrollToView: function( $element, timeout, $parent ) {
+	scrollToView( $element, timeout, $parent ) {
 		if ( undefined === timeout ) {
 			timeout = 500;
 		}
 
-		var $scrolled = $parent,
-			$elementorFrontendWindow = elementorFrontend.elements.$window;
+		let $scrolled = $parent;
+		const $elementorFrontendWindow = elementorFrontend.elements.$window;
 
 		if ( ! $parent ) {
 			$parent = $elementorFrontendWindow;
@@ -252,33 +531,33 @@ helpers = {
 				return;
 			}
 
-			var scrolling = elementTop - ( parentHeight / 2 );
+			const scrolling = elementTop - ( parentHeight / 2 );
 
 			$scrolled.stop( true ).animate( { scrollTop: scrolling }, 1000 );
 		}, timeout );
 	},
 
-	getElementInlineStyle: function( $element, properties ) {
-		var style = {},
+	getElementInlineStyle( $element, properties ) {
+		const style = {},
 			elementStyle = $element[ 0 ].style;
 
-		properties.forEach( function( property ) {
+		properties.forEach( ( property ) => {
 			style[ property ] = undefined !== elementStyle[ property ] ? elementStyle[ property ] : '';
 		} );
 
 		return style;
 	},
 
-	cssWithBackup: function( $element, backupState, rules ) {
-		var cssBackup = this.getElementInlineStyle( $element, Object.keys( rules ) );
+	cssWithBackup( $element, backupState, rules ) {
+		const cssBackup = this.getElementInlineStyle( $element, Object.keys( rules ) );
 
 		$element
 			.data( 'css-backup-' + backupState, cssBackup )
 			.css( rules );
 	},
 
-	recoverCSSBackup: function( $element, backupState ) {
-		var backupKey = 'css-backup-' + backupState;
+	recoverCSSBackup( $element, backupState ) {
+		const backupKey = 'css-backup-' + backupState;
 
 		$element.css( $element.data( backupKey ) );
 

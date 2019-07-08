@@ -53,7 +53,7 @@ class Widget_Html extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-coding';
+		return 'eicon-code';
 	}
 
 	/**

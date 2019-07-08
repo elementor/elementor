@@ -1,0 +1,21 @@
+.elementor-control-type-icons {
+
+	.elementor-control-media__preview {
+
+		> * {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+		}
+
+		i {
+			font-size: 70px;
+			color: $editor-light;
+		}
+
+		svg {
+			height: 75%;
+		}
+	}
+}

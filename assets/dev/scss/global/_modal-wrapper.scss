@@ -25,7 +25,29 @@
 		}
 
 		&-buttons-wrapper {
-			display: none;
+			background-color: #fff;
+			border: none;
+			display: flex;
+			justify-content: flex-end;
+			padding: 5px;
+			box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+			position: relative;
+
+			.elementor-button {
+				height: 40px;
+				@include margin-start(5px);
+
+				&-success {
+					padding: 12px 36px;
+					color: #fff;
+					width: initial;
+					font-size: 15px;
+
+					&:hover {
+						background-color: $editor-success;
+					}
+				}
+			}
 		}
 
 		&-message {
@@ -97,7 +119,7 @@
 
 			> i {
 				font-size: 20px;
-				transition: color .5s;
+				transition: $transition-hover;
 				cursor: pointer;
 
 				&:not(:hover) {
@@ -142,5 +164,15 @@
 				}
 			}
 		}
+	}
+
+	&__sidebar {
+		width: 25%;
+		background-color: rgba(255, 255, 255, 0.3);
+	}
+
+	&__content {
+		flex-grow: 1;
+		box-shadow: 0 0 13px inset rgba(0, 0, 0, 0.05);
 	}
 }

@@ -10,8 +10,7 @@
 	position: relative;
 	background-color: $progress-bg;
 	color: $progress-text;
-	height: 30px;
-	line-height: 30px;
+	height: 100%;
 	border-radius: 2px;
 }
 
@@ -20,7 +19,8 @@
 	background-color: $gray;
 	width: 0;
 	font-size: 11px;
-	height: 100%;
+	height: 30px;
+	line-height: 30px;
 	border-radius: 2px;
 	transition: width 1s ease-in-out;
 }

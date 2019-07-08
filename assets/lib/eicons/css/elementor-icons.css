@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.0.0");
-  src: url("../fonts/eicons.eot?5.0.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.0.0") format("woff2"), url("../fonts/eicons.woff?5.0.0") format("woff"), url("../fonts/eicons.ttf?5.0.0") format("truetype"), url("../fonts/eicons.svg?5.0.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.3.0");
+  src: url("../fonts/eicons.eot?5.3.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.3.0") format("woff2"), url("../fonts/eicons.woff?5.3.0") format("woff"), url("../fonts/eicons.ttf?5.3.0") format("truetype"), url("../fonts/eicons.svg?5.3.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -363,7 +363,7 @@
 .eicon-bullet-list:before {
   content: '\e86f'; }
 
-.eicon-coding:before {
+.eicon-code:before {
   content: '\e870'; }
 
 .eicon-favorite:before {
@@ -810,6 +810,9 @@
 .eicon-flash:before {
   content: '\e904'; }
 
+.eicon-redo:before {
+  content: '\e905'; }
+
 .eicon-ban:before {
   content: '\e906'; }
 
@@ -842,6 +845,12 @@
 
 .eicon-chevron-double-right:before {
   content: '\e910'; }
+
+.eicon-undo:before {
+  content: '\e911'; }
+
+.eicon-filter:before {
+  content: '\e912'; }
 
 .eicon-circle-o:before {
   content: '\e913'; }
@@ -885,6 +894,12 @@
 .eicon-font:before {
   content: '\e920'; }
 
+.eicon-adjust:before {
+  content: '\e921'; }
+
+.eicon-lightbox:before {
+  content: '\e922'; }
+
 .eicon-heart-o:before {
   content: '\e923'; }
 
@@ -905,6 +920,9 @@
 
 .eicon-long-arrow-right:before {
   content: '\e929'; }
+
+.eicon-caret-down:before {
+  content: '\e92a'; }
 
 .eicon-paint-brush:before {
   content: '\e92b'; }
@@ -957,11 +975,41 @@
 .eicon-trash-o:before {
   content: '\e93b'; }
 
+.eicon-font-awesome:before {
+  content: '\e93c'; }
+
 .eicon-user-circle-o:before {
   content: '\e93d'; }
 
 .eicon-video-camera:before {
   content: '\e93e'; }
 
+.eicon-heart:before {
+  content: '\e93f'; }
+
 .eicon-wrench:before {
   content: '\e940'; }
+
+.eicon-help:before {
+  content: '\e941'; }
+
+.eicon-help-o:before {
+  content: '\e942'; }
+
+.eicon-zoom-out-bold:before {
+  content: '\e943'; }
+
+.eicon-plus-square-o:before {
+  content: '\e944'; }
+
+.eicon-minus-square-o:before {
+  content: '\e945'; }
+
+.eicon-minus-circle:before {
+  content: '\e946'; }
+
+.eicon-minus-circle-o:before {
+  content: '\e947'; }
+
+.eicon-code-bold:before {
+  content: '\e948'; }

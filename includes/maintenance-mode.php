@@ -191,6 +191,7 @@ class Maintenance_Mode {
 				'sections' => [
 					'maintenance_mode' => [
 						'callback' => function() {
+							echo '<h2>' . esc_html__( 'Maintenance Mode', 'elementor' ) . '</h2>';
 							echo '<div>' . __( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' ) . '</div>';
 						},
 						'fields' => [
@@ -298,6 +299,12 @@ class Maintenance_Mode {
 		<?php
 	}
 
+	public function on_update_mode( $old_value, $value ) {
+		if ( $old_value !== $value ) {
+			do_action( 'elementor/maintenance_mode/mode_changed', $old_value, $value );
+		}
+	}
+
 	/**
 	 * Maintenance mode constructor.
 	 *
@@ -307,6 +314,8 @@ class Maintenance_Mode {
 	 * @access public
 	 */
 	public function __construct() {
+		add_action( 'update_option_elementor_maintenance_mode_mode', [ $this, 'on_update_mode' ], 10, 2 );
+
 		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
 
 		if ( is_admin() ) {

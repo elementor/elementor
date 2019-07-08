@@ -1,0 +1,19 @@
+#elementor-fatal-error-dialog {
+	&.elementor-preview-loading-error {
+		.dialog {
+			&-header {
+				color: $editor-darkest;
+			}
+			&-message a {
+				color: $editor-dark;
+				text-decoration: underline;
+				font-style: italic;
+			}
+		}
+	}
+}
+
+
+#elementor-preview-debug-link-text {
+	display: inline-block;
+}

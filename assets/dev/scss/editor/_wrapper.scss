@@ -72,9 +72,9 @@ body {
 
 		#elementor-mode-switcher-preview {
 
-			.fa {
+			.eicon {
 				&:before {
-					content: getValueByDirection('\f104', '\f105');
+					content: getValueByDirection('\e89f', '\e89e');
 				}
 			}
 		}
@@ -88,10 +88,10 @@ body {
 
 		#elementor-mode-switcher-preview {
 
-			.fa {
+			.eicon {
 
 				&:before {
-					content: getValueByDirection('\f105', '\f104');
+					content: getValueByDirection('\e89e', '\e89f');
 				}
 			}
 		}

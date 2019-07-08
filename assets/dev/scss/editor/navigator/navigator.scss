@@ -83,11 +83,14 @@
 .elementor-navigator {
 
 	&__item {
+		position: relative;
 		display: flex;
-		height: 32px;
-		font-size: 12px;
+		height: 30px;
+		font-size: 11px;
 		border-bottom: 1px solid $editor-background;
 		cursor: pointer;
+		transition: padding .5s linear;
+		overflow: hidden;
 
 		&:not(.elementor-active) {
 
@@ -173,7 +176,7 @@
 
 				&:not(:hover) {
 
-					.elementor-navigator__element__toggle, .elementor-navigator__element__indicators {
+					.elementor-navigator__element__toggle {
 						display: none;
 					}
 				}
@@ -225,9 +228,22 @@
 		}
 
 		&__toggle {
-			text-align: $end;
+			position: absolute;
+			@include end(15px);
+			height: 100%;
+			z-index: 0;
 			font-size: 13px;
-			padding: 0 10px;
+		}
+
+		&__indicators {
+			position: relative;
+			transition: transform .5s;
+			@include padding-start(5px);
+			z-index: 91;
+
+			&:not(:hover) {
+				transform: translateX(calc(100% - 8px));
+			}
 		}
 
 		&__indicator {
@@ -237,6 +253,7 @@
 			align-items: center;
 			justify-content: center;
 			color: $editor-dark;
+			background-color: #fff;
 			@include border-start(1px solid $editor-background);
 
 			&:first-child {
@@ -246,10 +263,10 @@
 					border-color: darken($editor-info, 10%);
 				}
 			}
-		}
 
-		&__indicators {
-			background-color: #fff;
+			&:hover {
+				color: $editor-darkest;
+			}
 		}
 
 		&--hidden {

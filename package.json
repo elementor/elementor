@@ -1,12 +1,13 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "2.5.15",
+	"version": "2.5.16",
 	"prev_stable_version": "2.4.7",
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
-		"test:php": "docker-compose run --rm wordpress_phpunit phpunit"
+		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
+		"test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit"
 	},
 	"devDependencies": {
 		"@babel/core": "7.0.0",
@@ -21,7 +22,8 @@
 		"cssnano": "^4.1.10",
 		"eslint": "^5.4.0",
 		"eslint-config-wordpress": "^2.0.0",
-		"eslint-loader": "^2.1.0",
+		"eslint-loader": "^2.1.2",
+		"eslint-plugin-babel": "^5.3.0",
 		"eslint-plugin-jsx-a11y": "^6.1.1",
 		"eslint-plugin-react": "^7.11.1",
 		"eslint-plugin-wordpress": "git://github.com/WordPress-Coding-Standards/eslint-plugin-wordpress.git#1774343f6226052a46b081e01db3fca8793cc9f1",
@@ -50,9 +52,11 @@
 	"dependencies": {
 		"@babel/plugin-transform-modules-commonjs": "^7.2.0",
 		"@babel/plugin-transform-runtime": "^7.3.4",
+		"@wordpress/babel-plugin-import-jsx-pragma": "^2.2.0",
 		"@wordpress/babel-preset-default": "^2.1.0",
-		"@wordpress/element": "^2.3.0",
 		"core-js": "^2.6.5",
-		"prop-types": "^15.7.1"
+		"prop-types": "^15.7.1",
+		"react": "^16.8.6",
+		"react-dom": "^16.8.6"
 	}
 }
