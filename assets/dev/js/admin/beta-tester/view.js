@@ -30,12 +30,9 @@ export default class BetaTesterView extends Marionette.ItemView {
 			data: {
 				betaTesterEmail: email,
 			},
-			success: () => {
-				this.ui.betaButton.addClass( 'elementor-button-state' );
-
-				elementorBetaTester.layout.hideModal();
-			},
+			// Do not wait for response.
 		} );
+		elementorBetaTester.layout.hideModal();
 	}
 
 	onRender() {}
