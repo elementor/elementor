@@ -10,10 +10,6 @@
 		.dialog-content {
 			display: flex;
 		}
-
-		.dialog-buttons-wrapper {
-			display: none;
-		}
 	}
 
 	&__wrapper {
@@ -29,6 +25,20 @@
 
 	&__tab-links {
 		margin-top: 30px;
+	}
+
+	&__upload {
+		margin: 0 45px;
+		padding-top: 35px;
+		border-top: 1px solid $editor-background;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		&__title {
+			color: $editor-lighter;
+			font-size: 11px;
+		}
 	}
 
 	&__main {
@@ -109,6 +119,31 @@
 			}
 		}
 	}
+
+	&__promotion {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		padding-top: 70px;
+
+		&__icon {
+			font-size: 70px;
+			color: $editor-lighter;
+		}
+
+		&__text {
+			width: 300px;
+			color: $editor-darker;
+			font-size: 16px;
+			padding-top: 20px;
+		}
+
+		&__link {
+			color: $editor-accent;
+			padding-top: 20px;
+			font-size: 15px;
+		}
+	}
 }
 
 .elementor-icons-manager {
@@ -170,18 +205,11 @@
 		background-color: #fff;
 		box-shadow: 0 1px 12px rgba(0,0,0,.05);
 		border-radius: 3px;
+		cursor: pointer;
 		transition: $transition-hover;
-		overflow: hidden;
 
 		&:hover {
 			box-shadow: 0 1px 14px rgba(0, 0, 0, 0.16)
-		}
-
-		&:not(:hover) {
-
-			.elementor-icons-manager__tab__item__overlay {
-				display: none;
-			}
 		}
 
 		&.elementor-selected {
@@ -213,31 +241,6 @@
 			max-width: 100%;
 			overflow: hidden;
 			text-overflow: ellipsis;
-		}
-
-		&__overlay {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background-color: rgba(0,0,0,0.4);
-		}
-
-		&__insert {
-			border-radius: 50%;
-			background-color: #fff;
-			padding: 7px;
-			line-height: 1;
-			cursor: pointer;
-
-			i {
-				font-size: 20px;
-				color: $editor-darkest;
-			}
 		}
 	}
 }
