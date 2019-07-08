@@ -20,11 +20,22 @@ export default class extends elementorModules.Module {
 		if ( ! this.layout ) {
 			this.layout = new ModalLayout();
 
-			this.layout.getModal()
+			const layoutModal = this.layout.getModal();
+
+			layoutModal.addButton( {
+				name: 'insert_icon',
+				text: elementor.translate( 'Insert' ),
+				classes: 'elementor-button elementor-button-success',
+				callback: () => {
+					this.updateControlValue();
+					this.unMountIconManager();
+				},
+			} );
+
+			layoutModal
 				.on( 'show', this.onPickerShow.bind( this ) )
 				.on( 'hide', this.unMountIconManager );
 		}
-
 		return this.layout;
 	}
 
@@ -42,7 +53,9 @@ export default class extends elementorModules.Module {
 
 	onPickerShow() {
 		const controlView = this.getSettings( 'controlView' ),
-			loaded = {},
+			loaded = {
+				GoPro: true,
+			},
 			iconManagerConfig = {
 				recommended: controlView.model.get( 'recommended' ) || false,
 			};
@@ -74,6 +87,7 @@ export default class extends elementorModules.Module {
 					label: 'Recommended',
 					icons: iconManagerConfig.recommended,
 					labelIcon: 'eicon-star-o',
+					native: true,
 				} );
 			}
 		} else {
@@ -107,6 +121,9 @@ export default class extends elementorModules.Module {
 				activeTab = icons[ 0 ].name;
 			}
 		}
+
+		iconManagerConfig.customIconsURL = elementor.config.customIconsURL;
+
 		iconManagerConfig.activeTab = activeTab;
 		return renderIconManager( iconManagerConfig );
 	}

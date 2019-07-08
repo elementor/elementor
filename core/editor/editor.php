@@ -711,6 +711,10 @@ class Editor {
 				'preview_debug_link_text' => __( 'Click here for preview debug', 'elementor' ),
 
 				'icon_library' => __( 'Icon Library', 'elementor' ),
+				'my_libraries' => __('My Libraries', 'elementor'),
+				'upload' => __('Upload', 'elementor'),
+				'icons_promotion' => __('Become a Pro user to upload unlimited font icon folders to your website.', 'elementor'),
+				'go_pro_»' => __('Go Pro »', 'elementor'),
 				'custom_positioning' => __( 'Custom Positioning', 'elementor' ),
 
 				// TODO: Remove.
