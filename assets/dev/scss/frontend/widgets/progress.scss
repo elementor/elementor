@@ -77,11 +77,6 @@
 // Responsive mode
 @media (max-width: $screen-sm-max) {
 
-	.elementor-progress-wrapper {
-		height: 25px;
-		line-height: 25px;
-	}
-
 	.elementor-progress-text {
 		@include padding-start(10px);
 	}
