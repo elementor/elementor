@@ -6,7 +6,7 @@ describe( 'Tests the funcnaliti of the widget image', () => {
 			cy.addWidget( 'basic', 'image' ).then( ( colomeView ) => {
 				const columnId = colomeView.model.get( 'id' ),
 					widgetId = colomeView.model.get( 'elements' ).first().get( 'id' );
-				cy.get( '.elementor-control-media-delete' ).click( { force: true } );
+				cy.get( '.elementor-control-media__replace' ).click( { force: true } );
 
 				cy.get( '#elementor-panel-saver-button-publish' ).click();
 				cy.wait( 100 );

@@ -16,7 +16,7 @@
 		color: $gray;
 	}
 
-	i {
+	i, svg {
 		width: 1em;
 		height: 1em;
 		position: relative;
@@ -36,6 +36,7 @@
 		padding: .5em;
 		background-color: $gray;
 		color: #fff;
+		fill: #fff;
 	}
 }
 

@@ -7,6 +7,7 @@
 }
 
 .elementor-social-icon {
+	background-color: $gray;
 	font-size: 25px;
 	text-align: center;
 	padding: 0.5em;
@@ -37,14 +38,14 @@
 		&digg			{ background-color: $digg; }
 		&dribbble		{ background-color: $dribbble; }
 		&envelope		{ background-color: $envelope; }
-		&facebook		{ background-color: $facebook; }
+		&facebook, &facebook-f		{ background-color: $facebook; }
 		&flickr			{ background-color: $flickr; }
 		&foursquare		{ background-color: $foursquare; }
-		&freecodecamp	{ background-color: $freecodecamp; }
+		&freecodecamp, &free-code-camp	{ background-color: $freecodecamp; }
 		&github			{ background-color: $github; }
 		&gitlab			{ background-color: $gitlab; }
 		&globe			{ background-color: $gray; }
-		&google-plus	{ background-color: $google-plus; }
+		&google-plus, &google-plus-g	{ background-color: $google-plus; }
 		&houzz			{ background-color: $houzz; }
 		&instagram		{ background-color: $instagram; }
 		&jsfiddle		{ background-color: $jsfiddle; }
@@ -73,6 +74,7 @@
 		&tumblr			{ background-color: $tumblr; }
 		&twitch			{ background-color: $twitch; }
 		&twitter		{ background-color: $twitter; }
+		&viber			{ background-color: $viber; }
 		&vimeo			{ background-color: $vimeo; }
 		&vk				{ background-color: $vk; }
 		&weibo			{ background-color: $weibo; }
