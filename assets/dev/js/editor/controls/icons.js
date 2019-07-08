@@ -226,6 +226,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	getSvgNotEnabledDialog() {
 		const onConfirm = () => {
 			elementorCommon.ajax.addRequest( 'enable_svg_uploads', {}, true );
+			this.openFrame();
 		};
 		return elementor.helpers.getSimpleDialog(
 			'elementor-enable-svg-dialog',

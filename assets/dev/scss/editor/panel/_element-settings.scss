@@ -71,7 +71,7 @@
 }
 
 #elementor-panel__editor__help {
-	padding: 25px;
+	padding: 50px 25px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -80,12 +80,14 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		color: $editor-darkest;
+		color: $editor-dark;
 		font-size: 12px;
 		font-weight: 500;
+		transition: $transition-hover;
 
 		&:hover {
-			
+			color: $editor-darkest;
+
 			i {
 				color: $editor-info;
 
