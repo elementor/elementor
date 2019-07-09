@@ -11,7 +11,7 @@ class IconsManager extends Component {
 			library: '',
 			value: '',
 		},
-		iconTabs: elementor.config.icons,
+		iconTabs: elementor.config.icons.libraries,
 		loaded: this.props.loaded,
 		filter: '',
 	};

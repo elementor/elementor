@@ -177,6 +177,7 @@ class Icons_Manager {
 				'native' => true,
 			],
 		];
+
 		return array_values( array_merge( $tabs, self::get_icon_manager_tabs() ) );
 	}
 
