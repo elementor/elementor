@@ -28,7 +28,7 @@
 	}
 
 	&__upload {
-		margin: 0 45px;
+		margin: 20px 45px;
 		padding-top: 35px;
 		border-top: 1px solid $editor-background;
 		display: flex;
@@ -37,7 +37,8 @@
 
 		&__title {
 			color: $editor-lighter;
-			font-size: 11px;
+			font-size: 10px;
+			text-transform: uppercase;
 		}
 	}
 
@@ -127,7 +128,7 @@
 		padding-top: 70px;
 
 		&__icon {
-			font-size: 70px;
+			font-size: 60px;
 			color: $editor-lighter;
 		}
 
@@ -135,7 +136,7 @@
 			width: 300px;
 			color: $editor-darker;
 			font-size: 16px;
-			padding-top: 20px;
+			padding-top: 25px;
 		}
 
 		&__link {
@@ -230,13 +231,13 @@
 
 		&__icon {
 			font-size: 25px;
-			color: $editor-darker;
+			color: $editor-dark;
 		}
 
 		&__name {
 			color: $editor-lighter;
 			font-size: 11px;
-			padding: 18px 20px 0;
+			padding: 13px 20px 0;
 			white-space: nowrap;
 			max-width: 100%;
 			overflow: hidden;
