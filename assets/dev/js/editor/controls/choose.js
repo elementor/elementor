@@ -23,6 +23,8 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 
 		if ( currentValue ) {
 			this.ui.inputs.filter( '[value="' + currentValue + '"]' ).prop( 'checked', true );
+		} else {
+			this.ui.inputs.filter( ':checked' ).prop( 'checked', false );
 		}
 	},
 
