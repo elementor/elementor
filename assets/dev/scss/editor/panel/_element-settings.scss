@@ -85,6 +85,26 @@
 		font-weight: 500;
 		transition: $transition-hover;
 
+		i {
+			padding: 0 5px;
+			color: $editor-light;
+			font-size: 18px;
+			position: relative;
+
+			&:after {
+				content: '';
+				position: absolute;
+				height: 13px;
+				width: 13px;
+				top: 3px;
+				bottom: 0;
+				left: 8px;
+				right: 0;
+				border-radius: 50%;
+				z-index: -1;
+			}
+		}
+
 		&:hover {
 			color: $editor-darkest;
 
@@ -94,13 +114,11 @@
 				&:before {
 					content: '\e941';
 				}
-			}
-		}
 
-		i {
-			padding: 0 5px;
-			color: $editor-light;
-			font-size: 18px;
+				&:after {
+					background: #fff;
+				}
+			}
 		}
 	}
 }
