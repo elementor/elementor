@@ -201,7 +201,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'item_icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}:not(:hover)' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}}' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -215,8 +215,8 @@ class Widget_Social_Icons extends Widget_Base {
 					'item_icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}:not(:hover) i' => 'color: {{VALUE}};',
-					'{{WRAPPER}} {{CURRENT_ITEM}}:not(:hover) svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}} i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}} svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -333,7 +333,7 @@ class Widget_Social_Icons extends Widget_Base {
 					'icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon:not(:hover)' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -347,8 +347,8 @@ class Widget_Social_Icons extends Widget_Base {
 					'icon_color' => 'custom',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-social-icon:not(:hover) i' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-social-icon:not(:hover) svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-social-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
