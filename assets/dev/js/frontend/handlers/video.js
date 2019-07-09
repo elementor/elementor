@@ -52,7 +52,7 @@ const VideoModule = elementorModules.frontend.handlers.Base.extend( {
 				indexOfStartTimeKey = videoSrc.indexOf( '#t=' );
 
 			// insert the autoplay flag before the '#t=' param. Param '#t=' must be last in the URL
-			$videoIframe[ 0 ].src = [ videoSrc.slice( 0, indexOfStartTimeKey ), '&autoplay=1', videoSrc.slice( indexOfStartTimeKey ) ].join( '' );
+			$videoIframe[ 0 ].src = videoSrc.slice( 0, indexOfStartTimeKey ) + '&autoplay=1' + videoSrc.slice( indexOfStartTimeKey );
 		} else {
 			$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
 		}
