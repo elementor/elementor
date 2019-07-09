@@ -518,7 +518,9 @@ class Editor {
 				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
 				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
 			],
-			'icons' => Icons_Manager::get_icon_manager_tabs_config(),
+			'icons' => [
+				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
+			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.json',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => SettingsManager::get_settings_managers_config(),
