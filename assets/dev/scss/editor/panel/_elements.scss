@@ -91,15 +91,6 @@
 #elementor-panel-elements-search-wrapper {
 	position: relative;
 	margin: 10px 10px 5px;
-
-	i {
-		position: absolute;
-		@include start(0);
-		top: 50%;
-		color: $editor-light;
-		transform: translateY(-50%);
-		transition: $start 1s;
-	}
 }
 
 #elementor-panel-elements-search-input {
@@ -116,19 +107,15 @@
 	-moz-appearance: none;
 
 	+ i {
+		position: absolute;
 		@include start(10px);
+		top: 50%;
+		color: $editor-light;
+		transform: translateY(-50%);
 	}
 
 	&:focus {
 		background-color: rgba(255,255,255,1);
 		@include padding-end(15px);
-
-		+ i {
-			@include start(10px);
-		}
-	}
-
-	&::-webkit-search-cancel-button {
-		margin-#{$end}: 6px;
 	}
 }
