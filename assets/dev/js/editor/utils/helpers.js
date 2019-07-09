@@ -102,7 +102,7 @@ helpers = {
 	},
 
 	getIconLibrarySettings( iconType ) {
-		const iconSetting = elementor.config.icons.filter( ( library ) => iconType === library.name );
+		const iconSetting = elementor.config.icons.libraries.filter( ( library ) => iconType === library.name );
 		if ( iconSetting[ 0 ] && iconSetting[ 0 ].name ) {
 			return iconSetting[ 0 ];
 		}
