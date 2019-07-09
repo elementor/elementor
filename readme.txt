@@ -263,7 +263,6 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 * Fix: Open the correct video when you have multiple images with the same video link in the same Media Carousel ([#8047](https://github.com/elementor/elementor/issues/8047))
 * Fix: Added escaping in the template type ([#8435](https://github.com/elementor/elementor/issues/8435))
 * Fix: Compression encoding for `gzip` to `brotli` conversions (Props [@pingram3541](https://github.com/pingram3541))
-* Fix: Reset style not working in some cases ([#8454](https://github.com/elementor/elementor/issues/8454))
 * Fix: Vimeo video lightbox is not playing automatically
 * Fix: Backslash was removed from Custom CSS in page settings
 * Fix: Set LTR direction only to `input` and `textarea` in RTL view
