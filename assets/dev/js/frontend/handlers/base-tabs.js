@@ -1,4 +1,4 @@
-export default class extends elementorModules.frontend.handlers.Base {
+export default class baseTabs extends elementorModules.frontend.handlers.Base {
 	constructor( ...args ) {
 		super( ...args );
 

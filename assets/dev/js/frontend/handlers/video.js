@@ -10,7 +10,7 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 	}
 
 	getDefaultElements() {
-		var selectors = this.getSettings( 'selectors' );
+		const selectors = this.getSettings( 'selectors' );
 
 		return {
 			$imageOverlay: this.$element.find( selectors.imageOverlay ),
@@ -47,7 +47,15 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 
 		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
 
-		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
+		if ( $videoIframe[ 0 ].src.includes( 'vimeo.com' ) ) {
+			const videoSrc = $videoIframe[ 0 ].src;
+			const indexOfStartTimeKey = videoSrc.indexOf( '#t=' );
+
+			// insert the autoplay flag before the '#t=' param. Param '#t=' must be last in the URL
+			$videoIframe[ 0 ].src = [ videoSrc.slice( 0, indexOfStartTimeKey ), '&autoplay=1', videoSrc.slice( indexOfStartTimeKey ) ].join( '' );
+		} else {
+			$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
+		}
 	}
 
 	animateVideo() {
@@ -69,7 +77,7 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 			return;
 		}
 
-		var isLightBoxEnabled = this.getElementSettings( 'lightbox' );
+		const isLightBoxEnabled = this.getElementSettings( 'lightbox' );
 
 		if ( 'lightbox' === propertyName && ! isLightBoxEnabled ) {
 			this.getLightBox().getModal().hide();

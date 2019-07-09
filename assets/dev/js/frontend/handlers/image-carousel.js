@@ -8,7 +8,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 	}
 
 	getDefaultElements() {
-		var selectors = this.getSettings( 'selectors' );
+		const selectors = this.getSettings( 'selectors' );
 
 		return {
 			$carousel: this.$element.find( selectors.carousel ),
@@ -18,13 +18,13 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.Base {
 	onInit() {
 		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
 
-		var elementSettings = this.getElementSettings(),
+		const elementSettings = this.getElementSettings(),
 			slidesToShow = +elementSettings.slides_to_show || 3,
 			isSingleSlide = 1 === slidesToShow,
 			defaultLGDevicesSlidesCount = isSingleSlide ? 1 : 2,
 			breakpoints = elementorFrontend.config.breakpoints;
 
-		var slickOptions = {
+		const slickOptions = {
 			slidesToShow: slidesToShow,
 			autoplay: 'yes' === elementSettings.autoplay,
 			autoplaySpeed: elementSettings.autoplay_speed,

@@ -18,7 +18,7 @@ class TextEditor extends elementorModules.frontend.handlers.Base {
 	}
 
 	getDefaultElements() {
-		var selectors = this.getSettings( 'selectors' ),
+		const selectors = this.getSettings( 'selectors' ),
 			classes = this.getSettings( 'classes' ),
 			$dropCap = jQuery( '<span>', { class: classes.dropCap } ),
 			$dropCapLetter = jQuery( '<span>', { class: classes.dropCapLetter } );
@@ -33,7 +33,7 @@ class TextEditor extends elementorModules.frontend.handlers.Base {
 	}
 
 	wrapDropCap() {
-		var isDropCapEnabled = this.getElementSettings( 'drop_cap' );
+		const isDropCapEnabled = this.getElementSettings( 'drop_cap' );
 
 		if ( ! isDropCapEnabled ) {
 			// If there is an old drop cap inside the paragraph
@@ -48,20 +48,20 @@ class TextEditor extends elementorModules.frontend.handlers.Base {
 			return;
 		}
 
-		var $paragraph = this.elements.$paragraph;
+		const $paragraph = this.elements.$paragraph;
 
 		if ( ! $paragraph.length ) {
 			return;
 		}
 
-		var	paragraphContent = $paragraph.html().replace( /&nbsp;/g, ' ' ),
+		const paragraphContent = $paragraph.html().replace( /&nbsp;/g, ' ' ),
 			firstLetterMatch = paragraphContent.match( /^ *([^ ] ?)/ );
 
 		if ( ! firstLetterMatch ) {
 			return;
 		}
 
-		var firstLetter = firstLetterMatch[ 1 ],
+		const firstLetter = firstLetterMatch[ 1 ],
 			trimmedFirstLetter = firstLetter.trim();
 
 		// Don't apply drop cap when the content starting with an HTML tag
@@ -73,7 +73,7 @@ class TextEditor extends elementorModules.frontend.handlers.Base {
 
 		this.elements.$dropCapLetter.text( trimmedFirstLetter );
 
-		var restoredParagraphContent = paragraphContent.slice( firstLetter.length ).replace( /^ */, function( match ) {
+		const restoredParagraphContent = paragraphContent.slice( firstLetter.length ).replace( /^ */, function( match ) {
 			return new Array( match.length + 1 ).join( '&nbsp;' );
 		} );
 

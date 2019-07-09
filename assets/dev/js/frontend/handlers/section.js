@@ -1,11 +1,4 @@
 class BackgroundVideo extends elementorModules.frontend.handlers.Base {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.player = null;
-		this.isYTVideo = null;
-	}
-
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -17,7 +10,7 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	}
 
 	getDefaultElements() {
-		var selectors = this.getSettings( 'selectors' ),
+		const selectors = this.getSettings( 'selectors' ),
 			elements = {
 				$backgroundVideoContainer: this.$element.find( selectors.backgroundVideoContainer ),
 		};
@@ -30,7 +23,7 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	}
 
 	calcVideosSize() {
-		var containerWidth = this.elements.$backgroundVideoContainer.outerWidth(),
+		const containerWidth = this.elements.$backgroundVideoContainer.outerWidth(),
 			containerHeight = this.elements.$backgroundVideoContainer.outerHeight(),
 			aspectRatioSetting = '16:9', //TEMP
 			aspectRatioArray = aspectRatioSetting.split( ':' ),
@@ -46,45 +39,42 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	}
 
 	changeVideoSize() {
-		var $video = this.isYTVideo ? jQuery( this.player.getIframe() ) : this.elements.$backgroundVideoHosted,
+		const $video = this.isYTVideo ? jQuery( this.player.getIframe() ) : this.elements.$backgroundVideoHosted,
 			size = this.calcVideosSize();
 
 		$video.width( size.width ).height( size.height );
 	}
 
 	startVideoLoop( firstTime ) {
-		const self = this;
-
 		// If the section has been removed
-		if ( ! self.player.getIframe().contentWindow ) {
+		if ( ! this.player.getIframe().contentWindow ) {
 			return;
 		}
 
-		const elementSettings = self.getElementSettings(),
+		const elementSettings = this.getElementSettings(),
 			startPoint = elementSettings.background_video_start || 0,
 			endPoint = elementSettings.background_video_end;
 
 		if ( elementSettings.background_play_once && ! firstTime ) {
-			self.player.stopVideo();
+			this.player.stopVideo();
 			return;
 		}
 
-		self.player.seekTo( startPoint );
+		this.player.seekTo( startPoint );
 
 		if ( endPoint ) {
 			const durationToEnd = endPoint - startPoint + 1;
 
-			setTimeout( function() {
-				self.startVideoLoop( false );
+			setTimeout( () => {
+				this.startVideoLoop( false );
 			}, durationToEnd * 1000 );
 		}
 	}
 
 	prepareYTVideo( YT, videoID ) {
-		var self = this,
-			$backgroundVideoContainer = self.elements.$backgroundVideoContainer,
-			elementSettings = self.getElementSettings(),
-			startStateCode = YT.PlayerState.PLAYING;
+		const $backgroundVideoContainer = this.elements.$backgroundVideoContainer,
+			elementSettings = this.getElementSettings();
+		let startStateCode = YT.PlayerState.PLAYING;
 
 		// Since version 67, Chrome doesn't fire the `PLAYING` state at start time
 		if ( window.chrome ) {
@@ -93,28 +83,28 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 
 		$backgroundVideoContainer.addClass( 'elementor-loading elementor-invisible' );
 
-		self.player = new YT.Player( self.elements.$backgroundVideoEmbed[ 0 ], {
+		this.player = new YT.Player( this.elements.$backgroundVideoEmbed[ 0 ], {
 			videoId: videoID,
 			events: {
-				onReady: function() {
-					self.player.mute();
+				onReady: () => {
+					this.player.mute();
 
-					self.changeVideoSize();
+					this.changeVideoSize();
 
-					self.startVideoLoop( true );
+					this.startVideoLoop( true );
 
-					self.player.playVideo();
+					this.player.playVideo();
 				},
-				onStateChange: function( event ) {
+				onStateChange: ( event ) => {
 					switch ( event.data ) {
 						case startStateCode:
 							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
 
 							break;
 						case YT.PlayerState.ENDED:
-							self.player.seekTo( elementSettings.background_video_start || 0 );
+							this.player.seekTo( elementSettings.background_video_start || 0 );
 							if ( elementSettings.background_play_once ) {
-								self.player.destroy();
+								this.player.destroy();
 							}
 					}
 				},
@@ -127,34 +117,33 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	}
 
 	activate() {
-		var self = this,
-			videoLink = self.getElementSettings( 'background_video_link' ),
-			videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink ),
-			playOnce = self.getElementSettings( 'background_play_once' );
+		let videoLink = this.getElementSettings( 'background_video_link' );
+		const videoID = elementorFrontend.utils.youtube.getYoutubeIDFromURL( videoLink ),
+			playOnce = this.getElementSettings( 'background_play_once' );
 
-		self.isYTVideo = ! ! videoID;
+		this.isYTVideo = ! ! videoID;
 
 		if ( videoID ) {
-			elementorFrontend.utils.youtube.onYoutubeApiReady( function( YT ) {
-				setTimeout( function() {
-					self.prepareYTVideo( YT, videoID );
-				}, 1 );
+			elementorFrontend.utils.youtube.onYoutubeApiReady( ( YT ) => {
+				setTimeout( () => {
+					this.prepareYTVideo( YT, videoID );
+				}, 0 );
 			} );
 		} else {
-			const startTime = self.getElementSettings( 'background_video_start' ),
-				endTime = self.getElementSettings( 'background_video_end' );
+			const startTime = this.getElementSettings( 'background_video_start' ),
+				endTime = this.getElementSettings( 'background_video_end' );
 			if ( startTime || endTime ) {
 				videoLink += '#t=' + ( startTime || 0 ) + ( endTime ? ',' + endTime : '' );
 			}
-			self.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', self.changeVideoSize );
+			this.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', this.changeVideoSize.bind( this ) );
 			if ( playOnce ) {
-				self.elements.$backgroundVideoHosted.on( 'ended', function() {
-					self.elements.$backgroundVideoHosted.hide();
+				this.elements.$backgroundVideoHosted.on( 'ended', () => {
+					this.elements.$backgroundVideoHosted.hide();
 				} );
 			}
 		}
 
-		elementorFrontend.elements.$window.on( 'resize', self.changeVideoSize );
+		elementorFrontend.elements.$window.on( 'resize', this.changeVideoSize );
 	}
 
 	deactivate() {
@@ -168,7 +157,7 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 	}
 
 	run() {
-		var elementSettings = this.getElementSettings();
+		const elementSettings = this.getElementSettings();
 
 		if ( 'video' === elementSettings.background_background && elementSettings.background_video_link ) {
 			this.activate();
@@ -177,8 +166,10 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 		}
 	}
 
-	onInit() {
-		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
+	onInit( ...args ) {
+		super.onInit( ...args );
+
+		this.changeVideoSize = this.changeVideoSize.bind( this );
 
 		this.run();
 	}
@@ -191,13 +182,8 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
 }
 
 class StretchedSection extends elementorModules.frontend.handlers.Base {
-	constructor( ...args ) {
-		super( ...args );
-		this.stretchElement = null;
-	}
-
 	bindEvents() {
-		var handlerID = this.getUniqueHandlerID();
+		const handlerID = this.getUniqueHandlerID();
 
 		elementorFrontend.addListenerOnce( handlerID, 'resize', this.stretch );
 
@@ -211,6 +197,8 @@ class StretchedSection extends elementorModules.frontend.handlers.Base {
 	}
 
 	initStretch() {
+		this.stretch = this.stretch.bind( this );
+
 		this.stretchElement = new elementorModules.frontend.tools.StretchElement( {
 			element: this.$element,
 			selectors: {
@@ -231,10 +219,10 @@ class StretchedSection extends elementorModules.frontend.handlers.Base {
 		this.stretchElement.stretch();
 	}
 
-	onInit() {
-		elementorModules.frontend.handlers.Base.prototype.onInit.apply( this, arguments );
-
+	onInit( ...args ) {
 		this.initStretch();
+
+		super.onInit( ...args );
 
 		this.stretch();
 	}
@@ -269,7 +257,7 @@ class Shapes extends elementorModules.frontend.handlers.Base {
 	}
 
 	getDefaultElements() {
-		var elements = {},
+		const elements = {},
 			selectors = this.getSettings( 'selectors' );
 
 		elements.$topContainer = this.$element.find( selectors.container.replace( '%s', 'top' ) );
@@ -288,9 +276,8 @@ class Shapes extends elementorModules.frontend.handlers.Base {
 	}
 
 	buildSVG( side ) {
-		const self = this,
-			baseSettingKey = 'shape_divider_' + side,
-			shapeType = self.getElementSettings( baseSettingKey ),
+		const baseSettingKey = 'shape_divider_' + side,
+			shapeType = this.getElementSettings( baseSettingKey ),
 			$svgContainer = this.elements[ '$' + side + 'Container' ];
 
 		$svgContainer.attr( 'data-shape', shapeType );
@@ -302,11 +289,11 @@ class Shapes extends elementorModules.frontend.handlers.Base {
 
 		let fileName = shapeType;
 
-		if ( self.getElementSettings( baseSettingKey + '_negative' ) ) {
+		if ( this.getElementSettings( baseSettingKey + '_negative' ) ) {
 			fileName += '-negative';
 		}
 
-		const svgURL = self.getSvgURL( shapeType, fileName );
+		const svgURL = this.getSvgURL( shapeType, fileName );
 
 		jQuery.get( svgURL, function( data ) {
 			$svgContainer.empty().append( data.childNodes[ 0 ] );
@@ -319,31 +306,29 @@ class Shapes extends elementorModules.frontend.handlers.Base {
 		this.elements[ '$' + side + 'Container' ].attr( 'data-negative', !! this.getElementSettings( 'shape_divider_' + side + '_negative' ) );
 	}
 
-	onInit() {
-		var self = this;
+	onInit( ...args ) {
+		super.onInit( ...args );
 
-		elementorModules.frontend.handlers.Base.prototype.onInit.apply( self, arguments );
-
-		[ 'top', 'bottom' ].forEach( function( side ) {
-			if ( self.getElementSettings( 'shape_divider_' + side ) ) {
-				self.buildSVG( side );
+		[ 'top', 'bottom' ].forEach( ( side ) => {
+			if ( this.getElementSettings( 'shape_divider_' + side ) ) {
+				this.buildSVG( side );
 			}
 		} );
 	}
 
 	onElementChange( propertyName ) {
-		var shapeChange = propertyName.match( /^shape_divider_(top|bottom)$/ );
+		const shapeChange = propertyName.match( /^shape_divider_(top|bottom)$/ );
 
 		if ( shapeChange ) {
-			this.buildSVG( shapeChange[ 1 ] );
+			this.buildSVG( shapeChange[ 1 ] ).bind( this );
 
 			return;
 		}
 
-		var negativeChange = propertyName.match( /^shape_divider_(top|bottom)_negative$/ );
+		const negativeChange = propertyName.match( /^shape_divider_(top|bottom)_negative$/ );
 
 		if ( negativeChange ) {
-			this.buildSVG( negativeChange[ 1 ] );
+			this.buildSVG( negativeChange[ 1 ] ).bind( this );
 
 			this.setNegative( negativeChange[ 1 ] );
 		}
@@ -364,7 +349,7 @@ class HandlesPosition extends elementorModules.frontend.handlers.Base {
 			return this.$element.offset().top;
 		}
 
-		var $container = jQuery( elementor.config.document.container );
+		const $container = jQuery( elementor.config.document.container );
 		return this.$element.offset().top - $container.offset().top;
 	}
 
@@ -395,7 +380,7 @@ class HandlesPosition extends elementorModules.frontend.handlers.Base {
     onInit() {
         this.setHandlesPosition();
 
-        this.$element.on( 'mouseenter', this.setHandlesPosition );
+        this.$element.on( 'mouseenter', this.setHandlesPosition.bind( this ) );
     }
 }
 

@@ -7,6 +7,7 @@ import toggleHandler from './handlers/toggle';
 import videoHandler from './handlers/video';
 import imageCarouselHandler from './handlers/image-carousel';
 import textEditorHandler from './handlers/text-editor';
+import sectionHandler from './handlers/section';
 
 module.exports = function( $ ) {
 	const self = this;
@@ -14,7 +15,7 @@ module.exports = function( $ ) {
 	// element-type.skin-type
 	const handlers = {
 		// Elements
-		section: require( 'elementor-frontend/handlers/section' ),
+		section: sectionHandler,
 
 		// Widgets
 		'accordion.default': accordionHandler,
