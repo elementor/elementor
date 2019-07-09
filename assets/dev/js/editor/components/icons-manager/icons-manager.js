@@ -61,7 +61,7 @@ export default class extends elementorModules.Module {
 			};
 
 		let selected = controlView.getControlValue(),
-			icons = elementor.config.icons;
+			icons = elementor.config.icons.libraries;
 
 		if ( ! selected.library || ! selected.value ) {
 			selected = {
