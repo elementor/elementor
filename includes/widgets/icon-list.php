@@ -571,11 +571,11 @@ class Widget_Icon_List extends Widget_Base {
 					}
 
 					// add old default
-					if ( empty( $item['icon'] ) && ! $migration_allowed ) {
+					if ( ! isset( $item['icon'] ) && ! $migration_allowed ) {
 						$item['icon'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-check';
 					}
 
-					if ( ! empty( $item['icon'] ) || ! empty( $item['selected_icon'] ) ) :
+					if ( ! empty( $item['icon'] ) || ! empty( $item['selected_icon']['value'] ) ) :
 						$migrated = isset( $item['__fa4_migrated']['selected_icon'] );
 						$is_new = empty( $item['icon'] ) && $migration_allowed;
 						?>
@@ -635,7 +635,7 @@ class Widget_Icon_List extends Widget_Base {
 						<# if ( item.link && item.link.url ) { #>
 							<a href="{{ item.link.url }}">
 						<# } #>
-						<# if ( item.icon || item.selected_icon ) { #>
+						<# if ( item.icon || item.selected_icon.value ) { #>
 						<span class="elementor-icon-list-icon">
 							<#
 								iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.selected_icon, { 'aria-hidden': true }, 'i', 'object' );
