@@ -94,7 +94,7 @@ class Rollback {
 				overflow: hidden;
                 max-width: 850px;
                 margin: auto;
-                font-family: monospace;
+                font-family: Courier, monospace;
 			}
 
 			h1 {
