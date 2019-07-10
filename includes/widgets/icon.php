@@ -291,7 +291,7 @@ class Widget_Icon extends Widget_Base {
 
 		$this->end_controls_tabs();
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'size',
 			[
 				'label' => __( 'Size', 'elementor' ),
@@ -328,7 +328,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'rotate',
 			[
 				'label' => __( 'Rotate', 'elementor' ),
