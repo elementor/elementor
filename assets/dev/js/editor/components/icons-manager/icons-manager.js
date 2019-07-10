@@ -53,13 +53,15 @@ export default class extends elementorModules.Module {
 
 	onPickerShow() {
 		const controlView = this.getSettings( 'controlView' ),
-			loaded = {},
+			loaded = {
+				GoPro: true,
+			},
 			iconManagerConfig = {
 				recommended: controlView.model.get( 'recommended' ) || false,
 			};
 
 		let selected = controlView.getControlValue(),
-			icons = elementor.config.icons;
+			icons = elementor.config.icons.libraries;
 
 		if ( ! selected.library || ! selected.value ) {
 			selected = {
@@ -85,6 +87,7 @@ export default class extends elementorModules.Module {
 					label: 'Recommended',
 					icons: iconManagerConfig.recommended,
 					labelIcon: 'eicon-star-o',
+					native: true,
 				} );
 			}
 		} else {
@@ -118,6 +121,9 @@ export default class extends elementorModules.Module {
 				activeTab = icons[ 0 ].name;
 			}
 		}
+
+		iconManagerConfig.customIconsURL = elementor.config.customIconsURL;
+
 		iconManagerConfig.activeTab = activeTab;
 		return renderIconManager( iconManagerConfig );
 	}
