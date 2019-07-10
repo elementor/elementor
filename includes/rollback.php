@@ -93,6 +93,8 @@ class Rollback {
 			.wrap {
 				overflow: hidden;
                 max-width: 850px;
+                margin: auto;
+                font-family: monospace;
 			}
 
 			h1 {
