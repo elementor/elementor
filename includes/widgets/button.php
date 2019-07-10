@@ -214,8 +214,20 @@ class Widget_Button extends Widget_Base {
 					'left' => __( 'Before', 'elementor' ),
 					'right' => __( 'After', 'elementor' ),
 				],
-				'condition' => [
-					'selected_icon[value]!' => '',
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'selected_icon[value]',
+							'operator' => '!=',
+							'value' => '',
+						],
+						[
+							'name' => 'icon',
+							'operator' => '!=',
+							'value' => '',
+						],
+					],
 				],
 			]
 		);

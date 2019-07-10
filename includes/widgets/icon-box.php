@@ -119,6 +119,11 @@ class Widget_Icon_Box extends Widget_Base {
 							'operator' => '!=',
 							'value' => '',
 						],
+						[
+							'name' => 'icon',
+							'operator' => '!=',
+							'value' => '',
+						],
 					],
 				],
 			]
@@ -134,9 +139,30 @@ class Widget_Icon_Box extends Widget_Base {
 					'square' => __( 'Square', 'elementor' ),
 				],
 				'default' => 'circle',
-				'condition' => [
-					'view!' => 'default',
-					'selected_icon[value]!' => '',
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'view',
+							'operator' => '!=',
+							'value' => 'default',
+						],
+						[
+							'relation' => 'or',
+							'terms' => [
+								[
+									'name' => 'selected_icon[value]',
+									'operator' => '!=',
+									'value' => '',
+								],
+								[
+									'name' => 'icon',
+									'operator' => '!=',
+									'value' => '',
+								],
+							],
+						],
+					],
 				],
 				'prefix_class' => 'elementor-shape-',
 			]
@@ -215,6 +241,11 @@ class Widget_Icon_Box extends Widget_Base {
 							'operator' => '!=',
 							'value' => '',
 						],
+						[
+							'name' => 'icon',
+							'operator' => '!=',
+							'value' => '',
+						],
 					],
 				],
 			]
@@ -252,6 +283,11 @@ class Widget_Icon_Box extends Widget_Base {
 					'terms' => [
 						[
 							'name' => 'selected_icon[value]',
+							'operator' => '!=',
+							'value' => '',
+						],
+						[
+							'name' => 'icon',
 							'operator' => '!=',
 							'value' => '',
 						],

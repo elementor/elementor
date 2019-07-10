@@ -331,8 +331,20 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => [
-					'selected_icon[value]!' => '',
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'selected_icon[value]',
+							'operator' => '!=',
+							'value' => '',
+						],
+						[
+							'name' => 'icon',
+							'operator' => '!=',
+							'value' => '',
+						],
+					],
 				],
 			]
 		);
