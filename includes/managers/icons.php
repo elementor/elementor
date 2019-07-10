@@ -231,6 +231,17 @@ class Icons_Manager {
 		return true;
 	}
 
+	public static function on_import_migration( $element, $old_control, $new_control ) {
+		if ( isset( $element['settings'][ $old_control ] ) && empty( $element['settings'][ $old_control ] ) && self::is_migration_allowed() ) {
+			unset( $element['settings'][ $old_control ] );
+			$element['settings'][ $new_control ] = [
+				'value' => '',
+				'library' => '',
+			];
+		}
+		return $element;
+	}
+
 	/**
 	 * is_migration_allowed
 	 * @return bool
