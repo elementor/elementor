@@ -475,9 +475,12 @@ class Widget_Toggle extends Widget_Base {
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 
 		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+			// @todo: remove when deprecated
+			// added as bc in 2.6
 			// add old default
 			$settings['icon'] = 'fa fa-caret' . ( is_rtl() ? '-left' : '-right' );
 			$settings['icon_active'] = 'fa fa-caret-up';
+			$settings['icon_align'] = $this->get_settings( 'icon_align' );
 		}
 
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
