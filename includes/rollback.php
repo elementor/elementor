@@ -92,10 +92,11 @@ class Rollback {
 		<style>
 			.wrap {
 				overflow: hidden;
+                max-width: 850px;
 			}
 
 			h1 {
-				background: #9b0a46;
+				background: #D30C5C;
 				text-align: center;
 				color: #fff !important;
 				padding: 70px !important;
