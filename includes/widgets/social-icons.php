@@ -110,6 +110,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'deviantart',
 						'digg',
 						'dribbble',
+						'elementor',
 						'facebook',
 						'flickr',
 						'foursquare',
