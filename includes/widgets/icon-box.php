@@ -711,4 +711,8 @@ class Widget_Icon_Box extends Widget_Base {
 		</div>
 		<?php
 	}
+
+	public function on_import( $element ) {
+		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
+	}
 }
