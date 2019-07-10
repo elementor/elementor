@@ -62,6 +62,7 @@
 		position: absolute;
 		overflow: hidden;
 		z-index: $ground-layer;
+		direction: ltr;
 	}
 
 	.elementor-background-video-container {
