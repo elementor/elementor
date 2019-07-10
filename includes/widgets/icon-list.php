@@ -571,7 +571,7 @@ class Widget_Icon_List extends Widget_Base {
 					}
 
 					// add old default
-					if ( empty( $item['icon'] ) && ! $migration_allowed ) {
+					if ( ! isset( $item['icon'] ) && ! $migration_allowed ) {
 						$item['icon'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-check';
 					}
 
