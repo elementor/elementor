@@ -221,7 +221,13 @@ No. Elementor supports WordPress 4.7 or greater, and is compatible with PHP 5.4 
 
 == Changelog ==
 
-= 2.6.0 - 2019-06-09 =
+= 2.6.1 - 2019-07-10 =
+* Tweak: Added responsive controls to Icon size and Icon rotation in Icon widget
+* Fix: Preview Could Not Be Loaded `.htaccess` error if permalink structure not set
+* Fix: Added backward compatibility for Icon control
+* Fix: UI glitches in the global lightbox modal
+
+= 2.6.0 - 2019-07-09 =
 * New: Introducing Icon Manager - the new way to add icons into your page ([#110](https://github.com/elementor/elementor/issues/110))
 * New: Introducing SVG file library ([#5570](https://github.com/elementor/elementor/issues/5570))
 * New: Replaced Font Awesome 4 with Font Awesome 5 ([#4430](https://github.com/elementor/elementor/issues/4430))
