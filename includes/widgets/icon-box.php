@@ -603,7 +603,7 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$icon_tag = 'span';
 
-		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+		if ( ! isset( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
 			// add old default
 			$settings['icon'] = 'fa fa-star';
 		}
