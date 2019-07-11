@@ -113,6 +113,11 @@ export default class extends elementorModules.Module {
 			activeTab = icons[ 0 ].name;
 		}
 
+		// selected Library exists
+		if ( ! Object.keys( icons ).some( ( library ) => library === activeTab ) ) {
+			activeTab = icons[ 0 ].name;
+		}
+
 		// Show recommended tab if selected from it
 		if ( iconManagerConfig.recommended && '' !== selected.library && '' !== selected.value && iconManagerConfig.recommended.hasOwnProperty( selected.library ) ) {
 			const iconLibrary = icons.filter( ( library ) => selected.library === library.name );
